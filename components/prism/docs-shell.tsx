@@ -1,4 +1,3 @@
-import Link from "next/link"
 import {
   ArrowLeftRight,
   BadgeCheck,
@@ -8,6 +7,8 @@ import {
   PanelTop,
   TextCursorInput,
 } from "lucide-react"
+
+import { NavLink } from "@/components/prism/nav-link"
 
 const groups = [
   {
@@ -39,21 +40,21 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="docs-shell">
       <aside className="docs-sidebar" aria-label="组件分类导航">
-        <Link href="/components" className="docs-sidebar-title">
+        <NavLink href="/components" exact className="docs-sidebar-title">
           <Box aria-hidden="true" />
           组件总览
-        </Link>
-        <nav>
+        </NavLink>
+        <nav aria-label="组件分类">
           {groups.map((group) => (
             <div className="docs-nav-group" key={group.label}>
               <div className="docs-nav-label">{group.label}</div>
               {group.items.map((item) => {
                 const Icon = item.icon
                 return (
-                  <Link className="docs-nav-link" href={item.href} key={item.href}>
+                  <NavLink exact className="docs-nav-link" href={item.href} key={item.href}>
                     <Icon aria-hidden="true" />
                     {item.label}
-                  </Link>
+                  </NavLink>
                 )
               })}
             </div>
@@ -64,7 +65,7 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
           Phase 1 · v0.1
         </div>
       </aside>
-      <main className="docs-content">{children}</main>
+      <main id="main-content" className="docs-content" tabIndex={-1}>{children}</main>
     </div>
   )
 }

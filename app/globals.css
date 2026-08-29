@@ -13,7 +13,7 @@
   --surface-hover: #edf2f5;
   --text-primary: #182630;
   --text-secondary: #5d6c76;
-  --text-tertiary: #75838c;
+  --text-tertiary: #64727b;
   --border-default: #d7dfe4;
   --border-subtle: #e6ebee;
   --border-strong: #aab7bf;
@@ -40,6 +40,10 @@
   --danger-border: #edbbb7;
   --focus-ring: #087ba8;
   --growth-signal: #c2f25b;
+
+  --control-height: 2.25rem;
+  --section-gap: 1.5rem;
+  --section-pad: 1.5rem;
 
   --background: var(--canvas);
   --foreground: var(--text-primary);
@@ -106,6 +110,23 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.skip-link {
+  position: fixed;
+  top: .75rem;
+  left: .75rem;
+  z-index: 100;
+  padding: .625rem .875rem;
+  border: 2px solid var(--focus-ring);
+  border-radius: .375rem;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: .875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+
 .site-header {
   position: sticky;
   top: 0;
@@ -132,6 +153,7 @@ body {
 .site-nav { display: flex; align-items: center; gap: .25rem; }
 .site-nav a { padding: .5rem .75rem; border-radius: .375rem; color: var(--text-secondary); font-size: .8125rem; font-weight: 600; text-decoration: none; }
 .site-nav a:hover { background: var(--surface-hover); color: var(--text-primary); }
+.site-nav a[data-active="true"] { background: var(--action-primary-soft); color: var(--action-primary); }
 
 .intro-page { width: min(100%, 80rem); margin-inline: auto; padding: 4rem 2rem 5rem; }
 .intro-hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(22rem, .8fr); align-items: center; gap: 5rem; min-height: 30rem; padding-block: 2rem 4rem; }
@@ -169,10 +191,13 @@ body {
 .docs-sidebar { position: sticky; top: 4rem; align-self: start; height: calc(100vh - 4rem); overflow-y: auto; padding: 2rem 1.25rem; border-right: 1px solid var(--border-subtle); background: var(--surface); }
 .docs-sidebar-title { display: flex; align-items: center; gap: .625rem; padding: .5rem; color: var(--text-primary); font-size: .875rem; font-weight: 700; text-decoration: none; }
 .docs-sidebar-title svg { color: var(--action-primary); }
+.docs-sidebar-title[data-active="true"] { background: var(--action-primary-soft); color: var(--action-primary); }
 .docs-nav-group { display: grid; gap: .25rem; margin-top: 1.5rem; }
 .docs-nav-label { padding: 0 .5rem .375rem; color: var(--text-tertiary); font-size: .6875rem; font-weight: 700; letter-spacing: .06em; }
 .docs-nav-link { display: flex; align-items: center; gap: .625rem; min-height: 2.25rem; padding: .5rem; border-radius: .375rem; color: var(--text-secondary); font-size: .8125rem; font-weight: 600; text-decoration: none; }
 .docs-nav-link:hover { background: var(--surface-hover); color: var(--text-primary); }
+.docs-nav-link[data-active="true"] { background: var(--action-primary-soft); color: var(--action-primary); }
+.docs-nav-link[data-active="true"] svg { color: var(--action-primary); }
 .docs-nav-link svg { width: .875rem; height: .875rem; color: var(--text-tertiary); }
 .docs-sidebar-footer { display: flex; align-items: center; gap: .5rem; margin: 2rem .5rem 0; padding-top: 1rem; border-top: 1px solid var(--border-subtle); color: var(--text-tertiary); font-size: .6875rem; }
 .docs-content { min-width: 0; padding: 3.5rem clamp(2rem, 5vw, 5rem) 5rem; }
@@ -208,13 +233,22 @@ body {
 .doc-notes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .doc-note { padding: 1.25rem; border: 1px solid var(--border-subtle); border-radius: .5rem; background: var(--surface-subtle); }
 
+.site-brand:focus-visible,
+.site-nav a:focus-visible,
+.intro-primary-link:focus-visible,
+.intro-secondary-link:focus-visible,
+.category-links a:focus-visible,
+.docs-sidebar-title:focus-visible,
+.docs-nav-link:focus-visible,
+.overview-links a:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 button, input { font: inherit; }
 svg { width: 1rem; height: 1rem; flex: none; }
 
 .benchmark-shell {
-  --control-height: 2.25rem;
-  --section-gap: 1.5rem;
-  --section-pad: 1.5rem;
   --page-gutter: 2rem;
   min-height: 100vh;
   overflow-x: clip;
@@ -497,6 +531,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
   .intro-principles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .principle-card { flex-direction: column; }
   .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .component-preview .card-matrix { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 48rem) {
