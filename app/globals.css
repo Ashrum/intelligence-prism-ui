@@ -188,7 +188,7 @@ body {
 .category-links a > svg:last-child { color: var(--text-tertiary); }
 
 .docs-shell { display: grid; grid-template-columns: 16rem minmax(0, 1fr); width: min(100%, 90rem); min-height: calc(100vh - 4rem); margin-inline: auto; }
-.docs-sidebar { position: sticky; top: 4rem; align-self: start; height: calc(100vh - 4rem); overflow-y: auto; padding: 2rem 1.25rem; border-right: 1px solid var(--border-subtle); background: var(--surface); }
+.docs-sidebar { position: sticky; top: 4rem; align-self: start; height: calc(100vh - 4rem); overflow-y: auto; padding: 2rem 1.25rem; border-right: 1px solid var(--border-subtle); background: var(--surface); scrollbar-gutter: stable; scrollbar-width: thin; }
 .docs-sidebar-title { display: flex; align-items: center; gap: .625rem; padding: .5rem; color: var(--text-primary); font-size: .875rem; font-weight: 700; text-decoration: none; }
 .docs-sidebar-title svg { color: var(--action-primary); }
 .docs-sidebar-title[data-active="true"] { background: var(--action-primary-soft); color: var(--action-primary); }
