@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     default: "智能曜彩 UI Design System",
     template: "%s｜智能曜彩",
   },
-  description: "智能曜彩 UI Design System v0.1 的组件文档与交互基准站点。",
+  description: "智能曜彩 UI Design System 的 Foundations、组件目录与交互基准站点。",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -29,6 +29,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </Link>
           <nav className="site-nav" aria-label="主导航">
             <NavLink href="/" exact>介绍</NavLink>
+            <NavLink href="/foundations">Foundations</NavLink>
             <NavLink href="/components">组件</NavLink>
             <NavLink href="/benchmark" exact>Benchmark</NavLink>
             <a href="https://github.com/Ashrum/intelligence-prism-ui" target="_blank" rel="noreferrer">GitHub</a>

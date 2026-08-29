@@ -1,18 +1,19 @@
 import Link from "next/link"
 import { ArrowRight, Layers3, ShieldCheck, Sparkles } from "lucide-react"
 
-import { componentGroups } from "@/components/prism/docs-shell"
+import { catalogStats, componentGroups } from "@/components/prism/catalog"
 
 export default function Home() {
   return (
     <main id="main-content" className="intro-page" tabIndex={-1}>
       <section className="intro-hero">
         <div className="intro-copy">
-          <div className="intro-kicker"><span className="growth-signal" aria-hidden="true" />智能曜彩 UI Design System · v0.1</div>
+          <div className="intro-kicker"><span className="growth-signal" aria-hidden="true" />智能曜彩 UI Design System · Catalog v0.2</div>
           <h1>面向教育智能产品的<br />克制型组件系统</h1>
           <p>保留 shadcn/ui 成熟、清晰的组件轮廓，通过曜蓝、智绯、生长荧的严格语义与精确微状态建立识别。</p>
           <div className="intro-actions">
-            <Link href="/components" className="intro-primary-link">浏览组件 <ArrowRight aria-hidden="true" /></Link>
+            <Link href="/foundations" className="intro-primary-link">查看 Foundations <ArrowRight aria-hidden="true" /></Link>
+            <Link href="/components" className="intro-secondary-link">浏览组件</Link>
             <Link href="/benchmark" className="intro-secondary-link">打开 Benchmark</Link>
           </div>
         </div>
@@ -24,17 +25,21 @@ export default function Home() {
       </section>
 
       <section className="intro-section" aria-labelledby="categories-title">
-        <div className="intro-section-heading"><div><span>Components</span><h2 id="categories-title">按使用目的组织</h2></div><p>分类结构借鉴 shadcn 的文档导航方式，同时保留智能曜彩自己的组件语义。</p></div>
+        <div className="intro-section-heading"><div><span>System map</span><h2 id="categories-title">完整目录，成熟度透明</h2></div><p>分类结构借鉴 shadcn；已完成内容可以进入详情，规划内容只显示状态，不创建空页面。</p></div>
+        <dl className="catalog-summary-strip" aria-label="设计系统目录统计">
+          <div><dd>{catalogStats.foundations}</dd><dt>Foundations</dt></div>
+          <div><dd>{catalogStats.baseComponents}</dd><dt>基础组件</dt></div>
+          <div><dd>{catalogStats.extensions}</dd><dt>智能曜彩扩展</dt></div>
+          <div><dd>{catalogStats.documentedPages}</dd><dt>已完成规范页</dt></div>
+        </dl>
         <div className="category-grid">
           {componentGroups.map((group) => (
             <section className="category-card" key={group.label}>
+              <group.icon aria-hidden="true" />
               <h3>{group.label}</h3>
-              <div className="category-links">
-                {group.items.map((item) => {
-                  const Icon = item.icon
-                  return <Link href={item.href} key={item.href}><Icon aria-hidden="true" /><span>{item.label}</span><ArrowRight aria-hidden="true" /></Link>
-                })}
-              </div>
+              <p>{group.description}</p>
+              <div className="category-counts"><span>{group.items.filter((item) => item.status === "stable").length} 稳定</span><span>{group.items.filter((item) => item.status === "planned").length} 规划中</span></div>
+              <Link href={`/components#${group.slug}`} className="category-summary-link">查看分类 <ArrowRight aria-hidden="true" /></Link>
             </section>
           ))}
         </div>

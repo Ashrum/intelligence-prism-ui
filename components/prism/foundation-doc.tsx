@@ -1,0 +1,247 @@
+import {
+  Accessibility,
+  ArrowRight,
+  BookOpenText,
+  CircleHelp,
+  FileCheck2,
+  Languages,
+  MousePointerClick,
+  Sparkles,
+} from "lucide-react"
+
+import { foundationItems } from "@/components/prism/catalog"
+
+export type FoundationSlug = (typeof foundationItems)[number]["slug"]
+
+type FoundationReference = {
+  label: string
+  value: string
+  use: string
+}
+
+type FoundationDocData = {
+  title: string
+  description: string
+  principles: readonly string[]
+  references: readonly FoundationReference[]
+  boundary: string
+}
+
+const docs: Record<FoundationSlug, FoundationDocData> = {
+  "tokens-theming": {
+    title: "设计令牌与主题",
+    description: "用语义 Token 连接品牌源色与真实界面，组件不直接消费品牌色值。",
+    principles: ["源色只定义身份，不直接决定文字或交互颜色。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
+    references: [
+      { label: "Source / Knowledge", value: "#4EB1D9", use: "品牌源色；映射到可访问的曜蓝操作色。" },
+      { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
+      { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
+      { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
+      { label: "AI / Action", value: "#A32967", use: "明确的 AI 操作，不用于普通强调。" },
+    ],
+    boundary: "当前版本冻结浅色主题映射；深色主题在完成全部核心组件后单独评审。",
+  },
+  color: {
+    title: "色彩",
+    description: "中性色承担大部分界面，三种核心色只在具有明确语义时出现。",
+    principles: ["曜蓝表示知识、主要操作与选择。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
+    references: [
+      { label: "Canvas", value: "#F6F8FA", use: "页面背景。" },
+      { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
+      { label: "Text / Primary", value: "#182630", use: "标题与正文主信息。" },
+      { label: "Text / Secondary", value: "#5D6C76", use: "辅助说明与弱化信息。" },
+      { label: "Border / Default", value: "#D7DFE4", use: "常规边界和控件描边。" },
+    ],
+    boundary: "颜色不能单独表达状态；成功、警告、失败和 AI 来源必须同时具有文字。",
+  },
+  typography: {
+    title: "字体与排版",
+    description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
+    principles: ["正文采用 14–16px，必要辅助说明使用 12px；仅非关键目录标注可降至 11px。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
+    references: [
+      { label: "Font Stack", value: "Inter / Noto Sans SC / 系统字体", use: "覆盖英文、中文与跨平台回退。" },
+      { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
+      { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
+      { label: "Body", value: "14–16px / 400", use: "说明、表单和长内容。" },
+      { label: "Label", value: "11–14px / 600–700", use: "控件标签、分类和非关键目录标注。" },
+    ],
+    boundary: "不使用全大写中文、超细字重或仅靠字重区分交互状态。",
+  },
+  "spacing-density": {
+    title: "间距与密度",
+    description: "以 4px 基线组织空间，在舒适与紧凑模式之间保持结构一致。",
+    principles: ["组件内部间距优先使用 4、8、12、16、24px。", "舒适模式用于默认工作台，紧凑模式用于高密度数据任务。", "密度变化只收紧高度和间距，不隐藏必要说明。"],
+    references: [
+      { label: "Base Unit", value: "4px", use: "全部间距的最小基线。" },
+      { label: "Control / Comfortable", value: "36px", use: "默认按钮、输入与切换控件。" },
+      { label: "Control / Compact", value: "32px", use: "高密度数据和工具栏。" },
+      { label: "Section Gap", value: "24px", use: "基准页主要内容区间距。" },
+      { label: "Section Padding", value: "24px", use: "卡片与基准区块内边距。" },
+    ],
+    boundary: "紧凑模式不等于缩小全部文字，也不能压缩触控任务所需的操作空间。",
+  },
+  "layout-breakpoints": {
+    title: "布局与断点",
+    description: "根据任务复杂度调整列数与导航方式，而不是简单按设备名称切换。",
+    principles: ["内容宽度受控，避免超宽屏上出现过长阅读行。", "复杂两栏结构先降为单栏，再调整局部密度。", "移动端保留完整信息层级，导航允许自然换行。"],
+    references: [
+      { label: "Documentation", value: "max 1440px", use: "侧栏与文档内容的整体宽度。" },
+      { label: "Narrative", value: "max 1280px", use: "介绍页与叙事内容。" },
+      { label: "Wide Breakpoint", value: "1088px", use: "复杂网格降列。" },
+      { label: "Tablet Breakpoint", value: "768px", use: "侧栏转为顶部导航、内容单列。" },
+      { label: "Small Breakpoint", value: "512px", use: "操作区和次级网格完全纵向。" },
+    ],
+    boundary: "断点服务内容，不根据特定品牌设备硬编码。",
+  },
+  "shape-elevation": {
+    title: "形状与层级",
+    description: "使用有限圆角、清晰边框和表面差异建立克制的界面层级。",
+    principles: ["小控件使用 6–8px 圆角，容器使用 8–12px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
+    references: [
+      { label: "Radius / Small", value: "6px", use: "标签、导航项和小型按钮。" },
+      { label: "Radius / Medium", value: "8px", use: "按钮、输入与一般卡片。" },
+      { label: "Radius / Large", value: "12px", use: "较大区块与预览容器。" },
+      { label: "Border", value: "1px", use: "常规组件和容器边界。" },
+      { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
+    ],
+    boundary: "不使用大面积玻璃拟态、彩色阴影或过度圆润的胶囊化容器。",
+  },
+  iconography: {
+    title: "图标",
+    description: "线性图标承担识别和方向提示，文字继续承担完整含义。",
+    principles: ["统一使用 Lucide 风格线性图标。", "常规尺寸以 16px 为主，状态和辅助图标可使用 12–14px。", "纯图标按钮必须提供可访问名称。"],
+    references: [
+      { label: "Inline", value: "16px", use: "按钮、导航和列表项。" },
+      { label: "Status", value: "12–14px", use: "状态、标签与辅助提示。" },
+      { label: "Feature", value: "18–20px", use: "原则卡片和功能分组。" },
+      { label: "Stroke", value: "currentColor", use: "继承所在语义的文字颜色。" },
+    ],
+    boundary: "不混用填充图标、表情符号和多套线宽，也不让装饰图标抢占信息层级。",
+  },
+  motion: {
+    title: "动效",
+    description: "动效用于确认状态变化和空间关系，保持短促、可中断和可关闭。",
+    principles: ["Hover 与 Press 使用约 120ms 的颜色或边框过渡。", "内容替换和状态交换控制在约 180ms。", "系统 Reduced Motion 开启时移除非必要动画。"],
+    references: [
+      { label: "Micro", value: "120ms", use: "按钮、链接、边框与背景变化。" },
+      { label: "State", value: "180ms", use: "状态标签和内容替换。" },
+      { label: "Easing", value: "cubic-bezier(.2,.8,.2,1)", use: "短距离界面反馈。" },
+      { label: "Reduced Motion", value: "0.01ms", use: "操作系统要求减少动效时的统一覆盖。" },
+    ],
+    boundary: "不使用循环发光、无意义漂浮或阻碍操作的长动画。",
+  },
+  accessibility: {
+    title: "无障碍",
+    description: "无障碍是组件完成条件，不作为上线前的补充检查。",
+    principles: ["全部交互组件支持键盘，并保留清晰焦点。", "状态、错误和 AI 来源同时提供可读文字。", "语义元素优先，ARIA 只补充原生语义无法覆盖的部分。"],
+    references: [
+      { label: "Focus Ring", value: "2px / #087BA8", use: "键盘焦点的统一视觉。" },
+      { label: "Skip Link", value: "全站", use: "跳过重复导航并进入主要内容。" },
+      { label: "Forced Colors", value: "支持", use: "高对比模式保留边界与状态。" },
+      { label: "State Text", value: "必须", use: "不能只依赖颜色和图形表达。" },
+      { label: "Reduced Motion", value: "支持", use: "遵循操作系统偏好。" },
+    ],
+    boundary: "单个示例通过检查不代表系统完成；每个新增组件仍需独立验证键盘和语义。",
+  },
+  "localization-direction": {
+    title: "本地化与文字方向",
+    description: "当前以简体中文教育界面为基线，同时避免阻断未来多语言适配。",
+    principles: ["文档语言为 zh-CN，组件名称保留通用英文。", "布局使用逻辑方向属性，减少 left/right 硬编码。", "日期、数字和长文本必须在真实语言内容下验证。"],
+    references: [
+      { label: "Primary Locale", value: "zh-CN", use: "当前文档、示例和业务语言。" },
+      { label: "Component Names", value: "English", use: "与 shadcn 和工程命名保持一致。" },
+      { label: "Numeric Alignment", value: "tabular-nums", use: "指标、时间和状态更新。" },
+      { label: "Direction", value: "LTR baseline", use: "当前稳定基线；RTL 尚未宣称完成。" },
+    ],
+    boundary: "RTL 属于后续验证范围；当前页面不得把未验证能力标记为稳定。",
+  },
+}
+
+export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
+  const doc = docs[slug]
+
+  return (
+    <article className="component-article foundation-article">
+      <header className="component-hero">
+        <div className="component-eyebrow">Foundations</div>
+        <div className="component-title-row">
+          <h1>{doc.title}</h1>
+          <span className="state-label state-label--completed"><span className="state-dot" aria-hidden="true" />基线已建立</span>
+        </div>
+        <p>{doc.description}</p>
+      </header>
+
+      <section className="doc-section" aria-labelledby="foundation-preview-title">
+        <div className="doc-section-heading">
+          <h2 id="foundation-preview-title">Reference</h2>
+          <p>当前实现中使用的视觉与交互基线。</p>
+        </div>
+        <FoundationPreview slug={slug} />
+      </section>
+
+      <section className="doc-section doc-notes-grid" aria-label="基础原则">
+        {doc.principles.map((principle, index) => (
+          <div className="doc-note" key={principle}>
+            <span className="principle-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <p>{principle}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="doc-section" aria-labelledby="foundation-table-title">
+        <div className="doc-section-heading">
+          <h2 id="foundation-table-title">Specification</h2>
+          <p>用于设计、实现和评审的共同参考。</p>
+        </div>
+        <div className="foundation-table-wrap" role="region" aria-label={`${doc.title}规范表`} tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">项目</th><th scope="col">基线</th><th scope="col">使用方式</th></tr></thead>
+            <tbody>{doc.references.map((reference) => <tr key={reference.label}><th scope="row">{reference.label}</th><td><code>{reference.value}</code></td><td>{reference.use}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside className="foundation-boundary" aria-label="当前边界"><CircleHelp aria-hidden="true" /><div><strong>当前边界</strong><p>{doc.boundary}</p></div></aside>
+    </article>
+  )
+}
+
+function FoundationPreview({ slug }: { slug: FoundationSlug }) {
+  if (slug === "tokens-theming") {
+    return <div className="foundation-preview color-foundation"><div className="color-chip color-chip--knowledge"><span /><strong>曜蓝</strong><small>#4EB1D9</small></div><div className="color-chip color-chip--ai"><span /><strong>智绯</strong><small>#E0438F</small></div><div className="color-chip color-chip--growth"><span /><strong>生长荧</strong><small>#C2F25B</small></div><ArrowRight aria-hidden="true" /><div className="semantic-color-stack"><span>Action</span><span>AI</span><span>Status</span></div></div>
+  }
+
+  if (slug === "color") {
+    return <div className="foundation-preview neutral-color-grid"><div className="neutral-color-chip"><span className="neutral-color-chip--canvas" /><strong>Canvas</strong><small>#F6F8FA</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--surface" /><strong>Surface</strong><small>#FFFFFF</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--text" /><strong>Text</strong><small>#182630</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--border" /><strong>Border</strong><small>#D7DFE4</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--action" /><strong>Action</strong><small>#08658F</small></div></div>
+  }
+
+  if (slug === "typography") {
+    return <div className="foundation-preview type-specimen"><span>Display · 教育智能从清晰开始</span><strong>Page title · 智能曜彩组件系统</strong><p>Body · 设计系统让产品、设计与工程使用同一种界面语言。</p><small>Label · EDUCATION EVIDENCE / 教育证据</small></div>
+  }
+
+  if (slug === "spacing-density") {
+    return <div className="foundation-preview spacing-specimen">{[4, 8, 12, 16, 24, 32].map((size) => <div key={size}><span style={{ width: `${size * 3}px` }} /><code>{size}px</code></div>)}</div>
+  }
+
+  if (slug === "layout-breakpoints") {
+    return <div className="foundation-preview layout-specimen"><div className="layout-sidebar" /><div className="layout-content"><span /><span /><span /></div></div>
+  }
+
+  if (slug === "shape-elevation") {
+    return <div className="foundation-preview shape-specimen"><div className="shape-card shape-card--sm">6px</div><div className="shape-card shape-card--md">8px</div><div className="shape-card shape-card--lg">12px</div></div>
+  }
+
+  if (slug === "iconography") {
+    return <div className="foundation-preview icon-specimen"><MousePointerClick aria-label="操作" /><FileCheck2 aria-label="证据" /><Sparkles aria-label="AI" /><BookOpenText aria-label="学习" /></div>
+  }
+
+  if (slug === "motion") {
+    return <div className="foundation-preview motion-specimen"><span><i />Hover · 120ms</span><span><i />State · 180ms</span><span><i />Reduced · 0.01ms</span></div>
+  }
+
+  if (slug === "accessibility") {
+    return <div className="foundation-preview accessibility-specimen"><button type="button" className="a11y-focus-demo"><Accessibility aria-hidden="true" />可见焦点</button><span className="state-label state-label--success"><span className="state-dot" aria-hidden="true" />校验通过</span><p>状态同时使用颜色、文字与语义。</p></div>
+  }
+
+  return <div className="foundation-preview locale-specimen"><Languages aria-hidden="true" /><div><strong>九年级数学 · 教育证据</strong><span>2026年8月29日 · 1,280 份记录</span><small>zh-CN · LTR baseline</small></div></div>
+}

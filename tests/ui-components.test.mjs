@@ -79,3 +79,22 @@ test("renders sidebar skeletons deterministically", async () => {
   assert.equal(first, second);
   assert.match(first, /--skeleton-width:70%/);
 });
+
+test("keeps one truthful catalog for Foundations and component maturity", async () => {
+  const { catalogItems, catalogStats, componentDocuments, foundationItems, internalModules } =
+    await vite.ssrLoadModule("/components/prism/catalog.ts");
+
+  assert.equal(foundationItems.length, 10);
+  assert.equal(catalogStats.baseComponents, 56);
+  assert.equal(catalogStats.extensions, 3);
+  assert.equal(catalogStats.stable, 9);
+  assert.equal(catalogStats.planned, 50);
+  assert.equal(catalogStats.documentedPages, 6);
+  assert.equal(catalogItems.length, 59);
+  assert.equal(internalModules.length, 5);
+  assert.equal(new Set(catalogItems.map((item) => item.id)).size, catalogItems.length);
+  const catalogIds = new Set(catalogItems.map((item) => item.id));
+  for (const document of Object.values(componentDocuments)) {
+    for (const id of document.itemIds) assert.ok(catalogIds.has(id));
+  }
+});

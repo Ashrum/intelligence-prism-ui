@@ -106,7 +106,7 @@ export default function Home() {
         <div className="benchmark-heading">
           <div className="benchmark-kicker">
             <span className="growth-signal" aria-hidden="true" />
-            组件库 v0.1
+            Phase 1 · 基准组件
           </div>
           <h1>智能曜彩｜基础组件基准</h1>
           <p>在同一教育产品页面中检验语义、密度、中文长内容与关键交互状态。</p>
