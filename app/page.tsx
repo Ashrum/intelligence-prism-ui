@@ -5,7 +5,7 @@ import { componentGroups } from "@/components/prism/docs-shell"
 
 export default function Home() {
   return (
-    <main className="intro-page">
+    <main id="main-content" className="intro-page" tabIndex={-1}>
       <section className="intro-hero">
         <div className="intro-copy">
           <div className="intro-kicker"><span className="growth-signal" aria-hidden="true" />智能曜彩 UI Design System · v0.1</div>
@@ -16,11 +16,11 @@ export default function Home() {
             <Link href="/benchmark" className="intro-secondary-link">打开 Benchmark</Link>
           </div>
         </div>
-        <div className="intro-principles" aria-label="设计系统原则">
+        <section className="intro-principles" aria-label="设计系统原则">
           <div className="principle-card"><Layers3 aria-hidden="true" /><div><strong>中性色主导</strong><span>颜色服从语义，不形成三色拼盘。</span></div></div>
           <div className="principle-card"><ShieldCheck aria-hidden="true" /><div><strong>无障碍基线</strong><span>焦点、键盘和状态说明从组件开始。</span></div></div>
           <div className="principle-card principle-card--ai"><Sparkles aria-hidden="true" /><div><strong>AI 可解释</strong><span>智绯只标注 AI 来源与明确行为。</span></div></div>
-        </div>
+        </section>
       </section>
 
       <section className="intro-section" aria-labelledby="categories-title">

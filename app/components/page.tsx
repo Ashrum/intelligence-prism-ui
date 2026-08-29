@@ -1,7 +1,10 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 import { componentGroups } from "@/components/prism/docs-shell"
+
+export const metadata: Metadata = { title: "组件总览" }
 
 export default function ComponentsOverview() {
   return (

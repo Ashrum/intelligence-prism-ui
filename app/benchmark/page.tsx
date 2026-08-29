@@ -127,7 +127,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="benchmark-main">
+      <main id="main-content" className="benchmark-main" tabIndex={-1}>
         <section className="benchmark-section" aria-labelledby="navigation-title">
           <SectionHeading
             id="navigation-title"
