@@ -17,62 +17,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
-export type ComponentSlug =
-  | "button"
-  | "tabs"
-  | "segmented-control"
-  | "card"
-  | "input-field"
-  | "badge-labels"
-
-const docs = {
-  button: {
-    eyebrow: "操作",
-    title: "Button",
-    description: "触发操作或导航。曜蓝承担主要操作，智绯仅用于明确的 AI 行为。",
-    guidance: "一个操作区域只保留一个主要按钮；导航行为使用链接语义。",
-    accessibility: "保留可见焦点；图标按钮必须提供 accessible name；Loading 与 Disabled 阻止重复触发。",
-  },
-  tabs: {
-    eyebrow: "导航与选择",
-    title: "Tabs",
-    description: "在同一上下文中切换相关内容面板，支持 page 与 surface 两种层级。",
-    guidance: "Page Tabs 用于页面内容分组；Surface Tabs 用于局部模块切换。",
-    accessibility: "使用真实 tab / tabpanel 语义，并支持方向键、Home 与 End。",
-  },
-  "segmented-control": {
-    eyebrow: "导航与选择",
-    title: "Segmented Control",
-    description: "立即切换视角、显示模式或时间粒度，不创建 TabPanel。",
-    guidance: "只用于少量互斥选项；选项超过五个时应选择其他控件。",
-    accessibility: "使用 Radio Group 单选语义，键盘操作后立即生效。",
-  },
-  card: {
-    eyebrow: "数据展示",
-    title: "Card",
-    description: "承载一组相关信息和操作，默认无阴影，以边框和轻表面建立层级。",
-    guidance: "只有可点击 Card 才提供 Hover 与 Focus；不要用固定高度伪造整齐。",
-    accessibility: "普通 Card 不伪装成按钮；可交互 Card 必须进入键盘焦点顺序。",
-  },
-  "input-field": {
-    eyebrow: "表单",
-    title: "Input / Field",
-    description: "组合可见标签、输入控件、说明与错误信息，形成稳定的表单结构。",
-    guidance: "Placeholder 不替代 Label；错误信息使用明确文字说明。",
-    accessibility: "Label 与 Input 关联；Description 和 Error 通过 aria-describedby 关联。",
-  },
-  "badge-labels": {
-    eyebrow: "状态反馈",
-    title: "Badge & Labels",
-    description: "区分静态元数据、运行状态和 AI 来源，避免同一种胶囊承担全部语义。",
-    guidance: "Badge 不可点击；State Label 的文字必须直接表达状态；AI Label 只使用智绯语义。",
-    accessibility: "状态不能只依赖颜色，AI 来源必须具有可访问文本。",
-  },
-} as const
-
-export function ComponentDoc({ slug }: { slug: ComponentSlug }) {
-  const doc = docs[slug]
+export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
+  const doc = componentDocuments[slug]
   return (
     <article className="component-article">
       <header className="component-hero">
@@ -108,7 +56,7 @@ export function ComponentDoc({ slug }: { slug: ComponentSlug }) {
   )
 }
 
-function ComponentPreview({ slug }: { slug: ComponentSlug }) {
+function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   const [segment, setSegment] = useState("student")
   const [title, setTitle] = useState("")
 
@@ -223,7 +171,7 @@ function SegmentedControl({ label, value, onValueChange, items }: { label: strin
 }
 
 function DemoCard({ title, description, value, footer, selected, ai }: { title: string; description: string; value: string; footer: React.ReactNode; selected?: boolean; ai?: boolean }) {
-  return <Card className={`prism-card ${selected ? "prism-card--selected" : ""} ${ai ? "prism-card--ai" : ""}`}><CardHeader className="prism-card-header"><div className="card-title-row"><CardTitle>{title}</CardTitle>{selected && <Check className="knowledge-icon" aria-hidden="true" />}</div><CardDescription>{description}</CardDescription></CardHeader><CardContent className="prism-card-content"><div className="metric-row"><strong>{value}</strong><span>{value === "AI" ? "需人工确认" : "份记录"}</span></div></CardContent><CardFooter className="prism-card-footer">{footer}</CardFooter></Card>
+  return <Card className={`prism-card ${selected ? "prism-card--selected" : ""} ${ai ? "prism-card--ai" : ""}`}><CardHeader className="prism-card-header"><div className="card-title-row"><CardTitle>{title}{selected && <span className="sr-only">，已选择</span>}</CardTitle>{selected && <Check className="knowledge-icon" aria-hidden="true" />}</div><CardDescription>{description}</CardDescription></CardHeader><CardContent className="prism-card-content"><div className="metric-row"><strong>{value}</strong><span>{value === "AI" ? "需人工确认" : "份记录"}</span></div></CardContent><CardFooter className="prism-card-footer">{footer}</CardFooter></Card>
 }
 
 function MetaBadge({ tone = "neutral", children }: { tone?: "neutral" | "knowledge" | "outline"; children: React.ReactNode }) {
