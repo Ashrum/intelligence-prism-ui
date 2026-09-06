@@ -199,7 +199,7 @@
   background: transparent !important;
   color: var(--text-secondary) !important;
 }
-.pageTrigger:not(:disabled):hover { color: var(--text-primary) !important; }
+.pageTrigger:not(:disabled):not([data-state="active"]):hover { color: var(--text-primary) !important; }
 .pageTrigger[data-state="active"] { background: transparent !important; color: var(--action-primary) !important; }
 
 .surfaceTrigger {
@@ -209,7 +209,7 @@
   background: transparent !important;
   color: var(--text-secondary) !important;
 }
-.surfaceTrigger:not(:disabled):hover { background: var(--surface-hover) !important; color: var(--text-primary) !important; }
+.surfaceTrigger:not(:disabled):not([data-state="active"]):hover { background: var(--surface-hover) !important; color: var(--text-primary) !important; }
 .surfaceTrigger[data-state="active"] { background: transparent !important; color: var(--text-primary) !important; }
 
 .pageIndicator,
@@ -281,7 +281,7 @@
 .boundary { display: grid; grid-template-columns: minmax(12rem, .35fr) minmax(0, .65fr); align-items: center; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
 .boundary > div:first-child { display: grid; gap: .25rem; }
 .boundary strong { color: var(--text-primary); font-size: .875rem; font-weight: 650; }
-.boundary span { color: var(--text-tertiary); font-size: .75rem; }
+.boundary > div:first-child > span { color: var(--text-tertiary); font-size: .75rem; }
 
 .segmentTrack { gap: 0 !important; }
 .segmentLabel {
@@ -348,7 +348,7 @@
   .toolbar { flex-direction: column; }
   .densityField { justify-content: space-between; }
   .section { padding: 1rem; }
-  .example { padding: 1rem; }
+  .example { align-items: unset; padding: 1rem; }
   .exampleTitle { align-items: flex-start; flex-direction: column; gap: .25rem; }
 }
 
