@@ -93,6 +93,10 @@ test("isolates moving indicators and their responsive motion contract", async ()
   assert.match(css, /--review-page-gap:\s*1\.5rem/);
   assert.match(css, /--review-page-gap:\s*1rem/);
   assert.match(css, /font-size:\s*\.875rem/);
+  assert.match(css, /\.boundary\s*>\s*div:first-child\s*>\s*span/);
+  assert.doesNotMatch(css, /\.boundary\s+span\s*\{/);
+  assert.match(css, /\.pageTrigger:not\(:disabled\):not\(\[data-state="active"\]\):hover/);
+  assert.match(css, /\.surfaceTrigger:not\(:disabled\):not\(\[data-state="active"\]\):hover/);
   assert.match(css, /\.currentPageTrack\s*\{[\s\S]*?height:\s*var\(--review-control-height\)[\s\S]*?gap:\s*var\(--review-page-gap\)/);
   assert.match(css, /\.currentSurfaceTrack\s*\{[\s\S]*?height:\s*var\(--review-control-height\)/);
   assert.match(css, /\.currentSegmentTrack\s*\{[\s\S]*?height:\s*var\(--review-control-height\)/);
