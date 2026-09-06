@@ -2,25 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { FormEvent } from "react"
-import { AlertCircle, Check, RefreshCw, Sparkles } from "lucide-react"
+import { AlertCircle, RefreshCw, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
-export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
+type GenericComponentDocumentSlug = Exclude<ComponentDocumentSlug, "card">
+
+export function ComponentDoc({ slug }: { slug: GenericComponentDocumentSlug }) {
   const doc = componentDocuments[slug]
   return (
     <article className="component-article">
@@ -57,7 +51,7 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
   )
 }
 
-function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
+function ComponentPreview({ slug }: { slug: GenericComponentDocumentSlug }) {
   const [title, setTitle] = useState("")
 
   if (slug === "button") {
@@ -66,16 +60,6 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
 
   if (slug === "tabs") return <TabsPreview />
   if (slug === "segmented-control") return <SegmentedPreview />
-
-  if (slug === "card") {
-    return (
-      <div className="card-matrix">
-        <DemoCard title="教育证据日报" description="汇总课堂观察、作业表现与阶段测评。" value="128" footer={<StateLabel tone="success">数据正常</StateLabel>} />
-        <DemoCard selected title="九年级数学批阅" description="查看学生作答与诊断证据。" value="6" footer={<StateLabel tone="pending">等待复核</StateLabel>} />
-        <DemoCard ai title="学习表现摘要" description="基于近 30 天教育证据生成。" value="AI" footer={<AILabel>AI 生成</AILabel>} />
-      </div>
-    )
-  }
 
   if (slug === "input-field") {
     const invalid = !title.trim()
@@ -312,10 +296,6 @@ function ButtonPreview() {
       </div>
     </div>
   )
-}
-
-function DemoCard({ title, description, value, footer, selected, ai }: { title: string; description: string; value: string; footer: React.ReactNode; selected?: boolean; ai?: boolean }) {
-  return <Card className={`prism-card ${selected ? "prism-card--selected" : ""} ${ai ? "prism-card--ai" : ""}`}><CardHeader className="prism-card-header"><div className="card-title-row"><CardTitle>{title}{selected && <span className="sr-only">，已选择</span>}</CardTitle>{selected && <Check className="knowledge-icon" aria-hidden="true" />}</div><CardDescription>{description}</CardDescription></CardHeader><CardContent className="prism-card-content"><div className="metric-row"><strong>{value}</strong><span>{value === "AI" ? "需人工确认" : "份记录"}</span></div></CardContent><CardFooter className="prism-card-footer">{footer}</CardFooter></Card>
 }
 
 function MetaBadge({ tone = "neutral", children }: { tone?: "neutral" | "knowledge" | "outline"; children: React.ReactNode }) {

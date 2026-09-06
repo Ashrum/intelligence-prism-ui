@@ -15,6 +15,63 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+function ObjectCard({
+  className,
+  selected,
+  tone = "knowledge",
+  ...props
+}: React.ComponentProps<"article"> & {
+  selected?: boolean
+  tone?: "knowledge" | "ai"
+}) {
+  return (
+    <article
+      data-slot="object-card"
+      data-selected={selected || undefined}
+      data-tone={tone}
+      className={cn("object-card", className)}
+      {...props}
+    />
+  )
+}
+
+function ObjectCardHeader({ className, ...props }: React.ComponentProps<"header">) {
+  return <header data-slot="object-card-header" className={cn("object-card-header", className)} {...props} />
+}
+
+function ObjectCardIdentity({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="object-card-identity" className={cn("object-card-identity", className)} {...props} />
+}
+
+function ObjectCardMeta({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="object-card-meta" className={cn("object-card-meta", className)} {...props} />
+}
+
+function ObjectCardStatus({
+  className,
+  state = "help",
+  ...props
+}: React.ComponentProps<"div"> & {
+  state?: "help" | "loading" | "error" | "success"
+}) {
+  return (
+    <div
+      data-slot="object-card-status"
+      data-state={state}
+      role={state === "error" ? "alert" : "status"}
+      aria-live="polite"
+      aria-atomic="true"
+      aria-busy={state === "loading" || undefined}
+      className={cn("object-card-status", className)}
+      {...props}
+    />
+  )
+}
+
+function ObjectCardActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="object-card-actions" className={cn("object-card-actions", className)} {...props} />
+}
+
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -89,4 +146,10 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  ObjectCard,
+  ObjectCardHeader,
+  ObjectCardIdentity,
+  ObjectCardMeta,
+  ObjectCardStatus,
+  ObjectCardActions,
 }

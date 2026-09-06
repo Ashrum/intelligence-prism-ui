@@ -5,7 +5,6 @@ import type { ChangeEvent, FormEvent, ReactNode } from "react"
 import {
   AlertCircle,
   ArrowRight,
-  Check,
   FileCheck2,
   RefreshCw,
   Sparkles,
@@ -13,14 +12,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { CardWorkbench } from "@/components/prism/card-patterns"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { SegmentedControl } from "@/components/ui/segmented-control"
@@ -33,7 +25,6 @@ import {
 
 type Density = "comfortable" | "compact"
 type WorkflowState = "pending" | "completed"
-type AIWorkflowState = "generating" | "review"
 
 const buttonVariants = [
   { label: "保存设置", variant: "default" },
@@ -67,8 +58,6 @@ export default function Home() {
   const [isRunning, setIsRunning] = useState(false)
   const [workflowState, setWorkflowState] =
     useState<WorkflowState>("pending")
-  const [aiWorkflowState, setAIWorkflowState] =
-    useState<AIWorkflowState>("generating")
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const buttonSize = density === "compact" ? "compact" : "default"
   const iconButtonSize = density === "compact" ? "icon-sm" : "icon"
@@ -94,10 +83,8 @@ export default function Home() {
     if (isRunning) return
     setIsRunning(true)
     setWorkflowState("pending")
-    setAIWorkflowState("generating")
     timerRef.current = setTimeout(() => {
       setWorkflowState("completed")
-      setAIWorkflowState("review")
       setIsRunning(false)
     }, 900)
   }
@@ -213,63 +200,10 @@ export default function Home() {
           <SectionHeading
             id="card-title"
             title="Card"
-            description="默认无阴影，以边框、轻表面和语义标签建立层级。"
+            description="对象身份与上下文保持稳定；选择、展开、AI 复核和异步反馈在原位完成。"
             aside={<MetaBadge tone="knowledge">教育证据</MetaBadge>}
           />
-          <div className="card-matrix">
-            <Card className="prism-card">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>教育证据日报</CardTitle>
-                  <MetaBadge>今日</MetaBadge>
-                </div>
-                <CardDescription>汇总课堂观察、作业表现与阶段测评产生的有效证据。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <div className="metric-row"><strong>128</strong><span>份有效证据</span></div>
-              </CardContent>
-              <CardFooter className="prism-card-footer">
-                <StateLabel tone="success">数据正常</StateLabel>
-              </CardFooter>
-            </Card>
-
-            <Card className="prism-card prism-card--selected">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>九年级数学批阅</CardTitle>
-                  <Check aria-hidden="true" className="knowledge-icon" />
-                </div>
-                <CardDescription>已选择本任务，用于查看学生作答与错因证据。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <div className="metric-row"><strong>6</strong><span>项等待人工复核</span></div>
-              </CardContent>
-              <CardFooter className="prism-card-footer card-footer-between">
-                <StateLabel tone="pending">等待复核</StateLabel>
-                <span className="growth-copy"><span aria-hidden="true" />近 7 日 +6.4%</span>
-              </CardFooter>
-            </Card>
-
-            <Card className="prism-card prism-card--ai">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>学习表现摘要</CardTitle>
-                  <AILabel>AI 生成</AILabel>
-                </div>
-                <CardDescription>基于近 30 天教育证据生成，提交前仍需教师确认。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <p className="ai-summary">方程建模能力稳步提升，几何证明中的条件引用仍需加强。</p>
-              </CardContent>
-              <CardFooter className="prism-card-footer">
-                <span className="status-swap" role="status" aria-live="polite">
-                  <StateLabel tone={aiWorkflowState === "review" ? "pending" : "running"}>
-                    {aiWorkflowState === "review" ? "待人工确认" : "生成中"}
-                  </StateLabel>
-                </span>
-              </CardFooter>
-            </Card>
-          </div>
+          <CardWorkbench density={density} />
         </section>
 
         <section className="benchmark-section" id="form-demo" aria-labelledby="form-title">

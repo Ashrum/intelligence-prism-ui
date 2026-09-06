@@ -228,9 +228,9 @@ export const componentDocuments = {
     itemIds: ["card"],
     eyebrow: "数据展示",
     title: "Card",
-    description: "承载一组相关信息和操作，默认无阴影，以边框和轻表面建立层级。",
-    guidance: "只有可点击 Card 才提供 Hover 与 Focus；不要用固定高度伪造整齐。",
-    accessibility: "普通 Card 不伪装成按钮；可交互 Card 必须进入键盘焦点顺序。",
+    description: "承载连续对象的阅读与判断；身份、上下文和状态在聚焦、展开、选择与编辑中保持稳定。",
+    guidance: "证据卡、处理卡与 AI 复核卡共用 Identity → Context → Stable status → Summary → Disclosure / Actions；详情和操作按意图就地展开。",
+    accessibility: "普通 Card 使用 article 与真实标题，不伪装成按钮；选择、展开和编辑使用独立控件，异步反馈替换稳定 live region，关键状态至少提供两种可读信号。",
   },
   "input-field": {
     itemIds: ["input", "field"],

@@ -617,24 +617,93 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .ui-button[data-loading="true"] { cursor: progress; }
 @keyframes prismButtonSpin { to { transform: rotate(360deg); } }
 
-.card-matrix { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.prism-card { gap: 0 !important; padding: 0 !important; border-color: var(--border-default) !important; border-radius: .75rem !important; box-shadow: none !important; background: var(--surface) !important; }
-.prism-card--selected { border-color: var(--selection-border) !important; background: var(--selection-bg) !important; }
-.prism-card--ai { border-color: var(--ai-border) !important; background: var(--ai-bg) !important; }
-.prism-card-header { gap: .5rem !important; padding: var(--section-pad) var(--section-pad) 0 !important; }
-.prism-card-content { padding: 1.25rem var(--section-pad) 0 !important; }
-.prism-card-footer { margin-top: auto; padding: 1.25rem var(--section-pad) var(--section-pad) !important; }
-.card-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
-.card-title-row [data-slot="card-title"] { font-size: 1rem; line-height: 1.4; }
-.card-title-row + [data-slot="card-description"] { line-height: 1.55; }
-.knowledge-icon { color: var(--action-primary); }
-.metric-row { display: flex; align-items: baseline; gap: .5rem; color: var(--text-secondary); }
-.metric-row strong { color: var(--text-primary); font-size: 1.75rem; font-weight: 650; line-height: 1; font-variant-numeric: tabular-nums; }
-.metric-row span, .ai-summary { font-size: .875rem; line-height: 1.6; }
-.ai-summary { margin: 0; color: var(--ai-fg); }
-.card-footer-between { justify-content: space-between; gap: .75rem; }
-.growth-copy { display: inline-flex; align-items: center; gap: .375rem; color: var(--text-secondary); font-size: .75rem; font-variant-numeric: tabular-nums; }
-.growth-copy > span { width: .4375rem; height: .4375rem; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--growth-signal); }
+.object-card-workbench { --card-pad: 1.5rem; --card-gap: 1rem; display: grid; gap: 1rem; min-width: 0; }
+.object-card-workbench[data-density="compact"] { --card-pad: 1rem; --card-gap: .75rem; }
+.object-card-toolbar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .75rem 1.5rem; }
+.object-card-toolbar > div { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+.object-card-toolbar > div > span { flex: none; color: var(--text-secondary); font-size: .75rem; font-weight: 650; }
+.object-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem; }
+.object-card { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--border-default); border-radius: .75rem; background: var(--surface); color: var(--text-primary); box-shadow: none; overflow: clip; transition: border-color 120ms cubic-bezier(.2,.8,.2,1), background-color 120ms cubic-bezier(.2,.8,.2,1); }
+.object-card:focus-within { border-color: var(--focus-ring); }
+.object-card[data-selected="true"] { border-color: var(--selection-border); background: var(--surface); }
+.object-card[data-selected="true"] .object-card-header, .object-card[data-selected="true"] .object-card-footer { background: color-mix(in srgb, var(--selection-bg) 55%, var(--surface)); }
+.object-card--wide { grid-column: 1 / -1; }
+.object-card-header { padding: var(--card-pad) var(--card-pad) 0; }
+.object-card-identity { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: .75rem; }
+.object-card-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border: 1px solid var(--action-primary-border); border-radius: .5rem; background: var(--action-primary-soft); color: var(--action-primary); }
+.object-card-mark[data-tone="ai"] { border-color: var(--ai-border); background: var(--ai-bg); color: var(--ai-fg); }
+.object-card-mark svg { width: 1rem; height: 1rem; }
+.object-card-identity-copy { min-width: 0; }
+.object-card-type { display: block; margin-bottom: .25rem; color: var(--text-tertiary); font-size: .6875rem; font-weight: 700; letter-spacing: .035em; font-variant-numeric: tabular-nums; }
+.object-card-title { margin: 0; font-size: 1rem; font-weight: 675; line-height: 1.4; letter-spacing: -.01em; }
+.object-card-signal-wrap { min-width: 0; }
+.object-card-signal, .object-card-confidence { display: inline-flex; align-items: center; gap: .375rem; min-height: 1.5rem; padding: .125rem .5rem; border: 1px solid var(--border-default); border-radius: .375rem; background: var(--surface-subtle); color: var(--text-secondary); font-size: .75rem; font-weight: 650; white-space: nowrap; }
+.object-card-signal svg, .object-card-confidence svg { width: .75rem; height: .75rem; }
+.object-card-signal[data-tone="pending"] { border-color: var(--warning-border); background: var(--warning-bg); color: var(--warning-fg); }
+.object-card-signal[data-tone="running"] { border-color: var(--action-primary-border); background: var(--action-primary-soft); color: var(--action-primary); }
+.object-card-signal[data-tone="danger"] { border-color: var(--danger-border); background: var(--danger-bg); color: var(--danger-fg); }
+.object-card-signal[data-tone="success"] { border-color: var(--success-border); background: var(--success-bg); color: var(--success-fg); }
+.object-card-signal[data-tone="ai"] { border-color: var(--ai-border); background: var(--ai-bg); color: var(--ai-fg); }
+.object-card-content { display: grid; gap: var(--card-gap); padding: 1rem var(--card-pad) 0; }
+.object-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; min-height: 1.5rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border-subtle); }
+.object-card-meta-item { display: inline-flex; align-items: center; gap: .375rem; color: var(--text-secondary); font-size: .75rem; line-height: 1.4; }
+.object-card-meta-item svg { width: .8125rem; height: .8125rem; color: var(--text-tertiary); }
+.object-card-confidence { border-color: var(--warning-border); background: var(--warning-bg); color: var(--warning-fg); }
+.object-card-summary { display: grid; gap: .375rem; }
+.object-card-summary > span { color: var(--text-tertiary); font-size: .6875rem; font-weight: 700; letter-spacing: .035em; }
+.object-card-summary p { margin: 0; color: var(--text-primary); font-size: .875rem; line-height: 1.7; }
+.object-card-editor { min-height: 6rem; resize: vertical; border-color: var(--border-default) !important; background: var(--surface) !important; color: var(--text-primary) !important; font-size: .875rem !important; line-height: 1.65 !important; box-shadow: none !important; }
+.object-card-editor:focus-visible { outline: 2px solid var(--focus-ring) !important; outline-offset: 2px; box-shadow: none !important; }
+.object-card-progress { display: grid; gap: .625rem; }
+.object-card-progress > div:first-child, .object-card-confidence-block > div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-size: .8125rem; }
+.object-card-progress strong, .object-card-confidence-block strong { font-variant-numeric: tabular-nums; }
+.object-card-progress-track, .object-card-confidence-track { height: .375rem; border-radius: 999px; background: var(--surface-active); overflow: hidden; }
+.object-card-progress-track span, .object-card-confidence-track span { display: block; height: 100%; border-radius: inherit; background: var(--action-primary); transition: width 180ms cubic-bezier(.2,.8,.2,1); }
+.object-card-progress p { display: flex; align-items: center; gap: .375rem; margin: 0; color: var(--warning-fg); font-size: .75rem; line-height: 1.4; }
+.object-card-progress p svg { width: .75rem; height: .75rem; }
+.object-card-ai-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(14rem, .65fr); gap: 1.25rem; }
+.object-card-confidence-block { display: grid; align-content: start; gap: .625rem; padding-left: 1.25rem; border-left: 1px solid var(--border-subtle); }
+.object-card-confidence-track span { width: 72%; background: var(--ai-action); }
+.object-card-confidence-block small { color: var(--text-secondary); font-size: .75rem; line-height: 1.5; }
+.object-card-detail { padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
+.object-card-detail dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: 0; }
+.object-card-detail dl > div { display: grid; align-content: start; gap: .375rem; min-width: 0; padding: .75rem; border-radius: .5rem; background: var(--surface-subtle); }
+.object-card-detail dt { color: var(--text-tertiary); font-size: .6875rem; font-weight: 700; }
+.object-card-detail dd { margin: 0; color: var(--text-primary); font-size: .75rem; line-height: 1.55; overflow-wrap: anywhere; }
+.object-card-stages { display: grid; gap: .625rem; margin: 0; padding: 0; list-style: none; }
+.object-card-stages li { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .5rem; }
+.object-card-stages li > svg { width: .875rem; height: .875rem; margin-top: .125rem; color: var(--success-fg); }
+.object-card-stages li[data-state="attention"] > svg { color: var(--warning-fg); }
+.object-card-stages li span { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.object-card-stages strong, .object-card-stages small { font-size: .75rem; line-height: 1.5; }
+.object-card-stages small { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.object-card-footer { display: grid; gap: .75rem; margin-top: var(--card-gap); padding: 1rem var(--card-pad) var(--card-pad); border-top: 1px solid var(--border-subtle); background: color-mix(in srgb, var(--surface-subtle) 42%, var(--surface)); }
+.object-card-status { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: .625rem; min-height: 3.25rem; padding: .625rem .75rem; border: 1px solid var(--border-default); border-radius: .5rem; background: var(--surface); color: var(--text-secondary); }
+.object-card-status > svg { width: .875rem; height: .875rem; margin-top: .125rem; }
+.object-card-status > span { display: grid; gap: .125rem; min-width: 0; }
+.object-card-status strong { color: var(--text-primary); font-size: .75rem; line-height: 1.4; }
+.object-card-status small { color: inherit; font-size: .6875rem; line-height: 1.45; }
+.object-card-status[data-state="loading"] { border-color: var(--action-primary-border); background: var(--action-primary-soft); color: var(--action-primary); }
+.object-card-status[data-state="error"] { border-color: var(--danger-border); background: var(--danger-bg); color: var(--danger-fg); }
+.object-card-status[data-state="error"] strong { color: var(--danger-fg); }
+.object-card-status[data-state="success"] { border-color: var(--success-border); background: var(--success-bg); color: var(--success-fg); }
+.object-card-status[data-state="success"] strong { color: var(--success-fg); }
+.object-card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; min-height: 2rem; }
+.object-card-disclosure { transition: transform 160ms cubic-bezier(.2,.8,.2,1); }
+.object-card-disclosure[data-open="true"] { transform: rotate(180deg); }
+.object-card-spin { animation: objectCardSpin 800ms linear infinite; }
+@keyframes objectCardSpin { to { transform: rotate(360deg); } }
+.card-type-table-wrap { overflow-x: auto; border: 1px solid var(--border-default); border-radius: .75rem; background: var(--surface); }
+.card-type-table-wrap:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.card-type-table { width: 100%; min-width: 48rem; border-collapse: collapse; text-align: left; }
+.card-type-table th, .card-type-table td { padding: .875rem 1rem; border-bottom: 1px solid var(--border-subtle); font-size: .75rem; line-height: 1.55; vertical-align: top; }
+.card-type-table thead th { background: var(--surface-subtle); color: var(--text-secondary); font-weight: 700; }
+.card-type-table tbody th { min-width: 10rem; }
+.card-type-table tbody th strong, .card-type-table tbody th small { display: block; }
+.card-type-table tbody th strong { color: var(--text-primary); font-size: .8125rem; }
+.card-type-table tbody th small { margin-top: .125rem; color: var(--text-tertiary); font-weight: 500; }
+.card-type-table tbody td { color: var(--text-secondary); }
+.card-type-table tbody tr:last-child > * { border-bottom: 0; }
 
 .form-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(28rem, .8fr); gap: 2rem; }
 .form-primary { display: grid; align-content: start; justify-items: start; gap: 1rem; min-width: 0; }
@@ -690,14 +759,16 @@ svg { width: 1rem; height: 1rem; flex: none; }
   .color-foundation { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .color-foundation > svg { display: none; }
   .semantic-color-stack { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .component-preview .card-matrix { grid-template-columns: 1fr; }
+  .object-card-grid { grid-template-columns: 1fr; }
+  .object-card--wide { grid-column: auto; }
+  .object-card-detail dl { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 48rem) {
   .benchmark-shell { --page-gutter: 1rem; }
   .benchmark-header, .section-heading, .workflow-section { align-items: stretch; flex-direction: column; }
   .density-control { justify-items: start; }
-  .navigation-secondary, .form-state-fields, .labels-layout, .card-matrix { grid-template-columns: 1fr; }
+  .navigation-secondary, .form-state-fields, .labels-layout { grid-template-columns: 1fr; }
   .label-group + .label-group { padding-top: var(--section-gap); padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
   .workflow-actions { justify-content: space-between; }
   .site-header { position: static; align-items: flex-start; padding-inline: 1rem; }
@@ -720,6 +791,14 @@ svg { width: 1rem; height: 1rem; flex: none; }
   .docs-sidebar-footer { display: none; }
   .docs-content { padding: 2.5rem 1rem 4rem; }
   .component-preview { padding: 1.25rem; }
+  .component-preview--card { padding: .75rem; }
+  .object-card-toolbar { align-items: flex-start; flex-direction: column; }
+  .object-card-toolbar > div { width: 100%; align-items: flex-start; flex-direction: column; }
+  .object-card-ai-layout { grid-template-columns: 1fr; }
+  .object-card-confidence-block { padding: 1rem 0 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
+  .object-card-identity { grid-template-columns: auto minmax(0, 1fr); }
+  .object-card-signal-wrap { grid-column: 2; }
+  .object-card-actions { justify-content: flex-start; }
   .foundation-preview { padding: 1.25rem; }
   .color-foundation, .shape-specimen { grid-template-columns: 1fr; }
   .neutral-color-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -742,16 +821,19 @@ svg { width: 1rem; height: 1rem; flex: none; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-  .ui-button, .selection-indicator { transition: none !important; }
+  .ui-button, .selection-indicator, .object-card, .object-card-progress-track span, .object-card-disclosure { transition: none !important; }
   .ui-button__spinner { animation: none !important; }
+  .object-card-spin { animation: none !important; }
 }
 
 @media (forced-colors: active) {
-  .ui-button, .prism-input, .prism-card, .state-label, .ai-label, .meta-badge, .segmented-control { forced-color-adjust: auto; }
+  .ui-button, .prism-input, .object-card, .state-label, .ai-label, .meta-badge, .segmented-control { forced-color-adjust: auto; }
   .ui-button { border-color: ButtonText; }
   .ui-button:disabled, .ui-button[data-disabled="true"] { color: GrayText; border-color: GrayText; }
   .ui-button:focus-visible { outline-color: Highlight !important; }
   .selection-indicator { border: 1px solid Highlight; }
   .prism-tabs-list--page > .selection-indicator { background: Highlight; }
   .state-dot, .growth-signal, .growth-copy > span { border: 1px solid CanvasText; }
+  .object-card:focus-within { outline: 2px solid Highlight; outline-offset: 2px; }
+  .object-card-progress-track span, .object-card-confidence-track span { background: Highlight; }
 }

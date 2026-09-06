@@ -46,7 +46,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   color: {
     title: "色彩",
     description: "中性色承担大部分界面，三种核心色只在具有明确语义时出现。",
-    principles: ["曜蓝表示知识、主要操作与选择。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
+    principles: ["曜蓝表示知识、主要操作与选择；Card 选中时保留中性主体，并同时显示边框、勾选和文字。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容，不覆盖整张 AI Card。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
     references: [
       { label: "Canvas", value: "#F6F8FA", use: "页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
@@ -82,6 +82,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Page Tabs Gap", value: "24px / 16px", use: "舒适／紧凑间距；窄容器独立滚动，不压缩长标签。" },
       { label: "Section Gap", value: "24px", use: "基准页主要内容区间距。" },
       { label: "Section Padding", value: "24px", use: "卡片与基准区块内边距。" },
+      { label: "Object Card", value: "24px / 16px", use: "舒适／紧凑内边距；状态槽高度保持不变，不因反馈文案切换造成跳动。" },
     ],
     boundary: "紧凑模式不等于缩小全部文字，也不能压缩触控任务所需的操作空间。",
   },
@@ -101,13 +102,13 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   "shape-elevation": {
     title: "形状与层级",
     description: "使用有限圆角、清晰边框和表面差异建立克制的界面层级。",
-    principles: ["小控件使用 6–8px 圆角，容器使用 8–12px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
+    principles: ["小控件使用 6–8px 圆角，容器使用 8–12px。", "常规卡片默认无阴影，优先依赖边框与背景；选中只轻微改变头尾表面。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
     references: [
       { label: "Radius / Small", value: "6px", use: "标签、导航项和小型按钮。" },
       { label: "Radius / Medium", value: "8px", use: "按钮、输入与一般卡片。" },
       { label: "Radius / Large", value: "12px", use: "较大区块与预览容器。" },
       { label: "Border", value: "1px", use: "常规组件和容器边界。" },
-      { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
+      { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影；AI 与选中状态也不靠阴影或整卡铺色表达。" },
       { label: "Tabs / Segmented Surface", value: "8px / 6px / 3px", use: "外圆角／选中面圆角／内边距；浅中性底与白色选中面，无阴影。" },
     ],
     boundary: "不使用大面积玻璃拟态、彩色阴影或过度圆润的胶囊化容器。",
@@ -132,6 +133,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Button / Hover", value: "120ms", use: "按钮背景、前景与边框反馈。" },
       { label: "Button / Pressed", value: "80ms", use: "仅缩短颜色或边框反馈，不改变几何位置。" },
       { label: "Tabs / Segmented Indicator", value: "180ms", use: "仅移动下划线或选中面；文字与内容面板不跟随移动，交互状态即时生效。" },
+      { label: "Card Disclosure", value: "160ms", use: "仅旋转展开图标；详情出现不延迟对象身份与状态更新。" },
       { label: "Easing", value: "cubic-bezier(.2,.8,.2,1)", use: "短距离界面反馈。" },
       { label: "Reduced Motion", value: "none", use: "操作系统要求减少动效时停止 Button 过渡、处理指示旋转及 Tabs／Segmented 指示器移动。" },
     ],
@@ -140,12 +142,14 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   accessibility: {
     title: "无障碍",
     description: "无障碍是组件完成条件，不作为上线前的补充检查。",
-    principles: ["全部交互组件支持键盘，并保留清晰焦点。", "Button Loading 保持当前焦点并真正阻止激活；显式 Disabled 继续使用原生禁用。", "状态、错误和 AI 来源同时提供可读文字；等待文案缺失或空白时保留原可见内容与名称。", "语义元素优先，ARIA 只补充原生语义无法覆盖的部分。"],
+    principles: ["全部交互组件支持键盘，并保留清晰焦点。", "Button Loading 保持当前焦点并真正阻止激活；显式 Disabled 继续使用原生禁用。", "状态、错误和 AI 来源同时提供可读文字；Card 的帮助、加载、错误和成功在固定 live region 中替换。", "语义元素优先，ARIA 只补充原生语义无法覆盖的部分；Card 的选择、展开与编辑使用独立控件。"],
     references: [
       { label: "Button / Focus Ring", value: "2px / 2px offset", use: "键盘焦点使用 #087BA8，并在 Loading 期间保持可见。" },
       { label: "Button / Loading", value: "aria-busy + blocked", use: "保留变体与焦点，同时阻止鼠标和键盘重复激活。" },
       { label: "Tabs / Keyboard", value: "manual / automatic", use: "手动激活时方向键仅移动焦点，Enter／Space 才切换；自动激活适用于即时可用的内容。" },
       { label: "Segmented / Keyboard", value: "radio / immediate", use: "方向键移动即选中；禁用项跳过，不创建 TabPanel。两类控件均保留 2px 焦点与 2px 间隔。" },
+      { label: "Card / Object", value: "article + heading", use: "对象身份由真实标题标记；普通 Card 不进入焦点顺序，展开与选择分别使用 aria-expanded 和 aria-pressed。" },
+      { label: "Card / Status Slot", value: "live region", use: "帮助、加载、错误与成功替换同一稳定区域；错误使用 alert，其余使用 status。" },
       { label: "Skip Link", value: "全站", use: "跳过重复导航并进入主要内容。" },
       { label: "Forced Colors", value: "支持", use: "高对比模式保留边界与状态。" },
       { label: "State Text", value: "必须", use: "不能只依赖颜色和图形表达。" },
