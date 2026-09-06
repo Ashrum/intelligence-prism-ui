@@ -348,7 +348,7 @@
   .toolbar { flex-direction: column; }
   .densityField { justify-content: space-between; }
   .section { padding: 1rem; }
-  .example { align-items: unset; padding: 1rem; }
+  .example { padding: 1rem; }
   .exampleTitle { align-items: flex-start; flex-direction: column; gap: .25rem; }
 }
 
