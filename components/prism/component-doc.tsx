@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
@@ -58,56 +58,14 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
 }
 
 function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
-  const [segment, setSegment] = useState("student")
   const [title, setTitle] = useState("")
 
   if (slug === "button") {
     return <ButtonPreview />
   }
 
-  if (slug === "tabs") {
-    return (
-      <div className="preview-grid-two">
-        <div>
-          <div className="control-caption">Page</div>
-          <Tabs defaultValue="overview" className="page-tabs">
-            <TabsList variant="line" className="page-tabs-list" aria-label="教育证据页面">
-              <TabsTrigger value="overview" className="page-tabs-trigger">概览</TabsTrigger>
-              <TabsTrigger value="evidence" className="page-tabs-trigger">教育证据</TabsTrigger>
-              <TabsTrigger value="records" className="page-tabs-trigger">处理记录</TabsTrigger>
-            </TabsList>
-            <div className="page-tab-content">
-              <TabsContent value="overview">今日汇总 128 份教育证据。</TabsContent>
-              <TabsContent value="evidence">覆盖课堂观察、作业表现与阶段测评。</TabsContent>
-              <TabsContent value="records">最近一次处理于 14:32 完成。</TabsContent>
-            </div>
-          </Tabs>
-        </div>
-        <div>
-          <div className="control-caption">Surface</div>
-          <Tabs defaultValue="today" className="surface-tabs">
-            <TabsList className="surface-tabs-list" aria-label="统计周期">
-              <TabsTrigger value="today" className="surface-tabs-trigger">今日</TabsTrigger>
-              <TabsTrigger value="week" className="surface-tabs-trigger">本周</TabsTrigger>
-              <TabsTrigger value="month" className="surface-tabs-trigger">本月</TabsTrigger>
-            </TabsList>
-            <TabsContent value="today" className="surface-tab-note">128 份</TabsContent>
-            <TabsContent value="week" className="surface-tab-note">816 份</TabsContent>
-            <TabsContent value="month" className="surface-tab-note">3,240 份</TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    )
-  }
-
-  if (slug === "segmented-control") {
-    return (
-      <div className="preview-stack">
-        <SegmentedControl label="查看视角" value={segment} onValueChange={setSegment} items={[["student", "学生视角"], ["question", "题目视角"]]} />
-        <p className="preview-result" role="status">当前选择：{segment === "student" ? "学生视角" : "题目视角"}</p>
-      </div>
-    )
-  }
+  if (slug === "tabs") return <TabsPreview />
+  if (slug === "segmented-control") return <SegmentedPreview />
 
   if (slug === "card") {
     return (
@@ -142,6 +100,91 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
       <div className="label-group"><h3>Badge</h3><div className="label-list"><MetaBadge>九年级</MetaBadge><MetaBadge tone="knowledge">数学</MetaBadge><MetaBadge tone="outline">课堂证据</MetaBadge></div></div>
       <div className="label-group"><h3>State Label</h3><div className="label-list"><StateLabel tone="running">正在处理</StateLabel><StateLabel tone="success">校验通过</StateLabel><StateLabel tone="warning">需要关注</StateLabel><StateLabel tone="danger">处理失败</StateLabel></div></div>
       <div className="label-group"><h3>AI Label</h3><div className="label-list"><AILabel>AI 生成</AILabel><AILabel>AI 推断</AILabel><AILabel>人工已编辑</AILabel></div></div>
+    </div>
+  )
+}
+
+type ControlDensity = "comfortable" | "compact"
+
+function DensitySelector({ value, onChange }: { value: ControlDensity; onChange: (value: ControlDensity) => void }) {
+  return <div className="control-preview-toolbar"><span>界面密度</span><SegmentedControl label="界面密度" size="sm" value={value} onValueChange={(value) => onChange(value as ControlDensity)} items={[["comfortable", "舒适 · 36px"], ["compact", "紧凑 · 32px"]]} /></div>
+}
+
+function TabsPreview() {
+  const [density, setDensity] = useState<ControlDensity>("comfortable")
+  return (
+    <div className="preview-stack component-control-preview" data-density={density}>
+      <DensitySelector value={density} onChange={setDensity} />
+      <div className="preview-grid-two">
+        <div>
+          <div className="control-caption">Page Tabs</div>
+          <Tabs defaultValue="overview" activationMode="manual">
+            <TabsList variant="line" aria-label="教育证据页面">
+              <TabsTrigger value="overview">概览</TabsTrigger>
+              <TabsTrigger value="evidence">教育证据</TabsTrigger>
+              <TabsTrigger value="records">处理记录</TabsTrigger>
+            </TabsList>
+            <div className="page-tab-content">
+              <TabsContent value="overview">今日汇总 128 份教育证据。</TabsContent>
+              <TabsContent value="evidence">覆盖课堂观察、作业表现与阶段测评。</TabsContent>
+              <TabsContent value="records">最近一次处理于 14:32 完成。</TabsContent>
+            </div>
+          </Tabs>
+          <p className="surface-tab-note">方向键移动焦点，Enter 或 Space 确认切换。</p>
+        </div>
+        <div>
+          <div className="control-caption">Surface Tabs</div>
+          <Tabs defaultValue="today">
+            <TabsList aria-label="统计周期">
+              <TabsTrigger value="today">今日</TabsTrigger>
+              <TabsTrigger value="week">本周</TabsTrigger>
+              <TabsTrigger value="month">本月</TabsTrigger>
+            </TabsList>
+            <TabsContent value="today" className="surface-tab-note">128 份</TabsContent>
+            <TabsContent value="week" className="surface-tab-note">816 份</TabsContent>
+            <TabsContent value="month" className="surface-tab-note">3,240 份</TabsContent>
+          </Tabs>
+        </div>
+      </div>
+      <div className="control-boundary">
+        <span className="control-caption">长标签、数量与禁用项 · 304px 容器</span>
+        <div className="control-narrow">
+          <Tabs defaultValue="all" activationMode="manual">
+            <TabsList variant="line" aria-label="长标签教育证据">
+              <TabsTrigger value="all"><span className="selection-label"><span>全部教育证据</span><span className="selection-count">128</span></span></TabsTrigger>
+              <TabsTrigger value="long"><span className="selection-label"><span>跨学科学习过程长期趋势</span><span className="selection-count">24</span></span></TabsTrigger>
+              <TabsTrigger value="archived" disabled><span className="selection-label"><span>已归档记录</span><span className="selection-count">8</span></span></TabsTrigger>
+            </TabsList>
+            <div className="page-tab-content">
+              <TabsContent value="all">显示当前范围内的全部教育证据。</TabsContent>
+              <TabsContent value="long">长标签保持完整，选项区域独立滚动。</TabsContent>
+              <TabsContent value="archived">归档记录暂不可用。</TabsContent>
+            </div>
+          </Tabs>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SegmentedPreview() {
+  const [density, setDensity] = useState<ControlDensity>("comfortable")
+  const [perspective, setPerspective] = useState("student")
+  return (
+    <div className="preview-stack component-control-preview" data-density={density}>
+      <DensitySelector value={density} onChange={setDensity} />
+      <SegmentedControl label="查看视角" value={perspective} onValueChange={setPerspective} items={[["student", "学生视角"], ["question", "题目视角"]]} />
+      <p className="preview-result" role="status">{perspective === "student" ? "按学生聚合课堂、作业与测评证据，优先呈现成长变化。" : "按题目与知识点聚合正确率、错因和待复核记录。"}</p>
+      <div className="control-boundary">
+        <span className="control-caption">长标签、数量与禁用项 · 304px 容器</span>
+        <div className="control-narrow">
+          <SegmentedControl label="证据组织方式" defaultValue="learner" items={[
+            { value: "learner", label: "按学生成长证据组织", count: 36 },
+            { value: "knowledge", label: "按题目与知识点组织", count: 128 },
+            { value: "class", label: "班级视角", disabled: true },
+          ]} />
+        </div>
+      </div>
     </div>
   )
 }
@@ -269,10 +312,6 @@ function ButtonPreview() {
       </div>
     </div>
   )
-}
-
-function SegmentedControl({ label, value, onValueChange, items }: { label: string; value: string; onValueChange: (value: string) => void; items: readonly (readonly [string, string])[] }) {
-  return <RadioGroup aria-label={label} value={value} onValueChange={onValueChange} className="segmented-control segmented-control--md">{items.map(([itemValue, itemLabel]) => <Label key={itemValue} className="segmented-item-label"><RadioGroupItem value={itemValue} aria-label={itemLabel} className="segmented-item" /><span>{itemLabel}</span></Label>)}</RadioGroup>
 }
 
 function DemoCard({ title, description, value, footer, selected, ai }: { title: string; description: string; value: string; footer: React.ReactNode; selected?: boolean; ai?: boolean }) {

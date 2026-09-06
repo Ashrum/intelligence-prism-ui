@@ -65,7 +65,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
       { label: "Body", value: "14–16px / 400", use: "说明、表单和长内容。" },
-      { label: "Label", value: "11–14px / 600–700", use: "控件标签、分类和非关键目录标注。" },
+      { label: "Tabs / Segmented", value: "14px / 500", use: "选中与未选中保持相同字重；数量使用 12px。" },
+      { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
     ],
     boundary: "不使用全大写中文、超细字重或仅靠字重区分交互状态。",
   },
@@ -77,6 +78,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Base Unit", value: "4px", use: "全部间距的最小基线。" },
       { label: "Button / Comfortable", value: "36px / 14px", use: "默认按钮高度与文字尺寸。" },
       { label: "Button / Compact", value: "32px / 14px", use: "高密度数据和工具栏；不缩小按钮文字。" },
+      { label: "Tabs / Segmented", value: "36px / 32px", use: "舒适／紧凑高度；主文字保持 14px，数量 12px。" },
+      { label: "Page Tabs Gap", value: "24px / 16px", use: "舒适／紧凑间距；窄容器独立滚动，不压缩长标签。" },
       { label: "Section Gap", value: "24px", use: "基准页主要内容区间距。" },
       { label: "Section Padding", value: "24px", use: "卡片与基准区块内边距。" },
     ],
@@ -105,6 +108,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Radius / Large", value: "12px", use: "较大区块与预览容器。" },
       { label: "Border", value: "1px", use: "常规组件和容器边界。" },
       { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
+      { label: "Tabs / Segmented Surface", value: "8px / 6px / 3px", use: "外圆角／选中面圆角／内边距；浅中性底与白色选中面，无阴影。" },
     ],
     boundary: "不使用大面积玻璃拟态、彩色阴影或过度圆润的胶囊化容器。",
   },
@@ -127,9 +131,9 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     references: [
       { label: "Button / Hover", value: "120ms", use: "按钮背景、前景与边框反馈。" },
       { label: "Button / Pressed", value: "80ms", use: "仅缩短颜色或边框反馈，不改变几何位置。" },
-      { label: "State", value: "180ms", use: "状态标签和内容替换。" },
+      { label: "Tabs / Segmented Indicator", value: "180ms", use: "仅移动下划线或选中面；文字与内容面板不跟随移动，交互状态即时生效。" },
       { label: "Easing", value: "cubic-bezier(.2,.8,.2,1)", use: "短距离界面反馈。" },
-      { label: "Reduced Motion", value: "none", use: "操作系统要求减少动效时停止 Button 过渡与处理指示旋转。" },
+      { label: "Reduced Motion", value: "none", use: "操作系统要求减少动效时停止 Button 过渡、处理指示旋转及 Tabs／Segmented 指示器移动。" },
     ],
     boundary: "不使用循环发光、无意义漂浮或阻碍操作的长动画。",
   },
@@ -140,6 +144,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     references: [
       { label: "Button / Focus Ring", value: "2px / 2px offset", use: "键盘焦点使用 #087BA8，并在 Loading 期间保持可见。" },
       { label: "Button / Loading", value: "aria-busy + blocked", use: "保留变体与焦点，同时阻止鼠标和键盘重复激活。" },
+      { label: "Tabs / Keyboard", value: "manual / automatic", use: "手动激活时方向键仅移动焦点，Enter／Space 才切换；自动激活适用于即时可用的内容。" },
+      { label: "Segmented / Keyboard", value: "radio / immediate", use: "方向键移动即选中；禁用项跳过，不创建 TabPanel。两类控件均保留 2px 焦点与 2px 间隔。" },
       { label: "Skip Link", value: "全站", use: "跳过重复导航并进入主要内容。" },
       { label: "Forced Colors", value: "支持", use: "高对比模式保留边界与状态。" },
       { label: "State Text", value: "必须", use: "不能只依赖颜色和图形表达。" },
@@ -240,7 +246,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "motion") {
-    return <div className="foundation-preview motion-specimen"><span><i />Hover · 120ms</span><span><i />State · 180ms</span><span><i />Reduced · 0.01ms</span></div>
+    return <div className="foundation-preview motion-specimen"><span><i />Hover · 120ms</span><span><i />Indicator · 180ms</span><span><i />Reduced · none</span></div>
   }
 
   if (slug === "accessibility") {
