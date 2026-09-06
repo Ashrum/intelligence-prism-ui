@@ -89,11 +89,12 @@ export default function Home() {
   }
 
   const handleRun = () => {
-    if (isRunning) return
+    if (timerRef.current) return
     setIsRunning(true)
     setWorkflowState("pending")
     setAIWorkflowState("generating")
     timerRef.current = setTimeout(() => {
+      timerRef.current = null
       setWorkflowState("completed")
       setAIWorkflowState("review")
       setIsRunning(false)
@@ -193,14 +194,14 @@ export default function Home() {
           />
           <div className="button-matrix">
             {buttonVariants.map(({ label, tone }) => (
-              <PrismButton key={tone} tone={tone}>{label}</PrismButton>
+              <Button key={tone} variant={tone}>{label}</Button>
             ))}
-            <Button asChild variant="link" className="prism-button prism-button--link">
+            <Button asChild variant="link">
               <a href="#form-demo">查看表单规范 <ArrowRight aria-hidden="true" /></a>
             </Button>
-            <PrismButton tone="outline" iconLabel="刷新教育证据"><RefreshCw aria-hidden="true" /></PrismButton>
-            <PrismButton tone="primary" loading>提交中</PrismButton>
-            <PrismButton tone="primary" disabled>暂无权限</PrismButton>
+            <Button variant="outline" size="icon" aria-label="刷新教育证据"><RefreshCw aria-hidden="true" /></Button>
+            <Button variant="primary" loading>提交中</Button>
+            <Button variant="primary" disabled>暂无权限</Button>
           </div>
         </section>
 
@@ -292,7 +293,7 @@ export default function Home() {
                   className="prism-input"
                 />
               </Field>
-              <PrismButton tone="primary" type="submit">校验并保存</PrismButton>
+              <Button variant="primary" type="submit">校验并保存</Button>
             </div>
 
             <div className="form-state-fields">
@@ -350,10 +351,9 @@ export default function Home() {
                 {workflowState === "completed" ? "已完成" : "待处理"}
               </StateLabel>
             </span>
-            <PrismButton tone="primary" onClick={handleRun} loading={isRunning}>
-              {!isRunning && <Sparkles aria-hidden="true" />}
-              {isRunning ? "处理中" : "开始处理"}
-            </PrismButton>
+            <Button variant="primary" onClick={handleRun} loading={isRunning} loadingLabel="处理中">
+              <Sparkles aria-hidden="true" />开始处理
+            </Button>
           </div>
         </section>
       </main>
@@ -367,22 +367,6 @@ function SectionHeading({ id, title, description, aside }: { id: string; title: 
       <div><h2 id={id}>{title}</h2><p>{description}</p></div>
       {aside}
     </div>
-  )
-}
-
-function PrismButton({ tone, loading, iconLabel, children, className = "", ...props }: React.ComponentProps<typeof Button> & { tone: string; loading?: boolean; iconLabel?: string }) {
-  return (
-    <Button
-      {...props}
-      className={`prism-button prism-button--${tone} ${iconLabel ? "prism-button--icon" : ""} ${className}`}
-      disabled={props.disabled || loading}
-      data-loading={loading || undefined}
-      aria-busy={loading || undefined}
-      aria-label={iconLabel ?? props["aria-label"]}
-    >
-      {loading && <span className="loading-mark" aria-hidden="true" />}
-      {children}
-    </Button>
   )
 }
 

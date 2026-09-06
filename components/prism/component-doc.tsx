@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { AlertCircle, Check, RefreshCw, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -60,26 +60,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   const [segment, setSegment] = useState("student")
   const [title, setTitle] = useState("")
 
-  if (slug === "button") {
-    return (
-      <div className="preview-stack">
-        <div className="button-matrix">
-          <PrismButton tone="primary">保存设置</PrismButton>
-          <PrismButton tone="secondary">暂存草稿</PrismButton>
-          <PrismButton tone="outline">导出记录</PrismButton>
-          <PrismButton tone="ghost">取消</PrismButton>
-          <PrismButton tone="ai-soft"><Sparkles aria-hidden="true" />AI 建议</PrismButton>
-          <PrismButton tone="ai-primary">智能分析</PrismButton>
-          <PrismButton tone="destructive">删除任务</PrismButton>
-        </div>
-        <div className="button-matrix">
-          <PrismButton tone="outline" iconLabel="刷新教育证据"><RefreshCw aria-hidden="true" /></PrismButton>
-          <PrismButton tone="primary" loading>提交中</PrismButton>
-          <PrismButton tone="primary" disabled>暂无权限</PrismButton>
-        </div>
-      </div>
-    )
-  }
+  if (slug === "button") return <ButtonExamples />
 
   if (slug === "tabs") {
     return (
@@ -162,8 +143,85 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   )
 }
 
-function PrismButton({ tone, loading, iconLabel, children, ...props }: React.ComponentProps<typeof Button> & { tone: string; loading?: boolean; iconLabel?: string }) {
-  return <Button {...props} className={`prism-button prism-button--${tone} ${iconLabel ? "prism-button--icon" : ""}`} disabled={props.disabled || loading} data-loading={loading || undefined} aria-busy={loading || undefined} aria-label={iconLabel ?? props["aria-label"]}>{loading && <span className="loading-mark" aria-hidden="true" />}{children}</Button>
+const buttonExamples = [
+  { variant: "primary", label: "保存设置", busy: "保存中" },
+  { variant: "secondary", label: "暂存草稿", busy: "暂存中" },
+  { variant: "outline", label: "导出记录", busy: "导出中" },
+  { variant: "ghost", label: "轻操作", busy: "处理中" },
+  { variant: "ai-soft", label: "AI 建议", busy: "生成中" },
+  { variant: "ai-primary", label: "智能分析", busy: "分析中" },
+  { variant: "destructive", label: "删除任务", busy: "删除中" },
+] as const
+
+function ButtonExamples() {
+  const [density, setDensity] = useState("comfortable")
+  const [reduceMotion, setReduceMotion] = useState(false)
+  const [running, setRunning] = useState<Record<string, boolean>>({})
+  const [message, setMessage] = useState("点击按钮体验真实状态；所有操作仅为演示。")
+  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
+
+  useEffect(() => {
+    const pending = timers.current
+    return () => { for (const timer of pending.values()) clearTimeout(timer); pending.clear() }
+  }, [])
+
+  function run(id: string) {
+    if (timers.current.has(id)) return
+    timers.current.set(id, setTimeout(() => {
+      timers.current.delete(id)
+      setRunning((previous) => ({ ...previous, [id]: false }))
+      setMessage("演示完成，可重新操作。")
+    }, 1800))
+    setRunning((previous) => ({ ...previous, [id]: true }))
+    setMessage("正在处理；再次点击或按 Enter 不会重复启动。")
+  }
+
+  function reset() {
+    for (const timer of timers.current.values()) clearTimeout(timer)
+    timers.current.clear()
+    setRunning({})
+    setMessage("演示已重置。")
+  }
+
+  return (
+    <div className="preview-stack" data-density={density} data-motion={reduceMotion ? "reduce" : "system"}>
+      <div className="button-matrix">
+        <label>密度 <select value={density} onChange={(event) => setDensity(event.currentTarget.value)} aria-label="Button 密度"><option value="comfortable">舒适 · 36px</option><option value="compact">紧凑 · 32px</option></select></label>
+        <label><input type="checkbox" checked={reduceMotion} onChange={(event) => setReduceMotion(event.currentTarget.checked)} />减少动效</label>
+        <Button variant="ghost" onClick={reset}>重置演示</Button>
+      </div>
+      <p className="preview-result" role="status">{message}</p>
+      <h3>变体与真实交互</h3>
+      <div className="button-matrix">
+        {buttonExamples.map((item) => (
+          <Button key={item.variant} variant={item.variant} loading={!!running[item.variant]} loadingLabel={item.busy} onClick={() => run(item.variant)}>
+            {item.variant.startsWith("ai-") && <Sparkles aria-hidden="true" />}{item.label}
+          </Button>
+        ))}
+      </div>
+      <div className="button-matrix">
+        <Button variant="outline" size="icon" aria-label="刷新教育证据" loading={!!running.icon} loadingLabel="正在刷新" onClick={() => run("icon")}><RefreshCw aria-hidden="true" /></Button>
+        <Button loading loadingLabel="提交中">提交记录</Button>
+        <Button disabled>暂无权限</Button>
+        <Button asChild variant="link"><a href="/foundations/motion">查看动效规范</a></Button>
+      </div>
+      <h3>等待文案回退</h3>
+      <p>未传、空字符串和纯空白都保留原文案；自定义等待文案按需预留宽度。异步按钮从空闲态传入 loading=false，不在点击后才添加此属性。</p>
+      <div className="button-matrix">
+        {[undefined, "", "   "].map((label, index) => (
+          <Button key={index} variant="outline" loading={!!running[`fallback-${index}`]} loadingLabel={label} onClick={() => run(`fallback-${index}`)}>{["未传文案", "空字符串", "纯空白"][index]}</Button>
+        ))}
+        <Button variant="ai-primary" loading={!!running.layout} loadingLabel="正在生成分析" onClick={() => run("layout")}><Sparkles aria-hidden="true" />智能分析</Button>
+        <Button variant="outline" onClick={reset}>相邻操作</Button>
+      </div>
+      <h3>尺寸与使用边界</h3>
+      <div className="button-matrix"><Button size="xs" variant="outline">24px</Button><Button size="sm" variant="outline">32px</Button><Button variant="outline">随密度</Button><Button size="lg" variant="outline">40px</Button></div>
+      <p>默认 36px，紧凑 32px；文字 14px、图标 16px、圆角 8px。24px 仅用于具有足够间距的紧凑辅助操作。普通按钮不预留异步文案；纯图标按钮始终保持正方形并提供可访问名称。</p>
+      <p>主要操作用曜蓝，次操作使用中性表面；AI 操作使用智绯，等待时不变色。Hover 为 120ms，Pressed 为 80ms，仅改变颜色或边框，不位移、不加阴影。键盘焦点为 2px 外框加 2px 间隔；Loading 保留焦点并阻止重复激活，Disabled 使用原生禁用。</p>
+      <p>尊重系统减少动效偏好；开关只提供额外减少选项，不能覆盖系统偏好重新开启动画。表单提交显式使用 type="submit"；导航使用 asChild 与真实链接。</p>
+      <pre><code>{'<Button variant="ai-primary" loading={isRunning} loadingLabel="分析中" onClick={handleRun}>智能分析</Button>'}</code></pre>
+    </div>
+  )
 }
 
 function SegmentedControl({ label, value, onValueChange, items }: { label: string; value: string; onValueChange: (value: string) => void; items: readonly (readonly [string, string])[] }) {

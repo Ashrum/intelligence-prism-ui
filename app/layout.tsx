@@ -32,7 +32,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <NavLink href="/foundations">Foundations</NavLink>
             <NavLink href="/components">组件</NavLink>
             <NavLink href="/benchmark" exact>Benchmark</NavLink>
-            <NavLink href="/review/button" exact>设计评审</NavLink>
             <a href="https://github.com/Ashrum/intelligence-prism-ui" target="_blank" rel="noreferrer">GitHub</a>
           </nav>
         </header>
