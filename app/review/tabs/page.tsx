@@ -254,6 +254,10 @@ function MovingSegmented({ idPrefix, label, options, narrow = false, ...props }:
                 disabled={option.disabled}
                 aria-labelledby={labelId}
                 className={styles.segmentItem}
+                onFocus={(event) => {
+                  // Keep selection with focus even when a short keypress ends before Radix moves focus.
+                  if (event.currentTarget.dataset.state !== "checked") event.currentTarget.click()
+                }}
               />
               <OptionLabel id={labelId} option={option} />
             </Label>
