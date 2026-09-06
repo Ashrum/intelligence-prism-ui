@@ -65,3 +65,26 @@ test("renders the finalized Button surfaces and removes the review route", async
   assert.match(benchmarkHtml, /智能曜彩｜基础组件基准/);
   assert.match(benchmarkHtml, /data-variant="ai-primary"/);
 });
+
+test("renders the isolated Tabs review without changing formal routes", async () => {
+  const [review, tabs, segmented, benchmark] = await Promise.all([
+    fetchPage("/review/tabs"),
+    fetchPage("/components/tabs"),
+    fetchPage("/components/segmented-control"),
+    fetchPage("/benchmark"),
+  ]);
+
+  assert.equal(review.status, 200);
+  assert.equal(tabs.status, 200);
+  assert.equal(segmented.status, 200);
+  assert.equal(benchmark.status, 200);
+
+  const reviewHtml = await review.text();
+  assert.match(reviewHtml, /Tabs 与 Segmented Control/);
+  assert.match(reviewHtml, /Page Tabs/);
+  assert.match(reviewHtml, /Surface Tabs/);
+  assert.match(reviewHtml, /Segmented Control/);
+  assert.match(reviewHtml, /窄容器与长标签/);
+  assert.match(reviewHtml, /长标签与禁用项/);
+  assert.match(reviewHtml, /Tabs 评审/);
+});
