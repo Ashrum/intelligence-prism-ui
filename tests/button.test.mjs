@@ -1,131 +1,211 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
+import path from "node:path";
 import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
+
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const vite = await createServer({
-  appType: "custom", configFile: false, root,
+  appType: "custom",
+  configFile: false,
+  root,
   resolve: { alias: { "@": root } },
-  server: { middlewareMode: true },
+  server: { middlewareMode: true, hmr: false },
 });
-after(() => vite.close());
-const { Button, buttonVariants } = await vite.ssrLoadModule("/components/ui/button.tsx");
+const { Button, buttonVariants } = await vite.ssrLoadModule(
+  "/components/ui/button.tsx",
+);
 
-function event(key) {
-  return { key, defaultPrevented: false, stopped: false,
-    preventDefault() { this.defaultPrevented = true; },
-    stopPropagation() { this.stopped = true; },
+after(async () => {
+  await vite.close();
+});
+
+function markup(props, children) {
+  return renderToStaticMarkup(React.createElement(Button, props, children));
+}
+
+function event(overrides = {}) {
+  return {
+    key: "Enter",
+    defaultPrevented: false,
+    preventDefault() {
+      this.defaultPrevented = true;
+    },
+    propagationStopped: false,
+    stopPropagation() {
+      this.propagationStopped = true;
+    },
+    ...overrides,
   };
 }
-function text(node) {
-  if (typeof node === "string" || typeof node === "number") return String(node);
-  if (Array.isArray(node)) return node.map(text).join("");
-  return node?.props ? text(node.props.children) : "";
-}
 
-test("Button is a non-submitting action unless submit is explicit", () => {
-  assert.equal(Button({ children: "保存" }).props.type, "button");
-  assert.equal(Button({ type: "submit", children: "保存" }).props.type, "submit");
-  assert.equal(Button({ children: "保存" }).props["data-async"], undefined);
+test("exposes seven formal variants and preserves every existing size", () => {
+  const variants = [
+    "default",
+    "secondary",
+    "outline",
+    "ghost",
+    "ai-soft",
+    "ai-primary",
+    "destructive",
+  ];
+  for (const variant of variants) {
+    const html = markup({ variant, type: "button" }, variant);
+    assert.match(html, new RegExp(`data-variant="${variant}"`));
+    assert.match(buttonVariants({ variant }), /ui-button/);
+  }
+
+  const sizes = [
+    "default",
+    "compact",
+    "xs",
+    "sm",
+    "lg",
+    "icon",
+    "icon-xs",
+    "icon-sm",
+    "icon-lg",
+  ];
+  for (const size of sizes) {
+    assert.match(markup({ size, type: "button" }, size), new RegExp(`data-size="${size}"`));
+  }
+  assert.match(buttonVariants({ size: "default" }), /ui-button--size-default/);
+  assert.match(buttonVariants({ size: "compact" }), /ui-button--size-compact/);
+  assert.match(buttonVariants({ variant: "link" }), /ui-button--link/);
 });
 
-test("missing, empty and whitespace loading labels retain the visible content", () => {
-  for (const loadingLabel of [undefined, "", "   "]) {
-    const idle = Button({ loading: false, loadingLabel, children: "保存设置" });
-    const busy = Button({ loading: true, loadingLabel, children: "保存设置" });
-    assert.equal(idle.props["data-async"], true);
-    assert.equal(busy.props["aria-busy"], true);
-    const layers = busy.props.children.props.children;
-    assert.equal(layers[0].props["aria-hidden"], true);
-    assert.equal(layers[1].props["aria-hidden"], false);
-    assert.equal(text(layers[1]), "保存设置");
-    assert.equal(text(idle.props.children), text(busy.props.children));
+test("preserves React children for omitted, empty, and blank loading labels", () => {
+  const content = React.createElement(
+    React.Fragment,
+    null,
+    React.createElement("svg", { "aria-hidden": "true", "data-test-icon": "true" }),
+    React.createElement("strong", null, "提交证据"),
+  );
+  const cases = [
+    { loading: true },
+    { loading: true, loadingLabel: "" },
+    { loading: true, loadingLabel: "   " },
+  ];
+
+  for (const props of cases) {
+    const html = markup({ ...props, type: "button" }, content);
+    assert.match(html, /aria-busy="true"/);
+    assert.match(html, /aria-disabled="true"/);
+    assert.match(html, /data-slot="button-spinner"/);
+    assert.match(html, /data-visible="true"/);
+    assert.match(html, /data-test-icon="true"/);
+    assert.equal((html.match(/<strong/g) ?? []).length, 1);
+    assert.match(html, />提交证据<\/strong>/);
+    assert.doesNotMatch(html, /\[object Object\]|undefined/);
   }
 });
 
-test("custom loading labels and icon labels preserve accessible names", () => {
-  const button = Button({ loading: true, loadingLabel: " 分析中 ", variant: "ai-primary", children: "智能分析" });
-  assert.equal(button.props["aria-label"], "分析中");
-  assert.equal(button.props["data-variant"], "ai-primary");
-  const icon = Button({ size: "icon", loading: true, "aria-label": "刷新", children: React.createElement("svg", { "aria-hidden": true }) });
-  assert.equal(icon.props["aria-label"], "刷新");
-  assert.equal(icon.props["data-size"], "icon");
+test("reserves only controlled async buttons and accepts ReactNode loading labels", () => {
+  const ordinary = markup({ type: "button" }, "普通按钮");
+  const controlled = markup({ type: "button", loading: false }, "受控异步");
+  const valid = markup(
+    { type: "button", loading: true, loadingLabel: React.createElement("em", null, "处理中") },
+    React.createElement("strong", null, "开始处理"),
+  );
+
+  assert.doesNotMatch(ordinary, /button-spinner|button-loading/);
+  assert.match(controlled, /ui-button__spinner--reserved/);
+  assert.match(valid, /data-slot="button-loading"/);
+  assert.match(valid, /<em>处理中<\/em>/);
+  assert.equal((valid.match(/<strong/g) ?? []).length, 1);
+  assert.doesNotMatch(valid, /\[object Object\]/);
 });
 
-test("loading keeps focusability but blocks click, Enter and Space", () => {
-  let count = 0;
-  const busy = Button({ loading: true, children: "保存", onClick: () => count++ });
-  assert.equal(busy.props.disabled, false);
-  assert.equal(busy.props["aria-disabled"], true);
-  const click = event(); busy.props.onClick(click);
-  assert.equal(click.defaultPrevented, true);
-  for (const key of ["Enter", " "]) {
-    const keyEvent = event(key); busy.props.onKeyDown(keyEvent);
-    assert.equal(keyEvent.defaultPrevented, true);
+test("blocks native activation while loading or disabled", () => {
+  for (const props of [{ loading: true }, { disabled: true }]) {
+    let calls = 0;
+    const element = Button({ ...props, onClick: () => { calls += 1; } });
+    const first = event();
+    const second = event();
+    element.props.onClick(first);
+    element.props.onClick(second);
+    assert.equal(calls, 0);
+    assert.equal(first.defaultPrevented, true);
+    assert.equal(first.propagationStopped, true);
   }
-  const tab = event("Tab"); busy.props.onKeyDown(tab);
-  assert.equal(tab.defaultPrevented, false);
-  assert.equal(count, 0);
-  Button({ loading: false, onClick: () => count++ }).props.onClick(event());
-  assert.equal(count, 1);
+
+  let activeCalls = 0;
+  const active = Button({ onClick: () => { activeCalls += 1; } });
+  active.props.onClick(event());
+  active.props.onClick(event());
+  assert.equal(activeCalls, 2);
 });
 
-test("disabled remains native and caller props/ref are preserved", () => {
-  const ref = React.createRef();
-  const button = Button({ disabled: true, id: "save", ref, "aria-describedby": "hint", children: "保存" });
-  assert.equal(button.props.disabled, true);
-  assert.equal(button.props.id, "save");
-  assert.equal(button.props.ref, ref);
-  assert.equal(button.props["aria-describedby"], "hint");
-});
+test("keeps asChild as one guarded link with child then Button events", () => {
+  const order = [];
+  const anchor = React.createElement(
+    "a",
+    { href: "#target", onClick: () => order.push("child") },
+    "查看规范",
+  );
+  const html = markup(
+    { asChild: true, variant: "link", onClick: () => order.push("button") },
+    anchor,
+  );
+  assert.equal((html.match(/<a\b/g) ?? []).length, 1);
+  assert.equal((html.match(/<button\b/g) ?? []).length, 0);
+  assert.match(html, /href="#target"/);
+  assert.match(html, /data-slot="button"/);
 
-test("asChild retains link markup and child-first cancellation", () => {
-  let parent = 0; let child = 0;
-  const anchor = React.createElement("a", {
-    href: "/components", onClick(e) { child++; e.preventDefault(); },
-  }, "组件");
-  const available = Button({ asChild: true, children: anchor, onClick: () => parent++ });
-  available.props.onClick(event());
-  assert.equal(child, 1); assert.equal(parent, 0);
-  const html = renderToStaticMarkup(available);
-  assert.match(html, /^<a /);
-  assert.match(html, /href="\/components"/);
-  assert.doesNotMatch(html, /<button/);
-  const busy = Button({ asChild: true, loading: true, children: anchor, onClick: () => parent++ });
-  const blocked = event(); busy.props.onClick(blocked);
-  assert.equal(child, 1); assert.equal(parent, 0);
-  assert.equal(blocked.defaultPrevented, true);
-  const disabledChild = Button({ asChild: true, children: React.createElement("button", { disabled: true }, "关闭") });
-  assert.equal(disabledChild.props.children.props.disabled, true);
-  assert.equal(disabledChild.props["aria-disabled"], true);
-});
+  const active = Button({
+    asChild: true,
+    children: anchor,
+    onClick: () => order.push("button"),
+  });
+  active.props.children.props.child.props.onClick(event());
+  assert.deepEqual(order, ["child", "button"]);
 
-test("all variants and existing size names are exported without preview classes", () => {
-  for (const variant of ["default", "primary", "secondary", "outline", "ghost", "ai-soft", "ai-primary", "destructive", "link"]) {
-    for (const size of ["default", "xs", "sm", "lg", "icon", "icon-xs", "icon-sm", "icon-lg"]) {
-      const html = renderToStaticMarkup(React.createElement(Button, { variant, size }, "操作"));
-      assert.match(html, /data-slot="button"/);
-      assert.match(html, new RegExp(`data-variant="${variant}"`));
-      assert.ok(buttonVariants({ variant, size }));
-      assert.doesNotMatch(html, /prism-button--|CandidateButton/);
-    }
+  for (const props of [{ loading: true }, { disabled: true }]) {
+    let childCalls = 0;
+    let buttonCalls = 0;
+    const blocked = Button({
+      ...props,
+      asChild: true,
+      children: React.createElement("a", { href: "#blocked", onClick: () => { childCalls += 1; } }, "阻止导航"),
+      onClick: () => { buttonCalls += 1; },
+    });
+    const click = event();
+    blocked.props.children.props.child.props.onClick(click);
+    assert.equal(childCalls, 0);
+    assert.equal(buttonCalls, 0);
+    assert.equal(click.defaultPrevented, true);
   }
 });
 
-test("Button reduced motion and cleanup rules are present in the real sources", async () => {
-  const css = await readFile(new URL("../components/ui/button.module.css", import.meta.url), "utf8");
+test("preserves native submit, true disabled, and icon naming", () => {
+  assert.match(markup({ type: "submit" }, "提交"), /type="submit"/);
+  assert.match(markup({ disabled: true }, "禁用"), / disabled=""/);
+  const icon = markup(
+    { type: "button", size: "icon", "aria-label": "刷新教育证据" },
+    React.createElement("svg", { "aria-hidden": "true" }),
+  );
+  assert.match(icon, /aria-label="刷新教育证据"/);
+  assert.match(icon, /data-size="icon"/);
+});
+
+test("removes the temporary review implementation and page-level Button copies", async () => {
+  await assert.rejects(access(path.join(root, "app/review/button/page.tsx")));
+  await assert.rejects(access(path.join(root, "app/review/button/review.module.css")));
+
+  const [layout, docs, benchmark, css] = await Promise.all([
+    readFile(path.join(root, "app/layout.tsx"), "utf8"),
+    readFile(path.join(root, "components/prism/component-doc.tsx"), "utf8"),
+    readFile(path.join(root, "app/benchmark/page.tsx"), "utf8"),
+    readFile(path.join(root, "app/globals.css"), "utf8"),
+  ]);
+  assert.doesNotMatch(layout, /review\/button|设计评审/);
+  assert.doesNotMatch(docs, /function PrismButton|prism-button--|loading-mark/);
+  assert.doesNotMatch(benchmark, /function PrismButton|prism-button--|loading-mark/);
+  assert.doesNotMatch(css, /\.prism-button(?:--|\s|\{|:|\[)/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.match(css, /animation:\s*none/);
-  assert.match(css, /transition-duration:\s*80ms/);
-  const [layout, benchmark, docs] = await Promise.all([
-    "../app/layout.tsx", "../app/benchmark/page.tsx", "../components/prism/component-doc.tsx",
-  ].map((path) => readFile(new URL(path, import.meta.url), "utf8")));
-  assert.doesNotMatch(layout, /\/review\/button/);
-  assert.doesNotMatch(benchmark + docs, /function PrismButton|prism-button--|loading-mark/);
-  await assert.rejects(access(new URL("../app/review/button/page.tsx", import.meta.url)), { code: "ENOENT" });
-  await assert.rejects(access(new URL("../app/review/button/review.module.css", import.meta.url)), { code: "ENOENT" });
+  assert.match(css, /\.ui-button__spinner\s*\{[^}]*animation:/s);
 });

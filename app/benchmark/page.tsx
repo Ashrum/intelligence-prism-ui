@@ -36,13 +36,13 @@ type WorkflowState = "pending" | "completed"
 type AIWorkflowState = "generating" | "review"
 
 const buttonVariants = [
-  { label: "保存设置", tone: "primary" },
-  { label: "暂存草稿", tone: "secondary" },
-  { label: "导出记录", tone: "outline" },
-  { label: "取消", tone: "ghost" },
-  { label: "AI 建议", tone: "ai-soft" },
-  { label: "智能分析", tone: "ai-primary" },
-  { label: "删除任务", tone: "destructive" },
+  { label: "保存设置", variant: "default" },
+  { label: "暂存草稿", variant: "secondary" },
+  { label: "导出记录", variant: "outline" },
+  { label: "取消", variant: "ghost" },
+  { label: "AI 建议", variant: "ai-soft" },
+  { label: "智能分析", variant: "ai-primary" },
+  { label: "删除任务", variant: "destructive" },
 ] as const
 
 const stateLabels = [
@@ -70,6 +70,8 @@ export default function Home() {
   const [aiWorkflowState, setAIWorkflowState] =
     useState<AIWorkflowState>("generating")
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const buttonSize = density === "compact" ? "compact" : "default"
+  const iconButtonSize = density === "compact" ? "icon-sm" : "icon"
 
   useEffect(() => {
     return () => {
@@ -89,12 +91,11 @@ export default function Home() {
   }
 
   const handleRun = () => {
-    if (timerRef.current) return
+    if (isRunning) return
     setIsRunning(true)
     setWorkflowState("pending")
     setAIWorkflowState("generating")
     timerRef.current = setTimeout(() => {
-      timerRef.current = null
       setWorkflowState("completed")
       setAIWorkflowState("review")
       setIsRunning(false)
@@ -193,15 +194,18 @@ export default function Home() {
             aside={<MetaBadge tone="outline">8 种操作</MetaBadge>}
           />
           <div className="button-matrix">
-            {buttonVariants.map(({ label, tone }) => (
-              <Button key={tone} variant={tone}>{label}</Button>
+            {buttonVariants.map(({ label, variant }) => (
+              <Button key={variant} type="button" variant={variant} size={buttonSize}>
+                {variant.startsWith("ai-") && <Sparkles aria-hidden="true" />}
+                {label}
+              </Button>
             ))}
             <Button asChild variant="link">
               <a href="#form-demo">查看表单规范 <ArrowRight aria-hidden="true" /></a>
             </Button>
-            <Button variant="outline" size="icon" aria-label="刷新教育证据"><RefreshCw aria-hidden="true" /></Button>
-            <Button variant="primary" loading>提交中</Button>
-            <Button variant="primary" disabled>暂无权限</Button>
+            <Button type="button" variant="outline" size={iconButtonSize} aria-label="刷新教育证据"><RefreshCw aria-hidden="true" /></Button>
+            <Button type="button" size={buttonSize} loading loadingLabel="提交中">提交</Button>
+            <Button type="button" size={buttonSize} disabled>暂无权限</Button>
           </div>
         </section>
 
@@ -293,7 +297,7 @@ export default function Home() {
                   className="prism-input"
                 />
               </Field>
-              <Button variant="primary" type="submit">校验并保存</Button>
+              <Button type="submit" size={buttonSize}>校验并保存</Button>
             </div>
 
             <div className="form-state-fields">
@@ -351,7 +355,7 @@ export default function Home() {
                 {workflowState === "completed" ? "已完成" : "待处理"}
               </StateLabel>
             </span>
-            <Button variant="primary" onClick={handleRun} loading={isRunning} loadingLabel="处理中">
+            <Button type="button" size={buttonSize} onClick={handleRun} loading={isRunning} loadingLabel="处理中">
               <Sparkles aria-hidden="true" />开始处理
             </Button>
           </div>

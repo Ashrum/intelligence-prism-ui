@@ -31,20 +31,22 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   "tokens-theming": {
     title: "设计令牌与主题",
     description: "用语义 Token 连接品牌源色与真实界面，组件不直接消费品牌色值。",
-    principles: ["源色只定义身份，不直接决定文字或交互颜色。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
+    principles: ["源色只定义身份，不直接决定文字或交互颜色。", "Button 以曜蓝表示主操作、智绯表示 AI 操作，中性表面承接次操作，危险色只用于破坏性动作。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
     references: [
       { label: "Source / Knowledge", value: "#4EB1D9", use: "品牌源色；映射到可访问的曜蓝操作色。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
       { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
-      { label: "AI / Action", value: "#A32967", use: "明确的 AI 操作；进入 Loading 后仍保持原语义色。" },
+      { label: "AI / Action", value: "#A32967", use: "明确的 AI 操作，不用于普通强调。" },
+      { label: "Button / Secondary", value: "Surface / Neutral", use: "次操作使用中性表面，不与主操作争夺曜蓝层级。" },
+      { label: "Button / Destructive", value: "#B63A36", use: "只用于删除等不可逆或高风险动作。" },
     ],
     boundary: "当前版本冻结浅色主题映射；深色主题在完成全部核心组件后单独评审。",
   },
   color: {
     title: "色彩",
     description: "中性色承担大部分界面，三种核心色只在具有明确语义时出现。",
-    principles: ["曜蓝表示知识、主要操作与选择；次操作按钮使用中性表面，避免多个操作同时抢占注意力。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容；等待状态不改为普通操作蓝。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
+    principles: ["曜蓝表示知识、主要操作与选择。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
     references: [
       { label: "Canvas", value: "#F6F8FA", use: "页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
@@ -63,7 +65,6 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
       { label: "Body", value: "14–16px / 400", use: "说明、表单和长内容。" },
-      { label: "Button", value: "14px / 500 / 20px", use: "默认及紧凑按钮使用同一字号、字重与行高。" },
       { label: "Label", value: "11–14px / 600–700", use: "控件标签、分类和非关键目录标注。" },
     ],
     boundary: "不使用全大写中文、超细字重或仅靠字重区分交互状态。",
@@ -74,10 +75,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     principles: ["组件内部间距优先使用 4、8、12、16、24px。", "舒适模式用于默认工作台，紧凑模式用于高密度数据任务。", "密度变化只收紧高度和间距，不隐藏必要说明。"],
     references: [
       { label: "Base Unit", value: "4px", use: "全部间距的最小基线。" },
-      { label: "Control / Comfortable", value: "36px", use: "默认按钮、输入与切换控件。" },
-      { label: "Control / Compact", value: "32px", use: "高密度数据和工具栏。" },
-      { label: "Button / Content Gap", value: "8px / 6px", use: "默认 / 紧凑模式的图标与文字间距。" },
-      { label: "Button / Loading", value: "宽度不变", use: "异步按钮从空闲态传 loading=false，按需预留等待文案；普通按钮不额外变宽。" },
+      { label: "Button / Comfortable", value: "36px / 14px", use: "默认按钮高度与文字尺寸。" },
+      { label: "Button / Compact", value: "32px / 14px", use: "高密度数据和工具栏；不缩小按钮文字。" },
       { label: "Section Gap", value: "24px", use: "基准页主要内容区间距。" },
       { label: "Section Padding", value: "24px", use: "卡片与基准区块内边距。" },
     ],
@@ -101,8 +100,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     description: "使用有限圆角、清晰边框和表面差异建立克制的界面层级。",
     principles: ["小控件使用 6–8px 圆角，容器使用 8–12px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
     references: [
-      { label: "Radius / Small", value: "6px", use: "标签、导航项和小型控件。" },
-      { label: "Radius / Medium", value: "8px", use: "Button 及输入的默认圆角；按钮按压不增加阴影或位移。" },
+      { label: "Radius / Small", value: "6px", use: "标签、导航项和小型按钮。" },
+      { label: "Radius / Medium", value: "8px", use: "按钮、输入与一般卡片。" },
       { label: "Radius / Large", value: "12px", use: "较大区块与预览容器。" },
       { label: "Border", value: "1px", use: "常规组件和容器边界。" },
       { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
@@ -124,25 +123,23 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   motion: {
     title: "动效",
     description: "动效用于确认状态变化和空间关系，保持短促、可中断和可关闭。",
-    principles: ["Button Hover 为 120ms、Pressed 为 80ms，仅过渡颜色或边框，不跳动。", "内容替换和状态交换控制在约 180ms；Button 等待内容即刻切换，保持尺寸。", "系统 Reduced Motion 开启时移除非必要动画；页面开关只能进一步减少动效。"],
+    principles: ["Button Hover 使用约 120ms 的颜色或边框过渡，Pressed 缩短至约 80ms。", "按压只改变颜色或边框，不增加位移、厚底或阴影。", "Loading 的处理指示不改变原变体；系统 Reduced Motion 开启时停止旋转并移除非必要过渡。"],
     references: [
-      { label: "Micro", value: "120ms", use: "按钮、链接、边框与背景变化。" },
-      { label: "Button / Pressed", value: "80ms", use: "按下反馈；不改变尺寸、位置或阴影。" },
+      { label: "Button / Hover", value: "120ms", use: "按钮背景、前景与边框反馈。" },
+      { label: "Button / Pressed", value: "80ms", use: "仅缩短颜色或边框反馈，不改变几何位置。" },
       { label: "State", value: "180ms", use: "状态标签和内容替换。" },
       { label: "Easing", value: "cubic-bezier(.2,.8,.2,1)", use: "短距离界面反馈。" },
-      { label: "Button / Loading", value: "800ms linear", use: "只在等待时旋转；减少动效时停止，并保留等待文案。" },
-      { label: "Reduced Motion", value: "Button: none；全局: 0.01ms", use: "公共 Button 显式关闭过渡与旋转；其余组件保留已有全局覆盖。" },
+      { label: "Reduced Motion", value: "none", use: "操作系统要求减少动效时停止 Button 过渡与处理指示旋转。" },
     ],
     boundary: "不使用循环发光、无意义漂浮或阻碍操作的长动画。",
   },
   accessibility: {
     title: "无障碍",
     description: "无障碍是组件完成条件，不作为上线前的补充检查。",
-    principles: ["全部交互组件支持键盘，并保留清晰焦点。", "状态、错误和 AI 来源同时提供可读文字。", "语义元素优先，ARIA 只补充原生语义无法覆盖的部分。"],
+    principles: ["全部交互组件支持键盘，并保留清晰焦点。", "Button Loading 保持当前焦点并真正阻止激活；显式 Disabled 继续使用原生禁用。", "状态、错误和 AI 来源同时提供可读文字；等待文案缺失或空白时保留原可见内容与名称。", "语义元素优先，ARIA 只补充原生语义无法覆盖的部分。"],
     references: [
-      { label: "Focus Ring", value: "2px / #087BA8；offset 2px", use: "键盘焦点的统一视觉；不与 Hover 混同。" },
-      { label: "Button / Loading", value: "aria-busy / aria-disabled", use: "保留键盘焦点并阻止重复激活；文案未传、为空或空白时回退原内容。" },
-      { label: "Button / Disabled", value: "native disabled", use: "不可用的原生按钮移出焦点序列；asChild 链接以事件阻断和 aria-disabled 补足语义。" },
+      { label: "Button / Focus Ring", value: "2px / 2px offset", use: "键盘焦点使用 #087BA8，并在 Loading 期间保持可见。" },
+      { label: "Button / Loading", value: "aria-busy + blocked", use: "保留变体与焦点，同时阻止鼠标和键盘重复激活。" },
       { label: "Skip Link", value: "全站", use: "跳过重复导航并进入主要内容。" },
       { label: "Forced Colors", value: "支持", use: "高对比模式保留边界与状态。" },
       { label: "State Text", value: "必须", use: "不能只依赖颜色和图形表达。" },
@@ -243,7 +240,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "motion") {
-    return <div className="foundation-preview motion-specimen"><span><i />Hover · 120ms</span><span><i />Pressed · 80ms</span><span><i />Button Reduced · none</span></div>
+    return <div className="foundation-preview motion-specimen"><span><i />Hover · 120ms</span><span><i />State · 180ms</span><span><i />Reduced · 0.01ms</span></div>
   }
 
   if (slug === "accessibility") {
