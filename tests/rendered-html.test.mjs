@@ -65,3 +65,26 @@ test("renders the finalized Button surfaces and removes the review route", async
   assert.match(benchmarkHtml, /智能曜彩｜基础组件基准/);
   assert.match(benchmarkHtml, /data-variant="ai-primary"/);
 });
+
+test("renders finalized Tabs and Segmented surfaces and removes the review route", async () => {
+  const [review, tabs, segmented, benchmark] = await Promise.all([
+    fetchPage("/review/tabs"),
+    fetchPage("/components/tabs"),
+    fetchPage("/components/segmented-control"),
+    fetchPage("/benchmark"),
+  ]);
+  assert.equal(review.status, 404);
+  for (const response of [tabs, segmented, benchmark]) assert.equal(response.status, 200);
+  const tabsHtml = await tabs.text();
+  assert.match(tabsHtml, /Page Tabs/);
+  assert.match(tabsHtml, /Surface Tabs/);
+  assert.match(tabsHtml, /跨学科学习过程长期趋势/);
+  assert.match(tabsHtml, /已归档记录/);
+  const segmentedHtml = await segmented.text();
+  assert.match(segmentedHtml, /按学生成长证据组织/);
+  assert.match(segmentedHtml, /role="radiogroup"/);
+  for (const html of [tabsHtml, segmentedHtml, await benchmark.text()]) {
+    assert.match(html, /data-selection-indicator/);
+    assert.doesNotMatch(html, /Tabs 评审|data-review-indicator|href="\/review\/tabs"/);
+  }
+});
