@@ -499,7 +499,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .prism-tabs { display: flex; flex-direction: column; min-width: 0; gap: 0; }
 .prism-tabs[data-orientation="vertical"] { flex-direction: row; gap: 1rem; }
 .selection-scroll {
-  min-width: 0; max-width: 100%; overflow-x: auto; overflow-y: clip;
+  min-width: 0; max-width: calc(100% + .5rem); overflow-x: auto; overflow-y: clip;
   padding: .25rem .25rem .5rem; margin: -.25rem -.25rem -.5rem;
   scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent;
 }
