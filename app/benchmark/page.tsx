@@ -36,13 +36,13 @@ type WorkflowState = "pending" | "completed"
 type AIWorkflowState = "generating" | "review"
 
 const buttonVariants = [
-  { label: "保存设置", tone: "primary" },
-  { label: "暂存草稿", tone: "secondary" },
-  { label: "导出记录", tone: "outline" },
-  { label: "取消", tone: "ghost" },
-  { label: "AI 建议", tone: "ai-soft" },
-  { label: "智能分析", tone: "ai-primary" },
-  { label: "删除任务", tone: "destructive" },
+  { label: "保存设置", variant: "default" },
+  { label: "暂存草稿", variant: "secondary" },
+  { label: "导出记录", variant: "outline" },
+  { label: "取消", variant: "ghost" },
+  { label: "AI 建议", variant: "ai-soft" },
+  { label: "智能分析", variant: "ai-primary" },
+  { label: "删除任务", variant: "destructive" },
 ] as const
 
 const stateLabels = [
@@ -70,6 +70,8 @@ export default function Home() {
   const [aiWorkflowState, setAIWorkflowState] =
     useState<AIWorkflowState>("generating")
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const buttonSize = density === "compact" ? "compact" : "default"
+  const iconButtonSize = density === "compact" ? "icon-sm" : "icon"
 
   useEffect(() => {
     return () => {
@@ -192,15 +194,18 @@ export default function Home() {
             aside={<MetaBadge tone="outline">8 种操作</MetaBadge>}
           />
           <div className="button-matrix">
-            {buttonVariants.map(({ label, tone }) => (
-              <PrismButton key={tone} tone={tone}>{label}</PrismButton>
+            {buttonVariants.map(({ label, variant }) => (
+              <Button key={variant} type="button" variant={variant} size={buttonSize}>
+                {variant.startsWith("ai-") && <Sparkles aria-hidden="true" />}
+                {label}
+              </Button>
             ))}
-            <Button asChild variant="link" className="prism-button prism-button--link">
+            <Button asChild variant="link">
               <a href="#form-demo">查看表单规范 <ArrowRight aria-hidden="true" /></a>
             </Button>
-            <PrismButton tone="outline" iconLabel="刷新教育证据"><RefreshCw aria-hidden="true" /></PrismButton>
-            <PrismButton tone="primary" loading>提交中</PrismButton>
-            <PrismButton tone="primary" disabled>暂无权限</PrismButton>
+            <Button type="button" variant="outline" size={iconButtonSize} aria-label="刷新教育证据"><RefreshCw aria-hidden="true" /></Button>
+            <Button type="button" size={buttonSize} loading loadingLabel="提交中">提交</Button>
+            <Button type="button" size={buttonSize} disabled>暂无权限</Button>
           </div>
         </section>
 
@@ -292,7 +297,7 @@ export default function Home() {
                   className="prism-input"
                 />
               </Field>
-              <PrismButton tone="primary" type="submit">校验并保存</PrismButton>
+              <Button type="submit" size={buttonSize}>校验并保存</Button>
             </div>
 
             <div className="form-state-fields">
@@ -350,10 +355,9 @@ export default function Home() {
                 {workflowState === "completed" ? "已完成" : "待处理"}
               </StateLabel>
             </span>
-            <PrismButton tone="primary" onClick={handleRun} loading={isRunning}>
-              {!isRunning && <Sparkles aria-hidden="true" />}
-              {isRunning ? "处理中" : "开始处理"}
-            </PrismButton>
+            <Button type="button" size={buttonSize} onClick={handleRun} loading={isRunning} loadingLabel="处理中">
+              <Sparkles aria-hidden="true" />开始处理
+            </Button>
           </div>
         </section>
       </main>
@@ -367,22 +371,6 @@ function SectionHeading({ id, title, description, aside }: { id: string; title: 
       <div><h2 id={id}>{title}</h2><p>{description}</p></div>
       {aside}
     </div>
-  )
-}
-
-function PrismButton({ tone, loading, iconLabel, children, className = "", ...props }: React.ComponentProps<typeof Button> & { tone: string; loading?: boolean; iconLabel?: string }) {
-  return (
-    <Button
-      {...props}
-      className={`prism-button prism-button--${tone} ${iconLabel ? "prism-button--icon" : ""} ${className}`}
-      disabled={props.disabled || loading}
-      data-loading={loading || undefined}
-      aria-busy={loading || undefined}
-      aria-label={iconLabel ?? props["aria-label"]}
-    >
-      {loading && <span className="loading-mark" aria-hidden="true" />}
-      {children}
-    </Button>
   )
 }
 

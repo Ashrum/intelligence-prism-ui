@@ -42,3 +42,26 @@ test("renders the Foundations and catalog routes", async () => {
   assert.match(await foundations.text(), /<title>色彩｜智能曜彩<\/title>/i);
   assert.match(await catalog.text(), /<title>组件总览｜智能曜彩<\/title>/i);
 });
+
+test("renders the finalized Button surfaces and removes the review route", async () => {
+  const [button, benchmark, review] = await Promise.all([
+    fetchPage("/components/button"),
+    fetchPage("/benchmark"),
+    fetchPage("/review/button"),
+  ]);
+
+  assert.equal(button.status, 200);
+  assert.equal(benchmark.status, 200);
+  assert.equal(review.status, 404);
+
+  const buttonHtml = await button.text();
+  assert.match(buttonHtml, /<title>Button｜智能曜彩<\/title>/i);
+  assert.match(buttonHtml, /七种操作层级/);
+  assert.match(buttonHtml, /未传等待文案/);
+  assert.match(buttonHtml, /空字符串等待文案/);
+  assert.match(buttonHtml, /纯空白等待文案/);
+
+  const benchmarkHtml = await benchmark.text();
+  assert.match(benchmarkHtml, /智能曜彩｜基础组件基准/);
+  assert.match(benchmarkHtml, /data-variant="ai-primary"/);
+});

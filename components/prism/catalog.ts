@@ -204,9 +204,9 @@ export const componentDocuments = {
     itemIds: ["button"],
     eyebrow: "操作与命令",
     title: "Button",
-    description: "触发操作或导航。曜蓝承担主要操作，智绯仅用于明确的 AI 行为。",
-    guidance: "一个操作区域只保留一个主要按钮；导航行为使用链接语义。",
-    accessibility: "保留可见焦点；图标按钮必须提供 accessible name；Loading 与 Disabled 阻止重复触发。",
+    description: "七种操作层级共用同一实现：曜蓝承担主要操作，智绯仅用于明确的 AI 行为，中性表面承接次操作。",
+    guidance: "默认高度 36px，紧凑高度 32px；一个操作区域只保留一个主要按钮，破坏性操作独立表达，导航使用 asChild 保留链接语义。",
+    accessibility: "保留 2px 可见焦点；图标按钮必须提供 accessible name。Loading 保留原变体颜色并阻止重复激活，等待文案缺失或空白时继续使用原内容。",
   },
   tabs: {
     itemIds: ["tabs"],

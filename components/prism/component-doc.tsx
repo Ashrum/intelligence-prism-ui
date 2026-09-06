@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import type { FormEvent } from "react"
 import { AlertCircle, Check, RefreshCw, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -61,24 +62,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   const [title, setTitle] = useState("")
 
   if (slug === "button") {
-    return (
-      <div className="preview-stack">
-        <div className="button-matrix">
-          <PrismButton tone="primary">保存设置</PrismButton>
-          <PrismButton tone="secondary">暂存草稿</PrismButton>
-          <PrismButton tone="outline">导出记录</PrismButton>
-          <PrismButton tone="ghost">取消</PrismButton>
-          <PrismButton tone="ai-soft"><Sparkles aria-hidden="true" />AI 建议</PrismButton>
-          <PrismButton tone="ai-primary">智能分析</PrismButton>
-          <PrismButton tone="destructive">删除任务</PrismButton>
-        </div>
-        <div className="button-matrix">
-          <PrismButton tone="outline" iconLabel="刷新教育证据"><RefreshCw aria-hidden="true" /></PrismButton>
-          <PrismButton tone="primary" loading>提交中</PrismButton>
-          <PrismButton tone="primary" disabled>暂无权限</PrismButton>
-        </div>
-      </div>
-    )
+    return <ButtonPreview />
   }
 
   if (slug === "tabs") {
@@ -162,8 +146,129 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   )
 }
 
-function PrismButton({ tone, loading, iconLabel, children, ...props }: React.ComponentProps<typeof Button> & { tone: string; loading?: boolean; iconLabel?: string }) {
-  return <Button {...props} className={`prism-button prism-button--${tone} ${iconLabel ? "prism-button--icon" : ""}`} disabled={props.disabled || loading} data-loading={loading || undefined} aria-busy={loading || undefined} aria-label={iconLabel ?? props["aria-label"]}>{loading && <span className="loading-mark" aria-hidden="true" />}{children}</Button>
+const buttonExamples = [
+  { variant: "default", label: "保存设置" },
+  { variant: "secondary", label: "暂存草稿" },
+  { variant: "outline", label: "导出记录" },
+  { variant: "ghost", label: "取消" },
+  { variant: "ai-soft", label: "AI 建议" },
+  { variant: "ai-primary", label: "智能分析" },
+  { variant: "destructive", label: "删除任务" },
+] as const
+
+function ButtonPreview() {
+  const [running, setRunning] = useState<Record<string, boolean>>({})
+  const [status, setStatus] = useState("选择任一异步示例，验证等待状态与布局稳定性。")
+  const [pressStatus, setPressStatus] = useState("尚未按下按钮。")
+  const [submitCount, setSubmitCount] = useState(0)
+  const [linkLoading, setLinkLoading] = useState(false)
+  const [linkCounts, setLinkCounts] = useState({ child: 0, button: 0 })
+  const [linkTag, setLinkTag] = useState("未挂载")
+  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
+  const activationCounts = useRef(new Map<string, number>())
+  const captureLinkRef = useCallback((node: HTMLButtonElement | null) => {
+    setLinkTag(node?.tagName ?? "未挂载")
+  }, [])
+
+  useEffect(() => {
+    const pending = timers.current
+    return () => {
+      for (const timer of pending.values()) clearTimeout(timer)
+      pending.clear()
+    }
+  }, [])
+
+  function run(id: string, label: string) {
+    if (timers.current.has(id)) return
+    const count = (activationCounts.current.get(id) ?? 0) + 1
+    activationCounts.current.set(id, count)
+    setRunning((previous) => ({ ...previous, [id]: true }))
+    setStatus(`${label}：正在处理；处理函数调用 ${count} 次。`)
+    timers.current.set(id, setTimeout(() => {
+      timers.current.delete(id)
+      setRunning((previous) => ({ ...previous, [id]: false }))
+      setStatus(`${label}：处理完成；处理函数共调用 ${count} 次。`)
+    }, 1800))
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setSubmitCount((count) => count + 1)
+  }
+
+  function recordPress(event: React.PointerEvent<HTMLButtonElement>, variant: string) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    setPressStatus(`${variant}：Pressed ${event.currentTarget.matches(":active") ? "已触发" : "未触发"}；宽度 ${Math.round(rect.width)}px。`)
+  }
+
+  return (
+    <div className="preview-stack button-doc-preview" id="button-behavior">
+      <div className="button-demo-group">
+        <div className="control-caption">七种操作层级</div>
+        <div className="button-matrix">
+          {buttonExamples.map(({ variant, label }) => (
+            <Button key={variant} type="button" variant={variant} data-demo-variant={variant} onPointerDown={(event) => recordPress(event, variant)}>
+              {variant.startsWith("ai-") && <Sparkles aria-hidden="true" />}
+              {label}
+            </Button>
+          ))}
+        </div>
+        <p className="preview-result" role="status" data-demo="pressed-status">{pressStatus}</p>
+      </div>
+
+      <div className="button-demo-group">
+        <div className="control-caption">尺寸与原生状态</div>
+        <div className="button-matrix">
+          <Button type="button">舒适 · 36px</Button>
+          <Button type="button" size="compact">紧凑 · 32px</Button>
+          <Button type="button" variant="outline" size="icon" aria-label="刷新教育证据"><RefreshCw aria-hidden="true" /></Button>
+          <Button type="button" disabled>暂无权限</Button>
+          <form onSubmit={handleSubmit} className="button-inline-form">
+            <Button type="submit" variant="outline">原生表单提交</Button>
+          </form>
+        </div>
+        <p className="preview-result" role="status">原生表单提交次数：{submitCount}</p>
+      </div>
+
+      <div className="button-demo-group">
+        <div className="control-caption">Loading 与等待文案边界</div>
+        <p className="button-demo-note">有效等待文案与处理指示从空闲时预留空间；未传、空字符串或纯空白时保留原内容。普通按钮不额外占位。</p>
+        <div className="button-matrix" data-demo="loading-boundaries">
+          <Button type="button" variant="ai-primary" loading={Boolean(running.valid)} loadingLabel="正在生成分析" onClick={() => run("valid", "有效等待文案")}>
+            <Sparkles aria-hidden="true" />智能分析
+          </Button>
+          <Button type="button" loading={Boolean(running.omitted)} onClick={() => run("omitted", "未传等待文案")}>未传等待文案</Button>
+          <Button type="button" variant="outline" loading={Boolean(running.empty)} loadingLabel="" onClick={() => run("empty", "空字符串等待文案")}>空字符串等待文案</Button>
+          <Button type="button" variant="ai-primary" loading={Boolean(running.blank)} loadingLabel="   " onClick={() => run("blank", "纯空白等待文案")}><Sparkles aria-hidden="true" />纯空白等待文案</Button>
+          <Button type="button" variant="secondary" loading={Boolean(running.duplicate)} loadingLabel="正在验证" onClick={() => run("duplicate", "重复触发防护")}>快速双击验证</Button>
+          <Button type="button" variant="secondary" data-demo="ordinary-button">普通按钮</Button>
+        </div>
+        <div className="button-matrix" data-demo="layout-stability">
+          <Button type="button" loading={Boolean(running.layout)} loadingLabel="正在保存较长的设置" onClick={() => run("layout", "布局稳定性")}>保存设置</Button>
+          <Button type="button" variant="outline">相邻操作</Button>
+        </div>
+        <p className="preview-result" role="status" aria-live="polite">{status}</p>
+      </div>
+
+      <div className="button-demo-group" id="button-contract-target">
+        <div className="control-caption">asChild 链接语义与事件</div>
+        <div className="button-matrix">
+          <Button
+            asChild
+            variant="link"
+            loading={linkLoading}
+            loadingLabel="导航准备中"
+            ref={captureLinkRef}
+            onClick={() => setLinkCounts((counts) => ({ ...counts, button: counts.button + 1 }))}
+          >
+            <a href="#button-contract-target" onClick={() => setLinkCounts((counts) => ({ ...counts, child: counts.child + 1 }))}>查看 Button 行为合同</a>
+          </Button>
+          <Button type="button" variant="outline" size="compact" onClick={() => setLinkLoading((value) => !value)}>{linkLoading ? "结束链接处理" : "模拟链接处理"}</Button>
+        </div>
+        <p className="preview-result" role="status">链接根元素：{linkTag}；子事件 {linkCounts.child} 次；Button 事件 {linkCounts.button} 次。</p>
+      </div>
+    </div>
+  )
 }
 
 function SegmentedControl({ label, value, onValueChange, items }: { label: string; value: string; onValueChange: (value: string) => void; items: readonly (readonly [string, string])[] }) {
