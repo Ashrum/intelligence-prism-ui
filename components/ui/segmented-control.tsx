@@ -15,13 +15,29 @@ type SegmentedControlProps = Omit<ComponentProps<typeof RadioGroup>, "children" 
   size?: "sm" | "md"
 }
 
-export function SegmentedControl({ label, items, size = "md", orientation = "horizontal", className, ref, ...props }: SegmentedControlProps) {
+export function SegmentedControl({ label, items, size = "md", orientation = "horizontal", className, ref, onKeyUpCapture, ...props }: SegmentedControlProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   useImperativeHandle(ref, () => trackRef.current as HTMLDivElement)
   useSelectionIndicator(trackRef, '[data-slot="radio-group-item"][data-state="checked"]', ".segmented-item-label")
   return (
     <div className="selection-scroll" data-selection-scroll>
-      <RadioGroup {...props} ref={trackRef} orientation={orientation} aria-label={label} className={cn("segmented-control", `segmented-control--${size}`, className)}>
+      <RadioGroup
+        {...props} ref={trackRef} orientation={orientation} aria-label={label}
+        className={cn("segmented-control", `segmented-control--${size}`, className)}
+        onKeyUpCapture={(event) => {
+          onKeyUpCapture?.(event)
+          if (event.defaultPrevented || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return
+          const releasedOn = event.target
+          const group = event.currentTarget
+          // Compensate only when keyup precedes Radix's deferred focus movement.
+          // Normal keypresses already release on the destination and never click twice.
+          setTimeout(() => {
+            const focused = document.activeElement
+            if (focused instanceof HTMLElement && focused !== releasedOn && group.contains(focused)
+              && focused.matches('[data-slot="radio-group-item"][data-state="unchecked"]:not(:disabled)')) focused.click()
+          }, 0)
+        }}
+      >
         <span aria-hidden="true" className="selection-indicator" data-selection-indicator />
         {items.map((item) => {
           const option: SegmentedOption = "value" in item ? item : { value: item[0], label: item[1] }
@@ -32,10 +48,6 @@ export function SegmentedControl({ label, items, size = "md", orientation = "hor
                 disabled={option.disabled || props.disabled}
                 aria-label={`${option.label}${option.count === undefined ? "" : ` ${option.count}`}`}
                 className="segmented-item"
-                onFocus={(event) => {
-                  // Selection follows focus without depending on the duration of an arrow keypress.
-                  if (event.currentTarget.dataset.state !== "checked") event.currentTarget.click()
-                }}
               />
               <span className="selection-label"><span>{option.label}</span>{option.count !== undefined && <span className="selection-count">{option.count}</span>}</span>
             </Label>
