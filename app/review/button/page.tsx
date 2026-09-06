@@ -53,9 +53,14 @@ function CurrentButton({ tone, label, loading, disabled, icon, onClick }: Previe
 // Temporary design candidate. After approval, move the accepted behavior and
 // styles into the shared Button; remove this route, its styles and nav link.
 function CandidateButton({
-  tone, label, loadingLabel, loading = false, disabled = false,
+  tone, label, loadingLabel, loading, disabled = false,
   snapshot, icon, onClick,
 }: PreviewButtonProps) {
+  const busyLabel = loadingLabel?.trim() || label
+  // Controlled async buttons pass loading={isLoading}, including while idle.
+  // Reserve their busy content up front; leave ordinary actions at natural width.
+  const hasLoadingState = loading !== undefined || Boolean(loadingLabel?.trim())
+
   return (
     <Button
       type="button"
@@ -66,7 +71,7 @@ function CandidateButton({
       disabled={disabled}
       aria-disabled={loading || disabled || undefined}
       aria-busy={loading || undefined}
-      aria-label={loading ? (loadingLabel ?? label) : label}
+      aria-label={loading ? busyLabel : label}
       onClick={(event) => {
         if (loading || disabled) {
           event.preventDefault()
@@ -76,9 +81,9 @@ function CandidateButton({
       }}
     >
       <span className={styles.idle} aria-hidden="true">{icon}{label}</span>
-      {loadingLabel && (
+      {hasLoadingState && (
         <span className={styles.busy} aria-hidden="true">
-          <span className={styles.spinner} />{loadingLabel}
+          <span className={styles.spinner} />{busyLabel}
         </span>
       )}
     </Button>
@@ -180,6 +185,19 @@ export default function ButtonReviewPage() {
                 icon={<Sparkles aria-hidden="true" />} loading={!!running["layout"]}
                 onClick={() => run("layout", "布局稳定性")} />
               <CandidateButton tone="outline" label="相邻操作" onClick={reset} />
+            </div>
+            <h3>等待文案回退</h3>
+            <p>未传、空值或纯空白等待文案均保留原文案，并显示处理指示。异步操作从空闲时就传入 loading 布尔值，确保切换不跳宽；普通操作不额外占位。</p>
+            <div className={styles.loadingDemo}>
+              <CandidateButton tone="primary" label="未传等待文案"
+                loading={!!running["fallback-omitted"]}
+                onClick={() => run("fallback-omitted", "未传等待文案")} />
+              <CandidateButton tone="outline" label="空值等待文案" loadingLabel=""
+                loading={!!running["fallback-empty"]}
+                onClick={() => run("fallback-empty", "空值等待文案")} />
+              <CandidateButton tone="ai-primary" label="空白等待文案" loadingLabel="   "
+                icon={<Sparkles aria-hidden="true" />} loading={!!running["fallback-blank"]}
+                onClick={() => run("fallback-blank", "空白等待文案")} />
             </div>
           </section>
         </TabsContent>
