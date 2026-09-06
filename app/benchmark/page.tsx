@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import {
   Tabs,
   TabsContent,
@@ -141,11 +141,11 @@ export default function Home() {
           <div className="navigation-grid">
             <div className="navigation-primary">
               <span className="control-caption">页面内容</span>
-              <Tabs value={pageTab} onValueChange={setPageTab} className="page-tabs">
-                <TabsList variant="line" aria-label="基础组件基准页面" className="page-tabs-list">
-                  <TabsTrigger value="overview" className="page-tabs-trigger">概览</TabsTrigger>
-                  <TabsTrigger value="evidence" className="page-tabs-trigger">教育证据</TabsTrigger>
-                  <TabsTrigger value="records" className="page-tabs-trigger">处理记录</TabsTrigger>
+              <Tabs value={pageTab} onValueChange={setPageTab} activationMode="manual">
+                <TabsList variant="line" aria-label="基础组件基准页面">
+                  <TabsTrigger value="overview">概览</TabsTrigger>
+                  <TabsTrigger value="evidence">教育证据</TabsTrigger>
+                  <TabsTrigger value="records">处理记录</TabsTrigger>
                 </TabsList>
                 <div className="page-tab-content">
                   <TabsContent value="overview">今日汇总 128 份教育证据，6 项等待人工复核。</TabsContent>
@@ -158,11 +158,11 @@ export default function Home() {
             <div className="navigation-secondary">
               <div className="control-group">
                 <span className="control-caption">统计周期</span>
-                <Tabs defaultValue="today" className="surface-tabs">
-                  <TabsList aria-label="教育证据统计周期" className="surface-tabs-list">
-                    <TabsTrigger value="today" className="surface-tabs-trigger">今日</TabsTrigger>
-                    <TabsTrigger value="week" className="surface-tabs-trigger">本周</TabsTrigger>
-                    <TabsTrigger value="month" className="surface-tabs-trigger">本月</TabsTrigger>
+                <Tabs defaultValue="today">
+                  <TabsList aria-label="教育证据统计周期">
+                    <TabsTrigger value="today">今日</TabsTrigger>
+                    <TabsTrigger value="week">本周</TabsTrigger>
+                    <TabsTrigger value="month">本月</TabsTrigger>
                   </TabsList>
                   <TabsContent value="today" className="surface-tab-note">128 份</TabsContent>
                   <TabsContent value="week" className="surface-tab-note">816 份</TabsContent>
@@ -371,19 +371,6 @@ function SectionHeading({ id, title, description, aside }: { id: string; title: 
       <div><h2 id={id}>{title}</h2><p>{description}</p></div>
       {aside}
     </div>
-  )
-}
-
-function SegmentedControl({ label, value, onValueChange, items, size = "md" }: { label: string; value: string; onValueChange: (value: string) => void; items: readonly (readonly [string, string])[]; size?: "sm" | "md" }) {
-  return (
-    <RadioGroup aria-label={label} value={value} onValueChange={onValueChange} className={`segmented-control segmented-control--${size}`}>
-      {items.map(([itemValue, itemLabel]) => (
-        <Label key={itemValue} className="segmented-item-label">
-          <RadioGroupItem value={itemValue} aria-label={itemLabel} className="segmented-item" />
-          <span>{itemLabel}</span>
-        </Label>
-      ))}
-    </RadioGroup>
   )
 }
 
