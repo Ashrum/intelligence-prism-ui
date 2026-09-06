@@ -360,7 +360,7 @@ export default function TabsReviewPage() {
         <div>
           <p className={styles.eyebrow}>临时站内评审 · 不影响正式组件</p>
           <h1>Tabs 与 Segmented Control</h1>
-          <p>比较选中识别、文字节奏与连续切换。候选只改变指示器反馈，不改变组件语义。</p>
+          <p>比较选中识别、文字节奏、表面比例与连续切换。Tabs 与单选控件沿用各自语义。</p>
         </div>
         <Link href="/components/tabs" className={styles.back}>返回正式 Tabs →</Link>
       </header>

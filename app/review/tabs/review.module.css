@@ -111,6 +111,7 @@
 .tabsRoot { display: flex !important; min-width: 0; gap: 0 !important; }
 .currentTabsRoot { min-width: 0; gap: 0 !important; }
 .currentPageTrack {
+  --control-height: var(--review-control-height);
   height: var(--review-control-height) !important;
   gap: var(--review-page-gap) !important;
 }
