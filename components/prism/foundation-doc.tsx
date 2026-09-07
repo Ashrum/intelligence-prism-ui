@@ -93,7 +93,9 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
     principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
     references: [
-      { label: "Current Font Stack", value: "Inter / Noto Sans SC / 系统字体", use: "现有全站实现；已确认的新字体分工见设计语言记录，正式字库与全站样式尚待回填。" },
+      { label: "UI / --font-ui", value: "Noto Sans CJK SC 2.004 / wght 100–900", use: "全站界面默认 400；已有 500、600、650、675、700、750 使用真实可变字重。中文、英文与数字由同一主字体承接。" },
+      { label: "Reading / --font-reading", value: "Noto Serif CJK SC 2.003 / 400", use: "较长阅读与对应编辑区；仅提供 400，不合成粗体或斜体。普通说明、表单和导航继续使用 Sans。" },
+      { label: "Math / --font-math", value: "STIX Two Math 2.13 b171 / 400", use: "原生 MathML 的数学符号与度量；公式内中文使用阅读字体。该变量提供字体，不代替渲染器。" },
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
       { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
@@ -208,10 +210,10 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "候选已接入 · 跨端待验证" : "基线已建立"}</span>
+          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</span>
         </div>
         <p>{doc.description}</p>
-        {slug === "typography" && <p>字体方向已确认：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。下方保留当前全站实现参数；新字体按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>回填，不将样本字库视为正式交付。</p>}
+        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>记录。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
@@ -247,10 +249,22 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
       {slug === "typography" && <section id="typography-production" className="doc-section" aria-labelledby="typography-production-title">
         <div className="doc-section-heading">
           <h2 id="typography-production-title">字体与数学的生产交付条件</h2>
-          <p>以下是设计与工程的共同接受标准，尚不表示实现完成。</p>
+          <p>以下是设计与工程的共同接受标准，实现进度与跨系统结果按下表分别记录。</p>
         </div>
-        <p>复核候选现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面使用可变字体的 400／500；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
-        <p>公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体。加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。尚未完成全站回填与跨系统验收。</p>
+        <p>全站基础层现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面沿用真实可变字重；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。两套字体各保留源字体的 25 个 Unicode 变体序列。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
+        <p>完整字体声明由根布局统一载入，界面、阅读、数学使用共用字体变量；常用分片覆盖现有页面与组件文案，其他字符继续按需加载。阅读复核中的公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体，加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。</p>
+        <div className="foundation-table-wrap" role="region" aria-label="字体生产验收进度" tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">验收范围</th><th scope="col">当前结果 · 2026-09-07</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">字体文件</th><td>24 个分片的实际字符表、变体序列、哈希及字重通过独立校验。变体字形与源字体一致；Sans 400／500 为真实可变字重。STIX 保留 MATH 表。</td></tr>
+              <tr><th scope="row">云端 Chrome</th><td>版本 25 的桌面基础排版、长证据公式、编辑与文本复制通过。真实中文字体失败时可回退、编辑、复制；STIX 失败时保留公式文字表达。本次基础层回填的云端浏览器未能访问预览，新增视觉检查待完成。</td></tr>
+              <tr><th scope="row">Windows Edge／macOS Safari／桌面 Firefox</th><td>由用户手动测试，待反馈实际版本与结果；继续推进字体基础层回填，不预记为通过。</td></tr>
+              <tr><th scope="row">Android Chrome／iOS Safari</th><td>由用户手动测试，待移动端结果；未用桌面画面代替真机结果。</td></tr>
+              <tr><th scope="row">仍待完成</th><td>实际字体命中、目标系统版本记录、窄视口、200% 原生缩放、冷缓存与慢网测量、公式复制语义及辅助技术读序。跨系统生产验收尚未完成。</td></tr>
+            </tbody>
+          </table>
+        </div>
         <div className="foundation-table-wrap" role="region" aria-label="字体生产方案的接受与拒绝条件" tabIndex={0}>
           <table className="foundation-table">
             <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>
@@ -278,7 +292,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "typography") {
-    return <div className="foundation-preview type-specimen"><span>Display · 教育智能从清晰开始</span><strong>Page title · 智能曜彩组件系统</strong><p>Body · 设计系统让产品、设计与工程使用同一种界面语言。</p><small>Label · EDUCATION EVIDENCE / 教育证据</small></div>
+    return <div className="foundation-preview type-specimen"><span>Display · 教育智能从清晰开始</span><strong>Page title · 智能曜彩组件系统</strong><p>界面正文 · 设计系统让产品、设计与工程使用同一种界面语言。</p><p className="type-reading-sample">阅读正文 · 从原文证据回到当前结论，保留成立条件，让每一次判断都有可追溯的依据。</p><small>Label · EDUCATION EVIDENCE / 教育证据</small></div>
   }
 
   if (slug === "spacing-density") {

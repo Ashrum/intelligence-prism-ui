@@ -1,14 +1,17 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(process.argv[2] || resolve(dirname(fileURLToPath(import.meta.url)), '..'))
 const read = path => readFileSync(resolve(root, path))
 const manifest = JSON.parse(read('public/fonts/reading/manifest.json'))
-const css = read('app/review/reading-review/fonts.css').toString()
-const requested = new Set([...read('app/review/reading-review/reading-review.tsx').toString()].map(c => c.codePointAt(0)))
+const css = read('app/fonts.css').toString()
+const textSources = ['app', 'components'].flatMap(dir => readdirSync(resolve(root, dir), { recursive: true }).filter(file => /\.tsx?$/.test(file)).map(file => `${dir}/${file}`)).sort()
+assert.deepEqual(manifest.textSources, textSources, 'Font corpus differs from the app/components source inventory')
+const requested = new Set([...textSources.map(file => read(file).toString()).join('\n')].map(c => c.codePointAt(0)))
+assert(read('app/layout.tsx').toString().includes('import "./fonts.css"'), 'Shared fonts must be imported by the root layout')
 const points = value => {
   const result = new Set()
   for (const range of value.split(',')) {
@@ -28,6 +31,7 @@ for (const source of manifest.sources) {
   assert.equal(common.length, 1, `${source.family}: expected one common shard`)
   const commonPoints = points(common[0].unicodeRange)
   const covered = new Set()
+  const variations = []
   for (const file of files) {
     assert(/^(sans|serif)-(common|\d+)-[0-9a-f]{12}\.woff2$/.test(file.file), 'Invalid font path')
     const bytes = read(`public/fonts/reading/${file.file}`)
@@ -35,6 +39,12 @@ for (const source of manifest.sources) {
     assert.equal(createHash('sha256').update(bytes).digest('hex'), file.sha256, `${file.file}: hash mismatch`)
     assert.equal(file.weight, source.weight, `${file.file}: weight mismatch`)
     const declared = points(file.unicodeRange)
+    assert(Array.isArray(file.variationSequences), `${file.file}: missing variation sequence inventory`)
+    for (const sequence of file.variationSequences) {
+      assert(/^[0-9A-F]{4,6} [0-9A-F]{4,6}$/.test(sequence), `${file.file}: invalid variation sequence`)
+      assert(declared.has(parseInt(sequence.split(' ')[0], 16)), `${file.file}: variation base outside shard`)
+      variations.push(sequence)
+    }
     assert.equal(declared.size, file.characters, `${file.file}: character count mismatch`)
     for (const cp of declared) {
       assert(!covered.has(cp), `${source.family}: overlapping unicode ranges`)
@@ -44,7 +54,9 @@ for (const source of manifest.sources) {
     assert(css.includes(rule), `${file.file}: CSS and manifest differ`)
   }
   assert.equal(covered.size, source.characters, `${source.family}: incomplete declared source coverage`)
+  assert.equal(new Set(variations).size, variations.length, `${source.family}: duplicate variation sequences`)
+  assert.deepEqual(variations.sort(), source.variationSequences, `${source.family}: incomplete variation sequence inventory`)
   const missing = [...requested].filter(cp => covered.has(cp) && !commonPoints.has(cp) && cp >= 0x20)
-  assert.equal(missing.length, 0, `${source.family}: ${missing.length} source characters fall outside the common shard (${missing.map(cp => String.fromCodePoint(cp)).join('')}). Rebuild with scripts/build-reading-fonts.py and the pinned source fonts.`)
+  assert.equal(missing.length, 0, `${source.family}: ${missing.length} app/components source characters fall outside the common shard (${missing.map(cp => String.fromCodePoint(cp)).join('')}). Rebuild with scripts/build-reading-fonts.py and the pinned source fonts.`)
 }
-console.log('Reading fonts: common coverage, declared ranges, asset hashes and CSS references verified.')
+console.log('Reading fonts: common coverage, declared ranges, variation inventory, asset hashes and CSS references verified.')

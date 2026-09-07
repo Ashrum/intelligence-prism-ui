@@ -93,15 +93,25 @@ export function ReadingReview() {
 
   useEffect(() => {
     let active = true
-    const failed = () => { if (active) setFontFallback(true) }
-    const loaded = () => { if (active) setFontRevision(current => current + 1) }
-    document.fonts.addEventListener("loadingerror", failed)
-    document.fonts.addEventListener("loadingdone", loaded)
+    const refreshFonts = () => {
+      if (!active) return
+      let failed = false
+      document.fonts.forEach(face => {
+        const family = face.family.replace(/^['"]|['"]$/g, "")
+        if ((family === "Prism Reading Sans SC" || family === "Prism Reading Serif SC") && face.status === "error") failed = true
+      })
+      setFontFallback(failed)
+      setFontRevision(current => current + 1)
+    }
+    document.fonts.addEventListener("loadingerror", refreshFonts)
+    document.fonts.addEventListener("loadingdone", refreshFonts)
+    // Read existing failures as well as future events: fonts can finish before hydration.
+    refreshFonts()
     document.fonts.load('400 22px "Prism Review STIX Two Math"', "x∫√∑").then(faces => {
       if (active && !faces.length) setMathAvailable(false)
     }).catch(() => { if (active) setMathAvailable(false) })
-    document.fonts.ready.then(loaded)
-    return () => { active = false; document.fonts.removeEventListener("loadingerror", failed); document.fonts.removeEventListener("loadingdone", loaded) }
+    document.fonts.ready.then(refreshFonts)
+    return () => { active = false; document.fonts.removeEventListener("loadingerror", refreshFonts); document.fonts.removeEventListener("loadingdone", refreshFonts) }
   }, [])
 
   useLayoutEffect(() => {

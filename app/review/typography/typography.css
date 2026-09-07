@@ -1,7 +1,6 @@
 @font-face { font-family: "Prism Review Noto Sans SC"; src: url('/fonts/typography-review/noto-sans-sc.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Prism Review Noto Serif SC"; src: url('/fonts/typography-review/noto-serif-sc.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Prism Review Plex Sans SC"; src: url('/fonts/typography-review/plex-sans-sc.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
-@font-face { font-family: "Prism Review STIX Two Math"; src: url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Prism Review NewCM Math"; src: url('/fonts/typography-review/newcm-math.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
 .prism-font-review { max-width: 82rem; margin: auto; padding: 1.5rem 2rem 4rem; }
 .prism-font-back { font-size: .875rem; color: var(--action-primary); text-underline-offset: .2em; }
