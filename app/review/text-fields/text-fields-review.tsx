@@ -7,11 +7,13 @@ import { AlertCircle, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
+import { InputGroupAddon } from "@/components/ui/input-group"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Textarea } from "@/components/ui/textarea"
 
 type RecordDraft = { title: string; lesson: string; note: string }
 type Errors = Partial<Record<"title" | "lesson", string>>
+type Density = "comfortable" | "compact"
 const initial: RecordDraft = { title: "", lesson: "3", note: "" }
 
 function validate(value: RecordDraft): Errors {
@@ -26,11 +28,12 @@ function validate(value: RecordDraft): Errors {
 
 function Feedback({ id, error, children }: { id: string; error?: string; children: React.ReactNode }) {
   return error
-    ? <FieldError id={id} className="tf-feedback tf-error"><AlertCircle aria-hidden="true" />{error}</FieldError>
+    ? <FieldError id={id} className="tf-feedback tf-error">{error}</FieldError>
     : <FieldDescription id={id} className="tf-feedback">{children}</FieldDescription>
 }
 
 export function TextFieldsReview() {
+  const [density, setDensity] = useState<Density>("comfortable")
   const [draft, setDraft] = useState<RecordDraft>(initial)
   const [touched, setTouched] = useState<Partial<Record<keyof Errors, boolean>>>({})
   const [errors, setErrors] = useState<Errors>({})
@@ -59,7 +62,7 @@ export function TextFieldsReview() {
       document.fonts.removeEventListener("loadingdone", resize)
       window.removeEventListener("resize", resize)
     }
-  }, [draft.note])
+  }, [draft.note, density])
 
   const change = (field: keyof RecordDraft, value: string) => {
     setDraft(current => ({ ...current, [field]: value }))
@@ -93,12 +96,22 @@ export function TextFieldsReview() {
     titleRef.current?.focus()
   }
 
-  return <article className="tf-page">
+  return <main id="main-content" className="tf-page" data-density={density}>
     <header className="tf-heading">
       <div className="tf-meta"><span>Text Fields · 中文场景候选</span><Link href="/benchmark">返回 Benchmark →</Link></div>
       <h1>创建课堂观察记录</h1>
       <p>记录课堂中的表现与依据。内容仅在本页保留，刷新后恢复初始内容。</p>
     </header>
+
+    <div className="tf-toolbar">
+      <p>* 为必填项</p>
+      <div className="tf-density-choice">
+        <span>字段密度</span>
+        <SegmentedControl className="tf-density" label="字段密度" value={density}
+          onValueChange={value => setDensity(value as Density)}
+          items={[["comfortable", "舒适"], ["compact", "紧凑"]]} />
+      </div>
+    </div>
 
     <form className="tf-form" noValidate onSubmit={apply} onKeyDown={guardComposition}
       onCompositionStart={() => { composing.current = true }}
@@ -109,42 +122,50 @@ export function TextFieldsReview() {
       }}>
       <div className="tf-fields">
         <Field className="tf-field tf-wide" data-invalid={Boolean(titleError) || undefined}>
-          <FieldLabel htmlFor="tf-title" className="tf-label">记录标题<span>必填</span></FieldLabel>
-          <Input ref={titleRef} id="tf-title" name="title" required className="tf-input" value={draft.title} placeholder="例如：九年级数学课堂观察"
-            onChange={event => change("title", event.currentTarget.value)} onBlur={() => blur("title")}
-            aria-invalid={Boolean(titleError)} aria-describedby="tf-title-feedback" />
-          <Feedback id="tf-title-feedback" error={titleError}>建议包含年级、学科和观察内容。</Feedback>
+          <div className="tf-outline" data-invalid={Boolean(titleError) || undefined}>
+            <Input ref={titleRef} id="tf-title" name="title" required className="tf-control" value={draft.title} placeholder=" "
+              onChange={event => change("title", event.currentTarget.value)} onBlur={() => blur("title")}
+              aria-invalid={Boolean(titleError)} aria-describedby="tf-title-feedback" />
+            <AlertCircle className="tf-error-icon" aria-hidden="true" />
+            <FieldLabel htmlFor="tf-title" className="tf-label">记录标题<span aria-hidden="true"> *</span></FieldLabel>
+          </div>
+          <Feedback id="tf-title-feedback" error={titleError}>例如：九年级数学课堂观察。</Feedback>
         </Field>
 
         <Field className="tf-field" data-invalid={Boolean(lessonError) || undefined}>
-          <FieldLabel htmlFor="tf-lesson" className="tf-label">观察节次<span>必填</span></FieldLabel>
-          <InputGroup className="tf-input-group">
-            <InputGroupAddon aria-hidden="true">第</InputGroupAddon>
-            <InputGroupInput ref={lessonRef} id="tf-lesson" name="lesson" required inputMode="numeric" className="tf-group-control" value={draft.lesson}
+          <div className="tf-outline tf-with-affixes" data-invalid={Boolean(lessonError) || undefined}>
+            <InputGroupAddon className="tf-affix tf-prefix" aria-hidden="true">第</InputGroupAddon>
+            <Input ref={lessonRef} id="tf-lesson" name="lesson" required inputMode="numeric" className="tf-control" value={draft.lesson} placeholder=" "
               onChange={event => change("lesson", event.currentTarget.value)} onBlur={() => blur("lesson")}
               aria-invalid={Boolean(lessonError)} aria-describedby="tf-lesson-feedback" />
-            <InputGroupAddon align="inline-end" aria-hidden="true">节</InputGroupAddon>
-          </InputGroup>
+            <InputGroupAddon className="tf-affix tf-suffix" align="inline-end" aria-hidden="true">节</InputGroupAddon>
+            <AlertCircle className="tf-error-icon" aria-hidden="true" />
+            <FieldLabel htmlFor="tf-lesson" className="tf-label">观察节次<span aria-hidden="true"> *</span></FieldLabel>
+          </div>
           <Feedback id="tf-lesson-feedback" error={lessonError}>输入 1–12 的整数，单位为节。</Feedback>
         </Field>
 
         <Field className="tf-field">
-          <FieldLabel htmlFor="tf-source" className="tf-label">证据来源<span>只读</span></FieldLabel>
-          <Input id="tf-source" className="tf-input" value="课堂观察" readOnly aria-describedby="tf-source-feedback" />
-          <Feedback id="tf-source-feedback">来源已确定，可选择并复制。</Feedback>
+          <div className="tf-outline" data-readonly="true">
+            <Input id="tf-source" className="tf-control" value="课堂观察" placeholder=" " readOnly />
+            <FieldLabel htmlFor="tf-source" className="tf-label">证据来源 · 只读</FieldLabel>
+          </div>
         </Field>
 
         <Field className="tf-field tf-wide">
-          <FieldLabel htmlFor="tf-note" className="tf-label">观察说明<span>选填</span></FieldLabel>
-          <Textarea ref={noteRef} id="tf-note" name="note" rows={3} className="tf-input tf-textarea" value={draft.note}
-            onChange={event => change("note", event.currentTarget.value)} placeholder="记录学生的表现、成立条件与原文依据。" aria-describedby="tf-note-feedback" />
-          <Feedback id="tf-note-feedback">可分行记录，内容增长时自然增高。</Feedback>
+          <div className="tf-outline tf-multiline">
+            <Textarea ref={noteRef} id="tf-note" name="note" rows={3} className="tf-control tf-textarea" value={draft.note}
+              onChange={event => change("note", event.currentTarget.value)} placeholder=" " aria-describedby="tf-note-feedback" />
+            <FieldLabel htmlFor="tf-note" className="tf-label">观察说明 · 选填</FieldLabel>
+          </div>
+          <Feedback id="tf-note-feedback">可分行记录表现、成立条件与原文依据。</Feedback>
         </Field>
 
-        <Field className="tf-field tf-wide" data-disabled="true">
-          <FieldLabel htmlFor="tf-review-id" className="tf-label">审核编号<span>不可编辑</span></FieldLabel>
-          <Input id="tf-review-id" className="tf-input" value="尚未生成" disabled aria-describedby="tf-review-id-feedback" />
-          <Feedback id="tf-review-id-feedback">完成审核后生成，本页仅应用观察记录。</Feedback>
+        <Field className="tf-field" data-disabled="true">
+          <div className="tf-outline" data-disabled="true">
+            <Input id="tf-review-id" className="tf-control" value="完成审核后生成" placeholder=" " disabled />
+            <FieldLabel htmlFor="tf-review-id" className="tf-label">审核编号 · 不可编辑</FieldLabel>
+          </div>
         </Field>
       </div>
 
@@ -160,5 +181,5 @@ export function TextFieldsReview() {
       <h2 id="tf-result-title">{applied.title}</h2>
       {applied.note && <p className="tf-result-note">{applied.note}</p>}
     </section>}
-  </article>
+  </main>
 }

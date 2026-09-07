@@ -1,30 +1,79 @@
-.tf-page { max-width: 48rem; margin: auto; padding: 2rem 1.5rem 4rem; font-family: var(--font-ui); color: var(--text-primary); }
-.tf-heading { margin-bottom: 1.75rem; }
+.tf-page {
+  --tf-height: 3.5rem;
+  --tf-row-gap: 1.5rem;
+  --tf-surface: var(--canvas);
+  max-width: 48rem; margin: auto; padding: 2rem 1.5rem 4rem;
+  font-family: var(--font-ui); color: var(--text-primary);
+}
+.tf-page[data-density="compact"] { --tf-height: 3rem; --tf-row-gap: 1.25rem; }
+.tf-heading { margin-bottom: 1.5rem; }
 .tf-meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; font-size: .875rem; color: var(--text-secondary); }
 .tf-meta a { color: var(--action-primary); text-underline-offset: .2em; }
 .tf-heading h1 { margin: .75rem 0; font-size: clamp(1.625rem, 4vw, 2rem); line-height: 1.4; font-weight: 600; }
 .tf-heading > p { margin: 0; font-size: .875rem; line-height: 1.8; color: var(--text-secondary); }
-.tf-form { padding: 1.5rem; border: 1px solid var(--border-default); border-radius: .75rem; background: var(--surface); }
-.tf-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem 1.5rem; }
-.tf-page .tf-field { min-width: 0; gap: .5rem; }
+.tf-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1rem; margin-bottom: 1.5rem; font-size: .875rem; color: var(--text-secondary); }
+.tf-toolbar p { margin: 0; }
+.tf-density-choice { display: flex; align-items: center; gap: .75rem; }
+/* Keep both density choices at least 48px tall, including in compact mode. */
+.tf-page .tf-density { --control-height: calc(3rem + 6px); }
+.tf-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: var(--tf-row-gap) 1.5rem; }
+.tf-page .tf-field { min-width: 0; gap: .25rem; }
 .tf-wide { grid-column: 1 / -1; }
-.tf-page .tf-label { display: flex; width: 100%; align-items: baseline; justify-content: space-between; gap: .5rem; font-size: .875rem; line-height: 1.5; font-weight: 500; color: var(--text-primary); opacity: 1; }
-.tf-label > span { flex-shrink: 0; color: var(--text-secondary); font-size: .75rem; font-weight: 400; }
-.tf-page .tf-input, .tf-page .tf-input-group { min-height: 2.75rem; height: 2.75rem; border: 1px solid var(--border-default); border-radius: .5rem; box-shadow: none; background: var(--surface); color: var(--text-primary); transition: border-color 140ms ease, background-color 140ms ease; }
-.tf-page .tf-input { padding: .5rem .75rem; font: 400 1rem/1.5 var(--font-ui); }
-.tf-page .tf-input::placeholder { color: var(--text-tertiary); }
-.tf-page .tf-input:not(:disabled):not([readonly]):not([aria-invalid=true]):not(:focus-visible):hover, .tf-page .tf-input-group:hover { border-color: var(--border-strong); }
-.tf-page .tf-input:focus-visible, .tf-page .tf-input-group:has(input:focus-visible) { border-color: var(--focus-ring); outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: none; }
-.tf-page .tf-input[aria-invalid=true], .tf-page .tf-input-group:has(input[aria-invalid=true]) { border-color: var(--danger-action); }
-.tf-page .tf-group-control { min-width: 0; height: 100%; padding: .5rem .75rem; font: 400 1rem/1.5 var(--font-ui); border: 0; outline: none; box-shadow: none; }
-.tf-page .tf-group-control:focus-visible { outline: none; box-shadow: none; }
-.tf-page .tf-input-group [data-slot=input-group-addon] { color: var(--text-secondary); font-size: 1rem; font-weight: 400; }
-.tf-page .tf-input[readonly] { background: var(--surface-subtle); }
-.tf-page .tf-input:disabled { background: var(--control-disabled-bg); border-color: var(--control-disabled-border); color: var(--control-disabled-fg); opacity: 1; }
-.tf-page .tf-textarea { min-height: 7.5rem; height: auto; padding-block: .625rem; overflow-y: hidden; resize: none; line-height: 1.8; }
-.tf-page .tf-feedback { margin: 0; min-height: 1.5em; font-size: .875rem; line-height: 1.6; color: var(--text-secondary); overflow-wrap: anywhere; }
-.tf-page .tf-error { display: flex; align-items: flex-start; gap: .375rem; color: var(--danger-fg); }
-.tf-error svg { width: 1rem; height: 1rem; flex-shrink: 0; margin-top: .2rem; }
+
+/* One outline owns hover, focus and error. The input has no second ring. */
+.tf-outline {
+  --tf-border: var(--text-tertiary);
+  --tf-label-color: var(--text-secondary);
+  --tf-caret: var(--action-primary);
+  position: relative; display: flex; align-items: center; min-width: 0;
+  min-height: var(--tf-height); background: var(--tf-surface); border-radius: .5rem;
+}
+.tf-outline::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--tf-border); border-radius: inherit; pointer-events: none; transition: border-color 140ms ease; }
+.tf-outline:where(:not([data-disabled="true"]):not([data-readonly="true"])):hover { --tf-border: var(--text-secondary); }
+.tf-outline:focus-within { --tf-border: var(--action-primary); --tf-label-color: var(--action-primary); }
+.tf-outline:focus-within::before { border-width: 2px; }
+.tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
+.tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
+.tf-outline[data-disabled="true"] { --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }
+
+.tf-page .tf-control {
+  display: block; flex: 1; width: 100%; min-width: 0; height: var(--tf-height); min-height: var(--tf-height);
+  padding: .75rem 1rem; border: 0; border-radius: inherit; background: transparent;
+  color: var(--text-primary); caret-color: var(--tf-caret); font: 400 1rem/1.5 var(--font-ui);
+  outline: none; box-shadow: none; transition: none;
+}
+.tf-page .tf-control:focus-visible { outline: none; box-shadow: none; }
+.tf-page .tf-control:disabled { color: var(--control-disabled-fg); -webkit-text-fill-color: var(--control-disabled-fg); opacity: 1; }
+.tf-page .tf-label {
+  position: absolute; z-index: 1; left: .75rem; top: calc(var(--tf-height) / 2);
+  display: block; width: auto; max-width: calc(100% - 1.5rem); margin: 0; padding: 0 .25rem;
+  transform: translateY(-50%); transform-origin: left center;
+  font: 400 1rem/1.5 var(--font-ui); color: var(--tf-label-color); opacity: 1;
+  white-space: nowrap; cursor: text;
+  transition: top 140ms ease, font-size 140ms ease, color 140ms ease;
+}
+/* Native value/placeholder state also covers restored values and autofill. */
+.tf-outline:focus-within .tf-label,
+.tf-outline:has(.tf-control:not(:placeholder-shown)) .tf-label,
+.tf-outline:has(.tf-control:autofill) .tf-label {
+  top: 0; font-size: .75rem; background: var(--tf-surface);
+}
+.tf-outline[data-disabled="true"] .tf-label { cursor: default; }
+.tf-page .tf-affix { flex: none; order: 0; padding: 0; color: var(--text-secondary); font: 400 1rem/1.5 var(--font-ui); visibility: hidden; }
+.tf-page .tf-prefix { padding-left: 1rem; }
+.tf-with-affixes .tf-control { padding-inline: .5rem; }
+.tf-page .tf-outline:focus-within .tf-affix,
+.tf-page .tf-outline:has(.tf-control:not(:placeholder-shown)) .tf-affix,
+.tf-page .tf-outline:has(.tf-control:autofill) .tf-affix { visibility: visible; }
+.tf-error-icon { flex: none; width: 1.25rem; height: 1.25rem; margin-right: 1rem; color: var(--danger-fg); visibility: hidden; pointer-events: none; }
+.tf-with-affixes .tf-error-icon { margin-left: .5rem; }
+.tf-outline[data-invalid="true"] .tf-error-icon { visibility: visible; }
+.tf-page .tf-textarea {
+  height: auto; min-height: calc(var(--tf-height) + 3rem); padding-block: calc((var(--tf-height) - 1.5rem) / 2);
+  overflow-y: hidden; resize: none; field-sizing: fixed; line-height: 1.5;
+}
+.tf-page .tf-feedback { margin: 0; padding-inline: 1rem; font-size: .875rem; line-height: 1.6; color: var(--text-secondary); overflow-wrap: anywhere; }
+.tf-page .tf-error { color: var(--danger-fg); }
 .tf-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); }
 .tf-status { display: flex; align-items: center; gap: .375rem; min-height: 1.5rem; margin: 0 0 0 auto; color: var(--success-fg); font-size: .875rem; }
 .tf-status svg { width: 1rem; height: 1rem; }
@@ -33,5 +82,11 @@
 .tf-result h2 { margin: 0; font-size: 1.25rem; line-height: 1.5; font-weight: 500; }
 .tf-result-note { margin: .75rem 0 0; white-space: pre-wrap; font-size: 1rem; line-height: 1.8; }
 .tf-page a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: .125rem; }
-@media (max-width: 40rem) { .tf-page { padding: 1.25rem 1rem 3rem; } .tf-form { padding: 1rem; } .tf-fields { grid-template-columns: minmax(0, 1fr); } .tf-status { width: 100%; margin-left: 0; } }
-@media (prefers-reduced-motion: reduce) { .tf-page .tf-input, .tf-page .tf-input-group { transition: none; } }
+@media (max-width: 40rem) { .tf-page { padding: 1.25rem 1rem 3rem; } .tf-fields { grid-template-columns: minmax(0, 1fr); } .tf-status { width: 100%; margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { .tf-outline::before, .tf-page .tf-label { transition: none; } }
+@media (forced-colors: active) {
+  .tf-page { --tf-surface: Canvas; }
+  .tf-outline { --tf-border: CanvasText; --tf-label-color: CanvasText; --tf-caret: CanvasText; }
+  .tf-outline:focus-within { --tf-border: Highlight; --tf-label-color: Highlight; }
+  .tf-outline[data-disabled="true"] { --tf-border: GrayText; --tf-label-color: GrayText; }
+}
