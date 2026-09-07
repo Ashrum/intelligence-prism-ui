@@ -71,7 +71,7 @@ export function DesignLanguageRecord() {
     <section className="language-record-section" aria-labelledby="language-components-title">
       <h3 id="language-components-title">组件承担不同职责，使用同一种语言</h3>
       <dl className="language-role-list">{componentRoles.map(([name, role]) => <div key={name}><dt>{name}</dt><dd>{role}</dd></div>)}</dl>
-      <p>共同准则用于后续实现与评审，已收口的 Button、Tabs 和 Segmented Control 不因此重新展开设计。Text Fields 的借鉴方向已明确，具体样式与空间比例仍需在中文场景中验证。</p>
+      <p>共同准则用于后续实现与评审，已收口的 Button、Tabs 和 Segmented Control 不因此重新展开设计。Text Fields 的借鉴方向已明确，具体样式与空间比例在<Link href="/review/text-fields">课堂观察记录候选</Link>中验证，尚未定型。</p>
     </section>
 
     <section className="language-record-section" aria-labelledby="language-motion-ai-title">

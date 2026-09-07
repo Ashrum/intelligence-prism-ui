@@ -28,6 +28,8 @@
     "app/review/card/page.tsx",
     "app/review/reading-review/page.tsx",
     "app/review/reading-review/reading-review.tsx",
+    "app/review/text-fields/page.tsx",
+    "app/review/text-fields/text-fields-review.tsx",
     "app/review/typography/page.tsx",
     "app/review/typography/typography-review.tsx",
     "components/prism/catalog.ts",
