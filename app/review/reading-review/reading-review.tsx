@@ -20,7 +20,7 @@ function Formula({ label, children, block = false }: { label: string; children: 
   return h("math", { xmlns: "http://www.w3.org/1998/Math/MathML", display: block ? "block" : "inline", "aria-label": label }, children)
 }
 const quadratic = <Formula label="f(x) 等于 x 平方减 2x 加 3">{m("mrow", fx(), op("="), square(v("x")), op("−"), n("2"), v("x"), op("+"), n("3"))}</Formula>
-const rational = <Formula label="g(x) 等于（x 减 1）的平方根除以（x 减 2）">{m("mrow", v("g"), op("("), v("x"), op(")"), op("="), m("mfrac", m("msqrt", v("x"), op("−"), n("1")), m("mrow", v("x"), op("−"), n("2"))))}</Formula>
+const rational = <Formula label="g(x) 等于（x 减 1）的平方根除以（x 减 2）">{m("mrow", m("mrow", v("g"), op("("), v("x"), op(")")), op("="), m("mfrac", m("msqrt", v("x"), op("−"), n("1")), m("mrow", v("x"), op("−"), n("2"))))}</Formula>
 
 const cases = [
   { id: "01", title: "单调区间", description: "结论是否超出了证明范围", topic: "函数的单调性", question: "根据下面的函数与原推导，判断结论的适用范围。", formula: quadratic,
