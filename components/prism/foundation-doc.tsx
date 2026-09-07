@@ -27,13 +27,45 @@ type FoundationDocData = {
   boundary: string
 }
 
+const typographyProduction = [
+  {
+    item: "字符覆盖与加载",
+    accept: "锁定字体版本、来源和许可；覆盖产品界面、导入题目、姓名及动态输入所需字符。Web 字库可按字符分片，unicode-range 与实际字形覆盖一致，首屏按需载入；完整覆盖不等于首次下载整套 CJK。",
+    reject: "固定演示样本冒充产品字库；只覆盖构建时页面文字，新增输入就缺字；声明了范围却没有对应字形。",
+    source: { label: "CSS Fonts：字符范围", href: "https://www.w3.org/TR/css-fonts-4/#unicode-range-desc" },
+  },
+  {
+    item: "真实字重",
+    accept: "把每个角色使用的 CSS 字重映射到实际静态文件，或可变字体的有效 wght 范围；明确禁止合成粗体／斜体，核对实际命中的字体和字重。Noto Sans 与 Serif 的静态字重档位分别确认。",
+    reject: "只有 400 文件却宣称已交付 500／600；把静态字体声明成连续可变范围；仅看到 computed font-weight 就认定字重真实。",
+    source: { label: "Noto CJK：字体资源", href: "https://github.com/notofonts/noto-cjk" },
+  },
+  {
+    item: "回退与载入失败",
+    accept: "分别明确 UI、长文、公式内中文与数学符号的回退；注明何时允许系统字体，并用目标系统实测。冷缓存、字体失败和未覆盖字符时，文字仍可读、可输入、可复制，载入后不遮挡当前内容或操作。",
+    reject: "未说明的系统字体替代；长期空白、方框缺字或符号丢失；把数学符号无条件交给普通正文后备字体。",
+    source: { label: "CSS Fonts：匹配与回退", href: "https://www.w3.org/TR/css-fonts-4/#font-matching-algorithm" },
+  },
+  {
+    item: "数学渲染路径",
+    accept: "把输入格式、渲染器版本、输出模式和数学字体作为一组确定，并明确不支持表达式的处理。原生 MathML + STIX 是当前候选；若采用 MathJax，应使用相应 STIX2 字体支持并重新核对。保留语义与复制路径。",
+    reject: "把 STIX 字体等同于渲染器；给 KaTeX 或 MathJax 的输出只改 font-family 就宣称等价；静默省略无法渲染的公式或符号。",
+    source: { label: "MathJax：输出字体支持", href: "https://docs.mathjax.org/en/latest/output/fonts.html" },
+  },
+  {
+    item: "跨系统结果",
+    accept: "先在 Windows Edge、macOS Safari 与桌面 Firefox 复核；移动端交付再覆盖 Android Chrome、iOS Safari，并记录实际版本。用同一组中文、公式与输入内容检查字体命中、行高、断行、200% 缩放、复制和辅助技术的读序。允许不影响阅读的抗锯齿差异。",
+    reject: "只凭单端截图或构建通过宣称一致；出现缺字、公式裁切、上下标关系错误、正文与公式重叠，或键盘编辑时焦点与文本丢失。",
+  },
+]
+
 const docs: Record<FoundationSlug, FoundationDocData> = {
   "tokens-theming": {
     title: "设计令牌与主题",
     description: "用语义 Token 连接品牌源色与真实界面，组件不直接消费品牌色值。",
     principles: ["源色只定义身份，不直接决定文字或交互颜色。", "Button 以曜蓝表示主操作、智绯表示 AI 操作，中性表面承接次操作，危险色只用于破坏性动作。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
     references: [
-      { label: "Source / Knowledge", value: "#4EB1D9", use: "品牌源色；映射到可访问的曜蓝操作色。" },
+      { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
       { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
@@ -59,12 +91,14 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   typography: {
     title: "字体与排版",
     description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
-    principles: ["正文采用 14–16px，必要辅助说明使用 12px；仅非关键目录标注可降至 11px。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
+    principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
     references: [
-      { label: "Font Stack", value: "Inter / Noto Sans SC / 系统字体", use: "覆盖英文、中文与跨平台回退。" },
+      { label: "UI / --font-ui", value: "Noto Sans CJK SC 2.004 / wght 100–900", use: "全站界面默认 400；已有 500、600、650、675、700、750 使用真实可变字重。中文、英文与数字由同一主字体承接。" },
+      { label: "Reading / --font-reading", value: "Noto Serif CJK SC 2.003 / 400", use: "较长阅读与对应编辑区；仅提供 400，不合成粗体或斜体。普通说明、表单和导航继续使用 Sans。" },
+      { label: "Math / --font-math", value: "STIX Two Math 2.13 b171 / 400", use: "原生 MathML 的数学符号与度量；公式内中文使用阅读字体。该变量提供字体，不代替渲染器。" },
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
-      { label: "Body", value: "14–16px / 400", use: "说明、表单和长内容。" },
+      { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
       { label: "Tabs / Segmented", value: "14px / 500", use: "选中与未选中保持相同字重；数量使用 12px。" },
       { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
     ],
@@ -176,15 +210,16 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className="state-label state-label--completed"><span className="state-dot" aria-hidden="true" />基线已建立</span>
+          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</span>
         </div>
         <p>{doc.description}</p>
+        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>记录。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
         <div className="doc-section-heading">
           <h2 id="foundation-preview-title">Reference</h2>
-          <p>当前实现中使用的视觉与交互基线。</p>
+          <p>{slug === "typography" ? "当前全站样式参考，不代表新字体已完成生产验收。" : "当前实现中使用的视觉与交互基线。"}</p>
         </div>
         <FoundationPreview slug={slug} />
       </section>
@@ -211,6 +246,37 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         </div>
       </section>
 
+      {slug === "typography" && <section id="typography-production" className="doc-section" aria-labelledby="typography-production-title">
+        <div className="doc-section-heading">
+          <h2 id="typography-production-title">字体与数学的生产交付条件</h2>
+          <p>以下是设计与工程的共同接受标准，实现进度与跨系统结果按下表分别记录。</p>
+        </div>
+        <p>全站基础层现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面沿用真实可变字重；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。两套字体各保留源字体的 25 个 Unicode 变体序列。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
+        <p>完整字体声明由根布局统一载入，界面、阅读、数学使用共用字体变量；常用分片覆盖现有页面与组件文案，其他字符继续按需加载。阅读复核中的公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体，加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。</p>
+        <div className="foundation-table-wrap" role="region" aria-label="字体生产验收进度" tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">验收范围</th><th scope="col">当前结果 · 2026-09-07</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">字体文件</th><td>24 个分片的实际字符表、变体序列、哈希及字重通过独立校验。变体字形与源字体一致；Sans 400／500 为真实可变字重。STIX 保留 MATH 表。</td></tr>
+              <tr><th scope="row">云端 Chrome</th><td>版本 25 的桌面基础排版、长证据公式、编辑与文本复制通过。真实中文字体失败时可回退、编辑、复制；STIX 失败时保留公式文字表达。本次基础层回填的云端浏览器未能访问预览，新增视觉检查待完成。</td></tr>
+              <tr><th scope="row">Windows Edge／macOS Safari／桌面 Firefox</th><td>由用户手动测试，待反馈实际版本与结果；继续推进字体基础层回填，不预记为通过。</td></tr>
+              <tr><th scope="row">Android Chrome／iOS Safari</th><td>由用户手动测试，待移动端结果；未用桌面画面代替真机结果。</td></tr>
+              <tr><th scope="row">仍待完成</th><td>实际字体命中、目标系统版本记录、窄视口、200% 原生缩放、冷缓存与慢网测量、公式复制语义及辅助技术读序。跨系统生产验收尚未完成。</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="foundation-table-wrap" role="region" aria-label="字体生产方案的接受与拒绝条件" tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>
+            <tbody>{typographyProduction.map((rule) => <tr key={rule.item}>
+              <th scope="row">{rule.item}</th><td>{rule.accept}{rule.source && <> <a href={rule.source.href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">{rule.source.label}</a></>}</td><td>{rule.reject}</td>
+            </tr>)}</tbody>
+          </table>
+        </div>
+        <p>最小内容样本复用现有候选并补入：生僻姓名、简体中文标点与中英数字混排；行内／独立公式、嵌套分式、根式、上下标、积分、求和、伸缩括号、矩阵和公式内中文。读、改、保存与复制使用同一份内容；公式加载失败须明确提示并保留可恢复的源内容。</p>
+        <p>STIX Two Math 提供数学字形和排版度量；原生 MathML 的布局仍由浏览器实现，两者要一起验证。参考 <a href="https://www.w3.org/TR/mathml-core/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">MathML Core</a>。本页的平台范围与接受条件是智能曜彩的交付要求，不宣称 W3C 指定了字体名单或已经完成标准符合性认证。</p>
+      </section>}
+
       <aside className="foundation-boundary" aria-label="当前边界"><CircleHelp aria-hidden="true" /><div><strong>当前边界</strong><p>{doc.boundary}</p></div></aside>
     </article>
   )
@@ -218,7 +284,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
 
 function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   if (slug === "tokens-theming") {
-    return <div className="foundation-preview color-foundation"><div className="color-chip color-chip--knowledge"><span /><strong>曜蓝</strong><small>#4EB1D9</small></div><div className="color-chip color-chip--ai"><span /><strong>智绯</strong><small>#E0438F</small></div><div className="color-chip color-chip--growth"><span /><strong>生长荧</strong><small>#C2F25B</small></div><ArrowRight aria-hidden="true" /><div className="semantic-color-stack"><span>Action</span><span>AI</span><span>Status</span></div></div>
+    return <div className="foundation-preview color-foundation"><div className="color-chip color-chip--knowledge"><span /><strong>曜蓝</strong><small>#339FF2</small></div><div className="color-chip color-chip--ai"><span /><strong>智绯</strong><small>#E0438F</small></div><div className="color-chip color-chip--growth"><span /><strong>生长荧</strong><small>#C2F25B</small></div><ArrowRight aria-hidden="true" /><div className="semantic-color-stack"><span>Action</span><span>AI</span><span>Status</span></div></div>
   }
 
   if (slug === "color") {
@@ -226,7 +292,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "typography") {
-    return <div className="foundation-preview type-specimen"><span>Display · 教育智能从清晰开始</span><strong>Page title · 智能曜彩组件系统</strong><p>Body · 设计系统让产品、设计与工程使用同一种界面语言。</p><small>Label · EDUCATION EVIDENCE / 教育证据</small></div>
+    return <div className="foundation-preview type-specimen"><span>Display · 教育智能从清晰开始</span><strong>Page title · 智能曜彩组件系统</strong><p>界面正文 · 设计系统让产品、设计与工程使用同一种界面语言。</p><p className="type-reading-sample">阅读正文 · 从原文证据回到当前结论，保留成立条件，让每一次判断都有可追溯的依据。</p><small>Label · EDUCATION EVIDENCE / 教育证据</small></div>
   }
 
   if (slug === "spacing-density") {
