@@ -39,7 +39,7 @@
 .rr-reading { padding: 1rem 2rem; }
 .rr-question { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 2rem; padding-bottom: .625rem; }
 .rr-question > p { max-width: 25em; color: var(--text-secondary); line-height: 1.8; }
-.rr-main-formula { font-size: 1.375rem; padding: .25rem 0; flex: none; }
+.rr-main-formula { font-size: 1.375rem; padding: .25rem 0; flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-x: auto; }
 .rr-page math { font-family: "Prism Review STIX Two Math", math; font-size: 1em; font-weight: 400; line-height: normal; letter-spacing: normal; }
 .rr-page mtext { font-family: var(--rr-reading-font); }
 .rr-math-fallback { font: 400 .875rem/1.8 var(--rr-ui-font); white-space: normal; }
@@ -74,6 +74,10 @@
 .rr-evidence-heading h3 { font-size: .9375rem; }
 .rr-evidence-prose { font: 400 1.0625rem/1.9 var(--rr-reading-font); overflow-wrap: break-word; }
 .rr-evidence-prose > p + p { margin-top: .75rem; }
+.rr-evidence-step + .rr-evidence-step { margin-top: 1.75rem; }
+.rr-evidence-step h4 { margin: 0 0 .625rem; font: 500 .875rem/1.6 var(--rr-ui-font); color: var(--text-primary); }
+.rr-evidence-step p + p { margin-top: .75rem; }
+.rr-evidence-return { margin-top: 1rem; }
 .rr-formula-scroll { max-width: 100%; overflow-x: auto; padding: .75rem 0; }
 .rr-formula-scroll math { width: max-content; margin: 0; }
 .rr-page .rr-evidence-note { font-size: .8125rem; color: var(--text-secondary); padding-top: .75rem; margin-top: .75rem; border-top: 1px solid var(--border-default); }
@@ -94,5 +98,6 @@
 @media (max-width: 44rem) { .rr-page { padding: 1rem 1rem 2rem; } .rr-page-heading { margin-block: 1.25rem; } .rr-context { gap: .625rem; flex-wrap: wrap; } .rr-context > span { font-size: .75rem; } .rr-context a:last-child { margin-left: 0; } .rr-workspace { grid-template-columns: minmax(0,1fr); gap: .75rem; } .rr-queue-heading, .rr-queue-copy > span:nth-child(2), .rr-page .rr-session-note, .rr-current-arrow { display: none; } .rr-queue ol { grid-template-columns: repeat(3,minmax(0,1fr)); } .rr-queue li > button { padding: .75rem .5rem; gap: .375rem; height: 100%; } .rr-queue-copy { gap: .375rem; } .rr-queue-copy > span:first-child { font-size: .8125rem; } .rr-queue-state { font-size: .75rem; gap: .25rem; } .rr-queue-number { font-size: .75rem; } .rr-page .rr-bottom-note { margin-left: 0; } .rr-object-heading { gap: .5rem; } .rr-object-meta { gap: .375rem; } .rr-conclusion-heading { gap: .375rem .75rem; } .rr-source { align-items: start; gap: .5rem; } .rr-source > span:first-child { align-items: start; } .rr-source > span:first-child > svg { flex: none; margin-top: .1875rem; } }
 @media (prefers-reduced-motion: reduce) { .rr-page *, .rr-page *::before, .rr-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media (max-width: 44rem) { .rr-session-mobile { display: block; margin-top: .5rem; } }
+@media (max-width: 44rem) { .rr-queue ol { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 
 .rr-object-heading h2 { scroll-margin-top: 5rem; }
