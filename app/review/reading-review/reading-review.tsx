@@ -21,6 +21,11 @@ function Formula({ label, children, block = false }: { label: string; children: 
 }
 const quadratic = <Formula label="f(x) 等于 x 平方减 2x 加 3">{m("mrow", fx(), op("="), square(v("x")), op("−"), n("2"), v("x"), op("+"), n("3"))}</Formula>
 const rational = <Formula label="g(x) 等于（x 减 1）的平方根除以（x 减 2）">{m("mrow", m("mrow", v("g"), op("("), v("x"), op(")")), op("="), m("mfrac", m("msqrt", v("x"), op("−"), n("1")), m("mrow", v("x"), op("−"), n("2"))))}</Formula>
+const rootA = () => m("msqrt", v("a"))
+const rootXA = () => m("msqrt", v("x"), op("+"), v("a"))
+const rootSum = () => m("mrow", rootXA(), op("+"), rootA())
+const ha = (value: ReactNode = v("x")) => m("mrow", m("msub", v("h"), v("a")), op("("), value, op(")"))
+const parameterFunction = <Formula label="a 大于零，h 下标 a 的 x 值等于（（x 加 a）的平方根减去 a 的平方根）除以 x">{m("mrow", ha(), op("="), m("mfrac", m("mrow", rootXA(), op("−"), rootA()), v("x")))}</Formula>
 
 const cases = [
   { id: "01", title: "单调区间", description: "结论是否超出了证明范围", topic: "函数的单调性", question: "根据下面的函数与原推导，判断结论的适用范围。", formula: quadratic,
@@ -35,15 +40,40 @@ const cases = [
     initial: "定义域为 x ≥ 1。", hint: "一个对象可能同时受到多个约束。核对根式时，别让分母的限制消失。", source: "示例作答 B · 第 1 步", sourceNote: "这里的两个条件需要同时成立。", sourceTitle: "分别检查根式和分母",
     evidence: <><p>根号内的数非负，因此 <Formula label="x 减 1 大于等于零，即 x 大于等于 1">{m("mrow", v("x"), op("−"), n("1"), op("≥"), n("0"), m("mtext", "，即 "), v("x"), op("≥"), n("1"))}</Formula>。</p><p>分母不能为零，因此 <Formula label="x 减 2 不等于零，即 x 不等于 2">{m("mrow", v("x"), op("−"), n("2"), op("≠"), n("0"), m("mtext", "，即 "), v("x"), op("≠"), n("2"))}</Formula>。</p><p>端点 x = 1 可以取到；x = 2 必须排除。</p></>,
   },
+  { id: "04", title: "参数与值域", description: "化简之后，原式约束是否还在", topic: "有理化、单调性与值域", question: "参数 a > 0。沿原推导核对定义域和端点，判断化简是否改变了原函数。", formula: parameterFunction, longEvidence: true,
+    initial: "当 a > 0 时，函数在 [−a, +∞) 上严格递减，值域为 (0, 1/√a]。有理化后 x = 0 可以取到，对应函数值为 1/(2√a)，因此结论适用于整个区间。",
+    hint: "化简后的表达式与原函数是否拥有同一个定义域？核对端点、极限与实际取值。", source: "示例作答 C · 第 1–5 步", sourceTitle: "从原式约束追到值域", sourceNote: "以上为合成推导，供复核练习。原式的约束必须随等价变形保留；人为补上的点属于另一个函数。",
+    evidence: <>
+      <section className="rr-evidence-step"><h4>01 · 先保留原式约束</h4><p>参数 a 为正数。根号内要求 x + a ≥ 0，原分母还要求 x ≠ 0；两项限制需要同时满足。左端点 x = −a 可以代入，因为此时分母为 −a，并不等于零。</p>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="原式定义域，可横向滚动"><Formula block label="定义域 D 等于负 a 到零的左闭右开区间，与零到正无穷的开区间的并集">{m("mrow", v("D"), op("="), m("mrow", op("["), op("−"), v("a"), op(","), n("0"), op(")")), op("∪"), m("mrow", op("("), n("0"), op(","), op("+"), op("∞"), op(")")))}</Formula></div>
+      </section>
+      <section className="rr-evidence-step"><h4>02 · 有理化不补回缺失点</h4><p>分子、分母同乘两根式之和。由于 a 为正数，这个和始终为正；约去 x 则必须沿用 x ≠ 0 的限制。等式只在原定义域内成立。</p>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="有理化推导，可横向滚动"><Formula block label="对原定义域中的 x，h 下标 a 的 x 值等于 x 除以 x 与（（x 加 a）的平方根加 a 的平方根）的乘积，等于一除以（（x 加 a）的平方根加 a 的平方根）">{m("mrow", ha(), op("="), m("mfrac", v("x"), m("mrow", v("x"), m("mrow", op("("), rootSum(), op(")")))), op("="), m("mfrac", n("1"), rootSum()))}</Formula></div>
+        <p>化简式在 x = 0 处有意义，只说明它可以给原函数作连续延拓，不能据此修改原函数的定义域。</p>
+      </section>
+      <section className="rr-evidence-step"><h4>03 · 单调性需要覆盖两侧</h4><p>在 x 大于 −a 且 x ≠ 0 时求导，分母中每个因子均为正，因此导数为负。它分别说明两个开区间内的递减关系。</p>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="带根式分母的导数，可横向滚动"><Formula block label="h 下标 a 的导数等于负一除以以下三项的乘积：二、（x 加 a）的平方根、以及〔（x 加 a）的平方根与 a 的平方根之和〕的平方；结果小于零">{m("mrow", m("mrow", m("msubsup", v("h"), v("a"), op("′")), op("("), v("x"), op(")")), op("="), op("−"), m("mfrac", n("1"), m("mrow", n("2"), rootXA(), square(m("mrow", op("("), rootSum(), op(")"))))), op("<"), n("0"))}</Formula></div>
+        <p>若要比较跨过 x = 0 的两个自变量，不能仅凭分段导数下结论。这里还可以直接观察化简式：在原定义域内，x 越大，正分母越大，倒数越小；包含左端点或跨过缺失点的比较也成立。</p>
+      </section>
+      <section className="rr-evidence-step"><h4>04 · 区分取到的端点与极限</h4><p>左端点处的函数值可以取到；当 x 趋向正无穷时，函数值趋向零，但不会等于零。x 从两侧趋近零时，函数值趋向同一个数，不过原式在零处没有定义。</p>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="左端点取值，可横向滚动"><Formula block label="h 下标 a 在负 a 处的值等于一除以 a 的平方根">{m("mrow", ha(m("mrow", op("−"), v("a"))), op("="), m("mfrac", n("1"), rootA()))}</Formula></div>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="缺失点处的极限，可横向滚动"><Formula block label="当 x 趋向零时，h 下标 a 的 x 值的极限等于一除以二倍 a 的平方根">{m("mrow", m("munder", m("mo", "lim"), m("mrow", v("x"), op("→"), n("0"))), ha(), op("="), m("mfrac", n("1"), m("mrow", n("2"), rootA())))}</Formula></div>
+        <p>反过来解“函数值等于 1/(2√a)”的方程，只会得到 x = 0。因此，没有另一个合法自变量能补上这个缺失的函数值。</p>
+      </section>
+      <section className="rr-evidence-step"><h4>05 · 将限制带回最终结论</h4><p>原函数的定义域为 [−a, 0) ∪ (0, +∞)，在该定义域内严格递减。两个区间分别连续，值域合起来需要保留最大值、排除零，并排除缺失点所对应的值。</p>
+        <div className="rr-formula-scroll" tabIndex={0} role="group" aria-label="排除缺失值后的值域，可横向滚动"><Formula block label="值域为零到一除以 a 的平方根的左开右闭区间，去掉一除以二倍 a 的平方根这个值">{m("mrow", m("mrow", op("("), n("0"), op(","), m("mfrac", n("1"), rootA()), op("]")), op("∖"), m("mrow", op("{"), m("mfrac", n("1"), m("mrow", n("2"), rootA())), op("}")))}</Formula></div>
+        <p>修正结论时应保留 a 为正数、原定义域和被排除的函数值。如果另行定义 x = 0 处的值，需明确那是延拓后的新函数。</p>
+      </section>
+    </>,
+  },
 ]
 
-type Entry = { value: string; draft: string; reviewed: boolean; editing: boolean; error: boolean; notice: string; previous: { value: string; reviewed: boolean } | null }
-const initialEntries = (): Entry[] => cases.map(item => ({ value: item.initial, draft: item.initial, reviewed: false, editing: false, error: false, notice: "", previous: null }))
+type Entry = { value: string; draft: string; reviewed: boolean; editing: boolean; evidenceOpen: boolean; error: boolean; notice: string; previous: { value: string; reviewed: boolean } | null }
+const initialEntries = (): Entry[] => cases.map(item => ({ value: item.initial, draft: item.initial, reviewed: false, editing: false, evidenceOpen: false, error: false, notice: "", previous: null }))
 
 export function ReadingReview() {
   const [entries, setEntries] = useState(initialEntries)
   const [index, setIndex] = useState(0)
-  const [evidenceOpen, setEvidenceOpen] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [mathAvailable, setMathAvailable] = useState(true)
   const [fontFallback, setFontFallback] = useState(false)
@@ -56,6 +86,7 @@ export function ReadingReview() {
   const focusNext = useRef<"title" | "editor" | "edit" | "source" | "evidence" | null>(null)
   const entry = entries[index]
   const item = cases[index]
+  const evidenceOpen = entry.evidenceOpen
   const completed = entries.filter(item => item.reviewed).length
   const changed = entry.value !== item.initial
   const patch = (update: Partial<Entry>) => setEntries(current => current.map((item, i) => i === index ? { ...item, ...update } : item))
@@ -122,14 +153,19 @@ export function ReadingReview() {
   }
   function toggleEvidence() {
     focusNext.current = evidenceOpen ? "source" : "evidence"
-    setEvidenceOpen(!evidenceOpen)
+    patch({ evidenceOpen: !evidenceOpen })
+  }
+  function returnToConclusion() {
+    const target = entry.editing ? editorRef.current : editRef.current
+    target?.scrollIntoView({ block: "center", behavior: "instant" })
+    target?.focus({ preventScroll: true })
   }
 
   return <MathFontContext.Provider value={mathAvailable}><main id="main-content" tabIndex={-1} className="rr-page">
     <div className="rr-context"><Link href="/benchmark"><ArrowLeft size={14} aria-hidden="true" />Benchmark</Link><span>交互语言候选 · 01</span><Link href="/review/typography">字体对照</Link></div>
     <header className="rr-page-heading"><div><p className="rr-eyebrow">阅读 → 证据 → 修正</p><h1>结论复核</h1><p>看清依据，再让结论前进一步。</p></div><div className="rr-progress"><span><strong>{completed}</strong> / {cases.length}</span><span>已复核</span></div></header>
     <div className="rr-workspace">
-      <nav className="rr-queue" aria-label="待复核结论"><div className="rr-queue-heading"><span>本次复核</span><span>3 条</span></div><ol>{cases.map((c, i) => {
+      <nav className="rr-queue" aria-label="待复核结论"><div className="rr-queue-heading"><span>本次复核</span><span>{cases.length} 条</span></div><ol>{cases.map((c, i) => {
         const state = entries[i]
         return <li key={c.id}><button type="button" aria-current={index === i ? "step" : undefined} onClick={() => navigate(i)}><span className="rr-queue-number">{c.id}</span><span className="rr-queue-copy"><span>{c.title}</span><span>{c.description}</span><span className="rr-queue-state" data-done={state.reviewed && !state.editing}>{state.editing ? <Pencil size={13} aria-hidden="true" /> : state.reviewed ? <CheckCircle2 size={13} aria-hidden="true" /> : <Circle size={12} aria-hidden="true" />}{state.editing ? "修正未应用" : state.reviewed ? "已复核" : "待复核"}</span></span>{index === i && <ArrowRight className="rr-current-arrow" size={15} aria-hidden="true" />}</button></li>
       })}</ol><p className="rr-session-note">演示数据 · 本页内保留操作<br />刷新后恢复初稿</p></nav>
@@ -138,7 +174,7 @@ export function ReadingReview() {
         <header className="rr-object-heading"><div><p className="rr-eyebrow">{item.id} / 函数与表达式</p><h2 id="rr-object-title" ref={titleRef} tabIndex={-1}>{item.title}</h2><p className="rr-object-meta">{item.topic}<span aria-hidden="true">·</span>合成样例<span aria-hidden="true">·</span>2026-09-06</p></div><span className="rr-object-status" data-done={entry.reviewed && !entry.editing}>{entry.editing ? <Pencil size={15} aria-hidden="true" /> : entry.reviewed ? <CheckCircle2 size={15} aria-hidden="true" /> : <Circle size={14} aria-hidden="true" />}{entry.editing ? "修正未应用" : entry.reviewed ? "已复核" : "待复核"}</span></header>
 
         <div className="rr-reading">
-          <section className="rr-question" aria-label="原题"><div className="rr-main-formula">{item.formula}</div><p>{item.question}</p></section>
+          <section className="rr-question" aria-label="原题"><div className="rr-main-formula" tabIndex={0} role="group" aria-label="原题公式，可横向滚动">{item.formula}</div><p>{item.question}</p></section>
 
           <section className="rr-conclusion" data-editing={entry.editing} aria-labelledby="rr-conclusion-label">
             <div className="rr-conclusion-heading"><h3 id="rr-conclusion-label">当前结论</h3>{changed && <span className="rr-authorship"><Pencil size={13} aria-hidden="true" />人工修正</span>}<span className="rr-origin"><Sparkles size={13} aria-hidden="true" />{changed ? "源自 AI 初稿" : "AI 初稿"}</span>{changed && !entry.editing && <button type="button" className="rr-history-toggle" aria-expanded={historyOpen} aria-controls="rr-original-conclusion" onClick={() => setHistoryOpen(!historyOpen)}>{historyOpen ? "收起 AI 初稿" : "对照 AI 初稿"}<ChevronDown size={14} aria-hidden="true" /></button>}</div>
@@ -153,7 +189,7 @@ export function ReadingReview() {
 
           <section className="rr-evidence" aria-label="结论依据">
             <button ref={sourceRef} type="button" className="rr-source" aria-expanded={evidenceOpen} aria-controls="rr-evidence-content" onClick={toggleEvidence}><span><FileText size={16} aria-hidden="true" /><span>{item.source}</span></span><span>{evidenceOpen ? "收起证据" : "查看证据"}<ChevronDown size={15} aria-hidden="true" /></span></button>
-            <div id="rr-evidence-content" hidden={!evidenceOpen} className="rr-evidence-content" onKeyDown={e => { if (e.key === "Escape" && !e.nativeEvent.isComposing) { e.preventDefault(); toggleEvidence() } }}><div className="rr-evidence-heading"><div><p>原文证据 · {item.source}</p><h3 ref={evidenceRef} tabIndex={-1}>{item.sourceTitle}</h3></div><Button size="icon-sm" variant="ghost" aria-label="关闭证据，返回来源入口" onClick={toggleEvidence}><X /></Button></div><div className="rr-evidence-prose">{item.evidence}</div><p className="rr-evidence-note">{item.sourceNote}</p></div>
+            <div id="rr-evidence-content" hidden={!evidenceOpen} className="rr-evidence-content" onKeyDown={e => { if (e.key === "Escape" && !e.nativeEvent.isComposing) { e.preventDefault(); toggleEvidence() } }}><div className="rr-evidence-heading"><div><p>原文证据 · {item.source}</p><h3 ref={evidenceRef} tabIndex={-1}>{item.sourceTitle}</h3></div><Button size="icon-sm" variant="ghost" aria-label="关闭证据，返回来源入口" onClick={toggleEvidence}><X /></Button></div><div className="rr-evidence-prose">{item.evidence}</div><p className="rr-evidence-note">{item.sourceNote}</p>{item.longEvidence && <div className="rr-evidence-return"><Button type="button" variant="outline" size="sm" onClick={returnToConclusion}><ArrowLeft />返回当前结论</Button></div>}</div>
           </section>
         </div>
 
