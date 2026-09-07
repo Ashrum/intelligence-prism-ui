@@ -4,7 +4,7 @@ import "./classroom-observation-form.css"
 
 import { useId, useRef, useState } from "react"
 import type { FormEvent, KeyboardEvent } from "react"
-import { Check } from "lucide-react"
+import { Check, PencilLine } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TextField } from "@/components/ui/text-field"
@@ -38,11 +38,12 @@ export function ClassroomObservationForm({ density: externalDensity }: { density
   const composing = useRef(false)
   const titleError = touched.title ? errors.title : undefined
   const lessonError = touched.lesson ? errors.lesson : undefined
+  const baseline = applied ?? initial
+  const hasChanges = draft.title !== baseline.title || draft.lesson !== baseline.lesson || draft.note !== baseline.note
 
   const change = (field: keyof RecordDraft, value: string) => {
     setDraft(current => ({ ...current, [field]: value }))
     if (!composing.current) setErrors(validate({ ...draft, [field]: value }))
-    setApplied(null)
   }
   const blur = (field: keyof Errors) => {
     setTouched(current => ({ ...current, [field]: true }))
@@ -58,7 +59,9 @@ export function ClassroomObservationForm({ density: externalDensity }: { density
       requestAnimationFrame(() => (nextErrors.title ? titleRef : lessonRef).current?.focus())
       return
     }
-    setApplied({ ...draft, title: draft.title.trim(), lesson: String(Number(draft.lesson.trim().normalize("NFKC"))) })
+    const record = { ...draft, title: draft.title.trim(), lesson: String(Number(draft.lesson.trim().normalize("NFKC"))) }
+    setDraft(record)
+    setApplied(record)
   }
   const guardComposition = (event: KeyboardEvent<HTMLFormElement>) => {
     if (event.target instanceof HTMLInputElement && event.key === "Enter" && (composing.current || event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229)) event.preventDefault()
@@ -68,6 +71,13 @@ export function ClassroomObservationForm({ density: externalDensity }: { density
     setTouched({})
     setErrors({})
     setApplied(null)
+    titleRef.current?.focus()
+  }
+  const restore = () => {
+    if (!applied) return
+    setDraft({ ...applied })
+    setTouched({})
+    setErrors({})
     titleRef.current?.focus()
   }
 
@@ -109,14 +119,16 @@ export function ClassroomObservationForm({ density: externalDensity }: { density
       </div>
 
       <div className="tf-actions">
-        <Button type="submit">应用记录</Button>
-        <Button type="button" variant="ghost" onClick={reset}>重置示例</Button>
-        <p className="tf-status" role="status">{applied && <><Check aria-hidden="true" />已应用到本页</>}</p>
+        <Button type="submit">{applied && hasChanges ? "应用修改" : "应用记录"}</Button>
+        <Button type="button" variant="ghost" onClick={applied && hasChanges ? restore : reset}>{applied && hasChanges ? "撤回修改" : "重置示例"}</Button>
+        <p className="tf-status" data-pending={hasChanges || undefined} role="status">
+          {hasChanges ? <><PencilLine aria-hidden="true" />{applied ? "有修改，尚未应用" : "尚未应用"}</> : applied ? <><Check aria-hidden="true" />已应用到本页</> : null}
+        </p>
       </div>
     </form>
 
     {applied && <section className="tf-result" aria-labelledby={`${id}-result-title`}>
-      <p className="tf-result-meta">第 {applied.lesson} 节 · 课堂观察</p>
+      <p className="tf-result-meta">已应用记录 · 第 {applied.lesson} 节 · 课堂观察</p>
       <h3 id={`${id}-result-title`}>{applied.title}</h3>
       {applied.note && <p className="tf-result-note">{applied.note}</p>}
     </section>}
