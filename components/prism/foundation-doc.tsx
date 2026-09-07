@@ -8,7 +8,6 @@ import {
   MousePointerClick,
   Sparkles,
 } from "lucide-react"
-import Link from "next/link"
 
 import { foundationItems } from "@/components/prism/catalog"
 
@@ -209,7 +208,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "分工已定 · 生产待落实" : "基线已建立"}</span>
+          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "候选已接入 · 跨端待验证" : "基线已建立"}</span>
         </div>
         <p>{doc.description}</p>
         {slug === "typography" && <p>字体方向已确认：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。下方保留当前全站实现参数；新字体按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>回填，不将样本字库视为正式交付。</p>}
@@ -250,7 +249,8 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <h2 id="typography-production-title">字体与数学的生产交付条件</h2>
           <p>以下是设计与工程的共同接受标准，尚不表示实现完成。</p>
         </div>
-        <p>当前中文候选使用固定样本子集和 400 字重，公式采用 STIX Two Math 与原生 MathML。应用定型先在既有复核场景落实一条可交付的字体与数学路径，再确定生产字号、字重与密度；相关结果回填本页。</p>
+        <p>复核候选现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面使用可变字体的 400／500；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
+        <p>公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体。加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。尚未完成全站回填与跨系统验收。</p>
         <div className="foundation-table-wrap" role="region" aria-label="字体生产方案的接受与拒绝条件" tabIndex={0}>
           <table className="foundation-table">
             <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>

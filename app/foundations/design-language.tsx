@@ -60,7 +60,8 @@ export function DesignLanguageRecord() {
         <tr><th scope="row">数学公式</th><td>STIX Two Math</td><td>接受完整、可选择的数学表达；拒绝用正文行高裁切分式、根式与上下标。</td></tr>
       </tbody></table></div>
       <p>中文与数学按实际字形、标点和断行习惯组织。接受短式随文、复杂推导独立排版，并按视觉大小与黑度协调；拒绝机械照搬日文断行习惯或把不同字体的相同 CSS 字号当作视觉等大。</p>
-      <p>字体分工已确认，生产交付尚未完成。当前中文候选仅包含固定样本和 400 字重；STIX Two Math 配合原生 MathML 仍是候选实现。生产回填必须明确字符覆盖与分片、真实字重、回退策略、数学渲染路径及跨系统结果，不能把样张通过当作产品完成。</p>
+      <p>复核候选已接入自托管的 Noto 字符分片：Sans 保留可变字重，界面使用真实 400／500；Serif 正文使用 400。覆盖对应源字体的字符集合，样本外输入可以继续加载其他分片，源字体之外使用声明的后备字体。原字体对照页仍保留固定样本，不能与应用字库混为一谈。</p>
+      <p>数学继续使用完整 STIX Two Math 与原生 MathML，字体加载失败时保留文字表达。全站字体尚未回填，跨系统结果仍须按字体规范记录，不能把单端候选通过当作完整生产交付。</p>
       <p>接受覆盖真实业务输入、可核对实际字体与渲染路径的交付；拒绝固定样本子集冒充完整字库、合成粗体冒充已交付字重，或只凭一个浏览器画面声称跨系统一致。具体要求集中在<Link href="/foundations/typography#typography-production">字体与数学的生产交付条件</Link>。</p>
       <div className="language-inline-links"><Link href="/review/typography">字体与数学对照 →</Link><Link href="/foundations/typography">当前字体规范与实现 →</Link></div>
     </section>

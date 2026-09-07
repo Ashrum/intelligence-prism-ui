@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { ReadingReview } from "./reading-review"
+import "./fonts.css"
 import "./reading-review.css"
 
 export const metadata: Metadata = {

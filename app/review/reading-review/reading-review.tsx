@@ -1,6 +1,6 @@
 "use client"
 
-import { createElement as h, useEffect, useRef, useState, type ReactNode } from "react"
+import { createContext, createElement as h, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, Circle, CircleAlert, FileText, Pencil, RotateCcw, Sparkles, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,11 +13,14 @@ const op = (text: string) => m("mo", text)
 const square = (value: ReactNode) => m("msup", value, n("2"))
 const sub = (index: string) => m("msub", v("x"), n(index))
 const fx = (value: ReactNode = v("x")) => m("mrow", v("f"), op("("), value, op(")"))
+const MathFontContext = createContext(true)
 function Formula({ label, children, block = false }: { label: string; children: ReactNode; block?: boolean }) {
+  const available = useContext(MathFontContext)
+  if (!available) return <span className="rr-math-fallback" data-block={block}>公式文字表达：{label}。</span>
   return h("math", { xmlns: "http://www.w3.org/1998/Math/MathML", display: block ? "block" : "inline", "aria-label": label }, children)
 }
 const quadratic = <Formula label="f(x) 等于 x 平方减 2x 加 3">{m("mrow", fx(), op("="), square(v("x")), op("−"), n("2"), v("x"), op("+"), n("3"))}</Formula>
-const rational = <Formula label="g(x) 等于根号下 x 减 1 除以 x 减 2">{m("mrow", v("g"), op("("), v("x"), op(")"), op("="), m("mfrac", m("msqrt", v("x"), op("−"), n("1")), m("mrow", v("x"), op("−"), n("2"))))}</Formula>
+const rational = <Formula label="g(x) 等于（x 减 1）的平方根除以（x 减 2）">{m("mrow", v("g"), op("("), v("x"), op(")"), op("="), m("mfrac", m("msqrt", v("x"), op("−"), n("1")), m("mrow", v("x"), op("−"), n("2"))))}</Formula>
 
 const cases = [
   { id: "01", title: "单调区间", description: "结论是否超出了证明范围", topic: "函数的单调性", question: "根据下面的函数与原推导，判断结论的适用范围。", formula: quadratic,
@@ -30,7 +33,7 @@ const cases = [
   },
   { id: "03", title: "定义域", description: "多个约束是否被同时保留", topic: "根式与分式的约束", question: "核对这个表达式有意义时，自变量需要满足哪些条件。", formula: rational,
     initial: "定义域为 x ≥ 1。", hint: "一个对象可能同时受到多个约束。核对根式时，别让分母的限制消失。", source: "示例作答 B · 第 1 步", sourceNote: "这里的两个条件需要同时成立。", sourceTitle: "分别检查根式和分母",
-    evidence: <><p>根号内的数非负，因此 <Formula label="x 减 1 大于等于零，即 x 大于等于 1">{m("mrow", v("x"), op("−"), n("1"), op("≥"), n("0"), op("，"), v("x"), op("≥"), n("1"))}</Formula>。</p><p>分母不能为零，因此 <Formula label="x 减 2 不等于零，即 x 不等于 2">{m("mrow", v("x"), op("−"), n("2"), op("≠"), n("0"), op("，"), v("x"), op("≠"), n("2"))}</Formula>。</p><p>端点 x = 1 可以取到；x = 2 必须排除。</p></>,
+    evidence: <><p>根号内的数非负，因此 <Formula label="x 减 1 大于等于零，即 x 大于等于 1">{m("mrow", v("x"), op("−"), n("1"), op("≥"), n("0"), m("mtext", "，即 "), v("x"), op("≥"), n("1"))}</Formula>。</p><p>分母不能为零，因此 <Formula label="x 减 2 不等于零，即 x 不等于 2">{m("mrow", v("x"), op("−"), n("2"), op("≠"), n("0"), m("mtext", "，即 "), v("x"), op("≠"), n("2"))}</Formula>。</p><p>端点 x = 1 可以取到；x = 2 必须排除。</p></>,
   },
 ]
 
@@ -42,6 +45,9 @@ export function ReadingReview() {
   const [index, setIndex] = useState(0)
   const [evidenceOpen, setEvidenceOpen] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [mathAvailable, setMathAvailable] = useState(true)
+  const [fontFallback, setFontFallback] = useState(false)
+  const [fontRevision, setFontRevision] = useState(0)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const editRef = useRef<HTMLButtonElement>(null)
@@ -53,6 +59,26 @@ export function ReadingReview() {
   const completed = entries.filter(item => item.reviewed).length
   const changed = entry.value !== item.initial
   const patch = (update: Partial<Entry>) => setEntries(current => current.map((item, i) => i === index ? { ...item, ...update } : item))
+
+  useEffect(() => {
+    let active = true
+    const failed = () => { if (active) setFontFallback(true) }
+    const loaded = () => { if (active) setFontRevision(current => current + 1) }
+    document.fonts.addEventListener("loadingerror", failed)
+    document.fonts.addEventListener("loadingdone", loaded)
+    document.fonts.load('400 22px "Prism Review STIX Two Math"', "x∫√∑").then(faces => {
+      if (active && !faces.length) setMathAvailable(false)
+    }).catch(() => { if (active) setMathAvailable(false) })
+    document.fonts.ready.then(loaded)
+    return () => { active = false; document.fonts.removeEventListener("loadingerror", failed); document.fonts.removeEventListener("loadingdone", loaded) }
+  }, [])
+
+  useLayoutEffect(() => {
+    const editor = editorRef.current
+    if (!editor || !entry.editing) return
+    editor.style.height = "auto"
+    editor.style.height = `${editor.scrollHeight + editor.offsetHeight - editor.clientHeight}px`
+  }, [entry.editing, entry.draft, index, fontRevision])
 
   useEffect(() => {
     const refs = { title: titleRef, editor: editorRef, edit: editRef, source: sourceRef, evidence: evidenceRef }
@@ -99,7 +125,7 @@ export function ReadingReview() {
     setEvidenceOpen(!evidenceOpen)
   }
 
-  return <main id="main-content" tabIndex={-1} className="rr-page">
+  return <MathFontContext.Provider value={mathAvailable}><main id="main-content" tabIndex={-1} className="rr-page">
     <div className="rr-context"><Link href="/benchmark"><ArrowLeft size={14} aria-hidden="true" />Benchmark</Link><span>交互语言候选 · 01</span><Link href="/review/typography">字体对照</Link></div>
     <header className="rr-page-heading"><div><p className="rr-eyebrow">阅读 → 证据 → 修正</p><h1>结论复核</h1><p>看清依据，再让结论前进一步。</p></div><div className="rr-progress"><span><strong>{completed}</strong> / {cases.length}</span><span>已复核</span></div></header>
     <div className="rr-workspace">
@@ -133,6 +159,6 @@ export function ReadingReview() {
 
       </article>
     </div>
-    <p className="rr-bottom-note">候选观察：阅读保持秩序，操作就近展开，变化留下可追溯的关系。<span className="rr-session-mobile">演示数据 · 本页内保留操作，刷新后恢复初稿。</span></p>
-  </main>
+    <p className="rr-bottom-note" role={fontFallback || !mathAvailable ? "status" : undefined}>{!mathAvailable ? "公式字体未能载入，暂显示文字表达；结论仍可修正，刷新后可重试。" : fontFallback ? "部分文字暂使用备用字体，内容仍可阅读、修正与复制。" : "候选观察：阅读保持秩序，操作就近展开，变化留下可追溯的关系。"}<span className="rr-session-mobile">演示数据 · 本页内保留操作，刷新后恢复初稿。</span></p>
+  </main></MathFontContext.Provider>
 }
