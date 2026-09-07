@@ -249,8 +249,20 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <h2 id="typography-production-title">字体与数学的生产交付条件</h2>
           <p>以下是设计与工程的共同接受标准，尚不表示实现完成。</p>
         </div>
-        <p>复核候选现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面使用可变字体的 400／500；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
+        <p>复核候选现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面使用可变字体的 400／500；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。两套字体各保留源字体的 25 个 Unicode 变体序列。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
         <p>公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体。加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。尚未完成全站回填与跨系统验收。</p>
+        <div className="foundation-table-wrap" role="region" aria-label="字体生产验收进度" tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">验收范围</th><th scope="col">当前结果 · 2026-09-07</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">字体文件</th><td>24 个分片的实际字符表、变体序列、哈希及字重通过独立校验。变体字形与源字体一致；Sans 400／500 为真实可变字重。STIX 保留 MATH 表。</td></tr>
+              <tr><th scope="row">云端 Chrome</th><td>同源码预览的桌面基础排版、长证据公式、编辑与文本复制通过。真实中文字体失败时可回退、编辑、复制；STIX 失败时保留公式文字表达。只覆盖本次实际操作的样本与宽度。</td></tr>
+              <tr><th scope="row">Windows Edge／macOS Safari／桌面 Firefox</th><td>待目标环境实测。当前没有可调用的对应浏览器，未计为通过。</td></tr>
+              <tr><th scope="row">Android Chrome／iOS Safari</th><td>待移动端实测，未用桌面画面代替真机结果。</td></tr>
+              <tr><th scope="row">仍待完成</th><td>实际字体命中、目标系统版本记录、窄视口、200% 原生缩放、冷缓存与慢网测量、公式复制语义及辅助技术读序。跨系统生产验收尚未完成。</td></tr>
+            </tbody>
+          </table>
+        </div>
         <div className="foundation-table-wrap" role="region" aria-label="字体生产方案的接受与拒绝条件" tabIndex={0}>
           <table className="foundation-table">
             <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>
