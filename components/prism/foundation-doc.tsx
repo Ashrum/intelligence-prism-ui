@@ -8,6 +8,7 @@ import {
   MousePointerClick,
   Sparkles,
 } from "lucide-react"
+import Link from "next/link"
 
 import { foundationItems } from "@/components/prism/catalog"
 
@@ -59,12 +60,12 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   typography: {
     title: "字体与排版",
     description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
-    principles: ["正文采用 14–16px，必要辅助说明使用 12px；仅非关键目录标注可降至 11px。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
+    principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
     references: [
-      { label: "Font Stack", value: "Inter / Noto Sans SC / 系统字体", use: "覆盖英文、中文与跨平台回退。" },
+      { label: "Current Font Stack", value: "Inter / Noto Sans SC / 系统字体", use: "现有全站实现；已确认的新字体分工见设计语言记录，正式字库与全站样式尚待回填。" },
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
-      { label: "Body", value: "14–16px / 400", use: "说明、表单和长内容。" },
+      { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
       { label: "Tabs / Segmented", value: "14px / 500", use: "选中与未选中保持相同字重；数量使用 12px。" },
       { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
     ],
@@ -179,6 +180,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <span className="state-label state-label--completed"><span className="state-dot" aria-hidden="true" />基线已建立</span>
         </div>
         <p>{doc.description}</p>
+        {slug === "typography" && <p>字体方向已确认：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。下方保留当前实现参数；<Link href="/foundations#language-typography" className="text-primary underline underline-offset-4">查看字体分工与验证边界</Link>。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
