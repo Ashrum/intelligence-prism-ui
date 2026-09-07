@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import type { ChangeEvent, FormEvent, ReactNode } from "react"
+import type { ReactNode } from "react"
 import {
-  AlertCircle,
   ArrowRight,
   Check,
   FileCheck2,
@@ -22,8 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import {
   Tabs,
@@ -63,8 +61,6 @@ export default function Home() {
   const [density, setDensity] = useState<Density>("comfortable")
   const [pageTab, setPageTab] = useState("overview")
   const [perspective, setPerspective] = useState("student")
-  const [evidenceTitle, setEvidenceTitle] = useState("")
-  const [showError, setShowError] = useState(true)
   const [isRunning, setIsRunning] = useState(false)
   const [workflowState, setWorkflowState] =
     useState<WorkflowState>("pending")
@@ -79,17 +75,6 @@ export default function Home() {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
-
-  const handleEvidenceTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const nextValue = event.currentTarget.value
-    setEvidenceTitle(nextValue)
-    if (nextValue.trim()) setShowError(false)
-  }
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setShowError(!evidenceTitle.trim())
-  }
 
   const handleRun = () => {
     if (isRunning) return
@@ -114,13 +99,13 @@ export default function Home() {
           <h1>智能曜彩｜基础组件基准</h1>
           <p>在同一教育产品页面中检验语义、密度、中文长内容与关键交互状态。</p>
           <p><Link href="/review/reading-review" className="text-primary underline underline-offset-4">交互语言候选：结论复核 →</Link></p>
-          <p><Link href="/review/text-fields" className="text-primary underline underline-offset-4">Text Fields 候选：课堂观察记录 →</Link></p>
         </div>
 
         <div className="density-control">
           <span className="control-caption" id="density-label">界面密度</span>
           <SegmentedControl
             label="界面密度"
+            className="tf-density"
             value={density}
             onValueChange={(value) => setDensity(value as Density)}
             items={[
@@ -279,39 +264,10 @@ export default function Home() {
           <SectionHeading
             id="form-title"
             title="Input / Field"
-            description="标签、说明、错误与输入状态保持清楚关联。"
+            description="浮动标签、前后缀、错误与输入状态保持清楚关联。"
             aside={<MetaBadge>表单基线</MetaBadge>}
           />
-          <form className="form-layout" onSubmit={handleSubmit} noValidate>
-            <div className="form-primary">
-              <Field
-                id="evidence-title"
-                label="证据记录标题"
-                description="标题将展示给任课教师，建议包含年级、学科和证据来源。"
-                error={showError ? "请输入证据记录标题，不能只填写空格或使用无法识别的简称。" : undefined}
-              >
-                <Input
-                  id="evidence-title"
-                  value={evidenceTitle}
-                  onChange={handleEvidenceTitleChange}
-                  placeholder="例如：九年级数学函数单元课堂观察"
-                  aria-invalid={showError}
-                  aria-describedby={showError ? "evidence-title-description evidence-title-error" : "evidence-title-description"}
-                  className="prism-input"
-                />
-              </Field>
-              <Button type="submit" size={buttonSize}>校验并保存</Button>
-            </div>
-
-            <div className="form-state-fields">
-              <Field id="evidence-source" label="证据来源" description="只读信息仍可聚焦与复制。">
-                <Input id="evidence-source" value="课堂观察记录" readOnly aria-describedby="evidence-source-description" className="prism-input prism-input--readonly" />
-              </Field>
-              <Field id="review-id" label="区域审核编号" description="当前阶段不可编辑。" disabled>
-                <Input id="review-id" value="提交后自动生成" disabled aria-describedby="review-id-description" className="prism-input" />
-              </Field>
-            </div>
-          </form>
+          <ClassroomObservationForm density={density} />
         </section>
 
         <section className="benchmark-section" aria-labelledby="labels-title">
@@ -373,17 +329,6 @@ function SectionHeading({ id, title, description, aside }: { id: string; title: 
     <div className="section-heading">
       <div><h2 id={id}>{title}</h2><p>{description}</p></div>
       {aside}
-    </div>
-  )
-}
-
-function Field({ id, label, description, error, disabled, children }: { id: string; label: string; description: string; error?: string; disabled?: boolean; children: ReactNode }) {
-  return (
-    <div className="prism-field" data-disabled={disabled || undefined} data-invalid={Boolean(error) || undefined}>
-      <Label htmlFor={id} className="field-label">{label}</Label>
-      {children}
-      <p id={`${id}-description`} className="field-description">{description}</p>
-      {error && <p id={`${id}-error`} className="field-error"><AlertCircle aria-hidden="true" />{error}</p>}
     </div>
   )
 }

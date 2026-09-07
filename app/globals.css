@@ -289,7 +289,6 @@ body {
 .button-demo-group { display: grid; gap: .75rem; }
 .button-demo-note { max-width: 56rem; margin: 0; color: var(--text-secondary); font-size: .8125rem; line-height: 1.65; }
 .button-inline-form { display: inline-flex; }
-.component-form-demo { max-width: 42rem; }
 .docs-labels-layout { grid-template-columns: 1fr; }
 .docs-labels-layout .label-group + .label-group { padding-top: 1.25rem; padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
 .doc-notes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -614,7 +613,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .ui-button--outline:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):hover { border-color: var(--border-strong); }
 .ui-button--ghost:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):hover { color: var(--text-primary); }
 .ui-button:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):active { background: var(--button-active); transition-duration: 80ms; }
-.ui-button:focus-visible, .prism-input:focus-visible {
+.ui-button:focus-visible {
   outline: 2px solid var(--focus-ring) !important;
   outline-offset: 2px;
   box-shadow: none !important;
@@ -642,23 +641,6 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .growth-copy { display: inline-flex; align-items: center; gap: .375rem; color: var(--text-secondary); font-size: .75rem; font-variant-numeric: tabular-nums; }
 .growth-copy > span { width: .4375rem; height: .4375rem; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--growth-signal); }
 
-.form-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(28rem, .8fr); gap: 2rem; }
-.form-primary { display: grid; align-content: start; justify-items: start; gap: 1rem; min-width: 0; }
-.form-primary > .prism-field { width: 100%; }
-.form-state-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 1rem; min-width: 0; }
-.prism-field { display: grid; gap: .5rem; min-width: 0; }
-.field-label { color: var(--text-primary); font-size: .875rem; font-weight: 650; }
-.field-description, .field-error { margin: 0; font-size: .8125rem; line-height: 1.55; }
-.field-description { color: var(--text-secondary); }
-.field-error { display: flex; align-items: flex-start; gap: .375rem; color: var(--danger-fg); }
-.field-error svg { margin-top: .125rem; }
-.prism-input { height: var(--control-height) !important; border-color: var(--border-default) !important; border-radius: .5rem !important; background: var(--surface) !important; box-shadow: none !important; color: var(--text-primary) !important; }
-.prism-input::placeholder { color: var(--text-tertiary); }
-.prism-input[aria-invalid="true"] { border-color: var(--danger-fg) !important; }
-.prism-input--readonly { border-style: dashed !important; background: var(--surface-subtle) !important; }
-.prism-input:disabled { opacity: 1 !important; background: #edf0f2 !important; color: #7b878e !important; cursor: not-allowed; }
-.prism-field[data-disabled="true"] .field-label, .prism-field[data-disabled="true"] .field-description { color: var(--text-tertiary); }
-
 .labels-layout { display: grid; grid-template-columns: minmax(11rem, .6fr) minmax(25rem, 1.4fr) minmax(14rem, .8fr); gap: var(--section-gap); }
 .label-group { min-width: 0; }
 .label-group + .label-group { padding-left: var(--section-gap); border-left: 1px solid var(--border-subtle); }
@@ -684,7 +666,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .workflow-actions { flex: none; }
 
 @media (max-width: 68rem) {
-  .navigation-grid, .form-layout { grid-template-columns: 1fr; }
+  .navigation-grid { grid-template-columns: 1fr; }
   .navigation-secondary { padding-top: var(--section-gap); padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
   .labels-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .label-group:last-child { grid-column: 1 / -1; padding-top: var(--section-gap); padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
@@ -703,7 +685,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
   .benchmark-shell { --page-gutter: 1rem; }
   .benchmark-header, .section-heading, .workflow-section { align-items: stretch; flex-direction: column; }
   .density-control { justify-items: start; }
-  .navigation-secondary, .form-state-fields, .labels-layout, .card-matrix { grid-template-columns: 1fr; }
+  .navigation-secondary, .labels-layout, .card-matrix { grid-template-columns: 1fr; }
   .label-group + .label-group { padding-top: var(--section-gap); padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
   .workflow-actions { justify-content: space-between; }
   .site-header { position: static; align-items: flex-start; padding-inline: 1rem; }
@@ -753,7 +735,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 }
 
 @media (forced-colors: active) {
-  .ui-button, .prism-input, .prism-card, .state-label, .ai-label, .meta-badge, .segmented-control { forced-color-adjust: auto; }
+  .ui-button, .prism-card, .state-label, .ai-label, .meta-badge, .segmented-control { forced-color-adjust: auto; }
   .ui-button { border-color: ButtonText; }
   .ui-button:disabled, .ui-button[data-disabled="true"] { color: GrayText; border-color: GrayText; }
   .ui-button:focus-visible { outline-color: Highlight !important; }

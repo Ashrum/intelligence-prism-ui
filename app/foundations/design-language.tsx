@@ -10,7 +10,7 @@ const behaviors = [
 const componentRoles = [
   ["导航、Tabs、Segmented Control", "说明当前位置、视角与作用范围。接受切换图表／明细时保留班级和周期；拒绝视图切换暗中重置筛选。"],
   ["Card、列表、表格", "帮助识别对象、比较差异和作出判断。接受同类指标沿共同列对齐；拒绝每项再套一张卡导致无法横向比较。"],
-  ["Text Fields", "以 M3 Outlined 浮动标签为当前方向：空值未聚焦时标签在框内，聚焦后上移，有值时持续保留。边框、标签、光标与错误图标联动；错误时保持错误色，聚焦用边界加粗表达。提供默认舒适与可选紧凑密度，保留必要字号和触控区域。前后缀、约束与帮助／错误就近呈现；拒绝只靠 Placeholder 标识字段，或只用 Toast 说明字段错误。"],
+  ["Text Fields", "采用 M3 Outlined 浮动标签：空值未聚焦时标签在框内，聚焦后上移，有值时持续保留。边框、标签、光标与错误图标联动；错误时保持错误色，聚焦用边界加粗表达。提供默认舒适与可选紧凑密度，保留必要字号和触控区域。前后缀、约束与帮助／错误就近呈现；拒绝只靠 Placeholder 标识字段，或只用 Toast 说明字段错误。"],
   ["Button、菜单与操作区", "行动名称具体，主次清楚，结果能够接续。接受“应用修正”对应明确的对象和结果；拒绝用同一个“确定”掩盖不同后果。"],
   ["Badge、状态与通知", "分别表达来源、处理进度、内容质量和复核状态。接受“AI 初稿”与“待复核”各自有明确含义；拒绝用一枚彩色 AI 标签同时代表生成中、可信与已复核。"],
 ]
@@ -71,7 +71,7 @@ export function DesignLanguageRecord() {
     <section className="language-record-section" aria-labelledby="language-components-title">
       <h3 id="language-components-title">组件承担不同职责，使用同一种语言</h3>
       <dl className="language-role-list">{componentRoles.map(([name, role]) => <div key={name}><dt>{name}</dt><dd>{role}</dd></div>)}</dl>
-      <p>共同准则用于后续实现与评审，已收口的 Button、Tabs 和 Segmented Control 不因此重新展开设计。Text Fields 的借鉴方向已明确，具体样式与空间比例在<Link href="/review/text-fields">课堂观察记录候选</Link>中验证，尚未定型。</p>
+      <p>共同准则用于后续实现与评审，已收口的 Button、Tabs 和 Segmented Control 不因此重新展开设计。Text Fields 已通过设计评审，浮动标签、字段状态与密度已回填至<Link href="/components/input-field">正式组件与课堂观察记录</Link>，Benchmark 共用相同实现。</p>
     </section>
 
     <section className="language-record-section" aria-labelledby="language-motion-ai-title">

@@ -1,7 +1,3 @@
-import type { Metadata } from "next"
-import { TextFieldsReview } from "./text-fields-review"
-import "./text-fields.css"
+import { redirect } from "next/navigation"
 
-export const metadata: Metadata = { title: "Text Fields · 中文场景候选" }
-
-export default function TextFieldsPage() { return <TextFieldsReview /> }
+export default function TextFieldsPage() { redirect("/components/input-field") }

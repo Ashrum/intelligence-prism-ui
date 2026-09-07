@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { FormEvent } from "react"
-import { AlertCircle, Check, RefreshCw, Sparkles } from "lucide-react"
+import { Check, RefreshCw, Sparkles } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,8 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
@@ -58,8 +57,6 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
 }
 
 function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
-  const [title, setTitle] = useState("")
-
   if (slug === "button") {
     return <ButtonPreview />
   }
@@ -77,23 +74,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
     )
   }
 
-  if (slug === "input-field") {
-    const invalid = !title.trim()
-    return (
-      <div className="form-primary component-form-demo">
-        <div className="prism-field" data-invalid={invalid || undefined}>
-          <Label htmlFor="component-evidence-title" className="field-label">证据记录标题</Label>
-          <Input id="component-evidence-title" value={title} onChange={(event) => setTitle(event.currentTarget.value)} placeholder="例如：九年级数学课堂观察" aria-invalid={invalid} aria-describedby={invalid ? "component-description component-error" : "component-description"} className="prism-input" />
-          <p id="component-description" className="field-description">建议包含年级、学科和证据来源。</p>
-          {invalid && <p id="component-error" className="field-error"><AlertCircle aria-hidden="true" />请输入证据记录标题。</p>}
-        </div>
-        <div className="preview-grid-two">
-          <Input value="课堂观察记录" readOnly aria-label="只读示例" className="prism-input prism-input--readonly" />
-          <Input value="当前不可编辑" disabled aria-label="禁用示例" className="prism-input" />
-        </div>
-      </div>
-    )
-  }
+  if (slug === "input-field") return <ClassroomObservationForm />
 
   return (
     <div className="labels-layout docs-labels-layout">

@@ -236,9 +236,9 @@ export const componentDocuments = {
     itemIds: ["input", "field"],
     eyebrow: "表单与选择",
     title: "Input / Field",
-    description: "组合可见标签、输入控件、说明与错误信息，形成稳定的表单结构。",
-    guidance: "Placeholder 不替代 Label；错误信息使用明确文字说明。",
-    accessibility: "Label 与 Input 关联；Description 和 Error 通过 aria-describedby 关联。",
+    description: "Outlined 浮动标签与字段状态联动，支持单行、多行、前后缀、只读与禁用。",
+    guidance: "默认舒适 56px，可选紧凑 48px，输入字号保持 16px。错误时统一使用错误色，聚焦以加粗边界表达；帮助与错误在同一位置替换。",
+    accessibility: "Label 与控件持续关联；Description 和 Error 通过 aria-describedby 关联。支持键盘、中文输入、首次错误定位和 Reduced Motion；长内容自然增高。",
   },
   "badge-labels": {
     itemIds: ["badge", "state-label", "ai-label"],
