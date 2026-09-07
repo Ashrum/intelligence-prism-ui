@@ -1,14 +1,17 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(process.argv[2] || resolve(dirname(fileURLToPath(import.meta.url)), '..'))
 const read = path => readFileSync(resolve(root, path))
 const manifest = JSON.parse(read('public/fonts/reading/manifest.json'))
-const css = read('app/review/reading-review/fonts.css').toString()
-const requested = new Set([...read('app/review/reading-review/reading-review.tsx').toString()].map(c => c.codePointAt(0)))
+const css = read('app/fonts.css').toString()
+const textSources = ['app', 'components'].flatMap(dir => readdirSync(resolve(root, dir), { recursive: true }).filter(file => /\.tsx?$/.test(file)).map(file => `${dir}/${file}`)).sort()
+assert.deepEqual(manifest.textSources, textSources, 'Font corpus differs from the app/components source inventory')
+const requested = new Set([...textSources.map(file => read(file).toString()).join('\n')].map(c => c.codePointAt(0)))
+assert(read('app/layout.tsx').toString().includes('import "./fonts.css"'), 'Shared fonts must be imported by the root layout')
 const points = value => {
   const result = new Set()
   for (const range of value.split(',')) {
@@ -54,6 +57,6 @@ for (const source of manifest.sources) {
   assert.equal(new Set(variations).size, variations.length, `${source.family}: duplicate variation sequences`)
   assert.deepEqual(variations.sort(), source.variationSequences, `${source.family}: incomplete variation sequence inventory`)
   const missing = [...requested].filter(cp => covered.has(cp) && !commonPoints.has(cp) && cp >= 0x20)
-  assert.equal(missing.length, 0, `${source.family}: ${missing.length} source characters fall outside the common shard (${missing.map(cp => String.fromCodePoint(cp)).join('')}). Rebuild with scripts/build-reading-fonts.py and the pinned source fonts.`)
+  assert.equal(missing.length, 0, `${source.family}: ${missing.length} app/components source characters fall outside the common shard (${missing.map(cp => String.fromCodePoint(cp)).join('')}). Rebuild with scripts/build-reading-fonts.py and the pinned source fonts.`)
 }
 console.log('Reading fonts: common coverage, declared ranges, variation inventory, asset hashes and CSS references verified.')

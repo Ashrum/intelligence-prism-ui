@@ -1,5 +1,4 @@
-@font-face { font-family: "Prism Review STIX Two Math"; src: url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
-.rr-page { --rr-ui-font: "Prism Reading Sans SC", "Prism Review STIX Two Math", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; --rr-reading-font: "Prism Reading Serif SC", "Prism Review STIX Two Math", "Songti SC", SimSun, "Noto Serif CJK SC", serif; max-width: 78rem; margin: auto; padding: 1.5rem 2rem 3rem; font: 400 .875rem/1.6 var(--rr-ui-font); font-synthesis: none; }
+.rr-page { --rr-ui-font: var(--font-ui); --rr-reading-font: var(--font-reading); max-width: 78rem; margin: auto; padding: 1.5rem 2rem 3rem; font: 400 .875rem/1.6 var(--rr-ui-font); font-synthesis: none; }
 .rr-page button, .rr-page textarea { font-family: inherit; font-weight: 400; }
 .rr-page h1, .rr-page h2, .rr-page h3, .rr-page p { margin: 0; font-weight: 400; }
 .rr-page button:focus-visible, .rr-page a:focus-visible, .rr-page [tabindex]:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
@@ -40,7 +39,7 @@
 .rr-question { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 2rem; padding-bottom: .625rem; }
 .rr-question > p { max-width: 25em; color: var(--text-secondary); line-height: 1.8; }
 .rr-main-formula { font-size: 1.375rem; padding: .25rem 0; flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-x: auto; }
-.rr-page math { font-family: "Prism Review STIX Two Math", math; font-size: 1em; font-weight: 400; line-height: normal; letter-spacing: normal; }
+.rr-page math { font-family: var(--font-math); font-size: 1em; font-weight: 400; line-height: normal; letter-spacing: normal; }
 .rr-page mtext { font-family: var(--rr-reading-font); }
 .rr-math-fallback { font: 400 .875rem/1.8 var(--rr-ui-font); white-space: normal; }
 .rr-math-fallback[data-block="true"] { display: block; }

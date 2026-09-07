@@ -3,6 +3,9 @@
 @import "../vendor/shadcn-tailwind-4.13.0.css";
 
 :root {
+  --font-ui: "Prism Reading Sans SC", "Prism Review STIX Two Math", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --font-reading: "Prism Reading Serif SC", "Prism Review STIX Two Math", "Songti SC", SimSun, "Noto Serif CJK SC", serif;
+  --font-math: "Prism Review STIX Two Math", math;
   --source-knowledge: #339ff2;
   --source-ai: #e0438f;
   --source-growth: #c2f25b;
@@ -98,7 +101,8 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --font-sans: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-sans: var(--font-ui);
+  --font-serif: var(--font-reading);
 }
 
 * { box-sizing: border-box; }
@@ -115,7 +119,8 @@ body {
   margin: 0;
   background: var(--canvas);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-ui);
+  font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -330,6 +335,7 @@ body {
 .type-specimen > span { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 675; letter-spacing: -.035em; line-height: 1.08; }
 .type-specimen strong { font-size: 2.5rem; font-weight: 650; letter-spacing: -.03em; }
 .type-specimen p { margin: 0; color: var(--text-secondary); font-size: .9375rem; line-height: 1.7; }
+.type-specimen .type-reading-sample { font-family: var(--font-reading); font-weight: 400; font-size: 1.0625rem; line-height: 1.9; color: var(--text-primary); }
 .type-specimen small { color: var(--action-primary); font-size: .75rem; font-weight: 700; letter-spacing: .06em; }
 .spacing-specimen { display: grid; align-content: center; gap: .875rem; }
 .spacing-specimen > div { display: flex; align-items: center; gap: 1rem; }

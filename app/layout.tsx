@@ -3,6 +3,7 @@ import Link from "next/link"
 
 import { NavLink } from "@/components/prism/nav-link"
 
+import "./fonts.css"
 import "./globals.css"
 
 export const metadata: Metadata = {
