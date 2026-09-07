@@ -42,6 +42,16 @@ The two Noto subsets now preserve all 464 codepoints in their previous cmap (inc
 - Formulas retain native MathML with the existing complete STIX Two Math WOFF2 and MATH data. MathML mtext uses the reading font for Chinese. If the mathematical face fails, the formula retains its explicit textual expression; conclusions can still be edited. No TeX parser or general formula editor is introduced.
 - Textarea height updates with input and font loading, independently of CSS field-sizing support. Production support across Windows, macOS, Android and iOS is not established by this implementation alone; current browser observations are recorded in PR #5.
 
+### Common-shard maintenance (2026-09-07)
+
+The longer evidence case added 76 ideographs outside the previous common shards. Nine source symbols were also outside them. The generator now includes printable route-source characters, not only ideographs, and keeps Unicode bidi mirrors such as ≥ / ≤ together to preserve fontTools' mirrored-glyph closure without overlapping shard cmaps. Remaining source characters still ship in separate shards for arbitrary input. Successful rebuilds remove superseded hashed assets listed in the previous manifest.
+
+The two common shards now contain 715 codepoints each and total 400,320 bytes (Sans 188,664; Serif 211,656). The current TSX has 425 distinct printable characters; each Noto source supports 424. The set-minus operator ∖ occurs in MathML and is supplied by the unchanged complete STIX face.
+
+For the same current-source character set mapped to both Noto families, the old CSS associated 23,158,660 bytes of font assets; the rebuilt CSS associates 400,320 bytes, all in the common shards. This is a static source-character/resource-set comparison, not a measured first-load request count, transferred-byte total, or speedup. It includes hidden case content and both font roles; it excludes STIX and the surrounding site's fonts. User-entered characters outside the common shards may still request additional resources.
+
+Normal site builds run `node scripts/check-reading-fonts.mjs` before vinext. It checks committed asset sizes/hashes, declared range counts and disjointness, CSS references/weights, and common-shard coverage of source-supported route characters. The previous manifest fails this check on 85 characters. This lightweight check does not parse actual font tables; the rebuild and independent fontTools audit check actual cmaps against the pinned sources. Browser font hits, cold-cache/slow-network timing, real load failure, zoom, copy behavior and assistive-technology output remain to be verified across the target platforms.
+
 ## Scope
 
 The comparison remains bounded; the reading application ships the full source cmap through shards. Neither is a product-wide GB 18030 or WCAG conformity claim. Font roles and the native MathML path are now implemented locally in the reading candidate; platform behavior and formal site-wide adoption remain to be verified. The mathematical faces contain no Chinese ideographs.
