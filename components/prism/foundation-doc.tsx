@@ -34,7 +34,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
     description: "用语义 Token 连接品牌源色与真实界面，组件不直接消费品牌色值。",
     principles: ["源色只定义身份，不直接决定文字或交互颜色。", "Button 以曜蓝表示主操作、智绯表示 AI 操作，中性表面承接次操作，危险色只用于破坏性动作。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
     references: [
-      { label: "Source / Knowledge", value: "#4EB1D9", use: "品牌源色；映射到可访问的曜蓝操作色。" },
+      { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
       { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
@@ -220,7 +220,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
 
 function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   if (slug === "tokens-theming") {
-    return <div className="foundation-preview color-foundation"><div className="color-chip color-chip--knowledge"><span /><strong>曜蓝</strong><small>#4EB1D9</small></div><div className="color-chip color-chip--ai"><span /><strong>智绯</strong><small>#E0438F</small></div><div className="color-chip color-chip--growth"><span /><strong>生长荧</strong><small>#C2F25B</small></div><ArrowRight aria-hidden="true" /><div className="semantic-color-stack"><span>Action</span><span>AI</span><span>Status</span></div></div>
+    return <div className="foundation-preview color-foundation"><div className="color-chip color-chip--knowledge"><span /><strong>曜蓝</strong><small>#339FF2</small></div><div className="color-chip color-chip--ai"><span /><strong>智绯</strong><small>#E0438F</small></div><div className="color-chip color-chip--growth"><span /><strong>生长荧</strong><small>#C2F25B</small></div><ArrowRight aria-hidden="true" /><div className="semantic-color-stack"><span>Action</span><span>AI</span><span>Status</span></div></div>
   }
 
   if (slug === "color") {

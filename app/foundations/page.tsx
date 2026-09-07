@@ -16,7 +16,7 @@ export default function FoundationsOverview() {
         <h1>设计语言与基础规范</h1>
         <p>以共同的阅读、操作与反馈方式连接组件，让清晰、精致和连续性在完整任务中成立。</p>
       </header>
-      <nav className="language-page-nav" aria-label="本页内容"><a href="#design-language">设计语言</a><a href="#language-typography">文字与公式</a><a href="#language-validation">验证进度</a><a href="#foundation-catalog">基础规范目录</a></nav>
+      <nav className="language-page-nav" aria-label="本页内容"><a href="#design-language">设计语言</a><a href="#language-typography">文字与公式</a><a href="#language-visualization">数据与关系</a><a href="#language-validation">验证进度</a><a href="#foundation-catalog">基础规范目录</a></nav>
       <DesignLanguageRecord />
       <section id="foundation-catalog" className="language-foundation-catalog" aria-labelledby="foundation-catalog-title">
       <h2 id="foundation-catalog-title">基础规范目录</h2>
