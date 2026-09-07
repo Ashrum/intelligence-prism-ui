@@ -28,6 +28,38 @@ type FoundationDocData = {
   boundary: string
 }
 
+const typographyProduction = [
+  {
+    item: "字符覆盖与加载",
+    accept: "锁定字体版本、来源和许可；覆盖产品界面、导入题目、姓名及动态输入所需字符。Web 字库可按字符分片，unicode-range 与实际字形覆盖一致，首屏按需载入；完整覆盖不等于首次下载整套 CJK。",
+    reject: "固定演示样本冒充产品字库；只覆盖构建时页面文字，新增输入就缺字；声明了范围却没有对应字形。",
+    source: { label: "CSS Fonts：字符范围", href: "https://www.w3.org/TR/css-fonts-4/#unicode-range-desc" },
+  },
+  {
+    item: "真实字重",
+    accept: "把每个角色使用的 CSS 字重映射到实际静态文件，或可变字体的有效 wght 范围；明确禁止合成粗体／斜体，核对实际命中的字体和字重。Noto Sans 与 Serif 的静态字重档位分别确认。",
+    reject: "只有 400 文件却宣称已交付 500／600；把静态字体声明成连续可变范围；仅看到 computed font-weight 就认定字重真实。",
+    source: { label: "Noto CJK：字体资源", href: "https://github.com/notofonts/noto-cjk" },
+  },
+  {
+    item: "回退与载入失败",
+    accept: "分别明确 UI、长文、公式内中文与数学符号的回退；注明何时允许系统字体，并用目标系统实测。冷缓存、字体失败和未覆盖字符时，文字仍可读、可输入、可复制，载入后不遮挡当前内容或操作。",
+    reject: "未说明的系统字体替代；长期空白、方框缺字或符号丢失；把数学符号无条件交给普通正文后备字体。",
+    source: { label: "CSS Fonts：匹配与回退", href: "https://www.w3.org/TR/css-fonts-4/#font-matching-algorithm" },
+  },
+  {
+    item: "数学渲染路径",
+    accept: "把输入格式、渲染器版本、输出模式和数学字体作为一组确定，并明确不支持表达式的处理。原生 MathML + STIX 是当前候选；若采用 MathJax，应使用相应 STIX2 字体支持并重新核对。保留语义与复制路径。",
+    reject: "把 STIX 字体等同于渲染器；给 KaTeX 或 MathJax 的输出只改 font-family 就宣称等价；静默省略无法渲染的公式或符号。",
+    source: { label: "MathJax：输出字体支持", href: "https://docs.mathjax.org/en/latest/output/fonts.html" },
+  },
+  {
+    item: "跨系统结果",
+    accept: "先在 Windows Edge、macOS Safari 与桌面 Firefox 复核；移动端交付再覆盖 Android Chrome、iOS Safari，并记录实际版本。用同一组中文、公式与输入内容检查字体命中、行高、断行、200% 缩放、复制和辅助技术的读序。允许不影响阅读的抗锯齿差异。",
+    reject: "只凭单端截图或构建通过宣称一致；出现缺字、公式裁切、上下标关系错误、正文与公式重叠，或键盘编辑时焦点与文本丢失。",
+  },
+]
+
 const docs: Record<FoundationSlug, FoundationDocData> = {
   "tokens-theming": {
     title: "设计令牌与主题",
@@ -177,16 +209,16 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className="state-label state-label--completed"><span className="state-dot" aria-hidden="true" />基线已建立</span>
+          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "分工已定 · 生产待落实" : "基线已建立"}</span>
         </div>
         <p>{doc.description}</p>
-        {slug === "typography" && <p>字体方向已确认：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。下方保留当前实现参数；<Link href="/foundations#language-typography" className="text-primary underline underline-offset-4">查看字体分工与验证边界</Link>。</p>}
+        {slug === "typography" && <p>字体方向已确认：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。下方保留当前全站实现参数；新字体按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>回填，不将样本字库视为正式交付。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
         <div className="doc-section-heading">
           <h2 id="foundation-preview-title">Reference</h2>
-          <p>当前实现中使用的视觉与交互基线。</p>
+          <p>{slug === "typography" ? "当前全站样式参考，不代表新字体已完成生产验收。" : "当前实现中使用的视觉与交互基线。"}</p>
         </div>
         <FoundationPreview slug={slug} />
       </section>
@@ -212,6 +244,24 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           </table>
         </div>
       </section>
+
+      {slug === "typography" && <section id="typography-production" className="doc-section" aria-labelledby="typography-production-title">
+        <div className="doc-section-heading">
+          <h2 id="typography-production-title">字体与数学的生产交付条件</h2>
+          <p>以下是设计与工程的共同接受标准，尚不表示实现完成。</p>
+        </div>
+        <p>当前中文候选使用固定样本子集和 400 字重，公式采用 STIX Two Math 与原生 MathML。应用定型先在既有复核场景落实一条可交付的字体与数学路径，再确定生产字号、字重与密度；相关结果回填本页。</p>
+        <div className="foundation-table-wrap" role="region" aria-label="字体生产方案的接受与拒绝条件" tabIndex={0}>
+          <table className="foundation-table">
+            <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>
+            <tbody>{typographyProduction.map((rule) => <tr key={rule.item}>
+              <th scope="row">{rule.item}</th><td>{rule.accept}{rule.source && <> <a href={rule.source.href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">{rule.source.label}</a></>}</td><td>{rule.reject}</td>
+            </tr>)}</tbody>
+          </table>
+        </div>
+        <p>最小内容样本复用现有候选并补入：生僻姓名、简体中文标点与中英数字混排；行内／独立公式、嵌套分式、根式、上下标、积分、求和、伸缩括号、矩阵和公式内中文。读、改、保存与复制使用同一份内容；公式加载失败须明确提示并保留可恢复的源内容。</p>
+        <p>STIX Two Math 提供数学字形和排版度量；原生 MathML 的布局仍由浏览器实现，两者要一起验证。参考 <a href="https://www.w3.org/TR/mathml-core/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">MathML Core</a>。本页的平台范围与接受条件是智能曜彩的交付要求，不宣称 W3C 指定了字体名单或已经完成标准符合性认证。</p>
+      </section>}
 
       <aside className="foundation-boundary" aria-label="当前边界"><CircleHelp aria-hidden="true" /><div><strong>当前边界</strong><p>{doc.boundary}</p></div></aside>
     </article>
