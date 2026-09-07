@@ -2,7 +2,7 @@
 
 import { createElement as h, useEffect, useRef, useState, type ReactNode } from "react"
 import Link from "next/link"
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, Circle, FileText, Pencil, RotateCcw, Sparkles, X } from "lucide-react"
+import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, Circle, CircleAlert, FileText, Pencil, RotateCcw, Sparkles, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -105,7 +105,7 @@ export function ReadingReview() {
     <div className="rr-workspace">
       <nav className="rr-queue" aria-label="待复核结论"><div className="rr-queue-heading"><span>本次复核</span><span>3 条</span></div><ol>{cases.map((c, i) => {
         const state = entries[i]
-        return <li key={c.id}><button type="button" aria-current={index === i ? "step" : undefined} onClick={() => navigate(i)}><span className="rr-queue-number">{c.id}</span><span className="rr-queue-copy"><span>{c.title}</span><span>{c.description}</span><span className="rr-queue-state">{state.editing ? <Pencil size={13} aria-hidden="true" /> : state.reviewed ? <CheckCircle2 size={13} aria-hidden="true" /> : <Circle size={12} aria-hidden="true" />}{state.editing ? "修正未应用" : state.reviewed ? "已复核" : "待复核"}</span></span>{index === i && <ArrowRight className="rr-current-arrow" size={15} aria-hidden="true" />}</button></li>
+        return <li key={c.id}><button type="button" aria-current={index === i ? "step" : undefined} onClick={() => navigate(i)}><span className="rr-queue-number">{c.id}</span><span className="rr-queue-copy"><span>{c.title}</span><span>{c.description}</span><span className="rr-queue-state" data-done={state.reviewed && !state.editing}>{state.editing ? <Pencil size={13} aria-hidden="true" /> : state.reviewed ? <CheckCircle2 size={13} aria-hidden="true" /> : <Circle size={12} aria-hidden="true" />}{state.editing ? "修正未应用" : state.reviewed ? "已复核" : "待复核"}</span></span>{index === i && <ArrowRight className="rr-current-arrow" size={15} aria-hidden="true" />}</button></li>
       })}</ol><p className="rr-session-note">演示数据 · 本页内保留操作<br />刷新后恢复初稿</p></nav>
 
       <article className="rr-object" aria-labelledby="rr-object-title">
@@ -115,12 +115,15 @@ export function ReadingReview() {
           <section className="rr-question" aria-label="原题"><div className="rr-main-formula">{item.formula}</div><p>{item.question}</p></section>
 
           <section className="rr-conclusion" data-editing={entry.editing} aria-labelledby="rr-conclusion-label">
-            <div className="rr-conclusion-heading"><h3 id="rr-conclusion-label">{entry.editing ? "修正结论" : "当前结论"}</h3><span className="rr-origin">{changed ? <Pencil size={13} aria-hidden="true" /> : <Sparkles size={13} aria-hidden="true" />}{changed ? "人工修正 · 源自 AI 初稿" : "AI 初稿"}</span></div>
-            {entry.editing ? <form onSubmit={e => { e.preventDefault(); apply() }}><label className="sr-only" htmlFor="rr-conclusion-input">结论内容</label><Textarea ref={editorRef} id="rr-conclusion-input" className="rr-editor" value={entry.draft} onChange={e => patch({ draft: e.target.value, error: false })} aria-invalid={entry.error} aria-describedby="rr-edit-help" rows={3} onKeyDown={e => { if (e.key === "Escape" && !e.nativeEvent.isComposing) { e.preventDefault(); cancelEdit() } }} /><div id="rr-edit-help" className="rr-edit-help" data-error={entry.error} role={entry.error ? "alert" : undefined}>{entry.error ? "请保留一条可阅读的结论，再应用修正。" : "请保留适用范围与成立条件。切换条目会保留未应用的文字。"}</div><div className="rr-edit-actions"><Button type="submit" size="sm"><Check />应用修正</Button><Button type="button" variant="ghost" size="sm" onClick={cancelEdit}>取消修正</Button></div></form> : <p className="rr-statement">{entry.value}</p>}
-            {changed && !entry.editing && <div className="rr-revision"><button type="button" aria-expanded={historyOpen} onClick={() => setHistoryOpen(!historyOpen)}>{historyOpen ? "收起 AI 初稿" : "对照 AI 初稿"}<ChevronDown size={14} aria-hidden="true" /></button>{historyOpen && <div><span>AI 初稿</span><p>{item.initial}</p></div>}</div>}
+            <div className="rr-conclusion-heading"><h3 id="rr-conclusion-label">当前结论</h3>{changed && <span className="rr-authorship"><Pencil size={13} aria-hidden="true" />人工修正</span>}<span className="rr-origin"><Sparkles size={13} aria-hidden="true" />{changed ? "源自 AI 初稿" : "AI 初稿"}</span>{changed && !entry.editing && <button type="button" className="rr-history-toggle" aria-expanded={historyOpen} aria-controls="rr-original-conclusion" onClick={() => setHistoryOpen(!historyOpen)}>{historyOpen ? "收起 AI 初稿" : "对照 AI 初稿"}<ChevronDown size={14} aria-hidden="true" /></button>}</div>
+            {entry.editing ? <form id="rr-conclusion-form" onSubmit={e => { e.preventDefault(); apply() }}><label className="sr-only" htmlFor="rr-conclusion-input">结论内容</label><Textarea ref={editorRef} id="rr-conclusion-input" className="rr-editor" value={entry.draft} onChange={e => patch({ draft: e.target.value, error: false })} aria-invalid={entry.error} aria-describedby="rr-status-copy" rows={1} onKeyDown={e => { if (e.key === "Escape" && !e.nativeEvent.isComposing) { e.preventDefault(); cancelEdit() } }} /></form> : <p className="rr-statement">{entry.value}</p>}
+            <div className="rr-status-slot" data-state={entry.error ? "error" : entry.editing ? "editing" : entry.reviewed ? "done" : "reading"} role={entry.error ? "alert" : "status"} aria-live={entry.error ? "assertive" : "polite"}><span className="rr-status-icon">{entry.error ? <CircleAlert size={16} aria-hidden="true" /> : entry.editing ? <Pencil size={16} aria-hidden="true" /> : entry.reviewed ? <CheckCircle2 size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}</span><p id="rr-status-copy">{entry.error ? "请保留一条可阅读的结论，再应用修正。" : entry.editing ? "请保留适用范围与成立条件。切换条目会保留未应用的文字。" : entry.notice || item.hint}</p></div>
+            <div className="rr-conclusion-tools">
+              <div className="rr-decision-actions">{entry.editing ? <><Button key="apply" type="submit" form="rr-conclusion-form" size="sm"><Check />应用修正</Button><Button key="cancel" type="button" variant="ghost" size="sm" onClick={cancelEdit}>取消修正</Button></> : <><Button key="edit" type="button" ref={editRef} variant={entry.reviewed ? "ghost" : "outline"} size="sm" onClick={openEditor}><Pencil />修正结论</Button>{!entry.reviewed && <Button key="confirm" type="button" size="sm" onClick={confirm}><Check />确认此结论</Button>}{entry.previous && <Button key="undo" type="button" variant="ghost" size="sm" onClick={undo}><RotateCcw />撤回本次</Button>}</>}</div>
+              <nav className="rr-navigation" aria-label="结论切换"><span>{index + 1} / {cases.length}</span><Button type="button" variant="ghost" size="icon-sm" aria-label="上一条结论" disabled={index === 0} onClick={() => navigate(index - 1)}><ArrowLeft /></Button><Button type="button" variant={entry.reviewed && !entry.editing ? "default" : "ghost"} size="sm" disabled={index === cases.length - 1} onClick={() => navigate(index + 1)}>下一条<ArrowRight /></Button></nav>
+            </div>
+            {changed && !entry.editing && <div id="rr-original-conclusion" className="rr-revision" hidden={!historyOpen}><span>AI 初稿</span><p>{item.initial}</p></div>}
           </section>
-
-          <div className="rr-status-slot" role="status" aria-live="polite"><span className="rr-status-icon">{entry.error ? <Circle size={15} aria-hidden="true" /> : entry.reviewed ? <CheckCircle2 size={15} aria-hidden="true" /> : <FileText size={15} aria-hidden="true" />}</span><p>{entry.editing ? "正在修正结论。原题与证据仍可随时核对。" : entry.notice || item.hint}</p></div>
 
           <section className="rr-evidence" aria-label="结论依据">
             <button ref={sourceRef} type="button" className="rr-source" aria-expanded={evidenceOpen} aria-controls="rr-evidence-content" onClick={toggleEvidence}><span><FileText size={16} aria-hidden="true" /><span>{item.source}</span></span><span>{evidenceOpen ? "收起证据" : "查看证据"}<ChevronDown size={15} aria-hidden="true" /></span></button>
@@ -128,7 +131,6 @@ export function ReadingReview() {
           </section>
         </div>
 
-        <footer className="rr-object-footer"><div className="rr-decision-actions">{!entry.editing && <><Button ref={editRef} variant={entry.reviewed ? "ghost" : "outline"} size="sm" onClick={openEditor}><Pencil />修正结论</Button>{!entry.reviewed && <Button size="sm" onClick={confirm}><Check />确认此结论</Button>}{entry.previous && <Button variant="ghost" size="sm" onClick={undo}><RotateCcw />撤回本次</Button>}</>}{entry.editing && <span className="rr-footer-note">完成修正后，在原处应用或取消。</span>}</div><div className="rr-navigation"><span>{index + 1} / {cases.length}</span><Button variant="ghost" size="icon-sm" aria-label="上一条结论" disabled={index === 0} onClick={() => navigate(index - 1)}><ArrowLeft /></Button><Button variant="ghost" size="sm" disabled={index === cases.length - 1} onClick={() => navigate(index + 1)}>下一条<ArrowRight /></Button></div></footer>
       </article>
     </div>
     <p className="rr-bottom-note">候选观察：阅读保持秩序，操作就近展开，变化留下可追溯的关系。<span className="rr-session-mobile">演示数据 · 本页内保留操作，刷新后恢复初稿。</span></p>
