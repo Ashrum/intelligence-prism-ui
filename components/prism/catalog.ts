@@ -236,9 +236,9 @@ export const componentDocuments = {
     itemIds: ["input", "field"],
     eyebrow: "表单与选择",
     title: "Input / Field",
-    description: "Outlined 浮动标签与字段状态联动，支持单行、多行、前后缀、只读与禁用。",
-    guidance: "默认舒适 56px，可选紧凑 48px，输入字号保持 16px。错误时统一使用错误色，聚焦以加粗边界表达；帮助与错误在同一位置替换。",
-    accessibility: "Label 与控件持续关联；Description 和 Error 通过 aria-describedby 关联。支持键盘、中文输入、首次错误定位和 Reduced Motion；长内容自然增高。",
+    description: "Input 接收输入值；Field 组织字段身份、约束和反馈，让输入、修正与应用保持连续。",
+    guidance: "Input 保留原生输入行为；Field 关联标签、控件、说明与错误；TextField 将它们组合为已确认的浮动标签表现。何时校验、何时应用以及保留哪些结果，由使用它的场景负责。",
+    accessibility: "TextField 保持 Label、控件与反馈的关联，提供只读、禁用、错误语义和 Reduced Motion。此页的场景表单负责中文输入法确认期间的提交保护、首次错误定位与本页结果保留；应用结果仅在当前页面保留。",
   },
   "badge-labels": {
     itemIds: ["badge", "state-label", "ai-label"],

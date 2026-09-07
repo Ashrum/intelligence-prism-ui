@@ -293,6 +293,13 @@ body {
 .docs-labels-layout .label-group + .label-group { padding-top: 1.25rem; padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
 .doc-notes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .doc-note { padding: 1.25rem; border: 1px solid var(--border-subtle); border-radius: .5rem; background: var(--surface-subtle); }
+.field-behavior-note { grid-column: 1 / -1; min-width: 0; }
+.field-behavior-note h2 { margin: 0 0 .75rem; font-size: 1.125rem; font-weight: 650; }
+.field-behavior-table { width: 100%; border-collapse: collapse; font-size: .875rem; line-height: 1.75; }
+.field-behavior-table th, .field-behavior-table td { padding: .75rem; border-bottom: 1px solid var(--border-subtle); text-align: left; vertical-align: top; }
+.field-behavior-table th { font-weight: 500; }
+.field-behavior-table tbody th { width: 24%; min-width: 5.5rem; }
+.field-behavior-table td { color: var(--text-secondary); }
 .foundation-article .doc-notes-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .foundation-article .doc-note { display: grid; align-content: start; gap: .75rem; }
 .foundation-article .doc-note p { margin: 0; }

@@ -34,8 +34,8 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
 
       <section className="doc-section" aria-labelledby="preview-title">
         <div className="doc-section-heading">
-          <h2 id="preview-title">Preview</h2>
-          <p>真实组件与交互状态，可直接键盘操作。</p>
+          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : "Preview"}</h2>
+          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : "真实组件与交互状态，可直接键盘操作。"}</p>
         </div>
         <div className="component-preview">
           <ComponentPreview slug={slug} />
@@ -44,13 +44,24 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
 
       <section className="doc-section doc-notes-grid" aria-label="使用与无障碍说明">
         <div className="doc-note">
-          <h2>Usage</h2>
+          <h2>{slug === "input-field" ? "组成与职责" : "Usage"}</h2>
           <p>{doc.guidance}</p>
+          {slug === "input-field" && <p>浮动标签保留字段身份；错误时标签、边框、光标与图标联动。舒适 56px／紧凑 48px，输入字号 16px；长内容自然增高。</p>}
         </div>
         <div className="doc-note">
-          <h2>Accessibility</h2>
+          <h2>{slug === "input-field" ? "语义与操作保障" : "Accessibility"}</h2>
           <p>{doc.accessibility}</p>
         </div>
+        {slug === "input-field" && <div className="field-behavior-note">
+          <h2>此场景的处理规则</h2>
+          <table className="field-behavior-table"><thead><tr><th scope="col">时刻</th><th scope="col">处理与保留</th></tr></thead><tbody>
+            <tr><th scope="row">开始输入</th><td>未访问的字段不提前报错。标签持续标识字段，单位和约束保持就近。</td></tr>
+            <tr><th scope="row">离开字段或应用</th><td>按字段约束校验；错误在原位置替换帮助，保留已填内容。应用失败时聚焦首个错误。</td></tr>
+            <tr><th scope="row">修正内容</th><td>已访问字段的反馈随修改更新。中文输入法确认期间不提交，Enter 仍可用于多行换行。</td></tr>
+            <tr><th scope="row">应用成功</th><td>更新本页结果，输入与结果采用同一确认值。字段合法与记录已应用分别表达。</td></tr>
+            <tr><th scope="row">继续修改</th><td>保留上次已应用记录，标明修改尚未应用；可撤回修改。重新应用才更新结果，重置示例才清空记录。</td></tr>
+          </tbody></table>
+        </div>}
       </section>
     </article>
   )
