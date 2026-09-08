@@ -8,14 +8,17 @@
   position: relative; display: flex; align-items: center; min-width: 0;
   min-height: var(--tf-height); background: var(--tf-surface); border-radius: .5rem;
 }
-.tf-outline::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--tf-border); border-radius: inherit; pointer-events: none; transition: border-color 140ms ease; }
+/* A native legend creates the notch; the real label needs no background patch. */
+.tf-notch { position: absolute; inset: -.5625rem 0 0; min-inline-size: 0; margin: 0; padding: 0 .75rem; border: 1px solid var(--tf-border); border-radius: inherit; pointer-events: none; transition: border-color 140ms ease; }
+.tf-notch legend { display: block; width: max-content; max-width: 0; height: 1.125rem; margin: 0; padding: 0; overflow: hidden; visibility: hidden; white-space: nowrap; font: 400 .75rem/1.5 var(--font-ui); }
+.tf-notch legend > span { display: inline-block; padding-inline: .25rem; }
 .tf-outline:where(:not([data-disabled="true"]):not([data-readonly="true"])):hover { --tf-border: var(--text-secondary); }
 .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: var(--action-primary); --tf-label-color: var(--action-primary); }
-.tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within::before { border-width: 2px; }
+.tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within > .tf-notch { border-width: 2px; }
 .tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
 .tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
 .tf-outline[data-readonly="true"] { --tf-surface: var(--surface-subtle); --tf-border: var(--field-border); }
-.tf-outline[data-readonly="true"]::before { border-style: dashed; }
+.tf-outline[data-readonly="true"] > .tf-notch { border-style: dashed; }
 .tf-outline[data-readonly="true"]:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .tf-outline[data-disabled="true"] { --tf-surface: var(--control-disabled-bg); --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }
 
@@ -32,7 +35,7 @@
   display: block; width: auto; max-width: calc(100% - 1.5rem); margin: 0; padding: 0 .25rem;
   transform: translateY(-50%); transform-origin: left center;
   font: 400 1rem/1.5 var(--font-ui); color: var(--tf-label-color); opacity: 1;
-  white-space: nowrap; cursor: text;
+  white-space: nowrap; cursor: text; background: transparent;
   transition: top 140ms ease, font-size 140ms ease, color 140ms ease;
 }
 /* Native value/placeholder state also covers restored values and autofill. */
@@ -41,8 +44,13 @@
 .tf-outline:has(.tf-control:autofill) .tf-label,
 .tf-outline[data-readonly="true"] .tf-label,
 .tf-outline[data-disabled="true"] .tf-label {
-  top: 0; font-size: .75rem; background: var(--tf-surface);
+  top: 0; font-size: .75rem;
 }
+.tf-outline:focus-within > .tf-notch legend,
+.tf-outline:has(.tf-control:not(:placeholder-shown)) > .tf-notch legend,
+.tf-outline:has(.tf-control:autofill) > .tf-notch legend,
+.tf-outline[data-readonly="true"] > .tf-notch legend,
+.tf-outline[data-disabled="true"] > .tf-notch legend { max-width: 100%; }
 .tf-outline[data-disabled="true"] .tf-label, .tf-outline[data-readonly="true"] .tf-label { cursor: default; }
 .tf-mode-label { margin-inline-start: .5em; font-weight: 500; }
 .tf-field .tf-affix { flex: none; order: 0; padding: 0; color: var(--text-secondary); font: 400 1rem/1.5 var(--font-ui); visibility: hidden; }
@@ -65,7 +73,7 @@
 
 .tf-field .tf-control::placeholder { color: var(--text-tertiary); opacity: 0; }
 .tf-field .tf-outline:focus-within .tf-control::placeholder { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .tf-outline::before, .tf-field .tf-label { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tf-notch, .tf-field .tf-label { transition: none; } }
 @media (forced-colors: active) {
   .tf-field { --tf-surface: Canvas; }
   .tf-outline { --tf-border: CanvasText; --tf-label-color: CanvasText; --tf-caret: CanvasText; }
