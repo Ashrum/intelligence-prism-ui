@@ -111,11 +111,11 @@ export function ClassroomObservationForm({ density: externalDensity }: { density
         <TextField ref={lessonRef} name="lesson" required inputMode="numeric" label="观察节次" density={density}
           prefix="第" suffix="节" value={draft.lesson} error={lessonError} description="输入 1–12 的整数，单位为节。"
           onChange={event => change("lesson", event.currentTarget.value)} onBlur={() => blur("lesson")} />
-        <TextField label="证据来源 · 只读" value="课堂观察" readOnly density={density} />
+        <TextField label="证据来源" value="课堂观察" readOnly density={density} />
         <TextField multiline name="note" rows={3} className="tf-wide" label="观察说明 · 选填" density={density}
           value={draft.note} description="可分行记录表现、成立条件与原文依据。"
           onChange={event => change("note", event.currentTarget.value)} />
-        <TextField label="审核编号 · 不可编辑" value="完成审核后生成" disabled density={density} />
+        <TextField label="审核编号" value="完成审核后生成" disabled density={density} />
       </div>
 
       <div className="tf-actions">

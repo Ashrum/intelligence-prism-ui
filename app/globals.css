@@ -21,6 +21,7 @@
   --border-default: #d7dfe4;
   --border-subtle: #e6ebee;
   --border-strong: #aab7bf;
+  --field-border: #64727b;
   --action-primary: #08658f;
   --action-primary-hover: #07577c;
   --action-primary-active: #064966;
@@ -74,7 +75,7 @@
   --accent-foreground: var(--action-primary);
   --destructive: var(--danger-action);
   --border: var(--border-default);
-  --input: var(--border-default);
+  --input: var(--field-border);
   --ring: var(--focus-ring);
   --radius: 0.5rem;
 }
@@ -205,8 +206,8 @@ body {
 .category-card p { min-height: 2.6rem; margin: 0; color: var(--text-secondary); font-size: .8125rem; line-height: 1.6; }
 .category-counts { display: flex; flex-wrap: wrap; gap: .5rem; color: var(--text-tertiary); font-size: .6875rem; font-weight: 600; }
 .category-counts span { padding: .1875rem .4375rem; border-radius: .375rem; background: var(--surface-subtle); }
-.category-summary-link { display: inline-flex; align-items: center; gap: .375rem; width: fit-content; margin-top: .25rem; color: var(--action-primary); font-size: .75rem; font-weight: 700; text-decoration: none; }
-.category-summary-link:hover { text-decoration: underline; text-underline-offset: .25rem; }
+.category-summary-link { display: inline-flex; align-items: center; gap: .375rem; width: fit-content; margin-top: .25rem; color: var(--action-primary); font-size: .75rem; font-weight: 700; text-decoration: underline; text-underline-offset: .25rem; }
+.category-summary-link:hover { color: var(--action-primary-hover); }
 .category-links { display: grid; gap: .25rem; }
 .category-links a { display: grid; grid-template-columns: 1rem 1fr 1rem; align-items: center; gap: .625rem; padding: .625rem; border-radius: .375rem; color: var(--text-primary); font-size: .875rem; font-weight: 600; text-decoration: none; }
 .category-links a:hover { background: var(--surface-hover); }
@@ -689,8 +690,9 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .ui-button--ai-soft { --button-bg: var(--ai-bg); --button-fg: var(--ai-fg); --button-border: var(--ai-border); --button-hover: var(--ai-bg-hover); --button-active: var(--ai-bg-active); }
 .ui-button--ai-primary { --button-bg: var(--ai-action); --button-fg: #fff; --button-hover: var(--ai-action-hover); --button-active: var(--ai-action-active); }
 .ui-button--destructive { --button-bg: var(--danger-action); --button-fg: #fff; --button-hover: var(--danger-action-hover); --button-active: var(--danger-action-active); }
-.ui-button--link { --button-bg: transparent; --button-fg: var(--action-primary); --button-hover: transparent; --button-active: transparent; height: auto; padding: .25rem .125rem; text-underline-offset: .25rem; }
-.ui-button--link:hover { text-decoration: underline; }
+.ui-button--link { --button-bg: transparent; --button-fg: var(--action-primary); --button-hover: transparent; --button-active: transparent; height: auto; padding: .25rem .125rem; text-decoration: underline; text-underline-offset: .25rem; }
+.ui-button--link .ui-button__content, .ui-button--link .ui-button__loading { text-decoration: underline; text-underline-offset: .25rem; }
+.ui-button--link:hover { --button-fg: var(--action-primary-hover); }
 .ui-button:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):hover { background: var(--button-hover); }
 .ui-button--outline:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):hover { border-color: var(--border-strong); }
 .ui-button--ghost:not(:disabled):not([data-disabled="true"]):not([data-loading="true"]):hover { color: var(--text-primary); }

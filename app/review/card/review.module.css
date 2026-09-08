@@ -31,7 +31,8 @@
 .pageHeader h1 { margin: .5rem 0 .75rem; font-size: clamp(2rem, 4vw, 3rem); font-weight: 675; letter-spacing: -.035em; line-height: 1.08; }
 .pageHeader p { margin: 0; color: var(--text-secondary); font-size: 1rem; line-height: 1.75; }
 .headerLinks { display: flex; flex: none; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; }
-.headerLinks a { color: var(--action-primary); font-size: .875rem; font-weight: 650; text-underline-offset: .25rem; }
+.headerLinks a { color: var(--action-primary); font-size: .875rem; font-weight: 650; text-decoration: underline; text-underline-offset: .25rem; }
+.headerLinks a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
 .proposition, .benchmarkSection { padding-top: 2.5rem; }
 .sectionHeading { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 1.25rem; }
@@ -131,7 +132,7 @@
 .summaryBlock { display: grid; gap: .375rem; }
 .summaryLabel { color: var(--text-tertiary); font-size: .6875rem; font-weight: 700; letter-spacing: .035em; }
 .summaryBlock p { margin: 0; color: var(--text-primary); font-size: .875rem; line-height: 1.7; }
-.summaryEditor { min-height: 6rem; resize: vertical; border-color: var(--border-default) !important; background: var(--surface) !important; color: var(--text-primary) !important; font-size: .875rem !important; line-height: 1.65 !important; box-shadow: none !important; }
+.summaryEditor { min-height: 6rem; resize: vertical; border-color: var(--field-border) !important; background: var(--surface) !important; color: var(--text-primary) !important; font-size: .875rem !important; line-height: 1.65 !important; box-shadow: none !important; }
 .summaryEditor:focus-visible { outline: 2px solid var(--focus-ring) !important; outline-offset: 2px; box-shadow: none !important; }
 
 .progressBlock { display: grid; gap: .625rem; }

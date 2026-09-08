@@ -205,7 +205,7 @@ export const componentDocuments = {
     eyebrow: "操作与命令",
     title: "Button",
     description: "七种操作层级共用同一实现：曜蓝承担主要操作，智绯仅用于明确的 AI 行为，中性表面承接次操作。",
-    guidance: "默认高度 36px，紧凑高度 32px；一个操作区域只保留一个主要按钮，破坏性操作独立表达，导航使用 asChild 保留链接语义。行动名称指向具体对象，各操作的反馈独立并就近呈现；重新处理时保留上次结果，完成后再更新。",
+    guidance: "默认高度 36px，紧凑高度 32px；一个操作区域只保留一个主要按钮，破坏性操作独立表达，导航使用 asChild 保留链接语义，文字链接默认显示下划线。行动名称指向具体对象，各操作的反馈独立并就近呈现；重新处理时保留上次结果，完成后再更新。",
     accessibility: "保留 2px 可见焦点；图标按钮必须提供 accessible name。Loading 保留原变体颜色并阻止重复激活，等待文案缺失或空白时继续使用原内容。",
   },
   tabs: {
@@ -237,7 +237,7 @@ export const componentDocuments = {
     eyebrow: "表单与选择",
     title: "Input / Field",
     description: "Input 接收输入值；Field 组织字段身份、约束和反馈，让输入、修正与应用保持连续。",
-    guidance: "Input 保留原生输入行为；Field 关联标签、控件、说明与错误；TextField 将它们组合为已确认的浮动标签表现。何时校验、何时应用以及保留哪些结果，由使用它的场景负责。",
+    guidance: "Input 保留原生输入行为；Field 关联标签、控件、说明与错误；TextField 将它们组合为已确认的浮动标签表现。可编辑字段常显实线边界；只读用中性底、间断边框与文字说明，禁用明确显示不可用。何时校验、何时应用以及保留哪些结果，由使用它的场景负责。",
     accessibility: "TextField 保持 Label、控件与反馈的关联，提供只读、禁用、错误语义和 Reduced Motion。此页的场景表单负责中文输入法确认期间的提交保护、首次错误定位与本页结果保留；应用结果仅在当前页面保留。",
   },
   "badge-labels": {
