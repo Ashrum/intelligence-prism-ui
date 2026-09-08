@@ -6,6 +6,7 @@ import { NavLink } from "@/components/prism/nav-link"
 const documentLabels: Record<string, string> = {
   "/components/input-field": "Input / Field",
   "/components/badge-labels": "Badge & Labels",
+  "/components/choice-controls": "多选 / 单选 / 开关",
 }
 
 function CatalogNavigation({ label }: { label: string }) {
@@ -32,14 +33,16 @@ function CatalogNavigation({ label }: { label: string }) {
                 return <span className="docs-nav-link docs-nav-link--planned" key={item.id}><span className="nav-status-dot" aria-hidden="true" /><span>{item.label}</span><small>规划</small></span>
               }
 
-              const firstGroup = linkedGroups.get(item.href)
+              const documentHref = item.href.split("#")[0]
+              const href = documentLabels[documentHref] ? documentHref : item.href
+              const firstGroup = linkedGroups.get(href)
               if (firstGroup === group.slug) return null
               if (firstGroup) {
                 return <span className="docs-nav-link docs-nav-link--related" key={item.id}><span className={`nav-status-dot nav-status-dot--${item.status}`} aria-hidden="true" /><span>{item.label}</span><small>同页</small></span>
               }
 
-              linkedGroups.set(item.href, group.slug)
-              return <NavLink exact className="docs-nav-link" href={item.href} key={item.id}><span className={`nav-status-dot nav-status-dot--${item.status}`} aria-hidden="true" /><span>{documentLabels[item.href] ?? item.label}</span>{item.status === "review" && <small>待评审</small>}</NavLink>
+              linkedGroups.set(href, group.slug)
+              return <NavLink exact className="docs-nav-link" href={href} key={item.id}><span className={`nav-status-dot nav-status-dot--${item.status}`} aria-hidden="true" /><span>{documentLabels[href] ?? item.label}</span>{item.status === "review" && <small>待评审</small>}</NavLink>
             })}
           </div>
         )
