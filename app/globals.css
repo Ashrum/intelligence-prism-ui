@@ -12,6 +12,7 @@
 
   --canvas: #f5f5f3;
   --surface: #ffffff;
+  --surface-quiet: #f7f7f5;
   --surface-subtle: #efefec;
   --surface-hover: #eaeae6;
   --surface-active: #e4e5e0;
@@ -539,7 +540,9 @@ svg { width: 1rem; height: 1rem; flex: none; }
   height: var(--control-height); align-items: center; justify-content: flex-start; gap: 0;
 }
 .prism-tabs-list--page { gap: var(--tabs-page-gap, 1.5rem); padding: 0; border-bottom: 1px solid var(--border-subtle); background: transparent; }
-.prism-tabs-list--surface, .segmented-control { padding: 3px; border: 0; border-radius: 8px; background: var(--surface-subtle); }
+.prism-tabs-list--surface, .segmented-control { padding: 3px; border: 0; border-radius: 8px; }
+.prism-tabs-list--surface { background: var(--surface-subtle); }
+.segmented-control { background: var(--surface-quiet); }
 .prism-tabs-trigger, .segmented-item-label {
   position: relative; z-index: 1; display: inline-flex; flex: none; min-width: max-content;
   align-items: center; justify-content: center; gap: .375rem; border: 0; box-shadow: none;
