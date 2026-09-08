@@ -2,12 +2,80 @@
 
 import Link from "next/link"
 import { AILabel, Badge, StateLabel } from "@/components/ui/badge"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type CSSProperties } from "react"
 import { Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TextField } from "@/components/ui/text-field"
-import { contrastPresets, contrastRatio } from "@/lib/color-contrast"
+import { colorReviewButtons, colorReviewPalettes, contrastPresets, contrastRatio } from "@/lib/color-contrast"
+
+function ColorDirectionReview() {
+  const [button, setButton] = useState<keyof typeof colorReviewButtons>("bright")
+  const [name, setName] = useState("学生 01")
+  const [appliedName, setAppliedName] = useState(name)
+  const [error, setError] = useState("")
+  const [errorScheme, setErrorScheme] = useState<"current" | "reference">("current")
+  const [feedback, setFeedback] = useState("")
+  const composing = useRef(false)
+
+  return <div className="color-direction-review" id="color-direction-review">
+    <div className="doc-section-heading"><h3>图1方向 · 同内容对照</h3><p>两侧共用字号、组件与内容，输入、应用和取消同步。候选只在此处展示，尚未应用到全站。</p></div>
+    <div className="color-review-toolbar"><span>候选主按钮</span><SegmentedControl label="候选主按钮配色" value={button} onValueChange={value => setButton(value as typeof button)} items={[["bright", "曜蓝底 · 近黑字"], ["deep", "深蓝底 · 白字"]]} /></div>
+    <div className="color-review-grid">
+      {(["current", "reference"] as const).map(scheme => {
+        const palette = colorReviewPalettes[scheme]
+        const pair = colorReviewButtons[scheme === "current" ? "deep" : button]
+        const title = scheme === "current" ? "当前浅色" : "图1方向 · 候选"
+        const buttonStyle = {
+          "--button-bg": pair.background, "--button-fg": pair.foreground,
+          "--button-hover": pair.hover, "--button-active": pair.pressed, "--button-border": pair.border,
+        } as CSSProperties
+        const samples = [
+          ["主文字／页面", palette["--text-primary"], palette["--canvas"]],
+          ["次级文字／页面", palette["--text-secondary"], palette["--canvas"]],
+          ["辅助文字／局部底色", palette["--text-tertiary"], palette["--surface-subtle"]],
+          ["按钮／默认", pair.foreground, pair.background],
+          ["按钮／Hover", pair.foreground, pair.hover],
+          ["按钮／按下", pair.foreground, pair.pressed],
+        ]
+        return <section className="color-review-column" key={scheme} aria-label={title}>
+          <h4 className="color-review-caption">{title}</h4>
+          <div className="color-review-scene" data-palette={scheme} style={palette as CSSProperties}>
+            <header className="color-review-heading"><h5>课堂观察与学习记录</h5><p>同一份记录，保留来源与复核状态。</p><small>更新于今日 09:30 · 示例数据</small></header>
+            <div className="color-review-sources" aria-label="三种品牌源色"><span><i style={{ background: "var(--source-knowledge)" }} aria-hidden="true" />曜蓝</span><span><i style={{ background: "var(--source-ai)" }} aria-hidden="true" />智绯</span><span><i style={{ background: "var(--source-growth)" }} aria-hidden="true" />生长荧</span></div>
+            <article className="color-review-card">
+              <div><h5>本周学习记录</h5><p className="color-review-secondary">{appliedName} · 九年级数学</p></div>
+              <div className="label-list"><AILabel>AI 初稿</AILabel><StateLabel tone="pending">待复核</StateLabel></div>
+              <p className="color-review-body">方程建模步骤完整，条件说明仍需补充。</p>
+              <p className="color-review-note">来源：课堂观察 · 12 份学习记录</p>
+              <form aria-label={`${title}输入示例`} noValidate onSubmit={event => {
+                event.preventDefault()
+                if (composing.current) return
+                if (!name.trim()) {
+                  setErrorScheme(scheme)
+                  setError("请填写学生姓名。")
+                  setFeedback("")
+                  event.currentTarget.querySelector("input")?.focus()
+                  return
+                }
+                setAppliedName(name.trim())
+                setName(name.trim())
+                setError("")
+                setFeedback("修改已应用，两侧记录已同步。")
+              }}>
+                <TextField label="学生姓名" value={name} required aria-invalid={Boolean(error)} error={errorScheme === scheme ? error : ""} description={errorScheme !== scheme ? error : undefined} className={error && errorScheme !== scheme ? "color-review-error-copy" : undefined} onChange={event => { setName(event.target.value); setError(""); setFeedback("") }} onCompositionStart={() => { composing.current = true }} onCompositionEnd={() => { composing.current = false }} />
+                <div className="color-review-actions"><Button type="submit" style={scheme === "reference" && button === "bright" ? buttonStyle : undefined}>应用修改</Button><Button type="button" variant="outline" onClick={() => { setName(appliedName); setError(""); setFeedback("已取消修改，原记录保留。") }}>取消</Button></div>
+              </form>
+            </article>
+          </div>
+          <details className="color-review-details"><summary>查看配色与对比度</summary><dl>{samples.map(([label, foreground, background]) => <div key={label}><dt>{label}</dt><dd><code>{foreground} / {background}</code><strong>{contrastRatio(foreground, background)?.toFixed(2)}:1</strong></dd></div>)}</dl></details>
+        </section>
+      })}
+    </div>
+    <p className="color-review-feedback" role="status">{feedback}</p>
+    <p className="button-demo-note">曜蓝按钮在 Hover 和按下时使用更浅底色，保持近黑文字的对比度；深蓝按钮保留白字与加深状态。两组均可直接操作。</p>
+  </div>
+}
 
 export function ColorContrastLab() {
   const [scheme, setScheme] = useState<keyof typeof contrastPresets>("current")
@@ -24,7 +92,8 @@ export function ColorContrastLab() {
   }
   const changed = colors.foreground.toUpperCase() !== contrastPresets[scheme][role][0] || colors.background.toUpperCase() !== contrastPresets[scheme][role][1]
 
-  return <div className="contrast-lab">
+  return <><ColorDirectionReview /><div className="contrast-lab">
+    <h3>单个配对实验</h3>
     <SegmentedControl label="配色方案" value={scheme} onValueChange={value => reset(value as typeof scheme)} items={[["current", "当前浅色"], ["light", "候选浅色"], ["dark", "候选深色"]]} />
     <SegmentedControl label="语义角色" size="sm" value={role} onValueChange={value => reset(scheme, value as typeof role)} items={[["action", "曜蓝"], ["ai", "智绯"], ["growth", "生长荧"]]} />
     <p className="button-demo-note">{changed ? "自定义实验值，仅影响下方样本。" : scheme === "current" ? role === "growth" ? "源色限制示例：生长荧用于色样展示，不直接承担浅色底上的正文或必要边界。" : "当前浅色 Token 配对。" : "候选配对，尚未应用到主题；数值通过不等于主题验收。"} 输入不带透明度的六位十六进制颜色；透明色需先与实际背景合成。</p>
@@ -36,7 +105,7 @@ export function ColorContrastLab() {
     <p className="contrast-lab-result" role="status">{ratio === null ? "请输入有效颜色，例如 #751C4A。" : <>对比度 <strong>{ratio.toFixed(2)}:1</strong> · 普通文字 AA（4.5:1）：{ratio >= 4.5 ? "达到" : "未达到"} · 本站阅读目标（7:1）：{ratio >= 7 ? "达到" : "未达到"}</>}</p>
     <div><Button type="button" variant="outline" size="compact" onClick={() => reset()}>恢复所选配对</Button></div>
     <p className="button-demo-note">按原始计算值判定，显示值保留两位小数。实验值不修改全站 Token。</p>
-  </div>
+  </div></>
 }
 
 export function HomeControlPreview() {
