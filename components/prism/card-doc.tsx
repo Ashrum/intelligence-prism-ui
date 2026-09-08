@@ -11,9 +11,13 @@ const cardTypes = [
   ["DiagnosisHypothesis", "复核卡", "AI 与人工判断", "AI 来源、观察周期、样本限制、待复核状态", "仅用于需要人工判断的候选结论；普通 AI 文案不升级"],
 ] as const
 
+const iconBackgrounds = [["none", "无底色"], ["warm", "暖白"], ["blue", "淡蓝"], ["neutral", "中性灰"]] as const
+type IconBackground = typeof iconBackgrounds[number][0]
+
 export function CardDoc() {
   const [density, setDensity] = useState<CardDensity>("comfortable")
-  return <article className="component-article">
+  const [iconBackground, setIconBackground] = useState<IconBackground>("none")
+  return <article className="component-article card-icon-comparison" data-icon-background={iconBackground}>
     <header className="component-hero">
       <div className="component-eyebrow">数据展示</div>
       <div className="component-title-row"><h1>Card</h1><StateLabel tone="pending">待评审</StateLabel></div>
@@ -22,6 +26,10 @@ export function CardDoc() {
 
     <section className="doc-section" aria-labelledby="card-common-title">
       <div className="doc-section-heading"><h2 id="card-common-title">常见样式</h2><p>按阅读任务选择结构，简单内容省略不需要的区块。所有示例每卡最多一条内部分隔线。</p></div>
+      <div className="card-icon-options" id="card-icon-colors">
+        <div className="card-icon-options-control"><span>图标底色对比</span><SegmentedControl label="Card 图标底色" size="sm" value={iconBackground} onValueChange={value => setIconBackground(value as IconBackground)} items={iconBackgrounds} aria-describedby="card-icon-colors-note" /></div>
+        <p id="card-icon-colors-note">切换下方图标、资源封面与班级标识的底色，大小和位置保持一致。中性灰为原配色，四种方案供选择。</p>
+      </div>
       <div className="common-card-toolbar"><p>示例数据；来源可以展开，任务可以标记与撤回。操作只在本页保留，刷新恢复初始内容。</p><div><span>界面密度</span><SegmentedControl label="Card 界面密度" size="sm" value={density} onValueChange={value => setDensity(value as CardDensity)} items={[["comfortable", "舒适"], ["compact", "紧凑"]]} /></div></div>
       <CommonCardExamples density={density} />
     </section>

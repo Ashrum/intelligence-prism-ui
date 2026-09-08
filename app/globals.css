@@ -719,7 +719,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .object-card--wide { grid-column: 1 / -1; }
 .object-card-header { padding: var(--card-pad, 1.5rem); padding-bottom: 0; }
 .object-card-identity { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: .75rem; }
-.object-card-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .375rem; background: var(--surface-subtle); color: var(--text-secondary); }
+.object-card-mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .375rem; background: var(--card-icon-background, var(--surface-subtle)); color: var(--text-secondary); }
 .object-card-mark svg { width: 1rem; height: 1rem; }
 .object-card-identity-copy, .object-card-signal-wrap { min-width: 0; }
 .object-card-type { display: block; margin-bottom: .25rem; color: var(--text-secondary); font-size: .8125rem; line-height: 1.5; font-variant-numeric: tabular-nums; }
@@ -788,6 +788,13 @@ svg { width: 1rem; height: 1rem; flex: none; }
 }
 
 
+.card-icon-comparison[data-icon-background="none"] { --card-icon-background: transparent; }
+.card-icon-comparison[data-icon-background="warm"] { --card-icon-background: #f8f5ed; }
+.card-icon-comparison[data-icon-background="blue"] { --card-icon-background: #edf4f8; }
+.card-icon-comparison[data-icon-background="neutral"] { --card-icon-background: var(--surface-subtle); }
+.card-icon-options { min-width: 0; margin-bottom: 1.75rem; scroll-margin-top: 6rem; }
+.card-icon-options-control { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1rem; min-width: 0; font-size: .875rem; }
+.card-icon-options > p { max-width: 42rem; margin: .75rem 0 0; color: var(--text-secondary); font-size: .8125rem; line-height: 1.7; }
 .common-card-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem 2rem; margin-bottom: 1.5rem; }
 .common-card-toolbar > p { max-width: 36rem; margin: 0; color: var(--text-secondary); font-size: .875rem; line-height: 1.7; }
 .common-card-toolbar > div { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; font-size: .8125rem; }
@@ -812,14 +819,14 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .common-card-facts dd { margin: 0; color: var(--text-primary); font-size: 1.375rem; font-weight: 600; line-height: 1.4; font-variant-numeric: tabular-nums; }
 .common-card-facts small { color: var(--text-secondary); font-size: .75rem; font-weight: 400; }
 .common-card-resource { grid-template-columns: 4.5rem minmax(0, 1fr); align-items: start; }
-.common-card-document { display: grid; place-items: center; align-content: center; gap: .625rem; width: 100%; min-height: 8rem; border-radius: .375rem; background: var(--surface-subtle); color: var(--text-secondary); }
+.common-card-document { display: grid; place-items: center; align-content: center; gap: .625rem; width: 100%; min-height: 8rem; border-radius: .375rem; background: var(--card-icon-background, var(--surface-subtle)); color: var(--text-secondary); }
 .common-card-document svg { width: 1.75rem; height: 1.75rem; }
 .common-card-document > span { font-size: .75rem; line-height: 1.6; text-align: center; }
 .common-card-resource-copy { display: grid; gap: .875rem; min-width: 0; }
 .common-card-identity { display: flex; align-items: center; gap: .875rem; }
 .common-card-identity > div { min-width: 0; }
 .common-card-identity .common-card-context { margin-top: .25rem; }
-.common-card-avatar { display: grid; flex: none; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .625rem; background: var(--surface-subtle); color: var(--text-secondary); font-size: 1rem; font-weight: 600; }
+.common-card-avatar { display: grid; flex: none; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .625rem; background: var(--card-icon-background, var(--surface-subtle)); color: var(--text-secondary); font-size: 1rem; font-weight: 600; }
 .common-card-topline { display: flex; width: 100%; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; }
 .common-card-task-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-top: 0; }
 .common-card-task-footer > p { flex: 1 1 10rem; }
