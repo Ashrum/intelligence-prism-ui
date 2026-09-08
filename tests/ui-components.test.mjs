@@ -87,16 +87,17 @@ test("keeps one truthful catalog for Foundations and component maturity", async 
   assert.equal(foundationItems.length, 10);
   assert.equal(catalogStats.baseComponents, 56);
   assert.equal(catalogStats.extensions, 3);
-  assert.equal(catalogStats.stable, 7);
+  assert.equal(catalogStats.stable, 10);
   assert.equal(catalogStats.review, 5);
-  assert.equal(catalogStats.planned, 47);
-  assert.equal(catalogStats.documentedPages, 8);
+  assert.equal(catalogStats.planned, 44);
+  assert.equal(catalogStats.documentedPages, 9);
   assert.equal(catalogItems.length, 59);
   assert.equal(catalogStats.stable + catalogStats.review + catalogStats.planned, catalogItems.length);
   assert.equal(componentDocumentStatus("tabs"), "review");
   assert.equal(componentDocumentStatus("card"), "review");
-  assert.equal(componentDocumentStatus("select"), "review");
-  assert.equal(componentDocumentStatus("dialog"), "review");
+  assert.equal(componentDocumentStatus("select"), "stable");
+  assert.equal(componentDocumentStatus("dialog"), "stable");
+  assert.equal(componentDocumentStatus("choice-controls"), "review");
   assert.equal(componentDocumentStatus("badge-labels"), "stable");
   assert.deepEqual(countCatalogItems([]), { stable: 0, review: 0, planned: 0 });
   assert.equal(internalModules.length, 5);
@@ -127,6 +128,26 @@ test("associates select labels and errors with the required control and exposes 
   assert.match(disabled, /Not available\./);
 });
 
+test("preserves mixed checkbox, required radio and binary switch semantics in the shared choice examples", async () => {
+  const { ChoiceCheckbox, ChoiceSwitch, ChoiceControlsExamples } = await vite.ssrLoadModule("/components/prism/choice-controls.tsx");
+  const mixed = renderToStaticMarkup(React.createElement(ChoiceCheckbox, { checked: "indeterminate", "aria-label": "All evidence" }));
+  assert.match(mixed, /role="checkbox"[^>]*aria-checked="mixed"/);
+  const binary = renderToStaticMarkup(React.createElement(ChoiceSwitch, { checked: true, disabled: true, "aria-label": "Reading font" }));
+  assert.match(binary, /role="switch"[^>]*aria-checked="true"/);
+  assert.match(binary, /disabled=""/);
+  const html = renderToStaticMarkup(React.createElement(ChoiceControlsExamples));
+  assert.match(html, /role="radiogroup"[^>]*aria-required="true"/);
+  assert.match(html, /部分选中/);
+  assert.match(html, /全选只影响这三种可用类型/);
+  assert.match(html, /hidden=""/);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(ids.length, new Set(ids).size);
+  for (const [, id] of html.matchAll(/<label[^>]*for="([^"]+)"/g)) assert.ok(ids.includes(id), `Missing control ${id}`);
+  for (const [, references] of html.matchAll(/aria-(?:labelledby|describedby|controls)="([^"]+)"/g)) {
+    for (const id of references.split(" ")) assert.ok(ids.includes(id), `Missing description or controlled region ${id}`);
+  }
+});
+
 test("calculates contrast without rounding away a failed text threshold", async () => {
   const { contrastRatio, contrastPresets } = await vite.ssrLoadModule("/lib/color-contrast.ts");
   assert.equal(contrastRatio("#000000", "#FFFFFF"), 21);
@@ -151,7 +172,7 @@ test("renders the new component pages and focus sample across the production RSC
   const { default: worker } = await import("../dist/server/index.js");
   const environment = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
   const context = { waitUntil() {}, passThroughOnException() {} };
-  for (const [route, expected] of [["/components/select", "选择证据范围"], ["/components/dialog", "复核设置"], ["/foundations/accessibility", "a11y-focus-demo"]]) {
+  for (const [route, expected] of [["/components/select", "选择证据范围"], ["/components/dialog", "复核设置"], ["/components/choice-controls", "纳入的学习证据"], ["/foundations/accessibility", "a11y-focus-demo"]]) {
     const response = await worker.fetch(new Request(`http://localhost${route}`, { headers: { accept: "text/html" } }), environment, context);
     assert.equal(response.status, 200, route);
     assert.ok((await response.text()).includes(expected), `${route} did not render its example`);
