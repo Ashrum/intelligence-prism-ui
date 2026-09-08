@@ -31,6 +31,8 @@
     "app/review/text-fields/page.tsx",
     "app/review/typography/page.tsx",
     "app/review/typography/typography-review.tsx",
+    "components/prism/card-doc.tsx",
+    "components/prism/card-patterns.tsx",
     "components/prism/catalog.ts",
     "components/prism/classroom-observation-form.tsx",
     "components/prism/component-doc.tsx",
