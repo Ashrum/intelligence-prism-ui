@@ -178,12 +178,12 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
   return <div className="common-card-examples" data-density={density}>
     <section className="common-card-example" aria-labelledby={`${id}-metric-kind`}>
       <h3 id={`${id}-metric-kind`} className="common-card-kind">指标摘要</h3>
-      <ObjectCard aria-labelledby={`${id}-metric-title`} className="common-card">
+      <ObjectCard aria-labelledby={`${id}-metric-title`} className="common-card common-card--metric">
         <div className="common-card-body">
           <p className="common-card-context">本周 · 九年级 1 班 · 数学</p>
           <h4 id={`${id}-metric-title`} className="common-card-title">有效证据</h4>
           <p className="common-card-metric"><strong>128</strong><span>份</span></p>
-          <p className="common-card-copy">上周 112 份，本周增加 16 份。</p>
+          <p className="common-card-copy common-card-trend">上周 112 份，本周增加 16 份。</p>
           <Disclosure open={sourcesOpen} controls={`${id}-sources`} onClick={() => setSourcesOpen(value => !value)}>查看来源构成</Disclosure>
           <dl id={`${id}-sources`} className="common-card-facts" hidden={!sourcesOpen}><div><dt>课堂观察</dt><dd>24 <small>份</small></dd></div><div><dt>作业记录</dt><dd>72 <small>份</small></dd></div><div><dt>阶段测评</dt><dd>32 <small>份</small></dd></div></dl>
         </div>
