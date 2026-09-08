@@ -14,7 +14,7 @@
 .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within::before { border-width: 2px; }
 .tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
 .tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
-.tf-outline[data-readonly="true"] { --tf-surface: var(--surface-subtle); --tf-border: var(--border-strong); }
+.tf-outline[data-readonly="true"] { --tf-surface: var(--surface-subtle); --tf-border: var(--field-border); }
 .tf-outline[data-readonly="true"]::before { border-style: dashed; }
 .tf-outline[data-readonly="true"]:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .tf-outline[data-disabled="true"] { --tf-surface: var(--control-disabled-bg); --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }

@@ -68,26 +68,33 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
-      { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
-      { label: "Field / Border", value: "#64727B", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
-      { label: "AI / Action", value: "#A32967", use: "明确的 AI 操作，不用于普通强调。" },
+      { label: "Action / Primary", value: "#064B7E", use: "主要操作、选中状态和关键链接。" },
+      { label: "Field / Border", value: "#686C65", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
+      { label: "AI / Action", value: "#872056", use: "明确的 AI 操作，不用于普通强调。" },
       { label: "Button / Secondary", value: "Surface / Neutral", use: "次操作使用中性表面，不与主操作争夺曜蓝层级。" },
-      { label: "Button / Destructive", value: "#B63A36", use: "只用于删除等不可逆或高风险动作。" },
+      { label: "Button / Destructive", value: "#872725", use: "只用于删除等不可逆或高风险动作。" },
     ],
     boundary: "当前版本冻结浅色主题映射；深色主题在完成全部核心组件后单独评审。",
   },
   color: {
     title: "色彩",
-    description: "中性色承担大部分界面，三种核心色只在具有明确语义时出现。",
-    principles: ["曜蓝表示知识、主要操作与选择。", "智绯只表示 AI 来源、AI 行为或 AI 生成内容。", "生长荧只作为小面积信号，不用于大面积底色和正文。"],
+    description: "在页面背景、内容表面和交互底色上保持清晰阅读，三种核心色通过语义映射表达用途。",
+    principles: ["普通文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "输入、选择和焦点的必要识别边界至少达到 3:1；普通内容容器可以使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
     references: [
-      { label: "Canvas", value: "#F6F8FA", use: "页面背景。" },
+      { label: "Canvas", value: "#F5F5F3", use: "近白中性的页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
-      { label: "Text / Primary", value: "#182630", use: "标题与正文主信息。" },
-      { label: "Text / Secondary", value: "#5D6C76", use: "辅助说明与弱化信息。" },
-      { label: "Border / Default", value: "#D7DFE4", use: "常规边界和控件描边。" },
+      { label: "Text / Primary", value: "#20231F", use: "标题与正文主信息。" },
+      { label: "Text / Secondary", value: "#3B4039", use: "辅助说明与次级信息；在交互底色上仍保持文字清晰。" },
+      { label: "Text / Tertiary", value: "#444940", use: "元信息和占位文字；在最深的中性交互底色上仍达到 7:1。" },
+      { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与主按钮背景；链接仅用颜色区分，不使用下划线。" },
+      { label: "AI / Action · Text", value: "#872056 / #751C4A", use: "AI 按钮与浅色 AI 表面上的文字。" },
+      { label: "Status / Success · Warning · Danger", value: "#215631 / #684511 / #872725", use: "分别与成功、警告、错误表面成对使用。" },
+      { label: "Field / Border", value: "#686C65", use: "可填写与只读区域的边界；通过实线和间断边框区分模式。" },
+      { label: "Selection / Border", value: "#51758E", use: "选中对象和局部选中面的边界。" },
+      { label: "Disabled / Text · Border", value: "#444940 / #7C8277", use: "禁用内容仍保持可读；以不可用说明、独立表面和行为区分。" },
+      { label: "Border / Default", value: "#D5D6D1", use: "普通内容容器与分隔线；输入和选择使用独立的边界 Token。" },
     ],
-    boundary: "颜色不能单独表达状态；成功、警告、失败和 AI 来源必须同时具有文字。",
+    boundary: "7:1 是当前浅色主题的文字对比目标，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
   },
   typography: {
     title: "字体与排版",
@@ -220,7 +227,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
       <section className="doc-section" aria-labelledby="foundation-preview-title">
         <div className="doc-section-heading">
           <h2 id="foundation-preview-title">Reference</h2>
-          <p>{slug === "typography" ? "当前全站样式参考，不代表新字体已完成生产验收。" : "当前实现中使用的视觉与交互基线。"}</p>
+          <p>{slug === "typography" ? "当前全站样式参考，不代表新字体已完成生产验收。" : slug === "color" ? "同一内容置于页面背景、内容表面与交互底色中对照。" : "当前实现中使用的视觉与交互基线。"}</p>
         </div>
         <FoundationPreview slug={slug} />
       </section>
@@ -289,7 +296,12 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "color") {
-    return <div className="foundation-preview neutral-color-grid"><div className="neutral-color-chip"><span className="neutral-color-chip--canvas" /><strong>Canvas</strong><small>#F6F8FA</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--surface" /><strong>Surface</strong><small>#FFFFFF</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--text" /><strong>Text</strong><small>#182630</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--border" /><strong>Border</strong><small>#D7DFE4</small></div><div className="neutral-color-chip"><span className="neutral-color-chip--action" /><strong>Action</strong><small>#08658F</small></div></div>
+    return <div className="foundation-preview color-background-grid">
+      {[["canvas", "页面背景"], ["surface", "内容表面"], ["active", "交互底色"]].map(([mode, label]) => <section key={mode} className={`color-reading-sample color-reading-sample--${mode}`}>
+        <small>{label}</small><h3>本周学习记录</h3><p>课堂观察与复核记录保持清晰，辅助说明也可以直接阅读。</p><small>更新于今日 09:30</small><a href="/components/input-field">查看课堂记录 →</a>
+      </section>)}
+      <div className="color-status-samples" aria-label="状态颜色"><span className="state-label state-label--running">处理中</span><span className="ai-label">AI 初稿</span><span className="state-label state-label--success">已完成</span><span className="state-label state-label--warning">待复核</span><span className="state-label state-label--danger">处理失败</span></div>
+    </div>
   }
 
   if (slug === "typography") {

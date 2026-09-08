@@ -38,9 +38,9 @@ export function DesignLanguageRecord() {
 
     <section className="language-record-section" aria-labelledby="language-character-title">
       <h3 id="language-character-title">精致、清晰、空间高效，配色雅致并具有记忆点</h3>
-      <p>沿用 B 方向：熟悉的组件轮廓、清楚的边界、克制的表面。接受用准确的字阶、留白和清晰的选中边界形成层级；拒绝把所有文字、边界一律变淡变小来表示精致。</p>
+      <p>沿用 B 方向：熟悉的组件轮廓、清楚的边界、克制的表面。近白中性背景承托深色文字，彩色集中于必要的操作与状态。接受用准确的字阶、留白和清晰的选中边界形成层级；拒绝把所有文字、边界一律变淡变小来表示精致。</p>
       <p>可操作性在操作之前就要可识别。链接默认使用操作色，不使用下划线，输入区在空值、已有值和失焦时均保留可见边界；只读与禁用各自明确说明。Hover 与 Focus 增强已有线索，不承担首次发现入口的职责。原位编辑保持阅读字体与行宽，同时常显编辑入口，并在进入编辑后清楚显示输入边界。</p>
-      <p>用来识别可输入区域的边界，与相邻背景至少达到 3:1 对比；普通内容容器可以继续采用较轻边界。当前浅色主题通过 <code>--field-border</code> 区分输入边界与容器边界。参考 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html">W3C 非文本对比说明</a>；数值检查不能代替真实页面的可识别性评审。</p>
+      <p>普通文字以 7:1 为对比目标，辅助信息、占位文字和操作文案同样保持清晰；字号、字重、间距与位置共同组织层级。输入、选择和焦点的必要识别边界，与相邻背景至少达到 3:1 对比；普通内容容器可以继续采用较轻边界。当前浅色主题通过 <code>--field-border</code> 区分输入边界与容器边界。参考 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-enhanced.html">W3C 文字增强对比</a>与<a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html">非文本对比说明</a>；按真实背景与透明度合成后的颜色检查，数值检查不能代替真实页面的可识别性评审。</p>
       <div className="language-source-colors" aria-label="三种已确认源色"><span><i className="language-color-knowledge" aria-hidden="true" />曜蓝 <code>#339FF2</code></span><span><i className="language-color-ai" aria-hidden="true" />智绯 <code>#E0438F</code></span><span><i className="language-color-growth" aria-hidden="true" />生长荧 <code>#C2F25B</code></span></div>
       <p>颜色沿用既有语义 Token，集中表达当前操作、选择、AI 参与和必要反馈。接受中性表面上的局部强调；拒绝为展示三源色而给三个并列区块平均铺色。</p>
       <p>曜蓝的唯一源色为 <code>#339FF2</code>。接受通过既有语义映射获得操作色和文字色；拒绝组件硬编码品牌源色，或将源色直接覆盖全部操作、文字与状态色。</p>
