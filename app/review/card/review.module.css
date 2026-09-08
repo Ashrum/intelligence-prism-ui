@@ -31,7 +31,7 @@
 .pageHeader h1 { margin: .5rem 0 .75rem; font-size: clamp(2rem, 4vw, 3rem); font-weight: 675; letter-spacing: -.035em; line-height: 1.08; }
 .pageHeader p { margin: 0; color: var(--text-secondary); font-size: 1rem; line-height: 1.75; }
 .headerLinks { display: flex; flex: none; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; }
-.headerLinks a { color: var(--action-primary); font-size: .875rem; font-weight: 650; text-decoration: underline; text-underline-offset: .25rem; }
+.headerLinks a { color: var(--action-primary); font-size: .875rem; font-weight: 650; text-decoration: none; }
 .headerLinks a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
 .proposition, .benchmarkSection { padding-top: 2.5rem; }

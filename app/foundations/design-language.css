@@ -1,5 +1,5 @@
 .language-page-nav { display: flex; flex-wrap: wrap; gap: .625rem 1.5rem; padding: 1.25rem 0; border-bottom: 1px solid var(--border-subtle); font-size: .875rem; }
-.language-page-nav a, .prism-language-record a { color: var(--action-primary); text-decoration: underline; text-underline-offset: .2em; }
+.language-page-nav a, .prism-language-record a { color: var(--action-primary); text-decoration: none; }
 .language-page-nav a:focus-visible, .prism-language-record a:focus-visible, .language-table-wrap:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 .prism-language-record, .prism-language-record section, .language-foundation-catalog { scroll-margin-top: 5.5rem; }
 .prism-language-record { font-size: 1rem; line-height: 1.85; overflow-wrap: break-word; }

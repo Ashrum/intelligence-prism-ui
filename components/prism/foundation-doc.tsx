@@ -214,7 +214,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</span>
         </div>
         <p>{doc.description}</p>
-        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary underline underline-offset-4">生产交付条件</a>记录。</p>}
+        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary no-underline">生产交付条件</a>记录。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
@@ -253,7 +253,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <p>以下是设计与工程的共同接受标准，实现进度与跨系统结果按下表分别记录。</p>
         </div>
         <p>全站基础层现已自托管完整源字符集合的分片：Noto Sans CJK SC 2.004 为 44,810 个字符，界面沿用真实可变字重；Noto Serif CJK SC 2.003 为 44,777 个字符、400 字重。两套字体各保留源字体的 25 个 Unicode 变体序列。完整源集合不等于覆盖全部 Unicode 或通过 GB 18030；源字体外字符仍需后备字体。原字体对照页的样本子集保持独立。</p>
-        <p>完整字体声明由根布局统一载入，界面、阅读、数学使用共用字体变量；常用分片覆盖现有页面与组件文案，其他字符继续按需加载。阅读复核中的公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体，加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary underline underline-offset-4">现有字体来源记录</a>。</p>
+        <p>完整字体声明由根布局统一载入，界面、阅读、数学使用共用字体变量；常用分片覆盖现有页面与组件文案，其他字符继续按需加载。阅读复核中的公式沿用完整 STIX Two Math 2.13 b171 与原生 MathML；公式内中文单独使用阅读字体，加载失败时保留公式文字表达和编辑能力。字体、来源、许可及分片校验记录见<a href="/fonts/typography-review/SOURCES.md" className="text-primary no-underline">现有字体来源记录</a>。</p>
         <div className="foundation-table-wrap" role="region" aria-label="字体生产验收进度" tabIndex={0}>
           <table className="foundation-table">
             <thead><tr><th scope="col">验收范围</th><th scope="col">当前结果 · 2026-09-07</th></tr></thead>
@@ -270,12 +270,12 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           <table className="foundation-table">
             <thead><tr><th scope="col">交付项</th><th scope="col">接受条件</th><th scope="col">拒绝方案</th></tr></thead>
             <tbody>{typographyProduction.map((rule) => <tr key={rule.item}>
-              <th scope="row">{rule.item}</th><td>{rule.accept}{rule.source && <> <a href={rule.source.href} target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">{rule.source.label}</a></>}</td><td>{rule.reject}</td>
+              <th scope="row">{rule.item}</th><td>{rule.accept}{rule.source && <> <a href={rule.source.href} target="_blank" rel="noreferrer" className="text-primary no-underline">{rule.source.label}</a></>}</td><td>{rule.reject}</td>
             </tr>)}</tbody>
           </table>
         </div>
         <p>最小内容样本复用现有候选并补入：生僻姓名、简体中文标点与中英数字混排；行内／独立公式、嵌套分式、根式、上下标、积分、求和、伸缩括号、矩阵和公式内中文。读、改、保存与复制使用同一份内容；公式加载失败须明确提示并保留可恢复的源内容。</p>
-        <p>STIX Two Math 提供数学字形和排版度量；原生 MathML 的布局仍由浏览器实现，两者要一起验证。参考 <a href="https://www.w3.org/TR/mathml-core/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-4">MathML Core</a>。本页的平台范围与接受条件是智能曜彩的交付要求，不宣称 W3C 指定了字体名单或已经完成标准符合性认证。</p>
+        <p>STIX Two Math 提供数学字形和排版度量；原生 MathML 的布局仍由浏览器实现，两者要一起验证。参考 <a href="https://www.w3.org/TR/mathml-core/" target="_blank" rel="noreferrer" className="text-primary no-underline">MathML Core</a>。本页的平台范围与接受条件是智能曜彩的交付要求，不宣称 W3C 指定了字体名单或已经完成标准符合性认证。</p>
       </section>}
 
       <aside className="foundation-boundary" aria-label="当前边界"><CircleHelp aria-hidden="true" /><div><strong>当前边界</strong><p>{doc.boundary}</p></div></aside>
