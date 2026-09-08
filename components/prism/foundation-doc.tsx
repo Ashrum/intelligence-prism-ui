@@ -266,7 +266,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="doc-section-heading"><h2 id="color-pairing-title">前景、背景与必要边界</h2><p>源色用于品牌识别，界面使用成对的语义 Token。中性表面承托阅读，颜色只说明明确用途。</p></div>
         <p>AI 标签使用深阶前景 #751C4A 与浅色背景 #FDF0F6，计算对比度约 9.39:1。浅色填充或装饰边框可以较轻；承担输入、选择与状态识别的必要边界仍需满足相邻色 3:1。10%–15% 透明度不能自动保障对比度，应计算合成后的颜色。</p>
         <p>普通文字的 AA 门槛为 4.5:1；本站阅读与操作文字继续以 7:1 为目标。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
-        <div className="doc-section-heading"><h3>对比度实验区</h3><p>比较当前与候选浅／深色配对，也可修改颜色。深色方案仍待完整组件验证。</p></div>
+        <div className="doc-section-heading"><h3>对比度实验区</h3><p>先比较图1方向的真实组件，再检查单个浅／深色配对。主文字、辅助信息与按钮使用相同内容；候选仍待评审。</p></div>
         <ColorContrastLab />
       </section>}
 

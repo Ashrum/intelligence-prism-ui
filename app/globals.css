@@ -393,6 +393,38 @@ body {
 .contrast-lab-sample p { color: inherit; }
 .contrast-lab-result { margin: 0; font-size: .875rem; line-height: 1.8; }
 .contrast-lab-result strong, .contrast-lab-sample span { font-variant-numeric: tabular-nums; }
+.color-direction-review { display: grid; gap: 1.25rem; margin-block: 1.5rem 2rem; scroll-margin-top: 6rem; }
+.color-review-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1rem; font-size: .875rem; }
+.color-review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr)); gap: 1.25rem; }
+.color-review-column { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; gap: .75rem; }
+.color-review-caption { margin: 0; font-size: 1rem; font-weight: 600; }
+.color-review-scene { --foreground: var(--text-primary); --muted-foreground: var(--text-secondary); display: grid; align-content: start; gap: 1.5rem; min-width: 0; padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid var(--border-default); border-radius: .75rem; background: var(--canvas); color: var(--text-primary); }
+.color-review-heading h5, .color-review-card h5 { margin: 0; font-size: 1.125rem; font-weight: 650; line-height: 1.5; }
+.color-review-heading p, .color-review-secondary { margin: .5rem 0 0; color: var(--text-secondary); font-size: .875rem; line-height: 1.7; }
+.color-review-heading small { display: block; margin-top: .375rem; color: var(--text-tertiary); font-size: .875rem; line-height: 1.7; }
+.color-review-sources { display: flex; flex-wrap: wrap; gap: .75rem 1rem; font-size: .875rem; line-height: 1.5; color: var(--text-secondary); }
+.color-review-sources span { display: inline-flex; align-items: center; gap: .5rem; }
+.color-review-sources i { width: 1.75rem; height: .625rem; border-radius: .125rem; }
+.color-review-card { display: grid; gap: 1.25rem; min-width: 0; padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid var(--border-default); border-radius: .625rem; background: var(--surface); }
+.color-review-body { margin: 0; color: var(--text-primary); font-size: 1rem; line-height: 1.8; }
+.color-review-note { margin: 0; padding: .625rem .75rem; border-radius: .375rem; background: var(--surface-subtle); color: var(--text-tertiary); font-size: .875rem; line-height: 1.7; }
+.color-review-card form { display: grid; gap: 1rem; min-width: 0; }
+.color-review-error-copy .tf-feedback { color: var(--danger-fg); }
+.color-review-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.color-review-details { font-size: .875rem; line-height: 1.7; }
+.color-review-details summary { width: fit-content; padding-block: .25rem; color: var(--action-primary); cursor: pointer; }
+.color-review-details summary:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.color-review-details dl { display: grid; gap: .75rem; margin: .75rem 0 0; }
+.color-review-details dl > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: .5rem; }
+.color-review-details dt { color: var(--text-secondary); }
+.color-review-details dd { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; margin: 0; }
+.color-review-details code, .color-review-details strong { font-variant-numeric: tabular-nums; }
+.color-review-feedback { min-height: 1.7em; margin: 0; font-size: .875rem; line-height: 1.7; }
+@media (forced-colors: active) {
+  .color-review-scene { background: Canvas; color: CanvasText; }
+  .color-review-actions .ui-button { background: ButtonFace !important; color: ButtonText !important; border-color: ButtonText !important; }
+  .color-review-actions .ui-button:not(:disabled):hover, .color-review-actions .ui-button:not(:disabled):active { background: Highlight !important; color: HighlightText !important; }
+}
 .type-specimen small { color: var(--action-primary); font-size: .75rem; font-weight: 700; letter-spacing: .06em; }
 .spacing-specimen { display: grid; align-content: center; gap: .875rem; }
 .spacing-specimen > div { display: flex; align-items: center; gap: 1rem; }
