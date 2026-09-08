@@ -45,7 +45,6 @@ export default function Home() {
       <header className="benchmark-header">
         <div className="benchmark-heading">
           <div className="benchmark-kicker">
-            <span className="growth-signal" aria-hidden="true" />
             Phase 1 · 基准组件
           </div>
           <h1>智能曜彩｜基础组件基准</h1>
