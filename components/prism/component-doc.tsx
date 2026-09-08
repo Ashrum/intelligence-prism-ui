@@ -17,7 +17,7 @@ import {
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TabsExamples, TabsUsageNotes } from "@/components/prism/tabs-examples"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
 export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
@@ -28,15 +28,15 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
         <div className="component-eyebrow">{doc.eyebrow}</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className="state-label state-label--completed"><span className="state-dot" aria-hidden="true" />稳定</span>
+          <span className={`state-label state-label--${slug === "tabs" ? "pending" : "completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "tabs" ? "待评审" : "稳定"}</span>
         </div>
         <p>{doc.description}</p>
       </header>
 
       <section className="doc-section" aria-labelledby="preview-title">
         <div className="doc-section-heading">
-          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : "Preview"}</h2>
-          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : "真实组件与交互状态，可直接键盘操作。"}</p>
+          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : slug === "tabs" ? "样式、状态与应用场景" : "Preview"}</h2>
+          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : slug === "tabs" ? "页面、局部内容、侧向详情与窄容器，共用清楚的选择和状态规则。" : "真实组件与交互状态，可直接键盘操作。"}</p>
         </div>
         <div className="component-preview">
           <ComponentPreview slug={slug} />
@@ -53,6 +53,7 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
           <h2>{slug === "input-field" ? "语义与操作保障" : "Accessibility"}</h2>
           <p>{doc.accessibility}</p>
         </div>
+        {slug === "tabs" && <TabsUsageNotes />}
         {slug === "input-field" && <div className="field-behavior-note">
           <h2>此场景的处理规则</h2>
           <table className="field-behavior-table"><thead><tr><th scope="col">时刻</th><th scope="col">处理与保留</th></tr></thead><tbody>
@@ -73,7 +74,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
     return <ButtonPreview />
   }
 
-  if (slug === "tabs") return <TabsPreview />
+  if (slug === "tabs") return <TabsExamples />
   if (slug === "segmented-control") return <SegmentedPreview />
 
   if (slug === "card") {
@@ -101,64 +102,6 @@ type ControlDensity = "comfortable" | "compact"
 
 function DensitySelector({ value, onChange }: { value: ControlDensity; onChange: (value: ControlDensity) => void }) {
   return <div className="control-preview-toolbar"><span>界面密度</span><SegmentedControl label="界面密度" size="sm" value={value} onValueChange={(value) => onChange(value as ControlDensity)} items={[["comfortable", "舒适 · 36px"], ["compact", "紧凑 · 32px"]]} /></div>
-}
-
-function TabsPreview() {
-  const [density, setDensity] = useState<ControlDensity>("comfortable")
-  return (
-    <div className="preview-stack component-control-preview" data-density={density}>
-      <DensitySelector value={density} onChange={setDensity} />
-      <div className="preview-grid-two">
-        <div>
-          <div className="control-caption">Page Tabs</div>
-          <p className="button-demo-note">九年级 · 数学 · 今日 · 示例数据</p>
-          <Tabs defaultValue="overview" activationMode="manual">
-            <TabsList variant="line" aria-label="教育证据页面">
-              <TabsTrigger value="overview">概览</TabsTrigger>
-              <TabsTrigger value="evidence">教育证据</TabsTrigger>
-              <TabsTrigger value="records">处理记录</TabsTrigger>
-            </TabsList>
-            <div className="page-tab-content">
-              <TabsContent value="overview">今日汇总 128 份教育证据。</TabsContent>
-              <TabsContent value="evidence">覆盖课堂观察、作业表现与阶段测评。</TabsContent>
-              <TabsContent value="records">最近一次处理于 14:32 完成。</TabsContent>
-            </div>
-          </Tabs>
-          <p className="surface-tab-note">方向键移动焦点，Enter 或 Space 确认切换。</p>
-        </div>
-        <div>
-          <div className="control-caption">Surface Tabs</div>
-          <Tabs defaultValue="today">
-            <TabsList aria-label="统计周期">
-              <TabsTrigger value="today">今日</TabsTrigger>
-              <TabsTrigger value="week">本周</TabsTrigger>
-              <TabsTrigger value="month">本月</TabsTrigger>
-            </TabsList>
-            <TabsContent value="today" className="surface-tab-note">128 份</TabsContent>
-            <TabsContent value="week" className="surface-tab-note">816 份</TabsContent>
-            <TabsContent value="month" className="surface-tab-note">3,240 份</TabsContent>
-          </Tabs>
-        </div>
-      </div>
-      <div className="control-boundary">
-        <span className="control-caption">长标签、数量与禁用项 · 304px 容器</span>
-        <div className="control-narrow">
-          <Tabs defaultValue="all" activationMode="manual">
-            <TabsList variant="line" aria-label="长标签教育证据">
-              <TabsTrigger value="all"><span className="selection-label"><span>全部教育证据</span><span className="selection-count">128</span></span></TabsTrigger>
-              <TabsTrigger value="long"><span className="selection-label"><span>跨学科学习过程长期趋势</span><span className="selection-count">24</span></span></TabsTrigger>
-              <TabsTrigger value="archived" disabled><span className="selection-label"><span>已归档记录</span><span className="selection-count">8</span></span></TabsTrigger>
-            </TabsList>
-            <div className="page-tab-content">
-              <TabsContent value="all">显示当前范围内的全部教育证据。</TabsContent>
-              <TabsContent value="long">长标签保持完整，选项区域独立滚动。</TabsContent>
-              <TabsContent value="archived">归档记录暂不可用。</TabsContent>
-            </div>
-          </Tabs>
-        </div>
-      </div>
-    </div>
-  )
 }
 
 function SegmentedPreview() {

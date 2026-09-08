@@ -71,7 +71,7 @@ export function DesignLanguageRecord() {
     <section className="language-record-section" aria-labelledby="language-components-title">
       <h3 id="language-components-title">组件承担不同职责，使用同一种语言</h3>
       <dl className="language-role-list">{componentRoles.map(([name, role]) => <div key={name}><dt>{name}</dt><dd>{role}</dd></div>)}</dl>
-      <p>共同准则也用于复核原有组件。Button 按操作保留就近反馈；Tabs 保持上下文与可见焦点；Segmented Control 在同一范围内立即更新结果。Text Fields 已通过设计评审，浮动标签、字段状态与密度已回填至<Link href="/components/input-field">正式组件与课堂观察记录</Link>，Benchmark 共用相同实现。</p>
+      <p>共同准则也用于复核原有组件。Button 按操作保留就近反馈；Tabs 按页面与局部范围组织内容，加载与错误就近表达，切换保留草稿和已有结果；Segmented Control 在同一范围内立即更新结果。Text Fields 已通过设计评审，浮动标签、字段状态与密度已回填至<Link href="/components/input-field">正式组件与课堂观察记录</Link>，Benchmark 共用相同实现。</p>
     </section>
 
     <section className="language-record-section" aria-labelledby="language-motion-ai-title">
