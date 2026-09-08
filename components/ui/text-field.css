@@ -6,7 +6,7 @@
   --tf-label-color: var(--text-secondary);
   --tf-caret: var(--action-primary);
   position: relative; display: flex; align-items: center; min-width: 0;
-  min-height: var(--tf-height); background: var(--tf-surface); border-radius: .5rem;
+  min-height: var(--tf-height); background: var(--tf-surface); border-radius: .625rem;
 }
 /* A native legend creates the notch; the real label needs no background patch. */
 .tf-notch { position: absolute; inset: -.5625rem 0 0; min-inline-size: 0; margin: 0; padding: 0 .75rem; border: 1px solid var(--tf-border); border-radius: inherit; pointer-events: none; transition: border-color 140ms ease; }

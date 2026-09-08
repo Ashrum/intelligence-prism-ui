@@ -70,7 +70,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "预留给有明确目标、周期与证据支持的成长或达成提示；不用于常规进度、处理完成或浅色底正文。具体反馈待场景验证。" },
-      { label: "Action / Primary", value: "#064B7E", use: "主要操作、选中状态和关键链接。" },
+      { label: "Action / Fill", value: "#339FF2 / #FFFFFF", use: "主按钮采用曜蓝底与白字；Hover 为 #218FE1，按下为 #1380D1。" },
+      { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与输入聚焦文字，独立于按钮填充。" },
       { label: "Field / Border", value: "#686C65", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
       { label: "AI / Action", value: "#872056", use: "明确的 AI 操作，不用于普通强调。" },
       { label: "AI / Source · Review", value: "分开表达", use: "智绯说明 AI 来源与明确的 AI 行为；生成进度、人工复核、失败另用状态与文字。人工编辑后来源保留，不默认显示模型名称、置信度或已验证。" },
@@ -83,24 +84,26 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   color: {
     title: "色彩",
     description: "在页面背景、内容表面和交互底色上保持清晰阅读，三种核心色通过语义映射表达用途。",
-    principles: ["阅读与可操作文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "可编辑输入、选择和焦点的必要识别边界至少达到 3:1；只读、禁用和普通内容容器使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
+    principles: ["阅读文字以 7:1 为对比目标，正文、辅助信息、标签与占位文字按真实背景校验。曜蓝底白字按钮为已确认的视觉选择，对比度限制另行说明。", "主按钮采用曜蓝底与白字；链接、AI 行为与状态文字使用各自的深阶语义色。", "可编辑输入、选择和焦点的必要识别边界至少达到 3:1；只读、禁用和普通内容容器使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
     references: [
-      { label: "Canvas", value: "#F5F5F3", use: "近白中性的页面背景。" },
+      { label: "Canvas", value: "#FAFAF8", use: "近白中性的页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
-      { label: "Surface / Quiet", value: "#F7F7F5", use: "只读／禁用字段与 Segmented Control 未选中区域的浅灰白填充；具体模式仍由文字、边界与行为说明。" },
-      { label: "Text / Primary", value: "#20231F", use: "标题与正文主信息。" },
-      { label: "Text / Secondary", value: "#3B4039", use: "辅助说明与次级信息；在交互底色上仍保持文字清晰。" },
-      { label: "Text / Tertiary", value: "#444940", use: "元信息和占位文字；在最深的中性交互底色上仍达到 7:1。" },
-      { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与主按钮背景；链接仅用颜色区分，不使用下划线。" },
+      { label: "Surface / Quiet", value: "#F7F7F5", use: "只读／禁用字段的浅灰白填充；具体模式仍由文字、边界与行为说明。" },
+      { label: "Surface / Subtle", value: "#F1EFE8", use: "指标 Card、局部筛选轨道与中性次操作的浅底色。" },
+      { label: "Text / Primary", value: "#2C2C2A", use: "标题与正文主信息。" },
+      { label: "Text / Secondary", value: "#444440", use: "辅助说明与次级信息；在交互底色上仍保持文字清晰。" },
+      { label: "Text / Tertiary", value: "#4F4F49", use: "元信息和占位文字；在最深的中性交互底色上仍达到 7:1。" },
+      { label: "Action / Fill · Text", value: "#339FF2 / #FFFFFF", use: "曜蓝主按钮采用白字；默认对比度 2.84:1，未达到普通文字 AA 与 7:1 目标。" },
+      { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与输入聚焦文字；链接不使用下划线。" },
       { label: "AI / Action · Text", value: "#872056 / #751C4A", use: "AI 按钮与浅色 AI 表面上的文字。" },
       { label: "Status / Success · Warning · Danger", value: "#215631 / #684511 / #872725", use: "分别与成功、警告、错误表面成对使用。" },
       { label: "Field / Border", value: "#686C65", use: "可填写区域的常显边界；只读与禁用字段使用较轻实线和接近背景的浅灰白填充，只读聚焦时只强化原边框。" },
-      { label: "Selection / Border", value: "#51758E", use: "选中对象和局部选中面的边界。" },
-      { label: "Disabled / Background · Text · Border", value: "#F0F0ED / #62675D / #D5D6D1", use: "按钮等控件的禁用配色；TextField 填充使用 Surface / Quiet，边界使用 Border / Subtle，保留不可用说明与可读灰字。" },
-      { label: "Border / Subtle", value: "#E3E4DE", use: "禁用字段的轻边界；填充使用 #F7F7F5，文字使用 #62675D。" },
-      { label: "Border / Default", value: "#D5D6D1", use: "普通内容容器、只读字段与分隔线；可编辑输入和选择使用独立的边界 Token。" },
+      { label: "Selection / Border", value: "#51758E", use: "选中对象的边界；Tabs 与 Segmented 的局部选中面使用普通细边框，选中状态同时由位置、字重与语义表达。" },
+      { label: "Disabled / Background · Text · Border", value: "#F1EFE8 / #66655E / #D3D1C7", use: "按钮等控件的禁用配色；TextField 填充使用 Surface / Quiet，边界使用 Border / Subtle，保留不可用说明与可读灰字。" },
+      { label: "Border / Subtle", value: "#E6E3DA", use: "禁用字段的轻边界；填充使用 #F7F7F5，文字使用 #66655E。" },
+      { label: "Border / Default", value: "#D3D1C7", use: "普通内容容器、只读字段与分隔线；可编辑输入和选择使用独立的边界 Token。" },
     ],
-    boundary: "7:1 是当前浅色主题的阅读与可操作文字对比目标；禁用文字单独保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
+    boundary: "7:1 是当前浅色主题的阅读目标；曜蓝底白字按钮默认 2.84:1，未达到普通文字 AA。禁用文字保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
   },
   typography: {
     title: "字体与排版",
@@ -115,7 +118,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
       { label: "Safe Line Leading", value: "unitless / natural height", use: "含行内公式时使用 2 的无单位基础行距，公式保留自然高度并沿基线排列；此值不是高度上限，也不是任意公式的安全保证。矩阵、多层分式与过高表达式转独立公式块。" },
       { label: "Numeric / Figures", value: "font-variant-numeric: tabular-nums", use: "对齐计分、指标和数字列；位数变化时按实际范围预留数字宽度。不覆盖数学字体的内部数字、上下标与运算符布局。" },
-      { label: "Tabs / Segmented", value: "14px / 500", use: "选中与未选中保持相同字重；数量使用 12px。" },
+      { label: "Tabs / Segmented", value: "14px / 500–600", use: "选中使用深灰与 600 字重，未选中为 500；数量使用 12px。" },
       { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
     ],
     boundary: "不使用全大写中文、超细字重或仅靠字重区分交互状态。",
@@ -151,14 +154,14 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   "shape-elevation": {
     title: "形状与层级",
     description: "使用有限圆角、清晰边框和表面差异建立克制的界面层级。",
-    principles: ["小控件使用 6–8px 圆角，容器使用 8–12px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
+    principles: ["标签使用 6px 圆角，按钮与输入使用 10px，Card 使用 16px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
     references: [
-      { label: "Radius / Small", value: "6px", use: "标签、导航项和小型按钮。" },
-      { label: "Radius / Medium", value: "8px", use: "按钮、输入与一般卡片。" },
-      { label: "Radius / Large", value: "12px", use: "较大区块与预览容器。" },
+      { label: "Radius / Small", value: "6px", use: "标签、导航项和最小型按钮。" },
+      { label: "Radius / Medium", value: "10px", use: "按钮、输入与分段选择轨道。" },
+      { label: "Radius / Large", value: "16px", use: "Card 与主要预览容器。" },
       { label: "Border", value: "1px", use: "常规组件和容器边界。" },
       { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
-      { label: "Tabs / Segmented Surface", value: "8px / 6px / 3px", use: "外圆角／选中面圆角／内边距；浅中性底与白色选中面，无阴影。" },
+      { label: "Tabs / Segmented Surface", value: "10px / 8px / 3px", use: "外圆角／选中面圆角／内边距；浅中性底与白色选中面，无阴影。" },
     ],
     boundary: "不使用大面积玻璃拟态、彩色阴影或过度圆润的胶囊化容器。",
   },
@@ -265,8 +268,8 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
       {slug === "color" && <section className="doc-section" aria-labelledby="color-pairing-title">
         <div className="doc-section-heading"><h2 id="color-pairing-title">前景、背景与必要边界</h2><p>源色用于品牌识别，界面使用成对的语义 Token。中性表面承托阅读，颜色只说明明确用途。</p></div>
         <p>AI 标签使用深阶前景 #751C4A 与浅色背景 #FDF0F6，计算对比度约 9.39:1。浅色填充或装饰边框可以较轻；承担输入、选择与状态识别的必要边界仍需满足相邻色 3:1。10%–15% 透明度不能自动保障对比度，应计算合成后的颜色。</p>
-        <p>普通文字的 AA 门槛为 4.5:1；本站阅读与操作文字继续以 7:1 为目标。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
-        <div className="doc-section-heading"><h3>对比度实验区</h3><p>先比较图1方向的真实组件，再检查单个浅／深色配对。主文字、辅助信息与按钮使用相同内容；候选仍待评审。</p></div>
+        <p>普通文字的 AA 门槛为 4.5:1；本站阅读文字以 7:1 为目标，已确认的曜蓝底白字按钮默认 2.84:1，未达到该门槛。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
+        <div className="doc-section-heading"><h3>对比度实验区</h3><p>查看已应用的真实组件，再检查单个浅／深色配对。深色实验值尚未应用到全站。</p></div>
         <ColorContrastLab />
       </section>}
 
@@ -360,7 +363,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "shape-elevation") {
-    return <div className="foundation-preview shape-specimen"><div className="shape-card shape-card--sm">6px</div><div className="shape-card shape-card--md">8px</div><div className="shape-card shape-card--lg">12px</div></div>
+    return <div className="foundation-preview shape-specimen"><div className="shape-card shape-card--sm">6px</div><div className="shape-card shape-card--md">10px</div><div className="shape-card shape-card--lg">16px</div></div>
   }
 
   if (slug === "iconography") {

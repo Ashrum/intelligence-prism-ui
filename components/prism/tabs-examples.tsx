@@ -153,7 +153,7 @@ export function TabsUsageNotes() {
     <h2>状态与场景规则</h2>
     <table className="field-behavior-table"><thead><tr><th scope="col">状态</th><th scope="col">表现与处理</th></tr></thead><tbody>
       <tr><th scope="row">默认、Hover、按下</th><td>默认中性文字；Hover显露局部表面；按下加深局部响应，不改变尺寸或移动正文。</td></tr>
-      <tr><th scope="row">选中与键盘焦点</th><td>页面使用曜蓝文字与指示线，局部使用白色选中面。焦点另用 2px 边界，聚焦和选中可同时识别。</td></tr>
+      <tr><th scope="row">选中与键盘焦点</th><td>页面使用深灰选中文字与指示线，局部使用白色选中面。焦点另用 2px 边界，聚焦和选中可同时识别。</td></tr>
       <tr><th scope="row">禁用与空内容</th><td>不可用标签退出操作顺序，并在面板外说明原因；零条记录仍可打开，显示空内容与可用行动。</td></tr>
       <tr><th scope="row">首次加载与刷新</th><td>标签身份和对象范围保持不变；首次加载在面板内提示，刷新保留上次结果。切换面板不会清除已取得的内容。</td></tr>
       <tr><th scope="row">失败与待修正</th><td>标签使用错误图标提示对应面板，面板内说明原因与修正入口。错误色不取代选中位置；焦点和错误可同时表达。</td></tr>

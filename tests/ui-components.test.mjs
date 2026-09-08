@@ -121,7 +121,7 @@ test("calculates contrast without rounding away a failed text threshold", async 
   assert.ok(contrastRatio(...contrastPresets.current.ai) > 9.38);
   assert.ok(contrastRatio(...contrastPresets.light.growth) < 7);
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-  for (const [name, value] of [["action-primary", contrastPresets.current.action[0]], ["action-primary-soft", contrastPresets.current.action[1]], ["ai-fg", contrastPresets.current.ai[0]], ["ai-bg", contrastPresets.current.ai[1]], ["source-growth", contrastPresets.current.growth[0]]]) {
+  for (const [name, value] of [["primary-foreground", contrastPresets.current.action[0]], ["action-fill", contrastPresets.current.action[1]], ["ai-fg", contrastPresets.current.ai[0]], ["ai-bg", contrastPresets.current.ai[1]], ["source-growth", contrastPresets.current.growth[0]]]) {
     assert.match(css.toLowerCase(), new RegExp(`--${name}: ${value.toLowerCase()};`));
   }
 });
