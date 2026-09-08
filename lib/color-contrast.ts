@@ -35,6 +35,6 @@ export const colorReviewPalettes = {
 } as const
 
 export const colorReviewButtons = {
-  bright: { foreground: "#05080A", background: "#339FF2", hover: "#45A8F4", pressed: "#58B1F6", border: "#064B7E" },
+  bright: { foreground: "#FFFFFF", background: "#339FF2", hover: "#218FE1", pressed: "#1380D1", border: "#064B7E" },
   deep: { foreground: "#FFFFFF", background: "#064B7E", hover: "#054372", pressed: "#04375E", border: "#064B7E" },
 } as const

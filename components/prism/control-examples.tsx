@@ -20,7 +20,7 @@ function ColorDirectionReview() {
 
   return <div className="color-direction-review" id="color-direction-review">
     <div className="doc-section-heading"><h3>图1方向 · 同内容对照</h3><p>两侧共用字号、组件与内容，输入、应用和取消同步。候选只在此处展示，尚未应用到全站。</p></div>
-    <div className="color-review-toolbar"><span>候选主按钮</span><SegmentedControl label="候选主按钮配色" value={button} onValueChange={value => setButton(value as typeof button)} items={[["bright", "曜蓝底 · 近黑字"], ["deep", "深蓝底 · 白字"]]} /></div>
+    <div className="color-review-toolbar"><span>候选主按钮</span><SegmentedControl label="候选主按钮配色" value={button} onValueChange={value => setButton(value as typeof button)} items={[["bright", "曜蓝底 · 白字"], ["deep", "深蓝底 · 白字"]]} /></div>
     <div className="color-review-grid">
       {(["current", "reference"] as const).map(scheme => {
         const palette = colorReviewPalettes[scheme]
@@ -73,7 +73,7 @@ function ColorDirectionReview() {
       })}
     </div>
     <p className="color-review-feedback" role="status">{feedback}</p>
-    <p className="button-demo-note">曜蓝按钮在 Hover 和按下时使用更浅底色，保持近黑文字的对比度；深蓝按钮保留白字与加深状态。两组均可直接操作。</p>
+    <p className="button-demo-note">曜蓝按钮采用白字，默认对比度为 {contrastRatio(colorReviewButtons.bright.foreground, colorReviewButtons.bright.background)?.toFixed(2)}:1，未达到普通文字 AA（4.5:1）与本站 7:1 目标；Hover 和按下使用更深底色。</p>
   </div>
 }
 
