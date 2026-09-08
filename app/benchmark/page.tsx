@@ -5,21 +5,13 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import {
   ArrowRight,
-  Check,
   RefreshCw,
   Sparkles,
 } from "lucide-react"
 
-import { AILabel, Badge, StateLabel } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { CardWorkbench } from "@/components/prism/card-patterns"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { PageTabsExample } from "@/components/prism/tabs-examples"
@@ -139,59 +131,10 @@ export default function Home() {
           <SectionHeading
             id="card-title"
             title="Card"
-            description="默认无阴影，以边框、轻表面和语义标签建立层级。"
+            description="对象身份与范围保持可见；选择、展开、重试与编辑各自表达清楚。"
             aside={<Badge>教育证据</Badge>}
           />
-          <div className="card-matrix">
-            <Card className="prism-card">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>教育证据日报</CardTitle>
-                  <Badge>今日</Badge>
-                </div>
-                <CardDescription>汇总课堂观察、作业表现与阶段测评产生的有效证据。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <div className="metric-row"><strong>128</strong><span>份有效证据</span></div>
-              </CardContent>
-              <CardFooter className="prism-card-footer">
-                <StateLabel tone="success">数据正常</StateLabel>
-              </CardFooter>
-            </Card>
-
-            <Card className="prism-card prism-card--selected">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>九年级数学批阅</CardTitle>
-                  <Check aria-hidden="true" className="knowledge-icon" />
-                </div>
-                <CardDescription>已选择本任务，用于查看学生作答与错因证据。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <div className="metric-row"><strong>6</strong><span>项等待人工复核</span></div>
-              </CardContent>
-              <CardFooter className="prism-card-footer card-footer-between">
-                <StateLabel tone="pending">等待复核</StateLabel>
-                <span className="growth-copy"><span aria-hidden="true" />近 7 日 +6.4%</span>
-              </CardFooter>
-            </Card>
-
-            <Card className="prism-card prism-card--ai">
-              <CardHeader className="prism-card-header">
-                <div className="card-title-row">
-                  <CardTitle>学习表现摘要</CardTitle>
-                  <AILabel>AI 生成</AILabel>
-                </div>
-                <CardDescription>基于近 30 天教育证据生成，提交前仍需教师确认。</CardDescription>
-              </CardHeader>
-              <CardContent className="prism-card-content">
-                <p className="ai-summary">方程建模能力稳步提升，几何证明中的条件引用仍需加强。</p>
-              </CardContent>
-              <CardFooter className="prism-card-footer">
-                <StateLabel tone="pending">待复核</StateLabel>
-              </CardFooter>
-            </Card>
-          </div>
+          <CardWorkbench density={density} />
         </section>
 
         <section className="benchmark-section" id="form-demo" aria-labelledby="form-title">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
-import { ComponentDoc } from "@/components/prism/component-doc"
+import { CardDoc } from "@/components/prism/card-doc"
 
 export const metadata: Metadata = { title: "Card" }
 
-export default function Page() { return <ComponentDoc slug="card" /> }
+export default function Page() { return <CardDoc /> }
