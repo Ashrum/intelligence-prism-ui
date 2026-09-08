@@ -71,7 +71,7 @@ export default function Home() {
           </div>
           <h1>智能曜彩｜基础组件基准</h1>
           <p>在同一教育产品页面中检验语义、密度、中文长内容与关键交互状态。</p>
-          <p><Link href="/review/reading-review" className="text-primary underline underline-offset-4">交互语言候选：结论复核 →</Link></p>
+          <p><Link href="/review/reading-review" className="text-primary no-underline">交互语言候选：结论复核 →</Link></p>
         </div>
 
         <div className="density-control">
