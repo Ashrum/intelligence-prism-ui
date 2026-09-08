@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
+import { AILabel, Badge, StateLabel } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
-import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
+import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { PageTabsExample } from "@/components/prism/tabs-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import {
@@ -42,19 +42,6 @@ const buttonVariants = [
   { label: "智能分析", variant: "ai-primary" },
   { label: "删除任务", variant: "destructive" },
 ] as const
-
-const stateLabels = [
-  { label: "未开始", tone: "neutral" },
-  { label: "信息更新", tone: "info" },
-  { label: "校验通过", tone: "success" },
-  { label: "需要关注", tone: "warning" },
-  { label: "处理失败", tone: "danger" },
-  { label: "正在处理", tone: "running" },
-  { label: "等待复核", tone: "pending" },
-  { label: "处理完成", tone: "completed" },
-] as const
-
-const aiLabels = ["AI 生成", "AI 推断", "AI 建议", "AI 初稿 · 人工已编辑"]
 
 export default function Home() {
   const [density, setDensity] = useState<Density>("comfortable")
@@ -96,7 +83,7 @@ export default function Home() {
             id="navigation-title"
             title="导航与视角控制"
             description="页面分组、局部时间范围与即时视角选择保持不同语义。"
-            aside={<MetaBadge tone="outline">示例数据</MetaBadge>}
+            aside={<Badge variant="outline">示例数据</Badge>}
           />
 
           <div className="navigation-grid">
@@ -129,7 +116,7 @@ export default function Home() {
             id="button-title"
             title="Button"
             description="曜蓝承担主要操作，智绯仅用于明确的 AI 行为。"
-            aside={<MetaBadge tone="outline">8 种操作</MetaBadge>}
+            aside={<Badge variant="outline">8 种操作</Badge>}
           />
           <div className="button-matrix">
             {buttonVariants.map(({ label, variant }) => (
@@ -153,14 +140,14 @@ export default function Home() {
             id="card-title"
             title="Card"
             description="默认无阴影，以边框、轻表面和语义标签建立层级。"
-            aside={<MetaBadge tone="knowledge">教育证据</MetaBadge>}
+            aside={<Badge>教育证据</Badge>}
           />
           <div className="card-matrix">
             <Card className="prism-card">
               <CardHeader className="prism-card-header">
                 <div className="card-title-row">
                   <CardTitle>教育证据日报</CardTitle>
-                  <MetaBadge>今日</MetaBadge>
+                  <Badge>今日</Badge>
                 </div>
                 <CardDescription>汇总课堂观察、作业表现与阶段测评产生的有效证据。</CardDescription>
               </CardHeader>
@@ -212,7 +199,7 @@ export default function Home() {
             id="form-title"
             title="Input / Field"
             description="浮动标签、前后缀、错误与输入状态保持清楚关联。"
-            aside={<MetaBadge>表单基线</MetaBadge>}
+            aside={<Badge>表单基线</Badge>}
           />
           <ClassroomObservationForm density={density} />
         </section>
@@ -223,28 +210,7 @@ export default function Home() {
             title="Badge 与语义标签"
             description="元数据、运行状态与 AI 来源采用不同的视觉和语言。"
           />
-          <div className="labels-layout">
-            <div className="label-group">
-              <h3>静态元数据</h3>
-              <div className="label-list">
-                <MetaBadge>九年级</MetaBadge>
-                <MetaBadge tone="knowledge">数学</MetaBadge>
-                <MetaBadge tone="outline">课堂证据</MetaBadge>
-              </div>
-            </div>
-            <div className="label-group label-group-wide">
-              <h3>处理状态</h3>
-              <div className="label-list">
-                {stateLabels.map(({ label, tone }) => <StateLabel key={tone} tone={tone}>{label}</StateLabel>)}
-              </div>
-            </div>
-            <div className="label-group">
-              <h3>AI 来源</h3>
-              <div className="label-list">
-                {aiLabels.map((label) => <AILabel key={label}>{label}</AILabel>)}
-              </div>
-            </div>
-          </div>
+          <LabelsExamples />
         </section>
 
       </main>
@@ -259,16 +225,4 @@ function SectionHeading({ id, title, description, aside }: { id: string; title: 
       {aside}
     </div>
   )
-}
-
-function MetaBadge({ tone = "neutral", children }: { tone?: "neutral" | "knowledge" | "outline"; children: ReactNode }) {
-  return <Badge variant="outline" className={`meta-badge meta-badge--${tone}`}>{children}</Badge>
-}
-
-function StateLabel({ tone, children }: { tone: string; children: ReactNode }) {
-  return <span className={`state-label state-label--${tone}`} data-state={tone}><span className="state-dot" aria-hidden="true" />{children}</span>
-}
-
-function AILabel({ children }: { children: ReactNode }) {
-  return <span className="ai-label"><Sparkles aria-hidden="true" />{children}</span>
 }

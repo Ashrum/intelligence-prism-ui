@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react"
 
+import { AILabel, StateLabel } from "@/components/ui/badge"
 import { foundationItems } from "@/components/prism/catalog"
 
 export type FoundationSlug = (typeof foundationItems)[number]["slug"]
@@ -218,7 +219,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className={`state-label${slug === "typography" ? "" : " state-label--completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</span>
+          <StateLabel tone={slug === "typography" ? "pending" : "completed"}>{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</StateLabel>
         </div>
         <p>{doc.description}</p>
         {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary no-underline">生产交付条件</a>记录。</p>}
@@ -300,7 +301,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
       {[["canvas", "页面背景"], ["surface", "内容表面"], ["active", "交互底色"]].map(([mode, label]) => <section key={mode} className={`color-reading-sample color-reading-sample--${mode}`}>
         <small>{label}</small><h3>本周学习记录</h3><p>课堂观察与复核记录保持清晰，辅助说明也可以直接阅读。</p><small>更新于今日 09:30</small><a href="/components/input-field">查看课堂记录 →</a>
       </section>)}
-      <div className="color-status-samples" aria-label="状态颜色"><span className="state-label state-label--running">处理中</span><span className="ai-label">AI 初稿</span><span className="state-label state-label--success">已完成</span><span className="state-label state-label--warning">待复核</span><span className="state-label state-label--danger">处理失败</span></div>
+      <div className="color-status-samples" aria-label="状态颜色"><StateLabel tone="running">处理中</StateLabel><AILabel>AI 初稿</AILabel><StateLabel tone="completed">已完成</StateLabel><StateLabel tone="pending">待复核</StateLabel><StateLabel tone="danger">处理失败</StateLabel></div>
     </div>
   }
 
@@ -329,7 +330,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "accessibility") {
-    return <div className="foundation-preview accessibility-specimen"><button type="button" className="a11y-focus-demo"><Accessibility aria-hidden="true" />可见焦点</button><span className="state-label state-label--success"><span className="state-dot" aria-hidden="true" />校验通过</span><p>状态同时使用颜色、文字与语义。</p></div>
+    return <div className="foundation-preview accessibility-specimen"><button type="button" className="a11y-focus-demo"><Accessibility aria-hidden="true" />可见焦点</button><StateLabel tone="success">校验通过</StateLabel><p>状态同时使用颜色、文字与语义。</p></div>
   }
 
   return <div className="foundation-preview locale-specimen"><Languages aria-hidden="true" /><div><strong>九年级数学 · 教育证据</strong><span>2026年8月29日 · 1,280 份记录</span><small>zh-CN · LTR baseline</small></div></div>

@@ -245,8 +245,8 @@ export const componentDocuments = {
     eyebrow: "反馈与状态",
     title: "Badge & Labels",
     description: "区分静态元数据、运行状态和 AI 来源，避免同一种胶囊承担全部语义。",
-    guidance: "Badge 不可点击；State Label 的文字必须直接表达状态；AI Label 只使用智绯语义表达来源。人工编辑后仍保留 AI 来源，复核状态独立表达；生成完成不代表已复核。",
-    accessibility: "状态不能只依赖颜色，AI 来源必须具有可访问文本。",
+    guidance: "Badge 用中性表面说明静态元数据，不承担链接或筛选操作。State Label 用图标与具体文字表达状态；处理完成不等于校验通过。AI Label 只表达来源，人工编辑后仍保留；复核状态独立表达。长标签完整换行，不截断条件。",
+    accessibility: "标签不进入键盘焦点顺序，操作另用链接或按钮。状态图标不重复播报，完整文字说明含义；静态标签不主动播报，动态变化由所属场景的反馈区统一播报。",
   },
 } as const
 

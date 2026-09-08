@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { FormEvent } from "react"
 import { Check, RefreshCw, Sparkles } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
+import { AILabel, StateLabel } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
-import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
+import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TabsExamples, TabsUsageNotes } from "@/components/prism/tabs-examples"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
@@ -28,15 +28,15 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
         <div className="component-eyebrow">{doc.eyebrow}</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <span className={`state-label state-label--${slug === "tabs" ? "pending" : "completed"}`}><span className="state-dot" aria-hidden="true" />{slug === "tabs" ? "待评审" : "稳定"}</span>
+          <StateLabel tone={slug === "tabs" || slug === "badge-labels" ? "pending" : "completed"}>{slug === "tabs" || slug === "badge-labels" ? "待评审" : "稳定"}</StateLabel>
         </div>
         <p>{doc.description}</p>
       </header>
 
       <section className="doc-section" aria-labelledby="preview-title">
         <div className="doc-section-heading">
-          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : slug === "tabs" ? "样式、状态与应用场景" : "Preview"}</h2>
-          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : slug === "tabs" ? "页面、局部内容、侧向详情与窄容器，共用清楚的选择和状态规则。" : "真实组件与交互状态，可直接键盘操作。"}</p>
+          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : slug === "tabs" ? "样式、状态与应用场景" : slug === "badge-labels" ? "元数据、状态与来源" : "Preview"}</h2>
+          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : slug === "tabs" ? "页面、局部内容、侧向详情与窄容器，共用清楚的选择和状态规则。" : slug === "badge-labels" ? "静态标签就近说明对象，操作使用独立入口。处理完成与复核结果分别表达。" : "真实组件与交互状态，可直接键盘操作。"}</p>
         </div>
         <div className="component-preview">
           <ComponentPreview slug={slug} />
@@ -89,13 +89,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
 
   if (slug === "input-field") return <ClassroomObservationForm />
 
-  return (
-    <div className="labels-layout docs-labels-layout">
-      <div className="label-group"><h3>Badge</h3><div className="label-list"><MetaBadge>九年级</MetaBadge><MetaBadge tone="knowledge">数学</MetaBadge><MetaBadge tone="outline">课堂证据</MetaBadge></div></div>
-      <div className="label-group"><h3>State Label</h3><div className="label-list"><StateLabel tone="running">正在处理</StateLabel><StateLabel tone="success">校验通过</StateLabel><StateLabel tone="warning">需要关注</StateLabel><StateLabel tone="danger">处理失败</StateLabel></div></div>
-      <div className="label-group"><h3>AI 来源与复核</h3><div className="label-list"><AILabel>AI 初稿 · 人工已编辑</AILabel><StateLabel tone="pending">待复核</StateLabel></div><p className="button-demo-note">人工编辑后保留 AI 来源；是否完成复核，使用独立状态说明。</p></div>
-    </div>
-  )
+  return <div className="preview-stack"><LabelsExamples /><LearningAnalysisExample /></div>
 }
 
 type ControlDensity = "comfortable" | "compact"
@@ -257,16 +251,4 @@ function ButtonPreview() {
 
 function DemoCard({ title, description, value, footer, selected, ai }: { title: string; description: string; value: string; footer: React.ReactNode; selected?: boolean; ai?: boolean }) {
   return <Card className={`prism-card ${selected ? "prism-card--selected" : ""} ${ai ? "prism-card--ai" : ""}`}><CardHeader className="prism-card-header"><div className="card-title-row"><CardTitle>{title}{selected && <span className="sr-only">，已选择</span>}</CardTitle>{selected && <Check className="knowledge-icon" aria-hidden="true" />}</div><CardDescription>{description}</CardDescription></CardHeader><CardContent className="prism-card-content"><div className="metric-row"><strong>{value}</strong><span>{value === "AI" ? "需人工确认" : "份记录"}</span></div></CardContent><CardFooter className="prism-card-footer">{footer}</CardFooter></Card>
-}
-
-function MetaBadge({ tone = "neutral", children }: { tone?: "neutral" | "knowledge" | "outline"; children: React.ReactNode }) {
-  return <Badge variant="outline" className={`meta-badge meta-badge--${tone}`}>{children}</Badge>
-}
-
-function StateLabel({ tone, children }: { tone: string; children: React.ReactNode }) {
-  return <span className={`state-label state-label--${tone}`} data-state={tone}><span className="state-dot" aria-hidden="true" />{children}</span>
-}
-
-function AILabel({ children }: { children: React.ReactNode }) {
-  return <span className="ai-label"><Sparkles aria-hidden="true" />{children}</span>
 }
