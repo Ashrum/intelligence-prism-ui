@@ -3,8 +3,8 @@
 .rr-page h1, .rr-page h2, .rr-page h3, .rr-page p { margin: 0; font-weight: 400; }
 .rr-page button:focus-visible, .rr-page a:focus-visible, .rr-page [tabindex]:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 .rr-context { display: flex; align-items: center; gap: 1rem; color: var(--text-tertiary); font-size: .8125rem; }
-.rr-context a { display: inline-flex; gap: .375rem; align-items: center; color: var(--action-primary); text-decoration: none; }
-.rr-context a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.rr-context a { display: inline-flex; gap: .375rem; align-items: center; color: var(--action-primary); text-decoration: underline; text-underline-offset: .2em; }
+.rr-context a:hover { color: var(--action-primary-hover); }
 .rr-context a:last-child { margin-left: auto; }
 .rr-page-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1rem 0 1.25rem; }
 .rr-page-heading .rr-eyebrow { display: none; }
@@ -51,7 +51,7 @@
 .rr-authorship { color: var(--text-secondary); }
 .rr-page .rr-statement, .rr-page .rr-editor { font: 400 1.5rem/1.7 var(--rr-reading-font); color: var(--text-primary); overflow-wrap: anywhere; min-height: 4rem; width: calc(100% + 1rem); margin: 0 -.5rem; padding: .375rem .5rem; border: 1px solid transparent; border-radius: .375rem; }
 .rr-conclusion[data-editing="true"] { background: var(--selection-bg); }
-.rr-page .rr-editor { background: var(--surface); border-color: var(--border-strong); box-shadow: none; resize: vertical; field-sizing: content; }
+.rr-page .rr-editor { background: var(--surface); border-color: var(--field-border); box-shadow: none; resize: vertical; field-sizing: content; }
 .rr-editor:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: none; }
 .rr-editor[aria-invalid="true"] { border-color: var(--danger-fg); }
 .rr-status-slot { display: flex; align-items: start; gap: .5rem; color: var(--text-secondary); font-size: .875rem; line-height: 1.7; min-height: 3.25rem; padding: .5rem 0 .875rem; }
@@ -62,8 +62,8 @@
 .rr-evidence { border-top: 1px solid var(--border-subtle); margin-top: .75rem; }
 .rr-source { border: 0; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; text-align: left; padding: .875rem 0; background: transparent; cursor: pointer; color: var(--text-secondary); font-size: .875rem; }
 .rr-source > span { display: inline-flex; align-items: center; gap: .5rem; }
-.rr-source > span:last-child { color: var(--action-primary); flex: none; }
-.rr-source:hover > span:last-child { text-decoration: underline; text-underline-offset: .2em; }
+.rr-source > span:last-child { color: var(--action-primary); flex: none; text-decoration: underline; text-underline-offset: .2em; }
+.rr-source:hover > span:last-child { color: var(--action-primary-hover); }
 .rr-source > span:last-child svg { transition: transform 140ms ease; }
 .rr-source[aria-expanded="true"] > span:last-child svg { transform: rotate(180deg); }
 .rr-evidence-content { padding: .5rem 0 .75rem; }
@@ -80,8 +80,8 @@
 .rr-formula-scroll { max-width: 100%; overflow-x: auto; padding: .75rem 0; }
 .rr-formula-scroll math { width: max-content; margin: 0; }
 .rr-page .rr-evidence-note { font-size: .8125rem; color: var(--text-secondary); padding-top: .75rem; margin-top: .75rem; border-top: 1px solid var(--border-default); }
-.rr-history-toggle { display: inline-flex; align-items: center; gap: .375rem; margin-left: auto; background: none; border: 0; padding: .125rem 0; font-size: .875rem; color: var(--action-primary); cursor: pointer; }
-.rr-history-toggle:hover { text-decoration: underline; text-underline-offset: .2em; }
+.rr-history-toggle { display: inline-flex; align-items: center; gap: .375rem; margin-left: auto; background: none; border: 0; padding: .125rem 0; font-size: .875rem; color: var(--action-primary); cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+.rr-history-toggle:hover { color: var(--action-primary-hover); }
 .rr-history-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 .rr-revision { padding: .75rem 1rem; margin-top: .875rem; background: var(--surface-subtle); border-radius: .375rem; }
 .rr-revision > span { color: var(--text-tertiary); font-size: .75rem; }

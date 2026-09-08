@@ -2,7 +2,7 @@
 .tf-field[data-density="compact"] { --tf-height: 3rem; }
 /* One outline owns hover, focus and error. The input has no second ring. */
 .tf-outline {
-  --tf-border: var(--text-tertiary);
+  --tf-border: var(--field-border);
   --tf-label-color: var(--text-secondary);
   --tf-caret: var(--action-primary);
   position: relative; display: flex; align-items: center; min-width: 0;
@@ -10,11 +10,14 @@
 }
 .tf-outline::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--tf-border); border-radius: inherit; pointer-events: none; transition: border-color 140ms ease; }
 .tf-outline:where(:not([data-disabled="true"]):not([data-readonly="true"])):hover { --tf-border: var(--text-secondary); }
-.tf-outline:focus-within { --tf-border: var(--action-primary); --tf-label-color: var(--action-primary); }
-.tf-outline:focus-within::before { border-width: 2px; }
+.tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: var(--action-primary); --tf-label-color: var(--action-primary); }
+.tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within::before { border-width: 2px; }
 .tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
 .tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
-.tf-outline[data-disabled="true"] { --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }
+.tf-outline[data-readonly="true"] { --tf-surface: var(--surface-subtle); --tf-border: var(--border-strong); }
+.tf-outline[data-readonly="true"]::before { border-style: dashed; }
+.tf-outline[data-readonly="true"]:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.tf-outline[data-disabled="true"] { --tf-surface: var(--control-disabled-bg); --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }
 
 .tf-field .tf-control {
   display: block; flex: 1; width: 100%; min-width: 0; height: var(--tf-height); min-height: var(--tf-height);
@@ -35,10 +38,13 @@
 /* Native value/placeholder state also covers restored values and autofill. */
 .tf-outline:focus-within .tf-label,
 .tf-outline:has(.tf-control:not(:placeholder-shown)) .tf-label,
-.tf-outline:has(.tf-control:autofill) .tf-label {
+.tf-outline:has(.tf-control:autofill) .tf-label,
+.tf-outline[data-readonly="true"] .tf-label,
+.tf-outline[data-disabled="true"] .tf-label {
   top: 0; font-size: .75rem; background: var(--tf-surface);
 }
-.tf-outline[data-disabled="true"] .tf-label { cursor: default; }
+.tf-outline[data-disabled="true"] .tf-label, .tf-outline[data-readonly="true"] .tf-label { cursor: default; }
+.tf-mode-label { margin-inline-start: .5em; font-weight: 500; }
 .tf-field .tf-affix { flex: none; order: 0; padding: 0; color: var(--text-secondary); font: 400 1rem/1.5 var(--font-ui); visibility: hidden; }
 .tf-field .tf-prefix { padding-left: 1rem; }
 .tf-outline:has(.tf-prefix) .tf-control { padding-left: .5rem; }
@@ -63,6 +69,8 @@
 @media (forced-colors: active) {
   .tf-field { --tf-surface: Canvas; }
   .tf-outline { --tf-border: CanvasText; --tf-label-color: CanvasText; --tf-caret: CanvasText; }
-  .tf-outline:focus-within { --tf-border: Highlight; --tf-label-color: Highlight; }
+  .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: Highlight; --tf-label-color: Highlight; }
+  .tf-outline[data-readonly="true"] { --tf-surface: Canvas; --tf-border: CanvasText; }
+  .tf-outline[data-readonly="true"]:focus-within { outline-color: Highlight; }
   .tf-outline[data-disabled="true"] { --tf-border: GrayText; --tf-label-color: GrayText; }
 }

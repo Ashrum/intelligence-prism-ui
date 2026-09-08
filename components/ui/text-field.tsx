@@ -77,7 +77,7 @@ export function TextField(props: TextFieldProps) {
       {input}
       {suffix && <InputGroupAddon className="tf-affix tf-suffix" align="inline-end" aria-hidden="true">{suffix}</InputGroupAddon>}
       {(control.required || invalid) && <AlertCircle className="tf-error-icon" aria-hidden="true" />}
-      <FieldLabel htmlFor={id} className="tf-label">{label}{control.required && <span aria-hidden="true"> *</span>}</FieldLabel>
+      <FieldLabel htmlFor={id} className="tf-label">{label}{control.required && <span aria-hidden="true"> *</span>}{control.disabled ? <span className="tf-mode-label">不可用</span> : control.readOnly ? <span className="tf-mode-label">只读</span> : null}</FieldLabel>
     </div>
     {error ? <FieldError id={feedbackId} className="tf-feedback tf-error">{error}</FieldError>
       : description ? <FieldDescription id={feedbackId} className="tf-feedback">{description}</FieldDescription> : null}

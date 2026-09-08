@@ -69,6 +69,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
       { label: "Action / Primary", value: "#08658F", use: "主要操作、选中状态和关键链接。" },
+      { label: "Field / Border", value: "#64727B", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
       { label: "AI / Action", value: "#A32967", use: "明确的 AI 操作，不用于普通强调。" },
       { label: "Button / Secondary", value: "Surface / Neutral", use: "次操作使用中性表面，不与主操作争夺曜蓝层级。" },
       { label: "Button / Destructive", value: "#B63A36", use: "只用于删除等不可逆或高风险动作。" },
