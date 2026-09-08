@@ -1,5 +1,4 @@
 import {
-  Accessibility,
   ArrowRight,
   BookOpenText,
   CircleHelp,
@@ -10,9 +9,8 @@ import {
 } from "lucide-react"
 
 import { AILabel, StateLabel } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { foundationItems } from "@/components/prism/catalog"
-import { ColorContrastLab } from "@/components/prism/control-examples"
+import { AccessibilityFocusExample, ColorContrastLab } from "@/components/prism/control-examples"
 
 export type FoundationSlug = (typeof foundationItems)[number]["slug"]
 
@@ -376,7 +374,7 @@ function FoundationPreview({ slug }: { slug: FoundationSlug }) {
   }
 
   if (slug === "accessibility") {
-    return <div className="foundation-preview accessibility-specimen"><Button variant="outline" className="a11y-focus-demo"><Accessibility aria-hidden="true" />可见焦点</Button><StateLabel tone="success">校验通过</StateLabel><p>按 Tab 查看焦点。状态同时使用颜色、文字与语义。</p></div>
+    return <div className="foundation-preview accessibility-specimen"><AccessibilityFocusExample /><StateLabel tone="success">校验通过</StateLabel><p>按 Tab 查看焦点。状态同时使用颜色、文字与语义。</p></div>
   }
 
   return <div className="foundation-preview locale-specimen"><Languages aria-hidden="true" /><div><strong>九年级数学 · 教育证据</strong><span>2026年8月29日 · 1,280 份记录</span><small>zh-CN · LTR baseline</small></div></div>

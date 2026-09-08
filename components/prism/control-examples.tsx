@@ -3,11 +3,15 @@
 import Link from "next/link"
 import { AILabel, Badge, StateLabel } from "@/components/ui/badge"
 import { useEffect, useRef, useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Accessibility, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TextField } from "@/components/ui/text-field"
 import { contrastPresets, contrastRatio } from "@/lib/color-contrast"
+
+export function AccessibilityFocusExample() {
+  return <Button type="button" variant="outline" className="a11y-focus-demo"><Accessibility aria-hidden="true" />可见焦点</Button>
+}
 
 function ColorStylePreview() {
   const [name, setName] = useState("学生 01")

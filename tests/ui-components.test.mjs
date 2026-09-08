@@ -146,3 +146,14 @@ test("calculates contrast without rounding away a failed text threshold", async 
     assert.match(css.toLowerCase(), new RegExp(`--${name}: ${value.toLowerCase()};`));
   }
 });
+
+test("renders the new component pages and focus sample across the production RSC boundary", async () => {
+  const { default: worker } = await import("../dist/server/index.js");
+  const environment = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
+  const context = { waitUntil() {}, passThroughOnException() {} };
+  for (const [route, expected] of [["/components/select", "选择证据范围"], ["/components/dialog", "复核设置"], ["/foundations/accessibility", "a11y-focus-demo"]]) {
+    const response = await worker.fetch(new Request(`http://localhost${route}`, { headers: { accept: "text/html" } }), environment, context);
+    assert.equal(response.status, 200, route);
+    assert.ok((await response.text()).includes(expected), `${route} did not render its example`);
+  }
+});
