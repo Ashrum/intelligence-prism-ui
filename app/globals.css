@@ -725,7 +725,7 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .object-card-type { display: block; margin-bottom: .25rem; color: var(--text-secondary); font-size: .8125rem; line-height: 1.5; font-variant-numeric: tabular-nums; }
 .object-card-title { margin: 0; color: var(--text-primary); font-size: 1.0625rem; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
 .object-card-content { display: grid; gap: var(--card-gap, 1rem); padding: 1rem var(--card-pad, 1.5rem) 0; }
-.object-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-bottom: .875rem; border-bottom: 1px solid var(--border-subtle); }
+.object-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-bottom: .5rem; }
 .object-card-meta-item { display: inline-flex; min-width: 0; align-items: flex-start; gap: .375rem; color: var(--text-secondary); font-size: .8125rem; line-height: 1.6; }
 .object-card-meta-item svg { flex: none; width: .875rem; height: .875rem; margin-top: .1875rem; }
 .object-card-summary { display: grid; gap: .5rem; min-width: 0; }
@@ -744,13 +744,14 @@ svg { width: 1rem; height: 1rem; flex: none; }
 .object-card-progress strong { font-variant-numeric: tabular-nums; font-size: 1.25rem; font-weight: 600; }
 .object-card-progress-track { height: .375rem; border-radius: 999px; background: var(--surface-active); overflow: hidden; }
 .object-card-progress-track span { display: block; height: 100%; border-radius: inherit; background: var(--action-primary); transition: width 160ms ease-out; }
-.object-card-detail { padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
+.object-card-detail { padding-top: .5rem; }
 .object-card-detail[hidden] { display: none; }
 .object-card-detail dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
 .object-card-detail dl > div { min-width: 0; }
 .object-card-detail dt { margin-bottom: .375rem; color: var(--text-secondary); font-size: .8125rem; font-weight: 500; }
 .object-card-detail dd { margin: 0; color: var(--text-primary); font-size: .875rem; line-height: 1.7; overflow-wrap: anywhere; }
-.object-card-footer { display: grid; gap: .875rem; margin-top: var(--card-gap, 1rem); padding: 1rem var(--card-pad, 1.5rem) var(--card-pad, 1.5rem); border-top: 1px solid var(--border-subtle); }
+.object-card-footer { display: grid; gap: .875rem; margin-top: var(--card-gap, 1rem); padding: .5rem var(--card-pad, 1.5rem) var(--card-pad, 1.5rem); }
+.object-card-footer--divided { padding-top: 1rem; border-top: 1px solid var(--border-subtle); }
 .object-card-status { display: grid; align-content: start; gap: .375rem; min-height: 4.25rem; color: var(--text-secondary); }
 .object-card-status p, .object-card-static-note { margin: 0; color: var(--text-secondary); font-size: .875rem; line-height: 1.6; }
 .object-card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; min-height: 2rem; }
