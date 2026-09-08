@@ -34,6 +34,7 @@
     "components/prism/catalog.ts",
     "components/prism/classroom-observation-form.tsx",
     "components/prism/component-doc.tsx",
+    "components/prism/control-examples.tsx",
     "components/prism/docs-shell.tsx",
     "components/prism/foundation-doc.tsx",
     "components/prism/nav-link.tsx",
