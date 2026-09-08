@@ -88,13 +88,15 @@ test("keeps one truthful catalog for Foundations and component maturity", async 
   assert.equal(catalogStats.baseComponents, 56);
   assert.equal(catalogStats.extensions, 3);
   assert.equal(catalogStats.stable, 7);
-  assert.equal(catalogStats.review, 2);
-  assert.equal(catalogStats.planned, 50);
-  assert.equal(catalogStats.documentedPages, 6);
+  assert.equal(catalogStats.review, 5);
+  assert.equal(catalogStats.planned, 47);
+  assert.equal(catalogStats.documentedPages, 8);
   assert.equal(catalogItems.length, 59);
   assert.equal(catalogStats.stable + catalogStats.review + catalogStats.planned, catalogItems.length);
   assert.equal(componentDocumentStatus("tabs"), "review");
   assert.equal(componentDocumentStatus("card"), "review");
+  assert.equal(componentDocumentStatus("select"), "review");
+  assert.equal(componentDocumentStatus("dialog"), "review");
   assert.equal(componentDocumentStatus("badge-labels"), "stable");
   assert.deepEqual(countCatalogItems([]), { stable: 0, review: 0, planned: 0 });
   assert.equal(internalModules.length, 5);
@@ -104,6 +106,25 @@ test("keeps one truthful catalog for Foundations and component maturity", async 
     for (const id of document.itemIds) assert.ok(catalogIds.has(id));
   }
   for (const item of catalogItems) assert.equal(Boolean(item.href), item.status !== "planned");
+});
+
+test("associates select labels and errors with the required control and exposes disabled state", async () => {
+  const { SelectionField } = await vite.ssrLoadModule("/components/prism/select-examples.tsx");
+  const html = renderToStaticMarkup(React.createElement(SelectionField, { label: "Evidence", value: "", required: true, error: "Choose evidence." }));
+  const trigger = html.match(/<button[^>]*role="combobox"[^>]*>/)?.[0];
+  assert.ok(trigger);
+  const id = trigger.match(/\sid="([^"]+)"/)?.[1];
+  const describedBy = trigger.match(/aria-describedby="([^"]+)"/)?.[1];
+  assert.ok(id && describedBy);
+  assert.ok(html.includes(`for="${id}"`));
+  assert.ok(html.includes(`id="${describedBy}"`));
+  assert.match(trigger, /aria-required="true"/);
+  assert.match(trigger, /aria-invalid="true"/);
+  assert.match(html, /role="alert"/);
+  assert.match(html, /Choose evidence\./);
+  const disabled = renderToStaticMarkup(React.createElement(SelectionField, { label: "Archive", value: "classroom", disabled: true, description: "Not available." }));
+  assert.match(disabled.match(/<button[^>]*role="combobox"[^>]*>/)?.[0] || "", /disabled=""/);
+  assert.match(disabled, /Not available\./);
 });
 
 test("calculates contrast without rounding away a failed text threshold", async () => {
