@@ -32,6 +32,7 @@ export function TextField(props: TextFieldProps) {
   const invalid = Boolean(error) || control["aria-invalid"] === true || control["aria-invalid"] === "true"
   const feedbackId = `${id}-feedback`
   const describedBy = [control["aria-describedby"], error || description ? feedbackId : undefined].filter(Boolean).join(" ") || undefined
+  const labelContent = <>{label}{control.required && <span aria-hidden="true"> *</span>}{control.disabled ? <span className="tf-mode-label">不可用</span> : control.readOnly ? <span className="tf-mode-label">只读</span> : null}</>
   const resize = () => {
     const el = textareaRef.current
     if (!el) return
@@ -73,11 +74,12 @@ export function TextField(props: TextFieldProps) {
   return <Field className={cn("tf-field", className)} data-density={density} data-invalid={invalid || undefined} data-disabled={control.disabled || undefined}>
     <div className={cn("tf-outline", (prefix || suffix) && "tf-with-affixes", control.multiline && "tf-multiline")}
       data-invalid={invalid || undefined} data-readonly={control.readOnly || undefined} data-disabled={control.disabled || undefined}>
+      <fieldset className="tf-notch" aria-hidden="true"><legend><span>{labelContent}</span></legend></fieldset>
       {prefix && <InputGroupAddon className="tf-affix tf-prefix" aria-hidden="true">{prefix}</InputGroupAddon>}
       {input}
       {suffix && <InputGroupAddon className="tf-affix tf-suffix" align="inline-end" aria-hidden="true">{suffix}</InputGroupAddon>}
       {(control.required || invalid) && <AlertCircle className="tf-error-icon" aria-hidden="true" />}
-      <FieldLabel htmlFor={id} className="tf-label">{label}{control.required && <span aria-hidden="true"> *</span>}{control.disabled ? <span className="tf-mode-label">不可用</span> : control.readOnly ? <span className="tf-mode-label">只读</span> : null}</FieldLabel>
+      <FieldLabel htmlFor={id} className="tf-label">{labelContent}</FieldLabel>
     </div>
     {error ? <FieldError id={feedbackId} className="tf-feedback tf-error">{error}</FieldError>
       : description ? <FieldDescription id={feedbackId} className="tf-feedback">{description}</FieldDescription> : null}
