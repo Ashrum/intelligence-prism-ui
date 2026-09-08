@@ -20,7 +20,7 @@ import {
   Type,
 } from "lucide-react"
 
-export type CatalogStatus = "stable" | "planned"
+export type CatalogStatus = "stable" | "review" | "planned"
 export type CatalogKind = "base" | "extension"
 
 export type FoundationItem = {
@@ -62,6 +62,7 @@ export const foundationItems = [
 ] as const satisfies readonly FoundationItem[]
 
 const stable = (id: string, label: string, href: string): CatalogItem => ({ id, label, href, status: "stable", kind: "base" })
+const review = (id: string, label: string, href: string): CatalogItem => ({ id, label, href, status: "review", kind: "base" })
 const planned = (id: string, label: string): CatalogItem => ({ id, label, status: "planned", kind: "base" })
 const extension = (id: string, label: string, href: string): CatalogItem => ({ id, label, href, status: "stable", kind: "extension" })
 
@@ -107,7 +108,7 @@ export const componentGroups = [
     icon: PanelTop,
     items: [
       planned("breadcrumb", "Breadcrumb"),
-      stable("tabs", "Tabs", "/components/tabs"),
+      review("tabs", "Tabs", "/components/tabs"),
       planned("pagination", "Pagination"),
       planned("navigation-menu", "Navigation Menu"),
       planned("menubar", "Menubar"),
@@ -124,7 +125,7 @@ export const componentGroups = [
       planned("aspect-ratio", "Aspect Ratio"),
       planned("avatar", "Avatar"),
       stable("badge", "Badge", "/components/badge-labels"),
-      stable("card", "Card", "/components/card"),
+      review("card", "Card", "/components/card"),
       planned("carousel", "Carousel"),
       planned("chart", "Chart"),
       planned("collapsible", "Collapsible"),
@@ -253,21 +254,49 @@ export const componentDocuments = {
 export type ComponentDocumentSlug = keyof typeof componentDocuments
 
 export const catalogItems = componentGroups.flatMap((group) => group.items)
+export const catalogStatuses = ["stable", "review", "planned"] as const
+export const statusLabels: Record<CatalogStatus, string> = {
+  stable: "稳定",
+  review: "待评审",
+  planned: "规划中",
+}
+
+export function countCatalogItems(items: readonly CatalogItem[]) {
+  return items.reduce((counts, item) => {
+    counts[item.status] += 1
+    return counts
+  }, { stable: 0, review: 0, planned: 0 })
+}
+
+export function formatCatalogCounts(items: readonly CatalogItem[]) {
+  const counts = countCatalogItems(items)
+  return catalogStatuses.map((status) => `${counts[status]} ${statusLabels[status]}`).join(" / ")
+}
+
+export function componentDocumentStatus(slug: ComponentDocumentSlug): CatalogStatus {
+  const statuses = componentDocuments[slug].itemIds.map((id) => {
+    const item = catalogItems.find((entry) => entry.id === id)
+    if (!item) throw new Error(`Missing catalog item: ${id}`)
+    return item.status
+  })
+  return statuses.includes("planned") ? "planned" : statuses.includes("review") ? "review" : "stable"
+}
+
 export const catalogStats = {
   foundations: foundationItems.length,
   baseComponents: catalogItems.filter((item) => item.kind === "base").length,
   extensions: catalogItems.filter((item) => item.kind === "extension").length,
-  stable: catalogItems.filter((item) => item.status === "stable").length,
-  planned: catalogItems.filter((item) => item.status === "planned").length,
+  ...countCatalogItems(catalogItems),
   documentedPages: Object.keys(componentDocuments).length,
 } as const
 
 export const internalModules = ["direction", "form", "label", "marker", "message-scroller"] as const
 
-export const statusLabels: Record<CatalogStatus, string> = {
-  stable: "稳定",
-  planned: "规划中",
-}
+export const catalogSummary = [
+  { label: "组件条目", value: catalogItems.length },
+  ...catalogStatuses.map((status) => ({ label: statusLabels[status], value: catalogStats[status] })),
+]
+export const catalogMaturityNote = "稳定：当前规则与示例已确认；待评审：已有实现，仍在评审；规划中：尚未交付规范与场景。稳定不代表全部平台或无障碍验证已完成。"
 
 export const catalogIcons = {
   foundations: Layers3,

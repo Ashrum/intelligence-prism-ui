@@ -81,20 +81,47 @@ test("renders sidebar skeletons deterministically", async () => {
 });
 
 test("keeps one truthful catalog for Foundations and component maturity", async () => {
-  const { catalogItems, catalogStats, componentDocuments, foundationItems, internalModules } =
+  const { catalogItems, catalogStats, componentDocuments, componentDocumentStatus, countCatalogItems, foundationItems, internalModules } =
     await vite.ssrLoadModule("/components/prism/catalog.ts");
 
   assert.equal(foundationItems.length, 10);
   assert.equal(catalogStats.baseComponents, 56);
   assert.equal(catalogStats.extensions, 3);
-  assert.equal(catalogStats.stable, 9);
+  assert.equal(catalogStats.stable, 7);
+  assert.equal(catalogStats.review, 2);
   assert.equal(catalogStats.planned, 50);
   assert.equal(catalogStats.documentedPages, 6);
   assert.equal(catalogItems.length, 59);
+  assert.equal(catalogStats.stable + catalogStats.review + catalogStats.planned, catalogItems.length);
+  assert.equal(componentDocumentStatus("tabs"), "review");
+  assert.equal(componentDocumentStatus("card"), "review");
+  assert.equal(componentDocumentStatus("badge-labels"), "stable");
+  assert.deepEqual(countCatalogItems([]), { stable: 0, review: 0, planned: 0 });
   assert.equal(internalModules.length, 5);
   assert.equal(new Set(catalogItems.map((item) => item.id)).size, catalogItems.length);
   const catalogIds = new Set(catalogItems.map((item) => item.id));
   for (const document of Object.values(componentDocuments)) {
     for (const id of document.itemIds) assert.ok(catalogIds.has(id));
+  }
+  for (const item of catalogItems) assert.equal(Boolean(item.href), item.status !== "planned");
+});
+
+test("calculates contrast without rounding away a failed text threshold", async () => {
+  const { contrastRatio, contrastPresets } = await vite.ssrLoadModule("/lib/color-contrast.ts");
+  assert.equal(contrastRatio("#000000", "#FFFFFF"), 21);
+  assert.equal(contrastRatio("#123456", "#123456"), 1);
+  assert.equal(contrastRatio("#000", "#FFFFFF"), null);
+  assert.equal(contrastRatio("#00000080", "#FFFFFF"), null);
+  assert.ok(contrastRatio("#777777", "#FFFFFF") < 4.5);
+  assert.equal(contrastRatio("#070707", "#777777").toFixed(2), "4.50");
+  assert.ok(contrastRatio("#070707", "#777777") < 4.5);
+  assert.equal(contrastRatio("#242424", "#AEAEAE").toFixed(2), "7.00");
+  assert.ok(contrastRatio("#242424", "#AEAEAE") < 7);
+  assert.ok(contrastRatio("#E11D48", "#FFF1F2") < 4.5);
+  assert.ok(contrastRatio(...contrastPresets.current.ai) > 9.38);
+  assert.ok(contrastRatio(...contrastPresets.light.growth) < 7);
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  for (const [name, value] of [["action-primary", contrastPresets.current.action[0]], ["action-primary-soft", contrastPresets.current.action[1]], ["ai-fg", contrastPresets.current.ai[0]], ["ai-bg", contrastPresets.current.ai[1]], ["source-growth", contrastPresets.current.growth[0]]]) {
+    assert.match(css.toLowerCase(), new RegExp(`--${name}: ${value.toLowerCase()};`));
   }
 });

@@ -11,17 +11,18 @@ import { ClassroomObservationForm } from "@/components/prism/classroom-observati
 import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TabsExamples, TabsUsageNotes } from "@/components/prism/tabs-examples"
-import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
+import { componentDocuments, componentDocumentStatus, statusLabels, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
 export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
   const doc = componentDocuments[slug]
+  const status = componentDocumentStatus(slug)
   return (
     <article className="component-article">
       <header className="component-hero">
         <div className="component-eyebrow">{doc.eyebrow}</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <StateLabel tone={slug === "tabs" || slug === "card" ? "pending" : "completed"}>{slug === "tabs" || slug === "card" ? "待评审" : "稳定"}</StateLabel>
+          <StateLabel tone={status === "stable" ? "completed" : "pending"}>{statusLabels[status]}</StateLabel>
         </div>
         <p>{doc.description}</p>
       </header>
