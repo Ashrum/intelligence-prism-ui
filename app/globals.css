@@ -49,9 +49,9 @@
   --danger-action: #872725;
   --danger-action-hover: #75201e;
   --danger-action-active: #631916;
-  --control-disabled-bg: #e8e9e4;
-  --control-disabled-border: #7c8277;
-  --control-disabled-fg: #444940;
+  --control-disabled-bg: #f0f0ed;
+  --control-disabled-border: #d5d6d1;
+  --control-disabled-fg: #62675d;
   --focus-ring: #087ba8;
   --growth-signal: #c2f25b;
 

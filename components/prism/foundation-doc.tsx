@@ -79,7 +79,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   color: {
     title: "色彩",
     description: "在页面背景、内容表面和交互底色上保持清晰阅读，三种核心色通过语义映射表达用途。",
-    principles: ["普通文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "输入、选择和焦点的必要识别边界至少达到 3:1；普通内容容器可以使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
+    principles: ["阅读与可操作文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "输入、选择和焦点的必要识别边界至少达到 3:1；普通内容容器可以使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
     references: [
       { label: "Canvas", value: "#F5F5F3", use: "近白中性的页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
@@ -91,10 +91,10 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Status / Success · Warning · Danger", value: "#215631 / #684511 / #872725", use: "分别与成功、警告、错误表面成对使用。" },
       { label: "Field / Border", value: "#686C65", use: "可填写与只读区域的边界；通过实线和间断边框区分模式。" },
       { label: "Selection / Border", value: "#51758E", use: "选中对象和局部选中面的边界。" },
-      { label: "Disabled / Text · Border", value: "#444940 / #7C8277", use: "禁用内容仍保持可读；以不可用说明、独立表面和行为区分。" },
+      { label: "Disabled / Background · Text · Border", value: "#F0F0ED / #62675D / #D5D6D1", use: "浅底与轻边界表达不可操作，文字保持 4.5:1 以上；保留不可用说明，不与可编辑字段争夺注意力。" },
       { label: "Border / Default", value: "#D5D6D1", use: "普通内容容器与分隔线；输入和选择使用独立的边界 Token。" },
     ],
-    boundary: "7:1 是当前浅色主题的文字对比目标，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
+    boundary: "7:1 是当前浅色主题的阅读与可操作文字对比目标；禁用文字单独保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
   },
   typography: {
     title: "字体与排版",
