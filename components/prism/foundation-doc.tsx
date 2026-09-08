@@ -11,6 +11,7 @@ import {
 
 import { AILabel, StateLabel } from "@/components/ui/badge"
 import { foundationItems } from "@/components/prism/catalog"
+import { ColorContrastLab } from "@/components/prism/control-examples"
 
 export type FoundationSlug = (typeof foundationItems)[number]["slug"]
 
@@ -64,14 +65,16 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   "tokens-theming": {
     title: "设计令牌与主题",
     description: "用语义 Token 连接品牌源色与真实界面，组件不直接消费品牌色值。",
-    principles: ["源色只定义身份，不直接决定文字或交互颜色。", "Button 以曜蓝表示主操作、智绯表示 AI 操作，中性表面承接次操作，危险色只用于破坏性动作。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
+    principles: ["中性表面以 85% 以上为常规版面的设计目标；源色只定义身份，不直接决定文字或交互颜色。", "Button 以曜蓝表示主操作、智绯表示 AI 操作，中性表面承接次操作，危险色只用于破坏性动作。", "组件使用 action、surface、text、border、status 等语义 Token。", "主题变化只替换 Token 映射，不改变组件结构和交互语义。"],
     references: [
       { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
-      { label: "Source / Growth", value: "#C2F25B", use: "仅用于微弱生长信号，不承载正文。" },
+      { label: "Source / Growth", value: "#C2F25B", use: "预留给有明确目标、周期与证据支持的成长或达成提示；不用于常规进度、处理完成或浅色底正文。具体反馈待场景验证。" },
       { label: "Action / Primary", value: "#064B7E", use: "主要操作、选中状态和关键链接。" },
       { label: "Field / Border", value: "#686C65", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
       { label: "AI / Action", value: "#872056", use: "明确的 AI 操作，不用于普通强调。" },
+      { label: "AI / Source · Review", value: "分开表达", use: "智绯说明 AI 来源与明确的 AI 行为；生成进度、人工复核、失败另用状态与文字。人工编辑后来源保留，不默认显示模型名称、置信度或已验证。" },
+      { label: "Growth / Evidence", value: "目标 · 周期 · 证据", use: "掌握度需说明评价范围与依据，不把完成练习等同于已完全掌握。置信度只在有真实数据、计算口径与适用说明时显示；缺少数据时不填入默认百分比。" },
       { label: "Button / Secondary", value: "Surface / Neutral", use: "次操作使用中性表面，不与主操作争夺曜蓝层级。" },
       { label: "Button / Destructive", value: "#872725", use: "只用于删除等不可逆或高风险动作。" },
     ],
@@ -102,7 +105,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   typography: {
     title: "字体与排版",
     description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
-    principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "数字指标使用 tabular nums，减少更新时的跳动。"],
+    principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "计分、指标、时间与数字列使用 tabular-nums；数学公式保留数学字体与渲染器度量。", "含行内公式的段落采用无单位阅读行距，让公式实际高度参与行盒计算；不固定段落高度，不裁切上下标。"],
     references: [
       { label: "UI / --font-ui", value: "Noto Sans CJK SC 2.004 / wght 100–900", use: "全站界面默认 400；已有 500、600、650、675、700、750 使用真实可变字重。中文、英文与数字由同一主字体承接。" },
       { label: "Reading / --font-reading", value: "Noto Serif CJK SC 2.003 / 400", use: "较长阅读与对应编辑区；仅提供 400，不合成粗体或斜体。普通说明、表单和导航继续使用 Sans。" },
@@ -110,6 +113,8 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
       { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
       { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
+      { label: "Safe Line Leading", value: "unitless / natural height", use: "含行内公式时使用 2 的无单位基础行距，公式保留自然高度并沿基线排列；此值不是高度上限，也不是任意公式的安全保证。矩阵、多层分式与过高表达式转独立公式块。" },
+      { label: "Numeric / Figures", value: "font-variant-numeric: tabular-nums", use: "对齐计分、指标和数字列；位数变化时按实际范围预留数字宽度。不覆盖数学字体的内部数字、上下标与运算符布局。" },
       { label: "Tabs / Segmented", value: "14px / 500", use: "选中与未选中保持相同字重；数量使用 12px。" },
       { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
     ],
@@ -221,7 +226,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
         <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
-          <StateLabel tone={slug === "typography" ? "pending" : "completed"}>{slug === "typography" ? "基础层已接入 · 跨端待反馈" : "基线已建立"}</StateLabel>
+          <StateLabel tone={slug === "typography" || slug === "motion" ? "pending" : "completed"}>{slug === "typography" ? "基础层已接入 · 跨端待反馈" : slug === "motion" ? "基础动效已接入 · AI 场景待验证" : "基线已建立"}</StateLabel>
         </div>
         <p>{doc.description}</p>
         {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary no-underline">生产交付条件</a>记录。</p>}
@@ -256,6 +261,41 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
           </table>
         </div>
       </section>
+
+      {slug === "color" && <section className="doc-section" aria-labelledby="color-pairing-title">
+        <div className="doc-section-heading"><h2 id="color-pairing-title">前景、背景与必要边界</h2><p>源色用于品牌识别，界面使用成对的语义 Token。中性表面承托阅读，颜色只说明明确用途。</p></div>
+        <p>AI 标签使用深阶前景 #751C4A 与浅色背景 #FDF0F6，计算对比度约 9.39:1。浅色填充或装饰边框可以较轻；承担输入、选择与状态识别的必要边界仍需满足相邻色 3:1。10%–15% 透明度不能自动保障对比度，应计算合成后的颜色。</p>
+        <p>普通文字的 AA 门槛为 4.5:1；本站阅读与操作文字继续以 7:1 为目标。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
+        <div className="doc-section-heading"><h3>对比度实验区</h3><p>比较当前与候选浅／深色配对，也可修改颜色。深色方案仍待完整组件验证。</p></div>
+        <ColorContrastLab />
+      </section>}
+
+      {slug === "motion" && <section className="doc-section" aria-labelledby="ai-motion-title">
+        <div className="doc-section-heading"><h2 id="ai-motion-title">AI 动态排版与自适应滚动</h2><p>以下为待场景验证的实现约束；AI 对话组件尚未交付。</p></div>
+        <div className="foundation-table-wrap" role="region" aria-label="AI 动态排版规则" tabIndex={0}><table className="foundation-table">
+          <thead><tr><th scope="col">场景</th><th scope="col">规则</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">流式追加</th><td>内容随正常布局增长，合并频繁更新；不对每次追加重新启动高度动画。图片与其他异步内容尽量预留空间，减少布局跳动。</td></tr>
+            <tr><th scope="row">末尾跟随</th><td>仅在用户保持末尾跟随时更新滚动位置；用户向上阅读立即停止跟随，提供“回到最新”。恢复跟随由用户明确操作，不能因新内容强行拉回。</td></tr>
+            <tr><th scope="row">滚动锚定</th><td>优先保留浏览器锚定；应用若自行补偿，仅在相应容器协调 overflow-anchor，避免两套补偿同时改变滚动位置。原生锚定不等于自动跟随末尾。</td></tr>
+            <tr><th scope="row">生成指示与播报</th><td>默认使用静态“生成中”，光标闪动不是必需；如采用，需可停止并响应减少动效。播报开始、阶段和完成，不逐字追加到 live region。</td></tr>
+            <tr><th scope="row">过程展开</th><td>展示公开步骤、来源与解释摘要。按钮支持键盘、aria-expanded 与内容关联，展开和收起保持焦点；收起包含焦点的区域前把焦点移回按钮。默认即时展开，弹簧曲线留待真实场景验证。</td></tr>
+            <tr><th scope="row">减少动效</th><td>取消平滑滚动、闪动与非必要尺寸过渡，内容和状态立即更新；用户停止跟随后的阅读位置继续保留。</td></tr>
+          </tbody>
+        </table></div>
+        <p>接受条件：长文本与公式连续追加时不抢走阅读位置；用户上滚、回到最新、展开／收起、取消生成及减少动效均需分别验证。参考 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_anchoring/Overview" target="_blank" rel="noreferrer">滚动锚定</a>、<a href="https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/" target="_blank" rel="noreferrer">Disclosure 模式</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html" target="_blank" rel="noreferrer">暂停、停止、隐藏</a>。</p>
+      </section>}
+
+      {slug === "typography" && <section className="doc-section" aria-labelledby="math-leading-title">
+        <div className="doc-section-heading"><h2 id="math-leading-title">公式混排的行高保护</h2><p>沿用原生 MathML 与 STIX Two Math。此处提供行内／独立公式样本；跨系统、缩放与辅助技术结果仍待记录。</p></div>
+        <div className="math-leading-sample reading-prose">
+          <p>若 <span className="reading-inline-math" dangerouslySetInnerHTML={{ __html: '<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mi>a</mi><mi>b</mi></mfrac></math>' }} /> 表示每次练习的平均得分，需同时说明总分与作答次数。积分 <span className="reading-inline-math" dangerouslySetInnerHTML={{ __html: '<math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mspace width="0.2em"/><mi>d</mi><mi>x</mi></math>' }} /> 与正文沿基线排列，段落高度由内容自然撑开。</p>
+          <p>矩阵等较高表达式另起一块，保留前后说明：</p>
+          <div className="reading-formula-block" role="region" aria-label="二行二列矩阵示例" tabIndex={0} dangerouslySetInnerHTML={{ __html: '<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>A</mi><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd></mtr></mtable><mo>)</mo></mrow></math>' }} />
+        </div>
+        <p>共用阅读区域 reading-prose 内含行内 MathML 的段落自动启用无单位行距；reading-inline-math 仅约束外层自然高度与基线，不覆盖渲染器内部定位。vertical-align: baseline 本身不是高度补偿；不使用固定负偏移强行拉齐分式，也不把 line-height: relaxed 当作有效 CSS。</p>
+        <p>复杂分式、矩阵或明显打断阅读节奏的公式使用独立块，窄容器允许局部键盘滚动，不裁切公式。数字列与计分使用 tabular-nums；位数变化仍需预留宽度。数学字体保留自身数字与运算符度量。参考 <a href="https://www.w3.org/TR/mathml-core/" target="_blank" rel="noreferrer">MathML Core</a>、<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/line-height" target="_blank" rel="noreferrer">line-height</a> 与 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font-variant-numeric" target="_blank" rel="noreferrer">font-variant-numeric</a>。</p>
+      </section>}
 
       {slug === "typography" && <section id="typography-production" className="doc-section" aria-labelledby="typography-production-title">
         <div className="doc-section-heading">

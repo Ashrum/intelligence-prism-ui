@@ -4,6 +4,7 @@ import { useState } from "react"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { StateLabel } from "@/components/ui/badge"
 import { CardWorkbench, CommonCardExamples, type CardDensity } from "@/components/prism/card-patterns"
+import { componentDocumentStatus, statusLabels } from "@/components/prism/catalog"
 
 const cardTypes = [
   ["EvidenceRecord", "证据卡", "阅读与追溯", "身份、来源、范围、时间、判断、核验状态", "原图、OCR 与关联对象按需展开；整卡不作为按钮"],
@@ -13,10 +14,11 @@ const cardTypes = [
 
 export function CardDoc() {
   const [density, setDensity] = useState<CardDensity>("comfortable")
+  const status = componentDocumentStatus("card")
   return <article className="component-article">
     <header className="component-hero">
       <div className="component-eyebrow">数据展示</div>
-      <div className="component-title-row"><h1>Card</h1><StateLabel tone="pending">待评审</StateLabel></div>
+      <div className="component-title-row"><h1>Card</h1><StateLabel tone={status === "stable" ? "completed" : "pending"}>{statusLabels[status]}</StateLabel></div>
       <p>Card 围绕一个对象或任务组织相关内容。指标、资源、概览与任务按用途取舍信息；操作时，对象身份、范围和已有结果保持连续。</p>
     </header>
 

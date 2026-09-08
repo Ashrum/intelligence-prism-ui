@@ -6,6 +6,101 @@ import { useEffect, useRef, useState } from "react"
 import { Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SegmentedControl } from "@/components/ui/segmented-control"
+import { TextField } from "@/components/ui/text-field"
+import { contrastPresets, contrastRatio } from "@/lib/color-contrast"
+
+export function ColorContrastLab() {
+  const [scheme, setScheme] = useState<keyof typeof contrastPresets>("current")
+  const [role, setRole] = useState<"action" | "ai" | "growth">("ai")
+  const [colors, setColors] = useState<{ foreground: string; background: string }>({ foreground: contrastPresets.current.ai[0], background: contrastPresets.current.ai[1] })
+  const ratio = contrastRatio(colors.foreground, colors.background)
+  const foregroundError = /^#[\da-f]{6}$/i.test(colors.foreground) ? "" : "前景色需为六位颜色，例如 #751C4A。"
+  const backgroundError = /^#[\da-f]{6}$/i.test(colors.background) ? "" : "背景色需为六位颜色，例如 #FDF0F6。"
+  const reset = (nextScheme = scheme, nextRole = role) => {
+    setScheme(nextScheme)
+    setRole(nextRole)
+    const pair = contrastPresets[nextScheme][nextRole]
+    setColors({ foreground: pair[0], background: pair[1] })
+  }
+  const changed = colors.foreground.toUpperCase() !== contrastPresets[scheme][role][0] || colors.background.toUpperCase() !== contrastPresets[scheme][role][1]
+
+  return <div className="contrast-lab">
+    <SegmentedControl label="配色方案" value={scheme} onValueChange={value => reset(value as typeof scheme)} items={[["current", "当前浅色"], ["light", "候选浅色"], ["dark", "候选深色"]]} />
+    <SegmentedControl label="语义角色" size="sm" value={role} onValueChange={value => reset(scheme, value as typeof role)} items={[["action", "曜蓝"], ["ai", "智绯"], ["growth", "生长荧"]]} />
+    <p className="button-demo-note">{changed ? "自定义实验值，仅影响下方样本。" : scheme === "current" ? role === "growth" ? "源色限制示例：生长荧用于色样展示，不直接承担浅色底上的正文或必要边界。" : "当前浅色 Token 配对。" : "候选配对，尚未应用到主题；数值通过不等于主题验收。"} 输入不带透明度的六位十六进制颜色；透明色需先与实际背景合成。</p>
+    <div className="contrast-lab-fields">
+      <TextField label="前景文本色" value={colors.foreground} error={foregroundError} spellCheck={false} autoCapitalize="characters" onChange={event => setColors(previous => ({ ...previous, foreground: event.target.value }))} />
+      <TextField label="背景色" value={colors.background} error={backgroundError} spellCheck={false} autoCapitalize="characters" onChange={event => setColors(previous => ({ ...previous, background: event.target.value }))} />
+    </div>
+    {ratio !== null && <div className="contrast-lab-sample" style={{ color: colors.foreground, backgroundColor: colors.background }}><strong>课堂观察与学习记录</strong><p>AI 来源、人工复核与评价条件分别说明。</p><span>得分 08 / 12 · 示例数据</span></div>}
+    <p className="contrast-lab-result" role="status">{ratio === null ? "请输入有效颜色，例如 #751C4A。" : <>对比度 <strong>{ratio.toFixed(2)}:1</strong> · 普通文字 AA（4.5:1）：{ratio >= 4.5 ? "达到" : "未达到"} · 本站阅读目标（7:1）：{ratio >= 7 ? "达到" : "未达到"}</>}</p>
+    <div><Button type="button" variant="outline" size="compact" onClick={() => reset()}>恢复所选配对</Button></div>
+    <p className="button-demo-note">按原始计算值判定，显示值保留两位小数。实验值不修改全站 Token。</p>
+  </div>
+}
+
+export function HomeControlPreview() {
+  const [record, setRecord] = useState({ text: "方程建模步骤完整，条件说明仍需补充。", edited: false, reviewed: false })
+  const [draft, setDraft] = useState(record.text)
+  const [editing, setEditing] = useState(false)
+  const [error, setError] = useState("")
+  const [feedback, setFeedback] = useState("")
+  const [density, setDensity] = useState<"comfortable" | "compact">("comfortable")
+  const editor = useRef<HTMLTextAreaElement>(null)
+  const editButton = useRef<HTMLButtonElement>(null)
+  const composing = useRef(false)
+  const returnFocus = useRef(false)
+
+  useEffect(() => {
+    if (editing) editor.current?.focus()
+    else if (returnFocus.current) {
+      editButton.current?.focus()
+      returnFocus.current = false
+    }
+  }, [editing])
+
+  function finishEditing() {
+    composing.current = false
+    returnFocus.current = true
+    setEditing(false)
+    setError("")
+  }
+
+  return <section className="home-control-preview" data-density={density} aria-labelledby="home-preview-title">
+    <header><span className="control-caption">真实组件 · 可直接操作</span><h2 id="home-preview-title">AI 来源与人工复核分开</h2><p>九年级数学 · 课堂观察。演示初稿，修改仅在本页保留。</p></header>
+    <div className="home-preview-density"><span>界面密度</span><SegmentedControl label="首页示例密度" size="sm" value={density} onValueChange={value => setDensity(value as typeof density)} items={[["comfortable", "舒适"], ["compact", "紧凑"]]} /></div>
+    <div className="label-list"><AILabel>{record.edited ? "AI 初稿 · 人工已编辑" : "AI 初稿"}</AILabel><StateLabel tone={record.reviewed ? "success" : "pending"}>{record.reviewed ? "人工已确认" : "待复核"}</StateLabel></div>
+    <p className="home-preview-reading">{record.text}</p>
+    {editing ? <form noValidate onSubmit={event => {
+      event.preventDefault()
+      if (composing.current) return
+      const text = draft.trim()
+      if (!text) {
+        setError("请填写候选结论。")
+        editor.current?.focus()
+        return
+      }
+      if (text !== record.text) {
+        setRecord({ text, edited: true, reviewed: false })
+        setFeedback("修改已应用，需重新复核；AI 来源保留。")
+      } else setFeedback("内容未变化，复核状态保留。")
+      finishEditing()
+    }}>
+      <TextField multiline ref={editor} label="候选结论" required density={density} value={draft} error={error} description="上方保留已应用的结论。应用修改后，再单独确认复核。"
+        onChange={event => { setDraft(event.target.value); setError("") }}
+        onCompositionStart={() => { composing.current = true }} onCompositionEnd={() => { composing.current = false }} />
+      <div className="home-preview-actions"><Button key="apply" type="submit" size={density === "compact" ? "compact" : "default"}>应用修改</Button><Button key="cancel" type="button" variant="ghost" size={density === "compact" ? "compact" : "default"} onClick={() => { finishEditing(); setFeedback("已取消修改，原结论与复核状态保留。") }}>取消</Button></div>
+    </form> : <div className="home-preview-actions">
+      <Button key="review" type="button" variant={record.reviewed ? "outline" : "default"} size={density === "compact" ? "compact" : "default"} onClick={() => {
+        setRecord(previous => ({ ...previous, reviewed: !previous.reviewed }))
+        setFeedback(record.reviewed ? "已撤回确认，恢复待复核；AI 来源保留。" : "已记录人工确认；AI 来源保留。")
+      }}>{record.reviewed ? "撤回确认" : "确认复核"}</Button>
+      <Button key="edit" ref={editButton} type="button" variant="ghost" size={density === "compact" ? "compact" : "default"} onClick={() => { setDraft(record.text); setFeedback(""); setEditing(true) }}>编辑结论</Button>
+    </div>}
+    <p className="home-preview-feedback" role="status">{feedback}</p>
+    <footer><p>复用 Button、Input / Field 与 Labels；此示例不代表 AI 对话组件已交付。</p><Link href="/components/badge-labels">查看来源与状态规范 →</Link></footer>
+  </section>
+}
 
 const evidence = [
   { student: "学生 01", scores: ["3 / 4", "1 / 2"] },

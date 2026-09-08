@@ -1,6 +1,6 @@
 import { Box, Layers3 } from "lucide-react"
 
-import { catalogStats, componentGroups, foundationItems } from "@/components/prism/catalog"
+import { catalogStats, componentGroups, foundationItems, formatCatalogCounts } from "@/components/prism/catalog"
 import { NavLink } from "@/components/prism/nav-link"
 
 const documentLabels: Record<string, string> = {
@@ -26,6 +26,7 @@ function CatalogNavigation({ label }: { label: string }) {
         return (
           <div className="docs-nav-group" key={group.slug}>
             <div className="docs-nav-label"><Icon aria-hidden="true" />{group.label}<span>{group.items.length}</span></div>
+            <p className="docs-nav-counts">{formatCatalogCounts(group.items)}</p>
             {group.items.map((item) => {
               if (!item.href) {
                 return <span className="docs-nav-link docs-nav-link--planned" key={item.id}><span className="nav-status-dot" aria-hidden="true" /><span>{item.label}</span><small>规划</small></span>
@@ -34,11 +35,11 @@ function CatalogNavigation({ label }: { label: string }) {
               const firstGroup = linkedGroups.get(item.href)
               if (firstGroup === group.slug) return null
               if (firstGroup) {
-                return <span className="docs-nav-link docs-nav-link--related" key={item.id}><span className="nav-status-dot nav-status-dot--stable" aria-hidden="true" /><span>{item.label}</span><small>同页</small></span>
+                return <span className="docs-nav-link docs-nav-link--related" key={item.id}><span className={`nav-status-dot nav-status-dot--${item.status}`} aria-hidden="true" /><span>{item.label}</span><small>同页</small></span>
               }
 
               linkedGroups.set(item.href, group.slug)
-              return <NavLink exact className="docs-nav-link" href={item.href} key={item.id}><span className="nav-status-dot nav-status-dot--stable" aria-hidden="true" /><span>{documentLabels[item.href] ?? item.label}</span></NavLink>
+              return <NavLink exact className="docs-nav-link" href={item.href} key={item.id}><span className={`nav-status-dot nav-status-dot--${item.status}`} aria-hidden="true" /><span>{documentLabels[item.href] ?? item.label}</span>{item.status === "review" && <small>待评审</small>}</NavLink>
             })}
           </div>
         )
@@ -58,7 +59,6 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
         <div className="docs-navigation--desktop"><CatalogNavigation label="基础规范与组件分类" /></div>
         <details className="docs-navigation-mobile"><summary>浏览完整目录</summary><CatalogNavigation label="移动端基础规范与组件分类" /></details>
         <div className="docs-sidebar-footer">
-          <span className="growth-signal" aria-hidden="true" />
           Catalog v0.2 · {catalogStats.baseComponents + catalogStats.extensions} components
         </div>
       </aside>
