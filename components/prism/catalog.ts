@@ -212,9 +212,9 @@ export const componentDocuments = {
     itemIds: ["tabs"],
     eyebrow: "导航",
     title: "Tabs",
-    description: "在同一上下文中切换相关内容面板，支持 page 与 surface 两种层级。",
-    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和白色选中面。高度 36／32px，主文字 14px，数量 12px；切换内容即时更新，同一对象的身份与作用范围保持可见。",
-    accessibility: "保留 tab / tabpanel 语义。Page 示例采用手动激活：方向键、Home／End 移动焦点，Enter／Space 确认。禁用项跳过；焦点与选中分离，进入内容面板仍有可见焦点；窄容器仅滚动选项区。",
+    description: "在同一对象下切换相关内容面板，分为页面与局部两类样式，覆盖横向、纵向、等分与窄容器。",
+    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和白色选中面。高度 36／32px，主文字 14px，数量 12px。Hover 与按下只改变局部表面；选中位置、面板状态、未应用修改分别表达，切换保留对象范围与已有内容。",
+    accessibility: "保留 tab / tabpanel 语义。有等待的面板手动激活：方向键移动焦点，Enter／Space 确认；已准备好的局部内容可自动激活。禁用项跳过且原因可读，焦点与选中分离。纵向键盘随排列变化，窄容器只滚动标签条；减少动效时内容和选择仍立即更新。",
   },
   "segmented-control": {
     itemIds: ["segmented-control"],

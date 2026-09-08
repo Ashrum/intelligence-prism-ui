@@ -38,6 +38,7 @@
     "components/prism/docs-shell.tsx",
     "components/prism/foundation-doc.tsx",
     "components/prism/nav-link.tsx",
+    "components/prism/tabs-examples.tsx",
     "components/ui/accordion.tsx",
     "components/ui/alert-dialog.tsx",
     "components/ui/alert.tsx",

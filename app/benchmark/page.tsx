@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
+import { PageTabsExample } from "@/components/prism/tabs-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import {
   Tabs,
@@ -57,7 +58,6 @@ const aiLabels = ["AI 生成", "AI 推断", "AI 建议", "AI 初稿 · 人工已
 
 export default function Home() {
   const [density, setDensity] = useState<Density>("comfortable")
-  const [pageTab, setPageTab] = useState("overview")
   const buttonSize = density === "compact" ? "compact" : "default"
   const iconButtonSize = density === "compact" ? "icon-sm" : "icon"
 
@@ -101,19 +101,7 @@ export default function Home() {
 
           <div className="navigation-grid">
             <div className="navigation-primary">
-              <span className="control-caption">九年级 · 数学 · 今日 · 页面内容</span>
-              <Tabs value={pageTab} onValueChange={setPageTab} activationMode="manual">
-                <TabsList variant="line" aria-label="基础组件基准页面">
-                  <TabsTrigger value="overview">概览</TabsTrigger>
-                  <TabsTrigger value="evidence">教育证据</TabsTrigger>
-                  <TabsTrigger value="records">处理记录</TabsTrigger>
-                </TabsList>
-                <div className="page-tab-content">
-                  <TabsContent value="overview">今日汇总 128 份教育证据，6 项等待人工复核。</TabsContent>
-                  <TabsContent value="evidence">证据来源覆盖课堂观察、作业表现与阶段测评。</TabsContent>
-                  <TabsContent value="records">最近一次批量处理于 14:32 完成，未发现异常记录。</TabsContent>
-                </div>
-              </Tabs>
+              <PageTabsExample density={density} />
             </div>
 
             <div className="navigation-secondary">

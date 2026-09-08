@@ -16,7 +16,7 @@ const tabsListVariants = cva("prism-tabs-list", {
   defaultVariants: { variant: "default" },
 })
 
-function TabsList({ className, variant = "default", children, ref, asChild, ...props }: React.ComponentProps<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants>) {
+function TabsList({ className, variant = "default", layout = "content", children, ref, asChild, ...props }: React.ComponentProps<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants> & { layout?: "content" | "equal" }) {
   const trackRef = React.useRef<HTMLDivElement>(null)
   React.useImperativeHandle(ref, () => trackRef.current as HTMLDivElement)
   useSelectionIndicator(trackRef, '[data-slot="tabs-trigger"][data-state="active"]')
@@ -26,7 +26,7 @@ function TabsList({ className, variant = "default", children, ref, asChild, ...p
     : <>{indicator}{children}</>
   return (
     <div className="selection-scroll" data-selection-scroll>
-      <TabsPrimitive.List {...props} ref={trackRef} asChild={asChild} data-slot="tabs-list" data-variant={variant} className={cn(tabsListVariants({ variant }), className)}>
+      <TabsPrimitive.List {...props} ref={trackRef} asChild={asChild} data-slot="tabs-list" data-variant={variant} data-layout={layout} className={cn(tabsListVariants({ variant }), className)}>
         {content}
       </TabsPrimitive.List>
     </div>
