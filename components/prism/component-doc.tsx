@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
+import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { componentDocuments, type ComponentDocumentSlug } from "@/components/prism/catalog"
@@ -91,7 +92,7 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
     <div className="labels-layout docs-labels-layout">
       <div className="label-group"><h3>Badge</h3><div className="label-list"><MetaBadge>九年级</MetaBadge><MetaBadge tone="knowledge">数学</MetaBadge><MetaBadge tone="outline">课堂证据</MetaBadge></div></div>
       <div className="label-group"><h3>State Label</h3><div className="label-list"><StateLabel tone="running">正在处理</StateLabel><StateLabel tone="success">校验通过</StateLabel><StateLabel tone="warning">需要关注</StateLabel><StateLabel tone="danger">处理失败</StateLabel></div></div>
-      <div className="label-group"><h3>AI Label</h3><div className="label-list"><AILabel>AI 生成</AILabel><AILabel>AI 推断</AILabel><AILabel>人工已编辑</AILabel></div></div>
+      <div className="label-group"><h3>AI 来源与复核</h3><div className="label-list"><AILabel>AI 初稿 · 人工已编辑</AILabel><StateLabel tone="pending">待复核</StateLabel></div><p className="button-demo-note">人工编辑后保留 AI 来源；是否完成复核，使用独立状态说明。</p></div>
     </div>
   )
 }
@@ -110,6 +111,7 @@ function TabsPreview() {
       <div className="preview-grid-two">
         <div>
           <div className="control-caption">Page Tabs</div>
+          <p className="button-demo-note">九年级 · 数学 · 今日 · 示例数据</p>
           <Tabs defaultValue="overview" activationMode="manual">
             <TabsList variant="line" aria-label="教育证据页面">
               <TabsTrigger value="overview">概览</TabsTrigger>
@@ -161,12 +163,10 @@ function TabsPreview() {
 
 function SegmentedPreview() {
   const [density, setDensity] = useState<ControlDensity>("comfortable")
-  const [perspective, setPerspective] = useState("student")
   return (
     <div className="preview-stack component-control-preview" data-density={density}>
       <DensitySelector value={density} onChange={setDensity} />
-      <SegmentedControl label="查看视角" value={perspective} onValueChange={setPerspective} items={[["student", "学生视角"], ["question", "题目视角"]]} />
-      <p className="preview-result" role="status">{perspective === "student" ? "按学生聚合课堂、作业与测评证据，优先呈现成长变化。" : "按题目与知识点聚合正确率、错因和待复核记录。"}</p>
+      <EvidencePerspective />
       <div className="control-boundary">
         <span className="control-caption">长标签、数量与禁用项 · 304px 容器</span>
         <div className="control-narrow">
@@ -193,7 +193,7 @@ const buttonExamples = [
 
 function ButtonPreview() {
   const [running, setRunning] = useState<Record<string, boolean>>({})
-  const [status, setStatus] = useState("选择任一异步示例，验证等待状态与布局稳定性。")
+  const [statuses, setStatuses] = useState<Record<string, string>>({})
   const [pressStatus, setPressStatus] = useState("尚未按下按钮。")
   const [submitCount, setSubmitCount] = useState(0)
   const [linkLoading, setLinkLoading] = useState(false)
@@ -218,11 +218,11 @@ function ButtonPreview() {
     const count = (activationCounts.current.get(id) ?? 0) + 1
     activationCounts.current.set(id, count)
     setRunning((previous) => ({ ...previous, [id]: true }))
-    setStatus(`${label}：正在处理；处理函数调用 ${count} 次。`)
+    setStatuses((previous) => ({ ...previous, [id]: `${label}：正在处理；处理函数调用 ${count} 次。` }))
     timers.current.set(id, setTimeout(() => {
       timers.current.delete(id)
       setRunning((previous) => ({ ...previous, [id]: false }))
-      setStatus(`${label}：处理完成；处理函数共调用 ${count} 次。`)
+      setStatuses((previous) => ({ ...previous, [id]: `${label}：处理完成；处理函数共调用 ${count} 次。` }))
     }, 1800))
   }
 
@@ -238,6 +238,7 @@ function ButtonPreview() {
 
   return (
     <div className="preview-stack button-doc-preview" id="button-behavior">
+      <LearningAnalysisExample />
       <div className="button-demo-group">
         <div className="control-caption">七种操作层级</div>
         <div className="button-matrix">
@@ -268,21 +269,26 @@ function ButtonPreview() {
       <div className="button-demo-group">
         <div className="control-caption">Loading 与等待文案边界</div>
         <p className="button-demo-note">有效等待文案与处理指示从空闲时预留空间；未传、空字符串或纯空白时保留原内容。普通按钮不额外占位。</p>
-        <div className="button-matrix" data-demo="loading-boundaries">
-          <Button type="button" variant="ai-primary" loading={Boolean(running.valid)} loadingLabel="正在生成分析" onClick={() => run("valid", "有效等待文案")}>
-            <Sparkles aria-hidden="true" />智能分析
-          </Button>
-          <Button type="button" loading={Boolean(running.omitted)} onClick={() => run("omitted", "未传等待文案")}>未传等待文案</Button>
-          <Button type="button" variant="outline" loading={Boolean(running.empty)} loadingLabel="" onClick={() => run("empty", "空字符串等待文案")}>空字符串等待文案</Button>
-          <Button type="button" variant="ai-primary" loading={Boolean(running.blank)} loadingLabel="   " onClick={() => run("blank", "纯空白等待文案")}><Sparkles aria-hidden="true" />纯空白等待文案</Button>
-          <Button type="button" variant="secondary" loading={Boolean(running.duplicate)} loadingLabel="正在验证" onClick={() => run("duplicate", "重复触发防护")}>快速双击验证</Button>
+        <div className="button-async-examples" data-demo="loading-boundaries">
+          {([
+            { id: "valid", label: "智能分析", description: "有效等待文案", variant: "ai-primary", loadingLabel: "正在生成分析" },
+            { id: "omitted", label: "未传等待文案", description: "未传等待文案", variant: "default" },
+            { id: "empty", label: "空字符串等待文案", description: "空字符串等待文案", variant: "outline", loadingLabel: "" },
+            { id: "blank", label: "纯空白等待文案", description: "纯空白等待文案", variant: "ai-primary", loadingLabel: "   " },
+            { id: "duplicate", label: "快速双击验证", description: "重复触发防护", variant: "secondary", loadingLabel: "正在验证" },
+          ] as const).map((example) => <div className="button-async-example" key={example.id}>
+            <Button type="button" variant={example.variant} loading={Boolean(running[example.id])} {...("loadingLabel" in example ? { loadingLabel: example.loadingLabel } : {})} onClick={() => run(example.id, example.description)}>
+              {example.variant.startsWith("ai-") && <Sparkles aria-hidden="true" />}{example.label}
+            </Button>
+            <p className="preview-result" role="status" data-demo={`status-${example.id}`}>{statuses[example.id] ?? "未开始"}</p>
+          </div>)}
           <Button type="button" variant="secondary" data-demo="ordinary-button">普通按钮</Button>
         </div>
         <div className="button-matrix" data-demo="layout-stability">
           <Button type="button" loading={Boolean(running.layout)} loadingLabel="正在保存较长的设置" onClick={() => run("layout", "布局稳定性")}>保存设置</Button>
           <Button type="button" variant="outline">相邻操作</Button>
         </div>
-        <p className="preview-result" role="status" aria-live="polite">{status}</p>
+        <p className="preview-result" role="status" data-demo="status-layout">{statuses.layout ?? "点击保存设置，查看等待文案对相邻操作的位置影响。"}</p>
       </div>
 
       <div className="button-demo-group" id="button-contract-target">

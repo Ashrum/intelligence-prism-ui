@@ -205,7 +205,7 @@ export const componentDocuments = {
     eyebrow: "操作与命令",
     title: "Button",
     description: "七种操作层级共用同一实现：曜蓝承担主要操作，智绯仅用于明确的 AI 行为，中性表面承接次操作。",
-    guidance: "默认高度 36px，紧凑高度 32px；一个操作区域只保留一个主要按钮，破坏性操作独立表达，导航使用 asChild 保留链接语义。",
+    guidance: "默认高度 36px，紧凑高度 32px；一个操作区域只保留一个主要按钮，破坏性操作独立表达，导航使用 asChild 保留链接语义。行动名称指向具体对象，各操作的反馈独立并就近呈现；重新处理时保留上次结果，完成后再更新。",
     accessibility: "保留 2px 可见焦点；图标按钮必须提供 accessible name。Loading 保留原变体颜色并阻止重复激活，等待文案缺失或空白时继续使用原内容。",
   },
   tabs: {
@@ -213,15 +213,15 @@ export const componentDocuments = {
     eyebrow: "导航",
     title: "Tabs",
     description: "在同一上下文中切换相关内容面板，支持 page 与 surface 两种层级。",
-    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和白色选中面。高度 36／32px，主文字 14px，数量 12px；切换内容即时更新。",
-    accessibility: "保留 tab / tabpanel 语义。Page 示例采用手动激活：方向键、Home／End 移动焦点，Enter／Space 确认。禁用项跳过；焦点与选中分离，窄容器仅滚动选项区。",
+    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和白色选中面。高度 36／32px，主文字 14px，数量 12px；切换内容即时更新，同一对象的身份与作用范围保持可见。",
+    accessibility: "保留 tab / tabpanel 语义。Page 示例采用手动激活：方向键、Home／End 移动焦点，Enter／Space 确认。禁用项跳过；焦点与选中分离，进入内容面板仍有可见焦点；窄容器仅滚动选项区。",
   },
   "segmented-control": {
     itemIds: ["segmented-control"],
     eyebrow: "智能曜彩扩展",
     title: "Segmented Control",
     description: "立即切换视角、显示模式或时间粒度，不创建 TabPanel。",
-    guidance: "用于少量互斥选项。高度 36／32px，14px 主文字与 12px 数量；浅中性轨道、白色选中面、8／6px 圆角，不使用阴影。长标签保持完整并局部滚动。",
+    guidance: "用于少量互斥选项。高度 36／32px，14px 主文字与 12px 数量；浅中性轨道、白色选中面、8／6px 圆角，不使用阴影。长标签保持完整并局部滚动。选择立即改变结果的组织方式，保留班级、周期和同一组数据。",
     accessibility: "使用 RadioGroup 单选语义，方向键移动焦点并立即选中，禁用项不可进入；180ms 仅移动选中背景，内容不等待动画。系统减少动效时取消指示器移动。",
   },
   card: {
@@ -245,7 +245,7 @@ export const componentDocuments = {
     eyebrow: "反馈与状态",
     title: "Badge & Labels",
     description: "区分静态元数据、运行状态和 AI 来源，避免同一种胶囊承担全部语义。",
-    guidance: "Badge 不可点击；State Label 的文字必须直接表达状态；AI Label 只使用智绯语义。",
+    guidance: "Badge 不可点击；State Label 的文字必须直接表达状态；AI Label 只使用智绯语义表达来源。人工编辑后仍保留 AI 来源，复核状态独立表达；生成完成不代表已复核。",
     accessibility: "状态不能只依赖颜色，AI 来源必须具有可访问文本。",
   },
 } as const

@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import type { ReactNode } from "react"
 import {
   ArrowRight,
   Check,
-  FileCheck2,
   RefreshCw,
   Sparkles,
 } from "lucide-react"
@@ -22,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
+import { EvidencePerspective, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import {
   Tabs,
@@ -31,8 +31,6 @@ import {
 } from "@/components/ui/tabs"
 
 type Density = "comfortable" | "compact"
-type WorkflowState = "pending" | "completed"
-type AIWorkflowState = "generating" | "review"
 
 const buttonVariants = [
   { label: "保存设置", variant: "default" },
@@ -55,38 +53,13 @@ const stateLabels = [
   { label: "处理完成", tone: "completed" },
 ] as const
 
-const aiLabels = ["AI 生成", "AI 推断", "AI 建议", "人工已编辑"]
+const aiLabels = ["AI 生成", "AI 推断", "AI 建议", "AI 初稿 · 人工已编辑"]
 
 export default function Home() {
   const [density, setDensity] = useState<Density>("comfortable")
   const [pageTab, setPageTab] = useState("overview")
-  const [perspective, setPerspective] = useState("student")
-  const [isRunning, setIsRunning] = useState(false)
-  const [workflowState, setWorkflowState] =
-    useState<WorkflowState>("pending")
-  const [aiWorkflowState, setAIWorkflowState] =
-    useState<AIWorkflowState>("generating")
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const buttonSize = density === "compact" ? "compact" : "default"
   const iconButtonSize = density === "compact" ? "icon-sm" : "icon"
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
-  }, [])
-
-  const handleRun = () => {
-    if (isRunning) return
-    setIsRunning(true)
-    setWorkflowState("pending")
-    setAIWorkflowState("generating")
-    timerRef.current = setTimeout(() => {
-      setWorkflowState("completed")
-      setAIWorkflowState("review")
-      setIsRunning(false)
-    }, 900)
-  }
 
   return (
     <div className="benchmark-shell" data-density={density}>
@@ -123,12 +96,12 @@ export default function Home() {
             id="navigation-title"
             title="导航与视角控制"
             description="页面分组、局部时间范围与即时视角选择保持不同语义。"
-            aside={<StateLabel tone="running">数据持续更新</StateLabel>}
+            aside={<MetaBadge tone="outline">示例数据</MetaBadge>}
           />
 
           <div className="navigation-grid">
             <div className="navigation-primary">
-              <span className="control-caption">页面内容</span>
+              <span className="control-caption">九年级 · 数学 · 今日 · 页面内容</span>
               <Tabs value={pageTab} onValueChange={setPageTab} activationMode="manual">
                 <TabsList variant="line" aria-label="基础组件基准页面">
                   <TabsTrigger value="overview">概览</TabsTrigger>
@@ -158,20 +131,9 @@ export default function Home() {
                 </Tabs>
               </div>
 
-              <div className="control-group">
-                <span className="control-caption">查看视角</span>
-                <SegmentedControl
-                  label="查看视角"
-                  value={perspective}
-                  onValueChange={setPerspective}
-                  items={[
-                    ["student", "学生视角"],
-                    ["question", "题目视角"],
-                  ]}
-                />
-              </div>
             </div>
           </div>
+          <EvidencePerspective />
         </section>
 
         <section className="benchmark-section" aria-labelledby="button-title">
@@ -195,6 +157,7 @@ export default function Home() {
             <Button type="button" size={buttonSize} loading loadingLabel="提交中">提交</Button>
             <Button type="button" size={buttonSize} disabled>暂无权限</Button>
           </div>
+          <LearningAnalysisExample compact={density === "compact"} />
         </section>
 
         <section className="benchmark-section" aria-labelledby="card-title">
@@ -250,11 +213,7 @@ export default function Home() {
                 <p className="ai-summary">方程建模能力稳步提升，几何证明中的条件引用仍需加强。</p>
               </CardContent>
               <CardFooter className="prism-card-footer">
-                <span className="status-swap" role="status" aria-live="polite">
-                  <StateLabel tone={aiWorkflowState === "review" ? "pending" : "running"}>
-                    {aiWorkflowState === "review" ? "待人工确认" : "生成中"}
-                  </StateLabel>
-                </span>
+                <StateLabel tone="pending">待复核</StateLabel>
               </CardFooter>
             </Card>
           </div>
@@ -300,25 +259,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="workflow-section" aria-labelledby="workflow-title">
-          <div className="workflow-copy">
-            <div className="workflow-icon" aria-hidden="true"><FileCheck2 /></div>
-            <div>
-              <h2 id="workflow-title">交互状态验证</h2>
-              <p>启动处理后，任务完成状态与 AI 人工确认状态将同步更新。</p>
-            </div>
-          </div>
-          <div className="workflow-actions">
-            <span className="status-swap" role="status" aria-live="polite">
-              <StateLabel tone={workflowState === "completed" ? "completed" : "pending"}>
-                {workflowState === "completed" ? "已完成" : "待处理"}
-              </StateLabel>
-            </span>
-            <Button type="button" size={buttonSize} onClick={handleRun} loading={isRunning} loadingLabel="处理中">
-              <Sparkles aria-hidden="true" />开始处理
-            </Button>
-          </div>
-        </section>
       </main>
     </div>
   )
