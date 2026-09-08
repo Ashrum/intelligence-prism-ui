@@ -11,7 +11,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CardWorkbench } from "@/components/prism/card-patterns"
+import { CardWorkbench, CommonCardExamples } from "@/components/prism/card-patterns"
 import { ClassroomObservationForm } from "@/components/prism/classroom-observation-form"
 import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { PageTabsExample } from "@/components/prism/tabs-examples"
@@ -135,6 +135,7 @@ export default function Home() {
             aside={<Badge>教育证据</Badge>}
           />
           <CardWorkbench density={density} />
+          <details className="common-card-disclosure"><summary>查看常见 Card 样式</summary><CommonCardExamples density={density} /></details>
         </section>
 
         <section className="benchmark-section" id="form-demo" aria-labelledby="form-title">
