@@ -14,12 +14,12 @@
 .tf-notch legend > span { display: inline-block; padding-inline: .25rem; }
 .tf-outline:where(:not([data-disabled="true"]):not([data-readonly="true"])):hover { --tf-border: var(--text-secondary); }
 .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: var(--action-primary); --tf-label-color: var(--action-primary); }
-.tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within > .tf-notch { border-width: 2px; }
+.tf-outline:where(:not([data-disabled="true"])):focus-within > .tf-notch { border-width: 2px; }
 .tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
 .tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
-.tf-outline[data-readonly="true"] { --tf-surface: transparent; --tf-border: var(--border-default); }
-.tf-outline[data-readonly="true"]:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-.tf-outline[data-disabled="true"] { --tf-surface: transparent; --tf-border: var(--border-subtle); --tf-label-color: var(--control-disabled-fg); }
+.tf-outline[data-readonly="true"] { --tf-surface: var(--surface-quiet); --tf-border: var(--border-default); }
+.tf-outline[data-readonly="true"]:focus-within { --tf-border: var(--focus-ring); }
+.tf-outline[data-disabled="true"] { --tf-surface: var(--surface-quiet); --tf-border: var(--border-subtle); --tf-label-color: var(--control-disabled-fg); }
 
 .tf-field .tf-control {
   display: block; flex: 1; width: 100%; min-width: 0; height: var(--tf-height); min-height: var(--tf-height);
@@ -78,6 +78,6 @@
   .tf-outline { --tf-border: CanvasText; --tf-label-color: CanvasText; --tf-caret: CanvasText; }
   .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: Highlight; --tf-label-color: Highlight; }
   .tf-outline[data-readonly="true"] { --tf-surface: Canvas; --tf-border: CanvasText; }
-  .tf-outline[data-readonly="true"]:focus-within { outline-color: Highlight; }
+  .tf-outline[data-readonly="true"]:focus-within { --tf-border: Highlight; }
   .tf-outline[data-disabled="true"] { --tf-surface: Canvas; --tf-border: GrayText; --tf-label-color: GrayText; }
 }
