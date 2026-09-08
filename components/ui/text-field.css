@@ -17,10 +17,9 @@
 .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within > .tf-notch { border-width: 2px; }
 .tf-outline[data-invalid="true"] { --tf-border: var(--danger-action); --tf-label-color: var(--danger-fg); --tf-caret: var(--danger-action); }
 .tf-outline[data-invalid="true"]:hover, .tf-outline[data-invalid="true"]:focus-within { --tf-border: var(--danger-action); }
-.tf-outline[data-readonly="true"] { --tf-surface: var(--surface-subtle); --tf-border: var(--field-border); }
-.tf-outline[data-readonly="true"] > .tf-notch { border-style: dashed; }
+.tf-outline[data-readonly="true"] { --tf-surface: transparent; --tf-border: var(--border-default); }
 .tf-outline[data-readonly="true"]:focus-within { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-.tf-outline[data-disabled="true"] { --tf-surface: var(--control-disabled-bg); --tf-border: var(--control-disabled-border); --tf-label-color: var(--control-disabled-fg); }
+.tf-outline[data-disabled="true"] { --tf-surface: transparent; --tf-border: var(--border-subtle); --tf-label-color: var(--control-disabled-fg); }
 
 .tf-field .tf-control {
   display: block; flex: 1; width: 100%; min-width: 0; height: var(--tf-height); min-height: var(--tf-height);
@@ -80,5 +79,5 @@
   .tf-outline:where(:not([data-readonly="true"]):not([data-disabled="true"])):focus-within { --tf-border: Highlight; --tf-label-color: Highlight; }
   .tf-outline[data-readonly="true"] { --tf-surface: Canvas; --tf-border: CanvasText; }
   .tf-outline[data-readonly="true"]:focus-within { outline-color: Highlight; }
-  .tf-outline[data-disabled="true"] { --tf-border: GrayText; --tf-label-color: GrayText; }
+  .tf-outline[data-disabled="true"] { --tf-surface: Canvas; --tf-border: GrayText; --tf-label-color: GrayText; }
 }

@@ -80,7 +80,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   color: {
     title: "色彩",
     description: "在页面背景、内容表面和交互底色上保持清晰阅读，三种核心色通过语义映射表达用途。",
-    principles: ["阅读与可操作文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "输入、选择和焦点的必要识别边界至少达到 3:1；普通内容容器可以使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
+    principles: ["阅读与可操作文字以 7:1 为对比目标，正文、辅助信息、标签、占位文字和操作文案按真实背景校验。", "主要操作、AI 行为与状态文字使用加深后的语义色；品牌源色继续保留身份。", "可编辑输入、选择和焦点的必要识别边界至少达到 3:1；只读、禁用和普通内容容器使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
     references: [
       { label: "Canvas", value: "#F5F5F3", use: "近白中性的页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
@@ -90,10 +90,11 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与主按钮背景；链接仅用颜色区分，不使用下划线。" },
       { label: "AI / Action · Text", value: "#872056 / #751C4A", use: "AI 按钮与浅色 AI 表面上的文字。" },
       { label: "Status / Success · Warning · Danger", value: "#215631 / #684511 / #872725", use: "分别与成功、警告、错误表面成对使用。" },
-      { label: "Field / Border", value: "#686C65", use: "可填写与只读区域的边界；通过实线和间断边框区分模式。" },
+      { label: "Field / Border", value: "#686C65", use: "可填写区域的常显边界；只读与禁用字段使用较轻实线，不增加底色。" },
       { label: "Selection / Border", value: "#51758E", use: "选中对象和局部选中面的边界。" },
-      { label: "Disabled / Background · Text · Border", value: "#F0F0ED / #62675D / #D5D6D1", use: "浅底与轻边界表达不可操作，文字保持 4.5:1 以上；保留不可用说明，不与可编辑字段争夺注意力。" },
-      { label: "Border / Default", value: "#D5D6D1", use: "普通内容容器与分隔线；输入和选择使用独立的边界 Token。" },
+      { label: "Disabled / Background · Text · Border", value: "#F0F0ED / #62675D / #D5D6D1", use: "按钮等控件的禁用配色；TextField 不增加底色，边界使用 Border / Subtle，保留不可用说明与可读灰字。" },
+      { label: "Border / Subtle", value: "#E3E4DE", use: "禁用字段的轻边界；不增加底色，文字使用 #62675D。" },
+      { label: "Border / Default", value: "#D5D6D1", use: "普通内容容器、只读字段与分隔线；可编辑输入和选择使用独立的边界 Token。" },
     ],
     boundary: "7:1 是当前浅色主题的阅读与可操作文字对比目标；禁用文字单独保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
   },
@@ -158,7 +159,7 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   iconography: {
     title: "图标",
     description: "线性图标承担识别和方向提示，文字继续承担完整含义。",
-    principles: ["统一使用 Lucide 风格线性图标。", "常规尺寸以 16px 为主，状态和辅助图标可使用 12–14px。", "纯图标按钮必须提供可访问名称。"],
+    principles: ["统一使用 Lucide 风格线性图标；Card 的标题图标、资源与班级标识使用无底色的中性前景。", "常规尺寸以 16px 为主，状态和辅助图标可使用 12–14px。", "纯图标按钮必须提供可访问名称。"],
     references: [
       { label: "Inline", value: "16px", use: "按钮、导航和列表项。" },
       { label: "Status", value: "12–14px", use: "状态、标签与辅助提示。" },
