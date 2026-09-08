@@ -50,7 +50,7 @@ export type CatalogGroup = {
 
 export const foundationItems = [
   { slug: "tokens-theming", href: "/foundations/tokens-theming", label: "Tokens & Theming", title: "设计令牌与主题", summary: "从三种源色到语义 Token 的稳定映射。", icon: Layers3 },
-  { slug: "color", href: "/foundations/color", label: "Color", title: "色彩", summary: "中性色主导，曜蓝、智绯与生长荧严格服从语义。", icon: Palette },
+  { slug: "color", href: "/foundations/color", label: "Color", title: "色彩", summary: "文字对背景以 7:1 为目标，曜蓝、智绯与生长荧保持语义。", icon: Palette },
   { slug: "typography", href: "/foundations/typography", label: "Typography", title: "字体与排版", summary: "面向中文教育界面的清晰层级与紧凑阅读节奏。", icon: Type },
   { slug: "spacing-density", href: "/foundations/spacing-density", label: "Spacing & Density", title: "间距与密度", summary: "舒适与紧凑两种密度共享同一语义结构。", icon: Ruler },
   { slug: "layout-breakpoints", href: "/foundations/layout-breakpoints", label: "Layout & Breakpoints", title: "布局与断点", summary: "围绕工作台、文档与移动端建立稳定响应规则。", icon: LayoutGrid },
@@ -213,7 +213,7 @@ export const componentDocuments = {
     eyebrow: "导航",
     title: "Tabs",
     description: "在同一对象下切换相关内容面板，分为页面与局部两类样式，覆盖横向、纵向、等分与窄容器。",
-    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和白色选中面。高度 36／32px，主文字 14px，数量 12px。Hover 与按下只改变局部表面；选中位置、面板状态、未应用修改分别表达，切换保留对象范围与已有内容。",
+    guidance: "Page Tabs 使用曜蓝文字与 2px 移动下划线；Surface Tabs 使用浅中性底和带清晰边界的白色选中面。高度 36／32px，主文字 14px，数量 12px。Hover 与按下只改变局部表面；选中位置、面板状态、未应用修改分别表达，切换保留对象范围与已有内容。",
     accessibility: "保留 tab / tabpanel 语义。有等待的面板手动激活：方向键移动焦点，Enter／Space 确认；已准备好的局部内容可自动激活。禁用项跳过且原因可读，焦点与选中分离。纵向键盘随排列变化，窄容器只滚动标签条；减少动效时内容和选择仍立即更新。",
   },
   "segmented-control": {
