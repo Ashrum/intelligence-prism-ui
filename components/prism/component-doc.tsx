@@ -11,6 +11,8 @@ import { ClassroomObservationForm } from "@/components/prism/classroom-observati
 import { EvidencePerspective, LabelsExamples, LearningAnalysisExample } from "@/components/prism/control-examples"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { TabsExamples, TabsUsageNotes } from "@/components/prism/tabs-examples"
+import { SelectExamples } from "@/components/prism/select-examples"
+import { DialogExamples } from "@/components/prism/dialog-examples"
 import { componentDocuments, componentDocumentStatus, statusLabels, type ComponentDocumentSlug } from "@/components/prism/catalog"
 
 export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
@@ -74,6 +76,8 @@ function ComponentPreview({ slug }: { slug: ComponentDocumentSlug }) {
   if (slug === "card") return <CardWorkbench showDensityControl />
 
   if (slug === "input-field") return <ClassroomObservationForm />
+  if (slug === "select") return <SelectExamples />
+  if (slug === "dialog") return <DialogExamples />
 
   return <div className="preview-stack"><LabelsExamples /><LearningAnalysisExample /></div>
 }
