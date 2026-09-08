@@ -57,7 +57,6 @@
   --control-disabled-border: #d3d1c7;
   --control-disabled-fg: #66655e;
   --focus-ring: #087ba8;
-  --growth-signal: #c2f25b;
 
   --control-height: 2.25rem;
   --section-gap: 1.5rem;
@@ -281,7 +280,7 @@ body {
 .catalog-item { display: grid; grid-template-columns: minmax(0, 1fr) auto 1rem; align-items: center; gap: .625rem; min-height: 3.25rem; padding: .75rem .875rem; border: 1px solid var(--border-default); border-radius: .5rem; background: var(--surface); color: var(--text-primary); text-decoration: none; }
 .catalog-item > span { display: grid; gap: .1875rem; min-width: 0; }
 .catalog-item strong { overflow: hidden; font-size: .8125rem; text-overflow: ellipsis; white-space: nowrap; }
-.catalog-item small { color: var(--ai-fg); font-size: .6875rem; font-weight: 600; }
+.catalog-item small { color: var(--text-secondary); font-size: .6875rem; font-weight: 600; }
 .catalog-item em { padding: .1875rem .4375rem; border-radius: .375rem; font-size: .6875rem; font-style: normal; font-weight: 700; white-space: nowrap; }
 .catalog-item--stable:hover, .catalog-item--review:hover { border-color: var(--action-primary-border); background: var(--action-primary-soft); }
 .catalog-item--review em { color: var(--text-secondary); background: var(--surface-subtle); }
@@ -377,6 +376,10 @@ body {
 .color-reading-sample a { color: var(--action-primary); text-decoration: none; font-size: .875rem; }
 .color-reading-sample a:hover { color: var(--action-primary-hover); }
 .color-reading-sample a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.foundation-article :where(p, td) a:not(.ui-button), .label-list > a:not(.ui-button) { color: var(--action-primary); text-decoration: none; }
+.foundation-article :where(p, td) a:not(.ui-button):hover, .label-list > a:not(.ui-button):hover { color: var(--action-primary-hover); }
+.foundation-article :where(p, td) a:not(.ui-button):active, .label-list > a:not(.ui-button):active { color: var(--action-primary-active); }
+.foundation-article :where(p, td) a:not(.ui-button):focus-visible, .label-list > a:not(.ui-button):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 .color-status-samples { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .75rem; padding-top: .5rem; }
 .type-specimen { display: grid; align-content: center; gap: 1rem; }
 .type-specimen > span { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 675; letter-spacing: -.035em; line-height: 1.08; }
@@ -515,13 +518,6 @@ svg { width: 1rem; height: 1rem; flex: none; }
   color: var(--text-secondary);
   font-size: .75rem;
   font-weight: 600;
-}
-.growth-signal {
-  width: .5rem;
-  height: .5rem;
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  background: var(--growth-signal);
 }
 .benchmark-heading h1,
 .section-heading h2,
@@ -1006,5 +1002,4 @@ svg { width: 1rem; height: 1rem; flex: none; }
   .ui-button:focus-visible { outline-color: Highlight !important; }
   .selection-indicator, .prism-tabs-list--surface > .selection-indicator, .segmented-control > .selection-indicator { border: 1px solid Highlight; }
   .prism-tabs-list--page > .selection-indicator { background: Highlight; }
-  .growth-signal { border: 1px solid CanvasText; }
 }
