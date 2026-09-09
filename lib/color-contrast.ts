@@ -13,7 +13,7 @@ export function contrastRatio(foreground: string, background: string): number | 
 }
 
 export const contrastPresets = {
-  current: { action: ["#FFFFFF", "#339FF2"], ai: ["#751C4A", "#FDF0F6"], growth: ["#C2F25B", "#FFFFFF"] },
+  current: { action: ["#FFFFFF", "#0B6FCA"], ai: ["#751C4A", "#FDF0F6"], growth: ["#C2F25B", "#FFFFFF"] },
   light: { action: ["#2563EB", "#EFF6FF"], ai: ["#BE123C", "#FFF1F2"], growth: ["#3F6212", "#F7FEE7"] },
   dark: { action: ["#60A5FA", "#172554"], ai: ["#FB7185", "#4C0519"], growth: ["#BEF264", "#1A2E05"] },
 } as const

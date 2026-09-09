@@ -55,18 +55,19 @@ export function SelectExamples() {
   const triggerRef = useRef<HTMLButtonElement>(null)
 
   return <div className="preview-stack">
-    <div className="control-preview-toolbar"><span>界面密度</span><SegmentedControl label="Select 界面密度" size="sm" value={density} onValueChange={value => setDensity(value as typeof density)} items={[["comfortable", "舒适 · 36px"], ["compact", "紧凑 · 32px"]]} /></div>
     <section className="selection-example" aria-labelledby="select-scope-title">
-      <div><h3 id="select-scope-title">选择证据范围</h3><p className="button-demo-note">九年级 1 班 · 数学。选择后应用，才更新当前范围。</p></div>
+      <div className="example-heading"><div><h3 id="select-scope-title">选择证据范围</h3><p className="button-demo-note">九年级 1 班 · 数学</p></div><div className="control-preview-toolbar"><span>界面密度</span><SegmentedControl label="Select 界面密度" size="sm" value={density} onValueChange={value => setDensity(value as typeof density)} items={[["comfortable", "舒适"], ["compact", "紧凑"]]} /></div></div>
+      <div className="selection-workspace">
       <form noValidate onSubmit={event => {
         event.preventDefault()
         if (!draft) { setError("请选择证据类型后再应用。"); setFeedback(""); triggerRef.current?.focus(); return }
         setApplied(draft); setError(""); setFeedback(`已应用：${evidenceLabel(draft)}。`)
       }}>
-        <SelectionField label="证据类型" required value={draft} onValueChange={value => { setDraft(value); setError(""); setFeedback("") }} density={density} triggerRef={triggerRef} error={error} description="单选。历史归档尚未开放，不能选择。" />
+        <SelectionField label="证据类型" required value={draft} onValueChange={value => { setDraft(value); setError(""); setFeedback("") }} density={density} triggerRef={triggerRef} error={error} description="选择后应用。历史归档暂不可用。" />
         <div className="selection-actions"><Button type="submit" size={density === "compact" ? "sm" : "default"}>应用范围</Button><Button type="button" variant="outline" size={density === "compact" ? "sm" : "default"} disabled={draft === applied && !error} onClick={() => { setDraft(applied); setError(""); setFeedback("已撤回修改。") }}>撤回修改</Button></div>
       </form>
       <div className="selection-result"><span>当前范围</span><strong>{applied ? evidenceLabel(applied) : "尚未应用"}</strong>{draft !== applied && <p>修改尚未应用，当前范围保持不变。</p>}</div>
+      </div>
       <p className="control-feedback" role="status">{feedback}</p>
     </section>
     <section className="control-boundary" aria-labelledby="select-boundary-title">

@@ -22,7 +22,6 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
   return (
     <article className="component-article">
       <header className="component-hero">
-        <div className="component-eyebrow">{doc.eyebrow}</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
           <StateLabel tone={status === "stable" ? "completed" : "pending"}>{statusLabels[status]}</StateLabel>
@@ -31,23 +30,22 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
       </header>
 
       <section className="doc-section" aria-labelledby="preview-title">
-        <div className="doc-section-heading">
-          <h2 id="preview-title">{slug === "input-field" ? "输入、反馈与应用" : slug === "tabs" ? "样式、状态与应用场景" : slug === "badge-labels" ? "元数据、状态与来源" : "Preview"}</h2>
-          <p>{slug === "input-field" ? "在同一条记录中输入、修正、应用，再继续修改，观察字段与结果如何接续。" : slug === "tabs" ? "页面、局部内容、侧向详情与窄容器，共用清楚的选择和状态规则。" : slug === "badge-labels" ? "静态标签就近说明对象，操作使用独立入口。处理完成与复核结果分别表达。" : "真实组件与交互状态，可直接键盘操作。"}</p>
-        </div>
+        <h2 id="preview-title" className="sr-only">{doc.title} 示例</h2>
         <div className="component-preview">
           <ComponentPreview slug={slug} />
         </div>
       </section>
 
-      <section className="doc-section doc-notes-grid" aria-label="使用与无障碍说明">
+      <details className="doc-guidance">
+        <summary>使用与无障碍说明</summary>
+        <div className="doc-notes-grid">
         <div className="doc-note">
-          <h2>{slug === "input-field" ? "组成与职责" : "Usage"}</h2>
+          <h2>{slug === "input-field" ? "组成与职责" : "使用规则"}</h2>
           <p>{doc.guidance}</p>
           {slug === "input-field" && <p>浮动标签保留字段身份；错误时标签、边框、光标与图标联动。舒适 56px／紧凑 48px，输入字号 16px；长内容自然增高。</p>}
         </div>
         <div className="doc-note">
-          <h2>{slug === "input-field" ? "语义与操作保障" : "Accessibility"}</h2>
+          <h2>{slug === "input-field" ? "语义与操作保障" : "无障碍与交互"}</h2>
           <p>{doc.accessibility}</p>
         </div>
         {slug === "tabs" && <TabsUsageNotes />}
@@ -61,7 +59,8 @@ export function ComponentDoc({ slug }: { slug: ComponentDocumentSlug }) {
             <tr><th scope="row">继续修改</th><td>保留上次已应用记录，标明修改尚未应用；可撤回修改。重新应用才更新结果，重置示例才清空记录。</td></tr>
           </tbody></table>
         </div>}
-      </section>
+        </div>
+      </details>
     </article>
   )
 }
