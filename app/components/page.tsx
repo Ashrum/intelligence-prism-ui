@@ -20,7 +20,7 @@ export default function ComponentsOverview() {
       <p className="catalog-integrity-note">{catalogMaturityNote}</p>
       <p className="catalog-integrity-note">当前 {catalogStats.stable + catalogStats.review} 个条目已有示例，映射到 {catalogStats.documentedPages} 组规范页；共享页面用于表达紧密关联的组件语义。</p>
       <p className="catalog-integrity-note catalog-integrity-note--secondary">另有 {internalModules.length} 个内部支持模块并入相应规范，不单独建立顶层组件页：{internalModules.join("、")}。</p>
-      <p className="catalog-integrity-note">Select 与 Dialog／Alert Dialog 已有待评审示例，下一组推进 Checkbox、Radio Group 与 Switch；现有扩展组件以完善验证为主。</p>
+      <p className="catalog-integrity-note">Select 与 Dialog／Alert Dialog 已通过评审；Checkbox、Radio Group 与 Switch 已有示例，等待评审。</p>
       <div className="overview-groups">
         {componentGroups.map((group) => (
           <section className="overview-group" id={group.slug} key={group.label}>

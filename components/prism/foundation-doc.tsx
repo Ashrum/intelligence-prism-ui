@@ -69,9 +69,9 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
       { label: "Source / Knowledge", value: "#339FF2", use: "品牌源色；操作、文字与状态继续使用各自的语义 Token。" },
       { label: "Source / AI", value: "#E0438F", use: "品牌源色；映射到 AI 行为与来源语义。" },
       { label: "Source / Growth", value: "#C2F25B", use: "预留给有明确目标、周期与证据支持的成长或达成提示；不用于常规进度、处理完成或浅色底正文。具体反馈待场景验证。" },
-      { label: "Action / Fill", value: "#339FF2 / #FFFFFF", use: "主按钮采用曜蓝底与白字；Hover 为 #218FE1，按下为 #1380D1。" },
+      { label: "Action / Fill", value: "#0B6FCA / #FFFFFF", use: "主按钮采用深阶操作蓝与白字；Hover 为 #0963B6，按下为 #07579F。" },
       { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与输入聚焦文字，独立于按钮填充。" },
-      { label: "Field / Border", value: "#686C65", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
+      { label: "Field / Border", value: "#686D75", use: "可填写区域的默认边界；--input 使用此映射，普通内容容器继续使用较轻边界。" },
       { label: "AI / Action", value: "#872056", use: "明确的 AI 操作，不用于普通强调。" },
       { label: "AI / Source · Review", value: "分开表达", use: "智绯说明 AI 来源与明确的 AI 行为；生成进度、人工复核、失败另用状态与文字。人工编辑后来源保留，不默认显示模型名称、置信度或已验证。" },
       { label: "Growth / Evidence", value: "目标 · 周期 · 证据", use: "掌握度需说明评价范围与依据，不把完成练习等同于已完全掌握。置信度只在有真实数据、计算口径与适用说明时显示；缺少数据时不填入默认百分比。" },
@@ -83,42 +83,42 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   color: {
     title: "色彩",
     description: "在页面背景、内容表面和交互底色上保持清晰阅读，三种核心色通过语义映射表达用途。",
-    principles: ["阅读文字以 7:1 为对比目标，正文、辅助信息、标签与占位文字按真实背景校验。曜蓝底白字按钮为已确认的视觉选择，对比度限制另行说明。", "主按钮采用曜蓝底与白字；链接、AI 行为与状态文字使用各自的深阶语义色。", "可编辑输入、选择和焦点的必要识别边界至少达到 3:1；只读、禁用和普通内容容器使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
+    principles: ["阅读文字以 7:1 为对比目标，正文、辅助信息、标签与占位文字按真实背景校验。白字按钮使用深阶操作蓝，普通文字至少达到 4.5:1。", "主按钮采用曜蓝底与白字；链接、AI 行为与状态文字使用各自的深阶语义色。", "可编辑输入、选择和焦点的必要识别边界至少达到 3:1；只读、禁用和普通内容容器使用较轻边界。", "层级依靠字号、字重、间距和位置；不通过文字透明度来表示精致。"],
     references: [
-      { label: "Canvas", value: "#FAFAF8", use: "近白中性的页面背景。" },
+      { label: "Canvas", value: "#FAFAFA", use: "近白中性的页面背景。" },
       { label: "Surface", value: "#FFFFFF", use: "卡片、浮层和主要内容表面。" },
-      { label: "Surface / Quiet", value: "#F7F7F5", use: "只读／禁用字段的浅灰白填充；具体模式仍由文字、边界与行为说明。" },
-      { label: "Surface / Subtle", value: "#F1EFE8", use: "指标 Card、局部筛选轨道与中性次操作的浅底色。" },
-      { label: "Text / Primary", value: "#2C2C2A", use: "标题与正文主信息。" },
-      { label: "Text / Secondary", value: "#444440", use: "辅助说明与次级信息；在交互底色上仍保持文字清晰。" },
-      { label: "Text / Tertiary", value: "#4F4F49", use: "元信息和占位文字；在最深的中性交互底色上仍达到 7:1。" },
-      { label: "Action / Fill · Text", value: "#339FF2 / #FFFFFF", use: "曜蓝主按钮采用白字；默认对比度 2.84:1，未达到普通文字 AA 与 7:1 目标。" },
+      { label: "Surface / Quiet", value: "#F8F8F8", use: "只读／禁用字段的浅灰白填充；具体模式仍由文字、边界与行为说明。" },
+      { label: "Surface / Subtle", value: "#F4F4F5", use: "指标 Card、局部筛选轨道与中性次操作的浅底色。" },
+      { label: "Text / Primary", value: "#222426", use: "标题与正文主信息。" },
+      { label: "Text / Secondary", value: "#454950", use: "辅助说明与次级信息；在交互底色上仍保持文字清晰。" },
+      { label: "Text / Tertiary", value: "#494D53", use: "元信息和占位文字；在最深的中性交互底色上仍达到 7:1。" },
+      { label: "Action / Fill · Text", value: "#0B6FCA / #FFFFFF", use: "主按钮保留白字，采用深阶操作蓝；默认对比度约 5.07:1，达到普通文字 AA。品牌源色保持 #339FF2。" },
       { label: "Action / Primary", value: "#064B7E", use: "链接、操作文字与输入聚焦文字；链接不使用下划线。" },
       { label: "AI / Action · Text", value: "#872056 / #751C4A", use: "AI 按钮与浅色 AI 表面上的文字。" },
       { label: "Status / Success · Warning · Danger", value: "#215631 / #684511 / #872725", use: "分别与成功、警告、错误表面成对使用。" },
-      { label: "Field / Border", value: "#686C65", use: "可填写区域的常显边界；只读与禁用字段使用较轻实线和接近背景的浅灰白填充，只读聚焦时只强化原边框。" },
+      { label: "Field / Border", value: "#686D75", use: "可填写区域的常显边界；只读与禁用字段使用较轻实线和接近背景的浅灰白填充，只读聚焦时只强化原边框。" },
       { label: "Selection / Border", value: "#51758E", use: "选中对象的边界；Tabs 与 Segmented 的局部选中面使用普通细边框，选中状态同时由位置、字重与语义表达。" },
-      { label: "Disabled / Background · Text · Border", value: "#F1EFE8 / #66655E / #D3D1C7", use: "按钮等控件的禁用配色；TextField 填充使用 Surface / Quiet，边界使用 Border / Subtle，保留不可用说明与可读灰字。" },
-      { label: "Border / Subtle", value: "#E6E3DA", use: "禁用字段的轻边界；填充使用 #F7F7F5，文字使用 #66655E。" },
-      { label: "Border / Default", value: "#D3D1C7", use: "普通内容容器、只读字段与分隔线；可编辑输入和选择使用独立的边界 Token。" },
+      { label: "Disabled / Background · Text · Border", value: "#F4F4F5 / #62666C / #D4D6DA", use: "按钮等控件的禁用配色；TextField 填充使用 Surface / Quiet，边界使用 Border / Subtle，保留不可用说明与可读灰字。" },
+      { label: "Border / Subtle", value: "#E5E6E8", use: "禁用字段的轻边界；填充使用 #F8F8F8，文字使用 #62666C。" },
+      { label: "Border / Default", value: "#D4D6DA", use: "按需用于内容边界、只读字段与分隔线；静态 Card 以表面和间距分组，可编辑输入和选择保留独立边界。" },
     ],
-    boundary: "7:1 是当前浅色主题的阅读目标；曜蓝底白字按钮默认 2.84:1，未达到普通文字 AA。禁用文字保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
+    boundary: "7:1 是当前浅色主题的阅读目标；深阶操作蓝配白字约 5.07:1，达到普通文字 AA。禁用文字保持 4.5:1 以上，不等同于全站 AAA 验收。按相邻背景和透明度合成后的颜色检查；成功、警告、失败和 AI 来源仍同时提供文字。",
   },
   typography: {
     title: "字体与排版",
     description: "优先保证中文教育内容的阅读效率，并让英文组件名保持清晰。",
-    principles: ["现有通用界面采用 14–16px，必要辅助说明使用 12px；长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "计分、指标、时间与数字列使用 tabular-nums；数学公式保留数学字体与渲染器度量。", "含行内公式的段落采用无单位阅读行距，让公式实际高度参与行盒计算；不固定段落高度，不裁切上下标。"],
+    principles: ["正文以 16px 为主，常用标签与辅助信息至少 14px；12px 仅用于非关键元信息。长文与数学阅读按内容单独验证字号。", "标题依靠字号、字重和间距建立层级，不依赖彩色装饰。", "计分、指标、时间与数字列使用 tabular-nums；数学公式保留数学字体与渲染器度量。", "含行内公式的段落采用无单位阅读行距，让公式实际高度参与行盒计算；不固定段落高度，不裁切上下标。"],
     references: [
       { label: "UI / --font-ui", value: "Noto Sans CJK SC 2.004 / wght 100–900", use: "全站界面默认 400；已有 500、600、650、675、700、750 使用真实可变字重。中文、英文与数字由同一主字体承接。" },
       { label: "Reading / --font-reading", value: "Noto Serif CJK SC 2.003 / 400", use: "较长阅读与对应编辑区；仅提供 400，不合成粗体或斜体。普通说明、表单和导航继续使用 Sans。" },
       { label: "Math / --font-math", value: "STIX Two Math 2.13 b171 / 400", use: "原生 MathML 的数学符号与度量；公式内中文使用阅读字体。该变量提供字体，不代替渲染器。" },
-      { label: "Display", value: "40–72px / 675", use: "介绍页的短标题。" },
-      { label: "Page Title", value: "40px / 675", use: "组件和基础规范标题。" },
-      { label: "Body", value: "14–16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
+      { label: "Display", value: "32–48px / 675", use: "介绍页的短标题。" },
+      { label: "Page Title", value: "28–32px / 650", use: "组件和基础规范标题。" },
+      { label: "Body", value: "16px / 400", use: "现有通用说明与表单；较长阅读与公式的字号按场景另行验证。" },
       { label: "Safe Line Leading", value: "unitless / natural height", use: "含行内公式时使用 2 的无单位基础行距，公式保留自然高度并沿基线排列；此值不是高度上限，也不是任意公式的安全保证。矩阵、多层分式与过高表达式转独立公式块。" },
       { label: "Numeric / Figures", value: "font-variant-numeric: tabular-nums", use: "对齐计分、指标和数字列；位数变化时按实际范围预留数字宽度。不覆盖数学字体的内部数字、上下标与运算符布局。" },
       { label: "Tabs / Segmented", value: "14px / 500–600", use: "选中使用深灰与 600 字重，未选中为 500；数量使用 12px。" },
-      { label: "Label", value: "11–14px / 600–700", use: "分类和非关键目录标注。" },
+      { label: "Label", value: "14px / 400–600", use: "分类和非关键目录标注。" },
     ],
     boundary: "不使用全大写中文、超细字重或仅靠字重区分交互状态。",
   },
@@ -153,12 +153,12 @@ const docs: Record<FoundationSlug, FoundationDocData> = {
   "shape-elevation": {
     title: "形状与层级",
     description: "使用有限圆角、清晰边框和表面差异建立克制的界面层级。",
-    principles: ["标签使用 6px 圆角，按钮与输入使用 10px，Card 使用 16px。", "常规卡片默认无阴影，优先依赖边框与背景。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
+    principles: ["标签使用 6px 圆角，按钮与输入使用 10px，Card 使用 16px。", "常规卡片默认无阴影，优先依赖表面、对齐和间距；边框按任务需要保留。", "浮层可以使用轻阴影，但不把阴影作为唯一边界。"],
     references: [
       { label: "Radius / Small", value: "6px", use: "标签、导航项和最小型按钮。" },
       { label: "Radius / Medium", value: "10px", use: "按钮、输入与分段选择轨道。" },
       { label: "Radius / Large", value: "16px", use: "Card 与主要预览容器。" },
-      { label: "Border", value: "1px", use: "常规组件和容器边界。" },
+      { label: "Border", value: "1px", use: "可编辑控件的必要边界；普通容器按需使用。" },
       { label: "Card Shadow", value: "none", use: "默认卡片不使用阴影。" },
       { label: "Tabs / Segmented Surface", value: "10px / 8px / 3px", use: "外圆角／选中面圆角／内边距；浅中性底与白色选中面，无阴影。" },
     ],
@@ -225,18 +225,17 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
   return (
     <article className="component-article foundation-article">
       <header className="component-hero">
-        <div className="component-eyebrow">Foundations</div>
         <div className="component-title-row">
           <h1>{doc.title}</h1>
           <StateLabel tone={slug === "typography" || slug === "motion" ? "pending" : "completed"}>{slug === "typography" ? "基础层已接入 · 跨端待反馈" : slug === "motion" ? "基础动效已接入 · AI 场景待验证" : "基线已建立"}</StateLabel>
         </div>
         <p>{doc.description}</p>
-        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字号与组件交互沿用现有参数；跨系统结果按本页的<a href="#typography-production" className="text-primary no-underline">生产交付条件</a>记录。</p>}
+        {slug === "typography" && <p>全站已接入共用字体基础层：Noto Sans CJK SC 用于界面，Noto Serif CJK SC 用于较长阅读，STIX Two Math 用于公式。字阶与页面层级同步，组件交互沿用现有规则；跨系统结果按本页的<a href="#typography-production" className="text-primary no-underline">生产交付条件</a>记录。</p>}
       </header>
 
       <section className="doc-section" aria-labelledby="foundation-preview-title">
         <div className="doc-section-heading">
-          <h2 id="foundation-preview-title">Reference</h2>
+          <h2 id="foundation-preview-title">样式示例</h2>
           <p>{slug === "typography" ? "当前全站样式参考，不代表新字体已完成生产验收。" : slug === "color" ? "同一内容置于页面背景、内容表面与交互底色中对照。" : "当前实现中使用的视觉与交互基线。"}</p>
         </div>
         <FoundationPreview slug={slug} />
@@ -267,7 +266,7 @@ export function FoundationDoc({ slug }: { slug: FoundationSlug }) {
       {slug === "color" && <section className="doc-section" aria-labelledby="color-pairing-title">
         <div className="doc-section-heading"><h2 id="color-pairing-title">前景、背景与必要边界</h2><p>源色用于品牌识别，界面使用成对的语义 Token。中性表面承托阅读，颜色只说明明确用途。</p></div>
         <p>AI 标签使用深阶前景 #751C4A 与浅色背景 #FDF0F6，计算对比度约 9.39:1。浅色填充或装饰边框可以较轻；承担输入、选择与状态识别的必要边界仍需满足相邻色 3:1。10%–15% 透明度不能自动保障对比度，应计算合成后的颜色。</p>
-        <p>普通文字的 AA 门槛为 4.5:1；本站阅读文字以 7:1 为目标，已确认的曜蓝底白字按钮默认 2.84:1，未达到该门槛。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
+        <p>普通文字的 AA 门槛为 4.5:1；本站阅读文字以 7:1 为目标，深阶操作蓝配白字约 5.07:1，达到该门槛。禁用组件在 WCAG 中有例外，本站仍保留可读文字。配对检查依据 <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html" target="_blank" rel="noreferrer">WCAG 文字对比度</a> 与 <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html" target="_blank" rel="noreferrer">非文字对比度</a>，不据此宣称全站符合性。</p>
         <div className="doc-section-heading"><h3>对比度实验区</h3><p>查看已应用的真实组件，再检查单个浅／深色配对。深色实验值尚未应用到全站。</p></div>
         <ColorContrastLab />
       </section>}

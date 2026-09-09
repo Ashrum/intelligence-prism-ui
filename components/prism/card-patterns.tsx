@@ -180,22 +180,21 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
       <h3 id={`${id}-metric-kind`} className="common-card-kind">指标摘要</h3>
       <ObjectCard aria-labelledby={`${id}-metric-title`} className="common-card common-card--metric">
         <div className="common-card-body">
-          <p className="common-card-context">本周 · 九年级 1 班 · 数学</p>
           <h4 id={`${id}-metric-title`} className="common-card-title">有效证据</h4>
+          <p className="common-card-context">本周 · 九年级 1 班 · 数学</p>
           <p className="common-card-metric"><strong>128</strong><span>份</span></p>
           <p className="common-card-copy common-card-trend">上周 112 份，本周增加 16 份。</p>
           <Disclosure open={sourcesOpen} controls={`${id}-sources`} onClick={() => setSourcesOpen(value => !value)}>查看来源构成</Disclosure>
           <dl id={`${id}-sources`} className="common-card-facts" hidden={!sourcesOpen}><div><dt>课堂观察</dt><dd>24 <small>份</small></dd></div><div><dt>作业记录</dt><dd>72 <small>份</small></dd></div><div><dt>阶段测评</dt><dd>32 <small>份</small></dd></div></dl>
         </div>
       </ObjectCard>
-      <p className="common-card-note">突出数值、单位与比较范围；需要时再展开来源。</p>
     </section>
 
     <section className="common-card-example" aria-labelledby={`${id}-resource-kind`}>
       <h3 id={`${id}-resource-kind`} className="common-card-kind">资源入口</h3>
       <ObjectCard aria-labelledby={`${id}-resource-title`} className="common-card">
         <div className="common-card-body common-card-resource">
-          <div className="common-card-document" aria-hidden="true"><FileText /><span>记录<br />模板</span></div>
+          <div className="common-card-document" aria-hidden="true"><FileText /></div>
           <div className="common-card-resource-copy">
             <Badge>教学记录</Badge>
             <h4 id={`${id}-resource-title`} className="common-card-title"><Link href="/components/input-field">课堂观察记录模板 →</Link></h4>
@@ -204,7 +203,6 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
           </div>
         </div>
       </ObjectCard>
-      <p className="common-card-note">文档标识配合内容摘要，标题链接是明确入口。</p>
     </section>
 
     <section className="common-card-example" aria-labelledby={`${id}-class-kind`}>
@@ -216,7 +214,6 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
           <p className="common-card-copy">课堂、作业与阶段测评共同构成本周的观察范围。</p>
         </div>
       </ObjectCard>
-      <p className="common-card-note">身份与共同列指标支持扫读；静态信息不模拟按钮。</p>
     </section>
 
     <section className="common-card-example" aria-labelledby={`${id}-task-kind`}>
@@ -230,7 +227,6 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
         </div>
         <footer className="object-card-footer object-card-footer--divided common-card-task-footer"><p role="status" className="common-card-copy">{taskDone ? "本页已标记完成，可撤回。" : "完成整理后，再标记此项完成。"}</p><Button type="button" variant="outline" size={density === "compact" ? "compact" : "default"} onClick={() => setTaskDone(value => !value)}>{taskDone ? "撤回完成" : "标记完成"}</Button></footer>
       </ObjectCard>
-      <p className="common-card-note">截止时间和下一步就近呈现，完成后仍保留事项内容。</p>
     </section>
 
     <section className="common-card-example common-card-example--wide" aria-labelledby={`${id}-empty-kind`}>
@@ -238,7 +234,6 @@ export function CommonCardExamples({ density = "comfortable" }: { density?: Card
       <ObjectCard aria-labelledby={`${id}-empty-title`} className="common-card">
         <div className="common-card-body common-card-empty"><span className="common-card-empty-icon" aria-hidden="true"><FileText /></span><div><h4 id={`${id}-empty-title`} className="common-card-title">暂无课堂观察记录</h4><p className="common-card-copy">创建记录后，可以整理课堂表现与原始依据。</p></div><Button asChild size={density === "compact" ? "compact" : "default"}><Link href="/components/input-field">创建课堂记录</Link></Button></div>
       </ObjectCard>
-      <p className="common-card-note">说明当前内容与建立内容的入口，保持普通内容表面。</p>
     </section>
   </div>
 }
