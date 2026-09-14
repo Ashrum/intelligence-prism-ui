@@ -11,9 +11,9 @@
 .openui-object span, .openui-object p { font-size: 14px; color: var(--text-secondary); }
 .openui-object p { display: flex; flex-wrap: wrap; gap: 12px; margin: 0; }
 .openui-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
-.openui-connection { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 20px; margin-bottom: 20px; }
-.openui-connection p { flex: 1 1 300px; margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.65; }
-.openui-connection-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.openui-scope { display: grid; gap: 6px; margin-bottom: 20px; }
+.openui-scope p { margin: 0; color: var(--text-secondary); font-size: 14px; line-height: 1.65; }
+.openui-scope .openui-order { color: var(--text-primary); }
 .openui-workspace { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); gap: 24px; align-items: start; }
 .openui-result, .openui-editor { min-width: 0; }
 .openui-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-bottom: 12px; }
