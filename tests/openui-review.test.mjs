@@ -120,3 +120,29 @@ test("adapter only returns completed validated model text; truncation and tool-o
   assert.equal((await handleReviewRequest(request(), env, result("completed", "root = Query()"))).status, 502)
   assert.equal((await handleReviewRequest(request(), env, async () => Response.json({ status: "completed", output: [{ type: "function_call" }] }))).status, 502)
 })
+
+test("generation failures distinguish provider limits from output validation without leaking provider content", async t => {
+  const warnings = t.mock.method(console, "warn", () => {})
+  const privateMessage = "private-provider-message-test-only-key"
+  for (const [status, code, expected] of [
+    [401, "invalid_api_key", "model_auth_failed"],
+    [403, "unknown", "model_access_denied"],
+    [404, "model_not_found", "model_unavailable"],
+    [404, "unknown", "model_request_rejected"],
+    [429, "insufficient_quota", "quota_exceeded"],
+    [429, "credit_balance_exhausted", "quota_exceeded"],
+    [429, "project_spend_limit_exceeded", "quota_exceeded"],
+    [429, "rate_limit_exceeded", "rate_limited"],
+    [429, "unknown", "model_limit_unknown"],
+    [503, "server_is_overloaded", "upstream_unavailable"],
+  ]) {
+    const response = await handleReviewRequest(request(), env, async () => Response.json({ error: { code, message: privateMessage } }, { status }))
+    assert.equal(response.status, 502)
+    assert.deepEqual(await response.json(), { error: expected })
+  }
+  const invalid = await handleReviewRequest(request(), env, async () => Response.json({ status: "completed", output: [{ type: "message", content: [{ type: "output_text", text: privateMessage }] }] }))
+  assert.deepEqual(await invalid.json(), { error: "invalid_model_output" })
+  const logText = JSON.stringify(warnings.mock.calls.map(call => call.arguments))
+  assert.equal(logText.includes(privateMessage), false)
+  assert.equal(logText.includes(env.OPENAI_API_KEY), false)
+})
