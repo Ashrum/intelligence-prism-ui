@@ -38,6 +38,12 @@
 
 Local-first 迁移、固定端口、跨平台部署、Storybook 补建、Hugging Face 迁移和 MCP 排查均不是本流程的前置任务。不重搭站点、不重组工程、不升级无关依赖；已有工具需要时复用。
 
+## OpenUI 研究范围
+
+`/review/openui` 当前只用预置样例比较 OpenUI 受控组合与普通 React 组件，检查草稿、人工复核和失败回退。页面不请求模型接口，不需要登录或 API 额度；已有服务端接入代码仅保留供后续使用，当前不继续联调。
+
+已确认组件可复用，状态保护由本站管理。三个预设任务的排列也可用普通 React 实现，目前未证明 OpenUI 在阅读效率、维护成本或自动编排上的优势。因此保留为可选试点，暂不纳入默认组件体系；真实生成和流式体验不属于本轮验收条件。
+
 ## 工程模板说明（保留现有运行方式）
 
 The following starter documentation describes the existing runtime. It does not introduce a local deployment requirement or a new hosting strategy.
