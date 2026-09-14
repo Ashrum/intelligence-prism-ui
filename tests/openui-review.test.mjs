@@ -6,7 +6,7 @@ import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 
 const root = fileURLToPath(new URL("..", import.meta.url))
-const vite = await createServer({ appType: "custom", configFile: false, root, resolve: { alias: { "@": root } }, server: { middlewareMode: true, hmr: false } })
+const vite = await createServer({ appType: "custom", cacheDir: "node_modules/.vite-test-openui-review", configFile: false, root, resolve: { alias: { "@": root } }, server: { middlewareMode: true, hmr: false } })
 after(() => vite.close())
 const contract = await vite.ssrLoadModule("/lib/openui/review-contract.ts")
 // Match the Workers module-evaluation restriction that caused the deployed 1101.

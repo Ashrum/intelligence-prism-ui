@@ -5,7 +5,7 @@ import { handleReviewRequest, type ReviewEnv } from "../lib/openui/generate-revi
 
 interface Env extends ReviewEnv {
   ASSETS: Fetcher;
-  DB: D1Database;
+  DB?: D1Database;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

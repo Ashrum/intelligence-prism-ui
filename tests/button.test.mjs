@@ -10,7 +10,7 @@ import { createServer } from "vite";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const vite = await createServer({
-  appType: "custom",
+  appType: "custom", cacheDir: "node_modules/.vite-test-button",
   configFile: false,
   root,
   resolve: { alias: { "@": root } },
@@ -193,13 +193,13 @@ test("preserves native submit, true disabled, and icon naming", () => {
 });
 
 test("removes the temporary review implementation and page-level Button copies", async () => {
-  await assert.rejects(access(path.join(root, "app/review/button/page.tsx")));
-  await assert.rejects(access(path.join(root, "app/review/button/review.module.css")));
+  await assert.rejects(access(path.join(root, "app/(legacy)/review/button/page.tsx")));
+  await assert.rejects(access(path.join(root, "app/(legacy)/review/button/review.module.css")));
 
   const [layout, docs, benchmark, css] = await Promise.all([
-    readFile(path.join(root, "app/layout.tsx"), "utf8"),
+    readFile(path.join(root, "app/(legacy)/layout.tsx"), "utf8"),
     readFile(path.join(root, "components/prism/component-doc.tsx"), "utf8"),
-    readFile(path.join(root, "app/benchmark/page.tsx"), "utf8"),
+    readFile(path.join(root, "app/(legacy)/benchmark/page.tsx"), "utf8"),
     readFile(path.join(root, "app/globals.css"), "utf8"),
   ]);
   assert.doesNotMatch(layout, /review\/button|设计评审/);

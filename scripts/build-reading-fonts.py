@@ -81,7 +81,7 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     manifest_path = OUT / "manifest.json"
     previous = json.loads(manifest_path.read_text())["files"] if manifest_path.exists() else []
-    text_sources = sorted(p for directory in ("app", "components") for p in (ROOT / directory).rglob("*") if p.suffix in (".tsx", ".ts"))
+    text_sources = sorted([p for directory in ("app/(legacy)", "components/prism", "components/ui") for p in (ROOT / directory).rglob("*") if p.suffix in (".tsx", ".ts")] + [ROOT / "app/chatgpt-auth.ts"])
     text = "\n".join(p.read_text() for p in text_sources)
     common = set(range(0x20, 0x100)) | set(range(0x2000, 0x2070)) | set(range(0x3000, 0x3040)) | set(range(0xFF01, 0xFF61))
     # Cover shared navigation, docs and candidates, including prose symbols.

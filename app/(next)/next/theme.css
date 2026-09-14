@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../../../vendor/coss-animations.css";
+@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *));
+
+@font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
+
+:root {
+  --background:#FFFFFF;
+  --foreground:#1F2328;
+  --heading:#1F2328;
+  --card:#FFFFFF;
+  --card-foreground:#1F2328;
+  --popover:#FFFFFF;
+  --popover-foreground:#1F2328;
+  --primary:#1F2328;
+  --primary-foreground:#FFFFFF;
+  --secondary:#F4F5F7;
+  --secondary-foreground:#1F2328;
+  --muted:#F4F5F7;
+  --muted-foreground:#6B7280;
+  --accent:#ECEEF1;
+  --accent-foreground:#1F2328;
+  --border:#E3E5E9;
+  --input:rgb(31 35 40 / 20%);
+  --ring:#1769AA;
+  --link:#1769AA;
+  --disabled-foreground:#B0B4BB;
+  --destructive:#E0438F;
+  --destructive-foreground:#B4233D;
+  --info:#339FF2;
+  --info-foreground:#1769AA;
+  --success:#2FA86B;
+  --success-foreground:#216440;
+  --warning:#E8A33D;
+  --warning-foreground:#895509;
+  --chart-1:#1769AA;
+  --chart-2:#B8266E;
+  --chart-3:#2B8050;
+  --chart-4:#A57013;
+  --chart-5:#7159A7;
+  --radius:0.625rem;
+  --sidebar:var(--secondary);
+  --sidebar-foreground:var(--foreground);
+  --sidebar-primary:var(--primary);
+  --sidebar-primary-foreground:var(--primary-foreground);
+  --sidebar-accent:var(--accent);
+  --sidebar-accent-foreground:var(--foreground);
+  --sidebar-border:var(--border);
+  --sidebar-ring:var(--ring);
+  --code:var(--secondary);
+  --code-foreground:var(--foreground);
+  --code-highlight:var(--accent);
+  --brand-blue:#339FF2;
+  --brand-magenta:#E0438F;
+  --brand-green:#C2F25B;
+  color-scheme:light;
+}
+
+:root[data-prism-theme="paper"] {
+  --background:#F4F1EA;
+  --foreground:#1E293B;
+  --heading:#0F172A;
+  --card:#FFFEFB;
+  --card-foreground:#1E293B;
+  --popover:#FFFEFB;
+  --popover-foreground:#1E293B;
+  --primary:#0F172A;
+  --primary-foreground:#F4F1EA;
+  --secondary:#EAE6DF;
+  --secondary-foreground:#1E293B;
+  --muted:#EAE6DF;
+  --muted-foreground:#4B5563;
+  --accent:#E3DED5;
+  --accent-foreground:#0F172A;
+  --border:#D8D5CE;
+  --input:rgb(30 41 59 / 24%);
+  --ring:#1D4ED8;
+  --link:#1D4ED8;
+  --disabled-foreground:#A5A29C;
+}
+
+:root[data-prism-theme="dark"] {
+  --background:#0F0F0F;
+  --foreground:#E1E5EA;
+  --heading:#F4F6F8;
+  --card:#17191C;
+  --card-foreground:#E1E5EA;
+  --popover:#202328;
+  --popover-foreground:#E1E5EA;
+  --primary:#E7ECF2;
+  --primary-foreground:#17212B;
+  --secondary:#202328;
+  --secondary-foreground:#E1E5EA;
+  --muted:#202328;
+  --muted-foreground:#B6BEC9;
+  --accent:#2B3037;
+  --accent-foreground:#F4F6F8;
+  --border:#34383E;
+  --input:#555D69;
+  --ring:#86C5FF;
+  --link:#86C5FF;
+  --disabled-foreground:#7A8593;
+  --destructive:#E0438F;
+  --destructive-foreground:#FFB4CF;
+  --info:#339FF2;
+  --info-foreground:#86C5FF;
+  --success:#62BD89;
+  --success-foreground:#99DFB4;
+  --warning:#E8A33D;
+  --warning-foreground:#F4CC86;
+  --chart-1:#86C5FF;
+  --chart-2:#F296C2;
+  --chart-3:#99DFB4;
+  --chart-4:#F4CC86;
+  --chart-5:#BDACED;
+  color-scheme:dark;
+}
+
+@theme inline {
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-heading:var(--font-sans);
+  --font-mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+  --color-background:var(--background);
+  --color-foreground:var(--foreground);
+  --color-card:var(--card);
+  --color-card-foreground:var(--card-foreground);
+  --color-popover:var(--popover);
+  --color-popover-foreground:var(--popover-foreground);
+  --color-primary:var(--primary);
+  --color-primary-foreground:var(--primary-foreground);
+  --color-secondary:var(--secondary);
+  --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:var(--muted);
+  --color-muted-foreground:var(--muted-foreground);
+  --color-accent:var(--accent);
+  --color-accent-foreground:var(--accent-foreground);
+  --color-destructive:var(--destructive);
+  --color-destructive-foreground:var(--destructive-foreground);
+  --color-info:var(--info);
+  --color-info-foreground:var(--info-foreground);
+  --color-success:var(--success);
+  --color-success-foreground:var(--success-foreground);
+  --color-warning:var(--warning);
+  --color-warning-foreground:var(--warning-foreground);
+  --color-border:var(--border);
+  --color-input:var(--input);
+  --color-ring:var(--ring);
+  --color-sidebar:var(--sidebar);
+  --color-sidebar-foreground:var(--sidebar-foreground);
+  --color-sidebar-primary:var(--sidebar-primary);
+  --color-sidebar-primary-foreground:var(--sidebar-primary-foreground);
+  --color-sidebar-accent:var(--sidebar-accent);
+  --color-sidebar-accent-foreground:var(--sidebar-accent-foreground);
+  --color-sidebar-border:var(--sidebar-border);
+  --color-sidebar-ring:var(--sidebar-ring);
+  --color-chart-1:var(--chart-1);
+  --color-chart-2:var(--chart-2);
+  --color-chart-3:var(--chart-3);
+  --color-chart-4:var(--chart-4);
+  --color-chart-5:var(--chart-5);
+  --radius-xs:calc(var(--radius) - 6px);
+  --radius-sm:calc(var(--radius) - 4px);
+  --radius-md:calc(var(--radius) - 2px);
+  --radius-lg:var(--radius);
+  --radius-xl:calc(var(--radius) + 4px);
+  --radius-2xl:calc(var(--radius) + 8px);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { min-width:20rem; background:var(--background); }
+  body { @apply bg-background text-foreground font-sans; margin:0; min-height:100dvh; font-synthesis:none; }
+  code,kbd,samp,pre { font-family:var(--font-mono); }
+}
+
+.prism-root { min-height:100dvh; isolation:isolate; }
+.prism-root a.prism-link { color:var(--link); text-decoration:none; }
+.prism-root a.prism-link:hover { opacity:.8; }
+.prism-content { width:100%; max-width:88rem; margin-inline:auto; padding:2rem; min-width:0; }
+.prism-page-heading { margin-bottom:2rem; }
+.prism-page-heading h1 { color:var(--heading); font-size:1.625rem; line-height:1.4; font-weight:600; letter-spacing:-.025em; }
+.prism-page-heading p { color:var(--muted-foreground); font-size:1rem; line-height:1.75; margin-top:.5rem; max-width:48rem; }
+.prism-copy { color:var(--foreground); font-size:1rem; line-height:1.85; }
+.prism-copy p { color:var(--foreground); margin:0 0 1rem; }
+.prism-copy h2 { color:var(--heading); font-weight:600; font-size:1.25rem; line-height:1.5; margin:1.75rem 0 .75rem; }
+.prism-copy ul { list-style:disc; padding-left:1.25rem; }
+.prism-copy li { padding-left:.25rem; margin:.45rem 0; }
+.prism-math { font-family:"Prism Math","Cambria Math",math,serif; color:var(--foreground); font-size:1.125em; }
+.prism-math * { color:inherit; }
+.prism-equation { overflow-x:auto; overflow-y:hidden; padding:1.25rem 0; margin:.5rem 0 1rem; color:var(--foreground); }
+.prism-equation math { font-size:1.4rem; }
+.prism-demo { padding:1.75rem; min-width:0; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--background); color:var(--foreground); }
+.prism-demo-section { scroll-margin-top:5rem; margin-top:2rem; }
+.prism-demo-section > header { margin-bottom:1rem; }
+.prism-demo-section h2 { color:var(--heading); font-size:1.125rem; font-weight:600; }
+.prism-demo-section > header p { color:var(--muted-foreground); font-size:.875rem; line-height:1.7; margin-top:.3rem; }
+.prism-numeric { font-variant-numeric:tabular-nums lining-nums; }
+.prism-source { font-size:.8125rem; color:var(--muted-foreground); margin-top:.8rem; }
+.prism-source a { color:var(--link); }
+.prism-skip { position:fixed; z-index:100; left:1rem; top:1rem; padding:.5rem 1rem; color:var(--primary-foreground); background:var(--primary); border-radius:var(--radius); transform:translateY(-200%); }
+.prism-skip:focus { transform:translateY(0); }
+@media(max-width:767px) { .prism-content { padding:1.25rem; } .prism-demo { padding:1.25rem; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }

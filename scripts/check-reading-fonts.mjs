@@ -8,10 +8,12 @@ const root = resolve(process.argv[2] || resolve(dirname(fileURLToPath(import.met
 const read = path => readFileSync(resolve(root, path))
 const manifest = JSON.parse(read('public/fonts/reading/manifest.json'))
 const css = read('app/fonts.css').toString()
-const textSources = ['app', 'components'].flatMap(dir => readdirSync(resolve(root, dir), { recursive: true }).filter(file => /\.tsx?$/.test(file)).map(file => `${dir}/${file}`)).sort()
-assert.deepEqual(manifest.textSources, textSources, 'Font corpus differs from the app/components source inventory')
+// Only the archived design uses these bundled reading fonts. The new coss
+// design uses the system UI font and the separately bundled mathematics font.
+const textSources = ['app/(legacy)', 'components/prism', 'components/ui'].flatMap(dir => readdirSync(resolve(root, dir), { recursive: true }).filter(file => /\.tsx?$/.test(file)).map(file => `${dir}/${file}`)).concat('app/chatgpt-auth.ts').sort()
+assert.deepEqual(manifest.textSources, textSources, 'Font corpus differs from the legacy source inventory')
 const requested = new Set([...textSources.map(file => read(file).toString()).join('\n')].map(c => c.codePointAt(0)))
-assert(read('app/layout.tsx').toString().includes('import "./fonts.css"'), 'Shared fonts must be imported by the root layout')
+assert(read('app/(legacy)/layout.tsx').toString().includes('import "../fonts.css"'), 'Reading fonts must be imported by the legacy root layout')
 const points = value => {
   const result = new Set()
   for (const range of value.split(',')) {

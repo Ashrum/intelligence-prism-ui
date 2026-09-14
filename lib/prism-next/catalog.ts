@@ -1,0 +1,75 @@
+export type ComponentEntry = { id:string; title:string; summary:string }
+export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
+const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
+export const componentGroups:ComponentGroup[] = [
+  { id:"actions",title:"操作与命令",items:[
+    item("button","Button 按钮","主要、次要、危险、图标与加载操作。"),
+    item("group","Group 控件组","将相关操作连为一组，保留统一尺寸。"),
+    item("toggle","Toggle 切换按钮","切换单个选项的开启状态。"),
+    item("toggle-group","Toggle Group 切换组","在多个格式或视图中选择。"),
+    item("toolbar","Toolbar 工具栏","集中相关操作并支持方向键移动。"),
+    item("command","Command 命令面板","通过搜索定位并执行命令。"),
+  ]},
+  { id:"forms",title:"输入与选择",items:[
+    item("input","Input 输入框","固定标签、清楚的边界与三档原生尺寸。"),
+    item("input-group","Input Group 输入组合","在输入项内组合单位、图标与操作。"),
+    item("textarea","Textarea 多行输入","允许长内容自然增高。"),
+    item("field","Field 字段","关联标签、说明和就地校验反馈。"),
+    item("fieldset","Fieldset 字段组","为一组相关字段提供共同标题。"),
+    item("form","Form 表单","提交、校验与错误恢复形成完整操作。"),
+    item("label","Label 标签","字段身份始终清楚可见。"),
+    item("select","Select 选择框","使用 coss 完整列表、选中标记和键盘行为。"),
+    item("combobox","Combobox 可搜索选择","在已知选项中搜索并选择。"),
+    item("autocomplete","Autocomplete 自动补全","输入自由文本并获得候选建议。"),
+    item("number-field","Number Field 数字输入","步进、范围限制与数值格式化。"),
+    item("checkbox","Checkbox 复选框","独立确认或多项选择。"),
+    item("checkbox-group","Checkbox Group 复选组","组织相关的多选项。"),
+    item("radio-group","Radio Group 单选组","直接展示互斥选项。"),
+    item("switch","Switch 开关","立即开启或关闭一个功能。"),
+    item("slider","Slider 滑杆","在数值范围内连续调整。"),
+    item("otp-field","OTP Field 验证码","输入并粘贴连续的验证码。"),
+    item("calendar","Calendar 日历","选择日期，支持月份导航。"),
+  ]},
+  { id:"navigation",title:"导航",items:[
+    item("breadcrumb","Breadcrumb 面包屑","表达当前位置和上级路径。"),
+    item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
+    item("pagination","Pagination 分页","在明确的数据页之间移动。"),
+    item("sidebar","Sidebar 侧栏","桌面导航、折叠与移动端抽屉。"),
+  ]},
+  { id:"content",title:"内容与数据",items:[
+    item("avatar","Avatar 头像","图像缺失时显示文字回退。"),
+    item("badge","Badge 标签","以文字与适量颜色表达状态。"),
+    item("card","Card 卡片","组织同一对象的内容与操作。"),
+    item("frame","Frame 内容框架","承载带标题、说明与底部操作的面板。"),
+    item("table","Table 表格","清晰对齐文本与数值列。"),
+    item("accordion","Accordion 折叠组","按需展开多项相关说明。"),
+    item("collapsible","Collapsible 展开区","就地展开补充信息。"),
+    item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
+  ]},
+  { id:"feedback",title:"反馈与状态",items:[
+    item("alert","Alert 提示","提供需要阅读的就地说明。"),
+    item("empty","Empty 空状态","解释当前没有内容的原因与下一步。"),
+    item("progress","Progress 进度","表达已知进度或等待状态。"),
+    item("meter","Meter 度量","在范围内显示当前数值。"),
+    item("skeleton","Skeleton 骨架","预留加载内容的实际结构。"),
+    item("spinner","Spinner 加载指示","随操作表达短暂等待。"),
+    item("toast","Toast 短时通知","非阻断地确认操作结果。"),
+  ]},
+  { id:"overlays",title:"浮层与菜单",items:[
+    item("menu","Menu 菜单","集中对象的次要操作。"),
+    item("context-menu","Context Menu 上下文菜单","为当前对象提供上下文操作。"),
+    item("dialog","Dialog 对话框","完成临时、聚焦的编辑任务。"),
+    item("alert-dialog","Alert Dialog 确认对话框","在有影响的操作前说明对象与结果。"),
+    item("drawer","Drawer 抽屉","从屏幕边缘展开补充任务。"),
+    item("sheet","Sheet 侧面板","在保留上下文时查看与编辑详情。"),
+    item("popover","Popover 弹出面板","就近展开短小的设置。"),
+    item("preview-card","Preview Card 预览","预览链接对象的补充信息。"),
+    item("tooltip","Tooltip 工具提示","补充简短说明，支持键盘焦点。"),
+  ]},
+  { id:"layout",title:"布局与滚动",items:[
+    item("scroll-area","Scroll Area 滚动区域","在有限空间内保留可访问的长内容。"),
+    item("separator","Separator 分隔线","在必要处表达内容边界。"),
+  ]},
+]
+export const components = componentGroups.flatMap(group=>group.items)
+export function findComponent(id:string) { return components.find(item=>item.id===id) }

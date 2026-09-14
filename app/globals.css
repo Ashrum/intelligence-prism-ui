@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "../vendor/shadcn-tailwind-4.13.0.css";
 
+.legacy-version-notice { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1rem; padding:.75rem 2rem; background:#f4f5f7; color:#1f2328; font:14px/1.6 system-ui,sans-serif; border-bottom:1px solid #e3e5e9; }
+.legacy-version-notice a { margin-left:auto; color:#1769aa; text-decoration:none; font-weight:600; }
+
 :root {
   --font-ui: "Prism Reading Sans SC", "Prism Review STIX Two Math", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --font-reading: "Prism Reading Serif SC", "Prism Review STIX Two Math", "Songti SC", SimSun, "Noto Serif CJK SC", serif;

@@ -1,0 +1,781 @@
+{
+  "source": "https://github.com/cosscom/coss",
+  "commit": "e937becd2d5ffb5c621eed6f8b1f223cbb6051e7",
+  "license": "MIT (apps/ui)",
+  "adaptation": "Import aliases only. Component styles, sizes and behavior are unchanged.",
+  "files": [
+    {
+      "file": "components/coss/accordion.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/accordion.tsx",
+      "upstreamSha256": "b975e2a75b37fb44bca277dd85bf0825e98c3531036ca8d1543f6f4556cf56a5",
+      "localSha256": "1742451845a7bd3070911c6d0686006fa90922119bcca95cab3742d047a199be",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/alert-dialog.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/alert-dialog.tsx",
+      "upstreamSha256": "e6e8d2aee4115cb2e2d5bba7e3f16941a2cfaa12a2bceae70d605b1751706d82",
+      "localSha256": "67911b2df718afd9036aaca3a78592d5ee0698a7f8c09a69e0ecf161b66bce57",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/alert.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/alert.tsx",
+      "upstreamSha256": "340fc98fae7b30d038e1b7bcbb632f551360cfd8e0803b62a8ddfc04c002119f",
+      "localSha256": "356c3ea12db94c730a81f8965932f0cd25862c8864f7fffaa2e0b589615f4a09",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/autocomplete.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/autocomplete.tsx",
+      "upstreamSha256": "1298734859a47189abc821795ed082bc56b7dbe6de14859d539afc1adefc17d1",
+      "localSha256": "540a96d6ed95f80acdb7780dec380ff7078c0ea3c8812e219801be6c0f474cea",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/input",
+          "to": "@/components/coss/input"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/avatar.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/avatar.tsx",
+      "upstreamSha256": "a742f2d7c3aa1a867799e66fa7f3b37615e455906fa0117b66c49cfedca0a4f1",
+      "localSha256": "a6870c7ff6a0ef83c7a80f187d381dbef721d8a797c476b68a77560eeeee0eb0",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/badge.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/badge.tsx",
+      "upstreamSha256": "60f73554b462ec5e2929ccc58c0522b069c07e1268dbfb67749c2837347b788b",
+      "localSha256": "7a7ee3bec46d1cfb3980916175ca663ae0e74adc309866a5dae14d78717511d9",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/breadcrumb.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/breadcrumb.tsx",
+      "upstreamSha256": "e420178801b8d72238f1274c722a7ca4e9f9834bd58c7a45ba8d71a645f83c79",
+      "localSha256": "2cd1c7bbcd8185db237b250d5b354cf205ff53368760974fe5d92f00b8697cf9",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/button.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/button.tsx",
+      "upstreamSha256": "1e65556bde3071f90f61825cf573aec74bdd8695824470bea3dae4d68a6b8fc8",
+      "localSha256": "a3a27ae6c008666b4e37258d7e6bbecdbbf0ff1fe0f4299c2e22689cef5f1d50",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/spinner",
+          "to": "@/components/coss/spinner"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/calendar.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/calendar.tsx",
+      "upstreamSha256": "e9046da3021b3bb1e77ae657cdacac79a15f71e99596984fbcd54f26f3b60179",
+      "localSha256": "a2cf7a593f72e8ad033c74a763fc759712c467284cacab3cb43483d9b7fd79f7",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/card.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/card.tsx",
+      "upstreamSha256": "b59dbc0bd5d61694fcf1948fb8134795b0f5a1bf0a28d8d6bc817297c73a006e",
+      "localSha256": "dbc899d3cc349da3ce6d40e3b03c2eeb714b9afcc0f88f7e859741cba7ab9217",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/checkbox-group.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/checkbox-group.tsx",
+      "upstreamSha256": "f78494035296e12c0ff602022338bb8f37a46f3a15647b53f0b2e8ac6c97f45e",
+      "localSha256": "496fd17bb9078a83c2a179a6c75e0203719309c1d8a333fc8a58e8ce8168e088",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/checkbox.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/checkbox.tsx",
+      "upstreamSha256": "a1b8b4180a39a47c47bd2b50e432d0911da6efe3b963b065b3b5cb8893760047",
+      "localSha256": "32a37e2dd7e6e2fdd307cf83c9410492e9c893f4a79b8f53f910d63f7a093d54",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/collapsible.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/collapsible.tsx",
+      "upstreamSha256": "f70e7b9fde220ce5f039c93176a545a46a9b553ecdb23595a320e5163a95a1e8",
+      "localSha256": "e4771870c600286a79ce94be976a5210c70dcbd731bc52ffa0dca159f8abfff5",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/combobox.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/combobox.tsx",
+      "upstreamSha256": "df233af98aa9141b3418489d20b71a693aa3d8672a3962e3d19576fb21383087",
+      "localSha256": "4870dc74673e0a74d4fff78a6a9ede5b599cc256b42cad3ba516db110aeb0c2b",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/input",
+          "to": "@/components/coss/input"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/command.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/command.tsx",
+      "upstreamSha256": "4b40973632f7b13bd2212f094b805470aad29fb190a46001f92b13ff2350b7bd",
+      "localSha256": "b941ad083fa7cabfb29d7293eafdcfa5f0e9efaf41acb2bec065342d3807cbc8",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/autocomplete",
+          "to": "@/components/coss/autocomplete"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/context-menu.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/context-menu.tsx",
+      "upstreamSha256": "a47c4563334813d12f0e46380a047483aed03d7ed3e37a9cfde5899f06761abf",
+      "localSha256": "284814da21eb8676bb92f873088b4ab9fae4bb4efef6e3e7b653d68993a60cbf",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/dialog.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/dialog.tsx",
+      "upstreamSha256": "14ad87a5f81d7753e9a954aa0624df49168eccc2c8d3074a41ea0a8bed3970d5",
+      "localSha256": "2e07fcb3a7c10d4d53941b8f0d71777cf691f7c288c608764db3ce66b8bcf4f4",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/drawer.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/drawer.tsx",
+      "upstreamSha256": "1f239297ae2fa6c5462bc94026901d783e388c697f71247c6c49873c17b27d49",
+      "localSha256": "26ddd89d311c46ff7450df9b1c4fda405973e17683e30a1ede003badf7f3d17d",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/empty.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/empty.tsx",
+      "upstreamSha256": "57341b5a985ba2cc229e4832ab8624b060d172706b678dd99a682fbb476d4aa9",
+      "localSha256": "00bbd99ea18965050ce5a9f0e335e9ccd5d1069a9b5263349c240379c97fe856",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/field.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/field.tsx",
+      "upstreamSha256": "02ffda39f73f04638f580fd1fbb76e783cb252f9a87ecebdd62fb4bd0d1393ff",
+      "localSha256": "d0fd4903f5219b629e5a0be63ca0c87f261cea12a8ad8d5260d5c9da37ca0686",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/fieldset.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/fieldset.tsx",
+      "upstreamSha256": "1ec36d2a2c60fd1ba229682a876f8d672ade66019513bac1a6747885d369f2a6",
+      "localSha256": "0ed5c2437bbd396451ccf976d2ca2c6d5a3e97015dca9e6ddcbba9b2c454798c",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/form.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/form.tsx",
+      "upstreamSha256": "c08b75b48a90dd349763720e4ffb5423ae348ec0ef43c8c96110695d6fcf7404",
+      "localSha256": "c08b75b48a90dd349763720e4ffb5423ae348ec0ef43c8c96110695d6fcf7404",
+      "importRewrites": []
+    },
+    {
+      "file": "components/coss/frame.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/frame.tsx",
+      "upstreamSha256": "55da638812d093e74ab7fb3cb141f01d834492b63b3e2e09880b9b1df24ee45c",
+      "localSha256": "cf181670a37815dc28fb629345340e339957662a55e8ae6f26cf8c5c16f1557f",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/group.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/group.tsx",
+      "upstreamSha256": "d2392c54a90e353762779639971bb9aaa44759a7bda81ea0cf1462afbf4492b0",
+      "localSha256": "b423e40bc9836c6b7f34c798553a3d2e6d1cd49ab21bc117e376d8234556f56a",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/ui/separator",
+          "to": "@/components/coss/separator"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/input-group.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/input-group.tsx",
+      "upstreamSha256": "999f1e8aa29d4520aa4086f508cfd55503547822e4a6c4a2314e2fb14a351452",
+      "localSha256": "2e9f9efba3071cc5af144a677f84600c9552ab20cb074922488b82594e104df0",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/input",
+          "to": "@/components/coss/input"
+        },
+        {
+          "from": "@/registry/default/ui/textarea",
+          "to": "@/components/coss/textarea"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/input.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/input.tsx",
+      "upstreamSha256": "3d488d491eb4e63642adc8b9354b0b0cc5b8ec4e284bbc26da7e2516f24980a4",
+      "localSha256": "9af36cf96d9e085dd2510cc6b46c2babbe2d0688f9da83cedd0ab8f42cd14222",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/kbd.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/kbd.tsx",
+      "upstreamSha256": "ad8f26b95d8307f460316cd27a2b595d04069df2561395b5d39067a99e407cb5",
+      "localSha256": "c5c9efe162d4095da03beb7c4f6d7c4ba1b7462ef36be69a7841c494f250f69d",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/label.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/label.tsx",
+      "upstreamSha256": "edaf5fb049b3e2f27ddd70a6c6772c7d99e920c589b41019b8f4fa602113e695",
+      "localSha256": "2745906b9d11edfafed2695223b61e436d029886eb7ed547d0bcc40da3070c96",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/menu.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/menu.tsx",
+      "upstreamSha256": "aeb2ebda24c8c90453fd7087bae8f14510f98e4eee75da5c084dfecaa56f2625",
+      "localSha256": "5e1cf980f2e2f407f26e4075440765df4ef29bb42260fcb078fd6f40d11c400b",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/meter.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/meter.tsx",
+      "upstreamSha256": "f7f0b85f6878378c76e66887a111a1cb8476ebea84a2ebb4f6d41fe0fbad8653",
+      "localSha256": "c4e2ee353705d4c4402d008066154b74561a78488e24e4471c9d1ad9b02f1cc0",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/number-field.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/number-field.tsx",
+      "upstreamSha256": "e49f539416076d832d855e53be646fbc613ccaf0b419b8951f477267b81cdbde",
+      "localSha256": "dd99837f3ed21b92049ad97445785f510a2e4b9991e48a8407ebbc1b1eae1f65",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/label",
+          "to": "@/components/coss/label"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/otp-field.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/otp-field.tsx",
+      "upstreamSha256": "4122b6f91e0c011a9bfe40b4ecad4d0b89a7b371e773adac6af6b2bcc5ac033e",
+      "localSha256": "7d899f7e9d1746a9e969b08e28756e1310e8cc3d8ff2650009a231308c4bcfd5",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/separator",
+          "to": "@/components/coss/separator"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/pagination.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/pagination.tsx",
+      "upstreamSha256": "4c3d048be127d228ad199b8555b833ffc26cd9506b4a75b4b298754833474993",
+      "localSha256": "86c09f586380bf966cf6a71c95c864ec3e178198d9448910ff6819998fc1c807",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/popover.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/popover.tsx",
+      "upstreamSha256": "ff9b981ce4e68b86a266f69480c59967c7065aacfa2d4ce927d91a1eff0035cf",
+      "localSha256": "2cf9c10502c464e957b99b1ca96e3c5f845a4ef12dd5068860933b84c271d991",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/preview-card.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/preview-card.tsx",
+      "upstreamSha256": "44741ce4217d89c19a485d6973c22c821ed9cf86b15dc03c7094308ae7faa6ba",
+      "localSha256": "230b02c676486823ce7f5886df4b1113f547aba76b3a02bf255e18a327ceb878",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/progress.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/progress.tsx",
+      "upstreamSha256": "605ea95436094735fc94d2ae38fd50df2dcce1617b2a67c504114bd0e55cc2b2",
+      "localSha256": "fd5b933380e2632ec6d63a9c6680326bf1bcfbb7ff8bd4815724f12a66c65d4d",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/radio-group.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/radio-group.tsx",
+      "upstreamSha256": "b2479e9967f0ba48d1acbb58a4fff7b919aa746bb8a61cbbff389baac02abbb7",
+      "localSha256": "a33118b0cfcf4180aca7e5195d7654baa491dea9c99c95b7e8ab7fc50c111b68",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/scroll-area.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/scroll-area.tsx",
+      "upstreamSha256": "6274eace4599cba26e731b0f02cd2307d2207947162ccc575e45984e87aa269f",
+      "localSha256": "383e9c73b537bb44e9a90d7b6f2366b7002a0cf1cba319ded8a7f89813cc664a",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/select.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/select.tsx",
+      "upstreamSha256": "aa8821bbb4bd6b8b52a6cbaaf8d995f48b1001ad93d4bfa4e5b91b5e6d5f66a0",
+      "localSha256": "4813f781431445879423d34bfe4f8e88ca8248476ab20a9494f4b5a9436e516a",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/separator.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/separator.tsx",
+      "upstreamSha256": "48393a9f365097e350bb33f0e84d2df25efd6b374868aa075f8d6011378c1d6e",
+      "localSha256": "c707557523cc2b3d16904b82692869f153a774b5db9e0c4f2ed17985682ca226",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/sheet.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/sheet.tsx",
+      "upstreamSha256": "74ce70050415c0ac6ad033a4d6770f023a736a9f24540c994e88c6934c16d9a4",
+      "localSha256": "c7032ead7165b1b52d6ac4c3b8153014c32de6eedd2387bde7f192293e94f4fe",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/sidebar.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/sidebar.tsx",
+      "upstreamSha256": "11e0381340b46a53f5a52c6a2a6a81a4c957c3690f889089764b60ba3da51965",
+      "localSha256": "c4f4d6bec5b0e820c795b048e05a3e1e2cdac47aeaf2d6b3f05d77ad7e043c99",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/hooks/use-media-query",
+          "to": "@/hooks/coss/use-media-query"
+        },
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        },
+        {
+          "from": "@/registry/default/ui/input",
+          "to": "@/components/coss/input"
+        },
+        {
+          "from": "@/registry/default/ui/scroll-area",
+          "to": "@/components/coss/scroll-area"
+        },
+        {
+          "from": "@/registry/default/ui/separator",
+          "to": "@/components/coss/separator"
+        },
+        {
+          "from": "@/registry/default/ui/sheet",
+          "to": "@/components/coss/sheet"
+        },
+        {
+          "from": "@/registry/default/ui/skeleton",
+          "to": "@/components/coss/skeleton"
+        },
+        {
+          "from": "@/registry/default/ui/tooltip",
+          "to": "@/components/coss/tooltip"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/skeleton.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/skeleton.tsx",
+      "upstreamSha256": "02e61d00c76b7ed5a1979c37c2a86b8a837a013909e84ac21c40bb5b56f9afd2",
+      "localSha256": "710dbf9edb6d063025d7e6adc8599eb5ff0d9228e49fc09b01e5417e5c21dbdf",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/slider.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/slider.tsx",
+      "upstreamSha256": "abf488cac56c237b5eebef7c7c25ff38d07f72581a2b46c7158c019576c7fa71",
+      "localSha256": "5ca5a183ff92a142564fefff51d3cbc373dbd2e936d1b33a0338770544ee0116",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/spinner.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/spinner.tsx",
+      "upstreamSha256": "5116d0ec549bf70d20d5359a485e6792b6c87d89a389102ad6c3f44312c23972",
+      "localSha256": "b04f8a7c117104280360491cf91f1a7cdea0f275fbe4382f0e61b68ccfb49435",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/switch.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/switch.tsx",
+      "upstreamSha256": "2b3bada3d7234149b4d29918d5e312e62919938c2ae0ee61db81350438ad43c4",
+      "localSha256": "5cc7e21fd14986fa3300d3391eabb9b148a178f43aa817a583db95641354d5f1",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/table.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/table.tsx",
+      "upstreamSha256": "b21f811291d6a1706874cb37dd568b922fb5d8b053e6636b7b0e9e9c6320c98d",
+      "localSha256": "9acd05cead691257e7a26d2bb020254d2514cfd8bfdbc3421c87262e8dbb3749",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/tabs.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/tabs.tsx",
+      "upstreamSha256": "cbfe21ce54efe39cc02eb073a8327a4ab81b918d5745d986fdfae07d32204a7a",
+      "localSha256": "2ccafba4dcc7037e9dd73901c95db5d023f641c39ad2021153c7b369b9f0c5c3",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/segmented-control",
+          "to": "@/lib/coss/segmented-control"
+        },
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/textarea.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/textarea.tsx",
+      "upstreamSha256": "d153ed8f568a6ffb7b5438ea83385e3d327db9af45ef9fdd0822575d15c4e745",
+      "localSha256": "cdbcc77cc30bdc4073ccc64eab69edfaa6238183b7cb00333a8af5ae557b3123",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/toast.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/toast.tsx",
+      "upstreamSha256": "6c83bd6ab5a90388aa06380924381058746bf2bd5ebb7b2187496a59e7c517d6",
+      "localSha256": "cb8a1b0edc8ef5db572da975db5ae5c61dfa30339b7e57f651ca19da24982f5d",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/button",
+          "to": "@/components/coss/button"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/toggle-group.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/toggle-group.tsx",
+      "upstreamSha256": "8c67854bffcf762299fb989721e47da30fea3268cb969fdc6c775c3fe89982bb",
+      "localSha256": "8540360fe7f0eebcf13c02532e3fd2c35661c294c165ef1dd350be24a52a86e0",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        },
+        {
+          "from": "@/registry/default/ui/separator",
+          "to": "@/components/coss/separator"
+        },
+        {
+          "from": "@/registry/default/ui/toggle",
+          "to": "@/components/coss/toggle"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/toggle.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/toggle.tsx",
+      "upstreamSha256": "a32372d0eaa291bc81f61f4ddb1f5bb827c507fd53de03c6f709adc242ee5bfb",
+      "localSha256": "3132bd5e984832263abb614591da51684267195810fdce414d84a1dade6c41b9",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/toolbar.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/toolbar.tsx",
+      "upstreamSha256": "f08696682ad171b5a0d2c918202bcee10b9f6de1408a2a2e864f61e8d424dba2",
+      "localSha256": "035230428228e086a344b70eb09fea24f823a547cc37c5ea65d68f1f93c15229",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "components/coss/tooltip.tsx",
+      "upstreamPath": "apps/ui/registry/default/ui/tooltip.tsx",
+      "upstreamSha256": "0ac59089d1d813b7eb1cd9e08ed2ff3b3931e4024df649ddb45b1eb43d50f694",
+      "localSha256": "a9907430b86087e786b64c4ccae5c5b168b7dfa8ca5b2f1ae34f33ad40f7a023",
+      "importRewrites": [
+        {
+          "from": "@/registry/default/lib/utils",
+          "to": "@/lib/utils"
+        }
+      ]
+    },
+    {
+      "file": "hooks/coss/use-media-query.ts",
+      "upstreamPath": "apps/ui/registry/default/hooks/use-media-query.ts",
+      "upstreamSha256": "17d75ccaf898415db77dd72659c9b1fdb9338290ae54e8371b772e0b221c9fca",
+      "localSha256": "17d75ccaf898415db77dd72659c9b1fdb9338290ae54e8371b772e0b221c9fca",
+      "importRewrites": []
+    },
+    {
+      "file": "lib/coss/segmented-control.ts",
+      "upstreamPath": "apps/ui/registry/default/lib/segmented-control.ts",
+      "upstreamSha256": "c1cb84d02ac5b75aa08a70c205feb9cc8668ffbc19751e013364f547ae41a8a8",
+      "localSha256": "c1cb84d02ac5b75aa08a70c205feb9cc8668ffbc19751e013364f547ae41a8a8",
+      "importRewrites": []
+    }
+  ]
+}
