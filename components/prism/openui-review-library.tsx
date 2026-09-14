@@ -37,13 +37,22 @@ const Evidence = defineComponent({ name: "Evidence", description: "只接受来�
 const Limits = defineComponent({ name: "Limits", description: "必须展示由站点提供的局限。", props: z.object({}), component: () => <LimitsView /> })
 const ReviewLayout = defineComponent({ name: "ReviewLayout", description: "三个区块各出现一次，可按任务调整顺序。", props: z.object({ children: z.array(z.union([Candidate.ref, Evidence.ref, Limits.ref])) }), component: ({ props, renderNode }) => <div className="openui-blocks">{renderNode(props.children)}</div> })
 
-export const reviewLibrary = createLibrary({ root: "ReviewLayout", components: [ReviewLayout, Candidate, Evidence, Limits] })
+// OpenUI creates a random internal library ID. Workers forbid randomness while
+// evaluating modules, so initialize on the first render/validation in a request.
+// This cache contains component definitions only, never draft or reviewer data.
+function createReviewLibrary() {
+  return createLibrary({ root: "ReviewLayout", components: [ReviewLayout, Candidate, Evidence, Limits] })
+}
+let reviewLibrary: ReturnType<typeof createReviewLibrary> | undefined
+export function getReviewLibrary() {
+  return reviewLibrary ??= createReviewLibrary()
+}
 
 // A closed lexical gate catches ignored assignments, expressions and extra args.
 // The real parser then checks completeness; Renderer never receives partial output.
 export function checkRenderableReview(input: unknown) {
   const checked = validateReview(input)
-  const parsed = createParser(reviewLibrary.toJSONSchema(), "ReviewLayout").parse(checked.response)
+  const parsed = createParser(getReviewLibrary().toJSONSchema(), "ReviewLayout").parse(checked.response)
   const { meta, root } = parsed
   if (!root || root.type !== "element" || root.typeName !== "ReviewLayout" || root.partial || root.hasDynamicProps !== false || meta.incomplete || meta.errors.length || meta.unresolved.length || meta.orphaned.length || meta.statementCount !== 4 || parsed.queryStatements.length || parsed.mutationStatements.length || Object.keys(parsed.stateDeclarations).length) throw new Error("Incomplete OpenUI tree")
   const children = root.props.children as Array<{ type: string; typeName: string; partial: boolean; hasDynamicProps?: boolean }>
