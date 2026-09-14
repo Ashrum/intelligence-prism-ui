@@ -1,0 +1,48 @@
+.openui-page { max-width: 1240px; margin: 0 auto; padding: 28px 32px 64px; color: var(--text-primary); }
+.openui-back { display: inline-flex; align-items: center; gap: 8px; color: var(--action-primary); font-size: 14px; text-decoration: none; }
+.openui-back svg { width: 16px; height: 16px; }
+.openui-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin: 28px 0; }
+.openui-eyebrow { font-size: 14px; color: var(--text-secondary); margin: 0 0 10px; }
+.openui-heading h1 { font-size: clamp(26px, 3vw, 36px); font-weight: 650; line-height: 1.25; margin: 0 0 12px; letter-spacing: -.025em; }
+.openui-heading p:last-child { color: var(--text-secondary); margin-bottom: 0; font-size: 16px; }
+.openui-object { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: var(--surface); padding: 20px 24px; border-radius: 16px; margin-bottom: 24px; }
+.openui-object > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; }
+.openui-object strong { font-size: 18px; font-weight: 600; }
+.openui-object span, .openui-object p { font-size: 14px; color: var(--text-secondary); }
+.openui-object p { display: flex; flex-wrap: wrap; gap: 12px; margin: 0; }
+.openui-controls { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+.openui-workspace { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); gap: 24px; align-items: start; }
+.openui-result, .openui-editor { min-width: 0; }
+.openui-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-bottom: 12px; }
+.openui-result-heading > span { color: var(--text-secondary); font-size: 14px; }
+.openui-blocks { display: grid; gap: 16px; }
+.openui-page .openui-block { padding: 24px; gap: 16px; }
+.openui-block h2 { font-size: 18px; line-height: 1.4; font-weight: 600; margin: 0; }
+.openui-block h3 { font-size: 16px; font-weight: 600; margin: 0; }
+.openui-block p { font-size: 16px; line-height: 1.75; margin: 0; overflow-wrap: anywhere; }
+.openui-block .object-card-header { display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 12px; }
+.openui-block .object-card-meta { font-size: 14px; }
+.openui-reading { font-family: var(--font-reading, "Prism Review Noto Serif SC", serif); }
+.openui-evidence-list { display: grid; gap: 24px; }
+.openui-evidence-list section { display: grid; gap: 8px; }
+.openui-evidence-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.openui-evidence-heading h3 { display: flex; gap: 8px; }
+.openui-evidence-heading h3 span { color: var(--text-secondary); font-size: 14px; font-weight: 400; }
+.openui-evidence-heading p { display: flex; align-items: baseline; gap: 8px; }
+.openui-evidence-heading strong { font-size: 24px; font-weight: 550; font-variant-numeric: tabular-nums; }
+.openui-evidence-heading p span { font-size: 14px; color: var(--text-secondary); }
+.openui-limits { background: var(--surface-quiet); }
+.openui-editor { padding-top: 56px; }
+.openui-block .openui-helper, .openui-helper { font-size: 14px; line-height: 1.65; color: var(--text-secondary); }
+.openui-field-label { font-size: 14px; font-weight: 600; }
+.openui-editor textarea { min-height: 180px; font-size: 16px; line-height: 1.75; resize: vertical; }
+.openui-applied { display: grid; gap: 10px; border-top: 1px solid var(--border-subtle); padding-top: 20px; }
+.openui-feedback { font-size: 14px; line-height: 1.65; min-height: 24px; margin: 24px 0; color: var(--text-secondary); }
+.openui-feedback[data-error] { color: var(--state-danger-fg, #a62d31); }
+.openui-evaluation { font-size: 14px; line-height: 1.75; color: var(--text-secondary); }
+.openui-evaluation summary { cursor: pointer; color: var(--text-primary); padding: 8px 0; font-size: 16px; }
+.openui-evaluation p { max-width: 75ch; }
+.openui-evaluation a { color: var(--action-primary); text-decoration: none; }
+.openui-check-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 850px) { .openui-workspace { grid-template-columns: 1fr; } .openui-editor { padding-top: 0; } .openui-object { align-items: flex-start; flex-direction: column; gap: 10px; } }
+@media (max-width: 480px) { .openui-page { padding: 20px 16px 40px; } .openui-heading { gap: 12px; flex-wrap: wrap; } .openui-page .openui-block, .openui-object { padding: 20px; } .openui-result-heading { flex-wrap: wrap; } }

@@ -20,7 +20,7 @@ export default function Home() {
           <div className="intro-actions">
             <Link href="/components" className="intro-primary-link">浏览组件 <ArrowRight aria-hidden="true" /></Link>
             <Link href="/foundations" className="intro-secondary-link">查看 Foundations</Link>
-            <Link href="/benchmark" className="intro-secondary-link">打开 Benchmark</Link>
+            <Link href="/review/openui" className="intro-secondary-link">OpenUI 复核试点 <ArrowRight aria-hidden="true" /></Link>
           </div>
         </div>
         <HomeControlPreview />
