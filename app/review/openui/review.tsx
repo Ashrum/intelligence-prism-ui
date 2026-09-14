@@ -9,11 +9,12 @@ import { Button } from "@/components/ui/button"
 import { ObjectCard, ObjectCardActions, ObjectCardHeader } from "@/components/ui/card"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Textarea } from "@/components/ui/textarea"
-import { CandidateView, EvidenceView, LimitsView, ReviewOrigin, checkRenderableReview, reviewLibrary } from "@/components/prism/openui-review-library"
+import { CandidateView, EvidenceView, LimitsView, ReviewOrigin, checkRenderableReview, getReviewLibrary } from "@/components/prism/openui-review-library"
 import { fixedResponse, initialReview, reviewReducer, tasks } from "@/lib/openui/review-contract"
 import type { Task } from "@/lib/openui/review-contract"
 
 export function OpenUIReview() {
+  const [reviewLibrary] = useState(getReviewLibrary)
   const [task, setTask] = useState<Task>("explain")
   const [mode, setMode] = useState("dynamic")
   const [checked, setChecked] = useState(() => checkRenderableReview(fixedResponse("explain")))

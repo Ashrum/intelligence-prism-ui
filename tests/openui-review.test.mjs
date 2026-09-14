@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import test, { after } from "node:test"
+import test, { after, mock } from "node:test"
 import { fileURLToPath } from "node:url"
 import { createServer } from "vite"
 import React from "react"
@@ -9,9 +9,23 @@ const root = fileURLToPath(new URL("..", import.meta.url))
 const vite = await createServer({ appType: "custom", configFile: false, root, resolve: { alias: { "@": root } }, server: { middlewareMode: true, hmr: false } })
 after(() => vite.close())
 const contract = await vite.ssrLoadModule("/lib/openui/review-contract.ts")
-const { checkRenderableReview, reviewLibrary } = await vite.ssrLoadModule("/components/prism/openui-review-library.tsx")
+// Match the Workers module-evaluation restriction that caused the deployed 1101.
+const randomDuringImport = mock.method(globalThis.crypto, "randomUUID", () => { throw new Error("Randomness during module evaluation") })
+let reviewModule
+try {
+  reviewModule = await vite.ssrLoadModule("/components/prism/openui-review-library.tsx")
+} finally {
+  randomDuringImport.mock.restore()
+}
+const { checkRenderableReview, getReviewLibrary } = reviewModule
+const reviewLibrary = getReviewLibrary()
 const { handleReviewRequest } = await vite.ssrLoadModule("/lib/openui/generate-review.ts")
 const { Renderer } = await import("@openuidev/react-lang")
+
+test("library initializes after module evaluation and keeps stable renderer identity", () => {
+  assert.equal(randomDuringImport.mock.callCount(), 0)
+  assert.equal(getReviewLibrary(), reviewLibrary)
+})
 
 test("all task layouts render complete host evidence through the real OpenUI parser and Renderer", () => {
   for (const task of contract.tasks) {
