@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useReducer, useRef, useState } from "react"
+import { useCallback, useEffect, useReducer, useRef, useState } from "react"
 import { Renderer } from "@openuidev/react-lang"
 import { ArrowLeft, ArrowRight, RefreshCw } from "lucide-react"
 import { Badge, StateLabel } from "@/components/ui/badge"
@@ -25,22 +25,44 @@ export function OpenUIReview() {
   const [failed, setFailed] = useState(false)
   const [renderFailed, setRenderFailed] = useState(false)
   const [modelReady, setModelReady] = useState(false)
-  const [modelConfigured, setModelConfigured] = useState(false)
+  const [modelAuthenticated, setModelAuthenticated] = useState(false)
+  const [checkingConnection, setCheckingConnection] = useState(true)
   const [modelStatus, setModelStatus] = useState("正在检查模型连接。")
   const [runs, setRuns] = useState({ accepted: 0, rejected: 0 })
   const request = useRef<AbortController | null>(null)
+  const connectionRequest = useRef<AbortController | null>(null)
   const sequence = useRef(0)
   const draftDirty = state.draft !== state.record.text
 
-  useEffect(() => {
+  const checkConnection = useCallback(async () => {
+    connectionRequest.current?.abort()
     const controller = new AbortController()
-    fetch("/api/openui-review", { signal: controller.signal }).then(r => r.json()).then(data => {
+    connectionRequest.current = controller
+    setCheckingConnection(true)
+    setModelReady(false)
+    setModelStatus("正在检查模型连接。")
+    const timeout = setTimeout(() => controller.abort(), 10000)
+    try {
+      const response = await fetch("/api/openui-review", { signal: controller.signal, cache: "no-store" })
+      if (!response.ok) throw new Error("Connection status unavailable")
+      const data = await response.json()
+      if (![data?.configured, data?.authenticated, data?.ready].every(value => typeof value === "boolean")) throw new Error("Invalid connection status")
+      if (connectionRequest.current !== controller) return
       setModelReady(data.ready === true)
-      setModelConfigured(data.configured === true)
-      setModelStatus(data.ready ? "模型已配置，生成结果仍需验证。" : data.configured ? "真实生成仅向已配置的评审账号开放。" : "模型尚未连接；当前可体验固定样例。")
-    }).catch(() => { if (!controller.signal.aborted) setModelStatus("暂时无法检查模型连接，固定样例仍可使用。") })
-    return () => { controller.abort(); request.current?.abort(); sequence.current++ }
+      setModelAuthenticated(data.authenticated === true)
+      setModelStatus(data.ready ? "当前评审账号可用，可点击「生成新初稿」。生成结果仍需复核。" : !data.configured ? "模型尚未连接；当前可体验固定样例。" : data.authenticated ? "当前账号没有评审权限，请使用已配置的评审账号。" : "模型已配置，请先使用评审账号继续。")
+    } catch {
+      if (connectionRequest.current === controller) setModelStatus("暂时无法检查模型连接，请重新检查。固定样例仍可使用。")
+    } finally {
+      clearTimeout(timeout)
+      if (connectionRequest.current === controller) setCheckingConnection(false)
+    }
   }, [])
+
+  useEffect(() => {
+    void checkConnection()
+    return () => { connectionRequest.current?.abort(); connectionRequest.current = null; request.current?.abort(); sequence.current++ }
+  }, [checkConnection])
 
   function accept(input: unknown, source: "sample" | "model") {
     const next = checkRenderableReview(input)
@@ -64,7 +86,10 @@ export function OpenUIReview() {
     setBusy(true); setFailed(false); setNotice("正在生成，完整校验后更新；可继续编辑复核草稿。")
     try {
       const response = await fetch("/api/openui-review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ task }), signal: controller.signal })
-      if (!response.ok) throw new Error("Generation unavailable")
+      if (!response.ok) {
+        if (response.status === 403 && current === sequence.current) void checkConnection()
+        throw new Error("Generation unavailable")
+      }
       const data = await response.json()
       if (current !== sequence.current) return
       accept(data.response, "model"); setNotice("新的 AI 初稿已生成；请核对依据后再用于复核。")
@@ -77,9 +102,16 @@ export function OpenUIReview() {
     <header className="openui-heading"><div><p className="openui-eyebrow">OpenUI · 受控组件试点</p><h1>证据解释与复核</h1><p>同一份证据，按任务调整阅读顺序。</p></div><Badge>候选 · 待评审</Badge></header>
     <section className="openui-object" aria-label="当前对象与范围"><div><strong>数学学习观察</strong><span>七年级 · 示例对象 01</span></div><p>近三周课堂作答与本周作业 <Badge>示例数据</Badge></p></section>
     <div className="openui-controls"><SegmentedControl label="阅读任务" value={task} onValueChange={changeTask} items={tasks.map(item => ({ value: item.value, label: item.label }))} /><SegmentedControl label="布局方式" value={mode} onValueChange={setMode} items={[["dynamic", "按任务排列"], ["fixed", "固定顺序"]]} size="sm" /></div>
+    <section className="openui-connection" aria-label="模型连接">
+      <p id="openui-connection-status" role="status" aria-live="polite">{modelStatus}</p>
+      <div className="openui-connection-actions">
+        {!modelReady && !modelAuthenticated && <Button asChild variant="secondary" size="compact"><a href="/signin-with-chatgpt?return_to=%2Freview%2Fopenui" target="_top">使用评审账号继续</a></Button>}
+        <Button variant="ghost" size="compact" disabled={busy} loading={checkingConnection} loadingLabel="检查中" onClick={checkConnection}>重新检查</Button>
+      </div>
+    </section>
     <div className="openui-workspace">
       <section className="openui-result" aria-label="证据与候选说明">
-        <div className="openui-result-heading"><span>{origin === "model" ? "AI 生成结果" : "固定样例"} · {tasks.find(item => item.value === task)?.label}</span><Button variant="ghost" size="compact" disabled={!modelReady} loading={busy} loadingLabel="生成中" onClick={generate}><RefreshCw aria-hidden="true" />生成新初稿</Button></div>
+        <div className="openui-result-heading"><span>{origin === "model" ? "AI 生成结果" : "固定样例"} · {tasks.find(item => item.value === task)?.label}</span><Button variant="ghost" size="compact" disabled={!modelReady} aria-describedby="openui-connection-status" loading={busy} loadingLabel="生成中" onClick={generate}><RefreshCw aria-hidden="true" />生成新初稿</Button></div>
         <ReviewOrigin.Provider value={origin}>
           {mode === "dynamic" && !renderFailed ? <Renderer response={checked.response} library={reviewLibrary} isStreaming={false} publishObservability={false} onError={(errors) => { if (!errors.length) return; setRenderFailed(true); setNotice("布局暂时不可用，已使用固定顺序保留内容。"); setFailed(true) }} /> : <div className="openui-blocks"><CandidateView text={checked.text} /><EvidenceView /><LimitsView /></div>}
         </ReviewOrigin.Provider>
@@ -99,6 +131,6 @@ export function OpenUIReview() {
       </aside>
     </div>
     <p className="openui-feedback" role="status" aria-live="polite" data-error={failed || undefined}>{notice}</p>
-    <details className="openui-evaluation"><summary>试点评审与连接状态</summary><p>{modelStatus}</p>{modelConfigured && !modelReady && <a href="/signin-with-chatgpt?return_to=%2Freview%2Fopenui" target="_top">使用评审账号继续</a>}<p>本次通过 {runs.accepted} 次，拒绝 {runs.rejected} 次。此计数包含固定样例检查，不代表模型生成效果。</p><div className="openui-check-actions"><Button variant="secondary" disabled={busy} onClick={() => { try { accept(fixedResponse(task).replace("limits = Limits()", ""), "sample") } catch { reject() } }}>验证不完整结果回退</Button><Button variant="ghost" disabled={busy} onClick={() => { accept(fixedResponse(task), "sample"); setNotice("已恢复当前任务的固定样例，复核内容保持不变。") }}>恢复固定样例</Button></div><p>可先编辑草稿，再切换任务；也可标记已复核后验证失败回退，检查内容与状态是否保留。</p><a href="https://www.openui.com/docs/openui-lang/defining-components" target="_blank" rel="noreferrer">OpenUI 组件机制</a></details>
+    <details className="openui-evaluation"><summary>试点评审</summary><p>本次通过 {runs.accepted} 次，拒绝 {runs.rejected} 次。此计数包含固定样例检查，不代表模型生成效果。</p><div className="openui-check-actions"><Button variant="secondary" disabled={busy} onClick={() => { try { accept(fixedResponse(task).replace("limits = Limits()", ""), "sample") } catch { reject() } }}>验证不完整结果回退</Button><Button variant="ghost" disabled={busy} onClick={() => { accept(fixedResponse(task), "sample"); setNotice("已恢复当前任务的固定样例，复核内容保持不变。") }}>恢复固定样例</Button></div><p>可先编辑草稿，再切换任务；也可标记已复核后验证失败回退，检查内容与状态是否保留。</p><a href="https://www.openui.com/docs/openui-lang/defining-components" target="_blank" rel="noreferrer">OpenUI 组件机制</a></details>
   </main>
 }

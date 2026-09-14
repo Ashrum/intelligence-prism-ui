@@ -11,7 +11,7 @@ export async function handleReviewRequest(request: Request, env: ReviewEnv, fetc
   const configured = Boolean(env.OPENAI_API_KEY && env.OPENUI_MODEL && env.OPENUI_REVIEWER_EMAILS?.trim())
   const email = request.headers.get("oai-authenticated-user-email")?.toLowerCase()
   const permitted = Boolean(email && env.OPENUI_REVIEWER_EMAILS?.split(",").map(value => value.trim().toLowerCase()).includes(email))
-  if (request.method === "GET") return reply({ configured, ready: configured && permitted })
+  if (request.method === "GET") return reply({ configured, authenticated: Boolean(email), ready: configured && permitted })
   if (request.method !== "POST") return reply({ error: "method_not_allowed" }, 405)
   if (!configured) return reply({ error: "model_not_configured" }, 503)
   if (!permitted) return reply({ error: "reviewer_required" }, 403)

@@ -97,7 +97,12 @@ test("generation stays unavailable without config, reviewer identity or same-ori
   assert.equal((await handleReviewRequest(request({}, { Origin: "https://elsewhere.example" }), env, noCall)).status, 403)
   assert.equal((await handleReviewRequest(request({ task: "execute", prompt: "extra" }), env, noCall)).status, 400)
   const status = await handleReviewRequest(new Request("https://site.example/api/openui-review"), {})
-  assert.deepEqual(await status.json(), { configured: false, ready: false })
+  assert.deepEqual(await status.json(), { configured: false, authenticated: false, ready: false })
+  for (const [email, authenticated, ready] of [["", false, false], ["other@example.test", true, false], ["reviewer@example.test", true, true]]) {
+    const status = await handleReviewRequest(new Request("https://site.example/api/openui-review", { headers: { "oai-authenticated-user-email": email } }), env, noCall)
+    assert.equal(status.headers.get("Cache-Control"), "no-store")
+    assert.deepEqual(await status.json(), { configured: true, authenticated, ready })
+  }
 })
 
 test("adapter only returns completed validated model text; truncation and tool-only outputs fail closed", async () => {
