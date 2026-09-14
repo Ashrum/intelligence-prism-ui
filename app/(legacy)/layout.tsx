@@ -2,9 +2,10 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 import { NavLink } from "@/components/prism/nav-link"
+import { LegacyNotice } from "@/components/legacy-notice"
 
-import "./fonts.css"
-import "./globals.css"
+import "../fonts.css"
+import "../globals.css"
 
 export const metadata: Metadata = {
   title: {
@@ -20,8 +21,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" data-ui-version="legacy">
       <body>
+        <LegacyNotice />
         <a className="skip-link" href="#main-content">跳到主要内容</a>
         <header className="site-header">
           <Link href="/" className="site-brand" aria-label="智能曜彩首页">

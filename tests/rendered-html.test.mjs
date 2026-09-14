@@ -95,5 +95,5 @@ test("renders the OpenUI review pilot across the production RSC boundary", async
   const html = await response.text();
   for (const text of ["证据解释与复核", "固定样例", "人工复核", "结论的局限", "18 / 22"]) assert.ok(html.includes(text));
   assert.match(html, /id="review-draft"/);
-  assert.match(html, /生成新初稿/);
+  assert.match(html, /恢复固定样例/);
 });

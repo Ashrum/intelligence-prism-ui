@@ -8,7 +8,7 @@ import { createServer } from "vite";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const vite = await createServer({
-  appType: "custom",
+  appType: "custom", cacheDir: "node_modules/.vite-test-tabs",
   configFile: false,
   root,
   resolve: { alias: { "@": root } },

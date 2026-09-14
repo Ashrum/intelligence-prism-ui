@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "app/globals.css",
+    "css": "app/(next)/next/theme.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
@@ -13,9 +13,11 @@
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
-    "ui": "@/components/ui",
+    "ui": "@/components/coss",
     "lib": "@/lib",
-    "hooks": "@/hooks"
+    "hooks": "@/hooks/coss"
   },
-  "registries": {}
+  "registries": {
+    "@coss": "https://coss.com/ui/r/{name}.json"
+  }
 }

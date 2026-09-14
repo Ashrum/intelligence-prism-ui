@@ -1,10 +1,66 @@
 # 智能曜彩 UI Design System
 
+## 当前版本：coss v1.0.0（实现完成，设计待评审）
+
+本轮用户授权完成一版组件库，并要求自行验证、继续修正后发布。当前基线优先于下面保留的历史流程与旧版设计说明。
+
+- 新版入口：`/next`；规范：`/next/foundations`；组件：`/next/components/[slug]`。
+- 应用模式：`/next/reading` 材料研读编辑、`/next/agent` Agent 工作区。
+- 54 项 coss 官方组件均有可操作示例。旧目录的 59 项规划是历史记录，不等同于本版交付范围。
+- 浅色 / 暖纸 / 深色一起提供；语义变量同时控制背景、标题、正文、公式、图标、状态与 Portal 浮层。
+- MD 浮动标签、Beautiful UI 和旧智能曜彩组件样式均不进入新版。保留 shadcn 的组件源码方式，采用 coss 视觉与 Base UI 行为；Motion 负责应用状态动效。
+- Agent 借鉴任务、上下文、执行步骤、停止、失败重试、结果确认的交互结构。本版为本地演示，不调用模型，不需要 API key 或额度。采用建议追加到人工备注，超出 500 字时不改变原文。
+
+### 组件与主题约定
+
+`components/coss/` 为官方 MIT 的 `apps/ui/registry/default` 源码，固定于提交 `e937becd2d5ffb5c621eed6f8b1f223cbb6051e7`。仅转换导入路径；`vendor/coss-manifest.json` 记录每个文件的上游与本地散列以及精确导入改写。未采用仓库内 AGPL 的 `packages/ui` 代码或全局样式。
+
+实际应用与示例放在 `components/prism-next/`，不在官方组件文件中叠加页面样式。使用 `render` 组合 Base UI/coss 组件，不用 Radix 的 `asChild` 语法代替。
+
+```tsx
+import { Input } from '@/components/coss/input'
+import { Field, FieldLabel } from '@/components/coss/field'
+import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from '@/components/coss/select'
+
+const kinds = [{ value: 'example', label: '例题讲解' }, { value: 'concept', label: '知识梳理' }]
+
+<Field className="max-w-48">
+  <FieldLabel htmlFor="material-kind">材料类型</FieldLabel>
+  <Select items={kinds} defaultValue="example">
+    <SelectTrigger id="material-kind"><SelectValue /></SelectTrigger>
+    <SelectPopup>{kinds.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup>
+  </Select>
+</Field>
+```
+
+不以原生 `<select>`、静态选项或仅修改外观的自制菜单冒充 coss Select。默认根字号 16px 时，桌面 sm/default/lg 的 Input 外框、Select、Button 高度为 28/32/36px；窄屏为 32/36/40px。保持内部字号、内边距、圆角、选中标记和焦点行为；通过字段容器控制宽度。
+
+主题定义在 `app/(next)/next/theme.css`，色值索引在 `lib/prism-next/config.ts`。浅色严格使用正文背景 `#FFFFFF`、次级背景 `#F4F5F7`、分割线 `#E3E5E9`、正文公式 `#1F2328`、次要文字 `#6B7280`、禁用色 `#B0B4BB`。交互边框独立于装饰分割线，遵从 coss 输入轮廓。不得将禁用色用于字段标签和必须阅读的说明。
+
+主题属性设置在 html，保证挂载至 body 的浮层获得同一套变量。图标继承当前前景；公式使用本地 STIX Two Math 和 MathML。主题选择与材料示例保存到当前浏览器；保存失败保留草稿并显示错误。
+
+### 旧版保留与隔离
+
+原有页面、示例、评审代码整体迁入 `app/(legacy)`，URL 保持不变，统一显示“旧版设计 · 已过期”。页面内容与旧评审文件通过逐字节比较保持不变。旧组件与字体资源保留；历史成熟度只作为历史记录。
+
+新旧两套根布局分别加载 CSS，不共享旧版全局 input/button/svg 规则。跨版本入口使用原生链接；不要将旧全局样式导入新版，也不要在用户决定删除前移除旧内容。
+
+### 验证与维护
+
+- `npx tsc --noEmit`：完整类型检查。Worker 声明由当前 Wrangler 官方 runtime 生成；真实 DB 绑定仍为可选。
+- `npm run build`：保留原有有界构建和旧字体校验。
+- `node --test tests/*.test.mjs`：旧功能回归、全部 54 条组件路由、新旧根隔离、原始 coss 散列、旧内容保留、材料校验和 Agent 状态约束。
+- 旧测试各使用独立 Vite 缓存，避免清空开发预览的依赖缓存。
+- 本轮实际浏览器验证：三主题正文、MathML、选择浮层；coss三档外框实测28/32/36px；键盘选择与Esc；搜索过滤；对话框取消与归档焦点回退；OTP连续输入；中文日期选择；材料保存刷新、Agent采用/停止/失败重试、页签草稿保留。
+- 窄屏布局已做源码与尺寸审查，修复顶栏、长标题和动效越界；未将其宣称为真实移动设备验收。
+- 浏览器检查记录以实际操作为准；源代码检查不替代视觉确认。设计状态保留“待评审”，不把自动化通过写成用户批准。
+
+
 完善设计规范，并逐项打磨组件的视觉、交互和动效。组件质量是主线；工程操作只服务于真实效果的实现和评审。
 
 - 评审与交付站点：https://intelligence-prism-ui.ashrvm.chatgpt.site/
 - 源码与变更记录：https://github.com/Ashrum/intelligence-prism-ui
-- 正式规范在 `/foundations` 原位完善，正式组件在 `/components` 展示；不另建站外 HTML、第二套规范站或下载包。
+- 新版在原站 `/next` 展示；`/foundations` 与 `/components` 保留为已过期的旧版。
 
 ## 站点—GitHub 工作流程
 
@@ -30,9 +86,9 @@
 - 未经用户确认的视觉候选不自动晋升正式设计；用户确认设计并授权收口后，直接完成回填、清理和必要验证，不为每个小操作重复请示。合并及原站发布仍按已有授权执行。
 - 不直接推送 `main`，不强制推送，不丢弃未说明的工作区改动。无冲突的提交变化不构成停工理由；只处理真正影响本轮任务的冲突。
 
-### 质量与范围
+### 旧版质量与范围（以下视觉规则已过期）
 
-采用已确认的参考图方向：近白页面、炭灰文字、白色普通卡与浅中性灰指标卡，16px Card 圆角、无阴影；静态内容以表面、对齐和间距分组，必要控件边界保留。品牌曜蓝 `#339FF2` 保持不变，主按钮使用深阶操作蓝 `#0B6FCA` 配白字，默认对比度约 5.07:1；链接和小字号操作文字使用独立深阶色。组件页以一句用途说明直接进入示例，详细规则集中于可展开的说明；侧栏显示已有规范页，完整规划与成熟度在组件总览。智绯 `#E0438F` 可用于 AI 来源侧边，必须保留来源文字并独立表达复核状态；生长荧 `#C2F25B` 保留既有证据语义。出彩来自比例、色彩、排版、状态与动效，不使用无语义装饰竖线或厚阴影。
+旧版曾采用的参考图方向：近白页面、炭灰文字、白色普通卡与浅中性灰指标卡，16px Card 圆角、无阴影；静态内容以表面、对齐和间距分组，必要控件边界保留。品牌曜蓝 `#339FF2` 保持不变，主按钮使用深阶操作蓝 `#0B6FCA` 配白字，默认对比度约 5.07:1；链接和小字号操作文字使用独立深阶色。组件页以一句用途说明直接进入示例，详细规则集中于可展开的说明；侧栏显示已有规范页，完整规划与成熟度在组件总览。智绯 `#E0438F` 可用于 AI 来源侧边，必须保留来源文字并独立表达复核状态；生长荧 `#C2F25B` 保留既有证据语义。出彩来自比例、色彩、排版、状态与动效，不使用无语义装饰竖线或厚阴影。
 
 每轮只验证受影响组件及必要组合：鼠标与键盘、焦点、可用状态、异步反馈、密度、Reduced Motion。复用现有构建和测试，不因无关历史问题重复全量核验或重建工具环境；未验证项目明确保留。
 
