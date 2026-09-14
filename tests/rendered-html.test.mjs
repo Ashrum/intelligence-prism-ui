@@ -79,7 +79,7 @@ test("renders finalized Tabs and Segmented surfaces and removes the review route
   assert.match(tabsHtml, /Page Tabs/);
   assert.match(tabsHtml, /Surface Tabs/);
   assert.match(tabsHtml, /跨学科学习过程长期趋势/);
-  assert.match(tabsHtml, /已归档记录/);
+  assert.match(tabsHtml, /归档记录不可用：当前用户没有查看权限/);
   const segmentedHtml = await segmented.text();
   assert.match(segmentedHtml, /按学生成长证据组织/);
   assert.match(segmentedHtml, /role="radiogroup"/);
@@ -87,4 +87,13 @@ test("renders finalized Tabs and Segmented surfaces and removes the review route
     assert.match(html, /data-selection-indicator/);
     assert.doesNotMatch(html, /Tabs 评审|data-review-indicator|href="\/review\/tabs"/);
   }
+});
+
+test("renders the OpenUI review pilot across the production RSC boundary", async () => {
+  const response = await fetchPage("/review/openui");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  for (const text of ["证据解释与复核", "固定样例", "人工复核", "结论的局限", "18 / 22"]) assert.ok(html.includes(text));
+  assert.match(html, /id="review-draft"/);
+  assert.match(html, /生成新初稿/);
 });

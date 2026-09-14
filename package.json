@@ -17,6 +17,7 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@hookform/resolvers": "^5.7.1",
+    "@openuidev/react-lang": "0.2.15",
     "@shadcn/react": "^0.3.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -60,5 +61,5 @@
     "wrangler": "4.92.0"
   },
   "type": "module",
-  "displayName": "\u667a\u80fd\u66dc\u5f69\u7ec4\u4ef6\u57fa\u51c6"
+  "displayName": "智能曜彩组件基准"
 }
