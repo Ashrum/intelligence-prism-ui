@@ -13,6 +13,23 @@ import { CandidateView, EvidenceView, LimitsView, ReviewOrigin, checkRenderableR
 import { fixedResponse, initialReview, reviewReducer, tasks } from "@/lib/openui/review-contract"
 import type { Task } from "@/lib/openui/review-contract"
 
+const generationErrors: Record<string, string> = {
+  model_auth_failed: "模型服务身份验证失败，请检查 API Key 和项目权限。",
+  model_access_denied: "当前模型访问被拒绝，请检查 API 项目权限及服务可用范围。",
+  model_unavailable: "当前模型不可用，请检查模型配置。",
+  quota_exceeded: "API 额度不足或已达到项目用量上限，请检查 OpenAI Platform 的额度和用量设置。",
+  rate_limited: "模型请求过于频繁，请过一会重试。",
+  model_limit_unknown: "模型服务触发请求限制，具体原因需要检查服务设置。",
+  model_request_rejected: "模型服务未接受生成请求，需要检查接入配置。",
+  upstream_unavailable: "模型服务暂时不可用，请过一会重试。",
+  generation_timeout: "模型生成超时，请过一会重试。",
+  model_connection_failed: "暂时无法连接模型服务，请过一会重试。",
+  incomplete_generation: "模型结果未完整生成，请重试。",
+  invalid_model_output: "模型结果未通过内容格式校验，请重试。",
+  invalid_model_response: "模型返回了无法识别的结果，请重试。",
+  reviewer_required: "评审账号状态已变化，请重新检查连接状态。",
+}
+
 export function OpenUIReview() {
   const [reviewLibrary] = useState(getReviewLibrary)
   const [task, setTask] = useState<Task>("explain")
@@ -83,17 +100,20 @@ export function OpenUIReview() {
     if (!modelReady || busy) return
     request.current?.abort(); const controller = new AbortController(); request.current = controller
     const current = ++sequence.current
+    let failureMessage = "本次生成未完成或结果无效。"
     setBusy(true); setFailed(false); setNotice("正在生成，完整校验后更新；可继续编辑复核草稿。")
     try {
       const response = await fetch("/api/openui-review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ task }), signal: controller.signal })
       if (!response.ok) {
         if (response.status === 403 && current === sequence.current) void checkConnection()
+        const error = await response.json().catch(() => null)
+        if (Object.hasOwn(generationErrors, error?.error)) failureMessage = generationErrors[error.error]
         throw new Error("Generation unavailable")
       }
       const data = await response.json()
       if (current !== sequence.current) return
       accept(data.response, "model"); setNotice("新的 AI 初稿已生成；请核对依据后再用于复核。")
-    } catch { if (current === sequence.current && !controller.signal.aborted) { reject(); setNotice("本次生成未完成或结果无效，已保留上一份内容、草稿与复核状态。") } }
+    } catch { if (current === sequence.current && !controller.signal.aborted) { reject(); setNotice(`${failureMessage}已保留上一份内容、草稿与复核状态。`) } }
     finally { if (current === sequence.current) setBusy(false) }
   }
 
