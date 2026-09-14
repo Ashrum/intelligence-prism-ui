@@ -44,6 +44,9 @@ export function OpenUIReview() {
     setFailed(true); setRuns(value => ({ ...value, rejected: value.rejected + 1 }))
     setNotice("新结果未通过完整性校验，已保留上一份内容、草稿与复核状态。")
   }
+  function reportSuccess(message: string) {
+    setFailed(false); setNotice(message)
+  }
 
   return <main id="main-content" className="openui-page" tabIndex={-1}>
     <Link href="/" className="openui-back"><ArrowLeft aria-hidden="true" />返回智能曜彩</Link>
@@ -67,10 +70,10 @@ export function OpenUIReview() {
           <label htmlFor="review-draft" className="openui-field-label">复核草稿</label>
           <Textarea id="review-draft" value={state.draft} maxLength={1200} rows={7} aria-describedby="draft-help" onChange={e => dispatch({ type: "edit", text: e.target.value })} />
           <p id="draft-help" className="openui-helper">{draftDirty ? "有未应用的修改。应用后需要重新复核。" : "可编辑草稿，或使用左侧候选说明。"}</p>
-          <ObjectCardActions><Button disabled={draftDirty || checked.text === state.draft} variant="secondary" onClick={() => { dispatch({ type: "candidate", text: checked.text, source: "sample" }); setNotice("候选说明已放入草稿，请核对后应用。") }}>使用候选说明<ArrowRight aria-hidden="true" /></Button></ObjectCardActions>
-          <ObjectCardActions><Button disabled={!draftDirty || !state.draft.trim()} onClick={() => { dispatch({ type: "apply" }); setNotice("修改已应用，需重新复核。") }}>应用修改</Button>{draftDirty && <Button variant="ghost" onClick={() => dispatch({ type: "discard" })}>取消修改</Button>}</ObjectCardActions>
+          <ObjectCardActions><Button disabled={draftDirty || checked.text === state.draft} variant="secondary" onClick={() => { dispatch({ type: "candidate", text: checked.text, source: "sample" }); reportSuccess("候选说明已放入草稿，请核对后应用。") }}>使用候选说明<ArrowRight aria-hidden="true" /></Button></ObjectCardActions>
+          <ObjectCardActions><Button disabled={!draftDirty || !state.draft.trim()} onClick={() => { dispatch({ type: "apply" }); reportSuccess("修改已应用，需重新复核。") }}>应用修改</Button>{draftDirty && <Button variant="ghost" onClick={() => { dispatch({ type: "discard" }); reportSuccess("已取消草稿修改，复核状态保持不变。") }}>取消修改</Button>}</ObjectCardActions>
           <div className="openui-applied"><h3>已应用内容</h3><p>{state.record.text}</p><span className="openui-helper">{state.record.source === "model" ? "AI 来源" : "固定样例来源"}{state.record.edited ? " · 人工调整" : ""} · {state.record.reviewed ? "已人工复核" : "待人工复核"}</span></div>
-          <ObjectCardActions><Button variant="secondary" disabled={draftDirty} onClick={() => { dispatch({ type: "review" }); setNotice(state.record.reviewed ? "已取消复核标记。" : "当前应用内容已标记复核。") }}>{state.record.reviewed ? "取消复核" : "标记已复核"}</Button><Button variant="ghost" disabled={!state.previous || draftDirty} onClick={() => { dispatch({ type: "undo" }); setNotice("已恢复上一份应用内容和复核状态。") }}>撤回应用</Button></ObjectCardActions>
+          <ObjectCardActions><Button variant="secondary" disabled={draftDirty} onClick={() => { dispatch({ type: "review" }); reportSuccess(state.record.reviewed ? "已取消复核标记。" : "当前应用内容已标记复核。") }}>{state.record.reviewed ? "取消复核" : "标记已复核"}</Button><Button variant="ghost" disabled={!state.previous || draftDirty} onClick={() => { dispatch({ type: "undo" }); reportSuccess("已恢复上一份应用内容和复核状态。") }}>撤回应用</Button></ObjectCardActions>
           <p className="openui-helper">本页为交互试点，操作仅在本次页面中保留。</p>
         </ObjectCard>
       </aside>
