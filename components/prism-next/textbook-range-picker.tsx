@@ -35,8 +35,8 @@ function countLabel(textbooks: TextbookDefinition[], selections: DirectorySelect
   return `${courses} 节课程 · ${knowledge} 个知识点`
 }
 
-export function TextbookRangePicker({ textbooks, selections, onSelectionsChange }: {
-  textbooks: TextbookDefinition[]; selections: DirectorySelections; onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
+export function TextbookRangePicker({ textbooks, selections, onSelectionsChange, compactTrigger = false, triggerLabel = "选择范围" }: {
+  textbooks: TextbookDefinition[]; selections: DirectorySelections; onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>; compactTrigger?: boolean; triggerLabel?: string
 }) {
   const controlId = useId()
   const [open, setOpen] = useState(false)
@@ -74,7 +74,7 @@ export function TextbookRangePicker({ textbooks, selections, onSelectionsChange 
   const hasApplied = selectionGroups(textbooks, selections).length > 0
   return <div className="min-w-0" data-range-picker>
     <Dialog open={open} onOpenChange={next => { if (next) initialize(); setOpen(next) }}>
-      <div className="flex flex-wrap items-end gap-3">
+      {compactTrigger ? <DialogTrigger ref={triggerRef} render={<Button variant="outline" size="sm" />} onClick={event => { returnFocus.current = event.currentTarget }}><ListChecks />{triggerLabel}</DialogTrigger> : <><div className="flex flex-wrap items-end gap-3">
         <div className="w-full max-w-72"><Label htmlFor={`${controlId}-book`}>教材</Label><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>
         <div><Label className="mb-2 block">选择内容</Label><Tabs value={kind} onValueChange={value => setKind(value as DirectoryKind)}><TabsList aria-label="选择的目录类型">{kinds.map(type => <TabsTab value={type} key={type}>{kindName(type)}</TabsTab>)}</TabsList></Tabs></div>
         <DialogTrigger ref={triggerRef} render={<Button variant="outline" />} onClick={event => { returnFocus.current = event.currentTarget }}><ListChecks />选择范围</DialogTrigger>
@@ -83,7 +83,7 @@ export function TextbookRangePicker({ textbooks, selections, onSelectionsChange 
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><div><h3 className="text-sm font-semibold">已应用范围</h3><p className="mt-1 text-sm text-muted-foreground" data-applied-count>{countLabel(textbooks, selections)}</p></div>{hasApplied && <Button size="sm" variant="ghost" onClick={event => launch("selected", event.currentTarget)}>查看全部与调整</Button>}</div>
         {hasApplied ? <SelectionSummary textbooks={textbooks} selections={selections} compact onRemove={removeApplied} onAdjust={(context, source) => launch("browse", source, context)} onShowAll={source => launch("selected", source)} /> : <p className="rounded-lg bg-muted/50 px-4 py-5 text-sm leading-6 text-muted-foreground">尚未选择范围。选择后，这里会保留具体名称和来源，方便随时调整。</p>}
         <div className="mt-2 flex min-h-7 items-center gap-2 text-sm text-muted-foreground" role="status">{status}{undo && <Button size="sm" variant="ghost" onClick={() => { onSelectionsChange(previous => ({ ...previous, [undo.scope]: [...new Set([...(previous[undo.scope] ?? []), ...undo.ids])] })); setUndo(null); setStatus("已恢复移除的内容。") }}>撤销</Button>}</div>
-      </section>
+      </section></>}
       <DialogPopup className="max-w-4xl h-[min(45rem,calc(100dvh-3rem))]" closeProps={{ "aria-label": "取消并关闭选择器" }} finalFocus={() => returnFocus.current?.isConnected ? returnFocus.current : triggerRef.current}>
         <DialogHeader className="shrink-0 pb-4"><DialogTitle>选择课程与知识点</DialogTitle><DialogDescription>跨教材保留选择，应用后更新页面范围。</DialogDescription></DialogHeader>
         <div className="flex min-h-0 flex-1 flex-col px-4 sm:px-6">
