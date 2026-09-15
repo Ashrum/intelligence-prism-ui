@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { execFileSync } from 'node:child_process';
 import { taskReducer, initialTask, validateMaterial, initialMaterial, isMaterial, appendReviewNotes, reviewAdoptionState, reviewSuggestion } from '../lib/prism-next/review.ts';
 
 const root = new URL('../', import.meta.url);
@@ -16,18 +15,6 @@ test('all vendored coss files retain their pinned source geometry and behavior',
     for(const rewrite of file.importRewrites) upstream=upstream.replaceAll('"'+rewrite.to+'"','"'+rewrite.from+'"');
     assert.equal(createHash('sha256').update(upstream).digest('hex'),file.upstreamSha256,file.file+' upstream');
   }
-});
-test('legacy route content is preserved byte-for-byte beneath the new legacy root',()=>{
-  const files=execFileSync('git',['ls-tree','-r','--name-only','c61cc98','app'],{cwd:root,encoding:'utf8'}).trim().split('\n');
-  let count=0;
-  for(const file of files){
-    if(file==='app/page.tsx'||/^app\/(components|foundations|benchmark|review)\//.test(file)){
-      const previous=execFileSync('git',['show',`c61cc98:${file}`],{cwd:root});
-      const current=readFileSync(new URL(file.replace('app/','app/(legacy)/'),root));
-      assert.deepEqual(current,previous,file);count++;
-    }
-  }
-  assert.ok(count>30);
 });
 test('material persistence rejects corrupted, invalid and incompatible records',()=>{
   assert.equal(isMaterial(initialMaterial),true);

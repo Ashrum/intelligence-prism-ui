@@ -36,6 +36,6 @@ export function CatalogOverview() {
       </section>
     })}
     {count===0&&<div className="py-12 text-center"><p className="mb-4 text-muted-foreground">没有匹配的组件。</p><Button variant="outline" onClick={()=>setQuery('')}>清除搜索</Button></div>}
-    <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-sm text-muted-foreground"><p>coss 原始组件 · 系统字体 · 清晰的数学排版</p><a href="/" className="prism-link">查看已过期的旧版与评审记录 →</a></footer>
+    <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-sm text-muted-foreground"><p>coss 原始组件 · 系统字体 · 清晰的数学排版</p></footer>
   </div>
 }

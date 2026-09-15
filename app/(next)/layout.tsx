@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Providers } from "@/components/prism-next/providers"
 import { Shell } from "@/components/prism-next/shell"
-import "./theme.css"
+import "./next/theme.css"
 
 export const metadata:Metadata = {
   title:{default:"智能曜彩 · coss 组件库",template:"%s｜智能曜彩 v1"},
