@@ -1,4 +1,4 @@
-export const DESIGN_VERSION = "1.7.0"
+export const DESIGN_VERSION = "1.7.1"
 export const COSS_COMMIT = "e937becd2d5ffb5c621eed6f8b1f223cbb6051e7"
 export const themeOptions = [
   { value: "light", label: "浅色" },

@@ -288,40 +288,26 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
   .question-print-sheet h4 { break-after:avoid; }
 }
 
-/* Companion work areas stay in document flow and never cover the active task. */
-.q-question-workspace { container-type:inline-size; container-name:question-space; }
-.q-workbench { scroll-margin-top:6rem; container-type:inline-size; container-name:question-workbench; display:grid; gap:1.5rem; align-items:start; }
-.q-work-panel { min-width:0; display:flex; flex-direction:column; background:var(--muted); color:var(--foreground); border:1px solid var(--border); border-radius:var(--radius-lg); }
-.q-workbench[data-basket] { grid-template-columns:minmax(0,1fr) 19rem; }
-.q-basket-panel { position:sticky; top:5rem; max-height:var(--q-panel-room,calc(100dvh - 6rem)); }
-.q-print-workbench { display:grid; gap:1.5rem; min-width:0; align-items:start; }
-.q-print-workbench[data-settings] { grid-template-columns:minmax(0,1fr) 18rem; }
-.q-print-workbench > .q-work-panel { grid-column:2; grid-row:1; max-height:var(--q-panel-room,calc(100dvh - 12rem)); }
-.q-print-canvas { grid-column:1; grid-row:1; }
+/* Existing coss Sheet, scoped non-modal adaptation for the two question tools. */
+.q-workbench { scroll-margin-top:6rem; min-width:0; }
+.q-task-sheet-portal > [data-slot="sheet-backdrop"] { display:none; }
+.q-task-sheet-portal > [data-slot="sheet-viewport"] { pointer-events:none; }
+.q-task-sheet { pointer-events:auto; }
+@media (min-width:80rem) {
+  body:has(.q-task-sheet[data-open]) [data-slot="sidebar-inset"] { margin-right:28rem; }
+}
+.q-print-workbench { min-width:0; }
 .q-print-workbench .q-paper-scroll { max-height:var(--q-preview-room,calc(100dvh - 17rem)); min-height:17.5rem; background:var(--muted); border-radius:var(--radius-lg); padding:12px; }
 .q-basket-item[data-highlight],.prism-question[data-highlight] { outline:2px solid var(--ring); outline-offset:2px; }
 .q-print-unit[data-highlight] { outline:2px solid #339ff2; outline-offset:2px; background:#339ff20a; }
 .prism-question { scroll-margin-top:6rem; }
-@container question-workbench (max-width:51.99rem) {
-  .q-workbench-main { grid-column:1; }
-  .q-print-workbench[data-settings] { grid-template-columns:minmax(0,1fr); }
-  .q-print-workbench > .q-work-panel { grid-column:1; grid-row:1; max-height:17rem; }
-  .q-print-workbench[data-settings] .q-print-canvas { grid-row:2; }
-}
-@container question-space (max-width:51.99rem) {
-  .q-workbench[data-basket] { grid-template-columns:minmax(0,1fr); }
-  .q-workbench[data-basket]:not([data-basket-preview]) > .q-workbench-main { display:none; }
-  .q-workbench[data-basket-preview] > .q-basket-panel { display:none; }
-  .q-basket-panel { position:static; max-height:none; }
-}
+.q-basket-panel [data-slot="sheet-footer"] { display:grid; grid-template-columns:1fr 1fr; }
+.q-basket-panel [data-slot="sheet-footer"] > button:first-child { grid-column:1/-1; justify-self:start; }
 @media print {
   .q-workbench,.q-workbench-main,.q-scene-content,.q-print-workbench,.q-print-canvas { display:block!important; width:auto!important; margin:0!important; padding:0!important; }
   .q-scene-content[hidden] { display:none!important; }
-  .q-work-panel,.q-basket-preview { display:none!important; }
+  .q-task-sheet-portal,.q-basket-preview { display:none!important; }
   .q-print-workbench .q-paper-scroll { min-height:0!important; max-height:none!important; border-radius:0; }
   .q-paper-pages { zoom:1!important; }
   .q-print-unit[data-highlight] { outline:none; background:transparent; }
 }
-
-.q-basket-panel > footer { display:grid; grid-template-columns:1fr 1fr; }
-.q-basket-panel > footer > button:first-child { grid-column:1/-1; justify-self:start; }
