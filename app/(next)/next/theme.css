@@ -202,3 +202,17 @@
 .prism-skip:focus { transform:translateY(0); }
 @media(max-width:767px) { .prism-content { padding:1.25rem; } .prism-demo { padding:1.25rem; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
+
+/* Question composition: content width chooses the option layout. */
+.prism-question { container-type:inline-size; }
+.prism-question-copy { overflow-wrap:anywhere; }
+.prism-question-copy .prism-math { line-height:normal; }
+.prism-question-options { grid-template-columns:minmax(0,1fr); }
+@container (min-width:30rem) {
+  .prism-question-options-2, .prism-question-options-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@container (min-width:48rem) {
+  .prism-question-options-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+.prism-question-equation { max-width:100%; overflow-x:auto; padding:1rem .25rem; color:var(--foreground); }
+.prism-question-equation math { font-size:1.2rem; }

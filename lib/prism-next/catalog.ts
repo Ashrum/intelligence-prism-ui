@@ -1,4 +1,4 @@
-export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string }
+export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string; sourceLabel?:string; review?:"approved" }
 export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
@@ -36,9 +36,10 @@ export const componentGroups:ComponentGroup[] = [
     item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
     item("pagination","Pagination 分页","在明确的数据页之间移动。"),
     item("sidebar","Sidebar 侧栏","桌面导航、折叠与移动端抽屉。"),
-    { ...item("tree","Tree 教材目录","教材切换、课程与知识点树、搜索及父子联动多选。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
+    { ...item("tree","Tree 教材目录","完整目录树与弹出选择器均已通过；两种形式一起保留。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree", review:"approved" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    { ...item("question","Question 题目","单选、多选、填空与解答；列表选题、展开阅读及答案解析。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     item("avatar","Avatar 头像","图像缺失时显示文字回退。"),
     item("badge","Badge 标签","以文字与适量颜色表达状态。"),
     item("card","Card 卡片","组织同一对象的内容与操作。"),
