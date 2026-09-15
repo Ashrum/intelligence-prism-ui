@@ -1,4 +1,4 @@
-export type ComponentEntry = { id:string; title:string; summary:string }
+export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern" }
 export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
@@ -29,6 +29,7 @@ export const componentGroups:ComponentGroup[] = [
     item("slider","Slider 滑杆","在数值范围内连续调整。"),
     item("otp-field","OTP Field 验证码","输入并粘贴连续的验证码。"),
     item("calendar","Calendar 日历","选择日期，支持月份导航。"),
+    { ...item("date-picker","Date Picker 日期选择","单日、日期范围与快捷日期；由日历和弹层组合。"), kind:"pattern" },
   ]},
   { id:"navigation",title:"导航",items:[
     item("breadcrumb","Breadcrumb 面包屑","表达当前位置和上级路径。"),
