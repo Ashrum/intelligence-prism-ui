@@ -13,7 +13,7 @@ export function CatalogOverview() {
   const [query,setQuery]=useState('')
   const match=(text:string)=>text.toLowerCase().includes(query.trim().toLowerCase())
   const count=components.filter(item=>match(item.title+' '+item.summary)).length
-  return <>
+  return <div className="prism-content">
     <div className="prism-page-heading flex flex-wrap items-start justify-between gap-5">
       <div><h1>组件总览</h1><p>从可操作的组件开始，查看它们在三套主题中的表现。</p></div>
       <div className="flex gap-2"><Button variant="outline" render={<Link href="/next/reading"/>}><BookOpen/>材料研读</Button><Button render={<Link href="/next/agent"/>}><MessageSquare/>Agent 工作区</Button></div>
@@ -37,5 +37,5 @@ export function CatalogOverview() {
     })}
     {count===0&&<div className="py-12 text-center"><p className="mb-4 text-muted-foreground">没有匹配的组件。</p><Button variant="outline" onClick={()=>setQuery('')}>清除搜索</Button></div>}
     <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-sm text-muted-foreground"><p>coss 原始组件 · 系统字体 · 清晰的数学排版</p><a href="/" className="prism-link">查看已过期的旧版与评审记录 →</a></footer>
-  </>
+  </div>
 }
