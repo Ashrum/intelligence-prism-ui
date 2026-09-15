@@ -20,7 +20,7 @@ export function CatalogOverview() {
     </div>
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div className="w-full max-w-sm"><Label htmlFor="component-search">查找组件</Label><Input id="component-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="名称或用途，例如：选择、表单、Dialog"/></div>
-      <p className="text-sm text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项`:`${components.filter(item=>item.kind!=="pattern").length} 项基础组件 · ${components.filter(item=>item.kind==="pattern").length} 项组合 · 3 套主题`}</p>
+      <p className="text-sm text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项`:`${components.filter(item=>!item.kind).length} 项基础组件 · ${components.filter(item=>item.kind==="pattern").length} 项组合 · ${components.filter(item=>item.kind==="extension").length} 项扩展 · 3 套主题`}</p>
     </div>
     {componentGroups.map(group=>{
       const items=group.items.filter(item=>match(item.title+' '+item.summary))
