@@ -13,6 +13,7 @@ declare module "react" {
       msup: MathAttributes
       mfrac: MathAttributes
       msqrt: MathAttributes
+      mtext: MathAttributes
     }
   }
 }
