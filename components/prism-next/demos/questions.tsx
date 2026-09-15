@@ -37,6 +37,9 @@ const ordered = (draft:QuestionDraft) => draft.groups.flatMap(group=>draft.entri
 const draftName = (kind:DraftKind) => kind==="paper"?"本卷":"本练习"
 const emptyDetail:QuestionDetailState = {open:false,tab:"answer"}
 
+type PrintSource = DraftKind | "sample"
+const samplePrintDraft:QuestionDraft = {...createQuestionWorkspace().paper,title:"数学综合示例试卷",entries:initialQuestions.map(makeEntry)}
+
 type Report = {category:string;message:string;saved?:boolean}
 
 export function QuestionsDemo() {
@@ -61,8 +64,8 @@ export function QuestionsDemo() {
   const [notice,setNotice]=useState(""),[dismissed,setDismissed]=useState<string[]>([]),[reviewVisited,setReviewVisited]=useState(false)
   const [audit,setAudit]=useState<Record<string,QuestionAvailability>>({}),[editingMetadataId,setEditingMetadataId]=useState<string|null>(null)
   const [movingGroup,setMovingGroup]=useState<{id:string;target:DraftKind}|null>(null)
-  const [printPreferences,setPrintPreferences]=useState<Record<DraftKind,PrintPreferences>>(()=>({paper:createPrintPreferences(),practice:createPrintPreferences()}))
-  const [settings,setSettings]=useState<DraftKind|null>(null),[printKind,setPrintKind]=useState<DraftKind>("paper")
+  const [printPreferences,setPrintPreferences]=useState<Record<PrintSource,PrintPreferences>>(()=>({paper:createPrintPreferences(),practice:createPrintPreferences(),sample:createPrintPreferences()}))
+  const [settings,setSettings]=useState<DraftKind|null>(null),[printKind,setPrintKind]=useState<PrintSource>("sample")
   const [dragId,setDragId]=useState<string|null>(null), copyIndex=useRef(0)
   useEffect(()=>{if(scene!=="reading")return;const restore=(event:KeyboardEvent)=>{if(event.key==="Escape"){setScene(returnScene)}};window.addEventListener("keydown",restore);return()=>window.removeEventListener("keydown",restore)},[scene,returnScene])
   const current=questions.find(question=>question.id===currentId)!
@@ -70,6 +73,9 @@ export function QuestionsDemo() {
   const statusName=(id:string)=>statusOptions.find(option=>option.value===(audit[id]??"ready"))!.label
   const activeKind:DraftKind=scene==="practice"?"practice":"paper"
   const activeDraft=workspace[activeKind]
+  const printDraft=printKind==="sample"?samplePrintDraft:workspace[printKind]
+  const printQuestions=printKind==="sample"?initialQuestions:questions
+  const printMetadata=printKind==="sample"?questionMetadata:metadata
   const rangeIds=Object.values(range).flat()
   const visible=questions.filter(question=>(kind==="全部题型"||question.kind===kind)&&(collection!=="favorite"||favorites.includes(question.id))&&(collection!=="basket"||workspace.basket.includes(question.id))&&`${question.id} ${question.title} ${question.kind} ${metadata[question.id].knowledge.join(" ")}`.toLowerCase().includes(search.trim().toLowerCase())&&(!rangeIds.length||Object.values(links[question.id]??{}).flat().some(id=>rangeIds.includes(id))))
   const visibleEligible=visible.filter(question=>eligible(question.id))
@@ -135,7 +141,7 @@ export function QuestionsDemo() {
 
     {scene==="recommend"&&<div className="space-y-5"><p className="text-sm leading-7 text-muted-foreground">固定推荐示例：围绕二次函数，从基础判断到情境建模。推荐依据来自知识点与方法，不使用虚构相似度，也不调用生成服务。</p>{questions.filter(question=>[judgmentQuestion.id,compositeQuestion.id].includes(question.id)&&!dismissed.includes(question.id)).map(question=><div key={question.id} className="space-y-3"><p className="text-sm"><span className="font-medium">推荐理由：</span>{question.kind==="判断题"?"检查对称轴、最值与不等式三个基础概念。":"检验建模、代入求值与定义域意识。"}</p>{question.kind==="复合题"&&<p className="text-sm text-muted-foreground">选用提醒：共享表格与三个小问需一同保留。</p>}<QuestionCard {...cardProps(question)} compact secondaryActions={secondary(question)} actions={<>{basketAction(question)}<ToolbarButton render={<Button variant="ghost" size="sm"/>} onClick={()=>setDismissed(previous=>[...previous,question.id])}>忽略</ToolbarButton></>}/></div>)}{dismissed.length>0&&<Button variant="outline" onClick={()=>setDismissed([])}>恢复已忽略建议</Button>}</div>}
 
-    {scene==="print"&&<div className="space-y-5"><div className="q-no-print"><QuestionSelect label="预览草稿" value={printKind} items={[{value:"paper",label:"当前试卷"},{value:"practice",label:"当前练习"}]} onChange={value=>setPrintKind(value as DraftKind)}/></div><QuestionPrint settingsOpen={panel==="print"} onSettingsChange={open=>{setBasketPreviewId(null);setPanel(open?"print":null)}} preferences={printPreferences[printKind]} onPreferencesChange={update=>setPrintPreferences(previous=>({...previous,[printKind]:update(previous[printKind])}))} entries={ordered(workspace[printKind])} questions={questions} versions={Object.fromEntries(Object.entries(metadata).map(([id,item])=>[id,item.version]))} blocked={workspace[printKind].entries.some(entry=>!eligible(entry.id))} title={workspace[printKind].title} showPoints={workspace[printKind].showPoints} description={printKind==="practice"?workspace.practice.goal:undefined} minutes={workspace[printKind].minutes}/></div>}
+    {scene==="print"&&<div className="space-y-5"><div className="q-no-print flex flex-wrap items-center gap-3"><QuestionSelect label="预览内容" value={printKind} items={[{value:"sample",label:"示例试卷 · 6 题"},{value:"paper",label:`当前试卷 · ${workspace.paper.entries.length} 题`},{value:"practice",label:`当前练习 · ${workspace.practice.entries.length} 题`}]} onChange={value=>setPrintKind(value as PrintSource)}/>{printKind==="sample"&&<span className="text-sm text-muted-foreground">示例内容独立于试题篮、试卷和练习草稿。</span>}</div><QuestionPrint settingsOpen={panel==="print"} onSettingsChange={open=>{setBasketPreviewId(null);setPanel(open?"print":null)}} preferences={printPreferences[printKind]} onPreferencesChange={update=>setPrintPreferences(previous=>({...previous,[printKind]:update(previous[printKind])}))} entries={ordered(printDraft)} questions={printQuestions} versions={Object.fromEntries(Object.entries(printMetadata).map(([id,item])=>[id,item.version]))} blocked={printKind!=="sample"&&printDraft.entries.some(entry=>!eligible(entry.id))} title={printDraft.title} showPoints={printDraft.showPoints} description={printKind==="practice"?printDraft.goal:undefined} minutes={printDraft.minutes} emptyActions={<><Button variant="outline" onClick={()=>{setPanel(null);navigate(printKind==="practice"?"practice":"paper")}}>前往{printKind==="practice"?"组练习":"组卷"}</Button><Button onClick={()=>setPrintKind("sample")}>查看示例试卷</Button></>}/></div>}
     {reviewVisited&&<div hidden={scene!=="review"}><QuestionReview/></div>}
     {scene==="audit"&&<div className="space-y-5"><p className="text-sm text-muted-foreground">维护修改保留在本页演示中，刷新后重置。</p>{questions.map(question=><QuestionCard key={question.id} {...cardProps(question)} status={membership(question)} secondaryActions={secondary(question)}/>)}</div>}
 
