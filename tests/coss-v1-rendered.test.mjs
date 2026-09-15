@@ -14,17 +14,20 @@ test('particle additions render in their existing categories and expose the date
     assert.match(html,/prism-content/);
   }
 });
-test('question review renders four readable types without answer-input controls',async()=>{
+test('question review renders six readable types without answer-input controls',async()=>{
   const html=await(await fetchPage('/next/components/question')).text();
-  for(const id of ['Q-M-001','Q-M-002','Q-M-003','Q-M-004']) assert.ok(html.includes(`data-question-id="${id}"`),id);
-  for(const label of ['单选题','多选题','填空题','解答题','题目选项（只读）','题目小问']) assert.ok(html.includes(label),label);
-  for(const n of [1,2,3,4]) assert.ok(html.includes(`查看第${n}题答案与解析`),`第${n}题答案入口`);
+  for(const id of ['Q-M-001','Q-M-002','Q-M-003','Q-M-004','Q-M-005','Q-M-006']) assert.ok(html.includes(`data-question-id="${id}"`),id);
+  for(const label of ['单选题','多选题','填空题','判断题','解答题','复合题','题目选项（只读）','题目小问']) assert.ok(html.includes(label),label);
+  for(const n of [1,2,3,4,5,6]) assert.ok(html.includes(`查看第${n}题答案与解析`),`第${n}题答案入口`);
   assert.doesNotMatch(html,/aria-label="第1题参考答案"/);
   assert.match(html,/<mfrac>/);
   assert.match(html,/<msqrt>/);
   assert.match(html,/<mtext>/);
   assert.match(html,/第1空，待填写/);
   assert.match(html,/M 为示意位置/);
+  assert.match(html,/<table/);
+  assert.match(html,/批量勾选/);
+  assert.match(html,/试题篮/);
   assert.doesNotMatch(html,/role="radio"/);
   assert.doesNotMatch(html,/<textarea/);
   const tree=await(await fetchPage('/next/components/tree')).text();

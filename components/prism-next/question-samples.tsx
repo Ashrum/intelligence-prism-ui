@@ -9,7 +9,7 @@ const blank = (number: string) => <span role="img" aria-label={`第${number}空�
 
 export const questionSamples: QuestionRecord[] = [
   {
-    id: "Q-M-001", title: "二次根式的化简", kind: "单选题", points: 5,
+    id: "Q-M-001", title: "二次根式的化简", kind: "单选题", response: "single", points: 5,
     stem: <p>化简 <M label="根号三加一除以根号三减一"><mfrac><mrow>{root3}<mo>+</mo><mn>1</mn></mrow><mrow>{root3}<mo>−</mo><mn>1</mn></mrow></mfrac></M>，所得结果是（　　）。</p>,
     optionColumns: 4,
     options: [
@@ -22,7 +22,7 @@ export const questionSamples: QuestionRecord[] = [
     explanation: <><p>分子、分母同时乘以分母的共轭式。分母化为 2，分子展开后即可约分。</p><M block label="原式等于根号三加一的平方除以二，等于二加根号三"><mfrac><mrow>{root3}<mo>+</mo><mn>1</mn></mrow><mrow>{root3}<mo>−</mo><mn>1</mn></mrow></mfrac><mo>=</mo><mfrac><msup><mrow><mo>(</mo>{root3}<mo>+</mo><mn>1</mn><mo>)</mo></mrow><mn>2</mn></msup><mn>2</mn></mfrac><mo>=</mo><mn>2</mn><mo>+</mo>{root3}</M></>,
   },
   {
-    id: "Q-M-002", title: "二次函数的性质", kind: "多选题", points: 6,
+    id: "Q-M-002", title: "二次函数的性质", kind: "多选题", response: "multiple", points: 6,
     stem: <p>已知函数 <M label="f从实数集映射到实数集"><mi>f</mi><mo>:</mo><mi>ℝ</mi><mo>→</mo><mi>ℝ</mi></M>，<M label="f(x)等于x平方减二x减三">{fx}<mo>=</mo>{fExpression}</M>，下列说法正确的有（　　）。</p>,
     optionColumns: 1,
     options: [
@@ -36,13 +36,13 @@ export const questionSamples: QuestionRecord[] = [
     initialLinks: { "math-1:course": ["math-1:course:c221"], "math-1:knowledge": ["math-1:knowledge:k221", "math-1:knowledge:k223"] },
   },
   {
-    id: "Q-M-003", title: "扇形的弧长与面积", kind: "填空题", points: 6,
+    id: "Q-M-003", title: "扇形的弧长与面积", kind: "填空题", response: "fill", points: 6,
     stem: <><p>已知扇形的半径为 4 cm，圆心角为 <M label="三分之π弧度"><mfrac><mi>π</mi><mn>3</mn></mfrac></M>（弧度）。</p><p className="leading-[2.7]">该扇形的弧长为{blank("1")}cm，面积为{blank("2")}<M label="平方厘米"><msup><mtext>cm</mtext><mn>2</mn></msup></M>。</p></>,
     answer: <p>第（1）空：<M label="三分之四π"><mfrac><mrow><mn>4</mn><mi>π</mi></mrow><mn>3</mn></mfrac></M>；第（2）空：<M label="三分之八π"><mfrac><mrow><mn>8</mn><mi>π</mi></mrow><mn>3</mn></mfrac></M>。</p>,
     explanation: <><p>弧度制下，弧长等于半径乘圆心角，扇形面积等于半径平方与圆心角乘积的一半。</p><M block label="弧长等于四乘以三分之π，等于三分之四π厘米"><mi>l</mi><mo>=</mo><mi>r</mi><mi>θ</mi><mo>=</mo><mn>4</mn><mo>×</mo><mfrac><mi>π</mi><mn>3</mn></mfrac><mo>=</mo><mfrac><mrow><mn>4</mn><mi>π</mi></mrow><mn>3</mn></mfrac><mtext> </mtext><mtext>cm</mtext></M><M block label="面积等于二分之一乘十六乘三分之π，等于三分之八π平方厘米"><mi>S</mi><mo>=</mo>{fraction("1","2")}<msup><mi>r</mi><mn>2</mn></msup><mi>θ</mi><mo>=</mo><mfrac><mrow><mn>8</mn><mi>π</mi></mrow><mn>3</mn></mfrac><mtext> </mtext><msup><mtext>cm</mtext><mn>2</mn></msup></M></>,
   },
   {
-    id: "Q-M-004", title: "动点与矩形面积", kind: "解答题", points: 12,
+    id: "Q-M-004", title: "动点与矩形面积", kind: "解答题", response: "long", points: 12,
     stem: <><p>在平面直角坐标系中，O 为原点，A(6, 0)，B(0, 4)。M 为线段 AB 上除端点外的动点，N、P 分别为 M 在 x、y 轴上的垂足，构成矩形 ONMP。</p><p>设 ON = x，且 0 &lt; x &lt; 6。根据上述条件，回答下列问题。</p></>,
     figure: <QuestionFigure />,
     parts: [

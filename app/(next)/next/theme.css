@@ -216,3 +216,32 @@
 }
 .prism-question-equation { max-width:100%; overflow-x:auto; padding:1rem .25rem; color:var(--foreground); }
 .prism-question-equation math { font-size:1.2rem; }
+
+/* The paper surface carries its own foreground/background pair in every theme. */
+.question-print-sheet { --background: #fff; --foreground: #1f2328; --heading: #1f2328; --muted-foreground: #4b5563; --border: #d1d5db; background: #fff; color: #1f2328; }
+@media print {
+  html:has(.question-print-preview), body:has(.question-print-preview) { background: #fff !important; color: #000 !important; }
+  body:has(.question-print-preview) [data-slot="sidebar"],
+  body:has(.question-print-preview) [data-slot="sidebar-gap"],
+  body:has(.question-print-preview) .prism-skip,
+  body:has(.question-print-preview) [data-slot="sidebar-inset"] > header,
+  body:has(.question-print-preview) .prism-content > :not(.prism-demo-section),
+  body:has(.question-print-preview) .q-workspace-controls,
+  body:has(.question-print-preview) .q-no-print,
+  body:has(.question-print-preview) [data-slot="dialog-portal"],
+  body:has(.question-print-preview) [data-slot="sheet-portal"] { display: none !important; }
+  body:has(.question-print-preview) .prism-root,
+  body:has(.question-print-preview) [data-slot="sidebar-wrapper"],
+  body:has(.question-print-preview) [data-slot="sidebar-inset"],
+  body:has(.question-print-preview) #prism-main,
+  body:has(.question-print-preview) .prism-content { display: block !important; width: 100% !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
+  .question-print-preview, .question-print-sheet, .prism-demo-section:has(.question-print-preview) { margin: 0 !important; padding: 0 !important; max-width: none !important; box-shadow: none !important; }
+  .question-print-sheet { --foreground:#000; --heading:#000; --muted-foreground:#333; color:#000; }
+  .question-print-sheet h4, .question-print-sheet tr { break-inside: avoid; }
+  .question-print-sheet h4 { break-after: avoid; }
+  .question-print-sheet figure { break-inside: avoid; }
+  .question-print-sheet figcaption button { display:none !important; }
+  .question-print-sheet .prism-question-equation { overflow:visible; }
+  .question-answer-space { break-inside:avoid; }
+  @page { size: A4; margin: 16mm; }
+}

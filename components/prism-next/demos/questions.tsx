@@ -1,100 +1,94 @@
 "use client"
 
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react"
-import { ArrowLeft, ArrowRight, BookOpen, Check, ChevronDown, ListChecks, X } from "lucide-react"
+import { useState, type Dispatch, type SetStateAction } from "react"
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, BookOpen, Check, Plus, X, ListChecks, Replace, RotateCcw } from "lucide-react"
 import { Button } from "@/components/coss/button"
+import { Input } from "@/components/coss/input"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Label } from "@/components/coss/label"
 import { Badge } from "@/components/coss/badge"
-import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
-import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from "@/components/coss/collapsible"
-import { Popover, PopoverTrigger, PopoverPopup, PopoverTitle } from "@/components/coss/popover"
-import { QuestionContent, type QuestionRecord } from "@/components/prism-next/question-content"
-import { questionSamples } from "@/components/prism-next/question-samples"
-import { TextbookRangePicker } from "@/components/prism-next/textbook-range-picker"
-import type { DirectorySelections } from "@/components/prism-next/textbook-directory"
-import { textbooks } from "@/lib/prism-next/textbook-directory"
-import { cn } from "@/lib/utils"
+import { Label } from "@/components/coss/label"
+import { Textarea } from "@/components/coss/textarea"
+import { Sheet, SheetPopup, SheetHeader, SheetTitle, SheetDescription, SheetPanel, SheetFooter } from "@/components/coss/sheet"
+import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogPanel } from "@/components/coss/dialog"
+import { QuestionCard } from "../question-card"
+import { QuestionSelect, PointsField } from "../question-controls"
+import { QuestionReview } from "../question-review"
+import { QuestionPrint } from "../question-print"
+import { questionSamples } from "../question-samples"
+import { judgmentQuestion, compositeQuestion } from "../question-composite-samples"
+import type { QuestionRecord } from "../question-content"
+import type { DirectorySelections } from "../textbook-directory"
+import { addToPaper, moveInPaper, replaceInPaper, entryPoints, type PaperEntry, type QuestionAvailability } from "@/lib/prism-next/question-workspace"
 
-type Links = Record<string, DirectorySelections>
+const questions = [...questionSamples, judgmentQuestion, compositeQuestion]
+const sceneOptions = [{value:"library",label:"题库选题"},{value:"paper",label:"试卷编排"},{value:"reading",label:"研读讲解"},{value:"recommend",label:"推荐与替题"},{value:"print",label:"纸面预览"},{value:"review",label:"作答与复核"},{value:"audit",label:"题目审核"}]
+const kindOptions = ["全部题型","单选题","多选题","填空题","判断题","解答题","复合题"].map(value=>({value,label:value}))
+const statusOptions = [{value:"ready",label:"可用"},{value:"review",label:"待审核"},{value:"paused",label:"暂停使用"}]
+const makeEntry = (question:QuestionRecord):PaperEntry => ({id:question.id,points:question.points,partPoints:question.parts?.every(part=>part.points!==undefined) ? Object.fromEntries(question.parts.map(part=>[part.id,part.points!])) : undefined})
 
 export function QuestionsDemo() {
-  const [view, setView] = useState<"list" | "reading">("list")
-  const [readingId, setReadingId] = useState(questionSamples[0].id)
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
-  const [answers, setAnswers] = useState<Record<string, boolean>>({})
-  const [links, setLinks] = useState<Links>(() => Object.fromEntries(questionSamples.map(question => [question.id, question.initialLinks ?? {}])))
-  const readingHeader = useRef<HTMLHeadingElement>(null)
-  const readingButtons = useRef<Record<string, HTMLButtonElement | null>>({})
-  const pendingFocus = useRef<"reading" | "list" | null>(null)
-  const index = questionSamples.findIndex(question => question.id === readingId)
-  const current = questionSamples[index]
-  const selected = questionSamples.filter(question => selectedIds.includes(question.id))
-  const points = selected.reduce((sum, question) => sum + question.points, 0)
-  useEffect(() => {
-    if (!pendingFocus.current) return
-    const target = pendingFocus.current === "reading" ? readingHeader.current : readingButtons.current[readingId]
-    target?.focus({ preventScroll: true }); target?.scrollIntoView({ block: "nearest" })
-    pendingFocus.current = null
-  }, [view, readingId])
-  const select = (id: string, checked: boolean) => setSelectedIds(previous => checked ? [...new Set([...previous, id])] : previous.filter(value => value !== id))
-  function read(id: string) { pendingFocus.current = "reading"; setReadingId(id); setView("reading") }
-  function back() { pendingFocus.current = "list"; setView("list") }
-  function questionProps(question: QuestionRecord) {
-    return {
-      question,
-      number: questionSamples.indexOf(question) + 1,
-      selected: selectedIds.includes(question.id),
-      onSelectedChange: (checked: boolean) => select(question.id, checked),
-      answersOpen: !!answers[question.id],
-      onAnswersOpenChange: (open: boolean) => setAnswers(previous => ({ ...previous, [question.id]: open })),
-      links: links[question.id] ?? {},
-      onLinksChange: ((update) => setLinks(previous => ({ ...previous, [question.id]: typeof update === "function" ? update(previous[question.id] ?? {}) : update }))) as Dispatch<SetStateAction<DirectorySelections>>,
-    }
+  const [scene,setScene] = useState("library")
+  const [returnScene,setReturnScene] = useState("library")
+  const [auditDrafts,setAuditDrafts] = useState<Record<string,{status:QuestionAvailability;note:string}>>({})
+  const [currentId,setCurrentId] = useState(questions[0].id)
+  const [checked,setChecked] = useState<string[]>([])
+  const [entries,setEntries] = useState<PaperEntry[]>([])
+  const [answers,setAnswers] = useState<Record<string,boolean>>({})
+  const [links,setLinks] = useState<Record<string,DirectorySelections>>(()=>Object.fromEntries(questions.map(question=>[question.id,question.initialLinks??{}])))
+  const [search,setSearch] = useState("")
+  const [kind,setKind] = useState("全部题型")
+  const [compact,setCompact] = useState(false)
+  const [basketOpen,setBasketOpen] = useState(false)
+  const [replacement,setReplacement] = useState<string|null>(null)
+  const [removed,setRemoved] = useState<{entry:PaperEntry;index:number}|null>(null)
+  const [notice,setNotice] = useState("")
+  const [explain,setExplain] = useState(false)
+  const [dismissed,setDismissed] = useState<string[]>([])
+  const [reviewVisited,setReviewVisited] = useState(false)
+  const [audit,setAudit] = useState<Record<string,{status:QuestionAvailability;note:string}>>({})
+  const current=questions.find(question=>question.id===currentId)!
+  const eligible=(id:string)=>(audit[id]?.status??"ready")==="ready"
+  const blocked=entries.some(entry=>!eligible(entry.id))
+  const visible=questions.filter(question=>(kind==="全部题型" || question.kind===kind) && `${question.id} ${question.title} ${question.kind}`.toLowerCase().includes(search.trim().toLowerCase()))
+  const visibleEligible=visible.filter(question=>eligible(question.id))
+  const candidates=questions.filter(question=>!entries.some(entry=>entry.id===question.id) && eligible(question.id))
+  const total=entries.reduce((sum,entry)=>sum+entryPoints(entry),0)
+  function navigate(value:string) { setScene(value); if(value==="review")setReviewVisited(true);setNotice("") }
+  function join(ids:string[]) {
+    const additions=questions.filter(question=>ids.includes(question.id)&&eligible(question.id)).map(makeEntry)
+    const count=additions.filter(item=>!entries.some(entry=>entry.id===item.id)).length
+    setEntries(previous=>addToPaper(previous,additions));setNotice(count?`已加入 ${count} 题。复合题按完整题组选用。`:"这些可用题目已在试题篮中。")
   }
+  function remove(id:string) {const index=entries.findIndex(entry=>entry.id===id);if(index<0)return;setRemoved({entry:entries[index],index});setEntries(previous=>previous.filter(entry=>entry.id!==id));setNotice("已移除题目，可撤销最近一次移除。")}
+  function restore() {if(!removed)return;if(entries.some(entry=>entry.id===removed.entry.id)){setRemoved(null);setNotice("该题已重新加入，保留当前顺序与分值，不重复恢复。");return}setEntries(previous=>{if(previous.some(entry=>entry.id===removed.entry.id))return previous;const next=[...previous];next.splice(Math.min(removed.index,next.length),0,removed.entry);return next});setRemoved(null);setNotice("已恢复题目及本卷分值。")}
+  function read(id:string) {setReturnScene(scene);setCurrentId(id);navigate("reading")}
+  function cardProps(question:QuestionRecord) {
+    return {question,number:questions.indexOf(question)+1,answersOpen:!!answers[question.id],onAnswersOpenChange:(value:boolean)=>setAnswers(previous=>({...previous,[question.id]:value})),links:links[question.id],onLinksChange:((update)=>setLinks(previous=>({...previous,[question.id]:typeof update==="function"?update(previous[question.id]??{}):update}))) as Dispatch<SetStateAction<DirectorySelections>>}
+  }
+  function addButton(question:QuestionRecord) {const present=entries.some(entry=>entry.id===question.id);return <Button size="sm" variant={present?"outline":"default"} disabled={present || !eligible(question.id)} onClick={()=>join([question.id])} aria-label={`${present?"已加入":"加入"}试题篮：${question.title}`}>{present?<Check/>:<Plus/>}{present?"已加入":eligible(question.id)?"加入试题篮":statusOptions.find(option=>option.value===audit[question.id]?.status)?.label}</Button>}
+  const selectedItems=questions.filter(question=>checked.includes(question.id))
   return <section className="prism-demo-section" aria-label="题目组件评审">
-    <Tabs value={view} onValueChange={value => setView(value as "list" | "reading")} className="gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
-        <TabsList aria-label="题目呈现方式"><TabsTab value="list">列表选题</TabsTab><TabsTab value="reading">展开阅读</TabsTab></TabsList>
-        <div className="flex flex-wrap items-center gap-3"><p className="prism-numeric text-sm text-muted-foreground" role="status">已选 {selected.length} 题 · {points} 分</p><Popover><PopoverTrigger render={<Button variant="outline" size="sm" />}><ListChecks />查看已选</PopoverTrigger><PopoverPopup className="w-80"><PopoverTitle className="text-base">已选题目</PopoverTitle>{selected.length ? <ul className="mt-3 space-y-3">{selected.map(question => <li key={question.id} className="flex items-start gap-2"><div className="min-w-0 flex-1"><p className="break-words text-sm leading-6">{question.title}</p><p className="text-xs text-muted-foreground">{question.id} · {question.kind} · {question.points} 分</p></div><Button size="icon-sm" variant="ghost" aria-label={`移除已选题目${question.id}`} onClick={() => select(question.id, false)}><X /></Button></li>)}</ul> : <p className="mt-3 text-sm text-muted-foreground">还没有选题。使用题目开头的复选框选用整题。</p>}</PopoverPopup></Popover></div>
-      </div>
-      <TabsPanel value="list" className="space-y-5">
-        <p className="text-sm text-muted-foreground">共 4 道自编示例题。复选框用于选用整题，A／B／C／D 选项仅供阅读。</p>
-        <div className="space-y-5">{questionSamples.map(question => <QuestionFrame key={question.id} {...questionProps(question)} onRead={() => read(question.id)} readButtonRef={element => { readingButtons.current[question.id] = element }} />)}</div>
-      </TabsPanel>
-      <TabsPanel value="reading">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><Button variant="ghost" onClick={back}><ArrowLeft />返回列表</Button><div className="flex items-center gap-3"><Button variant="outline" size="icon" aria-label="阅读上一题" disabled={index === 0} onClick={() => read(questionSamples[index - 1].id)}><ArrowLeft /></Button><span className="prism-numeric text-sm text-muted-foreground">{index + 1} / {questionSamples.length}</span><Button variant="outline" size="icon" aria-label="阅读下一题" disabled={index === questionSamples.length - 1} onClick={() => read(questionSamples[index + 1].id)}><ArrowRight /></Button></div></div>
-        <div className="mx-auto max-w-[54rem]"><h2 ref={readingHeader} tabIndex={-1} className="mb-5 rounded-sm text-xl font-semibold text-(--heading) outline-none focus-visible:ring-2 focus-visible:ring-ring">{current.title}</h2><QuestionFrame key={current.id} {...questionProps(current)} reading /></div>
-      </TabsPanel>
-    </Tabs>
+    <div className="q-workspace-controls mb-6 space-y-4 border-b pb-5"><div className="flex flex-wrap items-center justify-between gap-3"><div className="flex flex-wrap items-center gap-3"><Label>应用场景</Label><QuestionSelect label="题目应用场景" value={scene} items={sceneOptions} onChange={navigate}/></div><Button variant="outline" onClick={()=>setBasketOpen(true)}><ListChecks/>试题篮 {entries.length} 题 · {total} 分</Button></div><p className="text-sm leading-6 text-muted-foreground">共 6 道自编题，覆盖五类作答结构与混合复合题。操作结果保留在本页，刷新后重置。</p>{notice && <p role="status" className="text-sm">{notice}</p>}{removed && <Button variant="ghost" size="sm" onClick={restore}><RotateCcw/>撤销移除：{questions.find(question=>question.id===removed.entry.id)?.title}</Button>}</div>
+
+    {scene==="library" && <div className="space-y-5"><div className="flex flex-wrap items-center gap-3"><Input aria-label="搜索题目" placeholder="搜索题名、题号或题型" value={search} onChange={event=>setSearch(event.target.value)} className="w-full sm:max-w-72"/><QuestionSelect label="按题型筛选" value={kind} items={kindOptions} onChange={setKind}/><QuestionSelect label="题库显示密度" value={compact?"compact":"full"} items={[{value:"full",label:"完整题面"},{value:"compact",label:"紧凑摘要"}]} onChange={value=>setCompact(value==="compact")}/>{(search||kind!=="全部题型")&&<Button variant="ghost" onClick={()=>{setSearch("");setKind("全部题型")}}>清除筛选</Button>}</div><div className="flex flex-wrap items-center gap-3 text-sm"><Checkbox aria-label="勾选当前筛选下的全部可用题目" disabled={!visibleEligible.length} checked={visibleEligible.length>0&&visibleEligible.every(question=>checked.includes(question.id))} indeterminate={visibleEligible.some(question=>checked.includes(question.id))&&!visibleEligible.every(question=>checked.includes(question.id))} onCheckedChange={value=>setChecked(previous=>value?[...new Set([...previous,...visibleEligible.map(question=>question.id)])]:previous.filter(id=>!visibleEligible.some(question=>question.id===id)))}/><span>当前 {visible.length} 题 · 已勾选 {checked.length} 题</span><Button variant="outline" size="sm" disabled={!checked.some(eligible)} onClick={()=>{join(checked);setChecked([])}}>将勾选题加入试题篮</Button>{checked.length>0&&<Button variant="ghost" size="sm" onClick={()=>setChecked([])}>清空勾选</Button>}</div>{checked.length>0 && <div className="flex flex-wrap gap-2" aria-label="批量勾选明细">{selectedItems.map(question=><Button key={question.id} variant="outline" size="sm" onClick={()=>setChecked(previous=>previous.filter(id=>id!==question.id))} aria-label={`取消勾选：${question.title}`}>{question.title}{!visible.includes(question)&&" · 筛选外"}<X/></Button>)}</div>}<p className="text-sm text-muted-foreground">勾选用于批量操作；加入试题篮才会进入试卷。题内选项仅供阅读，复合题整组选用。</p>{visible.length?visible.map(question=><QuestionCard key={question.id} {...cardProps(question)} compact={compact} checked={checked.includes(question.id)} onCheckedChange={eligible(question.id)?value=>setChecked(previous=>value?[...new Set([...previous,question.id])]:previous.filter(id=>id!==question.id)):undefined} status={!eligible(question.id)?<Badge variant="outline">{statusOptions.find(option=>option.value===audit[question.id]?.status)?.label}</Badge>:undefined} actions={<><Button variant="ghost" size="sm" onClick={()=>read(question.id)} aria-label={`展开阅读第${questions.indexOf(question)+1}题`}><BookOpen/>阅读</Button>{addButton(question)}</>}/>):<p className="rounded-xl border p-10 text-center text-muted-foreground">没有匹配的题目。可清除筛选重新查看。</p>}</div>}
+
+    {scene==="paper" && <div className="space-y-5"><div className="flex flex-wrap justify-between gap-3"><div><h3 className="font-semibold">试卷编排</h3><p className="mt-2 text-sm text-muted-foreground">顺序与分值仅作用于本卷，以 0.5 分为步长，离开输入框时归整。复合题保留共享材料，按小问设置本卷分值。</p></div><Button variant="outline" disabled={!entries.length} onClick={()=>navigate("print")}>纸面预览<ArrowRight/></Button></div>{!entries.length?<div className="space-y-4 rounded-xl border p-8 text-center"><p className="text-muted-foreground">试题篮为空，从题库加入题目即可开始编排。</p><Button onClick={()=>join(["Q-M-001","Q-M-005","Q-M-006"])}>载入 3 题示例试卷</Button></div>:entries.map((entry,index)=>{const question=questions.find(item=>item.id===entry.id)!;return <section key={entry.id} className="rounded-xl border p-4 sm:p-5"><div className="flex flex-wrap items-center gap-3"><h4 className="min-w-0 flex-1 font-medium">{index+1}. {question.title}</h4><Badge variant="outline">{question.kind}</Badge>{!eligible(entry.id)&&<span className="text-sm text-destructive">{statusOptions.find(option=>option.value===audit[entry.id]?.status)?.label}，需移除或替换</span>}<span className="text-sm tabular-nums">本卷 {entryPoints(entry)} 分</span><div className="flex gap-1"><Button variant="ghost" size="icon-sm" aria-label={`上移：${question.title}`} disabled={index===0} onClick={()=>setEntries(previous=>moveInPaper(previous,entry.id,-1))}><ArrowUp/></Button><Button variant="ghost" size="icon-sm" aria-label={`下移：${question.title}`} disabled={index===entries.length-1} onClick={()=>setEntries(previous=>moveInPaper(previous,entry.id,1))}><ArrowDown/></Button><Button variant="ghost" size="icon-sm" aria-label={`替换：${question.title}`} onClick={()=>setReplacement(entry.id)}><Replace/></Button><Button variant="ghost" size="icon-sm" aria-label={`移除：${question.title}`} onClick={()=>remove(entry.id)}><X/></Button></div></div><div className="mt-4 flex flex-wrap items-center gap-5">{entry.partPoints ? Object.entries(entry.partPoints).map(([id,value])=><div key={id} className="space-y-2"><p className="text-xs text-muted-foreground">第 {id} 小问 · 本卷分值</p><PointsField label={`${question.title}第${id}小问本卷分值`} value={value} onChange={points=>{if(points!==null)setEntries(previous=>previous.map(item=>item.id===entry.id?{...item,partPoints:{...item.partPoints,[id]:points}}:item))}}/></div>):<div className="flex flex-wrap items-center gap-3"><span className="text-sm text-muted-foreground">本卷分值</span><PointsField label={`${question.title}本卷分值`} value={entry.points} onChange={points=>{if(points!==null)setEntries(previous=>previous.map(item=>item.id===entry.id?{...item,points}:item))}}/></div>}<Button variant="ghost" size="sm" onClick={()=>setEntries(previous=>previous.map(item=>item.id===entry.id?makeEntry(question):item))}>恢复原题分值</Button><Button variant="ghost" size="sm" onClick={()=>read(question.id)}>查看题面</Button></div><p className="mt-3 text-xs text-muted-foreground">原题 {question.points} 分 · {question.id}{entry.partPoints?" · 整组选用，不拆分小问":""}</p></section>})}</div>}
+
+    {scene==="reading" && <div className="space-y-5"><div className="flex flex-wrap items-center justify-between gap-3"><Button variant="ghost" onClick={()=>navigate(returnScene)}><ArrowLeft/>返回{sceneOptions.find(item=>item.value===returnScene)?.label}</Button><div className="flex flex-wrap items-center gap-2"><QuestionSelect label="选择研读题目" value={currentId} onChange={setCurrentId} items={questions.map(question=>({value:question.id,label:question.title}))}/><Button variant="outline" size="icon" aria-label="阅读上一题" disabled={currentId===questions[0].id} onClick={()=>setCurrentId(questions[questions.indexOf(current)-1].id)}><ArrowLeft/></Button><Button variant="outline" size="icon" aria-label="阅读下一题" disabled={currentId===questions.at(-1)!.id} onClick={()=>setCurrentId(questions[questions.indexOf(current)+1].id)}><ArrowRight/></Button></div></div><div className="flex flex-wrap gap-3"><Button variant={explain?"default":"outline"} onClick={()=>setExplain(!explain)}>{explain?"退出讲解视图":"进入讲解视图"}</Button>{!explain&&addButton(current)}</div><div className="mx-auto max-w-[54rem]"><QuestionCard {...cardProps(current)} onLinksChange={explain?undefined:cardProps(current).onLinksChange} reading/></div></div>}
+
+    {scene==="recommend" && <div className="space-y-5"><div><h3 className="font-semibold">推荐与替题</h3><p className="mt-2 text-sm leading-7 text-muted-foreground">固定示例：围绕二次函数安排由基础判断到情境建模的练习。建议及理由由人工编写，供检验 Agent 中的题目呈现与采用操作。</p></div>{[judgmentQuestion,compositeQuestion].filter(question=>!dismissed.includes(question.id)).map(question=><div key={question.id} className="space-y-3"><p className="text-sm"><span className="font-medium">推荐理由：</span>{question.kind==="判断题"?"快速检查对称轴、最值和不等式三个基础概念。":"用同一材料检验建模、代入求值和定义域意识；需保留三个小问与数据表。"}</p><QuestionCard {...cardProps(question)} onLinksChange={undefined} compact actions={<>{addButton(question)}<Button variant="outline" size="sm" onClick={()=>read(question.id)}>查看详情</Button><Button variant="ghost" size="sm" onClick={()=>setDismissed(previous=>[...previous,question.id])}>忽略</Button></>}/></div>)}{dismissed.length>0&&<Button variant="outline" onClick={()=>setDismissed([])}>恢复已忽略建议</Button>}<Button variant="ghost" onClick={()=>navigate("paper")}>到试卷中选择替换位置<ArrowRight/></Button></div>}
+
+    {scene==="print" && <QuestionPrint entries={entries} questions={questions} blocked={blocked}/>}
+    {reviewVisited && <div hidden={scene!=="review"}><QuestionReview/></div>}
+    {scene==="audit" && <div className="space-y-5"><QuestionSelect label="选择审核题目" value={currentId} onChange={setCurrentId} items={questions.map(question=>({value:question.id,label:question.title}))}/><div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]"><QuestionCard {...cardProps(current)} reading/><QuestionAudit key={currentId} draft={auditDrafts[currentId]??audit[currentId]??{status:"ready",note:""}} onDraftChange={value=>setAuditDrafts(previous=>({...previous,[currentId]:value}))} question={current} value={audit[currentId]??{status:"ready",note:""}} onSave={value=>{setAudit(previous=>({...previous,[currentId]:value}));setNotice("审核状态已更新；试题篮中的题目会同步提示可用性。")}}/></div></div>}
+
+    <Sheet open={basketOpen} onOpenChange={setBasketOpen}><SheetPopup closeProps={{"aria-label":"关闭试题篮"}}><SheetHeader><SheetTitle>试题篮 · {entries.length} 题</SheetTitle><SheetDescription>当前顺序与分值会用于试卷编排。批量勾选不会自动进入这里。</SheetDescription></SheetHeader><SheetPanel>{entries.length?<ol className="space-y-4">{entries.map((entry,index)=>{const question=questions.find(item=>item.id===entry.id)!;return <li key={entry.id} className="flex items-start gap-3 border-b pb-4"><div className="min-w-0 flex-1"><p className="text-sm font-medium leading-6">{index+1}. {question.title}</p><p className="mt-1 text-xs text-muted-foreground">{question.kind} · {entryPoints(entry)} 分{entry.partPoints?` · ${Object.keys(entry.partPoints).length} 个小问`:""}</p>{!eligible(entry.id)&&<p className="mt-2 text-xs text-destructive">当前不可选用，请移除或替换。</p>}</div><Button size="icon-sm" variant="ghost" aria-label={`从试题篮移除：${question.title}`} onClick={()=>remove(entry.id)}><X/></Button></li>})}</ol>:<p className="py-8 text-sm text-muted-foreground">还没有题目。使用题库中的“加入试题篮”。</p>}</SheetPanel><SheetFooter><p className="mr-auto text-sm tabular-nums">共 {total} 分</p><Button onClick={()=>{setBasketOpen(false);navigate("paper")}}>前往编排<ArrowRight/></Button></SheetFooter></SheetPopup></Sheet>
+    <Dialog open={!!replacement} onOpenChange={open=>{if(!open)setReplacement(null)}}><DialogPopup closeProps={{"aria-label":"关闭替题选择"}}><DialogHeader><DialogTitle>替换当前题目</DialogTitle><DialogDescription>保留原位置，使用新题默认分值。共享材料与小问一同替换。</DialogDescription></DialogHeader><DialogPanel><div className="space-y-3">{candidates.length?candidates.map(question=><div key={question.id} className="flex items-center gap-3 rounded-lg border p-3"><div className="min-w-0 flex-1"><p className="text-sm font-medium">{question.title}</p><p className="mt-1 text-xs text-muted-foreground">{question.kind} · {question.points} 分</p></div><Button size="sm" onClick={()=>{if(replacement){setEntries(previous=>replaceInPaper(previous,replacement,makeEntry(question)));setReplacement(null);setNotice(`已替换为“${question.title}”，使用新题默认分值。`)}}}>选用此题</Button></div>):<p className="text-sm text-muted-foreground">没有其他可用题目。已经入篮或当前不可用的题目不重复列出。</p>}</div></DialogPanel></DialogPopup></Dialog>
   </section>
 }
 
-function QuestionFrame({ question, number, selected, onSelectedChange, answersOpen, onAnswersOpenChange, links, onLinksChange, onRead, reading = false, readButtonRef }: {
-  question: QuestionRecord; number: number; selected: boolean; onSelectedChange: (checked: boolean) => void
-  answersOpen: boolean; onAnswersOpenChange: (open: boolean) => void
-  links: DirectorySelections; onLinksChange: Dispatch<SetStateAction<DirectorySelections>>
-  onRead?: () => void; reading?: boolean; readButtonRef?: (element: HTMLButtonElement | null) => void
-}) {
-  const titleId = `${reading ? "reading" : "list"}-${question.id}`
-  const checkboxId = `${titleId}-select`
-  const linkNames = textbooks.flatMap(book => (["course", "knowledge"] as const).flatMap(kind => (links[`${book.id}:${kind}`] ?? []).map(id => book.directories[kind].nodes[id]?.title).filter(Boolean)))
-  const [metadataOpen, setMetadataOpen] = useState(false)
-  return <article aria-labelledby={titleId} data-question-id={question.id} className={cn("prism-question rounded-xl border bg-background px-4 py-5 text-foreground sm:px-6 sm:py-6", selected ? "border-primary/60" : "border-border", reading && "border-transparent px-0 sm:px-0")}>
-    <header className="mb-5 flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-2"><Checkbox id={checkboxId} aria-label={`选用第${number}题：${question.title}`} checked={selected} onCheckedChange={onSelectedChange} /><Label htmlFor={checkboxId}>选用<span className="sr-only">第{number}题：{question.title}</span></Label></div>
-      <h3 id={titleId} className="text-sm font-semibold">第 {number} 题</h3><Badge variant="outline">{question.kind}</Badge><span className="prism-numeric text-sm text-muted-foreground">{question.points} 分</span>
-      {selected && <span className="flex items-center gap-1 text-sm"><Check className="size-3.5" />已选</span>}
-      {onRead && <Button ref={readButtonRef} variant="ghost" size="sm" className="ml-auto" onClick={onRead} aria-label={`展开阅读第${number}题`}><BookOpen />展开阅读</Button>}
-    </header>
-    <QuestionContent question={question} />
-    <Collapsible open={answersOpen} onOpenChange={onAnswersOpenChange} className="mt-5">
-      <CollapsibleTrigger render={<Button variant="ghost" size="sm" />} aria-label={`${answersOpen ? "收起" : "查看"}第${number}题答案与解析`}><ChevronDown className={cn("transition-transform", answersOpen && "rotate-180")} />{answersOpen ? "收起答案与解析" : "查看答案与解析"}</CollapsibleTrigger>
-      <CollapsiblePanel><div className="prism-question-copy mt-4 space-y-5 border-t pt-5 text-base leading-[1.9]"><section aria-label={`第${number}题参考答案`}><h4 className="mb-2 text-sm font-semibold">参考答案</h4>{question.answer}</section><section aria-label={`第${number}题解析`}><h4 className="mb-2 text-sm font-semibold">解析</h4><div className="space-y-3">{question.explanation}</div></section></div></CollapsiblePanel>
-    </Collapsible>
-    <Collapsible open={metadataOpen} onOpenChange={setMetadataOpen} className="mt-4">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2"><p className="text-xs text-muted-foreground">{question.id} · 自编示例</p><p className="min-w-0 flex-1 break-words text-sm text-muted-foreground">{linkNames.length ? `${linkNames.slice(0, 2).join(" · ")}${linkNames.length > 2 ? ` 等 ${linkNames.length} 项关联` : ""}` : "尚未关联教材与知识点"}</p><CollapsibleTrigger render={<Button variant="ghost" size="sm" />} aria-label={`调整第${number}题教材与知识点关联`}>{metadataOpen ? "收起关联" : "教材与知识点"}<ChevronDown className={cn("transition-transform", metadataOpen && "rotate-180")} /></CollapsibleTrigger></div>
-      <CollapsiblePanel><div className="mt-5 rounded-lg bg-muted/30 p-4 sm:p-5"><TextbookRangePicker textbooks={textbooks} selections={links} onSelectionsChange={onLinksChange} /></div></CollapsiblePanel>
-    </Collapsible>
-  </article>
+function QuestionAudit({question,value,draft,onDraftChange,onSave}:{question:QuestionRecord;value:{status:QuestionAvailability;note:string};draft:{status:QuestionAvailability;note:string};onDraftChange:(value:{status:QuestionAvailability;note:string})=>void;onSave:(value:{status:QuestionAvailability;note:string})=>void}) {
+  const {status,note}=draft
+  const [error,setError]=useState("")
+  return <section className="h-fit space-y-5 rounded-xl border p-5"><h3 className="font-semibold">题目审核</h3><p className="text-sm leading-6 text-muted-foreground">{question.id} · 自编示例。仅演示审核状态与选题限制；题干编辑将在内容维护模块接入。</p><div className="space-y-2"><Label>可用状态</Label><QuestionSelect label="题目可用状态" value={status} items={statusOptions} onChange={value=>onDraftChange({...draft,status:value as QuestionAvailability})}/></div><div className="space-y-2"><Label htmlFor="question-audit-note">审核说明{status!=="ready"?"（必填）":""}</Label><Textarea id="question-audit-note" value={note} onChange={event=>onDraftChange({...draft,note:event.target.value})} placeholder="如：数据表需核对，暂不用于组卷。"/></div>{error&&<p role="alert" className="text-sm text-destructive">{error}</p>}<Button disabled={status===value.status&&note===value.note} onClick={()=>{if(status!=="ready"&&!note.trim()){setError("请说明待审核或暂停使用的原因。");return}setError("");onDraftChange({status,note:note.trim()});onSave({status,note:note.trim()})}}>保存审核状态</Button><p className="text-xs leading-6 text-muted-foreground">待审核与暂停使用的题目不能新增到试题篮；已入篮题目保留位置并提示，打印前需处理。</p></section>
 }
