@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { taskReducer, initialTask, validateMaterial, initialMaterial, isMaterial, appendReviewNotes } from '../lib/prism-next/review.ts';
+import { taskReducer, initialTask, validateMaterial, initialMaterial, isMaterial, appendReviewNotes, reviewAdoptionState, reviewSuggestion } from '../lib/prism-next/review.ts';
 
 const root = new URL('../', import.meta.url);
 test('all vendored coss files retain their pinned source geometry and behavior', () => {
@@ -58,4 +58,24 @@ test('adopting agent notes preserves human work and rejects overflow',()=>{
   assert.equal(appendReviewNotes('人工备注','复核建议').notes,'人工备注\n\n复核建议');
   assert.equal(appendReviewNotes('人工备注\n\n复核建议','复核建议').notes,'人工备注\n\n复核建议');
   const long='人'.repeat(495);const result=appendReviewNotes(long,'补充完整的复核建议');assert.equal(result.notes,long);assert.ok(result.error);
+});
+
+test('review adoption follows actual draft and saved notes through cancellation, saving and removal',()=>{
+  const original='教师手写备注';
+  let saved=original;
+  let draft=appendReviewNotes(saved,reviewSuggestion).notes;
+  assert.equal(reviewAdoptionState(draft,saved),'draft');
+  draft=saved; // Cancelling restores the saved notes, without rerunning the assistant.
+  assert.equal(reviewAdoptionState(draft,saved),'absent');
+  draft=appendReviewNotes(draft,reviewSuggestion).notes;
+  assert.equal(appendReviewNotes(draft,reviewSuggestion).notes,draft);
+  saved=draft;
+  assert.equal(reviewAdoptionState(draft,saved),'saved');
+  assert.equal(reviewAdoptionState(draft+'\n其他人工备注',saved),'saved');
+  draft=original; // Manual removal takes precedence over the previous saved copy.
+  assert.equal(reviewAdoptionState(draft,saved),'absent');
+  assert.equal(reviewAdoptionState(saved,saved),'saved');
+  const long='人'.repeat(495),result=appendReviewNotes(long,reviewSuggestion);
+  assert.ok(result.error);
+  assert.equal(reviewAdoptionState(result.notes,long),'absent');
 });

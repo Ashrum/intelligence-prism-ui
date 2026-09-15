@@ -31,6 +31,12 @@ export function taskReducer(state: TaskState, action: TaskAction): TaskState {
 }
 export const reviewSuggestion = '已复核：判别式 Δ = 1，两个实数根为 1 与 2。建议明确区分 Δ > 0、Δ = 0 与 Δ < 0 三种情况。'
 
+export type ReviewAdoptionState = 'absent' | 'draft' | 'saved'
+export function reviewAdoptionState(draftNotes: string, savedNotes: string, suggestion = reviewSuggestion): ReviewAdoptionState {
+  if (!suggestion || !draftNotes.includes(suggestion)) return 'absent'
+  return savedNotes.includes(suggestion) ? 'saved' : 'draft'
+}
+
 export function appendReviewNotes(current: string, suggestion: string) {
   const notes = current.includes(suggestion) ? current : current.trim() ? current + '\n\n' + suggestion : suggestion
   return notes.length > 500 ? {notes:current, error:'追加后将超过 500 字。请先精简现有备注，再返回助手采用建议。'} : {notes, error:''}

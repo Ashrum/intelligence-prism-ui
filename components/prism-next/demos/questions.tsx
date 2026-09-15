@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useReducer, useRef, useState, type Dispatch, type SetStateAction } from "react"
+import { useCallback, useEffect, useReducer, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { ArrowLeft, Check, Plus, X, ListChecks, Replace, RotateCcw, GripVertical, Settings, Save, Printer, Flag } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { ToolbarButton } from "@/components/coss/toolbar"
@@ -58,6 +58,7 @@ export function QuestionsDemo() {
   const basketOpen=panel==="basket"
   const [basketPreviewId,setBasketPreviewId]=useState<string|null>(null),[highlighted,setHighlighted]=useState<string[]>([])
   const basketVisited=useRef(false),basketScroll=useRef(0),listOrigin=useRef(0),workbench=useRef<HTMLDivElement>(null)
+  const readingOrigin=useRef<{id:string;scrollTop:number;cardOffset?:number}|null>(null),restoreReadingPosition=useRef(false),readingReturn=useRef<HTMLButtonElement>(null)
   useEffect(()=>{if(!highlighted.length)return;const timer=window.setTimeout(()=>setHighlighted([]),1800);return()=>clearTimeout(timer)},[highlighted])
   const [candidate,setCandidate]=useState<{id:string;target?:DraftKind}|null>(null),[allCandidates,setAllCandidates]=useState(false)
   const [reportId,setReportId]=useState<string|null>(null),[reports,setReports]=useState<Record<string,Report>>({})
@@ -67,8 +68,34 @@ export function QuestionsDemo() {
   const [printPreferences,setPrintPreferences]=useState<Record<PrintSource,PrintPreferences>>(()=>({paper:createPrintPreferences(),practice:createPrintPreferences(),sample:createPrintPreferences()}))
   const [settings,setSettings]=useState<DraftKind|null>(null),[printKind,setPrintKind]=useState<PrintSource>("sample")
   const [dragId,setDragId]=useState<string|null>(null), copyIndex=useRef(0)
-  useEffect(()=>{if(scene!=="reading")return;const restore=(event:KeyboardEvent)=>{if(event.key==="Escape"){setScene(returnScene)}};window.addEventListener("keydown",restore);return()=>window.removeEventListener("keydown",restore)},[scene,returnScene])
+  const exitReading=useCallback(()=>{restoreReadingPosition.current=true;setScene(returnScene);setNotice("")},[returnScene])
+  useEffect(()=>{if(scene!=="reading")return;const restore=(event:KeyboardEvent)=>{if(event.key==="Escape"&&!event.defaultPrevented){event.preventDefault();exitReading()}};window.addEventListener("keydown",restore);return()=>window.removeEventListener("keydown",restore)},[scene,exitReading])
+  useEffect(()=>{
+    if(scene!=="reading"&&!restoreReadingPosition.current)return
+    let nextFrame=0
+    // Let the source coss Menu unmount and finish its focus return before moving focus.
+    const frame=requestAnimationFrame(()=>{nextFrame=requestAnimationFrame(()=>{
+      if(scene==="reading"){
+        readingReturn.current?.closest(".q-focus-view")?.scrollIntoView({block:"start",behavior:"instant"})
+        readingReturn.current?.focus({preventScroll:true})
+        return
+      }
+      const origin=readingOrigin.current
+      if(origin){
+        const card=workbench.current?.querySelector<HTMLElement>(`.q-scene-content [data-question-id="${origin.id}"]`)
+        const top=card&&origin.cardOffset!==undefined?window.scrollY+card.getBoundingClientRect().top-origin.cardOffset:origin.scrollTop
+        card?.querySelector<HTMLButtonElement>('button[aria-label$="更多操作"]')?.focus({preventScroll:true})
+        window.scrollTo({top,behavior:"instant"})
+      }
+      restoreReadingPosition.current=false
+      readingOrigin.current=null
+    })})
+    return()=>{cancelAnimationFrame(frame);cancelAnimationFrame(nextFrame)}
+  },[scene])
   const current=questions.find(question=>question.id===currentId)!
+  const readingDraft=returnScene==="paper"||returnScene==="practice"?workspace[returnScene]:null
+  const readingEntry=readingDraft?.entries.find(entry=>entry.id===currentId)
+  const readingDisplay=readingDraft&&readingEntry?{number:ordered(readingDraft).findIndex(entry=>entry.id===currentId)+1,showPoints:readingDraft.showPoints,displayPoints:entryPoints(readingEntry),displayPartPoints:readingEntry.partPoints}:{}
   const eligible=(id:string)=>(audit[id]??"ready")==="ready"
   const statusName=(id:string)=>statusOptions.find(option=>option.value===(audit[id]??"ready"))!.label
   const activeKind:DraftKind=scene==="practice"?"practice":"paper"
@@ -83,7 +110,7 @@ export function QuestionsDemo() {
   function narrowWorkbench() {return !window.matchMedia("(min-width: 80rem)").matches}
   function navigate(value:string) {setBasketPreviewId(null);if((value!=="print"&&panel==="print")||(panel==="basket"&&narrowWorkbench()))setPanel(null);setScene(value);if(value==="review")setReviewVisited(true);setNotice("")}
   function setDetail(id:string,value:QuestionDetailState) {setDetails(previous=>({...previous,[id]:value}))}
-  function read(id:string) {setReturnScene(scene);setCurrentId(id);setPanel(null);navigate("reading")}
+  function read(id:string) {const card=workbench.current?.querySelector<HTMLElement>(`.q-scene-content [data-question-id="${id}"]`);readingOrigin.current={id,scrollTop:window.scrollY,cardOffset:card?.getBoundingClientRect().top};restoreReadingPosition.current=false;setReturnScene(scene);setCurrentId(id);setPanel(null);navigate("reading")}
   function toggleFavorite(id:string) {setFavorites(previous=>previous.includes(id)?previous.filter(item=>item!==id):[...previous,id]);setNotice(favorites.includes(id)?"已取消收藏。":"已收藏；不会改变试题篮与草稿。")}
   function addBasket(ids:string[]) {const allowed=ids.filter(eligible);setHighlighted(allowed);if(basketVisited.current)setBasketChecked(previous=>[...new Set([...previous,...allowed.filter(id=>!workspace.basket.includes(id))])]);commit(addBasketItems(workspace,allowed),`已将 ${allowed.filter(id=>!workspace.basket.includes(id)).length} 题加入试题篮${allowed.length<ids.length?"，不可用题目已跳过":""}。`)}
   function removeBasket(ids:string[]) {commit(removeFromScope(workspace,"basket",ids),"已移出试题篮，组卷与练习草稿保持不变。");setBasketChecked(previous=>previous.filter(id=>!ids.includes(id)))}
@@ -137,7 +164,7 @@ export function QuestionsDemo() {
 
     {(scene==="paper"||scene==="practice")&&<div className="space-y-5"><div className="flex flex-wrap items-start justify-between gap-4"><div><h3 className="text-lg font-semibold">{activeDraft.title}</h3><p className="mt-2 text-sm text-muted-foreground">{activeDraft.entries.length} 道大题{activeDraft.showPoints?` · ${activeDraft.entries.reduce((sum,entry)=>sum+entryPoints(entry),0)} 分`:""} · 预计 {activeDraft.minutes} 分钟</p>{activeKind==="practice"&&<p className="mt-2 text-sm leading-7">{activeDraft.goal}</p>}<p className="mt-1 text-xs text-muted-foreground">答案设置：{activeDraft.answers==="after"?"完成后显示":"仅教师可见"} · 当前为教师预览</p></div><div className="flex flex-wrap gap-2"><Button variant="outline" onClick={()=>setSettings(activeKind)}><Settings/>{activeKind==="paper"?"试卷设置":"练习设置"}</Button><Button variant="outline" onClick={openBasket}><Plus/>从试题篮选题</Button><Button variant="outline" disabled={!activeDraft.entries.length||activeDraft.entries.some(entry=>!eligible(entry.id))} onClick={()=>{setPrintKind(activeKind);navigate("print")}}><Printer/>预览</Button><Button disabled={!activeDraft.entries.length} onClick={()=>{setSavedDrafts(previous=>({...previous,[activeKind]:copyDraft(activeDraft)}));setNotice(`${draftName(activeKind)}草稿已保存到当前页面。`)}}><Save/>保存草稿</Button></div></div>{savedDrafts[activeKind]&&<div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"><span>{JSON.stringify(activeDraft)===JSON.stringify(savedDrafts[activeKind])?"已保存":"有未保存的更改"}</span><Button variant="ghost" size="sm" disabled={JSON.stringify(activeDraft)===JSON.stringify(savedDrafts[activeKind])} onClick={()=>updateDraft(activeKind,copyDraft(savedDrafts[activeKind]!),"已恢复保存的草稿。")}>恢复已保存草稿</Button></div>}{!activeDraft.entries.length?<div className="space-y-4 rounded-xl border p-8 text-center"><p className="text-muted-foreground">{draftName(activeKind)}尚未选题。试题篮中的候选不会自动进入草稿。</p><Button variant="outline" onClick={openBasket}>打开试题篮</Button><Button className="ml-2" onClick={()=>{const ids=activeKind==="paper"?["Q-M-001","Q-M-005","Q-M-006"]:["Q-M-005","Q-M-006"];commit(transferToDraft(workspace,activeKind,questions.filter(question=>ids.includes(question.id)&&eligible(question.id)).map(makeEntry)),`已载入${draftName(activeKind)}示例，试题篮保持不变。`)}}>载入示例{activeKind==="paper"?"试卷":"练习"}</Button></div>:activeDraft.groups.map(group=>{const groupEntries=ordered(activeDraft).filter(entry=>(entry.group??activeDraft.groups[0])===group);return <section key={group} className="space-y-4"><h4 className="pt-3 font-semibold">{group}<span className="ml-3 text-sm font-normal text-muted-foreground">{groupEntries.length} 题</span></h4>{groupEntries.length?groupEntries.map((entry,index)=>{const question=questions.find(item=>item.id===entry.id)!;return <div key={entry.id} onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();drop(activeKind,entry.id)}} className={dragId===entry.id?"opacity-60":""}><QuestionCard {...cardProps(question)} number={ordered(activeDraft).findIndex(item=>item.id===entry.id)+1} showPoints={activeDraft.showPoints} displayPoints={entryPoints(entry)} displayPartPoints={entry.partPoints} status={!eligible(entry.id)?<span className="text-sm text-destructive">{statusName(entry.id)} · 请移除或替换</span>:undefined} header={<Button variant="ghost" size="icon-sm" draggable aria-label={`拖动排序：${question.title}`} onDragStart={event=>{setDragId(entry.id);event.dataTransfer.effectAllowed="move";event.dataTransfer.setData("text/plain",entry.id)}} onDragEnd={()=>setDragId(null)}><GripVertical/></Button>} secondaryActions={secondary(question,activeKind,index,groupEntries.length)} actions={<>{activeDraft.showPoints&&<Popover><PopoverTrigger render={<ToolbarButton render={<Button variant="outline" size="sm"/>}/>}>调整分值</PopoverTrigger><PopoverPopup className="w-80"><PopoverTitle>{question.title}</PopoverTitle><div className="mt-4 space-y-4">{activeDraft.showPoints&&(entry.partPoints?Object.entries(entry.partPoints).map(([id,value])=><div className="flex items-center justify-between gap-3" key={id}><span className="text-sm">第 {id} 小问</span><PointsField label={`${question.title}第${id}小问${draftName(activeKind)}分值`} value={value} onChange={points=>{if(points!==null)patchEntry(activeKind,entry.id,{partPoints:{...entry.partPoints,[id]:points}},`已调整${draftName(activeKind)}分值，原题保持不变。`)}}/></div>):<PointsField label={`${question.title}${draftName(activeKind)}分值`} value={entry.points} onChange={points=>{if(points!==null)patchEntry(activeKind,entry.id,{points},`已调整${draftName(activeKind)}分值，原题保持不变。`)}}/>)}{activeDraft.showPoints&&<><p className="text-xs text-muted-foreground">原题 {question.points} 分 · 以 0.5 分为步长</p><Button variant="ghost" size="sm" onClick={()=>patchEntry(activeKind,entry.id,makeEntry(question),"已恢复原题分值。")}>恢复原题分值</Button></>}</div></PopoverPopup></Popover>}<ToolbarButton render={<Button variant="outline" size="sm"/>} onClick={()=>openRelated(question.id,activeKind)}><Replace/>换题</ToolbarButton></>}/></div>}):<p className="rounded-lg border border-dashed p-5 text-sm text-muted-foreground">此题组还没有题目，可从其他题目的“更多”菜单移入。</p>}</section>})}</div>}
 
-    {scene==="reading"&&<div className="q-focus-view mx-auto max-w-[58rem] space-y-5"><div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-background py-3"><span className="text-sm text-muted-foreground">{current.id}</span><Button variant="outline" onClick={()=>navigate(returnScene)}><ArrowLeft/>显示界面</Button></div><QuestionCard {...cardProps(current)} reading/></div>}
+    {scene==="reading"&&<div className="q-focus-view mx-auto max-w-[58rem] space-y-5"><div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-background py-3"><span className="text-sm text-muted-foreground">{current.id}</span><Button ref={readingReturn} variant="outline" onClick={exitReading}><ArrowLeft/>显示界面</Button></div><QuestionCard {...cardProps(current)} {...readingDisplay} reading/></div>}
 
     {scene==="recommend"&&<div className="space-y-5"><p className="text-sm leading-7 text-muted-foreground">固定推荐示例：围绕二次函数，从基础判断到情境建模。推荐依据来自知识点与方法，不使用虚构相似度，也不调用生成服务。</p>{questions.filter(question=>[judgmentQuestion.id,compositeQuestion.id].includes(question.id)&&!dismissed.includes(question.id)).map(question=><div key={question.id} className="space-y-3"><p className="text-sm"><span className="font-medium">推荐理由：</span>{question.kind==="判断题"?"检查对称轴、最值与不等式三个基础概念。":"检验建模、代入求值与定义域意识。"}</p>{question.kind==="复合题"&&<p className="text-sm text-muted-foreground">选用提醒：共享表格与三个小问需一同保留。</p>}<QuestionCard {...cardProps(question)} compact secondaryActions={secondary(question)} actions={<>{basketAction(question)}<ToolbarButton render={<Button variant="ghost" size="sm"/>} onClick={()=>setDismissed(previous=>[...previous,question.id])}>忽略</ToolbarButton></>}/></div>)}{dismissed.length>0&&<Button variant="outline" onClick={()=>setDismissed([])}>恢复已忽略建议</Button>}</div>}
 
