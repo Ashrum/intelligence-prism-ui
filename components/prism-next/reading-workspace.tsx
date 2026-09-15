@@ -12,7 +12,7 @@ import { Badge } from '@/components/coss/badge'
 import { MaterialSelect } from '@/components/prism-next/demo-parts'
 import { MathContent } from '@/components/prism-next/math-content'
 import { AgentWorkspace } from '@/components/prism-next/agent-workspace'
-import { initialMaterial, isMaterial, validateMaterial, appendReviewNotes, type Material } from '@/lib/prism-next/review'
+import { initialMaterial, isMaterial, validateMaterial, appendReviewNotes, reviewAdoptionState, type Material } from '@/lib/prism-next/review'
 const storageKey='prism-v1-reading'
 const emptyErrors={title:'',minutes:'',notes:''}
 export function ReadingWorkspace() {
@@ -33,6 +33,6 @@ export function ReadingWorkspace() {
       <Field invalid={!!errors.minutes} className="max-w-44"><FieldLabel htmlFor="reading-material-minutes">预计时长（分钟）</FieldLabel><NumberField value={draft.minutes} min={1} max={120} onValueChange={v=>change('minutes',v)}><NumberFieldGroup><NumberFieldDecrement aria-label="减少研读时长"/><NumberFieldInput id="reading-material-minutes" aria-invalid={!!errors.minutes}/><NumberFieldIncrement aria-label="增加研读时长"/></NumberFieldGroup></NumberField><FieldError match={!!errors.minutes}>{errors.minutes}</FieldError></Field>
       <Field invalid={!!errors.notes}><FieldLabel htmlFor="reading-material-notes">修订备注</FieldLabel><Textarea id="reading-material-notes" value={draft.notes} maxLength={500} onChange={e=>change('notes',e.target.value)} aria-invalid={!!errors.notes}/><FieldDescription>{draft.notes.length} / 500 字</FieldDescription><FieldError match={!!errors.notes}>{errors.notes}</FieldError></Field>
       <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!dirty}>保存修改</Button><Button variant="ghost" disabled={!dirty} onClick={()=>{setDraft(saved);setErrors(emptyErrors);setMessage('已取消本次修改。')}}>取消</Button></div><p className="min-h-6 text-sm leading-6 text-muted-foreground" role="status" aria-live="polite">{message||(dirty?'保存后更新左侧材料信息。':'修改会保存在当前浏览器。')}</p>
-    </Form></TabsPanel><TabsPanel value="agent" keepMounted className="pt-6"><AgentWorkspace compact onApply={suggestion=>{const result=appendReviewNotes(draft.notes,suggestion);setTab('metadata');if(result.error){setMessage(result.error);return false}change('notes',result.notes);setMessage('已追加复核建议，原备注保留。点击保存修改后生效。');return true}}/></TabsPanel></Tabs></aside></div>
+    </Form></TabsPanel><TabsPanel value="agent" keepMounted className="pt-6"><AgentWorkspace compact adoptionState={reviewAdoptionState(draft.notes,saved.notes)} onApply={suggestion=>{const result=appendReviewNotes(draft.notes,suggestion);setTab('metadata');if(result.error){setMessage(result.error);return false}change('notes',result.notes);setMessage('已追加复核建议，原备注保留。点击保存修改后生效。');return true}}/></TabsPanel></Tabs></aside></div>
   </div>
 }
