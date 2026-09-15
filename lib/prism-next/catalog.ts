@@ -39,7 +39,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整目录树与弹出选择器均已通过；两种形式一起保留。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree", review:"approved" },
   ]},
   { id:"content",title:"内容与数据",items:[
-    { ...item("question","Question 题目","六种题型呈现；选题、编排、研读、推荐、纸面预览与评分复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("question","Question 题目","六种题型、三类详情；独立试题篮、组卷与组练习，支持维护与评分复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     item("avatar","Avatar 头像","图像缺失时显示文字回退。"),
     item("badge","Badge 标签","以文字与适量颜色表达状态。"),
     item("card","Card 卡片","组织同一对象的内容与操作。"),
