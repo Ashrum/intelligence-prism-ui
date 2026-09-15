@@ -24,6 +24,20 @@ const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : 
 const unitTitle = (kind: DirectoryKind) => kind === "course" ? "节课程" : "个知识点"
 const scopeKey = (bookId: string, kind: DirectoryKind) => `${bookId}:${kind}`
 
+export function useDirectorySelection(data: DirectoryData, checkedIds: string[], onCheckedChange: Dispatch<SetStateAction<string[]>>) {
+  return useTree<DirectoryNode>({
+    rootItemId: data.rootId,
+    dataLoader: { getItem: id => data.nodes[id], getChildren: id => data.nodes[id].children },
+    getItemName: item => item.getItemData().title,
+    isItemFolder: item => item.getItemData().children.length > 0,
+    propagateCheckedState: true,
+    canCheckFolders: false,
+    state: { checkedItems: [...new Set(checkedIds)].filter(id => data.leafIds.includes(id)) },
+    setCheckedItems: onCheckedChange,
+    features: [syncDataLoaderFeature, checkboxesFeature],
+  })
+}
+
 export function TextbookDirectory({ textbooks, selections, onSelectionsChange }: {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
@@ -80,17 +94,7 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   const checked = [...new Set(checkedIds)].filter(id => data.leafIds.includes(id))
   // Keep the upstream checkbox propagation on the complete tree. Searching never
   // changes the descendant set to which a parent's checkbox applies.
-  const selectionTree = useTree<DirectoryNode>({
-    rootItemId: data.rootId,
-    dataLoader: { getItem: id => data.nodes[id], getChildren: id => data.nodes[id].children },
-    getItemName: item => item.getItemData().title,
-    isItemFolder: item => item.getItemData().children.length > 0,
-    propagateCheckedState: true,
-    canCheckFolders: false,
-    state: { checkedItems: checked },
-    setCheckedItems: onCheckedChange,
-    features: [syncDataLoaderFeature, checkboxesFeature],
-  })
+  const selectionTree = useDirectorySelection(data, checked, onCheckedChange)
   const patch = useCallback((values: Partial<Session>) => setSessions(previous => ({ ...previous, [scope]: { ...(previous[scope] ?? blankSession), ...values } })), [scope, setSessions])
   const saveExpanded = useCallback((expandedIds: string[]) => setSessions(previous => {
     const previousSession = previous[scope] ?? blankSession

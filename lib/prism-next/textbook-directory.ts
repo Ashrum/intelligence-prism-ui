@@ -37,6 +37,26 @@ export function projectDirectory(data: DirectoryData, query: string) {
   return { nodes, visibleIds, matchingIds, normalized }
 }
 
+export function directoryLeaves(data: DirectoryData, id: string): string[] {
+  const node = data.nodes[id]
+  if (!node) return []
+  return node.children.length ? node.children.flatMap(child => directoryLeaves(data, child)) : [id]
+}
+
+// Compact only complete subtrees. Canonical selection remains leaf IDs, so a
+// partial branch never implies that its other children have been selected.
+export function summarizeDirectory(data: DirectoryData, selectedIds: string[]) {
+  const selected = new Set(selectedIds)
+  const entries: { id: string; leafIds: string[] }[] = []
+  function visit(id: string) {
+    const leaves = directoryLeaves(data, id)
+    if (leaves.length && leaves.every(leafId => selected.has(leafId))) entries.push({ id, leafIds: leaves })
+    else data.nodes[id].children.forEach(visit)
+  }
+  data.nodes[data.rootId].children.forEach(visit)
+  return entries
+}
+
 const leaf = (id: string, title: string, code?: string): DirectoryBranch => ({ id, title, code })
 const branch = (id: string, title: string, children: DirectoryBranch[], code?: string): DirectoryBranch => ({ id, title, children, code })
 
@@ -50,12 +70,13 @@ export const textbooks = [
       branch("c2", "函数的概念与性质", [
         branch("c21", "函数的概念", [leaf("c211", "函数的定义与定义域", "2.1.1"), leaf("c212", "函数的表示方法", "2.1.2")], "2.1"),
         branch("c22", "函数的基本性质", [leaf("c221", "单调性与最大（小）值", "2.2.1"), leaf("c222", "奇偶性", "2.2.2"), leaf("c223", "从图像与代数表达式两种角度理解函数性质及其实际应用", "2.2.3")], "2.2"),
+        branch("c23", "函数性质的综合应用", [branch("c231", "图像与变化", [leaf("c2311", "分段函数图像分析", "2.3.1.1"), leaf("c2312", "函数图像的平移与伸缩", "2.3.1.2")], "2.3.1")], "2.3"),
       ], "第 2 章"),
       branch("c3", "指数函数与对数函数", [leaf("c31", "指数函数", "3.1"), leaf("c32", "对数函数", "3.2"), leaf("c33", "函数的应用", "3.3")], "第 3 章"),
     ]),
     knowledge: createDirectory("math-1:knowledge", [
       branch("k1", "集合与逻辑", [branch("k11", "集合", [leaf("k111", "元素与集合的关系"), leaf("k112", "子集与真子集"), leaf("k113", "交集、并集与补集")]), branch("k12", "命题与条件", [leaf("k121", "充分条件"), leaf("k122", "必要条件")])]),
-      branch("k2", "函数", [branch("k21", "基本概念", [leaf("k211", "定义域"), leaf("k212", "值域"), leaf("k213", "对应关系")]), branch("k22", "基本性质", [leaf("k221", "单调性"), leaf("k222", "奇偶性"), leaf("k223", "最值")]), branch("k23", "基本初等函数", [leaf("k231", "指数函数"), leaf("k232", "对数函数")])]),
+      branch("k2", "函数", [branch("k21", "基本概念", [leaf("k211", "定义域"), leaf("k212", "值域"), leaf("k213", "对应关系")]), branch("k22", "基本性质", [leaf("k221", "单调性"), leaf("k222", "奇偶性"), leaf("k223", "最值")]), branch("k23", "基本初等函数", [leaf("k231", "指数函数"), leaf("k232", "对数函数")]), branch("k24", "函数图像", [branch("k241", "图像变换", [leaf("k2411", "平移变换"), leaf("k2412", "伸缩变换")])])]),
     ]),
   } },
   { id: "math-2", title: "高中数学 · 必修第二册", note: "示例教材", directories: {
