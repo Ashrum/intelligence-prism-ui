@@ -5,7 +5,8 @@
 
 @font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
 
-:root {
+/* One active UI root owns the theme, including body-mounted overlays. */
+:root:where([data-ui-version="coss-v1"]) {
   --background:#FFFFFF;
   --foreground:#1F2328;
   --heading:#1F2328;
@@ -57,7 +58,7 @@
   color-scheme:light;
 }
 
-:root[data-prism-theme="paper"] {
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="paper"] {
   --background:#F4F1EA;
   --foreground:#1E293B;
   --heading:#0F172A;
@@ -80,7 +81,7 @@
   --disabled-foreground:#A5A29C;
 }
 
-:root[data-prism-theme="dark"] {
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"] {
   --background:#0F0F0F;
   --foreground:#E1E5EA;
   --heading:#F4F6F8;
@@ -164,14 +165,14 @@
   --radius-md:calc(var(--radius) - 2px);
   --radius-lg:var(--radius);
   --radius-xl:calc(var(--radius) + 4px);
-  --radius-2xl:calc(var(--radius) + 8px);
+  --radius-2xl:1rem;
 }
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  html { min-width:20rem; background:var(--background); }
-  body { @apply bg-background text-foreground font-sans; margin:0; min-height:100dvh; font-synthesis:none; }
-  code,kbd,samp,pre { font-family:var(--font-mono); }
+  :where(html[data-ui-version="coss-v1"]) * { @apply border-border outline-ring/50; }
+  html:where([data-ui-version="coss-v1"]) { min-width:20rem; background:var(--background); }
+  :where(html[data-ui-version="coss-v1"]) body { @apply bg-background text-foreground font-sans; margin:0; min-height:100dvh; font-synthesis:none; }
+  :where(html[data-ui-version="coss-v1"]) :is(code,kbd,samp,pre) { font-family:var(--font-mono); }
 }
 
 .prism-root { min-height:100dvh; isolation:isolate; }
@@ -201,7 +202,7 @@
 .prism-skip { position:fixed; z-index:100; left:1rem; top:1rem; padding:.5rem 1rem; color:var(--primary-foreground); background:var(--primary); border-radius:var(--radius); transform:translateY(-200%); }
 .prism-skip:focus { transform:translateY(0); }
 @media(max-width:767px) { .prism-content { padding:1.25rem; } .prism-demo { padding:1.25rem; } }
-@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
+@media(prefers-reduced-motion:reduce) { :where(html[data-ui-version="coss-v1"]) *, :where(html[data-ui-version="coss-v1"]) *::before, :where(html[data-ui-version="coss-v1"]) *::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }
 
 /* Question composition: content width chooses the option layout. */
 .prism-question { container-type:inline-size; }
@@ -288,25 +289,25 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
   .question-print-sheet h4 { break-after:avoid; }
 }
 
-/* Existing coss Sheet, scoped non-modal adaptation for the two question tools. */
+/* Existing coss Drawer; only these two work tools leave the page interactive. */
 .q-workbench { scroll-margin-top:6rem; min-width:0; }
-.q-task-sheet-portal > [data-slot="sheet-backdrop"] { display:none; }
-.q-task-sheet-portal > [data-slot="sheet-viewport"] { pointer-events:none; }
-.q-task-sheet { pointer-events:auto; }
+.q-task-drawer-portal > [data-slot="drawer-backdrop"] { display:none; }
+.q-task-drawer-portal > [data-slot="drawer-viewport"] { pointer-events:none; }
+.q-task-drawer { pointer-events:auto; }
 @media (min-width:80rem) {
-  body:has(.q-task-sheet[data-open]) [data-slot="sidebar-inset"] { margin-right:28rem; }
+  /* Match the existing Drawer timing; keep the main view stable through closing. */
+  body:has(.q-workbench) [data-slot="sidebar-inset"] { transition:margin-right 450ms cubic-bezier(.32,.72,0,1); }
+  body:has(.q-task-drawer[data-open]) [data-slot="sidebar-inset"] { margin-right:var(--container-md,28rem); }
 }
 .q-print-workbench { min-width:0; }
 .q-print-workbench .q-paper-scroll { max-height:var(--q-preview-room,calc(100dvh - 17rem)); min-height:17.5rem; background:var(--muted); border-radius:var(--radius-lg); padding:12px; }
 .q-basket-item[data-highlight],.prism-question[data-highlight] { outline:2px solid var(--ring); outline-offset:2px; }
 .q-print-unit[data-highlight] { outline:2px solid #339ff2; outline-offset:2px; background:#339ff20a; }
 .prism-question { scroll-margin-top:6rem; }
-.q-basket-panel [data-slot="sheet-footer"] { display:grid; grid-template-columns:1fr 1fr; }
-.q-basket-panel [data-slot="sheet-footer"] > button:first-child { grid-column:1/-1; justify-self:start; }
 @media print {
   .q-workbench,.q-workbench-main,.q-scene-content,.q-print-workbench,.q-print-canvas { display:block!important; width:auto!important; margin:0!important; padding:0!important; }
   .q-scene-content[hidden] { display:none!important; }
-  .q-task-sheet-portal,.q-basket-preview { display:none!important; }
+  .q-task-drawer-portal,.q-basket-preview { display:none!important; }
   .q-print-workbench .q-paper-scroll { min-height:0!important; max-height:none!important; border-radius:0; }
   .q-paper-pages { zoom:1!important; }
   .q-print-unit[data-highlight] { outline:none; background:transparent; }

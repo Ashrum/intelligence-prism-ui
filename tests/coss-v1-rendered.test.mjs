@@ -39,6 +39,13 @@ test('new application and foundation routes use the isolated root',async()=>{
   const reading=await(await fetchPage('/next/reading')).text();assert.match(reading,/<math/);assert.match(reading,/<mfrac>/);assert.match(reading,/reading-material-kind/);
   const missing=await fetchPage('/next/components/does-not-exist');assert.equal(missing.status,404);
 });
-test('legacy review routes remain accessible and carry the deprecation notice',async()=>{
-  for(const path of ['/','/components/select','/review/openui','/review/reading-review','/review/typography']){const res=await fetchPage(path);assert.equal(res.status,200,path);const html=await res.text();assert.match(html,/legacy-version-notice/);assert.match(html,/旧版设计 · 已过期/);assert.doesNotMatch(html,/data-ui-version="coss-v1"/)}
+test('the homepage opens coss and removed legacy routes no longer render',async()=>{
+  const home=await fetchPage('/');
+  assert.ok([307,308].includes(home.status));
+  assert.equal(new URL(home.headers.get('location'),'http://localhost').href,'http://localhost/next');
+  for(const path of ['/components/select','/review/openui','/review/reading-review','/review/typography','/foundations','/api/openui-review']){
+    const response=await fetchPage(path);assert.equal(response.status,404,path);
+  }
+  const html=await(await fetchPage('/next')).text();
+  assert.doesNotMatch(html,/旧版 · 已过期|查看已过期的旧版/);
 });

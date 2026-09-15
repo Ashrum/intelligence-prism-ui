@@ -4,8 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { useEffect,useState } from "react"
-import { BookOpen,Boxes,Palette,ArrowUpRight,Archive,MessageSquare,Search,Layers } from "lucide-react"
-import { SidebarProvider,Sidebar,SidebarContent,SidebarFooter,SidebarHeader,SidebarGroup,SidebarGroupLabel,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarInset,SidebarTrigger,useSidebar } from "@/components/coss/sidebar"
+import { BookOpen,Boxes,Palette,ArrowUpRight,MessageSquare,Search,Layers } from "lucide-react"
+import { SidebarProvider,Sidebar,SidebarContent,SidebarHeader,SidebarGroup,SidebarGroupLabel,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarInset,SidebarTrigger,useSidebar } from "@/components/coss/sidebar"
 import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/components/coss/select"
 import { Button } from "@/components/coss/button"
 import { componentGroups } from "@/lib/prism-next/catalog"
@@ -36,9 +36,6 @@ function Navigation() {
         <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}</SidebarMenu>
       </SidebarGroup>)}
     </SidebarContent>
-    <SidebarFooter className="p-3"><SidebarMenu>
-      <SidebarMenuItem><SidebarMenuButton render={<a href="/"/>}><Archive/><span>旧版 · 已过期</span><ArrowUpRight className="ml-auto"/></SidebarMenuButton></SidebarMenuItem>
-    </SidebarMenu></SidebarFooter>
   </Sidebar>
 }
 
