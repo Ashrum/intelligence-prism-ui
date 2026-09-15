@@ -49,6 +49,12 @@ export const componentGroups:ComponentGroup[] = [
     item("collapsible","Collapsible 展开区","就地展开补充信息。"),
     item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
   ]},
+  { id:"learning",title:"评价与学习支持",items:[
+    { ...item("evaluation","Evaluation 评价","逐评分点复核作答、确认评价版本，保留依据与修改记录。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("diagnosis","Diagnosis 诊断","从作答和评分证据形成候选判断，支持确认、排除与来源复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("goals","Goals 目标规划","关联诊断，明确达成标准、截止日期和独立证据核验。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("learning-plan","Learning Plan 学习计划","安排任务、调整时间与顺序，区分任务完成和目标达成。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+  ]},
   { id:"feedback",title:"反馈与状态",items:[
     item("alert","Alert 提示","提供需要阅读的就地说明。"),
     item("empty","Empty 空状态","解释当前没有内容的原因与下一步。"),
