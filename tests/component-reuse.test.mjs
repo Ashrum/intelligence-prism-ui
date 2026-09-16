@@ -51,3 +51,20 @@ test('heatmap preserves zero separately from missing; box summaries reject inval
  assert.equal(extent.min,0);assert.ok(extent.missing<0);
  assert.equal(validBox([0,2,3,4,5]),true);assert.equal(validBox([0,3,2,4,5]),false);assert.equal(validBox([0,1,2,3,NaN]),false);
 });
+
+test('chart axes retain independent scales and nested theme overrides',async()=>{
+ const {themeAxes}=await import('../lib/prism-next/chart-options.ts');
+ const themed=themeAxes([{min:0,max:336,axisLabel:{formatter:'{value}次'}},{min:0,max:6,position:'right',splitLine:{show:false},axisLine:{lineStyle:{type:'dashed'}}}],{muted:'#bbb',border:'#444'});
+ assert.equal(Array.isArray(themed),true);assert.equal(themed.length,2);assert.equal(themed[1].max,6);assert.equal(themed[1].position,'right');assert.equal(themed[1].axisLine.lineStyle.color,'#444');assert.equal(themed[1].axisLine.lineStyle.type,'dashed');assert.equal(themed[1].splitLine.show,false);assert.equal(themed[0].axisLabel.formatter,'{value}次');assert.equal(themed[0].axisLabel.color,'#bbb');
+});
+test('chart alignment excludes unrelated categories while retaining zero and gaps',async()=>{
+ const {alignChartValues,chartDomain,validDomain}=await import('../lib/prism-next/chart-options.ts');
+ const result=alignChartValues([{id:'a'},{id:'b'},{id:'c'}],[{id:'a',value:0},{id:'c',value:null},{id:'unrelated',value:9999}]);
+ assert.deepEqual(result,[{id:'a',value:0},{id:'b',value:null},{id:'c',value:null}]);assert.deepEqual(chartDomain(result.map(d=>d.value)),[0,1]);assert.equal(validDomain([80,20]),false);assert.deepEqual(chartDomain([5,10],[80,20]),[0,10]);
+});
+test('composition excludes invalid quantities and distinguishes zero from missing',async()=>{
+ const {compositionSummary}=await import('../lib/prism-next/chart-options.ts');
+ assert.deepEqual(compositionSummary([{value:10},{value:0},{value:null},{value:-1},{value:Infinity}]),{total:10,missing:1,invalid:2});
+ const html=render(h(StatusComposition,{unit:'人',items:[{id:'a',label:'零值',value:0},{id:'b',label:'未知',value:null}]}));
+ assert.match(html,/有效数量合计为 0/);assert.match(html,/零值/);assert.match(html,/0人/);assert.match(html,/缺测/);assert.doesNotMatch(html,/NaN|Infinity/);
+});

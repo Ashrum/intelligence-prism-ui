@@ -64,6 +64,9 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("learning-plan","Learning Plan 学习计划","任务列表接收日期、条件、状态与操作，流程由调用方组织。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
   ]},
   { id:"analytics",title:"数据分析",items:[
+    {...item("paired-dot-chart","Paired Dots 成对指标","同一刻度比较两个指标，支持缺测、边界与项目选择。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
+    {...item("quadrant-chart","Quadrant 四象限","自定义阈值、象限、分组点形和坐标范围。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
+    {...item("combo-chart","Combo 柱线组合","柱形与折线共同呈现，各系列明确绑定单位和坐标轴。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("evidence-matrix","Heatmap 热力矩阵","行列、单元格、标签与选择事件；区分零值与缺测。"),kind:"pattern",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("scatter-chart","Scatter 散点图","展示两项数值的关系，接收坐标、标签与选择事件。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("box-plot","Box Plot 箱线图","接收五数摘要，比较不同分组的分布。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
@@ -72,7 +75,7 @@ export const componentGroups:ComponentGroup[] = [
     {...item("comparison-chart","Comparison 比较","横向或纵向比较任意分类数据，接收标签、单位和点击回调。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
     {...item("distribution-chart","Distribution 分布","展示外部已统计的区间频数，不在组件内固定分箱规则。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
     {...item("goal-comparison","Goal Comparison 目标对照","接收基线、当前值、目标与单位；数值进展和业务判断分离。"),kind:"pattern"},
-    {...item("status-composition","Composition 状态组成","数量与占比并列，区别处理状态与学习结果。"),kind:"pattern"},
+    {...item("status-composition","Composition 状态组成","分类数量与占比并列，支持选择、缺测和六分类配色。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
     {...item("analysis-filter","Analysis Filter 分析筛选","字段定义、选项、值与变更事件由外部提供。"),kind:"pattern"},
     {...item("evidence-table","Evidence 分析证据","接收记录、列定义及查看回调，不绑定特定证据数据。"),kind:"pattern"},
   ]},
