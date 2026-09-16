@@ -8,7 +8,7 @@ import { BookOpen,Boxes,Palette,ArrowUpRight,MessageSquare,Search,Layers } from 
 import { SidebarProvider,Sidebar,SidebarContent,SidebarHeader,SidebarGroup,SidebarGroupLabel,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarInset,SidebarTrigger,useSidebar } from "@/components/coss/sidebar"
 import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/components/coss/select"
 import { Button } from "@/components/coss/button"
-import { componentGroups } from "@/lib/prism-next/catalog"
+import { componentGroups,applicationExamples } from "@/lib/prism-next/catalog"
 import { themeOptions,DESIGN_VERSION } from "@/lib/prism-next/config"
 
 function Navigation() {
@@ -35,6 +35,7 @@ function Navigation() {
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
         <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}</SidebarMenu>
       </SidebarGroup>)}
+      <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>
 }

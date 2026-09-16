@@ -1,4 +1,5 @@
 "use client"
+import { LearningTaskList } from "@/components/prism-next/learning-components"
 
 import { useState } from "react"
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react"
@@ -10,13 +11,13 @@ import { Field, FieldLabel } from "@/components/coss/field"
 import { Progress } from "@/components/coss/progress"
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from "@/components/coss/table"
 import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from "@/components/coss/collapsible"
-import { useLearning } from "./learning-provider"
-import { QuestionWorkPanel } from "./question-work-panel"
-import { QuestionContent } from "./question-content"
-import { compositeQuestion } from "./question-composite-samples"
-import { PointsField, QuestionSelect } from "./question-controls"
-import { LearningDate, LearningEmpty, SourceNotice, futureDate } from "./learning-controls"
-import { followupAttempts } from "./learning-verification"
+import { useLearning } from "@/components/prism-next/examples/learning-provider"
+import { QuestionWorkPanel } from "@/components/prism-next/question-work-panel"
+import { QuestionContent } from "@/components/prism-next/question-content"
+import { compositeQuestion } from "@/components/prism-next/fixtures/question-composite-samples"
+import { PointsField, QuestionSelect } from "@/components/prism-next/question-controls"
+import { LearningDate, LearningEmpty, SourceNotice, futureDate } from "@/components/prism-next/learning-controls"
+import { followupAttempts } from "@/components/prism-next/fixtures/followup-attempts"
 import { goalSourceValid, goalStatus, taskSaveError, type Task, type Stage } from "@/lib/prism-next/learning-workflow"
 
 const statuses = [{ value: "pending", label: "待开始" }, { value: "running", label: "进行中" }, { value: "done", label: "已完成" }, { value: "skipped", label: "已跳过" }]
@@ -42,11 +43,11 @@ export function LearningPlan({ go, active }: { go: (stage: Stage) => void; activ
         const active = goal.mode === "active" && goalSourceValid(state, goal)
         return <section key={goal.id} className="space-y-4" aria-label={`${goal.id} 学习计划`}><header className="flex flex-wrap items-center justify-between gap-3 border-t pt-6"><div className="space-y-1"><h4 className="text-sm font-semibold">{goal.id} · {goal.title}</h4><p className="text-xs leading-6 text-muted-foreground">目标{goalStatus(state, goal)} · 截止 {goal.due}</p></div><Button variant="outline" disabled={!active} onClick={() => dispatch({ type: "add-task", id: goal.id, date: today })}>添加任务</Button></header>
           {!active && <SourceNotice>关联目标{goalStatus(state, goal)}。任务和完成记录仍保留，请在目标规划中处理后继续学习。</SourceNotice>}
-          {!visible.length ? <p className="py-6 text-sm text-muted-foreground">当前筛选没有匹配的任务。<Button variant="ghost" size="sm" onClick={() => { setFilter("all"); setQuery("") }}>清除筛选</Button></p> : <Table><TableHeader><TableRow><TableHead>任务与完成条件</TableHead><TableHead>日期 / 时长</TableHead><TableHead>状态</TableHead><TableHead className="text-right">操作</TableHead></TableRow></TableHeader><TableBody>{visible.map(task => {
+          {!visible.length ? <p className="py-6 text-sm text-muted-foreground">当前筛选没有匹配的任务。<Button variant="ghost" size="sm" onClick={() => { setFilter("all"); setQuery("") }}>清除筛选</Button></p> : <LearningTaskList items={visible.map(task=>{
             const index = tasks.findIndex(item => item.id === task.id)
             const overdue = task.date < today && ["pending", "running"].includes(task.status)
-            return <TableRow key={task.id}><TableCell className="min-w-64 max-w-lg whitespace-normal"><p className="font-medium">{task.title}</p><p className="mt-1 text-sm leading-6 text-muted-foreground">{task.condition}</p>{task.note && <p className="mt-2 text-xs leading-6">{task.status === "skipped" ? "跳过理由" : "任务备注"}：{task.note}</p>}</TableCell><TableCell><p>{task.date}</p><p className="mt-1 text-muted-foreground tabular-nums">{task.minutes} 分钟</p>{task.date > goal.due && <p className="mt-1 text-xs text-warning-foreground">晚于目标截止日</p>}</TableCell><TableCell><Badge variant={task.status === "done" ? "success" : overdue ? "warning" : "outline"}>{statuses.find(item => item.value === task.status)?.label}</Badge>{overdue && <p className="mt-1 text-xs text-warning-foreground">已逾期</p>}</TableCell><TableCell><div className="flex flex-wrap justify-end gap-2"><Button variant="outline" disabled={!active || !!editing || !!resource} aria-controls="learning-task-resource" onClick={() => { if (task.status === "pending") dispatch({ type: "save-task", task: { ...task, status: "running" } }); setResource(task) }}>{task.status === "pending" ? "开始学习" : "查看材料"}</Button>{task.status === "running" && <Button disabled={!active || !!editing || !!resource} onClick={() => dispatch({ type: "save-task", task: { ...task, status: "done" } })}>标记完成</Button>}<Button disabled={!!editing || !!resource} variant="ghost" aria-controls="learning-task-editor" onClick={() => { setEditing({ ...task }); setMinutes(task.minutes); setError("") }}>编辑</Button></div><div className="mt-2 flex justify-end gap-1"><Button variant="ghost" size="icon-sm" aria-label={`${task.title}上移`} disabled={index === 0 || filter !== "all" || !!query} onClick={() => dispatch({ type: "move-task", id: task.id, offset: -1 })}><ArrowUpIcon /></Button><Button variant="ghost" size="icon-sm" aria-label={`${task.title}下移`} disabled={index === tasks.length - 1 || filter !== "all" || !!query} onClick={() => dispatch({ type: "move-task", id: task.id, offset: 1 })}><ArrowDownIcon /></Button></div></TableCell></TableRow>
-          })}</TableBody></Table>}
+            return {id:task.id,title:task.title,condition:task.condition,note:task.note,schedule:<><p>{task.date}</p><p className="mt-1 text-muted-foreground tabular-nums">{task.minutes} 分钟</p>{task.date>goal.due&&<p className="text-xs text-warning-foreground">晚于目标截止日</p>}</>,status:<><Badge variant={task.status==="done"?"success":overdue?"warning":"outline"}>{statuses.find(item=>item.value===task.status)?.label}</Badge>{overdue&&<p className="text-xs text-warning-foreground">已逾期</p>}</>,actions:<><div className="flex flex-wrap justify-end gap-2"><Button variant="outline" disabled={!active || !!editing || !!resource} aria-controls="learning-task-resource" onClick={() => { if (task.status === "pending") dispatch({ type: "save-task", task: { ...task, status: "running" } }); setResource(task) }}>{task.status === "pending" ? "开始学习" : "查看材料"}</Button>{task.status === "running" && <Button disabled={!active || !!editing || !!resource} onClick={() => dispatch({ type: "save-task", task: { ...task, status: "done" } })}>标记完成</Button>}<Button disabled={!!editing || !!resource} variant="ghost" aria-controls="learning-task-editor" onClick={() => { setEditing({ ...task }); setMinutes(task.minutes); setError("") }}>编辑</Button></div><div className="mt-2 flex justify-end gap-1"><Button variant="ghost" size="icon-sm" aria-label={`${task.title}上移`} disabled={index === 0 || filter !== "all" || !!query} onClick={() => dispatch({ type: "move-task", id: task.id, offset: -1 })}><ArrowUpIcon /></Button><Button variant="ghost" size="icon-sm" aria-label={`${task.title}下移`} disabled={index === tasks.length - 1 || filter !== "all" || !!query} onClick={() => dispatch({ type: "move-task", id: task.id, offset: 1 })}><ArrowDownIcon /></Button></div></>}
+          })}/>}
         </section>
       })}
     </>}

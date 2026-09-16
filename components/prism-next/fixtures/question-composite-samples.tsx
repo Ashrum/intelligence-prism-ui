@@ -1,6 +1,7 @@
-import { QuestionMath as M, type QuestionRecord } from "./question-content"
+import type { DirectorySelections } from "@/components/prism-next/textbook-directory"
+import { QuestionMath as M, type QuestionRecord } from "@/components/prism-next/question-content"
 
-export const judgmentQuestion: QuestionRecord = {
+export const judgmentQuestion: QuestionRecord & { initialLinks?: DirectorySelections } = {
   id: "Q-M-005", title: "二次函数的三个判断", kind: "判断题", response: "boolean", points: 6,
   stem: <p>已知函数 <M label="f(x)等于x平方减4x加3"><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>x</mi><mo>+</mo><mn>3</mn></M>，定义域为实数集。判断下列说法是否正确。</p>,
   parts: [
@@ -11,7 +12,7 @@ export const judgmentQuestion: QuestionRecord = {
   answer:<p>① 正确　② 错误　③ 正确</p>, explanation:<p>各小题独立判分，判断正确得 2 分，错误或未作答得 0 分。</p>,
 }
 
-export const compositeQuestion: QuestionRecord = {
+export const compositeQuestion: QuestionRecord & { initialLinks?: DirectorySelections } = {
   id:"Q-M-006",title:"注水过程中的水量变化",kind:"复合题",points:16,
   stem:<p>某水箱开始时存有 20 L 水。随后 6 min 内，水量 V(t) 按二次函数模型描述；t 的单位为 min，V 的单位为 L，且 0 ≤ t ≤ 6。本题按此模型计算。</p>,
   blocks:[

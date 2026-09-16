@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createLearningState, learningReducer as run, latestReview, diagnosisValid, goalSourceValid, goalStatus, goalPasses, currentVerifications } from '../lib/prism-next/learning-workflow.ts';
-import { initialReviewScores as scores } from '../lib/prism-next/question-review-model.ts';
+import { initialReviewScores as scores } from '../lib/prism-next/fixtures/review.ts';
 function reviewed() { return run(createLearningState(), {type:'review',scores,reason:''}); }
 function goalReady() {
   let state=reviewed();

@@ -1,4 +1,6 @@
 "use client"
+import { MilestoneList, type MilestoneItem } from "@/components/prism-next/learning-components"
+import { WorkloadCalendar as CalendarView } from "@/components/prism-next/workload-calendar"
 
 import { createContext, useContext, useState, type ComponentProps } from "react"
 import { DayButton } from "@daypicker/react"
@@ -11,13 +13,13 @@ import { Calendar } from "@/components/coss/calendar"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Textarea } from "@/components/coss/textarea"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
-import { DemoSection } from "./demo-parts"
-import { LearningProvider, useLearning } from "./learning-provider"
-import { LearningDate, LearningEmpty } from "./learning-controls"
-import { QuestionSelect, PointsField } from "./question-controls"
-import { QuestionWorkPanel } from "./question-work-panel"
-import { VerificationPanel } from "./learning-verification"
-import { LearningWorkspace } from "./learning-workspace"
+import { DemoSection } from "@/components/prism-next/demo-parts"
+import { LearningProvider, useLearning } from "@/components/prism-next/examples/learning-provider"
+import { LearningDate, LearningEmpty } from "@/components/prism-next/learning-controls"
+import { QuestionSelect, PointsField } from "@/components/prism-next/question-controls"
+import { QuestionWorkPanel } from "@/components/prism-next/question-work-panel"
+import { VerificationPanel } from "@/components/prism-next/examples/learning-verification"
+import { LearningWorkspace } from "@/components/prism-next/examples/learning-workspace"
 import { goalStatus, goalSourceValid, goalPasses, taskSaveError, type Task, type LearningState } from "@/lib/prism-next/learning-workflow"
 import { createVisualLearningState, dailyWorkload, goalMilestones } from "@/lib/prism-next/visual-analysis-model"
 
@@ -57,20 +59,11 @@ function GoalMilestones({ active }: { active: boolean }) {
   return <>
     <div className="flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="里程碑目标" value={goal.id} onChange={id => { setSelection(id); setVerifying(false) }} items={state.goals.map(goal => ({ value: goal.id, label: `${goal.id} · ${goal.title}` }))}/><Badge variant={status === "已达成" ? "success" : "outline"}>{status}</Badge></div>
     <div className="milestone-summary"><div><p className="text-sm text-muted-foreground">有效独立作答</p><p className="mt-2 text-3xl font-semibold tabular-nums">{passes}<span className="ml-2 text-base font-normal text-muted-foreground">/ 2 份</span></p></div><p className="text-sm leading-7">{!valid ? "来源有变化，先复核诊断与目标。" : status === "已达成" ? "两份独立作答均经人工核验，满足当前标准。" : goal.mode !== "active" ? "先启用或恢复目标，再继续核验。" : `还需 ${Math.max(0, 2 - passes)} 份独立作答满足全部标准。`}<br/><span className="text-muted-foreground">截止 {goal.due} · 标准 v{goal.version}</span></p></div>
-    <ol className="goal-milestones">{goalMilestones(state, goal).map((item, index) => <li key={item.id} data-state={item.state}><span className="milestone-mark">{item.state === "met" ? <CheckIcon/> : item.state === "blocked" || item.state === "retry" ? <CircleAlertIcon/> : <CircleIcon/>}</span><div><p className="text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</p><h3 className="mt-1 text-sm font-semibold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{item.detail}</p></div></li>)}</ol>
+    <MilestoneList items={goalMilestones(state,goal) as MilestoneItem[]}/>
     <section className="rounded-xl border p-5"><h3 className="text-sm font-semibold">每份作答都需要满足</h3><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-7">{goal.criteria.map(item => <li key={item.id}>{item.text}</li>)}</ol><div className="mt-5 flex flex-wrap items-center gap-3"><Button disabled={!valid || goal.mode !== "active"} aria-controls="milestone-verification" onClick={() => setVerifying(true)}>核验独立作答</Button><Button variant="outline" disabled={!valid} onClick={() => dispatch({ type: "goal-mode", id: goal.id, mode: goal.mode === "active" ? "paused" : "active" })}>{goal.mode === "active" ? <><PauseIcon/>暂停目标</> : "启用目标"}</Button></div></section>
     <p className="text-sm text-muted-foreground">任务已完成 {tasks.filter(task => task.status === "done").length} / {tasks.length} 项，单独记录，不计作目标达成证据。两份作答均为人工编写的界面示例。</p>
     {verifying && <VerificationPanel key={`${goal.id}-${goal.version}`} goal={goal} active={active} panelId="milestone-verification" onClose={() => setVerifying(false)}/>}
   </>
-}
-
-const LoadContext = createContext<{ state: LearningState; capacity: number } | null>(null)
-function LoadDay(props: ComponentProps<typeof DayButton>) {
-  const context = useContext(LoadContext)!
-  const date = format(props.day.date, "yyyy-MM-dd")
-  const load = dailyWorkload(context.state, date)
-  const busy = load.remaining > context.capacity
-  return <DayButton {...props} data-load={busy ? "over" : load.tasks.length ? "planned" : "empty"} aria-label={`${date}，${load.tasks.length} 项任务，剩余可执行预计 ${load.remaining} 分钟${busy ? "，超出每日安排" : ""}`}><span>{props.day.date.getDate()}</span><span className="load-day-minutes" aria-hidden="true">{load.remaining ? `${load.remaining}′` : load.blocked ? "待处理" : load.tasks.length ? "已处理" : "—"}</span>{busy && <span className="load-day-flag" aria-hidden="true">!</span>}</DayButton>
 }
 
 function WorkloadCalendar({ active }: { active: boolean }) {
@@ -97,7 +90,7 @@ function WorkloadCalendar({ active }: { active: boolean }) {
   }
   return <>
     <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted-foreground">日历数字 = 剩余可执行任务的预计分钟</p><QuestionSelect label="每日可安排时间" value={String(capacity)} onChange={value => setCapacity(Number(value))} items={[30, 45, 60, 90].map(value => ({ value: String(value), label: `每日可安排 ${value} 分钟` }))}/></div>
-    <div className="workload-layout"><section className="min-w-0"><LoadContext value={{ state, capacity }}><Calendar mode="single" required locale={zhCN} weekStartsOn={1} className="workload-calendar" month={month} onMonthChange={setMonth} selected={selected} onSelect={setSelected} components={{ DayButton: LoadDay }}/></LoadContext><p className="mt-4 text-xs leading-6 text-muted-foreground">“!” 表示超出可安排时间；已完成、跳过及暂停任务不计入剩余负荷。预计时长不代表实际学习用时。</p></section>
+    <div className="workload-layout"><section className="min-w-0"><CalendarView days={Object.fromEntries([...new Set(state.tasks.map(t=>t.date))].map(date=>{const load=dailyWorkload(state,date);return [date,{value:load.remaining,hasItems:load.tasks.length>0,label:load.remaining?`${load.remaining}′`:load.blocked?"待处理":"已处理"}]}))} capacity={capacity} selected={selected} onSelect={setSelected} month={month} onMonthChange={setMonth}/><p className="mt-4 text-xs leading-6 text-muted-foreground">“!” 表示超出可安排时间；已完成、跳过及暂停任务不计入剩余负荷。预计时长不代表实际学习用时。</p></section>
       <section className="min-w-0 space-y-4" aria-label="当日学习安排"><header className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-base font-semibold">{format(selected, "M 月 d 日")}</h3><Badge variant={load.remaining > capacity ? "warning" : "outline"}>{load.remaining > capacity ? `超出 ${load.remaining - capacity} 分钟` : `${load.remaining} / ${capacity} 分钟`}</Badge></header><p className="text-xs leading-6 text-muted-foreground">{load.tasks.length} 项 · 已完成 {load.done} · 已跳过 {load.skipped} · 暂不可执行 {load.blocked}</p>
       {load.tasks.length ? <ul className="space-y-3">{load.tasks.map(task => { const goal = state.goals.find(goal => goal.id === task.goalId)!; const blocked = goal.mode !== "active" || !goalSourceValid(state, goal); return <li key={task.id} className="rounded-xl border p-4"><div className="flex flex-wrap items-center justify-between gap-2"><Badge variant="outline">{{ pending: "待开始", running: "进行中", done: "已完成", skipped: "已跳过" }[task.status]}</Badge><span className="text-sm tabular-nums">预计 {task.minutes} 分钟</span></div><h4 className="mt-3 text-sm font-medium leading-6">{task.title}</h4><p className="mt-2 text-xs leading-6 text-muted-foreground">{task.goalId} · 目标截止 {goal.due}</p>{blocked && <p className="text-sm text-warning-foreground">目标{goalStatus(state, goal)}，当前不可执行。</p>}{task.date > goal.due && <p className="text-sm text-warning-foreground">安排晚于目标截止日期。</p>}<div className="mt-3"><Button variant="outline" size="sm" aria-controls={`load-edit-${task.id}`} onClick={() => { setEditing({ ...task }); setMinutes(task.minutes); setError(""); setPanelOpen(true) }}>查看与调整</Button></div></li> })}</ul> : <p className="rounded-xl border border-dashed p-6 text-sm leading-6 text-muted-foreground">当天没有学习安排。{state.tasks.length ? "可以从其他日期移入任务。" : "请在关联工作流中启用目标并创建计划。"}</p>}
       </section></div>

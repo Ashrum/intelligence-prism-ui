@@ -1,5 +1,5 @@
 import { createLearningState, learningReducer, goalSourceValid, currentVerifications, type LearningState, type Goal } from "./learning-workflow.ts"
-import { initialReviewScores } from "./question-review-model.ts"
+import { initialReviewScores } from "./fixtures/review.ts"
 
 /** Isolated, explicitly prefilled demonstration. Never replaces the shared workflow. */
 export function createVisualLearningState(): LearningState {
