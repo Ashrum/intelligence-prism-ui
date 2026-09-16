@@ -39,6 +39,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整目录树与弹出选择器均已通过；两种形式一起保留。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree", review:"approved" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("icons","Icons 图标","搜索 41 个常用图标，统一名称、用途、尺寸与主题颜色。"),kind:"extension",sourceUrl:"https://lucide.dev/icons",sourceLabel:"Lucide"},
     { ...item("question","Question 题目","六种题型、三类详情；独立试题篮、组卷与组练习，支持维护与评分复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     item("avatar","Avatar 头像","图像缺失时显示文字回退。"),
     item("badge","Badge 标签","以文字与适量颜色表达状态。"),
@@ -54,6 +55,17 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("diagnosis","Diagnosis 诊断","从作答和评分证据形成候选判断，支持确认、排除与来源复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     { ...item("goals","Goals 目标规划","关联诊断，明确达成标准、截止日期和独立证据核验。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     { ...item("learning-plan","Learning Plan 学习计划","安排任务、调整时间与顺序，区分任务完成和目标达成。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+  ]},
+  { id:"analytics",title:"数据分析",items:[
+    {...item("student-analysis","Student Analysis 单元分析","将筛选、指标、图表和证据连接成完整的学生单元分析示例。"),kind:"pattern",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("metric-summary","Metric 指标摘要","显示数值、单位、有效样本和统计分母。"),kind:"pattern"},
+    {...item("trend-chart","Trend 趋势","固定尺度，区分缺测和零分，保留时间断点。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("comparison-chart","Comparison 比较","对比知识点样本表现，显示样本量与评分尺度。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("distribution-chart","Distribution 分布","展示互不重叠的得分区间，并联动明细。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("goal-comparison","Goal Comparison 目标对照","并列基线、当前值、目标和人工核验条件。"),kind:"pattern"},
+    {...item("status-composition","Composition 状态组成","数量与占比并列，区别处理状态与学习结果。"),kind:"pattern"},
+    {...item("analysis-filter","Analysis Filter 分析筛选","学生、知识点和日期范围同步作用于结果与证据。"),kind:"pattern"},
+    {...item("evidence-table","Evidence 分析证据","排序、范围下钻和右侧证据面板。"),kind:"pattern"},
   ]},
   { id:"feedback",title:"反馈与状态",items:[
     item("alert","Alert 提示","提供需要阅读的就地说明。"),
