@@ -46,7 +46,7 @@ export function SelectParticles() {
       </Select></div><Feedback>{selected.length ? `适用班级：${selected.join("、")}` : "尚未选择班级。"}</Feedback>
     </DemoSection>
     <DemoSection title="随内容确定宽度" description="短状态保持紧凑，较长内容自然扩展；保留 coss 的默认最小宽度。" sources={["p-select-21"]}>
-      <Label htmlFor="particle-auto-width">复核状态</Label><Select items={widths} value={widthValue} onValueChange={v => v && setWidthValue(v)}><SelectTrigger id="particle-auto-width" className="w-fit max-w-full"><SelectValue /></SelectTrigger><SelectPopup>{widths.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2"><Label htmlFor="particle-auto-width">复核状态</Label><Select items={widths} value={widthValue} onValueChange={v => v && setWidthValue(v)}><SelectTrigger id="particle-auto-width" className="w-fit max-w-full"><SelectValue /></SelectTrigger><SelectPopup>{widths.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>
     </DemoSection>
   </>
 }

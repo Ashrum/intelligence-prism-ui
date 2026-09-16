@@ -2,8 +2,28 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createTree, syncDataLoaderFeature, checkboxesFeature } from '@headless-tree/core';
 import { textbooks, projectDirectory, createDirectory, directoryLeaves, summarizeDirectory } from '../lib/prism-next/textbook-directory.ts';
+import { directoryDepthExamples } from '../lib/prism-next/fixtures/directory-depth.ts';
 
 const data = textbooks[0].directories.course;
+test('two to five level samples preserve deep paths and parent checkbox propagation', async () => {
+  const scopes=new Set();
+  for (const depth of [2,3,4,5]) for (const kind of ['course','knowledge']) {
+    const directory=directoryDepthExamples[String(depth)][0].directories[kind];
+    assert.equal(Math.max(...Object.values(directory.paths).map(path=>path.length)),depth);
+    for (const id of Object.keys(directory.nodes)) { assert.ok(!scopes.has(id)); scopes.add(id); }
+    const leaf=directory.leafIds[0], path=directory.paths[leaf], leaves=directoryLeaves(directory,path[0]);
+    const result=projectDirectory(directory,directory.nodes[leaf].title);
+    assert.ok(path.every(id=>result.visibleIds.has(id)));
+    const tree=createTree({rootItemId:directory.rootId,dataLoader:{getItem:id=>directory.nodes[id],getChildren:id=>directory.nodes[id].children},getItemName:item=>item.getItemData().title,isItemFolder:item=>item.getItemData().children.length>0,propagateCheckedState:true,canCheckFolders:false,features:[syncDataLoaderFeature,checkboxesFeature]});
+    tree.setMounted(true); tree.rebuildTree();
+    await tree.getItemInstance(path[0]).toggleCheckedState();
+    assert.deepEqual(new Set(tree.getState().checkedItems),new Set(leaves));
+    await tree.getItemInstance(leaf).setUnchecked();
+    assert.ok(path.slice(0,-1).every(id=>tree.getItemInstance(id).getCheckedState()==='indeterminate'));
+    const summary=summarizeDirectory(directory,tree.getState().checkedItems);
+    assert.deepEqual(new Set(summary.flatMap(item=>item.leafIds)),new Set(leaves.filter(id=>id!==leaf)));
+  }
+});
 test('search finds collapsed descendants and retains paths without unrelated branches', () => {
   const projected = projectDirectory(data, '  单调性  ');
   assert.deepEqual([...projected.matchingIds], ['math-1:course:c221']);
