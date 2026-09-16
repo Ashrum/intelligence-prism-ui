@@ -9,7 +9,7 @@ import { SidebarProvider,Sidebar,SidebarContent,SidebarHeader,SidebarGroup,Sideb
 import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/components/coss/select"
 import { Button } from "@/components/coss/button"
 import { componentGroups,applicationExamples } from "@/lib/prism-next/catalog"
-import { themeOptions,DESIGN_VERSION } from "@/lib/prism-next/config"
+import { themeOptions,DESIGN_VERSION,DESIGN_STATUS } from "@/lib/prism-next/config"
 
 function Navigation() {
   const pathname=usePathname()
@@ -60,7 +60,7 @@ export function Shell({children}:{children:React.ReactNode}) {
         <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b bg-background px-5">
           <SidebarTrigger aria-label="切换导航侧栏"/>
           <span className="hidden text-sm text-muted-foreground sm:inline">组件库</span>
-          <span className="hidden text-xs text-muted-foreground sm:inline">v{DESIGN_VERSION} · 待评审</span>
+          <span className="hidden text-xs text-muted-foreground sm:inline">v{DESIGN_VERSION} · {DESIGN_STATUS}</span>
           <div className="ml-auto flex items-center gap-2">
             <Button variant="ghost" size="icon" aria-label="查找组件" render={<Link href="/next#component-search"/>}><Search/></Button>
             <ThemePicker/>

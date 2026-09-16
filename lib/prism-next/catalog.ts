@@ -1,4 +1,4 @@
-export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string; sourceLabel?:string; review?:"approved" }
+export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string; sourceLabel?:string }
 export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
@@ -36,7 +36,7 @@ export const componentGroups:ComponentGroup[] = [
     item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
     item("pagination","Pagination 分页","在明确的数据页之间移动。"),
     item("sidebar","Sidebar 侧栏","桌面导航、折叠与移动端抽屉。"),
-    { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree", review:"approved" },
+    { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
     {...item("icons","Icons 图标","搜索 41 个常用图标，统一名称、用途、尺寸与主题颜色。"),kind:"extension",sourceUrl:"https://lucide.dev/icons",sourceLabel:"Lucide"},
