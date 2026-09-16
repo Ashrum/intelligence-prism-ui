@@ -1,6 +1,43 @@
-# v1.12.1 组件复用约定
+# v1.13.1 组件复用约定
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
+
+## 源码接入
+
+本版 80 个组件已通过评审，可作为研发接入基线。按需复用源文件及其直接依赖，组件示例与应用示例用于说明用法。仓库保留 `private: true`，不通过 npm 包安装。
+
+| 接入项 | 要求 |
+| --- | --- |
+| 运行依赖 | 当前验证基线：React 19.2.6、Tailwind CSS 4.2.1、Base UI 1.8.0；其他版本以 `package-lock.json` 为准。React 18 / Tailwind 3 需由接入项目另行适配验证 |
+| 源码与别名 | 基础组件位于 `components/coss`；组合与扩展位于 `components/prism-next`。保留其 `lib` 依赖及 `@/*` 路径映射 |
+| 样式 | 以 `app/(next)/next/theme.css` 为入口，保留 `vendor/coss-animations.css` 和 `tw-animate-css`；迁移目录时同步修正相对导入路径 |
+| 主题根节点 | `html` 保留 `data-ui-version="coss-v1"`；`ThemeProvider` 使用 `attribute="data-prism-theme"` 和 `light` / `paper` / `dark` 三主题，浮层与正文共享主题 |
+| 上下文 | 参考 `components/prism-next/providers.tsx` 组合 Theme、Motion、Tooltip 和 Toast；ECharts 封装也依赖主题上下文 |
+| 数学字体 | 同步 `public/fonts/typography-review/stix-two-math.woff2` 及该目录授权文件；更改公开路径时同步 CSS 的字体 URL |
+| 数据与事件 | 从业务容器传入真实数据、受控状态和回调。`fixtures`、`demos`、`examples` 中的数据和工作流仅供参考 |
+
+在现有项目内直接导入组件：
+
+```tsx
+import { Button } from "@/components/coss/button"
+import { Card, CardHeader, CardTitle, CardPanel } from "@/components/coss/card"
+
+export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => void }) {
+  return <Card>
+    <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
+    <CardPanel><Button onClick={onOpen}>打开材料</Button></CardPanel>
+  </Card>
+}
+```
+
+该示例在客户端组件中使用。迁入其他框架时，按实际导入替换 Next.js 的 Link、导航或图片适配；不需要带入站点 Shell、组件目录或业务演示页面。
+
+## 常用展示约定
+
+- Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
+- Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
+- Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
+- 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
 ## 代码与导航分层
 
