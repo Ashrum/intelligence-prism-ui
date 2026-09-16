@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { components } from '../lib/prism-next/catalog.ts';
+import { components, applicationExamples } from '../lib/prism-next/catalog.ts';
 const workerPromise=import(new URL('../dist/server/index.js',import.meta.url));
 async function fetchPage(path){const{default:worker}=await workerPromise;return worker.fetch(new Request('http://localhost'+path,{headers:{accept:'text/html'}}),{ASSETS:{fetch:async()=>new Response('Not found',{status:404})}},{waitUntil(){},passThroughOnException(){}})}
-test('all 75 coss component and composition routes render their real demonstrations',async()=>{
-  assert.equal(components.length,75);
+test('all reusable component routes render their demonstrations',async()=>{
+  assert.equal(components.length,77);
   for(const c of components){const res=await fetchPage('/next/components/'+c.id);assert.equal(res.status,200,c.id);const html=await res.text();assert.match(html,/prism-demo-section/,c.id);assert.match(html,/data-ui-version="coss-v1"/,c.id);assert.doesNotMatch(html,/legacy-version-notice/,c.id)}
 });
 test('particle additions render in their existing categories and expose the date composition',async()=>{
@@ -15,7 +15,7 @@ test('particle additions render in their existing categories and expose the date
   }
 });
 test('question review renders six readable types without answer-input controls',async()=>{
-  const html=await(await fetchPage('/next/components/question')).text();
+  const html=await(await fetchPage('/next/examples/questions')).text();
   for(const id of ['Q-M-001','Q-M-002','Q-M-003','Q-M-004','Q-M-005','Q-M-006']) assert.ok(html.includes(`data-question-id="${id}"`),id);
   for(const label of ['单选题','多选题','填空题','判断题','解答题','复合题','题目选项（只读）','题目小问']) assert.ok(html.includes(label),label);
   for(const n of [1,2,3,4,5,6]) assert.ok(html.includes(`第${n}题详情`),`第${n}题稳定详情入口`);
@@ -48,4 +48,11 @@ test('the homepage opens coss and removed legacy routes no longer render',async(
   }
   const html=await(await fetchPage('/next')).text();
   assert.doesNotMatch(html,/旧版 · 已过期|查看已过期的旧版/);
+});
+
+// Application routes are preserved, but are no longer counted as reusable components.
+test('application examples remain available and the old analysis URL redirects',async()=>{
+ assert.equal(applicationExamples.length,10);
+ for(const item of applicationExamples){const res=await fetchPage('/next/examples/'+item.id);assert.equal(res.status,200,item.id);const html=await res.text();assert.match(html,/应用示例/);}
+ const old=await fetchPage('/next/components/student-analysis');assert.ok([307,308].includes(old.status));assert.equal(new URL(old.headers.get('location'),'http://localhost').pathname,'/next/examples/student-analysis');
 });

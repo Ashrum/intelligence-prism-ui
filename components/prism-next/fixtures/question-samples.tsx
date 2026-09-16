@@ -1,4 +1,6 @@
-import { QuestionMath as M, QuestionFigure, type QuestionRecord } from "./question-content"
+import { QuestionFigure } from "@/components/prism-next/fixtures/question-figure"
+import type { DirectorySelections } from "@/components/prism-next/textbook-directory"
+import { QuestionMath as M, type QuestionRecord } from "@/components/prism-next/question-content"
 
 const root3 = <msqrt><mn>3</mn></msqrt>
 const fraction = (a: string, b: string) => <mfrac><mn>{a}</mn><mn>{b}</mn></mfrac>
@@ -7,7 +9,7 @@ const square = <msup><mi>x</mi><mn>2</mn></msup>
 const fExpression = <mrow>{square}<mo>−</mo><mn>2</mn><mi>x</mi><mo>−</mo><mn>3</mn></mrow>
 const blank = (number: string) => <span role="img" aria-label={`第${number}空，待填写`} className="mx-2 inline-flex min-w-24 items-end justify-center border-b border-foreground/65 px-4 align-baseline text-sm text-muted-foreground">（{number}）</span>
 
-export const questionSamples: QuestionRecord[] = [
+export const questionSamples: (QuestionRecord & { initialLinks?: DirectorySelections })[] = [
   {
     id: "Q-M-001", title: "二次根式的化简", kind: "单选题", response: "single", points: 5,
     stem: <p>化简 <M label="根号三加一除以根号三减一"><mfrac><mrow>{root3}<mo>+</mo><mn>1</mn></mrow><mrow>{root3}<mo>−</mo><mn>1</mn></mrow></mfrac></M>，所得结果是（　　）。</p>,

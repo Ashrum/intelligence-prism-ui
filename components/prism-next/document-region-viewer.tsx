@@ -1,0 +1,8 @@
+"use client"
+import { useEffect,useRef,type ReactNode } from "react"
+export type DocumentRegion={id:string;label:string;rect:[number,number,number,number];checked?:boolean;content?:ReactNode}
+export function DocumentRegionViewer({regions,selectedId,onSelect,zoom=100,header,footer,background,label="文档区域"}:{regions:DocumentRegion[];selectedId?:string;onSelect:(id:string)=>void;zoom?:number;header?:ReactNode;footer?:ReactNode;background?:ReactNode;label?:string}){
+ const canvas=useRef<HTMLDivElement>(null), previous=useRef(selectedId)
+ useEffect(()=>{if(previous.current===selectedId)return;previous.current=selectedId;const target=[...canvas.current?.querySelectorAll<HTMLElement>('[data-region]')??[]].find(node=>node.dataset.region===selectedId);target?.scrollIntoView({block:"nearest",inline:"nearest"})},[selectedId])
+ return <div className="review-sheet-viewport" ref={canvas} tabIndex={0} aria-label={label}><div className="review-sheet" style={{width:`${Math.max(50,Math.min(300,zoom))}%`}}>{background}{header&&<header className="review-sheet-heading">{header}</header>}{regions.map(item=><div key={item.id} className="review-sheet-region" data-region={item.id} style={{left:`${item.rect[0]}%`,top:`${item.rect[1]}%`,width:`${item.rect[2]}%`,height:`${item.rect[3]}%`}}>{item.content&&<div className="review-sheet-answer">{item.content}</div>}<button type="button" className="review-region-hit" data-selected={selectedId===item.id} data-checked={item.checked} aria-label={`定位${item.label}`} aria-pressed={selectedId===item.id} onClick={()=>onSelect(item.id)}><span>{item.checked?"已核对 · ":""}{item.label}</span></button></div>)}{footer&&<footer className="review-sheet-footer">{footer}</footer>}</div></div>
+}

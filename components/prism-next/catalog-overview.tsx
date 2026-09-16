@@ -7,7 +7,7 @@ import { Input } from "@/components/coss/input"
 import { Button } from "@/components/coss/button"
 import { Badge } from "@/components/coss/badge"
 import { Label } from "@/components/coss/label"
-import { componentGroups,components } from "@/lib/prism-next/catalog"
+import { componentGroups,components,applicationExamples } from "@/lib/prism-next/catalog"
 
 export function CatalogOverview() {
   const [query,setQuery]=useState('')
@@ -20,7 +20,7 @@ export function CatalogOverview() {
     </div>
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div className="w-full max-w-sm"><Label htmlFor="component-search">查找组件</Label><Input id="component-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="名称或用途，例如：选择、表单、Dialog"/></div>
-      <p className="text-sm text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项`:`${components.filter(item=>!item.kind).length} 项基础组件 · ${components.filter(item=>item.kind==="pattern").length} 项组合 · ${components.filter(item=>item.kind==="extension").length} 项扩展 · 3 套主题`}</p>
+      <p className="text-sm text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项`:`${components.filter(item=>!item.kind).length} 项基础组件 · ${components.filter(item=>item.kind==="pattern").length} 项业务与组合组件 · ${components.filter(item=>item.kind==="extension").length} 项扩展 · ${applicationExamples.length} 项应用示例（另计） · 3 套主题`}</p>
     </div>
     {componentGroups.map(group=>{
       const items=group.items.filter(item=>match(item.title+' '+item.summary))
@@ -36,6 +36,7 @@ export function CatalogOverview() {
       </section>
     })}
     {count===0&&<div className="py-12 text-center"><p className="mb-4 text-muted-foreground">没有匹配的组件。</p><Button variant="outline" onClick={()=>setQuery('')}>清除搜索</Button></div>}
+    <section className="mt-10"><h2 className="text-sm font-semibold">应用示例 · 不计入组件数量</h2><div className="mt-3 grid gap-4 sm:grid-cols-2">{applicationExamples.map(item=><Link key={item.id} href={`/next/examples/${item.id}`} className="border-b py-3"><p className="text-sm font-medium">{item.title}</p><p className="mt-1 text-sm text-muted-foreground">{item.summary}</p></Link>)}</div></section>
     <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-sm text-muted-foreground"><p>coss 原始组件 · 系统字体 · 清晰的数学排版</p></footer>
   </div>
 }

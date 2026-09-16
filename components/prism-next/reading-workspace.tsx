@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTab, TabsPanel } from '@/components/coss/tabs'
 import { Badge } from '@/components/coss/badge'
 import { MaterialSelect } from '@/components/prism-next/demo-parts'
 import { MathContent } from '@/components/prism-next/math-content'
-import { AgentWorkspace } from '@/components/prism-next/agent-workspace'
+import { AgentWorkspace } from '@/components/prism-next/examples/agent-workspace'
 import { initialMaterial, isMaterial, validateMaterial, appendReviewNotes, reviewAdoptionState, type Material } from '@/lib/prism-next/review'
 const storageKey='prism-v1-reading'
 const emptyErrors={title:'',minutes:'',notes:''}

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useReducer, useState, type ReactNode, type Dispatch, type SetStateAction } from "react"
 import { createLearningState, learningReducer, type LearningState, type LearningAction } from "@/lib/prism-next/learning-workflow"
-import { createReviewEditor, type ReviewEditor } from "@/lib/prism-next/question-review-model"
+import { createReviewEditor, type ReviewEditor } from "@/lib/prism-next/fixtures/review"
 
 const LearningContext = createContext<{ state: LearningState; dispatch: Dispatch<LearningAction>; editor: ReviewEditor; setEditor: Dispatch<SetStateAction<ReviewEditor>> } | null>(null)
 export function LearningProvider({ children, initialState }: { children: ReactNode; initialState?: LearningState }) {

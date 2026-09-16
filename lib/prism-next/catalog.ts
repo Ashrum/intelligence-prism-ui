@@ -40,7 +40,8 @@ export const componentGroups:ComponentGroup[] = [
   ]},
   { id:"content",title:"内容与数据",items:[
     {...item("icons","Icons 图标","搜索 41 个常用图标，统一名称、用途、尺寸与主题颜色。"),kind:"extension",sourceUrl:"https://lucide.dev/icons",sourceLabel:"Lucide"},
-    { ...item("question","Question 题目","六种题型、三类详情；独立试题篮、组卷与组练习，支持维护与评分复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("question","Question 题目","独立题面、可选详情与操作插槽；按需组合选择、编排、作答和复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    {...item("answer-review-map","Document Region 文档区域","传入文档内容与区域坐标，支持缩放、选中与定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/drawer",sourceLabel:"coss Drawer 组合"},
     item("avatar","Avatar 头像","图像缺失时显示文字回退。"),
     item("badge","Badge 标签","以文字与适量颜色表达状态。"),
     item("card","Card 卡片","组织同一对象的内容与操作。"),
@@ -50,26 +51,30 @@ export const componentGroups:ComponentGroup[] = [
     item("collapsible","Collapsible 展开区","就地展开补充信息。"),
     item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
   ]},
+  { id:"agent",title:"Agent",items:[
+    {...item("agent-components","Agent 任务组件","独立任务输入与步骤进度，不绑定模型或演示执行器。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+  ]},
   { id:"learning",title:"评价与学习支持",items:[
-    { ...item("evaluation","Evaluation 评价","逐评分点复核作答、确认评价版本，保留依据与修改记录。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
-    { ...item("diagnosis","Diagnosis 诊断","从作答和评分证据形成候选判断，支持确认、排除与来源复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
-    { ...item("goals","Goals 目标规划","关联诊断，明确达成标准、截止日期和独立证据核验。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
-    { ...item("learning-plan","Learning Plan 学习计划","安排任务、调整时间与顺序，区分任务完成和目标达成。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    {...item("goal-milestones","Milestones 里程碑","接收节点、说明和状态，不依赖目标工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+    {...item("workload-calendar","Workload 负荷日历","接收每日数值、容量与选中日期，可用于任务或资源安排。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/calendar",sourceLabel:"coss Calendar / DayPicker"},
+
+    { ...item("evaluation","Evaluation 评价","接收题目、作答与评分规则，逐项编辑并返回复核结果。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("diagnosis","Diagnosis 诊断","展示观察、来源、状态与证据操作，由外部提供判断。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("goals","Goals 目标规划","目标卡片与逐项核验字段，可独立接入不同目标流程。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
+    { ...item("learning-plan","Learning Plan 学习计划","任务列表接收日期、条件、状态与操作，流程由调用方组织。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
   ]},
   { id:"analytics",title:"数据分析",items:[
-    {...item("evidence-matrix","Evidence Matrix 学习证据矩阵","知识项与轮次交叉定位，区分零分、缺测与待复核。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/table",sourceLabel:"coss Table 组合"},
-    {...item("goal-milestones","Milestones 目标里程碑","显示来源、启用与独立作答核验，联动现有目标规则。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
-    {...item("workload-calendar","Workload 学习负荷日历","每日预计负荷、超量提醒与任务改期，支持当前工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/calendar",sourceLabel:"coss Calendar / DayPicker"},
-    {...item("answer-review-map","Review Map 答卷复核定位","题号与纸面区域联动，支持跨页缩放与人工核对记录。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/drawer",sourceLabel:"coss Drawer 组合"},
-    {...item("student-analysis","Student Analysis 单元分析","将筛选、指标、图表和证据连接成完整的学生单元分析示例。"),kind:"pattern",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("evidence-matrix","Heatmap 热力矩阵","行列、单元格、标签与选择事件；区分零值与缺测。"),kind:"pattern",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
+    {...item("scatter-chart","Scatter 散点图","展示两项数值的关系，接收坐标、标签与选择事件。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
+    {...item("box-plot","Box Plot 箱线图","接收五数摘要，比较不同分组的分布。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("metric-summary","Metric 指标摘要","显示数值、单位、有效样本和统计分母。"),kind:"pattern"},
     {...item("trend-chart","Trend 趋势","固定尺度，区分缺测和零分，保留时间断点。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
-    {...item("comparison-chart","Comparison 比较","对比知识点样本表现，显示样本量与评分尺度。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
-    {...item("distribution-chart","Distribution 分布","展示互不重叠的得分区间，并联动明细。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
-    {...item("goal-comparison","Goal Comparison 目标对照","并列基线、当前值、目标和人工核验条件。"),kind:"pattern"},
+    {...item("comparison-chart","Comparison 比较","横向或纵向比较任意分类数据，接收标签、单位和点击回调。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("distribution-chart","Distribution 分布","展示外部已统计的区间频数，不在组件内固定分箱规则。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("goal-comparison","Goal Comparison 目标对照","接收基线、当前值、目标与单位；数值进展和业务判断分离。"),kind:"pattern"},
     {...item("status-composition","Composition 状态组成","数量与占比并列，区别处理状态与学习结果。"),kind:"pattern"},
-    {...item("analysis-filter","Analysis Filter 分析筛选","学生、知识点和日期范围同步作用于结果与证据。"),kind:"pattern"},
-    {...item("evidence-table","Evidence 分析证据","排序、范围下钻和右侧证据面板。"),kind:"pattern"},
+    {...item("analysis-filter","Analysis Filter 分析筛选","字段定义、选项、值与变更事件由外部提供。"),kind:"pattern"},
+    {...item("evidence-table","Evidence 分析证据","接收记录、列定义及查看回调，不绑定特定证据数据。"),kind:"pattern"},
   ]},
   { id:"feedback",title:"反馈与状态",items:[
     item("alert","Alert 提示","提供需要阅读的就地说明。"),
@@ -98,3 +103,16 @@ export const componentGroups:ComponentGroup[] = [
 ]
 export const components = componentGroups.flatMap(group=>group.items)
 export function findComponent(id:string) { return components.find(item=>item.id===id) }
+
+export const applicationExamples=[
+ {id:"questions",title:"题库、组卷与练习",summary:"题卡、筛选、试题篮和打印组合。"},
+ {id:"student-analysis",title:"学生单元分析",summary:"统计口径、筛选与明细联动。"},
+ {id:"evidence-matrix",title:"学习证据矩阵",summary:"将题目记录适配为矩阵数据。"},
+ {id:"evaluation",title:"评价工作流",summary:"评价、诊断、目标与计划的连续示例。"},
+ {id:"diagnosis",title:"诊断工作流",summary:"依据具体作答形成并复核判断。"},
+ {id:"goals",title:"目标工作流",summary:"维护标准、来源与核验记录。"},
+ {id:"learning-plan",title:"学习计划工作流",summary:"任务安排、材料与完成记录。"},
+ {id:"goal-milestones",title:"目标核验里程碑",summary:"展示目标来源与独立核验。"},
+ {id:"workload-calendar",title:"学习负荷安排",summary:"任务改期和每日容量联动。"},
+ {id:"answer-review-map",title:"答卷定位复核",summary:"示意页、区域选择与人工核对。"},
+]
