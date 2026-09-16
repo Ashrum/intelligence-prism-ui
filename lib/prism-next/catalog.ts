@@ -108,14 +108,17 @@ export const components = componentGroups.flatMap(group=>group.items)
 export function findComponent(id:string) { return components.find(item=>item.id===id) }
 
 export const applicationExamples=[
- {id:"questions",title:"题库、组卷与练习",summary:"题卡、筛选、试题篮和打印组合。"},
- {id:"student-analysis",title:"学生单元分析",summary:"统计口径、筛选与明细联动。"},
- {id:"evidence-matrix",title:"学习证据矩阵",summary:"将题目记录适配为矩阵数据。"},
- {id:"evaluation",title:"评价工作流",summary:"评价、诊断、目标与计划的连续示例。"},
- {id:"diagnosis",title:"诊断工作流",summary:"依据具体作答形成并复核判断。"},
- {id:"goals",title:"目标工作流",summary:"维护标准、来源与核验记录。"},
- {id:"learning-plan",title:"学习计划工作流",summary:"任务安排、材料与完成记录。"},
- {id:"goal-milestones",title:"目标核验里程碑",summary:"展示目标来源与独立核验。"},
- {id:"workload-calendar",title:"学习负荷安排",summary:"任务改期和每日容量联动。"},
- {id:"answer-review-map",title:"答卷定位复核",summary:"示意页、区域选择与人工核对。"},
+ {id:"questions",title:"题库与打印组合",summary:"验证题卡、试题篮、组卷与打印预览的组合。"},
+ {id:"evaluation",title:"学习支持流程",summary:"在一个示例内切换评价、诊断、目标与计划。"},
 ]
+// Keep old bookmarks useful without keeping duplicate pages or navigation entries.
+export const retiredExampleTargets:Record<string,string>={
+ "student-analysis":"/next#group-analytics",
+ "evidence-matrix":"/next/components/evidence-matrix",
+ "diagnosis":"/next/examples/evaluation?stage=diagnosis",
+ "goals":"/next/examples/evaluation?stage=goals",
+ "learning-plan":"/next/examples/evaluation?stage=learning-plan",
+ "goal-milestones":"/next/components/goal-milestones",
+ "workload-calendar":"/next/components/workload-calendar",
+ "answer-review-map":"/next/components/answer-review-map",
+}

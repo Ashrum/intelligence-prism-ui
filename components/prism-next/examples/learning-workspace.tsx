@@ -11,7 +11,7 @@ import { QuestionReviewDemo as QuestionReview } from "@/components/prism-next/de
 import { LearningDiagnosis } from "@/components/prism-next/examples/learning-diagnosis"
 import { LearningGoals } from "@/components/prism-next/examples/learning-goals"
 import { LearningPlan } from "@/components/prism-next/examples/learning-plan"
-import { useLearning } from "@/components/prism-next/examples/learning-provider"
+import { LearningProvider, useLearning } from "@/components/prism-next/examples/learning-provider"
 import { stageLabels, latestReview, type Stage } from "@/lib/prism-next/learning-workflow"
 import { createReviewEditor } from "@/lib/prism-next/fixtures/review"
 
@@ -21,7 +21,7 @@ export function LearningWorkspace({ initialStage = "evaluation" }: { initialStag
   const [resetOpen, setResetOpen] = useState(false)
   const { state, dispatch, editor, setEditor } = useLearning()
   const review = latestReview(state)
-  return <DemoSection title="学习支持工作流" description="同一位示例学生、同一组证据：评价 → 诊断 → 目标 → 计划。四个入口共享当前页面会话，刷新后重置。">
+  return <DemoSection title="学习支持工作流" description="同一位示例学生、同一组证据：评价 → 诊断 → 目标 → 计划。四个阶段在此切换，离开本示例或刷新后重置。">
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4"><div className="space-y-2"><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold">示例学生 DEMO-001</span><Badge variant="outline">数学 · 函数应用</Badge><Badge variant="secondary">交互演示</Badge></div><p className="text-xs leading-6 text-muted-foreground">Q-M-006 · 作答 DEMO-A · 评分标准 v1 · {review ? `评价 v${review.version} 已确认` : "初评待确认"}</p></div><Dialog open={resetOpen} onOpenChange={setResetOpen}><DialogTrigger render={<Button variant="ghost" size="sm" />}>重置示例</DialogTrigger><DialogPopup closeProps={{ "aria-label": "关闭重置确认" }}><DialogHeader><DialogTitle>重置整个示例？</DialogTitle><DialogDescription>本次会话中的评价修改、诊断、目标和任务都会恢复为初始状态。</DialogDescription></DialogHeader><DialogFooter><DialogClose render={<Button variant="outline" />}>取消</DialogClose><Button onClick={() => { dispatch({ type: "reset" }); setEditor(createReviewEditor()); setEpoch(value => value + 1); setStage("evaluation"); setResetOpen(false) }}>确认重置</Button></DialogFooter></DialogPopup></Dialog></header>
       <Tabs key={epoch} value={stage} onValueChange={value => setStage(value as Stage)} className="gap-6"><div className="max-w-full overflow-x-auto pb-1"><TabsList variant="underline" aria-label="学习支持流程">{Object.entries(stageLabels).map(([id, label], index) => <TabsTab key={id} value={id}>{index + 1}. {label}</TabsTab>)}</TabsList></div>
@@ -34,7 +34,6 @@ export function LearningWorkspace({ initialStage = "evaluation" }: { initialStag
     </div>
   </DemoSection>
 }
-export const EvaluationDemo = () => <LearningWorkspace initialStage="evaluation" />
-export const DiagnosisDemo = () => <LearningWorkspace initialStage="diagnosis" />
-export const GoalsDemo = () => <LearningWorkspace initialStage="goals" />
-export const LearningPlanDemo = () => <LearningWorkspace initialStage="learning-plan" />
+export function LearningExample({initialStage="evaluation"}:{initialStage?:Stage}){
+ return <LearningProvider><LearningWorkspace initialStage={initialStage}/></LearningProvider>
+}

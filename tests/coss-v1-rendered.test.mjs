@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { components, applicationExamples } from '../lib/prism-next/catalog.ts';
+import { components, applicationExamples, retiredExampleTargets } from '../lib/prism-next/catalog.ts';
 const workerPromise=import(new URL('../dist/server/index.js',import.meta.url));
 async function fetchPage(path){const{default:worker}=await workerPromise;return worker.fetch(new Request('http://localhost'+path,{headers:{accept:'text/html'}}),{ASSETS:{fetch:async()=>new Response('Not found',{status:404})}},{waitUntil(){},passThroughOnException(){}})}
 test('all reusable component routes render their demonstrations',async()=>{
@@ -50,9 +50,19 @@ test('the homepage opens coss and removed legacy routes no longer render',async(
   assert.doesNotMatch(html,/旧版 · 已过期|查看已过期的旧版/);
 });
 
-// Application routes are preserved, but are no longer counted as reusable components.
-test('application examples remain available and the old analysis URL redirects',async()=>{
- assert.equal(applicationExamples.length,10);
+test('retained examples render and retired URLs resolve to their replacements',async()=>{
+ assert.deepEqual(applicationExamples.map(item=>item.id),['questions','evaluation']);
  for(const item of applicationExamples){const res=await fetchPage('/next/examples/'+item.id);assert.equal(res.status,200,item.id);const html=await res.text();assert.match(html,/应用示例/);}
- const old=await fetchPage('/next/components/student-analysis');assert.ok([307,308].includes(old.status));assert.equal(new URL(old.headers.get('location'),'http://localhost').pathname,'/next/examples/student-analysis');
+ const targets={...retiredExampleTargets,'../components/student-analysis':'/next#group-analytics'};
+ const catalog=await(await fetchPage('/next')).text();
+ for(const [slug,target] of Object.entries(targets)){
+  const path=new URL('/next/examples/'+slug,'http://localhost').pathname;
+  const old=await fetchPage(path);assert.ok([307,308].includes(old.status),path);
+  assert.equal(new URL(old.headers.get('location'),'http://localhost').href,'http://localhost'+target,path);
+  assert.ok(!catalog.includes('href="'+path+'"'),path+' removed from navigation');
+  const destination=await fetchPage(target);assert.equal(destination.status,200,target);
+  const html=await destination.text();assert.match(html,/prism-content/);
+  if(target.includes('#'))assert.ok(html.includes('id="'+target.split('#')[1]+'"'),target);
+ }
+ const missing=await fetchPage('/next/examples/does-not-exist');assert.equal(missing.status,404);
 });
