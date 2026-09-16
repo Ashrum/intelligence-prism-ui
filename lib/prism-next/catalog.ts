@@ -57,6 +57,10 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("learning-plan","Learning Plan 学习计划","安排任务、调整时间与顺序，区分任务完成和目标达成。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
   ]},
   { id:"analytics",title:"数据分析",items:[
+    {...item("evidence-matrix","Evidence Matrix 学习证据矩阵","知识项与轮次交叉定位，区分零分、缺测与待复核。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/table",sourceLabel:"coss Table 组合"},
+    {...item("goal-milestones","Milestones 目标里程碑","显示来源、启用与独立作答核验，联动现有目标规则。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+    {...item("workload-calendar","Workload 学习负荷日历","每日预计负荷、超量提醒与任务改期，支持当前工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/calendar",sourceLabel:"coss Calendar / DayPicker"},
+    {...item("answer-review-map","Review Map 答卷复核定位","题号与纸面区域联动，支持跨页缩放与人工核对记录。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/drawer",sourceLabel:"coss Drawer 组合"},
     {...item("student-analysis","Student Analysis 单元分析","将筛选、指标、图表和证据连接成完整的学生单元分析示例。"),kind:"pattern",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
     {...item("metric-summary","Metric 指标摘要","显示数值、单位、有效样本和统计分母。"),kind:"pattern"},
     {...item("trend-chart","Trend 趋势","固定尺度，区分缺测和零分，保留时间断点。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},

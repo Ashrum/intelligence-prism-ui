@@ -24,5 +24,5 @@ export function distributionSeries(records:EvidenceRecord[]){const total=records
 export function statusSeries(records:EvidenceRecord[]){return (Object.keys(statusLabels) as RecordStatus[]).map(id=>({id,label:statusLabels[id],count:records.filter(row=>row.status===id).length,total:records.length}))}
 export function displayRate(rate:number|null){return rate===null?"—":`${Math.round(rate*10)/10}%`}
 export function goalProgress(baseline:number|null,current:number|null,target:number|null){if(baseline===null||current===null||target===null||!Number.isFinite(baseline+current+target)||target<=baseline)return null;return Math.max(0,Math.min(100,(current-baseline)/(target-baseline)*100))}
-export type Drill={kind:"date"|"topic"|"bin"|"status";value:string;label:string}|null
-export function drillRecords(records:EvidenceRecord[],drill:Drill){if(!drill)return records;if(drill.kind==="bin")return inBin(records,drill.value);return records.filter(row=>row[drill.kind as "date"|"topic"|"status"]===drill.value)}
+export type Drill={kind:"date"|"topic"|"bin"|"status"|"record";value:string;label:string}|null
+export function drillRecords(records:EvidenceRecord[],drill:Drill){if(!drill)return records;if(drill.kind==="bin")return inBin(records,drill.value);if(drill.kind==="record")return records.filter(row=>row.id===drill.value);return records.filter(row=>row[drill.kind as "date"|"topic"|"status"]===drill.value)}
