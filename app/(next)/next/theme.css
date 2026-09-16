@@ -218,7 +218,21 @@
 .analytics-workspace :is(.analytics-swatch,.analytics-status-bar span)[data-status="missing"] { background:var(--muted-foreground); }
 .analytics-evidence { scroll-margin-top:5rem; }
 @container(min-width:42rem) { .analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .analytics-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); } }
-@media print { .analytics-filters,.analytics-workspace button { display:none!important; } .analytics-grid { display:block; } .analytics-panel { break-inside:avoid; margin-bottom:1rem; } .analytics-chart { height:13rem; } .analytics-data [data-slot="collapsible-panel"] { display:block!important; height:auto!important; } }
+@media print {
+  body:has(.analytics-workspace) { --background:#fff; --foreground:#1F2328; --heading:#1F2328; --muted-foreground:#56606B; --border:#D8DCE1; --chart-1:#1769AA; --chart-4:#895509; background:#fff!important; color:var(--foreground)!important; }
+  body:has(.analytics-workspace) :is([data-slot="sidebar"],[data-slot="sidebar-gap"],.prism-skip,[data-slot="sidebar-inset"] > header) { display:none!important; }
+  body:has(.analytics-workspace) :is(.prism-root,[data-slot="sidebar-wrapper"],[data-slot="sidebar-inset"],.prism-content) { display:block!important; width:auto!important; margin:0!important; min-height:0!important; }
+  body:has(.analytics-workspace) .prism-content { padding:10mm!important; }
+  body:has(.analytics-workspace) .prism-demo { border:0; padding:0; }
+  .analytics-workspace { container-type:normal; }
+  .analytics-filters,.analytics-workspace [role="combobox"],.analytics-data > button,.analytics-metrics dd:has(button),.analytics-evidence td:last-child,.analytics-evidence th:last-child { display:none!important; }
+  .analytics-workspace button { border:0!important; background:transparent!important; color:inherit!important; box-shadow:none!important; height:auto!important; padding:0!important; }
+  .analytics-workspace button svg { display:none!important; }
+  .analytics-grid { display:block; }
+  .analytics-panel { break-inside:avoid; margin-bottom:1rem; }
+  .analytics-chart { height:13rem; }
+  .analytics-status-bar,.analytics-swatch { print-color-adjust:exact; }
+}
 .prism-source { font-size:.8125rem; color:var(--muted-foreground); margin-top:.8rem; }
 .prism-source a { color:var(--link); }
 .prism-skip { position:fixed; z-index:100; left:1rem; top:1rem; padding:.5rem 1rem; color:var(--primary-foreground); background:var(--primary); border-radius:var(--radius); transform:translateY(-200%); }
