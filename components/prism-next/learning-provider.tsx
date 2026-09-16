@@ -5,9 +5,12 @@ import { createLearningState, learningReducer, type LearningState, type Learning
 import { createReviewEditor, type ReviewEditor } from "@/lib/prism-next/question-review-model"
 
 const LearningContext = createContext<{ state: LearningState; dispatch: Dispatch<LearningAction>; editor: ReviewEditor; setEditor: Dispatch<SetStateAction<ReviewEditor>> } | null>(null)
-export function LearningProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(learningReducer, undefined, createLearningState)
-  const [editor, setEditor] = useState(createReviewEditor)
+export function LearningProvider({ children, initialState }: { children: ReactNode; initialState?: LearningState }) {
+  const [state, dispatch] = useReducer(learningReducer, initialState, value => value ?? createLearningState())
+  const [editor, setEditor] = useState(() => {
+    const review = initialState?.reviews.at(-1)
+    return review ? { ...createReviewEditor(), scores: { ...review.scores }, saved: { ...review.scores }, record: review.reason } : createReviewEditor()
+  })
   return <LearningContext.Provider value={{ state, dispatch, editor, setEditor }}>{children}</LearningContext.Provider>
 }
 export function useLearning() {
