@@ -39,6 +39,14 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### 外部交互参考：beUI
+
+- **入口与定位**：[beUI](https://beui.dev/) 作为 Motion Interaction / Advanced Interaction Inspiration 外部参考，用于后续 Motion 与 AI Interaction Language 的设计验证。
+- **重点观察**：状态转换、内容出现与消失的节奏、操作反馈、内容展开及组件形态变化；可关注 Button 状态反馈、Dialog 进入、Card 展开、Empty State 和 Notification / Toast 等场景的表现。官方参考：[Motion Guide](https://beui.dev/docs/motion-patterns)、[Agent Loading States](https://beui.dev/components/agents/loading-states)。
+- **AI 状态表达**：可借鉴其界面表达，研究批阅、诊断、学习路径生成和数据刷新过程的反馈。阶段、进度和结果须由调用方的真实状态驱动；这些是智能曜彩的设计参考场景，不代表 beUI 已提供相应业务能力。
+- **使用边界**：仅作交互灵感，不直接复制组件，不作为基础组件、Design Token 或组件规范来源；基础实现继续遵循现有 coss / Base UI 与主题约定，不因纳入参考而新增运行依赖。
+- **取舍原则**：保持克制、高信息密度和长时间使用舒适性，尊重减少动态效果设置；避免炫技动画、Landing Page 风格、过度弹性及无语义的发光或渐变装饰。基础交互保持稳定，关键 AI 场景的动态反馈以帮助理解状态为准。
+
 ## 代码与导航分层
 
 | 层级 | 目录 / 入口 | 内容 |
