@@ -248,7 +248,7 @@
 .prism-question .q-question-stem > * + * { margin-top:.5rem; }
 .prism-question .prism-question-copy p + p { margin-top:.5rem; }
 .prism-question .prism-math { color:inherit; }
-.prism-question .q-card-actions { margin-top:1.25rem; padding-top:.875rem; border-top:1px solid var(--q-line); color:var(--q-soft); }
+.prism-question .q-card-actions { margin-top:1.25rem; padding-top:.875rem; color:var(--q-soft); }
 .q-card-actions [data-slot="toolbar-button"] { min-height:2rem; height:auto; padding:.4375rem .625rem; border-radius:.375rem; font-size:.8125rem; font-weight:400; line-height:1.4; }
 .q-card-actions .q-secondary-actions [data-slot="toolbar-button"] { color:var(--q-soft); }
 .q-card-actions .q-secondary-actions [data-slot="toolbar-button"]:hover { color:var(--q-copy); }
