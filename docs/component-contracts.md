@@ -68,8 +68,8 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 - `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
-- `variant="card"`（默认）用于独立卡片，`variant="list"` 用于无外框列表；列表分隔线由调用方容器提供。`number` 控制圆形序号；未提供序号和选择回调时不预留左栏。
-- `compact` 只显示题干，省略选项、附图、材料块与小问；普通卡片截成两行摘要，列表题干自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
+- 独立展示、题库、试题篮和组卷共用同一无外框排版：标题字号、题型分值行、留白和操作插槽保持一致。列表分隔线由调用方容器提供；不再提供 `variant`、`reading` 外观分支。`number` 控制圆形序号；未提供序号和选择回调时不预留左栏。
+- `compact` 只显示题干，省略选项、附图、材料块与小问；所有场景均自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
 - `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
 - `actions` 区域的默认实心按钮使用统一蓝底白字；操作数量与行为仍由调用方提供，至多保留一个主操作。面板底部可用 `q-primary-action` 复用同一颜色。类型色独立于成功/错误状态，不复用 destructive 等状态变体。
 - `showPoints` 控制总分及小问分值显示，隐藏分值仍保留题型；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
