@@ -1,7 +1,7 @@
 import { build } from "esbuild";
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const destination = process.argv[2];
@@ -37,15 +37,8 @@ if (/@import\s|sourceMappingURL\s*=|<\/style/i.test(css)) {
   throw new Error("Production CSS contains an import, source map, or unexpected closing tag.");
 }
 
-const result = await build({
-  absWorkingDir: root,
-  stdin: {
-    resolveDir: root,
-    sourcefile: "question-export.tsx",
-    loader: "tsx",
-    contents: `
+const componentSource = `
       import { useEffect, useState } from "react";
-      import { createRoot } from "react-dom/client";
       import { QuestionComponentDemo } from "./components/prism-next/demos/question-component";
       import { QuestionSelect } from "./components/prism-next/question-controls";
       import { DESIGN_VERSION, themeOptions, type PrismTheme } from "./lib/prism-next/config";
@@ -64,8 +57,48 @@ const result = await build({
           <QuestionComponentDemo standalone/>
         </main>;
       }
-      createRoot(document.getElementById("question-component-root")!).render(<QuestionExport/>);
-    `,
+`;
+
+// Include the same initial render in the document so script-free previews have a body.
+const serverResult = await build({
+  absWorkingDir: root,
+  jsx: "automatic",
+  stdin: {
+    resolveDir: root,
+    sourcefile: "question-export-server.tsx",
+    loader: "tsx",
+    contents: `${componentSource}\nimport { renderToString } from "react-dom/server";\nexport default renderToString(<QuestionExport/>);`,
+  },
+  alias: { "@": root },
+  bundle: true,
+  write: false,
+  platform: "node",
+  format: "esm",
+  packages: "external",
+  logLevel: "silent",
+});
+await mkdir(join(root, ".sites-runtime"), { recursive: true });
+const renderDir = await mkdtemp(join(root, ".sites-runtime/question-export-"));
+let markup;
+try {
+  const renderFile = join(renderDir, "render.mjs");
+  await writeFile(renderFile, serverResult.outputFiles[0].text);
+  markup = (await import(pathToFileURL(renderFile).href)).default;
+} finally {
+  await rm(renderDir, { recursive: true, force: true });
+}
+if ((markup.match(/<article\b/g) ?? []).length !== 12 || !markup.includes("<math")) {
+  throw new Error("The initial document must contain all 12 question cards and their math.");
+}
+
+const result = await build({
+  absWorkingDir: root,
+  jsx: "automatic",
+  stdin: {
+    resolveDir: root,
+    sourcefile: "question-export.tsx",
+    loader: "tsx",
+    contents: `${componentSource}\nimport { hydrateRoot } from "react-dom/client";\nhydrateRoot(document.getElementById("question-component-root")!, <QuestionExport/>);`,
   },
   alias: { "@": root },
   bundle: true,
@@ -105,8 +138,8 @@ const html = `<!doctype html>
 </style>
 </head>
 <body data-ui-version="coss-v1" data-prism-theme="light">
-<div id="question-component-root"></div>
-<noscript>请启用 JavaScript 以查看题目和使用交互功能。</noscript>
+<div id="question-component-root">${markup}</div>
+<noscript>当前可阅读全部题面；筛选、主题切换与作答交互需在浏览器中启用 JavaScript。</noscript>
 <template id="stix-font-license">${escapeText(fontLicense)}</template>
 <script>${script}</script>
 </body>
@@ -124,5 +157,6 @@ console.log(JSON.stringify({
   javascriptBytes: Buffer.byteLength(script),
   cssBytes: Buffer.byteLength(css),
   embeddedFontBytes: font.byteLength,
+  prerenderedQuestions: 12,
   externalResources: 0,
 }, null, 2));

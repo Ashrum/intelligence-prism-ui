@@ -395,13 +395,12 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .q-task-drawer-portal > [data-slot="drawer-viewport"] { pointer-events:none; }
 .q-task-drawer { pointer-events:auto; }
 .q-basket-panel { background:var(--background); }
-.q-basket-panel [data-slot="drawer-header"] { padding-bottom:1rem; }
+.q-basket-panel [data-slot="drawer-header"] { padding-bottom:1rem; border-bottom:1px solid var(--border); }
 .q-basket-panel [data-slot="drawer-footer"] { background:var(--background); }
 .q-basket-summary { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.25rem 0 1rem; }
 .q-basket-summary > div { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem; }
 .q-basket-summary dt { font-size:.875rem; color:var(--muted-foreground); }
 .q-basket-summary dd { font-size:2rem; line-height:1.2; font-weight:600; font-variant-numeric:tabular-nums; }
-.q-basket-list > li { border-top:1px solid var(--border); }
 .q-basket-list .prism-question { border:0; border-radius:0; background:transparent; }
 .q-basket-list .q-card-layout { display:grid; grid-template-columns:1.5rem minmax(0,1fr) 1.75rem; column-gap:.75rem; padding:1.25rem 0; }
 .q-basket-list :is(.q-card-heading,.q-card-meta) { display:contents; }
@@ -411,8 +410,6 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .q-basket-list .q-card-selection { grid-area:2 / 1; justify-self:center; align-self:start; margin-top:.75rem; }
 .q-basket-list .q-card-labels { grid-area:2 / 2 / auto / -1; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
 .q-basket-list .prism-question-copy { grid-area:3 / 2 / auto / -1; margin-top:.5rem; color:var(--q-soft); }
-.q-basket-list .q-card-actions { grid-area:4 / 2 / auto / -1; margin-top:.5rem; padding-top:0; }
-.q-basket-list .q-card-actions [data-slot="toolbar-button"] { padding-inline:0; }
 @media (max-height:40rem) {
   /* Short windows scroll the whole basket instead of squeezing its list away. */
   .q-basket-panel { overflow-y:auto; touch-action:pan-y; overscroll-behavior-y:contain; }
@@ -433,7 +430,7 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 @media print {
   .q-workbench,.q-workbench-main,.q-scene-content,.q-print-workbench,.q-print-canvas { display:block!important; width:auto!important; margin:0!important; padding:0!important; }
   .q-scene-content[hidden] { display:none!important; }
-  .q-task-drawer-portal,.q-basket-preview { display:none!important; }
+  .q-task-drawer-portal { display:none!important; }
   .q-print-workbench .q-paper-scroll { min-height:0!important; max-height:none!important; border-radius:0; }
   .q-paper-pages { zoom:1!important; }
   .q-print-unit[data-highlight] { outline:none; background:transparent; }
