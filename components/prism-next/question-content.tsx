@@ -1,6 +1,7 @@
 "use client"
 
 import { type ReactNode } from "react"
+import { QuestionTypeLabel, QuestionPoints, responsePresentation } from "./question-labels"
 
 export type ResponseModel = "single" | "multiple" | "fill" | "boolean" | "long"
 export type QuestionPart = {
@@ -40,7 +41,20 @@ export function QuestionContent({ question }: { question: QuestionRecord }) {
     {question.options && <ol aria-label="题目选项（只读）" className={`prism-question-options prism-question-options-${question.optionColumns ?? 1} mt-5 grid gap-x-8 gap-y-3`}>
       {question.options.map(option => <li key={option.id} className="flex min-w-0 items-baseline gap-3"><span className="shrink-0 font-medium">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}
     </ol>}
-    {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2"><span className="shrink-0">（{part.id}）</span><div className="min-w-0 flex-1">{part.points !== undefined && <p className="mb-1 text-sm text-muted-foreground">{part.response === "single" ? "单选" : part.response === "fill" ? "填空" : part.response === "boolean" ? "判断" : "解答"} · {part.points} 分</p>}{part.content}{part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="mt-3 grid gap-2 sm:grid-cols-2">{part.options.map(option => <li key={option.id} className="flex gap-3"><span>{option.id}.</span>{option.content}</li>)}</ol>}</div></li>)}</ol>}
+    {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => {
+      const presentation = responsePresentation(part.response ?? question.response)
+      return <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2">
+        <span className="shrink-0">（{part.id}）</span>
+        <div className="min-w-0 flex-1">
+          {(presentation || part.points !== undefined) && <div className="mb-2 flex flex-wrap items-center gap-2">
+            {presentation && <QuestionTypeLabel label={presentation.label} tone={presentation.tone} inline/>}
+            {part.points !== undefined && <QuestionPoints points={part.points} tone={presentation?.tone ?? "neutral"}/>}
+          </div>}
+          {part.content}
+          {part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="mt-3 grid gap-2 sm:grid-cols-2">{part.options.map(option => <li key={option.id} className="flex gap-3"><span>{option.id}.</span>{option.content}</li>)}</ol>}
+        </div>
+      </li>
+    })}</ol>}
   </div>
 }
 

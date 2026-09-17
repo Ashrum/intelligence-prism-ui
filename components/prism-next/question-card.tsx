@@ -3,7 +3,7 @@ import { useId, useState, type ReactNode } from "react"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Badge } from "@/components/coss/badge"
+import { QuestionTypeLabel, QuestionPoints, questionTone } from "./question-labels"
 import { Collapsible, CollapsiblePanel } from "@/components/coss/collapsible"
 import { Toolbar, ToolbarButton, ToolbarGroup } from "@/components/coss/toolbar"
 import { QuestionContent, type QuestionRecord } from "./question-content"
@@ -20,6 +20,7 @@ export function QuestionCard({question,number,details,detailsOpen,onDetailsOpenC
   const open=detailsOpen??localOpen
   const changeOpen=(next:boolean)=>{if(detailsOpen===undefined)setLocalOpen(next);onDetailsOpenChange?.(next)}
   const content={...question,parts:question.parts?.map(part=>({...part,points:showPoints?displayPartPoints?.[part.id]??part.points:undefined}))}
+  const tone=questionTone(question)
   const hasRail=number!==undefined||!!onCheckedChange
   return <article data-question-id={question.id} data-highlight={highlighted||undefined} data-variant={variant} aria-labelledby={id} className={cn("prism-question min-w-0 text-foreground",variant==="list"?"py-6":"rounded-xl border bg-background px-4 py-5 sm:p-6",checked&&variant==="card"&&"border-primary/60",reading&&"border-transparent px-0 sm:px-0")}>
     <div className={cn("grid min-w-0 gap-x-4 sm:gap-x-5",hasRail?"grid-cols-[2rem_minmax(0,1fr)]":"grid-cols-1")}>
@@ -30,10 +31,10 @@ export function QuestionCard({question,number,details,detailsOpen,onDetailsOpenC
       <div className="min-w-0">
         <header className="mb-4">
           <div className="flex items-start justify-between gap-3"><div className="flex min-w-0 flex-1 items-start gap-2">{header}<h3 id={id} className={cn("min-w-0 flex-1 break-words font-semibold leading-7 text-(--heading)",variant==="list"?"text-base":"text-lg")}>{number!==undefined&&<span className="sr-only">第 {number} 题 · </span>}{question.title}</h3></div>{headerActions&&<Toolbar aria-label={`${question.title}快捷操作`} className="shrink-0 rounded-none border-0 bg-transparent p-0"><ToolbarGroup>{headerActions}</ToolbarGroup></Toolbar>}</div>
-          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2"><Badge variant="outline" size="lg">{question.kind}</Badge>{showPoints&&<Badge variant="info" size="lg" className="tabular-nums">{displayPoints??question.points} 分</Badge>}{question.parts&&<span className="text-xs text-muted-foreground">整题 · 含 {question.parts.length} 个小问</span>}{status}</div>
+          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-2"><QuestionTypeLabel label={question.kind} tone={tone}/>{showPoints&&<QuestionPoints points={displayPoints??question.points} tone={tone}/>}{question.parts&&<span className="text-xs text-muted-foreground">整题 · 含 {question.parts.length} 个小问</span>}{status}</div>
         </header>
         {compact?<div className={cn("prism-question-copy min-w-0 text-base leading-[1.9] text-muted-foreground",variant!=="list"&&"line-clamp-2")}>{question.stem}</div>:<QuestionContent question={content}/>}
-        {(details||secondaryActions||actions)&&<Toolbar aria-label={`${question.title}操作`} className="mt-4 flex-wrap items-center gap-y-2 rounded-none border-0 bg-transparent p-0 text-foreground"><ToolbarGroup className="flex-wrap">{details&&<ToolbarButton render={<Button variant="ghost" size="sm"/>} aria-label={`${number===undefined?question.title:`第${number}题`}详情`} aria-expanded={open} aria-controls={`${id}-details`} onClick={()=>changeOpen(!open)}><ChevronDown className={cn("transition-transform",open&&"rotate-180")}/>详情</ToolbarButton>}{secondaryActions}</ToolbarGroup>{actions&&<ToolbarGroup className="ml-auto flex-wrap">{actions}</ToolbarGroup>}</Toolbar>}
+        {(details||secondaryActions||actions)&&<Toolbar aria-label={`${question.title}操作`} className="mt-4 flex-wrap items-center gap-y-2 rounded-none border-0 bg-transparent p-0 text-foreground"><ToolbarGroup className="flex-wrap">{details&&<ToolbarButton render={<Button variant="ghost" size="sm"/>} aria-label={`${number===undefined?question.title:`第${number}题`}详情`} aria-expanded={open} aria-controls={`${id}-details`} onClick={()=>changeOpen(!open)}><ChevronDown className={cn("transition-transform",open&&"rotate-180")}/>详情</ToolbarButton>}{secondaryActions}</ToolbarGroup>{actions&&<ToolbarGroup className="q-primary-action ml-auto flex-wrap">{actions}</ToolbarGroup>}</Toolbar>}
         {details&&<Collapsible open={open}><CollapsiblePanel id={`${id}-details`}><div className="question-detail-region mt-5 rounded-lg bg-muted/55 p-4 sm:p-5">{details}</div></CollapsiblePanel></Collapsible>}
       </div>
     </div>
