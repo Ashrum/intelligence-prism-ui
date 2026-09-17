@@ -539,23 +539,24 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .prism-root [data-slot=empty-description] > a:hover { color:var(--link); }
 
 /* Card compositions keep a common shell; grouping and identity stay explicit. */
-.prism-card-signature .prism-brand-mark { height:20px; gap:2px; }
-.prism-card-signature .prism-brand-mark i { width:3px; border-radius:2px; }
-.prism-card-signature .prism-brand-mark i:nth-child(1) { height:15px; }
-.prism-card-signature .prism-brand-mark i:nth-child(2) { height:20px; }
-.prism-card-signature .prism-brand-mark i:nth-child(3) { height:11px; }
+.prism-card-signature { display:inline-flex; flex-shrink:0; align-items:center; }
 .prism-card-group { border:0; background:transparent; box-shadow:none; }
 .prism-card-group::before { display:none; }
 .prism-card-group > [data-slot=card] { margin:0; clip-path:none; border-radius:var(--radius-2xl); }
 
-/* Card compositions keep the reading axis while adapting to their container. */
-.prism-card-examples { display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; container-type:inline-size; }
-.prism-card-examples > .prism-demo-section { min-width:0; margin:0; }
+/* The example grid follows available space; each card remains fluid. */
+.prism-card-examples { container:card-examples / inline-size; }
+.prism-card-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; align-items:start; }
+.prism-card-grid > .prism-demo-section { min-width:0; margin:0; }
+.prism-card-grid > .prism-demo-section > header { margin-bottom:.75rem; }
+.prism-card-grid > .prism-demo-section > header h2 { color:var(--muted-foreground); font-size:.875rem; line-height:1.5; }
+.prism-card-grid > .prism-demo-section > header p { font-size:.8125rem; line-height:1.6; }
+.prism-card-grid > .prism-demo-section > .prism-demo { container-type:inline-size; }
 .prism-card-composed > [data-slot=card-header] { padding:1.25rem 1.25rem .75rem; }
 .prism-card-composed > [data-slot=card-panel] { padding:0 1.25rem 1.25rem; }
 .prism-card-composed > [data-slot=card-footer] { padding:0 1.25rem 1.25rem; }
 @container (min-width:34rem) { .prism-card-options { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(min-width:1280px) {
-  .prism-card-examples { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .prism-card-example-wide { grid-column:1/-1; }
+@container card-examples (min-width:58rem) {
+  .prism-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prism-card-options { grid-template-columns:minmax(0,1fr); }
 }
