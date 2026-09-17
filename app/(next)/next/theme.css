@@ -537,3 +537,13 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 /* Filled danger buttons and readable error text have separate roles. */
 :root:where([data-ui-version="coss-v1"]) .text-destructive { color:var(--destructive-foreground); }
 .prism-root [data-slot=empty-description] > a:hover { color:var(--link); }
+
+/* Card compositions keep a common shell; grouping and identity stay explicit. */
+.prism-card-signature .prism-brand-mark { height:20px; gap:2px; }
+.prism-card-signature .prism-brand-mark i { width:3px; border-radius:2px; }
+.prism-card-signature .prism-brand-mark i:nth-child(1) { height:15px; }
+.prism-card-signature .prism-brand-mark i:nth-child(2) { height:20px; }
+.prism-card-signature .prism-brand-mark i:nth-child(3) { height:11px; }
+.prism-card-group { border:0; background:transparent; box-shadow:none; }
+.prism-card-group::before { display:none; }
+.prism-card-group > [data-slot=card] { margin:0; clip-path:none; border-radius:var(--radius-2xl); }
