@@ -25,14 +25,16 @@ export function QuestionCard({question,number,details,detailsOpen,onDetailsOpenC
     <div className="q-card-layout min-w-0">
       <header className="q-card-heading">
         <div className="q-card-meta">
-          {onCheckedChange&&<Checkbox checked={!!checked} disabled={selectionDisabled} onCheckedChange={onCheckedChange} aria-label={selectionLabel??`批量勾选${number===undefined?question.title:`第${number}题`}：${question.title}`}/>}
+          {onCheckedChange&&<Checkbox className="q-card-selection" checked={!!checked} disabled={selectionDisabled} onCheckedChange={onCheckedChange} aria-label={selectionLabel??`批量勾选${number===undefined?question.title:`第${number}题`}：${question.title}`}/>}
           {number!==undefined&&<span aria-label={`第 ${number} 题`} className="q-card-number tabular-nums">{number}.</span>}
           {header}
-          <QuestionTypeLabel label={question.kind} tone={tone}/>
-          {showPoints&&<QuestionPoints points={displayPoints??question.points} tone={tone}/>}
-          {question.parts&&<span className="q-card-meta-extra">整题 · 含 {question.parts.length} 个小问</span>}
-          {status}
-          {headerActions&&<Toolbar aria-label={`${question.title}快捷操作`} className="ml-auto shrink-0 rounded-none border-0 bg-transparent p-0"><ToolbarGroup>{headerActions}</ToolbarGroup></Toolbar>}
+          <div className="q-card-labels">
+            <QuestionTypeLabel label={question.kind} tone={tone}/>
+            {showPoints&&<QuestionPoints points={displayPoints??question.points} tone={tone}/>}
+            {question.parts&&<span className="q-card-meta-extra">整题 · 含 {question.parts.length} 个小问</span>}
+            {status}
+          </div>
+          {headerActions&&<Toolbar aria-label={`${question.title}快捷操作`} className="q-card-header-actions ml-auto shrink-0 rounded-none border-0 bg-transparent p-0"><ToolbarGroup>{headerActions}</ToolbarGroup></Toolbar>}
         </div>
         <h3 id={id} className="q-card-title">{number!==undefined&&<span className="sr-only">第 {number} 题 · </span>}{question.title}</h3>
       </header>
