@@ -67,6 +67,10 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 ```
 
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
+- `variant="card"`（默认）用于独立卡片，`variant="list"` 用于无外框列表；列表分隔线由调用方容器提供。`number` 控制圆形序号；未提供序号和选择回调时不预留左栏。
+- `compact` 只显示题干，省略选项、附图、材料块与小问；普通卡片截成两行摘要，列表题干自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
+- `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
+- `showPoints` 控制总分及小问分值显示；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
 - `QuestionActions` 仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
