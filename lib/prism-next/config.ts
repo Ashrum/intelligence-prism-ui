@@ -1,4 +1,4 @@
-export const DESIGN_VERSION = "1.19.0"
+export const DESIGN_VERSION = "1.20.0"
 export const DESIGN_STATUS = "已通过评审"
 export const COSS_COMMIT = "e937becd2d5ffb5c621eed6f8b1f223cbb6051e7"
 export const themeOptions = [
@@ -19,3 +19,15 @@ export const brandColors = [
   { name: "曜紫红", color: "#E0438F" },
   { name: "曜青绿", color: "#C2F25B" },
 ] as const
+
+// Shared by chart renderers; category colors stay distinct from action and status colors.
+export const chartColors = {
+  light: ['#1769AA','#B8266E','#2B8050','#A57013','#7159A7','#6B7280'],
+  paper: ['#1769AA','#B8266E','#2B8050','#A57013','#7159A7','#6B7280'],
+  dark: ['#86C5FF','#F296C2','#99DFB4','#F4CC86','#BDACED','#B6BEC9'],
+} as const
+export const heatmapColors = {
+  light: ['#EDF7FE','#76A9D2','#1769AA'],
+  paper: ['#E4EFF3','#76A9D2','#155B98'],
+  dark: ['#152B3D','#365B7B','#86C5FF'],
+} as const

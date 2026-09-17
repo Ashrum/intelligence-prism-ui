@@ -28,11 +28,11 @@ test('multiple instances preserve independent values and unique accessible headi
 });
 test('review derives limits from arbitrary questions and handles parts without rubrics',()=>{
  let html=render(h(QuestionReview,{question,attempts:{1:'外部答案'},initialScores:{score:2}}));
- assert.match(html,/2 \/ 5/);assert.doesNotMatch(html,/\{maximum\}/);assert.match(html,/外部答案/);assert.doesNotMatch(html,/Q-M-006|10 \/ 16/);
+ assert.match(html.replace(/<[^>]*>/g,''),/初评得分2 \/ 5/);assert.match(html.replace(/<[^>]*>/g,''),/上限 5 分/);assert.doesNotMatch(html,/\{maximum\}/);assert.match(html,/外部答案/);assert.doesNotMatch(html,/Q-M-006|10 \/ 16/);
  html=render(h(QuestionReview,{question:{...question,parts:[{id:'a',content:'子题',points:2},{id:'b',content:'子题二',points:3}]},attempts:{a:'A',b:'B'},initialScores:{}}));
  assert.match(html,/第 a 问 · 小问得分/);assert.match(html,/第 b 问 · 小问得分/);assert.match(html,/有待评分项/);assert.doesNotMatch(html,/0 \/ 0/);
  html=render(h(QuestionReview,{question:{...question,parts:[{id:'a',content:'未分配分值的小问'}]},attempts:{a:'过程'},initialScores:{score:1}}));
- assert.match(html,/整题得分/);assert.match(html,/1 \/ 5/);assert.match(html,/过程/);
+ assert.match(html,/整题得分/);assert.match(html.replace(/<[^>]*>/g,''),/初评得分1 \/ 5/);assert.match(html.replace(/<[^>]*>/g,''),/上限 5 分/);assert.match(html,/过程/);
 });
 test('zero categories do not shift status colors and generic metric labels remain external',()=>{
  const html=render(h(StatusComposition,{items:[{id:'a',label:'空分类',value:0},{id:'b',label:'实际分类',value:3}]}));

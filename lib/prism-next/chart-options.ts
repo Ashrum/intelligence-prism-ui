@@ -11,3 +11,20 @@ export function compositionSummary(items:{value:number|null}[]){return {total:it
 
 export const validDomain=(range:unknown):range is [number,number]=>Array.isArray(range)&&range.length===2&&range.every(isChartValue)&&range[0]<range[1]
 export function alignChartValues(categories:{id:string}[],data:{id:string;value:number|null}[]){const lookup=new Map(data.map(d=>[d.id,d.value]));return categories.map(c=>({id:c.id,value:lookup.get(c.id)??null}))}
+
+/** Match the continuous RGB ramp so cell labels follow the actual fill, including theme changes. */
+export function heatmapFill(value:number,min:number,max:number,stops:readonly string[]) {
+ const position=Math.max(0,Math.min(1,max>min?(value-min)/(max-min):0))*(stops.length-1)
+ const index=Math.min(stops.length-2,Math.floor(position)),amount=position-index
+ const rgb=(hex:string)=>[1,3,5].map(offset=>parseInt(hex.slice(offset,offset+2),16))
+ const from=rgb(stops[index]),to=rgb(stops[index+1])
+ return '#'+from.map((channel,i)=>Math.round(channel+(to[i]-channel)*amount).toString(16).padStart(2,'0')).join('')
+}
+export function colorLuminance(hex:string) {
+ const channels=[1,3,5].map(offset=>parseInt(hex.slice(offset,offset+2),16)/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4)
+ return channels[0]*.2126+channels[1]*.7152+channels[2]*.0722
+}
+export function heatmapLabelColor(fill:string) {
+ const luminance=colorLuminance(fill)
+ return (luminance+.05)/.05>=1.05/(luminance+.05)?'#000000':'#FFFFFF'
+}
