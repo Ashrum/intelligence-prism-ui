@@ -22,7 +22,7 @@ const modes = [{value:"select",label:"选择"},{value:"compose",label:"编排"},
 export function QuestionComponentDemo({standalone=false}:{standalone?:boolean}) {
   const [kind,setKind]=useState("all"), [mode,setMode]=useState("select")
   const visible=samples.filter(question=>kind==="all"||question.kind===kind)
-  return <DemoSection title="题目卡片" description="12 道自编示例，覆盖运算、函数、几何、集合、概率、数列与统计；共用同一套题卡排版。">
+  return <DemoSection id="question-component" title="题目卡片" description="12 道自编示例，覆盖运算、函数、几何、集合、概率、数列与统计；共用同一套题卡排版。">
     <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <QuestionSelect label="题型筛选" value={kind} onChange={setKind} items={[{value:"all",label:"全部题型 · "+samples.length+" 道"},...Array.from(new Set(samples.map(question=>question.kind)),value=>({value,label:value}))]}/>
@@ -30,7 +30,7 @@ export function QuestionComponentDemo({standalone=false}:{standalone?:boolean}) 
       </div>
       {!standalone&&<Button variant="outline" render={<a href="/next/examples/questions"/>}>题库与组卷应用示例</Button>}
     </div>
-    <div className="divide-y divide-border">{visible.map(question=><QuestionSpecimen key={question.id} id={question.id} number={samples.findIndex(item=>item.id===question.id)+1} mode={mode}/>)}</div>
+    <div className="max-w-3xl divide-y divide-border">{visible.map(question=><QuestionSpecimen key={question.id} id={question.id} number={samples.findIndex(item=>item.id===question.id)+1} mode={mode}/>)}</div>
     <p className="mt-4 text-sm text-muted-foreground" role="status">当前展示 {visible.length} 道题 · 交互状态仅保留在本次打开期间。</p>
     {!standalone&&<details className="mt-6 text-sm"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-xs leading-6">{'<QuestionCard question={question} />\n<QuestionCard question={question} number={1}\n  checked={selected} onCheckedChange={setSelected}\n  actions={actions} details={details} />\n<QuestionCard question={question} number={1}\n  compact headerActions={removeAction} />'}</pre></details>}
   </DemoSection>

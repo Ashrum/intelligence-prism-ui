@@ -59,6 +59,7 @@
   --q-magenta-ink:#AA2863; --q-magenta-surface:#FCECF4;
   --q-lime-ink:#4B6318; --q-lime-surface:#F2F9DE;
   --q-action:#1769AA;
+  --q-copy:#4B5563;
   color-scheme:light;
 }
 
@@ -85,6 +86,7 @@
   --disabled-foreground:#A5A29C;
   --q-blue-surface:#E4EFF3; --q-magenta-surface:#F3E3E9; --q-lime-surface:#E8EECF;
   --q-action:#155B98;
+  --q-copy:#475569;
 }
 
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"] {
@@ -112,6 +114,7 @@
   --q-magenta-ink:#FFB4D8; --q-magenta-surface:#381C2A;
   --q-lime-ink:#D3F596; --q-lime-surface:#273019;
   --q-action:#1769AA;
+  --q-copy:#CBD5E1;
   --destructive:#E0438F;
   --destructive-foreground:#FFB4CF;
   --info:#339FF2;
@@ -234,6 +237,11 @@
 
 /* Question composition: content width chooses the option layout. */
 .prism-question { container-type:inline-size; }
+#question-component { max-width:52rem; }
+.prism-question .prism-question-copy { color:var(--q-copy); line-height:1.8; }
+.prism-question .q-question-stem > * { margin-block:0; }
+.prism-question .q-question-stem > * + * { margin-top:.625rem; }
+.prism-question .prism-question-copy p + p { margin-top:.625rem; }
 /* Question identity is separate from success / error state semantics. */
 [data-question-tone] { --q-mark:var(--muted-foreground); --q-ink:var(--foreground); --q-surface:var(--muted); }
 [data-question-tone="blue"] { --q-mark:var(--brand-blue); --q-ink:var(--q-blue-ink); --q-surface:var(--q-blue-surface); }
@@ -260,9 +268,9 @@
 
 .prism-question-copy { overflow-wrap:anywhere; }
 .prism-question-copy .prism-math { line-height:normal; }
-.prism-question-options { grid-template-columns:minmax(0,1fr); }
+.prism-question-options, .prism-question .q-part-options { grid-template-columns:minmax(0,1fr); }
 @container (min-width:30rem) {
-  .prism-question-options-2, .prism-question-options-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prism-question-options-2, .prism-question-options-4, .prism-question .q-part-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @container (min-width:48rem) {
   .prism-question-options-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
