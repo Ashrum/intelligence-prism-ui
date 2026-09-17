@@ -1,6 +1,6 @@
 {
   "name": "intelligence-prism-ui",
-  "version": "1.20.2",
+  "version": "1.20.3",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
