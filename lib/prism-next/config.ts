@@ -1,4 +1,4 @@
-export const DESIGN_VERSION = "1.18.1"
+export const DESIGN_VERSION = "1.19.0"
 export const DESIGN_STATUS = "已通过评审"
 export const COSS_COMMIT = "e937becd2d5ffb5c621eed6f8b1f223cbb6051e7"
 export const themeOptions = [
