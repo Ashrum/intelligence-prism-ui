@@ -22,7 +22,7 @@ export function QuestionCard({question,number,details,detailsOpen,onDetailsOpenC
   const content={...question,parts:question.parts?.map(part=>({...part,points:showPoints?displayPartPoints?.[part.id]??part.points:undefined}))}
   const tone=questionTone(question)
   const hasRail=number!==undefined||!!onCheckedChange
-  return <article data-question-id={question.id} data-highlight={highlighted||undefined} aria-labelledby={id} className="prism-question min-w-0 py-6 text-foreground">
+  return <article data-question-id={question.id} data-highlight={highlighted||undefined} aria-labelledby={id} className="prism-question w-full min-w-0 max-w-3xl py-6 text-foreground">
     <div className={cn("grid min-w-0 gap-x-4 sm:gap-x-5",hasRail?"grid-cols-[2rem_minmax(0,1fr)]":"grid-cols-1")}>
       {hasRail&&<div className="flex flex-col items-center gap-3 pt-0.5">
         {number!==undefined&&<span aria-label={`第 ${number} 题`} className="flex size-8 shrink-0 items-center justify-center rounded-full border text-sm tabular-nums text-muted-foreground">{number}</span>}
