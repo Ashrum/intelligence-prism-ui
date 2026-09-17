@@ -68,12 +68,14 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 - `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
-- 独立展示、题库、试题篮和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，16px 标题、15px 正文（1.75 行高）、14px 选项与小问。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
+- 独立展示、题库和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，16px 标题、15px 正文（1.75 行高）、14px 选项与小问。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
+- 试题篮仍复用 `QuestionCard`，由 `.q-basket-list` 容器排列为序号左栏、标题在上、标签与题干在下；题间使用细分隔线，题卡本身不另加外框。常规高度下统计与操作位于滚动列表之外，短窗口改为整篮滚动。
 - `compact` 只显示题干，省略选项、附图、材料块与小问；所有场景均自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
 - `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
 - `actions` 区域的默认实心按钮使用统一蓝底白字；操作数量与行为仍由调用方提供，至多保留一个主操作。面板底部可用 `q-primary-action` 复用同一颜色。类型色独立于成功/错误状态，不复用 destructive 等状态变体。
 - `showPoints` 控制总分及小问分值显示，隐藏分值仍保留题型；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
+- 答案解析中的独立公式与说明文字左对齐，长公式在原区域内横向滚动；行内公式和公式内部对齐不改动。打印答案沿用左对齐规则。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
 - `QuestionActions` 将相似题及次常用操作收进更多菜单；仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
 - `QuestionResponse` 接收题型、选项、`value` / `onChange`，只收集作答，不自动判分。
