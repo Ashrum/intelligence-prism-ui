@@ -97,7 +97,7 @@ const html = `<!doctype html>
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>智能曜彩 · 题目组件</title>
 <style>${css}
-.question-export-main{max-width:56rem;margin-inline:auto;padding:2rem;min-width:0}
+.question-export-main{width:100%;margin-inline:auto;padding:2rem;min-width:0}
 .question-export-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 .question-export-heading h1{font-size:1.5rem;font-weight:600;line-height:1.4;color:var(--heading)}
 .question-export-heading p{margin-top:.35rem;font-size:.875rem;color:var(--muted-foreground)}
