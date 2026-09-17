@@ -66,14 +66,16 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 />
 ```
 
+- `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
 - `variant="card"`（默认）用于独立卡片，`variant="list"` 用于无外框列表；列表分隔线由调用方容器提供。`number` 控制圆形序号；未提供序号和选择回调时不预留左栏。
 - `compact` 只显示题干，省略选项、附图、材料块与小问；普通卡片截成两行摘要，列表题干自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
 - `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
-- `showPoints` 控制总分及小问分值显示；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
+- `actions` 区域的默认实心按钮使用统一蓝底白字；操作数量与行为仍由调用方提供，至多保留一个主操作。面板底部可用 `q-primary-action` 复用同一颜色。类型色独立于成功/错误状态，不复用 destructive 等状态变体。
+- `showPoints` 控制总分及小问分值显示，隐藏分值仍保留题型；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
-- `QuestionActions` 仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
+- `QuestionActions` 将相似题及次常用操作收进更多菜单；仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
 - `QuestionResponse` 接收题型、选项、`value` / `onChange`，只收集作答，不自动判分。
 - `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。确认通过 `onConfirm` 返回结果。
 - 没有细分 rubric 时：已有小问分值使用 `${part.id}-score`；没有小问分值回退整题 `score`。不擅自平均分配分值。未提供初评的评分点保持待评分。更换被复核对象时使用 `key={question.id}` 重建独立编辑草稿。

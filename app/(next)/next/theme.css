@@ -55,6 +55,10 @@
   --brand-blue:#339FF2;
   --brand-magenta:#E0438F;
   --brand-green:#C2F25B;
+  --q-blue-ink:#1769AA; --q-blue-surface:#EDF7FE;
+  --q-magenta-ink:#AA2863; --q-magenta-surface:#FCECF4;
+  --q-lime-ink:#4B6318; --q-lime-surface:#F2F9DE;
+  --q-action:#1769AA;
   color-scheme:light;
 }
 
@@ -79,6 +83,8 @@
   --ring:#1D4ED8;
   --link:#1D4ED8;
   --disabled-foreground:#A5A29C;
+  --q-blue-surface:#E4EFF3; --q-magenta-surface:#F3E3E9; --q-lime-surface:#E8EECF;
+  --q-action:#155B98;
 }
 
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"] {
@@ -102,6 +108,10 @@
   --ring:#86C5FF;
   --link:#86C5FF;
   --disabled-foreground:#7A8593;
+  --q-blue-ink:#86C5FF; --q-blue-surface:#152B3D;
+  --q-magenta-ink:#FFB4D8; --q-magenta-surface:#381C2A;
+  --q-lime-ink:#D3F596; --q-lime-surface:#273019;
+  --q-action:#1769AA;
   --destructive:#E0438F;
   --destructive-foreground:#FFB4CF;
   --info:#339FF2;
@@ -224,6 +234,30 @@
 
 /* Question composition: content width chooses the option layout. */
 .prism-question { container-type:inline-size; }
+/* Question identity is separate from success / error state semantics. */
+[data-question-tone] { --q-mark:var(--muted-foreground); --q-ink:var(--foreground); --q-surface:var(--muted); }
+[data-question-tone="blue"] { --q-mark:var(--brand-blue); --q-ink:var(--q-blue-ink); --q-surface:var(--q-blue-surface); }
+[data-question-tone="magenta"] { --q-mark:var(--brand-magenta); --q-ink:var(--q-magenta-ink); --q-surface:var(--q-magenta-surface); }
+[data-question-tone="lime"] { --q-mark:var(--brand-green); --q-ink:var(--q-lime-ink); --q-surface:var(--q-lime-surface); }
+.q-type-dot { display:inline-block; flex-shrink:0; width:.5rem; height:.5rem; border-radius:50%; background:var(--q-mark); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--q-ink) 35%,transparent); }
+.q-type-label { background:transparent; border-color:var(--border); color:var(--foreground); }
+.q-type-text { color:var(--foreground); }
+.q-score { background:var(--q-surface); color:var(--q-ink); }
+.q-type-segment { background:var(--q-mark); }
+.q-type-segment + .q-type-segment { border-inline-start:2px solid var(--background); }
+.q-primary-action { --primary:var(--q-action); --primary-foreground:#fff; }
+.q-geometry-point { fill:var(--q-blue-ink); }
+.question-print-sheet .q-geometry-region { fill:currentColor; fill-opacity:.045; }
+.question-print-sheet .q-geometry-point { fill:currentColor; }
+.question-print-sheet :is(.q-score,.q-type-label,.q-type-text) { background:transparent; color:inherit; border-color:currentColor; }
+.question-print-sheet .q-type-dot { background:currentColor; box-shadow:none; }
+@media print {
+  .q-geometry-region { fill:currentColor; fill-opacity:.045; }
+  .q-geometry-point { fill:currentColor; }
+  :is(.q-score,.q-type-label,.q-type-text) { background:transparent; color:inherit; border-color:currentColor; }
+  .q-type-dot { background:currentColor; box-shadow:none; }
+}
+
 .prism-question-copy { overflow-wrap:anywhere; }
 .prism-question-copy .prism-math { line-height:normal; }
 .prism-question-options { grid-template-columns:minmax(0,1fr); }
