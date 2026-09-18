@@ -6,7 +6,7 @@ import { ArrowUpDown,BookOpen,ChevronDown,FileText,Check,Info,TriangleAlert } fr
 import { Button } from "@/components/coss/button"
 import { Avatar,AvatarFallback } from "@/components/coss/avatar"
 import { RadioGroup,Radio } from "@/components/coss/radio-group"
-import { Badge } from "@/components/coss/badge"
+import { Badge } from "@/components/prism-next/badge"
 import { Card,CardHeader,CardTitle,CardDescription,CardPanel,CardFooter,CardFrame,CardFrameHeader,CardFrameTitle,CardFrameDescription,CardAction } from "@/components/coss/card"
 import { Frame,FrameHeader,FrameTitle,FrameDescription,FramePanel,FrameFooter } from "@/components/coss/frame"
 import { Table,TableHeader,TableBody,TableHead,TableRow,TableCell,TableCaption } from "@/components/coss/table"
@@ -26,7 +26,17 @@ const avatarSizes=[
   {size:96,style:"size-24 text-3xl",usage:"资料页头"},
 ]
 export function AvatarDemo(){return <DemoSection title="六种常用尺寸" description="同一头像按使用位置调整尺寸，文字回退随头像等比例变化；默认尺寸为 32px。"><div className="flex flex-wrap items-end gap-x-8 gap-y-6">{avatarSizes.map(item=><div key={item.size} className="flex flex-col items-center gap-3"><Avatar className={item.style} aria-label={`陈老师，${item.size} 像素头像`}><AvatarFallback>陈</AvatarFallback></Avatar><div className="text-center"><p className="text-sm font-medium tabular-nums">{item.size}px</p><p className="mt-1 text-xs text-muted-foreground">{item.usage}</p></div></div>)}</div></DemoSection>}
-export function BadgeDemo(){return <DemoSection title="信息与状态"><div className="flex flex-wrap items-center gap-3"><Badge variant="secondary">草稿</Badge><Badge variant="outline">待复核</Badge><Badge variant="info"><Info/>处理中</Badge><Badge variant="success"><Check/>已复核</Badge><Badge variant="warning"><TriangleAlert/>需要补充</Badge><Badge variant="error">未通过</Badge></div></DemoSection>}
+export function BadgeDemo(){
+ const [count,setCount]=useState(2)
+ return <>
+  <DemoSection title="信息与状态"><div className="flex flex-wrap items-center gap-3"><Badge variant="secondary">草稿</Badge><Badge variant="outline">待复核</Badge><Badge variant="info"><Info/>处理中</Badge><Badge variant="success"><Check/>已复核</Badge><Badge variant="warning"><TriangleAlert/>需要补充</Badge><Badge variant="error">未通过</Badge></div></DemoSection>
+  <DemoSection title="实心信息色与计数" description="用彩色气泡背景突出数量，数字保持中性色。info-solid 适用于计数等需要强调的信息，不表示待办、错误或任务完成。">
+   <div className="flex flex-wrap items-center gap-4"><Badge variant="info">浅底信息</Badge><Badge variant="info-solid">实心信息</Badge>{[0,2,100].map(value=><Badge key={value} variant="info-solid" size="sm" ><span className="sr-only">数量 </span>{value}</Badge>)}</div>
+   <div className="mt-5 flex flex-wrap items-center gap-3"><Button variant="outline" aria-label={`查看已选材料，${count} 项`} onClick={()=>setCount(value=>value===0?2:value===2?100:0)}>已选材料<Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge></Button><span className="text-sm text-muted-foreground">点击入口依次预览 0、2、100；示例不读取业务数据。</span></div>
+   <Feedback>当前示例数量：{count}。数量由调用方提供，徽标不自动隐藏零值或截断为 99+。</Feedback>
+  </DemoSection>
+ </>
+}
 export function CardDemo(){
  const [saved,setSaved]=useState(false),[selected,setSelected]=useState("brief")
  return <>

@@ -39,6 +39,25 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### 实心信息色徽标
+
+`components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；原有变体、尺寸和 render/ARIA 属性继续透传。coss 原始源码及其来源校验保持不变。
+
+```tsx
+import { Badge } from "@/components/prism-next/badge"
+
+<Button variant="outline" aria-label={`查看已选材料，${count} 项`}>
+  已选材料
+  <Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge>
+</Button>
+```
+
+- 彩色承载于气泡背景，内容采用对比中性色；浅色、暖纸、深色使用现有信息色与背景令牌。
+- `info` 保持浅底信息呈现，`info-solid` 只提高信息强调程度，不推断待办、错误、类别或完成状态。
+- 数量、零值是否展示、是否采用 `99+` 以及入口行为由调用方决定。组件不添加自动动画或存储。
+- 数量与含义须由可访问名称共同表达；在已提供完整名称的按钮内，可隐藏重复的数字读屏内容。
+- 组件示例位于 `/next/components/badge`，同时展示浅底／实心、0／2／100 及描边入口组合。
+
 ## 代码与导航分层
 
 | 层级 | 目录 / 入口 | 内容 |
