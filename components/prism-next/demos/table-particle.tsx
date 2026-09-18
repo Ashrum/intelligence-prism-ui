@@ -5,7 +5,7 @@ import { type ColumnDef, columnSizingFeature, columnVisibilityFeature, createPag
 import { ArrowDown, ArrowUp, ArrowUpDown, Search, X, RotateCcw, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Badge } from "@/components/coss/badge"
+import { StatusBadge } from "@/components/prism-next/status-badge"
 import { Frame, FrameFooter } from "@/components/coss/frame"
 import { Label } from "@/components/coss/label"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
@@ -23,7 +23,7 @@ const columns: ColumnDef<typeof features, MaterialRow>[] = [
   { accessorKey: "title", header: "材料", size: 270, cell: ({ row }) => <div><p className="font-medium">{row.original.title}</p><p className="mt-1 text-xs text-muted-foreground">{row.original.id} · {row.original.subject}</p></div> },
   { accessorKey: "minutes", header: "时长", size: 100, cell: ({ row }) => <span className="prism-numeric">{row.original.minutes} 分钟</span> },
   { accessorKey: "score", header: "评分", size: 100, cell: ({ row }) => <span className="prism-numeric">{row.original.score.toFixed(2)}</span> },
-  { accessorKey: "status", header: "状态", size: 110, enableSorting: false, cell: ({ row }) => <Badge variant={row.original.status === "reviewed" ? "success" : "outline"}>{row.original.status === "reviewed" ? "已复核" : "待复核"}</Badge> },
+  { accessorKey: "status", header: "状态", size: 110, enableSorting: false, cell: ({ row }) => <StatusBadge tone={row.original.status === "reviewed" ? "complete" : "pending"}>{row.original.status === "reviewed" ? "已复核" : "待复核"}</StatusBadge> },
 ]
 const statuses = [{ value: "all", label: "全部状态" }, { value: "pending", label: "待复核" }, { value: "reviewed", label: "已复核" }]
 

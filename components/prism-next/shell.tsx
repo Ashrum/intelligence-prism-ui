@@ -9,6 +9,7 @@ import { SidebarProvider,Sidebar,SidebarContent,SidebarHeader,SidebarGroup,Sideb
 import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/components/coss/select"
 import { Collapsible,CollapsibleTrigger,CollapsiblePanel } from "@/components/coss/collapsible"
 import { Command,CommandInput,CommandList,CommandEmpty,CommandItem,CommandPanel,CommandDialog,CommandDialogTrigger,CommandDialogPopup,CommandDialogPrimitive } from "@/components/coss/command"
+import { StatusBadge } from "./status-badge"
 import { Button } from "@/components/coss/button"
 import { componentGroups,components,applicationExamples } from "@/lib/prism-next/catalog"
 import { themeOptions,DESIGN_VERSION } from "@/lib/prism-next/config"
@@ -39,7 +40,7 @@ function Navigation() {
   </SidebarMenuItem>
   return <Sidebar collapsible="offcanvas">
     <SidebarHeader className="px-5 pt-6 pb-4">
-      <Link href="/next" className="flex items-center gap-3 font-semibold text-foreground"><BrandMark/><span>智能曜彩<span className="mt-0.5 block text-[11px] font-normal tracking-wide text-muted-foreground">组件与设计规范</span></span></Link>
+      <Link href="/next" className="flex items-center gap-3 font-semibold text-foreground"><BrandMark/><span>智能曜彩<span className="mt-0.5 block text-xs font-normal tracking-wide text-muted-foreground">组件与设计规范</span></span></Link>
     </SidebarHeader>
     <SidebarContent ref={navigation} className="px-2">
       <SidebarGroup><SidebarMenu>
@@ -51,7 +52,7 @@ function Navigation() {
         <CollapsiblePanel><SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}</SidebarMenu></CollapsiblePanel>
       </Collapsible></SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link('/next/examples/'+item.id,item.title))}</SidebarMenu></SidebarGroup>
-      <p className="px-4 py-4 text-xs text-muted-foreground">v{DESIGN_VERSION} · 已通过评审</p>
+      <div className="px-4 py-4 space-y-2"><p className="text-xs text-muted-foreground">v{DESIGN_VERSION}</p><StatusBadge tone="complete">已通过评审</StatusBadge></div>
     </SidebarContent>
   </Sidebar>
 }

@@ -26,7 +26,7 @@ export function ReferenceChartDemo({kind}:{kind:string}){
  }
  const composition=(edge?[{id:'zero',label:'零值',value:0},{id:'missing',label:'缺测',value:null}]:learning?[
   {id:'stable',label:'稳定保持',value:10},{id:'consolidating',label:'正在巩固',value:11},{id:'verification',label:'已纠正待验证',value:7},{id:'support',label:'需要支持',value:5},{id:'declining',label:'近期回落',value:2},{id:'insufficient',label:'证据不足',value:7}
- ]:[{id:'done',label:'已完成',value:36},{id:'running',label:'处理中',value:18},{id:'queued',label:'待处理',value:12},{id:'held',label:'已暂停',value:4}]).map((d,i)=>({...d,color:[colors[0],colors[2],colors[4],colors[3],colors[1],colors[5]][i]}))
+ ]:[{id:'done',label:'已完成',value:36},{id:'running',label:'处理中',value:18},{id:'queued',label:'待处理',value:12},{id:'held',label:'已暂停',value:4}]).map((d,i)=>({...d,color:!learning&&!edge?['var(--brand-lime-ink)','var(--brand-blue-ink)','var(--brand-magenta-ink)','var(--muted-foreground)'][i]:[colors[0],colors[2],colors[4],colors[3],colors[1],colors[5]][i]}))
  const paired:PairedRow[]=edge?[
   {id:'bounds',label:'范围两端',first:0,second:100},{id:'equal',label:'相同数值',first:50,second:50},{id:'close',label:'接近数值',first:50,second:50.1},{id:'missing',label:'单项缺测',first:null,second:35}
  ]:learning?[

@@ -1,12 +1,13 @@
 "use client"
 import { useId, useRef, useState, type Dispatch, type SetStateAction } from "react"
-import { Check, CircleAlert, Clock3 } from "lucide-react"
+import { CircleAlert } from "lucide-react"
 import { createReviewEditor, getReviewStatus, type ReviewEditor } from "@/lib/prism-next/question-review-model"
 import { Button } from "@/components/coss/button"
 import { Textarea } from "@/components/coss/textarea"
 import { Label } from "@/components/coss/label"
 import { Tabs, TabsList, TabsTab } from "@/components/coss/tabs"
 import { QuestionContent, type QuestionRecord } from "./question-content"
+import { StatusBadge, type StatusTone } from "./status-badge"
 import { PointsField } from "./question-controls"
 import { reviewError } from "@/lib/prism-next/question-workspace"
 
@@ -38,8 +39,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
   const reasonError=!!error&&!status.invalid.length&&!!status.changed.length&&!reason.trim()
   const showScoreErrors=!!error&&!!status.invalid.length
   const statusText={pending:"待复核",incomplete:"有待评分项",invalid:"评分需修正",changed:"评分有调整，待确认",note:"说明待提交",confirmed:"已确认复核"}[status.state]
-  const statusTone=["incomplete","invalid","changed"].includes(status.state)?"warning":status.state==="confirmed"?"success":"neutral"
-  const StatusIcon=statusTone==="success"?Check:statusTone==="warning"?CircleAlert:Clock3
+  const statusTone:StatusTone=status.state==="invalid"?"error":["incomplete","changed"].includes(status.state)?"warning":status.state==="confirmed"?"complete":"pending"
   function updateScore(id:string,value:number|null) {
     change(previous=>{
       const next={...previous.scores,[id]:value}
@@ -67,7 +67,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
         {view==="review"&&<div><dt>复核中得分</dt><dd>{status.invalid.length?<><span>已评 </span>{total}<span> 分</span></>:<>{total}<span> / {maximum}</span></>}</dd></div>}
       </dl>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-        <p className="q-review-status" data-tone={statusTone} role="status"><StatusIcon aria-hidden="true" className="size-4 shrink-0"/>{statusText}</p>
+        <p role="status"><StatusBadge tone={statusTone}>{statusText}</StatusBadge></p>
         {view==="review"&&!!status.changed.length&&<span className="text-muted-foreground">{status.changed.length} 个评分点未确认{savedComplete&&!status.invalid.length&&total!==savedTotal?` · 较已记录 ${total-savedTotal>0?"+":""}${total-savedTotal} 分`:""}</span>}
         {historyChanged&&savedComplete&&initialComplete&&<span className="text-muted-foreground">已记录较初评 {savedTotal===initialTotal?"总分不变，评分点有调整":`${savedTotal-initialTotal>0?"+":""}${savedTotal-initialTotal} 分`}</span>}
       </div>
