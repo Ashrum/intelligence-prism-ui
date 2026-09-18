@@ -130,3 +130,21 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。不连接模型或模拟执行器。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
+
+
+## 智能曜彩业务状态（v1.21）
+
+`StatusBadge` 位于 `components/prism-next/status-badge.tsx`，组合现有 coss Badge，不新增目录组件。调用方显式传入 `tone` 和状态文字，不从标签文案推测状态。
+
+| tone | 用途 | 色彩 |
+| --- | --- | --- |
+| pending | 等待人工处理、复核、验证 | 曜紫红 |
+| active | 正在执行 | 曜蓝 |
+| complete | 已完成、已更新、已保存 | 曜青绿 |
+| neutral | 草稿、暂停、排除、尚未进入的步骤 | 中性 |
+| warning | 来源失效、逾期、评分差异 | 琥珀 |
+| error | 校验或执行失败 | 独立红色 |
+
+所有状态提供文字与图标，颜色为辅助。使用 `--brand-{blue,magenta,lime}-{ink,surface}` 三主题配色；原 `--q-*` 同名角色保留为别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型仍使用色点身份；图表分类继续由数据定义，不能自动套成三类。
+
+`DataRecordTable` 列可传 `numeric: true`（右对齐与等宽数字）或 `align`；`rowLabel(row)` 提供查看按钮的可读名称。以上均为兼容性可选参数。`MilestoneList` 按自身容器宽度选择横/竖排列，并用可见状态文字及 `aria-current="step"` 标识当前节点。

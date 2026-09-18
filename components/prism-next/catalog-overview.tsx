@@ -6,6 +6,7 @@ import { ArrowUpRight,Check,Save } from "lucide-react"
 import { Input } from "@/components/coss/input"
 import { Button } from "@/components/coss/button"
 import { Label } from "@/components/coss/label"
+import { StatusBadge } from "./status-badge"
 import { BrandMark } from "./shell"
 import { QuestionTypeLabel,QuestionPoints } from "./question-labels"
 import { componentGroups,components,applicationExamples } from "@/lib/prism-next/catalog"
@@ -23,7 +24,7 @@ export function CatalogOverview() {
       <p className="text-sm text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项`:`${components.length} 个组件 · 3 套主题 · ${applicationExamples.length} 个应用示例`}</p>
     </div>
     {!query.trim()&&<section className="prism-preview-grid" aria-label="组件交互预览">
-      <article className="prism-preview-tile"><div className="prism-preview-stage"><p className="text-xs text-muted-foreground">一个明确的主操作</p><div className="flex flex-wrap items-center gap-2"><Button onClick={()=>setSaved(true)}>{saved?<Check/>:<Save/>}{saved?'已保存':'保存修改'}</Button><Button variant="outline" onClick={()=>setSaved(false)}>重置</Button></div><p className="text-xs text-muted-foreground" role="status">{saved?'示例修改已保存。':'点击按钮，体验操作与反馈。'}</p></div><Link href="/next/components/button">Button 按钮<ArrowUpRight/></Link></article>
+      <article className="prism-preview-tile"><div className="prism-preview-stage"><p className="text-xs text-muted-foreground">一个明确的主操作</p><div className="flex flex-wrap items-center gap-2"><Button onClick={()=>setSaved(true)}>{saved?<Check/>:<Save/>}{saved?'已保存':'保存修改'}</Button><Button variant="outline" onClick={()=>setSaved(false)}>重置</Button></div><p className="text-xs text-muted-foreground" role="status">{saved?<StatusBadge tone="complete">已保存</StatusBadge>:'点击按钮，体验操作与反馈。'}</p></div><Link href="/next/components/button">Button 按钮<ArrowUpRight/></Link></article>
       <article className="prism-preview-tile"><div className="prism-preview-stage"><p className="text-xs text-muted-foreground">标签、输入与说明各有位置</p><div className="space-y-2"><Label htmlFor="overview-title">练习名称</Label><Input id="overview-title" value={title} onChange={e=>setTitle(e.target.value)} maxLength={40}/><p className="text-xs text-muted-foreground">用于学生端展示，可直接修改。</p></div></div><Link href="/next/components/form">Form 表单<ArrowUpRight/></Link></article>
       <article className="prism-preview-tile"><div className="prism-preview-stage"><p className="text-xs text-muted-foreground">色彩帮助辨认作答形式</p><div className="flex flex-wrap gap-2"><QuestionTypeLabel label="单选" tone="blue"/><QuestionTypeLabel label="解答" tone="magenta"/><QuestionTypeLabel label="复合" tone="lime"/></div><div className="flex flex-wrap items-center gap-2"><span className="text-sm font-medium">函数与几何综合</span><QuestionPoints points={16} tone="lime"/></div></div><Link href="/next/components/question">Question 题目<ArrowUpRight/></Link></article>
     </section>}

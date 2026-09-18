@@ -3,7 +3,7 @@ import { DiagnosisEvidenceTable } from "@/components/prism-next/learning-compone
 
 import { useState } from "react"
 import { Button } from "@/components/coss/button"
-import { Badge } from "@/components/coss/badge"
+import { StatusBadge } from "@/components/prism-next/status-badge"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Textarea } from "@/components/coss/textarea"
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from "@/components/coss/table"
@@ -37,7 +37,7 @@ export function LearningDiagnosis({ go, active }: { go: (stage: Stage) => void; 
     <DiagnosisEvidenceTable items={evidenceDefinitions.map(item=>{
       const d=state.diagnoses.find(d=>d.id===item.id)!
       const stale=!!d.sourceVersion&&d.sourceVersion!==review?.version
-      return {id:item.id,title:item.title,observation:item.observed,location:item.curriculum,source:`Q-M-006 · 第 ${item.partId} 问 · 评价 ${d.sourceVersion??review?.version??"未确认"}`,status:<Badge variant={stale?"warning":d.decision==="confirmed"?"success":"outline"}>{stale?"来源已变化":d.decision==="confirmed"?"已确认":d.decision==="rejected"?"已排除":"待复核"}</Badge>,actions:<Button disabled={!!selected} variant="outline" aria-controls="learning-evidence" onClick={()=>{setSelected(item.id);setNote(d.note);setFormError("");setShowQuestion(false)}}>查看证据</Button>}
+      return {id:item.id,title:item.title,observation:item.observed,location:item.curriculum,source:`Q-M-006 · 第 ${item.partId} 问 · 评价 ${d.sourceVersion??review?.version??"未确认"}`,status:<StatusBadge tone={stale?"warning":d.decision==="confirmed"?"complete":d.decision==="rejected"?"neutral":"pending"}>{stale?"来源已变化":d.decision==="confirmed"?"已确认":d.decision==="rejected"?"已排除":"待复核"}</StatusBadge>,actions:<Button disabled={!!selected} variant="outline" aria-controls="learning-evidence" onClick={()=>{setSelected(item.id);setNote(d.note);setFormError("");setShowQuestion(false)}}>查看证据</Button>}
     })}/>
     <p className="text-sm leading-6 text-muted-foreground">确认后才能作为目标来源；排除会保留判断记录。评价变更后，诊断需要再次人工复核。</p>
     <QuestionWorkPanel id="learning-evidence" open={active && !!selected} title={evidence?.title ?? "诊断证据"} description="对照原始作答、评分点和参考解析，确认这一次作答的教学判断。" onClose={() => setSelected(null)} footer={<><Button disabled={!review} onClick={() => action("confirmed")}>确认判断</Button><Button variant="outline" disabled={!review} onClick={() => action("rejected")}>排除候选</Button></>}>
