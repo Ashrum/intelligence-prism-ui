@@ -148,3 +148,23 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 所有状态提供文字与图标，颜色为辅助。使用 `--brand-{blue,magenta,lime}-{ink,surface}` 三主题配色；原 `--q-*` 同名角色保留为别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型仍使用色点身份；图表分类继续由数据定义，不能自动套成三类。
 
 `DataRecordTable` 列可传 `numeric: true`（右对齐与等宽数字）或 `align`；`rowLabel(row)` 提供查看按钮的可读名称。以上均为兼容性可选参数。`MilestoneList` 按自身容器宽度选择横/竖排列，并用可见状态文字及 `aria-current="step"` 标识当前节点。
+
+
+## 实心信息色徽标
+
+`components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；原有变体、尺寸和 render/ARIA 属性继续透传。coss 原始源码及其来源校验保持不变。
+
+```tsx
+import { Badge } from "@/components/prism-next/badge"
+
+<Button variant="outline" aria-label={`查看已选材料，${count} 项`}>
+  已选材料
+  <Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge>
+</Button>
+```
+
+- 彩色承载于气泡背景，内容采用对比中性色；浅色、暖纸、深色使用现有信息色与背景令牌。
+- `info` 保持浅底信息呈现，`info-solid` 只提高信息强调程度，不推断待办、错误、类别或完成状态。
+- 数量、零值是否展示、是否采用 `99+` 以及入口行为由调用方决定。组件不添加自动动画或存储。
+- 数量与含义须由可访问名称共同表达；在已提供完整名称的按钮内，可隐藏重复的数字读屏内容。
+- 组件示例位于 `/next/components/badge`，同时展示浅底／实心、0／2／100 及描边入口组合。
