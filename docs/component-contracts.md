@@ -32,6 +32,12 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 该示例在客户端组件中使用。迁入其他框架时，按实际导入替换 Next.js 的 Link、导航或图片适配；不需要带入站点 Shell、组件目录或业务演示页面。
 
+## Agent 可读性与规范权威
+
+跨 Agent 使用时以站点根目录 `/llms.txt` 为发现入口，并遵循 `docs/agent-readable-contract.md`。组件页 Agent Spec、Foundations、Pattern / 应用示例、固定 coss upstream、Agent inference 依次构成权威顺序；后一级不得覆盖前一级。
+
+基础 Form / Field / Input / Textarea / Select 统一采用**常驻固定标签**。Floating label 不属于基础输入组件契约；若未来需要，只能作为单独评审的 Specialized Pattern 引入。缺失视觉值先复用固定 coss 行为，仍无定义时报告规范缺口，不从截图或模型偏好补造。
+
 ## 常用展示约定
 
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
@@ -39,13 +45,24 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
-### 外部交互参考：beUI
+### 实心信息色徽标
 
-- **入口与定位**：[beUI](https://beui.dev/) 作为 Motion Interaction / Advanced Interaction Inspiration 外部参考，用于后续 Motion 与 AI Interaction Language 的设计验证。
-- **重点观察**：状态转换、内容出现与消失的节奏、操作反馈、内容展开及组件形态变化；可关注 Button 状态反馈、Dialog 进入、Card 展开、Empty State 和 Notification / Toast 等场景的表现。官方参考：[Motion Guide](https://beui.dev/docs/motion-patterns)、[Agent Loading States](https://beui.dev/components/agents/loading-states)。
-- **AI 状态表达**：可借鉴其界面表达，研究批阅、诊断、学习路径生成和数据刷新过程的反馈。阶段、进度和结果须由调用方的真实状态驱动；这些是智能曜彩的设计参考场景，不代表 beUI 已提供相应业务能力。
-- **使用边界**：仅作交互灵感，不直接复制组件，不作为基础组件、Design Token 或组件规范来源；基础实现继续遵循现有 coss / Base UI 与主题约定，不因纳入参考而新增运行依赖。
-- **取舍原则**：保持克制、高信息密度和长时间使用舒适性，尊重减少动态效果设置；避免炫技动画、Landing Page 风格、过度弹性及无语义的发光或渐变装饰。基础交互保持稳定，关键 AI 场景的动态反馈以帮助理解状态为准。
+`components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；原有变体、尺寸和 render/ARIA 属性继续透传。coss 原始源码及其来源校验保持不变。
+
+```tsx
+import { Badge } from "@/components/prism-next/badge"
+
+<Button variant="outline" aria-label={`查看已选材料，${count} 项`}>
+  已选材料
+  <Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge>
+</Button>
+```
+
+- 彩色承载于气泡背景，内容采用对比中性色；浅色、暖纸、深色使用现有信息色与背景令牌。
+- `info` 保持浅底信息呈现，`info-solid` 只提高信息强调程度，不推断待办、错误、类别或完成状态。
+- 数量、零值是否展示、是否采用 `99+` 以及入口行为由调用方决定。组件不添加自动动画或存储。
+- 数量与含义须由可访问名称共同表达；在已提供完整名称的按钮内，可隐藏重复的数字读屏内容。
+- 组件示例位于 `/next/components/badge`，同时展示浅底／实心、0／2／100 及描边入口组合。
 
 ## 代码与导航分层
 
@@ -74,18 +91,10 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 />
 ```
 
-- `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
-- 独立展示、题库和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，16px 标题、15px 正文（1.75 行高）、14px 选项与小问。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
-- 试题篮仍复用 `QuestionCard`，由 `.q-basket-list` 容器排列为序号左栏、标题在上、标签与题干在下；题间以留白区分，题卡本身不另加外框。题篮不提供详情或跨区域定位，详情保留在完整题卡中。常规高度下统计与操作位于滚动列表之外，短窗口改为整篮滚动。
-- `compact` 只显示题干，省略选项、附图、材料块与小问；所有场景均自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
-- `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
-- `actions` 区域的默认实心按钮使用统一蓝底白字；操作数量与行为仍由调用方提供，至多保留一个主操作。面板底部可用 `q-primary-action` 复用同一颜色。类型色独立于成功/错误状态，不复用 destructive 等状态变体。
-- `showPoints` 控制总分及小问分值显示，隐藏分值仍保留题型；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
-- 答案解析中的独立公式与说明文字左对齐，长公式在原区域内横向滚动；行内公式和公式内部对齐不改动。打印答案沿用左对齐规则。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
-- `QuestionActions` 将相似题及次常用操作收进更多菜单；仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
+- `QuestionActions` 仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
 - `QuestionResponse` 接收题型、选项、`value` / `onChange`，只收集作答，不自动判分。
 - `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。确认通过 `onConfirm` 返回结果。
 - 没有细分 rubric 时：已有小问分值使用 `${part.id}-score`；没有小问分值回退整题 `score`。不擅自平均分配分值。未提供初评的评分点保持待评分。更换被复核对象时使用 `key={question.id}` 重建独立编辑草稿。
@@ -130,41 +139,3 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。不连接模型或模拟执行器。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
-
-
-## 智能曜彩业务状态（v1.21）
-
-`StatusBadge` 位于 `components/prism-next/status-badge.tsx`，组合现有 coss Badge，不新增目录组件。调用方显式传入 `tone` 和状态文字，不从标签文案推测状态。
-
-| tone | 用途 | 色彩 |
-| --- | --- | --- |
-| pending | 等待人工处理、复核、验证 | 曜紫红 |
-| active | 正在执行 | 曜蓝 |
-| complete | 已完成、已更新、已保存 | 曜青绿 |
-| neutral | 草稿、暂停、排除、尚未进入的步骤 | 中性 |
-| warning | 来源失效、逾期、评分差异 | 琥珀 |
-| error | 校验或执行失败 | 独立红色 |
-
-所有状态提供文字与图标，颜色为辅助。使用 `--brand-{blue,magenta,lime}-{ink,surface}` 三主题配色；原 `--q-*` 同名角色保留为别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型仍使用色点身份；图表分类继续由数据定义，不能自动套成三类。
-
-`DataRecordTable` 列可传 `numeric: true`（右对齐与等宽数字）或 `align`；`rowLabel(row)` 提供查看按钮的可读名称。以上均为兼容性可选参数。`MilestoneList` 按自身容器宽度选择横/竖排列，并用可见状态文字及 `aria-current="step"` 标识当前节点。
-
-
-## 实心信息色徽标
-
-`components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；原有变体、尺寸和 render/ARIA 属性继续透传。coss 原始源码及其来源校验保持不变。
-
-```tsx
-import { Badge } from "@/components/prism-next/badge"
-
-<Button variant="outline" aria-label={`查看已选材料，${count} 项`}>
-  已选材料
-  <Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge>
-</Button>
-```
-
-- 彩色承载于气泡背景，内容采用对比中性色；浅色、暖纸、深色使用现有信息色与背景令牌。
-- `info` 保持浅底信息呈现，`info-solid` 只提高信息强调程度，不推断待办、错误、类别或完成状态。
-- 数量、零值是否展示、是否采用 `99+` 以及入口行为由调用方决定。组件不添加自动动画或存储。
-- 数量与含义须由可访问名称共同表达；在已提供完整名称的按钮内，可隐藏重复的数字读屏内容。
-- 组件示例位于 `/next/components/badge`，同时展示浅底／实心、0／2／100 及描边入口组合。
