@@ -143,7 +143,7 @@ import { Badge } from "@/components/prism-next/badge"
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
 
 
-## 页面骨架：WorkbenchShell v0.1（Candidate）
+## 页面骨架：WorkbenchShell v0.2（Candidate）
 
 组合路径：组件库 → 页面骨架 → 标准页面 → Demo / Website。骨架源码是唯一维护源，接入项目沿用按需复制源码与来源清单，不再还原独立设计稿。当前只实现总骨架，第2—7项未启动。
 
@@ -155,9 +155,16 @@ import { Badge } from "@/components/prism-next/badge"
 | notifications | 记录、未读、逐条与全部已读回调；不改任务或业务成果状态 |
 | monitor | 显式后台任务状态和独立连接状态；不会从对话结束推断完成 |
 | usage | 积分与 token 分别提供个人/组织/待确认归属，以及启用/未启用/不可用；未知数据不能显示 0 |
-| context / auxiliary / children | 可选上下文侧栏、辅助区、主内容。context.content 可用 render function 接收移动目录的关闭回调 |
-| basket | 仅接收已有题篮的展开与方向，以预留布局空间。题篮状态、业务和浮层由应用拥有 |
+| context / auxiliary / auxiliaryLabel / children | 可选上下文侧栏、辅助区及其名称、主内容。context.content 可用 render function 接收目录关闭回调；辅助区只渲染一份，受控值由应用保存 |
+| basket | 接收已有题篮的 open、position、empty，以预留布局空间。题篮状态、业务和浮层由应用拥有 |
 
 骨架只使用现有组件 variant/size、主题令牌与字体，CSS 限于布局、区域尺寸及响应式。ThemeProvider 继续使用 `prism-v1-theme`；浅色、暖纸、深色应用到正文和 portal。搜索为模态 Dialog，通知/状态为 Popover，个人菜单为 Menu；同一时间只展开一个公共面板，关闭返回相应触发器，搜索选中结果后进入主内容。跳过链接不改写 HashRouter。顶部固定，主内容及桌面上下文分别滚动；中小屏收纳一级导航和上下文目录；题篮右侧/底部预留空间。
 
 接入时同步整个 `components/prism-next/skeletons` 目录及其直接 coss/prism/lib 依赖。演示页 `examples/skeletons/workbench-review` 只用于评审，不作为生产数据源。工作台通过同源副本与薄适配器接入原 `TeacherQuestionBasketProvider`，保留原业务路由和持久化语义。
+
+
+v0.2 空间规则：辅助区根据扣除上下文与题篮后的实际工作区测量；宽度不足1120px或高度不足640px时收纳到同一公共面板体系，入口保留在主内容滚动区之外。外壳不足1100px时再收纳上下文；关闭辅助面板保留阅读位置并返回入口焦点。设置改变引发收纳时自动接续面板，避免正在操作的控件消失。
+
+题篮面板使用 `workbench-basket-panel workbench-basket-right` 或 `workbench-basket-bottom`，空态同时加 `workbench-basket-empty`；外壳传入相同的 `basket.empty`。两处由同一CSS变量声明尺寸，避免页面预留与portal尺寸脱节。空态右侧20rem/底部min(36dvh,19rem)，有题右侧clamp(18rem,32vw,26rem)/底部min(46dvh,24rem)。这些尺寸仅供使用该骨架的接入页选择，不自动重写既有业务外壳。
+
+设计验收包含组件、色彩、用户体验、艺术表达、空间利用率。空间子项必须检查主区有效宽高、首屏内容、留白与密度、同时展开的收纳顺序、操作距离及滚动、桌面/中屏/窄屏/低高度视口；“无溢出”不是设计通过的充分条件。

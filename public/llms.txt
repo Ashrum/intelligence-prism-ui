@@ -59,6 +59,6 @@ The canonical base form strategy is a persistent fixed label. Field identity rem
 
 ## Page composition layers (candidate branch)
 - Page skeleton catalog: /next/skeletons
-- Teacher workbench shell review: /next/skeletons/workbench (v0.1 Candidate; fixtures only)
+- Teacher workbench shell review: /next/skeletons/workbench (v0.2 Candidate; fixtures only)
 - Standard pages: /next/pages (not started)
 Skeletons and standard pages are separate categories and do not change the 80-component count. Compose the same WorkbenchShell source in applications. Only stage 1 is implemented; stages 2–7 remain unstarted. Candidate branch routes do not imply a production publication.

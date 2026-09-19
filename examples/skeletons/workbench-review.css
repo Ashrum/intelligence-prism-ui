@@ -1,8 +1,7 @@
+.review-material { max-width:48rem; }
 .review-equation { overflow-x:auto; font-size:1.25rem; }
 .review-equation math { min-width:max-content; }
 .review-basket-launcher { position:fixed; bottom:24px; right:24px; z-index:40; }
-.review-basket-right { width:clamp(18rem,42vw,28rem); max-width:clamp(18rem,42vw,28rem); }
-.review-basket-bottom { height:min(60dvh,28rem); max-height:min(60dvh,28rem); }
 .q-task-drawer-portal:has(.review-basket-panel) > [data-slot="drawer-viewport"] { touch-action:auto; z-index:30; }
 body:has([data-shell-overlay][aria-modal="true"][data-open]) .review-basket-launcher,
 body:has([data-shell-overlay][aria-modal="true"][data-open]) .review-basket-panel { visibility:hidden; }

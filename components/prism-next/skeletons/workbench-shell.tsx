@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { useTheme } from 'next-themes'
-import { Activity, ArrowUpRight, Bell, Check, ChevronDown, CircleAlert, CircleCheck, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
+import { Activity, ArrowUpRight, Bell, Check, ChevronDown, CircleAlert, CircleCheck, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, PanelRight, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
 import { Button } from '@/components/coss/button'
 import { Avatar, AvatarFallback } from '@/components/coss/avatar'
 import { Badge } from '@/components/prism-next/badge'
@@ -33,20 +33,24 @@ export type WorkbenchShellProps = {
   usage: { accounts: readonly UsageAccount[]; sourceLabel: string }
   context?: { label: string; content: ReactNode | ((close: () => void) => ReactNode) }
   auxiliary?: ReactNode
+  auxiliaryLabel?: string
   children: ReactNode
-  basket?: { open: boolean; position: 'right' | 'bottom' }
+  basket?: { open: boolean; position: 'right' | 'bottom'; empty?: boolean }
 }
-type Panel = 'navigation' | 'context' | 'search' | 'notifications' | 'monitor' | 'account' | 'settings' | 'usage' | null
+type Panel = 'navigation' | 'context' | 'auxiliary' | 'search' | 'notifications' | 'monitor' | 'account' | 'settings' | 'usage' | null
 const tones = { idle: 'outline', running: 'info', attention: 'warning', failed: 'error', completed: 'success' } as const
 
 /** Page skeleton extracted from the teacher PreviewHeader and global basket layout.
  * Applications own routes, data, callbacks and the basket. No business fixture lives here. */
 export function WorkbenchShell(props: WorkbenchShellProps) {
-  const { organization, user, navigation, activeId, onNavigate, search, notifications, monitor, usage, context, auxiliary, basket, children } = props
+  const { organization, user, navigation, activeId, onNavigate, search, notifications, monitor, usage, context, auxiliary, auxiliaryLabel = '辅助区域', basket, children } = props
   const [panel, setPanel] = useState<Panel>(null)
   const [mounted, setMounted] = useState(false)
+  const [auxiliaryDocked, setAuxiliaryDocked] = useState(false)
   const { theme, setTheme } = useTheme()
   const main = useRef<HTMLElement>(null)
+  const workspace = useRef<HTMLDivElement>(null)
+  const auxiliaryTrigger = useRef<HTMLButtonElement>(null)
   const searchTrigger = useRef<HTMLButtonElement>(null)
   const searchSelected = useRef(false)
   const notificationTrigger = useRef<HTMLButtonElement>(null)
@@ -66,6 +70,25 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const current = navigation.find(item => item.id === activeId)
   useEffect(() => setMounted(true), [])
   useEffect(() => {
+    const element = workspace.current
+    if (!element) return
+    // Measure the area remaining AFTER the context navigation and basket.
+    // Keep a readable main column after gutters; short windows use a dialog.
+    const observer = new ResizeObserver(([entry]) => {
+      const docked = entry.contentRect.width >= 1120 && entry.contentRect.height >= 640
+      if (!docked && element.querySelector('.workbench-auxiliary')?.contains(document.activeElement)) setPanel('auxiliary')
+      setAuxiliaryDocked(docked)
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+  useEffect(() => {
+    if (auxiliaryDocked && activePanel.current === 'auxiliary') {
+      setPanel(null)
+      requestAnimationFrame(() => main.current?.focus({ preventScroll: true }))
+    }
+  }, [auxiliaryDocked])
+  useEffect(() => {
     function handleKey(event: KeyboardEvent) {
       if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'k') return
       // Do not steal focus from an application's editing/confirmation dialog.
@@ -82,7 +105,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const returnTo = (element: HTMLButtonElement | null) => activePanel.current ? false : element ?? false
   function navigate(id: string) { setPanel(null); onNavigate(id); requestAnimationFrame(() => main.current?.focus({ preventScroll: true })) }
   const navItems = navigation.map(item => <MenuItem key={item.id} onClick={() => navigate(item.id)} aria-current={activeId === item.id ? 'page' : undefined}>{item.icon}<span className="flex-1">{item.label}</span>{activeId === item.id && <Check />}</MenuItem>)
-  return <div className="workbench-shell bg-background text-foreground" data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
+  return <div className={`workbench-shell bg-background text-foreground${basket?.empty ? ' workbench-basket-empty' : ''}`} data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
     <a className="prism-skip" href={`#${mainId}`} onClick={event => { event.preventDefault(); main.current?.focus({ preventScroll: true }) }}>跳到主要内容</a>
     <header className="workbench-topbar border-b bg-background">
       <div className="workbench-organization" title={`${organization.name} · ${organization.description}`}>
@@ -124,8 +147,14 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
       </div>
     </header>
     <div className="workbench-body">
-      {context && <><aside className="workbench-context border-r" aria-label={context.label}>{typeof context.content === 'function' ? context.content(() => {}) : context.content}</aside><div className="workbench-context-mobile"><Button ref={contextTrigger} variant="ghost" onClick={() => setPanel('context')}><PanelLeft />{context.label}</Button></div></>}
-      <div className="workbench-scroll"><div className={`workbench-content${auxiliary ? ' has-auxiliary' : ''}`}><main ref={main} id={mainId} tabIndex={-1} className="workbench-main outline-none">{children}</main>{auxiliary && <aside className="workbench-auxiliary" aria-label="辅助区域">{auxiliary}</aside>}</div></div>
+      {context && <aside className="workbench-context border-r" aria-label={context.label}>{typeof context.content === 'function' ? context.content(() => {}) : context.content}</aside>}
+      <div ref={workspace} className="workbench-workspace">
+        <div className="workbench-region-tools bg-background" data-has-context={!!context} data-has-auxiliary={!!auxiliary && !auxiliaryDocked}>
+          {context && <div className="workbench-context-mobile"><Button ref={contextTrigger} variant="ghost" size="sm" onClick={() => setPanel('context')}><PanelLeft />{context.label}</Button></div>}
+          {auxiliary && !auxiliaryDocked && <Button ref={auxiliaryTrigger} variant="ghost" size="sm" className="ml-auto" onClick={() => setPanel('auxiliary')} aria-haspopup="dialog"><PanelRight />{auxiliaryLabel}</Button>}
+        </div>
+        <div className="workbench-scroll"><div className={`workbench-content${auxiliary && auxiliaryDocked ? ' has-auxiliary' : ''}`}><main ref={main} id={mainId} tabIndex={-1} className="workbench-main outline-none">{children}</main>{auxiliary && auxiliaryDocked && <aside className="workbench-auxiliary" aria-label={auxiliaryLabel}><h2 className="mb-5 text-sm font-semibold">{auxiliaryLabel}</h2>{auxiliary}</aside>}</div></div>
+      </div>
     </div>
     <Dialog open={panel === 'search'} onOpenChange={change('search')} onOpenChangeComplete={open => { if (!open && searchSelected.current && !activePanel.current) main.current?.focus({ preventScroll: true }) }}>
       <DialogPopup data-shell-overlay="search" finalFocus={() => activePanel.current ? false : searchSelected.current ? main.current : searchTrigger.current} closeProps={{ 'aria-label': '关闭全局搜索' }}>
@@ -136,6 +165,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
         </Command>
       </DialogPopup>
     </Dialog>
+    {auxiliary && !auxiliaryDocked && <Dialog open={panel === 'auxiliary'} onOpenChange={change('auxiliary')}><DialogPopup data-shell-overlay="auxiliary" finalFocus={() => returnTo(auxiliaryTrigger.current)} closeProps={{ 'aria-label': `关闭${auxiliaryLabel}` }}><DialogHeader><DialogTitle>{auxiliaryLabel}</DialogTitle><DialogDescription>调整后关闭面板，继续当前阅读位置。</DialogDescription></DialogHeader><DialogPanel>{auxiliary}</DialogPanel></DialogPopup></Dialog>}
     <Dialog open={panel === 'settings'} onOpenChange={change('settings')}><DialogPopup data-shell-overlay="settings" finalFocus={() => returnTo(settingsTrigger.current?.getClientRects().length ? settingsTrigger.current : accountTrigger.current)} closeProps={{ 'aria-label': '关闭快捷设置' }}><DialogHeader><DialogTitle>快捷设置</DialogTitle><DialogDescription>外观偏好沿用当前浏览器的主题设置。</DialogDescription></DialogHeader><DialogPanel><div className="grid grid-cols-3 gap-3" role="group" aria-label="主题">{themeOptions.map(option => <Button key={option.value} variant={mounted && theme === option.value ? 'secondary' : 'outline'} className="h-auto flex-col py-4" aria-pressed={mounted && theme === option.value} onClick={() => setTheme(option.value)}>{option.value === 'dark' ? <Moon /> : <Sun />}{option.label}</Button>)}</div></DialogPanel></DialogPopup></Dialog>
     <Dialog open={panel === 'usage'} onOpenChange={change('usage')}><DialogPopup data-shell-overlay="usage" finalFocus={() => returnTo(accountTrigger.current)} closeProps={{ 'aria-label': '关闭积分与 token' }}><DialogHeader><DialogTitle>积分与 token</DialogTitle><DialogDescription>{usage.sourceLabel}</DialogDescription></DialogHeader><DialogPanel><dl className="space-y-7">{usage.accounts.map(account => <div key={account.kind}><dt className="flex items-center gap-2 text-sm font-medium">{account.kind === 'points' ? <Coins className="size-4" /> : <Cpu className="size-4" />}{account.kind === 'points' ? '积分' : 'Token 额度'}<span className="ml-auto font-normal text-muted-foreground">{account.scope === 'personal' ? '个人' : account.scope === 'organization' ? '组织' : '归属待确认'}</span></dt><dd className="my-2 text-xl font-semibold tabular-nums">{usageText(account)}</dd><dd className="text-sm text-muted-foreground leading-relaxed">{account.detail}</dd></div>)}</dl></DialogPanel></DialogPopup></Dialog>
     <Dialog open={panel === 'context'} onOpenChange={change('context')}><DialogPopup data-shell-overlay="context" finalFocus={() => returnTo(contextTrigger.current)} closeProps={{ 'aria-label': '关闭上下文导航' }}><DialogHeader><DialogTitle>{context?.label}</DialogTitle><DialogDescription>当前页面的内容目录</DialogDescription></DialogHeader><DialogPanel>{typeof context?.content === 'function' ? context.content(() => setPanel(null)) : context?.content}</DialogPanel></DialogPopup></Dialog>
