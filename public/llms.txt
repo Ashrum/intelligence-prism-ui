@@ -1,0 +1,57 @@
+# Intelligent Prism UI Design System
+
+Version: 1.13.1
+Status: Canonical design-system baseline
+Language: zh-CN
+Site: https://intelligence-prism-ui.ashrvm.chatgpt.site/
+Repository: https://github.com/Ashrum/intelligence-prism-ui
+Base: coss UI @ e937becd2d5ffb5c621eed6f8b1f223cbb6051e7
+
+## Purpose
+Intelligent Prism (智能曜彩) is the canonical UI design system for OLE product interfaces. This file is the discovery and authority entry point for web-capable agents. It does not replace the human-facing site.
+
+## Authority
+When sources differ, use this order:
+1. Intelligent Prism component specification and Agent Spec on the relevant component page.
+2. Intelligent Prism Foundations.
+3. Intelligent Prism reusable patterns and application examples.
+4. Pinned coss upstream behavior.
+5. Agent inference.
+
+Application examples demonstrate composition and do not override component specifications. Agent inference must never override an existing specification.
+
+If a required rule is absent:
+1. Reuse the pinned coss behavior when applicable.
+2. If coss does not define it, report the specification gap.
+3. Do not invent visual values, component behavior, or a replacement design system.
+
+## Start here
+- Component catalog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next
+- Foundations: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations
+- Materials reading pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/reading
+- Agent workspace pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
+- Implementation contracts: https://github.com/Ashrum/intelligence-prism-ui/blob/main/docs/component-contracts.md
+
+## Core component specifications
+- Button: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/button
+- Form: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/form
+- Field: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/field
+- Input: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/input
+- Textarea: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/textarea
+- Select: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/select
+- Badge: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/badge
+- Card: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/card
+- Dialog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/dialog
+- Tabs: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/tabs
+
+## Canonical form-label rule
+The canonical base form strategy is a persistent fixed label. Field identity remains visible in default, filled, error, readonly, and disabled states. Floating labels are not a base Input/Field behavior. A product may use a separately specified specialized pattern only when that pattern is explicitly documented; do not infer one.
+
+## Agent reading instructions
+- Read Foundations and only the component specifications relevant to the task.
+- Preserve existing component behavior and semantic roles.
+- Treat the three Prism colors as semantic accents, not decoration.
+- Do not infer pixel values from screenshots when the specification or source is available.
+- When a visual value is not exposed by the page, inspect the linked source or pinned coss implementation before reporting a gap.
+- Keep accessibility semantics, keyboard behavior, theme behavior, and reduced-motion support intact.
+- Do not turn application examples into new generic components.
