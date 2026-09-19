@@ -145,7 +145,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ## 页面骨架：WorkbenchShell v0.2（Candidate）
 
-组合路径：组件库 → 页面骨架 → 标准页面 → Demo / Website。骨架源码是唯一维护源，接入项目沿用按需复制源码与来源清单，不再还原独立设计稿。当前只实现总骨架，第2—7项未启动。
+组合路径：组件库 → 页面骨架 → 标准页面 → Demo / Website。骨架源码是唯一维护源，接入项目沿用按需复制源码与来源清单，不再还原独立设计稿。当前实现总骨架与第2项 Agent 页面骨架候选，第3—7项未启动。
 
 | 输入 | 责任 |
 | --- | --- |
@@ -168,3 +168,22 @@ v0.2 空间规则：辅助区根据扣除上下文与题篮后的实际工作区
 题篮面板使用 `workbench-basket-panel workbench-basket-right` 或 `workbench-basket-bottom`，空态同时加 `workbench-basket-empty`；外壳传入相同的 `basket.empty`。两处由同一CSS变量声明尺寸，避免页面预留与portal尺寸脱节。空态右侧20rem/底部min(36dvh,19rem)，有题右侧clamp(18rem,32vw,26rem)/底部min(46dvh,24rem)。这些尺寸仅供使用该骨架的接入页选择，不自动重写既有业务外壳。
 
 设计验收包含组件、色彩、用户体验、艺术表达、空间利用率。空间子项必须检查主区有效宽高、首屏内容、留白与密度、同时展开的收纳顺序、操作距离及滚动、桌面/中屏/窄屏/低高度视口；“无溢出”不是设计通过的充分条件。
+
+
+## AgentPageSkeleton v0.1（Candidate）
+
+组合：`WorkbenchShell contentLayout="workspace"` → `AgentPageSkeleton` → `AgentComposer` / 消息内容。沿用原工作台 Agent stage 的新对话和连续对话结构；不会创建一套平行导航。`contentLayout` 默认仍为 document，workspace 模式把消息滚动与输入区留给内容骨架管理。
+
+| 输入 | 责任 |
+| --- | --- |
+| title / meta / actions | 当前对话标题、摘要与页面操作；允许长中文自然换行 |
+| empty / welcome / suggestions | 新对话内容与可编辑示例；示例填入不自动发送 |
+| messages / composer / notice | 消息、输入与反馈插槽；应用持有状态、草稿、材料快照、发送和停止回调 |
+
+目录通过总骨架 context 接入。正文最大阅读区 760px；连续对话的消息区独立滚动，输入区在视口内保留，短高度改为整体可滚动以免裁切。页级样式只控制布局。消息不等于后台任务，回复结束不修改全局任务监视器状态。
+
+`AgentComposer` 收回既有工作台的 default / compact / conversation 变体、tools / attachments / context / suggestions / footerNote 插槽及工具栏布局；使用现有 InputGroup 与 Textarea，不定义另一套输入皮肤。空白禁发、组合输入保护、Ctrl/⌘+Enter、运行时停止继续由组件提供，主动停止后焦点回到输入。
+
+`examples/skeletons/agent-review` 为两仓同源评审 fixture；固定回复、材料与历史仅保留本页会话，刷新恢复初始示例。真实会话存储、模型接入、任务调度及业务成果由后续应用适配，不能把此 fixture 用作生产实现。`review-basket` 只共享演示题篮；工作台传入已有题篮适配。
+
+AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺寸保持；最大输入高度仍由组件限定。workspace 模式的底部题篮为 min(36dvh,19rem)，与总骨架 document 模式分别保留空间。低高度时题篮入口有独立底部预留，避免覆盖发送按钮。

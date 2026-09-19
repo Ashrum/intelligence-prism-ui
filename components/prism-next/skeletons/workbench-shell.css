@@ -50,3 +50,11 @@
  .workbench-region-tools { padding:4px 16px; }
  .workbench-content { padding:20px 20px 80px; }
 }
+
+/* Workspace pages own their reading scroll and composer; document pages retain the default. */
+.workbench-shell[data-content-layout="workspace"] .workbench-scroll { display:flex; overflow:hidden; }
+.workbench-shell[data-content-layout="workspace"] .workbench-content { flex:1; min-height:0; min-width:0; max-width:none; width:100%; padding:0; display:flex; }
+.workbench-shell[data-content-layout="workspace"] .workbench-main { flex:1; min-height:0; min-width:0; display:flex; }
+/* Conversation workspaces reserve room for both reading and the composer. */
+.workbench-shell[data-content-layout="workspace"],
+body:has(.workbench-shell[data-content-layout="workspace"]) .workbench-basket-panel { --workbench-basket-block:min(36dvh,19rem); }

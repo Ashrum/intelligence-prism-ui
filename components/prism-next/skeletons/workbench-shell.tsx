@@ -33,6 +33,7 @@ export type WorkbenchShellProps = {
   usage: { accounts: readonly UsageAccount[]; sourceLabel: string }
   context?: { label: string; content: ReactNode | ((close: () => void) => ReactNode) }
   auxiliary?: ReactNode
+  contentLayout?: 'document' | 'workspace'
   auxiliaryLabel?: string
   children: ReactNode
   basket?: { open: boolean; position: 'right' | 'bottom'; empty?: boolean }
@@ -105,7 +106,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const returnTo = (element: HTMLButtonElement | null) => activePanel.current ? false : element ?? false
   function navigate(id: string) { setPanel(null); onNavigate(id); requestAnimationFrame(() => main.current?.focus({ preventScroll: true })) }
   const navItems = navigation.map(item => <MenuItem key={item.id} onClick={() => navigate(item.id)} aria-current={activeId === item.id ? 'page' : undefined}>{item.icon}<span className="flex-1">{item.label}</span>{activeId === item.id && <Check />}</MenuItem>)
-  return <div className={`workbench-shell bg-background text-foreground${basket?.empty ? ' workbench-basket-empty' : ''}`} data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
+  return <div className={`workbench-shell bg-background text-foreground${basket?.empty ? ' workbench-basket-empty' : ''}`} data-content-layout={props.contentLayout ?? 'document'} data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
     <a className="prism-skip" href={`#${mainId}`} onClick={event => { event.preventDefault(); main.current?.focus({ preventScroll: true }) }}>跳到主要内容</a>
     <header className="workbench-topbar border-b bg-background">
       <div className="workbench-organization" title={`${organization.name} · ${organization.description}`}>

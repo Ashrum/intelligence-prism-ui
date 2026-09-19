@@ -6,3 +6,6 @@
 body:has([data-shell-overlay][aria-modal="true"][data-open]) .review-basket-launcher,
 body:has([data-shell-overlay][aria-modal="true"][data-open]) .review-basket-panel { visibility:hidden; }
 @media(max-width:599px) { .review-basket-launcher { right:16px; bottom:max(16px,env(safe-area-inset-bottom)); } }
+
+body:has([data-agent-overlay][aria-modal="true"][data-open]) .review-basket-launcher,
+body:has([data-agent-overlay][aria-modal="true"][data-open]) .review-basket-panel { visibility:hidden; }
