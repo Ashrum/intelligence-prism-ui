@@ -55,3 +55,10 @@ The canonical base form strategy is a persistent fixed label. Field identity rem
 - When a visual value is not exposed by the page, inspect the linked source or pinned coss implementation before reporting a gap.
 - Keep accessibility semantics, keyboard behavior, theme behavior, and reduced-motion support intact.
 - Do not turn application examples into new generic components.
+
+
+## Page composition layers (candidate branch)
+- Page skeleton catalog: /next/skeletons
+- Teacher workbench shell review: /next/skeletons/workbench (v0.1 Candidate; fixtures only)
+- Standard pages: /next/pages (not started)
+Skeletons and standard pages are separate categories and do not change the 80-component count. Compose the same WorkbenchShell source in applications. Only stage 1 is implemented; stages 2–7 remain unstarted. Candidate branch routes do not imply a production publication.

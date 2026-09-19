@@ -71,6 +71,8 @@ import { Badge } from "@/components/prism-next/badge"
 | 基础组件 | `components/coss` | 54 个固定来源的 coss 原始组件 |
 | 可复用组件 | `components/prism-next`、`charts` | 数据、可选插槽、受控状态与事件接口 |
 | 组件示例 | `demos`、`/next/components/[slug]` | 单个组件的最小使用与不同输入对照 |
+| 页面骨架 | `components/prism-next/skeletons`、`/next/skeletons` | 可复用公共外壳与布局，不计入组件数量 |
+| 标准页面 | `/next/pages` | 独立分类；当前未启动，不预建业务页面 |
 | 应用示例 | `examples`、`/next/examples/[slug]` | 题库与打印组合、统一学习支持流程，不计入组件数量 |
 | 示例数据 | `fixtures` | 人工题目、作答、评分和关联资料 |
 
@@ -139,3 +141,23 @@ import { Badge } from "@/components/prism-next/badge"
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。不连接模型或模拟执行器。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
+
+
+## 页面骨架：WorkbenchShell v0.1（Candidate）
+
+组合路径：组件库 → 页面骨架 → 标准页面 → Demo / Website。骨架源码是唯一维护源，接入项目沿用按需复制源码与来源清单，不再还原独立设计稿。当前只实现总骨架，第2—7项未启动。
+
+| 输入 | 责任 |
+| --- | --- |
+| organization / user | 当前组织标识、名称、摘要与当前身份；无跨组织切换 |
+| navigation / activeId / onNavigate / onPersonal | 导航数据、当前位置和路由回调；骨架不生成业务页面 |
+| search | 外部查询、结果、加载/错误状态、来源与范围说明、选择回调；本轮夹具仅含五入口与一材料 |
+| notifications | 记录、未读、逐条与全部已读回调；不改任务或业务成果状态 |
+| monitor | 显式后台任务状态和独立连接状态；不会从对话结束推断完成 |
+| usage | 积分与 token 分别提供个人/组织/待确认归属，以及启用/未启用/不可用；未知数据不能显示 0 |
+| context / auxiliary / children | 可选上下文侧栏、辅助区、主内容。context.content 可用 render function 接收移动目录的关闭回调 |
+| basket | 仅接收已有题篮的展开与方向，以预留布局空间。题篮状态、业务和浮层由应用拥有 |
+
+骨架只使用现有组件 variant/size、主题令牌与字体，CSS 限于布局、区域尺寸及响应式。ThemeProvider 继续使用 `prism-v1-theme`；浅色、暖纸、深色应用到正文和 portal。搜索为模态 Dialog，通知/状态为 Popover，个人菜单为 Menu；同一时间只展开一个公共面板，关闭返回相应触发器，搜索选中结果后进入主内容。跳过链接不改写 HashRouter。顶部固定，主内容及桌面上下文分别滚动；中小屏收纳一级导航和上下文目录；题篮右侧/底部预留空间。
+
+接入时同步整个 `components/prism-next/skeletons` 目录及其直接 coss/prism/lib 依赖。演示页 `examples/skeletons/workbench-review` 只用于评审，不作为生产数据源。工作台通过同源副本与薄适配器接入原 `TeacherQuestionBasketProvider`，保留原业务路由和持久化语义。
