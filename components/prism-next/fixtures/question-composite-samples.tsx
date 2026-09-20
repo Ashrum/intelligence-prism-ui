@@ -16,7 +16,7 @@ export const compositeQuestion: QuestionRecord & { initialLinks?: DirectorySelec
   id:"Q-M-006",title:"注水过程中的水量变化",kind:"复合题",points:16,
   stem:<p>某水箱开始时存有 20 L 水。随后 6 min 内，水量 V(t) 按二次函数模型描述；t 的单位为 min，V 的单位为 L，且 0 ≤ t ≤ 6。本题按此模型计算。</p>,
   blocks:[
-    {id:"data",content:<div className="overflow-x-auto"><table className="w-full max-w-lg border-collapse text-left tabular-nums"><caption className="mb-2 text-left text-sm text-muted-foreground">本题设定的示例数据，用于数学建模与界面演示。</caption><tbody><tr className="border-y"><th className="p-3 font-medium" scope="row">时间 t / min</th><td className="p-3">0</td><td className="p-3">2</td><td className="p-3">4</td></tr><tr className="border-b"><th className="p-3 font-medium" scope="row">水量 V / L</th><td className="p-3">20</td><td className="p-3">40</td><td className="p-3">52</td></tr></tbody></table></div>},
+    {id:"data",content:<div className="overflow-x-auto"><table className="w-full max-w-lg border-collapse text-left tabular-nums"><caption className="mb-2 text-left text-ui-hint text-muted-foreground">本题设定的示例数据，用于数学建模与界面演示。</caption><tbody><tr className="border-y"><th className="p-3 font-medium" scope="row">时间 t / min</th><td className="p-3">0</td><td className="p-3">2</td><td className="p-3">4</td></tr><tr className="border-b"><th className="p-3 font-medium" scope="row">水量 V / L</th><td className="p-3">20</td><td className="p-3">40</td><td className="p-3">52</td></tr></tbody></table></div>},
     {id:"instruction",content:<p>请根据同一组材料完成以下三个小问。注意区分水箱中的总水量与新增水量。</p>},
   ],
   parts:[

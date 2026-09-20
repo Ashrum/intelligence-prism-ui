@@ -14,7 +14,7 @@ export function directoryLabels(textbooks:TextbookDefinition[],links:DirectorySe
     return {id,kind:type,label:[book.title,...path.map(key=>data.nodes[key]?.title).filter(Boolean)].join(" → ")}
   })))
 }
-function DataRow({label,children}:{label:string;children:React.ReactNode}) {return <div><dt className="mb-1 text-sm text-muted-foreground">{label}</dt><dd className="text-sm leading-7 text-foreground">{children}</dd></div>}
+function DataRow({label,children}:{label:string;children:React.ReactNode}) {return <div><dt className="mb-1 text-ui-hint text-muted-foreground">{label}</dt><dd className="text-ui-hint text-foreground">{children}</dd></div>}
 export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinksChange,status="可用",canEdit=false,textbooks=[],tabs=["answer","teaching","archive"],archive}:{question:QuestionRecord;metadata:QuestionMetadata;links:DirectorySelections;tab:QuestionDetailTab;onTabChange:(value:QuestionDetailTab)=>void;onLinksChange:Dispatch<SetStateAction<DirectorySelections>>;status?:string;canEdit?:boolean;textbooks?:TextbookDefinition[];tabs?:QuestionDetailTab[];archive?:{label:string;value:React.ReactNode}[]}) {
   const courses=directoryLabels(textbooks,links,"course"),knowledge=directoryLabels(textbooks,links,"knowledge")
   if(!tabs.length)return null

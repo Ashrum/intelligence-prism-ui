@@ -7,7 +7,7 @@ const fraction = (a: string, b: string) => <mfrac><mn>{a}</mn><mn>{b}</mn></mfra
 const fx = <mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow>
 const square = <msup><mi>x</mi><mn>2</mn></msup>
 const fExpression = <mrow>{square}<mo>−</mo><mn>2</mn><mi>x</mi><mo>−</mo><mn>3</mn></mrow>
-const blank = (number: string) => <span role="img" aria-label={`第${number}空，待填写`} className="mx-2 inline-flex min-w-24 items-end justify-center border-b border-foreground/65 px-4 align-baseline text-sm text-muted-foreground">（{number}）</span>
+const blank = (number: string) => <span role="img" aria-label={`第${number}空，待填写`} className="mx-2 inline-flex min-w-24 items-end justify-center border-b border-foreground/65 px-4 align-baseline text-ui-hint text-muted-foreground">（{number}）</span>
 
 export const questionSamples: (QuestionRecord & { initialLinks?: DirectorySelections })[] = [
   {
@@ -39,7 +39,7 @@ export const questionSamples: (QuestionRecord & { initialLinks?: DirectorySelect
   },
   {
     id: "Q-M-003", title: "扇形的弧长与面积", kind: "填空题", response: "fill", points: 6, answerFieldCount: 2,
-    stem: <><p>已知扇形的半径为 4 cm，圆心角为 <M label="三分之π弧度"><mfrac><mi>π</mi><mn>3</mn></mfrac></M>（弧度）。</p><p className="leading-[2.7]">该扇形的弧长为{blank("1")}cm，面积为{blank("2")}<M label="平方厘米"><msup><mtext>cm</mtext><mn>2</mn></msup></M>。</p></>,
+    stem: <><p>已知扇形的半径为 4 cm，圆心角为 <M label="三分之π弧度"><mfrac><mi>π</mi><mn>3</mn></mfrac></M>（弧度）。</p><p className="py-2">该扇形的弧长为{blank("1")}cm，面积为{blank("2")}<M label="平方厘米"><msup><mtext>cm</mtext><mn>2</mn></msup></M>。</p></>,
     answer: <p>第（1）空：<M label="三分之四π"><mfrac><mrow><mn>4</mn><mi>π</mi></mrow><mn>3</mn></mfrac></M>；第（2）空：<M label="三分之八π"><mfrac><mrow><mn>8</mn><mi>π</mi></mrow><mn>3</mn></mfrac></M>。</p>,
     explanation: <><p>弧度制下，弧长等于半径乘圆心角，扇形面积等于半径平方与圆心角乘积的一半。</p><M block label="弧长等于四乘以三分之π，等于三分之四π厘米"><mi>l</mi><mo>=</mo><mi>r</mi><mi>θ</mi><mo>=</mo><mn>4</mn><mo>×</mo><mfrac><mi>π</mi><mn>3</mn></mfrac><mo>=</mo><mfrac><mrow><mn>4</mn><mi>π</mi></mrow><mn>3</mn></mfrac><mtext> </mtext><mtext>cm</mtext></M><M block label="面积等于二分之一乘十六乘三分之π，等于三分之八π平方厘米"><mi>S</mi><mo>=</mo>{fraction("1","2")}<msup><mi>r</mi><mn>2</mn></msup><mi>θ</mi><mo>=</mo><mfrac><mrow><mn>8</mn><mi>π</mi></mrow><mn>3</mn></mfrac><mtext> </mtext><msup><mtext>cm</mtext><mn>2</mn></msup></M></>,
   },

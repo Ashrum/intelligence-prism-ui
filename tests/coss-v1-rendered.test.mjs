@@ -32,10 +32,10 @@ test('question review renders six readable types without answer-input controls',
   assert.doesNotMatch(html,/<textarea/);
   assert.doesNotMatch(html,/收起关联/);
   const tree=await(await fetchPage('/next/components/tree')).text();
-  assert.match(tree,/已通过/);
+  assert.match(tree,/字体实施候选/);
 });
 test('new application and foundation routes use the isolated root',async()=>{
-  for(const path of ['/next','/next/foundations','/next/reading','/next/agent']){const res=await fetchPage(path);assert.equal(res.status,200,path);const html=await res.text();assert.match(html,/data-ui-version="coss-v1"/);assert.doesNotMatch(html,/legacy-version-notice/)}
+  for(const path of ['/next','/next/foundations','/next/foundations/typography','/next/reading','/next/agent']){const res=await fetchPage(path);assert.equal(res.status,200,path);const html=await res.text();assert.match(html,/data-ui-version="coss-v1"/);assert.doesNotMatch(html,/legacy-version-notice/)}
   const reading=await(await fetchPage('/next/reading')).text();assert.match(reading,/<math/);assert.match(reading,/<mfrac>/);assert.match(reading,/reading-material-kind/);
   const missing=await fetchPage('/next/components/does-not-exist');assert.equal(missing.status,404);
 });

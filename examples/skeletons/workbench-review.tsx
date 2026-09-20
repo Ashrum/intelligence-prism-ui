@@ -34,7 +34,7 @@ export function WorkbenchReview({ returnHref='/next/skeletons', returnLabel='页
   if (id === 'material') { setAnnouncement('已定位本页演示材料。'); sample.current?.scrollIntoView({block:'nearest'}); return }
   setActive(id); setAnnouncement(`当前入口：${navigation.find(item=>item.id===id)?.label}。本轮仅验证导航状态，业务页保持未启动。`)
  }
- const sideContent = (close: () => void) => <nav aria-label="内容样例目录" className="flex flex-col gap-2"><p className="mb-3 px-3 text-xs text-muted-foreground">当前页面</p>{['阅读样例','中文与公式','密集内容'].map((label,index)=><Button key={label} variant="ghost" className="justify-start" onClick={()=>{sample.current?.scrollIntoView({block:'start'});setDense(index===2);setAnnouncement(`已选择${label}。`);close()}}>{label}</Button>)}</nav>
+ const sideContent = (close: () => void) => <nav aria-label="内容样例目录" className="flex flex-col gap-2"><p className="mb-3 px-3 text-ui-hint text-muted-foreground">当前页面</p>{['阅读样例','中文与公式','密集内容'].map((label,index)=><Button key={label} variant="ghost" className="justify-start" onClick={()=>{sample.current?.scrollIntoView({block:'start'});setDense(index===2);setAnnouncement(`已选择${label}。`);close()}}>{label}</Button>)}</nav>
  return <>
  <WorkbenchShell organization={{ name:longName?'启明实验学校教育集团高中部数学教研中心（东湖校区）':'启明实验学校', description:'教师工作台 · 组织示例', mark:<School className="size-6" /> }} user={{name:'王建国',role:'数学教师',initials:'王'}} navigation={navigation} activeId={active} onNavigate={choose} onPersonal={()=>setAnnouncement('个人页面入口已触发。第7项尚未启动，本轮不提供个人页面正文。')}
   search={{query,onQueryChange:setQuery,results:reviewSearch,status:'ready',sourceLabel:'演示数据',scopeLabel:'5 个业务入口与 1 份本页材料',onSelect:choose}}
@@ -43,22 +43,22 @@ export function WorkbenchReview({ returnHref='/next/skeletons', returnLabel='页
   auxiliaryLabel="评审条件" auxiliary={<div className="space-y-5">
     <div className="space-y-4"><div className="flex items-center justify-between gap-3"><Label htmlFor="review-long-organization">长组织名称</Label><Switch id="review-long-organization" aria-label="长组织名称" checked={longName} onCheckedChange={setLongName} /></div><div className="flex items-center justify-between gap-3"><Label htmlFor="review-context">上下文侧栏</Label><Switch id="review-context" aria-label="上下文侧栏" checked={context} onCheckedChange={setContext} /></div><div className="flex items-center justify-between gap-3"><Label htmlFor="review-density">密集内容</Label><Switch id="review-density" aria-label="密集内容" checked={dense} onCheckedChange={setDense} /></div></div>
     <ReviewSelect label="积分与 token 示例" value={usageState} options={[{value:'disabled',label:'未启用'},{value:'enabled',label:'开启示例数据'},{value:'unavailable',label:'暂不可用'}]} onChange={v=>setUsageState(v as typeof usageState)} />
-    <div className="space-y-2"><p className="text-sm font-medium">通知样例</p><div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={()=>setNotices([])}>空通知</Button><Button variant="ghost" size="sm" onClick={()=>setNotices(reviewNotifications)}>恢复示例</Button></div></div>
-    <p className="text-xs text-muted-foreground leading-relaxed">第1项 · 总骨架 v0.3 候选<br />第2项已获准启动 · 第3—7项未启动</p>
+    <div className="space-y-2"><p className="text-ui-action">通知样例</p><div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={()=>setNotices([])}>空通知</Button><Button variant="ghost" size="sm" onClick={()=>setNotices(reviewNotifications)}>恢复示例</Button></div></div>
+    <p className="text-ui-hint text-muted-foreground">第1项 · 总骨架 v0.3 候选<br />第2项已获准启动 · 第3—7项未启动</p>
   </div>}>
    <header className="mb-6">
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Button variant="ghost" size="sm" render={<a href={returnHref} />}><ArrowLeft />{returnLabel}</Button><Badge variant="outline">演示数据</Badge></div>
-    <h1 className="text-2xl font-semibold tracking-tight">教师工作台总骨架</h1>
-    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">公共功能使用演示数据，主题设置真实生效。</p>
+    <h1 className="text-page-title">教师工作台总骨架</h1>
+    <p className="mt-2 text-ui-hint text-muted-foreground">公共功能使用演示数据，主题设置真实生效。</p>
    </header>
-   <p role="status" className={announcement?'mb-5 text-sm text-info-foreground leading-relaxed':'sr-only'}>{announcement}</p>
+   <p role="status" className={announcement?'mb-5 text-ui-hint text-info-foreground':'sr-only'}>{announcement}</p>
    <section ref={sample} aria-labelledby="review-sample-title" className="review-material space-y-4">
-    <div><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-muted-foreground">阅读样例 · 高中数学</p>{sampleAction}</div><h2 id="review-sample-title" className="text-xl font-semibold leading-relaxed">函数与不等式：从条件整理到结论核对的课堂材料</h2><p className="mt-2 text-xs text-muted-foreground">示例材料 · 2026.09.19</p></div>
-    <p className="text-base leading-8">在整理课堂材料时，先明确变量的取值范围，再检查每一次变形是否满足条件。较长的中文说明应该自然换行；公式需要与上下文保持清楚的阅读关系。</p>
+    <div><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><p className="text-ui-hint text-muted-foreground">阅读样例 · 高中数学</p>{sampleAction}</div><h2 id="review-sample-title" className="text-section-title">函数与不等式：从条件整理到结论核对的课堂材料</h2><p className="mt-2 text-ui-hint text-muted-foreground">示例材料 · 2026.09.19</p></div>
+    <p className="text-read-body">在整理课堂材料时，先明确变量的取值范围，再检查每一次变形是否满足条件。较长的中文说明应该自然换行；公式需要与上下文保持清楚的阅读关系。</p>
     <div className="review-equation py-3" aria-label="已知函数 f(x) 等于 x 的平方减 2x 加 1，且 x 为实数，则 f(x) 大于等于 0。"><math display="block"><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><msup><mrow><mo>(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mn>2</mn></msup><mo>≥</mo><mn>0</mn></mrow></math></div>
-    <div><h3 className="text-sm font-semibold">核对时关注</h3><ol className="mt-3 list-decimal space-y-2 pl-5 text-base leading-7"><li>定义域是否在文字与公式中保持一致。</li><li>取等号的条件是否完整，例如本题中 <math><mi>x</mi><mo>=</mo><mn>1</mn></math>。</li><li>结论是否有明确依据，而不是仅依据表面相似的形式。</li></ol></div>
+    <div><h3 className="text-item-title">核对时关注</h3><ol className="mt-3 list-decimal space-y-2 pl-5 text-read-body"><li>定义域是否在文字与公式中保持一致。</li><li>取等号的条件是否完整，例如本题中 <math><mi>x</mi><mo>=</mo><mn>1</mn></math>。</li><li>结论是否有明确依据，而不是仅依据表面相似的形式。</li></ol></div>
    </section>
-   {dense && <section className="review-material mt-6 border-t pt-6"><h2 className="text-sm font-semibold">密集阅读样例</h2><ol className="mt-4 space-y-5">{Array.from({length:8},(_,i)=><li key={i} className="flex gap-4 text-sm leading-7"><span className="shrink-0 min-w-[2ch] text-muted-foreground tabular-nums">{String(i+1).padStart(2,'0')}</span><p><strong className="font-medium">条件、过程与结论的核对。</strong> 这是一段较长的中文说明，用于检验内容区独立滚动、连续阅读和窄屏自然换行。页面不要求所有内容都装入卡片，保持文字与数学表达的清晰关系。</p></li>)}</ol></section>}
+   {dense && <section className="review-material mt-6 border-t pt-6"><h2 className="text-section-title">密集阅读样例</h2><ol className="mt-4 space-y-5">{Array.from({length:8},(_,i)=><li key={i} className="flex gap-4 text-ui-hint"><span className="shrink-0 min-w-[2ch] text-muted-foreground tabular-nums">{String(i+1).padStart(2,'0')}</span><p><strong className="font-medium">条件、过程与结论的核对。</strong> 这是一段较长的中文说明，用于检验内容区独立滚动、连续阅读和窄屏自然换行。页面不要求所有内容都装入卡片，保持文字与数学表达的清晰关系。</p></li>)}</ol></section>}
  </WorkbenchShell>
  {basketPanel}
  </>

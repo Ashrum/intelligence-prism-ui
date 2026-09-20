@@ -2,7 +2,7 @@
 import { useId,useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/coss/button"
-import { Badge } from "@/components/coss/badge"
+import { Badge } from "@/components/prism-next/badge"
 import { DemoSection } from "../demo-parts"
 import { QuestionSelect } from "../question-controls"
 import { QuestionWorkPanel } from "../question-work-panel"
@@ -24,4 +24,4 @@ return <DemoSection title="可独立使用的业务组件" description="展示�
 {kind==="workload-calendar"&&<div className="max-w-xl"><WorkloadCalendar days={{"2026-09-16":{value:second?35:55,hasItems:true},"2026-09-18":{value:second?60:20,hasItems:true}}} capacity={45} selected={date} onSelect={value=>{setDate(value);setNotice(`已选择 ${value.toLocaleDateString("zh-CN")}`)}} month={month} onMonthChange={setMonth}/></div>}
 {kind==="answer-review-map"&&<div className="max-w-2xl"><DocumentRegionViewer label="文档区域组件示例" selectedId={selected} onSelect={setSelected} header={<><p>{second?"阅读记录":"数学答卷"}</p><span>两个独立区域</span></>} regions={[{id:"region-1",label:"区域一",rect:[8,20,84,20],content:<p>{second?"第一段材料内容":"第一题作答内容"}</p>},{id:"region-2",label:"区域二",rect:[8,48,84,25],content:<p>{second?"第二段材料内容":"第二题作答内容"}</p>}]}/></div>}
 {kind==="agent-components"&&<div className="max-w-2xl space-y-5"><AgentTaskProgress steps={[{id:"read",label:second?"读取记录":"检查材料",state:"done"},{id:"process",label:second?"整理事实":"核对公式",state:running?"running":"pending"}]}/><AgentComposer value={prompt} onChange={setPrompt} running={running} onSubmit={()=>{setRunning(true);setNotice("已收到任务请求；由外部执行器处理。")}} onStop={()=>{setRunning(false);setNotice("已收到停止请求。")}}/></div>}
-<p role="status" className="mt-5 min-h-5 text-sm text-muted-foreground">{notice||selected&&`选中：${selected}`}</p>{kind!=="answer-review-map"&&<QuestionWorkPanel id={panelId} open={!!selected} onClose={()=>setSelected(undefined)} title="来源依据" description={title}><p className="text-sm leading-7">这是调用方提供的内容。组件只返回所选记录 ID，展示位置与后续处理由外部决定。</p></QuestionWorkPanel>}</DemoSection>}
+<p role="status" className="mt-5 min-h-5 text-ui-hint text-muted-foreground">{notice||selected&&`选中：${selected}`}</p>{kind!=="answer-review-map"&&<QuestionWorkPanel id={panelId} open={!!selected} onClose={()=>setSelected(undefined)} title="来源依据" description={title}><p className="text-ui-hint">这是调用方提供的内容。组件只返回所选记录 ID，展示位置与后续处理由外部决定。</p></QuestionWorkPanel>}</DemoSection>}

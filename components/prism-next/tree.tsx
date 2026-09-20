@@ -14,5 +14,5 @@ export function TreeItem<T>({ item, current = false, className, children, style,
 }
 
 export function TreeItemLabel({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div {...props} data-slot="tree-item-label" className={cn("flex min-h-9 min-w-0 items-start gap-2 rounded-lg px-2 py-1.5 text-sm text-foreground transition-colors hover:bg-accent group-data-[current=true]/tree-item:bg-accent group-data-[current=true]/tree-item:font-medium sm:min-h-8", className)} />
+  return <div {...props} data-slot="tree-item-label" className={cn("flex min-h-9 min-w-0 items-start gap-2 rounded-lg px-2 py-1.5 text-ui-action text-foreground transition-colors hover:bg-accent group-data-[current=true]/tree-item:bg-accent group-data-[current=true]/tree-item:font-medium sm:min-h-8", className)} />
 }

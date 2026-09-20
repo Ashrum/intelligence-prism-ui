@@ -1,0 +1,5740 @@
+{
+  "date": "2026-09-20",
+  "standard": "0.2.1",
+  "environment": "Cloud Chromium / Linux",
+  "pageCount": 93,
+  "themeVisits": 279,
+  "scope": "Current rendered DOM states; font sizes, explicit role metrics, text contrast and page overflow. MathML, SVG/Canvas, print sheets, disabled controls and hidden states are separate boundaries.",
+  "unresolved": 0,
+  "routes": [
+    {
+      "path": "/next",
+      "title": "组件总览",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/foundations",
+      "title": "基础规范",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        }
+      ]
+    },
+    {
+      "path": "/next/foundations/typography",
+      "title": "字体与字号",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 16
+        }
+      ]
+    },
+    {
+      "path": "/next/reading",
+      "title": "材料研读与编辑",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 60
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 60
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 60
+        }
+      ]
+    },
+    {
+      "path": "/next/agent",
+      "title": "Agent 工作区",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/use-cases",
+      "title": "教师用例与流程验证",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/button",
+      "title": "Button 按钮",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/group",
+      "title": "Group 控件组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/toggle",
+      "title": "Toggle 切换按钮",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/toggle-group",
+      "title": "Toggle Group 切换组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/toolbar",
+      "title": "Toolbar 工具栏",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/command",
+      "title": "Command 命令面板",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/input",
+      "title": "Input 输入框",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/input-group",
+      "title": "Input Group 输入组合",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/textarea",
+      "title": "Textarea 多行输入",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/field",
+      "title": "Field 字段",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/fieldset",
+      "title": "Fieldset 字段组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/form",
+      "title": "Form 表单",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/label",
+      "title": "Label 标签",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/select",
+      "title": "Select 选择框",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/combobox",
+      "title": "Combobox 可搜索选择",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/autocomplete",
+      "title": "Autocomplete 自动补全",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/number-field",
+      "title": "Number Field 数字输入",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/checkbox",
+      "title": "Checkbox 复选框",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/checkbox-group",
+      "title": "Checkbox Group 复选组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/radio-group",
+      "title": "Radio Group 单选组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/switch",
+      "title": "Switch 开关",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/slider",
+      "title": "Slider 滑杆",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/otp-field",
+      "title": "OTP Field 验证码",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/calendar",
+      "title": "Calendar 日历",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/date-picker",
+      "title": "Date Picker 日期选择",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 2
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 2
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 2
+        }
+      ]
+    },
+    {
+      "path": "/next/components/breadcrumb",
+      "title": "Breadcrumb 面包屑",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/tabs",
+      "title": "Tabs 标签页",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/pagination",
+      "title": "Pagination 分页",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/sidebar",
+      "title": "Sidebar 侧栏",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/tree",
+      "title": "Tree 教材目录",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/icons",
+      "title": "Icons 图标",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/question",
+      "title": "Question 题目",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 32
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 32
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 32
+        }
+      ]
+    },
+    {
+      "path": "/next/components/answer-review-map",
+      "title": "Document Region 文档区域",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 4
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 4
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 4
+        }
+      ]
+    },
+    {
+      "path": "/next/components/avatar",
+      "title": "Avatar 头像",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/badge",
+      "title": "Badge 标签",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/card",
+      "title": "Card 卡片",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/frame",
+      "title": "Frame 内容框架",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/table",
+      "title": "Table 表格",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 3
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 3
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 3
+        }
+      ]
+    },
+    {
+      "path": "/next/components/accordion",
+      "title": "Accordion 折叠组",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/collapsible",
+      "title": "Collapsible 展开区",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/kbd",
+      "title": "Kbd 快捷键",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/agent-components",
+      "title": "Agent 任务组件",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/goal-milestones",
+      "title": "Milestones 里程碑",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/workload-calendar",
+      "title": "Workload 负荷日历",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/evaluation",
+      "title": "Evaluation 评价",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 1
+        }
+      ]
+    },
+    {
+      "path": "/next/components/diagnosis",
+      "title": "Diagnosis 诊断",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/goals",
+      "title": "Goals 目标规划",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/learning-plan",
+      "title": "Learning Plan 学习计划",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/paired-dot-chart",
+      "title": "Paired Dots 成对指标",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/quadrant-chart",
+      "title": "Quadrant 四象限",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/combo-chart",
+      "title": "Combo 柱线组合",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/evidence-matrix",
+      "title": "Heatmap 热力矩阵",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/scatter-chart",
+      "title": "Scatter 散点图",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/box-plot",
+      "title": "Box Plot 箱线图",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/metric-summary",
+      "title": "Metric 指标摘要",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            24,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/trend-chart",
+      "title": "Trend 趋势",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/comparison-chart",
+      "title": "Comparison 比较",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/distribution-chart",
+      "title": "Distribution 分布",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/goal-comparison",
+      "title": "Goal Comparison 目标对照",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/status-composition",
+      "title": "Composition 状态组成",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/analysis-filter",
+      "title": "Analysis Filter 分析筛选",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/evidence-table",
+      "title": "Evidence 分析证据",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/alert",
+      "title": "Alert 提示",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/empty",
+      "title": "Empty 空状态",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/progress",
+      "title": "Progress 进度",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/meter",
+      "title": "Meter 度量",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/skeleton",
+      "title": "Skeleton 骨架",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/spinner",
+      "title": "Spinner 加载指示",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/toast",
+      "title": "Toast 短时通知",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/menu",
+      "title": "Menu 菜单",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/context-menu",
+      "title": "Context Menu 上下文菜单",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/dialog",
+      "title": "Dialog 对话框",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/alert-dialog",
+      "title": "Alert Dialog 确认对话框",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/drawer",
+      "title": "Drawer 抽屉",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/sheet",
+      "title": "Sheet 侧面板",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/popover",
+      "title": "Popover 弹出面板",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/preview-card",
+      "title": "Preview Card 预览",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/tooltip",
+      "title": "Tooltip 工具提示",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/scroll-area",
+      "title": "Scroll Area 滚动区域",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/components/separator",
+      "title": "Separator 分隔线",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/skeletons",
+      "title": "页面骨架",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/pages",
+      "title": "标准页面",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/examples/questions",
+      "title": "题库与打印组合",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 106
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 106
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    },
+    {
+      "path": "/next/examples/evaluation",
+      "title": "学习支持流程",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 2
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 2
+        }
+      ]
+    },
+    {
+      "path": "/next/use-cases/parsing",
+      "title": "/next/use-cases/parsing",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            14
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 17
+        }
+      ]
+    },
+    {
+      "path": "/next/skeletons/workbench",
+      "title": "教师工作台总骨架",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 24
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 24
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            20,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 24
+        }
+      ]
+    },
+    {
+      "path": "/next/skeletons/agent",
+      "title": "新对话",
+      "checks": [
+        {
+          "theme": "light",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "paper",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        },
+        {
+          "theme": "dark",
+          "lang": "zh-CN",
+          "width": 1363,
+          "fontSizes": [
+            12,
+            14,
+            16,
+            26
+          ],
+          "roleMismatches": 0,
+          "unexpectedTypography": 0,
+          "lowContrast": 0,
+          "unparsedColors": 0,
+          "pageOverflow": false,
+          "separateScopeCount": 0
+        }
+      ]
+    }
+  ],
+  "interactions": {
+    "read": [
+      "16px",
+      "28px",
+      "400"
+    ],
+    "edit": [
+      "16px",
+      "28px",
+      "400"
+    ],
+    "states": [
+      [
+        "题目与公式识别中",
+        "14px",
+        "20px",
+        "500"
+      ],
+      [
+        "部分完成",
+        "14px",
+        "20px",
+        "500"
+      ],
+      [
+        "等待核对",
+        "14px",
+        "20px",
+        "500"
+      ]
+    ],
+    "textareaResponsive": [
+      {
+        "width": 390,
+        "size": 16,
+        "line": 28
+      },
+      {
+        "width": 1024,
+        "size": 16,
+        "line": 28
+      }
+    ],
+    "inputResponsive": [
+      {
+        "fields": [
+          [
+            "input-sm",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-default",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-lg",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-readonly",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-disabled",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-invalid",
+            "14px",
+            "20px"
+          ],
+          [
+            "input-filled",
+            "14px",
+            "20px"
+          ]
+        ],
+        "path": "/next/components/input",
+        "width": 1024
+      },
+      {
+        "fields": [
+          [
+            "input-sm",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-default",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-lg",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-readonly",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-disabled",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-invalid",
+            "16px",
+            "24px"
+          ],
+          [
+            "input-filled",
+            "16px",
+            "24px"
+          ]
+        ],
+        "path": "/next/components/input",
+        "width": 390
+      }
+    ],
+    "dialog": [
+      {
+        "color": "rgb(225, 229, 234)",
+        "line": "30px",
+        "size": "20px",
+        "slot": "dialog-title",
+        "text": "编辑材料",
+        "weight": "600"
+      },
+      {
+        "color": "rgb(182, 190, 201)",
+        "line": "22px",
+        "size": "14px",
+        "slot": "dialog-description",
+        "text": "修改标题与材料类型。",
+        "weight": "400"
+      },
+      {
+        "color": "rgb(225, 229, 234)",
+        "line": "20px",
+        "size": "14px",
+        "slot": "input",
+        "text": "dialog-title-input",
+        "weight": "400"
+      },
+      {
+        "color": "rgb(255, 180, 207)",
+        "line": "22px",
+        "size": "14px",
+        "text": "请输入材料标题。",
+        "weight": "400"
+      },
+      {
+        "color": "rgb(225, 229, 234)",
+        "line": "20px",
+        "size": "14px",
+        "text": "dialog-kind-hidden-input",
+        "weight": "400"
+      }
+    ],
+    "sheet": [
+      {
+        "line": "30px",
+        "size": "20px",
+        "slot": "sheet-title"
+      },
+      {
+        "line": "22px",
+        "size": "14px",
+        "slot": "sheet-description"
+      },
+      {
+        "line": "28px",
+        "size": "16px",
+        "slot": "textarea"
+      }
+    ]
+  },
+  "pending": [
+    "Windows / Apple actual glyph rendering and 400/500/600 differentiation",
+    "iOS Safari focus behavior",
+    "All combinations of component states; print output and non-DOM chart labels are not covered by this DOM audit"
+  ]
+}

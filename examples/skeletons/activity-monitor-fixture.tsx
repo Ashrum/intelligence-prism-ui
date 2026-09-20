@@ -36,6 +36,6 @@ export function useActivityMonitorFixture(): ActivityMonitorData {
  const canAdvance=['mixed','queued','running'].includes(scenario)&&step<3
  return {tasks,availability:scenario==='unavailable'?'unavailable':'ready',freshness:scenario==='stale'?'stale':'current',sourceLabel:'演示数据 · 当前教师 · 未连接真实任务服务',footer:<div className="space-y-2">
   <Label htmlFor={id}>演示场景</Label><div className="flex flex-wrap items-center gap-2"><Select items={scenarios} value={scenario} onValueChange={value=>{if(value){setScenario(value);setStep(0)}}}><SelectTrigger id={id} aria-label="AI 活动演示场景" className="min-w-0 flex-1"><SelectValue/></SelectTrigger><SelectPopup>{scenarios.map(s=><SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectPopup></Select><Button variant="outline" size="sm" disabled={!canAdvance} onClick={()=>setStep(value=>Math.min(value+1,3))}>推进演示一步</Button></div>
-  <p className="text-xs text-muted-foreground leading-5">仅改变本页示例。批阅与解析独立于 Agent 回复。</p>
+  <p className="text-ui-hint text-muted-foreground">仅改变本页示例。批阅与解析独立于 Agent 回复。</p>
  </div>}
 }

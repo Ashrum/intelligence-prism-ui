@@ -15,10 +15,10 @@ export function AgentPageSkeleton({ title, meta, actions, welcome, messages, com
  const titleId = useId()
  return <section className="agent-page" data-empty={empty} aria-labelledby={titleId}>
   <header className="agent-page-header">
-   <div className="min-w-0"><h1 id={titleId} className="text-base font-semibold leading-6 break-words">{title}</h1>{meta && <div className="mt-1 text-xs text-muted-foreground">{meta}</div>}</div>
+   <div className="min-w-0"><h1 id={titleId} className="text-page-title break-words">{title}</h1>{meta && <div className="mt-1 text-ui-hint text-muted-foreground">{meta}</div>}</div>
    <div className="agent-page-actions">{actions}</div>
   </header>
-  {notice && <div className="agent-page-notice text-sm text-info-foreground" role="status">{notice}</div>}
+  {notice && <div className="agent-page-notice text-ui-hint text-info-foreground" role="status">{notice}</div>}
   <ScrollArea className="agent-page-scroll" overscrollContain scrollbarGutter>
    <div className="agent-page-reading">{empty ? welcome : messages}</div>
   </ScrollArea>

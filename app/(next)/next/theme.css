@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../../../vendor/coss-animations.css";
+@import "./typography.css";
 @custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *));
 
 @font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
@@ -19,7 +20,7 @@
   --secondary:#F4F5F7;
   --secondary-foreground:#1F2328;
   --muted:#F4F5F7;
-  --muted-foreground:#6B7280;
+  --muted-foreground:#4B5563;
   --accent:#ECEEF1;
   --accent-foreground:#1F2328;
   --border:#E3E5E9;
@@ -119,7 +120,7 @@
 }
 
 @theme inline {
-  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
   --font-heading:var(--font-sans);
   --font-mono:ui-monospace,SFMono-Regular,Consolas,monospace;
   --color-background:var(--background);
@@ -170,8 +171,8 @@
 
 @layer base {
   :where(html[data-ui-version="coss-v1"]) * { @apply border-border outline-ring/50; }
-  html:where([data-ui-version="coss-v1"]) { min-width:20rem; background:var(--background); }
-  :where(html[data-ui-version="coss-v1"]) body { @apply bg-background text-foreground font-sans; margin:0; min-height:100dvh; font-synthesis:none; }
+  html:where([data-ui-version="coss-v1"]) { font-size:100%; min-width:20rem; background:var(--background); }
+  :where(html[data-ui-version="coss-v1"]) body { @apply bg-background text-foreground font-sans text-ui-body; margin:0; min-height:100dvh; font-synthesis:none; }
   :where(html[data-ui-version="coss-v1"]) :is(code,kbd,samp,pre) { font-family:var(--font-mono); }
 }
 
@@ -180,9 +181,9 @@
 .prism-root a.prism-link:hover { opacity:.8; }
 .prism-content { width:100%; max-width:88rem; margin-inline:auto; padding:2rem; min-width:0; }
 .prism-page-heading { margin-bottom:2rem; }
-.prism-page-heading h1 { color:var(--heading); font-size:1.625rem; line-height:1.4; font-weight:600; letter-spacing:-.025em; }
-.prism-page-heading p { color:var(--muted-foreground); font-size:1rem; line-height:1.75; margin-top:.5rem; max-width:48rem; }
-.prism-copy { color:var(--foreground); font-size:1rem; line-height:1.85; }
+.prism-page-heading h1 { color:var(--heading); font-size:var(--text-page-title); line-height:var(--text-page-title--line-height); font-weight:600; letter-spacing:0; }
+.prism-page-heading p:not([class*="text-ui-"]) { color:var(--muted-foreground); font-size:1rem; line-height:1.75; margin-top:.5rem; max-width:48rem; }
+.prism-copy { color:var(--foreground); font-size:var(--text-read-body); line-height:var(--text-read-body--line-height); }
 .prism-copy p { color:var(--foreground); margin:0 0 1rem; }
 .prism-copy h2 { color:var(--heading); font-weight:600; font-size:1.25rem; line-height:1.5; margin:1.75rem 0 .75rem; }
 .prism-copy ul { list-style:disc; padding-left:1.25rem; }
@@ -194,17 +195,17 @@
 .prism-demo { padding:1.75rem; min-width:0; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--background); color:var(--foreground); }
 .prism-demo-section { scroll-margin-top:5rem; margin-top:2rem; }
 .prism-demo-section > header { margin-bottom:1rem; }
-.prism-demo-section h2 { color:var(--heading); font-size:1.125rem; font-weight:600; }
-.prism-demo-section > header p { color:var(--muted-foreground); font-size:.875rem; line-height:1.7; margin-top:.3rem; }
+.prism-demo-section h2 { color:var(--heading); font-size:var(--text-section-title); line-height:var(--text-section-title--line-height); font-weight:600; }
+.prism-demo-section > header p { color:var(--muted-foreground); font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); margin-top:.3rem; }
 .prism-numeric { font-variant-numeric:tabular-nums lining-nums; }
 .analytics-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; padding:.5rem 0 1.5rem; border-bottom:1px solid var(--border); }
-.analytics-value { color:var(--heading); font-size:1.75rem; font-weight:600; line-height:1.4; letter-spacing:-.03em; margin:.5rem 0 .25rem; font-variant-numeric:tabular-nums; }
+.analytics-value { color:var(--heading); font-size:var(--text-stat-display); font-weight:600; line-height:var(--text-stat-display--line-height); letter-spacing:0; margin:.5rem 0 .25rem; font-variant-numeric:tabular-nums; }
 .analytics-panel { border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.25rem; min-width:0; background:var(--background); color:var(--foreground); }
 .analytics-panel > header { margin-bottom:1.25rem; }
 .analytics-goal-values { display:grid; grid-template-columns:repeat(auto-fit,minmax(5.5rem,1fr)); gap:1rem; }
 .analytics-chart { width:100%; height:15rem; min-width:0; font-variant-numeric:tabular-nums; }
 .analytics-chart .recharts-surface:focus-visible { outline:2px solid var(--ring); outline-offset:2px; border-radius:.25rem; }
-.analytics-tooltip { border:1px solid var(--border); border-radius:.5rem; padding:.625rem .75rem; background:var(--popover); color:var(--popover-foreground); font-size:.75rem; line-height:1.65; box-shadow:0 2px 8px rgb(0 0 0 / 8%); }
+.analytics-tooltip { border:1px solid var(--border); border-radius:.5rem; padding:.625rem .75rem; background:var(--popover); color:var(--popover-foreground); font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); box-shadow:0 2px 8px rgb(0 0 0 / 8%); }
 .analytics-tooltip strong { font-weight:500; }
 .analytics-data { margin-top:.75rem; }
 .analytics-status-bar { display:flex; gap:2px; height:.625rem; margin:1.5rem 0; overflow:hidden; border-radius:999px; background:var(--muted); }
@@ -215,7 +216,7 @@
   .analytics-chart { height:13rem; }
   .analytics-status-bar,.analytics-swatch { print-color-adjust:exact; }
 }
-.prism-source { font-size:.8125rem; color:var(--muted-foreground); margin-top:.8rem; }
+.prism-source { font-size:var(--text-ui-meta); line-height:var(--text-ui-meta--line-height); color:var(--muted-foreground); margin-top:.8rem; }
 .prism-source a { color:var(--link); }
 .prism-skip { position:fixed; z-index:100; left:1rem; top:1rem; padding:.5rem 1rem; color:var(--primary-foreground); background:var(--primary); border-radius:var(--radius); transform:translateY(-200%); }
 .prism-skip:focus { transform:translateY(0); }
@@ -252,7 +253,7 @@ body:has(.q-focus-view) .prism-demo-section { margin-top:0; }
 body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 
 /* Physical page dimensions are shared by measurement, preview and print. */
-.question-print-sheet { --background:#fff; --foreground:#1f2328; --heading:#1f2328; --muted-foreground:#4b5563; --border:#b8bdc5; --muted:#f4f5f7; background:#fff; color:#1f2328; font-size:var(--q-font); line-height:1.75; font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif; }
+.question-print-sheet { --background:#fff; --foreground:#1f2328; --heading:#1f2328; --muted-foreground:#4b5563; --border:#b8bdc5; --muted:#f4f5f7; background:#fff; color:#1f2328; font-size:var(--q-font); line-height:1.75; font-family:system-ui,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif; }
 .q-paper-scroll { overflow:auto; max-width:100%; padding:2px 2px 12px; }
 .q-paper-pages { width:max-content; margin:auto; display:grid; gap:24px; }
 .q-paper-page { box-sizing:border-box; width:210mm; min-height:297mm; padding:var(--q-margin); box-shadow:0 1px 5px #0002; }
@@ -346,8 +347,8 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .workload-calendar td > button[data-load="planned"] { background:var(--secondary); border-color:var(--border); }
 .workload-calendar td > button[data-load="over"] { background:color-mix(in srgb,var(--chart-4) 12%,var(--background)); border-color:var(--warning-foreground); }
 .workload-calendar [data-selected] > button { background:var(--primary)!important; color:var(--primary-foreground)!important; }
-.load-day-minutes { font-size:.75rem; line-height:1.3; font-variant-numeric:tabular-nums; }
-.load-day-flag { position:absolute; right:.2rem; top:.1rem; font-size:.75rem; font-weight:600; }
+.load-day-minutes { font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); font-variant-numeric:tabular-nums; }
+.load-day-flag { position:absolute; right:.2rem; top:.1rem; font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); font-weight:500; }
 .review-sheet-viewport { overflow:auto; max-height:43rem; padding:1rem; background:var(--muted); border:1px solid var(--border); border-radius:var(--radius-lg); }
 .review-sheet { position:relative; aspect-ratio:210 / 297; min-width:24rem; margin:auto; background:#fff; color:#1f2328; box-shadow:0 2px 6px #0002; container-type:inline-size; }
 .review-sheet-heading { position:absolute; top:6%; left:8%; width:84%; font-size:2.2cqw; line-height:1.8; }
@@ -358,7 +359,7 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .review-sheet-answer h4 { font-weight:600; margin-bottom:1cqw; }
 .review-sheet-answer > span { display:block; font-size:2cqw; margin-top:2cqw; color:#56606b; }
 .review-region-hit { position:absolute; inset:0; width:100%; height:100%; border:1px dashed #738495; border-radius:.25rem; background:transparent; color:#1f2328; text-align:left; }
-.review-region-hit > span { position:absolute; top:0; left:0; display:flex; align-items:center; gap:.35rem; padding:.3rem .5rem; font-size:.75rem; background:#eef3f8; border-radius:0 0 .25rem 0; }
+.review-region-hit > span { position:absolute; top:0; left:0; display:flex; align-items:center; gap:.35rem; padding:.3rem .5rem; font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); color:#1f2328; background:#eef3f8; border-radius:0 0 .25rem 0; }
 .review-region-hit svg { width:.875rem; height:.875rem; }
 .review-region-hit[data-selected="true"] { border:2px solid #1769aa; outline:2px solid #fff; background:rgb(23 105 170 / 3%); }
 .review-region-hit[data-checked="true"] > span { background:#e5f2eb; }
@@ -375,3 +376,8 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
   .review-sheet { width:100%!important; box-shadow:none; }
   .review-region-hit { display:none; }
 }
+
+/* Shared MathML optical sizing; business styles only own geometry. */
+:where(html[data-ui-version="coss-v1"]) math { font-family:"Prism Math","Cambria Math",math,serif; }
+.review-equation { font-size:1.25rem; }
+.parsing-paper math { font-size:1.125em; }

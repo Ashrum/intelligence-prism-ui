@@ -1,5 +1,5 @@
 .review-material { max-width:48rem; }
-.review-equation { overflow-x:auto; font-size:1.25rem; }
+.review-equation { overflow-x:auto; }
 .review-equation math { min-width:max-content; }
 .review-basket-launcher { position:fixed; bottom:24px; right:24px; z-index:40; }
 .q-task-drawer-portal:has(.review-basket-panel) > [data-slot="drawer-viewport"] { touch-action:auto; z-index:30; }
