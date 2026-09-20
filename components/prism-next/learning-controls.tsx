@@ -19,5 +19,5 @@ export function LearningEmpty({ title, children, action }: { title: string; chil
   return <Empty><EmptyHeader><EmptyTitle>{title}</EmptyTitle><EmptyDescription>{children}</EmptyDescription></EmptyHeader><EmptyContent>{action}</EmptyContent></Empty>
 }
 export function SourceNotice({ children }: { children: ReactNode }) {
-  return <p className="border-l-2 border-warning-foreground bg-warning/8 px-4 py-3 text-sm leading-6 text-foreground" role="status">{children}</p>
+  return <p className="border-l-2 border-warning-foreground bg-warning/8 px-4 py-3 text-ui-hint text-foreground" role="status">{children}</p>
 }

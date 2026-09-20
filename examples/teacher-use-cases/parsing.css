@@ -2,10 +2,10 @@
 .parsing-board{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;}
 .parsing-page-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;padding:20px 28px 12px;flex-shrink:0;}
 .parsing-case-picker{width:252px;max-width:100%;}
-.parsing-prototype-note{padding:0 28px 12px;line-height:1.6;}
-.parsing-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 28px;line-height:1.7;}
+.parsing-prototype-note{padding:0 28px 12px;line-height:var(--text-ui-hint--line-height);}
+.parsing-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 28px;line-height:var(--text-ui-hint--line-height);}
 .parsing-stages{display:flex;align-items:center;gap:28px;padding:16px 28px;flex-shrink:0;overflow-x:auto;}
-.parsing-stages li{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:14px;line-height:24px;}
+.parsing-stages li{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:var(--text-ui-action);line-height:var(--text-ui-action--line-height);}
 .parsing-surface{display:grid;grid-template-columns:minmax(248px,300px) minmax(0,1fr);flex:1;min-height:0;min-width:0;overflow:hidden;}
 .parsing-surface[data-agent-open=false]{grid-template-columns:minmax(0,1fr);}
 .parsing-assistant{overflow-y:auto;min-width:0;padding:24px 28px 48px;}
@@ -15,7 +15,7 @@
 .parsing-records{flex:1;min-height:0;overflow:auto;padding:28px;}
 .parsing-review-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;}
 .parsing-paper{min-height:340px;padding:20px 12px;overflow-wrap:anywhere;}
-.parsing-paper math{font-size:1.1em;max-width:100%;overflow-x:auto;overflow-y:hidden;padding-block:6px;}
+.parsing-paper math{max-width:100%;overflow-x:auto;overflow-y:hidden;padding-block:6px;}
 .parsing-review-switch{display:none;}
 .parsing-save-bar{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr);gap:24px;padding-top:18px;align-items:end;}
 @media(min-width:1500px){.parsing-surface{grid-template-columns:320px minmax(0,1fr);}.parsing-business{padding-inline:40px;}}

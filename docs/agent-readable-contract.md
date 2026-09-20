@@ -31,3 +31,7 @@ Floating label 不属于基础 Input / Field 行为。若未来确有紧凑场�
 ## Agent 入口
 
 部署站点根目录的 `/llms.txt` 是发现入口，提供 Authority、核心页面和 Agent 阅读规则。核心组件页面同时暴露 Agent Spec；人类可折叠查看，抓取 HTML 的 Agent 也可直接读取。
+
+## 字体契约
+
+Foundations / Typography v0.2.1 已落实为语义 Token 与公共适配层。以 [typography.md](typography.md) 为规则入口，业务页面只选择角色，不写局部字号。固定 coss 尺寸与本规范冲突时由 Prism 适配层统一处理，不改 vendored 文件。

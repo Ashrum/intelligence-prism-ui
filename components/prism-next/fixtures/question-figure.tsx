@@ -27,6 +27,6 @@ export function CoordinateDiagram() {
 export function QuestionFigure() {
   return <figure className="my-5 w-full max-w-[28rem]">
     <CoordinateDiagram />
-    <figcaption className="mt-1 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground"><span>M 为示意位置。</span><Dialog><DialogTrigger render={<Button variant="ghost" size="sm" />}><Expand />放大图形</DialogTrigger><DialogPopup className="max-w-3xl" closeProps={{ "aria-label": "关闭图形" }}><DialogHeader><DialogTitle>题目图形</DialogTitle><DialogDescription>M 为线段 AB 上的动点，此图不增加额外已知条件。</DialogDescription></DialogHeader><div className="min-h-0 overflow-auto px-6 pb-6"><CoordinateDiagram /></div></DialogPopup></Dialog></figcaption>
+    <figcaption className="mt-1 flex flex-wrap items-center justify-between gap-2 text-ui-hint text-muted-foreground"><span>M 为示意位置。</span><Dialog><DialogTrigger render={<Button variant="ghost" size="sm" />}><Expand />放大图形</DialogTrigger><DialogPopup className="max-w-3xl" closeProps={{ "aria-label": "关闭图形" }}><DialogHeader><DialogTitle>题目图形</DialogTitle><DialogDescription>M 为线段 AB 上的动点，此图不增加额外已知条件。</DialogDescription></DialogHeader><div className="min-h-0 overflow-auto px-6 pb-6"><CoordinateDiagram /></div></DialogPopup></Dialog></figcaption>
   </figure>
 }

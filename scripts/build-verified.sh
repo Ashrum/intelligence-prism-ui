@@ -19,6 +19,7 @@ if [[ ! -x "${vinext}" ]]; then
 fi
 
 node "${script_dir}/check-math-font.mjs"
+node "${script_dir}/check-typography.mjs"
 
 echo "Running bounded vinext build..."
 timeout \
