@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowLeft, BookOpen, ChartNoAxesCombined, ClipboardCheck, History, School, ShoppingBasket, Sparkles, X } from 'lucide-react'
 import { WorkbenchShell, type ShellNavigationItem } from '@/components/prism-next/skeletons/workbench-shell'
-import { taskLabels, type TaskState } from '@/components/prism-next/skeletons/workbench-model'
+import { useActivityMonitorFixture } from './activity-monitor-fixture'
 import { Button } from '@/components/coss/button'
 import { Badge } from '@/components/prism-next/badge'
 import { Label } from '@/components/coss/label'
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from '@/components/coss/select'
 import { Switch } from '@/components/coss/switch'
 import { QuestionWorkPanel } from '@/components/prism-next/question-work-panel'
-import { reviewNotifications, reviewSearch, reviewTasks, reviewUsage } from './workbench-fixtures'
+import { reviewNotifications, reviewSearch, reviewUsage } from './workbench-fixtures'
 import { useReviewBasket, type ReviewBasketAdapter } from './review-basket'
 export type { ReviewBasketAdapter } from './review-basket'
 import './workbench-review.css'
@@ -22,8 +22,7 @@ export function WorkbenchReview({ returnHref='/next/skeletons', returnLabel='页
  const [active, setActive] = useState('agent')
  const [query, setQuery] = useState('')
  const [notices, setNotices] = useState(reviewNotifications)
- const [taskState, setTaskState] = useState<TaskState>('running')
- const [connection, setConnection] = useState<'connected'|'offline'|'unavailable'>('unavailable')
+ const monitor = useActivityMonitorFixture()
  const [usageState, setUsageState] = useState<'enabled'|'disabled'|'unavailable'>('disabled')
  const [longName, setLongName] = useState(false)
  const [context, setContext] = useState(false)
@@ -40,14 +39,12 @@ export function WorkbenchReview({ returnHref='/next/skeletons', returnLabel='页
  <WorkbenchShell organization={{ name:longName?'启明实验学校教育集团高中部数学教研中心（东湖校区）':'启明实验学校', description:'教师工作台 · 组织示例', mark:<School className="size-6" /> }} user={{name:'王建国',role:'数学教师',initials:'王'}} navigation={navigation} activeId={active} onNavigate={choose} onPersonal={()=>setAnnouncement('个人页面入口已触发。第7项尚未启动，本轮不提供个人页面正文。')}
   search={{query,onQueryChange:setQuery,results:reviewSearch,status:'ready',sourceLabel:'演示数据',scopeLabel:'5 个业务入口与 1 份本页材料',onSelect:choose}}
   notifications={{items:notices,sourceLabel:'仅本次评审的演示通知；已读不改变任务状态。',onRead:id=>setNotices(items=>items.map(item=>item.id===id?{...item,read:true}:item)),onReadAll:()=>setNotices(items=>items.map(item=>({...item,read:true})))}}
-  monitor={{tasks:reviewTasks(taskState),connection,sourceLabel:'演示状态 · 未连接真实调度或监控服务'}} usage={{accounts:reviewUsage(usageState),sourceLabel:'全部为展示示例，未接入真实账户或计费。'}} context={context?{label:'内容目录',content:sideContent}:undefined} basket={basket}
+  monitor={monitor} usage={{accounts:reviewUsage(usageState),sourceLabel:'全部为展示示例，未接入真实账户或计费。'}} context={context?{label:'内容目录',content:sideContent}:undefined} basket={basket}
   auxiliaryLabel="评审条件" auxiliary={<div className="space-y-5">
     <div className="space-y-4"><div className="flex items-center justify-between gap-3"><Label htmlFor="review-long-organization">长组织名称</Label><Switch id="review-long-organization" aria-label="长组织名称" checked={longName} onCheckedChange={setLongName} /></div><div className="flex items-center justify-between gap-3"><Label htmlFor="review-context">上下文侧栏</Label><Switch id="review-context" aria-label="上下文侧栏" checked={context} onCheckedChange={setContext} /></div><div className="flex items-center justify-between gap-3"><Label htmlFor="review-density">密集内容</Label><Switch id="review-density" aria-label="密集内容" checked={dense} onCheckedChange={setDense} /></div></div>
-    <ReviewSelect label="后台任务" value={taskState} options={Object.entries(taskLabels).map(([value,label])=>({value,label}))} onChange={v=>setTaskState(v as TaskState)} />
-    <ReviewSelect label="服务连接（演示）" value={connection} options={[{value:'unavailable',label:'未接入'},{value:'connected',label:'已连接'},{value:'offline',label:'已断开'}]} onChange={v=>setConnection(v as typeof connection)} />
     <ReviewSelect label="积分与 token 示例" value={usageState} options={[{value:'disabled',label:'未启用'},{value:'enabled',label:'开启示例数据'},{value:'unavailable',label:'暂不可用'}]} onChange={v=>setUsageState(v as typeof usageState)} />
     <div className="space-y-2"><p className="text-sm font-medium">通知样例</p><div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={()=>setNotices([])}>空通知</Button><Button variant="ghost" size="sm" onClick={()=>setNotices(reviewNotifications)}>恢复示例</Button></div></div>
-    <p className="text-xs text-muted-foreground leading-relaxed">第1项 · 总骨架 v0.2 候选<br />第2项已获准启动 · 第3—7项未启动</p>
+    <p className="text-xs text-muted-foreground leading-relaxed">第1项 · 总骨架 v0.3 候选<br />第2项已获准启动 · 第3—7项未启动</p>
   </div>}>
    <header className="mb-6">
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><Button variant="ghost" size="sm" render={<a href={returnHref} />}><ArrowLeft />{returnLabel}</Button><Badge variant="outline">演示数据</Badge></div>

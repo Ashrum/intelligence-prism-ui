@@ -14,6 +14,7 @@ import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from '@/c
 import { Menu, MenuTrigger, MenuPopup, MenuItem } from '@/components/coss/menu'
 import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogPanel } from '@/components/coss/dialog'
 import { reviewNotifications, reviewUsage } from './workbench-fixtures'
+import { useActivityMonitorFixture } from './activity-monitor-fixture'
 import { useReviewBasket, type ReviewBasketAdapter } from './review-basket'
 import { conversationReducer, demoConversations, demoReply, type DemoConversation } from './agent-review-model'
 
@@ -23,6 +24,7 @@ const starters=['用一道题解释二次函数的最小值','把一段教学说
 
 /** One review fixture, reused by the design-system Site and workbench adapter. */
 export function AgentReview({returnHref='/next/skeletons',returnLabel='页面骨架',basket:externalBasket,onNavigate}: {returnHref?:string;returnLabel?:string;basket?:ReviewBasketAdapter;onNavigate?:(id:string)=>void}) {
+ const monitor = useActivityMonitorFixture()
  const [conversations,dispatch]=useReducer(conversationReducer,demoConversations)
  const [active,setActive]=useState('new'), [historyQuery,setHistoryQuery]=useState(''), [query,setQuery]=useState('')
  const [notices,setNotices]=useState(reviewNotifications), [scenario,setScenario]=useState('normal'), [longName,setLongName]=useState(false)
@@ -67,7 +69,7 @@ export function AgentReview({returnHref='/next/skeletons',returnLabel='页面骨
  return <><WorkbenchShell contentLayout="workspace" organization={{name:longName?'启明实验学校教育集团高中部数学教研中心（东湖校区）':'启明实验学校',description:'教师工作台 · 组织示例',mark:<School className="size-6"/>}} user={{name:'王建国',role:'数学教师',initials:'王'}} navigation={navigation} activeId="agent" onNavigate={navigate} onPersonal={()=>setNotice('个人页面入口已触发。第7项未启动。')} context={{label:'对话目录',content:context}} basket={basket}
  search={{query,onQueryChange:setQuery,results:conversations.filter(c=>c.messages.length).map(c=>({id:c.id,title:c.title,description:'仅本页示例对话',type:'对话'})),status:'ready',sourceLabel:'演示数据',scopeLabel:'仅本页对话，未检索生产资料',onSelect:id=>{setActive(id);setNotice('已打开示例对话。')}}}
  notifications={{items:notices,sourceLabel:'演示通知 · 与对话状态独立',onRead:id=>setNotices(ns=>ns.map(n=>n.id===id?{...n,read:true}:n)),onReadAll:()=>setNotices(ns=>ns.map(n=>({...n,read:true})))}}
- monitor={{tasks:[],connection:'unavailable',sourceLabel:'未连接后台任务服务；对话回复与业务任务分别呈现。'}} usage={{accounts:reviewUsage('disabled'),sourceLabel:'未接入账户服务，无可核实余额。'}}>
+ monitor={monitor} usage={{accounts:reviewUsage('disabled'),sourceLabel:'未接入账户服务，无可核实余额。'}}>
   <AgentPageSkeleton title={current.messages.length?current.title:'新对话'} meta={current.messages.length?'仅本页演示会话':undefined} empty={!current.messages.length} notice={notice} actions={<><Button variant="ghost" size="icon-sm" render={<a href={returnHref}/>} aria-label={returnLabel}><ArrowLeft/></Button><Button variant="ghost" size="icon-sm" aria-label="演示条件" onClick={e=>openDialog('conditions',e.currentTarget)}><Settings2/></Button></>}
    welcome={<div className="space-y-4"><p className="flex items-center gap-2 text-sm text-muted-foreground"><Sparkles className="size-4 text-info-foreground"/>王老师，你好</p><h2 className="text-3xl font-semibold tracking-tight leading-snug">今天，想从哪件事开始？</h2><p className="text-sm leading-7 text-muted-foreground">带上一个问题，或一件想推进的工作。</p></div>}
    messages={messageContent} composer={composer} suggestions={<div className="mt-5 space-y-2" aria-label="开始对话的建议"><p className="text-xs text-muted-foreground">试着这样开始 · 可修改后发送</p>{starters.map(s=><Button key={s} variant="ghost" className="h-auto sm:h-auto w-full justify-between gap-3 py-2 whitespace-normal text-left" onClick={()=>suggest(s)}><span>{s}</span><ArrowRight className="shrink-0"/></Button>)}</div>}/>

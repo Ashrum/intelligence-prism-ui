@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { useTheme } from 'next-themes'
-import { Activity, ArrowUpRight, Bell, Check, ChevronDown, CircleAlert, CircleCheck, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, PanelRight, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
+import { ArrowUpRight, Bell, Check, ChevronDown, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, PanelRight, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
 import { Button } from '@/components/coss/button'
 import { Avatar, AvatarFallback } from '@/components/coss/avatar'
 import { Badge } from '@/components/prism-next/badge'
@@ -10,11 +10,11 @@ import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuGroup, MenuGroupLabel, Menu
 import { Popover, PopoverTrigger, PopoverPopup, PopoverTitle, PopoverDescription, PopoverClose } from '@/components/coss/popover'
 import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from '@/components/coss/dialog'
 import { Command, CommandInput, CommandPanel, CommandEmpty, CommandList, CommandItem } from '@/components/coss/command'
-import { Progress, ProgressIndicator, ProgressTrack } from '@/components/coss/progress'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/coss/empty'
 import { Tooltip, TooltipTrigger, TooltipPopup } from '@/components/coss/tooltip'
 import { themeOptions } from '@/lib/prism-next/config'
-import { monitorState, taskLabels, usageText, type ShellTask, type UsageAccount } from './workbench-model'
+import { usageText, type UsageAccount } from './workbench-model'
+import { AIActivityMonitor, type ActivityMonitorData } from './ai-activity-monitor'
 import './workbench-shell.css'
 
 export type ShellNavigationItem = { id: string; label: string; icon?: ReactNode }
@@ -29,7 +29,7 @@ export type WorkbenchShellProps = {
   onPersonal: () => void
   search: { query: string; onQueryChange: (query: string) => void; results: readonly ShellSearchResult[]; status: 'ready' | 'loading' | 'error'; sourceLabel: string; scopeLabel: string; onSelect: (id: string) => void }
   notifications: { items: readonly ShellNotification[]; sourceLabel: string; onRead: (id: string) => void; onReadAll: () => void }
-  monitor: { tasks: readonly ShellTask[]; connection: 'connected' | 'offline' | 'unavailable'; sourceLabel: string }
+  monitor: ActivityMonitorData
   usage: { accounts: readonly UsageAccount[]; sourceLabel: string }
   context?: { label: string; content: ReactNode | ((close: () => void) => ReactNode) }
   auxiliary?: ReactNode
@@ -39,7 +39,6 @@ export type WorkbenchShellProps = {
   basket?: { open: boolean; position: 'right' | 'bottom'; empty?: boolean }
 }
 type Panel = 'navigation' | 'context' | 'auxiliary' | 'search' | 'notifications' | 'monitor' | 'account' | 'settings' | 'usage' | null
-const tones = { idle: 'outline', running: 'info', attention: 'warning', failed: 'error', completed: 'success' } as const
 
 /** Page skeleton extracted from the teacher PreviewHeader and global basket layout.
  * Applications own routes, data, callbacks and the basket. No business fixture lives here. */
@@ -65,9 +64,6 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const id = useId()
   const mainId = `workbench-main-${id}`
   const unread = notifications.items.filter(item => !item.read).length
-  const status = monitorState(monitor.tasks)
-  const StatusIcon = status === 'completed' ? CircleCheck : status === 'failed' || status === 'attention' ? CircleAlert : Activity
-  const statusTone = status === 'running' ? 'text-info-foreground' : status === 'failed' ? 'text-destructive-foreground' : status === 'attention' ? 'text-warning-foreground' : status === 'completed' ? 'text-success-foreground' : 'text-muted-foreground'
   const current = navigation.find(item => item.id === activeId)
   useEffect(() => setMounted(true), [])
   useEffect(() => {
@@ -128,15 +124,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
             {notifications.items.length ? <ul className="space-y-5">{notifications.items.map(item => <li key={item.id} className="space-y-1"><div className="flex items-start justify-between gap-3"><p className="text-sm font-medium">{item.title}</p>{!item.read && <Badge variant="info" size="sm">未读</Badge>}</div><p className="text-sm text-muted-foreground leading-relaxed">{item.detail}</p><div className="flex items-center justify-between gap-3"><span className="text-xs text-muted-foreground">{item.time}</span><Button variant="ghost" size="sm" disabled={item.read} onClick={() => notifications.onRead(item.id)}>{item.read ? '已读' : '标为已读'}</Button></div></li>)}</ul> : <Empty><EmptyHeader><EmptyTitle>暂无通知</EmptyTitle><EmptyDescription>新的通知会出现在这里。</EmptyDescription></EmptyHeader></Empty>}
           </PopoverPopup>
         </Popover>
-        <Popover open={panel === 'monitor'} onOpenChange={change('monitor')}>
-          <PopoverTrigger render={<Button ref={monitorTrigger} variant="ghost" className="workbench-monitor-trigger" aria-label={`AI 活动监视器，${taskLabels[status]}`} />}><StatusIcon className={statusTone} /><span className="workbench-monitor-label">{taskLabels[status]}</span></PopoverTrigger>
-          <PopoverPopup className="workbench-popup" align="end" data-shell-overlay="monitor" finalFocus={() => returnTo(monitorTrigger.current)}>
-            <div className="flex items-center justify-between gap-3"><PopoverTitle>AI 活动监视器</PopoverTitle><PopoverClose render={<Button variant="ghost" size="icon" aria-label="关闭AI 活动监视器" />}><X /></PopoverClose></div>
-            <PopoverDescription className="mt-2">{monitor.sourceLabel}</PopoverDescription>
-            <dl className="my-5 text-sm"><div className="flex justify-between gap-4"><dt className="text-muted-foreground">服务连接</dt><dd>{monitor.connection === 'connected' ? '已连接' : monitor.connection === 'offline' ? '连接已断开' : '未接入'}</dd></div></dl>
-            {monitor.tasks.length ? <ul className="space-y-6">{monitor.tasks.map(task => <li key={task.id} className="space-y-2"><div className="flex items-start justify-between gap-3"><p className="text-sm font-medium">{task.title}</p><Badge variant={tones[task.state]}>{taskLabels[task.state]}</Badge></div><p className="text-sm text-muted-foreground leading-relaxed">{task.detail}</p>{task.state === 'running' && task.progress !== undefined && <Progress value={task.progress} aria-label={`${task.title}进度`}><ProgressTrack><ProgressIndicator /></ProgressTrack></Progress>}{task.result && <p className="text-sm"><CircleCheck className="mr-1 inline size-4" />{task.result}</p>}</li>)}</ul> : <Empty><EmptyHeader><EmptyTitle>当前没有后台任务</EmptyTitle><EmptyDescription>任务进度与服务连接分别显示。</EmptyDescription></EmptyHeader></Empty>}
-          </PopoverPopup>
-        </Popover>
+        <AIActivityMonitor data={monitor} open={panel === 'monitor'} onOpenChange={change('monitor')} triggerRef={monitorTrigger} finalFocus={() => returnTo(monitorTrigger.current)} />
         <Button ref={settingsTrigger} variant="ghost" size="icon" className="workbench-settings-trigger" aria-label="快捷设置" onClick={() => setPanel('settings')}><Settings2 /></Button>
         <Menu open={panel === 'account'} onOpenChange={change('account')}>
           <MenuTrigger render={<Button ref={accountTrigger} variant="ghost" size="icon-lg" aria-label={`${user.name}的个人菜单`} />}><Avatar><AvatarFallback>{user.initials}</AvatarFallback></Avatar></MenuTrigger>
@@ -162,7 +150,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
         <DialogHeader><DialogTitle>全局搜索</DialogTitle><DialogDescription>{search.scopeLabel} · {search.sourceLabel}</DialogDescription></DialogHeader>
         <Command items={search.results.map(item => item.title)} value={search.query} onValueChange={search.onQueryChange}>
           <CommandInput aria-label="搜索关键词" placeholder="搜索入口或演示材料…" />
-          <CommandPanel>{search.status === 'ready' ? <><CommandEmpty>没有找到“{search.query}”。试试“数学”或“组卷”。</CommandEmpty><CommandList>{(title: string) => { const item = search.results.find(result => result.title === title)!; return <CommandItem key={item.id} value={title} onClick={() => { searchSelected.current = true; setPanel(null); search.onSelect(item.id); requestAnimationFrame(() => main.current?.focus()) }}><FileSearch /><span className="min-w-0 flex-1"><span className="block">{item.title}</span><span className="block text-xs text-muted-foreground">{item.description}</span></span><span className="text-xs text-muted-foreground">{item.type}</span></CommandItem> }}</CommandList></> : <p className="p-5 text-sm" role="status">{search.status === 'loading' ? '正在搜索…' : '搜索暂不可用，请稍后重试。'}</p>}</CommandPanel>
+          <CommandPanel>{search.status === 'ready' ? <><CommandEmpty>没有找到“{search.query}”。请换一个关键词，或清空输入查看可搜索内容。</CommandEmpty><CommandList>{(title: string) => { const item = search.results.find(result => result.title === title)!; return <CommandItem key={item.id} value={title} onClick={() => { searchSelected.current = true; setPanel(null); search.onSelect(item.id); requestAnimationFrame(() => main.current?.focus()) }}><FileSearch /><span className="min-w-0 flex-1"><span className="block">{item.title}</span><span className="block text-xs text-muted-foreground">{item.description}</span></span><span className="text-xs text-muted-foreground">{item.type}</span></CommandItem> }}</CommandList></> : <p className="p-5 text-sm" role="status">{search.status === 'loading' ? '正在搜索…' : '搜索暂不可用，请稍后重试。'}</p>}</CommandPanel>
         </Command>
       </DialogPopup>
     </Dialog>

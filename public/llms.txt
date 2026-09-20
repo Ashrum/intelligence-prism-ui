@@ -59,8 +59,10 @@ The canonical base form strategy is a persistent fixed label. Field identity rem
 
 ## Page composition layers (candidate branch)
 - Page skeleton catalog: /next/skeletons
-- Teacher workbench shell review: /next/skeletons/workbench (v0.2 Candidate; fixtures only)
+- Teacher workbench shell review: /next/skeletons/workbench (v0.3 Candidate; fixtures only)
 - Standard pages: /next/pages (not started)
-Skeletons and standard pages are separate categories and do not change the 80-component count. Compose the same WorkbenchShell source in applications. Only stage 1 is implemented; stages 2–7 remain unstarted. Candidate branch routes do not imply a production publication.
+Skeletons and standard pages are separate categories and do not change the 80-component count. Compose the same WorkbenchShell source in applications. Stage 1 and the authorized stage 2 Agent skeleton are review candidates; stages 3–7 remain unstarted. Review fixtures are not production services.
 
 - Agent page skeleton review: /next/skeletons/agent (v0.1 Candidate; same WorkbenchShell and AgentComposer; local fixtures only)
+
+- AI activity monitor: components/prism-next/skeletons/ai-activity-monitor.tsx. Current-user grading/parsing records only; state, trustworthy counts and follow-up are distinct. Review fixture includes nine scenes and explicit manual advancement; no live tasks.

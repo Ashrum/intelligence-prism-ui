@@ -58,3 +58,11 @@
 /* Conversation workspaces reserve room for both reading and the composer. */
 .workbench-shell[data-content-layout="workspace"],
 body:has(.workbench-shell[data-content-layout="workspace"]) .workbench-basket-panel { --workbench-basket-block:min(36dvh,19rem); }
+
+/* Activity monitor keeps a bounded footprint; its native popover owns scrolling. */
+.ai-monitor-summary { width:6.5em; text-align:left; }
+.ai-monitor-popup { width:min(420px,calc(100vw - 24px)); max-height:min(680px,calc(100dvh - 100px)); }
+.ai-monitor-popup [data-slot="popover-viewport"] { max-height:min(var(--available-height),678px,calc(100dvh - 102px)); }
+.ai-monitor-pulse { animation:ai-monitor-pulse 3.6s ease-in-out infinite; }
+@keyframes ai-monitor-pulse { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+@media(prefers-reduced-motion:reduce) { .ai-monitor-pulse { animation:none; } }
