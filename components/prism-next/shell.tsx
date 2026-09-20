@@ -30,6 +30,7 @@ function Navigation() {
         {link('/next/foundations','基础规范',<Palette/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
         {link('/next/agent','Agent 工作区',<MessageSquare/>)}
+        {link('/next/use-cases','教师用例与流程',<Layers/>)}
       </SidebarMenu></SidebarGroup>
       {componentGroups.map(group=><SidebarGroup key={group.id}>
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
@@ -56,7 +57,7 @@ function ThemePicker() {
 
 export function Shell({children}:{children:React.ReactNode}) {
   const pathname=usePathname()
-  if(["/next/skeletons/workbench", "/next/skeletons/agent"].includes(pathname)) return <>{children}</>
+  if(["/next/skeletons/workbench", "/next/skeletons/agent", "/next/use-cases/parsing"].includes(pathname)) return <>{children}</>
   return <div className="prism-root"><a className="prism-skip" href="#prism-main">跳到主要内容</a>
     <SidebarProvider style={{"--sidebar-width":"15rem"} as React.CSSProperties}>
       <Navigation/>
