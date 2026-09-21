@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { useTheme } from 'next-themes'
-import { Activity, ArrowUpRight, Bell, Check, ChevronDown, CircleAlert, CircleCheck, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, PanelRight, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
+import { ArrowUpRight, Bell, Check, ChevronDown, Coins, Cpu, FileSearch, Menu as MenuIcon, Moon, PanelLeft, PanelRight, Search, Settings2, Sun, UserRound, X } from 'lucide-react'
 import { Button } from '@/components/coss/button'
 import { Avatar, AvatarFallback } from '@/components/coss/avatar'
 import { Badge } from '@/components/prism-next/badge'
@@ -10,11 +10,11 @@ import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuGroup, MenuGroupLabel, Menu
 import { Popover, PopoverTrigger, PopoverPopup, PopoverTitle, PopoverDescription, PopoverClose } from '@/components/coss/popover'
 import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from '@/components/coss/dialog'
 import { Command, CommandInput, CommandPanel, CommandEmpty, CommandList, CommandItem } from '@/components/coss/command'
-import { Progress, ProgressIndicator, ProgressTrack } from '@/components/coss/progress'
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription } from '@/components/coss/empty'
 import { Tooltip, TooltipTrigger, TooltipPopup } from '@/components/coss/tooltip'
 import { themeOptions } from '@/lib/prism-next/config'
-import { monitorState, taskLabels, usageText, type ShellTask, type UsageAccount } from './workbench-model'
+import { usageText, type UsageAccount } from './workbench-model'
+import { AIActivityMonitor, type ActivityMonitorData } from './ai-activity-monitor'
 import './workbench-shell.css'
 
 export type ShellNavigationItem = { id: string; label: string; icon?: ReactNode }
@@ -29,16 +29,16 @@ export type WorkbenchShellProps = {
   onPersonal: () => void
   search: { query: string; onQueryChange: (query: string) => void; results: readonly ShellSearchResult[]; status: 'ready' | 'loading' | 'error'; sourceLabel: string; scopeLabel: string; onSelect: (id: string) => void }
   notifications: { items: readonly ShellNotification[]; sourceLabel: string; onRead: (id: string) => void; onReadAll: () => void }
-  monitor: { tasks: readonly ShellTask[]; connection: 'connected' | 'offline' | 'unavailable'; sourceLabel: string }
+  monitor: ActivityMonitorData
   usage: { accounts: readonly UsageAccount[]; sourceLabel: string }
   context?: { label: string; content: ReactNode | ((close: () => void) => ReactNode) }
   auxiliary?: ReactNode
+  contentLayout?: 'document' | 'workspace'
   auxiliaryLabel?: string
   children: ReactNode
   basket?: { open: boolean; position: 'right' | 'bottom'; empty?: boolean }
 }
 type Panel = 'navigation' | 'context' | 'auxiliary' | 'search' | 'notifications' | 'monitor' | 'account' | 'settings' | 'usage' | null
-const tones = { idle: 'outline', running: 'info', attention: 'warning', failed: 'error', completed: 'success' } as const
 
 /** Page skeleton extracted from the teacher PreviewHeader and global basket layout.
  * Applications own routes, data, callbacks and the basket. No business fixture lives here. */
@@ -64,9 +64,6 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const id = useId()
   const mainId = `workbench-main-${id}`
   const unread = notifications.items.filter(item => !item.read).length
-  const status = monitorState(monitor.tasks)
-  const StatusIcon = status === 'completed' ? CircleCheck : status === 'failed' || status === 'attention' ? CircleAlert : Activity
-  const statusTone = status === 'running' ? 'text-info-foreground' : status === 'failed' ? 'text-destructive-foreground' : status === 'attention' ? 'text-warning-foreground' : status === 'completed' ? 'text-success-foreground' : 'text-muted-foreground'
   const current = navigation.find(item => item.id === activeId)
   useEffect(() => setMounted(true), [])
   useEffect(() => {
@@ -105,7 +102,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
   const returnTo = (element: HTMLButtonElement | null) => activePanel.current ? false : element ?? false
   function navigate(id: string) { setPanel(null); onNavigate(id); requestAnimationFrame(() => main.current?.focus({ preventScroll: true })) }
   const navItems = navigation.map(item => <MenuItem key={item.id} onClick={() => navigate(item.id)} aria-current={activeId === item.id ? 'page' : undefined}>{item.icon}<span className="flex-1">{item.label}</span>{activeId === item.id && <Check />}</MenuItem>)
-  return <div className={`workbench-shell bg-background text-foreground${basket?.empty ? ' workbench-basket-empty' : ''}`} data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
+  return <div className={`workbench-shell bg-background text-foreground${basket?.empty ? ' workbench-basket-empty' : ''}`} data-content-layout={props.contentLayout ?? 'document'} data-basket-open={basket?.open || undefined} data-basket-position={basket?.position} data-shell-panel={panel ?? undefined}>
     <a className="prism-skip" href={`#${mainId}`} onClick={event => { event.preventDefault(); main.current?.focus({ preventScroll: true }) }}>跳到主要内容</a>
     <header className="workbench-topbar border-b bg-background">
       <div className="workbench-organization" title={`${organization.name} · ${organization.description}`}>
@@ -127,15 +124,7 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
             {notifications.items.length ? <ul className="space-y-5">{notifications.items.map(item => <li key={item.id} className="space-y-1"><div className="flex items-start justify-between gap-3"><p className="text-sm font-medium">{item.title}</p>{!item.read && <Badge variant="info" size="sm">未读</Badge>}</div><p className="text-sm text-muted-foreground leading-relaxed">{item.detail}</p><div className="flex items-center justify-between gap-3"><span className="text-xs text-muted-foreground">{item.time}</span><Button variant="ghost" size="sm" disabled={item.read} onClick={() => notifications.onRead(item.id)}>{item.read ? '已读' : '标为已读'}</Button></div></li>)}</ul> : <Empty><EmptyHeader><EmptyTitle>暂无通知</EmptyTitle><EmptyDescription>新的通知会出现在这里。</EmptyDescription></EmptyHeader></Empty>}
           </PopoverPopup>
         </Popover>
-        <Popover open={panel === 'monitor'} onOpenChange={change('monitor')}>
-          <PopoverTrigger render={<Button ref={monitorTrigger} variant="ghost" className="workbench-monitor-trigger" aria-label={`状态监视器，${taskLabels[status]}`} />}><StatusIcon className={statusTone} /><span className="workbench-monitor-label">{taskLabels[status]}</span></PopoverTrigger>
-          <PopoverPopup className="workbench-popup" align="end" data-shell-overlay="monitor" finalFocus={() => returnTo(monitorTrigger.current)}>
-            <div className="flex items-center justify-between gap-3"><PopoverTitle>状态监视器</PopoverTitle><PopoverClose render={<Button variant="ghost" size="icon" aria-label="关闭状态监视器" />}><X /></PopoverClose></div>
-            <PopoverDescription className="mt-2">{monitor.sourceLabel}</PopoverDescription>
-            <dl className="my-5 text-sm"><div className="flex justify-between gap-4"><dt className="text-muted-foreground">服务连接</dt><dd>{monitor.connection === 'connected' ? '已连接' : monitor.connection === 'offline' ? '连接已断开' : '未接入'}</dd></div></dl>
-            {monitor.tasks.length ? <ul className="space-y-6">{monitor.tasks.map(task => <li key={task.id} className="space-y-2"><div className="flex items-start justify-between gap-3"><p className="text-sm font-medium">{task.title}</p><Badge variant={tones[task.state]}>{taskLabels[task.state]}</Badge></div><p className="text-sm text-muted-foreground leading-relaxed">{task.detail}</p>{task.state === 'running' && task.progress !== undefined && <Progress value={task.progress} aria-label={`${task.title}进度`}><ProgressTrack><ProgressIndicator /></ProgressTrack></Progress>}{task.result && <p className="text-sm"><CircleCheck className="mr-1 inline size-4" />{task.result}</p>}</li>)}</ul> : <Empty><EmptyHeader><EmptyTitle>当前没有后台任务</EmptyTitle><EmptyDescription>任务进度与服务连接分别显示。</EmptyDescription></EmptyHeader></Empty>}
-          </PopoverPopup>
-        </Popover>
+        <AIActivityMonitor data={monitor} open={panel === 'monitor'} onOpenChange={change('monitor')} triggerRef={monitorTrigger} finalFocus={() => returnTo(monitorTrigger.current)} />
         <Button ref={settingsTrigger} variant="ghost" size="icon" className="workbench-settings-trigger" aria-label="快捷设置" onClick={() => setPanel('settings')}><Settings2 /></Button>
         <Menu open={panel === 'account'} onOpenChange={change('account')}>
           <MenuTrigger render={<Button ref={accountTrigger} variant="ghost" size="icon-lg" aria-label={`${user.name}的个人菜单`} />}><Avatar><AvatarFallback>{user.initials}</AvatarFallback></Avatar></MenuTrigger>
@@ -161,12 +150,12 @@ export function WorkbenchShell(props: WorkbenchShellProps) {
         <DialogHeader><DialogTitle>全局搜索</DialogTitle><DialogDescription>{search.scopeLabel} · {search.sourceLabel}</DialogDescription></DialogHeader>
         <Command items={search.results.map(item => item.title)} value={search.query} onValueChange={search.onQueryChange}>
           <CommandInput aria-label="搜索关键词" placeholder="搜索入口或演示材料…" />
-          <CommandPanel>{search.status === 'ready' ? <><CommandEmpty>没有找到“{search.query}”。试试“数学”或“组卷”。</CommandEmpty><CommandList>{(title: string) => { const item = search.results.find(result => result.title === title)!; return <CommandItem key={item.id} value={title} onClick={() => { searchSelected.current = true; setPanel(null); search.onSelect(item.id); requestAnimationFrame(() => main.current?.focus()) }}><FileSearch /><span className="min-w-0 flex-1"><span className="block">{item.title}</span><span className="block text-xs text-muted-foreground">{item.description}</span></span><span className="text-xs text-muted-foreground">{item.type}</span></CommandItem> }}</CommandList></> : <p className="p-5 text-sm" role="status">{search.status === 'loading' ? '正在搜索…' : '搜索暂不可用，请稍后重试。'}</p>}</CommandPanel>
+          <CommandPanel>{search.status === 'ready' ? <><CommandEmpty>没有找到“{search.query}”。请换一个关键词，或清空输入查看可搜索内容。</CommandEmpty><CommandList>{(title: string) => { const item = search.results.find(result => result.title === title)!; return <CommandItem key={item.id} value={title} onClick={() => { searchSelected.current = true; setPanel(null); search.onSelect(item.id); requestAnimationFrame(() => main.current?.focus()) }}><FileSearch /><span className="min-w-0 flex-1"><span className="block">{item.title}</span><span className="block text-xs text-muted-foreground">{item.description}</span></span><span className="text-xs text-muted-foreground">{item.type}</span></CommandItem> }}</CommandList></> : <p className="p-5 text-sm" role="status">{search.status === 'loading' ? '正在搜索…' : '搜索暂不可用，请稍后重试。'}</p>}</CommandPanel>
         </Command>
       </DialogPopup>
     </Dialog>
     {auxiliary && !auxiliaryDocked && <Dialog open={panel === 'auxiliary'} onOpenChange={change('auxiliary')}><DialogPopup data-shell-overlay="auxiliary" finalFocus={() => returnTo(auxiliaryTrigger.current)} closeProps={{ 'aria-label': `关闭${auxiliaryLabel}` }}><DialogHeader><DialogTitle>{auxiliaryLabel}</DialogTitle><DialogDescription>调整后关闭面板，继续当前阅读位置。</DialogDescription></DialogHeader><DialogPanel>{auxiliary}</DialogPanel></DialogPopup></Dialog>}
-    <Dialog open={panel === 'settings'} onOpenChange={change('settings')}><DialogPopup data-shell-overlay="settings" finalFocus={() => returnTo(settingsTrigger.current?.getClientRects().length ? settingsTrigger.current : accountTrigger.current)} closeProps={{ 'aria-label': '关闭快捷设置' }}><DialogHeader><DialogTitle>快捷设置</DialogTitle><DialogDescription>外观偏好沿用当前浏览器的主题设置。</DialogDescription></DialogHeader><DialogPanel><div className="grid grid-cols-3 gap-3" role="group" aria-label="主题">{themeOptions.map(option => <Button key={option.value} variant={mounted && theme === option.value ? 'secondary' : 'outline'} className="h-auto flex-col py-4" aria-pressed={mounted && theme === option.value} onClick={() => setTheme(option.value)}>{option.value === 'dark' ? <Moon /> : <Sun />}{option.label}</Button>)}</div></DialogPanel></DialogPopup></Dialog>
+    <Dialog open={panel === 'settings'} onOpenChange={change('settings')}><DialogPopup data-shell-overlay="settings" finalFocus={() => returnTo(settingsTrigger.current?.getClientRects().length ? settingsTrigger.current : accountTrigger.current)} closeProps={{ 'aria-label': '关闭快捷设置' }}><DialogHeader><DialogTitle>快捷设置</DialogTitle><DialogDescription>外观偏好沿用当前浏览器的主题设置。</DialogDescription></DialogHeader><DialogPanel><div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,5rem),1fr))] gap-3" role="group" aria-label="主题">{themeOptions.map(option => <Button key={option.value} variant={mounted && theme === option.value ? 'secondary' : 'outline'} className="h-auto min-w-0 flex-col whitespace-normal py-4 sm:h-auto" aria-pressed={mounted && theme === option.value} onClick={() => setTheme(option.value)}>{option.value === 'dark' ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}<span className="max-w-full break-words">{option.label}</span></Button>)}</div></DialogPanel></DialogPopup></Dialog>
     <Dialog open={panel === 'usage'} onOpenChange={change('usage')}><DialogPopup data-shell-overlay="usage" finalFocus={() => returnTo(accountTrigger.current)} closeProps={{ 'aria-label': '关闭积分与 token' }}><DialogHeader><DialogTitle>积分与 token</DialogTitle><DialogDescription>{usage.sourceLabel}</DialogDescription></DialogHeader><DialogPanel><dl className="space-y-7">{usage.accounts.map(account => <div key={account.kind}><dt className="flex items-center gap-2 text-sm font-medium">{account.kind === 'points' ? <Coins className="size-4" /> : <Cpu className="size-4" />}{account.kind === 'points' ? '积分' : 'Token 额度'}<span className="ml-auto font-normal text-muted-foreground">{account.scope === 'personal' ? '个人' : account.scope === 'organization' ? '组织' : '归属待确认'}</span></dt><dd className="my-2 text-xl font-semibold tabular-nums">{usageText(account)}</dd><dd className="text-sm text-muted-foreground leading-relaxed">{account.detail}</dd></div>)}</dl></DialogPanel></DialogPopup></Dialog>
     <Dialog open={panel === 'context'} onOpenChange={change('context')}><DialogPopup data-shell-overlay="context" finalFocus={() => returnTo(contextTrigger.current)} closeProps={{ 'aria-label': '关闭上下文导航' }}><DialogHeader><DialogTitle>{context?.label}</DialogTitle><DialogDescription>当前页面的内容目录</DialogDescription></DialogHeader><DialogPanel>{typeof context?.content === 'function' ? context.content(() => setPanel(null)) : context?.content}</DialogPanel></DialogPopup></Dialog>
   </div>

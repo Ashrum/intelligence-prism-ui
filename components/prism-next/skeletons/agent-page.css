@@ -1,0 +1,31 @@
+/* Geometry only: all controls, typography classes and colors come from Prism. */
+.agent-page { container:agent-page / size; overflow-y:auto; display:flex; flex:1; flex-direction:column; width:100%; min-width:0; min-height:0; }
+.agent-page-header { flex-shrink:0; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:18px 28px 12px; }
+.agent-page-actions { display:flex; flex-shrink:0; align-items:center; gap:4px; }
+.agent-page-notice { padding:0 28px 8px; flex-shrink:0; }
+.agent-page-scroll { flex:1; height:0; min-height:64px; }
+.agent-page-reading { max-width:816px; margin-inline:auto; padding:24px 28px 32px; overflow-wrap:anywhere; }
+.agent-page-compose { flex-shrink:0; padding:12px 28px 24px; }
+.agent-page-compose-inner { max-width:760px; margin-inline:auto; }
+.agent-page[data-empty="true"] .agent-page-scroll { flex:0 1 auto; height:auto; }
+.agent-page[data-empty="true"] .agent-page-reading { padding-top:clamp(24px,9dvh,88px); padding-bottom:16px; }
+.agent-page[data-empty="true"] .agent-page-compose { padding-top:8px; }
+@container agent-page (max-width:1050px) { .agent-page-compose { padding-bottom:64px; } }
+@container agent-page (max-width:599px) {
+ .agent-page-header { padding:12px 20px 8px; gap:8px; }
+ .agent-page-reading { padding:16px 20px 24px; }
+ .agent-page-compose { padding:8px 20px 72px; }
+ .agent-page-notice { padding-inline:20px; }
+ .agent-page[data-empty="true"] .agent-page-reading { padding-top:24px; }
+}
+.workbench-shell[data-basket-open="true"] .agent-page-compose { padding-bottom:12px; }
+/* At very short heights, the workspace itself can scroll the small remainder;
+ * conversation text still keeps its own scroll instead of pushing input below the thread. */
+@container agent-page (max-height:480px) {
+ .agent-page[data-empty="true"] .agent-page-scroll { flex:none; height:auto; }
+ .agent-page[data-empty="true"] .agent-page-reading { padding-top:12px; }
+}
+@media(max-height:620px) {
+ .workbench-shell[data-content-layout="workspace"]:not([data-basket-open="true"]) .workbench-body { padding-bottom:64px; }
+ .agent-page-compose { padding-bottom:12px; }
+}
