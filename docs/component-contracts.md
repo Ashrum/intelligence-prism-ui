@@ -140,7 +140,14 @@ import { Badge } from "@/components/prism-next/badge"
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR。
-- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。不连接模型或模拟执行器。
+- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`，失败状态用图标和文字表达。不连接模型或模拟执行器。
+- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
+- `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
+- `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。仅返回 `accepted` 或 `kept`；调用方检查建议基于的原文是否仍有效，并负责更新草稿、撤销原核对状态和独立保存。
+
+引导式任务 v0.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
+
+补充要求最多 500 字，保存在解析示例并写入任务指令；固定示例不根据自由文本生成内容。排版建议仅演示条件与问题分段，采用后需重新核对；若题干已被人工修改，旧建议不能覆盖。任务指令可在任意已添加材料的阶段展开，保存后直接展示；编辑复用副本不会修改当前任务。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
 

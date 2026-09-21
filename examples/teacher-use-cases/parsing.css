@@ -30,3 +30,23 @@
 .parsing-stage-list{display:grid;gap:8px;padding-top:14px;padding-bottom:4px;}
 .parsing-stage-list li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;}
 @media(max-width:760px){.parsing-stages{display:none;}.parsing-stage-mobile{display:block;}}
+
+/* Embedded Agent pattern uses document flow and the same workflow/controller. */
+.parsing-embedded{min-width:0;border:1px solid var(--border);border-radius:12px;overflow:clip;}
+.parsing-embedded .parsing-surface{display:block;overflow:visible;}
+.parsing-embedded .parsing-business,.parsing-embedded .parsing-assistant{overflow:visible;}
+.parsing-embedded .parsing-assistant{border-top:1px solid var(--border);}
+.parsing-embedded .parsing-stages{flex-wrap:wrap;}
+.parsing-embedded .parsing-review-grid{grid-template-columns:minmax(0,1fr);}
+.parsing-embedded .parsing-review-switch{display:flex;}
+.parsing-embedded .parsing-review-grid[data-mobile-panel=edit] .parsing-source{display:none;}
+.parsing-embedded .parsing-review-grid[data-mobile-panel=source] .parsing-editor{display:none;}
+
+.parsing-material-card{container-type:inline-size;}
+@container(max-width:420px){
+ .parsing-page-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;}
+ .parsing-page-row>svg{display:none;}
+ .parsing-page-row>.parsing-page-meta{grid-column:2 / -1;}
+ .parsing-page-row>[data-slot=badge]{grid-column:2;justify-self:start;align-self:center;}
+ .parsing-page-row>.parsing-page-actions{grid-column:3;}
+}

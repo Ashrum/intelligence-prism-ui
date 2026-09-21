@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'agent-components': {
+    component: 'Agent task patterns v0.1',
+    source: 'Prism / coss composition; interaction reference: https://www.beautifului.dev/',
+    contract: ['AgentQuestionCard is controlled; choosing an option does not execute or save.', 'AgentContextList displays caller-supplied title, source location and status; onInspect returns an ID.', 'AgentTaskProgress receives actual stage state and optional detail; no invented progress or reasoning trace.', 'AgentChangeReview displays before/after and returns accepted/kept; the caller rejects stale changes and owns editing and saving.'],
+    states: ['awaiting choice', 'running', 'failed', 'pending review', 'accepted but not saved', 'kept original'],
+    accessibility: ['Choices use the pinned RadioGroup and associated labels.', 'Decision information is at least 14px; long source and comparison text uses read-body 16/28.', 'Narrow containers wrap or stack; source dialogs return focus.'],
+    dont: ['Do not put demo execution, business persistence or model calls in reusable components.', 'Do not treat selection or accepted changes as permission to publish.', 'Do not manufacture confidence, completion percentages or internal reasoning.'],
+  },
   button: {
     component: "Button",
     source: "coss original component; preserve pinned upstream sizing, radius, padding and focus behavior",
