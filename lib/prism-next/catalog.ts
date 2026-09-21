@@ -52,7 +52,7 @@ export const componentGroups:ComponentGroup[] = [
     item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
   ]},
   { id:"agent",title:"Agent",items:[
-    {...item("agent-components","Agent 任务组件","独立任务输入与步骤进度，不绑定模型或演示执行器。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+    {...item("agent-components","Agent 任务组件","任务输入、必要追问、材料依据、步骤与修改对照，由外部控制。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
   ]},
   { id:"learning",title:"评价与学习支持",items:[
     {...item("goal-milestones","Milestones 里程碑","接收节点、说明和状态，不依赖目标工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},

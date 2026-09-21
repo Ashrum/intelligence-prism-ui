@@ -2,6 +2,14 @@
 
 ## 当前可用版本：coss v1.13.1
 
+### Agent 引导式任务 v0.1 · 候选（2026-09-21）
+
+`/next/agent` 增加「试卷解析引导」，复用已有解析流程完成材料入口、范围追问、执行、原稿核对和本机示例保存；原材料复核助手保留。`/next/components/agent-components` 原位补齐追问、材料引用、带详情的步骤和修改对照，调用方持有数据及操作，不增加组件目录分类。
+
+参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用后仍须核对与保存。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
+
+本轮验证：相关 20 项回归测试、类型检查、语义字号检查与构建通过。浏览器实际走通单题来源回看、追问补充、阶段监控、过期建议拦截、保留/采用、核对、保存和指令复用；390px 三主题检查新组件字号与关键容器，键盘可选择选项；窄屏题目与答案流程验证了局部失败重试。没有重新执行全站 93 页审计，实体设备与真实服务不在本轮范围内。
+
 ### 表现力候选 v0.1 · 三个原位样本（2026-09-21）
 
 入口 `/next/foundations#expression-review`。在现有 [Agent 欢迎页](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent)、[解析入口与保存结果](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/use-cases/parsing)、[分类图表](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/status-composition) 与 [连续热力图](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/evidence-matrix) 提供原版 / 候选对照，切换保留草稿、任务和选中项。候选在欢迎、材料入口与完成结果使用现有三色几何标记；解析入口与结果按业务区、辅助指导的顺序排列。暖纸数据色仅在两张图表示例中显式启用，不替换全局主题；品牌名称与色值、11 类字号令牌和 coss 原始源码保持不变。

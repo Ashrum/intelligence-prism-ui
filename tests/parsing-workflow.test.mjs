@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { sampleTask, parsingReducer as reduce, startProblem, saveProblem, missingSource, restoreTask } from '../examples/teacher-use-cases/parsing-model.ts'
+import { sampleTask, parsingReducer as reduce, startProblem, saveProblem, missingSource, restoreTask, taskInstruction } from '../examples/teacher-use-cases/parsing-model.ts'
 const finish=t=>{t=reduce(t,{type:'start'});while(t.stage==='processing')t=reduce(t,{type:'advance'});return t}
 const checkAll=t=>t.questions.reduce((state,q)=>reduce(state,{type:'check',id:q.id}),t)
 
@@ -32,4 +32,15 @@ test('provided answers require explicit mapping; parsing does not invent absent 
 })
 test('invalid stored snapshots fall back safely and valid progress can be restored',()=>{
  assert.equal(restoreTask('broken'),null);assert.equal(restoreTask('{"schema":1}'),null);const t=finish(sampleTask('single'));assert.deepEqual(restoreTask(JSON.stringify(t)),t)
+})
+
+test('clarification preserves extra requirements without starting work and records them in the reusable instruction',()=>{
+ let t=reduce(sampleTask('images'),{type:'scope',requirements:'保留题号与分值。'});assert.equal(t.stage,'scope');assert.match(taskInstruction(t),/补充要求：保留题号与分值/);assert.deepEqual(restoreTask(JSON.stringify(t)),t)
+ t=reduce(t,{type:'scope',requirements:'长'.repeat(501)});assert.equal(t.requirements.length,500);assert.equal(restoreTask(JSON.stringify({...t,requirements:{}})),null)
+})
+test('proposed changes cannot overwrite later manual edits and accepted changes require renewed checking',()=>{
+ let t=checkAll(finish(sampleTask('single')));const before=t.questions[0].stem,after=before.replace('。求','。\n求');
+ const edited=reduce(t,{type:'edit',id:'q1',stem:'教师新修订'});const stale=reduce(edited,{type:'apply-change',id:'q1',before,after});assert.equal(stale.questions[0].stem,'教师新修订');
+ t=reduce(t,{type:'apply-change',id:'q1',before,after});assert.equal(t.questions[0].stem,after);assert.equal(t.questions[0].checked,false);assert.ok(saveProblem(t));
+ const saved=reduce(checkAll(t),{type:'save',at:'test'});assert.equal(reduce(saved,{type:'apply-change',id:'q1',before:after,after:'覆盖保存'}).questions[0].stem,after)
 })

@@ -9,6 +9,8 @@ const pages=[
   {value:'/next/components/field',label:'字段说明与错误'},
   {value:'/next/examples/questions',label:'题目阅读'},
   {value:'/next/use-cases/parsing',label:'解析工作区'},
+  {value:'/next/agent',label:'Agent 引导式任务'},
+  {value:'/next/components/agent-components',label:'Agent 任务组件'},
   {value:'/next/skeletons/agent',label:'Agent 工作区'},
   {value:'/next/components/status-composition',label:'分类配色对照'},
   {value:'/next/components/evidence-matrix',label:'连续色阶对照'},
