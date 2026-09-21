@@ -1,5 +1,8 @@
 "use client"
 import { useState } from "react"
+import { useTheme } from "next-themes"
+import { paperSequentialCandidate } from "@/lib/prism-next/chart-color"
+import { PaperPaletteReview } from "./paper-palette-review"
 import { Button } from "@/components/coss/button"
 import { DemoSection } from "../demo-parts"
 import { QuestionSelect } from "../question-controls"
@@ -8,12 +11,12 @@ import { HeatmapChart,ScatterChart,BoxPlotChart,type BoxSummary } from "../chart
 import { MetricSummary,GoalComparison,StatusComposition,FilterBar,DataRecordTable } from "../data-display"
 import {ReferenceChartDemo} from './reference-charts'
 const datasets=[{id:"assessment",label:"测评数据",unit:"分",groups:["甲组","乙组","丙组"],values:[62,78,86],baseline:45,target:90},{id:"devices",label:"设备处理量",unit:"份",groups:["一号设备","二号设备","三号设备"],values:[120,180,95],baseline:60,target:200}]
-export function ChartComponentDemo({kind}:{kind:string}){const [source,setSource]=useState("assessment"),[empty,setEmpty]=useState(false),[selected,setSelected]=useState(""),[filters,setFilters]=useState<Record<string,string>>({group:"all",period:"week"});const sample=datasets.find(d=>d.id===source)!,{unit}=sample;const points=empty?[]:sample.values.map((value,i)=>({id:`item-${i}`,label:sample.groups[i],value}));const rows=points.map(p=>({id:p.id,label:p.label}));const select=(id:string)=>setSelected(id)
+export function ChartComponentDemo({kind}:{kind:string}){const [source,setSource]=useState("assessment"),[empty,setEmpty]=useState(false),[selected,setSelected]=useState(""),[filters,setFilters]=useState<Record<string,string>>({group:"all",period:"week"});const [candidate,setCandidate]=useState(true);const {theme}=useTheme();const sample=datasets.find(d=>d.id===source)!,{unit}=sample;const points=empty?[]:sample.values.map((value,i)=>({id:`item-${i}`,label:sample.groups[i],value}));const rows=points.map(p=>({id:p.id,label:p.label}));const select=(id:string)=>setSelected(id)
 if(['status-composition','paired-dot-chart','quadrant-chart','combo-chart'].includes(kind))return <ReferenceChartDemo kind={kind}/>
-return <DemoSection title="数据驱动的独立组件" description="切换两组不同用途的数据，组件实现保持一致；选中结果通过回调交给外部。"><div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} onChange={id=>{setSource(id);setSelected("")}} items={datasets.map(d=>({value:d.id,label:d.label}))}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected("")}}>{empty?"恢复数据":"查看空数据"}</Button></div><div className="analytics-panel">
+return <DemoSection title="数据驱动的独立组件" description="切换两组不同用途的数据，组件实现保持一致；选中结果通过回调交给外部。"><div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} onChange={id=>{setSource(id);setSelected("")}} items={datasets.map(d=>({value:d.id,label:d.label}))}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected("")}}>{empty?"恢复数据":"查看空数据"}</Button></div>{kind==="evidence-matrix"&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}<div className="analytics-panel">
 {kind==="trend-chart"&&<TrendChart label={sample.label} unit={unit} series={[{id:"a",label:"序列 A",data:points},{id:"b",label:"序列 B",data:points.map((p,i)=>({...p,value:i===1?null:Math.round(p.value*.8*10)/10}))}]} onSelect={select}/>}
 {(kind==="comparison-chart"||kind==="distribution-chart")&&<ComparisonChart label={sample.label} unit={unit} horizontal={kind!=="distribution-chart"} data={points} onSelect={select}/>}
-{kind==="evidence-matrix"&&<HeatmapChart label={sample.label} unit={unit} rows={rows} columns={[{id:"before",label:"第一轮"},{id:"after",label:"第二轮"}]} cells={points.flatMap((p,i)=>[{id:p.id+"-before",row:p.id,column:"before",value:i===1?null:Math.round(p.value*.8)},{id:p.id+"-after",row:p.id,column:"after",value:p.value}])} selectedId={selected} onSelect={select}/>}
+{kind==="evidence-matrix"&&<HeatmapChart sequentialColors={theme==="paper"&&candidate?paperSequentialCandidate:undefined} label={sample.label} unit={unit} rows={rows} columns={[{id:"before",label:"第一轮"},{id:"after",label:"第二轮"}]} cells={points.flatMap((p,i)=>[{id:p.id+"-before",row:p.id,column:"before",value:i===1?null:Math.round(p.value*.8)},{id:p.id+"-after",row:p.id,column:"after",value:p.value}])} selectedId={selected} onSelect={select}/>}
 {kind==="scatter-chart"&&<ScatterChart label={sample.label} xLabel="用时（分钟）" yLabel={sample.label+`（${unit}）`} unit={unit} data={points.map((p,i)=>({id:p.id,label:p.label,x:[15,28,40][i],y:p.value}))} selectedId={selected} onSelect={select}/>}
 {kind==="box-plot"&&<BoxPlotChart label={sample.label} unit={unit} data={points.map(p=>({id:p.id,label:p.label,values:[.4,.65,.8,1,1.2].map(ratio=>Math.round(p.value*ratio*10)/10) as BoxSummary["values"]}))} selectedId={selected} onSelect={select}/>}
 {kind==="metric-summary"&&<MetricSummary items={points.map(p=>({...p,value:`${p.value} ${unit}`,detail:"由调用方提供口径"}))} onSelect={select}/>}

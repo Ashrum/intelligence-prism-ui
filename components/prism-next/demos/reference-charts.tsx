@@ -1,5 +1,8 @@
 "use client"
 import {useState} from 'react'
+import {useTheme} from 'next-themes'
+import {paperCategoryCandidate} from '@/lib/prism-next/chart-color'
+import {PaperPaletteReview} from './paper-palette-review'
 import {Button} from '@/components/coss/button'
 import {QuestionSelect} from '../question-controls'
 import {DemoSection} from '../demo-parts'
@@ -18,7 +21,9 @@ const info:Record<string,[string,string,string]>={
 }
 export function ReferenceChartDemo({kind}:{kind:string}){
  const [source,setSource]=useState('learning'),[empty,setEmpty]=useState(false),[selected,setSelected]=useState(''),[selection,setSelection]=useState('')
- const {colors}=useChartTheme(),[title,description,code]=info[kind],learning=source==='learning',edge=source==='edge'
+ const [candidate,setCandidate]=useState(true);const {theme}=useTheme();const chartTheme=useChartTheme()
+ const colors=kind==='status-composition'&&theme==='paper'&&candidate?paperCategoryCandidate:chartTheme.colors
+ const [title,description,code]=info[kind],learning=source==='learning',edge=source==='edge'
  const select=(id:string,seriesId?:string)=>{setSelected(id);setSelection(`${id}${seriesId?` · ${seriesId}`:''}`)}
  const composition=(edge?[{id:'zero',label:'零值',value:0},{id:'missing',label:'缺测',value:null}]:learning?[
   {id:'stable',label:'稳定保持',value:10},{id:'consolidating',label:'正在巩固',value:11},{id:'verification',label:'已纠正待验证',value:7},{id:'support',label:'需要支持',value:5},{id:'declining',label:'近期回落',value:2},{id:'insufficient',label:'证据不足',value:7}
@@ -39,6 +44,7 @@ export function ReferenceChartDemo({kind}:{kind:string}){
  const axes:[ComboAxis,ComboAxis]=[{id:'count',label:learning||edge?'有效作答':'处理数量',unit:learning||edge?'次':'件',domain:[0,336]},{id:'secondary',label:learning||edge?'累计已解析任务':'处理用时',unit:learning||edge?'份':'小时',domain:[0,6]}]
  return <DemoSection title={title} description={description}>
   <div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} items={[{value:'learning',label:'学习数据'},{value:'operations',label:'运营数据'},{value:'edge',label:'边界与缺测'}]} onChange={value=>{setSource(value);setSelected('');setSelection('');setEmpty(false)}}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected('');setSelection('')}}>{empty?'恢复数据':'查看空数据'}</Button></div>
+  {kind==='status-composition'&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}
   <div className="analytics-panel">
    {kind==='status-composition'&&<StatusComposition label={learning?'学生学习进展状态分布':'分类数量分布'} items={empty?[]:composition} unit={learning?'人':'项'} selectedId={selected} onSelect={select}/>}
    {kind==='paired-dot-chart'&&<PairedDotChart label={learning?'错题影响与复现':'双指标对比'} data={empty?[]:paired} metrics={[{id:'first',label:learning?'错误影响':'指标 A',color:colors[1]},{id:'second',label:learning?'错误复现':'指标 B',color:colors[3]}]} unit="%" domain={[0,100]} selectedId={selected} onSelect={select}/>}
