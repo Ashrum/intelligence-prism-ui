@@ -35,6 +35,8 @@ function Navigation() {
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
         <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}</SidebarMenu>
       </SidebarGroup>)}
+      <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
+      <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>
@@ -53,6 +55,8 @@ function ThemePicker() {
 }
 
 export function Shell({children}:{children:React.ReactNode}) {
+  const pathname=usePathname()
+  if(pathname === "/next/skeletons/workbench") return <>{children}</>
   return <div className="prism-root"><a className="prism-skip" href="#prism-main">跳到主要内容</a>
     <SidebarProvider style={{"--sidebar-width":"15rem"} as React.CSSProperties}>
       <Navigation/>
