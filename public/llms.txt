@@ -50,7 +50,7 @@ The canonical base form strategy is a persistent fixed label. Field identity rem
 ## Agent reading instructions
 - Read Foundations and only the component specifications relevant to the task.
 - Preserve existing component behavior and semantic roles.
-- Treat the three Prism colors as semantic accents, not decoration.
+- Preserve established semantic color meanings. The scoped Expression v0.1 review permits non-semantic brand geometry for recognition; it must not encode task status or override component specifications.
 - Do not infer pixel values from screenshots when the specification or source is available.
 - When a visual value is not exposed by the page, inspect the linked source or pinned coss implementation before reporting a gap.
 - Keep accessibility semantics, keyboard behavior, theme behavior, and reduced-motion support intact.
@@ -76,3 +76,10 @@ Skeletons and standard pages are separate categories and do not change the 80-co
 
 Typography: /next/foundations/typography (v0.2.1 implementation candidate)
 Use semantic text roles; reading and long editing 16/28, decision hints >=14px. Theme and task state never shrink typography. Keep vendored coss sources unchanged; include the Prism typography adaptation stylesheet.
+
+## Expression review v0.1 (Candidate)
+- Entry: /next/foundations#expression-review
+- Three samples on existing pages: Agent welcome (/next/skeletons/agent); material intake and saved results (/next/use-cases/parsing); warm-paper categorical and sequential colors (/next/components/status-composition and /next/components/evidence-matrix).
+- Original/candidate controls preserve drafts, task state and selected data. Global theme tokens, brand names/colors, typography roles and coss source remain unchanged.
+- This is a scoped review, not a new global visual default or a full-site re-audit. Real device and color-vision simulation are not included in this round.
+- Heatmap sequentialColors accepts three six-digit opaque HEX colors in low/mid/high order. Labels choose black/white against the interpolated fill; hover preserves fill and emphasizes the border.

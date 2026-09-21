@@ -2,6 +2,12 @@
 
 ## 当前可用版本：coss v1.13.1
 
+### 表现力候选 v0.1 · 三个原位样本（2026-09-21）
+
+入口 `/next/foundations#expression-review`。在现有 [Agent 欢迎页](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent)、[解析入口与保存结果](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/use-cases/parsing)、[分类图表](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/status-composition) 与 [连续热力图](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/evidence-matrix) 提供原版 / 候选对照，切换保留草稿、任务和选中项。候选在欢迎、材料入口与完成结果使用现有三色几何标记；解析入口与结果按业务区、辅助指导的顺序排列。暖纸数据色仅在两张图表示例中显式启用，不替换全局主题；品牌名称与色值、11 类字号令牌和 coss 原始源码保持不变。
+
+热力图数值按实际插值底色选择黑/白文字，悬停仅改变边框，避免自动提亮造成对比度下降。分类标签、数量、占比、缺测说明和可键盘选择的数据表继续保留。这是局部候选验证，不重新声明全站或所有交互状态通过；色觉模拟和实体设备不在本轮已验证范围内。
+
 ### Typography v0.2.1 · 全站实施候选（2026-09-20）
 
 字体规范入口 `/next/foundations/typography` 提供 11 个角色实样、解析阅读/编辑与状态样本、真实窄屏预览和逐页检查清单。公共字号适配与浅色辅助文字修正已落实到组件、示例和工作区；coss 原始源码保持不变。后续业务代码使用语义字号，验证构建内的字体检查阻止局部字号回流。Windows / Apple 字形与 iOS 聚焦行为仍待真机确认。详见 `docs/typography.md`。

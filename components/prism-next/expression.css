@@ -1,0 +1,51 @@
+/* Expression v0.1: optional geometry, never a new state language. */
+.prism-signature{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:104px;height:88px;flex-shrink:0;pointer-events:none;}
+.prism-signature i{display:block;width:12px;border-radius:2px;height:48px;background:var(--brand-blue);transform:skewX(-18deg);}
+.prism-signature i:nth-child(2){height:72px;background:var(--brand-magenta);}
+.prism-signature i:nth-child(3){height:36px;background:var(--brand-green);}
+.prism-signature[data-compact=true]{width:44px;height:40px;gap:4px;}
+.prism-signature[data-compact=true] i{width:5px;height:24px;}
+.prism-signature[data-compact=true] i:nth-child(2){height:36px;}
+.prism-signature[data-compact=true] i:nth-child(3){height:18px;}
+.expression-switch{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+.expression-welcome{display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.expression-welcome-copy{max-width:34rem;}
+.expression-welcome-copy>p:first-child{margin-bottom:12px;}
+.expression-welcome-copy>p:last-child{margin-top:12px;}
+.agent-page[data-expression=candidate][data-empty=true]{background:var(--secondary);}
+.agent-page[data-expression=candidate][data-empty=true] .agent-page-reading{padding-top:clamp(24px,6dvh,56px);padding-bottom:24px;}
+.agent-page[data-expression=candidate][data-empty=true] .agent-page-compose-inner{padding:0;}
+.expression-starters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px;}
+.expression-starters>button{align-items:flex-start;min-height:68px;background:var(--background);border:1px solid transparent;border-radius:10px;padding:14px 16px;}
+.expression-starters>button:hover{border-color:var(--border);background:var(--card);}
+.parsing-board[data-expression=candidate] .parsing-surface[data-stage=intake] .parsing-business,
+.parsing-board[data-expression=candidate] .parsing-surface[data-stage=saved] .parsing-business{background:var(--secondary);}
+.expression-material-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.expression-upload[data-slot=card]{border:0;box-shadow:none;gap:24px;}
+.expression-upload-heading{display:flex;align-items:flex-start;gap:16px;}
+.expression-upload-heading>svg{margin-top:2px;flex-shrink:0;}
+.expression-result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:start;}
+.expression-result-details{display:flex;flex-wrap:wrap;gap:24px 40px;margin-top:24px;}
+.expression-result-details dd{margin-top:6px;}
+@media(max-width:760px){
+ .expression-welcome{gap:12px;}.expression-welcome>.prism-signature{width:44px;height:40px;gap:4px;}
+ .expression-starters{grid-template-columns:minmax(0,1fr);gap:8px;}
+ .expression-starters>button{min-height:44px;padding:10px 12px;}
+ .expression-material-heading>.prism-signature{width:52px;height:60px;gap:5px;}
+ .expression-material-heading>.prism-signature i{width:6px;height:30px;}
+ .expression-material-heading>.prism-signature i:nth-child(2){height:48px;}
+ .expression-material-heading>.prism-signature i:nth-child(3){height:24px;}
+ .expression-result{gap:12px;}.expression-result>.prism-signature{width:44px;height:40px;gap:4px;}
+}
+
+@media(max-width:760px){
+ .expression-welcome>.prism-signature i,.expression-result>.prism-signature i{width:5px;height:24px;}
+ .expression-welcome>.prism-signature i:nth-child(2),.expression-result>.prism-signature i:nth-child(2){height:36px;}
+ .expression-welcome>.prism-signature i:nth-child(3),.expression-result>.prism-signature i:nth-child(3){height:18px;}
+}
+/* A new-conversation welcome is short content, never an independently clipped pane. */
+.agent-page[data-expression=candidate][data-empty=true] .agent-page-scroll{flex:none;height:auto;}
+@media(max-width:760px){.agent-page[data-expression=candidate][data-empty=true] .agent-page-reading{padding-top:16px;padding-bottom:16px;}}
+
+/* Candidate entry/results put primary work before optional guidance in DOM and layout. */
+@media(min-width:761px){.parsing-surface[data-business-first=true][data-agent-open=true]{grid-template-columns:minmax(0,1fr) minmax(248px,300px);}}

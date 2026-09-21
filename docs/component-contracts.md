@@ -107,7 +107,7 @@ import { Badge } from "@/components/prism-next/badge"
 | --- | --- | --- |
 | TrendChart | 任意数值序列、标签、单位、可选数值范围 | `onSelect(id)` |
 | ComparisonChart | 分类与数值、横/纵方向、单位 | `onSelect(id)` |
-| HeatmapChart | 行列定义、单元格值/标签、选中 ID | `onSelect(id)` |
+| HeatmapChart | 行列定义、单元格值/标签、选中 ID、可选 sequentialColors | `onSelect(id)` |
 | ScatterChart / QuadrantScatterChart | x/y、分组与点形、范围、可选点大小；四象限额外传分界值与四个名称 | `onSelect(id)` |
 | PairedDotChart | 两个指标定义、每行两个值、同一单位与范围 | `onSelect(rowId, metricId?)` |
 | ComboChart | 分类、一个或两个坐标轴、绑定轴的柱/线系列 | `onSelect(categoryId, seriesId?)` |
@@ -119,6 +119,8 @@ import { Badge } from "@/components/prism-next/badge"
 | DataRecordTable | 任意记录、列渲染函数 | 选中记录 ID |
 
 新增复杂图形采用按需加载的 ECharts 6.1.0 SVG 引擎。原有趋势与比较继续使用 Recharts；没有同时引入第二套新引擎。图表提供数据表作为文字和键盘操作入口。缺测用 null 保留，零值不等于缺测；非法箱线摘要明确提示并不绘制。分箱、统计方法、达标判定和学情结论在组件外处理。
+
+`HeatmapChart.sequentialColors?: readonly [string, string, string]` 接收按低—中—高排列的三个六位 HEX 实色（`#RRGGBB`）。不接受 CSS 变量、短 HEX、透明色或颜色函数；非法输入回退原主题色阶。前景按实际 RGB 插值色选择黑/白，悬停继承原填色，仅改变边框。零值、缺测、数据表和受控选择行为不变。暖纸候选仅由演示页显式传入，不替换全局主题。
 
 现有能力包含热力矩阵、散点、箱线、成对指标、四象限和柱线组合；雷达、桑基、网络、树图等尚未封装，按真实复用需求继续添加。
 
@@ -177,6 +179,7 @@ v0.2 空间规则：辅助区根据扣除上下文与题篮后的实际工作区
 | 输入 | 责任 |
 | --- | --- |
 | title / meta / actions | 当前对话标题、摘要与页面操作；允许长中文自然换行 |
+| expression | 默认 `default`；`candidate` 仅用于表现评审，配合 `expression.css`，不改变对话数据或消息状态 |
 | empty / welcome / suggestions | 新对话内容与可编辑示例；示例填入不自动发送 |
 | messages / composer / notice | 消息、输入与反馈插槽；应用持有状态、草稿、材料快照、发送和停止回调 |
 
