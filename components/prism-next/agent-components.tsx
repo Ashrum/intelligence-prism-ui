@@ -105,10 +105,14 @@ export function AgentComposer({
   </form>;
 }
 export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string}
+export function AgentStepStatus({state}:{state:AgentStep['state']}) {
+ const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
+ return <Badge variant={tones[state]} size="lg">{{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
+}
 export function AgentTaskProgress({steps,actions}:{steps:AgentStep[];actions?:ReactNode}) {
  return <div><ol aria-label="任务执行步骤" className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={step.state==='running'?'step':undefined} className="flex items-start gap-3">
   <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'?<Spinner/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
-  <div className="min-w-0 flex-1"><div className="flex flex-wrap justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><span className={step.state==='error'?'text-ui-hint text-destructive-foreground':'text-ui-hint text-muted-foreground'}>{{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[step.state]}</span></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
+  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
  </li>)}</ol>{actions}</div>
 }
 

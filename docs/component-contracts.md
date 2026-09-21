@@ -140,12 +140,13 @@ import { Badge } from "@/components/prism-next/badge"
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR。
-- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`，失败状态用图标和文字表达。不连接模型或模拟执行器。
+- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
 - `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。仅返回 `accepted` 或 `kept`；调用方检查建议基于的原文是否仍有效，并负责更新草稿、撤销原核对状态和独立保存。
+- `DraftMathPreview`：`value / label?`，仅从当前草稿派生排版，题干与答案复用；不读原稿、不改变输入、不写库。Temml 0.13.4 作为同源原样 ESM 资产按需加载（避免构建优化改写词法器转义）；以 `throwOnError / strict` 开启、`trust` 关闭及展开/大小限额生成 MathML，沿用 Prism Math（STIX）与 `read-body`；正文经过 React 转义，只有渲染器生成的 MathML 可注入。默认识别保守的 Unicode 代数片段，复杂公式要求明确 `\(...\)` / `\[...\]` 标记；无法解析时显示当前原文与 14px 说明。渲染成功不等于数学正确；没有同步原稿或自动确认行为。
 
-引导式任务 v0.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
+引导式任务 v0.1.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
 
 补充要求最多 500 字，保存在解析示例并写入任务指令；固定示例不根据自由文本生成内容。排版建议仅演示条件与问题分段，采用后需重新核对；若题干已被人工修改，旧建议不能覆盖。任务指令可在任意已添加材料的阶段展开，保存后直接展示；编辑复用副本不会修改当前任务。
 
