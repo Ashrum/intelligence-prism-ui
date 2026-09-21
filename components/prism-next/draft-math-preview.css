@@ -1,0 +1,4 @@
+.prism-draft-equation{display:inline-block;max-width:100%;vertical-align:middle;overflow-x:auto;padding-block:.25rem;}
+.prism-draft-block{display:block;padding-block:.5rem;}
+.prism-draft-equation math{font-family:"Prism Math","Cambria Math",math,serif;font-size:var(--text-read-body);font-style:normal;font-weight:400;line-height:normal;letter-spacing:normal;white-space:normal;}
+.prism-draft-content{overflow-wrap:anywhere;}

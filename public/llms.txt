@@ -84,9 +84,12 @@ Use semantic text roles; reading and long editing 16/28, decision hints >=14px. 
 - This is a scoped review, not a new global visual default or a full-site re-audit. Real device and color-vision simulation are not included in this round.
 - Heatmap sequentialColors accepts three six-digit opaque HEX colors in low/mid/high order. Labels choose black/white against the interpolated fill; hover preserves fill and emphasizes the border.
 
-## Guided Agent tasks v0.1 (Candidate)
+## Guided Agent tasks v0.1.1 (Candidate)
 - Reusable patterns: /next/components/agent-components. Composer, clarification, context references, execution rows and change review are controlled components; the caller owns business state, execution and persistence.
 - Complete example: /next/agent, trial-paper parsing tab. Reuses the exact ParsingWorkspace/reducer shown at /next/use-cases/parsing, including source inspection, failure retry, review and local sample saving. The material-review assistant remains available in its tab and compact reading integration.
-- Interaction reference: https://www.beautifului.dev/ (Approval Card, Context Cards, Task Rows, Diff Table). Prism / coss implementation; no copied code, new library dependency or imported visual system.
+- Interaction reference: https://www.beautifului.dev/ (Approval Card, Context Cards, Task Rows, Diff Table). Prism / coss implementation; no copied Beautiful UI code, dependency or imported visual system.
 - Selection does not execute a task. Accepted changes are not saved/published; reject stale proposals and require renewed checking. Additional requirements appear in the reusable task instruction; editing its copy does not mutate the task.
 - Fixed fixtures only. Actual file content is not parsed; no OCR/model/backend grading or publishing. No fabricated confidence, progress percentage or reasoning traces.
+
+- DraftMathPreview renders the CURRENT stem/answer with pinned Temml 0.13.4 into native MathML / existing STIX. Conservative Unicode algebra and explicit \(…\) / \[ … \] are supported; unrecognized prose and invalid formulas preserve input. Rendering checks layout syntax, never mathematical correctness; no write-back, source edits or automatic confirmation. Length/expansion limits and untrusted-mode rendering apply.
+- Shared step badges stay 14px; loading uses the existing Spinner with reduced-motion support. Review code: https://github.com/Ashrum/intelligence-prism-ui/pull/18 (candidate branch, not main).
