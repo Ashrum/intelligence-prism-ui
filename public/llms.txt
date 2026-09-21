@@ -73,3 +73,6 @@ Skeletons and standard pages are separate categories and do not change the 80-co
 - Business use cases are not generic components or approved standard pages. Reuse WorkbenchShell and Prism/coss source.
 - Fixed local fixtures only. Actual selected files are not uploaded or parsed; image previews and PDF metadata only. No OCR, scanner, grading, publishing or production question-bank integration.
 - Review, execution and saving are distinct. Missing cross-page sources block save. Confirmed snapshots are isolated from later drafts. Word/Excel remain Step2.
+
+Typography: /next/foundations/typography (v0.2.1 implementation candidate)
+Use semantic text roles; reading and long editing 16/28, decision hints >=14px. Theme and task state never shrink typography. Keep vendored coss sources unchanged; include the Prism typography adaptation stylesheet.

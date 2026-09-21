@@ -21,13 +21,14 @@ function Navigation() {
     <SidebarHeader className="px-4 py-5">
       <Link href="/next" className="flex items-center gap-2.5 font-semibold text-foreground">
         <span className="flex items-center gap-0.5" aria-hidden="true"><span className="h-4 w-1 rounded-full bg-(--brand-blue)"/><span className="h-5 w-1 rounded-full bg-(--brand-magenta)"/><span className="h-3 w-1 rounded-full bg-(--brand-green)"/></span>
-        智能曜彩 <span className="ml-auto text-xs font-normal text-muted-foreground">v{DESIGN_VERSION}</span>
+        智能曜彩 <span className="ml-auto text-ui-hint text-muted-foreground">v{DESIGN_VERSION}</span>
       </Link>
     </SidebarHeader>
     <SidebarContent>
       <SidebarGroup><SidebarMenu>
         {link('/next','组件总览',<Boxes/>)}
         {link('/next/foundations','基础规范',<Palette/>)}
+        {link('/next/foundations/typography','字体与字号',<BookOpen/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
         {link('/next/agent','Agent 工作区',<MessageSquare/>)}
         {link('/next/use-cases','教师用例与流程',<Layers/>)}
@@ -64,8 +65,8 @@ export function Shell({children}:{children:React.ReactNode}) {
       <SidebarInset className="min-w-0">
         <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b bg-background px-5">
           <SidebarTrigger aria-label="切换导航侧栏"/>
-          <span className="hidden text-sm text-muted-foreground sm:inline">组件库</span>
-          <span className="hidden text-xs text-muted-foreground sm:inline">v{DESIGN_VERSION} · {DESIGN_STATUS}</span>
+          <span className="hidden text-ui-hint text-muted-foreground sm:inline">组件库</span>
+          <span className="hidden text-ui-hint text-muted-foreground sm:inline">v{DESIGN_VERSION} · {DESIGN_STATUS}</span>
           <div className="ml-auto flex items-center gap-2">
             <Button variant="ghost" size="icon" aria-label="查找组件" render={<Link href="/next#component-search"/>}><Search/></Button>
             <ThemePicker/>

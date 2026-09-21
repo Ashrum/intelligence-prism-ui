@@ -36,7 +36,7 @@ export function SelectParticles() {
     <DemoSection title="带说明的选项" description="说明留在选项内，收起时只显示名称，保留标准控件高度。" sources={["p-select-18"]}>
       <div className="max-w-80"><Label htmlFor="particle-scope">可见范围</Label><Select value={scope} onValueChange={v => v && setScope(v)} itemToStringValue={item => item.value}>
         <SelectTrigger id="particle-scope"><SelectValue>{item => <span className="truncate">{item.label}</span>}</SelectValue></SelectTrigger>
-        <SelectPopup alignItemWithTrigger={false}>{visibility.map(item => <SelectItem key={item.value} value={item}><span className="flex flex-col"><span>{item.label}</span><span className="text-xs text-muted-foreground">{item.description}</span></span></SelectItem>)}</SelectPopup>
+        <SelectPopup alignItemWithTrigger={false}>{visibility.map(item => <SelectItem key={item.value} value={item}><span className="flex flex-col"><span>{item.label}</span><span className="text-ui-hint text-muted-foreground">{item.description}</span></span></SelectItem>)}</SelectPopup>
       </Select></div><Feedback>{scope.description}</Feedback>
     </DemoSection>
     <DemoSection title="多选与已选摘要" description="少量选项直接多选；选中较多时显示名称与数量。" sources={["p-select-7"]}>

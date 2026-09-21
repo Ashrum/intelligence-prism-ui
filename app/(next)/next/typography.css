@@ -1,0 +1,113 @@
+/* Typography v0.2.1: semantic roles. Keep coss size utilities intact. */
+@theme {
+  --text-page-title: 1.625rem;
+  --text-page-title--line-height: 1.38461538;
+  --text-page-title--font-weight: 600;
+  --text-page-title--letter-spacing: 0;
+  --text-section-title: 1.25rem;
+  --text-section-title--line-height: 1.5;
+  --text-section-title--font-weight: 600;
+  --text-section-title--letter-spacing: 0;
+  --text-block-title: 1rem;
+  --text-block-title--line-height: 1.5;
+  --text-block-title--font-weight: 600;
+  --text-block-title--letter-spacing: 0;
+  --text-item-title: 0.875rem;
+  --text-item-title--line-height: 1.42857143;
+  --text-item-title--font-weight: 600;
+  --text-item-title--letter-spacing: 0;
+  --text-read-body: 1rem;
+  --text-read-body--line-height: 1.75;
+  --text-read-body--font-weight: 400;
+  --text-read-body--letter-spacing: 0;
+  --text-ui-body: 0.875rem;
+  --text-ui-body--line-height: 1.42857143;
+  --text-ui-body--font-weight: 400;
+  --text-ui-body--letter-spacing: 0;
+  --text-ui-action: 0.875rem;
+  --text-ui-action--line-height: 1.42857143;
+  --text-ui-action--font-weight: 500;
+  --text-ui-action--letter-spacing: 0;
+  --text-ui-hint: 0.875rem;
+  --text-ui-hint--line-height: 1.57142857;
+  --text-ui-hint--font-weight: 400;
+  --text-ui-hint--letter-spacing: 0;
+  --text-ui-meta: 0.75rem;
+  --text-ui-meta--line-height: 1.5;
+  --text-ui-meta--font-weight: 400;
+  --text-ui-meta--letter-spacing: 0;
+  --text-component-label: 0.75rem;
+  --text-component-label--line-height: 1.33333333;
+  --text-component-label--font-weight: 500;
+  --text-component-label--letter-spacing: 0;
+  --text-stat-display: 1.5rem;
+  --text-stat-display--line-height: 1.33333333;
+  --text-stat-display--font-weight: 600;
+  --text-stat-display--letter-spacing: 0;
+}
+
+.prism-long-edit, .prism-long-edit textarea { font-size:var(--text-read-body); line-height:var(--text-read-body--line-height); font-weight:400; }
+.prism-long-edit textarea { min-height:8rem; resize:vertical; }
+.prism-type-specimen { min-width:0; overflow-wrap:anywhere; }
+.prism-type-specimen p { max-inline-size:40em; }
+.prism-type-role { display:grid; grid-template-columns:minmax(9rem,1fr) minmax(0,2fr); gap:1rem; padding:1.25rem 0; }
+.prism-type-role + .prism-type-role { border-top:1px solid var(--border); }
+@media(max-width:40rem) { .prism-type-role { grid-template-columns:1fr; gap:.5rem; } }
+
+/* Prism adaptation layer: pinned coss sources remain byte-for-byte unchanged. */
+:where(html[data-ui-version="coss-v1"]) :is(h1,h2,h3,h4,h5,h6) { letter-spacing:0; }
+:where(html[data-ui-version="coss-v1"]) [data-slot="field-label"],
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="button"],[data-slot="tabs-tab"],[data-slot="menu-item"],[data-slot="menu-checkbox-item"],[data-slot="menu-radio-item"],[data-slot="select-item"],[data-slot="select-trigger"],[data-slot="combobox-item"],[data-slot="autocomplete-item"],[data-slot="toolbar-button"],[data-slot="toggle"],[data-slot="toast-action"]) {
+  font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); font-weight:500; letter-spacing:0;
+}
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="input"],[data-slot="combobox-input"],[data-slot="autocomplete-input"],[data-slot="table-cell"]) {
+  font-size:var(--text-ui-body); line-height:var(--text-ui-body--line-height); font-weight:400;
+}
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="field-description"],[data-slot="field-error"],[data-slot="card-description"],[data-slot="card-frame-description"],[data-slot="frame-panel-description"],[data-slot="dialog-description"],[data-slot="alert-dialog-description"],[data-slot="drawer-description"],[data-slot="popover-description"],[data-slot="empty-description"],[data-slot="alert-description"],[data-slot="toast-description"],[data-slot="table-caption"]) {
+  font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); font-weight:400;
+}
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="dialog-title"],[data-slot="alert-dialog-title"],[data-slot="drawer-title"],[data-slot="empty-title"]) {
+  font-size:var(--text-section-title); line-height:var(--text-section-title--line-height); font-weight:600;
+}
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="card-title"],[data-slot="card-frame-title"],[data-slot="frame-panel-title"],[data-slot="popover-title"]):not(.text-item-title) {
+  font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); font-weight:600;
+}
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="alert-title"],[data-slot="toast-title"],[data-slot="table-head"]) {
+  font-size:var(--text-item-title); line-height:var(--text-item-title--line-height); font-weight:600;
+}
+:where(html[data-ui-version="coss-v1"]) :is(textarea,[data-slot="textarea-control"]) {
+  font-size:var(--text-read-body); line-height:var(--text-read-body--line-height); font-weight:400;
+}
+:where(html[data-ui-version="coss-v1"]) :is(input,textarea)::placeholder { color:var(--muted-foreground); opacity:1; }
+/* All status badges have a 14px floor. Explicit short-label specimens can opt into 12px. */
+:where(html[data-ui-version="coss-v1"]) [data-slot="badge"] { height:auto; min-height:1.375rem; padding-block:0; font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); font-weight:500; }
+:where(html[data-ui-version="coss-v1"]) [data-slot="badge"].text-component-label { font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); min-height:1rem; }
+:where(html[data-ui-version="coss-v1"]) [data-slot="kbd"] { font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); font-weight:500; }
+.text-stat-display { font-variant-numeric:tabular-nums; }
+/* Match the existing coss sm breakpoint; never shrink reading content. */
+@media (width < 40rem) {
+  :where(html[data-ui-version="coss-v1"]) :is([data-slot="button"],[data-slot="tabs-tab"],[data-slot="menu-item"],[data-slot="select-trigger"],[data-slot="select-item"],[data-slot="input"],[data-slot="combobox-input"],[data-slot="combobox-item"],[data-slot="autocomplete-input"],[data-slot="autocomplete-item"],[data-slot="toolbar-button"],[data-slot="toggle"],[data-slot="field-label"]) { font-size:1rem; line-height:1.5; }
+}
+@layer base {
+  :where(html[data-ui-version="coss-v1"]) h1 { font-size:var(--text-page-title); line-height:var(--text-page-title--line-height); font-weight:600; }
+  :where(html[data-ui-version="coss-v1"]) h2 { font-size:var(--text-section-title); line-height:var(--text-section-title--line-height); font-weight:600; }
+  :where(html[data-ui-version="coss-v1"]) :is(h3,h4,h5,h6) { font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); font-weight:600; }
+}
+/* Opacity must not silently weaken enabled labels and placeholders. */
+:where(html[data-ui-version="coss-v1"]) [data-placeholder],
+:where(html[data-ui-version="coss-v1"]) [data-placeholder] > span { color:var(--muted-foreground); }
+:where(html[data-ui-version="coss-v1"]) [data-slot="tabs-tab"] { color:var(--muted-foreground); }
+:where(html[data-ui-version="coss-v1"]) [data-slot="tabs-tab"][data-active] { color:var(--foreground); }
+:where(html[data-ui-version="coss-v1"]) [data-outside]:not([data-selected]):not([data-disabled]) button { color:var(--muted-foreground); }
+@layer base { :where(html[data-ui-version="coss-v1"]) :is(strong,b) { font-weight:600; } }
+:where(.prism-copy,.prism-question-copy,.text-read-body) p, p.text-read-body { max-inline-size:40em; }
+/* Remaining text-bearing coss slots share the same roles as their field/button peers. */
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="label"],[data-slot="accordion-trigger"],[data-slot="sidebar-menu-button"],[data-slot="command-item"],[data-slot="context-menu-item"],[data-slot="context-menu-checkbox-item"],[data-slot="context-menu-radio-item"],[data-slot="context-menu-sub-trigger"],[data-slot="menu-sub-trigger"]) { font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); font-weight:500; }
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="number-field-input"],[data-slot="command-input"],[data-slot="combobox-chips-input"]) { font-size:var(--text-ui-body); line-height:var(--text-ui-body--line-height); font-weight:400; }
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="sheet-title"],[data-slot="fieldset-legend"]) { font-size:var(--text-section-title); line-height:var(--text-section-title--line-height); font-weight:600; }
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="sheet-description"],[data-slot="fieldset-description"],[data-slot="tooltip-popup"],[data-slot="combobox-empty"],[data-slot="combobox-status"],[data-slot="command-empty"]) { font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); font-weight:400; }
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="menu-shortcut"],[data-slot="context-menu-shortcut"],[data-slot="command-shortcut"],[data-slot="sidebar-group-label"]) { font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); font-weight:500; }
+@media (width < 40rem) {
+  :where(html[data-ui-version="coss-v1"]) :is([data-slot="label"],[data-slot="accordion-trigger"],[data-slot="sidebar-menu-button"],[data-slot="command-item"],[data-slot="context-menu-item"],[data-slot="context-menu-checkbox-item"],[data-slot="context-menu-radio-item"],[data-slot="context-menu-sub-trigger"],[data-slot="menu-sub-trigger"],[data-slot="number-field-input"],[data-slot="command-input"],[data-slot="combobox-chips-input"]) { font-size:1rem; line-height:1.5; }
+}
+:where(html[data-ui-version="coss-v1"]) [data-slot="fieldset-legend"] { font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); }

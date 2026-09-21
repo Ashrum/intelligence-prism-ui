@@ -33,11 +33,11 @@ export function VerificationPanel({ goal, onClose, active, panelId = "learning-v
   return <QuestionWorkPanel id={panelId} open={active} title="核验目标" description={`${goal.id} · 标准 v${goal.version}。两份独立新作答均满足所有标准，才判定达成。`} onClose={onClose} footer={<><Button onClick={save}>保存核验</Button><Button variant="outline" onClick={onClose}>取消</Button></>}>
     <div className="space-y-6">
       <Field><FieldLabel>新情境作答</FieldLabel><QuestionSelect label="选择新作答" value={attemptId} onChange={select} items={followupAttempts.map(item => ({ value: item.id, label: `${item.id} · ${item.title}` }))} /></Field>
-      <p className="text-xs leading-6 text-muted-foreground">两份作答均为人工编写的界面示例，代表两次独立练习。请根据下方内容手动判断；不自动评分。</p>
-      <section className="space-y-3"><h4 className="text-sm font-semibold">新情境题面</h4><p className="text-base leading-7">{attempt.prompt}</p></section>
-      <section className="space-y-3"><h4 className="text-sm font-semibold">示例学生作答 · {attempt.id}</h4><blockquote className="border-l-2 pl-4 text-base leading-7">{attempt.answer}</blockquote></section>
+      <p className="text-ui-hint text-muted-foreground">两份作答均为人工编写的界面示例，代表两次独立练习。请根据下方内容手动判断；不自动评分。</p>
+      <section className="space-y-3"><h4 className="text-item-title">新情境题面</h4><p className="text-read-body">{attempt.prompt}</p></section>
+      <section className="space-y-3"><h4 className="text-item-title">示例学生作答 · {attempt.id}</h4><blockquote className="border-l-2 pl-4 text-read-body">{attempt.answer}</blockquote></section>
       <VerificationFields criteria={goal.criteria} results={results} note={note} onResultsChange={setResults} onNoteChange={setNote} error={error}/>
-      <p className="text-xs leading-6 text-muted-foreground">更正同一份作答会保留历史记录，以最新判断为准；同一份作答始终只计一次。</p>
+      <p className="text-ui-hint text-muted-foreground">更正同一份作答会保留历史记录，以最新判断为准；同一份作答始终只计一次。</p>
     </div>
   </QuestionWorkPanel>
 }

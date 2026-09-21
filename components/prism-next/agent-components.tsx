@@ -67,7 +67,7 @@ export function AgentComposer({
           </div>
         </InputGroupAddon>
       </InputGroup>
-      <div className="min-w-0 text-xs text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
+      <div className="min-w-0 text-ui-hint text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
       {suggestions}
     </form>;
   }
@@ -90,7 +90,7 @@ export function AgentComposer({
       }}
     />
     <div className="flex items-center justify-between gap-3">
-      <div className="min-w-0 text-xs text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
+      <div className="min-w-0 text-ui-hint text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
       <div className="flex shrink-0 items-center gap-2">
         {context}
         {running
@@ -101,4 +101,4 @@ export function AgentComposer({
     {suggestions}
   </form>;
 }
-export function AgentTaskProgress({steps,actions}:{steps:{id:string;label:string;state:"done"|"running"|"pending"|"error"}[];actions?:ReactNode}){return <div><ol className="space-y-3 border-l pl-4 py-4 text-sm">{steps.map(step=><li key={step.id} className="flex items-center gap-3">{step.state==="done"?<Check className="size-4 text-success-foreground"/>:step.state==="running"?<Spinner/>:<Circle className="size-3 text-muted-foreground"/>}<span className={step.state==="pending"?"text-muted-foreground":""}>{step.label}</span><span className="ml-auto text-xs text-muted-foreground">{{done:"完成",running:"进行中",pending:"未完成",error:"失败"}[step.state]}</span></li>)}</ol>{actions}</div>}
+export function AgentTaskProgress({steps,actions}:{steps:{id:string;label:string;state:"done"|"running"|"pending"|"error"}[];actions?:ReactNode}){return <div><ol className="space-y-3 border-l pl-4 py-4 text-ui-body">{steps.map(step=><li key={step.id} className="flex items-center gap-3">{step.state==="done"?<Check className="size-4 text-success-foreground"/>:step.state==="running"?<Spinner/>:<Circle className="size-3 text-muted-foreground"/>}<span className={step.state==="pending"?"text-muted-foreground":""}>{step.label}</span><span className="ml-auto text-ui-hint text-muted-foreground">{{done:"完成",running:"进行中",pending:"未完成",error:"失败"}[step.state]}</span></li>)}</ol>{actions}</div>}
