@@ -2,11 +2,13 @@
 
 ## 当前可用版本：coss v1.13.1
 
-### Agent 上下文摘要 v0.1 · 设计候选（2026-09-22）
+### Agent 语义组件第一组 v0.1 · 设计候选（2026-09-22）
 
-依据 Agent 语义组件规范 v0.2.1，在既有 `/next/components/agent-components#context-summary-review` 原位增加首项候选。复用 AgentContextList 与 Prism / coss，独立展示选用、读取、本轮上下文和成果引用；缺记录、确认无事件、暂不可核验分别表达。展开状态和来源查看意图由调用方控制，查看来源不会改写证据。
+依据 v0.2.1 规范和复用规划 v0.1.2，原位扩展 `/next/components/agent-components#context-summary-review`：上下文摘要、摘要预览、对比查看、执行确认、任务进度、执行结果，以及同一次执行的组合示例。两种用途、独立状态与 384px 窄容器可手动切换。目录仍为 80 项。
 
-同处提供两种用途、六种记录情况、窄容器检查，以及“执行确认 + 任务进度 + 执行结果”的手动组合参照。组合不算其余语义已交付；全部为人工展示数据，不产生真实执行、存储或权限判断。详见 [候选说明与接续验收](docs/agent-context-summary-review.md)。组件目录仍为 80 项。
+复用 AgentContextSummary / AgentContextList / AgentChangeReview / AgentTaskProgress 和 Prism / coss；新增受控的预览、确认、整体进度与结果组合。操作仅返回意图，提交中不会被自动当作已接收，回执不明仅查询原执行；历史步骤停止转圈并标明“上次进行到”。不接业务存储、权限判断或 Runtime，不新增完整业务页面。
+
+本站候选源码与 GitHub 历史分开记录；本轮不宣称合入 GitHub main。交互、接口及接续验收见 [候选说明](docs/agent-context-summary-review.md) 和 [组件契约](docs/component-contracts.md)。
 
 ### Agent 引导式任务 v0.1.1 · 候选（2026-09-21）
 
