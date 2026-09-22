@@ -93,3 +93,9 @@ Use semantic text roles; reading and long editing 16/28, decision hints >=14px. 
 
 - DraftMathPreview renders the CURRENT stem/answer with pinned Temml 0.13.4 into native MathML / existing STIX. Conservative Unicode algebra and explicit \(…\) / \[ … \] are supported; unrecognized prose and invalid formulas preserve input. Rendering checks layout syntax, never mathematical correctness; no write-back, source edits or automatic confirmation. Length/expansion limits and untrusted-mode rendering apply.
 - Shared step badges stay 14px; loading uses the existing Spinner with reduced-motion support. Review code: https://github.com/Ashrum/intelligence-prism-ui/pull/18 (candidate branch, not main).
+
+## Agent context summary v0.1 (Design candidate, 2026-09-22)
+- Entry: /next/components/agent-components#context-summary-review. See docs/agent-context-summary-review.md. Reuses the Site candidate AgentContextList and Prism/coss; catalog remains 80 entries.
+- AgentContextSummary accepts independent host-supplied selection, read, current-context and citation facts. It never verifies evidence or infers one fact from another. Absent requires complete event coverage; unknown and unavailable are separate. Inspecting a source does not change any fact.
+- Expanded state and source-inspection callbacks are controlled by the host. No business store, authorization engine, Runtime execution, or full business page is introduced.
+- Two purposes and six evidence cases use explicitly synthetic fixtures. A manual confirmation/progress/result composition illustrates received, running, human review, stale confirmation, unknown receipt, complete, partial and failed states. It is a presentation reference, not delivery of the remaining semantics or an execution model.

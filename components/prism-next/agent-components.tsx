@@ -127,10 +127,10 @@ export function AgentQuestionCard({question,description,options,value,onValueCha
  </Card>
 }
 
-export type AgentContextItem = {id:string;title:string;location:string;description?:string;status?:ReactNode}
-export function AgentContextList({label='本次使用的材料',items,onInspect}:{label?:string;items:readonly AgentContextItem[];onInspect?:(id:string)=>void}) {
+export type AgentContextItem = {id:string;title:string;location:string;description?:string;status?:ReactNode;inspectable?:boolean}
+export function AgentContextList({label='本次使用的材料',items,onInspect,emptyText='尚未引用材料。',inspectLabel='查看原稿'}:{label?:string;items:readonly AgentContextItem[];onInspect?:(id:string)=>void;emptyText?:string;inspectLabel?:string}) {
  const id=useId()
- return <section aria-labelledby={id} className="space-y-3"><h3 id={id} className="text-block-title">{label}</h3>{items.length?<ul className="space-y-2">{items.map(item=><li key={item.id} className="flex min-w-0 items-start gap-3 rounded-lg bg-secondary p-4"><FileText className="mt-1 size-4 shrink-0 text-muted-foreground" aria-hidden="true"/><div className="min-w-0 flex-1"><p className="break-words text-item-title">{item.title}</p><p className="mt-1 text-ui-hint text-muted-foreground">{item.location}</p>{item.description&&<p className="mt-1 text-ui-hint text-muted-foreground">{item.description}</p>}{item.status&&<div className="mt-2">{item.status}</div>}{onInspect&&<Button variant="ghost" size="sm" className="mt-2" aria-label={`查看材料：${item.title}`} onClick={()=>onInspect(item.id)}>查看原稿<ArrowUpRight/></Button>}</div></li>)}</ul>:<p className="text-ui-hint text-muted-foreground">尚未引用材料。</p>}</section>
+ return <section aria-labelledby={id} className="space-y-3"><h3 id={id} className="text-block-title">{label}</h3>{items.length?<ul className="space-y-2">{items.map(item=><li key={item.id} className="flex min-w-0 items-start gap-3 rounded-lg bg-secondary p-4"><FileText className="mt-1 size-4 shrink-0 text-muted-foreground" aria-hidden="true"/><div className="min-w-0 flex-1"><p className="break-words text-item-title">{item.title}</p><p className="mt-1 text-ui-hint text-muted-foreground">{item.location}</p>{item.description&&<p className="mt-1 text-ui-hint text-muted-foreground">{item.description}</p>}{item.status&&<div className="mt-2">{item.status}</div>}{onInspect&&item.inspectable!==false&&<Button variant="ghost" size="sm" className="mt-2" aria-label={`查看材料：${item.title}`} onClick={()=>onInspect(item.id)}>{inspectLabel}<ArrowUpRight/></Button>}</div></li>)}</ul>:<p className="text-ui-hint text-muted-foreground">{emptyText}</p>}</section>
 }
 
 export type AgentChangeDecision = 'pending'|'accepted'|'kept'
