@@ -26,6 +26,38 @@
 - 结果接收 succeeded / partial / failed / unknown 联合类型。未知回执只接受查询入口；部分完成保留两类范围；明确失败的重试仅在宿主提供能力时显示。回调不把失败自动改写成成功。
 - 对比新增可选版本标签、采纳范围、展示插槽和重新选择回调。decision 仍必传，不内置 pending 默认值。采纳和撤回只返回意图；调用方负责草稿变更、失效核验与正式保存。展示插槽不代表公式语义差异算法；DraftMathPreview 独立契约不变。
 
+## 任务进度状态映射
+
+规范状态：v0.2.1 §7.1 原文未在本仓库、Git 历史及 Workspace docs 中找到，属规范缺口；以下映射基于既有契约，待原文核对。
+
+`AgentProgressState` 与标签由 `lib/prism-next/agent-progress.ts` 统一提供：
+
+| 展示态 | 标签 | 展示态 | 标签 |
+| --- | --- | --- | --- |
+| `pending` | 待开始 | `running` | 进行中 |
+| `waiting` | 等待处理 | `unknown` | 状态未确认 |
+| `completed` | 已完成 | `partial` | 部分完成 |
+| `failed` | 执行失败 | `queued` | 排队中 |
+| `paused` | 已暂停 | `waiting-human` | 待人工处理 |
+
+`mapAgentProgressState` 运行时只适配本仓库的两个契约：
+
+| 来源 | 契约文件 | 源状态 → 展示态 |
+| --- | --- | --- |
+| `shell` | `components/prism-next/skeletons/workbench-model.ts` · `TaskState` | `idle` → `null`；`queued` → `queued`；`running` → `running`；`attention` → `waiting`；`failed` → `failed`；`completed` → `completed` |
+| `review` | `lib/prism-next/review.ts` · `TaskStatus` | `idle` → `null`；`running` → `running`；`confirm` → `waiting-human`；`completed` → `completed`；`stopped` → `null`；`error` → `failed` |
+
+以下 Workspace 词汇仅为**接入方适配参考，非组件依赖**；由接入方实现，不纳入组件库运行时类型或映射：
+
+| 来源 | ole-school-workbench 源文件 | 源状态 → 建议展示态 |
+| --- | --- | --- |
+| `teacher-agent` | `ole-school-workbench/src/features/teacher/shared/model.ts` · `AgentTask.status` | `DRAFT` → `pending`；`READY` / `INSUFFICIENT` → `waiting-human`；`STOPPED` / `ADOPTED` / `REJECTED` → `null` |
+| `conversation` | `ole-school-workbench/src/features/teacher/agent-home/conversation-directory.ts` · `ConversationStatus` | `running` → `running`；`waiting` → `waiting-human`；`completed` → `completed`；`stopped` → `null` |
+
+`null` 表示由宿主处理空闲、已停止或业务决定，不表示 `unknown`（执行回执未确认）。停止是终态，所有 `stopped` / `STOPPED` 均映射为 `null`，不能呈现为可恢复的暂停；参见 `examples/agent-workspace.tsx` 的“任务已停止，没有采用任何建议”及“从头重试”。对话状态是聚合摘要，不能用来推断每项任务的执行回执；采纳 / 不采纳也不等于执行成功 / 失败。
+
+保留规范所列的 `paused`（已暂停）展示态，但当前契约没有产生它的来源，不声明任何源状态映射。`degraded`、`retrying` 没有既有契约依据，明确不支持。
+
 ## 确认、进度与结果的最小组合
 
 同一次执行的 11 种状态由示例选择器手动提供；组件没有自动执行、轮询、业务 Store 或权限引擎。

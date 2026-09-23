@@ -111,7 +111,7 @@ export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state']
 }
 export function AgentTaskProgress({steps,actions,activity='live'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot'}) {
  return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
-  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
+  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
   <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
  </li>)}</ol>{actions}</div>
 }
@@ -134,7 +134,7 @@ export function AgentContextList({label='本次使用的材料',items,onInspect,
 }
 
 export type AgentChangeDecision = 'pending'|'accepted'|'kept'
-/** Proposals are caller-owned. This component never edits content or persists it. */
+/** Decision expresses adoption only. The host owns verification, content edits and persistence. */
 export function AgentChangeReview({title,before,after,reason,decision,onDecision,disabled=false,disabledReason,beforeLabel='修改前',afterLabel='建议内容',beforePreview,afterPreview,scope,onResetDecision}:{
  title:string;before:string;after:string;reason:string;decision:AgentChangeDecision;
  onDecision:(decision:'accepted'|'kept')=>void;disabled?:boolean;disabledReason?:string;
@@ -142,7 +142,7 @@ export function AgentChangeReview({title,before,after,reason,decision,onDecision
 }) {
  const id=useId(),heading=useRef<HTMLHeadingElement>(null)
  const choose=(value:'accepted'|'kept')=>{onDecision(value);requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}
- return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用 · 尚需核对':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
+ return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
  <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">{beforeLabel}</h4>{beforePreview??<p className="whitespace-pre-wrap break-words text-read-body">{before}</p>}</section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">{afterLabel}</h4>{afterPreview??<p className="whitespace-pre-wrap break-words text-read-body">{after}</p>}</section></div>
  {scope&&<p className="text-ui-hint text-muted-foreground">{scope}</p>}
  {disabledReason&&<p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}

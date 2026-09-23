@@ -1,4 +1,4 @@
-export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string; sourceLabel?:string }
+export type ComponentEntry = { id:string; title:string; summary:string; kind?:"pattern"|"extension"; sourceUrl?:string; sourceLabel?:string; searchTargets?:readonly { terms:readonly string[]; anchor?:string }[] }
 export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
@@ -52,7 +52,15 @@ export const componentGroups:ComponentGroup[] = [
     item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
   ]},
   { id:"agent",title:"Agent",items:[
-    {...item("agent-components","Agent 语义组件","上下文、成果预览、对比、确认、进度与结果；复用现有输入和引导组件。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+    {...item("agent-components","Agent 语义组件","上下文、成果预览、对比、确认、进度与结果；复用现有输入和引导组件。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件",searchTargets:[
+      {terms:['上下文摘要','AgentContextSummary','AgentContextList'],anchor:'context-summary-review'},
+      {terms:['摘要预览','成果预览','AgentArtifactPreview'],anchor:'context-summary-review'},
+      {terms:['对比查看器','修改对照','AgentChangeReview'],anchor:'context-summary-review'},
+      {terms:['执行确认','AgentExecutionConfirmation'],anchor:'context-summary-review'},
+      {terms:['任务进度','执行进度','AgentExecutionProgress','AgentTaskProgress','AgentStepStatus'],anchor:'context-summary-review'},
+      {terms:['执行结果','AgentExecutionResult'],anchor:'context-summary-review'},
+      {terms:['AgentComposer','AgentQuestionCard','任务输入','澄清问题']},
+    ]},
   ]},
   { id:"learning",title:"评价与学习支持",items:[
     {...item("goal-milestones","Milestones 里程碑","接收节点、说明和状态，不依赖目标工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
@@ -106,6 +114,16 @@ export const componentGroups:ComponentGroup[] = [
 ]
 export const components = componentGroups.flatMap(group=>group.items)
 export function findComponent(id:string) { return components.find(item=>item.id===id) }
+
+/** One result per catalog entry; semantic names lead to an existing sample anchor. */
+export function searchComponents(query:string, entries:readonly ComponentEntry[]=components) {
+  const normalized=query.trim().toLowerCase()
+  return entries.flatMap(item=>{
+    const target=normalized?item.searchTargets?.find(target=>target.terms.some(term=>term.toLowerCase().includes(normalized))):undefined
+    if(!target&&!`${item.id} ${item.title} ${item.summary}`.toLowerCase().includes(normalized))return []
+    return [{item,href:`/next/components/${item.id}${target?.anchor?`#${target.anchor}`:''}`}]
+  })
+}
 
 /** Related Agent pages share navigation, not the component registry or count. */
 export const agentRelatedPages = [
