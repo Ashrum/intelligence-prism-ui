@@ -23,7 +23,7 @@ test('an arbitrary artifact without an open capability never invents an action o
   assert.doesNotMatch(html, /<button|函数|已完成|已发布/);
 });
 
-test('only a ready confirmation exposes submission; blocked and unresolved inputs preserve their facts', () => {
+test('only a ready confirmation exposes submission; submitting prevents duplicate submission and other states preserve their facts', () => {
   const base = { title: '生成采购草稿', target: '清单 A', version: '修订 B', effects: ['保留旧清单'] };
   let invoked = 0;
   const action = { label: '提交采购请求', onAction() { invoked++; } };
@@ -31,6 +31,10 @@ test('only a ready confirmation exposes submission; blocked and unresolved input
   for (const state of ['submitting', 'received', 'recorded', 'blocked', 'unknown']) {
     const html = render(h(AgentExecutionConfirmation, { ...base, confirmation: { state, description: '宿主提供的事实', confirm: action } }));
     assert.doesNotMatch(html, /提交采购请求/); assert.match(html, /宿主提供的事实/); assert.match(html, /修订 B/);
+    if (state === 'submitting') {
+      assert.match(html, /正在提交/); assert.match(html, /本次确认范围/);
+      assert.doesNotMatch(html, /<button\b/);
+    }
   }
   assert.equal(invoked, 0);
 });
