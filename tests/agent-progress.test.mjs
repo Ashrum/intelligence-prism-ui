@@ -13,16 +13,19 @@ for (const [source, states] of Object.entries(contracts)) {
   })
 }
 
-test('terminal stop is host-handled and no current source produces paused', () => {
+test('terminal stop is host-handled and current sources never invent display-only execution states', () => {
   assert.equal(mapAgentProgressState({ source: 'review', state: 'stopped' }), null)
   for (const [source, states] of Object.entries(contracts)) {
-    for (const state of Object.keys(states)) assert.notEqual(mapAgentProgressState({ source, state }), 'paused')
+    for (const state of Object.keys(states)) {
+      const mapped = mapAgentProgressState({ source, state })
+      assert.ok(!['paused', 'degraded', 'retrying'].includes(mapped), `${source}.${state}`)
+    }
   }
 })
 
-test('queued, paused and human waiting stay distinct from generic waiting and unknown receipts', () => {
+test('queued, paused, human waiting, degraded and retrying keep distinct display labels', () => {
   assert.deepEqual(['queued', 'paused', 'waiting-human', 'waiting', 'unknown'].map(state => agentProgressLabels[state]), ['排队中', '已暂停', '待人工处理', '等待处理', '状态未确认'])
   assert.deepEqual(['pending', 'running', 'completed', 'partial', 'failed'].map(state => agentProgressLabels[state]), ['待开始', '进行中', '已完成', '部分完成', '执行失败'])
-  assert.equal('degraded' in agentProgressLabels, false)
-  assert.equal('retrying' in agentProgressLabels, false)
+  assert.equal(agentProgressLabels.degraded, '已降级')
+  assert.equal(agentProgressLabels.retrying, '重试中')
 })
