@@ -29,10 +29,14 @@ If a required rule is absent:
 - Component catalog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next
 - Foundations: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations
 - Materials reading pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/reading
-- Agent workspace pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
+- Agent category: https://intelligence-prism-ui.ashrvm.chatgpt.site/next#group-agent
+- Agent semantic components: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/agent-components
+- Agent page skeleton: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent
+- Agent workspace example: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
 - Implementation contracts: https://github.com/Ashrum/intelligence-prism-ui/blob/main/docs/component-contracts.md
 
 ## Core component specifications
+- The Agent navigation category groups semantic components, page skeleton and workspace example. Only the component entry counts toward the 80-component catalog; the other two retain their own reuse levels. Existing routes are preserved.
 - Button: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/button
 - Form: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/form
 - Field: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/field
