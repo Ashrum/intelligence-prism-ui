@@ -38,6 +38,7 @@
 
 - [组件站点](https://intelligence-prism-ui.ashrvm.chatgpt.site/next) · [基础规范](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations)
 - [源码接入与组件约定](docs/component-contracts.md)：依赖、主题、字体、目录与数据接口。
+- [AI 原生开发流程 v0.1](docs/OLE_AI_NATIVE_DEVELOPMENT_WORKFLOW_v0.1.md)：Claude Code 监督与独立审核、Codex 构建；跨设备准备见第 11 节。在另一台电脑完成本机安装与授权后，从本仓库启动并先读取该文档。
 - 本版在 v1.13.0 上统一评审状态和版本号，沿用已验证的视觉、交互与组件接口。
 - 交付方式为源码复用，`private: true` 保留；未发布独立 npm 包。应用示例使用演示数据，业务服务、权限和持久化由接入应用提供。
 
