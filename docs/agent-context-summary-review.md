@@ -28,40 +28,27 @@
 
 ## 任务进度状态映射
 
-规范依据：[v0.2.1 批准原文 §7.1](https://github.com/Ashrum/intelligence-prism-ui/blob/481f54ff40ca1e5df42be1ab12ddd4a31168e2b2/docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md#71-全局任务状态) 已取得并核对，原件归档于 PR #21，尚未合入当前分支所基于的 main。此前“缺少原文”的记录已解除。该节要求统一呈现排队、运行、暂停、等待人工、完成、失败、降级和重试，映射既有执行契约；显示状态支持与执行来源接入分别登记，不在前端建立另一套业务状态真相。
+规范依据为已通过 PR #21 归档、包含于本分支基线 `main@51f980d` 的 [v0.2.1 批准原文 §7.1](OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md#71-全局任务状态)（L336–342）。该节要求统一呈现排队、运行、暂停、等待人工、完成、失败、降级和重试，映射既有执行契约，不在前端建立另一套业务状态真相。逐项支持与接入边界统一记录在下方“批准规范原文归档与任务状态复核”表中。
 
-`AgentProgressState` 与标签由 `lib/prism-next/agent-progress.ts` 统一提供：
+`AgentProgressState` 与标签由 `lib/prism-next/agent-progress.ts` 统一提供；除规范表中的八种状态外，保留 `pending`（待开始）、`waiting`（等待处理）、`unknown`（状态未确认）和 `partial`（部分完成），不混同各类事实。
 
-| 展示态 | 标签 | 展示态 | 标签 |
-| --- | --- | --- | --- |
-| `pending` | 待开始 | `running` | 进行中 |
-| `waiting` | 等待处理 | `unknown` | 状态未确认 |
-| `completed` | 已完成 | `partial` | 部分完成 |
-| `failed` | 执行失败 | `queued` | 排队中 |
-| `paused` | 已暂停 | `waiting-human` | 待人工处理 |
-| `degraded` | 已降级 | `retrying` | 重试中 |
+`mapAgentProgressState` 只适配本仓库的两个契约，目前仅由测试调用，尚未接入实际调用方：
 
-`mapAgentProgressState` 运行时只适配本仓库的两个契约：
-
-| 来源 | 契约文件 | 源状态 → 展示态 |
-| --- | --- | --- |
-| `shell` | `components/prism-next/skeletons/workbench-model.ts` · `TaskState` | `idle` → `null`；`queued` → `queued`；`running` → `running`；`attention` → `waiting`；`failed` → `failed`；`completed` → `completed` |
-| `review` | `lib/prism-next/review.ts` · `TaskStatus` | `idle` → `null`；`running` → `running`；`confirm` → `waiting-human`；`completed` → `completed`；`stopped` → `null`；`error` → `failed` |
+- `shell`：`components/prism-next/skeletons/workbench-model.ts` 的 `TaskState`；`idle → null`、`attention → waiting`，`queued` / `running` / `failed` / `completed` 同名映射。
+- `review`：`lib/prism-next/review.ts` 的 `TaskStatus`；`idle` / `stopped → null`、`confirm → waiting-human`、`error → failed`，`running` / `completed` 同名映射。
 
 以下 Workspace 词汇仅为**接入方适配参考，非组件依赖**；由接入方实现，不纳入组件库运行时类型或映射：
 
-| 来源 | ole-school-workbench 源文件 | 源状态 → 建议展示态 |
-| --- | --- | --- |
-| `teacher-agent` | `ole-school-workbench/src/features/teacher/shared/model.ts` · `AgentTask.status` | `DRAFT` → `pending`；`READY` / `INSUFFICIENT` → `waiting-human`；`STOPPED` / `ADOPTED` / `REJECTED` → `null` |
-| `conversation` | `ole-school-workbench/src/features/teacher/agent-home/conversation-directory.ts` · `ConversationStatus` | `running` → `running`；`waiting` → `waiting-human`；`completed` → `completed`；`stopped` → `null` |
+- `teacher-agent`：`ole-school-workbench/src/features/teacher/shared/model.ts` 的 `AgentTask.status`；`DRAFT → pending`、`READY` / `INSUFFICIENT → waiting-human`、`STOPPED` / `ADOPTED` / `REJECTED → null`。
+- `conversation`：`ole-school-workbench/src/features/teacher/agent-home/conversation-directory.ts` 的 `ConversationStatus`；`waiting → waiting-human`、`stopped → null`，`running` / `completed` 同名映射。
 
 `null` 表示由宿主处理空闲、已停止或业务决定，不表示 `unknown`（执行回执未确认）。停止是终态，所有 `stopped` / `STOPPED` 均映射为 `null`，不能呈现为可恢复的暂停；参见 `examples/agent-workspace.tsx` 的“任务已停止，没有采用任何建议”及“从头重试”。对话状态是聚合摘要，不能用来推断每项任务的执行回执；采纳 / 不采纳也不等于执行成功 / 失败。
 
-`paused`（已暂停）、`degraded`（已降级）、`retrying`（重试中）均支持作为调用方显式传入的显示状态，但**既有执行状态来源未接入**：当前 `shell` / `review` 契约没有对应状态，以上来源适配保持不变，不虚构任何源状态映射。显示“重试中”不代表组件发起重试，也不能由点击重试按钮直接推断。后续接入须由宿主从可信执行状态取得这些事实；示例样本不构成执行来源。
+示例样本不构成执行来源；显示“重试中”不代表组件发起重试，也不能由点击重试按钮推断执行事实。没有对应来源的展示态须由宿主后续接入可信回执，不能虚构源状态映射。
 
 ## 确认、进度与结果的最小组合
 
-示例选择器手动提供 15 种组合样本，供逐项查看同一次执行可能出现的事实，不模拟自动流转。新增排队、暂停、降级、重试中四种样本；“待人工处理”明确传入 `waiting-human`，不使用通用 `waiting`。组件仍仅显示调用方提供的状态，没有自动执行、轮询、业务 Store 或权限引擎；选择样本和点击业务动作不等于执行状态已变化。独立确认及组合确认按钮只反馈操作意图，不自动切换为 submitting；状态由宿主传参或示例选择器显式改变。
+示例选择器手动提供 15 种组合样本，包含排队、暂停、降级、重试中；“待人工处理”明确传入 `waiting-human`。独立及组合确认组件只返回确认意图，由示例宿主切换并停留在 `submitting`（提交中），保留确认范围并移除提交动作，不自动推进到已接收、执行中或结果状态；后续样本由选择器显式提供。组件没有自动执行、轮询、业务 Store 或权限引擎，演示状态不代表真实执行回执。
 
 | 外部事实 | 当前决定区 | 过程 / 结果 |
 | --- | --- | --- |
@@ -91,12 +78,20 @@
 
 ## 验证记录
 
-### 本次 §7.1 显示状态补齐（2026-09-23）
+### 本地整合验证（2026-09-24）
+
+在 `chore/consolidate-20260923` 按 README“Windows 本地验证”以 PowerShell / Node.js 24.14.0 执行：数学字体校验通过，字号检查覆盖 100 个 TSX 文件；`node node_modules/vinext/dist/cli.js build` 成功，随后 `node --test tests/*.test.mjs` 为 88 通过、0 失败、0 跳过；`node node_modules/typescript/bin/tsc --noEmit` 为 0 类型错误。两份归档原文与 main 的 Git 文件对象一致，文档差异检查通过。
+
+本次未重跑浏览器交互验收，未推送或发布；确认后停留提交中的描述依据整合源码，提交中禁止重复确认由组件回归覆盖。以上结果不代替真实执行来源及宿主／Runtime 接入验收。
+
+### §7.1 显示状态补齐阶段验证（2026-09-23）
+
+以下为原自审分支的历史验证范围；确认后停留提交中的修复晚于这次浏览器验证。
 
 - 在 `fix/agent-self-audit-v0.1` 独立工作目录完成类型检查：`node node_modules/typescript/bin/tsc --noEmit --incremental false`。
 - 相关 16 项回归通过：`agent-progress` 4 项、`agent-semantics` 6 项、`catalog-search` 6 项。覆盖既有来源映射不变、不把源状态虚构为暂停／降级／重试中、全部显示标签、非 running 步骤快照、未知回执及相关语义目录入口。
 - 本地 `5174` 预览实际切换排队、暂停、等待人工、降级、重试中五种进度样本：标签正确；排队三步均待开始；其余四种保留上次步骤；均无运行旋转图标或当前步骤声明。暂停、降级、重试中明确显示“执行状态来源未接入”。
-- 组合示例实际点击确认后保留待确认状态；失败结果点击重试后保留失败事实，仅显示意图反馈。随后通过状态选择器显式传入“重试中”，不出现成功结果；384px 容器的 `scrollWidth` 与 `clientWidth` 均为 384，无横向溢出。
+- 当时浏览器检查中，失败结果点击重试后保留失败事实，仅显示意图反馈；通过状态选择器显式传入“重试中”后，不出现成功结果。384px 容器的 `scrollWidth` 与 `clientWidth` 均为 384，无横向溢出。当前确认后的提交中行为见上方组合说明，不将旧浏览器记录改写为新行为验收。
 - 本次为显示状态和样本验证，未执行生产构建或发布站点。真实执行来源、任务／执行轮次归属和迟到回调隔离仍属宿主与 Runtime 接入待验。
 
 ### 历史候选验证
@@ -111,32 +106,32 @@
 
 ## 批准规范原文归档与任务状态复核（2026-09-23）
 
-本次将用户提供的两份原文完整放入 `docs/`，保留原文件名、内容和行号。规范与规划仍分别代表批准设计基线和复用计划，不因入库而升级为实现验收。上方既有实施、测试和站点记录保留其当时范围。
+PR #21 将用户提供的两份原文完整放入 `docs/`，保留原文件名、内容和行号。规范与规划仍分别代表批准设计基线和复用计划，不因入库而升级为实现验收。上方既有实施、测试和站点记录保留其当时范围。
 
 | 原文 | 行数 | SHA-256 |
 | --- | --- | --- |
 | [Agent 组件规范 v0.2.1 Approved](OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md) | 649 | `43f8ff09829c884585e80bd541a38fd986104923f3ff945160dbe8346efdcd04` |
 | [Agent 语义组件复用与设计规划 v0.1.2](智能曜彩_Agent语义组件复用与设计规划_v0.1.2.md) | 400 | `0948cc26c10c327ab6b38f3a08b3184c0ba0faae6fe8b9b52a068b902b4b423c` |
 
-**核对对象**：本地自审修复分支 `fix/agent-self-audit-v0.1` 的固定提交 `3b1c8915f7c6b525852630732be791db5da20c43`。下述源码路径与行号均指该提交；不代表文档分支或 GitHub main 已包含修复。文档分支以 `main@5228affd221d20aff6d3b20bd1a5364e42dd5e38` 为基线，仅归档原文和复核记录，不带入自审分支代码。
+**核对对象**：本地整合分支 `chore/consolidate-20260923`，基于 `main@51f980d`，依次保留 Windows 验证、自审修复（原提交 `3b1c891`、`f236a9f`、`d1d739b`）及开发流程文档的独立提交。下表按整合后的代码更新；仅本地整合，不代表已推送、合入 GitHub main 或发布站点。
 
 **原文依据**：批准规范第 7.1 节 L336–342，尤其 L338 列明排队、运行、暂停、等待人工、完成、失败、降级、重试；L340 要求未知状态明确呈现、收起不停止任务且离线不推定失败；L342 要求更新关联任务与执行轮次。第 8.1 节 L381–405 明确 Runtime 与授权服务执行、界面消费真实回执；第 10.3 节 L494–500 区分历史事实和当前工作卡。附录 A 不冻结字段名或 Schema，不能由前端杜撰一套运行时状态。
 
-| 第 7.1 节状态 | 自审修复提交的实际支持 | 核对结论 |
+| 第 7.1 节状态 | 整合代码的实际支持 | 核对结论 |
 | --- | --- | --- |
-| 排队 | `AgentProgressState.queued`；`shell.queued → queued` | 展示词汇和已有源映射具备；示例未覆盖 |
-| 运行 | `running`；shell 与 review 的 running 均有映射 | 展示词汇和已有源映射具备 |
-| 暂停 | `paused` 展示标签；当前两个源契约没有暂停输入 | 规范确实要求暂停；只有展示支持，不等于真实暂停能力 |
-| 等待人工 | `waiting-human`；`review.confirm → waiting-human` | 适配已区分；示例仍把“待人工处理”映射为通用 `waiting`，需对齐 |
-| 完成 | `completed`；shell 与 review 均有映射 | 展示词汇和已有源映射具备 |
-| 失败 | `failed`；shell.failed 与 review.error 均有映射 | 展示词汇和已有源映射具备 |
-| 降级 | 无 `degraded` 展示态与映射，测试断言该标签不存在 | 尚未覆盖规范要求；不能用 partial 或 failed 替代 |
-| 重试 | 失败结果可发出宿主提供的重试意图；无 `retrying` 展示态与映射 | 重试入口不等于执行中的重试状态，覆盖仍不完整 |
+| 排队 | `queued`（排队中）；`shell.queued → queued`；独立及组合样本已有 | 展示词汇、既有源映射和手动样本具备 |
+| 运行 | `running`（进行中）；shell 与 review 的 running 均有映射 | 展示词汇和既有源映射具备 |
+| 暂停 | `paused`（已暂停）；独立及组合样本已有 | 仅展示态（display-only），执行来源未接入；不等于真实暂停能力 |
+| 等待人工 | `waiting-human`（待人工处理）；`review.confirm → waiting-human` | 示例已使用 waiting-human；不再混用通用 waiting |
+| 完成 | `completed`（已完成）；shell 与 review 均有映射 | 展示词汇和既有源映射具备 |
+| 失败 | `failed`（执行失败）；shell.failed 与 review.error 均有映射 | 展示词汇和既有源映射具备 |
+| 降级 | `degraded`（已降级）；独立及组合样本已有 | 仅展示态（display-only），执行来源未接入；不以 partial 或 failed 替代 |
+| 重试 | `retrying`（重试中）；独立及组合样本已有 | 仅展示态（display-only），执行来源未接入；不由重试按钮推断 |
 
-源码证据：`lib/prism-next/agent-progress.ts:4–29`、`components/prism-next/agent-semantic-components.tsx:76–110`、`components/prism-next/demos/agent-semantic-group.tsx:29–34,60–66,114–119,131`；测试声明见 `tests/agent-progress.test.mjs:5–27` 和 `tests/agent-semantics.test.mjs:74–86`。词汇适配函数目前仅由测试调用，尚未接入实际调用方。`review.stopped → null` 保持停止事实由宿主处理，不把停止误称为暂停或回执未知。
+源码证据：`lib/prism-next/agent-progress.ts:4–33`、`components/prism-next/agent-semantic-components.tsx:76–110`、`components/prism-next/demos/agent-semantic-group.tsx:29–36,56–75,164–169`；回归声明见 `tests/agent-progress.test.mjs` 和 `tests/agent-semantics.test.mjs`。确认意图后的示例宿主停留在提交中，不自动推进；该本地状态不证明 Runtime 已接收。暂停、降级、重试中在现有 shell / review 契约中均无执行来源，示例说明明确标注未接入。
 
-**结论：部分对齐，不能据现有测试宣布第 7.1 节完整通过。** 原文缺失已经解除，早期“规范原文待取得”的记录应视为历史条件；“规范列出暂停”的归因已核实。降级与重试状态的展示缺口仍存在，排队／暂停／等待人工的示例与适配接入也待补齐。后续应沿用权威任务执行契约确定语义和映射；没有来源状态时标明未接入，不通过前端计时器或重试按钮猜测执行事实，也不以测试断言“不支持”替代规范验收。
+**结论：§7.1 要求的呈现词汇与手动样本已对齐；执行来源接入及宿主／Runtime 验收仍待完成，不能宣布 §7.1 完整通过。** 后续沿用权威任务执行契约提供可信事实，不通过前端计时器或重试按钮猜测状态。
 
 任务与执行轮次的归属、旧回调隔离、收起后的后台连续性、离线与未知状态、历史／当前卡片标识仍需宿主和 Runtime 接入验收；手动演示与纯词汇适配无法证明这些已完成。组件继续消费受控数据，不要求为一次文档核对改造为状态管理服务。
 
-本轮验证仅包含原文版本／行数／SHA-256、Git 文件对象一致性、文档链接与差异检查，以及固定提交的源码和测试声明阅读；未重跑应用测试、未修改组件行为、未发布站点。
+PR #21 归档阶段仅核对原文版本／行数／SHA-256、Git 文件对象、文档链接与差异，以及当时固定提交的源码和测试声明；不将归档核对视作组件行为或站点发布验收。本地整合验证另记于上方“验证记录”。
