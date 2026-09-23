@@ -52,7 +52,7 @@ export const componentGroups:ComponentGroup[] = [
     item("kbd","Kbd 快捷键","为操作标注键盘快捷方式。"),
   ]},
   { id:"agent",title:"Agent",items:[
-    {...item("agent-components","Agent 任务组件","任务输入、必要追问、材料依据、步骤与修改对照，由外部控制。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
+    {...item("agent-components","Agent 语义组件","上下文、成果预览、对比、确认、进度与结果；复用现有输入和引导组件。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
   ]},
   { id:"learning",title:"评价与学习支持",items:[
     {...item("goal-milestones","Milestones 里程碑","接收节点、说明和状态，不依赖目标工作流。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},
@@ -106,6 +106,12 @@ export const componentGroups:ComponentGroup[] = [
 ]
 export const components = componentGroups.flatMap(group=>group.items)
 export function findComponent(id:string) { return components.find(item=>item.id===id) }
+
+/** Related Agent pages share navigation, not the component registry or count. */
+export const agentRelatedPages = [
+  { href:"/next/skeletons/agent", title:"Agent 页面骨架", summary:"复用对话目录、消息阅读区与输入区的布局和承载方式。" },
+  { href:"/next/agent", title:"Agent 工作区示例", summary:"体验语义组件组合后的材料处理、必要追问与复核流程。" },
+]
 
 export const applicationExamples=[
  {id:"questions",title:"题库与打印组合",summary:"验证题卡、试题篮、组卷与打印预览的组合。"},

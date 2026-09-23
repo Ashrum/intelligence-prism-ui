@@ -143,8 +143,20 @@ import { Badge } from "@/components/prism-next/badge"
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
-- `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。仅返回 `accepted` 或 `kept`；调用方检查建议基于的原文是否仍有效，并负责更新草稿、撤销原核对状态和独立保存。
+- `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
 - `DraftMathPreview`：`value / label?`，仅从当前草稿派生排版，题干与答案复用；不读原稿、不改变输入、不写库。Temml 0.13.4 作为同源原样 ESM 资产按需加载（避免构建优化改写词法器转义）；以 `throwOnError / strict` 开启、`trust` 关闭及展开/大小限额生成 MathML，沿用 Prism Math（STIX）与 `read-body`；正文经过 React 转义，只有渲染器生成的 MathML 可注入。默认识别保守的 Unicode 代数片段，复杂公式要求明确 `\(...\)` / `\[...\]` 标记；无法解析时显示当前原文与 14px 说明。渲染成功不等于数学正确；没有同步原稿或自动确认行为。
+
+第一组 Agent 语义候选（2026-09-22，见 `docs/agent-context-summary-review.md`）：
+
+| 组件 | 输入及回调 | 边界 |
+| --- | --- | --- |
+| AgentContextSummary | `title / scope / sources / expanded / onExpandedChange? / onInspect? / notice? / snapshot?` | 复用 AgentContextList；来源事实独立，不检索或认证证据 |
+| AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 对象预览不证明执行或发布；缺 open 则没有打开入口 |
+| AgentExecutionConfirmation | `title / target / version / effects / confirmation` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query |
+| AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
+| AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
+
+后四项位于 `agent-semantic-components.tsx`，均可传 `presentation="card" | "inline"`，只控制外壳，不创建宿主面板。`AgentSemanticAction={label,onAction,disabledReason?}` 表示宿主提供的能力，回调仅为意图；条件、权限、有效版本、回执与恢复范围由宿主核验。新增 `AgentTaskProgress.activity="live" | "snapshot"`，默认 live 兼容；snapshot 将 running 步骤标作“上次进行到”，不转圈、不设置当前步骤。
 
 引导式任务 v0.1.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
 

@@ -105,14 +105,14 @@ export function AgentComposer({
   </form>;
 }
 export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string}
-export function AgentStepStatus({state}:{state:AgentStep['state']}) {
+export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
  const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
- return <Badge variant={tones[state]} size="lg">{{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
+ return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
 }
-export function AgentTaskProgress({steps,actions}:{steps:AgentStep[];actions?:ReactNode}) {
- return <div><ol aria-label="任务执行步骤" className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={step.state==='running'?'step':undefined} className="flex items-start gap-3">
-  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'?<Spinner/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
-  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
+export function AgentTaskProgress({steps,actions,activity='live'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot'}) {
+ return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
+  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
+  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
  </li>)}</ol>{actions}</div>
 }
 
@@ -127,22 +127,25 @@ export function AgentQuestionCard({question,description,options,value,onValueCha
  </Card>
 }
 
-export type AgentContextItem = {id:string;title:string;location:string;description?:string;status?:ReactNode}
-export function AgentContextList({label='本次使用的材料',items,onInspect}:{label?:string;items:readonly AgentContextItem[];onInspect?:(id:string)=>void}) {
+export type AgentContextItem = {id:string;title:string;location:string;description?:string;status?:ReactNode;inspectable?:boolean}
+export function AgentContextList({label='本次使用的材料',items,onInspect,emptyText='尚未引用材料。',inspectLabel='查看原稿'}:{label?:string;items:readonly AgentContextItem[];onInspect?:(id:string)=>void;emptyText?:string;inspectLabel?:string}) {
  const id=useId()
- return <section aria-labelledby={id} className="space-y-3"><h3 id={id} className="text-block-title">{label}</h3>{items.length?<ul className="space-y-2">{items.map(item=><li key={item.id} className="flex min-w-0 items-start gap-3 rounded-lg bg-secondary p-4"><FileText className="mt-1 size-4 shrink-0 text-muted-foreground" aria-hidden="true"/><div className="min-w-0 flex-1"><p className="break-words text-item-title">{item.title}</p><p className="mt-1 text-ui-hint text-muted-foreground">{item.location}</p>{item.description&&<p className="mt-1 text-ui-hint text-muted-foreground">{item.description}</p>}{item.status&&<div className="mt-2">{item.status}</div>}{onInspect&&<Button variant="ghost" size="sm" className="mt-2" aria-label={`查看材料：${item.title}`} onClick={()=>onInspect(item.id)}>查看原稿<ArrowUpRight/></Button>}</div></li>)}</ul>:<p className="text-ui-hint text-muted-foreground">尚未引用材料。</p>}</section>
+ return <section aria-labelledby={id} className="space-y-3"><h3 id={id} className="text-block-title">{label}</h3>{items.length?<ul className="space-y-2">{items.map(item=><li key={item.id} className="flex min-w-0 items-start gap-3 rounded-lg bg-secondary p-4"><FileText className="mt-1 size-4 shrink-0 text-muted-foreground" aria-hidden="true"/><div className="min-w-0 flex-1"><p className="break-words text-item-title">{item.title}</p><p className="mt-1 text-ui-hint text-muted-foreground">{item.location}</p>{item.description&&<p className="mt-1 text-ui-hint text-muted-foreground">{item.description}</p>}{item.status&&<div className="mt-2">{item.status}</div>}{onInspect&&item.inspectable!==false&&<Button variant="ghost" size="sm" className="mt-2" aria-label={`查看材料：${item.title}`} onClick={()=>onInspect(item.id)}>{inspectLabel}<ArrowUpRight/></Button>}</div></li>)}</ul>:<p className="text-ui-hint text-muted-foreground">{emptyText}</p>}</section>
 }
 
 export type AgentChangeDecision = 'pending'|'accepted'|'kept'
 /** Proposals are caller-owned. This component never edits content or persists it. */
-export function AgentChangeReview({title,before,after,reason,decision,onDecision,disabled=false,disabledReason}:{
+export function AgentChangeReview({title,before,after,reason,decision,onDecision,disabled=false,disabledReason,beforeLabel='修改前',afterLabel='建议内容',beforePreview,afterPreview,scope,onResetDecision}:{
  title:string;before:string;after:string;reason:string;decision:AgentChangeDecision;
  onDecision:(decision:'accepted'|'kept')=>void;disabled?:boolean;disabledReason?:string;
+ beforeLabel?:string;afterLabel?:string;beforePreview?:ReactNode;afterPreview?:ReactNode;scope?:string;onResetDecision?:()=>void;
 }) {
  const id=useId(),heading=useRef<HTMLHeadingElement>(null)
  const choose=(value:'accepted'|'kept')=>{onDecision(value);requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}
- return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?'待决定':decision==='accepted'?'已采用 · 尚需核对':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
- <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">修改前</h4><p className="whitespace-pre-wrap break-words text-read-body">{before}</p></section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">建议内容</h4><p className="whitespace-pre-wrap break-words text-read-body">{after}</p></section></div>
- {decision==='pending'&&<div className="flex flex-wrap gap-2"><Button disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>}{disabledReason&&<p role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
+ return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用 · 尚需核对':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
+ <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">{beforeLabel}</h4>{beforePreview??<p className="whitespace-pre-wrap break-words text-read-body">{before}</p>}</section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">{afterLabel}</h4>{afterPreview??<p className="whitespace-pre-wrap break-words text-read-body">{after}</p>}</section></div>
+ {scope&&<p className="text-ui-hint text-muted-foreground">{scope}</p>}
+ {disabledReason&&<p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
+ {decision==='pending'?<div className="flex flex-wrap gap-2"><Button aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>:onResetDecision&&<div><Button variant="outline" disabled={disabled} onClick={()=>{onResetDecision();requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}}>重新选择</Button></div>}
  </Card>
 }

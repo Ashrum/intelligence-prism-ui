@@ -29,10 +29,14 @@ If a required rule is absent:
 - Component catalog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next
 - Foundations: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations
 - Materials reading pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/reading
-- Agent workspace pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
+- Agent category: https://intelligence-prism-ui.ashrvm.chatgpt.site/next#group-agent
+- Agent semantic components: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/agent-components
+- Agent page skeleton: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent
+- Agent workspace example: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
 - Implementation contracts: https://github.com/Ashrum/intelligence-prism-ui/blob/main/docs/component-contracts.md
 
 ## Core component specifications
+- The Agent navigation category groups semantic components, page skeleton and workspace example. Only the component entry counts toward the 80-component catalog; the other two retain their own reuse levels. Existing routes are preserved.
 - Button: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/button
 - Form: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/form
 - Field: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/field
@@ -93,3 +97,13 @@ Use semantic text roles; reading and long editing 16/28, decision hints >=14px. 
 
 - DraftMathPreview renders the CURRENT stem/answer with pinned Temml 0.13.4 into native MathML / existing STIX. Conservative Unicode algebra and explicit \(…\) / \[ … \] are supported; unrecognized prose and invalid formulas preserve input. Rendering checks layout syntax, never mathematical correctness; no write-back, source edits or automatic confirmation. Length/expansion limits and untrusted-mode rendering apply.
 - Shared step badges stay 14px; loading uses the existing Spinner with reduced-motion support. Review code: https://github.com/Ashrum/intelligence-prism-ui/pull/18 (candidate branch, not main).
+
+## Agent semantic group v0.1 (Design candidate, 2026-09-22)
+- Entry: /next/components/agent-components#context-summary-review. Six independent semantics plus a confirmation/progress/result composition; two manual fixture purposes. Catalog stays at 80 entries. See docs/agent-context-summary-review.md.
+- Reuse AgentContextSummary, AgentContextList, AgentChangeReview and AgentTaskProgress. Add controlled AgentArtifactPreview, AgentExecutionConfirmation, AgentExecutionProgress and AgentExecutionResult in agent-semantic-components.tsx. No business page, store, authorization engine or Runtime is added.
+- Context selection, read, current-context and citation remain independent host facts. Absent requires complete event coverage; unknown and unavailable are distinct. Source inspection does not update facts.
+- Preview title/version/status/summary and open capability are external; no capability means no invented open action. Confirmation only exposes submission in ready state; submitting, received, blocked, recorded and unknown are distinct. Callbacks are intents, never receipts.
+- Overall progress does not derive from steps. Waiting or unknown stops live animation and labels the last running step as a snapshot. No percentages or timers.
+- Result receipts distinguish succeeded/partial/failed/unknown. Unknown accepts query only; partial retains completed and remaining scope. Generated, reviewable and published are separate facts.
+- ChangeReview adds optional version labels, scope, preview slots and reset callback; legacy string input is preserved. The caller rejects stale proposals, owns the decision/draft and saves separately. Preview slots are not semantic diff engines.
+- Source and acceptance are scoped to the Site candidate; this does not imply a GitHub main merge or Workspace/real-service acceptance.

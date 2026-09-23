@@ -4,18 +4,18 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { useEffect,useState } from "react"
-import { BookOpen,Boxes,Palette,ArrowUpRight,MessageSquare,Search,Layers } from "lucide-react"
+import { BookOpen,Boxes,Palette,ArrowUpRight,Search,Layers } from "lucide-react"
 import { SidebarProvider,Sidebar,SidebarContent,SidebarHeader,SidebarGroup,SidebarGroupLabel,SidebarMenu,SidebarMenuItem,SidebarMenuButton,SidebarInset,SidebarTrigger,useSidebar } from "@/components/coss/sidebar"
 import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/components/coss/select"
 import { Button } from "@/components/coss/button"
-import { componentGroups,applicationExamples } from "@/lib/prism-next/catalog"
+import { componentGroups,applicationExamples,agentRelatedPages } from "@/lib/prism-next/catalog"
 import { themeOptions,DESIGN_VERSION,DESIGN_STATUS } from "@/lib/prism-next/config"
 
 function Navigation() {
   const pathname=usePathname()
   const {setOpenMobile}=useSidebar()
   const link=(href:string,label:string,icon?:React.ReactNode)=> <SidebarMenuItem key={href}>
-    <SidebarMenuButton isActive={pathname===href} render={<Link href={href}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
+    <SidebarMenuButton isActive={pathname===href} render={<Link href={href} aria-current={pathname===href?'page':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
   </SidebarMenuItem>
   return <Sidebar collapsible="offcanvas">
     <SidebarHeader className="px-4 py-5">
@@ -30,12 +30,11 @@ function Navigation() {
         {link('/next/foundations','基础规范',<Palette/>)}
         {link('/next/foundations/typography','字体与字号',<BookOpen/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
-        {link('/next/agent','Agent 工作区',<MessageSquare/>)}
         {link('/next/use-cases','教师用例与流程',<Layers/>)}
       </SidebarMenu></SidebarGroup>
       {componentGroups.map(group=><SidebarGroup key={group.id}>
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-        <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}</SidebarMenu>
+        <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}{group.id==='agent'&&agentRelatedPages.map(page=>link(page.href,page.title))}</SidebarMenu>
       </SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>

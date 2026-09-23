@@ -2,6 +2,18 @@
 
 ## 当前可用版本：coss v1.13.1
 
+### Agent 导航归类 v0.1（2026-09-23）
+
+侧栏和组件总览统一在「Agent」分类下提供「Agent 语义组件 / Agent 页面骨架 / Agent 工作区示例」三个入口。工作区标题与字号预览同步命名，骨架返回入口指向该分类。既有路径沿用；组件仍为 80 项，骨架与组合示例另计。只整理入口与名称，真实业务接入仍由 Workspace 负责。
+
+### Agent 语义组件第一组 v0.1 · 设计候选（2026-09-22）
+
+依据 v0.2.1 规范和复用规划 v0.1.2，原位扩展 `/next/components/agent-components#context-summary-review`：上下文摘要、摘要预览、对比查看、执行确认、任务进度、执行结果，以及同一次执行的组合示例。两种用途、独立状态与 384px 窄容器可手动切换。目录仍为 80 项。
+
+复用 AgentContextSummary / AgentContextList / AgentChangeReview / AgentTaskProgress 和 Prism / coss；新增受控的预览、确认、整体进度与结果组合。操作仅返回意图，提交中不会被自动当作已接收，回执不明仅查询原执行；历史步骤停止转圈并标明“上次进行到”。不接业务存储、权限判断或 Runtime，不新增完整业务页面。
+
+本站候选源码与 GitHub 历史分开记录；本轮不宣称合入 GitHub main。交互、接口及接续验收见 [候选说明](docs/agent-context-summary-review.md) 和 [组件契约](docs/component-contracts.md)。
+
 ### Agent 引导式任务 v0.1.1 · 候选（2026-09-21）
 
 `/next/agent` 增加「试卷解析引导」，复用已有解析流程完成材料入口、范围追问、执行、原稿核对和本机示例保存；原材料复核助手保留。`/next/components/agent-components` 原位补齐追问、材料引用、带详情的步骤和修改对照，调用方持有数据及操作，不增加组件目录分类。
