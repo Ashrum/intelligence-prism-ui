@@ -51,12 +51,46 @@
 - 组件只呈现外部事实并发出意图：不内置模型、执行器、业务 Store、权限判断或持久化；不用计时器、按钮点击推定执行状态；未知就显示未知。
 - 动效只解释用户操作和外部状态变化，遵守减少动态效果设置。
 
-## 6. 本地环境（Windows）
+## 6. 本地环境
 
-- Node.js ≥ 22.13。`npm ci` 只按 lockfile 安装；未经 Product Owner 同意不增删依赖。
-- 开发服务：`$env:WRANGLER_LOG_PATH='.wrangler/wrangler.log'; node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort`。同一时间只运行一个服务，并确认它运行的是当前任务的工作树与分支。
-- 构建与测试按 README「Windows 本地验证」执行：字体检查 → 排版检查 → `node node_modules/vinext/dist/cli.js build` → `node --test tests/*.test.mjs` → `node node_modules/typescript/bin/tsc --noEmit`。Linux 继续使用 `npm run build` / `npm test`。
+通用要求：Node.js ≥ 22.13。依赖用 `npm ci` 按 lockfile 安装；未经 Product Owner 同意不增删依赖。同一时间只运行一个开发服务，并确认它运行的是当前任务的工作树与分支。
+
+### 6.1 通用验证路径（所有系统）
+
+以下命令只调用 `node`，Windows、macOS、Linux 均可执行，作为标准验证方式：
+
+1. `node scripts/check-math-font.mjs`
+2. `node scripts/check-typography.mjs`
+3. `node node_modules/vinext/dist/cli.js build`
+4. `node --test tests/*.test.mjs`
+5. `node node_modules/typescript/bin/tsc --noEmit`
+
+构建前的环境变量与运行目录设置见 README「Windows 本地验证」；macOS/Linux 以 POSIX shell 设置同名变量。先构建再跑全量测试，服务端渲染测试依赖 `dist/`。
+
+### 6.2 macOS / Linux
+
+- 开发服务：`npm run dev`（默认 5173）。
+- `npm run build` / `npm test` 依赖 GNU `timeout`。macOS 默认没有；未安装时改用 6.1 通用路径。
+- `npm run install:ci` 依赖 Linux `flock`，macOS 上不要使用，直接 `npm ci`。
+- macOS 上的实测结果尚未登记；首次在 Mac 上跑通 6.1 后，在此补记日期、系统与结果。
+
+### 6.3 Windows
+
+- 开发服务：`$env:WRANGLER_LOG_PATH='.wrangler/wrangler.log'; node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173 --strictPort`。
+- 构建与测试按 README「Windows 本地验证」执行（即 6.1 加 PowerShell 环境设置）。`npm run dev` / `build` / `test` 的 POSIX 写法在 Windows 上不可用。
 - `.gitattributes` 保证 coss 源码以 LF 检出；不要为通过散列测试而放宽测试。
+
+### 6.4 换机检查清单
+
+仓库规则随仓库走，以下本机配置不会同步，在新机器上逐项完成：
+
+1. 安装并登录 Claude Code 与 Codex CLI；用一个只读任务验证 `codex exec` 可用。
+2. 在用户级 `~/.claude/settings.json` 的 `permissions.allow` 加入 `Bash(codex exec:*)`，由 Product Owner 本人确认。
+3. 从 `intelligence-prism-ui` 仓库目录启动 Claude Code，使 `CLAUDE.md` / `AGENTS.md` 自动加载；上一台机器上的 Claude 本地记忆不会随之迁移，以本文件为准。
+4. `git fetch` 后切到最新 `main`，`npm ci`，按 6.1 完成一次全量验证。
+5. 可选：安装 `gh` CLI 以便直接查看 PR 状态。
+
+切换机器前，把进行中的工作推送到任务分支或提交 PR；本地未推送的改动不会出现在另一台机器上。同一时间只在一台机器上派出 Builder。
 
 ## 7. 验收标准
 
