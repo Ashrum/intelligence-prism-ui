@@ -26,10 +26,12 @@ const recordItems = [
   { value: "absent", label: "完整记录中无事件" }, { value: "unavailable", label: "记录暂不可用" },
   { value: "historical", label: "历史版本" }, { value: "empty", label: "无来源条目" },
 ]
-type FlowState = "ready" | "submitting" | "received" | "running" | "waiting" | "stale" | "readonly" | "unknown" | "complete" | "partial" | "failed"
+type FlowState = "ready" | "submitting" | "received" | "queued" | "running" | "paused" | "waiting-human" | "degraded" | "retrying" | "stale" | "readonly" | "unknown" | "complete" | "partial" | "failed"
 const flowItems: { value: FlowState; label: string }[] = [
   { value: "ready", label: "条件齐备 · 待确认" }, { value: "submitting", label: "提交中" }, { value: "received", label: "请求已接收" },
-  { value: "running", label: "执行中" }, { value: "waiting", label: "待人工处理" }, { value: "stale", label: "确认依据已过期" },
+  { value: "queued", label: "排队中" }, { value: "running", label: "执行中" }, { value: "paused", label: "已暂停" },
+  { value: "waiting-human", label: "待人工处理" }, { value: "degraded", label: "已降级" }, { value: "retrying", label: "重试中" },
+  { value: "stale", label: "确认依据已过期" },
   { value: "readonly", label: "当前只读" }, { value: "unknown", label: "回执未确认" },
   { value: "complete", label: "已完成" }, { value: "partial", label: "部分完成" }, { value: "failed", label: "明确失败" },
 ]
@@ -52,18 +54,27 @@ function sourcesFor(preparation: boolean, state: RecordState): AgentContextSourc
 }
 
 function progressFor(state: FlowState, preparation: boolean): { state: AgentProgressState; description: string; steps: AgentStep[] } {
-  const initial = ["ready", "stale", "readonly", "submitting", "received"].includes(state)
+  const initial = ["ready", "stale", "readonly", "submitting", "received", "queued"].includes(state)
   const terminal = state === "complete" || state === "partial"
+  const states: Record<FlowState, AgentProgressState> = {
+    ready: "pending", stale: "pending", readonly: "pending", submitting: "pending", received: "pending",
+    queued: "queued", running: "running", paused: "paused", "waiting-human": "waiting-human",
+    degraded: "degraded", retrying: "retrying", unknown: "unknown", complete: "completed", partial: "partial", failed: "failed",
+  }
   const descriptions: Record<FlowState, string> = {
     ready: "尚未提交任务。", submitting: "提交请求中，尚未收到接收回执。", received: "服务已接收请求，尚未报告开始执行。",
+    queued: "示例状态为排队中，尚未报告执行步骤。",
     running: preparation ? "正在整理第 2 节，保留对应来源。" : "正在整理第 2 页，保留原题与来源。",
-    waiting: preparation ? "第 2 节有一项材料冲突，等待人工核对。" : "第 2 页有一处文字不清，等待人工核对。",
+    paused: "示例状态为已暂停，保留最后步骤记录。执行状态来源未接入。",
+    "waiting-human": preparation ? "第 2 节有一项材料冲突，等待人工核对。" : "第 2 页有一处文字不清，等待人工核对。",
+    degraded: "示例状态为已降级，保留最后步骤记录。执行状态来源未接入，不据此判断任务成功或失败。",
+    retrying: "示例状态为重试中，保留最后步骤记录。执行状态来源未接入，不由重试按钮推定。",
     stale: "当前原稿为 v3，原确认依据 v2 已过期。", readonly: "宿主提供只读状态，不能提交。",
     unknown: "连接中断，当前执行状态未确认。下方只保留最后收到的步骤。",
     complete: "本轮整理已完成，成果仍需人工复核。", partial: "可用部分已保留，未完成范围单独列出。", failed: "服务回执明确报告整理阶段失败。",
   }
   return {
-    state: initial ? "pending" : state === "waiting" ? "waiting" : state === "unknown" ? "unknown" : state === "complete" ? "completed" : state === "partial" ? "partial" : state === "failed" ? "failed" : "running",
+    state: states[state],
     description: descriptions[state],
     steps: [
       { id: "read", label: "读取指定范围", state: initial ? "pending" : "done", detail: "原稿 v2 · 第 1–3 页" },
@@ -120,7 +131,7 @@ export function AgentSemanticGroupDemo() {
     }
     return <AgentExecutionResult title={unknown ? "尚不能确认本轮结果" : failed ? "本轮未能生成草稿" : partial ? "已保留可用部分" : "草稿已生成"} description={unknown ? "请求可能仍在执行。先查询同一次执行，再决定下一步。" : failed ? "整理阶段返回明确失败。已读取的材料记录仍保留。" : partial ? "成功部分可先查看，第 2 页需要另行处理。" : "整理工作已完成，内容仍待人工复核。"} receipt={receipt} facts={[{ label: "对应执行", value: "示例任务 · 第 1 轮" }, { label: "输入依据", value: "原稿 v2 · 第 1–3 页" }]} presentation={inline ? "inline" : "card"}>{!unknown && !failed && <div className="border-t pt-5">{renderPreview(true, partial)}</div>}</AgentExecutionResult>
   }
-  const chooseFlow = (value: string) => { setFlow(value as FlowState); setFeedback(""); setConfirmationExpanded(false); setFlowStepsExpanded(value === "running" || value === "waiting") }
+  const chooseFlow = (value: string) => { setFlow(value as FlowState); setFeedback(""); setConfirmationExpanded(false); setFlowStepsExpanded(value === "running" || value === "waiting-human") }
   const flowProgress = progressFor(flow, preparation), standaloneProgress = progressFor(progressState, preparation)
   const hasResult = ["unknown", "complete", "partial", "failed"].includes(flow)
   const beforeSubmission = ["ready", "stale", "readonly"].includes(flow)
@@ -128,7 +139,7 @@ export function AgentSemanticGroupDemo() {
     : section === "preview" ? { label: "查看状态", value: previewState, items: [{ value: "current", label: "当前成果" }, { value: "unavailable", label: "仅摘要可用" }, { value: "historical", label: "历史版本" }, { value: "empty", label: "尚无成果" }], change: setPreviewState }
     : section === "comparison" ? { label: "建议状态", value: comparisonState, items: [{ value: "current", label: "可决定" }, { value: "stale", label: "依据已变化" }, { value: "readonly", label: "只读查看" }], change: (value: string) => { setComparisonState(value); setDecision("pending") } }
     : section === "confirmation" ? { label: "确认状态", value: confirmationState, items: flowItems.filter(item => ["ready", "submitting", "received", "stale", "readonly", "unknown", "complete"].includes(item.value)), change: (value: string) => setConfirmationState(value as FlowState) }
-    : section === "progress" ? { label: "执行状态", value: progressState, items: flowItems.filter(item => ["received", "running", "waiting", "unknown", "complete", "partial", "failed"].includes(item.value)), change: (value: string) => setProgressState(value as FlowState) }
+    : section === "progress" ? { label: "执行状态", value: progressState, items: flowItems.filter(item => ["received", "queued", "running", "paused", "waiting-human", "degraded", "retrying", "unknown", "complete", "partial", "failed"].includes(item.value)), change: (value: string) => setProgressState(value as FlowState) }
     : section === "result" ? { label: "结果回执", value: resultState, items: flowItems.filter(item => ["complete", "partial", "failed", "unknown"].includes(item.value)), change: (value: string) => setResultState(value as FlowState) }
     : { label: "外部状态示例", value: flow, items: flowItems, change: chooseFlow }
   const recordNotices = {
@@ -149,14 +160,14 @@ export function AgentSemanticGroupDemo() {
       <div className={narrow ? "w-full max-w-sm" : "w-full max-w-4xl"} data-agent-semantic-fixture>
         <TabsPanel value="preview">{previewState === "empty" ? <Card className="gap-3 p-6"><h3 className="text-block-title">尚无成果记录</h3><p className="text-ui-hint text-muted-foreground">当前没有可预览对象。是否正在生成，请查看对应执行的回执。</p></Card> : renderPreview()}</TabsPanel>
         <TabsPanel value="context"><AgentContextSummary title={task} scope={[{ label: "任务对象", value: "高二（3）班 · 数学" }, { label: "内容范围", value: "函数单调性与奇偶性" }, { label: "要求", value: preparation ? "40 分钟；保留材料来源，班级学情尚未接入" : "仅整理已有题目与答案，不补造缺失内容" }]} sources={sources} expanded={contextExpanded} onExpandedChange={setContextExpanded} onInspect={sourceId => { const found = sources.find(item => item.id === sourceId); if (found) openDialog({ title: found.title, description: `示例定位 · ${found.location}`, content: "此处展示宿主提供的来源查看内容。打开来源不会改变选用、读取、本轮上下文或成果引用记录。" }) }} notice={recordNotices[record] ? { text: recordNotices[record], tone: record === "partial" || record === "unavailable" ? "warning" : "info" } : undefined} snapshot={record === "historical" ? "快照 · 2026-09-21" : undefined} /></TabsPanel>
-        <TabsPanel value="comparison"><AgentChangeReview title={preparation ? "让教学环节更清楚" : "将条件与两个问题分开"} before={before} after={after} beforeLabel="原稿 v2 · 建议依据" afterLabel="候选 v1 · 排版建议" reason="调整表达和阅读顺序，保留原有内容。采用后仍须核对。" scope="采纳范围：仅当前段落的本页草稿；不会修改原稿、入库或发布。" decision={decision} onDecision={value => { setDecision(value); notify(value === "accepted" ? "已在本页选择候选内容，尚未保存。" : "已在本页选择保留原文。") }} onResetDecision={() => { setDecision("pending"); notify("已撤回本页选择，可重新决定。") }} disabled={comparisonState !== "current"} disabledReason={comparisonState === "stale" ? "当前原稿已更新到 v3，旧候选不能覆盖新内容。" : comparisonState === "readonly" ? "当前只读，宿主未提供采纳能力。" : undefined} /></TabsPanel>
-        <TabsPanel value="confirmation">{renderConfirmation(confirmationState, () => { setConfirmationState("submitting"); notify("示例仅切换到提交中；后续状态请手动选择，不会自动执行。") })}</TabsPanel>
-        <TabsPanel value="progress"><AgentExecutionProgress title={task} {...standaloneProgress} expanded={stepsExpanded} onExpandedChange={setStepsExpanded} updatedAt="最后回执 · 2026-09-22 10:24（示例）" action={progressState === "waiting" ? inspectWaiting : progressState === "unknown" ? query : undefined} /></TabsPanel>
+        <TabsPanel value="comparison"><AgentChangeReview title={preparation ? "让教学环节更清楚" : "将条件与两个问题分开"} before={before} after={after} beforeLabel="原稿 v2 · 建议依据" afterLabel="候选 v1 · 排版建议" reason="调整表达和阅读顺序，保留原有内容。采用仅记录本页内容选择，核对状态由宿主提供。" scope="采纳范围：仅当前段落的本页草稿；不会修改原稿、入库或发布。" decision={decision} onDecision={value => { setDecision(value); notify(value === "accepted" ? "已在本页选择候选内容，尚未保存。" : "已在本页选择保留原文。") }} onResetDecision={() => { setDecision("pending"); notify("已撤回本页选择，可重新决定。") }} disabled={comparisonState !== "current"} disabledReason={comparisonState === "stale" ? "当前原稿已更新到 v3，旧候选不能覆盖新内容。" : comparisonState === "readonly" ? "当前只读，宿主未提供采纳能力。" : undefined} /></TabsPanel>
+        <TabsPanel value="confirmation">{renderConfirmation(confirmationState, () => { setConfirmationState("submitting"); notify("已提交意图，示例停留在“提交中”，不会自动推进；可用上方选择器查看后续状态。") })}</TabsPanel>
+        <TabsPanel value="progress"><AgentExecutionProgress title={task} {...standaloneProgress} expanded={stepsExpanded} onExpandedChange={setStepsExpanded} updatedAt="最后回执 · 2026-09-22 10:24（示例）" action={progressState === "waiting-human" ? inspectWaiting : progressState === "unknown" ? query : undefined} /></TabsPanel>
         <TabsPanel value="result">{renderResult(resultState)}</TabsPanel>
         <TabsPanel value="composition"><Card className="gap-6 p-5 sm:p-6"><div className="space-y-2"><div className="flex flex-wrap items-start justify-between gap-3"><h3 ref={flowHeading} tabIndex={-1} className="text-section-title outline-none">{task}</h3><Badge variant="outline">同一次执行</Badge></div><p className="text-ui-hint text-muted-foreground">高二（3）班 · 数学 · 原稿 v2 · 第 1–3 页</p></div>
           {hasResult && renderResult(flow, true)}
-          {beforeSubmission || flow === "submitting" || flow === "received" ? renderConfirmation(flow, () => { setFlow("submitting"); notify("已演示提交意图；未收到回执，不推进步骤。可用上方状态选择器继续查看。"); requestAnimationFrame(() => flowHeading.current?.focus({ preventScroll: true })) }, true) : null}
-          {!beforeSubmission && <div className={hasResult ? "border-t pt-5" : undefined}><AgentExecutionProgress title="执行过程" {...flowProgress} expanded={flowStepsExpanded} onExpandedChange={setFlowStepsExpanded} updatedAt={flow === "submitting" ? undefined : "最后回执 · 10:24（示例）"} action={flow === "waiting" ? inspectWaiting : undefined} presentation="inline" /></div>}
+          {beforeSubmission || flow === "submitting" || flow === "received" ? renderConfirmation(flow, () => { setFlow("submitting"); notify("已提交意图，示例停留在“提交中”，不会自动推进；可用上方选择器查看后续状态。"); requestAnimationFrame(() => flowHeading.current?.focus({ preventScroll: true })) }, true) : null}
+          {!beforeSubmission && <div className={hasResult ? "border-t pt-5" : undefined}><AgentExecutionProgress title="执行过程" {...flowProgress} expanded={flowStepsExpanded} onExpandedChange={setFlowStepsExpanded} updatedAt={flow === "submitting" ? undefined : "最后回执 · 10:24（示例）"} action={flow === "waiting-human" ? inspectWaiting : undefined} presentation="inline" /></div>}
           {!beforeSubmission && flow !== "submitting" && flow !== "received" && <Collapsible open={confirmationExpanded} onOpenChange={setConfirmationExpanded}><CollapsibleTrigger render={<Button variant="ghost" size="sm" />}><ChevronDown aria-hidden="true" className={confirmationExpanded ? "rotate-180" : undefined} />{confirmationExpanded ? "收起当时确认的范围" : "查看当时确认的范围"}</CollapsibleTrigger><CollapsiblePanel className="motion-reduce:transition-none"><div className="pt-5">{renderConfirmation("complete", () => {}, true)}</div></CollapsiblePanel></Collapsible>}
         </Card><p className="mt-4 text-ui-hint text-muted-foreground">确认区先说明影响；收到回执后保留确认范围；结果优先呈现，过程可展开。示例状态由上方选择器提供。</p></TabsPanel>
       </div>

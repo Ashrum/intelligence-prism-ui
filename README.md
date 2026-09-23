@@ -18,7 +18,7 @@
 
 `/next/agent` 增加「试卷解析引导」，复用已有解析流程完成材料入口、范围追问、执行、原稿核对和本机示例保存；原材料复核助手保留。`/next/components/agent-components` 原位补齐追问、材料引用、带详情的步骤和修改对照，调用方持有数据及操作，不增加组件目录分类。
 
-参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用后仍须核对与保存。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
+参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用仅记录内容选择；核对状态见题目编辑区，保存由宿主单独处理。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
 
 v0.1.1 追加：题干与参考答案下方显示当前草稿公式预览（Temml 0.13.4 → 原生 MathML，沿用本地 STIX 字体）；Unicode 常见代数式可直接预览，复杂公式使用 `\(...\)` / `\[...\]`。中文、换行及无法解析的输入原样保留，错误显示当前输入，不复用旧公式，不改原稿和保存快照。只检查排版，不证明数学正确。公式每段最多 1000 字符、全文超过 12000 字符回退原文；不支持链接、自定义宏和颜色/字号命令。任务步骤与监视器详情统一使用既有 14px 状态徽标；本机进度恢复增加 Spinner，减少动效模式保持静态。页面标注候选版本并链接 [PR #18](https://github.com/Ashrum/intelligence-prism-ui/pull/18)，审核源码以该候选分支为准。
 
@@ -68,6 +68,7 @@ v0.1.1 定向验证：25 项相关测试通过，包含构建后公式模块原�
 
 - [组件站点](https://intelligence-prism-ui.ashrvm.chatgpt.site/next) · [基础规范](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations)
 - [源码接入与组件约定](docs/component-contracts.md)：依赖、主题、字体、目录与数据接口。
+- [AI 原生开发流程 v0.1](docs/OLE_AI_NATIVE_DEVELOPMENT_WORKFLOW_v0.1.md)：Claude Code 监督与独立审核、Codex 构建；跨设备准备见第 11 节。在另一台电脑完成本机安装与授权后，从本仓库启动并先读取该文档。
 - 本版在 v1.13.0 上统一评审状态和版本号，沿用已验证的视觉、交互与组件接口。
 - 交付方式为源码复用，`private: true` 保留；未发布独立 npm 包。应用示例使用演示数据，业务服务、权限和持久化由接入应用提供。
 
@@ -83,6 +84,48 @@ npm run dev
 ```
 
 生产构建运行 `npm run build`；自动回归运行 `npm test`。源码接入目标项目时，使用 [组件复用约定](docs/component-contracts.md) 中的依赖与主题设置。
+
+#### Windows 本地验证
+
+在仓库根目录使用 PowerShell 和 Node.js 24（本机验证版本为 Node.js 24.14.0、npm 11.9.0），先完成 `npm ci`。现有 `npm run dev` 使用 POSIX 环境变量语法；Windows 可直接启动 Vite。若 5173 已被占用，可改用其他端口（下例为 5174；`--strictPort` 在端口被占用时直接退出）：
+
+```powershell
+$env:WRANGLER_LOG_PATH = '.wrangler/wrangler.log'
+node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5174 --strictPort
+```
+
+构建和测试在另一个 PowerShell 终端运行。以下设置对应 `sites-env.sh` 的本地运行目录与环境（Windows 环境变量名称不区分大小写），保留两项构建前检查；无需新增 `build:local`，也不依赖 Bash / GNU `timeout`。Linux 的 `npm run build` / `npm test` 继续使用原有有时限的构建脚本。
+
+```powershell
+$projectRoot = (Get-Location).Path
+$runtimeRoot = Join-Path $projectRoot '.sites-runtime'
+'home', 'npm-cache', 'xdg-config', 'tmp', 'wrangler/logs' | ForEach-Object { New-Item -ItemType Directory -Force (Join-Path $runtimeRoot $_) | Out-Null }
+$env:SITES_ENV_READY = '1'
+$env:SITES_PROJECT_ROOT = $projectRoot
+$env:HOME = Join-Path $runtimeRoot 'home'
+$env:XDG_CONFIG_HOME = Join-Path $runtimeRoot 'xdg-config'
+$env:TMPDIR = Join-Path $runtimeRoot 'tmp'
+$env:WRANGLER_WRITE_LOGS = 'false'
+$env:WRANGLER_LOG_PATH = Join-Path $runtimeRoot 'wrangler/logs'
+$env:MINIFLARE_REGISTRY_PATH = Join-Path $runtimeRoot 'wrangler/registry'
+'NPM_CONFIG_CACHE', 'npm_config_proxy', 'npm_config_http_proxy', 'npm_config_https_proxy' | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+$env:npm_config_cache = Join-Path $runtimeRoot 'npm-cache'
+$env:npm_config_audit = 'false'
+$env:npm_config_fund = 'false'
+$env:npm_config_update_notifier = 'false'
+node scripts/check-math-font.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Math font check failed' }
+node scripts/check-typography.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Typography check failed' }
+node node_modules/vinext/dist/cli.js build
+if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
+node --test tests/*.test.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+node node_modules/typescript/bin/tsc --noEmit
+if ($LASTEXITCODE -ne 0) { throw 'Type check failed' }
+```
+
+即使 `core.autocrlf=true`，`.gitattributes` 也要求清单中的 coss 源码以 LF 检出，并禁止转换固定哈希字体的二进制字节；哈希测试仍校验原始内容。已有 CRLF 工作副本首次采用规则时，确认这些文件没有本地修改后，仅重取 `components/coss/`、`hooks/coss/use-media-query.ts` 和 `lib/coss/segmented-control.ts`。`vendor/` 的说明与清单本身没有固定字节哈希，因此不扩大规则范围。先成功构建再运行完整测试，才能覆盖服务端渲染与生产公式模块；`dist/`、`.sites-runtime/`、`.wrangler/` 和 TypeScript 增量缓存均已忽略。
 
 以下为历史迭代记录，当前范围与状态以上述可用版本为准。
 

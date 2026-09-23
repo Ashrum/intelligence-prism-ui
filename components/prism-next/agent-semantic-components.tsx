@@ -8,6 +8,8 @@ import { Card } from "@/components/coss/card"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Badge } from "./badge"
 import { AgentTaskProgress, type AgentStep } from "./agent-components"
+import { agentProgressLabels, type AgentProgressState } from "@/lib/prism-next/agent-progress"
+export type { AgentProgressState } from "@/lib/prism-next/agent-progress"
 
 /** An available host capability. A callback expresses intent; it is never a receipt. */
 export type AgentSemanticAction = { label: string; onAction: () => void; disabledReason?: string }
@@ -70,9 +72,6 @@ export function AgentExecutionConfirmation({ title, target, version, effects, co
   </Surface>
 }
 
-export type AgentProgressState = "pending" | "running" | "waiting" | "unknown" | "completed" | "partial" | "failed"
-const progressLabels: Record<AgentProgressState, string> = { pending: "待开始", running: "进行中", waiting: "等待处理", unknown: "状态未确认", completed: "已完成", partial: "部分完成", failed: "执行失败" }
-
 /** Overall state is independent of step state. Unknown/waiting states never animate old steps. */
 export function AgentExecutionProgress({ title, state, description, steps, expanded, onExpandedChange, updatedAt, action, presentation = "card" }: {
   title: string; state: AgentProgressState; description: string; steps: readonly AgentStep[];
@@ -80,9 +79,9 @@ export function AgentExecutionProgress({ title, state, description, steps, expan
   action?: AgentSemanticAction; presentation?: Presentation;
 }) {
   const id = useId()
-  const tone = state === "failed" ? "error" : state === "completed" ? "success" : state === "running" ? "info" : state === "waiting" || state === "unknown" || state === "partial" ? "warning" : "outline"
+  const tone = state === "failed" ? "error" : state === "completed" ? "success" : state === "running" ? "info" : state === "waiting" || state === "waiting-human" || state === "unknown" || state === "partial" ? "warning" : "outline"
   return <Surface labelledBy={id} presentation={presentation}>
-    <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0 space-y-1"><h3 id={id} className="break-words text-block-title">{title}</h3>{updatedAt && <p className="text-ui-hint text-muted-foreground">{updatedAt}</p>}</div><Badge variant={tone}>{progressLabels[state]}</Badge></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0 space-y-1"><h3 id={id} className="break-words text-block-title">{title}</h3>{updatedAt && <p className="text-ui-hint text-muted-foreground">{updatedAt}</p>}</div><Badge variant={tone}>{agentProgressLabels[state]}</Badge></div>
     <p role="status" className="break-words text-ui-body">{description}</p>
     <Collapsible open={expanded} onOpenChange={onExpandedChange}>
       {onExpandedChange && <CollapsibleTrigger render={<Button variant="ghost" size="sm" />}><ChevronDown aria-hidden="true" className={expanded ? "rotate-180" : undefined} />{expanded ? "收起步骤" : "查看步骤"}</CollapsibleTrigger>}

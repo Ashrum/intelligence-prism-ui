@@ -156,11 +156,15 @@ import { Badge } from "@/components/prism-next/badge"
 | AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
 | AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
 
+`AgentExecutionProgress.state` 由调用方显式提供，统一类型与标签见 `lib/prism-next/agent-progress.ts`。按照 v0.2.1 §7.1 补充 `degraded`（已降级）和 `retrying`（重试中）；两者与 `paused`（已暂停）均为仅显示状态，**既有执行状态来源未接入**。`shell` / `review` 来源适配保持不变，不为这些显示状态虚构源状态；接入依据与对应关系见 [任务进度状态映射](agent-context-summary-review.md#任务进度状态映射)。
+
+组件不依据计时器、经过时间、确认或重试按钮点击推测状态。仅整体状态为 `running` 时展示实时步骤，其他状态静态保留最后步骤记录。示例选择器提供 15 种手动组合样本，“待人工处理”使用 `waiting-human`，并提供 `queued` / `paused` / `degraded` / `retrying` 样本；这些样本只展示外部输入，不表示已经接入执行服务或自动流转。
+
 后四项位于 `agent-semantic-components.tsx`，均可传 `presentation="card" | "inline"`，只控制外壳，不创建宿主面板。`AgentSemanticAction={label,onAction,disabledReason?}` 表示宿主提供的能力，回调仅为意图；条件、权限、有效版本、回执与恢复范围由宿主核验。新增 `AgentTaskProgress.activity="live" | "snapshot"`，默认 live 兼容；snapshot 将 running 步骤标作“上次进行到”，不转圈、不设置当前步骤。
 
 引导式任务 v0.1.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
 
-补充要求最多 500 字，保存在解析示例并写入任务指令；固定示例不根据自由文本生成内容。排版建议仅演示条件与问题分段，采用后需重新核对；若题干已被人工修改，旧建议不能覆盖。任务指令可在任意已添加材料的阶段展开，保存后直接展示；编辑复用副本不会修改当前任务。
+补充要求最多 500 字，保存在解析示例并写入任务指令；固定示例不根据自由文本生成内容。排版建议仅演示条件与问题分段，采用仅记录内容选择，核对状态见题目编辑区；若题干已被人工修改，旧建议不能覆盖。任务指令可在任意已添加材料的阶段展开，保存后直接展示；编辑复用副本不会修改当前任务。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
 

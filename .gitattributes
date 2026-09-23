@@ -1,0 +1,7 @@
+# Pinned source bytes: vendor/coss-manifest.json (tests/coss-v1.test.mjs).
+/components/coss/** text eol=lf
+/hooks/coss/use-media-query.ts text eol=lf
+/lib/coss/segmented-control.ts text eol=lf
+
+# Pinned binary asset: scripts/check-math-font.mjs.
+/public/fonts/typography-review/stix-two-math.woff2 -text
