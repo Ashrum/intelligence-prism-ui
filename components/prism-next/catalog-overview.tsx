@@ -27,7 +27,7 @@ export function CatalogOverview() {
       const pages=group.id==='agent'?relatedPages:[]
       if(!items.length&&!pages.length)return null
       return <section key={group.id} className="mb-9" aria-labelledby={'group-'+group.id}>
-        <h2 id={'group-'+group.id} className="mb-3 flex flex-wrap items-center gap-2 text-section-title">{group.title}<span className="text-ui-hint text-muted-foreground">{group.id==='agent'?`${items.length} 组组件 · 骨架与示例另计`:items.length}</span></h2>
+        <h2 id={'group-'+group.id} className="mb-3 flex scroll-mt-20 flex-wrap items-center gap-2 text-section-title">{group.title}<span className="text-ui-hint text-muted-foreground">{group.id==='agent'?`${items.length} 组组件 · 骨架与示例另计`:items.length}</span></h2>
         <div className="grid grid-cols-1 gap-x-8 md:grid-cols-2 xl:grid-cols-3">
           {items.map(item=><Link key={item.id} href={'/next/components/'+item.id} className="group min-w-0 border-b py-4">
             <div className="flex items-center gap-2 font-medium text-foreground">{item.title}<ArrowUpRight className="ml-auto size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"/></div>
