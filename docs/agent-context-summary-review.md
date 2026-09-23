@@ -37,7 +37,7 @@
 - `shell`：`components/prism-next/skeletons/workbench-model.ts` 的 `TaskState`；`idle → null`、`attention → waiting`，`queued` / `running` / `failed` / `completed` 同名映射。
 - `review`：`lib/prism-next/review.ts` 的 `TaskStatus`；`idle` / `stopped → null`、`confirm → waiting-human`、`error → failed`，`running` / `completed` 同名映射。
 
-以下 Workspace 词汇仅为**接入方适配参考，非组件依赖**；由接入方实现，不纳入组件库运行时类型或映射：
+以下 Workspace 词汇仅为接入方适配参考，非组件依赖，由接入方实现：
 
 - `teacher-agent`：`ole-school-workbench/src/features/teacher/shared/model.ts` 的 `AgentTask.status`；`DRAFT → pending`、`READY` / `INSUFFICIENT → waiting-human`、`STOPPED` / `ADOPTED` / `REJECTED → null`。
 - `conversation`：`ole-school-workbench/src/features/teacher/agent-home/conversation-directory.ts` 的 `ConversationStatus`；`waiting → waiting-human`、`stopped → null`，`running` / `completed` 同名映射。
