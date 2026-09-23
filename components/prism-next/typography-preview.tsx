@@ -9,7 +9,11 @@ const pages=[
   {value:'/next/components/field',label:'字段说明与错误'},
   {value:'/next/examples/questions',label:'题目阅读'},
   {value:'/next/use-cases/parsing',label:'解析工作区'},
-  {value:'/next/skeletons/agent',label:'Agent 工作区'},
+  {value:'/next/agent',label:'Agent 工作区示例'},
+  {value:'/next/components/agent-components',label:'Agent 语义组件'},
+  {value:'/next/skeletons/agent',label:'Agent 页面骨架'},
+  {value:'/next/components/status-composition',label:'分类配色对照'},
+  {value:'/next/components/evidence-matrix',label:'连续色阶对照'},
 ]
 /** An actual iframe viewport, not a scaled drawing, exercises native media queries. */
 export function TypographyPreview(){

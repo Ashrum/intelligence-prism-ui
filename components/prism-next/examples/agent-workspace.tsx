@@ -1,4 +1,6 @@
 "use client"
+import { ParsingWorkspace } from "@/examples/teacher-use-cases/parsing-workspace"
+import { Tabs,TabsList,TabsTab,TabsPanel } from "@/components/coss/tabs"
 import { AgentComposer, AgentTaskProgress } from "@/components/prism-next/agent-components"
 import { useEffect, useReducer, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -40,4 +42,9 @@ export function AgentWorkspace({compact=false,onApply,adoptionState='absent'}:{c
 
     {task.status!=='idle'&&!active&&<Button variant="ghost" size="sm" onClick={()=>{dispatch({type:'reset'});setPrompt('');setCopied('')}}>新任务</Button>}
   </div>
+}
+
+/** Existing Agent pattern route; compact reading assistant remains unchanged. */
+export function AgentWorkspaceExamples(){
+ return <Tabs defaultValue="parsing"><TabsList variant="underline" aria-label="Agent 工作区示例"><TabsTab value="parsing">试卷解析引导</TabsTab><TabsTab value="review">材料复核助手</TabsTab></TabsList><TabsPanel value="parsing" keepMounted className="pt-5"><ParsingWorkspace embedded/></TabsPanel><TabsPanel value="review" className="pt-5"><AgentWorkspace/></TabsPanel></Tabs>
 }

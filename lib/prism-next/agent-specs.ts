@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'agent-components': {
+    component: 'Agent semantic group v0.1 — design candidate',
+    source: 'Prism / coss composition; interaction reference: https://www.beautifului.dev/',
+    contract: ['AgentContextSummary composes AgentContextList; selection, read, current context and citation are independent host facts. confirmed requires a scoped description; absent requires complete host-verified coverage; unknown and unavailable stay distinct. Opening a source does not change facts.', 'AgentArtifactPreview receives object identity, version, status and optional open capability. Preview content never proves execution or publication.', 'AgentExecutionConfirmation receives a discriminated ready/submitting/received/blocked/unknown/recorded state. Only ready exposes confirmation. Callbacks return intent, not acknowledgements.', 'AgentExecutionProgress reuses AgentTaskProgress; overall state and expansion are external. Waiting/unknown renders old running steps as static snapshots, never ongoing activity.', 'AgentExecutionResult receives a succeeded/partial/failed/unknown receipt. Unknown exposes query only; partial preserves completed and remaining scope. Host capabilities determine recovery.', 'AgentChangeReview preserves controlled string input and adds optional version labels, scope, presentation slots and reset intent. Caller owns freshness, draft updates and saving. AgentQuestionCard remains controlled; choosing does not execute or save.'],
+    states: ['draft/current/historical/unavailable preview', 'pending/accepted/kept or externally blocked comparison', 'ready/submitting/received/blocked/recorded/unknown confirmation', 'running/waiting/snapshot progress', 'succeeded/partial/failed/unknown receipt'],
+    accessibility: ['Choices use the pinned RadioGroup and associated labels.', 'Decision information is at least 14px; long source and comparison text uses read-body 16/28.', 'Narrow containers wrap or stack; source dialogs return focus.'],
+    dont: ['Do not put demo execution, business persistence or model calls in reusable components.', 'Do not treat selection or accepted changes as permission to publish.', 'Do not manufacture confidence, completion percentages or internal reasoning.'],
+  },
   button: {
     component: "Button",
     source: "coss original component; preserve pinned upstream sizing, radius, padding and focus behavior",

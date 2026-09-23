@@ -4,7 +4,7 @@ export type Stage = 'intake' | 'scope' | 'processing' | 'review' | 'saved' | 'ha
 export type SourcePage = { id: string; label: string; role: 'questions' | 'answers' | 'student'; quality: 'clear' | 'blurred'; selected: boolean; status: 'waiting' | 'done' | 'failed'; revision: number }
 export type Question = { id: string; number: string; stem: string; answer: string; source: string[]; checked: boolean; sourceVersion: string }
 export type SavedResult = { title:string; version:number; at:string; bank:string; questions:Question[]; pages:SourcePage[] }
-export type ParsingTask = { schema: 1; id: string; scenario: ScenarioId; stage: Stage; title: string; pages: SourcePage[]; purpose: '' | 'questions' | 'with-answers' | 'student'; grouping: '' | 'one' | 'separate'; phase: number; failure: boolean; retryOnly: boolean; questions: Question[]; bank: string; version: number; savedAt: string | null; savedResult?:SavedResult; previousQuestions?:Question[]; answerLinked: boolean; handoff: boolean }
+export type ParsingTask = { schema: 1; requirements?: string; id: string; scenario: ScenarioId; stage: Stage; title: string; pages: SourcePage[]; purpose: '' | 'questions' | 'with-answers' | 'student'; grouping: '' | 'one' | 'separate'; phase: number; failure: boolean; retryOnly: boolean; questions: Question[]; bank: string; version: number; savedAt: string | null; savedResult?:SavedResult; previousQuestions?:Question[]; answerLinked: boolean; handoff: boolean }
 export const stageIndex: Record<Stage,number> = { intake:0, scope:1, processing:2, review:3, saved:4, handoff:1 }
 export const executionLabels = ['材料检查', '题目与公式识别', '题目结构整理']
 export function emptyTask(scenario: ScenarioId='images'): ParsingTask {
@@ -38,13 +38,14 @@ function candidateQuestions(task:ParsingTask):Question[] {
 }
 export type ParsingAction =
  | {type:'sample';scenario:ScenarioId}
- | {type:'scope';purpose?:ParsingTask['purpose'];grouping?:ParsingTask['grouping'];title?:string}
+ | {type:'scope';purpose?:ParsingTask['purpose'];grouping?:ParsingTask['grouping'];title?:string;requirements?:string}
  | {type:'select-page';id:string;selected:boolean}
  | {type:'move';id:string;direction:-1|1}
  | {type:'replace';id:string}
  | {type:'failure';value:boolean}
  | {type:'start'} | {type:'advance'} | {type:'retry'} | {type:'back'}
  | {type:'edit';id:string;stem?:string;answer?:string} | {type:'check';id:string}
+ | {type:'apply-change';id:string;before:string;after:string}
  | {type:'link-answer';value:boolean} | {type:'bank';value:string}
  | {type:'save';at:string} | {type:'revise'} | {type:'handoff'}
 export function saveProblem(t:ParsingTask):string {
@@ -64,7 +65,7 @@ export function missingSource(t:ParsingTask):boolean {
 }
 export function parsingReducer(t:ParsingTask,a:ParsingAction):ParsingTask {
  if(a.type==='sample')return sampleTask(a.scenario)
- if(a.type==='scope'&&t.stage==='scope')return {...t,...(a.purpose!==undefined?{purpose:a.purpose}:{}),...(a.grouping!==undefined?{grouping:a.grouping}:{}),...(a.title!==undefined?{title:a.title}:{})}
+ if(a.type==='scope'&&t.stage==='scope')return {...t,...(a.purpose!==undefined?{purpose:a.purpose}:{}),...(a.grouping!==undefined?{grouping:a.grouping}:{}),...(a.title!==undefined?{title:a.title}:{}),...(a.requirements!==undefined?{requirements:a.requirements.slice(0,500)}:{})}
  if(a.type==='select-page'&&t.stage==='scope')return {...t,pages:t.pages.map(p=>p.id===a.id?{...p,selected:a.selected}:p)}
  if(a.type==='move'&&t.stage==='scope'){const i=t.pages.findIndex(p=>p.id===a.id),j=i+a.direction;if(i<0||j<0||j>=t.pages.length)return t;const pages=[...t.pages];[pages[i],pages[j]]=[pages[j],pages[i]];return {...t,pages}}
  if(a.type==='replace'&&(t.stage==='scope'||t.stage==='review')){
@@ -83,6 +84,7 @@ export function parsingReducer(t:ParsingTask,a:ParsingAction):ParsingTask {
  if(a.type==='retry'&&t.stage==='review'&&t.pages.some(p=>p.status==='failed'))return {...t,stage:'processing',phase:1,retryOnly:true,pages:t.pages.map(p=>p.status==='failed'?{...p,status:'waiting'}:p)}
  if(a.type==='back'&&(t.stage==='review'||t.stage==='handoff'))return {...t,stage:'scope',questions:[],pages:t.pages.map(p=>({...p,status:'waiting'})),answerLinked:false}
  if(a.type==='edit'&&t.stage==='review')return {...t,questions:t.questions.map(q=>q.id===a.id?{...q,...(a.stem!==undefined?{stem:a.stem}:{}),...(a.answer!==undefined?{answer:a.answer}:{}),checked:false}:q)}
+ if(a.type==='apply-change'&&t.stage==='review'&&a.after.trim())return {...t,questions:t.questions.map(q=>q.id===a.id&&q.stem===a.before?{...q,stem:a.after,checked:false}:q)}
  if(a.type==='check'&&t.stage==='review')return {...t,questions:t.questions.map(q=>q.id===a.id&&q.stem.trim()?{...q,checked:true}:q)}
  if(a.type==='link-answer'&&t.stage==='review')return {...t,answerLinked:a.value,questions:t.questions.map(q=>({...q,checked:false}))}
  if(a.type==='bank'&&t.stage==='review')return {...t,bank:a.value}
@@ -93,8 +95,8 @@ export function parsingReducer(t:ParsingTask,a:ParsingAction):ParsingTask {
 }
 export function taskInstruction(t:ParsingTask):string {
  const purpose=t.purpose==='student'?'将学生作答整理到批阅准备，保留原始材料，不评分':t.purpose==='with-answers'?'提取题目，并单独整理原稿提供的参考答案':'提取题目；排除学生手写作答，不生成参考答案'
- return `请整理「${t.title}」。处理 ${t.pages.filter(p=>p.selected).length} 页，按当前确认的页序作为一份材料。${purpose}。保留题号、跨页与子题关系，并为每题关联原稿页码。不确定内容标为待核对，教师确认后再保存。`
+ return `请整理「${t.title}」。处理 ${t.pages.filter(p=>p.selected).length} 页，按当前确认的页序作为一份材料。${purpose}。保留题号、跨页与子题关系，并为每题关联原稿页码。不确定内容标为待核对，教师确认后再保存。${t.requirements?.trim()?` 补充要求：${t.requirements.trim()}`:''}`
 }
 export function restoreTask(raw:string|null):ParsingTask|null {
- try{const t=JSON.parse(raw??'null');if(!t||t.schema!==1||!['single','images','pdf','scan','answers','student'].includes(t.scenario)||!['intake','scope','processing','review','saved','handoff'].includes(t.stage)||!Array.isArray(t.pages)||!Array.isArray(t.questions)||typeof t.title!=='string'||typeof t.bank!=='string'||!Number.isInteger(t.version)||!Number.isInteger(t.phase))return null;if(!t.pages.every((p:SourcePage)=>typeof p.id==='string'&&typeof p.label==='string'&&['questions','answers','student'].includes(p.role)&&['clear','blurred'].includes(p.quality)&&['waiting','done','failed'].includes(p.status)&&typeof p.selected==='boolean'&&Number.isInteger(p.revision))||!t.questions.every((q:Question)=>typeof q.id==='string'&&typeof q.stem==='string'&&typeof q.answer==='string'&&Array.isArray(q.source)&&typeof q.sourceVersion==='string'&&typeof q.checked==='boolean'))return null;return t as ParsingTask}catch{return null}
+ try{const t=JSON.parse(raw??'null');if(!t||t.schema!==1||!['single','images','pdf','scan','answers','student'].includes(t.scenario)||!['intake','scope','processing','review','saved','handoff'].includes(t.stage)||!Array.isArray(t.pages)||!Array.isArray(t.questions)||typeof t.title!=='string'||typeof t.bank!=='string'||(t.requirements!==undefined&&(typeof t.requirements!=='string'||t.requirements.length>500))||!Number.isInteger(t.version)||!Number.isInteger(t.phase))return null;if(!t.pages.every((p:SourcePage)=>typeof p.id==='string'&&typeof p.label==='string'&&['questions','answers','student'].includes(p.role)&&['clear','blurred'].includes(p.quality)&&['waiting','done','failed'].includes(p.status)&&typeof p.selected==='boolean'&&Number.isInteger(p.revision))||!t.questions.every((q:Question)=>typeof q.id==='string'&&typeof q.stem==='string'&&typeof q.answer==='string'&&Array.isArray(q.source)&&typeof q.sourceVersion==='string'&&typeof q.checked==='boolean'))return null;return t as ParsingTask}catch{return null}
 }
