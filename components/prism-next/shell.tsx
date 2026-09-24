@@ -14,8 +14,8 @@ import { Button } from "@/components/coss/button"
 import { componentGroups,components,applicationExamples,agentRelatedPages } from "@/lib/prism-next/catalog"
 import { themeOptions,DESIGN_VERSION,DESIGN_STATUS } from "@/lib/prism-next/config"
 
-export function BrandMark({large=false}:{large?:boolean}) {
-  return <span className={'prism-brand-mark'+(large?' prism-brand-mark--large':'')} aria-hidden="true"><i/><i/><i/></span>
+export function BrandMark() {
+  return <span className="flex items-center gap-0.5" aria-hidden="true"><span className="h-4 w-1 rounded-full bg-(--brand-blue)"/><span className="h-5 w-1 rounded-full bg-(--brand-magenta)"/><span className="h-3 w-1 rounded-full bg-(--brand-green)"/></span>
 }
 
 function Navigation() {
@@ -40,7 +40,7 @@ function Navigation() {
   </SidebarMenuItem>
   return <Sidebar collapsible="offcanvas">
     <SidebarHeader className="px-5 pt-6 pb-4">
-      <Link href="/next" className="flex items-center gap-3 font-semibold text-foreground"><BrandMark/><span>智能曜彩<span className="mt-0.5 block text-ui-hint font-normal  text-muted-foreground">组件与设计规范</span></span></Link>
+      <Link href="/next" className="flex items-center gap-3 font-semibold text-foreground"><BrandMark/><span>智能曜彩<span className="mt-0.5 block text-ui-hint  text-muted-foreground">组件与设计规范</span></span></Link>
     </SidebarHeader>
     <SidebarContent ref={navigation} className="px-2">
       <SidebarGroup><SidebarMenu>
@@ -48,7 +48,7 @@ function Navigation() {
         {link('/next/foundations/typography','字体与字号',<BookOpen/>)}{link('/next/reading','材料研读',<BookOpen/>)}{link('/next/use-cases','教师用例与流程',<Layers/>)}
       </SidebarMenu></SidebarGroup>
       {componentGroups.map(group=><SidebarGroup key={group.id} className="py-0.5"><Collapsible open={Boolean(openGroups[group.id])} onOpenChange={open=>setOpenGroups(previous=>({...previous,[group.id]:open}))}>
-        <CollapsibleTrigger className="prism-nav-group">{group.title}<span className="font-normal tabular-nums">{group.items.length}</span><ChevronRight/></CollapsibleTrigger>
+        <CollapsibleTrigger render={<Button variant="ghost"/>} className="prism-nav-group">{group.title}<span className="text-ui-body tabular-nums">{group.items.length}</span><ChevronRight/></CollapsibleTrigger>
         <CollapsiblePanel><SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}{group.id==='agent'&&agentRelatedPages.map(page=>link(page.href,page.title))}</SidebarMenu></CollapsiblePanel>
       </Collapsible></SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>

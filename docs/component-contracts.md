@@ -101,20 +101,20 @@ import { Badge } from "@/components/prism-next/badge"
 />
 ```
 
-- `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
+- `kind` 保留外部业务名称；题型标签根据已识别 `response` 展示单选、多选、填空、判断或解答。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时标识为混合，未明确类型保持未知。内部 `tone` 分类保留兼容，不再映射品牌配色；类型使用 Badge 的 outline、分值使用 secondary 公开变体，不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
-- 独立展示、题库和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，标题采用 item-title，题干、选项与小问采用 read-body（16/28）。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
-- 试题篮仍复用 `QuestionCard`，由 `.q-basket-list` 容器排列为序号左栏、标题在上、标签与题干在下；题间以留白区分，题卡本身不另加外框。题篮不提供详情或跨区域定位，详情保留在完整题卡中。常规高度下统计与操作位于滚动列表之外，短窗口改为整篮滚动。
+- 独立展示、题库和组卷共用题卡：外观沿用 main，题型与分值在上、标题在下，标题采用 item-title，题干、选项与小问采用 read-body（16/28）。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
+- 试题篮仍复用 `QuestionCard`，由 `.q-basket-list` 容器排列为序号左栏、标题在上、标签与题干在下；题间以留白分隔，题卡保留 main 的既有外观。题篮不提供详情或跨区域定位，详情保留在完整题卡中。常规高度下统计与操作位于滚动列表之外，短窗口改为整篮滚动。
 - `compact` 只显示题干，省略选项、附图、材料块与小问；所有场景均自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
 - `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
-- `actions` 区域的默认实心按钮使用统一蓝底白字；操作数量与行为仍由调用方提供，至多保留一个主操作。面板底部可用 `q-primary-action` 复用同一颜色。类型色独立于成功/错误状态，不复用 destructive 等状态变体。
+- `actions` 使用现有 Button / ToolbarButton 的公开 variant 和 size，主操作沿用 main 主题；操作数量与行为由调用方提供，至多保留一个主操作。题型不复用成功/错误状态变体。
 - `showPoints` 控制总分及小问分值显示，隐藏分值仍保留题型；`displayPoints` / `displayPartPoints` 仅覆盖当前展示，不修改传入原题。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
 - 答案解析中的独立公式与说明文字左对齐，长公式在原区域内横向滚动；行内公式和公式内部对齐不改动。打印答案沿用左对齐规则。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
 - `QuestionActions` 将相似题及次常用操作收进更多菜单；仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
 - `QuestionResponse` 接收题型、选项、`value` / `onChange`，只收集作答，不自动判分。
-- `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。确认通过 `onConfirm` 返回结果。
+- `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。校验通过后 `onConfirm` 仅返回确认意图，不修改 saved、record 或清空理由。`status?: "pending" | "confirmed" | "unknown"` 由外部事实提供，默认 pending；record 文字不推导完成。缺分、非法值、未确认改分和待提交说明优先展示；无回调时确认按钮禁用。调用方收到实际回执后更新 status 及受控 editor 的 saved / record / reason；示例状态必须明确标注。
 - 没有细分 rubric 时：已有小问分值使用 `${part.id}-score`；没有小问分值回退整题 `score`。不擅自平均分配分值。未提供初评的评分点保持待评分。更换被复核对象时使用 `key={question.id}` 重建独立编辑草稿。
 
 ## 图表与分析
@@ -185,20 +185,20 @@ import { Badge } from "@/components/prism-next/badge"
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
 
 
-## 智能曜彩业务状态（设计分支候选）
+## 业务状态语义适配（方案 A）
 
 `StatusBadge` 位于 `components/prism-next/status-badge.tsx`，组合现有 coss Badge，不新增目录组件。调用方显式传入 `tone` 和状态文字，不从标签文案推测状态。
 
-| tone | 用途 | 色彩 |
+| tone | 用途 | Badge 公开 variant |
 | --- | --- | --- |
-| pending | 等待人工处理、复核、验证 | 曜紫红 |
-| active | 正在执行 | 曜蓝 |
-| complete | 已完成、已更新、已保存 | 曜青绿 |
-| neutral | 草稿、暂停、排除、尚未进入的步骤 | 中性 |
-| warning | 来源失效、逾期、评分差异 | 琥珀 |
-| error | 校验或执行失败 | 独立红色 |
+| pending | 等待人工处理、复核、验证 | outline |
+| active | 正在执行 | info |
+| complete | 已完成、已更新、已保存 | success |
+| neutral | 草稿、暂停、排除、尚未进入的步骤 | secondary |
+| warning | 来源失效、逾期、评分差异 | warning |
+| error | 校验或执行失败 | error |
 
-所有状态提供文字与图标，颜色为辅助。使用 `--brand-{blue,magenta,lime}-{ink,surface}` 三主题配色；原 `--q-*` 同名角色保留为别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型仍使用色点身份；图表分类继续由数据定义，不能自动套成三类。
+所有状态提供文字与图标，外观沿用 main 已有 Badge 变体及三主题；不新增颜色或角色别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型保留文字身份；图表分类继续由数据定义，不能自动套成三类。
 
 `DataRecordTable` 列可传 `numeric: true`（右对齐与等宽数字）或 `align`；`rowLabel(row)` 提供查看按钮的可读名称。以上均为兼容性可选参数。`MilestoneList` 按自身容器宽度选择横/竖排列，并用可见状态文字及 `aria-current="step"` 标识当前节点。
 

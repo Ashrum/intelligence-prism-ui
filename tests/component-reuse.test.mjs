@@ -110,3 +110,14 @@ test('printed part types remain readable without scores and teacher scoring stay
  assert.match(answers,/以下分值为原题评分依据，仅供教师参考/);
  assert.match(answers,/原题 2 分/);assert.match(answers,/原题 3 分/);assert.match(answers,/选择依据（2 分）/);
 });
+
+test('review completion renders only an external status, with no callback it cannot confirm',()=>{
+ const props={question,attempts:{1:'作答'},initialScores:{score:2},editor:{scores:{score:2},saved:{score:2},record:'旧记录',reason:'',error:''},onEditorChange(){}};
+ const pending=render(h(QuestionReview,props));
+ assert.match(pending,/待复核/);assert.doesNotMatch(pending,/已确认复核|最新复核记录/);
+ assert.match(pending,/<button[^>]*disabled[^>]*>确认复核<\/button>/);
+ const confirmed=render(h(QuestionReview,{...props,status:'confirmed'}));
+ assert.match(confirmed,/已确认复核/);assert.match(confirmed,/最新复核记录：旧记录/);
+ const unknown=render(h(QuestionReview,{...props,status:'unknown'}));
+ assert.match(unknown,/复核状态未确认/);assert.doesNotMatch(unknown,/已确认复核/);
+});

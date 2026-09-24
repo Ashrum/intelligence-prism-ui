@@ -33,8 +33,8 @@ export function BadgeDemo(){
  const [count,setCount]=useState(2)
  return <>
 
- <DemoSection title="业务状态" description="曜紫红标识待处理，曜蓝标识进行中，曜青绿标识已完成；文字与图标共同表达状态。"><div className="flex flex-wrap items-center gap-3"><StatusBadge tone="neutral">草稿</StatusBadge><StatusBadge tone="pending">待复核</StatusBadge><StatusBadge tone="active">处理中</StatusBadge><StatusBadge tone="complete">已更新</StatusBadge><StatusBadge tone="complete">已复核</StatusBadge></div></DemoSection>
- <DemoSection title="风险与校验" description="风险使用琥珀色，错误使用独立红色。"><div className="flex flex-wrap items-center gap-3"><StatusBadge tone="warning">来源已变化</StatusBadge><StatusBadge tone="error">校验未通过</StatusBadge></div></DemoSection>
+ <DemoSection title="业务状态" description="状态由示例显式传入；使用现有 Badge 变体，文字与图标共同表达。"><div className="flex flex-wrap items-center gap-3"><StatusBadge tone="neutral">草稿</StatusBadge><StatusBadge tone="pending">待复核</StatusBadge><StatusBadge tone="active">处理中</StatusBadge><StatusBadge tone="complete">已更新</StatusBadge><StatusBadge tone="complete">已复核</StatusBadge></div></DemoSection>
+ <DemoSection title="风险与校验" description="风险与校验分别使用现有 warning / error 变体。"><div className="flex flex-wrap items-center gap-3"><StatusBadge tone="warning">来源已变化</StatusBadge><StatusBadge tone="error">校验未通过</StatusBadge></div></DemoSection>
 
   <DemoSection title="信息与状态"><div className="flex flex-wrap items-center gap-3"><Badge variant="secondary">草稿</Badge><Badge variant="outline">待复核</Badge><Badge variant="info"><Info/>处理中</Badge><Badge variant="success"><Check/>已复核</Badge><Badge variant="warning"><TriangleAlert/>需要补充</Badge><Badge variant="error">未通过</Badge></div></DemoSection>
   <DemoSection title="实心信息色与计数" description="用彩色气泡背景突出数量，数字保持中性色。info-solid 适用于计数等需要强调的信息，不表示待办、错误或任务完成。">
@@ -52,7 +52,7 @@ export function CardDemo(){
   <DemoSection title="内容与操作" description="用于材料摘要；状态与时长集中呈现，收藏和阅读分别位于两侧。">
    <Card className="prism-card-composed">
     <CardHeader className="flex items-start justify-between gap-4">
-     <div className="min-w-0 space-y-1"><CardTitle className="text-block-title">二次方程的实数根</CardTitle><CardDescription>数学 · 函数与方程</CardDescription></div>
+     <div className="min-w-0 space-y-1"><CardTitle>二次方程的实数根</CardTitle><CardDescription>数学 · 函数与方程</CardDescription></div>
      <span className="prism-card-signature shrink-0" role="img" aria-label="智能曜彩"><BrandMark/></span>
     </CardHeader>
     <CardPanel>
@@ -64,31 +64,31 @@ export function CardDemo(){
   </DemoSection>
 
   <DemoSection title="带分组标题的卡片" description="分组标题独立于内容卡，更新状态与分类分别呈现。">
-   <CardFrame className="prism-card-group"><CardFrameHeader className="flex flex-row items-center gap-3 px-0 pt-0 pb-3"><span className="prism-card-signature" aria-hidden="true"><BrandMark/></span><div><CardFrameTitle className="text-block-title">本周材料</CardFrameTitle><CardFrameDescription className="mt-0.5 text-ui-hint">待完成的阅读与复核</CardFrameDescription></div></CardFrameHeader><Card className="prism-card-composed"><CardHeader><CardTitle className="text-block-title">函数的单调性</CardTitle><div className="flex flex-wrap items-center gap-x-3 gap-y-2"><CardDescription>知识梳理</CardDescription><StatusBadge tone="complete">已更新</StatusBadge></div></CardHeader><CardPanel><p className="text-read-body">从图像观察变化，再用定义说明结论。</p></CardPanel><CardFooter className="justify-end"><Button render={<Link href="/next/reading"/>}>查看材料<ArrowRight/></Button></CardFooter></Card></CardFrame>
+   <CardFrame ><CardFrameHeader className="flex flex-row items-center gap-3 px-0 pt-0 pb-3"><span className="prism-card-signature" aria-hidden="true"><BrandMark/></span><div><CardFrameTitle>本周材料</CardFrameTitle><CardFrameDescription className="mt-0.5">待完成的阅读与复核</CardFrameDescription></div></CardFrameHeader><Card className="prism-card-composed"><CardHeader><CardTitle>函数的单调性</CardTitle><div className="flex flex-wrap items-center gap-x-3 gap-y-2"><CardDescription>知识梳理</CardDescription><StatusBadge tone="complete">已更新</StatusBadge></div></CardHeader><CardPanel><p className="text-read-body">从图像观察变化，再用定义说明结论。</p></CardPanel><CardFooter className="justify-end"><Button render={<Link href="/next/reading"/>}>查看材料<ArrowRight/></Button></CardFooter></Card></CardFrame>
   </DemoSection>
 
   <DemoSection title="指标摘要" description="数值与进度共用统计口径。">
    <Card className="prism-card-composed">
-    <CardHeader><CardTitle id={`${id}-progress-title`} className="text-block-title">已完成复核</CardTitle><CardDescription>本周 · 示例数据</CardDescription></CardHeader>
+    <CardHeader><CardTitle id={`${id}-progress-title`}>已完成复核</CardTitle><CardDescription>本周 · 示例数据</CardDescription></CardHeader>
     <CardPanel>
-     <p className="flex items-baseline gap-2 text-stat-display tabular-nums">{completed}<span className="text-ui-body font-normal text-muted-foreground">份</span></p>
-     <Progress value={completion} aria-labelledby={`${id}-progress-title`} aria-valuetext={`已完成 ${completed} 份，共 ${total} 份，完成率 ${completion}%`} className="mt-4"><ProgressTrack><ProgressIndicator className="bg-(--q-blue-ink)"/></ProgressTrack></Progress>
-     <div className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-ui-hint tabular-nums"><span className="text-muted-foreground">共 {total} 份材料</span><span className="font-medium">完成率 {completion}%</span></div>
+     <p className="flex items-baseline gap-2 text-stat-display tabular-nums">{completed}<span className="text-ui-body text-muted-foreground">份</span></p>
+     <Progress value={completion} aria-labelledby={`${id}-progress-title`} aria-valuetext={`已完成 ${completed} 份，共 ${total} 份，完成率 ${completion}%`} className="mt-4"><ProgressTrack><ProgressIndicator/></ProgressTrack></Progress>
+     <div className="mt-2 flex flex-wrap justify-between gap-x-4 gap-y-1 text-ui-hint tabular-nums"><span className="text-muted-foreground">共 {total} 份材料</span><span className="text-ui-action">完成率 {completion}%</span></div>
     </CardPanel>
    </Card>
   </DemoSection>
 
   <DemoSection title="可选择卡片" description="用于互斥方案，支持整卡点击与方向键选择。">
-   <RadioGroup value={selected} onValueChange={setSelected} aria-label="卡片展示方案" className="prism-card-options grid gap-3">{[{id:"brief",title:"摘要模式",text:"优先显示标题、状态和关键数据。"},{id:"detail",title:"详细模式",text:"显示说明、关联内容与操作。"}].map(item=><Card key={item.id} render={<label/>} className={"cursor-pointer transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring "+(selected===item.id?"border-ring":"hover:border-muted-foreground")}><CardPanel className="flex items-start gap-3 p-4"><Radio value={item.id} aria-labelledby={`${id}-${item.id}-title`} aria-describedby={`${id}-${item.id}-description`} className="mt-1 focus-visible:ring-0 focus-visible:ring-offset-0"/><div className="min-w-0"><h3 id={`${id}-${item.id}-title`} className="text-item-title">{item.title}</h3><p id={`${id}-${item.id}-description`} className="mt-1 text-ui-hint text-muted-foreground">{item.text}</p></div></CardPanel></Card>)}</RadioGroup><Feedback>当前选择：{selected==="brief"?"摘要模式":"详细模式"}</Feedback>
+   <RadioGroup value={selected} onValueChange={setSelected} aria-label="卡片展示方案" className="prism-card-options grid gap-3">{[{id:"brief",title:"摘要模式",text:"优先显示标题、状态和关键数据。"},{id:"detail",title:"详细模式",text:"显示说明、关联内容与操作。"}].map(item=><Card key={item.id} render={<label/>} className="cursor-pointer"><CardPanel className="flex items-start gap-3 p-4"><Radio value={item.id} aria-labelledby={`${id}-${item.id}-title`} aria-describedby={`${id}-${item.id}-description`} className="mt-1"/><div className="min-w-0"><h3 id={`${id}-${item.id}-title`} className="text-item-title">{item.title}</h3><p id={`${id}-${item.id}-description`} className="mt-1 text-ui-hint text-muted-foreground">{item.text}</p></div></CardPanel></Card>)}</RadioGroup><Feedback>当前选择：{selected==="brief"?"摘要模式":"详细模式"}</Feedback>
   </DemoSection>
 
   <DemoSection title="紧凑横向卡片" description="用于资源清单，整卡进入材料。">
-   <Card render={<Link href="/next/reading"/>} className="group transition-colors hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"><CardPanel className="flex items-center gap-3 p-4"><FileText className="size-6 shrink-0 text-(--q-blue-ink)"/><div className="min-w-0 flex-1"><h3 className="text-item-title">函数图像阅读材料</h3><p className="mt-0.5 text-ui-hint text-muted-foreground">例题讲解 · 预计 8 分钟</p></div><ChevronDown className="size-4 shrink-0 -rotate-90 text-muted-foreground group-hover:text-(--q-blue-ink)"/></CardPanel></Card>
+   <Card render={<Link href="/next/reading"/>} className="group transition-colors hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"><CardPanel className="flex items-center gap-3 p-4"><FileText className="size-6 shrink-0 text-muted-foreground"/><div className="min-w-0 flex-1"><h3 className="text-item-title">函数图像阅读材料</h3><p className="mt-0.5 text-ui-hint text-muted-foreground">例题讲解 · 预计 8 分钟</p></div><ChevronDown className="size-4 shrink-0 -rotate-90 text-muted-foreground"/></CardPanel></Card>
   </DemoSection>
 
   <DemoSection title="人物资料" description="身份信息与个人简介分组呈现。">
    <Card className="prism-card-composed">
-    <CardHeader className="flex items-center gap-3"><Avatar className="size-11 border border-(--q-magenta-ink)/35 bg-transparent text-read-body text-(--q-magenta-ink)" aria-label="陈老师"><AvatarFallback className="bg-transparent">陈</AvatarFallback></Avatar><div className="min-w-0"><h3 className="text-item-title">陈老师</h3><p className="mt-1 text-ui-hint text-muted-foreground">数学 · 教研成员</p></div></CardHeader>
+    <CardHeader className="flex items-center gap-3"><Avatar className="size-12 text-read-body" aria-label="陈老师"><AvatarFallback>陈</AvatarFallback></Avatar><div className="min-w-0"><h3 className="text-item-title">陈老师</h3><p className="mt-1 text-ui-hint text-muted-foreground">数学 · 教研成员</p></div></CardHeader>
     <CardPanel><p className="text-read-body">关注函数与几何教学，参与材料整理和复核。</p></CardPanel>
    </Card>
   </DemoSection>

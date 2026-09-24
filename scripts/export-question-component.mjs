@@ -51,7 +51,7 @@ const componentSource = `
         }, [theme]);
         return <main className="prism-root question-export-main" data-ui-version="coss-v1" data-prism-theme={theme}>
           <header className="question-export-heading">
-            <div><h1>智能曜彩 · 题目组件</h1><p>v{DESIGN_VERSION}</p></div>
+            <div><h1 className="text-page-title text-(--heading)">智能曜彩 · 题目组件</h1><p className="text-ui-hint text-muted-foreground">v{DESIGN_VERSION}</p></div>
             <QuestionSelect label="主题" value={theme} onChange={value => setTheme(value as PrismTheme)} items={themeOptions.map(item => ({ ...item }))}/>
           </header>
           <QuestionComponentDemo standalone/>
@@ -132,8 +132,7 @@ const html = `<!doctype html>
 <style>${css}
 .question-export-main{width:100%;margin-inline:auto;padding:2rem;min-width:0}
 .question-export-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.question-export-heading h1{font-size:1.5rem;font-weight:600;line-height:1.4;color:var(--heading)}
-.question-export-heading p{margin-top:.35rem;font-size:.875rem;color:var(--muted-foreground)}
+.question-export-heading p{margin-top:.35rem}
 @media(max-width:767px){.question-export-main{padding:1.25rem}}
 </style>
 </head>

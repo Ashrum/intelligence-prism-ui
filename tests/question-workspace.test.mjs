@@ -43,23 +43,23 @@ test('missing and invalid criteria take priority over old records and score equa
   const base={...createReviewEditor({a:1,b:1}),record:'已确认'};
   for(const scores of [{a:2,b:null},{a:2}]) {
     const editor={...base,scores};
-    assert.equal(getReviewStatus(editor,{a:2,b:2}).state,'incomplete');
+    assert.equal(getReviewStatus(editor,{a:2,b:2},'confirmed').state,'incomplete');
     assert.match(reviewError(scores,{a:2,b:2},base.saved,''),/范围/);
   }
-  assert.equal(getReviewStatus({...base,scores:{a:NaN,b:2}},{a:2,b:2}).state,'invalid');
+  assert.equal(getReviewStatus({...base,scores:{a:NaN,b:2}},{a:2,b:2},'confirmed').state,'invalid');
 });
 test('confirmed scores become the comparison baseline even when different from initial scores',()=>{
   const editor={...createReviewEditor({a:0}),scores:{a:1},saved:{a:1},record:'补充依据后调整'};
-  assert.equal(getReviewStatus(editor,{a:2}).state,'confirmed');
+  assert.equal(getReviewStatus(editor,{a:2},'confirmed').state,'confirmed');
   assert.equal(reviewError(editor.scores,{a:2},editor.saved,''),'');
   const changed={...editor,scores:{a:0}};
-  assert.equal(getReviewStatus(changed,{a:2}).state,'changed');
+  assert.equal(getReviewStatus(changed,{a:2},'confirmed').state,'changed');
   assert.match(reviewError(changed.scores,{a:2},changed.saved,''),/理由/);
-  assert.equal(getReviewStatus({...changed,scores:{...changed.saved},reason:'',error:''},{a:2}).state,'confirmed');
+  assert.equal(getReviewStatus({...changed,scores:{...changed.saved},reason:'',error:''},{a:2},'confirmed').state,'confirmed');
 });
 test('a note awaiting submission does not claim a score difference or confirmed state',()=>{
   const editor={...createReviewEditor({a:1}),record:'已确认',reason:'补充说明'};
-  assert.equal(getReviewStatus(editor,{a:2}).state,'note');
+  assert.equal(getReviewStatus(editor,{a:2},'confirmed').state,'note');
   assert.deepEqual(getReviewStatus(editor,{a:2}).changed,[]);
 });
 
@@ -91,4 +91,12 @@ test('draft snapshots isolate later editing and undo restores replacement positi
   workspace.paper.groups[0]='新名称';
   assert.equal(saved.entries[1].partPoints['1'],8);
   assert.equal(saved.groups[0],'第一部分');
+});
+
+test('record text never substitutes for external confirmation and missing facts remain pending or unknown',()=>{
+ const editor={...createReviewEditor({a:0}),record:'已确认'};
+ assert.equal(getReviewStatus(editor,{a:2}).state,'pending');
+ assert.equal(getReviewStatus(editor,{a:2},'unknown').state,'unknown');
+ assert.equal(getReviewStatus(editor,{a:2},'confirmed').state,'confirmed');
+ assert.equal(getReviewStatus({...editor,record:''},{a:2},'confirmed').state,'confirmed');
 });

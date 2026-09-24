@@ -48,7 +48,7 @@ export function QuestionContent({ question }: { question: QuestionRecord }) {
     {question.parts && <ol aria-label="题目小问" className="q-question-parts mt-5 space-y-5">{question.parts.map(part => {
       const presentation = responsePresentation(part.response ?? question.response)
       return <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2">
-        <span className="q-part-number shrink-0">（{part.id}）</span>
+        <span className="q-part-number text-ui-action text-muted-foreground shrink-0">（{part.id}）</span>
         <div className="min-w-0 flex-1">
           {(presentation || part.points !== undefined) && <div className="mb-2"><span className="q-part-identity inline-flex flex-wrap items-center gap-2" data-question-tone={presentation?.tone ?? "neutral"}>
             {presentation && <QuestionTypeLabel label={presentation.label} tone={presentation.tone} inline/>}

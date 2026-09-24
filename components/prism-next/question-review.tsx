@@ -1,7 +1,7 @@
 "use client"
 import { useId, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { CircleAlert } from "lucide-react"
-import { createReviewEditor, getReviewStatus, type ReviewEditor } from "@/lib/prism-next/question-review-model"
+import { createReviewEditor, getReviewStatus, type ReviewEditor, type ReviewConfirmationStatus } from "@/lib/prism-next/question-review-model"
 import { Button } from "@/components/coss/button"
 import { Textarea } from "@/components/coss/textarea"
 import { Label } from "@/components/coss/label"
@@ -11,8 +11,8 @@ import { StatusBadge, type StatusTone } from "./status-badge"
 import { PointsField } from "./question-controls"
 import { reviewError } from "@/lib/prism-next/question-workspace"
 
-export type QuestionReviewProps={question:QuestionRecord;attempts:Record<string,React.ReactNode>;initialScores:Record<string,number>;learner?:string;description?:string;initialNote?:string;editor?:ReviewEditor;onEditorChange?:Dispatch<SetStateAction<ReviewEditor>>;onConfirm?:(scores:Record<string,number>,reason:string)=>void}
-export function QuestionReview({question,attempts,initialScores,learner,description,initialNote,editor,onEditorChange,onConfirm}:QuestionReviewProps) {
+export type QuestionReviewProps={question:QuestionRecord;attempts:Record<string,React.ReactNode>;initialScores:Record<string,number>;learner?:string;description?:string;initialNote?:string;status?:ReviewConfirmationStatus;editor?:ReviewEditor;onEditorChange?:Dispatch<SetStateAction<ReviewEditor>>;onConfirm?:(scores:Record<string,number>,reason:string)=>void}
+export function QuestionReview({question,attempts,initialScores,learner,description,initialNote,status:confirmation="pending",editor,onEditorChange,onConfirm}:QuestionReviewProps) {
   const perPart = question.parts?.length && question.parts.every(part => part.rubric?.length || (part.points !== undefined && Number.isFinite(part.points)))
   const parts = perPart ? question.parts!.map(part => ({...part,rubric:part.rubric?.length?part.rubric:[{id:`${part.id}-score`,label:"小问得分",points:part.points!}]})) : [{id:"1",content:question.parts?.length?<QuestionContent question={question}/>:question.stem,points:question.points,answer:question.answer,explanation:question.explanation,rubric:[{id:"score",label:"整题得分",points:question.points}]}]
   const attemptFor = (id:string) => !perPart && question.parts?.length ? <div className="space-y-2">{Object.entries(attempts).map(([key,value])=><div key={key}>（{key}）{value}</div>)}</div> : attempts[id]
@@ -28,7 +28,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
   const {scores,saved,reason,record,error}=current
   const change=controlled?onEditorChange:setLocal
   const [references,setReferences]=useState(false),[material,setMaterial]=useState(false),[view,setView]=useState("review")
-  const status=getReviewStatus(current,limits)
+  const status=getReviewStatus(current,limits,confirmation)
   const dirty=!!status.changed.length||!!reason.trim()
   const total=criteria.reduce((sum,item)=>sum+(Number.isFinite(scores[item.id])?scores[item.id]!:0),0)
   const savedComplete=criteria.every(item=>Number.isFinite(saved[item.id]))
@@ -38,8 +38,8 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
   const historyChanged=criteria.some(item=>saved[item.id]!==initial[item.id])
   const reasonError=!!error&&!status.invalid.length&&!!status.changed.length&&!reason.trim()
   const showScoreErrors=!!error&&!!status.invalid.length
-  const statusText={pending:"待复核",incomplete:"有待评分项",invalid:"评分需修正",changed:"评分有调整，待确认",note:"说明待提交",confirmed:"已确认复核"}[status.state]
-  const statusTone:StatusTone=status.state==="invalid"?"error":["incomplete","changed"].includes(status.state)?"warning":status.state==="confirmed"?"complete":"pending"
+  const statusText={pending:"待复核",incomplete:"有待评分项",invalid:"评分需修正",changed:"评分有调整，待确认",note:"说明待提交",confirmed:"已确认复核",unknown:"复核状态未确认"}[status.state]
+  const statusTone:StatusTone=status.state==="invalid"?"error":["incomplete","changed"].includes(status.state)?"warning":status.state==="confirmed"?"complete":status.state==="unknown"?"neutral":"pending"
   function updateScore(id:string,value:number|null) {
     change(previous=>{
       const next={...previous.scores,[id]:value}
@@ -53,8 +53,8 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
       if(!status.invalid.length) reasonRef.current?.focus()
       return
     }
-    change(previous=>({...previous,saved:{...scores} as Record<string,number>,record:reason.trim()||"复核确认，维持各评分点原分数。",reason:"",error:""}))
-    onConfirm?.(scores as Record<string,number>,reason)
+    // Emit an intent only. The caller supplies confirmation and any recorded baseline.
+    onConfirm?.({...scores} as Record<string,number>,reason)
   }
   return <div className="q-review space-y-6">
     <header className="space-y-2"><h3 className="text-block-title">{question.title}</h3><p className="text-ui-hint text-muted-foreground">{learner?`${learner} · `:""}{question.id} · 原题 {question.points} 分</p>{description&&<p className="text-ui-hint text-muted-foreground">{description}</p>}</header>
@@ -62,9 +62,9 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
     {material&&<div className="rounded-lg bg-muted/50 p-5"><QuestionContent question={question}/></div>}
     <section className="q-review-summary space-y-3" aria-label="得分与复核状态">
       <dl className="q-review-scores">
-        <div><dt>初评得分</dt><dd>{initialComplete?<>{initialTotal}<span> / {maximum}</span></>:"待评分"}</dd></div>
-        <div><dt>已记录得分</dt><dd>{savedComplete?<>{savedTotal}<span> / {maximum}</span></>:"待评分"}</dd></div>
-        {view==="review"&&<div><dt>复核中得分</dt><dd>{status.invalid.length?<><span>已评 </span>{total}<span> 分</span></>:<>{total}<span> / {maximum}</span></>}</dd></div>}
+        <div><dt className="text-ui-hint text-muted-foreground">初评得分</dt><dd className="text-stat-display tabular-nums">{initialComplete?<>{initialTotal}<span className="text-ui-body text-muted-foreground"> / {maximum}</span></>:"待评分"}</dd></div>
+        <div><dt className="text-ui-hint text-muted-foreground">已记录得分</dt><dd className="text-stat-display tabular-nums">{savedComplete?<>{savedTotal}<span className="text-ui-body text-muted-foreground"> / {maximum}</span></>:"待评分"}</dd></div>
+        {view==="review"&&<div><dt className="text-ui-hint text-muted-foreground">复核中得分</dt><dd className="text-stat-display tabular-nums">{status.invalid.length?<><span className="text-ui-body text-muted-foreground">已评 </span>{total}<span className="text-ui-body text-muted-foreground"> 分</span></>:<>{total}<span className="text-ui-body text-muted-foreground"> / {maximum}</span></>}</dd></div>}
       </dl>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-ui-body">
         <p role="status"><StatusBadge tone={statusTone}>{statusText}</StatusBadge></p>
@@ -74,7 +74,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
     </section>
     <div className="space-y-8">{parts.map(part=><section key={part.id} aria-label={`第${part.id}小问作答与评分`} className="q-review-part">
       <div className="min-w-0 space-y-4">
-        <h4 className="font-semibold">第 {part.id} 小问 · {part.points} 分</h4>
+        <h4 className="text-item-title">第 {part.id} 小问 · {part.points} 分</h4>
         <div className="prism-question-copy text-read-body">{part.content}</div>
         <div><p className="mb-2 text-item-title">学生作答</p><blockquote className="q-review-attempt prism-question-copy text-read-body">{attemptFor(part.id)}</blockquote></div>
         {references&&<div className="q-review-reference question-solution prism-question-copy text-read-body"><h5 className="mb-2 text-item-title">参考答案与解析</h5><div>{part.answer}</div><div className="mt-3">{part.explanation}</div></div>}
@@ -86,13 +86,13 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
           const invalid=showScoreErrors&&status.invalid.includes(item.id)
           const fieldErrorId=`${reasonId}-${item.id}-error`
           return <div key={item.id} className="q-review-criterion">
-            <div className="min-w-0 space-y-1 text-ui-body"><p className="font-medium">{item.label}</p><p className="text-muted-foreground">初评 <span className="tabular-nums text-foreground">{initial[item.id]===undefined?"未评分":`${initial[item.id]} 分`}</span>{saved[item.id]!==initial[item.id]&&<> · 已记录 <span className="tabular-nums text-foreground">{saved[item.id]===undefined?"未评分":`${saved[item.id]} 分`}</span></>}</p></div>
+            <div className="min-w-0 space-y-1 text-ui-body"><p className="text-ui-action">{item.label}</p><p className="text-muted-foreground">初评 <span className="tabular-nums text-foreground">{initial[item.id]===undefined?"未评分":`${initial[item.id]} 分`}</span>{saved[item.id]!==initial[item.id]&&<> · 已记录 <span className="tabular-nums text-foreground">{saved[item.id]===undefined?"未评分":`${saved[item.id]} 分`}</span></>}</p></div>
             <div className="q-review-score-control">
-              <span className="text-ui-body text-foreground">上限 <strong className="tabular-nums font-semibold">{item.points}</strong> 分</span>
+              <span className="text-ui-body text-foreground">上限 <span className="tabular-nums">{item.points}</span> 分</span>
               {view==="review"?<PointsField label={`第 ${part.id} 问 · ${item.label}`} value={scores[item.id]??null} max={item.points} invalid={invalid} describedBy={invalid?fieldErrorId:undefined} onChange={value=>updateScore(item.id,value)}/>:<span className="tabular-nums">{saved[item.id]??"未评分"} / {item.points}</span>}
-              {view==="review"&&changed&&!invalid&&<span className="q-review-adjustment text-ui-body"><CircleAlert className="size-3.5" aria-hidden="true"/>待确认</span>}
+              {view==="review"&&changed&&!invalid&&<span className="q-review-adjustment text-ui-body text-warning-foreground"><CircleAlert className="size-3.5" aria-hidden="true"/>待确认</span>}
             </div>
-            {invalid&&<p id={fieldErrorId} className="q-review-field-error text-ui-body" role="alert">请填写 0–{item.points} 分，步长为 0.5 分。</p>}
+            {invalid&&<p id={fieldErrorId} className="q-review-field-error text-ui-body text-destructive" role="alert">请填写 0–{item.points} 分，步长为 0.5 分。</p>}
           </div>
         })}
       </div>
@@ -102,10 +102,10 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
       <div className="space-y-2">
         <Label htmlFor={reasonId}>复核理由{!!status.changed.length?"（调整分数后必填）":""}</Label>
         <Textarea ref={reasonRef} id={reasonId} value={reason} aria-invalid={reasonError||undefined} aria-describedby={reasonError?`${reasonId}-error`:undefined} onChange={event=>{const next=event.target.value;change(previous=>({...previous,reason:next,error:previous.error?reviewError(previous.scores,limits,previous.saved,next):""}))}} placeholder="说明调整的评分点与依据。"/>
-        {reasonError&&<p id={`${reasonId}-error`} role="alert" className="q-review-field-error text-ui-body">{error}</p>}
+        {reasonError&&<p id={`${reasonId}-error`} role="alert" className="q-review-field-error text-ui-body text-destructive">{error}</p>}
       </div>
-      <div className="flex flex-wrap gap-2"><Button className="q-primary-action" disabled={!dirty&&!!record} onClick={confirm}>确认复核</Button><Button variant="outline" disabled={!dirty} onClick={()=>change(previous=>({...previous,scores:{...previous.saved},reason:"",error:""}))}>取消修改</Button></div>
+      <div className="flex flex-wrap gap-2"><Button  disabled={!onConfirm||(!dirty&&confirmation==="confirmed")} onClick={confirm}>确认复核</Button><Button variant="outline" disabled={!dirty} onClick={()=>change(previous=>({...previous,scores:{...previous.saved},reason:"",error:""}))}>取消修改</Button></div>
     </section>}
-    {record&&<p className="text-ui-hint text-muted-foreground">最新复核记录：{record}</p>}
+    {confirmation==="confirmed"&&editor?.record&&<p className="text-ui-hint text-muted-foreground">最新复核记录：{record}</p>}
   </div>
 }

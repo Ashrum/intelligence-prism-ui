@@ -1,6 +1,6 @@
 "use client"
 
-import { Badge } from "@/components/coss/badge"
+import { Badge } from "@/components/prism-next/badge"
 import type { QuestionRecord, ResponseModel } from "./question-content"
 
 export type QuestionTone = "blue" | "magenta" | "lime" | "neutral"
@@ -28,10 +28,10 @@ export function questionTone(question: Pick<QuestionRecord, "response" | "parts"
 }
 
 export function QuestionTypeLabel({ label, tone, inline = false }: { label: string; tone: QuestionTone; inline?: boolean }) {
-  const content = <><span aria-hidden="true" className="q-type-dot" />{label}</>
+  const content = label
   return inline
     ? <span className="q-type-text inline-flex items-center gap-1.5 text-ui-body" data-question-tone={tone}>{content}</span>
-    : <Badge variant="outline" size="lg" className="q-type-label gap-1.5" data-question-tone={tone}>{content}</Badge>
+    : <Badge variant="outline" size="lg" className="q-type-label" data-question-tone={tone}>{content}</Badge>
 }
 
 export function QuestionPoints({ points, tone }: { points: number; tone: QuestionTone }) {

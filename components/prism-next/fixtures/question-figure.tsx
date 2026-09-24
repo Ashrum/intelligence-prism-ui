@@ -14,10 +14,10 @@ export function CoordinateDiagram() {
     <g fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M34 260H435m-9 -5 9 5-9 5M65 282V25m-5 9 5-9 5 9" />
       <path d="M65 60 395 260" strokeWidth="2" />
-      <path d="M65 260H197V140H65Z" className="q-geometry-region" fill="var(--brand-blue)" fillOpacity=".1" />
+      <path d="M65 260H197V140H65Z" fill="currentColor" fillOpacity=".045" />
       <path d="M187 260v-10h10M65 150h10v-10" strokeWidth="1" />
     </g>
-    <g fill="currentColor"><circle className="q-geometry-point" cx="197" cy="140" r="3.5"/><circle cx="395" cy="260" r="2.5"/><circle cx="65" cy="60" r="2.5"/></g>
+    <g fill="currentColor"><circle cx="197" cy="140" r="3"/><circle cx="395" cy="260" r="2.5"/><circle cx="65" cy="60" r="2.5"/></g>
     <g fill="currentColor" fontSize="17" fontFamily="system-ui,sans-serif">
       <text x="44" y="280">O</text><text x="385" y="286">A(6, 0)</text><text x="78" y="58">B(0, 4)</text><text x="205" y="136">M</text><text x="191" y="283">N</text><text x="42" y="145">P</text><text x="444" y="265" fontStyle="italic">x</text><text x="73" y="24" fontStyle="italic">y</text>
     </g>
