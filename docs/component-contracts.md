@@ -101,6 +101,95 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 任务记录三件套两态 v0.1
+
+2026-09-24 设计候选，覆盖语义 26 任务进度、27 执行结果、03 上下文摘要，声明 **Inline + 通用扩展容器**。紧凑密度是列表布局，不增加第三种业务呈现方式。语义 25 执行确认继续仅 Inline，本轮不改。验证入口是 Workspace `/teacher/agent/workspace`；本仓库组件页只提供示例，不以历史骨架作为接入验收依据。
+
+检索与复用：沿用 `AgentExecutionProgress` / `AgentTaskProgress`、`AgentExecutionResult` / `AgentSemanticAction`、`AgentContextSummary` / `AgentContextList`；采用已批准 `AgentChangeSet.view` 的命名、其“说明”折叠方式以及 data-display 的 `density` 命名。`agent-record-parts.tsx` 仅收纳共用呈现属性和内部说明/展开组合，不是新组件目录项。未新增状态管理、权限服务、执行器、依赖或视觉令牌，目录仍为 80 项。
+
+### 三组件共用的新增属性
+
+| 属性 | 类型 / 默认值 | 职责 |
+| --- | --- | --- |
+| `view` | `'inline' / 'workspace'`，默认 `inline` | 两态内容；不创建浮层、路由或第二份业务对象。workspace 直接展示完整步骤及来源定位，不受局部 expanded 限制 |
+| `density` | `'default' / 'compact'`，默认 `default` | compact 用可换行列表行、较小行间距，状态与说明仍为 ui-body / ui-hint；可以与两种 view 组合，不截断记录或缩小字体 |
+| `onExpand` | 可选 `(trigger: HTMLButtonElement) => void`，默认未提供 | inline 的“更多”仅发出查看完整记录的意图；缺省无入口，已有事实不因缺入口被删去。workspace 不重复提供入口。执行结果 unknown 时也隐藏此入口，只允许查询原请求的业务动作 |
+| `details` | 可选 `ReactNode`，默认未提供 | 默认收起的“说明”，不放未知、不可用、禁用原因、失败和未完成范围等必要事实；不触发业务动作 |
+
+进度与结果的 `presentation='card' / 'inline'` 仍仅表示卡片外框，默认 `card`；上下文摘要沿用原有 Card 外框，没有借本轮增加同名属性。只传旧属性，或显式传 `view='inline' density='default'`，与 main `e99813a` 的 28 组 SSR 快照一致（仅归一化 React 自动 ID，所有引用关系保留）。
+
+### AgentExecutionProgress（语义 26）
+
+从 `agent-semantic-components` 导入组件及 `AgentExecutionProgressProps / AgentExecutionRun / AgentExecutionStage / AgentExecutionIssue`。
+
+| 属性 | 类型 / 默认值 | 职责 |
+| --- | --- | --- |
+| `title / state / description / steps` | 原有必填属性 | 整体状态显式取自调用方；steps 继续使用 `readonly AgentStep[]`，不能用最后一步反推整体状态 |
+| `expanded / onExpandedChange` | 原有必填 boolean / 可选回调 | 仅 inline 默认密度下控制当前步骤的局部披露；workspace / compact 直接展示步骤，切换不调用此回调 |
+| `updatedAt` | 原有可选 string，默认未提供 | 调用方给出的更新时间文本；workspace 缺省显示“更新时间未确认”，不取客户端时钟 |
+| `action` | 原有可选 `AgentSemanticAction` | 恢复/查询能力由调用方提供和核验，点击不改变任何状态；未知时应提供原请求查询能力 |
+| `run` | 可选 `{ id: string; label: string; version?: string }`，默认未提供 | 当前轮身份、名称及版本；记录视图标明“当前状态”。workspace 缺少轮次时明确未确认；ID 作为 data-run-id 供定位 |
+| `stages` | 可选 `readonly AgentExecutionStage[]`，默认未提供 | 完整阶段；每项含 `id/title/state/steps`，可选 `time/description`；时间仅展示输入，缺省“阶段时间未确认” |
+| `exceptions` | 可选 `readonly AgentExecutionIssue[]`，默认未提供 | 异常与处置；每项 `id/title/description` 必填，可选 `time/resolution`。缺 resolution 显示“处置状态未确认”，不从记录出现推断已解决 |
+| `history` | 可选 `readonly AgentExecutionRun[]`，默认未提供 | 每轮 `id/label/state/description/steps` 必填，可选 `version/updatedAt/stages/exceptions`。始终标记“当时状态/当时版本”，所有层级只读快照，不放执行动作 |
+| `snapshot` | 可选 string，默认未提供 | 将顶层记录明确标作当时快照；即使 state=running 也不转圈，不标 aria-current。不会验证 action 的有效性，旧记录可用动作仍需调用方重新核验 |
+
+支持层增量：`AgentStep.time?: string` 默认未提供；`AgentTaskProgress.density?: 'default' / 'compact'` 默认 default。默认输出保持原样。compact 将步骤名称、状态、时间和说明放入可换行的同一行。当前轮只有整体 `state=running` 且无 snapshot 时使用 live；阶段还要求自己的 state=running。历史轮及其阶段一律 snapshot；running 步骤文字为“上次进行到”，无 animate-spin、aria-current 或 live 标记。减少动态效果继续使用既有 motion-reduce 规则。阶段/异常/历史完整呈现，不进行自动分页、数量截断或状态合并。
+
+### AgentExecutionResult（语义 27）
+
+从 `agent-semantic-components` 导入组件及 `AgentExecutionResultProps / AgentExecutionReceipt / AgentExecutionOutput`。
+
+| 属性 | 类型 / 默认值 | 职责 |
+| --- | --- | --- |
+| `title / description / receipt` | 原有必填属性 | receipt.status 为 succeeded / partial / failed / unknown；前三者必填 completed / remaining 字符串列表，保持外部回执事实；unknown 不推算范围 |
+| `receipt.record` | 新增可选 `{ request: string; run: string; version?: string; receivedAt?: string }`，默认未提供 | 完整回执关联；版本/时间缺失分别显示未确认。收到时间不等于执行完成时间 |
+| `facts / children` | 原有可选字段，默认 [] / 未提供 | 补充回执事实与只读内容插槽；children 中不得另塞执行、重试、打开等动作绕过 unknown 约束，补充说明迁至 details |
+| `outputs` | 可选 `readonly AgentExecutionOutput[]`，默认未提供 | 每项 `id/title/version/status` 必填，`open?: AgentSemanticAction`；版本与内容状态原样呈现，文件存在不改变 receipt.status |
+| `outputs[].open` | 默认未提供 | 只在非 unknown 回执显示真实能力；未提供则“暂不可打开”且无假入口；disabledReason 保留为可访问关联的禁用原因；可打开能力不证明发布或保存 |
+| `failures` | 可选 `readonly AgentExecutionIssue[]`，默认未提供 | 明确失败明细与处置事实。空列表只说“暂无失败明细”，不代表已核实没有失败 |
+
+unknown 在所有密度/两态只呈现 `receipt.query` 提供的原请求查询动作；忽略非类型化调用误传的 next/secondary，抑制所有产出 open 与 onExpand。其余三种回执保留原 next/secondary 能力。query 的实际目标、参数和幂等核验由调用方保证，组件不靠按钮名称识别合法请求。产出名称、版本、内容状态和暂不可打开提示仍显示，不能因有产出改称已成功。
+
+### AgentContextSummary（语义 03）
+
+从 `agent-context-summary` 导入组件及 `AgentContextSummaryProps / AgentContextSource / AgentContextFact`。
+
+| 属性 | 类型 / 默认值 | 职责 |
+| --- | --- | --- |
+| `title / scope / sources / expanded` | 原有必填属性 | 同一任务、范围与来源集合；workspace / compact 展示全部来源和 source.details，不受 expanded 控制；inline 原局部版本披露保持 |
+| `onExpandedChange / onInspect / notice / snapshot` | 原有可选字段 | 查看只发出来源 ID；缺 onInspect 或 inspectable=false 无入口。notice 为一条边界/必要事实提示，snapshot 区分历史依据 |
+| `sources[].version` | 可选 string，默认未提供 | 来源版本；记录视图缺省标“来源版本未确认”，不解析 location 文本补造版本。location 继续表示来源定位 |
+| `sources[].selection` | 原三值外增加 `unavailable` | selected / not-selected / unknown / unavailable 分别表示本次选用、未选用、选用状态未确认、记录暂不可用；只描述选用事实 |
+| `sources[].selectionDetail` | 可选 `{ description?: string; version?: string; location?: string }`，默认未提供 | 选用记录自身的范围和版本定位，不改变 selection |
+| `sources[].read/context/citation` | 原有必填 `AgentContextFact` | 四事实中的另外三项，独立接受 confirmed / absent / unknown / unavailable；confirmed 仍必填 description |
+| `AgentContextFact.version/location` | 新增可选 string，默认未提供 | 每项事实各自对应的版本和定位；不在三项间复制。citation.version/location 应指向成果版本和引用位置，来源版本另见 source.version 或 details |
+| `sources[].details/inspectable` | 原有可选字段 | details 可补任务、执行、证据记录与引用来源版本；inspectable 只控制查看能力，不改变任何证据事实 |
+
+四事实分别显示 **选用 / 读取 / Agent 本次参考 / 成果引用**。记录覆盖不完整且无匹配有效事件用 unknown；记录来源无法核验用 unavailable；只有覆盖完整且没有对应事件才用 absent。匹配任务、来源、版本、执行与成果定位是适配器职责，组件不认证证据。本机读取、历史读取、已选用或查看材料都不推定本次参考；引用不推定读取或结论正确。
+
+### 三态信息结构与接入验证
+
+- inline：保留原标题、状态、范围及局部步骤/版本披露；新增回执、产出、异常与历史同源呈现，关键未知/不可用事实常驻。
+- workspace：完整当前执行、阶段步骤、时间说明、异常处置、当时轮次；完整回执和产出失败明细；全部来源四事实及版本定位。这里只提供内容区，外壳、焦点/返回/专注仍归 Workspace。
+- compact：同样输入采用一项一行的可换行列表，不缩字、不截断、不把未知合并为失败或完成；可选“更多”由调用方接至完整记录。
+
+`/next/components/agent-components#record-views` 提供 P04 扫描整理与备课资料整理两组明确标注的固定示例；选择记录类型后并排查看三种用法，含 320px 窄容器、长中文及打开示例中的公式。点击查询仅记录请求，不产生新回执。示例、正文和交互控件均在 demos；没有引入 Workspace 私有类型。
+
+Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，本轮未修改）：
+
+| P04 / Workspace 事实 | 组件输入 | 缺口与边界 |
+| --- | --- | --- |
+| `P04Runtime.runs[owner]`、`P04Run.requestId/objectId` | 当前轮 run.id/label/version；先前轮映射 history；通过原任务/轮次/对象保留关联 | 组件不挑当前轮、不排序，不把旧轮覆写为新轮；label/version 由适配器明确提供 |
+| `p04Progress(run)` 的 state/description/steps | AgentExecutionProgress 的同名输入；time/stages/exceptions 可从已有执行事实追加 | 当前 P04Run 没有 updatedAt、阶段时间或可信耗时，保持缺省/未确认；不读客户端时间，不把步骤 done 当整体 completed |
+| `run.phase/scopeReceipt/intent/entries/issueChoice` | 经原适配器确定 receipt 与 exceptions 的描述、处置和关联；requestId 对应 receipt.record.request | scopeReceipt 是范围确认回执，不能作为保存/发布成功回执；ready/reviewing 仍需核对，entries 叙述不自动提升为完整审计或已解决 |
+| `P04Output.id/title/version/reason`、`p04Target/resolveP04Target` | outputs 的身份、名称、版本及外部内容状态；有效目标+实际 onOpen 能力时提供 open | reason 是说明，不自动变成执行状态；snapshot 由既有查看器承接，旧版保持当时内容；产出数量不证明保存、入库或导出完成 |
+| `p04ContextSources(run)` | sources 原样提供 selection/read/context/citation；补 source.version 及各项实际定位 | 当前示例选用为 selected，另三项全 unknown；不因有校对稿而改为已引用；保留 fixture 标注 |
+| `WorkspaceResources.coverage`、`ReadEvidence`、`CitationEvidence` | 适配器匹配 owner/source/version/run/output 后，分别形成 read 与 citation 的 fact/description/version/location | coverage=unknown 且缺匹配事件仍 unknown，unavailable 保持不可用；现有数据没有本次参考证据，context 保持 unknown，不由 read 推算 |
+| 同一组 task/run/output/source 视图数据 | 浮层 `view='inline' density='compact'`；完整记录 `view='workspace'` | 打开/收起只改变视图；复用原单一右栏、Popover、会话归属与焦点返回，不新增 Store、路由或持久化 |
+
+接入测试仍需在 Workspace `/teacher/agent/workspace` 完成：资源浮层→完整记录→返回、会话切换与历史版本回看、未知查询、来源不可用、三主题/窄容器/键盘/焦点恢复。当前 P04 的保存与去向回执仍 unknown，没有真实服务；本候选不把静态示例或 SSR 测试当成业务验收。
+
 ## Agent 可读性与规范权威
 
 跨 Agent 使用时以站点根目录 `/llms.txt` 为发现入口，并遵循 `docs/agent-readable-contract.md`。组件页 Agent Spec、Foundations、Pattern / 应用示例、固定 coss upstream、Agent inference 依次构成权威顺序；后一级不得覆盖前一级。
@@ -206,7 +295,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
-Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；当前仅 AgentChangeSet 提供 `details?: ReactNode`。
+Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet 及本轮任务记录三件套提供 `details?: ReactNode`。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
@@ -234,6 +323,8 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 | AgentExecutionConfirmation | `title / target / version / effects / confirmation` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query |
 | AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
 | AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
+
+上表保留第一组原有输入；三件套新增 view / density / details、记录字段和职责边界见本文「任务记录三件套两态 v0.1」。
 
 `AgentExecutionProgress.state` 由调用方显式提供，统一类型与标签见 `lib/prism-next/agent-progress.ts`。按照 v0.2.1 §7.1 补充 `degraded`（已降级）和 `retrying`（重试中）；两者与 `paused`（已暂停）均为仅显示状态，**既有执行状态来源未接入**。`shell` / `review` 来源适配保持不变，不为这些显示状态虚构源状态；接入依据与对应关系见 [任务进度状态映射](agent-context-summary-review.md#任务进度状态映射)。
 
