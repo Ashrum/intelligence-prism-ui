@@ -72,7 +72,7 @@
 - 开发服务：`npm run dev`（默认 5173）。
 - `npm run build` / `npm test` 依赖 GNU `timeout`。macOS 默认没有；未安装时改用 6.1 通用路径。
 - `npm run install:ci` 依赖 Linux `flock`，macOS 上不要使用，直接 `npm ci`。
-- macOS 上的实测结果尚未登记；首次在 Mac 上跑通 6.1 后，在此补记日期、系统与结果。
+- 2026-09-24 实测：macOS 27.0（build 26A428），Node.js v24.14.0、npm 11.9.0；使用 6.1 通用路径 + POSIX 环境变量，数学字体检查通过、排版检查通过（100 个 TSX 文件）、构建成功、测试通过（tests 88 / pass 88 / fail 0 / skipped 0）、类型检查通过（0 错误），五项退出码均为 0。
 
 ### 6.3 Windows
 
