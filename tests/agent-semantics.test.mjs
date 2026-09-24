@@ -11,9 +11,9 @@ import { renderToStaticMarkup as render } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const file = new URL('../.sites-runtime/agent-semantics-test.mjs', import.meta.url);
 await mkdir(new URL('../.sites-runtime/', import.meta.url), { recursive: true });
-const bundle = await build({ stdin: { contents: `export * from './components/prism-next/agent-semantic-components';export {AgentTaskProgress,AgentChangeReview} from './components/prism-next/agent-components';`, resolveDir: root, loader: 'tsx' }, bundle: true, platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
+const bundle = await build({ stdin: { contents: `export * from './components/prism-next/agent-semantic-components';export {AgentContextSummary} from './components/prism-next/agent-context-summary';export {AgentTaskProgress,AgentChangeReview} from './components/prism-next/agent-components';`, resolveDir: root, loader: 'tsx' }, bundle: true, platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
 await writeFile(file, bundle.outputFiles[0].text);
-const { AgentArtifactPreview, AgentExecutionConfirmation, AgentExecutionProgress, AgentExecutionResult, AgentTaskProgress, AgentChangeReview } = await import(file);
+const { AgentContextSummary, AgentArtifactPreview, AgentExecutionConfirmation, AgentExecutionProgress, AgentExecutionResult, AgentTaskProgress, AgentChangeReview } = await import(file);
 await rm(file);
 const h = React.createElement;
 
@@ -31,6 +31,7 @@ test('only a ready confirmation exposes submission; submitting prevents duplicat
   for (const state of ['submitting', 'received', 'recorded', 'blocked', 'unknown']) {
     const html = render(h(AgentExecutionConfirmation, { ...base, confirmation: { state, description: '宿主提供的事实', confirm: action } }));
     assert.doesNotMatch(html, /提交采购请求/); assert.match(html, /宿主提供的事实/); assert.match(html, /修订 B/);
+    if (state === 'unknown') assert.match(html, /回执未确认/);
     if (state === 'submitting') {
       assert.match(html, /正在提交/); assert.match(html, /本次确认范围/);
       assert.doesNotMatch(html, /<button\b/);
@@ -42,7 +43,7 @@ test('only a ready confirmation exposes submission; submitting prevents duplicat
 test('unknown receipt shows only a query while a partial receipt preserves both completed and missing scope', () => {
   const next = { label: '重试全部', onAction() {} };
   const unknown = render(h(AgentExecutionResult, { title: '结果未确认', description: '等待原执行回执', receipt: { status: 'unknown', query: { label: '查询原执行', onAction() {} }, next } }));
-  assert.match(unknown, /查询原执行/); assert.doesNotMatch(unknown, /重试全部|已完成|明确失败/);
+  assert.match(unknown, /状态未确认/); assert.match(unknown, /查询原执行/); assert.doesNotMatch(unknown, /重试全部|已完成|明确失败/);
   const partial = render(h(AgentExecutionResult, { title: '保留可用部分', description: '外部回执', receipt: { status: 'partial', completed: ['区域 A 已整理'], remaining: ['区域 B 缺材料'] } }));
   assert.match(partial, /区域 A 已整理/); assert.match(partial, /区域 B 缺材料/); assert.doesNotMatch(partial, /重试|已发布/);
 });
@@ -88,4 +89,16 @@ test('every non-running progress state freezes running steps; running respects r
       assert.doesNotMatch(html, /animate-spin|aria-current="step"/);
     }
   }
+});
+
+
+test('context copy keeps selection, reading, Agent reference and citation as independent facts without a repeated boundary paragraph', () => {
+ const base = { title: '来源摘要', scope: [], expanded: false, notice: { text: '示例记录，尚未接入真实服务', tone: 'info' } };
+ for (const state of ['confirmed', 'absent', 'unknown', 'unavailable']) {
+  const html = render(h(AgentContextSummary, { ...base, sources: [{ id: 'source', title: '材料 A', location: 'v2', selection: 'selected', read: { state: 'confirmed', description: '已读取第 1 页' }, context: state === 'confirmed' ? { state, description: '已参考 · 仅第 1 题' } : { state }, citation: { state: 'unknown' } }] }));
+  for (const fact of ['本次选用', '已读取第 1 页', 'Agent 本次参考', '成果引用', '状态未确认', '示例记录，尚未接入真实服务']) assert.ok(html.includes(fact));
+  assert.ok(html.includes({ confirmed: '已参考 · 仅第 1 题', absent: '未参考', unknown: '状态未确认', unavailable: '记录暂不可用' }[state]));
+  if (state !== 'confirmed') assert.doesNotMatch(html, /已参考 · 仅第 1 题/);
+  assert.doesNotMatch(html, /本次任务使用|本轮上下文|分别记录|查看来源不会改变|意图|宿主|回调|受控/);
+ }
 });

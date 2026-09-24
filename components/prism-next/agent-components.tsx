@@ -1,6 +1,6 @@
 "use client"
 import { useId,useRef,type ReactNode } from "react"
-import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert } from "lucide-react"
+import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert,ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
@@ -9,6 +9,7 @@ import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/co
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Card } from "@/components/coss/card"
 import { Badge } from "@/components/prism-next/badge"
+import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Separator } from "@/components/coss/separator"
 export function AgentComposer({
   value, onChange, running = false, onSubmit, onStop, label = "任务",
@@ -176,11 +177,11 @@ export type AgentChangeSetProps = {
  onDecision: (id: string, decision: AgentChangeDecision) => void;
  onRewrite?: (id: string, value: string) => void;
  onExpand?: (trigger: HTMLButtonElement) => void;
- notice?: string; disabledReason?: string;
+ notice?: string; details?: ReactNode; disabledReason?: string;
  apply?: { label: string; onApply: () => void; disabledReason?: string };
 }
 /** Both views consume the same host draft. No local decisions, save or submit state. */
-export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onDecision, onRewrite, onExpand, notice, disabledReason, apply }: AgentChangeSetProps) {
+export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onDecision, onRewrite, onExpand, notice, details, disabledReason, apply }: AgentChangeSetProps) {
  const id = useId()
  const limit = Number.isFinite(inlineLimit) ? Math.max(1, Math.floor(inlineLimit)) : 2
  // With no expansion capability, keep every decision reachable in this view.
@@ -200,12 +201,15 @@ export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onD
     onDecision={decision => onDecision(item.id, decision)} onResetDecision={() => onDecision(item.id, 'pending')}/>
    {onRewrite && <div className="space-y-2">
     <Label htmlFor={`${id}-rewrite-${index}`}>手动改写建议内容：{item.title}</Label>
-    <Textarea id={`${id}-rewrite-${index}`} value={item.after} onChange={event => onRewrite(item.id, event.target.value)} disabled={!!(disabledReason || item.disabledReason)} aria-describedby={[`${id}-rewrite-hint`, disabledReason ? `${id}-disabled` : undefined, item.disabledReason ? `${id}-rewrite-${index}-disabled` : undefined].filter(Boolean).join(" ")}/>
+    <Textarea id={`${id}-rewrite-${index}`} value={item.after} onChange={event => onRewrite(item.id, event.target.value)} disabled={!!(disabledReason || item.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, item.disabledReason ? `${id}-rewrite-${index}-disabled` : undefined].filter(Boolean).join(" ") || undefined}/>
     {item.disabledReason && <p id={`${id}-rewrite-${index}-disabled`} className="text-ui-hint text-warning-foreground">{item.disabledReason}</p>}
    </div>}
   </li>)}</ol>
-  {onRewrite && <p id={`${id}-rewrite-hint`} className="text-ui-hint text-muted-foreground">改写与采用只发出意图；草稿变更、应用、保存和提交由宿主处理。</p>}
-  {view === 'inline' && onExpand && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">当前展示 {shown.length} 处修改（含全部关键项与冲突项），其余 {items.length - shown.length} 处请展开逐项查看；本卡不提供整组采纳。</p>}<Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看全部 {items.length} 处修改<ArrowUpRight aria-hidden="true"/></Button></div>}
+  {view === 'inline' && onExpand && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">另有 {items.length - shown.length} 处修改，展开查看全部</p>}<Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看全部 {items.length} 处修改<ArrowUpRight aria-hidden="true"/></Button></div>}
+  {details != null && <Collapsible defaultOpen={false}>
+   <CollapsibleTrigger render={<Button variant="ghost" size="sm" />}><ChevronDown aria-hidden="true"/>说明</CollapsibleTrigger>
+   <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 pt-3 text-ui-hint text-muted-foreground">{details}</div></CollapsiblePanel>
+  </Collapsible>}
   {apply && <div className="space-y-2">
    <Button disabled={!!(disabledReason || apply.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, apply.disabledReason ? `${id}-apply-disabled` : undefined].filter(Boolean).join(' ') || undefined} onClick={() => { if (!disabledReason && !apply.disabledReason) apply.onApply() }}>{apply.label}</Button>
    {apply.disabledReason && <p id={`${id}-apply-disabled`} role="status" className="text-ui-hint text-warning-foreground">{apply.disabledReason}</p>}

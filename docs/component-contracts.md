@@ -70,6 +70,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `onRewrite` | 可选 `(id: string, value: string) => void` | 提供时显示带固定标签的受控文本区；改写后是否重置决定由宿主处理 |
 | `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | 仅 inline 显示入口；不传则隐藏入口且显示全部项，避免不可达；宿主保存触发器并负责承载、焦点与返回恢复 |
 | `notice` | 可选 `string` | 整组冲突/过期等事实提示，`role=status`；不自动阻断任何动作 |
+| `details` | 可选 `ReactNode`，默认未提供 | 补充说明插槽，复用 coss Collapsible，入口为“说明”、默认收起；两态均可用，未提供时无入口。仅管理说明的展开，不触发业务回调；不放冲突、禁用原因或必要状态事实 |
 | `disabledReason` | 可选 `string` | 非空时整组决定、重新选择、改写与应用禁用；比较与展开仍可用 |
 | `apply` | 可选 `{ label: string; onApply: () => void; disabledReason?: string }` | 提供才显示动作；整组或动作的非空原因阻断应用并可访问关联。组件不按采用数量、冲突或项目禁用状态推算可应用性，不计算应用结果 |
 
@@ -88,7 +89,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 逐项比较沿用 `AgentChangeReview`：当 before 与 after 相同或 after 为空白时采用按钮禁用，保留仍可用；这与冲突无关。各项禁用原因常驻显示，并与相关控件关联。数学插槽的内容有效性、可访问性及字符串一致性由宿主负责。
 
-**组件职责**：渲染依据、统计外部决定、筛选 inline 可见项、呈现冲突和禁用原因、发出带 ID 的意图。无 Store、路由、持久化、执行器、权限判断或保存状态；切换 view 不发出任何业务回调。
+**组件职责**：渲染依据、统计外部决定、筛选 inline 可见项、呈现冲突和禁用原因、发出带 ID 的意图。关键项与冲突项始终显示，不受 inlineLimit 截断；不提供整组采纳。改写与采用只发出意图；草稿变更、应用、保存和提交由宿主处理。无 Store、路由、持久化、执行器、权限判断或保存状态；切换 view 不发出任何业务回调。
 
 **宿主职责与 P04 接入**：
 
@@ -202,6 +203,16 @@ import { Badge } from "@/components/prism-next/badge"
 - 独立示例入口：`status-composition`、`paired-dot-chart`、`quadrant-chart`、`combo-chart`。每个提供学习、运营、边界与缺测三组输入，以及空态；不新增分析整页。
 
 ## 学习、文档与 Agent
+
+### 界面文案原则
+
+Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；当前仅 AgentChangeSet 提供 `details?: ReactNode`。
+
+组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
+
+“回执未确认”“状态未确认”“示例”、冲突版本、禁用原因、部分完成与未完成范围等影响判断的必要事实必须常驻，不计作可删减的解释性边界提示，也不得移入折叠说明。缩短文案不改变状态来源、动作可用性、统计或可访问关联。
+
+AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别记录，查看来源不会改变这些记录。界面名称“Agent 本次参考”对应 v0.2.1 §10.2 中“进入本次模型上下文”的独立事实（`context`），不从选用、读取或查看推定该事实。四值语义不变：`confirmed` 显示外部提供的已参考事实及具体范围，`absent` 为“未参考”（记录覆盖完整且无对应事件），`unknown` 为“状态未确认”，`unavailable` 为“记录暂不可用”。来源版本与定位沿用已有折叠区；删除重复的卡底职责解释。
 
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。

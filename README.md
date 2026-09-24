@@ -4,6 +4,8 @@
 
 语义 15 `AgentChangeSet` 从本地旧提交 `32382e9` 单独移植，组合现有 `AgentChangeReview`；保留 main 的 Workspace 回收适配。支持同源受控 `inline / workspace`、整组依据与提示、逐项冲突事实、数学预览插槽、采用/保留/重新选择及可选改写、宿主提供的应用动作。冲突项与关键项在 inline 中始终可见；采用仅记录决定意图，应用、草稿变更、版本核验与保存均由宿主负责。
 
+2026-09-24 文案收敛：每卡最多一条边界提示，补充说明可放入默认收起的 `AgentChangeSet.details`“说明”；教师界面去除实现术语，必要状态事实保持常驻，本轮验证日志位于 `.sites-runtime/copy-density/`。
+
 组件示例：`/next/components/agent-components#change-set-two-state`，两栏共享手动示例状态，含一项冲突和 384px 窄容器开关。公开属性与 P04 映射见 [组件复用约定](docs/component-contracts.md#对比查看器两态-v01)。目录保持 80 项，不引入旧提交的承载层或示例 reducer。
 
 接入验证在 Workspace `/teacher/agent/workspace` 的 P04 流程进行，本仓库骨架页不作验收依据。本轮不启动开发服务、不修改 Workspace；验证日志位于 `.sites-runtime/change-set/`。浏览器三主题、窄屏交互、焦点恢复、实体设备、读屏器与真实业务接入尚未验证，仍需 Supervisor 独立 Review。

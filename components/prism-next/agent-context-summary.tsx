@@ -28,7 +28,7 @@ export type AgentContextSource = {
 
 const channels = [
   { key: "read", label: "读取", absent: "未读取" },
-  { key: "context", label: "本轮上下文", absent: "未进入" },
+  { key: "context", label: "Agent 本次参考", absent: "未参考" },
   { key: "citation", label: "成果引用", absent: "未引用" },
 ] as const
 
@@ -91,6 +91,5 @@ export function AgentContextSummary({
         </div>
       </CollapsiblePanel>
     </Collapsible>}
-    <p className="text-ui-hint text-muted-foreground">选用、读取、本轮上下文与成果引用分别记录。查看来源不会改变这些记录。</p>
   </Card>
 }
