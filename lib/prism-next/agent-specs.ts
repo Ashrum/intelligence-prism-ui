@@ -12,7 +12,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'agent-components': {
     component: 'Agent semantic group v0.1 — design candidate',
     source: 'Prism / coss composition; interaction reference: https://www.beautifului.dev/',
-    contract: ['AgentContextSummary composes AgentContextList; selection, read, current context and citation are independent host facts. confirmed requires a scoped description; absent requires complete host-verified coverage; unknown and unavailable stay distinct. Opening a source does not change facts.', 'AgentArtifactPreview receives object identity, version, status and optional open capability. Preview content never proves execution or publication.', 'AgentExecutionConfirmation receives a discriminated ready/submitting/received/blocked/unknown/recorded state. Only ready exposes confirmation. Callbacks return intent, not acknowledgements.', 'AgentExecutionProgress reuses AgentTaskProgress; overall state and expansion are external. Waiting/unknown renders old running steps as static snapshots, never ongoing activity.', 'AgentExecutionResult receives a succeeded/partial/failed/unknown receipt. Unknown exposes query only; partial preserves completed and remaining scope. Host capabilities determine recovery.', 'AgentChangeReview preserves controlled string input and adds optional version labels, scope, presentation slots and reset intent. Caller owns freshness, draft updates and saving. AgentQuestionCard remains controlled; choosing does not execute or save.'],
+    contract: ['AgentComposer scope is a host-provided slot. readOnly/sendDisabled default false; a nonempty sendDisabledReason also blocks form and keyboard submission. Read-only keeps the native draft readable; sendDisabled alone permits editing. The visible status reason describes both input and send button. Running stop behavior stays unchanged; slots remain host-owned.', 'AgentContextSummary composes AgentContextList; selection, read, current context and citation are independent host facts. confirmed requires a scoped description; absent requires complete host-verified coverage; unknown and unavailable stay distinct. Opening a source does not change facts.', 'AgentArtifactPreview receives object identity, version, status and optional open capability. Preview content never proves execution or publication.', 'AgentExecutionConfirmation receives a discriminated ready/submitting/received/blocked/unknown/recorded state. Only ready exposes confirmation. Callbacks return intent, not acknowledgements.', 'AgentExecutionProgress reuses AgentTaskProgress; overall state and expansion are external. Waiting/unknown renders old running steps as static snapshots, never ongoing activity.', 'AgentExecutionResult receives a succeeded/partial/failed/unknown receipt. Unknown exposes query only; partial preserves completed and remaining scope. Host capabilities determine recovery.', 'AgentChangeReview preserves controlled string input and adds optional version labels, scope, presentation slots and reset intent. Caller owns freshness, draft updates and saving. AgentQuestionCard remains controlled; choosing does not execute or save.'],
     states: ['draft/current/historical/unavailable preview', 'pending/accepted/kept or externally blocked comparison', 'ready/submitting/received/blocked/recorded/unknown confirmation', 'running/waiting/snapshot progress', 'succeeded/partial/failed/unknown receipt'],
     accessibility: ['Choices use the pinned RadioGroup and associated labels.', 'Decision information is at least 14px; long source and comparison text uses read-body 16/28.', 'Narrow containers wrap or stack; source dialogs return focus.'],
     dont: ['Do not put demo execution, business persistence or model calls in reusable components.', 'Do not treat selection or accepted changes as permission to publish.', 'Do not manufacture confidence, completion percentages or internal reasoning.'],
@@ -20,11 +20,33 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   button: {
     component: "Button",
     source: "coss original component; preserve pinned upstream sizing, radius, padding and focus behavior",
-    contract: ["One primary action per action region.", "Use sm / default / lg native sizes; icon buttons require an accessible name.", "Destructive actions use the destructive treatment and confirmation when impact warrants it."],
+    contract: ["One primary action per action region.", "Use native sizes; Prism Button additionally exposes navigation and navigation-icon with 40px desktop / 44px coarse-pointer targets. Default output is unchanged; icon buttons require an accessible name.", "Destructive actions use the destructive treatment and confirmation when impact warrants it."],
     states: ["default", "hover", "focus-visible", "active", "loading", "disabled"],
     accessibility: ["Preserve keyboard focus and loading/disabled semantics.", "Icon-only buttons require aria-label or equivalent accessible naming."],
     do: ["Use hierarchy before adding color.", "Keep coss interaction behavior intact."],
     dont: ["Do not invent new internal dimensions.", "Do not use Prism colors as decoration."]
+  },
+  toolbar: {
+    component: 'Toolbar',
+    source: 'Pinned coss Toolbar; optional Prism composition',
+    contract: ['Prism variant defaults to framed with identical coss output. plain reuses the same Base UI root and children without the visual frame; no new tokens.'],
+    accessibility: ['Preserve arrow-key navigation, ToolbarLink semantics and accessible naming.'],
+  },
+  'metric-summary': {
+    component: 'MetricSummary',
+    source: 'components/prism-next/data-display.tsx',
+    contract: ['density defaults to default; compact changes only layout to two columns with baseline-aligned label/value. Preserve analytics-value typography, external detail and onSelect intent.'],
+  },
+  'status-composition': {
+    component: 'StatusComposition',
+    source: 'components/prism-next/data-display.tsx',
+    contract: ['density defaults to default; compact uses a wrapping legend and an 8px read-only bar. An interactive bar stays 32px. Missing and invalid values retain existing semantics.'],
+    accessibility: ['Compact read-only legends retain full quantity and percentage through accessible labels and titles. Interactive bars and legends remain keyboard-selectable.'],
+  },
+  question: {
+    component: 'Question composition / QuestionPrint',
+    source: 'components/prism-next/question-print.tsx',
+    contract: ['QuestionPrint showQuestionIds defaults true. false hides the printed ID/version line and triggers pagination; question numbering, internal version references and edition hash stay unchanged. It is not a data-redaction API.'],
   },
   form: {
     component: "Form",
@@ -68,8 +90,8 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   },
   badge: {
     component: "Badge",
-    source: "coss Badge plus Prism info-solid extension",
-    contract: ["Use text plus restrained color to express status.", "Prism semantic colors require textual meaning.", "info-solid increases information emphasis only; it does not imply pending, error, category or completion.", "Counts do not automatically hide zero or collapse to 99+."],
+    source: "coss Badge plus Prism info-solid and attention aliases",
+    contract: ["Use text plus restrained color to express status.", "Prism semantic colors require textual meaning.", "info-solid increases information emphasis only; it does not imply pending, error, category or completion.", "attention maps to the existing error appearance for host-declared human attention; text defines meaning, never infer execution failure. Prism size remains lg by default.", "Counts do not automatically hide zero or collapse to 99+."],
     accessibility: ["Ensure the containing control has a complete accessible name when a numeric badge is visually repeated."],
     dont: ["Do not communicate status by color alone.", "Do not invent automatic count truncation."]
   },

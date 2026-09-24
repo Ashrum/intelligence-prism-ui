@@ -32,6 +32,27 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 该示例在客户端组件中使用。迁入其他框架时，按实际导入替换 Next.js 的 Link、导航或图片适配；不需要带入站点 Shell、组件目录或业务演示页面。
 
+## Workspace 适配回收 v0.1
+
+基于 Workspace `4e0d656` 的通用适配，保持本仓 main 既有默认值与 Typography v0.2.1。以下均不接 Store、权限判定、Runtime 或持久化；示例只手动设置外部状态。
+
+| 组件 / 属性 | 默认值 | 语义与边界 |
+| --- | --- | --- |
+| AgentComposer `scope?: ReactNode` | 未提供 | conversation 位于 InputGroup 顶部、材料之前；default / compact 位于标签之后、文本区之前。范围由宿主提供 |
+| AgentComposer `sendDisabled?: boolean` | `false` | 禁止表单与 Ctrl/⌘+Enter 发送，仍允许编辑 |
+| AgentComposer `sendDisabledReason?: string` | 未提供 | 非空原因本身即阻断发送；以 `role=status` 常驻显示，输入与发送按钮用 `aria-describedby` 关联。建议阻断时始终提供具体原因 |
+| AgentComposer `readOnly?: boolean` | `false` | 透传原生只读属性，保留可阅读/复制的草稿，同时阻止发送。运行态仍禁用输入；停止动作只取决于 `running / onStop`。宿主负责约束 scope/tools/suggestions 等插槽内控件 |
+| MetricSummary `density?: 'default' / 'compact'` | `default` | compact 两列、标签与数值基线排列，说明另起一行；只改变布局，保留 analytics-value 字体与外部查看回调 |
+| StatusComposition `density?: 'default' / 'compact'` | `default` | compact 图例横向换行，只读条 8px、可选择条仍 32px。只读图例显示数量，完整数量和占比保留于可访问说明及 title；零值、缺测、无效值规则保持 |
+| QuestionPrint `showQuestionIds?: boolean` | `true` | `false` 隐藏纸面题目标识/版本行；题目序号、内部来源版本与版次计算不变，开关变化重新分页。不是敏感信息脱敏功能 |
+| Prism Badge `variant='attention'` | 原 variant 默认不变 | 映射 coss 已有 error 变体；文字应表达待人工处理，不推断任务失败。Prism 默认 size 继续为 lg |
+| Prism Button `size='navigation' / 'navigation-icon'` | 原 size 默认不变 | 从 `components/prism-next/button` 导入；文字按钮最小 40px、自适应高度，图标按钮 40px，粗指针最小/固定 44px。使用 coss 原字体、视觉与事件，不新增颜色变体 |
+| Prism Toolbar `variant='framed' / 'plain'` | `framed` | 从 `components/prism-next/toolbar` 导入；framed 完整复用 coss，plain 复用同一 Base UI root 和子组件，仅省略外框，保留键盘与导航语义 |
+
+Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !sendDisabledReason && value.trim()`；不传新属性时原渲染与行为保持。发送原因不自动解除、只读不自动改变运行状态，组件不自行决定可用范围。示例：`/next/components/agent-components#composer-adaptations`、`/next/components/metric-summary#compact-summary`、`/next/components/status-composition#compact-composition`、`/next/components/question#print-metadata`、`/next/components/badge`、`/next/components/button`、`/next/components/toolbar`。
+
+迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、Button info、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
+
 ## Agent 可读性与规范权威
 
 跨 Agent 使用时以站点根目录 `/llms.txt` 为发现入口，并遵循 `docs/agent-readable-contract.md`。组件页 Agent Spec、Foundations、Pattern / 应用示例、固定 coss upstream、Agent inference 依次构成权威顺序；后一级不得覆盖前一级。
@@ -112,7 +133,7 @@ import { Badge } from "@/components/prism-next/badge"
 | PairedDotChart | 两个指标定义、每行两个值、同一单位与范围 | `onSelect(rowId, metricId?)` |
 | ComboChart | 分类、一个或两个坐标轴、绑定轴的柱/线系列 | `onSelect(categoryId, seriesId?)` |
 | BoxPlotChart | 下须、Q1、中位数、Q3、上须 | `onSelect(id)` |
-| MetricSummary | 标签、数值、说明 | 可选查看回调 |
+| MetricSummary | 标签、数值、说明、density | 可选查看回调 |
 | GoalComparison | 基线、当前、目标、单位、状态插槽 | 不推断目标达成 |
 | StatusComposition | 分类、数量、可选颜色、单位与受控选中 ID | `onSelect(id)` |
 | FilterBar | 字段定义、选项、当前值 | 值变更 / 重置 |

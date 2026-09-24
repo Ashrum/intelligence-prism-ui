@@ -13,7 +13,7 @@ import { Separator } from "@/components/coss/separator"
 export function AgentComposer({
   value, onChange, running = false, onSubmit, onStop, label = "任务",
   placeholder = "描述需要完成的任务…", submitLabel = "运行", maxLength = 1000,
-  variant = "default", footerNote, context, suggestions, tools, attachments, toolbarLayout = "responsive", toolbarSeparator = false, inputSize = "default",
+  variant = "default", footerNote, context, suggestions, tools, attachments, scope, sendDisabled = false, sendDisabledReason, readOnly = false, toolbarLayout = "responsive", toolbarSeparator = false, inputSize = "default",
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -30,6 +30,10 @@ export function AgentComposer({
   suggestions?: ReactNode;
   tools?: ReactNode;
   attachments?: ReactNode;
+  scope?: ReactNode;
+  sendDisabled?: boolean;
+  sendDisabledReason?: string;
+  readOnly?: boolean;
   toolbarLayout?: "responsive" | "inline";
   toolbarSeparator?: boolean;
   inputSize?: "default" | "compact";
@@ -37,17 +41,21 @@ export function AgentComposer({
   const id = useId();
   const compact = variant === "compact";
   const stop = () => { onStop?.(); requestAnimationFrame(() => document.getElementById(id)?.focus({ preventScroll: true })); };
-  const submit = () => { if (!running && value.trim()) onSubmit(); };
+  const blocked = readOnly || sendDisabled || Boolean(sendDisabledReason);
+  const submit = () => { if (!running && !blocked && value.trim()) onSubmit(); };
   if (variant === "conversation") {
     return <form className="relative min-w-0 space-y-3" onSubmit={event => { event.preventDefault(); submit(); }}>
       <Label htmlFor={id} className="sr-only">{label}</Label>
       <InputGroup className="@container/agent-composer">
+        {scope && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap">{scope}</InputGroupAddon>}
         {attachments && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap">{attachments}</InputGroupAddon>}
         <InputGroupTextarea
           id={id}
           value={value}
           onChange={event => onChange(event.target.value)}
           disabled={running}
+          readOnly={readOnly}
+          aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined}
           placeholder={placeholder}
           maxLength={maxLength}
           rows={inputSize === "compact" ? 2 : 4}
@@ -66,21 +74,25 @@ export function AgentComposer({
             {context}
             {running
               ? <Button type="button" variant="outline" size="icon" aria-label="停止" disabled={!onStop} onClick={stop}><Square aria-hidden="true" /></Button>
-              : <Button type="submit" size="icon" aria-label={submitLabel} disabled={!value.trim()}><ArrowUp aria-hidden="true" /></Button>}
+              : <Button type="submit" size="icon" aria-label={submitLabel} aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={blocked || !value.trim()}><ArrowUp aria-hidden="true" /></Button>}
           </div>
         </InputGroupAddon>
       </InputGroup>
+      {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint text-muted-foreground">{sendDisabledReason}</p>}
       <div className="min-w-0 text-ui-hint text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
       {suggestions}
     </form>;
   }
   return <form className={compact ? "relative space-y-2" : "relative space-y-3"} onSubmit={event => { event.preventDefault(); submit(); }}>
     <Label htmlFor={id} className={compact ? "sr-only" : undefined}>{label}</Label>
+    {scope}
     <Textarea
       id={id}
       value={value}
       onChange={event => onChange(event.target.value)}
       disabled={running}
+      readOnly={readOnly}
+      aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined}
       placeholder={placeholder}
       maxLength={maxLength}
       rows={compact ? 2 : undefined}
@@ -98,9 +110,10 @@ export function AgentComposer({
         {context}
         {running
           ? <Button type="button" variant="outline" size={compact ? "icon" : "default"} aria-label={compact ? "停止" : undefined} disabled={!onStop} onClick={stop}><Square aria-hidden="true" />{!compact && "停止"}</Button>
-          : <Button type="submit" size={compact ? "icon" : "default"} aria-label={compact ? submitLabel : undefined} disabled={!value.trim()}><ArrowUp aria-hidden="true" />{!compact && submitLabel}</Button>}
+          : <Button type="submit" size={compact ? "icon" : "default"} aria-label={compact ? submitLabel : undefined} aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={blocked || !value.trim()}><ArrowUp aria-hidden="true" />{!compact && submitLabel}</Button>}
       </div>
     </div>
+    {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint text-muted-foreground">{sendDisabledReason}</p>}
     {suggestions}
   </form>;
 }

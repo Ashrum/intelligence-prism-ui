@@ -1,6 +1,6 @@
 "use client"
 import {useState} from 'react'
-import {AgentQuestionCard,AgentContextList,AgentChangeReview,type AgentChangeDecision} from '../agent-components'
+import {AgentComposer,AgentQuestionCard,AgentContextList,AgentChangeReview,type AgentChangeDecision} from '../agent-components'
 import {Button} from '@/components/coss/button'
 import {Field,FieldLabel} from '@/components/coss/field'
 import {Textarea} from '@/components/coss/textarea'
@@ -8,10 +8,12 @@ import {Dialog,DialogPopup,DialogHeader,DialogTitle,DialogDescription,DialogPane
 
 /** Fixture only: the reusable patterns above remain controlled and business-neutral. */
 export function AgentPatternsDemo({alternate=false}:{alternate?:boolean}) {
+ const [draft,setDraft]=useState('请整理材料中的 x² − 3x + 2 = 0。'),[mode,setMode]=useState<'blocked'|'readonly'|'editable'>('blocked'),[intent,setIntent]=useState('')
  const [choice,setChoice]=useState(''),[note,setNote]=useState(''),[source,setSource]=useState(false),[decision,setDecision]=useState<AgentChangeDecision>('pending')
  const before=alternate?'周三完成阅读。提交一段摘要。':'已知 x² − 3x + 2 = 0。求方程的实数根。'
  const after=before.replace('。','。\n')
  return <div className="mt-8 space-y-8"><div className="space-y-2"><h3 className="text-section-title">追问、依据与修改对照</h3><p className="text-ui-hint text-muted-foreground">借鉴 Beautiful UI 的交互组织，以现有 Prism / coss 组件实现。选择与采用只回传给调用方。</p></div>
+ <section id="composer-adaptations" className="space-y-4"><h3 className="text-block-title">输入范围、发送阻断与只读</h3><p className="text-ui-hint text-muted-foreground">手动切换外部状态；发送只记录意图，未接执行服务。</p><div className="flex flex-wrap gap-2">{(['blocked','readonly','editable'] as const).map(state=><Button key={state} variant="outline" aria-pressed={mode===state} onClick={()=>{setMode(state);setIntent('')}}>{{blocked:'发送阻断',readonly:'只读草稿',editable:'可编辑'}[state]}</Button>)}</div><AgentComposer variant="conversation" inputSize="compact" value={draft} onChange={setDraft} scope={<span className="text-ui-hint">范围：外部材料 A · 第 1 页</span>} sendDisabled={mode==='blocked'} readOnly={mode==='readonly'} sendDisabledReason={mode==='blocked'?'材料尚未确认，可继续编辑草稿。':mode==='readonly'?'当前记录只读，草稿可阅读和复制。':undefined} onSubmit={()=>setIntent('宿主收到发送意图；未执行任务。')}/><p role="status" className="text-ui-hint">{intent}</p></section>
  <AgentQuestionCard question={alternate?'这次整理到什么程度？':'这次需要整理哪些内容？'} value={choice} onValueChange={setChoice} options={[{value:'content',label:alternate?'保留原文结构':'只提取题目',description:'保留来源，不补造内容。'},{value:'with-notes',label:alternate?'原文与已有批注':'题目与已有参考答案',description:'分别整理，完成后人工核对对应关系。'}]}><Field><FieldLabel>补充要求</FieldLabel><Textarea value={note} onChange={e=>setNote(e.target.value)} placeholder="也可以补充自己的要求"/></Field></AgentQuestionCard>
  <p role="status" className="text-ui-hint text-muted-foreground">{choice?`已选择：${choice==='content'?'仅正文':'正文与附加材料'}，尚未执行任务。`:'等待选择处理范围。'}</p>
  <AgentContextList items={[{id:'source',title:alternate?'阅读记录 B':'课堂练习 A',location:'第 1 页 · 原稿 v1',description:'人工构造示例，点击查看本条来源。'}]} onInspect={()=>setSource(true)}/>
