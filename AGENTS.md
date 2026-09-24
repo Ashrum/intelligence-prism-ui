@@ -33,7 +33,7 @@
 
 1. [Agent 组件规范 v0.2.1（已批准）](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)，以及各组件页的 Agent Spec
 2. Foundations：[字体规范](docs/typography.md)、主题与语义令牌
-3. [复用规划 v0.1.2](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.2.md)、[组件复用约定](docs/component-contracts.md)、Pattern 与应用示例
+3. [复用规划 v0.1.3](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)、[组件复用约定](docs/component-contracts.md)、Pattern 与应用示例
 4. 固定版本的 coss upstream 行为
 5. Agent 自行推断
 
