@@ -159,6 +159,56 @@ export function AgentChangeReview({title,before,after,reason,decision,onDecision
  <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">{beforeLabel}</h4>{beforePreview??<p className="whitespace-pre-wrap break-words text-read-body">{before}</p>}</section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">{afterLabel}</h4>{afterPreview??<p className="whitespace-pre-wrap break-words text-read-body">{after}</p>}</section></div>
  {scope&&<p className="text-ui-hint text-muted-foreground">{scope}</p>}
  {disabledReason&&<p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
- {decision==='pending'?<div className="flex flex-wrap gap-2"><Button aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>:onResetDecision&&<div><Button variant="outline" disabled={disabled} onClick={()=>{onResetDecision();requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}}>重新选择</Button></div>}
+ {decision==='pending'?<div className="flex flex-wrap gap-2"><Button aria-label={`采用：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" aria-label={`保留：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>:onResetDecision&&<div><Button variant="outline" aria-label={`重新选择：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>{onResetDecision();requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}}>重新选择</Button></div>}
  </Card>
+}
+
+export type AgentChangeSetItem = {
+ id: string; title: string; before: string; after: string; reason: string;
+ decision: AgentChangeDecision; scope?: string; critical?: boolean;
+ beforePreview?: ReactNode; afterPreview?: ReactNode;
+ conflict?: { baseLabel: string; currentLabel: string; description?: string };
+ disabledReason?: string;
+}
+export type AgentChangeSetProps = {
+ view: 'inline' | 'workspace'; title: string; basis: string;
+ items: readonly AgentChangeSetItem[]; inlineLimit?: number;
+ onDecision: (id: string, decision: AgentChangeDecision) => void;
+ onRewrite?: (id: string, value: string) => void;
+ onExpand?: (trigger: HTMLButtonElement) => void;
+ notice?: string; disabledReason?: string;
+ apply?: { label: string; onApply: () => void; disabledReason?: string };
+}
+/** Both views consume the same host draft. No local decisions, save or submit state. */
+export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onDecision, onRewrite, onExpand, notice, disabledReason, apply }: AgentChangeSetProps) {
+ const id = useId()
+ const limit = Number.isFinite(inlineLimit) ? Math.max(1, Math.floor(inlineLimit)) : 2
+ // With no expansion capability, keep every decision reachable in this view.
+ const shown = view === 'workspace' || !onExpand ? items : items.filter((item, index) => index < limit || item.critical || item.conflict)
+ const count = (decision: AgentChangeDecision) => items.filter(item => item.decision === decision).length
+ return <section aria-labelledby={id} data-agent-change-view={view} className="min-w-0 space-y-4">
+  <div className="space-y-2"><h3 id={id} className="text-block-title break-words">{title}</h3><p className="text-ui-hint text-muted-foreground break-words">{basis}</p>
+   <p className="text-ui-hint">共 {items.length} 处修改 · 已采用 {count('accepted')} · 保留原文 {count('kept')} · 待决定 {count('pending')}</p>
+  </div>
+  {notice && <p role="status" className="text-ui-hint text-warning-foreground">{notice}</p>}
+  {disabledReason && <p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
+  {!items.length && <p className="text-ui-hint text-muted-foreground">当前没有修改。</p>}
+  <ol className="space-y-5" aria-label="修改列表">{shown.map((item, index) => <li key={item.id} className="min-w-0 space-y-3">
+   {item.conflict && <p role="status" className="text-ui-hint text-warning-foreground break-words">候选基于 {item.conflict.baseLabel}，当前为 {item.conflict.currentLabel}{item.conflict.description && <> · {item.conflict.description}</>}</p>}
+   <AgentChangeReview title={item.title} before={item.before} after={item.after} reason={item.reason} scope={item.scope} decision={item.decision} beforePreview={item.beforePreview} afterPreview={item.afterPreview}
+    disabled={!!(disabledReason || item.disabledReason)} disabledReason={[disabledReason, item.disabledReason].filter(Boolean).join('；') || undefined}
+    onDecision={decision => onDecision(item.id, decision)} onResetDecision={() => onDecision(item.id, 'pending')}/>
+   {onRewrite && <div className="space-y-2">
+    <Label htmlFor={`${id}-rewrite-${index}`}>手动改写建议内容：{item.title}</Label>
+    <Textarea id={`${id}-rewrite-${index}`} value={item.after} onChange={event => onRewrite(item.id, event.target.value)} disabled={!!(disabledReason || item.disabledReason)} aria-describedby={[`${id}-rewrite-hint`, disabledReason ? `${id}-disabled` : undefined, item.disabledReason ? `${id}-rewrite-${index}-disabled` : undefined].filter(Boolean).join(" ")}/>
+    {item.disabledReason && <p id={`${id}-rewrite-${index}-disabled`} className="text-ui-hint text-warning-foreground">{item.disabledReason}</p>}
+   </div>}
+  </li>)}</ol>
+  {onRewrite && <p id={`${id}-rewrite-hint`} className="text-ui-hint text-muted-foreground">改写与采用只发出意图；草稿变更、应用、保存和提交由宿主处理。</p>}
+  {view === 'inline' && onExpand && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">当前展示 {shown.length} 处修改（含全部关键项与冲突项），其余 {items.length - shown.length} 处请展开逐项查看；本卡不提供整组采纳。</p>}<Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看全部 {items.length} 处修改<ArrowUpRight aria-hidden="true"/></Button></div>}
+  {apply && <div className="space-y-2">
+   <Button disabled={!!(disabledReason || apply.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, apply.disabledReason ? `${id}-apply-disabled` : undefined].filter(Boolean).join(' ') || undefined} onClick={() => { if (!disabledReason && !apply.disabledReason) apply.onApply() }}>{apply.label}</Button>
+   {apply.disabledReason && <p id={`${id}-apply-disabled`} role="status" className="text-ui-hint text-warning-foreground">{apply.disabledReason}</p>}
+  </div>}
+ </section>
 }
