@@ -5,6 +5,7 @@ import { Button } from "@/components/coss/button"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Spinner } from "@/components/coss/spinner"
+import { StatusBadge } from "./status-badge"
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/coss/input-group"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Card } from "@/components/coss/card"
@@ -106,8 +107,8 @@ export function AgentComposer({
 }
 export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string}
 export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
- const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
- return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
+ const tones={done:'complete',running:'active',pending:'neutral',error:'error'} as const
+ return <StatusBadge tone={snapshot&&state==='running'?'neutral':tones[state]}>{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</StatusBadge>
 }
 export function AgentTaskProgress({steps,actions,activity='live'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot'}) {
  return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">

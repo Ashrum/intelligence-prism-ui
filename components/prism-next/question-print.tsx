@@ -5,6 +5,7 @@ import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Label } from "@/components/coss/label"
 import { QuestionWorkPanel } from "./question-work-panel"
+import { responsePresentation } from "./question-labels"
 import { QuestionContent, type QuestionRecord, type ResponseModel } from "./question-content"
 import { QuestionSelect } from "./question-controls"
 import { entryPoints, type PaperEntry } from "@/lib/prism-next/question-workspace"
@@ -60,7 +61,7 @@ export function QuestionPrint({emptyActions,entries,questions,versions,blocked,t
     const paperContent=mode!=="response"
     const withSpace=mode!=="compact"
     units.push({id:`${entry.id}-stem`,breakBefore:breaks.includes(entry.id),keepWithNext:!!question.parts,content:<>{group}{heading}{paperContent&&<QuestionContent question={display}/>} {!question.parts&&withSpace&&<AnswerSpace response={question.response} label={`第 ${number} 题`} height={spaces[entry.id]??40} count={question.answerFieldCount}/>}</>})
-    question.parts?.forEach(part=>units.push({id:`${entry.id}-part-${part.id}`,content:<><h4 className="q-part-heading">第 {number} 题（{part.id}）{showPoints&&part.points!==undefined&&` · ${entry.partPoints?.[part.id]??part.points} 分`}</h4>{paperContent&&<div className="prism-question-copy"><div>{part.content}</div>{part.options&&<ol className="q-paper-options">{part.options.map(option=><li key={option.id}><span>{option.id}.</span>{option.content}</li>)}</ol>}</div>}{withSpace&&<AnswerSpace response={part.response??question.response} label={`第 ${number} 题（${part.id}）`} height={spaces[`${entry.id}:${part.id}`]??40}/>}</>}))
+    question.parts?.forEach(part=>units.push({id:`${entry.id}-part-${part.id}`,content:<><h4 className="q-part-heading">第 {number} 题（{part.id}）{responsePresentation(part.response??question.response)&&` · ${responsePresentation(part.response??question.response)!.label}`}{showPoints&&part.points!==undefined&&` · ${entry.partPoints?.[part.id]??part.points} 分`}</h4>{paperContent&&<div className="prism-question-copy"><div>{part.content}</div>{part.options&&<ol className="q-paper-options">{part.options.map(option=><li key={option.id}><span>{option.id}.</span>{option.content}</li>)}</ol>}</div>}{withSpace&&<AnswerSpace response={part.response??question.response} label={`第 ${number} 题（${part.id}）`} height={spaces[`${entry.id}:${part.id}`]??40}/>}</>}))
   })
   useEffect(()=>{
     let cancelled=false,frame=0

@@ -3,6 +3,7 @@ import { LearningGoalCard } from "@/components/prism-next/learning-components"
 
 import { useState } from "react"
 import { Button } from "@/components/coss/button"
+import { StatusBadge } from "@/components/prism-next/status-badge"
 import { Badge } from "@/components/prism-next/badge"
 import { Textarea } from "@/components/coss/textarea"
 import { Field, FieldLabel } from "@/components/coss/field"
@@ -29,7 +30,7 @@ export function LearningGoals({ go, active }: { go: (stage: Stage) => void; acti
       const status = goalStatus(state, goal), valid = goalSourceValid(state, goal)
       const checks = currentVerifications(state, goal)
       const tasks = state.tasks.filter(item => item.goalId === goal.id)
-      return <LearningGoalCard key={goal.id} id={goal.id} title={goal.title} status={<Badge variant={status==="已达成"?"success":!valid?"warning":"outline"}>{status}</Badge>} source={`标准 v${goal.version} · 截止 ${goal.due} · 来源评价 v${goal.sourceVersion}`} actions={<Button disabled={!!editing||!!verifying} variant="outline" aria-controls="learning-goal-editor" onClick={()=>{setEditing({...goal,criteria:goal.criteria.map(item=>({...item}))});setError("")}}>编辑目标</Button>}>
+      return <LearningGoalCard key={goal.id} id={goal.id} title={goal.title} status={<StatusBadge tone={status==="已达成"?"complete":!valid?"warning":goal.mode==="draft"||goal.mode==="paused"?"neutral":"pending"}>{status}</StatusBadge>} source={`标准 v${goal.version} · 截止 ${goal.due} · 来源评价 v${goal.sourceVersion}`} actions={<Button disabled={!!editing||!!verifying} variant="outline" aria-controls="learning-goal-editor" onClick={()=>{setEditing({...goal,criteria:goal.criteria.map(item=>({...item}))});setError("")}}>编辑目标</Button>}>
         {!valid && <SourceNotice>目标引用的评价或诊断已变化。原目标、任务和验证记录保留，请先重新检查诊断。<div className="mt-2 flex flex-wrap gap-2"><Button size="sm" variant="outline" onClick={() => go("diagnosis")}>复核诊断</Button><Button size="sm" variant="outline" onClick={() => dispatch({ type: "reconfirm-goal", id: goal.id })}>确认目标仍适用</Button></div></SourceNotice>}
         <div className="grid gap-6 @2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]"><section className="space-y-3"><h5 className="text-item-title">起点与关联</h5>{goal.sourceIds.map(id => { const definition = evidenceDefinitions.find(item => item.id === id)!; return <div key={id} className="border-l-2 pl-3 text-ui-hint"><p>{definition.observed}</p><p className="text-muted-foreground">{definition.curriculum} · 第 {definition.partId} 问</p></div> })}<Button variant="ghost" size="sm" onClick={() => go("diagnosis")}>查看来源证据</Button></section><section className="space-y-3"><h5 className="text-item-title">达成标准</h5><ol className="list-decimal space-y-2 pl-5 text-ui-hint">{goal.criteria.map(item => <li key={item.id}>{item.text}</li>)}</ol><p className="text-ui-hint text-muted-foreground">验证方法：两份不同的新情境作答，都满足以上全部标准。此门槛是本例约定。</p></section></div>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t pt-4 text-ui-body"><span>有效验证 <strong className="tabular-nums">{goalPasses(state, goal)} / 2</strong></span><span>任务完成 <strong className="tabular-nums">{tasks.filter(item => item.status === "done").length} / {tasks.length}</strong></span><span className="text-muted-foreground">两项指标分别计算</span></div>

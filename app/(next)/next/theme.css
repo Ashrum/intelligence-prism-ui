@@ -181,6 +181,7 @@
 .prism-root a.prism-link:hover { opacity:.8; }
 .prism-content { width:100%; max-width:88rem; margin-inline:auto; padding:2rem; min-width:0; }
 .prism-page-heading { margin-bottom:2rem; }
+.prism-heading-meta { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; }
 .prism-page-heading h1 { color:var(--heading); font-size:var(--text-page-title); line-height:var(--text-page-title--line-height); font-weight:600; letter-spacing:0; }
 .prism-page-heading p:not([class*="text-ui-"]) { color:var(--muted-foreground); font-size:1rem; line-height:1.75; margin-top:.5rem; max-width:48rem; }
 .prism-copy { color:var(--foreground); font-size:var(--text-read-body); line-height:var(--text-read-body--line-height); }
@@ -193,12 +194,13 @@
 .prism-equation { overflow-x:auto; overflow-y:hidden; padding:1.25rem 0; margin:.5rem 0 1rem; color:var(--foreground); }
 .prism-equation math { font-size:1.4rem; }
 .prism-demo { padding:1.75rem; min-width:0; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--background); color:var(--foreground); }
-.prism-demo-section { scroll-margin-top:5rem; margin-top:2rem; }
+.prism-demo-section { scroll-margin-top:5rem; margin-top:2.25rem; }
+.prism-demo-section + .prism-demo-section { margin-top:3rem; }
 .prism-demo-section > header { margin-bottom:1rem; }
 .prism-demo-section h2 { color:var(--heading); font-size:var(--text-section-title); line-height:var(--text-section-title--line-height); font-weight:600; }
 .prism-demo-section > header p { color:var(--muted-foreground); font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); margin-top:.3rem; }
 .prism-numeric { font-variant-numeric:tabular-nums lining-nums; }
-.analytics-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; padding:.5rem 0 1.5rem; border-bottom:1px solid var(--border); }
+.analytics-metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr)); gap:1.5rem; padding:.5rem 0 1.5rem; border-bottom:1px solid var(--border); }
 .analytics-value { color:var(--heading); font-size:var(--text-stat-display); font-weight:600; line-height:var(--text-stat-display--line-height); letter-spacing:0; margin:.5rem 0 .25rem; font-variant-numeric:tabular-nums; }
 .analytics-panel { border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.25rem; min-width:0; background:var(--background); color:var(--foreground); }
 .analytics-panel > header { margin-bottom:1.25rem; }
@@ -210,7 +212,7 @@
 .analytics-data { margin-top:.75rem; }
 .analytics-status-bar { display:flex; gap:2px; height:.625rem; margin:1.5rem 0; overflow:hidden; border-radius:999px; background:var(--muted); }
 .analytics-swatch { display:inline-block; width:.5rem; height:.5rem; border-radius:2px; flex-shrink:0; }
-@container(min-width:42rem) { .analytics-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+
 @media print {
   .analytics-panel { break-inside:avoid; margin-bottom:1rem; }
   .analytics-chart { height:13rem; }
@@ -225,11 +227,40 @@
 
 /* Question composition: content width chooses the option layout. */
 .prism-question { container-type:inline-size; }
+.q-card-layout { padding:1.375rem 1.5rem 1.125rem; }
+.q-card-heading { margin-bottom:.875rem; }
+.q-card-meta { display:flex; align-items:center; flex-wrap:wrap; gap:.625rem; }
+.q-card-labels { display:contents; }
+.q-card-title { margin-top:.75rem; overflow-wrap:anywhere; }
+.prism-question .q-question-stem > * { margin-block:0; }
+.prism-question .q-question-stem > * + * { margin-top:.5rem; }
+.prism-question .prism-question-copy p + p { margin-top:.5rem; }
+.prism-question .q-card-actions { margin-top:1.25rem; padding-top:.875rem; }
+.prism-question .q-question-parts { margin-top:1.25rem; }
+.prism-question .q-question-parts > li {  gap:.625rem; }
+.prism-question .q-part-number { min-width:1rem; }
+.prism-question .q-part-identity { gap:.375rem; padding:.125rem .5rem .125rem .375rem; }
+.prism-question :is(.prism-question-options,.q-part-options) { gap:.75rem 1.75rem; margin-top:1.125rem; }
+.prism-question :is(.prism-question-options,.q-part-options) > li { padding:.625rem .75rem; gap:.625rem; }
+.prism-question .q-question-material > figure { max-width:none; margin:.375rem 0 1.25rem; padding:1rem; }
+.prism-question .q-question-material > figure > svg { max-width:26.25rem; }
+.prism-question .q-question-material figcaption { margin-top:.375rem; }
+.prism-question table { width:100%; max-width:none; }
+.prism-question table :is(th,td) { padding:.5625rem .375rem; }
+.prism-question table th { width:7.5rem; text-align:left; }
+.prism-question table td { text-align:center; }
+#question-component > .prism-demo { padding:0; }
+@container (max-width:28rem) { .q-card-layout { padding:1rem; } .q-card-meta { gap:.5rem; } }
+@container (min-width:64rem) {
+  .prism-question .q-question-material[data-has-figure] { display:grid; grid-template-columns:minmax(0,1fr) minmax(20rem,28rem); gap:2rem; align-items:start; }
+  .prism-question .q-question-material[data-has-figure] > figure { margin-top:0; }
+}
+
 .prism-question-copy { overflow-wrap:anywhere; }
 .prism-question-copy .prism-math { line-height:normal; }
-.prism-question-options { grid-template-columns:minmax(0,1fr); }
+.prism-question-options, .prism-question .q-part-options { grid-template-columns:minmax(0,1fr); }
 @container (min-width:30rem) {
-  .prism-question-options-2, .prism-question-options-4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prism-question-options-2, .prism-question-options-4, .prism-question .q-part-options { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @container (min-width:48rem) {
   .prism-question-options-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
@@ -245,9 +276,24 @@
 .prism-question-copy code { padding:.1em .3em; border-radius:.2rem; background:var(--muted); }
 .prism-question-copy pre code { padding:0; background:transparent; }
 .question-solution section + section { margin-top:1.5rem; }
+:is(.question-solution,.q-answer-detail) .prism-question-equation { padding-inline:0; }
+:is(.question-solution,.q-answer-detail) .prism-question-equation > math[display="block"] { width:max-content; margin-inline:0; }
 .question-solution .q-rubric { list-style:decimal; padding-left:1.5rem; }
 .question-solution .q-rubric li { padding-left:.25rem; }
 .question-detail-region { color:var(--foreground); }
+.q-review { container-type:inline-size; }
+.q-review-scores { display:flex; flex-wrap:wrap; gap:1rem 2.5rem; }
+.q-review-scores dt { margin-bottom:.375rem; }
+.q-review-part { display:grid; gap:1.5rem; }
+.q-review-attempt { padding-inline-start:1rem; }
+.q-review-reference { padding:.875rem 1rem; }
+.q-review-criterion { display:grid; gap:.5rem 1rem; grid-template-columns:minmax(0,1fr) auto; align-items:start; }
+.q-review-score-control { display:flex; flex-direction:column; align-items:flex-end; gap:.375rem; }
+.q-review-adjustment { display:inline-flex; align-items:center; gap:.25rem; }
+.q-review-field-error { grid-column:1 / -1; }
+.q-review-form [data-slot="textarea"] { min-height:6rem; }
+@container (min-width:58rem) { .q-review-part { grid-template-columns:minmax(0,1.3fr) minmax(18rem,1fr); gap:2rem; } }
+@container (max-width:23rem) { .q-review-criterion { grid-template-columns:minmax(0,1fr); } .q-review-score-control { flex-direction:row; justify-content:flex-start; align-items:center; flex-wrap:wrap; gap:.5rem; } }
 body:has(.q-focus-view) [data-slot="sidebar"],body:has(.q-focus-view) [data-slot="sidebar-gap"],body:has(.q-focus-view) [data-slot="sidebar-inset"] > header,body:has(.q-focus-view) .prism-content > :not(.prism-demo-section),body:has(.q-focus-view) .q-workspace-controls { display:none; }
 body:has(.q-focus-view) .prism-demo-section { margin-top:0; }
 body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
@@ -313,6 +359,24 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .q-task-drawer-portal > [data-slot="drawer-backdrop"] { display:none; }
 .q-task-drawer-portal > [data-slot="drawer-viewport"] { pointer-events:none; }
 .q-task-drawer { pointer-events:auto; }
+.q-basket-panel [data-slot="drawer-header"] { padding-bottom:1rem; }
+.q-basket-summary { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.25rem 0 1rem; }
+.q-basket-summary > div { display:flex; flex-wrap:wrap; align-items:baseline; gap:.5rem; }
+.q-basket-list .q-card-layout { display:grid; grid-template-columns:1.5rem minmax(0,1fr) 1.75rem; column-gap:.75rem; padding:1.25rem 0; }
+.q-basket-list :is(.q-card-heading,.q-card-meta) { display:contents; }
+.q-basket-list .q-card-title { grid-area:1 / 2; margin:0; align-self:center; }
+.q-basket-list .q-card-number { grid-area:1 / 1; align-self:start; display:flex; align-items:center; justify-content:center; min-height:1.5rem; }
+.q-basket-list .q-card-header-actions { grid-area:1 / 3; margin:0; justify-self:end; }
+.q-basket-list .q-card-selection { grid-area:2 / 1; justify-self:center; align-self:start; margin-top:.75rem; }
+.q-basket-list .q-card-labels { grid-area:2 / 2 / auto / -1; display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
+.q-basket-list .prism-question-copy { grid-area:3 / 2 / auto / -1; margin-top:.5rem; }
+@media (max-height:40rem) {
+  /* Short windows scroll the whole basket instead of squeezing its list away. */
+  .q-basket-panel { overflow-y:auto; touch-action:pan-y; overscroll-behavior-y:contain; }
+  .q-basket-panel > :not([data-slot="drawer-close"]) { flex:none; }
+  .q-basket-panel > :has(> [data-slot="scroll-area-viewport"]) { height:auto; }
+  .q-basket-panel [data-slot="scroll-area-viewport"] { height:auto; overflow:visible!important; }
+}
 @media (min-width:80rem) {
   /* Match the existing Drawer timing; keep the main view stable through closing. */
   body:has(.q-workbench) [data-slot="sidebar-inset"] { transition:margin-right 450ms cubic-bezier(.32,.72,0,1); }
@@ -326,7 +390,7 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 @media print {
   .q-workbench,.q-workbench-main,.q-scene-content,.q-print-workbench,.q-print-canvas { display:block!important; width:auto!important; margin:0!important; padding:0!important; }
   .q-scene-content[hidden] { display:none!important; }
-  .q-task-drawer-portal,.q-basket-preview { display:none!important; }
+  .q-task-drawer-portal { display:none!important; }
   .q-print-workbench .q-paper-scroll { min-height:0!important; max-height:none!important; border-radius:0; }
   .q-paper-pages { zoom:1!important; }
   .q-print-unit[data-highlight] { outline:none; background:transparent; }
@@ -376,6 +440,34 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
   .review-sheet { width:100%!important; box-shadow:none; }
   .review-region-hit { display:none; }
 }
+.prism-nav-group { display:flex; align-items:center; width:100%; gap:.5rem; padding:.6rem .5rem; }
+.prism-nav-group svg { margin-left:auto; width:14px; height:14px; }
+.prism-demo-settings { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem; margin-bottom:1.25rem; padding:.75rem 0; }
+.prism-preview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.25rem; margin:1.5rem 0 2.5rem; }
+.prism-preview-tile { display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+.prism-preview-stage { display:flex; flex:1; flex-direction:column; justify-content:center; gap:1rem; min-height:11rem; padding:1.5rem; }
+.prism-preview-tile > a { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; }
+.prism-preview-tile > a svg { width:16px; height:16px; }
+.prism-catalog-link { display:block; padding:.875rem .75rem; margin-inline:-.75rem; }
+@media(max-width:1050px) { .prism-preview-grid { gap:.75rem; } .prism-preview-stage { padding:1rem; } }
+@media(max-width:700px) { .prism-preview-grid { grid-template-columns:1fr; } .prism-preview-stage { min-height:8rem; } }
+.prism-card-signature { display:inline-flex; flex-shrink:0; align-items:center; }
+
+/* The example grid follows available space; each card remains fluid. */
+.prism-card-examples { container:card-examples / inline-size; }
+.prism-card-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; align-items:start; }
+.prism-card-grid > .prism-demo-section { min-width:0; margin:0; }
+.prism-card-grid > .prism-demo-section > header { margin-bottom:.75rem; }
+.prism-card-grid > .prism-demo-section > .prism-demo { container-type:inline-size; }
+.prism-card-composed > [data-slot=card-header] { padding:1.25rem 1.25rem .75rem; }
+.prism-card-composed > [data-slot=card-panel] { padding:0 1.25rem 1.25rem; }
+.prism-card-composed > [data-slot=card-footer] { padding:0 1.25rem 1.25rem; }
+@container (min-width:34rem) { .prism-card-options { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@container card-examples (min-width:58rem) {
+  .prism-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .prism-card-options { grid-template-columns:minmax(0,1fr); }
+}
+.prism-status { height:auto; max-width:100%; white-space:normal; text-align:start; justify-content:flex-start; }
 
 /* Shared MathML optical sizing; business styles only own geometry. */
 :where(html[data-ui-version="coss-v1"]) math { font-family:"Prism Math","Cambria Math",math,serif; }

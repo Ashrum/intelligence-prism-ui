@@ -21,7 +21,7 @@ export function ScatterChart({data,label,xLabel,yLabel,unit='',xUnit='',xDomain,
  {ungrouped>0&&<p role="alert" className="text-ui-body text-destructive">{ungrouped} 项未匹配分组，未绘制；可在数据表查看。</p>}
  {quadrants&&!divided&&<p role="alert" className="text-ui-body text-destructive">分界值超出坐标范围，未绘制象限。</p>}
  {(missing>0||excluded>0)&&<p className="text-ui-hint text-muted-foreground">缺测 {missing} 项；无效或超出范围 {excluded} 项。未绘制的项目仍保留在数据表中。</p>}
- <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据与选择项目</summary><DataRecordTable rows={data} selectedId={selectedId} onSelect={onSelect} columns={[{id:'label',label:'项目',render:p=>p.label},{id:'x',label:xLabel,render:p=>formatChartValue(p.x,xUnit)},{id:'y',label:yLabel,render:p=>formatChartValue(p.y,unit)}]}/></details>
+ <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据与选择项目</summary><DataRecordTable rows={data} rowLabel={row=>row.label} selectedId={selectedId} onSelect={onSelect} columns={[{id:'label',label:'项目',render:p=>p.label},{id:'x',label:xLabel,numeric:true,render:p=>formatChartValue(p.x,xUnit)},{id:'y',label:yLabel,numeric:true,render:p=>formatChartValue(p.y,unit)}]}/></details>
  </div>
 }
 export function QuadrantScatterChart(props:ScatterChartProps&{quadrants:Quadrants}){return <ScatterChart {...props}/>}

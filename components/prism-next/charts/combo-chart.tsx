@@ -20,5 +20,5 @@ export function ComboChart({label,categories,axes,series,selectedId,onSelect,hei
  {unknown>0&&<p role="alert" className="text-ui-body text-destructive">{unknown} 项未匹配分类，未绘制。</p>}
  {clipped>0&&<p role="alert" className="text-ui-body text-destructive">{clipped} 项数值超出指定坐标范围，请调整范围或核对数据。</p>}
  <p className="text-ui-hint text-muted-foreground">{axes.map((a,i)=>`${i?'右轴':'左轴'}：${a.label}（${a.unit}）`).join('；')}。缺测保留间断。</p>
- <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据与选择项目</summary><DataRecordTable rows={categories} selectedId={selectedId} onSelect={onSelect} columns={[{id:'category',label:'周期',render:c=>c.label},...series.map(s=>({id:s.id,label:s.label,render:(c:{id:string})=>formatChartValue(s.data.find(d=>d.id===c.id)?.value,axes.find(a=>a.id===s.axisId)?.unit)}))]}/></details></div>
+ <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据与选择项目</summary><DataRecordTable rows={categories} rowLabel={row=>row.label} selectedId={selectedId} onSelect={onSelect} columns={[{id:'category',label:'周期',render:c=>c.label},...series.map(s=>({id:s.id,label:s.label,numeric:true,render:(c:{id:string})=>formatChartValue(s.data.find(d=>d.id===c.id)?.value,axes.find(a=>a.id===s.axisId)?.unit)}))]}/></details></div>
 }
