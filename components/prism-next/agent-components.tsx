@@ -118,15 +118,15 @@ export function AgentComposer({
     {suggestions}
   </form>;
 }
-export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string}
+export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string;time?:string}
 export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
  const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
  return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
 }
-export function AgentTaskProgress({steps,actions,activity='live'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot'}) {
- return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
+export function AgentTaskProgress({steps,actions,activity='live',density='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact'}) {
+ return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className={density==='compact'?'space-y-2 py-2':'space-y-4 py-3'}>{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
   <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
-  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
+  {density==='compact'?<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1"><span className="break-words text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/>{step.time&&<span className="break-words text-ui-hint text-muted-foreground">{step.time}</span>}{step.detail&&<span className="break-words text-ui-hint text-muted-foreground">{step.detail}</span>}</div>:<div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.time&&<p className="mt-1 break-words text-ui-hint text-muted-foreground">{step.time}</p>}{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>}
  </li>)}</ol>{actions}</div>
 }
 
