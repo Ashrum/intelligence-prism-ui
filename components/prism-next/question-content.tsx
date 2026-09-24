@@ -1,7 +1,6 @@
 "use client"
 
 import { type ReactNode } from "react"
-import { QuestionTypeLabel, QuestionPoints, responsePresentation } from "./question-labels"
 
 export type ResponseModel = "single" | "multiple" | "fill" | "boolean" | "long"
 export type QuestionPart = {
@@ -35,30 +34,13 @@ export type QuestionRecord = {
 
 export function QuestionContent({ question }: { question: QuestionRecord }) {
   return <div className="prism-question-copy min-w-0 text-read-body text-foreground">
-    <div className="q-question-material" data-has-figure={!!question.figure||undefined}>
-      <div className="min-w-0">
-        <div className="q-question-stem space-y-3">{question.stem}</div>
-        {question.blocks?.map(block => <div key={block.id} className="my-4 min-w-0">{block.content}</div>)}
-      </div>
-      {question.figure}
-    </div>
+    <div className="space-y-3">{question.stem}</div>
+    {question.blocks?.map(block => <div key={block.id} className="my-4 min-w-0">{block.content}</div>)}
+    {question.figure}
     {question.options && <ol aria-label="题目选项（只读）" className={`prism-question-options prism-question-options-${question.optionColumns ?? 1} mt-5 grid gap-x-8 gap-y-3`}>
       {question.options.map(option => <li key={option.id} className="flex min-w-0 items-baseline gap-3"><span className="shrink-0 font-medium">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}
     </ol>}
-    {question.parts && <ol aria-label="题目小问" className="q-question-parts mt-5 space-y-5">{question.parts.map(part => {
-      const presentation = responsePresentation(part.response ?? question.response)
-      return <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2">
-        <span className="q-part-number text-ui-action text-muted-foreground shrink-0">（{part.id}）</span>
-        <div className="min-w-0 flex-1">
-          {(presentation || part.points !== undefined) && <div className="mb-2"><span className="q-part-identity inline-flex flex-wrap items-center gap-2" data-question-tone={presentation?.tone ?? "neutral"}>
-            {presentation && <QuestionTypeLabel label={presentation.label} tone={presentation.tone} inline/>}
-            {part.points !== undefined && <QuestionPoints points={part.points} tone={presentation?.tone ?? "neutral"}/>}
-          </span></div>}
-          {part.content}
-          {part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="q-part-options mt-3 grid gap-x-8 gap-y-3 sm:grid-cols-2">{part.options.map(option => <li key={option.id} className="flex min-w-0 items-baseline gap-3"><span className="shrink-0 font-medium">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}</ol>}
-        </div>
-      </li>
-    })}</ol>}
+    {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2"><span className="shrink-0">（{part.id}）</span><div className="min-w-0 flex-1">{part.points !== undefined && <p className="mb-1 text-ui-hint text-muted-foreground">{part.response === "single" ? "单选" : part.response === "fill" ? "填空" : part.response === "boolean" ? "判断" : "解答"} · {part.points} 分</p>}{part.content}{part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="mt-3 grid gap-2 sm:grid-cols-2">{part.options.map(option => <li key={option.id} className="flex gap-3"><span>{option.id}.</span>{option.content}</li>)}</ol>}</div></li>)}</ol>}
   </div>
 }
 

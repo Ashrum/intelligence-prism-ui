@@ -24,11 +24,7 @@ export function ReferenceChartDemo({kind}:{kind:string}){
  const [candidate,setCandidate]=useState(true);const {theme}=useTheme();const chartTheme=useChartTheme()
  const colors=kind==='status-composition'&&theme==='paper'&&candidate?paperCategoryCandidate:chartTheme.colors
  const [title,description,code]=info[kind],learning=source==='learning',edge=source==='edge'
- const select=(id:string,seriesId?:string)=>{
-  const label=(kind==='status-composition'?composition:kind==='paired-dot-chart'?paired:kind==='quadrant-chart'?scatter:periods).find(item=>item.id===id)?.label??id
-  const metric=seriesId==='first'?(learning?'错误影响':'指标 A'):seriesId==='second'?(learning?'错误复现':'指标 B'):seriesId==='count'?(learning||edge?'新增有效作答':'处理数量'):seriesId==='secondary'?(learning||edge?'累计已解析任务':'处理用时'):''
-  setSelected(id);setSelection(`${label}${metric?` · ${metric}`:''}`)
- }
+ const select=(id:string,seriesId?:string)=>{setSelected(id);setSelection(`${id}${seriesId?` · ${seriesId}`:''}`)}
  const composition=(edge?[{id:'zero',label:'零值',value:0},{id:'missing',label:'缺测',value:null}]:learning?[
   {id:'stable',label:'稳定保持',value:10},{id:'consolidating',label:'正在巩固',value:11},{id:'verification',label:'已纠正待验证',value:7},{id:'support',label:'需要支持',value:5},{id:'declining',label:'近期回落',value:2},{id:'insufficient',label:'证据不足',value:7}
  ]:[{id:'done',label:'已完成',value:36},{id:'running',label:'处理中',value:18},{id:'queued',label:'待处理',value:12},{id:'held',label:'已暂停',value:4}]).map((d,i)=>({...d,color:[colors[0],colors[2],colors[4],colors[3],colors[1],colors[5]][i]}))
@@ -47,7 +43,7 @@ export function ReferenceChartDemo({kind}:{kind:string}){
  const line:(number|null)[]=edge?[0,1,null,2,3,null,4,6]:learning?[0,1,1,2,3,3,4,6]:[2,3,2.5,4,3,3,5,6]
  const axes:[ComboAxis,ComboAxis]=[{id:'count',label:learning||edge?'有效作答':'处理数量',unit:learning||edge?'次':'件',domain:[0,336]},{id:'secondary',label:learning||edge?'累计已解析任务':'处理用时',unit:learning||edge?'份':'小时',domain:[0,6]}]
  return <DemoSection title={title} description={description}>
-  <div className="prism-demo-settings"><span className="text-ui-hint text-muted-foreground">示例设置</span><QuestionSelect label="组件数据集" value={source} items={[{value:'learning',label:'学习数据'},{value:'operations',label:'运营数据'},{value:'edge',label:'边界与缺测'}]} onChange={value=>{setSource(value);setSelected('');setSelection('');setEmpty(false)}}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected('');setSelection('')}}>{empty?'恢复数据':'查看空数据'}</Button></div>
+  <div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} items={[{value:'learning',label:'学习数据'},{value:'operations',label:'运营数据'},{value:'edge',label:'边界与缺测'}]} onChange={value=>{setSource(value);setSelected('');setSelection('');setEmpty(false)}}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected('');setSelection('')}}>{empty?'恢复数据':'查看空数据'}</Button></div>
   {kind==='status-composition'&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}
   <div className="analytics-panel">
    {kind==='status-composition'&&<StatusComposition label={learning?'学生学习进展状态分布':'分类数量分布'} items={empty?[]:composition} unit={learning?'人':'项'} selectedId={selected} onSelect={select}/>}
