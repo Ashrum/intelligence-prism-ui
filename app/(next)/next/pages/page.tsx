@@ -1,0 +1,2 @@
+export const metadata = { title: '标准页面' }
+export default function Page() { return <div className="mx-auto max-w-5xl px-6 py-12"><p className="text-ui-hint text-muted-foreground">组件库 → 页面骨架 → 标准页面 → Demo / Website</p><h1 className="mt-3 text-page-title">标准页面</h1><p className="mt-4 max-w-2xl text-read-body text-muted-foreground">当前正在推进 Agent 页面骨架，标准页面尚未启动。后续标准页面直接组合已确认的骨架与组件。</p><p className="mt-8 text-ui-hint text-muted-foreground">此分类不计入组件数量，不预建业务占位页面。</p></div> }

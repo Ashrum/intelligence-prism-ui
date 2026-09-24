@@ -1,10 +1,10 @@
-# v1.13.1 组件复用约定
+# v1.14.0 字体实施候选 · 组件复用约定
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
 ## 源码接入
 
-本版 80 个组件已通过评审，可作为研发接入基线。按需复用源文件及其直接依赖，组件示例与应用示例用于说明用法。仓库保留 `private: true`，不通过 npm 包安装。
+80 个组件的既有行为基线沿用 v1.13.1；本轮统一字体为实施验证候选。按需复用源文件及其直接依赖，组件示例与应用示例用于说明用法。仓库保留 `private: true`，不通过 npm 包安装。
 
 | 接入项 | 要求 |
 | --- | --- |
@@ -32,6 +32,12 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 该示例在客户端组件中使用。迁入其他框架时，按实际导入替换 Next.js 的 Link、导航或图片适配；不需要带入站点 Shell、组件目录或业务演示页面。
 
+## Agent 可读性与规范权威
+
+跨 Agent 使用时以站点根目录 `/llms.txt` 为发现入口，并遵循 `docs/agent-readable-contract.md`。组件页 Agent Spec、Foundations、Pattern / 应用示例、固定 coss upstream、Agent inference 依次构成权威顺序；后一级不得覆盖前一级。
+
+基础 Form / Field / Input / Textarea / Select 统一采用**常驻固定标签**。Floating label 不属于基础输入组件契约；若未来需要，只能作为单独评审的 Specialized Pattern 引入。缺失视觉值先复用固定 coss 行为，仍无定义时报告规范缺口，不从截图或模型偏好补造。
+
 ## 常用展示约定
 
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
@@ -47,6 +53,25 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - **使用边界**：仅作交互灵感，不直接复制组件，不作为基础组件、Design Token 或组件规范来源；基础实现继续遵循现有 coss / Base UI 与主题约定，不因纳入参考而新增运行依赖。
 - **取舍原则**：保持克制、高信息密度和长时间使用舒适性，尊重减少动态效果设置；避免炫技动画、Landing Page 风格、过度弹性及无语义的发光或渐变装饰。基础交互保持稳定，关键 AI 场景的动态反馈以帮助理解状态为准。
 
+### 实心信息色徽标
+
+`components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；变体和 render/ARIA 属性继续透传；Prism 默认采用 lg，状态文字统一为 14/20，短标签例外见字体规范。coss 原始源码及其来源校验保持不变。
+
+```tsx
+import { Badge } from "@/components/prism-next/badge"
+
+<Button variant="outline" aria-label={`查看已选材料，${count} 项`}>
+  已选材料
+  <Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge>
+</Button>
+```
+
+- 彩色承载于气泡背景，内容采用对比中性色；浅色、暖纸、深色使用现有信息色与背景令牌。
+- `info` 保持浅底信息呈现，`info-solid` 只提高信息强调程度，不推断待办、错误、类别或完成状态。
+- 数量、零值是否展示、是否采用 `99+` 以及入口行为由调用方决定。组件不添加自动动画或存储。
+- 数量与含义须由可访问名称共同表达；在已提供完整名称的按钮内，可隐藏重复的数字读屏内容。
+- 组件示例位于 `/next/components/badge`，同时展示浅底／实心、0／2／100 及描边入口组合。
+
 ## 代码与导航分层
 
 | 层级 | 目录 / 入口 | 内容 |
@@ -54,6 +79,8 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 | 基础组件 | `components/coss` | 54 个固定来源的 coss 原始组件 |
 | 可复用组件 | `components/prism-next`、`charts` | 数据、可选插槽、受控状态与事件接口 |
 | 组件示例 | `demos`、`/next/components/[slug]` | 单个组件的最小使用与不同输入对照 |
+| 页面骨架 | `components/prism-next/skeletons`、`/next/skeletons` | 可复用公共外壳与布局，不计入组件数量 |
+| 标准页面 | `/next/pages` | 独立分类；当前未启动，不预建业务页面 |
 | 应用示例 | `examples`、`/next/examples/[slug]` | 题库与打印组合、统一学习支持流程，不计入组件数量 |
 | 示例数据 | `fixtures` | 人工题目、作答、评分和关联资料 |
 
@@ -76,7 +103,7 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 
 - `kind` 保留外部业务名称；题型颜色由已识别 `response` 决定：`single / multiple / fill / boolean` 为蓝，`long` 为紫红。小问缺少类型时继承明确父级；全部已知且包含多种作答模型时整题为青绿，未明确类型回退中性。颜色不代表评分政策。
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
-- 独立展示、题库和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，16px 标题、15px 正文（1.75 行高）、14px 选项与小问。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
+- 独立展示、题库和组卷共用参考题卡：8px 细边框、题型与分值在上、标题在下，标题采用 item-title，题干、选项与小问采用 read-body（16/28）。题卡宽度由容器决定，内部不设最大宽度；选项按容器宽度换列，宽屏几何材料可并排。列表用 24px 间距；不再提供 `variant`、`reading` 外观分支。`number` 与勾选控件位于题头，不预留左栏。打印正文颜色和段距独立。
 - 试题篮仍复用 `QuestionCard`，由 `.q-basket-list` 容器排列为序号左栏、标题在上、标签与题干在下；题间以留白区分，题卡本身不另加外框。题篮不提供详情或跨区域定位，详情保留在完整题卡中。常规高度下统计与操作位于滚动列表之外，短窗口改为整篮滚动。
 - `compact` 只显示题干，省略选项、附图、材料块与小问；所有场景均自然换行，避免裁切公式。完整题面与材料通过调用方的详情入口访问。
 - `headerActions` 是标题右侧操作插槽，`actions` / `secondaryActions` 位于底部；三者均提供 coss Toolbar 上下文，可传入 `ToolbarButton`。`selectionDisabled` 和 `selectionLabel` 分别控制选择禁用和可访问名称。
@@ -96,7 +123,7 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 | --- | --- | --- |
 | TrendChart | 任意数值序列、标签、单位、可选数值范围 | `onSelect(id)` |
 | ComparisonChart | 分类与数值、横/纵方向、单位 | `onSelect(id)` |
-| HeatmapChart | 行列定义、单元格值/标签、选中 ID | `onSelect(id)` |
+| HeatmapChart | 行列定义、单元格值/标签、选中 ID、可选 sequentialColors | `onSelect(id)` |
 | ScatterChart / QuadrantScatterChart | x/y、分组与点形、范围、可选点大小；四象限额外传分界值与四个名称 | `onSelect(id)` |
 | PairedDotChart | 两个指标定义、每行两个值、同一单位与范围 | `onSelect(rowId, metricId?)` |
 | ComboChart | 分类、一个或两个坐标轴、绑定轴的柱/线系列 | `onSelect(categoryId, seriesId?)` |
@@ -108,6 +135,8 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 | DataRecordTable | 任意记录、列渲染函数 | 选中记录 ID |
 
 新增复杂图形采用按需加载的 ECharts 6.1.0 SVG 引擎。原有趋势与比较继续使用 Recharts；没有同时引入第二套新引擎。图表提供数据表作为文字和键盘操作入口。缺测用 null 保留，零值不等于缺测；非法箱线摘要明确提示并不绘制。分箱、统计方法、达标判定和学情结论在组件外处理。
+
+`HeatmapChart.sequentialColors?: readonly [string, string, string]` 接收按低—中—高排列的三个六位 HEX 实色（`#RRGGBB`）。不接受 CSS 变量、短 HEX、透明色或颜色函数；非法输入回退原主题色阶。前景按实际 RGB 插值色选择黑/白，悬停继承原填色，仅改变边框。零值、缺测、数据表和受控选择行为不变。暖纸候选仅由演示页显式传入，不替换全局主题。
 
 现有能力包含热力矩阵、散点、箱线、成对指标、四象限和柱线组合；雷达、桑基、网络、树图等尚未封装，按真实复用需求继续添加。
 
@@ -127,12 +156,36 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR。
-- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。不连接模型或模拟执行器。
+- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
+- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
+- `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
+- `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
+- `DraftMathPreview`：`value / label?`，仅从当前草稿派生排版，题干与答案复用；不读原稿、不改变输入、不写库。Temml 0.13.4 作为同源原样 ESM 资产按需加载（避免构建优化改写词法器转义）；以 `throwOnError / strict` 开启、`trust` 关闭及展开/大小限额生成 MathML，沿用 Prism Math（STIX）与 `read-body`；正文经过 React 转义，只有渲染器生成的 MathML 可注入。默认识别保守的 Unicode 代数片段，复杂公式要求明确 `\(...\)` / `\[...\]` 标记；无法解析时显示当前原文与 14px 说明。渲染成功不等于数学正确；没有同步原稿或自动确认行为。
+
+第一组 Agent 语义候选（2026-09-22，见 `docs/agent-context-summary-review.md`）：
+
+| 组件 | 输入及回调 | 边界 |
+| --- | --- | --- |
+| AgentContextSummary | `title / scope / sources / expanded / onExpandedChange? / onInspect? / notice? / snapshot?` | 复用 AgentContextList；来源事实独立，不检索或认证证据 |
+| AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 对象预览不证明执行或发布；缺 open 则没有打开入口 |
+| AgentExecutionConfirmation | `title / target / version / effects / confirmation` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query |
+| AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
+| AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
+
+`AgentExecutionProgress.state` 由调用方显式提供，统一类型与标签见 `lib/prism-next/agent-progress.ts`。按照 v0.2.1 §7.1 补充 `degraded`（已降级）和 `retrying`（重试中）；两者与 `paused`（已暂停）均为仅显示状态，**既有执行状态来源未接入**。`shell` / `review` 来源适配保持不变，不为这些显示状态虚构源状态；接入依据与对应关系见 [任务进度状态映射](agent-context-summary-review.md#任务进度状态映射)。
+
+组件不依据计时器、经过时间、确认或重试按钮点击推测状态。仅整体状态为 `running` 时展示实时步骤，其他状态静态保留最后步骤记录。示例选择器提供 15 种手动组合样本，“待人工处理”使用 `waiting-human`，并提供 `queued` / `paused` / `degraded` / `retrying` 样本；这些样本只展示外部输入，不表示已经接入执行服务或自动流转。
+
+后四项位于 `agent-semantic-components.tsx`，均可传 `presentation="card" | "inline"`，只控制外壳，不创建宿主面板。`AgentSemanticAction={label,onAction,disabledReason?}` 表示宿主提供的能力，回调仅为意图；条件、权限、有效版本、回执与恢复范围由宿主核验。新增 `AgentTaskProgress.activity="live" | "snapshot"`，默认 live 兼容；snapshot 将 running 步骤标作“上次进行到”，不转圈、不设置当前步骤。
+
+引导式任务 v0.1.1 参考 [Beautiful UI](https://www.beautifului.dev/) 的 Approval Card / Context Cards / Task Rows / Diff Table 交互组织，以既有 Prism / coss 原位组合实现；未复制其源代码、引入依赖或第二套样式。独立样本在 `/next/components/agent-components`，完整流程在 `/next/agent` 的「试卷解析引导」。后者直接复用 `ParsingWorkspace embedded` 与原解析 reducer、校验、原稿和本机示例记录；`/next/use-cases/parsing` 同步使用这组组件。原材料复核助手与阅读页 compact 用法保留。
+
+补充要求最多 500 字，保存在解析示例并写入任务指令；固定示例不根据自由文本生成内容。排版建议仅演示条件与问题分段，采用仅记录内容选择，核对状态见题目编辑区；若题干已被人工修改，旧建议不能覆盖。任务指令可在任意已添加材料的阶段展开，保存后直接展示；编辑复用副本不会修改当前任务。
 
 应用示例中的题库状态、学习 reducer、合成证据、模拟任务与人工扫描区域均不放入这些复用组件。当前仍是本地交互演示，不含真实业务服务和持久化。
 
 
-## 智能曜彩业务状态（v1.21）
+## 智能曜彩业务状态（设计分支候选）
 
 `StatusBadge` 位于 `components/prism-next/status-badge.tsx`，组合现有 coss Badge，不新增目录组件。调用方显式传入 `tone` 和状态文字，不从标签文案推测状态。
 
@@ -148,3 +201,83 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 所有状态提供文字与图标，颜色为辅助。使用 `--brand-{blue,magenta,lime}-{ink,surface}` 三主题配色；原 `--q-*` 同名角色保留为别名。仅真实运行显示 Spinner，不为状态装饰增加闪烁。题型仍使用色点身份；图表分类继续由数据定义，不能自动套成三类。
 
 `DataRecordTable` 列可传 `numeric: true`（右对齐与等宽数字）或 `align`；`rowLabel(row)` 提供查看按钮的可读名称。以上均为兼容性可选参数。`MilestoneList` 按自身容器宽度选择横/竖排列，并用可见状态文字及 `aria-current="step"` 标识当前节点。
+
+## 页面骨架：WorkbenchShell v0.3（Candidate）
+
+组合路径：组件库 → 页面骨架 → 标准页面 → Demo / Website。骨架源码是唯一维护源，接入项目沿用按需复制源码与来源清单，不再还原独立设计稿。当前实现总骨架与第2项 Agent 页面骨架候选，第3—7项未启动。
+
+| 输入 | 责任 |
+| --- | --- |
+| organization / user | 当前组织标识、名称、摘要与当前身份；无跨组织切换 |
+| navigation / activeId / onNavigate / onPersonal | 导航数据、当前位置和路由回调；骨架不生成业务页面 |
+| search | 外部查询、结果、加载/错误状态、来源与范围说明、选择回调；本轮夹具仅含五入口与一材料 |
+| notifications | 记录、未读、逐条与全部已读回调；不改任务或业务成果状态 |
+| monitor | 当前用户已授权的批阅/解析任务、availability、freshness、来源说明与可选 onOpenTask；不会从对话结束推断完成 |
+| usage | 积分与 token 分别提供个人/组织/待确认归属，以及启用/未启用/不可用；未知数据不能显示 0 |
+| context / auxiliary / auxiliaryLabel / children | 可选上下文侧栏、辅助区及其名称、主内容。context.content 可用 render function 接收目录关闭回调；辅助区只渲染一份，受控值由应用保存 |
+| basket | 接收已有题篮的 open、position、empty，以预留布局空间。题篮状态、业务和浮层由应用拥有 |
+
+骨架只使用现有组件 variant/size、主题令牌与字体，CSS 限于布局、区域尺寸及响应式。ThemeProvider 继续使用 `prism-v1-theme`；浅色、暖纸、深色应用到正文和 portal。搜索为模态 Dialog，通知/状态为 Popover，个人菜单为 Menu；同一时间只展开一个公共面板，关闭返回相应触发器，搜索选中结果后进入主内容。跳过链接不改写 HashRouter。顶部固定，主内容及桌面上下文分别滚动；中小屏收纳一级导航和上下文目录；题篮右侧/底部预留空间。
+
+接入时同步整个 `components/prism-next/skeletons` 目录及其直接 coss/prism/lib 依赖。演示页 `examples/skeletons/workbench-review` 只用于评审，不作为生产数据源。工作台通过同源副本与薄适配器接入原 `TeacherQuestionBasketProvider`，保留原业务路由和持久化语义。
+
+
+v0.2 空间规则：辅助区根据扣除上下文与题篮后的实际工作区测量；宽度不足1120px或高度不足640px时收纳到同一公共面板体系，入口保留在主内容滚动区之外。外壳不足1100px时再收纳上下文；关闭辅助面板保留阅读位置并返回入口焦点。设置改变引发收纳时自动接续面板，避免正在操作的控件消失。
+
+题篮面板使用 `workbench-basket-panel workbench-basket-right` 或 `workbench-basket-bottom`，空态同时加 `workbench-basket-empty`；外壳传入相同的 `basket.empty`。两处由同一CSS变量声明尺寸，避免页面预留与portal尺寸脱节。空态右侧20rem/底部min(36dvh,19rem)，有题右侧clamp(18rem,32vw,26rem)/底部min(46dvh,24rem)。这些尺寸仅供使用该骨架的接入页选择，不自动重写既有业务外壳。
+
+设计验收包含组件、色彩、用户体验、艺术表达、空间利用率。空间子项必须检查主区有效宽高、首屏内容、留白与密度、同时展开的收纳顺序、操作距离及滚动、桌面/中屏/窄屏/低高度视口；“无溢出”不是设计通过的充分条件。
+
+
+## AgentPageSkeleton v0.1（Candidate）
+
+组合：`WorkbenchShell contentLayout="workspace"` → `AgentPageSkeleton` → `AgentComposer` / 消息内容。沿用原工作台 Agent stage 的新对话和连续对话结构；不会创建一套平行导航。`contentLayout` 默认仍为 document，workspace 模式把消息滚动与输入区留给内容骨架管理。
+
+| 输入 | 责任 |
+| --- | --- |
+| title / meta / actions | 当前对话标题、摘要与页面操作；允许长中文自然换行 |
+| expression | 默认 `default`；`candidate` 仅用于表现评审，配合 `expression.css`，不改变对话数据或消息状态 |
+| empty / welcome / suggestions | 新对话内容与可编辑示例；示例填入不自动发送 |
+| messages / composer / notice | 消息、输入与反馈插槽；应用持有状态、草稿、材料快照、发送和停止回调 |
+
+目录通过总骨架 context 接入。正文最大阅读区 760px；连续对话的消息区独立滚动，输入区在视口内保留，短高度改为整体可滚动以免裁切。页级样式只控制布局。消息不等于后台任务，回复结束不修改全局任务监视器状态。
+
+`AgentComposer` 收回既有工作台的 default / compact / conversation 变体、tools / attachments / context / suggestions / footerNote 插槽及工具栏布局；使用现有 InputGroup 与 Textarea，不定义另一套输入皮肤。空白禁发、组合输入保护、Ctrl/⌘+Enter、运行时停止继续由组件提供，主动停止后焦点回到输入。
+
+`examples/skeletons/agent-review` 为两仓同源评审 fixture；固定回复、材料与历史仅保留本页会话，刷新恢复初始示例。真实会话存储、模型接入、任务调度及业务成果由后续应用适配，不能把此 fixture 用作生产实现。`review-basket` 只共享演示题篮；工作台传入已有题篮适配。
+
+AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺寸保持；最大输入高度仍由组件限定。workspace 模式的底部题篮为 min(36dvh,19rem)，与总骨架 document 模式分别保留空间。低高度时题篮入口有独立底部预留，避免覆盖发送按钮。
+
+### 2026-09-20 快捷设置修复与 AI 活动监视器规划
+
+快捷设置的主题选项使用纵向图文，但只设置 `h-auto`，被 Button 的 `sm:h-8` 覆盖：桌面实测容器高34px，图标在顶部外溢5px。组合层补全 `sm:h-auto`，文字置于可换行容器，网格按最小可读宽度自动收纳。保留现有 Button 外观、主题令牌和 `prism-v1-theme` 保存方式，不修改 coss 基础组件。
+
+用户指定的旧版依据是 `ole-demo-site-offline-2026-08-20.html` 内的 `#/teacher`，而非新仓库的首页 AI 卡片或早期概念图。已实际打开并查看监视器、AI 运行活动页及三个任务示例；上传文件 SHA-256 为 `fd28c244c31e05d312a046c615cf4ad5e9f79c75b572f1e9ce19544a164c7414`。参考文件仅用于本地只读核对，不收进源码或发布产物。
+
+旧版监视器约216×80px，位于导航下方、试题篮上方，包含名称、LIVE、弱波形、呼吸点和每3.6秒轮换的摘要；支持减少动态效果。点击进入 AI 运行活动，通过选择器查看需处理、进行中、排队中三个固定示例，详情含任务依据、进度、运行轨迹和业务成果。旧版常驻摘要来自固定演示数据，不随详情选择同步；不能把它当成真实实时任务源。
+
+**2026-09-20 已按以下边界完成 WorkbenchShell v0.3 实现。** `AIActivityMonitor` 属于骨架组合，不计入组件数量；两评审页共享 `useActivityMonitorFixture`，演示数据不进入复用骨架。
+
+- 范围：当前组织内属于当前用户的批阅、解析任务，跨本人的任教班级汇总；应用传入已授权记录，不增加组织管理或全校监控。
+- 结构：沿用顶部公共区域的轻量入口，显示运行摘要与任务数；展开同一个活动面板查看任务。保留旧版简洁的状态文字与弱运行信号，不把216×80px侧栏卡片搬进顶栏，不另建业务详情页。
+- 状态：空闲、排队、运行中、需关注、失败、AI处理完成；同屏区分执行状态与业务后续（如「批阅完成 · 7项待复核」），AI处理完成不等于教师复核或发布完成。
+- 任务行：类型、标题、班级/学科、当前阶段、可信的已处理/总数、最近更新时间、必要的查看/处理入口。无可靠进度时只显示阶段，不造百分比或预计完成时间。解析与批阅各自使用明确阶段。
+- 汇总：需处理事项优先提示，同时保留仍在运行的数量；空闲显示「暂无正在执行的批阅或解析任务」。未接入与任务为空分别表达。
+- 动效：只在实际运行时显示轻微活动反馈；有多个运行任务才轮换，悬停/键盘焦点停留时暂停，减少动态效果时静态显示。轮换不重复播报读屏，不让提示文字挤动一级导航。
+- 连接：正常连接不占醒目位置；刷新失败仅说明「状态暂未更新」并保留最后更新时间，不把连接断开推断为任务失败。通知只承接完成/失败等必要事件，不重复常驻执行进展。
+- 详情：面板只呈现进度与接续入口，成果、复核、教学洞察由既有业务页承接；回调未接入时明确演示边界，不伪造跳转或重试成功。
+- 审核：组件、色彩、用户体验、艺术表达、空间利用率。重点复核长标题、多个并发任务、窄屏、题篮展开、浮层互斥和焦点返回，不扩大第3—7项实施范围。
+
+本次快捷设置已实看1363px桌面、1024×768、390×844、320×568；浅色/暖纸/深色清晰，图标与文字均在各自按钮边界内。320px放大根字体至200%时选项自动单列，可滚动并用键盘选择；Enter切换、刷新保留深色、Escape返回桌面设置入口/窄屏头像入口均已核对。此项局部布局检查不代替整站视觉验收。
+
+### AI 活动监视器 v0.3 实现验证
+
+`ShellTask` 包含批阅/解析类型、当前阶段、任教范围、最近更新时间、可选已处理/总数、执行轨迹，以及独立的 followUp/result。已处理与总数必须为有效整数；缺测不补零。完成但待复核的任务同时进入已完成与需处理筛选。`availability` 区分未接入与空态；`freshness=stale` 保留最后记录，不推断任务失败。详情回调由应用提供，fixture 没有真实业务回调。
+
+轻量入口保留旧版弱活动信号与3.6秒轮换；只在多个任务运行且无优先待办时轮换，焦点/悬停/展开/减少动态时暂停。面板最大420px宽、680px高，窄屏留出视口边距，以单一滚动层承载长列表和详情；详情从顶部阅读，返回列表恢复滚动位置与原任务焦点。主题选项保留本节前述容器修复。
+
+实际检查六类执行状态、多个并发任务、状态中断与未接入、筛选、演示推进、详情及返回焦点。受管 Chromium 目视桌面1363×936、中屏1024×768、390×844、320×568；浅色/暖纸/深色、长中文、题篮展开与公共浮层切换纳入复核。类型、构建与定向回归结果在工作台既有骨架验证记录登记。未做实体移动设备、屏幕阅读器、跨浏览器或真实服务验证；本轮仍待用户站点评审。
+
+## Typography v0.2.1
+
+参见 [字体规范](typography.md) 和站内 `/next/foundations/typography`。迁入时必须同时包含 `typography.css`；公共角色样式与控件适配属于 Prism 层，不修改固定 coss 源码。

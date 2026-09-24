@@ -1,5 +1,8 @@
 "use client"
 import {useState} from 'react'
+import {useTheme} from 'next-themes'
+import {paperCategoryCandidate} from '@/lib/prism-next/chart-color'
+import {PaperPaletteReview} from './paper-palette-review'
 import {Button} from '@/components/coss/button'
 import {QuestionSelect} from '../question-controls'
 import {DemoSection} from '../demo-parts'
@@ -18,7 +21,9 @@ const info:Record<string,[string,string,string]>={
 }
 export function ReferenceChartDemo({kind}:{kind:string}){
  const [source,setSource]=useState('learning'),[empty,setEmpty]=useState(false),[selected,setSelected]=useState(''),[selection,setSelection]=useState('')
- const {colors}=useChartTheme(),[title,description,code]=info[kind],learning=source==='learning',edge=source==='edge'
+ const [candidate,setCandidate]=useState(true);const {theme}=useTheme();const chartTheme=useChartTheme()
+ const colors=kind==='status-composition'&&theme==='paper'&&candidate?paperCategoryCandidate:chartTheme.colors
+ const [title,description,code]=info[kind],learning=source==='learning',edge=source==='edge'
  const select=(id:string,seriesId?:string)=>{
   const label=(kind==='status-composition'?composition:kind==='paired-dot-chart'?paired:kind==='quadrant-chart'?scatter:periods).find(item=>item.id===id)?.label??id
   const metric=seriesId==='first'?(learning?'错误影响':'指标 A'):seriesId==='second'?(learning?'错误复现':'指标 B'):seriesId==='count'?(learning||edge?'新增有效作答':'处理数量'):seriesId==='secondary'?(learning||edge?'累计已解析任务':'处理用时'):''
@@ -43,13 +48,14 @@ export function ReferenceChartDemo({kind}:{kind:string}){
  const axes:[ComboAxis,ComboAxis]=[{id:'count',label:learning||edge?'有效作答':'处理数量',unit:learning||edge?'次':'件',domain:[0,336]},{id:'secondary',label:learning||edge?'累计已解析任务':'处理用时',unit:learning||edge?'份':'小时',domain:[0,6]}]
  return <DemoSection title={title} description={description}>
   <div className="prism-demo-settings"><QuestionSelect label="组件数据集" value={source} items={[{value:'learning',label:'学习数据'},{value:'operations',label:'运营数据'},{value:'edge',label:'边界与缺测'}]} onChange={value=>{setSource(value);setSelected('');setSelection('');setEmpty(false)}}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected('');setSelection('')}}>{empty?'恢复数据':'查看空数据'}</Button></div>
+  {kind==='status-composition'&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}
   <div className="analytics-panel">
    {kind==='status-composition'&&<StatusComposition label={learning?'学生学习进展状态分布':'分类数量分布'} items={empty?[]:composition} unit={learning?'人':'项'} selectedId={selected} onSelect={select}/>}
    {kind==='paired-dot-chart'&&<PairedDotChart label={learning?'错题影响与复现':'双指标对比'} data={empty?[]:paired} metrics={[{id:'first',label:learning?'错误影响':'指标 A',color:colors[1]},{id:'second',label:learning?'错误复现':'指标 B',color:colors[3]}]} unit="%" domain={[0,100]} selectedId={selected} onSelect={select}/>}
    {kind==='quadrant-chart'&&<QuadrantScatterChart label={learning?'课程与知识点聚焦':'表现与变化'} data={empty?[]:scatter} groups={[{id:'a',label:learning?'课程':'分组 A',symbol:'circle',color:colors[0]},{id:'b',label:learning?'知识点':'分组 B',symbol:'diamond',color:colors[3]}]} xLabel={learning?'当前表现':'完成率'} xUnit="%" yLabel="变化" unit="pp" xDomain={[50,90]} yDomain={[-6,6]} quadrants={{x:70,y:0,labels:['较低 · 改善','较高 · 改善','较低 · 回落','较高 · 回落']}} selectedId={selected} onSelect={select}/>}
    {kind==='combo-chart'&&<ComboChart label={learning||edge?'可分析证据趋势':'数量与用时'} categories={empty?[]:periods} axes={axes} series={[{id:'count',label:learning||edge?'新增有效作答':'处理数量',type:'bar',axisId:'count',color:colors[0],data:empty?[]:periods.map((p,i)=>({id:p.id,value:bar[i]}))},{id:'secondary',label:learning||edge?'累计已解析任务':'处理用时',type:'line',axisId:'secondary',color:colors[2],data:empty?[]:periods.map((p,i)=>({id:p.id,value:line[i]}))}]} selectedId={selected} onSelect={select}/>}
   </div>
-  <p role="status" className="mt-4 min-h-5 text-sm text-muted-foreground">{selection?`已选项目：${selection}`:'点击图形、分类或数据表，选择结果由外部接收。'}</p>
-  <details className="mt-6 text-sm"><summary className="cursor-pointer text-muted-foreground">组件接口与边界</summary><p className="mt-3 leading-7">以上为可替换的演示数据。组件接收数据、标签、单位与回调，不读取业务状态，也不内置跳转、统计结论或诊断。零值与缺测分别处理。</p><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-xs leading-6">{code}</pre></details>
+  <p role="status" className="mt-4 min-h-5 text-ui-hint text-muted-foreground">{selection?`已选项目：${selection}`:'点击图形、分类或数据表，选择结果由外部接收。'}</p>
+  <details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">组件接口与边界</summary><p className="mt-3 leading-7">以上为可替换的演示数据。组件接收数据、标签、单位与回调，不读取业务状态，也不内置跳转、统计结论或诊断。零值与缺测分别处理。</p><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{code}</pre></details>
  </DemoSection>
 }

@@ -31,8 +31,8 @@ export function QuestionComponentDemo({standalone=false}:{standalone?:boolean}) 
       {!standalone&&<Button variant="outline" render={<a href="/next/examples/questions"/>}>题库与组卷应用示例</Button>}
     </div>
     <div className="grid gap-6">{visible.map(question=><QuestionSpecimen key={question.id} id={question.id} number={samples.findIndex(item=>item.id===question.id)+1} mode={mode}/>)}</div>
-    <p className="mt-4 text-sm text-muted-foreground" role="status">当前展示 {visible.length} 道题 · 交互状态仅保留在本次打开期间。</p>
-    {!standalone&&<details className="mt-6 text-sm"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-xs leading-6">{'<QuestionCard question={question} />\n<QuestionCard question={question} number={1}\n  checked={selected} onCheckedChange={setSelected}\n  actions={actions} details={details} />\n<QuestionCard question={question} number={1}\n  compact headerActions={removeAction} />'}</pre></details>}
+    <p className="mt-4 text-ui-hint text-muted-foreground" role="status">当前展示 {visible.length} 道题 · 交互状态仅保留在本次打开期间。</p>
+    {!standalone&&<details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} number={1}\n  checked={selected} onCheckedChange={setSelected}\n  actions={actions} details={details} />\n<QuestionCard question={question} number={1}\n  compact headerActions={removeAction} />'}</pre></details>}
   </DemoSection>
 }
 
@@ -53,6 +53,6 @@ function QuestionSpecimen({id,number,mode}:{id:string;number:number;mode:string}
         <Button className="q-primary-action" onClick={()=>setNotice("已收到作答，未进行自动评分。")}>提交作答</Button>
       </div>}
     </>}
-    {notice&&<p role="status" className="mb-4 text-sm text-muted-foreground">{notice}</p>}
+    {notice&&<p role="status" className="mb-4 text-ui-hint text-muted-foreground">{notice}</p>}
   </div>
 }

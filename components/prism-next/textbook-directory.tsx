@@ -56,7 +56,7 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange }:
   })).filter(group => group.ids.length)
   const courseCount = groups.filter(group => group.kind === "course").reduce((sum, group) => sum + group.ids.length, 0)
   const knowledgeCount = groups.filter(group => group.kind === "knowledge").reduce((sum, group) => sum + group.ids.length, 0)
-  if (!book) return <p className="py-6 text-sm text-muted-foreground">暂无可用教材。</p>
+  if (!book) return <p className="py-6 text-ui-hint text-muted-foreground">暂无可用教材。</p>
   const scope = scopeKey(book.id, kind)
   const session = sessions[scope] ?? blankSession
   return <div className="grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1.25fr)_minmax(17rem,.75fr)]">
@@ -71,13 +71,13 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange }:
       </Tabs>
     </div>
     <aside aria-label="已选范围" className="min-w-0 border-t pt-5 xl:border-t-0 xl:border-l xl:pt-0 xl:pl-7">
-      <h3 className="text-base font-semibold">已选范围</h3>
-      <p className="mt-1 text-sm text-muted-foreground" role="status">{courseCount} 节课程 · {knowledgeCount} 个知识点</p>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">切换教材或目录会保留各自选择。课程与知识点分别记录。</p>
+      <h3 className="text-block-title">已选范围</h3>
+      <p className="mt-1 text-ui-hint text-muted-foreground" role="status">{courseCount} 节课程 · {knowledgeCount} 个知识点</p>
+      <p className="mt-3 text-ui-hint text-muted-foreground">切换教材或目录会保留各自选择。课程与知识点分别记录。</p>
       {groups.length ? <ScrollArea className="mt-4 h-[25rem]" fill><div className="space-y-6 pr-3">{groups.map(group => <section key={group.scope} aria-label={`${group.book.title} / ${kindTitle(group.kind)}已选项`}>
-        <h4 className="text-sm font-medium">{group.book.title}</h4><p className="mb-2 mt-1 text-xs text-muted-foreground">{kindTitle(group.kind)} · {group.ids.length} {unitTitle(group.kind)}</p>
-        <ul className="space-y-2">{group.ids.map(id => <li key={id} className="flex min-w-0 items-start gap-2"><div className="min-w-0 flex-1"><p className="break-words text-sm leading-6">{group.data.nodes[id].title}</p><p className="break-words text-xs leading-5 text-muted-foreground">{group.data.paths[id].slice(0, -1).map(parent => group.data.nodes[parent].title).join(" / ") || kindTitle(group.kind)}</p></div><Button size="icon-xs" variant="ghost" aria-label={`移除${group.book.title}${kindTitle(group.kind)}的${group.data.nodes[id].title}`} onClick={() => onSelectionsChange(previous => ({ ...previous, [group.scope]: (previous[group.scope] ?? []).filter(value => value !== id) }))}><X /></Button></li>)}</ul>
-      </section>)}</div></ScrollArea> : <div className="py-10 text-sm leading-6 text-muted-foreground">尚未选择内容。<br />勾选左侧目录，选择需要的课程或知识点。</div>}
+        <h4 className="text-item-title">{group.book.title}</h4><p className="mb-2 mt-1 text-ui-hint text-muted-foreground">{kindTitle(group.kind)} · {group.ids.length} {unitTitle(group.kind)}</p>
+        <ul className="space-y-2">{group.ids.map(id => <li key={id} className="flex min-w-0 items-start gap-2"><div className="min-w-0 flex-1"><p className="break-words text-ui-hint">{group.data.nodes[id].title}</p><p className="break-words text-ui-hint text-muted-foreground">{group.data.paths[id].slice(0, -1).map(parent => group.data.nodes[parent].title).join(" / ") || kindTitle(group.kind)}</p></div><Button size="icon-xs" variant="ghost" aria-label={`移除${group.book.title}${kindTitle(group.kind)}的${group.data.nodes[id].title}`} onClick={() => onSelectionsChange(previous => ({ ...previous, [group.scope]: (previous[group.scope] ?? []).filter(value => value !== id) }))}><X /></Button></li>)}</ul>
+      </section>)}</div></ScrollArea> : <div className="py-10 text-ui-hint text-muted-foreground">尚未选择内容。<br />勾选左侧目录，选择需要的课程或知识点。</div>}
     </aside>
   </div>
 }
@@ -107,10 +107,10 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   return <div className="mt-4 min-w-0">
     <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>
     <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={inputId} ref={inputRef} value={session.query} onChange={event => patch({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>
-    <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-sm"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>
-    <p id={helpId} className="mb-3 text-xs leading-5 text-muted-foreground">箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。</p>
-    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-sm">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
-    <p className="mt-3 min-h-10 break-words text-xs leading-5 text-muted-foreground" role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : "方向键浏览和展开，Enter 定位，空格勾选或取消。"}</p>
+    <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>
+    <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。</p>
+    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
+    <p className="mt-3 min-h-10 break-words text-ui-hint text-muted-foreground" role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : "方向键浏览和展开，Enter 定位，空格勾选或取消。"}</p>
   </div>
 }
 

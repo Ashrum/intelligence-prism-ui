@@ -1,11 +1,80 @@
 # 智能曜彩 UI Design System
 
-## 当前可用版本：coss v1.21.0
+## 当前可用版本：coss v1.14.0
 
-沿用 v1.13.1 已通过评审的 80 个组件基线与用户确认的题卡视觉，本版统一三元素业务状态，并完成全目录的共用视觉层级、数据阅读、反馈对比和响应式修正。包含 54 个 coss 基础组件、16 个组合组件、10 个扩展组件、3 套主题和 2 个应用示例；应用示例独立于组件，不计入组件数量。
+### Agent 导航归类 v0.1（2026-09-23）
+
+侧栏和组件总览统一在「Agent」分类下提供「Agent 语义组件 / Agent 页面骨架 / Agent 工作区示例」三个入口。工作区标题与字号预览同步命名，骨架返回入口指向该分类。既有路径沿用；组件仍为 80 项，骨架与组合示例另计。只整理入口与名称，真实业务接入仍由 Workspace 负责。
+
+### Agent 语义组件第一组 v0.1 · 设计候选（2026-09-22）
+
+依据 [v0.2.1 批准规范](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)和[复用规划 v0.1.2](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.2.md)，原位扩展 `/next/components/agent-components#context-summary-review`：上下文摘要、摘要预览、对比查看、执行确认、任务进度、执行结果，以及同一次执行的组合示例。两种用途、独立状态与 384px 窄容器可手动切换。目录仍为 80 项。两份原文已归档供实施与独立审核引用；第 7.1 节状态映射的复核与待验范围见[候选说明](docs/agent-context-summary-review.md#批准规范原文归档与任务状态复核2026-09-23)。
+
+复用 AgentContextSummary / AgentContextList / AgentChangeReview / AgentTaskProgress 和 Prism / coss；新增受控的预览、确认、整体进度与结果组合。操作仅返回意图，提交中不会被自动当作已接收，回执不明仅查询原执行；历史步骤停止转圈并标明“上次进行到”。不接业务存储、权限判断或 Runtime，不新增完整业务页面。
+
+本站候选源码与 GitHub 历史分开记录；本轮不宣称合入 GitHub main。交互、接口及接续验收见 [候选说明](docs/agent-context-summary-review.md) 和 [组件契约](docs/component-contracts.md)。
+
+### Agent 引导式任务 v0.1.1 · 候选（2026-09-21）
+
+`/next/agent` 增加「试卷解析引导」，复用已有解析流程完成材料入口、范围追问、执行、原稿核对和本机示例保存；原材料复核助手保留。`/next/components/agent-components` 原位补齐追问、材料引用、带详情的步骤和修改对照，调用方持有数据及操作，不增加组件目录分类。
+
+参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用仅记录内容选择；核对状态见题目编辑区，保存由宿主单独处理。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
+
+v0.1.1 追加：题干与参考答案下方显示当前草稿公式预览（Temml 0.13.4 → 原生 MathML，沿用本地 STIX 字体）；Unicode 常见代数式可直接预览，复杂公式使用 `\(...\)` / `\[...\]`。中文、换行及无法解析的输入原样保留，错误显示当前输入，不复用旧公式，不改原稿和保存快照。只检查排版，不证明数学正确。公式每段最多 1000 字符、全文超过 12000 字符回退原文；不支持链接、自定义宏和颜色/字号命令。任务步骤与监视器详情统一使用既有 14px 状态徽标；本机进度恢复增加 Spinner，减少动效模式保持静态。页面标注候选版本并链接 [PR #18](https://github.com/Ashrum/intelligence-prism-ui/pull/18)，审核源码以该候选分支为准。
+
+v0.1 初次引入验证：相关 20 项回归测试、类型检查、语义字号检查与构建通过。浏览器实际走通单题来源回看、追问补充、阶段监控、过期建议拦截、保留/采用、核对、保存和指令复用；390px 三主题检查新组件字号与关键容器，键盘可选择选项；窄屏题目与答案流程验证了局部失败重试。没有重新执行全站 93 页审计，实体设备与真实服务不在本轮范围内。
+
+v0.1.1 定向验证：25 项相关测试通过，包含构建后公式模块原样保留与分式/根号执行检查；浏览器验证草稿更新、公式错误恢复、390px 三主题字号/状态徽标、六轮原稿/编辑切换、异常恢复和 1024px 公式预览。Vite 8 的依赖优化会破坏 Temml 词法器中的代理项转义，因此模块作为同源 ESM 资产按需加载，构建测试校验其字节；不调用第三方 CDN。
+
+### 表现力候选 v0.1 · 三个原位样本（2026-09-21）
+
+入口 `/next/foundations#expression-review`。在现有 [Agent 欢迎页](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent)、[解析入口与保存结果](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/use-cases/parsing)、[分类图表](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/status-composition) 与 [连续热力图](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/evidence-matrix) 提供原版 / 候选对照，切换保留草稿、任务和选中项。候选在欢迎、材料入口与完成结果使用现有三色几何标记；解析入口与结果按业务区、辅助指导的顺序排列。暖纸数据色仅在两张图表示例中显式启用，不替换全局主题；品牌名称与色值、11 类字号令牌和 coss 原始源码保持不变。
+
+热力图数值按实际插值底色选择黑/白文字，悬停仅改变边框，避免自动提亮造成对比度下降。分类标签、数量、占比、缺测说明和可键盘选择的数据表继续保留。这是局部候选验证，不重新声明全站或所有交互状态通过；色觉模拟和实体设备不在本轮已验证范围内。
+
+### Typography v0.2.1 · 全站实施候选（2026-09-20）
+
+字体规范入口 `/next/foundations/typography` 提供 11 个角色实样、解析阅读/编辑与状态样本、真实窄屏预览和逐页检查清单。公共字号适配与浅色辅助文字修正已落实到组件、示例和工作区；coss 原始源码保持不变。后续业务代码使用语义字号，验证构建内的字体检查阻止局部字号回流。Windows / Apple 字形与 iOS 聚焦行为仍待真机确认。详见 `docs/typography.md`。
+
+### 教师用例与解析流程 v0.1 · 候选（2026-09-20）
+
+原站增加 `/next/use-cases`：7 类教师主要用例，分别说明目标、输入、成果、人工决策与后续业务。首先展开 6 个解析场景；逐场景记录必要追问、异常接续与验收点。用例不计入通用组件数量。
+
+交互入口 `/next/use-cases/parsing` 复用 WorkbenchShell 顶部导航和 Prism/coss 控件。图片/PDF 本地材料检查、扫描导入说明、页序与范围、学生作答用途分流、手动解析阶段、局部失败重试、原稿对照、逐题核对和保存可操作。跨页题缺失阻止保存；重试保留未受影响人工编辑；原稿替换保留旧稿供对照；确认结果快照与后续草稿分离。每个用例的示例进度独立保存在本机，可从工作记录继续。
+
+这是流程验证，不接真实 OCR、扫描设备、任务服务或题库。真实文件不上传、不参与固定结果生成；本地图片可预览，PDF 只登记元数据。Word/Excel 维持 Step2 范围。多份扫描材料独立分组执行仍为规划分支；本轮以一份材料的连续流程验证为主。不会自动进入批阅、生成题目或发布成绩。
+
+
+### Agent 页面骨架 v0.1 · 候选（2026-09-19）
+
+评审入口 `/next/skeletons/agent`，分类仍为「页面骨架」，不增加组件数。`AgentPageSkeleton` 从工作台现有 Agent stage 提取消息阅读/输入布局，与 `WorkbenchShell contentLayout="workspace"` 组合；对话目录复用总骨架上下文区域。`AgentComposer` 收回工作台已有 conversation/compact 变体与材料、工具插槽，default 行为保留。对话示例由独立 reducer 管理，不接模型或业务执行服务，不改原工作台会话存储。
+
+新对话、连续对话、历史筛选、草稿与材料接续、回复中/停止/失败恢复可以操作。搜索仅覆盖本页示例；停止后不会被迟到的演示回复覆盖。演示题篮由总骨架和 Agent 页复用同一 fixture，工作台仍传入原全局题篮。本轮只推进第2项；第3—7项未启动，标准页面尚未启动；本轮评审内容增量发布到原组件站点。
+
+### 总骨架 v0.3 · 候选（2026-09-20）
+
+新增独立「页面骨架」与「标准页面」分类，组件数量仍为 80。骨架目录 `/next/skeletons`，教师工作台交互评审 `/next/skeletons/workbench`；标准页面仅登记阶段，尚未开始实现。原组件、两项应用示例及业务入口保留。
+
+- 从 `Ashrum/ole-school-workbench@02109ef194d80f128be69265b65a5d7762456a74` 的 `PreviewHeader` 和全局题篮布局提取 `WorkbenchShell`，在本仓库 `a764bf6e5fb38d427e461d7144580093efb1263e` 基线上组合现有 coss/prism 组件。
+- 公共壳包含组织、五项顶部导航、可选上下文侧栏、搜索、通知、AI 活动监视器、个人菜单、三主题与独立积分/token 插槽。业务数据和路由由调用方传入，演示夹具位于 `examples/skeletons`。
+- `QuestionWorkPanel` 收回工作台已有的底部方向、初始/返回焦点、标题操作、页脚及关闭按钮公开属性，默认行为保持原状。没有改写题篮编辑/发布流程。
+- v0.2 空间整改：按剩余工作区宽高收纳辅助区，固定入口保持可达；随后收纳上下文目录。题篮空态与有题状态共享尺寸预留；说明减量、正文前移，保持阅读行宽。
+- 第1项总骨架保留；用户已批准开始第2项 Agent 页面骨架，第3—7项未启动。源码保留任务分支与 PR；原组件站点增加独立骨架分类，既有组件和应用示例保留。
+
+验证：两个项目类型检查和构建通过；组件复用/coss/语义共 17 项测试、工作台 13 项 ID/题篮/导航回归通过。浏览器检查 1363px 桌面，以及实际页面在 1280/820/390px iframe 视口下的响应式表现、三主题、长组织名、长中文/公式、键盘搜索、通知已读与空态、任务五状态、积分/token 三状态、题篮展开和跨路由保留。修复搜索结果的焦点落点、HashRouter 跳过链接和 Flex 宿主宽度。实体移动设备、屏幕阅读器、真实后端与多用户服务未验证；不把构建通过视为用户视觉验收。
+
+
+当前 80 个组件已通过评审，作为研发接入的源码基线。包含 54 个 coss 基础组件、16 个组合组件、10 个扩展组件、3 套主题和 2 个应用示例；应用示例独立于组件，不计入组件数量。
 
 - [组件站点](https://intelligence-prism-ui.ashrvm.chatgpt.site/next) · [基础规范](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations)
 - [源码接入与组件约定](docs/component-contracts.md)：依赖、主题、字体、目录与数据接口。
+- [AI 原生开发流程 v0.1](docs/OLE_AI_NATIVE_DEVELOPMENT_WORKFLOW_v0.1.md)：Claude Code 监督与独立审核、Codex 构建；跨设备准备见第 11 节。在另一台电脑完成本机安装与授权后，从本仓库启动并先读取该文档。
+- 本版在 v1.13.0 上统一评审状态和版本号，沿用已验证的视觉、交互与组件接口。
+
+### 题卡层级与状态合并候选
+
+沿用 v1.13.1 已通过评审的 80 个组件基线与用户确认的题卡视觉，本版统一三元素业务状态，并完成全目录的共用视觉层级、数据阅读、反馈对比和响应式修正。包含 54 个 coss 基础组件、16 个组合组件、10 个扩展组件、3 套主题和 2 个应用示例；应用示例独立于组件，不计入组件数量。
+
 - 题型标识采用品牌色点，分值使用配对浅底与文字色；主操作统一蓝底白字。现有题卡结构、数据接口、三套主题与独立作答组件保持兼容。
 - 交付方式为源码复用，`private: true` 保留；未发布独立 npm 包。应用示例使用演示数据，业务服务、权限和持久化由接入应用提供。
 
@@ -21,6 +90,48 @@ npm run dev
 ```
 
 生产构建运行 `npm run build`；自动回归运行 `npm test`。源码接入目标项目时，使用 [组件复用约定](docs/component-contracts.md) 中的依赖与主题设置。
+
+#### Windows 本地验证
+
+在仓库根目录使用 PowerShell 和 Node.js 24（本机验证版本为 Node.js 24.14.0、npm 11.9.0），先完成 `npm ci`。现有 `npm run dev` 使用 POSIX 环境变量语法；Windows 可直接启动 Vite。若 5173 已被占用，可改用其他端口（下例为 5174；`--strictPort` 在端口被占用时直接退出）：
+
+```powershell
+$env:WRANGLER_LOG_PATH = '.wrangler/wrangler.log'
+node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5174 --strictPort
+```
+
+构建和测试在另一个 PowerShell 终端运行。以下设置对应 `sites-env.sh` 的本地运行目录与环境（Windows 环境变量名称不区分大小写），保留两项构建前检查；无需新增 `build:local`，也不依赖 Bash / GNU `timeout`。Linux 的 `npm run build` / `npm test` 继续使用原有有时限的构建脚本。
+
+```powershell
+$projectRoot = (Get-Location).Path
+$runtimeRoot = Join-Path $projectRoot '.sites-runtime'
+'home', 'npm-cache', 'xdg-config', 'tmp', 'wrangler/logs' | ForEach-Object { New-Item -ItemType Directory -Force (Join-Path $runtimeRoot $_) | Out-Null }
+$env:SITES_ENV_READY = '1'
+$env:SITES_PROJECT_ROOT = $projectRoot
+$env:HOME = Join-Path $runtimeRoot 'home'
+$env:XDG_CONFIG_HOME = Join-Path $runtimeRoot 'xdg-config'
+$env:TMPDIR = Join-Path $runtimeRoot 'tmp'
+$env:WRANGLER_WRITE_LOGS = 'false'
+$env:WRANGLER_LOG_PATH = Join-Path $runtimeRoot 'wrangler/logs'
+$env:MINIFLARE_REGISTRY_PATH = Join-Path $runtimeRoot 'wrangler/registry'
+'NPM_CONFIG_CACHE', 'npm_config_proxy', 'npm_config_http_proxy', 'npm_config_https_proxy' | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+$env:npm_config_cache = Join-Path $runtimeRoot 'npm-cache'
+$env:npm_config_audit = 'false'
+$env:npm_config_fund = 'false'
+$env:npm_config_update_notifier = 'false'
+node scripts/check-math-font.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Math font check failed' }
+node scripts/check-typography.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Typography check failed' }
+node node_modules/vinext/dist/cli.js build
+if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
+node --test tests/*.test.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+node node_modules/typescript/bin/tsc --noEmit
+if ($LASTEXITCODE -ne 0) { throw 'Type check failed' }
+```
+
+即使 `core.autocrlf=true`，`.gitattributes` 也要求清单中的 coss 源码以 LF 检出，并禁止转换固定哈希字体的二进制字节；哈希测试仍校验原始内容。已有 CRLF 工作副本首次采用规则时，确认这些文件没有本地修改后，仅重取 `components/coss/`、`hooks/coss/use-media-query.ts` 和 `lib/coss/segmented-control.ts`。`vendor/` 的说明与清单本身没有固定字节哈希，因此不扩大规则范围。先成功构建再运行完整测试，才能覆盖服务端渲染与生产公式模块；`dist/`、`.sites-runtime/`、`.wrangler/` 和 TypeScript 增量缓存均已忽略。
 
 以下为历史迭代记录，当前范围与状态以上述可用版本为准。
 
@@ -514,3 +625,5 @@ The timeout defaults can be overridden for a controlled canary with `SITES_INSTA
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
+2026-09-20：AI 活动监视器按旧版离线教师工作台重新组合，只接收本人批阅/解析任务。支持筛选、阶段详情、执行状态与后续复核分别呈现；九种显式演示场景及手动推进由共享fixture提供。快捷设置图文容器已修复。总骨架和Agent骨架本轮同步原智能曜彩站点「页面骨架」分类，不另建站点。

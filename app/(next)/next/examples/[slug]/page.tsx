@@ -9,5 +9,5 @@ export default async function ExamplePage({params,searchParams}:{params:Promise<
  const item=applicationExamples.find(item=>item.id===slug);if(!item)notFound()
  const requested=(await searchParams)?.stage
  const stage:Stage=typeof requested==="string"&&["evaluation","diagnosis","goals","learning-plan"].includes(requested)?requested as Stage:"evaluation"
- return <div className="prism-content"><div className="prism-page-heading"><h1>{item.title}</h1><p>{item.summary}</p><p className="!text-sm">应用示例 · 用于验证组件组合，不计入组件数量</p></div><ExampleRenderer id={slug} stage={stage}/></div>
+ return <div className="prism-content"><div className="prism-page-heading"><h1>{item.title}</h1><p>{item.summary}</p><p className="text-ui-hint">应用示例 · 用于验证组件组合，不计入组件数量</p></div><ExampleRenderer id={slug} stage={stage}/></div>
 }

@@ -1,6 +1,6 @@
 {
   "name": "intelligence-prism-ui",
-  "version": "1.21.0",
+  "version": "1.14.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -44,6 +44,7 @@
     "recharts": "^3.8.0",
     "sonner": "^2.0.8",
     "tailwind-merge": "3.6.0",
+    "temml": "0.13.4",
     "vaul": "^1.1.2",
     "zod": "^3.25.76"
   },

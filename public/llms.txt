@@ -1,0 +1,109 @@
+# Intelligent Prism UI Design System
+
+Version: 1.13.1
+Status: Canonical design-system baseline
+Language: zh-CN
+Site: https://intelligence-prism-ui.ashrvm.chatgpt.site/
+Repository: https://github.com/Ashrum/intelligence-prism-ui
+Base: coss UI @ e937becd2d5ffb5c621eed6f8b1f223cbb6051e7
+
+## Purpose
+Intelligent Prism (智能曜彩) is the canonical UI design system for OLE product interfaces. This file is the discovery and authority entry point for web-capable agents. It does not replace the human-facing site.
+
+## Authority
+When sources differ, use this order:
+1. Intelligent Prism component specification and Agent Spec on the relevant component page.
+2. Intelligent Prism Foundations.
+3. Intelligent Prism reusable patterns and application examples.
+4. Pinned coss upstream behavior.
+5. Agent inference.
+
+Application examples demonstrate composition and do not override component specifications. Agent inference must never override an existing specification.
+
+If a required rule is absent:
+1. Reuse the pinned coss behavior when applicable.
+2. If coss does not define it, report the specification gap.
+3. Do not invent visual values, component behavior, or a replacement design system.
+
+## Start here
+- Component catalog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next
+- Foundations: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations
+- Materials reading pattern: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/reading
+- Agent category: https://intelligence-prism-ui.ashrvm.chatgpt.site/next#group-agent
+- Agent semantic components: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/agent-components
+- Agent page skeleton: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/skeletons/agent
+- Agent workspace example: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/agent
+- Implementation contracts: https://github.com/Ashrum/intelligence-prism-ui/blob/main/docs/component-contracts.md
+
+## Core component specifications
+- The Agent navigation category groups semantic components, page skeleton and workspace example. Only the component entry counts toward the 80-component catalog; the other two retain their own reuse levels. Existing routes are preserved.
+- Button: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/button
+- Form: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/form
+- Field: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/field
+- Input: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/input
+- Textarea: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/textarea
+- Select: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/select
+- Badge: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/badge
+- Card: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/card
+- Dialog: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/dialog
+- Tabs: https://intelligence-prism-ui.ashrvm.chatgpt.site/next/components/tabs
+
+## Canonical form-label rule
+The canonical base form strategy is a persistent fixed label. Field identity remains visible in default, filled, error, readonly, and disabled states. Floating labels are not a base Input/Field behavior. A product may use a separately specified specialized pattern only when that pattern is explicitly documented; do not infer one.
+
+## Agent reading instructions
+- Read Foundations and only the component specifications relevant to the task.
+- Preserve existing component behavior and semantic roles.
+- Preserve established semantic color meanings. The scoped Expression v0.1 review permits non-semantic brand geometry for recognition; it must not encode task status or override component specifications.
+- Do not infer pixel values from screenshots when the specification or source is available.
+- When a visual value is not exposed by the page, inspect the linked source or pinned coss implementation before reporting a gap.
+- Keep accessibility semantics, keyboard behavior, theme behavior, and reduced-motion support intact.
+- Do not turn application examples into new generic components.
+
+
+## Page composition layers (candidate branch)
+- Page skeleton catalog: /next/skeletons
+- Teacher workbench shell review: /next/skeletons/workbench (v0.3 Candidate; fixtures only)
+- Standard pages: /next/pages (not started)
+Skeletons and standard pages are separate categories and do not change the 80-component count. Compose the same WorkbenchShell source in applications. Stage 1 and the authorized stage 2 Agent skeleton are review candidates; stages 3–7 remain unstarted. Review fixtures are not production services.
+
+- Agent page skeleton review: /next/skeletons/agent (v0.1 Candidate; same WorkbenchShell and AgentComposer; local fixtures only)
+
+- AI activity monitor: components/prism-next/skeletons/ai-activity-monitor.tsx. Current-user grading/parsing records only; state, trustworthy counts and follow-up are distinct. Review fixture includes nine scenes and explicit manual advancement; no live tasks.
+
+## Teacher use cases and parsing workflow (v0.1 Candidate)
+- Teacher use cases: /next/use-cases (7 primary goals, 6 parsing scenarios, exception paths and acceptance points).
+- Parsing workflow: /next/use-cases/parsing (query case=single|images|pdf|scan|answers|student).
+- Business use cases are not generic components or approved standard pages. Reuse WorkbenchShell and Prism/coss source.
+- Fixed local fixtures only. Actual selected files are not uploaded or parsed; image previews and PDF metadata only. No OCR, scanner, grading, publishing or production question-bank integration.
+- Review, execution and saving are distinct. Missing cross-page sources block save. Confirmed snapshots are isolated from later drafts. Word/Excel remain Step2.
+
+Typography: /next/foundations/typography (v0.2.1 implementation candidate)
+Use semantic text roles; reading and long editing 16/28, decision hints >=14px. Theme and task state never shrink typography. Keep vendored coss sources unchanged; include the Prism typography adaptation stylesheet.
+
+## Expression review v0.1 (Candidate)
+- Entry: /next/foundations#expression-review
+- Three samples on existing pages: Agent welcome (/next/skeletons/agent); material intake and saved results (/next/use-cases/parsing); warm-paper categorical and sequential colors (/next/components/status-composition and /next/components/evidence-matrix).
+- Original/candidate controls preserve drafts, task state and selected data. Global theme tokens, brand names/colors, typography roles and coss source remain unchanged.
+- This is a scoped review, not a new global visual default or a full-site re-audit. Real device and color-vision simulation are not included in this round.
+- Heatmap sequentialColors accepts three six-digit opaque HEX colors in low/mid/high order. Labels choose black/white against the interpolated fill; hover preserves fill and emphasizes the border.
+
+## Guided Agent tasks v0.1.1 (Candidate)
+- Reusable patterns: /next/components/agent-components. Composer, clarification, context references, execution rows and change review are controlled components; the caller owns business state, execution and persistence.
+- Complete example: /next/agent, trial-paper parsing tab. Reuses the exact ParsingWorkspace/reducer shown at /next/use-cases/parsing, including source inspection, failure retry, review and local sample saving. The material-review assistant remains available in its tab and compact reading integration.
+- Interaction reference: https://www.beautifului.dev/ (Approval Card, Context Cards, Task Rows, Diff Table). Prism / coss implementation; no copied Beautiful UI code, dependency or imported visual system.
+- Selection does not execute a task. Accepted changes are not saved/published; reject stale proposals and require renewed checking. Additional requirements appear in the reusable task instruction; editing its copy does not mutate the task.
+- Fixed fixtures only. Actual file content is not parsed; no OCR/model/backend grading or publishing. No fabricated confidence, progress percentage or reasoning traces.
+
+- DraftMathPreview renders the CURRENT stem/answer with pinned Temml 0.13.4 into native MathML / existing STIX. Conservative Unicode algebra and explicit \(…\) / \[ … \] are supported; unrecognized prose and invalid formulas preserve input. Rendering checks layout syntax, never mathematical correctness; no write-back, source edits or automatic confirmation. Length/expansion limits and untrusted-mode rendering apply.
+- Shared step badges stay 14px; loading uses the existing Spinner with reduced-motion support. Review code: https://github.com/Ashrum/intelligence-prism-ui/pull/18 (candidate branch, not main).
+
+## Agent semantic group v0.1 (Design candidate, 2026-09-22)
+- Entry: /next/components/agent-components#context-summary-review. Six independent semantics plus a confirmation/progress/result composition; two manual fixture purposes. Catalog stays at 80 entries. See docs/agent-context-summary-review.md.
+- Reuse AgentContextSummary, AgentContextList, AgentChangeReview and AgentTaskProgress. Add controlled AgentArtifactPreview, AgentExecutionConfirmation, AgentExecutionProgress and AgentExecutionResult in agent-semantic-components.tsx. No business page, store, authorization engine or Runtime is added.
+- Context selection, read, current-context and citation remain independent host facts. Absent requires complete event coverage; unknown and unavailable are distinct. Source inspection does not update facts.
+- Preview title/version/status/summary and open capability are external; no capability means no invented open action. Confirmation only exposes submission in ready state; submitting, received, blocked, recorded and unknown are distinct. Callbacks are intents, never receipts.
+- Overall progress does not derive from steps. Waiting or unknown stops live animation and labels the last running step as a snapshot. No percentages or timers.
+- Result receipts distinguish succeeded/partial/failed/unknown. Unknown accepts query only; partial retains completed and remaining scope. Generated, reviewable and published are separate facts.
+- ChangeReview adds optional version labels, scope, preview slots and reset callback; legacy string input is preserved. The caller rejects stale proposals, owns the decision/draft and saves separately. Preview slots are not semantic diff engines.
+- Source and acceptance are scoped to the Site candidate; this does not imply a GitHub main merge or Workspace/real-service acceptance.

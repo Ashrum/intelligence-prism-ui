@@ -34,7 +34,7 @@ export type QuestionRecord = {
 }
 
 export function QuestionContent({ question }: { question: QuestionRecord }) {
-  return <div className="prism-question-copy min-w-0 text-base leading-[1.9] text-foreground">
+  return <div className="prism-question-copy min-w-0 text-read-body text-foreground">
     <div className="q-question-material" data-has-figure={!!question.figure||undefined}>
       <div className="min-w-0">
         <div className="q-question-stem space-y-3">{question.stem}</div>
@@ -63,7 +63,7 @@ export function QuestionContent({ question }: { question: QuestionRecord }) {
 }
 
 export function QuestionSolution({ question }: { question: QuestionRecord }) {
-  return <div className="question-solution prism-question-copy space-y-5 text-base leading-[1.9]"><section><h4 className="mb-2 text-sm font-semibold">参考答案</h4>{question.answer}</section><section><h4 className="mb-2 text-sm font-semibold">解析</h4>{question.explanation}</section>{question.parts?.filter(part => part.answer).map(part => <section key={part.id} className="pt-1" aria-label={`第${part.id}小问答案与评分依据`}><h4 className="mb-2 font-medium">第 {part.id} 小问 · {part.points} 分</h4><div>{part.answer}</div><div className="mt-2 text-foreground">{part.explanation}</div>{part.rubric && <ol className="q-rubric mt-3 space-y-1 text-sm">{part.rubric.map(item => <li key={item.id}>{item.label} · {item.points} 分</li>)}</ol>}</section>)}</div>
+  return <div className="question-solution prism-question-copy space-y-5 text-read-body"><section><h4 className="mb-2 text-block-title">参考答案</h4>{question.answer}</section><section><h4 className="mb-2 text-block-title">解析</h4>{question.explanation}</section>{question.parts?.filter(part => part.answer).map(part => <section key={part.id} className="pt-1" aria-label={`第${part.id}小问答案与评分依据`}><h4 className="mb-2 text-block-title">第 {part.id} 小问 · {part.points} 分</h4><div>{part.answer}</div><div className="mt-2 text-foreground">{part.explanation}</div>{part.rubric && <ol className="q-rubric mt-3 space-y-1 text-ui-body">{part.rubric.map(item => <li key={item.id}>{item.label} · {item.points} 分</li>)}</ol>}</section>)}</div>
 }
 
 export function QuestionMath({ children, label, block = false }: { children: ReactNode; label: string; block?: boolean }) {

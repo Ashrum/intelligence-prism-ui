@@ -57,7 +57,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
     onConfirm?.(scores as Record<string,number>,reason)
   }
   return <div className="q-review space-y-6">
-    <header className="space-y-2"><h3 className="text-lg font-semibold">{question.title}</h3><p className="text-sm text-muted-foreground">{learner?`${learner} · `:""}{question.id} · 原题 {question.points} 分</p>{description&&<p className="text-sm text-muted-foreground">{description}</p>}</header>
+    <header className="space-y-2"><h3 className="text-block-title">{question.title}</h3><p className="text-ui-hint text-muted-foreground">{learner?`${learner} · `:""}{question.id} · 原题 {question.points} 分</p>{description&&<p className="text-ui-hint text-muted-foreground">{description}</p>}</header>
     <div className="flex flex-wrap items-center justify-between gap-3"><Tabs value={view} onValueChange={value=>setView(String(value))}><TabsList aria-label="作答回看与教师复核视图"><TabsTab value="attempt">作答回看</TabsTab><TabsTab value="review">教师复核</TabsTab></TabsList></Tabs><div className="flex flex-wrap gap-2"><Button variant="outline" aria-expanded={material} onClick={()=>setMaterial(!material)}>{material?"收起完整题面":"查看完整题面"}</Button><Button variant="outline" aria-pressed={references} onClick={()=>setReferences(!references)}>{references?"隐藏参考依据":"显示参考依据"}</Button></div></div>
     {material&&<div className="rounded-lg bg-muted/50 p-5"><QuestionContent question={question}/></div>}
     <section className="q-review-summary space-y-3" aria-label="得分与复核状态">
@@ -66,7 +66,7 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
         <div><dt>已记录得分</dt><dd>{savedComplete?<>{savedTotal}<span> / {maximum}</span></>:"待评分"}</dd></div>
         {view==="review"&&<div><dt>复核中得分</dt><dd>{status.invalid.length?<><span>已评 </span>{total}<span> 分</span></>:<>{total}<span> / {maximum}</span></>}</dd></div>}
       </dl>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-ui-body">
         <p role="status"><StatusBadge tone={statusTone}>{statusText}</StatusBadge></p>
         {view==="review"&&!!status.changed.length&&<span className="text-muted-foreground">{status.changed.length} 个评分点未确认{savedComplete&&!status.invalid.length&&total!==savedTotal?` · 较已记录 ${total-savedTotal>0?"+":""}${total-savedTotal} 分`:""}</span>}
         {historyChanged&&savedComplete&&initialComplete&&<span className="text-muted-foreground">已记录较初评 {savedTotal===initialTotal?"总分不变，评分点有调整":`${savedTotal-initialTotal>0?"+":""}${savedTotal-initialTotal} 分`}</span>}
@@ -75,37 +75,37 @@ export function QuestionReview({question,attempts,initialScores,learner,descript
     <div className="space-y-8">{parts.map(part=><section key={part.id} aria-label={`第${part.id}小问作答与评分`} className="q-review-part">
       <div className="min-w-0 space-y-4">
         <h4 className="font-semibold">第 {part.id} 小问 · {part.points} 分</h4>
-        <div className="prism-question-copy text-base leading-7">{part.content}</div>
-        <div><p className="mb-2 text-sm font-semibold">学生作答</p><blockquote className="q-review-attempt prism-question-copy text-base leading-8">{attemptFor(part.id)}</blockquote></div>
-        {references&&<div className="q-review-reference question-solution prism-question-copy text-base leading-8"><h5 className="mb-2 text-sm font-semibold">参考答案与解析</h5><div>{part.answer}</div><div className="mt-3">{part.explanation}</div></div>}
+        <div className="prism-question-copy text-read-body">{part.content}</div>
+        <div><p className="mb-2 text-item-title">学生作答</p><blockquote className="q-review-attempt prism-question-copy text-read-body">{attemptFor(part.id)}</blockquote></div>
+        {references&&<div className="q-review-reference question-solution prism-question-copy text-read-body"><h5 className="mb-2 text-item-title">参考答案与解析</h5><div>{part.answer}</div><div className="mt-3">{part.explanation}</div></div>}
       </div>
       <div className="q-review-rubric min-w-0 space-y-5">
-        <h5 className="text-sm font-semibold">{view==="review"?"评分细则与复核":"评分细则与记录"}</h5>
+        <h5 className="text-item-title">{view==="review"?"评分细则与复核":"评分细则与记录"}</h5>
         {(part.rubric??[]).map(item=>{
           const changed=status.changed.includes(item.id)
           const invalid=showScoreErrors&&status.invalid.includes(item.id)
           const fieldErrorId=`${reasonId}-${item.id}-error`
           return <div key={item.id} className="q-review-criterion">
-            <div className="min-w-0 space-y-1 text-sm leading-6"><p className="font-medium">{item.label}</p><p className="text-muted-foreground">初评 <span className="tabular-nums text-foreground">{initial[item.id]===undefined?"未评分":`${initial[item.id]} 分`}</span>{saved[item.id]!==initial[item.id]&&<> · 已记录 <span className="tabular-nums text-foreground">{saved[item.id]===undefined?"未评分":`${saved[item.id]} 分`}</span></>}</p></div>
+            <div className="min-w-0 space-y-1 text-ui-body"><p className="font-medium">{item.label}</p><p className="text-muted-foreground">初评 <span className="tabular-nums text-foreground">{initial[item.id]===undefined?"未评分":`${initial[item.id]} 分`}</span>{saved[item.id]!==initial[item.id]&&<> · 已记录 <span className="tabular-nums text-foreground">{saved[item.id]===undefined?"未评分":`${saved[item.id]} 分`}</span></>}</p></div>
             <div className="q-review-score-control">
-              <span className="text-sm text-foreground">上限 <strong className="tabular-nums font-semibold">{item.points}</strong> 分</span>
+              <span className="text-ui-body text-foreground">上限 <strong className="tabular-nums font-semibold">{item.points}</strong> 分</span>
               {view==="review"?<PointsField label={`第 ${part.id} 问 · ${item.label}`} value={scores[item.id]??null} max={item.points} invalid={invalid} describedBy={invalid?fieldErrorId:undefined} onChange={value=>updateScore(item.id,value)}/>:<span className="tabular-nums">{saved[item.id]??"未评分"} / {item.points}</span>}
-              {view==="review"&&changed&&!invalid&&<span className="q-review-adjustment text-sm"><CircleAlert className="size-3.5" aria-hidden="true"/>待确认</span>}
+              {view==="review"&&changed&&!invalid&&<span className="q-review-adjustment text-ui-body"><CircleAlert className="size-3.5" aria-hidden="true"/>待确认</span>}
             </div>
-            {invalid&&<p id={fieldErrorId} className="q-review-field-error text-sm" role="alert">请填写 0–{item.points} 分，步长为 0.5 分。</p>}
+            {invalid&&<p id={fieldErrorId} className="q-review-field-error text-ui-body" role="alert">请填写 0–{item.points} 分，步长为 0.5 分。</p>}
           </div>
         })}
       </div>
     </section>)}</div>
-    {initialNote&&<p className="text-sm leading-7 text-muted-foreground">{initialNote}</p>}
+    {initialNote&&<p className="text-ui-hint text-muted-foreground">{initialNote}</p>}
     {view==="review"&&<section className="q-review-form space-y-4" aria-label="复核理由与确认">
       <div className="space-y-2">
         <Label htmlFor={reasonId}>复核理由{!!status.changed.length?"（调整分数后必填）":""}</Label>
         <Textarea ref={reasonRef} id={reasonId} value={reason} aria-invalid={reasonError||undefined} aria-describedby={reasonError?`${reasonId}-error`:undefined} onChange={event=>{const next=event.target.value;change(previous=>({...previous,reason:next,error:previous.error?reviewError(previous.scores,limits,previous.saved,next):""}))}} placeholder="说明调整的评分点与依据。"/>
-        {reasonError&&<p id={`${reasonId}-error`} role="alert" className="q-review-field-error text-sm">{error}</p>}
+        {reasonError&&<p id={`${reasonId}-error`} role="alert" className="q-review-field-error text-ui-body">{error}</p>}
       </div>
       <div className="flex flex-wrap gap-2"><Button className="q-primary-action" disabled={!dirty&&!!record} onClick={confirm}>确认复核</Button><Button variant="outline" disabled={!dirty} onClick={()=>change(previous=>({...previous,scores:{...previous.saved},reason:"",error:""}))}>取消修改</Button></div>
     </section>}
-    {record&&<p className="text-sm leading-7 text-muted-foreground">最新复核记录：{record}</p>}
+    {record&&<p className="text-ui-hint text-muted-foreground">最新复核记录：{record}</p>}
   </div>
 }

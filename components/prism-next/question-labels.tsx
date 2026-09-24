@@ -30,7 +30,7 @@ export function questionTone(question: Pick<QuestionRecord, "response" | "parts"
 export function QuestionTypeLabel({ label, tone, inline = false }: { label: string; tone: QuestionTone; inline?: boolean }) {
   const content = <><span aria-hidden="true" className="q-type-dot" />{label}</>
   return inline
-    ? <span className="q-type-text inline-flex items-center gap-1.5 text-sm" data-question-tone={tone}>{content}</span>
+    ? <span className="q-type-text inline-flex items-center gap-1.5 text-ui-body" data-question-tone={tone}>{content}</span>
     : <Badge variant="outline" size="lg" className="q-type-label gap-1.5" data-question-tone={tone}>{content}</Badge>
 }
 

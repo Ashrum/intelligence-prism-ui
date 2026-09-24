@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {mkdir,writeFile,rm} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {build} from 'esbuild';
 import React from 'react';
 import {renderToStaticMarkup as render} from 'react-dom/server';
 import {matrixExtent,validBox} from '../lib/prism-next/chart-data.ts';
-const root=new URL('../',import.meta.url).pathname;
+const root=fileURLToPath(new URL('../',import.meta.url));
 const file=new URL('../.sites-runtime/reuse-test.mjs',import.meta.url);
 await mkdir(new URL('../.sites-runtime/',import.meta.url),{recursive:true});
 const bundle=await build({stdin:{contents:`export {QuestionCard} from './components/prism-next/question-card';export {QuestionReview} from './components/prism-next/question-review';export {questionTone,responsePresentation} from './components/prism-next/question-labels';export {QuestionPrint,createPrintPreferences} from './components/prism-next/question-print';export {MetricSummary,StatusComposition,FilterBar} from './components/prism-next/data-display';`,resolveDir:root,loader:'tsx'},bundle:true,platform:'node',format:'esm',packages:'external',alias:{'@':root},write:false});
