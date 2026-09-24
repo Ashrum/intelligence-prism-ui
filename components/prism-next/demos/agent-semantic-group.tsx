@@ -44,7 +44,7 @@ function sourcesFor(preparation: boolean, state: RecordState): AgentContextSourc
   return [
     { id: "main", title: preparation ? "函数教学参考 · 单调性" : "函数单元练习.pdf", location: "原稿 v2 · 第 1–3 页", selection: "selected",
       read: state === "unavailable" || state === "absent" ? unresolved : { state: "confirmed", description: "服务已读取 · 第 1–3 页" },
-      context: known ? { state: "confirmed", description: "本轮使用 · 第 1–3 页" } : unresolved,
+      context: known ? { state: "confirmed", description: "已参考 · 第 1–3 页" } : unresolved,
       citation: known ? { state: "confirmed", description: preparation ? "提纲 v1 · 第 2 节" : "校对稿 v1 · 第 1–6 题" } : unresolved,
       details: [{ label: "来源版本", value: "原稿 v2；仅覆盖第 1–3 页" }, { label: "对应执行", value: "示例任务 · 第 1 轮" }] },
     { id: "extra", title: preparation ? "往年教学活动记录" : "教师补充说明.txt", location: "材料 v1 · 个人提供", selection: "not-selected",
@@ -143,9 +143,9 @@ export function AgentSemanticGroupDemo() {
     : section === "result" ? { label: "结果回执", value: resultState, items: flowItems.filter(item => ["complete", "partial", "failed", "unknown"].includes(item.value)), change: (value: string) => setResultState(value as FlowState) }
     : { label: "外部状态示例", value: flow, items: flowItems, change: chooseFlow }
   const recordNotices = {
-    partial: "主材料有读取记录；本轮上下文使用与成果引用仍待确认。", complete: "三类记录分别对应来源版本和本轮任务；引用关系不证明结论正确。",
-    absent: "示例设定：记录覆盖完整，未发现对应读取、上下文或引用事件。", unavailable: "记录来源暂不可用，不能据此判断材料是否被读取或引用。",
-    historical: "仅展示当时的任务记录，不代表当前模型上下文。", empty: undefined,
+    partial: "主材料已读取；Agent 本次参考与成果引用仍待确认。", complete: "三类记录分别对应来源版本和本轮任务；引用关系不证明结论正确。",
+    absent: "示例：记录完整，无读取、Agent 本次参考或成果引用记录。", unavailable: "记录来源暂不可用，不能据此判断材料是否被读取或引用。",
+    historical: "仅展示历史记录，Agent 本次参考情况需另行确认。", empty: undefined,
   }
 
   return <section id="context-summary-review" aria-labelledby={`${id}-heading`} className="scroll-mt-24 space-y-6">
@@ -159,7 +159,7 @@ export function AgentSemanticGroupDemo() {
       </div>
       <div className={narrow ? "w-full max-w-sm" : "w-full max-w-4xl"} data-agent-semantic-fixture>
         <TabsPanel value="preview">{previewState === "empty" ? <Card className="gap-3 p-6"><h3 className="text-block-title">尚无成果记录</h3><p className="text-ui-hint text-muted-foreground">当前没有可预览对象。是否正在生成，请查看对应执行的回执。</p></Card> : renderPreview()}</TabsPanel>
-        <TabsPanel value="context"><AgentContextSummary title={task} scope={[{ label: "任务对象", value: "高二（3）班 · 数学" }, { label: "内容范围", value: "函数单调性与奇偶性" }, { label: "要求", value: preparation ? "40 分钟；保留材料来源，班级学情尚未接入" : "仅整理已有题目与答案，不补造缺失内容" }]} sources={sources} expanded={contextExpanded} onExpandedChange={setContextExpanded} onInspect={sourceId => { const found = sources.find(item => item.id === sourceId); if (found) openDialog({ title: found.title, description: `示例定位 · ${found.location}`, content: "此处展示宿主提供的来源查看内容。打开来源不会改变选用、读取、本轮上下文或成果引用记录。" }) }} notice={recordNotices[record] ? { text: recordNotices[record], tone: record === "partial" || record === "unavailable" ? "warning" : "info" } : undefined} snapshot={record === "historical" ? "快照 · 2026-09-21" : undefined} /></TabsPanel>
+        <TabsPanel value="context"><AgentContextSummary title={task} scope={[{ label: "任务对象", value: "高二（3）班 · 数学" }, { label: "内容范围", value: "函数单调性与奇偶性" }, { label: "要求", value: preparation ? "40 分钟；保留材料来源，班级学情尚未接入" : "仅整理已有题目与答案，不补造缺失内容" }]} sources={sources} expanded={contextExpanded} onExpandedChange={setContextExpanded} onInspect={sourceId => { const found = sources.find(item => item.id === sourceId); if (found) openDialog({ title: found.title, description: `示例定位 · ${found.location}`, content: "示例来源；查看不会改变材料使用记录。" }) }} notice={recordNotices[record] ? { text: recordNotices[record], tone: record === "partial" || record === "unavailable" ? "warning" : "info" } : undefined} snapshot={record === "historical" ? "快照 · 2026-09-21" : undefined} /></TabsPanel>
         <TabsPanel value="comparison"><AgentChangeReview title={preparation ? "让教学环节更清楚" : "将条件与两个问题分开"} before={before} after={after} beforeLabel="原稿 v2 · 建议依据" afterLabel="候选 v1 · 排版建议" reason="调整表达和阅读顺序，保留原有内容。采用仅记录本页内容选择，核对状态由宿主提供。" scope="采纳范围：仅当前段落的本页草稿；不会修改原稿、入库或发布。" decision={decision} onDecision={value => { setDecision(value); notify(value === "accepted" ? "已在本页选择候选内容，尚未保存。" : "已在本页选择保留原文。") }} onResetDecision={() => { setDecision("pending"); notify("已撤回本页选择，可重新决定。") }} disabled={comparisonState !== "current"} disabledReason={comparisonState === "stale" ? "当前原稿已更新到 v3，旧候选不能覆盖新内容。" : comparisonState === "readonly" ? "当前只读，宿主未提供采纳能力。" : undefined} /></TabsPanel>
         <TabsPanel value="confirmation">{renderConfirmation(confirmationState, () => { setConfirmationState("submitting"); notify("已提交意图，示例停留在“提交中”，不会自动推进；可用上方选择器查看后续状态。") })}</TabsPanel>
         <TabsPanel value="progress"><AgentExecutionProgress title={task} {...standaloneProgress} expanded={stepsExpanded} onExpandedChange={setStepsExpanded} updatedAt="最后回执 · 2026-09-22 10:24（示例）" action={progressState === "waiting-human" ? inspectWaiting : progressState === "unknown" ? query : undefined} /></TabsPanel>

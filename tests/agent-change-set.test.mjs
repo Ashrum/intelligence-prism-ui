@@ -29,6 +29,8 @@ test('inline summarizes decisions and retains critical evidence beyond its limit
  const inline = render(h(AgentChangeSet, { ...props, view: 'inline', onExpand() {} }));
  assert.match(inline, /共 4 处修改 · 已采用 0 · 保留原文 1 · 待决定 3/);
  assert.match(inline, /查看全部 4 处修改/); assert.match(inline, /证据不足/);
+ assert.match(inline, /另有 1 处修改，展开查看全部/);
+ assert.doesNotMatch(inline, /意图|宿主|回调|受控|含全部关键项|本卡不提供整组采纳/);
  assert.doesNotMatch(inline, /第 3 题：小问编号/);
  const full = render(h(AgentChangeSet, { ...props, view: 'workspace', notice: '基准已过期，核对冲突', onExpand() {} }));
  for (const item of props.items) assert.ok(full.includes(item.title));
@@ -44,6 +46,8 @@ test('controlled decision and rewritten text render identically in both views wi
  for (const decision of ['pending', 'accepted', 'kept']) for (const view of ['inline', 'workspace']) {
   const html = render(h(AgentChangeSet, { ...props, view, items: [{ ...props.items[0], after: '人工改写 x² + 2', decision }], onDecision() { calls++; }, onRewrite() { calls++; } }));
   assert.match(html, /人工改写 x² \+ 2<\/textarea>/);
+  assert.doesNotMatch(html.match(/<textarea\b[^>]*>/)[0], /aria-describedby/);
+  assert.doesNotMatch(html, /rewrite-hint/);
   assert.ok(html.includes({ pending: '待决定', accepted: '已采用', kept: '已保留原文' }[decision]));
   assert.doesNotMatch(html, /已保存|已提交/);
  }
@@ -169,4 +173,21 @@ test('callback wiring preserves item identity and controlled input; expansion/ap
   elements(tree).find(node => node.props.children === '应用').props.onClick();
  }
  assert.equal(events.length, 6);
+});
+
+
+test('supplementary details default to collapsed while conflict and disabled facts remain visible in both views', () => {
+ for (const view of ['inline', 'workspace']) {
+  const base = { ...props, view, items: [{ ...items[0], conflict: { baseLabel: 'r2', currentLabel: 'r3' } }], notice: '候选已过期', disabledReason: '请先核对原稿' };
+  const plain = render(h(AgentChangeSet, base));
+  assert.doesNotMatch(plain, /data-slot="collapsible-trigger"/);
+  const html = render(h(AgentChangeSet, { ...base, details: h('p', null, '补充的逐项比较说明') }));
+  const trigger = html.match(/<button\b[^>]*data-slot="collapsible-trigger"[^>]*>/)?.[0];
+  assert.ok(trigger);
+  assert.match(trigger, /aria-expanded="false"/);
+  assert.doesNotMatch(trigger, /disabled=""/);
+  assert.match(html, /说明<\/button>/);
+  assert.doesNotMatch(html, /补充的逐项比较说明/);
+  for (const fact of ['候选基于 r2，当前为 r3', '候选已过期', '请先核对原稿']) assert.ok(html.includes(fact));
+ }
 });
