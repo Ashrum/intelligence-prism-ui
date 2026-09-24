@@ -54,6 +54,52 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 对比查看器两态 v0.1
+
+2026-09-24 设计候选，语义 15，支持 **Inline + 专用扩展内容**。检索与复用依据：当前 `AgentChangeReview` 已提供逐项比较、采用/保留及预览插槽；`32382e9:components/prism-next/agent-components.tsx` 已有组级 `AgentChangeSet`，本轮仅回收此组合与类型，扩展冲突和受控应用。没有新增目录条目、差异算法、承载骨架或 Workspace 业务类型。
+
+从 `components/prism-next/agent-components` 导入 `AgentChangeSet`、`AgentChangeSetProps`、`AgentChangeSetItem`、`AgentChangeDecision`。
+
+| 公开属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `view` | 必填 `'inline' / 'workspace'` | 两态内容选择；不创建面板，不改动 `presentation` 的外框语义 |
+| `title / basis` | 必填 `string` | 整组标题与依据版本/来源；未知信息由宿主明确描述 |
+| `items` | 必填 `readonly AgentChangeSetItem[]` | 两态使用同一受控集合；空数组显示“当前没有修改” |
+| `inlineLimit` | `number`，默认 `2` | 有展开能力时展示前 N 项，加上所有关键项、冲突项，保持原顺序；有限值向下取整且至少 1，非有限值回退 2 |
+| `onDecision` | 必填 `(id, decision: AgentChangeDecision) => void` | `accepted / kept` 为采用/保留意图；重新选择发出 `pending`；不变更草稿、清除冲突或保存 |
+| `onRewrite` | 可选 `(id: string, value: string) => void` | 提供时显示带固定标签的受控文本区；改写后是否重置决定由宿主处理 |
+| `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | 仅 inline 显示入口；不传则隐藏入口且显示全部项，避免不可达；宿主保存触发器并负责承载、焦点与返回恢复 |
+| `notice` | 可选 `string` | 整组冲突/过期等事实提示，`role=status`；不自动阻断任何动作 |
+| `disabledReason` | 可选 `string` | 非空时整组决定、重新选择、改写与应用禁用；比较与展开仍可用 |
+| `apply` | 可选 `{ label: string; onApply: () => void; disabledReason?: string }` | 提供才显示动作；整组或动作的非空原因阻断应用并可访问关联。组件不按采用数量、冲突或项目禁用状态推算可应用性，不计算应用结果 |
+
+`AgentChangeSetItem`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `id / title` | 必填 `string` | 集合内稳定唯一 ID / 项标题；采用、保留与重新选择的可访问名称含标题 |
+| `before / after / reason` | 必填 `string` | 修改前、候选内容与建议理由；before 应明确对应当前比较对象，after 为受控候选 |
+| `decision` | 必填 `'pending' / 'accepted' / 'kept'` | 外部决定状态；“已采用”仅指采用选择，不代表已应用、核对或保存 |
+| `scope` | 可选 `string` | 适用范围，例如题干、第 1 页 |
+| `critical` | 可选 `boolean`，默认未标记 | 标记后不受 inlineLimit 截断 |
+| `conflict` | 可选 `{ baseLabel: string; currentLabel: string; description?: string }` | 显示“候选基于 rN，当前为 rM”及说明；同关键项始终可见，仍可比较后采用或保留，不推断冲突解决 |
+| `beforePreview / afterPreview` | 可选 `ReactNode` | 宿主数学/领域渲染；缺省使用字符串正文，保留 before/after 作为文本与改写值 |
+| `disabledReason` | 可选 `string` | 非空时只禁用本项决定、重新选择与改写，不隐含整组应用策略；宿主通过 apply.disabledReason 表达应用限制 |
+
+逐项比较沿用 `AgentChangeReview`：当 before 与 after 相同或 after 为空白时采用按钮禁用，保留仍可用；这与冲突无关。各项禁用原因常驻显示，并与相关控件关联。数学插槽的内容有效性、可访问性及字符串一致性由宿主负责。
+
+**组件职责**：渲染依据、统计外部决定、筛选 inline 可见项、呈现冲突和禁用原因、发出带 ID 的意图。无 Store、路由、持久化、执行器、权限判断或保存状态；切换 view 不发出任何业务回调。
+
+**宿主职责与 P04 接入**：
+
+- 将同一份 P04 候选集按“题目 ID + 字段”映射到稳定 `items.id`，标题可为“第 2 题 · 对称轴”；`before` 传当前待比较草稿，`after` 传候选或手动改写内容。保留来源/候选基准到 basis，逐项版本变化由宿主检测后传 conflict；无需为两态各建一份草稿。
+- `onDecision` 仅维护采用意向；`onRewrite` 更新候选并按宿主规则撤销旧选择。组件不会替宿主写入 P04 题目或清除冲突。
+- `apply.onApply` 由宿主读取当前受控选择，再核验对象、权限、版本及适用范围，应用 accepted 项并返回真实结果；保存是独立动作。无 adopted 项、执行中或宿主不允许应用时，通过 `apply.disabledReason` 给出事实原因；组件不会自行阻断冲突项的比较选择。
+- `onExpand(trigger)` 打开 Workspace `/teacher/agent/workspace` 既有工作区，传同一 items 和回调、`view="workspace"`；返回与重新打开保留候选、决定和阅读位置，并恢复触发器焦点。省略 onExpand 的 inline 显示全部项。
+- `beforePreview / afterPreview` 可组合既有 `DraftMathPreview`，分别传当前文本；组件不绑定数学库或题目私有结构。
+
+独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
+
 ## Agent 可读性与规范权威
 
 跨 Agent 使用时以站点根目录 `/llms.txt` 为发现入口，并遵循 `docs/agent-readable-contract.md`。组件页 Agent Spec、Foundations、Pattern / 应用示例、固定 coss upstream、Agent inference 依次构成权威顺序；后一级不得覆盖前一级。
