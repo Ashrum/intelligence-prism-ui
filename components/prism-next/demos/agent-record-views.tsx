@@ -16,10 +16,10 @@ export const recordViewExamples: Record<"p04" | "preparation", {
     progress: {
       title: "二次函数扫描材料整理 · 示例", state: "waiting-human", description: "第 3 页文字模糊，等待核对；第 1、2、4 页记录保留。",
       run: { id: "demo-p04-r2", label: "第 2 轮", version: "示例包 v2" }, updatedAt: "更新于 2026-09-24 09:20", expanded: true,
-      steps: [{ id: "read", label: "读取第 1、2、4 页", state: "done", time: "09:18", detail: "示例读取记录，仅覆盖标明页码。" }, { id: "proof", label: "核对第 3 页", state: "running", time: "09:19", detail: "上次进行到此处，当前等待教师处理。" }],
-      stages: [{ id: "organize", title: "内容整理", state: "partial", time: "09:19", description: "三个清晰页面已整理。", steps: [{ id: "draft", label: "形成待校对稿", state: "done", time: "09:19" }] }],
+      steps: [{ id: "read", label: "读取第 1、2、4 页", state: "done", time: "09:18", detail: "示例读取记录，仅覆盖标明页码。" }, { id: "proof", label: "核对第 3 页", state: "waiting-human", time: "09:19", detail: "当前等待教师核对模糊文字。" }],
+      stages: [{ id: "organize", title: "内容整理", state: "partial", time: "09:19", description: "三个清晰页面已整理。", steps: [{ id: "draft", label: "形成待校对稿", state: "partial", time: "09:19", detail: "第 1、2、4 页已形成校对稿，第 3 页尚未整理。" }] }],
       exceptions: [{ id: "blur", title: "第 3 页文字模糊", description: "无法核对二次函数的条件。", time: "09:19", resolution: "教师已要求补充清晰原稿；尚无后续回执。" }],
-      history: [{ id: "demo-p04-r1", label: "第 1 轮", version: "示例包 v1", state: "running", description: "保留当时记录，后续状态未确认。", updatedAt: "当时更新于 2026-09-23 16:40", steps: [{ id: "old", label: "整理原稿 v1", state: "running", time: "16:40", detail: "只代表当时位置。" }], exceptions: [] }],
+      history: [{ id: "demo-p04-r1", label: "第 1 轮", version: "示例包 v1", state: "running", description: "保留当时记录，后续状态未确认。", updatedAt: "当时更新于 2026-09-23 16:40", steps: [{ id: "old", label: "整理原稿 v1", state: "running", time: "16:40", detail: "只代表当时位置。" }, { id: "scope", label: "提交第 3 页的处理范围", state: "unknown", detail: "教师已确认处理范围，原请求回执缺失。" }, { id: "supplement", label: "处理补充原稿", state: "waiting", detail: "补充请求已接收，尚未报告开始处理。" }], exceptions: [] }],
     },
     result: {
       title: "扫描整理回执 · 示例", description: "保留可用部分，第 3 页尚未整理。", receipt: { status: "partial", completed: ["第 1、2、4 页形成校对稿 v2"], remaining: ["第 3 页待补充清晰原稿"], record: { request: "扫描整理请求 02 · 示例", run: "第 2 轮", version: "回执 v1", receivedAt: "2026-09-24 09:20" } },
