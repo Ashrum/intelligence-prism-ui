@@ -4,6 +4,8 @@
 
 回收 Workspace 固定提交 `4e0d656` 的通用适配：AgentComposer 范围、只读与发送阻断；MetricSummary / StatusComposition 紧凑布局；QuestionPrint 题号版本行开关；Badge attention 别名。Prism 层提供 Button 导航尺寸与 Toolbar plain 组合，固定 coss 源码保持不变；QuestionWorkPanel 的相关能力已在 main。
 
+经 Product Owner 2026-09-24 批准，Prism Button 增加可与导航尺寸组合的 `variant="info"`，复用现有信息色令牌用于引导/信息性操作，保留每个操作区唯一的 default 主动作层级。
+
 公开 API、默认值及迁移边界见 [组件复用约定](docs/component-contracts.md#workspace-适配回收-v01)。本轮为 Builder 源码交付；逐块分类与验证日志位于 `.sites-runtime/upstream/REPORT.md`。不启动开发服务，浏览器三主题、窄容器、键盘、读屏器、真实设备与 Workspace 升级接入未验证；需 Supervisor 独立检查，不构成视觉或业务验收。
 
 ## 当前可用版本：coss v1.13.1

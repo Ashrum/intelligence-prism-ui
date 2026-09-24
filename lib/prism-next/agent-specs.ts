@@ -19,8 +19,8 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   },
   button: {
     component: "Button",
-    source: "coss original component; preserve pinned upstream sizing, radius, padding and focus behavior",
-    contract: ["One primary action per action region.", "Use native sizes; Prism Button additionally exposes navigation and navigation-icon with 40px desktop / 44px coarse-pointer targets. Default output is unchanged; icon buttons require an accessible name.", "Destructive actions use the destructive treatment and confirmation when impact warrants it."],
+    source: "Pinned coss Button with components/prism-next/button adaptation; preserve upstream sizing, radius, padding and focus behavior",
+    contract: ["One primary action per action region.", "Use native sizes; Prism Button additionally exposes navigation and navigation-icon with 40px desktop / 44px coarse-pointer targets. Default output is unchanged; icon buttons require an accessible name.", "Prism variant=info uses existing semantic info tokens for guidance and informational actions, composes with navigation sizes, and does not replace the default primary action hierarchy.", "Destructive actions use the destructive treatment and confirmation when impact warrants it."],
     states: ["default", "hover", "focus-visible", "active", "loading", "disabled"],
     accessibility: ["Preserve keyboard focus and loading/disabled semantics.", "Icon-only buttons require aria-label or equivalent accessible naming."],
     do: ["Use hierarchy before adding color.", "Keep coss interaction behavior intact."],

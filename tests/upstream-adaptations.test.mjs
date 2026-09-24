@@ -118,6 +118,39 @@ test('Prism navigation Button keeps coss default output and disabled/loading/ren
   assert.match(icon, /size-10 pointer-coarse:size-11/); assert.match(icon, / disabled=""/);
 });
 
+test('Prism info Button uses semantic classes without primary appearance and composes with native/navigation sizes', () => {
+  for (const size of [undefined, 'sm', 'lg', 'icon', 'navigation', 'navigation-icon']) {
+    const html = render(h(Button, { variant: 'info', size, 'aria-label': '查看引导' }, '查看引导'));
+    const classes = html.match(/class="([^"]+)"/)[1].split(' ');
+    for (const name of ['border-info/30', 'bg-info/10', 'text-info-foreground', 'hover:bg-info/20', 'focus-visible:ring-info', 'focus-visible:ring-2', 'focus-visible:ring-offset-1']) {
+      assert.ok(classes.includes(name), `${size}: ${name}`);
+    }
+    assert.doesNotMatch(html, /bg-primary|text-primary-foreground|shadow-primary|focus-visible:ring-ring/);
+    const baseClasses = render(h(Button, { size, variant: null }, '查看引导')).match(/class="([^"]+)"/)[1].split(' ');
+    assert.deepEqual(classes.filter(name => !name.includes('info')), baseClasses.filter(name => name !== 'focus-visible:ring-ring'));
+    assert.match(html, /type="button"/);
+  }
+});
+
+test('Prism info Button preserves disabled/loading and render semantics with a visible loading indicator color', () => {
+  const disabled = render(h(Button, { variant: 'info', disabled: true }, '查看引导'));
+  assert.match(disabled, / disabled=""/);
+  assert.match(disabled, /disabled:pointer-events-none disabled:opacity-64/);
+  const loading = render(h(Button, { variant: 'info', loading: true, size: 'navigation' }, '查看引导'));
+  assert.match(loading, / disabled=""/);
+  assert.match(loading, /aria-disabled="true"/);
+  assert.match(loading, /data-loading=""/);
+  assert.match(loading, /data-loading:text-transparent/);
+  assert.ok(loading.includes('*:data-[slot=button-loading-indicator]:text-info-foreground'));
+  assert.match(loading, /data-slot="button-loading-indicator"/);
+  assert.match(loading, /role="status"/);
+  const link = render(h(Button, { variant: 'info', render: h('a', { href: '#guide' }), 'aria-label': '查看使用引导' }, '引导'));
+  assert.match(link, /^<a\b/);
+  assert.match(link, /href="#guide"/);
+  assert.match(link, /aria-label="查看使用引导"/);
+  assert.doesNotMatch(link, /type="button"/);
+});
+
 test('Prism Toolbar defaults to coss; plain retains the same root and child semantics without the frame', () => {
   const children = [h(ToolbarButton, { key: 'button' }, '操作'), h(ToolbarLink, { key: 'link', href: '#target' }, '导航')];
   const props = { 'aria-label': '外部工具栏' };
