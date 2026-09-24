@@ -8,7 +8,6 @@ import { Field, FieldLabel, FieldDescription, FieldError } from '@/components/co
 import { Form } from '@/components/coss/form'
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from '@/components/coss/number-field'
 import { Tabs, TabsList, TabsTab, TabsPanel } from '@/components/coss/tabs'
-import { StatusBadge } from './status-badge'
 import { Badge } from '@/components/prism-next/badge'
 import { MaterialSelect } from '@/components/prism-next/demo-parts'
 import { MathContent } from '@/components/prism-next/math-content'
@@ -21,13 +20,12 @@ export function ReadingWorkspace() {
   const [draft,setDraft]=useState<Material>(initialMaterial)
   const [errors,setErrors]=useState(emptyErrors)
   const [message,setMessage]=useState('')
-  const [hasSaved,setHasSaved]=useState(false)
   const [tab,setTab]=useState('metadata')
-  useEffect(()=>{try{const raw=localStorage.getItem(storageKey);if(raw){const value:unknown=JSON.parse(raw);if(isMaterial(value)){setSaved(value);setDraft(value);setHasSaved(true)}else setMessage('之前保存的数据格式已变化，已载入默认材料。')}}catch{setMessage('暂时无法读取本地记录，仍可编辑当前材料。')}},[])
+  useEffect(()=>{try{const raw=localStorage.getItem(storageKey);if(raw){const value:unknown=JSON.parse(raw);if(isMaterial(value)){setSaved(value);setDraft(value)}else setMessage('之前保存的数据格式已变化，已载入默认材料。')}}catch{setMessage('暂时无法读取本地记录，仍可编辑当前材料。')}},[])
   const dirty=JSON.stringify(saved)!==JSON.stringify(draft)
   function change<K extends keyof Material>(key:K,value:Material[K]){setDraft(v=>({...v,[key]:value}));setErrors(v=>({...v,[key]:''}));setMessage('')}
-  function save(){const result=validateMaterial(draft);setErrors(result);if(Object.values(result).some(Boolean)){setMessage('请修正标出的内容。');return}const value={...draft,title:draft.title.trim()};try{localStorage.setItem(storageKey,JSON.stringify(value));setSaved(value);setDraft(value);setHasSaved(true);setMessage('已保存到当前浏览器。')}catch{setMessage('保存失败：当前浏览器无法写入存储，请保留页面后重试。')}}
-  return <div className="prism-content"><header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b pb-5"><div className="flex items-center gap-3"><FileText className="size-5 text-muted-foreground"/><div><h1 className="font-semibold">材料研读与编辑</h1><p className="mt-1 text-ui-hint text-muted-foreground">浅色、暖纸与深色共享同一份内容</p></div></div><div className="flex flex-wrap items-center gap-3"><span className="text-ui-hint text-muted-foreground">草稿</span><StatusBadge tone={dirty?'pending':hasSaved?'complete':'neutral'}>{dirty?'有未保存修改':hasSaved?'已保存到本地':'示例材料'}</StatusBadge></div></header>
+  function save(){const result=validateMaterial(draft);setErrors(result);if(Object.values(result).some(Boolean)){setMessage('请修正标出的内容。');return}const value={...draft,title:draft.title.trim()};try{localStorage.setItem(storageKey,JSON.stringify(value));setSaved(value);setDraft(value);setMessage('已保存到当前浏览器。')}catch{setMessage('保存失败：当前浏览器无法写入存储，请保留页面后重试。')}}
+  return <div className="prism-content"><header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b pb-5"><div className="flex items-center gap-3"><FileText className="size-5 text-muted-foreground"/><div><h1 className="font-semibold">材料研读与编辑</h1><p className="mt-1 text-ui-hint text-muted-foreground">浅色、暖纸与深色共享同一份内容</p></div></div><Badge variant={dirty?'warning':'outline'}>{dirty?'有未保存修改':'草稿 · 本地保存'}</Badge></header>
     <div className="grid items-start gap-10 xl:grid-cols-[minmax(0,1.62fr)_minmax(18rem,1fr)]"><div className="min-w-0"><MathContent title={saved.title}/><div className="mt-8 flex flex-wrap items-center gap-4 border-t pt-5 text-ui-hint text-muted-foreground"><span>预计研读 {saved.minutes} 分钟</span><a className="text-(--link) underline underline-offset-4" href="/next/foundations#mathematics">查看数学排版规范 →</a></div></div>
     <aside aria-label="材料编辑与助手" className="min-w-0 xl:border-l xl:pl-8"><Tabs value={tab} onValueChange={v=>setTab(String(v))}><TabsList variant="underline"><TabsTab value="metadata">材料信息</TabsTab><TabsTab value="agent">复核助手</TabsTab></TabsList><TabsPanel value="metadata" className="pt-6"><Form noValidate className="space-y-6" onSubmit={e=>{e.preventDefault();save()}}>
       <Field invalid={!!errors.title}><FieldLabel htmlFor="reading-material-title">材料标题</FieldLabel><Input id="reading-material-title" value={draft.title} maxLength={80} onChange={e=>change('title',e.target.value)} aria-invalid={!!errors.title}/><FieldError match={!!errors.title}>{errors.title}</FieldError></Field>
