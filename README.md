@@ -4,6 +4,8 @@
 
 语义 26 `AgentExecutionProgress`、27 `AgentExecutionResult`、03 `AgentContextSummary` 补充 `view="inline" | "workspace"`（默认 inline）及独立 `density="default" | "compact"`。原 presentation 外框与默认调用输出保持；任务历史明确标“当时”并静态呈现，未知回执仅允许查询原请求，产出无打开能力不显示假入口，来源的选用/读取/Agent 本次参考/成果引用分别呈现。
 
+`AgentStep.state` 新增 `unknown / waiting-human / waiting / partial`，复用整体进度词表与静态图形；未到达用 pending，已发生但回执不明用 unknown，明确等待回执/处理用 waiting，当前等待教师用 waiting-human，规则见[步骤状态契约](docs/component-contracts.md#步骤状态2026-09-24)，本轮验证日志位于 `.sites-runtime/step-states/`。
+
 组件示例 `/next/components/agent-components#record-views` 含 P04 扫描整理与备课资料整理两组数据，三种用法共享事实，提供窄容器、长中文及公式示例。公开属性、默认值、职责和 P04 映射见 [组件复用约定](docs/component-contracts.md#任务记录三件套两态-v01)。执行确认仍仅 Inline；coss、依赖、视觉令牌和 80 项目录保持不变。
 
 接入验证在 Workspace `/teacher/agent/workspace` 进行，本仓库骨架不作验收依据。本轮不启动开发服务、不修改 Workspace；SSR 快照以 main `e99813a` 固定，验证日志与 Builder 报告位于 `.sites-runtime/record-views/`。浏览器三主题、窄屏/键盘/焦点恢复、实体设备、读屏器和真实服务未验证，候选仍待 Supervisor 独立 Review。

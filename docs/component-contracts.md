@@ -136,6 +136,27 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 支持层增量：`AgentStep.time?: string` 默认未提供；`AgentTaskProgress.density?: 'default' / 'compact'` 默认 default。默认输出保持原样。compact 将步骤名称、状态、时间和说明放入可换行的同一行。当前轮只有整体 `state=running` 且无 snapshot 时使用 live；阶段还要求自己的 state=running。历史轮及其阶段一律 snapshot；running 步骤文字为“上次进行到”，无 animate-spin、aria-current 或 live 标记。减少动态效果继续使用既有 motion-reduce 规则。阶段/异常/历史完整呈现，不进行自动分页、数量截断或状态合并。
 
+#### 步骤状态（2026-09-24）
+
+`AgentStep.state` 接受以下八值；`AgentStepStatus` 与所有消费步骤的 `AgentTaskProgress`、`AgentExecutionProgress` 当前轮、阶段及历史轮共用此契约，覆盖 inline / workspace 与 default / compact。标签复用 `lib/prism-next/agent-progress.ts` 的 `agentProgressLabels`；`done` 对应 completed，旧 `error` 保留原文“失败”以兼容原输出。
+
+| 值 | 标签 | Badge variant | 步骤行图形 | 外部事实 |
+| --- | --- | --- | --- | --- |
+| `pending` | 待开始 | secondary | Circle | 步骤尚未到达或开始；未来步骤只能用 pending |
+| `running` | 进行中 | info | Spinner | 当前有可信的运行事实；live 时才转动 |
+| `done` | 已完成 | success | Check | 明确完成本步骤，不推定整个任务完成 |
+| `error` | 失败 | error | CircleAlert | 明确失败，不能用来代替回执不明 |
+| `unknown` | 状态未确认 | warning | CircleHelp | 已提交或已发生，但回执缺失、超时或当前状态无法确认 |
+| `waiting-human` | 待人工处理 | warning | CircleAlert | 当前明确等待教师处理，不标记尚未到达的人工步骤 |
+| `waiting` | 等待处理 | warning | Clock3 | 有明确的等待回执或等待处理事实；具体内容由 detail 描述，不推定已接收或已运行 |
+| `partial` | 部分完成 | warning | CircleAlert | 明确仅完成部分范围，detail 保留已完成与未完成范围 |
+
+已发生但尚无回执的步骤依据事实使用 unknown / waiting，不回退 pending；回执不明用 unknown，只有明确的等待事实才用 waiting。点击确认不构成运行或完成证据。组件仅展示传入状态，宿主负责到达判断、请求关联和原请求查询；整体状态仍独立提供，不从步骤推算。
+
+`snapshot` 保留所有非 running 状态的原标签、Badge 与静态图形；running 仍显示“上次进行到”、outline 与 Circle。新增四值在 live / snapshot 均无动效且不设置 aria-current。状态文字与步骤图形同时呈现，图形对读屏隐藏，含义不只靠颜色。
+
+旧四值的独立 Badge、步骤列表、阶段/历史以及两态两密度输出以 main `0a19ff7` 的 25 组 SSR 快照对比；仅归一化 React 自动 ID，保留引用关系。`/next/components/agent-components#record-views` 的 P04 固定示例包含上述新增状态与旧 running 快照；示例不证明真实回执或业务接入。
+
 ### AgentExecutionResult（语义 27）
 
 从 `agent-semantic-components` 导入组件及 `AgentExecutionResultProps / AgentExecutionReceipt / AgentExecutionOutput`。

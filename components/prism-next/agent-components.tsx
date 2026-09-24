@@ -1,6 +1,6 @@
 "use client"
 import { useId,useRef,type ReactNode } from "react"
-import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert,ChevronDown } from "lucide-react"
+import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert,CircleHelp,Clock3,ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
@@ -11,6 +11,7 @@ import { Card } from "@/components/coss/card"
 import { Badge } from "@/components/prism-next/badge"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Separator } from "@/components/coss/separator"
+import { agentProgressLabels } from "@/lib/prism-next/agent-progress"
 export function AgentComposer({
   value, onChange, running = false, onSubmit, onStop, label = "任务",
   placeholder = "描述需要完成的任务…", submitLabel = "运行", maxLength = 1000,
@@ -118,14 +119,16 @@ export function AgentComposer({
     {suggestions}
   </form>;
 }
-export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string;time?:string}
+export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error"|"unknown"|"waiting-human"|"waiting"|"partial";detail?:string;time?:string}
 export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
- const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
- return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
+ const tones={done:'success',running:'info',pending:'secondary',error:'error',unknown:'warning','waiting-human':'warning',waiting:'warning',partial:'warning'} as const
+ // Preserve the legacy error label; all shared state labels use the progress vocabulary.
+ const label=state==='done'?agentProgressLabels.completed:state==='error'?'失败':agentProgressLabels[state]
+ return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':label}</Badge>
 }
 export function AgentTaskProgress({steps,actions,activity='live',density='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact'}) {
  return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className={density==='compact'?'space-y-2 py-2':'space-y-4 py-3'}>{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
-  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
+  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:step.state==='unknown'?<CircleHelp className="size-4 text-warning-foreground"/>:step.state==='waiting'?<Clock3 className="size-4 text-warning-foreground"/>:step.state==='waiting-human'||step.state==='partial'?<CircleAlert className="size-4 text-warning-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
   {density==='compact'?<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1"><span className="break-words text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/>{step.time&&<span className="break-words text-ui-hint text-muted-foreground">{step.time}</span>}{step.detail&&<span className="break-words text-ui-hint text-muted-foreground">{step.detail}</span>}</div>:<div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.time&&<p className="mt-1 break-words text-ui-hint text-muted-foreground">{step.time}</p>}{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>}
  </li>)}</ol>{actions}</div>
 }
