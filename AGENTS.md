@@ -5,7 +5,7 @@
 ## 1. 仓库职责
 
 - 本仓库：智能曜彩 Design System，以及 Agent 通用组件的设计、实现、交互状态、文档、组件示例和评审夹具。
-- `ole-school-workbench`：Teacher Workspace 的业务组合与接入验证。未经 Product Owner 明确要求，不修改该仓库；可只读参考。
+- `ole-school-workbench`：Teacher Workspace 的业务组合与接入验证；Agent 组件以 Workspace `/teacher/agent/workspace` 的真实流程为接入与验证依据，本仓库 `/next/skeletons/agent` 为历史骨架，不作为组件验收依据。经 Product Owner 2026-09-24 授权，可按同一流程（任务分支、Supervisor 委派 Builder 实现、独立 Review、Product Owner 确认后合并）修改 Workspace 以接入和验证组件；Workspace 的业务行为仍不搬进本仓库。
 - 不为让演示可用而把 Workspace 的业务行为（Store、路由、持久化、权限、Runtime）搬进本仓库，也不在运行时代码中引入 Workspace 私有类型。
 
 ## 2. 角色
@@ -101,7 +101,7 @@
 
 ## 8. 禁止事项
 
-未经 Product Owner 明确授权：部署或发布站点、修改远端环境、删除重要资源、大范围重构、修改冻结规范、增删依赖、改动 `ole-school-workbench`、超出任务范围的改动。
+未经 Product Owner 明确授权：部署或发布站点、修改远端环境、删除重要资源、大范围重构、修改冻结规范、增删依赖、超出已授权接入验证范围改动 `ole-school-workbench`、超出任务范围的改动。
 
 ## 9. 语言
 
