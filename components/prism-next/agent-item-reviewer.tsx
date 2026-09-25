@@ -78,13 +78,14 @@ export type AgentItemReviewerProps<T = string> = AgentRecordViewProps & {
   onBack?: () => void
 }
 
-const stateLabels: Record<AgentItemReviewState, string> = {
+/** Shared vocabulary for semantic 17 and its collection-level partner, semantic 16. */
+export const agentItemReviewLabels: Readonly<Record<AgentItemReviewState, string>> = {
   "waiting-human": "待复核", draft: "已编辑未提交", waiting: "复核提交中", unknown: "回执未确认",
   resolved: "已复核", failed: "已退回 / 失败", expired: "已过期",
 }
 
 function ReviewStatus({ state }: { state: AgentItemReviewState }) {
-  return <Badge variant={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{stateLabels[state]}</Badge>
+  return <Badge variant={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{agentItemReviewLabels[state]}</Badge>
 }
 
 function ReviewAction({ action, intent, title, primary, disabledReason, onAction }: {
