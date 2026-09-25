@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 文档工作区 v0.1 · 设计候选（2026-09-25）
+
+语义 28 `AgentDocumentWorkspace` 提供 Inline 摘要/节选与 Workspace 章节阅读、受控文本编辑、批注及历史版只读承载；`density="compact"` 只改变密度。查看、编辑、批注、导出四项能力及转换风险必填，未支持能力不提供可执行入口。保存状态、草稿与版本均由宿主提供，不内置持久化、格式转换或 Office／富文本编辑器。
+
+原位示例 `/next/components/agent-components#document-workspace` 包含五环节备课提纲与 PDF 讲评材料，两组均有 inline / workspace / compact、历史版、保存状态与 320px 容器。公开 API 见[组件复用约定](docs/component-contracts.md#文档工作区-v01)，目录保持 80 项，coss、依赖和视觉令牌不变。
+
+未合并候选位于 `feat/agent-document-workspace`，基于 main `fcc929d`。五项日志、测试与 Workspace 验证方案评估位于 `.sites-runtime/document-workspace/REPORT.md`；本轮只读核对 Workspace main `edbcbb1`，未接入或启动服务，浏览器与真实服务未验证。仍待 Supervisor 独立 Review，不自授通过结论。
+
 ## QuestionReview 状态外部化（2026-09-25）
 
 `QuestionReview` 新增可选 `review?: AgentItemReview`，复用单项复核器的七种外部状态。确认只调用原有 `onConfirm(scores, reason)` 意图回调，不再写入 saved/record、清空理由或显示本地生成的完成记录。旧属性与类型保持兼容；未传 review 时，发出确认后仅提示“已发出确认，等待记录”。
