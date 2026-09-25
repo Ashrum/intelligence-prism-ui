@@ -2,11 +2,19 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## QuestionReview 状态外部化（2026-09-25）
+
+`QuestionReview` 新增可选 `review?: AgentItemReview`，复用单项复核器的七种外部状态。确认只调用原有 `onConfirm(scores, reason)` 意图回调，不再写入 saved/record、清空理由或显示本地生成的完成记录。旧属性与类型保持兼容；未传 review 时，发出确认后仅提示“已发出确认，等待记录”。
+
+迁移时由宿主提供 waiting/unknown/resolved 等事实，只有匹配对象、请求与版本的回执才能提供 resolved；已记录评分由受控 editor.saved 更新。五处示例通过共用的示例宿主持有状态，“确认复核”后独立点击“载入示例回执”演示提交中 → 已复核；学习工作流在示例回执到达后才生成评价版本。详见 [QuestionReview 迁移契约](docs/component-contracts.md#questionreview-状态外部化迁移2026-09-25)。
+
+基线 main `3eb6533`，任务分支 `fix/question-review-external-status`。验证日志与 SSR 差异报告位于 `.sites-runtime/question-review/`；未启动开发服务，浏览器视觉／键盘、实体设备、读屏器、Workspace P04 接入与真实服务未验证，待 Supervisor 独立 Review。
+
 ## 单项复核器 v0.1 · 设计候选（2026-09-25）
 
 语义 17 `AgentItemReviewer` 位于 `components/prism-next/agent-item-reviewer.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，独立 `density="compact"` 只改变密度。Inline 呈现对象／依据版本、待复核要点、当前值摘要和快捷动作；Workspace 增加证据、受控草稿、原值对比、理由和当时复核记录。评分通过领域插槽接入。
 
-七种复核状态只取宿主事实；点击确认仅发请求，不产生“已复核”。unknown 只查询原请求；版本变化使旧确认过期，并保留草稿与理由。复核人／时间／版本取自回执，时间未知明确未确认。QuestionReview 存在点击后直接写 saved／record 的旧行为（`question-review.tsx:39`），本组件不继承，本轮保留原文件交 Supervisor 另行处理。
+七种复核状态只取宿主事实；点击确认仅发请求，不产生“已复核”。unknown 只查询原请求；版本变化使旧确认过期，并保留草稿与理由。复核人／时间／版本取自回执，时间未知明确未确认。QuestionReview 点击后直接写 saved／record 的旧行为已修复（本 PR），见上方状态外部化迁移说明。
 
 组件页 `/next/components/agent-components#item-reviewer` 提供 P04 单题原稿对照、单份作答评分两组固定示例，包含 inline / workspace / compact、320px、长中文与公式。复用 VerificationFields、PointsField、AgentEvidenceDrilldown、DocumentRegionViewer 及 coss / Prism；公开属性见[单项复核器契约](docs/component-contracts.md#单项复核器-v01)。目录仍为 80 项，无新增依赖或视觉令牌。
 
