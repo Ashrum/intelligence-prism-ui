@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 下钻与证据浏览 v0.1 · 设计候选（2026-09-25）
+
+语义 21 `AgentEvidenceDrilldown` 位于 `components/prism-next/agent-evidence-drilldown.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="compact"` 是独立密度。摘要展示结论与关键证据；完整视图按“结论 → 对象 → 证据”浏览，支持面包屑、上层返回和证据预览插槽。路径由宿主控制，打开、展开和返回仅发请求。
+
+已读取、已引用、仅检索命中、仅预览、不完整、不可用及未确认等事实分别呈现；数量与覆盖仅显示宿主提供的值，不依据点击或预览推定。历史证据保留当时版本；受限记录只显示允许披露的标题与原因，紧凑列表保留关键限制。
+
+组件页 `/next/components/agent-components#evidence-drilldown` 提供扫描校对与学情诊断两组固定示例，覆盖 inline / workspace / compact、320px 容器、长中文及公式。复用 DiagnosisEvidenceTable 诊断入口、AgentContextList 来源行与 DocumentRegionViewer 预览；公开 API 见[下钻与证据浏览契约](docs/component-contracts.md#下钻与证据浏览-v01)。不新增依赖、视觉令牌或目录条目。
+
+本轮未合并候选位于 `feat/agent-evidence-drilldown`（main 基线 `2f04f5a`），验证日志与 Builder 报告在 `.sites-runtime/evidence-drilldown/REPORT.md`，包含 P04 试验台轻量验证方案。未启动开发服务，未修改 Workspace 或写入 Git；浏览器视觉／键盘焦点及 Workspace 接入另行验证，候选待 Supervisor 独立 Review。
+
 ## 异常处理器 v0.1 · 设计候选（2026-09-25）
 
 语义 18 `AgentExceptionHandler` 位于 `components/prism-next/agent-exception-handler.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="default" | "compact"` 为独立密度。摘要保留类型、影响范围、已保留内容、处置状态及选项影响；完整视图提供全部异常、原始材料预览、判定依据、当时处置记录与返回入口。

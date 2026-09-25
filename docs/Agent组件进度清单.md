@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/18/26/27 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/18/21/26/27 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 21 新增**未合并组件候选**：分支 `feat/agent-evidence-drilldown`，基线 main `2f04f5a`；实现、两组组件页示例、契约及 `tests/agent-evidence-drilldown.test.mjs` 已提供。验证日志和 Builder 报告位于 `.sites-runtime/evidence-drilldown/`。Workspace `dce7e78` 仅作 P04 映射的只读核对，尚未引入本候选，浏览器与真实服务未验证。
 
 - 2026-09-25 语义 18 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #36](https://github.com/Ashrum/intelligence-prism-ui/pull/36)（`49e44e5`）；[Workspace #11](https://github.com/Ashrum/ole-school-workbench/pull/11)（`dce7e78`），P04 试验台浏览器验证覆盖待处理／提交中／回执未确认／已处置。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论；下列六项核查仍为此前记录。
 
@@ -71,7 +73,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 18 | 审核与修订 | 异常处理器 | AgentExceptionHandler（P/agent-exception-handler.tsx），复用 Alert / Card / Badge / Button / Collapsible / AgentStepStatus | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #36](https://github.com/Ashrum/intelligence-prism-ui/pull/36)（`49e44e5`）；[Workspace #11](https://github.com/Ashrum/ole-school-workbench/pull/11)（`dce7e78`）；P04 试验台浏览器验证：待处理／提交中／回执未确认／已处置 | P1 · 第 5 项 | 下一步：21 下钻与证据浏览；真实服务未验证。 |
 | 19 | 分析与诊断 | 指标摘要 | 复用起点：MetricSummary / GoalComparison / StatusComposition（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 优先直接复用，补语义映射说明；统计值、分母、缺测和结论不在组件内生成 |
 | 20 | 分析与诊断 | 分布矩阵 | 复用起点：HeatmapChart / ScatterChart / BoxPlotChart（P/analytics-components.tsx 导出） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接复用图形与数据表；数据维度、阈值和选择回调由宿主决定 |
-| 21 | 分析与诊断 | 下钻与证据浏览 | 复用起点：DiagnosisEvidenceTable（P/learning-components.tsx）、DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | P1 · 第 6 项 | 下一批第 2 项：组合证据定位、版本／失效提示及返回上下文；证据与授权事实外置。 |
+| 21 | 分析与诊断 | 下钻与证据浏览 | AgentEvidenceDrilldown（P/agent-evidence-drilldown.tsx）；复用 AgentContextList，DiagnosisEvidenceTable 入口与 DocumentRegionViewer 预览 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并分支 `feat/agent-evidence-drilldown`（main 基线 `2f04f5a`）；`tests/agent-evidence-drilldown.test.mjs`；`.sites-runtime/evidence-drilldown/REPORT.md` | P1 · 第 6 项 | Supervisor 独立 Review 后在 P04 验证原稿区域／识别文本、事实映射、历史版本与返回恢复；尚未接入 Workspace。 |
 | 22 | 计划与建议 | 建议集 | 复用起点：Card（B/card.tsx）、Checkbox（B/checkbox.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 建议依据、选择、调整与采纳事件；不以勾选推定教学任务已创建 |
 | 23 | 计划与建议 | 计划构建器 | 复用起点：LearningTaskList / MilestoneList（P/learning-components.tsx）、WorkloadCalendar（P/workload-calendar.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 受控任务、日期和编辑；列表／日历不等于自动排程或完整计划引擎 |
 | 24 | 计划与建议 | 路径与优先级 | 复用起点：MilestoneList（P/learning-components.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 顺序、依赖和阻塞的显示与受控调整；路径计算外置，不预建关系图编辑器 |
@@ -110,12 +112,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 35 | 除 03、13、15、18、25、26、27 外的各项 |
-| 组件候选 | 0 | — |
+| 未开始 | 34 | 除 03、13、15、18、21、25、26、27 外的各项 |
+| 组件候选 | 1 | 21；未合并任务分支 `feat/agent-evidence-drilldown` |
 | Workspace 已验证 | 7 | 03、13、15、18、25、26、27；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：**21 下钻与证据浏览**。下一批固定顺序：**21 下钻与证据浏览 → 17 单项复核器 → 28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
+下一步：**21 下钻与证据浏览候选的独立 Review 与 P04 轻量验证**。下一批固定顺序：**21 下钻与证据浏览 → 17 单项复核器 → 28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。
