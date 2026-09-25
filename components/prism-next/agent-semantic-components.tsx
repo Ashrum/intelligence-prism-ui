@@ -55,9 +55,9 @@ export type AgentConfirmationState =
   | { state: "unknown"; description: string; query?: AgentSemanticAction }
 
 /** Host owns all conditions and authorization. No implicit acknowledgement or local gate. */
-export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, presentation = "card" }: {
+export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, conditions, presentation = "card" }: {
   title: string; target: string; version: string; effects: readonly string[];
-  confirmation: AgentConfirmationState; presentation?: Presentation;
+  confirmation: AgentConfirmationState; conditions?: ReactNode; presentation?: Presentation;
 }) {
   const id = useId(), heading = useRef<HTMLHeadingElement>(null)
   const labels = { ready: "待确认", submitting: "正在提交", received: "请求已接收", recorded: "确认记录", blocked: "暂不可确认", unknown: "回执未确认" }
@@ -66,6 +66,7 @@ export function AgentExecutionConfirmation({ title, target, version, effects, co
     <div className="flex flex-wrap items-start justify-between gap-3"><h3 ref={heading} tabIndex={-1} id={id} className="min-w-0 break-words text-block-title outline-none">{title}</h3><Badge variant={blocked ? "warning" : "outline"}>{labels[confirmation.state]}</Badge></div>
     <Facts items={[{ label: "操作对象", value: target }, { label: "依据版本", value: version }]} />
     <div className="space-y-2"><p className="text-ui-action">{confirmation.state === "ready" || confirmation.state === "blocked" ? "确认后的影响" : "本次确认范围"}</p><ul className="list-disc space-y-1 pl-5 text-read-body">{effects.map(effect => <li key={effect} className="break-words">{effect}</li>)}</ul></div>
+    {conditions && <div className="min-w-0" data-execution-conditions="">{conditions}</div>}
     {confirmation.state !== "ready" && (blocked ? <Alert variant="warning" role="status"><CircleAlert aria-hidden="true" /><AlertDescription>{confirmation.description}</AlertDescription></Alert> : <p role="status" className="text-ui-hint text-muted-foreground">{confirmation.description}</p>)}
     {confirmation.state === "ready" && <Action action={{ ...confirmation.confirm, onAction: () => { confirmation.confirm.onAction(); requestAnimationFrame(() => heading.current?.focus({ preventScroll: true })) } }} />}
     {confirmation.state === "blocked" && confirmation.review && <Action action={confirmation.review} secondary />}
