@@ -101,6 +101,63 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 对象选择器 v0.1
+
+2026-09-25 设计候选，语义 **01 对象选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-object-picker` 导入 `AgentObjectPicker` 与同文件公开类型。不新增组件目录条目，目录保持 80 项。
+
+### 复用检索与 01 / 02 边界
+
+- 已核对 Combobox、Checkbox、DataRecordTable、FilterBar 和 AgentScopeBuilder。Combobox 支持受控查询与关闭默认过滤；Checkbox 提供原生键盘多选；DataRecordTable 的列渲染可组合选择控件；FilterBar 已有常驻固定标签。这些基础能力缺少跨对象类型的可用状态、推荐依据、跨结果选择及上限组合，因此补语义组合，不重造控件。
+- **01 选定具体对象**（某班级、学生、教师、课程或任务）；**02 组合多维范围**（班级＋章节＋时间等）。02 可在 `renderEditor / renderInlineEditor` 内复用 01 作为某一维度的选择器，01 不接管范围汇总、校验、版本或确认。02 的 inline compact 仍只显示其范围摘要，不挂载编辑器。
+- Workspace 表格只使用 DataRecordTable 的 `rows / columns`，在列内复用选择控件；不启用原有“查看记录 ID”的 `onSelect`，避免将查看混为选择或显示内部 ID。外框和辅助呈现复用 Card、Prism Badge/Button、Label、RecordDetails（coss Collapsible）。
+- 选择不授予权限。候选、可见名称／辅助信息／原因、推荐、已选对象、搜索结果及加载事实全部由宿主给出；组件没有权限服务、模型、取数、业务 Store、路由、持久化或执行器。
+
+### 公开 API
+
+`AgentObjectPickerProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / objectType` | 必填 string / `{id,label}` | 可读标题和对象类型；类型 id 是宿主已有标识，缺失时禁用选择／移除／确认。label 为教师语言，不从 id 推导 |
+| `selection` | 必填 `AgentObjectSelection` | `{mode:'single'}` 或 `{mode:'multiple',max?:number}`；单选直接请求替换，多选勾选／取消。max 为非负整数，0 不可新增；缺省无本地数量上限，非法上限禁止新增与确认；不截断现有选择 |
+| `candidates` | 必填 `readonly AgentObjectCandidate[]` | 当前已获权结果，稳定唯一 id 与显示顺序由宿主提供；重复／空 id 不可选择。不选推荐默认值、不缓存结果 |
+| `selectedIds / onSelectionChange?` | 必填只读 ID 数组 / `(ids:readonly string[])=>void` | 完全受控；请求新数组后等待宿主更新。单选传一个 id，多选仅增减目标；搜索、筛选、换页与 view 切换不改写选择。缺回调仅可查看选择 |
+| `selectedCandidates?` | `readonly AgentObjectCandidate[]`，默认 [] | 当前页以外已选对象的**当前获权事实**；同 id 优先取 candidates，以避免旧摘要覆盖新失权结果。缺记录用通用“对象暂不可确认”，不显示 id，不悄悄移除。失效项仍可经已选摘要“移除”发请求 |
+| `searchValue / onSearchChange?` | 必填 string / `(value:string)=>void` | workspace 固定标签 Combobox；只转发用户输入，保留空白，不转发选择项后产生的自动填充／清空。输入值及结果都由宿主更新；缺回调只读并说明搜索暂不可用 |
+| `filters?` | `{fields:FilterField[],value:Record<string,string>,onChange?}` | workspace 复用 FilterBar，值变化只回调；不自动重置、发起请求或筛选。缺回调显示只读字段标签和值 |
+| `filtering?` | 默认 host；`{mode:'host'}` 或 `{mode:'local',matches(candidate,query):boolean}` | 仅显式 local 时对当前 candidates 调用宿主提供的纯匹配函数；query 为 `{search,filters}`。不加载其他记录、不修改选中数组。restricted 项先投影到披露壳再交给 matcher。Combobox 始终 `filter={null}`，避免偷偷做第二层匹配 |
+| `result` | 必填 `AgentObjectPickerResult` | `ready`、`loading(message?)`、`empty(message)`、`error(message)`；后三者不挂载旧候选选择控件，但保留已选摘要。loading/error 阻断确认；empty 不否定已选且有当前合法事实的对象。ready 的空结果只显示当前没有候选，不声称整个学校无对象 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | 两态与密度正交，compact 只调整间距，不缩字、不藏不可选原因，非第三态 |
+| `inlineLimit / onExpand?` | 默认 3 / `(trigger:HTMLButtonElement)=>void` | 有展开能力时按宿主顺序取前 N 个有完整推荐依据或 recent 标记的快捷项，另保留所有已选和不可选结果。有限 N 取整且至少 1，非有限回退 3。缺 onExpand 无“更多选择”，保留所有已给出的结果；不猜测最近使用或任意挑默认项 |
+| `loadMore?` | `{onLoad:()=>void,loading?:boolean,disabledReason?:string}` | 只在 workspace 提供“加载更多”请求；loading／原因及整组 loading/error 禁用且再次保护。不递增页码或推定加载完成；收到新 candidates 才呈现新结果 |
+| `onConfirm? / confirmDisabledReason?` | `(ids:readonly string[])=>void` / string | 可选“确认选择”；只传当前数组副本，不生成确认、授权、保存、读取或执行事实。无选择、重复、失效、单选超量、多选超限、缺对象类型及 loading/error 阻断确认，原因常驻关联 |
+| `disabledReason?` | string | 限制新增、取消、移除、批量和确认，原因常驻且处理器保护；搜索、筛选、查看、展开和返回仍属可用视图操作 |
+| `onBack? / notice? / details?` | 可选函数 / string / ReactNode | 返回原位置只导航；notice 默认“选择对象不会授予访问权限。”，可替换成一条提示；补充说明进入默认收起的 details，不收纳关键不可选原因 |
+
+`AgentObjectCandidate` 分支：
+
+| 分支 | 字段 | 呈现 |
+| --- | --- | --- |
+| 可选 | `id,name,status:'available',description?,recent?,recommendation?` | 名称、辅助信息及宿主给定的最近使用／推荐，可选择 |
+| 已归档 / 不可用 | 上述公共字段，`status:'archived'/'unavailable',reason` | 状态及原因始终保留；不允许新增，已选引用可移除 |
+| 无权限 | `id,status:'restricted',disclosure:{name,reason}` | 只呈现允许披露的名称／原因；类型不接收私密 name、description、recent、recommendation，运行时也忽略误传字段，候选列表和已选摘要均遵守 |
+
+`recommendation: AgentObjectRecommendation={reason,source}` 必须同时非空才标“推荐”，并常驻显示依据和来源。缺失来源／依据时显示“推荐依据未提供，暂不标为推荐”，不展示无来源推荐文案、不从 recent 或排序制造依据。IDs 只用于 React key 和请求关联，不作为可见文案、隐藏业务属性或标签回退；Combobox 内使用局部序号关联当前候选。
+
+Workspace 批量范围是**当前展示结果中的可选项**，不代表全服务结果。新增部分加上已有选择超过上限时整批禁用，提示逐项选择，不任意截断选择前几人；“取消本页选择”保留页外项。已归档、失权、不可用、未解析、重复或超过上限的现有选择不被悄悄删除，确认被阻断，由用户移除／重选、宿主更新事实。
+
+宿主先过滤所有输入、选中摘要和 details，失权时同步更新 `candidates / selectedCandidates`；不可见对象连披露壳也不得传入。组件不是任意文本脱敏器，选择和前端禁用都不是授权凭据。宿主收到意图后重新核对当前身份、对象、可用状态、上限、会话／版本与明确任务范围；异步搜索结果与旧组件回调的归属保护继续由宿主承担。
+
+### 三种用法与验证边界
+
+- **inline default**：对象类型与选择模式 → 已选摘要及失效原因 → 少量推荐／最近项（依据来源常驻）和不可选原因 → 可选确认与更多选择。单选直接选择，多选勾选。
+- **workspace**：同一选择 → 固定标签搜索、筛选 → 当前页批量操作、DataRecordTable 完整结果与原因 → 可选加载更多、确认与返回。分页／搜索不创建第二份选择。
+- **compact**：可与任一 view 组合，只减少 padding 和间距；长中文换行，全部不可选／失效／上限原因保持常驻，不使用省略或折叠隐藏。
+
+组件页 `/next/components/agent-components#object-picker` 两组固定示例：班级单选（含一个只披露原因的无权限班级）；学生多选（已归档／不可用学生、上限 5、加载更多）。各有 inline / workspace / compact、320px 窄容器、长中文与说明内数学分式；三处共用受控选择、搜索与筛选。确认仅显示请求反馈，loading/empty/error 由独立示例控件手动指定。
+
+任务分支 `feat/agent-object-picker`，基于 main `696061e`；仍为未合并**组件候选**。测试、五项日志与 Workspace 本地 main `25b431e` 的只读轻量接线方案见 `.sites-runtime/object-picker/REPORT.md`。不启动开发服务，不改 Workspace 或 `.git`。SSR、原生控件语义与回调测试不等于浏览器键盘／三主题／窄容器视觉、读屏器、Workspace 接入或真实服务验收，候选待 Supervisor 独立 Review。
+
 ## 指标摘要 v0.1
 
 语义 19 `AgentMetricSummary`（`components/prism-next/agent-metric-summary.tsx`）声明 **Inline + 专用扩展内容**；为 Agent 场景组合既有指标展示，不新增目录条目。`view="inline" | "workspace"` 默认 inline；`density="default" | "compact"` 默认 default，compact 是独立密度，可与两态组合。
@@ -152,7 +209,7 @@ IDs 只作 key 与请求关联，不作为可见文字、隐藏 DOM 数据或回
 
 ## 范围构建器 v0.1
 
-2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。确定本次任务涉及哪些对象；执行方式、必须／禁止条件仍属于 08 约束构建器。范围选择不授予权限，未指定范围不等于使用全部授权数据。
+2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。02 组合多维范围；01 AgentObjectPicker 选定具体对象，可在 02 的维度编辑插槽中复用。范围汇总、跨维度校验、版本和确认仍由 02 消费宿主事实，不交给 01。执行方式、必须／禁止条件仍属于 08 约束构建器。范围选择不授予权限，未指定范围不等于使用全部授权数据。
 
 ### 复用检索与控件边界
 
@@ -885,6 +942,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+对象选择器同样提供 `details?: ReactNode`；推荐依据及来源、加载／空／错误、不可选原因、失效选择、上限与禁用原因在两态两密度常驻，不移入说明。常驻边界提示最多一条。
+
 范围构建器提供 `details?: ReactNode`。default 和 workspace 的校验、越权／不可用、排除原因及重新确认提示保持常驻。inline compact 按“范围构建器”契约例外处理：问题计数与重新确认标记常驻，具体原因在摘要入口可访问名称中可读，并可一键展开；边界提示只在本地详情出现一次，其他视图只常驻一次。
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
@@ -903,6 +962,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
 - `AgentMetricSummary`：语义 19 的指标卡，组合 MetricSummary compact 与 TrendChart；宿主给值、分母、样本、变化判断、异常与来源。Inline + 专用扩展内容，详见“指标摘要 v0.1”。
+- `AgentObjectPicker`：语义 01，复用 Combobox / Checkbox / DataRecordTable / FilterBar 选择具体对象；可作为 02 AgentScopeBuilder 的维度选择器，详见“对象选择器 v0.1”。候选、查询结果和选择都受控，选择不授予权限。
 - `AgentObjectViewer`：打开后的通用对象外壳与只读领域分区；身份、版本、权限来自宿主，敏感分区明确确认，受限原因常驻。摘要卡与入口仍由 AgentArtifactPreview 承担；详见“对象查看器 v0.1”。
 - `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。

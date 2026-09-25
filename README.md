@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 对象选择器 v0.1 · 设计候选（2026-09-25）
+
+语义 01 `AgentObjectPicker` 声明 **Inline + 专用扩展内容**：Inline 快速选择推荐／最近对象并呈现已选摘要；Workspace 复用 Combobox、FilterBar、DataRecordTable 和 Checkbox，提供搜索、筛选、多选、按上限批量选择与加载更多请求。`density="compact"` 只收紧间距，不隐藏不可选原因。
+
+01 选定“具体对象”，02 AgentScopeBuilder 组合“多维范围”；02 可在维度内复用 01。候选、允许披露的字段、选择、推荐依据／来源、搜索筛选结果与加载事实均由宿主提供，默认不做本地过滤；选择和确认不会授予权限或执行任务。跨结果选择保留，失效选择不自动删除，不显示内部长 ID。
+
+组件页 `/next/components/agent-components#object-picker` 提供班级单选（含无权限班级）、学生多选（含已归档学生、上限 5）两组标注示例，覆盖 inline / workspace / compact、320px、长中文和状态切换。公开 API 见[对象选择器契约](docs/component-contracts.md#对象选择器-v01)。coss、依赖、视觉令牌和 80 项目录不变。
+
+未合并候选位于 `feat/agent-object-picker`，基于 main `696061e`；进度清单第 01 项为“组件候选”。五项日志、测试清单与只读核对 Workspace 本地 main `25b431e` 的轻量接线方案见 `.sites-runtime/object-picker/REPORT.md`。本轮未写 `.git`、未启动开发服务、未修改 Workspace；浏览器与真实服务未验证，待 Supervisor 独立 Review。
+
 ## 指标摘要 v0.1 · 设计候选（2026-09-25）
 
 语义 19 `AgentMetricSummary` 声明 **Inline + 专用扩展内容**：Inline 用既有 MetricSummary compact 展示关键 KPI、显著变化与异常依据；Workspace 提供完整分组、TrendChart 趋势、统计口径和带来源解释。`density="compact"` 为独立密度，保留缺测、样本不足、状态未确认与受限原因。
