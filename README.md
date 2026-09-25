@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 集合篮 v0.1 · 设计候选（2026-09-25）
+
+语义 11 `AgentCollectionBasket` 声明 **Inline + 专用扩展内容**：Inline 展示宿主数量、关键条目、分组计数和去向；Workspace 提供完整清单、领域渲染插槽、受控批量选择／动作、分组与上移／下移。`density="compact"` 是独立密度，保留失效、冲突、受限与同步失败原因。汇总、来源版本、同步和最近变化均取宿主事实，操作只发请求，不内建集合数据源、计分、保存、组卷或发布。
+
+复用 Card、Badge、Button、Checkbox、Select、Collapsible；题目通过 QuestionCard 插槽呈现，QuestionWorkPanel 仍只承担可选 Drawer 外壳。Workspace 全局题篮 Provider、Store、班级交接与持久化保持原职责，不迁入本仓。目录仍为 80 项，coss、依赖、视觉令牌不变。
+
+组件页 `/next/components/agent-components#collection-basket` 提供试题篮（分值汇总、下架题、公式）和备课素材包（图片／视频／文章、分组）两组标注示例，展示 inline / workspace / compact、空态和手动同步状态。公开 API 见[集合篮契约](docs/component-contracts.md#集合篮-v01)。
+
+未合并候选位于 `feat/agent-collection-basket`，基于 main `9e6fa12`。测试、五项日志与 Workspace 轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。未启动开发服务、未修改 Workspace 或写入 Git；组件候选待 Supervisor 独立 Review，浏览器、Workspace 接入与真实服务尚未验证。
+
 ## 文件输入 v0.1 · 设计候选（2026-09-25）
 
 语义 04 `AgentFileInput` 声明 Inline + 专用扩展内容：少量文件选择与队列摘要、Workspace 完整队列／状态分组／批量操作／文件详情和排序；`density="compact"` 只调整布局密度。复用 coss 原生文件输入、卡片、进度和折叠组件，不新增目录条目、依赖或视觉令牌。
