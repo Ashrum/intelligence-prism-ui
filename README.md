@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 文件输入 v0.1 · 设计候选（2026-09-25）
+
+语义 04 `AgentFileInput` 声明 Inline + 专用扩展内容：少量文件选择与队列摘要、Workspace 完整队列／状态分组／批量操作／文件详情和排序；`density="compact"` 只调整布局密度。复用 coss 原生文件输入、卡片、进度和折叠组件，不新增目录条目、依赖或视觉令牌。
+
+选择与拖入只调用 `onSelect(files)`；类型、大小、数量校验及队列状态由宿主提供。已选择（仅本机）、校验未通过、等待上传、已接收、上传中、已上传、上传失败、状态未确认、已移除分别呈现，后续处理是独立记录。无有效进度不显示百分比，已上传不推定已读取或已解析；回执不明仅允许查询原请求，批量操作也不能绕过此限制。组件不读取文件内容、不上传、不持久化文件对象。
+
+组件与公开 API：`components/prism-next/agent-file-input.tsx`；契约见 [文件输入 v0.1](docs/component-contracts.md#文件输入-v01)。组件页 `/next/components/agent-components#file-input` 提供扫描试卷图片／PDF、备课 Word／Excel 两组标注示例，展示 inline / workspace / compact；紧凑实例置于 `AgentComposer.attachments`，`tools` 提供同队列入口。示例可做真实本机文件的元数据检查，真实上传明确未接入，不把本机材料送入预置解析结果。
+
+状态为任务分支 `feat/agent-file-input` 上的**组件候选**，不代表 main、Workspace 浏览器验收或真实服务接入。P04 轻量验证应把“带入示例扫描材料”作为已有资料引用，真实本机文件另列且只做本机检查；接收、上传、读取与解析分开映射，详见交付报告 `.sites-runtime/file-input/REPORT.md`。
+
 ## 文档工作区 v0.1 · 设计候选（2026-09-25）
 
 语义 28 `AgentDocumentWorkspace` 提供 Inline 摘要/节选与 Workspace 章节阅读、受控文本编辑、批注及历史版只读承载；`density="compact"` 只改变密度。查看、编辑、批注、导出四项能力及转换风险必填，未支持能力不提供可执行入口。保存状态、草稿与版本均由宿主提供，不内置持久化、格式转换或 Office／富文本编辑器。
