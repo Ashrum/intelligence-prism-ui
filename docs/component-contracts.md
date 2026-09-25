@@ -101,6 +101,64 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 对象查看器 v0.1
+
+2026-09-25 设计候选，语义 **14 对象查看器**，声明 **Inline + 通用扩展容器（领域内容可专用）**。从 `components/prism-next/agent-object-viewer` 导入 `AgentObjectViewer` 与同文件公开类型。不新增组件目录条目；80 项目录、coss、依赖与视觉令牌保持不变。
+
+### 复用检索与领域边界
+
+- `AgentArtifactPreview`（13）是成果摘要卡与打开入口；`AgentObjectViewer`（14）是**打开后的对象呈现**。前者的 `open.onAction` 由宿主接至后者所在的既有工作区，不给摘要预览补造独立 Workspace。
+- `QuestionCard / QuestionDetails` 已提供题面、数学内容和详情分类，`DocumentRegionViewer` 已提供文档区域与定位；它们不承担跨领域对象的身份、版本、授权结果和统一分区。新增组合只补这些共同职责，内容以插槽接入，不导入领域模型或 Workspace 私有类型。
+- 外框、按钮、标记、局部展开与“说明”复用 Card、Button、Prism Badge、coss Collapsible / RecordDetails。工作区的面板、专注、滚动恢复、路由、Store、权限检查和持久化仍由宿主承担；不引入第二套外壳。
+
+### 公开 API
+
+`AgentObjectViewerProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `object` | 必填 `AgentObjectIdentity` | `{id,type,name,displayId?}`；id 为不透明业务引用，type/name 为允许披露的教师语言。只有显式 displayId 才显示“编号”；不回退显示内部 ID，不写入 DOM 属性 |
+| `version` | 必填 `AgentObjectVersion` | `{id,label,state:'current'/'historical',currentLabel?,difference?}`；id 只作关联，label 是可读版本。历史常驻“历史版本（只读）／当时版本”；currentLabel 仅为宿主提供的当前版本名。difference 是宿主的差异说明，缺省不猜测变更或声称没有差异 |
+| `access` | 必填 `AgentObjectAccess` | available 分支必填 scope，可选 readOnlyReason；restricted 分支必填 reason。作用是呈现当前授权结果，不是权限判定 |
+| `source` | 可选 string | 可读来源；缺失显示“来源未确认”，不从名称、版本或关联对象推断 |
+| `sections` | 必填 `readonly AgentObjectSection[]` | 分区顺序与内容均由宿主提供，见下表。空数组只说“暂未提供对象内容” |
+| `view / density` | inline / workspace 默认 inline；default / compact 默认 default | 两态与密度正交。compact 只调整留白，保留阅读字号、历史、受限原因和需确认提示，不形成第三种业务态 |
+| `inlineLimit` | `1 / 2`，默认 2 | 按提供顺序常驻前 1–2 条具有 summary 的非敏感、可访问分区摘要；运行时非 1 值回退 2。所有分区仍有局部入口，不因缺 onExpand 变得不可达 |
+| `activeSection` | 必填 `string / null` | 受控分区选择；workspace 目录标记选中项，不自选第一项、不维护副本。无匹配项明确不可定位；目录不自动确认敏感内容 |
+| `onNavigate` | 可选 `(sectionId, trigger:HTMLButtonElement)=>void` | 只发导航请求，activeSection 更新后才滚动定位；缺省是静态目录。按钮通过生成的锚点关联分区，不将内部 ID 放入 HTML；定位不生成读取事实 |
+| `versions / onVersionChange` | 可选 `readonly AgentObjectVersionOption[] / (intent,trigger)=>void` | option={id,label,state,disabledReason?}；仅 workspace 且有接收器时呈现。请求包含 `{objectId,versionId,targetVersionId}`，不改版本或内容；宿主取得当前授权的所选内容后更新 version/sections。当前选项不重复发请求 |
+| `actions / onAction` | 可选 `readonly AgentObjectAction[] / (intent,trigger)=>void` | action={id,kind,label,disabledReason?}，kind 只接受 add-to-collection / review / drilldown。请求包含 `{objectId,versionId,actionId,kind}`；缺回调、未知种类或空 action.id 无入口，不解释按钮文案或执行脚本 |
+| `relations / onOpenRelation` | 可选 `readonly AgentObjectRelation[] / (intent,trigger)=>void` | relation={id,relationship,name,openable?}；workspace 展示已获权的关联对象。仅 openable 且有接收器时可打开，请求为 `{objectId,versionId,relatedObjectId}`；无能力仍为可读关系 |
+| `onExpand` | 可选 `(trigger:HTMLButtonElement)=>void` | inline 的“查看完整”，缺省无入口；不切 view、不新建面板、不读对象。宿主保持同一对象／版本并恢复原触发器焦点 |
+| `onBack` | 可选 `()=>void` | workspace 返回原位置，仅视图导航；不保存、提交、取消任务或撤销操作 |
+| `notice / details` | 可选 `string / ReactNode` | notice 至多一条常驻边界提示，details 默认收起“说明”；历史只读、受限原因、敏感确认、动作禁用和版本差异不移入说明 |
+
+### 分区、权限与敏感确认
+
+| 分支 | 输入 | 呈现与保护 |
+| --- | --- | --- |
+| 可访问分区 | `AgentObjectContentSection={id,title,access?:'available',summary?,content,sensitive?:{reason}}` | summary/content 是只读 ReactNode 插槽，正文字符串按文本转义。workspace 普通分区直接挂载 content；inline 使用独立 Collapsible 快速展开，默认收起 |
+| 敏感分区 | 上述 sensitive 存在 | reason 常驻且关联“确认查看…”按钮；**summary 永不挂载**，content 只有明确确认展开后挂载。目录定位、“查看完整”和展开其他分区均不代替确认；不使用 keepMounted 或浏览器查找自动展开。确认只是局部披露，不是权限授权 |
+| 受限分区 | `AgentObjectRestrictedSection={id,access:'restricted',disclosure:{label,reason}}` | 只接受当前允许披露的标题与原因；不接受正文、摘要、敏感内容或动作。运行时同样忽略误传的私密字段，不调用或挂载领域渲染器；所有密度常驻原因 |
+
+对象／版本引用、当前／历史状态、可见范围变化会重建局部展开区；分区变为受限或敏感策略变化也会重建。敏感确认不随对象或版本复用，收起后再次打开仍使用明确的确认入口；不持久化确认。整体 access=restricted 时，只保留获准披露的身份／版本、受限原因与可选返回；不挂载来源、差异、分区、关联对象、notice/details、版本切换、展开或操作。
+
+历史版本和 access.readOnlyReason 阻断加入集合及复核入口，仍可查看、切换获权版本、定位和下钻证据；全部插槽必须遵守只读边界，不得内嵌写操作绕过外部动作。缺对象或版本 id 时明确未确认并隐藏对象动作、版本请求、关联打开及完整查看；普通分区阅读仍可呈现。动作／版本的 disabledReason 常驻、可访问关联且事件处理再次保护。
+
+宿主须先过滤所有内容与元信息，包含名称、可读编号、历史版本、差异、来源、关系、摘要和 details；不能先把无权访问的数据放进插槽再依赖 UI 隐藏。历史读取也按**当前**权限检查。id 与 label 分离不是任意文本脱敏器，宿主不得把内部长 ID 当作 name、displayId 或版本 label。`QuestionDetails` 的 archive 页会直接显示题目 ID：此示例只提供 answer 页，真实接入须省略不适用页或由宿主提供经过核准的可读档案内容，不能仅靠外壳隐藏。
+
+查看器不接收或产生“已读取／已引用”状态，不从打开、定位、确认、版本变化或回调返回推断这些事实；需要证据时经 drilldown 接至既有 `AgentEvidenceDrilldown`。写入、复核、加入集合等请求由宿主重新校验权限、版本、对象归属和实际能力，组件不更新成果、集合、状态或历史。
+
+### 三种用法与验证边界
+
+- **inline**：对象身份、当前／当时版本、来源与可见范围 → 1–2 个关键摘要 → 全部分区的局部展开／敏感确认／受限原因 → 可用动作与“查看完整”。
+- **workspace**：同一身份与事实 → 受控版本选项 → 分区目录与完整内容 → 关联对象 → 可用动作与返回；不自行管理外部容器。
+- **compact**：上述内容保持，仅缩减间距并允许换行；历史只读、权限和敏感确认不隐藏。可用于 inline 或 workspace。
+
+组件页 `/next/components/agent-components#object-viewer` 两组标注固定示例：题目通过 QuestionCard 与答案专用 QuestionDetails 插槽组合，答案需确认；学生作答通过 DocumentRegionViewer 展示人工区域，“家长联系方式”受限并说明原因。三处用法共用版本与目录选择；版本按钮先请求，独立“载入请求的示例版本”才替换示例数据，提供 320px、长中文和数学分式。不连接题库、OCR、作答或复核服务。
+
+未合并候选：`feat/agent-object-viewer`，基于 main `c9980c8`。五项日志、测试清单和只读核对 Workspace main 的轻量验证方案见 `.sites-runtime/object-viewer/REPORT.md`。本轮不启动开发服务，不修改 Workspace 或 `.git`；SSR／回调检查不等于浏览器、Workspace 接入、读屏或真实服务验收。等待 Supervisor 独立 Review。
+
 ## 集合篮 v0.1
 
 2026-09-25 设计候选，语义 **11 集合篮**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-collection-basket` 导入 `AgentCollectionBasket` 及同文件公开类型；不增加 80 项组件目录。用于暂存已选题目、素材、资源、学生等，不创建第二份集合数据源。
@@ -728,6 +786,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
+- `AgentObjectViewer`：打开后的通用对象外壳与只读领域分区；身份、版本、权限来自宿主，敏感分区明确确认，受限原因常驻。摘要卡与入口仍由 AgentArtifactPreview 承担；详见“对象查看器 v0.1”。
 - `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
@@ -744,7 +803,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 | 组件 | 输入及回调 | 边界 |
 | --- | --- | --- |
 | AgentContextSummary | `title / scope / sources / expanded / onExpandedChange? / onInspect? / notice? / snapshot?` | 复用 AgentContextList；来源事实独立，不检索或认证证据 |
-| AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 对象预览不证明执行或发布；缺 open 则没有打开入口 |
+| AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 成果摘要卡与打开入口；打开后的对象呈现由 AgentObjectViewer / 领域工作区承担。预览不证明执行或发布，缺 open 没有入口 |
 | AgentExecutionConfirmation | `title / target / version / effects / confirmation` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query |
 | AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
 | AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |

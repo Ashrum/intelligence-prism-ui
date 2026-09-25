@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/11/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/11/14/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 14 为 Product Owner 批准的下一批首项：`feat/agent-object-viewer`（基于 main `c9980c8`）上的**未合并组件候选**。AgentObjectViewer 复用 QuestionCard / QuestionDetails / DocumentRegionViewer 插槽，提供 inline / workspace / compact、版本与权限分区、敏感确认；测试、五项日志与 Workspace main `b7e48c5` 的只读接入方案见 `.sites-runtime/object-viewer/REPORT.md`。未启动开发服务、未修改 Workspace；不表示 main 已包含或 Workspace 浏览器验收通过。
 
 - 2026-09-25 语义 11 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #48](https://github.com/Ashrum/intelligence-prism-ui/pull/48)（`ca2dd79`）；[Workspace #17](https://github.com/Ashrum/ole-school-workbench/pull/17)；全局题篮投影：对话摘要、右栏管理、移除与跨页一致；总分/清空/排序未接入，因 Context 未开放。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -74,7 +76,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 11 | 选择与组合 | 集合篮 | AgentCollectionBasket（P/agent-collection-basket.tsx）；复用 Card / Badge / Button / Checkbox / Select / RecordDetails，题目用 QuestionCard 插槽；QuestionWorkPanel 为可选外壳 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #48](https://github.com/Ashrum/intelligence-prism-ui/pull/48)（`ca2dd79`）；[Workspace #17](https://github.com/Ashrum/ole-school-workbench/pull/17)；全局题篮投影：对话摘要、右栏管理、移除与跨页一致；总分/清空/排序未接入，因 Context 未开放 | P1 · 第 10 项 | 按覆盖矩阵 §6.3 重新排序剩余 30 项，待 Supervisor 与 PO 确认下一批。 |
 | 12 | 选择与组合 | 结构编排器 | 复用起点：LearningTaskList（P/learning-components.tsx）、Tree（P/tree.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 当前没有完整通用层级编辑器；先考虑受控排序／分组及上移下移，不搬入组卷模型 |
 | 13 | 预览与查看 | 摘要预览 | AgentArtifactPreview（P/agent-semantic-components.tsx） | 仅 Inline | inline | Workspace 已验证 | [Workspace #7](https://github.com/Ashrum/ole-school-workbench/pull/7)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 3 项 | 随下一批核对同一成果身份与版本、可打开能力；不另建摘要扩展页。 |
-| 14 | 预览与查看 | 对象查看器 | 复用起点：QuestionCard（P/question-card.tsx）、QuestionDetails（P/question-details.tsx）、DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 通用承载与领域渲染器组合；详情、答案及敏感字段由宿主按权限提供 |
+| 14 | 预览与查看 | 对象查看器 | AgentObjectViewer（P/agent-object-viewer.tsx）；QuestionCard / QuestionDetails、DocumentRegionViewer 以只读插槽接入 | Inline + 通用扩展容器 | inline / workspace / compact | 组件候选 | 未合并分支 `feat/agent-object-viewer`，基于 main `c9980c8`；测试与五项日志见 `.sites-runtime/object-viewer/REPORT.md` | PO 2026-09-25 批准：下一批首项 | Supervisor 独立 Review 后，在 Workspace 新页右栏现有题目对象分支轻量验证；保留领域渲染、历史版本与当前权限，浏览器及真实服务未验证 |
 | 15 | 预览与查看 | 对比查看器 | AgentChangeSet（P/agent-components.tsx），组合 AgentChangeReview | Inline + 专用扩展内容 | inline / workspace | Workspace 已验证 | [Prism #31](https://github.com/Ashrum/intelligence-prism-ui/pull/31)；[Workspace #8](https://github.com/Ashrum/ole-school-workbench/pull/8)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 4 项 | 随 18/17 增量核对冲突、采纳意图与同源草稿；采纳不等于保存。 |
 | 16 | 审核与修订 | 审核队列 | 复用起点：DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 外部待审条目与状态、受控选择和下一项；审核优先级、锁和分派外置 |
 | 17 | 审核与修订 | 单项复核器 | AgentItemReviewer（P/agent-item-reviewer.tsx）；复用 VerificationFields / PointsField，证据与对照插槽 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #40](https://github.com/Ashrum/intelligence-prism-ui/pull/40)（`9b71c78`）；[Workspace #13](https://github.com/Ashrum/ole-school-workbench/pull/13)；P04 逐题复核：待复核→提交中→回执未确认→编辑后过期→重新复核→已复核 | P1 · 第 7 项 | 下一步：按覆盖矩阵 §6.3 重新排序剩余 30 项，待 Supervisor 与 PO 确认下一批。真实服务未验证。备注：QuestionReview 已外部状态化（[Prism #42](https://github.com/Ashrum/intelligence-prism-ui/pull/42)），并已在 Workspace 迁移（[Workspace #14](https://github.com/Ashrum/ole-school-workbench/pull/14)）。 |
@@ -120,12 +122,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 30 | 除 03、04、11、13、15、17、18、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | — |
+| 未开始 | 29 | 除 03、04、11、13、14、15、17、18、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 14；任务分支 `feat/agent-object-viewer` 未合并 |
 | Workspace 已验证 | 12 | 03、04、11、13、15、17、18、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：按覆盖矩阵 §6.3 重新排序剩余 30 项，待 Supervisor 与 PO 确认下一批。
+下一步：先完成 14 的独立 Review 与 Workspace 现有对象分支轻量验证，再按覆盖矩阵 §6.3 收敛剩余 29 个未开始项；不把组件候选升级为 Workspace 已验证。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。
