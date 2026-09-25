@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/08/11/14/16/17/18/19/21/26/27/28/33 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/08/11/14/16/17/18/19/21/26/27/28/33/35 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-26 语义 35 实施候选：`AgentStructuredContent`（`P/agent-structured-content.tsx`），任务分支 `feat/agent-structured-content`，基于 main `98c584b`，未提交／未合并。组合 Tree、Collapsible、Button、Input；两态与紧凑密度、节点意图及能力／冲突／历史保护详见组件契约。组件页 `#structured-content` 为标注示例；五项日志和 Workspace 本地 main `2cc32be` 的只读核对／轻量方案见 `.sites-runtime/structured-content/REPORT.md`。本轮未启动服务或浏览器验收、未接线 Workspace、未接真实服务。
 
 - 2026-09-26 语义 33 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentArtifactOutput`（`P/agent-artifact-output.tsx`），本仓 [Prism #66](https://github.com/Ashrum/intelligence-prism-ui/pull/66)（`727ac33`）；[Workspace #26](https://github.com/Ashrum/ole-school-workbench/pull/26)；P04 去向：PDF/Word 不支持并说明原因、无下载入口；组卷页打印预览以 QuestionPrint 作预览插槽。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。未验证：实际纸面打印。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -111,7 +113,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 32 | 内容与成果物 | 视频与时间轴 | 复用起点：Card（B/card.tsx）；通用视频时间轴编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用时间轴编辑器；播放、字幕和剪辑分别由适配器承担 |
 | 33 | 内容与成果物 | 成果物输出 | AgentArtifactOutput（P/agent-artifact-output.tsx）；复用 Card / Field / Select / Badge / Button / RecordDetails，QuestionPrint 预览插槽 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #66](https://github.com/Ashrum/intelligence-prism-ui/pull/66)（`727ac33`）；[Workspace #26](https://github.com/Ashrum/ole-school-workbench/pull/26)；P04 去向：PDF/Word 不支持并说明原因、无下载入口；组卷页打印预览以 QuestionPrint 作预览插槽 | PO 2026-09-26 批准：本批第 2 项 | 下一步：35 结构化内容工作区。当前文件下载事实由宿主提供；未验证：实际纸面打印；真实服务未验证。 |
 | 34 | 内容与成果物 | 图形关系工作区 | 复用起点：Card（B/card.tsx）；通用节点／连线编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用节点／连线编辑器；图表引擎不等于关系编辑能力，不引入统一 AST |
-| 35 | 内容与成果物 | 结构化内容工作区 | 复用起点：Tree（P/tree.tsx）、Collapsible（B/collapsible.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 目录选择不等于内容编辑；需要时补受控层级编辑，内容模型由对应适配器维护 |
+| 35 | 内容与成果物 | 结构化内容工作区 | AgentStructuredContent（P/agent-structured-content.tsx）；Tree / Collapsible / Button / Input 组合 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | `feat/agent-structured-content`，main 基线 `98c584b`；未提交／未合并，测试与五项日志见 `.sites-runtime/structured-content/REPORT.md` | PO 2026-09-26 批准：本批第 3 项 | 待 Supervisor 独立 Review；Workspace 同一备课提纲对象增加“结构”视图的方案仅只读核对。35 编辑层级，28 编辑章节正文，12 编排试卷／任务顺序。 |
 | 36 | 教学资源与素材 | 资源检索器 | 复用起点：Combobox（B/combobox.tsx）、DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 外部检索结果、来源、可用性和使用限制；命中、预览、读取分开 |
 | 37 | 教学资源与素材 | 素材提取器 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 选择片段和来源定位可复用；提取、裁剪、转换服务不在组件内实现 |
 | 38 | 教学资源与素材 | 素材包 | 复用起点：Card（B/card.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 组合分类、排序和来源引用；沿用资产身份，不另造一套资料库 |
@@ -136,13 +138,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 22 | 除 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28、33 外的各项 |
-| 组件候选 | 0 | — |
+| 未开始 | 21 | 除 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28、33、35 外的各项 |
+| 组件候选 | 1 | 35（未合并任务分支） |
 | Workspace 已验证 | 20 | 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28、33；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出已登记为 Workspace 已验证。下一步：35 结构化内容工作区，之后按本批顺序推进 07 → 10 → 22 → 36。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出已登记为 Workspace 已验证。35 结构化内容工作区为未合并组件候选，先完成独立 Review 与 Workspace 轻量验证，再按本批顺序推进 07 → 10 → 22 → 36。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
