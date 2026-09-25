@@ -112,8 +112,9 @@ export function FileInputExample({ purpose, narrow }: { purpose: keyof typeof fi
     ] as const).map(([view, density, label]) => <section key={`${view}-${density}`} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
+      {density === "compact" && <p className="text-ui-hint">文件名可展开详情与原因；状态始终可见，移除按钮只移除本页记录。</p>}
       {density === "compact" ? <AgentComposer variant="conversation" value={prompt} onChange={setPrompt} sendDisabledReason="此示例暂不能运行任务。" onSubmit={() => {}}
-        attachments={<AgentFileInput {...common} view={view} density={density} />}
+        attachments={<AgentFileInput {...common} title="已选文件" inlineLimit={3} view={view} density={density} />}
         tools={<Button type="button" variant="outline" size="navigation" onClick={event => expand(event.currentTarget)}>查看文件队列</Button>} />
         : <AgentFileInput {...common} view={view} density={density} />}
     </section>)}</div>

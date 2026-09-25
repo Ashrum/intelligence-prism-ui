@@ -121,11 +121,11 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `onSelect(files: File[])` | 选择／拖入后唯一回调；完整交付所选文件，不截断超量文件、不判定合法、不读取内容。空选择不回调，原生 input 值立即清空。不得把接到此事件视为上传、读取或解析回执 |
 | `selectionDisabledReason?` | 阻止选择及拖入并显示关联原因；不会禁用独立的原请求查询。宿主按当前权限决定 |
 | `onAction?(intent)` | 移除、替换、重试、查询、排序意图。`fileId / version?` 指向传入条目；`kind='move'` 附 `direction:'up'/'down' / adjacentId`；retry 附原 `requestId?`；query 必带原 `requestId`。不修改列表、版本或执行事实 |
-| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default。compact 不改变字号、事实或动作规则，不是第三种业务态 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default。inline compact 使用单行队列；workspace 的两种密度维持原呈现。compact 不改变字号、事实或动作规则，不是第三种业务态 |
 | `inlineLimit / onExpand?` | 默认 3 项；非有限值回退 3、其他值取整且至少 1。有 onExpand 且超限时提供“管理全部”，传出触发按钮供恢复焦点。校验失败、上传失败、unknown 永不因阈值隐藏；无 onExpand 则显示完整列表且无展开入口 |
 | `groupBy / onGroupByChange?` | 默认 `none` 即外部数组顺序；workspace 支持 `status` 分组，并保留每组内原顺序。回调只请求呈现变化。分组时排序按钮显示“请切回文件顺序后调整” |
 | `batchActions / onBatchAction?` | Workspace 专用。动作 `{id,label,kind:'remove'/'upload'/'retry',fileIds,disabledReason?}`，宿主明确目标集合；回调原样返回 `{id,kind,fileIds}`，不静默缩减目标集合 |
-| `onBack? / notice? / details?` | 返回只导航；一条可选常驻边界提示；其余解释进入默认收起的“说明”。失败、未知、能力限制及禁用原因始终可见 |
+| `onBack? / notice? / details?` | 返回只导航；一条可选常驻边界提示；其余解释进入默认收起的“说明”。default 与 workspace 的失败、未知、能力限制及禁用原因始终可见；inline compact 的披露方式见下文 |
 
 ### 条目与状态
 
@@ -155,7 +155,9 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 
 - Inline：固定标签的选择入口、能力／限制、少量文件和关键异常；超阈值时展开同一队列。
 - Workspace：完整队列、状态分组、宿主给出的批量动作、可折叠文件详情与排序；返回不提交、不取消、不保存。
-- Compact：相同事实与动作，压缩间距，可用在浮层或 Composer 附件区，不减字号。
+- Compact（仅 inline）：每个文件默认一行，呈现文件名详情入口、状态 Badge 和获授权的移除图标按钮。名称可截断，`title` 与可访问名称保留全文；移除按钮的可访问名称含文件名。文件详情入口通过原生按钮响应键盘，展开关联的 Collapsible 后显示完整名称、类型、大小、来源、校验／失败／未确认原因及其余可用动作。异常状态文字始终可见，原因同时出现在详情入口的可访问名称中，一键展开可读；移除禁用原因同样可展开，并关联到移除按钮。unknown 仍只有查询原请求，不因紧凑布局获得移除等能力。
+- Compact 能力说明：只保留一条最关键的常驻提示，优先显示选择禁用原因，否则显示外部声明的上传能力；不自行推定已执行本机校验。选择、上传、拖放的详细能力与原因、类型／大小／数量限制、notice 和 details 合并到默认收起的“说明”。原生文件 input、常驻标签、键盘入口与完整 aria-describedby 关联保留，说明面板保持挂载。使用既有 Input sm、Button sm／icon-sm，不新增字号或视觉令牌。
+- default inline 及 workspace 两种密度的 SSR 输出，以 main `7bf305b` 的九组夹具（完整状态、禁用与分组、空队列）作字节一致性回归。
 
 `AgentComposer variant="conversation"` 的 `attachments` 放 `<AgentFileInput density="compact" ... />`，`tools` 放打开同队列的按钮／既有资料入口。当前 default／compact Composer 分支不渲染 attachments/tools，不应宣称这两个分支已支持文件插槽；需要时在 Composer 外并列组合。示例已实际使用 conversation 组合，AgentFileInput 没有嵌套 form，所有队列按钮均为 `type="button"`；Composer 发送不自动触发上传。Composer 的 readOnly／running 不会自动约束插槽，宿主须同步选择限制及动作能力。
 
@@ -651,7 +653,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
-文档工作区与文件输入同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。
+文档工作区与文件输入同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。文件输入 inline compact 按本节“文件输入”契约例外处理：异常状态文字常驻，具体原因一键展开且在入口可访问名称中可读；其余能力与限制进入“说明”，选择禁用原因优先常驻。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
