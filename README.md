@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 单项复核器 v0.1 · 设计候选（2026-09-25）
+
+语义 17 `AgentItemReviewer` 位于 `components/prism-next/agent-item-reviewer.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，独立 `density="compact"` 只改变密度。Inline 呈现对象／依据版本、待复核要点、当前值摘要和快捷动作；Workspace 增加证据、受控草稿、原值对比、理由和当时复核记录。评分通过领域插槽接入。
+
+七种复核状态只取宿主事实；点击确认仅发请求，不产生“已复核”。unknown 只查询原请求；版本变化使旧确认过期，并保留草稿与理由。复核人／时间／版本取自回执，时间未知明确未确认。QuestionReview 存在点击后直接写 saved／record 的旧行为（`question-review.tsx:39`），本组件不继承，本轮保留原文件交 Supervisor 另行处理。
+
+组件页 `/next/components/agent-components#item-reviewer` 提供 P04 单题原稿对照、单份作答评分两组固定示例，包含 inline / workspace / compact、320px、长中文与公式。复用 VerificationFields、PointsField、AgentEvidenceDrilldown、DocumentRegionViewer 及 coss / Prism；公开属性见[单项复核器契约](docs/component-contracts.md#单项复核器-v01)。目录仍为 80 项，无新增依赖或视觉令牌。
+
+未合并候选位于 `feat/agent-item-reviewer`，基于 main `278e7e3`。五项日志、测试清单与 P04 轻量验证方案存于 `.sites-runtime/item-reviewer/REPORT.md`；既有 checked 仅表示本地“已与原稿对照”，不作为正式复核或保存回执。不启动开发服务、不修改 Workspace、不写入 Git；浏览器视觉／交互及真实接入另行验证，候选待 Supervisor 独立 Review。
+
 ## 下钻与证据浏览 v0.1 · 设计候选（2026-09-25）
 
 语义 21 `AgentEvidenceDrilldown` 位于 `components/prism-next/agent-evidence-drilldown.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="compact"` 是独立密度。摘要展示结论与关键证据；完整视图按“结论 → 对象 → 证据”浏览，支持面包屑、上层返回和证据预览插槽。路径由宿主控制，打开、展开和返回仅发请求。

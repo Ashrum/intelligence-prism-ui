@@ -101,6 +101,76 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 单项复核器 v0.1
+
+2026-09-25 设计候选，语义 **17 单项复核器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-item-reviewer` 导入 `AgentItemReviewer` 及同文件公开类型。复核单题、单页、单条诊断或单份作答；评分结构由领域编辑插槽提供，不成为通用复核模型。不增加 80 项组件目录条目。
+
+### 复用检索与 QuestionReview 审查
+
+- `QuestionReview` 已有题面、作答、评分点与理由布局；**不可直接包装为通用复核器**。`components/prism-next/question-review.tsx:39` 点击确认后，先更新 `saved`、生成 `record`、清空 `reason`，再调用 `onConfirm`；第 36、40 行据此展示“已记录得分”“最新复核记录”。第 21、23–25 行说明无成对控制属性时走本地状态，有控制属性时也会请求宿主写入同样的完成记录。此行为没有等待外部回执，违反 AGENTS.md §5；本任务不修改该组件及其既有调用，由 Supervisor 另行处理。
+- `VerificationFields` 的判断、依据与事件由外部控制，没有内部完成态；P04 示例的编辑插槽直接复用。评分示例复用 QuestionReview 使用的 `PointsField`，不挂载旧确认逻辑。
+- `AgentChangeReview / AgentChangeSet` 负责候选的采用／保留决定，不等同复核回执。本候选的原值／人工草稿对照是只读内容，使用 `comparison` 插槽，不为一份已编辑草稿补造“已采用”决定。宿主需要候选采纳时在同一工作区组合既有对比组件，采纳仍不能生成已复核状态。
+- `AgentEvidenceDrilldown` 与 `DocumentRegionViewer` 作为 `evidence` 插槽示例，复用来源、版本、未知事实与区域查看；预览不生成读取、引用或复核事实。外框、状态、表单及补充说明复用 Card、Prism Badge、Alert、Field、Textarea、Button、RecordDetails / coss Collapsible，不修改 coss。
+
+### 公开 API
+
+`AgentItemReviewerProps<T = string>`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `item` | 必填 `AgentItemReviewTarget={id,title,version}` | 单一对象的稳定 ID、教师可读名称和**本次复核依据版本**，均为 string；不随新版本到达自动替换。缺少身份或版本时显示未确认并阻断操作／编辑 |
+| `review` | 必填 `AgentItemReview` | 下表的外部复核事实；所有分支必填 description，不从点击、草稿差异、预览、时间或模型文案推定 |
+| `checkpoints` | 必填 `readonly string[]` | 待复核要点和影响判断的证据限制；全部常驻，不因紧凑或展开能力截断。空数组显示未提供，不推定无需复核 |
+| `summary` | 必填 `ReactNode` | 当前值摘要；由宿主明确呈现原值／草稿的含义，必要关键内容在 Inline 中保持可读 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | compact 是密度，可与任一 view 组合；只调整间距和换行，不隐藏未知、过期或未保存提示，不改变字号 |
+| `versionChange` | 可选 `{currentVersion?: string; description?: string}` | **传入即表示宿主确认当前版本已变化**；即使 review 仍为 resolved 也优先显示已过期，阻断原动作，不沿用旧确认。当前版本缺失显示未确认；不比较版本号或自动换草稿 |
+| `restart` | 可选 `AgentItemReviewAction` | 已过期且没有在途 waiting/unknown 时才显示重新复核动作；仅请求宿主接续当前版本，不自动换版、提交或清空草稿 |
+| `draft` | 可选 `AgentItemReviewDraft<T>` | `{value:T, onChange:(value:T)=>void, render:(editor:AgentItemReviewEditor<T>)=>ReactNode}`；组件没有初值、副本、重置或持久化。render 接收同一 value、带保护的 onChange、readOnly、describedBy |
+| `reason` | 可选 `{value:string; onChange:(value:string)=>void}` | Workspace 固定标签“复核理由”输入；不 trim、不清空、不代写，提交必要性及校验由宿主提供 |
+| `evidence / comparison` | 可选 `ReactNode` | Workspace 完整证据、原值与草稿对照；缺省明确未提供。当前获权的只读业务内容，可含区域定位等视图交互，不得放提交、重试或采纳按钮绕过复核状态 |
+| `history` | 可选 `readonly AgentItemReviewRecord[]`，默认 `[]` | Workspace 只读当时事实，保留输入顺序，不填充、修改或追加。历史展示仍须先经宿主授权 |
+| `onAction` | 可选 `(intent:AgentItemReviewIntent)=>void` | 仅返回对象、依据版本和动作标识；缺省禁用已提供的动作并说明不可执行。回调返回值不是回执 |
+| `onExpand` | 可选 `(trigger:HTMLButtonElement)=>void` | Inline 的“完整复核”；缺省无入口，workspace 不重复显示。unknown 时隐藏，保留查询原请求。宿主负责同一对象／草稿、容器与焦点恢复 |
+| `onBack` | 可选 `()=>void` | workspace 返回原位置，包括 unknown；只改变视图，不提交、丢弃或取消，离开时未保存输入的保护由宿主完成 |
+| `disabledReason` | 可选 string | 非空阻断全部复核、重新复核、查询及输入，原因常驻并关联按钮；查看、展开和返回不受影响 |
+| `notice / details` | 可选 `string / ReactNode` | notice 至多一条常驻边界提示；details 默认收起“说明”。未知、冲突、未保存、失败和禁用原因必须常驻 |
+
+`AgentItemReviewEditor<T>={value, onChange, readOnly, describedBy?}`。render 必须使用受控字段、遵守 readOnly 并关联 describedBy；可接单页文本、诊断字段、VerificationFields、可选评分等内容，不能私建执行或保存状态。组件保护传入的 onChange，waiting / unknown / resolved / expired、版本变化或 disabledReason 时不转发修改；插槽自身的外部回调仍由宿主负责约束。summary、evidence、comparison、details 都不能引入旁路业务动作或未经授权的数据。
+
+### 状态、动作与历史
+
+| `review.state` | 必需事实 / 能力 | 呈现与行为 |
+| --- | --- | --- |
+| `waiting-human` | 可选 `actions` | 待复核；宿主给出“确认无误”“修改”“标记待议”等实际可用动作 |
+| `draft` | 可选 `actions` | 已编辑未提交，常驻“修改未保存”；不因组件收到新值自动推定已保存 |
+| `waiting` | 必填 `request`；可选 `query` | 复核提交中，只查询原请求，没有重复提交 |
+| `unknown` | 必填 `request`；可选 `query` | 回执未确认，只查询原请求，不宣称成功或失败；没有查询能力则明确无入口 |
+| `resolved` | 必填 `resolution={reviewer,version,time?}` | 已复核；复核人、结果版本和时间取自记录，时间缺失显示“时间未确认”，不读客户端时钟；没有旧确认动作 |
+| `failed` | 可选 `actions` | 已退回 / 失败，description 说明具体事实；宿主核实恢复条件后才能提供修订动作 |
+| `expired` | 顶层可提供 `versionChange / restart` | 已过期，要求重新复核；保留原草稿、理由和依据版本，旧确认不可执行 |
+
+`AgentItemReviewAction={id,label,impact,disabledReason?}`；前三项为必填 string，影响常驻并关联按钮，按宿主提供的顺序呈现，首个动作为主操作。`AgentItemReviewRequest={id,label}`。每个意图共同包含 `{itemId,version,actionId}`：
+
+- 普通复核／修改／待议：`kind:'review'`；actionId 由宿主受控注册，不解析按钮文案，不接任意脚本或 URL。
+- 查询：`kind:'query', requestId`；必须关联原请求，缺原 ID 禁用并说明原因。
+- 重新复核：`kind:'restart', currentVersion?`；只在过期且没有在途请求时提供。旧依据 version 仍保留，用于宿主处理冲突。
+
+TypeScript 联合类型禁止 waiting / unknown / resolved / expired 携带 actions，运行时也只在 waiting-human / draft / failed 且没有版本变化时使用 actions。若版本变化与 waiting / unknown 同时出现，**同时保留过期提示和原请求状态，只允许查询，不提供 restart**。宿主收到意图后重新核验所属任务／会话／轮次、对象、版本、动作范围、权限和幂等；组件不会提供第二套执行管理方。确认后必须由真实回执或显式标注的评审事实更新 review。
+
+`AgentItemReviewRecord={id,item,state,description,reviewer?,time?,resultVersion?,reason?,request?}`。前四项必填；item 与当前对象同类型，但保留当时 ID、标题和依据版本。历史状态、理由、结果版本、复核人、时间及请求均只取本条记录，缺失明确未确认／未记录；不从当前 resolved 或当前版本回填，无任何执行动作。当前已过期时，既有 resolution 只呈现为“此前复核记录（不适用于当前版本）”。
+
+### 三种用法与 P04 接续
+
+- **inline**：身份／依据版本 → 当前状态及版本变化 → 待复核要点 → 当前值摘要 → 宿主动作；完整复核经 onExpand。
+- **workspace**：同一事实，增加完整证据与受控编辑、原值对照、理由、当时复核记录及可选返回；不自建工作区外壳。
+- **compact**：可换行紧凑布局；未知请求、过期版本、未保存、影响和禁用原因不折叠，不成为第三种正式业务态。
+
+组件页 `/next/components/agent-components#item-reviewer` 提供两组固定示例：P04 单题与原稿对照（复用 VerificationFields、DocumentRegionViewer、AgentEvidenceDrilldown），以及单份作答评分复核（PointsField 仅在领域插槽内）。同一草稿／理由贯穿三种用法；手动状态选择器、独立版本变化开关、320px 容器、长中文和分式用于后续评审。确认／提交／查询只更新示例请求反馈，不能推进回执状态；示例不代表真实 OCR、评分或复核服务。
+
+P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验台；`checked=true` 的“已与原稿对照”只是本地人工对照标记，不能直接映射 resolved、复核人、复核时间或保存成功。适配器须单独保留对象 revision、基准版本、草稿归属和复核请求／回执；已有 checked 放在要点／事实摘要中说明，缺复核记录时仍待复核。点击只发请求，在途待回执用 waiting／unknown，只有匹配原请求和版本的复核记录才能提供 resolved；无时间保持未确认。版本变化先过期，不清空手改与理由；历史只追加新事实。
+
+本轮未合并候选位于 `feat/agent-item-reviewer`（main 基线 `278e7e3`）；测试及五项结果、QuestionReview 问题定位和 P04 映射见 `.sites-runtime/item-reviewer/REPORT.md`。不启动开发服务，不改 Workspace，不写入 Git；浏览器三主题、窄容器、键盘／焦点、实体设备、读屏器、Workspace 接入及真实服务另行验证，候选待 Supervisor 独立 Review。
+
 ## 下钻与证据浏览 v0.1
 
 2026-09-25 设计候选，语义 **21 下钻与证据浏览**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-evidence-drilldown` 导入 `AgentEvidenceDrilldown` 及同文件公开类型。不增加 80 项目录条目；宿主接入验证入口仍为 `/teacher/agent/workspace`。
@@ -449,7 +519,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
-Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器及下钻与证据浏览提供 `details?: ReactNode`。
+Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
@@ -459,6 +529,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
+- `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 现有点击生成记录的问题与替代边界见“单项复核器 v0.1”；通用组件不继承其确认逻辑。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
