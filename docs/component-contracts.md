@@ -54,6 +54,58 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 参数配置器 v0.1
+
+2026-09-26 设计候选，语义 **07 参数配置器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-parameter-config` 导入 `AgentParameterConfig` 及同文件公开类型。候选位于 `feat/agent-parameter-config`，基于 main `1d4503b`（含 #68/#69），未提交／未合并；不新增 80 项目录条目。
+
+### 复用检索与 02 / 07 / 08 / 25 边界
+
+- 已完整核对批准规范 §2、参数配置器行（实际位于 §6.3）、§7、§8、§10 及 §11.1「确认出卷要求」，复用规划第 07 行、覆盖矩阵 B02/Q03/G01/G02、02/08/25 既有契约及进度清单。已检索 AgentConstraintBuilder、AgentScopeBuilder、AgentExecutionConfirmation、coss Field/Label、NumberField、Select、RadioGroup、Switch、Input。现有基础控件覆盖输入；缺口是同源参数、外部事实和冻结呈现，故仅新增语义组合。
+- **02 组合参与对象范围；07 编辑单值参数（数量、选项、开关、时长、短文本）；08 编辑约束条件（范围上下限、互斥、比例与组合规则）；25 确认执行。** 07 的 `min/max` 是一个数值字段的外部说明，不是 08 的双端范围值。难度档位属 07，难度比例组合与合计冲突属 08。07 不内置组卷、批阅、名单、权限、校验或默认值规则。
+- NumberField 负责数值输入解析及步进，07 只接受有限数字或清空的 null；不向控件传 min/max 做自动钳制，不自行舍入／归一化或填默认值。范围合法性、步长规则和跨字段校验由宿主判断。Select/RadioGroup 用局部序号作控件值，再映射回原值，避免内部长 ID 进入 DOM；缺失选项不回退首项。
+- 与 08 并列时通过 25 的 `conditions` 插槽合成同一决定卡。07/08 均使用 `presentation="inline" density="compact"`；07 传 `notice={null}`，08 不传 notice，外层只呈现一条共同边界提示。07 不增加确认按钮，08/25 API 不变；关键参数变化后宿主同步使旧确认失效，回执未确认仍由 25 呈现和处理，不能据组件事件宣称执行成功。
+
+### 公开 API
+
+`AgentParameterConfigProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / baseVersion` | 必填 string | 可读标题、既有参数草稿／冻结记录的基准版本；baseVersion 仅用于事件，不渲染。缺版本、空／重复 parameter ID 时只读 |
+| `parameters` | 必填 `readonly AgentParameterDefinition[]` | 唯一参数定义与值列表；两态消费同一引用／记录，保持顺序。Inline 严格按 `key` 筛选，不因缺展开能力而变成完整表单；Workspace 展示全量 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 只减少间距，保留固定标签、控件字号和重要事实；不是第三业务态 |
+| `presentation` | card/inline 默认 card | 只控制外框；用于嵌入 25，不创建 Workspace 外壳 |
+| `onIntent` | 可选 `(intent:AgentParameterIntent)=>void` | change 为 `{type:"change",parameterId,value,baseVersion}`；reset 为 `{type:"reset",baseVersion}`。组件不应用结果、不推定确认／保存；没有接收器时为纯只读呈现 |
+| `reset` | 可选 `{label?,disabledReason?}` | 显式声明整体重置能力，默认按钮名“恢复默认”，仅 workspace 且可编辑时提供。重置不复制 default；有任何只读／锁定／未知参数时阻断整体重置，避免绕过单项限制 |
+| `readOnlyReason` | 可选 string | 存在即全局只读（空串同样阻断）；不挂载任何输入控件，保留值和原因 |
+| `frozen` | 可选 `{versionLabel:string,reason:string}` | 存在即确认后的冻结记录，只读、不挂载输入或重置。宿主须同时传冻结当时的 parameters（含值、选项标签和事实）及 baseVersion；组件不在点击时生成快照，不用当前草稿覆盖历史 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | inline 调整／查看全部参数；workspace 返回原位置。缺能力不显示对应入口。宿主保持同一记录、版本、焦点和阅读位置；返回不保存、不丢弃、不确认 |
+| `notice / details` | 可选 string/null / ReactNode | 缺省一条“参数修改不代表已确认或执行。”；null 仅供上层共同承载提示。补充说明通过 RecordDetails 默认折叠，校验、未确认／未知、影响和锁定原因不放入 details |
+
+`AgentParameterDefinition` 公共字段：必填 `id / label / key / value / status / validation`；可选 `description / impact / readOnlyReason / lockedReason / default`。所有标签、原因与影响都是允许披露的宿主文案，组件不是任意文本脱敏器。`key` 是宿主指定的 Inline 字段身份，不代表已确认、必填或权限。
+
+| 类型 | 值 / 元信息 | 呈现 |
+| --- | --- | --- |
+| `number` | `number \| null`；可选 `unit / min / max / step / constraintSource` | NumberField；时长由单位表达，不内置分钟等单位。0、负数、小数与 null 不转成业务默认值；min/max/step 和来源说明可见 |
+| `select / radio` | `string \| null`；必填 `options:readonly {value,label,disabledReason?}[]` | Select / RadioGroup；禁用选项原因常驻，事件拒绝未知或禁用选项；现值缺项显示“当前选项未列出” |
+| `switch` | boolean | Switch；false 是关闭，未知状态不伪造 false |
+| `text-short` | `string \| null` | Input；保留空文本和空白，不截断、不 trim；用于卷名等短属性，不替代 06 长内容输入 |
+
+`default` 可选，存在时必须为 `{value:与该参数相同的值类型,source:string}`。仅 Workspace 展示默认值与来源，不传入控件 defaultValue；未提供时明确显示“未提供默认值”。当前 null／空字符串显示“未指定”，不取 default 补齐。
+
+`AgentParameterStatus` 必传：`{state:"provided"}` 只说明已提供值，不表示校验通过／已确认；`{state:"unconfirmed"|"unknown",reason:string}` 呈现对应事实。未确认可编辑，未知以“当前值未知”只读呈现，避免开关或选项伪造现值。宿主需先核对再传入可编辑记录。`validation` 必传数组，成员 `{level:"error"|"warning"|"hint",message:string}`；空数组不推定校验通过，组件不按范围或输入自行生成／清除结果。错误字段仍可编辑以修正。
+
+### 两态、组合与验证边界
+
+- **Inline**：只挂载 key 参数的输入；非 key 的校验、未确认／未知、影响、只读／锁定与不可选原因在“其他参数说明”常驻，避免筛选隐藏风险。无 onExpand 时保持同一筛选规则，宿主应将当前决策所需参数标为 key 或提供完整视图入口。
+- **Workspace**：完整参数集、默认值与来源、全部外部说明、可选重置与返回。两态没有独立业务副本；只有 NumberField 本身的输入解析与 RecordDetails 展开属于 UI 状态。
+- **只读／冻结**：当前值改为文字，标签与说明保留；冻结标“已冻结／确认时的参数”及可读版本，不挂载 Input/NumberField/Select/Radio/Switch。读旧版使用宿主保存的当时记录；解冻或返回当前草稿也是宿主操作。
+- **07 + 08 + 25**：同一决定、同一确认目标共享一张卡和一条边界提示；不合并不同权限／版本的事实，不由确认按钮生成冻结或回执。处理事件时宿主重新核验对象归属、基准版本、字段类型、能力、权限和确认范围。
+
+组件页 `/next/components/agent-components#parameter-config`：组卷（题量／时长／难度／分值方式，另有答案开关、长中文卷名）与批阅（纸张／身份方式／预期人数，另有批注和未知批次）两组标注示例。每组提供 inline / workspace / compact、320px、公式、错误／警告／提示、未确认／未知、单项锁定、全局只读与固定冻结记录。三个视图共享一份示例参数；输入、载入可用参数、请求确认、载入确认记录、默认请求与载入默认结果分开。示例仅页内状态，不持久化。
+
+本轮不写 .git、不启动开发服务、不修改 Workspace；五项日志、实际 diff、测试数字及 Workspace 本地 main 的只读接入建议见 `.sites-runtime/parameter-config/REPORT.md`。SSR／处理器／类型测试不是浏览器三主题、窄屏视觉、Workspace 接入、真实服务或独立 Review 结论。
+
 ## 结构化内容工作区 v0.1
 
 2026-09-26 设计候选，语义 **35 结构化内容工作区**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-structured-content` 导入 `AgentStructuredContent` 及公开类型；不增加 80 项组件目录条目。大纲、课程、章节和树状内容共用受控层级呈现，不建立新的权威内容模型或统一 AST。
@@ -1250,6 +1302,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+参数配置器 07 的错误／警告／提示、未确认／未知、影响和只读／锁定原因常驻；非关键参数的风险不因 Inline 筛选消失。冻结显示当时参数，无编辑输入。与 08/25 组合只保留一条共同边界提示，其他解释进 details。
+
 结构化内容工作区 35 同样提供 `details?: ReactNode`。全树冲突、只读／待删除原因、能力限制、基准版本与保存事实常驻；同文能力原因合并显示，不因 compact 或节点折叠隐藏。内部结构／节点／版本 ID 不进入界面，教师只看名称、版本标签、类型与层级。
 
 成果物输出 33 同样提供 `details?: ReactNode`：一条 notice 以外的补充解释收起；有损／不支持原因、生成失败、状态未确认、已过期／无权下载和“基于旧版本”在两态两密度常驻。文件名不接受原始路径作显示值，内部 ID 与可读标签分离。
@@ -1305,7 +1359,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 | --- | --- | --- |
 | AgentContextSummary | `title / scope / sources / expanded / onExpandedChange? / onInspect? / notice? / snapshot?` | 复用 AgentContextList；来源事实独立，不检索或认证证据 |
 | AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 成果摘要卡与打开入口；打开后的对象呈现由 AgentObjectViewer / 领域工作区承担。预览不证明执行或发布，缺 open 没有入口 |
-| AgentExecutionConfirmation | `title / target / version / effects / confirmation / conditions?` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query。conditions 组合 08；旧确认失效和确认后的编辑冻结由宿主同步提供，不由插槽推定 |
+| AgentExecutionConfirmation | `title / target / version / effects / confirmation / conditions?` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query。conditions 组合 07/08；旧确认失效和确认后的编辑冻结由宿主同步提供，不由插槽推定 |
 | AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
 | AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
 
