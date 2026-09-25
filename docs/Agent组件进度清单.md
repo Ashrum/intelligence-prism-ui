@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/11/14/16/17/18/19/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/11/14/16/17/18/19/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 06 新增未合并组件候选：`AgentContentInput`（`P/agent-content-input.tsx`），分支 `feat/agent-content-input`，基于 main `921397f`。Inline + 专用扩展内容，支持 inline / workspace / compact。两组标注示例、受控输入／外部状态测试与五项日志见 `.sites-runtime/content-input/REPORT.md`；本轮只读核对 Workspace 本地 main `f1d8847`，未接线、未做浏览器复验或真实服务验证。下一步为 Supervisor 独立 Review 与 P04 轻量接线。
 
 - 2026-09-25 语义 16 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentReviewQueue`（`P/agent-review-queue.tsx`），本仓 [Prism #59](https://github.com/Ashrum/intelligence-prism-ui/pull/59)（`07fa05f`）；[Workspace #22](https://github.com/Ashrum/ole-school-workbench/pull/22)；P04 三题队列：确认后提交中、回执后已复核 1/3、下一项。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。遗留：inline 摘要列出全部 7 种状态计数（含 0），文字偏多。
 
@@ -76,7 +78,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 03 | 范围与对象 | 上下文摘要 | AgentContextSummary（P/agent-context-summary.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 2 项 | 保持四事实独立；随 18/21 验证来源、版本和返回路径。 |
 | 04 | 输入与导入 | 文件输入 | AgentFileInput（P/agent-file-input.tsx）；复用 Input / Button / Card / Progress / Collapsible | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #45](https://github.com/Ashrum/intelligence-prism-ui/pull/45)（`7bf305b`）；[Prism #46](https://github.com/Ashrum/intelligence-prism-ui/pull/46)（`01fae8e`，compact 单行）；[Workspace #15](https://github.com/Ashrum/ole-school-workbench/pull/15)、[Workspace #16](https://github.com/Ashrum/ole-school-workbench/pull/16)；Agent 输入区：示例材料为已有资料、本机文件仅检查、上传未接入 | P1 · 第 9 项 | 下一步：06 内容输入。真实服务未验证。 |
 | 05 | 输入与导入 | 采集扫描 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用页预览和质检呈现；设备采集、OCR、质量判定不属于组件 |
-| 06 | 输入与导入 | 内容输入 | 复用起点：Textarea（B/textarea.tsx）、DraftMathPreview（P/draft-math-preview.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 输入仍由宿主持有；可组合当前草稿的公式排版预览，失败保留当前原文；AgentComposer 仅用于指令，不冒充完整编辑器 |
+| 06 | 输入与导入 | 内容输入 | AgentContentInput（P/agent-content-input.tsx）；Textarea / InputGroup / Field，DraftMathPreview 可选插槽 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并 `feat/agent-content-input`，基于 main `921397f`；tests/agent-content-input.test.mjs；五项及只读核对方案见 `.sites-runtime/content-input/REPORT.md` | PO 2026-09-25 批准：下一批第 6 项 | 待 Supervisor 独立 Review；优先在 P04 的 17 编辑插槽轻量验证。Composer 为指令，06 为输入材料，28 为已有文稿；公式有不依赖 temml／引入 temml 两方案。浏览器与真实服务未验证。 |
 | 07 | 参数配置 | 参数配置器 | 复用起点：Field（B/field.tsx）、Select（B/select.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接组合现有字段；关键参数与完整参数的同源呈现，校验结果从外部输入 |
 | 08 | 参数配置 | 约束构建器 | 复用起点：Fieldset（B/fieldset.tsx）、Alert（B/alert.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 展示约束项、条件和冲突定位；复杂规则求解交给宿主／规则层；备注：PO 2026-09-25 决定 P04“处理范围”（排重/模糊页）归属 08 约束构建器 + 25 执行确认，覆盖矩阵 §5.1 中 P02→02 的映射以此为准更正（矩阵原文不改）。 |
 | 09 | 参数配置 | 模板选择器 | 复用起点：Card（B/card.tsx）、RadioGroup（B/radio-group.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 外部模板列表、选择和预览；模板存储及管理由宿主承担 |
@@ -130,13 +132,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 25 | 除 01、02、03、04、11、13、14、15、16、17、18、19、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 24 | 除 01、02、03、04、06、11、13、14、15、16、17、18、19、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 06（未合并 `feat/agent-content-input`） |
 | Workspace 已验证 | 17 | 01、02、03、04、11、13、14、15、16、17、18、19、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：06 内容输入。
+下一步：06 内容输入候选的 Supervisor 独立 Review 与 P04 Workspace 轻量验证。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
