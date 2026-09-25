@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/08/11/14/16/17/18/19/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/08/11/14/16/17/18/19/21/26/27/28/33 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-26 语义 33 按本批第 2 项授权实现为组件候选：`AgentArtifactOutput`，任务分支 `feat/agent-artifact-output`，基于 main `538f5ca`；未提交／合并。两组示例、20 项定向测试及五项验证见 `.sites-runtime/artifact-output/REPORT.md`。Workspace 本地 main `399bb75` 仅只读核对 P04 去向与现有题卷打印入口；未做浏览器或接线验证，不升级为 Workspace 已验证。
 
 - 2026-09-26 语义 08 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentConstraintBuilder`（`P/agent-constraint-builder.tsx`），本仓 [Prism #64](https://github.com/Ashrum/intelligence-prism-ui/pull/64)（`251f572`）；[Workspace #25](https://github.com/Ashrum/ole-school-workbench/pull/25)；P04 处理条件放入执行确认条件区：切换更新影响、确认后冻结。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -107,7 +109,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 30 | 内容与成果物 | 图像查看与画布 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用查看和定位；裁切、组合、图层与图像生成不能推定已支持 |
 | 31 | 内容与成果物 | 音频与转写 | 复用起点：Card（B/card.tsx）；通用波形／转写编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用波形／转写编辑器；播放、转写、编辑能力分别声明 |
 | 32 | 内容与成果物 | 视频与时间轴 | 复用起点：Card（B/card.tsx）；通用视频时间轴编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用时间轴编辑器；播放、字幕和剪辑分别由适配器承担 |
-| 33 | 内容与成果物 | 成果物输出 | 复用起点：QuestionPrint（P/question-print.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 题卷打印按原有能力复用；其他格式配置、导出请求和文件可用性按外部能力声明，不伪造下载 |
+| 33 | 内容与成果物 | 成果物输出 | AgentArtifactOutput（P/agent-artifact-output.tsx）；复用 Card / Field / Select / Badge / Button / RecordDetails，QuestionPrint 预览插槽 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并任务分支 `feat/agent-artifact-output`，main 基线 `538f5ca`；测试 `tests/agent-artifact-output.test.mjs`；五项日志与只读方案 `.sites-runtime/artifact-output/REPORT.md` | PO 2026-09-26 批准：本批第 2 项 | 待 Supervisor 独立 Review 与 Workspace 轻量接线验证；P04 仅呈现导出未接入，已有题卷打印保持原能力。当前文件下载事实由宿主提供；浏览器、实际打印／下载和真实服务未验证。 |
 | 34 | 内容与成果物 | 图形关系工作区 | 复用起点：Card（B/card.tsx）；通用节点／连线编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用节点／连线编辑器；图表引擎不等于关系编辑能力，不引入统一 AST |
 | 35 | 内容与成果物 | 结构化内容工作区 | 复用起点：Tree（P/tree.tsx）、Collapsible（B/collapsible.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 目录选择不等于内容编辑；需要时补受控层级编辑，内容模型由对应适配器维护 |
 | 36 | 教学资源与素材 | 资源检索器 | 复用起点：Combobox（B/combobox.tsx）、DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 外部检索结果、来源、可用性和使用限制；命中、预览、读取分开 |
@@ -134,13 +136,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 23 | 除 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 22 | 除 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28、33 外的各项 |
+| 组件候选 | 1 | 33（未合并：`feat/agent-artifact-output`） |
 | Workspace 已验证 | 19 | 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；08 约束构建器已登记为 Workspace 已验证。下一步：33 成果物输出（本批顺序：33 → 35 → 07 → 10 → 22 → 36）。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器已登记为 Workspace 已验证。33 成果物输出已形成组件候选，先完成独立 Review 与 Workspace 轻量验证，再按本批顺序推进 35 → 07 → 10 → 22 → 36。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
