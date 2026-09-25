@@ -101,6 +101,70 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 集合篮 v0.1
+
+2026-09-25 设计候选，语义 **11 集合篮**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-collection-basket` 导入 `AgentCollectionBasket` 及同文件公开类型；不增加 80 项组件目录。用于暂存已选题目、素材、资源、学生等，不创建第二份集合数据源。
+
+### 复用检索与外壳关系
+
+- `QuestionWorkPanel` 只组合 coss 非模态 Drawer，负责开关、焦点和滚动接续；没有条目、分组、汇总或集合操作契约。集合篮提供内容，可放入它的 `children`，不重复实现 Drawer。Workspace 已有单右栏时直接挂集合篮内容，不再套 QuestionWorkPanel。
+- `TeacherQuestionBasket.tsx` 和 `shared/basket-context.ts` 只读核对 Workspace main `125f2b286d6028a12a963b58667875d1d7ca773c`。题篮已有数量、题型、分值、移除与空态呈现；Provider、Store、计分、班级交接、持久化、路由和发布均留宿主，没有整文件迁入。当前 Context 暴露 body/renderBody/footer、toggle/show/change，没有暴露完整条目与总分快照，接入不能假定已有通用数据 API。
+- `DataRecordTable` 提供表格列和单记录选择，未覆盖受控批量选择、集合身份、同步事实和失效条目处理；`AgentContextList` 主要承担来源事实列表。此候选组合 Card、Prism Badge/Button、Checkbox、Label、Select 与 RecordDetails（coss Collapsible），列表为语义化 ol/li，未重造基础控件。
+- `QuestionCard` 保留题目内容职责，通过 `renderItem` 渲染摘要；通用组件不导入题目或 Workspace 私有类型，不接题目评分编辑。排序与分组仅为平面集合管理，不扩展为语义 12 的层级／试卷结构编辑器，也不宣称实现完整语义 38 素材包管理。
+
+### 公开 API
+
+`AgentCollectionBasketProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `collection` | 必填 `AgentCollectionIdentity` | `{id,title,type,version?,source?,snapshot?}`。引用已有集合身份；缺版本明确未确认。snapshot 存在（包括空串）标历史、所有集合操作与选择只读；不从当前集合回填历史内容 |
+| `items` | 必填 `readonly AgentCollectionItem[]` | 稳定唯一 ID、宿主顺序、已授权内容；两态共用同一输入。不另建条目缓存或内部业务副本 |
+| `summary` | 必填 `AgentCollectionSummary` | `{count:number|null,unit?:string,fields?:AgentCollectionField[]}`；count 的 null 显示未确认，零保留，unit 默认项。`fields={label,value:string|number}` 可传宿主计算的总分等；组件不从 items 重算数量或分数，不用可见条数替代总量 |
+| `groups` | 可选 `readonly AgentCollectionGroup[]` | `{id,label,count:number|null}`；组 ID 唯一。计数仅显示宿主值；不根据列表推算。按分组查看保留各组内输入顺序，未分组、未知分组与受限条目各自保留，不静默丢弃 |
+| `sync` | 可选 `AgentCollectionSync`，默认 unknown | local / synced / failed / unknown 分别呈现本页暂存／已同步／同步失败／状态未确认。failed 必填 description，其余可选。可带 action 请求检查同步等；点击不改变同步事实。没有时间、动画或回调返回值推断 |
+| `changes` | 可选 `readonly AgentCollectionChange[]` | `{id,kind:'added'/'removed',description}`；仅显示宿主给出的当时变化，加入与移除不由点击或数组差异生成，也不自动消失。描述须经宿主披露检查 |
+| `view / density` | inline / workspace 默认 inline；default / compact 默认 default | 两态及独立密度；compact 仅调整间距，不隐藏失效、冲突、受限、同步失败、未知与禁用原因，不缩字 |
+| `inlineLimit / onExpand` | 默认 3 / 可选 `(trigger:HTMLButtonElement)=>void` | 有 onExpand 时前 N 项加所有失效／冲突／受限项，保持原顺序；非有限 N 回退 3，其余向下取整至少 1。缺回调无“管理全部”入口且保留全部项。workspace 不重复显示入口；展开不操作集合 |
+| `groupBy / onGroupByChange` | none / group 默认 none；可选回调 | workspace 的受控列表排列方式；只改变呈现。分组视图禁用排序并说明“请切回集合顺序后调整”，避免组内视觉次序误当集合顺序 |
+| `selectedIds / onSelectionChange` | 只读 ID 数组默认 [] / 可选回调 | workspace 批量选择、全选可选条目、清除选择；不修改集合。失效选中 ID 不被悄悄过滤，批量动作整批阻断并可清除选择；跨两态连续性由宿主持有 |
+| `clear / destinations` | 可选 action / 只读 action 数组 | action 为 `{id,label,disabledReason?}`；clear 仅 workspace，去向两态显示、第一项主操作。缺能力无入口；给出的能力但缺 onAction 显示禁用原因。集合级动作目标为全部传入 items，宿主必须提供完整目标清单并核验，不能把服务总量中未提供的 ID 算进影响范围 |
+| `batchActions` | 可选 `readonly AgentCollectionBatchAction[]` | `{id,label,itemIds,disabledReason?}`，workspace 专用。明确目标须非空、无重复、均存在且可选，并与 selectedIds 集合完全相符；否则整批禁用，不缩减范围。有效回调保留 action.itemIds 的顺序与每项输入版本 |
+| `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
+| `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 只在 workspace 调用，受限条目绝不调用。用于 QuestionCard 摘要等当前授权的只读领域内容；不得放旁路写操作或未授权元数据。完整题干沿用阅读字号 |
+| `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
+
+### 条目、权限与动作
+
+`AgentCollectionEntry={id,title,type,access?:'available',source?,version?,groupId?,summary?,fields?,issue?,selectable?,actions?}`。source、version 缺省各自未确认；不从内容或集合版本补值。`issue={state:'invalid'/'conflict',reason}` 由宿主标记下架、版本变化等，原因常驻；是否仍可移除、分组、选中或用于其他操作由宿主明确给出，组件不自行解决冲突。`selectable={disabledReason?}` 明确提供才有选择控件。
+
+`AgentCollectionRestrictedEntry={id,access:'restricted',disclosure:{label,reason},actions?:{remove?,resolve?}}` 只接受可披露名称、原因与明确可用的移除／处理动作。不会读取误传的 title/source/version/summary/fields/groupId/issue/selectable/move/group，也不挂载 renderItem。受限条目的版本不传出。集合标题、总量、分组、最近变化与 details 同样必须由宿主事先按当前权限处理；此分支只呈现授权结果，不是服务端授权。
+
+条目 `actions`：remove 为 `{disabledReason?}`；move 分别声明 up/down 能力，始终提供文字按钮与既有 navigation 触控尺寸，不依赖拖拽或悬停；group 为 `{options:[{id:string|null,label}],disabledReason?}`，null 请求取消分组；resolve 是宿主注册的 action 数组。不存在的能力不补造。控件禁用原因常驻并以 aria-describedby 关联，处理函数也阻断；首尾排序按传入全列表判断，回传实际相邻 ID。宿主提供 move 能力时须考虑被交换的相邻项权限。
+
+所有 `AgentCollectionIntent` 共含 `{collectionId,collectionVersion?}`，其分支为：
+
+| kind | 其余字段 | 含义 |
+| --- | --- | --- |
+| remove | itemId, version? | 请求移除此引用，非删除源对象 |
+| move | itemId, version?, direction:'up'/'down', adjacentId | 请求与指定相邻项调整顺序，不改变输入数组 |
+| group | itemId, version?, groupId:string/null | 请求移至宿主选项中的分组，不改本地分组值 |
+| resolve | itemId, version?, actionId | 请求查看替代项、核对版本、申请查看等明确能力 |
+| clear / destination / batch | actionId, targets:readonly `{itemId,version?}`[] | 对明确目标范围请求操作；用于组卷／练习不等于已经创建试卷或布置任务 |
+| sync | actionId | 请求宿主核对同步，不创建保存结果 |
+
+集合级、批量及 resolve 的业务含义由受控 actionId 注册映射；组件不根据按钮名称识别“移除”或“发布”。宿主必须在提供这些能力时核对每项权限、有效版本、可用动作、影响范围与必要确认，不能用批量／清空绕过单项限制；收到请求时重新核验身份、版本与并发。按钮是否禁用不代替授权，当前快照不代表未来版本仍可写。组件没有 Store、Provider、路由、持久化、计分、班级交接、执行器或计时器。
+
+### 三种用法与验证边界
+
+- Inline：集合身份／版本 → 宿主数量、汇总及分组计数 → 同步与最近变化事实 → 前 N 项及全部问题项 → 主去向与“管理全部”。缺 onExpand 时清单保持可达。
+- Workspace：同一事实 → 集合顺序／分组呈现 → 受控选择与批量动作 → 全清单、领域插槽、移除、处理、分组和上移／下移 → 去向、清空与可选返回；无第二套工作区外壳。
+- Compact：与任一 view 组合，只收紧间距；同步失败、失效与受限原因仍在折叠区外。
+
+组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、QuestionCard 数学摘要；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
+
+本轮任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`，状态为**组件候选**；测试与五项日志、Workspace 只接呈现的轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。不启动开发服务，不修改 Workspace 或 Git；浏览器三主题、窄容器、键盘焦点／触控、读屏器、Workspace 接入和真实服务分别待验，不用 SSR 或回调测试代替。
+
 ## 文件输入 v0.1
 
 语义 04 `AgentFileInput`，两态声明为 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-file-input.tsx`，示例 `/next/components/agent-components#file-input`。本轮为 `feat/agent-file-input` 组件候选；不等于 Workspace 或真实服务验收。
@@ -653,7 +717,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
-文档工作区与文件输入同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。文件输入 inline compact 按本节“文件输入”契约例外处理：异常状态文字常驻，具体原因一键展开且在入口可访问名称中可读；其余能力与限制进入“说明”，选择禁用原因优先常驻。
+文档工作区、文件输入与集合篮同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。集合篮两种密度的失效、冲突、受限原因与同步失败均常驻。文件输入 inline compact 按本节“文件输入”契约例外处理：异常状态文字常驻，具体原因一键展开且在入口可访问名称中可读；其余能力与限制进入“说明”，选择禁用原因优先常驻。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
@@ -664,6 +728,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
+- `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。

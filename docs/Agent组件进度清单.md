@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/11/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 11 更新为**组件候选**：未合并任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`。`AgentCollectionBasket` 与 19 项专项测试、两组用途示例已提供；支持 inline / workspace / compact，声明 Inline + 专用扩展内容。五项日志与轻量接入方案见 `.sites-runtime/collection-basket/REPORT.md`。Workspace main `125f2b2` 的题篮及 Context 仅只读参考；未修改 Provider、计分或发布，未进行浏览器或真实服务验证。
 
 - 2026-09-25 语义 04 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #45](https://github.com/Ashrum/intelligence-prism-ui/pull/45)（`7bf305b`）、[Prism #46](https://github.com/Ashrum/intelligence-prism-ui/pull/46)（`01fae8e`，compact 单行）；[Workspace #15](https://github.com/Ashrum/ole-school-workbench/pull/15)、[Workspace #16](https://github.com/Ashrum/ole-school-workbench/pull/16)，Agent 输入区：示例材料为已有资料、本机文件仅检查、上传未接入。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -69,7 +71,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 08 | 参数配置 | 约束构建器 | 复用起点：Fieldset（B/fieldset.tsx）、Alert（B/alert.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 展示约束项、条件和冲突定位；复杂规则求解交给宿主／规则层 |
 | 09 | 参数配置 | 模板选择器 | 复用起点：Card（B/card.tsx）、RadioGroup（B/radio-group.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 外部模板列表、选择和预览；模板存储及管理由宿主承担 |
 | 10 | 选择与组合 | 候选选择器 | 复用起点：QuestionCard（P/question-card.tsx）、DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 支持通用条目渲染与选择事件；检索、排序口径和分页数据外置 |
-| 11 | 选择与组合 | 集合篮 | 复用起点：Card（B/card.tsx）、DataRecordTable（P/data-display.tsx）；Workspace TeacherQuestionBasket（W/src/features/teacher/TeacherQuestionBasket.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da`；Workspace `8f9bb13` | P1 · 第 10 项 | 下一批第 6 项：抽取受控集合摘要与完整清单；保留唯一 TeacherQuestionBasket Provider。 |
+| 11 | 选择与组合 | 集合篮 | AgentCollectionBasket（P/agent-collection-basket.tsx）；复用 Card / Badge / Button / Checkbox / Select / RecordDetails，题目用 QuestionCard 插槽；QuestionWorkPanel 为可选外壳 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并 `feat/agent-collection-basket`，基线 `9e6fa12`；专项测试 19 项；`.sites-runtime/collection-basket/REPORT.md` | P1 · 第 10 项 | Supervisor 独立 Review 后，在 Workspace 既有全局题篮做呈现接线与轻量验证；保留唯一 Provider，不改计分／发布逻辑。 |
 | 12 | 选择与组合 | 结构编排器 | 复用起点：LearningTaskList（P/learning-components.tsx）、Tree（P/tree.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 当前没有完整通用层级编辑器；先考虑受控排序／分组及上移下移，不搬入组卷模型 |
 | 13 | 预览与查看 | 摘要预览 | AgentArtifactPreview（P/agent-semantic-components.tsx） | 仅 Inline | inline | Workspace 已验证 | [Workspace #7](https://github.com/Ashrum/ole-school-workbench/pull/7)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 3 项 | 随下一批核对同一成果身份与版本、可打开能力；不另建摘要扩展页。 |
 | 14 | 预览与查看 | 对象查看器 | 复用起点：QuestionCard（P/question-card.tsx）、QuestionDetails（P/question-details.tsx）、DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 通用承载与领域渲染器组合；详情、答案及敏感字段由宿主按权限提供 |
@@ -118,12 +120,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 31 | 除 03、04、13、15、17、18、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 30 | 除 03、04、11、13、15、17、18、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 11；未合并 `feat/agent-collection-basket` |
 | Workspace 已验证 | 11 | 03、04、13、15、17、18、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：**11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
+下一步：**11 集合篮的独立 Review 与 Workspace 轻量验证**。复用现有全局题篮，在对话中放 inline 摘要、既有右栏放 workspace 内容；P04 的入篮预演不能当真实题篮记录。Provider 接口限制与无新增业务逻辑的接线范围见集合篮报告，待 Supervisor 收敛。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。
