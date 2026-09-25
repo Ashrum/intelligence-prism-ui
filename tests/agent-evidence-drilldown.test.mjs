@@ -189,7 +189,7 @@ test('relationships are supplied, citation never changes a counterexample to sup
 test('one standing notice and collapsed details preserve all necessary evidence facts', () => {
   for (const mode of modes) {
     const html = htmlFor({ ...mode, notice: '固定示例边界', details: h('p', null, '补充解释正文'), nodes: withEvidence({ facts: [{ state: 'incomplete', description: '缺少后半段记录' }] }) });
-    assert.equal((html.match(/固定示例边界/g) ?? []).length, 1);
+    assert.equal((html.match(/固定示例边界/g) ?? []).length, mode.view === 'workspace' ? 1 : 0);
     assert.match(html, /aria-expanded="false"/); assert.doesNotMatch(html, /补充解释正文|意图|宿主|回调|受控/);
     assert.match(html, /记录不完整/); assert.match(html, /缺少后半段记录/);
   }
@@ -234,4 +234,22 @@ void [valid, read, cited, restricted, p, intent];
     const diagnostics = ts.getPreEmitDiagnostics(program);
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
+});
+
+
+test('inline retains coverage as its single standing message and moves boundary plus details into one closed explanation', () => {
+  for (const density of ['default', 'compact']) {
+    const extra = { density, nodes: [], conclusion: { ...conclusion, coverage: { state: 'incomplete', description: '缺少读取记录。' } },
+      notice: '查看证据不改变读取、引用或教师对照记录。', details: h('p', null, '其他解释') };
+    const html = htmlFor(extra);
+    assert.equal((html.match(/role="status"/g) ?? []).length, 1);
+    assert.match(html, /记录不完整.*缺少读取记录/);
+    assert.doesNotMatch(html, /查看证据不改变|其他解释/);
+    const node = capture(extra).find(node => node.type.name === 'RecordDetails');
+    const gate = node.type(node.props);
+    assert.equal(gate.props.defaultOpen, false);
+    const open = render(React.cloneElement(gate, { open: true }));
+    assert.equal((open.match(/查看证据不改变/g) ?? []).length, 1);
+    assert.match(open, /其他解释/);
+  }
 });

@@ -62,7 +62,8 @@ test('counts and progress preserve explicit host values, zero and missing values
   for (const mode of modes) {
     const html = htmlFor({ ...mode, counts: { resolved: 12, unknown: 0 }, progress: { reviewed: 12, total: 40 } });
     assert.match(html, /已复核 12\/40/);
-    assert.match(html, /<dt>回执未确认<\/dt><dd[^>]*>0<\/dd>/);
+    if (mode.view === 'workspace' && mode.density !== 'compact') assert.match(html, /<dt>回执未确认<\/dt><dd[^>]*>0<\/dd>/);
+    else assert.doesNotMatch(html, /<dt>回执未确认<\/dt>/);
     assert.match(html, /<dt>已复核<\/dt><dd[^>]*>12<\/dd>/);
     assert.doesNotMatch(html, /<dt>待复核/);
     assert.doesNotMatch(htmlFor(mode), /已复核 \d+\/\d+|<dl/);
@@ -254,5 +255,21 @@ test('two labelled examples expose all three presentations and the narrow fixtur
     assert.doesNotMatch(html, /example-internal|example-request|example-queue/);
     if (purpose === 'p04') { assert.match(html, /回执未确认/); assert.match(html, /已过期/); assert.equal(reviewQueueExamples.p04.items.length, 3); }
     else { assert.match(html, /他人处理中/); assert.match(html, /逐项示例回执/); assert.match(html, /批量确认/); }
+  }
+});
+
+
+test('inline and compact hide only zero counts; nonzero critical counts and collaboration remain standing', () => {
+  for (const mode of modes) {
+    const counts = { 'waiting-human': 0, draft: 0, waiting: 0, unknown: 2, resolved: 5, failed: 0, expired: 3 };
+    const html = htmlFor({ ...mode, counts, progress: { reviewed: 5, total: 20 } });
+    for (const [label, value] of [['回执未确认', 2], ['已过期', 3], ['已复核', 5]]) assert.match(html, new RegExp(`<dt>${label}</dt><dd[^>]*>${value}</dd>`));
+    assert.match(html, /已复核 5\/20/);
+    if (mode.view !== 'workspace' || mode.density === 'compact') assert.doesNotMatch(html, /<dd[^>]*>0<\/dd>/);
+    const allZero = htmlFor({ ...mode, items: [], counts: { unknown: 0, expired: 0 }, progress: { reviewed: 0, total: 0 } });
+    assert.match(allZero, /已复核 0\/0/); assert.doesNotMatch(allZero, /状态计数未提供|全部完成/);
+    for (const value of [-1, 0.5, NaN, Infinity]) assert.match(htmlFor({ ...mode, items: [], counts: { unknown: value } }), /<dt>回执未确认<\/dt><dd[^>]*>未确认<\/dd>/);
+    const occupied = htmlFor({ ...mode, items: [{ ...first, processingByOther: { name: '教师乙' } }], inlineLimit: 1, onExpand() {} });
+    assert.match(occupied, /他人处理中/); assert.match(occupied, /正在处理：教师乙/);
   }
 });

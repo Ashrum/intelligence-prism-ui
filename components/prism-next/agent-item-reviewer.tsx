@@ -141,20 +141,26 @@ export function AgentItemReviewer<T = string>({ item, review, checkpoints, summa
   const actions = !expired && editableState && "actions" in review ? review.actions ?? [] : []
   const query = pending ? review.query : undefined
   const request = pending ? review.request : undefined
-  const statusText = [
+  const statusMessages = [
     expired && "当前版本已变化，旧确认不再适用，请重新复核。",
     review.state === "draft" && "修改未保存。",
     review.state === "unknown" && "复核回执未确认，请先查询原请求，不要重复提交。",
     review.state === "waiting" && "复核提交中，等待原请求回执。",
     review.description,
-  ].filter(Boolean).join(" ")
+  ].filter((message): message is string => !!message)
+  const statusText = statusMessages[0]
+  const explanations = [...new Set([...statusMessages.slice(1), notice].filter((message): message is string => !!message && message !== statusText))]
   const context = { itemId: item.id, version: item.version }
   return <Card aria-labelledby={`${id}-title`} data-agent-item-review-view={view} data-density={density} data-review-state={state}
     data-item-id={item.id} className={`@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
         <h3 id={`${id}-title`} className="break-words text-block-title">{item.title}</h3>
-        <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当前状态</span><ReviewStatus state={state} /></div>
+        <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当前状态</span><ReviewStatus state={state} />
+          {expired && pending && <Badge variant="warning">{review.state === "unknown" ? "旧请求回执未确认" : "旧请求复核提交中"}</Badge>}
+          {expired && review.state === "draft" && <Badge variant="warning">修改未保存</Badge>}
+          {expired && review.state === "failed" && <ReviewStatus state="failed" />}
+        </div>
       </div>
       <p className="break-words text-ui-hint">对象：{item.id || "对象未确认"} · 复核依据版本：{item.version || "版本未确认"}</p>
       {expired && <p className="break-words text-ui-hint">当前版本：{versionChange?.currentVersion || "版本未确认"}{versionChange?.description && <> · {versionChange.description}</>}</p>}
@@ -212,8 +218,9 @@ export function AgentItemReviewer<T = string>({ item, review, checkpoints, summa
     {pending && !query && <p className="text-ui-hint text-muted-foreground">暂未提供原请求查询入口。</p>}
     {expired && !pending && !restart && <p className="text-ui-hint text-muted-foreground">请从当前对象重新发起复核。</p>}
     {view === "workspace" && <ReviewHistory records={history} compact={compact} />}
-    {notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
-    <RecordDetails>{details}</RecordDetails>
+    <RecordDetails>{explanations.length ? <div className="space-y-2">
+      {explanations.map(message => <p key={message} className="break-words">{message}</p>)}{details}
+    </div> : details}</RecordDetails>
     {view === "inline" && onExpand && review.state !== "unknown" && <div><Button type="button" variant="outline" onClick={event => onExpand(event.currentTarget)}>完整复核<ArrowUpRight aria-hidden="true" /></Button></div>}
     {view === "workspace" && onBack && <div><Button type="button" variant="outline" onClick={onBack}><ArrowLeft aria-hidden="true" />返回原位置</Button></div>}
   </Card>

@@ -58,7 +58,7 @@ export function ReviewQueueExample({ purpose, narrow = false }: { purpose: Queue
   const [message, setMessage] = useState("")
   const workspace = useRef<HTMLElement>(null), trigger = useRef<HTMLButtonElement>(null)
   // Counts, filtering and order belong to this labelled demo host, never the queue component.
-  const counts: Partial<Record<AgentItemReviewState, number>> = {}
+  const counts: Partial<Record<AgentItemReviewState, number>> = { "waiting-human": 0, draft: 0, waiting: 0, unknown: 0, resolved: 0, failed: 0, expired: 0 }
   for (const item of items) counts[item.review.state] = (counts[item.review.state] ?? 0) + 1
   const rows = items.filter(item => filters.review === "all" || item.review.state === filters.review)
   if (sort === "reverse") rows.reverse()

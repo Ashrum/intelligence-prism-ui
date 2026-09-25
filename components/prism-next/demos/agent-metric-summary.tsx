@@ -42,7 +42,8 @@ export const metricSummaryExamples: Record<"learning" | "grading", MetricFixture
     record: { id: "fixture-grading", version: "批阅示例 v2", dataTime: "2026-09-25 11:30" },
     scope: { state: "available", summary: "高二三班 · 第一次函数练习 · 本次 26 份答卷" },
     groups: [
-      { id: "review", label: "复核数量", items: [
+      { id: "review", label: "复核数量", sample: { size: "26 份答卷", denominator: "26 份答卷" },
+        record: { dataTime: "2026-09-25 11:30", version: "批阅示例 v2" }, items: [
         { id: "reviewed", access: "available", label: "已复核", key: true, reading: { state: "available", value: 18, unit: "份" },
           denominator: "26 份答卷", sampleSize: "26 份答卷", method: "仅包含具有对应版本复核记录的答卷。",
           trend: { label: "三次记录中的已复核数量", unit: "份", series: [{ id: "reviewed", label: "已复核", data: [
