@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 参数配置器 v0.1 · 设计候选（2026-09-26）
+
+语义 07 `AgentParameterConfig` 声明 **Inline + 专用扩展内容**：Inline 按宿主 `key` 标记展示关键参数，Workspace 展示同一列表的完整参数集。组合 NumberField、Select、RadioGroup、Switch、Input 和固定标签；compact 收紧间距，保留校验、未确认／未知、影响和锁定原因。
+
+07 负责单值参数；08 负责范围、互斥和组合约束；25 负责执行确认。修改只发带 `baseVersion` 的 change/reset，值、校验、默认值来源与确认事实由宿主提供。只读与冻结不挂载输入；冻结消费确认当时的参数记录。可通过 25 的 `conditions` 插槽与 08 共用一张卡和一条边界提示。
+
+组件页 `/next/components/agent-components#parameter-config` 提供组卷与批阅两组示例，覆盖两态、compact、320px、长中文、公式、校验错误、未确认、锁定和冻结。公开 API 与边界见[参数配置器契约](docs/component-contracts.md#参数配置器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+候选位于 `feat/agent-parameter-config`，基于 main `1d4503b`（含 #68/#69）；第 07 项登记为“组件候选”。五项验证日志、测试数字、实际 diff 与 Workspace 轻量验证方案见 `.sites-runtime/parameter-config/REPORT.md`。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器三主题／窄容器／键盘与读屏器、Workspace 接入及真实服务未验，待 Supervisor 独立 Review 与 PO 决定。
+
 ## 结构化内容工作区 v0.1 · 设计候选（2026-09-26）
 
 语义 35 `AgentStructuredContent` 声明 **Inline + 专用扩展内容**：Inline 展示前两层结构、节点计数与宿主关键变化；Workspace 复用 Tree 编辑节点名称、增删、移动与嵌套，并提供折叠和拖拽。上移／下移／升级／降级按钮是触屏和键盘的等效操作；`density="compact"` 仅收紧间距，保留深层冲突、只读原因与保存事实。
