@@ -278,9 +278,62 @@ groups={[{
 
 任务分支 `feat/agent-metric-summary`，main 基线 `cb5234d`。测试覆盖外部值原样显示、缺测与不确定性、变化判定、受限分支、只发请求、历史与紧凑密度。五项日志、SSR 样本与 Workspace main 只读接线建议见 `.sites-runtime/metric-summary/REPORT.md`。未启动开发服务；浏览器三主题、键盘/焦点、窄容器视觉、实体设备、读屏器和真实业务接入均未验证，仍待 Supervisor 独立 Review。
 
+## 约束构建器 v0.1
+
+2026-09-26 设计候选，语义 **08 约束构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-constraint-builder` 导入 `AgentConstraintBuilder` 及同文件公开类型。未合并候选在 `feat/agent-constraint-builder`，基于 main `641a5d7`；不新增目录条目。
+
+### 复用检索与 02 / 08 / 25 边界
+
+- 已核对 AgentScopeBuilder、AgentExecutionConfirmation、Fieldset、Checkbox、RadioGroup、NumberField、Select、Alert 与 QuestionSelect / PointsField。02 缺少条件类型和冲突定位语义；25 负责确认，不是条件编辑器。QuestionSelect 丢弃 null、PointsField 默认限值并舍入，不适合不改写受控条件。因此 08 直接组合 coss 表单控件及 Card、Prism Badge / Button、RecordDetails，不新增控件、依赖、样式或视觉令牌。
+- **02 回答哪些对象参与；08 回答执行或结果必须满足哪些条件；25 负责确认执行。** 08 不拥有确认按钮、执行状态或回执；值、默认值、校验、冲突及定位、影响、变化摘要和需重新确认的事实均来自宿主。冲突检查、比例求和、规则求解、权限及版本核验外置。
+- PO 2026-09-25 已决定 P04「处理范围」中的排重／模糊页归属 **08 + 25**，不用于扩展 02 的范围语义。覆盖矩阵旧 P02→02 映射由此备注更正，矩阵原文不改。
+- 按 v0.2.1 §10.4，25 新增可选 `conditions?: ReactNode` 条件区插槽；08 以 `presentation="inline"` 放入同一确认卡。未传插槽时保持原呈现和确认状态集合。组合只改变呈现：关键条件变化后，宿主同步更新 08 的 `reconfirmation` 和 25 的 `confirmation`，旧确认不授权新条件；08 不读取或改写 25 的状态。
+
+### 公开 API
+
+`AgentConstraintBuilderProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / basis` | 必填 string / `AgentConstraintTarget={objectId,version}` | 可读标题与既有对象／草稿版本引用；引用只用于事件，不作为界面文案或 DOM 标识。缺引用、空／重复条件 ID 阻断编辑和恢复默认 |
+| `groups` | 必填 `readonly AgentConstraintGroup[]` | `{id,label,description?,items}`；分组、条目顺序和值受控，不创建内部草稿或业务副本。ID 稳定且唯一 |
+| `reconfirmation` | 必填 `{required:false}` 或 `{required:true,reason:string}` | 仅展示宿主给出的重新确认事实；false 不表示已确认，true 不由 critical 标记、差异、版本或点击自动生成／清除 |
+| `changes` | 可选 `readonly {id,label,description}[]` | 相对上次确认的变化，由宿主给出，workspace 展示；缺省为“暂未提供变化记录”，空数组为“没有条件变化”，不通过默认值推算 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 为密度，非第三业务态；不缩字或折叠关键问题 |
+| `presentation` | card/inline 默认 card | 仅控制外框；inline 可嵌入 25 的 conditions，不等于 workspace |
+| `onValueChange` | 可选 `(change:AgentConstraintChange)=>void` | 返回 `{objectId,version,constraintId,type,value}`，type/value 类型关联。只发送新值，返回值与 Promise 不改变任何事实；缺回调控件禁用 |
+| `onRestoreDefaults` | 可选 `(target:AgentConstraintTarget)=>void` | workspace 才显示“恢复默认”；仅发送当前对象／版本，不把 defaultValue 写入 value，不重置校验／确认 |
+| `onLocateConflict` | 可选 `(request:AgentConstraintLocateRequest)=>void` | workspace 才显示定位按钮；返回 `{objectId,version,constraintId,target}`，只发出定位请求，不滚动、打开对象、执行或求解 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | inline 的“调整全部条件”缺 onExpand 无入口；workspace 可返回原位置。宿主保持同一份值、版本、焦点与阅读位置；08 不创建外壳 |
+| `disabledReason` | 可选 string | 阻断所有条件编辑及恢复默认；原因常驻，处理器再次保护。展开、返回和只读定位不受影响；最终授权仍由宿主负责 |
+| `notice / details` | 可选 string / ReactNode | 最多一条常驻边界提示，补充解释放默认收起的“说明”。组合时避免与 25 重复边界说明；关键冲突、不可用和需重新确认始终可见 |
+
+`AgentConstraintItem` 共同字段：`id / label / critical / validation` 必填，`description / impact / disabledReason` 可选。`critical` 表示宿主指定的主要／关键条件，用于 Inline 选择；不自动使确认失效。影响文案原样展示，例如“排除第 4 页重复页”，组件不推算处理规模。默认值必填但只用于 workspace 展示，绝不传入控件的 defaultValue。
+
+| `type` | 受控值与默认值 | 复用与边界 |
+| --- | --- | --- |
+| `toggle / required / forbidden` | `value / defaultValue: boolean` | Checkbox；true 表示该条约束启用，false 表示关闭。must／禁止不是访问授权或控件的 HTML required |
+| `ratio` | `number \| null`；可选 `step` | NumberField，显示 % 单位；不补 0、不硬限 0–100、不计算比例合计或自动归一化 |
+| `bounds` | `AgentConstraintBounds={min:number\|null,max:number\|null}`；可选 `unit / step` | 两个有固定标签的 NumberField；更新一端生成新值，保留另一端，不交换上下限、不舍入，不做跨字段判断 |
+| `rule` | `string \| null`；必填 `options:readonly AgentConstraintOption[]`；`control?:select\|radio` 默认 select | Select 或 RadioGroup；option 为 `{value,label,disabledReason?}`。不可选原因保持可见，事件不接受未提供／禁用选项；未知现值不回退到默认项，不显示内部值代号 |
+
+`AgentConstraintValidation`：`{state:"valid",reason?}` / `{state:"conflict",reason,targets:readonly AgentConstraintLocation[]}` / `{state:"unavailable",reason}`。结果必传；即使数值看起来矛盾，也不覆盖宿主给出的 valid 或补造冲突。conflict 仍可编辑以修正；unavailable 禁用该项，不移除当前值。单项 disabledReason 只限制该项。
+
+`AgentConstraintLocation={objectId,version,label,location,anchor?}`；前两项及 anchor 为定位引用，界面只显示可读 label/location。组件不生成目标对象、不解释 anchor。宿主先过滤所有标签、选项、原因、影响、目标和插槽，防止无权内容进入界面；组件不是文本脱敏器。编辑／恢复／定位处理时，宿主重新核对当前对象、版本、任务归属与可用能力。
+
+### 三种用法与验证边界
+
+- **inline**：主要条件（critical）快捷编辑；非主要的冲突／不可用／禁用条件与不可选规则也保留。无 onExpand 时保留全部条件，避免无从访问隐藏项。所有问题集中在一块常驻 Alert 内，各行保留状态并以 aria-describedby 关联原因；只收起补充说明，不把关键问题放进 details。
+- **workspace**：完整分组、类型与默认值、全部条件编辑、常驻冲突列表／外部定位、恢复默认、相对上次确认的变化、返回入口。
+- **compact**：按行减少间距，保留原控件字号、固定标签、冲突及不可用的原因和定位文字、影响与重新确认事实；workspace + compact 仍保留完整分区。
+
+组件页 `/next/components/agent-components#constraint-builder` 提供 P04 处理条件与函数单元组卷两组标注示例，各有 inline / workspace / compact 和 320px 入口。Inline 复用 25 的条件区；三个视图共用一份示例值，确认、默认恢复请求与独立载入示例结果分开。P04 初始模糊页条件不同于上次确认，需重新确认；载入示例确认后冻结，显式进入调整后再次改关键条件会失效。组卷提供题量范围、三项难度比例、禁止重复知识点、必须保留来源及两种枚举控件；一处“难度比例合计不为 100%”与一处规则不可用均由示例宿主提供，可手动切换，输入变化不自动清除。
+
+本轮不启动开发服务、不改 Workspace、不写 .git。五项日志、测试清单、实际 diff 与 Workspace 本地 main 的只读接线方案见 `.sites-runtime/constraint-builder/REPORT.md`。SSR／回调测试不是浏览器、Workspace、真实服务或独立 Review 的通过结论。
+
 ## 范围构建器 v0.1
 
-2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。02 组合多维范围；01 AgentObjectPicker 选定具体对象，可在 02 的维度编辑插槽中复用。范围汇总、跨维度校验、版本和确认仍由 02 消费宿主事实，不交给 01。执行方式、必须／禁止条件仍属于 08 约束构建器。范围选择不授予权限，未指定范围不等于使用全部授权数据。
+2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。02 组合多维范围；01 AgentObjectPicker 选定具体对象，可在 02 的维度编辑插槽中复用。范围汇总、跨维度校验、版本和确认仍由 02 消费宿主事实，不交给 01。执行方式、必须／禁止条件由 08 AgentConstraintBuilder 编辑，执行确认由 25 承担；P04 的排重／模糊页属于 08 + 25（见上节）。范围选择不授予权限，未指定范围不等于使用全部授权数据。
 
 ### 复用检索与控件边界
 
@@ -1079,6 +1132,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+约束构建器 08 同样提供 `details?: ReactNode`：一块常驻 Alert 汇总宿主提供的全部冲突／不可用结果，关键条件变化需重新确认、禁用原因和影响保持可见；compact 不隐藏问题。每张卡最多一条 notice，补充解释进入“说明”；与 25 组合时只保留一份边界说明。
+
 2026-09-25 经 Product Owner 批准的密度整理：单项复核器按过期 > 回执未确认 > 其他仅常驻一条提示，其余解释进“说明”，并存状态用独立标记保留；指标摘要只合并显式组级样本／时间／版本，差异逐项显示；审核队列 inline/compact 只显示非零状态计数（无效值仍标未确认），进度与总数只用宿主提供值；证据浏览 inline 的边界解释进入“说明”，覆盖限制与独立事实常驻。详见各组件条目，不改变业务状态集合或回调。
 
 内容输入同样提供 `details?: ReactNode`。固定标签、长度／格式约束、校验失败、保存未知、冲突版本、来源／抓取状态及禁用原因在两态两密度常驻；当前草稿与已提交版分别标明。组合公式预览时不重复边界提示。
@@ -1126,7 +1181,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 | --- | --- | --- |
 | AgentContextSummary | `title / scope / sources / expanded / onExpandedChange? / onInspect? / notice? / snapshot?` | 复用 AgentContextList；来源事实独立，不检索或认证证据 |
 | AgentArtifactPreview | `title / version / status / summary / facts? / children? / open? / notice? / snapshot?` | 成果摘要卡与打开入口；打开后的对象呈现由 AgentObjectViewer / 领域工作区承担。预览不证明执行或发布，缺 open 没有入口 |
-| AgentExecutionConfirmation | `title / target / version / effects / confirmation` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query |
+| AgentExecutionConfirmation | `title / target / version / effects / confirmation / conditions?` | ready 才有 confirm；submitting / received / recorded 为记录；blocked 可有 review；unknown 可有 query。conditions 组合 08；旧确认失效和确认后的编辑冻结由宿主同步提供，不由插槽推定 |
 | AgentExecutionProgress | `title / state / description / steps / expanded / onExpandedChange? / updatedAt? / action?` | 复用 AgentTaskProgress；非 running 使用快照呈现，不自行判断进度 |
 | AgentExecutionResult | `title / description / receipt / facts? / children?` | succeeded / partial / failed 接收 completed / remaining 及可选 next / secondary；unknown 仅可有 query |
 

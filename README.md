@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 约束构建器 v0.1 · 设计候选（2026-09-26）
+
+语义 08 `AgentConstraintBuilder` 声明 **Inline + 专用扩展内容**：Inline 查看并修改主要条件；Workspace 呈现全部分组、冲突定位、默认恢复与相对上次确认的变化。`density="compact"` 保留冲突、不可用及需重新确认提示。复用 Fieldset、Checkbox、RadioGroup、NumberField、Select、Alert，值、默认值、影响、校验与冲突均由宿主给出，不内置检查或求解。
+
+02 确定参与对象，08 编辑执行／结果条件，25 确认执行。`AgentExecutionConfirmation.conditions` 可组合 08；关键条件变化后，由宿主同步使旧确认失效，符合 §10.4 的同一决定区组合。P04 排重／模糊页归属 08 + 25。
+
+组件页 `/next/components/agent-components#constraint-builder` 提供 P04 处理条件与组卷约束两组标注示例，覆盖 inline / workspace / compact 和 320px：关键条件变化、确认后冻结、比例冲突、规则不可用及独立载入默认／确认记录。公开 API 和复用依据见[约束构建器契约](docs/component-contracts.md#约束构建器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+未合并候选位于 `feat/agent-constraint-builder`，基于 main `641a5d7`；进度清单第 08 项为“组件候选”。五项结果、实际 diff 和只读核对 Workspace 本地 main 的轻量验证方案见 `.sites-runtime/constraint-builder/REPORT.md`。本轮不写 .git、不启动开发服务、不改 Workspace；浏览器与真实服务未验证，待 Supervisor 独立 Review。
+
 ## 内容输入 v0.1 · 设计候选（2026-09-25）
 
 语义 06 `AgentContentInput` 声明 **Inline + 专用扩展内容**：Inline 提供轻量字段输入、字符数与限制提示；Workspace 提供长文本／结构化字段组、可选当前草稿公式预览和独立已提交版本。`density="compact"` 只收紧间距，保留常驻标签、校验失败、来源、保存未知与冲突。
