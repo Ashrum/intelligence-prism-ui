@@ -1,6 +1,17 @@
 # 智能曜彩 UI Design System
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
+
+## 异常处理器 v0.1 · 设计候选（2026-09-25）
+
+语义 18 `AgentExceptionHandler` 位于 `components/prism-next/agent-exception-handler.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="default" | "compact"` 为独立密度。摘要保留类型、影响范围、已保留内容、处置状态及选项影响；完整视图提供全部异常、原始材料预览、判定依据、当时处置记录与返回入口。
+
+七种处置状态由外部事实提供；提交中与回执未确认不接受重复处置，只可查询原请求。已处置、已忽略和已跳过分别呈现，缺少时间明确显示未确认。动作只回传异常与动作标识；历史不随当前状态改写，组件不判断恢复资格或写入数据。
+
+组件页 `/next/components/agent-components#exception-handler` 提供 P04 模糊页与题目冲突／缺失答案两组固定示例，含三种用法、320px 窄容器、长中文及公式。公开 API 与 P04 接入映射见[异常处理器契约](docs/component-contracts.md#异常处理器-v01)。复用现有 coss / Prism，不新增依赖、视觉令牌或目录条目。
+
+本轮证据在分支 `feat/agent-exception-handler`（基线 `96bb21f`），验证日志与 Builder 报告在 `.sites-runtime/exception-handler/REPORT.md`。不启动开发服务、不修改 Workspace、不写入 Git；组件候选仍待 Supervisor 独立 Review 与下一步 Workspace P04 轻量验证，不能视为业务接入或验收通过。 五项均退出 0：排版 107 个 TSX、全量测试 151/151、类型检查 0 错误。浏览器安全策略阻断本地文件预览，三主题、窄容器与键盘/焦点未实看。
+
 ## 任务记录三件套两态 v0.1 · 设计候选（2026-09-24）
 
 语义 26 `AgentExecutionProgress`、27 `AgentExecutionResult`、03 `AgentContextSummary` 补充 `view="inline" | "workspace"`（默认 inline）及独立 `density="default" | "compact"`。原 presentation 外框与默认调用输出保持；任务历史明确标“当时”并静态呈现，未知回执仅允许查询原请求，产出无打开能力不显示假入口，来源的选用/读取/Agent 本次参考/成果引用分别呈现。

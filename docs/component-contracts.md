@@ -101,6 +101,79 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 异常处理器 v0.1
+
+2026-09-25 设计候选，语义 **18 异常处理器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-exception-handler` 导入 `AgentExceptionHandler` 及下列同名类型。检索依据：`AgentExecutionProgress.exceptions` 只有只读异常记录；`AgentChangeSet` 负责修改比较；`AgentExecutionResult` 提供原请求查询边界；Workspace `8f9bb13` 的 P04TaskView 仅有本地 Alert 组合。因此组合既有 Card、Alert、Prism Badge、Button、AgentStepStatus 词表与 RecordDetails（coss Collapsible），不新增组件目录项、执行器、权限判断、Store 或 Workspace 私有类型。
+
+### 公开属性
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / items` | 必填 `string / readonly AgentExceptionItem[]` | 同一业务对象的异常集合；稳定唯一项 ID 由宿主提供，空数组仅表示暂无异常记录 |
+| `view` | `'inline' / 'workspace'`，默认 `inline` | 两态共用相同事实，workspace 只提供内容区，不创建浮层或路由 |
+| `density` | `'default' / 'compact'`，默认 `default` | compact 为可换行短列表；不缩字、不隐藏未知、失败、影响及禁用原因；可与任一 view 组合 |
+| `inlineLimit` | `number`，默认 `2` | 有展开能力时显示前 N 项及所有 critical、failed、waiting 项，保留输入顺序；有限值向下取整且至少 1，非有限值回退 2 |
+| `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | inline 的“查看全部 N 项异常”；缺省不显示入口且保留全部项。存在 unknown 时同执行结果隐藏该入口并保留全部项；workspace 不显示入口 |
+| `onAction` | 可选 `(intent: AgentExceptionIntent) => void` | 仅发处置或查询意图，不变更输入、状态或历史；缺省时已提供的动作仍显示为禁用，并说明当前无法执行 |
+| `onBack` | 可选 `() => void` | 仅 workspace 显示“返回”；纯视图导航，包括 unknown，不能绑定处置、恢复、取消或提交。恢复任务须作为明确的处置动作另行提供 |
+| `disabledReason` | 可选 `string` | 非空时阻断本组所有处置与查询，原因常驻并关联按钮；查看与返回不受影响 |
+| `notice` | 可选 `string` | 整卡最多一条常驻边界提示；必要状态事实不放在这里代替状态字段 |
+| `details` | 可选 `ReactNode` | 补充说明，默认收起；不放未知、失败、影响、禁用原因或其他必须即时看到的事实 |
+
+`AgentExceptionItem`：
+
+| 属性 | 类型 | 契约 |
+| --- | --- | --- |
+| `id / title` | 必填 `string` | 稳定异常 ID / 教师可读标题；按钮可访问名称包含标题 |
+| `kind` | 必填 `AgentExceptionKind` | `low-confidence / conflict / missing / unparseable` 分别显示识别不确定、内容冲突、信息缺失、无法解析；不生成置信度或自动检测异常 |
+| `scope / retained` | 必填 `string` | 影响范围 / 已保留部分；没有或不确定须如实描述，不由其他状态推算 |
+| `basis` | 必填 `string` | workspace 的判定依据或规则说明，必要的来源与版本由宿主描述；决策关键的证据不足仍需写入常驻 description/scope |
+| `disposition` | 必填 `AgentExceptionDisposition` | 见状态表；描述、状态与可用动作独立从宿主取得 |
+| `critical` | 可选 `boolean` | 宿主指定关键项，始终保留于摘要；不从标题或异常类型推算优先级 |
+| `disabledReason` | 可选 `string` | 与整组及动作原因合并，阻断本项所有处置与查询，不推定解决或失败 |
+| `evidence` | 可选 `readonly AgentExceptionEvidence[]` | workspace 原始材料/证据列表；缺省显示暂无可核对的材料记录 |
+| `history` | 可选 `readonly AgentExceptionRecord[]` | workspace 的只读当时事实，按输入顺序显示；不从当前项补字段，不追加、不覆盖 |
+
+### 状态、动作与历史
+
+所有 disposition 均必填 `description: string`。等待、未知和失败徽标复用 `AgentStepStatus`；处置上下文明确说明“处置提交中”“处置回执未确认”“处置失败”，不改变共享步骤词表。
+
+| `state` | 必填补充字段 | 可选动作 | 事实语义 |
+| --- | --- | --- | --- |
+| `waiting-human` | 无 | `actions` | 当前等待人工决定，不能代表尚未到达的步骤 |
+| `waiting` | `request: { id, label }` | `query` | 处置已提交，有明确等待事实；无普通处置动作 |
+| `unknown` | `request: { id, label }` | `query` | 原处置回执未确认，不宣称失败或成功；仅查询原请求 |
+| `resolved` | `resolution: { method, time? }` | `actions` | 已有处置记录；显示处置方式和时间，时间缺失显示“时间未确认”，不使用客户端时钟；不等于任务完成 |
+| `failed` | 无 | `actions` | 明确处置失败；恢复/重试是否可用由宿主核验后提供，不自动添加 |
+| `ignored / skipped` | `resolution: { method, time? }` | `actions` | 按宿主事实显示已忽略／已跳过与当时方式，不等于已解决或内容正确 |
+
+`AgentExceptionAction={ id, label, impact, disabledReason? }`：前三项为必填 string。`impact` 常驻且以 `aria-describedby` 关联按钮。普通处置包括替换、跳过或恢复，只通过 `onAction({ kind:'handle', exceptionId, actionId })` 发出；原请求查询只通过 `onAction({ kind:'query', exceptionId, actionId, requestId })` 发出。组件不按按钮名称识别查询。unknown/waiting 的类型不接受 actions，运行时也忽略非类型化输入混入的 actions；未知请求 ID 时查询禁用并说明原因。普通处置与查询均有禁用事件保护，仍不能替代受信任层的权限、版本、请求归属和幂等核验。
+
+`AgentExceptionEvidence={ id, label, location, version?, preview?, unavailableReason? }`：前三项为 string；`preview` 是宿主提供的**只读** ReactNode 插槽。不提供版本时显示“来源版本未确认”，不提供预览时显示“暂未提供材料预览”；有 unavailableReason 时优先显示原因，不渲染不可用预览。组件不加载材料、不授予访问权，也不把预览提升为已读取／已引用记录。preview/details 不得塞入处置、重试或恢复按钮绕过受控动作，尤其 unknown。
+
+`AgentExceptionRecord={ id, state, description, scope, basis, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
+
+### 三种用法与 P04 映射
+
+- inline：异常总数＋关键项的类型、范围、已保留部分、当前处置与操作影响；提供展开才可缩略列表，未知时保留全部。原请求关联、未确认、失败和禁用原因始终可见。
+- workspace：全部异常及各项的原始材料/证据定位、规则、处置、当时记录；可选返回。恢复任务是宿主明确提供的动作，不因返回或 resolved 自动恢复。
+- compact：减少间距，采用可换行短列表；与 view 正交，事实和动作规则不变。
+
+只读参考 Workspace main `8f9bb13` 的 `src/features/teacher/agent-workspace/P04TaskView.tsx` 与 `p04-task.ts`；本轮不修改 Workspace。
+
+| P04 事实 | 建议映射 | 接入边界 |
+| --- | --- | --- |
+| `owner / requestId / objectId` | 宿主持有原关联；`items.id` 可组合原 requestId 与局部问题标识 | 组件不建立任务对象；`onAction` 由适配器校验所属会话、轮次、版本和 writable |
+| `phase='issue'` | `kind='low-confidence'`、`state='waiting-human'`；scope 第 3 页，retained 已整理部分 | `replace / skip` 作为 actions，影响说明写明仅替换/跳过局部，映射原 `resolve` 事件 |
+| `phase='issue-submitting'` | `state='waiting'`；`request.id=run.intent.id` | intent.choice 只表示已请求的方式，不能当已处置回执 |
+| `phase='issue-unknown'` | `state='unknown'`；同一 request；仅 query | 查询原 intent.id；不能再次发 resolve，也不能以点击查询自动产出回执。现有“模拟原局部请求处理回执”是评审事件，不是真实查询服务；未接查询能力时省略 query 或以 disabledReason 说明 |
+| `delivery` + `issueChoice='replace' / 'skip'` | 匹配原处置回执后分别 resolved / skipped，method 描述实际方式 | ready/reviewing 或输出存在本身不证明处置；P04 无处置时间，保持 time 缺省／未确认。scope.blurry='skip' 须依据明确范围及交付事实说明跳过 |
+| `entries` 的当时 text / event / intentId / outputVersion / scope | 适配器仅将可确认状态的事件映射 history，保留当时范围与版本 | 现有 entries 无统一处置状态与时间，不用当前 phase 反填历史，不从自然语言记录猜测状态 |
+| 原材料/页定位、当前权限与可查看能力 | evidence.location / version / preview / unavailableReason；规则写 basis | P04 当前为固定示例，不伪造 OCR、置信度、真实扫描图或真实 evidence |
+| 已有右工作区与来源触发器 | onExpand 传同一 items、view=workspace；onBack 返回并恢复焦点 | 两态切换不发处置、不复制 Store；缺失失败事实不自行制造 failed |
+
+示例入口 `/next/components/agent-components#exception-handler`：P04 第 3 页模糊，以及题目识别冲突／缺失答案；三种用法、七值手动状态、320px、长中文与公式均明确标“示例”。验证日志与报告：`.sites-runtime/exception-handler/`。五项验证均退出 0：排版 107 个 TSX，全量测试 151/151（含本项 15 项），类型检查 0 错误；详情见报告。浏览器打开本地文件预览被 URL 安全策略拒绝，三主题、窄容器、键盘/焦点未实看。组件静态与回调测试不能替代 Workspace `/teacher/agent/workspace` 接入验证；真实服务、移动设备和读屏器不在本轮验证范围。
+
 ## 任务记录三件套两态 v0.1
 
 2026-09-24 设计候选，覆盖语义 26 任务进度、27 执行结果、03 上下文摘要，声明 **Inline + 通用扩展容器**。紧凑密度是列表布局，不增加第三种业务呈现方式。语义 25 执行确认继续仅 Inline，本轮不改。验证入口是 Workspace `/teacher/agent/workspace`；本仓库组件页只提供示例，不以历史骨架作为接入验收依据。
@@ -316,7 +389,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
-Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet 及本轮任务记录三件套提供 `details?: ReactNode`。
+Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套及异常处理器提供 `details?: ReactNode`。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
