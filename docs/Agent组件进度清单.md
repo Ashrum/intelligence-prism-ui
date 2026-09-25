@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 02/03/04/11/14/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 02/03/04/11/14/17/18/19/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 19 已形成未合并组件候选：`feat/agent-metric-summary`（main `cb5234d`）；原样数值、缺测/样本不足/未知、宿主变化判断、受限披露、版本绑定下钻、历史与 compact 均有组件测试。两组示例与五项结果见 `.sites-runtime/metric-summary/REPORT.md`。本轮仅只读核对 Workspace main `257f96c`，未完成接线或浏览器验证，不升级为 Workspace 已验证。
 
 - 2026-09-25 语义 02 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #52](https://github.com/Ashrum/intelligence-prism-ui/pull/52)（`6ae642f`）、[Prism #53](https://github.com/Ashrum/intelligence-prism-ui/pull/53)（`f720197`，compact 单行与空维度语义）；[Workspace #19](https://github.com/Ashrum/ole-school-workbench/pull/19)；输入区范围：班级/资料来源经 `setScope` 修改，未指定不补全。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -83,7 +85,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 16 | 审核与修订 | 审核队列 | 复用起点：DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 外部待审条目与状态、受控选择和下一项；审核优先级、锁和分派外置 |
 | 17 | 审核与修订 | 单项复核器 | AgentItemReviewer（P/agent-item-reviewer.tsx）；复用 VerificationFields / PointsField，证据与对照插槽 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #40](https://github.com/Ashrum/intelligence-prism-ui/pull/40)（`9b71c78`）；[Workspace #13](https://github.com/Ashrum/ole-school-workbench/pull/13)；P04 逐题复核：待复核→提交中→回执未确认→编辑后过期→重新复核→已复核 | P1 · 第 7 项 | 下一步：按已批准顺序 19 指标摘要 → 01 对象选择器 → 16 审核队列 → 06 内容输入。真实服务未验证。备注：QuestionReview 已外部状态化（[Prism #42](https://github.com/Ashrum/intelligence-prism-ui/pull/42)），并已在 Workspace 迁移（[Workspace #14](https://github.com/Ashrum/ole-school-workbench/pull/14)）。 |
 | 18 | 审核与修订 | 异常处理器 | AgentExceptionHandler（P/agent-exception-handler.tsx），复用 Alert / Card / Badge / Button / Collapsible / AgentStepStatus | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #36](https://github.com/Ashrum/intelligence-prism-ui/pull/36)（`49e44e5`）；[Workspace #11](https://github.com/Ashrum/ole-school-workbench/pull/11)（`dce7e78`）；P04 试验台浏览器验证：待处理／提交中／回执未确认／已处置 | P1 · 第 5 项 | 下一步：按已批准顺序 19 指标摘要 → 01 对象选择器 → 16 审核队列 → 06 内容输入。真实服务未验证。 |
-| 19 | 分析与诊断 | 指标摘要 | 复用起点：MetricSummary / GoalComparison / StatusComposition（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 优先直接复用，补语义映射说明；统计值、分母、缺测和结论不在组件内生成 |
+| 19 | 分析与诊断 | 指标摘要 | AgentMetricSummary（P/agent-metric-summary.tsx）；组合 MetricSummary compact、TrendChart 与 Card/Badge/Collapsible；GoalComparison/StatusComposition 的派生计算不自动接入 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并任务分支 `feat/agent-metric-summary`，main 基线 `cb5234d`；测试 `tests/agent-metric-summary.test.mjs`，报告 `.sites-runtime/metric-summary/REPORT.md` | PO 2026-09-25 批准：下一批第 3 项 | 待 Supervisor 独立 Review，再在 Workspace P04 对照/修订/保存预演计数做呈现接线；统计与授权留在宿主。Workspace/浏览器/真实服务尚未验证。 |
 | 20 | 分析与诊断 | 分布矩阵 | 复用起点：HeatmapChart / ScatterChart / BoxPlotChart（P/analytics-components.tsx 导出） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接复用图形与数据表；数据维度、阈值和选择回调由宿主决定 |
 | 21 | 分析与诊断 | 下钻与证据浏览 | AgentEvidenceDrilldown（P/agent-evidence-drilldown.tsx）；复用 AgentContextList，DiagnosisEvidenceTable 入口与 DocumentRegionViewer 预览 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #38](https://github.com/Ashrum/intelligence-prism-ui/pull/38)（`1dee5ec`）；[Workspace #12](https://github.com/Ashrum/ole-school-workbench/pull/12)；P04 第 2 题下钻：对话结论 → 证据链逐层导航与返回 | P1 · 第 6 项 | 下一步：按已批准顺序 19 指标摘要 → 01 对象选择器 → 16 审核队列 → 06 内容输入。真实服务未验证。 |
 | 22 | 计划与建议 | 建议集 | 复用起点：Card（B/card.tsx）、Checkbox（B/checkbox.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 建议依据、选择、调整与采纳事件；不以勾选推定教学任务已创建 |
@@ -124,13 +126,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 28 | 除 02、03、04、11、13、14、15、17、18、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 27 | 除 02、03、04、11、13、14、15、17、18、19、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 19（未合并 `feat/agent-metric-summary`） |
 | Workspace 已验证 | 14 | 02、03、04、11、13、14、15、17、18、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：按已批准顺序 19 指标摘要 → 01 对象选择器 → 16 审核队列 → 06 内容输入。
+下一步：先完成 19 指标摘要的独立 Review 与 Workspace 轻量验证，再按已批准顺序推进 01 对象选择器 → 16 审核队列 → 06 内容输入。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
