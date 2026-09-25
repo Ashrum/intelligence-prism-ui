@@ -101,6 +101,66 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 下钻与证据浏览 v0.1
+
+2026-09-25 设计候选，语义 **21 下钻与证据浏览**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-evidence-drilldown` 导入 `AgentEvidenceDrilldown` 及同文件公开类型。不增加 80 项目录条目；宿主接入验证入口仍为 `/teacher/agent/workspace`。
+
+复用检索依据：`DiagnosisEvidenceTable` 已提供观察、来源、定位与查看回调，适合作为诊断入口，但没有多层证据导航；`DocumentRegionViewer` 已有受控区域与定位，作为证据预览插槽使用；`AgentContextList / AgentContextSummary` 提供来源行及独立事实呈现起点。新组合复用 AgentContextList、Card、Button、Prism Badge、Breadcrumb 与 RecordDetails；compact 沿用记录组件的可换行列表布局。原有三组件无需修改；不引入取数、权限判断、业务 Store、路由、持久化或 Workspace 私有类型。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `conclusion` | 必填 `AgentEvidenceConclusion` | `id / statement` 必填；可选 `version / snapshot / summary / evidenceCount / coverage`。id 引用宿主结论；statement 为结论陈述，summary 为依据摘要。历史快照显式传 snapshot；版本缺省显示未确认，不从对象补造 |
+| `nodes` | 必填 `readonly AgentEvidenceNode[]` | 结论之下的对象／证据树。兄弟节点 ID 唯一、跨两态稳定；顺序由宿主决定，前两条可披露证据用于摘要。允许学生 → 题目 → 作答片段等多层对象 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | compact 是密度，可与任一 view 组合；只改变布局和间距，不改变事实、字号或能力 |
+| `path` | `readonly string[]`，默认 `[]` | `[]` 是结论；各 ID 逐层选中子节点。完全受控，无内部路径副本；找不到路径时说明当前位置未提供，不回退展示其他对象或旧预览 |
+| `onNavigate` | 可选 `(path, trigger: HTMLButtonElement) => void` | 只请求进入对象／证据、返回上层或面包屑层级；值更新后才改变呈现。缺省只读展示指定层级，没有假导航按钮；宿主负责焦点、滚动和两态恢复 |
+| `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | 仅 inline 显示“查看证据链”；缺省隐藏入口并展示全部已提供证据摘要，避免第三条以后不可达；不创建面板或改变 path |
+| `onOpen` | 可选 `(intent: AgentEvidenceOpenIntent, trigger: HTMLButtonElement) => void` | 节点还须显式提供 `openable=true` 才显示打开入口；intent 为 `{kind:'object'/'evidence', conclusionId, nodeId, path}`。不取数、不改写事实；由宿主解析身份／版本并重新核验授权 |
+| `onBack` | 可选 `() => void` | workspace 的“返回原位置”；仅返回原入口，不取消、提交或改变结论。原触发器、阅读位置和焦点由宿主保存与恢复 |
+| `notice / details` | 可选 `string / ReactNode` | notice 是至多一条常驻边界提示；details 复用“说明”默认收起。记录缺失、不可用、访问限制等必要事实不得放入 details |
+
+`AgentEvidenceConclusion.coverage: AgentEvidenceCoverage` 是 `{state:'complete'/'incomplete'/'unavailable'/'unknown', description?}`。分别显示“记录覆盖完整／记录不完整／记录暂不可用／覆盖状态未确认”。证据数量与覆盖情况**仅在宿主提供时显示**，不以树中条目数充当总体数量或分母。没有传 coverage 表示没有提供覆盖说明；宿主已知存在覆盖缺口时必须显式传 incomplete，不能省略。覆盖不完整也不撤销已有匹配的读取／引用事实。
+
+### 节点、来源与独立证据事实
+
+| 类型 | 字段与职责 |
+| --- | --- |
+| `AgentEvidenceObject` | `kind:'object', id, title, type, children` 必填；可选 `access:'available', version, location, summary, openable`。type 是教师可读对象类型；对象版本与证据来源版本独立 |
+| `AgentEvidenceItem` | `kind:'evidence', id, title, type, source, facts, relation` 必填；可选 `access:'available', summary, preview, previewUnavailableReason, openable`。summary 为关键摘录，workspace 选中该证据后才呈现 preview |
+| `AgentEvidenceSource` | `objectId, label, location` 必填，`version / snapshot` 可选。objectId 为已有来源身份，label 为可披露名称，location 描述页／区域／题号／作答段落。snapshot 标为历史证据，显示该记录自己的“当时版本”；不从当前对象或结论回填 |
+| `AgentEvidenceRestrictedNode` | `id, kind:'object'/'evidence', access:'restricted', disclosure:{label,reason}`。只传可披露标题与原因；类型不接受正文、来源、版本、事实、预览、子节点或打开能力。运行时同样忽略误传的私密字段及子树 |
+| `relation` | `supports / counterexample / pending`，显示“支持／反例／待核”；全部由宿主给出，不按已引用、已读取或预览内容计算，不用成功色证明结论正确 |
+
+`AgentEvidenceNode` 是以上对象、证据、受限节点的联合。宿主只能传入当前授权可见的数据；受限分支可披露字段也必须先经宿主处理。组件的展示分支不是最终授权检查。来源记录、结论摘要、总量、限制原因及 preview/details 同样受披露范围约束。
+
+`facts: readonly AgentEvidenceFact[]` 是**并列的独立事实集合**，不是互斥状态机或进度链：
+
+| `state` | 文案 | 必要条件 / 附加字段 |
+| --- | --- | --- |
+| `read` | 已读取 | 必填 description，说明谁读取及实际覆盖范围；不外推完整材料或模型读取 |
+| `cited` | 已引用 | 必填 description、version、location，后两项是被引用成果的版本和引用位置；来源版本另见 source.version |
+| `not-read / not-cited` | 未读取／未引用 | 仅宿主核实记录覆盖完整且没有相应事件时传入；组件不因 facts 为空产生否定事实 |
+| `retrieval-only / preview-only` | 仅检索命中／仅预览 | 宿主明确给出的有限记录；组件不从检索数量、挂载预览或点击生成 |
+| `incomplete` | 记录不完整 | 已知记录覆盖缺口，description 说明缺失范围；不推定未读取／未引用 |
+| `unavailable` | 记录暂不可用 | 当前记录来源无法核验；不把不可用写成未发生 |
+| `unknown` | 状态未确认 | 尚不能确认的事实；description 可说明具体未确认项 |
+
+各事实可附独立 description、version、location；除 cited 的成果定位要求外，其余版本／定位按所描述记录提供，彼此不复制。facts 为空仅说“暂无证据事实记录”。宿主／受信任层先匹配任务、会话、执行轮次、来源及版本和成果引用位置，再传事实；组件不验证证据真伪。已引用不证明结论正确、充分或已进入本次模型上下文；点击只发意图，不生成事实。
+
+`previewUnavailableReason` 只描述内容预览能力，有值时不挂载 preview；记录暂不可用与材料能否预览独立。preview 缺省显示“暂未提供证据预览”。preview/details 必须是当前允许披露的只读内容，可包含 DocumentRegionViewer 的区域选择、缩放等视图交互，不得绕过公开动作接入业务提交。
+
+### 三种用法与验证边界
+
+- **inline**：结论、版本、依据摘要、宿主给出的数量／覆盖，按输入顺序呈现关键 1–2 条证据；无展开能力时保留全部摘要。摘要之外的 incomplete、unavailable、unknown、预览不可用与权限受限信息集中在常驻“其他记录限制”，不因截断消失；宿主须将其他影响判断的关键依据保留于 summary 或前两条。
+- **workspace**：同一结论、面包屑、上层与原位置返回；逐层浏览对象及证据。选中证据显示自身类型、来源／版本／定位、关系、独立事实与领域预览。path 失效不取其他对象代替，提供返回最近已有层级的请求。
+- **compact**：同样事实采用可换行短列表，减少间距；两态都保留记录不完整、不可用、未确认和访问原因，不缩字。
+
+`/next/components/agent-components#evidence-drilldown` 原位示例：扫描校对“第 2 题识别可能有误”→第 2 题→原稿第 1 页区域／识别文本；学情诊断“二次函数配方掌握不足”→学生→题目→作答片段，含反例、检索命中、历史版本与受限记录。明确标“固定示例”；DiagnosisEvidenceTable 提供诊断入口，DocumentRegionViewer 展示人工区域与公式，示例宿主控制路径及返回焦点。未新增业务页面。
+
+本轮分支 `feat/agent-evidence-drilldown`，基线 main `2f04f5a`；仍是未合并组件候选。测试覆盖独立事实、受控层级、回调不改变记录、缺少展开能力、受限内容隔离、历史版本、紧凑限制及类型约束。五项结果与 P04 轻量验证方案记录于 `.sites-runtime/evidence-drilldown/REPORT.md`。不启动开发服务；浏览器三主题／窄容器／键盘焦点、Workspace 接入、真实服务、实体设备和读屏器另行验证，SSR 与回调检查不代替这些验收。
+
 ## 异常处理器 v0.1
 
 2026-09-25 设计候选，语义 **18 异常处理器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-exception-handler` 导入 `AgentExceptionHandler` 及下列同名类型。检索依据：`AgentExecutionProgress.exceptions` 只有只读异常记录；`AgentChangeSet` 负责修改比较；`AgentExecutionResult` 提供原请求查询边界；Workspace `8f9bb13` 的 P04TaskView 仅有本地 Alert 组合。因此组合既有 Card、Alert、Prism Badge、Button、AgentStepStatus 词表与 RecordDetails（coss Collapsible），不新增组件目录项、执行器、权限判断、Store 或 Workspace 私有类型。
@@ -389,7 +449,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
-Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套及异常处理器提供 `details?: ReactNode`。
+Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器及下钻与证据浏览提供 `details?: ReactNode`。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
@@ -397,11 +457,11 @@ Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其�
 
 AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别记录，查看来源不会改变这些记录。界面名称“Agent 本次参考”对应 v0.2.1 §10.2 中“进入本次模型上下文”的独立事实（`context`），不从选用、读取或查看推定该事实。四值语义不变：`confirmed` 显示外部提供的已参考事实及具体范围，`absent` 为“未参考”（记录覆盖完整且无对应事件），`unknown` 为“状态未确认”，`unavailable` 为“记录暂不可用”。来源版本与定位沿用已有折叠区；删除重复的卡底职责解释。
 
-- `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作。
+- `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
-- `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR。
+- `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
