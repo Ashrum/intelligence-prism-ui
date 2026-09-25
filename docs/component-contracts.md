@@ -54,6 +54,59 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 结构化内容工作区 v0.1
+
+2026-09-26 设计候选，语义 **35 结构化内容工作区**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-structured-content` 导入 `AgentStructuredContent` 及公开类型；不增加 80 项组件目录条目。大纲、课程、章节和树状内容共用受控层级呈现，不建立新的权威内容模型或统一 AST。
+
+### 复用检索与 28 / 12 / Tree 边界
+
+- **35 编辑内容层级本身**：节点增删、改名、移动、嵌套，保留节点身份与父子关系；目录选择不等于内容编辑，静态预览不能代替结构数据。
+- **28 AgentDocumentWorkspace** 负责长文阅读、按章节编辑正文及批注；其章节目录只负责导航。同一对象可由宿主切换“正文 / 结构”，章节树与正文键共用稳定节点 ID，不在两个组件里建立平行草稿。
+- **12 结构编排器** 负责试卷、任务等已选条目的顺序、分组、分值等业务编排。35 不承担试卷模型、任务执行顺序或组卷规则。覆盖矩阵 B05、D05、F04、L03、Q04 中的层级编辑可用 35，题序／任务顺序仍归 12；不修改历史矩阵。
+- 已检索 `Tree / TreeItem / TreeItemLabel`（`components/prism-next/tree.tsx`）、`TextbookDirectory`、`AgentDocumentWorkspace`、`AgentCollectionBasket` 及 coss Collapsible、Input、Button。Tree 仅接收外部 `TreeInstance` 并提供呈现，不提供节点增删改名或业务模型；教材目录含勾选／搜索语义，不宜整件当作内容编辑器。
+- 组合 Tree 与已安装的 `@headless-tree` 同步数据加载、方向键和拖拽功能，编辑工具使用固定标签 Input、Prism Button navigation，外框与状态使用 Card / Badge，`RecordDetails` 复用 coss Collapsible。无需新依赖，不改 coss、基础 Tree、视觉令牌、目录或业务 Store。
+- 拖拽为增强；上移／下移／升级／降级是始终存在的等效按钮（按能力显示），采用现有触屏目标尺寸。拖拽不复制数据、不接收外部拖入、不使用计时器修改业务状态；关闭拖拽悬停自动展开。Tree 继续负责键盘导航，编辑操作放在树外，避免在 treeitem 内嵌编辑表单。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `structure` | 必填 `AgentStructure` | `{id,title,version:{id,label},baseVersion?,snapshot?,currentVersion?}`；内部 ID 只用于引用，界面显示 title/label。snapshot **存在即历史只读**，包括空字符串；不把当前内容或保存状态填入历史版本 |
+| `nodes` | 必填 `readonly AgentStructureNode[]` | `{id,title,type,level,status,summary?,children?,capabilities?}`；树内 ID 唯一稳定，根 level=1、子节点逐层加 1。children 保留有序父子关系，type 为可读类型。空标题显示“未命名节点”，输入仍保留原值。重复／空 ID、循环或层级不一致时停止呈现树与动作，显示结构不可用 |
+| `capabilities` | 必填 `AgentStructureCapabilities` | view / rename / add / delete / move / nest 六项均声明 `{status:'supported',reason?}` 或 `{status:'limited'/'unsupported',reason}`。limited 必须说明支持范围；可通过节点 capabilities 限定具体节点。节点声明只能收紧全局能力，不能授予全局 unsupported 的操作 |
+| `selectedNodeId / onSelect` | 必填 `string / null`；可选 `(selection)=>void` | 业务选择受控。回传 `{structureId,versionId,nodeId}`，选中仅随新 prop 改变；无回调仍能浏览／折叠。失效 ID 提示重新选择，不自动选第一项 |
+| `expandedIds / onExpandedChange` | 可选 `readonly string[] / (ids:string[])=>void` | 不提供 expandedIds 时组件仅维护本地折叠视图状态，默认展开顶层；提供时受控，缺回调不改变展开。跨两态／会话的展开接续由宿主保存。对象身份或历史类别改变时重建局部树视图，版本更新不丢已有展开／焦点 |
+| `onIntent` | 可选 `(intent:AgentStructuredContentIntent)=>void` | 所有结构编辑只发下表意图，不修改节点、层级、选择、状态、版本、变更摘要或保存事实。缺回调仅查看；宿主同步回传节点树才更新呈现 |
+| `changes` | 可选 `{baseVersion:{id,label},summary:readonly string[]}` | 相对宿主指定基准版本的变化；undefined 为“变更情况未确认”，显式空数组为“未记录结构变化”。组件只计算已提供节点数和深度，不从节点状态／点击推导变更事实 |
+| `save` | 可选 `AgentStructureSave`，默认 unknown | `{state:'unsaved'/'saved-draft'/'submitted'/'conflict'/'unknown',description?}`。保存状态为外部事实；全局 conflict 保留当前内容并阻断修改，不自动清除冲突 |
+| `readOnlyReason` | 可选 string | 存在即只读，包括空字符串；保留当前节点与输入，显示原因。权限、并发控制、旧请求隔离及去重仍由宿主／受信任层负责 |
+| `view / density` | 默认 `inline / default` | view 为 inline / workspace；density 为 default / compact，可与两态组合，不是第三态 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void / ()=>void` | Inline“编辑结构”；历史或整体不可编辑时“查看完整结构”。缺 onExpand 不显示入口。workspace 可返回原位置；仅请求视图切换，不保存、提交、放弃或取消 |
+| `notice / details` | 可选 `string / ReactNode` | 最多一条常驻边界提示，其余说明经默认收起的 Collapsible。冲突、只读、能力限制、保存未知及操作阻断原因常驻，不因 compact／折叠隐藏 |
+
+节点 `status`：`{state:'normal'/'added'/'modified'/'deleted'}`，或 `{state:'conflict'/'readonly',reason:string}`。deleted 明确显示“已删除待提交”，保留在树和计数中，不当作已正式删除。冲突／只读／待删除节点及其后代不可写；移动或删除整个子树还检查后代，不能借父节点绕过受限子节点。宿主仅传获准披露的完整结构投影；view unsupported 不挂载节点、摘要、变更摘要或结构入口。所有 ReactNode 插槽须满足授权与历史只读边界。
+
+每个编辑意图都携带 `{structureId,versionId,baseVersionId}`。身份、基准版本、接收回调及当前能力不齐时不可编辑；没有内部“保存”动作，也不把回调返回值解释为保存回执。
+
+| 意图 | 参数 | 含义 |
+| --- | --- | --- |
+| `type:'rename'` | `nodeId,title` | Input 每次变化回传原始字符串（含空格／空串）；标题值由宿主控制，不另建临时业务草稿 |
+| `type:'add'` | `nodeId,placement:'child'/'after'/'root',target:{parentId,index}` | child 追加到选中节点下；after 插在选中节点后；空树 root 使用 nodeId=null、parentId=null、index=0。新节点 ID／名称／类型由宿主创建 |
+| `type:'delete'` | `nodeId` | 请求删除该节点及其子树；正式删除与“已删除待提交”事实由宿主给出，不弹无意义的常规确认 |
+| `type:'move'` | `nodeId,target:{parentId,index},via:'up'/'down'/'outdent'/'indent'/'drag'` | index 为**先移除源节点后**的目标同级数组零基下标，parentId=null 表示顶层。上／下移相邻同级；升级移至父节点之后；降级作为前一同级的末个子节点 |
+
+同级移动消费 move 能力；改变父级消费 nest 能力，两者独立。拖拽与按钮共用参数和校验，禁止自身／后代为目标、失效／受限目标、越界位置和空移动；接收器必须再次核验当前版本、范围、业务规则与请求归属。节点自身及受影响子树的限制均检查；上移／下移不修改其他节点内容。宿主用新的不可变树回传并重新计算层级，不把此展示投影提升为统一内容模型。对协作新建议，保留当前输入，宿主显式提供冲突／只读事实，不静默替换草稿。
+
+### 三种用法与验证边界
+
+- **inline**：可读身份／版本／保存事实 → 能力和关键问题 → 前两层层级摘要、全部已提供节点计数 → 宿主关键变化 → 可用展开入口。深层冲突、只读、待删除及节点能力限制在摘要之外常驻。
+- **workspace**：同一事实与完整 Tree → 宿主相对基准版变更摘要 → 当前节点摘要、固定标签名称输入、增删与移动／嵌套按钮。标题点击或 Enter/Space 只请求选择；独立箭头和方向键管理折叠。视图刷新保留节点身份，拖拽目标用可读父节点名和位置提示。
+- **compact**：仅减少间距与内边距；不缩字、不省略能力、冲突、只读／待删除、保存未知或操作原因。可与 workspace 组合；不新增第三态。
+
+组件页 `/next/components/agent-components#structured-content` 提供五环节备课提纲（含子活动，新增与移动）及教材章节（仅可折叠查看、不能移动）两组标注示例；各有 inline / workspace / compact、320px、长中文、公式、历史和深层冲突切换。示例适配器只修改页面运行内状态，名称、层级、变更摘要与未保存状态由示例宿主更新，未连接保存或执行服务。
+
+候选分支 `feat/agent-structured-content`，基于 main `98c584b`；五项日志、测试清单和只读核对 Workspace 本地 main `2cc32be` 的轻量接入方案见 `.sites-runtime/structured-content/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题、窄容器实际交互／视觉、真实拖拽、移动设备、读屏器与服务均未验。自动 SSR／处理器测试不代替上述验收，待 Supervisor 独立 Review。
+
 ## 成果物输出 v0.1
 
 2026-09-26 设计候选，语义 **33 成果物输出**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-artifact-output` 导入 `AgentArtifactOutput` 及同文件公开类型；不新增 80 项组件目录条目。
@@ -642,6 +695,8 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 
 其 export 快速操作可由宿主打开 33 AgentArtifactOutput 的输出配置，保持同一成果身份与版本；28 的保存／阅读事实不替代 33 的文件可用性。详见“成果物输出 v0.1”。
 
+28 的章节目录用于定位和正文编辑；节点增删、改名、调序与嵌套由 35 AgentStructuredContent 承担。可在同一文稿对象内组合“正文 / 结构”视图，宿主管理共享章节身份、正文、层级及版本，两个组件不互相维护副本；详见“结构化内容工作区 v0.1”。
+
 ### 复用检索与格式边界
 
 - `DocumentRegionViewer` 复用范围是页区域、缩放和定位，不提供文稿章节、编辑、保存和批注契约；需要原稿区域时可由宿主放入章节 `content`，不强制将长文装成页图。
@@ -1195,6 +1250,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+结构化内容工作区 35 同样提供 `details?: ReactNode`。全树冲突、只读／待删除原因、能力限制、基准版本与保存事实常驻；同文能力原因合并显示，不因 compact 或节点折叠隐藏。内部结构／节点／版本 ID 不进入界面，教师只看名称、版本标签、类型与层级。
+
 成果物输出 33 同样提供 `details?: ReactNode`：一条 notice 以外的补充解释收起；有损／不支持原因、生成失败、状态未确认、已过期／无权下载和“基于旧版本”在两态两密度常驻。文件名不接受原始路径作显示值，内部 ID 与可读标签分离。
 
 约束构建器 08 同样提供 `details?: ReactNode`：一块常驻 Alert 汇总宿主提供的全部冲突／不可用结果，关键条件变化需重新确认、禁用原因和影响保持可见；compact 不隐藏问题。每张卡最多一条 notice，补充解释进入“说明”；与 25 组合时只保留一份边界说明。
@@ -1233,6 +1290,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
 - `AgentDocumentWorkspace`：长稿章节阅读、受控文本编辑与批注意图；格式能力、保存和历史由宿主提供。`MathContent` 为既有数学阅读示例，通用公式可通过 RootFormula / MathML / DraftMathPreview 放入章节内容；数学显示不等于格式转换、计算或校验。
+- `AgentStructuredContent`：语义 35，组合 Tree 与独立节点工具，受控增删改名、移动及嵌套；28 编辑正文，12 编排试卷／任务。折叠和选择不等于编辑；节点关系、版本、保存和历史均由宿主提供，详见“结构化内容工作区 v0.1”。
 - `AgentArtifactOutput`：语义 33 的受控输出配置、文件交付与队列／历史呈现；27 报告执行事实，28 承载文稿内容，QuestionPrint 可作打印预览插槽。详见“成果物输出 v0.1”，不内建文件生成或下载服务。
 - `AgentContentInput`：语义 06 的任务材料／正文输入，复用 Textarea / InputGroup / Field，可选组合当前草稿公式预览；不承担已有文稿的完整阅读编辑（28）。详见“内容输入 v0.1”。
 - `AgentComposer` / `AgentTaskProgress`：给 Agent 的受控指令输入、提交/停止事件与外部步骤状态。Composer 不冒充内容编辑器，题干、答案与粘贴文章交给 06。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。

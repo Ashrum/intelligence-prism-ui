@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 结构化内容工作区 v0.1 · 设计候选（2026-09-26）
+
+语义 35 `AgentStructuredContent` 声明 **Inline + 专用扩展内容**：Inline 展示前两层结构、节点计数与宿主关键变化；Workspace 复用 Tree 编辑节点名称、增删、移动与嵌套，并提供折叠和拖拽。上移／下移／升级／降级按钮是触屏和键盘的等效操作；`density="compact"` 仅收紧间距，保留深层冲突、只读原因与保存事实。
+
+35 负责内容层级，28 `AgentDocumentWorkspace` 负责长文及章节正文，12 负责编排试卷／任务顺序。目录选择不等于内容编辑；内容模型、版本、变化与保存状态由宿主维护，组件只发出携带节点及目标位置的意图。历史强制只读，内部 ID 不进入界面。不改 coss、依赖、视觉令牌或 80 项目录。
+
+组件页 `/next/components/agent-components#structured-content` 提供五环节备课提纲（子活动、新增与移动）和仅可折叠查看的教材章节两组标注示例，覆盖 inline / workspace / compact、320px、长中文、公式、历史与深层冲突。公开 API 及 Tree 组合取舍见[结构化内容工作区契约](docs/component-contracts.md#结构化内容工作区-v01)。
+
+候选位于 `feat/agent-structured-content`，基于 main `98c584b`；进度清单第 35 项为“组件候选”。五项验证日志、测试清单和只读核对 Workspace main `2cc32be` 的接入建议见 `.sites-runtime/structured-content/REPORT.md`。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器三主题／实际拖拽／触屏／读屏器及真实服务未验，待 Supervisor 独立 Review。
+
 ## 成果物输出 v0.1 · 设计候选（2026-09-26）
 
 语义 33 `AgentArtifactOutput` 声明 **Inline + 专用扩展内容**：Inline 按推荐格式快速导出，Workspace 选择格式、版式、范围与版本，承载预览、批量输出队列和只读历史。`density="compact"` 保留失败、未确认、有损／不支持原因和“基于旧版本”提示。复用 Card、Field、Select、Prism Badge / Button 与 RecordDetails；QuestionPrint 原行为作为打印预览插槽复用。
