@@ -101,6 +101,58 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 范围构建器 v0.1
+
+2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。确定本次任务涉及哪些对象；执行方式、必须／禁止条件仍属于 08 约束构建器。范围选择不授予权限，未指定范围不等于使用全部授权数据。
+
+### 复用检索与控件边界
+
+- 已检索 TextbookRangePicker、TextbookDirectory / Tree、FilterBar、日期选择示例及 Agent 语义组合；已有控件覆盖字段选择，缺口是跨维度的范围校验、汇总与确认。因此只补通用呈现契约，不增加组件目录条目。
+- 外框与提示复用 Card、Prism Badge / Button、RecordDetails（coss Collapsible）。编辑插槽接入已有选择控件，不在组件内新增选择器、取数、跨班规则或日期计算。
+- TextbookRangePicker 的 `selections / onSelectionsChange` 承载已应用的叶节点选择，弹层仍是既有待应用草稿；取消不提交，应用选择不等于 Agent 范围确认。适配器将函数式更新解析到当前值，跨对象／版本变化时使旧弹层草稿失效。
+- TextbookDirectory 组合 Tree 与外部目录数据；父级选择映射叶节点，不扩展为权限引擎。FilterBar 接收字段／选项／当前值并返回变更；日期选择复用 Calendar + Popover + 常驻 Label，合法日期与校验由宿主提供。
+- 学情分析示例的章节用 TextbookRangePicker，备课章节用 TextbookDirectory / Tree；班级、教材、资源和时间快捷项用 FilterBar，完整时间范围用 Calendar。示例数据只在 demos，不导入 Workspace 私有类型，不改控件原实现。
+
+### 公开 API
+
+`AgentScopeBuilderProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / scope` | 必填 string / `AgentScopeTarget={scopeId,version}` | 可读标题及宿主已有范围／草稿版本引用，不建立新权威对象。引用只用于事件，不显示或写入 DOM；缺标识禁用编辑、确认、重置及默认恢复 |
+| `dimensions` | 必填 `readonly AgentScopeDimension[]` | 完整受控维度清单，稳定唯一 ID 和顺序由宿主给出。没有内部初值、缓存、业务副本、值归一化或自动全选 |
+| `summary / impact` | 必填 string/null / 可选 string | 已获准披露的可读范围摘要；summary 空白/null 显示“尚未指定范围”。impact 只在提供时显示，不根据选项、维度或可见条数推算规模 |
+| `exclusions` | 可选 `readonly AgentScopeExclusion[]` | 只有 `{reason,count?}`，计数是允许披露的非负整数，0 保留。只显示原因／计数，不接受对象明细，不补造数量 |
+| `confirmation` | 必填 `AgentScopeConfirmation` | unconfirmed 可带 reason；confirmed 必带其 version，可带 reason；changed 必带 reason。点击不改变状态；关键条件变化时宿主传 changed，已确认版本与当前 scope.version 不符时同样提示需重新确认 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | 两态与密度正交。compact 只收紧间距并换行，不隐藏冲突、越权、不可用及禁用原因，不缩字 |
+| `onValueChange` | 可选 `(change:AgentScopeChange)=>void` | 返回 `{scopeId,version,dimensionId,value:unknown}`；新值含 undefined、空值均原样发出，由适配器按 dimensionId 匹配类型、核验和更新。缺接收器不挂载编辑插槽 |
+| `onConfirm` | 可选 `(target:AgentScopeTarget)=>void` | 仅请求确认当前范围，不启动任务或生成回执；缺回调无按钮。空摘要／空维度、缺引用、非有效校验或禁用原因均阻断确认，不在组件内求解冲突或判定必填值 |
+| `onReset / onRestoreDefaults` | 可选 `(target)=>void` | 仅 workspace 显示重置／恢复默认，只发送当前版本的请求。组件不清空、不选默认项、不修改确认事实；宿主提供新值、校验和确认状态 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | inline 的“调整完整范围”缺回调无入口；workspace 可返回原位置。宿主保持同一值／版本、焦点与阅读位置；不创建外壳。缺展开时保留全部维度摘要 |
+| `disabledReason / confirmDisabledReason` | 可选 string | 前者阻断全部编辑、确认、重置及默认恢复；后者只阻断确认。原因常驻关联，处理器再次保护；查看、展开与返回不受影响 |
+| `notice / details` | 可选 string / ReactNode | 至多一条常驻边界提示，其余解释默认收起。校验、范围变化、排除／不可用原因及动作禁用不得移入 details |
+
+`AgentScopeDimension` 共同字段为必填 `id / label / required` 与可选 `core`。label 是获准披露的维度名，不能塞入无权对象名称；required 只呈现必填身份，必填缺失由宿主传 conflict。
+
+| 分支 | 输入 | 呈现与保护 |
+| --- | --- | --- |
+| `AgentScopeAvailableDimension` | `access:'available', source:{label,options:unknown}, value:unknown, summary:string/null, validation:{state:'valid'/'conflict'/'unavailable',reason}, disabledReason?, renderEditor?, renderInlineEditor?` | value/options 是不透明领域数据；summary 空白/null 为“尚未指定”，workspace 显示来源。三值分别为有效／范围冲突／数据不可用，原因来自宿主。conflict 仍可编辑以纠正，unavailable 不挂载编辑控件 |
+| `AgentScopeRestrictedDimension` | `access:'restricted', validation:{state:'out-of-scope',reason,count?}` 及共同字段 | 只接收允许披露的维度标签、原因和可选计数。类型禁止 value/source/summary/编辑插槽，运行时也忽略误传内容；非类型化 access 与 out-of-scope 矛盾时同样不挂载私密内容 |
+
+`AgentScopeEditor={value,options,onChange,controlId,labelledBy,describedBy}` 是编辑插槽参数。仅在可访问、非 unavailable、无禁用原因且有 onValueChange 时调用；inline 只调用显式轻量 `renderInlineEditor`，workspace 调用 `renderEditor`。控件须受控、保留常驻固定标签与说明关联，不通过插槽旁路执行。原生控件关联 controlId/describedBy；FilterBar 等自带标签的组合由外层有名 group 关联校验说明。
+
+宿主先过滤对象、选项及全部元信息、汇总、排除说明、details 和插槽；组件不是任意文本脱敏器，不能先传原始无权数据再靠 CSS 隐藏。关键值、合法选项或权限变化时，同步范围版本、校验、摘要／规模及确认事实。确认处理重新核验归属、版本、当前授权与明确任务范围；过期请求不能生效。confirmed 的显示还要求当前版本匹配且无确认阻断，旧确认不能掩盖校验失败。历史／只读范围通过 disabledReason 限制，持久化、恢复、执行、权限及真实回执仍归宿主／受信任服务。
+
+### 三种用法与验证边界
+
+- **inline**：摘要、明确提供的规模和排除说明 → 核心维度及全部问题／禁用维度 → 少量快捷编辑 → 确认、调整完整范围。无 onExpand 保留全部摘要，仍只提供显式轻量编辑。
+- **workspace**：同一汇总及确认事实 → 所有维度、来源、逐项编辑和校验 → 确认、重置、默认恢复及返回；不新建任务或第二份草稿。
+- **compact**：可与任一 view 组合，必要校验、越权原因、规模和重新确认提示均保留，仅减少间距。
+
+组件页 `/next/components/agent-components#scope-builder`：学情分析（班级＋章节＋时间，含一个只披露原因／数量的越权班级）；备课资料（教材版本＋章节＋资源类型，初始资料目录不可用）。每组 inline / workspace / compact 共用选择，提供 320px、长中文和分式。手动载入可用范围后可请求确认，独立“载入示例确认记录”才显示已确认，修改后需重新确认；重置／默认也经独立示例载入。没有依据的新组合不显示影响规模。
+
+未合并候选分支 `feat/agent-scope-builder`，基线 main `b716d7e`。五项日志、测试及 Workspace main `a09071d` 的只读方案见 `.sites-runtime/scope-builder/REPORT.md`。当前 P04Scope 只有 deduplicate/blurry，更适合 08；新页“对话信息→关联范围”是只读展示，尚无编辑入口，接线决定见报告。本轮不写 `.git`、不启动开发服务、不改 Workspace。SSR／回调测试不代替浏览器三主题、窄容器、键盘／读屏、Workspace 或真实服务验证。
+
 ## 对象查看器 v0.1
 
 2026-09-25 设计候选，语义 **14 对象查看器**，声明 **Inline + 通用扩展容器（领域内容可专用）**。从 `components/prism-next/agent-object-viewer` 导入 `AgentObjectViewer` 与同文件公开类型。不新增组件目录条目；80 项目录、coss、依赖与视觉令牌保持不变。
@@ -772,6 +824,8 @@ import { Badge } from "@/components/prism-next/badge"
 ## 学习、文档与 Agent
 
 ### 界面文案原则
+
+范围构建器提供 `details?: ReactNode`；校验、越权／不可用、排除原因及重新确认提示保持常驻，compact 不隐藏这些事实。
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
