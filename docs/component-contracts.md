@@ -54,6 +54,64 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 成果物输出 v0.1
+
+2026-09-26 设计候选，语义 **33 成果物输出**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-artifact-output` 导入 `AgentArtifactOutput` 及同文件公开类型；不新增 80 项组件目录条目。
+
+### 复用检索与 27 / 28 / QuestionPrint 边界
+
+- **27 AgentExecutionResult 报告执行事实；33 负责格式、版式、范围、版本与文件交付，可以组合。** 27 的 `outputs/open` 只提供成果入口，没有输出配置；其成功回执不证明已经存在可下载文件。组合仍保持各自状态，不能在 27 的 unknown 内容插槽里放执行动作绕过原请求查询约束。
+- **28 AgentDocumentWorkspace 承载已有文稿的阅读、编辑与批注。** 其 export 能力可请求打开 33；文稿保存、预览成功和格式支持都不能生成下载事实。两者引用同一成果身份与版本，不复制正文或引入统一 AST。
+- `QuestionPrint` 已有受控纸面设置、真实浏览器测量分页及 `window.print()`，没有通用文件生成／下载回执契约。通过 33 的 `preview` 插槽复用，保留原行为；“打印 / 保存 PDF”是浏览器打印能力，不是导出服务已生成 PDF。打印预览比例的百分比与文件生成进度无关。
+- 外框、固定标签、选项、状态、动作与说明复用 Card、Field / FieldLabel、Select、Prism Badge / Button、RecordDetails（coss Collapsible）。没有可复用的通用格式／版本／文件交付组合，因此增加本语义实现；不改 coss、依赖、视觉令牌、目录，不引入 Workspace 私有类型、业务 Store、路由、生成器或持久化。
+
+### 公开 API
+
+`AgentArtifactOutputProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `artifact` | 必填 `AgentOutputArtifact={id,title,version}` | 当前成果身份；`AgentArtifactVersion={id,label}` 分开保存内部引用与可读版本。id 只用于事件和比较，不作为文案或 DOM 标识 |
+| `formats` | 必填 `readonly AgentArtifactFormat[]` | `{id,label,support}`：supported；lossy **必填 risk**；unsupported **必填 reason**。有损风险／不支持原因始终可见，不支持或有损说明缺失时不能生成 |
+| `layouts / ranges / versions` | 必填 `readonly AgentArtifactOption[]` | `{id,label,disabledReason?}`；选项为宿主已授权可披露数据。versions 的 id 对应成果版本。disabledReason 存在即不可选；空值有明确兜底提示 |
+| `value` | 必填 `AgentArtifactOutputOptions` | `{formatId,layoutId,rangeId,versionId}`，每项 `string / null`。不选第一项、不回填失效选择；Select 只使用本地序号为 DOM 值，内部引用不进入属性或可读标签 |
+| `recommendedFormatId` | 可选 string，默认未提供 | Inline 快速导出使用此格式，加上受控版式／范围／版本；不修改 value.formatId。缺推荐或不支持则没有快速生成动作，不自行推荐 PDF |
+| `output` | 必填 `AgentArtifactOutputRecord` | 当前输出记录；结构与状态见下表。记录上的格式、版式、范围与版本是当次事实，与当前选择独立，切换选项不能改写旧请求／文件 |
+| `queue / history` | 可选 `readonly AgentArtifactOutputRecord[]` | queue 为同一成果的多文件输出队列，原顺序完整显示，不派发批量执行。history 全部为当时只读快照，无生成／查询／下载动作。缺省不推断无记录；显式 `[]` 显示暂无记录 |
+| `onValueChange / onGenerate` | 可选 `(intent:AgentArtifactGenerateIntent)=>void` | `{artifactId,currentVersionId,options}`，复制四项值后返回。前者只请求更新选项，后者只请求生成；回调返回值、点击与布局变化不更新任务或文件状态。缺前者只读；缺后者无生成入口 |
+| `generateDisabledReason` | 可选 string，默认未提供 | 存在即阻断生成并显示原因（包括空字符串）；不禁止单独调整合法选项。选择不完整／不可用同样阻断生成 |
+| `onQuery` | 可选 `(intent:AgentArtifactQueryIntent)=>void` | `{artifactId,recordId,versionId,request:{id,runId}}`，只查询对应 unknown 记录的原请求，不拼装新请求／轮次；缺原关联或能力无入口并说明暂不可查询 |
+| `onDownload` | 可选 `(intent:AgentArtifactDownloadIntent)=>void` | `{artifactId,recordId,versionId,fileId}`；只有 ready、关联匹配的 file、file.download 与本回调均存在才显示下载入口。此组件不接收 href 或原始存储路径；宿主复用已有文件下载动作，点击时重新核验实际文件与当前权限 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | compact 为密度，可与两种 view 组合；不增加第三种业务态，不隐藏失败／未知／不可用／旧版本提示 |
+| `preview` | 可选 ReactNode，默认未提供 | 只在 workspace 挂载，内容与所选版本／范围的映射由宿主负责。可组合 QuestionPrint；unknown、关联不明、当前 expired/forbidden 不挂载，不能通过插槽绕过动作限制 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline “更多输出选项”仅在有 onExpand 且无当前 unknown 时显示；workspace 可返回原位置。只发视图请求，焦点、位置与单一右栏由宿主维护 |
+| `notice / details` | 可选 string / ReactNode | 每卡最多一条常驻边界提示；其他补充解释进默认收起“说明”。details 必须被动，不放执行按钮；风险、失败、未确认、旧版和禁用原因不可折叠隐藏 |
+
+`AgentArtifactOutputRecord={id,artifactId,title,version,format,layout,range,status}`：version 为 `{id,label}`，format/layout/range 为当时可读文本。所有记录、文件、选项、标签和插槽必须已经过宿主的当前披露授权；组件的关联检查只是防误操作，不是授权或自动脱敏服务。跨成果批次由宿主按成果／权限分组组合本组件，不能把别的成果塞进当前卡片。
+
+| `AgentArtifactOutputStatus` 分支 | 必填及可选字段 | 呈现与动作 |
+| --- | --- | --- |
+| idle | `description?` | 未开始。格式／选项有效且 onGenerate 可用时发出生成请求，不把本状态解释为请求已接收 |
+| generating | `request:{id,runId}`、`progress?`、`description?` | 生成中。无进度不显示百分比；只显示外部传入的有限 0–100 数值，不裁剪或推算。100% 不转换为 ready |
+| ready | `file:AgentArtifactOutputFile`、`description?` | 宿主声明已生成可下载；下载入口另须匹配文件、能力与处理回调，缺失时明确暂未提供可用入口，不生成链接 |
+| failed | `reason` | 生成失败；允许在宿主明确给出 onGenerate 时按当前选择请求生成，不自动重试或清除失败事实 |
+| unknown | `request:{id,runId}`、`reason`、`query?:AgentArtifactOutputAction` | 状态未确认。当前 output 或 queue 任一 unknown 都阻断该卡选项编辑、生成、下载、展开与预览，只允许查询各 unknown 原请求；纯返回与被动说明不受影响 |
+| expired / forbidden | `reason` | 已过期／无权下载。没有文件入口，不显示误传的 file，不生成；后续允许操作须由宿主更新事实 |
+
+`AgentArtifactOutputFile={id,name,version,sizeBytes?,generatedAt?,download?}`；`AgentArtifactOutputAction={label,disabledReason?}`。download 的提供同时意味着宿主已确认实际文件当前可访问，不能只从模型文本、预览或历史记录自动构造。file.version 必须与该输出记录版本相同才可下载；与当前成果版本不同仍可在合法能力下下载，但明确显示“基于旧版本”，请求仍使用文件对应版本。历史列表自身不提供下载；宿主若需要交付历史文件，须单独取得当前授权与可用性后作为当前可操作记录提供。
+
+name 仅为可读文件名；包含路径分隔符或换行时不显示原值，而提示“文件名称未确认”。大小／生成时间缺失分别标未确认，不读取客户端时钟。原始存储路径没有公共字段；内部长 ID、请求／轮次／文件 ID、内部版本 ID 不输出到正文或 DOM 属性，允许披露的 title/label/reason 由宿主负责。空／重复选项 ID、空成果引用、错归属或重复当前记录 ID 阻断编辑／生成／文件操作。生成中也冻结配置与生成；独立 ready 文件的下载不从其他项进度推定。宿主仍须在服务层核验对象、版本、权限、幂等和迟到回执，组件不实施这些服务。
+
+### 三种用法与验证边界
+
+- **inline**：成果与当前版本 → 推荐格式及本次版式／范围／版本 → 可用快速导出 → 当前输出与下载入口 → 传入队列／历史的状态记录 → 更多输出选项。保留所有传入记录，缺展开入口也不会丢失失败或旧版事实。
+- **workspace**：同源四项受控选择与风险 → 当前输出 → 宿主预览 → 完整批量队列 → 历史输出记录（只读） → 返回原位置。展开和返回不提交、不生成文件、不另建外壳。
+- **compact**：可换行标题／状态行与较小间距；仍显示失败、未知、权限限制、有损风险、旧版及对应版本，不截断长中文或缩小字号。
+
+`/next/components/agent-components#artifact-output` 提供试卷导出（PDF 支持、Word 有损、QuestionPrint、v1 历史文件）与学情报告导出（PDF 生成中无进度、Excel 不支持、附页状态未确认）两组标注示例，均有 inline / workspace / compact 与 320px 容器。打印仍使用 QuestionPrint 原行为；生成、查询、下载仅写示例反馈，没有实际文件链接。主状态通过独立示例按钮载入，不由导出点击推进；选项改变不重标已有文件或请求。
+
+未合并候选 `feat/agent-artifact-output`，main 基线 `538f5ca`。测试、五项日志及 Workspace 本地 main `399bb75` 的只读轻量验证方案见 `.sites-runtime/artifact-output/REPORT.md`。本轮不启动开发服务、不操作 Git 提交、不修改 Workspace。浏览器三主题、窄容器视觉、键盘／焦点恢复、实际打印与下载、Workspace 接线、移动设备／读屏器和真实服务未验证；候选待 Supervisor 独立 Review。
+
 ## 内容输入 v0.1
 
 2026-09-25 设计候选，语义 **06 内容输入**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-content-input` 导入 `AgentContentInput` 及同文件公开类型；沿用现有 Agent 组件页，不新增目录条目。
@@ -582,6 +640,8 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 
 2026-09-25 设计候选，语义 **28 文档工作区**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-document-workspace` 导入 `AgentDocumentWorkspace` 及同文件公开类型；不新增 80 项组件目录条目。范围为教案、讲评稿、提纲、报告等长稿的阅读、章节编辑与批注承载，不包含 Office／富文本编辑器、文件解析或格式转换。
 
+其 export 快速操作可由宿主打开 33 AgentArtifactOutput 的输出配置，保持同一成果身份与版本；28 的保存／阅读事实不替代 33 的文件可用性。详见“成果物输出 v0.1”。
+
 ### 复用检索与格式边界
 
 - `DocumentRegionViewer` 复用范围是页区域、缩放和定位，不提供文稿章节、编辑、保存和批注契约；需要原稿区域时可由宿主放入章节 `content`，不强制将长文装成页图。
@@ -963,6 +1023,8 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 
 从 `agent-semantic-components` 导入组件及 `AgentExecutionResultProps / AgentExecutionReceipt / AgentExecutionOutput`。
 
+27 报告执行事实；33 `AgentArtifactOutput` 负责格式、版式、范围、版本与文件交付，两者可组合。27 的 succeeded/outputs 或 28 的文稿保存不等于文件已可下载；下载能力与对应版本由 33 的宿主输入明确提供。unknown 的原请求查询限制不因组合而放宽。
+
 | 属性 | 类型 / 默认值 | 职责 |
 | --- | --- | --- |
 | `title / description / receipt` | 原有必填属性 | receipt.status 为 succeeded / partial / failed / unknown；前三者必填 completed / remaining 字符串列表，保持外部回执事实；unknown 不推算范围 |
@@ -1075,6 +1137,7 @@ import { Badge } from "@/components/prism-next/badge"
 ```
 
 - `QuestionRecord` 只定义题面、选项、小问与可选答案。题卡不负责试题篮、选题筛选、组卷、题目保存或统计。
+- `QuestionPrint` 可作为 33 `AgentArtifactOutput.preview` 的题卷打印预览；原分页、纸面设置与浏览器打印行为不变。打印可用不等于生成服务已有可下载文件，33 不把打印动作当 ready 回执。
 - `details` 是可选内容插槽。未传入时没有详情按钮；展开可在内部维护，或由 `detailsOpen` / `onDetailsOpenChange` 控制。
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
 - `QuestionActions` 仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
@@ -1132,6 +1195,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+成果物输出 33 同样提供 `details?: ReactNode`：一条 notice 以外的补充解释收起；有损／不支持原因、生成失败、状态未确认、已过期／无权下载和“基于旧版本”在两态两密度常驻。文件名不接受原始路径作显示值，内部 ID 与可读标签分离。
+
 约束构建器 08 同样提供 `details?: ReactNode`：一块常驻 Alert 汇总宿主提供的全部冲突／不可用结果，关键条件变化需重新确认、禁用原因和影响保持可见；compact 不隐藏问题。每张卡最多一条 notice，补充解释进入“说明”；与 25 组合时只保留一份边界说明。
 
 2026-09-25 经 Product Owner 批准的密度整理：单项复核器按过期 > 回执未确认 > 其他仅常驻一条提示，其余解释进“说明”，并存状态用独立标记保留；指标摘要只合并显式组级样本／时间／版本，差异逐项显示；审核队列 inline/compact 只显示非零状态计数（无效值仍标未确认），进度与总数只用宿主提供值；证据浏览 inline 的边界解释进入“说明”，覆盖限制与独立事实常驻。详见各组件条目，不改变业务状态集合或回调。
@@ -1168,6 +1233,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
 - `AgentDocumentWorkspace`：长稿章节阅读、受控文本编辑与批注意图；格式能力、保存和历史由宿主提供。`MathContent` 为既有数学阅读示例，通用公式可通过 RootFormula / MathML / DraftMathPreview 放入章节内容；数学显示不等于格式转换、计算或校验。
+- `AgentArtifactOutput`：语义 33 的受控输出配置、文件交付与队列／历史呈现；27 报告执行事实，28 承载文稿内容，QuestionPrint 可作打印预览插槽。详见“成果物输出 v0.1”，不内建文件生成或下载服务。
 - `AgentContentInput`：语义 06 的任务材料／正文输入，复用 Textarea / InputGroup / Field，可选组合当前草稿公式预览；不承担已有文稿的完整阅读编辑（28）。详见“内容输入 v0.1”。
 - `AgentComposer` / `AgentTaskProgress`：给 Agent 的受控指令输入、提交/停止事件与外部步骤状态。Composer 不冒充内容编辑器，题干、答案与粘贴文章交给 06。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。

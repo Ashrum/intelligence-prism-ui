@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 成果物输出 v0.1 · 设计候选（2026-09-26）
+
+语义 33 `AgentArtifactOutput` 声明 **Inline + 专用扩展内容**：Inline 按推荐格式快速导出，Workspace 选择格式、版式、范围与版本，承载预览、批量输出队列和只读历史。`density="compact"` 保留失败、未确认、有损／不支持原因和“基于旧版本”提示。复用 Card、Field、Select、Prism Badge / Button 与 RecordDetails；QuestionPrint 原行为作为打印预览插槽复用。
+
+27 `AgentExecutionResult` 报告执行事实，28 `AgentDocumentWorkspace` 承载文稿阅读编辑，33 负责格式和文件交付，可按同一成果组合。生成、状态、版本与实际文件可用性均由宿主提供；只有 ready 文件、匹配版本、下载能力和回调齐备才提供下载入口。未知仅查询原请求，生成中无外部进度不显示百分比；组件不生成链接、不存文件、不显示内部 ID／原始路径。
+
+组件页 `/next/components/agent-components#artifact-output` 提供试卷和学情报告两组标注示例，覆盖 inline / workspace / compact、320px、公式、旧版文件及未确认队列。导出／下载为明确示例动作，没有实际文件链接。公开 API 与复用边界见[成果物输出契约](docs/component-contracts.md#成果物输出-v01)。coss、依赖、视觉令牌与 80 项目录不变。
+
+未合并候选位于 `feat/agent-artifact-output`，基于 main `538f5ca`；进度清单第 33 项为“组件候选”。五项日志、测试清单和 Workspace 本地 main `399bb75` 的只读轻量验证方案见 `.sites-runtime/artifact-output/REPORT.md`。未操作 Git 提交、未启动开发服务、未修改 Workspace；浏览器、实际打印／下载、Workspace 接线和真实服务尚未验证，待 Supervisor 独立 Review。
+
 ## 约束构建器 v0.1 · 设计候选（2026-09-26）
 
 语义 08 `AgentConstraintBuilder` 声明 **Inline + 专用扩展内容**：Inline 查看并修改主要条件；Workspace 呈现全部分组、冲突定位、默认恢复与相对上次确认的变化。`density="compact"` 保留冲突、不可用及需重新确认提示。复用 Fieldset、Checkbox、RadioGroup、NumberField、Select、Alert，值、默认值、影响、校验与冲突均由宿主给出，不内置检查或求解。
