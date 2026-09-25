@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 04 文件输入在 `feat/agent-file-input`（基于 main `de82f64`）实现为**组件候选**，尚未提交／合并。源码 `P/agent-file-input.tsx`、两组示例 `P/demos/agent-file-input.tsx`、测试 `tests/agent-file-input.test.mjs`；公开契约见“文件输入 v0.1”。五项验证与 P04 接续方案记录于 `.sites-runtime/file-input/REPORT.md`；本轮不启动开发服务、不修改 Workspace，不能升级为 Workspace 已验证或真实业务接入。
 
 - 2026-09-25 语义 28 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #43](https://github.com/Ashrum/intelligence-prism-ui/pull/43)（`48b4b9d`）；[Workspace #14](https://github.com/Ashrum/ole-school-workbench/pull/14)，备课提纲对象：章节编辑、切章／放大／收起／会话往返保持、历史只读。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -60,7 +62,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 01 | 范围与对象 | 对象选择器 | 复用起点：Combobox（B/combobox.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 对象身份、受控选中与搜索状态；对象和合法候选由宿主提供 |
 | 02 | 范围与对象 | 范围构建器 | 复用起点：TextbookRangePicker（P/textbook-range-picker.tsx）、Tree（P/tree.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 教材范围已有实现；其他范围用受控字段组合，不内置权限和跨班规则 |
 | 03 | 范围与对象 | 上下文摘要 | AgentContextSummary（P/agent-context-summary.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 2 项 | 保持四事实独立；随 18/21 验证来源、版本和返回路径。 |
-| 04 | 输入与导入 | 文件输入 | 复用起点：Input（B/input.tsx）、Progress（B/progress.tsx）、Button（B/button.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | P1 · 第 9 项 | 下一批第 5 项：组合文件队列、单文件替换和恢复；接收／上传／解析状态分开。 |
+| 04 | 输入与导入 | 文件输入 | AgentFileInput（P/agent-file-input.tsx）；复用 Input / Button / Card / Progress / Collapsible | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并分支 `feat/agent-file-input`，基线 `de82f64`；`tests/agent-file-input.test.mjs`；`.sites-runtime/file-input/REPORT.md` | P1 · 第 9 项 | 在 P04 试验台接入同队列与已有示例材料；真实本机文件只检查元数据，上传未接入；回执不明仅查询原请求。 |
 | 05 | 输入与导入 | 采集扫描 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用页预览和质检呈现；设备采集、OCR、质量判定不属于组件 |
 | 06 | 输入与导入 | 内容输入 | 复用起点：Textarea（B/textarea.tsx）、DraftMathPreview（P/draft-math-preview.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 输入仍由宿主持有；可组合当前草稿的公式排版预览，失败保留当前原文；AgentComposer 仅用于指令，不冒充完整编辑器 |
 | 07 | 参数配置 | 参数配置器 | 复用起点：Field（B/field.tsx）、Select（B/select.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接组合现有字段；关键参数与完整参数的同源呈现，校验结果从外部输入 |
@@ -116,12 +118,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 32 | 除 03、13、15、17、18、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 31 | 除 03、04、13、15、17、18、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 04（`feat/agent-file-input`，未合并） |
 | Workspace 已验证 | 10 | 03、13、15、17、18、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：**04 文件输入**。下一批固定顺序：**04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
+下一步：**04 文件输入的独立 Review 与 P04 轻量接入验证**，再推进 **11 集合篮**。下一批固定顺序保持 **04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。

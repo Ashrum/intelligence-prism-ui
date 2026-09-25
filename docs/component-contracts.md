@@ -101,6 +101,66 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 文件输入 v0.1
+
+语义 04 `AgentFileInput`，两态声明为 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-file-input.tsx`，示例 `/next/components/agent-components#file-input`。本轮为 `feat/agent-file-input` 组件候选；不等于 Workspace 或真实服务验收。
+
+### 复用检索与职责
+
+已检索 coss Input／Button／Card／Progress／Collapsible、AgentComposer 插槽和 `examples/teacher-use-cases/parsing-workspace.tsx:59` 的 `readFiles`。Input 的 `nativeInput` 保留原生 `<input type="file">`；Prism Button 的 navigation 尺寸复用已有触屏目标。现有解析示例按扩展名和大小检查、图片建立临时预览、PDF 仅登记元数据，包含示例状态与本机保存，因此不整体迁入。缺口是可跨场景使用的受控文件队列、动作和独立事实呈现，不新增目录条目或上传服务。
+
+### 公开 API
+
+从 `@/components/prism-next/agent-file-input` 导入组件及 `AgentFileInputProps / AgentFileItem / AgentFileStatus / AgentFileCapabilities / AgentFileLimits / AgentFileAction / AgentFileRequest / AgentFileIntent / AgentFileBatchAction / AgentFileBatchIntent`。
+
+| 属性 | 约定 |
+| --- | --- |
+| `title / items` | 标题与只读受控队列；条目 `id` 唯一且稳定。宿主只提供当前获权可见的文件名、类型、来源、元数据与内容 |
+| `limits` | 必填 `{accept,acceptLabel,maxFileSize,maxFiles}`；大小单位字节，大小／数量为正值。`accept` 是原生选择器提示，`acceptLabel` 是可读类型说明；两者须一致，不是内容安全校验 |
+| `capabilities` | 必填 `select:{status:'supported',reason?}`、`upload`、`drop`。后两者为 `supported`（可选 reason）或 `limited / unsupported`（必填 reason）；上传 unsupported 显示“未接入”。宿主按设备声明拖放能力，触屏始终可用原生选择入口 |
+| `onSelect(files: File[])` | 选择／拖入后唯一回调；完整交付所选文件，不截断超量文件、不判定合法、不读取内容。空选择不回调，原生 input 值立即清空。不得把接到此事件视为上传、读取或解析回执 |
+| `selectionDisabledReason?` | 阻止选择及拖入并显示关联原因；不会禁用独立的原请求查询。宿主按当前权限决定 |
+| `onAction?(intent)` | 移除、替换、重试、查询、排序意图。`fileId / version?` 指向传入条目；`kind='move'` 附 `direction:'up'/'down' / adjacentId`；retry 附原 `requestId?`；query 必带原 `requestId`。不修改列表、版本或执行事实 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default。compact 不改变字号、事实或动作规则，不是第三种业务态 |
+| `inlineLimit / onExpand?` | 默认 3 项；非有限值回退 3、其他值取整且至少 1。有 onExpand 且超限时提供“管理全部”，传出触发按钮供恢复焦点。校验失败、上传失败、unknown 永不因阈值隐藏；无 onExpand 则显示完整列表且无展开入口 |
+| `groupBy / onGroupByChange?` | 默认 `none` 即外部数组顺序；workspace 支持 `status` 分组，并保留每组内原顺序。回调只请求呈现变化。分组时排序按钮显示“请切回文件顺序后调整” |
+| `batchActions / onBatchAction?` | Workspace 专用。动作 `{id,label,kind:'remove'/'upload'/'retry',fileIds,disabledReason?}`，宿主明确目标集合；回调原样返回 `{id,kind,fileIds}`，不静默缩减目标集合 |
+| `onBack? / notice? / details?` | 返回只导航；一条可选常驻边界提示；其余解释进入默认收起的“说明”。失败、未知、能力限制及禁用原因始终可见 |
+
+### 条目与状态
+
+`AgentFileItem={id,name,type,sizeBytes?,source:{kind:'local'/'existing',label?},version?,status,processing?,actions?,details?,preview?}`。条目没有 File 字段，组件不把文件对象放入状态、全局缓存或存储。未知名称／类型／大小／版本／时间显示未确认；不从扩展名、当前时间或查看动作补造外部事实。
+
+| `status.state` | 专属字段与呈现 |
+| --- | --- |
+| `selected` | 本机文件显示“已选择（仅本机）”；已有资料引用显示“已选择（已有资料）”。不能映射为已接收或已上传；状态分组统称“已选择” |
+| `invalid` | 校验未通过；必填 `validation:'type'/'size'/'count'` 和 `reason` |
+| `queued` | 等待上传；不能推定请求已接收 |
+| `received` | 已接收；必填 `request:{id,label}`，仅确认对应原请求接收 |
+| `uploading` | 上传中；必填 request。仅 `progress` 为 0–100 有限数时显示百分比，缺省或越界显示“进度未确认”；100% 也不会转成已上传 |
+| `uploaded` | 已上传；上传时间取 `uploadedAt?`，版本取条目的 `version?`；未知分别显示未确认 |
+| `failed` | 上传失败；必填 reason；可带原 request 及 `retry:{disabledReason?}`，仅宿主显式给出重试能力才有入口 |
+| `unknown` | 状态未确认；必填 reason 与原 request；只可带 `query:{disabledReason?}`。即使非类型化输入注入 remove／replace／move／retry，也不呈现；原请求 ID 为空时禁止查询 |
+| `removed` | 已移除记录，不自动从外部队列删除，不提供变更动作 |
+
+`processing:{label,description?}` 是可选独立后续处理事实；不由上传完成、进度或预览派生。`actions:{remove?,replace?,move?}` 每项为 `{disabledReason?}`，仅代表宿主提供该能力；缺 onAction 的声明动作显示不可用原因并在处理函数中阻断。替换回调请求宿主打开替换流程，不自行读取或覆盖旧文件。
+
+Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是只呈现的授权内容插槽；没有预览则说明未提供，不建立 Blob URL。全局 `details` 是补充说明。插槽不得插入绕过 unknown 限制的业务操作或隐私内容。
+
+排序通过始终可见的“上移／下移”按钮完成，键盘和触屏均可操作；首尾／不可用原因关联到按钮。移动会带出相邻 ID，宿主需核对当前队列版本；禁止跨 unknown 相邻项悄悄改变其顺序。状态分组仅改变视图，不改变权威队列。
+
+批量动作只识别上述三类；目标为空、缺失、重复、含 unknown 或 removed 时整批不可执行。上传只允许 selected／queued，重试只允许有 retry 能力且无禁用原因的 failed；unsupported 上传同时阻断上传与重试。单项明确禁用的移除不能被批量动作绕过。动作范围、权限、版本、幂等、失败恢复及是否可保留本机文件均由宿主／服务核验，组件禁用不能替代受信任检查。
+
+### 三种用法与 Composer 组合
+
+- Inline：固定标签的选择入口、能力／限制、少量文件和关键异常；超阈值时展开同一队列。
+- Workspace：完整队列、状态分组、宿主给出的批量动作、可折叠文件详情与排序；返回不提交、不取消、不保存。
+- Compact：相同事实与动作，压缩间距，可用在浮层或 Composer 附件区，不减字号。
+
+`AgentComposer variant="conversation"` 的 `attachments` 放 `<AgentFileInput density="compact" ... />`，`tools` 放打开同队列的按钮／既有资料入口。当前 default／compact Composer 分支不渲染 attachments/tools，不应宣称这两个分支已支持文件插槽；需要时在 Composer 外并列组合。示例已实际使用 conversation 组合，AgentFileInput 没有嵌套 form，所有队列按钮均为 `type="button"`；Composer 发送不自动触发上传。Composer 的 readOnly／running 不会自动约束插槽，宿主须同步选择限制及动作能力。
+
+扫描图片／PDF 示例含本机选择、大小失败、已有资料选用与已移除；备课 Word／Excel 示例含明确失败、回执不明、等待上传、未知／已知进度与上传后独立解析记录。两组均展示三种用法及 320px 窄容器，并明确“示例不实际上传”。示例宿主 `checkExampleFiles` 只检查名称后缀、大小和数量；不接扫描、OCR、文件内容读取、真实上传、全局缓存或持久化。Word／Excel 的输入候选不扩大原解析流程 Step1 的读取、编辑或转换能力。
+
 ## 文档工作区 v0.1
 
 2026-09-25 设计候选，语义 **28 文档工作区**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-document-workspace` 导入 `AgentDocumentWorkspace` 及同文件公开类型；不新增 80 项组件目录条目。范围为教案、讲评稿、提纲、报告等长稿的阅读、章节编辑与批注承载，不包含 Office／富文本编辑器、文件解析或格式转换。
@@ -591,7 +651,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
-文档工作区同样提供 `details?: ReactNode`；其能力限制、转换风险、节选范围和保存事实保持常驻。
+文档工作区与文件输入同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
