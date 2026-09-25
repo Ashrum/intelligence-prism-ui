@@ -1,5 +1,6 @@
 # 智能曜彩 UI Design System
 
+进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 ## 任务记录三件套两态 v0.1 · 设计候选（2026-09-24）
 
 语义 26 `AgentExecutionProgress`、27 `AgentExecutionResult`、03 `AgentContextSummary` 补充 `view="inline" | "workspace"`（默认 inline）及独立 `density="default" | "compact"`。原 presentation 外框与默认调用输出保持；任务历史明确标“当时”并静态呈现，未知回执仅允许查询原请求，产出无打开能力不显示假入口，来源的选用/读取/Agent 本次参考/成果引用分别呈现。
