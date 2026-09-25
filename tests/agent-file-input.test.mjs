@@ -284,3 +284,87 @@ void [valid, missing, noReason, noRequest, retry, invalid, props, arbitrary];
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
 });
+
+test('compact files stay in one row with a full-name details trigger, visible badge and named remove icon', () => {
+  const name = '九年级数学复习资料_含长中文名称与分式条件的完整材料.docx';
+  const extra = { density: 'compact', items: [{ ...item, name }], onAction() {} };
+  const html = htmlFor(extra);
+  const row = html.match(/<div data-file-compact-row=""[^>]*>(.*?)<\/div>/s)?.[1];
+  assert.ok(row);
+  assert.match(row, /class="[^"]*truncate/);
+  assert.ok(row.includes(`title="${name}"`));
+  assert.ok(row.includes(`aria-label="文件详情：${name}"`));
+  assert.match(row, /aria-expanded="false"/);
+  assert.match(row, /已选择（仅本机）/);
+  assert.ok(row.includes(`aria-label="移除：${name}"`));
+  assert.doesNotMatch(row, /<h4\b|<p\b|flex-wrap|>移除</);
+  assert.doesNotMatch(row, /Word|1 KB|替换/);
+  const buttons = actionNodes(extra);
+  assert.equal(buttons.filter(node => node.props['data-file-action'] === 'remove').length, 1);
+  assert.equal(buttons.find(node => node.props['data-file-action'] === 'remove').props.size, 'icon-sm');
+});
+
+test('compact invalid/failed/unknown reasons are named on a keyboard disclosure and readable in its linked panel', () => {
+  for (const status of [
+    { state: 'invalid', validation: 'size', reason: '超过单个文件大小限制' },
+    { state: 'failed', reason: '服务明确拒绝接收', request, retry: {} },
+    { state: 'unknown', reason: '请求回执未确认', request, query: {} },
+  ]) {
+    const extra = { density: 'compact', items: [{ ...item, status }], onAction() {} };
+    const html = htmlFor(extra);
+    const trigger = html.match(/<button[^>]*aria-label="查看原因与文件详情[^>]*>/)?.[0];
+    assert.ok(trigger?.includes(item.name));
+    assert.ok(trigger.includes(status.reason));
+    assert.match(trigger, /aria-expanded="false"/);
+    assert.doesNotMatch(trigger, / disabled=""|aria-disabled="true"|tabindex="-1"/);
+    const panelId = trigger.match(/aria-controls="([^"]+)"/)?.[1];
+    assert.ok(panelId);
+    assert.ok(html.includes(`id="${panelId}"`));
+    assert.ok(html.includes(`>${status.reason}</p>`) || html.includes(`：${status.reason}</p>`));
+    const row = html.match(/<div data-file-compact-row=""[^>]*>(.*?)<\/div>/s)?.[1];
+    assert.ok(row.includes({ invalid: '校验未通过', failed: '上传失败', unknown: '状态未确认' }[status.state]));
+    if (status.state === 'unknown') assert.deepEqual(actionNodes(extra).map(node => node.props['data-file-action']), ['query']);
+  }
+});
+
+test('compact remove stays guarded and reason remains accessible; native picker still emits exact files', () => {
+  const calls = [];
+  const extra = { density: 'compact', onAction: intent => calls.push(intent) };
+  actionNodes(extra).find(node => node.props['data-file-action'] === 'remove').props.onClick();
+  assert.deepEqual(calls, [{ fileId: item.id, version: undefined, kind: 'remove' }]);
+  const disabled = { ...extra, items: [{ ...item, actions: { remove: { disabledReason: '文件正在使用' } } }] };
+  const remove = actionNodes(disabled).find(node => node.props['data-file-action'] === 'remove');
+  assert.equal(remove.props.disabled, true);
+  remove.props.onClick(); assert.equal(calls.length, 1);
+  const html = htmlFor(disabled);
+  const removeTag = html.match(/<button[^>]*data-file-action="remove"[^>]*>/)?.[0];
+  const reasonId = removeTag?.match(/aria-describedby="([^"]+)"/)?.[1];
+  assert.ok(reasonId); assert.ok(html.includes(`id="${reasonId}"`));
+  assert.match(html, /aria-label="文件详情：[^"]*不可移除：文件正在使用"/);
+  const files = [unreadableFile()], selected = [];
+  const input = capture({ density: 'compact', onSelect: value => selected.push(value) }).find(node => node.props.type === 'file');
+  const target = { files, value: 'file.pdf' };
+  input.props.onChange({ currentTarget: target });
+  assert.equal(target.value, ''); assert.deepEqual(selected, [files]);
+});
+
+test('compact explanatory copy starts collapsed while native input descriptions remain linked', () => {
+  const html = htmlFor({ density: 'compact', capabilities: { ...props.capabilities, upload: { status: 'unsupported', reason: '只检查本机文件' } }, notice: '示例不实际上传', details: '完整补充说明' });
+  assert.match(html, />上传未接入<\/p>/);
+  assert.equal((html.match(/>说明<\/button>/g) ?? []).length, 1);
+  for (const token of ['capabilities', 'limits', 'drop']) assert.match(html, new RegExp(`id="[^"]*-${token}"`));
+  for (const copy of ['只检查本机文件', '示例不实际上传', '完整补充说明']) assert.ok(html.includes(copy));
+  assert.match(html, /hidden=""[^>]*data-slot="collapsible-panel"/);
+});
+
+test('default inline and both workspace densities match main 7bf305b SSR bytes across nine fixtures', async () => {
+  const { createHash } = await import('node:crypto');
+  const fixture = JSON.parse(await readFile(new URL('./fixtures/agent-file-input-main-7bf305b.json', import.meta.url), 'utf8'));
+  const output = new URL('../.sites-runtime/file-input-compact/', import.meta.url);
+  await mkdir(output, { recursive: true });
+  for (const entry of fixture.cases) {
+    const html = render(h(AgentFileInput, { ...fixture.props, ...entry.props, onSelect() {}, onAction() {}, onExpand() {}, onGroupByChange() {}, onBatchAction() {}, onBack() {} }));
+    await writeFile(new URL(`current-${entry.name}.html`, output), html);
+    assert.equal(createHash('sha256').update(html).digest('hex'), entry.sha256, entry.name);
+  }
+});
