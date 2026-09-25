@@ -101,6 +101,55 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 指标摘要 v0.1
+
+语义 19 `AgentMetricSummary`（`components/prism-next/agent-metric-summary.tsx`）声明 **Inline + 专用扩展内容**；为 Agent 场景组合既有指标展示，不新增目录条目。`view="inline" | "workspace"` 默认 inline；`density="default" | "compact"` 默认 default，compact 是独立密度，可与两态组合。
+
+### 复用检索与取舍
+
+- `MetricSummary` 已支持任意数值/单位节点、说明和 compact 排列；本组件的每项 KPI 都由它呈现，未另写指标控件。窄容器仅以布局类将列数重排为一列，保留 `analytics-value` 和语义字号。
+- `GoalComparison` 内部由 baseline/current/target 计算进度，`StatusComposition` 内部求总量及占比。本次“不计算统计值”的契约不能直接消费这些派生结果，因此不改两者、不复制其算法；比较基准与变化作为外部已给定文字交给 MetricSummary 的说明区。日后确需目标进度或状态占比，须先给出宿主数值及独立适配设计。
+- Workspace 趋势复用 `charts/basic-charts.tsx` 的 `TrendChart`，原样传序列、单位、范围；沿用其数据表、null 缺测断点与关闭动画行为。不从趋势生成结论、拟合、差值或显著性。
+- Card、Button、Prism Badge、Collapsible、RecordDetails 继续复用。无依赖、视觉令牌、目录条目、业务 Store、权限服务、路由、执行器或持久化变更。
+
+### 公开 API
+
+| 属性 / 类型 | 含义 |
+| --- | --- |
+| `title: string` | 允许披露的卡片名称；整个范围受限时不渲染此标题，改用通用“指标摘要” |
+| `record: {id, version, dataTime?, snapshot?}` | 既有记录引用、可读数据版本、宿主时间；snapshot 标“当时数据”，否则“当前状态”；不取客户端时间、不补最新数据 |
+| `scope: AgentMetricScope` | `available` 带与 02 一致的 `summary` 和可选 `restricted: {count?,reason}`；`restricted` 仅带 `disclosure: {count?,reason}`。空摘要显示“未指定”，不扩成全部授权数据 |
+| `groups: readonly {id,label,items}[]` | 宿主完整指标分组；不根据输入条数统计总量、分母或缺测数量 |
+| `AgentMetricAvailableItem` | `id/access:"available"/label/reading/method` 必填；可选 `key/sampleSize/denominator/dataTime/version/baseline/change/trend/statements`。key 由宿主挑选少量 KPI；sampleSize、denominator、baseline 是已格式化的可读文字 |
+| `reading: AgentMetricReading` | `available` 带 `value:string|number`、可选 unit；原样保留精度、零值和负值，不格式化或重新计算。`missing/insufficient/unknown` 只带 reason，显示“—”及缺测/样本不足/状态未确认，不允许 value/unit；运行时也忽略误传值、单位、变化和趋势 |
+| 受限指标 | `{id,access:"restricted",disclosure:{count?,reason}}`，只渲染允许的计数和原因，不渲染误传名称、指标、口径、版本、趋势、解释或动作 |
+| `change: {text,direction?,significance?,basis}` | direction=`increase/decrease/unchanged/unknown`；significance=`significant/not-significant/unknown`；直接映射文字，不用正负号、差值、阈值或趋势判断。不传就不生成判断 |
+| `AgentMetricBasis` | `{state:"available",id,label}` 或 `{state:"unavailable",reason}`。变化和每项异常都必须给依据；可用引用配 onDrilldown 才有“查看依据”，不可用或无回调明确显示暂不可查看 |
+| `trend: {label,series,unit?,domain?,note?}` | ChartSeries[] 原样传给 TrendChart，保留 null 与零；note 是宿主提供的覆盖/缺测说明。仅 Workspace 且 reading=available 渲染 |
+| `statements: {kind,text,source}[]` | kind=`explanation/conclusion/recommendation`，text 为宿主允许的只读 ReactNode；来源非空才显示正文，未提供来源时显示“来源未提供，暂不展示”。组件不因数值变化生成解释、结论或建议 |
+| `anomalies: AgentMetricAnomaly[]` | 可用项 `{id,access:"available",text,basis}`；受限项 `{id,access:"restricted",disclosure}`。所有异常在两态两密度常驻，不根据指标识别异常 |
+| `onDrilldown(intent, trigger)?` | 指标：`{recordId,version,kind:"metric",metricId,metricVersion}`；变化依据增加 `kind:"change",basisId`；异常依据：`{recordId,version,kind:"anomaly",anomalyId,basisId}`。record version 与指标版本分别保留，可接 21 AgentEvidenceDrilldown |
+| `onExpand(trigger)? / onBack?` | Inline“查看指标详情”与 Workspace“返回原位置”；仅导航请求，不自行创建面板。缺 onExpand 没有入口且保留全部 KPI 摘要 |
+| `notice? / details?` | 每卡最多一条常驻边界提示；补充说明复用默认收起的 RecordDetails，不收纳缺测、样本不足、状态未确认、显著变化、异常或受限事实 |
+
+IDs 只作 key 与请求关联，不作为可见文字、隐藏 DOM 数据或回退标签。指标版本/时间未给则明确继承同一 record 的版本/时间；record 仍缺失时显示未确认，样本量和分母未给显示未提供。历史调用必须传入完整的当时 record、指标与序列；不能拿当前值配一个旧标题冒充历史。
+
+宿主在传入前核验范围、版本和当前有效授权。所有分组标题、摘要、计数、异常、statements、趋势与 details 均须已允许披露；UI 受限分支只呈现授权结果，不充当权限判定器。整卡 scope=restricted 时连标题、记录版本、所有插槽与展开入口都不挂载；历史同样遵守。部分受限条目只有披露壳，禁止夹带可用字段。查看回调不认证已读取、已引用、模型使用、复核或保存事实。
+
+### 三种用法与验证边界
+
+| 用法 | 信息结构 |
+| --- | --- |
+| inline / default | MetricSummary compact 显示宿主标 key 的 KPI，加全部受限、缺测、样本不足、未知、显著变化、变化判断未确认及变化依据不可用的指标；所有异常常驻且有依据信息。口径与解释在逐项 Collapsible 中；趋势留在 Workspace |
+| workspace / default | 全部分组、KPI、口径、带来源解释/结论/建议、宿主趋势及数据表；各允许指标可发下钻请求；保留返回入口 |
+| 任一 view / compact | 仅减少卡片间距与 padding，不缩字、不截断、不藏关键事实；Workspace 同样保留完整分组和趋势。非第三种业务态 |
+
+有 onExpand 却未标 key 且无关键事实时，Inline 明确“暂未指定关键指标”，不任意挑选数据；没有 onExpand 时全部摘要仍可读。下钻需要非空记录 ID、记录版本、指标 ID/版本或依据 ID，缺能力不造空按钮；历史允许只读的版本绑定下钻，权限与来源查询由宿主重新核验。
+
+组件页 `/next/components/agent-components#metric-summary` 有班级学情与批阅进度两组固定示例，各覆盖 inline / workspace / compact、320px、长中文、数学、缺测、样本不足、显著下降和状态未确认。点击依据由示例宿主打开 21 的只读示例记录，记录不改写；示例可切换历史呈现。不新增分析业务流程或目录入口。
+
+任务分支 `feat/agent-metric-summary`，main 基线 `cb5234d`。测试覆盖外部值原样显示、缺测与不确定性、变化判定、受限分支、只发请求、历史与紧凑密度。五项日志、SSR 样本与 Workspace main 只读接线建议见 `.sites-runtime/metric-summary/REPORT.md`。未启动开发服务；浏览器三主题、键盘/焦点、窄容器视觉、实体设备、读屏器和真实业务接入均未验证，仍待 Supervisor 独立 Review。
+
 ## 范围构建器 v0.1
 
 2026-09-25 设计候选，语义 **02 范围构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-scope-builder` 导入 `AgentScopeBuilder` 及同文件公开类型。确定本次任务涉及哪些对象；执行方式、必须／禁止条件仍属于 08 约束构建器。范围选择不授予权限，未指定范围不等于使用全部授权数据。
@@ -840,6 +889,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
+指标摘要的缺测、样本不足、状态未确认、显著变化、异常与受限事实在两态两密度均常驻；补充说明放入 `details`。
+
 文档工作区、文件输入与集合篮同样提供 `details?: ReactNode`；能力限制、转换风险、节选范围、保存事实、上传失败及回执不明保持常驻。集合篮两种密度的失效、冲突、受限原因与同步失败均常驻。文件输入 inline compact 按本节“文件输入”契约例外处理：异常状态文字常驻，具体原因一键展开且在入口可访问名称中可读；其余能力与限制进入“说明”，选择禁用原因优先常驻。
 
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
@@ -851,6 +902,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
+- `AgentMetricSummary`：语义 19 的指标卡，组合 MetricSummary compact 与 TrendChart；宿主给值、分母、样本、变化判断、异常与来源。Inline + 专用扩展内容，详见“指标摘要 v0.1”。
 - `AgentObjectViewer`：打开后的通用对象外壳与只读领域分区；身份、版本、权限来自宿主，敏感分区明确确认，受限原因常驻。摘要卡与入口仍由 AgentArtifactPreview 承担；详见“对象查看器 v0.1”。
 - `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。

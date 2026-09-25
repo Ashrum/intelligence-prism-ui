@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 指标摘要 v0.1 · 设计候选（2026-09-25）
+
+语义 19 `AgentMetricSummary` 声明 **Inline + 专用扩展内容**：Inline 用既有 MetricSummary compact 展示关键 KPI、显著变化与异常依据；Workspace 提供完整分组、TrendChart 趋势、统计口径和带来源解释。`density="compact"` 为独立密度，保留缺测、样本不足、状态未确认与受限原因。
+
+值、单位、分母/样本、数据时间/版本、变化判断、异常和来源全部由宿主提供。受限数据只显示获准披露的计数与原因；历史标“当时数据”。不计算统计、占比或结论，因此本候选不自动组合会计算进度/占比的 GoalComparison 与 StatusComposition。下钻只发版本绑定请求，可接 21 AgentEvidenceDrilldown；没有 onExpand 则没有详情入口。
+
+组件页 `/next/components/agent-components#metric-summary` 提供班级学情与批阅进度两组固定示例，覆盖 inline / workspace / compact、320px、长中文与公式。公开 API、复用取舍与披露边界见[指标摘要契约](docs/component-contracts.md#指标摘要-v01)。目录保持 80 项，coss、依赖、视觉令牌不变。
+
+未合并候选在 `feat/agent-metric-summary`，基于 main `cb5234d`；五项日志、测试清单和 Workspace 轻量验证建议在 `.sites-runtime/metric-summary/REPORT.md`。本轮只读核对 Workspace 本地 main `257f96c`，未接线、未启动开发服务、未写 Git。浏览器视觉/键盘和真实服务尚未验证，候选待 Supervisor 独立 Review。
+
 ## 范围构建器 v0.1 · 设计候选（2026-09-25）
 
 语义 02 `AgentScopeBuilder` 声明 **Inline + 专用扩展内容**：Inline 汇总核心范围并提供少量微调；Workspace 编辑全部维度、显示校验与影响规模、请求重置或恢复默认。`density="compact"` 为独立密度，保留冲突、越权、不可用和重新确认提示。
