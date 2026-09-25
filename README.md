@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 对象查看器 v0.1 · 设计候选（2026-09-25）
+
+语义 14 `AgentObjectViewer` 声明 **Inline + 通用扩展容器（领域内容可专用）**：Inline 呈现身份／版本、1–2 个关键分区摘要和局部展开；Workspace 提供完整分区、受控目录、版本切换和关联对象。`density="compact"` 为独立密度，保留历史只读、受限原因和敏感确认。只有宿主提供可读编号时才显示编号，不显示内部长 ID。
+
+AgentArtifactPreview 负责成果摘要卡与打开入口；对象查看器负责打开后的通用承载。题目继续用 QuestionCard / QuestionDetails，作答用 DocumentRegionViewer 插槽；敏感答案经明确确认才挂载，受限分区只显示可披露标题和原因。动作与换版只发请求，打开对象不推断已读取／已引用；版本差异只显示宿主说明，不内置业务 Store、权限判定或持久化。
+
+组件页 `/next/components/agent-components#object-viewer` 提供题目、学生作答两组固定示例，覆盖 inline / workspace / compact、历史换版、家长联系方式受限、320px 窄容器和数学分式。公开 API 见[对象查看器契约](docs/component-contracts.md#对象查看器-v01)。目录保持 80 项，coss、依赖和视觉令牌不变。
+
+本轮未合并候选位于 `feat/agent-object-viewer`，基于 main `c9980c8`。五项日志、测试清单与 Workspace main 的只读轻量验证方案见 `.sites-runtime/object-viewer/REPORT.md`。未操作 `.git`、未启动开发服务、未修改 Workspace；浏览器与真实服务未验证，候选待 Supervisor 独立 Review。
+
 ## 集合篮 v0.1 · 设计候选（2026-09-25）
 
 语义 11 `AgentCollectionBasket` 声明 **Inline + 专用扩展内容**：Inline 展示宿主数量、关键条目、分组计数和去向；Workspace 提供完整清单、领域渲染插槽、受控批量选择／动作、分组与上移／下移。`density="compact"` 是独立密度，保留失效、冲突、受限与同步失败原因。汇总、来源版本、同步和最近变化均取宿主事实，操作只发请求，不内建集合数据源、计分、保存、组卷或发布。
