@@ -10,7 +10,7 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 | --- | --- |
 | 未开始 | 尚未推进该语义组合；已有基础控件、领域组件或 Workspace 本地组合仅列为复用起点，不算完成。 |
 | 组件候选 | 本仓库已有该语义的实现与测试，尚未完成 Workspace 浏览器验证；未合并候选必须注明任务分支，不表示 main 已包含。 |
-| Workspace 已验证 | 已引入并在 `/teacher/agent/workspace` 浏览器验证；P04 示例验证不等于真实服务接入。当前十八项的证据来源及未核实边界见下节。 |
+| Workspace 已验证 | 已引入并在 `/teacher/agent/workspace` 浏览器验证；P04 示例验证不等于真实服务接入。当前十九项的证据来源及未核实边界见下节。 |
 | 真实业务接入 | 接入真实服务；本阶段所有项均未达到。 |
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
@@ -18,6 +18,8 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/08/11/14/16/17/18/19/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-26 语义 08 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentConstraintBuilder`（`P/agent-constraint-builder.tsx`），本仓 [Prism #64](https://github.com/Ashrum/intelligence-prism-ui/pull/64)（`251f572`）；[Workspace #25](https://github.com/Ashrum/ole-school-workbench/pull/25)；P04 处理条件放入执行确认条件区：切换更新影响、确认后冻结。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
 - 2026-09-25 语义 06 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentContentInput`（`P/agent-content-input.tsx`），本仓 [Prism #61](https://github.com/Ashrum/intelligence-prism-ui/pull/61)（`97a084f`）；[Workspace #23](https://github.com/Ashrum/ole-school-workbench/pull/23)；P04 校对题干：r1→r2、字数更新、未保存；方案 A 不含 temml。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。待决：Workspace 通用公式预览需 temml（方案 B），待 PO 决定。
 
@@ -80,7 +82,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 05 | 输入与导入 | 采集扫描 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用页预览和质检呈现；设备采集、OCR、质量判定不属于组件 |
 | 06 | 输入与导入 | 内容输入 | AgentContentInput（P/agent-content-input.tsx）；Textarea / InputGroup / Field，DraftMathPreview 可选插槽 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #61](https://github.com/Ashrum/intelligence-prism-ui/pull/61)（`97a084f`）；[Workspace #23](https://github.com/Ashrum/ole-school-workbench/pull/23)；P04 校对题干：r1→r2、字数更新、未保存；方案 A 不含 temml | PO 2026-09-25 批准：下一批第 6 项 | 待决：Workspace 通用公式预览需 temml（方案 B），待 PO 决定。Composer 为指令，06 为输入材料，28 为已有文稿；真实服务未验证。 |
 | 07 | 参数配置 | 参数配置器 | 复用起点：Field（B/field.tsx）、Select（B/select.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接组合现有字段；关键参数与完整参数的同源呈现，校验结果从外部输入 |
-| 08 | 参数配置 | 约束构建器 | AgentConstraintBuilder（P/agent-constraint-builder.tsx）；复用 Fieldset / Checkbox / RadioGroup / NumberField / Select / Alert | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并分支 `feat/agent-constraint-builder`，基于 main `641a5d7`；组件、示例、测试及 `.sites-runtime/constraint-builder/REPORT.md`；未做浏览器验证 | PO 2026-09-26 批准：下一批首项 | 待 Supervisor 独立 Review，再按报告在 P04 轻量接入；冲突检查与求解外置。保留 PO 2026-09-25 决定：P04“处理范围”（排重/模糊页）归属 08 + 25；覆盖矩阵 §5.1 中 P02→02 的旧映射以此为准更正，矩阵原文不改。 |
+| 08 | 参数配置 | 约束构建器 | AgentConstraintBuilder（P/agent-constraint-builder.tsx）；复用 Fieldset / Checkbox / RadioGroup / NumberField / Select / Alert | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #64](https://github.com/Ashrum/intelligence-prism-ui/pull/64)（`251f572`）；[Workspace #25](https://github.com/Ashrum/ole-school-workbench/pull/25)；P04 处理条件放入执行确认条件区：切换更新影响、确认后冻结 | PO 2026-09-26 批准：下一批首项 | 下一步：33 成果物输出（本批顺序：33 → 35 → 07 → 10 → 22 → 36）。真实服务未验证；冲突检查与求解外置。保留 PO 2026-09-25 决定：P04“处理范围”（排重/模糊页）归属 08 + 25；覆盖矩阵 §5.1 中 P02→02 的旧映射以此为准更正，矩阵原文不改。 |
 | 09 | 参数配置 | 模板选择器 | 复用起点：Card（B/card.tsx）、RadioGroup（B/radio-group.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 外部模板列表、选择和预览；模板存储及管理由宿主承担 |
 | 10 | 选择与组合 | 候选选择器 | 复用起点：QuestionCard（P/question-card.tsx）、DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 支持通用条目渲染与选择事件；检索、排序口径和分页数据外置 |
 | 11 | 选择与组合 | 集合篮 | AgentCollectionBasket（P/agent-collection-basket.tsx）；复用 Card / Badge / Button / Checkbox / Select / RecordDetails，题目用 QuestionCard 插槽；QuestionWorkPanel 为可选外壳 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #48](https://github.com/Ashrum/intelligence-prism-ui/pull/48)（`ca2dd79`）；[Workspace #17](https://github.com/Ashrum/ole-school-workbench/pull/17)；全局题篮投影：对话摘要、右栏管理、移除与跨页一致；总分/清空/排序未接入，因 Context 未开放 | P1 · 第 10 项 | 按已批准顺序 16 审核队列 → 06 内容输入。 |
@@ -133,12 +135,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
 | 未开始 | 23 | 除 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28 外的各项 |
-| 组件候选 | 1 | 08（任务分支，未合并；尚未做 Workspace 浏览器验证） |
-| Workspace 已验证 | 18 | 01、02、03、04、06、11、13、14、15、16、17、18、19、21、25、26、27、28；浏览器证据独立核实边界见上文 |
+| 组件候选 | 0 | 无 |
+| Workspace 已验证 | 19 | 01、02、03、04、06、08、11、13、14、15、16、17、18、19、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；PO 2026-09-26 批准下一批首项 08，本轮已形成未合并组件候选，待独立 Review 与 P04 轻量验证。其余语义排序另行确认。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器已登记为 Workspace 已验证。下一步：33 成果物输出（本批顺序：33 → 35 → 07 → 10 → 22 → 36）。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
