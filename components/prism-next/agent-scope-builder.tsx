@@ -1,8 +1,9 @@
 "use client"
 
 import { useId, type ReactNode } from "react"
-import { ArrowLeft, ArrowUpRight } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, ChevronDown } from "lucide-react"
 import { Card } from "@/components/coss/card"
+import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Button } from "./button"
 import { Badge } from "./badge"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
@@ -27,7 +28,7 @@ export type AgentScopeAvailableDimension = ScopeDimensionBase & {
   access: "available"
   source: { label: string; options: unknown }
   value: unknown
-  /** Authorized readable selection, null/blank explicitly means not specified. */
+  /** Authorized readable selection; nonblank means a value is selected, null/blank means unspecified. */
   summary: string | null
   validation: Extract<AgentScopeValidation, { state: "valid" | "conflict" | "unavailable" }>
   disabledReason?: string
@@ -80,20 +81,21 @@ function ScopeDimension({ dimension, anchor, view, target, disabledReason, onVal
   const outside = dimension.validation.state === "out-of-scope"
   const restricted = dimension.access === "restricted" || outside
   const available = !restricted && dimension.access === "available" ? dimension : null
+  const unspecified = !!available && !available.summary?.trim() && available.validation.state === "valid"
   const editor = available && (view === "workspace" ? available.renderEditor : available.renderInlineEditor)
   const blocked = disabledReason || available?.disabledReason
   const editable = available && available.validation.state !== "unavailable" && !blocked && !!onValueChange
   return <section aria-labelledby={`${anchor}-label`} className="min-w-0 space-y-2" data-scope-dimension="">
     <div className="flex min-w-0 flex-wrap items-center gap-2">
       <h4 id={`${anchor}-label`} className="break-words text-ui-action">{dimension.label}{dimension.required ? "（必填）" : "（选填）"}</h4>
-      <Badge variant={dimension.validation.state === "valid" ? "outline" : "warning"}>{validationLabels[dimension.validation.state]}</Badge>
+      <Badge variant={dimension.validation.state === "valid" ? "outline" : "warning"}>{unspecified ? "未指定" : validationLabels[dimension.validation.state]}</Badge>
     </div>
-    <p id={`${anchor}-validation`} role={dimension.validation.state === "valid" ? undefined : "status"} className="break-words text-ui-hint">
+    {!unspecified && <p id={`${anchor}-validation`} role={dimension.validation.state === "valid" ? undefined : "status"} className="break-words text-ui-hint">
       {dimension.validation.reason}
       {dimension.validation.state === "out-of-scope" && dimension.validation.count !== undefined && <>（{dimension.validation.count} 项）</>}
-    </p>
+    </p>}
     {available && <>
-      <p className="break-words text-ui-body">{available.summary?.trim() ? available.summary : "尚未指定"}</p>
+      <p id={unspecified ? `${anchor}-validation` : undefined} className="break-words text-ui-body">{available.summary?.trim() ? available.summary : "尚未指定"}</p>
       {view === "workspace" && <p className="break-words text-ui-hint text-muted-foreground">可选项来源：{available.source.label}</p>}
       {blocked && <p id={`${anchor}-disabled`} className="break-words text-ui-hint">{blocked}</p>}
       {editable && editor && <div className="min-w-0" role="group" aria-labelledby={`${anchor}-label`} aria-describedby={`${anchor}-validation`}>
@@ -117,6 +119,47 @@ export function AgentScopeBuilder({ title, scope, dimensions, summary, impact, e
   const changed = confirmation.state === "changed" || (confirmation.state === "confirmed" && confirmation.version !== scope.version)
   const confirmed = confirmation.state === "confirmed" && !changed && !confirmReason
   const visible = dimensions.filter(dimension => view === "workspace" || !onExpand || dimension.core || dimension.access === "restricted" || dimension.validation.state !== "valid" || (dimension.access === "available" && !!dimension.disabledReason))
+  const boundaryNotice = notice || "未指定的范围不自动使用全部可用对象。"
+  if (compact && view === "inline") {
+    // Read authorized summaries only, never inspect opaque domain values or restricted metadata.
+    const compactSummary = dimensions.map(dimension => `${dimension.label}：${dimension.validation.state === "out-of-scope" || dimension.access === "restricted"
+      ? "超出授权范围" : dimension.summary?.trim() || "未指定"}`).join("；") || "未指定"
+    const issues = dimensions.filter(dimension => dimension.access === "restricted" || dimension.validation.state !== "valid" || (dimension.access === "available" && !!dimension.disabledReason))
+    const reasons = issues.map(dimension => `${dimension.label}：${dimension.validation.state !== "valid" || dimension.access === "restricted" ? dimension.validation.reason : ""}${dimension.access === "available" && dimension.disabledReason ? ` ${dimension.disabledReason}` : ""}`)
+    const attention = issues.length ? `${issues.length} 项需处理` : mutationReason || confirmDisabledReason ? "需处理" : exclusions.length ? "有排除项" : undefined
+    const explanation = [changed ? "范围已变化，需重新确认" : undefined, confirmation.reason, ...reasons, mutationReason, confirmDisabledReason, ...exclusions.map(entry => entry.reason)].filter(Boolean).join("；")
+    return <Card aria-label={title} data-agent-scope-view={view} data-density={density} className="min-w-0 w-full gap-0 p-2">
+      <Collapsible defaultOpen={false}>
+        <div data-scope-compact-row="" className="flex min-w-0 flex-wrap items-center gap-2">
+          <CollapsibleTrigger aria-controls={`${id}-scope-details`} render={<Button type="button" size="sm" variant="ghost"
+            className="min-w-0 flex-[1_1_12rem] justify-start" aria-label={`范围详情：${compactSummary}${explanation ? `；${explanation}` : ""}`} />}>
+            <span className="min-w-0 truncate text-ui-body">范围：{compactSummary}</span><ChevronDown aria-hidden="true" />
+          </CollapsibleTrigger>
+          <div className="flex shrink-0 items-center gap-2">
+            <Badge variant="outline" role="status" aria-label={changed ? "范围已变化，需重新确认" : confirmed ? "范围已确认" : "范围待确认"}>{changed ? "需重确认" : confirmed ? "已确认" : "待确认"}</Badge>
+            {attention && <Badge variant="warning" role="status" aria-label={`${attention}；${explanation}`}>{attention}</Badge>}
+            {onExpand && <Button type="button" size="sm" variant="outline" onClick={event => onExpand(event.currentTarget)}>调整</Button>}
+          </div>
+        </div>
+        <CollapsiblePanel id={`${id}-scope-details`} keepMounted className="motion-reduce:transition-none">
+          <div className="min-w-0 space-y-3 pt-3" data-scope-compact-details="">
+            <p className="break-words text-ui-body">{summary?.trim() ? summary : "尚未指定范围"}</p>
+            {changed && <p className="text-ui-hint">范围已变化，需重新确认</p>}
+            {confirmation.reason && <p className="break-words text-ui-hint">{confirmation.reason}</p>}
+            {mutationReason && <p className="break-words text-ui-hint">{mutationReason}</p>}
+            {confirmDisabledReason && <p className="break-words text-ui-hint">{confirmDisabledReason}</p>}
+            {impact && <p data-scope-impact="" className="break-words text-ui-hint">{impact}</p>}
+            {exclusions.length > 0 && <ul aria-label="排除与不可用部分" className="space-y-2">{exclusions.map((entry, index) =>
+              <li key={index} className="break-words text-ui-hint">{entry.reason}{entry.count !== undefined && <>（{entry.count} 项）</>}</li>)}</ul>}
+            {dimensions.map((dimension, index) => <ScopeDimension key={dimension.id} dimension={dimension} anchor={`${id}-dimension-${index}`} view="inline" target={target} disabledReason={mutationReason} />)}
+            {!dimensions.length && <p className="text-ui-hint">暂未提供可选范围。</p>}
+            <p className="break-words text-ui-hint text-muted-foreground">{boundaryNotice}</p>
+            {details}
+          </div>
+        </CollapsiblePanel>
+      </Collapsible>
+    </Card>
+  }
   return <Card aria-labelledby={`${id}-title`} data-agent-scope-view={view} data-density={density}
     className={`min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
@@ -137,7 +180,7 @@ export function AgentScopeBuilder({ title, scope, dimensions, summary, impact, e
         view={view} target={target} disabledReason={mutationReason} onValueChange={onValueChange} />)}
       {!dimensions.length && <p className="text-ui-hint">暂未提供可选范围。</p>}
     </div>
-    {notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
+    <p className="break-words text-ui-hint text-muted-foreground">{boundaryNotice}</p>
     <RecordDetails>{details}</RecordDetails>
     {onConfirm && !confirmed && confirmReason && <p id={`${id}-confirm-reason`} className="break-words text-ui-hint">{confirmReason}</p>}
     <div className="flex min-w-0 flex-wrap gap-2">

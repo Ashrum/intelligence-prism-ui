@@ -8,7 +8,7 @@ import { renderToStaticMarkup as render } from 'react-dom/server';
 import ts from 'typescript';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const runtime = new URL('../.sites-runtime/scope-builder/', import.meta.url);
+const runtime = new URL('../.sites-runtime/scope-builder-compact/', import.meta.url);
 await mkdir(runtime, { recursive: true });
 const file = new URL('test-bundle.mjs', runtime);
 const bundle = await build({ stdin: { contents: `export * from './components/prism-next/agent-scope-builder'; export * from './components/prism-next/demos/agent-scope-builder';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false });
@@ -57,7 +57,7 @@ test('scope defaults to inline/default and shows only supplied summary, validati
 test('inline selects host core dimensions plus every issue; missing expansion retains all summaries', () => {
   const extra = { ...baseDimension, id: 'extra', label: '来源', summary: '校内作业', core: false };
   const input = { dimensions: [baseDimension, extra, conflict, restricted, unavailable], onExpand() {} };
-  for (const density of ['default', 'compact']) {
+  for (const density of ['default']) {
     const html = htmlFor({ ...input, density });
     assert.doesNotMatch(html, /校内作业/);
     for (const text of [baseDimension.summary, conflict.validation.reason, restricted.validation.reason, unavailable.validation.reason]) assert.ok(html.includes(text));
@@ -67,11 +67,16 @@ test('inline selects host core dimensions plus every issue; missing expansion re
   assert.doesNotMatch(htmlFor({ ...input, onExpand: undefined }), /调整完整范围/);
 });
 
-test('all four host validation values and reasons remain outside collapsed details in both views and densities', () => {
+test('full presentations keep validation reasons visible; compact inline has a warning count and readable collapsed reasons', () => {
   for (const mode of modes) {
     const html = htmlFor({ ...mode, dimensions: [baseDimension, conflict, restricted, unavailable], onExpand() {}, details: 'supplementary-hidden-text' });
     for (const text of ['有效', '范围冲突', '超出授权范围', '数据不可用', '结束日期早于开始日期。', '当前任教范围不包含所请求的班级。', '资料目录暂不可用。', '（1 项）']) assert.ok(html.includes(text), text);
-    assert.doesNotMatch(html, /supplementary-hidden-text/);
+    if (mode.density === 'compact' && mode.view !== 'workspace') {
+      assert.match(html, /3 项需处理/);
+      assert.match(html, /aria-expanded="false"/);
+      assert.match(html, /hidden=""[^>]*data-slot="collapsible-panel"|data-slot="collapsible-panel"[^>]*hidden=""/);
+      assert.match(html, /aria-label="范围详情：[^"]*结束日期早于开始日期。[^"]*当前任教范围不包含所请求的班级。[^"]*资料目录暂不可用。/);
+    } else assert.doesNotMatch(html, /supplementary-hidden-text/);
   }
 });
 
@@ -142,7 +147,13 @@ test('host-declared changes and a confirmed older revision require fresh confirm
     const extra = { ...mode, scope: next, confirmation, onConfirm: value => calls.push(value) };
     const before = htmlFor(extra);
     assert.match(before, /范围已变化，需重新确认/); assert.match(before, /高二三班/); assert.doesNotMatch(before, /范围已确认/);
-    button(capture(extra), '重新确认范围').props.onClick(); assert.deepEqual(calls.at(-1), next); assert.equal(htmlFor(extra), before);
+    if (mode.density === 'compact' && mode.view !== 'workspace') {
+      assert.match(before, /需重确认/);
+      assert.equal(button(capture(extra), '重新确认范围'), undefined);
+    } else {
+      button(capture(extra), '重新确认范围').props.onClick(); assert.deepEqual(calls.at(-1), next);
+    }
+    assert.equal(htmlFor(extra), before);
   }
 });
 
@@ -183,15 +194,62 @@ test('expansion/return preserve the trigger and do not confirm, edit or create a
 
 test('compact keeps non-core edit restrictions visible and text content is escaped without a hidden data payload', () => {
   const html = htmlFor({ density: 'compact', onExpand() {}, dimensions: [{ ...baseDimension, core: false, disabledReason: '当前选择正在核对。', summary: '<script>private code</script>' }], notice: '一条范围边界说明。', details: '补充解释不常驻。' });
-  assert.match(html, /当前选择正在核对/); assert.match(html, /&lt;script&gt;/); assert.doesNotMatch(html, /<script>|补充解释不常驻/);
+  assert.match(html, /当前选择正在核对/); assert.match(html, /&lt;script&gt;/); assert.doesNotMatch(html, /<script>/);
+  assert.match(html, /1 项需处理/); assert.match(html, /aria-expanded="false"/);
   assert.equal((html.match(/一条范围边界说明。/g) ?? []).length, 1);
+});
+
+test('compact inline is one summary row with read-only details, no editors or confirmation actions, and optional adjustment', () => {
+  const calls = [], trigger = {};
+  const extra = { density: 'compact', dimensions: [{ ...baseDimension, renderInlineEditor() { assert.fail('compact editor'); } }],
+    onValueChange() { assert.fail('compact mutation'); }, onConfirm() { assert.fail('compact confirmation'); }, onExpand: value => calls.push(value) };
+  const html = htmlFor(extra), row = html.split('data-scope-compact-row=""')[1].split('data-slot="collapsible-panel"')[0];
+  assert.match(row, /范围：班级：高二三班/); assert.match(row, /待确认/);
+  assert.doesNotMatch(row, /<h[34]|<section|班级可用。|有效|本次范围|确认范围|不自动使用全部/);
+  assert.doesNotMatch(html, /调整完整范围|>确认范围<|>重新确认范围</);
+  button(capture(extra), '调整').props.onClick({ currentTarget: trigger });
+  assert.deepEqual(calls, [trigger]); assert.equal(htmlFor(extra), html);
+  assert.equal(button(capture({ ...extra, onExpand: undefined }), '调整'), undefined);
+  const noExpand = htmlFor({ density: 'compact', dimensions: [baseDimension, { ...baseDimension, id: 'non-core', label: '材料', summary: '完整且可展开的材料名', core: false }] });
+  assert.match(noExpand, /材料：完整且可展开的材料名/); assert.match(noExpand, /aria-expanded="false"/);
+  assert.match(htmlFor({ density: 'compact', dimensions: [], summary: null }), /范围：未指定/);
+});
+
+test('unspecified valid dimensions are neutral and suppress repeated valid explanations, without masking issues', () => {
+  for (const mode of modes) for (const summary of [null, '', '  ']) {
+    const dimension = { ...baseDimension, required: false, value: null, summary, validation: { state: 'valid', reason: '未指定，不自动使用全部可用对象。' } };
+    const html = htmlFor({ ...mode, dimensions: [dimension, { ...dimension, id: 'second', label: '教材' }] });
+    assert.match(html, /未指定/); assert.doesNotMatch(html, />有效<|未指定，不自动使用全部可用对象/);
+    assert.equal((html.match(/不自动使用全部可用对象/g) ?? []).length, 1);
+    for (const issue of [conflict, unavailable]) {
+      const issueHtml = htmlFor({ ...mode, dimensions: [{ ...dimension, validation: issue.validation }] });
+      assert.match(issueHtml, new RegExp(issue.validation.reason));
+      assert.match(issueHtml, new RegExp(issue.validation.state === 'conflict' ? '范围冲突' : '数据不可用'));
+    }
+  }
+  assert.match(htmlFor({ dimensions: [{ ...baseDimension, required: false, value: 0, summary: '0 项' }] }), />有效</);
+  // Missing selection explanations still have an existing description target for full-view editors.
+  let editor;
+  const html = htmlFor({ view: 'workspace', dimensions: [{ ...baseDimension, summary: null, renderEditor: context => { editor = context; return null; } }], onValueChange() {} });
+  assert.ok(html.includes(`id="${editor.describedBy}"`));
+});
+
+test('compact problem count is affected dimensions, not private object counts, and disabled/exclusion facts stay discoverable', () => {
+  const html = htmlFor({ density: 'compact', dimensions: [conflict, { ...restricted, validation: { ...restricted.validation, count: 9 } }, unavailable],
+    disabledReason: '历史范围只读。', confirmDisabledReason: '正在核对范围。', exclusions: [{ reason: '未计入资料。', count: 0 }] });
+  assert.match(html, />3 项需处理</); assert.doesNotMatch(html, />9 项需处理</);
+  assert.match(html, /aria-label="范围详情：[^"]*历史范围只读。[^"]*正在核对范围。[^"]*未计入资料。/);
+  assert.match(htmlFor({ density: 'compact', disabledReason: '历史范围只读。' }), />需处理</);
+  assert.match(htmlFor({ density: 'compact', exclusions: [{ reason: '已排除材料。' }] }), />有排除项</);
+  assert.doesNotMatch(htmlFor({ density: 'compact', dimensions: [conflict], confirmation: { state: 'confirmed', version: target.version } }), />已确认</);
 });
 
 test('two labelled fixtures each compose three presentations and actual range/tree/filter/date controls with long Chinese and math', () => {
   for (const purpose of ['analysis', 'preparation']) {
     const html = render(h(ScopeBuilderExample, { purpose, narrow: true }));
     assert.equal((html.match(/data-agent-scope-view=/g) ?? []).length, 3);
-    for (const text of ['固定示例', '对话范围与微调', '完整范围构建', '紧凑范围确认', '载入示例确认记录']) assert.ok(html.includes(text), text);
+    for (const text of ['固定示例', '对话范围与微调', '完整范围构建', '输入区紧凑范围摘要', '载入示例确认记录', '补充资料：未指定']) assert.ok(html.includes(text), text);
+    assert.match(html, /<form[\s\S]*data-scope-compact-row/);
     assert.match(html, /<math.*<mfrac>/); assert.match(html, /max-w-\[320px\]/); assert.doesNotMatch(textOf(html), /意图|宿主|回调|受控/);
     if (purpose === 'analysis') {
       for (const text of ['学情分析范围', '高二三班', '第二章 二次函数', '近两周作业', '超出授权范围', '涉及 43 名学生、6 份作业', 'data-range-picker', '起止日期']) assert.ok(html.includes(text), text);

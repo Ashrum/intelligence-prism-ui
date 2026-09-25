@@ -12,6 +12,7 @@ import { TextbookRangePicker } from "../textbook-range-picker"
 import { TextbookDirectory, type DirectorySelections, type TextbookDefinition } from "../textbook-directory"
 import { createDirectory } from "@/lib/prism-next/textbook-directory"
 import { AgentScopeBuilder, type AgentScopeBuilderProps, type AgentScopeDimension, type AgentScopeEditor, type AgentScopeTarget } from "../agent-scope-builder"
+import { AgentComposer } from "../agent-components"
 
 // These are authorized fixture options, not a directory service or real textbook contents.
 const books: TextbookDefinition[] = ["甲", "乙"].map((edition, index) => {
@@ -73,6 +74,7 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
   const [requested, setRequested] = useState<AgentScopeTarget | null>(null)
   const [resetRequest, setResetRequest] = useState<"reset" | "defaults" | null>(null)
   const [feedback, setFeedback] = useState("尚未请求确认范围。")
+  const [message, setMessage] = useState("")
   const workspace = useRef<HTMLElement>(null), trigger = useRef<HTMLButtonElement | null>(null)
   const target = { scopeId: `scope-example-${purpose}`, version: `r${revision}` }
   const book = purpose === "analysis" ? books[0] : books.find(item => item.id === values.edition)
@@ -113,6 +115,9 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
         renderEditor: editor => <ChoiceEditor editor={editor} label="选择资源类型" />, renderInlineEditor: editor => <ChoiceEditor editor={editor} label="选择资源类型" /> },
     ...(purpose === "analysis" && issue ? [{ id: "restricted-group", access: "restricted" as const, label: "额外班级", required: false,
       validation: { state: "out-of-scope" as const, reason: "另一个班级不在当前任教范围内，请重新核对选择。", count: 1 } }] : []),
+    { id: "supplement", access: "available", label: "补充资料", required: false, core: true,
+      source: { label: "示例资料", options: [] }, value: null, summary: null,
+      validation: { state: "valid", reason: "此项可留空。" } },
   ]
   const summary = purpose === "analysis" ? [groupLabel, chapterSummary, validTime ? timeText(values.time) : null].filter(Boolean).join(" · ")
     : [book?.title, chapterSummary, resourceLabel].filter(Boolean).join(" · ")
@@ -130,8 +135,8 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
     onRestoreDefaults: () => { setResetRequest("defaults"); setFeedback("已请求恢复默认；载入示例范围前保留当前选择。") },
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
-    notice: "固定示例；选择范围不会增加访问权限。",
-    details: <p>未指定范围时，不会自动使用全部可用数据。确认仅针对当前选择，不表示已开始分析或检索；这里没有连接学校数据与资料服务。</p>,
+    notice: "未指定的范围不自动使用全部可用对象。",
+    details: <p>选择范围不会增加访问权限。确认仅针对当前选择，不表示已开始分析或检索；这里没有连接学校数据与资料服务。</p>,
   }
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用同一份选择。可先载入可用范围，再请求确认并独立载入确认记录。</p>
@@ -147,10 +152,13 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
     </div>
     <p role="status" className="break-words text-ui-hint">{feedback}</p>
     <div className="grid min-w-0 gap-6">{([
-      ["inline", "default", "对话范围与微调"], ["workspace", "default", "完整范围构建"], ["inline", "compact", "紧凑范围确认"],
+      ["inline", "default", "对话范围与微调"], ["workspace", "default", "完整范围构建"], ["inline", "compact", "输入区紧凑范围摘要"],
     ] as const).map(([view, density, label]) => <section key={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentScopeBuilder {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3>{density === "compact"
+        ? <AgentComposer variant="conversation" inputSize="compact" value={message} onChange={setMessage} onSubmit={() => setFeedback("示例消息未发送；请先核对范围。")}
+          scope={<AgentScopeBuilder {...common} view={view} density={density} />} />
+        : <AgentScopeBuilder {...common} view={view} density={density} />}
     </section>)}</div>
   </div>
 }
