@@ -124,34 +124,45 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `summary / impact` | 必填 string/null / 可选 string | 已获准披露的可读范围摘要；summary 空白/null 显示“尚未指定范围”。impact 只在提供时显示，不根据选项、维度或可见条数推算规模 |
 | `exclusions` | 可选 `readonly AgentScopeExclusion[]` | 只有 `{reason,count?}`，计数是允许披露的非负整数，0 保留。只显示原因／计数，不接受对象明细，不补造数量 |
 | `confirmation` | 必填 `AgentScopeConfirmation` | unconfirmed 可带 reason；confirmed 必带其 version，可带 reason；changed 必带 reason。点击不改变状态；关键条件变化时宿主传 changed，已确认版本与当前 scope.version 不符时同样提示需重新确认 |
-| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | 两态与密度正交。compact 只收紧间距并换行，不隐藏冲突、越权、不可用及禁用原因，不缩字 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | inline + compact 使用单行摘要（窄容器最多两行，展开详情后不限制高度）；workspace + compact 仍只收紧间距。字号不变，问题标记常驻，原因可一键展开 |
 | `onValueChange` | 可选 `(change:AgentScopeChange)=>void` | 返回 `{scopeId,version,dimensionId,value:unknown}`；新值含 undefined、空值均原样发出，由适配器按 dimensionId 匹配类型、核验和更新。缺接收器不挂载编辑插槽 |
 | `onConfirm` | 可选 `(target:AgentScopeTarget)=>void` | 仅请求确认当前范围，不启动任务或生成回执；缺回调无按钮。空摘要／空维度、缺引用、非有效校验或禁用原因均阻断确认，不在组件内求解冲突或判定必填值 |
 | `onReset / onRestoreDefaults` | 可选 `(target)=>void` | 仅 workspace 显示重置／恢复默认，只发送当前版本的请求。组件不清空、不选默认项、不修改确认事实；宿主提供新值、校验和确认状态 |
-| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | inline 的“调整完整范围”缺回调无入口；workspace 可返回原位置。宿主保持同一值／版本、焦点与阅读位置；不创建外壳。缺展开时保留全部维度摘要 |
-| `disabledReason / confirmDisabledReason` | 可选 string | 前者阻断全部编辑、确认、重置及默认恢复；后者只阻断确认。原因常驻关联，处理器再次保护；查看、展开与返回不受影响 |
-| `notice / details` | 可选 string / ReactNode | 至多一条常驻边界提示，其余解释默认收起。校验、范围变化、排除／不可用原因及动作禁用不得移入 details |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | inline default 的“调整完整范围”、inline compact 的“调整”缺回调无入口；workspace 可返回原位置。宿主保持同一值／版本、焦点与阅读位置；不创建外壳。compact 的本地只读详情入口始终存在，与 onExpand 独立 |
+| `disabledReason / confirmDisabledReason` | 可选 string | 前者阻断全部编辑、确认、重置及默认恢复；后者只阻断确认。default / workspace 原因常驻关联，处理器再次保护；inline compact 标记常驻、原因可展开且在入口可访问名称中可读。查看、展开与返回不受影响 |
+| `notice / details` | 可选 string / ReactNode | notice 缺省为“未指定的范围不自动使用全部可用对象。”；宿主可替换为一条边界提示，不在各维度 reason 或 details 重复。default / workspace 提示常驻，校验、范围变化、排除／不可用及禁用原因仍常驻；inline compact 的提示和原因统一放入本地折叠详情，问题及重新确认标记常驻，详见下文 |
 
 `AgentScopeDimension` 共同字段为必填 `id / label / required` 与可选 `core`。label 是获准披露的维度名，不能塞入无权对象名称；required 只呈现必填身份，必填缺失由宿主传 conflict。
 
 | 分支 | 输入 | 呈现与保护 |
 | --- | --- | --- |
-| `AgentScopeAvailableDimension` | `access:'available', source:{label,options:unknown}, value:unknown, summary:string/null, validation:{state:'valid'/'conflict'/'unavailable',reason}, disabledReason?, renderEditor?, renderInlineEditor?` | value/options 是不透明领域数据；summary 空白/null 为“尚未指定”，workspace 显示来源。三值分别为有效／范围冲突／数据不可用，原因来自宿主。conflict 仍可编辑以纠正，unavailable 不挂载编辑控件 |
+| `AgentScopeAvailableDimension` | `access:'available', source:{label,options:unknown}, value:unknown, summary:string/null, validation:{state:'valid'/'conflict'/'unavailable',reason}, disabledReason?, renderEditor?, renderInlineEditor?` | value/options 是不透明领域数据；summary 空白/null 表示未指定，非空表示宿主声明有选定值，宿主须保持其与 value 一致，组件不遍历 value 判断领域空值。只有 validation.state=valid 且 summary 非空才显示“有效”；valid + 未指定显示中性“未指定”，不显示该条 valid reason（包括重复边界说明），不改变校验事实或确认门槛。conflict / unavailable 始终保留警示和原因，即使未指定。workspace 显示来源；conflict 仍可编辑以纠正，unavailable 不挂载编辑控件 |
 | `AgentScopeRestrictedDimension` | `access:'restricted', validation:{state:'out-of-scope',reason,count?}` 及共同字段 | 只接收允许披露的维度标签、原因和可选计数。类型禁止 value/source/summary/编辑插槽，运行时也忽略误传内容；非类型化 access 与 out-of-scope 矛盾时同样不挂载私密内容 |
 
-`AgentScopeEditor={value,options,onChange,controlId,labelledBy,describedBy}` 是编辑插槽参数。仅在可访问、非 unavailable、无禁用原因且有 onValueChange 时调用；inline 只调用显式轻量 `renderInlineEditor`，workspace 调用 `renderEditor`。控件须受控、保留常驻固定标签与说明关联，不通过插槽旁路执行。原生控件关联 controlId/describedBy；FilterBar 等自带标签的组合由外层有名 group 关联校验说明。
+`AgentScopeEditor={value,options,onChange,controlId,labelledBy,describedBy}` 是编辑插槽参数。仅在可访问、非 unavailable、无禁用原因且有 onValueChange 时调用；inline default 只调用显式轻量 `renderInlineEditor`，workspace 调用 `renderEditor`。inline compact 及其本地详情均只读，不挂载编辑插槽或确认按钮；确认与编辑须通过 onExpand 接至完整视图。控件须受控、保留常驻固定标签与说明关联，不通过插槽旁路执行。原生控件关联 controlId/describedBy；FilterBar 等自带标签的组合由外层有名 group 关联校验说明。
 
 宿主先过滤对象、选项及全部元信息、汇总、排除说明、details 和插槽；组件不是任意文本脱敏器，不能先传原始无权数据再靠 CSS 隐藏。关键值、合法选项或权限变化时，同步范围版本、校验、摘要／规模及确认事实。确认处理重新核验归属、版本、当前授权与明确任务范围；过期请求不能生效。confirmed 的显示还要求当前版本匹配且无确认阻断，旧确认不能掩盖校验失败。历史／只读范围通过 disabledReason 限制，持久化、恢复、执行、权限及真实回执仍归宿主／受信任服务。
 
 ### 三种用法与验证边界
 
-- **inline**：摘要、明确提供的规模和排除说明 → 核心维度及全部问题／禁用维度 → 少量快捷编辑 → 确认、调整完整范围。无 onExpand 保留全部摘要，仍只提供显式轻量编辑。
+- **inline default**：摘要、明确提供的规模和排除说明 → 核心维度及全部问题／禁用维度 → 少量快捷编辑 → 确认、调整完整范围。无 onExpand 保留全部摘要，仍只提供显式轻量编辑。
 - **workspace**：同一汇总及确认事实 → 所有维度、来源、逐项编辑和校验 → 确认、重置、默认恢复及返回；不新建任务或第二份草稿。
-- **compact**：可与任一 view 组合，必要校验、越权原因、规模和重新确认提示均保留，仅减少间距。
+- **inline compact**：默认仅一行“范围：各维度标签与简短 summary／未指定”＋整体确认 Badge＋可选“调整”。只使用获准摘要，受限维度仅显示标签与“超出授权范围”；不读取其 value/source/summary。长摘要单行省略，可展开查看全文；窄容器将摘要与状态／操作分为最多两行，不缩字、不裁切状态或操作。
+- 整体 Badge 来自必填 confirmation：待确认／已确认／需重确认；仍执行版本和确认阻断保护，不从值的存在或按钮点击制造确认事实。未提供 confirmation 不属于当前公开 API 的有效调用。
+- 冲突、越权、不可用、维度禁用汇总为常驻“N 项需处理”；N 是问题维度数，同一维度只计一次，绝非无权对象数。只有全局编辑／确认受限时标“需处理”；只有排除说明时标“有排除项”。摘要按钮的可访问名称包含问题、禁用与排除原因；一键可展开的 keepMounted 详情承载所有维度、完整原因、明确提供的规模／排除计数、确认说明及边界提示，即使没有 onExpand 也可访问。
+- **workspace compact**：保持原分区、来源、编辑及操作结构，仅减少间距；未指定状态和单条边界提示的语义修正同 default。
 
-组件页 `/next/components/agent-components#scope-builder`：学情分析（班级＋章节＋时间，含一个只披露原因／数量的越权班级）；备课资料（教材版本＋章节＋资源类型，初始资料目录不可用）。每组 inline / workspace / compact 共用选择，提供 320px、长中文和分式。手动载入可用范围后可请求确认，独立“载入示例确认记录”才显示已确认，修改后需重新确认；重置／默认也经独立示例载入。没有依据的新组合不显示影响规模。
+组件页 `/next/components/agent-components#scope-builder`：学情分析（班级＋章节＋时间，含一个只披露原因／数量的越权班级）；备课资料（教材版本＋章节＋资源类型，初始资料目录不可用）。每组 inline / workspace / compact 共用选择，compact 放入 AgentComposer 的 scope 插槽，附选填未指定维度；提供 320px、长中文和分式。手动载入可用范围后可请求确认，独立“载入示例确认记录”才显示已确认，修改后需重新确认；重置／默认也经独立示例载入。没有依据的新组合不显示影响规模。
 
-未合并候选分支 `feat/agent-scope-builder`，基线 main `b716d7e`。五项日志、测试及 Workspace main `a09071d` 的只读方案见 `.sites-runtime/scope-builder/REPORT.md`。当前 P04Scope 只有 deduplicate/blurry，更适合 08；新页“对话信息→关联范围”是只读展示，尚无编辑入口，接线决定见报告。本轮不写 `.git`、不启动开发服务、不改 Workspace。SSR／回调测试不代替浏览器三主题、窄容器、键盘／读屏、Workspace 或真实服务验证。
+历史实现记录：`feat/agent-scope-builder` 基于 main `b716d7e` 开发，现已随 PR #52 合入本轮基线 `6ae642f`。五项日志、测试及 Workspace main `a09071d` 的只读方案见 `.sites-runtime/scope-builder/REPORT.md`。当前 P04Scope 只有 deduplicate/blurry，更适合 08；新页“对话信息→关联范围”是只读展示，尚无编辑入口，接线决定见报告。本轮不写 `.git`、不启动开发服务、不改 Workspace。SSR／回调测试不代替浏览器三主题、窄容器、键盘／读屏、Workspace 或真实服务验证。
+
+### compact 修正的 SSR 差异（main 6ae642f → fix/scope-builder-compact）
+
+- inline compact：移除可见标题、状态段落、汇总区、逐维度卡片、轻量编辑、常驻边界提示及底部确认操作，替换为摘要行；整体状态缩为 Badge，新增常驻问题计数及默认关闭的本地 Collapsible（keepMounted）。原因、规模与排除事实仍在 SSR DOM 内，展开后可读；其存在于 HTML 不代表默认可见。
+- inline default / workspace default / workspace compact：保留 header、汇总、维度顺序／筛选、来源、编辑、details 和动作结构。已有值且校验有效、有问题、禁用、过期确认等输入在提供 notice 时 SSR 与基线一致。
+- 三种完整呈现仅有两类语义差异：valid + 未指定维度的“有效”改为“未指定”、重复 valid reason 不渲染，原说明 ID 移至值段落以保留编辑器关联；缺 notice 时补一条默认边界提示，显式 notice 原样保留。
+- 组件页：compact 示例进入 AgentComposer.scope，增加选填未指定维度，边界提示集中到 notice。此处为示例 SSR 变化，不声称 Workspace 已接入或浏览器高度已验收。
+- 本轮五项日志、SSR 前后输出与差异报告见 `.sites-runtime/scope-builder-compact/`；未启动开发服务，未修改 Workspace。
 
 ## 对象查看器 v0.1
 
@@ -825,7 +836,7 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
-范围构建器提供 `details?: ReactNode`；校验、越权／不可用、排除原因及重新确认提示保持常驻，compact 不隐藏这些事实。
+范围构建器提供 `details?: ReactNode`。default 和 workspace 的校验、越权／不可用、排除原因及重新确认提示保持常驻。inline compact 按“范围构建器”契约例外处理：问题计数与重新确认标记常驻，具体原因在摘要入口可访问名称中可读，并可一键展开；边界提示只在本地详情出现一次，其他视图只常驻一次。
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
