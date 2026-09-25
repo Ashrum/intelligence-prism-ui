@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 候选选择器 v0.1 · 设计候选（2026-09-26）
+
+语义 10 `AgentCandidatePicker` 声明 **Inline + 专用扩展内容**：Inline 呈现页面给出的少量候选；Workspace 组合 DataRecordTable、FilterBar、Checkbox 与固定标签检索，支持排序、批量选择和加载更多请求。`density="compact"` 只收紧布局，选择依据、来源、失效／受限原因与未确认事实保持可见。题目通过 QuestionCard 插槽接入，学生、知识点和资源使用通用条目。
+
+01 选择既有对象作为上下文／目标；10 从推荐或检索结果中挑选候选、比较依据与替代来源；11 管理已选集合；14 承担打开后的对象查看。10 的选择、替换、检索、筛选、排序、加载和提交全部通过版本绑定的 `onIntent` 发出，页面持有结果与选择；组件不自行检索、过滤、排序、分页或加入题篮。已选、已提交和已在集合中分别取页面事实，总数未知不以已加载数量代替。
+
+组件页 `/next/components/agent-components#candidate-picker` 提供候选题（QuestionCard、公式、替代题、失效／受限／已在题篮）和候选学生／知识点两组标注示例，覆盖 inline / workspace / compact、320px、长中文、加载更多、总数未知、加载错误与独立示例回执。公开 API 见[候选选择器契约](docs/component-contracts.md#候选选择器-v01)。coss、依赖、视觉令牌和 80 项目录不变。
+
+未合并候选位于 `feat/agent-candidate-picker`，基于 main `ac27658`；第 10 项登记为“组件候选”。五项检查、实际 diff、测试数字及 Workspace main `c8cc00c` 的只读轻量验证方案见 `.sites-runtime/candidate-picker/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／窄屏／键盘触控、Workspace 接入、真实服务与独立 Review 尚未完成。
+
 ## 参数配置器 v0.1 · 设计候选（2026-09-26）
 
 语义 07 `AgentParameterConfig` 声明 **Inline + 专用扩展内容**：Inline 按宿主 `key` 标记展示关键参数，Workspace 展示同一列表的完整参数集。组合 NumberField、Select、RadioGroup、Switch、Input 和固定标签；compact 收紧间距，保留校验、未确认／未知、影响和锁定原因。

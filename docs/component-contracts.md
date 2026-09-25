@@ -54,6 +54,68 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 候选选择器 v0.1
+
+2026-09-26 设计候选，语义 **10 候选选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-candidate-picker` 导入 `AgentCandidatePicker` 及同文件公开类型。任务分支 `feat/agent-candidate-picker`，基于 main `ac27658`，未合并；不新增 80 项目录条目。
+
+### 复用检索与 01 / 10 / 11 / 14 边界
+
+- 已完整阅读批准规范 §2、候选选择器行（实际位于 §6.4）、§7、§8、§10、§11.1「查看与调整试卷」，复用规划第 10 行和 paper 行、覆盖矩阵 B04/C04/D03/Q01、01/07/11/14 及 QuestionCard、DataRecordTable、FilterBar 契约、进度清单。检索并核对上述组件源码。现有控件支持选择、字段、领域内容；缺口是候选依据／来源／替代关系、独立提交事实和通用选择请求的组合。
+- **01** 选既有对象作为上下文或目标；**10** 挑选系统推荐／检索给出的候选并比较依据和替代项；**11** 管理已经形成的集合；**14** 展示打开后的对象及其分区。10 不接管 01 的范围维度、11 的数据源／排序／移除，也不创建第二个对象查看器。`replace` 只替换本次选择，不替换正式试卷或题篮条目。
+- 复用 Card、Prism Badge/Button navigation、Checkbox、Input、Label、RecordDetails；Workspace 使用 DataRecordTable 的一列通用条目渲染，**不传 onSelect**，避免“查看内部 ID”。FilterBar 同时承担筛选与排序，字段和选项 ID 经局部序号映射后进入原生控件。表格保持一列自然换行，长领域内容按自身阅读排版。
+- QuestionCard 用 `renderItem` 接入；10 不导入题目模型、Workspace 私有类型或业务 Store。适用于题目、资源、学生、知识点等领域。对同一试卷可组合 10＋11＋12＋13；10 不承担编排、发布或读取证据认证。
+
+### 公开 API
+
+`AgentCandidatePickerProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / candidateSet` | 必填 string / `{id,version}` | 可读标题和既有候选上下文引用。id/version 只用于请求；为空时阻断请求，不显示内部长 ID。version 由页面维护，绑定本次候选及选择语境，不是 UI 生成的版本 |
+| `candidates` | 必填 `readonly AgentCandidate[]` | 页面明确给出的当前结果，按输入顺序完整渲染。Inline 的少量候选也由页面提供；组件不截取、过滤、排序或分页 |
+| `relatedCandidates` | 可选只读候选数组，默认 [] | 页外已选及替代项的当前获权事实，不是内部缓存。同 ID 以 candidates 为准，避免旧摘要盖过失权／失效；同一优先级出现重复 ID 时不允许新增或提交 |
+| `selectedIds` | 必填 `readonly string[]` | 唯一的受控本次选择；查询、换页、展开、返回均不重置。缺记录、重复、失效、受限、未知和已经入集合的已选引用不被自动删除，提交阻断，仍可取消或在候选行替换 |
+| `result` | 必填 `AgentCandidateResult` | ready / loading(message?) / empty(message) / error(message)。非 ready 不挂载旧结果或 renderItem，保留已选摘要；loading/error 阻断新增、替换与提交，仍可取消选择。empty 只描述当前检索，不否定页外合法选择 |
+| `page` | 必填 `AgentCandidatePage` | `{total:number|null,label?,more?}`。total 为非负整数时显示给定总数，null／无效值显示“总数未知”；“当前显示 N 项”仅为当前结果长度。label 由页面给出，组件不计算页码 |
+| `page.more` | 可选 `{cursor:string|null,state:'ready'/'loading'/'error',message?,disabledReason?}` | 存在即声明加载更多能力，两态可用。请求回传原 cursor，不递增页码／追加结果。loading 禁用；error 可重试相同追加请求并保留已有结果，原因常驻。此动作只加载候选，不重试业务提交 |
+| `submission` | 必填 `AgentCandidateSubmission` | idle / submitting / unconfirmed / submitted / error；error 必填 message，其他非 idle 可选 message。分别呈现尚未提交／提交中／回执未确认／已提交／提交失败；与已选及 in-collection 独立。submitting/unconfirmed 阻断选择修改、替换和重复提交；submitted 阻断重复提交，修改后由页面提供新事实 |
+| `query` | 可选 `{value,label?,disabledReason?}` | Workspace 固定标签 Input，默认标签“检索候选”。只返回输入，保留空白；没有接收器或提供禁用原因时只读 |
+| `filters` | 可选 `{fields:FilterField[],value:Record<string,string>,disabledReason?}` | Workspace FilterBar；只返回变更后的值，不改变候选或选择。不认识的字段／选项变更不发出；当前值无选项显示“当前选项未列出”或“未指定”，不回填首项 |
+| `sort` | 可选 `{label,options:FilterField['options'],value,description?,disabledReason?}` | Workspace FilterBar；排列口径由 description 说明，value 只回传，不运行比较器。受限字段改为固定标签与可读值 |
+| `confirm` | 可选 `{label?,disabledReason?}` | 显式提供提交能力，默认“提交本次选择”。仅发送当前 selectedIds 副本；无选择、无效选择、加载失败／进行中、提交进行中／未确认／已提交时阻断。没有此能力不显示按钮 |
+| `onIntent` | 可选 `(intent:AgentCandidateIntent)=>void` | 唯一数据变更出口，详见下表；缺省只读。所有 disabledReason（包括空字符串）既禁用控件，也由处理器保护；函数返回值不是回执 |
+| `disabledReason` | 可选 string | 限制选择／取消／批量／替换／提交；检索、排序和导航仍可用。原因常驻；历史／冻结只读可由页面提供此限制，历史事实需页面单独明确标识 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 只减少留白，不缩字、截断原因或增加第三业务态。无内部选择或查询副本 |
+| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；标题、状态、依据、来源仍由外层常驻。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开筛选与选择”与 Workspace“返回原位置”。只导航，不改变选择或提交；页面恢复原触发器、对象及阅读位置，没有能力就没有入口 |
+| `notice / details` | 可选 string / ReactNode | 一条常驻提示，默认“选择或提交不代表已加入集合。”；补充说明默认折叠。状态未知、失败、受限／失效原因、选择和替代依据不进入 details |
+
+候选类型：
+
+- `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
+- `AgentCandidateRestrictedEntry={id,status:'restricted',disclosure:{title,reason}}` 只接收获准披露的名称与原因。运行时同样忽略误传摘要、类型、依据、来源、替代关系及领域插槽。被引用的替代项变为 restricted 时，其关系解释也不显示。页面须先处理全组标题、总数、已选／关联事实、说明和所有插槽；组件不是权限机关或任意文本脱敏器。
+- `alternatives: readonly AgentCandidateAlternative[]`，成员 `{candidateId,reason,disabledReason?}` 引用 candidates/relatedCandidates 中的当前事实。常驻显示替代项标题、选择依据、来源与替代依据。原项必须在本次选择中，替代项必须唯一、可用且未选；缺记录、同项、已在集合、受限、失效、未知或缺替代依据时阻断，不自动搜索另一项。不允许用替换动作改动正式集合；已选失效项可换成合法替代项。
+
+全部 `AgentCandidateIntent` 包含 `{candidateSetId,baseVersion}`：
+
+| type | 其他字段 | 语义 |
+| --- | --- | --- |
+| select / deselect | `candidateIds:readonly string[],scope:'item'/'visible'/'selection'` | 单项、当前可选结果批量、取消全部本次选择。载荷仅含本次目标，页面决定增减；visible 不是全服务结果，取消当前结果保留页外选择 |
+| query | `value:string` | 检索词变更 |
+| filter | `value:Readonly<Record<string,string>>` | 筛选字段变更，保留未修改值 |
+| sort | `value:string` | 排序选项变更 |
+| load-more | `cursor:string|null` | 请求页面给出的下一批结果 |
+| replace | `candidateId,replacementId` | 以明确替代项替换本次选择中的原项 |
+| confirm | `candidateIds:readonly string[]` | 提交这次选择；不证明已加入、已保存或已发布 |
+
+页面须在接收请求时重核所属会话／候选版本、有效权限、当前事实、目标和本次选择；旧搜索结果／旧处理器不得覆盖较新查询或会话。提交记录必须与当前选择及版本匹配，编辑或切换对象后重新提供对应状态；结果未确认先查询原提交，10 不另造业务重试按钮。逐项加入及部分失败在既有业务层处理，`in-collection` 必须来自实际集合事实；组件不负责执行幂等、Store、Runtime、持久化或计时器。
+
+### 示例与验证边界
+
+`/next/components/agent-components#candidate-picker`：候选题用 QuestionCard（Inline 明示题面节选，Workspace 完整题面），含公式、选择依据与替代来源、一项失效、一项受限、一项已在题篮；候选学生／知识点用通用条目，含长中文和未知。三种用法共享示例选择，提供 320px、加载／空／错误、追加失败、总数未知／已知及独立示例提交与加入记录。所有依据、来源和回执均显式标为示例，页面演示过滤／排序不进入组件。
+
+五项检查与 `tests/agent-candidate-picker.test.mjs` 的 SSR／实际处理器／插槽验证、实际 diff、Workspace main `c8cc00c` 的只读 Q01 轻量接入方案见 `.sites-runtime/candidate-picker/REPORT.md`。本轮不写 .git、不启动开发服务、不修改 Workspace；三主题视觉、窄屏、实际键盘／触屏、读屏器、Workspace 接入与真实推荐／检索／保存服务尚未验证。Builder 不自我批准，待 Supervisor 独立 Review。
+
 ## 参数配置器 v0.1
 
 2026-09-26 设计候选，语义 **07 参数配置器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-parameter-config` 导入 `AgentParameterConfig` 及同文件公开类型。候选位于 `feat/agent-parameter-config`，基于 main `1d4503b`（含 #68/#69），未提交／未合并；不新增 80 项目录条目。
@@ -1302,6 +1364,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+候选选择器 10 的选择依据、来源、替代依据、失效／受限原因、总数未知和回执未确认常驻；details 只收补充说明。已选、已提交、已在集合中分别说明，不用按钮点击或加载数量推定结果。不显示内部候选／版本／游标 ID。
+
 参数配置器 07 的错误／警告／提示、未确认／未知、影响和只读／锁定原因常驻；非关键参数的风险不因 Inline 筛选消失。冻结显示当时参数，无编辑输入。与 08/25 组合只保留一条共同边界提示，其他解释进 details。
 
 结构化内容工作区 35 同样提供 `details?: ReactNode`。全树冲突、只读／待删除原因、能力限制、基准版本与保存事实常驻；同文能力原因合并显示，不因 compact 或节点折叠隐藏。内部结构／节点／版本 ID 不进入界面，教师只看名称、版本标签、类型与层级。
@@ -1338,6 +1402,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `AgentReviewQueue`：语义 16 的待审集合与批量审核，复用 DataRecordTable / FilterBar / Badge，与 17 配对；顺序、下一项、计数、协作与逐项回执由宿主提供，详见“审核队列 v0.1”。
 - `AgentMetricSummary`：语义 19 的指标卡，组合 MetricSummary compact 与 TrendChart；宿主给值、分母、样本、变化判断、异常与来源。Inline + 专用扩展内容，详见“指标摘要 v0.1”。
 - `AgentObjectPicker`：语义 01，复用 Combobox / Checkbox / DataRecordTable / FilterBar 选择具体对象；可作为 02 AgentScopeBuilder 的维度选择器，详见“对象选择器 v0.1”。候选、查询结果和选择都受控，选择不授予权限。
+- `AgentCandidatePicker`：语义 10，呈现候选、选择依据／来源与替代项，复用 DataRecordTable / FilterBar / Checkbox 和领域插槽；全部选择与提交只发 onIntent，是否加入集合由页面决定。详见“候选选择器 v0.1”。
 - `AgentObjectViewer`：打开后的通用对象外壳与只读领域分区；身份、版本、权限来自宿主，敏感分区明确确认，受限原因常驻。摘要卡与入口仍由 AgentArtifactPreview 承担；详见“对象查看器 v0.1”。
 - `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
