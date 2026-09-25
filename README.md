@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 资源检索器 v0.1 · 设计候选（2026-09-26）
+
+语义 36 `AgentResourceRetriever` 声明 **Inline + 专用扩展内容**：Inline 展示页面给出的少量推荐，Workspace 提供检索、筛选、排序及完整来源与许可；compact 只收紧间距。命中、预览、读取、Agent 本次参考与成果引用分别取页面记录，许可不自动授予操作能力，未知保持未知。
+
+10 挑选候选对象加入集合；36 决定预览或读取资源；03 汇总上下文与来源事实；38 组织素材包；21 浏览证据链。全部检索/资源动作通过版本绑定的 `onIntent` 返回；预览插槽仅在页面声明用户已请求、目标版本匹配且内容就绪时挂载，不自动播放。重复来源和许可提升到组级，标题只出现一次，相同禁用原因合并到相关控件组。
+
+组件页 `/next/components/agent-components#resource-retriever` 提供勾股定理图片/视频/文章/课例与教材章节页两组固定示例，含受限/未知/需确认许可、部分来源失败、总数未知、320px、长中文与公式。公开 API 见[资源检索器契约](docs/component-contracts.md#资源检索器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+候选位于 `feat/agent-resource-retriever`，基于 main `5036bd1`；第 36 项登记为“组件候选”。五项验证、实际 diff、测试数字与 Workspace `7ee2bf6` 的只读轻量方案见 `.sites-runtime/resource-retriever/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题/窄容器/键盘触屏、Workspace 接入、真实服务与独立 Review 未完成。
+
 ## 建议集 v0.1 · 设计候选（2026-09-26）
 
 语义 22 `AgentSuggestionSet` 声明 **Inline + 专用扩展内容**：Inline 呈现推荐短列表与选择，Workspace 承载独立比较、批量采纳及页面提供的调整字段。`density="compact"` 只收紧布局，保留依据、适用对象、影响／代价、确定性、限制和未确认回执；相同依据与来源分别合并到组级，建议标题只出现一次。

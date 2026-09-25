@@ -54,6 +54,70 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 资源检索器 v0.1
+
+2026-09-26 设计候选，语义 **36 资源检索器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-resource-retriever` 导入 `AgentResourceRetriever` 及同文件公开类型。任务分支 `feat/agent-resource-retriever`，基于 main `5036bd1`；尚未提交或合并，不新增 80 项目录条目。
+
+### 复用检索与 10 / 03 / 38 / 21 边界
+
+- 已核对 AGENTS、批准规范 §2、§6.11 资源检索器行、§7、§8、§10 和 §11.4/11.5 资源链（548/554 行附近），复用规划第 36 项与 resources 对象行，覆盖矩阵 B03/D03/E02/F02，同类 10/22/03/21 契约及进度清单。资源检索器行实际位于 §6.11，不修改批准规范。
+- **10 挑选候选对象加入集合；36 检索外部或库内资源并决定预览、读取或移出当前上下文；03 汇总来源及独立使用事实；38 组织已取得的资源为素材包；21 从结论下钻到来源与证据。** 36 的结果保留既有资源身份，可由页面交给 03/38；没有入篮、创建素材包、采纳建议或认证证据的动作。`unread` 请求移出本次上下文，不抹除历史读取或成果引用。
+- 已检索并阅读 AgentCandidatePicker、AgentSuggestionSet、AgentContextSummary、AgentEvidenceDrilldown、FilterBar、DataRecordTable、RecordDetails。10 的选择/提交事实无法代替资源读取，03/21 不提供检索控制与许可动作，因此新增语义组合，复用 Card、固定标签 Input/Label、FilterBar、Prism Badge/Button navigation、RecordDetails 和 `AgentContextFact` 类型。不改基础控件，不新增依赖或视觉令牌。
+- 结果采用自然换行的有序资源行；不套 DataRecordTable，避免在长中文、公式、预览与分组说明外再增加重复标题或表格横向滚动。被动 `summary` 和预览插槽不输出第二次资源标题、不内置播放器、取数或写操作。
+
+### 公开 API
+
+`AgentResourceRetrieverProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / resourceSet` | 必填 string / `{id,version}` | 可读标题与检索上下文版本；内部 ID/版本只进入请求，不显示或作为原生控件值。两者为空时阻断请求 |
+| `resources` | 必填 `readonly AgentResource[]` | 当前允许披露的精确结果，按原顺序完整呈现。Inline 少量推荐由页面提供；组件不检索、不截取、不筛选、不排序、不追加、不授予权限 |
+| `query / scope` | 必填 `{value,label?,disabledReason?}` / ReactNode | Workspace 固定标签输入，默认“检索资源”；Inline 为检索词摘要。原字符串含空白原样回传。scope 为文本或 02 范围摘要的只读插槽；null 显示“未知”，不补全教材/章节/知识点 |
+| `filters` | 可选 `{fields:FilterField[],value:Record<string,string>,disabledReason?}` | Workspace FilterBar；返回复制后的完整筛选值，保留其他字段。未知当前选项显示“当前选项未列出/未指定”；空/重复字段身份、重复选项值阻断，陌生变更不发请求 |
+| `sort` | 可选 `{label,options:FilterField['options'],value,description?,disabledReason?}` | Workspace 同一 FilterBar，口径说明由页面提供；只返回值，不运行比较器。筛选/排序身份用局部序号映射，内部 ID 不进入 DOM 值 |
+| `result` | 必填 `AgentResourceResult` | ready / loading(message?) / empty(message) / error(message)。只有 ready 挂载结果与预览，其余不展示旧列表；当前显示数量仅指这次挂载列表长度 |
+| `page` | 必填 `AgentResourcePage` | `{total:number|null,label?,more?}`。非负整数为页面声明的总数；null 或无效数字为“总数未知”，不由当前结果长度推算。label 由页面给出，不计算页码 |
+| `page.more` | 可选 `{cursor:string|null,state:'ready'/'loading'/'error',message?,disabledReason?}` | 存在即声明加载能力；仅检索 ready 且追加非 loading 可请求。error 显示“重试加载更多”，原 cursor 不变，原结果保持；不是读取重试 |
+| `sourceFailures` | 可选只读 `{source:AgentResourceSource,message:string}[]`，默认 [] | 常驻“部分来源失败”；不删除成功来源、不推断总数、不把全组标成失败。错误与披露范围由页面给出 |
+| `preview / renderPreview` | 可选 `AgentResourcePreview|null` / `(resource,{view,density})=>ReactNode` | 与预览事实独立。preview 必须匹配当前唯一资源 ID/版本，`requestedBy:'user'`，且页面声明 preview 能力当前可用。ready 才调用插槽；loading/error 只显示对应信息。目标过期、移出当前列表或能力收回立即卸载。未激活不挂载媒体；没有内部预加载或播放器 |
+| `disabledReason / onIntent` | 可选 string / `(intent:AgentResourceIntent)=>void` | 全部资源/查询/分页动作只经 onIntent；缺省只读。显式原因包括空字符串均阻断并提供兜底文案，控件与处理器同时保护；导航仍可用。返回值及 Promise 完成不作为回执 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 仅收紧间距；保留许可、来源、未知、独立事实和必要原因，不缩字，不是第三态 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开检索与来源”；Workspace“返回原位置”；没有能力就不显示入口。只导航，页面保持查询、范围、当前目标、焦点及阅读位置 |
+| `notice / details` | 可选 string / ReactNode | 一条常驻边界提示，默认“命中、预览、读取、Agent 本次参考与成果引用分别记录。”；补充说明默认折叠，必要许可、失败和未知不折叠 |
+
+`AgentResource` 必填 `id/version/title/kind/source/license/versionLabel/date/applicability/format/duration/size/facts`，可选 `summary/actions`。kind 支持 image/video/article/audio/lesson/textbook-page/other。`version` 是不透明标识，可为 null；`versionLabel` 才用于显示。来源、版本/日期、适用范围、格式与时长/大小未提供时各自显示“未知”；不适用也必须由页面明确提供，不从媒体类型推测。`summary` 是当前获准披露的被动正文，允许公式，不放媒体加载或重复标题。
+
+- `AgentResourceSource={id:string|null,label:string|null,location?:string|null}`：既有来源引用及可读出处，不据字符串/URL 推断可访问性。
+- `AgentResourceLicense={name:string|null,state:'available'|'restricted'|'confirmation-required'|'unknown',reason?}`：依次为可用/受限/需确认/未知；restricted 必填 reason（空值仍显示“使用限制未说明。”）。许可是页面给出的事实，**不决定动作是否可用**；相同许可下预览、读取、打开来源可以分别允许或禁用。
+- `facts={hit,preview,read,context,citation}`：每项使用 03 的 `AgentContextFact`，confirmed 必须有 description，说明谁、哪个范围及相应版本/定位；absent 仅在记录覆盖完整且确认没有该事件时提供；unknown 表示不足以确认；unavailable 表示记录暂不可核验。citation 的版本/定位应是成果版本和引用位置，不拿来源版本代替。读取、本次参考及成果引用三项继续分开；命中或挂载预览均不改变任何事实。显示用 description/version/location 必须是可读信息，不直接放内部长 ID。
+- `actions?:Partial<Record<AgentResourceActionType,{disabledReason?:string}>>`：每个键显式声明操作能力。尤其只有提供 `request-permission` 才出现“申请许可”，不从 restricted/unknown 推断可申请。`read` 按钮表示“读取并引用到上下文”的请求，成功读取、当前上下文使用和成果引用须分别由后续记录更新。已读取项是否可再次读取、等待原回执时是否禁用，由页面提供；组件不造本地 pending、成功或重试状态。
+- `AgentResourcePreview={resourceId,resourceVersion,requestedBy:'user',state:'loading'|'ready'|'error',message?}`：只描述当前预览区域。页面仅在用户请求后设置激活，远端图片/视频/音频只在该时点加载，不自动播放；预览挂载成功不能自动生成已读取/已引用事实。页面须在请求变化、权限收回时清除或更新目标，并管理媒体停止与卸载。
+
+### 分组说明与请求
+
+相同来源按 `id/label/location` 完整匹配；相同许可按 `state/name/reason` 完整匹配，分别提升到组级“来源 N / 许可 N（资源 1、2…）”。短引用和 `aria-describedby` 连接资源行与共用说明，不依据标题相似合并身份。不同来源 ID 或不同许可原因不会合并，重复未知也明确标“未知”。每个资源标题只在结果行出现一次，预览标题统一“资源预览”。
+
+同一资源的多个禁用按钮按相同原因组合，说明只在该组控件旁出现一次；若原因已由常驻许可说明给出，则关联该说明，不再次复制句子。全组只读原因只显示一次。页面传入 `details`、插槽与摘要时同样避免重复。这专门约束 10 的重复依据/标题和 22 的逐按钮重复原因问题。
+
+所有 `AgentResourceIntent` 包含 `{resourceSetId,baseVersion}`：
+
+| type | 其他字段 | 语义 |
+| --- | --- | --- |
+| query | `value:string` | 检索词变更 |
+| filter | `value:Readonly<Record<string,string>>` | 筛选值快照；不修改输入对象 |
+| sort | `value:string` | 排序变更 |
+| load-more | `cursor:string|null` | 请求页面给出的下一批 |
+| preview / read / unread / open-source / request-permission | `resourceId,resourceVersion:string|null,sourceId:string|null` | 针对既有资源及对应版本的请求；未知版本原样保留为 null，接收方决定是否可执行 |
+
+页面必须先处理允许披露的资源、总数、范围、失败信息、全部标签及插槽，许可受限不等于一概隐藏元信息。组件不是授权机关，也不是任意内容脱敏器。接收请求时重新核对当前任务/会话、查询版本、来源版本、有效许可与合法动作；不得把旧搜索/读取回执覆盖新查询、当前对象或其他会话。真实服务负责权限、去重、读取/上下文/成果引用记录和申请处理；组件不内置请求、业务 Store、权限判断、计时器或持久化。
+
+### 示例与验证边界
+
+`/next/components/agent-components#resource-retriever` 原位提供勾股定理教学资源（图片/视频/文章/课例，含已读取、受限/未知许可、部分来源失败、总数未知）和教材章节页检索（需确认许可/未知版本）。含两态、compact、320px、长中文与 MathML。页面仅过滤/排序人工固定样本，标题、来源、许可、命中和使用记录明确标注示例。图片预览为人工 SVG 示意，视频只有简介、没有真实视频文件；读取、申请仅显示收到请求且服务未接入，不模拟成功。
+
+五项检查、实际 diff、测试数字和只读核对 Workspace main `7ee2bf6` 的轻量接入方案见 `.sites-runtime/resource-retriever/REPORT.md`。本轮不写 .git、不启动开发服务、不修改 Workspace。SSR/处理器检查不是浏览器三主题、窄容器视觉、键盘/触屏/读屏器、Workspace 接入或真实服务验收；待 Supervisor 独立 Review 与 PO 决定。
+
 ## 建议集 v0.1
 
 2026-09-26 设计候选，语义 **22 建议集**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-suggestion-set` 导入 `AgentSuggestionSet` 及同文件公开类型。任务分支 `feat/agent-suggestion-set`，基于 main `bad3435`；本轮未提交／合并，不新增 80 项目录条目。
