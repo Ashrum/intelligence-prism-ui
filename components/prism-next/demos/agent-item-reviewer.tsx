@@ -90,6 +90,7 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
       { value: "waiting-human", label: "待复核" }, { value: "draft", label: "已编辑未提交" }, { value: "waiting", label: "复核提交中" },
       { value: "unknown", label: "回执未确认" }, { value: "resolved", label: "已复核 · 时间未确认" }, { value: "failed", label: "已退回 / 失败" }, { value: "expired", label: "已过期" },
     ]} /></Field>
+    <Button variant="outline" onClick={() => { setState("unknown"); setChanged(true) }}>旧请求未确认且版本变化（示例）</Button>
     <Button variant="outline" aria-pressed={changed} onClick={() => setChanged(!changed)}>当前版本变化（示例）</Button>
     <p role="status" className="text-ui-hint">{feedback || "固定示例：可手动切换复核记录；确认、提交与查询不会生成回执。"}</p>
     <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6"}>

@@ -202,7 +202,7 @@ export function AgentEvidenceDrilldown({ conclusion, nodes, path = [], view = "i
       {conclusion.evidenceCount !== undefined && <p className="text-ui-hint">证据数量：{conclusion.evidenceCount}</p>}
       {conclusion.coverage && <p role="status" className="break-words text-ui-hint">{coverageLabels[conclusion.coverage.state]}{conclusion.coverage.description && <> · {conclusion.coverage.description}</>}</p>}
     </header>
-    {notice && <p role="status" className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
+    {full && notice && <p role="status" className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
     {full && <div className="min-w-0 space-y-3">
       <Breadcrumb aria-label="证据层级"><BreadcrumbList>{crumbs.map((crumb, index) => <Fragment key={pathKey(crumb.path)}>
         {index > 0 && <BreadcrumbSeparator />}
@@ -228,6 +228,6 @@ export function AgentEvidenceDrilldown({ conclusion, nodes, path = [], view = "i
       </>}
     </li>)}</ul></section>}
     {!full && onExpand && <div><Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看证据链<ArrowUpRight aria-hidden="true" /></Button></div>}
-    <RecordDetails>{details}</RecordDetails>
+    <RecordDetails>{!full && notice ? <div className="space-y-2"><p className="break-words">{notice}</p>{details}</div> : details}</RecordDetails>
   </Card>
 }

@@ -55,7 +55,14 @@ export type AgentMetricAvailableItem = {
   statements?: readonly AgentMetricStatement[]
 }
 export type AgentMetricItem = AgentMetricAvailableItem | { id: string; access: "restricted"; disclosure: AgentMetricDisclosure }
-export type AgentMetricGroup = { id: string; label: string; items: readonly AgentMetricItem[] }
+export type AgentMetricGroup = {
+  id: string
+  label: string
+  items: readonly AgentMetricItem[]
+  /** Explicit, already-authorized shared facts; never inferred by comparing items. */
+  sample?: { size: string; denominator?: string }
+  record?: { dataTime?: string; version?: string }
+}
 export type AgentMetricAnomaly =
   | { id: string; access: "available"; text: string; basis: AgentMetricBasis }
   | { id: string; access: "restricted"; disclosure: AgentMetricDisclosure }
@@ -118,15 +125,26 @@ function MetricMethod({ item, workspace }: { item: AgentMetricAvailableItem; wor
   </Collapsible>
 }
 
-function MetricFacts({ item, record, workspace, onDrilldown }: {
-  item: AgentMetricAvailableItem; record: AgentMetricRecord; workspace: boolean; onDrilldown?: AgentMetricSummaryProps["onDrilldown"]
+function MetricFacts({ item, record, group, workspace, onDrilldown }: {
+  item: AgentMetricAvailableItem; record: AgentMetricRecord; group?: AgentMetricGroup; workspace: boolean; onDrilldown?: AgentMetricSummaryProps["onDrilldown"]
 }) {
-  const target = { recordId: record.id, version: record.version, metricVersion: item.version ?? record.version }
+  const target = { recordId: record.id, version: record.version, metricVersion: item.version ?? group?.record?.version ?? record.version }
+  const sampleSize = item.sampleSize ?? group?.sample?.size
+  const denominator = item.denominator ?? group?.sample?.denominator
+  const dataTime = item.dataTime ?? group?.record?.dataTime ?? record.dataTime
+  const sampleFacts = [
+    (group?.sample?.size === undefined || sampleSize !== group.sample.size) && `样本量：${sampleSize ?? "未提供"}`,
+    (group?.sample?.denominator === undefined || denominator !== group.sample.denominator) && `分母：${denominator ?? "未提供"}`,
+  ].filter(Boolean).join(" · ")
+  const recordFacts = [
+    (group?.record?.dataTime === undefined || dataTime !== group.record.dataTime) && `数据时间：${dataTime ?? "未确认"}`,
+    (group?.record?.version === undefined || target.metricVersion !== group.record.version) && `数据版本：${target.metricVersion || "未确认"}`,
+  ].filter(Boolean).join(" · ")
   const inspect = onDrilldown && record.id.trim() && target.version.trim() && target.metricVersion.trim() && item.id.trim() ? onDrilldown : undefined
   return <div className="min-w-0 space-y-2">
     {item.reading.state !== "available" && <div className="space-y-1"><Badge variant="warning">{readingLabels[item.reading.state]}</Badge><p className="break-words text-ui-hint">{item.reading.reason}</p></div>}
-    <p className="break-words text-ui-hint">样本量：{item.sampleSize ?? "未提供"} · 分母：{item.denominator ?? "未提供"}</p>
-    <p className="break-words text-ui-hint">数据时间：{item.dataTime ?? record.dataTime ?? "未确认"} · 数据版本：{target.metricVersion || "未确认"}</p>
+    {sampleFacts && <p className="break-words text-ui-hint">{sampleFacts}</p>}
+    {recordFacts && <p className="break-words text-ui-hint">{recordFacts}</p>}
     {item.baseline && <p className="break-words text-ui-hint">比较基准：{item.baseline}</p>}
     {item.reading.state === "available" && item.change && <div className="min-w-0 space-y-1">
       <p className="break-words text-ui-hint">变化：{item.change.text}</p>
@@ -145,6 +163,16 @@ function MetricFacts({ item, record, workspace, onDrilldown }: {
     {inspect && <Button type="button" variant="outline" size="sm" className="h-auto max-w-full whitespace-normal"
       onClick={event => inspect({ ...target, kind: "metric", metricId: item.id }, event.currentTarget)}>查看{item.label}明细<ArrowUpRight aria-hidden="true" /></Button>}
   </div>
+}
+
+function MetricGroupFacts({ group }: { group: AgentMetricGroup }) {
+  const facts = [
+    group.sample && `样本量：${group.sample.size}`,
+    group.sample?.denominator !== undefined && `分母：${group.sample.denominator}`,
+    group.record?.dataTime !== undefined && `数据时间：${group.record.dataTime}`,
+    group.record?.version !== undefined && `数据版本：${group.record.version || "未确认"}`,
+  ].filter(Boolean).join(" · ")
+  return facts ? <p className="break-words text-ui-hint">{facts}</p> : null
 }
 
 function metricValue(reading: AgentMetricReading) {
@@ -168,9 +196,9 @@ export function AgentMetricSummary({ title, record, scope, groups, anomalies = [
   const visible = items.filter(item => workspace || !onExpand || item.access === "restricted" || item.key
     || item.reading.state !== "available" || item.change?.significance === "significant"
     || item.change?.significance === "unknown" || item.change?.direction === "unknown" || item.change?.basis.state === "unavailable")
-  const kpi = (item: AgentMetricItem) => item.access === "restricted"
+  const kpi = (item: AgentMetricItem, group?: AgentMetricGroup) => item.access === "restricted"
     ? { id: item.id, label: "受限指标", value: "—", detail: <MetricRestriction disclosure={item.disclosure} /> }
-    : { id: item.id, label: item.label, value: metricValue(item.reading), detail: <MetricFacts item={item} record={record} workspace={workspace} onDrilldown={onDrilldown} /> }
+    : { id: item.id, label: item.label, value: metricValue(item.reading), detail: <MetricFacts item={item} record={record} group={group} workspace={workspace} onDrilldown={onDrilldown} /> }
   return <Card aria-labelledby={`${id}-title`} data-agent-metric-view={view} data-density={density} data-snapshot={available && record.snapshot || undefined}
     className={`@container min-w-0 break-words ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
@@ -183,12 +211,23 @@ export function AgentMetricSummary({ title, record, scope, groups, anomalies = [
     </header>
     {available && <>
       {workspace ? <div className="min-w-0 space-y-5">{groups.map(group => <section key={group.id} className="min-w-0 space-y-3" aria-label={group.label}>
-        <h4 className="text-block-title">{group.label}</h4>
+        {group.sample || group.record ? <><h4 className="text-block-title">{group.label}</h4>
+          {group.items.some(item => item.access === "available") && <MetricGroupFacts group={group} />}
+        </> : <h4 className="text-block-title">{group.label}</h4>}
         <div className="grid min-w-0 gap-5 @3xl:grid-cols-2">{group.items.map(item => <div key={item.id} className="min-w-0 [&>dl]:grid-cols-1 [&>dl>div]:min-w-0">
-          <MetricSummary density="compact" items={[kpi(item)]} />
+          <MetricSummary density="compact" items={[kpi(item, group)]} />
         </div>)}</div>
-      </section>)}</div> : <div className="min-w-0 [&>dl]:grid-cols-1 @sm:[&>dl]:grid-cols-2 [&>dl>div]:min-w-0">
-        <MetricSummary density="compact" items={visible.map(kpi)} />
+      </section>)}</div> : groups.some(group => group.sample || group.record) ? <div className="min-w-0 space-y-5">{groups.map(group => {
+        const shown = group.items.filter(item => visible.includes(item))
+        return shown.length ? <section key={group.id} className="min-w-0 space-y-3" aria-label={group.label}>
+          <h4 className="text-block-title">{group.label}</h4>
+          {shown.some(item => item.access === "available") && <MetricGroupFacts group={group} />}
+          <div className="min-w-0 [&>dl]:grid-cols-1 @sm:[&>dl]:grid-cols-2 [&>dl>div]:min-w-0">
+            <MetricSummary density="compact" items={shown.map(item => kpi(item, group))} />
+          </div>
+        </section> : null
+      })}</div> : <div className="min-w-0 [&>dl]:grid-cols-1 @sm:[&>dl]:grid-cols-2 [&>dl>div]:min-w-0">
+        <MetricSummary density="compact" items={visible.map(item => kpi(item))} />
       </div>}
       {!items.length && <p className="text-ui-hint">暂未提供指标。</p>}
       {!!items.length && !visible.length && <p className="text-ui-hint">暂未指定关键指标，可查看指标详情。</p>}

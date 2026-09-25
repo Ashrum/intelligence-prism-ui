@@ -162,6 +162,8 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
       onClick={trigger => onInspectException({ ...target(item), exceptionId: exception.id }, trigger)} />)}
   </div>
   const countEntries = (Object.keys(agentItemReviewLabels) as AgentItemReviewState[]).filter(state => counts?.[state] !== undefined)
+  // Hide only explicit zeroes. Invalid values remain visible as unconfirmed, never as zero.
+  const visibleCounts = countEntries.filter(state => workspace && !compact || counts?.[state] !== 0)
 
   return <Card aria-labelledby={`${id}-title`} data-agent-review-queue-view={view} data-density={density}
     className={`min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
@@ -171,9 +173,9 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
       {baseReason && <p role="status" className="break-words text-ui-hint">{baseReason}</p>}
     </header>
     <section aria-label="审核汇总" className="min-w-0 space-y-2">
-      {countEntries.length ? <dl className="flex flex-wrap gap-x-4 gap-y-2 text-ui-hint">{countEntries.map(state => <div key={state} className="flex flex-wrap gap-x-2">
+      {visibleCounts.length ? <dl className="flex flex-wrap gap-x-4 gap-y-2 text-ui-hint">{visibleCounts.map(state => <div key={state} className="flex flex-wrap gap-x-2">
         <dt>{agentItemReviewLabels[state]}</dt><dd className="tabular-nums">{countText(counts![state]!)}</dd>
-      </div>)}</dl> : <p className="text-ui-hint">状态计数未提供。</p>}
+      </div>)}</dl> : !countEntries.length ? <p className="text-ui-hint">状态计数未提供。</p> : null}
       {progress && <p className="text-ui-hint tabular-nums">已复核 {countText(progress.reviewed)}/{countText(progress.total)}</p>}
     </section>
     {workspace && <>

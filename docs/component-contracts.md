@@ -233,7 +233,7 @@ Workspace 批量范围是**当前展示结果中的可选项**，不代表全服
 | `title: string` | 允许披露的卡片名称；整个范围受限时不渲染此标题，改用通用“指标摘要” |
 | `record: {id, version, dataTime?, snapshot?}` | 既有记录引用、可读数据版本、宿主时间；snapshot 标“当时数据”，否则“当前状态”；不取客户端时间、不补最新数据 |
 | `scope: AgentMetricScope` | `available` 带与 02 一致的 `summary` 和可选 `restricted: {count?,reason}`；`restricted` 仅带 `disclosure: {count?,reason}`。空摘要显示“未指定”，不扩成全部授权数据 |
-| `groups: readonly {id,label,items}[]` | 宿主完整指标分组；不根据输入条数统计总量、分母或缺测数量 |
+| `groups: readonly AgentMetricGroup[]` | `{id,label,items,sample?,record?}`；可选 `sample={size:string,denominator?:string}`、`record={dataTime?:string,version?:string}` 显式声明组级共享事实；不统计或自动推断 |
 | `AgentMetricAvailableItem` | `id/access:"available"/label/reading/method` 必填；可选 `key/sampleSize/denominator/dataTime/version/baseline/change/trend/statements`。key 由宿主挑选少量 KPI；sampleSize、denominator、baseline 是已格式化的可读文字 |
 | `reading: AgentMetricReading` | `available` 带 `value:string|number`、可选 unit；原样保留精度、零值和负值，不格式化或重新计算。`missing/insufficient/unknown` 只带 reason，显示“—”及缺测/样本不足/状态未确认，不允许 value/unit；运行时也忽略误传值、单位、变化和趋势 |
 | 受限指标 | `{id,access:"restricted",disclosure:{count?,reason}}`，只渲染允许的计数和原因，不渲染误传名称、指标、口径、版本、趋势、解释或动作 |
@@ -246,7 +246,21 @@ Workspace 批量范围是**当前展示结果中的可选项**，不代表全服
 | `onExpand(trigger)? / onBack?` | Inline“查看指标详情”与 Workspace“返回原位置”；仅导航请求，不自行创建面板。缺 onExpand 没有入口且保留全部 KPI 摘要 |
 | `notice? / details?` | 每卡最多一条常驻边界提示；补充说明复用默认收起的 RecordDetails，不收纳缺测、样本不足、状态未确认、显著变化、异常或受限事实 |
 
-IDs 只作 key 与请求关联，不作为可见文字、隐藏 DOM 数据或回退标签。指标版本/时间未给则明确继承同一 record 的版本/时间；record 仍缺失时显示未确认，样本量和分母未给显示未提供。历史调用必须传入完整的当时 record、指标与序列；不能拿当前值配一个旧标题冒充历史。
+IDs 只作 key 与请求关联，不作为可见文字、隐藏 DOM 数据或回退标签。指标样本／分母未给时继承 group.sample；版本／时间按指标 → group.record → 顶层 record 取第一个非 undefined 值。仍缺失时，时间／版本显示未确认，样本／分母显示未提供；显式空版本不回退，并阻断下钻。历史调用必须传入完整的当时 record、指标与序列；不能拿当前值配一个旧标题冒充历史。
+
+**2026-09-25 文案密度规则**：只对显式 group.sample / group.record 合并，不检测多个指标是否相同。共享字段在分组标题后常驻一次；指标未传或与组值严格相等时省略该字段，不同部分逐项显示（包括不同分母、样本不足和未知原因）。没有声明的字段仍按原规则逐项显示。无新字段时，包括单指标独立调用，原 SSR 不变。inline 仅在显式声明共享字段时使用分组布局；无可见指标的组不展示共享信息，全受限组不展示 sample/record。共享字段必须已允许披露。回调结构不变：metricVersion 使用有效指标版本，recordId/version 仍取顶层记录；历史共享字段也须为当时事实。
+
+Workspace 可这样传入已确认的共享信息（示意，items 为原指标列表）：
+
+```tsx
+groups={[{
+  id: "review", label: "复核数量", items,
+  sample: { size: "26 份答卷", denominator: "26 份答卷" },
+  record: { dataTime: "2026-09-25 11:30", version: "批阅示例 v2" },
+}]}
+```
+
+只共享样本时省略 sample.denominator；不同指标继续传各自 denominator。指标自身 sampleSize / dataTime / version 可覆盖组值。未明确共享关系时保留旧调用，不补造样本、时间或版本。
 
 宿主在传入前核验范围、版本和当前有效授权。所有分组标题、摘要、计数、异常、statements、趋势与 details 均须已允许披露；UI 受限分支只呈现授权结果，不充当权限判定器。整卡 scope=restricted 时连标题、记录版本、所有插槽与展开入口都不挂载；历史同样遵守。部分受限条目只有披露壳，禁止夹带可用字段。查看回调不认证已读取、已引用、模型使用、复核或保存事实。
 
@@ -585,9 +599,9 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 | 属性 | 类型 / 默认值 | 契约 |
 | --- | --- | --- |
 | `title / queue / items` | 必填；`queue={id,version,snapshot?}`；`items: readonly AgentReviewQueueItem[]` | 已授权、按宿主顺序的当前结果或历史快照；内部 ID 只用于 key／回调，不进入 DOM、文案、可访问名称或缺名兜底 |
-| `counts?` | `Readonly<Partial<Record<AgentItemReviewState,number>>>` | 只显示传入的各状态计数，包括 0；缺项不补 0，整体缺省显示“状态计数未提供”。不从当前页或筛选结果统计 |
+| `counts?` | `Readonly<Partial<Record<AgentItemReviewState,number>>>` | 只显示传入值；inline 或 compact 隐藏精确的 0，workspace/default 保留 0。非零及无效值（显示未确认）常驻；缺项不补 0。未传／空对象显示“状态计数未提供”，全零被省略不误报缺失。不从条目推算 |
 | `progress?` | `{reviewed:number,total:number}` | 仅传入时显示“已复核 12/40”等原值，不计算百分比或从条目补分母。计数／进度值不是非负整数时显示“未确认” |
-| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | 两种业务呈现与独立密度；compact 只收紧间距，不隐藏未知、过期、草稿、协作、冲突和异常事实 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | 两种业务呈现与独立密度；compact 收紧间距并省略零值计数，不隐藏非零计数、未知、过期、草稿、协作、冲突和异常事实 |
 | `inlineLimit?` | number，默认 3 | 有 onExpand 时显示宿主顺序前 N 项，加全部关键状态／异常／禁用／版本变化／他人处理条目，以及当前选择和下一项；N 归一到正整数。缺 onExpand 显示全部输入项 |
 | `nextItemId? / onNext?` | ID；`(target,trigger)=>void` | 只打开宿主指定的下一项，不自行找首个待复核或按优先级计算。两者均有才呈现按钮；目标缺失／不可打开则禁用并解释，不跳到另一对象 |
 | `onOpen?` | `(target,trigger)=>void` | 条目 `openable=true` 才有“打开复核”；交给 17；可以打开未知／过期对象进行查询／重新复核，队列自身不重提请求 |
@@ -621,7 +635,7 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 
 - **inline**：队列身份／版本 → 宿主计数与可选进度 → 宿主优先顺序中的少量条目及关键事实 → 单项、下一项和可选进入队列。
 - **workspace**：同一事实 → 固定标签筛选／排序 → 受控选择及批量影响 → DataRecordTable 完整输入列表 → 下一项与返回。不创建独立路由、Store 或外壳。
-- **compact**：与任一 view 组合，仅改变间距；回执未确认、过期、他人处理中和长中文保持可读，不是第三态。
+- **compact**：与任一 view 组合，收紧间距、隐藏零值状态计数；回执未确认／已过期的非零计数和全部他人处理事实常驻。总数与进度只取 progress.reviewed / progress.total，不累加状态、不统计条目；现有 API 的他人处理中来自条目 processingByOther，并非第八种复核状态。
 
 `/next/components/agent-components#review-queue` 有 P04 三题校对及多名学生作答批阅两组标注示例。示例宿主共享三处选择、筛选与状态；批量点击仅载入示例 waiting，独立逐项回执控件分别载入 resolved／unknown，不能一键使整队已复核。数学分式位于展开说明，提供 320px 容器。单项／异常按钮只记录示例打开请求，不冒充已完成业务接入。
 
@@ -661,11 +675,15 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 | `onExpand` | 可选 `(trigger:HTMLButtonElement)=>void` | Inline 的“完整复核”；缺省无入口，workspace 不重复显示。unknown 时隐藏，保留查询原请求。宿主负责同一对象／草稿、容器与焦点恢复 |
 | `onBack` | 可选 `()=>void` | workspace 返回原位置，包括 unknown；只改变视图，不提交、丢弃或取消，离开时未保存输入的保护由宿主完成 |
 | `disabledReason` | 可选 string | 非空阻断全部复核、重新复核、查询及输入，原因常驻并关联按钮；查看、展开和返回不受影响 |
-| `notice / details` | 可选 `string / ReactNode` | notice 至多一条常驻边界提示；details 默认收起“说明”。未知、冲突、未保存、失败和禁用原因必须常驻 |
+| `notice / details` | 可选 `string / ReactNode` | 常驻复核提示按过期 > 回执未确认 > 其他取一条；notice、次要状态解释和补充 description 合并入默认收起“说明”。状态标记、版本、请求、未保存、动作影响与禁用原因仍常驻 |
 
 `AgentItemReviewEditor<T>={value, onChange, readOnly, describedBy?}`。render 必须使用受控字段、遵守 readOnly 并关联 describedBy；可接单页文本、诊断字段、VerificationFields、可选评分等内容，不能私建执行或保存状态。组件保护传入的 onChange，waiting / unknown / resolved / expired、版本变化或 disabledReason 时不转发修改；插槽自身的外部回调仍由宿主负责约束。summary、evidence、comparison、details 都不能引入旁路业务动作或未经授权的数据。
 
 ### 状态、动作与历史
+
+**2026-09-25 提示优先级**：过期 → 回执未确认 → 其他（修改未保存／提交中／review.description）。只保留最高优先级的一条常驻复核提示；剩余固定提示、description 与 notice 去重后进入同一个默认收起“说明”，再接 details。没有固定提示时 description 自身常驻。宿主不能把必要版本、请求或禁用事实只放入补充说明：分别使用 versionChange、request、disabledReason、checkpoints／summary 等已有字段。
+
+过期与 unknown／waiting 并存时，“已过期”主 Badge 和“旧请求回执未确认／旧请求复核提交中”次 Badge 同时可见，原请求关联和查询入口保留。过期与 draft／failed 并存时常驻“修改未保存／已退回 / 失败”标记；旧 resolved 仍为此前复核记录。必要事实和动作影响／禁用原因不计作可折叠的边界提示，不为减行隐藏。动作状态、回调与受控保护不变。
 
 | `review.state` | 必需事实 / 能力 | 呈现与行为 |
 | --- | --- | --- |
@@ -717,7 +735,7 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 | `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | 仅 inline 显示“查看证据链”；缺省隐藏入口并展示全部已提供证据摘要，避免第三条以后不可达；不创建面板或改变 path |
 | `onOpen` | 可选 `(intent: AgentEvidenceOpenIntent, trigger: HTMLButtonElement) => void` | 节点还须显式提供 `openable=true` 才显示打开入口；intent 为 `{kind:'object'/'evidence', conclusionId, nodeId, path}`。不取数、不改写事实；由宿主解析身份／版本并重新核验授权 |
 | `onBack` | 可选 `() => void` | workspace 的“返回原位置”；仅返回原入口，不取消、提交或改变结论。原触发器、阅读位置和焦点由宿主保存与恢复 |
-| `notice / details` | 可选 `string / ReactNode` | notice 是至多一条常驻边界提示；details 复用“说明”默认收起。记录缺失、不可用、访问限制等必要事实不得放入 details |
+| `notice / details` | 可选 `string / ReactNode` | inline 的 notice 与 details 合并到同一个默认收起“说明”，记录不完整等状态事实常驻；workspace 保留原 notice 常驻输出。记录缺失、不可用、访问限制不得折叠 |
 
 `AgentEvidenceConclusion.coverage: AgentEvidenceCoverage` 是 `{state:'complete'/'incomplete'/'unavailable'/'unknown', description?}`。分别显示“记录覆盖完整／记录不完整／记录暂不可用／覆盖状态未确认”。证据数量与覆盖情况**仅在宿主提供时显示**，不以树中条目数充当总体数量或分母。没有传 coverage 表示没有提供覆盖说明；宿主已知存在覆盖缺口时必须显式传 incomplete，不能省略。覆盖不完整也不撤销已有匹配的读取／引用事实。
 
@@ -1060,6 +1078,8 @@ import { Badge } from "@/components/prism-next/badge"
 ## 学习、文档与 Agent
 
 ### 界面文案原则
+
+2026-09-25 经 Product Owner 批准的密度整理：单项复核器按过期 > 回执未确认 > 其他仅常驻一条提示，其余解释进“说明”，并存状态用独立标记保留；指标摘要只合并显式组级样本／时间／版本，差异逐项显示；审核队列 inline/compact 只显示非零状态计数（无效值仍标未确认），进度与总数只用宿主提供值；证据浏览 inline 的边界解释进入“说明”，覆盖限制与独立事实常驻。详见各组件条目，不改变业务状态集合或回调。
 
 内容输入同样提供 `details?: ReactNode`。固定标签、长度／格式约束、校验失败、保存未知、冲突版本、来源／抓取状态及禁用原因在两态两密度常驻；当前草稿与已提交版分别标明。组合公式预览时不重复边界提示。
 

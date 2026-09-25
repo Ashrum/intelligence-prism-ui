@@ -76,8 +76,8 @@ export function AgentEvidenceDrilldownDemo() {
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整证据链'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => <section key={label} aria-label={label} className="min-w-0 space-y-3">
         <h3 ref={index === 1 ? heading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
         <AgentEvidenceDrilldown conclusion={example.conclusion} nodes={example.nodes} path={path} view={view} density={density}
-          notice="示例：展示固定记录，尚未连接真实证据服务。"
-          details={<p>已引用只说明存在引用记录，仍需核对结论与证据是否一致。历史证据保留当时版本。</p>}
+          notice="查看证据不改变读取、引用或教师对照记录。"
+          details={<p>固定示例，尚未连接真实证据服务。已引用只说明存在引用记录，仍需核对结论与证据是否一致。历史证据保留当时版本。</p>}
           onNavigate={navigate}
           onExpand={button => { origin.current = button; navigate(path) }}
           onOpen={intent => setFeedback(`示例：已请求打开${intent.kind === "object" ? "对象" : "证据"}，证据记录保持原样。`)}

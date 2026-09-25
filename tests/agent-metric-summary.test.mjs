@@ -244,3 +244,64 @@ test('two labelled demo purposes render inline/workspace/compact, narrow layout,
   const demo = render(h(AgentMetricSummaryDemo));
   assert.match(demo, /id="metric-summary"/); assert.match(demo, /班级学情示例/); assert.match(demo, /批阅进度示例/);
 });
+
+test('explicit group facts render once, item overrides stay visible, and omitted item fields inherit only declared facts', () => {
+  for (const mode of modes) {
+    const shared = { id: 'shared', label: '共享记录指标', sample: { size: '36 名学生', denominator: '40 份答卷' }, record: { dataTime: '组级时间', version: '组 v2' }, items: [
+      { ...item, sampleSize: undefined, denominator: undefined },
+      { ...item, id: 'same', sampleSize: '36 名学生', denominator: '40 份答卷', dataTime: '组级时间', version: '组 v2' },
+      { ...item, id: 'different', label: '不同口径', sampleSize: '3 名学生', denominator: '7 项作答', dataTime: '独立时间', version: '指标 v9' },
+    ] };
+    const html = htmlFor({ ...mode, groups: [shared], onExpand() {} });
+    for (const text of ['样本量：36 名学生', '分母：40 份答卷', '数据时间：组级时间', '数据版本：组 v2']) assert.equal(html.split(text).length - 1, 1, text);
+    for (const text of ['样本量：3 名学生', '分母：7 项作答', '数据时间：独立时间', '数据版本：指标 v9']) assert.ok(html.includes(text), text);
+    assert.match(html, /共享记录指标/);
+  }
+});
+
+test('sample-only group leaves per-item denominators and record fallbacks untouched; no implicit merging of equal items', () => {
+  for (const mode of modes) {
+    const items = [item, { ...item, id: 'second' }];
+    const legacy = htmlFor({ ...mode, groups: group(items) });
+    assert.equal(legacy.split('样本量：3 名学生').length - 1, 2);
+    const shared = htmlFor({ ...mode, groups: [{ ...group(items)[0], sample: { size: '3 名学生' } }] });
+    assert.equal(shared.split('样本量：3 名学生').length - 1, 1);
+    assert.equal(shared.split('分母：7 项作答').length - 1, 2);
+    assert.equal(shared.split('数据时间：2026-09-25 10:00').length - 1, 2);
+    const partial = htmlFor({ ...mode, groups: [{ ...group(items)[0], record: { dataTime: '组级时间' } }] });
+    assert.equal(partial.split('数据时间：组级时间').length - 1, 1);
+    assert.equal(partial.split('数据版本：记录 v7').length - 1, 3); // card header + each metric
+  }
+});
+
+test('group inheritance binds drilldown to effective metric version, preserves card record and never treats empty version as confirmed', () => {
+  const events = [];
+  const make = version => [{ ...group([{ ...item, change }])[0], record: { version } }];
+  const input = { groups: make('组 v2'), onDrilldown: (...args) => events.push(args) };
+  const before = htmlFor(input), nodes = capture(input), trigger = { fixture: 'group-button' };
+  button(nodes, '查看正确率明细').props.onClick({ currentTarget: trigger });
+  allButtons(nodes).find(node => node.props['aria-label'] === '查看正确率变化的依据').props.onClick({ currentTarget: trigger });
+  assert.deepEqual(events, [
+    [{ recordId: record.id, version: record.version, metricVersion: '组 v2', kind: 'metric', metricId: item.id }, trigger],
+    [{ recordId: record.id, version: record.version, metricVersion: '组 v2', kind: 'change', metricId: item.id, basisId: basis.id }, trigger],
+  ]);
+  assert.equal(htmlFor(input), before);
+  const blank = htmlFor({ ...input, groups: make('') });
+  assert.match(blank, /数据版本：未确认/); assert.doesNotMatch(blank, /查看正确率明细|aria-label="查看正确率变化的依据/);
+});
+
+test('shared metadata does not hide uncertainty, zero or differing unknown fields and is not disclosed for restricted-only or hidden groups', () => {
+  for (const mode of modes) {
+    const base = { id: 'shared', label: '共享组', sample: { size: '0 名学生' }, record: { dataTime: '组时间', version: '组 v1' } };
+    const html = htmlFor({ ...mode, groups: [{ ...base, items: [{ ...item, sampleSize: undefined, denominator: undefined, reading: { state: 'unknown', reason: '记录状态待核验' } }] }] });
+    for (const fact of ['样本量：0 名学生', '分母：未提供', '状态未确认', '记录状态待核验']) assert.ok(html.includes(fact));
+    const restricted = htmlFor({ ...mode, groups: [{ ...base, sample: { size: secret }, record: { dataTime: secret, version: secret }, items: [{ id: 'restricted', access: 'restricted', disclosure: { reason: '限制原因' } }] }] });
+    assert.ok(!restricted.includes(secret)); assert.match(restricted, /限制原因/);
+    const denied = htmlFor({ ...mode, scope: { state: 'restricted', disclosure: { reason: '范围受限' } }, groups: [{ ...base, sample: { size: secret }, items: [item] }] });
+    assert.ok(!denied.includes(secret));
+    if (mode.view !== 'workspace') {
+      const hidden = htmlFor({ ...mode, onExpand() {}, groups: [{ ...base, sample: { size: secret }, items: [{ ...item, key: false }] }] });
+      assert.ok(!hidden.includes(secret)); assert.match(hidden, /暂未指定关键指标/);
+    }
+  }
+});

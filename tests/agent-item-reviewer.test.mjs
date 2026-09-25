@@ -51,13 +51,20 @@ function freeze(value) {
   return value;
 }
 const actionNodes = extra => capture(extra).filter(node => node.props.onClick && node.props['aria-label']);
+function openedDetails(extra) {
+  const node = capture(extra).find(node => node.type.name === 'RecordDetails');
+  const gate = node.type(node.props);
+  return gate ? render(React.cloneElement(gate, { open: true })) : '';
+}
+
 
 test('seven external review states render in both views and densities; default is inline', () => {
   const labels = { 'waiting-human': '待复核', draft: '已编辑未提交', waiting: '复核提交中', unknown: '回执未确认', resolved: '已复核', failed: '已退回 / 失败', expired: '已过期' };
   let calls = 0;
   for (const mode of modes) for (const [state, review] of Object.entries(states)) {
     const html = htmlFor({ ...mode, review, onAction() { calls++; } });
-    for (const fact of [labels[state], review.description, props.item.title, props.item.version, ...props.checkpoints]) assert.ok(html.includes(fact), fact);
+    for (const fact of [labels[state], props.item.title, props.item.version, ...props.checkpoints]) assert.ok(html.includes(fact), fact);
+    assert.ok((html + openedDetails({ ...mode, review })).includes(review.description));
     assert.match(html, new RegExp(`data-review-state="${state}"`));
     assert.doesNotMatch(html, /意图|宿主|回调|受控|animate-spin|已保存/);
     if (state !== 'resolved') assert.doesNotMatch(html, /已复核/);
@@ -111,7 +118,9 @@ test('query without original request is disabled and guarded; absent query capab
   assert.match(htmlFor(extra), /原请求未确认，暂不可查询/);
   for (const mode of modes) {
     const html = htmlFor({ ...mode, review: { ...states.unknown, query: undefined } });
-    assert.match(html, /暂未提供原请求查询入口/); assert.doesNotMatch(html, /<button\b/);
+    assert.match(html, /暂未提供原请求查询入口/);
+    assert.equal(actionNodes({ ...mode, review: { ...states.unknown, query: undefined } }).length, 0);
+    assert.doesNotMatch(html, /确认无误|重新复核当前版本|完整复核/);
   }
 });
 
@@ -194,7 +203,8 @@ test('history keeps its own identity, version, reviewer, reason and time without
   const snapshot = JSON.stringify(history);
   function section(extra) {
     const html = htmlFor({ view: 'workspace', history, ...extra });
-    return html.slice(html.indexOf('<section aria-label="复核记录"'));
+    const start = html.indexOf('<section aria-label="复核记录"');
+    return html.slice(start, html.indexOf('</section>', start) + '</section>'.length);
   }
   for (const density of ['default', 'compact']) {
     const old = section({ density }), next = section({ density, item: { id: 'new-id', title: '当前题名', version: 'r9' }, review: states.resolved, versionChange: { currentVersion: 'r10' } });
@@ -219,8 +229,9 @@ test('compact retains unknown, expiry, unsaved and disabled facts outside collap
   for (const view of ['inline', 'workspace']) for (const review of [states.unknown, states.expired, states.draft]) {
     const html = htmlFor({ view, density: 'compact', review, notice: '唯一边界提示', disabledReason: '仅可查看当前记录。', details: h('p', null, '补充说明正文') });
     assert.match(html, /aria-expanded="false"/); assert.doesNotMatch(html, /补充说明正文/);
-    assert.ok(html.includes(review.description)); assert.ok(html.includes(props.item.version)); assert.match(html, /仅可查看当前记录/);
-    assert.equal((html.match(/唯一边界提示/g) ?? []).length, 1);
+    assert.ok((html + openedDetails({ view, density: 'compact', review })).includes(review.description)); assert.ok(html.includes(props.item.version)); assert.match(html, /仅可查看当前记录/);
+    assert.equal((html.match(/唯一边界提示/g) ?? []).length, 0);
+    assert.equal((openedDetails({ review, notice: '唯一边界提示' }).match(/唯一边界提示/g) ?? []).length, 1);
     if (review.state === 'unknown') assert.match(html, /回执未确认/);
     if (review.state === 'expired') assert.match(html, /请重新复核/);
     if (review.state === 'draft') assert.match(html, /修改未保存/);
@@ -285,4 +296,29 @@ void [valid, unknown, waiting, resolved, expired, noRequest, noReceipt, badInten
     const diagnostics = ts.getPreEmitDiagnostics(program);
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
+});
+
+
+test('one standing review message follows expiry > pending receipt > other; all explanations stay reachable', () => {
+  for (const mode of modes) for (const review of Object.values(states)) for (const versionChange of [undefined, { currentVersion: 'r3' }]) {
+    const extra = { ...mode, review, versionChange, notice: '仅记录单项复核请求，尚未确认复核结果。', details: h('p', null, '补充说明正文') };
+    const nodes = capture(extra), html = htmlFor(extra), open = openedDetails(extra);
+    const status = nodes.find(node => node.props.id?.endsWith('-status'));
+    const messages = React.Children.toArray(status.props.children).filter(React.isValidElement);
+    assert.ok(messages.length <= 1);
+    const standing = render(messages[0]);
+    assert.equal((html.match(/role="status"/g) ?? []).length, 1);
+    if (versionChange || review.state === 'expired') {
+      assert.match(standing, /当前版本已变化/);
+      assert.doesNotMatch(standing, /复核回执未确认|修改未保存|等待原请求回执/);
+      if (review.state === 'unknown') assert.match(html, /旧请求回执未确认/);
+      if (review.state === 'waiting') assert.match(html, /旧请求复核提交中/);
+      if (review.state === 'draft') assert.match(html, /修改未保存/);
+      if (review.state === 'failed') assert.match(html, /已退回 \/ 失败/);
+    } else if (review.state === 'unknown') assert.match(standing, /复核回执未确认.*不要重复提交/);
+    assert.ok((html + open).includes(review.description));
+    assert.doesNotMatch(html, /仅记录单项复核请求|补充说明正文/);
+    assert.match(open, /仅记录单项复核请求/); assert.match(open, /补充说明正文/);
+    if (versionChange && review.state === 'unknown') assert.match(open, /不要重复提交/);
+  }
 });
