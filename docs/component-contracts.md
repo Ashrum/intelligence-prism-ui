@@ -107,7 +107,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 ### 复用检索与 QuestionReview 审查
 
-- `QuestionReview` 已有题面、作答、评分点与理由布局；**不可直接包装为通用复核器**。`components/prism-next/question-review.tsx:39` 点击确认后，先更新 `saved`、生成 `record`、清空 `reason`，再调用 `onConfirm`；第 36、40 行据此展示“已记录得分”“最新复核记录”。第 21、23–25 行说明无成对控制属性时走本地状态，有控制属性时也会请求宿主写入同样的完成记录。此行为没有等待外部回执，违反 AGENTS.md §5；本任务不修改该组件及其既有调用，由 Supervisor 另行处理。
+- `QuestionReview` 已有题面、作答、评分点与理由布局；**不可直接包装为通用复核器**，其领域评分不成为通用复核模型。曾在确认点击后写入 `saved/record` 并清空理由的问题已修复（本 PR，2026-09-25）：现在复用 `AgentItemReview`，确认只回调意图；旧本地完成记录行为已移除。兼容与迁移见下方 QuestionReview 条目。
 - `VerificationFields` 的判断、依据与事件由外部控制，没有内部完成态；P04 示例的编辑插槽直接复用。评分示例复用 QuestionReview 使用的 `PointsField`，不挂载旧确认逻辑。
 - `AgentChangeReview / AgentChangeSet` 负责候选的采用／保留决定，不等同复核回执。本候选的原值／人工草稿对照是只读内容，使用 `comparison` 插槽，不为一份已编辑草稿补造“已采用”决定。宿主需要候选采纳时在同一工作区组合既有对比组件，采纳仍不能生成已复核状态。
 - `AgentEvidenceDrilldown` 与 `DocumentRegionViewer` 作为 `evidence` 插槽示例，复用来源、版本、未知事实与区域查看；预览不生成读取、引用或复核事实。外框、状态、表单及补充说明复用 Card、Prism Badge、Alert、Field、Textarea、Button、RecordDetails / coss Collapsible，不修改 coss。
@@ -480,8 +480,22 @@ import { Badge } from "@/components/prism-next/badge"
 - `QuestionDetails` 单独接收资料、教材定义、关联目录与允许的标签页。限制标签页会阻止相应面板渲染。敏感答案仍应由服务端从题目载荷中移除；UI 隐藏不是权限控制。
 - `QuestionActions` 仅显示实际传入回调的操作。是否进入试题篮、移动、替换与删除由容器决定。
 - `QuestionResponse` 接收题型、选项、`value` / `onChange`，只收集作答，不自动判分。
-- `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。确认通过 `onConfirm` 返回结果。
+- `QuestionReview` 接收 `question`、`attempts`（按小问 ID）、`initialScores`（按评分点 ID）。可提供 `editor` 与 `onEditorChange` 成对控制草稿；否则内部维护。新增可选 `review?: AgentItemReview`，类型复用 `components/prism-next/agent-item-reviewer`；确认通过原签名 `onConfirm(scores, reason)` 返回提交意图，回调返回值不是回执。
 - 没有细分 rubric 时：已有小问分值使用 `${part.id}-score`；没有小问分值回退整题 `score`。不擅自平均分配分值。未提供初评的评分点保持待评分。更换被复核对象时使用 `key={question.id}` 重建独立编辑草稿。
+
+
+### QuestionReview 状态外部化迁移（2026-09-25）
+
+旧的点击确认后本地写入 `saved/record`、清空 `reason`、显示“最新复核记录”的行为**已移除**。公开属性及 `ReviewEditor` 字段、`createReviewEditor` 和 `onConfirm(scores, reason)` 签名均保留。未传 `review` 的旧调用仍可编译与渲染：校验通过并调用回调后只提示“已发出确认，等待记录”；未提供回调时提示“未提供确认处理，尚未发出确认”，不生成完成事实。组件不依据 Promise 返回、计时器或点击次数推进状态。本仓库未发现开发环境一次性警告惯例，因此仅用本文档迁移提示，不新增 console.warn。
+
+- `review` 使用 `AgentItemReview` 的七种状态：`waiting-human` 待复核、`draft` 已编辑未提交（修改未保存）、`waiting` 复核提交中、`unknown` 回执未确认、`resolved` 已复核、`failed` 已退回 / 失败、`expired` 已过期。description 取外部输入；waiting/unknown 的原请求、resolved 的复核人／时间／版本均只取对应分支事实，缺少时间显示“时间未确认”。
+- 有 `review` 时，只在 waiting-human/draft/failed 允许确认；waiting/unknown/resolved/expired 禁用并在事件中阻断确认。此领域组件保留评分草稿编辑与取消行为，宿主负责编辑后的状态与版本失效、原请求查询和重新复核入口；`actions/query` 不在此自动生成按钮。
+- `editor.scores/reason/error` 是草稿与校验反馈；确认保留 scores/reason，不请求写入 saved/record。`editor.saved` 是**宿主提供的已记录评分基准**，未成对控制 editor 时初始值来自 initialScores；用于已记录得分、作答回看、取消修改及分数变化校验，不能代替复核回执。宿主收到有效回执后可更新 saved；需回填得分时使用受控 editor。
+- 兼容保留 `editor.record` 字段，但不再显示其内容或据其显示已复核。仅在未传 review 的旧用法中保留“record 非空且草稿未改时禁用确认”的原按钮行为；传入 review 后，以外部状态决定确认可用性。只有旧 record、没有 review 时显示“复核状态未提供，等待外部记录”，不能自动转换为 resolved，需核对原记录的对象、版本与请求。
+- 推荐迁移：宿主持有 review 与 editor → onConfirm 发出绑定对象和基准版本的请求并传入 waiting → 超时或回执不明传入 unknown 并查询原请求 → 仅匹配当前对象／请求／版本的记录可传入 resolved 与 resolution，并更新 editor.saved。拒绝用 P04 的本地 checked 标记直接生成 resolved；版本变化传入 expired，保留草稿，迟到回执不得覆盖新草稿。
+- 对象或作答／基准版本切换时用稳定身份组合的 key 隔离实例，避免沿用另一对象的草稿和兼容交互提示。
+
+五处演示统一使用 `demos/question-review.tsx` 的 **QuestionReviewExample 示例宿主**（不是组件目录条目）。宿主持有 editor、review 和待确认的分数／理由快照；“确认复核”只进入示例 waiting，独立“载入示例回执”才注入 resolved 并更新 saved。中途编辑会废弃该示例待回执并进入 draft，不用计时器模拟成功。`QuestionReviewDemo` 提供固定数学数据；`onConfirm` 仍为意图，示例专属 `onRecord` 只在载入回执时调用。learning-workspace 的评价版本与诊断接续改由 onRecord 推进。示例明确标注，无真实复核服务连接；生产调用方不得将此示例完成机制作为业务执行器。
 
 ## 图表与分析
 
@@ -529,7 +543,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
-- `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 现有点击生成记录的问题与替代边界见“单项复核器 v0.1”；通用组件不继承其确认逻辑。
+- `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
