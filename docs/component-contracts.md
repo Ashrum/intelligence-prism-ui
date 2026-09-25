@@ -510,9 +510,71 @@ Workspace 每条记录可展开文件详情，`preview` 与条目 `details` 是�
 
 未合并候选分支 `feat/agent-document-workspace`，main 基线 `fcc929d`。测试、五项日志及 Workspace main `edbcbb1` 的只读验证方案评估见 `.sites-runtime/document-workspace/REPORT.md`。P04 已有三道题的校对稿与历史快照，可提供全文阅读的局部验证；没有自然的教案/讲评长稿，不能将逐题编辑冒充完整长文工作。完整验证建议在既有 `/teacher/agent/workspace` 只接入 local-start 五环节提纲的对象渲染与原有宿主草稿；不新增业务流程或格式适配器，具体接入范围待 Supervisor 收敛。不启动开发服务、不修改 Workspace；浏览器三主题、窄容器、键盘焦点、移动设备、读屏器和真实服务未验证，候选待独立 Review。
 
+## 审核队列 v0.1
+
+2026-09-25 设计候选，语义 **16 审核队列**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-review-queue` 导入 `AgentReviewQueue` 及同文件公开类型。16 管理集合呈现、“下一项”及批量请求；17 AgentItemReviewer 处理单个对象的证据、确认与修订；18 AgentExceptionHandler 接收异常查看／处理请求。不新增目录条目或业务权威对象。
+
+### 复用检索与 16 / 17 配对
+
+- 已核对 DataRecordTable、FilterBar、Badge、Checkbox、AgentObjectPicker、AgentItemReviewer。前四项提供表格、固定标签筛选、状态与选择；01 的对象候选／推荐语义不等于审核队列；17 只有单项复核。因此补集合层组合，不另造表格、选择控件、状态词表或业务 Store。
+- Workspace 用 DataRecordTable 的 `rows / columns`，在列内组合选择框、身份、状态和具名动作。**不传其 `onSelect`**，避免基础表格的“查看内部 ID”按钮。窄容器保留可聚焦、具名的局部横向滚动区，长中文按列换行，文字不缩小。
+- `AgentReviewQueueItem` 直接复用 `AgentItemReviewTarget`、`AgentItemReview`；`agentItemReviewLabels` 从 17 导出，共享“待复核 / 已编辑未提交 / 复核提交中 / 回执未确认 / 已复核 / 已退回 / 失败 / 已过期”的七值词表（“已退回 / 失败”为同一标签）。组件不读取或执行 `review.actions / query`，这些留给 17；打开不会确认、修订或查询。
+- 优先级、排序、下一项、责任人、协作占用及版本变化均为宿主事实。`processingByOther` 的存在表示他人正在处理，不从责任人名称推断；禁用 UI 不是协作锁或权限校验。
+
+### 公开 API
+
+`AgentReviewQueueProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / queue / items` | 必填；`queue={id,version,snapshot?}`；`items: readonly AgentReviewQueueItem[]` | 已授权、按宿主顺序的当前结果或历史快照；内部 ID 只用于 key／回调，不进入 DOM、文案、可访问名称或缺名兜底 |
+| `counts?` | `Readonly<Partial<Record<AgentItemReviewState,number>>>` | 只显示传入的各状态计数，包括 0；缺项不补 0，整体缺省显示“状态计数未提供”。不从当前页或筛选结果统计 |
+| `progress?` | `{reviewed:number,total:number}` | 仅传入时显示“已复核 12/40”等原值，不计算百分比或从条目补分母。计数／进度值不是非负整数时显示“未确认” |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | 两种业务呈现与独立密度；compact 只收紧间距，不隐藏未知、过期、草稿、协作、冲突和异常事实 |
+| `inlineLimit?` | number，默认 3 | 有 onExpand 时显示宿主顺序前 N 项，加全部关键状态／异常／禁用／版本变化／他人处理条目，以及当前选择和下一项；N 归一到正整数。缺 onExpand 显示全部输入项 |
+| `nextItemId? / onNext?` | ID；`(target,trigger)=>void` | 只打开宿主指定的下一项，不自行找首个待复核或按优先级计算。两者均有才呈现按钮；目标缺失／不可打开则禁用并解释，不跳到另一对象 |
+| `onOpen?` | `(target,trigger)=>void` | 条目 `openable=true` 才有“打开复核”；交给 17；可以打开未知／过期对象进行查询／重新复核，队列自身不重提请求 |
+| `onInspectException?` | `(target & {exceptionId},trigger)=>void` | 可关联 18；只发具名异常查看请求，不识别或处置异常 |
+| `filters?` | `AgentReviewQueueFilters={fields:FilterField[],value:Record<string,string>,onChange?}` | Workspace 复用 FilterBar；只回调新值，不过滤 items、不改 counts、不重置选择。缺回调显示固定标签和可读选项值 |
+| `sort?` | `{field:FilterField,value:string,onChange?}` | Workspace 同样复用 FilterBar；只返回选项值，不运行比较器或修改输入顺序；缺回调只读 |
+| `selectedIds? / onSelectionChange?` | readonly string[] 默认 []；`(ids)=>void` | Workspace 受控批量选择；仅可选择有匹配批量能力且状态允许的条目。无回调只读。筛选外选择或重复选择仍保留，整批操作被阻断，可恢复筛选或显式清空 |
+| `batchActions? / onBatchAction?` | readonly `AgentReviewQueueBatchAction[]` 默认 []；`(intent)=>void` | Workspace 仅呈现宿主动作。缺回调、未选、能力不匹配、任一条目不可操作均禁用**整批**，不偷偷跳过部分对象；返回值／Promise 不当回执 |
+| `disabledReason?` | string | 原因常驻，阻断选择及对象／批量动作；筛选、排序与展开／返回独立 |
+| `onExpand? / onBack?` | `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline 的“进入审核队列”与 Workspace 的返回；纯呈现导航。缺 onExpand 无入口，Workspace 不重复入口；宿主负责相同对象、草稿、选择、滚动与焦点恢复 |
+| `notice? / details?` | string / ReactNode | notice 最多一条常驻边界提示；details 是默认收起“说明”，只收纳补充解释；必要状态与原因不能移入其中 |
+
+`AgentReviewQueueItem` 在 `AgentItemReviewTarget={id,title,version}` 上增加：
+
+| 字段 | 契约 |
+| --- | --- |
+| `displayNumber?:string / typeLabel:string` | 可读编号与类型；无可读名称／编号显示“未命名对象”，不以内部 ID 兜底 |
+| `review:AgentItemReview` | 17 的原始外部状态、说明及相应事实。队列呈现状态和说明，详细原请求／回执由 17 展开 |
+| `priority?:{label,reason}` | 优先级及理由由宿主提供；不比较等级、不生成推荐原因、不改变顺序 |
+| `assignee?:string` | 可披露的责任人；缺省“未提供”，不自动分派当前用户 |
+| `processingByOther?:{name,description?}` | 他人处理事实及说明常驻；选择不可用，不呈现该项打开复核、“下一项”或异常入口；原有选择不自动移除，混选时整批禁用 |
+| `versionChange?:{currentVersion?,description?}` | 传入表示旧依据已过期；保留原 version。若原状态是 waiting / unknown，**同时保留已过期与在途／未知状态**；不自动换版本或重建请求 |
+| `exceptions?:readonly {id,label,description?}[]` | 常驻异常标记与原因，ID 只用于回调；不是组件检测出来的异常 |
+| `openable?:boolean / batchActionIds?:readonly string[] / disabledReason?:string` | 已获授权的能力声明与禁用原因；不构成受信任权限。批量还要求 waiting-human / draft / failed 且没有版本变化／协作占用；waiting / unknown / resolved / expired 不接受注入的批量能力 |
+
+`AgentReviewQueueTarget={queueId,queueVersion,itemId,version}`。`AgentReviewQueueBatchAction={id,label,impact,disabledReason?}`；影响和禁用原因常驻并关联按钮。`AgentReviewQueueBatchIntent={queueId,queueVersion,actionId,items:readonly {itemId,version}[]}`，保留受控选择顺序、绑定每项复核依据，不只发数量。宿主在执行前核对所属任务／会话／轮次、当前权限、对象与版本、动作和幂等；将结果**逐项**映射回 `review`，再提供整体计数／进度。
+
+`queue.snapshot=true` 标“当时状态”，仅显示传入的当时顺序、版本与计数，去掉选择、批量、打开／下一项／异常动作，筛选排序只读；展开与返回仍可用于查看同一快照。所有条目、计数、责任人、筛选选项和插槽内容须已获授权，队列不实现数据脱敏或重新授权。
+
+### 三种用法与验证边界
+
+- **inline**：队列身份／版本 → 宿主计数与可选进度 → 宿主优先顺序中的少量条目及关键事实 → 单项、下一项和可选进入队列。
+- **workspace**：同一事实 → 固定标签筛选／排序 → 受控选择及批量影响 → DataRecordTable 完整输入列表 → 下一项与返回。不创建独立路由、Store 或外壳。
+- **compact**：与任一 view 组合，仅改变间距；回执未确认、过期、他人处理中和长中文保持可读，不是第三态。
+
+`/next/components/agent-components#review-queue` 有 P04 三题校对及多名学生作答批阅两组标注示例。示例宿主共享三处选择、筛选与状态；批量点击仅载入示例 waiting，独立逐项回执控件分别载入 resolved／unknown，不能一键使整队已复核。数学分式位于展开说明，提供 320px 容器。单项／异常按钮只记录示例打开请求，不冒充已完成业务接入。
+
+候选位于 `feat/agent-review-queue`，基于 main `36be612`。五项结果、18 项新增测试和 Workspace 本地 main `3413920` 的只读轻量接线方案见 `.sites-runtime/review-queue/REPORT.md`。未启动开发服务、未写 Git、未修改 Workspace；浏览器三主题／窄屏／键盘／读屏器、Workspace 接入与真实服务仍待验证。
+
 ## 单项复核器 v0.1
 
 2026-09-25 设计候选，语义 **17 单项复核器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-item-reviewer` 导入 `AgentItemReviewer` 及同文件公开类型。复核单题、单页、单条诊断或单份作答；评分结构由领域编辑插槽提供，不成为通用复核模型。不增加 80 项组件目录条目。
+
+与 **16 AgentReviewQueue** 配对：16 提供集合、下一项和批量入口，17 承载选中对象的完整证据、编辑及单项动作；复用同一个 `AgentItemReview`、复核依据版本和独立 `versionChange`，不得从队列选择或批量请求生成已复核。公开的 `agentItemReviewLabels` 是两者共享词表，17 的既有行为保持不变。
 
 ### 复用检索与 QuestionReview 审查
 
@@ -942,6 +1004,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+审核队列同样提供 `details?: ReactNode`。回执未确认、过期、修改未保存、他人处理中、责任人、优先级理由、异常和批量禁用原因均常驻；一条 notice 之外的补充边界说明收起。不把内部 ID 或“宿主／意图／回调”等术语显示给教师。
+
 对象选择器同样提供 `details?: ReactNode`；推荐依据及来源、加载／空／错误、不可选原因、失效选择、上限与禁用原因在两态两密度常驻，不移入说明。常驻边界提示最多一条。
 
 范围构建器提供 `details?: ReactNode`。default 和 workspace 的校验、越权／不可用、排除原因及重新确认提示保持常驻。inline compact 按“范围构建器”契约例外处理：问题计数与重新确认标记常驻，具体原因在摘要入口可访问名称中可读，并可一键展开；边界提示只在本地详情出现一次，其他视图只常驻一次。
@@ -961,6 +1025,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `DiagnosisEvidenceTable`：外部观察、来源、定位、状态、操作；可作为 AgentEvidenceDrilldown 的诊断入口，证据树与导航由宿主提供。
 - `LearningGoalCard` / `VerificationFields`：目标容器与受控逐项核验字段。
 - `AgentItemReviewer`：单对象人工复核与受控编辑；复核状态只来自外部事实。QuestionReview 点击生成记录的问题已修复（本 PR），现在共享外部复核状态词表；领域评分与通用复核仍分别组合。
+- `AgentReviewQueue`：语义 16 的待审集合与批量审核，复用 DataRecordTable / FilterBar / Badge，与 17 配对；顺序、下一项、计数、协作与逐项回执由宿主提供，详见“审核队列 v0.1”。
 - `AgentMetricSummary`：语义 19 的指标卡，组合 MetricSummary compact 与 TrendChart；宿主给值、分母、样本、变化判断、异常与来源。Inline + 专用扩展内容，详见“指标摘要 v0.1”。
 - `AgentObjectPicker`：语义 01，复用 Combobox / Checkbox / DataRecordTable / FilterBar 选择具体对象；可作为 02 AgentScopeBuilder 的维度选择器，详见“对象选择器 v0.1”。候选、查询结果和选择都受控，选择不授予权限。
 - `AgentObjectViewer`：打开后的通用对象外壳与只读领域分区；身份、版本、权限来自宿主，敏感分区明确确认，受限原因常驻。摘要卡与入口仍由 AgentArtifactPreview 承担；详见“对象查看器 v0.1”。

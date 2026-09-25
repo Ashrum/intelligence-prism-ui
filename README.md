@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 审核队列 v0.1 · 设计候选（2026-09-25）
+
+语义 16 `AgentReviewQueue` 声明 **Inline + 专用扩展内容**：Inline 呈现待办计数、宿主顺序的重点条目和“下一项”；Workspace 复用 DataRecordTable、FilterBar、Checkbox 和 Badge，提供完整列表、受控筛选／排序、选择与批量动作。`density="compact"` 为独立密度，保留回执未确认、过期、他人处理中及异常原因。
+
+16 负责“看全部、选下一项、批量”，17 `AgentItemReviewer` 负责单个对象的确认与修订；共享七值状态词表。优先级／原因、顺序、责任人、协作占用、版本、计数和进度全部来自宿主，下一项也由宿主指定。批量动作只发出绑定队列及逐项版本的请求，等待宿主逐项回传回执；混入不可操作对象时整批不可执行。他人处理中不提供打开复核、下一项或异常处置入口，组件不加锁或分派。不显示内部 ID。
+
+组件页 `/next/components/agent-components#review-queue` 提供 P04 三题校对（回执未确认、过期）与学生作答批阅（他人处理中、批量确认后独立逐项示例回执）两组用途，覆盖 inline / workspace / compact 和 320px 容器。公开 API、复用依据与边界见[审核队列契约](docs/component-contracts.md#审核队列-v01)。目录保持 80 项，coss、依赖和视觉令牌不变。
+
+未合并候选位于 `feat/agent-review-queue`，基于 main `36be612`；进度清单第 16 项为“组件候选”。五项日志、测试清单与 Workspace 本地 main `3413920` 的只读轻量验证方案见 `.sites-runtime/review-queue/REPORT.md`。未写 `.git`、未启动开发服务、未修改 Workspace；浏览器、Workspace 接线与真实服务尚未验证，待 Supervisor 独立 Review。
+
 ## 对象选择器 v0.1 · 设计候选（2026-09-25）
 
 语义 01 `AgentObjectPicker` 声明 **Inline + 专用扩展内容**：Inline 快速选择推荐／最近对象并呈现已选摘要；Workspace 复用 Combobox、FilterBar、DataRecordTable 和 Checkbox，提供搜索、筛选、多选、按上限批量选择与加载更多请求。`density="compact"` 只收紧间距，不隐藏不可选原因。
