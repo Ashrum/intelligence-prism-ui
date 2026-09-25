@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 建议集 v0.1 · 设计候选（2026-09-26）
+
+语义 22 `AgentSuggestionSet` 声明 **Inline + 专用扩展内容**：Inline 呈现推荐短列表与选择，Workspace 承载独立比较、批量采纳及页面提供的调整字段。`density="compact"` 只收紧布局，保留依据、适用对象、影响／代价、确定性、限制和未确认回执；相同依据与来源分别合并到组级，建议标题只出现一次。
+
+10 挑选题、资源或学生；22 决定做什么、为什么及对谁；21 查看证据；23 编排后续计划。选择、采纳与已创建任务分别取页面事实，所有数据操作只发版本绑定的 `onIntent`；确认选择不采纳，采纳不创建任务，驳回不取消已有任务。
+
+组件页 `/next/components/agent-components#suggestion-set` 提供讲评后的教学建议与通用学生学习建议两组标注示例，含并列比较、调整一项、独立操作／任务记录、320px、长中文与公式。公开 API 见[建议集契约](docs/component-contracts.md#建议集-v01)。coss、依赖、视觉令牌与 80 项目录不变。
+
+未合并候选位于 `feat/agent-suggestion-set`，基于 main `bad3435`；第 22 项登记为“组件候选”。五项验证、实际 diff、测试数字与 Workspace main `cf46ee9` 的只读轻量方案见 `.sites-runtime/suggestion-set/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／窄容器／键盘触屏、Workspace 接入、真实服务和独立 Review 尚未完成。
+
 ## 候选选择器 v0.1 · 设计候选（2026-09-26）
 
 语义 10 `AgentCandidatePicker` 声明 **Inline + 专用扩展内容**：Inline 呈现页面给出的少量候选；Workspace 组合 DataRecordTable、FilterBar、Checkbox 与固定标签检索，支持排序、批量选择和加载更多请求。`density="compact"` 只收紧布局，选择依据、来源、失效／受限原因与未确认事实保持可见。题目通过 QuestionCard 插槽接入，学生、知识点和资源使用通用条目。

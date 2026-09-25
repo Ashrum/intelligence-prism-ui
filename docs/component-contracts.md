@@ -54,6 +54,73 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 建议集 v0.1
+
+2026-09-26 设计候选，语义 **22 建议集**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-suggestion-set` 导入 `AgentSuggestionSet` 及同文件公开类型。任务分支 `feat/agent-suggestion-set`，基于 main `bad3435`；本轮未提交／合并，不新增 80 项目录条目。
+
+### 复用检索与 10 / 21 / 23 边界
+
+- 已阅读 AGENTS、批准规范 §2、§6.8 建议集行、§7、§8、§10、§11.3 数据到教学行动链，复用规划第 22 项与 report/learning 对象行，覆盖矩阵 C04/F04/N21/R03，同类 10/07/21/19 契约和进度清单。建议集行实际位于 §6.8，数据到行动链位于 §11.3（第 542 行附近）；不改批准规范。
+- **10 挑选对象（题、资源、学生）；22 选择行动建议（做什么、为什么、对谁、代价／风险）；21 浏览建议的证据；23 编排采纳后的计划、日期、任务和资源。** 22 不接管对象检索、证据认证、排程或任务创建。选择 ≠ 采纳 ≠ 已创建任务；驳回建议也不取消已有任务。
+- 核对了 AgentCandidatePicker、AgentParameterConfig、AgentMetricSummary 的共享事实、AgentEvidenceDrilldown、DataRecordTable 和固定 coss 控件。现有组件缺少行动建议、独立采纳／任务事实及调整请求的组合，因此新增本语义组合。复用 Card、Checkbox、Input、Textarea、NumberField、Select、Label、Prism Badge/Button navigation 与 RecordDetails；不修改基础控件。
+- 比较复用原建议条目与同一组字段，以容器宽度决定并列或堆叠。已检查 DataRecordTable，但其行式记录不适合本次长建议、正文和调整字段的并列阅读；不另建表格或比较控件。比较时条目从普通列表移入比较区，仅挂载一次，剩余建议仍可见。标题只有一处；不再叠加第二张有相同标题的领域卡。
+
+### 公开 API
+
+`AgentSuggestionSetProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / suggestionSet` | 必填 string / `{id,version,versionLabel?,snapshot?}` | 可读标题、既有建议上下文与版本；只有 versionLabel 用于显示。snapshot 标“当时建议”并只读；页面必须给当时事实，组件不捕获快照。内部 ID／版本不进入可见文案或 DOM 值 |
+| `suggestions` | 必填 `readonly AgentSuggestion[]` | 当前允许披露的建议，按原顺序完整显示；Inline 短列表由页面提供，不自行截取、排序或生成建议。两态与选中项由页面保持同源；短列表须包含其已选项，缺记录时阻断提交，不能静默删除选择 |
+| `selectedIds` | 必填只读 string 数组 | 唯一的本次选择。待定项被选中显示“已选”；已采纳／已调整等同时保留自己的状态。没有内部选择副本或默认采纳 |
+| `receipt` | 必填 `AgentSuggestionReceipt` | idle / pending / received / unconfirmed / failed，可附 message。pending 显示“等待回执”；unconfirmed 显示“回执未确认”；两者阻断所有数据修改，先核对原请求。received 只说明收到回执，不改写条目状态或任务事实；逐项结果由页面另传 |
+| `comparison` | 可选 `{selectedIds,open,disabledReason?}` | 独立的比较选择与可见状态，仅 Workspace 有控件；至少两条当前可查看、唯一且匹配的建议才能请求比较。与本次选择互不覆盖；不比较无权内容。已过期／已驳回可作只读比较，原状态保留 |
+| `adopt / confirm` | 可选 `AgentSuggestionAction` | 分别声明 Workspace 批量采纳与两态确认选择。固定标签“采纳已选建议”“确认本次选择”，避免把确认偷换成创建任务；不提供就无入口。单项采纳能力另由每条建议声明 |
+| `disabledReason` | 可选 string | 存在即阻断选择、采纳、调整、驳回和确认（空串也阻断）；只读比较／证据／返回不受此限制。原因常驻 |
+| `onIntent` | 可选 `(intent:AgentSuggestionIntent)=>void` | 唯一数据及证据／比较请求出口，缺省只读；所有按钮保护同时存在于处理器。返回值与 Promise 完成均不是业务回执 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 仅收紧间距，不缩字或隐藏理由、依据、适用范围、代价、未知、限制与回执；不是第三态 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开比较与调整”；Workspace“返回原位置”；仅导航，缺能力不显示入口。页面保持原对象、草稿、选择、焦点和阅读位置，不另建右栏 |
+| `notice / details` | 可选 string / ReactNode | 一条常驻边界提示，默认“选择、采纳与创建任务是三件事，结果以各自记录为准。”；补充说明默认折叠，不能隐藏必要事实或提供写操作旁路 |
+
+`AgentSuggestionEntry` 必填 `id/title/content/reason/evidence/source/scope/impact/certainty/status`。content 是被动、已获准披露的 ReactNode，可包含数学正文；不再次输出标题。理由、来源、范围、影响和确定性接受 null，分别显示未提供／未确认／未指定／未知，不用模型文案或数值计算补齐。
+
+- `status: AgentSuggestionStatus`：pending／adopted／adjusted；dismissed 可附 reason；expired／unconfirmed 必填 reason。对应待定／已采纳／已调整／已驳回／已过期／未确认；已选只由 selectedIds 投影，不是采纳状态。expired／unconfirmed 不允许新增选择和业务修改，已有选择仍可明确取消（整组回执等待时除外）。adopted／dismissed 不可重复采纳；其他可调整／驳回能力仍需页面显式给出。
+- `task?: AgentSuggestionTask={state:'not-created'/'created'/'unconfirmed',description?}`：独立显示任务未创建／任务已创建／任务状态未确认；省略等于未确认。既有任务与建议状态可以并存；组件没有创建／开始／取消任务动作。
+- `evidence: AgentSuggestionEvidence|null`：`{summary:string|null,target?:{conclusionId,version},unavailableReason?}`。只描述证据摘要和既有 21 目标；无依据不补造支持结论。目标非空、可用且有接收器才显示“查看依据”，只发请求，不认证读取、引用或结论正确。
+- `disabledReason? / adopt?:AgentSuggestionAction`：当前单项限制和采纳能力。未选也可发单项采纳请求，但不会自动选中；批量采纳以完整 selectedIds 为范围，每条均须可采纳，混入受限／过期／未知／已采纳／已驳回／缺能力项时整批阻断，不静默跳过。
+- `adjustment?:{open,fields,message?,disabledReason?}`：页面控制展开与当前调整草稿。仅 Workspace 编辑；start 请求打开，change 回传字段值快照，submit 请求提交调整，cancel 仅请求收起，不丢弃草稿。任何一次请求均不自行标“已调整”、不覆盖正文、依据或任务。
+- `dismiss?:{reason?:string,disabledReason?}`：显式驳回能力。Workspace 提供 reason 时显示“驳回原因（可选）”常驻标签 Input；reason 阶段回传原始字符串，submit 阶段提交当前原因。未提供 reason 可直接发无原因请求；空白不被 trim，已驳回不能重复驳回。
+- 受限分支为 `AgentSuggestionRestrictedEntry={id,status:{state:'restricted'},disclosure:{title,reason}}`；运行时忽略误传正文、来源、依据、调整字段、任务事实及动作，且不参与共享事实合并或比较。所有组标题、可披露原因和插槽仍需页面先授权；组件不作权限判断或通用文本脱敏。
+
+`AgentSuggestionField` 公共字段为 `id/label` 和可选 `description/disabledReason/error`：text / textarea 的 value 为 string；number 为 number/null，可给 unit/step；select 为 string/null，options 为只读 `{value,label,disabledReason?}[]`。编辑保留空字符串、空白、零、负数和 null，不裁剪、不填默认值、不内置业务校验。NumberField 仅作有限数字解析；Select 用局部序号映射值，未知或禁用选项不产生请求。error 常驻并阻断提交，但保留可编辑字段以修正；只读字段以文字显示。字段空／重复 ID、空字段组阻断调整；空／重复建议 ID、缺建议上下文／版本阻断全部请求。页面须提供唯一的字段和选项身份。
+
+### 依据与来源合并
+
+按各字段的完整事实严格匹配：依据以 summary、target.conclusionId、target.version、unavailableReason 共同判等；来源按原始字符串判等。至少两条相同则分别提升为常驻组级“依据 N／来源 N”，明确“适用建议 1、2…”；单项只显示短引用。不同目标／版本／可用性不因摘要相同而合并，不模糊归一化、不推断来源等价；来源相同但依据不同仍只合并来源。null 的重复未知也可共用，仍明确未提供／未确认。
+
+组级说明排在建议之前，关键依据没有放入 details；控件关联对应说明。合并后的查看依据请求携带涉及的全部建议 ID，target 仍为同一既有证据目标。建议序号仅用于当前可读定位，稳定业务关联仍使用 ID。改变 view 或比较范围不复制建议标题、来源或证据正文。
+
+### 请求与验证边界
+
+所有 `AgentSuggestionIntent` 都包含 `{suggestionSetId,baseVersion}`：
+
+| type | 其他字段 | 边界 |
+| --- | --- | --- |
+| select / deselect | `suggestionIds,scope:'item'/'visible'/'selection'` | 单条、当前可选列表批量、取消全部；只回传本次目标，不写采纳或任务 |
+| adopt | `suggestionIds,scope:'item'/'selection'` | 单项／完整已选集的采纳请求；不推断成功或创建任务 |
+| adjust | `suggestionId,phase:'start'/'change'/'submit'/'cancel',values:Readonly<Record<string,AgentSuggestionFieldValue>>` | 修改时复制所有当前字段值并替换本字段，不共享输入对象；提交仍须页面版本与字段校验 |
+| dismiss | `suggestionId,phase:'reason'/'submit',reason?` | 编辑原因与请求驳回分开；不取消正式任务 |
+| compare | `phase:'select'/'show'/'close',suggestionIds` | 只请求改变比较选择／可见性，复制完整比较数组 |
+| open-evidence | `suggestionIds,target:{conclusionId,version}` | 请求打开 21 证据，保持目标版本，不写使用事实 |
+| confirm | `suggestionIds` | 仅确认本次选择，不能同时采纳或创建任务 |
+
+页面在接收时重新核验所属会话、当前版本、合法建议与字段、权限、选择和动作能力；迟到事件不得覆盖新版本，重复副作用由既有服务防重。页面须随建议／草稿上下文变化维护版本及回执归属，保留未提交输入，不把旧 received 用作新操作结果；批量部分成功按每条状态回传。22 不实现服务查询／重试、冷却、到期计时或待办计量，N21 的拒绝／过期不被算成任务。
+
+`/next/components/agent-components#suggestion-set` 提供讲评后的教学建议（共用依据、长中文、分式、已采纳但任务未创建、驳回、过期、受限、未确认）和通用学生学习建议（无个人学情依据、确定性未知）。示例含两态、compact、320px、独立比较选择、调整字段、独立载入操作回执及任务记录；示例没有真实建议生成、证据或执行服务。三处共用页面选择，Inline 由示例页面给前三项及其他已选项，完整状态留在明确标注的扩展区。
+
+五项日志、实际 diff、测试数字和 Workspace 本地 main `cf46ee9` 的只读轻量验证方案见 `.sites-runtime/suggestion-set/REPORT.md`。本轮不写 .git、不启动开发服务、不修改 Workspace；浏览器三主题、窄容器视觉、键盘／触屏／读屏器、Workspace 接线与真实服务未验证。Builder 自检不构成独立 Review 或 PO 验收。
+
 ## 候选选择器 v0.1
 
 2026-09-26 设计候选，语义 **10 候选选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-candidate-picker` 导入 `AgentCandidatePicker` 及同文件公开类型。任务分支 `feat/agent-candidate-picker`，基于 main `ac27658`，未合并；不新增 80 项目录条目。
