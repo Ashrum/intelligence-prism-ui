@@ -9,15 +9,17 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 | 状态 | 定义 |
 | --- | --- |
 | 未开始 | 尚未推进该语义组合；已有基础控件、领域组件或 Workspace 本地组合仅列为复用起点，不算完成。 |
-| 组件候选 | 本仓库 main 已有该语义的实现与测试，尚未完成 Workspace 浏览器验证。 |
+| 组件候选 | 本仓库已有该语义的实现与测试，尚未完成 Workspace 浏览器验证；未合并候选必须注明任务分支，不表示 main 已包含。 |
 | Workspace 已验证 | 已引入并在 `/teacher/agent/workspace` 浏览器验证；P04 示例验证不等于真实服务接入。本次六项的证据来源及未核实边界见下节。 |
 | 真实业务接入 | 接入真实服务；本阶段所有项均未达到。 |
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/26/27 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/18/26/27 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 18 按 Product Owner 本轮授权登记为组件候选：分支 `feat/agent-exception-handler`，基线 main `96bb21f`；实现、示例、契约及 `tests/agent-exception-handler.test.mjs` 在本分支，验证证据见 `.sites-runtime/exception-handler/REPORT.md`。尚未合并、未接入 Workspace；合并后由 Supervisor 补 PR 号。下列六项核查仍为此前记录。
 
 - 编号、十二族及复用起点：[覆盖矩阵 v0.1 §2.2、§6](Agent业务流程组件覆盖矩阵_v0.1.md)、[复用规划 v0.1.3 §3、§7.1](智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)。覆盖矩阵是 2026-09-24 的旧基线，不能沿用其中六项“新语义未引入”的历史状态。
 - 当前 API：[组件复用约定](component-contracts.md)，重点为“对比查看器两态 v0.1”“任务记录三件套两态 v0.1”及步骤状态契约。
@@ -66,7 +68,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 15 | 预览与查看 | 对比查看器 | AgentChangeSet（P/agent-components.tsx），组合 AgentChangeReview | Inline + 专用扩展内容 | inline / workspace | Workspace 已验证 | [Prism #31](https://github.com/Ashrum/intelligence-prism-ui/pull/31)；[Workspace #8](https://github.com/Ashrum/ole-school-workbench/pull/8)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 4 项 | 随 18/17 增量核对冲突、采纳意图与同源草稿；采纳不等于保存。 |
 | 16 | 审核与修订 | 审核队列 | 复用起点：DataRecordTable / FilterBar（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 外部待审条目与状态、受控选择和下一项；审核优先级、锁和分派外置 |
 | 17 | 审核与修订 | 单项复核器 | 复用起点：QuestionReview（P/question-review.tsx）、VerificationFields（P/learning-components.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | P1 · 第 7 项 | 下一批第 3 项：扩展现有复核组合到非评分对象，保持受控草稿与证据区域。 |
-| 18 | 审核与修订 | 异常处理器 | 复用起点：Alert（B/alert.tsx）；Workspace P04TaskCard 局部异常组合（W/src/features/teacher/agent-workspace/P04TaskView.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da`；Workspace `8f9bb13` | P1 · 第 5 项 | 下一项：抽取影响范围、可选处置、成功部分保留和恢复组合；P04 当前仅为 Workspace 本地组合。 |
+| 18 | 审核与修订 | 异常处理器 | AgentExceptionHandler（P/agent-exception-handler.tsx），复用 Alert / Card / Badge / Button / Collapsible / AgentStepStatus | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 分支 `feat/agent-exception-handler`（基线 `96bb21f`）；`tests/agent-exception-handler.test.mjs`；`.sites-runtime/exception-handler/REPORT.md`；合并后 Supervisor 补 PR 号 | P1 · 第 5 项 | 下一步在 P04 轻量接入：issue / issue-submitting / issue-unknown、原请求查询、局部保留与两态返回；Workspace 浏览器与真实服务未验证。 |
 | 19 | 分析与诊断 | 指标摘要 | 复用起点：MetricSummary / GoalComparison / StatusComposition（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 优先直接复用，补语义映射说明；统计值、分母、缺测和结论不在组件内生成 |
 | 20 | 分析与诊断 | 分布矩阵 | 复用起点：HeatmapChart / ScatterChart / BoxPlotChart（P/analytics-components.tsx 导出） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接复用图形与数据表；数据维度、阈值和选择回调由宿主决定 |
 | 21 | 分析与诊断 | 下钻与证据浏览 | 复用起点：DiagnosisEvidenceTable（P/learning-components.tsx）、DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | P1 · 第 6 项 | 下一批第 2 项：组合证据定位、版本／失效提示及返回上下文；证据与授权事实外置。 |
@@ -108,12 +110,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 36 | 除 03、13、15、25、26、27 外的各项 |
-| 组件候选 | 0 | 六项已有候选已按本次 PO 交接登记至 Workspace 已验证，不重复计数 |
+| 未开始 | 35 | 除 03、13、15、18、25、26、27 外的各项 |
+| 组件候选 | 1 | 18；当前证据在任务分支，尚未合并和接入 Workspace |
 | Workspace 已验证 | 6 | 03、13、15、25、26、27；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一批固定顺序：**18 异常处理器 → 21 下钻与证据浏览 → 17 单项复核器 → 28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 在 Workspace 的现有模糊页处置只是本地组合，不能据此升级为本仓组件候选。
+下一批固定顺序：**18 异常处理器 → 21 下钻与证据浏览 → 17 单项复核器 → 28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 的本仓候选依据本轮任务分支实现与测试登记；Workspace 现有模糊页处置仍为本地组合，尚未引入此候选，下一步先完成 P04 轻量验证。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。
