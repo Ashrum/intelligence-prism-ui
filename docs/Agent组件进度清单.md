@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/07/08/10/11/14/16/17/18/19/21/26/27/28/33/35 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/07/08/10/11/14/16/17/18/19/21/22/26/27/28/33/35 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-26 语义 22 新增组件候选 `AgentSuggestionSet`（`P/agent-suggestion-set.tsx`），任务分支 `feat/agent-suggestion-set`，基于 main `bad3435`，未提交／合并。两态及 compact、严格共享依据／来源、独立选择／采纳／任务事实、比较和调整字段；组件页两组标注示例。五项日志、测试数字、diff 与 Workspace main `cf46ee9` 的只读核对方案见 `.sites-runtime/suggestion-set/REPORT.md`。浏览器、Workspace 接线、真实服务及独立 Review 未完成；不增加 Workspace 已验证项数。
 
 - 2026-09-26 语义 10 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentCandidatePicker`（`P/agent-candidate-picker.tsx`），本仓 [Prism #72](https://github.com/Ashrum/intelligence-prism-ui/pull/72)（`14f5a89`）；[Workspace #29](https://github.com/Ashrum/ole-school-workbench/pull/29)；Q01 示例练习三题候选：选择不写题篮；展开后选择保留；检索“对称轴”1 项、已选保留；批量选择当前结果；确认后逐题 `basket.add`，本机题篮加入 2 道题并显示“已在集合中”；返回焦点回到入口。依据标明示例、非推荐排序，不提供替代项（无真实依据）。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。未验证：题篮移除后重新可选、写入失败部分成功、三主题、窄屏、读屏器、真实检索/推荐服务。遗留：inline 每题重复相同的选择依据、来源和“题面节选”说明，且题目标题出现两次（候选标题 + QuestionCard），文字偏多，待文案整理时收。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -104,7 +106,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 19 | 分析与诊断 | 指标摘要 | AgentMetricSummary（P/agent-metric-summary.tsx）；组合 MetricSummary compact、TrendChart 与 Card/Badge/Collapsible；GoalComparison/StatusComposition 的派生计算不自动接入 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #55](https://github.com/Ashrum/intelligence-prism-ui/pull/55)；[Workspace #20](https://github.com/Ashrum/ole-school-workbench/pull/20)；工作记录预览：得分率 80%/分母 120/6 人/24 项/v1，只读投影 | PO 2026-09-25 批准：下一批第 3 项 | 下一步：06 内容输入。真实服务未验证。遗留：每个指标重复样本量行（组件文案待收）；新页缺少打开工作记录的入口（框架问题 FW01）。 |
 | 20 | 分析与诊断 | 分布矩阵 | 复用起点：HeatmapChart / ScatterChart / BoxPlotChart（P/analytics-components.tsx 导出） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接复用图形与数据表；数据维度、阈值和选择回调由宿主决定 |
 | 21 | 分析与诊断 | 下钻与证据浏览 | AgentEvidenceDrilldown（P/agent-evidence-drilldown.tsx）；复用 AgentContextList，DiagnosisEvidenceTable 入口与 DocumentRegionViewer 预览 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #38](https://github.com/Ashrum/intelligence-prism-ui/pull/38)（`1dee5ec`）；[Workspace #12](https://github.com/Ashrum/ole-school-workbench/pull/12)；P04 第 2 题下钻：对话结论 → 证据链逐层导航与返回 | P1 · 第 6 项 | 下一步：06 内容输入。真实服务未验证。 |
-| 22 | 计划与建议 | 建议集 | 复用起点：Card（B/card.tsx）、Checkbox（B/checkbox.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 建议依据、选择、调整与采纳事件；不以勾选推定教学任务已创建 |
+| 22 | 计划与建议 | 建议集 | AgentSuggestionSet（P/agent-suggestion-set.tsx）；Card / Checkbox / 固定标签字段 / Badge / Button / RecordDetails 组合 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | `feat/agent-suggestion-set`，基于 main `bad3435`，未提交／合并；组件页 `#suggestion-set` 两组示例；五项日志、实际 diff、测试数字和只读 Workspace 方案见 `.sites-runtime/suggestion-set/REPORT.md` | 2026-09-26 本轮委派；矩阵 C04/F04/N21/R03 | 待 Supervisor 独立 Review、PO 设计决定与 Workspace 轻量接入；选择、采纳、任务创建独立。浏览器与真实服务未验证。后续为 36，本轮不启动。 |
 | 23 | 计划与建议 | 计划构建器 | 复用起点：LearningTaskList / MilestoneList（P/learning-components.tsx）、WorkloadCalendar（P/workload-calendar.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 受控任务、日期和编辑；列表／日历不等于自动排程或完整计划引擎 |
 | 24 | 计划与建议 | 路径与优先级 | 复用起点：MilestoneList（P/learning-components.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 顺序、依赖和阻塞的显示与受控调整；路径计算外置，不预建关系图编辑器 |
 | 25 | 执行与追踪 | 执行确认 | AgentExecutionConfirmation（P/agent-semantic-components.tsx） | 仅 Inline | inline | Workspace 已验证 | [Workspace #7](https://github.com/Ashrum/ole-school-workbench/pull/7)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 保持确认范围与原请求关联，核对未知回执不重复提交。 |
@@ -142,13 +144,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 19 | 除 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、25、26、27、28、33、35 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 18 | 除 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、22、25、26、27、28、33、35 外的各项 |
+| 组件候选 | 1 | 22（`feat/agent-suggestion-set`，未合并） |
 | Workspace 已验证 | 23 | 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、25、26、27、28、33、35；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。下一步：22 建议集（本批剩余顺序：22 → 36）。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。22 建议集已形成组件候选，待独立 Review 与 Workspace 轻量接入；其后为 36，本轮不启动。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
