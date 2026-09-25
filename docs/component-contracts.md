@@ -101,6 +101,62 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
+## 文档工作区 v0.1
+
+2026-09-25 设计候选，语义 **28 文档工作区**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-document-workspace` 导入 `AgentDocumentWorkspace` 及同文件公开类型；不新增 80 项组件目录条目。范围为教案、讲评稿、提纲、报告等长稿的阅读、章节编辑与批注承载，不包含 Office／富文本编辑器、文件解析或格式转换。
+
+### 复用检索与格式边界
+
+- `DocumentRegionViewer` 复用范围是页区域、缩放和定位，不提供文稿章节、编辑、保存和批注契约；需要原稿区域时可由宿主放入章节 `content`，不强制将长文装成页图。
+- `ReadingWorkspace` 含 `localStorage` 和本地草稿管理，不能整页迁入；`Tree` 是基于外部树实例的通用选择控件，本项仅需带嵌套列表的章节导航，不复制树引擎或结构编辑能力。
+- 外框、字段、输入、状态和披露复用 Card、Field / FieldLabel、Textarea、Button、Prism Badge、Collapsible / RecordDetails；目录支持方向键移动焦点与 Enter/Space 激活。只调整布局和间距；采用既有 48rem 容器断点，窄容器目录可展开。
+- 未发现现有 Markdown 解析依赖。字符串一律按纯文本由 React 转义，以 `text-read-body`、保留换行和最多 40em 阅读宽度呈现；不解析 HTML 或 Markdown。Markdown、Word、PDF 等已处理内容由宿主传入 ReactNode，不新增解析依赖或统一 AST。数学可组合 MathContent 中的 RootFormula、MathML 或 DraftMathPreview；组件不会转换或验证公式。
+
+### 公开 API
+
+`AgentDocumentWorkspaceProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `document` | 必填 `AgentDocument` | `{id,title,version,format,contentScope,source?,snapshot?,currentVersion?}`；字符串均由宿主提供。contentScope 明示全文或已提供的局部范围；版本不从内容/保存状态推导。snapshot **存在即历史**（包括空字符串），标“历史版本（只读）／当时版本”；currentVersion 仅按需说明当前版，不回填当时事实 |
+| `capabilities` | 必填 `AgentDocumentCapabilities` | 查看 view、编辑 edit、批注 annotate、导出 export 四项均须声明；模型见下表。格式支持不等于授权，服务端仍须重新核验 |
+| `sections` | 必填 `readonly AgentDocumentSection[]` | `{id,title,content:ReactNode,children?}`，递归标题树；ID 在整份文档中唯一、跨两态稳定。空数组明确未提供章节；宿主仅传当前允许披露的内容 |
+| `activeSection / onNavigate` | 必填 `string / null`；可选 `(sectionId,trigger:HTMLButtonElement)=>void` | 受控当前章节；点击目录或批注定位只发请求，收到新 activeSection 才更新选中并滚动到该章。不自动选第一项；失效 ID 提示重新选择，不替换成其他章。缺回调目录只读；方向键/Home/End 仅移动焦点 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | compact 仅改变间距与换行，可与两种 view 组合，不是第三种业务态 |
+| `preview` | 可选 `AgentDocumentPreview={kind:'summary'/'excerpt',range,content}` | Inline 的摘要或节选及宿主给定范围；不从完整正文自动截取、不根据摘要/打开/滚动生成已读取或已引用记录 |
+| `draft` | 可选 `AgentDocumentDraft` | `{baseVersion,values:Readonly<Record<sectionId,string/undefined>>,onChange,readOnlyReason?}`。仅 workspace 当前选中章使用 Textarea；值缺省则明确未提供，不从阅读内容初始化副本；空字符串可编辑。readOnlyReason 或缺基准版本时保留输入且只读 |
+| `save` | 可选 `AgentDocumentSave={state,description?}` | 五值 `unsaved / saved-draft / submitted / conflict / unknown` 分别呈现未保存／已保存草稿／已提交／冲突／状态未确认；缺省 unknown。历史显示所传的当时保存状态，不从当前状态补值，不读时钟 |
+| `annotations` | 可选 `readonly AgentDocumentAnnotation[]` | `{id,version,anchor:{sectionId,paragraph?},author,time?,state,content:string}`。state 为 open/resolved/unknown（待处理／已处理／状态未确认）；时间缺失未确认，记录不被自动追加或更改。逐条保留版本、章节/段落、作者、时间和状态；只有版本匹配且章节存在才提供定位 |
+| `onAddAnnotation` | 可选 `(intent:AgentDocumentAnnotationIntent)=>void` | workspace 当前章节的新增批注请求 `{documentId,version,sectionId}`；不打开内置编辑器、不生成批注。段落标识由宿主批注界面收集；已存在批注可传 paragraph。缺能力或回调、历史版本、无当前章节时不显示入口 |
+| `quickActions / onAction` | 可选 `readonly AgentDocumentAction[]` / `(intent)=>void` | 动作为 `{id,label,capability,disabledReason?}`；四类能力白名单，unsupported、未声明能力或缺 onAction 时无入口。回传 `{documentId,version,actionId,capability}`，不执行任意脚本或 URL；禁用原因常驻并关联按钮，处理器也阻断 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline “打开文档”只在可查看、身份/版本完整且传回调时显示；workspace 可选返回原位置。均为视图请求，不提交、保存、丢弃、取消或生成读取事实 |
+| `notice / details` | 可选 `string / ReactNode` | 至多一条常驻边界提示；其余补充说明默认收起“说明”。能力限制、有损风险、未确认、冲突与禁用原因不得移入 details |
+
+`draft.onChange` 接收 `AgentDocumentChange={documentId,version,baseVersion,sectionId,value}`，保留空格、换行与空文本；组件不持有任何草稿副本、不持久化、不改写原输入。宿主同步 `values` 与对应阅读 `content`；阅读内容不会被组件假定为最新草稿。保存/提交操作可由明确的 quickAction 请求，但无内置保存实现、回执推导或自动提交。冲突为宿主事实，组件仍可编辑已有草稿；宿主需要锁定时传 readOnlyReason。权限、版本并发校验与最终写入始终由受信任层完成。
+
+### 必填能力声明
+
+每一项 `AgentDocumentCapability` 都含 `status` 与 `conversion`：
+
+| 字段 | 取值 | 呈现与边界 |
+| --- | --- | --- |
+| `status` | supported | 可选 reason；只有对应回调和内容实际可用时才显示操作 |
+| `status` | limited / unsupported | **必填 reason**，全部密度常驻；limited 只开放明确支持的范围，unsupported 没有可执行入口 |
+| `conversion` | `{state:'none'}` | 宿主明确声明该能力不涉及有损转换；不能以字段缺失代替 |
+| `conversion` | `{state:'lossy'/'unknown',description:string}` | 必填风险说明，常驻“转换风险／转换风险未确认”；不因 compact 隐藏 |
+
+`view=unsupported` 不渲染摘要、章节、草稿、批注内容及任何快速动作或展开入口，仍保留可披露身份、能力说明与返回。`edit=unsupported` 不渲染章节编辑；`annotate=unsupported` 不显示新增批注，既有获权批注仍可阅读；`export=unsupported` 不显示相应快速操作。历史版本强制不渲染 draft，不显示编辑/批注动作；仍可导航、查看和请求按当时版本导出。所有 ReactNode 插槽必须是当前授权且符合该版本只读边界的内容，不能用插槽内的写操作绕过能力限制。
+
+### 三种用法与验证边界
+
+- **inline**：身份／版本／格式、内容范围、保存事实与能力摘要 → 宿主给定范围的摘要或节选 → 实际可用快速操作 → 打开文档。
+- **workspace**：同一文档元信息与能力 → 完整标题树和提供范围内的全部正文 → 当前章节的受控纯文本编辑 → 带版本/锚点的批注清单与新增请求 → 可选返回。历史版仅展示当时内容；不另建 Drawer、业务路由或版本存储。
+- **compact**：仍保留范围、能力限制、有损风险、保存未知/冲突和操作禁用原因；仅收紧布局，不截断长中文、不缩小阅读字号。
+
+示例入口 `/next/components/agent-components#document-workspace`：可编辑的五环节备课提纲，以及仅阅读的 PDF 讲评材料（仅有指定页摘录、批注 limited、导出 unsupported）。二者均提供 inline / workspace / compact、历史版开关、五类保存状态与 320px 容器。公式由示例宿主渲染，点击不制造读取/引用或保存完成记录。
+
+未合并候选分支 `feat/agent-document-workspace`，main 基线 `fcc929d`。测试、五项日志及 Workspace main `edbcbb1` 的只读验证方案评估见 `.sites-runtime/document-workspace/REPORT.md`。P04 已有三道题的校对稿与历史快照，可提供全文阅读的局部验证；没有自然的教案/讲评长稿，不能将逐题编辑冒充完整长文工作。完整验证建议在既有 `/teacher/agent/workspace` 只接入 local-start 五环节提纲的对象渲染与原有宿主草稿；不新增业务流程或格式适配器，具体接入范围待 Supervisor 收敛。不启动开发服务、不修改 Workspace；浏览器三主题、窄容器、键盘焦点、移动设备、读屏器和真实服务未验证，候选待独立 Review。
+
 ## 单项复核器 v0.1
 
 2026-09-25 设计候选，语义 **17 单项复核器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-item-reviewer` 导入 `AgentItemReviewer` 及同文件公开类型。复核单题、单页、单条诊断或单份作答；评分结构由领域编辑插槽提供，不成为通用复核模型。不增加 80 项组件目录条目。
@@ -535,6 +591,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 Product Owner 2026-09-24 批准：每张卡最多一条常驻边界提示，其余补充说明放入默认收起的 Collapsible“说明”；已有的版本与定位、步骤折叠继续承载各自详情。优先删除重复解释，不为所有组件统一增加插槽；AgentChangeSet、任务记录三件套、异常处理器、下钻与证据浏览及单项复核器提供 `details?: ReactNode`。
 
+文档工作区同样提供 `details?: ReactNode`；其能力限制、转换风险、节选范围和保存事实保持常驻。
+
 组件自带文案及调用方提供的教师界面文案使用简短教师语言，不出现“意图”“宿主”“回调”“受控”等实现术语；组件职责与实现约束写入契约文档，开发者接入文档不受教师界面文案规则限制。
 
 “回执未确认”“状态未确认”“示例”、冲突版本、禁用原因、部分完成与未完成范围等影响判断的必要事实必须常驻，不计作可删减的解释性边界提示，也不得移入折叠说明。缩短文案不改变状态来源、动作可用性、统计或可访问关联。
@@ -547,6 +605,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
+- `AgentDocumentWorkspace`：长稿章节阅读、受控文本编辑与批注意图；格式能力、保存和历史由宿主提供。`MathContent` 为既有数学阅读示例，通用公式可通过 RootFormula / MathML / DraftMathPreview 放入章节内容；数学显示不等于格式转换、计算或校验。
 - `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。

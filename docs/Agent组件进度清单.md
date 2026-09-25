@@ -15,7 +15,7 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/17/18/21/26/27 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
 
@@ -82,7 +82,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 25 | 执行与追踪 | 执行确认 | AgentExecutionConfirmation（P/agent-semantic-components.tsx） | 仅 Inline | inline | Workspace 已验证 | [Workspace #7](https://github.com/Ashrum/ole-school-workbench/pull/7)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 保持确认范围与原请求关联，核对未知回执不重复提交。 |
 | 26 | 执行与追踪 | 任务进度 | AgentExecutionProgress（P/agent-semantic-components.tsx）＋ AgentTaskProgress 步骤（P/agent-components.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)、[Prism #34](https://github.com/Ashrum/intelligence-prism-ui/pull/34)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 随 18 验证整体／阶段／步骤的等待、未知、部分完成及历史快照。 |
 | 27 | 执行与追踪 | 执行结果 | AgentExecutionResult（P/agent-semantic-components.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)、[Prism #34](https://github.com/Ashrum/intelligence-prism-ui/pull/34)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 随 18 验证成功／剩余范围与失败明细；unknown 仅查询原请求。 |
-| 28 | 内容与成果物 | 文档工作区 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx）、Textarea（B/textarea.tsx）、MathContent（P/math-content.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | P1 · 第 8 项 | 下一批第 4 项：提供长稿、格式能力、版本和保存状态承载；不承诺完整 Word 编辑。 |
+| 28 | 内容与成果物 | 文档工作区 | AgentDocumentWorkspace（P/agent-document-workspace.tsx）；复用 Card / Field / Textarea / Badge / Collapsible，接受宿主数学内容 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | **未合并**：`feat/agent-document-workspace`，main 基线 `fcc929d`；测试 `tests/agent-document-workspace.test.mjs`；日志与报告 `.sites-runtime/document-workspace/REPORT.md` | P1 · 第 8 项 | 待 Supervisor 独立 Review 与 Workspace 轻量验证；只读核对 main `edbcbb1`：P04 可局部验证校对稿阅读，完整长稿推荐复用 local-start 五环节提纲对象；浏览器与真实服务未验证。 |
 | 29 | 内容与成果物 | 演示文稿工作区 | 复用起点：Card（B/card.tsx）；通用幻灯片编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用幻灯片编辑器；先定义缩略、版本与能力承载，编辑／生成由适配器提供 |
 | 30 | 内容与成果物 | 图像查看与画布 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用查看和定位；裁切、组合、图层与图像生成不能推定已支持 |
 | 31 | 内容与成果物 | 音频与转写 | 复用起点：Card（B/card.tsx）；通用波形／转写编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用波形／转写编辑器；播放、转写、编辑能力分别声明 |
@@ -114,12 +114,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 33 | 除 03、13、15、17、18、21、25、26、27 外的各项 |
-| 组件候选 | 0 | 无 |
+| 未开始 | 32 | 除 03、13、15、17、18、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 28（未合并任务分支） |
 | Workspace 已验证 | 9 | 03、13、15、17、18、21、25、26、27；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-下一步：**28 文档工作区**。下一批固定顺序：**28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
+下一步：**28 文档工作区候选的独立 Review 与 Workspace 验证范围收敛**。下一批固定顺序：**28 文档工作区 → 04 文件输入 → 11 集合篮**。优先在 P04 既有对象与受控事实下完成轻量验证；若某项确实无法在 P04 验证，先记录缺口与所需最小验证范围，再由 Supervisor 收敛任务。18 已完成 P04 试验台浏览器验证，证据见本仓 PR #36（`49e44e5`）及 Workspace PR #11（`dce7e78`）。
 
 每轮更新对应行的实现文件、两态／视图、最高已达状态、PR／提交及下一步，同时更新汇总。Workspace 验证应补录路径、操作、实际文案／状态、三主题、窄容器、长中文与公式、返回恢复及未验证范围；缺失证据写“未核实”。示例回执、静态测试、运行内恢复均不升级为真实服务接入。
