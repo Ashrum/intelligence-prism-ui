@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 内容输入 v0.1 · 设计候选（2026-09-25）
+
+语义 06 `AgentContentInput` 声明 **Inline + 专用扩展内容**：Inline 提供轻量字段输入、字符数与限制提示；Workspace 提供长文本／结构化字段组、可选当前草稿公式预览和独立已提交版本。`density="compact"` 只收紧间距，保留常驻标签、校验失败、来源、保存未知与冲突。
+
+Composer 输入给 Agent 的指令；06 输入任务材料／正文；28 AgentDocumentWorkspace 阅读编辑已有文稿。06 复用 Textarea、InputGroup、Field 等既有控件，值、校验、保存和 URL 抓取事实来自宿主；提交与展开仅发请求，不持久化或自动保存。Markdown 保留安全原文，不解析 HTML；URL 摘录不暗示已抓取全文。公式通过可选插槽组合 DraftMathPreview，06 本身不依赖 temml。
+
+组件页 `/next/components/agent-components#content-input` 提供题干与答案（公式预览、一处格式失败）和讲评要点（三字段、URL 来源“未抓取全文”）两组标注示例，覆盖 inline / workspace / compact 与 320px 容器。公开 API 和复用依据见[内容输入契约](docs/component-contracts.md#内容输入-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+未合并候选位于 `feat/agent-content-input`，基于 main `921397f`；进度清单第 06 项为“组件候选”。五项日志、测试清单与 Workspace 本地 main `f1d8847` 的只读轻量验证方案见 `.sites-runtime/content-input/REPORT.md`。本轮未写 `.git`、未启动开发服务、未修改 Workspace；浏览器、Workspace 接线和真实服务未验证，待 Supervisor 独立 Review。
+
 ## 审核队列 v0.1 · 设计候选（2026-09-25）
 
 语义 16 `AgentReviewQueue` 声明 **Inline + 专用扩展内容**：Inline 呈现待办计数、宿主顺序的重点条目和“下一项”；Workspace 复用 DataRecordTable、FilterBar、Checkbox 和 Badge，提供完整列表、受控筛选／排序、选择与批量动作。`density="compact"` 为独立密度，保留回执未确认、过期、他人处理中及异常原因。

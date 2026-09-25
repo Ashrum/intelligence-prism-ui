@@ -54,6 +54,63 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 内容输入 v0.1
+
+2026-09-25 设计候选，语义 **06 内容输入**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-content-input` 导入 `AgentContentInput` 及同文件公开类型；沿用现有 Agent 组件页，不新增目录条目。
+
+### 复用检索与职责边界
+
+- `Textarea` 提供长文本受控编辑；`InputGroup` 组合字符数与格式身份；`Field / FieldLabel` 保留常驻固定标签；Card、Prism Badge / Button 和 RecordDetails 提供既有外框、状态、动作与说明。组件不新增 CSS 或视觉令牌，阅读／编辑使用 `text-read-body`，完整工作区正文宽度最多 40em。
+- **AgentComposer 输入给 Agent 的指令**，例如“按以下材料生成讲评”；**06 输入任务材料／正文**，例如题干、参考答案、讲评要点、粘贴文章。06 不继承 Composer 的发送／停止、空白禁发或快捷键规则，不以正文提交假装发送指令。
+- **28 AgentDocumentWorkspace 负责已有文稿的阅读、章节编辑、批注与历史**；06 负责把材料输入任务。已有提纲不因含 Textarea 就改归 06。P04 校对题干可在 17 的受控编辑插槽中组合 06，但复核动作、回执和依据保护继续归 17／宿主。
+- `DraftMathPreview` 可作当前草稿预览；06 本身不导入它、Temml 或数学解析器，非数学接入无该依赖。预览失败继续显示当前原文，不修改字段、校验、保存或提交事实。
+- 沿用 28 的安全字符串边界：Markdown 以原文输入，段落／列表等允许范围由宿主的 `limits.format` 与 `validation` 描述；不解析 HTML、嵌入、脚本、Markdown 链接，不自动清洗或改写正文。这里是安全文本编辑能力，不声称已实现富文本或 Markdown 渲染器。来源 URL 也仅作转义文字展示，不导航或抓取。
+
+### 公开 API
+
+`AgentContentInputProps`：
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `title / inputId` | 必填 `string / string` | title 为可读材料名称；inputId 引用宿主已有任务材料，不显示为教师文案或 DOM ID，不建立新权威对象。所属任务、会话、请求轮次由宿主闭包关联 |
+| `content` | 必填 `AgentContentInputContent` | 单个 `AgentContentField`，或 `{type:'structured',fields:readonly AgentContentField[]}`。保持给定字段顺序，两态显示同一受控字段，不截断或自动从旧版初始化 |
+| `baseVersion / draftVersion` | 可选 `string` | 宿主给定基准版／草稿版，适用时传入；缺省不推断。新材料可以没有基准版，已有材料的版本合法性由宿主提交前重验 |
+| `save` | 可选 `AgentContentSave` | `{state,description?,autoSave?}`；state 为 `unsaved / saved-draft / submitted / conflict / unknown`，文案为未保存／已保存草稿／已提交／冲突／状态未确认。缺省 unknown；`autoSave` 只展示明确提供的自动保存事实文字，不调度保存 |
+| `validation` | 可选 `AgentContentValidation` | 整份材料的宿主结果；字段结果另见下表。输入、展开、预览或点击均不清除或生成检查结果 |
+| `conflict` | 可选 `{baseVersion,currentVersion,description}` | 冲突版本与原因常驻，输入仍保留可编辑；此项存在或 save.state 为 conflict 时阻断提交，等待宿主核对／更新。组件不提供覆盖写入或自行合并 |
+| `submitted` | 可选 `{version,fields:readonly {label,value}[]}` | 独立的已提交快照；两态均标明版本，workspace 另列只读原文，绝不用于初始化／覆盖当前草稿。省略时不伪造已提交版 |
+| `renderPreview` | 可选 `(field:AgentContentDraftValue)=>ReactNode` | 仅 workspace 对每个当前字段调用，参数为 `{id,label,type,value}` 的值快照。可返回 null；被动、已获准披露的内容，不引入提交旁路。组合 DraftMathPreview 时保持失败原文；预览带边界说明时不再重复 notice |
+| `readOnlyReason / describedBy` | 可选 `string / string` | 整份材料只读原因常驻，阻断字段修改与提交；describedBy 接收外部已存在的说明 ID，例如 17 的状态说明。缺字段 onChange 也只读 |
+| `onSubmit / submitLabel / submitDisabledReason` | 可选回调 / 默认“提交内容” / 可选原因 | 发出 `AgentContentSubmitIntent={inputId,baseVersion?,draftVersion?,fields:readonly {id,label,type,value}[]}`；内容快照不含回调，不能通过改写请求载荷回写输入。缺 onSubmit 无入口。禁用原因常驻且处理器也阻断；缺输入身份、字段空 ID 或重复 ID 同样阻断 |
+| `view / density` | `inline / workspace` 默认 inline；`default / compact` 默认 default | compact 仅密度，不是第三种业务态；可与两种 view 组合 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void / ()=>void` | Inline 仅有 onExpand 时显示“展开编辑”；workspace 可返回原位置。只改变宿主呈现，不保存／提交／清空；返回焦点和草稿恢复由宿主负责 |
+| `notice / details` | 可选 `string / ReactNode` | 最多一条常驻边界提示；补充说明放默认收起的“说明”，不是藏错误的入口 |
+
+`AgentContentField` 与辅助类型：
+
+| 字段 | 类型与语义 |
+| --- | --- |
+| `id / label / type / value` | 均必填；id 在材料内唯一稳定，label 始终可见。type 为 `text / markdown / url-excerpt`；value 是完整受控字符串，空字符串也保留 |
+| `onChange?` | `(value:string)=>void`，原样回传当前输入，不 trim、清洗、截断、合并或持久化；缺省为只读。每字段独立回调方便宿主接入已有 reducer |
+| `placeholder? / description?` | 可选占位与字段说明；placeholder 不替代常驻标签 |
+| `limits?` | `{maxLength?:number,format?:string}`，仅展示宿主约定的非负字符上限与格式要求；字符数按当前值 Unicode code point 计数（不是字形簇）。不写原生 maxLength／pattern／required，不据长度或格式计算有效性，超限输入仍完整保留；其他长度口径由宿主在 description／validation 说明 |
+| `validation?` | `{state:'invalid',message:string}` 或 `{state:'valid'/'unknown',message?:string}`；只有 invalid 设置 aria-invalid 并公告失败。缺省不显示校验通过；输入后仍保持所传结果，直到宿主替换 |
+| `source?` | 粘贴为 `{kind:'paste',label}`；URL 为 `{kind:'url',label,url,fetch?:{state,description?}}`。来源由宿主提供，不从剪贴板、输入内容或 URL 猜测；使用粘贴来源时必须标清实际出处，不能冒充原文读取 |
+| `source.fetch.state` | `not-fetched / fetching / excerpt / full / failed / unknown`；分别显示未抓取全文／正在抓取·全文尚未确认／已取得摘录·未抓取全文／已抓取全文／抓取失败／全文抓取状态未确认。仅显式 full 才显示全文事实；缺 fetch 或 URL 摘录缺 source 均不升级事实 |
+| `readOnlyReason?` | 此字段的只读原因，常驻并与控件关联；字段和全局只读保护均在事件处理器中生效 |
+
+限制／校验是事实显示，不自行制定业务提交规则。需因 invalid、等待回执、保存状态不明或权限等阻断提交时，宿主传 `submitDisabledReason`；unknown 保存状态本身可能是新材料缺记录，不被推定成一次正在提交的请求。冲突保护遵循 §8.2：有冲突事实时不提交。宿主负责当前身份、权限、版本、格式校验、原请求核对及幂等，不以回调返回值或 Promise 成功当作保存回执。不持久化、不自动保存、不内置离开拦截；未可靠保存时的离开选择与恢复依 §8.3 由宿主实现。
+
+### 三种用法与验证边界
+
+- **inline**：材料名称、当前草稿与保存事实 → 单字段／少量字段、字符数、限制、校验与来源 → 提交请求 → 可选展开。所有传入字段均保留；宿主按轻量用途控制字段数量。
+- **workspace**：同源长文本编辑与结构化字段组 → 可选当前草稿预览 → 独立已提交版本只读内容 → 提交／返回。编辑、预览与阅读使用 16/28，长中文换行，正文最多 40em。
+- **compact**：收紧间距，完整保留标签、格式失败、来源／抓取未知、冲突版本和禁用原因；不折叠关键判断信息、不缩小字号。
+
+`/next/components/agent-components#content-input` 有题干与答案（当前公式预览＋一处外部格式失败）、讲评要点（三字段“目标／活动／检查”，含 URL 摘录“未抓取全文”）两组固定示例。每组展示 inline / workspace / compact、320px 开关、共享草稿及手动保存状态；点击提交只显示请求反馈。公式预览中的解析错误与宿主格式校验分别呈现。
+
+未合并组件候选在 `feat/agent-content-input`，基于 main `921397f`；测试、五项日志及 Workspace 本地 main `f1d8847` 的只读核对与两种公式方案见 `.sites-runtime/content-input/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace。SSR／回调／解析检查不等于浏览器视觉、键盘、读屏器、Workspace 接线或真实服务验收，待 Supervisor 独立 Review。
+
 ## 对比查看器两态 v0.1
 
 2026-09-24 设计候选，语义 15，支持 **Inline + 专用扩展内容**。检索与复用依据：当前 `AgentChangeReview` 已提供逐项比较、采用/保留及预览插槽；`32382e9:components/prism-next/agent-components.tsx` 已有组级 `AgentChangeSet`，本轮仅回收此组合与类型，扩展冲突和受控应用。没有新增目录条目、差异算法、承载骨架或 Workspace 业务类型。
@@ -1004,6 +1061,8 @@ import { Badge } from "@/components/prism-next/badge"
 
 ### 界面文案原则
 
+内容输入同样提供 `details?: ReactNode`。固定标签、长度／格式约束、校验失败、保存未知、冲突版本、来源／抓取状态及禁用原因在两态两密度常驻；当前草稿与已提交版分别标明。组合公式预览时不重复边界提示。
+
 审核队列同样提供 `details?: ReactNode`。回执未确认、过期、修改未保存、他人处理中、责任人、优先级理由、异常和批量禁用原因均常驻；一条 notice 之外的补充边界说明收起。不把内部 ID 或“宿主／意图／回调”等术语显示给教师。
 
 对象选择器同样提供 `details?: ReactNode`；推荐依据及来源、加载／空／错误、不可选原因、失效选择、上限与禁用原因在两态两密度常驻，不移入说明。常驻边界提示最多一条。
@@ -1034,7 +1093,8 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
 - `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
 - `AgentDocumentWorkspace`：长稿章节阅读、受控文本编辑与批注意图；格式能力、保存和历史由宿主提供。`MathContent` 为既有数学阅读示例，通用公式可通过 RootFormula / MathML / DraftMathPreview 放入章节内容；数学显示不等于格式转换、计算或校验。
-- `AgentComposer` / `AgentTaskProgress`：受控输入、提交/停止事件与外部步骤状态。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
+- `AgentContentInput`：语义 06 的任务材料／正文输入，复用 Textarea / InputGroup / Field，可选组合当前草稿公式预览；不承担已有文稿的完整阅读编辑（28）。详见“内容输入 v0.1”。
+- `AgentComposer` / `AgentTaskProgress`：给 Agent 的受控指令输入、提交/停止事件与外部步骤状态。Composer 不冒充内容编辑器，题干、答案与粘贴文章交给 06。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
 - `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
