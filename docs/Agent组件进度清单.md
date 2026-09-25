@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-25。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 03/04/11/14/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 02/03/04/11/14/17/18/21/26/27/28 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-25 语义 02 已在 `feat/agent-scope-builder`（main 基线 `b716d7e`）实现为组件候选；尚未合并或进行 Workspace 浏览器验证。公开契约、两组示例与行为测试已提供；验证证据见 `.sites-runtime/scope-builder/REPORT.md`。
 
 - 2026-09-25 语义 14 按 Product Owner 本轮交接更新为 Workspace 已验证：本仓 [Prism #50](https://github.com/Ashrum/intelligence-prism-ui/pull/50)（`4d234c5`）；[Workspace #18](https://github.com/Ashrum/ole-school-workbench/pull/18)；示例练习单题：可读编号、版本、可见范围、答案确认展开。支持 inline / workspace / compact，两态声明为 Inline + 通用扩展容器。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -64,7 +66,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 序号 | 族 | 语义名 | 实现组件名与文件 | 两态声明 | 支持的视图（inline/workspace/compact） | 状态 | 证据（PR 链接或提交） | 覆盖矩阵优先级 | 下一步 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 01 | 范围与对象 | 对象选择器 | 复用起点：Combobox（B/combobox.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 对象身份、受控选中与搜索状态；对象和合法候选由宿主提供 |
-| 02 | 范围与对象 | 范围构建器 | 复用起点：TextbookRangePicker（P/textbook-range-picker.tsx）、Tree（P/tree.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 教材范围已有实现；其他范围用受控字段组合，不内置权限和跨班规则 |
+| 02 | 范围与对象 | 范围构建器 | AgentScopeBuilder（P/agent-scope-builder.tsx）；TextbookRangePicker、TextbookDirectory / Tree、FilterBar、Calendar 插槽组合 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并任务分支 `feat/agent-scope-builder`，main 基线 `b716d7e`；测试 `tests/agent-scope-builder.test.mjs`；五项与只读 Workspace 方案 `.sites-runtime/scope-builder/REPORT.md` | PO 2026-09-25 批准：下一批第 2 项 | 待 Supervisor 独立 Review；Workspace 只读核对 `a09071d`，P04 排重／模糊页更适合 08，建议新页关联范围入口轻量接入；浏览器与真实服务未验证 |
 | 03 | 范围与对象 | 上下文摘要 | AgentContextSummary（P/agent-context-summary.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 2 项 | 保持四事实独立；随 18/21 验证来源、版本和返回路径。 |
 | 04 | 输入与导入 | 文件输入 | AgentFileInput（P/agent-file-input.tsx）；复用 Input / Button / Card / Progress / Collapsible | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #45](https://github.com/Ashrum/intelligence-prism-ui/pull/45)（`7bf305b`）；[Prism #46](https://github.com/Ashrum/intelligence-prism-ui/pull/46)（`01fae8e`，compact 单行）；[Workspace #15](https://github.com/Ashrum/ole-school-workbench/pull/15)、[Workspace #16](https://github.com/Ashrum/ole-school-workbench/pull/16)；Agent 输入区：示例材料为已有资料、本机文件仅检查、上传未接入 | P1 · 第 9 项 | 下一步：按已批准顺序 02 范围构建器 → 19 指标摘要 → 01 对象选择器 → 16 审核队列 → 06 内容输入。真实服务未验证。 |
 | 05 | 输入与导入 | 采集扫描 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 可复用页预览和质检呈现；设备采集、OCR、质量判定不属于组件 |
@@ -122,8 +124,8 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 29 | 除 03、04、11、13、14、15、17、18、21、25、26、27、28 外的各项 |
-| 组件候选 | 0 | — |
+| 未开始 | 28 | 除 02、03、04、11、13、14、15、17、18、21、25、26、27、28 外的各项 |
+| 组件候选 | 1 | 02（任务分支未合并，不代表 main 已包含） |
 | Workspace 已验证 | 13 | 03、04、11、13、14、15、17、18、21、25、26、27、28；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |

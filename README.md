@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 范围构建器 v0.1 · 设计候选（2026-09-25）
+
+语义 02 `AgentScopeBuilder` 声明 **Inline + 专用扩展内容**：Inline 汇总核心范围并提供少量微调；Workspace 编辑全部维度、显示校验与影响规模、请求重置或恢复默认。`density="compact"` 为独立密度，保留冲突、越权、不可用和重新确认提示。
+
+维度、合法选项、受控值、校验、汇总与影响规模由宿主提供；受限维度只披露许可原因／计数。选择范围不授予权限，未指定范围不等于使用全部授权数据。确认只发请求，关键条件或版本变化后重新确认。复用 TextbookRangePicker、TextbookDirectory / Tree、FilterBar、Calendar / Popover 及既有 Card、Badge、Button、Collapsible，不新增选择控件、依赖、视觉令牌或目录条目，目录保持 80 项。
+
+组件页 `/next/components/agent-components#scope-builder` 提供学情分析与备课资料两组固定示例，涵盖三种用法、越权班级、不可用资料目录、320px、长中文与公式。公开 API 见[范围构建器契约](docs/component-contracts.md#范围构建器-v01)。
+
+未合并候选位于 `feat/agent-scope-builder`，基于 main `b716d7e`；第 02 项为“组件候选”。五项日志与只读核对 Workspace main 的接入方案见 `.sites-runtime/scope-builder/REPORT.md`。P04 的排重／模糊页属于执行约束，更适合 08；新页范围入口方案待确认。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器与真实服务未验证，候选待 Supervisor 独立 Review。
+
 ## 对象查看器 v0.1 · 设计候选（2026-09-25）
 
 语义 14 `AgentObjectViewer` 声明 **Inline + 通用扩展容器（领域内容可专用）**：Inline 呈现身份／版本、1–2 个关键分区摘要和局部展开；Workspace 提供完整分区、受控目录、版本切换和关联对象。`density="compact"` 为独立密度，保留历史只读、受限原因和敏感确认。只有宿主提供可读编号时才显示编号，不显示内部长 ID。
