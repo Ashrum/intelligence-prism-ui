@@ -88,6 +88,8 @@ export type AgentMaterialPackProps = AgentRecordViewProps & {
   /** Complete, authorized collection; categories and within-category order come from the page. */
   items: readonly AgentMaterialPackItem[]
   categories: readonly AgentMaterialPackCategory[]
+  /** Page-supplied count for categoryId=null; omitted or null means unknown. */
+  uncategorizedCount?: number | null
   summary: AgentMaterialPackSummary
   save?: AgentMaterialPackSave
   changes?: readonly string[]
@@ -112,7 +114,7 @@ const reasonOf = (value: string | undefined, fallback: string) => value === unde
 const titleOf = (item: AgentMaterialPackItem) => item.title.trim() || "未命名素材"
 
 /** Presentation and requests only. No resource contents, business draft or saved state is owned here. */
-export function AgentMaterialPack({ pack, items, categories, summary, save = { state: "unknown" }, changes, reuseRecords,
+export function AgentMaterialPack({ pack, items, categories, uncategorizedCount = null, summary, save = { state: "unknown" }, changes, reuseRecords,
   actions = {}, readOnlyReason, onIntent, preview, renderPreview, view = "inline", density = "default", onExpand, onBack,
   notice = "整理与确认不代表已保存或已在其他对象中使用。", details }: AgentMaterialPackProps) {
   const id = useId(), full = view === "workspace", compact = density === "compact"
@@ -267,7 +269,7 @@ export function AgentMaterialPack({ pack, items, categories, summary, save = { s
   }
 
   const sections = [...categories.map(category => ({ ...category, members: items.filter(item => item.categoryId === category.id) })),
-    ...(items.some(item => item.categoryId === null) ? [{ id: null, title: "未分类", count: null, members: items.filter(item => item.categoryId === null), lockedReason: undefined }] : []),
+    ...(items.some(item => item.categoryId === null) ? [{ id: null, title: "未分类", count: uncategorizedCount, members: items.filter(item => item.categoryId === null), lockedReason: undefined }] : []),
     ...(referenceBlock ? [{ id: null, title: "待核对分类", count: null, members: items.filter(item => item.categoryId !== null && !categories.some(category => category.id === item.categoryId)), lockedReason: referenceBlock }] : []),
   ].map((category, categoryIndex) => {
     const anchor = `${id}-category-${categoryIndex}`

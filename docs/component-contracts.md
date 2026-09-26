@@ -82,6 +82,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | --- | --- | --- |
 | `pack` | 必填 `AgentMaterialPackIdentity` | `{id,title,version:{id,label},baseVersion:{id,label},snapshot?}`。请求携带三种身份，界面只显示可读 title/label；snapshot 存在即历史只读，空串同样有效 |
 | `items / categories` | 必填只读数组 | 完整且已获准披露的集合。分类顺序由 categories 给出；各分类内保持 items 输入顺序；categoryId=null 为“未分类”。重复/空资源或分类身份、未知分类引用阻断请求，不静默丢失无法归类的素材 |
+| `uncategorizedCount` | 可选 `number / null`，默认 null | 页面提供 categoryId=null 的“未分类”数量；有效非负整数显示“数量：N 项”（保留 0），未提供、null 或无效数量显示“未知：分类数量。”。组件不根据条目计数；仅存在未分类条目时显示该分组。“待核对分类”数量仍为未知 |
 | `summary` | 必填 `AgentMaterialPackSummary` | `{count:number/null,sourceComposition:string/null,license:string/null,availability:string/null}`。总数、来源构成、许可和可用性摘要均来自页面；不以可见条数、分类合计或资源类型推算。0 保留；非整数、负数、非有限计数归未知 |
 | `save / changes` | 可选 `AgentMaterialPackSave` / 只读 string 数组 | save 复用 12 的状态词表：unsaved/saving/saved-draft/submitted/conflict/unconfirmed/error/unknown，默认 unknown；description 可选。saving/conflict/unconfirmed 阻断整理与复用；submitted 阻断重复确认。changes 未传为未知，[] 为未记录变化，不比较数组生成关键变化 |
 | `reuseRecords` | 必填 `readonly AgentMaterialReuseRecord[] / null` | 由页面提供在哪些对象、版本、位置被引用。null 表示覆盖未知，[] 表示所提供范围内暂无记录；整理、预览、确认、复用请求不添加或删除既有记录 |

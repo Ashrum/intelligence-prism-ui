@@ -70,6 +70,24 @@ test('external zero/unknown totals are never replaced with loaded length or cate
   }
 });
 
+test('SSR: uncategorized count uses the page fact, including zero, without changing unresolved categories', () => {
+  const rows = [item('loose', '未分类素材', null), item('unresolved', '待核对素材', 'missing-category')];
+  for (const mode of modes) for (const uncategorizedCount of [7, 0]) {
+    const text = textOf(htmlFor({ ...mode, items: rows, uncategorizedCount }));
+    assert.ok(text.includes(`未分类数量：${uncategorizedCount} 项`));
+    assert.match(text, /待核对分类未知：分类数量。/);
+    assert.doesNotMatch(text, /未分类数量：1 项|未分类未知：分类数量。/);
+  }
+});
+
+test('SSR: omitted, null or invalid uncategorized count stays unknown despite supplied items', () => {
+  for (const mode of modes) for (const extra of [{}, ...[null, NaN, Infinity, -1, 1.5].map(uncategorizedCount => ({ uncategorizedCount }))]) {
+    const text = textOf(htmlFor({ ...mode, items: [item('loose', '未分类素材', null)], ...extra }));
+    assert.match(text, /未分类未知：分类数量。/);
+    assert.doesNotMatch(text, /未分类数量：/);
+  }
+});
+
 test('unknown metadata merges into one line per object; null reuse never claims no reuse', () => {
   for (const mode of modes) {
     const html = htmlFor({ ...mode, pack: { ...pack, version: { ...pack.version, label: '' }, baseVersion: { ...pack.baseVersion, label: '' } }, save: { state: 'unknown' }, changes: undefined,
