@@ -10,7 +10,7 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 | --- | --- |
 | 未开始 | 尚未推进该语义组合；已有基础控件、领域组件或 Workspace 本地组合仅列为复用起点，不算完成。 |
 | 组件候选 | 本仓库已有该语义的实现与测试，尚未完成 Workspace 浏览器验证；未合并候选必须注明任务分支，不表示 main 已包含。 |
-| Workspace 已验证 | 已引入并在 `/teacher/agent/workspace` 浏览器验证；P04 示例验证不等于真实服务接入。当前二十四项的证据来源及未核实边界见下节。 |
+| Workspace 已验证 | 已引入并在 `/teacher/agent/workspace` 浏览器验证；P04 示例验证不等于真实服务接入。当前二十五项的证据来源及未核实边界见下节。 |
 | 真实业务接入 | 接入真实服务；本阶段所有项均未达到。 |
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
@@ -19,7 +19,7 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 
 ## 核查基线与证据
 
-- 2026-09-26 语义 36 本轮实现为组件候选：`AgentResourceRetriever`（`P/agent-resource-retriever.tsx`），任务分支 `feat/agent-resource-retriever`，基于 main `5036bd1`，尚未提交或合并。两态、compact、独立命中/预览/读取/本次参考/成果引用、许可、部分失败、总数未知和分组说明；示例明确标注，读取/申请不模拟成功。五项日志、实际 diff、测试数字和 Workspace main `7ee2bf6` 的只读轻量方案见 `.sites-runtime/resource-retriever/REPORT.md`。未验证：浏览器三主题、窄容器视觉、键盘/触屏/读屏器、Workspace 接线、真实检索/许可/读取服务；待 Supervisor 独立 Review 与 PO 决定。
+- 2026-09-26 语义 36 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentResourceRetriever`（`P/agent-resource-retriever.tsx`），本仓 [Prism #76](https://github.com/Ashrum/intelligence-prism-ui/pull/76)（`f694621`）；[Workspace #31](https://github.com/Ashrum/ole-school-workbench/pull/31)；“资源与产出 → 来源”：范围“当前会话的本机来源记录”，许可/版本/格式等未知，未查询时命中未确认；查询“二次函数”→“已命中 · 本机标题匹配”；用户预览显示既有三道只读题，读取仍未确认；读取/移出禁用并给一次原因，无申请许可；无匹配→“没有匹配的本机来源记录”、预览卸载；返回焦点回到“资源与产出”。采用“现有来源区域 + 本机标题查询”（Supervisor 取舍），不接外部检索。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。未验证：P04 回归、会话隔离与刷新（仅自动化）、三主题、窄屏、读屏器、真实检索/许可/读取服务。遗留：预览已打开时仍显示“预览：状态未确认”，易误解；未知字段较多。待 PO 决定：真实教材/资源服务的数据来源与接入范围。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
 - 2026-09-26 语义 22 按 Product Owner 本轮交接更新为 Workspace 已验证：`AgentSuggestionSet`（`P/agent-suggestion-set.tsx`），本仓 [Prism #74](https://github.com/Ashrum/intelligence-prism-ui/pull/74)（`58ea539`）；[Workspace #30](https://github.com/Ashrum/ole-school-workbench/pull/30)；已完成批阅记录“教学行动建议（通用示例）”：两条 R03 既有默认方案标为固定通用示例、依据未提供、确定性未知，依据/来源合并展示；选择 1 项后采纳→“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；展开后选择与状态保留，返回焦点回到入口。不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”）。支持 inline / workspace / compact，两态声明为 Inline + 专用扩展内容。未验证：比较两条、调整字段、驳回原因、三主题、窄屏、读屏器、真实建议与采纳服务。遗留：“未确认前不能重复操作。”在各禁用按钮处重复出现；大量“未提供/未知”字段偏重。待 PO 决定：是否加“评审用：模拟外部事件”回执以展示已采纳态。本轮仅更新文档，不产生新的浏览器复验或真实服务接入结论。
 
@@ -122,7 +122,7 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 33 | 内容与成果物 | 成果物输出 | AgentArtifactOutput（P/agent-artifact-output.tsx）；复用 Card / Field / Select / Badge / Button / RecordDetails，QuestionPrint 预览插槽 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #66](https://github.com/Ashrum/intelligence-prism-ui/pull/66)（`727ac33`）；[Workspace #26](https://github.com/Ashrum/ole-school-workbench/pull/26)；P04 去向：PDF/Word 不支持并说明原因、无下载入口；组卷页打印预览以 QuestionPrint 作预览插槽 | PO 2026-09-26 批准：本批第 2 项 | 下一步：10 候选选择器。当前文件下载事实由宿主提供；未验证：实际纸面打印；真实服务未验证。 |
 | 34 | 内容与成果物 | 图形关系工作区 | 复用起点：Card（B/card.tsx）；通用节点／连线编辑器未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 未核实有通用节点／连线编辑器；图表引擎不等于关系编辑能力，不引入统一 AST |
 | 35 | 内容与成果物 | 结构化内容工作区 | AgentStructuredContent（P/agent-structured-content.tsx）；Tree / Collapsible / Button / Input 组合 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #68](https://github.com/Ashrum/intelligence-prism-ui/pull/68)（`48021ee`）；[Workspace #27](https://github.com/Ashrum/ole-school-workbench/pull/27)；备课提纲对象“正文 / 结构”视图：键盘完成上移、改名、新增同级/子节点、升级、删除待提交，正文目录随结构投影，固定历史只读，返回当前后改动保留；会话内状态、标注未保存。未验证：拖拽、触屏、390/320 窄屏、200% 放大、读屏器、真实保存服务。遗留：连续新增的节点默认名称都是“新活动”，易混淆；历史只读时能力行仍显示“支持”（下方有“历史版本只读”说明）；对话中的提纲卡暂无结构摘要（仅对象内提供）。 | PO 2026-09-26 批准：本批第 3 项 | 下一步：10 候选选择器（本批剩余顺序：10 → 22 → 36） |
-| 36 | 教学资源与素材 | 资源检索器 | AgentResourceRetriever（P/agent-resource-retriever.tsx）；Card / 固定标签 Input / FilterBar / Badge / Button / RecordDetails 组合 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 未合并分支 `feat/agent-resource-retriever`，基于 main `5036bd1`；组件页 `#resource-retriever`、`tests/agent-resource-retriever.test.mjs`；五项与只读 Workspace 方案见 `.sites-runtime/resource-retriever/REPORT.md` | PO 2026-09-26 委派：本批最后一项；矩阵 B03/D03/E02/F02 | Supervisor 独立 Review；PO 决定现有来源记录承载方案。Workspace/真实服务/浏览器尚未验证。 |
+| 36 | 教学资源与素材 | 资源检索器 | AgentResourceRetriever（P/agent-resource-retriever.tsx）；Card / 固定标签 Input / FilterBar / Badge / Button / RecordDetails 组合 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | 本仓 [Prism #76](https://github.com/Ashrum/intelligence-prism-ui/pull/76)（`f694621`）；[Workspace #31](https://github.com/Ashrum/ole-school-workbench/pull/31)；“资源与产出 → 来源”：范围“当前会话的本机来源记录”，许可/版本/格式等未知，未查询时命中未确认；查询“二次函数”→“已命中 · 本机标题匹配”；用户预览显示既有三道只读题，读取仍未确认；读取/移出禁用并给一次原因，无申请许可；无匹配→“没有匹配的本机来源记录”、预览卸载；返回焦点回到“资源与产出”。采用“现有来源区域 + 本机标题查询”（Supervisor 取舍），不接外部检索。未验证：P04 回归、会话隔离与刷新（仅自动化）、三主题、窄屏、读屏器、真实检索/许可/读取服务。遗留：预览已打开时仍显示“预览：状态未确认”，易误解；未知字段较多。待 PO 决定：真实教材/资源服务的数据来源与接入范围。 | PO 2026-09-26 批准：本批第 7 项（最后一项）；矩阵 B03/D03/E02/F02 | 本批已全部登记为 Workspace 已验证；下一批待 PO 确认。 |
 | 37 | 教学资源与素材 | 素材提取器 | 复用起点：DocumentRegionViewer（P/document-region-viewer.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 选择片段和来源定位可复用；提取、裁剪、转换服务不在组件内实现 |
 | 38 | 教学资源与素材 | 素材包 | 复用起点：Card（B/card.tsx）、DataRecordTable（P/data-display.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 组合分类、排序和来源引用；沿用资产身份，不另造一套资料库 |
 | 39 | 学科工具 | 交互演示器 | 复用起点：Field（B/field.tsx）；领域交互插件未核实 | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；0 步骤，按需再定 | 领域演示由插件／适配器提供，按移动端可靠能力声明支持范围 |
@@ -147,12 +147,12 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
 | 未开始 | 17 | 除 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、22、25、26、27、28、33、35、36 外的各项 |
-| 组件候选 | 1 | 36（未合并分支 `feat/agent-resource-retriever`） |
-| Workspace 已验证 | 24 | 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、22、25、26、27、28、33、35；浏览器证据独立核实边界见上文 |
+| 组件候选 | 0 | 无 |
+| Workspace 已验证 | 25 | 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、22、25、26、27、28、33、35、36；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。22 建议集已登记为 Workspace 已验证，承载点为已完成批阅记录“教学行动建议（通用示例）”；两条 R03 既有默认方案为固定通用示例，采纳后仅显示“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”），是否加“评审用：模拟外部事件”回执待 PO 决定。36 资源检索器本轮为未合并组件候选；下一步为 Supervisor 独立 Review，并按报告由 PO 决定 Workspace 现有来源区域的轻量验证接线。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。22 建议集已登记为 Workspace 已验证，承载点为已完成批阅记录“教学行动建议（通用示例）”；两条 R03 既有默认方案为固定通用示例，采纳后仅显示“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”），是否加“评审用：模拟外部事件”回执待 PO 决定。36 资源检索器已登记为 Workspace 已验证，承载点为“资源与产出 → 来源”；采用“现有来源区域 + 本机标题查询”（Supervisor 取舍），不接外部检索；真实教材/资源服务的数据来源与接入范围待 PO 决定。本批（08 → 33 → 35 → 07 → 10 → 22 → 36）已全部登记为 Workspace 已验证；下一批待 PO 确认。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
