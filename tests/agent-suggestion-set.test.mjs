@@ -23,6 +23,19 @@ const envelope = { suggestionSetId: base.suggestionSet.id, baseVersion: base.sug
 const modes = [{}, { view: 'workspace' }, { density: 'compact' }, { view: 'workspace', density: 'compact' }];
 const htmlFor = extra => render(h(AgentSuggestionSet, { ...base, ...extra }));
 const textOf = html => html.replace(/<[^>]*>/g, '');
+const articlesOf = html => [...html.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)].map(match => match[0]);
+// Preserve nested button wrappers when locating each complete SSR action row.
+function actionRowsOf(html) {
+  const stack = [], rows = [];
+  for (const match of html.matchAll(/<\/?div\b[^>]*>/g)) {
+    if (!match[0].startsWith('</')) stack.push({ start: match.index, action: match[0].includes('data-suggestion-actions=""') });
+    else {
+      const entry = stack.pop();
+      if (entry?.action) rows.push(html.slice(entry.start, match.index + match[0].length));
+    }
+  }
+  return rows;
+}
 const freeze = value => { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.freeze(value); Object.values(value).forEach(freeze); } return value; };
 
 // Inspect the real rendered control handlers, not a parallel intent implementation.
@@ -59,16 +72,81 @@ test('SSR inline/workspace and compact preserve independent states and unknown f
   }
 });
 
-test('identical evidence and sources merge independently, and every title appears once even in comparison', () => {
+test('identical evidence and sources merge independently, partial references use readable titles and each heading appears once', () => {
   for (const mode of modes) {
     const third = { ...second, id: 'opaque-third', title: '另一种依据', evidence: { summary: '另一个证据摘要' } };
     const html = htmlFor({ ...mode, suggestions: [first, second, third], selectedIds: [first.id], comparison: { selectedIds: [first.id, second.id], open: true } });
     const text = textOf(html);
     assert.equal(text.split(first.evidence.summary).length - 1, 1);
     assert.equal(text.split(first.source).length - 1, 1);
-    for (const title of [first.title, second.title, third.title]) assert.equal(text.split(title).length - 1, 1, title);
-    assert.match(html, /适用建议 1、2/); assert.match(html, /适用建议 1、2、3/);
-    assert.match(html, /共用说明：依据 1 · 来源 1/);
+    const headings = [...html.matchAll(/<h4\b[^>]*>(.*?)<\/h4>/g)].map(match => textOf(match[1]));
+    for (const title of [first.title, second.title, third.title]) assert.equal(headings.filter(heading => heading.endsWith(title)).length, 1, title);
+    assert.match(html, /来源 · 适用全部建议/);
+    const articles = articlesOf(html);
+    for (const article of articles.slice(0, 2)) {
+      assert.ok(article.includes(`共用说明：依据（${first.title}、${second.title}）`));
+      assert.doesNotMatch(article, /共用说明：[^<]*来源/);
+    }
+    assert.doesNotMatch(articles[2], /共用说明/);
+    assert.doesNotMatch(html, /依据 1|来源 1|opaque-/);
+  }
+});
+
+test('all-suggestion facts omit row copies but preserve accessible shared fact associations across themes and modes', () => {
+  for (const theme of ['light', 'paper', 'dark']) for (const mode of modes) for (const unknown of [false, true]) {
+    const suggestions = unknown ? [first, second].map(item => ({ ...item, evidence: null, source: null })) : [first, second];
+    const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': theme }, h(AgentSuggestionSet, { ...base, ...mode, suggestions })));
+    assert.doesNotMatch(html, /共用说明/);
+    assert.match(html, /依据 · 适用全部建议/); assert.match(html, /来源 · 适用全部建议/);
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+    for (const article of articlesOf(html)) {
+      const refs = article.match(/aria-describedby="([^"]+)"/)[1].split(' ');
+      assert.ok(refs.some(ref => ref.endsWith('-evidence-0')));
+      assert.ok(refs.some(ref => ref.endsWith('-source-0')));
+      for (const ref of refs) assert.ok(ids.includes(ref));
+    }
+    assert.equal(textOf(html).split(unknown ? '依据未提供' : first.evidence.summary).length - 1, 1);
+  }
+});
+
+test('partial source groups use readable names and never assume shared facts apply to restricted entries', () => {
+  for (const mode of modes) {
+    const third = { ...second, id: 'opaque-third', title: '不同来源建议', source: '另一次记录' };
+    const html = htmlFor({ ...mode, suggestions: [first, second, third] });
+    const articles = articlesOf(html);
+    for (const article of articles.slice(0, 2)) {
+      assert.ok(article.includes(`共用说明：来源（${first.title}、${second.title}）`));
+      assert.doesNotMatch(article, /共用说明：[^<]*依据/);
+    }
+    assert.doesNotMatch(articles[2], /共用说明/);
+    const withRestricted = htmlFor({ ...mode, suggestions: [first, second, restricted] });
+    assert.doesNotMatch(withRestricted, /适用全部建议/);
+    assert.doesNotMatch(articlesOf(withRestricted)[2], /共用说明|data-suggestion-actions/);
+  }
+});
+
+test('SSR item action row contains adoption, dismissal, workspace adjustment and appended slot; fields remain outside', () => {
+  for (const mode of modes) for (const open of [false, true]) for (const comparing of [false, true]) {
+    const item = { ...first, adjustment: { open, fields: [{ id: 'opaque-field', label: '安排', type: 'text', value: '先核对' }] } };
+    const seen = [], extra = { ...mode, suggestions: [item, second, restricted], comparison: { selectedIds: [item.id, second.id], open: comparing },
+      itemActions: suggestion => { seen.push(suggestion); return h('button', { type: 'button' }, `打开已建立的教学行动：${suggestion.title}`); } };
+    const html = htmlFor(extra), articles = articlesOf(html), rows = actionRowsOf(html);
+    assert.deepEqual(seen, [item, second]); assert.equal(rows.length, 2);
+    for (const [index, row] of rows.entries()) {
+      assert.match(row, /class="flex min-w-0 flex-wrap items-start gap-2"/);
+      assert.match(row, />采纳<.*>驳回</s);
+      assert.ok(row.includes(`打开已建立的教学行动：${seen[index].title}`));
+      assert.ok(row.indexOf('>驳回<') < row.indexOf('>打开已建立的教学行动'));
+      assert.ok(articles[index].includes(row));
+      assert.doesNotMatch(row, /<input|<label|提交调整|收起调整/);
+    }
+    if (mode.view === 'workspace') {
+      assert.ok(articles[0].indexOf('驳回原因（可选）') < articles[0].indexOf('data-suggestion-actions'));
+      assert.equal(rows[0].includes('>调整<'), !open);
+      if (open) assert.match(articles[0], /调整建议[\s\S]*提交调整[\s\S]*收起调整/);
+    } else assert.doesNotMatch(rows[0], />调整</);
+    assert.doesNotMatch(articles[2], /打开已建立的教学行动|data-suggestion-actions/);
+    assert.equal(htmlFor({ ...extra, itemActions: undefined }), htmlFor({ ...extra, itemActions: () => null }));
   }
 });
 
@@ -281,8 +359,13 @@ test('two labelled demo groups provide comparison, adjustment, narrow layout, ma
   for (const purpose of ['teaching', 'learning']) {
     const html = render(h(SuggestionSetExample, { purpose, narrow: true }));
     for (const text of ['固定示例', 'max-w-[320px]', 'data-suggestion-set-view="inline"', 'data-suggestion-set-view="workspace"', 'data-suggestion-set-density="compact"', '建议比较', '调整草稿', '载入操作回执', '载入任务记录']) assert.ok(html.includes(text), `${purpose}: ${text}`);
-    assert.doesNotMatch(textOf(html), /意图|宿主|回调|适配器|opaque-/);
-    if (purpose === 'teaching') for (const text of ['已采纳', '已驳回', '已过期', '受限', '未确认', '<mfrac>']) assert.ok(html.includes(text), text);
+    // Keep node boundaries: adjacent “驳回” and “调整草稿” are not the term “回调”.
+    assert.doesNotMatch(html.replace(/<[^>]*>/g, ' '), /意图|宿主|回调|适配器|opaque-/);
+    if (purpose === 'teaching') {
+      for (const text of ['已采纳', '已驳回', '已过期', '受限', '未确认', '<mfrac>', '附加操作示例', '尚未接入创建服务']) assert.ok(html.includes(text), text);
+      assert.equal(html.split('>据此建立教学行动（示例）<').length - 1, 1);
+      assert.match(actionRowsOf(html)[0], /<button[^>]*disabled[^>]*>据此建立教学行动（示例）<\/button>/);
+    }
     else { assert.match(html, /未使用个人学情/); assert.match(html, /已调整/); assert.match(html, /依据未提供/); }
     await writeFile(new URL(`ssr-${purpose}.html`, runtime), html);
   }

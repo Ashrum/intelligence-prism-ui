@@ -80,6 +80,8 @@ export type AgentSuggestionSetProps = AgentRecordViewProps & {
   disabledReason?: string
   onIntent?: (intent: AgentSuggestionIntent) => void
   onBack?: () => void
+  /** Page-owned actions for visible entries; page owns permissions, guards and receipts. */
+  itemActions?: (suggestion: AgentSuggestionEntry) => ReactNode
   notice?: string
 }
 
@@ -92,7 +94,7 @@ const receiptLabels = { idle: "", pending: "等待回执", received: "已收到�
 const fieldsIdentified = (fields: readonly AgentSuggestionField[]) => fields.length > 0 && fields.every(field => !!field.id.trim()) && new Set(fields.map(field => field.id)).size === fields.length
 const fieldValues = (fields: readonly AgentSuggestionField[]) => Object.fromEntries(fields.map(field => [field.id, field.value]))
 
-type SharedFact = { kind: "evidence" | "source"; key: string; indexes: number[]; label: string; anchor: string }
+type SharedFact = { kind: "evidence" | "source"; key: string; indexes: number[]; label: string; anchor: string; all: boolean }
 const evidenceKey = (value: AgentSuggestionEvidence | null) => JSON.stringify([value?.summary ?? null, value?.target?.conclusionId ?? null, value?.target?.version ?? null, value?.unavailableReason ?? null])
 /** Exact fact equality only. Different evidence targets, versions or availability never merge. */
 function sharedFacts(items: readonly AgentSuggestion[], id: string): SharedFact[] {
@@ -104,7 +106,7 @@ function sharedFacts(items: readonly AgentSuggestion[], id: string): SharedFact[
       groups.set(key, [...(groups.get(key) ?? []), index])
     })
     return [...groups].filter(([, indexes]) => indexes.length > 1).map(([key, indexes], index) => ({
-      kind, key, indexes, label: `${kind === "evidence" ? "依据" : "来源"} ${index + 1}`, anchor: `${id}-${kind}-${index}`,
+      kind, key, indexes, label: `${kind === "evidence" ? "依据" : "来源"}（${indexes.map(i => titleOf(items[i])).join("、")}）`, anchor: `${id}-${kind}-${index}`, all: indexes.length === items.length,
     }))
   })
 }
@@ -158,7 +160,7 @@ function SuggestionField({ field, readOnly, onChange }: { field: AgentSuggestion
 
 /** Semantic 22: controlled action proposals. Selection, adoption and task creation are independent. */
 export function AgentSuggestionSet({ title, suggestionSet, suggestions, selectedIds, receipt, comparison, adopt, confirm, disabledReason, onIntent, onExpand, onBack,
-  notice, details, view = "inline", density = "default" }: AgentSuggestionSetProps) {
+  itemActions, notice, details, view = "inline", density = "default" }: AgentSuggestionSetProps) {
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   const selected = new Set(selectedIds), records = new Map(suggestions.map(item => [item.id, item]))
   const identityReason = !suggestionSet.id.trim() || !suggestionSet.version.trim() || suggestions.some(item => !item.id.trim()) || records.size !== suggestions.length ? "建议或版本信息未确认。" : undefined
@@ -244,15 +246,21 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
           {!shared.some(fact => fact.kind === "evidence") && <div><dt className="text-ui-action">依据</dt><dd><SuggestionEvidence evidence={item.evidence} onOpen={openEvidence(item.evidence, [index])} /></dd></div>}
           {!shared.some(fact => fact.kind === "source") && <div><dt className="text-ui-action">来源</dt><dd className="break-words">{textOr(item.source, "未确认")}</dd></div>}
         </dl>
-        {!!shared.length && <p className="text-ui-hint">共用说明：{shared.map(fact => fact.label).join(" · ")}</p>}
+        {shared.some(fact => !fact.all) && <p className="break-words text-ui-hint">共用说明：{shared.filter(fact => !fact.all).map(fact => fact.label).join(" · ")}</p>}
         {item.task?.description && <p className="break-words text-ui-hint">{item.task.description}</p>}
         {(itemReason(item) !== undefined || item.status.state === "dismissed" && item.status.reason) && <p id={`${anchor}-choice-reason`} className="break-words text-ui-hint">{(itemReason(item) ?? (item.status.state === "dismissed" ? item.status.reason : undefined)) || "当前不可修改此建议。"}</p>}
         {workspace && comparison && <Label htmlFor={`${anchor}-compare`} className="min-h-10 whitespace-normal pointer-coarse:min-h-11">
           <Checkbox id={`${anchor}-compare`} checked={compareIds.includes(item.id)} disabled={compareReason !== undefined} aria-label={`加入比较：${itemTitle}`} aria-describedby={compareReason !== undefined ? `${id}-compare-reason` : undefined} onCheckedChange={checked => compareSelection(item, checked)} />加入比较
         </Label>}
-        <div className="flex flex-wrap items-start gap-2">
+        {workspace && item.dismiss?.reason !== undefined && <div className="min-w-0 space-y-2">
+          <Label htmlFor={`${anchor}-dismiss`}>驳回原因（可选）</Label><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
+            onChange={event => { if (block === undefined && item.dismiss?.disabledReason === undefined && status !== "dismissed") emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "reason", reason: event.currentTarget.value }) }} />
+        </div>}
+        <div role="group" aria-label={`建议操作：${itemTitle}`} data-suggestion-actions="" className="flex min-w-0 flex-wrap items-start gap-2">
           {item.adopt && <SuggestionButton label={`采纳：${itemTitle}`} reason={adoptReason(item)} reasonId={reasonId(adoptReason(item))} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [item.id], scope: "item" })}>采纳</SuggestionButton>}
           {workspace && adjustment && !adjustment.open && <SuggestionButton label={`调整：${itemTitle}`} reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("start")}>调整</SuggestionButton>}
+          {item.dismiss && <SuggestionButton label={`驳回：${itemTitle}`} reason={dismissBlock} reasonId={reasonId(dismissBlock)} onClick={() => emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "submit", ...(item.dismiss?.reason !== undefined ? { reason: item.dismiss.reason } : {}) })}>驳回</SuggestionButton>}
+          {itemActions?.(item)}
         </div>
         {workspace && adjustment?.open && <section aria-label="调整建议" className="min-w-0 space-y-3">
           <p className="text-ui-action">调整草稿</p>
@@ -260,11 +268,6 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
           {adjustment.fields.map(field => <SuggestionField key={field.id} field={field} readOnly={adjustBlock !== undefined} onChange={value => adjust("change", { ...fieldValues(adjustment.fields), [field.id]: value })} />)}
           <div className="flex flex-wrap items-start gap-2"><SuggestionButton reason={submitAdjustBlock} reasonId={reasonId(submitAdjustBlock)} onClick={() => adjust("submit")}>提交调整</SuggestionButton><SuggestionButton reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("cancel")}>收起调整</SuggestionButton></div>
         </section>}
-        {item.dismiss && <div className="min-w-0 space-y-2">
-          {workspace && item.dismiss.reason !== undefined && <><Label htmlFor={`${anchor}-dismiss`}>驳回原因（可选）</Label><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
-            onChange={event => { if (block === undefined && item.dismiss?.disabledReason === undefined && status !== "dismissed") emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "reason", reason: event.currentTarget.value }) }} /></>}
-          <SuggestionButton label={`驳回：${itemTitle}`} reason={dismissBlock} reasonId={reasonId(dismissBlock)} onClick={() => emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "submit", ...(item.dismiss?.reason !== undefined ? { reason: item.dismiss.reason } : {}) })}>驳回</SuggestionButton>
-        </div>}
         {actionReasons.map((reason, reasonIndex) => <p key={reasonIndex} id={`${anchor}-action-reason-${reasonIndex}`} className="break-words text-ui-hint">{reason || "当前不可操作。"}</p>)}
       </>}
     </article>
@@ -280,7 +283,7 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
     </header>
     {!!facts.length && <section aria-label="共用依据与来源" className="min-w-0 space-y-3">{facts.map(fact => {
       const item = suggestions[fact.indexes[0]] as AgentSuggestionEntry
-      return <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1"><p className="text-ui-action">{fact.label} · 适用建议 {fact.indexes.map(index => index + 1).join("、")}</p>
+      return <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1"><p className="break-words text-ui-action">{fact.all ? `${fact.kind === "evidence" ? "依据" : "来源"} · 适用全部建议` : fact.label}</p>
         {fact.kind === "evidence" ? <SuggestionEvidence evidence={item.evidence} onOpen={openEvidence(item.evidence, fact.indexes)} /> : <p className="whitespace-pre-wrap break-words text-ui-hint">{textOr(item.source, "来源未确认")}</p>}
       </div>
     })}</section>}

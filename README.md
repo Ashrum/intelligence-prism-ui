@@ -2,6 +2,12 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 建议集布局与逐条附加操作（2026-09-26）
+
+分支 `fix/suggestion-set-layout`：22 `AgentSuggestionSet` 的共用依据／来源适用于全部建议时仅在组级显示，部分适用时用建议可读标题标注；采纳、调整与驳回统一横向排列并随容器换行。新增可选 `itemActions(suggestion)`，在该建议操作行内追加页面提供的操作，受限条目不调用；组件页演示一次已标注、未接创建服务的教学行动入口。
+
+API 与页面责任见[建议集契约](docs/component-contracts.md#建议集-v01)；五项验证、实际 diff 与 Workspace 接线要点见 `.sites-runtime/suggestion-layout/REPORT.md`。本轮不写 `.git`、不启动服务；浏览器三主题／窄屏视觉及 Workspace 接入待独立验收。
+
 ## Agent 文案整理第三轮（2026-09-26）
 
 分支 `fix/agent-copy-polish-3`：24 移除未知／空下一步的空标题；12 新增可选 `openItemLabel`（默认“查看详情”，Workspace 可传“查看题目”）；05 合并全页共同未知字段、部分已知采集时间逐页显示；23 按步骤归并未知；28 移除内部文档 ID 展示。16/19 已由 PR #63 修复，本轮补回归；38 焦点与默认分类名、05 补采后限制为宿主层，待 Workspace。
