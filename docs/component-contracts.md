@@ -54,6 +54,70 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 采集扫描 v0.1
+
+2026-09-26 设计候选，语义 **05 采集扫描**，声明 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-capture-scan.tsx`；组件页 `/next/components/agent-components#capture-scan`；分支 `feat/agent-capture-scan`，基于 main `3f41b9a`。不增加 80 项目录条目。
+
+### 复用检索与 04 / 18 / DocumentRegionViewer 边界
+
+- 已检索 `AgentFileInput`、`AgentExceptionHandler`、`DocumentRegionViewer`、`AgentStructureArranger` 的页序近邻及 coss Card / Label / Select / Progress / Collapsible。复用 Card、常驻 Label / Select、Progress、Prism Badge / Button navigation 和 RecordDetails；拖拽只是增强，上移／下移／指定位置使用既有按钮与选择控件。没有修改 coss 或既有组件 API。
+- **04 文件输入处理“选择已有文件并带入”；05 处理“采集得到的页集合及其页序与质量”。** 一个 PDF 文件可以对应多页，一页也可能来自再次采集；文件队列顺序不充当页序。04 的类型／大小检查、上传状态不能推定 05 的清晰度或页集合完整性。
+- **18 异常处理器**承载异常依据、影响、处置方式及原处置请求回执。05 提供被点名页面的补采／替换请求；不是异常识别器，不自动把新页标为异常已解决，不恢复批阅任务。P04 可由 18 的补采入口打开同一 05 页集合，第 3 页的质量和处置事实分别回传。
+- **DocumentRegionViewer**负责原稿区域、缩放及定位。05 不复制其内核；`inspect-page` 可交给宿主原稿查看器，或通过惰性的 `renderPreview` 放入该组件。demo 在用户查看后才挂载人工区域和公式示意。查看不改变质量、读取、引用或后续使用事实。
+- 设备选择、相机／扫描仪访问、上传、OCR、图像处理、质量判定、页集合存储、权限和版本校验均在页面／服务。未从 Workspace 迁入 Store、路由、Runtime 或私有类型。
+
+### 公开 API
+
+从 `@/components/prism-next/agent-capture-scan` 导入 `AgentCaptureScan` 和同文件类型 `AgentCaptureScanProps / AgentCaptureSet / AgentCapturePage / AgentCaptureQuality / AgentCaptureUsage / AgentCaptureAction / AgentCaptureRequest / AgentCaptureReceipt / AgentCaptureSave / AgentCaptureScanIntent / AgentCapturePreview`。
+
+| 属性 | 契约 |
+| --- | --- |
+| `captureSet` | `{id,title,version:{id,label},snapshot?}`，必填；title / label 为可读名称，ID 只用于引用与意图。snapshot 出现即历史只读；不推算最新版本 |
+| `pages` | 当前完整页集合，`readonly AgentCapturePage[]`，数组顺序就是页序；不是分页文件队列。空／重复 ID 阻断请求并提示核对；不静默去重 |
+| `capturedCount / totalPages` | 页面给出的已采集页数、原材料总页数，必填 `number` 或 `null`；null／无效数字显示未知，零有效。不以数组长度推定总数、完整采集或上传完成；删除页也不自动缩小原材料总页数 |
+| `qualitySummary` | 必填 `string` 或 `null`，只显示外部摘要；不从图片、页数或排序计算清晰度、置信度及补采需求 |
+| `receipt / save?` | 采集／上传回执必填；保存状态缺省 unknown，两者独立。仅 running 且外部进度为有限 0–100 时显示进度条；100% 不转成 succeeded |
+| `actions?` | `{capture?,confirm?}`，动作均为 `{disabledReason?}`；不声明则不显示。disabledReason 出现即禁用（空值仍使用兜底说明）。confirm 只确认这个版本的页集合，不提交 OCR、批阅或发布 |
+| `onIntent?` | 所有业务操作只发版本绑定请求；缺回调时已声明操作禁用。组件不修改页、页序、质量、版本或回执；调用方返回值不作为执行事实 |
+| `readOnlyReason?` | 出现即阻断变更；历史、采集 unknown／unconfirmed／received／running、保存 saving／conflict／unconfirmed 同样阻断变更。查看、展开与返回仍可独立提供；能力不是最终授权 |
+| `view / density` | 默认 `inline / default`；支持 `workspace` 和独立 `compact`。compact 只收紧间距，不缩字或隐藏质量、未知、失败、删除影响及禁用原因 |
+| `inlineLimit / onExpand?` | 默认 2，有限值取整且至少 1，其余回退 2；有展开能力才缩略，保留所有非清晰、补采需求未知或需补采、后续使用未知或已使用、锁定页以及当前预览页。无 onExpand 显示全列表且无假入口；传出原按钮供宿主恢复焦点 |
+| `preview? / renderPreview?` | `preview={setId,versionId,pageId,requestedBy:'user',state:'loading'\|'ready'\|'error',message?}`。页面只能在用户发出 inspect-page 后激活；当前集合／版本／页身份和查看能力均匹配，且 ready 时才调用渲染函数或挂载 previewUrl。加载／错误仅显示状态，不预加载大图；版本变更、页移除或撤销查看能力立即卸载。renderPreview 参数为 `(page,{view,density})`，优先于 URL |
+| `onBack? / notice? / details?` | Workspace 返回只导航；默认一条常驻边界提示，可替换，组合时可传空串由外层提供共同提示；补充说明默认折叠。关键事实不能移入 details。关闭大图由宿主清空 preview，不另建任务或提交 |
+
+`AgentCapturePage` 必填 `id / name / source:string|null / capturedAt:string|null / quality / needsRecapture:boolean|null / usage`。name 使用“第 3 页”等可读身份，移动后原名不改；当前位置由列表和位置选择器表达。`quality.state=clear / blurry / skewed / cropped / glare / unknown` 对应清晰／模糊／倾斜／缺角／反光／未知，可带 `reason`；质量与 `needsRecapture` 分别由页面给出，不因模糊等状态自动制造补采结论。
+
+`usage={state:'unused'|'unknown'}` 或 `{state:'used',label,removalImpact}` 是独立后续使用事实。used 的删除影响在两态两密度常驻；删除按钮为“申请删除”，只请求页面确认。unknown 禁止删除，used 缺影响说明也禁止删除；不把预览或上传完成映射为 used。已用于后续处理的替换同样由宿主核对影响和版本，组件不覆盖旧材料。
+
+可选 `thumbnail:ReactNode / thumbnailUrl / previewUrl`：Workspace 先用 thumbnail 插槽，否则显示懒加载的小图；Inline 用页名、质量和查看入口保持轻量。大图只能使用上述 preview 激活路径。URL 及插槽须已获当前披露授权，插槽只展示内容和视图交互，不触发采集、处理、轮询、自动播放或保存。
+
+可选 `lockedReason` 保护本页变更；`actions={inspect?,recapture?,remove?,reorder?}` 逐项声明能力。页序变更会核对受影响区间各页的 reorder 和锁定结果，不能绕过一个锁定页调整其位置；最终授权与业务规则仍由页面／服务检查。
+
+`receipt.state=idle / unknown / received / running / succeeded / failed / unconfirmed`。除 idle／unknown 外必填 `operation:'capture'|'upload'`、`request:{id,label}`，可带 progress / reason。unknown 可带 reason。采集／上传失败保留页集合和独立质量；新采集或补采能力须由页面明确提供，不自动重试。回执未确认仅保留查看与返回，原请求查询由页面或既有 18 承担，本组件未增加查询／重试动作。`save.state=unsaved / saving / saved / conflict / error / unconfirmed / unknown`，可带 description；保存未知不冒充已保存。
+
+### 意图与确认约定
+
+所有 `onIntent` 载荷均含 `setId / versionId`。
+
+| type | 额外载荷与职责 |
+| --- | --- |
+| `capture-request` | 页面选择实际设备或上传方式；组件不打开相机或文件选择器 |
+| `recapture-request` | `pageId`；页面负责补采／替换及影响确认，等待外部页面与质量结果 |
+| `reorder` | `pageId / toIndex / via:'up'|'down'|'drag'|'to-position'`；toIndex 为移除原页后最终插入的零基位置。非整数、越界、原位和跨锁定页无请求 |
+| `remove-page` | `pageId / requiresConfirmation`；used 为 true，unused 为 false。页面必须重查最新 usage、权限和版本，再展示并确认影响；不能把这个布尔值当成确认回执 |
+| `inspect-page` | `pageId`；交给已有原稿查看器，或页面响应后传 preview 和惰性插槽／URL |
+| `confirm-set` | 确认整个指定版本；空集合禁用。质量是否允许继续、总数未知是否可接受由页面动作能力和具体原因决定，不内置业务质量门槛 |
+
+拖拽使用本实例临时视图引用，不传业务 ID；换集合／版本／pages 引用或结束拖拽后旧操作失效。上移／下移和常驻标签的位置选择器提供键盘／触屏等效路径。所有请求仍需宿主检查当前会话、集合版本、范围、权限与幂等；确认或切换视图不生成保存或完成事实。
+
+### 文案、示例与验证边界
+
+说明／来源／质量原因／禁用原因按去除尾部句号或分号后的相同文字合并，同文只显示一次，所有受影响控件引用同一说明 ID。全体适用时不逐页复述，部分适用用可读页名；页标题仅一次。每个对象的未知字段合并为一行，标点不拼成“。；”，内部 ID 与实现术语不进入教师界面。
+
+`#capture-scan` 提供四页试卷作答（第 3 页模糊需补采、第 2 页倾斜、第 4 页已被批阅使用、总页数已知）和板书照片（长中文、总数／质量未知、采集回执未确认）两组固定示例。三种用法同源，320px 开关；用户查看后组合 DocumentRegionViewer 的人工页与公式。采集／补采／确认只反馈请求；排序与删除只调整示例草稿，used 删除须经页面 AlertDialog 再确认。独立示例回执控件不随请求或时间推进，不连接相机、OCR、上传或保存服务。
+
+五项日志、回调／SSR 测试数字、实际 diff 及只读核对 Workspace P01／P04 的最小接入方案见 `.sites-runtime/capture-scan/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace；浏览器三主题／窄屏／键盘／实际拖拽与触屏、读屏器、Workspace 接入、真实设备与处理服务均未验收，待 Supervisor 独立 Review 与 PO 视觉确认。
+
 ## 路径与优先级 v0.1
 
 2026-09-26 设计候选，语义 **24 路径与优先级**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-path-priority` 导入 `AgentPathPriority` 及同文件公开类型。分支 `feat/agent-path-priority`，基于 main `10b1839`；不新增 80 项目录条目。
@@ -1068,6 +1132,8 @@ groups={[{
 
 ### 复用检索与职责
 
+04 处理“选择已有文件并带入”，05 `AgentCaptureScan` 处理“采集得到的页集合及其页序与质量”。文件上传成功不推定扫描清晰、页序正确或页数完整；需要页级管理时共享来源引用并组合 [采集扫描](#采集扫描-v01)，不把文件队列直接当作扫描页集合。
+
 已检索 coss Input／Button／Card／Progress／Collapsible、AgentComposer 插槽和 `examples/teacher-use-cases/parsing-workspace.tsx:59` 的 `readFiles`。Input 的 `nativeInput` 保留原生 `<input type="file">`；Prism Button 的 navigation 尺寸复用已有触屏目标。现有解析示例按扩展名和大小检查、图片建立临时预览、PDF 仅登记元数据，包含示例状态与本机保存，因此不整体迁入。缺口是可跨场景使用的受控文件队列、动作和独立事实呈现，不新增目录条目或上传服务。
 
 ### 公开 API
@@ -1432,6 +1498,8 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 
 `AgentExceptionRecord={ id, state, description, scope, basis, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
 
+05 `AgentCaptureScan` 可承接本组件点名的补采／替换页入口；采集页质量与异常处置回执分别由页面提供。发出补采请求或查看大图不代表异常已解决，不自动恢复任务。
+
 ### 三种用法与 P04 映射
 
 - inline：异常总数＋关键项的类型、范围、已保留部分、当前处置与操作影响；提供展开才可缩略列表，未知时保留全部。原请求关联、未确认、失败和禁用原因始终可见。
@@ -1728,7 +1796,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `AgentCollectionBasket`：受控集合摘要与完整清单，复用 QuestionCard 插槽和可选 QuestionWorkPanel 外壳；汇总、同步、变化与权限来自宿主。TeacherQuestionBasket Provider 与业务逻辑不迁入；去向只发请求。
 - `LearningTaskList` / `MilestoneList`：外部任务与阶段状态。
 - `WorkloadCalendar`：日期索引数值、容量、单位、选中日期和月份。日历不生成任务。
-- `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview，定位或预览不改变证据事实。
+- `DocumentRegionViewer`：文档内容、百分比区域坐标、缩放与选择。不提供扫描识别或 OCR；可放入 AgentEvidenceDrilldown.preview 或 AgentCaptureScan.renderPreview（用户查看后才挂载），定位或预览不改变证据与质量事实。
 - `AgentDocumentWorkspace`：长稿章节阅读、受控文本编辑与批注意图；格式能力、保存和历史由宿主提供。`MathContent` 为既有数学阅读示例，通用公式可通过 RootFormula / MathML / DraftMathPreview 放入章节内容；数学显示不等于格式转换、计算或校验。
 - `AgentStructuredContent`：语义 35，组合 Tree 与独立节点工具，受控增删改名、移动及嵌套；28 编辑正文，12 编排试卷／任务。折叠和选择不等于编辑；节点关系、版本、保存和历史均由宿主提供，详见“结构化内容工作区 v0.1”。
 - `AgentArtifactOutput`：语义 33 的受控输出配置、文件交付与队列／历史呈现；27 报告执行事实，28 承载文稿内容，QuestionPrint 可作打印预览插槽。详见“成果物输出 v0.1”，不内建文件生成或下载服务。
