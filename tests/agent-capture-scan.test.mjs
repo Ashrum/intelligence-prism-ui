@@ -278,3 +278,30 @@ test('production component stays free of device, processing, storage, polling an
   const demo = await readFile(new URL('../components/prism-next/demos/agent-capture-scan.tsx', import.meta.url), 'utf8');
   assert.match(demo, /DocumentRegionViewer/); assert.doesNotMatch(demo, /setTimeout|setInterval|getUserMedia|FileReader|fetch\(/);
 });
+
+test('copy polish 3: repeated unknowns group across the complete collection, mixed times stay with each page', () => {
+  for (const mode of modes) {
+    const rows = [page(1), page(2), page(3)].map(row => ({ ...row, source: null, capturedAt: null }));
+    const html = htmlFor({ ...mode, pages: rows });
+    assert.match(textOf(html), /来源、采集时间：全部页未知。/);
+    assert.equal(count(html, 'data-capture-unknown="pages"'), 1);
+    assert.doesNotMatch(html, /data-capture-unknown="page"/);
+    const mixed = htmlFor({ ...mode, pages: [{ ...rows[0], capturedAt: '上午九点' }, { ...rows[1], capturedAt: '上午九点' }, rows[2]] });
+    assert.equal(count(textOf(mixed), '采集时间：上午九点'), 2);
+    assert.equal(count(textOf(mixed), '未知：采集时间。'), 1);
+    assert.match(textOf(mixed), /来源：全部页未知。/);
+    assert.doesNotMatch(mixed, /采集时间：全部页未知/);
+  }
+  const hiddenKnown = htmlFor({ pages: [{ ...page(1), capturedAt: null }, page(2)], inlineLimit: 1, onExpand() {} });
+  assert.match(hiddenKnown, /未知：采集时间。/); assert.doesNotMatch(hiddenKnown, /全部页未知/);
+  assert.doesNotMatch(htmlFor({ pages: [] }), /全部页未知/);
+  assert.match(htmlFor({ pages: [{ ...page(1), capturedAt: null }] }), /未知：采集时间。/);
+});
+
+test('copy polish 3: received restrictions disappear only when external facts release them', () => {
+  const released = { pages: [page(1)], receipt: { state: 'succeeded', operation: 'capture', request: { id: 'opaque-request', label: '补采请求' } } };
+  const before = htmlFor({ ...released, receipt: { ...released.receipt, state: 'received' } });
+  assert.match(before, /请等待当前采集请求的结果/);
+  assert.doesNotMatch(htmlFor(released), /操作限制/);
+  assert.match(htmlFor({ ...released, pages: [{ ...page(1), actions: { recapture: { disabledReason: '进入处理模糊页后才能补采。' } } }] }), /操作限制：进入处理模糊页后才能补采/);
+});

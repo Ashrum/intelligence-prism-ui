@@ -54,6 +54,17 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## Agent 文案整理第三轮（2026-09-26）
+
+- 12：新增可选 `AgentStructureArrangerProps.openItemLabel?: string`，默认及空白回退“查看详情”，页面可传“查看题目”。只影响按钮文字，`open-item` 能力、禁用保护、原来源与版本载荷不变。
+- 24：Inline 只有实际下一步内容时才显示“下一步建议”标题与列表；null 仍并入未知行，[] 仅显示“暂无下一步建议。”；无效范围继续提示核对，不补造建议。
+- 05：完整传入页集合中，多页共同缺失的同一字段合并为组级“采集时间：全部页未知。”（多个字段用顿号合并）；不根据 Inline 截取结果声称全部未知。单页仍逐页说明；部分已知采集时间逐页显示，剩余页保留未知；全部已知沿用原同文合并。采集完成不会覆盖页面给定的 disabledReason。
+- 23：计划级未知与步骤级未知分开；步骤旁一行“步骤 1：负责人、开始日期、结束日期、资源、依赖未知。”，不重复每个字段的步骤前缀。已知事实、空数组“无”与受阻说明保持。
+- 28：文档标题承载可读身份，保留版本、格式与内容范围；移除可见 `document.id` 和 `data-document-id`，ID 继续只用于请求关联，不加可见 ID 替代属性。
+- 16/19：复核 PR #63 的零计数省略与显式共享样本规则，不改变默认契约。38 的焦点接续与分类默认命名继续由页面负责。
+
+本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
+
 ## 素材包 v0.1
 
 2026-09-26 设计候选，语义 **38 素材包**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-material-pack` 导入 `AgentMaterialPack` 与同文件公开类型。候选位于 `feat/agent-material-pack`，基于 main `54b94a0`；不新增 80 项目录条目。
@@ -301,7 +312,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 ### 文案、示例与验证边界
 
-相同说明和禁用原因按完整文本合并到常驻“计划说明”，标适用步骤序号，控件以 aria-describedby 复用；建议来源按 suggestionId/versionId/label 严格合并，保留原打开目标。标题只有一处；编辑时标题输入替代原标题。未知字段集中一行，已知状态独立呈现，受阻／冲突不移入 details。输入、source、content、milestones、details 均应由页面先做可披露检查；不显示内部 ID 或实现术语。
+相同说明和禁用原因按完整文本合并到常驻“计划说明”，标适用步骤序号，控件以 aria-describedby 复用；建议来源按 suggestionId/versionId/label 严格合并，保留原打开目标。标题只有一处；编辑时标题输入替代原标题。未知字段按计划与步骤分别合并一行，步骤序号只写一次（如“步骤 1：负责人、资源未知。”），已知状态独立呈现，受阻／冲突不移入 details。输入、source、content、milestones、details 均应由页面先做可披露检查；不显示内部 ID 或实现术语。
 
 `/next/components/agent-components#plan-builder`：讲评后两周教学行动（采纳建议来源、日期冲突、工作量过载、一步受阻、一步已有任务、未知负责人、长中文／公式）与学生函数复习计划。两组共享各自的 inline/workspace/compact 页面草稿，含 320px、只读、独立保存／校验／核心确认示例。点击确认或创建入口只反馈请求，独立载入记录与请求分开；列表和日历不表示任务已创建。
 

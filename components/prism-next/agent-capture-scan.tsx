@@ -158,14 +158,19 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
   const previewValid = preview?.requestedBy === "user" && preview.setId === context.setId && preview.versionId === context.versionId
     && previewPage && !pageBlock(previewPage, "inspect")
   if (preview && !previewValid) note("预览对应的页面、版本或查看能力已变化，请重新选择。", -1, "预览")
+  const unknownFields = (page: AgentCapturePage) => [!known(page.source) && "来源", !known(page.capturedAt) && "采集时间", page.quality.state === "unknown" && "质量",
+    !["clear", "unknown"].includes(page.quality.state) && !known(page.quality.reason) && "质量原因", page.needsRecapture === null && "补采需求",
+    page.usage.state === "unknown" && "后续使用", page.usage.state === "used" && !known(page.usage.label) && "后续处理名称"].filter((field): field is string => !!field)
+  // Use the complete supplied collection, never just the inline subset, to claim "all pages".
+  const sharedUnknown = pages.length > 1 ? unknownFields(pages[0]).filter(field => pages.every(page => unknownFields(page).includes(field))) : []
+  const allCapturedAtKnown = pages.every(page => known(page.capturedAt))
   const rows = visible.map(page => {
     const scope = pages.indexOf(page), titleId = `${id}-page-${scope}`
-    note(known(page.source) ? page.source : undefined, scope, "来源"); note(known(page.capturedAt) ? page.capturedAt : undefined, scope, "采集时间")
+    note(known(page.source) ? page.source : undefined, scope, "来源")
+    if (allCapturedAtKnown) note(page.capturedAt, scope, "采集时间")
     note(known(page.quality.reason) ? page.quality.reason : undefined, scope, "质量原因"); note(limitReason(page.lockedReason, "此页暂不可修改。"), scope, "操作限制")
     const impact = page.usage.state === "used" ? note(page.usage.removalImpact, scope, "删除影响") : undefined
-    const pageUnknown = [!known(page.source) && "来源", !known(page.capturedAt) && "采集时间", page.quality.state === "unknown" && "质量",
-      !["clear", "unknown"].includes(page.quality.state) && !known(page.quality.reason) && "质量原因", page.needsRecapture === null && "补采需求",
-      page.usage.state === "unknown" && "后续使用", page.usage.state === "used" && !known(page.usage.label) && "后续处理名称"].filter(Boolean)
+    const pageUnknown = unknownFields(page).filter(field => !sharedUnknown.includes(field))
     const controls = <div className="flex flex-wrap gap-2">
       {pageButton(page, scope, "inspect", "查看大图", () => onIntent?.({ ...context, type: "inspect-page", pageId: page.id }))}
       {pageButton(page, scope, "recapture", page.needsRecapture === true ? "补采此页" : "重新采集／替换", () => onIntent?.({ ...context, type: "recapture-request", pageId: page.id }))}
@@ -211,6 +216,7 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
       {receiptLabel && <p role="status" className="break-words text-ui-hint">{[receiptLabel, "request" in receipt && known(receipt.request.label) && receipt.request.label].filter(Boolean).join(" · ")}</p>}
       {progress !== null && <div className="space-y-2"><p className="text-ui-hint">{operation}进度：{progress}%</p><Progress value={progress} aria-label={`${operation}进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress></div>}
     </header>
+    {sharedUnknown.length > 0 && <p className="break-words text-ui-hint" data-capture-unknown="pages">{sharedUnknown.join("、")}：全部页未知。</p>}
     {unknown.length > 0 && <p className="break-words text-ui-hint" data-capture-unknown="set">未知：{unknown.join("、")}。</p>}
     {renderNotes(-1)}{setControls}
     {!pages.length && <p className="text-ui-hint">尚未提供采集页面。</p>}
@@ -228,6 +234,7 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
           {page.usage.state === "unused" && <Badge variant="outline">尚未用于后续处理</Badge>}
         </div>
         {page.usage.state === "used" && known(page.usage.label) && <p className="break-words text-ui-hint">已用于：{page.usage.label}</p>}
+        {!allCapturedAtKnown && known(page.capturedAt) && <p className="break-words text-ui-hint">采集时间：{page.capturedAt}</p>}
         {pageUnknown.length > 0 && <p className="break-words text-ui-hint" data-capture-unknown="page">未知：{pageUnknown.join("、")}。</p>}
         {renderNotes(scope)}
         {workspace && (page.thumbnail != null ? <div className="max-w-full overflow-x-auto">{page.thumbnail}</div> : page.thumbnailUrl

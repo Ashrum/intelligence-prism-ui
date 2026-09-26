@@ -305,3 +305,17 @@ test('shared metadata does not hide uncertainty, zero or differing unknown field
     }
   }
 });
+
+test('copy polish 3 audit: work record sample appears once while score denominator stays specific', () => {
+  for (const mode of modes) {
+    const size = '6 名有效参与学生 · 24 项有效作答';
+    const groups = [{ id: 'work', label: '本结果指标', sample: { size }, items: [
+      { ...item, sampleSize: undefined, reading: { state: 'available', value: 80, unit: '%' }, denominator: '120 分' },
+      { ...item, id: 'total', label: '有效作答得分合计', sampleSize: undefined, reading: { state: 'available', value: 96, unit: '分' }, denominator: '120 分' },
+    ] }];
+    const text = textOf(htmlFor({ ...mode, groups }));
+    assert.equal(text.split(`样本量：${size}`).length - 1, 1);
+    assert.equal(text.split('分母：120 分').length - 1, 2);
+    assert.match(text, /80/); assert.match(text, /96/);
+  }
+});

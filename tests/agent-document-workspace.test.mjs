@@ -267,3 +267,21 @@ void [all, missing, noReason, noConversion, noRisk, draft, initial, noChange, no
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
 });
+
+test('copy polish 3: document internal identity stays out of markup but remains in requests', () => {
+  const id = 'opaque-document-long-internal-identity';
+  for (const mode of modes) {
+    const document = { ...props.document, id }, calls = [];
+    const extra = { ...mode, document, quickActions: [{ id: 'open', label: '查看原文', capability: 'view' }], onAction: intent => calls.push(intent) };
+    const html = htmlFor(extra);
+    assert.doesNotMatch(html, /opaque-document|data-document-id|文档：/);
+    assert.match(html, /教学提纲/); assert.match(html, /内容范围：全文/);
+    capture(extra).find(node => node.props['data-document-action']).props.onClick();
+    assert.equal(calls[0].documentId, id);
+  }
+});
+test('copy polish 3: absent document identity stays explicit and cannot open a document', () => {
+  const html = htmlFor({ document: { ...props.document, id: '' }, onExpand() {} });
+  assert.match(html, /文档身份未确认/);
+  assert.doesNotMatch(html, /打开文档/);
+});

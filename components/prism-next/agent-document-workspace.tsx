@@ -202,12 +202,12 @@ export function AgentDocumentWorkspace({ document, capabilities, sections, activ
     target?.scrollIntoView({ block: "nearest" })
   }, [activeSection])
 
-  return <Card aria-labelledby={`${id}-title`} data-agent-document-view={view} data-density={density} data-document-id={document.id}
+  return <Card aria-labelledby={`${id}-title`} data-agent-document-view={view} data-density={density}
     data-document-version={document.version} data-historical={historical || undefined} className={`@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
       <h3 id={`${id}-title`} className="break-words text-block-title">{document.title}</h3>
       <p className="break-words text-ui-hint">{historical ? "历史版本（只读）" : "当前状态"} · {historical ? "当时版本" : "当前版本"}：{document.version || "版本未确认"} · {document.format || "格式未确认"}</p>
-      <p className="break-words text-ui-hint">文档：{document.id || "对象未确认"} · 内容范围：{document.contentScope || "范围未确认"}</p>
+      <p className="break-words text-ui-hint">{!document.id.trim() && "文档身份未确认 · "}内容范围：{document.contentScope || "范围未确认"}</p>
       {document.source && <p className="break-words text-ui-hint">来源：{document.source}</p>}
       {historical && document.snapshot && <p className="break-words text-ui-hint">{document.snapshot}</p>}
       {historical && document.currentVersion && <p className="break-words text-ui-hint">当前版本：{document.currentVersion}</p>}

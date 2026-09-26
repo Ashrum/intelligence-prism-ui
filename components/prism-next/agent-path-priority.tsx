@@ -252,9 +252,8 @@ export function AgentPathPriority({ path, items, nextItemIds, blockerItemIds, sa
       {!items.length && <p className="text-ui-hint">暂无路径内容。</p>}
       {items.some(item => item.actions?.reorder) && <div className="p-2 text-ui-hint" {...dropHandlers(items.length)}>可拖至此处移到末尾，也可使用“移到位置”。</div>}
     </section> : <>
-      <section className="min-w-0 space-y-3"><h3 className="text-block-title">下一步建议</h3>{renderList(rows.filter(row => nextIds.includes(row.item.id)), "下一步建议顺序")}
-        {nextItemIds !== null && nextValid && !nextIds.length && <p className="text-ui-hint">暂无下一步建议。</p>}
-      </section>
+      {rows.some(row => nextIds.includes(row.item.id)) && <section className="min-w-0 space-y-3"><h3 className="text-block-title">下一步建议</h3>{renderList(rows.filter(row => nextIds.includes(row.item.id)), "下一步建议顺序")}</section>}
+      {nextItemIds !== null && nextValid && !nextIds.length && <p className="text-ui-hint">暂无下一步建议。</p>}
       {blockerItemIds !== null && blockersValid && <section className="min-w-0 space-y-3"><h3 className="text-block-title">阻塞项</h3>{renderList(rows.filter(row => !nextIds.includes(row.item.id)), "阻塞项顺序")}
         {!blockerIds.length ? <p className="text-ui-hint">无阻塞项。</p> : blockerIds.some(value => nextIds.includes(value)) && <p className="text-ui-hint">下一步中的阻塞项已在上方标明。</p>}
       </section>}

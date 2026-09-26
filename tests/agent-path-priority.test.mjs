@@ -237,3 +237,15 @@ test('component owns no clock, persistence, path calculation or business model; 
   assert.match(source, /active\.revision !== revision \|\| active\.items !== items/);
   assert.match(source, /aria-describedby/);
 });
+
+test('copy polish 3: unknown, empty and invalid next steps have no empty heading or list', () => {
+  for (const density of ['default', 'compact']) for (const nextItemIds of [null, [], ['missing'], [items[0].id, items[0].id]]) {
+    const html = htmlFor({ density, nextItemIds, blockerItemIds: [items[1].id] });
+    assert.doesNotMatch(html, /<h3[^>]*>下一步建议<|aria-label="下一步建议顺序"/);
+    assert.match(html, /可读任务b/);
+    if (nextItemIds === null) assert.match(html, /未知：下一步建议。/);
+    else if (!nextItemIds.length) assert.match(html, /暂无下一步建议。/);
+    else assert.match(html, /范围待核对/);
+  }
+  assert.match(htmlFor(), /<h3[^>]*>下一步建议</);
+});

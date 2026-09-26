@@ -48,8 +48,8 @@ function freeze(value) { if (value && typeof value === 'object' && !Object.isFro
 test('SSR Inline/Workspace and both densities retain identity, core facts, seven step states and boundaries in all themes', () => {
   for (const theme of ['light', 'paper', 'dark']) for (const mode of modes) {
     const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': theme }, h(AgentPlanBuilder, { ...props, ...mode })));
-    for (const text of [plan.title, plan.goal, '高二三班', '草稿二版', '基准一版', '2026-09-28', '2026-10-11', '核对负责人', '计划草稿', '任务未创建', '尚未执行', '已确认', '已创建任务', '进行中', '已完成', '受阻', '步骤 7状态', '缺少再练资料。']) assert.ok(html.includes(text), text);
-    assert.equal(occurrences(html, '未知：'), 1);
+    for (const text of [plan.title, plan.goal, '高二三班', '草稿二版', '基准一版', '2026-09-28', '2026-10-11', '核对负责人', '计划草稿', '任务未创建', '尚未执行', '已确认', '已创建任务', '进行中', '已完成', '受阻', '步骤 7：状态、负责人未知。', '缺少再练资料。']) assert.ok(html.includes(text), text);
+    assert.equal(occurrences(html, 'data-plan-step-unknown'), 7);
     assert.equal(occurrences(html, '计划草稿、已创建任务和实际执行分别记录；调整日期不会自动排程。'), 1);
     assert.doesNotMatch(html, /opaque-|宿主|意图|回调|受控/);
     assert.ok(html.indexOf(steps[0].title) < html.indexOf(steps[1].title));
@@ -57,11 +57,11 @@ test('SSR Inline/Workspace and both densities retain identity, core facts, seven
   }
 });
 
-test('unknown facts stay in a single standing line without guessing current values or treating absent lists as empty', () => {
+test('unknown facts group by plan and step without guessing current values or treating absent lists as empty', () => {
   const html = htmlFor({ plan: { ...plan, goal: null, audience: null, startDate: null, endDate: null, sources: null, version: { id: 'opaque-v', label: '' }, baseVersion: undefined, core: 'unknown', tasks: 'unknown', execution: 'unknown' }, save: undefined, pendingItems: null,
     steps: [{ ...steps[0], description: null, audience: null, resources: null, dependencies: null, source: null, startDate: null, endDate: null, status: { state: 'unknown' } }] });
   assert.equal(occurrences(html, '未知：'), 1);
-  for (const label of ['计划目标', '适用对象', '开始日期', '结束日期', '保存状态', '任务创建', '执行状态', '基准版本', '建议来源', '步骤 1负责人', '步骤 1资源', '步骤 1依赖']) assert.ok(html.includes(label), label);
+  for (const label of ['计划目标', '适用对象', '开始日期', '结束日期', '保存状态', '任务创建', '执行状态', '基准版本', '建议来源', '步骤 1：说明、状态、负责人、对象、开始日期、结束日期、资源、依赖、建议来源未知。']) assert.ok(html.includes(label), label);
   assert.doesNotMatch(html, /任务未创建|尚未执行|已保存草稿|依赖：无|所需资源：无/);
 });
 
@@ -260,4 +260,17 @@ test('omitting the calendar slot keeps milestones and steps without calendar pla
   const calendar = h('div', { 'data-calendar-slot': '' }, '页面提供的日历');
   assert.equal(occurrences(htmlFor({ view: 'workspace', calendar }), '页面提供的日历'), 1);
   assert.doesNotMatch(htmlFor({ view: 'inline', calendar }), /data-calendar-slot/);
+});
+
+test('copy polish 3: long unknown lists stay grouped beside each step and keep known facts', () => {
+  for (const mode of modes) {
+    const rows = [step('a'), step('b')].map(row => ({ ...row, startDate: null, endDate: null, resources: null, dependencies: null }));
+    const html = htmlFor({ ...mode, steps: rows });
+    for (const n of [1, 2]) assert.ok(html.includes(`步骤 ${n}：负责人、开始日期、结束日期、资源、依赖未知。`));
+    assert.equal(occurrences(html, 'data-plan-step-unknown'), 2);
+    assert.doesNotMatch(html, /步骤 \d(?:负责人|资源|依赖)|未知：/);
+    const known = htmlFor({ ...mode, steps: [{ ...rows[0], owner: reference('teacher', '教师甲'), resources: [], dependencies: [] }] });
+    assert.match(known, /负责人：教师甲/); assert.match(known, /所需资源：无/); assert.match(known, /依赖：无/);
+    assert.match(known, /步骤 1：开始日期、结束日期未知。/);
+  }
 });

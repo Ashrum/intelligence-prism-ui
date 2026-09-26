@@ -41,6 +41,8 @@ export type AgentStructureArrangerProps = AgentRecordViewProps & {
   onSelectionChange?: (ids: string[]) => void
   /** Host-supplied common fields/values for the selected items, not inferred by the component. */
   batchAttributes?: readonly AgentArrangementAttribute[]
+  /** Readable open action label; blank values use the default. */
+  openItemLabel?: string
   onBack?: () => void
   notice?: string
 }
@@ -79,7 +81,7 @@ function ArrangementAttributeField({ attribute, anchor, reason, describedBy, edi
 export function AgentStructureArranger({
   structure, items, groups, summary = {}, validation, changes, save = { state: "unknown" }, actions = {}, readOnlyReason,
   onIntent, selectedIds = [], onSelectionChange, batchAttributes = [], view = "inline", density = "default", onExpand, onBack,
-  notice = "编排调整不代表已保存或发布。", details,
+  notice = "编排调整不代表已保存或发布。", details, openItemLabel,
 }: AgentStructureArrangerProps) {
   const id = useId()
   const index = useMemo(() => indexArrangement(items, groups), [items, groups])
@@ -265,7 +267,7 @@ export function AgentStructureArranger({
             aria-describedby={note(reason, scope, undefined, boundary ? undefined : item.id)} onClick={() => move(item.id, target, via)}>{via === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />}{via === "up" ? "上移" : "下移"}</Button>
         })}
           {item.open && <Button type="button" variant="ghost" size="navigation" data-arranger-action="open-item" disabled={!!openReason} aria-describedby={note(openReason, scope, undefined, item.id)}
-            onClick={() => { if (!openReason && item.source) onIntent?.({ ...context, type: "open-item", itemId: item.id, source: { ...item.source } }) }}>查看条目</Button>}
+            onClick={() => { if (!openReason && item.source) onIntent?.({ ...context, type: "open-item", itemId: item.id, source: { ...item.source } }) }}>{openItemLabel?.trim() || "查看详情"}</Button>}
         </div>
         {view === "workspace" && actions.move && groupPicker([item.id], scope, `${anchor}-group`)}
       </Card>

@@ -216,17 +216,18 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
     const linked: (string | undefined)[] = []
     const sharedDescription = !!step.description && (descriptionCounts.get(step.description) ?? 0) > 1
     if (!editing && sharedDescription) linked.push(note(step.description || undefined, scope))
-    if (step.description === null) unknown.push(`${scope}说明`)
+    const stepUnknown: string[] = []
+    if (step.description === null) stepUnknown.push("说明")
     linked.push(note(reason(step.disabledReason, "此步骤暂不可调整。"), scope))
     if (step.status.state === "blocked") linked.push(note(step.status.reason || "受阻原因未知。", scope, "受阻", true))
-    if (step.status.state === "unknown") unknown.push(`${scope}状态`)
-    if (!step.owner) unknown.push(`${scope}负责人`)
-    if (step.audience === null) unknown.push(`${scope}对象`)
-    if (!step.startDate) unknown.push(`${scope}开始日期`)
-    if (!step.endDate) unknown.push(`${scope}结束日期`)
-    if (step.resources === null) unknown.push(`${scope}资源`)
-    if (step.dependencies === null) unknown.push(`${scope}依赖`)
-    if (step.source === null) unknown.push(`${scope}建议来源`)
+    if (step.status.state === "unknown") stepUnknown.push("状态")
+    if (!step.owner) stepUnknown.push("负责人")
+    if (step.audience === null) stepUnknown.push("对象")
+    if (!step.startDate) stepUnknown.push("开始日期")
+    if (!step.endDate) stepUnknown.push("结束日期")
+    if (step.resources === null) stepUnknown.push("资源")
+    if (step.dependencies === null) stepUnknown.push("依赖")
+    if (step.source === null) stepUnknown.push("建议来源")
     else if (step.source) sourceEntry(step.source, scope)
     const controls = <div className="min-w-0 space-y-3">
       <div className="flex flex-wrap gap-2">
@@ -247,6 +248,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
       condition: <div className="min-w-0 space-y-2" aria-describedby={linked.filter(Boolean).join(" ") || undefined}>
         {linked.some(Boolean) && <p className="text-ui-hint">见计划说明 · {scope}</p>}
         {!editing && !sharedDescription && step.description && <p className="whitespace-pre-wrap break-words text-ui-hint">{step.description}</p>}
+        {stepUnknown.length > 0 && <p className="break-words text-ui-hint" data-plan-step-unknown="">{scope}：{stepUnknown.join("、")}未知。</p>}
         {step.content && <div className="max-w-full overflow-x-auto text-read-body">{step.content}</div>}
         {step.owner && <p>负责人：{step.owner.label || "名称未提供"}</p>}
         {step.audience && <p>适用对象：{listText(step.audience)}</p>}
