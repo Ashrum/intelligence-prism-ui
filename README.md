@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 素材包 v0.1 · 设计候选（2026-09-26）
+
+语义 38 `AgentMaterialPack` 声明 **Inline + 专用扩展内容**：Inline 展示包名、分类数量、来源构成、许可/可用性、关键变化与复用记录；Workspace 提供分类、排序、用户触发的预览、包名/分类名/备注编辑和复用请求。支持独立 `density="compact"`，上移/下移与分类选择是拖拽的键盘和触屏等效入口。
+
+11 集合篮用于临时收集与跨页暂存，38 组织有名称、分类、来源引用的可复用素材集合；36 找资源，38 组织，12 提供位置校验，14 承载原对象预览。沿用原资源 ID、版本和来源引用，不复制内容、不建新资产体系。全部动作经带 `packId/versionId/baseVersionId` 的 `onIntent` 返回；包版本、保存、许可、来源失效及复用记录均由页面提供，确认和复用请求不推定保存或引用成功。
+
+组件页 `/next/components/agent-components#material-pack` 提供勾股定理复习与教研共享两组示例，含受限许可、失效来源、已有提纲引用、许可未知、320px、长中文与惰性公式预览。公开 API 见[素材包契约](docs/component-contracts.md#素材包-v01)。复用既有 Card / Label / Input / Textarea / Select / Badge / Button / RecordDetails，coss、依赖、令牌和 80 项目录不变。
+
+候选位于 `feat/agent-material-pack`，基于 main `54b94a0`；进度第 38 项为“组件候选”，本批 12 → 23 → 24 → 05 → 38 已全部具有组件候选。五项日志、数字、diff 与 Workspace 只读轻量验证方案见 `.sites-runtime/material-pack/REPORT.md`。本轮未写 `.git`、未启动服务、未改 Workspace；浏览器、Workspace 接入、真实服务与独立 Review 未完成。
+
 ## 采集扫描 v0.1 · 设计候选（2026-09-26）
 
 语义 05 `AgentCaptureScan` 声明 **Inline + 专用扩展内容**：Inline 呈现已采集页数、质量摘要、需补采页与入口；Workspace 提供完整页集合、缩略图、逐页质量、排序、补采／替换与删除。支持独立 `density="compact"`，上移／下移／指定位置是拖拽的键盘与触屏等效操作。
