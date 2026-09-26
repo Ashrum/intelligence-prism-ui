@@ -54,6 +54,72 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 素材包 v0.1
+
+2026-09-26 设计候选，语义 **38 素材包**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-material-pack` 导入 `AgentMaterialPack` 与同文件公开类型。候选位于 `feat/agent-material-pack`，基于 main `54b94a0`；不新增 80 项目录条目。
+
+### 复用检索与 11 / 36 / 12 / 13 / 14 边界
+
+- 已完整阅读 AGENTS.md、v0.2.1 批准规范（重点 §2、§6.11 素材包行、§7、§8、§10、548 行资源链）、复用规划 v0.1.3（38、resources、lesson-artifact）、覆盖矩阵 F02、上述相邻契约与进度清单。素材包行实际位于 §6.11，批准文件不改。
+- **11 集合篮是临时收集、跨页暂存；38 是有名称、分类、来源引用、可复用的素材集合。** 沿用原资源 id、版本与来源引用，不复制资源内容、不另造资产体系。已检索 `AgentCollectionBasket`、`AgentArtifactPreview`、`AgentObjectViewer`、`AgentResourceRetriever`、`AgentStructureArranger` 及其位置辅助函数。11 的同步、去向和批量选择不能替代包名、分类编辑与复用事实，因此复用其“身份与外部合计 → 分组有序清单 → 问题常驻 → 外部操作”的呈现方式，不嵌套另一份集合篮或 Store。
+- **36 找资源，38 组织资源**：`add-request` 交给页面打开 36，结果由页面核对后带入同一草稿；38 无检索、复制、抓取或许可判定。**12** 的 `indexArrangement / arrangementMoveTarget / arrangementDropTarget / arrangementMoveBlock` 直接用于分类位置校验；只建临时位置投影，不引入分值、业务模型或内容树。**13** 仍提供独立成果摘要与打开入口，不另造摘要 Workspace；38 的 Inline 是素材包自己的摘要。**14** 承载用户打开后的对象详情，demo 用 `AgentObjectViewer` 作为预览插槽，不在 38 内置题目、图片或播放器。
+- 复用 Card、Prism Badge/Button navigation、常驻 Label/Input/Textarea、Select 与 RecordDetails。分类采用 section + ol/li，拖拽只是增强；无需改变 coss、依赖、视觉令牌或现有组件 API。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `pack` | 必填 `AgentMaterialPackIdentity` | `{id,title,version:{id,label},baseVersion:{id,label},snapshot?}`。请求携带三种身份，界面只显示可读 title/label；snapshot 存在即历史只读，空串同样有效 |
+| `items / categories` | 必填只读数组 | 完整且已获准披露的集合。分类顺序由 categories 给出；各分类内保持 items 输入顺序；categoryId=null 为“未分类”。重复/空资源或分类身份、未知分类引用阻断请求，不静默丢失无法归类的素材 |
+| `summary` | 必填 `AgentMaterialPackSummary` | `{count:number/null,sourceComposition:string/null,license:string/null,availability:string/null}`。总数、来源构成、许可和可用性摘要均来自页面；不以可见条数、分类合计或资源类型推算。0 保留；非整数、负数、非有限计数归未知 |
+| `save / changes` | 可选 `AgentMaterialPackSave` / 只读 string 数组 | save 复用 12 的状态词表：unsaved/saving/saved-draft/submitted/conflict/unconfirmed/error/unknown，默认 unknown；description 可选。saving/conflict/unconfirmed 阻断整理与复用；submitted 阻断重复确认。changes 未传为未知，[] 为未记录变化，不比较数组生成关键变化 |
+| `reuseRecords` | 必填 `readonly AgentMaterialReuseRecord[] / null` | 由页面提供在哪些对象、版本、位置被引用。null 表示覆盖未知，[] 表示所提供范围内暂无记录；整理、预览、确认、复用请求不添加或删除既有记录 |
+| `actions` | 可选 `Partial<Record<AgentMaterialPackActionType,AgentMaterialPackAction>>`，默认 {} | 显式声明 add-request/category-create/category-rename/category-delete/rename-pack/reuse-request/confirm，每项 `{disabledReason?}`。缺能力没有入口；空串或空白原因仍禁用并给具体兜底 |
+| `readOnlyReason / onIntent` | 可选 string / `(intent:AgentMaterialPackIntent)=>void` | 唯一业务动作出口；缺回调仅查看。全局只读、历史、身份不明和外部保存阻碍均有常驻原因；按钮、字段、Select、拖拽处理器再次保护。不根据返回值/Promise 产生保存或引用事实 |
+| `preview / renderPreview` | 可选 `AgentMaterialPackPreview / null` / `(item,{view,density})=>ReactNode` | 用户请求后由页面激活，见下文；没有插槽时“预览素材”禁用并说明。只接受当前获准披露的只读领域内容，不放旁路写操作或自动播放 |
+| `view / density` | inline/workspace，默认 inline；default/compact，默认 default | Inline 显示包名、分类数量、来源与许可/可用性、关键变化、资源摘要和复用记录；Workspace 增加包名/分类名/备注输入、分类管理、排序、添加与预览。compact 仅收紧留白，不缩字、不隐藏限制与未知 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | “整理素材包”／“返回原位置”只导航；页面保持同一对象、草稿、焦点与阅读位置，返回不保存、丢弃或取消 |
+| `notice / details` | 可选 string / ReactNode | 默认一条“整理与确认不代表已保存或已在其他对象中使用。”；补充解释默认收起。关键许可/失效/受限/未知/保存失败/禁用原因常驻 |
+
+`AgentMaterialPackItem={resource,title,type,versionLabel,categoryId,note,license,availability,lockedReason?,actions?}`：
+
+- `resource:AgentMaterialResourceReference={resourceId,versionId:string/null,source:AgentResourceSource}` **直接引用原资源**。source 复用 36 `{id:string/null,label:string/null,location?:string/null}`；未知版本或来源原样为 null，不用包版本、标题或预览快照补造。`title/type/versionLabel` 为可读内容，ID 不进入 DOM、原生 Select 值或教师文案。
+- `license` 复用 36 `AgentResourceLicense`：available/restricted/confirmation-required/unknown，name 可为 null，受限原因必填。`availability` 独立为 available/invalid/restricted/unknown，invalid/restricted 必填 reason；失效与许可受限分别显示。**许可事实不授予或自动取消操作能力**，预览和打开来源由页面分别声明。页面在提供内容和请求执行时核对授权，组件不是授权机关。
+- `actions` 可声明 remove/move/edit-note/preview/open-source。`lockedReason` 保护整理但不挡页面明确允许的查看；分类锁覆盖分类内整理与移入。未开放 move 的素材位置不可被其他素材间接改变。Input/Textarea 原始内容（含空格/空串）通过请求回传，不内建另一个编辑草稿。
+- `AgentMaterialPackCategory={id,title,count:number/null,lockedReason?}`。count 同样只接受页面事实；删除含锁定素材的分类被阻断，避免绕过分类归属锁。**删除分类的最终条目去向由页面决定**；分类删除能力与移出素材包能力独立，不能从 UI 删除分类请求推定资源被移出、删除或自动转入其他分类。
+- `AgentMaterialReuseRecord={id,target:{objectId,versionId:string/null,label,versionLabel:string/null,location?},resourceIds?,description?}`。省略 resourceIds 表示包级引用；提供时指原资源 ID，以可读资源名标明范围。旧记录可引用已移出当前包的原素材，缺可读名时明确“未提供名称的原素材”，不显示 ID，不据当前成员清单改写旧引用。目标 label/versionLabel/location 必须经过披露检查；这类记录不证明模型读取或当前上下文使用。
+
+### 意图与位置约定
+
+所有 `AgentMaterialPackIntent` 包含 `{packId,versionId,baseVersionId}`：
+
+| type | 其余字段 | 含义 |
+| --- | --- | --- |
+| add-request | 无 | 请求页面交给 36/既有来源选择；不会增加内容 |
+| remove | `resource` | 移出原资源引用，不删除源资源、不撤销历史引用 |
+| move | `resource,target:{categoryId:string/null,index},via:up/down/drag/to-category` | 分类内/跨分类移动；原资源引用完整保留 |
+| category-create | 无 | 页面分配分类名称与稳定身份 |
+| category-rename | `categoryId,title` | 改分类名，不改源资源标题 |
+| category-delete | `categoryId,resources` | 包含分类当前全部原资源引用，页面决定去向；不在组件内清空 |
+| edit-note | `resource,note` | 仅调整包内备注 |
+| rename-pack | `title` | 仅调整包名 |
+| preview / open-source | `resource` | 页面选用 14/领域渲染器或打开原来源，不产生读取/引用事实 |
+| reuse-request / confirm | `resources` | 全部当前原资源引用与指定包版本；页面再选目标/校验/处理，均不代表保存、发布或已引用 |
+
+`index` 复用 12 的约定：**先移除移动资源，再在目标分类内按零基位置插入**。up/down 仅分类内相邻调整；to-category 追加分类末尾；拖拽可落在资源前或分类末尾（含空分类）。始终提供 navigation 尺寸的上移/下移和分类 Select，键盘/触屏不依赖拖拽或悬停。首尾原因指明“分类最前不能上移／分类最后不能下移”并用可读名称标范围。越界、未知目标、无变化、跨锁定位置均拒绝；拖拽只认当前组件实例，包版本、输入数组变化即失效，传输内容不含内部 ID，无计时器。
+
+`AgentMaterialPackPreview={packId,versionId,baseVersionId,resourceId,resourceVersionId:string/null,requestedBy:'user',state:'loading'/'ready'/'error',message?}`。只有三种包身份、原资源身份及版本均匹配、preview 能力仍可用、插槽存在且 state=ready 时才挂载；loading/error 只显示状态。移除、版本变化、能力收回立即卸载，关闭由页面将 preview 置 null；预览不修改保存、许可或复用记录。
+
+所有标签、摘要、备注、记录和插槽均由页面先按当前授权过滤；页内按钮禁用不能代替服务端校验。接收请求时重新核对当前会话/包/基准版本/原资源版本/来源/许可和目标归属；未知保持未知，回执不明核对原请求，不静默覆盖。草稿持久化、离开保护、跨页恢复及真实引用记录仍归 Workspace/服务。
+
+### 文案、示例与验证边界
+
+相同原文说明和禁用原因按字符串精确合并，受影响控件/资源通过 aria-describedby 关联；按资源身份判断覆盖，全包适用不重复列名，部分适用用可读资源名。每个素材只有一个标题承载；包名/分类名可编辑时由常驻标签与输入值承载，不再输出重复标题。每个对象的未知字段合并一行；正文与原因分段显示，避免句号后再叠分号。按钮使用“查找并添加素材／移出素材包／用于其他教学对象／确认素材包”等领域词。
+
+`/next/components/agent-components#material-pack` 提供勾股定理复习素材包（三类图示/视频/练习题，许可受限、来源失效、图示被提纲引用）与教研共享材料包（文章/提纲/课件、许可未知和包级复用记录）。两态共享同一页内示例草稿，支持 compact、320px、长中文与用户打开后的 MathML 预览；返回/展开接续焦点。示例页面只应用可逆整理，有内容的分类删除先保留并说明等待去向；确认和复用不模拟成功。
+
+五项日志、验证数字、实际 diff 和 Workspace 只读轻量方案见 `.sites-runtime/material-pack/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace。SSR 与处理器测试不代表三主题视觉、真实键盘/触屏/拖拽、读屏器、Workspace 接入或真实服务验收；候选待 Supervisor 独立 Review 与 PO 决定。
+
 ## 采集扫描 v0.1
 
 2026-09-26 设计候选，语义 **05 采集扫描**，声明 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-capture-scan.tsx`；组件页 `/next/components/agent-components#capture-scan`；分支 `feat/agent-capture-scan`，基于 main `3f41b9a`。不增加 80 项目录条目。
