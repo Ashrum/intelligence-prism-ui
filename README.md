@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 采集扫描 v0.1 · 设计候选（2026-09-26）
+
+语义 05 `AgentCaptureScan` 声明 **Inline + 专用扩展内容**：Inline 呈现已采集页数、质量摘要、需补采页与入口；Workspace 提供完整页集合、缩略图、逐页质量、排序、补采／替换与删除。支持独立 `density="compact"`，上移／下移／指定位置是拖拽的键盘与触屏等效操作。
+
+04 负责选择已有文件并带入，05 负责采集得到的页集合及其页序与质量；18 负责异常处置，DocumentRegionViewer 负责原稿查看。页、顺序、总数、质量、后续使用、版本、采集／上传回执与保存事实均来自页面；所有业务操作只发带 `setId/versionId` 的请求。已被后续处理使用的页常驻删除影响并交页面确认；回执未确认阻断变更。大图仅在用户查看后按匹配版本加载。
+
+组件页 `/next/components/agent-components#capture-scan` 提供四页试卷作答与板书拍照两组标注示例，覆盖总数未知、回执未确认、320px、长中文及惰性原稿公式预览。公开 API 见[采集扫描契约](docs/component-contracts.md#采集扫描-v01)。复用既有 Card / Label / Select / Progress / Badge / Button / RecordDetails；coss、依赖、令牌和 80 项目录不变。
+
+候选位于 `feat/agent-capture-scan`，基于 main `3f41b9a`，进度第 05 项为“组件候选”。五项日志、数字、实际 diff 和 Workspace 只读 P01／P04 轻量验证方案见 `.sites-runtime/capture-scan/REPORT.md`。本轮未写 `.git`、未启动服务、未改 Workspace；浏览器、设备、读屏器、Workspace 接入、真实服务及独立 Review 尚未完成。
+
 ## 插槽解耦与范围文案修复（2026-09-26）
 
 PO 批准的修复分支 `fix/agent-slot-and-scope-copy`：23 `AgentPlanBuilder` 的 `calendar` 改为可选 `ReactNode`，组件不再直接或间接引入日历依赖。组件页在 demo 中传入 `WorkloadCalendar` 保持演示；旧日历数据对象须迁移为页面组件插槽，Workspace 无日历需求时省略该属性即可，时间线和步骤照常显示。
