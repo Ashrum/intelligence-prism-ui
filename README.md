@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 计划构建器 v0.1 · 设计候选（2026-09-26）
+
+语义 23 `AgentPlanBuilder` 声明 **Inline + 专用扩展内容**：Inline 确认目标、对象、核心步骤、起止时间和待确认项；Workspace 编辑步骤、负责人、对象与资源，组合 LearningTaskList / MilestoneList / WorkloadCalendar 呈现完整计划。支持 `density="compact"`，保持冲突、受阻、未知和保存状态可见。
+
+22 提供建议，23 编排采纳后的计划草稿，24 处理路径与优先级，25 确认创建任务／开始执行。**计划草稿、已创建任务与实际执行由页面分别给出**；步骤增删改、移动、分派、资源关联和确认均只发送含 planId/versionId/baseVersionId 的 `onIntent`。日期不作业务校验，日历使用页面提供的过载判定，不自动排程或创建任务。
+
+组件页 `/next/components/agent-components#plan-builder` 提供讲评后两周教学行动与学生复习两组固定示例，含日期冲突、受阻、已创建任务、未知负责人、三种用法、320px、长中文与公式。公开 API 见[计划构建器契约](docs/component-contracts.md#计划构建器-v01)。复用组件只作兼容性属性扩展，coss、依赖、令牌与 80 项目录不变。
+
+候选位于 `feat/agent-plan-builder`，基于 main `a104c0d`；进度第 23 项为“组件候选”。五项日志、实际 diff、数字及 Workspace 只读轻量验证方案见 `.sites-runtime/plan-builder/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace；浏览器视觉与实际键盘触屏、Workspace 接入、真实服务及独立 Review 未完成。
+
 ## 结构编排器 v0.1 · 设计候选（2026-09-26）
 
 语义 12 `AgentStructureArranger` 声明 **Inline + 专用扩展内容**：Inline 提供编排摘要、简单移动与确认；Workspace 提供组→项两层列表、分组管理、编排属性和批量操作。拖拽为增强，上移／下移／移到分组提供键盘与触屏等效入口；compact 只收紧留白。

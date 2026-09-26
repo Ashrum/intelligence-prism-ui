@@ -54,6 +54,66 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 计划构建器 v0.1
+
+2026-09-26 设计候选，语义 **23 计划构建器**，声明 **Inline + 专用扩展内容**。导入 `components/prism-next/agent-plan-builder` 的 `AgentPlanBuilder` 与同文件公开类型。分支 `feat/agent-plan-builder`，基于 main `a104c0d`；不新增 80 项目录条目。
+
+### 复用检索与 22 / 24 / 25 边界
+
+- 已完整核对 AGENTS.md、批准规范 §2、§6.8 计划构建器与路径与优先级行、§7、§8、§10、§11.3 数据→行动链（第 542 行附近），复用规划第 23/24 行及 report/learning 行，覆盖矩阵 B04/R03/N21/R04，22/12/07/25 与学习列表／日历契约和进度清单的第二轮文案规则。批准规范不改。
+- **22 提供行动建议；23 把采纳后的建议或目标组织为可编辑计划草稿；24 处理顺序、依赖和优先级路径；25 确认开始执行／创建任务。** 23 只显示给定顺序与依赖，提供人工相邻移动请求，不计算路径或自动排程。确认核心步骤不创建任务；请求创建任务只交接 25。**计划草稿 ≠ 已创建任务 ≠ 已执行**，三类事实分别由页面传入。
+- 检索了 AgentSuggestionSet、AgentStructureArranger、AgentParameterConfig、AgentExecutionConfirmation、LearningTaskList、MilestoneList、WorkloadCalendar。12 编排已有引用，无法代替 23 的目标／时间／负责人／资源／计划状态；07 是单值参数配置，不承载完整计划。复用 Card、固定 Label/Input/Textarea、Select、Prism Badge/Button navigation、RecordDetails，及上述三种学习呈现组件。
+- `LearningTaskList` 增加可选 `layout="list"`、`density`，并允许 title 为 ReactNode，以便编辑时固定标签输入成为唯一标题呈现；默认 table 行为不变。列表在窄容器堆叠，操作始终可达。`MilestoneList` 直接接收页面给出的阶段标题、状态与日期说明，不从步骤推算阶段。
+- `WorkloadCalendar` 增加可选 `assessment="external"`：只读取 `DayLoad.overCapacity?:boolean`，不比较 value/capacity；缺判断为未知。capacity 支持 null；`emptyLabel` 可标明缺记录，默认用法仍为数值与容量比较、缺日期“无安排”。23 固定使用 external、缺日期“工作量未知”；数值、容量、单位和判断都是页面事实。没有新日历、排程引擎、依赖、令牌或 coss 修改。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `plan` | 必填 `AgentPlan` | id/title/kind、version:{id,label}、baseVersion?、snapshot?、goal:string/null、audience:引用数组/null、startDate/endDate:string/null、sources:建议来源数组/null、core/tasks/execution。kind 为 teaching/learning/revision/task；只影响名称。snapshot 存在即历史只读，包括空串；页面给当时事实 |
+| `steps` | 必填只读 `AgentPlanStep[]` | 完整获权步骤，顺序原样呈现；id/title/description、owner、audience、startDate/endDate、可选 timeWindow、resources、dependencies、status、可选 source/disabledReason/content。引用 `{id,label}` 只显示可读 label；content 是不重复标题的被动正文，可承载公式。两态的确认范围、顺序和草稿由页面保持同源，不截取／排序／默认填充 |
+| `validation / pendingItems` | 必填数组 / string[] 或 null | 校验 `{kind,level,message,stepIds?}`，kind=date-conflict/overload/resource-unavailable/other；level=error/warning/hint。来源、冲突和过载均由页面判断。全部常驻，错误阻断确认／提交编辑，但保留字段以修正；空数组不证明校验通过。待确认项 null 为未知，[] 为无 |
+| `save` | 可选 `AgentPlanSave`，默认 unknown | unsaved/saving/saved-draft/submitted/conflict/error/unconfirmed/unknown，加可选 description。保存中、版本冲突、回执未确认阻断修改；保存失败仍保留输入。没有组件保存命令，也不从 Promise、点击或输入推定已保存 |
+| `actions / onIntent` | 可选能力映射 / 回调 | actions 以九个意图类型为键，每项 `{disabledReason?}`；缺能力无入口，缺接收器只读。原因存在即阻断，空串也阻断；处理器重复保护。所有业务意图携带 planId/versionId/baseVersionId；缺身份／版本或重复空步骤／候选 ID 阻断操作 |
+| `editor` | 可选 `{stepId:string/null,values,open?:boolean,readOnlyFields?}` | stepId=null 为新增，其他为已有步骤；values={title,description,startDate,endDate,timeWindow} 全是原始 string。open 默认 true。由页面持有输入；仅 Workspace 挂载固定标签字段，Inline 提示可展开接续。open=false 可保留收起的输入；新增／编辑 start 优先携带对应保留值。组件没有第二份编辑草稿；readOnlyFields 按字段给只读原因，空串也阻断，该字段处理器不可发变更，相同原因只显示一次（可接只有计划文字的既有对象） |
+| `people / audiences / resources` | 可选只读 `AgentPlanChoice[]` | `{id,label,disabledReason?}`，用于负责人／对象／附加资源。固定标签 Select 使用局部序号 DOM 值，原引用仅进事件；无选项不假造候选，未知／禁用值不发请求。负责人可清除；对象逐项添加／移出。当前对象数组未知时阻断追加，避免把未知范围视作空范围覆盖 |
+| `createTaskStepIds` | 可选只读 string[]，默认 [] | 页面明确给出的完整待创建范围。核心需已确认、任务创建事实需为 not-created/partial；空、重复、失效、锁定、受阻、未知或已有任务／执行记录的目标整批阻断，不能静默剔除或重复创建。这里仍只是前往 25 的请求，不是最终授权 |
+| `milestones / calendar` | 可选只读阶段数组 / `AgentPlanCalendar` | milestones 复用 MilestoneItem；calendar={days,capacity,unit,selected,month}，selected/month 为有效 Date，days 复用 DayLoad。仅 Workspace 呈现；日期浏览是局部视图状态，点击日期不改计划／步骤，不产生业务请求；切换对象重新初始化浏览日期 |
+| `readOnlyReason` | 可选 string | 存在即只读；各步骤 disabledReason 保护编辑、删除、分派、资源及位置，也阻断其他步骤跨过该位置。查看建议来源与导航独立，不据只读推定无查看权 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline 呈现目标、对象、日期、步骤与状态、待确认项、相邻移动及核心确认；Workspace 增加增删改、对象与资源分派、阶段时间线和工作量日历。compact 只减少留白，不缩字、不隐藏冲突／受阻／未知／保存事实 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 展开计划／返回原位置；纯导航，页面负责同一对象、草稿、焦点、阅读位置和离开保护；不保存、丢弃或取消 |
+| `notice / details` | 可选 string / ReactNode | 默认一条“计划草稿、已创建任务和实际执行分别记录；调整日期不会自动排程。”；补充说明默认折叠，必要事实常驻 |
+
+`plan.core`：draft/confirmed/pending/unconfirmed/unknown；`plan.tasks`：not-created/partial/created/pending/unconfirmed/unknown；`plan.execution`：not-started/running/completed/blocked/unknown。相互独立，不由步骤计数推算计划整体状态。核心确认／创建任务 pending 或 unconfirmed 时阻断修改，先核对原请求。
+
+`step.status`：draft/confirmed/task-created/running/completed/blocked/unknown；blocked 必填 reason。计划仍为草稿时可以显示其中某步骤已有任务；任务已创建不表示已执行。组件不因日期过去、重排、删除或资源关联而改变状态，删除步骤也不取消已有正式任务；页面应按真实能力给出限制。
+
+### 意图载荷
+
+所有意图均包含 `{planId,versionId,baseVersionId}`；输入对象与引用复制后发送，组件不修改原数组。
+
+| type | 其余字段 | 语义 |
+| --- | --- | --- |
+| step-add | phase:start/change/submit/cancel、values | start 请求新编辑区，空值不造标题／身份；change 原样传全部当前字段值，submit 请求把它加入计划草稿；cancel 只请求收起，不授权丢弃 |
+| step-edit | stepId、phase、values | 同上，编辑已有步骤；输入不自动修改步骤，提交也不自动保存／确认 |
+| step-remove | stepId | 移出草稿的请求，不删除源资源或取消任务 |
+| step-move | stepId、toIndex、via:up/down | 相邻人工移动；toIndex 为先移除当前项后的零基插入位置，不调整依赖、不计算路径 |
+| assign | stepId、role:owner/audience、references | 负责人为零／一个引用；对象为完整的新选择数组；不授予权限 |
+| attach-resource | stepId、resource | 原资源引用，已附加项不重复发请求；不读取、下载或新建资源 |
+| confirm-core | stepIds | 完整当前步骤集合的版本绑定确认，不执行任务 |
+| request-create-tasks | stepIds | 原 createTaskStepIds 的完整副本；仅请求进入 25 |
+| open-source | source:{suggestionId,versionId,label} | 原建议及版本；不写采纳、引用或执行事实 |
+
+日期使用 coss Input 的原生 date 输入（纯 UI 格式处理），保留收到的原始 YYYY-MM-DD／空字符串；不解析为时间戳、不交换起止日期、不设 min/max、不校验业务日期冲突。其余字段不 trim、不默认补值。页面须在每次请求接收时重核对象／会话、当前版本、基准版本、合法步骤／引用、权限和范围，保护未提交输入、处理保存失败、迟到更新、原请求查询及去重。组件的按钮保护不是最终授权。
+
+### 文案、示例与验证边界
+
+相同说明和禁用原因按完整文本合并到常驻“计划说明”，标适用步骤序号，控件以 aria-describedby 复用；建议来源按 suggestionId/versionId/label 严格合并，保留原打开目标。标题只有一处；编辑时标题输入替代原标题。未知字段集中一行，已知状态独立呈现，受阻／冲突不移入 details。输入、source、content、milestones、details 均应由页面先做可披露检查；不显示内部 ID 或实现术语。
+
+`/next/components/agent-components#plan-builder`：讲评后两周教学行动（采纳建议来源、日期冲突、工作量过载、一步受阻、一步已有任务、未知负责人、长中文／公式）与学生函数复习计划。两组共享各自的 inline/workspace/compact 页面草稿，含 320px、只读、独立保存／校验／核心确认示例。点击确认或创建入口只反馈请求，独立载入记录与请求分开；列表和日历不表示任务已创建。
+
+本轮不写 `.git`、不启动开发服务、不改 Workspace。五项检查、实际 diff、验证数字和 Workspace 只读方案见 `.sites-runtime/plan-builder/REPORT.md`。SSR／处理器测试不构成三主题视觉、窄屏浏览器、键盘触屏、读屏器、Workspace 接入或真实服务验收，候选待 Supervisor 独立 Review。
+
 ## 结构编排器 v0.1
 
 2026-09-26 设计候选，语义 **12 结构编排器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-structure-arranger` 导入 `AgentStructureArranger` 与同文件公开类型。候选在 `feat/agent-structure-arranger`，基于 main `fd454db`；不增加 80 项目录条目。
