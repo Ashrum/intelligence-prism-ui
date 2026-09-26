@@ -54,6 +54,65 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 结构编排器 v0.1
+
+2026-09-26 设计候选，语义 **12 结构编排器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-structure-arranger` 导入 `AgentStructureArranger` 与同文件公开类型。候选在 `feat/agent-structure-arranger`，基于 main `fd454db`；不增加 80 项目录条目。
+
+### 复用检索与 35 / 11 / 14 边界
+
+- 已核对 AGENTS.md、批准规范 §2、结构编排器行（实际在 §6.4）、§7、§8、§10、§11.1「查看与调整试卷」，复用规划第 12 行／paper 行，覆盖矩阵 B05、D05、Q04，35／11／10／07 契约及进度清单的第二轮文案整理。检索 `AgentStructuredContent` 及位置辅助函数、Tree/headless-tree、LearningTaskList、AgentCollectionBasket、NumberField/Select。基础列表不具有外部版本、编排属性与批量请求契约；35 具有内容树编辑职责，不宜整件套用。
+- **35 编辑内容层级本身**：节点名称、增删、嵌套；**12 编排已经存在的条目引用**：顺序、分组、分值等编排属性，不改原题／任务／课程正文，不增删源条目，不增加第三层。**11 管理“收集了哪些”；12 管理“如何排列与分组”。** 10 挑选候选加入集合，07 配置任务级单值参数，不替代逐项编排属性。
+- **14 对象查看器**接收 `open-item` 中原条目的 source 引用，仍由页面选择查看器与承载位置。12 只展示可读条目身份、来源说明和编排属性，不复制题目详情编辑器。对应同一试卷时，10＋11＋12＋13 组合进「查看与调整试卷」容器，展开保留同一个草稿；确认编排不触发发布／导出。
+- 复用 Card、Prism Badge/Button navigation、Checkbox、固定 Label/Input、NumberField、Select 和 RecordDetails。采用分组 section + ol/li，便于属性表单与批量选择；最多组→项两层，无递归内容树、层级增删或嵌套。**复用 35 `structureMoveTarget` 的相邻移动及先移除再插入约定**，以通用分组列表计算位置，测试与 35 的等效位置对照；不耦合 `AgentStructureNode` 内容模型。拖拽仅增强，固定提供上移／下移／移到分组的键盘与触屏操作；不增加依赖或修改 coss。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `structure` | 必填 `AgentArrangement` | `{id,title,version:{id,label},baseVersion?:{id,label},snapshot?}`。ID 仅用于引用与请求；界面只显示可读 title/label。所有请求须有 structure/version/baseVersion 身份。snapshot 存在即历史只读（包括空字符串）；页面提供当时数据，不回填当前事实 |
+| `items / groups` | 必填只读数组 | 条目 `{id,title,type,source,groupId,attributes,description?,lockedReason?,open?}`；分组 `{id,title,description?,lockedReason?}`。groups 定义分组顺序，items 保留各组内输入顺序，null 表示未分组。空／重复 ID、未知分组引用、重复属性 ID／选项值阻断编排，不能静默丢项。输入须是完整、获权的编排投影 |
+| `source`（条目） | `{objectId,versionId?,label}` 或 null | 原对象引用及可读来源；相同 label 合并说明。没有来源则未知，不能打开；不据选中／拖拽推定已读取、已引用或已入模型上下文 |
+| `attributes`（条目） | `readonly AgentArrangementAttribute[]` | `{id,label,description?,readOnlyReason?}` 加 number `{value:number/null,unit?,step?}` 或 select `{value:string/null,options:[{value,label,disabledReason?}]}`。NumberField 只解析有限数字／null；不设 min/max 钳制、不归一化、不求和。0、负数、小数交回页面校验。select 使用局部序号值映射，不把内部值放入 DOM，不回退首项；null 为未指定 |
+| `summary` | 可选 `AgentArrangementSummary` | `{groupCount?,itemCount?,itemCountLabel?,totalScore?,targetScore?}`。数量须为非负整数；分数须为有限数。缺省/null/无效值合并为未知；未声明 targetScore 不补目标。itemCountLabel 默认“题数”，课程可给“任务数”。**全部合计由页面计算**，不以已提供条数或分值之和替代 |
+| `validation` | 必填只读数组 | `{level:'error'/'warning'/'hint',message,target?}`；target 为 `{itemId,attributeId?}` 或 `{groupId}`，无 target 指整体。空数组不声称校验通过。错误允许修改，但阻断 confirm；全部说明常驻，错误关联字段的 aria-invalid/aria-describedby。组件不生成分值／空组／目标总分规则，不在修改后自动清除结果 |
+| `changes / save` | 可选数组 / `AgentArrangementSave` | changes 为页面相对 baseVersion 的关键变化；未提供为未知，[] 为未记录变化。save 为 `{state,description?}`，state 支持 unsaved/saving/saved-draft/submitted/conflict/unconfirmed/error/unknown，默认 unknown。saving/conflict/unconfirmed 阻断修改与确认；submitted 阻断重复确认；error 保留草稿、允许修正。点击／返回值不改变保存事实，组件没有保存操作 |
+| `actions` | 可选 `AgentArrangementActions`，默认 {} | 明确声明 move/groupCreate/groupRename/groupDelete/setAttribute/batchMove/batchSetAttribute/confirm，每项 `{disabledReason?}`。未声明无对应入口，单项 `open` 同理。原因存在即禁用（空串也禁用）；事件处理器重复保护，不按按钮文案赋权 |
+| `readOnlyReason / lockedReason` | 可选 string | 全局只读、组或项锁定均按“存在”判定。锁定保护顺序、归属、属性；父组锁定覆盖组内条目；删除含锁定条目的组、跨过锁定位置的移动均阻断。只读/锁定不妨碍页面明确授权的 open-item；导航独立 |
+| `selectedIds / onSelectionChange` | 可选只读数组，默认 [] / 回调 | 仅 Workspace 的受控批量**视图选择**，不改变结构；页面跨两态保存此选择。缺回调不可改选择。空／重复／失效／锁定选择整批阻断，不默默剔除；可清除原选择 |
+| `batchAttributes` | 可选属性数组，默认 [] | 页面明确提供所选项可统一设置的字段／当前值；不从条目推断共同值。每个目标必须存在同类型、可写的该属性，且接受所发值，否则整批阻断；batch-set-attribute 不分拆成多次单项写入 |
+| `onIntent` | 可选 `(intent:AgentStructureArrangerIntent)=>void` | 唯一业务操作出口；缺省只读。所有意图都携带 `{structureId,versionId,baseVersionId}`；不重排输入、不写 Store、不产生权威草稿、保存或执行回执 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline 展示分组／合计／关键变化、条目属性只读值、简单移动／查看／确认。Workspace 增加属性输入、分组管理、批量选择与拖拽。两态同源；compact 只收紧留白，不缩字或隐藏校验／限制 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 展开编排／返回原位置，只导航；页面负责原对象、同一草稿、焦点与阅读位置。缺能力不显示入口，返回不保存、丢弃或取消 |
+| `notice / details` | 可选 string / ReactNode | 默认一条“编排调整不代表已保存或发布。”；补充说明默认折叠，校验、未知、只读／锁定及保存失败等保持常驻 |
+
+### 意图与位置约定
+
+每个意图都包含 `structureId/versionId/baseVersionId`：
+
+| type | 其他字段 | 语义 |
+| --- | --- | --- |
+| move | `itemId,target:{groupId,index},via:'up'/'down'/'drag'/'to-group'` | up/down 仅在当前组内相邻移动；to-group 追加到目标组末尾；拖拽可放在条目前／组末 |
+| group-create | 无 | 请求页面创建分组；名称与稳定 ID 由页面给出，可继续改名 |
+| group-rename | `groupId,title` | 原始输入（含空格／空串）；不编辑条目内容标题 |
+| group-delete | `groupId` | 仅请求删除组；**条目去向由页面决定**，组件不删除条目、不假定转到首组 |
+| set-attribute | `itemId,attributeId,value:number/string/null` | 请求修改该条目的编排属性，规则与校验外置 |
+| batch-move | `itemIds,target:{groupId,index}` | 完整目标集合，保持当前 items 输入相对顺序，一次请求；不静默跳过受限目标 |
+| batch-set-attribute | `itemIds,attributeId,value` | 所选目标全量副本，一次请求；共同字段声明不授权其他属性 |
+| open-item | `itemId,source:{objectId,versionId?,label}` | 交给 14 原对象查看，引用保持原值；锁定不等于不能查看 |
+| confirm | 无 | 确认当前明确版本的编排；不隐含保存、发布、出卷、任务创建或导出 |
+
+`index` 是**先从所有源组移除全部移动项后，目标组内的零基插入位置**；`groupId=null` 为未分组。位置检查拒绝不存在目标、越界、非整数与空移动；锁定项不能因其他项跨过它而改变位置。拖拽只接受当前实例启动的一个条目，DragData 不放内部 ID；结构、版本或输入数组变化后旧拖拽失效，外部拖入被忽略。不使用拖拽计时器。所有位置算法仅计算请求／保护条件，不能把假设排列当作已发生的业务事实。
+
+页面接收请求时重新检查所属会话／对象、结构与基准版本、完整范围、权限和业务规则；过期事件不得覆盖新结构。保存失败保留输入；回执不明先查询原请求；返回／切换入口的离开保护、恢复、去重与持久化属于既有宿主。组件接收的标题、来源、合计、校验与 details 都必须先经披露检查，UI 锁不替代授权。
+
+### 文案与验证边界
+
+第二轮规则在本组件直接采用：相同 description/source/禁用原因按原文精确合并到常驻说明，标明适用条目／分组序号；控件以 aria-describedby 引用同一原因，源对象标题只呈现一次。所有缺失的合计／版本标签／保存／变化／来源合并为一行“未知”；有名称的状态、错误与锁定说明仍显著可读。未知属性值显示缺失，null 输入保留“未指定”，不伪造当前值；内部 ID、实现术语不作教师界面文案。
+
+`/next/components/agent-components#structure-arranger`：三大题分组试卷（25/30 分不符、一题锁定、空分组、长中文与公式）及课程任务编排；三种用法共享页面内状态，带 320px、整体只读、合计未知与独立保存状态示例。示例页面计算合计、校验并应用请求，删除分组转到“未分组”是示例页面策略；确认只反馈收到请求，不伪造保存。
+
+五项检查、实际 diff 与 Workspace 当前 main `0f7052a` 的只读轻量方案见 `.sites-runtime/structure-arranger/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace。SSR/处理器测试不是三主题视觉、真实拖拽／键盘触屏、读屏器、Workspace 接入或真实服务验收；状态仅为组件候选，待 Supervisor 独立 Review。
+
 ## 资源检索器 v0.1
 
 2026-09-26 设计候选，语义 **36 资源检索器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-resource-retriever` 导入 `AgentResourceRetriever` 及同文件公开类型。任务分支 `feat/agent-resource-retriever`，基于 main `5036bd1`；尚未提交或合并，不新增 80 项目录条目。
