@@ -60,7 +60,7 @@ test('SSR both views and compact preserve identity, full group/item order and ex
 test('missing totals remain unknown in one line, never summed from points or loaded length; zero is known', () => {
   const html = htmlFor({ structure: { ...props.structure, version: { id: 'opaque-v', label: '' }, baseVersion: undefined }, items: items.map(item => ({ ...item, source: null })) });
   assert.equal((html.match(/未知：/g) ?? []).length, 1);
-  for (const label of ['当前版本', '基准版本', '保存状态', '关键变化', '分组数', '题数', '总分', '条目 1来源']) assert.ok(html.includes(label));
+  for (const label of ['当前版本', '基准版本', '保存状态', '关键变化', '分组数', '题数', '总分', `${items[0].title}来源`]) assert.ok(html.includes(label));
   assert.doesNotMatch(html, /总分：20|题数：4|已保存草稿/);
   assert.match(htmlFor({ summary: { groupCount: 0, itemCount: 0, totalScore: 0 } }), /分组数：0 · 题数：0 · 总分：0/);
   assert.match(htmlFor({ summary: { groupCount: -1, itemCount: 1.5, totalScore: NaN } }), /分组数、题数、总分/);
@@ -236,7 +236,7 @@ test('equal descriptions, sources and disabled reasons appear once; titles have 
   const extra = { items: items.map(item => ({ ...item, description: '相同附加说明。' })), actions: Object.fromEntries(Object.keys(actions).map(key => [key, { disabledReason: reason }])), readOnlyReason: reason, onSelectionChange() {} };
   for (const mode of modes) {
     const html = htmlFor({ ...extra, ...mode });
-    for (const text of [reason, '共同来源', '相同附加说明。', '编排调整不代表已保存或发布。', props.structure.title, ...items.map(item => item.title)]) assert.equal(html.split(text).length - 1, 1, text);
+    for (const text of [reason, '共同来源', '相同附加说明。', '编排调整不代表已保存或发布。', props.structure.title, ...items.map(item => item.title)]) assert.equal(html.replace(/<[^>]+>/g, "").split(text).length - 1, 1, text);
     const nodes = capture({ ...extra, ...mode }), reasons = controls(nodes, 'up').map(node => node.props['aria-describedby']);
     assert.equal(new Set(reasons).size, 1);
     assert.ok(html.includes(`id="${reasons[0]}"`));
@@ -317,4 +317,67 @@ test('example host reflects batch values after each edit, including multi-digit 
     assert.ok(state.items.filter(item => selected.includes(item.id)).every(item => item.attributes[0].value === value));
   }
   assert.equal(arrangementExampleBatchAttribute(arrangementExamples.paper, ['q1', 'q4'], 'paper').value, null);
+});
+
+const readableText = html => html.replace(/<[^>]+>/g, '');
+function assertDescriptionLinks(html) {
+  for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
+}
+
+test('shared source and description apply once to all items, with every heading linked in all themes and views', () => {
+  for (const theme of ['light', 'paper', 'dark']) for (const mode of modes) {
+    const rows = items.map(item => ({ ...item, description: '全部条目共用的说明。', source: { ...item.source, label: '当前题库题目' } }));
+    const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': theme }, h(AgentStructureArranger, { ...props, ...mode, items: rows })));
+    const text = readableText(html);
+    assert.equal(text.split('来源：当前题库题目').length - 1, 1);
+    assert.equal(text.split('全部条目共用的说明。').length - 1, 1);
+    assert.doesNotMatch(text, /条目 \d|当前位置无法这样调整/);
+    const common = [...html.matchAll(/<p[^>]*id="([^"]+)"[^>]*>([^<]*)<\/p>/g)].filter(([, , text]) => /来源：当前题库题目|全部条目共用的说明。/.test(text));
+    assert.equal(common.length, 2);
+    const headings = [...html.matchAll(/<h5[^>]*aria-describedby="([^"]+)"/g)];
+    assert.equal(headings.length, rows.length);
+    for (const [, refs] of headings) for (const [, id] of common) assert.ok(refs.split(' ').includes(id));
+    assertDescriptionLinks(html);
+  }
+});
+
+test('partial notes use titles or scopeLabel and do not broaden to other items with identical titles', () => {
+  for (const mode of modes) {
+    const rows = items.map((item, i) => ({ ...item, title: i === 2 ? items[0].title : item.title,
+      ...(i === 1 ? { scopeLabel: '第 2 题' } : {}), description: i < 2 ? '部分适用说明。' : '其他说明。',
+      source: { ...item.source, label: i < 2 ? '第一题库' : '第二题库' } }));
+    const html = htmlFor({ ...mode, items: rows }), text = readableText(html);
+    assert.ok(text.includes(`${items[0].title}、第 2 题：部分适用说明。`));
+    assert.ok(text.includes(`${items[0].title}、第 2 题 · 来源：第一题库`));
+    assert.equal(text.split('部分适用说明。').length - 1, 1);
+    assert.doesNotMatch(text, /条目 \d|opaque-/);
+    assertDescriptionLinks(html);
+  }
+});
+
+test('up/down boundary reasons are direction-specific, readable and optionally overridden without enabling moves', () => {
+  for (const mode of modes) {
+    const rows = items.slice(0, 2).map((item, i) => ({ ...item, scopeLabel: `第 ${i + 1} 题` }));
+    const text = readableText(htmlFor({ ...mode, items: rows }));
+    assert.ok(text.includes('第 1 题：已在最前，不能上移'));
+    assert.ok(text.includes('第 2 题：已在最后，不能下移'));
+    assert.doesNotMatch(text, /条目 \d|当前位置无法这样调整/);
+    const calls = [], options = { ...mode, items: rows.map((item, i) => ({ ...item, moveBoundaryReasons: i ? { down: '末题不能下移。' } : { up: '首题不能上移。', down: '不能覆盖合法移动。' } })), onIntent: intent => calls.push(intent) };
+    const html = htmlFor(options), nodes = capture(options);
+    assert.match(html, /第 1 题：首题不能上移。/); assert.match(html, /第 2 题：末题不能下移。/);
+    assert.doesNotMatch(html, /不能覆盖合法移动/);
+    assert.equal(controls(nodes, 'up')[0].props.disabled, true); assert.equal(controls(nodes, 'down')[1].props.disabled, true);
+    controls(nodes, 'up')[0].props.onClick(); controls(nodes, 'down')[1].props.onClick(); assert.equal(calls.length, 0);
+    assert.equal(controls(nodes, 'down')[0].props.disabled, false); controls(nodes, 'down')[0].props.onClick(); assert.equal(calls.length, 1);
+    const locked = htmlFor({ ...options, items: options.items.map(item => ({ ...item, lockedReason: '保留的锁定原因。' })) });
+    assert.match(locked, /保留的锁定原因/); assert.doesNotMatch(locked, /首题不能上移|末题不能下移/);
+    assertDescriptionLinks(html);
+  }
+});
+
+
+test('single-item boundaries keep the readable range name in both directions', () => {
+  const html = readableText(htmlFor({ items: [{ ...items[0], scopeLabel: '第 1 题', moveBoundaryReasons: { up: '  ', down: '' } }] }));
+  assert.ok(html.includes('第 1 题：已在最前，不能上移'));
+  assert.ok(html.includes('第 1 题：已在最后，不能下移'));
 });

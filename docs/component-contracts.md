@@ -125,7 +125,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 - **22 提供行动建议；23 把采纳后的建议或目标组织为可编辑计划草稿；24 处理顺序、依赖和优先级路径；25 确认开始执行／创建任务。** 23 只显示给定顺序与依赖，提供人工相邻移动请求，不计算路径或自动排程。确认核心步骤不创建任务；请求创建任务只交接 25。**计划草稿 ≠ 已创建任务 ≠ 已执行**，三类事实分别由页面传入。
 - 检索了 AgentSuggestionSet、AgentStructureArranger、AgentParameterConfig、AgentExecutionConfirmation、LearningTaskList、MilestoneList、WorkloadCalendar。12 编排已有引用，无法代替 23 的目标／时间／负责人／资源／计划状态；07 是单值参数配置，不承载完整计划。复用 Card、固定 Label/Input/Textarea、Select、Prism Badge/Button navigation、RecordDetails，及上述三种学习呈现组件。
 - `LearningTaskList` 增加可选 `layout="list"`、`density`，并允许 title 为 ReactNode，以便编辑时固定标签输入成为唯一标题呈现；默认 table 行为不变。列表在窄容器堆叠，操作始终可达。`MilestoneList` 直接接收页面给出的阶段标题、状态与日期说明，不从步骤推算阶段。
-- `WorkloadCalendar` 增加可选 `assessment="external"`：只读取 `DayLoad.overCapacity?:boolean`，不比较 value/capacity；缺判断为未知。capacity 支持 null；`emptyLabel` 可标明缺记录，默认用法仍为数值与容量比较、缺日期“无安排”。23 固定使用 external、缺日期“工作量未知”；数值、容量、单位和判断都是页面事实。没有新日历、排程引擎、依赖、令牌或 coss 修改。
+- `WorkloadCalendar` 增加可选 `assessment="external"`：只读取 `DayLoad.overCapacity?:boolean`，不比较 value/capacity；缺判断为未知。capacity 支持 null；`emptyLabel` 可标明缺记录，默认用法仍为数值与容量比较、缺日期“无安排”。组件页的日历插槽示例使用 external、缺日期“工作量未知”；23 本身不导入日历；数值、容量、单位和判断都是页面事实。没有新日历、排程引擎、依赖、令牌或 coss 修改。
 
 ### 公开 API
 
@@ -139,11 +139,13 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `editor` | 可选 `{stepId:string/null,values,open?:boolean,readOnlyFields?}` | stepId=null 为新增，其他为已有步骤；values={title,description,startDate,endDate,timeWindow} 全是原始 string。open 默认 true。由页面持有输入；仅 Workspace 挂载固定标签字段，Inline 提示可展开接续。open=false 可保留收起的输入；新增／编辑 start 优先携带对应保留值。组件没有第二份编辑草稿；readOnlyFields 按字段给只读原因，空串也阻断，该字段处理器不可发变更，相同原因只显示一次（可接只有计划文字的既有对象） |
 | `people / audiences / resources` | 可选只读 `AgentPlanChoice[]` | `{id,label,disabledReason?}`，用于负责人／对象／附加资源。固定标签 Select 使用局部序号 DOM 值，原引用仅进事件；无选项不假造候选，未知／禁用值不发请求。负责人可清除；对象逐项添加／移出。当前对象数组未知时阻断追加，避免把未知范围视作空范围覆盖 |
 | `createTaskStepIds` | 可选只读 string[]，默认 [] | 页面明确给出的完整待创建范围。核心需已确认、任务创建事实需为 not-created/partial；空、重复、失效、锁定、受阻、未知或已有任务／执行记录的目标整批阻断，不能静默剔除或重复创建。这里仍只是前往 25 的请求，不是最终授权 |
-| `milestones / calendar` | 可选只读阶段数组 / `AgentPlanCalendar` | milestones 复用 MilestoneItem；calendar={days,capacity,unit,selected,month}，selected/month 为有效 Date，days 复用 DayLoad。仅 Workspace 呈现；日期浏览是局部视图状态，点击日期不改计划／步骤，不产生业务请求；切换对象重新初始化浏览日期 |
+| `milestones / calendar` | 可选只读阶段数组 / `ReactNode` | milestones 复用 MilestoneItem；calendar 是页面拥有的可选日历插槽（`AgentPlanCalendar` 类型别名现为 ReactNode）。仅 Workspace 挂载。未提供时正常显示时间线和步骤列表，不生成空占位或不可用提示；日期浏览状态由插槽拥有。组件不直接或间接引入 WorkloadCalendar / react-day-picker / date-fns / coss calendar |
 | `readOnlyReason` | 可选 string | 存在即只读；各步骤 disabledReason 保护编辑、删除、分派、资源及位置，也阻断其他步骤跨过该位置。查看建议来源与导航独立，不据只读推定无查看权 |
 | `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline 呈现目标、对象、日期、步骤与状态、待确认项、相邻移动及核心确认；Workspace 增加增删改、对象与资源分派、阶段时间线和工作量日历。compact 只减少留白，不缩字、不隐藏冲突／受阻／未知／保存事实 |
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 展开计划／返回原位置；纯导航，页面负责同一对象、草稿、焦点、阅读位置和离开保护；不保存、丢弃或取消 |
 | `notice / details` | 可选 string / ReactNode | 默认一条“计划草稿、已创建任务和实际执行分别记录；调整日期不会自动排程。”；补充说明默认折叠，必要事实常驻 |
+
+**PO 2026-09-26 批准的迁移**：移除 23 的内建日历。旧 `calendar={{days,capacity,unit,selected,month}}` 数据对象不能再直接传入；需要日历的页面自行导入 `WorkloadCalendar`，以 `calendar={<PageCalendar />}` 传入，页面组件管理 selected/month、标题、容量说明和布局，并保留 `assessment="external"`、`emptyLabel="工作量未知"`。对象切换时可用 `key={plan.id}` 重建浏览状态。组件页 demo 已按此迁移；Workspace 没有日历需求时省略 calendar 即可，无需引入日历依赖。`AgentPlanCalendar` 导出名称保留为插槽类型别名；其余 API 与事件保持兼容。
 
 `plan.core`：draft/confirmed/pending/unconfirmed/unknown；`plan.tasks`：not-created/partial/created/pending/unconfirmed/unknown；`plan.execution`：not-started/running/completed/blocked/unknown。相互独立，不由步骤计数推算计划整体状态。核心确认／创建任务 pending 或 unconfirmed 时阻断修改，先核对原请求。
 
@@ -191,7 +193,8 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | 属性 | 类型 / 默认值 | 契约 |
 | --- | --- | --- |
 | `structure` | 必填 `AgentArrangement` | `{id,title,version:{id,label},baseVersion?:{id,label},snapshot?}`。ID 仅用于引用与请求；界面只显示可读 title/label。所有请求须有 structure/version/baseVersion 身份。snapshot 存在即历史只读（包括空字符串）；页面提供当时数据，不回填当前事实 |
-| `items / groups` | 必填只读数组 | 条目 `{id,title,type,source,groupId,attributes,description?,lockedReason?,open?}`；分组 `{id,title,description?,lockedReason?}`。groups 定义分组顺序，items 保留各组内输入顺序，null 表示未分组。空／重复 ID、未知分组引用、重复属性 ID／选项值阻断编排，不能静默丢项。输入须是完整、获权的编排投影 |
+| `items / groups` | 必填只读数组 | 条目 `{id,title,type,source,groupId,attributes,description?,scopeLabel?,moveBoundaryReasons?,lockedReason?,open?}`；分组 `{id,title,description?,lockedReason?}`。groups 定义分组顺序，items 保留各组内输入顺序，null 表示未分组。空／重复 ID、未知分组引用、重复属性 ID／选项值阻断编排，不能静默丢项。输入须是完整、获权的编排投影 |
+| `scopeLabel / moveBoundaryReasons`（条目） | 可选 string / `Partial<Record<"up" \| "down", string>>` | scopeLabel 为可读范围名（如“第 1 题”），缺省或空白回退 title，再回退“未命名条目”。上下移无目标时分别显示“已在最前，不能上移”／“已在最后，不能下移”，始终带范围名；moveBoundaryReasons 仅覆盖该条目对应方向的边界文案，空白回退默认。全局／锁定原因优先；不禁用合法方向、不改变权限或拖拽、不放行边界请求 |
 | `source`（条目） | `{objectId,versionId?,label}` 或 null | 原对象引用及可读来源；相同 label 合并说明。没有来源则未知，不能打开；不据选中／拖拽推定已读取、已引用或已入模型上下文 |
 | `attributes`（条目） | `readonly AgentArrangementAttribute[]` | `{id,label,description?,readOnlyReason?}` 加 number `{value:number/null,unit?,step?}` 或 select `{value:string/null,options:[{value,label,disabledReason?}]}`。NumberField 只解析有限数字／null；不设 min/max 钳制、不归一化、不求和。0、负数、小数交回页面校验。select 使用局部序号值映射，不把内部值放入 DOM，不回退首项；null 为未指定 |
 | `summary` | 可选 `AgentArrangementSummary` | `{groupCount?,itemCount?,itemCountLabel?,totalScore?,targetScore?}`。数量须为非负整数；分数须为有限数。缺省/null/无效值合并为未知；未声明 targetScore 不补目标。itemCountLabel 默认“题数”，课程可给“任务数”。**全部合计由页面计算**，不以已提供条数或分值之和替代 |
@@ -228,7 +231,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 ### 文案与验证边界
 
-第二轮规则在本组件直接采用：相同 description/source/禁用原因按原文精确合并到常驻说明，标明适用条目／分组序号；控件以 aria-describedby 引用同一原因，源对象标题只呈现一次。所有缺失的合计／版本标签／保存／变化／来源合并为一行“未知”；有名称的状态、错误与锁定说明仍显著可读。未知属性值显示缺失，null 输入保留“未指定”，不伪造当前值；内部 ID、实现术语不作教师界面文案。
+第二轮规则在本组件直接采用：相同 description/source/禁用原因按原文精确合并到常驻说明，部分适用时标明条目的 scopeLabel／title 或分组 title，不写死“条目 N”。适用于全部当前条目的同类说明不列逐项前缀，来源显示一次“来源：当前题库题目”，说明正文一次；按条目身份判断覆盖，重名不扩大范围。控件及每项标题以 aria-describedby 引用共用说明；条目标题保留单一标题承载，必要范围引用使用可读名称。所有缺失的合计／版本标签／保存／变化／来源合并为一行“未知”；有名称的状态、错误与锁定说明仍显著可读。未知属性值显示缺失，null 输入保留“未指定”，不伪造当前值；内部 ID、实现术语不作教师界面文案。
 
 `/next/components/agent-components#structure-arranger`：三大题分组试卷（25/30 分不符、一题锁定、空分组、长中文与公式）及课程任务编排；三种用法共享页面内状态，带 320px、整体只读、合计未知与独立保存状态示例。示例页面计算合计、校验并应用请求，删除分组转到“未分组”是示例页面策略；确认只反馈收到请求，不伪造保存。
 
@@ -276,9 +279,9 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 ### 分组说明与请求
 
-相同来源按 `id/label/location` 完整匹配；相同许可按 `state/name/reason` 完整匹配，分别提升到组级“来源 N / 许可 N（资源 1、2…）”。短引用和 `aria-describedby` 连接资源行与共用说明，不依据标题相似合并身份。不同来源 ID 或不同许可原因不会合并，重复未知也明确标“未知”。每个资源标题只在结果行出现一次，预览标题统一“资源预览”。
+相同来源按 `id/label/location` 完整匹配；相同许可按 `state/name/reason` 完整匹配，分别提升到组级说明。来源沿用来源短引用；许可适用于全部当前资源时仅在组级显示一次（如“许可：未知”），资源行不重复许可短引用。部分资源共用许可时，组级列可读资源 title，相关行显示“共用许可：名称甲、名称乙”。`aria-describedby` 始终连接资源行及操作与许可说明，不依据标题相似合并身份。不同来源 ID 或不同许可原因不会合并，重复未知也明确标“未知”。每个资源有一个结果标题，部分许可的范围引用可复用可读名称；预览标题统一“资源预览”。
 
-文案整理第二轮：未共用且无名称／原因的未知许可置于未知合并行首位（如“许可、版本、日期、适用范围、格式、时长、大小：未知”）。有名称或原因的未知许可完整单列；已共用的未知许可保留组级全文，每条资源的短引用明确为“许可 N（未知）”。未知及许可均常驻、不折叠、不降为弱化文字，许可原因关联不变。预览区域与 `facts.preview` 仍独立，宿主须提供确切的预览事实，不能把挂载预览推断为读取／参考／引用。
+文案整理第二轮：未共用且无名称／原因的未知许可置于未知合并行首位（如“许可、版本、日期、适用范围、格式、时长、大小：未知”）。有名称或原因的未知许可完整单列；已共用的未知许可保留组级完整“未知”事实；全部适用不再逐项重复“许可 N（未知）”，部分适用的行用可读资源名称引用。未知及许可均常驻、不折叠、不降为弱化文字，许可原因关联不变。预览区域与 `facts.preview` 仍独立，宿主须提供确切的预览事实，不能把挂载预览推断为读取／参考／引用。
 
 同一资源的多个禁用按钮按相同原因组合，说明只在该组控件旁出现一次；若原因已由常驻许可说明给出，则关联该说明，不再次复制句子。全组只读原因只显示一次。页面传入 `details`、插槽与摘要时同样避免重复。这专门约束 10 的重复依据/标题和 22 的逐按钮重复原因问题。
 
@@ -412,7 +415,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 - `AgentCandidateRestrictedEntry={id,status:'restricted',disclosure:{title,reason}}` 只接收获准披露的名称与原因。运行时同样忽略误传摘要、类型、依据、来源、替代关系及领域插槽。被引用的替代项变为 restricted 时，其关系解释也不显示。页面须先处理全组标题、总数、已选／关联事实、说明和所有插槽；组件不是权限机关或任意文本脱敏器。
 - `alternatives: readonly AgentCandidateAlternative[]`，成员 `{candidateId,reason,disabledReason?}` 引用 candidates/relatedCandidates 中的当前事实。常驻显示替代项标题、选择依据、来源与替代依据。原项必须在本次选择中，替代项必须唯一、可用且未选；缺记录、同项、已在集合、受限、失效、未知或缺替代依据时阻断，不自动搜索另一项。不允许用替换动作改动正式集合；已选失效项可换成合法替代项。
 
-第二轮共用说明：对当前 ready 结果中的非 restricted 候选，`rationale/source/summary` 分别按原始值严格判等，至少两条相同才提升到常驻“选择依据 N／来源 N／附加说明 N”，标明适用候选序号。空 summary 不生成说明；重复 null 的依据／来源保留“未提供／未确认”。不做 trim 后的模糊合并，不合并候选身份、不修改选择或替代关系。结果行保留短引用，勾选控件关联组级说明；非 ready 不挂载组级旧结果。插槽自带的重复说明需宿主移至 summary 等字段，组件不分析插槽正文。
+第二轮共用说明：对当前 ready 结果中的非 restricted 候选，`rationale/source/summary` 分别按原始值严格判等，至少两条相同才提升为常驻组级“选择依据／来源／附加说明”。适用于全部当前候选时只显示一次正文，不再逐行显示“共用说明：附加说明 1 · 选择依据 1 · 来源 1”。部分适用时组级和对应行以候选可读 title 标明范围；restricted 不加入说明，也不被算作适用。空 summary 不生成说明；重复 null 的依据／来源保留“未提供／未确认”。不做 trim 后的模糊合并，不合并候选身份、不修改选择或替代关系。仅部分适用的结果行保留可读名称引用；全部或部分适用时，勾选控件都关联组级说明；非 ready 不挂载组级旧结果。插槽自带的重复说明需宿主移至 summary 等字段，组件不分析插槽正文。
 
 全部 `AgentCandidateIntent` 包含 `{candidateSetId,baseVersion}`：
 

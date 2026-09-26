@@ -84,7 +84,7 @@ const statusLabels = { available: "可选", "in-collection": "已在集合中", 
 const submissionLabels = { idle: "尚未提交", submitting: "提交中", unconfirmed: "回执未确认", submitted: "已提交", error: "提交失败" }
 
 const factLabels = { summary: "附加说明", rationale: "选择依据", source: "来源" }
-type CandidateSharedFact = { kind: keyof typeof factLabels; value: string | null | undefined; indexes: number[]; anchor: string; label: string }
+type CandidateSharedFact = { kind: keyof typeof factLabels; value: string | null | undefined; indexes: number[]; anchor: string; label: string; all: boolean }
 function sharedCandidateFacts(items: readonly AgentCandidate[], id: string): CandidateSharedFact[] {
   return (Object.keys(factLabels) as (keyof typeof factLabels)[]).flatMap(kind => {
     const groups = new Map<string | null | undefined, number[]>()
@@ -94,7 +94,7 @@ function sharedCandidateFacts(items: readonly AgentCandidate[], id: string): Can
       groups.set(value, [...(groups.get(value) ?? []), index])
     })
     return [...groups].filter(([, indexes]) => indexes.length > 1).map(([value, indexes], index) => ({
-      kind, value, indexes, anchor: `${id}-${kind}-${index}`, label: `${factLabels[kind]} ${index + 1}`,
+      kind, value, indexes, anchor: `${id}-${kind}-${index}`, label: `${factLabels[kind]}（${indexes.map(i => titleOf(items[i])).join("、")}）`, all: indexes.length === items.length,
     }))
   })
 }
@@ -112,7 +112,7 @@ function CandidateFacts({ item, selected, shared = [] }: { item: AgentCandidate;
       {item.summary && !shared.some(fact => fact.kind === "summary") && <p className="whitespace-pre-wrap break-words text-ui-hint">{item.summary}</p>}
       {!shared.some(fact => fact.kind === "rationale") && <p className="whitespace-pre-wrap break-words text-ui-hint">选择依据：{item.rationale?.trim() ? item.rationale : "未提供"}</p>}
       {!shared.some(fact => fact.kind === "source") && <p className="whitespace-pre-wrap break-words text-ui-hint text-muted-foreground">来源：{item.source?.trim() ? item.source : "未确认"}</p>}
-      {!!shared.length && <p className="break-words text-ui-hint">共用说明：{shared.map(fact => fact.label).join(" · ")}</p>}
+      {shared.some(fact => !fact.all) && <p className="break-words text-ui-hint">共用说明：{shared.filter(fact => !fact.all).map(fact => fact.label).join(" · ")}</p>}
     </>}
     {reasonOf(item) && <p className="whitespace-pre-wrap break-words text-ui-hint">{reasonOf(item)}</p>}
   </div>
@@ -282,7 +282,7 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       {result.state === "ready" && <>
         <p className="text-ui-hint">当前显示 {candidates.length} 项</p>
         {!!facts.length && <section aria-label="候选共用说明" className="min-w-0 space-y-2">{facts.map(fact => <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1">
-          <p className="break-words text-ui-action">{fact.label} · 适用候选 {fact.indexes.map(index => index + 1).join("、")}</p>
+          {!fact.all && <p className="break-words text-ui-action">适用候选：{fact.indexes.map(index => titleOf(candidates[index])).join("、")}</p>}
           <p className="whitespace-pre-wrap break-words text-ui-hint">{factLabels[fact.kind]}：{fact.value?.trim() ? fact.value : fact.kind === "source" ? "未确认" : "未提供"}</p>
         </div>)}</section>}
         {workspace && <div className="space-y-1"><div className="flex flex-wrap gap-2">

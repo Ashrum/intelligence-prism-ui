@@ -96,24 +96,39 @@ export function AgentStructureArranger({
     || (!actions[kind] ? "此操作暂不可用。" : arrangementReason(actions[kind]?.disabledReason, "此操作暂不可用。"))
 
   // Shared standing copy, keyed by exact text. All affected controls reference it.
-  const notes = new Map<string, { id: string; scopes: Set<string>; levels: Set<string> }>()
-  function note(text: string | undefined, scope: string, level?: string) {
+  const notes = new Map<string, { id: string; scopes: Set<string>; itemIds: Set<string>; levels: Set<string> }>()
+  function note(text: string | undefined, scope: string, level?: string, itemId?: string) {
     if (!text) return undefined
     let entry = notes.get(text)
-    if (!entry) { entry = { id: `${id}-note-${notes.size}`, scopes: new Set(), levels: new Set() }; notes.set(text, entry) }
-    entry.scopes.add(scope)
+    if (!entry) { entry = { id: `${id}-note-${notes.size}`, scopes: new Set(), itemIds: new Set(), levels: new Set() }; notes.set(text, entry) }
+    if (itemId) entry.itemIds.add(itemId)
+    else entry.scopes.add(scope)
     if (level) entry.levels.add(level)
     return entry.id
   }
+  // Track identities, not labels: distinct items may have the same readable title.
+  const sharedNotes = new Map<string, { id: string; text: string; label: string; itemIds: Set<string> }>()
+  function itemNote(text: string | undefined, itemId: string, label = "") {
+    if (!text) return undefined
+    const key = JSON.stringify([label, text])
+    let entry = sharedNotes.get(key)
+    if (!entry) { entry = { id: `${id}-shared-${sharedNotes.size}`, text, label, itemIds: new Set() }; sharedNotes.set(key, entry) }
+    entry.itemIds.add(itemId)
+    return entry.id
+  }
+  function sharedScope(entry: { label: string; itemIds: Set<string> }) {
+    if (items.every(item => entry.itemIds.has(item.id))) return entry.label
+    return [items.filter(item => entry.itemIds.has(item.id)).map(item => itemScope(item.id)).join("、"), entry.label].filter(Boolean).join(" · ")
+  }
   const unknowns: string[] = []
   const unknownId = `${id}-unknown`
-  const itemScope = (itemId: string) => { const n = items.findIndex(item => item.id === itemId); return n < 0 ? "未定位条目" : `条目 ${n + 1}` }
-  const groupScope = (groupId: string) => { const n = groups.findIndex(group => group.id === groupId); return n < 0 ? "未定位分组" : `分组 ${n + 1}` }
+  const itemScope = (itemId: string) => { const item = index.itemMap.get(itemId); return item?.scopeLabel?.trim() || item?.title || "未命名条目" }
+  const groupScope = (groupId: string) => groups.find(group => group.id === groupId)?.title || "未命名分组"
   const factsFor = (itemId: string, attributeId?: string) => validation.filter(result => result.target && "itemId" in result.target
     && result.target.itemId === itemId && (result.target.attributeId === undefined || result.target.attributeId === attributeId))
   for (const result of validation) {
     const scope = !result.target ? "整体" : "groupId" in result.target ? groupScope(result.target.groupId) : itemScope(result.target.itemId)
-    note(result.message, scope, validationLabels[result.level])
+    note(result.message, scope, validationLabels[result.level], result.target && "itemId" in result.target ? result.target.itemId : undefined)
   }
   note(globalBlock, "编排操作")
   note(save.description, "保存状态")
@@ -161,7 +176,7 @@ export function AgentStructureArranger({
       .filter(option => batch || option.groupId !== index.itemMap.get(itemIds[0])?.groupId)
       .map(option => { const target = arrangementDropTarget(index, itemIds, option.groupId, null); return { ...option, target, reason: reason || arrangementMoveBlock(index, itemIds, target) } })
     if (!options.length) return null
-    const describedBy = [note(reason, scope), ...options.map(option => note(option.reason, scope))].filter(Boolean).join(" ") || undefined
+    const describedBy = [note(reason, scope, undefined, batch ? undefined : itemIds[0]), ...options.map(option => note(option.reason, scope, undefined, batch ? undefined : itemIds[0]))].filter(Boolean).join(" ") || undefined
     return <div className="min-w-0 space-y-2"><Label id={`${anchor}-label`} htmlFor={anchor}>{batch ? "将所选移到分组末尾" : "移到分组末尾"}</Label>
       <Select value={null} items={options.map((option, i) => ({ value: String(i), label: option.label }))} disabled={!!reason || !options.some(option => !option.reason)}
         onValueChange={value => {
@@ -190,7 +205,7 @@ export function AgentStructureArranger({
       return { ...option, ...(disabledReason !== undefined ? { disabledReason } : {}) }
     }) } : attribute
     const facts = itemIds.flatMap(itemId => factsFor(itemId, attribute.id))
-    const descriptions = [note(reason, scope), note(attribute.description, scope), ...facts.map(fact => note(fact.message, scope, validationLabels[fact.level]))]
+    const descriptions = [note(reason, scope, undefined, batch ? undefined : itemIds[0]), note(attribute.description, scope, undefined, batch ? undefined : itemIds[0]), ...facts.map(fact => note(fact.message, scope, validationLabels[fact.level], batch ? undefined : itemIds[0]))]
     if (presented.type === "select") for (const option of presented.options) descriptions.push(note(arrangementReason(option.disabledReason, "此选项暂不可用。"), `${scope} · ${option.label}`))
     if (attribute.type === "number" && attribute.value !== null && !Number.isFinite(attribute.value)) unknowns.push(`${scope}的${attribute.label}`)
     if (view === "inline") return <p key={anchor} className="break-words text-ui-body" aria-describedby={[...new Set(descriptions.filter(Boolean)), unknownId].join(" ")}>
@@ -216,8 +231,8 @@ export function AgentStructureArranger({
   const renderItem = (item: AgentArrangementItem) => {
     const ordinal = items.indexOf(item), scope = itemScope(item.id), anchor = `${id}-item-${ordinal}`
     const locked = arrangementItemBlock(index, item.id)
-    const descriptionIds = [note(item.description, scope), note(locked, scope), ...factsFor(item.id).map(fact => note(fact.message, scope, validationLabels[fact.level]))]
-    if (item.source?.label) descriptionIds.push(note(item.source.label, `${scope}来源`))
+    const descriptionIds = [itemNote(item.description, item.id), note(locked, scope, undefined, item.id), ...factsFor(item.id).map(fact => note(fact.message, scope, validationLabels[fact.level], item.id))]
+    if (item.source?.label) descriptionIds.push(itemNote(item.source.label, item.id, "来源"))
     else unknowns.push(`${scope}来源`)
     const selectionReason = globalBlock || locked || (!onSelectionChange ? "当前不能更改选择。" : undefined)
     const selectable = view === "workspace" && (actions.batchMove || actions.batchSetAttribute)
@@ -238,16 +253,18 @@ export function AgentStructureArranger({
               event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", "编排条目")
             }} onDragEnd={() => { drag.current = null }}><GripVertical aria-hidden="true" /></span>}
           <div className="min-w-0 flex-1 space-y-1"><h5 id={`${anchor}-title`} className="break-words text-item-title" aria-describedby={[...descriptionIds.filter(Boolean), unknownId].join(" ")}>{item.title || "未命名条目"}</h5>
-            <p className="break-words text-ui-hint">{scope} · {item.type}{locked ? " · 已锁定" : ""}</p></div>
+            <p className="break-words text-ui-hint">{item.scopeLabel?.trim() && `${item.scopeLabel.trim()} · `}{item.type}{locked ? " · 已锁定" : ""}</p></div>
         </div>
         {!!item.attributes.length && <div className={view === "inline" ? "flex min-w-0 flex-wrap gap-x-4 gap-y-1" : "grid min-w-0 gap-3"}>{item.attributes.map((attribute, i) => attributeField(attribute, [item.id], `${anchor}-attribute-${i}`))}</div>}
         <div className="flex flex-wrap gap-2">{actions.move && (["up", "down"] as const).map(via => {
           const target = arrangementMoveTarget(index, item.id, via)
-          const reason = actionBlock("move") || arrangementMoveBlock(index, [item.id], target)
+          const boundary = !actionBlock("move") && !locked && !target
+          const reason = actionBlock("move") || locked || (target ? arrangementMoveBlock(index, [item.id], target)
+            : item.moveBoundaryReasons?.[via]?.trim() || (via === "up" ? "已在最前，不能上移" : "已在最后，不能下移"))
           return <Button key={via} type="button" variant="outline" size="navigation" data-arranger-action={via} disabled={!!reason}
-            aria-describedby={note(reason, scope)} onClick={() => move(item.id, target, via)}>{via === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />}{via === "up" ? "上移" : "下移"}</Button>
+            aria-describedby={note(reason, scope, undefined, boundary ? undefined : item.id)} onClick={() => move(item.id, target, via)}>{via === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />}{via === "up" ? "上移" : "下移"}</Button>
         })}
-          {item.open && <Button type="button" variant="ghost" size="navigation" data-arranger-action="open-item" disabled={!!openReason} aria-describedby={note(openReason, scope)}
+          {item.open && <Button type="button" variant="ghost" size="navigation" data-arranger-action="open-item" disabled={!!openReason} aria-describedby={note(openReason, scope, undefined, item.id)}
             onClick={() => { if (!openReason && item.source) onIntent?.({ ...context, type: "open-item", itemId: item.id, source: { ...item.source } }) }}>查看条目</Button>}
         </div>
         {view === "workspace" && actions.move && groupPicker([item.id], scope, `${anchor}-group`)}
@@ -303,8 +320,10 @@ export function AgentStructureArranger({
       <p id={unknownId} className="break-words text-ui-hint">{unknowns.length ? `未知：${[...new Set(unknowns)].join("、")}。` : null}</p>
       {changes !== undefined && <p className="break-words text-ui-hint">关键变化：{[...new Set(changes)].join("；") || "未记录编排变化"}</p>}
     </header>
-    {!!notes.size && <section aria-label="编排说明与校验" className="min-w-0 space-y-2">{[...notes].map(([text, entry]) => <p key={entry.id} id={entry.id} role={entry.levels.has("错误") ? "alert" : undefined} className="break-words text-ui-hint">
-      {entry.levels.size ? `${[...entry.levels].join("／")} · ` : ""}{[...entry.scopes].join("、")}：{text}
+    {(!!notes.size || !!sharedNotes.size) && <section aria-label="编排说明与校验" className="min-w-0 space-y-2">{[...notes].map(([text, entry]) => <p key={entry.id} id={entry.id} role={entry.levels.has("错误") ? "alert" : undefined} className="break-words text-ui-hint">
+      {entry.levels.size ? `${[...entry.levels].join("／")} · ` : ""}{[...entry.scopes, ...(items.length && items.every(item => entry.itemIds.has(item.id)) ? [] : [...entry.itemIds].map(itemScope))].join("、") || "编排说明"}：{text}
+    </p>)}{[...sharedNotes.values()].map(entry => <p key={entry.id} id={entry.id} className="break-words text-ui-hint">
+      {sharedScope(entry) && `${sharedScope(entry)}：`}{entry.text}
     </p>)}</section>}
     {batch}{body}{footer}
     <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>

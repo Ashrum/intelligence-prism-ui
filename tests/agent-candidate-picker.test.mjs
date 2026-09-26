@@ -259,8 +259,8 @@ test('copy polish: exact rationale/source/summary repeats merge once, with acces
     const html = htmlFor({ ...mode, candidates: [first, repeated, different, { ...restricted, rationale: first.rationale, source: first.source, summary: first.summary }] });
     const text = textOf(html);
     for (const phrase of [first.rationale, first.source, first.summary, different.rationale, different.source, different.summary]) assert.equal(text.split(phrase).length - 1, 1, phrase);
-    assert.match(text, /适用候选 1、2/);
-    assert.doesNotMatch(text, /适用候选 1、2、4/);
+    assert.ok(text.includes(`适用候选：${first.title}、${repeated.title}`));
+    assert.ok(!text.includes(`适用候选：${first.title}、${repeated.title}、${restricted.disclosure.title}`));
     for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
     const changed = textOf(htmlFor({ ...mode, candidates: [first, { ...repeated, source: first.source + ' ' }] }));
     assert.equal(changed.split(first.source).length - 1, 2, 'no fuzzy source equality');
@@ -283,5 +283,20 @@ test('copy polish: slot title ownership is opt-in, preserves accessible selectio
     let calls = 0;
     const hidden = htmlFor({ ...options, candidates: [restricted], itemTitleOwner: 'slot', renderItem: () => { calls++; return 'SECRET'; } });
     assert.equal(calls, 0); assert.equal(textOf(hidden).split(restricted.disclosure.title).length - 1, 1);
+  }
+});
+
+test('all-candidate notes have no row repetitions; partial applicability references readable names', () => {
+  const repeated = { ...first, id: 'opaque-repeat', title: '第二道题' };
+  for (const theme of ['light', 'paper', 'dark']) for (const mode of modes) {
+    const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': theme }, h(AgentCandidatePicker, { ...base, ...mode, candidates: [first, repeated] })));
+    const text = textOf(html);
+    for (const phrase of [first.rationale, first.source, first.summary]) assert.equal(text.split(phrase).length - 1, 1);
+    assert.doesNotMatch(text, /共用说明：|适用候选|附加说明 1|选择依据 1|来源 1/);
+    for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
+    const partial = textOf(htmlFor({ ...mode, candidates: [first, repeated, { ...second, summary: "其他说明" }] }));
+    assert.ok(partial.includes(`共用说明：附加说明（${first.title}、${repeated.title}）`));
+    assert.ok(partial.includes(`适用候选：${first.title}、${repeated.title}`));
+    assert.doesNotMatch(partial, /附加说明 1|选择依据 1|来源 1|条目 \d/);
   }
 });

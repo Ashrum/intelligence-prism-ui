@@ -273,8 +273,26 @@ test('copy polish: unknown metadata merges with license first and known fields r
     const named = textOf(htmlFor({ ...mode, resources: [{ ...resource, license: { state: 'unknown', name: '待核对的教学许可', reason: '授权范围尚未核验' } }] }));
     assert.ok(named.includes('许可：未知 · 待核对的教学许可 · 授权范围尚未核验'));
     const shared = htmlFor({ ...mode, resources: [resource, { ...resource, id: second.id, title: second.title }] });
-    assert.match(textOf(shared), /许可 1（资源 1、2）：未知/);
-    assert.equal(occurrences(textOf(shared), '许可 1（未知）'), 2);
+    assert.equal(occurrences(textOf(shared), "许可：未知"), 1);
+    assert.equal(occurrences(textOf(shared), '许可 1（未知）'), 0);
     for (const [, refs] of shared.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(shared.includes(`id="${ref}"`), ref);
+  }
+});
+
+test('all-resource license stays visible once, partial license uses readable resource names and keeps row associations', () => {
+  const unknown = { ...first, license: { state: 'unknown', name: null } };
+  const repeated = { ...unknown, id: 'opaque-repeat', title: '第二份教材' };
+  for (const theme of ['light', 'paper', 'dark']) for (const mode of modes) {
+    const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': theme }, h(AgentResourceRetriever, { ...base, ...mode, resources: [unknown, repeated] })));
+    const text = textOf(html);
+    assert.equal(occurrences(text, '许可：未知'), 1);
+    assert.doesNotMatch(text, /许可 1|共用许可：/);
+    const rows = [...html.matchAll(/<li[^>]*aria-labelledby="[^"]*item-[^"]*"[^>]*aria-describedby="([^"]+)"/g)];
+    assert.equal(rows.length, 2); assert.equal(rows[0][1], rows[1][1]);
+    for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
+    const partial = textOf(htmlFor({ ...mode, resources: [unknown, repeated, { ...second, license: { state: 'available', name: '校内许可' } }] }));
+    assert.ok(partial.includes(`许可（${first.title}、${repeated.title}）：未知`));
+    assert.equal(occurrences(partial, `共用许可：${first.title}、${repeated.title}`), 2);
+    assert.doesNotMatch(partial, /许可 1|条目 \d/);
   }
 });
