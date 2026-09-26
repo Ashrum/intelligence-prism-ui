@@ -245,7 +245,7 @@ test('unknown metadata remains explicit and necessary limitations are not hidden
   const resource = { ...first, versionLabel: null, date: null, source: { id: null, label: null }, license: { state: 'confirmation-required', name: null, reason: '核对本次授权范围' }, applicability: null, format: null, duration: null, size: null };
   for (const mode of modes) {
     const text = textOf(htmlFor({ ...mode, resources: [resource], details: h('p', null, '补充说明正文') }));
-    for (const phrase of ['来源：未知', '许可：需确认', '核对本次授权范围', '版本：未知', '日期：未知', '适用范围：未知', '格式：未知', '时长：未知', '大小：未知', '说明']) assert.ok(text.includes(phrase), phrase);
+    for (const phrase of ['来源：未知', '许可：需确认', '核对本次授权范围', '版本、日期、适用范围、格式、时长、大小：未知', '说明']) assert.ok(text.includes(phrase), phrase);
     assert.ok(!text.includes('补充说明正文'));
   }
 });
@@ -256,7 +256,25 @@ test('resource fixtures are explicitly examples with long Chinese/math/narrow co
     const html = render(h(ResourceRetrieverExample, { purpose, narrow: true }));
     assert.match(html, /固定示例/); assert.match(html, /max-w-\[320px\]/); assert.doesNotMatch(html, /<img|<video|<audio|autoplay|autoPlay|三块正方形面积分别为九、十六和二十五/);
     assert.match(html, /data-resource-retriever-view="inline"/); assert.match(html, /data-resource-retriever-view="workspace"/); assert.match(html, /data-resource-retriever-density="compact"/);
-    if (purpose === 'teaching') for (const phrase of ['图片', '视频', '文章', '课例', '已读取', '许可：受限', '许可：未知', '部分来源失败', '总数未知', '<math']) assert.ok(html.includes(phrase), phrase);
+    if (purpose === 'teaching') for (const phrase of ['图片', '视频', '文章', '课例', '已读取', '许可：受限', '许可、版本、日期、适用范围、格式、时长、大小：未知', '部分来源失败', '总数未知', '<math']) assert.ok(html.includes(phrase), phrase);
     else assert.match(html, /教材章节页检索|教材页/);
+  }
+});
+
+test('copy polish: unknown metadata merges with license first and known fields remain independently visible', () => {
+  const resource = { ...first, license: { state: 'unknown', name: null }, versionLabel: null, date: null, applicability: null, format: null, duration: null, size: null };
+  for (const mode of modes) {
+    const html = htmlFor({ ...mode, resources: [resource] }), text = textOf(html);
+    assert.equal(occurrences(text, '许可、版本、日期、适用范围、格式、时长、大小：未知'), 1);
+    for (const phrase of ['版本：未知', '日期：未知', '格式：未知']) assert.ok(!text.includes(phrase));
+    for (const phrase of ['命中：已命中', '预览：未预览', '读取：状态未确认', 'Agent 本次参考：未参考', '成果引用：状态未确认']) assert.ok(text.includes(phrase));
+    const mixed = textOf(htmlFor({ ...mode, resources: [{ ...resource, versionLabel: '教材修订版', format: 'PDF', size: '0 KB', duration: '不适用' }] }));
+    for (const phrase of ['版本：教材修订版', '格式：PDF', '大小：0 KB', '时长：不适用', '许可、日期、适用范围：未知']) assert.equal(occurrences(mixed, phrase), 1);
+    const named = textOf(htmlFor({ ...mode, resources: [{ ...resource, license: { state: 'unknown', name: '待核对的教学许可', reason: '授权范围尚未核验' } }] }));
+    assert.ok(named.includes('许可：未知 · 待核对的教学许可 · 授权范围尚未核验'));
+    const shared = htmlFor({ ...mode, resources: [resource, { ...resource, id: second.id, title: second.title }] });
+    assert.match(textOf(shared), /许可 1（资源 1、2）：未知/);
+    assert.equal(occurrences(textOf(shared), '许可 1（未知）'), 2);
+    for (const [, refs] of shared.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(shared.includes(`id="${ref}"`), ref);
   }
 });

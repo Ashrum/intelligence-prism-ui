@@ -224,7 +224,7 @@ export function AgentStructuredContent({
       {save.description && <p className="break-words text-ui-hint">{save.description}</p>}
     </header>
     <section aria-label="结构能力" className="min-w-0 space-y-2">
-      <p className="break-words text-ui-hint">{capabilityKinds.map(kind => `${capabilityLabels[kind]}：${capabilityStatus[capabilities[kind]?.status] ?? "未确认"}`).join(" · ")}</p>
+      <p className="break-words text-ui-hint">{historical ? "历史版本只读，结构编辑能力不适用。" : editBlock || !onIntent ? "当前结构只读，结构编辑能力不适用。" : capabilityKinds.map(kind => `${capabilityLabels[kind]}：${capabilityStatus[capabilities[kind]?.status] ?? "未确认"}`).join(" · ")}</p>
       {[...capabilityReasons].map(([reason, labels]) => <p key={reason} className="break-words text-ui-hint">{labels.join("、")}：{reason}</p>)}
     </section>
     {(identityBlock || index.error) && <p role="alert" className="text-ui-hint">{identityBlock || index.error}</p>}
