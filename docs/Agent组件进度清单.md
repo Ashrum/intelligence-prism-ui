@@ -15,9 +15,11 @@ Product Owner 批准日期：2026-09-25。最后更新：2026-09-26。性质：*
 
 按每项当前最高阶段互斥计数，不重复累计。两态声明只使用：**仅 Inline / Inline + 通用扩展容器 / Inline + 专用扩展内容 / 待定**。未开始项的语义呈现契约尚未确定，登记“待定”，不从复用控件推定支持视图。
 
-支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/07/08/10/11/12/14/16/17/18/19/21/22/23/26/27/28/33/35/36 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
+支持视图列使用 `inline / workspace / compact` 表示实际用法。其中 01/02/03/04/06/07/08/10/11/12/14/16/17/18/19/21/22/23/24/26/27/28/33/35/36 的 API 是 `view="inline" / "workspace"` 加独立 `density="default" / "compact"`；compact 为紧凑密度，可与两种 view 组合，不是第三种业务态。`presentation="card" / "inline"` 只控制外框，不等于扩展态。
 
 ## 核查基线与证据
+
+- 2026-09-26 本轮推进语义 24 为组件候选：`AgentPathPriority`，分支 `feat/agent-path-priority`，基于 main `10b1839`。Inline 下一步建议、Workspace 完整有序路径；顺序／依赖／阻塞／优先级事实外置，建议与待办区分，八类状态保留。版本绑定请求、键盘／触屏等效排序、文案合并、窄容器与公式示例已提供；五项日志、diff、数字及 Workspace 只读 R04 方案见 `.sites-runtime/path-priority/REPORT.md`。不写 `.git`、不启服务、不改 Workspace；浏览器与接入尚未验收。23 源码已随 PR #80 合入本地 main `10b1839`，本轮只核实源码基线，不升级其 Workspace 状态。
 
 - 2026-09-26 本轮推进语义 23 为组件候选：`AgentPlanBuilder`，分支 `feat/agent-plan-builder`，基于 main `a104c0d`。目标／对象／步骤／日期／资源编排，两态同源；复用 LearningTaskList 列表、MilestoneList 和外部判定的 WorkloadCalendar。草稿、任务创建和执行分别取页面事实；只发含计划／当前／基准版本的请求，不自动排程、不计算路径、不创建任务。文案按第二轮规则合并；五项日志、diff、数字和 Workspace 只读方案见 `.sites-runtime/plan-builder/REPORT.md`。未做浏览器或 Workspace 接入验收。
 
@@ -113,8 +115,8 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 | 20 | 分析与诊断 | 分布矩阵 | 复用起点：HeatmapChart / ScatterChart / BoxPlotChart（P/analytics-components.tsx 导出） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 直接复用图形与数据表；数据维度、阈值和选择回调由宿主决定 |
 | 21 | 分析与诊断 | 下钻与证据浏览 | AgentEvidenceDrilldown（P/agent-evidence-drilldown.tsx）；复用 AgentContextList，DiagnosisEvidenceTable 入口与 DocumentRegionViewer 预览 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | [Prism #38](https://github.com/Ashrum/intelligence-prism-ui/pull/38)（`1dee5ec`）；[Workspace #12](https://github.com/Ashrum/ole-school-workbench/pull/12)；P04 第 2 题下钻：对话结论 → 证据链逐层导航与返回 | P1 · 第 6 项 | 下一步：06 内容输入。真实服务未验证。 |
 | 22 | 计划与建议 | 建议集 | AgentSuggestionSet（P/agent-suggestion-set.tsx）；Card / Checkbox / 固定标签字段 / Badge / Button / RecordDetails 组合 | Inline + 专用扩展内容 | inline / workspace / compact | Workspace 已验证 | 本仓 [Prism #74](https://github.com/Ashrum/intelligence-prism-ui/pull/74)（`58ea539`）；[Workspace #30](https://github.com/Ashrum/ole-school-workbench/pull/30)；已完成批阅记录“教学行动建议（通用示例）”：两条 R03 既有默认方案标为固定通用示例、依据未提供、确定性未知，依据/来源合并展示；选择 1 项后采纳→“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；展开后选择与状态保留，返回焦点回到入口。不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”）。未验证：比较两条、调整字段、驳回原因、三主题、窄屏、读屏器、真实建议与采纳服务。遗留：相同禁用原因逐按钮重复与全未知字段偏重，文案整理第二轮已处理（本分支）。待 PO 决定：是否加“评审用：模拟外部事件”回执以展示已采纳态。 | PO 2026-09-26 批准：本批第 6 项；矩阵 C04/F04/N21/R03 | 下一步：36 资源检索器（本批最后一项）；选择、采纳、任务创建独立。 |
-| 23 | 计划与建议 | 计划构建器 | AgentPlanBuilder（P/agent-plan-builder.tsx）；LearningTaskList / MilestoneList / WorkloadCalendar，固定标签字段与版本绑定请求 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | `feat/agent-plan-builder`，基于 main `a104c0d`；未提交／未合并；五项日志与只读方案见 `.sites-runtime/plan-builder/REPORT.md` | PO 2026-09-26 批准：本批第 2 项；矩阵 B04/R03 | 待独立 Review、PO 视觉确认与 Workspace 轻量接入；22 建议→23 草稿，24 路径，25 执行确认。其余本批任务不在本轮实现。 |
-| 24 | 计划与建议 | 路径与优先级 | 复用起点：MilestoneList（P/learning-components.tsx） | 待定 | 未核实（语义未开始） | 未开始 | 矩阵 #28（`ecfd1fd`）；本仓 `fc257da` | 未列前十；后续按需求收敛 | 顺序、依赖和阻塞的显示与受控调整；路径计算外置，不预建关系图编辑器 |
+| 23 | 计划与建议 | 计划构建器 | AgentPlanBuilder（P/agent-plan-builder.tsx）；LearningTaskList / MilestoneList / WorkloadCalendar，固定标签字段与版本绑定请求 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | 源码随 PR #80 已入本地 main `10b1839`；此前基线 `a104c0d`；五项日志与只读方案见 `.sites-runtime/plan-builder/REPORT.md` | PO 2026-09-26 批准：本批第 2 项；矩阵 B04/R03 | 待独立 Review、PO 视觉确认与 Workspace 轻量接入；22 建议→23 草稿，24 路径，25 执行确认。其余本批任务不在本轮实现。 |
+| 24 | 计划与建议 | 路径与优先级 | AgentPathPriority（P/agent-path-priority.tsx）；Card / Label / Select / Badge / Button / RecordDetails 与有序列表 | Inline + 专用扩展内容 | inline / workspace / compact | 组件候选 | `feat/agent-path-priority`，基于 main `10b1839`；未提交／未合并；五项日志与只读方案见 `.sites-runtime/path-priority/REPORT.md` | PO 2026-09-26 批准：本批第 3 项；矩阵 N21/R04 | 待独立 Review、PO 视觉确认与 Workspace 轻量接入；23 编排内容、24 调整顺序／依赖／优先级，路径计算外置；05、38 不在本轮实现。 |
 | 25 | 执行与追踪 | 执行确认 | AgentExecutionConfirmation（P/agent-semantic-components.tsx） | 仅 Inline | inline | Workspace 已验证 | [Workspace #7](https://github.com/Ashrum/ole-school-workbench/pull/7)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 保持确认范围与原请求关联，核对未知回执不重复提交。 |
 | 26 | 执行与追踪 | 任务进度 | AgentExecutionProgress（P/agent-semantic-components.tsx）＋ AgentTaskProgress 步骤（P/agent-components.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)、[Prism #34](https://github.com/Ashrum/intelligence-prism-ui/pull/34)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 随 18 验证整体／阶段／步骤的等待、未知、部分完成及历史快照。 |
 | 27 | 执行与追踪 | 执行结果 | AgentExecutionResult（P/agent-semantic-components.tsx） | Inline + 通用扩展容器 | inline / workspace / compact | Workspace 已验证 | [Prism #33](https://github.com/Ashrum/intelligence-prism-ui/pull/33)、[Prism #34](https://github.com/Ashrum/intelligence-prism-ui/pull/34)；[Workspace #10](https://github.com/Ashrum/ole-school-workbench/pull/10)；浏览器结论按 PO 交接，本轮未核实 | P0 · 第 1 项（执行事实链） | 随 18 验证成功／剩余范围与失败明细；unknown 仅查询原请求。 |
@@ -150,13 +152,13 @@ Workspace 引入证据：[Workspace #7](https://github.com/Ashrum/ole-school-wor
 
 | 当前状态 | 项数 | 序号 |
 | --- | --- | --- |
-| 未开始 | 15 | 除 01、02、03、04、06、07、08、10、11、12、13、14、15、16、17、18、19、21、22、23、25、26、27、28、33、35、36 外的各项 |
-| 组件候选 | 2 | 12（源码已入 main `a104c0d`，Workspace 验收未在本轮核实）、23（`feat/agent-plan-builder`，未合并） |
+| 未开始 | 14 | 除 01、02、03、04、06、07、08、10、11、12、13、14、15、16、17、18、19、21、22、23、24、25、26、27、28、33、35、36 外的各项 |
+| 组件候选 | 3 | 12（源码已入 main `a104c0d`）、23（源码已入 main `10b1839`，Workspace 验收未在本轮核实）、24（`feat/agent-path-priority`，未合并） |
 | Workspace 已验证 | 25 | 01、02、03、04、06、07、08、10、11、13、14、15、16、17、18、19、21、22、25、26、27、28、33、35、36；浏览器证据独立核实边界见上文 |
 | 真实业务接入 | 0 | 本阶段均未达到 |
 | 合计 | 42 | 不包含上节五个支撑组件 |
 
-上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。22 建议集已登记为 Workspace 已验证，承载点为已完成批阅记录“教学行动建议（通用示例）”；两条 R03 既有默认方案为固定通用示例，采纳后仅显示“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”），是否加“评审用：模拟外部事件”回执待 PO 决定。36 资源检索器已登记为 Workspace 已验证，承载点为“资源与产出 → 来源”；采用“现有来源区域 + 本机标题查询”（Supervisor 取舍），不接外部检索；真实教材/资源服务的数据来源与接入范围待 PO 决定。本批（08 → 33 → 35 → 07 → 10 → 22 → 36）已全部登记为 Workspace 已验证。PO 2026-09-26 批准下一批 **12 → 23 → 24 → 05 → 38**；12 的源码已合入本地 main `a104c0d`（本轮不据合并推定 Workspace 验收）；本轮按委派推进 23 为组件候选，待独立 Review 与接入验证。24、05、38 保持未开始，按批准顺序后续推进。
+上一批（14/02/19/01/16/06）已登记完成；08 约束构建器、33 成果物输出、35 结构化内容工作区、07 参数配置器已登记为 Workspace 已验证。07 承载点为 G02 批阅而非 P04（P04 当前无单值参数，其处理条件归 08）。10 候选选择器已登记为 Workspace 已验证，承载点为 Q01 示例练习三题候选／本机题篮；示例依据、非推荐排序，不提供无真实依据的替代项。22 建议集已登记为 Workspace 已验证，承载点为已完成批阅记录“教学行动建议（通用示例）”；两条 R03 既有默认方案为固定通用示例，采纳后仅显示“已提交，待回执 / 未确认”，不创建任务或待办、阻止重复操作；不做模拟回执（Supervisor 取舍，未经 PO 决定前不展示“已采纳”），是否加“评审用：模拟外部事件”回执待 PO 决定。36 资源检索器已登记为 Workspace 已验证，承载点为“资源与产出 → 来源”；采用“现有来源区域 + 本机标题查询”（Supervisor 取舍），不接外部检索；真实教材/资源服务的数据来源与接入范围待 PO 决定。本批（08 → 33 → 35 → 07 → 10 → 22 → 36）已全部登记为 Workspace 已验证。PO 2026-09-26 批准下一批 **12 → 23 → 24 → 05 → 38**；12 的源码已合入本地 main `a104c0d`（本轮不据合并推定 Workspace 验收）；23 的源码已合入本地 main `10b1839`（Workspace 验收未在本轮核实）；本轮按委派推进 24 为组件候选，待独立 Review 与接入验证。05、38 保持未开始，按批准顺序后续推进。
 
 遗留：文档工作区卡片显示内部长 ID（[ole-school-workbench PR #14](https://github.com/Ashrum/ole-school-workbench/pull/14) 接线处）。
 
