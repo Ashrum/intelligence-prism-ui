@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 分布矩阵 v0.1 · 设计候选（2026-09-26）
+
+语义 20 `AgentDistributionMatrix` 支持 **Inline + 专用扩展内容**：对话态展示页面指定的关键区域与样本／口径，扩展态提供完整文字矩阵、行列维度切换、筛选、排序、两列／两组比较及逐格下钻。`density="compact"` 独立于两态；所有调整经 `onIntent` 发出，选择保留行、列和数据版本，展开与返回沿用同一记录。19 汇总指标，20 定位分布，21 接续证据。
+
+复用 coss Table / Select / Label、Prism Badge / Button、Card 与 RecordDetails；分级由页面明确提供，缺测、样本不足、未知、不适用不插值。原生表格提供颜色的等价文字与方向键逐格操作；既有 HeatmapChart 的自动连续色阶保持原样。组件页 `/next/components/agent-components#distribution-matrix` 有学生 × 题目 6 × 4 和知识点 × 班级两组固定示例，含 320px、长中文与公式。
+
+候选分支 `feat/agent-distribution-matrix`，main 基线 `bcc328d`。公开 API 见[分布矩阵契约](docs/component-contracts.md#分布矩阵-v01)；五项日志、验证数字、实际 diff、未验证范围及 Workspace 只读轻量接入方案见 `.sites-runtime/distribution-matrix/REPORT.md`。进度第 20 项登记为“组件候选”；不代表已接入 Agent 页或通过独立验收。本轮不写 `.git`、不启动服务、不修改 Workspace，coss、依赖、令牌与 80 项目录不变。
+
 ## 建议集布局与逐条附加操作（2026-09-26）
 
 分支 `fix/suggestion-set-layout`：22 `AgentSuggestionSet` 的共用依据／来源适用于全部建议时仅在组级显示，部分适用时用建议可读标题标注；采纳、调整与驳回统一横向排列并随容器换行。新增可选 `itemActions(suggestion)`，在该建议操作行内追加页面提供的操作，受限条目不调用；组件页演示一次已标注、未接创建服务的教学行动入口。
