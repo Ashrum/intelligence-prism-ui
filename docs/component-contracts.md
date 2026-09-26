@@ -972,6 +972,55 @@ groups={[{
 
 任务分支 `feat/agent-metric-summary`，main 基线 `cb5234d`。测试覆盖外部值原样显示、缺测与不确定性、变化判定、受限分支、只发请求、历史与紧凑密度。五项日志、SSR 样本与 Workspace main 只读接线建议见 `.sites-runtime/metric-summary/REPORT.md`。未启动开发服务；浏览器三主题、键盘/焦点、窄容器视觉、实体设备、读屏器和真实业务接入均未验证，仍待 Supervisor 独立 Review。
 
+## 分布矩阵 v0.1
+
+语义 20 `AgentDistributionMatrix`（`components/prism-next/agent-distribution-matrix.tsx`）声明 **Inline + 专用扩展内容**。本轮是 `feat/agent-distribution-matrix` 上基于 main `bcc328d` 的设计候选；Agent 页实际接入与独立 Review 待完成。组件页沿用 `/next/components/agent-components#distribution-matrix`，不新增目录条目。
+
+### 复用检索与 19 / 21 的关系
+
+- 已核对批准规范 §2、§6.7 分布矩阵行、§7、§8、§10、§11.3（第 542 行分析链），复用规划第 20 项、覆盖矩阵 R02，以及 19/21、HeatmapChart / ScatterChart / BoxPlotChart / DataRecordTable 的契约与实现。
+- 19 `AgentMetricSummary` 负责指标、变化及其口径；20 呈现二维分布与页面指定的关键区域；21 `AgentEvidenceDrilldown` 负责接续后的证据链。20 不从色块生成异常、诊断、最低值或排名，不把选择变成读取／引用事实。
+- 既有 `HeatmapChart` 根据当前数据极值生成连续色阶，不能直接表达页面明确提供的分级及缺失种类；ScatterChart 和 BoxPlotChart 也不承担二维逐格浏览。本候选采用现有 **coss Table + Prism Badge / Button** 的文字矩阵，直接消费页面分级，不改图表默认行为、不引入另一套图表库。表格本身就是颜色的等价文本呈现。
+- 已核对 `DataRecordTable`：其记录行选择与自动“查看 ID”入口不适合行列双向表头及逐格移动，因此组合它所使用的同一组 coss Table primitives，明确设置行／列表头、单元格按钮与局部滚动区。表单复用 coss Select / Label，外框与补充说明复用 Card / RecordDetails。原有组件 API、coss、依赖、令牌和 80 项目录均不变。
+
+### 公开 API
+
+| 属性 / 类型 | 契约 |
+| --- | --- |
+| `title / record / scope` | title 是可读名称。record 复用 19 的 `AgentMetricRecord={id,version,dataTime?,snapshot?}`，version 为可读且稳定的该份数据版本；scope 复用 `AgentMetricScope`。snapshot 保留当时事实，不自行捕获当前值。整体 restricted 只显示披露原因／数量，不挂载标题、版本、矩阵、说明插槽或展开入口。所有传入内容须已获当前披露授权。 |
+| `rowDimension / columnDimension: AgentDistributionAxis` | `{id,label,items,options?,disabledReason?}`；items 是 `{id,label,content?}[]`，content 只承载可读的长中文／公式，label 始终保留文本名称。options 是 `{id,label}[]`，只列当前合法维度。页面须保证每个轴的成员 ID 非空且唯一，全部维度变更及对应数据由页面更新。 |
+| `cells: readonly AgentDistributionCell[]` | `{rowId,columnId,reading,sampleSize?,denominator?,bandId?,selectable?,disabledReason?}`，每对行列至多一条。范围外记录不渲染；未提供的格子显示未知；重复格子显示待核对，不任取其中一条。 |
+| `reading: AgentDistributionReading` | 复用 19 的 available/missing/insufficient/unknown，并加入 not-applicable。available 的 value:string/number 与 unit 原样呈现，保留精度、负数和零；其余状态只接受 reason，显示缺测／样本不足／未知／不适用，运行时忽略误附数值、单位及分级。NaN、Infinity、空数值显示未知，不补零、不插值。 |
+| `method / sample? / cellSample?` | method 为统计口径；sample=`{size,denominator?}` 是整份矩阵的可读事实，按“样本量／分母／统计口径”在一行中换行呈现。cellSample=`{size?,denominator?}` 明确声明全格共用事实；逐格字段仅在 undefined 时继承，与共用值相同则省略重复，显式空值保持未知，差异列入常驻数据提示。组件不从行列数计算总体样本或分母。 |
+| `keyRegions: readonly AgentDistributionRegion[]` | `{id,label,summary,basis,cells?}`；摘要、依据及顺序由页面指定，cells 仅引用原格子。可描述最低若干格／行／列或集中区域，但必须由页面给出判断。未给摘要就说明未提供，不自动挑最小值。所有缺失、样本不足、不适用与未知仍在常驻数据提示中可见。 |
+| `bands?: readonly AgentDistributionBand[]` | `{id,label,interval,tone}`，interval 是包含端点与单位的可读区间；tone 仅取现有 Badge 的 secondary/outline/info/success/warning/error。页面同时给各格 bandId；组件只查表映射，不按数值推断好坏、不按极值重算阈值。无 bandId 为中性；未知 bandId 显示“颜色分级未知”。 |
+| `filters? / sort?` | filters 是 `{id,label,value,options,disabledReason?}[]`；sort 是 `{value,options,basis,disabledReason?}`。Workspace 固定标签控件发请求，数据顺序与筛选结果更新前不改变任何格子。排序依据常驻；不排序数据、不聚合、不排名。缺回调显示只读标签与值。 |
+| `comparison?: AgentDistributionComparison` | `{axis:'row'/'column',memberIds,disabledReason?}`，memberIds 为零至两个选择。两项不同且均在当前轴内时，以给定次序并排呈现原列或原行，不求差值或合并样本；不完整／失效时提示并保留完整矩阵。取消比较只发请求。Inline 保留已选对照说明，返回后选择不重建。 |
+| `selectedCell?` | `{rowId,columnId}`，外部选择事实；只控制已有格子的选择标记。组件仅保留局部键盘焦点，不维护第二份选择或业务数据。 |
+| `view / density` | view 默认 inline，workspace 提供完整矩阵与操作；density 默认 default，compact 只减少外框间距，不缩字、不藏事实，不是第三态。无 onExpand 时 Inline 保留完整表格，避免详情不可达。 |
+| `onIntent(intent, trigger?)` | 唯一数据查看／调整请求入口，载荷见下表；单元格选择带原按钮。返回值不产生加载、成功或证据事实。selectable 必须由页面明确给出；缺回调、记录／维度身份、版本或依据能力时阻断并说明。 |
+| `onExpand(trigger)? / onBack? / notice? / details?` | 只控制展开／返回请求，宿主接续同一对象、版本、选择、焦点与滚动。notice 默认“分布描述本次记录；判断前请核对样本与口径。”，可替换或传空串用于复合卡统一提示；details 默认收起，不能收纳关键限制。 |
+
+每个 `onIntent` 都带 `{recordId,version,rowDimensionId,columnDimensionId}`。ID 只作 key、查表与请求关联；Select DOM 使用局部序号，行列表头及说明 DOM 使用 useId 生成的局部标识，不把内部 ID 作为文案、数据属性或无标签回退。
+
+| `type` | 附加载荷 |
+| --- | --- |
+| `change-dimension` | `axis, dimensionId` |
+| `filter` | `filterId, value` |
+| `sort` | `sortId` |
+| `select-cell` | `rowId, columnId`；页面据此解析同一结果版本的证据并接 21 |
+| `compare` | `axis, memberIds`；空数组请求取消或重选 |
+
+### 可访问性、文案与验证边界
+
+矩阵使用原生 table、`scope=col/row` 与完整文本数值／状态，颜色不是唯一信息。单元格只有一个 Tab 入口，方向键逐格移动（包含不可下钻格）；Home/End 到行首／行尾，Ctrl/⌘+Home/End 到整个表格首／尾；Enter/空格使用原生按钮选择。不可下钻格使用 aria-disabled 保持可读、可导航，事件处理器仍检查能力。每格通过 aria-labelledby 关联行、列和数值，通过 aria-describedby 关联共用样本和对应数据提示；窄容器使用具名、可聚焦的表格局部滚动区。
+
+标题一次；相同限制与未知说明按文字合并，同一组格子的多项说明合为一行；顶部缺少的版本／时间／样本／分母／口径合成一条未知行。不同样本与分母不合并成伪共同口径。禁用原因常驻一次；不使用“条目 N”或宿主／意图／回调等教师界面术语。
+
+两个固定示例为学生 × 题目（6 × 4，含零、样本不足、缺交）与知识点 × 班级（含不适用、未知），演示同一实例 Inline ↔ Workspace、独立 compact、320px、长中文与 MathML、轴转置、筛选、名称排序、两列／两组比较以及打开 21 示例说明。示例调整来自页面，真实能力与阈值不从夹具外推。
+
+`tests/agent-distribution-matrix.test.mjs` 检查 SSR 两态、文本表格、缺失与样本不足、共享口径、真实处理器载荷、维度／筛选／排序／比较、键盘移动、compact、权限披露和文案去重。五项结果、实际 diff 与只读 Workspace 接入方案见 `.sites-runtime/distribution-matrix/REPORT.md`。不启动服务；SSR 的 light/paper/dark 包裹样本不能代替浏览器三主题、窄屏、键盘焦点、读屏器、移动设备或 Workspace 验收。
+
 ## 约束构建器 v0.1
 
 2026-09-26 设计候选，语义 **08 约束构建器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-constraint-builder` 导入 `AgentConstraintBuilder` 及同文件公开类型。未合并候选在 `feat/agent-constraint-builder`，基于 main `641a5d7`；不新增目录条目。
