@@ -244,10 +244,44 @@ test('two labelled demo groups cover QuestionCard math, generic entries, unknown
     const html = render(h(CandidatePickerExample, { purpose, narrow: true }));
     for (const text of ['示例', '总数未知', '加载更多', 'max-w-[320px]', '结果状态示例', '载入提交回执', '载入加入记录', 'data-candidate-picker-view="inline"', 'data-candidate-picker-view="workspace"', 'data-candidate-picker-density="compact"']) assert.ok(html.includes(text), `${purpose}: ${text}`);
     assert.doesNotMatch(textOf(html), /意图|宿主|回调|适配器|opaque-/);
-    if (purpose === 'questions') { assert.match(html, /prism-question/); assert.match(html, /<mfrac>/); assert.match(html, /替代依据/); assert.match(html, /失效/); assert.match(html, /受限/); assert.match(html, /已在集合中/); }
+    if (purpose === 'questions') { assert.equal(textOf(html).split('题面节选 · 示例').length - 1, 1); assert.match(html, /prism-question/); assert.match(html, /<mfrac>/); assert.match(html, /替代依据/); assert.match(html, /失效/); assert.match(html, /受限/); assert.match(html, /已在集合中/); }
     else { assert.match(html, /林同学/); assert.match(html, /跨知识点辨析/); assert.match(html, /状态未知/); }
     await writeFile(new URL(`ssr-${purpose}.html`, runtime), html);
   }
   assert.match(render(h(AgentCandidatePickerDemo)), /id="candidate-picker"/);
   assert.match(await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'), /<AgentCandidatePickerDemo\/>/);
+});
+
+test('copy polish: exact rationale/source/summary repeats merge once, with accessible row references', () => {
+  for (const mode of modes) {
+    const repeated = { ...first, id: 'opaque-repeat', title: '第二道题' };
+    const different = { ...second, summary: '单独的题面说明' };
+    const html = htmlFor({ ...mode, candidates: [first, repeated, different, { ...restricted, rationale: first.rationale, source: first.source, summary: first.summary }] });
+    const text = textOf(html);
+    for (const phrase of [first.rationale, first.source, first.summary, different.rationale, different.source, different.summary]) assert.equal(text.split(phrase).length - 1, 1, phrase);
+    assert.match(text, /适用候选 1、2/);
+    assert.doesNotMatch(text, /适用候选 1、2、4/);
+    for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
+    const changed = textOf(htmlFor({ ...mode, candidates: [first, { ...repeated, source: first.source + ' ' }] }));
+    assert.equal(changed.split(first.source).length - 1, 2, 'no fuzzy source equality');
+    const unknowns = textOf(htmlFor({ ...mode, candidates: [{ ...first, rationale: null, source: null }, { ...repeated, rationale: null, source: null }] }));
+    assert.equal(unknowns.split('选择依据：未提供').length - 1, 1);
+    assert.equal(unknowns.split('来源：未确认').length - 1, 1);
+    assert.doesNotMatch(htmlFor({ ...mode, candidates: [first, repeated], result: { state: 'loading' } }), /候选共用说明/);
+  }
+});
+
+test('copy polish: slot title ownership is opt-in, preserves accessible selection and falls back without content', () => {
+  for (const mode of modes) {
+    const slot = item => h('h4', null, item.title);
+    const options = { ...mode, candidates: [first], renderItem: slot };
+    assert.equal(textOf(htmlFor(options)).split(first.title).length - 1, 2, 'legacy default');
+    const html = htmlFor({ ...options, itemTitleOwner: 'slot' });
+    assert.equal(textOf(html).split(first.title).length - 1, 1);
+    assert.match(html, /aria-label="选择：根式计算题"/);
+    for (const renderItem of [undefined, () => null, () => false]) assert.equal(textOf(htmlFor({ ...options, itemTitleOwner: 'slot', renderItem })).split(first.title).length - 1, 1);
+    let calls = 0;
+    const hidden = htmlFor({ ...options, candidates: [restricted], itemTitleOwner: 'slot', renderItem: () => { calls++; return 'SECRET'; } });
+    assert.equal(calls, 0); assert.equal(textOf(hidden).split(restricted.disclosure.title).length - 1, 1);
+  }
 });

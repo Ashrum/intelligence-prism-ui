@@ -298,3 +298,19 @@ void [limited, noReason, incomplete, badNode, noLevel, noSelection, noPosition, 
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(file); }
 });
+
+test('copy polish: historical and whole-readonly capability lines never claim supported editing', () => {
+  for (const mode of modes) {
+    for (const extra of [{ structure: { ...props.structure, snapshot: '历史记录' } }, { structure: { ...props.structure, snapshot: '' } }, { readOnlyReason: '已冻结' }, { readOnlyReason: '' }, { onIntent: undefined }]) {
+      const html = htmlFor({ ...mode, onIntent() {}, ...extra });
+      const section = html.match(/<section aria-label="结构能力"[\s\S]*?<\/section>/)[0];
+      assert.match(section, /只读，结构编辑能力不适用/);
+      assert.doesNotMatch(section, /：支持/);
+      if (extra.structure) assert.match(section, /历史版本只读/);
+    }
+    const html = htmlFor({ ...mode, onIntent() {} });
+    assert.match(html, /重命名：支持/);
+    const limitedHtml = htmlFor({ ...mode, readOnlyReason: '只读示例', capabilities: { ...capabilities, move: limited } });
+    assert.match(limitedHtml, /仅可调整提供的教学活动/);
+  }
+});

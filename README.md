@@ -2,6 +2,12 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## Agent 文案整理第二轮（2026-09-26）
+
+本分支 `fix/agent-copy-polish-2` 基于 main `e32f5e9`，集中整理 35／07／10／22／36：只读结构能力明确标只读，参数缺省默认值合并说明并隐藏只读输入提示，候选共用依据／来源／附加说明，建议禁用原因去重与全未知说明合并，资源未知元信息合并且许可保持清楚可见。已知事实、校验与执行边界保留。
+
+10 新增可选 `itemTitleOwner="slot"`，用于 QuestionCard 等已含标题的 `renderItem`；默认 `"picker"` 兼容原调用。详见[组件契约](docs/component-contracts.md)。五项验证日志、实际 diff 与交接报告位于 `.sites-runtime/copy-polish-2/`。本轮不改 Workspace，不写 `.git`，不启动服务；浏览器三主题、窄屏、交互与 Workspace 同步仍待复验，不改变进度阶段及计数。
+
 ## 资源检索器 v0.1 · 设计候选（2026-09-26）
 
 语义 36 `AgentResourceRetriever` 声明 **Inline + 专用扩展内容**：Inline 展示页面给出的少量推荐，Workspace 提供检索、筛选、排序及完整来源与许可；compact 只收紧间距。命中、预览、读取、Agent 本次参考与成果引用分别取页面记录，许可不自动授予操作能力，未知保持未知。

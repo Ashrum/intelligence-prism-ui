@@ -246,15 +246,18 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
       const licenseId = licenseGroup ? `${id}-license-${licenseGroup.id}` : `${id}-item-license-${index}`
       const rowReason = channelReason ?? identityReason(resource)
       const rowReasonId = channelReason !== undefined ? `${id}-channel` : rowReason !== undefined ? `${id}-identity-${index}` : undefined
+      // Preserve named licenses and restriction reasons even when their state is unknown.
+      const mergeLicense = !licenseGroup && resource.license.state === "unknown" && !resource.license.name && !licenseReason(resource.license)
+      const metadata = [["版本", resource.versionLabel], ["日期", resource.date], ["适用范围", resource.applicability], ["格式", resource.format], ["时长", resource.duration], ["大小", resource.size]]
+      const unknownLabels = [...(mergeLicense ? ["许可"] : []), ...metadata.filter(([, value]) => known(value) === "未知").map(([label]) => label)]
       return <li key={index} aria-labelledby={`${id}-item-${index}`} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
         <div className="flex flex-wrap items-baseline gap-2"><h4 id={`${id}-item-${index}`} className="min-w-0 break-words text-item-title">{index + 1}. {resource.title || "未命名资源"}</h4><Badge variant="outline">{kinds[resource.kind] ?? "其他资源"}</Badge></div>
         {resource.summary != null && <div className="min-w-0 break-words text-read-body">{resource.summary}</div>}
         <div className="min-w-0 space-y-1 text-ui-hint">
           {sourceGroup ? <p aria-describedby={`${id}-source-${sourceGroup.id}`}>来源 {sourceGroup.id + 1}</p> : <p className="break-words">来源：{sourceText(resource.source)}</p>}
-          {licenseGroup ? <p aria-describedby={licenseId}>许可 {licenseGroup.id + 1}</p> : <p id={licenseId} className="break-words">许可：<ResourceLicense license={resource.license} /></p>}
-          <p className="break-words">版本：{known(resource.versionLabel)} · 日期：{known(resource.date)}</p>
-          <p className="break-words">适用范围：{known(resource.applicability)}</p>
-          <p className="break-words">格式：{known(resource.format)} · 时长：{known(resource.duration)} · 大小：{known(resource.size)}</p>
+          {licenseGroup ? <p aria-describedby={licenseId}>许可 {licenseGroup.id + 1}{resource.license.state === "unknown" && "（未知）"}</p> : !mergeLicense && <p id={licenseId} className="break-words">许可：<ResourceLicense license={resource.license} /></p>}
+          {metadata.filter(([, value]) => known(value) !== "未知").map(([label, value]) => <p key={label} className="break-words">{label}：{value}</p>)}
+          {!!unknownLabels.length && <p id={mergeLicense ? licenseId : undefined} className="break-words">{unknownLabels.join("、")}：未知</p>}
         </div>
         <ResourceFacts facts={resource.facts} />
         {rowReason !== undefined && channelReason === undefined && <p id={rowReasonId} className="break-words text-ui-hint">{rowReason}</p>}

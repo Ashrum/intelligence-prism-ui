@@ -146,14 +146,14 @@ function ParameterField({ parameter, anchor, full, compact, baseVersion, readOnl
     {editor}
     <div id={`${anchor}-facts`} className="min-w-0 space-y-1 text-ui-hint">
       {parameter.description && <p className="break-words">{parameter.description}</p>}
-      {parameter.type === "number" && <>
+      {!blocked && parameter.type === "number" && <>
         {(parameter.min !== undefined || parameter.max !== undefined) && <p>范围：{parameter.min !== undefined ? `下限 ${parameter.min}${parameter.unit ?? ""}` : "未提供下限"}；{parameter.max !== undefined ? `上限 ${parameter.max}${parameter.unit ?? ""}` : "未提供上限"}</p>}
         {parameter.step !== undefined && <p>步长：{parameter.step}{parameter.unit ?? ""}</p>}
         {parameter.constraintSource && <p className="break-words">{parameter.constraintSource}</p>}
       </>}
       {parameter.type === "radio" && parameter.value !== null && !parameter.options.some(option => option.value === parameter.value) && <p>当前选项未列出</p>}
       <ParameterFacts parameter={parameter} />
-      {full && <p className="break-words text-muted-foreground">{parameter.default ? `默认：${valueText(parameter, true)}；来源：${parameter.default.source}` : "未提供默认值。"}</p>}
+      {full && parameter.default && <p className="break-words text-muted-foreground">{`默认：${valueText(parameter, true)}；来源：${parameter.default.source || "未提供"}`}</p>}
     </div>
   </section>
 }
@@ -183,6 +183,7 @@ export function AgentParameterConfig({ title, baseVersion, parameters, view = "i
       <ParameterField key={parameter.id} parameter={parameter} anchor={`${id}-parameter-${parameters.indexOf(parameter)}`} full={full} compact={compact}
         baseVersion={baseVersion} readOnly={readOnly} onIntent={onIntent} />
     )}</div>
+    {full && visible.some(parameter => !parameter.default) && <p className="break-words text-ui-hint text-muted-foreground">未提供默认值：{visible.filter(parameter => !parameter.default).map(parameter => parameter.label).join("、")}。</p>}
     {!parameters.length && <p className="text-ui-hint">暂未提供参数。</p>}
     {!!parameters.length && !visible.length && <p className="text-ui-hint">尚未指定关键参数。</p>}
     {!!hiddenFacts.length && <section aria-label="其他参数说明" className="min-w-0 space-y-3" data-parameter-other-facts="">

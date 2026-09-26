@@ -86,7 +86,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开检索与来源”；Workspace“返回原位置”；没有能力就不显示入口。只导航，页面保持查询、范围、当前目标、焦点及阅读位置 |
 | `notice / details` | 可选 string / ReactNode | 一条常驻边界提示，默认“命中、预览、读取、Agent 本次参考与成果引用分别记录。”；补充说明默认折叠，必要许可、失败和未知不折叠 |
 
-`AgentResource` 必填 `id/version/title/kind/source/license/versionLabel/date/applicability/format/duration/size/facts`，可选 `summary/actions`。kind 支持 image/video/article/audio/lesson/textbook-page/other。`version` 是不透明标识，可为 null；`versionLabel` 才用于显示。来源、版本/日期、适用范围、格式与时长/大小未提供时各自显示“未知”；不适用也必须由页面明确提供，不从媒体类型推测。`summary` 是当前获准披露的被动正文，允许公式，不放媒体加载或重复标题。
+`AgentResource` 必填 `id/version/title/kind/source/license/versionLabel/date/applicability/format/duration/size/facts`，可选 `summary/actions`。kind 支持 image/video/article/audio/lesson/textbook-page/other。`version` 是不透明标识，可为 null；`versionLabel` 才用于显示。来源未提供时显示“未知”；许可、版本/日期、适用范围、格式与时长/大小中的未知字段在资源行合并为一行，已知字段逐项显示；不适用也必须由页面明确提供，不从媒体类型推测。`summary` 是当前获准披露的被动正文，允许公式，不放媒体加载或重复标题。
 
 - `AgentResourceSource={id:string|null,label:string|null,location?:string|null}`：既有来源引用及可读出处，不据字符串/URL 推断可访问性。
 - `AgentResourceLicense={name:string|null,state:'available'|'restricted'|'confirmation-required'|'unknown',reason?}`：依次为可用/受限/需确认/未知；restricted 必填 reason（空值仍显示“使用限制未说明。”）。许可是页面给出的事实，**不决定动作是否可用**；相同许可下预览、读取、打开来源可以分别允许或禁用。
@@ -97,6 +97,8 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 ### 分组说明与请求
 
 相同来源按 `id/label/location` 完整匹配；相同许可按 `state/name/reason` 完整匹配，分别提升到组级“来源 N / 许可 N（资源 1、2…）”。短引用和 `aria-describedby` 连接资源行与共用说明，不依据标题相似合并身份。不同来源 ID 或不同许可原因不会合并，重复未知也明确标“未知”。每个资源标题只在结果行出现一次，预览标题统一“资源预览”。
+
+文案整理第二轮：未共用且无名称／原因的未知许可置于未知合并行首位（如“许可、版本、日期、适用范围、格式、时长、大小：未知”）。有名称或原因的未知许可完整单列；已共用的未知许可保留组级全文，每条资源的短引用明确为“许可 N（未知）”。未知及许可均常驻、不折叠、不降为弱化文字，许可原因关联不变。预览区域与 `facts.preview` 仍独立，宿主须提供确切的预览事实，不能把挂载预览推断为读取／参考／引用。
 
 同一资源的多个禁用按钮按相同原因组合，说明只在该组控件旁出现一次；若原因已由常驻许可说明给出，则关联该说明，不再次复制句子。全组只读原因只显示一次。页面传入 `details`、插槽与摘要时同样避免重复。这专门约束 10 的重复依据/标题和 22 的逐按钮重复原因问题。
 
@@ -147,7 +149,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开比较与调整”；Workspace“返回原位置”；仅导航，缺能力不显示入口。页面保持原对象、草稿、选择、焦点和阅读位置，不另建右栏 |
 | `notice / details` | 可选 string / ReactNode | 一条常驻边界提示，默认“选择、采纳与创建任务是三件事，结果以各自记录为准。”；补充说明默认折叠，不能隐藏必要事实或提供写操作旁路 |
 
-`AgentSuggestionEntry` 必填 `id/title/content/reason/evidence/source/scope/impact/certainty/status`。content 是被动、已获准披露的 ReactNode，可包含数学正文；不再次输出标题。理由、来源、范围、影响和确定性接受 null，分别显示未提供／未确认／未指定／未知，不用模型文案或数值计算补齐。
+`AgentSuggestionEntry` 必填 `id/title/content/reason/evidence/source/scope/impact/certainty/status`。content 是被动、已获准披露的 ReactNode，可包含数学正文；不再次输出标题。理由、来源、范围、影响和确定性接受 null，分别显示未提供／未确认／未指定／未知，不用模型文案或数值计算补齐。理由、适用对象／范围、预期影响／代价、确定性全部缺失或显式为“未提供／未指定／未知”时合为一行，保留各字段原有未知类别（如“理由：未提供；适用对象／范围：未指定；预期影响／代价、确定性：未知”）；有值时仍逐项显示。
 
 - `status: AgentSuggestionStatus`：pending／adopted／adjusted；dismissed 可附 reason；expired／unconfirmed 必填 reason。对应待定／已采纳／已调整／已驳回／已过期／未确认；已选只由 selectedIds 投影，不是采纳状态。expired／unconfirmed 不允许新增选择和业务修改，已有选择仍可明确取消（整组回执等待时除外）。adopted／dismissed 不可重复采纳；其他可调整／驳回能力仍需页面显式给出。
 - `task?: AgentSuggestionTask={state:'not-created'/'created'/'unconfirmed',description?}`：独立显示任务未创建／任务已创建／任务状态未确认；省略等于未确认。既有任务与建议状态可以并存；组件没有创建／开始／取消任务动作。
@@ -164,6 +166,8 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 按各字段的完整事实严格匹配：依据以 summary、target.conclusionId、target.version、unavailableReason 共同判等；来源按原始字符串判等。至少两条相同则分别提升为常驻组级“依据 N／来源 N”，明确“适用建议 1、2…”；单项只显示短引用。不同目标／版本／可用性不因摘要相同而合并，不模糊归一化、不推断来源等价；来源相同但依据不同仍只合并来源。null 的重复未知也可共用，仍明确未提供／未确认。
 
 组级说明排在建议之前，关键依据没有放入 details；控件关联对应说明。合并后的查看依据请求携带涉及的全部建议 ID，target 仍为同一既有证据目标。建议序号仅用于当前可读定位，稳定业务关联仍使用 ID。改变 view 或比较范围不复制建议标题、来源或证据正文。
+
+同一建议的相同禁用原因只呈现一次，选择／采纳／调整（含提交和收起）／驳回控件通过 `aria-describedby` 共用说明。已有状态原因直接复用，整组只读或回执原因关联头部常驻说明，不逐按钮重复；不同原因分别保留，所有原有处理器阻断条件不变。
 
 ### 请求与验证边界
 
@@ -217,7 +221,8 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | `onIntent` | 可选 `(intent:AgentCandidateIntent)=>void` | 唯一数据变更出口，详见下表；缺省只读。所有 disabledReason（包括空字符串）既禁用控件，也由处理器保护；函数返回值不是回执 |
 | `disabledReason` | 可选 string | 限制选择／取消／批量／替换／提交；检索、排序和导航仍可用。原因常驻；历史／冻结只读可由页面提供此限制，历史事实需页面单独明确标识 |
 | `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 只减少留白，不缩字、截断原因或增加第三业务态。无内部选择或查询副本 |
-| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；标题、状态、依据、来源仍由外层常驻。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
+| `itemTitleOwner` | 可选 `"picker" / "slot"`，默认 `"picker"` | 默认保持原有外层标题；`"slot"` 声明 renderItem 自行呈现 item.title，外层显示“选择候选”，勾选控件仍保留完整标题的 accessible name。无插槽或返回 null/undefined/boolean 时保留外层标题；受限项始终保留获权标题且不调用插槽。宿主须保证实际返回的内容含标题；不检测 ReactNode 内部。标题去重范围为候选结果行，已选摘要与替代项仍各自保留可读名称 |
+| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；默认标题由外层显示，状态、依据、来源常驻（重复说明可共用）。标题归属见 `itemTitleOwner`。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开筛选与选择”与 Workspace“返回原位置”。只导航，不改变选择或提交；页面恢复原触发器、对象及阅读位置，没有能力就没有入口 |
 | `notice / details` | 可选 string / ReactNode | 一条常驻提示，默认“选择或提交不代表已加入集合。”；补充说明默认折叠。状态未知、失败、受限／失效原因、选择和替代依据不进入 details |
 
@@ -226,6 +231,8 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 - `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
 - `AgentCandidateRestrictedEntry={id,status:'restricted',disclosure:{title,reason}}` 只接收获准披露的名称与原因。运行时同样忽略误传摘要、类型、依据、来源、替代关系及领域插槽。被引用的替代项变为 restricted 时，其关系解释也不显示。页面须先处理全组标题、总数、已选／关联事实、说明和所有插槽；组件不是权限机关或任意文本脱敏器。
 - `alternatives: readonly AgentCandidateAlternative[]`，成员 `{candidateId,reason,disabledReason?}` 引用 candidates/relatedCandidates 中的当前事实。常驻显示替代项标题、选择依据、来源与替代依据。原项必须在本次选择中，替代项必须唯一、可用且未选；缺记录、同项、已在集合、受限、失效、未知或缺替代依据时阻断，不自动搜索另一项。不允许用替换动作改动正式集合；已选失效项可换成合法替代项。
+
+第二轮共用说明：对当前 ready 结果中的非 restricted 候选，`rationale/source/summary` 分别按原始值严格判等，至少两条相同才提升到常驻“选择依据 N／来源 N／附加说明 N”，标明适用候选序号。空 summary 不生成说明；重复 null 的依据／来源保留“未提供／未确认”。不做 trim 后的模糊合并，不合并候选身份、不修改选择或替代关系。结果行保留短引用，勾选控件关联组级说明；非 ready 不挂载组级旧结果。插槽自带的重复说明需宿主移至 summary 等字段，组件不分析插槽正文。
 
 全部 `AgentCandidateIntent` 包含 `{candidateSetId,baseVersion}`：
 
@@ -279,12 +286,12 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 | 类型 | 值 / 元信息 | 呈现 |
 | --- | --- | --- |
-| `number` | `number \| null`；可选 `unit / min / max / step / constraintSource` | NumberField；时长由单位表达，不内置分钟等单位。0、负数、小数与 null 不转成业务默认值；min/max/step 和来源说明可见 |
+| `number` | `number \| null`；可选 `unit / min / max / step / constraintSource` | NumberField；时长由单位表达，不内置分钟等单位。0、负数、小数与 null 不转成业务默认值；可编辑时显示 min/max/step 和 constraintSource；只读／冻结／锁定／未知值时隐藏这些输入提示 |
 | `select / radio` | `string \| null`；必填 `options:readonly {value,label,disabledReason?}[]` | Select / RadioGroup；禁用选项原因常驻，事件拒绝未知或禁用选项；现值缺项显示“当前选项未列出” |
 | `switch` | boolean | Switch；false 是关闭，未知状态不伪造 false |
 | `text-short` | `string \| null` | Input；保留空文本和空白，不截断、不 trim；用于卷名等短属性，不替代 06 长内容输入 |
 
-`default` 可选，存在时必须为 `{value:与该参数相同的值类型,source:string}`。仅 Workspace 展示默认值与来源，不传入控件 defaultValue；未提供时明确显示“未提供默认值”。当前 null／空字符串显示“未指定”，不取 default 补齐。
+`default` 可选，存在时必须为 `{value:与该参数相同的值类型,source:string}`。仅 Workspace 展示默认值与来源，不传入控件 defaultValue；未提供时仅在 Workspace 组级说明一次“未提供默认值：参数名、参数名。”，不逐字段重复。当前 null／空字符串显示“未指定”，不取 default 补齐。
 
 `AgentParameterStatus` 必传：`{state:"provided"}` 只说明已提供值，不表示校验通过／已确认；`{state:"unconfirmed"|"unknown",reason:string}` 呈现对应事实。未确认可编辑，未知以“当前值未知”只读呈现，避免开关或选项伪造现值。宿主需先核对再传入可编辑记录。`validation` 必传数组，成员 `{level:"error"|"warning"|"hint",message:string}`；空数组不推定校验通过，组件不按范围或输入自行生成／清除结果。错误字段仍可编辑以修正。
 
@@ -292,7 +299,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 - **Inline**：只挂载 key 参数的输入；非 key 的校验、未确认／未知、影响、只读／锁定与不可选原因在“其他参数说明”常驻，避免筛选隐藏风险。无 onExpand 时保持同一筛选规则，宿主应将当前决策所需参数标为 key 或提供完整视图入口。
 - **Workspace**：完整参数集、默认值与来源、全部外部说明、可选重置与返回。两态没有独立业务副本；只有 NumberField 本身的输入解析与 RecordDetails 展开属于 UI 状态。
-- **只读／冻结**：当前值改为文字，标签与说明保留；冻结标“已冻结／确认时的参数”及可读版本，不挂载 Input/NumberField/Select/Radio/Switch。读旧版使用宿主保存的当时记录；解冻或返回当前草稿也是宿主操作。
+- **只读／冻结**：当前值改为文字，标签、通用 description、校验、影响、状态和只读／锁定原因保留；范围／步长及 constraintSource 输入提示隐藏（这些不是校验结果，宿主须通过 validation 提供校验事实）；冻结标“已冻结／确认时的参数”及可读版本，不挂载 Input/NumberField/Select/Radio/Switch。读旧版使用宿主保存的当时记录；解冻或返回当前草稿也是宿主操作。
 - **07 + 08 + 25**：同一决定、同一确认目标共享一张卡和一条边界提示；不合并不同权限／版本的事实，不由确认按钮生成冻结或回执。处理事件时宿主重新核验对象归属、基准版本、字段类型、能力、权限和确认范围。
 
 组件页 `/next/components/agent-components#parameter-config`：组卷（题量／时长／难度／分值方式，另有答案开关、长中文卷名）与批阅（纸张／身份方式／预期人数，另有批注和未知批次）两组标注示例。每组提供 inline / workspace / compact、320px、公式、错误／警告／提示、未确认／未知、单项锁定、全局只读与固定冻结记录。三个视图共享一份示例参数；输入、载入可用参数、请求确认、载入确认记录、默认请求与载入默认结果分开。示例仅页内状态，不持久化。
@@ -318,7 +325,7 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 | --- | --- | --- |
 | `structure` | 必填 `AgentStructure` | `{id,title,version:{id,label},baseVersion?,snapshot?,currentVersion?}`；内部 ID 只用于引用，界面显示 title/label。snapshot **存在即历史只读**，包括空字符串；不把当前内容或保存状态填入历史版本 |
 | `nodes` | 必填 `readonly AgentStructureNode[]` | `{id,title,type,level,status,summary?,children?,capabilities?}`；树内 ID 唯一稳定，根 level=1、子节点逐层加 1。children 保留有序父子关系，type 为可读类型。空标题显示“未命名节点”，输入仍保留原值。重复／空 ID、循环或层级不一致时停止呈现树与动作，显示结构不可用 |
-| `capabilities` | 必填 `AgentStructureCapabilities` | view / rename / add / delete / move / nest 六项均声明 `{status:'supported',reason?}` 或 `{status:'limited'/'unsupported',reason}`。limited 必须说明支持范围；可通过节点 capabilities 限定具体节点。节点声明只能收紧全局能力，不能授予全局 unsupported 的操作 |
+| `capabilities` | 必填 `AgentStructureCapabilities` | view / rename / add / delete / move / nest 六项均声明 `{status:'supported',reason?}` 或 `{status:'limited'/'unsupported',reason}`。limited 必须说明支持范围；可通过节点 capabilities 限定具体节点。节点声明只能收紧全局能力，不能授予全局 unsupported 的操作；历史／整体只读时以“历史版本只读，结构编辑能力不适用。”或“当前结构只读，结构编辑能力不适用。”替代逐项支持状态，能力限制原因仍常驻 |
 | `selectedNodeId / onSelect` | 必填 `string / null`；可选 `(selection)=>void` | 业务选择受控。回传 `{structureId,versionId,nodeId}`，选中仅随新 prop 改变；无回调仍能浏览／折叠。失效 ID 提示重新选择，不自动选第一项 |
 | `expandedIds / onExpandedChange` | 可选 `readonly string[] / (ids:string[])=>void` | 不提供 expandedIds 时组件仅维护本地折叠视图状态，默认展开顶层；提供时受控，缺回调不改变展开。跨两态／会话的展开接续由宿主保存。对象身份或历史类别改变时重建局部树视图，版本更新不丢已有展开／焦点 |
 | `onIntent` | 可选 `(intent:AgentStructuredContentIntent)=>void` | 所有结构编辑只发下表意图，不修改节点、层级、选择、状态、版本、变更摘要或保存事实。缺回调仅查看；宿主同步回传节点树才更新呈现 |

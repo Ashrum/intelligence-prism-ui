@@ -69,6 +69,8 @@ export type AgentCandidatePickerProps = AgentRecordViewProps & {
   onIntent?: (intent: AgentCandidateIntent) => void
   onBack?: () => void
   renderItem?: (item: AgentCandidateEntry, context: { view: "inline" | "workspace"; density: "default" | "compact" }) => ReactNode
+  /** Opt in only when renderItem renders the candidate title. Without slot content the outer title remains. */
+  itemTitleOwner?: "picker" | "slot"
   notice?: string
 }
 
@@ -81,7 +83,23 @@ const reasonOf = (item: AgentCandidate) => item.status === "restricted" ? item.d
 const statusLabels = { available: "可选", "in-collection": "已在集合中", invalid: "失效", restricted: "受限", unknown: "状态未知" }
 const submissionLabels = { idle: "尚未提交", submitting: "提交中", unconfirmed: "回执未确认", submitted: "已提交", error: "提交失败" }
 
-function CandidateFacts({ item, selected }: { item: AgentCandidate; selected: boolean }) {
+const factLabels = { summary: "附加说明", rationale: "选择依据", source: "来源" }
+type CandidateSharedFact = { kind: keyof typeof factLabels; value: string | null | undefined; indexes: number[]; anchor: string; label: string }
+function sharedCandidateFacts(items: readonly AgentCandidate[], id: string): CandidateSharedFact[] {
+  return (Object.keys(factLabels) as (keyof typeof factLabels)[]).flatMap(kind => {
+    const groups = new Map<string | null | undefined, number[]>()
+    items.forEach((item, index) => {
+      if (item.status === "restricted" || kind === "summary" && !item.summary) return
+      const value = item[kind]
+      groups.set(value, [...(groups.get(value) ?? []), index])
+    })
+    return [...groups].filter(([, indexes]) => indexes.length > 1).map(([value, indexes], index) => ({
+      kind, value, indexes, anchor: `${id}-${kind}-${index}`, label: `${factLabels[kind]} ${index + 1}`,
+    }))
+  })
+}
+
+function CandidateFacts({ item, selected, shared = [] }: { item: AgentCandidate; selected: boolean; shared?: CandidateSharedFact[] }) {
   return <div className="min-w-0 space-y-1">
     <div className="flex flex-wrap gap-2">
       {item.status !== "restricted" && <Badge variant="outline">{item.type}</Badge>}
@@ -91,27 +109,28 @@ function CandidateFacts({ item, selected }: { item: AgentCandidate; selected: bo
       {selected && item.status !== "available" && <Badge variant="outline">已选</Badge>}
     </div>
     {item.status !== "restricted" && <>
-      {item.summary && <p className="whitespace-pre-wrap break-words text-ui-hint">{item.summary}</p>}
-      <p className="whitespace-pre-wrap break-words text-ui-hint">选择依据：{item.rationale?.trim() ? item.rationale : "未提供"}</p>
-      <p className="whitespace-pre-wrap break-words text-ui-hint text-muted-foreground">来源：{item.source?.trim() ? item.source : "未确认"}</p>
+      {item.summary && !shared.some(fact => fact.kind === "summary") && <p className="whitespace-pre-wrap break-words text-ui-hint">{item.summary}</p>}
+      {!shared.some(fact => fact.kind === "rationale") && <p className="whitespace-pre-wrap break-words text-ui-hint">选择依据：{item.rationale?.trim() ? item.rationale : "未提供"}</p>}
+      {!shared.some(fact => fact.kind === "source") && <p className="whitespace-pre-wrap break-words text-ui-hint text-muted-foreground">来源：{item.source?.trim() ? item.source : "未确认"}</p>}
+      {!!shared.length && <p className="break-words text-ui-hint">共用说明：{shared.map(fact => fact.label).join(" · ")}</p>}
     </>}
     {reasonOf(item) && <p className="whitespace-pre-wrap break-words text-ui-hint">{reasonOf(item)}</p>}
   </div>
 }
 
-function CandidateRow({ item, selected, disabledReason, onToggle, children, content, compact }: {
+function CandidateRow({ item, selected, disabledReason, onToggle, children, content, compact, shared, slotTitle }: {
   item: AgentCandidate; selected: boolean; disabledReason?: string; onToggle: (checked: boolean) => void
-  children?: ReactNode; content?: ReactNode; compact: boolean
+  children?: ReactNode; content?: ReactNode; compact: boolean; shared: CandidateSharedFact[]; slotTitle: boolean
 }) {
   const id = useId()
   return <div className={`min-w-0 ${compact ? "space-y-2 py-1" : "space-y-3 py-2"}`}>
     <Label htmlFor={`${id}-choice`} className="flex min-h-10 min-w-0 items-center gap-3 whitespace-normal pointer-coarse:min-h-11">
       <Checkbox id={`${id}-choice`} checked={selected} disabled={disabledReason !== undefined}
-        aria-label={`选择：${titleOf(item)}`} aria-describedby={`${id}-facts${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
+        aria-label={`选择：${titleOf(item)}`} aria-describedby={`${id}-facts${shared.map(fact => ` ${fact.anchor}`).join("")}${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
         onCheckedChange={checked => { if (disabledReason === undefined) onToggle(checked) }} />
-      <span className="min-w-0 break-words text-item-title">{titleOf(item)}</span>
+      <span className={slotTitle ? "text-ui-action" : "min-w-0 break-words text-item-title"}>{slotTitle ? "选择候选" : titleOf(item)}</span>
     </Label>
-    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} /></div>
+    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} shared={shared} /></div>
     {disabledReason !== undefined && disabledReason !== reasonOf(item) && <p id={`${id}-disabled`} className="break-words text-ui-hint">{disabledReason}</p>}
     {content != null && <div className="min-w-0">{content}</div>}
     {children}
@@ -164,7 +183,7 @@ function CandidateFilters({ fields, value, onChange, reason }: {
 }
 
 export function AgentCandidatePicker({ title, candidateSet, candidates, relatedCandidates = [], selectedIds, result, page, submission,
-  query, filters, sort, confirm, disabledReason, onIntent, onExpand, onBack, renderItem, notice, details,
+  query, filters, sort, confirm, disabledReason, onIntent, onExpand, onBack, renderItem, itemTitleOwner = "picker", notice, details,
   view = "inline", density = "default" }: AgentCandidatePickerProps) {
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   // Current result facts take precedence over retained facts, including access revocation.
@@ -205,9 +224,13 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       ?? identityReason(target) ?? (target ? reasonOf(target) : undefined)
       ?? (item.id === alternative.candidateId || selected.has(alternative.candidateId) ? "替代项已经选中。" : undefined)
   }
-  const renderRow = (item: AgentCandidate) => <CandidateRow item={item} selected={selected.has(item.id)} compact={compact}
+  const facts = sharedCandidateFacts(result.state === "ready" ? candidates : [], id)
+  const renderRow = (item: AgentCandidate, index: number) => {
+    const content = item.status !== "restricted" ? renderItem?.(item, { view, density }) : undefined
+    return <CandidateRow item={item} selected={selected.has(item.id)} compact={compact}
+    shared={facts.filter(fact => fact.indexes.includes(index))} slotTitle={itemTitleOwner === "slot" && content != null && typeof content !== "boolean"}
     disabledReason={choiceReason(item)} onToggle={checked => toggle(item, checked)}
-    content={item.status !== "restricted" ? renderItem?.(item, { view, density }) : undefined}>
+    content={content}>
     {item.status !== "restricted" && !!item.alternatives?.length && <ul aria-label={`${titleOf(item)}的替代项`} className="space-y-3">
       {item.alternatives.map((alternative, index) => {
         const target = records.get(alternative.candidateId), reason = replacementReason(item, alternative)
@@ -216,6 +239,7 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       })}
     </ul>}
   </CandidateRow>
+  }
 
   return <Card data-candidate-picker-view={view} data-candidate-picker-density={density} className={`min-w-0 ${compact ? "gap-3 p-3" : "gap-4 p-4"}`}>
     <header className="min-w-0 space-y-2"><h3 className="break-words text-block-title">{title}</h3>
@@ -257,6 +281,10 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       {message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
       {result.state === "ready" && <>
         <p className="text-ui-hint">当前显示 {candidates.length} 项</p>
+        {!!facts.length && <section aria-label="候选共用说明" className="min-w-0 space-y-2">{facts.map(fact => <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1">
+          <p className="break-words text-ui-action">{fact.label} · 适用候选 {fact.indexes.map(index => index + 1).join("、")}</p>
+          <p className="whitespace-pre-wrap break-words text-ui-hint">{factLabels[fact.kind]}：{fact.value?.trim() ? fact.value : fact.kind === "source" ? "未确认" : "未提供"}</p>
+        </div>)}</section>}
         {workspace && <div className="space-y-1"><div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="navigation" disabled={batchReason !== undefined || !additions.length} aria-describedby={batchReason !== undefined ? `${id}-batch` : undefined}
             onClick={() => { if (batchReason === undefined && additions.length) emit({ ...envelope, type: "select", candidateIds: [...additions], scope: "visible" }) }}>选择当前可选项</Button>
@@ -264,8 +292,8 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
             onClick={() => { if (editReason === undefined && visibleSelected.length) emit({ ...envelope, type: "deselect", candidateIds: [...visibleSelected], scope: "visible" }) }}>取消当前结果选择</Button>
         </div>{batchReason !== undefined && <p id={`${id}-batch`} className="text-ui-hint">{batchReason}</p>}</div>}
         {workspace ? <div className="min-w-0 [&_table]:table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
-          <DataRecordTable rows={candidates.map((item, index) => ({ id: String(index), item }))} columns={[{ id: "candidate", label: "候选与选择依据", render: row => renderRow(row.item) }]} empty="当前没有候选。" />
-        </div> : candidates.length ? <ul className={compact ? "space-y-2" : "space-y-4"}>{candidates.map((item, index) => <li key={index}>{renderRow(item)}</li>)}</ul> : <p className="text-ui-hint">当前没有候选。</p>}
+          <DataRecordTable rows={candidates.map((item, index) => ({ id: String(index), item, index }))} columns={[{ id: "candidate", label: "候选与选择依据", render: row => renderRow(row.item, row.index) }]} empty="当前没有候选。" />
+        </div> : candidates.length ? <ul className={compact ? "space-y-2" : "space-y-4"}>{candidates.map((item, index) => <li key={index}>{renderRow(item, index)}</li>)}</ul> : <p className="text-ui-hint">当前没有候选。</p>}
       </>}
       {page.more && <div className="space-y-1"><Button type="button" variant="outline" size="navigation" disabled={moreReason !== undefined}
         aria-describedby={moreReason !== undefined || page.more.message || page.more.state === "error" ? `${id}-more` : undefined}

@@ -289,3 +289,33 @@ test('two labelled demo groups provide comparison, adjustment, narrow layout, ma
   assert.match(render(h(AgentSuggestionSetDemo)), /id="suggestion-set"/);
   assert.match(await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'), /<AgentSuggestionSetDemo\/>/);
 });
+
+test('copy polish: per-suggestion repeated disabled reasons have one accessible explanation, including open adjustment', () => {
+  const reason = '未确认前不能重复操作。';
+  for (const mode of modes) for (const open of [false, true]) {
+    const item = { ...first, status: { state: 'unconfirmed', reason }, adjustment: { open, fields: [{ id: 'field', label: '次数', type: 'number', value: 1 }] } };
+    const html = htmlFor({ ...mode, suggestions: [item] });
+    assert.equal(textOf(html).split(reason).length - 1, 1);
+    for (const [, refs] of html.matchAll(/aria-describedby="([^"]+)"/g)) for (const ref of refs.split(' ')) assert.ok(html.includes(`id="${ref}"`), ref);
+    const explicit = htmlFor({ ...mode, suggestions: [{ ...item, status: { state: 'pending' }, adopt: { disabledReason: reason }, adjustment: { ...item.adjustment, disabledReason: reason }, dismiss: { disabledReason: reason } }] });
+    assert.equal(textOf(explicit).split(reason).length - 1, 1);
+    const distinct = htmlFor({ ...mode, suggestions: [{ ...first, adopt: { disabledReason: '采纳能力暂不可用' }, dismiss: { disabledReason: '驳回能力暂不可用' } }] });
+    for (const phrase of ['采纳能力暂不可用', '驳回能力暂不可用']) assert.equal(textOf(distinct).split(phrase).length - 1, 1);
+    const global = htmlFor({ ...mode, suggestions: [item, second], selectedIds: [first.id], receipt: { state: 'unconfirmed' } });
+    assert.equal(textOf(global).split('请先核对原请求，结果未确认前不能重复操作。').length - 1, 1);
+  }
+});
+
+test('copy polish: wholly missing suggestion details form one line, while supplied facts retain individual fields', () => {
+  for (const mode of modes) {
+    const missing = { ...first, reason: null, scope: null, impact: null, certainty: null };
+    const html = htmlFor({ ...mode, suggestions: [missing] });
+    assert.match(html, /<p[^>]*>理由：未提供；适用对象／范围：未指定；预期影响／代价、确定性：未知<\/p>/);
+    assert.doesNotMatch(html, /<dt[^>]*>理由<\/dt>/);
+    const known = htmlFor({ ...mode, suggestions: [{ ...missing, reason: first.reason }] });
+    assert.match(known, /<dt[^>]*>理由<\/dt>/); assert.ok(known.includes(first.reason));
+    assert.match(known, /<dt[^>]*>确定性<\/dt>/); assert.match(known, />未知<\/dd>/);
+    const explicit = htmlFor({ ...mode, suggestions: [{ ...missing, reason: '未提供', scope: '未知', certainty: '未知' }] });
+    assert.match(explicit, /适用对象／范围、预期影响／代价、确定性：未知/);
+  }
+});

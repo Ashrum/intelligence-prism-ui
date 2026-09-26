@@ -283,3 +283,27 @@ void [missing,wrong,source,unknown,validation,choices,event,version,config,froze
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
 });
+
+test('copy polish: missing defaults have one group note while supplied values and sources remain', () => {
+  for (const density of ['default', 'compact']) {
+    const html = htmlFor({ view: 'workspace', density, parameters: [number, select, radio, short] });
+    assert.equal((html.match(/未提供默认值/g) ?? []).length, 1);
+    assert.match(html, /未提供默认值：难度、分值方式、卷名。/);
+    assert.match(html, /默认：12 题；来源：练习模板/);
+    assert.doesNotMatch(html, /未提供默认值。/);
+  }
+});
+
+test('copy polish: frozen and all readonly paths hide numeric input hints but retain value, validation and impact', () => {
+  const parameter = { ...number, constraintSource: '仅用于输入的范围说明', description: '参数事实说明', impact: '影响输出题量', validation: [{ level: 'error', message: '数量超过当前许可范围' }] };
+  for (const mode of modes) {
+    for (const extra of [{ frozen: { versionLabel: '确认版', reason: '已确认，不能修改' } }, { readOnlyReason: '历史记录' }, { onIntent: undefined }, { parameters: [{ ...parameter, lockedReason: '已锁定' }] }, { parameters: [{ ...parameter, readOnlyReason: '单项只读' }] }]) {
+      const html = htmlFor({ ...mode, parameters: [parameter], ...extra });
+      assert.doesNotMatch(html, /下限 1|上限 20|步长：|仅用于输入的范围说明/);
+      for (const phrase of ['24 题', '数量超过当前许可范围', '影响输出题量', '参数事实说明']) assert.ok(html.includes(phrase), phrase);
+      if (extra.frozen) assert.match(html, /已确认，不能修改/);
+    }
+    const editable = htmlFor({ ...mode, parameters: [parameter] });
+    assert.match(editable, /下限 1/); assert.match(editable, /步长：2/);
+  }
+});
