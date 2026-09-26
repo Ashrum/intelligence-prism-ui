@@ -54,6 +54,67 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 迁移时可用本次 Prism 源码替换 Composer、data-display、QuestionPrint、Badge；QuestionWorkPanel 与当前 Workspace 源码已一致。仍须同步直接依赖、Typography 样式及新的 Agent 语义导出，不回退 main 的任务快照语义。Button / Toolbar 的调用先切换 Prism 导入，再恢复相应 coss 原文件。Button info 已获 Product Owner 2026-09-24 批准，在 Prism 适配层复用 Workspace `4e0d656` 的 `border-info/30 bg-info/10 text-info-foreground hover:bg-info/20 focus-visible:ring-info`，加载指示器沿用 info-foreground 以保持可见。主题动画相对路径继续由宿主适配。Sidebar 本地中文/兼容保护、md=768、EmptyTitle lg 尚不能直接覆盖：涉及内部能力或规范冲突，保留到独立迁移与产品决定；本轮不修改 Workspace，也不证明升级已通过。
 
+## 路径与优先级 v0.1
+
+2026-09-26 设计候选，语义 **24 路径与优先级**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-path-priority` 导入 `AgentPathPriority` 及同文件公开类型。分支 `feat/agent-path-priority`，基于 main `10b1839`；不新增 80 项目录条目。
+
+### 复用检索与 23 / 22 / 17 边界
+
+- 已阅读 AGENTS.md、批准规范 §2、§6.8 路径与优先级行、§7、§8、§10、复用规划第 24 项、覆盖矩阵 N21/R04、23/22/12/17 及 MilestoneList / LearningTaskList 契约、进度清单与第二轮文案要求。路径行实际在 §6.8；不改批准规范。
+- **23 编排计划内容，24 呈现与调整顺序／依赖／优先级。** 顺序、下一步范围、阻塞项、依赖满足情况、优先级等级／得分／理由和确定性全部由页面提供。组件不计算路径、拓扑排序、自动排程或推算阻塞，不预建关系图编辑器。
+- **22 决定采纳哪些建议，24 决定已有路径中先做什么，17 承担单个行动的证据核对与复盘判断。** `accept-next` 只请求接受下一步，不创建或启动任务；R04 关闭／延长判断及执行结果分别交回 17／27 与既有页面命令。12 编排引用与分组，不代替建议／待办生命周期和依赖事实。
+- 检索了 AgentPlanBuilder、AgentSuggestionSet、AgentStructureArranger、AgentItemReviewer、MilestoneList、LearningTaskList。MilestoneList 五种阶段状态不足以表达冷却／到期／未知，LearningTaskList 固定步骤与日程槽不适合依赖及位置操作；不强行映射成错误状态，也不扩张它们的默认行为。本组件采用同类有序列表 `ol/li`，直接复用 Card、固定 Label/Select、Prism Badge/Button navigation、RecordDetails，无基础组件修改。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `path` | 必填 `AgentPath` | `{id,title,version:{id,label},baseVersion?:{id,label},snapshot?}`。ID 仅用于请求与 React key；版本只显示可读 label。snapshot 存在（含空串）即历史只读，不回填当前事实 |
+| `items` | 必填 `readonly AgentPathItem[]` | 完整获权路径，数组顺序原样呈现。id/title/type/kind/status/priority/dependencies，及可选 description/content/lockedReason/actions。title 是唯一条目标题；type 是可读类型；kind=suggestion/todo，分别显示“建议／待办”。content 是不重复标题的被动正文，可含公式 |
+| `nextItemIds` | 必填 `readonly string[] / null` | 页面明确选择的 0–3 项，Inline 严格按此数组展示；[] 为暂无下一步，null 为未知。可含真实待办，但不能被 accept-next 当成建议。重复／失效／超过三项显示范围待核对，不自动截断或补前三项；组件不根据得分、状态或顺序挑选 |
+| `blockerItemIds` | 必填 `readonly string[] / null` | 页面声明的阻塞项。Inline 全部保留；与下一步重叠时只渲染一次并提示上方已有。Workspace 用标记说明下一步与阻塞项，不计算关系图。[] 为无，null 为未知；不从未满足依赖或 blocked 自动生成 |
+| `save` | 可选 `AgentPathSave`，默认 unknown | `{state,description?}`，state=unsaved/saving/saved/conflict/error/unconfirmed/unknown。保存中／冲突／回执未确认阻断修改，失败保留外部草稿并可修正；未知只说明缺保存事实，不推定失败。点击／Promise／移动都不改变保存状态 |
+| `readOnlyReason / lockedReason` | 可选 string | 全局只读／单项锁定；存在即阻断修改（空串也阻断）。锁定项的位置也不得因其他项跨越而改变；明确的 reorder.disabledReason 同样保护该位置。查看原内容及展开／返回独立 |
+| `onIntent` | 可选 `(intent:AgentPathPriorityIntent)=>void` | 唯一业务操作出口。缺省只读；全部意图带 pathId/versionId/baseVersionId；缺身份／版本、空或重复条目 ID、空或重复依赖 ID 阻断请求。没有组件业务状态副本、保存动作或回执生成 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline 为下一步建议与阻塞项、理由及轻量决定；Workspace 为完整路径与位置／优先级／依赖操作。compact 只减少留白，保留状态、原因、未知、版本和保存事实，不缩字、不另建第三态 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 展开完整路径／返回原位置；纯导航。页面负责同对象、草稿、阅读位置、焦点恢复与离开保护，不隐含保存、丢弃或取消 |
+| `notice / details` | 可选 string / ReactNode | 默认一条“建议与待办分别记录；跳过或冷却不会取消已有工作，接受下一步仅提交请求。”；details 是默认收起的补充说明，不能藏关键事实或引入写操作旁路 |
+
+`AgentPathStatus`：not-started（待开始）、in-progress（进行中）、completed（已完成）、blocked（受阻，必填 reason）、skipped（已跳过）、snoozed（冷却中，until:string/null）、expired（已到期）、unknown（未知）。没有计时器或本机时钟判断；过去的冷却日期也不能自动变到期／待开始。**N21：建议不是待办；跳过／冷却／到期／已完成只呈现独立事实，完整路径保留所有传入内容，不删除、取消或重新创建业务工作，不计算待办数。** 退出面板也不移除工作。
+
+`priority={label:string/null,reason:string/null,evidence:string/null,certainty:string/null,score?:number/null}`。label 是外部等级或顺位说明；score 原样显示有限数（包括 0），缺失／无效为未知，不推算百分比或确定性。reason 与 evidence 是摘要，不认证其真实性；未知字段在每个对象内合并一行。
+
+`dependencies:readonly AgentPathDependency[]/null`：每项 `{id,title,state:'met'/'unmet'/'unknown',resolve?:AgentPathAction}`，显示可读前置名与已满足／未满足／满足情况未知；[] 为无依赖，null 为未知。依赖可引用路径外的前置对象，不要求加载它或重建图。即使前置条目已完成也不自动改满足状态；即使存在循环也不重排或自行判受阻。resolve 只声明请求能力，不证明依赖已经满足。
+
+### 能力、意图与移动约定
+
+`AgentPathItemActions` 按意图类型声明：`reorder`、`set-priority`、`skip`、`snooze`、`restore`、`open-item`、`accept-next`；每项均有可选 disabledReason，原因存在即禁用，处理器重复保护。缺能力无入口。set-priority/skip 必填 `options:readonly {id,label,disabledReason?}[]`；snooze 选项额外必填 `until:string`，事件保留原始时间字符串，不转换时区或计算日期。空／重复 ID 选项、未知选项值、禁用选项或缺冷却结束时间不发送请求。固定 Select 的 DOM 值为局部序号，不暴露业务 ID，也不自动选第一项。
+
+每个意图共有 `{pathId,versionId,baseVersionId,itemId}`：
+
+| type | 其他字段 | 边界 |
+| --- | --- | --- |
+| reorder | `toIndex:number,via:'up'/'down'/'drag'/'to-position'` | 仅 Workspace；人工相邻移动、拖拽或指定位置。toIndex 是先移除源项后的零基插入位置；不改优先级、依赖或下一步选择 |
+| set-priority | `optionId` | 仅 Workspace；请求页面给定选项，不重算得分或排序 |
+| skip | `optionId` | 请求页面给定跳过选项，不删除真实待办。仅待开始／进行中／受阻且页面声明能力时可请求 |
+| snooze | `optionId,until` | 同上；时间严格取所选页面选项，无自动解除冷却 |
+| restore | 无 | 仅已跳过／冷却中／已到期且有能力时可请求；不自行恢复原状态 |
+| mark-dependency-resolved | `dependencyId` | 仅 Workspace，依赖明确为 unmet 且页面提供 resolve 才可请求；不更改依赖、条目状态或后续可用性 |
+| open-item | 无 | 页面打开原对象，不写读取、采纳或执行事实；只读不等于禁止查看 |
+| accept-next | 无 | 必须是当前 nextItemIds 中待开始的 suggestion，且有显式能力；只请求接受，不写成待办或启动执行 |
+
+移动拒绝越界、非整数、原地移动及跨越锁定位置。拖拽仅接受当前组件实例启动的条目，版本或 items 数组变化后旧拖拽无效；DragData 不存业务 ID；拖拽结束后清除局部引用。始终提供上移／下移／指定位置的键盘与触屏等效入口，拖拽仅为增强。局部位置换算是请求坐标，不是路径计算。
+
+页面接收时重新核对对象／会话、当前及基准版本、合法选项、权限和动作能力，使用既有服务防重及记录回执；UI 保护不替代授权。请求在途或回执不明时应回传相应只读原因／保存事实，先查询原请求再决定重试；返回和刷新恢复由页面负责。所有文本、选项、依赖名和插槽必须先经披露检查，组件不解析为业务命令或任意 URL。
+
+### 文案、示例与验证边界
+
+相同 description／优先级理由／依据／受阻原因／操作限制按完整文本合并；单项说明留在条目内，跨项相同说明常驻一次并用有意义的路径顺序定位（“适用顺序 1、2”）。相关控件共享 aria-describedby；无“条目 N”占位编号，标题不复制到工具区。版本与保存缺失合并一行，每项缺失字段也各合并一行；句子分开呈现，不把自带句号的说明用分号再拼接。已知状态、阻塞和限制不放入 details。
+
+`/next/components/agent-components#path-priority`：学生二次函数补弱路径（未满足依赖、受阻、冷却、优先级理由与得分）与教师待办优先级（建议／待办混合、已到期、已跳过），共享三种用法，提供 320px、长中文与 MathML 公式。示例页面只响应人工排序／优先级草稿并增加版本；其余操作仅记录请求，保存记录单独切换，不伪造执行或路径计算。
+
+五项日志、实际 diff、验证数字与 Workspace 只读轻量方案见 `.sites-runtime/path-priority/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace。SSR／处理器覆盖不等于浏览器三主题、实际拖拽／键盘触屏、读屏器、Workspace 接入或真实服务验收；状态为组件候选，待 Supervisor 独立 Review 与 PO 确认。
+
 ## 计划构建器 v0.1
 
 2026-09-26 设计候选，语义 **23 计划构建器**，声明 **Inline + 专用扩展内容**。导入 `components/prism-next/agent-plan-builder` 的 `AgentPlanBuilder` 与同文件公开类型。分支 `feat/agent-plan-builder`，基于 main `a104c0d`；不新增 80 项目录条目。

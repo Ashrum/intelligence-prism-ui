@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 路径与优先级 v0.1 · 设计候选（2026-09-26）
+
+语义 24 `AgentPathPriority` 声明 **Inline + 专用扩展内容**：Inline 呈现页面指定的 1–3 项下一步建议、理由与阻塞项；Workspace 呈现完整顺序、依赖、优先级、完成情况和人工调整。支持 `density="compact"`；上移、下移和指定位置提供拖拽的键盘／触屏等效操作。
+
+23 编排计划内容，24 呈现与调整顺序／依赖／优先级；22 负责建议采纳，17 负责单项复盘判断。路径计算全部外置，所有操作只发带 `pathId/versionId/baseVersionId` 的 `onIntent`。建议和真实待办明确区分；跳过、冷却、到期、完成不会删除已有工作，接受下一步不代表创建或执行任务。
+
+组件页 `/next/components/agent-components#path-priority` 提供学生补弱路径与教师待办优先级两组固定示例，含八类状态、未满足依赖、320px、长中文、公式及独立保存记录。公开 API 见[路径与优先级契约](docs/component-contracts.md#路径与优先级-v01)。复用 Card / Label / Select / Badge / Button / RecordDetails，不修改基础组件；coss、依赖、令牌与 80 项目录不变。
+
+候选位于 `feat/agent-path-priority`，基于 main `10b1839`；第 24 项为“组件候选”。五项日志、实际 diff、数字及 Workspace 只读轻量验证方案见 `.sites-runtime/path-priority/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／实际键盘触屏、Workspace 接入、真实服务和独立 Review 未完成。
+
 ## 计划构建器 v0.1 · 设计候选（2026-09-26）
 
 语义 23 `AgentPlanBuilder` 声明 **Inline + 专用扩展内容**：Inline 确认目标、对象、核心步骤、起止时间和待确认项；Workspace 编辑步骤、负责人、对象与资源，组合 LearningTaskList / MilestoneList / WorkloadCalendar 呈现完整计划。支持 `density="compact"`，保持冲突、受阻、未知和保存状态可见。
