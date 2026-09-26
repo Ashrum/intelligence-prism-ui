@@ -273,3 +273,13 @@ test('inline and compact hide only zero counts; nonzero critical counts and coll
     assert.match(occupied, /他人处理中/); assert.match(occupied, /正在处理：教师乙/);
   }
 });
+
+test('copy polish 3 audit: seven supplied counts keep only nonzero inline and retain complete workspace detail', () => {
+  const counts = Object.fromEntries(Object.keys(agentItemReviewLabels).map(state => [state, 0]));
+  counts['waiting-human'] = 2; counts.resolved = 1;
+  const inline = textOf(htmlFor({ counts, items: [] }));
+  assert.match(inline, /待复核2/); assert.match(inline, /已复核1/);
+  for (const [state, label] of Object.entries(agentItemReviewLabels)) if (counts[state] === 0) assert.ok(!inline.includes(`${label}0`));
+  const full = textOf(htmlFor({ counts, items: [], view: 'workspace' }));
+  for (const [state, label] of Object.entries(agentItemReviewLabels)) assert.ok(full.includes(`${label}${counts[state]}`));
+});

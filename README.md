@@ -2,6 +2,12 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## Agent 文案整理第三轮（2026-09-26）
+
+分支 `fix/agent-copy-polish-3`：24 移除未知／空下一步的空标题；12 新增可选 `openItemLabel`（默认“查看详情”，Workspace 可传“查看题目”）；05 合并全页共同未知字段、部分已知采集时间逐页显示；23 按步骤归并未知；28 移除内部文档 ID 展示。16/19 已由 PR #63 修复，本轮补回归；38 焦点与默认分类名、05 补采后限制为宿主层，待 Workspace。
+
+公开契约见 [组件复用约定](docs/component-contracts.md#agent-文案整理第三轮2026-09-26)，逐条核对、五项日志与未验证范围见 `.sites-runtime/copy-polish-3/REPORT.md`。不写 `.git`、不启动服务、不修改 Workspace；SSR 三主题包裹检查不代表视觉或接入验收，交 Supervisor 独立 Review。
+
 ## 素材包 v0.1 · 设计候选（2026-09-26）
 
 语义 38 `AgentMaterialPack` 声明 **Inline + 专用扩展内容**：Inline 展示包名、分类数量、来源构成、许可/可用性、关键变化与复用记录；Workspace 提供分类、排序、用户触发的预览、包名/分类名/备注编辑和复用请求。支持独立 `density="compact"`，上移/下移与分类选择是拖拽的键盘和触屏等效入口。

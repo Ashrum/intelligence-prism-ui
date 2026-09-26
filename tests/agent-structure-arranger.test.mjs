@@ -381,3 +381,16 @@ test('single-item boundaries keep the readable range name in both directions', (
   assert.ok(html.includes('第 1 题：已在最前，不能上移'));
   assert.ok(html.includes('第 1 题：已在最后，不能下移'));
 });
+
+test('copy polish 3: optional open label preserves source requests and disabled guards', () => {
+  for (const mode of modes) for (const openItemLabel of [undefined, '', '  ', '查看题目', '查看课程任务']) {
+    const calls = [], extra = { ...mode, openItemLabel, onIntent: intent => calls.push(intent) };
+    const html = htmlFor(extra);
+    assert.ok(html.includes(openItemLabel?.trim() || '查看详情'));
+    assert.doesNotMatch(html, /查看条目|opaque-/);
+    controls(capture(extra), 'open-item')[0].props.onClick();
+    assert.deepEqual(calls, [{ ...context, type: 'open-item', itemId: items[0].id, source: items[0].source }]);
+    const blocked = controls(capture({ ...extra, items: [{ ...items[0], open: { disabledReason: '暂不可查看' } }] }), 'open-item')[0];
+    assert.equal(blocked.props.disabled, true); blocked.props.onClick(); assert.equal(calls.length, 1);
+  }
+});

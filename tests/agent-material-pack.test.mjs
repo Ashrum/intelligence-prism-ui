@@ -259,3 +259,15 @@ test('component stays free of content copying, storage, execution services, time
   const demo = await readFile(new URL('../components/prism-next/demos/agent-material-pack.tsx', import.meta.url), 'utf8');
   assert.match(demo, /AgentObjectViewer|<math>/); assert.doesNotMatch(demo, /setTimeout|setInterval|fetch\(|localStorage/);
 });
+
+test('copy polish 3: organizing delegates the trigger and category creation delegates naming', () => {
+  const trigger = { focus() { assert.fail('component must not move host focus'); } }, expansions = [], calls = [];
+  const nodes = capture({ view: 'inline', onExpand: value => expansions.push(value) });
+  nodes.find(node => node.props['data-material-expand'] !== undefined).props.onClick({ currentTarget: trigger });
+  assert.deepEqual(expansions, [trigger]);
+  const before = htmlFor({ view: 'workspace' });
+  button(capture({ onIntent: value => calls.push(value) }), 'category-create').props.onClick();
+  assert.deepEqual(calls, [{ ...context, type: 'category-create' }]);
+  assert.equal(htmlFor({ view: 'workspace' }), before);
+  assert.doesNotMatch(before, /新分类 \d/);
+});
