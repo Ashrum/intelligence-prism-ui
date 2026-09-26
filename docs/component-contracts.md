@@ -65,6 +65,63 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
 
+## 学科专用编辑器 v0.1（数学公式）
+
+2026-09-27 设计候选，语义 **42 学科专用编辑器**，声明 **Inline + 专用扩展内容**。导入 `components/prism-next/agent-subject-editor`；组件页锚点 `#subject-editor`。本期只编辑单个数学公式片段，行内／行间由页面指定；不含几何、化学、计算、求值、数学正确性判断或完整可视化公式 AST 编辑器。
+
+### 复用检索与 06 / DraftMathPreview / MathContent 边界
+
+- **06 AgentContentInput 是整段内容输入**：文本为主，公式可通过被动插槽内嵌预览；**42 是选定单个公式片段的专业编辑**。页面可从 06 题干或 28 章节正文中定位片段，打开 42，收到 apply 后核对版本与原文，再替换同一草稿的该段。06 的字段、提交和预览 API 不变，不引入 42 或 temml 依赖。
+- `MathContent / RootFormula` 是既有静态数学阅读与 MathML 示例，没有任意公式输入、工具栏、光标插入或撤销能力。`DraftMathPreview` 只从当前字符串派生安全排版，不能代替公式编辑。复用检索未发现现有专业编辑能力；42 组合 Card、Field / FieldLabel、Textarea、Prism Button、RecordDetails 和 DraftMathPreview，并添加纯字符串插入／本次编辑历史。
+- 不自造解析器：`lib/prism-next/draft-math.ts` 新增 `previewFormula`，复用原 `render` 与同一 temml 安全限制。解析位置仅取 Temml 的数值 `position`，未提供位置则明确未知；不读取或猜测英文错误消息。不会因排版成功宣称数学成立。
+- 无 coss、依赖、视觉令牌或 80 项目录变更；布局只用既有组件与间距，原文／预览使用 `text-read-body`，其他文案使用语义字号。
+
+### 公开 API
+
+`AgentSubjectEditorProps`（公开类型从组件同文件导入）：
+
+| 属性 | 类型／默认 | 契约 |
+| --- | --- | --- |
+| `formulaId / baseVersion` | 必填 `string / string` | 页面已有片段标识及本次编辑的基准令牌，仅用于请求与历史隔离，不显示内部值。所属任务、对象、字段与片段范围由页面闭包保存；缺失时只读 |
+| `location / baseVersionLabel` | 必填 `string / string` | 可读定位（如“第 1 题题干 · 第 2 个公式”）及基准版本名称；不可传内部 ID 充当文案。位置缺失时只读；版本标签空时显示未确认 |
+| `value` | 必填 `string` | 单个公式原文，不含外围 `\(...\)` / `\[...\]` 分隔符；不 trim、清洗、计算或持久化。原内容中的分隔符与替换范围由页面管理 |
+| `formulaMode` | 可选 `inline / block`，默认 inline | 数学行内／行间排版；与 view 的对话／扩展呈现相互独立。不因展开改变行内公式的含义 |
+| `title / versionLabel` | 可选 `string / string` | 默认标题“数学公式”；可选当前草稿版本名称，由页面提供，不从点击推算 |
+| `view / density` | 默认 inline / default | view 为 inline / workspace；density 为 default / compact，不是第三态。两态始终显示当前原文、实时预览、定位与基准 |
+| `onIntent` | 可选 `(intent:AgentSubjectEditorIntent)=>void` | 只发 change / apply / cancel；缺省只读，不出现确认／取消入口。页面同步接纳 change 并传回 value；组件不将请求当作已接受的事实 |
+| `readOnlyReason / applyDisabledReason` | 可选 `string / string` | 只读阻断输入、插入、撤销／重做、apply；仅 apply 禁用时仍可编辑。原因常驻且处理器保护；只读时仍可定位查看原文、取消或返回。版本冲突由页面核对并提供原因 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void / ()=>void` | 只请求改变呈现；不提交、不保存、不丢弃。推荐同一已挂载实例改变 view，保留本次历史；页面负责展开／返回焦点、滚动和离开处理 |
+| `details` | 可选 `ReactNode` | 默认收起的“说明”，不收纳错误或禁用原因。一条固定常驻提示：“仅排版，不校验数学结论。确认后替换原内容，保存请在原内容中完成。” |
+
+意图形状（`formulaId / baseVersion / formulaMode` 每次均携带）：
+
+```ts
+type AgentSubjectEditorIntent = {
+  formulaId: string
+  baseVersion: string
+  formulaMode: 'inline' | 'block'
+} & (
+  | { type: 'change' | 'apply'; value: string }
+  | { type: 'cancel' }
+)
+```
+
+change 是片段编辑草稿，不直接改整段原内容；apply 才请求确认替换。cancel 仅发请求，由页面恢复／丢弃片段草稿；返回只改变视图。页面再次核对当前对象、权限、原文范围和基准版本，不能把 apply 当作保存、复核确认或正式提交。排版失败保留原文和提示，组件不擅自决定业务提交政策；页面如需阻断替换，传 applyDisabledReason。取消后若重新开始独立编辑会话，可重挂实例；单纯展开／返回不重挂。
+
+### 插入、撤销与解析定位
+
+- Inline 提供 8 个常用入口：分式、根式、上标、下标、括号、小于等于、正负号、乘号。Workspace 提供结构／关系／运算／希腊字母／集合 5 组，共 27 个模板。结构模板把选中文字放入参数位置（无选择则填入可替换占位）；符号替换选择；未提供光标则追加末尾。插入后选中参数位置，连续编辑不用再次寻找光标。
+- `lib/prism-next/subject-editor.ts` 公开纯函数：`insertSubjectTool / subjectSelection / subjectChangeIntent / createSubjectHistory / recordSubjectEdit / stepSubjectHistory / reconcileSubjectHistory`。选区使用 textarea 的 UTF-16 `[start,end)` 坐标；返回新原文和选区，不修改输入对象。
+- 本组件历史只包含本次实例中页面已接纳的编辑，不是业务版本历史。未接纳 change 不入历史；撤销／重做仍发带基准的 change，页面值不随按钮自行改变。撤销后新编辑清空 redo；外部替换文本、formulaId、baseVersion 或 formulaMode 改变时清空旧历史。仅 view / density 改变保留历史。不同实例不共享撤销栈，不覆盖外部新文本。
+- 工具栏每组一个 Tab 入口，以左右方向键及 Home / End 移动，Enter / Space 使用原生按钮。原文支持 Ctrl/Cmd+Z、Shift+Ctrl/Cmd+Z、Ctrl+Y；输入法组字时不截获快捷键。按钮名称为“插入分式”等。错误区给出 Temml 的行列（可识别末尾）及“定位到原文”；无位置时说明无法确定，不捏造定位。
+- DraftMathPreview 仅新增可选 `formulaMode / notice / showHelp / onLocateError`，旧 `value / label` 调用行为保留。formulaMode 缺省继续识别整段正文；指定后使用 previewFormula，原文不加分隔符。notice=null、showHelp=false 供 42 合并重复边界说明；错误／加载失败提示不能关闭。onLocateError 只在单公式模式使用，返回 `{start,end,line,column}`；MathML 保留 temml 的原文 annotation，原文 Textarea 始终可读。
+
+### 示例与验证边界
+
+`/next/components/agent-components#subject-editor` 有勾股定理 `a² + b² = c²`、行间分式根式 `\frac{1}{\sqrt{x^2+1}}`、缺右花括号解析失败三组固定示例，可在同一实例展开／返回、模拟只读，并切换 320px 窄容器；失败组使用 compact。确认仅替换该示例的本页原内容，尚未保存；取消恢复该示例上次确认的原文。示例不接业务 Store。
+
+候选分支 `feat/agent-subject-editor`，本地 main 基线 `ac27c3c`。五项日志、测试数字、实际 diff、只读核对 Workspace P04／28 的接入方案及待决项见 `.sites-runtime/subject-editor/REPORT.md`。本轮不启动服务、不修改 Workspace；SSR／纯函数／处理器检查不等于浏览器、三主题视觉、读屏器、Workspace 或真实业务验收。
+
 ## 素材包 v0.1
 
 2026-09-26 设计候选，语义 **38 素材包**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-material-pack` 导入 `AgentMaterialPack` 与同文件公开类型。候选位于 `feat/agent-material-pack`，基于 main `54b94a0`；不新增 80 项目录条目。
@@ -758,6 +815,7 @@ name 仅为可读文件名；包含路径分隔符或换行时不显示原值，
 - `Textarea` 提供长文本受控编辑；`InputGroup` 组合字符数与格式身份；`Field / FieldLabel` 保留常驻固定标签；Card、Prism Badge / Button 和 RecordDetails 提供既有外框、状态、动作与说明。组件不新增 CSS 或视觉令牌，阅读／编辑使用 `text-read-body`，完整工作区正文宽度最多 40em。
 - **AgentComposer 输入给 Agent 的指令**，例如“按以下材料生成讲评”；**06 输入任务材料／正文**，例如题干、参考答案、讲评要点、粘贴文章。06 不继承 Composer 的发送／停止、空白禁发或快捷键规则，不以正文提交假装发送指令。
 - **28 AgentDocumentWorkspace 负责已有文稿的阅读、章节编辑、批注与历史**；06 负责把材料输入任务。已有提纲不因含 Textarea 就改归 06。P04 校对题干可在 17 的受控编辑插槽中组合 06，但复核动作、回执和依据保护继续归 17／宿主。
+- **42 AgentSubjectEditor 针对单个公式片段**，专业插入、光标编辑、撤销与替换请求不属于 06。页面从当前字段定位公式后打开 42，apply 时回写同一草稿；详见“学科专用编辑器 v0.1（数学公式）”。
 - `DraftMathPreview` 可作当前草稿预览；06 本身不导入它、Temml 或数学解析器，非数学接入无该依赖。预览失败继续显示当前原文，不修改字段、校验、保存或提交事实。
 - 沿用 28 的安全字符串边界：Markdown 以原文输入，段落／列表等允许范围由宿主的 `limits.format` 与 `validation` 描述；不解析 HTML、嵌入、脚本、Markdown 链接，不自动清洗或改写正文。这里是安全文本编辑能力，不声称已实现富文本或 Markdown 渲染器。来源 URL 也仅作转义文字展示，不导航或抓取。
 
@@ -1939,7 +1997,8 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
 - `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
-- `DraftMathPreview`：`value / label?`，仅从当前草稿派生排版，题干与答案复用；不读原稿、不改变输入、不写库。Temml 0.13.4 作为同源原样 ESM 资产按需加载（避免构建优化改写词法器转义）；以 `throwOnError / strict` 开启、`trust` 关闭及展开/大小限额生成 MathML，沿用 Prism Math（STIX）与 `read-body`；正文经过 React 转义，只有渲染器生成的 MathML 可注入。默认识别保守的 Unicode 代数片段，复杂公式要求明确 `\(...\)` / `\[...\]` 标记；无法解析时显示当前原文与 14px 说明。渲染成功不等于数学正确；没有同步原稿或自动确认行为。
+- `AgentSubjectEditor`：语义 42，单公式原文编辑与排版，和 06 整段输入、28 已有文稿、MathContent 静态阅读分工；详见“学科专用编辑器 v0.1（数学公式）”。
+- `DraftMathPreview`：`value / label? / formulaMode? / notice? / showHelp? / onLocateError?`，后四项为兼容新增；单公式模式及位置回调见 42 契约。仅从当前草稿派生排版，题干与答案复用；不读原稿、不改变输入、不写库。Temml 0.13.4 作为同源原样 ESM 资产按需加载（避免构建优化改写词法器转义）；以 `throwOnError / strict` 开启、`trust` 关闭及展开/大小限额生成 MathML，沿用 Prism Math（STIX）与 `read-body`；正文经过 React 转义，只有渲染器生成的 MathML 可注入。默认识别保守的 Unicode 代数片段，复杂公式要求明确 `\(...\)` / `\[...\]` 标记；无法解析时显示当前原文与 14px 说明。渲染成功不等于数学正确；没有同步原稿或自动确认行为。
 
 第一组 Agent 语义候选（2026-09-22，见 `docs/agent-context-summary-review.md`）：
 

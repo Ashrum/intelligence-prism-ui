@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 学科专用编辑器 v0.1（数学公式）· 设计候选（2026-09-27）
+
+语义 42 `AgentSubjectEditor` 支持 **Inline + 专用扩展内容**：对话态显示单公式原文与实时排版，提供分式、根式、上下标、括号及常见符号；扩展态提供结构／关系／运算／希腊字母／集合工具栏、光标插入和本次公式撤销／重做。`density="compact"` 独立于两态，保留定位、版本、只读原因与解析提示。常驻提示明确“仅排版，不校验数学结论”。
+
+06 `AgentContentInput` 编辑整段材料，42 编辑页面选定的公式片段；apply 只请求替换同一草稿，保存、版本检查与正式复核仍由页面负责。复用 `DraftMathPreview` 与已锁定 temml，错误定位使用其真实位置；无位置则如实提示。没有新解析器、依赖、令牌或目录条目，coss 原样保留。
+
+组件页 `/next/components/agent-components#subject-editor` 提供勾股定理、分式根式、解析失败三组示例及 320px 窄容器。公开 API 见[学科专用编辑器契约](docs/component-contracts.md#学科专用编辑器-v01数学公式)。候选位于 `feat/agent-subject-editor`，基线 `ac27c3c`；进度 42 为“组件候选”，下一项按 PO 批准顺序为 37。本轮五项数字、实际 diff、未验证范围及 Workspace P04／提纲正文轻量接入方案见 `.sites-runtime/subject-editor/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace；浏览器及独立验收待完成。
+
 ## 分布矩阵 v0.1 · 设计候选（2026-09-26）
 
 语义 20 `AgentDistributionMatrix` 支持 **Inline + 专用扩展内容**：对话态展示页面指定的关键区域与样本／口径，扩展态提供完整文字矩阵、行列维度切换、筛选、排序、两列／两组比较及逐格下钻。`density="compact"` 独立于两态；所有调整经 `onIntent` 发出，选择保留行、列和数据版本，展开与返回沿用同一记录。19 汇总指标，20 定位分布，21 接续证据。
