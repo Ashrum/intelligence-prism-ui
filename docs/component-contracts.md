@@ -65,6 +65,78 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
 
+## 素材提取器 v0.1
+
+2026-09-27 设计候选，语义 **37 素材提取器**，声明 **Inline + 专用扩展内容**；文本来源优先。从 `components/prism-next/agent-material-extractor` 导入组件与公开类型；范围纯函数在 `lib/prism-next/material-extractor.ts`。未合并候选分支 `feat/agent-material-extractor`，main 基线 `130f88b`。
+
+### 复用检索与 36 / 38 / 21 / 14 边界
+
+- 已完整阅读 AGENTS.md、v0.2.1 批准规范、复用规划 v0.1.3，重点核对 §2、§6.11 素材提取器行、§7、§8、§10、548 行资源链，以及规划第 37 项和附录 C 的源区域选择／片段范围／来源定位／候选确认／结果关联。规范中该行实际位于 §6.11；不修改冻结文件。
+- **36 找资源；37 从已读来源中选片段并保留出处；38 组织素材。** 37 不检索、不创建资产身份、不复制来源全文到结果之外、不保存、不写入素材包，不实现 OCR／裁剪／转换；图像、视频、音频和其他非文本来源本版显示“暂不支持提取”。选用、浏览、加入素材包不证明模型读取、进入上下文或被成果引用。
+- **21** 接续需要查看的证据链；候选出处只是原来源定位，不是可信读取或引用证据。**14** 可由 `open-source` 打开题目／文档对象，来源取数和返回仍由页面负责。已核对 `AgentResourceRetriever`、`AgentMaterialPack`、`AgentEvidenceDrilldown`、`AgentObjectViewer`、`AgentDocumentWorkspace`、`DocumentRegionViewer` 及其契约。DocumentRegionViewer 的百分比页区域和缩放不能表达字符范围；本版不把段落伪造为坐标，不扩展其旧 API。
+- 复用 Card、常驻 Field/FieldLabel、Input、Textarea、Prism Badge/Button navigation 与 RecordDetails；范围与候选用有序列表，原生按钮支持键盘选择与排序。Input 使用已存在的可选 `nativeInput`，保证固定标签与显式 id 的 SSR 关联；coss 不变。许可类型复用 36，可用性类型复用 38，均为 type-only 引入。
+- 38 当前按原资源身份组织清单，`uncategorizedCount` 仍由页面提供；37 的确认不是 38 的整包确认或复用。多段来自同一原资源时，轻量接入建议在页面的同一成员下存多条片段引用，不伪造新的资源 ID。未分类计数按成员口径由页面投影，不能把片段数当资源数。具体源码缺口见本轮报告。
+
+### 公开 API
+
+| 属性 | 类型 / 默认值 | 契约 |
+| --- | --- | --- |
+| `context` | 必填 `{extractorId,baseRevision}` | 当前候选工作集及基准版本，仅用于请求关联，不显示内部 ID；缺失、重复来源／候选身份阻断操作 |
+| `sources` | 必填 `readonly AgentMaterialSource[]` | 页面已获权披露的可读来源及完整段落；不抓取、不分页、不推断“已完整读取”，Inline 不显示来源全文 |
+| `candidates` | 必填 `readonly AgentMaterialCandidate[]` | 已有候选或教师选定的片段，顺序／正文快照／状态由页面给出；不在组件中添加、改写、移除或确认 |
+| `selection` | 必填 `MaterialTextRange / null` | 页面持有的当前范围；更新后才高亮和显示范围。两态切换保留同一选择；不可定位时如实提示，不替换成其他内容 |
+| `target` | 必填 `{packId,versionId,baseVersionId,label} / null` | 目标素材包的原身份／版本与可读名。未确认时禁用批量加入，不自动创建素材包 |
+| `readOnlyReason / confirmDisabledReason` | 可选 string | 分别限制全部整理／仅批量确认；显式空串也禁用并给兜底原因。查看来源、展开与返回独立于整理能力 |
+| `onIntent` | 可选 `(intent:AgentMaterialExtractorIntent)=>void` | 唯一业务动作出口；缺省只读。回调返回或 Promise 完成不作为执行结果 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline“选择关键片段”：来源、候选与定位、批量确认；Workspace“批量提取、标注与整理”：增加全文阅读、键盘范围选择、标题标注和排序。compact 只收紧留白，不缩字或隐藏风险 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 只请求“展开提取与整理”／“返回原位置”；由页面维护单一工作区、焦点、滚动与同一份数据，不提交、不取消 |
+| `renderExcerpt` | 可选 `(candidate)=>ReactNode` | 同一片段的被动排版插槽；默认安全转义原文。只格式化传入 excerpt，不放加载、旁路写入或完整来源；例中复用 DraftMathPreview 呈现公式，不修改字符定位 |
+| `notice / details` | 可选 string / ReactNode | 默认一条“选择与确认不代表已加入素材包；加入结果以素材包记录为准。”；其余解释默认收起。许可／可用性未知、失效、未确认、版本及操作限制常驻 |
+
+`AgentMaterialSource`：
+
+- `id / version:string|null / label / versionLabel:string|null` 分离身份与可读信息；id、版本令牌与段落 ID 不进入 HTML 属性或教师文案。每个来源在本工作集中唯一；未知版本保持 null，不能用查询修订号、包版本或预览指纹补造。
+- `kind=text/document/question/image/video/audio/other`；`paragraphs:readonly {id,label,text}[]` 保留原文空格、换行、数学原文及稳定段落身份，不标准化文本。本版支持的类型还须 `extractability.state=available` 且版本已知；unavailable/unknown 显示 reason 或明确兜底。
+- `license` 沿用 36 的 available/restricted/confirmation-required/unknown；`availability` 沿用 38 的 available/invalid/restricted/unknown。二者独立呈现；组件不从许可或可用性自行授予／取消权限。页面提供可提取性和当前允许披露的正文，接收请求时再核验授权。
+- `openable / openDisabledReason?` 显式声明查看能力；打开来源不改变选中、读取、候选状态或素材包。图像／视频不因 openable 而可提取。
+
+`AgentMaterialCandidate={id,range,sourceLabel,versionLabel,location,excerpt,title,note,status,disabledReason?}`：可读来源／版本／完整位置和 excerpt 都是候选的原版本快照，不用新版本原文填补旧候选。location 由页面提供可读段落与字符描述，可复用 `materialRangeDescription`。候选原文必须与当前来源同版本、同范围的文本完全一致才可确认。段落之间以一个 `\n` 连接；范围携带原段落，连接符不写回来源。标题／标注原始字符串含空白原样回传。
+
+| 外部 status | 呈现与操作 |
+| --- | --- |
+| `candidate` | 候选，可标注、排序、移出和确认 |
+| `confirmed` | 已确认，可请求加入；尚不代表已加入素材包；修改后是否退回候选由页面决定 |
+| `added` + `targetLabel` | 已加入素材包及可读包名，不重复确认或改写；移出候选列表不移出该包 |
+| `invalid` + `reason` | 失效及原因常驻；不可标注、排序、确认，可移出候选列表 |
+| `unconfirmed` + `reason?` | 未确认；先核对上次确认结果，阻断调整、移出和重复确认，不假称失败或重试 |
+
+### 范围、键盘与意图
+
+`MaterialTextRange={sourceId,sourceVersion,start:{paragraphId,offset},end:{paragraphId,offset}}`，**零基 UTF-16 偏移、右端不含**；可跨同一来源的连续段落。纯函数拒绝未知／旧版本、重复或缺失段落、空范围、倒置、越界、非整数及拆开代理对的边界，不静默截断或校正出处。字符控件对教师使用 **从 1 起的 Unicode 码点计数、结束字符包含在内**，换算后才发请求；组合字符并非字形簇分段，原文不归一化。
+
+按钮依次支持“选择整段／选择首句”“向前／向后扩展一句或一段”；按句以中文句末标点、分号、换行及非小数英文句点为选择辅助，不宣称理解语义或公式。首尾按钮禁用；字符起止控件有常驻标签、有效范围和错误说明。字符框只保存未应用的视图输入，点击“更新所选范围”才请求页面更新 selection；换范围或离开扩展态会放弃未应用的字符框输入，不影响已选范围和候选。已选文字有可见括号、双下划线、读屏起止说明和 `role=status` 的范围描述，不依赖颜色或鼠标拖选。
+
+所有 `AgentMaterialExtractorIntent` 带 `{extractorId,baseRevision}`：
+
+| type | 其余载荷 | 语义 |
+| --- | --- | --- |
+| `select-range` | `range,purpose:'preview'/'candidate'` | preview 请求调整阅读选择；candidate 请求将同一范围列为候选。都不含全文；已列出的相同范围不重复请求 |
+| `annotate` | `candidateId,range,field:'title'/'note',value` | 调整该片段的标题或标注，不改源文 |
+| `remove` | `candidateId,range` | 只请求移出候选列表，不删除来源或撤销已加入的素材 |
+| `reorder` | `candidateId,range,beforeCandidateId:string|null,orderedCandidateIds` | 上下移动一步后的完整候选顺序；null 表示末尾。当前项与相邻项都可调整才可交换，不能间接移动失效／已加入／未确认项 |
+| `confirm` | `target,candidates:[{candidateId,range,title,note}]` | 一次加入全部当前可确认片段，按钮显式给出本次段数；排除已加入、失效、未确认和不能核对的片段。载荷只含引用、范围、标注，不带来源全文或 excerpt |
+| `open-source` | `sourceId,sourceVersion,range?` | 来源行打开同一来源；候选行带原版本与范围定位。未知原版本保持 null，不用当前版本替换 |
+
+事件处理器与禁用控件使用同一保护条件；页面仍须重新核验工作集修订、当前会话归属、原文／版本／范围、许可、目标包版本和去重。可逆请求不另弹确认；批量确认本身不写包，页面得到可信加入结果后才更新 added。旧版本／迟到回调不能覆写当前候选，回执不明先查询原请求。保存、跨入口恢复、持久化、素材包记录与来源的真实读取均属页面或服务职责。
+
+### 文案、示例与验证边界
+
+相同原因按原字符串合并，按可读来源或片段名标范围，通过 `aria-describedby` 关联相关控件；全局只读不逐按钮重复。来源未知字段合并一行，标题输入常驻时不另列同名标题。仅一条边界提示；实现术语和内部 ID 不出现于教师界面。正文与选中高亮保持阅读字号，320px 用同一布局自然换行。
+
+`/next/components/agent-components#material-extractor` 有“勾股定理复习课提纲”两段（一段由固定记录声明已加入，一段候选）、一道题干首句及图像不支持；第三段用于跨段扩展、长中文和分式原文。两态共享页内选择与标注，独立按钮切换候选／已确认／失效／未确认固定状态，不冒充真实回执。确认只记录请求，没有真实素材包写入。公式可用已有 DraftMathPreview 排版，选择仍针对同一原文。
+
+五项日志、数字、实际 diff、组件夹具验证与只读 Workspace 轻量接入方案见 `.sites-runtime/material-extractor/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace；SSR 或组件夹具均不代替 `/teacher/agent/workspace` 接入、真实服务、实体移动设备或读屏器验收，仍待 Supervisor 独立 Review 与 PO 决定。
+
 ## 学科专用编辑器 v0.1（数学公式）
 
 2026-09-27 设计候选，语义 **42 学科专用编辑器**，声明 **Inline + 专用扩展内容**。导入 `components/prism-next/agent-subject-editor`；组件页锚点 `#subject-editor`。本期只编辑单个数学公式片段，行内／行间由页面指定；不含几何、化学、计算、求值、数学正确性判断或完整可视化公式 AST 编辑器。
@@ -130,7 +202,7 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 
 - 已完整阅读 AGENTS.md、v0.2.1 批准规范（重点 §2、§6.11 素材包行、§7、§8、§10、548 行资源链）、复用规划 v0.1.3（38、resources、lesson-artifact）、覆盖矩阵 F02、上述相邻契约与进度清单。素材包行实际位于 §6.11，批准文件不改。
 - **11 集合篮是临时收集、跨页暂存；38 是有名称、分类、来源引用、可复用的素材集合。** 沿用原资源 id、版本与来源引用，不复制资源内容、不另造资产体系。已检索 `AgentCollectionBasket`、`AgentArtifactPreview`、`AgentObjectViewer`、`AgentResourceRetriever`、`AgentStructureArranger` 及其位置辅助函数。11 的同步、去向和批量选择不能替代包名、分类编辑与复用事实，因此复用其“身份与外部合计 → 分组有序清单 → 问题常驻 → 外部操作”的呈现方式，不嵌套另一份集合篮或 Store。
-- **36 找资源，38 组织资源**：`add-request` 交给页面打开 36，结果由页面核对后带入同一草稿；38 无检索、复制、抓取或许可判定。**12** 的 `indexArrangement / arrangementMoveTarget / arrangementDropTarget / arrangementMoveBlock` 直接用于分类位置校验；只建临时位置投影，不引入分值、业务模型或内容树。**13** 仍提供独立成果摘要与打开入口，不另造摘要 Workspace；38 的 Inline 是素材包自己的摘要。**14** 承载用户打开后的对象详情，demo 用 `AgentObjectViewer` 作为预览插槽，不在 38 内置题目、图片或播放器。
+- **36 找资源，37 从已读文本中选取带出处的片段，38 组织资源**：`add-request` 交给页面打开 36，结果由页面核对后带入同一草稿；37 只请求加入原引用／范围／标注，不在组件内写入 38，片段与原资源成员的映射由页面负责；38 无检索、复制、抓取或许可判定。**12** 的 `indexArrangement / arrangementMoveTarget / arrangementDropTarget / arrangementMoveBlock` 直接用于分类位置校验；只建临时位置投影，不引入分值、业务模型或内容树。**13** 仍提供独立成果摘要与打开入口，不另造摘要 Workspace；38 的 Inline 是素材包自己的摘要。**14** 承载用户打开后的对象详情，demo 用 `AgentObjectViewer` 作为预览插槽，不在 38 内置题目、图片或播放器。
 - 复用 Card、Prism Badge/Button navigation、常驻 Label/Input/Textarea、Select 与 RecordDetails。分类采用 section + ol/li，拖拽只是增强；无需改变 coss、依赖、视觉令牌或现有组件 API。
 
 ### 公开 API
@@ -443,7 +515,7 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 ### 复用检索与 10 / 03 / 38 / 21 边界
 
 - 已核对 AGENTS、批准规范 §2、§6.11 资源检索器行、§7、§8、§10 和 §11.4/11.5 资源链（548/554 行附近），复用规划第 36 项与 resources 对象行，覆盖矩阵 B03/D03/E02/F02，同类 10/22/03/21 契约及进度清单。资源检索器行实际位于 §6.11，不修改批准规范。
-- **10 挑选候选对象加入集合；36 检索外部或库内资源并决定预览、读取或移出当前上下文；03 汇总来源及独立使用事实；38 组织已取得的资源为素材包；21 从结论下钻到来源与证据。** 36 的结果保留既有资源身份，可由页面交给 03/38；没有入篮、创建素材包、采纳建议或认证证据的动作。`unread` 请求移出本次上下文，不抹除历史读取或成果引用。
+- **10 挑选候选对象加入集合；36 检索外部或库内资源并决定预览、读取或移出当前上下文；03 汇总来源及独立使用事实；37 从已能阅读且可定位版本的文本中选择带出处片段；38 组织已取得的资源为素材包；21 从结论下钻到来源与证据。** 36 的结果保留既有资源身份，可由页面交给 03/37/38；预览不证明已读取，37 仍需页面提供文本和真实来源版本；没有入篮、创建素材包、采纳建议或认证证据的动作。`unread` 请求移出本次上下文，不抹除历史读取或成果引用。
 - 已检索并阅读 AgentCandidatePicker、AgentSuggestionSet、AgentContextSummary、AgentEvidenceDrilldown、FilterBar、DataRecordTable、RecordDetails。10 的选择/提交事实无法代替资源读取，03/21 不提供检索控制与许可动作，因此新增语义组合，复用 Card、固定标签 Input/Label、FilterBar、Prism Badge/Button navigation、RecordDetails 和 `AgentContextFact` 类型。不改基础控件，不新增依赖或视觉令牌。
 - 结果采用自然换行的有序资源行；不套 DataRecordTable，避免在长中文、公式、预览与分组说明外再增加重复标题或表格横向滚动。被动 `summary` 和预览插槽不输出第二次资源标题、不内置播放器、取数或写操作。
 
