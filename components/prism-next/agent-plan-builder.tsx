@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState, type ReactNode } from "react"
+import { useId, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
@@ -10,7 +10,6 @@ import { Badge } from "./badge"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import { LearningTaskList, MilestoneList, type MilestoneItem } from "./learning-components"
-import { WorkloadCalendar, type DayLoad } from "./workload-calendar"
 
 export type AgentPlanReference = { id: string; label: string }
 export type AgentPlanChoice = AgentPlanReference & { disabledReason?: string }
@@ -55,7 +54,8 @@ export type AgentPlanIntent = PlanContext & (
   | { type: "request-create-tasks"; stepIds: string[] }
   | { type: "open-source"; source: AgentPlanSource }
 )
-export type AgentPlanCalendar = { days: Record<string, DayLoad>; capacity: number | null; unit: string; selected: Date; month: Date }
+/** Optional page-owned calendar content; calendar data/rendering now live in the page. */
+export type AgentPlanCalendar = ReactNode
 export type AgentPlanBuilderProps = AgentRecordViewProps & {
   plan: AgentPlan; steps: readonly AgentPlanStep[]; validation: readonly AgentPlanValidation[]
   pendingItems: readonly string[] | null; save?: AgentPlanSave; actions?: AgentPlanActions
@@ -64,7 +64,7 @@ export type AgentPlanBuilderProps = AgentRecordViewProps & {
   people?: readonly AgentPlanChoice[]; audiences?: readonly AgentPlanChoice[]; resources?: readonly AgentPlanChoice[]
   /** Exact target set for semantic 25; never guessed from the displayed rows. */
   createTaskStepIds?: readonly string[]
-  milestones?: readonly MilestoneItem[]; calendar?: AgentPlanCalendar
+  milestones?: readonly MilestoneItem[]; calendar?: ReactNode
   readOnlyReason?: string; onIntent?: (intent: AgentPlanIntent) => void; onBack?: () => void; notice?: string
 }
 
@@ -82,16 +82,6 @@ const blankFields = (): AgentPlanStepFields => ({ title: "", description: "", st
 const fieldsFor = (step: AgentPlanStep): AgentPlanStepFields => ({ title: step.title, description: step.description ?? "", startDate: step.startDate ?? "", endDate: step.endDate ?? "", timeWindow: step.timeWindow ?? "" })
 const copyRef = ({ id, label }: AgentPlanReference): AgentPlanReference => ({ id, label })
 const listText = (refs: readonly AgentPlanReference[]) => refs.map(item => item.label || "名称未提供").join("、") || "未指定"
-
-/** Browsing a month/day is view state only; it never changes step dates. */
-function PlanCalendar({ calendar }: { calendar: AgentPlanCalendar }) {
-  const [selected, setSelected] = useState(calendar.selected), [month, setMonth] = useState(calendar.month)
-  return <div className="min-w-0 space-y-2">
-    <h3 className="text-block-title">工作量日历</h3>
-    <p className="text-ui-hint">{calendar.capacity === null ? "容量未知" : `参考容量：${calendar.capacity} ${calendar.unit}`} · 点击日期仅查看</p>
-    <div className="max-w-full overflow-x-auto"><WorkloadCalendar {...calendar} assessment="external" emptyLabel="工作量未知" selected={selected} month={month} onSelect={setSelected} onMonthChange={setMonth} /></div>
-  </div>
-}
 
 export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save = { state: "unknown" }, actions = {}, editor: suppliedEditor,
   people = [], audiences = [], resources = [], createTaskStepIds = [], milestones, calendar, readOnlyReason, onIntent,
@@ -307,7 +297,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
     {!steps.length && <p className="text-ui-hint">尚无计划步骤。</p>}
     {addEditor}{addButton}
     {workspace && milestones && <section className="min-w-0 space-y-3"><h3 className="text-block-title">阶段时间线</h3><MilestoneList items={[...milestones]} /></section>}
-    {workspace && calendar && <PlanCalendar key={plan.id} calendar={calendar} />}
+    {workspace && calendar}
     <div className="flex flex-wrap gap-2">{confirmButton}{createButton}{!workspace && onExpand && <Button type="button" size="navigation" variant="outline" onClick={event => onExpand(event.currentTarget)}>展开计划</Button>}</div>
     <p className="text-ui-hint">{notice}</p>
     <RecordDetails>{details}</RecordDetails>

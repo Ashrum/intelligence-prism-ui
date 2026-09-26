@@ -22,6 +22,10 @@ export type AgentArrangementAttribute = {
 export type AgentArrangementItem = {
   id: string
   title: string
+  /** Readable range name; defaults to title. */
+  scopeLabel?: string
+  /** Copy overrides for positional boundaries only; never enables a move. */
+  moveBoundaryReasons?: Partial<Record<"up" | "down", string>>
   type: string
   source: AgentArrangementSource | null
   groupId: string | null

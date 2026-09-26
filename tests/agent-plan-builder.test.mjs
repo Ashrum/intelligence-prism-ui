@@ -205,7 +205,7 @@ test('Workspace composes external milestones and calendar; compact retains facts
   const calls = [], trigger = {}, inline = capture({ view: 'inline', onExpand: target => calls.push(target) }); withText(inline, '展开计划').props.onClick({ currentTarget: trigger });
   const nodes = capture({ onBack: () => calls.push('back') }); withText(nodes, '返回原位置').props.onClick(); assert.deepEqual(calls, [trigger, 'back']);
   assert.doesNotMatch(htmlFor(), /展开计划|返回原位置/);
-  const calendar = { days: {}, capacity: null, unit: '分钟', selected: new Date(2026, 8, 28), month: new Date(2026, 8, 1) };
+  const calendar = h("section", null, h("h3", null, "工作量日历"), h("p", null, "容量未知"));
   const html = htmlFor({ view: 'workspace', density: 'compact', calendar, milestones: [{ id: 'opaque-milestone', title: '第一周回看', state: 'pending', detail: '阶段尚未完成' }], details: h('p', null, '补充说明') });
   assert.match(html, /第一周回看/); assert.match(html, /阶段尚未完成/); assert.match(html, /工作量日历/); assert.match(html, /容量未知/); assert.match(html, /gap-3 p-3/); assert.match(html, /aria-expanded="false"/);
   assert.doesNotMatch(html, /opaque-/); // Pinned coss classes are adapted by the shared typography layer.
@@ -237,6 +237,27 @@ test('example adapter preserves closed editing buffers, rejects stale versions a
 test('runtime has no business store, scheduling, timers, persistence, private models or local typography', async () => {
   const source = await readFile(new URL('../components/prism-next/agent-plan-builder.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /localStorage|sessionStorage|setTimeout|setInterval|ole-school-workbench|Date\.now|text-xs|text-sm|text-\[/);
-  assert.match(source, /assessment="external"/); assert.match(source, /<LearningTaskList/); assert.match(source, /<MilestoneList/);
+  assert.match(source, /<LearningTaskList/); assert.match(source, /<MilestoneList/);
   const page = await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'); assert.match(page, /<AgentPlanBuilderDemo\/>/);
+});
+
+test('plan module dependency graph excludes calendar implementations even before tree shaking', async () => {
+  const graph = await build({ entryPoints: ['components/prism-next/agent-plan-builder.tsx'], absWorkingDir: root,
+    bundle: true, metafile: true, write: false, jsx: 'automatic', platform: 'node', format: 'esm',
+    packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' } });
+  const dependencies = Object.entries(graph.metafile.inputs).flatMap(([path, input]) => [path, ...input.imports.map(entry => entry.path)]);
+  assert.doesNotMatch(dependencies.join('\n'), /workload-calendar|react-day-picker|date-fns|coss\/calendar/);
+});
+
+test('omitting the calendar slot keeps milestones and steps without calendar placeholders', () => {
+  for (const calendar of [undefined, null, false]) for (const density of ['default', 'compact']) {
+    const html = htmlFor({ view: 'workspace', density, calendar,
+      milestones: [{ id: 'opaque-phase', title: '阶段时间线', state: 'pending', detail: '阶段尚未完成' }] });
+    assert.match(html, /阶段时间线/); assert.match(html, /阶段尚未完成/);
+    for (const step of steps) assert.ok(html.includes(step.title));
+    assert.doesNotMatch(html, /工作量日历|日历不可用|容量未知/);
+  }
+  const calendar = h('div', { 'data-calendar-slot': '' }, '页面提供的日历');
+  assert.equal(occurrences(htmlFor({ view: 'workspace', calendar }), '页面提供的日历'), 1);
+  assert.doesNotMatch(htmlFor({ view: 'inline', calendar }), /data-calendar-slot/);
 });

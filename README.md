@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 插槽解耦与范围文案修复（2026-09-26）
+
+PO 批准的修复分支 `fix/agent-slot-and-scope-copy`：23 `AgentPlanBuilder` 的 `calendar` 改为可选 `ReactNode`，组件不再直接或间接引入日历依赖。组件页在 demo 中传入 `WorkloadCalendar` 保持演示；旧日历数据对象须迁移为页面组件插槽，Workspace 无日历需求时省略该属性即可，时间线和步骤照常显示。
+
+12 `AgentStructureArranger` 的条目新增可选 `scopeLabel`（默认 title）及 `moveBoundaryReasons`（按 up/down 覆盖边界文案）；首尾分别说明不能上移／下移。全部条目共用的说明／来源只显示一次，每项仍关联说明；部分适用使用可读名称。10 候选共用说明、36 共用许可全部适用时取消逐项重复引用，部分适用才用可读名称标注，许可未知仍在组级常驻。
+
+API、迁移和范围规则见 [组件复用约定](docs/component-contracts.md)。验证与未验证范围见 `.sites-runtime/slot-scope-fix/REPORT.md`；本轮不启动服务、不写 `.git`、不改 Workspace，不据 SSR 或工程检查宣称浏览器验收。
+
 ## 路径与优先级 v0.1 · 设计候选（2026-09-26）
 
 语义 24 `AgentPathPriority` 声明 **Inline + 专用扩展内容**：Inline 呈现页面指定的 1–3 项下一步建议、理由与阻塞项；Workspace 呈现完整顺序、依赖、优先级、完成情况和人工调整。支持 `density="compact"`；上移、下移和指定位置提供拖拽的键盘／触屏等效操作。
@@ -14,7 +22,7 @@
 
 ## 计划构建器 v0.1 · 设计候选（2026-09-26）
 
-语义 23 `AgentPlanBuilder` 声明 **Inline + 专用扩展内容**：Inline 确认目标、对象、核心步骤、起止时间和待确认项；Workspace 编辑步骤、负责人、对象与资源，组合 LearningTaskList / MilestoneList / WorkloadCalendar 呈现完整计划。支持 `density="compact"`，保持冲突、受阻、未知和保存状态可见。
+语义 23 `AgentPlanBuilder` 声明 **Inline + 专用扩展内容**：Inline 确认目标、对象、核心步骤、起止时间和待确认项；Workspace 编辑步骤、负责人、对象与资源，组合 LearningTaskList / MilestoneList 和页面可选提供的日历插槽呈现完整计划（demo 插槽复用 WorkloadCalendar）。支持 `density="compact"`，保持冲突、受阻、未知和保存状态可见。
 
 22 提供建议，23 编排采纳后的计划草稿，24 处理路径与优先级，25 确认创建任务／开始执行。**计划草稿、已创建任务与实际执行由页面分别给出**；步骤增删改、移动、分派、资源关联和确认均只发送含 planId/versionId/baseVersionId 的 `onIntent`。日期不作业务校验，日历使用页面提供的过载判定，不自动排程或创建任务。
 

@@ -1,5 +1,7 @@
 "use client"
 
+import { WorkloadCalendar, type DayLoad } from "../workload-calendar"
+
 import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { Button } from "../button"
@@ -63,6 +65,16 @@ export function applyPlanExample(state: PlanExampleState, intent: AgentPlanInten
     plan: { ...state.plan, core: "draft", version: { id: `plan-v${revision}`, label: `示例草稿 ${revision}` } } }
 }
 
+/** Browsing a month/day is view state only; it never changes step dates. */
+function PlanCalendarExample({ calendar }: { calendar: { days: Record<string, DayLoad>; capacity: number | null; unit: string; selected: Date; month: Date } }) {
+  const [selected, setSelected] = useState(calendar.selected), [month, setMonth] = useState(calendar.month)
+  return <div className="min-w-0 space-y-2">
+    <h3 className="text-block-title">工作量日历</h3>
+    <p className="text-ui-hint">{calendar.capacity === null ? "容量未知" : `参考容量：${calendar.capacity} ${calendar.unit}`} · 点击日期仅查看</p>
+    <div className="max-w-full overflow-x-auto"><WorkloadCalendar {...calendar} assessment="external" emptyLabel="工作量未知" selected={selected} month={month} onSelect={setSelected} onMonthChange={setMonth} /></div>
+  </div>
+}
+
 export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof typeof planExamples; narrow?: boolean }) {
   const [state, setState] = useState(planExamples[purpose]), [save, setSave] = useState<AgentPlanSave["state"]>("unsaved")
   const [readOnly, setReadOnly] = useState(false), [checksLoaded, setChecksLoaded] = useState(true)
@@ -89,8 +101,8 @@ export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof
     resources: [resource, { id: "formula", label: "公式条件核对单" }, { id: "missing-material", label: "待补齐的再练资料", disabledReason: "再练资料暂不可用，需先补齐资料。" }],
     createTaskStepIds: state.steps.filter(step => ["draft", "confirmed"].includes(step.status.state)).map(step => step.id),
     milestones: [{ id: "first-week", title: "第一周回看", state: "pending", detail: "10 月 4 日 · 核对本周订正记录；阶段尚未完成。" }, { id: "second-week", title: "第二周接续", state: "blocked", detail: "10 月 11 日 · 需补齐再练证据；阶段受阻。" }],
-    calendar: { month: new Date(2026, 8, 1), selected: new Date(2026, 8, 28), unit: "分钟", capacity: 30,
-      days: { "2026-09-28": { value: 45, overCapacity: true, label: "45 分钟（固定示例）" }, "2026-09-30": { value: 15, overCapacity: false }, "2026-10-04": { value: 15 } } },
+    calendar: <PlanCalendarExample key={state.plan.id} calendar={{ month: new Date(2026, 8, 1), selected: new Date(2026, 8, 28), unit: "分钟", capacity: 30,
+      days: { "2026-09-28": { value: 45, overCapacity: true, label: "45 分钟（固定示例）" }, "2026-09-30": { value: 15, overCapacity: false }, "2026-10-04": { value: 15 } } }} />,
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>时间线、工作量与校验是固定示例记录。修改步骤不会重算它们。步骤顺序可用上移、下移调整，依赖关系在路径与优先级中处理；收起编辑保留当前输入，再次编辑同一步骤可继续。</p>,

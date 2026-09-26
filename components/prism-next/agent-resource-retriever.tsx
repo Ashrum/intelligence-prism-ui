@@ -238,7 +238,7 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
     </section>}
     {(sourceGroups.length > 0 || licenseGroups.length > 0) && <section aria-label="共用来源与许可" className="space-y-2">
       {sourceGroups.map(group => <p key={`source-${group.id}`} id={`${id}-source-${group.id}`} className="break-words text-ui-hint">来源 {group.id + 1}（资源 {group.indexes.map(index => index + 1).join("、")}）：{sourceText(visible[group.indexes[0]].source)}</p>)}
-      {licenseGroups.map(group => <p key={`license-${group.id}`} id={`${id}-license-${group.id}`} className="break-words text-ui-hint">许可 {group.id + 1}（资源 {group.indexes.map(index => index + 1).join("、")}）：<ResourceLicense license={visible[group.indexes[0]].license} /></p>)}
+      {licenseGroups.map(group => <p key={`license-${group.id}`} id={`${id}-license-${group.id}`} className="break-words text-ui-hint">许可{group.indexes.length < visible.length && `（${group.indexes.map(index => visible[index].title || "未命名资源").join("、")}）`}：<ResourceLicense license={visible[group.indexes[0]].license} /></p>)}
     </section>}
     {result.state === "ready" && !visible.length && <p className="text-ui-hint">当前没有展示资源。</p>}
     {!!visible.length && <ol aria-label="资源结果" className={compact ? "min-w-0 space-y-4" : "min-w-0 space-y-6"}>{visible.map((resource, index) => {
@@ -250,12 +250,12 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
       const mergeLicense = !licenseGroup && resource.license.state === "unknown" && !resource.license.name && !licenseReason(resource.license)
       const metadata = [["版本", resource.versionLabel], ["日期", resource.date], ["适用范围", resource.applicability], ["格式", resource.format], ["时长", resource.duration], ["大小", resource.size]]
       const unknownLabels = [...(mergeLicense ? ["许可"] : []), ...metadata.filter(([, value]) => known(value) === "未知").map(([label]) => label)]
-      return <li key={index} aria-labelledby={`${id}-item-${index}`} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
+      return <li key={index} aria-labelledby={`${id}-item-${index}`} aria-describedby={licenseId} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
         <div className="flex flex-wrap items-baseline gap-2"><h4 id={`${id}-item-${index}`} className="min-w-0 break-words text-item-title">{index + 1}. {resource.title || "未命名资源"}</h4><Badge variant="outline">{kinds[resource.kind] ?? "其他资源"}</Badge></div>
         {resource.summary != null && <div className="min-w-0 break-words text-read-body">{resource.summary}</div>}
         <div className="min-w-0 space-y-1 text-ui-hint">
           {sourceGroup ? <p aria-describedby={`${id}-source-${sourceGroup.id}`}>来源 {sourceGroup.id + 1}</p> : <p className="break-words">来源：{sourceText(resource.source)}</p>}
-          {licenseGroup ? <p aria-describedby={licenseId}>许可 {licenseGroup.id + 1}{resource.license.state === "unknown" && "（未知）"}</p> : !mergeLicense && <p id={licenseId} className="break-words">许可：<ResourceLicense license={resource.license} /></p>}
+          {licenseGroup ? licenseGroup.indexes.length < visible.length && <p aria-describedby={licenseId} className="break-words">共用许可：{licenseGroup.indexes.map(i => visible[i].title || "未命名资源").join("、")}</p> : !mergeLicense && <p id={licenseId} className="break-words">许可：<ResourceLicense license={resource.license} /></p>}
           {metadata.filter(([, value]) => known(value) !== "未知").map(([label, value]) => <p key={label} className="break-words">{label}：{value}</p>)}
           {!!unknownLabels.length && <p id={mergeLicense ? licenseId : undefined} className="break-words">{unknownLabels.join("、")}：未知</p>}
         </div>
