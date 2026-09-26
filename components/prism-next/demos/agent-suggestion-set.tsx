@@ -91,7 +91,10 @@ export function SuggestionSetExample({ purpose, narrow = false }: { purpose: key
     ] as const).map(([view, density, label]) => <section key={label} aria-label={label} ref={view === "workspace" ? workspace : undefined} tabIndex={view === "workspace" ? -1 : undefined}
       className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      <AgentSuggestionSet {...common} view={view} density={density} suggestions={view === "workspace" ? suggestions : suggestions.filter((item, index) => index < 3 || selectedIds.includes(item.id))} />
+      {purpose === "teaching" && view === "inline" && density === "default" && <p className="text-ui-hint">附加操作示例：第一条建议展示“据此建立教学行动”入口，尚未接入创建服务，当前不可操作。</p>}
+      <AgentSuggestionSet {...common} view={view} density={density} suggestions={view === "workspace" ? suggestions : suggestions.filter((item, index) => index < 3 || selectedIds.includes(item.id))}
+        itemActions={purpose === "teaching" && view === "inline" && density === "default" ? suggestion => suggestion.id === fixture.suggestions[0].id
+          ? <Button type="button" size="navigation" variant="outline" disabled className="max-w-full whitespace-normal">据此建立教学行动（示例）</Button> : null : undefined} />
     </section>)}</div>
   </div>
 }
