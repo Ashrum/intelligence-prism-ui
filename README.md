@@ -2,6 +2,16 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 结构编排器 v0.1 · 设计候选（2026-09-26）
+
+语义 12 `AgentStructureArranger` 声明 **Inline + 专用扩展内容**：Inline 提供编排摘要、简单移动与确认；Workspace 提供组→项两层列表、分组管理、编排属性和批量操作。拖拽为增强，上移／下移／移到分组提供键盘与触屏等效入口；compact 只收紧留白。
+
+35 编辑内容层级本身，11 管理已收集的条目，12 编排已有条目的顺序／分组／属性，打开原条目交给 14。沿用 35 的“移除源项后计算目标位置”约定。所有业务操作经带 structureId/versionId/baseVersionId 的 `onIntent` 返回；合计、校验、锁定、版本与保存事实来自页面。相同说明和禁用原因合并，标题一次，未知信息一行；确认不伪造保存或发布。
+
+组件页 `/next/components/agent-components#structure-arranger` 提供三大题试卷（分值、总分不符、锁定题、空分组）与课程任务两组固定示例，含三种用法、320px、长中文与公式。公开 API 见[结构编排器契约](docs/component-contracts.md#结构编排器-v01)。coss、依赖、令牌及 80 项目录不变。
+
+候选位于 `feat/agent-structure-arranger`，基于 main `fd454db`，进度第 12 项为“组件候选”。五项检查、实际 diff、测试数字和 Workspace 的只读轻量验证方案见 `.sites-runtime/structure-arranger/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace；浏览器三主题／窄容器／实际拖拽与键盘触屏、Workspace 接入、真实服务及独立 Review 尚未完成。
+
 ## Agent 文案整理第二轮（2026-09-26）
 
 本分支 `fix/agent-copy-polish-2` 基于 main `e32f5e9`，集中整理 35／07／10／22／36：只读结构能力明确标只读，参数缺省默认值合并说明并隐藏只读输入提示，候选共用依据／来源／附加说明，建议禁用原因去重与全未知说明合并，资源未知元信息合并且许可保持清楚可见。已知事实、校验与执行边界保留。
