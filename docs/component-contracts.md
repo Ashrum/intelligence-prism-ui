@@ -2,6 +2,64 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 演示文稿工作区 v0.1
+
+2026-09-27 设计候选，语义 **29 AgentSlideWorkspace**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-slide-workspace` 导入组件及公开类型。未合并分支 `feat/agent-slide-workspace`，main 基线 `7be98e2`；组件页 `/next/components/agent-components#slide-workspace`，不增加 80 项目录条目。
+
+### 复用检索与职责
+
+已读批准规范 §2、演示文稿行及格式边界（实际在 §6.10，含 L285）、§7、§8、§10；复用规划 v0.1.3 第 29 项、覆盖矩阵 29（历史基线只有 Card，无专用幻灯片能力）、28/13/33/35/30 契约与进度文案规则。没有已核实的通用幻灯片编辑器；本项只补缩略、版本、页序、可读文字和能力承载。
+
+- **28 AgentDocumentWorkspace** 为最近邻：文稿章节、正文、批注；29 为线性幻灯片、要点与讲者备注。直接复用 `AgentDocumentSave` 类型，不复制文档编辑器。
+- **13 AgentArtifactPreview** 是通用成果摘要及打开入口；29 inline 是课件自身的前三页缩略摘要，不给 13 新建 Workspace。
+- **33 AgentArtifactOutput** 负责格式、范围、版本和真实文件交付。29 `request-export` 交宿主打开同身份/版本的 33；预览和确认文字不证明有 PPT 文件或可下载成果。
+- **35 AgentStructuredContent** 编辑内容树，29 只请求线性页序/标题/要点变更，不维护树、统一 AST 或提纲副本。将提纲投影成课件的规则归宿主。
+- **30 AgentImageCanvas** 提供深度图像查看；本项只需既有 `img` 按自然比例展示缩略图，不重绘查看器。缺图/加载失败仍能阅读要点与备注。
+- Card、Button、Field/FieldLabel、Input、Textarea、Prism Badge 与 RecordDetails 组合。只用既有语义字号、间距和 48rem 容器断点；三主题继承公共样式。不改 coss、依赖、视觉令牌、目录、Workspace，也不内置生成器、PPT 渲染器、存储或计时器。
+
+### 公开 API
+
+公开 `AgentSlideWorkspaceProps / AgentSlide / AgentSlideCapabilityKind / AgentSlideCapability / AgentSlideCapabilities / AgentSlideContext / AgentSlideIntent`。
+
+| 属性 | 契约 |
+| --- | --- |
+| `deckId / version / title` | 必填。前两项是不透明请求引用，不进入可见文案或 DOM；title 为可读标题。版本未知用空串阻断请求，不拿 label 代替版本令牌 |
+| `versionLabel / source` | 可选可读版本名；来源 `{label,openable?}`。缺省分别显示版本/来源未确认；openable 只允许 `open-source`，不自行打开 URL |
+| `slides` | 必填完整获权有序 `readonly AgentSlide[]`。页 `{id,number,title,points,thumbnail?:{src,alt},notes?,status?}`；number 为宿主一基页码，列表顺序为宿主页序；id/number 唯一且有效。points 为可读纯文本，原样转义、保留换行，不解析 HTML/Markdown/PPT；status 如待补充/已完成来自外部，不从编辑/生成推定 |
+| `selectedSlideId` | 必填 string/null，点击只发请求，新 prop 决定当前页。null 提示请选择，失效 ID 提示重新选择，不自动回退首项 |
+| `capabilities` | 必填 view/reorder/edit-text/add/delete/generate/export 七项，各 `{supported:true,reason?}` 或 `{supported:false,reason}`。未接入项说明原因；相同原因合并一处。不支持项不渲染操作按钮和编辑表单，不逐页重复禁用控件 |
+| `save` | 可选 `AgentDocumentSave`：unsaved/saved-draft/submitted/conflict/unknown，缺省 unknown；只消费外部状态。conflict 阻断编辑/增删/调序/生成，不冒充已保存或自行解除冲突 |
+| `readOnlyReason` | 存在即整体只读，包括空字符串；阻断文字、增删、调序、生成，仍可选页、查看来源和请求已支持的导出。历史内容须由宿主传独立快照与该限制，不填入当前草稿 |
+| `onIntent` | 可选版本绑定请求；缺接收器仅浏览且说明无操作入口。宿主核验权限、当前对象/版本、动作、范围、迟到请求、删除影响与幂等；组件不是授权服务 |
+| `view / density` | 默认 inline/default；workspace/compact 可独立组合。compact 只减间距，不隐藏能力、版本、冲突、保存、草稿或失败信息 |
+| `onExpand / onBack` | `(trigger, {deckId,version}) => void` / `({deckId,version}) => void`；打开课件/返回原位置，只导航，不保存或丢弃；宿主负责两态实例/焦点/位置接续 |
+| `notice / details` | 一条常驻边界提示（默认明确预览、修改、生成与文件保存的区别）；补充说明经 RecordDetails 默认收起。能力原因和未知/失败不折叠；details 仅传获权被动说明 |
+
+`view` 不支持时不挂载页内容、缩略图、备注、details 或任何内容请求；仍显示可披露元信息、原因和返回。空 deck/version、空/重复页 ID、无效/重复页码阻断全部请求和页内容，保留错误说明。所有文案、图片来源和插槽必须先由宿主检查当前披露权限。
+
+### 意图与草稿
+
+所有 `onIntent` 均带 `{deckId,version}`，原引用不写入 HTML：
+
+| type | 额外参数 / 行为 |
+| --- | --- |
+| select-slide | `slideId`；按钮点击与原生 Enter/Space 等效 |
+| reorder | `slideId,toIndex`；移除原页后的零基目标位置，上移/下移与页列表 Alt+上下键走同一处理器；越界不发请求 |
+| edit-text | `slideId,title,points`；显式确认本地文字草稿才发出，保留原始空串/空格/换行 |
+| add-slide | `afterSlideId:string/null`；插在当前页后，空列表 null 表示新增第一页；正式身份与内容由宿主提供 |
+| delete-slide | `slideId`；请求删除当前页，不直接删除数据；删除影响与正式执行归宿主 |
+| request-generate / request-export / open-source | 仅共同上下文；宿主接适配器/33/来源导航，不生成内容、下载链接或读取事实 |
+
+本地文字草稿保留开始编辑时的 deck/version/页/内容及能力快照。内容、选择、版本、只读或能力变化时保留输入、提示失效并阻断确认；换对象、失去查看或整体只读时不披露原输入。正在编辑时阻止选页、调序、增删、生成/导出/来源及返回，明确确认或放弃后继续。确认只显示“已提交文字修改请求，结果待确认”，正文、页序、状态仍等宿主回传；放弃只清临时草稿。组件不持久化；同一 mounted 实例换 view 保留草稿，外部卸载、路由/会话切换及恢复由宿主拦截管理，不能静默卸载未确认草稿。
+
+目录上下/Home/End 只移动焦点；原生按钮 Enter/Space 请求选页，Alt+上下等效请求调序，不吞输入法、重复、Ctrl/Meta/Shift 组合。固定字段标签、当前页 `aria-current`、状态反馈与可读要点保留；无鼠标专属操作、拖拽引擎或新增动效。重排后焦点依靠稳定页 key 和宿主维持选中引用，真实浏览器仍待验证。
+
+### 示例与验证边界
+
+`#slide-workspace`：勾股定理复习课 6 页（公式页、待补充页、长中文和讲者备注）、只读版本；两组各有 inline/workspace/compact，320px 可选。全部标为模拟，SVG 只作缩略占位；页面示例适配器可以更新运行内文字/页序/增删与修订号，保存始终未保存，生成/导出不支持且解释原因。
+
+五项检查、SSR/处理器测试数字、实际 diff 与只读 Workspace 方案见 `.sites-runtime/slide-workspace/REPORT.md`。本任务不写 `.git`、不启动服务，三主题实页视觉、窄屏/焦点/触屏/读屏器、Workspace 接入及真实服务未验证；自动化不代替独立 Review。
+
 ## 图形关系工作区 v0.1
 
 2026-09-27 设计候选，语义 **34 AgentRelationGraph**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-relation-graph` 导入组件及同文件公开类型。任务分支 `feat/agent-relation-graph`，main 基线 `c61f2fc`；不增加 80 项目录条目。

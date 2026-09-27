@@ -1,6 +1,14 @@
 # 智能曜彩 UI Design System
 
 
+## 演示文稿工作区 v0.1 · 设计候选（2026-09-27）
+
+语义 **29 AgentSlideWorkspace** 支持 Inline 前三页缩略摘要、Workspace 页列表与当前页要点/讲者备注，按能力开放文字草稿确认、调序和增删请求；compact 独立于两态。版本、保存、来源与各项能力由宿主给出；生成与导出交适配器，导出可接 33，不包含 PPT 渲染、文件生成或存储。
+
+复用 28 的保存状态类型与 Card、固定标签 Input/Textarea、Button、Badge、RecordDetails、图片元素。相同能力原因集中说明，不支持的编辑工具不逐页出现。组件页 `/next/components/agent-components#slide-workspace` 有“勾股定理复习课”六页模拟课件（含公式、待补充页、讲者备注）、只读版、compact 与 320px；缩略图为 SVG 占位，导出不支持并说明原因。
+
+[公开契约](docs/component-contracts.md#演示文稿工作区-v01)及 `.sites-runtime/slide-workspace/REPORT.md` 记录 API、五项验证、实际 diff 和 Workspace 只读轻量接入方案。分支 `feat/agent-slide-workspace`，基线 `7be98e2`，未合并；coss、依赖、令牌与 80 项目录不变。浏览器三主题/窄屏/焦点、Workspace、读屏器和真实服务未验。进度同时按 Supervisor 交接登记 34 为 Workspace 已验证（Prism #103 / Workspace #71）；29 仅为组件候选。
+
 ## 图形关系工作区 v0.1 · 设计候选（2026-09-27）
 
 语义 **34 AgentRelationGraph** 支持 Inline 关系摘要／静态缩略图、Workspace SVG 缩放平移与等价节点／关系列表、类型／状态筛选、邻接查看及受控编辑请求；compact 独立于两态。节点、边、版本、覆盖／薄弱状态和能力均由宿主提供，超阈值自动退化列表，不引入图布局库或统一 AST。
