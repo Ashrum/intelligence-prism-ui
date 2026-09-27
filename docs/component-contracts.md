@@ -2,6 +2,61 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 图形关系工作区 v0.1
+
+2026-09-27 设计候选，语义 **34 AgentRelationGraph**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-relation-graph` 导入组件及同文件公开类型。任务分支 `feat/agent-relation-graph`，main 基线 `c61f2fc`；不增加 80 项目录条目。
+
+### 复用检索与 35 / 12 / 20 / 21 的关系
+
+已完整核对 AGENTS.md、批准规范 §2、图形关系工作区行（实际位于 §6.10）、§7、§8、§10；复用规划 v0.1.3 第 34 行与覆盖矩阵 34 的历史零步骤记录。该矩阵保留历史，不把本轮模拟组卷方案写成既有接入证据。
+
+- **35** 编辑内容树的层级；**34** 保留节点与有向边，可含多对多、循环、自环和平行关系，不强制转为树或统一 AST。
+- **12** 编排已有题目与分组、顺序、分值；34 仅阅读这些对象的关系投影，编辑图不等于改题序或组卷规则。
+- **20** 呈现二维分布与宿主给定的分级；34 的覆盖／薄弱状态由宿主给出，不从边数、位置或权重生成诊断。
+- **21** 承载证据链，不把节点选择当作读取／引用证据；34 的 `open-source` 将原引用交回 **14** 对象查看器，由宿主处理可用性及授权。
+- 已检索 Tree / AgentStructuredContent、AgentStructureArranger、AgentDistributionMatrix 与 analytics 的 ScatterChart / HeatmapChart / DataRecordTable。它们分别缺少通用节点与边的编辑请求契约，**图表引擎不等于关系编辑能力**。复用 Card、固定 Label/Input、Prism Button、RecordDetails；小图用原生 SVG 确定性网格／分层布局，不引入图布局库、依赖、令牌，不改 coss。
+
+### 公开 API
+
+| 属性 / 类型 | 契约 |
+| --- | --- |
+| `graphId / version / title / versionLabel?` | 前两项只作关联身份，title 与 versionLabel 为可读名称；缺版本标签显示未知，不用 ID 回退。全部输入先由宿主做披露检查。没有对象／版本身份或回调时仅查看，操作处理器再次保护。 |
+| `nodes: readonly AgentRelationNode[]` | `{id,label,type,group?,level?,status?,description?,source?}`。group/type/status 是可读文本，level 为布局层次提示；缺 status 显示未知。source=`{objectId,version?,label}`，只通过 open-source 交回宿主。空标签显示“未命名节点”。完整图的节点 ID 必须非空且唯一。 |
+| `edges: readonly AgentRelationEdge[]` | `{id,from,to,type,weight?,description?}`，type 为可读关系名；方向严格 from→to。唯一非空 id 支持同一端点间多条不同关系；允许自环／循环。空／重复 ID、缺失端点、非有限权重导致资料不可用，不悄悄删边或造节点。权重原样保留零与负值，不等于掌握度。 |
+| `capabilities: AgentRelationCapabilities` | 必填 view/filter/edit-node/edit-edge/layout，每项 `{supported:true,reason?}` 或 `{supported:false,reason}`。相同原因合并并标明能力范围；不支持原因常驻。view 不支持时不挂载图、列表、摘要、details 或展开入口。 |
+| `summary?` | `{statusCounts?:{label,count}[],gaps?:string[]}`，计数与关键缺口由宿主明确提供。缺失／非法计数为未知；gaps 未提供为未知，[] 为“未记录关键缺口”。仅节点数与边数来自所提供的完整数组，始终标明本份图的数量；不把筛选后条数当成总量。 |
+| `filter?: AgentRelationFilter / selectedNodeId?` | filter=`{type?,status?}`，默认 {}。两项取交集；保留满足条件的节点与两端均在其中的边，图／列表使用同一诱导子图。选择与筛选完全受控，只经 onIntent 请求更新。失效／筛除的选择提示重新选择，不替选第一项。未知状态可筛选。 |
+| `layout? / graphThreshold?` | grid（默认）/layered；grid 按输入顺序三列，layered 按有限 level 升序、层内原顺序，缺 level 放在 0 层。不推断章节／依赖层级、不运行模拟。阈值默认 80，非负整数；非法值回退 80。完整节点数 **大于** 阈值时不挂载 SVG，两态均提供完整列表并常驻原因，不能通过筛选绕开保护。 |
+| `readOnlyReason?` | 存在即阻断节点／边编辑和布局请求，空串仍生效；不阻断明确获权的阅读、选择、筛选和查看来源。历史／冲突由宿主明确提供此限制与当时数据；宿主负责版本并发和旧事件校验。 |
+| `view / density` | inline（默认）/workspace；default（默认）/compact。compact 仅减少外框间距，不缩字、不藏关键限制，不是第三态。 |
+| `notice? / details?` | 一条常驻边界提示，默认“关系与覆盖状态仅反映当前提供的资料，调整后是否保存请以记录为准。”；details 使用默认收起的 RecordDetails。限制、未知、退化提示不移入 details。 |
+| `onIntent?` | 唯一对象操作出口，所有请求携带 `{graphId,version}`。组件不修改节点、边、覆盖状态、保存事实或版本；无 Runtime、Store、持久化、计时器。 |
+| `onExpand?(trigger,context) / onBack?(context)` | context=`{graphId,version}`。只请求展开／返回，宿主接续同一图、筛选、选择和焦点／滚动；不保存或取消。 |
+
+### 意图载荷
+
+| type | 额外字段 | 边界 |
+| --- | --- | --- |
+| select-node | `nodeId` | 只请求视图选择；图点击和列表按钮使用相同出口 |
+| filter | `filter:{type?,status?}` | 受控交集；请求后等待新属性，不改业务数组 |
+| open-source | `nodeId,source:{objectId,version?,label}` | 原始引用交回 14；来源身份缺失时不开放 |
+| node-create | 无 | 名称、类型、稳定身份和正式创建由宿主决定 |
+| node-update | `nodeId,label` | v0.1 提供名称编辑，原始输入含空串／空格原样回传；其余节点属性由宿主给出 |
+| node-delete | `nodeId` | 只请求删除，关联边去向由宿主决定 |
+| edge-create | `from,to,relationType` | 选中节点为起点，明确选择现存终点并填写可读关系名；不补造边 ID |
+| edge-delete | `edgeId` | 按精确关系身份请求，平行边不合并 |
+| request-layout | `layout:'grid'/'layered'` | 宿主回传提示后改变排列，不改图内容 |
+
+宿主重新校验当前会话、对象、版本、权限、完整范围与编辑规则；回调返回不证明已保存。创建关系的终点选择和名称是局部待发送表单输入，按图／版本／起点重建，不是权威图草稿；缩放、平移、图／列表切换属于局部视图状态。需要跨入口保持视野时可保持实例挂载，导航上下文仍由宿主管理。
+
+### 可访问性、示例与验证边界
+
+Inline：完整数量、宿主状态计数／关键缺口、小型静态 SVG 和“查看关系图”；附原生 details 的完整节点／关系列表，无展开回调时列表直接显示。Workspace：SVG（缩放 50–300%、指针拖动、方向键平移、+/− 缩放、Home 重置及等效按钮），默认图与列表并存，也可切仅列表；列表不依赖颜色或 SVG 可访问树，保留完整节点名称、类型、状态、分组／层级、说明、来源及每条有向关系的名称、权重和说明。SVG 长标签可截断，但 title 和列表保留全文。节点列表原生按钮支持 Enter/空格，与图选择相同；选中区域列出完整资料中的入边与出边，明确包含筛选范围外的邻居。
+
+`/next/components/agent-components#relation-graph` 三组均标模拟：6 知识点＋8 题＋2 章节（2 未覆盖、1 薄弱）；只读概念图（编辑节点／关系共用限制原因）；16 节点、阈值 10 的退化夹具。提供两态往返、独立 compact、320px、长中文与公式纯文本。示例宿主仅改页面运行内数据，删除节点同时删除关联边是示例策略；覆盖状态不会随边编辑自动变化，未保存如实显示。
+
+测试覆盖两态 SSR、等价列表、筛选与邻接、编辑请求及保护、能力不支持、超阈值、文案去重、compact、导航载荷、确定性布局、边表单与键盘视野处理器。最后两项用隔离的局部状态测试夹具，不冒充真实浏览器。五项日志、实际 diff、Workspace 本地 `af60102` 只读方案见 `.sites-runtime/relation-graph/REPORT.md`。本轮不写 `.git`、不启动服务、不改 Workspace；三主题实际视觉／窄屏／焦点恢复／指针拖动／读屏器、Workspace 接入、真实服务均未验证。候选待 Supervisor 独立 Review。
+
 ## 源码接入
 
 80 个组件的既有行为基线沿用 v1.13.1；本轮统一字体为实施验证候选。按需复用源文件及其直接依赖，组件示例与应用示例用于说明用法。仓库保留 `private: true`，不通过 npm 包安装。
