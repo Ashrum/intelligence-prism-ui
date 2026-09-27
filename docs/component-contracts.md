@@ -65,6 +65,63 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
 
+## 图像查看与画布 v0.1
+
+2026-09-27 设计候选，语义 **30 图像查看与画布**，声明 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-image-canvas.tsx`，示例 `/next/components/agent-components#image-canvas`。分支 `feat/agent-image-canvas`，基线 main `5657ac3`，未合并；不增加 80 项组件目录条目。
+
+### 复用检索与职责边界
+
+已核对批准规范 §2、图像行／格式与适配器边界（实际在 §6.10，L270 / L285）、§7、§8、§10，复用规划 v0.1.3 第 30 项及附录 C，覆盖矩阵 30／P05，以及 14／21／17／05 契约和进度清单文案口径。**直接复用 DocumentRegionViewer 的百分比区域、50–300% 缩放、选中与 scrollIntoView 定位**，原文件和 API 均不改。只在新组件外层覆盖布局（取消 A4 比例及最小宽度，以 img 自然比例确定高度）；不重绘原控件样式。Card、固定 Label/Input、Checkbox、Prism Button 和 RecordDetails 沿用既有控件。
+
+- **14 对象查看器**负责对象身份、获权分区与通用导航，30 可作为图像分区，不承担对象目录或业务编辑。
+- **21 下钻与证据浏览**负责证据链和独立事实；其只读 preview 只能组合 30 的查看／缩放，关闭 annotate/crop，不把查看或标注推定为已读取／已引用。
+- **17 单项复核器**负责评分、理由、复核请求与回执；30 可在 evidence 内查看作答图，不能更改分数或复核状态。
+- **05 采集扫描**负责完整页集合、页序、质量与补采请求；inspect-page 可打开 30，或在受控惰性 renderPreview 中组合 30。30 的图片列表只选择查看对象，不排序、补采或评价质量。
+- 只补图片集合、能力声明和范围请求这一稳定缺口，不新增图像编辑器、图层、上传、存储、识别、裁切引擎、像素合成、业务 Store、私有类型、依赖或令牌。
+
+### 公开 API
+
+从同文件导入 `AgentImageCanvas`、`AgentImageCanvasProps`、`AgentCanvasImage`、`AgentImageRegion`、`AgentImageRect`、`AgentImageCapability`、`AgentImageCapabilities`、`AgentImageCanvasIntent`；纯函数 `isAgentImageRect`、`agentImageRectFromPoints`、`agentImagePanDelta` 可用于适配与验证。
+
+| 属性 | 类型、默认值与约定 |
+| --- | --- |
+| `title / imageSet` | 必填可读标题、`{id,version}` 请求归属；不新建业务权威对象 |
+| `images / selectedImageId` | 完整获权图片集合、受控选择 ID 或 null；未知选择显示“当前图片未列出”，不偷换首图 |
+| `capabilities` | 必填 view/zoom/annotate/crop/compose 五项；各为 `{supported:true}` 或 `{supported:false,reason}`。仅支持的动作可执行，缺失原因兜底“暂不支持”。compose 只代表并列查看，不代表生成合成图片 |
+| `comparisonIds` | 可选 readonly string[]，默认 []；宿主收到 compare 后决定是否返回比较对象，不自动展示比较结果；宿主须在对象版本／权限变化时同步撤回或刷新 |
+| `onIntent` | 可选；没有接收器则操作只读，缩放／定位／平移仍是查看状态。空或重复图片 ID、缺集合／图片版本阻断所有请求，不阻止已有可读内容 |
+| `view / density` | 默认 inline / default；支持 workspace 与独立 compact。紧凑仅减少间距，保留所有能力限制和不可用原因 |
+| `onExpand / onBack` | `(trigger:HTMLButtonElement)=>void` / `()=>void`；只导航，不提交或持久化；宿主负责容器与原入口焦点。组件内尚有选区时阻止切图／返回，须明确提交请求或取消选区 |
+| `notice / details` | 默认一条常驻“标注与裁切仅提交请求，不修改原图。”；可替换 notice，补充 details 默认收起。能力与不可用、加载失败、过期选区、坐标无效等事实常驻 |
+
+`AgentCanvasImage` 必填 `id,name,source,version,availability`；src、alt、width、height、regions 可选。`source={label,openable?}|null`；来源 URL 不直接打开，openable 只允许发 open-source 请求。`version={id,label:string|null}`；id 不作可见回退。`availability=available|unavailable(reason)|unknown(reason?)`；只有 available 且有 src 且 view 支持才挂载图片，加载错误卸载并显示“图片加载失败”。src／版本变化后可重试加载。所有 URL、图片内容、标题、原因及详情必须由宿主先核定当前披露权限，组件不能代替授权检查。
+
+`alt` 空白或缺失时，img 使用“缺少图片说明”，同时显示可见提示；不能拿文件名冒充图片说明。尺寸未提供保持未知，渲染沿用图片自然比例。`regions` 默认 []，代表该图完整已知标注集合，数量只是提供的区域数，不推定识别完成。区域 `{id,label,rect,source}`；source 为 teacher/system/example（教师／系统／示例）。`rect=[left,top,width,height]` 是**原图百分比**，有限值、左上 ≥0、宽高 >0、右下 ≤100。无效／重复区域阻断标注和裁切，并停止挂载无效区域层。
+
+### 意图与本地选区
+
+每个 onIntent 含 `imageSetId,version`。除 compare 外均带 `imageId,imageVersion`，均使用原始引用，不从可读 label 反推 ID。
+
+| type | 额外载荷 |
+| --- | --- |
+| select-image / open-source | 无；前者只请求更换查看对象，后者交宿主解析来源 |
+| zoom | `percent`；视图缩放可内部保留，存在 onIntent 时上报 |
+| annotate-create | `region:{label,rect,source:'teacher'}`；不生成正式区域身份 |
+| annotate-update | `regionId,label,rect`；宿主记录修改归属，不在组件内覆写原区域 |
+| annotate-delete | `regionId`；只请求删除区域，不删除图片 |
+| crop-request | `rect`；只请求指定范围，不创建新图、不产生下载链接 |
+| compare | `images:[{imageId,imageVersion},…]`，至少两个当前可查看图片，保持勾选顺序 |
+
+标注／裁切的临时选区含基准集合、图像、版本、区域与能力快照。正在编辑时这些条件变化，保留输入并阻断旧请求，显示“图片或标注已变化，请取消选区后重新选择。”。临时选区只表示本次尚未提交的范围；提交请求后关闭选区，不伪称保存或执行成功。正式标注只从新 props 呈现；没有自动保存、计时器、localStorage 或完成态。跨视图时保持同一 mounted 实例；外部强制卸载、会话切换、刷新和可靠草稿恢复由宿主管理。
+
+宿主接收请求后重新核验所属会话、图片集合／原图版本、当前权限、能力和范围。crop/annotate 的服务回执须由外部能力承载；传入 supported 不等于服务授权。比较引用、图片和标注变更应一起返回，防止旧比较结果关联新图。
+
+### 可访问性、文案与示例
+
+Inline 显示可读列表、选中图缩略、区域数量与“查看大图”；Workspace 增加原图比例查看、放大／缩小／适应宽度、平移、区域列表定位、标注与裁切范围编辑、并列比较。平移的键盘等效是聚焦画布后按方向键；区域列表是原生可聚焦按钮，不吞方向键。Pointer 框选将当前图片边界换算成百分比，拖拽仅增强；四个常驻标签的 number 输入（步长 0.1）可完成同一动作。标注名称必填；坐标超界／非有限／空白阻断提交。相同能力限制合并一次；只展示当前图的来源／版本／尺寸，不逐页重复元信息；内部 ID 不出现在 UI 或区域 DOM，旧查看器仅收到局部序号。
+
+`#image-canvas` 是单实例两态切换、compact、320px 模拟夹具：四页扫描（第 2 页倾斜、第 3 页模糊，第 1 页两个示例标注）、学生作答“第 1 题作答区”、缺说明插图与不可用截图。图片为本仓原创 SVG data URI。默认裁切不支持且说明原因；独立“演示裁切范围选择”开关只演示请求。标注可由示例页面更新本次模拟集合，仍未保存且刷新重置；不改原图。三主题沿用既有组件及查看器样式，未增加视觉规则。五项日志、定向测试与只读 Workspace 方案见 `.sites-runtime/image-canvas/REPORT.md`；浏览器三主题／窄屏／焦点／触屏、读屏器、Workspace 两态接入和真实服务均未验，本任务不启动服务，不自授 Review 结论。
+
 ## 模板选择器 v0.1
 
 2026-09-27 设计候选，语义 **09 模板选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-template-picker` 导入 `AgentTemplatePicker`、`AgentTemplatePickerProps`、`AgentTemplate`、`AgentTemplatePickerIntent`。任务分支 `feat/agent-template-picker`，基于 main `7ff98e7`；未合并，不增加 80 项目录条目。
