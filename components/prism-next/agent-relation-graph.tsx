@@ -76,7 +76,7 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, readable = fa
   const pan = (x: number, y: number) => setCamera(value => ({ ...value, x: value.x + x, y: value.y + y }))
   const zoom = (delta: number) => setCamera(value => ({ ...value, zoom: Math.max(readable ? 1 : .5, Math.min(3, value.zoom + delta)) }))
   return <div className="min-w-0 space-y-2">
-    {!thumbnail && <div className="flex flex-wrap gap-2" role="group" aria-label="关系图视野">
+    {!thumbnail && <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="关系图视野">
       <Button type="button" variant="outline" onClick={() => zoom(.25)}>放大</Button>
       <Button type="button" variant="outline" onClick={() => zoom(-.25)}>缩小</Button>
       <Button type="button" variant="outline" onClick={() => setCamera({ zoom: 1, x: 0, y: 0 })}>重置视野</Button>
@@ -84,7 +84,7 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, readable = fa
       <span className="text-ui-hint">缩放 {Math.round(camera.zoom * 100)}%</span>
     </div>}
     {!thumbnail && <p id={`${id}-help`} className="text-ui-hint">方向键平移，加减键缩放，Home 重置；节点和关系可在下方列表中完整查看。</p>}
-    <div className={readable ? "max-h-80" : undefined}
+    <div className={readable ? "max-h-80 w-full max-w-full min-w-0 overflow-x-auto [contain:inline-size]" : undefined}
       style={readable ? { minWidth: 0, maxWidth: "100%", overflowX: "auto", overflowY: "auto", overscrollBehaviorX: "contain" } : undefined}
       role={readable ? "region" : undefined} aria-label={readable ? "关系图（可横向滚动）" : undefined} tabIndex={readable ? 0 : undefined}>
     <svg style={readable ? { width, minWidth: width, height } : undefined} viewBox={`0 0 ${width} ${height}`} className={`w-full ${thumbnail ? "h-36" : "h-80 touch-none"}`} role="img"
@@ -196,18 +196,18 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
       {summary?.gaps === undefined ? <p className="text-ui-hint">关键缺口未知</p> : summary.gaps.length ? <ul className="text-ui-hint space-y-1">{[...new Set(summary.gaps)].map(gap => <li key={gap}>{gap}</li>)}</ul> : <p className="text-ui-hint">未记录关键缺口</p>}
       {large && <p className="text-ui-hint">节点超过图示上限（{threshold}），请使用列表查看与筛选。</p>}
       {narrow && !large && <p className="text-ui-hint">当前区域较窄，默认仅显示列表；查看关系图时可滚动浏览。</p>}
-      {narrow && !workspace && !large && <div className="flex flex-wrap gap-2" role="group" aria-label="呈现方式">
+      {narrow && !workspace && !large && <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="呈现方式">
         <Button type="button" variant="outline" aria-pressed={activeDisplay === "graph"} onClick={() => chooseDisplay("graph")}>仍查看关系图</Button>
         <Button type="button" variant="outline" aria-pressed={activeDisplay === "list"} onClick={() => chooseDisplay("list")}>仅列表</Button>
       </div>}
       {workspace && <>
-        <div className="space-y-3" aria-label="关系筛选">
-          {(["type", "status"] as const).map(key => <div key={key} role="group" aria-label={key === "type" ? "按类型筛选" : "按状态筛选"} className="flex flex-wrap gap-2">
+        <div className="min-w-0 space-y-3" aria-label="关系筛选">
+          {(["type", "status"] as const).map(key => <div key={key} role="group" aria-label={key === "type" ? "按类型筛选" : "按状态筛选"} className="flex min-w-0 flex-wrap gap-2">
             {[undefined, ...new Set(nodes.map(node => key === "type" ? node.type : nodeStatus(node)))].map((value, index) => <Button key={index} type="button" variant="outline" aria-pressed={filter[key] === value} disabled={!can("filter")} aria-describedby={`${id}-abilities`}
               onClick={() => send({ ...context, type: "filter", filter: { ...filter, [key]: value } }, "filter")}>{value ?? (key === "type" ? "全部类型" : "全部状态")}</Button>)}
           </div>)}
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="呈现方式">
+        <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="呈现方式">
           <Button type="button" variant="outline" disabled={large} aria-pressed={!large && activeDisplay === "graph"} onClick={() => { if (!large) chooseDisplay("graph") }}>{narrow && !large ? "仍查看关系图" : "图与列表"}</Button>
           <Button type="button" variant="outline" aria-pressed={large || activeDisplay === "list"} onClick={() => chooseDisplay("list")}>仅列表</Button>
           <Button type="button" variant="outline" disabled={!can("layout")} onClick={() => send({ ...context, type: "request-layout", layout: layout === "grid" ? "layered" : "grid" }, "layout")}>切换布局</Button>
@@ -224,7 +224,7 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
           {!edges.some(edge => edge.from === selected.id || edge.to === selected.id) && <p className="text-ui-hint">此节点暂无相邻关系。</p>}
           {capabilities["edit-node"].supported && <><Label htmlFor={`${id}-label`}>节点名称</Label>
           <Input id={`${id}-label`} value={selected.label} readOnly={!can("edit-node")} onChange={event => send({ ...context, type: "node-update", nodeId: selected.id, label: event.target.value }, "edit-node")} /></>}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-wrap gap-2">
             {capabilities["edit-node"].supported && <Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-delete", nodeId: selected.id }, "edit-node")}>删除节点</Button>}
             {selected.source && <Button type="button" variant="outline" disabled={!ready || !text(selected.source.objectId)} onClick={() => { if (selected.source && text(selected.source.objectId)) send({ ...context, type: "open-source", nodeId: selected.id, source: selected.source }) }}>查看来源</Button>}
           </div>
@@ -247,7 +247,7 @@ function RelationEdgeForm({ nodes, from, disabled, onCreate }: { nodes: readonly
   const valid = !disabled && nodes.some(node => node.id === to) && text(relationType)
   return <div className="min-w-0 space-y-2">
     <p className="text-ui-action">新增关系 · 起点：{nodeLabel(from)}</p>
-    <div role="group" aria-label="选择关系终点" className="flex flex-wrap gap-2">{nodes.map(node => <Button key={node.id} type="button" variant="outline" className="max-w-full whitespace-normal" disabled={disabled} aria-pressed={to === node.id} onClick={() => { if (!disabled) setTo(node.id) }}>{nodeLabel(node)}</Button>)}</div>
+    <div role="group" aria-label="选择关系终点" className="flex min-w-0 flex-wrap gap-2">{nodes.map(node => <Button key={node.id} type="button" variant="outline" className="max-w-full whitespace-normal" disabled={disabled} aria-pressed={to === node.id} onClick={() => { if (!disabled) setTo(node.id) }}>{nodeLabel(node)}</Button>)}</div>
     <Label htmlFor={`${id}-relation`}>关系名称</Label>
     <Input id={`${id}-relation`} value={relationType} readOnly={disabled} onChange={event => { if (!disabled) setRelationType(event.target.value) }} />
     <Button type="button" variant="outline" disabled={!valid} onClick={() => { if (valid && to) onCreate(to, relationType) }}>新增关系</Button>

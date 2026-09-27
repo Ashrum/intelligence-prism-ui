@@ -274,6 +274,11 @@ test('readable canvas keeps viewBox dimensions at 1:1 and clamps both button and
   assert.deepEqual(svg.props.style, { width, minWidth: width, height });
   assert.ok(width > 262);
   const region = result.nodes.find(node => node.props.role === 'region');
+  for (const token of ['[contain:inline-size]', 'w-full', 'max-w-full', 'min-w-0', 'overflow-x-auto']) {
+    assert.ok(region.props.className.split(/\s+/).includes(token), token);
+  }
+  const toolbar = result.nodes.find(node => node.props['aria-label'] === '关系图视野');
+  for (const token of ['min-w-0', 'flex-wrap']) assert.ok(toolbar.props.className.split(/\s+/).includes(token), token);
   assert.equal(region.props.tabIndex, 0);
   assert.equal(region.props['aria-label'], '关系图（可横向滚动）');
   assert.deepEqual(region.props.style, { minWidth: 0, maxWidth: '100%', overflowX: 'auto', overflowY: 'auto', overscrollBehaviorX: 'contain' });
