@@ -2,6 +2,78 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 交互演示器 v0.1
+
+2026-09-27 · 设计候选，语义 **39 AgentInteractiveDemo**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-interactive-demo.tsx`；组件页 `#interactive-demo`。未合并分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`。
+
+### 复用检索与关系
+
+已完整阅读批准规范 §2、§6.12 学科工具行与边界、§7、§8、§10，复用规划 v0.1.3 第 39/41 行，覆盖矩阵的相关零步骤与适配边界，及 40/42/07/30/analytics 契约和进度清单文案口径。矩阵保留历史基线，不修改。现有 40 收表达式并呈现外部计算结果，42 编辑公式原文，07 提供常规参数，30 查看图像，analytics 展示外部数据；均不承担课堂演示插槽或实验输入／结果的完整契约。39/41 只补该语义组合，未引入领域引擎。
+
+复用 Card、Field/FieldLabel、Input(nativeInput, type=number)、Slider、Prism Button、RecordDetails；41 另复用 Textarea、Table、ScatterChart。内部 `agent-subject-demo-parts.tsx` 仅共用参数与能力呈现，不增加组件目录项。无 coss、依赖、视觉令牌、80 项目录变更，无计时器、自动播放、仿真、Store、localStorage、权限执行或 Workspace 私有类型。三主题继承既有控件；页面只调整布局与密度。
+
+### 公开 API
+
+组件及 `AgentInteractiveDemoProps / AgentDemoContext / AgentDemoParameter / AgentDemoCapability / AgentDemoCapabilities / AgentDemoIntent` 均从同文件导出。
+
+| 属性 | 契约 |
+| --- | --- |
+| `demoId / version / title` | 必填，既有对象及版本、可读标题；内部引用仅用于请求，不输出到可见文案或 data 属性 |
+| `subject? / grade?` | 可读学科／适用年级，缺失与来源、参数未知合并一行，不猜测 |
+| `parameters` | 必填只读数组 `{id,label,min,max,step,value:number或null,unit?}`；唯一非空 id，范围有限且 min<max、step>0。两态共用同一份受控值 |
+| `preview? / content? / description / teachingTips` | Inline 缩略、Workspace 完整 ReactNode 插槽，必填可读文字等价与教学提示字符串数组。宿主提供获权被动渲染内容，随同一参数／版本更新；不能在插槽绕过能力限制加入执行器。没有插槽仍保留参数和文字 |
+| `capabilities` | 必填 interact/fullscreen/record/share，各 `{supported:true,reason?}` 或 `{supported:false,reason}`。同原因合并常驻；record/share 仅登记适配器能力，无本批动作入口，不暗示已录制／分享 |
+| `mobileSupport` | 必填相同能力形状，独立声明移动端可靠范围；具体触控／设备实测不得由 supported 推定 |
+| `source?` | `{label,openable}`，查看来源只发请求；不给 URL、不开链接、不产生读取事实 |
+| `view / density` | 默认 inline/default；支持 workspace 与 compact，紧凑仅减间距 |
+| `readOnlyReason? / details?` | 原因存在（含空串）阻断业务操作，无 onIntent 只读；details 默认折叠。关键能力、未知、范围提示及边界常驻 |
+| `onIntent?` | 只发送下述意图，无内部值更新、重置、全屏、记录、保存或成功态 |
+| `onExpand? / onBack?` | `(trigger:HTMLButtonElement,{demoId,version})` / `({demoId,version})`；宿主管容器、草稿、焦点和返回位置 |
+
+所有意图带 `{demoId,version}`：`param-change{parameterId,value}`、`reset`、`request-fullscreen`、`open-source`。缺身份／版本或重复参数 id 阻断业务请求；对应能力关闭时不挂载工具。仅 Workspace 提供参数输入与重置；Inline 为当前参数／缩略摘要和“打开演示”。record/share 仅声明，不能推定本外壳提供这些工具。
+
+数值输入为常驻标签的原生 number 控件，键盘输入／上下步进与 Slider 共用同一 change 路径。只发有限数值或清空 null，不自行补值或钳制；有限越界／非步长草稿仍回传，便于连续键入，由宿主回传后常驻提示核对。Slider 仅在有效范围和当前值下挂载，不把未知改为 0。非有限输入忽略，定义无效阻断该字段。缺值用破折号，未知字段一行汇总。宿主核对版本、参数、能力、权限与来源，不能用 UI 防护代替受信任校验。
+
+固定常驻边界为“演示用于课堂观察；参数调整不代表结论已验证或记录已保存。”。示例用 a/h/k 三参数，由示例宿主生成 SVG 和完整文字说明；a=0 明确退化为直线，图形可视范围明确。全部模拟，全屏不支持一处，record/share 共用原因一处。`#interactive-demo` 提供两态、compact、320px；参数变化只由宿主回传，重置不保存。
+
+## 模拟器 / 虚拟实验 v0.1
+
+2026-09-27 · 设计候选，语义 **41 AgentSimulationLab**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-simulation-lab.tsx`；组件页 `#simulation-lab`。本批不自研仿真，先登记输入／结果／能力边界；复用依据与 39 同上，领域运行全部交宿主或外部工具。
+
+### 公开 API
+
+组件及 `AgentSimulationLabProps / AgentLabContext / AgentLabVariable / AgentLabCapability / AgentLabCapabilities / AgentLabStep / AgentLabResult / AgentLabRecord / AgentLabIntent` 从同文件导出。
+
+| 属性 | 契约 |
+| --- | --- |
+| `labId / version / title / objective` | 必填当前对象／版本及可读标题／目标；内部引用不渲染 |
+| `steps / currentStepId` | 完整 `{id,title,description?}[]`，当前步骤 id 或 null；仅按外部事实标“当前步骤”，不自动推进。缺失当前步骤合并到未知行 |
+| `variables` | 与 39 参数形状相同的数值变量数组；固定标签 number 输入，有限值／null 意图，不自造默认值；运行要求范围、步长及全部值有效 |
+| `result?` | `null` 明确尚未运行；undefined、空摘要、身份／版本不匹配为最近结果未知。只有匹配本实验和版本的完整摘要才展示表格与图。改变输入后可保留最近一次结果，必须显示其运行时变量快照，不冒充新输入结果 |
+| `records?` | 外部只读 `{labId,version,label,text}[]`；undefined 为记录列表未知，[] 为暂无。仅显示同 labId 的获权历史，允许不同版本，不覆写／追加／保存 |
+| `conclusionDraft` | 必填受控字符串，逐次输入发 record-note，组件不缓存、不确认、不追加到记录列表；宿主负责草稿接纳、归属、保留／丢弃与离开拦截 |
+| `capabilities` | 必填 run/step/record/export，各支持标识与原因；run 同时控制变量编辑，record 控制结论草稿输入；不支持操作收起，结论保留只读文字输入 |
+| `mobileSupport / view / density / readOnlyReason / details` | 同 39，默认 inline/default；无回调、缺身份／版本、重复或空变量／步骤 id 时只读 |
+| `backDisabledReason?` | 宿主尚未保留草稿时可阻断返回，空串也阻断；理由常驻。外部路由／切换对象／卸载仍由宿主保护，不能通过返回自动丢弃 |
+| `onIntent? / onExpand? / onBack?` | 前者接下述请求；导航与 39 同形，context 为 `{labId,version}`；展开不运行，返回不提交 |
+
+`AgentLabResult={labId,version,summary,inputs:[{label,value:number,unit?}],values:[{label,value:string或number或null,unit?}],source?,plot?}`。必填摘要是结果文字等价，inputs 是运行时快照；values 为通用项目／数值／单位表格，不计算统计结论。null／非有限值显示破折号并合并未知，未传单位不猜无量纲。source 为 `{kind:'simulation'或'external-tool',label?}`；缺来源保持未知，不默认为模拟或真实。plot 复用 ScatterChart 的 data/label/xLabel/yLabel/unit/xUnit/xDomain/yDomain，只展示外部数值坐标点及既有数据表，无插值、拟合或自动统计。
+
+全部意图带 `{labId,version}`：
+
+- `set-variable{variableId,value}`：受控变量草稿；数值／Slider 边界与 39 一致。
+- `run-request{variables:[{variableId,value:number}]}`：明确快照，不在组件计算、标运行中、产结果或创建记录。
+- `step{stepId}`：请求选择步骤，不表示完成该步骤；按钮的 Tab/Enter/Space 是键盘入口。
+- `record-note{text}`：逐次原文草稿请求，保留空白，不表示保存。
+- `request-export`：仅有匹配结果且 export supported 时请求；实际文件由宿主/33 提供。
+
+Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、“打开实验”；Workspace 增加当前步骤列表、变量表单、运行请求、结果表格／可选图、记录、结论草稿。固定边界“运行请求不代表实验完成；结论为草稿，记录与导出以实际返回为准。”只一处。
+
+`#simulation-lab` 为抛硬币频率模拟，10/100/1000 次分别固定返回 6/52/503 次正面，其他次数未知；无随机引擎。导出不支持一处，记录列表仍由外部提供，不把草稿输入当记录。示例页面仅用页内状态，两个视图共享输入与结论；刷新重置，返回恢复到原入口。示例的 supported 是声明范围，不是移动端实测。
+
+39/41 定向 SSR／处理器测试及五项检查、实际 diff、Workspace 只读轻量方案见 `.sites-runtime/subject-demos/REPORT.md`。不启动服务；三主题视觉、320/390 容器、真实浏览器键盘／焦点／触屏、读屏器、Workspace 接入和真实领域插件均未验证，不自授 Review 结论。
+
+
 ## 音频与转写 v0.1
 
 2026-09-27 · 设计候选，语义 **31 AgentAudioTranscript**。源码 `components/prism-next/agent-audio-transcript.tsx`；组件页 `/next/components/agent-components#audio-transcript`。分支 `feat/agent-media-workspaces`，基线 `ab6760e`，未合并。声明 **Inline + 专用扩展内容**，独立 compact；不增加 80 项目录条目。
