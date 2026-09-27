@@ -1,5 +1,14 @@
 # 智能曜彩 UI Design System
 
+
+## 计算与分析工具 v0.1 · 设计候选（2026-09-27）
+
+语义 **40 AgentCalcTool** 提供 Inline 单行输入与结果／答案对比摘要，Workspace 增加完整输入、外部步骤、本次会话历史、可选函数采样图和插入答案／解析请求；compact 为独立密度。输入由组件收集，结果、单位、来源、步骤、对比均由宿主提供，不内置计算引擎；未提供或输入／版本不匹配显示“结果未知”。
+
+复用既有公式预览与 ScatterChart 数值坐标，coss、依赖、令牌、80 项目录不变。组件页 `/next/components/agent-components#calc-tool` 提供顶点／最小值一致、对称轴不一致、结果未知、plot 未接入的模拟示例，含两态、compact、320px。公开 API 见[计算与分析工具契约](docs/component-contracts.md#计算与分析工具-v01)。
+
+候选分支 `feat/agent-calc-tool`，本地 main 基线 `4d57eea`，未合并。报告、五项数字、实际 diff 及 Workspace 只读轻量方案见 `.sites-runtime/calc-tool/REPORT.md`。30 根据本轮 Supervisor / Prism #101（`4d57eea`）/ Workspace #69 交接登记为两态已验证；本轮未独立复验。当前互斥计数：Workspace 已验证 **35**、组件候选 **1（40）**、未开始 **6**、真实业务接入 **0**。不写 `.git`、不启动服务、不修改 Workspace；40 的浏览器与 Workspace 接入仍待验证。下方旧候选节保留各轮历史口径，以本节和进度清单为当前状态。
+
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
 ## 图像查看与画布 v0.1 · 设计候选（2026-09-27）

@@ -65,6 +65,59 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
 
+## 计算与分析工具 v0.1
+
+2026-09-27 设计候选，语义 **40 计算与分析工具**，声明 **Inline + 专用扩展内容**。导入 `components/prism-next/agent-calc-tool`，组件页锚点 `#calc-tool`；任务分支 `feat/agent-calc-tool`，基线 `4d57eea`，未合并。无计算引擎、单位换算、数学正确性判定或题目写回。
+
+### 复用检索与邻接职责
+
+- 已检索 MathContent / RootFormula、DraftMathPreview、42 AgentSubjectEditor、17 AgentItemReviewer、19 AgentMetricSummary 及 analytics 图表；现有数学渲染与图表不等于计算器。40 补齐输入、计算能力、外部结果和插入请求的语义组合，计算、单位规则和过程来源外置。
+- MathContent 是静态阅读示例，不接受任意表达式；默认输入／结果／步骤公式复用 DraftMathPreview 的安全 temml 排版。`inputPreview` 可放 MathContent / MathML 等只读内容，须匹配当前表达式。数学排版不证明结论正确。
+- 42 编辑单个公式，不计算；17 负责复核确认与回执，40 的答案对比不等于已复核；19 汇总既有业务指标，40 的 stats 只收输入并呈现外部统计结果，不替代学情统计。
+- 可选函数图复用 ScatterChart（analytics 既有数值坐标图），只呈现宿主采样点，不计算、连线、插值或推断连续函数性质。保留原始 x/y 与数据表，缺测保持 null。避免把 TrendChart 的分类轴误当数值横轴。
+- 组合 Card、Field / FieldLabel、Input(nativeInput) / Textarea、Prism Button、RecordDetails。coss、依赖、令牌、80 项目录均不变；三主题继承公共样式，无计时器、Store、localStorage 或 Workspace 私有类型。
+
+### 公开 API
+
+`AgentCalcToolProps` 及以下类型由同文件导出。
+
+| 属性 | 类型／默认 | 契约 |
+| --- | --- | --- |
+| `toolSessionId / version` | 必填 string | 当前计算会话及基准版本，不显示内部值；空白阻断请求。宿主将题目／答案／输入或计算轮次的变化纳入版本约束，防止旧回执覆盖新结果 |
+| `expression / mode` | 必填 string / AgentCalcMode | 受控原文与模式。`evaluate / simplify / solve / plot / stats` 分别为求值与函数性质、化简、解方程、函数绘图、简单统计；原文不 trim、转换或计算 |
+| `capabilities` | 必填 Record<AgentCalcMode, AgentCalcCapability> | 每项为 `{supported:true,reason?}` 或 `{supported:false,reason}`；缺项按不可用处理，未知原因给通用说明。全部声明常驻，同文原因合并 |
+| `result` | 可选 AgentCalcResult | 同会话、版本、原文、模式完全相符且非空文本时才显示；否则“结果未知”，不展示旧步骤、图、对比或开放插入 |
+| `history` | 可选 readonly AgentCalcResult[] | 本次会话只读快照，保持顺序与当时事实；不传为“历史未提供”，空数组为暂无；忽略其他会话，不追加／删除／回填记录 |
+| `inputPreview` | 可选 `{expression,content:ReactNode}` | 仅相同原文时使用，只读数学阅读插槽；否则回到默认公式预览，不显示陈旧内容 |
+| `title / view / density` | 默认“计算与分析” / inline / default | view 支持 inline / workspace；density 支持 default / compact，独立于两态，仅改变布局间距 |
+| `disabledReason` | 可选 string | 传入即阻断输入和全部业务请求；空串也阻断并给通用原因。无 onIntent 时只读。展开／返回仍可用 |
+| `insertDisabledReason / compareDisabledReason` | 可选 string | 各自仅阻断插入／对比；传入空串也阻断。宿主负责当前题目、目标字段权限、只读／冲突与覆盖条件 |
+| `onIntent` | 可选 `(AgentCalcIntent)=>void` | 下列所有业务操作仅请求；回调不代表计算、比对、插入或历史清空已成功 |
+| `onExpand / onBack` | 可选 `(trigger,context)=>void / (context)=>void` | context 为 `{toolSessionId,version}`。仅视图导航；前者携带按钮恢复焦点。页面持有同一输入／结果／历史，负责返回定位和草稿接续 |
+| `details` | 可选 ReactNode | 默认收起的“说明”；不收纳关键未知、禁用、不支持或不一致。唯一常驻边界：“计算结果来自……，请核对后使用。”；来源只在此摘要出现一次 |
+
+`AgentCalcResult = {toolSessionId,version,expression,mode,text,formula?,unit?,source?,steps?,comparison?,plot?}`：text 是必需的可读结果等价，不允许只传公式图像；formula 为可选排版原文。单位原样呈现，缺失为未知，不推断无量纲。来源 `AgentCalcSource={kind:'local-rule'|'external-tool'|'simulation',label?}`；kind 明确本机规则／外部工具／模拟，缺失则来源及是否模拟均未知。模拟必须 kind=simulation，不能用 label 冒充真实计算。
+
+步骤 `AgentCalcStep={text,formula?,source?}`，text 是可读过程，未单列 source 表示宿主声明继承本次结果来源，未给总来源则仍未知；步骤为空／缺失显示未提供，不自动推导。对比 `AgentCalcComparison={state:'consistent'|'inconsistent'|'unknown',answer?,reason?}`，仅按宿主状态显示一致／不一致／无法判断，未传为无法判断，不比较字符串或公式。plot 接收 ScatterChart 的 data/label/xLabel/yLabel/unit?/xUnit?/xDomain?/yDomain?；只在 workspace 且当前结果提供数据点时挂载图表。plot 不支持表示不能发起新绘图请求，不妨碍查看宿主已经提供的采样点。
+
+### 意图与键盘
+
+所有 onIntent 载荷含 `{toolSessionId,version}`：
+
+- `change-input`：`{expression,mode}`，收集输入草稿，宿主同步接纳并传回；为两态共用草稿提供单一路径。
+- `evaluate`：`{expression,mode}`，须原文非空且该模式 supported；不设置运行／完成状态。
+- `insert-result`：`{target:'answer'|'explanation',expression,mode}`，仅 workspace 当前结果可用时请求；宿主重新核验该版本结果和目标后写入既有草稿，组件不写题目、不提交、不保存。
+- `compare-with-answer`：`{expression,mode}`；结果需当前有效，对比结论仍由宿主传回。
+- `clear-history`：仅当前会话历史存在时请求，组件不清空记录。
+
+Inline 为单行输入，Enter / Ctrl+Enter / Cmd+Enter 与“计算”按钮等效；Workspace 为多行输入，Enter 换行，Ctrl/Cmd+Enter 提交。输入法组字、229、重复 keydown、Alt/Shift 不触发提交。固定标签、aria-live 结果、结果／步骤文字等价、图表数据表保留；导航按上下文请求，内部 ID 不进入可见文案或 data 属性。
+
+### 示例与验证边界
+
+`#calc-tool` 三组均明确模拟：二次函数顶点／最小值一致（含五个固定采样点）、对称轴不一致、统计结果未知；plot 未接入原因常驻。示例宿主仅对相同原文／模式作固定映射，其他输入结果未知；有两态往返、320px、compact、本页历史。插入只报告请求，示例不改题目。
+
+五项日志、定向 SSR／真实处理器测试、实际 diff 和 Workspace 只读轻量接入方案见 `.sites-runtime/calc-tool/REPORT.md`。不启动服务、不改 Workspace；浏览器三主题、320/390、触屏、焦点、读屏器、真实服务均未验证，不将静态测试当作独立验收。
+
 ## 图像查看与画布 v0.1
 
 2026-09-27 设计候选，语义 **30 图像查看与画布**，声明 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-image-canvas.tsx`，示例 `/next/components/agent-components#image-canvas`。分支 `feat/agent-image-canvas`，基线 main `5657ac3`，未合并；不增加 80 项组件目录条目。
