@@ -106,11 +106,11 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 
 ### 时间、草稿与播放边界（31/32 共用）
 
-时间须有限且非负；已知时长须有限非负，范围 `0 ≤ start < end ≤ duration`，时长未知只校验起止关系；不静默夹取。空／重复条目身份、非法条目时间、缺原对象或版本阻断请求并常驻说明。文本 React 转义，不解析 HTML。列表按宿主顺序呈现，不推断章节或字幕。
+时间须有限且非负；已知时长须有限非负，范围 `0 ≤ start < end ≤ duration`，时长未知只校验起止关系；不静默夹取。空／重复条目身份、非法条目时间、缺原对象或版本阻断请求并常驻说明。文本 React 转义，不解析 HTML。转写段落与字幕按宿主顺序呈现；时间轴标记按 time 升序展示（同秒保留输入顺序），先排序再截取 Inline 前 3 项，不修改宿主数组或原 ID，不推断章节或字幕。
 
-同一实例的 UI 草稿绑定对象、版本、原内容及能力快照；两态切换保留。基准变化保留草稿、阻断旧确认；换对象或只读时隐藏原输入。未确认草稿期间，其他请求与展开／返回阻断，须明确确认或放弃；外部强制卸载、会话切换、恢复／持久化保护由宿主负责。确认仅显示“请求已提交，结果待确认”，正式内容等 props；不推定保存或生成成功。
+同一实例的 UI 草稿绑定对象、版本、原内容及能力快照；两态切换保留。基准变化保留草稿、阻断旧确认；换对象或只读时隐藏原输入。未确认草稿期间，其他请求与展开阻断；返回入口保持可操作，点击后不调用 onBack，而将焦点移到本实例“放弃草稿”按钮，须明确确认或放弃。放弃后焦点回到本实例返回入口；外部强制卸载、会话切换、恢复／持久化保护由宿主负责。确认仅显示“请求已提交，结果待确认”，正式内容等 props；不推定保存或生成成功。
 
-两态使用原生控件（含播放按钮），不自研播放器或进度计时器。无 src 与不可用原因常驻；播放支持不等于一定取得可播放文件。加载错误显示原因并卸载元素；媒体身份／版本／src／播放能力／可用性变化后可重试。段落与标记跳转请求可在无媒体地址时交宿主处理，组件不伪造播放成功；宿主可据请求提示材料暂不可播放。原生元素有标题与说明关联。Tab 遍历列表；有 seek 时上下/Home/End 移动按钮焦点，Enter/Space 原生激活；无播放能力时列表行可聚焦。时间字段常驻固定标签、数值输入可用键盘完成。compact 只减间距，三主题继承现有控件；没有新视觉令牌、动效、依赖或 coss 修改。
+两态使用原生控件（含播放按钮），不自研播放器或进度计时器。不可播放原因常驻且只保留一条：优先 availability.reason，其次不支持播放的 capability.reason，均无有效宿主原因时才使用组件兜底；缺 src 不再叠加“未提供播放地址”。播放支持不等于一定取得可播放文件。加载错误显示原因并卸载元素；媒体身份／版本／src／播放能力／可用性变化后可重试。段落与标记跳转请求可在无媒体地址时交宿主处理，组件不伪造播放成功；宿主可据请求提示材料暂不可播放。原生元素有标题与说明关联。Tab 遍历列表；有 seek 时上下/Home/End 移动按钮焦点，Enter/Space 原生激活；无播放能力时列表行可聚焦。时间字段常驻固定标签、数值输入可用键盘完成。compact 只减间距，三主题继承现有控件；没有新视觉令牌、动效、依赖或 coss 修改。
 
 ## 视频与时间轴 v0.1
 
@@ -132,7 +132,9 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 
 ### 示例与验证边界
 
-31：课堂讲解录音 6 段，一段说话人和置信度未知，包含长中文和公式纯文本；另有不可用录音只读示例。32：教学视频 4 个章节与 3 条字幕，剪辑默认不支持且原因仅一处；可开启“演示片段请求”核对范围载荷。全部无媒体 src、全部标注模拟，没有外部资源。示例为同一组件两态切换，支持 compact 和 320px；文本与标记修改仅更新运行内模拟 props，未保存、刷新还原，片段确认不生成文件。
+31 的说话人／置信度按完整段落集合核对：全部缺失时只显示“说话人/置信度：未知（全部段落）”；部分缺失按字段与原段号合并一行，相同缺失范围合并字段，逐段仅显示已知项。搜索和 Inline 截取不将局部未知误写为全部未知；空集合不显示全未知提示。
+
+31：课堂讲解录音 6 段，一段说话人和置信度未知，包含长中文和公式纯文本；另有不可用录音只读示例（所有说话人／置信度未知，原因一处）。32：教学视频 4 个乱序输入章节（展示按时间排列）与 3 条字幕，剪辑默认不支持且原因仅一处；可开启“演示片段请求”核对范围载荷。全部无媒体 src、全部标注模拟，没有外部资源。示例为同一组件两态切换，支持 compact 和 320px；文本与标记修改仅更新运行内模拟 props，未保存、刷新还原，片段确认不生成文件。
 
 报告 `.sites-runtime/media-workspaces/REPORT.md` 记录公开 API、五项数字、实际 diff 及 Workspace 输入材料区的只读轻量验证方案。本轮不写 `.git`、不启动服务、不改 Workspace；SSR／处理器验证不代替三主题浏览器、窄屏、焦点、读屏器、真实媒体播放或 Workspace 接入验收，31/32 仍为组件候选。
 
@@ -159,7 +161,7 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 | --- | --- |
 | `deckId / version / title` | 必填。前两项是不透明请求引用，不进入可见文案或 DOM；title 为可读标题。版本未知用空串阻断请求，不拿 label 代替版本令牌 |
 | `versionLabel / source` | 可选可读版本名；来源 `{label,openable?}`。缺省分别显示版本/来源未确认；openable 只允许 `open-source`，不自行打开 URL |
-| `slides` | 必填完整获权有序 `readonly AgentSlide[]`。页 `{id,number,title,points,thumbnail?:{src,alt},notes?,status?}`；number 为宿主一基页码，列表顺序为宿主页序；id/number 唯一且有效。points 为可读纯文本，原样转义、保留换行，不解析 HTML/Markdown/PPT；status 如待补充/已完成来自外部，不从编辑/生成推定 |
+| `slides` | 必填完整获权有序 `readonly AgentSlide[]`。页 `{id,number,title,points,thumbnail?:{src,alt},notes?,status?}`；number 为宿主一基页码，列表顺序为宿主页序；id/number 唯一且有效。points 为可读纯文本，原样转义、保留换行，不解析 HTML/Markdown/PPT；status 如待补充/已完成来自外部，不从编辑/生成推定；完整非空页集合全部缺省或空白时仅一处“页面状态未确认”，部分已知时仅标已知项，不逐页补未知 |
 | `selectedSlideId` | 必填 string/null，点击只发请求，新 prop 决定当前页。null 提示请选择，失效 ID 提示重新选择，不自动回退首项 |
 | `capabilities` | 必填 view/reorder/edit-text/add/delete/generate/export 七项，各 `{supported:true,reason?}` 或 `{supported:false,reason}`。未接入项说明原因；相同原因合并一处。不支持项不渲染操作按钮和编辑表单，不逐页重复禁用控件 |
 | `save` | 可选 `AgentDocumentSave`：unsaved/saved-draft/submitted/conflict/unknown，缺省 unknown；只消费外部状态。conflict 阻断编辑/增删/调序/生成，不冒充已保存或自行解除冲突 |
@@ -190,7 +192,7 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 
 ### 示例与验证边界
 
-`#slide-workspace`：勾股定理复习课 6 页（公式页、待补充页、长中文和讲者备注）、只读版本；两组各有 inline/workspace/compact，320px 可选。全部标为模拟，SVG 只作缩略占位；页面示例适配器可以更新运行内文字/页序/增删与修订号，保存始终未保存，生成/导出不支持且解释原因。
+`#slide-workspace`：勾股定理复习课 6 页（公式页、待补充页、长中文和讲者备注、部分页面状态缺省）、全页状态缺省的只读版本；两组各有 inline/workspace/compact，320px 可选。全部标为模拟，SVG 只作缩略占位；页面示例适配器可以更新运行内文字/页序/增删与修订号，保存始终未保存，生成/导出不支持且解释原因。
 
 五项检查、SSR/处理器测试数字、实际 diff 与只读 Workspace 方案见 `.sites-runtime/slide-workspace/REPORT.md`。本任务不写 `.git`、不启动服务，三主题实页视觉、窄屏/焦点/触屏/读屏器、Workspace 接入及真实服务未验证；自动化不代替独立 Review。
 
@@ -215,7 +217,7 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 | `graphId / version / title / versionLabel?` | 前两项只作关联身份，title 与 versionLabel 为可读名称；缺版本标签显示未知，不用 ID 回退。全部输入先由宿主做披露检查。没有对象／版本身份或回调时仅查看，操作处理器再次保护。 |
 | `nodes: readonly AgentRelationNode[]` | `{id,label,type,group?,level?,status?,description?,source?}`。group/type/status 是可读文本，level 为布局层次提示；缺 status 显示未知。source=`{objectId,version?,label}`，只通过 open-source 交回宿主。空标签显示“未命名节点”。完整图的节点 ID 必须非空且唯一。 |
 | `edges: readonly AgentRelationEdge[]` | `{id,from,to,type,weight?,description?}`，type 为可读关系名；方向严格 from→to。唯一非空 id 支持同一端点间多条不同关系；允许自环／循环。空／重复 ID、缺失端点、非有限权重导致资料不可用，不悄悄删边或造节点。权重原样保留零与负值，不等于掌握度。 |
-| `capabilities: AgentRelationCapabilities` | 必填 view/filter/edit-node/edit-edge/layout，每项 `{supported:true,reason?}` 或 `{supported:false,reason}`。相同原因合并并标明能力范围；不支持原因常驻。view 不支持时不挂载图、列表、摘要、details 或展开入口。 |
+| `capabilities: AgentRelationCapabilities` | 必填 view/filter/edit-node/edit-edge/layout，每项 `{supported:true,reason?}` 或 `{supported:false,reason}`。相同原因合并并标明能力范围；不支持原因常驻。edit-node / edit-edge 不支持时分别不挂载新增／编辑／删除节点控件及新增／删除关系控件，仅顶部保留能力说明；支持时沿用既有禁用与意图保护。view 不支持时不挂载图、列表、摘要、details 或展开入口。 |
 | `summary?` | `{statusCounts?:{label,count}[],gaps?:string[]}`，计数与关键缺口由宿主明确提供。缺失／非法计数为未知；gaps 未提供为未知，[] 为“未记录关键缺口”。仅节点数与边数来自所提供的完整数组，始终标明本份图的数量；不把筛选后条数当成总量。 |
 | `filter?: AgentRelationFilter / selectedNodeId?` | filter=`{type?,status?}`，默认 {}。两项取交集；保留满足条件的节点与两端均在其中的边，图／列表使用同一诱导子图。选择与筛选完全受控，只经 onIntent 请求更新。失效／筛除的选择提示重新选择，不替选第一项。未知状态可筛选。 |
 | `layout? / graphThreshold?` | grid（默认）/layered；grid 按输入顺序三列，layered 按有限 level 升序、层内原顺序，缺 level 放在 0 层。不推断章节／依赖层级、不运行模拟。阈值默认 80，非负整数；非法值回退 80。完整节点数 **大于** 阈值时不挂载 SVG，两态均提供完整列表并常驻原因，不能通过筛选绕开保护。 |
@@ -245,7 +247,7 @@ Inline 呈现目标、当前变量、最近结果摘要与其输入／来源、�
 
 Inline：完整数量、宿主状态计数／关键缺口、小型静态 SVG 和“查看关系图”；附原生 details 的完整节点／关系列表，无展开回调时列表直接显示。Workspace：SVG（缩放 50–300%、指针拖动、方向键平移、+/− 缩放、Home 重置及等效按钮），默认图与列表并存，也可切仅列表；列表不依赖颜色或 SVG 可访问树，保留完整节点名称、类型、状态、分组／层级、说明、来源及每条有向关系的名称、权重和说明。SVG 长标签可截断，但 title 和列表保留全文。节点列表原生按钮支持 Enter/空格，与图选择相同；选中区域列出完整资料中的入边与出边，明确包含筛选范围外的邻居。
 
-`/next/components/agent-components#relation-graph` 三组均标模拟：6 知识点＋8 题＋2 章节（2 未覆盖、1 薄弱）；只读概念图（编辑节点／关系共用限制原因）；16 节点、阈值 10 的退化夹具。提供两态往返、独立 compact、320px、长中文与公式纯文本。示例宿主仅改页面运行内数据，删除节点同时删除关联边是示例策略；覆盖状态不会随边编辑自动变化，未保存如实显示。
+`/next/components/agent-components#relation-graph` 三组均标模拟：6 知识点＋8 题＋2 章节（2 未覆盖、1 薄弱）；只读概念图（默认选中节点，编辑节点／关系共用限制原因一处，不展示编辑控件）；16 节点、阈值 10 的退化夹具。提供两态往返、独立 compact、320px、长中文与公式纯文本。示例宿主仅改页面运行内数据，删除节点同时删除关联边是示例策略；覆盖状态不会随边编辑自动变化，未保存如实显示。
 
 测试覆盖两态 SSR、等价列表、筛选与邻接、编辑请求及保护、能力不支持、超阈值、文案去重、compact、导航载荷、确定性布局、边表单与键盘视野处理器。最后两项用隔离的局部状态测试夹具，不冒充真实浏览器。五项日志、实际 diff、Workspace 本地 `af60102` 只读方案见 `.sites-runtime/relation-graph/REPORT.md`。本轮不写 `.git`、不启动服务、不改 Workspace；三主题实际视觉／窄屏／焦点恢复／指针拖动／读屏器、Workspace 接入、真实服务均未验证。候选待 Supervisor 独立 Review。
 
@@ -472,9 +474,9 @@ Inline 显示可读列表、选中图缩略、区域数量与“查看大图”�
 
 ### 文案与验证边界
 
-相同字段说明按原文合并一次，部分适用用“模板 N”标明；单项说明就近展示。每行标题一次，共用说明和选择按钮用 aria-describedby 关联；缺失来源/版本标签/推荐理由/影响等合并一行，未知影响直说“影响未知”。未知、不可用和确认不放入 details。两个对比项勾满后的上限原因常驻。复用既有主题，未增加动画、依赖、令牌、目录项、计时器或持久化。
+notice 与完整非空模板集合中所有 selectionImpact.description 原文相同时，保留已合并的切换影响、去掉底部重复 notice；筛选为空仍保留 notice，部分相同或缺失影响不触发此规则。确认与 aria-describedby 仍关联常驻影响说明，意图保留原影响文本。相同字段说明按原文合并一次，部分适用用“模板 N”标明；单项说明就近展示。每行标题一次，共用说明和选择按钮用 aria-describedby 关联；缺失来源/版本标签/推荐理由/影响等合并一行，未知影响直说“影响未知”。未知、不可用和确认不放入 details。两个对比项勾满后的上限原因常驻。复用既有主题，未增加动画、依赖、令牌、目录项、计时器或持久化。
 
-`/next/components/agent-components#template-picker`：试卷模拟数据含期中卷三大题、随堂练习两部分、不可用单元测验和原因、未知推荐理由；教学方案一组含无影响直接选择与未知影响确认。每组 inline/workspace/compact 共用页面内选择，提供 320px、长中文、MathML 版面。页面仅记录选择，未实际重排。
+`/next/components/agent-components#template-picker`：试卷模拟数据含期中卷三大题、随堂练习两部分、不可用单元测验和原因、未知推荐理由；教学方案一组含无影响直接选择、所有切换影响与 notice 同文去重；未知影响仍由试卷组不可用模板披露，确认保护由定向测试覆盖。每组 inline/workspace/compact 共用页面内选择，提供 320px、长中文、MathML 版面。页面仅记录选择，未实际重排。
 
 五项日志、测试数字、实际 diff 与 Workspace 当前代码只读轻量方案见 `.sites-runtime/template-picker/REPORT.md`。本轮不写 `.git`、不启动服务、不改 Workspace。SSR/处理器测试不代表三主题/窄屏视觉、键盘触屏、读屏器、Workspace 或真实服务验收；独立 Review 待 Supervisor 完成。
 
@@ -702,6 +704,7 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 | `readOnlyReason?` | 出现即阻断变更；历史、采集 unknown／unconfirmed／received／running、保存 saving／conflict／unconfirmed 同样阻断变更。查看、展开与返回仍可独立提供；能力不是最终授权 |
 | `view / density` | 默认 `inline / default`；支持 `workspace` 和独立 `compact`。compact 只收紧间距，不缩字或隐藏质量、未知、失败、删除影响及禁用原因 |
 | `inlineLimit / onExpand?` | 默认 2，有限值取整且至少 1，其余回退 2；有展开能力才缩略，保留所有非清晰、补采需求未知或需补采、后续使用未知或已使用、锁定页以及当前预览页。无 onExpand 显示全列表且无假入口；传出原按钮供宿主恢复焦点 |
+| `inspectLabel?` | 可选 string，默认“查看页面”，空白也回退默认；用于页集合 inspect 入口，如“查看板书”。不改变 inspect-page 的 pageId、版本载荷或能力保护；与 30 的“查看大图”区分 |
 | `preview? / renderPreview?` | `preview={setId,versionId,pageId,requestedBy:'user',state:'loading'\|'ready'\|'error',message?}`。页面只能在用户发出 inspect-page 后激活；当前集合／版本／页身份和查看能力均匹配，且 ready 时才调用渲染函数或挂载 previewUrl。加载／错误仅显示状态，不预加载大图；版本变更、页移除或撤销查看能力立即卸载。renderPreview 参数为 `(page,{view,density})`，优先于 URL |
 | `onBack? / notice? / details?` | Workspace 返回只导航；默认一条常驻边界提示，可替换，组合时可传空串由外层提供共同提示；补充说明默认折叠。关键事实不能移入 details。关闭大图由宿主清空 preview，不另建任务或提交 |
 
@@ -734,7 +737,7 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 
 说明／来源／质量原因／禁用原因按去除尾部句号或分号后的相同文字合并，同文只显示一次，所有受影响控件引用同一说明 ID。全体适用时不逐页复述，部分适用用可读页名；页标题仅一次。每个对象的未知字段合并为一行，标点不拼成“。；”，内部 ID 与实现术语不进入教师界面。
 
-`#capture-scan` 提供四页试卷作答（第 3 页模糊需补采、第 2 页倾斜、第 4 页已被批阅使用、总页数已知）和板书照片（长中文、总数／质量未知、采集回执未确认）两组固定示例。三种用法同源，320px 开关；用户查看后组合 DocumentRegionViewer 的人工页与公式。采集／补采／确认只反馈请求；排序与删除只调整示例草稿，used 删除须经页面 AlertDialog 再确认。独立示例回执控件不随请求或时间推进，不连接相机、OCR、上传或保存服务。
+`#capture-scan` 提供四页试卷作答（第 3 页模糊需补采、第 2 页倾斜、第 4 页已被批阅使用、总页数已知）和板书照片（长中文、总数／质量未知、采集回执未确认）两组固定示例。三种用法同源，320px 开关；试卷 inspect 默认“查看页面”，板书显式 inspectLabel="查看板书"；用户查看后组合 DocumentRegionViewer 的人工页与公式。采集／补采／确认只反馈请求；排序与删除只调整示例草稿，used 删除须经页面 AlertDialog 再确认。独立示例回执控件不随请求或时间推进，不连接相机、OCR、上传或保存服务。
 
 五项日志、回调／SSR 测试数字、实际 diff 及只读核对 Workspace P01／P04 的最小接入方案见 `.sites-runtime/capture-scan/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace；浏览器三主题／窄屏／键盘／实际拖拽与触屏、读屏器、Workspace 接入、真实设备与处理服务均未验收，待 Supervisor 独立 Review 与 PO 视觉确认。
 

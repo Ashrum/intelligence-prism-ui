@@ -34,7 +34,7 @@ export async function mediaHarness(name, exported, base) {
     }
     return { html: render(inspect(h(Probe, { ...base, view: 'workspace', ...extra }))), nodes };
   }
-  const click = (extra, label) => { const node = capture(extra).nodes.find(node => node.props.onClick && textOf(node.props.children) === label); assert.ok(node, label); node.props.onClick({ currentTarget: {} }); return node; };
+  const click = (extra, label) => { const node = capture(extra).nodes.find(node => node.props.onClick && textOf(node.props.children) === label); assert.ok(node, label); node.props.onClick({ currentTarget: { closest() { return null; } } }); return node; };
   const input = (extra, suffix, value) => { const node = capture(extra).nodes.find(node => node.props.id?.endsWith(suffix) && node.props.onChange); assert.ok(node, suffix); node.props.onChange({ target: { value } }); };
   const html = extra => render(h(exports[exported], { ...base, ...extra }));
   return { exports, reset, capture, click, input, html, render, h };

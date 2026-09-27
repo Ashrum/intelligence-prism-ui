@@ -56,8 +56,8 @@ test('draft blocks navigation/other operations, survives view change and rejects
   reset(); const calls = [], extra = { onIntent: value => calls.push(value), onBack() { calls.push('back'); } };
   click(extra, '新增标记'); input(extra, '-label', '我的草稿'); input(extra, '-time', '12');
   assert.match(capture({ ...extra, view: 'inline' }).html, /我的草稿/);
-  for (const label of ['请求字幕', '请求导出', '查看来源', '删除标记', '返回原位置']) assert.equal(click(extra, label).props.disabled, true);
-  assert.deepEqual(calls, []);
+  for (const label of ['请求字幕', '请求导出', '查看来源', '删除标记']) assert.equal(click(extra, label).props.disabled, true);
+  click(extra, '返回原位置'); assert.deepEqual(calls, []);
   for (const change of [{ version: 'next' }, { marks: [] }, { videoId: 'other' }, { readOnlyReason: '' }, { capabilities: { ...all, mark: { supported: false, reason: '仅阅读。' } } }]) {
     assert.equal(click({ ...extra, ...change }, '确认请求').props.disabled, true); assert.match(capture({ ...extra, ...change }).html, /草稿保留但不可提交/);
     if (change.videoId || 'readOnlyReason' in change) assert.doesNotMatch(capture({ ...extra, ...change }).html, /我的草稿/);
@@ -90,4 +90,51 @@ test('identical limitations including playback have one explanation; list remain
   const out = html({ capabilities, view: 'workspace' });
   assert.equal(out.split('共同限制。').length - 1, 1);
   assert.match(out, /<li tabindex="0"/);
+});
+
+
+test('blocked back focuses this instance discard; discard restores back without navigating', () => {
+  reset(); const calls = [], extra = { onBack: value => calls.push(value) };
+  click(extra, '新增标记');
+  let focused = '';
+  const panel = { querySelector(selector) { return { focus() { focused = selector; } }; } };
+  const event = { currentTarget: { closest(selector) { assert.equal(selector, '[data-agent-media]'); return panel; } } };
+  let state = capture(extra);
+  const back = state.nodes.find(node => 'data-media-back' in node.props);
+  assert.equal(back.props.disabled, undefined);
+  back.props.onClick(event);
+  assert.equal(focused, '[data-media-discard]'); assert.deepEqual(calls, []);
+  state.nodes.find(node => 'data-media-discard' in node.props).props.onClick(event);
+  assert.equal(focused, '[data-media-back]'); assert.deepEqual(calls, []);
+  state = capture(extra); assert.ok(!state.nodes.some(node => 'data-media-discard' in node.props));
+  state.nodes.find(node => 'data-media-back' in node.props).props.onClick(event);
+  assert.deepEqual(calls, [context]);
+});
+
+test('one host playback reason replaces missing src, availability reason takes precedence', () => {
+  for (const mode of modes) {
+    for (const availability of [{ state: 'unavailable', reason: '原文件暂不可用。' }, { state: 'unknown', reason: '正在核对文件。' }]) {
+      const out = html({ ...mode, video: { ...video, availability }, capabilities: { ...all, play: { supported: false, reason: '当前格式不支持。' } } });
+      assert.equal(out.split(availability.reason).length - 1, 1);
+      assert.doesNotMatch(out, /未提供播放地址|当前格式不支持|<video/);
+    }
+    const out = html({ ...mode, capabilities: { ...all, play: { supported: false, reason: '文件不可播放。' } } });
+    assert.equal(out.split('文件不可播放。').length - 1, 1); assert.doesNotMatch(out, /未提供播放地址/);
+    assert.match(html(mode), /未提供播放地址/);
+  }
+});
+
+test('marks sort before inline slicing, stable ties retain source order and original intent ids', () => {
+  const rows = Object.freeze([marks[3], marks[1], { ...marks[2], time: 10 }, marks[0]].map(row => Object.freeze(row)));
+  for (const mode of modes) {
+    const out = html({ ...mode, marks: rows });
+    const labels = [...out.matchAll(/ · 章节 · (章节\d)/g)].map(match => match[1]);
+    assert.deepEqual(labels, mode.view === 'workspace' ? ['章节0', '章节1', '章节2', '章节3'] : ['章节0', '章节1', '章节2']);
+  }
+  reset(); const calls = [], extra = { marks: rows, onIntent: value => calls.push(value) };
+  const state = capture(extra);
+  state.nodes.filter(node => 'data-media-seek' in node.props)[2].props.onClick();
+  click(extra, '编辑标记'); input(extra, '-label', '更正零秒'); click(extra, '确认请求'); click(extra, '删除标记');
+  assert.deepEqual(calls, [{ ...context, type: 'seek', markId: marks[2].id, seconds: 10 }, { ...context, type: 'mark-update', markId: marks[0].id, time: 0, label: '更正零秒', kind: 'chapter' }, { ...context, type: 'mark-delete', markId: marks[0].id }]);
+  assert.deepEqual(rows.map(row => row.id), [marks[3].id, marks[1].id, marks[2].id, marks[0].id]);
 });

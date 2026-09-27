@@ -102,6 +102,7 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
     }
     if (missing.length) unknown.push(`${ordinal(item)}：${missing.map(label => label === "切换影响" ? "影响未知" : `${label}未知`).join("、")}`)
   }
+  const noticeMatchesImpact = hasText(notice) && templates.length > 0 && visible.length > 0 && templates.every(item => item.selectionImpact?.description === notice)
   const factEntries = [...facts]
   const describedBy = (item: AgentTemplate) => [reason ? `${id}-reason` : "", ...factEntries.flatMap(([, items], index) => items.includes(item) ? [`${id}-fact-${index}`] : []), unknown.length ? `${id}-unknown` : ""].filter(Boolean).join(" ") || undefined
   const content = <>
@@ -186,7 +187,7 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
         </Card>)}</div>
       </section>}
     </>}
-    {notice && <p className="break-words text-ui-hint text-muted-foreground" data-template-notice="">{notice}</p>}
+    {notice && !noticeMatchesImpact && <p className="break-words text-ui-hint text-muted-foreground" data-template-notice="">{notice}</p>}
     <RecordDetails>{details}</RecordDetails>
     <div className="flex min-w-0 flex-wrap gap-2">
       {selectedId !== null && <Button type="button" variant="outline" size="navigation" disabled={!!reason} aria-describedby={reason ? `${id}-reason` : undefined}

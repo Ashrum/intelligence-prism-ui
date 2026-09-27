@@ -30,7 +30,7 @@ export const templateExamples: Record<"paper" | "lesson", readonly AgentTemplate
       structure: [{ key: "stages", label: "教学环节", value: "情境导入 / 自主探究 / 交流归纳 / 迁移练习" }, { key: "duration", label: "建议时长", value: "40 分钟" }],
       preview: <p className="text-read-body">情境导入：从 {formula} 的图像出发，提出关于对称性与变化趋势的问题。</p> },
     { id: "review", name: "复习讲评方案", objectType: "教学方案", summary: "三环节：回顾 / 讲评 / 再练", scope: "高中数学 · 函数", source: "备课组模拟模板库", version: { id: "review-v1", label: "示例第一版" }, categoryId: "lesson", recommended: true,
-      availability: { state: "available" }, structure: [{ key: "stages", label: "教学环节", value: "回顾 / 讲评 / 再练" }, { key: "duration", label: "建议时长", value: null }],
+      availability: { state: "available" }, selectionImpact: { requiresConfirmation: false, description: "仅记录本次模板选择，不调整教学内容。" }, structure: [{ key: "stages", label: "教学环节", value: "回顾 / 讲评 / 再练" }, { key: "duration", label: "建议时长", value: null }],
       preview: <p className="text-read-body">回顾常见错误，按理解情况安排讲评与再练。</p> },
   ],
 }
@@ -52,6 +52,7 @@ export function TemplatePickerExample({ purpose, narrow = false }: { purpose: ke
   }
   const common: AgentTemplatePickerProps = { title: purpose === "paper" ? "试卷模板（模拟）" : "教学方案模板（模拟）",
     templateSet: { id: purpose, version: "example-v1" }, templates, selectedId, previewId, comparison, onIntent, manage: {},
+    notice: purpose === "lesson" ? "仅记录本次模板选择，不调整教学内容。" : undefined,
     categories: purpose === "paper" ? [{ id: "exam", label: "测验与考试" }, { id: "practice", label: "课堂练习" }] : [{ id: "lesson", label: "教学方案" }],
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },

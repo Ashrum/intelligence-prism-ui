@@ -305,3 +305,16 @@ test('copy polish 3: received restrictions disappear only when external facts re
   assert.doesNotMatch(htmlFor(released), /操作限制/);
   assert.match(htmlFor({ ...released, pages: [{ ...page(1), actions: { recapture: { disabledReason: '进入处理模糊页后才能补采。' } } }] }), /操作限制：进入处理模糊页后才能补采/);
 });
+
+test('inspect label defaults to view page and optional label preserves request identity and restrictions', () => {
+  for (const mode of modes) for (const [inspectLabel, expected] of [[undefined, '查看页面'], ['查看板书', '查看板书'], [' ', '查看页面']]) {
+    const calls = [], extra = { ...mode, inspectLabel, onIntent: value => calls.push(value) };
+    const node = button(capture(extra), 'inspect');
+    assert.equal(childrenText(node), expected);
+    node.props.onClick();
+    assert.deepEqual(calls, [{ ...context, type: 'inspect-page', pageId: pages[0].id }]);
+    assert.doesNotMatch(htmlFor(extra), /查看大图/);
+  }
+  const node = button(capture({ inspectLabel: '查看板书', onIntent: undefined }), 'inspect');
+  assert.equal(node.props.disabled, true);
+});

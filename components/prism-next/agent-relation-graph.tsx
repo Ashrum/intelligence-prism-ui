@@ -160,7 +160,7 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
     </li>)}</ul>
     {!projected.nodes.length && <p className="text-ui-hint">没有符合条件的节点。</p>}
     <h4 className="text-item-title">关系（{projected.edges.length}）</h4>
-    <ul className="space-y-2">{projected.edges.map(edge => <li key={edge.id} className="break-words text-ui-body">{edgeText(edge)}{workspace && <Button type="button" variant="outline" disabled={!can("edit-edge")} aria-label={`删除关系：${edgeText(edge)}`} onClick={() => send({ ...context, type: "edge-delete", edgeId: edge.id }, "edit-edge")}>删除关系</Button>}</li>)}</ul>
+    <ul className="space-y-2">{projected.edges.map(edge => <li key={edge.id} className="break-words text-ui-body">{edgeText(edge)}{workspace && capabilities["edit-edge"].supported && <Button type="button" variant="outline" disabled={!can("edit-edge")} aria-label={`删除关系：${edgeText(edge)}`} onClick={() => send({ ...context, type: "edge-delete", edgeId: edge.id }, "edit-edge")}>删除关系</Button>}</li>)}</ul>
     {!projected.edges.length && <p className="text-ui-hint">当前范围没有关系。</p>}
   </div>
   return <Card data-agent-relation-view={view} data-density={density} className={`min-w-0 ${density === "compact" ? "gap-3 p-3" : "gap-4 p-4"}`}>
@@ -196,15 +196,15 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
           <p className="text-ui-hint">相邻关系（完整资料，包含筛选范围外的节点）</p>
           <ul className="text-ui-body space-y-2 break-words">{edges.filter(edge => edge.from === selected.id || edge.to === selected.id).map(edge => <li key={edge.id}>{edgeText(edge)}</li>)}</ul>
           {!edges.some(edge => edge.from === selected.id || edge.to === selected.id) && <p className="text-ui-hint">此节点暂无相邻关系。</p>}
-          <Label htmlFor={`${id}-label`}>节点名称</Label>
-          <Input id={`${id}-label`} value={selected.label} readOnly={!can("edit-node")} onChange={event => send({ ...context, type: "node-update", nodeId: selected.id, label: event.target.value }, "edit-node")} />
+          {capabilities["edit-node"].supported && <><Label htmlFor={`${id}-label`}>节点名称</Label>
+          <Input id={`${id}-label`} value={selected.label} readOnly={!can("edit-node")} onChange={event => send({ ...context, type: "node-update", nodeId: selected.id, label: event.target.value }, "edit-node")} /></>}
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-delete", nodeId: selected.id }, "edit-node")}>删除节点</Button>
+            {capabilities["edit-node"].supported && <Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-delete", nodeId: selected.id }, "edit-node")}>删除节点</Button>}
             {selected.source && <Button type="button" variant="outline" disabled={!ready || !text(selected.source.objectId)} onClick={() => { if (selected.source && text(selected.source.objectId)) send({ ...context, type: "open-source", nodeId: selected.id, source: selected.source }) }}>查看来源</Button>}
           </div>
-          <RelationEdgeForm key={`${graphId}:${version}:${selected.id}`} nodes={nodes} from={selected} disabled={!can("edit-edge")} onCreate={(to, relationType) => { if (nodes.some(node => node.id === to) && text(relationType)) send({ ...context, type: "edge-create", from: selected.id, to, relationType }, "edit-edge") }} />
+          {capabilities["edit-edge"].supported && <RelationEdgeForm key={`${graphId}:${version}:${selected.id}`} nodes={nodes} from={selected} disabled={!can("edit-edge")} onCreate={(to, relationType) => { if (nodes.some(node => node.id === to) && text(relationType)) send({ ...context, type: "edge-create", from: selected.id, to, relationType }, "edit-edge") }} />}
         </section> : <p className="text-ui-hint">{selectedNodeId ? "所选节点不在当前范围，请重新选择。" : "选择节点可查看相邻关系与说明。"}</p>}
-        <div><Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-create" }, "edit-node")}>新增节点</Button></div>
+        {capabilities["edit-node"].supported && <div><Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-create" }, "edit-node")}>新增节点</Button></div>}
       </>}
       <p className="text-ui-hint break-words">{notice}</p>
       <RecordDetails>{details}</RecordDetails>
