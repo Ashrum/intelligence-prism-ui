@@ -1,6 +1,14 @@
 # 智能曜彩 UI Design System
 
 
+## 图形关系工作区 v0.1 · 设计候选（2026-09-27）
+
+语义 **34 AgentRelationGraph** 支持 Inline 关系摘要／静态缩略图、Workspace SVG 缩放平移与等价节点／关系列表、类型／状态筛选、邻接查看及受控编辑请求；compact 独立于两态。节点、边、版本、覆盖／薄弱状态和能力均由宿主提供，超阈值自动退化列表，不引入图布局库或统一 AST。
+
+复用 Card、Label/Input、Button、RecordDetails；coss、依赖、令牌与 80 项目录不变。组件页 `/next/components/agent-components#relation-graph` 提供试卷覆盖（6 知识点、8 题、2 章节；2 未覆盖、1 薄弱）、只读概念图、超阈值三组模拟示例，含 compact、320px、长中文与公式文本。[公开契约](docs/component-contracts.md#图形关系工作区-v01)与 `.sites-runtime/relation-graph/REPORT.md` 记录 API、五项验证、实际 diff 及 Workspace 只读轻量方案。
+
+候选位于未合并分支 `feat/agent-relation-graph`，main 基线 `c61f2fc`。40 按 Prism #102（`c61f2fc`）／Workspace #70 与 Supervisor 交接登记为两态已验证，本轮未独立复验。当前互斥计数：Workspace 已验证 **36**、组件候选 **1（34）**、未开始 **5**、真实业务接入 **0**。34 尚待独立 Review、浏览器及 Workspace 验证；本轮不写 `.git`、不启动服务、不修改 Workspace。下方各候选节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
 ## 计算与分析工具 v0.1 · 设计候选（2026-09-27）
 
 语义 **40 AgentCalcTool** 提供 Inline 单行输入与结果／答案对比摘要，Workspace 增加完整输入、外部步骤、本次会话历史、可选函数采样图和插入答案／解析请求；compact 为独立密度。输入由组件收集，结果、单位、来源、步骤、对比均由宿主提供，不内置计算引擎；未提供或输入／版本不匹配显示“结果未知”。
