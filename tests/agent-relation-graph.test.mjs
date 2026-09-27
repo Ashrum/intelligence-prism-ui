@@ -246,7 +246,7 @@ test('262px content defaults to complete list in both views; graph opt-in and re
     click(result.nodes, '顶点与对称轴');
     assert.deepEqual(calls, [{ ...context, type: 'select-node', nodeId: 'knowledge-0' }]);
     click(result.nodes, '仍查看关系图'); result = next();
-    assert.match(result.html, /<svg/); assert.match(result.html, /可滚动关系图/);
+    assert.match(result.html, /<svg/); assert.match(result.html, /关系图（可横向滚动）/);
     assert.equal(result.html.split('当前区域较窄').length - 1, 1);
     click(result.nodes, '仅列表'); assert.doesNotMatch(next().html, /<svg/);
     assert.equal(responsive.unmount(), true);
@@ -272,10 +272,35 @@ test('readable canvas keeps viewBox dimensions at 1:1 and clamps both button and
   const svg = result.nodes.find(node => node.type === 'svg');
   const [, , width, height] = svg.props.viewBox.split(' ').map(Number);
   assert.deepEqual(svg.props.style, { width, minWidth: width, height });
-  assert.ok(width > 262); assert.match(result.html, /overflow-auto/);
+  assert.ok(width > 262);
+  const region = result.nodes.find(node => node.props.role === 'region');
+  assert.equal(region.props.tabIndex, 0);
+  assert.equal(region.props['aria-label'], '关系图（可横向滚动）');
+  assert.deepEqual(region.props.style, { minWidth: 0, maxWidth: '100%', overflowX: 'auto', overflowY: 'auto', overscrollBehaviorX: 'contain' });
   click(result.nodes, '缩小');
   svg.props.onKeyDown({ key: '-', target: 1, currentTarget: 1, preventDefault() {} });
   harness.rerenderHarness(); result = capture(props, harness.RelationCanvas, {});
   assert.match(result.html, /scale\(1\)/);
   assert.match(result.html, /class="text-ui-body"/);
+});
+
+test('both canvas modes render each pan and zoom button change; wide canvas retains responsive SVG', () => {
+  for (const readable of [false, true]) {
+    harness.resetHarness();
+    const props = { nodes: coverageNodes, edges: coverageEdges, layout: 'grid', readable };
+    let result = capture(props, harness.RelationCanvas, {});
+    if (!readable) {
+      assert.equal(result.nodes.find(node => node.type === 'svg').props.style, undefined);
+      assert.equal(result.nodes.some(node => node.props.role === 'region'), false);
+    }
+    for (const [label, transform] of [
+      ['右移', 'translate(40 0) scale(1)'], ['下移', 'translate(40 40) scale(1)'],
+      ['左移', 'translate(0 40) scale(1)'], ['上移', 'translate(0 0) scale(1)'],
+      ['放大', 'translate(0 0) scale(1.25)'], ['缩小', 'translate(0 0) scale(1)'],
+    ]) {
+      click(result.nodes, label);
+      harness.rerenderHarness(); result = capture(props, harness.RelationCanvas, {});
+      assert.equal(result.nodes.find(node => node.type === 'g').props.transform, transform);
+    }
+  }
 });
