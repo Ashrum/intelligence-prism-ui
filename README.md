@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 图像查看与画布 v0.1 · 设计候选（2026-09-27）
+
+语义 30 `AgentImageCanvas` 支持 **Inline + 专用扩展内容**：对话态图片缩略与区域摘要；扩展态缩放、适应宽度、拖动／方向键平移、区域定位、矩形标注编辑与裁切范围请求、多图并列比较。`density="compact"` 独立于两态。图像集合、来源、版本、可用性和五项能力由页面提供；缺少图片说明与不支持原因常驻，标注及裁切仅发请求，不上传、不识别、不存储或修改原图。
+
+直接复用 `DocumentRegionViewer` 的查看、缩放和区域定位，原 API 不变；14 管对象分区，21 管证据链，17 管复核，05 管采集页集合。无新依赖、令牌或目录条目，coss 不改。组件页 `/next/components/agent-components#image-canvas` 提供四页扫描（倾斜／模糊／两个示例区域）、学生作答、缺说明插图及不可用图片，均为本地 SVG 示意；含两态往返、compact、320px 与裁切能力开关。
+
+候选分支 `feat/agent-image-canvas`，基线 `5657ac3`，尚未合并。[公开契约](docs/component-contracts.md#图像查看与画布-v01)、验证数字及 Workspace 只读轻量方案见 `.sites-runtime/image-canvas/REPORT.md`。进度 30 为组件候选；09 根据本轮提供的 Supervisor / Workspace #68 证据登记为 Workspace 已验证。当前互斥计数：已验证 34、候选 1、未开始 7、真实业务接入 0。本轮不写 `.git`、不启动服务、不修改 Workspace；30 的浏览器、Workspace 接入与真实服务尚未验证。
+
 ## 模板选择器 v0.1 · 设计候选（2026-09-27）
 
 语义 09 `AgentTemplatePicker` 支持 **Inline + 专用扩展内容**：对话态推荐与快速切换，扩展态前端分类过滤、模拟版面预览、两项结构字段对比与管理请求。`density="compact"` 独立于两态。模板、当前选择、来源、版本、推荐依据和切换影响由页面提供；缺失影响显示“影响未知”并要求确认，组件不应用或保存模板。
