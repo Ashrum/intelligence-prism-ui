@@ -1,6 +1,21 @@
 # 智能曜彩 UI Design System
 
 
+
+## 交互演示器 v0.1 · 设计候选（2026-09-27）
+
+语义 **39 AgentInteractiveDemo** 提供 Inline 参数／缩略摘要、Workspace 参数面板／演示区域／教学提示，支持独立 compact。演示由宿主插槽承担；参数、重置、全屏、来源均只发带对象版本的请求。interact/fullscreen/record/share 与移动端范围明确声明，不支持原因集中一处。复用 Field、Slider、数值 Input、Card、Button 和 RecordDetails，无领域插件、依赖、令牌或目录新增。
+
+组件页 `/next/components/agent-components#interactive-demo`：a/h/k 二次函数 SVG 模拟，参数由示例宿主回传更新，a=0 明确为直线，全屏不支持。含 compact、320px；[公开契约](docs/component-contracts.md#交互演示器-v01)。
+
+## 模拟器 / 虚拟实验 v0.1 · 设计候选（2026-09-27）
+
+语义 **41 AgentSimulationLab** 提供 Inline 实验目标、变量、最近结果摘要，Workspace 步骤、变量输入、运行请求、结果表格／既有图表、外部记录及受控结论草稿。组件不计算或仿真；未运行与未知分开，运行结果保留当时变量和模拟／外部来源。导出仅请求，不产生文件。
+
+组件页 `/next/components/agent-components#simulation-lab`：抛硬币次数仅映射 10/100/1000 次固定模拟结果，其他次数未知；导出不支持。两态共享数据，compact 与 320px 独立切换。[公开契约](docs/component-contracts.md#模拟器--虚拟实验-v01)及 `.sites-runtime/subject-demos/REPORT.md` 记录两个组件 API、五项数字、实际 diff、Workspace 只读方案和未验证范围。候选分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`；本轮不写 `.git`、不启动服务、不修改 Workspace，浏览器和真实服务未验。
+
+31/32 按本仓 #105（`27d4593`）／Workspace #73（`693cc8d`）和 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当前计数：Workspace 已验证 **40**、组件候选 **2（39、41）**、未开始 **0**、真实业务接入 **0**。下方各节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
 ## 音频与转写 v0.1 · 设计候选（2026-09-27）
 
 语义 **31 AgentAudioTranscript** 提供 Inline 时长／段落摘要、前三段转写和原生音频播放；Workspace 增加搜索、版本绑定的文字草稿确认及时间片段请求。播放、转写、编辑、剪辑、导出分别声明能力。无 src 显示原因，未知说话人与置信度如实呈现；组件不识别、不剪辑、不保存。
