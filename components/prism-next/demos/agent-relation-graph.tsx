@@ -85,7 +85,7 @@ export function AgentRelationGraphDemo() {
   const [narrow, setNarrow] = useState(false)
   return <section id="relation-graph" className="min-w-0 space-y-5 py-6">
     <h2 className="text-section-title">图形关系工作区</h2>
-    <p className="text-ui-body">模拟试卷：6 个知识点、8 道题、2 个章节；2 个知识点未覆盖、1 个薄弱。另含只读概念图与超上限列表示例。</p>
+    <p className="text-ui-body">模拟试卷：6 个知识点、8 道题、2 个章节；2 个知识点未覆盖、1 个薄弱。另含只读概念图与超上限列表示例。窄容器默认展示列表，可选择“仍查看关系图”并滚动浏览，返回“仅列表”。</p>
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     {(["coverage", "concept", "large"] as const).map(kind => <RelationGraphExample key={kind} kind={kind} narrow={narrow} />)}
   </section>

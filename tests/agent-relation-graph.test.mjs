@@ -204,3 +204,78 @@ test('node and edge unsupported controls are omitted independently, common reaso
     assert.ok(button(nodes, '查看来源'));
   }
 });
+
+// ResizeObserver + local hook lifecycle fixture; no browser layout is claimed.
+const responsive = await bundle('responsive-bundle.mjs', `${source.replace('useEffect, useId, useRef,', 'useId,')}
+let slots = [], cursor = 0, effects = [], cleanups = [], observers = [];
+function useState(initial) { const i = cursor++; if (!(i in slots)) slots[i] = initial; return [slots[i], next => { slots[i] = typeof next === 'function' ? next(slots[i]) : next; }]; }
+function useRef(initial) { const [ref] = useState({ current: initial }); return ref; }
+function useEffect(effect) { const [registered, register] = useState(false); if (!registered) { effects.push(effect); register(true); } }
+class ResizeObserver {
+  constructor(callback) { this.callback = callback; observers.push(this); }
+  observe(target) { this.target = target; }
+  disconnect() { this.target = null; }
+}
+export function reset() { slots = []; cursor = 0; effects = []; cleanups = []; observers = []; }
+export function rerender() { cursor = 0; }
+export function mount() { cleanups = effects.map(effect => effect()); effects = []; }
+export function resize(width) { for (const observer of observers) if (observer.target) observer.callback([{ target: observer.target, contentRect: { width } }]); }
+export function unmount() { cleanups.forEach(cleanup => cleanup?.()); return observers.every(observer => observer.target === null); }
+export { RelationCanvas };
+`);
+function responsiveFixture(props) {
+  responsive.reset();
+  let result = capture(props, responsive.AgentRelationGraph);
+  result.nodes.find(node => node.props['data-agent-relation-view']).props.ref.current = {};
+  responsive.mount();
+  return width => {
+    if (width !== undefined) responsive.resize(width);
+    responsive.rerender();
+    return capture(props, responsive.AgentRelationGraph);
+  };
+}
+test('262px content defaults to complete list in both views; graph opt-in and return have one notice and preserve intent payloads', () => {
+  for (const view of ['inline', 'workspace']) {
+    const calls = [], next = responsiveFixture({ view, onExpand() {}, onIntent: value => calls.push(value) });
+    let result = next(262);
+    assert.doesNotMatch(result.html, /<svg|<summary[^>]*>查看节点与关系列表/);
+    assert.match(result.html, /节点与关系列表/);
+    assert.equal(result.html.split('当前区域较窄').length - 1, 1);
+    assert.equal(result.html.split('仍查看关系图').length - 1, 1);
+    assert.equal(button(result.nodes, '仅列表').props['aria-pressed'], true);
+    click(result.nodes, '顶点与对称轴');
+    assert.deepEqual(calls, [{ ...context, type: 'select-node', nodeId: 'knowledge-0' }]);
+    click(result.nodes, '仍查看关系图'); result = next();
+    assert.match(result.html, /<svg/); assert.match(result.html, /可滚动关系图/);
+    assert.equal(result.html.split('当前区域较窄').length - 1, 1);
+    click(result.nodes, '仅列表'); assert.doesNotMatch(next().html, /<svg/);
+    assert.equal(responsive.unmount(), true);
+  }
+});
+test('wide defaults to graph; content resize and threshold prop use strict boundary; large graph cannot opt in', () => {
+  for (const minGraphWidth of [undefined, NaN, 0, -1, 600]) {
+    const next = responsiveFixture({ view: 'workspace', minGraphWidth });
+    const boundary = minGraphWidth === 600 ? 600 : 480;
+    assert.match(next(boundary).html, /<svg/);
+    assert.doesNotMatch(next(boundary - 1).html, /<svg/);
+    assert.match(next(1000).html, /<svg/);
+    responsive.unmount();
+  }
+  const next = responsiveFixture({ view: 'workspace', graphThreshold: 10 });
+  assert.doesNotMatch(next(262).html, /<svg|仍查看关系图|当前区域较窄/);
+  responsive.unmount();
+});
+test('readable canvas keeps viewBox dimensions at 1:1 and clamps both button and keyboard zoom to 100%', () => {
+  harness.resetHarness();
+  const props = { nodes: coverageNodes, edges: coverageEdges, layout: 'grid', readable: true };
+  let result = capture(props, harness.RelationCanvas, {});
+  const svg = result.nodes.find(node => node.type === 'svg');
+  const [, , width, height] = svg.props.viewBox.split(' ').map(Number);
+  assert.deepEqual(svg.props.style, { width, minWidth: width, height });
+  assert.ok(width > 262); assert.match(result.html, /overflow-auto/);
+  click(result.nodes, '缩小');
+  svg.props.onKeyDown({ key: '-', target: 1, currentTarget: 1, preventDefault() {} });
+  harness.rerenderHarness(); result = capture(props, harness.RelationCanvas, {});
+  assert.match(result.html, /scale\(1\)/);
+  assert.match(result.html, /class="text-ui-body"/);
+});

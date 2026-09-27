@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useRef, useState, type ReactNode } from "react"
+import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
@@ -32,7 +32,7 @@ export type AgentRelationGraphProps = AgentRelationContext & {
   title: string; versionLabel?: string; nodes: readonly AgentRelationNode[]; edges: readonly AgentRelationEdge[]
   capabilities: AgentRelationCapabilities
   summary?: { statusCounts?: readonly { label: string; count: number }[]; gaps?: readonly string[] }
-  layout?: "grid" | "layered"; graphThreshold?: number
+  layout?: "grid" | "layered"; graphThreshold?: number; minGraphWidth?: number
   filter?: AgentRelationFilter; selectedNodeId?: string | null
   view?: "inline" | "workspace"; density?: "default" | "compact"
   readOnlyReason?: string; notice?: string; details?: ReactNode
@@ -62,8 +62,8 @@ export function relationPositions(nodes: readonly AgentRelationNode[], layout: "
   })
 }
 
-function RelationCanvas({ nodes, edges, layout, thumbnail = false, selectedNodeId, onSelect }: {
-  nodes: readonly AgentRelationNode[]; edges: readonly AgentRelationEdge[]; layout: "grid" | "layered"; thumbnail?: boolean
+function RelationCanvas({ nodes, edges, layout, thumbnail = false, readable = false, selectedNodeId, onSelect }: {
+  nodes: readonly AgentRelationNode[]; edges: readonly AgentRelationEdge[]; layout: "grid" | "layered"; thumbnail?: boolean; readable?: boolean
   selectedNodeId?: string | null; onSelect?: (id: string) => void
 }) {
   const id = useId()
@@ -74,7 +74,7 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, selectedNodeI
   const width = Math.max(360, ...positions.map(point => point.x + 130))
   const height = Math.max(180, ...positions.map(point => point.y + 60))
   const pan = (x: number, y: number) => setCamera(value => ({ ...value, x: value.x + x, y: value.y + y }))
-  const zoom = (delta: number) => setCamera(value => ({ ...value, zoom: Math.max(.5, Math.min(3, value.zoom + delta)) }))
+  const zoom = (delta: number) => setCamera(value => ({ ...value, zoom: Math.max(readable ? 1 : .5, Math.min(3, value.zoom + delta)) }))
   return <div className="min-w-0 space-y-2">
     {!thumbnail && <div className="flex flex-wrap gap-2" role="group" aria-label="关系图视野">
       <Button type="button" variant="outline" onClick={() => zoom(.25)}>放大</Button>
@@ -84,7 +84,8 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, selectedNodeI
       <span className="text-ui-hint">缩放 {Math.round(camera.zoom * 100)}%</span>
     </div>}
     {!thumbnail && <p id={`${id}-help`} className="text-ui-hint">方向键平移，加减键缩放，Home 重置；节点和关系可在下方列表中完整查看。</p>}
-    <svg viewBox={`0 0 ${width} ${height}`} className={`w-full ${thumbnail ? "h-36" : "h-80 touch-none"}`} role="img"
+    <div className={readable ? "max-h-80 overflow-auto" : undefined} role={readable ? "region" : undefined} aria-label={readable ? "可滚动关系图" : undefined} tabIndex={readable ? 0 : undefined}>
+    <svg style={readable ? { width, minWidth: width, height } : undefined} viewBox={`0 0 ${width} ${height}`} className={`w-full ${thumbnail ? "h-36" : "h-80 touch-none"}`} role="img"
       aria-label={thumbnail ? "关系缩略图，完整内容见关系列表" : "关系图"} tabIndex={thumbnail ? undefined : 0}
       aria-describedby={thumbnail ? undefined : `${id}-help`}
       onKeyDown={event => {
@@ -119,15 +120,33 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, selectedNodeI
         </g>)}
       </g>
     </svg>
+    </div>
   </div>
 }
 
 export function AgentRelationGraph({ title, graphId, version, versionLabel, nodes, edges, capabilities, summary,
-  layout = "grid", graphThreshold = 80, filter = {}, selectedNodeId, view = "inline", density = "default", readOnlyReason,
+  layout = "grid", graphThreshold = 80, minGraphWidth = 480, filter = {}, selectedNodeId, view = "inline", density = "default", readOnlyReason,
   notice = "关系与覆盖状态仅反映当前提供的资料，调整后是否保存请以记录为准。", details, onIntent, onExpand, onBack,
 }: AgentRelationGraphProps) {
   const id = useId()
   const [display, setDisplay] = useState<"graph" | "list">("graph")
+  const container = useRef<HTMLDivElement>(null)
+  const [containerWidth, setContainerWidth] = useState<number | null>(null)
+  const [narrowDisplay, setNarrowDisplay] = useState<"graph" | "list">("list")
+  const minimum = Number.isFinite(minGraphWidth) && minGraphWidth > 0 ? minGraphWidth : 480
+  const narrow = containerWidth !== null && containerWidth < minimum
+  const activeDisplay = narrow ? narrowDisplay : display
+  const chooseDisplay = narrow ? setNarrowDisplay : setDisplay
+  useEffect(() => {
+    const element = container.current
+    if (!element || typeof ResizeObserver === "undefined") return
+    const observer = new ResizeObserver(entries => {
+      const entry = entries.find(item => item.target === element)
+      if (entry) setContainerWidth(entry.contentRect.width)
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
   const context = { graphId, version }
   const workspace = view === "workspace"
   const validIds = (items: readonly { id: string }[]) => items.every(item => text(item.id)) && new Set(items.map(item => item.id)).size === items.length
@@ -163,7 +182,7 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
     <ul className="space-y-2">{projected.edges.map(edge => <li key={edge.id} className="break-words text-ui-body">{edgeText(edge)}{workspace && capabilities["edit-edge"].supported && <Button type="button" variant="outline" disabled={!can("edit-edge")} aria-label={`删除关系：${edgeText(edge)}`} onClick={() => send({ ...context, type: "edge-delete", edgeId: edge.id }, "edit-edge")}>删除关系</Button>}</li>)}</ul>
     {!projected.edges.length && <p className="text-ui-hint">当前范围没有关系。</p>}
   </div>
-  return <Card data-agent-relation-view={view} data-density={density} className={`min-w-0 ${density === "compact" ? "gap-3 p-3" : "gap-4 p-4"}`}>
+  return <Card ref={container} data-agent-relation-view={view} data-density={density} className={`min-w-0 ${density === "compact" ? "gap-3 p-3" : "gap-4 p-4"}`}>
     <h3 className="break-words text-block-title">{title}</h3>
     <ul id={`${id}-abilities`} className="space-y-1 break-words text-ui-hint">{[...reasons].map(([reason, scope]) => <li key={reason}>{scope.join("、")}：{reason}</li>)}</ul>
     {readOnlyReason !== undefined && <p className="text-ui-hint">{readOnlyReason || "当前关系只读。"}</p>}
@@ -174,6 +193,11 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
       <p className="text-ui-body break-words">按状态计数：{summary?.statusCounts?.length ? summary.statusCounts.map(item => `${item.label} ${Number.isInteger(item.count) && item.count >= 0 ? item.count : "未知"}`).join(" · ") : "未知"}</p>
       {summary?.gaps === undefined ? <p className="text-ui-hint">关键缺口未知</p> : summary.gaps.length ? <ul className="text-ui-hint space-y-1">{[...new Set(summary.gaps)].map(gap => <li key={gap}>{gap}</li>)}</ul> : <p className="text-ui-hint">未记录关键缺口</p>}
       {large && <p className="text-ui-hint">节点超过图示上限（{threshold}），请使用列表查看与筛选。</p>}
+      {narrow && !large && <p className="text-ui-hint">当前区域较窄，默认仅显示列表；查看关系图时可滚动浏览。</p>}
+      {narrow && !workspace && !large && <div className="flex flex-wrap gap-2" role="group" aria-label="呈现方式">
+        <Button type="button" variant="outline" aria-pressed={activeDisplay === "graph"} onClick={() => chooseDisplay("graph")}>仍查看关系图</Button>
+        <Button type="button" variant="outline" aria-pressed={activeDisplay === "list"} onClick={() => chooseDisplay("list")}>仅列表</Button>
+      </div>}
       {workspace && <>
         <div className="space-y-3" aria-label="关系筛选">
           {(["type", "status"] as const).map(key => <div key={key} role="group" aria-label={key === "type" ? "按类型筛选" : "按状态筛选"} className="flex flex-wrap gap-2">
@@ -182,14 +206,14 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
           </div>)}
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="呈现方式">
-          <Button type="button" variant="outline" disabled={large} aria-pressed={!large && display === "graph"} onClick={() => { if (!large) setDisplay("graph") }}>图与列表</Button>
-          <Button type="button" variant="outline" aria-pressed={large || display === "list"} onClick={() => setDisplay("list")}>仅列表</Button>
+          <Button type="button" variant="outline" disabled={large} aria-pressed={!large && activeDisplay === "graph"} onClick={() => { if (!large) chooseDisplay("graph") }}>{narrow && !large ? "仍查看关系图" : "图与列表"}</Button>
+          <Button type="button" variant="outline" aria-pressed={large || activeDisplay === "list"} onClick={() => chooseDisplay("list")}>仅列表</Button>
           <Button type="button" variant="outline" disabled={!can("layout")} onClick={() => send({ ...context, type: "request-layout", layout: layout === "grid" ? "layered" : "grid" }, "layout")}>切换布局</Button>
         </div>
       </>}
-      {!large && (!workspace || display === "graph") && <RelationCanvas key={`${graphId}:${version}:${view}`} nodes={projected.nodes} edges={projected.edges} layout={layout} thumbnail={!workspace} selectedNodeId={selectedNodeId} onSelect={nodeId => send({ ...context, type: "select-node", nodeId })} />}
-      {(workspace || !onExpand || large) && list}
-      {!workspace && onExpand && !large && <details><summary className="text-ui-action">查看节点与关系列表</summary>{list}</details>}
+      {!large && ((!workspace && !narrow) || activeDisplay === "graph") && <RelationCanvas key={`${graphId}:${version}:${view}:${narrow}`} readable={narrow} nodes={projected.nodes} edges={projected.edges} layout={layout} thumbnail={!workspace && !narrow} selectedNodeId={selectedNodeId} onSelect={nodeId => send({ ...context, type: "select-node", nodeId })} />}
+      {(workspace || !onExpand || large || narrow) && list}
+      {!workspace && onExpand && !large && !narrow && <details><summary className="text-ui-action">查看节点与关系列表</summary>{list}</details>}
       {workspace && <>
         {selected ? <section aria-label="选中节点的邻接关系" className="min-w-0 space-y-3">
           <h4 className="text-item-title">已选：{nodeLabel(selected)}</h4>
