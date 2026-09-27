@@ -2,6 +2,14 @@
 
 进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
 
+## 模板选择器 v0.1 · 设计候选（2026-09-27）
+
+语义 09 `AgentTemplatePicker` 支持 **Inline + 专用扩展内容**：对话态推荐与快速切换，扩展态前端分类过滤、模拟版面预览、两项结构字段对比与管理请求。`density="compact"` 独立于两态。模板、当前选择、来源、版本、推荐依据和切换影响由页面提供；缺失影响显示“影响未知”并要求确认，组件不应用或保存模板。
+
+复用 Card、Select、Checkbox、Prism Button/Badge 与 RecordDetails，不改 coss、不新增依赖/令牌/目录条目。09 与 02/07/08 可在“确认出卷要求”同卡组合；12 负责已有题目的编排，13 负责成果摘要。组件页 `/next/components/agent-components#template-picker` 提供试卷与教学方案模拟数据、不可用模板、未知推荐理由、三种用法、320px、长中文和公式预览。
+
+候选分支 `feat/agent-template-picker`，基线 `7ff98e7`，尚未合并。[公开契约](docs/component-contracts.md#模板选择器-v01)、五项数字与只读 Workspace 轻量方案见 `.sites-runtime/template-picker/REPORT.md`。第 09 项更新为“组件候选”；未做浏览器三主题/窄屏/键盘触屏验收、Workspace 接入或真实服务验证。本轮不写 `.git`、不启动服务、不修改 Workspace。
+
 ## 素材提取器 v0.1 · 设计候选（2026-09-27）
 
 语义 37 `AgentMaterialExtractor` 支持 **Inline + 专用扩展内容**：对话态选择关键片段，常驻来源、版本、定位与候选状态；扩展态阅读页面提供的文本，逐段／按句选择与扩展、输入字符范围、添加标题和标注、上移下移、批量确认加入指定素材包。`density="compact"` 仅收紧间距。选择有文字描述、括号和双下划线，全部选择操作都有键盘入口。
