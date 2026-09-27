@@ -2,6 +2,68 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 音频与转写 v0.1
+
+2026-09-27 · 设计候选，语义 **31 AgentAudioTranscript**。源码 `components/prism-next/agent-audio-transcript.tsx`；组件页 `/next/components/agent-components#audio-transcript`。分支 `feat/agent-media-workspaces`，基线 `ab6760e`，未合并。声明 **Inline + 专用扩展内容**，独立 compact；不增加 80 项目录条目。
+
+### 复用检索与邻接关系
+
+核对 AGENTS、批准规范 §2、§6.10 音视频行与 L285「承载不等于自研编辑器」、§7/§8/§10，规划 v0.1.3 第 31/32 行和覆盖矩阵对应行（历史基线均仅 Card、无已核实通用编辑器），以及 30/29/28/21/37 契约。检索现有资源检索／素材包只有媒体元信息与简介，没有可复用的转写或时间轴编辑器。复用 Card、Button、固定 Field/FieldLabel/Input/Textarea 和 RecordDetails，播放使用原生 audio/video；`agent-media-parts.tsx` 只共用呈现、时间校验和范围字段，不是新的语义或目录项。
+
+28 编辑文稿章节，29 调整线性幻灯片，30 查看与标注图像；31/32 分别承载音频转写和视频标记，不统一 AST、不复制这些编辑器。21 接续来源证据链，播放／跳转／编辑不产生读取或引用事实。37 的文本片段选择思路复用于显式时间范围确认；31/32 只发送原媒体身份、版本和秒数，不调用剪辑、不生成新资产。33 可承接导出请求。Composer 语音输入与实时语音对话不是 31。
+
+### 公开 API
+
+同文件导出 `AgentAudioTranscriptProps / AgentAudioCapabilityKind / AgentAudioCapabilities / AgentAudioSegment / AgentAudioContext / AgentAudioIntent`，并重导出共用 `AgentMediaMetadata / AgentMediaAvailability / AgentMediaCapability`。
+
+| 属性 | 契约 |
+| --- | --- |
+| `audioId / version` | 必填原对象／版本令牌；不进入 HTML 或可见文案；空白阻断请求，不能拿可读版本名替代 |
+| `audio` | 必填 `AgentMediaMetadata`：`title,availability`；可选 `description,src,duration,versionLabel,source:{label,openable?}`。duration 是宿主给出的秒数，不从段落末尾推断；省略显示时长未知。来源与版本可读名缺失显示未确认 |
+| `availability` | `{state:'available'}`、`{state:'unavailable',reason}` 或 `{state:'unknown',reason?}`；只描述媒体可播放性，转写可单独获权阅读。宿主预先裁剪获权元信息、正文、src 与 details；组件不充当权限服务 |
+| `segments` | 完整已提供范围内的有序 `readonly AgentAudioSegment[]`；段 `{id,start,end,text,speaker?,confidence?:{label,source?}}`，时间为秒。说话人／置信度缺省未知，置信度有值但无来源则来源未知，不计算分数或置信度 |
+| `capabilities` | 必填 play/transcribe/edit-transcript/clip/export，各 `{supported:true,reason?}` 或 `{supported:false,reason}`。播放、转写和编辑分别声明。仅支持且有接收器的操作展示；相同原因集中一次，不逐段放禁用工具 |
+| `onIntent` | 可选 `(AgentAudioIntent)=>void`；缺省仅浏览。宿主重新核验当前会话、对象／版本、权限、范围、能力及重复／迟到请求，结果通过新 props 回传 |
+| `mediaRef` | 可选 `Ref<HTMLAudioElement>`。seek 只请求定位；宿主核验后可设置此原生元素的 `currentTime`，不自动播放、不推定定位或处理成功。原生播放不依赖 onIntent；缺 src/不可用/play 不支持时不挂载媒体元素 |
+| `view / density` | 默认 inline/default；workspace/compact 独立组合。Inline 展示前三段与摘要；Workspace 全文、前端文本／说话人搜索、编辑和片段选择。过滤不改变段落原身份和序号 |
+| `readOnlyReason` | 可选 string，存在（含空串）即只读，隐藏转写／编辑／片段操作；仍可请求跳转、来源与已支持导出。历史版由宿主传原快照和该限制 |
+| `onExpand / onBack` | `(trigger,{audioId,version})=>void` / `({audioId,version})=>void`；只导航，宿主维护容器、草稿及返回焦点 |
+| `notice / details` | 一条常驻边界提示／默认折叠的获权被动说明。缺媒体说明显式提示；能力、失败、未知和草稿冲突不折叠 |
+
+全部意图带 `{audioId,version}`：`seek {segmentId,seconds}`；`edit-segment {segmentId,text}`；`clip-request {start,end}`；`request-transcribe / request-export / open-source` 无额外载荷。编辑保留原始空格与换行，非空文本才可确认。请求不原地改写输入数组、音频或保存事实。
+
+### 时间、草稿与播放边界（31/32 共用）
+
+时间须有限且非负；已知时长须有限非负，范围 `0 ≤ start < end ≤ duration`，时长未知只校验起止关系；不静默夹取。空／重复条目身份、非法条目时间、缺原对象或版本阻断请求并常驻说明。文本 React 转义，不解析 HTML。列表按宿主顺序呈现，不推断章节或字幕。
+
+同一实例的 UI 草稿绑定对象、版本、原内容及能力快照；两态切换保留。基准变化保留草稿、阻断旧确认；换对象或只读时隐藏原输入。未确认草稿期间，其他请求与展开／返回阻断，须明确确认或放弃；外部强制卸载、会话切换、恢复／持久化保护由宿主负责。确认仅显示“请求已提交，结果待确认”，正式内容等 props；不推定保存或生成成功。
+
+两态使用原生控件（含播放按钮），不自研播放器或进度计时器。无 src 与不可用原因常驻；播放支持不等于一定取得可播放文件。加载错误显示原因并卸载元素；媒体身份／版本／src／播放能力／可用性变化后可重试。段落与标记跳转请求可在无媒体地址时交宿主处理，组件不伪造播放成功；宿主可据请求提示材料暂不可播放。原生元素有标题与说明关联。Tab 遍历列表；有 seek 时上下/Home/End 移动按钮焦点，Enter/Space 原生激活；无播放能力时列表行可聚焦。时间字段常驻固定标签、数值输入可用键盘完成。compact 只减间距，三主题继承现有控件；没有新视觉令牌、动效、依赖或 coss 修改。
+
+## 视频与时间轴 v0.1
+
+2026-09-27 · 设计候选，语义 **32 AgentVideoTimeline**。源码 `components/prism-next/agent-video-timeline.tsx`；组件页 `/next/components/agent-components#video-timeline`。同一未合并任务分支，**Inline + 专用扩展内容** 与独立 compact。复用依据、时间校验、草稿保护、键盘及边界同上；播放、字幕和剪辑能力分别由宿主适配器承担。
+
+同文件导出 `AgentVideoTimelineProps / AgentVideoCapabilityKind / AgentVideoCapabilities / AgentVideoMark / AgentVideoSubtitle / AgentVideoContext / AgentVideoIntent`，并重导出共用媒体类型。
+
+| 属性 | 契约 |
+| --- | --- |
+| `videoId / version / video` | 身份与元信息同 31；video 另可带 `poster:{src,alt}`，Inline 原图比例展示封面；缺省无封面，不引入外部占位图 |
+| `marks` | 必填 `readonly {id,time,label,kind:'chapter'/'subtitle'/'annotation'}[]`；全为外部事实；Inline 前三项摘要，Workspace 全列表；修改时间数值等效于时间轴拖动，本版不提供拖动或波形 |
+| `subtitles` | 可选 `readonly {id,start,end,text}[]` 默认空；Workspace 提供可读字幕及跳转列表。本版不生成 VTT、不合成视频字幕轨、不保证字幕跟播 |
+| `capabilities` | 必填 play/subtitle/mark/clip/export，能力结构同 31；字幕不支持指不接受生成请求，已提供的获权字幕仍可阅读 |
+| `onIntent / mediaRef` | `(AgentVideoIntent)=>void` / `Ref<HTMLVideoElement>`；只发请求，seek 由宿主核验后经原生元素定位 |
+| `view / density / readOnlyReason / details / notice` | 同 31；Workspace 支持标记新增／编辑／删除及片段选择；只读阻断标记、字幕生成和片段请求 |
+| `onExpand / onBack` | `(trigger,{videoId,version})=>void` / `({videoId,version})=>void`；宿主管理两态与返回 |
+
+全部意图带 `{videoId,version}`：`seek {seconds,markId? ,subtitleId?}`（组件入口只带对应一项）；`mark-create {time,label,kind}`；`mark-update {markId,time,label,kind}`；`mark-delete {markId}`；`clip-request {start,end}`；`request-subtitle / request-export / open-source`。新增标记默认“标注”，可选章节／字幕；原记录 ID 由宿主分配。新增／更新显式草稿确认，文字非空；删除只发请求，宿主处理正式执行及影响。不修改媒体文件、不上传、不转码、不识别、不剪辑、不存储，不内置服务、权限模型或业务 Store。
+
+### 示例与验证边界
+
+31：课堂讲解录音 6 段，一段说话人和置信度未知，包含长中文和公式纯文本；另有不可用录音只读示例。32：教学视频 4 个章节与 3 条字幕，剪辑默认不支持且原因仅一处；可开启“演示片段请求”核对范围载荷。全部无媒体 src、全部标注模拟，没有外部资源。示例为同一组件两态切换，支持 compact 和 320px；文本与标记修改仅更新运行内模拟 props，未保存、刷新还原，片段确认不生成文件。
+
+报告 `.sites-runtime/media-workspaces/REPORT.md` 记录公开 API、五项数字、实际 diff 及 Workspace 输入材料区的只读轻量验证方案。本轮不写 `.git`、不启动服务、不改 Workspace；SSR／处理器验证不代替三主题浏览器、窄屏、焦点、读屏器、真实媒体播放或 Workspace 接入验收，31/32 仍为组件候选。
+
 ## 演示文稿工作区 v0.1
 
 2026-09-27 设计候选，语义 **29 AgentSlideWorkspace**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-slide-workspace` 导入组件及公开类型。未合并分支 `feat/agent-slide-workspace`，main 基线 `7be98e2`；组件页 `/next/components/agent-components#slide-workspace`，不增加 80 项目录条目。

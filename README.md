@@ -1,6 +1,20 @@
 # 智能曜彩 UI Design System
 
 
+## 音频与转写 v0.1 · 设计候选（2026-09-27）
+
+语义 **31 AgentAudioTranscript** 提供 Inline 时长／段落摘要、前三段转写和原生音频播放；Workspace 增加搜索、版本绑定的文字草稿确认及时间片段请求。播放、转写、编辑、剪辑、导出分别声明能力。无 src 显示原因，未知说话人与置信度如实呈现；组件不识别、不剪辑、不保存。
+
+组件页 `/next/components/agent-components#audio-transcript`：课堂讲解 6 段、不可播放只读示例，均无媒体 src；同一实例两态切换，独立 compact、320px。复用原生媒体与既有卡片、固定标签表单和详情区，不改 coss、依赖、令牌或 80 项目录。[公开契约](docs/component-contracts.md#音频与转写-v01)及 `.sites-runtime/media-workspaces/REPORT.md` 记录 API、验证与 Workspace 只读方案。
+
+## 视频与时间轴 v0.1 · 设计候选（2026-09-27）
+
+语义 **32 AgentVideoTimeline** 提供 Inline 封面／时长／标记摘要与原生视频播放；Workspace 呈现章节、字幕列表和跳转请求，支持数值时间新增／编辑标记、删除及片段请求。播放、字幕和剪辑分别交宿主适配器；不转码、不生成字幕轨或视频文件。不支持能力集中说明，不逐项重复禁用控件。
+
+组件页 `/next/components/agent-components#video-timeline`：4 章节、3 字幕，剪辑默认不支持且原因一处，可切换模拟范围请求；全部无 src，含 compact、320px。[公开契约](docs/component-contracts.md#视频与时间轴-v01)。两个候选位于未合并分支 `feat/agent-media-workspaces`，main 基线 `ab6760e`；五项日志、实际 diff 与报告在 `.sites-runtime/media-workspaces/`。本轮不写 `.git`、不启动服务、不改 Workspace；浏览器三主题／窄屏／焦点、读屏器、真实播放和 Workspace 接入未验。
+
+29 按本仓 #104（`ab6760e`）／Workspace #72 及 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当前计数：Workspace 已验证 **38**、组件候选 **2（31、32）**、未开始 **2（39、41）**、真实业务接入 **0**。下方各节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
 ## 演示文稿工作区 v0.1 · 设计候选（2026-09-27）
 
 语义 **29 AgentSlideWorkspace** 支持 Inline 前三页缩略摘要、Workspace 页列表与当前页要点/讲者备注，按能力开放文字草稿确认、调序和增删请求；compact 独立于两态。版本、保存、来源与各项能力由宿主给出；生成与导出交适配器，导出可接 33，不包含 PPT 渲染、文件生成或存储。
