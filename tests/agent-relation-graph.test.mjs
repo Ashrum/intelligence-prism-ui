@@ -96,7 +96,10 @@ test('node create/update/delete, edge create/delete, open source and layout requ
 test('unsupported abilities and missing identity/callback protect direct handlers; read-only still permits select/filter/source', () => {
   for (const extra of [{ graphId: '' }, { version: ' ' }, { onIntent: undefined }, { capabilities: Object.fromEntries(Object.keys(relationCapabilities).map(key => [key, { supported: key === 'view', reason: key === 'view' ? undefined : '共同限制。' }])) }]) {
     const { nodes } = capture({ view: 'workspace', selectedNodeId: 'knowledge-0', onIntent() { assert.fail('blocked'); }, ...extra });
-    for (const label of ['新增节点', '删除节点', '删除关系', '切换布局', '未覆盖']) assert.equal(click(nodes, label).props.disabled, true);
+    for (const label of ['新增节点', '删除节点', '删除关系', '切换布局', '未覆盖']) {
+      if (extra.capabilities && ['新增节点', '删除节点', '删除关系'].includes(label)) assert.equal(button(nodes, label), undefined);
+      else assert.equal(click(nodes, label).props.disabled, true);
+    }
   }
   const calls = [], { nodes } = capture({ view: 'workspace', selectedNodeId: 'knowledge-0', readOnlyReason: '', onIntent: value => calls.push(value) });
   for (const label of ['新增节点', '删除节点', '删除关系', '切换布局']) assert.equal(click(nodes, label).props.disabled, true);
@@ -186,4 +189,18 @@ test('canvas keyboard pan/zoom equals buttons; Home resets; thumbnail static and
   harness.rerenderHarness(); canvas = capture(props, harness.RelationCanvas, {}); assert.match(canvas.html, /translate\(0 0\) scale\(1\)/);
   canvas.nodes.find(node => node.type === 'g' && node.props.onClick).props.onClick(); assert.deepEqual(calls, ['knowledge-0']);
   harness.resetHarness(); canvas = capture({ ...props, thumbnail: true }, harness.RelationCanvas, {}); assert.equal(button(canvas.nodes, '放大'), undefined);
+});
+
+test('node and edge unsupported controls are omitted independently, common reason once', () => {
+  for (const nodeSupport of [false, true]) for (const edgeSupport of [false, true]) {
+    const capabilities = { ...relationCapabilities, 'edit-node': { supported: nodeSupport, reason: nodeSupport ? undefined : '仅供阅读。' }, 'edit-edge': { supported: edgeSupport, reason: edgeSupport ? undefined : '仅供阅读。' } };
+    const { html, nodes } = capture({ view: 'workspace', selectedNodeId: 'knowledge-0', capabilities });
+    assert.equal(!!button(nodes, '新增节点'), nodeSupport);
+    assert.equal(!!button(nodes, '删除节点'), nodeSupport);
+    assert.equal(nodes.some(node => node.props.id?.endsWith('-label')), nodeSupport);
+    assert.equal(!!button(nodes, '删除关系'), edgeSupport);
+    assert.equal(nodes.some(node => node.props.onCreate), edgeSupport);
+    assert.equal(html.split('仅供阅读。').length - 1, nodeSupport && edgeSupport ? 0 : 1);
+    assert.ok(button(nodes, '查看来源'));
+  }
 });

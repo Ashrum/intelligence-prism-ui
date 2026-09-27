@@ -177,3 +177,25 @@ test('filtering cannot conceal selected template unavailability or unknown impac
   for (const copy of ['当前选择不属于此分类', '版面正在修订。', '影响未知', '单元测验', '随堂练习']) assert.ok(html.includes(copy), copy);
   assert.doesNotMatch(html, />模板 1 · 期中卷</);
 });
+
+test('notice identical to every impact appears once while partial matches and unknowns remain', () => {
+  const notice = first.selectionImpact.description;
+  const templates = [first, { ...second, selectionImpact: { ...first.selectionImpact, requiresConfirmation: true } }];
+  for (const mode of modes) {
+    const out = htmlFor({ ...mode, templates, notice });
+    assert.equal(out.split(notice).length - 1, 1);
+    assert.doesNotMatch(out, /data-template-notice/);
+    assert.match(htmlFor({ ...mode, templates: [first, second], notice }), /data-template-notice/);
+    assert.match(htmlFor({ ...mode, templates: [first, unavailable], notice }), /影响未知/);
+    assert.match(htmlFor({ ...mode, templates: [], notice }), /data-template-notice/);
+  }
+  reset(); const calls = [], extra = { templates, notice, onIntent: value => calls.push(value) };
+  click(capture(extra).nodes, '选择随堂练习');
+  const pending = capture(extra); assert.equal(pending.html.split(notice).length - 1, 1);
+  for (const node of pending.nodes) for (const id of (node.props['aria-describedby'] ?? '').split(' ').filter(Boolean)) assert.ok(pending.html.includes(`id="${id}"`));
+  click(pending.nodes, '确认切换'); assert.equal(calls[0].impact, notice); assert.equal(calls[0].confirmed, true);
+  reset();
+  const hidden = { ...extra, view: 'workspace', selectedId: null, categories: [{ id: 'empty', label: '空分类' }] };
+  capture(hidden).nodes.find(node => node.props.onValueChange).props.onValueChange('0');
+  assert.equal(capture(hidden).html.split(notice).length - 1, 1);
+});

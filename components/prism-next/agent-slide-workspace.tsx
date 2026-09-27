@@ -134,11 +134,12 @@ export function AgentSlideWorkspace({ deckId, version, title, versionLabel, sour
       {!valid && <p className="text-ui-hint">课件身份、版本或页列表未确认，暂不可操作。</p>}
       {!onIntent && <p className="text-ui-hint">当前仅供浏览，暂未提供操作入口。</p>}
     </section>
+    {canView && valid && slides.length > 0 && slides.every(slide => !slide.status?.trim()) && <p className="text-ui-hint">页面状态未确认</p>}
     {canView && valid && (view === "inline" ? <section aria-label="课件缩略摘要" className="min-w-0 space-y-3">
       <ol className="grid min-w-0 gap-3 @min-[48rem]:grid-cols-3">{slides.slice(0, 3).map(slide => <li key={slide.id} className="min-w-0 space-y-2">
         <p className="break-words text-ui-body">第 {slide.number} 页 · {titleOf(slide)}</p>
         <SlideThumbnail key={`${slide.id}:${slide.thumbnail?.src}`} thumbnail={slide.thumbnail} />
-        <p className="break-words text-ui-hint">{slide.status || "页面状态未确认"}</p>
+        {slide.status?.trim() && <p className="break-words text-ui-hint">{slide.status}</p>}
       </li>)}</ol>
       {slides.length > 3 && <p className="text-ui-hint">展示前 3 页，共 {slides.length} 页。</p>}
       {!slides.length && <p className="text-ui-hint">尚未提供幻灯片。</p>}
@@ -149,7 +150,7 @@ export function AgentSlideWorkspace({ deckId, version, title, versionLabel, sour
           <Button type="button" variant={slide.id === selectedSlideId ? "secondary" : "ghost"} data-slide-select="" disabled={!available || !!draft}
             className="h-auto min-h-9 w-full justify-start whitespace-normal py-2 text-left sm:h-auto" aria-current={slide.id === selectedSlideId ? "page" : undefined}
             onClick={() => request({ ...context, type: "select-slide", slideId: slide.id }, "view")}>
-            第 {slide.number} 页 · {titleOf(slide)} · {slide.status || "页面状态未确认"}
+            第 {slide.number} 页 · {titleOf(slide)}{slide.status?.trim() && ` · ${slide.status}`}
           </Button>
         </li>)}</ol>
         {!slides.length && <p className="text-ui-hint">尚未提供幻灯片。</p>}

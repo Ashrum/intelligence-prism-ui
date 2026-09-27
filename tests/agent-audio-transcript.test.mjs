@@ -12,7 +12,7 @@ const modes = [{}, { view: 'workspace' }, { density: 'compact' }, { view: 'works
 test('audio SSR both views and compact: metadata, transcript summary, missing src and honest unknowns', () => {
   for (const mode of modes) {
     const out = html(mode);
-    for (const value of ['课堂讲解', '6 段转写', '1:00', '录音 v1', '模拟来源', '音频不可播放', '未提供播放地址', '说话人未知', '置信度：未知']) assert.ok(out.includes(value), value);
+    for (const value of ['课堂讲解', '6 段转写', '1:00', '录音 v1', '模拟来源', '音频不可播放', '未提供播放地址', '说话人/置信度：未知（第 3 段）']) assert.ok(out.includes(value), value);
     assert.doesNotMatch(out, /<audio|opaque-|宿主|回调|意图|<textarea/);
     assert.equal(out.includes('课堂转写第5段'), mode.view === 'workspace');
     assert.equal(out.split('不代表已保存').length - 1, 1);
@@ -49,7 +49,7 @@ test('editing requires explicit confirmation, preserves raw text and does not ch
   reset(); const calls = [], extra = { onIntent: value => calls.push(value) };
   click(extra, '编辑第 1 段'); input(extra, '-text', '  更正文字\n第二行  '); assert.equal(calls.length, 0);
   assert.match(capture({ ...extra, view: 'inline' }).html, /更正文字/);
-  assert.equal(click({ ...extra, onBack() { assert.fail(); } }, '返回原位置').props.disabled, true);
+  assert.equal(click({ ...extra, onBack() { assert.fail(); } }, '返回原位置').props.disabled, undefined);
   click(extra, '确认请求'); assert.deepEqual(calls, [{ ...context, type: 'edit-segment', segmentId: segments[0].id, text: '  更正文字\n第二行  ' }]);
   assert.match(capture(extra).html, /结果待确认/); assert.match(capture(extra).html, /公式 a²/); assert.doesNotMatch(capture(extra).html, /<textarea/);
 });
@@ -91,4 +91,54 @@ test('identical limitations including playback have one explanation; list remain
   const out = html({ capabilities, view: 'workspace' });
   assert.equal(out.split('共同限制。').length - 1, 1);
   assert.match(out, /<li tabindex="0"/);
+});
+
+
+test('blocked back focuses this instance discard; discard restores back without navigating', () => {
+  reset(); const calls = [], extra = { onBack: value => calls.push(value) };
+  click(extra, '编辑第 1 段');
+  let focused = '';
+  const panel = { querySelector(selector) { return { focus() { focused = selector; } }; } };
+  const event = { currentTarget: { closest(selector) { assert.equal(selector, '[data-agent-media]'); return panel; } } };
+  let state = capture(extra);
+  const back = state.nodes.find(node => 'data-media-back' in node.props);
+  assert.equal(back.props.disabled, undefined);
+  back.props.onClick(event);
+  assert.equal(focused, '[data-media-discard]'); assert.deepEqual(calls, []);
+  state.nodes.find(node => 'data-media-discard' in node.props).props.onClick(event);
+  assert.equal(focused, '[data-media-back]'); assert.deepEqual(calls, []);
+  state = capture(extra); assert.ok(!state.nodes.some(node => 'data-media-discard' in node.props));
+  state.nodes.find(node => 'data-media-back' in node.props).props.onClick(event);
+  assert.deepEqual(calls, [context]);
+});
+
+test('one host playback reason replaces missing src, availability reason takes precedence', () => {
+  for (const mode of modes) {
+    for (const availability of [{ state: 'unavailable', reason: '原文件暂不可用。' }, { state: 'unknown', reason: '正在核对文件。' }]) {
+      const out = html({ ...mode, audio: { ...audio, availability }, capabilities: { ...all, play: { supported: false, reason: '当前格式不支持。' } } });
+      assert.equal(out.split(availability.reason).length - 1, 1);
+      assert.doesNotMatch(out, /未提供播放地址|当前格式不支持|<audio/);
+    }
+    const out = html({ ...mode, capabilities: { ...all, play: { supported: false, reason: '文件不可播放。' } } });
+    assert.equal(out.split('文件不可播放。').length - 1, 1); assert.doesNotMatch(out, /未提供播放地址/);
+    assert.match(html(mode), /未提供播放地址/);
+  }
+});
+
+test('unknown speaker/confidence is grouped over all segments, including offscreen and filtered rows', () => {
+  const unknown = segments.map(segment => ({ ...segment, speaker: ' ', confidence: undefined }));
+  for (const mode of modes) {
+    const out = html({ ...mode, segments: unknown });
+    assert.equal(out.split('说话人/置信度：未知（全部段落）').length - 1, 1);
+    assert.doesNotMatch(out, /说话人未知| · 置信度：未知|来源：未知/);
+    const mixed = html({ ...mode, segments: [segments[0], ...unknown.slice(1)] });
+    assert.equal(mixed.split('说话人/置信度：未知（第 2 段、第 3 段、第 4 段、第 5 段、第 6 段）').length - 1, 1);
+    assert.match(mixed, /说话人：教师/); assert.match(mixed, /置信度：待核对/);
+    assert.doesNotMatch(html({ ...mode, segments: [...unknown.slice(0, 5), segments[5]] }), /未知（全部段落）/);
+    assert.doesNotMatch(html({ ...mode, segments: [] }), /全部段落/);
+  }
+  const mixed = [{ ...unknown[0], speaker: '教师' }, { ...unknown[1], confidence: { label: '待核对', source: '记录' } }];
+  assert.match(html({ segments: mixed }), /说话人：未知（第 2 段）；置信度：未知（第 1 段）/);
+  reset(); const extra = { segments: unknown }; input(extra, '-search', '公式');
+  assert.equal(capture(extra).html.split('说话人/置信度：未知（全部段落）').length - 1, 1);
 });

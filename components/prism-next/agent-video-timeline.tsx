@@ -50,6 +50,7 @@ export function AgentVideoTimeline({ videoId, version, video, marks, subtitles =
     onIntent(intent)
   }
   const tool = (label: string, kind: AgentVideoCapabilityKind, action: () => void) => supports(kind) && <Button type="button" variant="outline" disabled={!!draft} onClick={() => { if (!draft && supports(kind)) action() }}>{label}</Button>
+  const sortedMarks = [...marks].sort((a, b) => a.time - b.time)
   const time = draft?.kind === "mark" ? mediaSeconds(draft.time) : null
   const start = draft?.kind === "clip" ? mediaSeconds(draft.start) : null
   const end = draft?.kind === "clip" ? mediaSeconds(draft.end) : null
@@ -60,12 +61,15 @@ export function AgentVideoTimeline({ videoId, version, video, marks, subtitles =
     {tool("请求导出", "export", () => request({ ...context, type: "request-export" }, "export"))}
     {video.source?.openable && valid && onIntent && <Button type="button" variant="outline" disabled={!!draft} onClick={() => request({ ...context, type: "open-source" })}>查看来源</Button>}
     {view === "inline" && valid && onExpand && <Button type="button" variant="outline" data-media-expand="" disabled={!!draft} onClick={event => { if (!draft) onExpand(event.currentTarget, context) }}>打开视频与时间轴</Button>}
-    {view === "workspace" && onBack && <Button type="button" variant="outline" disabled={!!draft} onClick={() => { if (!draft) onBack(context) }}>返回原位置</Button>}
+    {view === "workspace" && onBack && <Button type="button" variant="outline" data-media-back="" onClick={event => {
+      if (draft) event.currentTarget.closest("[data-agent-media]")?.querySelector<HTMLButtonElement>("[data-media-discard]")?.focus()
+      else onBack(context)
+    }}>返回原位置</Button>}
   </>}>
     {view === "inline" && video.poster && video.availability.state === "available" && <img src={video.poster.src} alt={video.poster.alt.trim() || "未提供封面说明"} className="h-auto max-h-60 max-w-full object-contain" />}
     <NativeMedia key={JSON.stringify([videoId, version, video.src, capabilities.play, video.availability])} kind="video" media={video} capability={capabilities.play} mediaRef={mediaRef} poster={video.poster?.src} />
     <section aria-label="时间轴标记" onKeyDown={mediaListKeys} className="min-w-0 space-y-3">
-      <ol className="min-w-0 space-y-3">{(view === "inline" ? marks.slice(0, 3) : marks).map(mark => <li key={mark.id} tabIndex={supports("play") ? undefined : 0} className="min-w-0 space-y-2">
+      <ol className="min-w-0 space-y-3">{(view === "inline" ? sortedMarks.slice(0, 3) : sortedMarks).map(mark => <li key={mark.id} tabIndex={supports("play") ? undefined : 0} className="min-w-0 space-y-2">
         <p className="break-words text-read-body">{mediaTime(mark.time)} · {markLabels[mark.kind]} · {mark.label}</p>
         <div className="flex flex-wrap gap-2">
           {supports("play") && <Button type="button" variant="ghost" data-media-seek="" disabled={!!draft} aria-label={`跳转到 ${mark.label}`} onClick={() => request({ ...context, type: "seek", markId: mark.id, seconds: mark.time }, "play")}>跳转到 {mediaTime(mark.time)}</Button>}

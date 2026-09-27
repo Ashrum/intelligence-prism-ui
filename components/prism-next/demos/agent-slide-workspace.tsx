@@ -13,7 +13,7 @@ export const slideWorkspaceExample: readonly AgentSlide[] = [
   { id: "recognize", number: 2, title: "旋转图形后，怎样辨认直角边与斜边并说明判断依据", points: "旋转不改变边的角色。\n斜边始终在直角的对面。", notes: "板书同一个三角形的两种摆放方向。", status: "已完成", thumbnail: thumbnail(2) },
   { id: "formula", number: 3, title: "公式与适用条件", points: "直角三角形中：a² + b² = c²\n两条直角边为 3、4 时：c = √(3² + 4²) = 5\n非直角三角形不能直接套用。", notes: "强调 c 表示斜边；先判条件，再代入。", status: "已完成", thumbnail: thumbnail(3) },
   { id: "practice", number: 4, title: "列式练习", points: "两条直角边为 5 和 12，求斜边。\n用代回原式的方式检查结果。", notes: "留出学生独立计算与同伴解释的时间。", status: "已完成", thumbnail: thumbnail(4) },
-  { id: "check", number: 5, title: "课堂检查", points: "请比较直角三角形与非直角三角形的求边方法。", notes: "追问使用定理的依据，不只核对数值。", status: "已完成", thumbnail: thumbnail(5) },
+  { id: "check", number: 5, title: "课堂检查", points: "请比较直角三角形与非直角三角形的求边方法。", notes: "追问使用定理的依据，不只核对数值。", thumbnail: thumbnail(5) },
   { id: "followup", number: 6, title: "课后巩固安排", points: "待补充教材页码、练习题与课时安排。", notes: "尚未取得本班作答数据，不推断掌握情况。", status: "待补充", thumbnail: thumbnail(6) },
 ]
 const supported = { supported: true } as const
@@ -24,7 +24,7 @@ export const slideExampleCapabilities: AgentSlideCapabilities = {
 }
 
 export function SlideWorkspaceExample({ readOnly = false, narrow = false }: { readOnly?: boolean; narrow?: boolean }) {
-  const [slides, setSlides] = useState<readonly AgentSlide[]>(slideWorkspaceExample)
+  const [slides, setSlides] = useState<readonly AgentSlide[]>(readOnly ? slideWorkspaceExample.map(slide => ({ ...slide, status: undefined })) : slideWorkspaceExample)
   const [selected, setSelected] = useState<string | null>(slideWorkspaceExample[0].id)
   const [revision, setRevision] = useState(1)
   const [feedback, setFeedback] = useState("全部内容为模拟示例。")

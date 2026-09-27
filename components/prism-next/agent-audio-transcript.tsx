@@ -48,6 +48,16 @@ export function AgentAudioTranscript({ audioId, version, audio, segments, capabi
   }
   const tool = (label: string, kind: AgentAudioCapabilityKind, action: () => void) => supports(kind) && <Button type="button" variant="outline" disabled={!!draft} onClick={() => { if (!draft && supports(kind)) action() }}>{label}</Button>
   const visible = view === "inline" ? segments.slice(0, 3) : segments.filter(segment => `${segment.text} ${segment.speaker ?? ""}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+  const unknownMetadata = new Map<string, string[]>()
+  for (const [label, known] of [
+    ["说话人", (segment: AgentAudioSegment) => !!segment.speaker?.trim()],
+    ["置信度", (segment: AgentAudioSegment) => !!segment.confidence?.label.trim()],
+  ] as const) {
+    const missing = segments.flatMap((segment, index) => known(segment) ? [] : [`第 ${index + 1} 段`])
+    if (!missing.length) continue
+    const scope = missing.length === segments.length ? "全部段落" : missing.join("、")
+    unknownMetadata.set(scope, [...(unknownMetadata.get(scope) ?? []), label])
+  }
   const start = draft?.kind === "clip" ? mediaSeconds(draft.start) : null
   const end = draft?.kind === "clip" ? mediaSeconds(draft.end) : null
   const draftValid = !!draft && supports(draft.kind) && (draft.kind === "edit-transcript" ? !!draft.text.trim() : start !== null && end !== null && validMediaRange(start, end, audio.duration))
@@ -56,13 +66,17 @@ export function AgentAudioTranscript({ audioId, version, audio, segments, capabi
     {tool("请求导出", "export", () => request({ ...context, type: "request-export" }, "export"))}
     {audio.source?.openable && valid && onIntent && <Button type="button" variant="outline" disabled={!!draft} onClick={() => request({ ...context, type: "open-source" })}>查看来源</Button>}
     {view === "inline" && valid && onExpand && <Button type="button" variant="outline" data-media-expand="" disabled={!!draft} onClick={event => { if (!draft) onExpand(event.currentTarget, context) }}>打开音频与转写</Button>}
-    {view === "workspace" && onBack && <Button type="button" variant="outline" disabled={!!draft} onClick={() => { if (!draft) onBack(context) }}>返回原位置</Button>}
+    {view === "workspace" && onBack && <Button type="button" variant="outline" data-media-back="" onClick={event => {
+      if (draft) event.currentTarget.closest("[data-agent-media]")?.querySelector<HTMLButtonElement>("[data-media-discard]")?.focus()
+      else onBack(context)
+    }}>返回原位置</Button>}
   </>}>
     <NativeMedia key={JSON.stringify([audioId, version, audio.src, capabilities.play, audio.availability])} kind="audio" media={audio} capability={capabilities.play} mediaRef={mediaRef} />
     {view === "workspace" && <Field><FieldLabel htmlFor={`${id}-search`}>搜索转写</FieldLabel><Input nativeInput id={`${id}-search`} value={query} onChange={event => setQuery(event.target.value)} /></Field>}
     <section aria-label="转写段落" className="min-w-0 space-y-3" onKeyDown={mediaListKeys}>
+      {!!unknownMetadata.size && <p className="break-words text-ui-hint">{[...unknownMetadata].map(([scope, fields]) => `${fields.join("/")}：未知（${scope}）`).join("；")}</p>}
       <ol className="min-w-0 space-y-4">{visible.map(segment => <li key={segment.id} tabIndex={supports("play") ? undefined : 0} className="min-w-0 space-y-2">
-        <p className="break-words text-ui-hint">{mediaTime(segment.start)}–{mediaTime(segment.end)} · {segment.speaker?.trim() || "说话人未知"} · 置信度：{segment.confidence?.label.trim() || "未知"}{segment.confidence && `（来源：${segment.confidence.source?.trim() || "未知"}）`}</p>
+        <p className="break-words text-ui-hint">{mediaTime(segment.start)}–{mediaTime(segment.end)}{segment.speaker?.trim() && ` · 说话人：${segment.speaker.trim()}`}{segment.confidence?.label.trim() && ` · 置信度：${segment.confidence.label.trim()}（来源：${segment.confidence.source?.trim() || "未知"}）`}</p>
         <p className="max-w-[40em] whitespace-pre-wrap break-words text-read-body">{segment.text}</p>
         <div className="flex flex-wrap gap-2">
           {supports("play") && <Button type="button" variant="ghost" data-media-seek="" disabled={!!draft} aria-label={`跳转到 ${mediaTime(segment.start)} 的转写`} onClick={() => request({ ...context, type: "seek", segmentId: segment.id, seconds: segment.start }, "play")}>跳转到 {mediaTime(segment.start)}</Button>}

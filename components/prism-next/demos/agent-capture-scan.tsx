@@ -115,7 +115,7 @@ export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof
     </div>{preview && <Button type="button" variant="outline" onClick={() => setPreview(null)}>收起大图</Button>}</div>
     <p className="text-ui-hint">固定示例；切换记录仅用于评审，不代表执行了采集、上传、保存或批阅。</p><p role="status" className="text-ui-hint">{feedback}</p>
     {([["inline", "default", "快速采集"], ["workspace", "default", "批量页与页序"], ["inline", "compact", "紧凑采集摘要"]] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} tabIndex={view === "workspace" ? -1 : undefined} ref={view === "workspace" ? workspace : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentCaptureScan {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common} view={view} density={density} />
     </section>)}
     <AlertDialog open={!!pendingRemoval} onOpenChange={open => { if (!open) setPendingRemoval(null) }}>
       <AlertDialogPopup><AlertDialogHeader><AlertDialogTitle>确认删除示例页</AlertDialogTitle>

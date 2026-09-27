@@ -213,3 +213,16 @@ test('six-page simulated demo includes formula, pending page, notes, read-only a
   assert.doesNotMatch(html, /意图|宿主|回调|受控|opaque-/);
   assert.doesNotMatch(render(h(SlideWorkspaceExample, { readOnly: true })), /编辑标题与要点|新增一页|删除当前页|<textarea/);
 });
+
+test('page status unknown is stated once for the full deck, mixed pages only show known status', () => {
+  for (const mode of modes) {
+    const unknown = slides.map(slide => ({ ...slide, status: '  ' }));
+    const allUnknown = htmlFor({ ...mode, slides: unknown });
+    assert.equal(allUnknown.split('页面状态未确认').length - 1, 1);
+    const mixed = htmlFor({ ...mode, slides: [slides[0], ...unknown.slice(1)] });
+    assert.match(mixed, /已完成/); assert.doesNotMatch(mixed, /页面状态未确认/);
+    assert.doesNotMatch(htmlFor({ ...mode, slides: [...unknown.slice(0, 3), { ...unknown[3], status: "已完成" }] }), /页面状态未确认/);
+    assert.doesNotMatch(htmlFor({ ...mode, slides: [] }), /页面状态未确认/);
+    assert.doesNotMatch(htmlFor({ ...mode, slides: unknown, capabilities: { ...all, view: { supported: false, reason: '无权查看。' } } }), /页面状态未确认/);
+  }
+});

@@ -15,9 +15,9 @@ export const audioTranscriptExample: readonly AgentAudioSegment[] = [
 ]
 export const videoTimelineExample: readonly AgentVideoMark[] = [
   { id: "opening", time: 0, kind: "chapter", label: "观察直角三角形" },
-  { id: "rotation", time: 30, kind: "chapter", label: "旋转图形，辨认直角边与斜边的位置关系" },
   { id: "equation", time: 65, kind: "chapter", label: "列式：a² + b² = c²" },
   { id: "exercise", time: 100, kind: "chapter", label: "练习与条件检查" },
+  { id: "rotation", time: 30, kind: "chapter", label: "旋转图形，辨认直角边与斜边的位置关系" },
 ]
 export const videoSubtitleExample: readonly AgentVideoSubtitle[] = [
   { id: "s1", start: 0, end: 15, text: "请先指出图中的直角。" },
@@ -32,7 +32,7 @@ export function AudioTranscriptExample({ unavailable = false }: { unavailable?: 
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [compact, setCompact] = useState(false)
   const [narrow, setNarrow] = useState(false)
-  const [segments, setSegments] = useState(audioTranscriptExample)
+  const [segments, setSegments] = useState(unavailable ? audioTranscriptExample.map(segment => ({ ...segment, speaker: undefined, confidence: undefined })) : audioTranscriptExample)
   const [revision, setRevision] = useState(1)
   const [feedback, setFeedback] = useState("全部为模拟内容，未保存；未提供音频文件。")
   const trigger = useRef<HTMLButtonElement | null>(null)

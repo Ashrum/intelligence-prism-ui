@@ -48,6 +48,7 @@ export type AgentCaptureScanProps = AgentRecordViewProps & {
   receipt: AgentCaptureReceipt; save?: AgentCaptureSave; readOnlyReason?: string
   actions?: { capture?: AgentCaptureAction; confirm?: AgentCaptureAction }
   onIntent?: (intent: AgentCaptureScanIntent) => void
+  inspectLabel?: string
   inlineLimit?: number; onBack?: () => void; notice?: string
   /** Activate only in response to inspect-page, and clear on close or authorization changes. */
   preview?: AgentCapturePreview | null
@@ -66,7 +67,7 @@ const describedBy = (values: (string | undefined)[]) => [...new Set(values.filte
 /** Presents page facts and version-bound requests; device, quality and processing services stay outside. */
 export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages, qualitySummary, receipt,
   save = { state: "unknown" }, actions = {}, readOnlyReason, onIntent, view = "inline", density = "default",
-  inlineLimit = 2, onExpand, onBack, details, preview, renderPreview,
+  inlineLimit = 2, inspectLabel = "查看页面", onExpand, onBack, details, preview, renderPreview,
   notice = "确认页集合不代表已识别或批阅；采集与保存结果以实际回执为准。",
 }: AgentCaptureScanProps) {
   const id = useId(), workspace = view === "workspace"
@@ -172,7 +173,7 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
     const impact = page.usage.state === "used" ? note(page.usage.removalImpact, scope, "删除影响") : undefined
     const pageUnknown = unknownFields(page).filter(field => !sharedUnknown.includes(field))
     const controls = <div className="flex flex-wrap gap-2">
-      {pageButton(page, scope, "inspect", "查看大图", () => onIntent?.({ ...context, type: "inspect-page", pageId: page.id }))}
+      {pageButton(page, scope, "inspect", inspectLabel.trim() || "查看页面", () => onIntent?.({ ...context, type: "inspect-page", pageId: page.id }))}
       {pageButton(page, scope, "recapture", page.needsRecapture === true ? "补采此页" : "重新采集／替换", () => onIntent?.({ ...context, type: "recapture-request", pageId: page.id }))}
       {workspace && pageButton(page, scope, "remove", page.usage.state === "used" ? "申请删除" : "删除页", () => onIntent?.({ ...context, type: "remove-page", pageId: page.id, requiresConfirmation: page.usage.state === "used" }), undefined, impact)}
       {workspace && pageButton(page, scope, "reorder", "上移", () => move(page, scope - 1, "up"), scope === 0 ? "已在首位，不能上移。" : moveBlock(page, scope - 1))}

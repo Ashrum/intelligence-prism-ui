@@ -49,10 +49,13 @@ export function mediaListKeys(event: KeyboardEvent<HTMLElement>) {
 }
 
 function playbackReasons(media: AgentMediaMetadata, capability: AgentMediaCapability) {
-  const reasons = new Set<string>()
-  if (!media.src?.trim()) reasons.add("未提供播放地址。")
-  if (!capability.supported) reasons.add(capability.reason.trim() || "当前不支持播放。")
-  if (media.availability.state !== "available") reasons.add(media.availability.reason?.trim() || (media.availability.state === "unknown" ? "可用性未知。" : "材料暂不可用。"))
+  // Prefer one host-authored playback explanation over generic missing-source copy.
+  const hostReason = (media.availability.state !== "available" ? media.availability.reason?.trim() : undefined)
+    || (!capability.supported ? capability.reason.trim() : undefined)
+  const reason = hostReason || (!capability.supported ? "当前不支持播放。"
+    : media.availability.state !== "available" ? (media.availability.state === "unknown" ? "可用性未知。" : "材料暂不可用。")
+    : !media.src?.trim() ? "未提供播放地址。" : undefined)
+  const reasons = new Set<string>(reason ? [reason] : [])
   return reasons
 }
 
@@ -116,6 +119,6 @@ export function MediaDraftActions({ stale, valid, onConfirm, onDiscard }: { stal
     <p className="text-ui-hint">尚有未确认草稿，请确认或放弃后再返回。</p>
     {stale && <p role="status" className="text-ui-hint">材料或可用操作已变化，草稿保留但不可提交；请放弃后重新选择。</p>}
     {!valid && !stale && <p className="text-ui-hint">请填写有效内容；时间须为非负数，片段结束晚于起始且不超过已知时长。</p>}
-    <div className="flex flex-wrap gap-2"><Button type="button" disabled={stale || !valid} onClick={() => { if (!stale && valid) onConfirm() }}>确认请求</Button><Button type="button" variant="outline" onClick={onDiscard}>放弃草稿</Button></div>
+    <div className="flex flex-wrap gap-2"><Button type="button" disabled={stale || !valid} onClick={() => { if (!stale && valid) onConfirm() }}>确认请求</Button><Button type="button" variant="outline" data-media-discard="" onClick={event => { event.currentTarget.closest("[data-agent-media]")?.querySelector<HTMLButtonElement>("[data-media-back]")?.focus(); onDiscard() }}>放弃草稿</Button></div>
   </>
 }

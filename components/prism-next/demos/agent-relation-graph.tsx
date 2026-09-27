@@ -35,7 +35,7 @@ export function RelationGraphExample({ kind = "coverage", narrow = false }: { ki
   const [nodes, setNodes] = useState<readonly AgentRelationNode[]>(kind === "concept" ? conceptNodes : coverageNodes)
   const [edges, setEdges] = useState<readonly AgentRelationEdge[]>(kind === "concept" ? conceptEdges : coverageEdges)
   const [revision, setRevision] = useState(1)
-  const [selectedNodeId, setSelected] = useState<string | null>(null)
+  const [selectedNodeId, setSelected] = useState<string | null>(kind === "concept" ? conceptNodes[0].id : null)
   const [filter, setFilter] = useState<AgentRelationFilter>({})
   const [layout, setLayout] = useState<"grid" | "layered">("layered")
   const [feedback, setFeedback] = useState("")
