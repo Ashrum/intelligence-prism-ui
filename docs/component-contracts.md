@@ -65,6 +65,62 @@ Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !se
 
 本轮仅 SSR/处理器与静态验证，不代表三主题视觉、窄屏、键盘焦点或 Workspace 接入验收。报告与日志：`.sites-runtime/copy-polish-3/`。
 
+## 模板选择器 v0.1
+
+2026-09-27 设计候选，语义 **09 模板选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-template-picker` 导入 `AgentTemplatePicker`、`AgentTemplatePickerProps`、`AgentTemplate`、`AgentTemplatePickerIntent`。任务分支 `feat/agent-template-picker`，基于 main `7ff98e7`；未合并，不增加 80 项目录条目。
+
+### 复用检索与邻接职责
+
+已核对批准规范 §2、模板选择器行（实际位于 §6.3）、§7、§8、§10、§11.1 第 528 行，复用规划 09、覆盖矩阵 09（旧基线没有独立步骤）、07/08/02/10/12/13 契约及进度清单文案规则。Card、RadioGroup、PreviewCard、Dialog 是既有复用起点；本次使用 Card、固定 Label/Select、Checkbox、Prism Button/Badge、RecordDetails。模板需要分别选择、预览和加入对比，使用有名按钮与复选框；预览是显式按钮打开的 Card，键盘和触屏不依赖悬停。确认就地呈现，避免另建弹层外壳。新增的是外部模板事实、版本与确认请求的组合契约，不新增基础控件。
+
+- **02** 确定参与范围，**07** 编辑数量/时长等单值参数，**08** 编辑必须/禁止/比例等约束；**09** 选择已有模板。模板结构字段只读，不反向覆盖 07/08 的值。
+- **10** 选择题目等内容候选；**12** 编排已有题目引用、分组和分值；09 不代替选题、编排或重排。**13** 预览成果摘要与打开入口；09 预览的是模板示例，不产生正式试卷或保存事实。
+- “确认出卷要求”由 02 + 09 + 07 + 08 合成一张 Inline 卡。09 用 `presentation="inline" notice={null}` 嵌入共同容器，上层保留一条边界提示；不同对象、版本与授权不因同卡而合并。09 的确认只确认该模板切换，不能代替整张卡的执行确认。
+
+### 公开 API
+
+| 属性 | 类型 / 默认 | 契约 |
+| --- | --- | --- |
+| `title / templateSet` | string / `{id,version}` 必填 | 可读标题与当前模板集合/选择语境版本。集合版本应覆盖已有编排与影响说明的变化；引用只进入事件，不进 DOM |
+| `templates / selectedId` | readonly AgentTemplate[] / string 或 null，必填 | 完整获权模板投影与唯一受控选择；不复制、生成、存储或自动应用模板。缺失选择仍显示“当前选择未列出”，可清除；不静默换成首项 |
+| `categories` | readonly `{id,label}`[]，默认 [] | 页面提供分类；Workspace 固定标签 Select 只前端过滤显示。分类值映射局部序号，不写内部 ID；过滤不清除选择，分类外当前选择固定保留完整条目及限制原因 |
+| `previewId / comparison` | 可选 string/null / readonly `[string,string]`/null | 页面控制已打开预览和对比；不会从点击推定已应用。比较只并列显示两项的原结构字段，不算分、补字段、求差或判断优劣 |
+| `view / density` | inline/workspace 默认 inline；default/compact 默认 default | Inline 推荐项 + 当前选择；只有提供 onExpand 才筛少量，否则保留全列表。Workspace 全库/分类/预览/对比/管理。compact 只减少间距，不缩字或隐藏影响、未知、禁用原因 |
+| `onIntent` | 可选 `(intent)=>void` | 唯一业务出口；缺省只读，返回值不改变事实。全部载荷含 templateSetId/version；选择不修改 selectedId，不应用模板 |
+| `manage / disabledReason` | 可选 `{disabledReason?}` / string | manage 显式开放管理入口，只请求打开；全局 disabledReason 存在即禁止所有业务请求（空串也禁用），分类和导航仍可用。管理原因只出现一次 |
+| `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | 查看全部模板/返回原位置，只导航；页面保持对象、版本、选择、预览和焦点，不保存或取消任务 |
+| `presentation / notice / details` | card/inline 默认 card；string/null；ReactNode | 默认一条“选择模板不代表已应用到内容。”；null 仅供共同容器接管提示。补充说明默认收起；必要事实常驻 |
+
+`AgentTemplate`：必填 `id/name/objectType/summary/scope/source/version/availability/structure`；summary/scope/source 可为 null，version 为 `{id,label:string|null}`；可选 `categoryId/recommended/recommendationReason/selectionImpact/preview`。name、objectType、版本 label、来源和所有插槽必须是允许披露的可读内容，不得传内部 ID 作教师文案。
+
+`availability` 为 available / unavailable(reason 必填) / unknown(reason 可选)。只有 available 可选；另外两种仍可查看页面已授权披露的预览和结构。可用性不是授权引擎；宿主须在传数据前排除无权内容。空/重复模板 ID、空集合 ID/版本或模板版本 ID 阻断所有请求。
+
+`structure` 为 readonly `{key,label,value:string|null}`[]，是页面给出的结构字段；组件只按原顺序展示，null/空白显示未知。`preview?:ReactNode` 为可选只读版面插槽，不带存储或管理操作；未提供不显示版面预览按钮。当前模板数据变化后页面须同步撤回过期 previewId/comparison，不把查看状态当作执行证据。
+
+`selectionImpact?:{requiresConfirmation:boolean,description:string}` 由页面依据当前编排提供，原样显示。true、缺省或空白说明均要求“选择模板 → 核对影响 → 确认切换”；缺失显示“影响未知”。false 且说明非空才直接请求选择。待确认对象仅是本地披露状态，绑定集合/版本、当前选择、模板版本/可用性/影响及全局限制；这些变化后旧确认不再显示。取消不发送选择，确认不自动应用。已选项不能重复选择。clear 只取消选择引用，不撤销此前已经应用的模板。
+
+### 意图载荷
+
+全部包含 `{templateSetId,version}`：
+
+| type | 其他字段 |
+| --- | --- |
+| select | `templateId,templateVersion,previousTemplateId:string|null,confirmed:boolean,impact:string|null`；confirmed 只表示这次确认按钮操作，不是执行/保存回执 |
+| preview | `templateId,templateVersion` |
+| compare | `templateIds:[string,string],templateVersions:[string,string]`；由两项复选框视图选择形成，最多两项 |
+| clear | `previousTemplateId` |
+| request-manage | 无；不创建管理页或生成模板 |
+
+页面接收时重新核对所属会话、集合与编排版本、旧选择、模板版本/可用性、当前影响、确认范围及授权。过期闭包/重复事件不可写新对象；必要时将 disabledReason 设为待核对说明。组件确认不能替代宿主的版本检查。过滤与对比勾选是临时视图状态，已确认选择、打开的预览及对比结果由页面持有并跨两态复用。
+
+### 文案与验证边界
+
+相同字段说明按原文合并一次，部分适用用“模板 N”标明；单项说明就近展示。每行标题一次，共用说明和选择按钮用 aria-describedby 关联；缺失来源/版本标签/推荐理由/影响等合并一行，未知影响直说“影响未知”。未知、不可用和确认不放入 details。两个对比项勾满后的上限原因常驻。复用既有主题，未增加动画、依赖、令牌、目录项、计时器或持久化。
+
+`/next/components/agent-components#template-picker`：试卷模拟数据含期中卷三大题、随堂练习两部分、不可用单元测验和原因、未知推荐理由；教学方案一组含无影响直接选择与未知影响确认。每组 inline/workspace/compact 共用页面内选择，提供 320px、长中文、MathML 版面。页面仅记录选择，未实际重排。
+
+五项日志、测试数字、实际 diff 与 Workspace 当前代码只读轻量方案见 `.sites-runtime/template-picker/REPORT.md`。本轮不写 `.git`、不启动服务、不改 Workspace。SSR/处理器测试不代表三主题/窄屏视觉、键盘触屏、读屏器、Workspace 或真实服务验收；独立 Review 待 Supervisor 完成。
+
 ## 素材提取器 v0.1
 
 2026-09-27 设计候选，语义 **37 素材提取器**，声明 **Inline + 专用扩展内容**；文本来源优先。从 `components/prism-next/agent-material-extractor` 导入组件与公开类型；范围纯函数在 `lib/prism-next/material-extractor.ts`。未合并候选分支 `feat/agent-material-extractor`，main 基线 `130f88b`。
