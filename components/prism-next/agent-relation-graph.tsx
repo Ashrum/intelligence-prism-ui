@@ -84,7 +84,9 @@ function RelationCanvas({ nodes, edges, layout, thumbnail = false, readable = fa
       <span className="text-ui-hint">缩放 {Math.round(camera.zoom * 100)}%</span>
     </div>}
     {!thumbnail && <p id={`${id}-help`} className="text-ui-hint">方向键平移，加减键缩放，Home 重置；节点和关系可在下方列表中完整查看。</p>}
-    <div className={readable ? "max-h-80 overflow-auto" : undefined} role={readable ? "region" : undefined} aria-label={readable ? "可滚动关系图" : undefined} tabIndex={readable ? 0 : undefined}>
+    <div className={readable ? "max-h-80" : undefined}
+      style={readable ? { minWidth: 0, maxWidth: "100%", overflowX: "auto", overflowY: "auto", overscrollBehaviorX: "contain" } : undefined}
+      role={readable ? "region" : undefined} aria-label={readable ? "关系图（可横向滚动）" : undefined} tabIndex={readable ? 0 : undefined}>
     <svg style={readable ? { width, minWidth: width, height } : undefined} viewBox={`0 0 ${width} ${height}`} className={`w-full ${thumbnail ? "h-36" : "h-80 touch-none"}`} role="img"
       aria-label={thumbnail ? "关系缩略图，完整内容见关系列表" : "关系图"} tabIndex={thumbnail ? undefined : 0}
       aria-describedby={thumbnail ? undefined : `${id}-help`}
