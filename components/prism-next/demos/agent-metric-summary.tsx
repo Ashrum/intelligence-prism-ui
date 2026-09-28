@@ -95,7 +95,7 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
   const selectedLabel = metric?.access === "available" ? metric.label : anomaly?.access === "available" ? anomaly.text : "指标依据"
   const selectedBasis = selected?.kind === "change" && metric?.access === "available" ? metric.change?.basis : anomaly?.access === "available" ? anomaly.basis : undefined
   const basisVersion = selected && selected.kind !== "anomaly" ? selected.metricVersion : selected?.version
-  if (presentation.previewOnly) return <AgentMetricSummary {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
+  if (presentation.previewOnly) return <AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用同一份数据；下钻打开示例依据，数值和状态保持不变。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={snapshot} onClick={() => { setSnapshot(value => !value); setSelected(null) }}>切换当时数据示例</Button>
@@ -110,7 +110,7 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
       ["inline", "default", "对话指标摘要"], ["workspace", "default", "完整指标体系"], ["inline", "compact", "紧凑指标摘要"],
     ] as const).map(([view, density, label]) => <section key={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentMetricSummary {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }

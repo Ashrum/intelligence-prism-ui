@@ -217,9 +217,9 @@ test('one notice stays visible; extra details and inline methods are closed and 
   const input = { notice: '唯一边界提示', details: '补充说明文本' };
   const html = htmlFor(input);
   assert.equal(html.split('唯一边界提示').length - 1, 1); assert.doesNotMatch(html, /补充说明文本|原样口径说明/);
-  const gate = capture(input).find(node => node.type.name === 'Collapsible');
-  assert.equal(gate.props.defaultOpen, false);
-  assert.match(render(React.cloneElement(gate, { open: true })), /统计口径：原样口径说明/);
+  const gate = capture(input).find(node => node.type.name === 'AgentSourceChip' && node.props.label === '正确率：口径与解释');
+  assert.match(html, /aria-expanded="false"/);
+  assert.match(render(h(React.Fragment, null, gate.props.children)), /统计口径：原样口径说明/);
 });
 
 test('empty input and unselected keys are explicit without a fabricated zero or arbitrary default KPI', () => {

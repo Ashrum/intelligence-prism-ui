@@ -80,8 +80,8 @@ export function AgentRecordViewsDemo({ initialKind = "progress", onlyKind = fals
         const shared = { view, density, onExpand: () => { workspaceHeading.current?.focus(); workspaceHeading.current?.scrollIntoView({ block: "nearest" }) }, details: <p>各项记录分别保留版本和范围，查看不会改变记录。</p> }
         return <section key={label} className="min-w-0 space-y-3" aria-label={label}>
           <h3 ref={index === 1 ? workspaceHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
-          {kind === "progress" && <AgentExecutionProgress {...sample.progress} {...shared} expanded={expanded} onExpandedChange={setExpanded} presentation={density === "compact" ? "inline" : "card"} />}
-          {kind === "result" && <AgentExecutionResult {...result} {...shared} presentation={density === "compact" ? "inline" : "card"} />}
+          {kind === "progress" && <AgentExecutionProgress visual={{ sample: true, disconnected: true }} {...sample.progress} {...shared} expanded={expanded} onExpandedChange={setExpanded} presentation={density === "compact" ? "inline" : "card"} />}
+          {kind === "result" && <AgentExecutionResult visual={{ sample: true, disconnected: true }} {...result} {...shared} presentation={density === "compact" ? "inline" : "card"} />}
           {kind === "context" && <AgentContextSummary {...sample.context} {...shared} expanded={expanded} onExpandedChange={setExpanded} onInspect={id => setObject(sample.context.sources.find(source => source.id === id)?.title ?? null)} />}
         </section>
       })}

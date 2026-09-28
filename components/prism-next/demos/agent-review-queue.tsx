@@ -83,7 +83,7 @@ export function ReviewQueueExample({ purpose, narrow = false }: { purpose: Queue
     notice: "固定示例，未连接真实复核服务。",
     details: <p>队列负责查看全部、选择下一项与批量处理。单题的原稿、修订和查询在单项复核中完成；例如对称轴 <math className="prism-math" aria-label="x 等于负 b 除以二 a"><mi>x</mi><mo>=</mo><mo>−</mo><mfrac><mi>b</mi><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></math>。展开和返回保留当前选择。</p>,
   }
-  if (presentation.previewOnly) return <AgentReviewQueue {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
+  if (presentation.previewOnly) return <AgentReviewQueue visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div className="min-w-0 space-y-5">
     {purpose === "grading" && <section aria-label="逐项示例回执" className="space-y-3">
       <p className="text-ui-hint">在完整队列中选择前两份作答并批量确认，再分别载入回执。</p>
@@ -98,7 +98,7 @@ export function ReviewQueueExample({ purpose, narrow = false }: { purpose: Queue
       ["inline", "default", "待办摘要"], ["workspace", "default", "批量审核工作区"], ["inline", "compact", "紧凑待办摘要"],
     ] as const).map(([view, density, label]) => <section key={label} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentReviewQueue {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentReviewQueue visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }

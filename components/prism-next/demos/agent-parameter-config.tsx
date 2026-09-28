@@ -117,7 +117,7 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
     ] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      {density === "compact" ? <AgentExecutionConfirmation title={purpose === "paper" ? "确认出卷要求（示例）" : "确认批阅要求（示例）"}
+      {density === "compact" ? <AgentExecutionConfirmation visual={{ sample: true, disconnected: true }} title={purpose === "paper" ? "确认出卷要求（示例）" : "确认批阅要求（示例）"}
         target={purpose === "paper" ? "函数单元练习" : "函数练习答题卡"} version={snapshot?.versionLabel ?? `参数 v${revision}`} confirmation={confirmation}
         effects={[purpose === "paper" ? "按本次参数与约束准备候选试题。" : "按本次纸张和身份设置准备接收答卷。"]}
         conditions={<div className="min-w-0 space-y-5">

@@ -12,11 +12,12 @@ export function AgentCorePreview({ kind }: { kind: "context" | "preview" | "conf
   const { onExpand, view = "inline", density = "default" } = useAgentDemoPresentation()
   const sample = recordViewExamples.p04
   const [confirmation, setConfirmation] = useState<AgentConfirmationState>({ state: "ready", confirm: { label: "确认整理（示例）", onAction: () => setConfirmation({ state: "submitting", description: "已提出整理请求，尚无执行回执。" }) } })
+  const [expanded, setExpanded] = useState(false)
   const [value, setValue] = useState("")
   if (kind === "context") return <AgentContextSummary {...sample.context} view={view} density={density} expanded={false} onExpand={onExpand} />
-  if (kind === "progress") return <AgentExecutionProgress {...sample.progress} view={view} density={density} expanded={false} onExpand={onExpand} />
-  if (kind === "result") return <AgentExecutionResult {...sample.result} view={view} density={density} onExpand={onExpand} />
-  if (kind === "preview") return <AgentArtifactPreview title="函数单元练习校对稿（示例）" version="草稿 v1" status="待人工核对" summary="保留原题条件与来源，答案仍需人工复核。" />
-  if (kind === "confirmation") return <AgentExecutionConfirmation title="确认整理范围（示例）" target="函数单元练习 · 第 1–3 页" version="原稿 v2" effects={["形成校对草稿，保留原材料。", "不会入库或发布。"]} confirmation={confirmation} />
+  if (kind === "progress") return <AgentExecutionProgress visual={{ sample: true, disconnected: true }} {...sample.progress} view={view} density={density} expanded={expanded} onExpandedChange={setExpanded} onExpand={onExpand} />
+  if (kind === "result") return <AgentExecutionResult visual={{ sample: true, disconnected: true }} {...sample.result} view={view} density={density} onExpand={onExpand} />
+  if (kind === "preview") return <AgentArtifactPreview visual={{ sample: true, disconnected: true }} title="函数单元练习校对稿（示例）" version="草稿 v1" status="待人工核对" source={{ label: "示例说明", description: "保留原题条件与来源，答案仍需人工复核。" }} summary="保留原题条件与来源，答案仍需人工复核。" />
+  if (kind === "confirmation") return <AgentExecutionConfirmation visual={{ sample: true, disconnected: true }} title="确认整理范围（示例）" target="函数单元练习 · 第 1–3 页" version="原稿 v2" effects={["形成校对草稿，保留原材料。", "不会入库或发布。"]} confirmation={confirmation} />
   return <AgentComposer value={value} onChange={setValue} onSubmit={() => {}} sendDisabledReason="示例输入区尚未连接任务服务。" />
 }

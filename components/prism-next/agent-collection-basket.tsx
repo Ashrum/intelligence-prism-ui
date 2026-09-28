@@ -2,13 +2,12 @@
 
 import { useId, useRef, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react"
-import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
-import { Badge } from "./badge"
 import { Button } from "./button"
-import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+import type { AgentRecordViewProps } from "./agent-record-parts"
+import { AgentMetaLine, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, AgentWell, type AgentVisualProps } from "./agent-visual-parts"
 
 export type AgentCollectionAvailability = { disabledReason?: string }
 export type AgentCollectionAction = AgentCollectionAvailability & { id: string; label: string }
@@ -67,7 +66,7 @@ export type AgentCollectionIntent = { collectionId: string; collectionVersion?: 
   | { kind: "sync"; actionId: string }
 )
 export type AgentCollectionBatchAction = AgentCollectionAction & { itemIds: readonly string[] }
-export type AgentCollectionBasketProps = AgentRecordViewProps & {
+export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps & {
   collection: AgentCollectionIdentity
   items: readonly AgentCollectionItem[]
   summary: AgentCollectionSummary
@@ -96,9 +95,7 @@ const targetOf = (item: AgentCollectionItem): AgentCollectionTarget => item.acce
 const displayed = (value: string | number | null) => value === null || typeof value === "number" && !Number.isFinite(value) ? "未确认" : value
 
 function BasketFields({ fields }: { fields?: readonly AgentCollectionField[] }) {
-  return fields?.length ? <dl className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{fields.map((field, index) => <div key={index} className="flex min-w-0 flex-wrap items-baseline gap-1 text-ui-body">
-    <dt>{field.label}：</dt><dd className="break-words tabular-nums">{displayed(field.value)}</dd>
-  </div>)}</dl> : null
+  return fields?.length ? <>{fields.map((field, index) => <span key={index}>{index > 0 && " · "}{field.label}：<span className="tabular-nums">{displayed(field.value)}</span></span>)}</> : null
 }
 
 function BasketActionButton({ label, scope, reason, primary = false, onClick, children }: {
@@ -129,7 +126,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
   const groupIndex = changeGroup?.options.findIndex(option => option.id === (entry?.groupId ?? null)) ?? -1
   const groupLabel = entry?.groupId == null ? "未分组" : props.groups?.find(group => group.id === entry.groupId)?.label || "分组未确认"
   return <li data-collection-item={item.id} data-collection-access={restricted ? "restricted" : "available"}
-    className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
+    className="min-w-0"><AgentSurface className="min-h-11 gap-2.5 p-3">
     <div className="flex min-w-0 flex-wrap items-start gap-3">
       {full && entry?.selectable && <div className="min-w-0 space-y-1">
         <Label className="min-h-11 max-w-full" htmlFor={`${id}-select`}>
@@ -144,14 +141,15 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         {selectReason && <p id={`${id}-selection-reason`} className="text-ui-hint">{selectReason}</p>}
       </div>}
       <div className="min-w-0 flex-1 space-y-1"><h4 className="break-words text-item-title">{title}</h4>
-        {entry && <p className="break-words text-ui-hint text-muted-foreground">{entry.type} · {groupLabel}</p>}
+        {entry && <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!entry.fields?.length && <> · <BasketFields fields={entry.fields} /></>}</AgentMetaLine>}
       </div>
     </div>
     {restricted ? <p role="status" className="break-words text-ui-hint">访问受限 · {item.disclosure.reason}</p> : <>
-      <p className="break-words text-ui-hint text-muted-foreground">来源：{item.source || "未确认"} · 版本：{item.version || "未确认"}</p>
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        {item.source ? <AgentSourceChip label={`来源：${item.source}`}>{item.source}</AgentSourceChip> : <p className="text-ui-meta text-muted-foreground">来源：未确认</p>}
+      </div>
       {item.issue && <p role="status" data-collection-issue={item.issue.state} className="break-words text-ui-hint">{item.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {item.issue.reason}</p>}
       {item.summary && <p className="whitespace-pre-wrap break-words text-ui-body">{item.summary}</p>}
-      <BasketFields fields={item.fields} />
       {full && props.renderItem && <div className="min-w-0" data-collection-content>{props.renderItem(item, { density: props.density ?? "default" })}</div>}
     </>}
     <div className="flex min-w-0 flex-wrap gap-2">
@@ -170,7 +168,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         </BasketActionButton>
       })}
     </div>
-    {full && changeGroup && <div className="min-w-0 space-y-2">
+    {full && changeGroup && <div className="min-w-0 space-y-1.5">
       <Label htmlFor={`${id}-group`}>分组 · {title}</Label>
       <Select value={groupIndex >= 0 ? String(groupIndex) : null} disabled={!!groupReason}
         items={changeGroup.options.map((option, index) => ({ value: String(index), label: option.label }))}
@@ -185,13 +183,13 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       </Select>
       {groupReason && <p id={`${id}-group-reason`} className="text-ui-hint">{groupReason}</p>}
     </div>}
-  </li>
+  </AgentSurface></li>
 }
 
 /** Controlled collection content, without a drawer, data source, scoring or saving implementation. */
 export function AgentCollectionBasket({ view = "inline", density = "default", inlineLimit = 3, groupBy = "none", sync = { state: "unknown" }, ...rest }: AgentCollectionBasketProps) {
   const props = { ...rest, view, density, groupBy, sync }, id = useId()
-  const { collection, items, summary, groups = [], changes = [], selectedIds = [], onSelectionChange, onAction, onExpand, onBack, notice, details } = props
+  const { collection, items, summary, groups = [], changes = [], selectedIds = [], onSelectionChange, onAction, onExpand, onBack, notice, details, visual } = props
   const full = view === "workspace", compact = density === "compact", historical = collection.snapshot !== undefined
   const baseReason = historical ? "历史集合仅供查看。" : !collection.id.trim() ? "集合标识未确认。" : undefined
   const actionReason = baseReason || (!onAction ? "当前无法操作。" : undefined)
@@ -208,18 +206,18 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const allSelected = selectable.length > 0 && selectable.every(item => selectedIds.includes(item.id))
   const selectionReason = baseReason || (!onSelectionChange ? "当前无法选择。" : undefined)
   const targets = items.map(targetOf)
-  return <Card aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}
-    className={compact ? "min-w-0 gap-3 p-4 [overflow-wrap:anywhere]" : "min-w-0 gap-5 p-5 sm:p-6 [overflow-wrap:anywhere]"}>
-    <header className="min-w-0 space-y-2">
+  return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
+    <header className="min-w-0 space-y-1.5">
       <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>
-      <h3 id={id} className="break-words text-block-title">{collection.title}</h3>
-      <p className="break-words text-ui-hint">{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>}</p>
-      <p className="text-ui-body tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</p>
-      <BasketFields fields={summary.fields} />
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}</h3>
+        <AgentStatus unknown={sync.state === "unknown"} tone={sync.state === "failed" ? "error" : sync.state === "synced" ? "success" : "neutral"}>{syncLabels[sync.state]}</AgentStatus>
+      </div>
+      <AgentVisibleMarkers visual={visual} />
+      <AgentMetaLine>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>} · <span className="tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</span>{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}{sync.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>
       {groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
     </header>
-    <div className="min-w-0 space-y-2" data-collection-sync={sync.state}>
-      <div role="status" className="flex min-w-0 flex-wrap items-start gap-2"><Badge variant={sync.state === "failed" ? "error" : sync.state === "unknown" ? "warning" : "outline"}>{syncLabels[sync.state]}</Badge>
+    <div className="min-w-0 space-y-1.5" data-collection-sync={sync.state}>
+      <div role="status" className="flex min-w-0 flex-wrap items-start gap-2">
         {sync.description && <p className="min-w-0 break-words text-ui-hint">{sync.description}</p>}
       </div>
       {sync.action && <BasketActionButton label={sync.action.label} scope={collection.title} reason={actionReason || sync.action.disabledReason}
@@ -227,13 +225,13 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
     </div>
     {changes.length > 0 && <ul aria-label="最近变化" aria-live="polite" className="space-y-1">{changes.map(change => <li key={change.id} data-collection-change={change.kind} className="break-words text-ui-hint">{change.kind === "added" ? "已加入" : "已移除"} · {change.description}</li>)}</ul>}
     {notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
-    {full && <div className="min-w-0 space-y-3">
+    {full && <div className="min-w-0 space-y-2.5">
       {(groups.length > 0 || groupBy === "group") && <div className="flex min-w-0 flex-wrap items-center gap-2" role="group" aria-label="列表排列">
         <span className="text-ui-action">列表排列</span>{(["none", "group"] as const).map(value => props.onGroupByChange
           ? <Button key={value} type="button" size="navigation" variant="outline" aria-pressed={groupBy === value} onClick={() => props.onGroupByChange?.(value)}>{value === "none" ? "集合顺序" : "按分组查看"}</Button>
           : groupBy === value && <span key={value} className="text-ui-body">{value === "none" ? "集合顺序" : "按分组查看"}</span>)}
       </div>}
-      {(selectable.length > 0 || selectedIds.length > 0) && <div className="min-w-0 space-y-2">
+      {(selectable.length > 0 || selectedIds.length > 0) && <div className="min-w-0 space-y-1.5">
         <div className="flex flex-wrap items-center gap-3"><p className="text-ui-hint">已选择 {selectedIds.length} 项</p>
           <BasketActionButton label={allSelected ? "取消全选" : "全选可选条目"} scope={collection.title} reason={selectionReason || (!selectable.length ? "当前没有可选条目。" : undefined)}
             onClick={() => onSelectionChange?.(allSelected ? selectedIds.filter(value => !selectable.some(item => item.id === value)) : [...new Set([...selectedIds, ...selectable.map(item => item.id)])])} />
@@ -249,9 +247,9 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
           onClick={trigger => onAction?.({ ...common, kind: "batch", actionId: action.id, targets: action.itemIds.map(value => targetOf(items.find(item => item.id === value)!)) }, trigger)} />
       })}</div>}
     </div>}
-    {items.length === 0 ? <p role="status" className="text-ui-hint">{props.emptyText || "集合中还没有条目。"}</p> : sections.map(section => <section key={section.key} aria-label={section.label} className="min-w-0 space-y-3">
+    {items.length === 0 ? <p role="status" className="text-ui-hint">{props.emptyText || "集合中还没有条目。"}</p> : sections.map(section => <section key={section.key} aria-label={section.label} className="min-w-0 space-y-2.5">
       <h4 className="break-words text-item-title">{section.label}</h4>
-      <ol className={compact ? "space-y-4" : "space-y-6"}>{section.items.map(item => {
+      <ol className="space-y-2.5">{section.items.map(item => {
         const index = items.indexOf(item)
         return <BasketRow key={item.id} item={item} previous={items[index - 1]} next={items[index + 1]} props={props} baseReason={baseReason} />
       })}</ol>
@@ -264,6 +262,6 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
       {!full && onExpand && <Button type="button" size="navigation" variant="outline" onClick={event => onExpand(event.currentTarget)}>管理全部<ArrowUpRight aria-hidden="true" /></Button>}
       {full && onBack && <Button type="button" size="navigation" variant="ghost" onClick={onBack}>返回原位置</Button>}
     </div>
-    <RecordDetails>{details}</RecordDetails>
-  </Card>
+    <AgentSourceChip>{details}</AgentSourceChip>
+  </AgentWell>
 }

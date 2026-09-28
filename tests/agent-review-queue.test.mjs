@@ -206,8 +206,10 @@ test('compact and inline limits retain every uncertain, expired, busy, unsaved, 
     const compact = htmlFor({ ...input, density: 'compact' });
     for (const fact of ['回执未确认', '已过期', '他人处理中', '复核提交中', '已编辑未提交', '已退回 / 失败', '当前不可修改', '依据缺失', '修改未保存']) assert.ok(compact.includes(fact), fact);
     assert.equal(textOf(compact), textOf(htmlFor({ ...input, density: 'default' })));
-    assert.equal((compact.match(/唯一常驻边界提示/g) ?? []).length, 1); assert.doesNotMatch(compact, /可折叠补充解释|line-clamp|truncate/);
+    assert.equal((compact.match(/唯一常驻边界提示/g) ?? []).length, 1); assert.doesNotMatch(compact, /可折叠补充解释|line-clamp/);
     assert.match(compact, /aria-expanded="false"/);
+    for (const item of items) assert.ok(compact.includes(`title="${item.title}"`), 'capsule retains the complete object title');
+    for (const facts of compact.matchAll(/data-review-state="[^"]+">(.*?)<\/div>/g)) assert.doesNotMatch(facts[1], /truncate/);
   }
 });
 
