@@ -100,7 +100,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
     } : undefined,
     details: <p>仅为本页演示。搜索、筛选、排序和追加结果来自固定数据；选择不代表已提交，回执与集合记录分别载入。公式与题目内容由既有题卡提供，刷新后还原。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCandidatePicker {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCandidatePicker {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
     {purpose === "questions" && <p className="text-ui-hint">题面节选 · 示例：下方简要候选展示节选，展开后显示完整题面。</p>}

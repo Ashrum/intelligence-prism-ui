@@ -115,7 +115,7 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
         validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
         readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}
         selectedIds={selected} onSelectionChange={setSelected} batchAttributes={batchAttributes} onIntent={receive}
-        details={<p>上移、下移或移到分组可用键盘和触屏操作。拖拽可放到条目前或分组末尾。分组最多一层，条目内容请打开原对象查看。此示例删除分组后将条目留在“未分组”。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        details={<p>上移、下移或移到分组可用键盘和触屏操作。拖拽可放到条目前或分组末尾。分组最多一层，条目内容请打开原对象查看。此示例删除分组后将条目留在“未分组”。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <div className="min-w-0 space-y-2"><Label htmlFor={`${id}-save`}>独立保存状态示例</Label><QuestionSelect id={`${id}-save`} label="独立保存状态示例" value={save} onChange={value => setSave(value as AgentArrangementSave["state"])}

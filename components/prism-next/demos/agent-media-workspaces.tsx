@@ -50,7 +50,7 @@ export function AudioTranscriptExample({ unavailable = false }: { unavailable?: 
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentAudioTranscript audioId="demo-audio" version={`demo-${revision}`} audio={{ title: unavailable ? "不可播放录音（模拟）" : "课堂讲解录音（模拟）", duration: 180, versionLabel: `录音 v${revision}（模拟）`, source: { label: "课堂讲解固定示例", openable: true }, description: "勾股定理课堂讲解与学生追问。", availability: unavailable ? { state: "unavailable", reason: "原录音暂不可用。" } : { state: "available" } }}
       segments={segments} capabilities={audioExampleCapabilities} readOnlyReason={unavailable ? "此示例仅供回看。" : undefined}   onIntent={intent}
-      details={<p>点击时间只记录定位请求，确认片段不生成文件；同一页面中的转写修改仍未保存。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+      details={<p>点击时间只记录定位请求，确认片段不生成文件；同一页面中的转写修改仍未保存。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section ref={panel} tabIndex={-1} aria-label="课堂录音示例" className={`min-w-0 space-y-3 ${narrow ? "max-w-[320px]" : ""}`}>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(!compact)}>紧凑密度</Button><Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     <p role="status" className="text-ui-hint">{feedback}</p>
@@ -83,7 +83,7 @@ export function VideoTimelineExample() {
     setRevision(revision + 1); setFeedback("模拟标记已更新，未保存；刷新后还原。")
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentVideoTimeline videoId="demo-video" version={`demo-${revision}`} video={{ title: "教学视频（模拟）", duration: 140, versionLabel: `视频 v${revision}（模拟）`, source: { label: "勾股定理教学固定示例", openable: true }, description: "观察图形、辨认边、列式与练习四个章节。", availability: { state: "available" } }} marks={marks} subtitles={videoSubtitleExample} capabilities={{ ...videoExampleCapabilities, clip: clip ? yes : videoExampleCapabilities.clip }}   onIntent={intent}
-      details={<p>字幕与章节由示例提供，播放和查看不代表已读取或已引用。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+      details={<p>字幕与章节由示例提供，播放和查看不代表已读取或已引用。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section ref={panel} tabIndex={-1} aria-label="教学视频示例" className={`min-w-0 space-y-3 ${narrow ? "max-w-[320px]" : ""}`}>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(!compact)}>紧凑密度</Button><Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button><Button type="button" variant="outline" aria-pressed={clip} onClick={() => setClip(!clip)}>演示片段请求</Button></div>
     <p role="status" className="text-ui-hint">{feedback}</p>

@@ -38,7 +38,7 @@ export function AgentChangeSetDemo() {
       onApply: () => setFeedback("示例：已点击应用；未修改试卷草稿，未保存。"),
     },
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentChangeSet {...shared}  view="inline" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentChangeSet {...shared}  view={presentation.view ?? "inline"} onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "change-set-two-state"} className="mb-12 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">对比查看器两态</h2>}
     <p className="text-ui-hint text-muted-foreground">两栏共享同一组示例选择与改写内容。真实 P04 接入验证在 Workspace /teacher/agent/workspace 进行；本页仅展示组件。</p>

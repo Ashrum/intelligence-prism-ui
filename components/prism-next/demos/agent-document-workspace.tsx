@@ -78,7 +78,7 @@ export function DocumentWorkspaceExample({ purpose, narrow }: { purpose: keyof t
         onAddAnnotation={intent => setFeedback(`已请求批注「${example.sections.find(section => section.id === intent.sectionId)?.title}」；示例未新增记录。`)}
         quickActions={purpose === "outline" ? [{ id: "save-request", label: "请求保存草稿", capability: "edit" }] : []}
         onAction={() => setFeedback("已请求保存；保存结果尚未确认。")}
-        notice="固定示例；修改刷新后还原。" details={<p>打开和滚动不代表材料已被读取或引用。历史示例显示当时内容，保存情况缺少记录时保持未确认。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        notice="固定示例；修改刷新后还原。" details={<p>打开和滚动不代表材料已被读取或引用。历史示例显示当时内容，保存情况缺少记录时保持未确认。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <Field><FieldLabel htmlFor={`${controlId}-save`}>保存状态示例</FieldLabel><QuestionSelect id={`${controlId}-save`} label="保存状态示例" value={state} onChange={value => setState(value as AgentDocumentSaveState)} items={[

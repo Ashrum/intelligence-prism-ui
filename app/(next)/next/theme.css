@@ -2,12 +2,14 @@
 @import "tw-animate-css";
 @import "../../../vendor/coss-animations.css";
 @import "./typography.css";
-@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *));
+/* Explicit preview themes form a boundary inside a dark site. */
+@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *):not([data-agent-preview][data-prism-theme="light"], [data-agent-preview][data-prism-theme="light"] *, [data-agent-preview][data-prism-theme="paper"], [data-agent-preview][data-prism-theme="paper"] *));
 
 @font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
 
-/* One active UI root owns the theme, including body-mounted overlays. */
-:root:where([data-ui-version="coss-v1"]) {
+/* The site root and explicit review previews share the same token definitions. */
+:root:where([data-ui-version="coss-v1"]),
+:where([data-agent-preview][data-prism-theme]) {
   --background:#FFFFFF;
   --foreground:#1F2328;
   --heading:#1F2328;
@@ -59,7 +61,8 @@
   color-scheme:light;
 }
 
-:root:where([data-ui-version="coss-v1"])[data-prism-theme="paper"] {
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="paper"],
+:where([data-agent-preview])[data-prism-theme="paper"] {
   --background:#F4F1EA;
   --foreground:#1E293B;
   --heading:#0F172A;
@@ -82,7 +85,8 @@
   --disabled-foreground:#A5A29C;
 }
 
-:root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"] {
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"],
+:where([data-agent-preview])[data-prism-theme="dark"] {
   --background:#0F0F0F;
   --foreground:#E1E5EA;
   --heading:#F4F6F8;

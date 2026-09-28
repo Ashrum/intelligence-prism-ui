@@ -113,7 +113,7 @@ export function StructuredContentExample({ purpose, narrow }: { purpose: keyof t
         nodes={supplied} capabilities={example.capabilities} selectedNodeId={selected} onSelect={selection => setSelected(selection.nodeId)} expandedIds={expanded} onExpandedChange={setExpanded}
           onIntent={receive} save={historical ? { state: "unknown" } : { state: save, description: save === "conflict" ? "基准版本已有更新，当前结构保留，暂不能修改。" : undefined }}
         changes={{ baseVersion: { id: "base-v1", label: "示例 v1" }, summary: historical ? [] : changes }}
-        notice="示例修改仅在本次页面中保留，刷新后还原。" details={<p>选择节点后，可用名称输入框和按钮调整结构。方向键浏览与折叠，Enter 或空格选择；上移、下移、升级、降级也可通过触屏或键盘操作。拖拽仅辅助移动，正文请在文档视图编辑。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        notice="示例修改仅在本次页面中保留，刷新后还原。" details={<p>选择节点后，可用名称输入框和按钮调整结构。方向键浏览与折叠，Enter 或空格选择；上移、下移、升级、降级也可通过触屏或键盘操作。拖拽仅辅助移动，正文请在文档视图编辑。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <Field><FieldLabel htmlFor={`${id}-save`}>保存状态示例</FieldLabel><QuestionSelect id={`${id}-save`} label="保存状态示例" value={save} onChange={value => setSave(value as AgentStructureSave["state"])} items={Object.entries(saveLabels).map(([value, label]) => ({ value, label }))} /></Field>

@@ -90,7 +90,7 @@ export function ArtifactOutputExample({ purpose, narrow }: { purpose: keyof type
       }} settingsOpen={settingsOpen} onSettingsChange={setSettingsOpen} /> : undefined,
   }
   const samples = { idle: "未开始", generating: "生成中（无进度）", ready: "可下载", failed: "生成失败", unknown: "状态未确认", expired: "已过期", forbidden: "无权下载" } as const
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentArtifactOutput {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentArtifactOutput {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">三个视图共享输出选项。以下按钮只切换固定示例状态，刷新后还原。</p>
     <div className="flex flex-wrap gap-2">{(Object.keys(samples) as (keyof typeof samples)[]).map(state => <Button key={state} type="button" variant="outline" aria-pressed={status.state === state}

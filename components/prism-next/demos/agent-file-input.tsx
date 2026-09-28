@@ -107,7 +107,7 @@ export function FileInputExample({ purpose, narrow }: { purpose: keyof typeof fi
     notice: "示例不实际上传；刷新后本页选择还原。",
     details: <p>类型检查仅依据文件名后缀，大小检查依据本机元数据。既有上传与后续处理记录都是固定示例，选择新文件不会改变这些记录，也不会生成题目。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentFileInput {...common} title="已选文件" inlineLimit={3}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentFileInput {...common} title="已选文件" inlineLimit={3}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 两种用途共用文件输入，三处呈现共用本页队列。</p>
     <p role="status" className="break-words text-ui-hint">{feedback}</p>

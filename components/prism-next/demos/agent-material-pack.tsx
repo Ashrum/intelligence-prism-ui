@@ -120,7 +120,7 @@ export function MaterialPackExample({ purpose, narrow = false }: { purpose: keyo
     onBack: () => { setView("inline"); setPreview(null) },
     details: <p>分类、备注和顺序由本页示例维护，不保存到资料库。删除有内容的分类先保留原样，等待决定素材去向；确认、复用和打开来源均只显示请求反馈。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentMaterialPack {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentMaterialPack {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-4">
     <p className="text-ui-hint">固定示例；来源、许可、保存和复用记录均为评审样本，没有连接真实服务。</p>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={density === "compact"} onClick={() => setDensity(value => value === "default" ? "compact" : "default")}>紧凑密度</Button>

@@ -60,7 +60,7 @@ export function AgentImageCanvasDemo() {
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentImageCanvas title="图片材料（模拟）" imageSet={{ id: "example-images", version: "example-v1" }} images={images} selectedImageId={selectedImageId} comparisonIds={comparisonIds}
         capabilities={{ ...imageCanvasCapabilities, crop: crop ? { supported: true } : imageCanvasCapabilities.crop }}   onIntent={onIntent}
-        details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "image-canvas"} className="min-w-0 space-y-5 py-6">
     {!presentation.embedded && <h2 className="text-section-title">图像查看与画布</h2>}
     <p className="text-ui-body">四页扫描、学生作答、教学插图与不可用截图。只用于演示查看与范围选择。</p>

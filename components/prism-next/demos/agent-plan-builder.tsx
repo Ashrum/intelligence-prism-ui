@@ -110,7 +110,7 @@ export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>时间线、工作量与校验是固定示例记录。修改步骤不会重算它们。步骤顺序可用上移、下移调整，依赖关系在路径与优先级中处理；收起编辑保留当前输入，再次编辑同一步骤可继续。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPlanBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPlanBuilder {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPlanSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "回执未确认" }, { value: "unknown", label: "未知" },

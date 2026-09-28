@@ -3,7 +3,15 @@
 import { createContext, useContext, useRef, type ReactNode } from "react"
 
 /** Page composition only. Standalone review fixtures retain their full rendering. */
-export const AgentDemoPresentation = createContext({ previewOnly: false, embedded: false, onExpand: undefined as (() => void) | undefined })
+type AgentDemoPresentationValue = {
+  previewOnly: boolean
+  embedded: boolean
+  onExpand?: () => void
+  onBack?: () => void
+  view?: "inline" | "workspace"
+  density?: "default" | "compact"
+}
+export const AgentDemoPresentation = createContext<AgentDemoPresentationValue>({ previewOnly: false, embedded: false })
 export const useAgentDemoPresentation = () => useContext(AgentDemoPresentation)
 
 /** Keep feedback from the interactive preview without repeating its initial fixture instructions. */

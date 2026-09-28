@@ -80,7 +80,7 @@ export function MaterialExtractorExample({ sample, narrow = false, initialView =
       selection={selection} target={{ packId: "example-target", versionId: "pack-v1", baseVersionId: "pack-base", label: "勾股定理复习素材包（示例）" }}
       onIntent={receive}
       renderExcerpt={item => item.excerpt.includes("\\(") ? <DraftMathPreview value={item.excerpt} label="片段内容" notice={null} showHelp={false} /> : <p className="text-read-body whitespace-pre-wrap break-words">{item.excerpt}</p>}
-      details={<p>在正文中选择整段或首句，再按句、按段扩展，也可输入字符位置。双下划线和括号标出已选文字；选择后可列为候选、添加标注并调整顺序。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+      details={<p>在正文中选择整段或首句，再按句、按段扩展，也可输入字符位置。双下划线和括号标出已选文字；选择后可列为候选、添加标注并调整顺序。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <h3 className="text-block-title">{sample.label}</h3>
     <div className="flex flex-wrap gap-2" aria-label="切换固定状态示例">

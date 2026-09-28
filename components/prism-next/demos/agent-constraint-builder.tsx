@@ -107,7 +107,7 @@ export function ConstraintBuilderExample({ purpose, narrow }: { purpose: keyof t
     onPrepare: () => setPreparedVersion(version),
     onConfirm: () => { setRequestedVersion(version); setFeedback("已请求确认本次条件；确认结果尚未收到。") },
   })
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentConstraintBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentConstraintBuilder {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例，刷新后还原。三个视图共用当前条件；校验和确认记录单独载入。</p>
     <div className="flex flex-wrap gap-2">

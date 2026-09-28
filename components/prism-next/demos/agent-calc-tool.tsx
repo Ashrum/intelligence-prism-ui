@@ -63,7 +63,7 @@ export function CalcToolExample({ index, narrow = false }: { index: number; narr
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCalcTool title={index === 0 ? "顶点与最小值（模拟）" : index === 1 ? "对称轴核对（模拟）" : "统计结果未知（模拟）"}
       toolSessionId={toolSessionId} version={version} expression={expression} mode={mode} capabilities={calcCapabilities}
       result={result} history={history}   onIntent={receive}
-      details="所有结果、过程、对比和数据点都是预置模拟；采样点之间不代表已经计算过的函数曲线。可修改输入并点击计算，未匹配的表达式保持结果未知。" view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+      details="所有结果、过程、对比和数据点都是预置模拟；采样点之间不代表已经计算过的函数曲线。可修改输入并点击计算，未匹配的表达式保持结果未知。" view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div ref={panel} tabIndex={-1} className={`min-w-0 space-y-2 ${narrow ? "max-w-[320px]" : ""}`}>
     <AgentCalcTool title={index === 0 ? "顶点与最小值（模拟）" : index === 1 ? "对称轴核对（模拟）" : "统计结果未知（模拟）"}
       toolSessionId={toolSessionId} version={version} expression={expression} mode={mode} capabilities={calcCapabilities}

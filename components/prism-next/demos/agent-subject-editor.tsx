@@ -37,7 +37,7 @@ export function SubjectEditorExample({ sample, narrow = false, initialView = "in
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSubjectEditor title={sample.title} formulaId={sample.id} location={sample.location} value={value} formulaMode={sample.mode}
         baseVersion="example-base-v1" baseVersionLabel="示例 v1"
         readOnlyReason={readonly ? "历史版本只读，当前公式原文仍可查看。" : undefined} onIntent={receive}
-        details={<p>先将光标放在公式原文中，再选择插入；选中文字可放入结构的参数位置。工具栏支持方向键、Home 和 End，Tab 切换分组。撤销与重做只处理本次公式编辑；展开和返回保留输入，不会确认替换。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        details={<p>先将光标放在公式原文中，再选择插入；选中文字可放入结构的参数位置。工具栏支持方向键、Home 和 End，Tab 切换分组。撤销与重做只处理本次公式编辑；展开和返回保留输入，不会确认替换。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <Button type="button" variant="outline" aria-pressed={readonly} onClick={() => setReadonly(value => !value)}>只读示例</Button>
     <div ref={region}>
