@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentParameterConfig, type AgentParameterConfigProps, type AgentParameterDefinition, type AgentParameterIntent } from "../agent-parameter-config"
@@ -52,6 +54,7 @@ export function availableParameterExample(purpose: keyof typeof parameterExample
 }
 
 export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typeof parameterExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = parameterExamples[purpose]
   const [parameters, setParameters] = useState(example.parameters), [revision, setRevision] = useState(1)
   const [snapshot, setSnapshot] = useState<{ parameters: readonly AgentParameterDefinition[]; baseVersion: string; versionLabel: string; constraint: boolean }>()
@@ -83,6 +86,7 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
     : requestedVersion === currentVersion ? { state: "unknown", description: "确认结果未收到，当前参数仍未确认。" }
     : needsCheck || readOnly ? { state: "blocked", description: readOnly ? "当前只读，请返回可编辑状态后核对。" : "请核对错误与未确认参数。" }
     : { state: "ready", confirm: { label: "确认本次要求（示例）", onAction: () => { setRequestedVersion(currentVersion); setFeedback("已请求确认，等待示例确认记录。") } } }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentParameterConfig {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例，三个视图共用一份参数；不连接组卷、OCR 或批阅服务。</p>
     <div className="flex min-w-0 flex-wrap gap-2">
@@ -130,9 +134,11 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
 }
 
 export function AgentParameterConfigDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof parameterExamples>("paper"), [narrow, setNarrow] = useState(false)
-  return <section id="parameter-config" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">参数配置器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ParameterConfigExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "parameter-config"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">参数配置器</h2>}
     <div className="flex flex-wrap gap-3">{(["paper", "grading"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"}
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "paper" ? "组卷参数示例" : "批阅参数示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

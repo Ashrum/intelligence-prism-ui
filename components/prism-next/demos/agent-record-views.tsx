@@ -1,5 +1,7 @@
 "use client"
 
+import { useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogPanel } from "@/components/coss/dialog"
@@ -56,9 +58,10 @@ export const recordViewExamples: Record<"p04" | "preparation", {
   },
 }
 
-export function AgentRecordViewsDemo() {
+export function AgentRecordViewsDemo({ initialKind = "progress", onlyKind = false }: { onlyKind?: boolean; initialKind?: "progress" | "result" | "context" } = {}) {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof recordViewExamples>("p04")
-  const [kind, setKind] = useState<"progress" | "result" | "context">("progress")
+  const [kind, setKind] = useState<"progress" | "result" | "context">(initialKind)
   const [narrow, setNarrow] = useState(false), [expanded, setExpanded] = useState(true)
   const [feedback, setFeedback] = useState(""), [object, setObject] = useState<string | null>(null)
   const workspaceHeading = useRef<HTMLHeadingElement>(null)
@@ -68,11 +71,11 @@ export function AgentRecordViewsDemo() {
     receipt: sample.result.receipt.status === "unknown" ? { ...sample.result.receipt, query: { label: "查询原请求", onAction: () => setFeedback("示例查询已发出；没有新回执，状态仍未确认。") } } : sample.result.receipt,
     outputs: sample.result.outputs?.map((output, index) => ({ ...output, open: index === 0 ? { label: `查看${output.version}`, onAction: () => setObject(`${output.title} · ${output.version}`) } : undefined })),
   }
-  return <section id="record-views" className="mt-10 space-y-5">
-    <div className="space-y-2"><h2 className="text-section-title">任务记录三件套两态 v0.1 · 设计候选</h2><p className="text-ui-hint text-muted-foreground">示例：三种用法共享同一组记录。切换仅改变呈现，任务与来源事实保持原样。</p></div>
+  return <section id={presentation.embedded ? undefined : "record-views"} className="mt-10 space-y-5">
+    <div className="space-y-2">{!presentation.embedded && <h2 className="text-section-title">任务记录三件套两态</h2>}<p className="text-ui-hint text-muted-foreground">示例：三种用法共享同一组记录。切换仅改变呈现，任务与来源事实保持原样。</p></div>
     <div className="flex flex-wrap gap-2" aria-label="示例用途">{Object.entries(recordViewExamples).map(([key, value]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as keyof typeof recordViewExamples); setFeedback("") }}>{value.label}</Button>)}</div>
-    <div className="flex flex-wrap gap-2" aria-label="记录类型">{([['progress', '任务进度'], ['result', '执行结果'], ['context', '上下文摘要']] as const).map(([key, label]) => <Button key={key} variant="outline" aria-pressed={kind === key} onClick={() => setKind(key)}>{label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
-    <div className={narrow ? "grid max-w-80 gap-6" : "grid gap-6 xl:grid-cols-3"}>
+    <div className="flex flex-wrap gap-2" aria-label="记录类型">{!onlyKind && ([['progress', '任务进度'], ['result', '执行结果'], ['context', '上下文摘要']] as const).map(([key, label]) => <Button key={key} variant="outline" aria-pressed={kind === key} onClick={() => setKind(key)}>{label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
+    <div className={narrow ? "grid max-w-80 gap-6" : "grid gap-6 @min-[1100px]:grid-cols-3"}>
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整记录'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => {
         const shared = { view, density, onExpand: () => { workspaceHeading.current?.focus(); workspaceHeading.current?.scrollIntoView({ block: "nearest" }) }, details: <p>各项记录分别保留版本和范围，查看不会改变记录。</p> }
         return <section key={label} className="min-w-0 space-y-3" aria-label={label}>

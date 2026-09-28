@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentRelationGraph, type AgentRelationCapabilities, type AgentRelationEdge, type AgentRelationFilter, type AgentRelationIntent, type AgentRelationNode } from "../agent-relation-graph"
 import { Button } from "../button"
@@ -31,6 +33,7 @@ const conceptEdges: readonly AgentRelationEdge[] = [
   { id: "concept-edge-2", from: "concept-2", to: "concept-1", type: "修正" },
 ]
 export function RelationGraphExample({ kind = "coverage", narrow = false }: { kind?: "coverage" | "concept" | "large"; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [nodes, setNodes] = useState<readonly AgentRelationNode[]>(kind === "concept" ? conceptNodes : coverageNodes)
   const [edges, setEdges] = useState<readonly AgentRelationEdge[]>(kind === "concept" ? conceptEdges : coverageEdges)
@@ -70,6 +73,12 @@ export function RelationGraphExample({ kind = "coverage", narrow = false }: { ki
   const statusCounts = [...new Set(nodes.filter(node => node.type === "知识点").map(node => node.status || "未知"))].map(label => ({ label, count: nodes.filter(node => node.type === "知识点" && (node.status || "未知") === label).length }))
   const missing = nodes.filter(node => node.type === "知识点" && node.status === "未覆盖")
   const capabilities = kind === "concept" ? { ...relationCapabilities, "edit-node": { supported: false as const, reason: "此概念图仅供阅读，尚未提供编辑能力。" }, "edit-edge": { supported: false as const, reason: "此概念图仅供阅读，尚未提供编辑能力。" } } : relationCapabilities
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentRelationGraph title={kind === "concept" ? "概念推演（模拟）" : kind === "large" ? "超出图示上限（模拟）" : "试卷知识点覆盖（模拟）"}
+      graphId={graphId} version={version} versionLabel={`本页资料第 ${revision} 版 · ${revision === 1 ? "预置模拟" : "未保存"}`} nodes={nodes} edges={edges}
+      summary={kind === "concept" ? undefined : { statusCounts, gaps: missing.length ? [`未覆盖知识点 ${missing.length} 个：${missing.map(node => node.label).join("、")}`] : [] }}
+      capabilities={capabilities} layout={layout} graphThreshold={kind === "large" ? 10 : 80} filter={filter} selectedNodeId={selectedNodeId}
+        onIntent={receive}
+      details="所有节点、关系和覆盖状态均为模拟；图中位置只用于阅读，不表示掌握程度。示例删除节点时同时移除关联连线，仅改变本页资料。" view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div ref={panel} tabIndex={-1} className={`min-w-0 space-y-2 ${narrow ? "max-w-[320px]" : ""}`}>
     <AgentRelationGraph title={kind === "concept" ? "概念推演（模拟）" : kind === "large" ? "超出图示上限（模拟）" : "试卷知识点覆盖（模拟）"}
       graphId={graphId} version={version} versionLabel={`本页资料第 ${revision} 版 · ${revision === 1 ? "预置模拟" : "未保存"}`} nodes={nodes} edges={edges}
@@ -82,9 +91,11 @@ export function RelationGraphExample({ kind = "coverage", narrow = false }: { ki
   </div>
 }
 export function AgentRelationGraphDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false)
-  return <section id="relation-graph" className="min-w-0 space-y-5 py-6">
-    <h2 className="text-section-title">图形关系工作区</h2>
+  if (presentation.previewOnly) return <RelationGraphExample kind="coverage" narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "relation-graph"} className="min-w-0 space-y-5 py-6">
+    {!presentation.embedded && <h2 className="text-section-title">图形关系工作区</h2>}
     <p className="text-ui-body">模拟试卷：6 个知识点、8 道题、2 个章节；2 个知识点未覆盖、1 个薄弱。另含只读概念图与超上限列表示例。窄容器默认展示列表，可选择“仍查看关系图”并滚动浏览，返回“仅列表”。</p>
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     {(["coverage", "concept", "large"] as const).map(kind => <RelationGraphExample key={kind} kind={kind} narrow={narrow} />)}

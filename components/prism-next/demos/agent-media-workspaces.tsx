@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { AgentAudioTranscript, type AgentAudioCapabilities, type AgentAudioSegment, type AgentAudioIntent } from "../agent-audio-transcript"
@@ -29,6 +31,7 @@ export const audioExampleCapabilities: AgentAudioCapabilities = { play: yes, tra
 export const videoExampleCapabilities: AgentVideoCapabilities = { play: yes, subtitle: { supported: false, reason: "尚未接入字幕生成服务。" }, mark: yes, clip: { supported: false, reason: "尚未接入视频剪辑服务。" }, export: { supported: false, reason: "尚未提供可下载的文件。" } }
 
 export function AudioTranscriptExample({ unavailable = false }: { unavailable?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [compact, setCompact] = useState(false)
   const [narrow, setNarrow] = useState(false)
@@ -45,6 +48,9 @@ export function AudioTranscriptExample({ unavailable = false }: { unavailable?: 
     else if (value.type === "seek") setFeedback(`已请求定位到 ${value.seconds} 秒；示例没有可播放文件。`)
     else setFeedback("来源为固定课堂讲解模拟材料，没有真实来源文件。")
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentAudioTranscript audioId="demo-audio" version={`demo-${revision}`} audio={{ title: unavailable ? "不可播放录音（模拟）" : "课堂讲解录音（模拟）", duration: 180, versionLabel: `录音 v${revision}（模拟）`, source: { label: "课堂讲解固定示例", openable: true }, description: "勾股定理课堂讲解与学生追问。", availability: unavailable ? { state: "unavailable", reason: "原录音暂不可用。" } : { state: "available" } }}
+      segments={segments} capabilities={audioExampleCapabilities} readOnlyReason={unavailable ? "此示例仅供回看。" : undefined}   onIntent={intent}
+      details={<p>点击时间只记录定位请求，确认片段不生成文件；同一页面中的转写修改仍未保存。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <section ref={panel} tabIndex={-1} aria-label="课堂录音示例" className={`min-w-0 space-y-3 ${narrow ? "max-w-[320px]" : ""}`}>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(!compact)}>紧凑密度</Button><Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     <p role="status" className="text-ui-hint">{feedback}</p>
@@ -58,6 +64,7 @@ export function AudioTranscriptExample({ unavailable = false }: { unavailable?: 
 }
 
 export function VideoTimelineExample() {
+  const presentation = useAgentDemoPresentation()
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [compact, setCompact] = useState(false)
   const [narrow, setNarrow] = useState(false)
@@ -75,6 +82,8 @@ export function VideoTimelineExample() {
     else { setFeedback(value.type === "clip-request" ? `已记录 ${value.start}–${value.end} 秒的片段请求，没有生成视频文件。` : value.type === "seek" ? `已请求定位到 ${value.seconds} 秒；示例没有可播放文件。` : "来源为固定教学视频示例，没有真实来源文件。"); return }
     setRevision(revision + 1); setFeedback("模拟标记已更新，未保存；刷新后还原。")
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentVideoTimeline videoId="demo-video" version={`demo-${revision}`} video={{ title: "教学视频（模拟）", duration: 140, versionLabel: `视频 v${revision}（模拟）`, source: { label: "勾股定理教学固定示例", openable: true }, description: "观察图形、辨认边、列式与练习四个章节。", availability: { state: "available" } }} marks={marks} subtitles={videoSubtitleExample} capabilities={{ ...videoExampleCapabilities, clip: clip ? yes : videoExampleCapabilities.clip }}   onIntent={intent}
+      details={<p>字幕与章节由示例提供，播放和查看不代表已读取或已引用。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <section ref={panel} tabIndex={-1} aria-label="教学视频示例" className={`min-w-0 space-y-3 ${narrow ? "max-w-[320px]" : ""}`}>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(!compact)}>紧凑密度</Button><Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button><Button type="button" variant="outline" aria-pressed={clip} onClick={() => setClip(!clip)}>演示片段请求</Button></div>
     <p role="status" className="text-ui-hint">{feedback}</p>
@@ -86,8 +95,12 @@ export function VideoTimelineExample() {
 }
 
 export function AgentAudioTranscriptDemo() {
-  return <section id="audio-transcript" className="min-w-0 space-y-5 py-6"><h2 className="text-section-title">音频与转写 v0.1 · 设计候选</h2><AudioTranscriptExample /><AudioTranscriptExample unavailable /></section>
+  const presentation = useAgentDemoPresentation()
+  if (presentation.previewOnly) return <AudioTranscriptExample />
+  return <section id={presentation.embedded ? undefined : "audio-transcript"} className="min-w-0 space-y-5 py-6">{!presentation.embedded && <h2 className="text-section-title">音频与转写</h2>}<AudioTranscriptExample /><AudioTranscriptExample unavailable /></section>
 }
 export function AgentVideoTimelineDemo() {
-  return <section id="video-timeline" className="min-w-0 space-y-5 py-6"><h2 className="text-section-title">视频与时间轴 v0.1 · 设计候选</h2><VideoTimelineExample /></section>
+  const presentation = useAgentDemoPresentation()
+  if (presentation.previewOnly) return <VideoTimelineExample />
+  return <section id={presentation.embedded ? undefined : "video-timeline"} className="min-w-0 space-y-5 py-6">{!presentation.embedded && <h2 className="text-section-title">视频与时间轴</h2>}<VideoTimelineExample /></section>
 }

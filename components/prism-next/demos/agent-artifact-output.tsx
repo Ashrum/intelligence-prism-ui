@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentArtifactOutput, type AgentArtifactOutputProps, type AgentArtifactOutputRecord, type AgentArtifactOutputStatus } from "../agent-artifact-output"
@@ -56,6 +58,7 @@ export function artifactOutputSampleStatus(state: AgentArtifactOutputStatus["sta
 }
 
 export function ArtifactOutputExample({ purpose, narrow }: { purpose: keyof typeof artifactOutputExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = artifactOutputExamples[purpose]
   const [value, setValue] = useState(example.value), [status, setStatus] = useState(example.output.status)
   const [feedback, setFeedback] = useState("尚未操作示例。")
@@ -87,6 +90,7 @@ export function ArtifactOutputExample({ purpose, narrow }: { purpose: keyof type
       }} settingsOpen={settingsOpen} onSettingsChange={setSettingsOpen} /> : undefined,
   }
   const samples = { idle: "未开始", generating: "生成中（无进度）", ready: "可下载", failed: "生成失败", unknown: "状态未确认", expired: "已过期", forbidden: "无权下载" } as const
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentArtifactOutput {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">三个视图共享输出选项。以下按钮只切换固定示例状态，刷新后还原。</p>
     <div className="flex flex-wrap gap-2">{(Object.keys(samples) as (keyof typeof samples)[]).map(state => <Button key={state} type="button" variant="outline" aria-pressed={status.state === state}
@@ -102,9 +106,11 @@ export function ArtifactOutputExample({ purpose, narrow }: { purpose: keyof type
 }
 
 export function AgentArtifactOutputDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof artifactOutputExamples>("paper"), [narrow, setNarrow] = useState(false)
-  return <section id="artifact-output" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">成果物输出 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ArtifactOutputExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "artifact-output"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">成果物输出</h2>}
     <div className="flex flex-wrap gap-3">{(["paper", "report"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "paper" ? "试卷导出示例" : "学情报告导出示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     </div>

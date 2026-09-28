@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentSubjectEditor, type AgentSubjectEditorIntent, type SubjectFormulaMode } from "../agent-subject-editor"
 import { Button } from "../button"
@@ -13,6 +15,7 @@ export const subjectEditorExamples = [
 export function SubjectEditorExample({ sample, narrow = false, initialView = "inline", density = "default" }: {
   sample: typeof subjectEditorExamples[number]; narrow?: boolean; initialView?: "inline" | "workspace"; density?: "default" | "compact"
 }) {
+  const presentation = useAgentDemoPresentation()
   const [value, setValue] = useState<string>(sample.value), [applied, setApplied] = useState<string>(sample.value)
   const [view, setView] = useState(initialView), [readonly, setReadonly] = useState(false)
   const [feedback, setFeedback] = useState("固定示例，刷新后还原；原内容尚未修改。")
@@ -31,6 +34,10 @@ export function SubjectEditorExample({ sample, narrow = false, initialView = "in
     else if (!readonly && intent.type === "apply") { setApplied(intent.value); setFeedback("已替换本页示例内容，尚未保存。") }
   }
   const formula = sample.mode === "block" ? `\\[${applied}\\]` : `\\(${applied}\\)`
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSubjectEditor title={sample.title} formulaId={sample.id} location={sample.location} value={value} formulaMode={sample.mode}
+        baseVersion="example-base-v1" baseVersionLabel="示例 v1"
+        readOnlyReason={readonly ? "历史版本只读，当前公式原文仍可查看。" : undefined} onIntent={receive}
+        details={<p>先将光标放在公式原文中，再选择插入；选中文字可放入结构的参数位置。工具栏支持方向键、Home 和 End，Tab 切换分组。撤销与重做只处理本次公式编辑；展开和返回保留输入，不会确认替换。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <Button type="button" variant="outline" aria-pressed={readonly} onClick={() => setReadonly(value => !value)}>只读示例</Button>
     <div ref={region}>
@@ -47,9 +54,11 @@ export function SubjectEditorExample({ sample, narrow = false, initialView = "in
 }
 
 export function AgentSubjectEditorDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false)
-  return <section id="subject-editor" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">学科专用编辑器 v0.1 · 数学公式 · 设计候选</h2>
+  if (presentation.previewOnly) return <SubjectEditorExample sample={subjectEditorExamples[0]} />
+  return <section id={presentation.embedded ? undefined : "subject-editor"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">学科专用编辑器</h2>}
     <p className="text-ui-hint">每组编辑一个公式片段；确认替换只更新本页示例，不代表保存。下列示例可展开或返回同一份公式。</p>
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     <div className="grid min-w-0 gap-6">{subjectEditorExamples.map((sample, index) => <SubjectEditorExample key={sample.id} sample={sample}

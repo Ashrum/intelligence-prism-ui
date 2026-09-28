@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { Badge } from "../badge"
@@ -52,6 +54,7 @@ export const evidenceExamples: Record<"scan" | "diagnosis", { label: string; con
 }
 
 export function AgentEvidenceDrilldownDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof evidenceExamples>("scan")
   const [path, setPath] = useState<AgentEvidencePath>([])
   const [narrow, setNarrow] = useState(false)
@@ -65,14 +68,20 @@ export function AgentEvidenceDrilldownDemo() {
     if (pendingFocus.current) { pendingFocus.current = false; heading.current?.focus(); heading.current?.scrollIntoView({ block: "nearest" }) }
   }, [path])
   const navigate = (next: AgentEvidencePath) => { pendingFocus.current = true; setPath([...next]) }
-  return <section id="evidence-drilldown" className="mb-12 space-y-5">
-    <h2 className="text-section-title">下钻与证据浏览 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentEvidenceDrilldown conclusion={example.conclusion} nodes={example.nodes} path={path}
+          notice="查看证据不改变读取、引用或教师对照记录。"
+          details={<p>固定示例，尚未连接真实证据服务。已引用只说明存在引用记录，仍需核对结论与证据是否一致。历史证据保留当时版本。</p>}
+          onNavigate={navigate}
+          onOpen={intent => setFeedback(`示例：已请求打开${intent.kind === "object" ? "对象" : "证据"}，证据记录保持原样。`)}
+           view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  return <section id={presentation.embedded ? undefined : "evidence-drilldown"} className="mb-12 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">下钻与证据浏览</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：选择对象、查看证据与返回，三种用法共享同一组记录。</p>
     <div className="flex flex-wrap gap-2" aria-label="证据示例用途">{Object.entries(evidenceExamples).map(([key, item]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as typeof purpose); setPath([]); setFeedback(""); origin.current = null }}>{item.label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     {purpose === "diagnosis" && <DiagnosisEvidenceTable items={[{ id: example.conclusion.id, title: example.conclusion.statement, observation: example.conclusion.summary, source: "本次练习（示例）", location: "学生 → 题目 → 作答片段", status: <Badge variant="outline">待核对</Badge>, actions: <Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate([]) }}>查看诊断依据</Button> }]} />}
     <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate(example.firstEvidence) }}>定位首条证据示例</Button></div>
     <p role="status" className="text-ui-hint">{feedback || "查看与返回不会改变证据记录。"}</p>
-    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-3"}>
+    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 @min-[1100px]:grid-cols-3"}>
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整证据链'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => <section key={label} aria-label={label} className="min-w-0 space-y-3">
         <h3 ref={index === 1 ? heading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
         <AgentEvidenceDrilldown conclusion={example.conclusion} nodes={example.nodes} path={path} view={view} density={density}

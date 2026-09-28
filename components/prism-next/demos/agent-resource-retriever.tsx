@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentResourceRetriever, type AgentResource, type AgentResourceIntent, type AgentResourcePreview, type AgentResourceResult, type AgentResourceRetrieverProps } from "../agent-resource-retriever"
@@ -60,6 +62,7 @@ function ResourcePreviewExample({ resource }: { resource: AgentResource }) {
 
 /** All state here is labelled fixture data; the reusable component never runs a search. */
 export function ResourceRetrieverExample({ purpose, narrow = false }: { purpose: keyof typeof resourceRetrieverExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const fixture = resourceRetrieverExamples[purpose]
   const [query, setQuery] = useState(fixture.query), [kind, setKind] = useState("all"), [sort, setSort] = useState("provided")
   const [result, setResult] = useState<AgentResourceResult>({ state: "ready" })
@@ -95,6 +98,7 @@ export function ResourceRetrieverExample({ purpose, narrow = false }: { purpose:
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     details: <p>筛选和排序仅用于本页固定样本。未知字段没有从文件名、简介或点击补齐；许可申请与读取请求不生成成功记录。预览内容仅在点击后挂载，刷新还原。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentResourceRetriever {...common}   resources={false ? resources : resources.slice(0, 2)} preview={preview && (false || resources.slice(0, 2).some(resource => resource.id === preview.resourceId)) ? preview : null} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 来源、许可与使用记录均为人工样本。两态与紧凑用法共用查询和预览目标。</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="检索状态示例">
@@ -112,9 +116,11 @@ export function ResourceRetrieverExample({ purpose, narrow = false }: { purpose:
 }
 
 export function AgentResourceRetrieverDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof resourceRetrieverExamples>("teaching"), [narrow, setNarrow] = useState(false)
-  return <section id="resource-retriever" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">资源检索器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ResourceRetrieverExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "resource-retriever"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">资源检索器</h2>}
     <div className="flex flex-wrap gap-3">{(["teaching", "textbook"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "teaching" ? "勾股定理教学资源" : "教材章节页检索"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     </div><ResourceRetrieverExample key={purpose} purpose={purpose} narrow={narrow} />

@@ -1,5 +1,7 @@
 "use client"
 
+import { useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { ArrowUpRight, ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
@@ -85,9 +87,10 @@ function progressFor(state: FlowState, preparation: boolean): { state: AgentProg
 }
 
 /** Local, manual fixtures only. No service, store, authorization decision or execution loop. */
-export function AgentSemanticGroupDemo() {
+export function AgentSemanticGroupDemo({ initialSection = "preview", onlySection = false }: { onlySection?: boolean; initialSection?: string } = {}) {
+  const presentation = useAgentDemoPresentation()
   const id = useId(), flowHeading = useRef<HTMLHeadingElement>(null), dialogReturnFocus = useRef<HTMLElement | null>(null)
-  const [section, setSection] = useState("preview"), [purpose, setPurpose] = useState("parsing"), [narrow, setNarrow] = useState(false)
+  const [section, setSection] = useState(initialSection), [purpose, setPurpose] = useState("parsing"), [narrow, setNarrow] = useState(false)
   const [record, setRecord] = useState<RecordState>("partial"), [contextExpanded, setContextExpanded] = useState(false)
   const [previewState, setPreviewState] = useState("current"), [comparisonState, setComparisonState] = useState("current")
   const [decision, setDecision] = useState<AgentChangeDecision>("pending")
@@ -148,10 +151,10 @@ export function AgentSemanticGroupDemo() {
     historical: "仅展示历史记录，Agent 本次参考情况需另行确认。", empty: undefined,
   }
 
-  return <section id="context-summary-review" aria-labelledby={`${id}-heading`} className="scroll-mt-24 space-y-6">
-    <div className="space-y-2"><div className="flex flex-wrap items-center gap-3"><h2 id={`${id}-heading`} className="text-section-title">从任务依据到执行结果</h2><Badge variant="outline">第一组 · v0.1 候选</Badge></div><p className="max-w-3xl text-ui-hint text-muted-foreground">六项语义，按需独立使用或组合。以下均为手动示例数据，操作仅影响本页展示。</p></div>
+  return <section id={presentation.embedded ? undefined : "context-summary-review"} aria-labelledby={presentation.embedded ? undefined : `${id}-heading`} className="scroll-mt-24 space-y-6">
+    {!presentation.embedded && <div className="space-y-2"><div className="flex flex-wrap items-center gap-3">{!presentation.embedded && <h2 id={`${id}-heading`} className="text-section-title">从任务依据到执行结果</h2>}<Badge variant="outline">组合示例</Badge></div><p className="max-w-3xl text-ui-hint text-muted-foreground">六项语义，按需独立使用或组合。以下均为手动示例数据，操作仅影响本页展示。</p></div>}
     <Tabs value={section} onValueChange={value => { setSection(String(value)); setFeedback("") }} className="min-w-0 gap-6">
-      <div className="max-w-full overflow-x-auto pb-1"><TabsList variant="underline" aria-label="Agent 语义组件">{sections.map(item => <TabsTab key={item.value} value={item.value}>{item.label}</TabsTab>)}</TabsList></div>
+      {!onlySection && <div className="max-w-full overflow-x-auto pb-1"><TabsList variant="underline" aria-label="Agent 语义组件">{sections.map(item => <TabsTab key={item.value} value={item.value}>{item.label}</TabsTab>)}</TabsList></div>}
       <div className="flex flex-wrap items-end gap-4">
         <Field><FieldLabel htmlFor={`${id}-purpose`}>示例用途</FieldLabel><QuestionSelect id={`${id}-purpose`} label="示例用途" value={purpose} items={[{ value: "parsing", label: "试卷解析" }, { value: "preparation", label: "备课资源" }]} onChange={value => { setPurpose(value); setDecision("pending"); setFlow("ready"); setConfirmationState("ready"); setFeedback(""); setDialog(null) }} /></Field>
         <Field><FieldLabel htmlFor={`${id}-state`}>{controls.label}</FieldLabel><QuestionSelect id={`${id}-state`} label={controls.label} value={controls.value} items={controls.items} onChange={value => { controls.change(value); setFeedback("") }} /></Field>

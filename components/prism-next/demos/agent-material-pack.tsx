@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentObjectViewer } from "../agent-object-viewer"
@@ -86,6 +88,7 @@ function MaterialPreview({ item }: { item: AgentMaterialPackItem }) {
 }
 
 export function MaterialPackExample({ purpose, narrow = false }: { purpose: keyof typeof materialPackExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [state, setState] = useState<Pick<AgentMaterialPackProps, "pack" | "items" | "categories" | "summary" | "reuseRecords" | "changes">>(materialPackExamples[purpose])
   const [preview, setPreview] = useState<AgentMaterialPackPreview | null>(null)
   const [feedback, setFeedback] = useState("固定示例，尚未发出操作请求。")
@@ -117,6 +120,7 @@ export function MaterialPackExample({ purpose, narrow = false }: { purpose: keyo
     onBack: () => { setView("inline"); setPreview(null) },
     details: <p>分类、备注和顺序由本页示例维护，不保存到资料库。删除有内容的分类先保留原样，等待决定素材去向；确认、复用和打开来源均只显示请求反馈。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentMaterialPack {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-4">
     <p className="text-ui-hint">固定示例；来源、许可、保存和复用记录均为评审样本，没有连接真实服务。</p>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={density === "compact"} onClick={() => setDensity(value => value === "default" ? "compact" : "default")}>紧凑密度</Button>
@@ -130,8 +134,10 @@ export function MaterialPackExample({ purpose, narrow = false }: { purpose: keyo
 }
 
 export function AgentMaterialPackDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof materialPackExamples>("pythagoras"), [narrow, setNarrow] = useState(false)
-  return <section id="material-pack" className="mb-12 min-w-0 space-y-5"><h2 className="text-section-title">素材包 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <MaterialPackExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "material-pack"} className="mb-12 min-w-0 space-y-5">{!presentation.embedded && <h2 className="text-section-title">素材包</h2>}
     <div className="flex flex-wrap gap-2">{(["pythagoras", "research"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "pythagoras" ? "勾股定理复习示例" : "教研共享示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
     <MaterialPackExample key={purpose} purpose={purpose} narrow={narrow} />

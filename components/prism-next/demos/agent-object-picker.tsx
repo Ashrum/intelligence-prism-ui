@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { AgentObjectPicker, type AgentObjectCandidate, type AgentObjectPickerProps, type AgentObjectPickerResult } from "../agent-object-picker"
@@ -35,6 +37,7 @@ export const objectPickerExamples: Record<"classes" | "students", PickerFixture>
 }
 
 export function ObjectPickerExample({ purpose, narrow = false }: { purpose: "classes" | "students"; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const stateId = useId()
   const fixture = objectPickerExamples[purpose]
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([])
@@ -61,6 +64,7 @@ export function ObjectPickerExample({ purpose, narrow = false }: { purpose: "cla
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     onConfirm: ids => setRequest(`已请求确认 ${ids.length} 项示例选择；尚未提交任务。`),
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={request}><AgentObjectPicker {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用选择、搜索与筛选；状态由下方控件手动切换。</p>
     <div className="space-y-2"><Label htmlFor={stateId}>候选状态示例</Label>
@@ -78,10 +82,12 @@ export function ObjectPickerExample({ purpose, narrow = false }: { purpose: "cla
 }
 
 export function AgentObjectPickerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<"classes" | "students">("classes")
   const [narrow, setNarrow] = useState(false)
-  return <section id="object-picker" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">对象选择器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ObjectPickerExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "object-picker"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">对象选择器</h2>}
     <div className="flex flex-wrap gap-3">{(["classes", "students"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "classes" ? "选择班级示例" : "选择学生示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

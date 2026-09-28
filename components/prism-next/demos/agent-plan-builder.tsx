@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { WorkloadCalendar, type DayLoad } from "../workload-calendar"
 
 import { useId, useRef, useState } from "react"
@@ -76,6 +78,7 @@ function PlanCalendarExample({ calendar }: { calendar: { days: Record<string, Da
 }
 
 export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof typeof planExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [state, setState] = useState(planExamples[purpose]), [save, setSave] = useState<AgentPlanSave["state"]>("unsaved")
   const [readOnly, setReadOnly] = useState(false), [checksLoaded, setChecksLoaded] = useState(true)
   const [feedback, setFeedback] = useState("固定示例；编辑只保留在本页，未连接保存或任务服务。")
@@ -107,6 +110,7 @@ export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>时间线、工作量与校验是固定示例记录。修改步骤不会重算它们。步骤顺序可用上移、下移调整，依赖关系在路径与优先级中处理；收起编辑保留当前输入，再次编辑同一步骤可继续。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPlanBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPlanSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "回执未确认" }, { value: "unknown", label: "未知" },
@@ -123,8 +127,10 @@ export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof
 }
 
 export function AgentPlanBuilderDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof planExamples>("teaching"), [narrow, setNarrow] = useState(false)
-  return <section id="plan-builder" className="mb-12 min-w-0 space-y-5"><h2 className="text-section-title">计划构建器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <PlanBuilderExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "plan-builder"} className="mb-12 min-w-0 space-y-5">{!presentation.embedded && <h2 className="text-section-title">计划构建器</h2>}
     <div className="flex flex-wrap gap-3">{(["teaching", "revision"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "teaching" ? "两周教学行动示例" : "学生复习示例"}</Button>)}<Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
     <PlanBuilderExample key={purpose} purpose={purpose} narrow={narrow} />
   </section>

@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentMaterialExtractor, type AgentMaterialCandidate, type AgentMaterialExtractorIntent, type AgentMaterialSource, type MaterialTextRange } from "../agent-material-extractor"
 import { materialParagraphRange, materialRangeDescription, materialRangeText, sameMaterialRange } from "@/lib/prism-next/material-extractor"
@@ -42,6 +44,7 @@ type Example = typeof materialExtractorExamples[number]
 export function MaterialExtractorExample({ sample, narrow = false, initialView = "inline", density = "default" }: {
   sample: Example; narrow?: boolean; initialView?: "inline" | "workspace"; density?: "default" | "compact"
 }) {
+  const presentation = useAgentDemoPresentation()
   const [view, setView] = useState(initialView), [revision, setRevision] = useState(0)
   const [selection, setSelection] = useState<MaterialTextRange | null>(null)
   const [items, setItems] = useState<readonly AgentMaterialCandidate[]>(sample.candidates)
@@ -73,6 +76,11 @@ export function MaterialExtractorExample({ sample, narrow = false, initialView =
     }
     setRevision(revision + 1)
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentMaterialExtractor context={{ extractorId: sample.id, baseRevision: String(revision) }} sources={sample.sources} candidates={items}
+      selection={selection} target={{ packId: "example-target", versionId: "pack-v1", baseVersionId: "pack-base", label: "勾股定理复习素材包（示例）" }}
+      onIntent={receive}
+      renderExcerpt={item => item.excerpt.includes("\\(") ? <DraftMathPreview value={item.excerpt} label="片段内容" notice={null} showHelp={false} /> : <p className="text-read-body whitespace-pre-wrap break-words">{item.excerpt}</p>}
+      details={<p>在正文中选择整段或首句，再按句、按段扩展，也可输入字符位置。双下划线和括号标出已选文字；选择后可列为候选、添加标注并调整顺序。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <h3 className="text-block-title">{sample.label}</h3>
     <div className="flex flex-wrap gap-2" aria-label="切换固定状态示例">
@@ -92,9 +100,11 @@ export function MaterialExtractorExample({ sample, narrow = false, initialView =
 }
 
 export function AgentMaterialExtractorDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false), [compact, setCompact] = useState(false)
-  return <section id="material-extractor" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">素材提取器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <MaterialExtractorExample sample={materialExtractorExamples[0]} />
+  return <section id={presentation.embedded ? undefined : "material-extractor"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">素材提取器</h2>}
     <p className="text-ui-hint">文本片段的选择、出处与标注。已加入的片段来自固定示例记录；操作不会改写该记录。</p>
     <div className="flex flex-wrap gap-2"><Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
       <Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button></div>

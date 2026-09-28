@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { AgentTemplatePicker, type AgentTemplate, type AgentTemplatePickerIntent, type AgentTemplatePickerProps } from "../agent-template-picker"
 import { Button } from "../button"
@@ -36,6 +38,7 @@ export const templateExamples: Record<"paper" | "lesson", readonly AgentTemplate
 }
 
 export function TemplatePickerExample({ purpose, narrow = false }: { purpose: keyof typeof templateExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const templates = templateExamples[purpose]
   const [selectedId, setSelectedId] = useState<string | null>(templates[0].id)
   const [previewId, setPreviewId] = useState<string | null>(null)
@@ -58,6 +61,7 @@ export function TemplatePickerExample({ purpose, narrow = false }: { purpose: ke
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>全部为模拟模板。三个示例视图共享本次选择；分类只过滤显示，刷新后还原。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentTemplatePicker {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p role="status" className="text-ui-hint">{feedback}</p>
     {([ ["inline", "default", "推荐与快速切换"], ["workspace", "default", "模板库、预览与对比"], ["inline", "compact", "紧凑选择"] ] as const).map(([view, density, label]) =>
@@ -68,9 +72,11 @@ export function TemplatePickerExample({ purpose, narrow = false }: { purpose: ke
 }
 
 export function AgentTemplatePickerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false)
-  return <section id="template-picker" className="min-w-0 space-y-6 py-6">
-    <h2 className="text-section-title">模板选择器</h2>
+  if (presentation.previewOnly) return <TemplatePickerExample purpose="paper" narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "template-picker"} className="min-w-0 space-y-6 py-6">
+    {!presentation.embedded && <h2 className="text-section-title">模板选择器</h2>}
     <p className="text-ui-body">试卷与教学方案的模拟模板选择，预览结构与版面后再决定。</p>
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>切换 320px 窄容器</Button>
     <TemplatePickerExample purpose="paper" narrow={narrow} /><TemplatePickerExample purpose="lesson" narrow={narrow} />

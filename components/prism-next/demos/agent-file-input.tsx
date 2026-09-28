@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentComposer } from "../agent-components"
@@ -53,6 +55,7 @@ export function checkExampleFiles(files: readonly File[], limits: AgentFileLimit
 }
 
 export function FileInputExample({ purpose, narrow }: { purpose: keyof typeof fileInputExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = fileInputExamples[purpose]
   const [items, setItems] = useState(example.items)
   const [groupBy, setGroupBy] = useState<"none" | "status">("none")
@@ -104,6 +107,7 @@ export function FileInputExample({ purpose, narrow }: { purpose: keyof typeof fi
     notice: "示例不实际上传；刷新后本页选择还原。",
     details: <p>类型检查仅依据文件名后缀，大小检查依据本机元数据。既有上传与后续处理记录都是固定示例，选择新文件不会改变这些记录，也不会生成题目。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentFileInput {...common} title="已选文件" inlineLimit={3}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 两种用途共用文件输入，三处呈现共用本页队列。</p>
     <p role="status" className="break-words text-ui-hint">{feedback}</p>
@@ -122,10 +126,12 @@ export function FileInputExample({ purpose, narrow }: { purpose: keyof typeof fi
 }
 
 export function AgentFileInputDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof fileInputExamples>("scan")
   const [narrow, setNarrow] = useState(false)
-  return <section id="file-input" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">文件输入 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <FileInputExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "file-input"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">文件输入</h2>}
     <div className="flex flex-wrap gap-3">{(["scan", "preparation"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} size="navigation"
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "scan" ? "扫描试卷示例" : "备课资料示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
