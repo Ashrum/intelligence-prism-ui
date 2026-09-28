@@ -10,6 +10,7 @@ import { Select,SelectTrigger,SelectValue,SelectPopup,SelectItem } from "@/compo
 import { Button } from "@/components/coss/button"
 import { componentGroups,applicationExamples,agentRelatedPages } from "@/lib/prism-next/catalog"
 import { themeOptions,DESIGN_VERSION,DESIGN_STATUS } from "@/lib/prism-next/config"
+import { PrismBrandMark } from "@/components/prism-next/app-bar"
 
 function Navigation() {
   const pathname=usePathname()
@@ -20,7 +21,7 @@ function Navigation() {
   return <Sidebar collapsible="offcanvas">
     <SidebarHeader className="px-4 py-5">
       <Link href="/next" className="flex items-center gap-2.5 font-semibold text-foreground">
-        <span className="flex items-center gap-0.5" aria-hidden="true"><span className="h-4 w-1 rounded-full bg-(--brand-blue)"/><span className="h-5 w-1 rounded-full bg-(--brand-magenta)"/><span className="h-3 w-1 rounded-full bg-(--brand-green)"/></span>
+        <PrismBrandMark />
         智能曜彩 <span className="ml-auto text-ui-hint text-muted-foreground">v{DESIGN_VERSION}</span>
       </Link>
     </SidebarHeader>
@@ -38,7 +39,7 @@ function Navigation() {
       </SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>
-      <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}</SidebarMenu></SidebarGroup>
+      <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}{link("/next/use-cases/workspace-app-bar","Workspace 顶部区域")}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>
 }
