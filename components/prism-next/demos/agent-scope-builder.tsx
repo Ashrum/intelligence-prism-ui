@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import type { DateRange } from "@daypicker/react"
 import { zhCN } from "@daypicker/react/locale"
@@ -67,6 +69,7 @@ function ChapterEditor({ editor, tree }: { editor: AgentScopeEditor; tree: boole
 }
 
 export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "analysis" | "preparation"; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [values, setValues] = useState<ExampleValues>(initialValues)
   const [issue, setIssue] = useState(true)
   const [revision, setRevision] = useState(1)
@@ -138,6 +141,7 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
     notice: "未指定的范围不自动使用全部可用对象。",
     details: <p>选择范围不会增加访问权限。确认仅针对当前选择，不表示已开始分析或检索；这里没有连接学校数据与资料服务。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentScopeBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用同一份选择。可先载入可用范围，再请求确认并独立载入确认记录。</p>
     <div className="flex flex-wrap gap-2">
@@ -164,10 +168,12 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
 }
 
 export function AgentScopeBuilderDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<"analysis" | "preparation">("analysis")
   const [narrow, setNarrow] = useState(false)
-  return <section id="scope-builder" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">范围构建器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ScopeBuilderExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "scope-builder"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">范围构建器</h2>}
     <div className="flex flex-wrap gap-3">{(["analysis", "preparation"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "analysis" ? "学情分析范围示例" : "备课资料范围示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

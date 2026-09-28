@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { Button } from "../button"
@@ -81,6 +83,7 @@ export function arrangementExampleBatchAttribute(state: ArrangementExampleState,
 }
 
 export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "course"; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = arrangementExamples[purpose], id = useId()
   const [state, setState] = useState<ArrangementExampleState>(example)
   const [selected, setSelected] = useState<string[]>([])
@@ -107,6 +110,12 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
     setChanges([label]); setFeedback(`${label}，仅在本页保留，尚未保存。`)
   }
   const batchAttributes = [arrangementExampleBatchAttribute(state, selected, purpose)]
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentStructureArranger structure={structure} items={state.items} groups={state.groups}
+        summary={unknown ? {} : { groupCount: state.groups.length, itemCount: state.items.length, itemCountLabel: purpose === "paper" ? "题数" : "任务数", totalScore, ...(purpose === "paper" ? { targetScore: 30 } : {}) }}
+        validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
+        readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}
+        selectedIds={selected} onSelectionChange={setSelected} batchAttributes={batchAttributes} onIntent={receive}
+        details={<p>上移、下移或移到分组可用键盘和触屏操作。拖拽可放到条目前或分组末尾。分组最多一层，条目内容请打开原对象查看。此示例删除分组后将条目留在“未分组”。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <div className="min-w-0 space-y-2"><Label htmlFor={`${id}-save`}>独立保存状态示例</Label><QuestionSelect id={`${id}-save`} label="独立保存状态示例" value={save} onChange={value => setSave(value as AgentArrangementSave["state"])}
@@ -133,9 +142,11 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
 }
 
 export function AgentStructureArrangerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<"paper" | "course">("paper"), [narrow, setNarrow] = useState(false)
-  return <section id="structure-arranger" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">结构编排器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ArrangementExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "structure-arranger"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">结构编排器</h2>}
     <div className="flex flex-wrap gap-3">{(["paper", "course"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "paper" ? "试卷编排示例" : "课程任务编排示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
     <ArrangementExample key={purpose} purpose={purpose} narrow={narrow} />

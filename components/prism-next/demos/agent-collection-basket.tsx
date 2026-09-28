@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { QuestionCard } from "../question-card"
@@ -34,6 +36,7 @@ export const collectionBasketExamples: Record<"questions" | "preparation", { col
 
 /** Fixture host owns the only example list. No Provider, storage, network or business handoff. */
 export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof typeof collectionBasketExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = collectionBasketExamples[purpose]
   const [items, setItems] = useState<readonly AgentCollectionItem[]>(example.items)
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([])
@@ -87,6 +90,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     notice: "仅为本页示例；刷新后还原。",
     details: <p>题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCollectionBasket {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处呈现共用同一份本页集合与选择。</p>
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="同步记录示例"><span className="text-ui-action">同步记录</span>
@@ -111,10 +115,12 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
 }
 
 export function AgentCollectionBasketDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof collectionBasketExamples>("questions")
   const [narrow, setNarrow] = useState(false)
-  return <section id="collection-basket" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">集合篮 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <CollectionBasketExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "collection-basket"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">集合篮</h2>}
     <div className="flex flex-wrap gap-3">{(["questions", "preparation"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"}
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "questions" ? "试题篮示例" : "备课素材包示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

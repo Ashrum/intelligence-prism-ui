@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { AgentExceptionHandler, type AgentExceptionAction, type AgentExceptionDisposition, type AgentExceptionItem, type AgentExceptionState } from "../agent-exception-handler"
@@ -66,6 +68,7 @@ export const exceptionExamples: Record<"scan" | "questions", { label: string; ti
 const stateOptions: readonly [AgentExceptionState, string][] = [["waiting-human", "待处理"], ["waiting", "提交中"], ["unknown", "回执未确认"], ["resolved", "已处置"], ["failed", "失败"], ["ignored", "已忽略"], ["skipped", "已跳过"]]
 
 export function AgentExceptionHandlerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof exceptionExamples>("scan")
   const [state, setState] = useState<AgentExceptionState>("waiting-human")
   const [narrow, setNarrow] = useState(false)
@@ -84,13 +87,18 @@ export function AgentExceptionHandlerDemo() {
     skipped: { state: "skipped", description: "已跳过本项，待核对部分保留。", resolution: { method: "跳过当前区域", time: "示例时间 2026-09-25 09:20" }, actions: [resume] },
   }
   const items = example.items.map((item, index) => index === 0 ? { ...item, disposition: dispositions[state] } : item)
-  return <section id="exception-handler" className="mb-12 space-y-5">
-    <h2 className="text-section-title">异常处理器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentExceptionHandler title={example.title} items={items}   inlineLimit={1}
+          notice="示例：尚未连接真实处理服务。"
+          details={<p>查看材料不代表已核对；处理只针对当前异常，已保留的内容继续使用。历史记录保留当时事实。</p>}
+          onAction={intent => { const item = items.find(value => value.id === intent.exceptionId); const action = intent.kind === "query" ? query : item && "actions" in item.disposition ? item.disposition.actions?.find(value => value.id === intent.actionId) : undefined; setFeedback(`示例：已选择“${action?.label ?? "处理"}”（${item?.title}）；记录保持原样。`) }}
+           view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  return <section id={presentation.embedded ? undefined : "exception-handler"} className="mb-12 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">异常处理器</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：三种用法共享同一组记录。下方按钮手动切换首项状态，处置按钮只记录选择。</p>
     <div className="flex flex-wrap gap-2" aria-label="异常示例用途">{Object.entries(exceptionExamples).map(([key, sample]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as typeof purpose); setState("waiting-human"); setFeedback("") }}>{sample.label}</Button>)}</div>
     <div className="flex flex-wrap gap-2" aria-label="首项示例状态">{stateOptions.map(([value, label]) => <Button key={value} variant="outline" aria-pressed={state === value} onClick={() => { setState(value); setFeedback("") }}>{label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     <p role="status" className="text-ui-hint">{feedback || "尚未选择处置操作。"}</p>
-    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-3"}>
+    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 @min-[1100px]:grid-cols-3"}>
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整处置'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => <section key={label} className="min-w-0 space-y-3" aria-label={label}>
         <h3 ref={index === 1 ? workspaceHeading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
         <AgentExceptionHandler title={example.title} items={items} view={view} density={density} inlineLimit={1}

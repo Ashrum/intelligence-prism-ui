@@ -1,5 +1,7 @@
 "use client"
 
+import { useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useMemo, useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentDistributionMatrix, type AgentDistributionCell, type AgentDistributionComparison, type AgentDistributionIntent, type AgentDistributionMatrixProps } from "../agent-distribution-matrix"
@@ -77,6 +79,7 @@ export const distributionMatrixExamples: Record<"students" | "knowledge", Fixtur
 }
 
 export function DistributionMatrixExample({ purpose, narrow = false, initialView = "inline" }: { purpose: "students" | "knowledge"; narrow?: boolean; initialView?: "inline" | "workspace" }) {
+  const presentation = useAgentDemoPresentation()
   const fixture = distributionMatrixExamples[purpose]
   const [view, setView] = useState(initialView)
   const [compact, setCompact] = useState(false)
@@ -129,6 +132,7 @@ export function DistributionMatrixExample({ purpose, narrow = false, initialView
     comparison, selectedCell: selection ?? undefined, onIntent: intent,
     onExpand: () => changeView("workspace"), onBack: () => changeView("inline"),
   }
+  if (presentation.previewOnly) return <AgentDistributionMatrix {...props}   view="inline" density="default" onExpand={presentation.onExpand} />
   return <div className={`min-w-0 space-y-4 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <p className="text-ui-hint">固定示例 · 展开与返回共用同一结果；筛选、排序和比较只调整本次查看范围。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button>
@@ -146,10 +150,12 @@ export function DistributionMatrixExample({ purpose, narrow = false, initialView
 }
 
 export function AgentDistributionMatrixDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<"students" | "knowledge">("students")
   const [narrow, setNarrow] = useState(false)
-  return <section id="distribution-matrix" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">分布矩阵 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <DistributionMatrixExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "distribution-matrix"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">分布矩阵</h2>}
     <div className="flex flex-wrap gap-3">{(["students", "knowledge"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "students" ? "学生 × 题目（6 × 4）" : "知识点 × 班级"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

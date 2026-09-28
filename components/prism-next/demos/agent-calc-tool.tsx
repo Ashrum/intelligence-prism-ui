@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentCalcTool, type AgentCalcCapabilities, type AgentCalcIntent, type AgentCalcMode, type AgentCalcResult } from "../agent-calc-tool"
 import { Button } from "../button"
@@ -27,6 +29,7 @@ export const calcExamples: readonly AgentCalcResult[] = [
 ]
 
 export function CalcToolExample({ index, narrow = false }: { index: number; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const sample = calcExamples[index], toolSessionId = sample?.toolSessionId ?? "demo-unknown", version = "v1"
   const [expression, setExpression] = useState(sample?.expression ?? "1, 3, 5, 7")
   const [mode, setMode] = useState<AgentCalcMode>(sample?.mode ?? "stats")
@@ -57,6 +60,10 @@ export function CalcToolExample({ index, narrow = false }: { index: number; narr
     else if (intent.type === "compare-with-answer") setFeedback("已显示预置的模拟对比结论。")
     else setFeedback(`已收到插入到题目${intent.target === "answer" ? "答案" : "解析"}的请求；本示例不修改题目。`)
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCalcTool title={index === 0 ? "顶点与最小值（模拟）" : index === 1 ? "对称轴核对（模拟）" : "统计结果未知（模拟）"}
+      toolSessionId={toolSessionId} version={version} expression={expression} mode={mode} capabilities={calcCapabilities}
+      result={result} history={history}   onIntent={receive}
+      details="所有结果、过程、对比和数据点都是预置模拟；采样点之间不代表已经计算过的函数曲线。可修改输入并点击计算，未匹配的表达式保持结果未知。" view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div ref={panel} tabIndex={-1} className={`min-w-0 space-y-2 ${narrow ? "max-w-[320px]" : ""}`}>
     <AgentCalcTool title={index === 0 ? "顶点与最小值（模拟）" : index === 1 ? "对称轴核对（模拟）" : "统计结果未知（模拟）"}
       toolSessionId={toolSessionId} version={version} expression={expression} mode={mode} capabilities={calcCapabilities}
@@ -68,9 +75,11 @@ export function CalcToolExample({ index, narrow = false }: { index: number; narr
   </div>
 }
 export function AgentCalcToolDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false)
-  return <section id="calc-tool" className="min-w-0 space-y-5 py-6">
-    <h2 className="text-section-title">计算与分析工具</h2>
+  if (presentation.previewOnly) return <CalcToolExample index={0} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "calc-tool"} className="min-w-0 space-y-5 py-6">
+    {!presentation.embedded && <h2 className="text-section-title">计算与分析工具</h2>}
     <p className="text-ui-body">模拟组卷核算：顶点与最小值一致、对称轴不一致、统计结果未知。可展开查看过程与本次会话历史。</p>
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     <div className="grid min-w-0 gap-6">{[0, 1, 2].map(index => <CalcToolExample key={index} index={index} narrow={narrow} />)}</div>

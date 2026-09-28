@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { Field, FieldLabel } from "@/components/coss/field"
@@ -44,6 +46,7 @@ export const documentExamples = {
 }
 
 export function DocumentWorkspaceExample({ purpose, narrow }: { purpose: keyof typeof documentExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = documentExamples[purpose]
   const controlId = useId()
   const workspace = useRef<HTMLElement>(null)
@@ -64,6 +67,18 @@ export function DocumentWorkspaceExample({ purpose, narrow }: { purpose: keyof t
     workspace.current?.focus({ preventScroll: true })
     workspace.current?.scrollIntoView({ block: "nearest" })
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentDocumentWorkspace
+        document={{ id: example.id, title: example.title, version, format: example.format, contentScope: example.scope,
+          source: purpose === "outline" ? "教师提供的教学主题（示例）" : "教研材料（固定示例）", snapshot: historical ? "2026-09-24 的固定快照" : undefined, currentVersion: historical ? example.version : undefined }}
+        capabilities={example.capabilities} sections={sections} activeSection={activeSection} onNavigate={sectionId => setActiveSection(sectionId)}
+        preview={{ kind: "excerpt", range: example.previewRange, content: historical ? example.sections[0].text : values[example.sections[0].id] }}
+        draft={purpose === "outline" ? { baseVersion: example.version, values, onChange: change => { setValues(previous => ({ ...previous, [change.sectionId]: change.value })); setState("unsaved") } } : undefined}
+        save={historical ? undefined : { state, description: state === "conflict" ? "另有新版本，当前草稿保留，尚未覆盖原稿。" : undefined }}
+        annotations={[{ id: "note-1", version, anchor: { sectionId: example.sections[0].id, paragraph: "第 1 段" }, author: "教师甲（示例）", time: "2026-09-24 10:30", state: "open", content: purpose === "outline" ? "补充学生说明判断依据的时间。" : "讲评时请补充常数项变化的中间步骤。" }]}
+        onAddAnnotation={intent => setFeedback(`已请求批注「${example.sections.find(section => section.id === intent.sectionId)?.title}」；示例未新增记录。`)}
+        quickActions={purpose === "outline" ? [{ id: "save-request", label: "请求保存草稿", capability: "edit" }] : []}
+        onAction={() => setFeedback("已请求保存；保存结果尚未确认。")}
+        notice="固定示例；修改刷新后还原。" details={<p>打开和滚动不代表材料已被读取或引用。历史示例显示当时内容，保存情况缺少记录时保持未确认。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <Field><FieldLabel htmlFor={`${controlId}-save`}>保存状态示例</FieldLabel><QuestionSelect id={`${controlId}-save`} label="保存状态示例" value={state} onChange={value => setState(value as AgentDocumentSaveState)} items={[
@@ -96,10 +111,12 @@ export function DocumentWorkspaceExample({ purpose, narrow }: { purpose: keyof t
 }
 
 export function AgentDocumentWorkspaceDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof documentExamples>("outline")
   const [narrow, setNarrow] = useState(false)
-  return <section id="document-workspace" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">文档工作区 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <DocumentWorkspaceExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "document-workspace"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">文档工作区</h2>}
     <div className="flex flex-wrap gap-3">{(["outline", "pdf"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "outline" ? "备课提纲示例" : "PDF 讲评材料示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     </div>

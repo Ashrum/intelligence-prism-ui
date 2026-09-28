@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { Field, FieldLabel } from "@/components/coss/field"
@@ -73,6 +75,7 @@ function DraftFields({ value, onChange, readOnly, describedBy, grading }: AgentI
 }
 
 export function ReviewerExample({ example, grading, narrow }: { example: ReviewExample; grading: boolean; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [draft, setDraft] = useState(example.draft)
   const [reason, setReason] = useState("")
   const [state, setState] = useState<AgentItemReviewState>("waiting-human")
@@ -85,6 +88,17 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
   const focusWorkspace = () => { heading.current?.focus(); heading.current?.scrollIntoView({ block: "nearest" }) }
   const review = itemReviewFixture(state, example.item.version)
   const updateDraft = (value: ExampleDraft) => { setDraft(value); setState("draft") }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentItemReviewer item={example.item} review={review} checkpoints={example.checkpoints}
+          summary={<>{draft.text}{grading && <p className="mt-2 text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p>}</>}
+          versionChange={changed || state === "expired" ? { currentVersion: grading ? "评分稿 r3" : "校对稿 r3" } : undefined}
+          restart={{ id: "restart", label: "重新复核当前版本", impact: "请求打开当前版本，原草稿保留。" }}
+          draft={{ value: draft, onChange: updateDraft, render: editor => <DraftFields {...editor} grading={grading} /> }}
+          reason={{ value: reason, onChange: value => { setReason(value); setState("draft") } }}
+          evidence={<AgentEvidenceDrilldown conclusion={{ id: `${example.item.id}-evidence`, statement: "本项核对依据（示例）", version: example.item.version }} nodes={[example.evidence]} view="workspace" density="compact" path={[example.evidence.id]} />}
+          comparison={<dl className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><div className="min-w-0 space-y-2"><dt className="text-ui-action">原值 · {example.item.version}</dt><dd className="whitespace-pre-wrap break-words text-read-body">{example.original}{grading && <p>初评：2 / 2 分</p>}</dd></div><div className="min-w-0 space-y-2"><dt className="text-ui-action">当前草稿</dt><dd className="whitespace-pre-wrap break-words text-read-body">{draft.text}{grading && <p>草稿：{draft.score ?? "待评分"} / 2 分</p>}</dd></div></dl>}
+          history={example.history} notice="示例：未连接真实复核服务。"
+          details={<p>预览、核对标记、复核提交与业务保存分别记录。复核本项不代表整份任务已完成。</p>}
+          onAction={intent => { setFeedback(`示例：已请求${intent.kind === "query" ? "查询原请求" : intent.kind === "restart" ? "重新复核当前版本" : intent.actionId === "edit" ? "修改" : intent.actionId === "defer" ? "标记待议" : intent.actionId === "confirm" ? "确认无误" : "提交修订"}，尚未取得新的复核回执。`); if (intent.kind === "review" && intent.actionId === "edit") focusWorkspace() }} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="space-y-5">
     <Field><FieldLabel htmlFor={selectId}>复核状态示例</FieldLabel><QuestionSelect id={selectId} label="复核状态示例" value={state} onChange={value => setState(value as AgentItemReviewState)} items={[
       { value: "waiting-human", label: "待复核" }, { value: "draft", label: "已编辑未提交" }, { value: "waiting", label: "复核提交中" },
@@ -115,10 +129,12 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
 }
 
 export function AgentItemReviewerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof itemReviewExamples>("scan")
   const [narrow, setNarrow] = useState(false)
-  return <section id="item-reviewer" className="mb-12 space-y-5">
-    <h2 className="text-section-title">单项复核器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ReviewerExample key={purpose} example={itemReviewExamples[purpose]} grading={purpose === "grading"} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "item-reviewer"} className="mb-12 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">单项复核器</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：同一对象、草稿与理由在三种用法中展示，评分字段仅用于单份作答示例。</p>
     <div className="flex flex-wrap gap-2" aria-label="复核示例用途">{Object.entries(itemReviewExamples).map(([key, example]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => setPurpose(key as typeof purpose)}>{example.label}</Button>)}
       <Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>

@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { AgentSlideWorkspace, type AgentSlide, type AgentSlideCapabilities, type AgentSlideIntent } from "../agent-slide-workspace"
@@ -24,6 +26,7 @@ export const slideExampleCapabilities: AgentSlideCapabilities = {
 }
 
 export function SlideWorkspaceExample({ readOnly = false, narrow = false }: { readOnly?: boolean; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const [slides, setSlides] = useState<readonly AgentSlide[]>(readOnly ? slideWorkspaceExample.map(slide => ({ ...slide, status: undefined })) : slideWorkspaceExample)
   const [selected, setSelected] = useState<string | null>(slideWorkspaceExample[0].id)
   const [revision, setRevision] = useState(1)
@@ -56,6 +59,11 @@ export function SlideWorkspaceExample({ readOnly = false, narrow = false }: { re
     setRevision(previous => previous + 1)
     setFeedback("模拟内容已更新，仍未保存；刷新后还原。")
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSlideWorkspace deckId={readOnly ? "historical-lesson-slides" : "lesson-slides"} version={`demo-${revision}`} versionLabel={`课件 v${revision}（模拟）`}
+          title="勾股定理复习课" source={{ label: "由备课提纲生成（模拟）", openable: true }}
+          save={{ state: "unsaved" }} slides={slides} selectedSlideId={selected} capabilities={slideExampleCapabilities}
+          readOnlyReason={readOnly ? "此版本仅供回看，不可修改或重新生成。" : undefined}   onIntent={intent}
+          details={<p>缩略图为 SVG 占位，文字和讲者备注供阅读，不对应真实 PPT 版式。展开与返回不改变保存状态。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <section className="min-w-0 space-y-4">
     <h3 className="text-block-title">{readOnly ? "只读版本示例" : "可调整文字与顺序的模拟课件"}</h3>
     <p role="status" className="text-ui-hint">{feedback}</p>
@@ -75,9 +83,11 @@ export function SlideWorkspaceExample({ readOnly = false, narrow = false }: { re
 }
 
 export function AgentSlideWorkspaceDemo() {
+  const presentation = useAgentDemoPresentation()
   const [narrow, setNarrow] = useState(false)
-  return <section id="slide-workspace" className="min-w-0 space-y-5 py-6">
-    <h2 className="text-section-title">演示文稿工作区 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <SlideWorkspaceExample narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "slide-workspace"} className="min-w-0 space-y-5 py-6">
+    {!presentation.embedded && <h2 className="text-section-title">演示文稿工作区</h2>}
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     <SlideWorkspaceExample narrow={narrow} />
     <SlideWorkspaceExample readOnly narrow={narrow} />

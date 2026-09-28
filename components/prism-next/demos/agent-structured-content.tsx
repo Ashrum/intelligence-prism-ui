@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Button } from "../button"
@@ -78,6 +80,7 @@ export function applyStructureExample(nodes: readonly AgentStructureNode[], inte
 }
 
 export function StructuredContentExample({ purpose, narrow }: { purpose: keyof typeof structuredContentExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = structuredContentExamples[purpose]
   const id = useId()
   const workspace = useRef<HTMLElement>(null)
@@ -105,6 +108,12 @@ export function StructuredContentExample({ purpose, narrow }: { purpose: keyof t
     setChanges(current => [...current, `${action}「${title}」${intent.type === "move" || intent.type === "add" ? `，目标第 ${intent.target.index + 1} 项` : ""}。`])
     setFeedback(`示例结构已调整：${action}。修改未保存。`)
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentStructuredContent structure={{ id: example.id, title: example.title, version: { id: historical ? "history-v1" : "current-v2", label: historical ? "示例 v1" : "示例 v2" },
+        baseVersion: { id: "base-v1", label: "示例 v1" }, ...(historical ? { snapshot: "固定历史结构", currentVersion: { id: "current-v2", label: "示例 v2" } } : {}) }}
+        nodes={supplied} capabilities={example.capabilities} selectedNodeId={selected} onSelect={selection => setSelected(selection.nodeId)} expandedIds={expanded} onExpandedChange={setExpanded}
+          onIntent={receive} save={historical ? { state: "unknown" } : { state: save, description: save === "conflict" ? "基准版本已有更新，当前结构保留，暂不能修改。" : undefined }}
+        changes={{ baseVersion: { id: "base-v1", label: "示例 v1" }, summary: historical ? [] : changes }}
+        notice="示例修改仅在本次页面中保留，刷新后还原。" details={<p>选择节点后，可用名称输入框和按钮调整结构。方向键浏览与折叠，Enter 或空格选择；上移、下移、升级、降级也可通过触屏或键盘操作。拖拽仅辅助移动，正文请在文档视图编辑。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <Field><FieldLabel htmlFor={`${id}-save`}>保存状态示例</FieldLabel><QuestionSelect id={`${id}-save`} label="保存状态示例" value={save} onChange={value => setSave(value as AgentStructureSave["state"])} items={Object.entries(saveLabels).map(([value, label]) => ({ value, label }))} /></Field>
@@ -130,10 +139,12 @@ export function StructuredContentExample({ purpose, narrow }: { purpose: keyof t
 }
 
 export function AgentStructuredContentDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof structuredContentExamples>("lesson")
   const [narrow, setNarrow] = useState(false)
-  return <section id="structured-content" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">结构化内容工作区 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <StructuredContentExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "structured-content"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">结构化内容工作区</h2>}
     <div className="flex flex-wrap gap-3">{(["lesson", "textbook"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "lesson" ? "备课提纲结构示例" : "教材章节结构示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     </div>

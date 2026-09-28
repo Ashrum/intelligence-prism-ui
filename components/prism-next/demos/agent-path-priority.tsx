@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { Button } from "../button"
@@ -59,6 +61,7 @@ export function applyPathExample(current: PathExampleState, intent: AgentPathPri
 }
 
 export function PathPriorityExample({ purpose, narrow }: { purpose: keyof typeof pathExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const id = useId(), trigger = useRef<HTMLButtonElement | null>(null), workspace = useRef<HTMLElement | null>(null)
   const [state, setState] = useState(pathExamples[purpose]), [save, setSave] = useState<AgentPathSave["state"]>("unsaved"), [readOnly, setReadOnly] = useState(false)
   const [feedback, setFeedback] = useState("尚未发出操作请求。")
@@ -77,6 +80,7 @@ export function PathPriorityExample({ purpose, narrow }: { purpose: keyof typeof
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>顺序、下一步范围、依赖、完成与到期均为固定示例记录。调整顺序不会重新计算路径；跳过、冷却、恢复及接受建议只显示请求反馈，待办保留。可用上移、下移或指定位置完成排序。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPathPriority {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPathSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved", label: "已保存（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "保存回执未确认" }, { value: "unknown", label: "未知" },
@@ -89,8 +93,10 @@ export function PathPriorityExample({ purpose, narrow }: { purpose: keyof typeof
 }
 
 export function AgentPathPriorityDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof pathExamples>("student"), [narrow, setNarrow] = useState(false)
-  return <section id="path-priority" className="mb-12 min-w-0 space-y-5"><h2 className="text-section-title">路径与优先级 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <PathPriorityExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "path-priority"} className="mb-12 min-w-0 space-y-5">{!presentation.embedded && <h2 className="text-section-title">路径与优先级</h2>}
     <div className="flex flex-wrap gap-3">{(["student", "teacher"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "student" ? "学生补弱路径示例" : "教师待办优先级示例"}</Button>)}<Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
     <PathPriorityExample key={purpose} purpose={purpose} narrow={narrow} />
   </section>

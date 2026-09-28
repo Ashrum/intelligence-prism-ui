@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentEvidenceDrilldown } from "../agent-evidence-drilldown"
@@ -37,6 +39,7 @@ export const suggestionSetExamples: Record<"teaching" | "learning", { title: str
 
 /** Fixture state is outside the component. Loading a receipt is separate from requesting an action. */
 export function SuggestionSetExample({ purpose, narrow = false }: { purpose: keyof typeof suggestionSetExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const fixture = suggestionSetExamples[purpose]
   const [suggestions, setSuggestions] = useState(fixture.suggestions)
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([fixture.suggestions[0].id])
@@ -74,6 +77,9 @@ export function SuggestionSetExample({ purpose, narrow = false }: { purpose: key
     details: <p>本页仅用固定示例核对选择、比较和调整。共用说明只合并完全相同的依据或来源；证据不足与回执未确认保持可见。刷新后还原。</p>,
   }
   const selectedEvidenceItem = evidence && suggestions.find(item => "evidence" in item && item.evidence?.target?.conclusionId === evidence.target.conclusionId) as AgentSuggestionEntry | undefined
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSuggestionSet {...common}   suggestions={suggestions.filter((item, index) => index < 3 || selectedIds.includes(item.id))}
+        itemActions={purpose === "teaching" ? suggestion => suggestion.id === fixture.suggestions[0].id
+          ? <Button type="button" size="navigation" variant="outline" disabled className="max-w-full whitespace-normal">据此建立教学行动（示例）</Button> : null : undefined} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 两态与紧凑用法共用一份选择及调整草稿。教学建议的完整状态在扩展区展示。</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="独立载入示例事实">
@@ -100,9 +106,11 @@ export function SuggestionSetExample({ purpose, narrow = false }: { purpose: key
 }
 
 export function AgentSuggestionSetDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof suggestionSetExamples>("teaching"), [narrow, setNarrow] = useState(false)
-  return <section id="suggestion-set" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">建议集 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "suggestion-set"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">建议集</h2>}
     <div className="flex flex-wrap gap-3">{(["teaching", "learning"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "teaching" ? "讲评后的教学建议" : "学生学习建议（通用）"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
     </div><SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />

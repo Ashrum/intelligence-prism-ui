@@ -249,7 +249,7 @@ test('two labelled demo groups cover QuestionCard math, generic entries, unknown
     await writeFile(new URL(`ssr-${purpose}.html`, runtime), html);
   }
   assert.match(render(h(AgentCandidatePickerDemo)), /id="candidate-picker"/);
-  assert.match(await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'), /<AgentCandidatePickerDemo\/>/);
+  assert.match(await readFile(new URL('../components/prism-next/demos/agent-component-examples.tsx', import.meta.url), 'utf8'), /<AgentCandidatePickerDemo\s*\/>/);
 });
 
 test('copy polish: exact rationale/source/summary repeats merge once, with accessible row references', () => {

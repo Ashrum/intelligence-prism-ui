@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { AlertDialog, AlertDialogPopup, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogClose } from "@/components/coss/alert-dialog"
 import { Label } from "@/components/coss/label"
@@ -68,6 +70,7 @@ function PagePreview() {
 }
 
 export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof typeof captureScanExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const id = useId(), trigger = useRef<HTMLButtonElement | null>(null), workspace = useRef<HTMLElement | null>(null)
   const [state, setState] = useState(captureScanExamples[purpose]), [save, setSave] = useState<AgentCaptureSave["state"]>("unsaved")
   const [preview, setPreview] = useState<AgentCapturePreview | null>(null), [pendingRemoval, setPendingRemoval] = useState<Extract<AgentCaptureScanIntent, { type: "remove-page" }> | null>(null)
@@ -105,6 +108,7 @@ export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof
           : value === "succeeded" ? { state: "succeeded", operation: "capture", request } : value === "unknown" ? { state: "unknown" } : { state: "idle" }
     setState(current => ({ ...current, receipt })); setFeedback("已载入独立示例回执；没有执行设备采集、上传或质量检查。")
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 space-y-2"><Label htmlFor={`${id}-receipt`}>独立采集／上传回执示例</Label>
       <QuestionSelect id={`${id}-receipt`} label="独立采集／上传回执示例" value={receiptChoice(state.receipt)} onChange={loadReceipt}
@@ -132,8 +136,10 @@ export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof
 }
 
 export function AgentCaptureScanDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof captureScanExamples>("paper"), [narrow, setNarrow] = useState(false)
-  return <section id="capture-scan" className="mb-12 min-w-0 space-y-5"><h2 className="text-section-title">采集扫描 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <CaptureScanExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "capture-scan"} className="mb-12 min-w-0 space-y-5">{!presentation.embedded && <h2 className="text-section-title">采集扫描</h2>}
     <div className="flex flex-wrap gap-3">{(["paper", "board"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "paper" ? "四页试卷作答示例" : "板书拍照示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
     <CaptureScanExample key={purpose} purpose={purpose} narrow={narrow} />

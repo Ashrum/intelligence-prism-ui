@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentConstraintBuilder, type AgentConstraintBuilderProps, type AgentConstraintChange, type AgentConstraintGroup, type AgentConstraintItem } from "../agent-constraint-builder"
@@ -55,6 +57,7 @@ export function constraintExampleConfirmation({ version, confirmedVersion, prepa
 }
 
 export function ConstraintBuilderExample({ purpose, narrow }: { purpose: keyof typeof constraintExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = constraintExamples[purpose], originals = example.groups.flatMap(group => group.items)
   const [values, setValues] = useState<ExampleValues>(() => Object.fromEntries(originals.map(item => [item.id, item.value])))
   const [revision, setRevision] = useState(2)
@@ -104,6 +107,7 @@ export function ConstraintBuilderExample({ purpose, narrow }: { purpose: keyof t
     onPrepare: () => setPreparedVersion(version),
     onConfirm: () => { setRequestedVersion(version); setFeedback("已请求确认本次条件；确认结果尚未收到。") },
   })
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentConstraintBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例，刷新后还原。三个视图共用当前条件；校验和确认记录单独载入。</p>
     <div className="flex flex-wrap gap-2">
@@ -144,9 +148,11 @@ export function ConstraintBuilderExample({ purpose, narrow }: { purpose: keyof t
 }
 
 export function AgentConstraintBuilderDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof constraintExamples>("p04"), [narrow, setNarrow] = useState(false)
-  return <section id="constraint-builder" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">约束构建器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ConstraintBuilderExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "constraint-builder"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">约束构建器</h2>}
     <div className="flex flex-wrap gap-3">{(["p04", "paper"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"}
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "p04" ? "P04 处理条件示例" : "组卷约束示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

@@ -304,8 +304,8 @@ test('paper and course fixtures share real example state, three uses, narrow lay
 test('runtime stays independent of workspace models, timers, storage, content editors and sum calculations', async () => {
   const source = await readFile(new URL('../components/prism-next/agent-structure-arranger.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /localStorage|sessionStorage|setTimeout|setInterval|ole-school-workbench|\.reduce\(|contentEditable|Textarea|text-xs|text-sm|text-\[/);
-  const page = await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8');
-  assert.match(page, /<AgentStructureArrangerDemo\/>/);
+  const page = await readFile(new URL('../components/prism-next/demos/agent-component-examples.tsx', import.meta.url), 'utf8');
+  assert.match(page, /<AgentStructureArrangerDemo\s*\/>/);
 });
 
 test('example host reflects batch values after each edit, including multi-digit input, clearing and mixed selections', () => {

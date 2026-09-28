@@ -370,7 +370,7 @@ test('two labelled demo groups provide comparison, adjustment, narrow layout, ma
     await writeFile(new URL(`ssr-${purpose}.html`, runtime), html);
   }
   assert.match(render(h(AgentSuggestionSetDemo)), /id="suggestion-set"/);
-  assert.match(await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'), /<AgentSuggestionSetDemo\/>/);
+  assert.match(await readFile(new URL('../components/prism-next/demos/agent-component-examples.tsx', import.meta.url), 'utf8'), /<AgentSuggestionSetDemo\s*\/>/);
 });
 
 test('copy polish: per-suggestion repeated disabled reasons have one accessible explanation, including open adjustment', () => {

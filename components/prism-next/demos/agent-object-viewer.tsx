@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentObjectViewer, type AgentObjectIdentity, type AgentObjectSection, type AgentObjectViewerProps } from "../agent-object-viewer"
@@ -26,6 +28,7 @@ export const objectViewerExamples: Record<"question" | "response", { object: Age
 
 /** One fixture host owns the version and section selection shared by all three presentations. */
 export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof objectViewerExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = objectViewerExamples[purpose]
   const [versionId, setVersionId] = useState("example-v2")
   const [requestedVersion, setRequestedVersion] = useState<string | null>(null)
@@ -73,6 +76,7 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
     notice: "固定示例；未连接题库与作答服务。",
     details: <p>查看和定位不会改变读取、引用或复核记录。切换版本后，答案需要重新确认查看；历史内容只读。</p>,
   }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentObjectViewer {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处呈现同一对象与版本。</p>
     <Button type="button" variant="outline" size="navigation" disabled={!requestedVersion} onClick={() => {
@@ -90,10 +94,12 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
 }
 
 export function AgentObjectViewerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof objectViewerExamples>("question")
   const [narrow, setNarrow] = useState(false)
-  return <section id="object-viewer" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">对象查看器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ObjectViewerExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "object-viewer"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">对象查看器</h2>}
     <div className="flex flex-wrap gap-3">{(["question", "response"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "question" ? "题目对象示例" : "学生作答示例"}</Button>)}
       <Button type="button" variant="outline" size="navigation" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
