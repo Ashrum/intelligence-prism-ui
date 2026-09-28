@@ -10,6 +10,8 @@ import { AgentItemReviewer, type AgentItemReview, type AgentItemReviewEditor, ty
 import { AgentEvidenceDrilldown, type AgentEvidenceItem } from "../agent-evidence-drilldown"
 import { DocumentRegionViewer } from "../document-region-viewer"
 import { DraftMathPreview } from "../draft-math-preview"
+import { QuestionContent, type QuestionRecord } from "../question-content"
+import { QuestionExampleDetails, useQuestionPreview } from "./agent-question-presentation"
 import { VerificationFields, type CriterionResult } from "../learning-components"
 import { PointsField, QuestionSelect } from "../question-controls"
 
@@ -64,7 +66,7 @@ function DraftFields({ value, onChange, readOnly, describedBy, grading }: AgentI
   return <div className="space-y-4">
     <Field className="w-full"><FieldLabel htmlFor={id}>{grading ? "评分说明草稿" : "题干草稿"}</FieldLabel>
       <Textarea id={id} value={value.text} readOnly={readOnly} aria-describedby={describedBy} onChange={event => onChange({ ...value, text: event.target.value })} /></Field>
-    {!grading && <DraftMathPreview value={value.text} label="当前题干草稿" />}
+    {!grading && <QuestionContent question={{ id: "review-draft-preview", title: "当前题干草稿", kind: "解答题", points: 5, stem: <DraftMathPreview value={value.text} label="当前题干草稿" /> }} />}
     {grading ? <div className="space-y-2"><p className="text-ui-action">本评分点得分 · 上限 2 分</p>
       {readOnly ? <p className="text-ui-body">{value.score ?? "待评分"} / 2 分</p>
         : <PointsField label="配方步骤得分" value={value.score} max={2} onChange={score => onChange({ ...value, score })} />}
@@ -87,9 +89,16 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
   const selectId = useId()
   const focusWorkspace = () => { heading.current?.focus(); heading.current?.scrollIntoView({ block: "nearest" }) }
   const review = itemReviewFixture(state, example.item.version)
+  const questionPreview = useQuestionPreview()
+  const question: QuestionRecord = { id: grading ? "question-4" : "p04-question-2", title: grading ? "配方步骤" : "二次函数的配方与对称轴", kind: "解答题", points: grading ? 2 : 5,
+    stem: grading ? <p>将 x² − 4x + 1 配方。</p> : <DraftMathPreview value={draft.text} label="当前题面" /> }
+  const summary = (view: "inline" | "workspace") => <div className="min-w-0 space-y-3">
+    {view === "workspace" ? <><QuestionContent question={question} /><QuestionExampleDetails question={question} tabs={["answer"]} /></> : questionPreview.reference(question, grading ? 4 : 2)}
+    {grading && <><p className="text-ui-hint">{draft.text}</p><p className="text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p></>}
+  </div>
   const updateDraft = (value: ExampleDraft) => { setDraft(value); setState("draft") }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentItemReviewer visual={{ sample: true, disconnected: true }} item={example.item} review={review} checkpoints={example.checkpoints}
-          summary={<>{draft.text}{grading && <p className="mt-2 text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p>}</>}
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentItemReviewer visual={{ sample: true, disconnected: true }} item={example.item} review={review} checkpoints={example.checkpoints}
+          summary={summary(presentation.view ?? "inline")}
           versionChange={changed || state === "expired" ? { currentVersion: grading ? "评分稿 r3" : "校对稿 r3" } : undefined}
           restart={{ id: "restart", label: "重新复核当前版本", impact: "请求打开当前版本，原草稿保留。" }}
           draft={{ value: draft, onChange: updateDraft, render: editor => <DraftFields {...editor} grading={grading} /> }}
@@ -99,7 +108,7 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
           history={example.history} notice="示例：未连接真实复核服务。"
           details={<p>预览、核对标记、复核提交与业务保存分别记录。复核本项不代表整份任务已完成。</p>}
           onAction={intent => { setFeedback(`示例：已请求${intent.kind === "query" ? "查询原请求" : intent.kind === "restart" ? "重新复核当前版本" : intent.actionId === "edit" ? "修改" : intent.actionId === "defer" ? "标记待议" : intent.actionId === "confirm" ? "确认无误" : "提交修订"}，尚未取得新的复核回执。`); if (intent.kind === "review" && intent.actionId === "edit") focusWorkspace() }} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
-  return <div className="space-y-5">
+  return <div className="space-y-5">{questionPreview.panel}
     <Field><FieldLabel htmlFor={selectId}>复核状态示例</FieldLabel><QuestionSelect id={selectId} label="复核状态示例" value={state} onChange={value => setState(value as AgentItemReviewState)} items={[
       { value: "waiting-human", label: "待复核" }, { value: "draft", label: "已编辑未提交" }, { value: "waiting", label: "复核提交中" },
       { value: "unknown", label: "回执未确认" }, { value: "resolved", label: "已复核 · 时间未确认" }, { value: "failed", label: "已退回 / 失败" }, { value: "expired", label: "已过期" },
@@ -111,7 +120,7 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
       {([["inline", "default", "对话摘要"], ["workspace", "default", "完整复核"], ["inline", "compact", "紧凑列表"]] as const).map(([view, density, label], index) => <section key={label} aria-label={`${label}示例`} className="min-w-0 space-y-3">
         <h3 ref={index === 1 ? heading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
         <AgentItemReviewer visual={{ sample: true, disconnected: true }} item={example.item} review={review} checkpoints={example.checkpoints} view={view} density={density}
-          summary={<>{draft.text}{grading && <p className="mt-2 text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p>}</>}
+          summary={summary(view)}
           versionChange={changed || state === "expired" ? { currentVersion: grading ? "评分稿 r3" : "校对稿 r3" } : undefined}
           restart={{ id: "restart", label: "重新复核当前版本", impact: "请求打开当前版本，原草稿保留。" }}
           draft={{ value: draft, onChange: updateDraft, render: editor => <DraftFields {...editor} grading={grading} /> }}

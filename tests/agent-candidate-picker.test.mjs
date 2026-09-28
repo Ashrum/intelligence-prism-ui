@@ -244,7 +244,7 @@ test('two labelled demo groups cover QuestionCard math, generic entries, unknown
     const html = render(h(CandidatePickerExample, { purpose, narrow: true }));
     for (const text of ['示例', '总数未知', '加载更多', 'max-w-[320px]', '结果状态示例', '载入提交回执', '载入加入记录', 'data-candidate-picker-view="inline"', 'data-candidate-picker-view="workspace"', 'data-candidate-picker-density="compact"']) assert.ok(html.includes(text), `${purpose}: ${text}`);
     assert.doesNotMatch(textOf(html), /意图|宿主|回调|适配器|opaque-/);
-    if (purpose === 'questions') { assert.equal(textOf(html).split('题面节选 · 示例').length - 1, 1); assert.match(html, /prism-question/); assert.match(html, /<mfrac>/); assert.match(html, /替代依据/); assert.match(html, /失效/); assert.match(html, /受限/); assert.match(html, /已在集合中/); }
+    if (purpose === 'questions') { assert.equal(textOf(html).split('示例：对话候选使用摘要行').length - 1, 1); assert.match(html, /prism-question/); assert.match(html, /<mfrac>/); assert.match(html, /替代依据/); assert.match(html, /失效/); assert.match(html, /受限/); assert.match(html, /已在集合中/); }
     else { assert.match(html, /林同学/); assert.match(html, /跨知识点辨析/); assert.match(html, /状态未知/); }
     await writeFile(new URL(`ssr-${purpose}.html`, runtime), html);
   }

@@ -121,7 +121,8 @@ function StageRecords({ stages, live, density }: { stages: readonly AgentExecuti
     {stages.map(stage => <li key={stage.id} className="min-w-0 space-y-1">
       <div data-agent-trace-row="" className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1">
         <Circle aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" /><span className="min-w-0 flex-1 break-words text-ui-action">{stage.title}</span>
-        <AgentMetaLine><span className="sr-only">阶段状态：</span>{agentProgressLabels[stage.state]} · <span className="sr-only">阶段时间：</span>{stage.time || "阶段时间未确认"}</AgentMetaLine>
+        <AgentStatus unknown={stage.state === "unknown"} tone={stage.state === "failed" ? "error" : stage.state === "completed" ? "success" : stage.state === "running" && live ? "info" : ["waiting", "waiting-human", "partial"].includes(stage.state) ? "warning" : "neutral"}><span className="sr-only">阶段状态：</span>{agentProgressLabels[stage.state]}</AgentStatus>
+        <AgentMetaLine><span className="sr-only">阶段时间：</span>{stage.time || "阶段时间未确认"}</AgentMetaLine>
       </div>
       {stage.description && <p className="break-words text-ui-hint">{stage.description}</p>}
       <AgentTaskProgress appearance="trace" steps={stage.steps} density={density} activity={live && stage.state === "running" ? "live" : "snapshot"} />
@@ -149,7 +150,8 @@ export function AgentExecutionProgress({ title, state, description, steps, expan
     {(exceptions || full) && <IssueRecords items={exceptions ?? []} label="异常与处置记录" density={density} />}
     {(history || full) && <section className="min-w-0 space-y-1.5" aria-label="历次执行"><h4 className="text-ui-meta text-muted-foreground">历次执行</h4>{history?.length ? <ol className="space-y-2.5">{history.map(previous => <li key={previous.id} data-run-id={previous.id} data-activity="snapshot" className="min-w-0 space-y-1.5">
       <div data-agent-trace-row="" className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1"><History aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" /><span className="min-w-0 flex-1 break-words text-ui-action">{previous.label}</span>
-        <AgentMetaLine>当时状态 · {agentProgressLabels[previous.state]}{previous.version && <> · 当时版本 · {previous.version}</>} · {previous.updatedAt || "当时更新时间未确认"}</AgentMetaLine>
+        <AgentStatus unknown={previous.state === "unknown"} tone={previous.state === "failed" ? "error" : previous.state === "completed" ? "success" : ["waiting", "waiting-human", "partial"].includes(previous.state) ? "warning" : "neutral"}>当时状态 · {agentProgressLabels[previous.state]}</AgentStatus>
+        <AgentMetaLine>{previous.version && <>当时版本 · {previous.version} · </>}{previous.updatedAt || "当时更新时间未确认"}</AgentMetaLine>
       </div>
       <p className="break-words text-ui-hint">{previous.description}</p>
       <AgentTaskProgress appearance="trace" steps={previous.steps} activity="snapshot" density={density} />

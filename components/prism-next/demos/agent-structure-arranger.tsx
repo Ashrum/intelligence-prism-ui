@@ -6,6 +6,9 @@ import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { Button } from "../button"
 import { RootFormula } from "../math-content"
+import { QuestionSummaryRow } from "../question-card"
+import type { QuestionRecord } from "../question-content"
+import { useQuestionPreview } from "./agent-question-presentation"
 import { QuestionSelect } from "../question-controls"
 import { AgentStructureArranger, type AgentArrangementActions, type AgentArrangementAttribute, type AgentArrangementGroup, type AgentArrangementItem, type AgentArrangementSave, type AgentArrangementValidation, type AgentStructureArrangerIntent } from "../agent-structure-arranger"
 
@@ -41,6 +44,14 @@ export const arrangementExamples: Record<"paper" | "course", ArrangementExampleS
     ],
   },
 }
+
+/** Original question records are separate from arrangement attributes and display ordinals. */
+const arrangementQuestions: QuestionRecord[] = [
+  { id: "question-source-q1", title: "判断二次函数的开口方向", kind: "单选题", points: 5, stem: <p>函数 y = −2x² + 3 的图像开口方向是（　）。</p>, options: [{ id: "A", content: "向上" }, { id: "B", content: "向下" }], answer: "B", explanation: "二次项系数为负，图像开口向下。" },
+  { id: "question-source-q2", title: "求对称轴", kind: "单选题", points: 5, stem: <p>函数 f(x) = x² − 4x + 3 的对称轴是（　）。</p>, options: [{ id: "A", content: "x = 2" }, { id: "B", content: "x = −2" }], answer: "A", explanation: "配方得 f(x) = (x − 2)² − 1。" },
+  { id: "question-source-q3", title: "函数图像与判别式", kind: "单选题", points: 5, stem: <p>二次函数与横轴有两个不同交点时，判别式满足什么条件？</p>, options: [{ id: "A", content: "大于 0" }, { id: "B", content: "等于 0" }, { id: "C", content: "小于 0" }], answer: "A" },
+  { id: "question-source-q4", title: "求根公式的适用条件", kind: "解答题", points: 10, stem: <p>写出一元二次方程 ax² + bx + c = 0 的实数根公式，并说明适用条件。</p>, blocks: [{ id: "formula", content: <RootFormula /> }], answer: "a ≠ 0 且 b² − 4ac ≥ 0。" },
+]
 
 /** Page-only sample adapter. It never persists, publishes, or claims a save receipt. */
 export function applyArrangementExample(state: ArrangementExampleState, intent: AgentStructureArrangerIntent): ArrangementExampleState {
@@ -84,6 +95,7 @@ export function arrangementExampleBatchAttribute(state: ArrangementExampleState,
 
 export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "course"; narrow: boolean }) {
   const presentation = useAgentDemoPresentation()
+  const questionPreview = useQuestionPreview(arrangementQuestions)
   const example = arrangementExamples[purpose], id = useId()
   const [state, setState] = useState<ArrangementExampleState>(example)
   const [selected, setSelected] = useState<string[]>([])
@@ -103,20 +115,30 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
   }
   function receive(intent: AgentStructureArrangerIntent) {
     if (intent.structureId !== structure.id || intent.versionId !== structure.version.id || intent.baseVersionId !== structure.baseVersion.id) return
-    if (intent.type === "open-item") { setFeedback("已收到示例查看请求；实际接入时由对象查看器打开原条目。"); return }
+    if (intent.type === "open-item") {
+      const question = arrangementQuestions.find(question => question.id === intent.source.objectId)
+      if (question && document.activeElement instanceof HTMLButtonElement) questionPreview.openQuestion(question, state.items.findIndex(item => item.id === intent.itemId) + 1, document.activeElement)
+      else setFeedback("已收到示例查看请求；实际接入时由对象查看器打开原条目。")
+      return
+    }
     if (intent.type === "confirm") { setFeedback("已收到示例确认请求；保存状态未改变。"); return }
     setState(current => applyArrangementExample(current, intent)); setSave("unsaved")
     const label = ({ move: "条目位置已调整", "group-create": "已增加分组", "group-rename": "分组名称已调整", "group-delete": "分组已移除，条目转为未分组", "set-attribute": "编排属性已调整", "batch-move": "所选条目位置已调整", "batch-set-attribute": "所选条目属性已调整" })[intent.type]
     setChanges([label]); setFeedback(`${label}，仅在本页保留，尚未保存。`)
   }
+  const renderQuestion = purpose === "paper" ? (item: AgentArrangementItem) => {
+    const question = arrangementQuestions.find(question => question.id === item.source?.objectId)
+    return question ? <QuestionSummaryRow question={{ ...question, title: item.title }} number={state.items.indexOf(item) + 1} headingLevel={5}
+      onOpen={trigger => questionPreview.openQuestion(question, state.items.indexOf(item) + 1, trigger)} /> : null
+  } : undefined
   const batchAttributes = [arrangementExampleBatchAttribute(state, selected, purpose)]
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentStructureArranger structure={structure} items={state.items} groups={state.groups}
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "在右栏查看" : undefined} structure={structure} items={state.items} groups={state.groups}
         summary={unknown ? {} : { groupCount: state.groups.length, itemCount: state.items.length, itemCountLabel: purpose === "paper" ? "题数" : "任务数", totalScore, ...(purpose === "paper" ? { targetScore: 30 } : {}) }}
         validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
         readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}
         selectedIds={selected} onSelectionChange={setSelected} batchAttributes={batchAttributes} onIntent={receive}
         details={<p>上移、下移或移到分组可用键盘和触屏操作。拖拽可放到条目前或分组末尾。分组最多一层，条目内容请打开原对象查看。此示例删除分组后将条目留在“未分组”。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <div className="flex flex-wrap items-end gap-3">
       <div className="min-w-0 space-y-2"><Label htmlFor={`${id}-save`}>独立保存状态示例</Label><QuestionSelect id={`${id}-save`} label="独立保存状态示例" value={save} onChange={value => setSave(value as AgentArrangementSave["state"])}
         items={[{ value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例记录）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "unconfirmed", label: "回执未确认" }, { value: "error", label: "保存失败" }, { value: "unknown", label: "未知" }]} /></div>
@@ -129,7 +151,7 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
     {([ ["inline", "default", "对话编排摘要"], ["workspace", "default", "完整编排"], ["inline", "compact", "紧凑编排摘要"] ] as const).map(([view, density, label]) => <section key={`${view}-${density}`}
       ref={view === "workspace" ? workspace : undefined} tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      <AgentStructureArranger structure={structure} items={state.items} groups={state.groups}
+      <AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "在右栏查看" : undefined} structure={structure} items={state.items} groups={state.groups}
         summary={unknown ? {} : { groupCount: state.groups.length, itemCount: state.items.length, itemCountLabel: purpose === "paper" ? "题数" : "任务数", totalScore, ...(purpose === "paper" ? { targetScore: 30 } : {}) }}
         validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
         readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}

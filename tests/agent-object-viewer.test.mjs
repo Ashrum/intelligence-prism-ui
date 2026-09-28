@@ -231,7 +231,7 @@ test('both labelled examples compose three presentations, readable math and actu
     for (const text of ['固定示例', '对话快速查看', '完整对象详情', '紧凑对象查看', objectViewerExamples[purpose].object.name]) assert.ok(html.includes(text));
     assert.doesNotMatch(textOf(html), /意图|宿主|回调|受控/);
     assert.ok(!html.includes(objectViewerExamples[purpose].object.id)); assert.match(html, /<math.*<mfrac>/);
-    if (purpose === 'question') { assert.match(html, /data-question-id/); assert.match(html, /确认查看答案与解析/); assert.doesNotMatch(html, /question-solution|分子、分母同时乘以分母的共轭式/); }
+    if (purpose === 'question') { assert.match(html, /data-question-id/); assert.match(html, /data-question-reference/); assert.doesNotMatch(html, /确认查看答案与解析/); assert.match(html, /question-solution/); assert.match(html, /分子、分母同时乘以分母的共轭式/); }
     else { assert.match(html, /review-sheet-viewport/); assert.match(html, /家长联系方式/); assert.match(html, /可见范围不含家长联系方式/); }
   }
   assert.match(render(h(AgentObjectViewerDemo)), /320px 窄容器/);

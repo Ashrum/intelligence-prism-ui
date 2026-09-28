@@ -6,6 +6,7 @@ import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { AgentChangeSet, type AgentChangeSetItem, type AgentChangeSetProps } from "../agent-components"
 import { DraftMathPreview } from "../draft-math-preview"
+import { QuestionContent } from "../question-content"
 
 /** Hand-written examples only; no P04 store or application logic. */
 const exampleItems: readonly AgentChangeSetItem[] = [
@@ -28,7 +29,7 @@ export function AgentChangeSetDemo() {
     basis: "固定示例：扫描材料 A · 第 1 页 · 候选依据 r2；当前草稿 r3",
     notice: "示例：采用不代表已应用或已保存。",
     details: <p>候选依据 r2，当前草稿为 r3；请逐项比较后选择采用或保留。</p>,
-    items: items.map(item => ({ ...item, beforePreview: <DraftMathPreview value={item.before} label="修改前预览"/>, afterPreview: <DraftMathPreview value={item.after} label="建议内容预览"/> })),
+    items: items.map(item => ({ ...item, beforePreview: <QuestionContent question={{ id: item.id, title: item.title, kind: "题面片段", points: 0, stem: <DraftMathPreview value={item.before} label="修改前预览" /> }} />, afterPreview: <QuestionContent question={{ id: item.id, title: item.title, kind: "题面片段", points: 0, stem: <DraftMathPreview value={item.after} label="建议内容预览" /> }} /> })),
     inlineLimit: 1,
     onDecision: (id, decision) => setItems(current => current.map(item => item.id === id ? { ...item, decision } : item)),
     onRewrite: (id, after) => setItems(current => current.map(item => item.id === id ? { ...item, after, decision: "pending" } : item)),

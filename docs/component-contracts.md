@@ -2366,6 +2366,44 @@ import { Badge } from "@/components/prism-next/badge"
 
 ## 题目
 
+遵循 [题目呈现章程 v0.1（PO 已批准）](question-presentation-charter.md)。题面统一由 `QuestionContent` 呈现，详情统一由 `QuestionDetails` 呈现；Agent 对话用 L0 / L1，通过宿主回调进入右栏 L2，不就地展开题目详情。组合件不增加组件目录条目，仍为 80 项。
+
+### 题目呈现分层（任务 C2）
+
+复用检索依据：既有 `QuestionCard`、`QuestionContent`、`QuestionDetails`、coss Button / Checkbox / Tabs、任务 C 的 `AgentStatus` 与普通卡片表面。`compact` 原来只裁两行题干，缺少安全节选和引用，因此在 `question-presentation.tsx` 组合 L0 / L1，由 `question-card.tsx` 一并导出；不创建另一套题面渲染器。
+
+| API | 默认与语义 |
+| --- | --- |
+| `QuestionReference` | L0，`question` 仅需 `QuestionRecord` 的 `id` / `title`；可选 `number`、`status`；`href` 或 `onOpen(trigger)` 二选一，原生链接／按钮，由宿主打开完整题目 |
+| `QuestionSummaryRow` | L1，无外框；`question`、可选 `number`、`headingLevel=3`、`checked/onCheckedChange`、`onOpen(trigger)`、`showPoints=true`、`displayPoints`、`status/header` |
+| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“在右栏查看”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
+| `QuestionCard.number` | 沿用现有可选属性，明确为宿主提供的展示序号；不新增 displayLabel、不改写 question.id。标题“第 n 题 · 标题”，档案始终显示真实 question.id |
+| `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
+| `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
+| `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
+| `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
+| `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
+| `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |
+
+`QuestionSolution` 的整题与每个小问均对缺失的 answer / explanation 显示“未提供参考答案 / 未提供解析”；数值 0 不是缺失。宿主可通过 tabs 去掉答案页，不根据作答或提交状态自行显示答案。小问类型覆盖 single / multiple / fill / boolean / long。
+
+L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-xs/5、bg-card；不为配图中的 12px 新增圆角令牌。内边距 16px，选中用 ring-primary/60 与 bg-info/10；属性一行 text-ui-meta，窄容器整体换到标题下。选项默认两列，容器不足 480px 单列；显式 optionColumns=1/4 保持原支持。块级公式按实际滚动位置显示两侧边缘渐隐，使用现有 border 令牌，无动画、无字号缩小。
+
+### Agent 题目插槽接入（任务 C2）
+
+| 组件 | 接入与兼容边界 |
+| --- | --- |
+| 10 候选选择器 | 既有 renderItem 不变；示例 inline 用 L1，workspace 用 L2 + QuestionDetails；受限条目仍不调用插槽 |
+| 11 集合篮 | 新增可选 itemPresentation='default' / 'summary'，默认 default 保持 renderItem 仅 workspace 调用；summary 才在两态调用原签名插槽并采用无外框条目。受限条目不调用；示例 L1 的查看交宿主单题面板 |
+| 12 结构编排器 | 新增可选 renderItem(item, { view, density })，默认未传保持原渲染；提供内容时以无外框域内容替代可见重复标题，原标题的可访问关联、锁定、来源、属性和操作保护仍在。回调与状态机不变 |
+| 14 对象查看器 | 新增可选 inlineDisclosure='local' / 'host'，默认 local 保持原披露；host 的 inline 只挂载允许的 summary，不提供就地展开 content 的入口，workspace 和 sensitive/受限保护不变。题目示例选 host，扩展态 L2 默认答案与解析 |
+| 15 / 17 | 示例题面由 QuestionContent 呈现；17 的扩展态 QuestionDetails 只传 answer，inline 用 L0 |
+| 16 / 19 / 20 / 21 | 示例通过现有说明／内容槽或示例宿主提供 L0 引用；字符串契约不扩为 ReactNode，不改回调 |
+| 33 / 42 | 33 继续既有 QuestionPrint 阅读／打印；42 示例编辑区下方组合 QuestionContent 预览 |
+
+示例宿主 `useQuestionPreview` 只保存本页查看对象、页签和触发元素；同一示例宿主只有一个题目面板。复用 QuestionWorkPanel/coss Drawer，右栏默认答案页，上一题／下一题保持当前页签，关闭交回原触发元素；小于 600px 用全屏宽高。它不进入复用组件，不新增 Store、路由、持久化、读取事实或执行回执。完整浏览器与焦点验收由 Supervisor 执行。
+
+
 ```tsx
 <QuestionCard question={question} />
 <QuestionCard

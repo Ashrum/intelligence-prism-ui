@@ -247,7 +247,7 @@ test('two purposes reuse three presentations, question summary slot and provided
     const html = render(h(CollectionBasketExample, { purpose, narrow: true }));
     for (const text of ['固定示例', '对话摘要', '完整集合管理', '紧凑集合摘要', 'max-w-[320px]']) assert.ok(html.includes(text));
     assert.equal((html.match(/data-agent-collection-view=/g) ?? []).length, 3);
-    if (purpose === 'questions') { assert.match(html, /data-question-id=/); assert.match(html, /<mfrac>/); assert.match(html, /总分（含失效题）/); }
+    if (purpose === 'questions') { assert.match(html, /data-question-summary=/); assert.match(html, /<mfrac>/); assert.match(html, /总分（含失效题）/); }
     else for (const text of ['课堂导入', '拓展阅读', '图片', '视频', '文章']) assert.ok(html.includes(text));
   }
   assert.match(render(h(AgentCollectionBasketDemo)), /320px 窄容器/);
