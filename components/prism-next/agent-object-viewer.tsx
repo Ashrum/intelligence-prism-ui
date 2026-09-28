@@ -167,12 +167,15 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
   return <Surface aria-labelledby={minimal ? undefined : `${id}-title`} aria-label={minimal ? object.name : undefined} data-agent-object-view={view} data-density={density}
     data-historical={historical || undefined} className={minimal ? `@container flex min-w-0 flex-col ${compact ? "gap-3" : "gap-5"}` : `@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
     {minimal ? <header className="min-w-0 space-y-2">
-      <AgentMetaLine data-object-facts="" className="overflow-x-auto whitespace-nowrap" tabIndex={0} role="region" aria-label="对象事实">
-        <AgentStatus tone={historical ? "warning" : "neutral"}>{historical ? "历史版本（只读）" : "当前状态"}</AgentStatus>
-        {` · ${historical ? "当时版本" : "当前版本"}：${version.label || "版本未确认"}`}
-        {historical && version.currentLabel && ` · 当前版本：${version.currentLabel}`}
-        {object.displayId && ` · 编号：${object.displayId}`}
-        {available && ` · 可见范围：${access.scope || "范围未确认"} · 来源：${source || "来源未确认"}`}
+      <AgentMetaLine data-object-facts="">
+        <span className="inline-block whitespace-nowrap"><AgentStatus tone={historical ? "warning" : "neutral"}>{historical ? "历史版本（只读）" : "当前状态"}</AgentStatus></span>
+        <span className="inline-block whitespace-nowrap">{` · ${historical ? "当时版本" : "当前版本"}：${version.label || "版本未确认"}`}</span>
+        {historical && version.currentLabel && <span className="inline-block whitespace-nowrap">{` · 当前版本：${version.currentLabel}`}</span>}
+        {object.displayId && <span className="inline-block whitespace-nowrap">{` · 编号：${object.displayId}`}</span>}
+        {available && <>
+          <span className="inline-block whitespace-nowrap">{` · 可见范围：${access.scope || "范围未确认"}`}</span>
+          <span className="inline-block whitespace-nowrap">{` · 来源：${source || "来源未确认"}`}</span>
+        </>}
       </AgentMetaLine>
       {!identified && <p role="status"><AgentStatus unknown>对象或版本尚未确认。</AgentStatus></p>}
       {available ? <>
