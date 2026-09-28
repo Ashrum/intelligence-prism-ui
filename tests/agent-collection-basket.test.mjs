@@ -248,7 +248,7 @@ test('two purposes reuse three presentations, question summary slot and provided
     const html = render(h(CollectionBasketExample, { purpose, narrow: true }));
     for (const text of ['固定示例', '对话摘要', '完整集合管理', '紧凑集合摘要', 'max-w-[320px]']) assert.ok(html.includes(text));
     assert.equal((html.match(/data-agent-collection-view=/g) ?? []).length, 3);
-    if (purpose === 'questions') { assert.match(html, /data-question-summary=/); assert.match(html, /<mfrac>/); assert.match(html, /总分（含失效题）/); }
+    if (purpose === 'questions') { assert.match(html, /data-collection-summary-row=/); assert.doesNotMatch(html, /data-question-summary=|<mfrac>|data-collection-content=/); assert.match(html, /总分（含失效题）/); }
     else for (const text of ['课堂导入', '拓展阅读', '图片', '视频', '文章']) assert.ok(html.includes(text));
   }
   assert.match(render(h(AgentCollectionBasketDemo)), /320px 窄容器/);
@@ -295,7 +295,7 @@ test('default presentation retains its pre-B1 rendered snapshots', () => {
 
 const summaryProps = {
   itemPresentation: 'summary', onAction() {},
-  renderItem: item => h('div', { 'data-host-summary': item.id }, `${item.title} · 题目 · 5 分`),
+  renderItem: () => assert.fail('summary must never invoke content renderer'),
 };
 function descendants(node, predicate) {
   const found = [];
@@ -307,31 +307,65 @@ function descendants(node, predicate) {
   visit(node); return found;
 }
 
-test('summary main row pairs one host summary with a trailing 44px removal control and supplementary metadata', () => {
+test('summary renders compact numbered title and one facts line without invoking body renderer in either view', () => {
   for (const mode of modes) {
-    const nodes = capture({ ...mode, ...summaryProps });
-    const rows = nodes.filter(node => node.props['data-collection-summary-row'] === '');
+    const extra = { ...mode, ...summaryProps, onSelectionChange() {} };
+    const nodes = capture(extra), rows = nodes.filter(node => node.props['data-collection-summary-row'] === '');
     assert.equal(rows.length, 2);
     rows.forEach((row, index) => {
-      assert.doesNotMatch(row.props.className, /flex-wrap/);
-      assert.equal(descendants(row, n => n.props['data-host-summary']).length, 1);
-      const children = React.Children.toArray(row.props.children);
-      const remove = children.at(-1);
+      const remove = React.Children.toArray(row.props.children).at(-1);
       assert.equal(remove.props['aria-label'], `移出试题篮：${props.items[index].title}`);
-      assert.match(remove.props.className, /min-h-11 min-w-11 shrink-0/);
-      assert.equal(remove.props.size, 'navigation-icon');
+      assert.equal(remove.props.size, 'icon-sm'); assert.equal(remove.props.variant, 'ghost');
+      assert.match(remove.props.className, /pointer-coarse:min-h-11 pointer-coarse:min-w-11/);
     });
-    const html = htmlFor({ ...mode, ...summaryProps });
-    assert.equal((html.match(/data-collection-content=/g) || []).length, 2);
-    assert.doesNotMatch(html, /aria-label="移除：|分值：/);
-    assert.match(textOf(html), /基础 · 版本：题目 v2/);
-    assert.match(textOf(html), /拓展 · 版本：题目 v3/);
+    const html = htmlFor(extra), rowsHtml = html.match(/<li data-collection-item[\s\S]*?<\/li>/g).join('');
+    assert.match(textOf(rowsHtml), /第 1 题 · 第一题.*题目 · 分值：5 分/);
+    assert.doesNotMatch(rowsHtml, /data-collection-content=|data-host-summary|版本：|data-slot="card"/);
+    assert.equal((rowsHtml.match(/data-agent-meta=/g) || []).length, 2);
+    assert.match(rowsHtml, /data-slot="separator"/);
+    if (mode.view === 'workspace') {
+      assert.match(html, /aria-label="选择：第 1 题 · 第一题"/);
+      for (const label of rowsHtml.match(/<label[^>]*for="[^"]*-select"[\s\S]*?<\/label>/g) || []) assert.equal(textOf(label), '');
+    }
   }
-  const extra = { ...summaryProps, items: [{ ...entry, fields: [...entry.fields, { label: '审核', value: '待核对' }] }] };
-  assert.match(textOf(htmlFor(extra)), /审核：待核对/);
-  for (const renderItem of [undefined, () => null, () => false]) {
-    assert.match(textOf(htmlFor({ ...summaryProps, renderItem })), /类型：题目.*分值：5 分/);
+});
+
+test('summary title opens the exact authorized entry with a scoped label and trigger, including history', () => {
+  const calls = [], trigger = { id: 'open' };
+  const extra = { ...summaryProps, openLabel: '核对题目', onOpenItem: (...args) => calls.push(args) };
+  for (const snapshot of [undefined, '历史快照']) {
+    button(capture({ ...extra, collection: { ...collection, snapshot } }), '核对题目：第 1 题 · 第一题').props.onClick({ currentTarget: trigger });
   }
+  assert.deepEqual(calls, [[entry, trigger], [entry, trigger]]);
+  const restricted = { id: 'secret', access: 'restricted', disclosure: { label: '受限题', reason: '无权查看' } };
+  assert.doesNotMatch(htmlFor({ ...extra, items: [restricted] }), /核对题目|第 1 题/);
+  assert.doesNotMatch(htmlFor(summaryProps), /aria-label="查看题目/);
+  const html = htmlFor({ ...extra, inlineLimit: 1, onExpand() {}, items: [entry, { ...entry, id: 'skip' }, { ...entry, id: 'invalid', issue: { state: 'invalid', reason: '失效' } }] });
+  assert.match(html, /核对题目：第 3 题/);
+});
+
+test('summary move icons retain scoped version intents, boundaries and grouped-order guards', () => {
+  const events = [], trigger = {}, extra = { ...summaryProps, view: 'workspace', onAction: (...args) => events.push(args) };
+  const nodes = capture(extra);
+  const down = button(nodes, '下移：第 1 题 · 第一题');
+  assert.equal(down.props.size, 'icon-sm'); assert.equal(down.props.variant, 'ghost');
+  down.props.onClick({ currentTarget: trigger });
+  assert.deepEqual(events, [[{ collectionId: 'basket', collectionVersion: '集合 v4', itemId: 'q1', version: '题目 v2', kind: 'move', direction: 'down', adjacentId: 'q2' }, trigger]]);
+  for (const [state, label, reason] of [
+    [{}, '上移：第 1 题 · 第一题', '已经是第一项。'],
+    [{}, '下移：第 2 题 · 第二题', '已经是最后一项。'],
+    [{ groupBy: 'group' }, '下移：第 1 题 · 第一题', '请切回集合顺序后调整。'],
+    [{ collection: { ...collection, snapshot: '' } }, '下移：第 1 题 · 第一题', '历史集合仅供查看。'],
+    [{ onAction: undefined }, '下移：第 1 题 · 第一题', '当前无法操作。'],
+    [{ items: [{ ...entry, actions: { move: { down: { disabledReason: '顺序锁定' } } } }, props.items[1]] }, '下移：第 1 题 · 第一题', '顺序锁定'],
+  ]) {
+    const control = button(capture({ ...extra, ...state }), label);
+    assert.equal(control.props.disabled, true); assert.ok(control.props['aria-describedby']);
+    const html = htmlFor({ ...extra, ...state }); assert.ok(html.includes(reason));
+    control.props.onClick({ currentTarget: trigger });
+  }
+  assert.equal(events.length, 1);
+  assert.doesNotMatch(htmlFor({ ...extra, view: 'inline' }), /aria-label="上移|aria-label="下移/);
 });
 
 test('summary removal preserves the exact version-bound intent, trigger and disabled guards', () => {
@@ -358,7 +392,7 @@ test('summary removal preserves the exact version-bound intent, trigger and disa
 test('summary sources deduplicate only explicit matches; absent source and different source stay visible', () => {
   const items = [{ ...entry, source: collection.source }, { ...entry, id: 'other', source: '其他题库' }, { ...entry, id: 'unknown', source: undefined }];
   const html = htmlFor({ ...summaryProps, items });
-  assert.equal((html.match(/data-agent-source=""/g) || []).length, 2);
+  assert.equal((html.match(/data-agent-source=""/g) || []).length, 1);
   assert.equal((html.match(/来源：现有题篮/g) || []).length, 1);
   assert.match(html, /来源：其他题库/); assert.match(html, /来源：未确认/);
   const same = htmlFor({ ...summaryProps, items: [items[0], { ...items[0], id: 'same' }] });
@@ -378,7 +412,7 @@ test('summary header has one short-fact line and one main status; supplementary 
   const disclosed = render(h('div', null, source.props.children));
   for (const text of ['本机浏览器存储说明', '当前全局选题说明', 'P04 入篮说明']) assert.ok(disclosed.includes(text));
   assert.match(textOf(htmlFor({ ...extra, summary: { count: 0, unit: '题' } })), /练习题集合 · 0题/);
-  assert.match(textOf(htmlFor({ ...extra, summary: { count: null }, collection: { ...collection, source: undefined, version: undefined } })), /练习题集合 · 未确认.*集合版本：未确认.*来源：未确认/);
+  assert.match(textOf(htmlFor({ ...extra, summary: { count: null }, collection: { ...collection, source: undefined, version: undefined } })), /练习题集合 · 未确认.*来源：未确认.*同步信息不完整（集合版本未提供）/);
 });
 
 test('summary preserves required failure, unknown, issue, restriction, history and change facts outside disclosures', () => {
@@ -392,4 +426,83 @@ test('summary preserves required failure, unknown, issue, restriction, history a
     for (const text of ['同步原因必须可见', '新增事实', '题目已下架', '版本已更改', '权限不足', '当时版本', '历史集合仅供查看']) assert.ok(html.includes(text));
     assert.doesNotMatch(html, /PRIVATE/);
   }
+});
+
+
+test('summary hides ungrouped placeholders and secondary facts but retains real grouping and issue reasons in every mode', () => {
+  for (const mode of modes) for (const groupBy of ['none', 'group']) {
+    const items = [
+      { ...entry, groupId: undefined, source: collection.source, summary: '次要摘要', fields: [{ label: '版本备注', value: '次要字段' }], actions: { remove: {} } },
+      { ...entry, id: 'conflict', groupId: 'g1', issue: { state: 'conflict', reason: '引用 v1 与当前 v2 不一致，请核对' }, actions: { remove: {} } },
+      { ...entry, id: 'invalid', groupId: 'missing', issue: { state: 'invalid', reason: '资源失效，请移除' }, actions: { remove: { disabledReason: '移出暂不可用' } } },
+    ];
+    const html = htmlFor({ ...mode, ...summaryProps, groupBy, items });
+    const rows = html.match(/<li data-collection-item[\s\S]*?<\/li>/g).join('');
+    assert.doesNotMatch(html, /未分组|次要摘要|次要字段/);
+    assert.doesNotMatch(rows, /版本：题目|版本：未确认/);
+    for (const reason of ['版本冲突', '引用 v1 与当前 v2 不一致，请核对', '资源失效，请移除', '移出暂不可用']) assert.ok(rows.includes(reason));
+    assert.match(textOf(rows), /分组：基础.*分组：分组未确认/);
+    const normal = rows.match(/<li data-collection-item="q1"[\s\S]*?<\/li>/)[0];
+    assert.doesNotMatch(normal, /data-agent-source|data-host-summary|次要摘要/);
+    assert.match(normal, /data-agent-meta/);
+  }
+});
+
+test('summary header consolidates missing sync metadata without inventing or changing sync status', () => {
+  for (const state of ['unknown', 'local', 'synced', 'failed']) {
+    for (const version of [undefined, '集合 v4']) for (const updatedAt of [undefined, '10:30']) {
+      const html = htmlFor({ ...summaryProps, collection: { ...collection, version }, visual: { updatedAt }, sync: { state, description: '宿主同步说明' } });
+      const header = html.match(/<header[\s\S]*?<\/header>/)[0];
+      assert.doesNotMatch(header, /集合版本：未确认|最近更新：未提供/);
+      assert.equal((header.match(/同步信息不完整/g) || []).length, !version || !updatedAt ? 1 : 0);
+      if (version) assert.match(textOf(header), /集合版本：集合 v4/);
+      if (updatedAt) assert.match(textOf(header), /最近更新：10:30/);
+      if (!version && !updatedAt) assert.match(textOf(header), /同步信息不完整（集合版本、更新时间未提供）/);
+      assert.ok(textOf(header).includes({ unknown: '状态未确认', local: '本页暂存', synced: '已同步', failed: '同步失败' }[state]));
+      if (state === 'unknown' || state === 'failed') assert.match(html, /宿主同步说明/);
+    }
+  }
+});
+
+test('overview is workspace-only, follows header, precedes selection/list and ends with a separator', () => {
+  const overview = h('p', { 'data-host-overview': '' }, '宿主统计 999');
+  for (const itemPresentation of ['default', 'summary']) for (const density of ['default', 'compact']) {
+    const extra = { itemPresentation, density, overview, onSelectionChange() {} };
+    assert.doesNotMatch(htmlFor(extra), /data-host-overview|data-collection-overview/);
+    const html = htmlFor({ ...extra, view: 'workspace' });
+    const start = html.indexOf('data-collection-overview'), end = html.indexOf('已选择');
+    assert.ok(start > html.indexOf('</header>'));
+    assert.ok(start < end && end < html.indexOf('data-collection-item='));
+    assert.match(html.slice(start, end), /宿主统计 999[\s\S]*data-slot="separator"/);
+  }
+});
+
+test('overview replaces all header statistic fields/group counts while preserving status and identity', () => {
+  for (const itemPresentation of ['default', 'summary']) for (const state of ['unknown', 'failed']) {
+    const extra = { view: 'workspace', itemPresentation, overview: h('p', null, '统计由宿主提供'),
+      collection: { ...collection, title: '试题篮', snapshot: '昨日' }, summary: { count: 9, unit: '题', fields: [{ label: '总分（含失效题）', value: 147 }, { label: '其他统计', value: 99 }] },
+      sync: { state, description: '同步记录暂不可核对' } };
+    const html = htmlFor(extra), header = textOf(html.match(/<header[\s\S]*?<\/header>/)[0]);
+    assert.match(header, /试题篮 · 9题/);
+    assert.match(header, /历史集合 · 昨日.*当时版本：集合 v4.*来源：现有题篮.*同步信息不完整/);
+    assert.ok(header.includes(state === 'unknown' ? '状态未确认' : '同步失败'));
+    assert.match(html, /同步记录暂不可核对/);
+    assert.doesNotMatch(header, /总分|其他统计|基础：8|拓展：1|数量：/);
+    for (const overview of [undefined, null, false, true]) {
+      const fallback = htmlFor({ ...extra, overview });
+      assert.doesNotMatch(fallback, /data-collection-overview/);
+      assert.match(textOf(fallback), /总分（含失效题）：147.*其他统计：99.*基础：8/);
+    }
+    assert.match(textOf(htmlFor({ ...extra, view: 'inline' })), /总分（含失效题）：147/);
+  }
+});
+
+test('question fixture provides passive count, total and score composition once in workspace', () => {
+  const html = render(h(CollectionBasketExample, { purpose: 'questions', narrow: true }));
+  assert.equal((html.match(/data-collection-overview/g) || []).length, 1);
+  const overview = html.slice(html.indexOf('data-collection-overview'), html.indexOf('role="separator"', html.indexOf('data-collection-overview')));
+  assert.match(textOf(overview), /已选题目3当前总分17/);
+  for (const value of ['题型分值构成', '单选：5分', '多选：6分', '填空：6分']) assert.ok(overview.includes(value));
+  assert.doesNotMatch(overview, /<button/);
+  assert.doesNotMatch(render(h(CollectionBasketExample, { purpose: 'preparation', narrow: true })), /data-collection-overview/);
 });

@@ -4,7 +4,7 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 
 import { useRef, useState } from "react"
 import { Button } from "../button"
-import { QuestionSummaryRow } from "../question-card"
+import { MetricSummary, StatusComposition } from "../data-display"
 import { useQuestionPreview } from "./agent-question-presentation"
 import { questionSamples } from "../fixtures/question-samples"
 import { AgentCollectionBasket, type AgentCollectionBasketProps, type AgentCollectionChange, type AgentCollectionEntry, type AgentCollectionGroup, type AgentCollectionIdentity, type AgentCollectionIntent, type AgentCollectionItem, type AgentCollectionSync } from "../agent-collection-basket"
@@ -17,7 +17,7 @@ export const collectionBasketExamples: Record<"questions" | "preparation", { col
     collection: { id: "example-questions", title: "试题篮", type: "题目集合", source: "示例题库", version: "示例集合 v1" },
     items: questionSamples.slice(0, 3).map((question, index): AgentCollectionEntry => ({
       id: question.id, title: question.title, type: question.kind, source: index === 2 ? "校本补充题库（示例）" : "示例题库", version: "题目示例 v1",
-      summary: index === 0 ? "含根式与分式条件，完整题干可在管理视图核对。" : undefined,
+      summary: index === 0 ? "含根式与分式条件，完整题干可点击标题查看。" : undefined,
       fields: [{ label: "分值", value: `${question.points} 分` }], selectable: {},
       issue: index === 2 ? { state: "invalid", reason: "示例题库已下架此题，使用前请移除或查看替代题。" } : undefined,
       actions: { remove: {}, move, ...(index === 2 ? { resolve: [{ id: "replacement", label: "查看替代题" }] } : {}) },
@@ -73,10 +73,20 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     setItems(next); setRevision(value => value + 1); setSync({ state: "local" })
   }
 
+  const questions = items.flatMap(item => questionSamples.filter(question => question.id === item.id))
+  const totalPoints = questions.reduce((sum, question) => sum + question.points, 0)
+  const composition = (["single", "multiple", "fill"] as const).map((response, index) => ({
+    id: response, label: ["单选", "多选", "填空"][index],
+    value: questions.filter(question => question.response === response).reduce((sum, question) => sum + question.points, 0),
+  }))
   const common: AgentCollectionBasketProps = {
     collection: { ...example.collection, version: `示例集合 v${revision}` }, items,
     // These values belong to this fixture host, never to the collection component.
-    summary: { count: items.length, unit: purpose === "questions" ? "题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${items.reduce((sum, item) => sum + (questionSamples.find(question => question.id === item.id)?.points ?? 0), 0)} 分` }] : undefined },
+    summary: { count: items.length, unit: purpose === "questions" ? "题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${totalPoints} 分` }] : undefined },
+    overview: purpose === "questions" ? <>
+      <MetricSummary density="compact" items={[{ id: "count", label: "已选题目", value: items.length }, { id: "points", label: "当前总分", value: totalPoints }]} />
+      <StatusComposition density="compact" items={composition} unit="分" label="题型分值构成" />
+    </> : undefined,
     groups: example.groups.map(group => ({ ...group, count: items.filter(item => item.access !== "restricted" && item.groupId === group.id).length })),
     sync, changes, selectedIds, onSelectionChange: setSelectedIds, groupBy, onGroupByChange: setGroupBy, onAction: act,
     inlineLimit: 1,
@@ -86,14 +96,14 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     itemPresentation: purpose === "questions" ? "summary" : "default",
-    renderItem: purpose === "questions" ? item => {
+    openLabel: "查看题目",
+    onOpenItem: purpose === "questions" ? (item, trigger) => {
       const question = questionSamples.find(question => question.id === item.id)
-      return question ? <QuestionSummaryRow question={question} number={items.indexOf(item) + 1} headingLevel={4}
-        onOpen={trigger => questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)} /> : null
+      if (question) questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)
     } : undefined,
     notice: "仅为本页示例；刷新后还原。",
     // Supplementary collection guidance is disclosed by the header source chip in summary mode.
-    details: <p>三个视图共用当前选题集合。题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
+    details: <p>三个视图共用当前选题集合。题目分值与分组数量由本页示例提供。已选题目指篮内题目（包含失效题），不是批量勾选项；当前总分与题型分值采用相同口径。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}

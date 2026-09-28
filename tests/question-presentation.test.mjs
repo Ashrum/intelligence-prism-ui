@@ -190,11 +190,13 @@ test('candidate conversation previews contain L1 and never a details region or a
   assert.match(full, /data-question-level="L2"/); assert.match(full, /question-solution/);
 });
 
-test('basket and arranger conversation items use L1 without details and retain external facts', () => {
+test('basket compact titles and arranger L1 retain external facts without inline details', () => {
   const basket = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: true });
   const arranger = demo(c.ArrangementExample, { purpose: 'paper', narrow: true });
+  assert.match(basket, /查看题目/); assert.match(arranger, /在右栏查看/);
+  assert.match(basket, /data-collection-summary-row/); assert.doesNotMatch(basket, /data-question-summary|data-collection-content/);
+  assert.match(arranger, /data-question-summary/);
   for (const html of [basket, arranger]) {
-    assert.match(html, /data-question-summary/); assert.match(html, /在右栏查看/);
     assert.doesNotMatch(html, /question-solution|question-detail-region|aria-label="答案与解析"/);
   }
   assert.match(basket, /本页暂存/); assert.match(arranger, /未保存/);
@@ -217,7 +219,9 @@ test('new basket summary opt-in preserves workspace-only default and never invok
   const props = { collection: { id: 'c', title: '集合', type: '题目' }, items: [{ id: 'q', title: '题目', type: '题目' }, { id: 'private', access: 'restricted', disclosure: { label: '受限题', reason: '不可披露' } }], summary: { count: 2 },
     renderItem: item => { calls.push(item.id); return h('div', null, 'SLOT_CONTENT'); } };
   assert.doesNotMatch(render(h(c.AgentCollectionBasket, props)), /SLOT_CONTENT/); assert.deepEqual(calls, []);
-  assert.match(render(h(c.AgentCollectionBasket, { ...props, itemPresentation: 'summary' })), /SLOT_CONTENT/); assert.deepEqual(calls, ['q']);
+  for (const view of ['inline', 'workspace']) {
+    assert.doesNotMatch(render(h(c.AgentCollectionBasket, { ...props, view, itemPresentation: 'summary' })), /SLOT_CONTENT/); assert.deepEqual(calls, []);
+  }
   calls.length = 0;
   assert.match(render(h(c.AgentCollectionBasket, { ...props, view: 'workspace' })), /SLOT_CONTENT/); assert.deepEqual(calls, ['q']);
 });
@@ -285,4 +289,31 @@ test('question attributes are indivisible segments below the title and its trail
     assert.deepEqual(segments, ['复合题', ' · 12 分', ' · 综合', ' · 整题', ' · 含 3 个小问']);
     assert.match(html, /示例<\/span><\/div><\/div><p data-question-attributes/);
   }
+});
+
+
+test('L1 open labels are configurable without changing native button, excerpt or exact trigger forwarding', () => {
+  const calls = [], trigger = {}, q = { ...question, options: [{ id: 'A', content: '完整选项' }] };
+  const props = { question: q, number: 2, onOpen: value => calls.push(value), openLabel: '查看题目', openAccessibleLabel: '查看完整题目：第 2 题 · 从配方解释最小值' };
+  const html = render(h(c.QuestionSummaryRow, props));
+  assert.match(html, /<button[^>]*type="button"[^>]*aria-label="查看完整题目：第 2 题 · 从配方解释最小值"/);
+  assert.match(text(html), /查看题目/); assert.doesNotMatch(html, /在右栏查看|完整选项/);
+  assert.match(html, /data-question-excerpt="true"/);
+  capture(c.QuestionSummaryRow, props).find(node => node.type.name === 'Button').props.onClick({ currentTarget: trigger });
+  assert.deepEqual(calls, [trigger]);
+  const defaults = render(h(c.QuestionSummaryRow, { question: q, onOpen() {} }));
+  assert.match(defaults, /aria-label="在右栏查看完整题目：从配方解释最小值"/); assert.match(text(defaults), /在右栏查看/);
+  const onlyVisible = render(h(c.QuestionSummaryRow, { question: q, onOpen() {}, openLabel: '查看题目' }));
+  assert.match(onlyVisible, /aria-label="在右栏查看完整题目：从配方解释最小值"/);
+  for (const extra of [{ onOpen: undefined }, { excerpt: false }]) {
+    const complete = render(h(c.QuestionSummaryRow, { ...props, ...extra }));
+    assert.match(complete, /完整选项/); assert.doesNotMatch(complete, /data-question-excerpt|节选/);
+    if (extra.onOpen === undefined && !('excerpt' in extra)) assert.doesNotMatch(complete, /查看题目/);
+  }
+});
+
+test('collection workspace example opens compact titles using context-neutral question labels', () => {
+  const html = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: false }, 'workspace');
+  assert.match(html, /data-collection-summary-row/); assert.match(html, /aria-label="查看题目：第 1 题/);
+  assert.doesNotMatch(html, /data-question-summary|data-collection-content|<math/); assert.doesNotMatch(html, /在右栏查看/);
 });
