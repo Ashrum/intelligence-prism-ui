@@ -2642,3 +2642,10 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 ## Typography v0.2.1
 
 参见 [字体规范](typography.md) 和站内 `/next/foundations/typography`。迁入时必须同时包含 `typography.css`；公共角色样式与控件适配属于 Prism 层，不修改固定 coss 源码。
+
+
+### 集合篮：宿主选择工具栏（SEL，2026-09-29）
+
+`selectionToolbar?: boolean` 默认显示原有选择计数、全选和清除选择；设为 `false` 只隐藏该区，不影响逐条复选框、受控 `selectedIds` / `onSelectionChange`、受限或历史禁用规则及 `batchActions`。宿主负责提供可访问的选择入口及已选统计。summary 模式复选框名称为“选择第 N 题 · 标题”，无可见“选择”文案。Workspace 将全选置于底部，并在宿主“更多”菜单提供移除已选；这些业务布局不进入通用组件。SEL 批准后 Workspace overview 的已选题目、总分及构成采用勾选子集；此前组件页示例的全篮统计说明不作为 Workspace 的现行统计口径。
+
+集合篮 SEL 头部操作：`headerActions?: ReactNode` 将宿主菜单组合进现有标题行，操作区不收缩且不另起控制条；紧凑头部将同步状态移入既有事实行。未传插槽的 DOM 保持原样。Workspace 题篮以此替换标题上方独立更多菜单行；组件页集合示例同步提供原生 Menu。

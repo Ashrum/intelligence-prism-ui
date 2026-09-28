@@ -4,6 +4,8 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 
 import { useRef, useState } from "react"
 import { Button } from "../button"
+import { MoreHorizontal } from "lucide-react"
+import { Menu, MenuTrigger, MenuPopup, MenuItem } from "@/components/coss/menu"
 import { MetricSummary, StatusComposition } from "../data-display"
 import { useQuestionPreview } from "./agent-question-presentation"
 import { questionSamples } from "../fixtures/question-samples"
@@ -83,6 +85,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     collection: { ...example.collection, version: `示例集合 v${revision}` }, items,
     // These values belong to this fixture host, never to the collection component.
     summary: { count: items.length, unit: purpose === "questions" ? "题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${totalPoints} 分` }] : undefined },
+    headerActions: <Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="集合更多操作" />}><MoreHorizontal /></MenuTrigger><MenuPopup align="end"><MenuItem onClick={() => setFeedback("仅为本页集合示例；刷新后还原。")}>查看示例说明</MenuItem></MenuPopup></Menu>,
     overview: purpose === "questions" ? <>
       <MetricSummary density="compact" items={[{ id: "count", label: "已选题目", value: items.length }, { id: "points", label: "当前总分", value: totalPoints }]} />
       <StatusComposition density="compact" items={composition} unit="分" label="题型分值构成" />
