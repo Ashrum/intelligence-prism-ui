@@ -1777,8 +1777,11 @@ groups={[{
 | `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
 | `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary 或题干。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实必须经 issue / disabledReason 提供 |
 | `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 仅 default + workspace 调用，summary 和受限条目均不调用。保留给其他宿主的已授权只读领域内容，完整题干沿用阅读字号 |
+| `overview` | 可选 `ReactNode` | 仅 workspace 呈现于 header 之后、选择工具与列表之前，组件在统计区末尾添加 Separator。宿主提供已授权、被动呈现的统计；不传交互控件或隐含业务状态。undefined / null / boolean 视为未提供；非空 ReactNode 由宿主保证有可见内容。启用时两种 itemPresentation 都使用紧凑头部：标题保留 collection.title + summary.count/unit，隐藏全部 summary.fields 与头部分组数量，避免总分与构成重复；不解析 ReactNode 或字段名推测重叠。宿主负责把所需统计与口径放入 overview，关键状态仍经 sync / issue 等提供；版本、来源、缺失同步信息与历史标识保留。inline 忽略此插槽；未提供时行为不变 |
 | `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开题干 |
 | `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
+
+2026-09-29 PO 第三轮：复用既有 `MetricSummary` + `StatusComposition`，不新增组件。workspace 试题篮示例默认已选题目 3、当前总分 17、单选 5 / 多选 6 / 填空 6 分；宿主演示随移除更新，同步不由统计推断。已选题目指篮内题目而非批量勾选项，包含失效题；该口径在来源补充说明中披露。
 
 2026-09-28 PO 第二轮要求覆盖此前题篮 L1 插槽呈现：直接收紧 summary，不新增 compact 别名，避免宿主继续误用含题干的 summary；其他宿主需要题干时使用 default + workspace + renderItem。Workspace 接入需把原 renderItem 中的打开逻辑迁至 onOpenItem，传 openLabel="查看题目"。本仓库仅更新组件与示例，不代表 Workspace 已接入验收。
 

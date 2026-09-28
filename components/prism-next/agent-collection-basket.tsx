@@ -90,6 +90,8 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   /** Summary title action; host opens the permitted item and restores focus to the trigger. */
   onOpenItem?: (item: AgentCollectionEntry, trigger: HTMLButtonElement) => void
   openLabel?: string
+  /** Workspace-only passive host statistics; replaces header summary fields and group counts. */
+  overview?: ReactNode
   onBack?: () => void
   notice?: string
   emptyText?: string
@@ -241,26 +243,29 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const selectionReason = baseReason || (!onSelectionChange ? "当前无法选择。" : undefined)
   const targets = items.map(targetOf)
   const summaryMode = props.itemPresentation === "summary"
+  const hasOverview = full && props.overview != null && typeof props.overview !== "boolean"
+  const compactHeader = summaryMode || hasOverview
   const missingSyncFacts = [!collection.version && (historical ? "当时版本" : "集合版本"), !visual?.updatedAt && "更新时间"].filter(Boolean)
-  const visibleSyncDescription = !summaryMode || sync.state === "failed" || sync.state === "unknown"
+  const visibleSyncDescription = !compactHeader || sync.state === "failed" || sync.state === "unknown"
   return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
     <header className="min-w-0 space-y-1.5">
-      {!summaryMode && <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>}
-      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{summaryMode && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>
+      {!compactHeader && <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>}
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{compactHeader && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>
         <AgentStatus unknown={sync.state === "unknown"} tone={sync.state === "failed" ? "error" : sync.state === "synced" ? "success" : "neutral"}>{syncLabels[sync.state]}</AgentStatus>
       </div>
       <AgentVisibleMarkers visual={visual} />
-      {summaryMode ? <AgentMetaLine data-collection-header-facts>
+      {compactHeader ? <AgentMetaLine data-collection-header-facts>
         {historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}{collection.version && <> · {historical ? "当时版本" : "集合版本"}：{collection.version}</>} · <AgentSourceChip label={`来源：${collection.source || "未确认"}`}>
           <p>{collection.source || "来源未确认"}</p>
           {!visibleSyncDescription && sync.description && <p>{sync.description}</p>}
           {notice && <p>{notice}</p>}{details}
-        </AgentSourceChip>{visual?.updatedAt && <> · 最近更新：{visual.updatedAt}</>}{missingSyncFacts.length > 0 && <> · 同步信息不完整（{missingSyncFacts.join("、")}未提供）</>}{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}
-      </AgentMetaLine> : <AgentMetaLine>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>} · <span className="tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</span>{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}{sync.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>}
-      {groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
+        </AgentSourceChip>{visual?.updatedAt && <> · 最近更新：{visual.updatedAt}</>}{missingSyncFacts.length > 0 && <> · 同步信息不完整（{missingSyncFacts.join("、")}未提供）</>}{!hasOverview && !!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}
+      </AgentMetaLine> : <AgentMetaLine>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>} · <span className="tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</span>{!hasOverview && !!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}{sync.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>}
+      {!hasOverview && groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
     </header>
-    {(!summaryMode || visibleSyncDescription && sync.description || sync.action) && <div className="min-w-0 space-y-1.5" data-collection-sync={sync.state}>
-      {(!summaryMode || visibleSyncDescription && sync.description) && <div role="status" className="flex min-w-0 flex-wrap items-start gap-2">
+    {hasOverview && <div data-collection-overview className="min-w-0 space-y-3">{props.overview}<Separator /></div>}
+    {(!compactHeader || visibleSyncDescription && sync.description || sync.action) && <div className="min-w-0 space-y-1.5" data-collection-sync={sync.state}>
+      {(!compactHeader || visibleSyncDescription && sync.description) && <div role="status" className="flex min-w-0 flex-wrap items-start gap-2">
         {visibleSyncDescription && sync.description && <p className="min-w-0 break-words text-ui-hint">{sync.description}</p>}
       </div>}
       {sync.action && <BasketActionButton label={sync.action.label} scope={collection.title} reason={actionReason || sync.action.disabledReason}
