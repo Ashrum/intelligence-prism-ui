@@ -250,9 +250,23 @@ test('26 stage and historical row statuses carry icons and times in a following 
   assert.doesNotMatch(html, /animate-spin|aria-current="step"/);
 });
 
-test('the published charter retains the approved original SHA-256 and contract link', async () => {
-  const charter = await readFile(new URL('../docs/question-presentation-charter.md', import.meta.url));
-  assert.equal(createHash('sha256').update(charter).digest('hex'), 'c788f525296429a7f0280552c6f6d07f901f885b21e04a69a73a8a66030ca7f7');
+test('the published charter preserves the approved original, scoped PO amendment and contract link', async () => {
+  const charter = await readFile(new URL('../docs/question-presentation-charter.md', import.meta.url), 'utf8');
+  // Remove exactly one standalone amendment paragraph and its following blank line.
+  // Do not trim/normalize the remaining text: every original byte stays SHA-256 protected.
+  const amendments = [...charter.matchAll(/^\*\*原型阶段修订[^\n]*\n\n/gm)];
+  assert.equal(amendments.length, 1, 'exactly one standalone prototype amendment is required');
+  const amendment = amendments[0][0];
+  assert.ok(amendment.startsWith('**原型阶段修订（2026-09-28，PO 批准）**：'), 'retain the approval date and PO approval');
+  for (const condition of [
+    '仅适用于未接入真实服务、全部为本机规则与预置数据的原型阶段。',
+    '此阶段 Workspace 界面不逐项标注“示例／预置／演示”，组件保留 `visual.sample`、示例小签等标注能力，由 Workspace 停止传入相应标注属性。',
+    '接入真实服务或混入真实数据后，恢复逐项标注；真实与示例混排时必须标注。',
+    '本修订仅调整原型标注策略，不改变读取、引用、保存、提交等事实及状态的判定，不免除“节选”标记。',
+    '原条文保留，恢复条件满足后继续适用。',
+  ]) assert.ok(amendment.includes(condition), `prototype amendment must retain: ${condition}`);
+  const original = charter.slice(0, amendments[0].index) + charter.slice(amendments[0].index + amendment.length);
+  assert.equal(createHash('sha256').update(original).digest('hex'), 'c788f525296429a7f0280552c6f6d07f901f885b21e04a69a73a8a66030ca7f7');
   const contracts = await readFile(new URL('../docs/component-contracts.md', import.meta.url), 'utf8');
   assert.match(contracts, /question-presentation-charter\.md/);
 });
