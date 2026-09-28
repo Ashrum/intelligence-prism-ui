@@ -1754,7 +1754,7 @@ groups={[{
 - `QuestionWorkPanel` 只组合 coss 非模态 Drawer，负责开关、焦点和滚动接续；没有条目、分组、汇总或集合操作契约。集合篮提供内容，可放入它的 `children`，不重复实现 Drawer。Workspace 已有单右栏时直接挂集合篮内容，不再套 QuestionWorkPanel。
 - `TeacherQuestionBasket.tsx` 和 `shared/basket-context.ts` 只读核对 Workspace main `125f2b286d6028a12a963b58667875d1d7ca773c`。题篮已有数量、题型、分值、移除与空态呈现；Provider、Store、计分、班级交接、持久化、路由和发布均留宿主，没有整文件迁入。当前 Context 暴露 body/renderBody/footer、toggle/show/change，没有暴露完整条目与总分快照，接入不能假定已有通用数据 API。
 - `DataRecordTable` 提供表格列和单记录选择，未覆盖受控批量选择、集合身份、同步事实和失效条目处理；`AgentContextList` 主要承担来源事实列表。此候选组合 Card、Prism Badge/Button、Checkbox、Label、Select 与 RecordDetails（coss Collapsible），列表为语义化 ol/li，未重造基础控件。
-- `QuestionCard` 保留题目内容职责，通过 `renderItem` 渲染摘要；通用组件不导入题目或 Workspace 私有类型，不接题目评分编辑。排序与分组仅为平面集合管理，不扩展为语义 12 的层级／试卷结构编辑器，也不宣称实现完整语义 38 素材包管理。
+- `QuestionCard` 保留题目内容职责，在 default + workspace 通过 `renderItem` 渲染摘要；summary 只呈现标题及事实，单题打开交由 `onOpenItem`；通用组件不导入题目或 Workspace 私有类型，不接题目评分编辑。排序与分组仅为平面集合管理，不扩展为语义 12 的层级／试卷结构编辑器，也不宣称实现完整语义 38 素材包管理。
 
 ### 公开 API
 
@@ -1775,8 +1775,14 @@ groups={[{
 | `clear / destinations` | 可选 action / 只读 action 数组 | action 为 `{id,label,disabledReason?}`；clear 仅 workspace，去向两态显示、第一项主操作。缺能力无入口；给出的能力但缺 onAction 显示禁用原因。集合级动作目标为全部传入 items，宿主必须提供完整目标清单并核验，不能把服务总量中未提供的 ID 算进影响范围 |
 | `batchActions` | 可选 `readonly AgentCollectionBatchAction[]` | `{id,label,itemIds,disabledReason?}`，workspace 专用。明确目标须非空、无重复、均存在且可选，并与 selectedIds 集合完全相符；否则整批禁用，不缩减范围。有效回调保留 action.itemIds 的顺序与每项输入版本 |
 | `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
-| `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 只在 workspace 调用，受限条目绝不调用。用于 QuestionCard 摘要等当前授权的只读领域内容；不得放旁路写操作或未授权元数据。完整题干沿用阅读字号 |
+| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary 或题干。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实必须经 issue / disabledReason 提供 |
+| `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 仅 default + workspace 调用，summary 和受限条目均不调用。保留给其他宿主的已授权只读领域内容，完整题干沿用阅读字号 |
+| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开题干 |
 | `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
+
+2026-09-28 PO 第二轮要求覆盖此前题篮 L1 插槽呈现：直接收紧 summary，不新增 compact 别名，避免宿主继续误用含题干的 summary；其他宿主需要题干时使用 default + workspace + renderItem。Workspace 接入需把原 renderItem 中的打开逻辑迁至 onOpenItem，传 openLabel="查看题目"。本仓库仅更新组件与示例，不代表 Workspace 已接入验收。
+
+`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“在右栏查看”）与 `openAccessibleLabel?: string`（默认“在右栏查看完整题目：题号 · 标题”）。二者独立覆盖；右栏题篮同时传“查看题目”和“查看完整题目：题号 · 标题”。只改变文案，不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
 
 ### 条目、权限与动作
 
@@ -1784,7 +1790,7 @@ groups={[{
 
 `AgentCollectionRestrictedEntry={id,access:'restricted',disclosure:{label,reason},actions?:{remove?,resolve?}}` 只接受可披露名称、原因与明确可用的移除／处理动作。不会读取误传的 title/source/version/summary/fields/groupId/issue/selectable/move/group，也不挂载 renderItem。受限条目的版本不传出。集合标题、总量、分组、最近变化与 details 同样必须由宿主事先按当前权限处理；此分支只呈现授权结果，不是服务端授权。
 
-条目 `actions`：remove 为 `{disabledReason?}`；move 分别声明 up/down 能力，始终提供文字按钮与既有 navigation 触控尺寸，不依赖拖拽或悬停；group 为 `{options:[{id:string|null,label}],disabledReason?}`，null 请求取消分组；resolve 是宿主注册的 action 数组。不存在的能力不补造。控件禁用原因常驻并以 aria-describedby 关联，处理函数也阻断；首尾排序按传入全列表判断，回传实际相邻 ID。宿主提供 move 能力时须考虑被交换的相邻项权限。
+条目 `actions`：remove 为 `{disabledReason?}`；move 分别声明 up/down 能力，仅 workspace 显示；default 保留文字按钮，summary 为行尾 ghost / icon-sm 按钮，粗指针最小 44px，不依赖拖拽或悬停；group 为 `{options:[{id:string|null,label}],disabledReason?}`，null 请求取消分组；resolve 是宿主注册的 action 数组。不存在的能力不补造。控件禁用原因以 aria-describedby 关联；summary 排序边界原因以 sr-only 常驻并提供 title，其余原因可见，处理函数也阻断；首尾排序按传入全列表判断，回传实际相邻 ID。宿主提供 move 能力时须考虑被交换的相邻项权限。
 
 所有 `AgentCollectionIntent` 共含 `{collectionId,collectionVersion?}`，其分支为：
 
@@ -1805,7 +1811,7 @@ groups={[{
 - Workspace：同一事实 → 集合顺序／分组呈现 → 受控选择与批量动作 → 全清单、领域插槽、移除、处理、分组和上移／下移 → 去向、清空与可选返回；无第二套工作区外壳。
 - Compact：与任一 view 组合，只收紧间距；同步失败、失效与受限原因仍在折叠区外。
 
-组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、QuestionCard 数学摘要；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
+组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实行，点击标题打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
 
 本轮任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`，状态为**组件候选**；测试与五项日志、Workspace 只接呈现的轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。不启动开发服务，不修改 Workspace 或 Git；浏览器三主题、窄容器、键盘焦点／触控、读屏器、Workspace 接入和真实服务分别待验，不用 SSR 或回调测试代替。
 
@@ -2394,7 +2400,7 @@ L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-
 | 组件 | 接入与兼容边界 |
 | --- | --- |
 | 10 候选选择器 | 既有 renderItem 不变；示例 inline 用 L1，workspace 用 L2 + QuestionDetails；受限条目仍不调用插槽 |
-| 11 集合篮 | 新增可选 itemPresentation='default' / 'summary'，默认 default 保持 renderItem 仅 workspace 调用；summary 才在两态调用原签名插槽并采用无外框条目。受限条目不调用；示例 L1 的查看交宿主单题面板 |
+| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态均为紧凑标题／事实行且不调用插槽，onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
 | 12 结构编排器 | 新增可选 renderItem(item, { view, density })，默认未传保持原渲染；提供内容时以无外框域内容替代可见重复标题，原标题的可访问关联、锁定、来源、属性和操作保护仍在。回调与状态机不变 |
 | 14 对象查看器 | 新增可选 inlineDisclosure='local' / 'host'，默认 local 保持原披露；host 的 inline 只挂载允许的 summary，不提供就地展开 content 的入口，workspace 和 sensitive/受限保护不变。题目示例选 host，扩展态 L2 默认答案与解析 |
 | 15 / 17 | 示例题面由 QuestionContent 呈现；17 的扩展态 QuestionDetails 只传 answer，inline 用 L0 |

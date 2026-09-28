@@ -3,6 +3,7 @@
 import { useId, useRef, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight, X } from "lucide-react"
 import { Checkbox } from "@/components/coss/checkbox"
+import { Separator } from "@/components/coss/separator"
 import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Button } from "./button"
@@ -84,8 +85,11 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   onAction?: (intent: AgentCollectionIntent, trigger?: HTMLElement) => void
   /** Workspace-only, authorized passive domain content, e.g. a QuestionCard summary. */
   renderItem?: (item: AgentCollectionEntry, context: { density: "default" | "compact" }) => ReactNode
-  /** Opt in to L1 content (including type and score) in both views; renderItem remains workspace-only by default. */
+  /** Compact title/facts rows in both views. Summary never invokes renderItem or displays item.summary. */
   itemPresentation?: "default" | "summary"
+  /** Summary title action; host opens the permitted item and restores focus to the trigger. */
+  onOpenItem?: (item: AgentCollectionEntry, trigger: HTMLButtonElement) => void
+  openLabel?: string
   onBack?: () => void
   notice?: string
   emptyText?: string
@@ -100,12 +104,12 @@ function BasketFields({ fields }: { fields?: readonly AgentCollectionField[] }) 
   return fields?.length ? <>{fields.map((field, index) => <span key={index}>{index > 0 && " · "}{field.label}：<span className="tabular-nums">{displayed(field.value)}</span></span>)}</> : null
 }
 
-function BasketActionButton({ label, scope, reason, primary = false, onClick, children }: {
-  label: string; scope: string; reason?: string; primary?: boolean; onClick: (trigger: HTMLButtonElement) => void; children?: ReactNode
+function BasketActionButton({ label, scope, reason, primary = false, compact = false, onClick, children }: {
+  label: string; scope: string; reason?: string; primary?: boolean; compact?: boolean; onClick: (trigger: HTMLButtonElement) => void; children?: ReactNode
 }) {
   const id = useId()
   return <div className="min-w-0 max-w-full space-y-1">
-    <Button type="button" size="navigation" variant={primary ? "default" : "outline"} className="max-w-full whitespace-normal break-words"
+    <Button type="button" size={compact ? "sm" : "navigation"} variant={primary ? "default" : compact ? "ghost" : "outline"} className="max-w-full whitespace-normal break-words"
       aria-label={`${label}：${scope}`} disabled={!!reason} aria-describedby={reason ? id : undefined}
       onClick={event => { if (!reason) onClick(event.currentTarget) }}>{children}{label}</Button>
     {reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}
@@ -117,7 +121,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
 }) {
   const id = useId(), title = titleOf(item), full = props.view === "workspace"
   const groupTrigger = useRef<HTMLButtonElement>(null)
-  const compact = props.density === "compact", restricted = item.access === "restricted"
+  const restricted = item.access === "restricted"
   const entry = !restricted ? item : undefined
   const common = { collectionId: props.collection.id, collectionVersion: props.collection.version, ...targetOf(item) }
   const reason = baseReason || (!item.id.trim() ? "条目标识未确认。" : undefined)
@@ -127,59 +131,76 @@ function BasketRow({ item, previous, next, props, baseReason }: {
   const groupReason = actionReason || changeGroup?.disabledReason || (!changeGroup?.options.length ? "当前没有可用分组。" : undefined)
   const groupIndex = changeGroup?.options.findIndex(option => option.id === (entry?.groupId ?? null)) ?? -1
   const groupLabel = entry?.groupId == null ? "未分组" : props.groups?.find(group => group.id === entry.groupId)?.label || "分组未确认"
-  const content = entry && (full || props.itemPresentation === "summary") ? props.renderItem?.(entry, { density: props.density ?? "default" }) : undefined
-  const summaryContent = props.itemPresentation === "summary" && content != null && typeof content !== "boolean"
   const summaryMode = props.itemPresentation === "summary"
-  // L1 owns type and score. Keep other host fields, grouping and version visible.
-  const extraFields = summaryContent ? entry?.fields?.filter(field => !["题型", "类型", "分值"].includes(field.label)) : entry?.fields
+  const content = entry && full && !summaryMode ? props.renderItem?.(entry, { density: props.density ?? "default" }) : undefined
+  const extraFields = summaryMode ? entry?.fields?.filter(field => field.label === "分值") : entry?.fields
+  const rowTitle = summaryMode && entry ? `第 ${props.items.indexOf(item) + 1} 题 · ${title}` : title
+  const showSummaryGroup = summaryMode && !!entry?.groupId
+  function moveButtons() {
+    return full && entry?.actions?.move && (["up", "down"] as const).map(direction => {
+      const capability = entry.actions?.move?.[direction]
+      if (!capability) return null
+      const adjacent = direction === "up" ? previous : next
+      const moveReason = actionReason || capability.disabledReason || (props.groupBy === "group" ? "请切回集合顺序后调整。" : !adjacent ? direction === "up" ? "已经是第一项。" : "已经是最后一项。" : undefined)
+      const label = direction === "up" ? "上移" : "下移"
+      const icon = direction === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />
+      const onClick = (trigger: HTMLButtonElement) => { if (!moveReason && adjacent) props.onAction?.({ ...common, kind: "move", direction, adjacentId: adjacent.id }, trigger) }
+      return summaryMode ? <span key={direction} className="shrink-0">
+        <Button type="button" size="icon-sm" variant="ghost" className="pointer-coarse:min-h-11 pointer-coarse:min-w-11" aria-label={`${label}：${rowTitle}`}
+          title={moveReason || label} disabled={!!moveReason} aria-describedby={moveReason ? `${id}-${direction}-reason` : undefined}
+          onClick={event => onClick(event.currentTarget)}>{icon}</Button>
+        {moveReason && <span id={`${id}-${direction}-reason`} className="sr-only">{moveReason}</span>}
+      </span> : <BasketActionButton key={direction} label={label} scope={title} reason={moveReason} onClick={onClick}>{icon}</BasketActionButton>
+    })
+  }
   const removeReason = actionReason || item.actions?.remove?.disabledReason
   return <li data-collection-item={item.id} data-collection-access={restricted ? "restricted" : "available"}
-    className="min-w-0"><AgentSurface presentation={summaryContent ? "inline" : "card"} className="min-h-11 gap-2.5 p-3">
+    className="min-w-0"><AgentSurface presentation={summaryMode ? "inline" : "card"} className={summaryMode ? "gap-1 py-2" : "min-h-11 gap-2.5 p-3"}>
     <div data-collection-summary-row={summaryMode ? "" : undefined} className={summaryMode ? "flex min-w-0 items-start gap-2" : "flex min-w-0 flex-wrap items-start gap-3"}>
       {full && entry?.selectable && <div className="min-w-0 space-y-1">
-        <Label className="min-h-11 max-w-full" htmlFor={`${id}-select`}>
+        <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "min-h-11 max-w-full"} htmlFor={`${id}-select`}>
           <Checkbox id={`${id}-select`} checked={props.selectedIds?.includes(item.id) ?? false} disabled={!!selectReason}
-            aria-label={`选择：${title}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
+            aria-label={`选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
             onCheckedChange={checked => {
               if (selectReason) return
               const selected = props.selectedIds ?? []
               props.onSelectionChange?.(checked ? selected.includes(item.id) ? [...selected] : [...selected, item.id] : selected.filter(value => value !== item.id))
-            }} />选择
+            }} />{!summaryMode && "选择"}
         </Label>
         {selectReason && <p id={`${id}-selection-reason`} className="text-ui-hint">{selectReason}</p>}
       </div>}
-      <div className="min-w-0 flex-1 space-y-1">{!summaryContent && <h4 className="break-words text-item-title">{title}</h4>}
-        {summaryContent && <div className="min-w-0" data-collection-content>{content}</div>}
-        {entry && <AgentMetaLine>{!summaryContent && <><span className="sr-only">类型：</span>{entry.type} · </>}<span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}</AgentMetaLine>}
+      <div className="min-w-0 flex-1 space-y-1">
+        <h4 className="break-words text-item-title">{summaryMode && entry && props.onOpenItem ? <Button type="button" variant="ghost" size="sm"
+          className="h-auto min-h-7 max-w-full justify-start whitespace-normal break-words px-0 text-left text-item-title pointer-coarse:min-h-11"
+          aria-label={`${props.openLabel || "查看题目"}：${rowTitle}`} title={props.openLabel || "查看题目"}
+          onClick={event => props.onOpenItem?.(entry, event.currentTarget)}>{rowTitle}</Button> : rowTitle}</h4>
+        {entry && (summaryMode ? <AgentMetaLine>
+          {entry.type}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}
+          {(!entry.source || entry.source !== props.collection.source) && <> · 来源：{entry.source || "未确认"}</>}
+          {showSummaryGroup && <> · 分组：{groupLabel}</>}
+        </AgentMetaLine> : <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}</AgentMetaLine>)}
       </div>
-      {summaryMode && item.actions?.remove && <Button type="button" size="navigation-icon" variant="ghost" className="min-h-11 min-w-11 shrink-0"
+      {summaryMode && moveButtons()}
+      {summaryMode && item.actions?.remove && <Button type="button" size="icon-sm" variant="ghost" className="shrink-0 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
         aria-label={`移出试题篮：${title}`} title="移出" disabled={!!removeReason} aria-describedby={removeReason ? `${id}-remove-reason` : undefined}
         onClick={event => { if (!removeReason) props.onAction?.({ ...common, kind: "remove" }, event.currentTarget) }}><X aria-hidden="true" /></Button>}
     </div>
     {summaryMode && item.actions?.remove && removeReason && <p id={`${id}-remove-reason`} className="break-words text-ui-hint">{removeReason}</p>}
     {restricted ? <p role="status" className="break-words text-ui-hint">访问受限 · {item.disclosure.reason}</p> : <>
-      {(!summaryMode || !item.source || item.source !== props.collection.source) && <div className="flex min-w-0 flex-wrap items-center gap-2">
+      {!summaryMode && <div className="flex min-w-0 flex-wrap items-center gap-2">
         {item.source ? <AgentSourceChip label={`来源：${item.source}`}>{item.source}</AgentSourceChip> : <p className="text-ui-meta text-muted-foreground">来源：未确认</p>}
       </div>}
-      {item.issue && <p role="status" data-collection-issue={item.issue.state} className="break-words text-ui-hint">{item.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {item.issue.reason}</p>}
-      {item.summary && <p className="whitespace-pre-wrap break-words text-ui-body">{item.summary}</p>}
-      {!summaryContent && content != null && <div className="min-w-0" data-collection-content>{content}</div>}
+      {!summaryMode && item.issue && <p role="status" data-collection-issue={item.issue.state} className="break-words text-ui-hint">{item.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {item.issue.reason}</p>}
+      {!summaryMode && item.summary && <p className="whitespace-pre-wrap break-words text-ui-body">{item.summary}</p>}
+      {content != null && <div className="min-w-0" data-collection-content>{content}</div>}
     </>}
-    {(!summaryMode || !!item.actions?.resolve?.length || full && (entry?.actions?.move?.up || entry?.actions?.move?.down)) && <div className="flex min-w-0 flex-wrap gap-2">
+    {(!summaryMode || entry?.issue || !!item.actions?.resolve?.length) && <div className={summaryMode ? "flex min-w-0 flex-wrap items-center gap-2" : "flex min-w-0 flex-wrap gap-2"}>
+      {summaryMode && entry?.issue && <p role="status" data-collection-issue={entry.issue.state} className="break-words text-ui-hint">{entry.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {entry.issue.reason}</p>}
       {!summaryMode && item.actions?.remove && <BasketActionButton label="移除" scope={title} reason={actionReason || item.actions.remove.disabledReason}
         onClick={trigger => props.onAction?.({ ...common, kind: "remove" }, trigger)} />}
-      {item.actions?.resolve?.map(action => <BasketActionButton key={action.id} label={action.label} scope={title}
+      {item.actions?.resolve?.map(action => <BasketActionButton key={action.id} compact={summaryMode} label={action.label} scope={title}
         reason={actionReason || action.disabledReason} onClick={trigger => props.onAction?.({ ...common, kind: "resolve", actionId: action.id }, trigger)} />)}
-      {full && entry?.actions?.move && (["up", "down"] as const).map(direction => {
-        const capability = entry.actions?.move?.[direction]
-        if (!capability) return null
-        const adjacent = direction === "up" ? previous : next
-        const moveReason = actionReason || capability.disabledReason || (props.groupBy === "group" ? "请切回集合顺序后调整。" : !adjacent ? direction === "up" ? "已经是第一项。" : "已经是最后一项。" : undefined)
-        return <BasketActionButton key={direction} label={direction === "up" ? "上移" : "下移"} scope={title} reason={moveReason}
-          onClick={trigger => { if (adjacent) props.onAction?.({ ...common, kind: "move", direction, adjacentId: adjacent.id }, trigger) }}>
-          {direction === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />}
-        </BasketActionButton>
-      })}
+      {!summaryMode && moveButtons()}
     </div>}
     {full && changeGroup && <div className="min-w-0 space-y-1.5">
       <Label htmlFor={`${id}-group`}>分组 · {title}</Label>
@@ -196,7 +217,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       </Select>
       {groupReason && <p id={`${id}-group-reason`} className="text-ui-hint">{groupReason}</p>}
     </div>}
-  </AgentSurface></li>
+  </AgentSurface>{summaryMode && next && <Separator />}</li>
 }
 
 /** Controlled collection content, without a drawer, data source, scoring or saving implementation. */
@@ -220,6 +241,7 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const selectionReason = baseReason || (!onSelectionChange ? "当前无法选择。" : undefined)
   const targets = items.map(targetOf)
   const summaryMode = props.itemPresentation === "summary"
+  const missingSyncFacts = [!collection.version && (historical ? "当时版本" : "集合版本"), !visual?.updatedAt && "更新时间"].filter(Boolean)
   const visibleSyncDescription = !summaryMode || sync.state === "failed" || sync.state === "unknown"
   return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
     <header className="min-w-0 space-y-1.5">
@@ -229,11 +251,11 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
       </div>
       <AgentVisibleMarkers visual={visual} />
       {summaryMode ? <AgentMetaLine data-collection-header-facts>
-        {historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type} · {historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"} · <AgentSourceChip label={`来源：${collection.source || "未确认"}`}>
+        {historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}{collection.version && <> · {historical ? "当时版本" : "集合版本"}：{collection.version}</>} · <AgentSourceChip label={`来源：${collection.source || "未确认"}`}>
           <p>{collection.source || "来源未确认"}</p>
           {!visibleSyncDescription && sync.description && <p>{sync.description}</p>}
           {notice && <p>{notice}</p>}{details}
-        </AgentSourceChip> · 最近更新：{visual?.updatedAt || "未提供"}{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}
+        </AgentSourceChip>{visual?.updatedAt && <> · 最近更新：{visual.updatedAt}</>}{missingSyncFacts.length > 0 && <> · 同步信息不完整（{missingSyncFacts.join("、")}未提供）</>}{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}
       </AgentMetaLine> : <AgentMetaLine>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>} · <span className="tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</span>{!!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}{sync.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>}
       {groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
     </header>
@@ -268,9 +290,9 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
           onClick={trigger => onAction?.({ ...common, kind: "batch", actionId: action.id, targets: action.itemIds.map(value => targetOf(items.find(item => item.id === value)!)) }, trigger)} />
       })}</div>}
     </div>}
-    {items.length === 0 ? <p role="status" className="text-ui-hint">{props.emptyText || "集合中还没有条目。"}</p> : sections.map(section => <section key={section.key} aria-label={section.label} className="min-w-0 space-y-2.5">
-      <h4 className="break-words text-item-title">{section.label}</h4>
-      <ol className="space-y-2.5">{section.items.map(item => {
+    {items.length === 0 ? <p role="status" className="text-ui-hint">{props.emptyText || "集合中还没有条目。"}</p> : sections.map(section => <section key={section.key} aria-label={summaryMode && section.key === "ungrouped" ? undefined : section.label} className="min-w-0 space-y-2.5">
+      {!(summaryMode && (section.key === "ungrouped" || section.key === "all")) && <h4 className="break-words text-item-title">{section.label}</h4>}
+      <ol className={summaryMode ? "space-y-0" : "space-y-2.5"}>{section.items.map(item => {
         const index = items.indexOf(item)
         return <BasketRow key={item.id} item={item} previous={items[index - 1]} next={items[index + 1]} props={props} baseReason={baseReason} />
       })}</ol>

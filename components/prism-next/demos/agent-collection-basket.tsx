@@ -4,7 +4,6 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 
 import { useRef, useState } from "react"
 import { Button } from "../button"
-import { QuestionSummaryRow } from "../question-card"
 import { useQuestionPreview } from "./agent-question-presentation"
 import { questionSamples } from "../fixtures/question-samples"
 import { AgentCollectionBasket, type AgentCollectionBasketProps, type AgentCollectionChange, type AgentCollectionEntry, type AgentCollectionGroup, type AgentCollectionIdentity, type AgentCollectionIntent, type AgentCollectionItem, type AgentCollectionSync } from "../agent-collection-basket"
@@ -17,7 +16,7 @@ export const collectionBasketExamples: Record<"questions" | "preparation", { col
     collection: { id: "example-questions", title: "试题篮", type: "题目集合", source: "示例题库", version: "示例集合 v1" },
     items: questionSamples.slice(0, 3).map((question, index): AgentCollectionEntry => ({
       id: question.id, title: question.title, type: question.kind, source: index === 2 ? "校本补充题库（示例）" : "示例题库", version: "题目示例 v1",
-      summary: index === 0 ? "含根式与分式条件，完整题干可在管理视图核对。" : undefined,
+      summary: index === 0 ? "含根式与分式条件，完整题干可点击标题查看。" : undefined,
       fields: [{ label: "分值", value: `${question.points} 分` }], selectable: {},
       issue: index === 2 ? { state: "invalid", reason: "示例题库已下架此题，使用前请移除或查看替代题。" } : undefined,
       actions: { remove: {}, move, ...(index === 2 ? { resolve: [{ id: "replacement", label: "查看替代题" }] } : {}) },
@@ -86,10 +85,10 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     itemPresentation: purpose === "questions" ? "summary" : "default",
-    renderItem: purpose === "questions" ? item => {
+    openLabel: "查看题目",
+    onOpenItem: purpose === "questions" ? (item, trigger) => {
       const question = questionSamples.find(question => question.id === item.id)
-      return question ? <QuestionSummaryRow question={question} number={items.indexOf(item) + 1} headingLevel={4}
-        onOpen={trigger => questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)} /> : null
+      if (question) questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)
     } : undefined,
     notice: "仅为本页示例；刷新后还原。",
     // Supplementary collection guidance is disclosed by the header source chip in summary mode.
