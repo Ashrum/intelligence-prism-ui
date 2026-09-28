@@ -14,9 +14,9 @@ const preparationGroups = [{ id: "intro", label: "课堂导入", count: 2 }, { i
 const groupOptions = [{ id: null, label: "未分组" }, ...preparationGroups.map(({ id, label }) => ({ id, label }))]
 export const collectionBasketExamples: Record<"questions" | "preparation", { collection: AgentCollectionIdentity; items: AgentCollectionItem[]; groups: AgentCollectionGroup[]; destination: string }> = {
   questions: {
-    collection: { id: "example-questions", title: "单元练习试题篮（示例）", type: "题目集合", source: "本页选题示例", version: "示例集合 v1" },
+    collection: { id: "example-questions", title: "试题篮", type: "题目集合", source: "示例题库", version: "示例集合 v1" },
     items: questionSamples.slice(0, 3).map((question, index): AgentCollectionEntry => ({
-      id: question.id, title: question.title, type: question.kind, source: "示例题库", version: "题目示例 v1",
+      id: question.id, title: question.title, type: question.kind, source: index === 2 ? "校本补充题库（示例）" : "示例题库", version: "题目示例 v1",
       summary: index === 0 ? "含根式与分式条件，完整题干可在管理视图核对。" : undefined,
       fields: [{ label: "分值", value: `${question.points} 分` }], selectable: {},
       issue: index === 2 ? { state: "invalid", reason: "示例题库已下架此题，使用前请移除或查看替代题。" } : undefined,
@@ -76,7 +76,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
   const common: AgentCollectionBasketProps = {
     collection: { ...example.collection, version: `示例集合 v${revision}` }, items,
     // These values belong to this fixture host, never to the collection component.
-    summary: { count: items.length, unit: purpose === "questions" ? "道题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${items.reduce((sum, item) => sum + (questionSamples.find(question => question.id === item.id)?.points ?? 0), 0)} 分` }] : undefined },
+    summary: { count: items.length, unit: purpose === "questions" ? "题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${items.reduce((sum, item) => sum + (questionSamples.find(question => question.id === item.id)?.points ?? 0), 0)} 分` }] : undefined },
     groups: example.groups.map(group => ({ ...group, count: items.filter(item => item.access !== "restricted" && item.groupId === group.id).length })),
     sync, changes, selectedIds, onSelectionChange: setSelectedIds, groupBy, onGroupByChange: setGroupBy, onAction: act,
     inlineLimit: 1,
@@ -92,7 +92,8 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
         onOpen={trigger => questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)} /> : null
     } : undefined,
     notice: "仅为本页示例；刷新后还原。",
-    details: <p>题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
+    // Supplementary collection guidance is disclosed by the header source chip in summary mode.
+    details: <p>三个视图共用当前选题集合。题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}

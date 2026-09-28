@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
@@ -277,4 +278,118 @@ void [secret, sync, intent, summary, props];
     const diagnostics = ts.getPreEmitDiagnostics(program);
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
+});
+
+
+// Captured from the unmodified component before B1: inline/workspace × default/compact.
+// Normalize only opaque React-generated IDs; markup, text and classes remain exact.
+test('default presentation retains its pre-B1 rendered snapshots', () => {
+  const snapshots = [
+    'c4045557d8f630a3f0e8fed89840583e3d9132c09abcde6760de15420c2f259d',
+    '8e259d74eedaafcd12e4162023c07b7caa5940fc3ed1e3ec19f882bec1ecd7fa',
+    'eeb1281ab142f5edda4e404a4457dabb06d5c277cc0c83b3b924f4d47381b8d9',
+    'e97eb6fd972afa294a4dfd245f127930218ca761c77f87ace5e3ca37332ec128',
+  ];
+  modes.forEach((mode, index) => assert.equal(createHash('sha256').update(htmlFor(mode).replace(/_R_[^"\s<>]+_/g, 'REACT_ID')).digest('hex'), snapshots[index]));
+});
+
+const summaryProps = {
+  itemPresentation: 'summary', onAction() {},
+  renderItem: item => h('div', { 'data-host-summary': item.id }, `${item.title} · 题目 · 5 分`),
+};
+function descendants(node, predicate) {
+  const found = [];
+  function visit(value) {
+    if (!React.isValidElement(value)) return;
+    if (predicate(value)) found.push(value);
+    React.Children.forEach(value.props.children, visit);
+  }
+  visit(node); return found;
+}
+
+test('summary main row pairs one host summary with a trailing 44px removal control and supplementary metadata', () => {
+  for (const mode of modes) {
+    const nodes = capture({ ...mode, ...summaryProps });
+    const rows = nodes.filter(node => node.props['data-collection-summary-row'] === '');
+    assert.equal(rows.length, 2);
+    rows.forEach((row, index) => {
+      assert.doesNotMatch(row.props.className, /flex-wrap/);
+      assert.equal(descendants(row, n => n.props['data-host-summary']).length, 1);
+      const children = React.Children.toArray(row.props.children);
+      const remove = children.at(-1);
+      assert.equal(remove.props['aria-label'], `移出试题篮：${props.items[index].title}`);
+      assert.match(remove.props.className, /min-h-11 min-w-11 shrink-0/);
+      assert.equal(remove.props.size, 'navigation-icon');
+    });
+    const html = htmlFor({ ...mode, ...summaryProps });
+    assert.equal((html.match(/data-collection-content=/g) || []).length, 2);
+    assert.doesNotMatch(html, /aria-label="移除：|分值：/);
+    assert.match(textOf(html), /基础 · 版本：题目 v2/);
+    assert.match(textOf(html), /拓展 · 版本：题目 v3/);
+  }
+  const extra = { ...summaryProps, items: [{ ...entry, fields: [...entry.fields, { label: '审核', value: '待核对' }] }] };
+  assert.match(textOf(htmlFor(extra)), /审核：待核对/);
+  for (const renderItem of [undefined, () => null, () => false]) {
+    assert.match(textOf(htmlFor({ ...summaryProps, renderItem })), /类型：题目.*分值：5 分/);
+  }
+});
+
+test('summary removal preserves the exact version-bound intent, trigger and disabled guards', () => {
+  const events = [], trigger = { id: 'remove' }, extra = { ...summaryProps, onAction: (...args) => events.push(args) };
+  const before = htmlFor(extra);
+  button(capture(extra), '移出试题篮：第一题').props.onClick({ currentTarget: trigger });
+  assert.deepEqual(events, [[{ collectionId: 'basket', collectionVersion: '集合 v4', itemId: 'q1', version: '题目 v2', kind: 'remove' }, trigger]]);
+  assert.equal(htmlFor(extra), before);
+  for (const blocked of [
+    { onAction: undefined },
+    { collection: { ...collection, snapshot: '' } },
+    { items: [{ ...entry, actions: { remove: { disabledReason: '本题不可移出' } } }] },
+  ]) {
+    const state = { ...extra, ...blocked }, control = button(capture(state), '移出试题篮：第一题');
+    assert.equal(control.props.disabled, true); assert.ok(control.props['aria-describedby']);
+    const html = htmlFor(state), tag = html.match(/<button[^>]*aria-label="移出试题篮：第一题"[^>]*>/)[0];
+    const describedBy = tag.match(/aria-describedby="([^"]+)"/)[1];
+    assert.ok(html.includes(`id="${describedBy}"`));
+    control.props.onClick({ currentTarget: trigger });
+  }
+  assert.equal(events.length, 1);
+});
+
+test('summary sources deduplicate only explicit matches; absent source and different source stay visible', () => {
+  const items = [{ ...entry, source: collection.source }, { ...entry, id: 'other', source: '其他题库' }, { ...entry, id: 'unknown', source: undefined }];
+  const html = htmlFor({ ...summaryProps, items });
+  assert.equal((html.match(/data-agent-source=""/g) || []).length, 2);
+  assert.equal((html.match(/来源：现有题篮/g) || []).length, 1);
+  assert.match(html, /来源：其他题库/); assert.match(html, /来源：未确认/);
+  const same = htmlFor({ ...summaryProps, items: [items[0], { ...items[0], id: 'same' }] });
+  assert.equal((same.match(/data-agent-source=""/g) || []).length, 1);
+});
+
+test('summary header has one short-fact line and one main status; supplementary prose lives in source disclosure', () => {
+  const extra = { ...summaryProps, summary: { count: 9, unit: '题' }, sync: { state: 'local', description: '本机浏览器存储说明' }, notice: '当前全局选题说明', details: h('p', null, 'P04 入篮说明'), visual: { updatedAt: '10:30' } };
+  const html = htmlFor(extra), header = html.match(/<header[\s\S]*?<\/header>/)[0];
+  assert.match(textOf(header), /练习题集合 · 9题/);
+  assert.equal((header.match(/data-agent-status=/g) || []).length, 1);
+  assert.equal((header.match(/data-agent-meta=/g) || []).length, 1);
+  assert.match(header, /data-collection-header-facts/);
+  assert.match(textOf(header), /集合版本：集合 v4.*来源：现有题篮.*最近更新：10:30/);
+  assert.doesNotMatch(html, /本机浏览器存储说明|当前全局选题说明|P04 入篮说明/);
+  const source = capture(extra).find(node => node.type.name === 'AgentSourceChip' && node.props.label === '来源：现有题篮');
+  const disclosed = render(h('div', null, source.props.children));
+  for (const text of ['本机浏览器存储说明', '当前全局选题说明', 'P04 入篮说明']) assert.ok(disclosed.includes(text));
+  assert.match(textOf(htmlFor({ ...extra, summary: { count: 0, unit: '题' } })), /练习题集合 · 0题/);
+  assert.match(textOf(htmlFor({ ...extra, summary: { count: null }, collection: { ...collection, source: undefined, version: undefined } })), /练习题集合 · 未确认.*集合版本：未确认.*来源：未确认/);
+});
+
+test('summary preserves required failure, unknown, issue, restriction, history and change facts outside disclosures', () => {
+  const secret = { ...entry, access: 'restricted', title: 'PRIVATE', source: 'PRIVATE', disclosure: { label: '受限题目', reason: '权限不足' } };
+  for (const state of ['failed', 'unknown']) {
+    const html = htmlFor({ ...summaryProps, density: 'compact', collection: { ...collection, snapshot: '历史快照' },
+      sync: { state, description: '同步原因必须可见' }, changes: [{ id: 'c', kind: 'added', description: '新增事实' }],
+      items: [{ ...entry, issue: { state: 'invalid', reason: '题目已下架' } }, { ...entry, id: 'conflict', issue: { state: 'conflict', reason: '版本已更改' } }, secret],
+      renderItem: item => { assert.notEqual(item.access, 'restricted'); return summaryProps.renderItem(item); },
+    });
+    for (const text of ['同步原因必须可见', '新增事实', '题目已下架', '版本已更改', '权限不足', '当时版本', '历史集合仅供查看']) assert.ok(html.includes(text));
+    assert.doesNotMatch(html, /PRIVATE/);
+  }
 });
