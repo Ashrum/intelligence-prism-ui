@@ -7,6 +7,7 @@ import { Button } from "../button"
 import { AgentObjectViewer, type AgentObjectIdentity, type AgentObjectSection, type AgentObjectViewerProps } from "../agent-object-viewer"
 import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { QuestionMath } from "../question-content"
+import { QuestionReference } from "../question-presentation"
 import { DocumentRegionViewer } from "../document-region-viewer"
 import { questionSamples } from "../fixtures/question-samples"
 
@@ -24,7 +25,7 @@ export const objectViewerExamples: Record<"question" | "response", { object: Age
 }
 
 /** One fixture host owns the version and section selection shared by all three presentations. */
-export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof objectViewerExamples; narrow: boolean }) {
+export function ObjectViewerExample({ purpose, narrow, chrome = "full" }: { purpose: keyof typeof objectViewerExamples; narrow: boolean; chrome?: AgentObjectViewerProps["chrome"] }) {
   const presentation = useAgentDemoPresentation()
   const example = objectViewerExamples[purpose]
   const questionPreview = useQuestionPreview(questionSamples)
@@ -38,8 +39,10 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
   const question = questionSamples[0]
   // This host explicitly permits answers in the teacher's right-hand question view.
   const sections: AgentObjectSection[] = purpose === "question" ? [
-    { id: "stem", title: "完整题目", summary: questionPreview.reference(question, 1),
-      content: <QuestionExampleCard question={question} number={1} /> },
+    { id: "stem", title: "完整题目", summary: chrome === "minimal" ? <QuestionReference question={question} number={1}
+      onOpen={button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) }} /> : questionPreview.reference(question, 1),
+      content: <>{chrome === "minimal" && <div className="mb-2 flex flex-wrap gap-2"><Button type="button" variant="outline" size="navigation"
+        onClick={() => setFeedback("已请求选择片段；本示例未生成引用证据。")}>选择片段</Button></div>}<QuestionExampleCard question={question} number={1} /></> },
   ] : [
     { id: "response", title: "作答原稿", summary: <>第一行：<QuestionMath label="根号三加一除以根号三减一"><mfrac><mrow><msqrt><mn>3</mn></msqrt><mo>+</mo><mn>1</mn></mrow><mrow><msqrt><mn>3</mn></msqrt><mo>−</mo><mn>1</mn></mrow></mfrac></QuestionMath>，完整过程见原稿区域。</>, content: <DocumentRegionViewer
       label="学生甲作答原稿（人工区域示例）" selectedId={region} onSelect={setRegion}
@@ -52,7 +55,7 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
     { id: "contact", access: "restricted", disclosure: { label: "家长联系方式", reason: "当前任课教师可见范围不含家长联系方式。" } },
   ]
   const common: AgentObjectViewerProps = {
-    object: example.object, source: example.source,
+    object: example.object, source: example.source, chrome,
     version: { id: versionId, label: historical ? "示例 v1" : "示例 v2", state: historical ? "historical" : "current", currentLabel: "示例 v2", difference: example.difference },
     access: { state: "available", scope: purpose === "question" ? "本题题干、答案、评分标准与来源" : "本份作答及来源" },
     sections, inlineDisclosure: purpose === "question" ? "host" : "local", activeSection, onNavigate: setActiveSection,
@@ -65,7 +68,7 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
     onOpenRelation: () => setFeedback("已请求打开所属任务；本示例未连接任务详情。"),
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
-    notice: "固定示例；未连接题库与作答服务。",
+    notice: chrome === "minimal" ? "查看不会生成读取或引用证据。" : "固定示例；未连接题库与作答服务。",
     details: <p>查看和定位不会改变读取、引用或复核记录。本题示例允许查看答案；右栏默认展开答案与解析，历史内容只读。</p>,
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentObjectViewer {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
@@ -80,7 +83,7 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
       ["inline", "default", "对话快速查看"], ["workspace", "default", "完整对象详情"], ["inline", "compact", "紧凑对象查看"],
     ] as const).map(([view, density, label]) => <section key={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentObjectViewer {...common} view={view} density={density} />
+      <h3 className="text-block-title">{view === "workspace" && chrome === "minimal" ? "单题精简查看" : label}</h3><AgentObjectViewer {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }
@@ -89,13 +92,17 @@ export function AgentObjectViewerDemo() {
   const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof objectViewerExamples>("question")
   const [narrow, setNarrow] = useState(false)
+  const [chrome, setChrome] = useState<"full" | "minimal">("full")
   if (presentation.previewOnly) return <ObjectViewerExample key={purpose} purpose={purpose} narrow={narrow} />
   return <section id={presentation.embedded ? undefined : "object-viewer"} className="mb-12 min-w-0 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">对象查看器</h2>}
     <div className="flex flex-wrap gap-3">{(["question", "response"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "question" ? "题目对象示例" : "学生作答示例"}</Button>)}
       <Button type="button" variant="outline" size="navigation" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
+      {purpose === "question" && <Button type="button" variant="outline" size="navigation" aria-pressed={chrome === "minimal"}
+        onClick={() => setChrome(value => value === "minimal" ? "full" : "minimal")}>单题精简外壳</Button>}
     </div>
-    <ObjectViewerExample key={purpose} purpose={purpose} narrow={narrow} />
+    {purpose === "question" && <p className="text-ui-meta text-muted-foreground">单题精简外壳仅用于右栏的单个内容分区；多分区保留完整外壳。</p>}
+    <ObjectViewerExample key={purpose} purpose={purpose} narrow={narrow} chrome={purpose === "question" ? chrome : "full"} />
   </section>
 }

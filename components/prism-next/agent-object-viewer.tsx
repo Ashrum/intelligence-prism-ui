@@ -7,6 +7,7 @@ import { Card } from "@/components/coss/card"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Badge } from "./badge"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+import { AgentMetaLine, AgentStatus } from "./agent-visual-parts"
 
 /** IDs are opaque references for callbacks, never teacher-facing labels or DOM attributes. */
 export type AgentObjectIdentity = { id: string; type: string; name: string; displayId?: string }
@@ -46,6 +47,8 @@ export type AgentObjectActionIntent = AgentObjectTarget & { actionId: string; ki
 export type AgentObjectRelation = { id: string; relationship: string; name: string; openable?: boolean }
 export type AgentObjectRelationIntent = AgentObjectTarget & { relatedObjectId: string }
 export type AgentObjectViewerProps = AgentRecordViewProps & {
+  /** Minimal framing only applies to workspace objects with exactly one section. */
+  chrome?: "full" | "minimal"
   object: AgentObjectIdentity
   version: AgentObjectVersion
   access: AgentObjectAccess
@@ -77,14 +80,14 @@ function ObjectContent({ children }: { children: ReactNode }) {
   </div>
 }
 
-function ObjectSection({ section, anchor, view, showSummary, inlineDisclosure }: {
-  section: AgentObjectSection; anchor: string; view: "inline" | "workspace"; showSummary: boolean; inlineDisclosure?: "local" | "host"
+function ObjectSection({ section, anchor, view, showSummary, inlineDisclosure, minimal = false }: {
+  section: AgentObjectSection; anchor: string; view: "inline" | "workspace"; showSummary: boolean; inlineDisclosure?: "local" | "host"; minimal?: boolean
 }) {
   const title = sectionTitle(section)
-  return <section id={anchor} aria-labelledby={`${anchor}-title`} className="min-w-0 space-y-2" data-object-section="">
-    <h4 id={`${anchor}-title`} className="break-words text-block-title">{title}</h4>
+  return <section id={anchor} aria-labelledby={minimal ? undefined : `${anchor}-title`} aria-label={minimal ? title : undefined} className="min-w-0 space-y-2" data-object-section="">
+    {!minimal && <h4 id={`${anchor}-title`} className="break-words text-block-title">{title}</h4>}
     {section.access === "restricted" ? <div className="space-y-2">
-      <Badge variant="warning">访问受限</Badge><p className="break-words text-ui-hint">{section.disclosure.reason}</p>
+      {minimal ? <AgentStatus tone="warning">访问受限</AgentStatus> : <Badge variant="warning">访问受限</Badge>}<p className="break-words text-ui-hint">{section.disclosure.reason}</p>
     </div> : <>
       {section.sensitive && <p id={`${anchor}-reason`} className="break-words text-ui-hint">需确认查看：{section.sensitive.reason}</p>}
       {showSummary && !section.sensitive && <ObjectContent>{section.summary}</ObjectContent>}
@@ -131,12 +134,14 @@ function ObjectVersionChoice({ option, version, target, onVersionChange }: {
 
 /** Semantic 14: opened-object presentation. No reads, citations, versions or permissions are inferred. */
 export function AgentObjectViewer({ object, version, access, source, sections, activeSection, onNavigate, versions = [], onVersionChange,
-  actions = [], onAction, relations = [], onOpenRelation, inlineLimit = 2, inlineDisclosure = "local", view = "inline", density = "default", onExpand, onBack, notice, details,
+  actions = [], onAction, relations = [], onOpenRelation, inlineLimit = 2, inlineDisclosure = "local", view = "inline", density = "default", chrome = "full", onExpand, onBack, notice, details,
 }: AgentObjectViewerProps) {
   const id = useId()
   const reader = useRef<HTMLDivElement>(null)
   const previousSection = useRef(activeSection)
   const compact = density === "compact"
+  const minimal = chrome === "minimal" && view === "workspace" && sections.length === 1
+  const Surface = minimal ? "section" : Card
   const available = access.state === "available"
   const historical = version.state === "historical"
   const identified = !!object.id.trim() && !!version.id.trim()
@@ -159,9 +164,22 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
     if (index >= 0) reader.current?.querySelectorAll<HTMLElement>("[data-object-section]")[index]?.scrollIntoView({ block: "nearest", behavior: "instant" })
   }, [activeSection, available, sections, view])
 
-  return <Card aria-labelledby={`${id}-title`} data-agent-object-view={view} data-density={density}
-    data-historical={historical || undefined} className={`@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
-    <header className="min-w-0 space-y-2">
+  return <Surface aria-labelledby={minimal ? undefined : `${id}-title`} aria-label={minimal ? object.name : undefined} data-agent-object-view={view} data-density={density}
+    data-historical={historical || undefined} className={minimal ? `@container flex min-w-0 flex-col ${compact ? "gap-3" : "gap-5"}` : `@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
+    {minimal ? <header className="min-w-0 space-y-2">
+      <AgentMetaLine data-object-facts="" className="overflow-x-auto whitespace-nowrap" tabIndex={0} role="region" aria-label="对象事实">
+        <AgentStatus tone={historical ? "warning" : "neutral"}>{historical ? "历史版本（只读）" : "当前状态"}</AgentStatus>
+        {` · ${historical ? "当时版本" : "当前版本"}：${version.label || "版本未确认"}`}
+        {historical && version.currentLabel && ` · 当前版本：${version.currentLabel}`}
+        {object.displayId && ` · 编号：${object.displayId}`}
+        {available && ` · 可见范围：${access.scope || "范围未确认"} · 来源：${source || "来源未确认"}`}
+      </AgentMetaLine>
+      {!identified && <p role="status"><AgentStatus unknown>对象或版本尚未确认。</AgentStatus></p>}
+      {available ? <>
+        {access.readOnlyReason && <p className="break-words text-ui-meta"><AgentStatus>只读</AgentStatus> {access.readOnlyReason}</p>}
+        {version.difference && <p role="status" className="break-words text-ui-meta">版本差异：{version.difference}</p>}
+      </> : <div className="space-y-2"><AgentStatus tone="warning">访问受限</AgentStatus><p className="break-words text-ui-meta">{access.reason}</p></div>}
+    </header> : <header className="min-w-0 space-y-2">
       <div className="flex min-w-0 flex-wrap items-center gap-2"><Badge variant="outline">{object.type}</Badge>
         <h3 id={`${id}-title`} className="break-words text-block-title">{object.name}</h3></div>
       {object.displayId && <p className="break-words text-ui-hint">编号：{object.displayId}</p>}
@@ -174,13 +192,13 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
         <p className="break-words text-ui-hint">来源：{source || "来源未确认"}</p>
         {version.difference && <p role="status" className="break-words text-ui-hint">版本差异：{version.difference}</p>}
       </> : <div className="space-y-2"><Badge variant="warning">访问受限</Badge><p className="break-words text-ui-hint">{access.reason}</p></div>}
-    </header>
+    </header>}
     {available && <>
       {view === "workspace" && identified && onVersionChange && !!versions.length && <div className="min-w-0 space-y-2">
         <h4 className="text-ui-action">对象版本</h4><ul aria-label="对象版本" className="flex min-w-0 flex-wrap gap-3">{versions.filter(option => !!option.id.trim()).map(option =>
           <ObjectVersionChoice key={option.id} option={option} version={version} target={target} onVersionChange={onVersionChange} />)}</ul>
       </div>}
-      {view === "workspace" && sections.length > 0 && <nav aria-label="对象分区目录" className="min-w-0 space-y-2">
+      {view === "workspace" && !minimal && sections.length > 0 && <nav aria-label="对象分区目录" className="min-w-0 space-y-2">
         <h4 className="text-ui-action">分区目录</h4><ol className="flex min-w-0 flex-wrap gap-2">{sections.map((section, index) => <li key={section.id} className="min-w-0">
           {onNavigate ? <Button type="button" variant={activeSection === section.id ? "secondary" : "ghost"}
             className="h-auto max-w-full whitespace-normal py-2 sm:h-auto" aria-current={activeSection === section.id ? "location" : undefined}
@@ -188,11 +206,11 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
             : <span className="break-words text-ui-body" aria-current={activeSection === section.id ? "location" : undefined}>{sectionTitle(section)}</span>}
         </li>)}</ol>
       </nav>}
-      {view === "workspace" && activeSection !== null && !active && <p role="status" className="text-ui-hint">当前分区暂不可定位，请从目录重新选择。</p>}
+      {view === "workspace" && activeSection !== null && !active && <p role="status" className="text-ui-hint">{minimal ? "当前分区暂不可定位。" : "当前分区暂不可定位，请从目录重新选择。"}</p>}
       <div key={contentKey} ref={reader} className={compact ? "min-w-0 space-y-3" : "min-w-0 space-y-5"}>
         {sections.length ? sections.map((section, index) => <ObjectSection
           key={JSON.stringify([section.id, section.access, section.access !== "restricted" ? section.sensitive ?? null : null])}
-          inlineDisclosure={inlineDisclosure} section={section} anchor={`${id}-section-${index}`} view={view} showSummary={view === "inline" && previewIds.includes(section.id)} />)
+          minimal={minimal} inlineDisclosure={inlineDisclosure} section={section} anchor={`${id}-section-${index}`} view={view} showSummary={view === "inline" && previewIds.includes(section.id)} />)
           : <p className="text-ui-hint text-muted-foreground">暂未提供对象内容。</p>}
       </div>
       {view === "workspace" && !!relations.length && <section aria-label="关联对象" className="min-w-0 space-y-2">
@@ -203,10 +221,10 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
         </li>)}</ul>
       </section>}
       {!!visibleActions.length && onAction && <ul aria-label="对象操作" className="flex min-w-0 flex-wrap gap-3">{visibleActions.map(action => <ObjectAction key={action.id} action={action} target={target} onAction={onAction} />)}</ul>}
-      {notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
+      {notice && (minimal ? <AgentMetaLine>{notice}</AgentMetaLine> : <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>)}
       <RecordDetails>{details}</RecordDetails>
       {view === "inline" && identified && onExpand && <div><Button type="button" variant="outline" onClick={event => onExpand(event.currentTarget)}>查看完整<ArrowUpRight aria-hidden="true" /></Button></div>}
     </>}
     {view === "workspace" && onBack && <div><Button type="button" variant="outline" onClick={onBack}><ArrowLeft aria-hidden="true" />返回原位置</Button></div>}
-  </Card>
+  </Surface>
 }

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -54,6 +54,101 @@ function capture(extra) {
 const button = (nodes, label) => nodes.find(node => {
   const children = React.Children.toArray(node.props.children);
   return node.props.onClick && (children.includes(label) || children.filter(value => typeof value === 'string').join('') === label);
+});
+
+test('default and explicit full preserve seven pre-change render snapshots', async () => {
+  const snapshots = JSON.parse(await readFile(new URL('./fixtures/agent-object-viewer-full.json', import.meta.url), 'utf8'));
+  assert.equal(snapshots.length, 7);
+  for (const { props: input, html } of snapshots) {
+    assert.equal(render(h(AgentObjectViewer, input)), html);
+    assert.equal(render(h(AgentObjectViewer, { ...input, chrome: 'full' })), html);
+  }
+});
+
+const minimalSection = { id: 'single-section', title: '完整题目', content: h('article', null,
+  h('button', { type: 'button', onClick() {} }, '选择片段'), h('h4', null, object.name), h('p', null, '题面内容')) };
+const minimalProps = { chrome: 'minimal', view: 'workspace', sections: [minimalSection], activeSection: minimalSection.id };
+
+test('minimal single-section workspace removes card/headings/directory, retaining region names and host controls', () => {
+  for (const density of ['default', 'compact']) {
+    const html = htmlFor({ ...minimalProps, density });
+    assert.match(html, new RegExp(`^<section aria-label="${object.name}"`));
+    assert.doesNotMatch(html, /data-slot="card"|<h3|对象分区目录|分区目录|>完整题目</);
+    assert.match(html, /<section[^>]+aria-label="完整题目"/);
+    assert.equal(textOf(html).split(object.name).length - 1, 1);
+    assert.match(html, /选择片段/);
+    const root = capture({ ...minimalProps, density }).find(node => node.props['data-agent-object-view']);
+    assert.doesNotMatch(root.props.className, /(?:^| )(?:p-|px-|py-|bg-|border|ring|shadow|rounded)/);
+  }
+});
+
+test('minimal facts share one nonwrapping meta paragraph, with status glyph and standing notice', () => {
+  const notice = '查看不会生成读取或引用证据。';
+  const html = htmlFor({ ...minimalProps, notice, object: { ...object, displayId: 'Q-3' } });
+  const facts = html.match(/<p[^>]*data-object-facts=""[^>]*>.*?<\/p>/)?.[0];
+  assert.ok(facts);
+  for (const text of ['text-ui-meta', 'text-muted-foreground', 'whitespace-nowrap', 'overflow-x-auto', 'tabindex="0"', 'data-agent-status', '<svg', ' · 当前版本：v2', ' · 编号：Q-3', ' · 可见范围：仅本题内容', ' · 来源：课堂练习']) assert.ok(facts.includes(text), text);
+  assert.doesNotMatch(facts, /<br|<div/);
+  assert.equal(html.split(notice).length - 1, 1);
+  assert.match(html, new RegExp(`<p[^>]*text-ui-meta[^>]*>${notice}</p>`));
+});
+
+test('minimal is ignored in inline and with zero or multiple sections, with identical full output', () => {
+  for (const sections of [[], [minimalSection], props.sections]) {
+    for (const view of ['inline', 'workspace']) {
+      if (view === 'workspace' && sections.length === 1) continue;
+      assert.equal(htmlFor({ view, sections, chrome: 'minimal' }), htmlFor({ view, sections }));
+    }
+  }
+  assert.match(htmlFor({ chrome: 'minimal', view: 'workspace' }), /对象分区目录/);
+});
+
+test('minimal preserves critical history, readonly, unknown, restrictions and sensitive confirmation without leaks', () => {
+  const history = htmlFor({ ...minimalProps, version: { ...version, state: 'historical', currentLabel: 'v3', difference: '评分说明已更正' }, access: { state: 'available', scope: '本题', readOnlyReason: '仅可查看' }, actions, onAction() {} });
+  for (const text of ['历史版本（只读）', '当时版本：v2', '当前版本：v3', '评分说明已更正', '仅可查看', '下钻证据']) assert.ok(history.includes(text), text);
+  assert.doesNotMatch(history, /加入集合|复核题目/);
+  const unknown = htmlFor({ ...minimalProps, object: { ...object, id: '' }, version: { ...version, id: '', label: '' }, source: undefined });
+  for (const text of ['对象或版本尚未确认', '版本未确认', '来源未确认', 'data-agent-status="unknown"']) assert.ok(unknown.includes(text), text);
+  function Forbidden() { assert.fail('restricted or sensitive content mounted'); }
+  const denied = htmlFor({ ...minimalProps, access: { state: 'restricted', reason: '对象不可用：授权已撤销' }, source: secret, notice: secret, details: h(Forbidden),
+    sections: [{ ...minimalSection, title: secret, content: h(Forbidden) }], onBack() {} });
+  assert.match(denied, /访问受限/); assert.match(denied, /对象不可用：授权已撤销/); assert.match(denied, /返回原位置/); assert.doesNotMatch(denied, /NEVER_DISCLOSE_THIS_FIELD/);
+  const deniedSection = htmlFor({ ...minimalProps, sections: [{ id: minimalSection.id, access: 'restricted', disclosure: { label: '受限分区', reason: '无权访问' }, content: h(Forbidden) }] });
+  assert.match(deniedSection, /data-agent-status="warning"/); assert.match(deniedSection, /无权访问/);
+  const sensitive = { ...minimalProps, sections: [{ ...minimalSection, sensitive: { reason: '需先确认' }, summary: secret, content: h('p', null, '获权内容') }] };
+  const closed = htmlFor(sensitive); assert.match(closed, /确认查看完整题目/); assert.match(closed, /需先确认/); assert.doesNotMatch(closed, /获权内容|NEVER_DISCLOSE_THIS_FIELD/);
+  const gate = capture(sensitive).find(node => node.type.name === 'Collapsible');
+  assert.match(render(React.cloneElement(gate, { open: true })), /获权内容/);
+  assert.match(htmlFor({ ...minimalProps, activeSection: 'missing' }), /当前分区暂不可定位。/);
+  assert.doesNotMatch(htmlFor({ ...minimalProps, activeSection: 'missing' }), /请从目录/);
+});
+
+test('minimal keeps version, relation, object and section actions and return as unchanged host requests', () => {
+  const calls = [], trigger = {}, extra = { ...minimalProps, versions, onVersionChange: (...args) => calls.push(['version', ...args]),
+    relations: [{ id: 'task-ref', relationship: '所属任务', name: '单元练习', openable: true }], onOpenRelation: (...args) => calls.push(['relation', ...args]),
+    actions, onAction: (...args) => calls.push(['action', ...args]), onBack: () => calls.push(['back']), onExpand: () => assert.fail('workspace never expands'),
+    sections: [{ ...minimalSection, content: h('button', { onClick: event => calls.push(['section', event.currentTarget]) }, '选择片段') }] };
+  const before = htmlFor(extra), nodes = capture(extra);
+  button(nodes, 'v1').props.onClick({ currentTarget: trigger });
+  button(nodes, '查看单元练习').props.onClick({ currentTarget: trigger });
+  button(nodes, '加入集合').props.onClick({ currentTarget: trigger });
+  button(nodes, '选择片段').props.onClick({ currentTarget: trigger });
+  button(nodes, '返回原位置').props.onClick();
+  const target = { objectId: object.id, versionId: version.id };
+  assert.deepEqual(calls, [['version', { ...target, targetVersionId: versions[1].id }, trigger], ['relation', { ...target, relatedObjectId: 'task-ref' }, trigger],
+    ['action', { ...target, actionId: 'collect', kind: 'add-to-collection' }, trigger], ['section', trigger], ['back']]);
+  assert.equal(htmlFor(extra), before);
+  assert.doesNotMatch(before, /查看完整|已读取|已引用/);
+  const duplicate = htmlFor({ ...extra, sections: [{ ...minimalSection, content: h('button', null, '加入集合') }] });
+  assert.equal(textOf(duplicate).split('加入集合').length - 1, 2, 'host owns duplicate actions');
+});
+
+test('minimal example exposes one workspace L2 with answer open and host section controls', () => {
+  const html = render(h(ObjectViewerExample, { purpose: 'question', narrow: true, chrome: 'minimal' }));
+  assert.match(html, /单题精简查看/); assert.match(html, /选择片段/); assert.match(html, /question-solution/);
+  assert.equal((html.match(/data-question-id=/g) ?? []).length, 1);
+  assert.doesNotMatch(html, /对象分区目录/);
+  assert.match(render(h(AgentObjectViewerDemo)), /单题精简外壳/);
 });
 
 test('default inline shows at most two supplied key summaries, all local disclosure entries and no invented facts', () => {
