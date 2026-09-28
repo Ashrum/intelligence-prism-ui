@@ -12,6 +12,7 @@ import { Badge } from "@/components/prism-next/badge"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Separator } from "@/components/coss/separator"
 import { agentProgressLabels } from "@/lib/prism-next/agent-progress"
+import { AgentStatus, AgentWaitingIcon } from "./agent-visual-parts"
 export function AgentComposer({
   value, onChange, running = false, onSubmit, onStop, label = "任务",
   placeholder = "描述需要完成的任务…", submitLabel = "运行", maxLength = 1000,
@@ -126,7 +127,17 @@ export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state']
  const label=state==='done'?agentProgressLabels.completed:state==='error'?'失败':agentProgressLabels[state]
  return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':label}</Badge>
 }
-export function AgentTaskProgress({steps,actions,activity='live',density='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact'}) {
+export function AgentTaskProgress({steps,actions,activity='live',density='default',appearance='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact';appearance?:'default'|'trace'}) {
+ if(appearance==='trace') return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-1">{steps.map(step=>{
+  const live=step.state==='running'&&activity==='live'
+  const label=step.state==='done'?agentProgressLabels.completed:step.state==='error'?'失败':step.state==='running'&&!live?'上次进行到':agentProgressLabels[step.state]
+  return <li key={step.id} aria-current={live?'step':undefined} className="flex min-h-11 min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1 py-1">
+   <span className="min-w-0 flex-1 break-words text-ui-action">{step.label}</span>
+   <AgentStatus unknown={step.state==='unknown'} running={live} icon={step.state==='waiting'?AgentWaitingIcon:undefined} tone={step.state==='done'?'success':step.state==='error'?'error':live?'info':['waiting','waiting-human','partial'].includes(step.state)?'warning':'neutral'}>{label}</AgentStatus>
+   {step.time&&<span className="break-words text-ui-meta text-muted-foreground">{step.time}</span>}
+   {step.detail&&<p className="w-full break-words text-ui-hint text-muted-foreground">{step.detail}</p>}
+  </li>
+ })}</ol>{actions&&<div className="mt-2.5 flex flex-wrap gap-2">{actions}</div>}</div>
  return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className={density==='compact'?'space-y-2 py-2':'space-y-4 py-3'}>{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
   <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:step.state==='unknown'?<CircleHelp className="size-4 text-warning-foreground"/>:step.state==='waiting'?<Clock3 className="size-4 text-warning-foreground"/>:step.state==='waiting-human'||step.state==='partial'?<CircleAlert className="size-4 text-warning-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
   {density==='compact'?<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1"><span className="break-words text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/>{step.time&&<span className="break-words text-ui-hint text-muted-foreground">{step.time}</span>}{step.detail&&<span className="break-words text-ui-hint text-muted-foreground">{step.detail}</span>}</div>:<div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.time&&<p className="mt-1 break-words text-ui-hint text-muted-foreground">{step.time}</p>}{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>}

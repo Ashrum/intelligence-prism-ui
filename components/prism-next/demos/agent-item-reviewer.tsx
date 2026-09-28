@@ -88,14 +88,14 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
   const focusWorkspace = () => { heading.current?.focus(); heading.current?.scrollIntoView({ block: "nearest" }) }
   const review = itemReviewFixture(state, example.item.version)
   const updateDraft = (value: ExampleDraft) => { setDraft(value); setState("draft") }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentItemReviewer item={example.item} review={review} checkpoints={example.checkpoints}
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentItemReviewer visual={{ sample: true, disconnected: true }} item={example.item} review={review} checkpoints={example.checkpoints}
           summary={<>{draft.text}{grading && <p className="mt-2 text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p>}</>}
           versionChange={changed || state === "expired" ? { currentVersion: grading ? "评分稿 r3" : "校对稿 r3" } : undefined}
           restart={{ id: "restart", label: "重新复核当前版本", impact: "请求打开当前版本，原草稿保留。" }}
           draft={{ value: draft, onChange: updateDraft, render: editor => <DraftFields {...editor} grading={grading} /> }}
           reason={{ value: reason, onChange: value => { setReason(value); setState("draft") } }}
           evidence={<AgentEvidenceDrilldown conclusion={{ id: `${example.item.id}-evidence`, statement: "本项核对依据（示例）", version: example.item.version }} nodes={[example.evidence]} view="workspace" density="compact" path={[example.evidence.id]} />}
-          comparison={<dl className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><div className="min-w-0 space-y-2"><dt className="text-ui-action">原值 · {example.item.version}</dt><dd className="whitespace-pre-wrap break-words text-read-body">{example.original}{grading && <p>初评：2 / 2 分</p>}</dd></div><div className="min-w-0 space-y-2"><dt className="text-ui-action">当前草稿</dt><dd className="whitespace-pre-wrap break-words text-read-body">{draft.text}{grading && <p>草稿：{draft.score ?? "待评分"} / 2 分</p>}</dd></div></dl>}
+          textComparison={{ before: example.original, after: draft.text, beforeLabel: `原值 · ${example.item.version}`, afterLabel: "当前草稿" }}
           history={example.history} notice="示例：未连接真实复核服务。"
           details={<p>预览、核对标记、复核提交与业务保存分别记录。复核本项不代表整份任务已完成。</p>}
           onAction={intent => { setFeedback(`示例：已请求${intent.kind === "query" ? "查询原请求" : intent.kind === "restart" ? "重新复核当前版本" : intent.actionId === "edit" ? "修改" : intent.actionId === "defer" ? "标记待议" : intent.actionId === "confirm" ? "确认无误" : "提交修订"}，尚未取得新的复核回执。`); if (intent.kind === "review" && intent.actionId === "edit") focusWorkspace() }} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
@@ -110,14 +110,14 @@ export function ReviewerExample({ example, grading, narrow }: { example: ReviewE
     <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6"}>
       {([["inline", "default", "对话摘要"], ["workspace", "default", "完整复核"], ["inline", "compact", "紧凑列表"]] as const).map(([view, density, label], index) => <section key={label} aria-label={`${label}示例`} className="min-w-0 space-y-3">
         <h3 ref={index === 1 ? heading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
-        <AgentItemReviewer item={example.item} review={review} checkpoints={example.checkpoints} view={view} density={density}
+        <AgentItemReviewer visual={{ sample: true, disconnected: true }} item={example.item} review={review} checkpoints={example.checkpoints} view={view} density={density}
           summary={<>{draft.text}{grading && <p className="mt-2 text-ui-hint">当前评分草稿：{draft.score ?? "待评分"} / 2 分</p>}</>}
           versionChange={changed || state === "expired" ? { currentVersion: grading ? "评分稿 r3" : "校对稿 r3" } : undefined}
           restart={{ id: "restart", label: "重新复核当前版本", impact: "请求打开当前版本，原草稿保留。" }}
           draft={{ value: draft, onChange: updateDraft, render: editor => <DraftFields {...editor} grading={grading} /> }}
           reason={{ value: reason, onChange: value => { setReason(value); setState("draft") } }}
           evidence={<AgentEvidenceDrilldown conclusion={{ id: `${example.item.id}-evidence`, statement: "本项核对依据（示例）", version: example.item.version }} nodes={[example.evidence]} view="workspace" density="compact" path={[example.evidence.id]} />}
-          comparison={<dl className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><div className="min-w-0 space-y-2"><dt className="text-ui-action">原值 · {example.item.version}</dt><dd className="whitespace-pre-wrap break-words text-read-body">{example.original}{grading && <p>初评：2 / 2 分</p>}</dd></div><div className="min-w-0 space-y-2"><dt className="text-ui-action">当前草稿</dt><dd className="whitespace-pre-wrap break-words text-read-body">{draft.text}{grading && <p>草稿：{draft.score ?? "待评分"} / 2 分</p>}</dd></div></dl>}
+          textComparison={{ before: example.original, after: draft.text, beforeLabel: `原值 · ${example.item.version}`, afterLabel: "当前草稿" }}
           history={example.history} notice="示例：未连接真实复核服务。"
           details={<p>预览、核对标记、复核提交与业务保存分别记录。复核本项不代表整份任务已完成。</p>}
           onExpand={button => { origin.current = button; focusWorkspace() }}

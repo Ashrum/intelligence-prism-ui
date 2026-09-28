@@ -100,7 +100,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
     } : undefined,
     details: <p>仅为本页演示。搜索、筛选、排序和追加结果来自固定数据；选择不代表已提交，回执与集合记录分别载入。公式与题目内容由既有题卡提供，刷新后还原。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCandidatePicker {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && presentation.view !== "workspace" }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
     {purpose === "questions" && <p className="text-ui-hint">题面节选 · 示例：下方简要候选展示节选，展开后显示完整题面。</p>}
@@ -123,7 +123,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
       ["inline", "default", "少量候选快速选择"], ["workspace", "default", "筛选、排序与批量选择"], ["inline", "compact", "紧凑候选选择"],
     ] as const).map(([view, density, label]) => <section key={label} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentCandidatePicker {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && view === "inline" }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }

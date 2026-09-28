@@ -138,7 +138,7 @@ export function ConstraintBuilderExample({ purpose, narrow }: { purpose: keyof t
     ] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      {view === "inline" && density === "default" ? <AgentExecutionConfirmation title={purpose === "p04" ? "确认处理范围（示例）" : "确认组卷条件（示例）"}
+      {view === "inline" && density === "default" ? <AgentExecutionConfirmation visual={{ sample: true, disconnected: true }} title={purpose === "p04" ? "确认处理范围（示例）" : "确认组卷条件（示例）"}
         target={purpose === "p04" ? "扫描材料 · 4 页" : "函数单元练习"} version={version}
         effects={[purpose === "p04" ? "按本次条件整理材料，生成后仍需人工核对。" : "按本次条件准备候选试题，尚未生成或发布。"]}
         conditions={<AgentConstraintBuilder {...common} presentation="inline" />} confirmation={confirmation} />

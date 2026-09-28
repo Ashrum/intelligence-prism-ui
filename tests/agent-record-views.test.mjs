@@ -7,6 +7,7 @@ import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 import { legacyRecordCases, normalizeRecordMarkup } from './fixtures/agent-record-views-legacy.mjs';
 import { agentProgressLabels } from '../lib/prism-next/agent-progress.ts';
+import { assertLegacyVisualFacts } from './fixtures/agent-visual-compatibility.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtime = new URL('../.sites-runtime/record-views/', import.meta.url);
@@ -21,14 +22,16 @@ const h = React.createElement;
 const modes = [{ view: 'inline' }, { view: 'workspace' }, { view: 'inline', density: 'compact' }, { view: 'workspace', density: 'compact' }];
 const p04 = recordViewExamples.p04;
 
-test('28 legacy SSR snapshots match pinned main e99813a, including explicit default view and density', async () => {
+test('28 pinned main cases retain facts and capabilities; unaffected context markup stays exact', async () => {
   const snapshot = JSON.parse(await readFile(new URL('./fixtures/agent-record-views-main.json', import.meta.url), 'utf8'));
   assert.equal(snapshot.baseline, 'e99813ac4d4ce64c74b910933edf268ca8cc3250');
   const cases = legacyRecordCases();
   assert.equal(Object.keys(cases).length, 28);
   for (const [name, { component, props }] of Object.entries(cases)) for (const defaults of [{}, { view: 'inline', density: 'default' }]) {
     const actual = normalizeRecordMarkup(render(h(components[component], { ...props, ...defaults })));
-    assert.equal(actual, snapshot.cases[name], name);
+    if (component === 'AgentContextSummary') assert.equal(actual, snapshot.cases[name], name);
+    else assertLegacyVisualFacts(actual, snapshot.cases[name], name);
+    assert.equal(actual, normalizeRecordMarkup(render(h(components[component], { ...props, view: 'inline', density: 'default' }))), `${name}: default view/density`);
   }
 });
 
@@ -41,7 +44,7 @@ test('both example purposes render the same supplied facts in inline, workspace 
     for (const output of sample.result.outputs) for (const fact of [output.title, output.version, output.status]) assert.ok(result.includes(fact), fact);
     for (const source of sample.context.sources) for (const fact of [source.title, source.version, source.location]) assert.ok(context.includes(fact), fact);
     for (const [Component, props] of [[AgentExecutionProgress, sample.progress], [AgentExecutionResult, sample.result]]) {
-      assert.match(render(h(Component, { ...props, ...mode, presentation: 'card' })), /data-slot="card"/);
+      assert.match(render(h(Component, { ...props, ...mode, presentation: 'card' })), Component === AgentExecutionProgress ? /data-agent-well/ : /data-slot="card"/);
       assert.doesNotMatch(render(h(Component, { ...props, ...mode, presentation: 'inline' })), /data-slot="card"/);
     }
   }
@@ -153,7 +156,7 @@ test('missing times and record metadata remain unknown and empty collections nev
 test('supplementary explanation starts collapsed; uncertainty, scope and failure facts stay outside it', () => {
   for (const mode of modes) for (const [Component, props] of [[AgentExecutionProgress, p04.progress], [AgentExecutionResult, p04.result], [AgentContextSummary, p04.context]]) {
     const html = render(h(Component, { ...props, ...mode, details: h('p', null, '补充实现之外的解释') }));
-    assert.match(html, /aria-expanded="false"/); assert.match(html, /说明<\/button>/);
+    assert.match(html, /aria-expanded="false"/); assert.match(html, Component === AgentContextSummary ? /说明<\/button>/ : /data-agent-source/);
     assert.doesNotMatch(html, /补充实现之外的解释/);
     assert.ok(html.includes(props.title));
     assert.match(html, /未确认|暂不可用|尚未|模糊/);
