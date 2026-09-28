@@ -229,7 +229,10 @@
 
 /* Question composition: content width chooses the option layout. */
 .prism-question { container-type:inline-size; }
-.prism-question-copy { overflow-wrap:anywhere; }
+@container (max-width:30rem) {
+  .prism-question-attributes { flex-basis:100%; overflow-wrap:anywhere; }
+}
+.prism-question-copy { container-type:inline-size; overflow-wrap:anywhere; }
 .prism-question-copy .prism-math { line-height:normal; }
 .prism-question-options { grid-template-columns:minmax(0,1fr); }
 @container (min-width:30rem) {
@@ -243,7 +246,7 @@
 
 /* Reading semantics stay scoped to question content, not coss controls. */
 .prism-question-copy p + p { margin-top:.75em; }
-.prism-question-copy h4,.prism-question-copy h5 { color:var(--heading); line-height:1.5; }
+.prism-question-copy h4,.prism-question-copy h5 { color:var(--heading); }
 .prism-question-copy blockquote { margin:1em 0; padding:.15em 0 .15em 1em; border-left:3px solid var(--border); color:var(--foreground); }
 .prism-question-copy pre { overflow:auto; padding:1rem; border-radius:.5rem; background:var(--muted); font-size:.875em; line-height:1.65; }
 .prism-question-copy code { padding:.1em .3em; border-radius:.2rem; background:var(--muted); }
@@ -317,10 +320,14 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 .q-task-drawer-portal > [data-slot="drawer-backdrop"] { display:none; }
 .q-task-drawer-portal > [data-slot="drawer-viewport"] { pointer-events:none; }
 .q-task-drawer { pointer-events:auto; }
+.question-charter-preview { width:min(100vw,40rem); max-width:100vw; }
+@media(max-width:599px) {
+  .question-charter-preview { width:100vw; height:100dvh; max-height:100dvh; }
+}
 @media (min-width:80rem) {
   /* Match the existing Drawer timing; keep the main view stable through closing. */
   body:has(.q-workbench) [data-slot="sidebar-inset"] { transition:margin-right 450ms cubic-bezier(.32,.72,0,1); }
-  body:has(.q-task-drawer[data-open]) [data-slot="sidebar-inset"] { margin-right:var(--container-md,28rem); }
+  body:has(.q-task-drawer[data-open]:not(.question-charter-preview)) [data-slot="sidebar-inset"] { margin-right:var(--container-md,28rem); }
 }
 .q-print-workbench { min-width:0; }
 .q-print-workbench .q-paper-scroll { max-height:var(--q-preview-room,calc(100dvh - 17rem)); min-height:17.5rem; background:var(--muted); border-radius:var(--radius-lg); padding:12px; }

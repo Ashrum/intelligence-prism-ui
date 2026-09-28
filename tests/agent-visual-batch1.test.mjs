@@ -158,7 +158,7 @@ test('16 merges all short item facts into one meta line while reasons remain sta
   }
 });
 
-test('26 merges run, stage and history short facts into meta rows with icons and keeps all descriptions', () => {
+test('26 keeps run metadata, status icons and following times in stage/history rows without losing facts', () => {
   const input = { ...progress, run: { id: 'now', label: '第 2 轮', version: '材料 v2' },
     stages: [{ id: 'stage', title: '核对材料', state: 'completed', time: '13:50', description: '已保留原稿条件。', steps: [] }],
     exceptions: [{ id: 'issue', title: '图像模糊', time: '13:55', description: '第 3 页文字无法辨认。', resolution: '等待清晰原稿。' }],
@@ -166,8 +166,12 @@ test('26 merges run, stage and history short facts into meta rows with icons and
   for (const view of ['inline', 'workspace']) for (const density of ['default', 'compact']) {
     const html = render(h(c.AgentExecutionProgress, { ...input, view, density }));
     assertMetaLine(html, ['当前状态', '第 2 轮', '材料 v2', '最近更新：14:10']);
-    assertMetaLine(html, ['阶段状态：已完成', '阶段时间：13:50']);
-    assertMetaLine(html, ['当时状态 · 部分完成', '当时版本 · 材料 v1', '12:00']);
+    const stageTime = [...html.matchAll(/<p[^>]*data-agent-meta=""[^>]*>[\s\S]*?<\/p>/g)].map(match => match[0]).find(line => text(line) === '阶段时间：13:50');
+    assert.ok(stageTime, 'exact stage time stays in its own metadata line');
+    assert.match(stageTime, /text-ui-meta text-muted-foreground/);
+    assertMetaLine(html, ['当时版本 · 材料 v1', '12:00']);
+    const statuses = [...html.matchAll(/<span[^>]*data-agent-status=[^>]*>([\s\S]*?)<\/span><\/span>/g)].map(match => match[1]);
+    for (const fact of ['阶段状态：已完成', '当时状态 · 部分完成']) assert.ok(statuses.some(status => text(status).includes(fact) && /<svg[^>]*aria-hidden="true"/.test(status)), fact);
     for (const title of ['阶段记录', '异常与处置记录', '历次执行']) assert.ok(html.includes(`<h4 class="text-ui-meta text-muted-foreground">${title}</h4>`));
     const rows = [...html.matchAll(/<div data-agent-trace-row=""[^>]*>([\s\S]*?)<\/div>/g)].map(match => match[1]);
     for (const title of ['核对材料', '图像模糊', '第 1 轮']) assert.ok(rows.some(row => /<svg[^>]*aria-hidden="true"/.test(row) && text(row).includes(title) && /data-agent-meta/.test(row)), title);

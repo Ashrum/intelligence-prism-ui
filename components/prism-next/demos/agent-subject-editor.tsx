@@ -5,6 +5,8 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentSubjectEditor, type AgentSubjectEditorIntent, type SubjectFormulaMode } from "../agent-subject-editor"
 import { Button } from "../button"
+import { QuestionContent } from "../question-content"
+import { DraftMathPreview } from "../draft-math-preview"
 
 export const subjectEditorExamples = [
   { id: "pythagoras", title: "勾股定理（示例）", location: "第 1 题题干 · 第 2 个公式", value: "a² + b² = c²", mode: "inline" as SubjectFormulaMode },
@@ -34,10 +36,12 @@ export function SubjectEditorExample({ sample, narrow = false, initialView = "in
     else if (!readonly && intent.type === "apply") { setApplied(intent.value); setFeedback("已替换本页示例内容，尚未保存。") }
   }
   const formula = sample.mode === "block" ? `\\[${applied}\\]` : `\\(${applied}\\)`
+  const questionPreview = <QuestionContent question={{ id: `subject-example-${sample.id}`, title: sample.title, kind: "公式片段", points: 0,
+    stem: <DraftMathPreview value={formula} label="题面预览（示例）" /> }} />
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSubjectEditor title={sample.title} formulaId={sample.id} location={sample.location} value={value} formulaMode={sample.mode}
         baseVersion="example-base-v1" baseVersionLabel="示例 v1"
         readOnlyReason={readonly ? "历史版本只读，当前公式原文仍可查看。" : undefined} onIntent={receive}
-        details={<p>先将光标放在公式原文中，再选择插入；选中文字可放入结构的参数位置。工具栏支持方向键、Home 和 End，Tab 切换分组。撤销与重做只处理本次公式编辑；展开和返回保留输入，不会确认替换。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+        details={<p>先将光标放在公式原文中，再选择插入；选中文字可放入结构的参数位置。工具栏支持方向键、Home 和 End，Tab 切换分组。撤销与重做只处理本次公式编辑；展开和返回保留输入，不会确认替换。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />{presentation.view === "workspace" && questionPreview}</AgentDemoPreview>
   return <div className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <Button type="button" variant="outline" aria-pressed={readonly} onClick={() => setReadonly(value => !value)}>只读示例</Button>
     <div ref={region}>
@@ -49,7 +53,7 @@ export function SubjectEditorExample({ sample, narrow = false, initialView = "in
     </div>
     <p role="status" className="text-ui-hint break-words">{feedback}</p>
     <p className="text-ui-action">原内容（本页示例）</p>
-    <p className="text-read-body whitespace-pre-wrap break-words">{formula}</p>
+    {view === "workspace" ? questionPreview : <p className="text-ui-hint">展开编辑器查看题面预览。</p>}
   </div>
 }
 

@@ -4,7 +4,8 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 
 import { useRef, useState } from "react"
 import { Button } from "../button"
-import { QuestionCard } from "../question-card"
+import { QuestionSummaryRow } from "../question-card"
+import { useQuestionPreview } from "./agent-question-presentation"
 import { questionSamples } from "../fixtures/question-samples"
 import { AgentCollectionBasket, type AgentCollectionBasketProps, type AgentCollectionChange, type AgentCollectionEntry, type AgentCollectionGroup, type AgentCollectionIdentity, type AgentCollectionIntent, type AgentCollectionItem, type AgentCollectionSync } from "../agent-collection-basket"
 
@@ -38,6 +39,7 @@ export const collectionBasketExamples: Record<"questions" | "preparation", { col
 export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof typeof collectionBasketExamples; narrow: boolean }) {
   const presentation = useAgentDemoPresentation()
   const example = collectionBasketExamples[purpose]
+  const questionPreview = useQuestionPreview(questionSamples)
   const [items, setItems] = useState<readonly AgentCollectionItem[]>(example.items)
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([])
   const [groupBy, setGroupBy] = useState<"none" | "group">("none")
@@ -83,15 +85,17 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     batchActions: [{ id: "remove-selected", label: "移除已选", itemIds: selectedIds, disabledReason: selectedIds.length ? undefined : "请先选择条目。" }],
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
+    itemPresentation: purpose === "questions" ? "summary" : "default",
     renderItem: purpose === "questions" ? item => {
       const question = questionSamples.find(question => question.id === item.id)
-      return question ? <QuestionCard question={question} compact showPoints={false} /> : null
+      return question ? <QuestionSummaryRow question={question} number={items.indexOf(item) + 1} headingLevel={4}
+        onOpen={trigger => questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)} /> : null
     } : undefined,
     notice: "仅为本页示例；刷新后还原。",
     details: <p>题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
-  return <div className="min-w-0 space-y-5">
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处呈现共用同一份本页集合与选择。</p>
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="同步记录示例"><span className="text-ui-action">同步记录</span>
       {(["local", "synced", "failed", "unknown"] as const).map(state => <Button key={state} type="button" size="navigation" variant="outline" aria-pressed={sync.state === state}

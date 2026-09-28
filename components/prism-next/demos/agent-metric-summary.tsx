@@ -4,6 +4,8 @@ import { useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../button"
+import { useQuestionPreview } from "./agent-question-presentation"
+import { axisQuestion } from "./question-reference-fixtures"
 import { AgentMetricSummary, type AgentMetricDrilldownIntent, type AgentMetricSummaryProps } from "../agent-metric-summary"
 import { AgentEvidenceDrilldown } from "../agent-evidence-drilldown"
 
@@ -74,6 +76,8 @@ export const metricSummaryExamples: Record<"learning" | "grading", MetricFixture
 export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "learning" | "grading"; narrow?: boolean }) {
   const presentation = useAgentDemoPresentation()
   const example = metricSummaryExamples[purpose]
+  const questionPreview = useQuestionPreview([axisQuestion])
+  const questionReference = <div className="min-w-0 text-ui-hint">相关题目（示例）：{questionPreview.reference(axisQuestion, 2)}</div>
   const [snapshot, setSnapshot] = useState(false)
   const [selected, setSelected] = useState<AgentMetricDrilldownIntent | null>(null)
   const workspace = useRef<HTMLElement>(null)
@@ -95,8 +99,8 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
   const selectedLabel = metric?.access === "available" ? metric.label : anomaly?.access === "available" ? anomaly.text : "指标依据"
   const selectedBasis = selected?.kind === "change" && metric?.access === "available" ? metric.change?.basis : anomaly?.access === "available" ? anomaly.basis : undefined
   const basisVersion = selected && selected.kind !== "anomaly" ? selected.metricVersion : selected?.version
-  if (presentation.previewOnly) return <AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
-  return <div className="min-w-0 space-y-5">
+  if (presentation.previewOnly) return <>{questionPreview.panel}{questionReference}<AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></>
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}{questionReference}
     <p className="text-ui-hint">固定示例 · 三处共用同一份数据；下钻打开示例依据，数值和状态保持不变。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={snapshot} onClick={() => { setSnapshot(value => !value); setSelected(null) }}>切换当时数据示例</Button>
     {selected && <section ref={evidence} tabIndex={-1} aria-label="指标依据示例" className="min-w-0"><AgentEvidenceDrilldown view="workspace" conclusion={{ id: "metric-fixture-basis", statement: `指标依据 · ${selectedLabel}`, version: selected.version,

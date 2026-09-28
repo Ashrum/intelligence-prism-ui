@@ -4,6 +4,8 @@ import { useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react"
 import { Button } from "../button"
+import { useQuestionPreview } from "./agent-question-presentation"
+import { distributionQuestions } from "./question-reference-fixtures"
 import { AgentDistributionMatrix, type AgentDistributionCell, type AgentDistributionComparison, type AgentDistributionIntent, type AgentDistributionMatrixProps } from "../agent-distribution-matrix"
 import { AgentEvidenceDrilldown } from "../agent-evidence-drilldown"
 
@@ -80,7 +82,11 @@ export const distributionMatrixExamples: Record<"students" | "knowledge", Fixtur
 
 export function DistributionMatrixExample({ purpose, narrow = false, initialView = "inline" }: { purpose: "students" | "knowledge"; narrow?: boolean; initialView?: "inline" | "workspace" }) {
   const presentation = useAgentDemoPresentation()
-  const fixture = distributionMatrixExamples[purpose]
+  const questionPreview = useQuestionPreview(distributionQuestions)
+  const sourceFixture = distributionMatrixExamples[purpose]
+  const fixture = useMemo(() => purpose !== "students" ? sourceFixture : { ...sourceFixture, columnDimension: { ...sourceFixture.columnDimension,
+    items: sourceFixture.columnDimension.items.map((item, index) => ({ ...item, content: <div className="min-w-0 space-y-1">{questionPreview.reference(distributionQuestions[index], index + 1)}{item.content && <span className="text-ui-meta">对称轴：{formula}</span>}</div> })) },
+    keyRegions: sourceFixture.keyRegions.map(region => ({ ...region, summary: <>{region.summary}{questionPreview.reference(distributionQuestions[3], 4)}</> })) }, [sourceFixture, purpose])
   const [view, setView] = useState(initialView)
   const [compact, setCompact] = useState(false)
   const [transposed, setTransposed] = useState(false)
@@ -132,8 +138,8 @@ export function DistributionMatrixExample({ purpose, narrow = false, initialView
     comparison, selectedCell: selection ?? undefined, onIntent: intent,
     onExpand: () => changeView("workspace"), onBack: () => changeView("inline"),
   }
-  if (presentation.previewOnly) return <AgentDistributionMatrix {...props}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
-  return <div className={`min-w-0 space-y-4 ${narrow ? "w-full max-w-[320px]" : ""}`}>
+  if (presentation.previewOnly) return <>{questionPreview.panel}<AgentDistributionMatrix {...props}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></>
+  return <div className={`min-w-0 space-y-4 ${narrow ? "w-full max-w-[320px]" : ""}`}>{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 展开与返回共用同一结果；筛选、排序和比较只调整本次查看范围。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button>
     {showEvidence && selection && <section ref={evidence} tabIndex={-1} aria-label="单元格依据示例">

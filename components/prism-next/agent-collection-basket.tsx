@@ -84,6 +84,8 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   onAction?: (intent: AgentCollectionIntent, trigger?: HTMLElement) => void
   /** Workspace-only, authorized passive domain content, e.g. a QuestionCard summary. */
   renderItem?: (item: AgentCollectionEntry, context: { density: "default" | "compact" }) => ReactNode
+  /** Opt in to L1 content in both views; renderItem remains workspace-only by default. */
+  itemPresentation?: "default" | "summary"
   onBack?: () => void
   notice?: string
   emptyText?: string
@@ -125,8 +127,10 @@ function BasketRow({ item, previous, next, props, baseReason }: {
   const groupReason = actionReason || changeGroup?.disabledReason || (!changeGroup?.options.length ? "当前没有可用分组。" : undefined)
   const groupIndex = changeGroup?.options.findIndex(option => option.id === (entry?.groupId ?? null)) ?? -1
   const groupLabel = entry?.groupId == null ? "未分组" : props.groups?.find(group => group.id === entry.groupId)?.label || "分组未确认"
+  const content = entry && (full || props.itemPresentation === "summary") ? props.renderItem?.(entry, { density: props.density ?? "default" }) : undefined
+  const summaryContent = props.itemPresentation === "summary" && content != null && typeof content !== "boolean"
   return <li data-collection-item={item.id} data-collection-access={restricted ? "restricted" : "available"}
-    className="min-w-0"><AgentSurface className="min-h-11 gap-2.5 p-3">
+    className="min-w-0"><AgentSurface presentation={summaryContent ? "inline" : "card"} className="min-h-11 gap-2.5 p-3">
     <div className="flex min-w-0 flex-wrap items-start gap-3">
       {full && entry?.selectable && <div className="min-w-0 space-y-1">
         <Label className="min-h-11 max-w-full" htmlFor={`${id}-select`}>
@@ -140,7 +144,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         </Label>
         {selectReason && <p id={`${id}-selection-reason`} className="text-ui-hint">{selectReason}</p>}
       </div>}
-      <div className="min-w-0 flex-1 space-y-1"><h4 className="break-words text-item-title">{title}</h4>
+      <div className="min-w-0 flex-1 space-y-1">{!summaryContent && <h4 className="break-words text-item-title">{title}</h4>}
         {entry && <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!entry.fields?.length && <> · <BasketFields fields={entry.fields} /></>}</AgentMetaLine>}
       </div>
     </div>
@@ -150,7 +154,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       </div>
       {item.issue && <p role="status" data-collection-issue={item.issue.state} className="break-words text-ui-hint">{item.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {item.issue.reason}</p>}
       {item.summary && <p className="whitespace-pre-wrap break-words text-ui-body">{item.summary}</p>}
-      {full && props.renderItem && <div className="min-w-0" data-collection-content>{props.renderItem(item, { density: props.density ?? "default" })}</div>}
+      {content != null && <div className="min-w-0" data-collection-content>{content}</div>}
     </>}
     <div className="flex min-w-0 flex-wrap gap-2">
       {item.actions?.remove && <BasketActionButton label="移除" scope={title} reason={actionReason || item.actions.remove.disabledReason}

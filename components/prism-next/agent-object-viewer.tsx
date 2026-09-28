@@ -61,6 +61,8 @@ export type AgentObjectViewerProps = AgentRecordViewProps & {
   onOpenRelation?: (intent: AgentObjectRelationIntent, trigger: HTMLButtonElement) => void
   /** The first one or two non-sensitive supplied summaries are the inline key sections. */
   inlineLimit?: 1 | 2
+  /** Host opens domain details elsewhere; inline only mounts the supplied summaries. */
+  inlineDisclosure?: "local" | "host"
   notice?: string
   onBack?: () => void
 }
@@ -75,8 +77,8 @@ function ObjectContent({ children }: { children: ReactNode }) {
   </div>
 }
 
-function ObjectSection({ section, anchor, view, showSummary }: {
-  section: AgentObjectSection; anchor: string; view: "inline" | "workspace"; showSummary: boolean
+function ObjectSection({ section, anchor, view, showSummary, inlineDisclosure }: {
+  section: AgentObjectSection; anchor: string; view: "inline" | "workspace"; showSummary: boolean; inlineDisclosure?: "local" | "host"
 }) {
   const title = sectionTitle(section)
   return <section id={anchor} aria-labelledby={`${anchor}-title`} className="min-w-0 space-y-2" data-object-section="">
@@ -86,7 +88,7 @@ function ObjectSection({ section, anchor, view, showSummary }: {
     </div> : <>
       {section.sensitive && <p id={`${anchor}-reason`} className="break-words text-ui-hint">需确认查看：{section.sensitive.reason}</p>}
       {showSummary && !section.sensitive && <ObjectContent>{section.summary}</ObjectContent>}
-      {view === "workspace" && !section.sensitive ? <ObjectContent>{section.content}</ObjectContent> :
+      {view === "inline" && inlineDisclosure === "host" ? null : view === "workspace" && !section.sensitive ? <ObjectContent>{section.content}</ObjectContent> :
         <Collapsible defaultOpen={false}>
           <CollapsibleTrigger aria-describedby={section.sensitive ? `${anchor}-reason` : undefined}
             render={(props, state) => <Button {...props} type="button" variant="outline" className="h-auto max-w-full whitespace-normal py-2 sm:h-auto">
@@ -129,7 +131,7 @@ function ObjectVersionChoice({ option, version, target, onVersionChange }: {
 
 /** Semantic 14: opened-object presentation. No reads, citations, versions or permissions are inferred. */
 export function AgentObjectViewer({ object, version, access, source, sections, activeSection, onNavigate, versions = [], onVersionChange,
-  actions = [], onAction, relations = [], onOpenRelation, inlineLimit = 2, view = "inline", density = "default", onExpand, onBack, notice, details,
+  actions = [], onAction, relations = [], onOpenRelation, inlineLimit = 2, inlineDisclosure = "local", view = "inline", density = "default", onExpand, onBack, notice, details,
 }: AgentObjectViewerProps) {
   const id = useId()
   const reader = useRef<HTMLDivElement>(null)
@@ -190,7 +192,7 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
       <div key={contentKey} ref={reader} className={compact ? "min-w-0 space-y-3" : "min-w-0 space-y-5"}>
         {sections.length ? sections.map((section, index) => <ObjectSection
           key={JSON.stringify([section.id, section.access, section.access !== "restricted" ? section.sensitive ?? null : null])}
-          section={section} anchor={`${id}-section-${index}`} view={view} showSummary={view === "inline" && previewIds.includes(section.id)} />)
+          inlineDisclosure={inlineDisclosure} section={section} anchor={`${id}-section-${index}`} view={view} showSummary={view === "inline" && previewIds.includes(section.id)} />)
           : <p className="text-ui-hint text-muted-foreground">暂未提供对象内容。</p>}
       </div>
       {view === "workspace" && !!relations.length && <section aria-label="关联对象" className="min-w-0 space-y-2">
