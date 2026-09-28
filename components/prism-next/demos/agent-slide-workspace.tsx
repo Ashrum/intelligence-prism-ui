@@ -63,7 +63,7 @@ export function SlideWorkspaceExample({ readOnly = false, narrow = false }: { re
           title="勾股定理复习课" source={{ label: "由备课提纲生成（模拟）", openable: true }}
           save={{ state: "unsaved" }} slides={slides} selectedSlideId={selected} capabilities={slideExampleCapabilities}
           readOnlyReason={readOnly ? "此版本仅供回看，不可修改或重新生成。" : undefined}   onIntent={intent}
-          details={<p>缩略图为 SVG 占位，文字和讲者备注供阅读，不对应真实 PPT 版式。展开与返回不改变保存状态。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+          details={<p>缩略图为 SVG 占位，文字和讲者备注供阅读，不对应真实 PPT 版式。展开与返回不改变保存状态。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section className="min-w-0 space-y-4">
     <h3 className="text-block-title">{readOnly ? "只读版本示例" : "可调整文字与顺序的模拟课件"}</h3>
     <p role="status" className="text-ui-hint">{feedback}</p>

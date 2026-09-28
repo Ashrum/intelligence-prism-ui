@@ -77,9 +77,9 @@ export function SuggestionSetExample({ purpose, narrow = false }: { purpose: key
     details: <p>本页仅用固定示例核对选择、比较和调整。共用说明只合并完全相同的依据或来源；证据不足与回执未确认保持可见。刷新后还原。</p>,
   }
   const selectedEvidenceItem = evidence && suggestions.find(item => "evidence" in item && item.evidence?.target?.conclusionId === evidence.target.conclusionId) as AgentSuggestionEntry | undefined
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSuggestionSet {...common}   suggestions={suggestions.filter((item, index) => index < 3 || selectedIds.includes(item.id))}
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentSuggestionSet {...common}   suggestions={presentation.view === "workspace" ? suggestions : suggestions.filter((item, index) => index < 3 || selectedIds.includes(item.id))}
         itemActions={purpose === "teaching" ? suggestion => suggestion.id === fixture.suggestions[0].id
-          ? <Button type="button" size="navigation" variant="outline" disabled className="max-w-full whitespace-normal">据此建立教学行动（示例）</Button> : null : undefined} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+          ? <Button type="button" size="navigation" variant="outline" disabled className="max-w-full whitespace-normal">据此建立教学行动（示例）</Button> : null : undefined} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 两态与紧凑用法共用一份选择及调整草稿。教学建议的完整状态在扩展区展示。</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="独立载入示例事实">

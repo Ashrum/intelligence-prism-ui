@@ -95,7 +95,7 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
   const selectedLabel = metric?.access === "available" ? metric.label : anomaly?.access === "available" ? anomaly.text : "指标依据"
   const selectedBasis = selected?.kind === "change" && metric?.access === "available" ? metric.change?.basis : anomaly?.access === "available" ? anomaly.basis : undefined
   const basisVersion = selected && selected.kind !== "anomaly" ? selected.metricVersion : selected?.version
-  if (presentation.previewOnly) return <AgentMetricSummary {...common}   view="inline" density="default" onExpand={presentation.onExpand} />
+  if (presentation.previewOnly) return <AgentMetricSummary {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用同一份数据；下钻打开示例依据，数值和状态保持不变。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={snapshot} onClick={() => { setSnapshot(value => !value); setSelected(null) }}>切换当时数据示例</Button>

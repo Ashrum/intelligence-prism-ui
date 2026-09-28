@@ -80,7 +80,7 @@ export function PathPriorityExample({ purpose, narrow }: { purpose: keyof typeof
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>顺序、下一步范围、依赖、完成与到期均为固定示例记录。调整顺序不会重新计算路径；跳过、冷却、恢复及接受建议只显示请求反馈，待办保留。可用上移、下移或指定位置完成排序。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPathPriority {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPathPriority {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPathSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved", label: "已保存（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "保存回执未确认" }, { value: "unknown", label: "未知" },

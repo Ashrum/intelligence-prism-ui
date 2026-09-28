@@ -61,7 +61,7 @@ export function TemplatePickerExample({ purpose, narrow = false }: { purpose: ke
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     details: <p>全部为模拟模板。三个示例视图共享本次选择；分类只过滤显示，刷新后还原。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentTemplatePicker {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentTemplatePicker {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p role="status" className="text-ui-hint">{feedback}</p>
     {([ ["inline", "default", "推荐与快速切换"], ["workspace", "default", "模板库、预览与对比"], ["inline", "compact", "紧凑选择"] ] as const).map(([view, density, label]) =>

@@ -15,7 +15,7 @@ function Navigation() {
   const pathname=usePathname()
   const {setOpenMobile}=useSidebar()
   const link=(href:string,label:string,icon?:React.ReactNode)=> <SidebarMenuItem key={href}>
-    <SidebarMenuButton isActive={pathname===href} render={<Link href={href} aria-current={pathname===href?'page':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
+    <SidebarMenuButton isActive={pathname===href || (href==="/next/components/agent-components" && pathname.startsWith(href+"/"))} render={<Link href={href} aria-current={pathname===href?'page':href==="/next/components/agent-components" && pathname.startsWith(href+"/")?'location':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
   </SidebarMenuItem>
   return <Sidebar collapsible="offcanvas">
     <SidebarHeader className="px-4 py-5">

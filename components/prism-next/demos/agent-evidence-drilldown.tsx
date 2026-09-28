@@ -73,7 +73,7 @@ export function AgentEvidenceDrilldownDemo() {
           details={<p>固定示例，尚未连接真实证据服务。已引用只说明存在引用记录，仍需核对结论与证据是否一致。历史证据保留当时版本。</p>}
           onNavigate={navigate}
           onOpen={intent => setFeedback(`示例：已请求打开${intent.kind === "object" ? "对象" : "证据"}，证据记录保持原样。`)}
-           view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+           view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "evidence-drilldown"} className="mb-12 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">下钻与证据浏览</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：选择对象、查看证据与返回，三种用法共享同一组记录。</p>

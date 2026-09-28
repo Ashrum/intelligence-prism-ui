@@ -98,7 +98,7 @@ export function ResourceRetrieverExample({ purpose, narrow = false }: { purpose:
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     details: <p>筛选和排序仅用于本页固定样本。未知字段没有从文件名、简介或点击补齐；许可申请与读取请求不生成成功记录。预览内容仅在点击后挂载，刷新还原。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentResourceRetriever {...common}   resources={false ? resources : resources.slice(0, 2)} preview={preview && (false || resources.slice(0, 2).some(resource => resource.id === preview.resourceId)) ? preview : null} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentResourceRetriever {...common}   resources={presentation.view === "workspace" ? resources : resources.slice(0, 2)} preview={preview && (presentation.view === "workspace" || resources.slice(0, 2).some(resource => resource.id === preview.resourceId)) ? preview : null} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 来源、许可与使用记录均为人工样本。两态与紧凑用法共用查询和预览目标。</p>
     <div className="flex flex-wrap gap-2" role="group" aria-label="检索状态示例">

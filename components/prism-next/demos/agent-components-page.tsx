@@ -34,7 +34,8 @@ export function AgentExampleSection({ slug, name, description, entry, preview, e
   }, [expanded])
   return <section id={slug} data-agent-page-section className="@container min-w-0 scroll-mt-24 space-y-4" aria-labelledby={`${slug}-heading`}>
     <header className="space-y-2">
-      <h2 id={`${slug}-heading`} tabIndex={-1} className="text-section-title">{entry && `${entry.number} `}{name}</h2>
+      <h2 id={`${slug}-heading`} tabIndex={-1} className="text-section-title">{entry ? <a className="prism-link" href={`/next/components/agent-components/${slug}`} aria-label={`${entry.number} ${name} · 打开单独页面`}>{entry.number} {name}</a> : name}</h2>
+      {entry && <a className="prism-link text-ui-hint" href={`/next/components/agent-components/${slug}`}>打开单独页面<span className="sr-only"> · {name}</span></a>}
       <p className="text-ui-body">{description}</p>
       {entry ? <div className="space-y-2"><Badge variant="outline">{agentComponentStatusLabels[entry.status]}</Badge><p className="text-ui-hint text-muted-foreground">承载位置：{entry.carriers.label}</p></div> : <Badge variant="outline">组合示例</Badge>}
     </header>

@@ -76,7 +76,7 @@ export function ObjectViewerExample({ purpose, narrow }: { purpose: keyof typeof
     notice: "固定示例；未连接题库与作答服务。",
     details: <p>查看和定位不会改变读取、引用或复核记录。切换版本后，答案需要重新确认查看；历史内容只读。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentObjectViewer {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentObjectViewer {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处呈现同一对象与版本。</p>
     <Button type="button" variant="outline" size="navigation" disabled={!requestedVersion} onClick={() => {

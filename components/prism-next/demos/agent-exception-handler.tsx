@@ -91,7 +91,7 @@ export function AgentExceptionHandlerDemo() {
           notice="示例：尚未连接真实处理服务。"
           details={<p>查看材料不代表已核对；处理只针对当前异常，已保留的内容继续使用。历史记录保留当时事实。</p>}
           onAction={intent => { const item = items.find(value => value.id === intent.exceptionId); const action = intent.kind === "query" ? query : item && "actions" in item.disposition ? item.disposition.actions?.find(value => value.id === intent.actionId) : undefined; setFeedback(`示例：已选择“${action?.label ?? "处理"}”（${item?.title}）；记录保持原样。`) }}
-           view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+           view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "exception-handler"} className="mb-12 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">异常处理器</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：三种用法共享同一组记录。下方按钮手动切换首项状态，处置按钮只记录选择。</p>

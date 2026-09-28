@@ -108,7 +108,7 @@ export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof
           : value === "succeeded" ? { state: "succeeded", operation: "capture", request } : value === "unknown" ? { state: "unknown" } : { state: "idle" }
     setState(current => ({ ...current, receipt })); setFeedback("已载入独立示例回执；没有执行设备采集、上传或质量检查。")
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 space-y-2"><Label htmlFor={`${id}-receipt`}>独立采集／上传回执示例</Label>
       <QuestionSelect id={`${id}-receipt`} label="独立采集／上传回执示例" value={receiptChoice(state.receipt)} onChange={loadReceipt}

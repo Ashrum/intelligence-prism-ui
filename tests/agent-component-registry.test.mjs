@@ -54,7 +54,7 @@ test('SSR contains every semantic anchor exactly once, in category/number order,
     assert.equal(html.split(`id="${entry.slug}"`).length - 1, 1, entry.slug);
     const position = html.indexOf(`id="${entry.slug}"`);
     assert.ok(position > previous, entry.slug); previous = position;
-    assert.ok(html.includes(`${entry.number} ${entry.name}</h2>`));
+    assert.ok(html.includes(`${entry.number} ${entry.name}</a></h2>`));
   }
   assert.equal((html.match(/data-agent-page-section=/g) ?? []).length, 46);
   assert.equal((html.match(/data-agent-page-preview=/g) ?? []).length, 46);

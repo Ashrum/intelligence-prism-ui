@@ -86,7 +86,7 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
     : requestedVersion === currentVersion ? { state: "unknown", description: "确认结果未收到，当前参数仍未确认。" }
     : needsCheck || readOnly ? { state: "blocked", description: readOnly ? "当前只读，请返回可编辑状态后核对。" : "请核对错误与未确认参数。" }
     : { state: "ready", confirm: { label: "确认本次要求（示例）", onAction: () => { setRequestedVersion(currentVersion); setFeedback("已请求确认，等待示例确认记录。") } } }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentParameterConfig {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentParameterConfig {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例，三个视图共用一份参数；不连接组卷、OCR 或批阅服务。</p>
     <div className="flex min-w-0 flex-wrap gap-2">

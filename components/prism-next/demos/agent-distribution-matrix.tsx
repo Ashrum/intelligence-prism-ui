@@ -132,7 +132,7 @@ export function DistributionMatrixExample({ purpose, narrow = false, initialView
     comparison, selectedCell: selection ?? undefined, onIntent: intent,
     onExpand: () => changeView("workspace"), onBack: () => changeView("inline"),
   }
-  if (presentation.previewOnly) return <AgentDistributionMatrix {...props}   view="inline" density="default" onExpand={presentation.onExpand} />
+  if (presentation.previewOnly) return <AgentDistributionMatrix {...props}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div className={`min-w-0 space-y-4 ${narrow ? "w-full max-w-[320px]" : ""}`}>
     <p className="text-ui-hint">固定示例 · 展开与返回共用同一结果；筛选、排序和比较只调整本次查看范围。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button>

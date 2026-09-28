@@ -78,7 +78,7 @@ export function InteractiveDemoExample({ compact = false, narrow = false }: { co
       teachingTips={["保持 h、k 不变，比较 a 的正负与绝对值如何影响开口。", "保持 a 不变，观察 h、k 与顶点位置的关系；先预测，再调整并用完整中文说明观察依据。"]}
       capabilities={demoCapabilities} mobileSupport={{ supported: true, reason: "可查看图像、用数值输入或滑块调整参数；触屏可靠性待验证。" }}
       source={{ label: "课堂参数示意（模拟）", openable: false }}
-      onIntent={receive}   details="图像由本页示例生成，仅用于观察参数变化，刷新后恢复初始值。" view="inline" density="default" onExpand={presentation.onExpand} />
+      onIntent={receive}   details="图像由本页示例生成，仅用于观察参数变化，刷新后恢复初始值。" view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div ref={navigation.panel} tabIndex={-1} className={`min-w-0 ${narrow ? "max-w-[320px]" : ""}`}>
     <AgentInteractiveDemo demoId="quadratic-example" version="example-v1" title="二次函数参数演示（模拟）" subject="数学" grade="九年级"
       parameters={parameters} preview={visual} content={visual} description={description}
@@ -104,7 +104,7 @@ export function SimulationLabExample({ compact = false, narrow = false }: { comp
       steps={labSteps} currentStepId={currentStepId} variables={variables} result={result} records={[]}
       conclusionDraft={conclusionDraft} capabilities={labCapabilities} mobileSupport={{ supported: true, reason: "提供数值输入与结果表格；真实移动设备待验证。" }}
         onIntent={receive}
-      details="没有真实随机抛掷；运行只展示预置模拟数据，调整变量后仍保留最近结果的运行时次数。" view="inline" density="default" onExpand={presentation.onExpand} />
+      details="没有真实随机抛掷；运行只展示预置模拟数据，调整变量后仍保留最近结果的运行时次数。" view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} />
   return <div ref={navigation.panel} tabIndex={-1} className={`min-w-0 space-y-2 ${narrow ? "max-w-[320px]" : ""}`}>
     <p className="text-ui-hint">模拟样例仅提供 10、100、1000 次的固定结果；其他次数结果未知。结论仅保留在本页，刷新重置。</p>
     <AgentSimulationLab labId="coin-example" version="example-v1" title="抛硬币频率实验（模拟）" objective="比较不同次数下的正面频率，辨别频率与概率。"

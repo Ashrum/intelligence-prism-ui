@@ -90,7 +90,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     notice: "仅为本页示例；刷新后还原。",
     details: <p>题目分值与分组数量由本页示例提供。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCollectionBasket {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCollectionBasket {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处呈现共用同一份本页集合与选择。</p>
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="同步记录示例"><span className="text-ui-action">同步记录</span>

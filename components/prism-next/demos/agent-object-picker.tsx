@@ -64,7 +64,7 @@ export function ObjectPickerExample({ purpose, narrow = false }: { purpose: "cla
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     onConfirm: ids => setRequest(`已请求确认 ${ids.length} 项示例选择；尚未提交任务。`),
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={request}><AgentObjectPicker {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={request}><AgentObjectPicker {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用选择、搜索与筛选；状态由下方控件手动切换。</p>
     <div className="space-y-2"><Label htmlFor={stateId}>候选状态示例</Label>

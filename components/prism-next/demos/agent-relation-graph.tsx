@@ -78,7 +78,7 @@ export function RelationGraphExample({ kind = "coverage", narrow = false }: { ki
       summary={kind === "concept" ? undefined : { statusCounts, gaps: missing.length ? [`未覆盖知识点 ${missing.length} 个：${missing.map(node => node.label).join("、")}`] : [] }}
       capabilities={capabilities} layout={layout} graphThreshold={kind === "large" ? 10 : 80} filter={filter} selectedNodeId={selectedNodeId}
         onIntent={receive}
-      details="所有节点、关系和覆盖状态均为模拟；图中位置只用于阅读，不表示掌握程度。示例删除节点时同时移除关联连线，仅改变本页资料。" view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+      details="所有节点、关系和覆盖状态均为模拟；图中位置只用于阅读，不表示掌握程度。示例删除节点时同时移除关联连线，仅改变本页资料。" view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div ref={panel} tabIndex={-1} className={`min-w-0 space-y-2 ${narrow ? "max-w-[320px]" : ""}`}>
     <AgentRelationGraph title={kind === "concept" ? "概念推演（模拟）" : kind === "large" ? "超出图示上限（模拟）" : "试卷知识点覆盖（模拟）"}
       graphId={graphId} version={version} versionLabel={`本页资料第 ${revision} 版 · ${revision === 1 ? "预置模拟" : "未保存"}`} nodes={nodes} edges={edges}

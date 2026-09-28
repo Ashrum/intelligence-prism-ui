@@ -48,7 +48,7 @@ export function ContentInputExample({ purpose, narrow }: { purpose: keyof typeof
         renderPreview={purpose === "question" ? field => field.id === "answer" ? <DraftMathPreview value={`${values.stem}\n参考答案：${field.value}`} label="当前题干与答案预览" /> : null : undefined}
         submitDisabledReason={invalid ? "请先修正格式并重新检查。" : undefined}
         onSubmit={() => setFeedback("已请求提交内容；提交结果尚未确认。")}
-        details={<p>这里填写题干、答案或讲评材料。给 Agent 的操作要求在对话输入区填写。展开和返回保留同一份输入，不会提交；此示例没有自动保存或网页抓取。</p>} view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+        details={<p>这里填写题干、答案或讲评材料。给 Agent 的操作要求在对话输入区填写。展开和返回保留同一份输入，不会提交；此示例没有自动保存或网页抓取。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end gap-3">
       <Field><FieldLabel htmlFor={`${id}-save`}>保存状态示例</FieldLabel><QuestionSelect id={`${id}-save`} label="保存状态示例" value={saveState}

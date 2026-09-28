@@ -141,7 +141,7 @@ export function ScopeBuilderExample({ purpose, narrow = false }: { purpose: "ana
     notice: "未指定的范围不自动使用全部可用对象。",
     details: <p>选择范围不会增加访问权限。确认仅针对当前选择，不表示已开始分析或检索；这里没有连接学校数据与资料服务。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentScopeBuilder {...common}   view="inline" density="default" onExpand={presentation.onExpand} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentScopeBuilder {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用同一份选择。可先载入可用范围，再请求确认并独立载入确认记录。</p>
     <div className="flex flex-wrap gap-2">
