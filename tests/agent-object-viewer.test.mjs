@@ -82,15 +82,40 @@ test('minimal single-section workspace removes card/headings/directory, retainin
   }
 });
 
-test('minimal facts share one nonwrapping meta paragraph, with status glyph and standing notice', () => {
+test('minimal facts wrap between indivisible segments in one meta paragraph, with status glyph and standing notice', () => {
   const notice = '查看不会生成读取或引用证据。';
   const html = htmlFor({ ...minimalProps, notice, object: { ...object, displayId: 'Q-3' } });
   const facts = html.match(/<p[^>]*data-object-facts=""[^>]*>.*?<\/p>/)?.[0];
   assert.ok(facts);
-  for (const text of ['text-ui-meta', 'text-muted-foreground', 'whitespace-nowrap', 'overflow-x-auto', 'tabindex="0"', 'data-agent-status', '<svg', ' · 当前版本：v2', ' · 编号：Q-3', ' · 可见范围：仅本题内容', ' · 来源：课堂练习']) assert.ok(facts.includes(text), text);
+  for (const text of ['text-ui-meta', 'text-muted-foreground', 'data-agent-status', '<svg', ' · 当前版本：v2', ' · 编号：Q-3', ' · 可见范围：仅本题内容', ' · 来源：课堂练习']) assert.ok(facts.includes(text), text);
   assert.doesNotMatch(facts, /<br|<div/);
+  assert.doesNotMatch(facts.match(/^<p[^>]*>/)[0], /whitespace-nowrap|overflow-x-auto|tabindex|role=|aria-label=/);
+  const segments = [...facts.matchAll(/<span class="inline-block whitespace-nowrap">(.*?)<\/span>/g)];
+  assert.equal(segments.length, 5);
+  assert.deepEqual(segments.slice(1).map(match => textOf(match[1])), [' · 当前版本：v2', ' · 编号：Q-3', ' · 可见范围：仅本题内容', ' · 来源：课堂练习']);
   assert.equal(html.split(notice).length - 1, 1);
   assert.match(html, new RegExp(`<p[^>]*text-ui-meta[^>]*>${notice}</p>`));
+});
+
+test('minimal fact segments retain history, optional fields, unknown fallbacks and restricted order', () => {
+  const scenarios = [
+    [{ version: { ...version, state: 'historical', currentLabel: 'v3' }, object: { ...object, displayId: 'Q-3' } },
+      ['历史版本（只读）', ' · 当时版本：v2', ' · 当前版本：v3', ' · 编号：Q-3', ' · 可见范围：仅本题内容', ' · 来源：课堂练习']],
+    [{ version: { ...version, label: '' }, source: undefined, access: { state: 'available', scope: '' } },
+      ['当前状态', ' · 当前版本：版本未确认', ' · 可见范围：范围未确认', ' · 来源：来源未确认']],
+    [{ access: { state: 'restricted', reason: '授权撤销' }, source: secret }, ['当前状态', ' · 当前版本：v2']],
+  ];
+  for (const [input, expected] of scenarios) {
+    const tree = capture({ ...minimalProps, ...input });
+    const facts = tree.find(node => node.props['data-object-facts'] === '');
+    assert.doesNotMatch(facts.props.className || '', /whitespace-nowrap|overflow-x-auto/);
+    assert.equal(facts.props.tabIndex, undefined);
+    assert.equal(facts.props.role, undefined);
+    const html = htmlFor({ ...minimalProps, ...input });
+    const paragraph = html.match(/<p[^>]*data-object-facts=""[^>]*>(.*?)<\/p>/)[1];
+    const segments = [...paragraph.matchAll(/<span class="inline-block whitespace-nowrap">(.*?)<\/span>/g)];
+    assert.deepEqual(segments.map(match => textOf(match[1])), expected);
+  }
 });
 
 test('minimal is ignored in inline and with zero or multiple sections, with identical full output', () => {
