@@ -324,7 +324,7 @@ test('summary renders compact numbered title and one facts line without invoking
     assert.equal((rowsHtml.match(/data-agent-meta=/g) || []).length, 2);
     assert.match(rowsHtml, /data-slot="separator"/);
     if (mode.view === 'workspace') {
-      assert.match(html, /aria-label="选择：第 1 题 · 第一题"/);
+      assert.match(html, /aria-label="选择第 1 题 · 第一题"/);
       for (const label of rowsHtml.match(/<label[^>]*for="[^"]*-select"[\s\S]*?<\/label>/g) || []) assert.equal(textOf(label), '');
     }
   }
@@ -505,4 +505,40 @@ test('question fixture provides passive count, total and score composition once 
   for (const value of ['题型分值构成', '单选：5分', '多选：6分', '填空：6分']) assert.ok(overview.includes(value));
   assert.doesNotMatch(overview, /<button/);
   assert.doesNotMatch(render(h(CollectionBasketExample, { purpose: 'preparation', narrow: true })), /data-collection-overview/);
+});
+
+
+test('host selection toolbar opt-out preserves controlled row checkboxes and default toolbar behavior', () => {
+  const extra = { view: 'workspace', itemPresentation: 'summary', selectedIds: ['q1'], onSelectionChange() {} };
+  assert.match(htmlFor(extra), /已选择 1 项/);
+  const hidden = htmlFor({ ...extra, selectionToolbar: false });
+  assert.doesNotMatch(hidden, /已选择|全选可选条目|清除选择/);
+  assert.equal((hidden.match(/role="checkbox"/g) ?? []).length, 2);
+  assert.match(hidden, /aria-label="选择第 1 题 · 第一题"/);
+  const changes = [];
+  const nodes = capture({ ...extra, selectionToolbar: false, onSelectionChange: ids => changes.push(ids) });
+  nodes.find(n => n.props['aria-label'] === '选择第 2 题 · 第二题').props.onCheckedChange(true);
+  assert.deepEqual(changes, [['q1', 'q2']]);
+  const historical = capture({ ...extra, selectionToolbar: false, collection: { ...collection, snapshot: '历史版本' }, onSelectionChange() { assert.fail('history cannot select'); } });
+  const checkbox = historical.find(n => n.props['aria-label'] === '选择第 1 题 · 第一题');
+  assert.equal(checkbox.props.disabled, true);
+  checkbox.props.onCheckedChange(false);
+});
+
+test('headerActions stays beside title and compact status stays visible in existing facts line', () => {
+  for (const mode of modes) for (const itemPresentation of ['default', 'summary']) {
+    const action = h('button', { 'aria-label': '集合更多操作', onClick() {} }, '…');
+    const nodes = capture({ ...mode, itemPresentation, headerActions: action });
+    const row = nodes.find(node => node.type === 'div' && React.Children.toArray(node.props.children).some(child => child.type === 'h3'));
+    assert.ok(row);
+    assert.doesNotMatch(row.props.className, /flex-wrap/);
+    assert.equal(descendants(row, node => node.props['data-collection-header-actions'] !== undefined).length, 1);
+    const html = htmlFor({ ...mode, itemPresentation, headerActions: action });
+    const header = html.match(/<header[\s\S]*?<\/header>/)[0];
+    assert.equal((header.match(/aria-label="集合更多操作"/g) || []).length, 1);
+    assert.equal((header.match(/data-agent-status=/g) || []).length, 1);
+    assert.match(textOf(header), /状态未确认/);
+    if (itemPresentation === 'summary') assert.ok(header.indexOf('data-agent-status=') > header.indexOf('data-collection-header-facts'));
+  }
+  assert.match(render(h(CollectionBasketExample, { purpose: 'questions', narrow: true })), /data-collection-header-actions/);
 });

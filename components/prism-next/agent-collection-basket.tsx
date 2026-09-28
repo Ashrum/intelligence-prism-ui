@@ -79,6 +79,8 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   onGroupByChange?: (value: "none" | "group") => void
   selectedIds?: readonly string[]
   onSelectionChange?: (ids: readonly string[]) => void
+  /** Hide only the built-in selection controls when the host supplies its own toolbar. */
+  selectionToolbar?: boolean
   clear?: AgentCollectionAction
   destinations?: readonly AgentCollectionAction[]
   batchActions?: readonly AgentCollectionBatchAction[]
@@ -92,6 +94,8 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   openLabel?: string
   /** Workspace-only passive host statistics; replaces header summary fields and group counts. */
   overview?: ReactNode
+  /** Host controls on the existing title row; compact headers keep status in the facts line. */
+  headerActions?: ReactNode
   onBack?: () => void
   notice?: string
   emptyText?: string
@@ -162,7 +166,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       {full && entry?.selectable && <div className="min-w-0 space-y-1">
         <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "min-h-11 max-w-full"} htmlFor={`${id}-select`}>
           <Checkbox id={`${id}-select`} checked={props.selectedIds?.includes(item.id) ?? false} disabled={!!selectReason}
-            aria-label={`选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
+            aria-label={summaryMode ? `选择${rowTitle}` : `选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
             onCheckedChange={checked => {
               if (selectReason) return
               const selected = props.selectedIds ?? []
@@ -245,16 +249,20 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const summaryMode = props.itemPresentation === "summary"
   const hasOverview = full && props.overview != null && typeof props.overview !== "boolean"
   const compactHeader = summaryMode || hasOverview
+  const hasHeaderActions = props.headerActions != null && typeof props.headerActions !== "boolean"
+  const headerStatus = <AgentStatus unknown={sync.state === "unknown"} tone={sync.state === "failed" ? "error" : sync.state === "synced" ? "success" : "neutral"}>{syncLabels[sync.state]}</AgentStatus>
   const missingSyncFacts = [!collection.version && (historical ? "当时版本" : "集合版本"), !visual?.updatedAt && "更新时间"].filter(Boolean)
   const visibleSyncDescription = !compactHeader || sync.state === "failed" || sync.state === "unknown"
   return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
     <header className="min-w-0 space-y-1.5">
       {!compactHeader && <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>}
-      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{compactHeader && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>
-        <AgentStatus unknown={sync.state === "unknown"} tone={sync.state === "failed" ? "error" : sync.state === "synced" ? "success" : "neutral"}>{syncLabels[sync.state]}</AgentStatus>
+      <div className={hasHeaderActions ? "flex min-w-0 items-start justify-between gap-2" : "flex min-w-0 flex-wrap items-start justify-between gap-2"}><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{compactHeader && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>
+        {!(compactHeader && hasHeaderActions) && headerStatus}
+        {hasHeaderActions && <div className="flex shrink-0 items-center gap-2" data-collection-header-actions>{props.headerActions}</div>}
       </div>
       <AgentVisibleMarkers visual={visual} />
       {compactHeader ? <AgentMetaLine data-collection-header-facts>
+        {hasHeaderActions && headerStatus}
         {historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}{collection.version && <> · {historical ? "当时版本" : "集合版本"}：{collection.version}</>} · <AgentSourceChip label={`来源：${collection.source || "未确认"}`}>
           <p>{collection.source || "来源未确认"}</p>
           {!visibleSyncDescription && sync.description && <p>{sync.description}</p>}
@@ -279,7 +287,7 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
           ? <Button key={value} type="button" size="navigation" variant="outline" aria-pressed={groupBy === value} onClick={() => props.onGroupByChange?.(value)}>{value === "none" ? "集合顺序" : "按分组查看"}</Button>
           : groupBy === value && <span key={value} className="text-ui-body">{value === "none" ? "集合顺序" : "按分组查看"}</span>)}
       </div>}
-      {(selectable.length > 0 || selectedIds.length > 0) && <div className="min-w-0 space-y-1.5">
+      {props.selectionToolbar !== false && (selectable.length > 0 || selectedIds.length > 0) && <div className="min-w-0 space-y-1.5">
         <div className="flex flex-wrap items-center gap-3"><p className="text-ui-hint">已选择 {selectedIds.length} 项</p>
           <BasketActionButton label={allSelected ? "取消全选" : "全选可选条目"} scope={collection.title} reason={selectionReason || (!selectable.length ? "当前没有可选条目。" : undefined)}
             onClick={() => onSelectionChange?.(allSelected ? selectedIds.filter(value => !selectable.some(item => item.id === value)) : [...new Set([...selectedIds, ...selectable.map(item => item.id)])])} />
