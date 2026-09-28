@@ -101,3 +101,12 @@ export const typographyRoles = [
   }
 ] as const
 export type TypographyRole = typeof typographyRoles[number]["id"]
+
+// D1 is an institution-wordmark exception, not a general UI typography role.
+export const typographyBrandClasses = ["text-brand-wordmark"] as const
+
+// Shared by class merging and the CSS-token parity test.
+export const typographyFontSizeClasses = [
+  ...typographyRoles.map(role => role.className),
+  ...typographyBrandClasses,
+]

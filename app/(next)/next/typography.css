@@ -44,6 +44,19 @@
   --text-stat-display--line-height: 1.33333333;
   --text-stat-display--font-weight: 600;
   --text-stat-display--letter-spacing: 0;
+  /* D1: institution wordmark only. The design leaves line-height at normal. */
+  --text-brand-wordmark: 1.0625rem;
+  --text-brand-wordmark--line-height: normal;
+  --text-brand-wordmark--font-weight: 700;
+  --text-brand-wordmark--letter-spacing: 0.04em;
+}
+
+.prism-institution-wordmark {
+  font-family:"Songti SC","STSong","Noto Serif SC",serif;
+  font-size:var(--text-brand-wordmark);
+  line-height:var(--text-brand-wordmark--line-height);
+  font-weight:var(--text-brand-wordmark--font-weight);
+  letter-spacing:var(--text-brand-wordmark--letter-spacing);
 }
 
 .prism-long-edit, .prism-long-edit textarea { font-size:var(--text-read-body); line-height:var(--text-read-body--line-height); font-weight:400; }
