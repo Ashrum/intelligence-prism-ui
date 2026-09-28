@@ -1,0 +1,387 @@
+{
+  "baseline": "7bf305b1cd6438aa6c075b2688f42cf2a8b3baa4",
+  "props": {
+    "title": "完整状态与长中文文件名",
+    "limits": {
+      "accept": ".pdf,.docx",
+      "acceptLabel": "PDF、Word",
+      "maxFiles": 12,
+      "maxFileSize": 1048576
+    },
+    "capabilities": {
+      "select": {
+        "status": "supported",
+        "reason": "可从本机选择"
+      },
+      "upload": {
+        "status": "unsupported",
+        "reason": "只检查本机文件"
+      },
+      "drop": {
+        "status": "limited",
+        "reason": "部分设备可拖入"
+      }
+    },
+    "items": [
+      {
+        "id": "file-0",
+        "name": "九年级数学教学设计与复习练习0.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "local",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "selected"
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-1",
+        "name": "九年级数学教学设计与复习练习1.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "existing",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "invalid",
+          "validation": "size",
+          "reason": "超过大小限制"
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-2",
+        "name": "九年级数学教学设计与复习练习2.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "local",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "queued"
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-3",
+        "name": "九年级数学教学设计与复习练习3.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "existing",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "received",
+          "request": {
+            "id": "original-request",
+            "label": "原请求"
+          }
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-4",
+        "name": "九年级数学教学设计与复习练习4.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "local",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "uploading",
+          "request": {
+            "id": "original-request",
+            "label": "原请求"
+          },
+          "progress": 42
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-5",
+        "name": "九年级数学教学设计与复习练习5.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "existing",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "uploading",
+          "request": {
+            "id": "original-request",
+            "label": "原请求"
+          }
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-6",
+        "name": "九年级数学教学设计与复习练习6.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "local",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "uploaded",
+          "uploadedAt": "2026-09-25"
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容",
+        "processing": {
+          "label": "解析中",
+          "description": "独立记录"
+        }
+      },
+      {
+        "id": "file-7",
+        "name": "九年级数学教学设计与复习练习7.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "existing",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "failed",
+          "reason": "明确失败",
+          "request": {
+            "id": "original-request",
+            "label": "原请求"
+          },
+          "retry": {}
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-8",
+        "name": "九年级数学教学设计与复习练习8.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "local",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "unknown",
+          "reason": "回执未确认",
+          "request": {
+            "id": "original-request",
+            "label": "原请求"
+          },
+          "query": {}
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      },
+      {
+        "id": "file-9",
+        "name": "九年级数学教学设计与复习练习9.docx",
+        "type": "Word",
+        "sizeBytes": 1024,
+        "source": {
+          "kind": "existing",
+          "label": "来源说明"
+        },
+        "version": "v1",
+        "status": {
+          "state": "removed"
+        },
+        "actions": {
+          "remove": {},
+          "replace": {
+            "disabledReason": "当前不可替换"
+          },
+          "move": {}
+        },
+        "details": "文件说明",
+        "preview": "已有授权内容"
+      }
+    ],
+    "notice": "示例边界",
+    "details": "补充说明",
+    "inlineLimit": 2,
+    "batchActions": [
+      {
+        "id": "remove",
+        "label": "移除两项",
+        "kind": "remove",
+        "fileIds": [
+          "file-0",
+          "file-1"
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "0-inline-default",
+      "props": {
+        "view": "inline",
+        "density": "default"
+      },
+      "sha256": "7aa4d89c7d1e35b2be319bedafbe3bf12da1d3e39f6166ed58cb43fca7fb9e38"
+    },
+    {
+      "name": "0-workspace-default",
+      "props": {
+        "view": "workspace",
+        "density": "default"
+      },
+      "sha256": "77943dbdd757bba314b898578896c24f43dcb0d5c8bc0612632cae634019420e"
+    },
+    {
+      "name": "0-workspace-compact",
+      "props": {
+        "view": "workspace",
+        "density": "compact"
+      },
+      "sha256": "8c2de7bffa843953cb43f8a9128e422ea236ec583ad5ccda20342150509225dc"
+    },
+    {
+      "name": "1-inline-default",
+      "props": {
+        "view": "inline",
+        "density": "default",
+        "groupBy": "status",
+        "selectionDisabledReason": "材料只读"
+      },
+      "sha256": "96e05f9c593b95678c99c22a5013e9b9839198346f0c4ff5ef37970eef61abaf"
+    },
+    {
+      "name": "1-workspace-default",
+      "props": {
+        "view": "workspace",
+        "density": "default",
+        "groupBy": "status",
+        "selectionDisabledReason": "材料只读"
+      },
+      "sha256": "3f28e1ecf365f44a3894173eef06ef4ecc8f9b9ddca4a978d67159e49bc500f5"
+    },
+    {
+      "name": "1-workspace-compact",
+      "props": {
+        "view": "workspace",
+        "density": "compact",
+        "groupBy": "status",
+        "selectionDisabledReason": "材料只读"
+      },
+      "sha256": "aff206b3e82043d52e3482ecb2281c2bfc72d209616be4eef324a0687794c3a6"
+    },
+    {
+      "name": "2-inline-default",
+      "props": {
+        "view": "inline",
+        "density": "default",
+        "items": []
+      },
+      "sha256": "8f51e9e74cd94458c6873200bf37b6bd4c44049adb8f7661fb54a8553ebd11dc"
+    },
+    {
+      "name": "2-workspace-default",
+      "props": {
+        "view": "workspace",
+        "density": "default",
+        "items": []
+      },
+      "sha256": "377dc9689e06cea4adfa7caf33f9471bde173fe2394eba2bec327c3331b07075"
+    },
+    {
+      "name": "2-workspace-compact",
+      "props": {
+        "view": "workspace",
+        "density": "compact",
+        "items": []
+      },
+      "sha256": "607eeaa7eb32a5f49700b5ad95c7faeb4b4d0f6be009899301827790016194d9"
+    }
+  ]
+}

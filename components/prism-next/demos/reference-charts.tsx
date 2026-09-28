@@ -52,6 +52,7 @@ export function ReferenceChartDemo({kind}:{kind:string}){
    {kind==='combo-chart'&&<ComboChart label={learning||edge?'可分析证据趋势':'数量与用时'} categories={empty?[]:periods} axes={axes} series={[{id:'count',label:learning||edge?'新增有效作答':'处理数量',type:'bar',axisId:'count',color:colors[0],data:empty?[]:periods.map((p,i)=>({id:p.id,value:bar[i]}))},{id:'secondary',label:learning||edge?'累计已解析任务':'处理用时',type:'line',axisId:'secondary',color:colors[2],data:empty?[]:periods.map((p,i)=>({id:p.id,value:line[i]}))}]} selectedId={selected} onSelect={select}/>}
   </div>
   <p role="status" className="mt-4 min-h-5 text-ui-hint text-muted-foreground">{selection?`已选项目：${selection}`:'点击图形、分类或数据表，选择结果由外部接收。'}</p>
+  {kind==='status-composition'&&<section id="compact-composition" className="mt-6 space-y-4"><h3 className="text-block-title">紧凑状态组成</h3><p className="text-ui-hint text-muted-foreground">只读条保留完整数量和占比说明；可选择条保留操作高度。</p><StatusComposition density="compact" label="紧凑只读分类" items={empty?[]:composition} unit={learning?'人':'项'}/><StatusComposition density="compact" label="紧凑可选分类" items={empty?[]:composition} unit={learning?'人':'项'} selectedId={selected} onSelect={select}/></section>}
   <details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">组件接口与边界</summary><p className="mt-3 leading-7">以上为可替换的演示数据。组件接收数据、标签、单位与回调，不读取业务状态，也不内置跳转、统计结论或诊断。零值与缺测分别处理。</p><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{code}</pre></details>
  </DemoSection>
 }

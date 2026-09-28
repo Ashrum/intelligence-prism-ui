@@ -25,7 +25,7 @@ function AnswerSpace({response,label,height,count=1}:{response?:ResponseModel;la
     {response==="long"?<div style={{height:`${height}mm`}}/>:<p className="q-response-line">{response==="single"||response==="multiple"?"答案：________":response==="boolean"?"判断：________":Array.from({length:count},(_,i)=>`${count>1?`（${i+1}）`:"答案："}________________`).join("　")}</p>}
   </div>
 }
-export function QuestionPrint({emptyActions,entries,questions,versions,blocked,title,showPoints=true,description,minutes,preferences,onPreferencesChange,settingsOpen,onSettingsChange}:{emptyActions?:ReactNode;settingsOpen:boolean;onSettingsChange:(open:boolean)=>void;preferences:PrintPreferences;onPreferencesChange:(update:(previous:PrintPreferences)=>PrintPreferences)=>void;entries:PaperEntry[];questions:QuestionRecord[];versions:Record<string,string>;blocked:boolean;title:string;showPoints?:boolean;description?:string;minutes:number}) {
+export function QuestionPrint({emptyActions,entries,questions,versions,blocked,title,showPoints=true,showQuestionIds=true,description,minutes,preferences,onPreferencesChange,settingsOpen,onSettingsChange}:{emptyActions?:ReactNode;settingsOpen:boolean;onSettingsChange:(open:boolean)=>void;preferences:PrintPreferences;onPreferencesChange:(update:(previous:PrintPreferences)=>PrintPreferences)=>void;entries:PaperEntry[];questions:QuestionRecord[];versions:Record<string,string>;blocked:boolean;title:string;showPoints?:boolean;showQuestionIds?:boolean;description?:string;minutes:number}) {
   const {mode,margin,fontSize,spaces,breaks,view="fit"}=preferences
   const preview=useRef<HTMLDivElement>(null),anchor=useRef<{id:string;offset:number}|null>(null)
   const widthMemory=useRef(0),settingsScroll=useRef(0)
@@ -37,7 +37,7 @@ export function QuestionPrint({emptyActions,entries,questions,versions,blocked,t
   const setSpaces=(value:SetStateAction<Record<string,number>>)=>update("spaces",value),setBreaks=(value:SetStateAction<string[]>)=>update("breaks",value)
   const [layout,setLayout]=useState<{pages:string[][];oversized:string[];signature:string}>({pages:[],oversized:[],signature:""})
   const measure=useRef<HTMLDivElement>(null)
-  const signature=JSON.stringify({entries,versions,title,description,minutes,mode,margin,fontSize,spaces,breaks,showPoints})
+  const signature=JSON.stringify({entries,versions,title,description,minutes,mode,margin,fontSize,spaces,breaks,showPoints,showQuestionIds})
   const contentVersion=JSON.stringify({entries,versions:entries.map(entry=>[entry.id,versions[entry.id]]),title,description,minutes,showPoints})
   let hash=2166136261;for(const character of contentVersion)hash=Math.imul(hash^character.charCodeAt(0),16777619)
   const edition=`D-${(hash>>>0).toString(16).toUpperCase().padStart(8,"0")}`
@@ -48,7 +48,7 @@ export function QuestionPrint({emptyActions,entries,questions,versions,blocked,t
     const question=questions.find(item=>item.id===entry.id);if(!question)return
     const number=index+1
     const display={...question,parts:undefined}
-    const heading=<div className="q-paper-question-heading"><h4>{number}. {question.title}{showPoints&&`（${entryPoints(entry)} 分）`}</h4><p>{question.id} · v{versions[question.id]??"1.0"}</p></div>
+    const heading=<div className="q-paper-question-heading"><h4>{number}. {question.title}{showPoints&&`（${entryPoints(entry)} 分）`}</h4>{showQuestionIds&&<p>{question.id} · v{versions[question.id]??"1.0"}</p>}</div>
     const group=entry.group&&entry.group!==entries[index-1]?.group?<h4 className="q-paper-group">{entry.group}</h4>:null
     if(mode==="answers") {
       const adjusted=entryPoints(entry)!==question.points||Object.entries(entry.partPoints??{}).some(([id,value])=>question.parts?.find(part=>part.id===id)?.points!==value)

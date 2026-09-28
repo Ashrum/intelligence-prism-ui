@@ -4,7 +4,7 @@ import { Badge as CossBadge, type BadgeProps as CossBadgeProps } from "@/compone
 import { cn } from "@/lib/utils";
 
 export interface BadgeProps extends Omit<CossBadgeProps, "variant"> {
-  variant?: CossBadgeProps["variant"] | "info-solid";
+  variant?: CossBadgeProps["variant"] | "info-solid" | "attention";
 }
 
 /** Prism variants compose the pinned coss Badge with the Prism typography adapter; pinned upstream files stay untouched. */
@@ -13,7 +13,7 @@ export function Badge({ variant, className, size = "lg", ...props }: BadgeProps)
   return <CossBadge
     {...props}
     size={size}
-    variant={solidInfo ? "info" : variant}
+    variant={solidInfo ? "info" : variant === "attention" ? "error" : variant}
     className={cn(solidInfo && "bg-info-foreground text-background dark:bg-info-foreground", className)}
   />;
 }

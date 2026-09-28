@@ -29,7 +29,7 @@ export function AvatarDemo(){return <DemoSection title="六种常用尺寸" desc
 export function BadgeDemo(){
  const [count,setCount]=useState(2)
  return <>
-  <DemoSection title="信息与状态"><div className="flex flex-wrap items-center gap-3"><Badge variant="secondary">草稿</Badge><Badge variant="outline">待复核</Badge><Badge variant="info"><Info/>处理中</Badge><Badge variant="success"><Check/>已复核</Badge><Badge variant="warning"><TriangleAlert/>需要补充</Badge><Badge variant="error">未通过</Badge></div></DemoSection>
+  <DemoSection title="信息与状态"><div className="flex flex-wrap items-center gap-3"><Badge variant="secondary">草稿</Badge><Badge variant="outline">待复核</Badge><Badge variant="info"><Info/>处理中</Badge><Badge variant="success"><Check/>已复核</Badge><Badge variant="warning"><TriangleAlert/>需要补充</Badge><Badge variant="error">未通过</Badge><Badge variant="attention">待人工处理</Badge></div></DemoSection>
   <DemoSection title="实心信息色与计数" description="用彩色气泡背景突出数量，数字保持中性色。info-solid 适用于计数等需要强调的信息，不表示待办、错误或任务完成。">
    <div className="flex flex-wrap items-center gap-4"><Badge variant="info">浅底信息</Badge><Badge variant="info-solid">实心信息</Badge>{[0,2,100].map(value=><Badge key={value} variant="info-solid" size="sm" ><span className="sr-only">数量 </span>{value}</Badge>)}</div>
    <div className="mt-5 flex flex-wrap items-center gap-3"><Button variant="outline" aria-label={`查看已选材料，${count} 项`} onClick={()=>setCount(value=>value===0?2:value===2?100:0)}>已选材料<Badge variant="info-solid" size="sm" aria-hidden="true">{count}</Badge></Button><span className="text-ui-hint text-muted-foreground">点击入口依次预览 0、2、100；示例不读取业务数据。</span></div>

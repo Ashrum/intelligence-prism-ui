@@ -1,19 +1,35 @@
 import type { Options } from 'temml'
 
-export type DraftPart = { kind:'text'; source:string } | { kind:'math'; source:string; html:string; block:boolean } | { kind:'error'; source:string; message:string }
+export type DraftPart = { kind:'text'; source:string } | { kind:'math'; source:string; html:string; block:boolean } | { kind:'error'; source:string; message:string; position?:number }
 export type MathRenderer = (expression:string,options?:Options)=>string
+export type DraftMathErrorLocation = { start:number; end:number; line:number; column:number }
 const plainMath = /[A-Za-z0-9α-ωΑ-Ω+\-−=<>≤≥≠≈∈∉×÷·∞π.,()[\]{}^_⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁽⁾₀₁₂₃₄₅₆₇₈₉ \t]+/gu
 const presentation = /\\(?:color|textcolor|colorbox|fcolorbox|definecolor|bbox|fontsize|tiny|scriptsize|footnotesize|small|large|Large|LARGE|huge|Huge|href|url|includegraphics|html\w*|class|style|id|def|gdef|newcommand|renewcommand)\b/
 
-function render(renderer:MathRenderer,source:string, expression:string, block=false):DraftPart {
+function render(renderer:MathRenderer,source:string, expression:string, block=false, expressionStart=0):DraftPart {
  if(expression.length>1000)return {kind:'error',source,message:'这段公式过长，暂不预览；请拆分后再检查。'}
  if(presentation.test(expression))return {kind:'error',source,message:'预览不支持链接、自定义宏或颜色与字号命令；请保留数学表达式。'}
  try {
   const html=renderer(expression,{displayMode:block,throwOnError:true,strict:true,trust:false,maxExpand:200,maxSize:[5,5],annotate:true})
   return {kind:'math',source,html,block}
- } catch {
-  return {kind:'error',source,message:'公式未能排版，请检查命令、参数和花括号。输入已保留。'}
+ } catch (error) {
+  // Temml supplies a UTF-16 offset. Never guess a location from its message.
+  const offset=error && typeof error==='object' && 'position' in error ? error.position : undefined
+  const position=typeof offset==='number' && Number.isInteger(offset) && offset>=0 && offset<=expression.length ? offset+expressionStart : undefined
+  return {kind:'error',source,message:'公式未能排版，请检查命令、参数和花括号。输入已保留。',...(position===undefined?{}:{position})}
  }
+}
+
+/** A single expression, without prose delimiters; shares the same guarded renderer. */
+export function previewFormula(value:string,renderer:MathRenderer,block=false):DraftPart[] {
+ return [value.trim()?render(renderer,value,value,block):{kind:'error',source:value,message:'公式内容为空，请补充表达式。'}]
+}
+
+/** UI coordinates only, not a parser. start/end match textarea selection offsets. */
+export function draftMathErrorLocation(value:string,position?:number):DraftMathErrorLocation|undefined {
+ if(position===undefined || !Number.isInteger(position) || position<0 || position>value.length)return undefined
+ const lines=value.slice(0,position).split('\n')
+ return {start:position,end:Math.min(value.length,position+(value.codePointAt(position)!>0xffff?2:1)),line:lines.length,column:[...lines[lines.length-1]].length+1}
 }
 
 /** Only recognize conservative algebra runs. Plain prose is never treated as TeX. */
@@ -56,7 +72,7 @@ export function previewDraft(value:string,renderer:MathRenderer):DraftPart[] {
   const closer=opener==='\\('?'\\)':'\\]',end=value.indexOf(closer,start.index+2)
   if(end<0){parts.push({kind:'error',source:value.slice(start.index),message:`公式标记未闭合，请补上 ${closer}。`});break}
   const source=value.slice(start.index,end+2),expression=value.slice(start.index+2,end)
-  parts.push(expression.trim()?render(renderer,source,expression,opener==='\\['):{kind:'error',source,message:'公式内容为空，请补充表达式。'})
+  parts.push(expression.trim()?render(renderer,source,expression,opener==='\\[',2):{kind:'error',source,message:'公式内容为空，请补充表达式。'})
   cursor=end+2
  }
  return parts

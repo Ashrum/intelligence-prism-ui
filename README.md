@@ -1,5 +1,401 @@
 # 智能曜彩 UI Design System
 
+
+
+## 交互演示器 v0.1 · 设计候选（2026-09-27）
+
+语义 **39 AgentInteractiveDemo** 提供 Inline 参数／缩略摘要、Workspace 参数面板／演示区域／教学提示，支持独立 compact。演示由宿主插槽承担；参数、重置、全屏、来源均只发带对象版本的请求。interact/fullscreen/record/share 与移动端范围明确声明，不支持原因集中一处。复用 Field、Slider、数值 Input、Card、Button 和 RecordDetails，无领域插件、依赖、令牌或目录新增。
+
+组件页 `/next/components/agent-components#interactive-demo`：a/h/k 二次函数 SVG 模拟，参数由示例宿主回传更新，a=0 明确为直线，全屏不支持。含 compact、320px；[公开契约](docs/component-contracts.md#交互演示器-v01)。
+
+## 模拟器 / 虚拟实验 v0.1 · 设计候选（2026-09-27）
+
+语义 **41 AgentSimulationLab** 提供 Inline 实验目标、变量、最近结果摘要，Workspace 步骤、变量输入、运行请求、结果表格／既有图表、外部记录及受控结论草稿。组件不计算或仿真；未运行与未知分开，运行结果保留当时变量和模拟／外部来源。导出仅请求，不产生文件。
+
+组件页 `/next/components/agent-components#simulation-lab`：抛硬币次数仅映射 10/100/1000 次固定模拟结果，其他次数未知；导出不支持。两态共享数据，compact 与 320px 独立切换。[公开契约](docs/component-contracts.md#模拟器--虚拟实验-v01)及 `.sites-runtime/subject-demos/REPORT.md` 记录两个组件 API、五项数字、实际 diff、Workspace 只读方案和未验证范围。候选分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`；本轮不写 `.git`、不启动服务、不修改 Workspace，浏览器和真实服务未验。
+
+31/32 按本仓 #105（`27d4593`）／Workspace #73（`693cc8d`）和 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当前计数：Workspace 已验证 **40**、组件候选 **2（39、41）**、未开始 **0**、真实业务接入 **0**。下方各节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
+## 音频与转写 v0.1 · 设计候选（2026-09-27）
+
+语义 **31 AgentAudioTranscript** 提供 Inline 时长／段落摘要、前三段转写和原生音频播放；Workspace 增加搜索、版本绑定的文字草稿确认及时间片段请求。播放、转写、编辑、剪辑、导出分别声明能力。无 src 显示原因，未知说话人与置信度如实呈现；组件不识别、不剪辑、不保存。
+
+组件页 `/next/components/agent-components#audio-transcript`：课堂讲解 6 段、不可播放只读示例，均无媒体 src；同一实例两态切换，独立 compact、320px。复用原生媒体与既有卡片、固定标签表单和详情区，不改 coss、依赖、令牌或 80 项目录。[公开契约](docs/component-contracts.md#音频与转写-v01)及 `.sites-runtime/media-workspaces/REPORT.md` 记录 API、验证与 Workspace 只读方案。
+
+## 视频与时间轴 v0.1 · 设计候选（2026-09-27）
+
+语义 **32 AgentVideoTimeline** 提供 Inline 封面／时长／标记摘要与原生视频播放；Workspace 呈现章节、字幕列表和跳转请求，支持数值时间新增／编辑标记、删除及片段请求。播放、字幕和剪辑分别交宿主适配器；不转码、不生成字幕轨或视频文件。不支持能力集中说明，不逐项重复禁用控件。
+
+组件页 `/next/components/agent-components#video-timeline`：4 章节、3 字幕，剪辑默认不支持且原因一处，可切换模拟范围请求；全部无 src，含 compact、320px。[公开契约](docs/component-contracts.md#视频与时间轴-v01)。两个候选位于未合并分支 `feat/agent-media-workspaces`，main 基线 `ab6760e`；五项日志、实际 diff 与报告在 `.sites-runtime/media-workspaces/`。本轮不写 `.git`、不启动服务、不改 Workspace；浏览器三主题／窄屏／焦点、读屏器、真实播放和 Workspace 接入未验。
+
+29 按本仓 #104（`ab6760e`）／Workspace #72 及 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当前计数：Workspace 已验证 **38**、组件候选 **2（31、32）**、未开始 **2（39、41）**、真实业务接入 **0**。下方各节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
+## 演示文稿工作区 v0.1 · 设计候选（2026-09-27）
+
+语义 **29 AgentSlideWorkspace** 支持 Inline 前三页缩略摘要、Workspace 页列表与当前页要点/讲者备注，按能力开放文字草稿确认、调序和增删请求；compact 独立于两态。版本、保存、来源与各项能力由宿主给出；生成与导出交适配器，导出可接 33，不包含 PPT 渲染、文件生成或存储。
+
+复用 28 的保存状态类型与 Card、固定标签 Input/Textarea、Button、Badge、RecordDetails、图片元素。相同能力原因集中说明，不支持的编辑工具不逐页出现。组件页 `/next/components/agent-components#slide-workspace` 有“勾股定理复习课”六页模拟课件（含公式、待补充页、讲者备注）、只读版、compact 与 320px；缩略图为 SVG 占位，导出不支持并说明原因。
+
+[公开契约](docs/component-contracts.md#演示文稿工作区-v01)及 `.sites-runtime/slide-workspace/REPORT.md` 记录 API、五项验证、实际 diff 和 Workspace 只读轻量接入方案。分支 `feat/agent-slide-workspace`，基线 `7be98e2`，未合并；coss、依赖、令牌与 80 项目录不变。浏览器三主题/窄屏/焦点、Workspace、读屏器和真实服务未验。进度同时按 Supervisor 交接登记 34 为 Workspace 已验证（Prism #103 / Workspace #71）；29 仅为组件候选。
+
+## 图形关系工作区 v0.1 · 设计候选（2026-09-27）
+
+语义 **34 AgentRelationGraph** 支持 Inline 关系摘要／静态缩略图、Workspace SVG 缩放平移与等价节点／关系列表、类型／状态筛选、邻接查看及受控编辑请求；compact 独立于两态。节点、边、版本、覆盖／薄弱状态和能力均由宿主提供，超阈值自动退化列表，不引入图布局库或统一 AST。
+
+复用 Card、Label/Input、Button、RecordDetails；coss、依赖、令牌与 80 项目录不变。组件页 `/next/components/agent-components#relation-graph` 提供试卷覆盖（6 知识点、8 题、2 章节；2 未覆盖、1 薄弱）、只读概念图、超阈值三组模拟示例，含 compact、320px、长中文与公式文本。[公开契约](docs/component-contracts.md#图形关系工作区-v01)与 `.sites-runtime/relation-graph/REPORT.md` 记录 API、五项验证、实际 diff 及 Workspace 只读轻量方案。
+
+候选位于未合并分支 `feat/agent-relation-graph`，main 基线 `c61f2fc`。40 按 Prism #102（`c61f2fc`）／Workspace #70 与 Supervisor 交接登记为两态已验证，本轮未独立复验。当前互斥计数：Workspace 已验证 **36**、组件候选 **1（34）**、未开始 **5**、真实业务接入 **0**。34 尚待独立 Review、浏览器及 Workspace 验证；本轮不写 `.git`、不启动服务、不修改 Workspace。下方各候选节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+
+## 计算与分析工具 v0.1 · 设计候选（2026-09-27）
+
+语义 **40 AgentCalcTool** 提供 Inline 单行输入与结果／答案对比摘要，Workspace 增加完整输入、外部步骤、本次会话历史、可选函数采样图和插入答案／解析请求；compact 为独立密度。输入由组件收集，结果、单位、来源、步骤、对比均由宿主提供，不内置计算引擎；未提供或输入／版本不匹配显示“结果未知”。
+
+复用既有公式预览与 ScatterChart 数值坐标，coss、依赖、令牌、80 项目录不变。组件页 `/next/components/agent-components#calc-tool` 提供顶点／最小值一致、对称轴不一致、结果未知、plot 未接入的模拟示例，含两态、compact、320px。公开 API 见[计算与分析工具契约](docs/component-contracts.md#计算与分析工具-v01)。
+
+候选分支 `feat/agent-calc-tool`，本地 main 基线 `4d57eea`，未合并。报告、五项数字、实际 diff 及 Workspace 只读轻量方案见 `.sites-runtime/calc-tool/REPORT.md`。30 根据本轮 Supervisor / Prism #101（`4d57eea`）/ Workspace #69 交接登记为两态已验证；本轮未独立复验。当前互斥计数：Workspace 已验证 **35**、组件候选 **1（40）**、未开始 **6**、真实业务接入 **0**。不写 `.git`、不启动服务、不修改 Workspace；40 的浏览器与 Workspace 接入仍待验证。下方旧候选节保留各轮历史口径，以本节和进度清单为当前状态。
+
+进度跟踪：[Agent 组件进度清单](docs/Agent组件进度清单.md)（持续更新，每轮对照汇报）。
+
+## 图像查看与画布 v0.1 · 设计候选（2026-09-27）
+
+语义 30 `AgentImageCanvas` 支持 **Inline + 专用扩展内容**：对话态图片缩略与区域摘要；扩展态缩放、适应宽度、拖动／方向键平移、区域定位、矩形标注编辑与裁切范围请求、多图并列比较。`density="compact"` 独立于两态。图像集合、来源、版本、可用性和五项能力由页面提供；缺少图片说明与不支持原因常驻，标注及裁切仅发请求，不上传、不识别、不存储或修改原图。
+
+直接复用 `DocumentRegionViewer` 的查看、缩放和区域定位，原 API 不变；14 管对象分区，21 管证据链，17 管复核，05 管采集页集合。无新依赖、令牌或目录条目，coss 不改。组件页 `/next/components/agent-components#image-canvas` 提供四页扫描（倾斜／模糊／两个示例区域）、学生作答、缺说明插图及不可用图片，均为本地 SVG 示意；含两态往返、compact、320px 与裁切能力开关。
+
+候选分支 `feat/agent-image-canvas`，基线 `5657ac3`，尚未合并。[公开契约](docs/component-contracts.md#图像查看与画布-v01)、验证数字及 Workspace 只读轻量方案见 `.sites-runtime/image-canvas/REPORT.md`。进度 30 为组件候选；09 根据本轮提供的 Supervisor / Workspace #68 证据登记为 Workspace 已验证。当前互斥计数：已验证 34、候选 1、未开始 7、真实业务接入 0。本轮不写 `.git`、不启动服务、不修改 Workspace；30 的浏览器、Workspace 接入与真实服务尚未验证。
+
+## 模板选择器 v0.1 · 设计候选（2026-09-27）
+
+语义 09 `AgentTemplatePicker` 支持 **Inline + 专用扩展内容**：对话态推荐与快速切换，扩展态前端分类过滤、模拟版面预览、两项结构字段对比与管理请求。`density="compact"` 独立于两态。模板、当前选择、来源、版本、推荐依据和切换影响由页面提供；缺失影响显示“影响未知”并要求确认，组件不应用或保存模板。
+
+复用 Card、Select、Checkbox、Prism Button/Badge 与 RecordDetails，不改 coss、不新增依赖/令牌/目录条目。09 与 02/07/08 可在“确认出卷要求”同卡组合；12 负责已有题目的编排，13 负责成果摘要。组件页 `/next/components/agent-components#template-picker` 提供试卷与教学方案模拟数据、不可用模板、未知推荐理由、三种用法、320px、长中文和公式预览。
+
+候选分支 `feat/agent-template-picker`，基线 `7ff98e7`，尚未合并。[公开契约](docs/component-contracts.md#模板选择器-v01)、五项数字与只读 Workspace 轻量方案见 `.sites-runtime/template-picker/REPORT.md`。第 09 项更新为“组件候选”；未做浏览器三主题/窄屏/键盘触屏验收、Workspace 接入或真实服务验证。本轮不写 `.git`、不启动服务、不修改 Workspace。
+
+## 素材提取器 v0.1 · 设计候选（2026-09-27）
+
+语义 37 `AgentMaterialExtractor` 支持 **Inline + 专用扩展内容**：对话态选择关键片段，常驻来源、版本、定位与候选状态；扩展态阅读页面提供的文本，逐段／按句选择与扩展、输入字符范围、添加标题和标注、上移下移、批量确认加入指定素材包。`density="compact"` 仅收紧间距。选择有文字描述、括号和双下划线，全部选择操作都有键盘入口。
+
+36 找资源，37 从已读来源中选择片段并保留来源 id／版本／段落／字符范围，38 组织素材，21 按需接续证据。确认只发送引用、范围与标注，不复制全文、不写入素材包；许可与可用性未知如实呈现，图像／视频暂不支持提取。没有 OCR、裁剪、转换、持久化、新依赖、令牌或目录条目。
+
+组件页 `/next/components/agent-components#material-extractor` 提供“勾股定理复习课提纲”两段（一段已加入、一段候选）、题干片段、图像不支持和固定状态示例，含长中文、公式、320px 容器及两态往返。公开 API 见[素材提取器契约](docs/component-contracts.md#素材提取器-v01)。候选分支 `feat/agent-material-extractor`，基线 `130f88b`；进度 37 为“组件候选”。五项检查、实际 diff、只读 Workspace 接入方案与未验证范围见 `.sites-runtime/material-extractor/REPORT.md`；本轮不写 `.git`、不启动服务、不修改 Workspace，独立 Review 与接入验收待完成。
+
+## 学科专用编辑器 v0.1（数学公式）· 设计候选（2026-09-27）
+
+语义 42 `AgentSubjectEditor` 支持 **Inline + 专用扩展内容**：对话态显示单公式原文与实时排版，提供分式、根式、上下标、括号及常见符号；扩展态提供结构／关系／运算／希腊字母／集合工具栏、光标插入和本次公式撤销／重做。`density="compact"` 独立于两态，保留定位、版本、只读原因与解析提示。常驻提示明确“仅排版，不校验数学结论”。
+
+06 `AgentContentInput` 编辑整段材料，42 编辑页面选定的公式片段；apply 只请求替换同一草稿，保存、版本检查与正式复核仍由页面负责。复用 `DraftMathPreview` 与已锁定 temml，错误定位使用其真实位置；无位置则如实提示。没有新解析器、依赖、令牌或目录条目，coss 原样保留。
+
+组件页 `/next/components/agent-components#subject-editor` 提供勾股定理、分式根式、解析失败三组示例及 320px 窄容器。公开 API 见[学科专用编辑器契约](docs/component-contracts.md#学科专用编辑器-v01数学公式)。候选位于 `feat/agent-subject-editor`，基线 `ac27c3c`；进度 42 为“组件候选”，下一项按 PO 批准顺序为 37。本轮五项数字、实际 diff、未验证范围及 Workspace P04／提纲正文轻量接入方案见 `.sites-runtime/subject-editor/REPORT.md`。本轮不写 `.git`、不启动服务、不修改 Workspace；浏览器及独立验收待完成。
+
+## 分布矩阵 v0.1 · 设计候选（2026-09-26）
+
+语义 20 `AgentDistributionMatrix` 支持 **Inline + 专用扩展内容**：对话态展示页面指定的关键区域与样本／口径，扩展态提供完整文字矩阵、行列维度切换、筛选、排序、两列／两组比较及逐格下钻。`density="compact"` 独立于两态；所有调整经 `onIntent` 发出，选择保留行、列和数据版本，展开与返回沿用同一记录。19 汇总指标，20 定位分布，21 接续证据。
+
+复用 coss Table / Select / Label、Prism Badge / Button、Card 与 RecordDetails；分级由页面明确提供，缺测、样本不足、未知、不适用不插值。原生表格提供颜色的等价文字与方向键逐格操作；既有 HeatmapChart 的自动连续色阶保持原样。组件页 `/next/components/agent-components#distribution-matrix` 有学生 × 题目 6 × 4 和知识点 × 班级两组固定示例，含 320px、长中文与公式。
+
+候选分支 `feat/agent-distribution-matrix`，main 基线 `bcc328d`。公开 API 见[分布矩阵契约](docs/component-contracts.md#分布矩阵-v01)；五项日志、验证数字、实际 diff、未验证范围及 Workspace 只读轻量接入方案见 `.sites-runtime/distribution-matrix/REPORT.md`。进度第 20 项登记为“组件候选”；不代表已接入 Agent 页或通过独立验收。本轮不写 `.git`、不启动服务、不修改 Workspace，coss、依赖、令牌与 80 项目录不变。
+
+## 建议集布局与逐条附加操作（2026-09-26）
+
+分支 `fix/suggestion-set-layout`：22 `AgentSuggestionSet` 的共用依据／来源适用于全部建议时仅在组级显示，部分适用时用建议可读标题标注；采纳、调整与驳回统一横向排列并随容器换行。新增可选 `itemActions(suggestion)`，在该建议操作行内追加页面提供的操作，受限条目不调用；组件页演示一次已标注、未接创建服务的教学行动入口。
+
+API 与页面责任见[建议集契约](docs/component-contracts.md#建议集-v01)；五项验证、实际 diff 与 Workspace 接线要点见 `.sites-runtime/suggestion-layout/REPORT.md`。本轮不写 `.git`、不启动服务；浏览器三主题／窄屏视觉及 Workspace 接入待独立验收。
+
+## Agent 文案整理第三轮（2026-09-26）
+
+分支 `fix/agent-copy-polish-3`：24 移除未知／空下一步的空标题；12 新增可选 `openItemLabel`（默认“查看详情”，Workspace 可传“查看题目”）；05 合并全页共同未知字段、部分已知采集时间逐页显示；23 按步骤归并未知；28 移除内部文档 ID 展示。16/19 已由 PR #63 修复，本轮补回归；38 焦点与默认分类名、05 补采后限制为宿主层，待 Workspace。
+
+公开契约见 [组件复用约定](docs/component-contracts.md#agent-文案整理第三轮2026-09-26)，逐条核对、五项日志与未验证范围见 `.sites-runtime/copy-polish-3/REPORT.md`。不写 `.git`、不启动服务、不修改 Workspace；SSR 三主题包裹检查不代表视觉或接入验收，交 Supervisor 独立 Review。
+
+## 素材包 v0.1 · 设计候选（2026-09-26）
+
+语义 38 `AgentMaterialPack` 声明 **Inline + 专用扩展内容**：Inline 展示包名、分类数量、来源构成、许可/可用性、关键变化与复用记录；Workspace 提供分类、排序、用户触发的预览、包名/分类名/备注编辑和复用请求。支持独立 `density="compact"`，上移/下移与分类选择是拖拽的键盘和触屏等效入口。
+
+11 集合篮用于临时收集与跨页暂存，38 组织有名称、分类、来源引用的可复用素材集合；36 找资源，38 组织，12 提供位置校验，14 承载原对象预览。沿用原资源 ID、版本和来源引用，不复制内容、不建新资产体系。全部动作经带 `packId/versionId/baseVersionId` 的 `onIntent` 返回；包版本、保存、许可、来源失效及复用记录均由页面提供，确认和复用请求不推定保存或引用成功。
+
+组件页 `/next/components/agent-components#material-pack` 提供勾股定理复习与教研共享两组示例，含受限许可、失效来源、已有提纲引用、许可未知、320px、长中文与惰性公式预览。公开 API 见[素材包契约](docs/component-contracts.md#素材包-v01)。复用既有 Card / Label / Input / Textarea / Select / Badge / Button / RecordDetails，coss、依赖、令牌和 80 项目录不变。
+
+候选位于 `feat/agent-material-pack`，基于 main `54b94a0`；进度第 38 项为“组件候选”，本批 12 → 23 → 24 → 05 → 38 已全部具有组件候选。五项日志、数字、diff 与 Workspace 只读轻量验证方案见 `.sites-runtime/material-pack/REPORT.md`。本轮未写 `.git`、未启动服务、未改 Workspace；浏览器、Workspace 接入、真实服务与独立 Review 未完成。
+
+## 采集扫描 v0.1 · 设计候选（2026-09-26）
+
+语义 05 `AgentCaptureScan` 声明 **Inline + 专用扩展内容**：Inline 呈现已采集页数、质量摘要、需补采页与入口；Workspace 提供完整页集合、缩略图、逐页质量、排序、补采／替换与删除。支持独立 `density="compact"`，上移／下移／指定位置是拖拽的键盘与触屏等效操作。
+
+04 负责选择已有文件并带入，05 负责采集得到的页集合及其页序与质量；18 负责异常处置，DocumentRegionViewer 负责原稿查看。页、顺序、总数、质量、后续使用、版本、采集／上传回执与保存事实均来自页面；所有业务操作只发带 `setId/versionId` 的请求。已被后续处理使用的页常驻删除影响并交页面确认；回执未确认阻断变更。大图仅在用户查看后按匹配版本加载。
+
+组件页 `/next/components/agent-components#capture-scan` 提供四页试卷作答与板书拍照两组标注示例，覆盖总数未知、回执未确认、320px、长中文及惰性原稿公式预览。公开 API 见[采集扫描契约](docs/component-contracts.md#采集扫描-v01)。复用既有 Card / Label / Select / Progress / Badge / Button / RecordDetails；coss、依赖、令牌和 80 项目录不变。
+
+候选位于 `feat/agent-capture-scan`，基于 main `3f41b9a`，进度第 05 项为“组件候选”。五项日志、数字、实际 diff 和 Workspace 只读 P01／P04 轻量验证方案见 `.sites-runtime/capture-scan/REPORT.md`。本轮未写 `.git`、未启动服务、未改 Workspace；浏览器、设备、读屏器、Workspace 接入、真实服务及独立 Review 尚未完成。
+
+## 插槽解耦与范围文案修复（2026-09-26）
+
+PO 批准的修复分支 `fix/agent-slot-and-scope-copy`：23 `AgentPlanBuilder` 的 `calendar` 改为可选 `ReactNode`，组件不再直接或间接引入日历依赖。组件页在 demo 中传入 `WorkloadCalendar` 保持演示；旧日历数据对象须迁移为页面组件插槽，Workspace 无日历需求时省略该属性即可，时间线和步骤照常显示。
+
+12 `AgentStructureArranger` 的条目新增可选 `scopeLabel`（默认 title）及 `moveBoundaryReasons`（按 up/down 覆盖边界文案）；首尾分别说明不能上移／下移。全部条目共用的说明／来源只显示一次，每项仍关联说明；部分适用使用可读名称。10 候选共用说明、36 共用许可全部适用时取消逐项重复引用，部分适用才用可读名称标注，许可未知仍在组级常驻。
+
+API、迁移和范围规则见 [组件复用约定](docs/component-contracts.md)。验证与未验证范围见 `.sites-runtime/slot-scope-fix/REPORT.md`；本轮不启动服务、不写 `.git`、不改 Workspace，不据 SSR 或工程检查宣称浏览器验收。
+
+## 路径与优先级 v0.1 · 设计候选（2026-09-26）
+
+语义 24 `AgentPathPriority` 声明 **Inline + 专用扩展内容**：Inline 呈现页面指定的 1–3 项下一步建议、理由与阻塞项；Workspace 呈现完整顺序、依赖、优先级、完成情况和人工调整。支持 `density="compact"`；上移、下移和指定位置提供拖拽的键盘／触屏等效操作。
+
+23 编排计划内容，24 呈现与调整顺序／依赖／优先级；22 负责建议采纳，17 负责单项复盘判断。路径计算全部外置，所有操作只发带 `pathId/versionId/baseVersionId` 的 `onIntent`。建议和真实待办明确区分；跳过、冷却、到期、完成不会删除已有工作，接受下一步不代表创建或执行任务。
+
+组件页 `/next/components/agent-components#path-priority` 提供学生补弱路径与教师待办优先级两组固定示例，含八类状态、未满足依赖、320px、长中文、公式及独立保存记录。公开 API 见[路径与优先级契约](docs/component-contracts.md#路径与优先级-v01)。复用 Card / Label / Select / Badge / Button / RecordDetails，不修改基础组件；coss、依赖、令牌与 80 项目录不变。
+
+候选位于 `feat/agent-path-priority`，基于 main `10b1839`；第 24 项为“组件候选”。五项日志、实际 diff、数字及 Workspace 只读轻量验证方案见 `.sites-runtime/path-priority/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／实际键盘触屏、Workspace 接入、真实服务和独立 Review 未完成。
+
+## 计划构建器 v0.1 · 设计候选（2026-09-26）
+
+语义 23 `AgentPlanBuilder` 声明 **Inline + 专用扩展内容**：Inline 确认目标、对象、核心步骤、起止时间和待确认项；Workspace 编辑步骤、负责人、对象与资源，组合 LearningTaskList / MilestoneList 和页面可选提供的日历插槽呈现完整计划（demo 插槽复用 WorkloadCalendar）。支持 `density="compact"`，保持冲突、受阻、未知和保存状态可见。
+
+22 提供建议，23 编排采纳后的计划草稿，24 处理路径与优先级，25 确认创建任务／开始执行。**计划草稿、已创建任务与实际执行由页面分别给出**；步骤增删改、移动、分派、资源关联和确认均只发送含 planId/versionId/baseVersionId 的 `onIntent`。日期不作业务校验，日历使用页面提供的过载判定，不自动排程或创建任务。
+
+组件页 `/next/components/agent-components#plan-builder` 提供讲评后两周教学行动与学生复习两组固定示例，含日期冲突、受阻、已创建任务、未知负责人、三种用法、320px、长中文与公式。公开 API 见[计划构建器契约](docs/component-contracts.md#计划构建器-v01)。复用组件只作兼容性属性扩展，coss、依赖、令牌与 80 项目录不变。
+
+候选位于 `feat/agent-plan-builder`，基于 main `a104c0d`；进度第 23 项为“组件候选”。五项日志、实际 diff、数字及 Workspace 只读轻量验证方案见 `.sites-runtime/plan-builder/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace；浏览器视觉与实际键盘触屏、Workspace 接入、真实服务及独立 Review 未完成。
+
+## 结构编排器 v0.1 · 设计候选（2026-09-26）
+
+语义 12 `AgentStructureArranger` 声明 **Inline + 专用扩展内容**：Inline 提供编排摘要、简单移动与确认；Workspace 提供组→项两层列表、分组管理、编排属性和批量操作。拖拽为增强，上移／下移／移到分组提供键盘与触屏等效入口；compact 只收紧留白。
+
+35 编辑内容层级本身，11 管理已收集的条目，12 编排已有条目的顺序／分组／属性，打开原条目交给 14。沿用 35 的“移除源项后计算目标位置”约定。所有业务操作经带 structureId/versionId/baseVersionId 的 `onIntent` 返回；合计、校验、锁定、版本与保存事实来自页面。相同说明和禁用原因合并，标题一次，未知信息一行；确认不伪造保存或发布。
+
+组件页 `/next/components/agent-components#structure-arranger` 提供三大题试卷（分值、总分不符、锁定题、空分组）与课程任务两组固定示例，含三种用法、320px、长中文与公式。公开 API 见[结构编排器契约](docs/component-contracts.md#结构编排器-v01)。coss、依赖、令牌及 80 项目录不变。
+
+候选位于 `feat/agent-structure-arranger`，基于 main `fd454db`，进度第 12 项为“组件候选”。五项检查、实际 diff、测试数字和 Workspace 的只读轻量验证方案见 `.sites-runtime/structure-arranger/REPORT.md`。本轮不写 `.git`、不启动开发服务、不修改 Workspace；浏览器三主题／窄容器／实际拖拽与键盘触屏、Workspace 接入、真实服务及独立 Review 尚未完成。
+
+## Agent 文案整理第二轮（2026-09-26）
+
+本分支 `fix/agent-copy-polish-2` 基于 main `e32f5e9`，集中整理 35／07／10／22／36：只读结构能力明确标只读，参数缺省默认值合并说明并隐藏只读输入提示，候选共用依据／来源／附加说明，建议禁用原因去重与全未知说明合并，资源未知元信息合并且许可保持清楚可见。已知事实、校验与执行边界保留。
+
+10 新增可选 `itemTitleOwner="slot"`，用于 QuestionCard 等已含标题的 `renderItem`；默认 `"picker"` 兼容原调用。详见[组件契约](docs/component-contracts.md)。五项验证日志、实际 diff 与交接报告位于 `.sites-runtime/copy-polish-2/`。本轮不改 Workspace，不写 `.git`，不启动服务；浏览器三主题、窄屏、交互与 Workspace 同步仍待复验，不改变进度阶段及计数。
+
+## 资源检索器 v0.1 · 设计候选（2026-09-26）
+
+语义 36 `AgentResourceRetriever` 声明 **Inline + 专用扩展内容**：Inline 展示页面给出的少量推荐，Workspace 提供检索、筛选、排序及完整来源与许可；compact 只收紧间距。命中、预览、读取、Agent 本次参考与成果引用分别取页面记录，许可不自动授予操作能力，未知保持未知。
+
+10 挑选候选对象加入集合；36 决定预览或读取资源；03 汇总上下文与来源事实；38 组织素材包；21 浏览证据链。全部检索/资源动作通过版本绑定的 `onIntent` 返回；预览插槽仅在页面声明用户已请求、目标版本匹配且内容就绪时挂载，不自动播放。重复来源和许可提升到组级，标题只出现一次，相同禁用原因合并到相关控件组。
+
+组件页 `/next/components/agent-components#resource-retriever` 提供勾股定理图片/视频/文章/课例与教材章节页两组固定示例，含受限/未知/需确认许可、部分来源失败、总数未知、320px、长中文与公式。公开 API 见[资源检索器契约](docs/component-contracts.md#资源检索器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+候选位于 `feat/agent-resource-retriever`，基于 main `5036bd1`；第 36 项登记为“组件候选”。五项验证、实际 diff、测试数字与 Workspace `7ee2bf6` 的只读轻量方案见 `.sites-runtime/resource-retriever/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题/窄容器/键盘触屏、Workspace 接入、真实服务与独立 Review 未完成。
+
+## 建议集 v0.1 · 设计候选（2026-09-26）
+
+语义 22 `AgentSuggestionSet` 声明 **Inline + 专用扩展内容**：Inline 呈现推荐短列表与选择，Workspace 承载独立比较、批量采纳及页面提供的调整字段。`density="compact"` 只收紧布局，保留依据、适用对象、影响／代价、确定性、限制和未确认回执；相同依据与来源分别合并到组级，建议标题只出现一次。
+
+10 挑选题、资源或学生；22 决定做什么、为什么及对谁；21 查看证据；23 编排后续计划。选择、采纳与已创建任务分别取页面事实，所有数据操作只发版本绑定的 `onIntent`；确认选择不采纳，采纳不创建任务，驳回不取消已有任务。
+
+组件页 `/next/components/agent-components#suggestion-set` 提供讲评后的教学建议与通用学生学习建议两组标注示例，含并列比较、调整一项、独立操作／任务记录、320px、长中文与公式。公开 API 见[建议集契约](docs/component-contracts.md#建议集-v01)。coss、依赖、视觉令牌与 80 项目录不变。
+
+未合并候选位于 `feat/agent-suggestion-set`，基于 main `bad3435`；第 22 项登记为“组件候选”。五项验证、实际 diff、测试数字与 Workspace main `cf46ee9` 的只读轻量方案见 `.sites-runtime/suggestion-set/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／窄容器／键盘触屏、Workspace 接入、真实服务和独立 Review 尚未完成。
+
+## 候选选择器 v0.1 · 设计候选（2026-09-26）
+
+语义 10 `AgentCandidatePicker` 声明 **Inline + 专用扩展内容**：Inline 呈现页面给出的少量候选；Workspace 组合 DataRecordTable、FilterBar、Checkbox 与固定标签检索，支持排序、批量选择和加载更多请求。`density="compact"` 只收紧布局，选择依据、来源、失效／受限原因与未确认事实保持可见。题目通过 QuestionCard 插槽接入，学生、知识点和资源使用通用条目。
+
+01 选择既有对象作为上下文／目标；10 从推荐或检索结果中挑选候选、比较依据与替代来源；11 管理已选集合；14 承担打开后的对象查看。10 的选择、替换、检索、筛选、排序、加载和提交全部通过版本绑定的 `onIntent` 发出，页面持有结果与选择；组件不自行检索、过滤、排序、分页或加入题篮。已选、已提交和已在集合中分别取页面事实，总数未知不以已加载数量代替。
+
+组件页 `/next/components/agent-components#candidate-picker` 提供候选题（QuestionCard、公式、替代题、失效／受限／已在题篮）和候选学生／知识点两组标注示例，覆盖 inline / workspace / compact、320px、长中文、加载更多、总数未知、加载错误与独立示例回执。公开 API 见[候选选择器契约](docs/component-contracts.md#候选选择器-v01)。coss、依赖、视觉令牌和 80 项目录不变。
+
+未合并候选位于 `feat/agent-candidate-picker`，基于 main `ac27658`；第 10 项登记为“组件候选”。五项检查、实际 diff、测试数字及 Workspace main `c8cc00c` 的只读轻量验证方案见 `.sites-runtime/candidate-picker/REPORT.md`。本轮不写 `.git`、不启动开发服务、不改 Workspace；浏览器三主题／窄屏／键盘触控、Workspace 接入、真实服务与独立 Review 尚未完成。
+
+## 参数配置器 v0.1 · 设计候选（2026-09-26）
+
+语义 07 `AgentParameterConfig` 声明 **Inline + 专用扩展内容**：Inline 按宿主 `key` 标记展示关键参数，Workspace 展示同一列表的完整参数集。组合 NumberField、Select、RadioGroup、Switch、Input 和固定标签；compact 收紧间距，保留校验、未确认／未知、影响和锁定原因。
+
+07 负责单值参数；08 负责范围、互斥和组合约束；25 负责执行确认。修改只发带 `baseVersion` 的 change/reset，值、校验、默认值来源与确认事实由宿主提供。只读与冻结不挂载输入；冻结消费确认当时的参数记录。可通过 25 的 `conditions` 插槽与 08 共用一张卡和一条边界提示。
+
+组件页 `/next/components/agent-components#parameter-config` 提供组卷与批阅两组示例，覆盖两态、compact、320px、长中文、公式、校验错误、未确认、锁定和冻结。公开 API 与边界见[参数配置器契约](docs/component-contracts.md#参数配置器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+候选位于 `feat/agent-parameter-config`，基于 main `1d4503b`（含 #68/#69）；第 07 项登记为“组件候选”。五项验证日志、测试数字、实际 diff 与 Workspace 轻量验证方案见 `.sites-runtime/parameter-config/REPORT.md`。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器三主题／窄容器／键盘与读屏器、Workspace 接入及真实服务未验，待 Supervisor 独立 Review 与 PO 决定。
+
+## 结构化内容工作区 v0.1 · 设计候选（2026-09-26）
+
+语义 35 `AgentStructuredContent` 声明 **Inline + 专用扩展内容**：Inline 展示前两层结构、节点计数与宿主关键变化；Workspace 复用 Tree 编辑节点名称、增删、移动与嵌套，并提供折叠和拖拽。上移／下移／升级／降级按钮是触屏和键盘的等效操作；`density="compact"` 仅收紧间距，保留深层冲突、只读原因与保存事实。
+
+35 负责内容层级，28 `AgentDocumentWorkspace` 负责长文及章节正文，12 负责编排试卷／任务顺序。目录选择不等于内容编辑；内容模型、版本、变化与保存状态由宿主维护，组件只发出携带节点及目标位置的意图。历史强制只读，内部 ID 不进入界面。不改 coss、依赖、视觉令牌或 80 项目录。
+
+组件页 `/next/components/agent-components#structured-content` 提供五环节备课提纲（子活动、新增与移动）和仅可折叠查看的教材章节两组标注示例，覆盖 inline / workspace / compact、320px、长中文、公式、历史与深层冲突。公开 API 及 Tree 组合取舍见[结构化内容工作区契约](docs/component-contracts.md#结构化内容工作区-v01)。
+
+候选位于 `feat/agent-structured-content`，基于 main `98c584b`；进度清单第 35 项为“组件候选”。五项验证日志、测试清单和只读核对 Workspace main `2cc32be` 的接入建议见 `.sites-runtime/structured-content/REPORT.md`。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器三主题／实际拖拽／触屏／读屏器及真实服务未验，待 Supervisor 独立 Review。
+
+## 成果物输出 v0.1 · 设计候选（2026-09-26）
+
+语义 33 `AgentArtifactOutput` 声明 **Inline + 专用扩展内容**：Inline 按推荐格式快速导出，Workspace 选择格式、版式、范围与版本，承载预览、批量输出队列和只读历史。`density="compact"` 保留失败、未确认、有损／不支持原因和“基于旧版本”提示。复用 Card、Field、Select、Prism Badge / Button 与 RecordDetails；QuestionPrint 原行为作为打印预览插槽复用。
+
+27 `AgentExecutionResult` 报告执行事实，28 `AgentDocumentWorkspace` 承载文稿阅读编辑，33 负责格式和文件交付，可按同一成果组合。生成、状态、版本与实际文件可用性均由宿主提供；只有 ready 文件、匹配版本、下载能力和回调齐备才提供下载入口。未知仅查询原请求，生成中无外部进度不显示百分比；组件不生成链接、不存文件、不显示内部 ID／原始路径。
+
+组件页 `/next/components/agent-components#artifact-output` 提供试卷和学情报告两组标注示例，覆盖 inline / workspace / compact、320px、公式、旧版文件及未确认队列。导出／下载为明确示例动作，没有实际文件链接。公开 API 与复用边界见[成果物输出契约](docs/component-contracts.md#成果物输出-v01)。coss、依赖、视觉令牌与 80 项目录不变。
+
+未合并候选位于 `feat/agent-artifact-output`，基于 main `538f5ca`；进度清单第 33 项为“组件候选”。五项日志、测试清单和 Workspace 本地 main `399bb75` 的只读轻量验证方案见 `.sites-runtime/artifact-output/REPORT.md`。未操作 Git 提交、未启动开发服务、未修改 Workspace；浏览器、实际打印／下载、Workspace 接线和真实服务尚未验证，待 Supervisor 独立 Review。
+
+## 约束构建器 v0.1 · 设计候选（2026-09-26）
+
+语义 08 `AgentConstraintBuilder` 声明 **Inline + 专用扩展内容**：Inline 查看并修改主要条件；Workspace 呈现全部分组、冲突定位、默认恢复与相对上次确认的变化。`density="compact"` 保留冲突、不可用及需重新确认提示。复用 Fieldset、Checkbox、RadioGroup、NumberField、Select、Alert，值、默认值、影响、校验与冲突均由宿主给出，不内置检查或求解。
+
+02 确定参与对象，08 编辑执行／结果条件，25 确认执行。`AgentExecutionConfirmation.conditions` 可组合 08；关键条件变化后，由宿主同步使旧确认失效，符合 §10.4 的同一决定区组合。P04 排重／模糊页归属 08 + 25。
+
+组件页 `/next/components/agent-components#constraint-builder` 提供 P04 处理条件与组卷约束两组标注示例，覆盖 inline / workspace / compact 和 320px：关键条件变化、确认后冻结、比例冲突、规则不可用及独立载入默认／确认记录。公开 API 和复用依据见[约束构建器契约](docs/component-contracts.md#约束构建器-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+未合并候选位于 `feat/agent-constraint-builder`，基于 main `641a5d7`；进度清单第 08 项为“组件候选”。五项结果、实际 diff 和只读核对 Workspace 本地 main 的轻量验证方案见 `.sites-runtime/constraint-builder/REPORT.md`。本轮不写 .git、不启动开发服务、不改 Workspace；浏览器与真实服务未验证，待 Supervisor 独立 Review。
+
+## 内容输入 v0.1 · 设计候选（2026-09-25）
+
+语义 06 `AgentContentInput` 声明 **Inline + 专用扩展内容**：Inline 提供轻量字段输入、字符数与限制提示；Workspace 提供长文本／结构化字段组、可选当前草稿公式预览和独立已提交版本。`density="compact"` 只收紧间距，保留常驻标签、校验失败、来源、保存未知与冲突。
+
+Composer 输入给 Agent 的指令；06 输入任务材料／正文；28 AgentDocumentWorkspace 阅读编辑已有文稿。06 复用 Textarea、InputGroup、Field 等既有控件，值、校验、保存和 URL 抓取事实来自宿主；提交与展开仅发请求，不持久化或自动保存。Markdown 保留安全原文，不解析 HTML；URL 摘录不暗示已抓取全文。公式通过可选插槽组合 DraftMathPreview，06 本身不依赖 temml。
+
+组件页 `/next/components/agent-components#content-input` 提供题干与答案（公式预览、一处格式失败）和讲评要点（三字段、URL 来源“未抓取全文”）两组标注示例，覆盖 inline / workspace / compact 与 320px 容器。公开 API 和复用依据见[内容输入契约](docs/component-contracts.md#内容输入-v01)。coss、依赖、视觉令牌及 80 项目录不变。
+
+未合并候选位于 `feat/agent-content-input`，基于 main `921397f`；进度清单第 06 项为“组件候选”。五项日志、测试清单与 Workspace 本地 main `f1d8847` 的只读轻量验证方案见 `.sites-runtime/content-input/REPORT.md`。本轮未写 `.git`、未启动开发服务、未修改 Workspace；浏览器、Workspace 接线和真实服务未验证，待 Supervisor 独立 Review。
+
+## 审核队列 v0.1 · 设计候选（2026-09-25）
+
+语义 16 `AgentReviewQueue` 声明 **Inline + 专用扩展内容**：Inline 呈现待办计数、宿主顺序的重点条目和“下一项”；Workspace 复用 DataRecordTable、FilterBar、Checkbox 和 Badge，提供完整列表、受控筛选／排序、选择与批量动作。`density="compact"` 为独立密度，保留回执未确认、过期、他人处理中及异常原因。
+
+16 负责“看全部、选下一项、批量”，17 `AgentItemReviewer` 负责单个对象的确认与修订；共享七值状态词表。优先级／原因、顺序、责任人、协作占用、版本、计数和进度全部来自宿主，下一项也由宿主指定。批量动作只发出绑定队列及逐项版本的请求，等待宿主逐项回传回执；混入不可操作对象时整批不可执行。他人处理中不提供打开复核、下一项或异常处置入口，组件不加锁或分派。不显示内部 ID。
+
+组件页 `/next/components/agent-components#review-queue` 提供 P04 三题校对（回执未确认、过期）与学生作答批阅（他人处理中、批量确认后独立逐项示例回执）两组用途，覆盖 inline / workspace / compact 和 320px 容器。公开 API、复用依据与边界见[审核队列契约](docs/component-contracts.md#审核队列-v01)。目录保持 80 项，coss、依赖和视觉令牌不变。
+
+未合并候选位于 `feat/agent-review-queue`，基于 main `36be612`；进度清单第 16 项为“组件候选”。五项日志、测试清单与 Workspace 本地 main `3413920` 的只读轻量验证方案见 `.sites-runtime/review-queue/REPORT.md`。未写 `.git`、未启动开发服务、未修改 Workspace；浏览器、Workspace 接线与真实服务尚未验证，待 Supervisor 独立 Review。
+
+## 对象选择器 v0.1 · 设计候选（2026-09-25）
+
+语义 01 `AgentObjectPicker` 声明 **Inline + 专用扩展内容**：Inline 快速选择推荐／最近对象并呈现已选摘要；Workspace 复用 Combobox、FilterBar、DataRecordTable 和 Checkbox，提供搜索、筛选、多选、按上限批量选择与加载更多请求。`density="compact"` 只收紧间距，不隐藏不可选原因。
+
+01 选定“具体对象”，02 AgentScopeBuilder 组合“多维范围”；02 可在维度内复用 01。候选、允许披露的字段、选择、推荐依据／来源、搜索筛选结果与加载事实均由宿主提供，默认不做本地过滤；选择和确认不会授予权限或执行任务。跨结果选择保留，失效选择不自动删除，不显示内部长 ID。
+
+组件页 `/next/components/agent-components#object-picker` 提供班级单选（含无权限班级）、学生多选（含已归档学生、上限 5）两组标注示例，覆盖 inline / workspace / compact、320px、长中文和状态切换。公开 API 见[对象选择器契约](docs/component-contracts.md#对象选择器-v01)。coss、依赖、视觉令牌和 80 项目录不变。
+
+未合并候选位于 `feat/agent-object-picker`，基于 main `696061e`；进度清单第 01 项为“组件候选”。五项日志、测试清单与只读核对 Workspace 本地 main `25b431e` 的轻量接线方案见 `.sites-runtime/object-picker/REPORT.md`。本轮未写 `.git`、未启动开发服务、未修改 Workspace；浏览器与真实服务未验证，待 Supervisor 独立 Review。
+
+## 指标摘要 v0.1 · 设计候选（2026-09-25）
+
+语义 19 `AgentMetricSummary` 声明 **Inline + 专用扩展内容**：Inline 用既有 MetricSummary compact 展示关键 KPI、显著变化与异常依据；Workspace 提供完整分组、TrendChart 趋势、统计口径和带来源解释。`density="compact"` 为独立密度，保留缺测、样本不足、状态未确认与受限原因。
+
+值、单位、分母/样本、数据时间/版本、变化判断、异常和来源全部由宿主提供。受限数据只显示获准披露的计数与原因；历史标“当时数据”。不计算统计、占比或结论，因此本候选不自动组合会计算进度/占比的 GoalComparison 与 StatusComposition。下钻只发版本绑定请求，可接 21 AgentEvidenceDrilldown；没有 onExpand 则没有详情入口。
+
+组件页 `/next/components/agent-components#metric-summary` 提供班级学情与批阅进度两组固定示例，覆盖 inline / workspace / compact、320px、长中文与公式。公开 API、复用取舍与披露边界见[指标摘要契约](docs/component-contracts.md#指标摘要-v01)。目录保持 80 项，coss、依赖、视觉令牌不变。
+
+未合并候选在 `feat/agent-metric-summary`，基于 main `cb5234d`；五项日志、测试清单和 Workspace 轻量验证建议在 `.sites-runtime/metric-summary/REPORT.md`。本轮只读核对 Workspace 本地 main `257f96c`，未接线、未启动开发服务、未写 Git。浏览器视觉/键盘和真实服务尚未验证，候选待 Supervisor 独立 Review。
+
+## 范围构建器 v0.1 · 设计候选（2026-09-25）
+
+语义 02 `AgentScopeBuilder` 声明 **Inline + 专用扩展内容**：Inline 汇总核心范围并提供少量微调；Workspace 编辑全部维度、显示校验与影响规模、请求重置或恢复默认。`density="compact"` 为独立密度，保留冲突、越权、不可用和重新确认提示。
+
+维度、合法选项、受控值、校验、汇总与影响规模由宿主提供；受限维度只披露许可原因／计数。选择范围不授予权限，未指定范围不等于使用全部授权数据。确认只发请求，关键条件或版本变化后重新确认。复用 TextbookRangePicker、TextbookDirectory / Tree、FilterBar、Calendar / Popover 及既有 Card、Badge、Button、Collapsible，不新增选择控件、依赖、视觉令牌或目录条目，目录保持 80 项。
+
+组件页 `/next/components/agent-components#scope-builder` 提供学情分析与备课资料两组固定示例，涵盖三种用法、越权班级、不可用资料目录、320px、长中文与公式。公开 API 见[范围构建器契约](docs/component-contracts.md#范围构建器-v01)。
+
+未合并候选位于 `feat/agent-scope-builder`，基于 main `b716d7e`；第 02 项为“组件候选”。五项日志与只读核对 Workspace main 的接入方案见 `.sites-runtime/scope-builder/REPORT.md`。P04 的排重／模糊页属于执行约束，更适合 08；新页范围入口方案待确认。本轮未写 `.git`、未启动开发服务、未改 Workspace；浏览器与真实服务未验证，候选待 Supervisor 独立 Review。
+
+## 对象查看器 v0.1 · 设计候选（2026-09-25）
+
+语义 14 `AgentObjectViewer` 声明 **Inline + 通用扩展容器（领域内容可专用）**：Inline 呈现身份／版本、1–2 个关键分区摘要和局部展开；Workspace 提供完整分区、受控目录、版本切换和关联对象。`density="compact"` 为独立密度，保留历史只读、受限原因和敏感确认。只有宿主提供可读编号时才显示编号，不显示内部长 ID。
+
+AgentArtifactPreview 负责成果摘要卡与打开入口；对象查看器负责打开后的通用承载。题目继续用 QuestionCard / QuestionDetails，作答用 DocumentRegionViewer 插槽；敏感答案经明确确认才挂载，受限分区只显示可披露标题和原因。动作与换版只发请求，打开对象不推断已读取／已引用；版本差异只显示宿主说明，不内置业务 Store、权限判定或持久化。
+
+组件页 `/next/components/agent-components#object-viewer` 提供题目、学生作答两组固定示例，覆盖 inline / workspace / compact、历史换版、家长联系方式受限、320px 窄容器和数学分式。公开 API 见[对象查看器契约](docs/component-contracts.md#对象查看器-v01)。目录保持 80 项，coss、依赖和视觉令牌不变。
+
+本轮未合并候选位于 `feat/agent-object-viewer`，基于 main `c9980c8`。五项日志、测试清单与 Workspace main 的只读轻量验证方案见 `.sites-runtime/object-viewer/REPORT.md`。未操作 `.git`、未启动开发服务、未修改 Workspace；浏览器与真实服务未验证，候选待 Supervisor 独立 Review。
+
+## 集合篮 v0.1 · 设计候选（2026-09-25）
+
+语义 11 `AgentCollectionBasket` 声明 **Inline + 专用扩展内容**：Inline 展示宿主数量、关键条目、分组计数和去向；Workspace 提供完整清单、领域渲染插槽、受控批量选择／动作、分组与上移／下移。`density="compact"` 是独立密度，保留失效、冲突、受限与同步失败原因。汇总、来源版本、同步和最近变化均取宿主事实，操作只发请求，不内建集合数据源、计分、保存、组卷或发布。
+
+复用 Card、Badge、Button、Checkbox、Select、Collapsible；题目通过 QuestionCard 插槽呈现，QuestionWorkPanel 仍只承担可选 Drawer 外壳。Workspace 全局题篮 Provider、Store、班级交接与持久化保持原职责，不迁入本仓。目录仍为 80 项，coss、依赖、视觉令牌不变。
+
+组件页 `/next/components/agent-components#collection-basket` 提供试题篮（分值汇总、下架题、公式）和备课素材包（图片／视频／文章、分组）两组标注示例，展示 inline / workspace / compact、空态和手动同步状态。公开 API 见[集合篮契约](docs/component-contracts.md#集合篮-v01)。
+
+未合并候选位于 `feat/agent-collection-basket`，基于 main `9e6fa12`。测试、五项日志与 Workspace 轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。未启动开发服务、未修改 Workspace 或写入 Git；组件候选待 Supervisor 独立 Review，浏览器、Workspace 接入与真实服务尚未验证。
+
+## 文件输入 v0.1 · 设计候选（2026-09-25）
+
+语义 04 `AgentFileInput` 声明 Inline + 专用扩展内容：少量文件选择与队列摘要、Workspace 完整队列／状态分组／批量操作／文件详情和排序；`density="compact"` 只调整布局密度。复用 coss 原生文件输入、卡片、进度和折叠组件，不新增目录条目、依赖或视觉令牌。
+
+选择与拖入只调用 `onSelect(files)`；类型、大小、数量校验及队列状态由宿主提供。已选择（仅本机）、校验未通过、等待上传、已接收、上传中、已上传、上传失败、状态未确认、已移除分别呈现，后续处理是独立记录。无有效进度不显示百分比，已上传不推定已读取或已解析；回执不明仅允许查询原请求，批量操作也不能绕过此限制。组件不读取文件内容、不上传、不持久化文件对象。
+
+组件与公开 API：`components/prism-next/agent-file-input.tsx`；契约见 [文件输入 v0.1](docs/component-contracts.md#文件输入-v01)。组件页 `/next/components/agent-components#file-input` 提供扫描试卷图片／PDF、备课 Word／Excel 两组标注示例，展示 inline / workspace / compact；紧凑实例置于 `AgentComposer.attachments`，`tools` 提供同队列入口。示例可做真实本机文件的元数据检查，真实上传明确未接入，不把本机材料送入预置解析结果。
+
+状态为任务分支 `feat/agent-file-input` 上的**组件候选**，不代表 main、Workspace 浏览器验收或真实服务接入。P04 轻量验证应把“带入示例扫描材料”作为已有资料引用，真实本机文件另列且只做本机检查；接收、上传、读取与解析分开映射，详见交付报告 `.sites-runtime/file-input/REPORT.md`。
+
+## 文档工作区 v0.1 · 设计候选（2026-09-25）
+
+语义 28 `AgentDocumentWorkspace` 提供 Inline 摘要/节选与 Workspace 章节阅读、受控文本编辑、批注及历史版只读承载；`density="compact"` 只改变密度。查看、编辑、批注、导出四项能力及转换风险必填，未支持能力不提供可执行入口。保存状态、草稿与版本均由宿主提供，不内置持久化、格式转换或 Office／富文本编辑器。
+
+原位示例 `/next/components/agent-components#document-workspace` 包含五环节备课提纲与 PDF 讲评材料，两组均有 inline / workspace / compact、历史版、保存状态与 320px 容器。公开 API 见[组件复用约定](docs/component-contracts.md#文档工作区-v01)，目录保持 80 项，coss、依赖和视觉令牌不变。
+
+未合并候选位于 `feat/agent-document-workspace`，基于 main `fcc929d`。五项日志、测试与 Workspace 验证方案评估位于 `.sites-runtime/document-workspace/REPORT.md`；本轮只读核对 Workspace main `edbcbb1`，未接入或启动服务，浏览器与真实服务未验证。仍待 Supervisor 独立 Review，不自授通过结论。
+
+## QuestionReview 状态外部化（2026-09-25）
+
+`QuestionReview` 新增可选 `review?: AgentItemReview`，复用单项复核器的七种外部状态。确认只调用原有 `onConfirm(scores, reason)` 意图回调，不再写入 saved/record、清空理由或显示本地生成的完成记录。旧属性与类型保持兼容；未传 review 时，发出确认后仅提示“已发出确认，等待记录”。
+
+迁移时由宿主提供 waiting/unknown/resolved 等事实，只有匹配对象、请求与版本的回执才能提供 resolved；已记录评分由受控 editor.saved 更新。五处示例通过共用的示例宿主持有状态，“确认复核”后独立点击“载入示例回执”演示提交中 → 已复核；学习工作流在示例回执到达后才生成评价版本。详见 [QuestionReview 迁移契约](docs/component-contracts.md#questionreview-状态外部化迁移2026-09-25)。
+
+基线 main `3eb6533`，任务分支 `fix/question-review-external-status`。验证日志与 SSR 差异报告位于 `.sites-runtime/question-review/`；未启动开发服务，浏览器视觉／键盘、实体设备、读屏器、Workspace P04 接入与真实服务未验证，待 Supervisor 独立 Review。
+
+## 单项复核器 v0.1 · 设计候选（2026-09-25）
+
+语义 17 `AgentItemReviewer` 位于 `components/prism-next/agent-item-reviewer.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，独立 `density="compact"` 只改变密度。Inline 呈现对象／依据版本、待复核要点、当前值摘要和快捷动作；Workspace 增加证据、受控草稿、原值对比、理由和当时复核记录。评分通过领域插槽接入。
+
+七种复核状态只取宿主事实；点击确认仅发请求，不产生“已复核”。unknown 只查询原请求；版本变化使旧确认过期，并保留草稿与理由。复核人／时间／版本取自回执，时间未知明确未确认。QuestionReview 点击后直接写 saved／record 的旧行为已修复（本 PR），见上方状态外部化迁移说明。
+
+组件页 `/next/components/agent-components#item-reviewer` 提供 P04 单题原稿对照、单份作答评分两组固定示例，包含 inline / workspace / compact、320px、长中文与公式。复用 VerificationFields、PointsField、AgentEvidenceDrilldown、DocumentRegionViewer 及 coss / Prism；公开属性见[单项复核器契约](docs/component-contracts.md#单项复核器-v01)。目录仍为 80 项，无新增依赖或视觉令牌。
+
+未合并候选位于 `feat/agent-item-reviewer`，基于 main `278e7e3`。五项日志、测试清单与 P04 轻量验证方案存于 `.sites-runtime/item-reviewer/REPORT.md`；既有 checked 仅表示本地“已与原稿对照”，不作为正式复核或保存回执。不启动开发服务、不修改 Workspace、不写入 Git；浏览器视觉／交互及真实接入另行验证，候选待 Supervisor 独立 Review。
+
+## 下钻与证据浏览 v0.1 · 设计候选（2026-09-25）
+
+语义 21 `AgentEvidenceDrilldown` 位于 `components/prism-next/agent-evidence-drilldown.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="compact"` 是独立密度。摘要展示结论与关键证据；完整视图按“结论 → 对象 → 证据”浏览，支持面包屑、上层返回和证据预览插槽。路径由宿主控制，打开、展开和返回仅发请求。
+
+已读取、已引用、仅检索命中、仅预览、不完整、不可用及未确认等事实分别呈现；数量与覆盖仅显示宿主提供的值，不依据点击或预览推定。历史证据保留当时版本；受限记录只显示允许披露的标题与原因，紧凑列表保留关键限制。
+
+组件页 `/next/components/agent-components#evidence-drilldown` 提供扫描校对与学情诊断两组固定示例，覆盖 inline / workspace / compact、320px 容器、长中文及公式。复用 DiagnosisEvidenceTable 诊断入口、AgentContextList 来源行与 DocumentRegionViewer 预览；公开 API 见[下钻与证据浏览契约](docs/component-contracts.md#下钻与证据浏览-v01)。不新增依赖、视觉令牌或目录条目。
+
+本轮未合并候选位于 `feat/agent-evidence-drilldown`（main 基线 `2f04f5a`），验证日志与 Builder 报告在 `.sites-runtime/evidence-drilldown/REPORT.md`，包含 P04 试验台轻量验证方案。未启动开发服务，未修改 Workspace 或写入 Git；浏览器视觉／键盘焦点及 Workspace 接入另行验证，候选待 Supervisor 独立 Review。
+
+## 异常处理器 v0.1 · 设计候选（2026-09-25）
+
+语义 18 `AgentExceptionHandler` 位于 `components/prism-next/agent-exception-handler.tsx`，声明 **Inline + 专用扩展内容**。`view="inline" | "workspace"` 默认 inline，`density="default" | "compact"` 为独立密度。摘要保留类型、影响范围、已保留内容、处置状态及选项影响；完整视图提供全部异常、原始材料预览、判定依据、当时处置记录与返回入口。
+
+七种处置状态由外部事实提供；提交中与回执未确认不接受重复处置，只可查询原请求。已处置、已忽略和已跳过分别呈现，缺少时间明确显示未确认。动作只回传异常与动作标识；历史不随当前状态改写，组件不判断恢复资格或写入数据。
+
+组件页 `/next/components/agent-components#exception-handler` 提供 P04 模糊页与题目冲突／缺失答案两组固定示例，含三种用法、320px 窄容器、长中文及公式。公开 API 与 P04 接入映射见[异常处理器契约](docs/component-contracts.md#异常处理器-v01)。复用现有 coss / Prism，不新增依赖、视觉令牌或目录条目。
+
+本轮证据在分支 `feat/agent-exception-handler`（基线 `96bb21f`），验证日志与 Builder 报告在 `.sites-runtime/exception-handler/REPORT.md`。不启动开发服务、不修改 Workspace、不写入 Git；组件候选仍待 Supervisor 独立 Review 与下一步 Workspace P04 轻量验证，不能视为业务接入或验收通过。 五项均退出 0：排版 107 个 TSX、全量测试 151/151、类型检查 0 错误。浏览器安全策略阻断本地文件预览，三主题、窄容器与键盘/焦点未实看。
+
+## 任务记录三件套两态 v0.1 · 设计候选（2026-09-24）
+
+语义 26 `AgentExecutionProgress`、27 `AgentExecutionResult`、03 `AgentContextSummary` 补充 `view="inline" | "workspace"`（默认 inline）及独立 `density="default" | "compact"`。原 presentation 外框与默认调用输出保持；任务历史明确标“当时”并静态呈现，未知回执仅允许查询原请求，产出无打开能力不显示假入口，来源的选用/读取/Agent 本次参考/成果引用分别呈现。
+
+`AgentStep.state` 新增 `unknown / waiting-human / waiting / partial`，复用整体进度词表与静态图形；未到达用 pending，已发生但回执不明用 unknown，明确等待回执/处理用 waiting，当前等待教师用 waiting-human，规则见[步骤状态契约](docs/component-contracts.md#步骤状态2026-09-24)，本轮验证日志位于 `.sites-runtime/step-states/`。
+
+组件示例 `/next/components/agent-components#record-views` 含 P04 扫描整理与备课资料整理两组数据，三种用法共享事实，提供窄容器、长中文及公式示例。公开属性、默认值、职责和 P04 映射见 [组件复用约定](docs/component-contracts.md#任务记录三件套两态-v01)。执行确认仍仅 Inline；coss、依赖、视觉令牌和 80 项目录保持不变。
+
+接入验证在 Workspace `/teacher/agent/workspace` 进行，本仓库骨架不作验收依据。本轮不启动开发服务、不修改 Workspace；SSR 快照以 main `e99813a` 固定，验证日志与 Builder 报告位于 `.sites-runtime/record-views/`。浏览器三主题、窄屏/键盘/焦点恢复、实体设备、读屏器和真实服务未验证，候选仍待 Supervisor 独立 Review。
+
+## 对比查看器两态 v0.1 · 设计候选（2026-09-24）
+
+语义 15 `AgentChangeSet` 从本地旧提交 `32382e9` 单独移植，组合现有 `AgentChangeReview`；保留 main 的 Workspace 回收适配。支持同源受控 `inline / workspace`、整组依据与提示、逐项冲突事实、数学预览插槽、采用/保留/重新选择及可选改写、宿主提供的应用动作。冲突项与关键项在 inline 中始终可见；采用仅记录决定意图，应用、草稿变更、版本核验与保存均由宿主负责。
+
+2026-09-24 文案收敛：每卡最多一条边界提示，补充说明可放入默认收起的 `AgentChangeSet.details`“说明”；教师界面去除实现术语，必要状态事实保持常驻，本轮验证日志位于 `.sites-runtime/copy-density/`。
+
+组件示例：`/next/components/agent-components#change-set-two-state`，两栏共享手动示例状态，含一项冲突和 384px 窄容器开关。公开属性与 P04 映射见 [组件复用约定](docs/component-contracts.md#对比查看器两态-v01)。目录保持 80 项，不引入旧提交的承载层或示例 reducer。
+
+接入验证在 Workspace `/teacher/agent/workspace` 的 P04 流程进行，本仓库骨架页不作验收依据。本轮不启动开发服务、不修改 Workspace；验证日志位于 `.sites-runtime/change-set/`。浏览器三主题、窄屏交互、焦点恢复、实体设备、读屏器与真实业务接入尚未验证，仍需 Supervisor 独立 Review。
+
+## Workspace 适配回收 v0.1（2026-09-24）
+
+回收 Workspace 固定提交 `4e0d656` 的通用适配：AgentComposer 范围、只读与发送阻断；MetricSummary / StatusComposition 紧凑布局；QuestionPrint 题号版本行开关；Badge attention 别名。Prism 层提供 Button 导航尺寸与 Toolbar plain 组合，固定 coss 源码保持不变；QuestionWorkPanel 的相关能力已在 main。
+
+经 Product Owner 2026-09-24 批准，Prism Button 增加可与导航尺寸组合的 `variant="info"`，复用现有信息色令牌用于引导/信息性操作，保留每个操作区唯一的 default 主动作层级。
+
+公开 API、默认值及迁移边界见 [组件复用约定](docs/component-contracts.md#workspace-适配回收-v01)。本轮为 Builder 源码交付；逐块分类与验证日志位于 `.sites-runtime/upstream/REPORT.md`。不启动开发服务，浏览器三主题、窄容器、键盘、读屏器、真实设备与 Workspace 升级接入未验证；需 Supervisor 独立检查，不构成视觉或业务验收。
+
 ## 当前可用版本：coss v1.13.1
 
 ### Agent 导航归类 v0.1（2026-09-23）
@@ -8,7 +404,7 @@
 
 ### Agent 语义组件第一组 v0.1 · 设计候选（2026-09-22）
 
-依据 v0.2.1 规范和复用规划 v0.1.2，原位扩展 `/next/components/agent-components#context-summary-review`：上下文摘要、摘要预览、对比查看、执行确认、任务进度、执行结果，以及同一次执行的组合示例。两种用途、独立状态与 384px 窄容器可手动切换。目录仍为 80 项。
+依据 [v0.2.1 批准规范](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)和[复用规划 v0.1.2](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.2.md)，原位扩展 `/next/components/agent-components#context-summary-review`：上下文摘要、摘要预览、对比查看、执行确认、任务进度、执行结果，以及同一次执行的组合示例。两种用途、独立状态与 384px 窄容器可手动切换。目录仍为 80 项。两份原文已归档供实施与独立审核引用；第 7.1 节状态映射的复核与待验范围见[候选说明](docs/agent-context-summary-review.md#批准规范原文归档与任务状态复核2026-09-23)。
 
 复用 AgentContextSummary / AgentContextList / AgentChangeReview / AgentTaskProgress 和 Prism / coss；新增受控的预览、确认、整体进度与结果组合。操作仅返回意图，提交中不会被自动当作已接收，回执不明仅查询原执行；历史步骤停止转圈并标明“上次进行到”。不接业务存储、权限判断或 Runtime，不新增完整业务页面。
 
@@ -18,7 +414,7 @@
 
 `/next/agent` 增加「试卷解析引导」，复用已有解析流程完成材料入口、范围追问、执行、原稿核对和本机示例保存；原材料复核助手保留。`/next/components/agent-components` 原位补齐追问、材料引用、带详情的步骤和修改对照，调用方持有数据及操作，不增加组件目录分类。
 
-参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用后仍须核对与保存。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
+参考 Beautiful UI 的交互组织，使用现有 Prism / coss 实现，不引入其源码或全局样式。三主题与字号标准不变。补充要求进入可复用指令；采用修改前校验原文，失效建议不会覆盖人工编辑，采用仅记录内容选择；核对状态见题目编辑区，保存由宿主单独处理。解析后台、OCR 和模型未接入，真实文件仍只做本地检查，后续结果为明确标注的固定示例。
 
 v0.1.1 追加：题干与参考答案下方显示当前草稿公式预览（Temml 0.13.4 → 原生 MathML，沿用本地 STIX 字体）；Unicode 常见代数式可直接预览，复杂公式使用 `\(...\)` / `\[...\]`。中文、换行及无法解析的输入原样保留，错误显示当前输入，不复用旧公式，不改原稿和保存快照。只检查排版，不证明数学正确。公式每段最多 1000 字符、全文超过 12000 字符回退原文；不支持链接、自定义宏和颜色/字号命令。任务步骤与监视器详情统一使用既有 14px 状态徽标；本机进度恢复增加 Spinner，减少动效模式保持静态。页面标注候选版本并链接 [PR #18](https://github.com/Ashrum/intelligence-prism-ui/pull/18)，审核源码以该候选分支为准。
 
@@ -68,6 +464,7 @@ v0.1.1 定向验证：25 项相关测试通过，包含构建后公式模块原�
 
 - [组件站点](https://intelligence-prism-ui.ashrvm.chatgpt.site/next) · [基础规范](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations)
 - [源码接入与组件约定](docs/component-contracts.md)：依赖、主题、字体、目录与数据接口。
+- [AI 原生开发流程 v0.1](docs/OLE_AI_NATIVE_DEVELOPMENT_WORKFLOW_v0.1.md)：Claude Code 监督与独立审核、Codex 构建；跨设备准备见第 11 节。在另一台电脑完成本机安装与授权后，从本仓库启动并先读取该文档。
 - 本版在 v1.13.0 上统一评审状态和版本号，沿用已验证的视觉、交互与组件接口。
 - 交付方式为源码复用，`private: true` 保留；未发布独立 npm 包。应用示例使用演示数据，业务服务、权限和持久化由接入应用提供。
 
@@ -83,6 +480,48 @@ npm run dev
 ```
 
 生产构建运行 `npm run build`；自动回归运行 `npm test`。源码接入目标项目时，使用 [组件复用约定](docs/component-contracts.md) 中的依赖与主题设置。
+
+#### Windows 本地验证
+
+在仓库根目录使用 PowerShell 和 Node.js 24（本机验证版本为 Node.js 24.14.0、npm 11.9.0），先完成 `npm ci`。现有 `npm run dev` 使用 POSIX 环境变量语法；Windows 可直接启动 Vite。若 5173 已被占用，可改用其他端口（下例为 5174；`--strictPort` 在端口被占用时直接退出）：
+
+```powershell
+$env:WRANGLER_LOG_PATH = '.wrangler/wrangler.log'
+node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5174 --strictPort
+```
+
+构建和测试在另一个 PowerShell 终端运行。以下设置对应 `sites-env.sh` 的本地运行目录与环境（Windows 环境变量名称不区分大小写），保留两项构建前检查；无需新增 `build:local`，也不依赖 Bash / GNU `timeout`。Linux 的 `npm run build` / `npm test` 继续使用原有有时限的构建脚本。
+
+```powershell
+$projectRoot = (Get-Location).Path
+$runtimeRoot = Join-Path $projectRoot '.sites-runtime'
+'home', 'npm-cache', 'xdg-config', 'tmp', 'wrangler/logs' | ForEach-Object { New-Item -ItemType Directory -Force (Join-Path $runtimeRoot $_) | Out-Null }
+$env:SITES_ENV_READY = '1'
+$env:SITES_PROJECT_ROOT = $projectRoot
+$env:HOME = Join-Path $runtimeRoot 'home'
+$env:XDG_CONFIG_HOME = Join-Path $runtimeRoot 'xdg-config'
+$env:TMPDIR = Join-Path $runtimeRoot 'tmp'
+$env:WRANGLER_WRITE_LOGS = 'false'
+$env:WRANGLER_LOG_PATH = Join-Path $runtimeRoot 'wrangler/logs'
+$env:MINIFLARE_REGISTRY_PATH = Join-Path $runtimeRoot 'wrangler/registry'
+'NPM_CONFIG_CACHE', 'npm_config_proxy', 'npm_config_http_proxy', 'npm_config_https_proxy' | ForEach-Object { Remove-Item "Env:$_" -ErrorAction SilentlyContinue }
+$env:npm_config_cache = Join-Path $runtimeRoot 'npm-cache'
+$env:npm_config_audit = 'false'
+$env:npm_config_fund = 'false'
+$env:npm_config_update_notifier = 'false'
+node scripts/check-math-font.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Math font check failed' }
+node scripts/check-typography.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Typography check failed' }
+node node_modules/vinext/dist/cli.js build
+if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
+node --test tests/*.test.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+node node_modules/typescript/bin/tsc --noEmit
+if ($LASTEXITCODE -ne 0) { throw 'Type check failed' }
+```
+
+即使 `core.autocrlf=true`，`.gitattributes` 也要求清单中的 coss 源码以 LF 检出，并禁止转换固定哈希字体的二进制字节；哈希测试仍校验原始内容。已有 CRLF 工作副本首次采用规则时，确认这些文件没有本地修改后，仅重取 `components/coss/`、`hooks/coss/use-media-query.ts` 和 `lib/coss/segmented-control.ts`。`vendor/` 的说明与清单本身没有固定字节哈希，因此不扩大规则范围。先成功构建再运行完整测试，才能覆盖服务端渲染与生产公式模块；`dist/`、`.sites-runtime/`、`.wrangler/` 和 TypeScript 增量缓存均已忽略。
 
 以下为历史迭代记录，当前范围与状态以上述可用版本为准。
 

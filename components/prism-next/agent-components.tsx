@@ -1,6 +1,6 @@
 "use client"
 import { useId,useRef,type ReactNode } from "react"
-import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert } from "lucide-react"
+import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert,CircleHelp,Clock3,ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
@@ -9,11 +9,13 @@ import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/co
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Card } from "@/components/coss/card"
 import { Badge } from "@/components/prism-next/badge"
+import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Separator } from "@/components/coss/separator"
+import { agentProgressLabels } from "@/lib/prism-next/agent-progress"
 export function AgentComposer({
   value, onChange, running = false, onSubmit, onStop, label = "任务",
   placeholder = "描述需要完成的任务…", submitLabel = "运行", maxLength = 1000,
-  variant = "default", footerNote, context, suggestions, tools, attachments, toolbarLayout = "responsive", toolbarSeparator = false, inputSize = "default",
+  variant = "default", footerNote, context, suggestions, tools, attachments, scope, sendDisabled = false, sendDisabledReason, readOnly = false, toolbarLayout = "responsive", toolbarSeparator = false, inputSize = "default",
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -30,6 +32,10 @@ export function AgentComposer({
   suggestions?: ReactNode;
   tools?: ReactNode;
   attachments?: ReactNode;
+  scope?: ReactNode;
+  sendDisabled?: boolean;
+  sendDisabledReason?: string;
+  readOnly?: boolean;
   toolbarLayout?: "responsive" | "inline";
   toolbarSeparator?: boolean;
   inputSize?: "default" | "compact";
@@ -37,17 +43,21 @@ export function AgentComposer({
   const id = useId();
   const compact = variant === "compact";
   const stop = () => { onStop?.(); requestAnimationFrame(() => document.getElementById(id)?.focus({ preventScroll: true })); };
-  const submit = () => { if (!running && value.trim()) onSubmit(); };
+  const blocked = readOnly || sendDisabled || Boolean(sendDisabledReason);
+  const submit = () => { if (!running && !blocked && value.trim()) onSubmit(); };
   if (variant === "conversation") {
     return <form className="relative min-w-0 space-y-3" onSubmit={event => { event.preventDefault(); submit(); }}>
       <Label htmlFor={id} className="sr-only">{label}</Label>
       <InputGroup className="@container/agent-composer">
+        {scope && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap">{scope}</InputGroupAddon>}
         {attachments && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap">{attachments}</InputGroupAddon>}
         <InputGroupTextarea
           id={id}
           value={value}
           onChange={event => onChange(event.target.value)}
           disabled={running}
+          readOnly={readOnly}
+          aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined}
           placeholder={placeholder}
           maxLength={maxLength}
           rows={inputSize === "compact" ? 2 : 4}
@@ -66,21 +76,25 @@ export function AgentComposer({
             {context}
             {running
               ? <Button type="button" variant="outline" size="icon" aria-label="停止" disabled={!onStop} onClick={stop}><Square aria-hidden="true" /></Button>
-              : <Button type="submit" size="icon" aria-label={submitLabel} disabled={!value.trim()}><ArrowUp aria-hidden="true" /></Button>}
+              : <Button type="submit" size="icon" aria-label={submitLabel} aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={blocked || !value.trim()}><ArrowUp aria-hidden="true" /></Button>}
           </div>
         </InputGroupAddon>
       </InputGroup>
+      {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint text-muted-foreground">{sendDisabledReason}</p>}
       <div className="min-w-0 text-ui-hint text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
       {suggestions}
     </form>;
   }
   return <form className={compact ? "relative space-y-2" : "relative space-y-3"} onSubmit={event => { event.preventDefault(); submit(); }}>
     <Label htmlFor={id} className={compact ? "sr-only" : undefined}>{label}</Label>
+    {scope}
     <Textarea
       id={id}
       value={value}
       onChange={event => onChange(event.target.value)}
       disabled={running}
+      readOnly={readOnly}
+      aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined}
       placeholder={placeholder}
       maxLength={maxLength}
       rows={compact ? 2 : undefined}
@@ -98,21 +112,24 @@ export function AgentComposer({
         {context}
         {running
           ? <Button type="button" variant="outline" size={compact ? "icon" : "default"} aria-label={compact ? "停止" : undefined} disabled={!onStop} onClick={stop}><Square aria-hidden="true" />{!compact && "停止"}</Button>
-          : <Button type="submit" size={compact ? "icon" : "default"} aria-label={compact ? submitLabel : undefined} disabled={!value.trim()}><ArrowUp aria-hidden="true" />{!compact && submitLabel}</Button>}
+          : <Button type="submit" size={compact ? "icon" : "default"} aria-label={compact ? submitLabel : undefined} aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={blocked || !value.trim()}><ArrowUp aria-hidden="true" />{!compact && submitLabel}</Button>}
       </div>
     </div>
+    {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint text-muted-foreground">{sendDisabledReason}</p>}
     {suggestions}
   </form>;
 }
-export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error";detail?:string}
+export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error"|"unknown"|"waiting-human"|"waiting"|"partial";detail?:string;time?:string}
 export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
- const tones={done:'success',running:'info',pending:'secondary',error:'error'} as const
- return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':{done:'已完成',running:'进行中',pending:'待开始',error:'失败'}[state]}</Badge>
+ const tones={done:'success',running:'info',pending:'secondary',error:'error',unknown:'warning','waiting-human':'warning',waiting:'warning',partial:'warning'} as const
+ // Preserve the legacy error label; all shared state labels use the progress vocabulary.
+ const label=state==='done'?agentProgressLabels.completed:state==='error'?'失败':agentProgressLabels[state]
+ return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':label}</Badge>
 }
-export function AgentTaskProgress({steps,actions,activity='live'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot'}) {
- return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-4 py-3">{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
-  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
-  <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>
+export function AgentTaskProgress({steps,actions,activity='live',density='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact'}) {
+ return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className={density==='compact'?'space-y-2 py-2':'space-y-4 py-3'}>{steps.map(step=><li key={step.id} aria-current={activity==='live'&&step.state==='running'?'step':undefined} className="flex items-start gap-3">
+  <span aria-hidden="true" className="mt-1 shrink-0">{step.state==='done'?<Check className="size-4 text-success-foreground"/>:step.state==='running'&&activity==='live'?<Spinner className="motion-reduce:animate-none"/>:step.state==='error'?<CircleAlert className="size-4 text-destructive-foreground"/>:step.state==='unknown'?<CircleHelp className="size-4 text-warning-foreground"/>:step.state==='waiting'?<Clock3 className="size-4 text-warning-foreground"/>:step.state==='waiting-human'||step.state==='partial'?<CircleAlert className="size-4 text-warning-foreground"/>:<Circle className="size-4 text-muted-foreground"/>}</span>
+  {density==='compact'?<div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1"><span className="break-words text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/>{step.time&&<span className="break-words text-ui-hint text-muted-foreground">{step.time}</span>}{step.detail&&<span className="break-words text-ui-hint text-muted-foreground">{step.detail}</span>}</div>:<div className="min-w-0 flex-1"><div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"><span className="text-ui-action">{step.label}</span><AgentStepStatus state={step.state} snapshot={activity==='snapshot'}/></div>{step.time&&<p className="mt-1 break-words text-ui-hint text-muted-foreground">{step.time}</p>}{step.detail&&<p className="mt-1 text-ui-hint text-muted-foreground">{step.detail}</p>}</div>}
  </li>)}</ol>{actions}</div>
 }
 
@@ -134,7 +151,7 @@ export function AgentContextList({label='本次使用的材料',items,onInspect,
 }
 
 export type AgentChangeDecision = 'pending'|'accepted'|'kept'
-/** Proposals are caller-owned. This component never edits content or persists it. */
+/** Decision expresses adoption only. The host owns verification, content edits and persistence. */
 export function AgentChangeReview({title,before,after,reason,decision,onDecision,disabled=false,disabledReason,beforeLabel='修改前',afterLabel='建议内容',beforePreview,afterPreview,scope,onResetDecision}:{
  title:string;before:string;after:string;reason:string;decision:AgentChangeDecision;
  onDecision:(decision:'accepted'|'kept')=>void;disabled?:boolean;disabledReason?:string;
@@ -142,10 +159,63 @@ export function AgentChangeReview({title,before,after,reason,decision,onDecision
 }) {
  const id=useId(),heading=useRef<HTMLHeadingElement>(null)
  const choose=(value:'accepted'|'kept')=>{onDecision(value);requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}
- return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用 · 尚需核对':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
+ return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
  <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">{beforeLabel}</h4>{beforePreview??<p className="whitespace-pre-wrap break-words text-read-body">{before}</p>}</section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">{afterLabel}</h4>{afterPreview??<p className="whitespace-pre-wrap break-words text-read-body">{after}</p>}</section></div>
  {scope&&<p className="text-ui-hint text-muted-foreground">{scope}</p>}
  {disabledReason&&<p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
- {decision==='pending'?<div className="flex flex-wrap gap-2"><Button aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>:onResetDecision&&<div><Button variant="outline" disabled={disabled} onClick={()=>{onResetDecision();requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}}>重新选择</Button></div>}
+ {decision==='pending'?<div className="flex flex-wrap gap-2"><Button aria-label={`采用：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled||before===after||!after.trim()} onClick={()=>choose('accepted')}>采用这项修改</Button><Button variant="outline" aria-label={`保留：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>choose('kept')}>保留原文</Button></div>:onResetDecision&&<div><Button variant="outline" aria-label={`重新选择：${title}`} aria-describedby={disabledReason?`${id}-disabled`:undefined} disabled={disabled} onClick={()=>{onResetDecision();requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}}>重新选择</Button></div>}
  </Card>
+}
+
+export type AgentChangeSetItem = {
+ id: string; title: string; before: string; after: string; reason: string;
+ decision: AgentChangeDecision; scope?: string; critical?: boolean;
+ beforePreview?: ReactNode; afterPreview?: ReactNode;
+ conflict?: { baseLabel: string; currentLabel: string; description?: string };
+ disabledReason?: string;
+}
+export type AgentChangeSetProps = {
+ view: 'inline' | 'workspace'; title: string; basis: string;
+ items: readonly AgentChangeSetItem[]; inlineLimit?: number;
+ onDecision: (id: string, decision: AgentChangeDecision) => void;
+ onRewrite?: (id: string, value: string) => void;
+ onExpand?: (trigger: HTMLButtonElement) => void;
+ notice?: string; details?: ReactNode; disabledReason?: string;
+ apply?: { label: string; onApply: () => void; disabledReason?: string };
+}
+/** Both views consume the same host draft. No local decisions, save or submit state. */
+export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onDecision, onRewrite, onExpand, notice, details, disabledReason, apply }: AgentChangeSetProps) {
+ const id = useId()
+ const limit = Number.isFinite(inlineLimit) ? Math.max(1, Math.floor(inlineLimit)) : 2
+ // With no expansion capability, keep every decision reachable in this view.
+ const shown = view === 'workspace' || !onExpand ? items : items.filter((item, index) => index < limit || item.critical || item.conflict)
+ const count = (decision: AgentChangeDecision) => items.filter(item => item.decision === decision).length
+ return <section aria-labelledby={id} data-agent-change-view={view} className="min-w-0 space-y-4">
+  <div className="space-y-2"><h3 id={id} className="text-block-title break-words">{title}</h3><p className="text-ui-hint text-muted-foreground break-words">{basis}</p>
+   <p className="text-ui-hint">共 {items.length} 处修改 · 已采用 {count('accepted')} · 保留原文 {count('kept')} · 待决定 {count('pending')}</p>
+  </div>
+  {notice && <p role="status" className="text-ui-hint text-warning-foreground">{notice}</p>}
+  {disabledReason && <p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}
+  {!items.length && <p className="text-ui-hint text-muted-foreground">当前没有修改。</p>}
+  <ol className="space-y-5" aria-label="修改列表">{shown.map((item, index) => <li key={item.id} className="min-w-0 space-y-3">
+   {item.conflict && <p role="status" className="text-ui-hint text-warning-foreground break-words">候选基于 {item.conflict.baseLabel}，当前为 {item.conflict.currentLabel}{item.conflict.description && <> · {item.conflict.description}</>}</p>}
+   <AgentChangeReview title={item.title} before={item.before} after={item.after} reason={item.reason} scope={item.scope} decision={item.decision} beforePreview={item.beforePreview} afterPreview={item.afterPreview}
+    disabled={!!(disabledReason || item.disabledReason)} disabledReason={[disabledReason, item.disabledReason].filter(Boolean).join('；') || undefined}
+    onDecision={decision => onDecision(item.id, decision)} onResetDecision={() => onDecision(item.id, 'pending')}/>
+   {onRewrite && <div className="space-y-2">
+    <Label htmlFor={`${id}-rewrite-${index}`}>手动改写建议内容：{item.title}</Label>
+    <Textarea id={`${id}-rewrite-${index}`} value={item.after} onChange={event => onRewrite(item.id, event.target.value)} disabled={!!(disabledReason || item.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, item.disabledReason ? `${id}-rewrite-${index}-disabled` : undefined].filter(Boolean).join(" ") || undefined}/>
+    {item.disabledReason && <p id={`${id}-rewrite-${index}-disabled`} className="text-ui-hint text-warning-foreground">{item.disabledReason}</p>}
+   </div>}
+  </li>)}</ol>
+  {view === 'inline' && onExpand && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">另有 {items.length - shown.length} 处修改，展开查看全部</p>}<Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看全部 {items.length} 处修改<ArrowUpRight aria-hidden="true"/></Button></div>}
+  {details != null && <Collapsible defaultOpen={false}>
+   <CollapsibleTrigger render={<Button variant="ghost" size="sm" />}><ChevronDown aria-hidden="true"/>说明</CollapsibleTrigger>
+   <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 pt-3 text-ui-hint text-muted-foreground">{details}</div></CollapsiblePanel>
+  </Collapsible>}
+  {apply && <div className="space-y-2">
+   <Button disabled={!!(disabledReason || apply.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, apply.disabledReason ? `${id}-apply-disabled` : undefined].filter(Boolean).join(' ') || undefined} onClick={() => { if (!disabledReason && !apply.disabledReason) apply.onApply() }}>{apply.label}</Button>
+   {apply.disabledReason && <p id={`${id}-apply-disabled`} role="status" className="text-ui-hint text-warning-foreground">{apply.disabledReason}</p>}
+  </div>}
+ </section>
 }
