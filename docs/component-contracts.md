@@ -2,6 +2,15 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 组件来源与复用顺序（PO 2026-09-29）
+
+- 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
+- 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
+- coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
+- 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+
+以上是组件来源检索顺序，不改变规范权威顺序、主题与语义令牌要求，也不允许引入 Workspace 业务行为或私有类型。
+
 ## 交互演示器 v0.1
 
 2026-09-27 · 设计候选，语义 **39 AgentInteractiveDemo**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-interactive-demo.tsx`；组件页 `#interactive-demo`。未合并分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`。
