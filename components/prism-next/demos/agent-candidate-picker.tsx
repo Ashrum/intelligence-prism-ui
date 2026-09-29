@@ -93,6 +93,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
     onExpand: element => { trigger.current = element; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest", behavior: "instant" }) },
     itemTitleOwner: purpose === "questions" ? "slot" : "picker",
+    getItemSelectionLabel: purpose === "questions" ? item => `选择第 ${fixture.candidates.findIndex(candidate => candidate.id === item.id) + 1} 题 · ${item.title}` : undefined,
     renderItem: purpose === "questions" ? (item, context) => {
       const question = questionSamples.find(question => question.id === item.id) ?? (item.id === "example-extra-question" ? questionSamples[0] : undefined)
       if (!question) return null
@@ -107,7 +108,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && presentation.view !== "workspace" }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
-    {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“查看详情”打开完整题目；对话内不展开题目详情。</p>}
+    {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“查看详情”打开完整题目；对话内不展开题目详情。类型随题目内容显示；已在集合中的候选只显示一次状态，失效与受限原因保留。</p>}
     <div className="space-y-2"><Label htmlFor={stateId}>结果状态示例</Label><QuestionSelect id={stateId} label="结果状态示例" value={state} onChange={value => setState(value as AgentCandidateResult["state"])}
       items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "错误" }]} /></div>
     <div className="flex flex-wrap gap-2" role="group" aria-label="载入示例事实">
