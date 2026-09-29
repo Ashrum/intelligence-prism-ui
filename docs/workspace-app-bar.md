@@ -20,6 +20,7 @@
 | `AppBarToolGroup` | `visibility="always|desktop|wide|compact|phone"`，分别为总是、≥600、≥900、<900、<600；仅在 AppBar 查询容器内使用。负责工具组的可见性与布局。 |
 | `BarIconButton` | `label / children / size? / count? / countUnit?`，size 为 global（40px）或 space（36px），手机各 44px；接受其余 Button 属性。有效计数自动加入可访问名，未知不补零；调用方不要在 label 再重复计数。 |
 | `IconCountBadge` | `count?:number|null`。仅显示非负安全整数（包括 0），其他值不显示。复用 Prism Badge sm + component-label，12/16/500，位于相对定位父容器右上。独立使用时宿主须在所属控件可访问名中提供计数，徽标自身 aria-hidden 防重复读出。 |
+| `AppBarTeachingContext` | 顶栏 School 图标 + coss Popover；任教事实、切换意图、设置入口，完整属性见下文 PO 2026-09-29 契约。 |
 | `AppBarStatusButton` | Button 属性及宿主传入的 children / aria-label；28px 高、component-label、secondary 底，仅提供状态入口外观。状态与说明不在组件中内置。 |
 | `AppBarPersonalMenu` | `identity:{name,institution,detail,initials} / children / menuProps? / popupProps?`；32px 头像，手机 44px 触点；300px 菜单、身份卡、40px 菜单项。宿主组合 MenuGroup / MenuGroupLabel / MenuItem 提供栏目和行为；不内置用户、审阅项或权限。 |
 | `SpaceBar` | `side?:{title,collapsed,onToggle,controls?} / sideWidth? / children / tools?`，默认 sideWidth 248px；48px 高。展开左段 secondary 底+右边框，目录 item-title；收起时只显示图标按钮。中段 min-width:0、右段放空间工具。使用 role=group 与正常 Tab 顺序，不伪装具有方向键行为的 toolbar。 |
@@ -37,15 +38,15 @@
 | 实际容器宽度 | Prism 全局栏 | 宿主的组合责任 |
 | --- | --- | --- |
 | ≥1180 | 208px 机构区：标识+字样；空间带图标 | 左栏展开，SpaceBar.sideWidth 与实际左栏一致；全局演示入口可见 |
-| 900–1179 | 40px 机构区：仅标识；空间带图标 | 将 side.collapsed 设 true；保留教材说明 |
-| 600–899 | 仅标识；空间仅文字；wide 工具隐藏 | 演示入口移至个人菜单；任教与教材改图标；教材说明隐藏 |
-| <600 | 36px 机构区+当前空间菜单；desktop 工具隐藏 | 全局保留通知/头像；空间栏只留目录按钮、中段、更多和最右试题篮；页头操作下移 |
+| 900–1179 | 40px 机构区：仅标识；空间带图标 | 将 side.collapsed 设 true；任教上下文保留顶栏图标入口 |
+| 600–899 | 仅标识；空间仅文字；wide 工具隐藏 | 演示入口移至个人菜单；任教上下文保留顶栏图标入口 |
+| <600 | 36px 机构区+当前空间菜单；desktop 工具隐藏 | 全局保留任教上下文/通知/头像；空间栏只留目录按钮、中段、更多和最右试题篮；页头操作下移 |
 
 Prism 不猜左栏的打开状态。`side.collapsed`、目录显隐与窄屏目录面板由宿主使用同一布局事实同步传入；onToggle 是请求，aria-expanded 根据 collapsed 显示。菜单 Portal 默认进入 document.body；应用主题在根节点时可直接使用。局部三主题预览应通过 popupProps.portalProps.container 将弹层放入对应主题边界，且放在 overflow scroller 之外；门户中的工具组若不在 AppBar 容器内，宿主须自行传入可见项，不依赖 AppBarToolGroup 查询。
 
 ## 视觉与业务边界
 
-Prism 拥有尺寸、语义字号、颜色/边框/圆角/焦点/当前态和响应式表现。宿主拥有空间列表、当前空间、机构身份、任教范围数据、目录/左右栏状态、通知数、试题篮数、演示状态、路由和操作回调；组件只展示这些事实。任教范围统一放中段（D3）、试题篮固定最右（D4），由宿主组合保证。
+Prism 拥有尺寸、语义字号、颜色/边框/圆角/焦点/当前态和响应式表现。宿主拥有空间列表、当前空间、机构身份、任教范围数据、目录/左右栏状态、通知数、试题篮数、演示状态、路由和操作回调；组件只展示这些事实。任教上下文按下文 2026-09-29 决策统一放顶栏；试题篮固定最右（D4），由宿主组合保证。
 
 D1 仅豁免机构字样，见 [字体规范](typography.md#品牌字样)。D2 同一全局栏只能有一个环境入口：≥900 在全局工具区，<900 移到个人菜单“演示与审阅”分组；Page Map 属同组，正式环境由宿主隐藏整组和环境入口；对象级“示例对话”继续保留，页面级“本地业务演示”由 Workspace 侧移除。
 
@@ -57,8 +58,31 @@ D2 原型适用方式：所有宽度均不显示顶栏“演示环境”，不�
 
 ## 示例与验收入口
 
-`/next/use-cases/workspace-app-bar`，从应用示例侧栏和 `/next/use-cases` 可到达。四个宽度按钮控制固定尺寸容器，同时展示 light/paper/dark 各两套 Agent/组卷组合；可切换长机构名、导航空间、对话标题、范围、目录、个人菜单。示例宿主的数值和文案取自设计稿；普通业务按钮仅展示静态说明弹窗，不执行组卷、搜索、保存或通知处理。
+`/next/use-cases/workspace-app-bar`，从应用示例侧栏和 `/next/use-cases` 可到达。四个宽度按钮控制固定尺寸容器，同时展示 light/paper/dark 各两套 Agent/组卷组合；可切换长机构名、导航空间、对话标题、任教班级、目录、个人菜单。示例宿主的基础数值和文案取自设计稿，任教上下文增加本次评审夹具；普通业务按钮仅展示静态说明弹窗，不执行组卷、搜索、保存或通知处理。
 
 示例个人菜单身份卡与“演示与审阅”组可直接打开；宽≥900 的环境说明只保留工具区一处，较窄时只保留个人菜单一处。设计图 Agent/手机局部绘制顺序与 D4 不一致，本实现遵循已批准 D4，所有组合均把试题篮排最右。
 
 需要独立浏览器复验：四档容器宽度×三主题、长机构名、导航 hover/current/focus 共存、Tab/Enter/方向键/Escape 与焦点返回、当前菜单项勾、窄屏操作整行、计数可读性、用户放大字体。自动测试不能替代这些视觉与交互验收，也未验证 Workspace 真实路由、业务服务、实体移动设备或读屏器。
+
+## PO 2026-09-29：统一任教上下文入口
+
+任教上下文由顶栏图标入口统一承载，页面第二排不再重复班级名称、教材版本及“任教与教材”入口；取代 D3 中任教范围位于中段的旧规则。对话标题等空间信息仍归 SpaceBar。所有宽度仅显示 `School` 图标，复用 `BarIconButton` global，与搜索、通知、设置同处工具区、同尺寸；不要放入会隐藏的 desktop/wide 工具组。
+
+复用检索：已查本次提供的 coss `INDEX.tsv`，并阅读本地 particles 源码 `p-popover-1`（Popover 内组合标题、表单、按钮）与 `p-menu-4`（MenuRadioGroup 单选）。采用前者的 Popover 组合模式：面板包含当前班级、只读教材与设置操作，适合正常 Tab 顺序浏览事实；Menu 更适合纯操作/单选菜单。复用 coss Popover/Title 与现有 Prism Button/BarIconButton，不复制粒子业务示例。本次为通用 App Bar 扩展，不增加 Agent 专用组件、Beautiful UI 代码或目录条目；外观延续 coss/Prism，不添加令牌。
+
+`AppBarTeachingContext`（同文件导出）宿主接入属性：
+
+| 属性 | 契约 |
+| --- | --- |
+| `summary: string` | 宿主当前摘要；按钮可访问名严格为“任教班级与教材：{summary}”，不显示摘要文字。 |
+| `items: readonly {id:string; label:string}[]` | 可切换任教关系，label 包含班级与学科；id 唯一。 |
+| `currentId?: string | null` | 宿主确认的当前关系；未匹配时使用 status，不默认第一项。 |
+| `status: string` | 无关系、载入失败或当前关系未知时的宿主状态文案。空列表仍显示教材事实和设置入口。 |
+| `textbook: string` | 只读教材版本/册次或宿主提供的未知状态；组件不按班级自行推算。 |
+| `onSelect(id)` | 仅发出选择意图；当前态和教材须由宿主回传，选择后保持面板以展示确认事实。 |
+| `settings` | `{href, onSelect?}` 原生链接，或 `{onSelect}` 按钮；文案固定“任教与教材设置”。 |
+| `popoverProps / popupProps` | coss 原属性；支持受控开关及 `popupProps.portalProps.container` 局部主题门户。 |
+
+列表使用带 `aria-pressed` 的选择按钮组，当前项勾选；Tab/Shift+Tab 遍历，Enter/Space 激活，Escape 关闭并返回触发器，开关及焦点管理复用 coss。触屏 pointer-coarse 下全局图标按钮至少 44×44px，列表与设置按钮所有模式至少 44px 高。长中文换行，列表超过 240px 内滚动；不覆盖颜色、圆角、阴影或字号。
+
+示例 `/next/use-cases/workspace-app-bar` 的三主题和四宽度均接入该入口；“已配置任教 / 无任教关系 / 长任教与教材”覆盖选择、空状态、长中文和公式文本。示例中的选择仅更新夹具状态，设置打开说明对话框。Workspace 接入应在应用顶层传入上述事实和回调，并移除各业务页重复任教区域；本次不修改 Workspace。

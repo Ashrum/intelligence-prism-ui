@@ -114,3 +114,15 @@
   :is(.prism-app-bar-root,.prism-space-bar-root,.prism-page-head-root,.prism-app-bar-space-popup,.prism-app-bar-personal-popup) *,
   :is(.prism-app-bar-root,.prism-space-bar-root,.prism-page-head-root) *::before { animation:none; transition:none; }
 }
+
+/* Context composition: reuse coss surfaces and Prism typography without visual overrides. */
+.prism-app-bar-teaching-popup { width:320px; max-width:calc(100vw - 32px); }
+.prism-app-bar-teaching-content { display:flex; flex-direction:column; gap:16px; min-width:0; overflow-wrap:anywhere; }
+.prism-app-bar-teaching-fact { display:flex; flex-direction:column; gap:4px; }
+.prism-app-bar-teaching-fact > p { margin:0; }
+.prism-app-bar-teaching-options { display:flex; flex-direction:column; gap:4px; max-height:240px; overflow-y:auto; }
+.prism-app-bar-teaching-action[data-slot] { height:auto; min-height:44px; justify-content:space-between; white-space:normal; text-align:start; }
+.prism-app-bar-teaching-action > span { min-width:0; overflow-wrap:anywhere; }
+@media (pointer:coarse) {
+  .prism-app-bar .prism-bar-icon-button[data-slot] { min-width:44px; min-height:44px; }
+}
