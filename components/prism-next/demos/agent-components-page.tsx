@@ -67,7 +67,7 @@ export function AgentComponentsPage() {
   const [pendingTarget, setPendingTarget] = useState<string>()
   const root = useRef<HTMLDivElement>(null), mobileDirectory = useRef<HTMLDetailsElement>(null)
   const entries = filterAgentComponents(query, status)
-  const supplemental = status === "all" ? agentSupplementalExamples.filter(entry => entry.name.includes(query.trim())) : []
+  const supplemental = status === "all" ? agentSupplementalExamples.filter(entry => `${entry.name} ${"componentName" in entry ? entry.componentName : ""}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())) : []
   const changeExpanded = (slug: string, value: boolean) => setExpanded(current => {
     const next = new Set(current)
     if (value) next.add(slug); else next.delete(slug)
