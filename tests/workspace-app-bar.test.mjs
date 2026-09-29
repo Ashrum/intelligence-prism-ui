@@ -12,7 +12,7 @@ await mkdir(runtime, { recursive: true });
 const file = new URL('test-bundle.mjs', runtime);
 const bundle = await build({ stdin: { contents: `export * from './components/prism-next/app-bar';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false });
 await writeFile(file, bundle.outputFiles[0].text);
-const { PrismBrandMark, InstitutionWordmark, AppBarNavLink, AppBarSpaceMenu, IconCountBadge, BarIconButton, SpaceBar, PageHead } = await import(file);
+const { AppBarTeachingContext, PrismBrandMark, InstitutionWordmark, AppBarNavLink, AppBarSpaceMenu, IconCountBadge, BarIconButton, SpaceBar, PageHead } = await import(file);
 await rm(file);
 const h = React.createElement;
 const css = await readFile(new URL('../components/prism-next/app-bar.css', import.meta.url), 'utf8');
@@ -114,7 +114,7 @@ test('SpaceBar middle controls can shrink while titles truncate and side/tools s
   const demo = new URL('../examples/workspace-app-bar/demo.tsx', import.meta.url);
   return readFile(demo, 'utf8').then(source => {
     assert.match(source, /<SpaceBarTitle title=\{conversation\}>/);
-    assert.match(source, /<span className="min-w-0 truncate">\{scope\}<\/span>/);
+    assert.doesNotMatch(source, /任教范围：|scopeOptions/);
   });
 });
 
@@ -166,4 +166,32 @@ test('the built application example exposes all four widths and three themes out
   assert.match(html, /Workspace 顶部区域/); assert.match(html, /同步组卷/);
   const { components } = await import('../lib/prism-next/catalog.ts');
   assert.equal(components.length, 80);
+});
+
+test('teaching context emits intents but waits for host-confirmed facts, with empty and stale states', () => {
+  const items = Object.freeze([Object.freeze({ id: 'a', label: '一班 · 数学' }), Object.freeze({ id: 'b', label: '二班 · 数学' })]);
+  const calls = [];
+  const props = { summary: '一班 · 数学', items, currentId: 'a', status: '任教信息未确认', textbook: '宿主教材', onSelect: id => calls.push(id), settings: { href: '/settings/teaching', onSelect: () => calls.push('settings') } };
+  const tree = AppBarTeachingContext(props);
+  const [trigger, popup] = tree.props.children;
+  assert.equal(trigger.props.render.props.label, '任教班级与教材：一班 · 数学');
+  const content = popup.props.children.props.children;
+  const buttons = content[2].props.children;
+  assert.equal(buttons[0].props['aria-pressed'], true);
+  buttons[1].props.onClick();
+  assert.deepEqual(calls, ['b']);
+  assert.equal(buttons[0].props['aria-pressed'], true);
+  assert.equal(content[3].props.children[1].props.children, '宿主教材');
+  assert.equal(content[4].props.render.props.href, '/settings/teaching');
+  content[4].props.onClick();
+  assert.deepEqual(calls, ['b', 'settings']);
+  for (const patch of [{ items: [] }, { currentId: 'stale' }]) {
+    const state = AppBarTeachingContext({ ...props, ...patch }).props.children[1].props.children.props.children;
+    assert.equal(state[1].props.children[1].props.children, '任教信息未确认');
+    assert.equal(state[4].props.children, '任教与教材设置');
+  }
+  const html = render(h(AppBarTeachingContext, props));
+  assert.match(html, /aria-label="任教班级与教材：一班 · 数学"/);
+  assert.match(html, /lucide-school/);
+  assert.doesNotMatch(html, />一班 · 数学</);
 });
