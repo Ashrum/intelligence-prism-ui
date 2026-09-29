@@ -162,8 +162,8 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
               <Button type="button" size="navigation" variant="outline" onClick={event => { event.currentTarget.closest("li")?.querySelector("button")?.focus(); setPending(null) }}>取消切换</Button>
             </div>
           </section>}
-          {full && valid && previewId === item.id && item.preview != null && <Card className="min-w-0 gap-3 p-4" aria-label="模板示例版面">
-            <h5 className="text-ui-action">示例版面</h5><div className="min-w-0 break-words">{item.preview}</div>
+          {full && valid && previewId === item.id && item.preview != null && <Card className="min-w-0 gap-3 p-4" aria-label="模板版面预览">
+            <h5 className="text-ui-action">版面预览</h5><div className="min-w-0 break-words">{item.preview}</div>
           </Card>}
         </li>
       })}

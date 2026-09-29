@@ -34,6 +34,7 @@ export function AgentImageCanvasDemo() {
   const [comparisonIds, setComparisonIds] = useState<readonly string[]>([])
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [compact, setCompact] = useState(false), [narrow, setNarrow] = useState(false), [crop, setCrop] = useState(false)
+  const [showRegionSourceLabels, setShowRegionSourceLabels] = useState(true)
   const [feedback, setFeedback] = useState("全部为模拟图片，刷新后还原。")
   const panel = useRef<HTMLDivElement>(null)
   const nextRegion = useRef(0), previousView = useRef(view)
@@ -59,6 +60,7 @@ export function AgentImageCanvasDemo() {
     if (intent.type === "open-source") setFeedback("来源为本页人工绘制的示意图，没有外部原稿。")
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentImageCanvas title="图片材料（模拟）" imageSet={{ id: "example-images", version: "example-v1" }} images={images} selectedImageId={selectedImageId} comparisonIds={comparisonIds}
+        showRegionSourceLabels={showRegionSourceLabels}
         capabilities={{ ...imageCanvasCapabilities, crop: crop ? { supported: true } : imageCanvasCapabilities.crop }}   onIntent={onIntent}
         details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "image-canvas"} className="min-w-0 space-y-5 py-6">
@@ -67,11 +69,13 @@ export function AgentImageCanvasDemo() {
     <div className="flex flex-wrap gap-2">
       <Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button>
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
+      <Button type="button" variant="outline" aria-pressed={showRegionSourceLabels} onClick={() => setShowRegionSourceLabels(value => !value)}>显示区域来源标签</Button>
       <Button type="button" variant="outline" aria-pressed={crop} onClick={() => setCrop(value => !value)}>演示裁切范围选择</Button>
     </div>
     <p role="status" className="text-ui-hint">{feedback}</p>
     <div ref={panel} tabIndex={-1} aria-label="图片材料示例" className={narrow ? "min-w-0 w-full max-w-[320px]" : "min-w-0"}>
       <AgentImageCanvas title="图片材料（模拟）" imageSet={{ id: "example-images", version: "example-v1" }} images={images} selectedImageId={selectedImageId} comparisonIds={comparisonIds}
+        showRegionSourceLabels={showRegionSourceLabels}
         capabilities={{ ...imageCanvasCapabilities, crop: crop ? { supported: true } : imageCanvasCapabilities.crop }} view={view} density={compact ? "compact" : "default"} onIntent={onIntent}
         onExpand={() => setView("workspace")} onBack={() => setView("inline")}
         details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} />

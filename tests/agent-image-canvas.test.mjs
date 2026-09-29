@@ -202,3 +202,23 @@ test('demo supplies four scans, blur/skew, answer region, missing alt, unavailab
   const html = render(h(AgentImageCanvasDemo));
   for (const text of ['image-canvas', '倾斜', '模糊', '原图片暂不可用', '当前未连接裁切工具', '320px']) assert.ok(html.includes(text), text);
 });
+
+
+test('region source labels default on and can be hidden without changing facts or intents', () => {
+  const images = [{ ...first, regions: ['example', 'teacher', 'system'].map((source, index) =>
+    Object.freeze({ ...first.regions[0], id: `region-${index}`, source })) }];
+  const before = JSON.stringify(images);
+  for (const density of ['default', 'compact']) {
+    const extra = { view: 'workspace', density, images };
+    for (const label of ['示例', '教师', '系统']) assert.ok(htmlFor(extra).includes(`来源：${label}`));
+    assert.equal(htmlFor(extra), htmlFor({ ...extra, showRegionSourceLabels: true }));
+    const hidden = htmlFor({ ...extra, showRegionSourceLabels: false });
+    for (const label of ['示例', '教师', '系统']) assert.ok(!hidden.includes(`来源：${label}`));
+    assert.match(hidden, /来源：模拟原稿/);
+    assert.match(hidden, /3 个区域标注/);
+  }
+  reset(); const calls = [], extra = { images, showRegionSourceLabels: false, onIntent: intent => calls.push(intent) };
+  click(extra, '删除第 1 题作答区');
+  assert.deepEqual(calls, [{ ...context, type: 'annotate-delete', regionId: 'region-0' }]);
+  assert.equal(JSON.stringify(images), before);
+});

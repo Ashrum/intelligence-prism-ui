@@ -40,6 +40,8 @@ export type AgentImageCanvasProps = AgentRecordViewProps & {
   images: readonly AgentCanvasImage[]
   selectedImageId: string | null
   comparisonIds?: readonly string[]
+  /** Show region provenance labels (teacher/system/example). Presentation only; defaults to true. */
+  showRegionSourceLabels?: boolean
   capabilities: AgentImageCapabilities
   onIntent?: (intent: AgentImageCanvasIntent) => void
   onBack?: () => void
@@ -66,7 +68,7 @@ type SelectionDraft = { basis: string; mode: "annotate" | "crop"; regionId?: str
 
 /** Semantic 30. Reuse DocumentRegionViewer for the main canvas; no pixel editing. */
 export function AgentImageCanvas({ title, imageSet, images, selectedImageId, comparisonIds = [], capabilities,
-  view = "inline", density = "default", onIntent, onExpand, onBack, details,
+  view = "inline", density = "default", showRegionSourceLabels = true, onIntent, onExpand, onBack, details,
   notice = "标注与裁切仅提交请求，不修改原图。" }: AgentImageCanvasProps) {
   const id = useId(), full = view === "workspace", compact = density === "compact"
   const surface = useRef<HTMLDivElement>(null)
@@ -215,7 +217,7 @@ export function AgentImageCanvas({ title, imageSet, images, selectedImageId, com
         <ol aria-label="区域列表" className="space-y-3">{regions.map((region, index) => <li key={index} className="min-w-0 space-y-2">
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" size="navigation" disabled={!validRegions || !!draft} aria-pressed={selectedRegion === index} onClick={() => { if (validRegions && !draft) setRegion({ basis, index }) }}>定位{region.label || "未命名区域"}</Button>
-            <span className="text-ui-hint">来源：{sourceLabels[region.source]}</span>
+            {showRegionSourceLabels && <span className="text-ui-hint">来源：{sourceLabels[region.source]}</span>}
             <Button type="button" variant="outline" size="navigation" aria-label={`编辑${region.label}`} disabled={!canEdit || !capabilities.annotate.supported || !!draft} onClick={() => startDraft("annotate", region)}>编辑</Button>
             <Button type="button" variant="outline" size="navigation" aria-label={`删除${region.label}`} disabled={!canEdit || !capabilities.annotate.supported || !!draft} onClick={() => { if (canEdit && capabilities.annotate.supported && !draft) emit({ ...context, ...target(image), type: "annotate-delete", regionId: region.id }) }}>删除</Button>
           </div>
