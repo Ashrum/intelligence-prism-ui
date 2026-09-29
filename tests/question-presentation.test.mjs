@@ -332,12 +332,12 @@ test('L1 open labels are configurable without changing native button, excerpt or
   }
 });
 
-test('L1 default opener is the coss outline small button with a 16px decorative icon', () => {
+test('L1 default opener is the coss secondary extra-small button with a 16px decorative icon', () => {
   const props = { question, number: 8, onOpen() {} };
   const button = capture(c.QuestionSummaryRow, props).find(node => node.type === c.CossButton);
   assert.ok(button, 'reuse the actual coss Button export');
-  assert.equal(button.props.variant, 'outline');
-  assert.equal(button.props.size, 'sm');
+  assert.equal(button.props.variant, 'secondary');
+  assert.equal(button.props.size, 'xs');
   assert.equal(button.props['aria-label'], '查看详情：第 8 题 · 从配方解释最小值');
   const icon = React.Children.toArray(button.props.children).find(React.isValidElement);
   assert.equal(icon.props.className, 'size-4');
@@ -352,4 +352,23 @@ test('collection workspace example opens compact titles using context-neutral qu
   const html = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: false }, 'workspace');
   assert.match(html, /data-collection-summary-row/); assert.match(html, /aria-label="查看题目：第 1 题/);
   assert.doesNotMatch(html, /data-question-summary|data-collection-content/); assert.doesNotMatch(html, /查看详情/); assert.match(html, /<math/); assert.match(html, /data-collection-summary-clamp/);
+});
+
+test('L1 action row reserves the left excerpt slot and keeps every opener at the right edge', () => {
+  for (const omitted of [false, true]) {
+    const props = { question: { ...question, options: omitted ? [{ id: 'a', content: '完整选项' }] : undefined }, onOpen() {} };
+    const nodes = capture(c.QuestionSummaryRow, props);
+    const row = nodes.find(node => 'data-question-actions' in node.props);
+    assert.ok(row);
+    for (const token of ['flex', 'flex-wrap', 'items-center', 'justify-between']) assert.ok(row.props.className.split(' ').includes(token));
+    const [left, button] = React.Children.toArray(row.props.children);
+    assert.equal(left.type, 'span');
+    assert.equal(text(render(left)), omitted ? '节选' : '');
+    assert.equal(button.type, c.CossButton);
+    const classes = button.props.className.split(' ');
+    assert.ok(classes.includes('ml-auto'), 'right aligned even after wrapping');
+    assert.ok(classes.includes('pointer-coarse:min-h-11'));
+    assert.ok(!classes.includes('min-h-11'), 'desktop uses the coss xs height');
+  }
+  assert.doesNotMatch(render(h(c.QuestionSummaryRow, { question })), /data-question-actions/);
 });
