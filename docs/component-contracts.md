@@ -1113,14 +1113,15 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 | `onIntent` | 可选 `(intent:AgentCandidateIntent)=>void` | 唯一数据变更出口，详见下表；缺省只读。所有 disabledReason（包括空字符串）既禁用控件，也由处理器保护；函数返回值不是回执 |
 | `disabledReason` | 可选 string | 限制选择／取消／批量／替换／提交；检索、排序和导航仍可用。原因常驻；历史／冻结只读可由页面提供此限制，历史事实需页面单独明确标识 |
 | `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 只减少留白，不缩字、截断原因或增加第三业务态。无内部选择或查询副本 |
-| `itemTitleOwner` | 可选 `"picker" / "slot"`，默认 `"picker"` | 默认保持原有外层标题；`"slot"` 声明 renderItem 自行呈现 item.title，外层显示“选择候选”，勾选控件仍保留完整标题的 accessible name。无插槽或返回 null/undefined/boolean 时保留外层标题；受限项始终保留获权标题且不调用插槽。宿主须保证实际返回的内容含标题；不检测 ReactNode 内部。标题去重范围为候选结果行，已选摘要与替代项仍各自保留可读名称 |
-| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；默认标题由外层显示，状态、依据、来源常驻（重复说明可共用）。标题归属见 `itemTitleOwner`。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
+| `itemTitleOwner` | 可选 `"picker" / "slot"`，默认 `"picker"` | 默认保持原有外层标题；`"slot"` 声明 renderItem 自行呈现 item.title，外层不再显示“选择候选”，保留复选框与右上状态，勾选控件仍保留完整标题的 accessible name。无插槽或返回 null/undefined/boolean 时保留外层标题；受限项始终保留获权标题且不调用插槽。宿主须保证实际返回的内容含标题；不检测 ReactNode 内部。标题去重范围为候选结果行，已选摘要与替代项仍各自保留可读名称 |
+| `getItemSelectionLabel` | 可选 `(item:AgentCandidateEntry)=>string` | 完整的复选框 accessible name；题目宿主传入“选择第 N 题 · 标题”，N 必须与 renderItem 内容编号一致（排序／筛选后也一致）。未提供或返回空字符串时回退“选择：标题”；restricted 不调用，始终使用获权标题。不推断候选领域或解析 ReactNode |
+| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；有实际内容时候选层不再显示 type，由宿主内容提供类型；未提供或返回 null/undefined/boolean 时保持原类型行，不新增 itemPresentation 属性。默认标题由外层显示，状态、依据、来源常驻（重复说明可共用）。标题归属见 `itemTitleOwner`。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开筛选与选择”与 Workspace“返回原位置”。只导航，不改变选择或提交；页面恢复原触发器、对象及阅读位置，没有能力就没有入口 |
 | `notice / details` | 可选 string / ReactNode | 一条常驻提示，默认“选择或提交不代表已加入集合。”；补充说明默认折叠。状态未知、失败、受限／失效原因、选择和替代依据不进入 details |
 
 候选类型：
 
-- `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
+- `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；候选结果行的固定原因“已在集合中，无需重复选择。”仅以 sr-only 文本经 aria-describedby 直接关联复选框，右上状态仍可见。原因严格等于该项状态文案时也仅作可访问描述；不模糊推断任意原因句的语义。不同的权限、失效、未知及全局禁用原因仍可见。替代项维持原呈现；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
 - `AgentCandidateRestrictedEntry={id,status:'restricted',disclosure:{title,reason}}` 只接收获准披露的名称与原因。运行时同样忽略误传摘要、类型、依据、来源、替代关系及领域插槽。被引用的替代项变为 restricted 时，其关系解释也不显示。页面须先处理全组标题、总数、已选／关联事实、说明和所有插槽；组件不是权限机关或任意文本脱敏器。
 - `alternatives: readonly AgentCandidateAlternative[]`，成员 `{candidateId,reason,disabledReason?}` 引用 candidates/relatedCandidates 中的当前事实。常驻显示替代项标题、选择依据、来源与替代依据。原项必须在本次选择中，替代项必须唯一、可用且未选；缺记录、同项、已在集合、受限、失效、未知或缺替代依据时阻断，不自动搜索另一项。不允许用替换动作改动正式集合；已选失效项可换成合法替代项。
 
