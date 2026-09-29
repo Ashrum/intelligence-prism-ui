@@ -1778,10 +1778,13 @@ groups={[{
 | `clear / destinations` | 可选 action / 只读 action 数组 | action 为 `{id,label,disabledReason?}`；clear 仅 workspace，去向两态显示、第一项主操作。缺能力无入口；给出的能力但缺 onAction 显示禁用原因。集合级动作目标为全部传入 items，宿主必须提供完整目标清单并核验，不能把服务总量中未提供的 ID 算进影响范围 |
 | `batchActions` | 可选 `readonly AgentCollectionBatchAction[]` | `{id,label,itemIds,disabledReason?}`，workspace 专用。明确目标须非空、无重复、均存在且可选，并与 selectedIds 集合完全相符；否则整批禁用，不缩减范围。有效回调保留 action.itemIds 的顺序与每项输入版本 |
 | `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
-| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary 或题干。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实必须经 issue / disabledReason 提供 |
+| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary；题干仅由 renderSummary 提供。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实经 sync.failed / issue / attention / disabledReason 提供 |
+| `infoPlacement / headerActions` | 默认 inline；menu 仅 workspace + summary 生效 / ReactNode 或 `({infoMenuItem})=>ReactNode` | menu 时常态头部只保留标题、数量与操作菜单；同步、类型、来源、版本、更新时间、缺失同步字段、visual 标记、summary.fields、groups、notice、details 全部移入内置 coss Dialog“题篮信息”。同步失败、条目失效／冲突及 attention 汇为头部一条原因，不裁切。headerActions 函数须把 infoMenuItem 放进 coss MenuPopup；普通 ReactNode 或未传时自动补一个更多菜单。未启用的调用行为不变 |
+| `attention` | 可选 string | 宿主确认需要处理的原因，例如“本机存储失败，请重试”；始终直接可见。不同于常态 notice，不解析文本判断异常，不改变 sync |
+| `renderSummary` | 可选 `(item:AgentCollectionEntry)=>{content:ReactNode,excerpt?:boolean} 或 null` | 仅 summary 且提供 onOpenItem 时调用，两态均可；受限项不调用。传被动 QuestionContent 题干，不含题卡标题、操作或选项。保留 MathML，以 line-clamp-2 呈现，实际溢出经 ResizeObserver / 字体加载 / 内容变化检测显示“节选”；宿主提前节选或省略选项、小问等需传 excerpt:true。无回调时不挂载摘要，避免截断后不能一步查看全文。组件不切割字符串或公式 |
 | `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 仅 default + workspace 调用，summary 和受限条目均不调用。保留给其他宿主的已授权只读领域内容，完整题干沿用阅读字号 |
 | `overview` | 可选 `ReactNode` | 仅 workspace 呈现于 header 之后、选择工具与列表之前，组件在统计区末尾添加 Separator。宿主提供已授权、被动呈现的统计；不传交互控件或隐含业务状态。undefined / null / boolean 视为未提供；非空 ReactNode 由宿主保证有可见内容。启用时两种 itemPresentation 都使用紧凑头部：标题保留 collection.title + summary.count/unit，隐藏全部 summary.fields 与头部分组数量，避免总分与构成重复；不解析 ReactNode 或字段名推测重叠。宿主负责把所需统计与口径放入 overview，关键状态仍经 sync / issue 等提供；版本、来源、缺失同步信息与历史标识保留。inline 忽略此插槽；未提供时行为不变 |
-| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开题干 |
+| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮，点击覆盖整行被动区域；复选框、移出、排序、分组、异常处理独立；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开完整题目 |
 | `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
 
 2026-09-29 PO 第三轮：复用既有 `MetricSummary` + `StatusComposition`，不新增组件。workspace 试题篮示例默认已选题目 3、当前总分 17、单选 5 / 多选 6 / 填空 6 分；宿主演示随移除更新，同步不由统计推断。已选题目指篮内题目而非批量勾选项，包含失效题；该口径在来源补充说明中披露。
@@ -1817,7 +1820,7 @@ groups={[{
 - Workspace：同一事实 → 集合顺序／分组呈现 → 受控选择与批量动作 → 全清单、领域插槽、移除、处理、分组和上移／下移 → 去向、清空与可选返回；无第二套工作区外壳。
 - Compact：与任一 view 组合，只收紧间距；同步失败、失效与受限原因仍在折叠区外。
 
-组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实行，点击标题打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
+组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实／两行题干，整行打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
 
 本轮任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`，状态为**组件候选**；测试与五项日志、Workspace 只接呈现的轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。不启动开发服务，不修改 Workspace 或 Git；浏览器三主题、窄容器、键盘焦点／触控、读屏器、Workspace 接入和真实服务分别待验，不用 SSR 或回调测试代替。
 
@@ -2406,7 +2409,7 @@ L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-
 | 组件 | 接入与兼容边界 |
 | --- | --- |
 | 10 候选选择器 | 既有 renderItem 不变；示例 inline 用 L1，workspace 用 L2 + QuestionDetails；受限条目仍不调用插槽 |
-| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态均为紧凑标题／事实行且不调用插槽，onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
+| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态通过 renderSummary 提供两行题干（不调用 renderItem），onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
 | 12 结构编排器 | 新增可选 renderItem(item, { view, density })，默认未传保持原渲染；提供内容时以无外框域内容替代可见重复标题，原标题的可访问关联、锁定、来源、属性和操作保护仍在。回调与状态机不变 |
 | 14 对象查看器 | 新增可选 inlineDisclosure='local' / 'host'，默认 local 保持原披露；host 的 inline 只挂载允许的 summary，不提供就地展开 content 的入口，workspace 和 sensitive/受限保护不变。题目示例选 host，扩展态 L2 默认答案与解析 |
 | 15 / 17 | 示例题面由 QuestionContent 呈现；17 的扩展态 QuestionDetails 只传 answer，inline 用 L0 |
@@ -2651,7 +2654,7 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `selectionToolbar?: boolean` 默认显示原有选择计数、全选和清除选择；设为 `false` 只隐藏该区，不影响逐条复选框、受控 `selectedIds` / `onSelectionChange`、受限或历史禁用规则及 `batchActions`。宿主负责提供可访问的选择入口及已选统计。summary 模式复选框名称为“选择第 N 题 · 标题”，无可见“选择”文案。Workspace 将全选置于底部，并在宿主“更多”菜单提供移除已选；这些业务布局不进入通用组件。SEL 批准后 Workspace overview 的已选题目、总分及构成采用勾选子集；此前组件页示例的全篮统计说明不作为 Workspace 的现行统计口径。
 
-集合篮 SEL 头部操作：`headerActions?: ReactNode` 将宿主菜单组合进现有标题行，操作区不收缩且不另起控制条；紧凑头部将同步状态移入既有事实行。未传插槽的 DOM 保持原样。Workspace 题篮以此替换标题上方独立更多菜单行；组件页集合示例同步提供原生 Menu。
+集合篮 SEL 头部操作：`headerActions` 将宿主菜单组合进现有标题行，操作区不收缩。默认沿用既有事实行；2026-09-29 PO 精简方案新增 `infoPlacement="menu"`，Workspace summary 可使用 `headerActions={({infoMenuItem}) => <Menu>…<MenuPopup>{infoMenuItem}…</MenuPopup></Menu>}`，由组件内置“题篮信息”项打开完整事实 Dialog。组件页 workspace 试题篮已启用；真实 Workspace 需按本节 API 接入。
 
 ## Agent 对话组合（PO 2026-09-29）
 

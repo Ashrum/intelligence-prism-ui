@@ -248,7 +248,7 @@ test('two purposes reuse three presentations, question summary slot and provided
     const html = render(h(CollectionBasketExample, { purpose, narrow: true }));
     for (const text of ['固定示例', '对话摘要', '完整集合管理', '紧凑集合摘要', 'max-w-[320px]']) assert.ok(html.includes(text));
     assert.equal((html.match(/data-agent-collection-view=/g) ?? []).length, 3);
-    if (purpose === 'questions') { assert.match(html, /data-collection-summary-row=/); assert.doesNotMatch(html, /data-question-summary=|<mfrac>|data-collection-content=/); assert.match(html, /总分（含失效题）/); }
+    if (purpose === 'questions') { assert.match(html, /data-collection-summary-row=/); assert.doesNotMatch(html, /data-question-summary=|data-collection-content=/); assert.match(html, /总分（含失效题）/); assert.match(html, /<mfrac>/); assert.match(html, /data-collection-summary-clamp/); }
     else for (const text of ['课堂导入', '拓展阅读', '图片', '视频', '文章']) assert.ok(html.includes(text));
   }
   assert.match(render(h(AgentCollectionBasketDemo)), /320px 窄容器/);
@@ -541,4 +541,73 @@ test('headerActions stays beside title and compact status stays visible in exist
     if (itemPresentation === 'summary') assert.ok(header.indexOf('data-agent-status=') > header.indexOf('data-collection-header-facts'));
   }
   assert.match(render(h(CollectionBasketExample, { purpose: 'questions', narrow: true })), /data-collection-header-actions/);
+});
+
+// PO 2026-09-29: opt-in minimal workspace header, with facts preserved in the dialog.
+const menuProps = { view: 'workspace', itemPresentation: 'summary', infoPlacement: 'menu', onAction() {} };
+test('menu placement keeps only title/count/actions in the normal workspace header; other hosts are unchanged', () => {
+  for (const density of ['default', 'compact']) for (const state of ['unknown', 'local', 'synced']) {
+    const extra = { ...menuProps, density, sync: { state, description: '常态存储说明' } };
+    const html = htmlFor(extra), header = html.match(/<header[\s\S]*?<\/header>/)[0];
+    assert.equal(textOf(header), '练习题集合 · 9项');
+    assert.match(header, /aria-label="题篮更多操作"/);
+    assert.doesNotMatch(html, /常态存储说明|状态未确认|同步信息不完整|data-collection-header-facts/);
+    for (const unchanged of [{ view: 'inline' }, { itemPresentation: 'default' }]) {
+      assert.equal(htmlFor({ ...extra, ...unchanged }), htmlFor({ ...extra, ...unchanged, infoPlacement: 'inline' }));
+    }
+  }
+});
+
+test('information menu slot discloses all supplied facts and unknown placeholders without losing statistics or history', () => {
+  let menuItem;
+  const nodes = capture({ ...menuProps, collection: { ...collection, snapshot: '昨日记录' },
+    sync: { state: 'unknown', description: '外部同步描述' }, visual: { updatedAt: '11:20', sample: true, excerpt: true, disconnected: true },
+    notice: '集合边界说明', details: h('p', null, '宿主核验详情'), overview: h('p', null, '概览'),
+    headerActions: context => { menuItem = context.infoMenuItem; return h('button', null, '宿主菜单'); },
+  });
+  assert.equal(menuItem.type.name, 'MenuItem'); assert.equal(menuItem.props.children, '题篮信息');
+  assert.equal(typeof menuItem.props.onClick, 'function');
+  const info = nodes.find(node => node.props['data-collection-info'] !== undefined);
+  const disclosed = textOf(render(info));
+  for (const text of ['状态未确认', '示例', '节选', '未连接', '历史集合 · 昨日记录', '题目', '当时版本：集合 v4', '来源：现有题篮', '最近更新：11:20', '数量：9项', '总分：147 分', '基础：8', '拓展：1', '外部同步描述', '集合边界说明', '宿主核验详情']) assert.ok(disclosed.includes(text), text);
+  const missing = capture({ ...menuProps, collection: { id: 'c', title: '试题篮', type: '题目' } }).find(node => node.props['data-collection-info'] !== undefined);
+  assert.match(textOf(render(missing)), /集合版本：未确认.*来源：未确认.*最近更新：未提供.*同步信息不完整（集合版本、更新时间未提供）/);
+  const plain = htmlFor({ ...menuProps, headerActions: ({ infoMenuItem }) => h('div', null, h('button', null, '宿主菜单')) });
+  assert.equal((plain.match(/<button/g) || []).filter(Boolean).length > 0, true);
+  assert.doesNotMatch(plain, /题篮更多操作/);
+});
+
+test('minimal header directly reports failed sync, storage failure and invalid/conflicting reasons in one untruncated status', () => {
+  const html = htmlFor({ ...menuProps, attention: '本机存储失败，请重试',
+    sync: { state: 'failed', description: '服务器拒绝保存', action: { id: 'retry', label: '重新同步' } },
+    items: [{ ...entry, issue: { state: 'invalid', reason: '题目下架' } }, { ...entry, id: 'conflict', issue: { state: 'conflict', reason: '版本发生变化' } }],
+  });
+  const header = html.match(/<header[\s\S]*?<\/header>/)[0];
+  for (const text of ['本机存储失败，请重试', '同步失败：服务器拒绝保存', '条目已失效：题目下架', '版本冲突：版本发生变化']) assert.ok(textOf(header).includes(text));
+  assert.equal((header.match(/role="status"/g) || []).length, 1); assert.doesNotMatch(header, /line-clamp|truncate/);
+  assert.match(html, /重新同步/);
+  assert.match(htmlFor({ attention: '存储错误' }), /存储错误/);
+});
+
+test('summary content preserves host math with a two-line clamp, explicit excerpt and one row opener; restricted entries cannot render', () => {
+  const calls = [], opened = [], trigger = { id: 'row-button' };
+  const extra = { ...menuProps, onSelectionChange() {}, onOpenItem: (...args) => opened.push(args),
+    items: [entry, { id: 'secret', access: 'restricted', disclosure: { label: '受限题', reason: '不可披露' } }],
+    renderItem: () => assert.fail('summary must not call renderItem'),
+    renderSummary: item => { calls.push(item.id); return { content: h('div', null, '长中文题干', h('math', null, h('mfrac', null, h('mn', null, '1'), h('mn', null, '2')))), excerpt: true }; },
+  };
+  const html = htmlFor(extra); assert.deepEqual(calls, ['q1']);
+  assert.match(html, /line-clamp-2/); assert.match(html, /长中文题干<math><mfrac>/); assert.match(html, /data-collection-excerpt/);
+  assert.doesNotMatch(html, /在右栏查看|data-collection-content=/);
+  const nodes = capture(extra), opener = button(nodes, '查看题目：第 1 题 · 第一题');
+  assert.equal(opener.props.type, 'button'); assert.match(opener.props.className, /after:absolute after:inset-0/);
+  opener.props.onClick({ currentTarget: trigger }); assert.deepEqual(opened, [[entry, trigger]]);
+  const checkbox = nodes.find(node => node.props['aria-label'] === '选择第 1 题 · 第一题');
+  assert.ok(checkbox); assert.equal(descendants(opener, node => node.props['aria-label'] === checkbox.props['aria-label']).length, 0);
+  assert.match(button(nodes, '移出试题篮：第一题').props.className, /relative z-10/);
+  for (const override of [{ onOpenItem: undefined }, { itemPresentation: 'default' }]) {
+    calls.length = 0;
+    htmlFor({ ...extra, ...override, renderItem: undefined }); assert.deepEqual(calls, []);
+  }
+  assert.doesNotMatch(htmlFor({ ...extra, renderSummary: () => ({ content: '完整短题干' }) }), /data-collection-excerpt/);
 });

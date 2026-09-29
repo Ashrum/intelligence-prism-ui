@@ -1,8 +1,10 @@
 "use client"
 
-import { useId, useRef, type ReactNode } from "react"
-import { ArrowDown, ArrowUp, ArrowUpRight, X } from "lucide-react"
+import { useEffect, useId, useRef, useState, type ReactNode } from "react"
+import { ArrowDown, ArrowUp, ArrowUpRight, MoreHorizontal, X } from "lucide-react"
 import { Checkbox } from "@/components/coss/checkbox"
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/coss/menu"
+import { Dialog, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "@/components/coss/dialog"
 import { Separator } from "@/components/coss/separator"
 import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
@@ -87,16 +89,24 @@ export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps
   onAction?: (intent: AgentCollectionIntent, trigger?: HTMLElement) => void
   /** Workspace-only, authorized passive domain content, e.g. a QuestionCard summary. */
   renderItem?: (item: AgentCollectionEntry, context: { density: "default" | "compact" }) => ReactNode
-  /** Compact title/facts rows in both views. Summary never invokes renderItem or displays item.summary. */
+  /** Passive L1 content in summary mode. Requires onOpenItem for one-step access to the full item.
+   * Use QuestionContent for question stems; excerpt declares any host-side omissions. */
+  renderSummary?: (item: AgentCollectionEntry) => { content: ReactNode; excerpt?: boolean } | null
+  /** Compact title/facts/stem rows in both views. Never invokes renderItem or displays item.summary. */
   itemPresentation?: "default" | "summary"
   /** Summary title action; host opens the permitted item and restores focus to the trigger. */
   onOpenItem?: (item: AgentCollectionEntry, trigger: HTMLButtonElement) => void
   openLabel?: string
   /** Workspace-only passive host statistics; replaces header summary fields and group counts. */
   overview?: ReactNode
-  /** Host controls on the existing title row; compact headers keep status in the facts line. */
-  headerActions?: ReactNode
+  /** Opt-in compact workspace summary header. Other views and default hosts stay unchanged. */
+  infoPlacement?: "inline" | "menu"
+  /** A render function places the built-in infoMenuItem inside the host MenuPopup.
+   * A plain node remains supported; menu placement then adds a fallback more menu. */
+  headerActions?: ReactNode | ((context: { infoMenuItem: ReactNode }) => ReactNode)
   onBack?: () => void
+  /** Host-reported actionable failure, e.g. local storage failure; never inferred from notice. */
+  attention?: string
   notice?: string
   emptyText?: string
 }
@@ -122,6 +132,33 @@ function BasketActionButton({ label, scope, reason, primary = false, compact = f
   </div>
 }
 
+/** Measure actual clipping after layout, font loading and slot updates; never slice MathML. */
+function BasketSummary({ content, excerpt }: { content: ReactNode; excerpt?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [clipped, setClipped] = useState(false)
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return
+    let active = true
+    const measure = () => { if (active) setClipped(node.scrollHeight > node.clientHeight + 1 || node.scrollWidth > node.clientWidth + 1) }
+    const observer = new ResizeObserver(measure)
+    observer.observe(node)
+    // The slot can change height while the clamped viewport remains two lines tall.
+    for (const child of node.children) observer.observe(child)
+    const mutations = new MutationObserver(measure)
+    mutations.observe(node, { childList: true, subtree: true, characterData: true })
+    node.addEventListener("load", measure, true)
+    document.fonts.addEventListener("loadingdone", measure)
+    void document.fonts.ready.then(measure)
+    measure()
+    return () => { active = false; observer.disconnect(); mutations.disconnect(); node.removeEventListener("load", measure, true); document.fonts.removeEventListener("loadingdone", measure) }
+  }, [content])
+  return <div data-collection-summary-content className="min-w-0">
+    <div ref={ref} data-collection-summary-clamp className="line-clamp-2 min-w-0 text-read-body">{content}</div>
+    {(excerpt || clipped) && <span data-collection-excerpt className="text-ui-meta text-muted-foreground">节选</span>}
+  </div>
+}
+
 function BasketRow({ item, previous, next, props, baseReason }: {
   item: AgentCollectionItem; previous?: AgentCollectionItem; next?: AgentCollectionItem; props: AgentCollectionBasketProps; baseReason?: string
 }) {
@@ -139,6 +176,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
   const groupLabel = entry?.groupId == null ? "未分组" : props.groups?.find(group => group.id === entry.groupId)?.label || "分组未确认"
   const summaryMode = props.itemPresentation === "summary"
   const content = entry && full && !summaryMode ? props.renderItem?.(entry, { density: props.density ?? "default" }) : undefined
+  const stem = summaryMode && entry && props.onOpenItem ? props.renderSummary?.(entry) : undefined
   const extraFields = summaryMode ? entry?.fields?.filter(field => field.label === "分值") : entry?.fields
   const rowTitle = summaryMode && entry ? `第 ${props.items.indexOf(item) + 1} 题 · ${title}` : title
   const showSummaryGroup = summaryMode && !!entry?.groupId
@@ -151,7 +189,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       const label = direction === "up" ? "上移" : "下移"
       const icon = direction === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />
       const onClick = (trigger: HTMLButtonElement) => { if (!moveReason && adjacent) props.onAction?.({ ...common, kind: "move", direction, adjacentId: adjacent.id }, trigger) }
-      return summaryMode ? <span key={direction} className="shrink-0">
+      return summaryMode ? <span key={direction} className="relative z-10 shrink-0">
         <Button type="button" size="icon-sm" variant="ghost" className="pointer-coarse:min-h-11 pointer-coarse:min-w-11" aria-label={`${label}：${rowTitle}`}
           title={moveReason || label} disabled={!!moveReason} aria-describedby={moveReason ? `${id}-${direction}-reason` : undefined}
           onClick={event => onClick(event.currentTarget)}>{icon}</Button>
@@ -161,9 +199,9 @@ function BasketRow({ item, previous, next, props, baseReason }: {
   }
   const removeReason = actionReason || item.actions?.remove?.disabledReason
   return <li data-collection-item={item.id} data-collection-access={restricted ? "restricted" : "available"}
-    className="min-w-0"><AgentSurface presentation={summaryMode ? "inline" : "card"} className={summaryMode ? "gap-1 py-2" : "min-h-11 gap-2.5 p-3"}>
+    className="min-w-0"><AgentSurface presentation={summaryMode ? "inline" : "card"} className={summaryMode ? "relative gap-1 py-2" : "min-h-11 gap-2.5 p-3"}>
     <div data-collection-summary-row={summaryMode ? "" : undefined} className={summaryMode ? "flex min-w-0 items-start gap-2" : "flex min-w-0 flex-wrap items-start gap-3"}>
-      {full && entry?.selectable && <div className="min-w-0 space-y-1">
+      {full && entry?.selectable && <div className={summaryMode ? "relative z-10 min-w-0 space-y-1" : "min-w-0 space-y-1"}>
         <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "min-h-11 max-w-full"} htmlFor={`${id}-select`}>
           <Checkbox id={`${id}-select`} checked={props.selectedIds?.includes(item.id) ?? false} disabled={!!selectReason}
             aria-label={summaryMode ? `选择${rowTitle}` : `选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
@@ -177,7 +215,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       </div>}
       <div className="min-w-0 flex-1 space-y-1">
         <h4 className="break-words text-item-title">{summaryMode && entry && props.onOpenItem ? <Button type="button" variant="ghost" size="sm"
-          className="h-auto min-h-7 max-w-full justify-start whitespace-normal break-words px-0 text-left text-item-title pointer-coarse:min-h-11"
+          className="static h-auto min-h-7 max-w-full justify-start whitespace-normal break-words px-0 text-left text-item-title after:absolute after:inset-0 pointer-coarse:min-h-11"
           aria-label={`${props.openLabel || "查看题目"}：${rowTitle}`} title={props.openLabel || "查看题目"}
           onClick={event => props.onOpenItem?.(entry, event.currentTarget)}>{rowTitle}</Button> : rowTitle}</h4>
         {entry && (summaryMode ? <AgentMetaLine>
@@ -185,9 +223,10 @@ function BasketRow({ item, previous, next, props, baseReason }: {
           {(!entry.source || entry.source !== props.collection.source) && <> · 来源：{entry.source || "未确认"}</>}
           {showSummaryGroup && <> · 分组：{groupLabel}</>}
         </AgentMetaLine> : <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}</AgentMetaLine>)}
+        {stem?.content != null && <BasketSummary {...stem} />}
       </div>
       {summaryMode && moveButtons()}
-      {summaryMode && item.actions?.remove && <Button type="button" size="icon-sm" variant="ghost" className="shrink-0 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
+      {summaryMode && item.actions?.remove && <Button type="button" size="icon-sm" variant="ghost" className="relative z-10 shrink-0 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
         aria-label={`移出试题篮：${title}`} title="移出" disabled={!!removeReason} aria-describedby={removeReason ? `${id}-remove-reason` : undefined}
         onClick={event => { if (!removeReason) props.onAction?.({ ...common, kind: "remove" }, event.currentTarget) }}><X aria-hidden="true" /></Button>}
     </div>
@@ -200,7 +239,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
       {!summaryMode && item.summary && <p className="whitespace-pre-wrap break-words text-ui-body">{item.summary}</p>}
       {content != null && <div className="min-w-0" data-collection-content>{content}</div>}
     </>}
-    {(!summaryMode || entry?.issue || !!item.actions?.resolve?.length) && <div className={summaryMode ? "flex min-w-0 flex-wrap items-center gap-2" : "flex min-w-0 flex-wrap gap-2"}>
+    {(!summaryMode || entry?.issue || !!item.actions?.resolve?.length) && <div className={summaryMode ? "relative z-10 flex min-w-0 flex-wrap items-center gap-2" : "flex min-w-0 flex-wrap gap-2"}>
       {summaryMode && entry?.issue && <p role="status" data-collection-issue={entry.issue.state} className="break-words text-ui-hint">{entry.issue.state === "invalid" ? "条目已失效" : "版本冲突"} · {entry.issue.reason}</p>}
       {!summaryMode && item.actions?.remove && <BasketActionButton label="移除" scope={title} reason={actionReason || item.actions.remove.disabledReason}
         onClick={trigger => props.onAction?.({ ...common, kind: "remove" }, trigger)} />}
@@ -208,7 +247,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         reason={actionReason || action.disabledReason} onClick={trigger => props.onAction?.({ ...common, kind: "resolve", actionId: action.id }, trigger)} />)}
       {!summaryMode && moveButtons()}
     </div>}
-    {full && changeGroup && <div className="min-w-0 space-y-1.5">
+    {full && changeGroup && <div className={summaryMode ? "relative z-10 min-w-0 space-y-1.5" : "min-w-0 space-y-1.5"}>
       <Label htmlFor={`${id}-group`}>分组 · {title}</Label>
       <Select value={groupIndex >= 0 ? String(groupIndex) : null} disabled={!!groupReason}
         items={changeGroup.options.map((option, index) => ({ value: String(index), label: option.label }))}
@@ -249,19 +288,30 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const summaryMode = props.itemPresentation === "summary"
   const hasOverview = full && props.overview != null && typeof props.overview !== "boolean"
   const compactHeader = summaryMode || hasOverview
-  const hasHeaderActions = props.headerActions != null && typeof props.headerActions !== "boolean"
+  const menuInfo = full && summaryMode && props.infoPlacement === "menu"
+  const [infoOpen, setInfoOpen] = useState(false)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const infoMenuItem = menuInfo ? <MenuItem onClick={() => setInfoOpen(true)}>题篮信息</MenuItem> : null
+  const hostHeaderActions = typeof props.headerActions === "function" ? props.headerActions({ infoMenuItem }) : props.headerActions
+  const headerActions = <>{hostHeaderActions}{menuInfo && typeof props.headerActions !== "function" && <Menu>
+    <MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="题篮更多操作" />}><MoreHorizontal /></MenuTrigger>
+    <MenuPopup align="end">{infoMenuItem}</MenuPopup>
+  </Menu>}</>
+  const hasHeaderActions = menuInfo || hostHeaderActions != null && typeof hostHeaderActions !== "boolean"
   const headerStatus = <AgentStatus unknown={sync.state === "unknown"} tone={sync.state === "failed" ? "error" : sync.state === "synced" ? "success" : "neutral"}>{syncLabels[sync.state]}</AgentStatus>
   const missingSyncFacts = [!collection.version && (historical ? "当时版本" : "集合版本"), !visual?.updatedAt && "更新时间"].filter(Boolean)
-  const visibleSyncDescription = !compactHeader || sync.state === "failed" || sync.state === "unknown"
+  const visibleSyncDescription = !compactHeader || sync.state === "failed" || !menuInfo && sync.state === "unknown"
+  const issues = items.flatMap(item => item.access !== "restricted" && item.issue ? [`${item.issue.state === "invalid" ? "条目已失效" : "版本冲突"}：${item.issue.reason}`] : [])
+  const urgent = [props.attention, sync.state === "failed" && `同步失败：${sync.description}`, ...issues].filter(Boolean)
   return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
     <header className="min-w-0 space-y-1.5">
       {!compactHeader && <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>}
       <div className={hasHeaderActions ? "flex min-w-0 items-start justify-between gap-2" : "flex min-w-0 flex-wrap items-start justify-between gap-2"}><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{compactHeader && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>
-        {!(compactHeader && hasHeaderActions) && headerStatus}
-        {hasHeaderActions && <div className="flex shrink-0 items-center gap-2" data-collection-header-actions>{props.headerActions}</div>}
+        {!menuInfo && !(compactHeader && hasHeaderActions) && headerStatus}
+        {hasHeaderActions && <div ref={headerRef} className="flex shrink-0 items-center gap-2" data-collection-header-actions>{headerActions}</div>}
       </div>
-      <AgentVisibleMarkers visual={visual} />
-      {compactHeader ? <AgentMetaLine data-collection-header-facts>
+      {!menuInfo && <AgentVisibleMarkers visual={visual} />}
+      {menuInfo ? null : compactHeader ? <AgentMetaLine data-collection-header-facts>
         {hasHeaderActions && headerStatus}
         {historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}{collection.version && <> · {historical ? "当时版本" : "集合版本"}：{collection.version}</>} · <AgentSourceChip label={`来源：${collection.source || "未确认"}`}>
           <p>{collection.source || "来源未确认"}</p>
@@ -269,11 +319,30 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
           {notice && <p>{notice}</p>}{details}
         </AgentSourceChip>{visual?.updatedAt && <> · 最近更新：{visual.updatedAt}</>}{missingSyncFacts.length > 0 && <> · 同步信息不完整（{missingSyncFacts.join("、")}未提供）</>}{!hasOverview && !!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}
       </AgentMetaLine> : <AgentMetaLine>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}{collection.source && <> · 来源：{collection.source}</>} · <span className="tabular-nums">数量：{displayed(summary.count)}{summary.count !== null && <>{summary.unit || "项"}</>}</span>{!hasOverview && !!summary.fields?.length && <> · <BasketFields fields={summary.fields} /></>}{sync.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>}
-      {!hasOverview && groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
+      {!menuInfo && !hasOverview && groups.length > 0 && <ul aria-label="分组数量" className="flex min-w-0 flex-wrap gap-x-5 gap-y-2">{groups.map(group => <li key={group.id} className="break-words text-ui-hint">{group.label}：{displayed(group.count)}</li>)}</ul>}
+      {menuInfo && urgent.length > 0 && <p role="status" data-collection-attention className="break-words text-ui-hint">{urgent.join("；")}</p>}
     </header>
+    {menuInfo && <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
+      <DialogPopup finalFocus={() => headerRef.current?.querySelector<HTMLButtonElement>("button") ?? false} closeProps={{ "aria-label": "关闭题篮信息" }}>
+        <DialogHeader><DialogTitle className="text-block-title">题篮信息</DialogTitle></DialogHeader>
+        <DialogPanel><div data-collection-info className="min-w-0 space-y-2 break-words text-ui-hint">
+          {headerStatus}<AgentVisibleMarkers visual={visual} />
+          <p>{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>
+          <p>{historical ? "当时版本" : "集合版本"}：{collection.version || "未确认"}</p>
+          <p>来源：{collection.source || "未确认"}</p>
+          <p>最近更新：{visual?.updatedAt || "未提供"}</p>
+          {missingSyncFacts.length > 0 && <p>同步信息不完整（{missingSyncFacts.join("、")}未提供）</p>}
+          <p>数量：{displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</p>
+          <p><BasketFields fields={summary.fields} /></p>
+          {groups.map(group => <p key={group.id}>{group.label}：{displayed(group.count)}</p>)}
+          {sync.description && <p>{sync.description}</p>}{props.attention && <p>{props.attention}</p>}{notice && <p>{notice}</p>}{details}
+        </div></DialogPanel>
+      </DialogPopup>
+    </Dialog>}
+    {!menuInfo && props.attention && <p role="status" className="break-words text-ui-hint">{props.attention}</p>}
     {hasOverview && <div data-collection-overview className="min-w-0 space-y-3">{props.overview}<Separator /></div>}
-    {(!compactHeader || visibleSyncDescription && sync.description || sync.action) && <div className="min-w-0 space-y-1.5" data-collection-sync={sync.state}>
-      {(!compactHeader || visibleSyncDescription && sync.description) && <div role="status" className="flex min-w-0 flex-wrap items-start gap-2">
+    {(!menuInfo && (!compactHeader || visibleSyncDescription && sync.description) || sync.action) && <div className="min-w-0 space-y-1.5" data-collection-sync={sync.state}>
+      {!menuInfo && (!compactHeader || visibleSyncDescription && sync.description) && <div role="status" className="flex min-w-0 flex-wrap items-start gap-2">
         {visibleSyncDescription && sync.description && <p className="min-w-0 break-words text-ui-hint">{sync.description}</p>}
       </div>}
       {sync.action && <BasketActionButton label={sync.action.label} scope={collection.title} reason={actionReason || sync.action.disabledReason}
