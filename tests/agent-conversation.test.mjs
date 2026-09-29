@@ -44,7 +44,7 @@ test('all nine dictation facts and six conversation facts render verbatim withou
     const html = render(h(api.AgentVoiceStatus, { dictation: { state, reason: state === 'error' ? '连接中断' : undefined }, voice: { state: 'idle' }, onIntent() {} }));
     assert.ok(html.includes(label), state);
     if (state === 'error') assert.match(html, /连接中断/);
-    if (state === 'listening') { assert.match(html, /电平未知/); assert.doesNotMatch(html, /<meter/); }
+    if (state === 'listening') { assert.doesNotMatch(html, /电平/); assert.doesNotMatch(html, /<meter/); }
   }
   for (const [state, label] of Object.entries(api.voiceModeLabels)) {
     const html = render(h(api.AgentVoiceStatus, { dictation: { state: 'idle' }, voice: { state }, onIntent() {} }));
@@ -55,9 +55,45 @@ test('all nine dictation facts and six conversation facts render verbatim withou
 test('host transcripts and level are displayed, bounded, never inserted into the controlled draft', () => {
   const html = render(h(api.AgentPromptBar, { ...base, value: '保留草稿', dictation: { state: 'listening', interim: '中间结果', final: '最终结果', level: 2 } }));
   assert.match(html, />保留草稿<\/textarea>/);
-  assert.match(html, /识别中：中间结果/);
-  assert.match(html, /识别结果：最终结果/);
-  assert.match(html, /<meter[^>]*value="1"/);
+  assert.match(html, /data-dictation-transcript="interim"[^>]*text-muted-foreground[^>]*>中间结果/);
+  assert.doesNotMatch(html, /最终结果/);
+  assert.match(html, /data-level-known="true"/);
+  assert.match(html, /height:100%/);
+  assert.doesNotMatch(html, /<meter|麦克风电平/);
+});
+test('active dictation uses accented equalizer, coss ring and listening placeholder in all active phases', () => {
+  for (const state of Object.keys(api.dictationLabels)) {
+    const html = render(h(api.AgentPromptBar, { ...base, dictation: { state } }));
+    const active = ['requesting', 'listening', 'recognizing'].includes(state);
+    assert.equal(html.includes('placeholder="正在听…"'), active);
+    assert.equal(html.includes('bg-info/10 text-info-foreground'), active);
+    assert.equal(html.includes('border-ring ring-ring/24 ring-[3px]'), active);
+    assert.equal((html.match(/class="agent-dictation-bar /g) ?? []).length, active ? 3 : 0);
+    if (active) assert.match(html, /aria-label="停止听写"[^>]*aria-pressed="true"/);
+  }
+});
+test('elapsed uses finite host timestamps only; level bars clamp and invalid levels use activity animation', () => {
+  for (const start of [undefined, NaN, Infinity]) assert.equal(api.dictationElapsed(start, 5000), undefined);
+  assert.equal(api.dictationElapsed(1000, undefined), undefined);
+  assert.equal(api.dictationElapsed(1000, 6000), '0:05');
+  assert.equal(api.dictationElapsed(1000, 66000), '1:05');
+  assert.equal(api.dictationElapsed(9000, 6000), '0:00');
+  for (const [level, height] of [[-1, 20], [0.5, 60], [2, 100]]) {
+    const html = render(h(api.AgentVoiceButtons, { ...base, dictation: { state: 'listening', level } }));
+    assert.match(html, /data-level-known="true"/); assert.match(html, new RegExp(`height:${height}%`));
+  }
+  assert.match(render(h(api.AgentVoiceButtons, { ...base, dictation: { state: 'listening', level: NaN } })), /data-level-known="false"/);
+});
+test('host final replaces interim preview with normal editable draft without component insertion', () => {
+  const html = render(h(api.AgentPromptBar, { ...base, value: '最终结果', dictation: { state: 'inserted', interim: '过期临时文字', final: '最终结果' } }));
+  assert.match(html, />最终结果<\/textarea>/); assert.doesNotMatch(html, /过期临时文字|data-dictation-transcript|agent-dictation-placeholder/);
+});
+test('equalizer and shimmer stop under reduced motion, with medium bars even when host level exists', async () => {
+  const css = await readFile(join(root, 'components/prism-next/agent-conversation.css'), 'utf8');
+  assert.match(css, /prism-dictation-eq-bounce 900ms/);
+  const reduced = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
+  assert.match(reduced, /\.agent-dictation-bar \{ animation: none !important; transform: none !important; height: 60% !important/);
+  assert.match(reduced, /\.agent-dictation-placeholder \{ animation: none; background: none; color: var\(--muted-foreground\)/);
 });
 test('voice intents remain requests; privacy blocks start and exposes confirm/cancel', () => {
   const intents = [];
@@ -126,6 +162,44 @@ const useRef = () => ({ current: { focus() { (globalThis as any).__promptProbe.f
 const useState = (initial: any) => { const p = (globalThis as any).__promptProbe, i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (next: any) => { p.values[i] = typeof next === 'function' ? next(p.values[i]) : next }]; };`) }));
 } }] })).outputFiles[0].text);
 const { AgentPromptBar: Probe } = await import(pathToFileURL(probeFile));
+const voiceProbeFile = join(temp, 'voice-probe.mjs');
+await writeFile(voiceProbeFile, (await build({ stdin: { contents: `export * from './components/prism-next/agent-voice';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'voice-hooks', setup(b) {
+  b.onLoad({ filter: /agent-voice\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8')).replace('import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react"', `import type { ReactNode, RefObject } from "react";
+const useId = () => 'voice-test';
+const useRef = (initial: any) => { const p = (globalThis as any).__voiceProbe, i = p.cursor++; return p.values[i] ??= { current: initial }; };
+const useState = (initial: any) => { const p = (globalThis as any).__voiceProbe, i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (next: any) => { p.values[i] = next; p.updates.push(next); }]; };
+const useEffect = (fn: any, deps: any[]) => { const p = (globalThis as any).__voiceProbe, i = p.cursor++; if (!p.effects[i] || deps.some((d, j) => !Object.is(d, p.effects[i].deps[j]))) { p.effects[i]?.cleanup?.(); p.effects[i] = { deps, cleanup: fn() }; } };
+const setInterval = (fn: any) => { const p = (globalThis as any).__voiceProbe; p.timers.set(++p.timerId, fn); return p.timerId; };
+const clearInterval = (id: number) => (globalThis as any).__voiceProbe.timers.delete(id);`) }));
+} }] })).outputFiles[0].text);
+const voiceProbe = await import(pathToFileURL(voiceProbeFile));
+function voiceHarness(component) {
+  const state = globalThis.__voiceProbe = { cursor: 0, values: [], effects: [], updates: [], timers: new Map(), timerId: 0 };
+  return { state, render(props) { state.cursor = 0; return component(props) }, unmount() { state.effects.forEach(e => e?.cleanup?.()) } };
+}
+test('dictation live region announces entry and exit exactly once across phase, transcript and level changes', () => {
+  const p = voiceHarness(voiceProbe.AgentDictationAnnouncement);
+  for (const state of ['idle', 'requesting', 'requesting', 'listening', 'recognizing', 'recognizing', 'inserted', 'idle']) p.render({ state });
+  assert.deepEqual(p.state.updates, ['听写已开始', '听写已结束']);
+  p.render({ state: 'listening' }); p.render({ state: 'error' });
+  assert.deepEqual(p.state.updates, ['听写已开始', '听写已结束', '听写已开始', '听写已结束']);
+  p.unmount();
+});
+test('dictation indicator timer needs a host start, stops on exit/unmount, and never enters live output', () => {
+  const p = voiceHarness(voiceProbe.AgentDictationIndicator), intents = [];
+  const props = { dictation: { state: 'listening' }, onIntent: i => intents.push(i) };
+  p.render(props); assert.equal(p.state.timers.size, 0);
+  props.dictation.startedAt = Date.now() - 5000;
+  p.render(props); const button = p.render(props);
+  assert.equal(p.state.timers.size, 1);
+  assert.match(render(button), /aria-hidden="true"[^>]*>0:05/);
+  assert.doesNotMatch(render(button), /role="status"|aria-live/);
+  button.props.onClick(); assert.deepEqual(intents, [{ type: 'dictation-stop' }]);
+  assert.equal(props.dictation.state, 'listening');
+  props.dictation.state = 'recognizing'; p.render(props); assert.equal(p.state.timers.size, 1);
+  props.dictation.state = 'inserted'; assert.equal(p.render(props), null); assert.equal(p.state.timers.size, 0);
+  props.dictation.state = 'listening'; p.render(props); p.unmount(); assert.equal(p.state.timers.size, 0);
+});
 function promptHarness(extra = {}) {
   globalThis.__promptProbe = { cursor: 0, values: [], focused: 0 };
   let value = extra.value ?? ''; const intents = [];
@@ -145,6 +219,22 @@ test('keyboard handlers: arrows skip disabled options, Enter selects once, Esc s
   p.change('@'); p.key('ArrowUp'); p.key('Enter'); assert.equal(p.intents.at(-1).id, 'b');
   p.change('/'); p.key('Escape'); assert.equal(p.input().props['aria-expanded'], false);
   p.change('/组'); p.key('Enter'); assert.equal(p.value(), '/组卷 '); assert.equal(p.intents.at(-1).type, 'run-command');
+});
+test('Escape capture stops active dictation once from any prompt child; respects IME and disabled', () => {
+  for (const state of ['requesting', 'listening', 'recognizing', 'idle']) {
+    const p = promptHarness({ dictation: { state } });
+    let prevented = 0, stopped = 0;
+    p.nodes()[0].props.onKeyDownCapture({ key: 'Escape', nativeEvent: {}, preventDefault() { prevented++ }, stopPropagation() { stopped++ } });
+    const active = state !== 'idle';
+    assert.deepEqual(p.intents, active ? [{ type: 'dictation-stop' }] : []);
+    assert.equal(prevented, Number(active)); assert.equal(stopped, Number(active));
+    assert.equal(p.props.dictation.state, state);
+  }
+  for (const [disabled, nativeEvent] of [[true, {}], [false, { isComposing: true }], [false, { keyCode: 229 }]]) {
+    const p = promptHarness({ disabled, dictation: { state: 'listening' } });
+    p.nodes()[0].props.onKeyDownCapture({ key: 'Escape', nativeEvent, preventDefault() { assert.fail() }, stopPropagation() { assert.fail() } });
+    assert.equal(p.intents.length, 0);
+  }
 });
 test('keyboard handlers: IME confirm cannot pick/send, empty matches cannot send, Shift+Enter remains newline', () => {
   const p = promptHarness({ value: '/' });
@@ -222,4 +312,21 @@ test('component fixture uses local rule label and documents Drive as the default
   assert.match(demo, /label: "本机规则"/);
   assert.match(demo, /Drive 为默认动画/);
   assert.doesNotMatch(demo, /GPT-6 Astra|Orbit 为默认动画/);
+});
+
+test('dictation level never renders visible text; unknown is only the active microphone description', () => {
+  for (const state of ['idle', 'requesting', 'listening', 'recognizing', 'inserted']) {
+    for (const level of [undefined, NaN, Infinity, 0, 0.5, 1]) {
+      const dictation = { state, level };
+      const html = render(h(api.AgentPromptBar, { ...base, dictation }));
+      const unknown = ['requesting', 'listening', 'recognizing'].includes(state) && !Number.isFinite(level);
+      const description = /<button(?=[^>]*aria-label="停止听写")(?=[^>]*aria-description="麦克风电平未知")[^>]*>/;
+      assert.equal(description.test(html), unknown);
+      assert.doesNotMatch(html.replace(/aria-description="麦克风电平未知"/g, ''), /麦克风电平|<meter/);
+      for (const promptStatus of [false, true]) {
+        const status = render(h(api.AgentVoiceStatus, { ...base, dictation, promptStatus }));
+        assert.doesNotMatch(status, /麦克风电平|<meter/);
+      }
+    }
+  }
 });

@@ -51,28 +51,34 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
   const [voice, setVoice] = useState<AgentVoiceMode["state"]>("not-connected")
   const [privacy, setPrivacy] = useState(false), [attachments, setAttachments] = useState(false)
   const [intent, setIntent] = useState("尚未操作")
+  const [startedAt, setStartedAt] = useState<number>()
+  const [level, setLevel] = useState<number>()
   const onIntent = (next: AgentPromptIntent) => {
     setIntent(JSON.stringify(next))
     if (next.type === "select-model") setModelId(next.id)
     if (next.type === "remove-attachment") setAttachments(false)
     // A request is logged, never turned into a recognition or execution receipt.
   }
-  const dictationFact: AgentDictation = { state: dictation, interim: dictation === "recognizing" ? "请为高二三班准备" : undefined, final: dictation === "inserted" ? "请为高二三班准备函数练习。" : undefined, reason: dictation === "error" ? "宿主返回：网络连接中断" : undefined }
+  const dictationFact: AgentDictation = { state: dictation, startedAt, level, interim: dictation === "recognizing" ? "请为高二三班准备" : undefined, final: dictation === "inserted" ? "请为高二三班准备函数练习。" : undefined, reason: dictation === "error" ? "宿主返回：网络连接中断" : undefined }
   return <div className="space-y-6" data-agent-conversation-demo={section}>
     <nav aria-label="Agent 对话组合" className="flex flex-wrap gap-4">{agentConversationCompositions.map(item => <a key={item.slug} className="prism-link text-ui-action" href={`/next/components/agent-components/${item.slug}`} aria-current={section === item.slug ? "page" : undefined}>{item.name}</a>)}</nav>
     <p className="text-ui-hint">组件评审示例。语音状态由下方控件明确切换，未连接麦克风、识别或对话服务。</p>
+    {section === "prompt-bar" && <p className="text-ui-hint text-muted-foreground">听写中点击状态、麦克风或按 Esc 仅发停止请求；用时依据宿主 startedAt，无开始时间不计时。interim 在输入框内以次要色预览，最终结果由宿主更新 value。电平未知时均衡条仅提示活动，减少动效时固定为三条中等高度，占位微光停止。</p>}
     <div className="flex flex-wrap items-end gap-4">
       <div className="space-y-2"><Label htmlFor={`${id}-theme`}>预览主题</Label><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} onChange={setTheme} items={[{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
       <div className="space-y-2"><Label htmlFor={`${id}-width`}>预览宽度</Label><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} onChange={setWidth} items={[{ value: "auto", label: "自适应" }, { value: "390", label: "390 px" }]} /></div>
       {section === "prompt-bar" && <>
         <div className="space-y-2"><Label htmlFor={`${id}-variant`}>输入框变体</Label><QuestionSelect id={`${id}-variant`} label="输入框变体" value={variant!} onChange={v => setVariant(v as typeof variant)} items={[{ value: "Rounded", label: "Rounded" }, { value: "Pill", label: "Pill" }]} /></div>
-        <div className="space-y-2"><Label htmlFor={`${id}-dictation`}>听写状态</Label><QuestionSelect id={`${id}-dictation`} label="听写状态" value={dictation} onChange={v => setDictation(v as typeof dictation)} items={Object.entries(dictationLabels).map(([value, label]) => ({ value, label }))} /></div>
+        <div className="space-y-2"><Label htmlFor={`${id}-dictation`}>听写状态</Label><QuestionSelect id={`${id}-dictation`} label="听写状态" value={dictation} onChange={v => { setDictation(v as typeof dictation); if (v === "inserted") setValue("请为高二三班准备函数练习。"); }} items={Object.entries(dictationLabels).map(([value, label]) => ({ value, label }))} /></div>
         <div className="space-y-2"><Label htmlFor={`${id}-voice`}>语音对话状态</Label><QuestionSelect id={`${id}-voice`} label="语音对话状态" value={voice} onChange={v => setVoice(v as typeof voice)} items={Object.entries(voiceModeLabels).map(([value, label]) => ({ value, label }))} /></div>
       </>}
     </div>
     {section === "prompt-bar" && <div className="flex flex-wrap gap-2" aria-label="输入夹具">
       <Button variant="outline" size="sm" onClick={() => setValue("")}>空输入</Button><Button variant="outline" size="sm" onClick={() => setValue("请整理高二三班的函数单元复习练习，保留原题条件与出处。")}>载入草稿</Button>
       <Button variant="outline" size="sm" onClick={() => setValue("@")}>打开来源示例</Button><Button variant="outline" size="sm" onClick={() => setValue("/")}>打开命令示例</Button>
+      <Button variant="outline" size="sm" onClick={() => setStartedAt(Date.now() - 5000)}>传入开始时间（5 秒前）</Button><Button variant="outline" size="sm" onClick={() => setStartedAt(undefined)}>清除开始时间</Button>
+      <Button variant="outline" size="sm" onClick={() => setLevel(level === undefined ? .25 : level === .25 ? .85 : undefined)}>电平：{level === undefined ? "未知" : level === .25 ? "低" : "高"}</Button>
+      <Button variant="outline" size="sm" onClick={() => setValue("请核对二次函数 f(x) = ax² + bx + c 的判别式 Δ = b² − 4ac，并为高二三班整理一份保留原题条件、完整推导过程与材料出处的函数单元复习练习。")}>长中文与公式草稿</Button>
       <Button variant="outline" size="sm" aria-pressed={attachments} onClick={() => setAttachments(!attachments)}>附件夹具</Button><Button variant="outline" size="sm" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)}>隐私说明夹具</Button>
     </div>}
     <div data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} data-preview-width={width} className="mx-auto min-w-0 max-w-full rounded-xl border bg-background p-4 text-foreground" style={{ width: width === "390" ? 390 : "100%" }}>

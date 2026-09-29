@@ -2676,7 +2676,9 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `onIntent` 联合类型：`submit { text, attachmentIds }`、`attach`、`select-source { id }`、`run-command { id }`、`select-model { id }`、`remove-attachment { id }`、`dictation-start/stop`、`voice-mode-start/stop`、`privacy-confirm/cancel`。来源／命令选择同时通过 `onValueChange` 编辑输入中的提及；其余服务状态、模型值、附件事实、提交后的清空由宿主处理。空文本有附件也可提交。无匹配菜单时 Enter 不提交；输入法组合确认不选择菜单或发送；Shift + Enter 换行。
 
-`dictation`：`idle | requesting | listening | recognizing | inserted | error | denied | unsupported | not-connected`，可传 `interim`、`final`、`reason`、`level`（0–1）。中间和最终文本仅展示，插入草稿须宿主更新 `value`，`inserted` 须来自宿主确认。无电平用静止点和未知说明，不模拟声波。`voice`：`idle | connecting | listening | answering | ended | not-connected`，可传 `description`；所有活动阶段有结束入口。
+`dictation`：`idle | requesting | listening | recognizing | inserted | error | denied | unsupported | not-connected`，可传 `interim`、`final`、`reason`、`level`（0–1）、`startedAt`（宿主 epoch 毫秒）。中间文本在输入框表面内以 `text-muted-foreground` 预览，不写入可编辑草稿；最终插入须宿主更新 `value`，`inserted` 须来自宿主确认。无草稿时可展示宿主 final，不能据此提交；有草稿时以 value 为准。`voice`：`idle | connecting | listening | answering | ended | not-connected`，可传 `description`；所有活动阶段有结束入口。
+
+**听写醒目反馈（PO 2026-09-29）**：requesting / listening / recognizing 的按钮使用 Beautiful UI 三条 eq-bounce（900ms，150ms 错峰）。`bg-accent-tint / text-accent-ink` 复用 Prism 现有 info 按钮映射 `bg-info/10 / text-info-foreground`（hover 为 `bg-info/20`）。未知电平时动画只提示活动，不代表实测音量；有效电平驱动条高并暂停循环。减少动效时三条固定 60% 高度。输入占位为「正在听…」，复用 shimmer-text 位移及 foreground / muted-foreground，减少动效时静止。外框复用 coss `border-ring ring-ring/24 ring-[3px] shadow-none`。底栏麦克风左侧的 destructive 圆点与状态按钮展示「正在请求麦克风… / 正在听 / 正在识别…」，仅有有限 startedAt 时按当前时间差更新 m:ss，永不从挂载或点击开始推算。圆点仅在允许动态效果时脉动。状态按钮、麦克风、组件内 Esc 均仅发 dictation-stop（全局 disabled / IME 组合时不触发）；麦克风可访问名「停止听写」、aria-pressed=true。PromptBar 独立 live region 只播报进入 / 结束听写，阶段、interim、电平、计时不重复播报；错误和权限拒绝仍可见。`AgentVoiceStatus.promptStatus` 为该组合去除重复听写播报与结果，完整状态样本仍保留原展示。
 
 首次隐私说明用 `privacy: { open, description: ReactNode }`。宿主收到 start 意图后决定是否先展示说明；确认仅发 privacy-confirm，宿主再按授权和服务状态启动。组件不保存同意记录、不访问麦克风、不创建识别器。说明打开时阻止新的开始操作；已有活动仍可停止。状态通过 live region 播报，可用键盘操作；读屏器与真机行为需单独验证。
 
