@@ -76,9 +76,9 @@ export function QuestionSummaryRow({ question, number, headingLevel = 3, checked
       <QuestionHeading question={question} number={number} id={id} headingLevel={headingLevel} showPoints={showPoints} displayPoints={displayPoints} trailing={(header || status) ? <>{header}{status}</> : undefined} />
     </header>
     <QuestionContent question={content} />
-    {(omitted || onOpen) && <div className="flex min-w-0 flex-wrap items-center gap-2">
-      {omitted && <AgentStatus>节选</AgentStatus>}
-      {onOpen && <Button type="button" variant="outline" size="sm" className="h-auto min-h-11 max-w-full whitespace-normal sm:h-auto"
+    {(omitted || onOpen) && <div data-question-actions="" className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+      <span>{omitted && <AgentStatus>节选</AgentStatus>}</span>
+      {onOpen && <Button type="button" variant="secondary" size="xs" className="ml-auto max-w-full whitespace-normal pointer-coarse:min-h-11"
         aria-label={openAccessibleLabel ?? `查看详情：${questionDisplayTitle(question, number)}`} onClick={event => onOpen(event.currentTarget)}>
         <ArrowUpRight aria-hidden="true" className="size-4" />{openLabel}
       </Button>}
