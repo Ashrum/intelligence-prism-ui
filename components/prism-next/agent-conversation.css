@@ -21,8 +21,26 @@
 .agent-user-message .agent-message-content :is(p, span, a, pre, code, math, .katex, [data-slot="badge"]) { color: inherit; background-color: transparent; }
 .agent-user-message .agent-message-content a { text-decoration: underline; }
 @container (max-width: 640px) { .agent-user-message { max-width: 88%; } }
+/* Beautiful UI PromptBar eq-bounce (900ms / 150ms stagger) and shimmer-text.
+   accent-tint / accent-ink map to Prism info/10 / info-foreground.
+   Known host levels drive bar heights instead of an invented audio waveform. */
+.agent-dictation-bar { animation: prism-dictation-eq-bounce 900ms ease-in-out infinite; }
+.agent-dictation-equalizer[data-level-known="true"] .agent-dictation-bar { animation: none; }
+@keyframes prism-dictation-eq-bounce { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+/* A real text overlay animates reliably; ::placeholder does not support all
+   animation/background properties. The native placeholder stays accessible. */
+.agent-dictation-field[data-shimmer="true"] textarea::placeholder { color: transparent; }
+.agent-dictation-placeholder {
+  background-image: linear-gradient(90deg, var(--muted-foreground) 35%, var(--foreground) 50%, var(--muted-foreground) 65%);
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: prism-agent-shimmer 1.4s linear infinite;
+}
 @media (prefers-reduced-motion: reduce) {
   [data-agent-mark] .agent-mark-pixel { animation: none !important; opacity: 1 !important; }
   .agent-mark-shimmer { animation: none; background: none; color: inherit; }
   [data-agent-prompt-bar] *, [data-agent-prompt-bar] *::before, [data-agent-prompt-bar] *::after { animation: none !important; transition: none !important; }
+  .agent-dictation-bar { animation: none !important; transform: none !important; height: 60% !important; }
+  .agent-dictation-placeholder { animation: none; background: none; color: var(--muted-foreground); }
 }

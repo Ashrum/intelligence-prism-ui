@@ -13,7 +13,7 @@ import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuRadioGroup, MenuRadioItem }
 import { Popover, PopoverPopup } from "@/components/coss/popover"
 import { cn } from "@/lib/utils"
 import { createPromptSweep } from "./agent-prompt-sweep"
-import { AgentVoiceButtons, AgentVoiceStatus, type AgentDictation, type AgentVoiceMode, type AgentVoicePrivacy, type AgentVoiceIntent } from "./agent-voice"
+import { AgentVoiceButtons, AgentVoiceStatus, AgentDictationIndicator, AgentDictationAnnouncement, isDictating, type AgentDictation, type AgentVoiceMode, type AgentVoicePrivacy, type AgentVoiceIntent } from "./agent-voice"
 import "./agent-conversation.css"
 
 export type AgentPromptOption = { id: string; label: string; description?: string; disabled?: boolean }
@@ -38,6 +38,10 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
   const [plusOpen, setPlusOpen] = useState(false), [modelOpen, setModelOpen] = useState(false)
+  const dictating = isDictating(dictation.state)
+  // Interim is a preview inside the input surface, never part of the editable draft.
+  const interim = dictating ? dictation.interim : undefined
+  const transcript = interim || (dictation.state === "inserted" && !value ? dictation.final : undefined)
   const token = disabled || dismissed === value || plusOpen || modelOpen ? null : parsePromptToken(value)
   const rows = token ? (token.kind === "source" ? sources : commands).filter(row => row.label.toLocaleLowerCase().replace(/^\//, "").includes(token.query)) : []
   const enabledRows = rows.filter(row => !row.disabled)
@@ -66,7 +70,11 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     onIntent({ type: "submit", text: value.trim(), attachmentIds: attachments.map(item => item.id) })
     close(); sweep.current?.play()
   }
-  return <div ref={root} data-agent-prompt-bar data-variant={variant} className="min-w-0 space-y-2">
+  return <div ref={root} data-agent-prompt-bar data-variant={variant} data-dictating={dictating} className="min-w-0 space-y-2" onKeyDownCapture={event => {
+    if (event.key !== "Escape" || !dictating || disabled || event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return
+    event.preventDefault(); event.stopPropagation(); close(); onIntent({ type: "dictation-stop" })
+  }}>
+    <AgentDictationAnnouncement state={dictation.state} />
     <Label htmlFor={id} className="sr-only">{label}</Label>
     <div ref={anchor} className="relative min-w-0">
       <Popover open={Boolean(token)} onOpenChange={open => { if (!open) setDismissed(value) }}>
@@ -82,14 +90,16 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
           <p className="mt-2 text-ui-meta text-muted-foreground">↑↓ 选择 · Enter 确认 · Esc 关闭</p>
         </PopoverPopup>
       </Popover>
-      <InputGroup className={cn("agent-prompt-surface isolate overflow-hidden", variant === "Pill" ? "rounded-3xl" : "rounded-xl")}>
+      <InputGroup className={cn("agent-prompt-surface isolate overflow-hidden", variant === "Pill" ? "rounded-3xl" : "rounded-xl", dictating && "border-ring ring-ring/24 ring-[3px] shadow-none")}>
         <canvas ref={canvas} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 h-full w-full rounded-[inherit]" />
         {attachments.length > 0 && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap gap-2">{attachments.map(item => <span key={item.id} className="flex max-w-full items-center gap-1 rounded-md border px-2 text-ui-hint">
           <Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{item.label}</span><Button type="button" variant="ghost" size="icon-xs" aria-label={`移除附件：${item.label}`} disabled={disabled} onClick={() => onIntent({ type: "remove-attachment", id: item.id })}><X aria-hidden="true" /></Button>
         </span>)}</InputGroupAddon>}
-        <InputGroupTextarea ref={input} id={id} value={value} disabled={disabled} placeholder={placeholder} rows={2}
+        <div className="agent-dictation-field relative w-full min-w-0" data-shimmer={dictating && !value && !transcript}>
+        {dictating && !value && !transcript && <span aria-hidden="true" className="agent-dictation-placeholder pointer-events-none absolute left-[calc(--spacing(3)-1px)] top-[calc(--spacing(3)-1px)] text-read-body">正在听…</span>}
+        <InputGroupTextarea ref={input} id={id} value={value} disabled={disabled} placeholder={dictating ? "正在听…" : placeholder} rows={2}
           role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={Boolean(token)} aria-controls={token ? `${id}-options` : undefined} aria-activedescendant={token && selected ? `${id}-option-${selected.id}` : undefined}
-          aria-describedby={`${id}-help${sendDisabledReason ? ` ${id}-blocked` : ""}`} className="[&>textarea]:max-h-52 [&>textarea]:overflow-y-auto"
+          aria-describedby={`${id}-help${transcript ? ` ${id}-transcript` : ""}${sendDisabledReason ? ` ${id}-blocked` : ""}`} className="[&>textarea]:max-h-52 [&>textarea]:overflow-y-auto"
           onChange={event => { onValueChange(event.target.value); setDismissed(null); setActive(0); setPlusOpen(false); setModelOpen(false) }}
           onKeyDown={event => {
             if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return
@@ -101,6 +111,8 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
             }
             if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submit() }
           }} />
+        </div>
+        {transcript && <p id={`${id}-transcript`} data-dictation-transcript={interim ? "interim" : "final"} className={cn("w-full max-h-52 overflow-y-auto whitespace-pre-wrap break-words px-[calc(--spacing(3)-1px)] pb-2 text-read-body", interim ? "text-muted-foreground" : "text-foreground")}>{transcript}</p>}
         <InputGroupAddon align="block-end" className="min-w-0 flex-wrap gap-1.5">
           <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1">
             <Menu open={plusOpen} onOpenChange={open => { setPlusOpen(open); if (open) { setDismissed(value); setModelOpen(false) } }}>
@@ -120,6 +132,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
                 {models.map(item => <MenuRadioItem key={item.id} value={item.id} disabled={item.disabled}>{item.label}{item.description && <span className="block text-ui-hint text-muted-foreground">{item.description}</span>}</MenuRadioItem>)}
               </MenuRadioGroup></MenuPopup>
             </Menu>
+            <AgentDictationIndicator dictation={dictation} disabled={disabled} onIntent={onIntent} />
             <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
             <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
           </div>
@@ -128,6 +141,6 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     </div>
     <p id={`${id}-help`} className="text-ui-meta text-muted-foreground">@ 来源 · / 命令 · Enter 发送 · Shift + Enter 换行</p>
     {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint">{sendDisabledReason}</p>}
-    <AgentVoiceStatus hideUnavailable dictation={dictation} voice={voice} privacy={privacy} onIntent={onIntent} />
+    <AgentVoiceStatus hideUnavailable promptStatus dictation={dictation} voice={voice} privacy={privacy} onIntent={onIntent} />
   </div>
 }
