@@ -7,7 +7,7 @@ import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Input } from "@/components/coss/input"
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/coss/progress"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -150,7 +150,7 @@ function FileRow({ item, items, view, compact, groupBy, upload, onAction }: {
             title={name} aria-label={`${reason ? "查看原因与文件详情" : "文件详情"}：${name}${reason ? `；${reason}` : ""}${removable && removeReason ? `；不可移除：${removeReason}` : ""}`} />}>
             <span className="min-w-0 truncate">{name}</span><ChevronDown aria-hidden="true" />
           </CollapsibleTrigger>
-          <Badge className="shrink-0" variant={attention ? "warning" : "secondary"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</Badge>
+          <AgentStatus className="shrink-0" tone={attention ? "warning" : "neutral"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</AgentStatus>
           {removable && <Button type="button" size="icon-sm" variant="ghost" aria-label={`移除：${name}`}
             disabled={!!removeReason} aria-describedby={removeReason ? `${id}-remove-reason` : undefined} data-file-action="remove"
             onClick={() => { if (!removeReason) onAction?.({ ...target, kind: "remove" }) }}><X aria-hidden="true" /></Button>}
@@ -179,7 +179,7 @@ function FileRow({ item, items, view, compact, groupBy, upload, onAction }: {
   return <li data-file-id={item.id} data-file-state={status.state} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
       <h4 id={`${id}-name`} className="min-w-0 break-words text-item-title [overflow-wrap:anywhere]">{item.name || "名称未确认"}</h4>
-      <Badge variant={attention ? "warning" : "secondary"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</Badge>
+      <AgentStatus tone={attention ? "warning" : "neutral"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</AgentStatus>
     </div>
     <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {fileSize(item.sizeBytes)} · {item.source.kind === "local" ? "本机" : "已有资料"}{item.source.label && ` · ${item.source.label}`}</p>
     {status.state === "invalid" && <p className="break-words text-ui-hint">{validationLabels[status.validation]}：{status.reason}</p>}

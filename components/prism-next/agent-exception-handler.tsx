@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowUpRight, Check, CircleAlert, CircleHelp, CircleMinus, C
 import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Button } from "@/components/coss/button"
 import { Card } from "@/components/coss/card"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { AgentStepStatus } from "./agent-components"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -89,7 +89,7 @@ function ExceptionStatus({ state }: { state: AgentExceptionState }) {
   return <span className="inline-flex max-w-full items-center gap-2">
     <Icon aria-hidden="true" className="size-4 shrink-0" />
     {state === "resolved" || state === "ignored" || state === "skipped"
-      ? <Badge variant={state === "resolved" ? "success" : "outline"}>{{ resolved: "已处置", ignored: "已忽略", skipped: "已跳过" }[state]}</Badge>
+      ? <AgentStatus tone={state === "resolved" ? "success" : "neutral"}>{{ resolved: "已处置", ignored: "已忽略", skipped: "已跳过" }[state]}</AgentStatus>
       : <AgentStepStatus state={state === "failed" ? "error" : state} />}
   </span>
 }

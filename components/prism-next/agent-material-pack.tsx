@@ -8,6 +8,7 @@ import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import type { AgentResourceLicense, AgentResourceSource } from "./agent-resource-retriever"
@@ -242,10 +243,10 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
           onDragStart={event => { if (itemBlock(item, "move")) { event.preventDefault(); return }; drag.current = { resourceId, revision, items, categories }; event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", "material-resource") }}
           onDragEnd={() => { drag.current = null }}><GripVertical /></span>}
         <h5 id={`${anchor}-title`} className="min-w-0 break-words text-item-title">{title}</h5>
-        <Badge variant="outline">{item.type}</Badge>
-        {item.availability.state === "invalid" && <Badge variant="error">来源失效</Badge>}
-        {item.availability.state === "restricted" && <Badge variant="warning">访问受限</Badge>}
-        {item.license.state === "restricted" && <Badge variant="warning">许可受限</Badge>}
+        <Badge variant="secondary">{item.type}</Badge>
+        {item.availability.state === "invalid" && <AgentStatus tone="error">来源失效</AgentStatus>}
+        {item.availability.state === "restricted" && <AgentStatus tone="warning">访问受限</AgentStatus>}
+        {item.license.state === "restricted" && <AgentStatus tone="warning">许可受限</AgentStatus>}
       </div>
       {item.versionLabel?.trim() && <p className="text-ui-hint">资源版本：{item.versionLabel}</p>}
       {missing.length > 0 && <p id={`${anchor}-unknown`} data-material-unknown="resource" className="break-words text-ui-hint">未知：{missing.join("、")}。</p>}
@@ -320,7 +321,7 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
     className={compact ? "min-w-0 gap-3 p-4 [overflow-wrap:anywhere]" : "min-w-0 gap-5 p-5 sm:p-6 [overflow-wrap:anywhere]"}>
     <header className="min-w-0 space-y-2"><p className="text-ui-hint text-muted-foreground">{pack.snapshot !== undefined ? `历史素材包 · ${pack.snapshot || "当时记录"}` : "当前素材包"}</p>{title}
       <p className="break-words text-ui-hint">{[pack.version.label && `包版本：${pack.version.label}`, pack.baseVersion.label && `基于：${pack.baseVersion.label}`, countKnown(summary.count) && `素材总数：${summary.count} 项`].filter(Boolean).join(" · ")}</p>
-      {save.state !== "unknown" && <Badge variant={save.state === "error" || save.state === "conflict" ? "error" : "outline"}>{saveLabels[save.state]}</Badge>}
+      {save.state !== "unknown" && <AgentStatus tone={save.state === "error" || save.state === "conflict" ? "error" : "neutral"}>{saveLabels[save.state]}</AgentStatus>}
       {changes?.length === 0 && <p className="text-ui-hint">未记录关键变化。</p>}
       {unknowns.length > 0 && <p id={unknownId} data-material-unknown="pack" className="break-words text-ui-hint">未知：{unknowns.join("、")}。</p>}
     </header>

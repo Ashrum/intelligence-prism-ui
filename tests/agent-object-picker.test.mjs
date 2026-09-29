@@ -327,3 +327,18 @@ void [ok, privateData, noReason, noSource, singleLimit];
     assert.deepEqual(diagnostics.map(d => ts.flattenDiagnosticMessageText(d.messageText, '\n')), []);
   } finally { await rm(fixture); }
 });
+
+
+test('object availability and recommendation are passive icon/text statuses in every presentation', () => {
+  for (const mode of modes) {
+    const html = htmlFor(mode);
+    assert.doesNotMatch(html, /data-slot="badge"/);
+    assert.match(html, /data-agent-status="neutral"/);
+    assert.match(html, /data-agent-status="info"/);
+    assert.match(html, /可选/);
+    assert.match(html, /推荐/);
+    const statuses = [...html.matchAll(/<span[^>]*data-agent-status="[^"]+"[^>]*>/g)];
+    assert.ok(statuses.length);
+    for (const [opening] of statuses) assert.doesNotMatch(opening, /(?:class="| )(?:border|rounded|bg-|ring-|shadow)|role="button"|tabindex=/);
+  }
+});

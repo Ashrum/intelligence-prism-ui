@@ -8,7 +8,7 @@ import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import {
@@ -317,7 +317,7 @@ export function AgentStructureArranger({
   </div>
   return <Card data-agent-arranger-view={view} data-density={density} className={`min-w-0 ${density === "compact" ? "gap-3 p-3" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
-      <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="min-w-0 break-words text-block-title">{structure.title}</h3><Badge variant="secondary">{historical ? "历史编排" : "当前编排"}</Badge></div>
+      <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="min-w-0 break-words text-block-title">{structure.title}</h3><AgentStatus tone="neutral">{historical ? "历史编排" : "当前编排"}</AgentStatus></div>
       {(structure.version.label || structure.baseVersion?.label || save.state !== "unknown") && <p className="break-words text-ui-hint">{[
         structure.version.label && `${historical ? "当时版本" : "当前版本"}：${structure.version.label}`, structure.baseVersion?.label && `基准版本：${structure.baseVersion.label}`,
         save.state !== "unknown" && `${historical ? "当时" : ""}${saveLabels[save.state]}`,

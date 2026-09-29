@@ -7,7 +7,7 @@ import { Card } from "@/components/coss/card"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Textarea } from "@/components/coss/textarea"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
 export type AgentDocumentCapabilityKind = "view" | "edit" | "annotate" | "export"
@@ -104,7 +104,7 @@ function DocumentCapabilities({ capabilities, id }: { capabilities: AgentDocumen
       const capability = capabilities[kind]
       return <div key={kind} className="min-w-0 space-y-1" data-capability={kind}>
         <div className="flex flex-wrap items-center gap-2"><dt className="text-ui-action">{capabilityLabels[kind]}</dt><dd>
-          <Badge variant={capability?.status === "supported" ? "secondary" : "warning"}>{capabilityStatuses[capability?.status] ?? "能力未确认"}</Badge>
+          <AgentStatus tone={capability?.status === "supported" ? "neutral" : "warning"}>{capabilityStatuses[capability?.status] ?? "能力未确认"}</AgentStatus>
         </dd></div>
         {capability?.reason && <dd className="break-words text-ui-hint">{capability.reason}</dd>}
         {capability?.conversion?.state !== "none" && <dd className="break-words text-ui-hint">{capability?.conversion?.state === "lossy" ? "转换风险" : "转换风险未确认"}：{capability?.conversion && "description" in capability.conversion ? capability.conversion.description : "暂未提供说明。"}</dd>}
@@ -212,7 +212,7 @@ export function AgentDocumentWorkspace({ document, capabilities, sections, activ
       {historical && document.snapshot && <p className="break-words text-ui-hint">{document.snapshot}</p>}
       {historical && document.currentVersion && <p className="break-words text-ui-hint">当前版本：{document.currentVersion}</p>}
       <div id={`${id}-save`} role="status" className="min-w-0 space-y-1">
-        <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">{historical ? "当时保存状态" : "保存状态"}</span><Badge variant={state === "unknown" || state === "conflict" || state === "unsaved" ? "warning" : "secondary"}>{saveLabels[state]}</Badge></div>
+        <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">{historical ? "当时保存状态" : "保存状态"}</span><AgentStatus tone={state === "unknown" || state === "conflict" || state === "unsaved" ? "warning" : "neutral"}>{saveLabels[state]}</AgentStatus></div>
         {save?.description && <p className="break-words text-ui-hint">{save.description}</p>}
       </div>
     </header>
