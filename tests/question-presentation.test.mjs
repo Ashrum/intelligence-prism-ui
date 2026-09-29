@@ -354,19 +354,23 @@ test('collection workspace example opens compact titles using context-neutral qu
   assert.doesNotMatch(html, /data-question-summary|data-collection-content/); assert.doesNotMatch(html, /查看详情/); assert.match(html, /<math/); assert.match(html, /data-collection-summary-clamp/);
 });
 
-test('L1 action row reserves the left excerpt slot and keeps every opener at the right edge', () => {
+test('L1 action row aligns left with the opener first and optional excerpt immediately after', () => {
   for (const omitted of [false, true]) {
     const props = { question: { ...question, options: omitted ? [{ id: 'a', content: '完整选项' }] : undefined }, onOpen() {} };
     const nodes = capture(c.QuestionSummaryRow, props);
     const row = nodes.find(node => 'data-question-actions' in node.props);
     assert.ok(row);
-    for (const token of ['flex', 'flex-wrap', 'items-center', 'justify-between']) assert.ok(row.props.className.split(' ').includes(token));
-    const [left, button] = React.Children.toArray(row.props.children);
-    assert.equal(left.type, 'span');
-    assert.equal(text(render(left)), omitted ? '节选' : '');
+    for (const token of ['flex', 'flex-wrap', 'items-center', 'justify-start']) assert.ok(row.props.className.split(' ').includes(token));
+    const children = React.Children.toArray(row.props.children);
+    assert.equal(children.length, omitted ? 2 : 1);
+    const [button, excerpt] = children;
+    if (omitted) assert.equal(text(render(excerpt)), '节选');
+    assert.match(render(row), /^<div[^>]*data-question-actions[^>]*><button\b/);
     assert.equal(button.type, c.CossButton);
     const classes = button.props.className.split(' ');
-    assert.ok(classes.includes('ml-auto'), 'right aligned even after wrapping');
+    assert.ok(!classes.includes('ml-auto'), 'opener stays at the left edge after wrapping');
+    assert.equal(button.props.variant, 'secondary');
+    assert.equal(button.props.size, 'xs');
     assert.ok(classes.includes('pointer-coarse:min-h-11'));
     assert.ok(!classes.includes('min-h-11'), 'desktop uses the coss xs height');
   }
