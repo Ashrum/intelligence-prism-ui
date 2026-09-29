@@ -199,3 +199,14 @@ test('notice identical to every impact appears once while partial matches and un
   capture(hidden).nodes.find(node => node.props.onValueChange).props.onValueChange('0');
   assert.equal(capture(hidden).html.split(notice).length - 1, 1);
 });
+
+
+test('expanded preview uses layout preview heading and accessible name by default', () => {
+  for (const density of ['default', 'compact']) {
+    const html = htmlFor({ view: 'workspace', density, previewId: first.id });
+    assert.match(html, /aria-label="模板版面预览"/);
+    assert.match(html, /<h5[^>]*>版面预览<\/h5>/);
+    assert.match(html, /示例题面/);
+    assert.doesNotMatch(html, /模板示例版面|>示例版面</);
+  }
+});

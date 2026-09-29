@@ -393,6 +393,7 @@ Inline 为单行输入，Enter / Ctrl+Enter / Cmd+Enter 与“计算”按钮等
 | `title / imageSet` | 必填可读标题、`{id,version}` 请求归属；不新建业务权威对象 |
 | `images / selectedImageId` | 完整获权图片集合、受控选择 ID 或 null；未知选择显示“当前图片未列出”，不偷换首图 |
 | `capabilities` | 必填 view/zoom/annotate/crop/compose 五项；各为 `{supported:true}` 或 `{supported:false,reason}`。仅支持的动作可执行，缺失原因兜底“暂不支持”。compose 只代表并列查看，不代表生成合成图片 |
+| `showRegionSourceLabels` | 可选 boolean，默认 true；false 隐藏全部区域来源种类标签（教师／系统／示例）。仅影响展示，不改变 `region.source`、图片来源元信息或意图载荷。Workspace 可传 `showRegionSourceLabels={false}`（PO 2026-09-29 批准） |
 | `comparisonIds` | 可选 readonly string[]，默认 []；宿主收到 compare 后决定是否返回比较对象，不自动展示比较结果；宿主须在对象版本／权限变化时同步撤回或刷新 |
 | `onIntent` | 可选；没有接收器则操作只读，缩放／定位／平移仍是查看状态。空或重复图片 ID、缺集合／图片版本阻断所有请求，不阻止已有可读内容 |
 | `view / density` | 默认 inline / default；支持 workspace 与独立 compact。紧凑仅减少间距，保留所有能力限制和不可用原因 |
@@ -425,9 +426,11 @@ Inline 为单行输入，Enter / Ctrl+Enter / Cmd+Enter 与“计算”按钮等
 
 Inline 显示可读列表、选中图缩略、区域数量与“查看大图”；Workspace 增加原图比例查看、放大／缩小／适应宽度、平移、区域列表定位、标注与裁切范围编辑、并列比较。平移的键盘等效是聚焦画布后按方向键；区域列表是原生可聚焦按钮，不吞方向键。Pointer 框选将当前图片边界换算成百分比，拖拽仅增强；四个常驻标签的 number 输入（步长 0.1）可完成同一动作。标注名称必填；坐标超界／非有限／空白阻断提交。相同能力限制合并一次；只展示当前图的来源／版本／尺寸，不逐页重复元信息；内部 ID 不出现在 UI 或区域 DOM，旧查看器仅收到局部序号。
 
-`#image-canvas` 是单实例两态切换、compact、320px 模拟夹具：四页扫描（第 2 页倾斜、第 3 页模糊，第 1 页两个示例标注）、学生作答“第 1 题作答区”、缺说明插图与不可用截图。图片为本仓原创 SVG data URI。默认裁切不支持且说明原因；独立“演示裁切范围选择”开关只演示请求。标注可由示例页面更新本次模拟集合，仍未保存且刷新重置；不改原图。三主题沿用既有组件及查看器样式，未增加视觉规则。五项日志、定向测试与只读 Workspace 方案见 `.sites-runtime/image-canvas/REPORT.md`；浏览器三主题／窄屏／焦点／触屏、读屏器、Workspace 两态接入和真实服务均未验，本任务不启动服务，不自授 Review 结论。
+`#image-canvas` 是单实例两态切换、compact、320px 模拟夹具：四页扫描（第 2 页倾斜、第 3 页模糊，第 1 页两个示例标注）、学生作答“第 1 题作答区”、缺说明插图与不可用截图。图片为本仓原创 SVG data URI。默认裁切不支持且说明原因；独立“演示裁切范围选择”开关只演示请求。“显示区域来源标签”开关展示 `showRegionSourceLabels` 的默认开启与关闭效果。标注可由示例页面更新本次模拟集合，仍未保存且刷新重置；不改原图。三主题沿用既有组件及查看器样式，未增加视觉规则。五项日志、定向测试与只读 Workspace 方案见 `.sites-runtime/image-canvas/REPORT.md`；浏览器三主题／窄屏／焦点／触屏、读屏器、Workspace 两态接入和真实服务均未验，本任务不启动服务，不自授 Review 结论。
 
 ## 模板选择器 v0.1
+
+PO 2026-09-29 批准：展开后的预览卡片标题统一为“版面预览”，可访问名为“模板版面预览”，默认生效；只修正文案，不改变预览数据、受控状态或选择行为。
 
 2026-09-27 设计候选，语义 **09 模板选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-template-picker` 导入 `AgentTemplatePicker`、`AgentTemplatePickerProps`、`AgentTemplate`、`AgentTemplatePickerIntent`。任务分支 `feat/agent-template-picker`，基于 main `7ff98e7`；未合并，不增加 80 项目录条目。
 
