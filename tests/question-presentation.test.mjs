@@ -329,5 +329,5 @@ test('L1 open labels are configurable without changing native button, excerpt or
 test('collection workspace example opens compact titles using context-neutral question labels', () => {
   const html = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: false }, 'workspace');
   assert.match(html, /data-collection-summary-row/); assert.match(html, /aria-label="查看题目：第 1 题/);
-  assert.doesNotMatch(html, /data-question-summary|data-collection-content|<math/); assert.doesNotMatch(html, /在右栏查看/);
+  assert.doesNotMatch(html, /data-question-summary|data-collection-content/); assert.doesNotMatch(html, /在右栏查看/); assert.match(html, /<math/); assert.match(html, /data-collection-summary-clamp/);
 });

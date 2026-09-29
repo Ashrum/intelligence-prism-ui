@@ -6,6 +6,7 @@ import { useRef, useState } from "react"
 import { Button } from "../button"
 import { MoreHorizontal } from "lucide-react"
 import { Menu, MenuTrigger, MenuPopup, MenuItem } from "@/components/coss/menu"
+import { QuestionContent } from "../question-content"
 import { MetricSummary, StatusComposition } from "../data-display"
 import { useQuestionPreview } from "./agent-question-presentation"
 import { questionSamples } from "../fixtures/question-samples"
@@ -85,7 +86,8 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     collection: { ...example.collection, version: `示例集合 v${revision}` }, items,
     // These values belong to this fixture host, never to the collection component.
     summary: { count: items.length, unit: purpose === "questions" ? "题" : "项", fields: purpose === "questions" ? [{ label: "总分（含失效题）", value: `${totalPoints} 分` }] : undefined },
-    headerActions: <Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="集合更多操作" />}><MoreHorizontal /></MenuTrigger><MenuPopup align="end"><MenuItem onClick={() => setFeedback("仅为本页集合示例；刷新后还原。")}>查看示例说明</MenuItem></MenuPopup></Menu>,
+    infoPlacement: purpose === "questions" ? "menu" : "inline",
+    headerActions: ({ infoMenuItem }) => <Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="集合更多操作" />}><MoreHorizontal /></MenuTrigger><MenuPopup align="end">{infoMenuItem}<MenuItem onClick={() => setFeedback("仅为本页集合示例；刷新后还原。")}>查看示例说明</MenuItem></MenuPopup></Menu>,
     overview: purpose === "questions" ? <>
       <MetricSummary density="compact" items={[{ id: "count", label: "已选题目", value: items.length }, { id: "points", label: "当前总分", value: totalPoints }]} />
       <StatusComposition density="compact" items={composition} unit="分" label="题型分值构成" />
@@ -99,13 +101,20 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     onExpand: button => { trigger.current = button; workspace.current?.focus({ preventScroll: true }); workspace.current?.scrollIntoView({ block: "nearest" }) },
     onBack: () => { trigger.current?.focus(); trigger.current?.scrollIntoView({ block: "nearest" }) },
     itemPresentation: purpose === "questions" ? "summary" : "default",
+    renderSummary: purpose === "questions" ? item => {
+      const question = questionSamples.find(question => question.id === item.id)
+      return question ? {
+        content: <QuestionContent question={{ ...question, blocks: undefined, figure: undefined, options: undefined, parts: undefined }} />,
+        excerpt: !!(question.blocks?.length || question.figure || question.options?.length || question.parts?.length),
+      } : null
+    } : undefined,
     openLabel: "查看题目",
     onOpenItem: purpose === "questions" ? (item, trigger) => {
       const question = questionSamples.find(question => question.id === item.id)
       if (question) questionPreview.openQuestion(question, items.indexOf(item) + 1, trigger)
     } : undefined,
     notice: "仅为本页示例；刷新后还原。",
-    // Supplementary collection guidance is disclosed by the header source chip in summary mode.
+    // Supplementary collection guidance is disclosed by the basket information menu in workspace summary mode.
     details: <p>三个视图共用当前选题集合。题目分值与分组数量由本页示例提供。已选题目指篮内题目（包含失效题），不是批量勾选项；当前总分与题型分值采用相同口径。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
