@@ -5,6 +5,7 @@ import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Badge } from "../badge"
+import { AgentStatus } from "../agent-visual-parts"
 import { Button } from "../button"
 import { QuestionSelect } from "../question-controls"
 import { agentComponentCategories, agentComponentStatusCounts, agentComponentRegistry, agentComponentStatusLabels, filterAgentComponents, type AgentComponentEntry, type AgentComponentStatus } from "@/lib/prism-next/agent-component-registry"
@@ -37,7 +38,7 @@ export function AgentExampleSection({ slug, name, description, entry, preview, e
       <h2 id={`${slug}-heading`} tabIndex={-1} className="text-section-title">{entry ? <a className="prism-link" href={`/next/components/agent-components/${slug}`} aria-label={`${entry.number} ${name} · 打开单独页面`}>{entry.number} {name}</a> : name}</h2>
       {entry && <a className="prism-link text-ui-hint" href={`/next/components/agent-components/${slug}`}>打开单独页面<span className="sr-only"> · {name}</span></a>}
       <p className="text-ui-body">{description}</p>
-      {entry ? <div className="space-y-2"><Badge variant="outline">{agentComponentStatusLabels[entry.status]}</Badge><p className="text-ui-hint text-muted-foreground">承载位置：{entry.carriers.label}</p></div> : <Badge variant="outline">组合示例</Badge>}
+      {entry ? <div className="space-y-2"><AgentStatus tone="neutral">{agentComponentStatusLabels[entry.status]}</AgentStatus><p className="text-ui-hint text-muted-foreground">承载位置：{entry.carriers.label}</p></div> : <Badge variant="secondary">组合示例</Badge>}
     </header>
     <div data-agent-page-preview>
       <AgentDemoPresentation.Provider value={{ previewOnly: true, embedded: true, onExpand: () => { focusDetails.current = true; onExpandedChange(true) } }}>{preview}</AgentDemoPresentation.Provider>
@@ -115,7 +116,7 @@ export function AgentComponentsPage() {
       event.preventDefault()
       if (window.location.hash !== `#${slug}`) window.history.pushState(null, "", `#${slug}`)
       navigate(`#${slug}`)
-    }}><span className="min-w-0 space-y-1"><span className="block text-ui-body">{entry && `${entry.number} `}{name}</span>{entry && <Badge variant="outline">{agentComponentStatusLabels[entry.status]}</Badge>}</span></Button>
+    }}><span className="min-w-0 space-y-1"><span className="block text-ui-body">{entry && `${entry.number} `}{name}</span>{entry && <AgentStatus tone="neutral">{agentComponentStatusLabels[entry.status]}</AgentStatus>}</span></Button>
   const directory = <nav aria-label="Agent 语义组件页内目录" className="space-y-5 p-1">
     {agentComponentCategories.map(category => {
       const group = entries.filter(entry => entry.category.id === category.id)

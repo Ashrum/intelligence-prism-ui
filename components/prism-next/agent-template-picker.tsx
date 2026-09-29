@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/coss/checkbox"
 import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Button } from "./button"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
 export type AgentTemplate = {
@@ -137,9 +137,9 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
         return <li key={index} aria-labelledby={`${id}-item-${index}`} aria-describedby={describedBy(item)} className="min-w-0 space-y-2" data-template-item="">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <h4 id={`${id}-item-${index}`} className="min-w-0 break-words text-item-title">{ordinal(item)} · {item.name || "未命名模板"}</h4>
-            {item.id === selectedId && <Badge variant="secondary">当前选择</Badge>}
-            {item.recommended && <Badge variant="outline">推荐</Badge>}
-            <Badge variant={item.availability.state === "available" ? "outline" : "warning"}>{availabilityLabel[item.availability.state]}</Badge>
+            {item.id === selectedId && <AgentStatus tone="neutral">当前选择</AgentStatus>}
+            {item.recommended && <AgentStatus tone="neutral">推荐</AgentStatus>}
+            <AgentStatus tone={item.availability.state === "available" ? "neutral" : "warning"}>{availabilityLabel[item.availability.state]}</AgentStatus>
           </div>
           {factEntries.map(([text, items], factIndex) => items.length === 1 && items[0] === item && <p key={factIndex} id={`${id}-fact-${factIndex}`} className="break-words text-ui-hint">{text}</p>)}
           <div className="flex min-w-0 flex-wrap items-center gap-2">

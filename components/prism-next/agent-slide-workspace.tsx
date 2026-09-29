@@ -6,7 +6,7 @@ import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Input } from "@/components/coss/input"
 import { Textarea } from "@/components/coss/textarea"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import type { AgentDocumentSave } from "./agent-document-workspace"
 
@@ -124,7 +124,7 @@ export function AgentSlideWorkspace({ deckId, version, title, versionLabel, sour
     <header className="min-w-0 space-y-2">
       <h3 id={`${id}-title`} className="break-words text-block-title">{title || "演示文稿"}</h3>
       <p className="break-words text-ui-hint">{readOnly ? "只读版本" : "当前版本"} · {versionLabel?.trim() || "版本未确认"}{canView && ` · ${slides.length} 页`}</p>
-      <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">保存状态</span><Badge variant={state === "saved-draft" || state === "submitted" ? "secondary" : "warning"}>{saveLabels[state]}</Badge></div>
+      <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">保存状态</span><AgentStatus tone={state === "saved-draft" || state === "submitted" ? "neutral" : "warning"}>{saveLabels[state]}</AgentStatus></div>
       {save?.description && <p className="break-words text-ui-hint">{save.description}</p>}
       <p className="break-words text-ui-hint">来源：{source?.label.trim() || "未确认"}</p>
     </header>

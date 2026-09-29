@@ -6,7 +6,7 @@ import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import { LearningTaskList, MilestoneList, type MilestoneItem } from "./learning-components"
@@ -257,7 +257,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
         {editing && editorBody(editor.values, step)}
       </div>,
       schedule: editing ? null : (step.startDate || step.endDate || step.timeWindow) ? <p className="text-ui-hint">{step.startDate && `开始：${step.startDate}`}{step.startDate && step.endDate ? " · " : ""}{step.endDate && `结束：${step.endDate}`}{step.timeWindow && ` · ${step.timeWindow}`}</p> : null,
-      status: step.status.state === "unknown" ? null : <Badge variant={step.status.state === "blocked" ? "warning" : step.status.state === "completed" ? "success" : "outline"}>{stepLabels[step.status.state]}</Badge>,
+      status: step.status.state === "unknown" ? null : <AgentStatus tone={step.status.state === "blocked" ? "warning" : step.status.state === "completed" ? "success" : "neutral"}>{stepLabels[step.status.state]}</AgentStatus>,
       actions: controls,
     }
   })
@@ -284,7 +284,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
         <p className="text-ui-hint">{kindLabels[plan.kind]}{plan.snapshot !== undefined ? ` · 历史计划${plan.snapshot ? ` · ${plan.snapshot}` : ""}` : " · 当前计划"}</p>
         <h2 id={`${id}-title`} className="break-words text-block-title">{plan.title}</h2>
       </div>{workspace && onBack && <Button type="button" variant="outline" size="navigation" onClick={onBack}>返回原位置</Button>}</div>
-      <div className="flex flex-wrap gap-2">{plan.core !== "unknown" && <Badge variant="outline">{coreLabels[plan.core]}</Badge>}{plan.tasks !== "unknown" && <Badge variant="outline">{taskLabels[plan.tasks]}</Badge>}{plan.execution !== "unknown" && <Badge variant="outline">{executionLabels[plan.execution]}</Badge>}{save.state !== "unknown" && <Badge variant={save.state === "error" || save.state === "conflict" ? "warning" : "outline"}>{saveLabels[save.state]}</Badge>}</div>
+      <div className="flex flex-wrap gap-2">{plan.core !== "unknown" && <AgentStatus tone="neutral">{coreLabels[plan.core]}</AgentStatus>}{plan.tasks !== "unknown" && <AgentStatus tone="neutral">{taskLabels[plan.tasks]}</AgentStatus>}{plan.execution !== "unknown" && <AgentStatus tone="neutral">{executionLabels[plan.execution]}</AgentStatus>}{save.state !== "unknown" && <AgentStatus tone={save.state === "error" || save.state === "conflict" ? "warning" : "neutral"}>{saveLabels[save.state]}</AgentStatus>}</div>
       {(plan.version.label || plan.baseVersion?.label) && <p className="text-ui-hint">{[plan.version.label && `版本：${plan.version.label}`, plan.baseVersion?.label && `基于：${plan.baseVersion.label}`].filter(Boolean).join(" · ")}</p>}
     </header>
     <div className="min-w-0 space-y-2 text-ui-body">

@@ -7,7 +7,7 @@ import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, ChevronRight, IndentDecrea
 import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Input } from "@/components/coss/input"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import { Tree, TreeItem, TreeItemLabel } from "./tree"
@@ -54,7 +54,7 @@ const moveActions = [
 ] as const
 
 function StructureStatus({ node }: { node: AgentStructureNode }) {
-  return node.status.state === "normal" ? null : <Badge variant={node.status.state === "conflict" ? "warning" : "secondary"}>{nodeStatus[node.status.state]}</Badge>
+  return node.status.state === "normal" ? null : <AgentStatus tone={node.status.state === "conflict" ? "warning" : "neutral"}>{nodeStatus[node.status.state]}</AgentStatus>
 }
 
 function StructureSummary({ nodes, level = 1 }: { nodes: readonly AgentStructureNode[]; level?: number }) {
@@ -216,11 +216,11 @@ export function AgentStructuredContent({
   }
   return <Card data-agent-structured-view={view} data-density={density} className={`min-w-0 ${density === "compact" ? "gap-3 p-3" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2">
-      <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="min-w-0 break-words text-block-title">{structure.title}</h3><Badge variant={historical ? "secondary" : "info"}>{historical ? "历史版本（只读）" : "当前状态"}</Badge></div>
+      <div className="flex flex-wrap items-start justify-between gap-2"><h3 className="min-w-0 break-words text-block-title">{structure.title}</h3><AgentStatus tone={historical ? "neutral" : "info"}>{historical ? "历史版本（只读）" : "当前状态"}</AgentStatus></div>
       <p className="break-words text-ui-hint">{historical ? "当时版本" : "当前版本"}：{structure.version.label || "未确认"}{structure.baseVersion && ` · 基准版本：${structure.baseVersion.label || "未确认"}`}</p>
       {historical && structure.snapshot && <p className="break-words text-ui-hint">{structure.snapshot}</p>}
       {historical && structure.currentVersion && <p className="break-words text-ui-hint">当前版本：{structure.currentVersion.label || "未确认"}</p>}
-      <div className="flex flex-wrap items-center gap-2 text-ui-hint"><span>{historical ? "当时保存状态" : "保存状态"}</span><Badge variant={save.state === "conflict" || save.state === "unknown" ? "warning" : "secondary"}>{saveLabels[save.state]}</Badge></div>
+      <div className="flex flex-wrap items-center gap-2 text-ui-hint"><span>{historical ? "当时保存状态" : "保存状态"}</span><AgentStatus tone={save.state === "conflict" || save.state === "unknown" ? "warning" : "neutral"}>{saveLabels[save.state]}</AgentStatus></div>
       {save.description && <p className="break-words text-ui-hint">{save.description}</p>}
     </header>
     <section aria-label="结构能力" className="min-w-0 space-y-2">

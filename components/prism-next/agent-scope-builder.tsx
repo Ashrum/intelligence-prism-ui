@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowUpRight, ChevronDown } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Button } from "./button"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
 /** References to the host's existing scope/draft revision; never displayed as labels. */
@@ -88,7 +88,7 @@ function ScopeDimension({ dimension, anchor, view, target, disabledReason, onVal
   return <section aria-labelledby={`${anchor}-label`} className="min-w-0 space-y-2" data-scope-dimension="">
     <div className="flex min-w-0 flex-wrap items-center gap-2">
       <h4 id={`${anchor}-label`} className="break-words text-ui-action">{dimension.label}{dimension.required ? "（必填）" : "（选填）"}</h4>
-      <Badge variant={dimension.validation.state === "valid" ? "outline" : "warning"}>{unspecified ? "未指定" : validationLabels[dimension.validation.state]}</Badge>
+      <AgentStatus tone={dimension.validation.state === "valid" ? "neutral" : "warning"}>{unspecified ? "未指定" : validationLabels[dimension.validation.state]}</AgentStatus>
     </div>
     {!unspecified && <p id={`${anchor}-validation`} role={dimension.validation.state === "valid" ? undefined : "status"} className="break-words text-ui-hint">
       {dimension.validation.reason}
@@ -136,8 +136,8 @@ export function AgentScopeBuilder({ title, scope, dimensions, summary, impact, e
             <span className="min-w-0 truncate text-ui-body">范围：{compactSummary}</span><ChevronDown aria-hidden="true" />
           </CollapsibleTrigger>
           <div className="flex shrink-0 items-center gap-2">
-            <Badge variant="outline" role="status" aria-label={changed ? "范围已变化，需重新确认" : confirmed ? "范围已确认" : "范围待确认"}>{changed ? "需重确认" : confirmed ? "已确认" : "待确认"}</Badge>
-            {attention && <Badge variant="warning" role="status" aria-label={`${attention}；${explanation}`}>{attention}</Badge>}
+            <AgentStatus tone="neutral" role="status" aria-label={changed ? "范围已变化，需重新确认" : confirmed ? "范围已确认" : "范围待确认"}>{changed ? "需重确认" : confirmed ? "已确认" : "待确认"}</AgentStatus>
+            {attention && <AgentStatus tone="warning" role="status" aria-label={`${attention}；${explanation}`}>{attention}</AgentStatus>}
             {onExpand && <Button type="button" size="sm" variant="outline" onClick={event => onExpand(event.currentTarget)}>调整</Button>}
           </div>
         </div>

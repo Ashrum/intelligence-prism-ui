@@ -30,9 +30,9 @@ export function AgentWell({ presentation = "card", className, ...props }: Compon
 
 export type AgentStatusTone = "neutral" | "info" | "success" | "warning" | "error"
 const statusTones = {
-  neutral: "bg-secondary text-muted-foreground", info: "bg-info/10 text-info-foreground",
-  success: "bg-success/10 text-success-foreground", warning: "bg-warning/10 text-warning-foreground",
-  error: "bg-destructive/10 text-destructive-foreground",
+  neutral: "text-muted-foreground", info: "text-info-foreground",
+  success: "text-success-foreground", warning: "text-warning-foreground",
+  error: "text-destructive-foreground",
 }
 const statusIcons = { neutral: Circle, info: Info, success: Check, warning: CircleAlert, error: CircleAlert }
 
@@ -42,7 +42,7 @@ export function AgentStatus({ children, tone = "neutral", icon, unknown = false,
 }) {
   const Icon = unknown ? CircleHelp : icon ?? (running ? LoaderCircle : statusIcons[tone])
   return <span {...props} data-agent-status={unknown ? "unknown" : tone} className={cn(
-    "inline-flex max-w-full shrink-0 items-center gap-1 self-start rounded-md px-1.5 py-0.5 text-component-label",
+    "inline-flex min-w-0 max-w-full items-center gap-1 self-start text-component-label",
     statusTones[unknown ? "neutral" : tone], className,
   )}><Icon aria-hidden="true" className={cn("size-3.5 shrink-0", running && !unknown && "motion-safe:animate-spin motion-reduce:animate-none")} />
     <span className="min-w-0 break-words">{children}{unknown && !(typeof children === "string" && children.includes("未知")) && " · 未知"}</span>

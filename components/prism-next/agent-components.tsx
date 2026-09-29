@@ -8,7 +8,6 @@ import { Spinner } from "@/components/coss/spinner"
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/components/coss/input-group"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Card } from "@/components/coss/card"
-import { Badge } from "@/components/prism-next/badge"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
 import { Separator } from "@/components/coss/separator"
 import { agentProgressLabels } from "@/lib/prism-next/agent-progress"
@@ -122,10 +121,10 @@ export function AgentComposer({
 }
 export type AgentStep = {id:string;label:string;state:"done"|"running"|"pending"|"error"|"unknown"|"waiting-human"|"waiting"|"partial";detail?:string;time?:string}
 export function AgentStepStatus({state,snapshot=false}:{state:AgentStep['state'];snapshot?:boolean}) {
- const tones={done:'success',running:'info',pending:'secondary',error:'error',unknown:'warning','waiting-human':'warning',waiting:'warning',partial:'warning'} as const
+ const tones={done:'success',running:'info',pending:'neutral',error:'error',unknown:'warning','waiting-human':'warning',waiting:'warning',partial:'warning'} as const
  // Preserve the legacy error label; all shared state labels use the progress vocabulary.
  const label=state==='done'?agentProgressLabels.completed:state==='error'?'失败':agentProgressLabels[state]
- return <Badge variant={snapshot&&state==='running'?'outline':tones[state]} size="lg">{snapshot&&state==='running'?'上次进行到':label}</Badge>
+ return <AgentStatus tone={snapshot&&state==='running'?'neutral':tones[state]}>{snapshot&&state==='running'?'上次进行到':label}</AgentStatus>
 }
 export function AgentTaskProgress({steps,actions,activity='live',density='default',appearance='default'}:{steps:readonly AgentStep[];actions?:ReactNode;activity?:'live'|'snapshot';density?:'default'|'compact';appearance?:'default'|'trace'}) {
  if(appearance==='trace') return <div><ol aria-label={activity==='snapshot'?'任务步骤记录':'任务执行步骤'} className="space-y-1">{steps.map(step=>{
@@ -170,7 +169,7 @@ export function AgentChangeReview({title,before,after,reason,decision,onDecision
 }) {
  const id=useId(),heading=useRef<HTMLHeadingElement>(null)
  const choose=(value:'accepted'|'kept')=>{onDecision(value);requestAnimationFrame(()=>heading.current?.focus({preventScroll:true}))}
- return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><Badge size="lg" variant={decision==='pending'?'warning':'outline'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用':'已保留原文'}</Badge></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
+ return <Card aria-labelledby={id} className="@container gap-4 p-5"><div className="flex flex-wrap items-center justify-between gap-2"><h3 ref={heading} tabIndex={-1} id={id} className="text-block-title outline-none">{title}</h3><AgentStatus tone={decision==='pending'?'warning':'neutral'}>{decision==='pending'?(disabled?'暂不可决定':'待决定'):decision==='accepted'?'已采用':'已保留原文'}</AgentStatus></div><p className="text-ui-hint text-muted-foreground">{reason}</p>
  <div className="grid min-w-0 gap-4 @min-[560px]:grid-cols-2"><section className="min-w-0"><h4 className="mb-2 text-ui-action">{beforeLabel}</h4>{beforePreview??<p className="whitespace-pre-wrap break-words text-read-body">{before}</p>}</section><section className="min-w-0 rounded-lg bg-secondary p-4"><h4 className="mb-2 text-ui-action">{afterLabel}</h4>{afterPreview??<p className="whitespace-pre-wrap break-words text-read-body">{after}</p>}</section></div>
  {scope&&<p className="text-ui-hint text-muted-foreground">{scope}</p>}
  {disabledReason&&<p id={`${id}-disabled`} role="status" className="text-ui-hint text-warning-foreground">{disabledReason}</p>}

@@ -87,7 +87,7 @@ function ObjectSection({ section, anchor, view, showSummary, inlineDisclosure, m
   return <section id={anchor} aria-labelledby={minimal ? undefined : `${anchor}-title`} aria-label={minimal ? title : undefined} className="min-w-0 space-y-2" data-object-section="">
     {!minimal && <h4 id={`${anchor}-title`} className="break-words text-block-title">{title}</h4>}
     {section.access === "restricted" ? <div className="space-y-2">
-      {minimal ? <AgentStatus tone="warning">访问受限</AgentStatus> : <Badge variant="warning">访问受限</Badge>}<p className="break-words text-ui-hint">{section.disclosure.reason}</p>
+      <AgentStatus tone="warning">访问受限</AgentStatus><p className="break-words text-ui-hint">{section.disclosure.reason}</p>
     </div> : <>
       {section.sensitive && <p id={`${anchor}-reason`} className="break-words text-ui-hint">需确认查看：{section.sensitive.reason}</p>}
       {showSummary && !section.sensitive && <ObjectContent>{section.summary}</ObjectContent>}
@@ -183,7 +183,7 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
         {version.difference && <p role="status" className="break-words text-ui-meta">版本差异：{version.difference}</p>}
       </> : <div className="space-y-2"><AgentStatus tone="warning">访问受限</AgentStatus><p className="break-words text-ui-meta">{access.reason}</p></div>}
     </header> : <header className="min-w-0 space-y-2">
-      <div className="flex min-w-0 flex-wrap items-center gap-2"><Badge variant="outline">{object.type}</Badge>
+      <div className="flex min-w-0 flex-wrap items-center gap-2"><Badge variant="secondary">{object.type}</Badge>
         <h3 id={`${id}-title`} className="break-words text-block-title">{object.name}</h3></div>
       {object.displayId && <p className="break-words text-ui-hint">编号：{object.displayId}</p>}
       <p className="break-words text-ui-hint">{historical ? "历史版本（只读） · 当时版本" : "当前状态 · 当前版本"}：{version.label || "版本未确认"}</p>
@@ -194,7 +194,7 @@ export function AgentObjectViewer({ object, version, access, source, sections, a
         {access.readOnlyReason && <p className="break-words text-ui-hint">只读：{access.readOnlyReason}</p>}
         <p className="break-words text-ui-hint">来源：{source || "来源未确认"}</p>
         {version.difference && <p role="status" className="break-words text-ui-hint">版本差异：{version.difference}</p>}
-      </> : <div className="space-y-2"><Badge variant="warning">访问受限</Badge><p className="break-words text-ui-hint">{access.reason}</p></div>}
+      </> : <div className="space-y-2"><AgentStatus tone="warning">访问受限</AgentStatus><p className="break-words text-ui-hint">{access.reason}</p></div>}
     </header>}
     {available && <>
       {view === "workspace" && identified && onVersionChange && !!versions.length && <div className="min-w-0 space-y-2">

@@ -8,7 +8,7 @@ import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -234,9 +234,9 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
         <h4 id={`${anchor}-title`} className="min-w-0 self-center break-words text-item-title">{index + 1}. {itemTitle}</h4>
       </div>
       <div id={`${anchor}-status`} className="flex flex-wrap gap-2">
-        <Badge variant={status === "expired" || status === "restricted" || status === "unconfirmed" ? "warning" : "outline"}>{status === "pending" && selected.has(item.id) ? "已选" : statusLabels[status]}</Badge>
-        {selected.has(item.id) && status !== "pending" && <Badge variant="outline">已选</Badge>}
-        {!restricted(item) && <Badge variant="outline">{taskLabels[item.task?.state ?? "unconfirmed"]}</Badge>}
+        <AgentStatus tone={status === "expired" || status === "restricted" || status === "unconfirmed" ? "warning" : "neutral"}>{status === "pending" && selected.has(item.id) ? "已选" : statusLabels[status]}</AgentStatus>
+        {selected.has(item.id) && status !== "pending" && <AgentStatus tone="neutral">已选</AgentStatus>}
+        {!restricted(item) && <AgentStatus tone="neutral">{taskLabels[item.task?.state ?? "unconfirmed"]}</AgentStatus>}
       </div>
       {restricted(item) ? <p id={`${anchor}-choice-reason`} className="break-words text-ui-hint">{item.disclosure.reason || "当前建议受限。"}</p> : <>
         <div className="max-w-[40em] whitespace-pre-wrap break-words text-read-body">{item.content}</div>
@@ -277,7 +277,7 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
   return <Card aria-labelledby={`${id}-title`} data-suggestion-set-view={view} data-suggestion-set-density={density} className={`min-w-0 ${compact ? "gap-3 p-3" : "gap-5 p-5"}`}>
     <header className="min-w-0 space-y-2"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3>
       <p className="break-words text-ui-hint">{suggestionSet.snapshot ? "当时建议" : "当前建议"}{suggestionSet.versionLabel ? ` · ${suggestionSet.versionLabel}` : ""} · 本次已选 {selected.size} 项</p>
-      {receipt.state !== "idle" && <div role="status" className="space-y-1"><Badge variant={receipt.state === "unconfirmed" || receipt.state === "failed" ? "warning" : "outline"}>{receiptLabels[receipt.state]}</Badge>{receipt.message && <p className="break-words text-ui-hint">{receipt.message}</p>}</div>}
+      {receipt.state !== "idle" && <div role="status" className="space-y-1"><AgentStatus tone={receipt.state === "unconfirmed" || receipt.state === "failed" ? "warning" : "neutral"}>{receiptLabels[receipt.state]}</AgentStatus>{receipt.message && <p className="break-words text-ui-hint">{receipt.message}</p>}</div>}
       {editReason !== undefined && <p id={`${id}-edit`} className="break-words text-ui-hint">{editReason || "当前不可修改建议。"}</p>}
       {selectedIds.length > 0 && selectionReason && <p role="status" className="break-words text-ui-hint">{selectionReason}</p>}
     </header>

@@ -7,6 +7,7 @@ import { Label } from "@/components/coss/label"
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/coss/progress"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -211,8 +212,8 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
       <p className="text-ui-hint">{captureSet.snapshot !== undefined ? ["历史页集合", captureSet.snapshot].filter(Boolean).join(" · ") : "当前页集合"}</p>
       <h2 id={`${id}-title`} className="break-words text-block-title">{captureSet.title}</h2>
     </div>{workspace && onBack && <Button type="button" size="navigation" variant="outline" onClick={onBack}>返回原位置</Button>}</div>
-      <div className="flex flex-wrap gap-2">{known(captureSet.version.label) && <Badge variant="outline">{captureSet.version.label}</Badge>}
-        {save.state !== "unknown" && <Badge variant={save.state === "error" || save.state === "conflict" ? "warning" : "outline"}>{saveLabels[save.state]}</Badge>}</div>
+      <div className="flex flex-wrap gap-2">{known(captureSet.version.label) && <Badge variant="secondary">{captureSet.version.label}</Badge>}
+        {save.state !== "unknown" && <AgentStatus tone={save.state === "error" || save.state === "conflict" ? "warning" : "neutral"}>{saveLabels[save.state]}</AgentStatus>}</div>
       {(countKnown(capturedCount) || countKnown(totalPages)) && <p className="text-ui-hint">{[countKnown(capturedCount) && `已采集 ${capturedCount} 页`, countKnown(totalPages) && `总页数 ${totalPages} 页`].filter(Boolean).join(" · ")}</p>}
       {receiptLabel && <p role="status" className="break-words text-ui-hint">{[receiptLabel, "request" in receipt && known(receipt.request.label) && receipt.request.label].filter(Boolean).join(" · ")}</p>}
       {progress !== null && <div className="space-y-2"><p className="text-ui-hint">{operation}进度：{progress}%</p><Progress value={progress} aria-label={`${operation}进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress></div>}
@@ -229,10 +230,10 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
             onDragStart={event => { if (pageBlock(page, "reorder")) { event.preventDefault(); return }; drag.current = { pageId: page.id, revision, pages }; event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", "capture-page") }}
             onDragEnd={() => { drag.current = null }}><GripVertical aria-hidden="true" /></span>}
         </div>
-        <div className="flex flex-wrap gap-2">{page.quality.state !== "unknown" && <Badge variant={page.quality.state === "clear" ? "outline" : "warning"}>{qualityLabels[page.quality.state]}</Badge>}
-          {page.needsRecapture === true && <Badge variant="warning">需要补采</Badge>}
-          {page.usage.state === "used" && <Badge variant="outline">已用于后续处理</Badge>}
-          {page.usage.state === "unused" && <Badge variant="outline">尚未用于后续处理</Badge>}
+        <div className="flex flex-wrap gap-2">{page.quality.state !== "unknown" && <AgentStatus tone={page.quality.state === "clear" ? "neutral" : "warning"}>{qualityLabels[page.quality.state]}</AgentStatus>}
+          {page.needsRecapture === true && <AgentStatus tone="warning">需要补采</AgentStatus>}
+          {page.usage.state === "used" && <AgentStatus tone="neutral">已用于后续处理</AgentStatus>}
+          {page.usage.state === "unused" && <AgentStatus tone="neutral">尚未用于后续处理</AgentStatus>}
         </div>
         {page.usage.state === "used" && known(page.usage.label) && <p className="break-words text-ui-hint">已用于：{page.usage.label}</p>}
         {!allCapturedAtKnown && known(page.capturedAt) && <p className="break-words text-ui-hint">采集时间：{page.capturedAt}</p>}

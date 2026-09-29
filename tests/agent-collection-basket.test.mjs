@@ -281,14 +281,14 @@ void [secret, sync, intent, summary, props];
 });
 
 
-// Captured from the unmodified component before B1: inline/workspace × default/compact.
+// PO 2026-09-29: status decoration removed; all other markup verified against main 3279441.
 // Normalize only opaque React-generated IDs; markup, text and classes remain exact.
-test('default presentation retains its pre-B1 rendered snapshots', () => {
+test('default presentation retains reviewed plain-status snapshots', () => {
   const snapshots = [
-    'c4045557d8f630a3f0e8fed89840583e3d9132c09abcde6760de15420c2f259d',
-    '8e259d74eedaafcd12e4162023c07b7caa5940fc3ed1e3ec19f882bec1ecd7fa',
-    'eeb1281ab142f5edda4e404a4457dabb06d5c277cc0c83b3b924f4d47381b8d9',
-    'e97eb6fd972afa294a4dfd245f127930218ca761c77f87ace5e3ca37332ec128',
+    'fb13b4c52303bedb4152d5fd56bd8dd56f2d035ceb5810f15006fde27b8e63f5',
+    '0ceefa502d419796e91b4dc967f41e97d0abd58a7367ae3728eb218314865d55',
+    'a9821643ee277401f1d016a323cd13ca5bdabdfe0223fa43210ea245b6ff8ce0',
+    'f96c67bac1ca90bc34ded8ca76efa9eb670d2cf6cfbbda7484e654e67ef0a6a4',
   ];
   modes.forEach((mode, index) => assert.equal(createHash('sha256').update(htmlFor(mode).replace(/_R_[^"\s<>]+_/g, 'REACT_ID')).digest('hex'), snapshots[index]));
 });

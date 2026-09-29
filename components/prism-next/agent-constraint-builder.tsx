@@ -10,7 +10,7 @@ import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -148,7 +148,7 @@ function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledR
   return <section aria-labelledby={`${anchor}-label`} data-constraint-item="" className={compact ? "min-w-0 space-y-1" : "min-w-0 space-y-2"}>
     <div className="flex min-w-0 flex-wrap items-center gap-2">
       {boolean && editor}{label}
-      <Badge variant={item.validation.state === "valid" ? "outline" : "warning"}>{validationLabels[item.validation.state]}</Badge>
+      <AgentStatus tone={item.validation.state === "valid" ? "neutral" : "warning"}>{validationLabels[item.validation.state]}</AgentStatus>
       {item.critical && <span className="text-ui-hint text-muted-foreground">关键条件</span>}
     </div>
     <div id={`${anchor}-description`} className="min-w-0 space-y-1 text-ui-hint">

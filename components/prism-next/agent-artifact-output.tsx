@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowUpRight, Download } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
-import { Badge, type BadgeProps } from "./badge"
+import { AgentStatus, type AgentStatusTone } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -76,8 +76,8 @@ export type AgentArtifactOutputProps = AgentRecordViewProps & {
 }
 
 const stateLabels = { idle: "未开始", generating: "生成中", ready: "已生成可下载", failed: "生成失败", unknown: "状态未确认", expired: "已过期", forbidden: "无权下载" }
-const stateVariants: Record<AgentArtifactOutputStatus["state"], BadgeProps["variant"]> = {
-  idle: "secondary", generating: "info", ready: "success", failed: "error", unknown: "warning", expired: "warning", forbidden: "warning",
+const stateVariants: Record<AgentArtifactOutputStatus["state"], AgentStatusTone> = {
+  idle: "neutral", generating: "info", ready: "success", failed: "error", unknown: "warning", expired: "warning", forbidden: "warning",
 }
 const supportLabels = { supported: "支持", lossy: "有损", unsupported: "不支持" }
 const validId = (value?: string) => typeof value === "string" && !!value.trim()
@@ -95,7 +95,7 @@ function fileLabel(name?: string) {
   return name?.trim() && !/[/\\\r\n]/.test(name) ? name : "文件名称未确认"
 }
 function OldVersion({ version, current }: { version: AgentArtifactVersion; current: AgentArtifactVersion }) {
-  return validId(version.id) && validId(current.id) && version.id !== current.id ? <Badge variant="warning">基于旧版本</Badge> : null
+  return validId(version.id) && validId(current.id) && version.id !== current.id ? <AgentStatus tone="warning">基于旧版本</AgentStatus> : null
 }
 
 function OutputChoice({ label, options, value, disabled, describedBy, showReasons = true, onChange }: {
@@ -135,7 +135,7 @@ function OutputRecord({ record, artifact, historical = false, queryOnly, actions
   return <section aria-label={record.title} data-output-state={status.state} data-output-history={historical || undefined} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
     <div className="flex min-w-0 flex-wrap items-center gap-2">
       <h4 className="min-w-0 break-words text-item-title">{record.title}</h4>
-      <Badge variant={stateVariants[status.state]}>{historical ? "当时状态：" : ""}{stateLabels[status.state] ?? "状态未确认"}</Badge>
+      <AgentStatus tone={stateVariants[status.state]}>{historical ? "当时状态：" : ""}{stateLabels[status.state] ?? "状态未确认"}</AgentStatus>
       <OldVersion version={file?.version ?? record.version} current={artifact.version} />
     </div>
     <p className="break-words text-ui-hint">{historical ? "当时版本" : "输出版本"}：{record.version.label || "版本未确认"} · {record.format || "格式未确认"} · {record.layout || "版式未确认"} · {record.range || "范围未确认"}</p>
