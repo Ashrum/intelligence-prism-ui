@@ -1,14 +1,13 @@
 "use client"
 
 import { useId, type ReactNode } from "react"
-import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
-import { Badge } from "./badge"
 import { Button } from "./button"
 import { DataRecordTable, FilterBar, type FilterField } from "./data-display"
-import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+import type { AgentRecordViewProps } from "./agent-record-parts"
+import { AgentMetaLine, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, type AgentVisualProps } from "./agent-visual-parts"
 
 export type AgentCandidateAlternative = { candidateId: string; reason: string; disabledReason?: string }
 export type AgentCandidateEntry = {
@@ -50,7 +49,7 @@ export type AgentCandidateIntent = { candidateSetId: string; baseVersion: string
   | { type: "replace"; candidateId: string; replacementId: string }
   | { type: "confirm"; candidateIds: readonly string[] }
 )
-export type AgentCandidatePickerProps = AgentRecordViewProps & {
+export type AgentCandidatePickerProps = AgentRecordViewProps & AgentVisualProps & {
   title: string
   candidateSet: { id: string; version: string }
   /** Exact displayed results, in page-supplied order, including the inline shortlist. */
@@ -99,19 +98,31 @@ function sharedCandidateFacts(items: readonly AgentCandidate[], id: string): Can
   })
 }
 
-function CandidateFacts({ item, selected, shared = [] }: { item: AgentCandidate; selected: boolean; shared?: CandidateSharedFact[] }) {
+function CandidateStatus({ item, selected }: { item: AgentCandidate; selected: boolean }) {
+  return <AgentStatus unknown={item.status === "unknown"} tone={item.status === "in-collection" ? "success" : item.status === "available" ? selected ? "info" : "neutral" : "warning"}>
+    {item.status === "available" && selected ? "已选" : statusLabels[item.status] || "状态未知"}
+  </AgentStatus>
+}
+
+function CandidateSource({ source }: { source?: string | null }) {
+  return source?.trim() ? <AgentSourceChip label={`来源：${source}`}>{source}</AgentSourceChip>
+    : <span className="text-ui-meta text-muted-foreground">来源：未确认</span>
+}
+
+function CandidateFacts({ item, selected, shared = [], showStatus = true, alternativeRationale }: { alternativeRationale?: string; item: AgentCandidate; selected: boolean; shared?: CandidateSharedFact[]; showStatus?: boolean }) {
   return <div className="min-w-0 space-y-1">
     <div className="flex flex-wrap gap-2">
-      {item.status !== "restricted" && <Badge variant="outline">{item.type}</Badge>}
-      <Badge variant={item.status === "available" ? "outline" : item.status === "in-collection" ? "info" : "warning"}>
-        {item.status === "available" && selected ? "已选" : statusLabels[item.status] || "状态未知"}
-      </Badge>
-      {selected && item.status !== "available" && <Badge variant="outline">已选</Badge>}
+      {item.status !== "restricted" && <span className="text-ui-meta text-muted-foreground">{item.type}</span>}
+      {showStatus && <CandidateStatus item={item} selected={selected} />}
+      {selected && item.status !== "available" && <AgentStatus>已选</AgentStatus>}
     </div>
     {item.status !== "restricted" && <>
       {item.summary && !shared.some(fact => fact.kind === "summary") && <p className="whitespace-pre-wrap break-words text-ui-hint">{item.summary}</p>}
-      {!shared.some(fact => fact.kind === "rationale") && <p className="whitespace-pre-wrap break-words text-ui-hint">选择依据：{item.rationale?.trim() ? item.rationale : "未提供"}</p>}
-      {!shared.some(fact => fact.kind === "source") && <p className="whitespace-pre-wrap break-words text-ui-hint text-muted-foreground">来源：{item.source?.trim() ? item.source : "未确认"}</p>}
+      {(!shared.some(fact => fact.kind === "rationale") || alternativeRationale === undefined && !shared.some(fact => fact.kind === "source")) && <p data-agent-candidate-basis="" className="whitespace-pre-wrap break-words text-ui-hint">
+        {!shared.some(fact => fact.kind === "rationale") && <>选择依据：{item.rationale?.trim() ? item.rationale : "未提供"}</>}
+        {alternativeRationale === undefined && !shared.some(fact => fact.kind === "source") && <> <CandidateSource source={item.source} /></>}
+      </p>}
+      {alternativeRationale !== undefined && <p data-agent-candidate-alternative-basis="" className="whitespace-pre-wrap break-words text-ui-hint">替代依据：{alternativeRationale || "未提供"} <CandidateSource source={item.source} /></p>}
       {shared.some(fact => !fact.all) && <p className="break-words text-ui-hint">共用说明：{shared.filter(fact => !fact.all).map(fact => fact.label).join(" · ")}</p>}
     </>}
     {reasonOf(item) && <p className="whitespace-pre-wrap break-words text-ui-hint">{reasonOf(item)}</p>}
@@ -123,14 +134,15 @@ function CandidateRow({ item, selected, disabledReason, onToggle, children, cont
   children?: ReactNode; content?: ReactNode; compact: boolean; shared: CandidateSharedFact[]; slotTitle: boolean
 }) {
   const id = useId()
-  return <div className={`min-w-0 ${compact ? "space-y-2 py-1" : "space-y-3 py-2"}`}>
-    <Label htmlFor={`${id}-choice`} className="flex min-h-10 min-w-0 items-center gap-3 whitespace-normal pointer-coarse:min-h-11">
+  return <div data-agent-candidate-selected={selected || undefined} className={`min-w-0 space-y-1.5 rounded-lg p-2.5 ${selected ? "bg-info/10" : ""}`}>
+    <Label htmlFor={`${id}-choice`} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2.5 whitespace-normal">
       <Checkbox id={`${id}-choice`} checked={selected} disabled={disabledReason !== undefined}
         aria-label={`选择：${titleOf(item)}`} aria-describedby={`${id}-facts${shared.map(fact => ` ${fact.anchor}`).join("")}${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
         onCheckedChange={checked => { if (disabledReason === undefined) onToggle(checked) }} />
-      <span className={slotTitle ? "text-ui-action" : "min-w-0 break-words text-item-title"}>{slotTitle ? "选择候选" : titleOf(item)}</span>
+      <span className={slotTitle ? "min-w-0 flex-1 text-ui-action" : "min-w-0 flex-1 break-words text-item-title"}>{slotTitle ? "选择候选" : titleOf(item)}</span>
+      <CandidateStatus item={item} selected={selected} />
     </Label>
-    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} shared={shared} /></div>
+    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} shared={shared} showStatus={false} /></div>
     {disabledReason !== undefined && disabledReason !== reasonOf(item) && <p id={`${id}-disabled`} className="break-words text-ui-hint">{disabledReason}</p>}
     {content != null && <div className="min-w-0">{content}</div>}
     {children}
@@ -143,8 +155,8 @@ function CandidateReplacement({ title, target, selected, rationale, reason, onRe
   const id = useId()
   return <li className="min-w-0 space-y-1">
     <p className="break-words text-item-title">替代项：{target ? titleOf(target) : "暂不可确认"}</p>
-    {target && <CandidateFacts item={target} selected={selected} />}
-    {target?.status !== "restricted" && <p className="break-words text-ui-hint">替代依据：{rationale || "未提供"}</p>}
+    {target && <CandidateFacts item={target} selected={selected} alternativeRationale={rationale} />}
+    {!target && <p className="break-words text-ui-hint">替代依据：{rationale || "未提供"}</p>}
     <Button type="button" variant="outline" size="navigation" className="max-w-full whitespace-normal" disabled={reason !== undefined}
       aria-label={`用${target ? titleOf(target) : "替代项"}替换${title}`} aria-describedby={reason !== undefined ? id : undefined}
       onClick={() => { if (reason === undefined) onReplace() }}>替换本次选择</Button>
@@ -184,7 +196,7 @@ function CandidateFilters({ fields, value, onChange, reason }: {
 
 export function AgentCandidatePicker({ title, candidateSet, candidates, relatedCandidates = [], selectedIds, result, page, submission,
   query, filters, sort, confirm, disabledReason, onIntent, onExpand, onBack, renderItem, itemTitleOwner = "picker", notice, details,
-  view = "inline", density = "default" }: AgentCandidatePickerProps) {
+  view = "inline", density = "default", visual }: AgentCandidatePickerProps) {
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   // Current result facts take precedence over retained facts, including access revocation.
   const records = new Map<string, AgentCandidate>(), counts = new Map<string, number>()
@@ -231,7 +243,7 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
     shared={facts.filter(fact => fact.indexes.includes(index))} slotTitle={itemTitleOwner === "slot" && content != null && typeof content !== "boolean"}
     disabledReason={choiceReason(item)} onToggle={checked => toggle(item, checked)}
     content={content}>
-    {item.status !== "restricted" && !!item.alternatives?.length && <ul aria-label={`${titleOf(item)}的替代项`} className="space-y-3">
+    {item.status !== "restricted" && !!item.alternatives?.length && <ul aria-label={`${titleOf(item)}的替代项`} className="space-y-2.5">
       {item.alternatives.map((alternative, index) => {
         const target = records.get(alternative.candidateId), reason = replacementReason(item, alternative)
         return <CandidateReplacement key={index} title={titleOf(item)} target={target} selected={selected.has(alternative.candidateId)} rationale={alternative.reason} reason={reason}
@@ -241,16 +253,21 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
   </CandidateRow>
   }
 
-  return <Card data-candidate-picker-view={view} data-candidate-picker-density={density} className={`min-w-0 ${compact ? "gap-3 p-3" : "gap-4 p-4"}`}>
-    <header className="min-w-0 space-y-2"><h3 className="break-words text-block-title">{title}</h3>
-      <p className="break-words text-ui-hint">{total}{page.label && ` · ${page.label}`}</p>
-      <div role="status" className="space-y-1"><Badge variant={submission.state === "error" || submission.state === "unconfirmed" ? "warning" : "outline"}>{submissionLabels[submission.state]}</Badge>
+  return <AgentSurface level={submission.state === "submitted" ? "normal" : "decision"} data-candidate-picker-view={view} data-candidate-picker-density={density}>
+    <header className="min-w-0 space-y-1.5">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><h3 className="min-w-0 flex-1 break-words text-item-title">{title}</h3>
+        <AgentStatus unknown={submission.state === "unconfirmed"} tone={submission.state === "error" ? "error" : submission.state === "submitted" ? "success" : "neutral"}>{submissionLabels[submission.state]}</AgentStatus>
+      </div>
+      <AgentVisibleMarkers visual={visual} />
+      <AgentMetaLine>{total}{page.label && ` · ${page.label}`} · <span aria-live="polite">本次已选 {selectedIds.length} 项</span>{result.state === "ready" && <> · 当前显示 {candidates.length} 项</>}
+        {(submission.state === "unconfirmed" || candidates.some(item => item.status === "unknown") || total === "总数未知") && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}
+      </AgentMetaLine>
+      <div role="status" className="space-y-1">
         {submission.state !== "idle" && submission.message && <p className="break-words text-ui-hint">{submission.message}</p>}
       </div>
     </header>
-    <section aria-label="本次选择" className="min-w-0 space-y-2">
-      <p className="text-ui-body" aria-live="polite">本次已选 {selectedIds.length} 项</p>
-      {!!selectedIds.length && <ul className="space-y-2">{[...selected].map((value, index) => {
+    {(selectedIds.length > 0 || invalidSelection || editReason !== undefined) && <section aria-label="本次选择" className="min-w-0 space-y-1.5">
+      {!!selectedIds.length && <ul className="space-y-1.5">{[...selected].map((value, index) => {
         const item = records.get(value), reason = identityReason(item) ?? (item ? reasonOf(item) : undefined)
         return <li key={index} className="flex min-w-0 flex-wrap items-start gap-2">
           <div className="min-w-0 flex-1"><p className="break-words text-ui-body">{item ? titleOf(item) : "候选暂不可确认"}</p>
@@ -262,9 +279,9 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       })}</ul>}
       {invalidSelection && <p role="status" className="text-ui-hint">{invalidSelection}</p>}
       {editReason !== undefined && <p id={`${id}-edit`} className="break-words text-ui-hint">{editReason}</p>}
-    </section>
-    {workspace && (query || filters || sort) && <section aria-label="检索与排序" className="min-w-0 space-y-3">
-      {query && <div className="space-y-2"><Label htmlFor={`${id}-query`}>{query.label || "检索候选"}</Label>
+    </section>}
+    {workspace && (query || filters || sort) && <section aria-label="检索与排序" className="min-w-0 space-y-2.5">
+      {query && <div className="space-y-1.5"><Label htmlFor={`${id}-query`}>{query.label || "检索候选"}</Label>
         <Input id={`${id}-query`} value={query.value} readOnly={channelReason !== undefined || query.disabledReason !== undefined}
           aria-describedby={query.disabledReason !== undefined ? `${id}-query-reason` : undefined}
           onChange={event => { if (channelReason === undefined && query.disabledReason === undefined) emit({ ...envelope, type: "query", value: event.currentTarget.value }) }} />
@@ -277,13 +294,12 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
         {sort.description && <p className="break-words text-ui-hint">{sort.description}</p>}
       </div>}
     </section>}
-    <section aria-label="候选结果" aria-busy={result.state === "loading"} className="min-w-0 space-y-3">
+    <section aria-label="候选结果" aria-busy={result.state === "loading"} className="min-w-0 space-y-2.5">
       {message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
       {result.state === "ready" && <>
-        <p className="text-ui-hint">当前显示 {candidates.length} 项</p>
-        {!!facts.length && <section aria-label="候选共用说明" className="min-w-0 space-y-2">{facts.map(fact => <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1">
+        {!!facts.length && <section aria-label="候选共用说明" className="min-w-0 space-y-1.5">{facts.map(fact => <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1">
           {!fact.all && <p className="break-words text-ui-action">适用候选：{fact.indexes.map(index => titleOf(candidates[index])).join("、")}</p>}
-          <p className="whitespace-pre-wrap break-words text-ui-hint">{factLabels[fact.kind]}：{fact.value?.trim() ? fact.value : fact.kind === "source" ? "未确认" : "未提供"}</p>
+          {fact.kind === "source" ? <CandidateSource source={fact.value} /> : <p className="whitespace-pre-wrap break-words text-ui-hint">{factLabels[fact.kind]}：{fact.value?.trim() ? fact.value : "未提供"}</p>}
         </div>)}</section>}
         {workspace && <div className="space-y-1"><div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="navigation" disabled={batchReason !== undefined || !additions.length} aria-describedby={batchReason !== undefined ? `${id}-batch` : undefined}
@@ -293,7 +309,7 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
         </div>{batchReason !== undefined && <p id={`${id}-batch`} className="text-ui-hint">{batchReason}</p>}</div>}
         {workspace ? <div className="min-w-0 [&_table]:table-fixed [&_td]:whitespace-normal [&_th]:whitespace-normal">
           <DataRecordTable rows={candidates.map((item, index) => ({ id: String(index), item, index }))} columns={[{ id: "candidate", label: "候选与选择依据", render: row => renderRow(row.item, row.index) }]} empty="当前没有候选。" />
-        </div> : candidates.length ? <ul className={compact ? "space-y-2" : "space-y-4"}>{candidates.map((item, index) => <li key={index}>{renderRow(item, index)}</li>)}</ul> : <p className="text-ui-hint">当前没有候选。</p>}
+        </div> : candidates.length ? <ul className="space-y-2.5">{candidates.map((item, index) => <li key={index}>{renderRow(item, index)}</li>)}</ul> : <p className="text-ui-hint">当前没有候选。</p>}
       </>}
       {page.more && <div className="space-y-1"><Button type="button" variant="outline" size="navigation" disabled={moreReason !== undefined}
         aria-describedby={moreReason !== undefined || page.more.message || page.more.state === "error" ? `${id}-more` : undefined}
@@ -302,8 +318,8 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       </div>}
     </section>
     <p className="text-ui-hint text-muted-foreground">{notice || "选择或提交不代表已加入集合。"}</p>
-    <RecordDetails>{details}</RecordDetails>
-    <footer className="space-y-2"><div className="flex flex-wrap gap-2">
+    <AgentSourceChip>{details}</AgentSourceChip>
+    <footer className="space-y-1.5"><div className="flex flex-wrap gap-2 @max-[390px]:[&>button]:w-full">
       {confirm && <Button type="button" size="navigation" disabled={confirmReason !== undefined} aria-describedby={confirmReason !== undefined ? `${id}-confirm` : undefined}
         onClick={() => { if (confirmReason === undefined) emit({ ...envelope, type: "confirm", candidateIds: [...selectedIds] }) }}>{confirm.label || "提交本次选择"}</Button>}
       {!!selectedIds.length && <Button type="button" variant="ghost" size="navigation" disabled={editReason !== undefined} aria-describedby={editReason !== undefined ? `${id}-edit` : undefined}
@@ -311,5 +327,5 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       {!workspace && onExpand && <Button type="button" size="navigation" variant="outline" onClick={event => onExpand(event.currentTarget)}>展开筛选与选择</Button>}
       {workspace && onBack && <Button type="button" size="navigation" variant="outline" onClick={onBack}>返回原位置</Button>}
     </div>{confirm && confirmReason !== undefined && <p id={`${id}-confirm`} className="break-words text-ui-hint">{confirmReason || "当前不可提交。"}</p>}</footer>
-  </Card>
+  </AgentSurface>
 }

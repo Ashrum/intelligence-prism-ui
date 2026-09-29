@@ -1,7 +1,12 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
+import { useQuestionPreview } from "./agent-question-presentation"
+import { axisQuestion, completingSquareQuestion } from "./question-reference-fixtures"
+import { QuestionContent } from "../question-content"
 import { Badge } from "../badge"
 import { DocumentRegionViewer } from "../document-region-viewer"
 import { DiagnosisEvidenceTable } from "../learning-components"
@@ -27,7 +32,7 @@ export const evidenceExamples: Record<"scan" | "diagnosis", { label: string; con
     nodes: [{ kind: "object", id: "question-2", title: "第 2 题", type: "题目", version: "校对稿 r2", location: "第 1 页 · 第 2 题", openable: true,
       children: [
         { kind: "evidence", id: "original", title: "原稿第 1 页区域", type: "材料页区域", source: { objectId: "scan-v1", label: "二次函数练习原稿", version: "原稿 v1", location: "第 1 页 · 区域 q2" }, relation: "pending", summary: "原稿中二次项系数为 1/2，仍待逐项核对。", facts: [{ state: "preview-only", description: "示例记录仅说明预览过第 2 题区域。" }, { state: "unknown", description: "读取与成果引用均未确认。" }], preview: <ScanPreview />, openable: true },
-        { kind: "evidence", id: "recognized", title: "第 2 题识别文本", type: "识别文本", source: { objectId: "recognized-v1", label: "首次识别稿", version: "识别稿 v1", location: "第 2 题 · 题干第 1 段", snapshot: "首次识别时的版本" }, relation: "supports", summary: "识别文本写为 y = x² − 2x + 3，二次项系数与原稿不同。", facts: [{ state: "incomplete", description: "未提供本次识别的完整记录。" }], preview: <p className="text-read-body">已知 y = x² − 2x + 3，求对称轴。</p>, openable: true },
+        { kind: "evidence", id: "recognized", title: "第 2 题识别文本", type: "识别文本", source: { objectId: "recognized-v1", label: "首次识别稿", version: "识别稿 v1", location: "第 2 题 · 题干第 1 段", snapshot: "首次识别时的版本" }, relation: "supports", summary: "识别文本写为 y = x² − 2x + 3，二次项系数与原稿不同。", facts: [{ state: "incomplete", description: "未提供本次识别的完整记录。" }], preview: <QuestionContent question={axisQuestion} />, openable: true },
       ] }],
   },
   diagnosis: {
@@ -52,6 +57,7 @@ export const evidenceExamples: Record<"scan" | "diagnosis", { label: string; con
 }
 
 export function AgentEvidenceDrilldownDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof evidenceExamples>("scan")
   const [path, setPath] = useState<AgentEvidencePath>([])
   const [narrow, setNarrow] = useState(false)
@@ -61,18 +67,26 @@ export function AgentEvidenceDrilldownDemo() {
   const inlineHeading = useRef<HTMLHeadingElement>(null)
   const pendingFocus = useRef(false)
   const example = evidenceExamples[purpose]
+  const questionPreview = useQuestionPreview([axisQuestion, completingSquareQuestion])
+  const questionReference = <div className="min-w-0 text-ui-hint">关联题目（示例）：{questionPreview.reference(purpose === "scan" ? axisQuestion : completingSquareQuestion, purpose === "scan" ? 2 : 4)}</div>
   useLayoutEffect(() => {
     if (pendingFocus.current) { pendingFocus.current = false; heading.current?.focus(); heading.current?.scrollIntoView({ block: "nearest" }) }
   }, [path])
   const navigate = (next: AgentEvidencePath) => { pendingFocus.current = true; setPath([...next]) }
-  return <section id="evidence-drilldown" className="mb-12 space-y-5">
-    <h2 className="text-section-title">下钻与证据浏览 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}{questionReference}<AgentEvidenceDrilldown conclusion={example.conclusion} nodes={example.nodes} path={path}
+          notice="查看证据不改变读取、引用或教师对照记录。"
+          details={<p>固定示例，尚未连接真实证据服务。已引用只说明存在引用记录，仍需核对结论与证据是否一致。历史证据保留当时版本。</p>}
+          onNavigate={navigate}
+          onOpen={intent => setFeedback(`示例：已请求打开${intent.kind === "object" ? "对象" : "证据"}，证据记录保持原样。`)}
+           view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  return <section id={presentation.embedded ? undefined : "evidence-drilldown"} className="mb-12 space-y-5">{questionPreview.panel}{questionReference}
+    {!presentation.embedded && <h2 className="text-section-title">下钻与证据浏览</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：选择对象、查看证据与返回，三种用法共享同一组记录。</p>
     <div className="flex flex-wrap gap-2" aria-label="证据示例用途">{Object.entries(evidenceExamples).map(([key, item]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as typeof purpose); setPath([]); setFeedback(""); origin.current = null }}>{item.label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     {purpose === "diagnosis" && <DiagnosisEvidenceTable items={[{ id: example.conclusion.id, title: example.conclusion.statement, observation: example.conclusion.summary, source: "本次练习（示例）", location: "学生 → 题目 → 作答片段", status: <Badge variant="outline">待核对</Badge>, actions: <Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate([]) }}>查看诊断依据</Button> }]} />}
     <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate(example.firstEvidence) }}>定位首条证据示例</Button></div>
     <p role="status" className="text-ui-hint">{feedback || "查看与返回不会改变证据记录。"}</p>
-    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-3"}>
+    <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 @min-[1100px]:grid-cols-3"}>
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整证据链'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => <section key={label} aria-label={label} className="min-w-0 space-y-3">
         <h3 ref={index === 1 ? heading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
         <AgentEvidenceDrilldown conclusion={example.conclusion} nodes={example.nodes} path={path} view={view} density={density}

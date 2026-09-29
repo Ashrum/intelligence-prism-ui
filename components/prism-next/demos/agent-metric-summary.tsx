@@ -1,7 +1,11 @@
 "use client"
 
+import { useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../button"
+import { useQuestionPreview } from "./agent-question-presentation"
+import { axisQuestion } from "./question-reference-fixtures"
 import { AgentMetricSummary, type AgentMetricDrilldownIntent, type AgentMetricSummaryProps } from "../agent-metric-summary"
 import { AgentEvidenceDrilldown } from "../agent-evidence-drilldown"
 
@@ -70,7 +74,10 @@ export const metricSummaryExamples: Record<"learning" | "grading", MetricFixture
 }
 
 export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "learning" | "grading"; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = metricSummaryExamples[purpose]
+  const questionPreview = useQuestionPreview([axisQuestion])
+  const questionReference = <div className="min-w-0 text-ui-hint">相关题目（示例）：{questionPreview.reference(axisQuestion, 2)}</div>
   const [snapshot, setSnapshot] = useState(false)
   const [selected, setSelected] = useState<AgentMetricDrilldownIntent | null>(null)
   const workspace = useRef<HTMLElement>(null)
@@ -92,7 +99,8 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
   const selectedLabel = metric?.access === "available" ? metric.label : anomaly?.access === "available" ? anomaly.text : "指标依据"
   const selectedBasis = selected?.kind === "change" && metric?.access === "available" ? metric.change?.basis : anomaly?.access === "available" ? anomaly.basis : undefined
   const basisVersion = selected && selected.kind !== "anomaly" ? selected.metricVersion : selected?.version
-  return <div className="min-w-0 space-y-5">
+  if (presentation.previewOnly) return <>{questionPreview.panel}{questionReference}<AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></>
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}{questionReference}
     <p className="text-ui-hint">固定示例 · 三处共用同一份数据；下钻打开示例依据，数值和状态保持不变。</p>
     <Button type="button" variant="outline" size="navigation" aria-pressed={snapshot} onClick={() => { setSnapshot(value => !value); setSelected(null) }}>切换当时数据示例</Button>
     {selected && <section ref={evidence} tabIndex={-1} aria-label="指标依据示例" className="min-w-0"><AgentEvidenceDrilldown view="workspace" conclusion={{ id: "metric-fixture-basis", statement: `指标依据 · ${selectedLabel}`, version: selected.version,
@@ -106,16 +114,18 @@ export function MetricSummaryExample({ purpose, narrow = false }: { purpose: "le
       ["inline", "default", "对话指标摘要"], ["workspace", "default", "完整指标体系"], ["inline", "compact", "紧凑指标摘要"],
     ] as const).map(([view, density, label]) => <section key={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentMetricSummary {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentMetricSummary visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }
 
 export function AgentMetricSummaryDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<"learning" | "grading">("learning")
   const [narrow, setNarrow] = useState(false)
-  return <section id="metric-summary" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">指标摘要 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <MetricSummaryExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "metric-summary"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">指标摘要</h2>}
     <div className="flex flex-wrap gap-3">{(["learning", "grading"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "learning" ? "班级学情示例" : "批阅进度示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

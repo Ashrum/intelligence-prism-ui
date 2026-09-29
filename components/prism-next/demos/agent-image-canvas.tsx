@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useLayoutEffect, useRef, useState } from "react"
 import { AgentImageCanvas, type AgentCanvasImage, type AgentImageCanvasIntent, type AgentImageCapabilities } from "../agent-image-canvas"
 import { Button } from "../button"
@@ -26,11 +28,13 @@ export const imageCanvasExamples: readonly AgentCanvasImage[] = [
 export const imageCanvasCapabilities: AgentImageCapabilities = { view: { supported: true }, zoom: { supported: true }, annotate: { supported: true }, crop: { supported: false, reason: "当前未连接裁切工具，可继续查看和标注。" }, compose: { supported: true } }
 
 export function AgentImageCanvasDemo() {
+  const presentation = useAgentDemoPresentation()
   const [images, setImages] = useState(imageCanvasExamples)
   const [selectedImageId, setSelectedImageId] = useState<string | null>(images[0].id)
   const [comparisonIds, setComparisonIds] = useState<readonly string[]>([])
   const [view, setView] = useState<"inline" | "workspace">("inline")
   const [compact, setCompact] = useState(false), [narrow, setNarrow] = useState(false), [crop, setCrop] = useState(false)
+  const [showRegionSourceLabels, setShowRegionSourceLabels] = useState(true)
   const [feedback, setFeedback] = useState("全部为模拟图片，刷新后还原。")
   const panel = useRef<HTMLDivElement>(null)
   const nextRegion = useRef(0), previousView = useRef(view)
@@ -55,17 +59,23 @@ export function AgentImageCanvasDemo() {
     if (intent.type === "crop-request") setFeedback("已请求裁切；示例不会生成新图片。")
     if (intent.type === "open-source") setFeedback("来源为本页人工绘制的示意图，没有外部原稿。")
   }
-  return <section id="image-canvas" className="min-w-0 space-y-5 py-6">
-    <h2 className="text-section-title">图像查看与画布</h2>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentImageCanvas title="图片材料（模拟）" imageSet={{ id: "example-images", version: "example-v1" }} images={images} selectedImageId={selectedImageId} comparisonIds={comparisonIds}
+        showRegionSourceLabels={showRegionSourceLabels}
+        capabilities={{ ...imageCanvasCapabilities, crop: crop ? { supported: true } : imageCanvasCapabilities.crop }}   onIntent={onIntent}
+        details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  return <section id={presentation.embedded ? undefined : "image-canvas"} className="min-w-0 space-y-5 py-6">
+    {!presentation.embedded && <h2 className="text-section-title">图像查看与画布</h2>}
     <p className="text-ui-body">四页扫描、学生作答、教学插图与不可用截图。只用于演示查看与范围选择。</p>
     <div className="flex flex-wrap gap-2">
       <Button type="button" variant="outline" aria-pressed={compact} onClick={() => setCompact(value => !value)}>紧凑密度</Button>
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
+      <Button type="button" variant="outline" aria-pressed={showRegionSourceLabels} onClick={() => setShowRegionSourceLabels(value => !value)}>显示区域来源标签</Button>
       <Button type="button" variant="outline" aria-pressed={crop} onClick={() => setCrop(value => !value)}>演示裁切范围选择</Button>
     </div>
     <p role="status" className="text-ui-hint">{feedback}</p>
     <div ref={panel} tabIndex={-1} aria-label="图片材料示例" className={narrow ? "min-w-0 w-full max-w-[320px]" : "min-w-0"}>
       <AgentImageCanvas title="图片材料（模拟）" imageSet={{ id: "example-images", version: "example-v1" }} images={images} selectedImageId={selectedImageId} comparisonIds={comparisonIds}
+        showRegionSourceLabels={showRegionSourceLabels}
         capabilities={{ ...imageCanvasCapabilities, crop: crop ? { supported: true } : imageCanvasCapabilities.crop }} view={view} density={compact ? "compact" : "default"} onIntent={onIntent}
         onExpand={() => setView("workspace")} onBack={() => setView("inline")}
         details={<p>倾斜、模糊与区域均为人工示例，不表示识别结果。并列比较不会合成图片；示例标注仅在本次页面中保留。</p>} />

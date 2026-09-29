@@ -1,0 +1,4 @@
+/* Review-page CSS owns layout only. All bar and control visuals come from Prism/coss. */
+.workspace-app-bar-scroll { width:100%; overflow-x:auto; padding-block:4px; }
+.workspace-app-bar-preview { min-width:0; }
+.workspace-app-bar-directory { flex-shrink:0; min-width:0; }

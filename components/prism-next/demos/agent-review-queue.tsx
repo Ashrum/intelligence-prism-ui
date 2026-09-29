@@ -1,9 +1,13 @@
 "use client"
 
+import { useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { AgentReviewQueue, type AgentReviewQueueItem, type AgentReviewQueueProps, type AgentReviewQueueBatchIntent } from "../agent-review-queue"
 import { agentItemReviewLabels, type AgentItemReviewState } from "../agent-item-reviewer"
 import { Button } from "../button"
+import { useQuestionPreview } from "./agent-question-presentation"
+import { axisQuestion } from "./question-reference-fixtures"
 
 type QueuePurpose = "p04" | "grading"
 export const reviewQueueExamples: Record<QueuePurpose, { title: string; items: readonly AgentReviewQueueItem[] }> = {
@@ -50,6 +54,9 @@ export function receiveQueueExampleReceipt(items: readonly AgentReviewQueueItem[
 }
 
 export function ReviewQueueExample({ purpose, narrow = false }: { purpose: QueuePurpose; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
+  const questionPreview = useQuestionPreview([axisQuestion])
+  const questionReference = <div className="min-w-0 text-ui-hint">相关题目（示例）：{questionPreview.reference(axisQuestion, 2)}</div>
   const fixture = reviewQueueExamples[purpose]
   const [items, setItems] = useState(fixture.items)
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([])
@@ -80,7 +87,8 @@ export function ReviewQueueExample({ purpose, narrow = false }: { purpose: Queue
     notice: "固定示例，未连接真实复核服务。",
     details: <p>队列负责查看全部、选择下一项与批量处理。单题的原稿、修订和查询在单项复核中完成；例如对称轴 <math className="prism-math" aria-label="x 等于负 b 除以二 a"><mi>x</mi><mo>=</mo><mo>−</mo><mfrac><mi>b</mi><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></math>。展开和返回保留当前选择。</p>,
   }
-  return <div className="min-w-0 space-y-5">
+  if (presentation.previewOnly) return <>{questionPreview.panel}{questionReference}<AgentReviewQueue visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></>
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}{questionReference}
     {purpose === "grading" && <section aria-label="逐项示例回执" className="space-y-3">
       <p className="text-ui-hint">在完整队列中选择前两份作答并批量确认，再分别载入回执。</p>
       <div className="flex flex-wrap gap-3">{items.filter(item => !item.processingByOther).map((item, index) => <Button key={item.id} type="button" variant="outline"
@@ -94,15 +102,17 @@ export function ReviewQueueExample({ purpose, narrow = false }: { purpose: Queue
       ["inline", "default", "待办摘要"], ["workspace", "default", "批量审核工作区"], ["inline", "compact", "紧凑待办摘要"],
     ] as const).map(([view, density, label]) => <section key={label} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentReviewQueue {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentReviewQueue visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }
 
 export function AgentReviewQueueDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<QueuePurpose>("p04"), [narrow, setNarrow] = useState(false)
-  return <section id="review-queue" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">审核队列 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ReviewQueueExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "review-queue"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">审核队列</h2>}
     <div className="flex flex-wrap gap-3">{(["p04", "grading"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"}
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "p04" ? "P04 逐题校对示例" : "批阅复核示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

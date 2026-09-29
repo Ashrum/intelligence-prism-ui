@@ -1,0 +1,234 @@
+[
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-5 p-5\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"inline\" data-density=\"default\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">来源：教研组</p></header><div class=\"min-w-0 space-y-5\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干摘要</p></div><div data-closed=\"\" data-slot=\"collapsible\"><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 px-[calc(--spacing(3)-1px)] border-input bg-popover not-dark:bg-clip-padding text-foreground shadow-xs/5 not-disabled:not-active:not-data-pressed:before:shadow-[0_1px_--theme(--color-black/4%)] hover:bg-accent/50 data-pressed:bg-accent/50 *:data-[slot=button-loading-indicator]:text-foreground dark:bg-input/32 dark:data-pressed:bg-input/64 dark:hover:bg-input/64 dark:not-disabled:before:shadow-[0_-1px_--theme(--color-white/2%)] dark:not-disabled:not-active:not-data-pressed:before:shadow-[0_-1px_--theme(--color-white/6%)] [:disabled,:active,[data-pressed]]:shadow-none h-auto max-w-full whitespace-normal py-2 sm:h-auto\" aria-disabled=\"false\" data-slot=\"collapsible-trigger\" tabindex=\"0\" aria-expanded=\"false\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-chevron-down\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"></path></svg>展开完整题目</button></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "view": "workspace"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-5 p-5\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"workspace\" data-density=\"default\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">来源：教研组</p></header><nav aria-label=\"对象分区目录\" class=\"min-w-0 space-y-2\"><h4 class=\"text-ui-action\">分区目录</h4><ol class=\"flex min-w-0 flex-wrap gap-2\"><li class=\"min-w-0\"><span class=\"break-words text-ui-body\" aria-current=\"location\">完整题目</span></li></ol></nav><div class=\"min-w-0 space-y-5\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干全文</p></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "density": "compact"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-3 p-4\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"inline\" data-density=\"compact\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">来源：教研组</p></header><div class=\"min-w-0 space-y-3\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干摘要</p></div><div data-closed=\"\" data-slot=\"collapsible\"><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 px-[calc(--spacing(3)-1px)] border-input bg-popover not-dark:bg-clip-padding text-foreground shadow-xs/5 not-disabled:not-active:not-data-pressed:before:shadow-[0_1px_--theme(--color-black/4%)] hover:bg-accent/50 data-pressed:bg-accent/50 *:data-[slot=button-loading-indicator]:text-foreground dark:bg-input/32 dark:data-pressed:bg-input/64 dark:hover:bg-input/64 dark:not-disabled:before:shadow-[0_-1px_--theme(--color-white/2%)] dark:not-disabled:not-active:not-data-pressed:before:shadow-[0_-1px_--theme(--color-white/6%)] [:disabled,:active,[data-pressed]]:shadow-none h-auto max-w-full whitespace-normal py-2 sm:h-auto\" aria-disabled=\"false\" data-slot=\"collapsible-trigger\" tabindex=\"0\" aria-expanded=\"false\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-chevron-down\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"></path></svg>展开完整题目</button></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "view": "workspace",
+      "density": "compact"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-3 p-4\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"workspace\" data-density=\"compact\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">来源：教研组</p></header><nav aria-label=\"对象分区目录\" class=\"min-w-0 space-y-2\"><h4 class=\"text-ui-action\">分区目录</h4><ol class=\"flex min-w-0 flex-wrap gap-2\"><li class=\"min-w-0\"><span class=\"break-words text-ui-body\" aria-current=\"location\">完整题目</span></li></ol></nav><div class=\"min-w-0 space-y-3\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干全文</p></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        },
+        {
+          "id": "extra",
+          "title": "补充",
+          "content": "补充全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "view": "workspace"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-5 p-5\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"workspace\" data-density=\"default\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">来源：教研组</p></header><nav aria-label=\"对象分区目录\" class=\"min-w-0 space-y-2\"><h4 class=\"text-ui-action\">分区目录</h4><ol class=\"flex min-w-0 flex-wrap gap-2\"><li class=\"min-w-0\"><span class=\"break-words text-ui-body\" aria-current=\"location\">完整题目</span></li><li class=\"min-w-0\"><span class=\"break-words text-ui-body\">补充</span></li></ol></nav><div class=\"min-w-0 space-y-5\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干全文</p></div></section><section id=\"_R_0_-section-1\" aria-labelledby=\"_R_0_-section-1-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-1-title\" class=\"break-words text-block-title\">补充</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">补充全文</p></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v1",
+        "label": "v1",
+        "state": "historical",
+        "currentLabel": "v2",
+        "difference": "补充评分说明"
+      },
+      "access": {
+        "state": "available",
+        "scope": "本题",
+        "readOnlyReason": "仅可查看"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "view": "workspace"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-5 p-5\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"workspace\" data-density=\"default\" data-historical=\"true\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">历史版本（只读） · 当时版本：v1</p><p class=\"break-words text-ui-hint\">当前版本：v2</p><p class=\"break-words text-ui-hint\">可见范围：本题</p><p class=\"break-words text-ui-hint\">只读：仅可查看</p><p class=\"break-words text-ui-hint\">来源：教研组</p><p role=\"status\" class=\"break-words text-ui-hint\">版本差异：补充评分说明</p></header><nav aria-label=\"对象分区目录\" class=\"min-w-0 space-y-2\"><h4 class=\"text-ui-action\">分区目录</h4><ol class=\"flex min-w-0 flex-wrap gap-2\"><li class=\"min-w-0\"><span class=\"break-words text-ui-body\" aria-current=\"location\">完整题目</span></li></ol></nav><div class=\"min-w-0 space-y-5\"><section id=\"_R_0_-section-0\" aria-labelledby=\"_R_0_-section-0-title\" class=\"min-w-0 space-y-2\" data-object-section=\"\"><h4 id=\"_R_0_-section-0-title\" class=\"break-words text-block-title\">完整题目</h4><div class=\"min-w-0 max-w-[40em] break-words text-read-body\"><p class=\"whitespace-pre-wrap\">题干全文</p></div></section></div><p class=\"break-words text-ui-hint text-muted-foreground\">查看不会生成读取或引用证据。</p></div>"
+  },
+  {
+    "props": {
+      "object": {
+        "id": "object-ref",
+        "type": "题目",
+        "name": "默认题目",
+        "displayId": "Q-3"
+      },
+      "version": {
+        "id": "v2",
+        "label": "v2",
+        "state": "current"
+      },
+      "access": {
+        "state": "restricted",
+        "reason": "授权已撤销"
+      },
+      "source": "教研组",
+      "sections": [
+        {
+          "id": "stem",
+          "title": "完整题目",
+          "summary": "题干摘要",
+          "content": "题干全文"
+        }
+      ],
+      "activeSection": "stem",
+      "notice": "查看不会生成读取或引用证据。",
+      "view": "workspace"
+    },
+    "html": "<div class=\"relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] @container min-w-0 gap-5 p-5\" data-slot=\"card\" aria-labelledby=\"_R_0_-title\" data-agent-object-view=\"workspace\" data-density=\"default\"><header class=\"min-w-0 space-y-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm border-input bg-background text-foreground dark:bg-input/32 [button&amp;,a&amp;]:hover:bg-accent/50 dark:[button&amp;,a&amp;]:hover:bg-input/48\" data-slot=\"badge\">题目</span><h3 id=\"_R_0_-title\" class=\"break-words text-block-title\">默认题目</h3></div><p class=\"break-words text-ui-hint\">编号：Q-3</p><p class=\"break-words text-ui-hint\">当前状态 · 当前版本：v2</p><div class=\"space-y-2\"><span class=\"relative inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-sm border border-transparent font-medium outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-3 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [button&amp;,a&amp;]:cursor-pointer [button&amp;,a&amp;]:pointer-coarse:after:absolute [button&amp;,a&amp;]:pointer-coarse:after:size-full [button&amp;,a&amp;]:pointer-coarse:after:min-h-11 [button&amp;,a&amp;]:pointer-coarse:after:min-w-11 h-6.5 min-w-6.5 px-[calc(--spacing(1.5)-1px)] text-base sm:h-5.5 sm:min-w-5.5 sm:text-sm bg-warning/8 text-warning-foreground dark:bg-warning/16\" data-slot=\"badge\">访问受限</span><p class=\"break-words text-ui-hint\">授权已撤销</p></div></header></div>"
+  }
+]

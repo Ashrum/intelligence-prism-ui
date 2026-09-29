@@ -52,9 +52,8 @@ function freeze(value) {
 }
 const actionNodes = extra => capture(extra).filter(node => node.props.onClick && node.props['aria-label']);
 function openedDetails(extra) {
-  const node = capture(extra).find(node => node.type.name === 'RecordDetails');
-  const gate = node.type(node.props);
-  return gate ? render(React.cloneElement(gate, { open: true })) : '';
+  const node = capture(extra).find(node => node.type.name === 'AgentSourceChip');
+  return node?.props.children ? render(h(React.Fragment, null, node.props.children)) : '';
 }
 
 

@@ -238,7 +238,7 @@ test('runtime has no business store, scheduling, timers, persistence, private mo
   const source = await readFile(new URL('../components/prism-next/agent-plan-builder.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /localStorage|sessionStorage|setTimeout|setInterval|ole-school-workbench|Date\.now|text-xs|text-sm|text-\[/);
   assert.match(source, /<LearningTaskList/); assert.match(source, /<MilestoneList/);
-  const page = await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'); assert.match(page, /<AgentPlanBuilderDemo\/>/);
+  const page = await readFile(new URL('../components/prism-next/demos/agent-component-examples.tsx', import.meta.url), 'utf8'); assert.match(page, /<AgentPlanBuilderDemo\s*\/>/);
 });
 
 test('plan module dependency graph excludes calendar implementations even before tree shaking', async () => {

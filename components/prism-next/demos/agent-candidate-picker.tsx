@@ -1,10 +1,13 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useId, useRef, useState } from "react"
 import { Label } from "@/components/coss/label"
 import { AgentCandidatePicker, type AgentCandidate, type AgentCandidateIntent, type AgentCandidatePickerProps, type AgentCandidateResult, type AgentCandidateSubmission } from "../agent-candidate-picker"
 import { Button } from "../button"
-import { QuestionCard } from "../question-card"
+import { QuestionSummaryRow } from "../question-card"
+import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { QuestionSelect } from "../question-controls"
 import { questionSamples } from "../fixtures/question-samples"
 
@@ -36,7 +39,9 @@ export const candidatePickerExamples: Record<"questions" | "learners", { title: 
 
 /** A labelled, in-memory fixture page. Search/order/pages and receipts never live in the component. */
 export function CandidatePickerExample({ purpose, narrow = false }: { purpose: keyof typeof candidatePickerExamples; narrow?: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const fixture = candidatePickerExamples[purpose], stateId = useId()
+  const questionPreview = useQuestionPreview(questionSamples)
   const [items, setItems] = useState<readonly AgentCandidate[]>(fixture.candidates)
   const [selectedIds, setSelectedIds] = useState<readonly string[]>([fixture.candidates[0].id])
   const [query, setQuery] = useState("")
@@ -90,16 +95,19 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
     itemTitleOwner: purpose === "questions" ? "slot" : "picker",
     renderItem: purpose === "questions" ? (item, context) => {
       const question = questionSamples.find(question => question.id === item.id) ?? (item.id === "example-extra-question" ? questionSamples[0] : undefined)
-      // Use a readable fixture reference in QuestionCard's metadata, never an opaque business ID.
-      return question ? <div className="min-w-0 space-y-1">
-        <QuestionCard question={{ ...question, title: item.title, id: `示例题-${questionSamples.indexOf(question) + 1}`, ...(context.view === "inline" ? { options: undefined, parts: undefined, figure: undefined } : {}) }} showPoints={false} />
-      </div> : null
+      if (!question) return null
+      const displayed = { ...question, id: item.id, title: item.title }
+      const number = fixture.candidates.findIndex(candidate => candidate.id === item.id) + 1
+      return context.view === "workspace" ? <QuestionExampleCard question={displayed} number={number} />
+        : <QuestionSummaryRow question={displayed} number={number} headingLevel={4}
+          onOpen={trigger => questionPreview.openQuestion(displayed, number, trigger)} />
     } : undefined,
     details: <p>仅为本页演示。搜索、筛选、排序和追加结果来自固定数据；选择不代表已提交，回执与集合记录分别载入。公式与题目内容由既有题卡提供，刷新后还原。</p>,
   }
-  return <div className="min-w-0 space-y-5">
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && presentation.view !== "workspace" }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
-    {purpose === "questions" && <p className="text-ui-hint">题面节选 · 示例：下方简要候选展示节选，展开后显示完整题面。</p>}
+    {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“在右栏查看”打开完整题目；对话内不展开题目详情。</p>}
     <div className="space-y-2"><Label htmlFor={stateId}>结果状态示例</Label><QuestionSelect id={stateId} label="结果状态示例" value={state} onChange={value => setState(value as AgentCandidateResult["state"])}
       items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "错误" }]} /></div>
     <div className="flex flex-wrap gap-2" role="group" aria-label="载入示例事实">
@@ -119,15 +127,17 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
       ["inline", "default", "少量候选快速选择"], ["workspace", "default", "筛选、排序与批量选择"], ["inline", "compact", "紧凑候选选择"],
     ] as const).map(([view, density, label]) => <section key={label} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentCandidatePicker {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && view === "inline" }} {...common} view={view} density={density} />
     </section>)}</div>
   </div>
 }
 
 export function AgentCandidatePickerDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof candidatePickerExamples>("questions"), [narrow, setNarrow] = useState(false)
-  return <section id="candidate-picker" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">候选选择器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <CandidatePickerExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "candidate-picker"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">候选选择器</h2>}
     <div className="flex flex-wrap gap-3">{(["questions", "learners"] as const).map(value => <Button key={value} type="button" size="navigation"
       variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "questions" ? "候选题示例" : "候选学生与知识点示例"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

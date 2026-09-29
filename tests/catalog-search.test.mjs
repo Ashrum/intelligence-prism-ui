@@ -1,15 +1,18 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+const workerPromise = import(new URL('../dist/server/index.js', import.meta.url))
 import { components, searchComponents } from '../lib/prism-next/catalog.ts'
 
 for (const query of ['执行确认', '任务进度', '上下文摘要', '摘要预览', 'AgentExecutionConfirmation']) {
-  test(`semantic catalog query ${query} reaches the existing Agent sample`, () => {
+  test(`semantic catalog query ${query} reaches the existing Agent sample`, async () => {
     const results = searchComponents(query)
     assert.ok(results.length >= 1)
     const agent = results.find(result => result.item.id === 'agent-components')
     assert.equal(agent?.href, '/next/components/agent-components#context-summary-review')
-    const demo = readFileSync(new URL('../components/prism-next/demos/agent-semantic-group.tsx', import.meta.url), 'utf8')
+    const { default: worker } = await workerPromise
+    const response = await worker.fetch(new Request('http://localhost/next/components/agent-components', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} })
+    assert.equal(response.status, 200)
+    const demo = await response.text()
     assert.ok(demo.includes('id="context-summary-review"'))
   })
 }

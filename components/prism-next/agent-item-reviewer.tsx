@@ -4,11 +4,11 @@ import { useId, type ReactNode } from "react"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Button } from "@/components/coss/button"
-import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Textarea } from "@/components/coss/textarea"
-import { Badge } from "./badge"
-import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+import type { AgentRecordViewProps } from "./agent-record-parts"
+import { AgentMetaLine, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, type AgentVisualProps } from "./agent-visual-parts"
+import { AgentTextDiff, type AgentTextComparison } from "./agent-text-diff"
 
 export type AgentItemReviewState = "waiting-human" | "draft" | "waiting" | "unknown" | "resolved" | "failed" | "expired"
 export type AgentItemReviewTarget = { id: string; title: string; version: string }
@@ -57,7 +57,7 @@ export type AgentItemReviewDraft<T> = {
   render: (editor: AgentItemReviewEditor<T>) => ReactNode
 }
 
-export type AgentItemReviewerProps<T = string> = AgentRecordViewProps & {
+export type AgentItemReviewerProps<T = string> = AgentRecordViewProps & AgentVisualProps & {
   item: AgentItemReviewTarget
   review: AgentItemReview
   checkpoints: readonly string[]
@@ -70,6 +70,8 @@ export type AgentItemReviewerProps<T = string> = AgentRecordViewProps & {
   /** Already-authorized, passive content. Neither slot may introduce submission actions. */
   evidence?: ReactNode
   comparison?: ReactNode
+  /** Optional plain-text presentation. Opaque comparison slots remain untouched and take precedence. */
+  textComparison?: AgentTextComparison
   history?: readonly AgentItemReviewRecord[]
   notice?: string
   disabledReason?: string
@@ -85,7 +87,7 @@ export const agentItemReviewLabels: Readonly<Record<AgentItemReviewState, string
 }
 
 function ReviewStatus({ state }: { state: AgentItemReviewState }) {
-  return <Badge variant={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{agentItemReviewLabels[state]}</Badge>
+  return <AgentStatus unknown={state === "unknown"} tone={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{agentItemReviewLabels[state]}</AgentStatus>
 }
 
 function ReviewAction({ action, intent, title, primary, disabledReason, onAction }: {
@@ -101,7 +103,7 @@ function ReviewAction({ action, intent, title, primary, disabledReason, onAction
     !intent.itemId.trim() && "复核对象未确认。", !intent.version.trim() && "复核依据版本未确认。",
     !intent.actionId.trim() && "操作未确认。", intent.kind === "query" && !intent.requestId.trim() && "原请求未确认，暂不可查询。",
   ].filter(Boolean).join("；")
-  return <li className="min-w-0 space-y-2">
+  return <li className="min-w-0 space-y-1.5">
     <Button type="button" variant={primary ? "default" : "outline"} className="max-w-full whitespace-normal"
       aria-label={`${action.label}：${title}`} aria-describedby={`${id}-impact${reason ? ` ${id}-disabled` : ""}`} disabled={!!reason}
       onClick={() => { if (!reason) onAction?.(intent) }}>{action.label}</Button>
@@ -111,24 +113,21 @@ function ReviewAction({ action, intent, title, primary, disabledReason, onAction
 }
 
 function ReviewHistory({ records, compact }: { records: readonly AgentItemReviewRecord[]; compact: boolean }) {
-  return <section aria-label="复核记录" className="min-w-0 space-y-3">
+  return <section aria-label="复核记录" className="min-w-0 space-y-2.5">
     <h4 className="text-block-title">复核记录（当时事实）</h4>
-    {records.length ? <ol className={compact ? "space-y-3" : "space-y-5"}>{records.map(record => <li key={record.id} data-review-record={record.id} className="min-w-0 space-y-2">
+    {records.length ? <ol className={compact ? "space-y-2.5" : "space-y-5"}>{records.map(record => <li key={record.id} data-review-record={record.id} className="min-w-0 space-y-1.5">
       <p className="break-words text-item-title">{record.item.title}</p>
-      <p className="break-words text-ui-hint">当时对象：{record.item.id} · 当时依据版本：{record.item.version || "版本未确认"}</p>
+      <AgentMetaLine>当时对象：{record.item.id} · 当时依据版本：{record.item.version || "版本未确认"} · 当时复核人：{record.reviewer || "复核人未确认"} · 记录时间：{record.time || "时间未确认"} · 当时结果版本：{record.resultVersion || "版本未确认"}{record.request && <span data-request-id={record.request.id}> · 当时请求：{record.request.label}</span>}</AgentMetaLine>
       <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当时状态</span><ReviewStatus state={record.state} /></div>
       <p className="break-words text-ui-body">{record.description}</p>
-      <p className="break-words text-ui-hint">当时复核人：{record.reviewer || "复核人未确认"} · 记录时间：{record.time || "时间未确认"}</p>
-      <p className="break-words text-ui-hint">当时结果版本：{record.resultVersion || "版本未确认"}</p>
       <p className="whitespace-pre-wrap break-words text-read-body">当时理由：{record.reason || "未记录"}</p>
-      {record.request && <p className="break-words text-ui-hint" data-request-id={record.request.id}>当时请求：{record.request.label}</p>}
     </li>)}</ol> : <p className="text-ui-hint text-muted-foreground">暂无复核记录。</p>}
   </section>
 }
 
 /** Semantic 17. No local draft, receipt, history, clock, persistence or execution state. */
 export function AgentItemReviewer<T = string>({ item, review, checkpoints, summary, versionChange, restart, draft, reason,
-  evidence, comparison, history = [], view = "inline", density = "default", notice, details, disabledReason, onAction, onExpand, onBack,
+  evidence, comparison, textComparison, history = [], view = "inline", density = "default", notice, details, disabledReason, onAction, onExpand, onBack, visual,
 }: AgentItemReviewerProps<T>) {
   const id = useId()
   const compact = density === "compact"
@@ -151,55 +150,55 @@ export function AgentItemReviewer<T = string>({ item, review, checkpoints, summa
   const statusText = statusMessages[0]
   const explanations = [...new Set([...statusMessages.slice(1), notice].filter((message): message is string => !!message && message !== statusText))]
   const context = { itemId: item.id, version: item.version }
-  return <Card aria-labelledby={`${id}-title`} data-agent-item-review-view={view} data-density={density} data-review-state={state}
-    data-item-id={item.id} className={`@container min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
-    <header className="min-w-0 space-y-2">
+  return <AgentSurface aria-labelledby={`${id}-title`} data-agent-item-review-view={view} data-density={density} data-review-state={state}
+    data-item-id={item.id}>
+    <header className="min-w-0 space-y-1.5">
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-        <h3 id={`${id}-title`} className="break-words text-block-title">{item.title}</h3>
+        <h3 id={`${id}-title`} className="break-words text-item-title">{item.title}</h3>
         <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当前状态</span><ReviewStatus state={state} />
-          {expired && pending && <Badge variant="warning">{review.state === "unknown" ? "旧请求回执未确认" : "旧请求复核提交中"}</Badge>}
-          {expired && review.state === "draft" && <Badge variant="warning">修改未保存</Badge>}
+          {expired && pending && <AgentStatus unknown={review.state === "unknown"} tone="warning">{review.state === "unknown" ? "旧请求回执未确认" : "旧请求复核提交中"}</AgentStatus>}
+          {expired && review.state === "draft" && <AgentStatus tone="warning">修改未保存</AgentStatus>}
           {expired && review.state === "failed" && <ReviewStatus state="failed" />}
         </div>
       </div>
-      <p className="break-words text-ui-hint">对象：{item.id || "对象未确认"} · 复核依据版本：{item.version || "版本未确认"}</p>
-      {expired && <p className="break-words text-ui-hint">当前版本：{versionChange?.currentVersion || "版本未确认"}{versionChange?.description && <> · {versionChange.description}</>}</p>}
+      <AgentVisibleMarkers visual={visual} />
+      <AgentMetaLine>对象：{item.id || "对象未确认"} · 复核依据版本：{item.version || "版本未确认"}{expired && <> · 当前版本：{versionChange?.currentVersion || "版本未确认"}</>}{pending && <span data-request-id={request?.id}> · 原请求：{request?.label || "原请求未确认"}</span>}{review.state === "unknown" && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>
+      {expired && versionChange?.description && <p className="break-words text-ui-hint">{versionChange.description}</p>}
     </header>
     <div id={`${id}-status`}>
-      {expired || review.state === "unknown" || review.state === "failed"
+      {expired || review.state === "failed"
         ? <Alert role="status" variant={review.state === "failed" && !expired ? "error" : "warning"}><AlertDescription className="break-words text-ui-hint">{statusText}</AlertDescription></Alert>
         : <p role="status" className="break-words text-ui-hint">{statusText}</p>}
       {disabledReason && <p role="status" className="mt-2 break-words text-ui-hint">{disabledReason}</p>}
     </div>
-    {pending && <p className="break-words text-ui-hint" data-request-id={request?.id}>原请求：{request?.label || "原请求未确认"}</p>}
     {review.state === "resolved" && <section aria-label={expired ? "此前复核记录" : "本次复核记录"} className="space-y-1">
       {expired && <p className="text-ui-hint">此前复核记录（不适用于当前版本）</p>}
-      <p className="break-words text-ui-hint">复核人：{review.resolution?.reviewer || "复核人未确认"}</p>
-      <p className="break-words text-ui-hint">复核时间：{review.resolution?.time || "时间未确认"} · 复核结果版本：{review.resolution?.version || "版本未确认"}</p>
+      <AgentMetaLine>复核人：{review.resolution?.reviewer || "复核人未确认"} · 复核时间：{review.resolution?.time || "时间未确认"} · 复核结果版本：{review.resolution?.version || "版本未确认"}</AgentMetaLine>
     </section>}
-    <section aria-label="待复核要点" className="min-w-0 space-y-2">
+    <section aria-label="待复核要点" className="min-w-0 space-y-1.5">
       <h4 className="text-ui-action">待复核要点</h4>
       {checkpoints.length ? <ul className="list-disc space-y-1 pl-5 text-ui-hint">{checkpoints.map((point, index) => <li key={index} className="break-words">{point}</li>)}</ul>
         : <p className="text-ui-hint text-muted-foreground">暂未提供复核要点。</p>}
     </section>
-    <section aria-label="当前值摘要" className="min-w-0 space-y-2">
+    <section aria-label="当前值摘要" className="min-w-0 space-y-1.5">
       <h4 className="text-ui-action">当前值摘要</h4><div className="min-w-0 whitespace-pre-wrap break-words text-read-body">{summary}</div>
     </section>
+    {view === "inline" && textComparison && <AgentTextDiff {...textComparison} />}
     {view === "workspace" && <>
       <div className="grid min-w-0 gap-5 @min-[800px]:grid-cols-2">
-        <section aria-label="原始材料与证据" className="min-w-0 space-y-3">
+        <section aria-label="原始材料与证据" className="min-w-0 space-y-2.5">
           <h4 className="text-block-title">原始材料与证据</h4>
           {evidence ?? <p className="text-ui-hint text-muted-foreground">暂未提供可核对的证据。</p>}
         </section>
-        <section aria-label="编辑草稿" className="min-w-0 space-y-3">
+        <section aria-label="编辑草稿" className="min-w-0 space-y-2.5">
           <h4 className="text-block-title">编辑草稿</h4>
           {draft ? draft.render({ value: draft.value, onChange: value => { if (!readOnly) draft.onChange(value) }, readOnly, describedBy: `${id}-status` })
             : <p className="text-ui-hint text-muted-foreground">暂未提供编辑内容。</p>}
         </section>
       </div>
-      <section aria-label="修改与原值对比" className="min-w-0 space-y-3">
+      <section aria-label="修改与原值对比" className="min-w-0 space-y-2.5">
         <h4 className="text-block-title">修改与原值对比</h4>
-        {comparison ?? <p className="text-ui-hint text-muted-foreground">暂未提供修改对比。</p>}
+        {comparison ?? (textComparison ? <AgentTextDiff {...textComparison} /> : <p className="text-ui-hint text-muted-foreground">暂未提供修改对比。</p>)}
       </section>
       {reason ? <Field className="w-full">
         <FieldLabel htmlFor={`${id}-reason`}>复核理由</FieldLabel>
@@ -218,10 +217,10 @@ export function AgentItemReviewer<T = string>({ item, review, checkpoints, summa
     {pending && !query && <p className="text-ui-hint text-muted-foreground">暂未提供原请求查询入口。</p>}
     {expired && !pending && !restart && <p className="text-ui-hint text-muted-foreground">请从当前对象重新发起复核。</p>}
     {view === "workspace" && <ReviewHistory records={history} compact={compact} />}
-    <RecordDetails>{explanations.length ? <div className="space-y-2">
+    <AgentSourceChip>{explanations.length ? <div className="space-y-1.5">
       {explanations.map(message => <p key={message} className="break-words">{message}</p>)}{details}
-    </div> : details}</RecordDetails>
+    </div> : details}</AgentSourceChip>
     {view === "inline" && onExpand && review.state !== "unknown" && <div><Button type="button" variant="outline" onClick={event => onExpand(event.currentTarget)}>完整复核<ArrowUpRight aria-hidden="true" /></Button></div>}
     {view === "workspace" && onBack && <div><Button type="button" variant="outline" onClick={onBack}><ArrowLeft aria-hidden="true" />返回原位置</Button></div>}
-  </Card>
+  </AgentSurface>
 }

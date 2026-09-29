@@ -1,9 +1,12 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { AgentChangeSet, type AgentChangeSetItem, type AgentChangeSetProps } from "../agent-components"
 import { DraftMathPreview } from "../draft-math-preview"
+import { QuestionContent } from "../question-content"
 
 /** Hand-written examples only; no P04 store or application logic. */
 const exampleItems: readonly AgentChangeSetItem[] = [
@@ -14,6 +17,7 @@ const exampleItems: readonly AgentChangeSetItem[] = [
 ]
 
 export function AgentChangeSetDemo() {
+  const presentation = useAgentDemoPresentation()
   const [items, setItems] = useState(exampleItems)
   const [feedback, setFeedback] = useState("")
   const [narrow, setNarrow] = useState(false)
@@ -25,7 +29,7 @@ export function AgentChangeSetDemo() {
     basis: "固定示例：扫描材料 A · 第 1 页 · 候选依据 r2；当前草稿 r3",
     notice: "示例：采用不代表已应用或已保存。",
     details: <p>候选依据 r2，当前草稿为 r3；请逐项比较后选择采用或保留。</p>,
-    items: items.map(item => ({ ...item, beforePreview: <DraftMathPreview value={item.before} label="修改前预览"/>, afterPreview: <DraftMathPreview value={item.after} label="建议内容预览"/> })),
+    items: items.map(item => ({ ...item, beforePreview: <QuestionContent question={{ id: item.id, title: item.title, kind: "题面片段", points: 0, stem: <DraftMathPreview value={item.before} label="修改前预览" /> }} />, afterPreview: <QuestionContent question={{ id: item.id, title: item.title, kind: "题面片段", points: 0, stem: <DraftMathPreview value={item.after} label="建议内容预览" /> }} /> })),
     inlineLimit: 1,
     onDecision: (id, decision) => setItems(current => current.map(item => item.id === id ? { ...item, decision } : item)),
     onRewrite: (id, after) => setItems(current => current.map(item => item.id === id ? { ...item, after, decision: "pending" } : item)),
@@ -35,14 +39,15 @@ export function AgentChangeSetDemo() {
       onApply: () => setFeedback("示例：已点击应用；未修改试卷草稿，未保存。"),
     },
   }
-  return <section id="change-set-two-state" className="mb-12 space-y-5">
-    <h2 className="text-section-title">对比查看器两态 · 设计候选示例</h2>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentChangeSet {...shared}  view={presentation.view ?? "inline"} onExpand={presentation.onExpand} /></AgentDemoPreview>
+  return <section id={presentation.embedded ? undefined : "change-set-two-state"} className="mb-12 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">对比查看器两态</h2>}
     <p className="text-ui-hint text-muted-foreground">两栏共享同一组示例选择与改写内容。真实 P04 接入验证在 Workspace /teacher/agent/workspace 进行；本页仅展示组件。</p>
     <div className="flex flex-wrap gap-2">
       <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>384px 窄容器</Button>
       <Button variant="outline" onClick={() => { setItems(exampleItems); setFeedback("") }}>重置示例</Button>
     </div>
-    <div className={narrow ? "grid max-w-96 gap-8" : "grid min-w-0 gap-8 xl:grid-cols-2"}>
+    <div className={narrow ? "grid max-w-96 gap-8" : "grid min-w-0 gap-8 @min-[900px]:grid-cols-2"}>
       <div className="min-w-0 space-y-4"><h3 className="text-block-title">Inline · 关键差异</h3><AgentChangeSet {...shared} view="inline" onExpand={button => { trigger.current = button; setHasTrigger(true); heading.current?.focus() }}/></div>
       <div className="min-w-0 space-y-4"><h3 ref={heading} tabIndex={-1} className="text-block-title">Workspace · 完整比较</h3><Button variant="outline" onClick={() => trigger.current?.focus()} disabled={!hasTrigger}>返回展开入口</Button><AgentChangeSet {...shared} view="workspace"/></div>
     </div>

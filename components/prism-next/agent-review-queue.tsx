@@ -2,12 +2,11 @@
 
 import { useId } from "react"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
-import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Badge } from "./badge"
 import { Button } from "./button"
 import { DataRecordTable, FilterBar, type FilterField } from "./data-display"
-import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+import type { AgentRecordViewProps } from "./agent-record-parts"
+import { AgentMetaLine, AgentCapsuleRow, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, type AgentVisualProps } from "./agent-visual-parts"
 import { agentItemReviewLabels, type AgentItemReview, type AgentItemReviewState, type AgentItemReviewTarget } from "./agent-item-reviewer"
 
 export type AgentReviewQueueItem = AgentItemReviewTarget & {
@@ -38,7 +37,7 @@ export type AgentReviewQueueFilters = {
   value: Record<string, string>
   onChange?: (value: Record<string, string>) => void
 }
-export type AgentReviewQueueProps = AgentRecordViewProps & {
+export type AgentReviewQueueProps = AgentRecordViewProps & AgentVisualProps & {
   title: string
   queue: { id: string; version: string; snapshot?: boolean }
   /** Already authorized objects in host order. Filtering and ordering never run in this component. */
@@ -71,29 +70,40 @@ const batchStateReason = (item: AgentReviewQueueItem) => item.processingByOther 
   : item.review.state === "resolved" ? "已复核。"
   : !["waiting-human", "draft", "failed"].includes(item.review.state) ? "复核状态未确认。" : undefined
 
-function QueueIdentity({ item }: { item: AgentReviewQueueItem }) {
+function QueueIdentity({ item, hideTitle = false }: { item: AgentReviewQueueItem; hideTitle?: boolean }) {
   return <div className="min-w-0 space-y-1 whitespace-normal break-words">
-    <p className="text-item-title">{nameOf(item)}</p>
-    <p className="text-ui-hint">{item.displayNumber && <>编号：{item.displayNumber} · </>}{item.typeLabel || "类型未确认"} · 依据版本：{item.version || "版本未确认"}</p>
-    {item.priority && <p className="text-ui-hint">优先级：{item.priority.label || "未确认"} · {item.priority.reason || "原因未提供"}</p>}
-    <p className="text-ui-hint">责任人：{item.assignee || "未提供"}</p>
+    {!hideTitle && <p className="text-item-title">{nameOf(item)}</p>}
+    <AgentMetaLine>{[
+      item.displayNumber ? { label: "编号", value: item.displayNumber } : undefined,
+      { label: "类型", value: item.typeLabel || "类型未确认" }, { label: "依据版本", value: item.version || "版本未确认" },
+      item.priority ? { label: "优先级", value: item.priority.label || "未确认" } : undefined,
+      { label: "责任人", value: item.assignee || "未提供" },
+      item.versionChange ? { label: "当前版本", value: item.versionChange.currentVersion || "版本未确认" } : undefined,
+      item.processingByOther ? { label: "正在处理", value: item.processingByOther.name || "处理人未确认" } : undefined,
+      ...(item.exceptions?.map(exception => ({ label: "异常", value: exception.label })) ?? []),
+    ].filter(fact => fact !== undefined).map((fact, index) => <span key={index}>{index > 0 && " · "}{["编号", "类型", "依据版本", "优先级", "责任人"].includes(fact.label) ? <><span className="sr-only">{fact.label}：</span>{fact.value}</> : `${fact.label}：${fact.value}`}</span>)}</AgentMetaLine>
+    {item.priority && <p className="text-ui-hint">{item.priority.reason || "原因未提供"}</p>}
+  </div>
+}
+
+function QueueStatus({ item }: { item: AgentReviewQueueItem }) {
+  const state = stateOf(item)
+  return <div className="flex flex-wrap items-center gap-1">
+    <AgentStatus unknown={state === "unknown"} tone={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{agentItemReviewLabels[state] || "复核状态未确认"}</AgentStatus>
+    {item.versionChange && ["waiting", "unknown"].includes(item.review.state) && <AgentStatus unknown={item.review.state === "unknown"} tone="warning">{agentItemReviewLabels[item.review.state]}</AgentStatus>}
+    {item.processingByOther && <AgentStatus tone="warning">他人处理中</AgentStatus>}
   </div>
 }
 
 function QueueFacts({ item }: { item: AgentReviewQueueItem }) {
   const state = stateOf(item)
-  return <div className="min-w-0 space-y-2 whitespace-normal break-words" data-review-state={state}>
-    <div className="flex flex-wrap gap-2">
-      <Badge variant={state === "resolved" ? "success" : state === "failed" ? "error" : "warning"}>{agentItemReviewLabels[state] || "复核状态未确认"}</Badge>
-      {item.versionChange && ["waiting", "unknown"].includes(item.review.state) && <Badge variant="warning">{agentItemReviewLabels[item.review.state]}</Badge>}
-      {item.processingByOther && <Badge variant="warning">他人处理中</Badge>}
-    </div>
+  return <div className="min-w-0 space-y-1 whitespace-normal break-words" data-review-state={state}>
     <p className="text-ui-hint">{item.review.description}</p>
     {item.review.state === "draft" && <p className="text-ui-hint">修改未保存。</p>}
-    {item.versionChange && <p className="text-ui-hint">当前版本：{item.versionChange.currentVersion || "版本未确认"} · {item.versionChange.description || "旧确认不再适用，请重新复核。"}</p>}
-    {item.processingByOther && <p className="text-ui-hint">正在处理：{item.processingByOther.name || "处理人未确认"}{item.processingByOther.description && <> · {item.processingByOther.description}</>}</p>}
+    {item.versionChange && <p className="text-ui-hint">{item.versionChange.description || "旧确认不再适用，请重新复核。"}</p>}
+    {item.processingByOther?.description && <p className="text-ui-hint">{item.processingByOther.description}</p>}
     {item.disabledReason && <p className="text-ui-hint">{item.disabledReason}</p>}
-    {item.exceptions?.map(exception => <p key={exception.id} className="text-ui-hint">异常：{exception.label}{exception.description && <> · {exception.description}</>}</p>)}
+    {item.exceptions?.map(exception => exception.description && <p key={exception.id} className="text-ui-hint">{exception.description}</p>)}
   </div>
 }
 
@@ -101,7 +111,7 @@ function QueueSelection({ item, selected, reason, onChange }: {
   item: AgentReviewQueueItem; selected: boolean; reason?: string; onChange: (checked: boolean) => void
 }) {
   const id = useId()
-  return <div className="max-w-48 space-y-2 whitespace-normal break-words">
+  return <div className="max-w-48 space-y-1.5 whitespace-normal break-words">
     <Checkbox aria-label={`选择：${nameOf(item)}`} checked={selected} disabled={!!reason} aria-describedby={reason ? id : undefined}
       onCheckedChange={checked => { if (!reason) onChange(checked) }} />
     {reason && <p id={id} className="text-ui-hint">{reason}</p>}
@@ -112,7 +122,7 @@ function QueueButton({ label, accessibleLabel, reason, impact, onClick, primary 
   label: string; accessibleLabel?: string; reason?: string; impact?: string; onClick: (trigger: HTMLButtonElement) => void; primary?: boolean
 }) {
   const id = useId()
-  return <div className="min-w-0 space-y-2 whitespace-normal break-words">
+  return <div className="min-w-0 space-y-1.5 whitespace-normal break-words">
     <Button type="button" variant={primary ? "default" : "outline"} className="max-w-full whitespace-normal"
       aria-label={accessibleLabel || label} disabled={!!reason} aria-describedby={impact || reason ? id : undefined}
       onClick={event => { if (!reason) onClick(event.currentTarget) }}>{label}</Button>
@@ -130,7 +140,7 @@ function QueueFilters({ fields, value, onChange }: AgentReviewQueueFilters) {
 /** Semantic 16: one controlled collection paired with semantic 17, never an executor or lock owner. */
 export function AgentReviewQueue({ title, queue, items, counts, progress, inlineLimit = 3, nextItemId, onNext, onOpen, onInspectException,
   filters, sort, selectedIds = [], onSelectionChange, batchActions = [], onBatchAction, disabledReason, notice, details,
-  view = "inline", density = "default", onExpand, onBack }: AgentReviewQueueProps) {
+  view = "inline", density = "default", onExpand, onBack, visual }: AgentReviewQueueProps) {
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   const baseReason = queue.snapshot ? "历史记录仅供查看。" : disabledReason
     || (!queue.id.trim() || !queue.version.trim() ? "队列或版本未确认。" : undefined)
@@ -155,7 +165,7 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
     || (!action.id.trim() ? "操作未确认。" : !onBatchAction ? "当前无法批量操作。" : !selectedIds.length ? "请先选择审核对象。" : undefined)
     || (selected.some(item => !item || itemReason(item) || batchStateReason(item) || !item.batchActionIds?.includes(action.id))
       ? "所选对象包含不可执行此操作的条目，请逐项核对。" : undefined)
-  const openActions = (item: AgentReviewQueueItem) => queue.snapshot || item.processingByOther ? null : <div className="min-w-0 space-y-2">
+  const openActions = (item: AgentReviewQueueItem) => queue.snapshot || item.processingByOther ? null : <div className="min-w-0 space-y-1.5">
     {item.openable && onOpen && <QueueButton label="打开复核" accessibleLabel={`打开复核：${nameOf(item)}`} reason={itemReason(item)} onClick={trigger => onOpen(target(item), trigger)} />}
     {onInspectException && item.exceptions?.map(exception => <QueueButton key={exception.id} label={`查看异常：${exception.label}`}
       accessibleLabel={`查看异常：${nameOf(item)} · ${exception.label}`} reason={itemReason(item) || (!exception.id.trim() ? "异常记录未确认。" : undefined)}
@@ -165,14 +175,21 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
   // Hide only explicit zeroes. Invalid values remain visible as unconfirmed, never as zero.
   const visibleCounts = countEntries.filter(state => workspace && !compact || counts?.[state] !== 0)
 
-  return <Card aria-labelledby={`${id}-title`} data-agent-review-queue-view={view} data-density={density}
-    className={`min-w-0 ${compact ? "gap-3 p-4" : "gap-5 p-5"}`}>
-    <header className="min-w-0 space-y-2">
-      <h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3>
-      <p className="break-words text-ui-hint">{queue.snapshot ? "当时状态" : "当前状态"} · 队列版本：{queue.version || "版本未确认"}</p>
+  const row = (item: AgentReviewQueueItem) => <AgentCapsuleRow title={nameOf(item)} status={<QueueStatus item={item} />}>
+    <QueueIdentity item={item} hideTitle /><QueueFacts item={item} />
+    {workspace && !queue.snapshot && (batchActions.length > 0 || selectedIds.length > 0 || onSelectionChange) &&
+      <QueueSelection item={item} selected={selectedIds.includes(item.id)} reason={selectionReason(item)} onChange={checked => select(item, checked)} />}
+    {openActions(item)}
+  </AgentCapsuleRow>
+
+  return <AgentSurface aria-labelledby={`${id}-title`} data-agent-review-queue-view={view} data-density={density}>
+    <header className="min-w-0 space-y-1.5">
+      <h3 id={`${id}-title`} className="break-words text-item-title">{title}</h3>
+      <AgentVisibleMarkers visual={visual} />
+      <AgentMetaLine>{queue.snapshot ? "当时状态" : "当前状态"} · 队列版本：{queue.version || "版本未确认"}{items.some(item => item.review.state === "unknown") && <> · 最近更新：{visual?.updatedAt || "未提供"}</>}</AgentMetaLine>
       {baseReason && <p role="status" className="break-words text-ui-hint">{baseReason}</p>}
     </header>
-    <section aria-label="审核汇总" className="min-w-0 space-y-2">
+    <section aria-label="审核汇总" className="min-w-0 space-y-1.5">
       {visibleCounts.length ? <dl className="flex flex-wrap gap-x-4 gap-y-2 text-ui-hint">{visibleCounts.map(state => <div key={state} className="flex flex-wrap gap-x-2">
         <dt>{agentItemReviewLabels[state]}</dt><dd className="tabular-nums">{countText(counts![state]!)}</dd>
       </div>)}</dl> : !countEntries.length ? <p className="text-ui-hint">状态计数未提供。</p> : null}
@@ -184,7 +201,7 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
         {sort && <QueueFilters fields={[sort.field]} value={{ [sort.field.id]: sort.value }}
           onChange={!queue.snapshot && sort.onChange ? value => sort.onChange?.(value[sort.field.id]) : undefined} />}
       </section>}
-      {(batchActions.length > 0 || selectedIds.length > 0 || onSelectionChange) && <section aria-label="批量审核" className="min-w-0 space-y-3">
+      {(batchActions.length > 0 || selectedIds.length > 0 || onSelectionChange) && <section aria-label="批量审核" className="min-w-0 space-y-2.5">
         <p className="text-ui-hint">已选 {selectedIds.length} 项</p>
         {selectionProblem && <p role="status" className="text-ui-hint">{selectionProblem}</p>}
         <div className="flex flex-wrap items-start gap-3">{!queue.snapshot && batchActions.map((action, index) => <QueueButton key={action.id} label={action.label}
@@ -195,20 +212,14 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
           {!queue.snapshot && selectedIds.length > 0 && onSelectionChange && <QueueButton label="清空选择" reason={baseReason} onClick={() => onSelectionChange([])} />}
         </div>
       </section>}
-      <div role="region" aria-label="审核对象列表" tabIndex={0} className="min-w-0 overflow-x-auto">
+      <div role="region" aria-label="审核对象列表" tabIndex={0} className="min-w-0 overflow-x-auto [&_table]:table-fixed [&_td]:whitespace-normal">
         <DataRecordTable rows={[...items]} empty="当前列表没有审核对象。" columns={[
-          ...(!queue.snapshot && (batchActions.length || selectedIds.length || onSelectionChange) ? [{ id: "selection", label: "选择", render: (item: AgentReviewQueueItem) =>
-            <QueueSelection item={item} selected={selectedIds.includes(item.id)} reason={selectionReason(item)} onChange={checked => select(item, checked)} /> }] : []),
-          { id: "identity", label: "审核对象", render: item => <div className="min-w-48 max-w-sm"><QueueIdentity item={item} /></div> },
-          { id: "review", label: queue.snapshot ? "当时复核情况" : "复核情况", render: item => <div className="min-w-56 max-w-md"><QueueFacts item={item} /></div> },
-          ...(!queue.snapshot && (onOpen || onInspectException) ? [{ id: "actions", label: "操作", render: openActions }] : []),
+          { id: "review", label: queue.snapshot ? "当时复核情况" : "审核对象与复核情况", render: row },
         ]} />
       </div>
     </>}
-    {!workspace && <ol aria-label="优先审核对象" className={compact ? "space-y-3" : "space-y-5"}>
-      {visible.map((item, index) => <li key={`${item.id}-${index}`} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
-        <QueueIdentity item={item} /><QueueFacts item={item} />{openActions(item)}
-      </li>)}
+    {!workspace && <ol aria-label="优先审核对象" className="space-y-2.5">
+      {visible.map((item, index) => <li key={`${item.id}-${index}`} className="min-w-0">{row(item)}</li>)}
       {!visible.length && <li className="text-ui-hint">当前列表没有审核对象。</li>}
     </ol>}
     <div className="flex flex-wrap items-start gap-3">
@@ -219,6 +230,6 @@ export function AgentReviewQueue({ title, queue, items, counts, progress, inline
       {workspace && onBack && <Button type="button" variant="ghost" onClick={onBack}><ArrowLeft aria-hidden="true" />返回</Button>}
     </div>
     {notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
-    <RecordDetails>{details}</RecordDetails>
-  </Card>
+    <AgentSourceChip>{details}</AgentSourceChip>
+  </AgentSurface>
 }

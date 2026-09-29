@@ -1,5 +1,7 @@
 "use client"
 
+import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
+
 import { useRef, useState } from "react"
 import { Button } from "../button"
 import { AgentParameterConfig, type AgentParameterConfigProps, type AgentParameterDefinition, type AgentParameterIntent } from "../agent-parameter-config"
@@ -52,6 +54,7 @@ export function availableParameterExample(purpose: keyof typeof parameterExample
 }
 
 export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typeof parameterExamples; narrow: boolean }) {
+  const presentation = useAgentDemoPresentation()
   const example = parameterExamples[purpose]
   const [parameters, setParameters] = useState(example.parameters), [revision, setRevision] = useState(1)
   const [snapshot, setSnapshot] = useState<{ parameters: readonly AgentParameterDefinition[]; baseVersion: string; versionLabel: string; constraint: boolean }>()
@@ -83,6 +86,7 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
     : requestedVersion === currentVersion ? { state: "unknown", description: "确认结果未收到，当前参数仍未确认。" }
     : needsCheck || readOnly ? { state: "blocked", description: readOnly ? "当前只读，请返回可编辑状态后核对。" : "请核对错误与未确认参数。" }
     : { state: "ready", confirm: { label: "确认本次要求（示例）", onAction: () => { setRequestedVersion(currentVersion); setFeedback("已请求确认，等待示例确认记录。") } } }
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentParameterConfig {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例，三个视图共用一份参数；不连接组卷、OCR 或批阅服务。</p>
     <div className="flex min-w-0 flex-wrap gap-2">
@@ -113,7 +117,7 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
     ] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} ref={view === "workspace" ? workspace : undefined}
       tabIndex={view === "workspace" ? -1 : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      {density === "compact" ? <AgentExecutionConfirmation title={purpose === "paper" ? "确认出卷要求（示例）" : "确认批阅要求（示例）"}
+      {density === "compact" ? <AgentExecutionConfirmation visual={{ sample: true, disconnected: true }} title={purpose === "paper" ? "确认出卷要求（示例）" : "确认批阅要求（示例）"}
         target={purpose === "paper" ? "函数单元练习" : "函数练习答题卡"} version={snapshot?.versionLabel ?? `参数 v${revision}`} confirmation={confirmation}
         effects={[purpose === "paper" ? "按本次参数与约束准备候选试题。" : "按本次纸张和身份设置准备接收答卷。"]}
         conditions={<div className="min-w-0 space-y-5">
@@ -130,9 +134,11 @@ export function ParameterConfigExample({ purpose, narrow }: { purpose: keyof typ
 }
 
 export function AgentParameterConfigDemo() {
+  const presentation = useAgentDemoPresentation()
   const [purpose, setPurpose] = useState<keyof typeof parameterExamples>("paper"), [narrow, setNarrow] = useState(false)
-  return <section id="parameter-config" className="mb-12 min-w-0 space-y-5">
-    <h2 className="text-section-title">参数配置器 v0.1 · 设计候选</h2>
+  if (presentation.previewOnly) return <ParameterConfigExample key={purpose} purpose={purpose} narrow={narrow} />
+  return <section id={presentation.embedded ? undefined : "parameter-config"} className="mb-12 min-w-0 space-y-5">
+    {!presentation.embedded && <h2 className="text-section-title">参数配置器</h2>}
     <div className="flex flex-wrap gap-3">{(["paper", "grading"] as const).map(value => <Button key={value} type="button" variant={purpose === value ? "secondary" : "outline"}
       aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "paper" ? "组卷参数示例" : "批阅参数示例"}</Button>)}
       <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>

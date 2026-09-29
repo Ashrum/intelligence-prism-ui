@@ -282,5 +282,5 @@ test('two labelled fixtures cover 6x4, insufficient/missing/not-applicable, narr
     }
   }
   assert.match(render(h(AgentDistributionMatrixDemo)), /id="distribution-matrix"/);
-  assert.match(await readFile(new URL('../components/prism-next/demos/learning-components.tsx', import.meta.url), 'utf8'), /<AgentDistributionMatrixDemo\/>/);
+  assert.match(await readFile(new URL('../components/prism-next/demos/agent-component-examples.tsx', import.meta.url), 'utf8'), /<AgentDistributionMatrixDemo\s*\/>/);
 });

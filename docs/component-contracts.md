@@ -393,6 +393,7 @@ Inline 为单行输入，Enter / Ctrl+Enter / Cmd+Enter 与“计算”按钮等
 | `title / imageSet` | 必填可读标题、`{id,version}` 请求归属；不新建业务权威对象 |
 | `images / selectedImageId` | 完整获权图片集合、受控选择 ID 或 null；未知选择显示“当前图片未列出”，不偷换首图 |
 | `capabilities` | 必填 view/zoom/annotate/crop/compose 五项；各为 `{supported:true}` 或 `{supported:false,reason}`。仅支持的动作可执行，缺失原因兜底“暂不支持”。compose 只代表并列查看，不代表生成合成图片 |
+| `showRegionSourceLabels` | 可选 boolean，默认 true；false 隐藏全部区域来源种类标签（教师／系统／示例）。仅影响展示，不改变 `region.source`、图片来源元信息或意图载荷。Workspace 可传 `showRegionSourceLabels={false}`（PO 2026-09-29 批准） |
 | `comparisonIds` | 可选 readonly string[]，默认 []；宿主收到 compare 后决定是否返回比较对象，不自动展示比较结果；宿主须在对象版本／权限变化时同步撤回或刷新 |
 | `onIntent` | 可选；没有接收器则操作只读，缩放／定位／平移仍是查看状态。空或重复图片 ID、缺集合／图片版本阻断所有请求，不阻止已有可读内容 |
 | `view / density` | 默认 inline / default；支持 workspace 与独立 compact。紧凑仅减少间距，保留所有能力限制和不可用原因 |
@@ -425,9 +426,11 @@ Inline 为单行输入，Enter / Ctrl+Enter / Cmd+Enter 与“计算”按钮等
 
 Inline 显示可读列表、选中图缩略、区域数量与“查看大图”；Workspace 增加原图比例查看、放大／缩小／适应宽度、平移、区域列表定位、标注与裁切范围编辑、并列比较。平移的键盘等效是聚焦画布后按方向键；区域列表是原生可聚焦按钮，不吞方向键。Pointer 框选将当前图片边界换算成百分比，拖拽仅增强；四个常驻标签的 number 输入（步长 0.1）可完成同一动作。标注名称必填；坐标超界／非有限／空白阻断提交。相同能力限制合并一次；只展示当前图的来源／版本／尺寸，不逐页重复元信息；内部 ID 不出现在 UI 或区域 DOM，旧查看器仅收到局部序号。
 
-`#image-canvas` 是单实例两态切换、compact、320px 模拟夹具：四页扫描（第 2 页倾斜、第 3 页模糊，第 1 页两个示例标注）、学生作答“第 1 题作答区”、缺说明插图与不可用截图。图片为本仓原创 SVG data URI。默认裁切不支持且说明原因；独立“演示裁切范围选择”开关只演示请求。标注可由示例页面更新本次模拟集合，仍未保存且刷新重置；不改原图。三主题沿用既有组件及查看器样式，未增加视觉规则。五项日志、定向测试与只读 Workspace 方案见 `.sites-runtime/image-canvas/REPORT.md`；浏览器三主题／窄屏／焦点／触屏、读屏器、Workspace 两态接入和真实服务均未验，本任务不启动服务，不自授 Review 结论。
+`#image-canvas` 是单实例两态切换、compact、320px 模拟夹具：四页扫描（第 2 页倾斜、第 3 页模糊，第 1 页两个示例标注）、学生作答“第 1 题作答区”、缺说明插图与不可用截图。图片为本仓原创 SVG data URI。默认裁切不支持且说明原因；独立“演示裁切范围选择”开关只演示请求。“显示区域来源标签”开关展示 `showRegionSourceLabels` 的默认开启与关闭效果。标注可由示例页面更新本次模拟集合，仍未保存且刷新重置；不改原图。三主题沿用既有组件及查看器样式，未增加视觉规则。五项日志、定向测试与只读 Workspace 方案见 `.sites-runtime/image-canvas/REPORT.md`；浏览器三主题／窄屏／焦点／触屏、读屏器、Workspace 两态接入和真实服务均未验，本任务不启动服务，不自授 Review 结论。
 
 ## 模板选择器 v0.1
+
+PO 2026-09-29 批准：展开后的预览卡片标题统一为“版面预览”，可访问名为“模板版面预览”，默认生效；只修正文案，不改变预览数据、受控状态或选择行为。
 
 2026-09-27 设计候选，语义 **09 模板选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-template-picker` 导入 `AgentTemplatePicker`、`AgentTemplatePickerProps`、`AgentTemplate`、`AgentTemplatePickerIntent`。任务分支 `feat/agent-template-picker`，基于 main `7ff98e7`；未合并，不增加 80 项目录条目。
 
@@ -1754,7 +1757,7 @@ groups={[{
 - `QuestionWorkPanel` 只组合 coss 非模态 Drawer，负责开关、焦点和滚动接续；没有条目、分组、汇总或集合操作契约。集合篮提供内容，可放入它的 `children`，不重复实现 Drawer。Workspace 已有单右栏时直接挂集合篮内容，不再套 QuestionWorkPanel。
 - `TeacherQuestionBasket.tsx` 和 `shared/basket-context.ts` 只读核对 Workspace main `125f2b286d6028a12a963b58667875d1d7ca773c`。题篮已有数量、题型、分值、移除与空态呈现；Provider、Store、计分、班级交接、持久化、路由和发布均留宿主，没有整文件迁入。当前 Context 暴露 body/renderBody/footer、toggle/show/change，没有暴露完整条目与总分快照，接入不能假定已有通用数据 API。
 - `DataRecordTable` 提供表格列和单记录选择，未覆盖受控批量选择、集合身份、同步事实和失效条目处理；`AgentContextList` 主要承担来源事实列表。此候选组合 Card、Prism Badge/Button、Checkbox、Label、Select 与 RecordDetails（coss Collapsible），列表为语义化 ol/li，未重造基础控件。
-- `QuestionCard` 保留题目内容职责，通过 `renderItem` 渲染摘要；通用组件不导入题目或 Workspace 私有类型，不接题目评分编辑。排序与分组仅为平面集合管理，不扩展为语义 12 的层级／试卷结构编辑器，也不宣称实现完整语义 38 素材包管理。
+- `QuestionCard` 保留题目内容职责，在 default + workspace 通过 `renderItem` 渲染摘要；summary 只呈现标题及事实，单题打开交由 `onOpenItem`；通用组件不导入题目或 Workspace 私有类型，不接题目评分编辑。排序与分组仅为平面集合管理，不扩展为语义 12 的层级／试卷结构编辑器，也不宣称实现完整语义 38 素材包管理。
 
 ### 公开 API
 
@@ -1775,8 +1778,17 @@ groups={[{
 | `clear / destinations` | 可选 action / 只读 action 数组 | action 为 `{id,label,disabledReason?}`；clear 仅 workspace，去向两态显示、第一项主操作。缺能力无入口；给出的能力但缺 onAction 显示禁用原因。集合级动作目标为全部传入 items，宿主必须提供完整目标清单并核验，不能把服务总量中未提供的 ID 算进影响范围 |
 | `batchActions` | 可选 `readonly AgentCollectionBatchAction[]` | `{id,label,itemIds,disabledReason?}`，workspace 专用。明确目标须非空、无重复、均存在且可选，并与 selectedIds 集合完全相符；否则整批禁用，不缩减范围。有效回调保留 action.itemIds 的顺序与每项输入版本 |
 | `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
-| `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 只在 workspace 调用，受限条目绝不调用。用于 QuestionCard 摘要等当前授权的只读领域内容；不得放旁路写操作或未授权元数据。完整题干沿用阅读字号 |
+| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary 或题干。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实必须经 issue / disabledReason 提供 |
+| `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 仅 default + workspace 调用，summary 和受限条目均不调用。保留给其他宿主的已授权只读领域内容，完整题干沿用阅读字号 |
+| `overview` | 可选 `ReactNode` | 仅 workspace 呈现于 header 之后、选择工具与列表之前，组件在统计区末尾添加 Separator。宿主提供已授权、被动呈现的统计；不传交互控件或隐含业务状态。undefined / null / boolean 视为未提供；非空 ReactNode 由宿主保证有可见内容。启用时两种 itemPresentation 都使用紧凑头部：标题保留 collection.title + summary.count/unit，隐藏全部 summary.fields 与头部分组数量，避免总分与构成重复；不解析 ReactNode 或字段名推测重叠。宿主负责把所需统计与口径放入 overview，关键状态仍经 sync / issue 等提供；版本、来源、缺失同步信息与历史标识保留。inline 忽略此插槽；未提供时行为不变 |
+| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开题干 |
 | `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
+
+2026-09-29 PO 第三轮：复用既有 `MetricSummary` + `StatusComposition`，不新增组件。workspace 试题篮示例默认已选题目 3、当前总分 17、单选 5 / 多选 6 / 填空 6 分；宿主演示随移除更新，同步不由统计推断。已选题目指篮内题目而非批量勾选项，包含失效题；该口径在来源补充说明中披露。
+
+2026-09-28 PO 第二轮要求覆盖此前题篮 L1 插槽呈现：直接收紧 summary，不新增 compact 别名，避免宿主继续误用含题干的 summary；其他宿主需要题干时使用 default + workspace + renderItem。Workspace 接入需把原 renderItem 中的打开逻辑迁至 onOpenItem，传 openLabel="查看题目"。本仓库仅更新组件与示例，不代表 Workspace 已接入验收。
+
+`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“在右栏查看”）与 `openAccessibleLabel?: string`（默认“在右栏查看完整题目：题号 · 标题”）。二者独立覆盖；右栏题篮同时传“查看题目”和“查看完整题目：题号 · 标题”。只改变文案，不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
 
 ### 条目、权限与动作
 
@@ -1784,7 +1796,7 @@ groups={[{
 
 `AgentCollectionRestrictedEntry={id,access:'restricted',disclosure:{label,reason},actions?:{remove?,resolve?}}` 只接受可披露名称、原因与明确可用的移除／处理动作。不会读取误传的 title/source/version/summary/fields/groupId/issue/selectable/move/group，也不挂载 renderItem。受限条目的版本不传出。集合标题、总量、分组、最近变化与 details 同样必须由宿主事先按当前权限处理；此分支只呈现授权结果，不是服务端授权。
 
-条目 `actions`：remove 为 `{disabledReason?}`；move 分别声明 up/down 能力，始终提供文字按钮与既有 navigation 触控尺寸，不依赖拖拽或悬停；group 为 `{options:[{id:string|null,label}],disabledReason?}`，null 请求取消分组；resolve 是宿主注册的 action 数组。不存在的能力不补造。控件禁用原因常驻并以 aria-describedby 关联，处理函数也阻断；首尾排序按传入全列表判断，回传实际相邻 ID。宿主提供 move 能力时须考虑被交换的相邻项权限。
+条目 `actions`：remove 为 `{disabledReason?}`；move 分别声明 up/down 能力，仅 workspace 显示；default 保留文字按钮，summary 为行尾 ghost / icon-sm 按钮，粗指针最小 44px，不依赖拖拽或悬停；group 为 `{options:[{id:string|null,label}],disabledReason?}`，null 请求取消分组；resolve 是宿主注册的 action 数组。不存在的能力不补造。控件禁用原因以 aria-describedby 关联；summary 排序边界原因以 sr-only 常驻并提供 title，其余原因可见，处理函数也阻断；首尾排序按传入全列表判断，回传实际相邻 ID。宿主提供 move 能力时须考虑被交换的相邻项权限。
 
 所有 `AgentCollectionIntent` 共含 `{collectionId,collectionVersion?}`，其分支为：
 
@@ -1805,7 +1817,7 @@ groups={[{
 - Workspace：同一事实 → 集合顺序／分组呈现 → 受控选择与批量动作 → 全清单、领域插槽、移除、处理、分组和上移／下移 → 去向、清空与可选返回；无第二套工作区外壳。
 - Compact：与任一 view 组合，只收紧间距；同步失败、失效与受限原因仍在折叠区外。
 
-组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、QuestionCard 数学摘要；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
+组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实行，点击标题打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
 
 本轮任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`，状态为**组件候选**；测试与五项日志、Workspace 只接呈现的轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。不启动开发服务，不修改 Workspace 或 Git；浏览器三主题、窄容器、键盘焦点／触控、读屏器、Workspace 接入和真实服务分别待验，不用 SSR 或回调测试代替。
 
@@ -2366,6 +2378,44 @@ import { Badge } from "@/components/prism-next/badge"
 
 ## 题目
 
+遵循 [题目呈现章程 v0.1（PO 已批准）](question-presentation-charter.md)。题面统一由 `QuestionContent` 呈现，详情统一由 `QuestionDetails` 呈现；Agent 对话用 L0 / L1，通过宿主回调进入右栏 L2，不就地展开题目详情。组合件不增加组件目录条目，仍为 80 项。
+
+### 题目呈现分层（任务 C2）
+
+复用检索依据：既有 `QuestionCard`、`QuestionContent`、`QuestionDetails`、coss Button / Checkbox / Tabs、任务 C 的 `AgentStatus` 与普通卡片表面。`compact` 原来只裁两行题干，缺少安全节选和引用，因此在 `question-presentation.tsx` 组合 L0 / L1，由 `question-card.tsx` 一并导出；不创建另一套题面渲染器。
+
+| API | 默认与语义 |
+| --- | --- |
+| `QuestionReference` | L0，`question` 仅需 `QuestionRecord` 的 `id` / `title`；可选 `number`、`status`；`href` 或 `onOpen(trigger)` 二选一，原生链接／按钮，由宿主打开完整题目 |
+| `QuestionSummaryRow` | L1，无外框；`question`、可选 `number`、`headingLevel=3`、`checked/onCheckedChange`、`onOpen(trigger)`、`showPoints=true`、`displayPoints`、`status/header` |
+| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“在右栏查看”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
+| `QuestionCard.number` | 沿用现有可选属性，明确为宿主提供的展示序号；不新增 displayLabel、不改写 question.id。标题“第 n 题 · 标题”，档案始终显示真实 question.id |
+| `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
+| `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
+| `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
+| `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
+| `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
+| `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |
+
+`QuestionSolution` 的整题与每个小问均对缺失的 answer / explanation 显示“未提供参考答案 / 未提供解析”；数值 0 不是缺失。宿主可通过 tabs 去掉答案页，不根据作答或提交状态自行显示答案。小问类型覆盖 single / multiple / fill / boolean / long。
+
+L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-xs/5、bg-card；不为配图中的 12px 新增圆角令牌。内边距 16px，选中用 ring-primary/60 与 bg-info/10；属性一行 text-ui-meta，窄容器整体换到标题下。选项默认两列，容器不足 480px 单列；显式 optionColumns=1/4 保持原支持。块级公式按实际滚动位置显示两侧边缘渐隐，使用现有 border 令牌，无动画、无字号缩小。
+
+### Agent 题目插槽接入（任务 C2）
+
+| 组件 | 接入与兼容边界 |
+| --- | --- |
+| 10 候选选择器 | 既有 renderItem 不变；示例 inline 用 L1，workspace 用 L2 + QuestionDetails；受限条目仍不调用插槽 |
+| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态均为紧凑标题／事实行且不调用插槽，onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
+| 12 结构编排器 | 新增可选 renderItem(item, { view, density })，默认未传保持原渲染；提供内容时以无外框域内容替代可见重复标题，原标题的可访问关联、锁定、来源、属性和操作保护仍在。回调与状态机不变 |
+| 14 对象查看器 | 新增可选 inlineDisclosure='local' / 'host'，默认 local 保持原披露；host 的 inline 只挂载允许的 summary，不提供就地展开 content 的入口，workspace 和 sensitive/受限保护不变。题目示例选 host，扩展态 L2 默认答案与解析 |
+| 15 / 17 | 示例题面由 QuestionContent 呈现；17 的扩展态 QuestionDetails 只传 answer，inline 用 L0 |
+| 16 / 19 / 20 / 21 | 示例通过现有说明／内容槽或示例宿主提供 L0 引用；字符串契约不扩为 ReactNode，不改回调 |
+| 33 / 42 | 33 继续既有 QuestionPrint 阅读／打印；42 示例编辑区下方组合 QuestionContent 预览 |
+
+示例宿主 `useQuestionPreview` 只保存本页查看对象、页签和触发元素；同一示例宿主只有一个题目面板。复用 QuestionWorkPanel/coss Drawer，右栏默认答案页，上一题／下一题保持当前页签，关闭交回原触发元素；小于 600px 用全屏宽高。它不进入复用组件，不新增 Store、路由、持久化、读取事实或执行回执。完整浏览器与焦点验收由 Supervisor 执行。
+
+
 ```tsx
 <QuestionCard question={question} />
 <QuestionCard
@@ -2595,3 +2645,10 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 ## Typography v0.2.1
 
 参见 [字体规范](typography.md) 和站内 `/next/foundations/typography`。迁入时必须同时包含 `typography.css`；公共角色样式与控件适配属于 Prism 层，不修改固定 coss 源码。
+
+
+### 集合篮：宿主选择工具栏（SEL，2026-09-29）
+
+`selectionToolbar?: boolean` 默认显示原有选择计数、全选和清除选择；设为 `false` 只隐藏该区，不影响逐条复选框、受控 `selectedIds` / `onSelectionChange`、受限或历史禁用规则及 `batchActions`。宿主负责提供可访问的选择入口及已选统计。summary 模式复选框名称为“选择第 N 题 · 标题”，无可见“选择”文案。Workspace 将全选置于底部，并在宿主“更多”菜单提供移除已选；这些业务布局不进入通用组件。SEL 批准后 Workspace overview 的已选题目、总分及构成采用勾选子集；此前组件页示例的全篮统计说明不作为 Workspace 的现行统计口径。
+
+集合篮 SEL 头部操作：`headerActions?: ReactNode` 将宿主菜单组合进现有标题行，操作区不收缩且不另起控制条；紧凑头部将同步状态移入既有事实行。未传插槽的 DOM 保持原样。Workspace 题篮以此替换标题上方独立更多菜单行；组件页集合示例同步提供原生 Menu。

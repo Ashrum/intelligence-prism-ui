@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useMemo, useRef, type DragEvent } from "react"
+import { useId, useMemo, useRef, type ReactNode, type DragEvent } from "react"
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, GripVertical, Plus } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
@@ -42,6 +42,8 @@ export type AgentStructureArrangerProps = AgentRecordViewProps & {
   /** Host-supplied common fields/values for the selected items, not inferred by the component. */
   batchAttributes?: readonly AgentArrangementAttribute[]
   /** Readable open action label; blank values use the default. */
+  /** Optional domain presentation. Default item title and controls remain unchanged. */
+  renderItem?: (item: AgentArrangementItem, context: { view: "inline" | "workspace"; density: "default" | "compact" }) => ReactNode
   openItemLabel?: string
   onBack?: () => void
   notice?: string
@@ -81,7 +83,7 @@ function ArrangementAttributeField({ attribute, anchor, reason, describedBy, edi
 export function AgentStructureArranger({
   structure, items, groups, summary = {}, validation, changes, save = { state: "unknown" }, actions = {}, readOnlyReason,
   onIntent, selectedIds = [], onSelectionChange, batchAttributes = [], view = "inline", density = "default", onExpand, onBack,
-  notice = "编排调整不代表已保存或发布。", details, openItemLabel,
+  notice = "编排调整不代表已保存或发布。", details, openItemLabel, renderItem: renderItemContent,
 }: AgentStructureArrangerProps) {
   const id = useId()
   const index = useMemo(() => indexArrangement(items, groups), [items, groups])
@@ -243,8 +245,10 @@ export function AgentStructureArranger({
     const openReason = index.error || identityBlock || (!onIntent ? "当前不能打开条目。" : undefined)
       || (!item.source || !arrangementHasId(item.source.objectId) ? "来源对象未确认，暂不能打开。" : undefined)
       || arrangementReason(item.open?.disabledReason, "当前不能打开条目。")
+    const content = renderItemContent?.(item, { view, density })
+    const hasContent = content != null && typeof content !== "boolean"
     return <li key={item.id} className="min-w-0" {...(view === "workspace" ? dropHandlers(item.groupId, item.id) : {})} data-arranger-row={ordinal}>
-      <Card className={`min-w-0 ${density === "compact" ? "gap-2 p-3" : "gap-3 p-4"}`}>
+      <Card className={`min-w-0 ${hasContent ? "rounded-none border-0 bg-transparent shadow-none before:hidden" : ""} ${density === "compact" ? "gap-2 p-3" : "gap-3 p-4"}`}>
         <div className="flex min-w-0 items-start gap-2">
           {selectable && <Checkbox aria-labelledby={`${anchor}-title`} aria-describedby={selectionDescription} checked={selectedIds.includes(item.id)} disabled={!!selectionReason}
             onCheckedChange={checked => { if (!selectionReason) onSelectionChange?.(checked ? [...new Set([...selectedIds, item.id])] : selectedIds.filter(value => value !== item.id)) }} />}
@@ -254,9 +258,10 @@ export function AgentStructureArranger({
               drag.current = { itemId: item.id, revision, items, groups }
               event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", "编排条目")
             }} onDragEnd={() => { drag.current = null }}><GripVertical aria-hidden="true" /></span>}
-          <div className="min-w-0 flex-1 space-y-1"><h5 id={`${anchor}-title`} className="break-words text-item-title" aria-describedby={[...descriptionIds.filter(Boolean), unknownId].join(" ")}>{item.title || "未命名条目"}</h5>
+          <div className="min-w-0 flex-1 space-y-1"><h5 id={`${anchor}-title`} className={hasContent ? "sr-only" : "break-words text-item-title"} aria-describedby={[...descriptionIds.filter(Boolean), unknownId].join(" ")}>{item.title || "未命名条目"}</h5>
             <p className="break-words text-ui-hint">{item.scopeLabel?.trim() && `${item.scopeLabel.trim()} · `}{item.type}{locked ? " · 已锁定" : ""}</p></div>
         </div>
+        {content != null && <div className="min-w-0" data-arrangement-content="">{content}</div>}
         {!!item.attributes.length && <div className={view === "inline" ? "flex min-w-0 flex-wrap gap-x-4 gap-y-1" : "grid min-w-0 gap-3"}>{item.attributes.map((attribute, i) => attributeField(attribute, [item.id], `${anchor}-attribute-${i}`))}</div>}
         <div className="flex flex-wrap gap-2">{actions.move && (["up", "down"] as const).map(via => {
           const target = arrangementMoveTarget(index, item.id, via)
