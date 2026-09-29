@@ -52,9 +52,9 @@ export type QuestionSummaryRowProps = {
   question: QuestionRecord; number?: number; headingLevel?: QuestionHeadingLevel
   checked?: boolean; onCheckedChange?: (checked: boolean) => void
   onOpen?: (trigger: HTMLButtonElement) => void
-  /** Visible open action text; defaults to 在右栏查看. */
+  /** Visible open action text; defaults to 查看详情. */
   openLabel?: string
-  /** Complete accessible name; defaults to 在右栏查看完整题目：{display title}. */
+  /** Complete accessible name; defaults to 查看详情：{display title}. */
   openAccessibleLabel?: string
   /** Keep the complete stem block and omit subsequent blocks/options/parts only when onOpen is present. */
   excerpt?: boolean
@@ -62,7 +62,7 @@ export type QuestionSummaryRowProps = {
 }
 
 /** L1. No outer surface, disclosure, line clamp, or formula/string slicing. */
-export function QuestionSummaryRow({ question, number, headingLevel = 3, checked, onCheckedChange, onOpen, openLabel = "在右栏查看", openAccessibleLabel, excerpt = true,
+export function QuestionSummaryRow({ question, number, headingLevel = 3, checked, onCheckedChange, onOpen, openLabel = "查看详情", openAccessibleLabel, excerpt = true,
   showPoints = true, displayPoints, status, header }: QuestionSummaryRowProps) {
   const id = useId()
   const omitted = !!(excerpt && onOpen && (question.blocks?.length || question.figure || question.options?.length || question.parts?.length))
@@ -78,9 +78,9 @@ export function QuestionSummaryRow({ question, number, headingLevel = 3, checked
     <QuestionContent question={content} />
     {(omitted || onOpen) && <div className="flex min-w-0 flex-wrap items-center gap-2">
       {omitted && <AgentStatus>节选</AgentStatus>}
-      {onOpen && <Button type="button" variant="ghost" size="sm" className="h-auto min-h-11 max-w-full whitespace-normal sm:h-auto"
-        aria-label={openAccessibleLabel ?? `在右栏查看完整题目：${questionDisplayTitle(question, number)}`} onClick={event => onOpen(event.currentTarget)}>
-        <ArrowUpRight aria-hidden="true" />{openLabel}
+      {onOpen && <Button type="button" variant="outline" size="sm" className="h-auto min-h-11 max-w-full whitespace-normal sm:h-auto"
+        aria-label={openAccessibleLabel ?? `查看详情：${questionDisplayTitle(question, number)}`} onClick={event => onOpen(event.currentTarget)}>
+        <ArrowUpRight aria-hidden="true" className="size-4" />{openLabel}
       </Button>}
     </div>}
   </article>

@@ -598,7 +598,7 @@ test('summary content preserves host math with a two-line clamp, explicit excerp
   };
   const html = htmlFor(extra); assert.deepEqual(calls, ['q1']);
   assert.match(html, /line-clamp-2/); assert.match(html, /长中文题干<math><mfrac>/); assert.match(html, /data-collection-excerpt/);
-  assert.doesNotMatch(html, /在右栏查看|data-collection-content=/);
+  assert.doesNotMatch(html, /在右栏查看|查看详情|data-collection-content=/);
   const nodes = capture(extra), opener = button(nodes, '查看题目：第 1 题 · 第一题');
   assert.equal(opener.props.type, 'button'); assert.match(opener.props.className, /after:absolute after:inset-0/);
   opener.props.onClick({ currentTarget: trigger }); assert.deepEqual(opened, [[entry, trigger]]);

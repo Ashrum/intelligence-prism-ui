@@ -1791,7 +1791,7 @@ groups={[{
 
 2026-09-28 PO 第二轮要求覆盖此前题篮 L1 插槽呈现：直接收紧 summary，不新增 compact 别名，避免宿主继续误用含题干的 summary；其他宿主需要题干时使用 default + workspace + renderItem。Workspace 接入需把原 renderItem 中的打开逻辑迁至 onOpenItem，传 openLabel="查看题目"。本仓库仅更新组件与示例，不代表 Workspace 已接入验收。
 
-`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“在右栏查看”）与 `openAccessibleLabel?: string`（默认“在右栏查看完整题目：题号 · 标题”）。二者独立覆盖；右栏题篮同时传“查看题目”和“查看完整题目：题号 · 标题”。只改变文案，不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
+`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“查看详情”）与 `openAccessibleLabel?: string`（默认“查看详情：题号 · 标题”）。二者独立覆盖；打开操作使用 coss `Button`（`variant="outline"`、`size="sm"`），配 16px `ArrowUpRight` 图标。题篮 summary 继续整行打开，不显示此按钮。此修订不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
 
 ### 条目、权限与动作
 
@@ -2391,7 +2391,7 @@ import { Badge } from "@/components/prism-next/badge"
 | --- | --- |
 | `QuestionReference` | L0，`question` 仅需 `QuestionRecord` 的 `id` / `title`；可选 `number`、`status`；`href` 或 `onOpen(trigger)` 二选一，原生链接／按钮，由宿主打开完整题目 |
 | `QuestionSummaryRow` | L1，无外框；`question`、可选 `number`、`headingLevel=3`、`checked/onCheckedChange`、`onOpen(trigger)`、`showPoints=true`、`displayPoints`、`status/header` |
-| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“在右栏查看”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
+| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“查看详情”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
 | `QuestionCard.number` | 沿用现有可选属性，明确为宿主提供的展示序号；不新增 displayLabel、不改写 question.id。标题“第 n 题 · 标题”，档案始终显示真实 question.id |
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
