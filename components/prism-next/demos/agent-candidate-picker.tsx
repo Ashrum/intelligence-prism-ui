@@ -107,7 +107,7 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCandidatePicker visual={{ sample: true, disconnected: true, excerpt: purpose === "questions" && presentation.view !== "workspace" }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
-    {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“在右栏查看”打开完整题目；对话内不展开题目详情。</p>}
+    {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“查看详情”打开完整题目；对话内不展开题目详情。</p>}
     <div className="space-y-2"><Label htmlFor={stateId}>结果状态示例</Label><QuestionSelect id={stateId} label="结果状态示例" value={state} onChange={value => setState(value as AgentCandidateResult["state"])}
       items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "错误" }]} /></div>
     <div className="flex flex-wrap gap-2" role="group" aria-label="载入示例事实">

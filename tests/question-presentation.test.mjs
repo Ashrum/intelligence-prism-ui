@@ -12,6 +12,7 @@ const runtime = new URL('../.sites-runtime/question-charter/', import.meta.url);
 await mkdir(runtime, { recursive: true });
 const file = new URL('test-bundle.mjs', runtime);
 const result = await build({ stdin: { contents: `
+export { Button as CossButton } from './components/coss/button';
 export * from './components/prism-next/question-card';
 export * from './components/prism-next/question-content';
 export * from './components/prism-next/question-details';
@@ -125,7 +126,7 @@ test('L1 preserves the entire stem and MathML, marks block omission, and opens v
   const props = { question: q, number: 8, onOpen: value => calls.push(value) };
   const html = render(h(c.QuestionSummaryRow, props));
   assert.ok(text(html).includes(longStem)); assert.match(html, /<mfrac><mi>a<\/mi><mi>b<\/mi><\/mfrac>/);
-  assert.match(html, /data-question-excerpt="true"/); assert.match(html, /节选/); assert.match(html, /在右栏查看/);
+  assert.match(html, /data-question-excerpt="true"/); assert.match(html, /节选/); assert.match(html, /查看详情/);
   assert.doesNotMatch(html, /line-clamp|后续材料|选项内容|小问内容|question-detail-region|question-solution|ANSWER_SECRET/);
   capture(c.QuestionSummaryRow, props).find(node => node.type.name === 'Button').props.onClick({ currentTarget: trigger });
   assert.deepEqual(calls, [trigger]);
@@ -182,7 +183,7 @@ test('the selected L2 uses the shared surface and metadata role across the 12 SS
 test('candidate conversation previews contain L1 and never a details region or answer payload', () => {
   for (const density of ['default', 'compact']) {
     const html = demo(c.CandidatePickerExample, { purpose: 'questions' }, 'inline', density);
-    assert.match(html, /data-question-summary/); assert.match(html, /在右栏查看/); assert.match(html, /节选/);
+    assert.match(html, /data-question-summary/); assert.match(html, /查看详情/); assert.match(html, /节选/);
     assert.doesNotMatch(html, /question-detail-region|question-solution|aria-label="答案与解析"|分子、分母同时乘以分母的共轭式/);
     for (const fact of ['失效', '受限', '已在集合中', '尚未提交']) assert.ok(text(html).includes(fact), fact);
   }
@@ -193,7 +194,7 @@ test('candidate conversation previews contain L1 and never a details region or a
 test('basket compact titles and arranger L1 retain external facts without inline details', () => {
   const basket = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: true });
   const arranger = demo(c.ArrangementExample, { purpose: 'paper', narrow: true });
-  assert.match(basket, /查看题目/); assert.match(arranger, /在右栏查看/);
+  assert.match(basket, /查看题目/); assert.match(arranger, /查看详情/);
   assert.match(basket, /data-collection-summary-row/); assert.doesNotMatch(basket, /data-question-summary|data-collection-content/);
   assert.match(arranger, /data-question-summary/);
   for (const html of [basket, arranger]) {
@@ -252,11 +253,12 @@ test('26 stage and historical row statuses carry icons and times in a following 
 
 test('the published charter preserves the approved original, scoped PO amendment and contract link', async () => {
   const charter = await readFile(new URL('../docs/question-presentation-charter.md', import.meta.url), 'utf8');
-  // Remove exactly one standalone amendment paragraph and its following blank line.
+  // Remove each dated, PO-approved standalone amendment and its following blank line.
   // Do not trim/normalize the remaining text: every original byte stays SHA-256 protected.
-  const amendments = [...charter.matchAll(/^\*\*原型阶段修订[^\n]*\n\n/gm)];
-  assert.equal(amendments.length, 1, 'exactly one standalone prototype amendment is required');
-  const amendment = amendments[0][0];
+  const amendmentPattern = /^\*\*([^\n*]*修订)（(\d{4}-\d{2}-\d{2})，PO 批准）\*\*：[^\n]*\n\n/gm;
+  const amendments = [...charter.matchAll(amendmentPattern)];
+  assert.deepEqual(amendments.map(match => [match[1], match[2]]), [['文案修订', '2026-09-29'], ['原型阶段修订', '2026-09-28']]);
+  const amendment = amendments.find(match => match[1] === '原型阶段修订')[0];
   assert.ok(amendment.startsWith('**原型阶段修订（2026-09-28，PO 批准）**：'), 'retain the approval date and PO approval');
   for (const condition of [
     '仅适用于未接入真实服务、全部为本机规则与预置数据的原型阶段。',
@@ -265,7 +267,11 @@ test('the published charter preserves the approved original, scoped PO amendment
     '本修订仅调整原型标注策略，不改变读取、引用、保存、提交等事实及状态的判定，不免除“节选”标记。',
     '原条文保留，恢复条件满足后继续适用。',
   ]) assert.ok(amendment.includes(condition), `prototype amendment must retain: ${condition}`);
-  const original = charter.slice(0, amendments[0].index) + charter.slice(amendments[0].index + amendment.length);
+  const copyAmendment = amendments.find(match => match[1] === '文案修订')[0];
+  for (const condition of ['B 类对话中打开右栏 L2', '操作文案为‘查看详情’', '以明显按钮呈现', '行为不变']) {
+    assert.ok(copyAmendment.includes(condition), `copy amendment must retain: ${condition}`);
+  }
+  const original = charter.replace(amendmentPattern, '');
   assert.equal(createHash('sha256').update(original).digest('hex'), 'c788f525296429a7f0280552c6f6d07f901f885b21e04a69a73a8a66030ca7f7');
   const contracts = await readFile(new URL('../docs/component-contracts.md', import.meta.url), 'utf8');
   assert.match(contracts, /question-presentation-charter\.md/);
@@ -311,14 +317,14 @@ test('L1 open labels are configurable without changing native button, excerpt or
   const props = { question: q, number: 2, onOpen: value => calls.push(value), openLabel: '查看题目', openAccessibleLabel: '查看完整题目：第 2 题 · 从配方解释最小值' };
   const html = render(h(c.QuestionSummaryRow, props));
   assert.match(html, /<button[^>]*type="button"[^>]*aria-label="查看完整题目：第 2 题 · 从配方解释最小值"/);
-  assert.match(text(html), /查看题目/); assert.doesNotMatch(html, /在右栏查看|完整选项/);
+  assert.match(text(html), /查看题目/); assert.doesNotMatch(text(html), /查看详情|完整选项/);
   assert.match(html, /data-question-excerpt="true"/);
   capture(c.QuestionSummaryRow, props).find(node => node.type.name === 'Button').props.onClick({ currentTarget: trigger });
   assert.deepEqual(calls, [trigger]);
   const defaults = render(h(c.QuestionSummaryRow, { question: q, onOpen() {} }));
-  assert.match(defaults, /aria-label="在右栏查看完整题目：从配方解释最小值"/); assert.match(text(defaults), /在右栏查看/);
+  assert.match(defaults, /aria-label="查看详情：从配方解释最小值"/); assert.match(text(defaults), /查看详情/);
   const onlyVisible = render(h(c.QuestionSummaryRow, { question: q, onOpen() {}, openLabel: '查看题目' }));
-  assert.match(onlyVisible, /aria-label="在右栏查看完整题目：从配方解释最小值"/);
+  assert.match(onlyVisible, /aria-label="查看详情：从配方解释最小值"/);
   for (const extra of [{ onOpen: undefined }, { excerpt: false }]) {
     const complete = render(h(c.QuestionSummaryRow, { ...props, ...extra }));
     assert.match(complete, /完整选项/); assert.doesNotMatch(complete, /data-question-excerpt|节选/);
@@ -326,8 +332,24 @@ test('L1 open labels are configurable without changing native button, excerpt or
   }
 });
 
+test('L1 default opener is the coss outline small button with a 16px decorative icon', () => {
+  const props = { question, number: 8, onOpen() {} };
+  const button = capture(c.QuestionSummaryRow, props).find(node => node.type === c.CossButton);
+  assert.ok(button, 'reuse the actual coss Button export');
+  assert.equal(button.props.variant, 'outline');
+  assert.equal(button.props.size, 'sm');
+  assert.equal(button.props['aria-label'], '查看详情：第 8 题 · 从配方解释最小值');
+  const icon = React.Children.toArray(button.props.children).find(React.isValidElement);
+  assert.equal(icon.props.className, 'size-4');
+  assert.equal(icon.props['aria-hidden'], 'true');
+  const html = render(h(c.QuestionSummaryRow, props));
+  assert.match(html, /<button[^>]*data-slot="button"/);
+  assert.match(text(html), /查看详情/);
+  assert.doesNotMatch(html, /在右栏查看/);
+});
+
 test('collection workspace example opens compact titles using context-neutral question labels', () => {
   const html = demo(c.CollectionBasketExample, { purpose: 'questions', narrow: false }, 'workspace');
   assert.match(html, /data-collection-summary-row/); assert.match(html, /aria-label="查看题目：第 1 题/);
-  assert.doesNotMatch(html, /data-question-summary|data-collection-content/); assert.doesNotMatch(html, /在右栏查看/); assert.match(html, /<math/); assert.match(html, /data-collection-summary-clamp/);
+  assert.doesNotMatch(html, /data-question-summary|data-collection-content/); assert.doesNotMatch(html, /查看详情/); assert.match(html, /<math/); assert.match(html, /data-collection-summary-clamp/);
 });
