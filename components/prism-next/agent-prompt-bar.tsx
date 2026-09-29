@@ -67,7 +67,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     close(); sweep.current?.play()
   }
   return <div ref={root} data-agent-prompt-bar data-variant={variant} className="min-w-0 space-y-2">
-    <Label htmlFor={id}>{label}</Label>
+    <Label htmlFor={id} className="sr-only">{label}</Label>
     <div ref={anchor} className="relative min-w-0">
       <Popover open={Boolean(token)} onOpenChange={open => { if (!open) setDismissed(value) }}>
         <PopoverPopup anchor={anchor} side="top" align="start" initialFocus={false} finalFocus={false} portalProps={{ container: root }} className="w-[var(--anchor-width)] max-w-full" aria-label={token?.kind === "source" ? "来源提及" : "命令选择"}>
@@ -120,7 +120,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
                 {models.map(item => <MenuRadioItem key={item.id} value={item.id} disabled={item.disabled}>{item.label}{item.description && <span className="block text-ui-hint text-muted-foreground">{item.description}</span>}</MenuRadioItem>)}
               </MenuRadioGroup></MenuPopup>
             </Menu>
-            <AgentVoiceButtons dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
+            <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
             <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
           </div>
         </InputGroupAddon>
@@ -128,6 +128,6 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     </div>
     <p id={`${id}-help`} className="text-ui-meta text-muted-foreground">@ 来源 · / 命令 · Enter 发送 · Shift + Enter 换行</p>
     {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint">{sendDisabledReason}</p>}
-    <AgentVoiceStatus dictation={dictation} voice={voice} privacy={privacy} onIntent={onIntent} />
+    <AgentVoiceStatus hideUnavailable dictation={dictation} voice={voice} privacy={privacy} onIntent={onIntent} />
   </div>
 }

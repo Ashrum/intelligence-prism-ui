@@ -17,12 +17,17 @@ const api = await import(pathToFileURL(file));
 const h = React.createElement;
 const base = { value: '', onValueChange() {}, onIntent() {}, sources: [], commands: [], models: [], dictation: { state: 'not-connected' }, voice: { state: 'not-connected' } };
 
-test('SSR: Rounded/Pill retain fixed label, controlled draft, disabled empty send and accessible voice controls', () => {
+test('SSR: Rounded/Pill retain visually hidden accessible label, controlled draft, disabled empty send and accessible voice controls', () => {
   for (const variant of ['Rounded', 'Pill']) {
     const html = render(h(api.AgentPromptBar, { ...base, variant }));
     assert.match(html, new RegExp(`data-variant="${variant}"`));
-    assert.match(html, /<label[^>]*>消息<\/label>/);
-    assert.match(html, /<button(?=[^>]*aria-label="发送消息")(?=[^>]*disabled)[^>]*>/);
+    assert.match(html, /<label(?=[^>]*class="[^"]*sr-only)(?=[^>]*for=")[^>]*>消息<\/label>/);
+    for (const label of ["开始听写", "开始语音对话"]) {
+      assert.match(html, new RegExp(`<button(?=[^>]*aria-label="${label}")(?=[^>]*aria-describedby=")[^>]*>`));
+      assert.doesNotMatch(html, new RegExp(`<button(?=[^>]*aria-label="${label}")(?=[^>]* disabled="")[^>]*>`));
+    }
+    assert.doesNotMatch(html, /<p[^>]*>(听写|语音对话)服务未接入/);
+    assert.match(html, /<button(?=[^>]*aria-label="发送消息")(?=[^>]* disabled="")[^>]*>/);
     assert.match(html, /听写服务未接入/);
     assert.match(html, /语音对话服务未接入/);
     assert.match(html, /aria-pressed="false"/);
@@ -63,7 +68,7 @@ test('voice intents remain requests; privacy blocks start and exposes confirm/ca
   for (const control of stopping.props.children) assert.equal(control.props['aria-pressed'], true);
   const html = render(h(api.AgentPromptBar, { ...base, dictation: { state: 'idle' }, voice: { state: 'idle' }, privacy: { open: true, description: '录音用途说明' } }));
   assert.match(html, /录音用途说明/); assert.match(html, /确认使用语音/); assert.match(html, /取消/);
-  assert.match(html, /<button(?=[^>]*aria-label="开始听写")(?=[^>]*disabled)[^>]*>/);
+  assert.match(html, /<button(?=[^>]*aria-label="开始听写")(?=[^>]* disabled="")[^>]*>/);
 });
 test('AgentMark states, three patterns, host elapsed snapshots and unknown default', () => {
   for (const state of Object.keys(api.agentMarkLabels)) for (const variant of ['Orbit', 'Drive', 'Dots']) {
@@ -74,6 +79,7 @@ test('AgentMark states, three patterns, host elapsed snapshots and unknown defau
     assert.doesNotMatch(html, /已用时/);
   }
   assert.match(render(h(api.AgentMark)), /状态未知/);
+  assert.match(render(h(api.AgentMark, { state: "thinking" })), /data-variant="Drive"/);
   assert.match(render(h(api.AgentMark, { state: 'idle', startedAt: 1000, endedAt: 66000 })), /已用时 1 分 5 秒/);
 });
 test('user and agent messages preserve rich content slots and inverse tokens without a visible user label', () => {
@@ -188,4 +194,32 @@ test('three theme inverse token pairs exceed 4.5:1 numerically (not a browser co
   const results = pairs.map((p, i) => { const a=luminance(p[1]), b=luminance(p[2]); return { theme: ['light','paper','dark'][i], text:p[1], background:p[2], contrast:(Math.max(a,b)+.05)/(Math.min(a,b)+.05) } });
   for (const result of results) assert.ok(result.contrast >= 4.5, JSON.stringify(result));
   await writeFile(join(temp, 'token-contrast.json'), JSON.stringify(results, null, 2));
+});
+
+test('prompt status hides unavailable facts but retains host errors, denied permissions and results', () => {
+  for (const state of ['not-connected', 'unsupported', 'error', 'denied', 'recognizing', 'inserted']) {
+    const html = render(h(api.AgentVoiceStatus, { hideUnavailable: true, dictation: { state, reason: '宿主原因' }, voice: { state: 'not-connected' }, onIntent() {} }));
+    assert.equal(html.includes(api.dictationLabels[state]), !['not-connected', 'unsupported'].includes(state));
+    assert.doesNotMatch(html, /语音对话服务未接入/);
+  }
+});
+test('unavailable voice explanations never emit start intents or play the sweep', () => {
+  const fail = () => assert.fail('unavailable control must only explain');
+  for (const state of ['not-connected', 'unsupported']) {
+    const controls = api.AgentVoiceButtons({ dictation: { state, reason: '宿主原因' }, voice: { state: 'not-connected', description: '宿主说明' }, onIntent: fail, onStart: fail });
+    for (const control of controls.props.children) {
+      assert.equal(control.props.onClick, undefined);
+      assert.equal(control.props.disabled, false);
+      const html = render(control);
+      assert.match(html, /aria-describedby=/);
+      assert.match(html, /sr-only/);
+      assert.match(html, /宿主(原因|说明)/);
+    }
+  }
+});
+test('component fixture uses local rule label and documents Drive as the default', async () => {
+  const demo = await readFile(join(root, 'components/prism-next/demos/agent-conversation-demo.tsx'), 'utf8');
+  assert.match(demo, /label: "本机规则"/);
+  assert.match(demo, /Drive 为默认动画/);
+  assert.doesNotMatch(demo, /GPT-6 Astra|Orbit 为默认动画/);
 });

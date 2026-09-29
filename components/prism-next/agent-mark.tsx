@@ -15,7 +15,7 @@ const patterns = {
   Drive: { delays: Array.from({ length: 9 }, (_, i) => (i % 3 + Math.abs(Math.floor(i / 3) - 1)) * 90), duration: 650 },
   Dots: { delays: Array.from({ length: 9 }, (_, i) => (i % 3 + Math.abs(Math.floor(i / 3) - 1)) * 90), duration: 650 },
 }
-export function AgentMark({ state = "unknown", variant = "Orbit", size = "inline", label, startedAt, endedAt }: {
+export function AgentMark({ state = "unknown", variant = "Drive", size = "inline", label, startedAt, endedAt }: {
   state?: AgentMarkState; variant?: keyof typeof patterns; size?: "inline" | "loading"; label?: string
   /** Epoch milliseconds from the host. A terminal snapshot needs endedAt. */
   startedAt?: number; endedAt?: number

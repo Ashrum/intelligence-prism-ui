@@ -12,8 +12,8 @@ import { agentConversationCompositions } from "@/lib/prism-next/agent-conversati
 
 const sources = [{ id: "bank", label: "题库", description: "可选的题目来源" }, { id: "classes", label: "任教班级", description: "当前教师的班级范围" }, { id: "records", label: "工作记录", description: "以往任务的记录" }]
 const commands = ["出题", "组卷", "批阅", "学情", "备课"].map(label => ({ id: label, label: `/${label}`, description: `提出${label}请求` }))
-const models = [{ id: "astra", label: "GPT-6 Astra 轻度", description: "示例能力选项" }, { id: "teaching", label: "教学助手", description: "示例能力选项" }]
-const fixtures = { sources, commands, models, modelId: "astra" }
+const models = [{ id: "local-rule", label: "本机规则", description: "示例能力选项" }]
+const fixtures = { sources, commands, models, modelId: "local-rule" }
 const noService = { state: "not-connected" } as const
 
 export function AgentPromptBarPreview() {
@@ -36,17 +36,17 @@ function ConversationSample() {
   </div>
 }
 function MarkSamples() {
-  return <div className="space-y-6"><div className="flex flex-wrap gap-6">{(["Orbit", "Drive", "Dots"] as const).map(variant => <div key={variant} className="space-y-2"><p className="text-item-title">{variant}</p><AgentMark state="thinking" variant={variant} size="loading" label="正在整理题目" /></div>)}</div>
+  return <div className="space-y-6"><div className="flex flex-wrap gap-6">{(["Drive", "Orbit", "Dots"] as const).map(variant => <div key={variant} className="space-y-2"><p className="text-item-title">{variant}</p><AgentMark state="thinking" variant={variant} size="loading" label="正在整理题目" /></div>)}</div>
     <div className="flex flex-wrap gap-5">{(Object.keys(agentMarkLabels) as AgentMarkState[]).map(state => <AgentMark key={state} state={state} label={agentMarkLabels[state]} />)}</div>
     <AgentMark state="working" size="loading" label="正在核对材料" startedAt={0} endedAt={65000} />
-    <p className="text-ui-hint text-muted-foreground">默认前景色，Orbit 为默认动画；上方 1 分 5 秒来自固定起止时间。无开始时间不显示用时，减少动态效果时点阵和文字静止。</p>
+    <p className="text-ui-hint text-muted-foreground">默认前景色，Drive 为默认动画，Orbit / Dots 为可选变体；上方 1 分 5 秒来自固定起止时间。无开始时间不显示用时，减少动态效果时点阵和文字静止。</p>
   </div>
 }
 export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "prompt-bar" | "agent-mark" | "agent-message" }) {
   const id = useId()
   const [theme, setTheme] = useState("light"), [width, setWidth] = useState("auto")
   const [variant, setVariant] = useState<AgentPromptBarProps["variant"]>("Rounded")
-  const [value, setValue] = useState(""), [modelId, setModelId] = useState("astra")
+  const [value, setValue] = useState(""), [modelId, setModelId] = useState("local-rule")
   const [dictation, setDictation] = useState<AgentDictation["state"]>("not-connected")
   const [voice, setVoice] = useState<AgentVoiceMode["state"]>("not-connected")
   const [privacy, setPrivacy] = useState(false), [attachments, setAttachments] = useState(false)
@@ -82,6 +82,6 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
         : section === "agent-mark" ? <MarkSamples /> : <ConversationSample />}
     </div>
     {section === "prompt-bar" && <><p role="status" className="break-all text-ui-hint">最近意图：{intent}</p><details><summary className="cursor-pointer text-ui-action">全部语音状态样本</summary><div className="mt-4 grid gap-4 sm:grid-cols-2">{Object.keys(dictationLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={{ state: state as AgentDictation["state"], reason: state === "error" ? "宿主报告连接中断" : undefined }} voice={noService} onIntent={onIntent} /></Card>)}{Object.keys(voiceModeLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={noService} voice={{ state: state as AgentVoiceMode["state"] }} onIntent={onIntent} /></Card>)}<Card className="p-4"><AgentVoiceStatus dictation={{ state: "listening", level: .6 }} voice={noService} onIntent={onIntent} /></Card></div></details></>}
-    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、attachments、contextActions、dictation、voice、privacy、onIntent。所有执行状态均来自宿主；提交后是否清空由宿主决定。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。使用反相文字背景对，业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
+    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、attachments、contextActions、dictation、voice、privacy、onIntent。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。使用反相文字背景对，业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
   </div>
 }
