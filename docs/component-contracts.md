@@ -2666,7 +2666,11 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 ### 输入与语音 API
 
-`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+
+**对话输入标签例外（PO 2026-09-29 确认）**：`AgentPromptBar` 的固定 label 默认「消息」，通过 `sr-only` 视觉隐藏并与输入关联，读屏仍获得可访问名；不使用 placeholder 代替标签。此处为对话输入，按 Codex / Claude / Beautiful UI 的对话惯例减少重复视觉信息，是 AGENTS.md「基础表单使用常驻固定标签」的特定例外；其他基础表单仍使用可见固定标签。
+
+**语音不可用反馈（PO 2026-09-29 确认）**：听写 `not-connected` / `unsupported`、语音对话 `not-connected` 不常驻显示在输入框下方，原因与宿主补充说明通过按钮 `aria-describedby` 提供。入口可聚焦，点击或键盘激活仅就地打开 coss Popover 说明，不发 start 意图、不播放启动扫光、不推定服务状态；Esc、外部点击或再次点击关闭，再次激活可重新查看，不保存已读状态。全局 disabled、隐私确认或互斥语音活动仍阻止入口操作。`AgentVoiceButtons.portalContainer` 可指定同主题的弹层容器；PromptBar 使用输入框外层根容器，避免输入表面的 overflow 裁切。`AgentVoiceStatus` 的 `hideUnavailable` 默认 false（完整状态样本），PromptBar 传 true；错误 `error`、权限拒绝 `denied` 以及进行中和结果状态仍由宿主事实明确显示与播报，不因本地点击制造或清除。组件页模型示例为「本机规则」，组件模型名称仍完全来自 `models`。
 
 来源、命令、模型项为 `{ id, label, description?, disabled? }`；附件为 `{ id, label }`。`contextActions` 供宿主以 coss 幽灵按钮呈现范围／材料／题篮，`activity` 供宿主放置事实状态。不得由组件主动读取文件或把来源选择等同于上下文已读取。
 
@@ -2678,7 +2682,7 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 ### 标识与消息 API
 
-`AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Orbit`（Drive / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
+`AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Drive`（Orbit / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
 
 `AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
 
