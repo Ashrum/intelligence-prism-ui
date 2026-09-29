@@ -2652,3 +2652,39 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 `selectionToolbar?: boolean` 默认显示原有选择计数、全选和清除选择；设为 `false` 只隐藏该区，不影响逐条复选框、受控 `selectedIds` / `onSelectionChange`、受限或历史禁用规则及 `batchActions`。宿主负责提供可访问的选择入口及已选统计。summary 模式复选框名称为“选择第 N 题 · 标题”，无可见“选择”文案。Workspace 将全选置于底部，并在宿主“更多”菜单提供移除已选；这些业务布局不进入通用组件。SEL 批准后 Workspace overview 的已选题目、总分及构成采用勾选子集；此前组件页示例的全篮统计说明不作为 Workspace 的现行统计口径。
 
 集合篮 SEL 头部操作：`headerActions?: ReactNode` 将宿主菜单组合进现有标题行，操作区不收缩且不另起控制条；紧凑头部将同步状态移入既有事实行。未传插槽的 DOM 保持原样。Workspace 题篮以此替换标题上方独立更多菜单行；组件页集合示例同步提供原生 Menu。
+
+## Agent 对话组合（PO 2026-09-29）
+
+`AgentPromptBar`、`AgentVoiceButtons` / `AgentVoiceStatus`、`AgentMark` 与 `AgentMessage` 登记在 Agent 总览的「组合与既有组件」，是对话层组合，不追加基础组件或十二类业务语义：基础目录保持 80，业务语义保持 42。既有 `AgentComposer` API 保留。站点子页：
+
+- `/next/components/agent-components/prompt-bar`：Rounded / Pill、受控草稿、来源和命令菜单、模型选择、听写、语音对话与隐私说明。
+- `/next/components/agent-components/agent-mark`：六状态、Orbit / Drive / Dots、行内与加载尺寸、宿主用时。
+- `/next/components/agent-components/agent-message`：交替消息、长中文、MathML、代码与附件；三主题与 390 宽预览。
+
+### 输入与语音 API
+
+`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+
+来源、命令、模型项为 `{ id, label, description?, disabled? }`；附件为 `{ id, label }`。`contextActions` 供宿主以 coss 幽灵按钮呈现范围／材料／题篮，`activity` 供宿主放置事实状态。不得由组件主动读取文件或把来源选择等同于上下文已读取。
+
+`onIntent` 联合类型：`submit { text, attachmentIds }`、`attach`、`select-source { id }`、`run-command { id }`、`select-model { id }`、`remove-attachment { id }`、`dictation-start/stop`、`voice-mode-start/stop`、`privacy-confirm/cancel`。来源／命令选择同时通过 `onValueChange` 编辑输入中的提及；其余服务状态、模型值、附件事实、提交后的清空由宿主处理。空文本有附件也可提交。无匹配菜单时 Enter 不提交；输入法组合确认不选择菜单或发送；Shift + Enter 换行。
+
+`dictation`：`idle | requesting | listening | recognizing | inserted | error | denied | unsupported | not-connected`，可传 `interim`、`final`、`reason`、`level`（0–1）。中间和最终文本仅展示，插入草稿须宿主更新 `value`，`inserted` 须来自宿主确认。无电平用静止点和未知说明，不模拟声波。`voice`：`idle | connecting | listening | answering | ended | not-connected`，可传 `description`；所有活动阶段有结束入口。
+
+首次隐私说明用 `privacy: { open, description: ReactNode }`。宿主收到 start 意图后决定是否先展示说明；确认仅发 privacy-confirm，宿主再按授权和服务状态启动。组件不保存同意记录、不访问麦克风、不创建识别器。说明打开时阻止新的开始操作；已有活动仍可停止。状态通过 live region 播报，可用键盘操作；读屏器与真机行为需单独验证。
+
+### 标识与消息 API
+
+`AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Orbit`（Drive / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
+
+`AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
+
+### 第三方来源与适配
+
+Beautiful UI（https://www.beautifului.dev/）注册源 `components/primitives/PromptBar.tsx`、`LoadingState.tsx` 与 `foundation.css`，Supervisor 提供的 2026-09-29 快照。Copyright (c) 2026 Shane Levine，MIT；完整许可见 [beautifului-LICENSE.txt](third-party/beautifului-LICENSE.txt)。Prompt Bar 改为受控事实与意图，删除 autoplay、假附件、计时器听写、内置来源／命令／模型、连接成功推定及全局 Math.random 替换。Loading State 保留点阵时序、微光与用时语义，删除 Surfer，起止时间改为宿主输入。Chat 07 只参考用户／Agent 对话结构，没有复制聊天业务实现。
+
+基础控件直接组合固定 coss `InputGroup` / `InputGroupTextarea` / `InputGroupAddon`、`Button`、`Menu` / radio menu、`Popover`、`Label`；参考 particles `p-input-group-28`（附件与底栏）、`p-input-group-29`（听写、圆形发送）、`p-input-group-23`（加载与语音入口，仅采用布局，不采用其计时器）。所有 coss 源文件保持不变。
+
+Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 → muted-foreground；line → border / input；hover → accent；field → secondary；accent-ink → info-foreground；orange / red 状态文字 → warning-foreground / destructive-foreground。原 source 色值、12/12.5/13px 文字和 shadow-plugin 叠层不引入：分别使用 Prism 主题、text-ui-body / text-ui-action / text-ui-hint / text-ui-meta，以及 coss InputGroup / Menu / Popover 已有阴影。原 14/22/24px 输入框曲率映射为 rounded-xl / rounded-3xl，按钮圆角使用 coss 或 rounded-full；点阵 Dots 使用 rounded-full。没有对应精确值时使用最接近的现有令牌，保留 Prism 字号可读性。
+
+扫光仅按 [Agent-readable contract 的明确例外](agent-readable-contract.md#beautiful-ui-prompt-bar-扫光动效例外po-2026-09-29-批准) 使用 `glimm@0.3.1`（MIT）；不导入 Beautiful UI 的全局 foundation、shadow-plugin 或新字体。组件候选不等于 Workspace 接入或独立 Review 通过。

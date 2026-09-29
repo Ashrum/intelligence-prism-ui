@@ -1,0 +1,28 @@
+/* Beautiful UI Loading State MIT, Copyright (c) 2026 Shane Levine.
+   Full notice: docs/third-party/beautifului-LICENSE.txt.
+   PO 2026-09-29: existing Prism tokens; no new visual tokens. */
+.agent-mark-grid { width: 1rem; height: 1rem; }
+[data-agent-mark][data-size="loading"] .agent-mark-grid { width: 1.5rem; height: 1.5rem; }
+.agent-mark-pixel { min-width: 0; min-height: 0; }
+.agent-mark-shimmer {
+  background-image: linear-gradient(90deg, var(--muted-foreground) 35%, var(--foreground) 50%, var(--muted-foreground) 65%);
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: prism-agent-shimmer 1.4s linear infinite;
+}
+@keyframes prism-agent-pixel { 0%, 100% { opacity: .15; } 18%, 42% { opacity: 1; } 62% { opacity: .15; } }
+@keyframes prism-agent-shimmer { from { background-position: 150% center; } to { background-position: -50% center; } }
+.agent-message-container { container-type: inline-size; }
+.agent-user-message { width: fit-content; max-width: 80%; }
+.agent-message-content :is(pre, .katex-display, math[display="block"]) { max-width: 100%; overflow-x: auto; }
+/* User-authored rich text inherits the inverse pair, including syntax/math colors.
+   Business cards belong to the unpainted Agent side and are never restyled. */
+.agent-user-message .agent-message-content :is(p, span, a, pre, code, math, .katex, [data-slot="badge"]) { color: inherit; background-color: transparent; }
+.agent-user-message .agent-message-content a { text-decoration: underline; }
+@container (max-width: 640px) { .agent-user-message { max-width: 88%; } }
+@media (prefers-reduced-motion: reduce) {
+  [data-agent-mark] .agent-mark-pixel { animation: none !important; opacity: 1 !important; }
+  .agent-mark-shimmer { animation: none; background: none; color: inherit; }
+  [data-agent-prompt-bar] *, [data-agent-prompt-bar] *::before, [data-agent-prompt-bar] *::after { animation: none !important; transition: none !important; }
+}
