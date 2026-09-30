@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'score-review': {
+    component: 'ScoreReview v0.1 — component candidate',
+    source: 'Pinned coss NumberField / Textarea / Card / Alert / Button + PaperPreview / DraftMathPreview / AgentMetaLine / AgentStatus; reuse evaluation in docs/score-review.md',
+    contract: ['Host supplies student, question, exam number, confidencePercent (0–100), progress, OCR, AI suggestion and basis. Missing confidence says 未提供; low-confidence labels are supplied, never inferred.', 'Optional paper composes PaperPreview; omit it for a standalone scoring panel. Host provides region selection and locationNotice only when supported by source facts.', 'score undefined uses defaultScore (default null); controlled null means empty. Editing values clamp to 0..maxScore and snap to step (default 1); 0.5 is supported. AI facts and saved scores are never normalized.', 'requireReasonOnChange compares against baselineScore or a valid AI score; missing baseline requires a reason. Blank/whitespace reasons block both save and retry. Saved/saving and disabledReason lock editing.', 'onScoreChange/onReasonChange update drafts; onAcceptAi also requests the valid AI score as a draft. onSave/onRetry({score,reason}), onPrev/onSkip are intents only. No callback advances receipt, audit, history or navigation.', 'Saved feedback uses state.score, not the editing value, and only auditUpdated=true claims an updated audit. Host keys/remounts by review identity, validates versions/permissions and owns audit persistence.'],
+    states: ['ready', 'changed + required reason', 'saving + disabled', 'failed + reason + retry', 'saved + explicit audit receipt', 'unknown confidence / missing source'],
+    accessibility: ['Persistent labels, coss NumberField keyboard/direct-entry controls, described validation, live feedback and Collapsible history. Three-theme 320px and long Chinese/formula fixtures; browser acceptance is separate.'],
+    dont: ['Do not execute grading, persist, infer confidence or success, normalize source facts or import Workspace private types. Keep AgentItemReviewer and AgentReviewQueue contracts unchanged.'],
+  },
   'queue-board': {
     component: 'QueueBoard v0.1 — component candidate',
     source: 'Pinned coss Card / Toggle / Table / Empty / Skeleton and shared Prism Badge / Button; reuse evaluation in docs/queue-board.md',

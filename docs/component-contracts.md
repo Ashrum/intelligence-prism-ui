@@ -2739,3 +2739,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Queue Board 队列看板 v0.1
 
 2026-10-01 · PO 批准候选 #8，位于「内容与数据」。评估 AgentReviewQueue / StatusComposition 后保持旧 API，复用 coss Card/Toggle/Table/Empty/Skeleton 与 Prism Badge/Button 组合。外部提供 2–6 分类计数与互斥状态；受控/非受控单选可取消，零值可见；行操作、头部和重试只发意图。禁用原因可见且关联 title/aria-describedby；缺失事实不推断。表格支持 maxHeight 和局部横向滚动，分页由宿主组合。完整 API、复用证据与浏览器验收阻塞见 [Queue Board 契约](queue-board.md)。独立 Review 与产品验收另行确认。
+
+## Score Review 人工评分（独立组件候选）
+
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 PaperPreview 与 DraftMathPreview。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
