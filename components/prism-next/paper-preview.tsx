@@ -20,6 +20,8 @@ export type PaperPreviewPage = {
 export type PaperPreviewVersion = { id: string; label: string; current?: boolean; validated?: boolean; restorable?: boolean }
 export type PaperPreviewAction = { id: string; label: string; primary?: boolean; disabled?: boolean }
 export type PaperPreviewProps = {
+  /** Canvas omits document metadata, thumbnails, versions and document actions. */
+  variant?: "default" | "canvas"
   title?: string; subtitle?: string; status?: { label: string; variant?: BadgeProps["variant"] }
   pages: readonly PaperPreviewPage[]; page?: number; defaultPage?: number; onPageChange?: (page: number) => void
   zoom?: PaperPreviewZoom; defaultZoom?: PaperPreviewZoom; onZoomChange?: (zoom: PaperPreviewZoom) => void
@@ -60,7 +62,7 @@ export function PaperThumbnail({ page, label }: { page: PaperPreviewPage; label:
 }
 
 export function PaperPreview(props: PaperPreviewProps) {
-  const { pages, title, subtitle, status, state = "ready", information = [], informationSlot, versions, actions = [], onRetry, onClose } = props
+  const { pages, title, subtitle, status, variant = "default", state = "ready", information = [], informationSlot, versions, actions = [], onRetry, onClose } = props
   const [locateRequest, setLocateRequest] = useState(0)
   const [localPage, setLocalPage] = useState(props.defaultPage ?? 0)
   const [localZoom, setLocalZoom] = useState<PaperPreviewZoom>(props.defaultZoom ?? "page")
@@ -99,13 +101,13 @@ export function PaperPreview(props: PaperPreviewProps) {
     const actual = paperRef.current ? paperRef.current.getBoundingClientRect().width / dimensions.width * 100 : percent
     changeZoom(stepPaperZoom(actual, factor))
   }
-  return <section className="paper-preview min-w-0" aria-labelledby={`${id}-title`} data-paper-preview data-state={state}>
-    <header className="flex flex-wrap items-start justify-between gap-3 pb-4">
+  return <section className="paper-preview min-w-0" aria-labelledby={variant === "canvas" ? undefined : `${id}-title`} aria-label={variant === "canvas" ? title || "试卷预览" : undefined} data-paper-preview data-state={state}>
+    {variant !== "canvas" && <header className="flex flex-wrap items-start justify-between gap-3 pb-4">
       <div className="min-w-0 flex-1"><h2 id={`${id}-title`} className="text-block-title break-words">{known(title)}</h2><p className="text-ui-hint break-words">{known(subtitle)}</p></div>
       {status ? <Badge variant={status.variant} className="h-auto whitespace-normal">{known(status.label)}</Badge> : <Badge>未提供</Badge>}
       {onClose && <Button variant="ghost" onClick={onClose}>关闭预览</Button>}
-    </header>
-    <div className="paper-preview-layout">
+    </header>}
+    <div className={variant === "canvas" ? "min-w-0" : "paper-preview-layout"}>
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2 pb-3" role="group" aria-label="页面与缩放">
           <Button variant="outline" disabled={!ready || pageIndex === 0} onClick={() => changePage(pageIndex - 1)}>上一页</Button>
@@ -134,7 +136,7 @@ export function PaperPreview(props: PaperPreviewProps) {
         </Card>
         {ready && !!current.regions?.length && <div className="flex flex-wrap gap-2 pt-3" role="group" aria-label="答题区域">{current.regions.map(region => <Button key={region.id} variant="outline" aria-pressed={props.selectedRegionId === region.id} disabled={!props.onRegionSelect} onClick={() => selectRegion(region.id)}>{region.label}</Button>)}</div>}
       </div>
-      <aside className="grid min-w-0 content-start gap-5" aria-label="试卷信息">
+      {variant !== "canvas" && <aside className="grid min-w-0 content-start gap-5" aria-label="试卷信息">
         <dl className="grid gap-3">{information.map((item, index) => <div key={index} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-3 text-ui-body"><dt className="break-words">{item.label}</dt><dd className="min-w-0 break-words">{known(item.value)}</dd></div>)}</dl>
         {informationSlot}
         <section aria-label="扫描页面"><h3 className="pb-2 text-item-title">扫描页面</h3><div className="grid max-h-80 grid-cols-2 gap-2 overflow-auto p-1">{pages.map((page, index) => <Button key={page.id} className="h-auto sm:h-auto min-w-0 flex-col items-stretch whitespace-normal p-2" variant={pageIndex === index ? "secondary" : "outline"} disabled={!ready} aria-pressed={pageIndex === index} aria-label={`第 ${index + 1} 页 · ${page.anomaly ? `异常页 · ${page.anomaly}` : page.quality === "normal" ? "正常" : "未提供"}`} onClick={() => changePage(index)}>
@@ -143,7 +145,7 @@ export function PaperPreview(props: PaperPreviewProps) {
         <section aria-label="扫描版本"><h3 className="pb-2 text-item-title">扫描版本</h3>{versions === undefined ? <p className="text-ui-hint">未提供</p> : versions.length === 0 ? <p className="text-ui-hint">暂无扫描版本</p> : <ul className="grid gap-2">{versions.map(version => <li key={version.id}><Card className="gap-2 p-3"><p className="text-ui-body break-words">{version.label} · {version.current ? "当前扫描件" : "历史扫描件"}</p>{!version.current && <><p className="text-ui-hint">{version.validated === true ? "已通过校验" : version.validated === false ? "未通过校验" : "校验状态未提供"} · {version.restorable === true ? "可恢复" : version.restorable === false ? "不可恢复" : "恢复状态未提供"}</p><Button className="h-auto whitespace-normal" variant="outline" disabled={!version.restorable || !version.validated || !props.onSetCurrentVersion} onClick={() => { if (version.restorable && version.validated) props.onSetCurrentVersion?.(version.id) }}>设为当前扫描件</Button></>}</Card></li>)}</ul>}</section>
         <div className="grid gap-2">{actions.map(action => <Button key={action.id} className="h-auto whitespace-normal" variant={action.primary ? "default" : "outline"} disabled={action.disabled || !props.onAction} onClick={() => { if (!action.disabled) props.onAction?.(action.id) }}>{action.label}</Button>)}</div>
         <div className="flex flex-wrap gap-2"><Button variant="outline" disabled={!props.hasPrev || !props.onPrev} onClick={() => { if (props.hasPrev) props.onPrev?.() }}>上一份</Button><Button variant="outline" disabled={!props.hasNext || !props.onNext} onClick={() => { if (props.hasNext) props.onNext?.() }}>下一份</Button></div>
-      </aside>
+      </aside>}
     </div>
   </section>
 }
