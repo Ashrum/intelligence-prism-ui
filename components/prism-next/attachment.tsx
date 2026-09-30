@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState, type ReactNode, type CSSProperties } from "react"
+import { Children, useId, useState, type ReactNode, type CSSProperties } from "react"
 import { FileText, FileImage, File } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
@@ -15,7 +15,9 @@ import { PaperThumbnail, paperDimensions } from "./paper-preview"
 
 export type AttachmentIntent = Extract<AgentFileIntent, { kind: "retry" }> | { fileId: string; version?: string; kind: "remove" | "view" }
 export type AttachmentProps = {
-  item: Pick<AgentFileItem, "id" | "name" | "type" | "sizeBytes" | "status" | "processing" | "version" | "actions">
+  item: Pick<AgentFileItem, "id" | "name" | "type" | "sizeBytes" | "status" | "version" | "actions"> & {
+    processing?: NonNullable<AgentFileItem["processing"]> & { tone?: AgentStatusTone; retry?: AgentFileAction & { requestId?: string } }
+  }
   size?: "sm" | "md" | "lg"; thumbnailUrl?: string; mediaKind?: "pdf" | "image" | "document"
   view?: AgentFileAction; onAction?: (intent: AttachmentIntent) => void; className?: string
 }
@@ -35,9 +37,12 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
   const kind = mediaKind ?? (/pdf/i.test(item.type) || /\.pdf$/i.test(name) ? "pdf" : /^image\//i.test(item.type) || /\.(png|jpe?g|webp|gif)$/i.test(name) ? "image" : "document")
   const target = { fileId: item.id, version: item.version }
   const unavailable = !item.id.trim() ? "文件标识未确认" : !onAction ? "操作暂不可用" : undefined
+  const processing = item.processing
+  const retry = processing ? processing.retry : status.state === "failed" ? status.retry : undefined
+  const retryRequestId = processing ? processing.retry?.requestId : status.state === "failed" ? status.request?.id : undefined
   const actions: { kind: "remove" | "retry" | "view"; label: string; config: AgentFileAction }[] = []
   if (view) actions.push({ kind: "view", label: "查看", config: view })
-  if (status.state === "failed" && status.retry) actions.push({ kind: "retry", label: "重试", config: status.retry })
+  if (status.state !== "unknown" && status.state !== "removed" && retry) actions.push({ kind: "retry", label: "重试", config: retry })
   if (status.state !== "unknown" && status.state !== "removed" && item.actions?.remove) actions.push({ kind: "remove", label: "移除", config: item.actions.remove })
   return <Card render={<article />} aria-labelledby={`${id}-name`} data-attachment data-size={size} data-file-state={status.state}
     className={cn("min-w-0 w-full", size === "sm" ? "gap-2 p-3" : size === "lg" ? "gap-4 p-5" : "gap-3 p-4", className)}>
@@ -48,18 +53,18 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
         <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {formatAgentFileSize(item.sizeBytes)}</p>
       </div>
     </div>
-    <AgentStatus tone={status.state === "failed" || status.state === "invalid" ? "error" : status.state === "unknown" ? "warning" : "neutral"}>{agentFileStatusLabels[status.state]}</AgentStatus>
+    <AgentStatus tone={processing ? processing.tone ?? "neutral" : status.state === "failed" || status.state === "invalid" ? "error" : status.state === "unknown" ? "warning" : "neutral"}>{processing ? processing.label : agentFileStatusLabels[status.state]}</AgentStatus>
     {reason && <p className="break-words text-ui-hint [overflow-wrap:anywhere]">{reason}</p>}
     {status.state === "uploading" && <div className="space-y-2">
       <p className="text-ui-hint tabular-nums">{progress === undefined ? "进度未确认" : `上传进度 ${progress}%`}</p>
       <Progress value={progress ?? null} aria-label={`${name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
     </div>}
-    {item.processing && <p className="break-words text-ui-hint [overflow-wrap:anywhere]">正在处理：{item.processing.label}{item.processing.description && ` · ${item.processing.description}`}</p>}
+    {processing?.description && <p className="break-words text-ui-hint [overflow-wrap:anywhere]">{processing.description}</p>}
     {actions.length > 0 && <div className="flex flex-wrap items-start gap-2">{actions.map(action => {
       const disabledReason = unavailable || action.config.disabledReason
       return <div key={action.kind} className="min-w-0 space-y-1">
         <Button type="button" variant="outline" size="sm" data-attachment-action={action.kind} aria-label={`${action.label}：${name}`} disabled={!!disabledReason} aria-describedby={disabledReason ? `${id}-${action.kind}` : undefined}
-          onClick={() => { if (!disabledReason) onAction?.(action.kind === "retry" ? { ...target, kind: "retry", requestId: status.state === "failed" ? status.request?.id : undefined } : { ...target, kind: action.kind }) }}>{action.label}</Button>
+          onClick={() => { if (!disabledReason) onAction?.(action.kind === "retry" ? { ...target, kind: "retry", requestId: retryRequestId } : { ...target, kind: action.kind }) }}>{action.label}</Button>
         {disabledReason && <p id={`${id}-${action.kind}`} className="text-ui-hint [overflow-wrap:anywhere]">{disabledReason}</p>}
       </div>
     })}</div>}
@@ -100,7 +105,7 @@ export function PaperCardGrid({ children, maxHeight, state = "ready", emptyMessa
   return <section data-paper-card-grid data-state={state} aria-label={label} tabIndex={maxHeight !== undefined ? 0 : undefined} className="min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1" style={{ maxHeight }}>
     {state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
-        : state === "empty" || !children || (Array.isArray(children) && children.length === 0) ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
+        : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
           : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(168px, 100%), 1fr))" }}>{children}</div>}
   </section>
 }

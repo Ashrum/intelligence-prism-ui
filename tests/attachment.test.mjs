@@ -39,8 +39,48 @@ test('all shared lifecycle states are visible; processing never follows upload i
   ];
   for (const [status, label] of statuses) assert.ok(attach({ ...base, status }).includes(label));
   assert.doesNotMatch(attach({ ...base, status: { state: 'uploaded' } }), /正在处理/);
-  assert.match(attach(attachmentFixtures[3]), /正在处理：正在识别题目与评分依据/);
+  assert.match(attach(attachmentFixtures[3]), /正在处理 · 识别题目与评分依据/);
   assert.match(attach({ ...base, status: { state: 'failed', reason: '连接中断' } }), /连接中断/);
+});
+
+test('processing uses one verbatim host status with explicit tone for running completed and failed facts', () => {
+  for (const processing of [
+    { label: '正在处理 · 识别题目与评分依据', tone: 'info' },
+    { label: '解析已完成', tone: 'success' },
+    { label: '解析失败', tone: 'error', description: '评分依据不完整' },
+    { label: '解析已完成' },
+  ]) {
+    const out = attach({ ...base, status: { state: 'uploaded' }, processing });
+    assert.equal((out.match(/data-agent-status=/g) || []).length, 1);
+    assert.ok(out.includes(`data-agent-status="${processing.tone ?? 'neutral'}"`));
+    assert.ok(out.includes(processing.label));
+    assert.doesNotMatch(out, /已上传|正在处理：/);
+    if (processing.description) assert.ok(out.includes(processing.description));
+  }
+});
+
+test('processing retry is explicit, versioned and controlled, with its own request and disabled reasons', () => {
+  const item = { ...base, version: 'v3', status: { state: 'uploaded' }, processing: { label: '解析失败', tone: 'error', retry: { requestId: 'parse-1' } } };
+  const before = structuredClone(item), calls = [];
+  const out = capture(Attachment, { item, onAction: intent => calls.push(intent) });
+  out.nodes.find(n => n.props['data-attachment-action'] === 'retry').props.onClick();
+  assert.deepEqual(calls, [{ fileId: item.id, version: 'v3', kind: 'retry', requestId: 'parse-1' }]);
+  assert.deepEqual(item, before);
+  assert.equal(attach(item), attach(before));
+  assert.doesNotMatch(attach({ ...item, processing: { label: '解析失败', tone: 'error' } }), /data-attachment-action="retry"/);
+  for (const overrides of [
+    { processing: { ...item.processing, retry: { disabledReason: '正在核对文件' } } },
+    { id: '' },
+  ]) {
+    const disabled = capture(Attachment, { item: { ...item, ...overrides }, onAction: () => assert.fail() });
+    const button = disabled.nodes.find(n => n.props['data-attachment-action'] === 'retry');
+    assert.equal(button.props.disabled, true); button.props.onClick();
+    assert.ok(disabled.nodes.some(n => n.props.id === button.props['aria-describedby']));
+  }
+  for (const state of ['unknown', 'removed']) assert.doesNotMatch(attach({ ...item, status: { state, reason: '等待回执', request } }), /data-attachment-action="(?:retry|remove)"/);
+  const noRequest = capture(Attachment, { item: { ...item, status: { state: 'failed', request, retry: {} }, processing: { ...item.processing, retry: {} } }, onAction: intent => calls.push(intent) });
+  noRequest.nodes.find(n => n.props['data-attachment-action'] === 'retry').props.onClick();
+  assert.equal(calls.at(-1).requestId, undefined);
 });
 
 test('known progress uses exact percentage; unknown and invalid values never masquerade as zero', () => {
@@ -134,15 +174,34 @@ test('grid loading empty error replace stale facts; retry emits intent; ready em
     if (state === 'empty') assert.match(out.html, /没有接收记录/);
     if (state === 'error') { assert.match(out.html, /role="alert"/); out.nodes.find(n => n.props.onClick).props.onClick(); assert.equal(count, 1); }
   }
-  assert.match(html(PaperCardGrid, { children: [] }), /尚未接收学生试卷/);
+  for (const children of [undefined, null, false, true, '', [], [null, false], [undefined, true, ''], [[null], [false, []]]]) {
+    const out = html(PaperCardGrid, { children });
+    assert.match(out, /尚未接收学生试卷/);
+    assert.doesNotMatch(out, /grid-template-columns/);
+  }
+  const mixed = html(PaperCardGrid, { children: [null, false, h(PaperCard, { ...paperCardFixtures[0], key: 'paper' })] });
+  assert.match(mixed, /data-paper-card=/);
+  assert.doesNotMatch(mixed, /尚未接收学生试卷/);
 });
 
 test('single catalog entry and full demo cover lifecycle sizes eight students themes narrow and formulas', () => {
   assert.equal(components.filter(c => c.id === 'attachment').length, 1);
   assert.equal(components.filter(c => c.id === 'paper-card').length, 0);
-  assert.equal(attachmentFixtures.length, 6); assert.equal(paperCardFixtures.length, 8);
+  assert.equal(attachmentFixtures.length, 8); assert.equal(paperCardFixtures.length, 8);
   const out = html(AttachmentDemo, {});
   for (const theme of ['light', 'paper', 'dark']) assert.match(out, new RegExp(`data-prism-theme="${theme}"`));
   for (const size of ['sm', 'md', 'lg']) assert.match(out, new RegExp(`data-size="${size}"`));
+  assert.doesNotMatch(out, /示例|演示/);
   assert.match(out, /320px/); assert.match(out, /<math/); assert.match(out, /未交/); assert.match(out, /扫描中/);
+});
+
+
+test('built attachment page uses neutral copy throughout navigation content and expanded spec', async () => {
+  const { default: worker } = await import(new URL('../dist/server/index.js', import.meta.url));
+  const response = await worker.fetch(new Request('http://localhost/next/components/attachment', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200);
+  const markup = await response.text();
+  const visible = markup.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, '');
+  assert.doesNotMatch(visible, /示例|演示/);
+  for (const label of ['应用页面', 'Agent 工作区', '视觉呈现', '解析已完成', '解析失败', '正在处理 · 识别题目与评分依据']) assert.ok(visible.includes(label), label);
 });

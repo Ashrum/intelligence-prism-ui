@@ -14,7 +14,7 @@
 
 `item` 为 `AgentFileItem` 的 id/name/type/sizeBytes/status/processing/version/actions 子集；`size?: sm | md | lg` 默认为 md；`thumbnailUrl?` 是宿主授权的缩略图；`mediaKind?: pdf | image | document` 显式指定占位类型，省略时按 MIME 或文件后缀选择图标。`view?: AgentFileAction` 声明可选查看入口；`onAction(intent)` 发出 `{fileId,version,kind:remove|retry|view,requestId?}`。
 
-生命周期沿用原模型：selected（默认已选择）、queued、received、uploading、uploaded、invalid、failed、unknown、removed。`processing` 是独立后续处理事实，显式显示“正在处理”及调用方标签；不会由上传完成自动推定。上传只接受有限的 0–100 进度；未知时显示“进度未确认”及无数字进度条。失败显示原因，只有 `status.retry` 才展示重试，关联原请求 id；unknown/removed 不开放移除或重试。缺少回调/标识或 disabledReason 时动作禁用并显示原因。
+生命周期沿用原模型：selected（默认已选择）、queued、received、uploading、uploaded、invalid、failed、unknown、removed。`processing` 是独立后续处理事实：存在时以宿主 `label` 原文作为唯一主状态，不添加前缀、不另显示“已上传”；`tone?: AgentStatusTone` 控制语义，缺省 neutral，不从文案推断。`description?` 单独展示处理说明；不会由上传完成自动推定。上传只接受有限的 0–100 进度；未知时显示“进度未确认”及无数字进度条。失败显示原因；有 processing 时仅使用 `processing.retry?: AgentFileAction & { requestId?: string }` 声明的处理重试及其请求 id，无 processing 时沿用 `status.retry` 与上传请求 id，二者不串用；unknown/removed 不开放移除或重试。缺少回调/标识或 disabledReason 时动作禁用并显示原因。
 
 文件名中间省略保留尾部 12 个字符，完整名称在 title 和可访问名称中；短名称不拆分。大小使用既有 B/KB/MB 格式；未知不显示为零。三尺寸只改变布局间距与媒体位，不缩小文字。图片加载失败回退类型图标，不改动上传事实。
 
@@ -22,4 +22,4 @@
 
 `PaperCard` 接收 `id, studentName, examNumber?, pageCount?, thumbnailUrl?, paperSize?: A4|A3, orientation?: portrait|landscape, status: {label,tone?}, reason?, selected?, onView(id)?`。调用方提供状态文字与 AgentStatusTone 语义（转换为既有 Badge 变体），不解析文字推断业务。正整数页数才视为已知；完全未知仅显示一次“考号、页数未提供”，部分已知保留另一项未知说明。纸张比例复用 paperDimensions；无图仅纸张图标与规格，aria 说明“扫描图像未接入”。已知页数角标；原因最多两行、title 和辅助技术保留全文。selected 由宿主控制，以“当前预览”Badge 和 aria-current 表达；查看按钮不自动选中或改变状态。
 
-`PaperCardGrid` 接收 children、maxHeight（CSS 高度）、state（ready/loading/empty/error）、emptyMessage、errorMessage、onRetry、aria-label。默认空文案“尚未接收学生试卷”，支持覆盖。网格 auto-fill 最小 168px（比容器窄时收缩），maxHeight 只约束具名且可键盘聚焦的网格区域；loading/empty/error 替代原卡片。无计时器、业务 Store、持久化、权限判断或上传/扫描执行器。
+`PaperCardGrid` 接收 children、maxHeight（CSS 高度）、state（ready/loading/empty/error）、emptyMessage、errorMessage、onRetry、aria-label。默认空文案“尚未接收学生试卷”，支持覆盖。网格 auto-fill 最小 168px（比容器窄时收缩），maxHeight 只约束具名且可键盘聚焦的网格区域；loading/empty/error 替代原卡片；ready 的空数组或只含 null/undefined/布尔值/空字符串的条件列表显示空态。无计时器、业务 Store、持久化、权限判断或上传/扫描执行器。

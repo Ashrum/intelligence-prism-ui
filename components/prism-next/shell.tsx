@@ -15,6 +15,7 @@ import { PrismBrandMark } from "@/components/prism-next/app-bar"
 function Navigation() {
   const pathname=usePathname()
   const {setOpenMobile}=useSidebar()
+  const attachmentPage=pathname==="/next/components/attachment"
   const link=(href:string,label:string,icon?:React.ReactNode)=> <SidebarMenuItem key={href}>
     <SidebarMenuButton isActive={pathname===href || (href==="/next/components/agent-components" && pathname.startsWith(href+"/"))} render={<Link href={href} aria-current={pathname===href?'page':href==="/next/components/agent-components" && pathname.startsWith(href+"/")?'location':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
   </SidebarMenuItem>
@@ -35,11 +36,11 @@ function Navigation() {
       </SidebarMenu></SidebarGroup>
       {componentGroups.map(group=><SidebarGroup key={group.id}>
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
-        <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}{group.id==='agent'&&agentRelatedPages.map(page=>link(page.href,page.title))}</SidebarMenu>
+        <SidebarMenu>{group.items.map(item=>link('/next/components/'+item.id,item.title))}{group.id==='agent'&&agentRelatedPages.map(page=>link(page.href,attachmentPage ? page.title.replace("示例", "") : page.title))}</SidebarMenu>
       </SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>
-      <SidebarGroup><SidebarGroupLabel>应用示例</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}{link("/next/use-cases/workspace-app-bar","Workspace 顶部区域")}</SidebarMenu></SidebarGroup>
+      <SidebarGroup><SidebarGroupLabel>{attachmentPage ? "应用页面" : "应用示例"}</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}{link("/next/use-cases/workspace-app-bar","Workspace 顶部区域")}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>
 }
