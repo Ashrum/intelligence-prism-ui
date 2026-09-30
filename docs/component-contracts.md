@@ -2721,3 +2721,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Instrument 任务状态面板 v0.1（PO 2026-09-30 候选 #3）
 
 `InstrumentPanel` 登记在「内容与数据」，入口 `/next/components/instrument-panel`。按头部、指标、当前处理、关注、清单、动作、下一步顺序组合可选区块；复用 coss 与 `MetricSummary` / `AgentStatus`。调用方提供所有事实、状态文字、完成标记与进度；组件不推定执行状态。主动作唯一，禁用原因关联 `aria-describedby`，次动作最多两个；所有回调仅发出意图。具备 Loading / Empty / Error 与 320px 三主题长中文、公式夹具。完整 API、复用检索、边界见 [Instrument 契约](instrument-panel.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
+
+## Attachment 附件 / Paper Card 试卷卡
+
+2026-10-01 · PO 批准候选 #4、#5，共用“内容与数据 / Attachment 附件”条目，Paper Card 为变体。复用 AgentFileStatus、文件状态标签和大小格式化、PaperThumbnail 与 coss / Prism 展示原子；上传与后续处理保持独立。支持 sm/md/lg、独立移除/重试/查看意图、已知或未知进度、学生身份/页数/状态/选中/异常原因及局部滚动网格。Loading / Empty / Error 由宿主传入；不内置执行或业务状态。完整 API、复用检索与未知值边界见 [Attachment 契约](attachment.md)。Builder 实现待独立 Review。

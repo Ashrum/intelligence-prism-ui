@@ -77,19 +77,21 @@ export type AgentFileInputProps = AgentRecordViewProps & {
   notice?: string
 }
 
-const statusLabels: Record<AgentFileStatus["state"], string> = {
+export const agentFileStatusLabels: Record<AgentFileStatus["state"], string> = {
   selected: "已选择", invalid: "校验未通过", queued: "等待上传", received: "已接收",
   uploading: "上传中", uploaded: "已上传", failed: "上传失败", unknown: "状态未确认", removed: "已移除",
 }
+const statusLabels = agentFileStatusLabels
 const validationLabels = { type: "类型不支持", size: "大小超限", count: "数量超限" }
 const capabilityLabels = { supported: "支持", limited: "有限支持", unsupported: "未接入" }
 
-function fileSize(bytes?: number) {
+export function formatAgentFileSize(bytes?: number) {
   if (bytes === undefined || !Number.isFinite(bytes) || bytes < 0) return "大小未确认"
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${Number((bytes / 1024).toFixed(1))} KB`
   return `${Number((bytes / (1024 * 1024)).toFixed(1))} MB`
 }
+const fileSize = formatAgentFileSize
 
 function FileActionButton({ label, name, action, reason, onClick, children }: {
   label: string; name: string; action: string; reason?: string; onClick: () => void; children?: ReactNode
