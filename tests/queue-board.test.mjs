@@ -38,6 +38,40 @@ function capture(props = {}, Component = api.QueueBoard) {
 const pressed = out => out.toggles.filter(n => n.props['aria-pressed']).map(n => n.props['aria-label']);
 const button = (out, label) => out.buttons.find(n => React.Children.toArray(n.props.children).includes(label));
 
+test('filter cards and multiline actions override desktop height and keep all card content inside the toggle', () => {
+  const out = capture();
+  for (const control of [...out.toggles, ...out.buttons]) {
+    assert.ok(control.props.className.split(/\s+/).includes('sm:h-auto'));
+    const html = render(control);
+    assert.match(html, /sm:h-auto/); assert.doesNotMatch(html, /sm:h-8(?:\s|")/);
+  }
+  out.toggles.forEach((toggle, index) => {
+    const category = base.categories[index];
+    const parts = React.Children.toArray(toggle.props.children.props.children);
+    assert.equal(parts.length, 3);
+    assert.equal(parts[0].props.children, category.count);
+    assert.equal(parts[1].type, api.SharedBadge); assert.equal(parts[1].props.children, category.label);
+    assert.equal(parts[2].props.children, category.description);
+    assert.equal(parts[2].props.id, toggle.props['aria-describedby']);
+  });
+  const selected = capture({ filter: 'completed' });
+  assert.match(render(selected.toggles[0]), /data-pressed=""/);
+  const status = out.nodes.find(n => n.props.role === 'status');
+  assert.equal(status.props.className, 'sr-only'); assert.equal(status.props['aria-live'], 'polite');
+});
+
+test('same-label row actions include each student in their accessible name without changing visible labels', () => {
+  const completed = api.queueBoardFixtures.find(f => f.id === 'completed').props;
+  const out = capture(completed);
+  const previews = out.buttons.filter(n => React.Children.toArray(n.props.children).includes('预览试卷'));
+  assert.equal(previews.length, completed.rows.length);
+  assert.deepEqual(previews.map(n => n.props['aria-label']), completed.rows.map(row => `预览试卷：${row.name}`));
+  for (const preview of previews) assert.match(render(preview), />预览试卷<\/button>/);
+  const unknown = capture({ rows: [{ ...base.rows[0], name: '  ' }] });
+  assert.equal(button(unknown, '预览试卷').props['aria-label'], '预览试卷：姓名未提供');
+  assert.equal(button(out, '查看当前批阅结果').props['aria-label'], undefined);
+});
+
 test('controlled single filter emits selection/cancel while host remains authoritative', () => {
   const calls = [], props = { filter: 'completed', onFilterChange: id => calls.push(id) };
   const out = capture(props);

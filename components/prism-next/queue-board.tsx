@@ -39,11 +39,11 @@ function identity(row: QueueBoardRow) {
   const exam = row.examNumber?.trim(), pages = row.pages != null && Number.isSafeInteger(row.pages) && row.pages > 0 ? row.pages : null
   return !exam && pages === null ? "考号、页数未提供" : `考号 ${exam || "未提供"} · ${pages === null ? "页数未提供" : `${pages} 页`}`
 }
-function BoardAction({ label, reason, onClick, children }: { label: string; reason?: string; onClick: () => void; children?: ReactNode }) {
+function BoardAction({ label, accessibleLabel, reason, onClick, children }: { label: string; accessibleLabel?: string; reason?: string; onClick: () => void; children?: ReactNode }) {
   const id = useId()
   return <div className="min-w-0 space-y-1">
-    <Button type="button" variant="outline" className="h-auto min-h-11 max-w-full whitespace-normal" disabled={!!reason}
-      title={reason} aria-describedby={reason ? id : undefined} onClick={() => { if (!reason) onClick() }}>{label}{children}</Button>
+    <Button type="button" variant="outline" className="h-auto sm:h-auto min-h-11 max-w-full whitespace-normal" disabled={!!reason}
+      title={reason} aria-label={accessibleLabel} aria-describedby={reason ? id : undefined} onClick={() => { if (!reason) onClick() }}>{label}{children}</Button>
     {reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}
   </div>
 }
@@ -74,14 +74,14 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
         <div role="group" aria-label="队列状态筛选" className="grid min-w-0 grid-cols-1 gap-3 @min-[360px]:grid-cols-2 @min-[760px]:grid-cols-4">
           {categories.map(category => <Toggle key={category.id} variant="outline" pressed={selected === category.id} aria-pressed={selected === category.id}
             aria-label={`${category.label}：${validCount(category.count) ? category.count : "数量未提供"}`} aria-describedby={`${id}-filter-${category.id}`}
-            onPressedChange={() => select(category.id)} className="h-auto min-h-11 min-w-0 justify-start whitespace-normal p-3 text-left">
+            onPressedChange={() => select(category.id)} className="h-auto sm:h-auto min-h-11 min-w-0 justify-start whitespace-normal p-3 text-left">
             <span className="grid min-w-0 gap-2"><span className="text-stat-display tabular-nums">{validCount(category.count) ? category.count : "未提供"}</span>
               <Badge variant={category.tone} className="max-w-full whitespace-normal break-words">{category.label}</Badge>
               <span id={`${id}-filter-${category.id}`} className="break-words text-ui-hint">{category.description}</span>
             </span>
           </Toggle>)}
         </div>
-        <p role="status" aria-live="polite" className="text-ui-hint">{selected === null ? "全部队列" : `当前队列：${categories.find(category => category.id === selected)?.label || "分类未提供"}`}{!visible.length && ` · ${selected === null ? "暂无试卷" : "该队列暂无试卷"}`}</p>
+        <p role="status" aria-live="polite" className="sr-only">{selected === null ? "全部队列" : `当前队列：${categories.find(category => category.id === selected)?.label || "分类未提供"}`}{!visible.length && ` · ${selected === null ? "暂无试卷" : "该队列暂无试卷"}`}</p>
         {visible.length ? <Table className="min-w-[680px] table-fixed" render={<div role="region" aria-label="试卷队列表，可横向滚动" tabIndex={0} className="overflow-auto" style={{ maxHeight }} />}>
           <TableHeader><TableRow><TableHead scope="col" className="w-1/4">学生 / 试卷</TableHead><TableHead scope="col" className="w-36">当前状态</TableHead><TableHead scope="col">状态说明</TableHead><TableHead scope="col" className="w-40">操作</TableHead></TableRow></TableHeader>
           <TableBody>{visible.map(row => {
@@ -91,6 +91,7 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
               <TableCell className="whitespace-normal"><Badge variant={category?.tone || "outline"} className="max-w-full whitespace-normal break-words">{category?.label || "状态未提供"}</Badge></TableCell>
               <TableCell className="whitespace-normal break-words text-ui-hint">{row.description ?? "状态说明未提供"}</TableCell>
               <TableCell className="space-y-2 whitespace-normal break-words">{row.actions.length ? row.actions.map(action => <BoardAction key={action.id} label={action.label}
+                accessibleLabel={`${action.label}：${row.name.trim() || "姓名未提供"}`}
                 reason={actionReason(action, !!onRowAction)} onClick={() => onRowAction?.(row.id, action.id)} />) : <span className="text-ui-hint">未提供操作</span>}</TableCell>
             </TableRow>
           })}</TableBody>
