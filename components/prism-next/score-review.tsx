@@ -44,7 +44,7 @@ export function normalizeReviewScore(value: number | null, max: number, step = 1
   return Math.min(max, Math.max(0, Number((Math.round(bounded / step) * step).toFixed(10))))
 }
 const known = (text?: string) => text?.trim() || "未提供"
-const actionClass = "h-auto sm:h-auto max-w-full whitespace-normal"
+const actionClass = "min-h-11 h-auto sm:h-auto max-w-full whitespace-normal"
 
 /** UI draft only. Saving, receipts, audit and navigation remain host facts/intents. */
 export function ScoreReview(props: ScoreReviewProps) {
@@ -94,7 +94,7 @@ export function ScoreReview(props: ScoreReviewProps) {
     <div className="min-w-0 space-y-3">
       <Field>
         <FieldLabel htmlFor={`${id}-score`}>教师最终评分{scaleValid ? `（0–${maxScore} 分，步长 ${step}）` : ""}</FieldLabel>
-        <NumberField id={`${id}-score`} value={score} min={0} max={scaleValid ? maxScore : 0} step={scaleValid ? step : 1} disabled={locked} onValueChange={changeScore}>
+        <NumberField id={`${id}-score`} value={score} min={0} max={scaleValid ? maxScore : 0} step={scaleValid ? step : 1} snapOnStep disabled={locked} onValueChange={changeScore}>
           <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput aria-describedby={`${id}-instructions ${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
         </NumberField>
       </Field>
@@ -124,6 +124,6 @@ export function ScoreReview(props: ScoreReviewProps) {
     </CollapsiblePanel></Collapsible>}
   </Card>
   return <div className="@container min-w-0" data-score-review><div className={paper ? "grid min-w-0 items-start gap-5 @min-[960px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]" : "min-w-0"}>
-    {paper && <div className="min-w-0" data-score-review-paper><PaperPreview {...paper} /></div>}{panel}
+    {paper && <div className="min-w-0" data-score-review-paper><PaperPreview {...paper} variant="canvas" /></div>}{panel}
   </div></div>
 }

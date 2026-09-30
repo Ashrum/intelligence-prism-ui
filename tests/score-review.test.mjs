@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { toValidatedNumber } from '../node_modules/@base-ui/react/number-field/utils/validate.js';
 import { api, probe, capture, button, h, render } from './score-review-harness.mjs';
 
 test('score normalization clamps range and snaps 0.5 steps without floating drift or invented empty values', () => {
@@ -7,6 +8,24 @@ test('score normalization clamps range and snaps 0.5 steps without floating drif
   const values = [], out = capture({ onScoreChange: v => values.push(v), step: .5 });
   for (const value of [-3,11,6.3,null]) out.number.props.onValueChange(value);
   assert.deepEqual(values, [0,10,6.5,null]);
+});
+
+test('NumberField directional stepping reaches adjacent legal scores and both endpoints', () => {
+  // Exercise the pinned NumberField validator with the actual component props,
+  // then its onValueChange handler; this is not a browser keyboard/pointer test.
+  for (const [maxScore, step, start, direction, expected] of [
+    [10,.3,10,-1,9.9], [10,.3,9.9,-1,9.6], [10,.3,9.9,1,10],
+    [9.2,1,9.2,-1,9], [9.2,1,9,1,9.2],
+    [10,.5,10,-1,9.5], [10,.3,0,1,.3], [10,.3,.3,-1,0],
+    [10,.3,0,-1,0], [10,.3,10,1,10],
+  ]) {
+    const values = [], out = capture({ maxScore, step, score: start, onScoreChange: value => values.push(value) });
+    const p = out.number.props;
+    const next = toValidatedNumber(p.value + direction * p.step, direction * p.step, p.min, p.max, p.min, undefined, p.snapOnStep, false, true);
+    p.onValueChange(next);
+    assert.deepEqual(values, [expected], `${start} ${direction > 0 ? '+' : '-'} ${step}, max ${maxScore}`);
+    assert.equal(capture({ maxScore, step, score: start }).number.props.value, start);
+  }
 });
 
 test('controlled score/reason and accept AI emit exact intents without changing host values or receipts', () => {
@@ -83,8 +102,26 @@ test('empty score, invalid scale and host disabled reason prevent submission and
 
 test('composition preserves PaperPreview region props and shared reviewer/queue APIs; multiline heights override desktop', () => {
   const paper = {title:'原卷',pages:[{id:'p',regions:[{id:'a',label:'第3题',rect:[8,42,84,24]}]}],selectedRegionId:'a'};
-  const out = capture({paper}); assert.deepEqual(out.nodes.find(n=>n.type===api.PaperPreview).props,paper); assert.match(out.html,/data-paper-preview/);
+  const out = capture({paper}); assert.deepEqual(out.nodes.find(n=>n.type===api.PaperPreview).props,{...paper,variant:'canvas'}); assert.match(out.html,/data-paper-preview/);
+  assert.doesNotMatch(out.html, /aria-label="试卷信息"|aria-label="扫描页面"|aria-label="扫描版本"|上一份|>下一份</);
   for (const b of out.buttons) { assert.match(b.props.className,/h-auto sm:h-auto/); assert.doesNotMatch(render(b),/sm:h-8(?:\s|")/); }
   assert.match(render(h(api.AgentItemReviewer,{item:{id:'i',title:'旧复核器',version:'v1'},review:{state:'waiting-human',description:'待确认'},checkpoints:[],summary:'摘要'})),/旧复核器/);
   assert.match(render(h(api.AgentReviewQueue,{title:'旧复核队列',queue:{id:'q',version:'v1'},items:[]})),/旧复核队列/);
+});
+
+test('all review actions including history and retry retain 44px minimum and multiline sizing', () => {
+  for (const state of [{kind:'ready'}, {kind:'failed',reason:'连接中断'}]) {
+    const out = capture({ state, history: [], onPrev() {}, onSkip() {}, onRetry() {} });
+    const actions = [...out.html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)]
+      .filter(([, , content]) => /接受 AI 建议|保存并处理下一份|重试保存|上一题|跳过|历史记录/.test(content));
+    assert.equal(actions.length, 5);
+    for (const [, attrs] of actions) {
+      const classes = attrs.match(/class="([^"]*)"/)[1].split(' ');
+      for (const name of ['min-h-11','h-auto','sm:h-auto','whitespace-normal']) assert.ok(classes.includes(name), name);
+      assert.ok(!classes.includes('sm:h-8'));
+    }
+    const primary = button(out, state.kind === 'ready' ? '保存并处理下一份' : '重试保存');
+    assert.match(render(primary), /bg-primary /);
+    for (const action of out.buttons) assert.equal(action.props.size ?? 'default', 'default');
+  }
 });

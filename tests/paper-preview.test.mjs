@@ -41,6 +41,50 @@ function capture(extra = {}, Component = probeApi.PaperPreview) {
 function button(extra, label) { const found = capture(extra).nodes.find(n => n.props.onClick && (n.props['aria-label'] === label || textOf(n) === label)); assert.ok(found, label); return found; }
 function click(extra, label) { const node = button(extra, label); assert.ok(!node.props.disabled, label); node.props.onClick(); }
 
+test('canvas variant omits document chrome while default and explicit default retain it', () => {
+  const props = { subtitle: '原卷副标题', status: { label: '待复核' }, information: [{ label: '学生', value: '张明' }], informationSlot: h('p', {}, '原始笔迹信息'), actions: [{ id: 'scan', label: '重新扫描' }], onClose() {} };
+  const legacy = html(props);
+  assert.equal(html({ ...props, variant: 'default' }), legacy);
+  for (const label of ['原卷副标题','待复核','原始笔迹信息','试卷信息','扫描页面','扫描版本','重新扫描','上一份','下一份','关闭预览']) assert.ok(legacy.includes(label), label);
+  const canvas = html({ ...props, variant: 'canvas' });
+  assert.match(canvas, /aria-label="张明的试卷"/);
+  assert.doesNotMatch(canvas, /<header|<aside|paper-preview-layout|aria-labelledby/);
+  for (const label of ['原卷副标题','待复核','原始笔迹信息','试卷信息','扫描页面','扫描版本','重新扫描','上一份','下一份','关闭预览']) assert.ok(!canvas.includes(label), label);
+  for (const label of ['上一页','下一页','缩小','放大','适合页面','适合宽度','data-paper-size']) assert.ok(canvas.includes(label), label);
+  assert.match(html({ variant: 'canvas', title: undefined }), /aria-label="试卷预览"/);
+});
+
+test('canvas variant retains paging, zoom, keyboard and repeated region location intents', () => {
+  reset();
+  const regions = [{ id: 'r', label: '页底区域', rect: [8,80,84,15] }];
+  const requests = [], zooms = [], props = { variant: 'canvas', pages: [{ id:'p1', regions }, { id:'p2', regions }], selectedRegionId:'r', onRegionSelect: (...args) => requests.push(args), onZoomChange: zoom => zooms.push(zoom) };
+  const viewer = () => capture(props).nodes.find(n => n.props.locateRequest !== undefined);
+  assert.equal(button(props,'上一页').props.disabled,true);
+  click(props,'页底区域'); click(props,'页底区域');
+  assert.equal(viewer().props.locateRequest,2);
+  click(props,'下一页'); assert.equal(viewer().key,'p2');
+  assert.equal(button(props,'下一页').props.disabled,true);
+  const handler = capture(props).nodes.find(n => n.props.onKeyDown).props.onKeyDown;
+  handler({ key:'ArrowLeft', target:{closest:()=>null}, preventDefault() {} });
+  assert.equal(viewer().key,'p1');
+  click(props,'适合宽度'); click(props,'适合页面'); click(props,'放大');
+  assert.deepEqual(zooms.slice(0,2),['width','page']); assert.ok(zooms[2] > 0);
+  assert.deepEqual(requests,[['p1','r'],['p1','r']]);
+  assert.match(capture(props).html,/left:8%;top:80%;width:84%;height:15%/);
+});
+
+test('canvas variant retains loading, empty, errors and retry without document sidebar', () => {
+  reset();
+  for (const [state, expected] of [['loading',/正在加载试卷/],['empty',/无页面/],['error',/加载失败/]]) {
+    const markup = html({ variant:'canvas', state });
+    assert.match(markup,expected); assert.doesNotMatch(markup,/<aside|扫描版本/);
+    assert.equal(button({ variant:'canvas', state },'下一页').props.disabled,true);
+  }
+  let retries = 0;
+  click({ variant:'canvas', state:'error', onRetry:()=>retries++ },'重试');
+  assert.equal(retries,1);
+});
+
 test('catalog IDs are unique and student/material fixtures have 6/12 explicit page slots', () => {
   assert.equal(new Set(components.map(entry => entry.id)).size, components.length); assert.equal(components.filter(c => c.id === 'paper-preview').length, 1);
   assert.equal(pages.length, 6); assert.equal(api.markingMaterialPages.length, 12);
