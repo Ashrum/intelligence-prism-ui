@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'data-station': {
+    component: 'DataStation / DataStationBadge v0.1 — component candidate',
+    source: 'Pinned coss Sheet / RadioGroup / Card / Skeleton / Empty and shared DataStationConnectionStatus; see docs/data-station.md',
+    contract: ['Controlled right Sheet by default, presentation=inline for embedding. Host supplies devices, recommendation, selection, task, refresh copy, load state and connection with stationId. Availability never implies a connection.', 'Busy, offline and unknown devices cannot be selected or connected; missing handlers disable actions with visible reasons. Connecting locks selection and connect; connected requires disconnect before changing devices.', 'onSelect/onConnect/onDisconnect/onRetry/onClose/onOpen emit intent only. Retry distinguishes loading from a specific failed connection; clicks never transition connection facts.', 'Badge consumes explicit connected name, available count or disconnected state. Unknown facts never become zero or available. MaterialIntake shares connection status presentation without API changes. See docs/data-station.md.'],
+    states: ['ready', 'idle / connecting / connected / failed + reason', 'loading', 'empty + next step', 'error + retry', 'badge connected / available / disconnected'],
+    accessibility: ['coss Sheet supplies focus containment, Escape and focus restoration; coss RadioGroup supplies single selection and keyboard behavior. Persistent labels, described reasons and live status.', 'Buttons and full device labels are at least 44px targets. Three themes, 320px, long Chinese and MathML retain existing semantic typography.'],
+    dont: ['Do not connect devices, poll, execute business logic, persist data or infer status from time or clicks.'],
+  },
   'material-intake': {
     component: 'MaterialIntake v0.1 — component candidate',
     source: 'AgentFileInput + Attachment + Stepper + pinned coss Card/Skeleton/Dialog; reuse evaluation in docs/material-intake.md',
