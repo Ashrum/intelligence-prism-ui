@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'queue-board': {
+    component: 'QueueBoard v0.1 — component candidate',
+    source: 'Pinned coss Card / Toggle / Table / Empty / Skeleton and shared Prism Badge / Button; reuse evaluation in docs/queue-board.md',
+    contract: ['Host provides 2–6 unique categories, counts, mutually exclusive row status IDs, facts and actions. Counts are never computed from visible rows; zero stays visible and invalid counts say 未提供.', 'filter=null means all; undefined uses defaultFilter and local state. Single selection toggles off on repeated activation. onFilterChange(id|null) emits selection; controlled props remain authoritative.', 'onRowAction(rowId, actionId), onHeaderAction() and onRetry() emit intents only. Disabled actions expose a reason via visible text, title and aria-describedby. Missing handlers disable actions.', 'Rows match supplied category IDs; absent facts say 未提供. maxHeight constrains only the named table region. Host pagination must filter before paging; the board never computes business classifications or totals.'],
+    states: ['ready', 'filtered empty', 'loading', 'empty', 'error + retry', 'disabled action + reason'],
+    accessibility: ['coss Toggle uses aria-pressed; one selected category or none. Status text and semantic Badge colors agree between cards and rows.', 'Container-responsive cards use 4/2/1 columns; table retains columns with local horizontal scrolling and keyboard focus. Three-theme 320px fixtures include long Chinese and MathML; live visual acceptance is separate.'],
+    dont: ['Do not infer grading status from clicks or time; do not execute, route, persist, classify submissions or import Workspace business types. Do not reinterpret AgentReviewQueue or StatusComposition APIs.'],
+  },
   'data-station': {
     component: 'DataStation / DataStationBadge v0.1 — component candidate',
     source: 'Pinned coss Sheet / RadioGroup / Card / Skeleton / Empty and shared DataStationConnectionStatus; see docs/data-station.md',
