@@ -40,6 +40,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("queue-board","Queue Board 队列看板","按状态选择队列，查看试卷事实并发出预览、异常处理或复核请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/table",sourceLabel:"coss Table / Toggle / Prism Badge 组合"},
     {...item("data-station","Data Station 教学数据站","选择可用数据站、查看连接事实与任务绑定信息，支持右侧抽屉和入口徽标。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/sheet",sourceLabel:"coss Sheet / RadioGroup / 共享数据站状态组合"},
     {...item("material-intake","Material Intake 资料接收","扫描与上传汇入同一资料清单，支持资料核对、页数限制与单页替换。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileInput / Attachment / Stepper 组合"},
     {...item("attachment","Attachment 附件","文件生命周期、独立操作与学生试卷卡；Paper Card 网格支持当前预览与异常说明。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileStatus / coss / PaperThumbnail 组合",searchTargets:[{terms:["Paper Card","PaperCard","试卷卡","学生试卷"]}]},

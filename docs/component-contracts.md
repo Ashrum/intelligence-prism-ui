@@ -2734,3 +2734,8 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Data Station 教学数据站
 
 2026-10-01 · PO 批准候选 #7，位于「内容与数据」。默认受控 coss 右侧 Sheet，支持 inline；组合 RadioGroup/Card/Skeleton/Empty 和共享 DataStationConnectionStatus（MaterialIntake 旧 API 保持）。调用方提供设备可用性、推荐、选择、连接目标/状态、任务绑定说明与刷新文案；只发 onSelect/onConnect/onDisconnect/onRetry/onClose/onOpen 意图。离线、占用、未知不可选且说明原因；连接中锁定选择与连接，已连接先断开；失败重试携带原目标 ID。DataStationBadge 是同条目入口变体，接收明确的已连接/可用数量/未连接事实。缺失事实不推断，组件无计时器与设备执行。完整 API、复用检索限制、44px 目标与浏览器阻塞见 [Data Station 契约](data-station.md)。独立 Review 与产品验收另行确认。
+
+
+## Queue Board 队列看板 v0.1
+
+2026-10-01 · PO 批准候选 #8，位于「内容与数据」。评估 AgentReviewQueue / StatusComposition 后保持旧 API，复用 coss Card/Toggle/Table/Empty/Skeleton 与 Prism Badge/Button 组合。外部提供 2–6 分类计数与互斥状态；受控/非受控单选可取消，零值可见；行操作、头部和重试只发意图。禁用原因可见且关联 title/aria-describedby；缺失事实不推断。表格支持 maxHeight 和局部横向滚动，分页由宿主组合。完整 API、复用证据与浏览器验收阻塞见 [Queue Board 契约](queue-board.md)。独立 Review 与产品验收另行确认。
