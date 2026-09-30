@@ -16,7 +16,7 @@ const { MaterialIntake, MaterialIntakeDemo, materialIntakeBase: base, materialIn
 await rm(file);
 const h = React.createElement;
 function capture(overrides = {}, Component = MaterialIntake) {
-  const nodes = [], owned = new Set(['MaterialIntake', 'AgentFileInput', 'Attachment']);
+  const nodes = [], owned = new Set(['MaterialIntake', 'IntakeSelection', 'AgentFileInput', 'Attachment']);
   function walk(n) {
     if (Array.isArray(n)) return n.map(walk);
     if (!React.isValidElement(n)) return n;

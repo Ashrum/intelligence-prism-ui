@@ -52,6 +52,7 @@ function IntakeFixture({ props, onCancel }: { props: MaterialIntakeProps; onCanc
     setFeedback(`已选择 ${files.length} 个本机文件；等待调用方接收，尚未上传`)
   }
   return <div className="min-w-0 space-y-3"><MaterialIntake {...props} files={[...props.files, ...local]} onFilesSelected={select}
+    confirmDisabledReason={props.confirmDisabledReason || (local.some(item => item.status.state === "selected" || item.status.state === "invalid") ? "有文件未上传或校验失败" : undefined)}
     onRemove={intent => setFeedback(`已发出移除请求：${intent.fileId}；等待调用方处理`)}
     onRetry={intent => setFeedback(`已发出${intent.kind === "load" ? "重新加载" : "重新接收"}请求；等待调用方处理`)}
     onChangeStation={() => setFeedback("已发出更换数据站请求；等待调用方打开数据站选择")}

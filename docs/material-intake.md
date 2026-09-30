@@ -10,6 +10,12 @@ PO 批准候选 #6；目录「内容与数据」，入口 `/next/components/mate
 - `AgentCaptureScan` 的 AgentCapturePage、quality、needsRecapture、usage、版本/请求回执适用于接收后的页集质量与版本核对。把它嵌入等待接收面板会要求尚不存在的版本与页面事实，并引入重排/预览等超范围动作，因此保留原组件与 API，交由后续流程消费；不从文件数推断页数或清晰度。
 - 流程直接组合 `Stepper`，沿用当前位置摘要与水平局部滚动。基础界面组合固定 coss Card / Skeleton / Dialog 与 Prism Button / AgentStatus；不新增 CSS、视觉令牌、依赖或组件皮肤。S21/S22/S23/S27/S28/S43 只提供功能依据。
 
+## Fix1 复用与交互修正
+
+沿用上述 Supervisor 已查的 Beautiful UI 无对应条目、coss particles `p-input-5` 文件选择依据；不引入第三方代码或新组件条目。`AgentFileInput` 增加可选 `renderSelection({select, canDrop, selectionReason})` 展示插槽，未传时原生输入与能力折叠行为保持不变；Material Intake 在插槽内组合 Prism outline Button、隐藏原生 input 和 Upload 图标。整块按钮支持原生 Enter/Space 激活文件选择，拖入使用既有 `data-pressed` 外观，减少动态效果下禁用过渡；类型、大小、数量上限及能力说明通过 aria-describedby 关联。选择和拖放仍调用原有受限 select，元数据校验仍归宿主。
+
+接收区下方始终显示由 upload.status/reason 生成的中性能力说明，页面不再显示能力折叠入口。文件 MIME 在传给 Attachment 的显示数据中转换为 PDF、PNG 图片、Word 等名称，原始文件与校验数据不变。单页接收入口提取 targetLabel 中已有的「第 N 页」文字，其余目标标签原样显示。夹具宿主在新增 selected/invalid 文件后提供「有文件未上传或校验失败」禁用原因。接收 busy 标记位于数据站卡，加载 busy 标记位于骨架区域；二者均不包含状态 live region，避免阻塞接收页数播报。真实读屏与浏览器验收由 Supervisor 补验。
+
 ## 契约
 
 `MaterialIntake` 必填 `title, description, station, platform, state, files, limits, capabilities, steps`。文件、限制和能力复用 AgentFileInput 的类型。`station` 包含 name/connection/location/mode/receivedPages；connection 为 connected/available/disconnected/offline/unknown，文字与 AgentStatus 语义同步。缺失文字、未知/负数/非整数页数显示「未提供」，0 为真实零页。
