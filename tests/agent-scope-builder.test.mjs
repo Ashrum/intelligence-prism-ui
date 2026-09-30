@@ -292,3 +292,16 @@ void [leak,options,renderer,noReason,uncontrolled,confirmation,props,empty];
     assert.equal(diagnostics.length, 0, diagnostics.map(value => ts.flattenDiagnosticMessageText(value.messageText, '\n')).join('\n'));
   } finally { await rm(typeFile); }
 });
+
+
+test('scope statuses retain accessible labels without badge or button decoration in every presentation', () => {
+  for (const mode of modes) {
+    const html = htmlFor({ ...mode, dimensions: [baseDimension, { ...baseDimension, id: 'optional', required: false, summary: null }] });
+    assert.doesNotMatch(html, /data-slot="badge"/);
+    for (const label of ['有效', '未指定']) assert.ok(html.includes(label), label);
+    const statuses = [...html.matchAll(/<span[^>]*data-agent-status="[^"]+"[^>]*>/g)];
+    assert.ok(statuses.length >= 2);
+    for (const [opening] of statuses) assert.doesNotMatch(opening, /(?:class="| )(?:border|rounded|bg-|ring-|shadow)|role="button"|tabindex=/);
+    if (mode.density === 'compact' && mode.view !== 'workspace') assert.match(html, /role="status" aria-label="范围待确认"/);
+  }
+});

@@ -7,6 +7,7 @@ import { Label } from "@/components/coss/label"
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
 import { Badge, type BadgeProps } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import type { AgentMetricReading, AgentMetricRecord, AgentMetricScope } from "./agent-metric-summary"
@@ -125,9 +126,10 @@ type Entry = {
 }
 
 function CellReading({ entry, id }: { entry: Entry; id?: string }) {
-  return <Badge id={id} variant={entry.reading.state === "available" ? entry.band?.tone ?? "secondary" : "outline"}
+  if (entry.reading.state !== "available") return <AgentStatus id={id} unknown={entry.reading.state === "unknown"}>{readingLabels[entry.reading.state]}</AgentStatus>
+  return <Badge id={id} variant={entry.band?.tone === "outline" ? "secondary" : entry.band?.tone ?? "secondary"}
     className="h-auto max-w-full whitespace-normal break-words py-1">
-    {entry.reading.state === "available" ? <span className="tabular-nums">{entry.reading.value}{entry.reading.unit}{entry.band && <> · {entry.band.label}</>}</span> : readingLabels[entry.reading.state]}
+    <span className="tabular-nums">{entry.reading.value}{entry.reading.unit}{entry.band && <> · {entry.band.label}</>}</span>
   </Badge>
 }
 
@@ -276,7 +278,7 @@ export function AgentDistributionMatrix({ title, record, scope, rowDimension, co
       <p id={`${id}-cell-sample`} className={sharedCellFacts ? "text-ui-hint" : "sr-only"}>{sharedCellFacts ? `单元格共用口径：${sharedCellFacts}；不同处见数据提示。` : "单元格样本与分母见数据提示。"}</p>
       {showTable && <>
         {!!bands.length && <ul aria-label="颜色分级区间" className="flex flex-wrap gap-3">{bands.map(band => <li key={band.id} className="flex max-w-full flex-wrap items-center gap-2 text-ui-hint">
-          <Badge variant={band.tone} className="h-auto whitespace-normal break-words py-1">{band.label}</Badge><span>{band.interval}</span>
+          <Badge variant={band.tone === "outline" ? "secondary" : band.tone} className="h-auto whitespace-normal break-words py-1">{band.label}</Badge><span>{band.interval}</span>
         </li>)}</ul>}
         {!rows.length || !columns.length ? <p className="text-ui-hint">当前范围暂无矩阵数据。</p> : <>
           <p id={`${id}-keyboard`} className="text-ui-hint">方向键逐格移动，Home / End 移至行首或行尾，Enter / 空格查看可用依据；窄容器可横向滚动。</p>

@@ -70,6 +70,8 @@ export type AgentCandidatePickerProps = AgentRecordViewProps & AgentVisualProps 
   renderItem?: (item: AgentCandidateEntry, context: { view: "inline" | "workspace"; density: "default" | "compact" }) => ReactNode
   /** Opt in only when renderItem renders the candidate title. Without slot content the outer title remains. */
   itemTitleOwner?: "picker" | "slot"
+  /** Full selection accessible name; host numbering must match renderItem. Never called for restricted items. */
+  getItemSelectionLabel?: (item: AgentCandidateEntry) => string
   notice?: string
 }
 
@@ -109,10 +111,10 @@ function CandidateSource({ source }: { source?: string | null }) {
     : <span className="text-ui-meta text-muted-foreground">来源：未确认</span>
 }
 
-function CandidateFacts({ item, selected, shared = [], showStatus = true, alternativeRationale }: { alternativeRationale?: string; item: AgentCandidate; selected: boolean; shared?: CandidateSharedFact[]; showStatus?: boolean }) {
+function CandidateFacts({ item, selected, shared = [], showStatus = true, showType = true, showReason = true, alternativeRationale }: { alternativeRationale?: string; item: AgentCandidate; selected: boolean; shared?: CandidateSharedFact[]; showStatus?: boolean; showType?: boolean; showReason?: boolean }) {
   return <div className="min-w-0 space-y-1">
     <div className="flex flex-wrap gap-2">
-      {item.status !== "restricted" && <span className="text-ui-meta text-muted-foreground">{item.type}</span>}
+      {showType && item.status !== "restricted" && <span className="text-ui-meta text-muted-foreground">{item.type}</span>}
       {showStatus && <CandidateStatus item={item} selected={selected} />}
       {selected && item.status !== "available" && <AgentStatus>已选</AgentStatus>}
     </div>
@@ -125,25 +127,30 @@ function CandidateFacts({ item, selected, shared = [], showStatus = true, altern
       {alternativeRationale !== undefined && <p data-agent-candidate-alternative-basis="" className="whitespace-pre-wrap break-words text-ui-hint">替代依据：{alternativeRationale || "未提供"} <CandidateSource source={item.source} /></p>}
       {shared.some(fact => !fact.all) && <p className="break-words text-ui-hint">共用说明：{shared.filter(fact => !fact.all).map(fact => fact.label).join(" · ")}</p>}
     </>}
-    {reasonOf(item) && <p className="whitespace-pre-wrap break-words text-ui-hint">{reasonOf(item)}</p>}
+    {showReason && reasonOf(item) && <p className="whitespace-pre-wrap break-words text-ui-hint">{reasonOf(item)}</p>}
   </div>
 }
 
-function CandidateRow({ item, selected, disabledReason, onToggle, children, content, compact, shared, slotTitle }: {
+function CandidateRow({ item, selected, disabledReason, onToggle, children, content, compact, shared, slotTitle, selectionLabel }: {
   item: AgentCandidate; selected: boolean; disabledReason?: string; onToggle: (checked: boolean) => void
-  children?: ReactNode; content?: ReactNode; compact: boolean; shared: CandidateSharedFact[]; slotTitle: boolean
+  children?: ReactNode; content?: ReactNode; compact: boolean; shared: CandidateSharedFact[]; slotTitle: boolean; selectionLabel?: string
 }) {
   const id = useId()
+  const reason = reasonOf(item)
+  // Only known status semantics or exact status text may hide a reason; never fuzzy-match host prose.
+  const repeatsStatus = (value: string) => value === statusLabels[item.status] || item.status === "in-collection" && value === reason
+  const hasContent = content != null && typeof content !== "boolean"
   return <div data-agent-candidate-selected={selected || undefined} className={`min-w-0 space-y-1.5 rounded-lg p-2.5 ${selected ? "bg-info/10" : ""}`}>
     <Label htmlFor={`${id}-choice`} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2.5 whitespace-normal">
       <Checkbox id={`${id}-choice`} checked={selected} disabled={disabledReason !== undefined}
-        aria-label={`选择：${titleOf(item)}`} aria-describedby={`${id}-facts${shared.map(fact => ` ${fact.anchor}`).join("")}${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
+        aria-label={selectionLabel || `选择：${titleOf(item)}`} aria-describedby={`${id}-facts${reason ? ` ${id}-reason` : ""}${shared.map(fact => ` ${fact.anchor}`).join("")}${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
         onCheckedChange={checked => { if (disabledReason === undefined) onToggle(checked) }} />
-      <span className={slotTitle ? "min-w-0 flex-1 text-ui-action" : "min-w-0 flex-1 break-words text-item-title"}>{slotTitle ? "选择候选" : titleOf(item)}</span>
+      {slotTitle ? <span className="flex-1" aria-hidden="true" /> : <span className="min-w-0 flex-1 break-words text-item-title">{titleOf(item)}</span>}
       <CandidateStatus item={item} selected={selected} />
     </Label>
-    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} shared={shared} showStatus={false} /></div>
-    {disabledReason !== undefined && disabledReason !== reasonOf(item) && <p id={`${id}-disabled`} className="break-words text-ui-hint">{disabledReason}</p>}
+    <div id={`${id}-facts`}><CandidateFacts item={item} selected={selected} shared={shared} showStatus={false} showType={!hasContent} showReason={false} /></div>
+    {reason && <p id={`${id}-reason`} className={repeatsStatus(reason) ? "sr-only" : "whitespace-pre-wrap break-words text-ui-hint"}>{reason}</p>}
+    {disabledReason !== undefined && disabledReason !== reasonOf(item) && <p id={`${id}-disabled`} className={repeatsStatus(disabledReason) ? "sr-only" : "break-words text-ui-hint"}>{disabledReason}</p>}
     {content != null && <div className="min-w-0">{content}</div>}
     {children}
   </div>
@@ -195,7 +202,7 @@ function CandidateFilters({ fields, value, onChange, reason }: {
 }
 
 export function AgentCandidatePicker({ title, candidateSet, candidates, relatedCandidates = [], selectedIds, result, page, submission,
-  query, filters, sort, confirm, disabledReason, onIntent, onExpand, onBack, renderItem, itemTitleOwner = "picker", notice, details,
+  query, filters, sort, confirm, disabledReason, onIntent, onExpand, onBack, renderItem, itemTitleOwner = "picker", getItemSelectionLabel, notice, details,
   view = "inline", density = "default", visual }: AgentCandidatePickerProps) {
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   // Current result facts take precedence over retained facts, including access revocation.
@@ -241,6 +248,7 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
     const content = item.status !== "restricted" ? renderItem?.(item, { view, density }) : undefined
     return <CandidateRow item={item} selected={selected.has(item.id)} compact={compact}
     shared={facts.filter(fact => fact.indexes.includes(index))} slotTitle={itemTitleOwner === "slot" && content != null && typeof content !== "boolean"}
+    selectionLabel={item.status !== "restricted" ? getItemSelectionLabel?.(item) : undefined}
     disabledReason={choiceReason(item)} onToggle={checked => toggle(item, checked)}
     content={content}>
     {item.status !== "restricted" && !!item.alternatives?.length && <ul aria-label={`${titleOf(item)}的替代项`} className="space-y-2.5">

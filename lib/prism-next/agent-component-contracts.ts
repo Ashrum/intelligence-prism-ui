@@ -71,9 +71,9 @@ const paragraphStarts: Record<string, readonly string[]> = {
   ],
   "collection-basket": [
     "AgentCollectionBasket (semantic 11, components/prism-next/agent-collection-basket.tsx) dec",
-    "Collection entries={id,title,type,access?:available,source?,version?,groupId?,summary?,fie",
+    "Collection itemPresentation=summary renders compact numbered titles",
+    "Collection infoPlacement=menu is opt-in and applies only to workspace summary",
     "Collection sync defaults unknown: local/synced/failed/unknown display 本页暂存/已同步/同步失败/状态未确认;",
-    "Inline shows first inlineLimit (default 3, finite integer >=1) plus every invalid/conflict",
     "Collection entry actions explicitly declare remove, independent move.up/move.down, group={"
   ],
   "structure-arranger": [

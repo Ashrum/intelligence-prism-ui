@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Button } from "@/components/coss/button"
 import { Card } from "@/components/coss/card"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { AgentContextList } from "./agent-components"
 import { RecordDetails, RecordExpand, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -88,7 +88,7 @@ export function AgentContextSummary({
           <p className="text-ui-hint text-muted-foreground">{snapshot ? recordLayout ? "历史依据 · 当时记录" : "历史依据" : "当前任务依据"}</p>
           <h3 id={id} className="break-words text-block-title">{title}</h3>
         </div>
-        <Badge variant="outline" className="max-w-full whitespace-normal">{snapshot ? <><History aria-hidden="true" />{snapshot}</> : "当前状态"}</Badge>
+        <AgentStatus icon={snapshot ? History : undefined} className="max-w-full whitespace-normal">{snapshot || "当前状态"}</AgentStatus>
       </div>
       <dl className="grid min-w-0 gap-x-6 gap-y-3 @min-[480px]:grid-cols-2">
         {scope.map(field => <div key={field.label} className="min-w-0">

@@ -357,14 +357,15 @@ test('compact explanatory copy starts collapsed while native input descriptions 
   assert.match(html, /hidden=""[^>]*data-slot="collapsible-panel"/);
 });
 
-test('default inline and both workspace densities match main 7bf305b SSR bytes across nine fixtures', async () => {
+test('default inline and both workspace densities match reviewed plain-status snapshots across nine fixtures', async () => {
   const { createHash } = await import('node:crypto');
   const fixture = JSON.parse(await readFile(new URL('./fixtures/agent-file-input-main-7bf305b.json', import.meta.url), 'utf8'));
+  const snapshots = JSON.parse(await readFile(new URL('./fixtures/agent-file-input-status-text.json', import.meta.url), 'utf8'));
   const output = new URL('../.sites-runtime/file-input-compact/', import.meta.url);
   await mkdir(output, { recursive: true });
   for (const entry of fixture.cases) {
     const html = render(h(AgentFileInput, { ...fixture.props, ...entry.props, onSelect() {}, onAction() {}, onExpand() {}, onGroupByChange() {}, onBatchAction() {}, onBack() {} }));
     await writeFile(new URL(`current-${entry.name}.html`, output), html);
-    assert.equal(createHash('sha256').update(html).digest('hex'), entry.sha256, entry.name);
+    assert.equal(createHash('sha256').update(html).digest('hex'), snapshots.cases[entry.name], entry.name);
   }
 });

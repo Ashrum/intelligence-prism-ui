@@ -5,7 +5,7 @@ import { useTheme } from "next-themes"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { Toggle } from "@/components/coss/toggle"
 import { Label } from "@/components/coss/label"
-import { Badge } from "../badge"
+import { AgentStatus } from "../agent-visual-parts"
 import { QuestionSelect } from "../question-controls"
 import { agentComponentStatusLabels, type AgentComponentEntry } from "@/lib/prism-next/agent-component-registry"
 import { agentOverviewHref, agentSemanticHref, agentSemanticTabs, resolveSemanticTab, semanticNeighbors, type AgentSemanticTab } from "@/lib/prism-next/agent-component-navigation"
@@ -83,7 +83,7 @@ export function AgentComponentPage({ entry, contract }: { entry: AgentComponentE
     <header className="prism-page-heading space-y-3">
       <h1>{entry.number} {entry.name}</h1>
       <p className="text-ui-body break-words">导出名：{entry.componentName}</p>
-      <div className="flex flex-wrap items-center gap-3"><Badge variant="outline">{agentComponentStatusLabels[entry.status]}</Badge><span className="text-ui-hint">{entry.category.id} {entry.category.name} · {twoStateLabels[entry.twoState]}</span></div>
+      <div className="flex flex-wrap items-center gap-3"><AgentStatus tone="neutral">{agentComponentStatusLabels[entry.status]}</AgentStatus><span className="text-ui-hint">{entry.category.id} {entry.category.name} · {twoStateLabels[entry.twoState]}</span></div>
       <p className="text-ui-body">{agentComponentExamples[entry.slug].description}</p>
     </header>
     <section aria-label="审阅设置" className="min-w-0 space-y-3">

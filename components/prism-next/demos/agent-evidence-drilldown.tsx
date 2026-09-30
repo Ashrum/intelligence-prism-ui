@@ -7,7 +7,7 @@ import { Button } from "@/components/coss/button"
 import { useQuestionPreview } from "./agent-question-presentation"
 import { axisQuestion, completingSquareQuestion } from "./question-reference-fixtures"
 import { QuestionContent } from "../question-content"
-import { Badge } from "../badge"
+import { AgentStatus } from "../agent-visual-parts"
 import { DocumentRegionViewer } from "../document-region-viewer"
 import { DiagnosisEvidenceTable } from "../learning-components"
 import { AgentEvidenceDrilldown, type AgentEvidenceConclusion, type AgentEvidenceNode, type AgentEvidencePath } from "../agent-evidence-drilldown"
@@ -83,7 +83,7 @@ export function AgentEvidenceDrilldownDemo() {
     {!presentation.embedded && <h2 className="text-section-title">下钻与证据浏览</h2>}
     <p className="text-ui-hint text-muted-foreground">固定示例：选择对象、查看证据与返回，三种用法共享同一组记录。</p>
     <div className="flex flex-wrap gap-2" aria-label="证据示例用途">{Object.entries(evidenceExamples).map(([key, item]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as typeof purpose); setPath([]); setFeedback(""); origin.current = null }}>{item.label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
-    {purpose === "diagnosis" && <DiagnosisEvidenceTable items={[{ id: example.conclusion.id, title: example.conclusion.statement, observation: example.conclusion.summary, source: "本次练习（示例）", location: "学生 → 题目 → 作答片段", status: <Badge variant="outline">待核对</Badge>, actions: <Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate([]) }}>查看诊断依据</Button> }]} />}
+    {purpose === "diagnosis" && <DiagnosisEvidenceTable items={[{ id: example.conclusion.id, title: example.conclusion.statement, observation: example.conclusion.summary, source: "本次练习（示例）", location: "学生 → 题目 → 作答片段", status: <AgentStatus tone="neutral">待核对</AgentStatus>, actions: <Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate([]) }}>查看诊断依据</Button> }]} />}
     <div className="flex flex-wrap gap-2"><Button variant="outline" onClick={event => { origin.current = event.currentTarget; navigate(example.firstEvidence) }}>定位首条证据示例</Button></div>
     <p role="status" className="text-ui-hint">{feedback || "查看与返回不会改变证据记录。"}</p>
     <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 @min-[1100px]:grid-cols-3"}>

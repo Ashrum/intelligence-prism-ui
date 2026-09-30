@@ -5,7 +5,7 @@ import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { InputGroup, InputGroupAddon } from "@/components/coss/input-group"
 import { Textarea } from "@/components/coss/textarea"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -141,7 +141,7 @@ export function AgentContentInput({ title, inputId, content, baseVersion, draftV
       <p className="text-ui-hint">{typeLabels[content.type]} · 当前草稿{draftVersion && ` ${draftVersion}`}</p>
       {baseVersion && <p className="text-ui-hint break-words">基准版本：{baseVersion}</p>}
       <div id={`${id}-save`} role="status" className="space-y-1">
-        <Badge variant={state === "conflict" || state === "unknown" ? "warning" : "outline"}>{saveLabels[state]}</Badge>
+        <AgentStatus tone={state === "conflict" || state === "unknown" ? "warning" : "neutral"}>{saveLabels[state]}</AgentStatus>
         {save?.description && <p className="text-ui-hint whitespace-pre-wrap break-words">{save.description}</p>}
         {save?.autoSave && <p className="text-ui-hint whitespace-pre-wrap break-words">自动保存：{save.autoSave}</p>}
       </div>

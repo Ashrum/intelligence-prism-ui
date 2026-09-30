@@ -42,7 +42,11 @@
 ## 5. 设计系统硬约束
 
 - `components/coss/**` 是固定来源的 54 个原始组件，字节受散列校验，禁止修改。需要调整时在 `components/prism-next` 组合或适配。
-- 先复用：现有组件 → 组合或公开属性扩展 → 抽取 Workspace 的通用部分 → 确有稳定缺口才新增。新增前记录检索依据。
+- 先复用（PO 2026-09-29）：
+  - 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
+  - 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
+  - coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
+  - 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
 - 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。
 - 文字使用语义字号类（`text-ui-body`、`text-ui-hint`、`text-read-body`、`text-block-title` 等），不写局部字号；排版检查脚本会拦截。
 - 主题保持 `light` / `paper` / `dark` 三套；根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。

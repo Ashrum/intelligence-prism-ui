@@ -1,9 +1,10 @@
 "use client";
 
 import type { ComponentProps, CSSProperties, ReactNode } from "react";
-import { Check, ChevronDown, PanelLeft } from "lucide-react";
+import { Check, ChevronDown, PanelLeft, School } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/coss/avatar";
 import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuLinkItem } from "@/components/coss/menu";
+import { Popover, PopoverTrigger, PopoverPopup, PopoverTitle } from "@/components/coss/popover";
 import { Badge } from "@/components/prism-next/badge";
 import { Button, type ButtonProps } from "@/components/prism-next/button";
 import { cn } from "@/lib/utils";
@@ -170,6 +171,50 @@ export function BarIconButton({ label, count, countUnit = "", size = "global", c
     <span aria-hidden="true" className="prism-bar-button-icon">{children}</span>
     <IconCountBadge count={count} />
   </Button>;
+}
+
+export interface AppBarTeachingContextProps {
+  /** Host-owned summary, including its unknown/unavailable state when needed. */
+  summary: string;
+  items: readonly { id: string; label: string }[];
+  currentId?: string | null;
+  /** Required host copy when currentId is absent, stale, or no relations exist. */
+  status: string;
+  textbook: string;
+  onSelect: (id: string) => void;
+  settings: { href: string; onSelect?: () => void } | { href?: never; onSelect: () => void };
+  popoverProps?: ComponentProps<typeof Popover>;
+  popupProps?: ComponentProps<typeof PopoverPopup>;
+}
+
+/** Global context facts and selection intents only; the host confirms all changes. */
+export function AppBarTeachingContext({ summary, items, currentId, status, textbook, onSelect, settings, popoverProps, popupProps }: AppBarTeachingContextProps) {
+  const current = items.find(item => item.id === currentId);
+  return <Popover {...popoverProps}>
+    <PopoverTrigger render={<BarIconButton label={`任教班级与教材：${summary}`}><School /></BarIconButton>} />
+    <PopoverPopup align="end" {...popupProps} className={cn("prism-app-bar-teaching-popup", popupProps?.className)}>
+      <div className="prism-app-bar-teaching-content">
+        <PopoverTitle className="text-item-title">任教班级与教材</PopoverTitle>
+        <div className="prism-app-bar-teaching-fact">
+          <p className="text-ui-meta text-muted-foreground">当前任教班级 · 学科</p>
+          <p className="text-ui-body">{current?.label ?? status}</p>
+        </div>
+        {items.length > 0 && <div role="group" aria-label="切换任教班级与学科" className="prism-app-bar-teaching-options">
+          {items.map(item => <Button key={item.id} variant="ghost" className="prism-app-bar-teaching-action text-ui-action"
+            aria-pressed={item.id === currentId} onClick={() => onSelect(item.id)}>
+            <span>{item.label}</span>{item.id === currentId && <Check aria-hidden="true" className="size-4 shrink-0" />}
+          </Button>)}
+        </div>}
+        <div className="prism-app-bar-teaching-fact">
+          <p className="text-ui-meta text-muted-foreground">当前教材版本</p>
+          <p className="text-ui-body">{textbook}</p>
+        </div>
+        <Button variant="outline" className="prism-app-bar-teaching-action text-ui-action"
+          render={settings.href === undefined ? undefined : <a href={settings.href} />}
+          onClick={() => settings.onSelect?.()}>任教与教材设置</Button>
+      </div>
+    </PopoverPopup>
+  </Popover>;
 }
 
 /** The label and environment explanation are supplied by the host. */

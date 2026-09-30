@@ -9,7 +9,7 @@ import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncreme
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Switch } from "@/components/coss/switch"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -74,7 +74,7 @@ function ParameterFacts({ parameter }: { parameter: AgentParameterDefinition }) 
   return <>
     {parameter.status.state !== "provided" && <p className="break-words">{statusLabels[parameter.status.state]}：{parameter.status.reason}</p>}
     {parameter.validation.map((result, index) => <p key={index} className="flex min-w-0 items-start gap-2">
-      <Badge variant={result.level === "error" ? "attention" : result.level === "warning" ? "warning" : "outline"}>{validationLabels[result.level]}</Badge>
+      <AgentStatus tone={result.level === "error" ? "error" : result.level === "warning" ? "warning" : "neutral"}>{validationLabels[result.level]}</AgentStatus>
       <span className="min-w-0 break-words">{result.message}</span>
     </p>)}
     {parameter.impact && <p className="break-words">{parameter.impact}</p>}
@@ -174,7 +174,7 @@ export function AgentParameterConfig({ title, baseVersion, parameters, view = "i
   const content = <>
     <header className="min-w-0 space-y-2">
       <div className="flex min-w-0 flex-wrap items-center gap-2"><h3 id={`${id}-title`} className="min-w-0 break-words text-block-title">{title}</h3>
-        {frozen && <Badge variant="outline">已冻结</Badge>}
+        {frozen && <AgentStatus tone="neutral">已冻结</AgentStatus>}
       </div>
       {frozen && <p className="break-words text-ui-hint">确认时的参数 · {frozen.versionLabel}</p>}
       {reason && <p id={`${id}-reason`} className="break-words text-ui-hint">{reason}</p>}

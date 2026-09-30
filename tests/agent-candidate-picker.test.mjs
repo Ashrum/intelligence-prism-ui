@@ -300,3 +300,43 @@ test('all-candidate notes have no row repetitions; partial applicability referen
     assert.doesNotMatch(partial, /附加说明 1|选择依据 1|来源 1|条目 \d/);
   }
 });
+
+test('dedup: membership reason remains directly described but hidden; distinct reasons remain visible', () => {
+  for (const mode of modes) {
+    const html = htmlFor({ ...mode, candidates: [inCollection, invalid, restricted, unknown] });
+    const hidden = [...html.matchAll(/<p id="([^"]+)" class="sr-only">([^<]+)<\/p>/g)];
+    assert.equal(hidden.length, 1);
+    assert.equal(hidden[0][2], '已在集合中，无需重复选择。');
+    assert.ok([...html.matchAll(/aria-describedby="([^"]+)"/g)].some(([, ids]) => ids.split(' ').includes(hidden[0][1])));
+    const visible = textOf(html.replace(/<p[^>]*class="sr-only"[^>]*>.*?<\/p>/g, ''));
+    assert.equal(visible.split('已在集合中').length - 1, 1);
+    for (const reason of [invalid.reason, restricted.disclosure.reason, unknown.reason]) assert.ok(visible.includes(reason));
+    const calls = [], nodes = capture({ ...mode, candidates: [inCollection], onIntent: value => calls.push(value) });
+    const choice = checkbox(nodes, inCollection.title);
+    assert.equal(choice.props.disabled, true); choice.props.onCheckedChange(true); assert.deepEqual(calls, []);
+    const overridden = htmlFor({ ...mode, candidates: [inCollection], disabledReason: '权限不足，不能修改。' });
+    assert.match(overridden, /class="break-words text-ui-hint">权限不足，不能修改。/);
+    assert.match(htmlFor({ ...mode, candidates: [{ ...invalid, reason: '失效' }] }), /class="sr-only">失效<\/p>/);
+  }
+});
+
+test('dedup: slot owns type, empty slots retain type and title; accessible numbering follows host', () => {
+  for (const mode of modes) {
+    const candidate = { ...first, type: '填空题' };
+    const options = { ...mode, candidates: [candidate], itemTitleOwner: 'slot', getItemSelectionLabel: item => `选择第 7 题 · ${item.title}` };
+    const html = htmlFor({ ...options, renderItem: item => h('div', {}, h('h4', {}, `第 7 题 · ${item.title}`), h('p', {}, `${item.type} · 5 分 · 基础`)) });
+    assert.equal(textOf(html).split('填空题').length - 1, 1);
+    assert.doesNotMatch(html, />选择候选</);
+    assert.match(html, /aria-label="选择第 7 题 · 根式计算题"/);
+    for (const renderItem of [undefined, () => null, () => undefined, () => false, () => true]) {
+      const fallback = textOf(htmlFor({ ...options, renderItem }));
+      assert.equal(fallback.split('填空题').length - 1, 1);
+      assert.equal(fallback.split(first.title).length - 1, 1);
+    }
+    assert.doesNotMatch(htmlFor({ ...options, itemTitleOwner: 'picker', renderItem: () => '自带类型内容' }), /填空题/);
+    let called = false;
+    const restrictedHTML = htmlFor({ ...options, candidates: [restricted], getItemSelectionLabel: () => { called = true; return 'SECRET'; } });
+    assert.equal(called, false); assert.doesNotMatch(restrictedHTML, /SECRET/);
+    assert.match(htmlFor({ ...options, getItemSelectionLabel: () => '' }), /aria-label="选择：根式计算题"/);
+  }
+});

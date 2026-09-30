@@ -132,7 +132,7 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
       onOpen={trigger => questionPreview.openQuestion(question, state.items.indexOf(item) + 1, trigger)} /> : null
   } : undefined
   const batchAttributes = [arrangementExampleBatchAttribute(state, selected, purpose)]
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "在右栏查看" : undefined} structure={structure} items={state.items} groups={state.groups}
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "查看详情" : undefined} structure={structure} items={state.items} groups={state.groups}
         summary={unknown ? {} : { groupCount: state.groups.length, itemCount: state.items.length, itemCountLabel: purpose === "paper" ? "题数" : "任务数", totalScore, ...(purpose === "paper" ? { targetScore: 30 } : {}) }}
         validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
         readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}
@@ -151,7 +151,7 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
     {([ ["inline", "default", "对话编排摘要"], ["workspace", "default", "完整编排"], ["inline", "compact", "紧凑编排摘要"] ] as const).map(([view, density, label]) => <section key={`${view}-${density}`}
       ref={view === "workspace" ? workspace : undefined} tabIndex={view === "workspace" ? -1 : undefined} aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3>
-      <AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "在右栏查看" : undefined} structure={structure} items={state.items} groups={state.groups}
+      <AgentStructureArranger renderItem={renderQuestion} openItemLabel={purpose === "paper" ? "查看详情" : undefined} structure={structure} items={state.items} groups={state.groups}
         summary={unknown ? {} : { groupCount: state.groups.length, itemCount: state.items.length, itemCountLabel: purpose === "paper" ? "题数" : "任务数", totalScore, ...(purpose === "paper" ? { targetScore: 30 } : {}) }}
         validation={validation} actions={actions} changes={changes} save={{ state: save, description: save === "error" ? "示例写入失败，当前编排仍保留。" : undefined }}
         readOnlyReason={readonly ? "此版本仅供核对，请在可编辑草稿中调整。" : undefined}

@@ -2,6 +2,15 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
+## 组件来源与复用顺序（PO 2026-09-29）
+
+- 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
+- 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
+- coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
+- 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+
+以上是组件来源检索顺序，不改变规范权威顺序、主题与语义令牌要求，也不允许引入 Workspace 业务行为或私有类型。
+
 ## 交互演示器 v0.1
 
 2026-09-27 · 设计候选，语义 **39 AgentInteractiveDemo**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-interactive-demo.tsx`；组件页 `#interactive-demo`。未合并分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`。
@@ -1104,14 +1113,15 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 | `onIntent` | 可选 `(intent:AgentCandidateIntent)=>void` | 唯一数据变更出口，详见下表；缺省只读。所有 disabledReason（包括空字符串）既禁用控件，也由处理器保护；函数返回值不是回执 |
 | `disabledReason` | 可选 string | 限制选择／取消／批量／替换／提交；检索、排序和导航仍可用。原因常驻；历史／冻结只读可由页面提供此限制，历史事实需页面单独明确标识 |
 | `view / density` | inline/workspace 默认 inline；default/compact 默认 default | compact 只减少留白，不缩字、截断原因或增加第三业务态。无内部选择或查询副本 |
-| `itemTitleOwner` | 可选 `"picker" / "slot"`，默认 `"picker"` | 默认保持原有外层标题；`"slot"` 声明 renderItem 自行呈现 item.title，外层显示“选择候选”，勾选控件仍保留完整标题的 accessible name。无插槽或返回 null/undefined/boolean 时保留外层标题；受限项始终保留获权标题且不调用插槽。宿主须保证实际返回的内容含标题；不检测 ReactNode 内部。标题去重范围为候选结果行，已选摘要与替代项仍各自保留可读名称 |
-| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；默认标题由外层显示，状态、依据、来源常驻（重复说明可共用）。标题归属见 `itemTitleOwner`。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
+| `itemTitleOwner` | 可选 `"picker" / "slot"`，默认 `"picker"` | 默认保持原有外层标题；`"slot"` 声明 renderItem 自行呈现 item.title，外层不再显示“选择候选”，保留复选框与右上状态，勾选控件仍保留完整标题的 accessible name。无插槽或返回 null/undefined/boolean 时保留外层标题；受限项始终保留获权标题且不调用插槽。宿主须保证实际返回的内容含标题；不检测 ReactNode 内部。标题去重范围为候选结果行，已选摘要与替代项仍各自保留可读名称 |
+| `getItemSelectionLabel` | 可选 `(item:AgentCandidateEntry)=>string` | 完整的复选框 accessible name；题目宿主传入“选择第 N 题 · 标题”，N 必须与 renderItem 内容编号一致（排序／筛选后也一致）。未提供或返回空字符串时回退“选择：标题”；restricted 不调用，始终使用获权标题。不推断候选领域或解析 ReactNode |
+| `renderItem` | 可选 `(item:AgentCandidateEntry,{view,density})=>ReactNode` | 两态的当前获权领域内容；有实际内容时候选层不再显示 type，由宿主内容提供类型；未提供或返回 null/undefined/boolean 时保持原类型行，不新增 itemPresentation 属性。默认标题由外层显示，状态、依据、来源常驻（重复说明可共用）。标题归属见 `itemTitleOwner`。restricted 从不调用；不得放入绕过选择保护的写操作或未授权内容 |
 | `onExpand / onBack` | 可选 `(trigger:HTMLButtonElement)=>void` / `()=>void` | Inline“展开筛选与选择”与 Workspace“返回原位置”。只导航，不改变选择或提交；页面恢复原触发器、对象及阅读位置，没有能力就没有入口 |
 | `notice / details` | 可选 string / ReactNode | 一条常驻提示，默认“选择或提交不代表已加入集合。”；补充说明默认折叠。状态未知、失败、受限／失效原因、选择和替代依据不进入 details |
 
 候选类型：
 
-- `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
+- `AgentCandidateEntry` 必填 `id/title/type/rationale/source/status`，可选 `summary/alternatives`。`rationale/source` 接受 null，显示“选择依据：未提供／来源：未确认”；不据排序、点击或题干生成推荐依据，也不擅自补推荐分数。`available` 可选；`in-collection` 只说明已在集合中且阻断重复选择；候选结果行的固定原因“已在集合中，无需重复选择。”仅以 sr-only 文本经 aria-describedby 直接关联复选框，右上状态仍可见。原因严格等于该项状态文案时也仅作可访问描述；不模糊推断任意原因句的语义。不同的权限、失效、未知及全局禁用原因仍可见。替代项维持原呈现；`invalid/unknown` 必填 reason，不可新增。**已选**只由 selectedIds 投影，与可用状态并列。
 - `AgentCandidateRestrictedEntry={id,status:'restricted',disclosure:{title,reason}}` 只接收获准披露的名称与原因。运行时同样忽略误传摘要、类型、依据、来源、替代关系及领域插槽。被引用的替代项变为 restricted 时，其关系解释也不显示。页面须先处理全组标题、总数、已选／关联事实、说明和所有插槽；组件不是权限机关或任意文本脱敏器。
 - `alternatives: readonly AgentCandidateAlternative[]`，成员 `{candidateId,reason,disabledReason?}` 引用 candidates/relatedCandidates 中的当前事实。常驻显示替代项标题、选择依据、来源与替代依据。原项必须在本次选择中，替代项必须唯一、可用且未选；缺记录、同项、已在集合、受限、失效、未知或缺替代依据时阻断，不自动搜索另一项。不允许用替换动作改动正式集合；已选失效项可换成合法替代项。
 
@@ -1778,17 +1788,20 @@ groups={[{
 | `clear / destinations` | 可选 action / 只读 action 数组 | action 为 `{id,label,disabledReason?}`；clear 仅 workspace，去向两态显示、第一项主操作。缺能力无入口；给出的能力但缺 onAction 显示禁用原因。集合级动作目标为全部传入 items，宿主必须提供完整目标清单并核验，不能把服务总量中未提供的 ID 算进影响范围 |
 | `batchActions` | 可选 `readonly AgentCollectionBatchAction[]` | `{id,label,itemIds,disabledReason?}`，workspace 专用。明确目标须非空、无重复、均存在且可选，并与 selectedIds 集合完全相符；否则整批禁用，不缩减范围。有效回调保留 action.itemIds 的顺序与每项输入版本 |
 | `onAction` | 可选 `(intent,trigger?:HTMLElement)=>void` | 类型化动作请求，见下文；不执行保存、组卷或发布。按钮传触发器，分组选择传 Select 触发器（未挂载时可缺省）；宿主负责完成后的焦点接续 |
-| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary 或题干。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实必须经 issue / disabledReason 提供 |
+| `itemPresentation` | default / summary，默认 default | summary 两态均为无卡片的紧凑标题／事实行，不调用 renderItem，不呈现条目 summary；题干仅由 renderSummary 提供。标题为“第 N 题 · 标题”（N 按原始 items 顺序）；第二行合并类型、fields 中的分值、异源／未知来源及真实 groupId，无逐题版本或空分组占位；窄容器允许自然换行。issue、受限与禁用原因保留，版本仍随 intent 发送。头部缺版本／更新时间合并为“同步信息不完整（…未提供）”，不改判 sync。需要处理的事实经 sync.failed / issue / attention / disabledReason 提供 |
+| `infoPlacement / headerActions` | 默认 inline；menu 仅 workspace + summary 生效 / ReactNode 或 `({infoMenuItem})=>ReactNode` | menu 时常态头部只保留标题、数量与操作菜单；同步、类型、来源、版本、更新时间、缺失同步字段、visual 标记、summary.fields、groups、notice、details 全部移入内置 coss Dialog“题篮信息”。同步失败、条目失效／冲突及 attention 汇为头部一条原因，不裁切。headerActions 函数须把 infoMenuItem 放进 coss MenuPopup；普通 ReactNode 或未传时自动补一个更多菜单。未启用的调用行为不变 |
+| `attention` | 可选 string | 宿主确认需要处理的原因，例如“本机存储失败，请重试”；始终直接可见。不同于常态 notice，不解析文本判断异常，不改变 sync |
+| `renderSummary` | 可选 `(item:AgentCollectionEntry)=>{content:ReactNode,excerpt?:boolean} 或 null` | 仅 summary 且提供 onOpenItem 时调用，两态均可；受限项不调用。传被动 QuestionContent 题干，不含题卡标题、操作或选项。保留 MathML，以 line-clamp-2 呈现，实际溢出经 ResizeObserver / 字体加载 / 内容变化检测显示“节选”；宿主提前节选或省略选项、小问等需传 excerpt:true。无回调时不挂载摘要，避免截断后不能一步查看全文。组件不切割字符串或公式 |
 | `renderItem` | 可选 `(item:AgentCollectionEntry,{density})=>ReactNode` | 仅 default + workspace 调用，summary 和受限条目均不调用。保留给其他宿主的已授权只读领域内容，完整题干沿用阅读字号 |
 | `overview` | 可选 `ReactNode` | 仅 workspace 呈现于 header 之后、选择工具与列表之前，组件在统计区末尾添加 Separator。宿主提供已授权、被动呈现的统计；不传交互控件或隐含业务状态。undefined / null / boolean 视为未提供；非空 ReactNode 由宿主保证有可见内容。启用时两种 itemPresentation 都使用紧凑头部：标题保留 collection.title + summary.count/unit，隐藏全部 summary.fields 与头部分组数量，避免总分与构成重复；不解析 ReactNode 或字段名推测重叠。宿主负责把所需统计与口径放入 overview，关键状态仍经 sync / issue 等提供；版本、来源、缺失同步信息与历史标识保留。inline 忽略此插槽；未提供时行为不变 |
-| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开题干 |
+| `onOpenItem / openLabel` | 可选 `(item:AgentCollectionEntry,trigger:HTMLButtonElement)=>void` / 默认“查看题目” | summary 标题作为原生按钮，点击覆盖整行被动区域；复选框、移出、排序、分组、异常处理独立；可访问名为 openLabel + 题号与标题，title 为 openLabel。缺回调时仅显示标题；受限项无打开入口。可查看历史项，回调保留原条目及版本；宿主负责权限复核、打开单题及关闭后焦点返回，不在集合内展开完整题目 |
 | `onBack / notice / details / emptyText` | 均可选 | 返回原位置只导航；最多一条常驻边界提示；补充说明默认收起；空态默认“集合中还没有条目”。关键事实不能移入 details |
 
 2026-09-29 PO 第三轮：复用既有 `MetricSummary` + `StatusComposition`，不新增组件。workspace 试题篮示例默认已选题目 3、当前总分 17、单选 5 / 多选 6 / 填空 6 分；宿主演示随移除更新，同步不由统计推断。已选题目指篮内题目而非批量勾选项，包含失效题；该口径在来源补充说明中披露。
 
 2026-09-28 PO 第二轮要求覆盖此前题篮 L1 插槽呈现：直接收紧 summary，不新增 compact 别名，避免宿主继续误用含题干的 summary；其他宿主需要题干时使用 default + workspace + renderItem。Workspace 接入需把原 renderItem 中的打开逻辑迁至 onOpenItem，传 openLabel="查看题目"。本仓库仅更新组件与示例，不代表 Workspace 已接入验收。
 
-`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“在右栏查看”）与 `openAccessibleLabel?: string`（默认“在右栏查看完整题目：题号 · 标题”）。二者独立覆盖；右栏题篮同时传“查看题目”和“查看完整题目：题号 · 标题”。只改变文案，不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
+`QuestionSummaryRow` 新增可选 `openLabel?: string`（默认“查看详情”）与 `openAccessibleLabel?: string`（默认“查看详情：题号 · 标题”）。二者独立覆盖；打开操作使用 coss `Button`（`variant="outline"`、`size="sm"`），配 16px `ArrowUpRight` 图标。题篮 summary 继续整行打开，不显示此按钮。此修订不改变 `onOpen(trigger)`、节选条件、原生按钮键盘行为或宿主焦点接续。
 
 ### 条目、权限与动作
 
@@ -1817,7 +1830,7 @@ groups={[{
 - Workspace：同一事实 → 集合顺序／分组呈现 → 受控选择与批量动作 → 全清单、领域插槽、移除、处理、分组和上移／下移 → 去向、清空与可选返回；无第二套工作区外壳。
 - Compact：与任一 view 组合，只收紧间距；同步失败、失效与受限原因仍在折叠区外。
 
-组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实行，点击标题打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
+组件页 `/next/components/agent-components#collection-basket` 原位示例：试题篮含宿主分值汇总、一项下架题、紧凑标题／事实／两行题干，整行打开包含数学题面的单题面板；备课素材包含图片／视频／文章和两组。三处使用同一示例列表与选择，提供 320px、四种手动同步记录、空集合和独立载入示例变化；示例宿主可以更新本页条目和汇总，组件本身只发请求。无真实题库、同步或去向服务，不复制 Workspace 数据源。
 
 本轮任务分支 `feat/agent-collection-basket`，main 基线 `9e6fa12`，状态为**组件候选**；测试与五项日志、Workspace 只接呈现的轻量验证方案见 `.sites-runtime/collection-basket/REPORT.md`。不启动开发服务，不修改 Workspace 或 Git；浏览器三主题、窄容器、键盘焦点／触控、读屏器、Workspace 接入和真实服务分别待验，不用 SSR 或回调测试代替。
 
@@ -2388,7 +2401,7 @@ import { Badge } from "@/components/prism-next/badge"
 | --- | --- |
 | `QuestionReference` | L0，`question` 仅需 `QuestionRecord` 的 `id` / `title`；可选 `number`、`status`；`href` 或 `onOpen(trigger)` 二选一，原生链接／按钮，由宿主打开完整题目 |
 | `QuestionSummaryRow` | L1，无外框；`question`、可选 `number`、`headingLevel=3`、`checked/onCheckedChange`、`onOpen(trigger)`、`showPoints=true`、`displayPoints`、`status/header` |
-| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“在右栏查看”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
+| `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“查看详情”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
 | `QuestionCard.number` | 沿用现有可选属性，明确为宿主提供的展示序号；不新增 displayLabel、不改写 question.id。标题“第 n 题 · 标题”，档案始终显示真实 question.id |
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
@@ -2406,7 +2419,7 @@ L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-
 | 组件 | 接入与兼容边界 |
 | --- | --- |
 | 10 候选选择器 | 既有 renderItem 不变；示例 inline 用 L1，workspace 用 L2 + QuestionDetails；受限条目仍不调用插槽 |
-| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态均为紧凑标题／事实行且不调用插槽，onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
+| 11 集合篮 | itemPresentation='default' / 'summary'；default 保持 renderItem 仅 workspace 调用；summary 两态通过 renderSummary 提供两行题干（不调用 renderItem），onOpenItem + openLabel 将查看交宿主单题面板。受限条目无打开入口 |
 | 12 结构编排器 | 新增可选 renderItem(item, { view, density })，默认未传保持原渲染；提供内容时以无外框域内容替代可见重复标题，原标题的可访问关联、锁定、来源、属性和操作保护仍在。回调与状态机不变 |
 | 14 对象查看器 | 新增可选 inlineDisclosure='local' / 'host'，默认 local 保持原披露；host 的 inline 只挂载允许的 summary，不提供就地展开 content 的入口，workspace 和 sensitive/受限保护不变。题目示例选 host，扩展态 L2 默认答案与解析 |
 | 15 / 17 | 示例题面由 QuestionContent 呈现；17 的扩展态 QuestionDetails 只传 answer，inline 用 L0 |
@@ -2651,4 +2664,46 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `selectionToolbar?: boolean` 默认显示原有选择计数、全选和清除选择；设为 `false` 只隐藏该区，不影响逐条复选框、受控 `selectedIds` / `onSelectionChange`、受限或历史禁用规则及 `batchActions`。宿主负责提供可访问的选择入口及已选统计。summary 模式复选框名称为“选择第 N 题 · 标题”，无可见“选择”文案。Workspace 将全选置于底部，并在宿主“更多”菜单提供移除已选；这些业务布局不进入通用组件。SEL 批准后 Workspace overview 的已选题目、总分及构成采用勾选子集；此前组件页示例的全篮统计说明不作为 Workspace 的现行统计口径。
 
-集合篮 SEL 头部操作：`headerActions?: ReactNode` 将宿主菜单组合进现有标题行，操作区不收缩且不另起控制条；紧凑头部将同步状态移入既有事实行。未传插槽的 DOM 保持原样。Workspace 题篮以此替换标题上方独立更多菜单行；组件页集合示例同步提供原生 Menu。
+集合篮 SEL 头部操作：`headerActions` 将宿主菜单组合进现有标题行，操作区不收缩。默认沿用既有事实行；2026-09-29 PO 精简方案新增 `infoPlacement="menu"`，Workspace summary 可使用 `headerActions={({infoMenuItem}) => <Menu>…<MenuPopup>{infoMenuItem}…</MenuPopup></Menu>}`，由组件内置“题篮信息”项打开完整事实 Dialog。组件页 workspace 试题篮已启用；真实 Workspace 需按本节 API 接入。
+
+## Agent 对话组合（PO 2026-09-29）
+
+`AgentPromptBar`、`AgentVoiceButtons` / `AgentVoiceStatus`、`AgentMark` 与 `AgentMessage` 登记在 Agent 总览的「组合与既有组件」，是对话层组合，不追加基础组件或十二类业务语义：基础目录保持 80，业务语义保持 42。既有 `AgentComposer` API 保留。站点子页：
+
+- `/next/components/agent-components/prompt-bar`：Rounded / Pill、受控草稿、来源和命令菜单、模型选择、听写、语音对话与隐私说明。
+- `/next/components/agent-components/agent-mark`：六状态、Orbit / Drive / Dots、行内与加载尺寸、宿主用时。
+- `/next/components/agent-components/agent-message`：交替消息、长中文、MathML、代码与附件；三主题与 390 宽预览。
+
+### 输入与语音 API
+
+`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+
+**对话输入标签例外（PO 2026-09-29 确认）**：`AgentPromptBar` 的固定 label 默认「消息」，通过 `sr-only` 视觉隐藏并与输入关联，读屏仍获得可访问名；不使用 placeholder 代替标签。此处为对话输入，按 Codex / Claude / Beautiful UI 的对话惯例减少重复视觉信息，是 AGENTS.md「基础表单使用常驻固定标签」的特定例外；其他基础表单仍使用可见固定标签。
+
+**语音不可用反馈（PO 2026-09-29 确认）**：听写 `not-connected` / `unsupported`、语音对话 `not-connected` 不常驻显示在输入框下方，原因与宿主补充说明通过按钮 `aria-describedby` 提供。入口可聚焦，点击或键盘激活仅就地打开 coss Popover 说明，不发 start 意图、不播放启动扫光、不推定服务状态；Esc、外部点击或再次点击关闭，再次激活可重新查看，不保存已读状态。全局 disabled、隐私确认或互斥语音活动仍阻止入口操作。`AgentVoiceButtons.portalContainer` 可指定同主题的弹层容器；PromptBar 使用输入框外层根容器，避免输入表面的 overflow 裁切。`AgentVoiceStatus` 的 `hideUnavailable` 默认 false（完整状态样本），PromptBar 传 true；错误 `error`、权限拒绝 `denied` 以及进行中和结果状态仍由宿主事实明确显示与播报，不因本地点击制造或清除。组件页模型示例为「本机规则」，组件模型名称仍完全来自 `models`。
+
+来源、命令、模型项为 `{ id, label, description?, disabled? }`；附件为 `{ id, label }`。`contextActions` 供宿主以 coss 幽灵按钮呈现范围／材料／题篮，`activity` 供宿主放置事实状态。不得由组件主动读取文件或把来源选择等同于上下文已读取。
+
+`onIntent` 联合类型：`submit { text, attachmentIds }`、`attach`、`select-source { id }`、`run-command { id }`、`select-model { id }`、`remove-attachment { id }`、`dictation-start/stop`、`voice-mode-start/stop`、`privacy-confirm/cancel`。来源／命令选择同时通过 `onValueChange` 编辑输入中的提及；其余服务状态、模型值、附件事实、提交后的清空由宿主处理。空文本有附件也可提交。无匹配菜单时 Enter 不提交；输入法组合确认不选择菜单或发送；Shift + Enter 换行。
+
+`dictation`：`idle | requesting | listening | recognizing | inserted | error | denied | unsupported | not-connected`，可传 `interim`、`final`、`reason`、`level`（0–1）、`startedAt`（宿主 epoch 毫秒）。中间文本在输入框表面内以 `text-muted-foreground` 预览，不写入可编辑草稿；最终插入须宿主更新 `value`，`inserted` 须来自宿主确认。无草稿时可展示宿主 final，不能据此提交；有草稿时以 value 为准。`voice`：`idle | connecting | listening | answering | ended | not-connected`，可传 `description`；所有活动阶段有结束入口。
+
+**听写醒目反馈（PO 2026-09-29）**：requesting / listening / recognizing 的按钮使用 Beautiful UI 三条 eq-bounce（900ms，150ms 错峰）。`bg-accent-tint / text-accent-ink` 复用 Prism 现有 info 按钮映射 `bg-info/10 / text-info-foreground`（hover 为 `bg-info/20`）。未知电平时动画只提示活动，不代表实测音量；有效电平驱动条高并暂停循环。减少动效时三条固定 60% 高度。输入占位为「正在听…」，复用 shimmer-text 位移及 foreground / muted-foreground，减少动效时静止。外框复用 coss `border-ring ring-ring/24 ring-[3px] shadow-none`。底栏麦克风左侧的 destructive 圆点与状态按钮展示「正在请求麦克风… / 正在听 / 正在识别…」，仅有有限 startedAt 时按当前时间差更新 m:ss，永不从挂载或点击开始推算。圆点仅在允许动态效果时脉动。状态按钮、麦克风、组件内 Esc 均仅发 dictation-stop（全局 disabled / IME 组合时不触发）；麦克风可访问名「停止听写」、aria-pressed=true。PromptBar 独立 live region 只播报进入 / 结束听写，阶段、interim、电平、计时不重复播报；错误和权限拒绝仍可见。`AgentVoiceStatus.promptStatus` 为该组合去除重复听写播报与结果，完整状态样本仍保留原展示。
+
+首次隐私说明用 `privacy: { open, description: ReactNode }`。宿主收到 start 意图后决定是否先展示说明；确认仅发 privacy-confirm，宿主再按授权和服务状态启动。组件不保存同意记录、不访问麦克风、不创建识别器。说明打开时阻止新的开始操作；已有活动仍可停止。状态通过 live region 播报，可用键盘操作；读屏器与真机行为需单独验证。
+
+### 标识与消息 API
+
+`AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Drive`（Orbit / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
+
+`AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
+
+### 第三方来源与适配
+
+Beautiful UI（https://www.beautifului.dev/）注册源 `components/primitives/PromptBar.tsx`、`LoadingState.tsx` 与 `foundation.css`，Supervisor 提供的 2026-09-29 快照。Copyright (c) 2026 Shane Levine，MIT；完整许可见 [beautifului-LICENSE.txt](third-party/beautifului-LICENSE.txt)。Prompt Bar 改为受控事实与意图，删除 autoplay、假附件、计时器听写、内置来源／命令／模型、连接成功推定及全局 Math.random 替换。Loading State 保留点阵时序、微光与用时语义，删除 Surfer，起止时间改为宿主输入。Chat 07 只参考用户／Agent 对话结构，没有复制聊天业务实现。
+
+基础控件直接组合固定 coss `InputGroup` / `InputGroupTextarea` / `InputGroupAddon`、`Button`、`Menu` / radio menu、`Popover`、`Label`；参考 particles `p-input-group-28`（附件与底栏）、`p-input-group-29`（听写、圆形发送）、`p-input-group-23`（加载与语音入口，仅采用布局，不采用其计时器）。所有 coss 源文件保持不变。
+
+Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 → muted-foreground；line → border / input；hover → accent；field → secondary；accent-ink → info-foreground；orange / red 状态文字 → warning-foreground / destructive-foreground。原 source 色值、12/12.5/13px 文字和 shadow-plugin 叠层不引入：分别使用 Prism 主题、text-ui-body / text-ui-action / text-ui-hint / text-ui-meta，以及 coss InputGroup / Menu / Popover 已有阴影。原 14/22/24px 输入框曲率映射为 rounded-xl / rounded-3xl，按钮圆角使用 coss 或 rounded-full；点阵 Dots 使用 rounded-full。没有对应精确值时使用最接近的现有令牌，保留 Prism 字号可读性。
+
+扫光仅按 [Agent-readable contract 的明确例外](agent-readable-contract.md#beautiful-ui-prompt-bar-扫光动效例外po-2026-09-29-批准) 使用 `glimm@0.3.1`（MIT）；不导入 Beautiful UI 的全局 foundation、shadow-plugin 或新字体。组件候选不等于 Workspace 接入或独立 Review 通过。

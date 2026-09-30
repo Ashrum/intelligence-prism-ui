@@ -35,10 +35,13 @@ test('12px statuses always carry an aria-hidden icon; unknown is neutral and sta
     assert.match(html, /text-component-label/);
     assert.match(html, /<svg[^>]*aria-hidden="true"/);
     assert.match(html, /状态事实/);
+    const opening = html.match(/^<span[^>]*>/)[0];
+    assert.doesNotMatch(opening, /data-slot="badge"|(?:class="| )(?:rounded|bg-|border|ring-|shadow|px-|py-)/);
+    assert.doesNotMatch(opening, /role="button"|tabindex=/);
   }
   const html = render(h(c.AgentStatus, { tone: 'warning', unknown: true, running: true }, '回执未确认'));
   assert.match(html, /circle-question-mark/); assert.match(html, /未知/);
-  assert.match(html, /bg-secondary text-muted-foreground/);
+  assert.match(html, /text-muted-foreground/);
   assert.doesNotMatch(html, /bg-warning|text-warning|animate-spin/);
 });
 

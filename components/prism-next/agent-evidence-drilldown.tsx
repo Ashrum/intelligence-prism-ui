@@ -116,7 +116,7 @@ function EvidenceFacts({ facts }: { facts: readonly AgentEvidenceFact[] }) {
 
 function EvidenceContent({ item, preview }: { item: AgentEvidenceItem; preview: boolean }) {
   return <div className="min-w-0 space-y-3">
-    <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">与结论的关系</span><Badge variant="outline">{relationLabels[item.relation]}</Badge></div>
+    <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">与结论的关系</span><Badge variant="secondary">{relationLabels[item.relation]}</Badge></div>
     {item.summary && <p className="whitespace-pre-wrap break-words text-read-body">{item.summary}</p>}
     <EvidenceFacts facts={item.facts} />
     {item.previewUnavailableReason ? <p role="status" className="break-words text-ui-hint">{item.previewUnavailableReason}</p>

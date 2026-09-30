@@ -1,3 +1,4 @@
+import { assertLegacyVisualFacts } from './fixtures/agent-visual-compatibility.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
@@ -56,12 +57,12 @@ const button = (nodes, label) => nodes.find(node => {
   return node.props.onClick && (children.includes(label) || children.filter(value => typeof value === 'string').join('') === label);
 });
 
-test('default and explicit full preserve seven pre-change render snapshots', async () => {
+test('default and explicit full preserve facts and actions from seven pre-change snapshots', async () => {
   const snapshots = JSON.parse(await readFile(new URL('./fixtures/agent-object-viewer-full.json', import.meta.url), 'utf8'));
   assert.equal(snapshots.length, 7);
   for (const { props: input, html } of snapshots) {
-    assert.equal(render(h(AgentObjectViewer, input)), html);
-    assert.equal(render(h(AgentObjectViewer, { ...input, chrome: 'full' })), html);
+    assertLegacyVisualFacts(render(h(AgentObjectViewer, input)), html, 'default');
+    assertLegacyVisualFacts(render(h(AgentObjectViewer, { ...input, chrome: 'full' })), html, 'full');
   }
 });
 

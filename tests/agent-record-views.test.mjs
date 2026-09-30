@@ -22,15 +22,14 @@ const h = React.createElement;
 const modes = [{ view: 'inline' }, { view: 'workspace' }, { view: 'inline', density: 'compact' }, { view: 'workspace', density: 'compact' }];
 const p04 = recordViewExamples.p04;
 
-test('28 pinned main cases retain facts and capabilities; unaffected context markup stays exact', async () => {
+test('28 pinned main cases retain facts and capabilities after status presentation changes', async () => {
   const snapshot = JSON.parse(await readFile(new URL('./fixtures/agent-record-views-main.json', import.meta.url), 'utf8'));
   assert.equal(snapshot.baseline, 'e99813ac4d4ce64c74b910933edf268ca8cc3250');
   const cases = legacyRecordCases();
   assert.equal(Object.keys(cases).length, 28);
   for (const [name, { component, props }] of Object.entries(cases)) for (const defaults of [{}, { view: 'inline', density: 'default' }]) {
     const actual = normalizeRecordMarkup(render(h(components[component], { ...props, ...defaults })));
-    if (component === 'AgentContextSummary') assert.equal(actual, snapshot.cases[name], name);
-    else assertLegacyVisualFacts(actual, snapshot.cases[name], name);
+    assertLegacyVisualFacts(actual, snapshot.cases[name], name);
     assert.equal(actual, normalizeRecordMarkup(render(h(components[component], { ...props, view: 'inline', density: 'default' }))), `${name}: default view/density`);
   }
 });

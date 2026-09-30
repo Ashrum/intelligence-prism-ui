@@ -37,7 +37,7 @@ function assertStepList(html) {
     const labels = [...html.matchAll(/data-agent-status="[^"]+"[^>]*><svg[\s\S]*?<\/svg><span[^>]*>(.*?)<\/span>/g)].map(match => match[1].replace(' · 未知', ''));
     assert.deepEqual(labels, Object.values(newStates).map(({ label }) => label));
     for (const step of steps) for (const fact of [step.label, step.time, step.detail]) assert.ok(html.includes(fact), fact);
-    assert.equal((html.match(/aria-hidden="true"/g) ?? []).length, 4);
+    assert.equal((html.match(/data-agent-status="[^"]+"[^>]*><svg[^>]*aria-hidden="true"/g) ?? []).length, 4);
     assert.doesNotMatch(html, noActivity);
     return;
   }
@@ -49,7 +49,7 @@ function assertStepList(html) {
   assert.doesNotMatch(html, noActivity);
 }
 
-test('25 pinned step cases retain facts/activity; unchanged primitive markup stays exact', async () => {
+test('25 pinned step cases retain facts and activity after status presentation changes', async () => {
   const snapshot = JSON.parse(await readFile(new URL('./fixtures/agent-step-states-main.json', import.meta.url), 'utf8'));
   assert.equal(snapshot.baseline, stepStatesBaseline);
   const cases = legacyStepCases();
@@ -60,15 +60,19 @@ test('25 pinned step cases retain facts/activity; unchanged primitive markup sta
   const comparisons = Object.entries(actual).map(([name, html]) => ({ name, equal: html === snapshot.cases[name], expectedSha256: createHash('sha256').update(snapshot.cases[name]).digest('hex'), actualSha256: createHash('sha256').update(html).digest('hex') }));
   await writeFile(new URL('legacy-comparison.json', runtime), JSON.stringify({ baseline: stepStatesBaseline, total: comparisons.length, matched: comparisons.filter(item => item.equal).length, comparisons }, null, 2) + '\n');
   for (const [name, html] of Object.entries(actual)) {
-    if (cases[name].component === 'AgentExecutionProgress') assertLegacyVisualFacts(html, snapshot.cases[name], name);
-    else assert.equal(html, snapshot.cases[name], name);
+    assertLegacyVisualFacts(html, snapshot.cases[name], name);
   }
 });
 
-for (const [state, { label }] of Object.entries(newStates)) test(`${state} uses the shared ${label} label and existing warning Badge in live and snapshot`, () => {
+for (const [state, { label }] of Object.entries(newStates)) test(`${state} uses the shared ${label} label and passive AgentStatus in live and snapshot`, () => {
   assert.equal(agentProgressLabels[state], label);
-  const expected = render(h(Badge, { variant: 'warning', size: 'lg' }, label));
-  for (const snapshot of [false, true]) assert.equal(render(h(AgentStepStatus, { state, snapshot })), expected);
+  for (const snapshot of [false, true]) {
+    const html = render(h(AgentStepStatus, { state, snapshot }));
+    assert.equal(html.replace(/<[^>]*>/g, ''), label);
+    assert.match(html, /data-agent-status="warning"/);
+    assert.match(html, /<svg[^>]*aria-hidden="true"/);
+    assert.doesNotMatch(html, /data-slot="badge"|rounded|bg-|border|tabindex=|role="button"/);
+  }
 });
 
 test('all new steps have visible text and static graphical cues at both densities, even during live activity', () => {

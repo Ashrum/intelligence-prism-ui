@@ -5,7 +5,7 @@ import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxPopup } from "@/components/coss/combobox"
 import { Label } from "@/components/coss/label"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { DataRecordTable, FilterBar, type FilterField } from "./data-display"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
@@ -70,11 +70,11 @@ function disclosed(item: AgentObjectCandidate): AgentObjectCandidate {
 function PickerFacts({ item }: { item: AgentObjectCandidate }) {
   const recommendation = recommendationOf(item)
   return <>
-    <Badge variant={item.status === "available" ? "outline" : "warning"}>{statusLabels[item.status] || "状态未确认"}</Badge>
+    <AgentStatus tone={item.status === "available" ? "neutral" : "warning"}>{statusLabels[item.status] || "状态未确认"}</AgentStatus>
     {item.status !== "restricted" && <>
       {item.description && <p className="whitespace-pre-wrap break-words text-ui-hint text-muted-foreground">{item.description}</p>}
       {item.recent && <p className="text-ui-hint text-muted-foreground">最近使用</p>}
-      {recommendation ? <div className="space-y-1"><Badge variant="info">推荐</Badge><p className="break-words text-ui-hint">依据：{recommendation.reason}；来源：{recommendation.source}</p></div>
+      {recommendation ? <div className="space-y-1"><AgentStatus tone="info">推荐</AgentStatus><p className="break-words text-ui-hint">依据：{recommendation.reason}；来源：{recommendation.source}</p></div>
         : item.recommendation && <p className="text-ui-hint">推荐依据未提供，暂不标为推荐。</p>}
     </>}
   </>

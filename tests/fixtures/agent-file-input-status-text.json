@@ -1,0 +1,14 @@
+{
+  "baseline": "32794410900b27238e962024c633f424539c717a + PO 2026-09-29 status presentation",
+  "cases": {
+    "0-inline-default": "245f3b2d7eeaf9aeb73cecd804bf7ccd2bbae6371b27644e68f6632d0b2fa445",
+    "0-workspace-default": "e72289e3ecbc880528e670863d3c1f846e14dcca7ead0100f9d3f86b7ddcef23",
+    "0-workspace-compact": "a92d590fb516b6262f9b9491e63fae9d08c6ab80f2a4abfcd14084204a9e9286",
+    "1-inline-default": "414a93e9c9348defd3ed6dfb90fa7fa8bb533bd05917fe0bf48ab3ca2af97493",
+    "1-workspace-default": "116f44496f997268dd26606568c947763b681f72f2a4e99624c9c3cfd8cd7855",
+    "1-workspace-compact": "5746ad6efc64b3663d327fa0137ac1ec52f742d0838badcc6db47fadad1ddf19",
+    "2-inline-default": "8f51e9e74cd94458c6873200bf37b6bd4c44049adb8f7661fb54a8553ebd11dc",
+    "2-workspace-default": "377dc9689e06cea4adfa7caf33f9471bde173fe2394eba2bec327c3331b07075",
+    "2-workspace-compact": "607eeaa7eb32a5f49700b5ad95c7faeb4b4d0f6be009899301827790016194d9"
+  }
+}

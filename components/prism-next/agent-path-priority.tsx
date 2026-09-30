@@ -6,6 +6,7 @@ import { Card } from "@/components/coss/card"
 import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 
@@ -228,9 +229,9 @@ export function AgentPathPriority({ path, items, nextItemIds, blockerItemIds, sa
         </div>{workspace && item.actions?.reorder && <span draggable={!actionBlock(item, "reorder")} data-path-drag={scope} aria-label="拖动调整顺序；也可使用移动按钮" className="shrink-0 p-2"
           onDragStart={event => { if (actionBlock(item, "reorder")) { event.preventDefault(); return }; drag.current = { itemId: item.id, revision, items }; event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", "path-item") }}
           onDragEnd={() => { drag.current = null }}><GripVertical aria-hidden="true" /></span>}</div>
-        <div className="flex flex-wrap gap-2"><Badge variant="outline">{item.kind === "suggestion" ? "建议" : "待办"}</Badge>
-          {status.state !== "unknown" && <Badge variant={status.state === "blocked" || status.state === "expired" ? "warning" : status.state === "completed" ? "success" : "outline"}>{statusLabels[status.state]}</Badge>}
-          {workspace && nextIds.includes(item.id) && <Badge variant="outline">下一步</Badge>}{blockerIds.includes(item.id) && <Badge variant="warning">阻塞项</Badge>}
+        <div className="flex flex-wrap gap-2"><Badge variant="secondary">{item.kind === "suggestion" ? "建议" : "待办"}</Badge>
+          {status.state !== "unknown" && <AgentStatus tone={status.state === "blocked" || status.state === "expired" ? "warning" : status.state === "completed" ? "success" : "neutral"}>{statusLabels[status.state]}</AgentStatus>}
+          {workspace && nextIds.includes(item.id) && <AgentStatus tone="neutral">下一步</AgentStatus>}{blockerIds.includes(item.id) && <AgentStatus tone="warning">阻塞项</AgentStatus>}
         </div>
         {status.state === "snoozed" && known(status.until) && <p className="text-ui-hint">冷却至：{status.until}</p>}
         {(known(priority.label) || (typeof priority.score === "number" && Number.isFinite(priority.score)) || known(priority.certainty)) && <p className="break-words text-ui-hint">{[known(priority.label) && `优先级：${priority.label}`, typeof priority.score === "number" && Number.isFinite(priority.score) && `得分：${priority.score}`, known(priority.certainty) && `确定性：${priority.certainty}`].filter(value => value !== false).join(" · ")}</p>}
@@ -244,7 +245,7 @@ export function AgentPathPriority({ path, items, nextItemIds, blockerItemIds, sa
       <p className="text-ui-hint">{path.snapshot !== undefined ? ["历史路径", path.snapshot].filter(Boolean).join(" · ") : "当前路径"}</p><h2 id={`${id}-title`} className="break-words text-block-title">{path.title}</h2>
     </div>{workspace && onBack && <Button type="button" size="navigation" variant="outline" onClick={onBack}>返回原位置</Button>}</div>
       {(known(path.version.label) || known(path.baseVersion?.label)) && <p className="text-ui-hint">{[known(path.version.label) && `版本：${path.version.label}`, known(path.baseVersion?.label) && `基于：${path.baseVersion?.label}`].filter(Boolean).join(" · ")}</p>}
-      {save.state !== "unknown" && <Badge variant={save.state === "error" || save.state === "conflict" ? "warning" : "outline"}>{saveLabels[save.state]}</Badge>}
+      {save.state !== "unknown" && <AgentStatus tone={save.state === "error" || save.state === "conflict" ? "warning" : "neutral"}>{saveLabels[save.state]}</AgentStatus>}
     </header>
     {globalUnknown.length > 0 && <p className="break-words text-ui-hint" data-path-unknown="path">未知：{globalUnknown.join("、")}。</p>}
     {renderNotes(0)}

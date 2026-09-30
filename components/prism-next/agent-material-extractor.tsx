@@ -5,7 +5,7 @@ import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Input } from "@/components/coss/input"
 import { Textarea } from "@/components/coss/textarea"
-import { Badge } from "./badge"
+import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
 import type { AgentResourceLicense } from "./agent-resource-retriever"
@@ -223,7 +223,7 @@ export function AgentMaterialExtractor({ context, sources, candidates, selection
       {full ? <Field className="min-w-0"><FieldLabel htmlFor={`${id}-title-${index}`}>片段标题</FieldLabel>
         <Input nativeInput id={`${id}-title-${index}`} value={item.title} readOnly={!editable} aria-describedby={description} onChange={event => requestAnnotation("title", event.target.value)} /></Field>
         : <h4 className="text-item-title break-words">{title}</h4>}
-      <Badge variant={item.status.state === "invalid" ? "warning" : "secondary"}>{states[item.status.state]}</Badge>
+      <AgentStatus tone={item.status.state === "invalid" ? "warning" : "neutral"}>{states[item.status.state]}</AgentStatus>
       {item.status.state === "added" && <p className="text-ui-hint break-words">所在素材包：{item.status.targetLabel || "名称未提供"}</p>}
       <p className="text-ui-hint break-words">出处：{named(item.sourceLabel)} · {item.versionLabel || "版本未知"} · {item.location || "位置未提供"}</p>
       <div className="min-w-0 max-w-[40em]">{renderExcerpt ? renderExcerpt(item) : <p className="text-read-body whitespace-pre-wrap break-words">{item.excerpt}</p>}</div>

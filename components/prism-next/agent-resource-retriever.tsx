@@ -251,7 +251,7 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
       const metadata = [["版本", resource.versionLabel], ["日期", resource.date], ["适用范围", resource.applicability], ["格式", resource.format], ["时长", resource.duration], ["大小", resource.size]]
       const unknownLabels = [...(mergeLicense ? ["许可"] : []), ...metadata.filter(([, value]) => known(value) === "未知").map(([label]) => label)]
       return <li key={index} aria-labelledby={`${id}-item-${index}`} aria-describedby={licenseId} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
-        <div className="flex flex-wrap items-baseline gap-2"><h4 id={`${id}-item-${index}`} className="min-w-0 break-words text-item-title">{index + 1}. {resource.title || "未命名资源"}</h4><Badge variant="outline">{kinds[resource.kind] ?? "其他资源"}</Badge></div>
+        <div className="flex flex-wrap items-baseline gap-2"><h4 id={`${id}-item-${index}`} className="min-w-0 break-words text-item-title">{index + 1}. {resource.title || "未命名资源"}</h4><Badge variant="secondary">{kinds[resource.kind] ?? "其他资源"}</Badge></div>
         {resource.summary != null && <div className="min-w-0 break-words text-read-body">{resource.summary}</div>}
         <div className="min-w-0 space-y-1 text-ui-hint">
           {sourceGroup ? <p aria-describedby={`${id}-source-${sourceGroup.id}`}>来源 {sourceGroup.id + 1}</p> : <p className="break-words">来源：{sourceText(resource.source)}</p>}

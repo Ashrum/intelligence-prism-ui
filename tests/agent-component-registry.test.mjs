@@ -56,8 +56,8 @@ test('SSR contains every semantic anchor exactly once, in category/number order,
     assert.ok(position > previous, entry.slug); previous = position;
     assert.ok(html.includes(`${entry.number} ${entry.name}</a></h2>`));
   }
-  assert.equal((html.match(/data-agent-page-section=/g) ?? []).length, 46);
-  assert.equal((html.match(/data-agent-page-preview=/g) ?? []).length, 46);
+  assert.equal((html.match(/data-agent-page-section=/g) ?? []).length, registry.length + agentSupplementalExamples.length);
+  assert.equal((html.match(/data-agent-page-preview=/g) ?? []).length, registry.length + agentSupplementalExamples.length);
   for (const entry of agentSupplementalExamples) assert.ok(html.includes(`id="${entry.slug}"`));
   assert.doesNotMatch(html, /<h2[^>]*>[^<]*(?:设计候选|v0\.1)/);
   assert.doesNotMatch(html, /完整搜索与选择|不可播放录音（模拟）|超出图示上限（模拟）/);
