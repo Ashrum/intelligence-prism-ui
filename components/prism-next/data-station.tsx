@@ -27,8 +27,8 @@ export type DataStationProps = {
   task: { className?: string; subject?: string; gradingMode?: string; bindingDescription: string }
   refreshDescription?: string
   onSelect?: (stationId: string) => void; onConnect?: (stationId: string) => void
-  onDisconnect?: (stationId: string) => void; onRetry?: (intent: DataStationRetryIntent) => void; onClose?: () => void
-} & ({ presentation?: "sheet"; open: boolean } | { presentation: "inline"; open?: never })
+  onDisconnect?: (stationId: string) => void; onRetry?: (intent: DataStationRetryIntent) => void
+} & ({ presentation?: "sheet"; open: boolean; onClose: () => void } | { presentation: "inline"; open?: never; onClose?: () => void })
 export type DataStationBadgeProps = {
   state: { kind: "connected"; name: string } | { kind: "available"; count: number } | { kind: "disconnected" }
   onOpen?: () => void
@@ -62,8 +62,8 @@ export function DataStationBadge({ state, onOpen }: DataStationBadgeProps) {
 export function DataStation(props: DataStationProps) {
   const description = `选择并连接本次批阅使用的数据站${props.refreshDescription?.trim() ? ` · ${props.refreshDescription}` : ""}`
   if (props.presentation === "inline") return <DataStationPanel {...props} description={description} />
-  return <Sheet open={props.open} onOpenChange={open => { if (!open) props.onClose?.() }}>
-    <SheetPopup side="right" className="w-full max-w-xl motion-reduce:transition-none" showCloseButton={!!props.onClose}
+  return <Sheet open={props.open} onOpenChange={open => { if (!open) props.onClose() }}>
+    <SheetPopup side="right" className="w-full max-w-xl motion-reduce:transition-none" showCloseButton
       closeProps={{ "aria-label": "关闭教学数据站", className: "absolute end-2 top-2 min-h-11 min-w-11" }}>
       <SheetHeader className="pr-16"><SheetTitle>教学数据站</SheetTitle><SheetDescription>{description}</SheetDescription></SheetHeader>
       <SheetPanel><DataStationPanel {...props} description={description} hideHeading /></SheetPanel>
@@ -107,7 +107,7 @@ function DataStationPanel({ devices, recommendedId, selectedId, connection, stat
             </div>
             {recommended ? <Card className="min-w-0 gap-3 p-4" aria-label="推荐设备">
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex shrink-0 items-center gap-2" aria-label="打印与扫描设备和终端的关系">
+                <div className="flex shrink-0 items-center gap-2" role="img" aria-label="打印/扫描与终端双向连接">
                   <span className="flex flex-col items-center gap-2 text-ui-hint"><Printer aria-hidden="true" className="size-8" />打印 / 扫描</span>
                   <ArrowLeftRight aria-hidden="true" className="size-5" />
                   <span className="flex flex-col items-center gap-2 text-ui-hint"><Monitor aria-hidden="true" className="size-8" />终端</span>

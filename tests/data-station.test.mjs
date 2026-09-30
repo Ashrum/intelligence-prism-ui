@@ -4,6 +4,7 @@ import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
+import ts from 'typescript';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 import { components, componentGroups } from '../lib/prism-next/catalog.ts';
 
@@ -112,8 +113,11 @@ test('badge renders three states, count zero is real, invalid count unknown and 
 test('default presentation is a controlled Sheet; close intent does not mutate open', () => {
   let closed = 0; const out = capture({ presentation: undefined, open: false, onClose: () => closed++ });
   const sheet = out.nodes.find(n => typeof n.props.onOpenChange === 'function'); assert.ok(sheet); assert.equal(sheet.props.open, false);
-  sheet.props.onOpenChange(false); sheet.props.onOpenChange(true); assert.equal(closed, 1); assert.equal(sheet.props.open, false);
-  const popup = out.nodes.find(n => n.type?.name === 'SheetPopup'); assert.equal(popup.props.side, 'right'); assert.match(popup.props.closeProps.className, /min-h-11 min-w-11/);
+  for (const reason of ['close-press', 'escape-key']) sheet.props.onOpenChange(false, { reason });
+  sheet.props.onOpenChange(true); assert.equal(closed, 2);
+  const panel = capture({ onClose: sheet.props.children.props.children[1].props.children.props.onClose });
+  assert.equal(panel.action('close').props.disabled, false); panel.action('close').props.onClick(); assert.equal(closed, 3); assert.equal(sheet.props.open, false);
+  const popup = out.nodes.find(n => n.type?.name === 'SheetPopup'); assert.equal(popup.props.showCloseButton, true); assert.equal(popup.props.closeProps['aria-label'], '关闭教学数据站'); assert.equal(popup.props.side, 'right'); assert.match(popup.props.closeProps.className, /min-h-11 min-w-11/);
 });
 
 test('catalog, fixtures and MaterialIntake keep shared connection semantics without old API changes', async () => {
@@ -127,4 +131,39 @@ test('catalog, fixtures and MaterialIntake keep shared connection semantics with
   }
   const source = await readFile(new URL('../components/prism-next/data-station.tsx', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /setInterval|setTimeout|fetch\(|localStorage/);
+});
+
+
+test('device relationship has a named image role and three decorative icons', () => {
+  const out = capture();
+  const diagram = out.nodes.find(n => n.props.role === 'img');
+  assert.ok(diagram); assert.equal(diagram.props['aria-label'], '打印/扫描与终端双向连接');
+  const html = render(diagram);
+  assert.equal((html.match(/<svg\b/g) || []).length, 3);
+  assert.equal((html.match(/aria-hidden="true"/g) || []).length, 3);
+});
+
+test('Sheet requires onClose while inline allows its omission', () => {
+  const path = `${root}tests/data-station-contract.virtual.tsx`;
+  const source = `import type { DataStationProps } from '../components/prism-next/data-station';
+    declare const facts: Omit<DataStationProps, 'presentation' | 'open' | 'onClose'>;
+    const defaultSheet: DataStationProps = { ...facts, open: true, onClose() {} };
+    const explicitSheet: DataStationProps = { ...facts, presentation: 'sheet', open: true, onClose() {} };
+    const inline: DataStationProps = { ...facts, presentation: 'inline' };
+    const inlineClose: DataStationProps = { ...facts, presentation: 'inline', onClose() {} };
+    // @ts-expect-error Default Sheet requires onClose.
+    const missingDefault: DataStationProps = { ...facts, open: true };
+    // @ts-expect-error Explicit Sheet requires onClose.
+    const missingExplicit: DataStationProps = { ...facts, presentation: 'sheet', open: true };
+    // @ts-expect-error Undefined cannot satisfy the required callback.
+    const undefinedClose: DataStationProps = { ...facts, open: true, onClose: undefined };
+  `;
+  const config = ts.readConfigFile(`${root}tsconfig.json`, ts.sys.readFile);
+  assert.equal(config.error, undefined);
+  const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys, root);
+  const options = { ...parsed.options, incremental: false, noEmit: true };
+  const host = ts.createCompilerHost(options), original = host.getSourceFile.bind(host);
+  host.getSourceFile = (name, ...args) => name === path ? ts.createSourceFile(name, source, options.target, true, ts.ScriptKind.TSX) : original(name, ...args);
+  const diagnostics = ts.getPreEmitDiagnostics(ts.createProgram([path], options, host));
+  assert.equal(diagnostics.length, 0, ts.formatDiagnosticsWithColorAndContext(diagnostics, host));
 });
