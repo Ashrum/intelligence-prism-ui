@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState } from "react"
+import { useId, useState, useEffect, useRef } from "react"
 import { Card } from "@/components/coss/card"
 import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Button } from "@/components/coss/button"
@@ -21,6 +21,8 @@ export type ScoreReviewState =
 export type ScoreReviewRecord = { id: string; score: number; reason?: string; time?: string }
 export type ScoreReviewProps = {
   studentName: string; questionLabel: string; examNumber?: string
+  /** Stable review target identity; include student/version when relevant. No focus on initial mount. */
+  questionId?: string; focusOnQuestionChange?: boolean
   confidencePercent?: number | null; confidenceLabel?: string; progress?: { current: number; total: number }
   eyebrow?: string; answer?: string; locationNotice?: string
   paper?: PaperPreviewProps
@@ -29,8 +31,12 @@ export type ScoreReviewProps = {
   aiSuggestion?: { score: number; reason?: string; basis?: readonly string[] }
   /** Score at the start of editing. Defaults to a valid AI suggestion; absent baseline requires a reason. */
   baselineScore?: number; requireReasonOnChange?: boolean; showReason?: boolean
+  /** Require a non-whitespace reason for every save/retry, even at the baseline score. */
+  requireReason?: boolean
   reason?: string; defaultReason?: string; onReasonChange?: (reason: string) => void
   state?: ScoreReviewState; disabledReason?: string; history?: readonly ScoreReviewRecord[]
+  /** Host-confirmed save AND audit update. Host clears/replaces this one-shot receipt. */
+  lastSaved?: { score: number; label?: string }
   onAcceptAi?: (score: number) => void; onSave?: (draft: ScoreReviewDraft) => void
   onRetry?: (draft: ScoreReviewDraft) => void; onPrev?: () => void; onSkip?: () => void
 }
@@ -49,6 +55,13 @@ const actionClass = "min-h-11 h-auto sm:h-auto max-w-full whitespace-normal"
 /** UI draft only. Saving, receipts, audit and navigation remain host facts/intents. */
 export function ScoreReview(props: ScoreReviewProps) {
   const id = useId()
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const previousQuestionId = useRef(props.questionId)
+  useEffect(() => {
+    const changed = previousQuestionId.current !== props.questionId
+    previousQuestionId.current = props.questionId
+    if (props.focusOnQuestionChange && changed && props.questionId !== undefined) titleRef.current?.focus()
+  }, [props.questionId, props.focusOnQuestionChange])
   const [localScore, setLocalScore] = useState<number | null>(props.defaultScore ?? null)
   const [localReason, setLocalReason] = useState(props.defaultReason ?? "")
   const { maxScore, step = 1, state = { kind: "ready" }, aiSuggestion: ai, paper } = props
@@ -58,8 +71,8 @@ export function ScoreReview(props: ScoreReviewProps) {
   const locked = state.kind === "saving" || state.kind === "saved" || !!props.disabledReason || !scaleValid
   const aiValid = !!ai && Number.isFinite(ai.score) && ai.score >= 0 && ai.score <= maxScore && normalizeReviewScore(ai.score, maxScore, step) === ai.score
   const baseline = props.baselineScore ?? (aiValid ? ai?.score : undefined)
-  const reasonRequired = !!props.requireReasonOnChange && (baseline === undefined || score !== baseline)
-  const validation = !scaleValid ? "评分范围或步长无效，请由调用方核对。" : score === null ? "请填写教师最终评分。" : reasonRequired && !reason.trim() ? "调整分数后，请填写修改理由。" : undefined
+  const reasonRequired = !!props.requireReason || (!!props.requireReasonOnChange && (baseline === undefined || score !== baseline))
+  const validation = !scaleValid ? "评分范围或步长无效，请由调用方核对。" : score === null ? "请填写教师最终评分。" : reasonRequired && !reason.trim() ? (props.requireReason ? "请填写修改理由。" : "调整分数后，请填写修改理由。") : undefined
   const block = props.disabledReason || (state.kind === "saving" ? "正在保存，请等待处理结果。" : state.kind === "saved" ? "本次评分已保存，等待调用方切换题项。" : validation)
   const confidence = props.confidencePercent
   const confidenceKnown = confidence !== null && confidence !== undefined && Number.isFinite(confidence) && confidence >= 0 && confidence <= 100
@@ -75,7 +88,7 @@ export function ScoreReview(props: ScoreReviewProps) {
   const panel = <Card render={<section aria-labelledby={`${id}-title`} />} className="min-w-0 gap-5 p-4" aria-busy={state.kind === "saving"} data-score-review-panel data-state={state.kind}>
     <header className="min-w-0 space-y-2">
       {props.eyebrow && <p className="text-ui-hint">{props.eyebrow}</p>}
-      <h2 id={`${id}-title`} className="break-words text-block-title">{known(props.studentName)} · {known(props.questionLabel)}</h2>
+      <h2 ref={titleRef} tabIndex={props.focusOnQuestionChange ? -1 : undefined} id={`${id}-title`} className="break-words text-block-title">{known(props.studentName)} · {known(props.questionLabel)}</h2>
       <AgentMetaLine>考号 {known(props.examNumber)} · {confidenceKnown ? `${props.confidenceLabel || "置信度"} ${confidence}%` : "置信度 未提供"}</AgentMetaLine>
       {props.progress && <AgentMetaLine>第 {props.progress.current} / {props.progress.total} 题</AgentMetaLine>}
     </header>
@@ -95,11 +108,11 @@ export function ScoreReview(props: ScoreReviewProps) {
       <Field>
         <FieldLabel htmlFor={`${id}-score`}>教师最终评分{scaleValid ? `（0–${maxScore} 分，步长 ${step}）` : ""}</FieldLabel>
         <NumberField id={`${id}-score`} value={score} min={0} max={scaleValid ? maxScore : 0} step={scaleValid ? step : 1} snapOnStep disabled={locked} onValueChange={changeScore}>
-          <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput aria-describedby={`${id}-instructions ${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
+          <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput className="min-h-11 h-11 sm:h-11" aria-describedby={`${id}-instructions ${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
         </NumberField>
       </Field>
       <p id={`${id}-instructions`} className="text-ui-hint">接受 AI 建议，或调整分数后保存。人工修改将保留审计记录。</p>
-      {(props.showReason || props.requireReasonOnChange) && <Field>
+      {(props.showReason || props.requireReasonOnChange || props.requireReason) && <Field>
         <FieldLabel htmlFor={`${id}-reason`}>修改理由{reasonRequired ? "（必填）" : "（选填）"}</FieldLabel>
         <Textarea id={`${id}-reason`} value={reason} disabled={locked} required={reasonRequired} aria-describedby={`${id}-gate`} onChange={event => {
           if (locked) return
@@ -111,7 +124,10 @@ export function ScoreReview(props: ScoreReviewProps) {
     </div>
     {state.kind === "saving" && <AgentStatus running>保存中</AgentStatus>}
     {state.kind === "failed" && <Alert variant="error"><AlertDescription className="break-words text-ui-body">保存失败：{known(state.reason)}</AlertDescription></Alert>}
-    {state.kind === "saved" && <Alert variant="success" role="status"><AlertDescription className="break-words text-ui-body">已保存 {Number.isFinite(state.score) ? state.score : "未提供"} 分{state.auditUpdated ? "，审计记录已更新" : "；审计记录状态未提供"}</AlertDescription></Alert>}
+    <div role="status" aria-live="polite" aria-atomic="true" className={!props.lastSaved && state.kind !== "saved" ? "sr-only" : undefined} data-score-review-receipt>
+      {props.lastSaved ? <Alert variant="success" role={undefined}><AlertDescription className="break-words text-ui-body">{props.lastSaved.label?.trim() ? `${props.lastSaved.label}：` : ""}已保存 {Number.isFinite(props.lastSaved.score) ? props.lastSaved.score : "未提供"} 分，审计记录已更新</AlertDescription></Alert>
+        : state.kind === "saved" && <Alert variant="success" role={undefined}><AlertDescription className="break-words text-ui-body">已保存 {Number.isFinite(state.score) ? state.score : "未提供"} 分{state.auditUpdated ? "，审计记录已更新" : "；审计记录状态未提供"}</AlertDescription></Alert>}
+    </div>
     <div className="flex min-w-0 flex-wrap gap-2" aria-label="评分操作">
       <Button type="button" variant="outline" className={actionClass} disabled={locked || !aiValid || !props.onAcceptAi} onClick={() => { if (!locked && aiValid && ai && props.onAcceptAi) { changeScore(ai.score); props.onAcceptAi(ai.score) } }}>接受 AI 建议</Button>
       {state.kind === "failed" ? <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onRetry} onClick={() => submit(props.onRetry)}>重试保存</Button>

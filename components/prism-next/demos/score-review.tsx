@@ -36,6 +36,27 @@ function ScoreFixture({ overrides, onIntent }: { overrides: Partial<ScoreReviewP
     onPrev={() => onIntent("请求上一题；等待调用方导航。")} onSkip={() => onIntent("请求跳过；等待调用方导航。")} />
 }
 
+export function ScoreReviewReasonReceiptDemo() {
+  const [question, setQuestion] = useState(3)
+  const [score, setScore] = useState<number | null>(6)
+  const [reason, setReason] = useState("")
+  const [lastSaved, setLastSaved] = useState<ScoreReviewProps["lastSaved"]>()
+  const [notice, setNotice] = useState("尚无保存请求。")
+  return <DemoSection id="score-required-receipt" title="每次保存必填理由 · 上一题保存回执" description="当前分数等于 AI 建议仍需填写理由。回执控件载入独立预设数据，保存按钮只发出请求。切换题项后焦点移到面板标题。">
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" onClick={() => setLastSaved({ score: 7, label: "主观题 2" })}>载入预设回执</Button>
+      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" disabled={!lastSaved} onClick={() => setLastSaved(undefined)}>清除回执</Button>
+      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" onClick={() => { setQuestion(value => value + 1); setScore(6); setReason(""); setLastSaved(undefined) }}>切换题项（焦点交接）</Button>
+    </div>
+    <ScoreReview {...scoreReviewBase} questionId={`student-1-question-${question}`} questionLabel={`主观题 ${question}`} progress={undefined}
+      focusOnQuestionChange requireReason requireReasonOnChange={false} lastSaved={lastSaved}
+      score={score} onScoreChange={setScore} reason={reason} onReasonChange={setReason}
+      onAcceptAi={() => setNotice("已接受建议作为草稿，尚未保存。")}
+      onSave={draft => setNotice(`保存请求：${draft.score} 分；理由：${draft.reason}。等待处理回执。`)} />
+    <Feedback>{notice}</Feedback>
+  </DemoSection>
+}
+
 export function ScoreReviewDemo() {
   const [notice, setNotice] = useState("尚无操作请求。")
   const [narrow, setNarrow] = useState(false)
@@ -56,6 +77,7 @@ export function ScoreReviewDemo() {
       </div>
       <Feedback>{notice}</Feedback>
     </DemoSection>
+    <ScoreReviewReasonReceiptDemo />
     {scoreReviewFixtures.map(fixture => <DemoSection key={fixture.id} id={`score-${fixture.id}`} title={fixture.title}>
       <ScoreFixture overrides={fixture.props} onIntent={setNotice} />
       <Feedback>{notice}</Feedback>
