@@ -2715,4 +2715,4 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Stepper 流程步骤条 v0.1
 
-`Stepper` 接收完整有序 `steps` 与显式 done/current/upcoming/pending/blocked/error 状态，只读呈现当前位置、后续阶段和未完成事项。默认水平局部滚动并显露当前步，可选垂直；不提供点击导航，不从序号或执行状态推断完成。公开 API、连接段、无障碍、复用检索及未验证边界见 [Stepper 契约](stepper.md)。PO 2026-09-30 批准「导航」目录项；独立 Review 与浏览器验收尚待完成。
+`Stepper` 接收完整有序 `steps` 与显式 done/current/upcoming/pending/blocked/error 状态；可选 `currentStepId` 优先确定当前位置，省略时兼容 state=current，支持“当前阶段 · 受阻”。只读呈现当前位置、后续阶段和未完成事项。默认水平局部滚动并显露当前步，可选垂直；不提供点击导航，不从序号或执行状态推断完成。公开 API、连接段、无障碍、复用检索及未验证边界见 [Stepper 契约](stepper.md)。PO 2026-09-30 批准「导航」目录项；独立 Review 与浏览器验收尚待完成。

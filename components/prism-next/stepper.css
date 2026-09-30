@@ -1,12 +1,13 @@
-/* Layout only; Badge and Progress retain their existing coss/Prism surfaces. */
+/* Layout only; decorative marks/lines consume existing semantic utilities in TSX. */
 .prism-stepper-viewport { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; padding: .25rem; }
 .prism-stepper-list { display: flex; width: max-content; min-width: 100%; margin: 0; padding: 0; list-style: none; }
-.prism-stepper-item { display: flex; flex: 1 0 auto; align-items: flex-start; min-width: 0; }
-.prism-stepper-content { display: flex; align-items: flex-start; gap: .5rem; width: 9rem; }
-.prism-stepper-connector { flex: 1 0 1.5rem; min-width: 1.5rem; margin: .625rem .75rem 0; }
-.prism-stepper-item:last-child { flex-grow: 0; }
-.prism-stepper[data-orientation="vertical"] .prism-stepper-list { display: block; width: 100%; }
-.prism-stepper[data-orientation="vertical"] .prism-stepper-item { display: block; }
-.prism-stepper[data-orientation="vertical"] .prism-stepper-content { width: 100%; }
-.prism-stepper[data-orientation="vertical"] .prism-stepper-connector { position: relative; width: 1.5rem; height: 2rem; margin: 0; }
-.prism-stepper[data-orientation="vertical"] .prism-stepper-connector > [data-slot="progress"] { position: absolute; top: 50%; width: 1.5rem; transform: rotate(90deg); }
+.prism-stepper-item { position: relative; flex: 1 0 10.5rem; min-width: 0; padding-right: 1.5rem; }
+.prism-stepper-content { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; width: 9rem; }
+.prism-stepper-connector { position: absolute; top: 1rem; left: 2.25rem; right: .25rem; height: 1px; }
+.prism-stepper-item:last-child { flex: 0 0 9rem; padding-right: 0; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-viewport { overflow: visible; height: auto; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-list { flex-direction: column; width: 100%; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-item { flex: none; padding: 0 0 1.5rem; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-item:last-child { padding-bottom: 0; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-content { flex-direction: row; width: 100%; min-height: 2rem; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-connector { top: 2.25rem; bottom: .25rem; left: 1rem; right: auto; width: 1px; height: auto; }

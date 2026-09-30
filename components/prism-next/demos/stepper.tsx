@@ -12,7 +12,7 @@ export const stepperFixtures = {
   third: stages(["done", "done", "current", "upcoming", "upcoming", "upcoming"]),
   fifth: stages(["done", "done", "done", "done", "current", "upcoming"]),
   pending: stages(["done", "pending", "current", "upcoming", "upcoming", "upcoming"]),
-  blocked: stages(["done", "done", "done", "current", "blocked", "upcoming"]).map(step => step.state === "blocked" ? { ...step, description: "答题区域无法匹配，请检查试卷模板" } : step),
+  blocked: stages(["done", "done", "done", "done", "blocked", "upcoming"]).map(step => step.state === "blocked" ? { ...step, description: "答题区域无法匹配，请检查试卷模板" } : step),
 }
 const longSteps = stepperFixtures.pending.map((step, index) => ({ ...step, label: ["设置高二年级数学期中考试批阅任务", "准备试卷原卷、标准答案与评分依据", "扫描并核对学生试卷姓名与考号", "验收扫描页序、缺页及识别异常", "按已确认的评分依据进行 AI 批阅", "查看批阅结果并安排人工复核"][index] }))
 
@@ -25,7 +25,7 @@ export function StepperDemo() {
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><Stepper steps={stepperFixtures[position]} aria-label="批阅任务阶段" /></div>
     </DemoSection>
     <DemoSection title="准备资料 · 待完成" description="扫描已开始，但资料尚未确认；第二步不显示完成勾，也不会被推定为当前步。"><Stepper steps={stepperFixtures.pending} /></DemoSection>
-    <DemoSection title="批阅受阻" description="当前在扫描验收；后续 AI 批阅受模板匹配问题阻挡。受阻与当前阶段由调用方分别提供。"><Stepper steps={stepperFixtures.blocked} /></DemoSection>
+    <DemoSection title="批阅受阻" description="S46：当前第 5 步 AI 批阅受阻；当前位置与受阻状态由调用方分别提供。"><Stepper steps={stepperFixtures.blocked} currentStepId="stage-5" /></DemoSection>
     <DemoSection title="侧栏 · 垂直方向"><div className="w-80 max-w-full"><Stepper orientation="vertical" steps={stepperFixtures.pending} /></div></DemoSection>
     <DemoSection title="三主题 · 320px · 长中文标签" description="当前步骤自动进入局部视野；横向滚动可查看之前的待完成步骤和后续阶段。">
       <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
