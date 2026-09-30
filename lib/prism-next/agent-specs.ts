@@ -9,6 +9,20 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'paper-preview': {
+    component: 'PaperPreview / PaperPreviewDialog v0.1 — component candidate',
+    source: 'Prism DocumentRegionViewer + pinned coss Sheet / Card / Button / Badge / Skeleton / Empty',
+    contract: [
+      'See docs/paper-preview.md. pages is the complete ordered page-slot collection, including missing pages. page/defaultPage/onPageChange is zero-based; out-of-range display clamps without emitting facts.',
+      'zoom/defaultZoom/onZoomChange accepts page (default), width or numeric percent, 5–300. Fit uses viewport dimensions; manual zoom starts from actual displayed scale. A4/A3 and portrait/landscape retain their physical aspect ratio.',
+      'Unknown information remains 未提供. Missing images say 扫描图像未接入. Anomalies use visible labels; supplied percentage regions compose DocumentRegionViewer.pageLayout and controlled selectedRegionId/onRegionSelect.',
+      'versions are host facts; restore requires validated + restorable. onSetCurrentVersion/onAction/onPrev/onNext/onRetry/onClose only emit intent. No local business mutation or receipt inference.',
+      'PaperPreviewDialog composes coss Sheet; open/onOpenChange may be controlled, triggerLabel names its trigger, optional returnFocus specifies focus return. Narrow containers move information below the canvas.'
+    ],
+    states: ['ready', 'loading Skeleton', 'empty', 'error + retry', 'missing image', 'image load error', 'anomaly', 'historical scan'],
+    accessibility: ['ArrowLeft/ArrowRight page navigation is scoped to canvas, not inputs or modifier shortcuts.', 'Preserve Sheet Escape, focus trap, accessible title/description and trigger focus return; real browser verification required.', 'Text labels accompany anomaly/selection; controls wrap; respect reduced motion.'],
+    dont: ['Do not embed scanning, uploading, grading, permission checks, stores or persistence.', 'Do not treat restoring intent as a new current version.']
+  },
   'agent-components': {
     component: 'Agent semantic group / record views / exception handler / evidence drilldown / item reviewer / document workspace / file input / capture scan / collection basket / material pack / object viewer / scope builder / metric summary / distribution matrix / object picker / review queue / content input / constraint builder / artifact output / structured content / parameter config / candidate picker / suggestion set / resource retriever / structure arranger / plan builder / path priority / subject editor / template picker / image canvas / calc tool / relation graph / slide workspace / audio transcript / video timeline / interactive demo / simulation lab v0.1 — design candidate',
     source: 'Prism / coss composition; interaction reference: https://www.beautifului.dev/',

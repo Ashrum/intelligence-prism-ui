@@ -2707,3 +2707,8 @@ Beautiful UI（https://www.beautifului.dev/）注册源 `components/primitives/P
 Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 → muted-foreground；line → border / input；hover → accent；field → secondary；accent-ink → info-foreground；orange / red 状态文字 → warning-foreground / destructive-foreground。原 source 色值、12/12.5/13px 文字和 shadow-plugin 叠层不引入：分别使用 Prism 主题、text-ui-body / text-ui-action / text-ui-hint / text-ui-meta，以及 coss InputGroup / Menu / Popover 已有阴影。原 14/22/24px 输入框曲率映射为 rounded-xl / rounded-3xl，按钮圆角使用 coss 或 rounded-full；点阵 Dots 使用 rounded-full。没有对应精确值时使用最接近的现有令牌，保留 Prism 字号可读性。
 
 扫光仅按 [Agent-readable contract 的明确例外](agent-readable-contract.md#beautiful-ui-prompt-bar-扫光动效例外po-2026-09-29-批准) 使用 `glimm@0.3.1`（MIT）；不导入 Beautiful UI 的全局 foundation、shadow-plugin 或新字体。组件候选不等于 Workspace 接入或独立 Review 通过。
+
+
+## Paper Preview 试卷预览 v0.1
+
+`PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
