@@ -1,0 +1,34 @@
+# Record List 记录列表 v0.1 · Builder 实现
+
+PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/record-list`。独立 Review 与产品验收另行确认。
+
+## 实施前复用检索
+
+- 已读取固定 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress、Badge。组合基础控件，不改 `components/coss/**`。
+- [coss particles](https://coss.com/ui/particles) 本轮可读，页面列出 510 项；[registry](https://coss.com/ui/r/registry.json) 与 `p-table-8.json` 在线读取失败。只读检查既有缓存 `/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/f9a352c5-7ad1-4d06-9d0d-08fc4599e165/scratchpad/coss/particles-src/` 的 p-table-5（状态点、表格）和 p-table-8（分页、选择、排序）。沿用状态文字与分页组合思路，不复制硬编码颜色，不增添 TanStack 依赖；卡片行适应 320px，与多列数据表职责不同。
+- [Beautiful UI](https://www.beautifului.dev) 的 Records Table 是 CRM 网格，Filter Table 是表格筛选，Task Rows 是执行状态行；在线 `r/records-table.json`、`r/filter-table.json` 读取失败。只读检查同一 scratchpad 下 `beautifului/records-table.json`：固定 CRM 列、AI 属性计算、计时更新和独立 CSS 不匹配本任务的通用事实卡片行。不复制代码，不引入其令牌或执行状态。
+- 评估 QueueBoard：学生试卷异常队列与多列表格，不能承载本次批次记录目录；保留旧契约。评估 analysis-filter 对应的 data-display FilterBar：依赖 QuestionSelect，未开放本任务要求的 44px 菜单项与触点布局；不为一个列表扩展旧接口。直接组合 coss Select，使用同样的固定标签模式。
+- 复用 AgentStatus 的语义色与文字，通过 Circle 图标呈现状态点；不另建状态组件。agent-record-parts 提供详情折叠与工作区展开，不含本任务的状态、筛选原子，不强行套用。
+- 已查看“批阅记录 ／ …”全部 9 张 PNG；只读核对 5174 TeacherGradingRecordsPage、Workspace GradingList.tsx 与 list-model.ts。Figma 仅取功能，业务分类、路由与 sessionStorage 不迁入。
+
+## API 与事实边界
+
+导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
+
+- 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
+- `tabs: {id,label,count}[]` 由宿主提供，count 非负整数，零保留，null/无效显示「未提供」。`tab` 未提供时使用 `defaultTab` 或首项；受控模式只有新 props 改变选中项。ID 唯一且 tab/defaultTab 须属于 tabs；切换对象时宿主应 key/remount 或控制 tab。
+- `rows` 是宿主当前查询页面；可选 `tabIds` 是宿主显式分类，支持非受控 Tab；省略时当前页面全部呈现。分类文本不参与推导。宿主应先筛选、再分页，切换目录或查询时更新 rows、summary、page；计数不得从当前页面倒推。
+- 行提供 type/name/metadata、可选 description ReactNode、status `{label,tone}`、可选 0–100 progress。缺失身份显示「未提供」，缺失状态显示「状态未知」；非法或未知进度不画条。description 可组合现有公式呈现，组件不识别或解释公式。
+- `search`、`filters[{id,label,value,options}]`、`activeFilters: string[]`、`summary{label,tone}` 全部由宿主提供。过滤项、发布状态与时间选项无内置业务含义；组件不执行搜索。activeFilters 用于已选条件摘要，`onClearFilters()` 由宿主决定重置哪些条件；清除搜索调用 `onSearch("")`。
+- `pagination{page,pages,label}` 接收宿主页码窗口，组件不算页数。页码按钮发出 `onPageChange(page)`，当前页保留 aria-current。大数据使用紧凑页码窗口，分页规则归宿主。
+- 意图：`onTabChange(id)`、`onSearch(query)`、`onFilterChange(id,value)`、`onRowAction(rowId,actionId)`、`onRowMenu(rowId,actionId)`、`onPageChange(page)`、`onPrimary()`、`onRetry()`、`onClearFilters()`。无回调的操作禁用；search 无回调时只读。行主操作可给 disabledReason，禁用整行快捷点击并显示原因；菜单项可给 disabledReason。
+- 行背景点击与可聚焦的主操作按钮调用同一个意图；Card 不包裹 Button，内部按钮与 Portal 菜单阻止冒泡，不出现嵌套按钮，也不抢夺内部控件键盘行为。
+- `state` 默认 ready；ready + activeFilters 为 Filtered；search-empty 为搜索无结果；empty 为首次空；error 带 reason 与 retry；loading 呈现 Skeleton。隐去非 ready 的记录与分页，不把旧结果当作新回执；首次空不显示搜索工具栏。
+
+## 页面、无障碍与验证边界
+
+组件页含四个目录，28 条中文夹具（7 需处理、3 处理中、18 完成），五项筛选、分页和意图回显；夹具仅管理视图，不执行实际批阅。图中固定“12 页”未沿用，页数依据本夹具数据提供。系统处理中 183 份是 92+45+46，已完成 12 个已发布与 6 个未发布与夹具一致。
+
+使用共享 AgentStatus 语义色与可见状态文字，Circle 是状态点；关键文字使用语义 ui-hint。coss Tabs 管理 roving focus 与 TabPanel 关联；coss Menu/Select 管理弹层焦点、Escape 和选择。固定标签、44px 触点、多行按钮 h-auto + sm:h-auto、容器断点 720px、减少动态效果沿用既有机制。页面提供三主题、1366px 宽区与 320px 长中文/MathML；不新增视觉令牌。
+
+浏览器尝试打开 `http://localhost:5173/next/components/score-review` 时被权限审核拒绝（工具返回用户拒绝该访问），未绕过。**ESCALATE：新路由的真实键盘交互、Portal 焦点返回、三主题/1366/320px 视觉与触点尺寸尚未浏览器验收**。SSR 和回调测试不能替代这些验收。真实服务、移动设备与读屏器未验证；其他仓库只读，未修改 `.git`，未提交/推送/发布。
