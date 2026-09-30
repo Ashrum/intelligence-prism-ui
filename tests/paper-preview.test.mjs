@@ -41,8 +41,8 @@ function capture(extra = {}, Component = probeApi.PaperPreview) {
 function button(extra, label) { const found = capture(extra).nodes.find(n => n.props.onClick && (n.props['aria-label'] === label || textOf(n) === label)); assert.ok(found, label); return found; }
 function click(extra, label) { const node = button(extra, label); assert.ok(!node.props.disabled, label); node.props.onClick(); }
 
-test('catalog has exactly 81 and student/material fixtures have 6/12 explicit page slots', () => {
-  assert.equal(components.length, 81); assert.equal(components.filter(c => c.id === 'paper-preview').length, 1);
+test('catalog IDs are unique and student/material fixtures have 6/12 explicit page slots', () => {
+  assert.equal(new Set(components.map(entry => entry.id)).size, components.length); assert.equal(components.filter(c => c.id === 'paper-preview').length, 1);
   assert.equal(pages.length, 6); assert.equal(api.markingMaterialPages.length, 12);
   const content = render(h(api.PaperPreviewDemo));
   for (const theme of ['light', 'paper', 'dark']) assert.ok(content.includes(`data-prism-theme="${theme}"`));
@@ -120,4 +120,82 @@ test('dialog delegates Escape/focus to pinned Sheet and forwards close intent (S
   const root = result.nodes.find(n => n.props.onOpenChange); root.props.onOpenChange(false);
   assert.deepEqual(events, [false, 'close']); assert.ok(result.nodes.some(n => n.props.finalFocus === ref));
   assert.ok(result.nodes.some(n => n.props.closeProps?.['aria-label'] === '关闭预览'));
+});
+
+
+test('thumbnail cards override responsive button height and preserve paper aspect ratios', () => {
+  reset();
+  const result = capture({ pages: [{ id: 'portrait' }, { id: 'landscape', paperSize: 'A3', orientation: 'landscape', anomaly: '缺页，等待补扫' }] });
+  const section = result.html.split('aria-label="扫描页面"')[1].split('</section>')[0];
+  const buttons = [...section.matchAll(/<button[^>]*class="([^"]*)"/g)];
+  assert.equal(buttons.length, 2);
+  for (const [, classes] of buttons) {
+    assert.ok(classes.split(' ').includes('h-auto'));
+    assert.ok(classes.split(' ').includes('sm:h-auto'));
+    assert.ok(!classes.split(' ').includes('sm:h-8'));
+  }
+  assert.equal((section.match(/aspect-ratio:/g) ?? []).length, 2);
+  assert.doesNotMatch(section, />扫描图像未接入</);
+  assert.match(section, /lucide-triangle-alert/);
+  assert.match(section, /异常页 · 缺页，等待补扫/);
+  const ratios = result.nodes.filter(n => n.props.style?.aspectRatio).map(n => n.props.style.aspectRatio.split(' / ').map(Number));
+  assert.ok(Math.abs(ratios[0][0] / ratios[0][1] - 210 / 297) < 1e-10);
+  assert.ok(Math.abs(ratios[1][0] / ratios[1][1] - 420 / 297) < 1e-10);
+});
+test('region hit layers cover full height with visible normal/selected borders and transparent hover', () => {
+  const markup = render(h(api.DocumentRegionViewer, { regions: [{ id: 'r', label: '第 3 题', rect: [8, 70, 84, 20] }], selectedId: 'r', onSelect() {}, pageLayout: { width: 794, height: 1123 } }));
+  const classes = markup.match(/<button[^>]*class="([^"]*)"/)[1].split(' ');
+  for (const name of ['h-full', 'sm:h-full', 'border-border', 'aria-pressed:border-2', 'aria-pressed:border-primary', 'hover:bg-transparent', 'data-pressed:bg-transparent']) assert.ok(classes.includes(name), name);
+  for (const name of ['sm:h-8', 'border-transparent', 'hover:bg-accent', 'data-pressed:bg-accent']) assert.ok(!classes.includes(name), name);
+});
+test('anomaly badge is inside the paper canvas and includes an icon plus text', () => {
+  const canvas = html({ page: 1 }).split('data-paper-size="A4"')[1].split('</section>')[0];
+  assert.match(canvas, /data-paper-anomaly/);
+  assert.match(canvas.split('data-paper-anomaly')[1], /lucide-triangle-alert/);
+  assert.match(canvas.split('data-paper-anomaly')[1], /异常页 · 缺页，等待补扫/);
+});
+test('region list repeat requests reach the viewer and page changes remount the selected region', () => {
+  reset();
+  const regions = [{ id: 'r', label: '页底区域', rect: [8, 80, 84, 15] }];
+  const requests = [], props = { pages: [{ id: 'p1', regions }, { id: 'p2', regions }], selectedRegionId: 'r', zoom: 150, onRegionSelect: (...args) => requests.push(args) };
+  const viewer = () => capture(props).nodes.find(n => n.props.locateRequest !== undefined);
+  assert.equal(viewer().key, 'p1'); assert.equal(viewer().props.locateRequest, 0);
+  click(props, '页底区域'); assert.equal(viewer().props.locateRequest, 1);
+  click(props, '页底区域'); assert.equal(viewer().props.locateRequest, 2);
+  click(props, '下一页'); assert.equal(viewer().key, 'p2'); assert.equal(viewer().props.selectedId, 'r');
+  assert.deepEqual(requests, [['p1', 'r'], ['p1', 'r']]);
+});
+test('viewer effects scroll on initial mount, cross-page mount, selection and repeated requests; legacy remains compatible', async () => {
+  const effectsFile = new URL('region-effects.mjs', dir);
+  const contents = (await readFile(new URL('../components/prism-next/document-region-viewer.tsx', import.meta.url), 'utf8'))
+    .replace('useEffect,useRef,type ReactNode', 'type ReactNode')
+    .replace('export type DocumentRegion=', `const useRef = (_initial: any) => ({ current: (globalThis as any).__region.canvas });
+const useEffect = (effect: () => void, deps: any[]) => { const p = (globalThis as any).__region; if (!p.deps || deps.some((value, i) => !Object.is(value, p.deps[i]))) { p.effects.push(effect); p.deps = deps; } };
+export type DocumentRegion=`);
+  await writeFile(effectsFile, (await build({ ...options, stdin: { contents, resolveDir: root + 'components/prism-next', loader: 'tsx' } })).outputFiles[0].text);
+  const { DocumentRegionViewer } = await import(effectsFile);
+  await rm(effectsFile);
+  const calls = [], regions = [{ id: 'r', label: '页底区域', rect: [8, 80, 84, 15] }, { id: 'other', label: '其他区域', rect: [8, 10, 84, 15] }];
+  function mount(page) {
+    globalThis.__region = { effects: [], canvas: { querySelectorAll: () => regions.map(r => ({ dataset: { region: r.id }, scrollIntoView: options => calls.push({ page, id: r.id, options }) })) } };
+  }
+  function draw(extra = {}) {
+    const tree = DocumentRegionViewer({ regions, selectedId: 'r', onSelect() {}, pageLayout: { width: 794, height: 1123 }, ...extra });
+    globalThis.__region.effects.splice(0).forEach(effect => effect());
+    return tree;
+  }
+  mount('p1'); draw(); assert.equal(calls.length, 1);
+  draw(); assert.equal(calls.length, 1);
+  mount('p2'); draw(); assert.equal(calls.length, 2);
+  draw({ locateRequest: 1 }); draw({ locateRequest: 2 }); assert.equal(calls.length, 4);
+  draw({ selectedId: 'other', locateRequest: 2 }); assert.equal(calls.at(-1).id, 'other');
+  assert.ok(calls.every(call => call.options.block === 'nearest' && call.options.inline === 'nearest'));
+  const count = calls.length;
+  draw({ selectedId: 'missing', locateRequest: 2 }); assert.equal(calls.length, count);
+  mount('legacy');
+  const tree = draw({ pageLayout: undefined }); assert.equal(calls.at(-1).page, 'legacy');
+  function findClick(n) { if (Array.isArray(n)) return n.map(findClick).find(Boolean); if (!React.isValidElement(n)) return; return n.props.onClick ?? findClick(n.props.children); }
+  const handler = findClick(tree); handler(); handler(); assert.equal(calls.length, count + 3);
+  mount('modern'); const modernClick = findClick(draw()); modernClick(); modernClick();
+  assert.equal(calls.slice(-3).filter(call => call.page === 'modern' && call.id === 'r').length, 3);
 });

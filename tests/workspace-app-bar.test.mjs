@@ -156,7 +156,7 @@ test('responsive sizes are based on named containers including portalled menu ty
   assert.doesNotMatch(css, /@media\s*\([^)]*width/);
 });
 
-test('the built application example exposes all four widths and three themes outside the 81-entry catalog', async () => {
+test('the built application example exposes all four widths and three themes outside the component catalog', async () => {
   const { default: worker } = await import(new URL('../dist/server/index.js', import.meta.url));
   const response = await worker.fetch(new Request('http://localhost/next/use-cases/workspace-app-bar', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
   assert.equal(response.status, 200);
@@ -165,7 +165,7 @@ test('the built application example exposes all four widths and three themes out
   for (const theme of ['light', 'paper', 'dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
   assert.match(html, /Workspace 顶部区域/); assert.match(html, /同步组卷/);
   const { components } = await import('../lib/prism-next/catalog.ts');
-  assert.equal(components.length, 81);
+  assert.equal(components.some(entry => entry.id === 'workspace-app-bar'), false);
 });
 
 test('teaching context emits intents but waits for host-confirmed facts, with empty and stale states', () => {

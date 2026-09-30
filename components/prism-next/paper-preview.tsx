@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react"
 import "./paper-preview.css"
-import { ZoomIn, ZoomOut } from "lucide-react"
+import { ZoomIn, ZoomOut, TriangleAlert, FileImage } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Empty } from "@/components/coss/empty"
 import { Skeleton } from "@/components/coss/skeleton"
@@ -48,6 +48,7 @@ const known = (value?: ReactNode) => value === undefined || value === null || va
 function PageImage({ page, label, onRetry, thumbnail = false }: { page: PaperPreviewPage; label: string; onRetry?: () => void; thumbnail?: boolean }) {
   const [failed, setFailed] = useState(false)
   const src = thumbnail ? page.thumbnailUrl ?? page.imageUrl : page.imageUrl
+  if (thumbnail && (!src || failed)) return <span className="flex h-full w-full flex-col items-center justify-center gap-2" aria-label={failed ? "图像加载失败" : "扫描图像未接入"}><FileImage aria-hidden="true" /><span className="text-ui-meta">{page.paperSize ?? "A4"}</span></span>
   if (!src) return <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-2 text-center"><span className={thumbnail ? "text-ui-meta" : "text-ui-body"}>扫描图像未接入</span><span className="text-ui-meta">{page.paperSize ?? "A4"}</span></div>
   if (failed) return <div className="flex h-full flex-col items-center justify-center gap-2 p-2"><span className="text-ui-hint" role={thumbnail ? undefined : "alert"}>图像加载失败</span>{!thumbnail && <Button variant="outline" disabled={!onRetry} onClick={() => { setFailed(false); onRetry?.() }}>重试</Button>}</div>
   return <img src={src} alt={thumbnail ? "" : page.alt || label} className="h-full w-full object-contain" onError={() => setFailed(true)} />
@@ -55,6 +56,7 @@ function PageImage({ page, label, onRetry, thumbnail = false }: { page: PaperPre
 
 export function PaperPreview(props: PaperPreviewProps) {
   const { pages, title, subtitle, status, state = "ready", information = [], informationSlot, versions, actions = [], onRetry, onClose } = props
+  const [locateRequest, setLocateRequest] = useState(0)
   const [localPage, setLocalPage] = useState(props.defaultPage ?? 0)
   const [localZoom, setLocalZoom] = useState<PaperPreviewZoom>(props.defaultZoom ?? "page")
   const viewportRef = useRef<HTMLDivElement>(null), paperRef = useRef<HTMLDivElement>(null)
@@ -73,6 +75,10 @@ export function PaperPreview(props: PaperPreviewProps) {
     const observer = new ResizeObserver(measure); observer.observe(node)
     return () => observer.disconnect()
   }, [ready])
+  function selectRegion(regionId: string) {
+    props.onRegionSelect?.(current.id, regionId)
+    if (regionId === props.selectedRegionId) setLocateRequest(value => value + 1)
+  }
   function changePage(next: number) {
     const value = clampPaperPage(next, pages.length)
     if (!ready || value === pageIndex) return
@@ -115,18 +121,19 @@ export function PaperPreview(props: PaperPreviewProps) {
               if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || (event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return
               if (event.key === "ArrowLeft" || event.key === "ArrowRight") { event.preventDefault(); changePage(pageIndex + (event.key === "ArrowLeft" ? -1 : 1)) }
             }}>
-              <div ref={paperRef} className="mx-auto" style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }} data-paper-size={current.paperSize ?? "A4"}>
-                <DocumentRegionViewer key={current.id} label={`第 ${pageIndex + 1} 页`} pageLayout={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }} regions={current.regions ?? []} selectedId={props.selectedRegionId} onSelect={props.onRegionSelect ? regionId => props.onRegionSelect?.(current.id, regionId) : undefined} background={<PageImage key={`${current.id}:${current.imageUrl}`} page={current} label={`第 ${pageIndex + 1} 页扫描图像`} onRetry={onRetry} />} />
+              <div ref={paperRef} className="relative mx-auto" style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }} data-paper-size={current.paperSize ?? "A4"}>
+                <DocumentRegionViewer key={current.id} label={`第 ${pageIndex + 1} 页`} pageLayout={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }} regions={current.regions ?? []} selectedId={props.selectedRegionId} locateRequest={locateRequest} onSelect={props.onRegionSelect ? regionId => props.onRegionSelect?.(current.id, regionId) : undefined} background={<PageImage key={`${current.id}:${current.imageUrl}`} page={current} label={`第 ${pageIndex + 1} 页扫描图像`} onRetry={onRetry} />} />
+                {current.anomaly && <div className="pointer-events-none absolute inset-x-2 top-2" data-paper-anomaly><Badge variant="warning" className="h-auto sm:h-auto max-w-full whitespace-normal"><TriangleAlert aria-hidden="true" />异常页 · {current.anomaly}</Badge></div>}
               </div>
             </div>}
         </Card>
-        {ready && !!current.regions?.length && <div className="flex flex-wrap gap-2 pt-3" role="group" aria-label="答题区域">{current.regions.map(region => <Button key={region.id} variant="outline" aria-pressed={props.selectedRegionId === region.id} disabled={!props.onRegionSelect} onClick={() => props.onRegionSelect?.(current.id, region.id)}>{region.label}</Button>)}</div>}
+        {ready && !!current.regions?.length && <div className="flex flex-wrap gap-2 pt-3" role="group" aria-label="答题区域">{current.regions.map(region => <Button key={region.id} variant="outline" aria-pressed={props.selectedRegionId === region.id} disabled={!props.onRegionSelect} onClick={() => selectRegion(region.id)}>{region.label}</Button>)}</div>}
       </div>
       <aside className="grid min-w-0 content-start gap-5" aria-label="试卷信息">
         <dl className="grid gap-3">{information.map((item, index) => <div key={index} className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-3 text-ui-body"><dt className="break-words">{item.label}</dt><dd className="min-w-0 break-words">{known(item.value)}</dd></div>)}</dl>
         {informationSlot}
-        <section aria-label="扫描页面"><h3 className="pb-2 text-item-title">扫描页面</h3><div className="grid max-h-80 grid-cols-2 gap-2 overflow-auto p-1">{pages.map((page, index) => <Button key={page.id} className="h-auto min-w-0 flex-col items-stretch whitespace-normal p-2" variant={pageIndex === index ? "secondary" : "outline"} disabled={!ready} aria-pressed={pageIndex === index} aria-label={`第 ${index + 1} 页 · ${page.anomaly ? `异常页 · ${page.anomaly}` : page.quality === "normal" ? "正常" : "未提供"}`} onClick={() => changePage(index)}>
-          <span className="block h-24"><PageImage key={`${page.id}:${page.thumbnailUrl}:${page.imageUrl}`} thumbnail page={page} label="" /></span><span className="text-ui-body">第 {index + 1} 页{pageIndex === index ? " · 当前页" : ""}</span><span className="text-ui-hint">{page.anomaly ? `异常页 · ${page.anomaly}` : page.quality === "normal" ? "正常" : "未提供"}</span>
+        <section aria-label="扫描页面"><h3 className="pb-2 text-item-title">扫描页面</h3><div className="grid max-h-80 grid-cols-2 gap-2 overflow-auto p-1">{pages.map((page, index) => <Button key={page.id} className="h-auto sm:h-auto min-w-0 flex-col items-stretch whitespace-normal p-2" variant={pageIndex === index ? "secondary" : "outline"} disabled={!ready} aria-pressed={pageIndex === index} aria-label={`第 ${index + 1} 页 · ${page.anomaly ? `异常页 · ${page.anomaly}` : page.quality === "normal" ? "正常" : "未提供"}`} onClick={() => changePage(index)}>
+          <span className="block w-full" style={{ aspectRatio: `${paperDimensions(page.paperSize, page.orientation).width} / ${paperDimensions(page.paperSize, page.orientation).height}` }}><PageImage key={`${page.id}:${page.thumbnailUrl}:${page.imageUrl}`} thumbnail page={page} label="" /></span><span className="text-ui-body">第 {index + 1} 页{pageIndex === index ? " · 当前页" : ""}</span><span className="text-ui-hint">{page.anomaly ? <span className="flex items-start justify-center gap-1"><TriangleAlert aria-hidden="true" /><span className="min-w-0 break-words">异常页 · {page.anomaly}</span></span> : page.quality === "normal" ? "正常" : "未提供"}</span>
         </Button>)}</div></section>
         <section aria-label="扫描版本"><h3 className="pb-2 text-item-title">扫描版本</h3>{versions === undefined ? <p className="text-ui-hint">未提供</p> : versions.length === 0 ? <p className="text-ui-hint">暂无扫描版本</p> : <ul className="grid gap-2">{versions.map(version => <li key={version.id}><Card className="gap-2 p-3"><p className="text-ui-body break-words">{version.label} · {version.current ? "当前扫描件" : "历史扫描件"}</p>{!version.current && <><p className="text-ui-hint">{version.validated === true ? "已通过校验" : version.validated === false ? "未通过校验" : "校验状态未提供"} · {version.restorable === true ? "可恢复" : version.restorable === false ? "不可恢复" : "恢复状态未提供"}</p><Button className="h-auto whitespace-normal" variant="outline" disabled={!version.restorable || !version.validated || !props.onSetCurrentVersion} onClick={() => { if (version.restorable && version.validated) props.onSetCurrentVersion?.(version.id) }}>设为当前扫描件</Button></>}</Card></li>)}</ul>}</section>
         <div className="grid gap-2">{actions.map(action => <Button key={action.id} className="h-auto whitespace-normal" variant={action.primary ? "default" : "outline"} disabled={action.disabled || !props.onAction} onClick={() => { if (!action.disabled) props.onAction?.(action.id) }}>{action.label}</Button>)}</div>
