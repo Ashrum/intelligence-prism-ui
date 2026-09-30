@@ -15,7 +15,7 @@ await writeFile(file, (await build(options)).outputFiles[0].text);
 const api = await import(file);
 await writeFile(probe, (await build({ ...options, plugins: [{ name: 'paper-events', setup(build) {
   build.onLoad({ filter: /prism-next\/paper-preview\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8'))
-    .replace('useEffect, useId, useRef, useState,', 'useEffect, useId,')
+    .replace('useId, useRef, useState,', 'useId,')
     .replace('export type PaperPreviewZoom', `const useState = (initial: any): any => { const p = (globalThis as any).__paper; const i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (v: any) => { p.values[i] = typeof v === 'function' ? v(p.values[i]) : v }]; };
 const useRef = <T,>(initial: T): {current:T} => { const p = (globalThis as any).__paper; return p.refs[p.refCursor++] ?? {current:initial}; };
 export type PaperPreviewZoom`) }));
@@ -60,10 +60,10 @@ test('default page-fit, page boundary clamps and controlled page changes do not 
 });
 test('zoom measures rendered paper when leaving fit and remains continuous and bounded', () => {
   reset(); const natural = api.paperDimensions();
-  globalThis.__paper.refs[1] = { current: { getBoundingClientRect: () => ({ width: natural.width * .25 }) } };
+  globalThis.__paper.refs[0] = { current: { getBoundingClientRect: () => ({ width: natural.width * .25 }) } };
   const requests = [], props = { onZoomChange: n => requests.push(n) };
   click(props, '放大'); assert.equal(requests[0], 31.25);
-  globalThis.__paper.refs[1].current.getBoundingClientRect = () => ({ width: natural.width * .3125 });
+  globalThis.__paper.refs[0].current.getBoundingClientRect = () => ({ width: natural.width * .3125 });
   click(props, '缩小'); assert.equal(requests[1], 25);
   click(props, '适合宽度'); assert.equal(requests[2], 'width');
   click(props, '适合页面'); assert.equal(requests[3], 'page');
@@ -77,6 +77,95 @@ test('zoom measures rendered paper when leaving fit and remains continuous and b
 test('controlled zoom retains host value until updated', () => {
   reset(); const requests = []; click({ zoom: 80, onZoomChange: v => requests.push(v) }, '放大');
   assert.deepEqual(requests, [100]); assert.match(capture({ zoom: 80 }).html, />80%<\/output>/);
+});
+
+// DOM dimensions and ResizeObserver delivery are simulated; this is not visual QA.
+function resizeFixture(t, props) {
+  reset();
+  const observers = [], original = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = class {
+    constructor(callback) { this.callback = callback; observers.push(this); }
+    observe(node) { this.node = node; }
+    disconnect() { this.node = null; }
+  };
+  const cleanups = [];
+  t.after(() => {
+    cleanups.forEach(cleanup => cleanup?.());
+    if (original === undefined) delete globalThis.ResizeObserver;
+    else globalThis.ResizeObserver = original;
+  });
+  const draw = () => capture(props);
+  function mount(width, height) {
+    const viewport = { clientWidth: width, clientHeight: height };
+    const ref = draw().nodes.find(n => n.props.className === 'paper-preview-viewport').props.ref;
+    const cleanup = ref(viewport);
+    cleanups.push(cleanup);
+    assert.equal(observers.at(-1).node, viewport);
+    return { viewport, cleanup };
+  }
+  function resize(viewport, width, height) {
+    viewport.clientWidth = width; viewport.clientHeight = height;
+    for (const observer of observers) if (observer.node === viewport) observer.callback([{ target: viewport }]);
+    return draw();
+  }
+  return { draw, mount, resize, observers };
+}
+function paperGeometry(result) {
+  return result.nodes.find(n => n.props['data-paper-size']).props.style;
+}
+function assertZoom(result, percent, mode) {
+  assert.equal(textOf(result.nodes.find(n => n.type === 'output')), `${Math.round(percent)}%`);
+  for (const [label, value] of [['适合页面', 'page'], ['适合宽度', 'width']]) {
+    assert.equal(result.nodes.find(n => n.props.onClick && textOf(n) === label).props['aria-pressed'], mode === value);
+  }
+}
+test('fit modes recalculate on width and height resize and preserve controlled/uncontrolled mode', async t => {
+  for (const mode of ['page', 'width']) for (const controlled of [false, true]) await t.test(`${mode}, controlled=${controlled}`, t => {
+    const requests = [], props = { [controlled ? 'zoom' : 'defaultZoom']: mode, onZoomChange: value => requests.push(value) };
+    const fixture = resizeFixture(t, props), { viewport } = fixture.mount(900, 600);
+    const paper = api.paperDimensions();
+    for (const [width, height] of [[900, 600], [318, 600], [318, 320], [900, 600]]) {
+      const result = fixture.resize(viewport, width, height);
+      const scale = mode === 'width' ? (width - 32) / paper.width : Math.min((width - 32) / paper.width, (height - 32) / paper.height);
+      assertZoom(result, scale * 100, mode);
+      const geometry = paperGeometry(result);
+      assert.ok(Math.abs(geometry.width - paper.width * scale) < 1e-8);
+      assert.ok(geometry.width <= width - 32 + 1e-8);
+      if (mode === 'page') assert.ok(geometry.height <= height - 32 + 1e-8);
+    }
+    assert.deepEqual(requests, []);
+  });
+});
+test('manual zoom remains unchanged after container resize, including after leaving fit mode', async t => {
+  for (const controlled of [false, true]) await t.test(`controlled=${controlled}`, t => {
+    const requests = [], props = { ...(controlled ? { zoom: 125 } : {}), onZoomChange: value => requests.push(value) };
+    const fixture = resizeFixture(t, props), { viewport } = fixture.mount(900, 600);
+    if (!controlled) click(props, '放大');
+    const before = fixture.draw(), geometry = paperGeometry(before);
+    const percent = controlled ? 125 : requests[0];
+    const requestCount = requests.length;
+    for (const [width, height] of [[318, 600], [318, 320], [900, 600]]) {
+      const result = fixture.resize(viewport, width, height);
+      assertZoom(result, percent);
+      assert.deepEqual(paperGeometry(result), geometry);
+    }
+    assert.equal(requests.length, requestCount);
+  });
+});
+test('viewport observation starts on delayed DOM attachment and reconnects after replacement', t => {
+  const props = { defaultZoom: 'width' }, fixture = resizeFixture(t, props);
+  fixture.draw(); fixture.draw(); // Component rendered before its viewport is attached.
+  assert.equal(fixture.observers.length, 0);
+  const first = fixture.mount(900, 600);
+  assert.ok(Math.abs(paperGeometry(fixture.draw()).width - 868) < 1e-8);
+  first.cleanup();
+  assert.equal(fixture.observers[0].node, null);
+  const second = fixture.mount(318, 600);
+  assert.ok(Math.abs(paperGeometry(fixture.draw()).width - 286) < 1e-8);
+  fixture.resize(first.viewport, 1200, 800);
+  assert.ok(Math.abs(paperGeometry(fixture.draw()).width - 286) < 1e-8);
+  second.cleanup();
+  assert.ok(fixture.observers.every(observer => observer.node === null));
 });
 test('anomalies and unknown values are textual; version restoration emits intent only', () => {
   reset(); const before = structuredClone(base), versions = [];

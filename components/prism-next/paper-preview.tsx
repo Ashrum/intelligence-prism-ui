@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react"
+import { useCallback, useId, useRef, useState, type ReactNode, type RefObject } from "react"
 import "./paper-preview.css"
 import { ZoomIn, ZoomOut, TriangleAlert, FileImage } from "lucide-react"
 import { Card } from "@/components/coss/card"
@@ -59,7 +59,7 @@ export function PaperPreview(props: PaperPreviewProps) {
   const [locateRequest, setLocateRequest] = useState(0)
   const [localPage, setLocalPage] = useState(props.defaultPage ?? 0)
   const [localZoom, setLocalZoom] = useState<PaperPreviewZoom>(props.defaultZoom ?? "page")
-  const viewportRef = useRef<HTMLDivElement>(null), paperRef = useRef<HTMLDivElement>(null)
+  const paperRef = useRef<HTMLDivElement>(null)
   const [viewport, setViewport] = useState({ width: 288, height: 448 })
   const id = useId()
   const pageIndex = clampPaperPage(props.page ?? localPage, pages.length), current = pages[pageIndex]
@@ -67,14 +67,14 @@ export function PaperPreview(props: PaperPreviewProps) {
   const dimensions = paperDimensions(current?.paperSize, current?.orientation)
   const percent = paperZoomPercent(zoom, viewport, dimensions)
   const ready = state === "ready" && !!current
-  useEffect(() => {
-    const node = viewportRef.current
+  // Bind measurement to the actual DOM node, including delayed mounts/replacements.
+  const viewportRef = useCallback((node: HTMLDivElement | null) => {
     if (!node) return
     const measure = () => setViewport({ width: Math.max(1, node.clientWidth - 32), height: Math.max(1, node.clientHeight - 32) })
     measure()
     const observer = new ResizeObserver(measure); observer.observe(node)
     return () => observer.disconnect()
-  }, [ready])
+  }, [])
   function selectRegion(regionId: string) {
     props.onRegionSelect?.(current.id, regionId)
     if (regionId === props.selectedRegionId) setLocateRequest(value => value + 1)
