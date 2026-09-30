@@ -74,9 +74,12 @@ test('drop highlight follows allowed file drag, clears on leave/drop, and select
 });
 
 test('neutral upload explanation reflects each supplied capability, without claiming scanner availability', () => {
-  for (const [status, label] of [['supported', '上传服务已连接'], ['limited', '上传服务有限支持'], ['unsupported', '上传服务未连接']]) {
-    reset(); const out = capture({ station: { connection: 'offline' }, capabilities: { ...base.capabilities, upload: { status, reason: '调用方能力事实' } } });
-    assert.ok(out.html.includes(`${label}：调用方能力事实`)); assert.doesNotMatch(out.html, /可使用数据站扫描|aria-expanded/);
+  for (const status of ['supported', 'limited', 'unsupported']) {
+    const reason = '上传服务未接入；选择只保留本机文件信息。';
+    reset(); const out = capture({ station: { connection: 'offline' }, capabilities: { ...base.capabilities, upload: { status, reason } } });
+    const explanation = out.nodes.find(n => n.props.id?.endsWith('-capabilities'));
+    assert.equal(explanation.props.children, [reason, base.capabilities.select.reason].filter(Boolean).join('；'));
+    assert.doesNotMatch(out.html, /上传服务未连接：|上传服务有限支持：|上传服务已连接：|可使用数据站扫描|aria-expanded/);
   }
 });
 

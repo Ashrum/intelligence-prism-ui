@@ -74,7 +74,7 @@ function IntakeSelection({ select, canDrop, selectionReason, label, hint, limits
       <span className="break-words text-ui-action [overflow-wrap:anywhere]">{label}</span>
       <span id={`${id}-hint`} className="break-words text-ui-hint [overflow-wrap:anywhere]">{hint}</span>
     </Button>
-    <p id={`${id}-capabilities`} className="break-words text-ui-hint">{upload.status === "unsupported" ? "上传服务未连接" : upload.status === "limited" ? "上传服务有限支持" : "上传服务已连接"}{upload.reason && `：${upload.reason}`}{capabilities.select.reason && `；${capabilities.select.reason}`}</p>
+    <p id={`${id}-capabilities`} className="break-words text-ui-hint">{[upload.reason, capabilities.select.reason].filter(Boolean).join("；")}</p>
     <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {formatAgentFileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</p>
     <p id={`${id}-drop`} className="break-words text-ui-hint">{canDrop ? "可拖入此处，也可点击上传。" : "请点击选择文件。"}{capabilities.drop.reason && ` ${capabilities.drop.reason}`}</p>
     {selectionReason && <p id={`${id}-disabled`} className="break-words text-ui-hint">{selectionReason}</p>}
