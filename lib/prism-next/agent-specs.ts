@@ -9,6 +9,15 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  stepper: {
+    component: 'Stepper v0.1 — component candidate',
+    source: 'Pinned coss Progress + Prism Badge; Supervisor reuse search recorded in docs/stepper.md',
+    contract: ['steps is a readonly ordered list of 3–8 unique {id,label,state,description?} records. No completion or current position is inferred. At most one current state; omit it if the current position is unknown.', 'orientation defaults to horizontal; vertical supports sidebars. aria-label defaults to 流程阶段. No onStepSelect, navigation, timer, runtime, persistence or Workspace types.', 'Completed outgoing segments use Progress at 100; all other segments at 0. This is a decorative connector, not a task completion percentage.'],
+    states: ['done: 已完成 + check; current: 当前阶段; upcoming: 后续阶段; pending: 待完成, without a check; blocked/error: 受阻 + alert icon. Optional description supplements the mandatory state label.'],
+    accessibility: ['Named nav + ol/li; aria-current=step only on supplied current state; each step includes ordinal and screen-reader status. No interactive steps.', 'Horizontal region is keyboard-focusable with local overflow; current step is revealed on state/content changes and resize, without moving page scroll or focus. No animated scrolling; visible summary retains current ordinal, total and label. No current displays 未提供当前阶段.'],
+    do: ['Provide explicit facts, unique IDs, complete ordered labels and at most one current state. Verify all three themes, 320px and long labels in the consuming layout.'],
+    dont: ['Do not equate position with running status or mark all earlier steps done. Do not use this indicator as a clickable wizard or percent-complete meter.'],
+  },
   'paper-preview': {
     component: 'PaperPreview / PaperPreviewDialog v0.1 — component candidate',
     source: 'Prism DocumentRegionViewer + pinned coss Sheet / Card / Button / Badge / Skeleton / Empty',

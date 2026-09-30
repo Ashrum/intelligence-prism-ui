@@ -1,0 +1,12 @@
+/* Layout only; Badge and Progress retain their existing coss/Prism surfaces. */
+.prism-stepper-viewport { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; padding: .25rem; }
+.prism-stepper-list { display: flex; width: max-content; min-width: 100%; margin: 0; padding: 0; list-style: none; }
+.prism-stepper-item { display: flex; flex: 1 0 auto; align-items: flex-start; min-width: 0; }
+.prism-stepper-content { display: flex; align-items: flex-start; gap: .5rem; width: 9rem; }
+.prism-stepper-connector { flex: 1 0 1.5rem; min-width: 1.5rem; margin: .625rem .75rem 0; }
+.prism-stepper-item:last-child { flex-grow: 0; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-list { display: block; width: 100%; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-item { display: block; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-content { width: 100%; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-connector { position: relative; width: 1.5rem; height: 2rem; margin: 0; }
+.prism-stepper[data-orientation="vertical"] .prism-stepper-connector > [data-slot="progress"] { position: absolute; top: 50%; width: 1.5rem; transform: rotate(90deg); }

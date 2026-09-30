@@ -2712,3 +2712,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Paper Preview 试卷预览 v0.1
 
 `PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
+
+## Stepper 流程步骤条 v0.1
+
+`Stepper` 接收完整有序 `steps` 与显式 done/current/upcoming/pending/blocked/error 状态，只读呈现当前位置、后续阶段和未完成事项。默认水平局部滚动并显露当前步，可选垂直；不提供点击导航，不从序号或执行状态推断完成。公开 API、连接段、无障碍、复用检索及未验证边界见 [Stepper 契约](stepper.md)。PO 2026-09-30 批准「导航」目录项；独立 Review 与浏览器验收尚待完成。

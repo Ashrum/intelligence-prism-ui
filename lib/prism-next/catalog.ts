@@ -32,6 +32,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("date-picker","Date Picker 日期选择","单日、日期范围与快捷日期；由日历和弹层组合。"), kind:"pattern" },
   ]},
   { id:"navigation",title:"导航",items:[
+    {...item("stepper","Stepper 流程步骤条","只读流程位置、待完成与受阻状态；支持水平滚动和垂直侧栏。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/progress",sourceLabel:"coss Badge / Progress 组合"},
     item("breadcrumb","Breadcrumb 面包屑","表达当前位置和上级路径。"),
     item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
     item("pagination","Pagination 分页","在明确的数据页之间移动。"),
