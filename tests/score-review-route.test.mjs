@@ -12,4 +12,6 @@ test('built Score Review route includes all fixtures, neutral copy and three the
   for (const label of ['Score Review 人工评分','低置信度 62%','调整为 7 分','0.5 分步长','保存中','保存失败','重试保存','已保存 6 分，审计记录已更新','置信度 未提供','三主题','OCR 文本','Agent Spec','视觉呈现','320px']) assert.ok(text.includes(label),label);
   for (const theme of ['light','paper','dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
   assert.match(html,/data-ui-version="coss-v1"/); assert.match(html,/data-paper-preview/); assert.match(html,/data-score-review-panel/);
+  assert.match(html,/id="score-required-receipt"/);
+  for (const label of ['每次保存必填理由','载入预设回执','清除回执','切换题项（焦点交接）','请填写修改理由。']) assert.ok(text.includes(label),label);
 });

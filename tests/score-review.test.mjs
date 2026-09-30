@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { toValidatedNumber } from '../node_modules/@base-ui/react/number-field/utils/validate.js';
-import { api, probe, capture, button, h, render } from './score-review-harness.mjs';
+import { api, probe, focusProbe, capture, button, h, render } from './score-review-harness.mjs';
 
 test('score normalization clamps range and snaps 0.5 steps without floating drift or invented empty values', () => {
   for (const [value, max, step, expected] of [[-4,10,.5,0],[15,10,.5,10],[6.3,10,.5,6.5],[.3,1,.1,.3],[10,9.5,1,9.5],[10,10,.3,10],[null,10,1,null],[NaN,10,1,null],[6,NaN,1,null],[6,10,0,null]]) assert.equal(api.normalizeReviewScore(value,max,step), expected);
@@ -124,4 +124,73 @@ test('all review actions including history and retry retain 44px minimum and mul
     assert.match(render(primary), /bg-primary /);
     for (const action of out.buttons) assert.equal(action.props.size ?? 'default', 'default');
   }
+});
+
+test('requireReason gates unchanged scores, save and retry, shows the field and links the blocking reason', () => {
+  for (const state of [{kind:'ready'}, {kind:'failed',reason:'离线'}]) {
+    const calls = [], label = state.kind === 'ready' ? '保存并处理下一份' : '重试保存';
+    const props = { state, score:6, baselineScore:6, showReason:false, requireReasonOnChange:false, requireReason:true, onSave:d=>calls.push(d), onRetry:d=>calls.push(d) };
+    for (const reason of ['', ' \n\t ']) {
+      const out = capture({...props,reason}), save = button(out,label);
+      assert.equal(out.reason.props.required,true);
+      assert.equal(save.props.disabled,true); save.props.onClick();
+      const gate = out.nodes.find(n=>n.props.id===save.props['aria-describedby']);
+      assert.equal(gate.props.children,'请填写修改理由。');
+      assert.equal(out.reason.props['aria-describedby'],gate.props.id);
+    }
+    assert.equal(calls.length,0);
+    const out = capture({...props,reason:'  维持原评分  '});
+    assert.equal(button(out,label).props.disabled,false); button(out,label).props.onClick();
+    assert.deepEqual(calls,[{score:6,reason:'维持原评分'}]);
+  }
+  for (const requireReason of [undefined,false]) {
+    const out = capture({requireReason,requireReasonOnChange:false,showReason:false,reason:''});
+    assert.equal(out.reason,undefined);
+    assert.equal(button(out,'保存并处理下一份').props.disabled,false);
+  }
+});
+
+test('lastSaved is a host-controlled polite receipt independent of draft score and editing state', () => {
+  const props = { score:8, reason:'复核完成', lastSaved:{score:7,label:'上一题'} };
+  const out = capture(props), receipt = out.nodes.find(n=>n.props['data-score-review-receipt'] !== undefined);
+  const receiptHtml = render(receipt);
+  assert.match(receiptHtml,/role="status" aria-live="polite" aria-atomic="true"/);
+  assert.match(receiptHtml,/上一题：已保存 7 分，审计记录已更新/);
+  assert.doesNotMatch(receiptHtml,/role="alert"|已保存 8 分/);
+  assert.equal(out.number.props.disabled,false); assert.equal(button(out,'保存并处理下一份').props.disabled,false);
+  button(out,'保存并处理下一份').props.onClick();
+  assert.equal(capture(props).html,out.html);
+  assert.doesNotMatch(capture({...props,lastSaved:undefined}).html,/已保存 7 分|审计记录已更新/);
+  assert.match(capture({...props,lastSaved:{score:0}}).html,/已保存 0 分，审计记录已更新/);
+  const both = capture({...props,state:{kind:'saved',score:7,auditUpdated:true}});
+  assert.equal((both.html.match(/已保存 7 分/g)||[]).length,1);
+  assert.equal(both.number.props.disabled,true);
+});
+
+test('question identity transitions focus only when enabled, never on initial mount, edits or enabling alone', t => {
+  let calls = 0;
+  globalThis.__scoreFocus = { index:0, refs:[], effects:[], focus:()=>calls++ };
+  t.after(()=>delete globalThis.__scoreFocus);
+  const show = p => capture(p,focusProbe);
+  let out = show({questionId:'a',focusOnQuestionChange:true});
+  assert.equal(calls,0); assert.equal(out.nodes.find(n=>n.type==='h2').props.tabIndex,-1);
+  show({questionId:'a',focusOnQuestionChange:true,score:8,questionLabel:'更正标签'}); assert.equal(calls,0);
+  show({questionId:'b',focusOnQuestionChange:true}); assert.equal(calls,1);
+  show({questionId:'b',focusOnQuestionChange:true,lastSaved:{score:6}}); assert.equal(calls,1);
+  out = show({questionId:'c'}); assert.equal(calls,1); assert.equal(out.nodes.find(n=>n.type==='h2').props.tabIndex,undefined);
+  show({questionId:'c',focusOnQuestionChange:true}); assert.equal(calls,1);
+  show({questionId:undefined,focusOnQuestionChange:true}); assert.equal(calls,1);
+  show({questionId:'d',focusOnQuestionChange:true}); assert.equal(calls,2);
+});
+
+test('numeric input itself keeps 44px sizing at base and sm, and required receipt example is present', () => {
+  const input = capture().html.match(/<input\b[^>]*data-slot="number-field-input"[^>]*>/)?.[0];
+  assert.ok(input);
+  const classes = input.match(/class="([^"]*)"/)[1].split(' ');
+  for (const cls of ['min-h-11','h-11','sm:h-11']) assert.ok(classes.includes(cls),cls);
+  assert.ok(!classes.includes('h-8.5')); assert.ok(!classes.includes('sm:h-7.5'));
+  const html = render(h(api.ScoreReviewReasonReceiptDemo));
+  assert.match(html,/score-required-receipt/); assert.match(html,/请填写修改理由。/);
+  assert.match(html,/载入预设回执/); assert.match(html,/切换题项（焦点交接）/);
+  assert.doesNotMatch(html,/已保存 \d+ 分/);
 });
