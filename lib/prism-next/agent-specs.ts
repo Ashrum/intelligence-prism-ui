@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'instrument-panel': {
+    component: 'InstrumentPanel v0.1 — component candidate',
+    source: 'Pinned coss Card / Progress / Alert / Skeleton / Empty / Separator / Button + Prism MetricSummary / AgentStatus; reuse evidence in docs/instrument-panel.md',
+    contract: ['All blocks optional, ordered header, metric, current, attention, list, actions, next. Host supplies every value, status label and tone; no runtime, store, timer or business inference.', 'metric.progress is explicit {value,max?,label}; absent or invalid progress is hidden. list items have unique IDs; completed=true alone renders a check. Only selectable rows emit onItemSelect(id).', 'One primaryAction; disabled=true requires disabledReason, linked with aria-describedby. Up to two secondaryActions. onPrimary/onSecondary(id)/onHeaderAction/onMetricLink/onItemSelect(id)/onRetry emit intent only; missing callbacks disable actions.', 'ready is default; loading/empty/error replace facts and hide header actions. Error retry waits for host state. See docs/instrument-panel.md for full API.'],
+    states: ['ready', 'loading Skeleton', 'empty', 'error + optional retry', 'disabled primary + reason', 'unknown progress omitted'],
+    accessibility: ['Named aside, ordered list, visible status text plus semantic icon/color, unique title and description IDs.', 'coss keyboard/focus behavior; wrapping labels at 320px; reduced-motion Skeleton and Progress.'],
+    dont: ['Do not infer progress, completion, availability, grading or publication from user clicks. Do not copy Figma panel colors or import Workspace private types.'],
+  },
   stepper: {
     component: 'Stepper v0.1 — component candidate',
     source: 'Native decorative marks/connectors + existing Prism semantic tokens; coss/particles/Beautiful UI reuse search recorded in docs/stepper.md',

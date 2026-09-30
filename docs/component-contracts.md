@@ -2716,3 +2716,8 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Stepper 流程步骤条 v0.1
 
 `Stepper` 接收完整有序 `steps` 与显式 done/current/upcoming/pending/blocked/error 状态；可选 `currentStepId` 优先确定当前位置，省略时兼容 state=current，支持“当前阶段 · 受阻”。只读呈现当前位置、后续阶段和未完成事项。默认水平局部滚动并显露当前步，可选垂直；不提供点击导航，不从序号或执行状态推断完成。公开 API、连接段、无障碍、复用检索及未验证边界见 [Stepper 契约](stepper.md)。PO 2026-09-30 批准「导航」目录项；独立 Review 与浏览器验收尚待完成。
+
+
+## Instrument 任务状态面板 v0.1（PO 2026-09-30 候选 #3）
+
+`InstrumentPanel` 登记在「内容与数据」，入口 `/next/components/instrument-panel`。按头部、指标、当前处理、关注、清单、动作、下一步顺序组合可选区块；复用 coss 与 `MetricSummary` / `AgentStatus`。调用方提供所有事实、状态文字、完成标记与进度；组件不推定执行状态。主动作唯一，禁用原因关联 `aria-describedby`，次动作最多两个；所有回调仅发出意图。具备 Loading / Empty / Error 与 320px 三主题长中文、公式夹具。完整 API、复用检索、边界见 [Instrument 契约](instrument-panel.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
