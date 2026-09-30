@@ -2730,3 +2730,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Material Intake 资料接收
 
 2026-10-01 · PO 批准候选 #6，位于「内容与数据」。组合 AgentFileInput（新增向后兼容的 renderItem 行内容插槽）、Attachment、Stepper 与 coss Card/Dialog。调用方提供设备/页数/接收状态/文件/能力/流程，组件仅发选择、移除、重试、更换数据站、取消、确认意图。页数未知显示「未提供」，文件选择不等于接收成功；单页替换固定只收 1 页并显示影响边界。等待、处理中、失败、Loading/Error、未知状态均阻止保存并关联原因。完整 API、复用取舍、页面夹具和验证边界见 [Material Intake 契约](material-intake.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
+
+## Data Station 教学数据站
+
+2026-10-01 · PO 批准候选 #7，位于「内容与数据」。默认受控 coss 右侧 Sheet，支持 inline；组合 RadioGroup/Card/Skeleton/Empty 和共享 DataStationConnectionStatus（MaterialIntake 旧 API 保持）。调用方提供设备可用性、推荐、选择、连接目标/状态、任务绑定说明与刷新文案；只发 onSelect/onConnect/onDisconnect/onRetry/onClose/onOpen 意图。离线、占用、未知不可选且说明原因；连接中锁定选择与连接，已连接先断开；失败重试携带原目标 ID。DataStationBadge 是同条目入口变体，接收明确的已连接/可用数量/未连接事实。缺失事实不推断，组件无计时器与设备执行。完整 API、复用检索限制、44px 目标与浏览器阻塞见 [Data Station 契约](data-station.md)。独立 Review 与产品验收另行确认。

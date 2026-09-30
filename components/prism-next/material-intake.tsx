@@ -6,7 +6,8 @@ import { Card } from "@/components/coss/card"
 import { Skeleton } from "@/components/coss/skeleton"
 import { AgentFileInput, formatAgentFileSize, type AgentFileInputProps, type AgentFileItem } from "./agent-file-input"
 import { Attachment, type AttachmentIntent } from "./attachment"
-import { AgentStatus, type AgentStatusTone } from "./agent-visual-parts"
+import { AgentStatus } from "./agent-visual-parts"
+import { DataStationConnectionStatus } from "./data-station-status"
 import { Button } from "./button"
 import { Stepper, type StepperProps } from "./stepper"
 
@@ -33,11 +34,6 @@ export type MaterialIntakeProps = {
   onChangeStation?: () => void; onCancel?: () => void; onConfirm?: () => void
 }
 
-const connections: Record<MaterialIntakeStation["connection"], { label: string; tone: AgentStatusTone }> = {
-  connected: { label: "已连接", tone: "success" }, available: { label: "可用", tone: "info" },
-  disconnected: { label: "未连接", tone: "warning" }, offline: { label: "离线", tone: "error" },
-  unknown: { label: "连接状态未提供", tone: "neutral" },
-}
 const labels = { waiting: "等待接收", receiving: "接收中", review: "已接收待核对", invalid: "校验失败", loading: "正在加载接收信息", error: "接收信息加载失败", unknown: "接收状态未提供" }
 const blocked = { waiting: "尚未接收资料，请先扫描或上传。", receiving: "正在接收资料，请等待接收完成。", invalid: "校验未通过，请重新接收后核对。", loading: "接收信息正在加载，请稍候。", error: "接收信息加载失败，请重试。", unknown: "接收状态未提供，请先核对接收结果。" }
 const knownText = (value?: string) => value?.trim() || "未提供"
@@ -88,7 +84,6 @@ export function MaterialIntake({ title, description, station, platform, platform
 }: MaterialIntakeProps) {
   const id = useId()
   const pages = typeof station.receivedPages === "number" && Number.isInteger(station.receivedPages) && station.receivedPages >= 0 ? `${station.receivedPages} 页` : "未提供"
-  const connection = connections[station.connection]
   const failed = state.kind === "invalid" || state.kind === "error"
   const limited = mode.kind === "limited" || mode.kind === "replace-page"
   const modeReason = mode.kind === "limited" && !positiveCount(mode.pageLimit) ? "接收页数限制未提供，请先核对。"
@@ -131,7 +126,7 @@ export function MaterialIntake({ title, description, station, platform, platform
         <Card className="min-w-0 gap-3 p-4" aria-label="数据站状态" aria-busy={state.kind === "receiving"}>
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
             <h3 className="break-words text-item-title [overflow-wrap:anywhere]">{knownText(station.name)}</h3>
-            <AgentStatus tone={connection.tone}>{connection.label}</AgentStatus>
+            <DataStationConnectionStatus status={station.connection} />
           </div>
           <dl className="grid min-w-0 gap-2 text-ui-hint">{[["位置", knownText(station.location)], ["接收模式", knownText(station.mode)], ["已接收页数", pages]].map(([label, value]) =>
             <div key={label} className="flex min-w-0 flex-wrap gap-x-2"><dt>{label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]">{value}</dd></div>)}</dl>
