@@ -39,6 +39,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("paper-preview","Paper Preview 试卷预览","扫描页面、异常标记、区域定位与扫描版本；内嵌或全屏预览。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/sheet",sourceLabel:"coss Sheet / DocumentRegionViewer 组合"},
     {...item("icons","Icons 图标","搜索 41 个常用图标，统一名称、用途、尺寸与主题颜色。"),kind:"extension",sourceUrl:"https://lucide.dev/icons",sourceLabel:"Lucide"},
     { ...item("question","Question 题目","独立题面、可选详情与操作插槽；按需组合选择、编排、作答和复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     {...item("answer-review-map","Document Region 文档区域","传入文档内容与区域坐标，支持缩放、选中与定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/drawer",sourceLabel:"coss Drawer 组合"},

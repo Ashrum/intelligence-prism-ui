@@ -22,11 +22,11 @@ async function fetchPage(path) {
   return worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
-test('42 semantic static params exactly match registry; parent catalog and search remain at 80', async () => {
+test('42 semantic static params exactly match registry; parent catalog and search remain at 81', async () => {
   assert.deepEqual(generateStaticParams(), registry.map(entry => ({ semantic: entry.slug })));
   assert.equal(new Set(generateStaticParams().map(item => item.semantic)).size, 42);
-  assert.equal(components.length, 80);
-  assert.equal(searchComponents('').length, 80);
+  assert.equal(components.length, 81);
+  assert.equal(searchComponents('').length, 81);
   assert.equal(components.filter(entry => entry.id === 'agent-components').length, 1);
   for (const entry of registry) {
     assert.equal((await generateMetadata({ params: Promise.resolve({ semantic: entry.slug }) })).title, `${entry.number} ${entry.name} · Agent 语义组件`);

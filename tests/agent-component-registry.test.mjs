@@ -37,7 +37,7 @@ test('registry has the 42 unique numbered semantics and all twelve authoritative
     assert.ok(entry.carriers.label && entry.unverified.length);
     for (const url of entry.carriers.prs) assert.ok(row[7].includes(url), `${entry.number} ${url}`);
   }
-  assert.equal(components.length, 80);
+  assert.equal(components.length, 81);
 });
 
 test('mutually exclusive status counts match the current progress summary (42/0/0)', () => {

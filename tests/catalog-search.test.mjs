@@ -17,9 +17,9 @@ for (const query of ['执行确认', '任务进度', '上下文摘要', '摘要�
   })
 }
 
-test('semantic aliases preserve 80 entries, deduplicate hits and support trimmed case-insensitive search', () => {
-  assert.equal(components.length, 80)
-  assert.equal(searchComponents('').length, 80)
+test('semantic aliases preserve 81 entries, deduplicate hits and support trimmed case-insensitive search', () => {
+  assert.equal(components.length, 81)
+  assert.equal(searchComponents('').length, 81)
   assert.equal(searchComponents('AgentExecution').length, 1)
   assert.equal(searchComponents('  agentexecutionconfirmation  ')[0].href, '/next/components/agent-components#context-summary-review')
   assert.equal(searchComponents('Agent')[0].item.id, 'agent-components')
