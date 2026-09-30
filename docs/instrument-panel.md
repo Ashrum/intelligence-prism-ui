@@ -8,6 +8,7 @@ PO 2026-09-30 批准候选 #3；目录「内容与数据」，入口 `/next/comp
 - Builder 查询 [coss particles](https://coss.com/ui/particles)，页面列出 510 个组合；[注册索引](https://coss.com/ui/r/registry.json) 本轮 web 无法读取，命令行代理连接失败。结合仓库 `docs/stepper.md` 已记录的 `p-progress-1/2/3` 检索：这些为进度条组合，不提供完整任务状态面板；本轮没有取得其最新源代码，不据此推断额外能力。
 - 已读固定 coss Card / Progress / Alert / Empty，以及 Prism Button / Badge / AgentStatus。组合 Card、Progress、Alert、Skeleton、Empty、Button；状态文字与语义色复用 `AgentStatus`，不另造状态视觉规则。
 - `MetricSummary` 的单项 `layout="strip"` 可直接复用指标语义与字号；只传一项，不使用其固定明细按钮，行内链接由面板单独发出意图。
+- Fix1 沿用上述复用检索与既有组件：指标 Card 建立本地查询容器，并仅对其直接子 `dl` 固定单列（含宽面板）；不修改 MetricSummary 旧行为。清单链接独立使用首行高度与顶部对齐，不沿用主动作最小高度。
 - 已查 `AgentTaskProgress` / `AgentExecutionProgress` / `AgentStepStatus`：绑定执行词汇、快照与记录展开，不能把“缺失、有限开放、接收中”等任意业务事实塞进固定执行枚举。复用它们的 `AgentStatus` 原子；清单是面板内部结构，不新增公共组件或改变旧 API。
 - `StatusComposition` 用于分类数量与占比，自动计算总量；`AgentContextSummary` 用于材料读取/引用事实，均不等同当前任务清单。保持旧调用兼容，不复制统计、执行或上下文逻辑。
 - 只读核对 5174 `TeacherGradingWorkflowPages.tsx` 与 Workspace `SmartGradingReceive.tsx` / `SmartGradingMonitor.tsx`；Figma S10 本地截图用于核对功能结构。沿用任务文件对其余截图的功能提炼；未复制深青黛配色、运行计时或业务推断。

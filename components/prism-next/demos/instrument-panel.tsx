@@ -47,7 +47,9 @@ export const instrumentFixtures: readonly InstrumentPanelProps[] = [
       { id: "exceptions", title: "扫描异常", status: { label: "待完成" }, selectable: true },
       { id: "basis", title: "批阅依据", status: { label: "待完成" }, selectable: true },
     ] },
-    primaryAction: { label: "确认扫描验收", disabled: true, disabledReason: "请先确认批阅依据，并核对未提交名单与扫描异常" },
+    primaryAction: { label: "处理 2 项异常" },
+    secondaryActions: [{ id: "resume-scan", label: "返回继续扫描" }, { id: "add", label: "补交学生试卷" }],
+    actionNote: "AI 批阅已在后台进行；完成验收不会重新启动已有批阅",
     next: { text: "确认后进入智能批阅", status: { label: "等待" } },
   },
   {

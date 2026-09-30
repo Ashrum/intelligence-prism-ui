@@ -71,7 +71,7 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
     </div> : state === "error" ? <Empty className="px-0 py-6 md:py-6"><p role="alert" className="text-ui-body">{props.errorMessage || "任务状态加载失败"}</p>{props.onRetry && <Button type="button" className={wrappingButton} onClick={props.onRetry}>重试</Button>}</Empty>
       : <Empty className="px-0 py-6 md:py-6"><p className="text-ui-body">{props.emptyMessage || "暂无任务状态"}</p></Empty>
       : <>
-        {metric && <Card className="min-w-0 gap-3 p-4" data-instrument-metric>
+        {metric && <Card className="@container min-w-0 gap-3 p-4 [&>dl]:grid-cols-1!" data-instrument-metric>
           <MetricSummary layout="strip" items={[{ id: "metric", label: metric.label, value: metric.value }]} />
           {metric.status && <AgentStatus tone={metric.status.tone}>{metric.status.label}</AgentStatus>}
           {metric.linkLabel && <Button type="button" variant="link" className={cn(wrappingButton, "self-start")} disabled={!props.onMetricLink} onClick={props.onMetricLink}>{metric.linkLabel}</Button>}
@@ -91,7 +91,7 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
             <span className="flex min-h-6 min-w-6 shrink-0 items-center justify-center text-ui-hint" aria-hidden="true">{item.completed ? <Check className="size-4" /> : index + 1}</span>
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                {item.selectable ? <Button type="button" variant="link" className={cn(wrappingButton, "min-w-0 justify-start p-0 text-left")} disabled={!props.onItemSelect} onClick={() => props.onItemSelect?.(item.id)}>{item.title}</Button> : <p className="min-w-0 text-ui-body">{item.title}</p>}
+                {item.selectable ? <Button type="button" variant="link" className="h-auto sm:h-auto min-h-6 min-w-0 max-w-full items-start justify-start whitespace-normal p-0 text-left [overflow-wrap:anywhere]" disabled={!props.onItemSelect} onClick={() => props.onItemSelect?.(item.id)}>{item.title}</Button> : <p className="min-w-0 text-ui-body">{item.title}</p>}
                 {item.status && <AgentStatus tone={item.status.tone}>{item.status.label}</AgentStatus>}
               </div>
               {item.completed && <span className="sr-only">已完成</span>}

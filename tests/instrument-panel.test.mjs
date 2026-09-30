@@ -95,6 +95,37 @@ test('only explicit valid progress is rendered; metric text is never parsed', ()
   for (const value of [0, 82, 100]) assert.match(html({ metric: { ...metric, progress: { value, label: '进度' } } }), new RegExp(`aria-valuenow="${value}"`));
 });
 
+test('single metric isolates ancestor queries and keeps one column even in a wide panel', () => {
+  const out = capture({ metric: { value: '38/42', label: '已收到 / 预计提交' } });
+  const card = out.nodes.find(n => 'data-instrument-metric' in n.props);
+  assert.ok(card.props.className.split(' ').includes('@container'));
+  // The local, important direct-child override also wins when this container is >= 680px.
+  assert.ok(card.props.className.split(' ').includes('[&>dl]:grid-cols-1!'));
+  const metric = out.nodes.find(n => n.props.layout === 'strip');
+  assert.deepEqual(metric.props.items, [{ id: 'metric', label: '已收到 / 预计提交', value: '38/42' }]);
+  // Shared strip behavior remains available to other consumers.
+  assert.match(out.html, /@min-\[400px\]:grid-cols-2/);
+  assert.match(out.html, /@min-\[680px\]:grid-cols-4/);
+});
+
+test('S09 exposes three enabled intents with exact callbacks and preserves background grading facts', () => {
+  const facts = structuredClone(instrumentFixtures[3]), before = structuredClone(facts), events = [];
+  assert.equal(facts.primaryAction.label, '处理 2 项异常');
+  assert.equal(facts.actionNote, 'AI 批阅已在后台进行；完成验收不会重新启动已有批阅');
+  assert.deepEqual(facts.secondaryActions, [{ id: 'resume-scan', label: '返回继续扫描' }, { id: 'add', label: '补交学生试卷' }]);
+  const props = { ...facts, onPrimary: () => events.push('primary'), onSecondary: id => events.push(`secondary:${id}`) };
+  const out = capture(props);
+  assert.equal(out.nodes.filter(n => 'data-instrument-primary' in n.props).length, 1);
+  for (const label of ['返回继续扫描', '补交学生试卷', '处理 2 项异常']) {
+    const node = button(out, label);
+    assert.ok(node); assert.equal(node.props.disabled, false); node.props.onClick();
+  }
+  assert.deepEqual(events, ['secondary:resume-scan', 'secondary:add', 'primary']);
+  const note = out.nodes.find(n => n.props.id === button(out, '处理 2 项异常').props['aria-describedby']);
+  assert.equal(textOf(note), facts.actionNote);
+  assert.deepEqual(facts, before); assert.equal(capture(props).html, out.html);
+});
+
 test('loading empty error replace stale facts; retry does not synthesize readiness', () => {
   let retries = 0;
   for (const state of ['loading', 'empty', 'error']) {
