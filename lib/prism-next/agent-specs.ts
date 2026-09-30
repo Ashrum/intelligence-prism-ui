@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'record-list': {
+    component: 'RecordList v0.1 — component candidate',
+    source: 'Pinned coss Tabs / Input / Select / Menu / Card / Pagination / Empty / Skeleton / Progress + shared AgentStatus; reuse evaluation in docs/record-list.md',
+    contract: ['Host supplies tabs and counts, rows with optional explicit tabIds, summary, search, filter options/values, active-filter labels and page numbers. Unknown counts/status/progress never become zero or success.', 'tab undefined uses defaultTab or first tab; controlled tab is authoritative. Optional row tabIds express host membership; omit for an already projected page. Search, filters and pagination are controlled; the host queries and pages before supplying rows.', 'onTabChange/onSearch/onFilterChange/onClearFilters/onRowAction/onRowMenu/onPageChange/onPrimary/onRetry emit intents only. Clear search emits onSearch(""). Row background and its primary button share one action; buttons and portaled menus never trigger the row action twice.', 'Only finite 0–100 progress renders a progress bar. Missing callbacks disable actions. No timers, runtime, store, persistence, routes, status inference or Workspace private types.'],
+    states: ['ready + filtered', 'search-empty', 'empty', 'error + retry', 'loading'],
+    accessibility: ['coss Tabs supplies keyboard behavior and linked panels; fixed input labels, text plus semantic status glyph, named menus and pagination, live summaries.', 'At least 44px controls; long buttons use h-auto and sm:h-auto. Container-responsive row operations stack below facts below 720px. Three-theme 320px, 1366px and long Chinese/MathML fixtures; live visual acceptance is separate.'],
+    dont: ['Do not classify records from status labels, derive total counts from one page, execute business actions or advance status after clicks.'],
+  },
   'score-review': {
     component: 'ScoreReview v0.1 — component candidate',
     source: 'Pinned coss NumberField / Textarea / Card / Alert / Button + PaperPreview / DraftMathPreview / AgentMetaLine / AgentStatus; reuse evaluation in docs/score-review.md',

@@ -2743,3 +2743,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Score Review 人工评分（独立组件候选）
 
 2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 PaperPreview 与 DraftMathPreview。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
+
+## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
+
+`RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress 和共享 AgentStatus；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。

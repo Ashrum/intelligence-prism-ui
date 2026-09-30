@@ -15,7 +15,7 @@ import { PrismBrandMark } from "@/components/prism-next/app-bar"
 function Navigation() {
   const pathname=usePathname()
   const {setOpenMobile}=useSidebar()
-  const receptionPage=["/next/components/attachment", "/next/components/material-intake", "/next/components/data-station", "/next/components/queue-board", "/next/components/score-review"].includes(pathname)
+  const receptionPage=["/next/components/attachment", "/next/components/material-intake", "/next/components/data-station", "/next/components/queue-board", "/next/components/score-review", "/next/components/record-list"].includes(pathname)
   const link=(href:string,label:string,icon?:React.ReactNode)=> <SidebarMenuItem key={href}>
     <SidebarMenuButton isActive={pathname===href || (href==="/next/components/agent-components" && pathname.startsWith(href+"/"))} render={<Link href={href} aria-current={pathname===href?'page':href==="/next/components/agent-components" && pathname.startsWith(href+"/")?'location':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
   </SidebarMenuItem>
