@@ -66,6 +66,8 @@ export type AgentFileInputProps = AgentRecordViewProps & {
   limits: AgentFileLimits
   capabilities: AgentFileCapabilities
   onSelect: (files: File[]) => void
+  /** Optional row content; the host preserves file action eligibility. The list owns li. */
+  renderItem?: (item: AgentFileItem) => ReactNode
   selectionDisabledReason?: string
   onAction?: (intent: AgentFileIntent) => void
   inlineLimit?: number
@@ -226,7 +228,7 @@ function FileBatchButton({ action, items, upload, onBatchAction }: {
 /** Semantic 04. The host owns validation, the queue, upload requests and every execution fact. */
 export function AgentFileInput({ title, items, limits, capabilities, onSelect, selectionDisabledReason, onAction,
   view = "inline", density = "default", inlineLimit = 3, onExpand, groupBy = "none", onGroupByChange,
-  batchActions = [], onBatchAction, onBack, notice, details,
+  batchActions = [], onBatchAction, onBack, notice, details, renderItem,
 }: AgentFileInputProps) {
   const id = useId()
   const compact = density === "compact"
@@ -283,7 +285,9 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
     </div>}
     {items.length ? groups.map(group => <section key={group.label} aria-label={group.label} className="min-w-0 space-y-3">
       {view === "workspace" && groupBy === "status" && <h4 className="text-ui-action">{group.label} · {group.items.length} 项</h4>}
-      <ol className={compactInline ? "min-w-0 space-y-1" : compact ? "min-w-0 space-y-4" : "min-w-0 space-y-6"}>{group.items.map(item => <FileRow key={item.id} item={item} items={items} view={view} compact={compact} groupBy={groupBy} upload={capabilities.upload} onAction={onAction} />)}</ol>
+      <ol className={compactInline ? "min-w-0 space-y-1" : compact ? "min-w-0 space-y-4" : "min-w-0 space-y-6"}>{group.items.map(item => renderItem
+        ? <li key={item.id} data-file-id={item.id} data-file-state={item.status.state} className="min-w-0">{renderItem(item)}</li>
+        : <FileRow key={item.id} item={item} items={items} view={view} compact={compact} groupBy={groupBy} upload={capabilities.upload} onAction={onAction} />)}</ol>
     </section>) : <p className="text-ui-hint text-muted-foreground">尚未选择文件。</p>}
     {!compactInline && notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
     <RecordDetails>{compactInline ? undefined : details}</RecordDetails>

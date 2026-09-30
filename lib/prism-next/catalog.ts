@@ -40,6 +40,7 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("material-intake","Material Intake 资料接收","扫描与上传汇入同一资料清单，支持资料核对、页数限制与单页替换。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileInput / Attachment / Stepper 组合"},
     {...item("attachment","Attachment 附件","文件生命周期、独立操作与学生试卷卡；Paper Card 网格支持当前预览与异常说明。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileStatus / coss / PaperThumbnail 组合",searchTargets:[{terms:["Paper Card","PaperCard","试卷卡","学生试卷"]}]},
     {...item("instrument-panel","Instrument 任务状态面板","当前事实、状态原因与下一步操作；支持指标、处理提示和状态清单。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss / MetricSummary / AgentStatus 组合"},
     {...item("paper-preview","Paper Preview 试卷预览","扫描页面、异常标记、区域定位与扫描版本；内嵌或全屏预览。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/sheet",sourceLabel:"coss Sheet / DocumentRegionViewer 组合"},
