@@ -2725,3 +2725,8 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Attachment 附件 / Paper Card 试卷卡
 
 2026-10-01 · PO 批准候选 #4、#5，共用“内容与数据 / Attachment 附件”条目，Paper Card 为变体。复用 AgentFileStatus、文件状态标签和大小格式化、PaperThumbnail 与 coss / Prism 展示原子；上传与后续处理保持独立。支持 sm/md/lg、独立移除/重试/查看意图、已知或未知进度、学生身份/页数/状态/选中/异常原因及局部滚动网格。Loading / Empty / Error 由宿主传入；不内置执行或业务状态。完整 API、复用检索与未知值边界见 [Attachment 契约](attachment.md)。Builder 实现待独立 Review。
+
+
+## Material Intake 资料接收
+
+2026-10-01 · PO 批准候选 #6，位于「内容与数据」。组合 AgentFileInput（新增向后兼容的 renderItem 行内容插槽）、Attachment、Stepper 与 coss Card/Dialog。调用方提供设备/页数/接收状态/文件/能力/流程，组件仅发选择、移除、重试、更换数据站、取消、确认意图。页数未知显示「未提供」，文件选择不等于接收成功；单页替换固定只收 1 页并显示影响边界。等待、处理中、失败、Loading/Error、未知状态均阻止保存并关联原因。完整 API、复用取舍、页面夹具和验证边界见 [Material Intake 契约](material-intake.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。

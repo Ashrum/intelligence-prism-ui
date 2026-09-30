@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'material-intake': {
+    component: 'MaterialIntake v0.1 — component candidate',
+    source: 'AgentFileInput + Attachment + Stepper + pinned coss Card/Skeleton/Dialog; reuse evaluation in docs/material-intake.md',
+    contract: ['Host supplies station, platform, state, files, limits, capabilities and steps. Missing facts say 未提供; file count never implies page count. Selection does not imply upload, reception, recognition or saving.', 'mode=all/limited/replace-page; replacement receives only one page and visibly limits its impact. Host validates content and page limits. Stepper position is independent and controlled.', 'onFilesSelected/onRemove/onRetry/onChangeStation/onCancel/onConfirm emit intents only; attachment version and request IDs remain intact. Only review enables confirmation, subject to confirmDisabledReason and callback availability.', 'AgentFileInput renderItem is optional row content with li owned by the list. Default rendering is unchanged; custom content must preserve action eligibility. See docs/material-intake.md for complete API.'],
+    states: ['waiting', 'receiving + supplied page count', 'review', 'invalid + reason + retry', 'loading', 'error + reason + retry', 'unknown'],
+    accessibility: ['Named section, persistent file label, live reception status and visible disabled reasons connected with aria-describedby. coss Dialog owns Escape and focus return; browser acceptance remains separate.', '320px and three-theme fixtures retain current step, wrap Chinese and use existing typography. No new visual tokens.'],
+    dont: ['Do not connect devices, upload files, infer quality or completion, mutate business stores, run timers or persist data. Do not transplant AgentCaptureScan page/version management into reception.'],
+  },
   attachment: {
     component: 'Attachment / PaperCard / PaperCardGrid v0.1 — component candidate',
     source: 'AgentFileStatus + shared file labels/size formatter, coss Card/Progress/Empty/Skeleton, Prism Button/Badge/AgentStatus, PaperThumbnail; see docs/attachment.md for reuse evidence',

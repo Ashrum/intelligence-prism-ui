@@ -66,6 +66,10 @@ export type AgentFileInputProps = AgentRecordViewProps & {
   limits: AgentFileLimits
   capabilities: AgentFileCapabilities
   onSelect: (files: File[]) => void
+  /** Optional row content; the host preserves file action eligibility. The list owns li. */
+  renderItem?: (item: AgentFileItem) => ReactNode
+  /** Optional selection surface; reuse the guarded selection intent and capability facts. */
+  renderSelection?: (selection: { select: (files: File[]) => void; canDrop: boolean; selectionReason?: string }) => ReactNode
   selectionDisabledReason?: string
   onAction?: (intent: AgentFileIntent) => void
   inlineLimit?: number
@@ -226,7 +230,7 @@ function FileBatchButton({ action, items, upload, onBatchAction }: {
 /** Semantic 04. The host owns validation, the queue, upload requests and every execution fact. */
 export function AgentFileInput({ title, items, limits, capabilities, onSelect, selectionDisabledReason, onAction,
   view = "inline", density = "default", inlineLimit = 3, onExpand, groupBy = "none", onGroupByChange,
-  batchActions = [], onBatchAction, onBack, notice, details,
+  batchActions = [], onBatchAction, onBack, notice, details, renderItem, renderSelection,
 }: AgentFileInputProps) {
   const id = useId()
   const compact = density === "compact"
@@ -250,7 +254,7 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
       <p className={compactInline ? "shrink-0 text-ui-hint" : "text-ui-hint"}>共 {items.length} 项{visible.length < items.length && ` · 当前显示 ${visible.length} 项`}</p>
       {!compactInline && <p id={`${id}-capabilities`} className="break-words text-ui-hint">选择：{capabilities.select.status === "supported" ? "支持" : "未确认"}{capabilities.select.reason && ` · ${capabilities.select.reason}`}；上传：{capabilityLabels[capabilities.upload.status]}{capabilities.upload.reason && ` · ${capabilities.upload.reason}`}</p>}
     </header>
-    <section aria-label="文件选择与拖放" data-file-drop={canDrop ? "enabled" : "disabled"} className="min-w-0 space-y-2"
+    {renderSelection ? renderSelection({ select, canDrop, selectionReason }) : <section aria-label="文件选择与拖放" data-file-drop={canDrop ? "enabled" : "disabled"} className="min-w-0 space-y-2"
       onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); event.dataTransfer.dropEffect = canDrop ? "copy" : "none" } }}
       onDrop={event => { event.preventDefault(); event.stopPropagation(); if (canDrop) select(Array.from(event.dataTransfer.files)) }}>
       <Field className={compactInline ? "w-full flex-row items-center gap-2" : "w-full"}><FieldLabel className={compactInline ? "shrink-0" : undefined} htmlFor={`${id}-input`}>选择文件</FieldLabel>
@@ -273,7 +277,7 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
       </Collapsible> : <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {fileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</p>}
       {!compactInline && <p id={`${id}-drop`} className="break-words text-ui-hint">{canDrop ? "可拖入此处，也可选择文件。" : "请使用“选择文件”。"}{capabilities.drop.reason && ` ${capabilities.drop.reason}`}</p>}
       {!compactInline && selectionReason && <p id={`${id}-disabled`} className="break-words text-ui-hint">{selectionReason}</p>}
-    </section>
+    </section>}
     {view === "workspace" && <div className="min-w-0 space-y-3">
       {onGroupByChange && <div aria-label="文件排列方式" className="flex flex-wrap gap-2">{(["none", "status"] as const).map(value => <Button key={value} type="button" size="navigation"
         variant="outline" aria-pressed={groupBy === value} onClick={() => onGroupByChange(value)}>{value === "none" ? "文件顺序" : "按状态分组"}</Button>)}</div>}
@@ -283,7 +287,9 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
     </div>}
     {items.length ? groups.map(group => <section key={group.label} aria-label={group.label} className="min-w-0 space-y-3">
       {view === "workspace" && groupBy === "status" && <h4 className="text-ui-action">{group.label} · {group.items.length} 项</h4>}
-      <ol className={compactInline ? "min-w-0 space-y-1" : compact ? "min-w-0 space-y-4" : "min-w-0 space-y-6"}>{group.items.map(item => <FileRow key={item.id} item={item} items={items} view={view} compact={compact} groupBy={groupBy} upload={capabilities.upload} onAction={onAction} />)}</ol>
+      <ol className={compactInline ? "min-w-0 space-y-1" : compact ? "min-w-0 space-y-4" : "min-w-0 space-y-6"}>{group.items.map(item => renderItem
+        ? <li key={item.id} data-file-id={item.id} data-file-state={item.status.state} className="min-w-0">{renderItem(item)}</li>
+        : <FileRow key={item.id} item={item} items={items} view={view} compact={compact} groupBy={groupBy} upload={capabilities.upload} onAction={onAction} />)}</ol>
     </section>) : <p className="text-ui-hint text-muted-foreground">尚未选择文件。</p>}
     {!compactInline && notice && <p className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
     <RecordDetails>{compactInline ? undefined : details}</RecordDetails>
