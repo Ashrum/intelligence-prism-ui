@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  attachment: {
+    component: 'Attachment / PaperCard / PaperCardGrid v0.1 — component candidate',
+    source: 'AgentFileStatus + shared file labels/size formatter, coss Card/Progress/Empty/Skeleton, Prism Button/Badge/AgentStatus, PaperThumbnail; see docs/attachment.md for reuse evidence',
+    contract: ['Host supplies upload and independent processing facts; reuse AgentFileStatus without a second lifecycle. No timers, runtime, permissions, store or persistence.', 'Attachment sizes sm/md/lg affect layout only. Middle-truncated filename retains full title and accessible name. Unknown upload progress has no percentage. remove/retry/view emit versioned file intent only; unknown cannot retry/remove.', 'PaperCard status label/tone, scan URL, student/exam/page facts and selected are controlled. Placeholder has accessible missing-image description; reasons clamp to two lines with full title. onView(id) never changes business state.', 'PaperCardGrid auto-fills min 168px columns and maxHeight constrains only its focusable scroll region. loading/empty/error replace cards; empty/error wording and retry come from host. Paper Card is a variant under the single Attachment catalog entry.'],
+    states: ['selected', 'uploading known/unknown progress', 'independent processing', 'uploaded', 'failed + retry', 'unknown', 'grid ready/loading/empty/error'],
+    accessibility: ['Visible status text; named actions and full filenames; paper current preview uses aria-current and visible badge; keyboard-scrollable named grid; reduced-motion Progress and Skeleton.'],
+    dont: ['Do not infer received, parsed, graded, retried or removed facts from clicks or uploaded status. Do not synthesize scans or zero counts for missing data.'],
+  },
   'instrument-panel': {
     component: 'InstrumentPanel v0.1 — component candidate',
     source: 'Pinned coss Card / Progress / Alert / Skeleton / Empty / Separator / Button + Prism MetricSummary / AgentStatus; reuse evidence in docs/instrument-panel.md',
