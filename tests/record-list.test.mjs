@@ -118,3 +118,44 @@ test('fixture totals and processing/completed summaries agree with their host fa
   assert.equal(api.recordRows.filter(row => row.status?.label === '已发布').length,12);
   assert.equal(api.recordRows.filter(row => row.status?.label === '未发布').length,6);
 });
+
+test('omitted or empty tabs render the complete host page without any tab structure', () => {
+  for (const tabs of [undefined, []]) {
+    const rows = [...api.recordRows, { ...api.recordRows[0], id: 'unclassified', tabIds: undefined }, { ...api.recordRows[0], id: 'no-membership', tabIds: [] }];
+    const out = capture({ tabs, rows, defaultTab: 'processing' });
+    assert.equal(out.find('Tabs').length, 0);
+    assert.doesNotMatch(out.html, /role="(?:tablist|tab|tabpanel)"/);
+    assert.equal((out.html.match(/data-record-row=/g) || []).length, rows.length);
+    assert.match(out.html, /记录搜索与筛选/);
+    assert.match(out.html, /data-slot="pagination"/);
+  }
+});
+
+test('external controlled tab filters membership without an internal tab UI', () => {
+  for (const tabs of [undefined, []]) {
+    const rows = [...api.recordRows, { ...api.recordRows[0], id: 'projected', tabIds: undefined }];
+    const out = capture({ tabs, rows, tab: 'processing' });
+    assert.equal(out.find('Tabs').length, 0);
+    assert.equal(out.find('Card').length, 4);
+    assert.match(out.html, /data-record-row="quadratic"/);
+    assert.match(out.html, /data-record-row="projected"/);
+    assert.doesNotMatch(out.html, /data-record-row="linear"/);
+    const changed = capture({ tabs, rows, tab: 'completed' });
+    assert.equal(changed.find('Card').length, 19);
+    assert.doesNotMatch(changed.html, /data-record-row="quadratic"/);
+    assert.equal(capture({ tabs, rows, tab: '' }).find('Card').length, 1);
+  }
+});
+
+test('tabless content preserves action intents and loading, empty and error states', () => {
+  const events = [];
+  const out = capture({ tabs: undefined, onRowAction: (...args) => events.push(args), onSearch: value => events.push(value) });
+  button(out, '继续处理').props.onClick(click());
+  out.find('Input')[0].props.onChange({ target: { value: '方程' } });
+  assert.deepEqual(events, [['linear', 'open'], '方程']);
+  for (const [state, text] of [[{ kind: 'loading' }, '正在加载记录'], [{ kind: 'empty' }, '暂无记录'], [{ kind: 'search-empty' }, '没有找到匹配的记录'], [{ kind: 'error', reason: '请求失败' }, '请求失败']]) {
+    const result = capture({ tabs: undefined, state });
+    assert.ok(result.html.includes(text));
+    assert.doesNotMatch(result.html, /data-record-row=|role="tablist"/);
+  }
+});

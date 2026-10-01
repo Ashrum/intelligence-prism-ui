@@ -32,7 +32,7 @@ export type RecordListState = { kind: "ready" | "loading" | "search-empty" }
   | { kind: "empty"; description?: string } | { kind: "error"; reason: string }
 export type RecordListProps = {
   title?: string; description?: string; primaryLabel?: string
-  tabs: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
+  tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
   rows: readonly RecordListRow[]; search?: string; searchLabel?: string; searchPlaceholder?: string
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
   summary?: RecordListStatus; state?: RecordListState
@@ -49,13 +49,13 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
-  tabs, tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
+  tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
   onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
   const id = useId()
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
-  const visible = rows.filter(row => !row.tabIds || row.tabIds.includes(selected))
+  const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
   const primary = <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}>{primaryLabel}</Button>
   const content = <div className="min-w-0 space-y-4">
     {state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
@@ -138,11 +138,11 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
     <header className="flex min-w-0 flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
     </header>
-    <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
+    {tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
         {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} motion-reduce:transition-none`}>{item.label} <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}
       </TabsList>
       {tabs.map(item => <TabsPanel key={item.id} value={item.id} className="min-w-0">{item.id === selected ? content : null}</TabsPanel>)}
-    </Tabs>
+    </Tabs> : content}
   </section>
 }
