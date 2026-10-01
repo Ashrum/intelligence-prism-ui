@@ -55,7 +55,7 @@ export function Stepper({ steps, currentStepId, orientation = "horizontal", comp
   }, [signature, orientation, current, isCompact])
 
   return <nav aria-label={label} className={cn("prism-stepper min-w-0 max-w-full", className)} data-orientation={orientation} data-compact={isCompact || undefined}>
-    <p className="mb-3 break-words text-ui-hint" data-step-summary>{current >= 0 ? `第 ${current + 1} / ${steps.length} 步 · ${steps[current].label}` : `共 ${steps.length} 步 · 未提供当前阶段`}</p>
+    <p className={isCompact ? "sr-only" : "mb-3 break-words text-ui-hint"} data-step-summary>{current >= 0 ? `第 ${current + 1} / ${steps.length} 步 · ${steps[current].label}` : `共 ${steps.length} 步 · 未提供当前阶段`}</p>
     <div ref={viewport} className="prism-stepper-viewport" tabIndex={orientation === "horizontal" ? 0 : undefined} role={orientation === "horizontal" ? "region" : undefined} aria-label={orientation === "horizontal" ? `${label}完整步骤，可横向滚动` : undefined}>
       <ol ref={list} className="prism-stepper-list">
         {steps.map((step, index) => {

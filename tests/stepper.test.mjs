@@ -114,16 +114,19 @@ test('vertical and missing current never invent a scroll target; no observer sti
   await t.test('observer unavailable', t => { const f = fixture(t, { observer: false }); assert.equal(f.requests.length, 1); assert.equal(f.cleanup, undefined); });
 });
 
-test('compact retains visible summary, full blocked facts, and horizontal accessibility; vertical stays unchanged', () => {
+test('compact retains SR-only summary, full blocked facts, and horizontal accessibility; default and vertical stay visible', () => {
   const props = { compact: true, currentStepId: 'stage-5' };
   const out = html(api.stepperFixtures.blocked, props);
   assert.match(out, /data-compact="true"/); assert.match(out, /第 5 \/ 6 步/);
-  assert.match(out, /<p class="mb-3 break-words text-ui-hint" data-step-summary/);
+  assert.match(out, /<p class="sr-only" data-step-summary="true">第 5 \/ 6 步 · AI 批阅<\/p>/);
+  const standard = html(api.stepperFixtures.blocked, { currentStepId: 'stage-5' });
+  assert.match(standard, /<p class="mb-3 break-words text-ui-hint" data-step-summary="true">第 5 \/ 6 步 · AI 批阅<\/p>/);
+  assert.equal(html(api.stepperFixtures.blocked, { ...props, compact: false }), standard);
   assert.equal((out.match(/aria-current="step"/g) || []).length, 1);
   assert.equal((out.match(/<li /g) || []).length, 6);
   assert.match(out, /当前阶段 · 受阻/); assert.match(out, /tabindex="0"/);
   assert.doesNotMatch(out, /<button|<a\s/);
   const unknown = html(api.stepperFixtures.blocked, { compact: true, currentStepId: 'missing' });
-  assert.match(unknown, /未提供当前阶段/); assert.doesNotMatch(unknown, /aria-current=/);
+  assert.match(unknown, /<p class="sr-only" data-step-summary="true">共 6 步 · 未提供当前阶段<\/p>/); assert.doesNotMatch(unknown, /aria-current=/);
   assert.equal(html(api.stepperFixtures.pending, { compact: true, orientation: 'vertical' }), html(api.stepperFixtures.pending, { orientation: 'vertical' }));
 });
