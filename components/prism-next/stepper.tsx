@@ -12,6 +12,7 @@ export type StepperProps = {
   steps: readonly StepperStep[]
   /** Overrides legacy state=current for summary, aria-current and reveal; unknown IDs stay unknown. */
   currentStepId?: string
+  compact?: boolean
   orientation?: "horizontal" | "vertical"
   "aria-label"?: string
   className?: string
@@ -27,7 +28,8 @@ function markerSurface(state: StepperState, current: boolean) {
 }
 
 /** Position is a supplied fact, never inferred from completion or list order. */
-export function Stepper({ steps, currentStepId, orientation = "horizontal", "aria-label": label = "流程阶段", className }: StepperProps) {
+export function Stepper({ steps, currentStepId, orientation = "horizontal", compact = false, "aria-label": label = "流程阶段", className }: StepperProps) {
+  const isCompact = compact && orientation === "horizontal"
   const viewport = useRef<HTMLDivElement>(null)
   const list = useRef<HTMLOListElement>(null)
   const current = steps.findIndex(step => currentStepId !== undefined ? step.id === currentStepId : step.state === "current")
@@ -50,9 +52,9 @@ export function Stepper({ steps, currentStepId, orientation = "horizontal", "ari
     observer.observe(container)
     observer.observe(content)
     return () => observer.disconnect()
-  }, [signature, orientation, current])
+  }, [signature, orientation, current, isCompact])
 
-  return <nav aria-label={label} className={cn("prism-stepper min-w-0 max-w-full", className)} data-orientation={orientation}>
+  return <nav aria-label={label} className={cn("prism-stepper min-w-0 max-w-full", className)} data-orientation={orientation} data-compact={isCompact || undefined}>
     <p className="mb-3 break-words text-ui-hint" data-step-summary>{current >= 0 ? `第 ${current + 1} / ${steps.length} 步 · ${steps[current].label}` : `共 ${steps.length} 步 · 未提供当前阶段`}</p>
     <div ref={viewport} className="prism-stepper-viewport" tabIndex={orientation === "horizontal" ? 0 : undefined} role={orientation === "horizontal" ? "region" : undefined} aria-label={orientation === "horizontal" ? `${label}完整步骤，可横向滚动` : undefined}>
       <ol ref={list} className="prism-stepper-list">

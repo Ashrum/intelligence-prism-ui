@@ -106,6 +106,11 @@ export function InstrumentPanelDemo() {
           list={{ title: "实时任务状态", items: [{ id: "long", title: "补交跨页作答的学生试卷并重新核对页序与答题区域", description: "仅接收本轮尚未提交的试卷，接收范围由当前任务配置提供。", status: { label: "有限开放", tone: "warning" }, selectable: true }] }} />
       </div>)}</div>
     </DemoSection>
+    <DemoSection title="紧凑任务面板 · 三主题与 320px" description="指标不嵌套卡片；当前处理放在清单之后，所有业务事实仍由调用方提供。">
+      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <InteractivePanel {...instrumentFixtures[4]} compact current={{ label: "当前处理", title: "核对长中文题干与跨页作答的完整性", description: <math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math> }} />
+      </div>)}</div>
+    </DemoSection>
     <DemoSection title="可选区块 · 未提供进度" description="仅展示调用方提供的事实，不补造进度、当前学生或预计时间。">
       <div className="w-80 max-w-full"><InstrumentPanel current={{ label: "当前正在处理", title: "未提供", description: "题号未提供 · 预计时间未提供" }} /></div>
     </DemoSection>

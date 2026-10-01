@@ -35,7 +35,7 @@ export type DataStationBadgeProps = {
 }
 const known = (value?: string) => value?.trim() || "未提供"
 const minutes = (value?: number) => typeof value === "number" && Number.isFinite(value) && value >= 0 ? `${value} 分钟` : undefined
-const actionClass = "h-auto min-h-11 min-w-11 max-w-full whitespace-normal break-words py-2 motion-reduce:transition-none"
+const actionClass = "h-auto sm:h-auto min-h-12 min-w-11 max-w-full whitespace-normal break-words py-2 motion-reduce:transition-none"
 
 function unavailable(device: DataStationDevice) {
   const state = device.availability

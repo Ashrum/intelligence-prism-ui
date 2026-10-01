@@ -43,6 +43,14 @@ export function AttachmentDemo() {
       <Feedback>{feedback}</Feedback>
       <PaperCardGrid maxHeight={520}>{paperCardFixtures.map(item => <PaperCard key={item.id} {...item} selected={selected === item.id} onView={viewPaper} />)}</PaperCardGrid>
     </DemoSection>
+    <DemoSection title="紧凑试卷卡 · 缩略页与占位" description="80px 纸张缩略页与查看按钮发出同一请求；无图保留纸张图形，未交文案由调用方提供。">
+      <PaperCardGrid compact maxHeight={480} className="max-w-3xl">
+        <PaperCard {...paperCardFixtures[0]} compact thumbnailUrl={exampleThumbnail} onView={viewPaper} />
+        <PaperCard {...paperCardFixtures[3]} compact onView={viewPaper} onResolve={id => setFeedback(`已发出异常处理请求：${id}`)} resolveLabel="核对扫描异常" />
+        <PaperCard {...paperCardFixtures[4]} compact placeholder viewLabel="查看提交记录" onView={viewPaper} />
+        <PaperCard {...paperCardFixtures[5]} compact orientation="landscape" thumbnailUrl={exampleThumbnail} onView={viewPaper} />
+      </PaperCardGrid><Feedback>{feedback}</Feedback>
+    </DemoSection>
     <DemoSection title="缩略图 URL · 图片与文档" description="左侧为图片文件缩略图；右侧文档使用类型占位。">
       <div className="grid gap-4 sm:grid-cols-2"><Attachment item={{ ...base, id: "image", name: "数学样张.png", type: "image/png", status: { state: "uploaded" } }} thumbnailUrl={exampleThumbnail} view={{}} onAction={attachmentAction} /><Attachment item={{ ...base, id: "document", name: "评分依据.docx", type: "Word", status: { state: "selected" } }} onAction={attachmentAction} /></div>
       <div className="mt-4 w-48 max-w-full"><PaperCard id="sample" studentName="姓名未提供" thumbnailUrl={exampleThumbnail} pageCount={1} paperSize="A3" orientation="landscape" status={{ label: "状态未提供" }} onView={viewPaper} /></div>
@@ -57,6 +65,10 @@ export function AttachmentDemo() {
         {[attachmentFixtures[3], attachmentFixtures[6], attachmentFixtures[7]].map(item => <Attachment key={item.id} item={item} view={{}} onAction={attachmentAction} />)}
         <p className="text-ui-hint">样张公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
         <PaperCardGrid maxHeight={420}>{[paperCardFixtures[3], paperCardFixtures[4]].map(item => <PaperCard key={item.id} {...item} selected={selected === item.id} onView={viewPaper} />)}</PaperCardGrid>
+        <PaperCardGrid compact maxHeight={420}>
+          <PaperCard {...paperCardFixtures[3]} compact thumbnailUrl={exampleThumbnail} onView={viewPaper} onResolve={id => setFeedback(`已发出核对请求：${id}`)} />
+          <PaperCard {...paperCardFixtures[4]} compact placeholder onView={viewPaper} />
+        </PaperCardGrid>
         <Feedback>{feedback}</Feedback>
       </section>)}</div>
     </DemoSection>

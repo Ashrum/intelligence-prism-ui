@@ -11,3 +11,9 @@
 .prism-stepper[data-orientation="vertical"] .prism-stepper-item:last-child { padding-bottom: 0; }
 .prism-stepper[data-orientation="vertical"] .prism-stepper-content { flex-direction: row; width: 100%; min-height: 2rem; }
 .prism-stepper[data-orientation="vertical"] .prism-stepper-connector { top: 2.25rem; bottom: .25rem; left: 1rem; right: auto; width: 1px; height: auto; }
+
+/* Optional horizontal toolbar; vertical keeps its existing layout and summary. */
+.prism-stepper[data-compact="true"] .prism-stepper-item { flex: 1 0 auto; padding-right: 1.25rem; }
+.prism-stepper[data-compact="true"] .prism-stepper-content { flex-direction: row; align-items: center; width: auto; max-width: 16rem; gap: .5rem; }
+.prism-stepper[data-compact="true"] .prism-stepper-connector { display: none; }
+.prism-stepper[data-compact="true"] .prism-stepper-item:last-child { flex: 0 0 auto; padding-right: 0; }

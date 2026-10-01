@@ -51,3 +51,9 @@ const steps: StepperStep[] = [
 
 组件页含第 1/3/5 步、待完成、受阻、垂直、320px、长中文、公式、三主题及 3/8 步夹具。测试与类型检查结果见 `/tmp/prism-stepper/Fix1-Report.md` 和 `fix1-checks/`。
 真实浏览器验证因浏览器安全策略拒绝访问 localhost:5173 而未执行；SSR 与模拟尺寸测试不等于视觉、原生键盘滚动或真实读屏器验收。Workspace 未接入，移动真机、实际服务及业务流程均未验证。
+
+## W4 紧凑工具栏
+
+沿用上述 coss（含 particles）/ Beautiful UI 检索与既有 Stepper；本轮补查 particles 索引可访问，registry 与 Beautiful UI stepper 注册文件访问失败，未取得新来源代码。
+
+`compact?: boolean` 默认 false，仅在 horizontal 生效：步骤内标记和内容横排，隐藏装饰连接线，标签区最大 16rem 后换行，所有步骤仍在可聚焦的局部滚动区。保持摘要可见，满足字体规范“关键流程须直接显示当前步骤与总步骤”；未采用 W4 隐藏摘要的处理。vertical 即使传 compact 仍保持原来的摘要、连接线与布局。compact 变化也重新显露当前步骤；未匹配 currentStepId 仍明确未知。没有新增交互、执行状态、计时器或动效。新增紧凑三主题 320px、长中文、受阻与未知位置示例。
