@@ -205,3 +205,51 @@ test('built attachment page uses neutral copy throughout navigation content and 
   assert.doesNotMatch(visible, /示例|演示/);
   for (const label of ['应用页面', 'Agent 工作区', '视觉呈现', '解析已完成', '解析失败', '正在处理 · 识别题目与评分依据']) assert.ok(visible.includes(label), label);
 });
+
+test('compact paper keeps a proportional thumbnail and emits the same view intent independently of resolution', () => {
+  const events = [], props = { ...paperCardFixtures[3], compact: true, paperSize: 'A3', orientation: 'landscape', thumbnailUrl: '/scan.png', onView: id => events.push(['view', id]), onResolve: id => events.push(['resolve', id]), resolveLabel: '核对扫描' };
+  const before = capture(PaperCard, props);
+  const action = kind => before.nodes.find(n => n.props['data-paper-action'] === kind);
+  for (const kind of ['thumbnail', 'view', 'resolve']) {
+    assert.equal(action(kind).props.type, 'button'); assert.equal(action(kind).props.disabled, false);
+    action(kind).props.onClick();
+  }
+  assert.deepEqual(events, [['view', props.id], ['view', props.id], ['resolve', props.id]]);
+  assert.equal(capture(PaperCard, props).html, before.html);
+  assert.equal(before.nodes.find(n => n.props['data-paper-card']).props.onClick, undefined);
+  const thumbnail = action('thumbnail');
+  assert.match(thumbnail.props.className, /w-20/); assert.match(thumbnail.props.className, /sm:h-auto/);
+  const ratio = thumbnail.props.style.aspectRatio.split(' / ').map(Number);
+  assert.ok(Math.abs(ratio[0] / ratio[1] - 420 / 297) < .001);
+  assert.match(before.html, /src="\/scan.png"/);
+  assert.match(before.html, /查看\/放大/);
+  const reason = before.nodes.find(n => n.props.title === props.reason);
+  assert.equal(reason.props.children, props.reason); assert.match(reason.props.className, /line-clamp-2/);
+});
+
+test('compact missing facts preserve image placeholder and explicit card variant without invented copy', () => {
+  const props = { id: 'p', studentName: '学生', compact: true, status: { label: '未交' } };
+  for (const pageCount of [undefined, NaN, 0, -1, 1.5]) {
+    const out = html(PaperCard, { ...props, pageCount, examNumber: '  ' });
+    assert.match(out, /aria-label="扫描图像未接入"/);
+    assert.doesNotMatch(out, /考号|页数未提供|0 页|等待提交|处置未交|未交 · 学生|data-placeholder/);
+  }
+  assert.match(html(PaperCard, { ...props, pageCount: 3 }), /title="3 页"/);
+  assert.match(html(PaperCard, { ...props, examNumber: '123', pageCount: 3 }), /考号 123 · 3 页/);
+  const placeholder = html(PaperCard, { ...props, placeholder: true, viewLabel: '查看提交记录' });
+  assert.match(placeholder, /data-placeholder="true"/); assert.match(placeholder, /border-dashed bg-muted/);
+  assert.match(placeholder, /查看提交记录/); assert.doesNotMatch(placeholder, /data-paper-action="resolve"/);
+});
+
+test('paper intents reject empty IDs and absent callbacks; compact grid keeps independent layout ownership', () => {
+  const fail = () => assert.fail('disabled intent fired');
+  for (const props of [{ id: ' ', onView: fail, onResolve: fail }, { id: 'valid' }]) {
+    const out = capture(PaperCard, { studentName: '学生', compact: true, status: { label: '未知' }, ...props });
+    for (const action of out.nodes.filter(n => n.props['data-paper-action'])) {
+      assert.equal(action.props.disabled, true); action.props.onClick();
+    }
+  }
+  const grid = capture(PaperCardGrid, { compact: true, className: 'max-w-xl', maxHeight: 300, children: h(PaperCard, paperCardFixtures[0]) });
+  assert.match(grid.html, /min\(172px, 100%\)/); assert.match(grid.html, /max-w-xl/);
+  assert.doesNotMatch(grid.html, /data-compact="true"/);
+});

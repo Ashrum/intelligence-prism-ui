@@ -23,3 +23,17 @@
 `PaperCard` 接收 `id, studentName, examNumber?, pageCount?, thumbnailUrl?, paperSize?: A4|A3, orientation?: portrait|landscape, status: {label,tone?}, reason?, selected?, onView(id)?`。调用方提供状态文字与 AgentStatusTone 语义（转换为既有 Badge 变体），不解析文字推断业务。正整数页数才视为已知；完全未知仅显示一次“考号、页数未提供”，部分已知保留另一项未知说明。纸张比例复用 paperDimensions；无图仅纸张图标与规格，aria 说明“扫描图像未接入”。已知页数角标；原因最多两行、title 和辅助技术保留全文。selected 由宿主控制，以“当前预览”Badge 和 aria-current 表达；查看按钮不自动选中或改变状态。
 
 `PaperCardGrid` 接收 children、maxHeight（CSS 高度）、state（ready/loading/empty/error）、emptyMessage、errorMessage、onRetry、aria-label。默认空文案“尚未接收学生试卷”，支持覆盖。网格 auto-fill 最小 168px（比容器窄时收缩），maxHeight 只约束具名且可键盘聚焦的网格区域；loading/empty/error 替代原卡片；ready 的空数组或只含 null/undefined/布尔值/空字符串的条件列表显示空态。无计时器、业务 Store、持久化、权限判断或上传/扫描执行器。
+
+## W4 可选紧凑布局与迁移
+
+沿用上述 coss（含 p-input-5）与 Beautiful UI 复用记录，继续组合 PaperThumbnail、Card、Button、Badge，不新增组件目录项。2026-10-02 补查 [particles](https://coss.com/ui/particles) 可读取索引简介；[registry](https://coss.com/ui/r/registry.json)、Beautiful UI attachment / stepper 注册文件访问失败，未声称重新确认 404 或完整名单，未复制上游代码。
+
+- `PaperCard.compact?: boolean` 默认 false。true 时左侧为 80px 宽缩略页，保持 A4/A3 与横竖版比例；缩略页是原生按钮，点击、Enter/Space 与“查看”同发 `onView(id)`，无回调或空 id 时禁用；卡片背景不绑定点击。
+- compact 姓名、状态 Badge 均在卡内；考号与页数只列已知事实，用 ` · ` 分隔，均未知时整行省略。默认非紧凑模式保留既有未知说明与页数角标。
+- 无扫描图像仍复用 PaperThumbnail 的图形与规格占位，可访问名称为“扫描图像未接入”，不新增可见长句；加载失败沿用“图像加载失败”。原因单独一段、最多两行省略，title 保留全文。
+- `placeholder?: boolean` 默认 false，显式启用虚线边框与既有 `bg-muted` 弱化背景；不由状态文案推断未交，不自动添加姓名前缀或改变动作。
+- `viewLabel?: string` 默认“查看”，`resolveLabel?: string` 默认“处理”，`onResolve(id)?` 显式提供才显示独立处理动作。两者仅发意图，不推定扫描异常或改变选中。姓名/状态/处置文案由宿主提供。
+- `PaperCardGrid.compact?: boolean` 默认 false，紧凑列最小 172px，默认仍 168px；`className?` 仅供布局。Grid 不隐式设置子卡 compact。
+- 动作使用 coss / Prism Button 的键盘与焦点行为；多行同时设置 h-auto / sm:h-auto，目标至少 44px，紧凑文字动作至少 48px。新增三主题 320px、长中文、有图/无图、A3 横版与占位示例。
+
+Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/边框、姓名“未交”前缀与推断文案；按业务显式传入 viewLabel、resolveLabel、onResolve、placeholder。缩略页始终表示查看意图；需要不同的未交处置流程时使用 onResolve，不把缩略页接到处置动作。

@@ -73,39 +73,54 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
 
 export type PaperCardProps = {
   id: string; studentName: string; examNumber?: string; pageCount?: number; thumbnailUrl?: string
+  compact?: boolean; placeholder?: boolean
+  /** Labels and resolution eligibility are supplied by the host, never inferred from status. */
+  viewLabel?: string; resolveLabel?: string; onResolve?: (id: string) => void
   paperSize?: "A4" | "A3"; orientation?: "portrait" | "landscape"
   status: { label: string; tone?: AgentStatusTone }; reason?: string; selected?: boolean; onView?: (id: string) => void
 }
 const badgeTones = { neutral: "outline", info: "info", success: "success", warning: "warning", error: "error" } as const
-export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView }: PaperCardProps) {
+export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, compact = false, placeholder = false, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
   const labelId = useId(), dimensions = paperDimensions(paperSize, orientation)
   const count = Number.isInteger(pageCount) && pageCount! > 0 ? pageCount : undefined
-  const exam = examNumber?.trim()
-  const metadata = !exam && count === undefined ? "考号、页数未提供" : `${exam ? `考号 ${exam}` : "考号未提供"} · ${count === undefined ? "页数未提供" : `${count} 页`}`
-  return <Card render={<article />} data-paper-card={id} aria-labelledby={labelId} aria-current={selected ? "true" : undefined} className="min-w-0 gap-3 p-3">
-    <Card className="relative w-full min-w-0 gap-0 overflow-hidden p-0" style={{ aspectRatio: `${dimensions.width} / ${dimensions.height}` }}>
-      <PaperThumbnail page={{ id, thumbnailUrl, paperSize, orientation }} label={`${studentName}试卷缩略图`} />
-      {count !== undefined && <Badge className="absolute right-1 bottom-1" variant="outline">{count} 页</Badge>}
-    </Card>
-    <div className="min-w-0 space-y-1">
-      <h3 id={labelId} className="truncate text-item-title" title={studentName}>{studentName || "姓名未提供"}</h3>
-      <p className="truncate text-ui-hint" title={metadata}>{metadata}</p>
-    </div>
-    <div className="flex flex-wrap items-start gap-1"><Badge variant={badgeTones[status.tone ?? "neutral"]} className="h-auto whitespace-normal [overflow-wrap:anywhere]">{status.label || "状态未提供"}</Badge>{selected && <Badge variant="info">当前预览</Badge>}</div>
+  const exam = examNumber?.trim(), name = studentName || "姓名未提供"
+  const metadata = compact ? [exam && `考号 ${exam}`, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")
+    : !exam && count === undefined ? "考号、页数未提供" : `${exam ? `考号 ${exam}` : "考号未提供"} · ${count === undefined ? "页数未提供" : `${count} 页`}`
+  const view = () => { if (id.trim()) onView?.(id) }
+  const ratio = { aspectRatio: `${dimensions.width} / ${dimensions.height}` }
+  const thumbnail = <PaperThumbnail page={{ id, thumbnailUrl, paperSize, orientation }} label={`${name}试卷缩略图`} />
+  const media = compact ? <Button type="button" variant="outline" data-paper-action="thumbnail"
+    className="relative h-auto min-h-11 w-20 min-w-11 shrink-0 overflow-hidden p-0 sm:h-auto" style={ratio}
+    aria-label={`查看/放大：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}>
+    <span className="absolute inset-0">{thumbnail}</span>
+  </Button> : <Card className="relative w-full min-w-0 gap-0 overflow-hidden p-0" style={ratio}>
+    {thumbnail}{count !== undefined && <Badge className="absolute right-1 bottom-1" variant="outline">{count} 页</Badge>}
+  </Card>
+  const identity = <div className="min-w-0 space-y-1">
+    <h3 id={labelId} className="truncate text-item-title" title={studentName}>{name}</h3>
+    {metadata && <p className="truncate text-ui-hint" title={metadata}>{metadata}</p>}
+  </div>
+  const badges = <div className="flex flex-wrap items-start gap-1"><Badge variant={badgeTones[status.tone ?? "neutral"]} className="h-auto whitespace-normal [overflow-wrap:anywhere]">{status.label || "状态未提供"}</Badge>{selected && <Badge variant="info">当前预览</Badge>}</div>
+  return <Card render={<article />} data-paper-card={id} data-compact={compact || undefined} data-placeholder={placeholder || undefined} aria-labelledby={labelId} aria-current={selected ? "true" : undefined}
+    className={cn("min-w-0 gap-3 p-3", compact && "gap-2 p-2", placeholder && "border-dashed bg-muted")}>
+    {compact ? <div className="flex min-w-0 items-start gap-2">{media}<div className="min-w-0 flex-1 space-y-1">{identity}{badges}</div></div> : <>{media}{identity}{badges}</>}
     {reason && <p className="line-clamp-2 text-ui-hint [overflow-wrap:anywhere]" title={reason}>{reason}</p>}
-    <Button type="button" variant="outline" size="sm" className="mt-auto" aria-label={`查看：${studentName || "姓名未提供"}的试卷`} disabled={!onView || !id.trim()} onClick={() => { if (id.trim()) onView?.(id) }}>查看</Button>
+    <div className="mt-auto flex flex-wrap gap-1">
+      {onResolve && <Button type="button" variant="outline" data-paper-action="resolve" className="h-auto min-h-12 min-w-11 max-w-full whitespace-normal [overflow-wrap:anywhere] sm:h-auto" aria-label={`${resolveLabel}：${name}`} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}>{resolveLabel}</Button>}
+      <Button type="button" variant="outline" size="sm" data-paper-action="view" className={cn("h-auto min-h-11 min-w-11 max-w-full flex-1 whitespace-normal [overflow-wrap:anywhere] sm:h-auto", compact && "min-h-12")} aria-label={`${viewLabel}：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}>{viewLabel}</Button>
+    </div>
   </Card>
 }
 
 export type PaperCardGridProps = {
-  children?: ReactNode; maxHeight?: CSSProperties["maxHeight"]; state?: "ready" | "loading" | "empty" | "error"
+  compact?: boolean; className?: string; children?: ReactNode; maxHeight?: CSSProperties["maxHeight"]; state?: "ready" | "loading" | "empty" | "error"
   emptyMessage?: string; errorMessage?: string; onRetry?: () => void; "aria-label"?: string
 }
-export function PaperCardGrid({ children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
-  return <section data-paper-card-grid data-state={state} aria-label={label} tabIndex={maxHeight !== undefined ? 0 : undefined} className="min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1" style={{ maxHeight }}>
+export function PaperCardGrid({ compact = false, className, children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
+  return <section data-paper-card-grid data-state={state} aria-label={label} tabIndex={maxHeight !== undefined ? 0 : undefined} className={cn("min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1", className)} style={{ maxHeight }}>
     {state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
         : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
-          : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(168px, 100%), 1fr))" }}>{children}</div>}
+          : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>}
   </section>
 }

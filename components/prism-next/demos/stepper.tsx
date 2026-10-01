@@ -34,6 +34,12 @@ export function StepperDemo() {
         <p className="mt-4 text-read-body">核对公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </div>)}</div>
     </DemoSection>
+    <DemoSection title="紧凑工具栏 · 三主题与 320px" description="只压缩横向布局；仍保留全部步骤、当前位置、待完成和受阻原因，垂直模式保持原样。">
+      <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full space-y-3 p-3">
+        <Stepper compact steps={stepperFixtures.blocked} currentStepId="stage-5" aria-label={`${theme} 紧凑批阅阶段`} />
+        <Stepper compact steps={[{ id: "unknown", label: "准备试卷原卷、标准答案与评分依据并核对跨页公式", state: "pending" }]} />
+      </div>)}</div>
+    </DemoSection>
     <DemoSection title="3–8 步与无当前阶段" description="步数不固定；未提供 current 时如实说明，不把受阻或最后一步自动视为当前。">
       <div className="grid gap-6"><Stepper steps={stages(["done", "current", "upcoming"])} /><Stepper steps={Array.from({ length: 8 }, (_, index) => ({ id: `review-${index}`, label: `复核阶段 ${index + 1}`, state: index === 7 ? "error" : "done" }))} /></div>
     </DemoSection>

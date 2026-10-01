@@ -50,6 +50,10 @@ export function DataStationDemo() {
     <DemoSection title="选择其他可用数据站" description="单选只改变待连接目标；主按钮随推荐与所选目标变化。">
       <div className="max-w-xl"><StationFixture props={{ ...dataStationBase, selectedId: null, devices: [...dataStationBase.devices, { ...dataStationBase.devices[0], id: "03", name: "高中部教学数据站 03", number: "ST-HS-03" }] }} /></div>
     </DemoSection>
+    <DemoSection title="窄工具栏 · 多行数据站入口" description="入口名称可跨行，桌面断点仍使用自然高度，触控目标至少 44px。">
+      <div className="w-44 max-w-full"><DataStationBadge state={{ kind: "connected", name: "高二年级数学期中考试资料接收专用教学数据站" }} onOpen={() => setFeedback("已发出长名称数据站查看请求")} /></div>
+      <Feedback>{feedback}</Feedback>
+    </DemoSection>
     <DemoSection title="三主题 · 320px · 长中文与公式" description="状态、设备信息与操作完整换行，控件保留触控空间。">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
         <h3 className="text-item-title">{theme} · 320px</h3><StationFixture props={{ ...dataStationBase, devices: dataStationBase.devices.map(device => ({ ...device, name: `${device.name} · 高二数学期中考试标准答案答题卡与评分依据完整核对资料接收专用设备` })) }} />
