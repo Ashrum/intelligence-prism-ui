@@ -16,7 +16,8 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
 
 - 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
-- `tabs: {id,label,count}[]` 由宿主提供，count 非负整数，零保留，null/无效显示「未提供」。`tab` 未提供时使用 `defaultTab` 或首项；受控模式只有新 props 改变选中项。ID 唯一且 tab/defaultTab 须属于 tabs；切换对象时宿主应 key/remount 或控制 tab。
+- `tabs?: {id,label,count}[]` 由宿主提供，count 非负整数，零保留，null/无效显示「未提供」。`tab` 未提供时使用 `defaultTab` 或首项；受控模式只有新 props 改变选中项。传入非空 tabs 时，ID 唯一且 tab/defaultTab 须属于 tabs；切换对象时宿主应 key/remount 或控制 tab。
+- 不传 `tabs` 或传 `[]` 时不渲染 Tabs、TabList 或 TabPanel，直接呈现内容。不传 `tab` 时忽略 `tabIds`（包括空数组），完整显示宿主页面，`defaultTab` 不参与过滤；显式传 `tab` 时仍按 `tabIds` 过滤，未标分类的行继续显示。外部导航负责筛选后分页，组件不会发出 Tab 切换意图。组件页「外部导航驱动、无内部 Tab」展示此用法。
 - `rows` 是宿主当前查询页面；可选 `tabIds` 是宿主显式分类，支持非受控 Tab；省略时当前页面全部呈现。分类文本不参与推导。宿主应先筛选、再分页，切换目录或查询时更新 rows、summary、page；计数不得从当前页面倒推。
 - 行提供 type/name/metadata、可选 description ReactNode、status `{label,tone}`、可选 0–100 progress。缺失身份显示「未提供」，缺失状态显示「状态未知」；非法或未知进度不画条。description 可组合现有公式呈现，组件不识别或解释公式。
 - `search`、`filters[{id,label,value,options}]`、`activeFilters: string[]`、`summary{label,tone}` 全部由宿主提供。过滤项、发布状态与时间选项无内置业务含义；组件不执行搜索。activeFilters 用于已选条件摘要，`onClearFilters()` 由宿主决定重置哪些条件；清除搜索调用 `onSearch("")`。
@@ -32,3 +33,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 使用共享 AgentStatus 语义色与可见状态文字，Circle 是状态点；关键文字使用语义 ui-hint。coss Tabs 管理 roving focus 与 TabPanel 关联；coss Menu/Select 管理弹层焦点、Escape 和选择。固定标签、44px 触点、多行按钮 h-auto + sm:h-auto、容器断点 720px、减少动态效果沿用既有机制。页面提供三主题、1366px 宽区与 320px 长中文/MathML；不新增视觉令牌。
 
 浏览器尝试打开 `http://localhost:5173/next/components/score-review` 时被权限审核拒绝（工具返回用户拒绝该访问），未绕过。**ESCALATE：新路由的真实键盘交互、Portal 焦点返回、三主题/1366/320px 视觉与触点尺寸尚未浏览器验收**。SSR 和回调测试不能替代这些验收。真实服务、移动设备与读屏器未验证；其他仓库只读，未修改 `.git`，未提交/推送/发布。
+
+## 可选 tabs 适配依据
+
+本次按 `/tmp/prism-score2/record-list-adaptation.diff` 原样上游化五处改动。复核上文 coss Tabs、particles p-table-5/p-table-8 与 Beautiful UI Records Table/Filter Table/Task Rows 的既有检索取舍；本次仅扩展已有 RecordList 的可选属性，不引入新组件或上游代码。传非空 tabs 的既有路径保持不变。

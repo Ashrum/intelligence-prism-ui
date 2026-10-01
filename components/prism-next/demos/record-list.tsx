@@ -38,8 +38,8 @@ const baseFilters: RecordListFilter[] = [
 export const recordBase: RecordListProps = { tabs: recordTabs, rows: recordRows.slice(0, 5), filters: baseFilters,
   summary: { label: "7 项待处理 · 7 个批阅批次需要处理 · 影响 12 名学生", tone: "warning" }, pagination: { page: 1, pages: [1, 2], label: "第 1 页 · 共 7 条记录" } }
 
-function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = false, longContent = false, overrides = {} }: {
-  initialTab?: string; initialSearch?: string; filtered?: boolean; longContent?: boolean; overrides?: Partial<RecordListProps>
+function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = false, longContent = false, externalNavigation = false, overrides = {} }: {
+  initialTab?: string; initialSearch?: string; filtered?: boolean; longContent?: boolean; externalNavigation?: boolean; overrides?: Partial<RecordListProps>
 }) {
   const [tab, setTab] = useState(initialTab)
   const [search, setSearch] = useState(initialSearch)
@@ -60,7 +60,12 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
     description: <span>核对最小值与取等条件：<math aria-label="f(x) 等于 x 的平方减二 x 减三"><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>−</mo><mn>3</mn></math></span>,
   } : row)
   return <>
-    <RecordList {...recordBase} tab={tab} search={search} filters={filters} activeFilters={activeFilters} rows={pageRows} summary={summary}
+    {externalNavigation && <nav aria-label="外部记录导航" className="mb-4 flex flex-wrap gap-2">
+      {recordTabs.map(item => <Button key={item.id} variant="outline" aria-pressed={tab === item.id}
+        className="h-auto sm:h-auto min-h-11 whitespace-normal break-words"
+        onClick={() => { setTab(item.id); setPage(1) }}>{item.label}</Button>)}
+    </nav>}
+    <RecordList {...recordBase} tabs={externalNavigation ? undefined : recordTabs} tab={externalNavigation ? undefined : tab} search={search} filters={filters} activeFilters={activeFilters} rows={pageRows} summary={summary}
       state={matches.length ? { kind: "ready" } : { kind: "search-empty" }}
       pagination={{ page, pages: Array.from({ length: Math.ceil(matches.length / 5) }, (_, i) => i + 1), label: `第 ${page} 页 · 共 ${matches.length} 条记录` }}
       onTabChange={next => { setTab(next); setPage(1) }} onSearch={next => { setSearch(next); setPage(1) }}
@@ -80,6 +85,9 @@ export function RecordListDemo() {
       <Button variant="outline" className="mb-4 h-auto sm:h-auto min-h-11 whitespace-normal" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><RecordFixture /></div>
     </DemoSection>
+    <DemoSection id="record-external-navigation" title="外部导航驱动、无内部 Tab" description="宿主导航先筛选、再分页；列表不传 tabs 与 tab，完整呈现当前页记录。">
+      <RecordFixture externalNavigation />
+    </DemoSection>
     <DemoSection id="record-processing" title="系统处理中 · 3 个批阅批次"><RecordFixture initialTab="processing" /></DemoSection>
     <DemoSection id="record-completed" title="已完成 · 发布状态"><RecordFixture initialTab="completed" /></DemoSection>
     <DemoSection id="record-all" title="全部记录 · 28 个批阅批次"><RecordFixture initialTab="all" /></DemoSection>
@@ -94,7 +102,7 @@ export function RecordListDemo() {
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <p className="pb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</p>
-        <RecordFixture longContent />
+        <RecordFixture longContent externalNavigation />
       </div>)}</div>
     </DemoSection>
   </>
