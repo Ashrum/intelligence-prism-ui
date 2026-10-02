@@ -128,3 +128,15 @@
 - QuestionCard 尚无选项附加内容透传；QuestionDetails 尚无专门评分点／知识点导航插槽。本轮采用宿主组合及既有 ReactNode 扩展，不擅自增加 API。共同组件化时再审定这些槽位；数字内容与扫描内容混排、扫描工具的可见范围和摘要避让也仍是宿主协议。
 - 自动验证覆盖卡片和扫描变换分离、MathML 一致性、选项统计／默认展开、三页签／证据环、吸顶摘要意图、未选／已选时一／两个主数字、唯一主按钮、控件尺寸、统计夹具与冻结稿 SSR。旧的“题目 SVG／分组纸”断言按本任务替换，未放宽 coss 散列或冻结稿快照。
 - 本轮浏览器自动审批明确拒绝 `localhost:5173`（此前用户拒绝该访问），未尝试绕过。三主题、1440/1920、390/320、长中文／公式实际布局、滚动／吸顶／工具条贴边、触摸与焦点返回均待 Supervisor 视觉复验；SSR、宿主事件与内存 DOM 测试不能替代浏览器、真实服务、移动设备或读屏器验收。最终五项数字与 diff 见 `/tmp/prism-review2/Report-Q6.md` 和 `q6-checks/`。
+
+## Q7 · 题目卡字号、间距与行宽（2026-10-02）
+
+本节取代 Q6 的卡片正文 16/28 与间距描述。PO 原话：“题目的字号和间距，保持与左侧栏和右侧栏一致。”“刻度条保留。”这是 PO 对本预览框架的决定，偏离《题目呈现章程》第七条 3 款“题干与选项 16/28”；章程和 Foundations 本身不改，由 Supervisor 提请 PO 另行裁定是否修订。
+
+- 复用检索：重新读取 Supervisor 缓存 registry 的 `tabs`、`frame`、`p-tabs-10`、`p-frame-1` 与两项 particles 源码，复核固定 coss Tabs、QuestionContent / QuestionSolution / QuestionDetails、现有左右栏。coss 原生页签与语义字号已满足需求，未复制 particle 局部字号；本任务不涉及 Agent 执行，不采用 Beautiful UI，不新增组件条目、依赖或视觉令牌。
+- 唯一公开 API 增补为 QuestionContent / QuestionSolution 的 `textSize?: "read" | "ui"`，默认 read 与修改前 DOM 完全一致。本页明确传 ui；题干、选项、小问、答案／解析、教学定位、档案及作答情况为 ui-body 14/20，次要信息为 ui-meta 12/18 muted。标题仍 item-title 14/20/600；公式沿用公共 `.prism-math` 的 1.125em 光学校准，随正文从 16px 到 14px 比例变化，无局部 font-size／transform。配图中的公式标注也使用 ui 角色，其他 QuestionRecord 默认图像 DOM 不变。
+- QuestionDetails 没有字号透传，本轮未获准扩展其 API，因此预览宿主以既有 coss Tabs + QuestionSolution 组合本地 ReviewQuestionDetails；保留答案／教学定位／题目档案顺序、完整字段、知识点导航和证据切答案逻辑。评分点移为答案页的同级宿主段落；无第二套题面或数学渲染器，既有 QuestionDetails 及其调用方不变。后续透传需求仍属于组件缺口。
+- 卡片仍与扫描作答纸等宽且左对齐，内边距复用检查器 `px-4 py-5`（横16／纵20px）。正文含选项统计及详情的内容区左对齐，最大744px（约53个14px汉字），窄时100%；选项统计靠该内容区右缘，宽卡剩余留白。卡片与扫描变换分离不变。
+- 布局只采用已有16px区块节奏（左栏 space-y-4、检查器概况 space-y-4）与8px清单节奏（检查器错误答案／原因 space-y-2、知识点行 space-y-2）：标题→题面、题干→配图、配图→小问／选项、题面→详情、页签→内容均16px；选项／小问行8px，答案区块16px、段落8px。检查器“当前作答”多列评分清单仍保持原16px，不在本轮改左右栏。
+- 吸顶摘要明确 ui-body 14/20；学生作答分段标题从 ui-hint 14/22 对齐为 ui-body 14/20，保留 muted；纸外姓名原为 ui-body 14/20、考号／分数原为 ui-meta 12/18，保持不变。标准 coss 控件保留自身窄屏字号和 size，刻度条与其交互代码不改。
+- 自动回归覆盖两组件省略／undefined／read的修改前快照、ui与optionExtra、20题卡片、三页签字段与意图、内容宽度／布局约束、公共公式字号和刻度保留；五项结果与实际 diff 见 `/tmp/prism-review2/Report-Q7.md`、`q7-checks/`。沿用既有 localhost 浏览器访问拒绝边界，本轮未绕过；以上像素为源码／语义令牌核对，非浏览器计算样式实测。三主题、1440/1920、窄容器、长中文／公式、滚动／焦点、真机与读屏器由 Supervisor 继续视觉验收，无真实服务验证。

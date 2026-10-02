@@ -38,9 +38,9 @@ const seeds: {title:string;stem:string;answer:string;explanation:string;options?
  {title:'条件概率与事件',stem:'已知 $P(A)=0.6$，$P(B\\mid A)=0.4$。求 $P(A\\cap B)$，并解释条件事件。',answer:'$P(A\\cap B)=0.24$。',explanation:'条件事件为 $A$。由乘法公式，$P(A\\cap B)=P(A)P(B\\mid A)=0.6\\times0.4=0.24$。'},
  {title:'极值与实根个数',stem:'已知 $f(x)=x^3-3x$。',parts:['求函数的极值。','讨论方程 $f(x)=m$ 的不同实根个数。'],answer:'极大值为 $2$，极小值为 $-2$。当 $|m|<2$ 时有 $3$ 个实根；当 $|m|=2$ 时有 $2$ 个；当 $|m|>2$ 时有 $1$ 个。',explanation:'由 $f^{\\prime}(x)=3(x^2-1)$ 得极值点 $x=-1$、$x=1$。结合三个单调区间，比较水平直线 $y=m$ 与函数图象的交点数。'},
 ]
-function ellipseFigure(number:number) {
+export function ellipseFigure(number:number,textSize:"read"|"ui"="read") {
  const q17=number===17, a=q17?Math.sqrt(8):2,b=q17?Math.sqrt(2):1,c=Math.sqrt(a*a-b*b),unit=70,cx=240,cy=132
- const label=(x:number,y:number,latex:string)=>h('foreignObject',{x,y,width:100,height:32},h('div',{className:'text-read-body'},reviewText(`$${latex}$`)))
+ const label=(x:number,y:number,latex:string)=>h('foreignObject',{x,y,width:100,height:32},h('div',{className:textSize==='ui'?'text-ui-body':'text-read-body'},reviewText(`$${latex}$`)))
  return h('figure',{className:'my-5 max-w-full'},h('svg',{viewBox:'0 0 480 280',role:'img','aria-label':q17?'椭圆与点 P(2,1)，横轴为长轴':'参数方程对应的椭圆，横轴为长轴',className:'mx-auto w-full max-w-md text-foreground'},
  h('g',{stroke:'currentColor',fill:'none'},h('path',{d:`M12 ${cy}H468 M${cx} 12V264`}),h('ellipse',{cx,cy,rx:a*unit,ry:b*unit})),
  h('g',{fill:'currentColor'},...[cx-c*unit,cx+c*unit].map((x,i)=>h('circle',{key:i,cx:x,cy,r:3})),q17&&h('circle',{cx:cx+2*unit,cy:cy-unit,r:3})),

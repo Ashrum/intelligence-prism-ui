@@ -2748,3 +2748,9 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 
 `RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress 和共享 AgentStatus；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。
+
+## QuestionContent / QuestionSolution · 可选正文字号（Q7）
+
+2026-10-02 PO 对题目与知识点预览框架明确授权：两组件新增 `textSize?: "read" | "ui"`，默认 `"read"`。省略、显式 `undefined` 或 `"read"` 均保持原始 DOM（含类名、顺序、缺失值提示）完全一致；`"ui"` 使用 `text-ui-body`（14px / 20px），小问类型／分值与答案缺失提示改用 `text-ui-meta`（12px / 18px）及既有 muted 色。公式继承正文并沿用公共数学光学校准，不加局部缩放。属性不改变题面、答案、宿主事实或交互，不自动按宽度切换；组件不重写宿主 ReactNode 内自带的字号。
+
+本轮只授权这两个公开 API；`QuestionDetails` / `QuestionCard` 不增加透传属性。预览宿主以现有 coss Tabs、QuestionHeading、QuestionContent、QuestionSolution 组合，间距与 744px 内容最大宽度留在宿主。默认输出以修改前捕获的 20 题及缺失值夹具 SHA-256 验证。本页选择偏离《题目呈现章程》第七条 3 款的 16/28，章程与 Foundations 原文未改，由 Supervisor 提请 PO 另行裁定是否修订；其他调用方仍默认阅读字号。

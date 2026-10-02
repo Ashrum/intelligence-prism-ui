@@ -35,22 +35,22 @@ export type QuestionRecord = {
   explanation?: ReactNode
 }
 
-export function QuestionContent({ question, optionExtra }: { question: QuestionRecord; /** Host-owned option statistics or actions; omitted preserves legacy markup. */ optionExtra?: (optionId: string) => ReactNode }) {
-  return <div className="prism-question-copy min-w-0 text-read-body text-foreground">
+export function QuestionContent({ question, optionExtra, textSize = "read" }: { question: QuestionRecord; /** Reading typography by default; ui is an explicit host choice. */ textSize?: "read" | "ui"; /** Host-owned option statistics or actions; omitted preserves legacy markup. */ optionExtra?: (optionId: string) => ReactNode }) {
+  return <div className={`prism-question-copy min-w-0 ${textSize === "ui" ? "text-ui-body" : "text-read-body"} text-foreground`}>
     <div className="space-y-3">{question.stem}</div>
     {question.blocks?.map(block => <div key={block.id} className="my-4 min-w-0">{block.content}</div>)}
     {question.figure}
     {question.options && <ol aria-label="题目选项（只读）" className={`prism-question-options prism-question-options-${question.optionColumns ?? 2} mt-5 grid gap-x-8 gap-y-3`}>
       {question.options.map(option => <li key={option.id} className={optionExtra ? "grid min-w-0 grid-cols-[auto_minmax(0,1fr)_minmax(8rem,40%)] items-baseline gap-x-3 gap-y-2" : "flex min-w-0 items-baseline gap-3"}><span className="shrink-0 font-medium">{option.id}.</span><div className="min-w-0">{option.content}</div>{optionExtra?.(option.id)}</li>)}
     </ol>}
-    {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2"><span className="shrink-0">（{part.id}）</span><div className="min-w-0 flex-1">{(part.response || part.points !== undefined) && <p className="mb-1 text-ui-hint text-muted-foreground">{responseLabels[part.response ?? "long"]}{part.points !== undefined && <> · {part.points} 分</>}</p>}{part.content}{part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="prism-question-options prism-question-options-2 mt-3 grid gap-2">{part.options.map(option => <li key={option.id} className="flex min-w-0 gap-3"><span className="shrink-0">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}</ol>}</div></li>)}</ol>}
+    {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2"><span className="shrink-0">（{part.id}）</span><div className="min-w-0 flex-1">{(part.response || part.points !== undefined) && <p className={`mb-1 ${textSize === "ui" ? "text-ui-meta" : "text-ui-hint"} text-muted-foreground`}>{responseLabels[part.response ?? "long"]}{part.points !== undefined && <> · {part.points} 分</>}</p>}{part.content}{part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="prism-question-options prism-question-options-2 mt-3 grid gap-2">{part.options.map(option => <li key={option.id} className="flex min-w-0 gap-3"><span className="shrink-0">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}</ol>}</div></li>)}</ol>}
   </div>
 }
 
-export function QuestionSolution({ question }: { question: QuestionRecord }) {
+export function QuestionSolution({ question, textSize = "read" }: { question: QuestionRecord; /** Reading typography by default; ui is an explicit host choice. */ textSize?: "read" | "ui" }) {
   const provided = (value: ReactNode, fallback: string) => value == null || typeof value === "boolean" || typeof value === "string" && !value.trim()
-    ? <p className="text-ui-hint text-muted-foreground">{fallback}</p> : value
-  return <div className="question-solution prism-question-copy min-w-0 space-y-5 text-read-body"><section><h4 className="mb-2 text-item-title">参考答案</h4>{provided(question.answer, "未提供参考答案")}</section><section><h4 className="mb-2 text-item-title">解析</h4>{provided(question.explanation, "未提供解析")}</section>{question.parts?.map(part => <section key={part.id} className="pt-1" aria-label={`第${part.id}小问答案与评分依据`}><h4 className="mb-2 text-item-title">第 {part.id} 小问{part.points !== undefined && <> · {part.points} 分</>}</h4><div>{provided(part.answer, "未提供参考答案")}</div><div className="mt-2 text-foreground">{provided(part.explanation, "未提供解析")}</div>{part.rubric && <ol className="q-rubric mt-3 space-y-1 text-ui-body">{part.rubric.map(item => <li key={item.id}>{item.label} · {item.points} 分</li>)}</ol>}</section>)}</div>
+    ? <p className={`${textSize === "ui" ? "text-ui-meta" : "text-ui-hint"} text-muted-foreground`}>{fallback}</p> : value
+  return <div className={`question-solution prism-question-copy min-w-0 space-y-5 ${textSize === "ui" ? "text-ui-body" : "text-read-body"}`}><section><h4 className="mb-2 text-item-title">参考答案</h4>{provided(question.answer, "未提供参考答案")}</section><section><h4 className="mb-2 text-item-title">解析</h4>{provided(question.explanation, "未提供解析")}</section>{question.parts?.map(part => <section key={part.id} className="pt-1" aria-label={`第${part.id}小问答案与评分依据`}><h4 className="mb-2 text-item-title">第 {part.id} 小问{part.points !== undefined && <> · {part.points} 分</>}</h4><div>{provided(part.answer, "未提供参考答案")}</div><div className="mt-2 text-foreground">{provided(part.explanation, "未提供解析")}</div>{part.rubric && <ol className="q-rubric mt-3 space-y-1 text-ui-body">{part.rubric.map(item => <li key={item.id}>{item.label} · {item.points} 分</li>)}</ol>}</section>)}</div>
 }
 
 /** Observe actual overflow, including font loading; cues never cover or clip the formula. */
