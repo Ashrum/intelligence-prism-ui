@@ -1,17 +1,9 @@
-/** Best review resolution: 1440×900; only logical container width selects the band. */
-export const PAPER_REVIEW_BEST_WIDTH = 1440
+import type { RailPreferences } from "@/components/prism-next/review-workspace-layout"
+export { PAPER_REVIEW_BEST_WIDTH, railBand, railCollapsedForWidth, type RailPreferences } from "../../components/prism-next/review-workspace-layout.ts"
 export const railPreferenceKeys = {
   best: 'prism-paper-review-rail-collapsed-best',
   compact: 'prism-paper-review-rail-collapsed-compact',
 } as const
-export type RailPreferences = Partial<Record<keyof typeof railPreferenceKeys, boolean>>
-export function railBand(width: number): keyof typeof railPreferenceKeys {
-  return width >= PAPER_REVIEW_BEST_WIDTH ? 'best' : 'compact'
-}
-export function railCollapsedForWidth(width: number, preferences: RailPreferences): boolean {
-  const band = railBand(width)
-  return preferences[band] ?? (band === 'compact')
-}
 export function readRailPreferences(): RailPreferences {
   const preferences: RailPreferences = {}
   for (const band of Object.keys(railPreferenceKeys) as (keyof RailPreferences)[]) {

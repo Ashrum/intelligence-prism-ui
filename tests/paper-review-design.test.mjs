@@ -80,6 +80,7 @@ function captureHost() {
   function walk(node) {
     if (Array.isArray(node)) return node.map(walk);
     if (!React.isValidElement(node)) return node;
+    if (typeof node.type === 'function' && ['ReviewWorkspace','PaperPreviewSurface','PaperPreview'].includes(node.type.name)) return walk(node.type(node.props));
     nodes.push(node);
     React.Children.forEach(node.props.children, walk);
     return node;
@@ -113,15 +114,15 @@ test('D2 immersion works with button, F and Escape and retains the vertical tool
   assert.equal(captureHost().find(n => n.props['aria-label'] === '试卷悬浮工具条').props.orientation, 'vertical');
 });
 test('D7 canvas uses a paper-attached overlay instead of a separate tool column', async () => {
-  const css = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../components/prism-next/review-workspace.css', import.meta.url), 'utf8');
   const canvas = css.match(/\.d1-canvas \{([^}]+)\}/)[1];
   assert.match(canvas, /grid-template-columns:minmax\(0,1fr\);/);
   assert.match(css, /\.d1-paper-column \{[^}]*gap:16px/);
   assert.match(css, /\.d1-tool-dock \{[^}]*position:absolute/);
   assert.match(css, /\.d1-tools \{[^}]*width:56px/);
-  const source = await readFile(new URL('../examples/paper-review/continuous-paper-canvas.tsx', import.meta.url), 'utf8');
-  assert.match(source, /node.clientWidth - 16 - 56/);
-  assert.match(source, /width: columnWidth \+ 56/);
+  const source = await readFile(new URL('../components/prism-next/paper-preview-continuous.tsx', import.meta.url), 'utf8');
+  assert.match(source, /node.clientWidth - 16 - toolbarWidth/);
+  assert.match(source, /width: columnWidth \+ toolbarWidth/);
 });
 
 test('D7 toolbar has four visible groups and moves keyboard help to the top menu', () => {
@@ -162,7 +163,7 @@ test('D7 toolbar has four visible groups and moves keyboard help to the top menu
 test('D3 review accent stays in the review utility and the adaptive frame fills its viewport', async () => {
   const css = await readFile(new URL('../examples/review-tools/review-tools.css', import.meta.url), 'utf8');
   const theme = await readFile(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
-  const page = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8');
+  const page = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8') + await readFile(new URL('../components/prism-next/review-workspace.css', import.meta.url), 'utf8');
   assert.match(css, /\.review-tools-trigger\s*\{\s*--review-accent: #F04A1A;/);
   assert.doesNotMatch(theme + page, /--review-accent|#f04a1a/i);
   assert.match(page, /\.d1-review \{[^}]*height:100dvh;[^}]*grid-template-rows:minmax\(0,1fr\)/);
@@ -193,7 +194,7 @@ function panelNodes(props) {
     if (!React.isValidElement(node)) return;
     nodes.push(node); React.Children.forEach(node.props.children, walk);
   }
-  walk(StudentPanel(props)); return nodes;
+  const adapter = StudentPanel(props); walk(adapter.type(adapter.props)); return nodes;
 }
 test('D8 student panel delegates grouping, search text, selection and popup focus to coss', () => {
   let chosen;
@@ -225,7 +226,7 @@ test('D8 student panel delegates grouping, search text, selection and popup focu
   const empty = renderToStaticMarkup(React.cloneElement(inline, { inputValue: '不存在' }));
   assert.equal([...empty.matchAll(/data-slot="combobox-item"/g)].length, 0);
   assert.match(empty, /没有匹配的学生/);
-  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8') + readFileSync(new URL('../components/prism-next/review-switcher.tsx', import.meta.url), 'utf8');
   assert.match(source, /<ComboboxInput[^>]*size="default"[^>]*showTrigger=\{false\}/);
   assert.doesNotMatch(source, /aria-activedescendant|activeStudent|studentQuery/);
 });
@@ -245,14 +246,14 @@ test('D2 G opens the student panel; bracket keys and panel selection share navig
   pressHost('n'); // A full-score paper has no wrong question and must remain navigable.
   panelNodes(panel().props).find(n => n.props['aria-label'] === '上一位学生').props.onClick();
   assert.equal(panel().props.current, 4);
-  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8') + readFileSync(new URL('../components/prism-next/review-switcher.tsx', import.meta.url), 'utf8');
   assert.match(source, /\["G", "选择学生"\]/);
   assert.match(source, /\["\[ \/ \]", "上一位 \/ 下一位学生"\]/);
   assert.match(source, /finalFocus=\{triggerRef\}/);
 });
 
 
-import { dockPaperToolbar } from '../examples/paper-review/paper-toolbar-layout.ts';
+import { dockPaperToolbar } from '../components/prism-next/paper-preview-layout.ts';
 test('D7 toolbar follows paper edge for width fit, page fit, overwide zoom and panning', () => {
   // 828 canvas - 16 margins - 56 toolbar = 756 paper; seam at x=764.
   assert.deepEqual(dockPaperToolbar({ canvasWidth: 828, paperRight: 8 + 756 }), { left: 764 });
@@ -316,7 +317,7 @@ test('D7 T/button collapse persists safely, restores through immersion and expos
     assert.doesNotThrow(() => pressHost('t'));
     assert.equal(frame().props['data-rail-collapsed'], true);
   } finally { globalThis.localStorage = prior; }
-  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8') + readFileSync(new URL('../components/prism-next/review-switcher.tsx', import.meta.url), 'utf8');
   assert.match(source, /\["T", "显示 \/ 隐藏题目栏"\]/);
 });
 
@@ -326,7 +327,8 @@ test('D7 rail keeps numeric arrow order, Enter location, tab order and page inte
   function nodes() {
     const result = [];
     function walk(node) { if (Array.isArray(node)) return node.forEach(walk); if (!React.isValidElement(node)) return; result.push(node); React.Children.forEach(node.props.children, walk); if (node.props.render) walk(node.props.render); }
-    walk(QuestionRail({ ...props, selected })); return result;
+    function Probe() { const adapter = QuestionRail({ ...props, selected }); const tree = adapter.type(adapter.props); walk(tree); return tree; }
+    renderToStaticMarkup(React.createElement(Probe)); return result;
   }
   function key(key) { nodes().find(n => n.props.role === 'listbox').props.onKeyDown({ key, preventDefault() {}, stopPropagation() {} }); }
   key('ArrowDown'); assert.equal(selected, 'q5');

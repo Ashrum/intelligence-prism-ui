@@ -198,3 +198,22 @@ PO 2026-10-02 对所有评审页的长期要求：评审控制使用可拖动的
 ### 验证边界
 
 浏览器工具明确拒绝 localhost:5173 访问（用户此前未授权该访问），本轮未绕过限制。三主题、窄屏、长中文/公式、真实焦点返回与触摸的浏览器视觉验收仍由 Supervisor 执行；无真实服务、移动设备或读屏器验证。五项检查数字、实际 diff 和退出码见 `/tmp/prism-review/Report-D2-fix3.md` 与 `/tmp/prism-review/d2-checks/fix3/`。
+
+
+## C1 · 组件化对照表（2026-10-02）
+
+本节只记录实现归属，不修订以上冻结外观/行为。PO 已批准新增四个目录组件；评审工具仍在 examples/review-tools，业务与数据留在宿主。
+
+| 冻结区域 / 行为 | 正式组件与属性 / 归属 |
+| --- | --- |
+| 三栏、唯一顶栏、沉浸、窄分区 | ReviewWorkspace：topbar/rail/canvas/inspector、open/onOpenChange、immersive、pane/onPaneChange；已有流程顶栏时省略 topbar |
+| 键盘边界与快捷键表 | ReviewWorkspace shortcuts/onShortcut；ReviewWorkspaceShortcuts entries/open |
+| 1440 分档与偏好 | review-workspace-layout 的常量/纯函数；localStorage、宽度测量、两档键与焦点恢复仍由评审宿主管 |
+| 答题卡成绩地图、筛选、页标、键盘 | QuestionRail：sections、filters、overview、collapse、selected/filter 与各意图；review-data.tsx 映射夹具 |
+| 相连学生导航与跳转面板 | ReviewSwitcher：items/groups/current、itemToStringLabel/renderItem、labels；宿主决定学生身份和分数 |
+| 本题头部、得分、评分点、AI、知识点、班级对比、动作 | QuestionInspector：score/points/evidence/knowledge/comparison/actions、extraLink；宿主构造跳转 URL |
+| 连续扫描、缩放锚点、按纸旋转、可见页 | PaperPreview layout=continuous、rotation、continuous；实现已移至 paper-preview-continuous.tsx |
+| 选中聚光、定位、贴纸侧签、无图占位 | continuous.spotlight/original/location；locatePaperTarget；PaperPreviewSurface toolbar/overlay/emptyImageText/bottomInset |
+| 评审工具、视口缩放、学生/题号参数、存储与回执 | examples/paper-review/paper-review.tsx + review-data.tsx + rail-preferences.ts；ReviewTools 原样保留 |
+
+删除本地 continuous-paper-canvas.tsx 与 paper-toolbar-layout.ts；第二冻结页仅调整已移动工具的 import。重构前 7 状态与 6 种旧 PaperPreview 调用在 `tests/fixtures/review-c1-before.json` 固化，测试先在未改代码上 13/13 通过；原 `paper-review-v1.sha256` 不变。布局 CSS 原声明移入 review-workspace.css，评审设备框两条样式仍在宿主。浏览器视觉签名对照由 Supervisor 执行。

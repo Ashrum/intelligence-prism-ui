@@ -2,6 +2,10 @@
 
 import { useCallback, useId, useRef, useState, useLayoutEffect, type PointerEvent, type ReactNode, type RefObject } from "react"
 import "./paper-preview.css"
+import { PaperPreviewContinuous, type PaperPreviewContinuousProps } from "./paper-preview-continuous"
+export { PaperPreviewContinuous, locatePaperTarget, type PaperPreviewLocation, type PaperPreviewContinuousProps } from "./paper-preview-continuous"
+export { PaperPreviewSurface, type PaperPreviewSurfaceProps } from "./paper-preview-surface"
+export { dockPaperToolbar } from "./paper-preview-layout"
 import { ZoomIn, ZoomOut, TriangleAlert, FileImage, RotateCcw, RotateCw } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Empty } from "@/components/coss/empty"
@@ -16,11 +20,16 @@ export type PaperPreviewZoom = "page" | "width" | number
 export type PaperPreviewPage = {
   id: string; imageUrl?: string; thumbnailUrl?: string; alt?: string
   paperSize?: "A4" | "A3"; orientation?: "portrait" | "landscape"
+  dimensions?: { width: number; height: number }
   quality?: "normal" | "unknown"; anomaly?: string; regions?: DocumentRegion[]
 }
 export type PaperPreviewVersion = { id: string; label: string; current?: boolean; validated?: boolean; restorable?: boolean }
 export type PaperPreviewAction = { id: string; label: string; primary?: boolean; disabled?: boolean }
 export type PaperPreviewProps = {
+  /** Opt-in continuous canvas; omitted keeps the original single-page DOM. */
+  layout?: "single" | "continuous"
+  continuous?: Omit<PaperPreviewContinuousProps, "pages" | "zoom" | "rotations" | "selected" | "onZoom" | "onSelect">
+
   /** Canvas omits document metadata, thumbnails, versions and document actions. */
   variant?: "default" | "canvas"
   title?: string; subtitle?: string; status?: { label: string; variant?: BadgeProps["variant"] }
@@ -219,6 +228,7 @@ export function PaperPreview(props: PaperPreviewProps) {
     }
     if ((event.target as HTMLElement).hasPointerCapture?.(event.pointerId)) (event.target as HTMLElement).releasePointerCapture(event.pointerId)
   }
+  if (props.layout === "continuous") return <PaperPreviewContinuous {...props.continuous} viewportRef={props.continuous?.viewportRef ?? viewportNode} pages={pages} zoom={zoom} rotations={props.rotation ?? localRotation} selected={props.selectedRegionId} onZoom={changeZoom} onSelect={props.onRegionSelect ? (regionId, pageId) => props.onRegionSelect?.(pageId, regionId) : undefined} />
   return <section className="paper-preview min-w-0" aria-labelledby={variant === "canvas" ? undefined : `${id}-title`} aria-label={variant === "canvas" ? title || "试卷预览" : undefined} data-paper-preview data-state={state}>
     {variant !== "canvas" && <header className="flex flex-wrap items-start justify-between gap-3 pb-4">
       <div className="min-w-0 flex-1"><h2 id={`${id}-title`} className="text-block-title break-words">{known(title)}</h2><p className="text-ui-hint break-words">{known(subtitle)}</p></div>

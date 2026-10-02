@@ -2754,3 +2754,10 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 2026-10-02 PO 对题目与知识点预览框架明确授权：两组件新增 `textSize?: "read" | "ui"`，默认 `"read"`。省略、显式 `undefined` 或 `"read"` 均保持原始 DOM（含类名、顺序、缺失值提示）完全一致；`"ui"` 使用 `text-ui-body`（14px / 20px），小问类型／分值与答案缺失提示改用 `text-ui-meta`（12px / 18px）及既有 muted 色。公式继承正文并沿用公共数学光学校准，不加局部缩放。属性不改变题面、答案、宿主事实或交互，不自动按宽度切换；组件不重写宿主 ReactNode 内自带的字号。
 
 本轮只授权这两个公开 API；`QuestionDetails` / `QuestionCard` 不增加透传属性。预览宿主以现有 coss Tabs、QuestionHeading、QuestionContent、QuestionSolution 组合，间距与 744px 内容最大宽度留在宿主。默认输出以修改前捕获的 20 题及缺失值夹具 SHA-256 验证。三栏预览框架依据章程 2026-10-02 预览框架修订，由宿主显式传入 `textSize="ui"`，见[《题目呈现章程》第七条](question-presentation-charter.md#第七条-视觉)；间距取两侧栏同一组间距值，组件不自行判断场景。其他场景仍按该款 16/28，其他调用方仍默认阅读字号；Foundations 保持不变。
+
+
+## C1 · 预览框架组件化（PO 2026-10-02 批准）
+
+新增「内容与数据」目录项：`ReviewWorkspace`、`QuestionRail`、`ReviewSwitcher`、`QuestionInspector`。分别见 [框架](review-workspace.md)、[题目栏](question-rail.md)、[切换器](review-switcher.md)、[单题检查器](question-inspector.md)。只呈现外部事实、发出意图；宿主保留筛选/排序、偏好存储、学生名册、路由与回执。顶栏可由宿主唯一流程顶栏接管。题目栏同一接口接受分数或全班正确率，不内置业务计算。
+
+`PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。

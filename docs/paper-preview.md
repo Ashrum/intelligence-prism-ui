@@ -44,3 +44,32 @@ PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/component
 - 几何、锚点、受控/非受控、键盘、Pointer/Wheel 处理器由自动测试覆盖；浏览器视觉、真实触屏/触控板捏合、读屏器交 Supervisor 补验。coss、依赖、令牌和目录项不变。
 
 组件页提供 6 页缺页学生卷、12 页 A3 批阅资料、带公式的区域复核、三状态、三主题和 320px 长中文夹具。不使用“示例/演示”标签，不把按钮请求当作真实扫描结果。SSR / 事件处理器检查无法验证真实焦点、键盘布局、缩放测量与视觉；需 Supervisor 浏览器复验，真实扫描服务、移动设备及读屏器未验证。
+
+## C1 连续模式与贴纸侧签（2026-10-02）
+
+本轮增强已有目录组件；不传新属性时旧 `PaperPreview` 和 Dialog 的默认 DOM 与事件路径保持。重构前冻结 default/canvas/missing/empty/loading/error 六种旧调用，另保留既有手势、版本与状态测试。
+
+复用检索：依据 [冻结稿](paper-review-design.md) D7/D8 和 [题目稿](question-review-design.md)，复核 Supervisor 579 项 registry 缓存与 p-toolbar-1、p-frame-1、p-meter-3、p-group-11、p-combobox-10/8、p-tabs-14/10；连续画布复用 DocumentRegionViewer 坐标和旋转，侧签复用 coss Toolbar。无对应完整连续预览粒子，增强已有 PaperPreview，不新建目录；通用文档组件不涉及 Beautiful UI。未重新联网获取。
+
+| 属性 / 导出 | 契约 |
+| --- | --- |
+| `layout?: single或continuous` | 默认原单页实现；continuous 返回连续画布，不注入旧的文档导航、缩略图或工具条。 |
+| `PaperPreviewPage.dimensions?` | 每纸独立 `{width,height}`（有限正 CSS px）；否则按既有 paperSize/orientation 计算。 |
+| `zoom`、`onZoomChange`、`rotation` | 沿用 width/page/5–300 数值缩放和每纸旋转字典；连续模式默认也沿用旧 defaultZoom=page，冻结宿主显式传 width。提供 onZoomChange 时由宿主回传受控值。 |
+| `continuous.viewportRef`、`scale?=1` | 共享滚动视口引用与评审框变换比例，手势转换使用逻辑坐标。 |
+| `continuous.onVisiblePage?`、`onViewport?` | 按可见面积报告零基纸索引，以及扣左右留白和工具条后的可用尺寸；滚动不改变 selectedRegionId。 |
+| `continuous.gap?`、`toolbarWidth?=56` | 纸间距默认 CSS 16px；为纸列右缘侧签预留宽度。 |
+| `continuous.beforeContent?`、`renderPageHeader?(page,index)` | 纸列前置内容、每纸外部页眉。插槽不参与纸张缩放与旋转；未传不增加 wrapper。可供第二批题目卡和学生身份使用。 |
+| `continuous.location?` | `{pageId?,regionId?,request?,focus?}`，显式请求定位；同目标重复请求增加 request。regionId 优先，居中区域；pageId 定位纸顶。reduced-motion 用 instant，其余 smooth。 |
+| `continuous.spotlight?`、`original?` | 可选区域聚光；原稿取消遮罩，选中环由 Surface 保留。未开聚光保持调用方 regions.content。 |
+| `continuous.emptyImageText?` | 单纸无图文案，默认“扫描图像未提供”；不会虚构图像或数据。 |
+| `PaperPreviewContinuous` | 同目录低层导出，可直接受控组合；完整 props 见源码，包括 pages/zoom/rotations/selected/onSelect/onZoom。 |
+| `locatePaperTarget(viewport, target, scale?)` | 现有宿主定位迁移工具，与 location 同协议；不创建业务状态。 |
+| `PaperPreviewSurface` | 包含 canvas、paper host、侧签壳；children 为画布，toolbar 为 coss Toolbar 插槽，toolbarRef 指向工具条，viewportRef 指向滚动视口。canvasRef、overlay、scale、layoutKey 可选。 |
+| `Surface.missing?`、`emptyImageText?`、`emptyImageDetail?` | 替换整幅画布的无扫描占位，文字/页码由宿主给。 |
+| `Surface.bottomInset?=0` | 宿主声明底部浮层避让（屏幕 CSS px）；冻结评审宿主传 88。组件不认识 ReviewTools。 |
+| `dockPaperToolbar` | 纯函数，贴合最宽纸右缘，超宽夹取；可从 paper-preview-layout.ts 单独导入。 |
+
+侧签观察纸/画布/工具尺寸与滚动，布局更新按外部内容重测；高度不足时内部滚动。拖动平移、Ctrl/⌘+滚轮与双指缩放沿用冻结锚点逻辑，点击与拖动分离，不设置计时器。Surface 的选中环和纸面视觉完全沿用冻结组合，CSS 不增加视觉令牌。`d1-*` 保留以确保冻结输出稳定。
+
+纸外页眉与前置内容是第二批接口预留；题目卡的吸顶摘要、学生筛选避让和知识点证据组合未在本批接入。连续模式暂无图像加载失败重试状态（无 URL 占位已支持）；真实扫描服务未接入。浏览器几何、三主题窄屏、触控和焦点验证交 Supervisor，不把 SSR/处理器测试当作浏览器验收。
