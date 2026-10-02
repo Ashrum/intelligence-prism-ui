@@ -11,7 +11,7 @@ import {questionImage,answerImage} from '../examples/question-review/artwork.ts'
 import {linkedPaperRecords,linkedPaperQuestions,questionReviewStudentId} from '../examples/question-review/paper-link.ts';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const out=new URL('../.sites-runtime/q1-test/probe.mjs',import.meta.url);await mkdir(new URL('.',out),{recursive:true});
-const built=await build({stdin:{contents:"export { QuestionReviewDesign, shortcuts } from './examples/question-review/question-review'; export { QuestionKnowledgeRail, QuestionInspector } from './examples/question-review/parts'; export { PaperReviewDesign } from './examples/paper-review/paper-review'",resolveDir:root,loader:'tsx'},bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false,plugins:[{name:'review-only-snapshot',setup(b){b.onLoad({filter:/examples\/(?:paper-review\/paper-review|question-review\/question-review)\.tsx$/},async args=>({loader:'tsx',contents:(await readFile(args.path,'utf8')).replace('import { ReviewTools } from "@/examples/review-tools/review-tools"','const ReviewTools = () => null')}))}}]});await writeFile(out,built.outputFiles[0].text);const {QuestionReviewDesign,QuestionKnowledgeRail,QuestionInspector,PaperReviewDesign,shortcuts}=await import(out);await rm(out);
+const built=await build({stdin:{contents:"export { QuestionReviewDesign, shortcuts } from './examples/question-review/question-review'; export { QuestionKnowledgeRail, QuestionInspector, StudentScale, StudentJump } from './examples/question-review/parts'; export { PaperReviewDesign } from './examples/paper-review/paper-review'",resolveDir:root,loader:'tsx'},bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false,plugins:[{name:'review-only-snapshot',setup(b){b.onLoad({filter:/examples\/(?:paper-review\/paper-review|question-review\/question-review)\.tsx$/},async args=>({loader:'tsx',contents:(await readFile(args.path,'utf8')).replace('import { ReviewTools } from "@/examples/review-tools/review-tools"','const ReviewTools = () => null')}))}}]});await writeFile(out,built.outputFiles[0].text);const {QuestionReviewDesign,QuestionKnowledgeRail,QuestionInspector,StudentScale,StudentJump,PaperReviewDesign,shortcuts}=await import(out);await rm(out);
 const render=node=>renderToStaticMarkup(node),q17=reviewQuestions[16];
 const normalize=html=>html.replace(/«[^»]*»|_R_[^\s"<>]*_/g,'REACT_ID');
 test('Q1 fixture: 36 students, 20 questions, 18 knowledge records and exact filter counts',()=>{
@@ -47,9 +47,63 @@ const railNode=()=>node(n=>n.props.onKnowledge&&n.props.closeRef);
 function press(key,closest=()=>null){let prevented=false;node(n=>n.props.onKeyDownCapture).props.onKeyDownCapture({key,target:{closest},nativeEvent:{},preventDefault(){prevented=true},stopPropagation(){}});return prevented}
 function resetHost(){globalThis.__q1Host={cursor:0,values:[]}}
 test('Q1 host: K/evidence/rubric maintain knowledge context and precise point highlights',()=>{resetHost();press('k');assert.equal(railNode().props.view,'knowledge');railNode().props.onEvidence('q12',['p1','p2']);assert.equal(inspectorNode().props.question.id,'q12');assert.equal(inspectorNode().props.knowledge.id,'ellipse-focus');const points=canvasNode().props.pages[0].regions.filter(r=>r.content.props.className.includes('ring-info'));assert.deepEqual(points.map(p=>p.id),['p1','p2']);press('k');assert.equal(inspectorNode().props.knowledge,null)});
-test('Q1 host: answer filtering keeps question sheet, rubric and student synchronized',()=>{resetHost();node(n=>n.props.value==='all'&&n.props.onValueChange&&n.props.className==='surface-floating').props.onValueChange('pending');assert.equal(canvasNode().props.pages.length,3);assert.equal(canvasNode().props.pages[0].id,'question');assert.equal(inspectorNode().props.answer.review,'待复核');const first=inspectorNode().props.answer.student.id;press('ArrowRight');assert.notEqual(inspectorNode().props.answer.student.id,first);assert.equal(inspectorNode().props.answer.review,'待复核');press(']');assert.equal(inspectorNode().props.question.id,'q18');assert.equal(canvasNode().props.pages.length,3)});
+test('Q1 host: answer filtering keeps question sheet, rubric and student synchronized',()=>{resetHost();node(n=>n.props.value==='all'&&n.props.onValueChange).props.onValueChange('pending');assert.equal(canvasNode().props.pages.length,3);assert.equal(canvasNode().props.pages[0].id,'question');assert.equal(inspectorNode().props.answer.review,'待复核');press('ArrowRight');const first=inspectorNode().props.answer.student.id;press('ArrowRight');assert.notEqual(inspectorNode().props.answer.student.id,first);assert.equal(inspectorNode().props.answer.review,'待复核');press(']');assert.equal(inspectorNode().props.question.id,'q18');assert.equal(canvasNode().props.pages.length,3)});
 test('Q1 host: actions emit receipts, native Enter survives, shortcuts control viewing only',()=>{resetHost();const score=inspectorNode().props.answer.score;inspectorNode().props.onIntent('教师批阅');assert.match(node(n=>n.props.role==='status').props.children,/已请求：教师批阅/);assert.equal(inspectorNode().props.answer.score,score);assert.equal(press('Enter',selector=>selector==='button,a,[role=tab]'?{}:null),false);press('0');assert.equal(canvasNode().props.zoom,'page');press('f');assert.equal(node(n=>n.props['data-immersive']!==undefined).props['data-immersive'],true);press('Escape');assert.equal(node(n=>n.props['data-immersive']!==undefined).props['data-immersive'],false);press('g');assert.equal(node(n=>n.props.current?.number).props.open,true)});
 import {railPreferenceKeys,railCollapsedForWidth} from '../examples/question-review/rail-preferences.ts';
 test('Q1 independently namespaces preferences and follows the frozen width bands',()=>{assert.equal(railCollapsedForWidth(1439,{}),true);assert.equal(railCollapsedForWidth(1440,{}),false);assert.equal(railCollapsedForWidth(1920,{best:true}),true);assert.ok(Object.values(railPreferenceKeys).every(key=>key.startsWith('prism-question-review-')))});
 
 test("Q1 frozen roster links resolve names without collisions in the 5174 roster",()=>{for(const name of ["张雨桐","李思远","陈语安","周子墨","林书宁","王予辰"]){const id=questionReviewStudentId(name,"unresolved");assert.equal(classStudents.find(s=>s.id===id)?.name,name)}});
+
+const jumpNode=()=>node(n=>n.props.triggerRef&&n.props.answers);
+const scaleNode=()=>node(n=>n.props.answers&&n.props.max&&!n.props.triggerRef);
+test('Q2 SSR: one student control bar holds filter and navigation; side dock is view-only',()=>{
+ const html=render(React.createElement(QuestionReviewDesign));
+ assert.equal((html.match(/data-student-controls=/g)||[]).length,1);
+ const start=html.indexOf('data-student-controls='),end=html.indexOf('class="d1-paper-host',start),bar=html.slice(start,end);
+ for(const text of ['题目页','学生作答筛选','学生导航','选择学生 · 36','data-student-scale','36 位学生：满分 6、部分 19、零分 11'])assert.ok(bar.includes(text),text);
+ assert.match(bar,/aria-pressed="true"/);
+ const dock=html.slice(html.indexOf('aria-label="作答侧签工具条"'),html.indexOf('data-review-inspector'));
+ assert.doesNotMatch(dock,/学生|题目页|data-student-scale/);
+ for(const text of ['视图','图层','沉浸'])assert.ok(dock.includes(text));
+ const rail=html.slice(html.indexOf('data-review-rail'),html.indexOf('data-review-canvas'));
+ assert.doesNotMatch(rail,/第 [12] 页/);for(const type of ['选择题','填空题','解答题'])assert.ok(rail.includes(type));
+});
+test('Q2 scale: each filter has exactly one tick per visible student and one active info tick',()=>{
+ for(const [filter,count] of [['all',36],['loss',30],['pending',2]]){
+ const answers=filterAnswers(answersForQuestion(q17),filter);
+ const html=render(React.createElement(StudentScale,{answers,current:answers[1],max:q17.max,onSelect(){}}));
+ assert.equal((html.match(/data-student-tick=/g)||[]).length,count);
+ assert.equal((html.match(/h-2 bg-info/g)||[]).length,1);
+ assert.match(html,new RegExp(`${count} 位学生：`));assert.match(html,/aria-hidden="true"/);
+ }
+});
+test('Q2 inspector: deduplicated related knowledge, thin scoring bars, Meter only in knowledge overview',()=>{
+ const props={question:q17,answer:answersForQuestion(q17)[0],knowledge:null,onKnowledge(){},onEvidence(){},onIntent(){}};
+ const html=render(React.createElement(QuestionInspector,props));
+ assert.equal((html.match(/椭圆焦距关系/g)||[]).length,1);assert.match(html,/关联知识点/);assert.doesNotMatch(html,/role="meter"/);
+ const scoring=html.split('data-class-scoring-points')[1].split('</ul>')[0];assert.equal((scoring.match(/block h-1 flex-1/g)||[]).length,3);
+ const multiple={...q17,points:q17.points.map((p,i)=>({...p,knowledge:i===0?['ellipse-focus',knowledgePoints[1].id]:p.knowledge}))};
+ const multi=render(React.createElement(QuestionInspector,{...props,question:multiple}));
+ assert.ok((multi.match(/椭圆焦距关系/g)||[]).length>1);
+ const knowledge=render(React.createElement(QuestionInspector,{...props,knowledge:knowledgePoints[0]}));assert.equal((knowledge.match(/role="meter"/g)||[]).length,1);
+});
+test('Q2 host: initial selection, S/H, paper clicks and scale clicks share navigation state',()=>{
+ resetHost();assert.equal(jumpNode().props.current,null);press('s');assert.equal(jumpNode().props.open,true);
+ press('Escape');jumpNode().props.onOpenChange(false);press('ArrowRight');
+ assert.equal(jumpNode().props.current.student.id,canvasNode().props.pages[1].id);
+ const target=canvasNode().props.pages[5].id;canvasNode().props.onSelect(target);
+ assert.equal(jumpNode().props.current.student.id,target);assert.equal(inspectorNode().props.answer.student.id,target);assert.equal(canvasNode().props.activePage,target);
+ scaleNode().props.onSelect(canvasNode().props.pages[3].id);assert.equal(jumpNode().props.current.student.id,canvasNode().props.activePage);
+ press('h');assert.deepEqual(globalThis.__q1Host.values.find(v=>v?.id==='question'&&v?.request>0)?.id,'question');
+ canvasNode().props.onVisiblePage(0);assert.equal(node(n=>n.props['aria-pressed']!==undefined).props['aria-pressed'],true);
+ canvasNode().props.onVisiblePage(2);assert.equal(jumpNode().props.current.student.id,canvasNode().props.pages[2].id);
+ press('f');assert.ok(node(n=>n.props['data-student-controls']!==undefined));
+});
+test('Q2 host: filtered jump, scale, paper ring and inspector use identical roster and selection',()=>{
+ resetHost();press('ArrowRight');node(n=>n.props.value==='all'&&n.props.onValueChange).props.onValueChange('pending');
+ assert.equal(jumpNode().props.answers.length,2);assert.equal(scaleNode().props.answers.length,2);assert.equal(canvasNode().props.pages.length,3);
+ jumpNode().props.onSelect(jumpNode().props.answers[1].student.id);
+ const id=jumpNode().props.current.student.id;
+ assert.equal(scaleNode().props.current.student.id,id);assert.equal(inspectorNode().props.answer.student.id,id);assert.equal(canvasNode().props.activePage,id);
+ const html=render(React.createElement(StudentJump,jumpNode().props));assert.match(html,/2 \/ 2/);
+});

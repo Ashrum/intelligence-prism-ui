@@ -5,8 +5,8 @@ import { DocumentRegionViewer } from "@/components/prism-next/document-region-vi
 import { clampPaperZoom, paperDimensions, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
 // Review-host composition only. The shared viewer's public API remains unchanged.
-export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage }: {
-  headers: Record<string, ReactNode>; activePage: string
+export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset }: {
+  headers: Record<string, ReactNode>; activePage: string; topInset: number
   viewportRef: RefObject<HTMLDivElement | null>; pages: PaperPreviewPage[]; zoom: PaperPreviewZoom
   rotations: Record<string, PaperPreviewRotation>; selected: string; scale: number
   onSelect: (id: string) => void; onZoom: (zoom: PaperPreviewZoom) => void
@@ -26,7 +26,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     let best = 0, area = -1
     node.querySelectorAll<HTMLElement>('[data-review-page]').forEach((paper, index) => {
       const rect = paper.getBoundingClientRect()
-      const visible = Math.max(0, Math.min(rect.bottom, view.bottom) - Math.max(rect.top, view.top)) * Math.max(0, Math.min(rect.right, view.right) - Math.max(rect.left, view.left))
+      const visible = Math.max(0, Math.min(rect.bottom, view.bottom) - Math.max(rect.top, view.top + topInset * scale)) * Math.max(0, Math.min(rect.right, view.right) - Math.max(rect.left, view.left))
       if (visible > area) { area = visible; best = index }
     })
     onVisiblePage(best)
@@ -35,7 +35,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     const node = viewportRef.current
     if (!node) return
     const measure = () => {
-      const size = { width: Math.max(1, node.clientWidth - 16 - 56), height: Math.max(1, node.clientHeight - 16) }
+      const size = { width: Math.max(1, node.clientWidth - 16 - 56), height: Math.max(1, node.clientHeight - topInset - 8) }
       setViewport(size); onViewport(size)
     }
     const handle = (event: WheelEvent) => wheel.current(event)
@@ -43,7 +43,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     const observer = new ResizeObserver(measure); observer.observe(node)
     node.addEventListener('wheel', handle, { passive: false })
     return () => { observer.disconnect(); node.removeEventListener('wheel', handle) }
-  }, [viewportRef, onViewport])
+  }, [viewportRef, onViewport, topInset])
   useLayoutEffect(() => {
     const request = anchor.current, node = viewportRef.current
     if (request && node) {
@@ -116,7 +116,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     return { rotation, dimensions, percent }
   })
   const columnWidth = Math.max(...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
-  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="题目与学生作答连续画布" className="d1-continuous" onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
+  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="题目与学生作答连续画布" className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
     <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {pages.map((page, index) => {
       const { rotation, dimensions, percent } = layouts[index]

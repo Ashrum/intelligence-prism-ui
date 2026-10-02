@@ -1,5 +1,6 @@
 .q1-rail-tabs { height:100%; display:grid; gap:0; grid-template-rows:56px auto minmax(0,1fr); }
-.q1-review .d1-continuous { padding-top:56px; }
-.q1-canvas-controls { max-width:calc(100% - 72px); }
+.q1-student-controls { position:absolute; top:8px; z-index:20; width:max-content; padding-bottom:4px; }
+.q1-student-controls-row { display:flex; align-items:center; gap:8px; padding:4px; overflow-x:auto; }
+.q1-student-controls-row > * { flex-shrink:0; }
 .q1-review .d1-rail [role=option] { justify-content:stretch; }
 @container (max-width:650px) { .q1-review .d1-topbar { gap:8px; } .q1-review .d1-topbar > [data-slot=avatar] { display:none; } }
