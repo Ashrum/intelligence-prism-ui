@@ -45,3 +45,12 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - 未采用 card-style Table：当前每条记录是适应 320px 的完整事实与动作块，没有固定列头；套表格会改变列表语义与窄容器行为。沿用 p-table-7 的框架/内容分层，不移植其多列数据结构。
 - DOM/外观变化：新增 Frame 框架与 FrameHeader，记录行使用 FramePanel 的默认边框、圆角、背景和阴影；只适配 padding、溢出裁剪和布局。Tabs、搜索、分页、Progress、点击与菜单语义不变；既有 Beautiful UI 检索取舍继续适用，不复制上游代码。
 - demo 文案同步；原三主题、1366px、320px、长中文/公式与菜单夹具复用。浏览器视觉、Portal 焦点与移动触控交 Supervisor 验收。
+
+## 2026-10-02 P3：每页条数与计数评估
+
+- 复核 Supervisor registry 快照（579 项）、particles `p-pagination-3` 与 `p-tabs-10`，以及固定 Select/Pagination/Tabs。p-pagination-3 实际是“结果范围 Select + 上/下一页”，并非每页条数控件；采用其 Select 与分页组合思路，保留本组件已有受控页码窗口，不复制其本地页数推算，不根据当前页补造上一页/下一页边界。
+- `pagination.pageSize?: {value:number;options:readonly number[];label?:string}`，配合顶层 `onPageSizeChange?: (size:number)=>void`。默认固定标签“每页条数”，值显示“N 条”；宿主提供唯一正整数选项和值。没有 pageSize 不渲染；有 pageSize 而无回调则禁用。仅允许选项内正整数发意图；null 不触发。
+- 不在组件内切片、重置页码或刷新数据；宿主更新 pageSize/page/rows/summary，是否回到首页由宿主决定。demo 明确在宿主执行每页 5/10/20 条与回到第 1 页。触点至少 44px，保留三主题窄容器与长中文公式夹具。
+- p-tabs-10 用 outline Badge 表达计数；现状 TabsTab 中已有 tabular-nums 文字计数，标签与数字可读且零/未知有明确文字，符合 coss children 用法。按委派允许保留文字计数，避免无必要的默认 DOM 与视觉变化；不引入 Badge。
+
+检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。

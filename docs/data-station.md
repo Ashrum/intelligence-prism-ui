@@ -22,7 +22,7 @@ PO 批准候选 #7；目录「内容与数据」，入口 `/next/components/data
 
 `task` 含 className/subject/gradingMode/bindingDescription；绑定说明由宿主提供，不从连接状态推定已绑定。`state` 为 ready/loading/empty/error；loading 显示 Skeleton；empty 必须 nextStep；error 必须 reason，呈现重新加载。后三态替代设备、任务与连接动作，仅保留返回（error 另有加载重试）。ready 的空列表只声明列表为空，不推断学校未配置。
 
-`onSelect(id), onConnect(id), onDisconnect(id), onClose()` 仅发意图。`onRetry({kind:'load'})` 重试加载；`onRetry({kind:'connect',stationId})` 明确重试原失败目标（按钮注明名称），不因待选目标改变而静默重定向；目标缺失或不可用时禁用。缺失动作回调禁用并显示原因，用 aria-describedby 关联；无 onClose 的受控 Sheet 不提供关闭按钮，宿主应始终提供 onClose。
+`onSelect(id), onConnect(id), onDisconnect(id), onClose()` 仅发意图。`onRetry({kind:'load'})` 重试加载；`onRetry({kind:'connect',stationId})` 明确重试原失败目标（按钮注明名称），不因待选目标改变而静默重定向；目标缺失或不可用时禁用。缺失动作回调禁用并显示原因，用 aria-describedby 关联；受控 Sheet/Drawer 的 onClose 是必填，宿主始终提供并处理。
 
 `DataStationBadge` 接收 `state={kind:'connected',name}`（name 为如“02”的站点显示标识）、`{kind:'available',count}` 或 `{kind:'disconnected'}`，以及 `onOpen()`。显示“教学数据站 02 · 已连接 › / 教学数据站 1 台可用 › / 教学数据站 未连接 ›”。非法数量显示未提供，0 为有效零台；入口未接入则禁用并说明。
 
@@ -37,3 +37,12 @@ PO 批准候选 #7；目录「内容与数据」，入口 `/next/components/data
 ## W4 多行操作适配
 
 沿用本页 coss Sheet/RadioGroup/Card/Button、particles 与 Beautiful UI 复用调查；本轮核对固定 Button 的 sm:h-8 默认尺寸，通用操作类补上 `sm:h-auto`（与 `h-auto` 配对），最小高 48px、最小宽 44px。关闭 Sheet 的图标入口仍为 44px。无需新增 prop；设备、连接、禁用与回调语义保持不变。新增 176px 长名称入口，桌面断点也可自然换行。三主题与实际点击/键盘验收由 Supervisor 执行。
+
+## 2026-10-02 P3：受控右侧 Drawer
+
+- 复核 Supervisor registry 快照（579 项）、`p-drawer-12` 与固定 coss Drawer/Sheet。p-drawer-12 在触控宽度用 Drawer、桌面用 Dialog；本次只采用复用同一内容的取舍，宿主显式选择 presentation，不复制媒体查询或自行按屏宽切换。
+- 新增 `presentation="drawer"`，与默认 sheet 同样必须提供 open/onClose；inline/sheet 分支保持原 DOM 与行为。Drawer `position="right"`，复用同一个 DataStationPanel、标题说明、选择与连接状态；不新建组件或业务状态。
+- coss/Base UI 提供焦点约束、初始焦点、关闭后返回之前聚焦元素、Escape/遮罩/滑动关闭请求；onOpenChange(false) 映射 onClose，open 必须由宿主回传。中文关闭按钮通过 DrawerClose + Prism Button 组合，44×44px，面板返回也仅发 onClose。
+- 保留 Drawer 固定外观，仅设置面板宽度；portalProps 的局部 reduced-motion 选择器关闭遮罩与滚动控件过渡，popup 自身关闭过渡。固定版本类型支持上述契约，但实际触屏手势、焦点圈定/恢复尚待浏览器核验，不声称已经验收。
+
+检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。

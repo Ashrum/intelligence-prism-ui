@@ -37,7 +37,8 @@ export type RecordListProps = {
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
   summary?: RecordListStatus; state?: RecordListState
   /** Host supplies current page and visible page numbers after its query/projection. No inferred totals. */
-  pagination?: { page: number; pages: readonly number[]; label?: string }
+  pagination?: { page: number; pages: readonly number[]; label?: string; pageSize?: { value: number; options: readonly number[]; label?: string } }
+  onPageSizeChange?: (size: number) => void
   onSearch?: (query: string) => void; onFilterChange?: (id: string, value: string) => void
   onRowAction?: (rowId: string, actionId: string) => void; onRowMenu?: (rowId: string, actionId: string) => void
   onPageChange?: (page: number) => void; onPrimary?: () => void; onRetry?: () => void; onClearFilters?: () => void
@@ -51,7 +52,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
-  onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
+  onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPageSizeChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
   const id = useId()
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
@@ -126,6 +127,14 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       </ul>
       {pagination && <div className="space-y-2">
         {pagination.label && <p className="break-words text-ui-hint">{pagination.label}</p>}
+        {pagination.pageSize && <div className="grid min-w-0 max-w-full gap-2" data-record-page-size>
+          <label htmlFor={`${id}-page-size`} className="break-words text-ui-action">{pagination.pageSize.label || "每页条数"}</label>
+          <Select value={pagination.pageSize.value} items={pagination.pageSize.options.map(value => ({ value, label: `${value} 条` }))}
+            disabled={!onPageSizeChange} onValueChange={value => { if (value !== null && pagination.pageSize?.options.includes(value) && Number.isSafeInteger(value) && value > 0) onPageSizeChange?.(value) }}>
+            <SelectTrigger id={`${id}-page-size`} className="h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal"><SelectValue /></SelectTrigger>
+            <SelectPopup>{pagination.pageSize.options.map(value => <SelectItem key={value} value={value} className="min-h-11 sm:min-h-11 whitespace-normal break-words">{value} 条</SelectItem>)}</SelectPopup>
+          </Select>
+        </div>}
         <Pagination aria-label={`${title}分页`}><PaginationContent className="flex-wrap">
           {pagination.pages.map(page => <PaginationItem key={page}><PaginationLink isActive={page === pagination.page} aria-label={`第 ${page} 页`}
             render={<Button variant={page === pagination.page ? "outline" : "ghost"} className={targetClass} disabled={!onPageChange} />}

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { DataStation, DataStationBadge, type DataStationProps, type DataStationBadgeProps } from "../data-station"
+import { Button } from "../button"
 import { DemoSection, Feedback } from "../demo-parts"
 
 export const dataStationBase: DataStationProps = {
@@ -35,6 +36,7 @@ function StationFixture({ props }: { props: DataStationProps }) {
 }
 const badges: DataStationBadgeProps["state"][] = [{ kind: "connected", name: "02" }, { kind: "available", count: 1 }, { kind: "disconnected" }]
 export function DataStationDemo() {
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const [open, setOpen] = useState(false)
   const [sheetFixture, setSheetFixture] = useState(dataStationBase)
   const [selectedId, setSelectedId] = useState("02")
@@ -45,6 +47,11 @@ export function DataStationDemo() {
       <DataStation {...sheetFixture} presentation="sheet" open={open} selectedId={selectedId}
         onClose={() => setOpen(false)} onSelect={setSelectedId} onDisconnect={id => setFeedback(`已发出断开请求：${id}；等待调用方回执`)} onConnect={id => setFeedback(`已发出连接请求：${id}；等待调用方回执`)} />
       <Feedback>{feedback}</Feedback>
+    </DemoSection>
+    <DemoSection id="station-drawer" title="触控端 · 右侧 Drawer" description="宿主明确选择 drawer；Esc、遮罩、关闭与返回均请求关闭，连接状态不变。">
+      <Button variant="outline" className="h-auto sm:h-auto min-h-11 whitespace-normal" onClick={() => setDrawerOpen(true)}>打开触控抽屉</Button>
+      <DataStation {...dataStationBase} presentation="drawer" open={drawerOpen} onClose={() => setDrawerOpen(false)} selectedId={selectedId} onSelect={setSelectedId}
+        onConnect={id => setFeedback(`已发出连接请求：${id}；等待调用方回执`)} />
     </DemoSection>
     {dataStationFixtures.map(({ label, props }) => <DemoSection key={label} title={label}><div className="max-w-xl"><StationFixture props={props} /></div></DemoSection>)}
     <DemoSection title="选择其他可用数据站" description="单选只改变待连接目标；主按钮随推荐与所选目标变化。">

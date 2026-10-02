@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DemoSection } from "../demo-parts"
+import { DemoSection, Feedback } from "../demo-parts"
 import { Button } from "../button"
 import { Stepper, type StepperState, type StepperStep } from "../stepper"
 
@@ -19,10 +19,17 @@ const longSteps = stepperFixtures.pending.map((step, index) => ({ ...step, label
 export function StepperDemo() {
   const [position, setPosition] = useState<"first" | "third" | "fifth">("third")
   const [narrow, setNarrow] = useState(false)
+  const [intent, setIntent] = useState("尚未请求跳步")
   return <>
     <DemoSection title="六步批阅流程" description="步骤只读；下方按钮载入不同阶段的固定事实。窄容器保留全部步骤，可聚焦后用方向键横向滚动。">
       <div className="mb-4 flex flex-wrap gap-2">{(["first", "third", "fifth"] as const).map((key, index) => <Button key={key} variant={position === key ? "secondary" : "outline"} aria-pressed={position === key} onClick={() => setPosition(key)}>当前第 {[1, 3, 5][index]} 步</Button>)}<Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><Stepper steps={stepperFixtures[position]} aria-label="批阅任务阶段" /></div>
+    </DemoSection>
+    <DemoSection id="stepper-select" title="宿主允许的步骤导航" description="点击只发送步骤 ID，当前步骤不提供按钮；状态与可选资格分别由宿主提供。">
+      <div className="grid gap-6">{(["horizontal", "compact", "vertical"] as const).map(layout => <Stepper key={layout}
+        orientation={layout === "vertical" ? "vertical" : "horizontal"} compact={layout === "compact"}
+        aria-label={`${layout} 可选步骤`} steps={stepperFixtures.pending.map(step => ({ ...step, selectable: ["stage-1", "stage-2", "stage-3"].includes(step.id), selectLabel: `返回：${step.label}` }))}
+        onStepSelect={id => setIntent(`请求返回 ${id}；等待宿主更新当前位置`)} />)}</div><Feedback>{intent}</Feedback>
     </DemoSection>
     <DemoSection title="准备资料 · 待完成" description="扫描已开始，但资料尚未确认；第二步不显示完成勾，也不会被推定为当前步。"><Stepper steps={stepperFixtures.pending} /></DemoSection>
     <DemoSection title="批阅受阻" description="S46：当前第 5 步 AI 批阅受阻；当前位置与受阻状态由调用方分别提供。"><Stepper steps={stepperFixtures.blocked} currentStepId="stage-5" /></DemoSection>
@@ -30,7 +37,7 @@ export function StepperDemo() {
     <DemoSection title="三主题 · 320px · 长中文标签" description="当前步骤自动进入局部视野；横向滚动可查看之前的待完成步骤和后续阶段。">
       <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <h3 className="mb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</h3>
-        <Stepper steps={longSteps} aria-label={`${theme} 长中文批阅阶段`} />
+        <Stepper onStepSelect={id => setIntent(`请求前往 ${id}`)} steps={longSteps.map(step => ({ ...step, selectable: true }))} aria-label={`${theme} 长中文批阅阶段`} />
         <p className="mt-4 text-read-body">核对公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </div>)}</div>
     </DemoSection>

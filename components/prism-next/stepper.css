@@ -17,3 +17,6 @@
 .prism-stepper[data-compact="true"] .prism-stepper-content { flex-direction: row; align-items: center; width: auto; max-width: 16rem; gap: .5rem; }
 .prism-stepper[data-compact="true"] .prism-stepper-connector { display: none; }
 .prism-stepper[data-compact="true"] .prism-stepper-item:last-child { flex: 0 0 auto; padding-right: 0; }
+
+/* Interactive targets retain 44px height in vertical and compact layouts too. */
+.prism-stepper .prism-stepper-content:is(button) { min-height: 2.75rem; min-width: 2.75rem; }

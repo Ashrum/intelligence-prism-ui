@@ -1,11 +1,12 @@
 "use client"
 
 import { useId, type ReactNode } from "react"
-import { ArrowLeftRight, ChevronRight, Monitor, Printer } from "lucide-react"
+import { ArrowLeftRight, ChevronRight, Monitor, Printer, X } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Empty } from "@/components/coss/empty"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Sheet, SheetPopup, SheetHeader, SheetTitle, SheetDescription, SheetPanel } from "@/components/coss/sheet"
+import { Drawer, DrawerPopup, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerClose } from "@/components/coss/drawer"
 import { Skeleton } from "@/components/coss/skeleton"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
@@ -28,7 +29,7 @@ export type DataStationProps = {
   refreshDescription?: string
   onSelect?: (stationId: string) => void; onConnect?: (stationId: string) => void
   onDisconnect?: (stationId: string) => void; onRetry?: (intent: DataStationRetryIntent) => void
-} & ({ presentation?: "sheet"; open: boolean; onClose: () => void } | { presentation: "inline"; open?: never; onClose?: () => void })
+} & ({ presentation?: "sheet" | "drawer"; open: boolean; onClose: () => void } | { presentation: "inline"; open?: never; onClose?: () => void })
 export type DataStationBadgeProps = {
   state: { kind: "connected"; name: string } | { kind: "available"; count: number } | { kind: "disconnected" }
   onOpen?: () => void
@@ -62,6 +63,14 @@ export function DataStationBadge({ state, onOpen }: DataStationBadgeProps) {
 export function DataStation(props: DataStationProps) {
   const description = `选择并连接本次批阅使用的数据站${props.refreshDescription?.trim() ? ` · ${props.refreshDescription}` : ""}`
   if (props.presentation === "inline") return <DataStationPanel {...props} description={description} />
+  if (props.presentation === "drawer") return <Drawer position="right" open={props.open} onOpenChange={open => { if (!open) props.onClose() }}>
+    <DrawerPopup className="w-full max-w-xl motion-reduce:transition-none"
+      portalProps={{ className: "motion-reduce:[&_[data-slot=drawer-backdrop]]:transition-none motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none" }}>
+      <DrawerHeader className="pr-16"><DrawerTitle>教学数据站</DrawerTitle><DrawerDescription>{description}</DrawerDescription></DrawerHeader>
+      <DrawerPanel><DataStationPanel {...props} description={description} hideHeading /></DrawerPanel>
+      <DrawerClose aria-label="关闭教学数据站" render={<Button variant="ghost" className="absolute end-2 top-2 min-h-11 min-w-11" />}><X aria-hidden="true" /></DrawerClose>
+    </DrawerPopup>
+  </Drawer>
   return <Sheet open={props.open} onOpenChange={open => { if (!open) props.onClose() }}>
     <SheetPopup side="right" className="w-full max-w-xl motion-reduce:transition-none" showCloseButton
       closeProps={{ "aria-label": "关闭教学数据站", className: "absolute end-2 top-2 min-h-11 min-w-11" }}>

@@ -150,7 +150,7 @@ test('loading/empty/error replace stale data and error retry stays an intent', (
 test('shared semantic badges, table scope and keyboard-scroll region preserve fact structure', () => {
   const out = capture({ maxHeight: 280 });
   const table = out.nodes.find(n => n.type?.name === 'Table');
-  assert.equal(table.props.render.type.name, 'ScrollArea'); assert.equal(table.props.render.props.scrollFade, true); assert.equal(table.props.variant, 'card');
+  assert.equal(table.props.render.type.name, 'ScrollArea'); assert.equal(table.props.render.props.scrollFade, undefined); assert.equal(table.props.variant, 'card');
   assert.match(out.html, /data-slot="scroll-area-viewport"/);
   assert.equal(capture({ maxHeight: undefined }).nodes.find(n => n.type?.name === 'Table').props.render.props.tabIndex, 0); assert.equal(table.props.render.props.style.maxHeight, 280);
   assert.match(out.html, /role="region"/); assert.match(out.html, /aria-label="试卷队列表，可横向滚动"/);

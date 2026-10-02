@@ -6,12 +6,13 @@ import { cn } from "@/lib/utils"
 import "./stepper.css"
 
 export type StepperState = "done" | "current" | "upcoming" | "pending" | "blocked" | "error"
-export type StepperStep = { id: string; label: string; state: StepperState; description?: string }
+export type StepperStep = { id: string; label: string; state: StepperState; description?: string; selectable?: boolean; selectLabel?: string }
 export type StepperProps = {
   /** Complete ordered list, normally 3–8 steps; IDs must be unique. */
   steps: readonly StepperStep[]
   /** Overrides legacy state=current for summary, aria-current and reveal; unknown IDs stay unknown. */
   currentStepId?: string
+  onStepSelect?: (id: string) => void
   compact?: boolean
   orientation?: "horizontal" | "vertical"
   "aria-label"?: string
@@ -28,7 +29,7 @@ function markerSurface(state: StepperState, current: boolean) {
 }
 
 /** Position is a supplied fact, never inferred from completion or list order. */
-export function Stepper({ steps, currentStepId, orientation = "horizontal", compact = false, "aria-label": label = "流程阶段", className }: StepperProps) {
+export function Stepper({ steps, currentStepId, onStepSelect, orientation = "horizontal", compact = false, "aria-label": label = "流程阶段", className }: StepperProps) {
   const isCompact = compact && orientation === "horizontal"
   const viewport = useRef<HTMLDivElement>(null)
   const list = useRef<HTMLOListElement>(null)
@@ -64,21 +65,28 @@ export function Stepper({ steps, currentStepId, orientation = "horizontal", comp
           const special = blocked || step.state === "pending"
           const stateLabel = labels[step.state === "current" ? "upcoming" : step.state]
           const status = isCurrent ? `当前阶段${step.state === "current" || step.state === "upcoming" ? "" : ` · ${stateLabel}`}` : stateLabel
+          const selectable = !!onStepSelect && step.selectable === true && !isCurrent
+          const Content = selectable ? "button" : "div"
+          const Details = selectable ? "span" : "div"
+          const Text = selectable ? "span" : "p"
           return <li key={step.id} className="prism-stepper-item" data-step-state={step.state} aria-current={isCurrent ? "step" : undefined}>
-            <div className="prism-stepper-content" data-step-content>
+            <Content className={cn("prism-stepper-content", selectable && "min-h-11 min-w-11 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring")}
+              data-step-content type={selectable ? "button" : undefined}
+              aria-label={selectable ? step.selectLabel?.trim() || `前往：${step.label}` : undefined}
+              onClick={selectable ? () => onStepSelect?.(step.id) : undefined}>
               <span data-step-marker aria-hidden="true" className={cn("flex size-8 shrink-0 items-center justify-center rounded-full border text-ui-action", markerSurface(step.state, isCurrent))}>
                 {step.state === "done" ? <Check className="size-4" /> : blocked ? <CircleAlert className="size-4" /> : index + 1}
               </span>
-              <div className="min-w-0 space-y-1">
-                <p className={cn("break-words", isCurrent ? "text-item-title" : "text-ui-body")}>{step.label}</p>
+              <Details className="min-w-0 space-y-1">
+                <Text className={cn("break-words", selectable && "block", isCurrent ? "text-item-title" : "text-ui-body")}>{step.label}</Text>
                 <span className="sr-only">第 {index + 1} 步，{status}</span>
-                {special && <p aria-hidden="true" className="text-ui-hint">{status}</p>}
+                {special && <Text aria-hidden="true" className={cn("text-ui-hint", selectable && "block")}>{status}</Text>}
                 {step.description && step.description !== stateLabel && <>
-                  <p aria-hidden="true" title={step.description} className="line-clamp-2 break-words text-ui-hint">{step.description}</p>
+                  <Text aria-hidden="true" title={step.description} className="line-clamp-2 break-words text-ui-hint">{step.description}</Text>
                   <span className="sr-only">{step.description}</span>
                 </>}
-              </div>
-            </div>
+              </Details>
+            </Content>
             {index < steps.length - 1 && <div className={cn("prism-stepper-connector", step.state === "done" ? "bg-info-foreground" : "bg-border")} aria-hidden="true" data-complete={step.state === "done"} />}
           </li>
         })}
