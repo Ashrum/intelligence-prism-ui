@@ -2406,6 +2406,7 @@ import { Badge } from "@/components/prism-next/badge"
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
 | `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
+| `QuestionContent.optionExtra` | Q6 授权增加的可选 `(optionId: string) => ReactNode`；按顶层选项顺序调用，内容接在该选项正文之后。省略或传 undefined 时既有 DOM 完全不变；传入时选项使用字母／正文／附加内容的网格布局，宿主负责统计、名单、动作及窄容器适配；不影响小问内选项，不推断正确性或执行状态 |
 | `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
 | `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
 | `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |
@@ -2747,3 +2748,9 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 
 `RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress 和共享 AgentStatus；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。
+
+## QuestionContent / QuestionSolution · 可选正文字号（Q7）
+
+2026-10-02 PO 对题目与知识点预览框架明确授权：两组件新增 `textSize?: "read" | "ui"`，默认 `"read"`。省略、显式 `undefined` 或 `"read"` 均保持原始 DOM（含类名、顺序、缺失值提示）完全一致；`"ui"` 使用 `text-ui-body`（14px / 20px），小问类型／分值与答案缺失提示改用 `text-ui-meta`（12px / 18px）及既有 muted 色。公式继承正文并沿用公共数学光学校准，不加局部缩放。属性不改变题面、答案、宿主事实或交互，不自动按宽度切换；组件不重写宿主 ReactNode 内自带的字号。
+
+本轮只授权这两个公开 API；`QuestionDetails` / `QuestionCard` 不增加透传属性。预览宿主以现有 coss Tabs、QuestionHeading、QuestionContent、QuestionSolution 组合，间距与 744px 内容最大宽度留在宿主。默认输出以修改前捕获的 20 题及缺失值夹具 SHA-256 验证。三栏预览框架依据章程 2026-10-02 预览框架修订，由宿主显式传入 `textSize="ui"`，见[《题目呈现章程》第七条](question-presentation-charter.md#第七条-视觉)；间距取两侧栏同一组间距值，组件不自行判断场景。其他场景仍按该款 16/28，其他调用方仍默认阅读字号；Foundations 保持不变。
