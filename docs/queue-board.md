@@ -47,3 +47,13 @@ PO 批准候选 #8；目录「内容与数据」，入口 `/next/components/queu
 - 核对 `p-scroll-area-4`；maxHeight 存在时 Table 容器改为 ScrollArea（scrollFade、overscrollContain），maxHeight 同步限制内部 viewport；根节点关闭 Table 默认外层横向滚动，双轴滚动统一由 viewport 承担。无 maxHeight 保留原生有名称、tabIndex=0 的横向区域。
 - coss viewport 检测溢出后自动进入 Tab 顺序，原生触屏滚动由 Base UI 保留；viewport/scrollbar 过渡在 reduced-motion 下关闭。区域仍具名称，表头 scope 和四列结构不变。
 - DOM/外观变化：框架、默认变体筛选组、card 表格以及限高时的 viewport/content/双轴 scrollbar。组件页已有三主题限高长文公式夹具，补充键盘与渐隐说明；实际焦点、双轴触屏滚动与三主题视觉由 Supervisor 验收。
+
+## 2026-10-02 P3：排序意图与限高吸顶
+
+- 复核本轮 Supervisor 的 registry 快照（579 项）及 particles `p-table-4`、`p-table-8` 的可排序表头、方向图标、aria-sort；固定 coss Table/Button/ScrollArea 足以组合。不引入 TanStack，不复制客户端排序/分页与选择列。Ant Table sorter/sticky 仅作能力对照，未复制其代码。
+- 可选 `sort?: QueueBoardSort | null`，其中 `QueueBoardSort={column:"name"|"status",direction:"asc"|"desc"}`；`onSortChange?: (next: QueueBoardSort|null)=>void`。有回调才出现两个原生 Button 表头；同列循环 asc → desc → null，切另一列从 asc 开始。方向图标、th 的 aria-sort 和操作名称跟随外部 sort。
+- 组件不重排行、不更新 sort；宿主处理排序后回传 rows/sort。缺回调时表头保持文字，可用外部 sort 标明当前顺序。排序夹具由 demo 宿主排序固定数据；默认不传 sort/回调保持旧 DOM。
+- maxHeight 模式的 thead 在同一个 ScrollArea viewport 内 `sticky top-0`，保留表头正常流占位；用既有 bg-background 提供不透明主题表面，避免滚动行透出，不新增色值或令牌。去掉该模式 scrollFade：顶部遮罩会同时淡出吸顶表头。无 maxHeight 保留旧表头和横向滚动区域。
+- 两个排序按钮至少 44px，h-auto + sm:h-auto，文案可换行，coss 自带焦点；reduced-motion 下无按钮过渡。三主题 320px 长文公式夹具开启排序。没有多选或批量操作。
+
+检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。

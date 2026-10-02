@@ -34,7 +34,7 @@ const steps: StepperStep[] = [
 | `aria-label` | 默认“流程阶段”，多个流程同时出现时由调用方提供不同名称。 |
 | `className` | 宿主布局类。不可重绘颜色、字号、圆角或阴影。 |
 
-没有 `onStepSelect`：任务没有明确跳转需要，故不提供点击导航。所有步骤均只读，示例外部按钮仅载入固定状态夹具，不代表执行成功。
+默认步骤只读；P3 可选 onStepSelect/selectable 契约见下文。示例外部按钮仅载入固定状态夹具，不代表执行成功。
 
 当前位置优先来自 `currentStepId`，省略时来自 `state=current`；无匹配位置时显示“共 N 步 · 未提供当前阶段”，不推定最后一步或受阻步为当前。显式 ID 覆盖后，其他遗留 current 按后续阶段呈现，不产生第二个当前位置。S46 使用 `currentStepId="stage-5"` 与第五步 `state="blocked"`，显示“当前阶段 · 受阻”及警示图标；error 同理，待完成等独立事实也予以保留。
 
@@ -43,7 +43,7 @@ const steps: StepperStep[] = [
 ## 布局、无障碍与减少动效
 
 - `nav` + `ol/li`；只有统一解析出的当前位置带 `aria-current="step"`。每步提供序号和已完成/当前阶段/后续阶段/待完成/受阻的屏幕阅读器文本；装饰序号、图标与重复可见状态从辅助树隐藏。
-- 顶部摘要默认常驻显示当前序号、总步数与标签。水平列表在自身容器滚动，标签换行且不缩字；说明最多两行省略，title 与独立 SR 文本保留完整内容。滚动区可通过 Tab 聚焦，再用原生方向键滚动；步骤本身不占 Tab 顺序。
+- 顶部摘要默认常驻显示当前序号、总步数与标签。水平列表在自身容器滚动，标签换行且不缩字；说明最多两行省略，title 与独立 SR 文本保留完整内容。滚动区可通过 Tab 聚焦，再用原生方向键滚动；未启用选择的步骤不占 Tab 顺序。
 - 首次挂载、currentStepId/状态/标签变化及 ResizeObserver 尺寸变化时，仅横向调整该区域以显露当前步骤，不调用 scrollIntoView、不移动焦点或页面滚动。用户主动滚动不会被持续拉回。
 - 垂直列表及卡片按内容自然撑高，连接线随步骤高度延伸，不自动滚动；无计时器、自动播放或动画，减少动效偏好下亦无动画。
 
@@ -57,3 +57,12 @@ const steps: StepperStep[] = [
 沿用上述 coss（含 particles）/ Beautiful UI 检索与既有 Stepper；本轮补查 particles 索引可访问，registry 与 Beautiful UI stepper 注册文件访问失败，未取得新来源代码。
 
 `compact?: boolean` 默认 false，仅在 horizontal 生效：步骤内标记和内容横排，隐藏装饰连接线，标签区最大 16rem 后换行，所有步骤仍在可聚焦的局部滚动区。compact 水平模式的步骤摘要使用 `sr-only`，仅供读屏，非 compact 模式保持可见。vertical 即使传 compact 仍保持原来的摘要、连接线与布局。compact 变化也重新显露当前步骤；未匹配 currentStepId 仍明确未知。没有新增交互、执行状态、计时器或动效。新增紧凑三主题 320px、长中文、受阻与未知位置示例。
+
+## 2026-10-02 P3：宿主授权的可选步骤
+
+- 延用本页 coss（含 particles）与 Beautiful UI 无同义步骤组件的检索；本轮复核 Supervisor 的 registry 快照（579 项），固定 coss Button/Tabs 均没有“位置事实 + 每步选择资格”契约，因此扩展现有 Stepper，不新增组件。Ant Design Steps onChange、MUI StepButton、Mantine onStepClick 仅为委派中的能力对照，未复制代码或声称重新联网核验。
+- 新增 `onStepSelect?: (id: string) => void`、`StepperStep.selectable?: boolean`、`StepperStep.selectLabel?: string`。只有回调存在、selectable 严格为 true、且不是解析后的当前位置，才用原生 button；不按 done/pending/upcoming 推断资格。currentStepId 优先规则不变，未知位置不补造。
+- 默认可访问名称为“前往：{label}”，宿主可用 selectLabel 提供“返回：{label}”。原生 Enter/Space、可见 focus-visible outline，最小 44×44px；button 内部使用 span，保持有效 HTML。horizontal/compact/vertical 共享资格规则。
+- 仅发送 ID，组件不跳转、不改 state/currentStepId，不自动标记完成。未传回调或未授权时保持旧 div/p DOM；当前步骤始终只读。三布局交互夹具与三主题 320px 长文公式夹具已同步。
+
+检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。

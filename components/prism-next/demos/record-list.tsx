@@ -45,6 +45,7 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
   const [search, setSearch] = useState(initialSearch)
   const [values, setValues] = useState<Record<string, string>>(filtered ? { class: "九年级", status: "待复核" } : {})
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
   const [notice, setNotice] = useState("尚无操作请求。")
   const filters = baseFilters.map(filter => ({ ...filter, value: values[filter.id] ?? "all" }))
   const activeFilters = filters.filter(filter => filter.value !== "all").map(filter => `${filter.label}：${filter.options.find(option => option.value === filter.value)?.label}`)
@@ -55,7 +56,7 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
       : filter.id === "time" ? (index < 10 ? "2026-10-01" : "2026-09-30") === filter.value : row.status?.label === filter.value)))
   const summary = search || activeFilters.length ? { label: `当前条件找到 ${matches.length} 条记录`, tone: "info" as const }
     : tab === "mine" ? recordBase.summary : { label: tab === "processing" ? "系统处理中 3 · 3 个批阅批次正在处理中 · 共 183 份答卷" : tab === "completed" ? "18 个批阅批次已完成 · 12 个已发布" : "全部记录 28 · 当前权限范围内的 28 个持久批阅记录", tone: "info" as const }
-  const pageRows = matches.slice((page - 1) * 5, page * 5).map(row => longContent && row.id === "linear" ? { ...row,
+  const pageRows = matches.slice((page - 1) * pageSize, page * pageSize).map(row => longContent && row.id === "linear" ? { ...row,
     name: "一元二次方程与二次函数综合复习：配方法的完整推导、取等条件与结论核对",
     description: <span>核对最小值与取等条件：<math aria-label="f(x) 等于 x 的平方减二 x 减三"><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>−</mo><mn>3</mn></math></span>,
   } : row)
@@ -67,9 +68,9 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
     </nav>}
     <RecordList {...recordBase} tabs={externalNavigation ? undefined : recordTabs} tab={externalNavigation ? undefined : tab} search={search} filters={filters} activeFilters={activeFilters} rows={pageRows} summary={summary}
       state={matches.length ? { kind: "ready" } : { kind: "search-empty" }}
-      pagination={{ page, pages: Array.from({ length: Math.ceil(matches.length / 5) }, (_, i) => i + 1), label: `第 ${page} 页 · 共 ${matches.length} 条记录` }}
+      pagination={{ page, pageSize: { value: pageSize, options: [5, 10, 20] }, pages: Array.from({ length: Math.ceil(matches.length / pageSize) }, (_, i) => i + 1), label: `第 ${page} 页 · 共 ${matches.length} 条记录` }}
       onTabChange={next => { setTab(next); setPage(1) }} onSearch={next => { setSearch(next); setPage(1) }}
-      onFilterChange={(id, value) => { setValues({ ...values, [id]: value }); setPage(1) }} onClearFilters={() => { setValues({}); setPage(1) }} onPageChange={setPage}
+      onFilterChange={(id, value) => { setValues({ ...values, [id]: value }); setPage(1) }} onClearFilters={() => { setValues({}); setPage(1) }} onPageChange={setPage} onPageSizeChange={size => { setPageSize(size); setPage(1); setNotice(`宿主已改为每页 ${size} 条并回到第 1 页`) }}
       onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
       onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)}
       onPrimary={() => setNotice("已请求开始 AI 批阅，等待调用方导航。")}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useId, useState, type CSSProperties, type ReactNode } from "react"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react"
 import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Empty } from "@/components/coss/empty"
@@ -21,7 +21,10 @@ export type QueueBoardRow = {
   /** A host-classified category ID; the board does not classify business facts. */
   statusId: string; description?: ReactNode; actions: readonly QueueBoardAction[]
 }
+export type QueueBoardSort = { column: "name" | "status"; direction: "asc" | "desc" }
 export type QueueBoardProps = {
+  sort?: QueueBoardSort | null
+  onSortChange?: (next: QueueBoardSort | null) => void
   title?: string; description?: string
   /** Supply 2–6 unique categories. Counts and mutually exclusive classification belong to the host. */
   categories: readonly QueueBoardCategory[]; rows: readonly QueueBoardRow[]
@@ -53,7 +56,7 @@ const actionReason = (action: Omit<QueueBoardAction, "id">, available: boolean) 
 
 /** A fact-only queue view. Only the local filter is stateful; actions never advance a row. */
 export function QueueBoard({ title = "试卷工作区", description = "选择队列后预览或处理具体试卷", categories, rows,
-  filter, defaultFilter = null, onFilterChange, onRowAction, headerAction, onHeaderAction, state = { kind: "ready" }, onRetry, maxHeight }: QueueBoardProps) {
+  filter, defaultFilter = null, onFilterChange, onRowAction, headerAction, onHeaderAction, state = { kind: "ready" }, onRetry, maxHeight, sort, onSortChange }: QueueBoardProps) {
   const id = useId()
   const [localFilter, setLocalFilter] = useState<string | null>(defaultFilter)
   const selected = filter === undefined ? localFilter : filter
@@ -63,6 +66,16 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
     if (filter === undefined) setLocalFilter(next)
     onFilterChange?.(next)
   }
+  const sortHeading = (column: QueueBoardSort["column"], label: string) => {
+    if (!onSortChange) return label
+    const direction = sort?.column === column ? sort.direction : undefined
+    const next = direction === "asc" ? { column, direction: "desc" as const } : direction === "desc" ? null : { column, direction: "asc" as const }
+    const Icon = direction === "asc" ? ChevronUp : direction === "desc" ? ChevronDown : ArrowUpDown
+    return <Button type="button" variant="ghost" className="h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal break-words motion-reduce:transition-none"
+      aria-label={`${label}：${direction === "asc" ? "当前升序，改为降序" : direction === "desc" ? "当前降序，取消排序" : "按升序排序"}`}
+      onClick={() => onSortChange(next)}>{label}<Icon aria-hidden="true" className="shrink-0" /></Button>
+  }
+  const ariaSort = (column: QueueBoardSort["column"]) => sort?.column === column ? sort.direction === "asc" ? "ascending" as const : "descending" as const : onSortChange ? "none" as const : undefined
   return <section aria-labelledby={`${id}-title`} className="@container min-w-0" data-queue-board data-state={state.kind}><Frame>
     <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>
@@ -84,9 +97,9 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
         </ToggleGroup></FramePanel>
         <p role="status" aria-live="polite" className="sr-only">{selected === null ? "全部队列" : `当前队列：${categories.find(category => category.id === selected)?.label || "分类未提供"}`}{!visible.length && ` · ${selected === null ? "暂无试卷" : "该队列暂无试卷"}`}</p>
         {visible.length ? <Table variant="card" className="min-w-[680px] table-fixed" render={maxHeight !== undefined
-          ? <ScrollArea role="region" aria-label="试卷队列表，可横向滚动" scrollFade overscrollContain className="h-auto min-w-0 overflow-hidden! [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none" style={{ maxHeight }} />
+          ? <ScrollArea role="region" aria-label="试卷队列表，可横向滚动" overscrollContain className="h-auto min-w-0 overflow-hidden! [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none" style={{ maxHeight }} />
           : <div role="region" aria-label="试卷队列表，可横向滚动" tabIndex={0} />}>
-          <TableHeader><TableRow><TableHead scope="col" className="w-1/4">学生 / 试卷</TableHead><TableHead scope="col" className="w-36">当前状态</TableHead><TableHead scope="col">状态说明</TableHead><TableHead scope="col" className="w-40">操作</TableHead></TableRow></TableHeader>
+          <TableHeader className={maxHeight !== undefined ? "sticky top-0 z-10 bg-background" : undefined}><TableRow><TableHead scope="col" className="w-1/4" aria-sort={ariaSort("name")}>{sortHeading("name", "学生 / 试卷")}</TableHead><TableHead scope="col" className="w-36" aria-sort={ariaSort("status")}>{sortHeading("status", "当前状态")}</TableHead><TableHead scope="col">状态说明</TableHead><TableHead scope="col" className="w-40">操作</TableHead></TableRow></TableHeader>
           <TableBody>{visible.map(row => {
             const category = categories.find(category => category.id === row.statusId)
             return <TableRow key={row.id}>
