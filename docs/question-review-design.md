@@ -131,7 +131,7 @@
 
 ## Q7 · 题目卡字号、间距与行宽（2026-10-02）
 
-本节取代 Q6 的卡片正文 16/28 与间距描述。PO 原话：“题目的字号和间距，保持与左侧栏和右侧栏一致。”“刻度条保留。”这是 PO 对本预览框架的决定，偏离《题目呈现章程》第七条 3 款“题干与选项 16/28”；章程和 Foundations 本身不改，由 Supervisor 提请 PO 另行裁定是否修订。
+本节取代 Q6 的卡片正文 16/28 与间距描述。PO 原话：“题目的字号和间距，保持与左侧栏和右侧栏一致。”“刻度条保留。”本预览框架依据章程 2026-10-02 预览框架修订执行，见[《题目呈现章程》第七条](question-presentation-charter.md#第七条-视觉)；其他场景仍按该款 16/28，Foundations 保持不变。
 
 - 复用检索：重新读取 Supervisor 缓存 registry 的 `tabs`、`frame`、`p-tabs-10`、`p-frame-1` 与两项 particles 源码，复核固定 coss Tabs、QuestionContent / QuestionSolution / QuestionDetails、现有左右栏。coss 原生页签与语义字号已满足需求，未复制 particle 局部字号；本任务不涉及 Agent 执行，不采用 Beautiful UI，不新增组件条目、依赖或视觉令牌。
 - 唯一公开 API 增补为 QuestionContent / QuestionSolution 的 `textSize?: "read" | "ui"`，默认 read 与修改前 DOM 完全一致。本页明确传 ui；题干、选项、小问、答案／解析、教学定位、档案及作答情况为 ui-body 14/20，次要信息为 ui-meta 12/18 muted。标题仍 item-title 14/20/600；公式沿用公共 `.prism-math` 的 1.125em 光学校准，随正文从 16px 到 14px 比例变化，无局部 font-size／transform。配图中的公式标注也使用 ui 角色，其他 QuestionRecord 默认图像 DOM 不变。
