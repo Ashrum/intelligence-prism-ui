@@ -51,29 +51,51 @@ const seedStudents: [string,string][]=[['0018','张雨桐'],['0020','周可欣']
 const otherNames=['李思远','陈语安','周子墨','林书宁','王予辰','赵嘉宁','孙悦','吴梓涵','郑宇轩','冯诗涵','蒋明哲','沈若曦','韩沐辰','杨书瑶','朱浩然','秦以安','许思齐','何知远','吕清越','施亦辰','张予安','孔嘉禾','曹明轩','严思宁','华子谦','金雨泽','魏安然','陶心怡','姜亦舟','谢知夏']
 export const classStudents=[...seedStudents,...otherNames.map((name,i)=>[String(40+i).padStart(4,'0'),name])].map(([id,name])=>({id:`OLE-ST-${id}`,name,examId:`2026${id}`}))
 export type StudentAnswer = {student: typeof classStudents[number]; score:number; status:'满分'|'部分得分'|'零分'; review:'待复核'|'已确认'; points:{id:string;score:number;reason?:string}[]; lines:string[]; annotation:string; option?:string; answerText?:string}
+// Ability slots are fixed independently of roster order. Zhang is a middle-level student.
+export const abilityOrder = [2,3,5,...Array.from({length:13},(_,i)=>i+6),0,1,4,...Array.from({length:17},(_,i)=>i+19)].map(i=>classStudents[i].id)
+// Fixed seed, bounded local variation; two cross-band swaps on subjective questions.
+// Q03/Q13 intentionally have weak ability association to demonstrate “待改进”.
+const variation=(question:number,rank:number)=>{
+ let x=(Math.imul(question+1803,374761393)^Math.imul(rank+1,668265263))>>>0
+ x=Math.imul(x^(x>>>13),1274126177)>>>0
+ return ((x^(x>>>16))>>>0)/4294967296
+}
+const profiles=Array.from({length:36},(_,rank)=>({rank,scores:[] as number[]}))
+for(const q of reviewQuestions){
+ const [full,partial]=q.distribution, remainder=Math.round(q.rate*q.max*36/100)-full*q.max
+ const pool=[...Array(full).fill(q.max),...Array.from({length:partial},(_,i)=>Math.floor(remainder/partial)+(i<remainder%partial?1:0)),...Array(36-full-partial).fill(0)]
+ const spread=q.number===3||q.number===13?70:q.number===6?20:12
+ const order=profiles.map(row=>({row,key:row.rank+(variation(q.number,row.rank)-.5)*spread})).sort((a,b)=>a.key-b.key||a.row.rank-b.row.rank)
+ if(partial){
+  const high=Array.from({length:10},(_,i)=>i).sort((a,b)=>variation(q.number+40,a)-variation(q.number+40,b))
+  const low=Array.from({length:10},(_,i)=>i+26).sort((a,b)=>variation(q.number+80,a)-variation(q.number+80,b))
+  for(let i=0;i<2;i++)[order[high[i]],order[low[i]]]=[order[low[i]],order[high[i]]]
+ }
+ order.forEach(({row},rank)=>row.scores[q.number-1]=pool[rank])
+}
+// Normalize the generated profiles once to the fixed ability slots; no metric is patched.
+profiles.sort((a,b)=>b.scores.reduce((s,n)=>s+n,0)-a.scores.reduce((s,n)=>s+n,0)||a.rank-b.rank)
 function generateAnswers(q:ReviewQuestion):StudentAnswer[]{
- const [full,partial]=q.distribution
- // Distribute integer points so rounded class score rate agrees with the supplied fact.
- const target=Math.round(q.rate*q.max*36/100), remainder=target-full*q.max
- const partScores=Array.from({length:partial},(_,i)=>Math.floor(remainder/partial)+(i<remainder%partial?1:0))
- if(q.number===17){const idx=partScores.findIndex(v=>v===6);if(idx>=0)[partScores[0],partScores[idx]]=[partScores[idx],partScores[0]]}
+ const scoreFor=(id:string)=>profiles[abilityOrder.indexOf(id)].scores[q.number-1]
+ // Preserve every option histogram, assigning the main distractor to weaker students first.
+ const wrong=classStudents.filter(s=>scoreFor(s.id)<q.max).sort((a,b)=>abilityOrder.indexOf(b.id)-abilityOrder.indexOf(a.id))
+ const incorrectOptions=q.options?.filter(o=>!o.correct).sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label)).flatMap(o=>Array(o.count).fill(o.label))
  return classStudents.map((student,i)=>{
-  // Put the first student in the partial group; preserve 6/12 on Q17.
-  const rank=partial?(i+full)%36:i,score=rank<full?q.max:rank<full+partial?partScores[rank-full]:0
+  const score=scoreFor(student.id)
   let left=score
   const order=q.number===17?[0,2,1]:q.points.map((_,p)=>p)
   const allocated=q.points.map(()=>0)
   for(const p of order){allocated[p]=Math.min(left,q.points[p].max);left-=allocated[p]}
   const points=q.points.map((p,j)=>({id:p.id,score:allocated[j],...(allocated[j]<p.max?{reason:q.number===17&&j===1?'未把点 P(2,1) 代入，并与 a²=b²+c² 联立，焦点坐标缺少推导依据。':`缺少${p.label}的完整依据。`}:{})}))
   const status=score===q.max?'满分':score===0?'零分':'部分得分'
-  const option=q.type==='选择题'?(score===q.max?'A':q.number===1?(i<33?'B':i===33?'C':'D'):['B','C','D'][i%3]):undefined
+  const option=q.type==='选择题'?(score===q.max?'A':incorrectOptions![wrong.findIndex(s=>s.id===student.id)]):undefined
   const answerText=q.type==='填空题'?(score===q.max?q.answer.join(' '):q.number===6?['在 (1,+∞) 上递减','在 R 上递增'][i%2]:['8','12'][i%2]):undefined
   const lines=option?[`选择 ${option}${q.number===1&&option==='A'?'：充分不必要条件。':'。'}`]:answerText?[answerText]:score===q.max?q.answer:score===0?(i%2?['设所求结果为 0。','未继续推导。']:['直接写出结论，未列出条件。']):q.number===17?['由 e=c/a=√3/2，得 c=a√3/2。',i%2?'直接令 a=2，故 c=√3。':'取 c=1，焦点为 (±1,0)。','焦点坐标尚缺少联立求解。']:[q.answer[0],i%2?'据此直接得到结论。':'其余条件未继续检验。']
   return {student,score,status,review:i===1||i===4?'待复核':'已确认',points,lines,annotation:score===q.max?(i%2?'推导完整，结论成立。':'条件使用正确。'):points.filter(p=>p.reason).map(p=>p.reason).join(' '),option,answerText}
  })
 }
 // Capture deterministic per-student facts before deriving aggregate fields.
-for(const q of reviewQuestions) if(q.type==='选择题'&&!q.options) q.options=['A','B','C','D'].map(label=>({label,count:0,correct:label==='A'}))
+for(const q of reviewQuestions) if(q.type==='选择题'&&!q.options) q.options=['A','B','C','D'].map(label=>({label,count:label==='A'?q.distribution[0]:Array.from({length:36-q.distribution[0]},(_,i)=>['B','C','D'][(i+q.distribution[0])%3]).filter(value=>value===label).length,correct:label==='A'}))
 const answerRecords=Object.fromEntries(reviewQuestions.map(q=>[q.id,generateAnswers(q)]))
 export const answersForQuestion=(q:ReviewQuestion):StudentAnswer[]=>answerRecords[q.id]
 export const wholePaperTotals=Object.fromEntries(classStudents.map(s=>[s.id,reviewQuestions.reduce((sum,q)=>sum+answerRecords[q.id].find(a=>a.student.id===s.id)!.score,0)]))

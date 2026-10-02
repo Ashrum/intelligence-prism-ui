@@ -4,10 +4,13 @@ import { useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode, t
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
 import { clampPaperZoom, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
+// Measurements may be absent while a pane is hidden or content is not laid out.
+const positiveSize=(value:number,fallback:number)=>Number.isFinite(value)&&value>0?value:fallback
+
 export type QuestionPaper = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
 function MeasuredContent({children,onHeight,percent}:{children:ReactNode;onHeight:(n:number)=>void;percent:number}){
  const ref=useRef<HTMLDivElement>(null)
- useLayoutEffect(()=>{const node=ref.current;if(!node)return;const measure=()=>onHeight(node.offsetHeight);measure();const observer=new ResizeObserver(measure);observer.observe(node);return()=>observer.disconnect()},[onHeight])
+ useLayoutEffect(()=>{const node=ref.current;if(!node)return;const measure=()=>onHeight(positiveSize(node.offsetHeight,1));measure();const observer=new ResizeObserver(measure);observer.observe(node);return()=>observer.disconnect()},[onHeight])
  return <div ref={ref} data-agent-preview data-prism-theme="light" className="shrink-0 bg-background text-foreground" style={{width:794,transform:`scale(${percent/100})`,transformOrigin:'top left'}}>{children}</div>
 }
 // Review-host composition only. The shared viewer's public API remains unchanged.
@@ -41,7 +44,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     const node = viewportRef.current
     if (!node) return
     const measure = () => {
-      const size = { width: Math.max(1, node.clientWidth - 16 - 56), height: Math.max(1, node.clientHeight - topInset - 8) }
+      const size = { width: positiveSize(node.clientWidth - 16 - 56,1), height: positiveSize(node.clientHeight - topInset - 8,1) }
       setViewport(size); onViewport(size)
     }
     const handle = (event: WheelEvent) => wheel.current(event)
@@ -118,12 +121,12 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     if ((event.target as HTMLElement).hasPointerCapture?.(event.pointerId)) (event.target as HTMLElement).releasePointerCapture(event.pointerId)
   }
   const layouts = pages.map(page => {
-    const source={width:page.width,height:contentHeights[page.id]??page.height}
+    const source={width:positiveSize(page.width,794),height:positiveSize(contentHeights[page.id]??page.height,positiveSize(page.height,1))}
     const rotation = rotations[page.id] ?? 0, dimensions = rotatedPaperDimensions(source, rotation)
     const percent = paperZoomPercent(zoom, viewport, dimensions)
     return { source, rotation, dimensions, percent }
   })
-  const columnWidth = Math.max(...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
+  const columnWidth = Math.max(0,...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
   return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="题目与学生作答连续画布" className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
     <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {pages.map((page, index) => {
