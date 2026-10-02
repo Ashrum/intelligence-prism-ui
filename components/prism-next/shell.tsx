@@ -40,12 +40,13 @@ function Navigation() {
       </SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>
+      <SidebarGroup><SidebarGroupLabel>设计评审</SidebarGroupLabel><SidebarMenu>{link("/next/reviews/paper-review","试卷预览框架 · 设计稿")}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>{receptionPage ? "应用页面" : "应用示例"}</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}{link("/next/use-cases/workspace-app-bar","Workspace 顶部区域")}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>
 }
 
-function ThemePicker() {
+export function ThemePicker() {
   const {theme,setTheme}=useTheme()
   const [mounted,setMounted]=useState(false)
   useEffect(()=>setMounted(true),[])
@@ -59,7 +60,7 @@ function ThemePicker() {
 
 export function Shell({children}:{children:React.ReactNode}) {
   const pathname=usePathname()
-  if(["/next/skeletons/workbench", "/next/skeletons/agent", "/next/use-cases/parsing"].includes(pathname)) return <>{children}</>
+  if(["/next/skeletons/workbench", "/next/skeletons/agent", "/next/use-cases/parsing", "/next/reviews/paper-review"].includes(pathname)) return <>{children}</>
   return <div className="prism-root"><a className="prism-skip" href="#prism-main">跳到主要内容</a>
     <SidebarProvider style={{"--sidebar-width":"15rem"} as React.CSSProperties}>
       <Navigation/>

@@ -1,0 +1,41 @@
+.d1-review { height:100dvh; overflow:hidden; display:grid; grid-template-rows:64px minmax(0,1fr); }
+.d1-controls { overflow-x:auto; white-space:nowrap; }
+.d1-stage { position:relative; min-height:0; overflow:hidden; display:flex; justify-content:center; align-items:flex-start; }
+.d1-frame { position:relative; flex-shrink:0; width:100%; height:min(100%,900px); display:flex; flex-direction:column; overflow:hidden; transform-origin:top center; container-type:inline-size; }
+.d1-topbar { min-height:56px; height:56px; flex-shrink:0; }
+.d1-columns { min-height:0; flex:1; display:grid; grid-template-columns:232px minmax(0,1fr) 380px; }
+.d1-rail { display:grid; grid-template-rows:auto minmax(0,1fr) auto; }
+.d1-inspector { display:grid; grid-template-rows:minmax(0,1fr) auto; }
+.d1-canvas { min-width:0; min-height:0; display:grid; grid-template-rows:minmax(0,1fr) auto; overflow:hidden; }
+.d1-mobile-nav { display:none; }
+/* Layout-only bridge for the existing canvas DOM; no public API changes. */
+.d1-paper-host .paper-preview,
+.d1-paper-host .paper-preview > div,
+.d1-paper-host .paper-preview > div > div { height:100%; min-height:0; }
+.d1-paper-host [aria-label="页面与缩放"],
+.d1-paper-host [aria-label="答题区域"] { display:none; }
+.d1-paper-host .paper-preview > div > div > [data-slot="card"] { display:contents; }
+.d1-paper-host .paper-preview-viewport { display:flex; height:100%; min-height:0; overscroll-behavior:contain; }
+.d1-paper-host [data-paper-size] { isolation:isolate; flex-shrink:0; margin-block:auto; }
+.d1-paper-host [data-region] > button > span { visibility:hidden; }
+.d1-paper-host [data-region] > button { min-height:44px; }
+.d1-tools { gap:2px; }
+@container (min-width:1800px) { .d1-columns { grid-template-columns:264px minmax(0,1fr) 420px; } }
+@container (max-width:1250px) { .d1-student-meta { display:none; } .d1-topbar { gap:8px; } }
+@container (max-width:1099px) {
+  .d1-mobile-nav { display:flex; flex-shrink:0; }
+  .d1-columns { display:block; position:relative; }
+  .d1-columns > * { height:100%; }
+  .d1-frame:not([data-mobile-pane="rail"]) .d1-rail,
+  .d1-frame:not([data-mobile-pane="canvas"]) .d1-canvas,
+  .d1-frame:not([data-mobile-pane="inspector"]) .d1-inspector { display:none; }
+  .d1-inspector { max-width:600px; margin-inline:auto; }
+  .d1-return-label,.d1-student-label { display:none; }
+}
+@container (max-width:650px) {
+  .d1-topbar { overflow-x:auto; padding-inline:8px; }
+  .d1-total { gap:8px; }
+  .d1-total > :first-child { display:none; }
+  .d1-tools { gap:0; }
+  .d1-tool-dock { padding:8px; }
+}
