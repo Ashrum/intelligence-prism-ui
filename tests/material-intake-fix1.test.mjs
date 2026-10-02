@@ -117,3 +117,34 @@ test('receiving page announcements have no busy ancestor and busy marks remain o
     assert.equal(out.nodes.find(n => n.props['data-material-intake'] !== undefined).props['aria-busy'], undefined);
   }
 });
+
+test('P1 rejection list wraps host reasons and dismiss only emits intent',()=>{
+  reset(); let dismissed=0; const props={rejections:[{name:'很长的文件名.zip',reason:'文件类型不符'},{name:'资料.pdf',reason:'文件大小超限'}],onDismissRejections:()=>dismissed++};
+  const out=capture(props);assert.match(out.html,/role="alert"/);assert.match(out.html,/很长的文件名.zip · 文件类型不符/);assert.match(out.html,/资料.pdf · 文件大小超限/);
+  assert.ok(out.nodes.some(n=>n.type==='li'&&n.props.className.includes('[overflow-wrap:anywhere]')));
+  const dismiss=out.nodes.find(n=>n.props.children==='知道了');assert.match(dismiss.props.className,/min-h-12/);dismiss.props.onClick();assert.equal(dismissed,1);assert.match(capture(props).html,/很长的文件名.zip/);
+  assert.doesNotMatch(capture({rejections:props.rejections}).html,/知道了/);
+});
+test('P1 drag metadata rejects known mismatches/disabled selections and accepts unknown or mixed types',()=>{
+  for(const [items,accept,state] of [
+    [[{kind:'file',type:'application/zip'}],'image/*,application/pdf','reject'],
+    [[{kind:'file',type:'image/png'}],'image/*','accept'],
+    [[{kind:'file',type:''}],'image/*','accept'],
+    [[{kind:'file',type:'application/zip'}],'.pdf','accept'],
+    [[{kind:'file',type:'application/zip'},{kind:'file',type:'image/png'}],'image/*','accept'],
+  ]){ reset();const props={limits:{...base.limits,accept}}, e=event();e.dataTransfer.items=items;capture(props).drop.props.onDragOver(e);const out=capture(props);assert.equal(out.drop.props['data-drop-state'],state);if(state==='reject')assert.match(out.html,/不能接收：文件类型不符/);out.drop.props.onDrop(event());assert.equal(capture(props).drop.props['data-drop-state'],undefined); }
+  reset();const props={selectionDisabledReason:'请先核对原结果'};capture(props).drop.props.onDragOver(event());assert.equal(capture(props).drop.props['data-drop-state'],'reject');assert.match(capture(props).html,/不能接收：请先核对原结果/);
+});
+test('P1 paste and camera share selection gates, reset input and never imply upload',()=>{
+  reset();const calls=[],files=[{name:'相机.jpg',type:'image/jpeg'}],props={allowPaste:true,cameraCapture:true,onFilesSelected:f=>calls.push(f)};
+  const out=capture(props),root=out.nodes.find(n=>n.props['data-material-intake']!==undefined),camera=out.nodes.find(n=>n.props.capture==='environment');
+  assert.equal(camera.props.accept,'image/*');assert.match(out.html,/也可粘贴图片/);
+  let clicked=0;camera.props.ref.current={click(){clicked++}};out.nodes.find(n=>n.props.children==='拍照').props.onClick();assert.equal(clicked,1);
+  const change={currentTarget:{files,value:'fake'}};camera.props.onChange(change);assert.equal(change.currentTarget.value,'');
+  root.props.onPaste({clipboardData:{files},preventDefault(){},stopPropagation(){}});assert.deepEqual(calls,[files,files]);
+  root.props.onPaste({clipboardData:{files:[]},preventDefault(){assert.fail('text paste prevented')},stopPropagation(){}});
+  const blocked=capture({...props,selectionDisabledReason:'不可选择'});blocked.nodes.find(n=>n.props['data-material-intake']!==undefined).props.onPaste({clipboardData:{files},preventDefault(){},stopPropagation(){}});blocked.nodes.find(n=>n.props.capture).props.onChange(change);assert.equal(calls.length,2);
+  for(const kind of ['loading','error'])capture({...props,state:{kind,reason:'失败'}}).nodes.find(n=>n.props['data-material-intake']!==undefined).props.onPaste({clipboardData:{files},preventDefault(){},stopPropagation(){}});
+  assert.equal(calls.length,2);assert.doesNotMatch(out.html,/已上传/);
+  assert.doesNotMatch(capture().html,/capture=|也可粘贴图片|>拍照</);assert.equal(capture().nodes.find(n=>n.props['data-material-intake']!==undefined).props.onPaste,undefined);
+});

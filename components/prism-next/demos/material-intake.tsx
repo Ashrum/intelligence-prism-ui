@@ -39,6 +39,7 @@ export const materialIntakeFixtures: { label: string; props: MaterialIntakeProps
 function IntakeFixture({ props, onCancel }: { props: MaterialIntakeProps; onCancel?: () => void }) {
   const [feedback, setFeedback] = useState("尚未发出操作请求")
   const [local, setLocal] = useState<AgentFileItem[]>([])
+  const [rejections, setRejections] = useState(props.rejections)
   const select = (files: File[]) => {
     // Host-side metadata validation only; no file reads, uploads or reception transition.
     const newItems = files.map((file, index): AgentFileItem => {
@@ -48,10 +49,11 @@ function IntakeFixture({ props, onCancel }: { props: MaterialIntakeProps; onCanc
       return { id: `local-${local.length + index}`, name: file.name, type: file.type, sizeBytes: file.size, source: { kind: "local" },
         status: validation ? { state: "invalid", validation, reason: validation === "count" ? "文件数量超限" : validation === "size" ? "文件大小超限" : "请选择 PDF 或图片" } : { state: "selected" }, actions: { remove: {} } }
     })
+    setRejections(newItems.flatMap(item => item.status.state === "invalid" ? [{ name: item.name, reason: item.status.reason }] : []))
     setLocal(current => [...current, ...newItems])
     setFeedback(`已选择 ${files.length} 个本机文件；等待调用方接收，尚未上传`)
   }
-  return <div className="min-w-0 space-y-3"><MaterialIntake {...props} files={[...props.files, ...local]} onFilesSelected={select}
+  return <div className="min-w-0 space-y-3"><MaterialIntake {...props} rejections={rejections} onDismissRejections={() => setRejections([])} files={[...props.files, ...local]} onFilesSelected={select}
     confirmDisabledReason={props.confirmDisabledReason || (local.some(item => item.status.state === "selected" || item.status.state === "invalid") ? "有文件未上传或校验失败" : undefined)}
     onRemove={intent => setFeedback(`已发出移除请求：${intent.fileId}；等待调用方处理`)}
     onRetry={intent => setFeedback(`已发出${intent.kind === "load" ? "重新加载" : "重新接收"}请求；等待调用方处理`)}
@@ -64,6 +66,9 @@ export function MaterialIntakeDemo() {
   const [open, setOpen] = useState(false)
   return <>
     {materialIntakeFixtures.map(({ label, props }, index) => <DemoSection key={label} title={label} description={index === 0 ? "状态为调用方传入的固定记录；操作只记录请求，未连接真实上传或数据站。" : undefined}><div className="max-w-2xl"><IntakeFixture props={props} /></div></DemoSection>)}
+    <DemoSection title="拒绝原因、粘贴与拍照" description="点击接收区使焦点位于组件内后粘贴图片；拍照请求交给设备文件输入。选择只更新本机清单，未连接上传。">
+      <IntakeFixture props={{ ...materialIntakeBase, allowPaste: true, cameraCapture: true, rejections: [{ name: "高二数学期中考试标准答案与评分依据完整扫描资料.zip", reason: "请选择 PDF 或图片" }] }} />
+    </DemoSection>
     <DemoSection title="对话框接收" description="关闭与取消返回原触发入口；接收状态由调用方提供。">
       <Dialog open={open} onOpenChange={setOpen}><DialogTrigger render={<Button variant="outline" />}>打开资料接收</DialogTrigger>
         <DialogPopup className="max-w-2xl" closeProps={{ "aria-label": "关闭资料接收" }}><DialogHeader><DialogTitle>资料接收</DialogTitle><DialogDescription>接收后统一核对并保存。</DialogDescription></DialogHeader>
@@ -73,7 +78,7 @@ export function MaterialIntakeDemo() {
     <DemoSection title="三主题 · 320px · 长中文与公式" description="保留完整状态、禁用原因与当前步骤；完整流程可在局部横向滚动。">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
         <h3 className="text-item-title">{theme} · 320px</h3>
-        <IntakeFixture props={{ ...materialIntakeFixtures[1].props, title: "准备接收高二数学期中考试标准答案答题卡与评分依据完整核对版本", files: [{ ...receivedFiles[0], name: "高二数学期中考试标准答案答题卡与评分依据完整核对版本.pdf" }] }} />
+        <IntakeFixture props={{ ...materialIntakeFixtures[1].props, allowPaste: true, cameraCapture: true, rejections: [{ name: "高二数学期中考试标准答案与评分依据完整扫描资料.zip", reason: "请选择 PDF 或图片" }], title: "准备接收高二数学期中考试标准答案答题卡与评分依据完整核对版本", files: [{ ...receivedFiles[0], name: "高二数学期中考试标准答案答题卡与评分依据完整核对版本.pdf" }] }} />
         <p className="text-ui-hint">资料公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </section>)}</div>
     </DemoSection>

@@ -33,4 +33,14 @@ PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/component
 
 ## 验收范围
 
+### 2026-10-02 P1：旋转与手势
+
+- 本轮 registry 由 Supervisor 在线提供（`https://coss.com/ui/r/registry.json`，审核缓存 579 项），Builder 读取缓存核对，无专用 lightbox/image viewer/dropzone。缓存位于 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/`。复核 coss Button/Card/Sheet；Ant Design Image 只沿用 Supervisor 的能力对照，不复制代码。既有 Beautiful UI Context Cards 是来源内容块，无法承担纸张几何，选择在现有组件内适配原生 Pointer/Wheel，不增加依赖。
+- 可选 `rotation?: Record<string, 0|90|180|270>`、`defaultRotation?`、`onRotationChange?(pageId, degrees)`。受控时等待宿主回传；非受控按页 ID 保存查看角度。默认零度，工具栏明确新增 44px 左/右旋转按钮，canvas 同样保留；缩略图不旋转。
+- 90/270 度交换纸张宽高，fit 基于旋转包围盒；图像与百分比区域层一起变换。DocumentRegionViewer 可选 `pageRotation` 默认 0、`locateOnResize` 默认 true；PaperPreview 关闭尺寸变化自动定位，避免覆盖缩放锚点，显式区域定位仍保留。
+- 放大溢出后鼠标/笔按住拖动平移，5px 阈值；单指触摸交给浏览器原生滚动，组件不拦截或自定义平移。拖动或双指操作后的指针点击不触发区域，键盘点击与局部滚动保留。Ctrl/Cmd+滚轮（含 ctrl+wheel 触控板捏合）使用局部非 passive 监听，普通滚轮不拦截；deltaMode 换算后的每事件有效 delta 限在 ±25，系数 0.01，单次最多放大约 1.28 倍，小 delta 保持连续。双指间距缩放保持自定义，范围 5%–300%，全部经 onZoomChange。指针/双指中心的纸张归一化坐标用于锚点恢复，受控模式等待宿主返回请求值。
+- 双击、300ms 内位移不超过 5px 的双指轻点切换 page/100；取消手势不触发轻点，pointercancel / lostpointercapture 清理对应指针，全部结束后清理双指状态和锚点。视口 `touch-action:pan-x pan-y`，允许单指原生滚动；不设置 overscroll-behavior 限制，滚动到边界可继续滚动外层页面。浏览器接管手势时服从 pointercancel；双指捏合/轻点需在真实触屏上复验。键盘 +/=、-、0、R、Shift+R，左右翻页保留，输入区与组合输入忽略。无新增动画/计时器，轻点只比较事件时间戳。
+- 默认 DOM 与 main 8ba0cd6 快照比较，仅排除本任务授权新增的旋转按钮和键盘说明，并归一化 React 不透明 ID。零度区域结构保持不变。新增固定 A3 横版测试图、A4、regions 夹具，三主题 320px 展示旋转状态。
+- 几何、锚点、受控/非受控、键盘、Pointer/Wheel 处理器由自动测试覆盖；浏览器视觉、真实触屏/触控板捏合、读屏器交 Supervisor 补验。coss、依赖、令牌和目录项不变。
+
 组件页提供 6 页缺页学生卷、12 页 A3 批阅资料、带公式的区域复核、三状态、三主题和 320px 长中文夹具。不使用“示例/演示”标签，不把按钮请求当作真实扫描结果。SSR / 事件处理器检查无法验证真实焦点、键盘布局、缩放测量与视觉；需 Supervisor 浏览器复验，真实扫描服务、移动设备及读屏器未验证。

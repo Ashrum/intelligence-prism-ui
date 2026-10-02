@@ -3,6 +3,7 @@
 import { useId, useRef, useState } from "react"
 import { Upload } from "lucide-react"
 import { Card } from "@/components/coss/card"
+import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Skeleton } from "@/components/coss/skeleton"
 import { AgentFileInput, formatAgentFileSize, type AgentFileInputProps, type AgentFileItem } from "./agent-file-input"
 import { Attachment, type AttachmentIntent } from "./attachment"
@@ -28,6 +29,8 @@ export type MaterialIntakeProps = {
   limits: AgentFileInputProps["limits"]; capabilities: AgentFileInputProps["capabilities"]
   steps: StepperProps["steps"]; currentStepId?: string
   sourceDescription?: string; selectionDisabledReason?: string; confirmDisabledReason?: string; retryDisabledReason?: string
+  rejections?: readonly { name: string; reason: string }[]; onDismissRejections?: () => void
+  allowPaste?: boolean; cameraCapture?: boolean
   onFilesSelected?: (files: File[]) => void
   onRemove?: (intent: { kind: "remove"; fileId: string; version?: string }) => void
   onRetry?: (intent: MaterialIntakeRetryIntent) => void
@@ -49,29 +52,54 @@ function readableFileType(type: string) {
   return fileTypes[type.toLowerCase()] ?? (type.startsWith("image/") ? "图片" : type.includes("/") ? "文件" : type || "类型未确认")
 }
 
-function IntakeSelection({ select, canDrop, selectionReason, label, hint, limits, capabilities }: Parameters<NonNullable<AgentFileInputProps["renderSelection"]>>[0] & {
+/** Drag metadata is advisory; an extension or missing MIME cannot prove a mismatch. */
+export function intakeDropTypeMismatch(items: readonly { kind: string; type: string }[], accept: string) {
+  const types = accept.toLowerCase().split(",").map(value => value.trim()).filter(Boolean)
+  const files = items.filter(item => item.kind === "file")
+  if (!types.length || types.some(type => type.startsWith(".")) || !files.length) return false
+  return files.every(item => !!item.type && !types.some(type => type === "*/*" || type === item.type.toLowerCase() || (type.endsWith("/*") && item.type.toLowerCase().startsWith(type.slice(0, -1)))))
+}
+
+function IntakeSelection({ select, canDrop, selectionReason, label, hint, limits, capabilities, allowPaste, cameraCapture, rejections, onDismissRejections }: Parameters<NonNullable<AgentFileInputProps["renderSelection"]>>[0] & {
+  allowPaste?: boolean; cameraCapture?: boolean; rejections?: MaterialIntakeProps["rejections"]; onDismissRejections?: () => void
   label: string; hint: string; limits: MaterialIntakeProps["limits"]; capabilities: MaterialIntakeProps["capabilities"]
 }) {
   const id = useId(), input = useRef<HTMLInputElement>(null)
-  const [dragging, setDragging] = useState(false)
+  const camera = useRef<HTMLInputElement>(null)
+  const [dropState, setDropState] = useState<"accept" | "reject">()
+  const [dropReason, setDropReason] = useState("")
   const describedBy = `${id}-limits ${id}-hint ${id}-capabilities ${id}-drop${selectionReason ? ` ${id}-disabled` : ""}`
   const upload = capabilities.upload
-  return <section aria-label="文件选择与拖放" className="min-w-0 space-y-2" data-file-drop={canDrop ? "enabled" : "disabled"}
-    onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); event.dataTransfer.dropEffect = canDrop ? "copy" : "none"; setDragging(canDrop) } }}
-    onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false) }}
-    onDrop={event => { event.preventDefault(); event.stopPropagation(); setDragging(false); if (canDrop) select(Array.from(event.dataTransfer.files)) }}>
+  return <section aria-label="文件选择与拖放" className="min-w-0 space-y-2" data-file-drop={canDrop ? "enabled" : "disabled"} data-drop-state={dropState}
+    onDragOver={event => { if (event.dataTransfer.types.includes("Files")) {
+      event.preventDefault()
+      const reason = selectionReason || (!canDrop ? capabilities.drop.reason || "拖放不可用" : intakeDropTypeMismatch(Array.from(event.dataTransfer.items ?? []), limits.accept) ? "文件类型不符" : "")
+      event.dataTransfer.dropEffect = reason ? "none" : "copy"; setDropState(reason ? "reject" : "accept"); setDropReason(reason)
+    } }}
+    onDragLeave={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDropState(undefined) }}
+    onDrop={event => { event.preventDefault(); event.stopPropagation(); setDropState(undefined); if (canDrop) select(Array.from(event.dataTransfer.files)) }}>
     <input ref={input} id={`${id}-input`} type="file" className="sr-only" tabIndex={-1} aria-label={label} aria-describedby={describedBy}
       accept={limits.accept} multiple={limits.maxFiles > 1} disabled={!!selectionReason}
       onChange={event => { const files = Array.from(event.currentTarget.files ?? []); event.currentTarget.value = ""; select(files) }} />
     <Button type="button" variant="outline" size={null} className="min-h-40 w-full min-w-0 flex-col gap-3 border-dashed px-4 py-6 whitespace-normal motion-reduce:transition-none"
-      data-intake-select data-pressed={dragging && canDrop ? "" : undefined} disabled={!!selectionReason} aria-describedby={describedBy}
+      data-intake-select data-pressed={dropState === "accept" && canDrop ? "" : undefined} disabled={!!selectionReason} aria-describedby={describedBy}
       onClick={() => { if (!selectionReason) input.current?.click() }}>
       <Upload aria-hidden="true" className="size-6" />
       <span className="break-words text-ui-action [overflow-wrap:anywhere]">{label}</span>
       <span id={`${id}-hint`} className="break-words text-ui-hint [overflow-wrap:anywhere]">{hint}</span>
     </Button>
+    {cameraCapture && <>
+      <input ref={camera} type="file" className="sr-only" tabIndex={-1} aria-label="拍照" accept="image/*" capture="environment" disabled={!!selectionReason} aria-describedby={describedBy}
+        onChange={event => { const files = Array.from(event.currentTarget.files ?? []); event.currentTarget.value = ""; select(files) }} />
+      <Button type="button" variant="outline" className="min-h-12 h-auto sm:h-auto whitespace-normal" disabled={!!selectionReason} aria-describedby={describedBy} onClick={() => { if (!selectionReason) camera.current?.click() }}>拍照</Button>
+    </>}
+    {dropState === "reject" && <Alert variant="error"><AlertDescription className="break-words text-ui-hint">不能接收：{dropReason}</AlertDescription></Alert>}
+    {!!rejections?.length && <Alert variant="error"><AlertDescription>
+      <ul className="min-w-0 space-y-1 text-ui-body">{rejections.map((item, index) => <li key={index} className="break-words [overflow-wrap:anywhere]">{item.name} · {item.reason}</li>)}</ul>
+      {onDismissRejections && <Button type="button" variant="outline" className="mt-2 min-h-12 h-auto sm:h-auto whitespace-normal" onClick={onDismissRejections}>知道了</Button>}
+    </AlertDescription></Alert>}
     <p id={`${id}-capabilities`} className="break-words text-ui-hint">{[upload.reason, capabilities.select.reason].filter(Boolean).join("；")}</p>
-    <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {formatAgentFileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</p>
+    <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {formatAgentFileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件{allowPaste && " · 也可粘贴图片"}</p>
     <p id={`${id}-drop`} className="break-words text-ui-hint">{canDrop ? "可拖入此处，也可点击上传。" : "请点击选择文件。"}{capabilities.drop.reason && ` ${capabilities.drop.reason}`}</p>
     {selectionReason && <p id={`${id}-disabled`} className="break-words text-ui-hint">{selectionReason}</p>}
   </section>
@@ -80,7 +108,7 @@ function IntakeSelection({ select, canDrop, selectionReason, label, hint, limits
 /** Reception facts and intents only. Selection does not imply upload, recognition or saved data. */
 export function MaterialIntake({ title, description, station, platform, platformHint, state, mode = { kind: "all" },
   files, limits, capabilities, steps, currentStepId, sourceDescription = sourceCopy, selectionDisabledReason,
-  confirmDisabledReason, retryDisabledReason, onFilesSelected, onRemove, onRetry, onChangeStation, onCancel, onConfirm,
+  confirmDisabledReason, retryDisabledReason, rejections, onDismissRejections, allowPaste, cameraCapture, onFilesSelected, onRemove, onRetry, onChangeStation, onCancel, onConfirm,
 }: MaterialIntakeProps) {
   const id = useId()
   const pages = typeof station.receivedPages === "number" && Number.isInteger(station.receivedPages) && station.receivedPages >= 0 ? `${station.receivedPages} 页` : "未提供"
@@ -95,6 +123,10 @@ export function MaterialIntake({ title, description, station, platform, platform
   const retryReason = retryDisabledReason || (!onRetry ? "重新接收操作暂不可用。" : undefined)
   const cancelReason = !onCancel ? "取消操作暂不可用。" : undefined
   const loading = state.kind === "loading"
+
+  function selectFiles(selected: File[]) {
+    if (!selectReason && capabilities.select.status === "supported" && selected.length && !loading && state.kind !== "error") onFilesSelected?.(selected)
+  }
 
   function renderFile(item: AgentFileItem) {
     // Keep per-file restrictions, including independent callback and upload capabilities.
@@ -112,6 +144,10 @@ export function MaterialIntake({ title, description, station, platform, platform
   }
 
   return <Card render={<section />} aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}
+    onPaste={allowPaste ? event => {
+      const selected = Array.from(event.clipboardData.files)
+      if (selected.length) { event.preventDefault(); event.stopPropagation(); selectFiles(selected) }
+    } : undefined}
     data-material-intake data-state={state.kind} className="min-w-0 w-full gap-5 p-4 sm:p-5">
     <header className="min-w-0 space-y-2">
       <h2 id={`${id}-title`} className="break-words text-block-title [overflow-wrap:anywhere]">{title}</h2>
@@ -137,10 +173,10 @@ export function MaterialIntake({ title, description, station, platform, platform
           {mode.kind === "replace-page" && <><p className="break-words text-ui-body">{knownText(mode.targetLabel)}</p><p className="text-ui-hint">仅替换当前缺失页，不新增试卷或覆盖其他正常页面</p></>}
         </Card>}
         <AgentFileInput title="接收资料清单" items={files} limits={limits} capabilities={capabilities} density="compact"
-          renderSelection={selection => <IntakeSelection {...selection} limits={limits} capabilities={capabilities}
+          renderSelection={selection => <IntakeSelection {...selection} allowPaste={allowPaste} cameraCapture={cameraCapture} rejections={rejections} onDismissRejections={onDismissRejections} limits={limits} capabilities={capabilities}
             label={mode.kind === "replace-page" ? `放入${mode.targetLabel.match(/第\s*\d+\s*页/)?.[0] ?? knownText(mode.targetLabel)}，或点击上传` : "点击上传文件，或放入数据站扫描"}
             hint={platformHint ?? (platform === "web" ? `Web：选择或拖入 ${limits.acceptLabel}，也可通过数据站扫描接收。` : `优先连接数据站扫描；也可选择 ${limits.acceptLabel} 上传。`)} />}
-          selectionDisabledReason={selectReason} onSelect={selected => { if (!selectReason) onFilesSelected?.(selected) }} renderItem={renderFile} />
+          selectionDisabledReason={selectReason} onSelect={selectFiles} renderItem={renderFile} />
         <Card className="min-w-0 gap-2 p-4" aria-label="接收说明"><p className="break-words text-ui-hint">{sourceDescription}</p></Card>
       </>}
     {failed && <div className="min-w-0 space-y-2"><p role="alert" className="break-words text-ui-hint [overflow-wrap:anywhere]">{state.reason.trim() || "原因未提供"}</p>

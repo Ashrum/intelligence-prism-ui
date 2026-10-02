@@ -12,6 +12,14 @@ PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/scor
 
 ## API 与事实边界
 
+### 2026-10-02 P1：快捷给分与快捷键
+
+- 本轮 registry 由 Supervisor 在线提供（coss registry 579 项，位于审核 scratchpad/audit/registry.json），Builder 读取 particles `p-number-field-7`（范围）、`p-number-field-9`（step）、`p-kbd-1`（快捷键提示）源码；复用固定 coss NumberField/Button/Kbd。Beautiful UI Approval/Recommendation Card 的既有检索不匹配评分门禁；本轮扩展已有组件，不复制上游代码。coss、依赖、令牌及组件目录不变。
+- 可选 `quickScores?: readonly number[]`，缺省不渲染。过滤非有限、越界、非 step 整倍数并去重；满分端点不符合 step 也过滤。组标签“快捷给分”，按钮至少 48px，0 显示“0 分”，非零满分显示“满分 N”，aria-pressed 对应草稿。仅更新本地草稿/发 onScoreChange，不保存，受控与原编辑门禁不变。
+- 可选 `shortcuts?: boolean`，默认 false。组件根 onKeyDown 处理 Ctrl/Cmd+Enter（保存或失败重试）、Alt+A（接受 AI）、Alt+左（上一题）、Alt+右（跳过），按钮内显示 coss Kbd。不挂 window，忽略组合输入、已处理事件、按键重复和额外修饰键。
+- 快捷键复用按钮处理器及全部门禁：保存/重试检查理由、评分范围、回调、saving/saved、disabledReason；导航仍按原规则，saving/disabledReason 禁止，saved 可导航。未传新增属性的 DOM 与 main 8ba0cd6 快照一致，仅归一化 React 不透明 ID。
+- 新增快捷操作夹具，三主题窄容器开启两项能力。自动检查覆盖过滤、草稿、受控/非受控、禁用/理由门禁和输入法；实际浏览器快捷键、读屏器交 Supervisor 验收。
+
 2026-10-01 `fix/score-review-reason` 增量复用核对：重读固定 coss NumberField（含 Input 的公开 className）、Alert、Field/标签组合，以及既有缓存 particles 的 p-number-field-1、p-number-field-10、p-textarea-5。前两项提供步进/校验组合，后一项提供固定标签；没有本次回执与焦点交接协议。在线 [particles](https://coss.com/ui/particles) 与 [Beautiful UI](https://www.beautifului.dev) Approval Card / Recommendation Card 页面可读，registry 仍读取失败；没有复制上游代码或演示计时器。选择扩展现有 ScoreReview 的公开属性，保持 coss 原始字节不变。
 
 从 `components/prism-next/score-review.tsx` 导出 ScoreReview、ScoreReviewProps、ScoreReviewState、ScoreReviewDraft、ScoreReviewRecord、normalizeReviewScore。
