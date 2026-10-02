@@ -2775,3 +2775,12 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 QuestionRail 同目录新增 QuestionRailClass（格内第二行、外部 marker、行式排序）；PaperPreview 增加 mixed 模式及 PaperPreviewMixed/PaperPreviewGroup 辅助导出，连续模式前置内容、纸外身份、分段、折叠和 topInset 避让。旧调用默认 DOM 不变。统计纯函数移至 `lib/prism-next/question-analysis.ts`，宿主提供输入并负责选用口径。
 
 QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmptyText?: string` 仅在对应数组为空且传入文本时显示 muted 说明；未传属性保留原 DOM。`actions[].disabledReason?: string` 仅在该动作实际禁用（显式禁用或缺少 `onIntent`）且有非空原因时显示“动作名：原因”，放在动作区下方，以实例唯一 ID 的 `aria-describedby` 关联按钮；按钮保留 coss 标准尺寸。evidence / knowledge / comparison 条目文案保持宿主事实，confidence 默认“未提供”不变。
+
+
+### G2 · 真实数据不全（2026-10-03）
+
+- QuestionAnalysisCard / Details：`pointsEmptyText`、`teaching` / `archive`（label/value/emptyText 条目）；移除组件写死档案/教材文本，冻结宿主显式传原文本。options 非空强制单列，count=0 无名单控件；`options[].highLow` 可单独缺 high/low，兼容旧可选 high/low。无选项统计时复用 groups 的答错/答对名单，新增可选 description，答对默认折叠。
+- QuestionAnalysisPanel：`reasonsEmptyText` / `relatedEmptyText` / `evidenceEmptyText` 在对应空列表标题下显示；knowledge.rate 可缺失/null，`rateEmptyText` 替代 Meter，0 仍是已知值；`volumeText` 为宿主完整证据量文字，无组件追加单位。旧 volume 仅原样回退。statistics 的非数字文案及已格式化百分比原样显示。
+- KnowledgeRail：item.rate 可缺失/null，`rateEmptyText` 替代值条；`emptyText` 同时覆盖整栏与 bodyOnly 空态。QuestionRailClass 现有 value 支持“未提供”等任意短文本，未知比例省略 ratio，无需新 API。
+- QuestionInspector：`bodyOnly` 仅输出主体及班级对比，无头部导航、动作、外框与内层滚动；宿主以单 ScrollArea 组合全班分析和当前作答。默认完整模式不变。
+- 属性可选、事实外部提供；新增空态只在对应数据缺失时出现。复用依据、示例与边界见各组件文档；coss 与冻结快照/一致性测试保持原文件。
