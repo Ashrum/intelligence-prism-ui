@@ -25,9 +25,22 @@ test('Q7 both typography defaults preserve pre-edit DOM, including missing answe
  const calls=[];const html=render(h(c.QuestionContent,{question:reviewQuestions[0].record,textSize:'ui',optionExtra:id=>{calls.push(id);return h('span',{'data-extra':id},id)}}));
  assert.deepEqual(calls,['A','B','C','D']);assert.match(html,/text-ui-body/);assert.match(html,/data-extra="D"/);
 });
-test('Q7 all digital cards use ui-body, bounded left-aligned content, and unchanged mathematical markup',()=>{
+test('Q9 all digital cards share full card content width across the stem, statistics and details',()=>{
  for(const q of reviewQuestions){const html=render(h(c.QuestionDigitalCard,{question:q,answers:answersForQuestion(q),selected:null,onSelect:noop,missing:false,annotations:true,onIncludeCorrect:noop,filter:'loss',markedPoints:[],onKnowledge:noop}));
-  assert.match(html,/q6-question-card[^\"]*px-4 py-5 text-ui-body/);assert.match(html,/q7-question-content min-w-0 w-full max-w-\[744px\] space-y-4/);assert.match(html,/question-solution prism-question-copy min-w-0 space-y-5 text-ui-body/);assert.doesNotMatch(html,/text-read-body|text-ui-hint/);
+  assert.match(html,/q6-question-card[^\"]*px-4 py-5 text-ui-body/);assert.match(html,/q7-question-content min-w-0 w-full space-y-4/);assert.match(html,/question-solution prism-question-copy min-w-0 space-y-5 text-ui-body/);assert.doesNotMatch(html,/text-read-body|text-ui-hint/);
+  // Direct block children stretch to the same full-width wrapper; only panel content is inset.
+  assert.doesNotMatch(html,/max-w-\[744px\]/);
+  assert.match(html,/<div class="q7-question-content min-w-0 w-full space-y-4"><div class="prism-question-heading/);
+  assert.match(html,/<div class="prism-question-copy min-w-0 text-ui-body text-foreground">/);
+  assert.match(html,/<div class="question-detail-region min-w-0 rounded-xl bg-secondary py-4"><div/);
+  assert.match(html,/@container\/question-details min-w-0/);
+  assert.match(html,/grid w-full min-w-0 auto-cols-fr grid-flow-col/);
+  if(q.type==='选择题'){
+   assert.match(html,/prism-question-options-1/);
+   assert.equal((html.match(/grid-cols-\[auto_minmax\(0,1fr\)_minmax\(8rem,40%\)\]/g)||[]).length,4);
+   assert.equal((html.match(/q6-option-statistics flex min-w-0 items-center/g)||[]).length,4);
+  }
+  if(q.type==='填空题')assert.match(html,/<section data-objective-groups="true" class="space-y-4">/);
   assert.match(html,/<math class="prism-math"/);assert.doesNotMatch(html,/font-size:|line-height:|scale\(/);
  }
 });
@@ -35,7 +48,7 @@ test('Q7 local details retain ordered tabs, teaching facts/navigation, archive i
  const q=reviewQuestions[16],related=[...new Set(q.points.flatMap(p=>p.knowledge))];
  for(const tab of ['answer','teaching','archive']){const html=render(h(c.ReviewQuestionDetails,{question:q,related,tab,onTabChange:noop,scoring:h('section',{'data-rubric':true},'评分点'),onKnowledge:noop}));
   assert.ok(html.indexOf('aria-label="答案与解析"')<html.indexOf('aria-label="教学定位"'));assert.ok(html.indexOf('aria-label="教学定位"')<html.indexOf('aria-label="题目档案"'));
-  assert.match(html,/gap-4/);assert.doesNotMatch(html,/text-read-body|text-ui-hint/);
+  assert.match(html,/gap-4/);assert.match(html,/flex-1 outline-none px-4/);assert.doesNotMatch(html,/text-read-body|text-ui-hint/);
   if(tab==='answer'){assert.match(html,/参考答案/);assert.match(html,/data-rubric/)}
   if(tab==='teaching'){for(const text of ['尚未关联教材章节','尚未关联知识点目录','考查方法','认知要求','课程标准','关联知识点导航',...related.map(id=>knowledgePoints.find(k=>k.id===id).name)])assert.ok(html.includes(text),text)}
   if(tab==='archive')for(const text of ['q17','解答题','12 分','来源','版本','可用状态','未提供'])assert.ok(html.includes(text),text);

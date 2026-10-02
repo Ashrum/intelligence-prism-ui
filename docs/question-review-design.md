@@ -136,7 +136,15 @@
 - 复用检索：重新读取 Supervisor 缓存 registry 的 `tabs`、`frame`、`p-tabs-10`、`p-frame-1` 与两项 particles 源码，复核固定 coss Tabs、QuestionContent / QuestionSolution / QuestionDetails、现有左右栏。coss 原生页签与语义字号已满足需求，未复制 particle 局部字号；本任务不涉及 Agent 执行，不采用 Beautiful UI，不新增组件条目、依赖或视觉令牌。
 - 唯一公开 API 增补为 QuestionContent / QuestionSolution 的 `textSize?: "read" | "ui"`，默认 read 与修改前 DOM 完全一致。本页明确传 ui；题干、选项、小问、答案／解析、教学定位、档案及作答情况为 ui-body 14/20，次要信息为 ui-meta 12/18 muted。标题仍 item-title 14/20/600；公式沿用公共 `.prism-math` 的 1.125em 光学校准，随正文从 16px 到 14px 比例变化，无局部 font-size／transform。配图中的公式标注也使用 ui 角色，其他 QuestionRecord 默认图像 DOM 不变。
 - QuestionDetails 没有字号透传，本轮未获准扩展其 API，因此预览宿主以既有 coss Tabs + QuestionSolution 组合本地 ReviewQuestionDetails；保留答案／教学定位／题目档案顺序、完整字段、知识点导航和证据切答案逻辑。评分点移为答案页的同级宿主段落；无第二套题面或数学渲染器，既有 QuestionDetails 及其调用方不变。后续透传需求仍属于组件缺口。
-- 卡片仍与扫描作答纸等宽且左对齐，内边距复用检查器 `px-4 py-5`（横16／纵20px）。正文含选项统计及详情的内容区左对齐，最大744px（约53个14px汉字），窄时100%；选项统计靠该内容区右缘，宽卡剩余留白。卡片与扫描变换分离不变。
+- 卡片仍与扫描作答纸等宽且左对齐，内边距复用检查器 `px-4 py-5`（横16／纵20px）。正文含选项统计及详情的内容区左对齐；Q9 已取消本轮原定的最大行宽，改为撑满卡片内容宽度，选项统计靠内容区右缘。卡片与扫描变换分离不变。
 - 布局只采用已有16px区块节奏（左栏 space-y-4、检查器概况 space-y-4）与8px清单节奏（检查器错误答案／原因 space-y-2、知识点行 space-y-2）：标题→题面、题干→配图、配图→小问／选项、题面→详情、页签→内容均16px；选项／小问行8px，答案区块16px、段落8px。检查器“当前作答”多列评分清单仍保持原16px，不在本轮改左右栏。
 - 吸顶摘要明确 ui-body 14/20；学生作答分段标题从 ui-hint 14/22 对齐为 ui-body 14/20，保留 muted；纸外姓名原为 ui-body 14/20、考号／分数原为 ui-meta 12/18，保持不变。标准 coss 控件保留自身窄屏字号和 size，刻度条与其交互代码不改。
 - 自动回归覆盖两组件省略／undefined／read的修改前快照、ui与optionExtra、20题卡片、三页签字段与意图、内容宽度／布局约束、公共公式字号和刻度保留；五项结果与实际 diff 见 `/tmp/prism-review2/Report-Q7.md`、`q7-checks/`。沿用既有 localhost 浏览器访问拒绝边界，本轮未绕过；以上像素为源码／语义令牌核对，非浏览器计算样式实测。三主题、1440/1920、窄容器、长中文／公式、滚动／焦点、真机与读屏器由 Supervisor 继续视觉验收，无真实服务验证。
+
+
+## Q9 · 详情区与题目卡同宽（2026-10-02）
+
+- 复用检索：重新读取 Supervisor 缓存 registry（579 项）的 `tabs`、`p-tabs-10`、`p-tabs-14` 及两项 particles 源码，复核固定 coss Tabs 与现有 QuestionContent / ReviewQuestionDetails。继续使用既有三等分页签布局和默认 size，不覆盖 TabsTab 尺寸；不新增组件、依赖、令牌或公开 API。此为通用预览宿主，Beautiful UI 不适用。
+- 本节取代 Q7 的 744px 正文上限：题面、选项统计、填空作答情况、灰底详情区与页签条均撑满题目卡内容宽度（卡宽减左右各16px），左右边缘一致。灰底区横向 padding 移到三页签的内容面板，保留内容16px内缩、上下留白、页签到内容16px间距；页签条横跨灰底区并维持三等分，控件仍用 coss 默认尺寸。选项人数条与比例占据选项行最右列，末端对齐卡片内容右缘。
+- 题目卡与默认适合宽度的扫描作答纸等宽左对齐；扫描缩放与旋转协议不变。正文14/20、次要文字12/18、16px区块与8px清单间距保持不变。按既有尺寸公式，1440视口卡片/内容宽为756/724px，1920为1164/1132px；这是源码推算，非浏览器实测。
+- 更新既有20题SSR回归，断言内容无最大行宽、题面/作答情况/详情共用满宽块布局、页签条满宽三等分且横向留白只在内容面板；保留字体、公式、扫描变换、冻结稿SSR和coss散列回归。五项检查及diff见 `/tmp/prism-review2/Report-Q9.md`、`q9-checks/`。浏览器三主题、1440/1920/窄容器的实际宽度与视觉由Supervisor验收；未验证真实服务、真机或读屏器。
