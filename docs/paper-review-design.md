@@ -174,3 +174,27 @@ PO 2026-10-02 对所有评审页的长期要求：评审控制使用可拖动的
 | 1280×800 | 668×744 | 596px / 75.09% | 685.5 / 728 / 42.5px |
 
 三主题题号文字合成对比按源值计算：light 最低6.93:1、paper最低6.08:1、dark最低8.40:1，覆盖中性格和失分格正常/hover；未冒充浏览器合成实测。浏览器 localhost 访问被权限策略拒绝，本轮未进行实际三主题、窄屏、长中文/公式、焦点返回或触摸视觉验收；由 Supervisor 继续执行。无真实服务、移动设备和读屏器验证。自动检查、实际 diff 与数字见 `/tmp/prism-review/Report-D2-fix2.md` 和 `d2-checks/fix2/`。
+
+## D8 · D2 返工 3：coss 标准尺寸与分档默认（PO 2026-10-02）
+
+本节取代前文手写学生选择、44px 触控下限、56px 学生行高、单键题目栏偏好及相关源码高度核算。PO 明确要求按 coss 标准组件尺寸实现；触屏边缘设备的大目标需求今后通过 coss `size` 变体统一切换，不逐个覆盖。不改 coss 原件、依赖、Foundations 或组件目录；继续在现有任务分支工作，不写 `.git`。
+
+### 实施前复用核对与 1–8 项
+
+- 读取固定 coss Combobox、Tabs、Badge、Button、Toggle、分段尺寸映射及现有 Prism Button；读取 Supervisor `audit/particles/` 的 `p-combobox-10`（弹层内搜索）、`p-combobox-8`（原生分组集合）、`p-tabs-14`（小号分段）、`p-tabs-10`（计数徽标）。采用这些组合及尺寸 API，不复制演示数据或视觉值。通用文档预览宿主，不涉及 Beautiful UI / Agent 组件。
+- **1–2、4**：学生导航中间按钮为 ComboboxTrigger，弹层用默认尺寸 ComboboxInput、List / Group / GroupLabel / Collection / Item / Empty；Base UI 管理过滤、高亮、↑↓ / Enter / Esc 与关闭焦点返回。`itemToStringLabel` 提供姓名和考号，保留头像、总分、比例条、状态分组、底部 Kbd 与原生 ItemIndicator 当前标记；选项靠原生内边距及内容自然撑高。移除宿主查询、高亮、手写 listbox/combobox ARIA；G / [ / ] 与所有选择共用 `changeStudent`。
+- **3、6–8**：删除输入、按钮、Toggle、菜单项、知识点 Badge、页标、Dialog 关闭按钮、评审工具 Select / 选项 / ThemePicker 包装器等的高度覆盖，亦删除纸上区域按钮的 44px CSS 覆盖。图标按钮使用 `size="icon"`，Toggle 使用 `size="default"`，其余默认尺寸。顶栏仍单行 56px；工具条仍四组、56px 侧签容器，内部采用标准控件；检查器动作自然对齐。评审浮动按钮保留圆形/颜色/拖动语义，移除 CSS 56×56 强制尺寸，以 `size="icon"` 的实际宽度计算边缘位置与夹取，并观察按钮尺寸变化。
+- **5**：筛选采用 `TabsList size="sm"` 默认分段变体与 coss Badge；TabsTab 不加高宽覆盖。两个标签共享一个动态值的 TabsPanel 和唯一题目列表，保留完整计数 aria-label、筛选事实、题目键盘操作；框架快捷键不拦截 tablist 的原生按键。栏头“题目”保留为屏幕阅读器标题，给标准 Tabs 与收起按钮留足水平空间。
+- **尺寸例外逐项**：① 16 个选择/填空题号格保留 `min-h-11`，作为本稿成绩地图单元沿用 D7 布局；② 题目按钮保留 `h-auto sm:h-auto`，其中解答题得分/失分为多行自然内容，已移除原 `min-h-13`；题号格也以 auto 容纳网格内容。不保留其他 coss 控件高度/最小宽度覆盖。纸张、头像、侧签容器、分数条、顶栏与分区的布局尺寸不是控件高度覆盖。
+
+### 9–11 项：1440×900 与用户偏好
+
+- 最佳浏览分辨率为 **1440×900**，判定只看框架逻辑容器宽度，常量 `PAPER_REVIEW_BEST_WIDTH = 1440`：≥1440 默认展开，<1440 默认收起。设备框缩小显示的 transform 不影响档位；1440 / 1920 设备框无偏好时展开，自适应按 `frame.clientWidth`。
+- `prism-paper-review-rail-collapsed-best` / `prism-paper-review-rail-collapsed-compact` 分别存“达到最佳 / 低于最佳”的显式布尔选择；只接受 `true` / `false`，不迁移旧的单档键，以免把同一旧选择强加给两档。无偏好用默认；存储异常时使用默认，当前会话手动选择仍有效。
+- 首次测量在 layout effect 中完成，准备前框架不可见；ResizeObserver 在跨阈值时选择目标档偏好并禁用该次栏宽/透明度过渡。手动 T / 按钮切换保留原过渡与焦点返回；reduced-motion 下直接切换。F 沉浸不更改偏好。
+- 评审工具增加可选宿主动作“恢复题目栏默认”，清除两档存储与内存偏好，立即应用当前宽度默认值，回到试卷分区；其他评审页未提供回调时不显示该项。
+- 测试覆盖 1280 / 1439 / 1440 / 1920 的无偏好、明确展开/收起、另一档偏好不串用、往返跨阈值、非法/受限存储、恢复默认、单一 TabsPanel、Combobox 契约与控件尺寸。SSR / 宿主事件测试不代替 Base UI 的实际浏览器输入验证。
+
+### 验证边界
+
+浏览器工具明确拒绝 localhost:5173 访问（用户此前未授权该访问），本轮未绕过限制。三主题、窄屏、长中文/公式、真实焦点返回与触摸的浏览器视觉验收仍由 Supervisor 执行；无真实服务、移动设备或读屏器验证。五项检查数字、实际 diff 和退出码见 `/tmp/prism-review/Report-D2-fix3.md` 与 `/tmp/prism-review/d2-checks/fix3/`。

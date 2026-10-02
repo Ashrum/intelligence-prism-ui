@@ -31,7 +31,7 @@ test('D1 built review route renders three panes and a single primary action with
   assert.doesNotMatch(text, /示例|演示|Demo|样本/i);
   const primary = [...body.matchAll(/<button\b[^>]*class="([^"]*)"[^>]*>/g)].filter(match => /\bbg-primary\s/.test(match[1]));
   assert.equal(primary.length, 1);
-  for (const label of ['试卷预览框架 · 设计稿', '张雨桐', '全部 20', '错题 4', '最终确认', '更正评分', '教师批阅', '椭圆焦距关系', '置信度', '未提供']) assert.ok(text.includes(label), label);
+  for (const label of ['试卷预览框架 · 设计稿', '张雨桐', '全部20', '错题4', '最终确认', '更正评分', '教师批阅', '椭圆焦距关系', '置信度', '未提供']) assert.ok(text.includes(label), label);
   assert.doesNotMatch(body, /d1-controls|返回设计评审导航|<h1[^>]*>试卷预览框架/);
   assert.match(body, /<button\b[^>]*aria-label="评审工具"/);
   assert.match(body, /<title>试卷预览框架 · 设计稿/);
@@ -149,7 +149,8 @@ test('D7 toolbar has four visible groups and moves keyboard help to the top menu
   assert.ok(captureHost().some(n => n.props.open === true && n.props.onOpenChange));
   for (const label of ['上一页', '下一页', '放大', '缩小', '适合页面', '旋转当前页', '标注效果', '扫描原稿', '标注层', '沉浸']) {
     const control = nodes.find(n => n.props['aria-label'] === label);
-    assert.match(control.props.render?.props.className ?? control.props.className, /min-h-11 min-w-11/, label);
+    assert.doesNotMatch(control.props.render?.props.className ?? control.props.className ?? '', /(?:min-)?[hw]-11|h-auto/, label);
+    assert.ok(['icon', 'default'].includes(control.props.render?.props.size ?? control.props.size), label);
   }
   const canvas = () => captureHost().find(n => n.props.viewportRef);
   nodes.find(n => n.props['aria-label'] === '旋转当前页').props.onClick();
@@ -194,23 +195,39 @@ function panelNodes(props) {
   }
   walk(StudentPanel(props)); return nodes;
 }
-test('D2 student panel exposes filtering, current selection, empty result and keyboard selection', () => {
-  let chosen, active = 0, query = '';
-  const props = () => ({ current: 0, query, active, onSelect: index => { chosen = index; }, onActive: index => { active = index; }, onQuery: value => { query = value; } });
-  const nodes = () => panelNodes(props());
-  assert.equal(nodes().filter(n => n.props.role === 'option').length, 6);
-  assert.equal(nodes().find(n => n.props['aria-selected']).props.id, 'student-option-0');
-  nodes().find(n => n.props.id === 'student-search').props.onChange({ target: { value: '0020' } });
-  assert.deepEqual(nodes().filter(n => n.props.role === 'option').map(n => n.props.id), ['student-option-2']);
-  const event = key => ({ key, nativeEvent: {}, preventDefault() {}, stopPropagation() {} });
-  nodes()[0].props.onKeyDown(event('Enter')); assert.equal(chosen, 2);
-  query = 'not-found';
-  assert.equal(nodes().find(n => n.props.role === 'status').props.children, '没有匹配的学生');
-  chosen = undefined; nodes()[0].props.onKeyDown(event('Enter')); assert.equal(chosen, undefined);
-  query = ''; active = 1;
-  const before = globalThis.document; globalThis.document = { getElementById: () => null };
-  try { nodes()[0].props.onKeyDown(event('ArrowDown')); assert.equal(active, 3); nodes()[0].props.onKeyDown(event('ArrowUp')); assert.equal(active, 1); }
-  finally { globalThis.document = before; }
+test('D8 student panel delegates grouping, search text, selection and popup focus to coss', () => {
+  let chosen;
+  const triggerRef = { current: null };
+  const props = { current: 0, open: true, onOpenChange() {}, onSelect: index => { chosen = index; }, triggerRef };
+  const nodes = panelNodes(props), root = nodes[0];
+  assert.deepEqual(root.props.items.map(group => group.value), ['待复核', '已确认']);
+  assert.equal(root.props.items.flatMap(group => group.items).length, 6);
+  assert.equal(root.props.value.index, 0);
+  const student = root.props.items[0].items[0];
+  assert.equal(root.props.itemToStringLabel(student), `${student.name} ${student.examId}`);
+  root.props.onValueChange(student); assert.equal(chosen, student.index);
+  assert.equal(nodes.find(n => n.props.id === 'student-search').props.size, 'default');
+  assert.equal(nodes.find(n => n.props['data-student-panel']).props.finalFocus, triggerRef);
+  assert.ok(nodes.some(n => n.props.children === '没有匹配的学生'));
+  assert.equal(nodes.some(n => n.props.role === 'combobox' || n.props.role === 'listbox' || n.props.onKeyDown), false);
+  const markup = renderToStaticMarkup(React.createElement(StudentPanel, { ...props, open: false }));
+  assert.match(markup, /data-slot="combobox-trigger"/);
+  // Inline only the portal boundary for server rendering; all input/list/item primitives are real coss.
+  const inline = React.cloneElement(root, {}, React.Children.map(root.props.children, child => child.props['data-student-panel'] !== undefined ? React.createElement('div', {}, child.props.children) : child));
+  const popupMarkup = renderToStaticMarkup(inline);
+  for (const slot of ['combobox-input', 'combobox-list', 'combobox-group', 'combobox-item', 'combobox-empty']) assert.match(popupMarkup, new RegExp(`data-slot="${slot}"`));
+  assert.equal([...popupMarkup.matchAll(/data-slot="combobox-item"/g)].length, 6);
+  for (const inputValue of ['语安', 'ole-st-0020']) {
+    const filtered = renderToStaticMarkup(React.cloneElement(inline, { inputValue }));
+    assert.equal([...filtered.matchAll(/data-slot="combobox-item"/g)].length, 1);
+    assert.match(filtered, /陈语安/);
+  }
+  const empty = renderToStaticMarkup(React.cloneElement(inline, { inputValue: '不存在' }));
+  assert.equal([...empty.matchAll(/data-slot="combobox-item"/g)].length, 0);
+  assert.match(empty, /没有匹配的学生/);
+  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  assert.match(source, /<ComboboxInput[^>]*size="default"[^>]*showTrigger=\{false\}/);
+  assert.doesNotMatch(source, /aria-activedescendant|activeStudent|studentQuery/);
 });
 
 test('D2 G opens the student panel; bracket keys and panel selection share navigation behavior and retain viewing state', () => {
@@ -226,12 +243,12 @@ test('D2 G opens the student panel; bracket keys and panel selection share navig
   panel().props.onSelect(5); assert.equal(panel().props.current, 5); assert.equal(canvas().props.zoom, 'page');
   pressHost(']'); assert.equal(panel().props.current, 5);
   pressHost('n'); // A full-score paper has no wrong question and must remain navigable.
-  captureHost().find(n => n.props['aria-label'] === '上一位学生').props.onClick();
+  panelNodes(panel().props).find(n => n.props['aria-label'] === '上一位学生').props.onClick();
   assert.equal(panel().props.current, 4);
   const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
   assert.match(source, /\["G", "选择学生"\]/);
   assert.match(source, /\["\[ \/ \]", "上一位 \/ 下一位学生"\]/);
-  assert.match(source, /finalFocus=\{studentTrigger\}/);
+  assert.match(source, /finalFocus=\{triggerRef\}/);
 });
 
 
@@ -289,7 +306,7 @@ test('D7 T/button collapse persists safely, restores through immersion and expos
   try {
     assert.equal(frame().props['data-rail-collapsed'], false);
     pressHost('t'); assert.equal(frame().props['data-rail-collapsed'], true);
-    assert.equal(values.get('prism-paper-review-rail-collapsed'), 'true');
+    assert.equal(values.get('prism-paper-review-rail-collapsed-best'), 'true');
     assert.ok(captureHost().some(n => n.props['aria-label'] === '展开题目栏'));
     pressHost('f'); pressHost('t'); pressHost('Escape');
     assert.equal(frame().props['data-rail-collapsed'], true);
@@ -325,4 +342,65 @@ test('D7 rail keeps numeric arrow order, Enter location, tab order and page inte
   // If the first type no longer has errors, the remaining first-page type keeps its page navigation.
   props.questions = questions.map(q => q.type === '选择' ? { ...q, score: q.max } : q);
   assert.ok(nodes().some(n => n.props['aria-label'] === '定位第 1 页，清晰'));
+});
+
+import { PAPER_REVIEW_BEST_WIDTH, railBand, railCollapsedForWidth, railPreferenceKeys, readRailPreferences } from '../examples/paper-review/rail-preferences.ts';
+test('D8 default collapse follows the 1440 logical-width boundary and separate explicit preferences', () => {
+  assert.equal(PAPER_REVIEW_BEST_WIDTH, 1440);
+  for (const width of [1280, 1439, 1440, 1920]) {
+    const band = width < 1440 ? 'compact' : 'best';
+    assert.equal(railBand(width), band);
+    assert.equal(railCollapsedForWidth(width, {}), width < 1440);
+    for (const preference of [true, false]) {
+      assert.equal(railCollapsedForWidth(width, { [band]: preference }), preference);
+      assert.equal(railCollapsedForWidth(width, { [band === 'best' ? 'compact' : 'best']: preference }), width < 1440);
+    }
+  }
+  // Repeated threshold crossings select the destination band's preference.
+  const preferences = { best: true, compact: false };
+  assert.deepEqual([1440, 1280, 1920, 1439].map(width => railCollapsedForWidth(width, preferences)), [true, false, true, false]);
+});
+test('D8 only valid boolean preferences load; blocked storage falls back independently', () => {
+  const prior = globalThis.localStorage;
+  try {
+    globalThis.localStorage = { getItem(key) { return key === railPreferenceKeys.best ? 'true' : 'false'; } };
+    assert.deepEqual(readRailPreferences(), { best: true, compact: false });
+    globalThis.localStorage = { getItem(key) { if (key === railPreferenceKeys.best) throw Error('denied'); return 'invalid'; } };
+    assert.deepEqual(readRailPreferences(), {});
+  } finally { globalThis.localStorage = prior; }
+});
+test('D8 Tabs share one panel and list with native segmented sizing and count badges', () => {
+  for (const filter of [false, true]) {
+    const html = railMarkup(questions, filter);
+    assert.equal([...html.matchAll(/data-slot="tabs-tab"/g)].length, 2);
+    assert.equal([...html.matchAll(/data-slot="tabs-content"/g)].length, 1);
+    assert.equal([...html.matchAll(/role="listbox"/g)].length, 1);
+    assert.match(html, /data-size="sm" data-slot="tabs-list"/);
+    assert.match(html, /aria-label="全部题目，共 20 题"/);
+    assert.match(html, /aria-label="仅看错题，共 4 题"/);
+    assert.match(html, /data-slot="badge"/);
+    assert.equal([...html.matchAll(/aria-controls="question-filter-panel"/g)].length, 2);
+  }
+});
+test('D8 coss size overrides remain only on own question cells and multiline question buttons', async () => {
+  const source = await readFile(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  const utility = await readFile(new URL('../examples/review-tools/review-tools.tsx', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../examples/review-tools/review-tools.css', import.meta.url), 'utf8');
+  const withoutQuestion = source.split('\n').filter(line => !line.includes('className={`d1-question')).join('\n');
+  assert.doesNotMatch(withoutQuestion + utility, /min-h-1[1-4]|min-w-11|h-auto|(?:sm:)?h-11/);
+  assert.doesNotMatch(css, /(?:^|[;\s])(?:width|height):/);
+  assert.match(source, /onResetRailPreferences=\{resetRailPreferences\}/);
+});
+test('D8 restore-default clears both stored bands and current manual choice', () => {
+  globalThis.__reviewHost = { cursor: 0, values: [] };
+  const prior = globalThis.localStorage, removed = [];
+  globalThis.localStorage = { setItem() {}, removeItem(key) { removed.push(key); } };
+  const frame = () => captureHost().find(n => n.props['data-rail-collapsed'] !== undefined);
+  try {
+    pressHost('t'); assert.equal(frame().props['data-rail-collapsed'], true);
+    captureHost().find(n => n.props.onResetRailPreferences).props.onResetRailPreferences();
+    assert.deepEqual(removed.sort(), Object.values(railPreferenceKeys).sort());
+    assert.equal(frame().props['data-rail-collapsed'], false);
+    assert.equal(frame().props['data-rail-animate'], false);
+  } finally { globalThis.localStorage = prior; }
 });

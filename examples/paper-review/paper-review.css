@@ -4,7 +4,10 @@
 .d1-topbar { min-height:56px; height:56px; flex-shrink:0; }
 .d1-columns { min-height:0; flex:1; display:grid; grid-template-columns:232px minmax(0,1fr) 380px; transition:grid-template-columns 160ms ease-out; }
 .d1-rail-shell { min-width:0; min-height:0; overflow:hidden; transition:opacity 160ms ease-out, visibility 160ms; }
-.d1-rail { height:100%; display:grid; grid-template-rows:56px 40px minmax(0,1fr); }
+.d1-rail { height:100%; }
+.d1-rail-tabs { height:100%; display:grid; gap:0; grid-template-rows:56px 40px minmax(0,1fr); }
+.d1-frame[data-rail-ready="false"] { visibility:hidden; }
+.d1-frame[data-rail-animate="false"] .d1-columns, .d1-frame[data-rail-animate="false"] .d1-rail-shell { transition:none; }
 .d1-frame[data-rail-collapsed="true"] .d1-columns { grid-template-columns:0 minmax(0,1fr) 380px; }
 .d1-frame[data-rail-collapsed="true"] .d1-rail-shell { opacity:0; visibility:hidden; }
 .d1-frame[data-rail-collapsed="true"] .d1-rail { min-width:232px; }
@@ -28,7 +31,6 @@
 .d1-frame[data-immersive="true"][data-rail-collapsed="true"] .d1-columns { grid-template-columns:minmax(0,1fr); }
 .d1-frame[data-immersive="true"] .d1-canvas { display:grid; }
 .d1-paper-host [data-region] > button > span { visibility:hidden; }
-.d1-paper-host [data-region] > button { min-height:44px; }
 .d1-tools { gap:2px; width:56px; flex-shrink:0; }
 @container (min-width:1800px) { .d1-columns { grid-template-columns:264px minmax(0,1fr) 420px; } .d1-frame[data-rail-collapsed="true"] .d1-columns { grid-template-columns:0 minmax(0,1fr) 420px; } }
 @container (max-width:1250px) { .d1-student-meta { display:none; } .d1-topbar { gap:8px; } }

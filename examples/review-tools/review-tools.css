@@ -5,8 +5,6 @@
   z-index: 40;
   right: 24px;
   bottom: 24px;
-  width: 56px;
-  height: 56px;
   background: var(--review-accent);
   color: white;
   touch-action: none;

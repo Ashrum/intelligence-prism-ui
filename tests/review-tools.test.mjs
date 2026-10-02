@@ -21,7 +21,9 @@ await writeFile(probe, result.outputFiles[0].text);
 const { ReviewTools } = await import(probe);
 await rm(probe);
 
-function setup(t, { saved = null, failStorage = false, defaultPosition } = {}) {
+function setup(t, { saved = null, failStorage = false, defaultPosition, toolSize = 56, onResetRailPreferences } = {}) {
+  const oldObserver = globalThis.ResizeObserver;
+  globalThis.ResizeObserver = class { observe() {} disconnect() {} };
   const oldWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
   const oldStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   const listeners = new Map(), effects = [], values = [];
@@ -35,9 +37,10 @@ function setup(t, { saved = null, failStorage = false, defaultPosition } = {}) {
     for (const cleanup of cleanups) cleanup?.();
     if (oldWindow) Object.defineProperty(globalThis, 'window', oldWindow); else delete globalThis.window;
     if (oldStorage) Object.defineProperty(globalThis, 'localStorage', oldStorage); else delete globalThis.localStorage;
+    globalThis.ResizeObserver = oldObserver;
     delete globalThis.__toolsHost;
   });
-  const render = () => { globalThis.__toolsHost.cursor = 0; const tree = ReviewTools({ device: 'auto', onDeviceChange() {}, missing: false, onMissingChange() {}, defaultPosition }); for (const effect of effects.splice(0)) cleanups.push(effect()); return tree; };
+  const render = () => { globalThis.__toolsHost.cursor = 0; const tree = ReviewTools({ device: 'auto', onDeviceChange() {}, missing: false, onMissingChange() {}, defaultPosition, onResetRailPreferences }); tree.props.children[0].props.ref.current = { offsetWidth: toolSize }; for (const effect of effects.splice(0)) cleanups.push(effect()); return tree; };
   const trigger = () => render().props.children[0];
   const target = { getBoundingClientRect: () => { const left = values[0]?.x ?? 920, top = values[0]?.y ?? 720; return { left, top, right: left + 56, bottom: top + 56 }; }, setPointerCapture() { captured = true; }, hasPointerCapture() { return captured; }, releasePointerCapture() { captured = false; } };
   const pointer = (x, y, type = 'mouse', id = 1) => ({ button: 0, pointerId: id, pointerType: type, clientX: x, clientY: y, currentTarget: target });
@@ -191,4 +194,21 @@ test('D4 each saved edge survives tiny-viewport clamping and restores its origin
       assert.equal(h.stored(), saved); assert.equal(h.writes(), 0);
     });
   }
+});
+
+test('D8 floating utility positioning measures coss default sizes and reset action is host-owned', async t => {
+  for (const toolSize of [32, 36]) await t.test(`${toolSize}px`, t => {
+    let resets = 0;
+    const h = setup(t, { toolSize, onResetRailPreferences: () => { resets++; } });
+    assert.equal(h.trigger().props.style.left, 1000 - toolSize - 24);
+    assert.equal(h.trigger().props.style.top, 800 - toolSize - 24);
+    function find(node) {
+      if (Array.isArray(node)) return node.map(find).find(Boolean);
+      if (!node?.props) return;
+      return node.props.children === '恢复题目栏默认' ? node : find(node.props.children);
+    }
+    find(h.render()).props.onClick();
+    assert.equal(resets, 1);
+    assert.equal(h.writes(), 0);
+  });
 });

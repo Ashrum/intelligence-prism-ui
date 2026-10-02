@@ -14,14 +14,15 @@ const storageKey = "prism-review-tools-edge-position-v2"
 type Position = { x: number; y: number }
 export type ReviewToolsPosition = { horizontal: "left" | "right"; vertical: "top" | "bottom"; offsetX: number; offsetY: number }
 const cornerPosition: ReviewToolsPosition = { horizontal: "right", vertical: "bottom", offsetX: 24, offsetY: 24 }
-const clamp = (p: Position): Position => ({ x: Math.max(0, Math.min(window.innerWidth - 56, p.x)), y: Math.max(0, Math.min(window.innerHeight - 56, p.y)) })
-const resolvePosition = (p: ReviewToolsPosition): Position => clamp({ x: p.horizontal === "left" ? p.offsetX : window.innerWidth - 56 - p.offsetX, y: p.vertical === "top" ? p.offsetY : window.innerHeight - 56 - p.offsetY })
+const clamp = (p: Position, size: number): Position => ({ x: Math.max(0, Math.min(window.innerWidth - size, p.x)), y: Math.max(0, Math.min(window.innerHeight - size, p.y)) })
+const resolvePosition = (p: ReviewToolsPosition, size: number): Position => clamp({ x: p.horizontal === "left" ? p.offsetX : window.innerWidth - size - p.offsetX, y: p.vertical === "top" ? p.offsetY : window.innerHeight - size - p.offsetY }, size)
 
 // Review-page utility only: never register this in the design-system catalog.
-export function ReviewTools({ device, onDeviceChange, missing, onMissingChange, defaultPosition = cornerPosition }: {
+export function ReviewTools({ device, onDeviceChange, missing, onMissingChange, defaultPosition = cornerPosition, onResetRailPreferences }: {
   device: string; onDeviceChange: (value: string) => void
   missing: boolean; onMissingChange: (value: boolean) => void
   defaultPosition?: ReviewToolsPosition
+  onResetRailPreferences?: () => void
 }) {
   const [position, setPosition] = useState<Position | null>(null)
   const [open, setOpen] = useState(false), [dragging, setDragging] = useState(false)
@@ -33,16 +34,18 @@ export function ReviewTools({ device, onDeviceChange, missing, onMissingChange, 
   const pinned = useRef(false)
   const id = useId()
 
+  const triggerSize = () => button.current?.offsetWidth ?? 32
   function place(point: Position) {
-    const next = clamp(point)
-    const right = Math.max(0, window.innerWidth - 56 - next.x), bottom = Math.max(0, window.innerHeight - 56 - next.y)
+    const size = triggerSize()
+    const next = clamp(point, size)
+    const right = Math.max(0, window.innerWidth - size - next.x), bottom = Math.max(0, window.innerHeight - size - next.y)
     anchor.current = { horizontal: next.x <= right ? "left" : "right", vertical: next.y <= bottom ? "top" : "bottom", offsetX: Math.min(next.x, right), offsetY: Math.min(next.y, bottom) }
     setPosition(next)
     try { localStorage.setItem(storageKey, JSON.stringify(anchor.current)) } catch { /* Storage is optional. */ }
   }
   function resetPosition() {
     anchor.current = null
-    setPosition(resolvePosition(defaultPosition))
+    setPosition(resolvePosition(defaultPosition, triggerSize()))
     try { localStorage.removeItem(storageKey) } catch { /* Storage is optional. */ }
   }
   useEffect(() => {
@@ -53,10 +56,12 @@ export function ReviewTools({ device, onDeviceChange, missing, onMissingChange, 
   }, [])
   useEffect(() => {
     // A user-chosen anchor wins; otherwise follow the host's live default.
-    const resize = () => setPosition(resolvePosition(anchor.current ?? defaultPosition))
+    const resize = () => setPosition(resolvePosition(anchor.current ?? defaultPosition, triggerSize()))
     resize()
     window.addEventListener("resize", resize)
-    return () => window.removeEventListener("resize", resize)
+    const observer = new ResizeObserver(resize)
+    if (button.current) observer.observe(button.current)
+    return () => { window.removeEventListener("resize", resize); observer.disconnect() }
   }, [defaultPosition])
 
   function down(event: PointerEvent<HTMLButtonElement>) {
@@ -130,14 +135,15 @@ export function ReviewTools({ device, onDeviceChange, missing, onMissingChange, 
       <div className="mt-4 space-y-4">
         <div className="space-y-2"><label htmlFor={`${id}-viewport`} className="text-ui-body">视口</label>
           <Select value={device} items={targets} onValueChange={value => { if (value) onDeviceChange(value) }}>
-            <SelectTrigger id={`${id}-viewport`} className="min-h-11 w-full"><SelectValue /></SelectTrigger>
-            <SelectPopup>{targets.map(item => <SelectItem key={item.value} value={item.value} className="min-h-11">{item.label}</SelectItem>)}</SelectPopup>
+            <SelectTrigger id={`${id}-viewport`} className="w-full"><SelectValue /></SelectTrigger>
+            <SelectPopup>{targets.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup>
           </Select>
         </div>
-        <div role="group" aria-labelledby={`${id}-theme`} className="space-y-2 [&_button]:min-h-11"><p id={`${id}-theme`} className="text-ui-body">主题</p><ThemePicker /></div>
-        <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3 text-ui-body" htmlFor={`${id}-missing`}>无扫描图像<Switch id={`${id}-missing`} checked={missing} onCheckedChange={onMissingChange} /></label>
-        <Button variant="outline" className="min-h-11 w-full" onClick={resetPosition}>按钮归位</Button>
-        <Button variant="outline" className="min-h-11 w-full" render={<a href="/next" />}>返回组件库</Button>
+        <div role="group" aria-labelledby={`${id}-theme`} className="space-y-2"><p id={`${id}-theme`} className="text-ui-body">主题</p><ThemePicker /></div>
+        <label className="flex cursor-pointer items-center justify-between gap-3 text-ui-body" htmlFor={`${id}-missing`}>无扫描图像<Switch id={`${id}-missing`} checked={missing} onCheckedChange={onMissingChange} /></label>
+        {onResetRailPreferences && <Button variant="outline" size="default" className="w-full" onClick={onResetRailPreferences}>恢复题目栏默认</Button>}
+        <Button variant="outline" className="w-full" onClick={resetPosition}>按钮归位</Button>
+        <Button variant="outline" className="w-full" render={<a href="/next" />}>返回组件库</Button>
       </div>
     </PopoverPopup>
   </Popover>
