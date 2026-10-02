@@ -3,13 +3,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { api, h, render, capture, assertRoute } from './review-components-harness.mjs';
 const base = { label: '框架', open: true, onOpenChange() {}, immersive: false, pane: 'canvas', onPaneChange() {}, rail: h('aside', {}, '题目'), canvas: h('section', {}, '试卷'), inspector: h('aside', {}, '反馈') };
-test('ReviewWorkspace slots preserve a single topbar or hand it completely to the host', () => {
-  const topbar = h('header', { className: 'd1-topbar' }, '流程顶栏');
+test('ReviewWorkspace renders its own topbar and preserves optional-slot compatibility', () => {
+  const topbar = h('header', { className: 'd1-topbar' }, '预览框架顶栏');
   assert.equal((render(h(api.ReviewWorkspace, { ...base, topbar })).match(/<header/g) || []).length, 1);
-  const takeover = render(h('div', {}, topbar, h(api.ReviewWorkspace, base)));
-  assert.equal((takeover.match(/<header/g) || []).length, 1);
+  // Legacy omission remains renderable; new fullscreen integrations always supply topbar.
+  const legacyWithoutTopbar = render(h(api.ReviewWorkspace, base));
+  assert.equal((legacyWithoutTopbar.match(/<header/g) || []).length, 0);
   for (const open of [true,false]) for (const immersive of [true,false]) {
-    const html = render(h(api.ReviewWorkspace, { ...base, open, immersive }));
+    const html = render(h(api.ReviewWorkspace, { ...base, topbar, open, immersive }));
     assert.match(html, new RegExp(`data-rail-collapsed="${!open}"`)); assert.match(html, new RegExp(`data-immersive="${immersive}"`));
     assert.equal(/inert=""/.test(html), !open);
   }

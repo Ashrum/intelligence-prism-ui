@@ -2,6 +2,10 @@
 
 PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/components/paper-preview`；仅 Builder 实现，独立 Review 与浏览器验收由 Supervisor 完成。
 
+## 全屏接入与旧用法待退役
+
+**2026-10-03，PO 批准**：“预览一份试卷”的场景应使用全屏预览框架（`ReviewWorkspace` + `PaperPreview` 连续模式），遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)。旧的单页模式与 `PaperPreviewDialog` 标记为**待退役**，保留至 Workspace 全部迁移完成后移除；新接入不得再使用弹窗或内嵌预览。本次不删除代码，不改变现有类型、默认值与行为。
+
 ## 复用检索与取舍
 
 | 来源 | 实际查阅 | 匹配情况与选择 |
@@ -18,7 +22,7 @@ PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/component
 
 ## API 与行为契约
 
-- `PaperPreview` 内嵌；`PaperPreviewDialog` 复用 coss Sheet 的全屏容器、Esc、焦点陷阱和触发器焦点返回。`open/onOpenChange` 可受控，`triggerLabel` 命名内置触发器，`returnFocus` 可指定返回元素；关闭发 `onClose`。受控打开状态须由调用方响应 `onOpenChange`。
+- 以下为待退役旧用法的兼容契约，不供新接入使用：`PaperPreview` 单页内嵌；`PaperPreviewDialog` 复用 coss Sheet 的全屏容器、Esc、焦点陷阱和触发器焦点返回。`open/onOpenChange` 可受控，`triggerLabel` 命名内置触发器，`returnFocus` 可指定返回元素；关闭发 `onClose`。受控打开状态须由调用方响应 `onOpenChange`。
 - `pages` 是调用方提供的完整有序页槽（包含缺页占位）；`page/defaultPage` 从 0 开始，`onPageChange(index)`。越界展示值钳制，不改写调用方事实、不自动发事件。文档/版本改变时宿主可用 React key 重置非受控视图。
 - 每页有 `id/imageUrl?/thumbnailUrl?/alt?/paperSize?/orientation?/quality?/anomaly?/regions?`。缺图显示“扫描图像未接入”；纸张默认 A4 纵向（可 A3/横向），比例采用毫米尺寸；100% 以 96 CSS px/in 换算，不宣称物理打印大小。缩略图无 URL 同样占位，不造扫描图。
 - `zoom/defaultZoom/onZoomChange` 值为 `"page" | "width" | number`，number 为百分比，默认 `page`。页面/宽度适配随 ResizeObserver 调整；所有比例限定 5%–300%。± 从实际 DOM 宽度换算的比例连续乘 .8 / 1.25，不从 100% 跳变；事件只因用户选择发出。
@@ -53,7 +57,7 @@ PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/component
 
 | 属性 / 导出 | 契约 |
 | --- | --- |
-| `layout?: single或continuous` | 默认原单页实现；continuous 返回连续画布，不注入旧的文档导航、缩略图或工具条。 |
+| `layout?: single或continuous` | 默认原单页实现（待退役，仅保留兼容）；新接入“预览一份试卷”应显式使用 continuous 并组合全屏 ReviewWorkspace；continuous 返回连续画布，不注入旧的文档导航、缩略图或工具条。 |
 | `PaperPreviewPage.dimensions?` | 每纸独立 `{width,height}`（有限正 CSS px）；否则按既有 paperSize/orientation 计算。 |
 | `zoom`、`onZoomChange`、`rotation` | 沿用 width/page/5–300 数值缩放和每纸旋转字典；连续模式默认也沿用旧 defaultZoom=page，冻结宿主显式传 width。提供 onZoomChange 时由宿主回传受控值。 |
 | `continuous.viewportRef`、`scale?=1` | 共享滚动视口引用与评审框变换比例，手势转换使用逻辑坐标。 |

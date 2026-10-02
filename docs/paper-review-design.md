@@ -1,5 +1,7 @@
 # 试卷预览框架 · D1 设计稿
 
+状态：2026-10-03 经 PO 批准修订全屏规则；仅修订文档，设计稿实现与冻结快照保持不变。以下保留各阶段记录，顶栏接入要求以本次全屏规则为准。
+
 本轮仅为 PO 定稿提供可操作页面，不冻结组件、不接入 Workspace、不增加组件目录项。路由 `/next/reviews/paper-review`；沿用独立评审夹具的全屏 Shell 旁路，在站点导航增加「设计评审」入口。主题直接复用站点 ThemePicker。
 
 ## 实现前复用核对
@@ -57,11 +59,13 @@
 
 - PaperPreview：**连续滚动模式**（多页同时挂载、可见面积主导页回调、页首导航、跨页区域定位）、独立工具槽/适合尺寸协议、连续画布的平移/缩放锚点、每页旋转状态；现阶段本地宿主组合不能视为已完成上游化。
 - QuestionRail：增加 `onPageLocate(pageId)` 意图；页分组紧凑头、滚动末尾说明，以及紧凑筛选头的布局选项。
-- 框架沉浸状态与宿主顶栏插槽需在定稿后的框架组件阶段提炼；本轮不注册新组件。
+- 框架沉浸状态与框架自己的顶栏插槽需在定稿后的框架组件阶段提炼（遵循下述全屏规则）；本轮不注册新组件。
 
 ### 下一阶段冻结要求
 
-套用到已有流程顶栏的页面时，本框架顶栏内容必须并入宿主顶栏；框架顶栏须做成可由宿主接管的插槽，全页不得出现两行顶栏。本条为 PO 本次明确要求，不代表本设计稿已经冻结或已完成 Workspace 接入。
+**全屏规则（2026-10-03，PO 批准，取代原‘并入宿主顶栏’要求）**：预览框架始终独占整个视口，是独立的全屏视图；顶栏是框架自己的顶栏。不嵌入应用外壳、流程外壳（步骤条、任务名行、底部状态条）或任何页面内容区块，也不与宿主页面的顶栏合并。其他页面通过入口打开它，‘返回’回到来源页面。
+
+删除说明：原要求基于‘框架嵌入流程页’的错误前提，已废止。本次规则修订不代表已完成 Workspace 接入迁移。
 
 
 ## 评审工具约定
@@ -206,7 +210,7 @@ PO 2026-10-02 对所有评审页的长期要求：评审控制使用可拖动的
 
 | 冻结区域 / 行为 | 正式组件与属性 / 归属 |
 | --- | --- |
-| 三栏、唯一顶栏、沉浸、窄分区 | ReviewWorkspace：topbar/rail/canvas/inspector、open/onOpenChange、immersive、pane/onPaneChange；已有流程顶栏时省略 topbar |
+| 三栏、唯一顶栏、沉浸、窄分区 | ReviewWorkspace：topbar/rail/canvas/inspector、open/onOpenChange、immersive、pane/onPaneChange；topbar 是框架自己的顶栏，应始终提供；遵循上述全屏规则，属性仅为兼容保留可选 |
 | 键盘边界与快捷键表 | ReviewWorkspace shortcuts/onShortcut；ReviewWorkspaceShortcuts entries/open |
 | 1440 分档与偏好 | review-workspace-layout 的常量/纯函数；localStorage、宽度测量、两档键与焦点恢复仍由评审宿主管 |
 | 答题卡成绩地图、筛选、页标、键盘 | QuestionRail：sections、filters、overview、collapse、selected/filter 与各意图；review-data.tsx 映射夹具 |

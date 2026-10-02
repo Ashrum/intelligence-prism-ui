@@ -2712,6 +2712,8 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Paper Preview 试卷预览 v0.1
 
+**2026-10-03，PO 批准**：“预览一份试卷”的场景应使用全屏预览框架（`ReviewWorkspace` + `PaperPreview` 连续模式），遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)。旧的单页模式与 `PaperPreviewDialog` 标记为**待退役**，保留至 Workspace 全部迁移完成后移除；新接入不得再使用弹窗或内嵌预览。本次不删除代码，不改变现有类型、默认值与行为。
+
 `PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
 
 ## Stepper 流程步骤条 v0.1
@@ -2758,7 +2760,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## C1 · 预览框架组件化（PO 2026-10-02 批准）
 
-新增「内容与数据」目录项：`ReviewWorkspace`、`QuestionRail`、`ReviewSwitcher`、`QuestionInspector`。分别见 [框架](review-workspace.md)、[题目栏](question-rail.md)、[切换器](review-switcher.md)、[单题检查器](question-inspector.md)。只呈现外部事实、发出意图；宿主保留筛选/排序、偏好存储、学生名册、路由与回执。顶栏可由宿主唯一流程顶栏接管。题目栏同一接口接受分数或全班正确率，不内置业务计算。
+新增「内容与数据」目录项：`ReviewWorkspace`、`QuestionRail`、`ReviewSwitcher`、`QuestionInspector`。分别见 [框架](review-workspace.md)、[题目栏](question-rail.md)、[切换器](review-switcher.md)、[单题检查器](question-inspector.md)。只呈现外部事实、发出意图；宿主保留筛选/排序、偏好存储、学生名册、路由与回执。遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)：ReviewWorkspace 始终独占整个视口，不嵌入应用外壳、流程外壳（步骤条、任务名行、底部状态条）或页面内容区块，不与宿主顶栏合并。其他页面通过入口打开，“返回”回到来源页面。`topbar` 是框架自己的顶栏，应始终提供；属性仅为兼容保留可选，类型与实现不变。题目栏同一接口接受分数或全班正确率，不内置业务计算。
 
 `PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。
 
