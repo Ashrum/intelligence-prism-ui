@@ -149,18 +149,35 @@ test('catalog and demo expose six scenarios, three themes, 320px and formula cov
   assert.match(out, /320px/); assert.match(out, /<math/); assert.match(out, /请先确认批阅依据/);
 });
 
-test('compact keeps host facts and intents while moving current after list and using an unframed metric', () => {
+test('compact keeps host facts and intents while moving current after list and using FramePanel sections', () => {
   let calls = 0;
   const props = { compact: true, metric: { value: '未知', label: '已收', linkLabel: '查看名单' }, current: { label: '当前处理', title: '' }, attention: { label: '需关注', title: '等待核对' }, list: { title: '清单', items: [{ id: 'scan', title: '扫描记录', selectable: true }] }, primaryAction: { label: '继续核对跨页作答与完整评分依据' }, onPrimary: () => calls++, onItemSelect: () => calls++, onMetricLink: () => calls++ };
   const out = capture(props);
   const markers = ['metric', 'attention', 'list', 'current', 'actions'].map(key => out.html.indexOf(`data-instrument-${key}`));
   assert.ok(markers.every((value, index) => value >= 0 && (!index || value > markers[index - 1])));
   const metric = out.nodes.find(n => 'data-instrument-metric' in n.props);
-  assert.equal(metric.type, 'div'); assert.match(metric.props.className, /\[&>dl\]:grid-cols-1!/);
+  assert.equal(metric.type.name, 'FramePanel'); assert.match(out.html, /data-slot="frame"/); assert.match(metric.props.className, /\[&>dl\]:grid-cols-1!/);
   assert.doesNotMatch(out.html, /role="progressbar"|text-item-title"><\/p>/);
   for (const label of [props.primaryAction.label, '查看名单', '扫描记录']) {
     const node = button(out, label); assert.match(node.props.className, /sm:h-auto/); assert.match(node.props.className, /min-h-1[12]/); node.props.onClick();
   }
   assert.equal(calls, 3); assert.equal(capture(props).html, out.html);
   for (const state of ['loading', 'empty', 'error']) assert.doesNotMatch(html({ ...props, state }), /data-instrument-(metric|current|list|primary)/);
+});
+
+ test('meter is opt-in, labeled and bounded; default and explicit progress retain their role', () => {
+  const metric = { value: '5/6', label: '已收到', progress: { value: 5, max: 6, label: '已收到试卷量', kind: 'meter' } };
+  for (const compact of [false, true]) {
+    const out = html({ metric, compact });
+    assert.match(out, /role="meter"/); assert.match(out, /aria-valuenow="5"/); assert.match(out, /aria-valuemax="6"/);
+    assert.match(out, /已收到试卷量/); assert.match(out, /5 \/ 6/); assert.doesNotMatch(out, /role="progressbar"/);
+  }
+  for (const kind of [undefined, 'progress']) {
+    const out = html({ metric: { ...metric, progress: { ...metric.progress, kind } } });
+    assert.match(out, /role="progressbar"/); assert.doesNotMatch(out, /role="meter"/);
+  }
+  for (const progress of [{ value: -1 }, { value: NaN }, { value: Infinity }, { value: 7 }, { max: 0 }, { max: Infinity }]) {
+    assert.doesNotMatch(html({ metric: { ...metric, progress: { ...metric.progress, ...progress } } }), /role="meter"/);
+  }
+  for (const value of [0, 6]) assert.match(html({ metric: { ...metric, progress: { ...metric.progress, value } } }), new RegExp(`aria-valuenow="${value}"`));
 });

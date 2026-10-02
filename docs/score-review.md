@@ -50,3 +50,9 @@ PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/scor
 **ESCALATE：本轮真实浏览器验收被自动审批拒绝。** Chrome 打开本地 5173 返回 browser security policy / user declined permission，未尝试绕过。三主题实际配色、320px 视觉与触控、键盘输入/焦点、公式客户端渲染、区域定位滚动与折叠交互仍待 Supervisor 浏览器验证。真实保存/审计服务、移动设备、读屏器与 Workspace 接入未验证。数字及原始日志见 `/tmp/prism-score/Report.md`、`checks/`。
 
 本次增量验证另见 `/tmp/prism-score2/Report.md`、`checks/`：新增保存/重试强制理由、默认兼容、外部回执/清除/去重、输入本体尺寸类、焦点标识转换策略与新示例回归。焦点测试使用持久 ref/effect 探针与 focus spy，不代表真实 DOM 焦点验收；尺寸测试核对最终 SSR class，不代表浏览器实测。当前 Chrome 再次打开组件页被自动审批拒绝（user declined permission），未绕过；上述浏览器与真实服务验证缺口仍保留，待独立 Review。
+
+## 2026-10-02 P2：Meter 适用性核对
+
+- Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
+- 核对 `p-meter-3/4`、固定 Meter/Progress 和 ScoreReview 当前源码：confidencePercent 通过 AgentMetaLine 呈现文字百分比，progress.current/total 也是题项文字，没有任何 Progress 组件或静态量值进度条。
+- **未采用 Meter**：没有错误进度条待替换；增加条形量表会是额外展示能力，超出本轮条件性替换范围。置信度文字和题项复核进度保持原样，不把复核过程改成量值语义。组件与 demo 无 DOM/外观变化，原置信度/题项测试及夹具复用。

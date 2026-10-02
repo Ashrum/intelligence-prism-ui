@@ -6,7 +6,7 @@ import { renderToStaticMarkup as render } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dir = new URL('../.sites-runtime/record-list-test/', import.meta.url);
 await mkdir(dir, { recursive: true });
-const options = { stdin: { contents: `export * from './components/prism-next/record-list'; export * from './components/prism-next/demos/record-list'; export {Button} from './components/coss/button'; export {Tabs} from './components/coss/tabs'; export {Input} from './components/coss/input'; export {Select} from './components/coss/select'; export {MenuItem} from './components/coss/menu'; export {Card} from './components/coss/card'; export {PaginationLink} from './components/coss/pagination';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false };
+const options = { stdin: { contents: `export * from './components/prism-next/record-list'; export * from './components/prism-next/demos/record-list'; export {Button} from './components/coss/button'; export {Tabs} from './components/coss/tabs'; export {Input} from './components/coss/input'; export {Select} from './components/coss/select'; export {MenuItem} from './components/coss/menu'; export {FramePanel} from './components/coss/frame'; export {PaginationLink} from './components/coss/pagination';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false };
 async function bundle(name, plugins = []) {
   const file = new URL(name, dir);
   await writeFile(file, (await build({ ...options, plugins })).outputFiles[0].text);

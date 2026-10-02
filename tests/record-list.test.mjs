@@ -52,7 +52,7 @@ test('row primary action emits exactly once, background shares intent, internal 
   const action = out.find('Button').find(n => n.props['aria-label'] === '继续处理：一元二次方程复习作业');
   const event = click(); action.props.onClick(event);
   assert.equal(event.stopped, true); assert.deepEqual(events, [['linear','open']]);
-  const card = out.find('Card')[0];
+  const card = out.find('FramePanel')[0];
   card.props.onClick({ target: { closest: () => null } });
   assert.equal(events.length, 2);
   for (const tag of ['button','a','input','select','textarea','[role=menuitem]','[data-record-menu]']) {
@@ -73,7 +73,7 @@ test('menu emits separate intent with propagation stopped and never advances rec
 test('disabled row and menu actions cannot emit intent; absent callbacks disable controls', () => {
   const events = [], out = capture({ rows: [{ ...api.recordRows[0], action: { id: 'open', label: '继续处理', disabledReason: '等待更新回执' }, menu: [{ id: 'history', label: '历史', disabledReason: '暂不可用' }] }], onRowAction: () => events.push('row'), onRowMenu: () => events.push('menu') });
   button(out,'继续处理').props.onClick(click()); out.find('MenuItem')[0].props.onClick(click());
-  out.find('Card')[0].props.onClick({ target: { closest: () => null } });
+  out.find('FramePanel')[0].props.onClick({ target: { closest: () => null } });
   assert.deepEqual(events, []); assert.match(out.html, /等待更新回执/);
   const absent = capture({ onPrimary: undefined, onRowAction: undefined, onRowMenu: undefined });
   assert.equal(button(absent,'开始 AI 批阅').props.disabled, true);
@@ -136,14 +136,14 @@ test('external controlled tab filters membership without an internal tab UI', ()
     const rows = [...api.recordRows, { ...api.recordRows[0], id: 'projected', tabIds: undefined }];
     const out = capture({ tabs, rows, tab: 'processing' });
     assert.equal(out.find('Tabs').length, 0);
-    assert.equal(out.find('Card').length, 4);
+    assert.equal(out.find('FramePanel').length, 4);
     assert.match(out.html, /data-record-row="quadratic"/);
     assert.match(out.html, /data-record-row="projected"/);
     assert.doesNotMatch(out.html, /data-record-row="linear"/);
     const changed = capture({ tabs, rows, tab: 'completed' });
-    assert.equal(changed.find('Card').length, 19);
+    assert.equal(changed.find('FramePanel').length, 19);
     assert.doesNotMatch(changed.html, /data-record-row="quadratic"/);
-    assert.equal(capture({ tabs, rows, tab: '' }).find('Card').length, 1);
+    assert.equal(capture({ tabs, rows, tab: '' }).find('FramePanel').length, 1);
   }
 });
 

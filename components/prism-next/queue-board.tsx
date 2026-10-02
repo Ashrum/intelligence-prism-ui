@@ -2,10 +2,11 @@
 
 import { useId, useState, type CSSProperties, type ReactNode } from "react"
 import { ChevronRight } from "lucide-react"
-import { Card } from "@/components/coss/card"
+import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
+import { ScrollArea } from "@/components/coss/scroll-area"
 import { Empty } from "@/components/coss/empty"
 import { Skeleton } from "@/components/coss/skeleton"
-import { Toggle } from "@/components/coss/toggle"
+import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
 import { Badge } from "./badge"
 import { Button } from "./button"
@@ -57,32 +58,34 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
   const [localFilter, setLocalFilter] = useState<string | null>(defaultFilter)
   const selected = filter === undefined ? localFilter : filter
   const visible = selected === null ? rows : rows.filter(row => row.statusId === selected)
-  const select = (categoryId: string) => {
-    const next = selected === categoryId ? null : categoryId
+  const select = (values: string[]) => {
+    const next = values[0] ?? null
     if (filter === undefined) setLocalFilter(next)
     onFilterChange?.(next)
   }
-  return <Card render={<section aria-labelledby={`${id}-title`} />} className="@container min-w-0 gap-5 p-4" data-queue-board data-state={state.kind}>
-    <header className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+  return <section aria-labelledby={`${id}-title`} className="@container min-w-0" data-queue-board data-state={state.kind}><Frame>
+    <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>
       {state.kind === "ready" && headerAction && <BoardAction label={headerAction.label} reason={actionReason(headerAction, !!onHeaderAction)} onClick={() => onHeaderAction?.()}><ChevronRight aria-hidden="true" /></BoardAction>}
-    </header>
-    {state.kind === "loading" ? <div role="status" aria-live="polite" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载试卷队列…</p><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-40 w-full motion-reduce:animate-none" /></div>
+    </FrameHeader>
+    {state.kind !== "ready" ? <FramePanel>{state.kind === "loading" ? <div role="status" aria-live="polite" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载试卷队列…</p><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-40 w-full motion-reduce:animate-none" /></div>
       : state.kind === "error" ? <Empty><p role="alert" className="break-words text-ui-hint">{state.reason || "队列加载失败，原因未提供"}</p><BoardAction label="重试" reason={!onRetry ? "重试暂不可用" : undefined} onClick={() => onRetry?.()} /></Empty>
-      : state.kind === "empty" ? <Empty role="status"><p className="text-ui-body">暂无试卷</p>{state.description && <p className="text-ui-hint">{state.description}</p>}</Empty>
+      : <Empty role="status"><p className="text-ui-body">暂无试卷</p>{state.kind === "empty" && state.description && <p className="text-ui-hint">{state.description}</p>}</Empty>}</FramePanel>
       : <>
-        <div role="group" aria-label="队列状态筛选" className="grid min-w-0 grid-cols-1 gap-3 @min-[360px]:grid-cols-2 @min-[760px]:grid-cols-4">
-          {categories.map(category => <Toggle key={category.id} variant="outline" pressed={selected === category.id} aria-pressed={selected === category.id}
+        <FramePanel className="min-w-0"><ToggleGroup multiple={false} value={selected === null ? [] : [selected]} onValueChange={select} aria-label="队列状态筛选" className="grid w-full min-w-0 grid-cols-1 gap-3 @min-[360px]:grid-cols-2 @min-[760px]:grid-cols-4">
+          {categories.map(category => <ToggleGroupItem key={category.id} value={category.id}
             aria-label={`${category.label}：${validCount(category.count) ? category.count : "数量未提供"}`} aria-describedby={`${id}-filter-${category.id}`}
-            onPressedChange={() => select(category.id)} className="h-auto sm:h-auto min-h-11 min-w-0 justify-start whitespace-normal p-3 text-left">
+            className="h-auto sm:h-auto min-h-11 min-w-0 justify-start whitespace-normal p-3 text-left motion-reduce:transition-none">
             <span className="grid min-w-0 gap-2"><span className="text-stat-display tabular-nums">{validCount(category.count) ? category.count : "未提供"}</span>
               <Badge variant={category.tone} className="max-w-full whitespace-normal break-words">{category.label}</Badge>
               <span id={`${id}-filter-${category.id}`} className="break-words text-ui-hint">{category.description}</span>
             </span>
-          </Toggle>)}
-        </div>
+          </ToggleGroupItem>)}
+        </ToggleGroup></FramePanel>
         <p role="status" aria-live="polite" className="sr-only">{selected === null ? "全部队列" : `当前队列：${categories.find(category => category.id === selected)?.label || "分类未提供"}`}{!visible.length && ` · ${selected === null ? "暂无试卷" : "该队列暂无试卷"}`}</p>
-        {visible.length ? <Table className="min-w-[680px] table-fixed" render={<div role="region" aria-label="试卷队列表，可横向滚动" tabIndex={0} className="overflow-auto" style={{ maxHeight }} />}>
+        {visible.length ? <Table variant="card" className="min-w-[680px] table-fixed" render={maxHeight !== undefined
+          ? <ScrollArea role="region" aria-label="试卷队列表，可横向滚动" scrollFade overscrollContain className="h-auto min-w-0 overflow-hidden! [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none" style={{ maxHeight }} />
+          : <div role="region" aria-label="试卷队列表，可横向滚动" tabIndex={0} />}>
           <TableHeader><TableRow><TableHead scope="col" className="w-1/4">学生 / 试卷</TableHead><TableHead scope="col" className="w-36">当前状态</TableHead><TableHead scope="col">状态说明</TableHead><TableHead scope="col" className="w-40">操作</TableHead></TableRow></TableHeader>
           <TableBody>{visible.map(row => {
             const category = categories.find(category => category.id === row.statusId)
@@ -97,5 +100,5 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
           })}</TableBody>
         </Table> : <Empty><p className="text-ui-body">{selected === null ? "暂无试卷" : "该队列暂无试卷"}</p></Empty>}
       </>}
-  </Card>
+  </Frame></section>
 }

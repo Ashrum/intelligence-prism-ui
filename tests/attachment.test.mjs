@@ -160,8 +160,11 @@ test('paper status selection reason and view are controlled, A3 landscape has co
 test('grid alone owns maxHeight, keyboard scrolling and responsive minimum columns', () => {
   const out = capture(PaperCardGrid, { maxHeight: 420, children: h(PaperCard, paperCardFixtures[0]) });
   const region = out.nodes.find(n => 'data-paper-card-grid' in n.props);
-  assert.equal(region.props.style.maxHeight, 420); assert.equal(region.props.tabIndex, 0);
-  assert.match(region.props.className, /overflow-y-auto/); assert.match(region.props.className, /overscroll-contain/);
+  assert.equal(region.props.style.maxHeight, 420); assert.equal(region.type.name, 'ScrollArea');
+  assert.equal(region.props.overscrollContain, true); assert.equal(region.props.scrollFade, true);
+  assert.match(region.props.className, /max-h-\[inherit\]/);
+  assert.match(out.html, /data-slot="scroll-area-viewport"/);
+  assert.doesNotMatch(html(PaperCardGrid, { children: h(PaperCard, paperCardFixtures[0]) }), /scroll-area-viewport/);
   assert.equal(out.nodes.find(n => n.props.style?.gridTemplateColumns).props.style.gridTemplateColumns, 'repeat(auto-fill, minmax(min(168px, 100%), 1fr))');
 });
 

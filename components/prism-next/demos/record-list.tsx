@@ -81,7 +81,7 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
-    <DemoSection title="批阅记录 · 四个状态目录" description="按外部分类查看记录；计数、摘要、进度和操作回执均由调用方提供。">
+    <DemoSection title="批阅记录 · 四个状态目录" description="标题与记录分区呈现；按外部分类查看记录，计数、摘要、进度和操作回执均由调用方提供。">
       <Button variant="outline" className="mb-4 h-auto sm:h-auto min-h-11 whitespace-normal" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><RecordFixture /></div>
     </DemoSection>
