@@ -29,3 +29,11 @@
 ## C2 全班正确率呈现
 
 同目录辅助 `QuestionRailClass` 复用现有目录项；`sections[{id,label,summary,layout,items}]` 接收已排序项目。item 沿用 QuestionRailItem，增加 `kind?` 和 `marker?`；value 为格内第二行，detail 为行内区分度文字。marker 的判断由宿主给定。overview 外部给段数与文字；sort 为外置 Select 插槽，bodyOnly 用于宿主 Tabs 与 ReviewRailList。未传新参数的 QuestionRail 行为与第一批快照不变。
+
+## G2 · 真实数据不全（2026-10-03）
+
+复读 Supervisor 本地缓存 registry（`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/`）的 Tabs / Collapsible / Meter / Frame 条目与 particles `p-tabs-10`、`p-meter-3`、`p-frame-1`、`p-toolbar-1`，核对固定 coss Collapsible / Meter / Frame。继续扩展现有组件：Tabs 承载字段、Collapsible 承载名单、Frame 承载主体；Meter 仅表达已知值，空态沿用语义文字。无适配缺口需要新组件，不复制 particles 演示样式或数据；通用题目预览不属于 Agent 执行组件，Beautiful UI 不适用。未联网刷新上游。
+
+全班模式 `QuestionRailClass` 的 item.value 已是 ReactNode，直接支持任意短文本，例如 `{value:'未提供', tone:'neutral', ariaLabel:'第 2 题，正确率未提供', tooltip:'正确率未提供'}`；缺少比例时省略 ratio，不传假 0。新增三主题 320px“数据不全”示例验证第二行文字，未新增 API 或修改组件实现。
+
+本轮浏览器访问 `http://localhost:5173/next/components/question-analysis-card` 被工具安全策略拒绝（该地址此前被用户拒绝授权），未绕过。已提供三主题窄容器夹具与自动化证据，实际交互、视觉、焦点、滚动和读屏器留待 Supervisor 复验；不以 SSR 冒充浏览器验收。检查数字见 `/tmp/prism-comp/Report-G2.md`。

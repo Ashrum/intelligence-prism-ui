@@ -32,3 +32,13 @@ Frame/Header/Footer、ScrollArea scrollFade、Meter、Badge 和标准按钮保�
 复读本地缓存 registry 的 Button、Frame、Field 与 particles `p-frame-1` / `p-toolbar-1` 源码，以及固定 coss Button / Frame 和 Prism Button。继续用现有 Frame 分区与标准 Button，说明文字复用语义 `text-ui-hint` 和 `text-muted-foreground`；无需新组件或按钮尺寸覆盖。未联网刷新缓存；此为通用预览组件，Beautiful UI 不适用。
 
 同类检查：evidence 与 knowledge 的“未提供”仍由宿主以内容传入，confidence 仍默认“未提供”；comparison 的条目 text 原样显示，未知数值不画 Meter。空 comparison 数组确有空标题，因此新增可选 comparisonEmptyText；两个数组本身仍为必传，未传新属性时保持原 DOM。组件页新增三主题 320px“数据不全”示例，包含评分点/班级对比空态与两条禁用原因；原长中文与公式夹具保留。
+
+## G2 · 真实数据不全（2026-10-03）
+
+复读 Supervisor 本地缓存 registry（`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/`）的 Tabs / Collapsible / Meter / Frame 条目与 particles `p-tabs-10`、`p-meter-3`、`p-frame-1`、`p-toolbar-1`，核对固定 coss Collapsible / Meter / Frame。继续扩展现有组件：Tabs 承载字段、Collapsible 承载名单、Frame 承载主体；Meter 仅表达已知值，空态沿用语义文字。无适配缺口需要新组件，不复制 particles 演示样式或数据；通用题目预览不属于 Agent 执行组件，Beautiful UI 不适用。未联网刷新上游。
+
+`bodyOnly?: boolean` 默认为 false。true 时仅输出原主体和班级对比区，不含头部标题/状态/导航、底部动作、aside、Frame 或内层 ScrollArea；主体不自建滚动区。宿主提供“当前作答”标题与语义容器，在同一 Frame / ScrollArea 内先组合 QuestionAnalysisPanel，再放 QuestionInspector bodyOnly。extraLink 仍由宿主决定，若不需要跳转应省略。原 required props 保持兼容，bodyOnly 时导航与动作属性不参与渲染；此模式不发导航/动作意图。
+
+组件页保留 G1 空态与禁用原因示例，新增三主题 320px“数据不全 · 当前作答共用滚动区”，含长中文及 MathML；宿主只有一个 ScrollArea，默认完整模式 DOM 不变。
+
+本轮浏览器访问 `http://localhost:5173/next/components/question-analysis-card` 被工具安全策略拒绝（该地址此前被用户拒绝授权），未绕过。已提供三主题窄容器夹具与自动化证据，实际交互、视觉、焦点、滚动和读屏器留待 Supervisor 复验；不以 SSR 冒充浏览器验收。检查数字见 `/tmp/prism-comp/Report-G2.md`。

@@ -154,11 +154,12 @@
 
 | 冻结宿主能力 | 正式组件 / 工具 | 宿主保留 |
 | --- | --- | --- |
-| 专题、知识点、证据行 | KnowledgeRail / KnowledgeEvidenceList / ReviewRailList | Tabs 跨视角组合、夹具投影和定位 |
+| 专题、知识点、证据行 | KnowledgeRail / KnowledgeEvidenceList / ReviewRailList；G2：rate 可未知、rateEmptyText、整栏 emptyText | Tabs 跨视角组合、夹具投影、定位及未知值文案 |
 | 学生浮动栏、跳转、刻度 | StudentControlBar / StudentControlSwitcher（ReviewSwitcher）/ StudentControlScale | 筛选集合、计数、状态档位和回执 |
-| 数字题目、统计名单、填空分组、三页签、摘要 | QuestionAnalysisCard / QuestionAnalysisDetails / QuestionAnalysisGroups / QuestionAnalysisSummary | QuestionRecord、代表图、知识点及统计事实 |
-| 本题分析、知识点概况 | QuestionAnalysisPanel | 统计格式化与当前作答反馈组合 |
-| 题号格与排序行 | QuestionRailClass（QuestionRail 同目录辅助） | 排序纯函数及档位文字 |
+| 数字题目、统计名单、填空分组、三页签、摘要 | QuestionAnalysisCard / QuestionAnalysisDetails / QuestionAnalysisGroups / QuestionAnalysisSummary | QuestionRecord、代表图、知识点及统计事实；G2：pointsEmptyText、teaching/archive 字段与空态、可选 highLow、groups.description；选项统计单列、零人数不展开 |
+| 本题分析、知识点概况 | QuestionAnalysisPanel | 统计格式化与当前作答反馈组合；G2：reasonsEmptyText/relatedEmptyText/evidenceEmptyText、knowledge.rateEmptyText/volumeText |
+| 题号格与排序行 | QuestionRailClass（QuestionRail 同目录辅助） | 排序纯函数及档位文字；G2：现有 value 直接承载“未提供”，未知 ratio 省略 |
+| 当前作答主体 | QuestionInspector bodyOnly（G2） | 标题、外框和单一 ScrollArea，与本题分析共用滚动区 |
 | 数字/扫描连续画布、折叠纸组 | PaperPreviewMixed / PaperPreviewGroup | 裁切尺寸适配、身份页眉、分段标题和查看整卷链接 |
 | 均值、总体标准差、区分度、高低组、排序 | lib/prism-next/question-analysis.ts | 外部逐生事实与全卷总分 |
 
