@@ -6,10 +6,10 @@ import "./review-workspace.css"
 export type PaperPreviewSurfaceProps = {
   children: ReactNode; toolbar: ReactNode; overlay?: ReactNode; scale?: number; layoutKey?: unknown
   viewportRef: RefObject<HTMLDivElement | null>; canvasRef?: RefObject<HTMLElement | null>; toolbarRef: RefObject<HTMLDivElement | null>
-  bottomInset?: number; missing?: boolean; emptyImageText?: ReactNode; emptyImageDetail?: ReactNode
+  scanOnly?:boolean; topInset?:number; bottomInset?: number; missing?: boolean; emptyImageText?: ReactNode; emptyImageDetail?: ReactNode
 }
 /** Paper-edge side tab: observes paper geometry, clamps overwide sheets, no timers. */
-export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale = 1, layoutKey, viewportRef, canvasRef, toolbarRef: toolbar, bottomInset = 0, missing = false, emptyImageText = "扫描图像未提供", emptyImageDetail }: PaperPreviewSurfaceProps) {
+export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale = 1, layoutKey, viewportRef, canvasRef, toolbarRef: toolbar, scanOnly=false, topInset=0, bottomInset = 0, missing = false, emptyImageText = "扫描图像未提供", emptyImageDetail }: PaperPreviewSurfaceProps) {
   const localCanvas = useRef<HTMLElement>(null), canvasArea = canvasRef ?? localCanvas
   const [dockPosition, setDockPosition] = useState({ left: 0, top: 8, maxHeight: 600 })
   useLayoutEffect(() => {
@@ -17,7 +17,7 @@ export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale =
     if (!area || !bar) return
     const measure = () => {
       const bounds = area.getBoundingClientRect(), factor = scale || 1
-      const papers = [...area.querySelectorAll<HTMLElement>('[data-review-page], [data-missing-paper]')]
+      const papers = [...area.querySelectorAll<HTMLElement>(scanOnly?'[data-scan-paper]':'[data-review-page], [data-missing-paper]')].filter(paper=>!scanOnly||(()=>{const r=paper.getBoundingClientRect();return r.bottom>bounds.top+topInset*factor&&r.top<bounds.bottom})())
       const right = papers.length ? Math.max(...papers.map(paper => paper.getBoundingClientRect().right)) : bounds.right - 64 * factor
       const size = dockPaperToolbar({ canvasWidth: area.clientWidth, paperRight: (right - bounds.left) / factor, toolbarWidth: bar.offsetWidth })
       const height = area.clientHeight, maxHeight = Math.max(44, height - bottomInset / factor - 16)
@@ -30,7 +30,7 @@ export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale =
     area.querySelectorAll<HTMLElement>('[data-review-page], [data-missing-paper]').forEach(paper => observer.observe(paper))
     node?.addEventListener('scroll', measure, { passive: true })
     return () => { observer.disconnect(); node?.removeEventListener('scroll', measure) }
-  }, [scale, layoutKey, missing, children, bottomInset])
+  }, [scale, layoutKey, missing, children, bottomInset, topInset, scanOnly])
   return <section ref={canvasArea} aria-label="试卷画布" data-review-canvas className="d1-canvas bg-border">
     {overlay}
     <div className="d1-paper-host min-h-0 min-w-0 [&_[data-paper-size]]:shadow-2xl [&_[data-region]>button]:border-0! [&_[data-region]>button]:ring-offset-0! [&_[data-region]>button[aria-pressed=false]:hover]:border! [&_[data-region]>button[aria-pressed=false]:hover]:border-info! [&_[data-region]>button[aria-pressed=false]:focus-visible]:ring-1! [&_[data-region]>button[aria-pressed=false]:focus-visible]:ring-info! [&_[data-region]>button[aria-pressed=true]]:ring-2! [&_[data-region]>button[aria-pressed=true]]:ring-info!">

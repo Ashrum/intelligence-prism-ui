@@ -1,4 +1,5 @@
 "use client"
+import {MixedPaperPreviewDemo} from "./paper-preview-mixed"
 import { ContinuousPaperPreviewDemo } from "./paper-preview-continuous"
 import { useState } from "react"
 import { DemoSection } from "../demo-parts"
@@ -28,6 +29,7 @@ export function PaperPreviewDemo() {
   }
   return <>
     <ContinuousPaperPreviewDemo />
+    <MixedPaperPreviewDemo />
     <DemoSection title="学生试卷 · 缺页与扫描版本" description="6 页试卷；第 2 页缺失。页面顶部可切换浅色、暖纸、深色。">
       <div className="mb-4 flex flex-wrap gap-2"><Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button><PaperPreviewDialog {...student} triggerLabel="全屏查看学生试卷" onClose={() => setNotice("已关闭试卷预览。")} /></div>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><PaperPreview {...student} /></div>

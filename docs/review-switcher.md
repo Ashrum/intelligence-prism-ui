@@ -24,3 +24,7 @@
 ## 验证与边界
 
 组件页提供三主题、320px、长中文与公式夹具；自动测试覆盖受控事实、意图与渲染。冻结页默认及六种附加状态采用重构前 SHA-256，原有 `paper-review-v1.sha256` 不变。浏览器三主题、窄容器、焦点、触摸和视觉签名由 Supervisor 验收；不声明真实服务、移动设备或读屏器已验证。
+
+## C2 插槽兼容
+
+新增可选 `navigation`（完整 Group/Trigger 插槽）、`searchRef`（初始搜索焦点）、`popupClassName/searchLabelClassName`（布局兼容）、`markPanel`（默认 true）与 `itemToStringValue`（外部表单序列化）。StudentControlSwitcher 据此复用统一 Combobox 列表、搜索和选中行为。旧调用默认参数保持，冻结快照不变。
