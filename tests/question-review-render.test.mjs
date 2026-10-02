@@ -7,7 +7,7 @@ import React,{act} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {createRoot} from 'react-dom/client';
 import {reviewQuestions,answersForQuestion} from '../examples/question-review/fixture.ts';
-import {questionLayout,answerHeight,PAPER_WIDTH} from '../examples/question-review/artwork.ts';
+import {answerHeight,PAPER_WIDTH} from '../examples/question-review/artwork.ts';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const out=new URL('../.sites-runtime/q5-test/canvas.mjs',import.meta.url);
 await mkdir(new URL('.',out),{recursive:true});
@@ -34,7 +34,7 @@ function clientDOM(){
  const window={document,HTMLElement:Element,HTMLIFrameElement:class {}};document.defaultView=window;document.documentElement=document.createElement('html');document.body=document.createElement('body');document.activeElement=document.body;
  return {window,document,styles};
 }
-function propsFor(q,pages){return {pages:pages??[{id:'question',...questionLayout(q)},...answersForQuestion(q).map(a=>({id:a.student.id,width:PAPER_WIDTH,height:answerHeight(q)}))],zoom:'width',rotations:{},headers:{},selected:'question',activePage:'question',scale:1,topInset:68,viewportRef:()=>{},onSelect(){},onZoom(){},onVisiblePage(){},onViewport(){}}}
+function propsFor(q,pages){return {pages:pages??[{id:'question',width:794,height:1,content:React.createElement('article',{'data-digital-question':true},q.record.title)},...answersForQuestion(q).map(a=>({id:a.student.id,width:PAPER_WIDTH,height:answerHeight(q)}))],zoom:'width',rotations:{},headers:{},selected:'question',activePage:'question',scale:1,topInset:68,viewportRef:()=>{},onSelect(){},onZoom(){},onVisiblePage(){},onViewport(){}}}
 const assertFiniteStyles=html=>{for(const [,style] of html.matchAll(/style="([^"]*)"/g))assert.doesNotMatch(style,/NaN|Infinity/)};
 test('Q5 canvas SSR and initial React client commit never assign non-finite inline sizes',async()=>{
  const env=clientDOM(),previous={window:globalThis.window,document:globalThis.document,act:globalThis.IS_REACT_ACT_ENVIRONMENT};

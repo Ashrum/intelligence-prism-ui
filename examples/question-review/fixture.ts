@@ -1,7 +1,9 @@
+import { makeQuestionRecord } from './question-records.ts'
+import type { QuestionRecord } from '../../components/prism-next/question-content'
 import { computeQuestionAnalysis, sortAnswers } from './analysis.ts'
 /** Review host facts. No runtime inference of risk, confirmation or mastery. */
 export type Rubric = { id: string; label: string; max: number; knowledge: string[]; rate: number }
-export type ReviewQuestion = { id: string; number: number; type: string; category: 'objective' | 'subjective'; page: number; max: number; rate: number; affected: number; distribution: [number, number, number]; pending: number; highLoss: boolean; tone: 'neutral' | 'warning' | 'destructive'; knowledge: string; weakness: string; prompt: string; answer: string[]; points: Rubric[]; options?: { label: string; count: number; correct: boolean }[] }
+export type ReviewQuestion = { record: QuestionRecord; id: string; number: number; type: string; category: 'objective' | 'subjective'; page: number; max: number; rate: number; affected: number; distribution: [number, number, number]; pending: number; highLoss: boolean; tone: 'neutral' | 'warning' | 'destructive'; knowledge: string; weakness: string; prompt: string; answer: string[]; points: Rubric[]; options?: { label: string; count: number; correct: boolean }[] }
 export type Knowledge = { id: string; name: string; topic: string; rate: number; affected: number; volume: number; impact: boolean; sufficient: boolean; evidence: { question: string; points: string[] }[] }
 const knowledgeSeeds: [string, string, string, number, number][] = [
  ['ellipse-focus','椭圆焦距关系','圆锥曲线',42,21], ['derivative','导数与单调性','函数与导数',55,17], ['parameter','参数方程','圆锥曲线',46,18], ['plane','线面垂直判定','立体几何',61,14], ['probability','条件概率','概率统计',74,9], ['logic','充分必要条件','集合与逻辑',81,6],
@@ -37,7 +39,8 @@ export const reviewQuestions: ReviewQuestion[] = qSeeds.map(([knowledge,prompt,a
  const count=number===6?2:[12,16,17,18,19].includes(number)?3:subjective?2:1
  const labels=number===17?['建立离心率关系','联立点 P 与椭圆条件','标准方程与焦点坐标']:number===12?['消去参数','求半轴与焦距关系','写出焦点坐标']:number===18?['识别相交直线','证明两组线线垂直','引用线面垂直判定']:number===6?['判断导数符号','写出单调区间']:Array.from({length:count},(_,p)=>['条件与关系','推导过程','结论与检验'][p])
  const pointMax=number===6?[2,2]:Array.from({length:count},()=>max/count)
- return {id:`q${number}`,number,type:subjective?'解答题':number===6||number===13?'填空题':'选择题',category:subjective?'subjective':'objective',page:number<=13?0:1,max,rate:rates[i],distribution,affected:36-distribution[0],pending:2,highLoss:rates[i]<65,tone:rates[i]<45?'destructive':rates[i]<65?'warning':'neutral',knowledge,weakness,prompt,answer,points:labels.map((label,p)=>({id:`p${p+1}`,label,max:pointMax[p],knowledge:[knowledge],rate:rates[i]})), ...(number===1?{options:[{label:'A',count:31,correct:true},{label:'B',count:2,correct:false},{label:'C',count:1,correct:false},{label:'D',count:2,correct:false}]}:{}) }
+ const type=subjective?'解答题':number===6||number===13?'填空题':'选择题'
+ return {record:makeQuestionRecord(number,type,max),id:`q${number}`,number,type:subjective?'解答题':number===6||number===13?'填空题':'选择题',category:subjective?'subjective':'objective',page:number<=13?0:1,max,rate:rates[i],distribution,affected:36-distribution[0],pending:2,highLoss:rates[i]<65,tone:rates[i]<45?'destructive':rates[i]<65?'warning':'neutral',knowledge,weakness,prompt,answer,points:labels.map((label,p)=>({id:`p${p+1}`,label,max:pointMax[p],knowledge:[knowledge],rate:rates[i]})), ...(number===1?{options:[{label:'A',count:31,correct:true},{label:'B',count:2,correct:false},{label:'C',count:1,correct:false},{label:'D',count:2,correct:false}]}:{}) }
 })
 // Explicit evidence references; volume counts each referenced rubric once.
 const refs: [number, number[]][][] = [ [[12,[1,2]],[17,[2]],[14,[1]]], [[6,[1,2]],[16,[1,2]]], [[12,[1,2]]], [[18,[1,2,3]]], [[10,[1]],[19,[1,2]]], [[1,[1]],[2,[1]]], [[3,[1]]], [[4,[1]]], [[5,[1]]], [[7,[1]]], [[8,[1]]], [[9,[1]]], [[11,[1]]], [[13,[1]]], [[20,[1,2]]], [[16,[3]],[20,[2]]], [[15,[1,2]]], [[14,[1,2]]] ]

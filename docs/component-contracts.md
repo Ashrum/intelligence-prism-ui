@@ -2406,6 +2406,7 @@ import { Badge } from "@/components/prism-next/badge"
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
 | `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
+| `QuestionContent.optionExtra` | Q6 授权增加的可选 `(optionId: string) => ReactNode`；按顶层选项顺序调用，内容接在该选项正文之后。省略或传 undefined 时既有 DOM 完全不变；传入时选项使用字母／正文／附加内容的网格布局，宿主负责统计、名单、动作及窄容器适配；不影响小问内选项，不推断正确性或执行状态 |
 | `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
 | `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
 | `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |

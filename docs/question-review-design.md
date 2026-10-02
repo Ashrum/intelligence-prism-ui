@@ -99,3 +99,32 @@
 - 尺寸缺口定位到连续画布 `.d1-paper-spread` / `.d1-paper-column` 及各纸 section/viewer：未就绪的纸宽参与乘法会生成 NaN，空页集合的 Math.max 会生成 −Infinity。现在源尺寸和测量使用有限正数回退（宽 794、未知高度至少 1），空集合列宽为 0；ThinBar 非有限值回退 0，有限值限制 0–100。正常纸张的适合宽度/旋转仍复用原计算。
 - 渲染回归包括全页 SSR 内联样式、20 题画布 SSR 与 React 客户端首次 commit、空纸列及未就绪尺寸注入。客户端测试使用内存 DOM 捕获原始 style 写入，隔离 DocumentRegionViewer，只验证画布尺寸，不模拟浏览器布局或 Base UI。返工前版本在同一测试的空列用例失败（width:-Infinitypx），返工后通过。
 - **S2 原始控制台警告尚未完成浏览器归因。** 本轮默认 SSR 未复现 Supervisor 的初次渲染 NaN；上述故障注入证明尺寸缺口及防护有效，不能证明它就是原页面警告的唯一来源。已请求 component stack；本轮浏览器工具仍因用户此前拒绝而阻止 localhost:5173，未绕过。三主题、1440/1920/窄屏统计行实际不折行、真实首次加载控制台及其他交互视觉复验交 Supervisor；不声明浏览器、真实服务、触屏或读屏器验收完成。
+
+## Q6 · 数字题目卡与扫描作答（2026-10-02）
+
+本节取代此前 Q1/Q4 将题目和客观题分组绘成纸张的方案。题目是系统内可阅读、可关联的数字内容，使用章程 L2 卡片；学生作答是扫描证据，继续使用看片台、白纸和阴影。二者保持同一连续阅读路径，以材质区分信息性质。
+
+### 复用与外部做法取舍
+
+- 复读章程、QuestionContent / QuestionCard / QuestionDetails / QuestionHeading、组件页 QuestionsDemo 与 MathML 夹具；复核 coss Collapsible、Badge、Tabs、Avatar、Button，以及缓存 registry 的 `collapsible` / `p-collapsible-1` 条目、particles `p-tabs-10`、`p-meter-3`。沿用 coss 折叠、徽标与姓名按钮、既有 ThinBar；未修改固定 coss 字节或引入新依赖。
+- 采用 Supervisor 给定的外部产品做法：选项原位显示人数和比例、高低分组对照、单题与扫描证据同屏、低区分度继续标在左栏。不新增中分组（现有夹具仅明确高低组口径），不复制外部产品代码或声称已经访问其站点；本任务是通用预览宿主，Beautiful UI 不适用。
+- 不直接嵌套 QuestionCard：它尚无选项附加内容的透传能力，而本任务仅授权 QuestionContent 一个 API 增补。因此宿主组合相同的 L2 表面、QuestionHeading、QuestionContent、QuestionDetails，不新建目录条目，也不增加第二套题面渲染器。
+
+### 逐项实现
+
+1. 卡片正文为 `text-read-body`，表面复用 `bg-card / rounded-xl / ring-1 / shadow-xs/5`，跟随 light / paper / dark；沿用 Foundations 的圆角令牌，不局部强制 12px。其宽度固定为当前画布的适合宽度，与默认扫描纸等宽、左对齐；手动缩放、适合页面和旋转只改变扫描纸，卡片不跟着变形或缩字。
+2. `ReviewQuestion.record` 是 20 道题的完整 QuestionRecord。数字题干、选项、小问、配图只交给 QuestionContent；答案和解析交给 QuestionDetails。原 prompt / answer 文本仅用于保留既有扫描笔迹夹具。Q01、Q06、Q12、Q17 及其余题均含完整题面、答案和解析；Q12/Q17 有两小问及按数学比例绘制的 currentColor 椭圆图。
+3. 全部数字公式是 MathML，沿用 `prism-math` 与 STIX Two Math，长公式允许局部横向滚动。152 条固定公式由仓库已固定的 temml 0.13.4 预生成至 `question-math.json`，测试逐条重算核对。初版直接在运行时调用 temml 在 Worker 打包后出现解析错误，因此最终运行时只读取固定 MathML，不引入新解析器或依赖。
+4. 选择题单列选项后直接显示细条、人数／比例、高低分组、success 正确标记和主要干扰项 Badge；错误组选项默认展开名单，正确组默认折叠。展开正确组同步“全部”筛选；姓名按钮选中该生，并仅追加其一张裁切纸。原独立“作答分组纸”移除。
+5. 填空题卡内“作答情况”保留默认折叠的答对组、错误答案分组、姓名标签与代表裁切缩略图；缺少分类仍用“答案归类未提供”及答错名单。解答题卡内不放学生名单，逐生纸张继续在下方。
+6. QuestionDetails 默认答案页，页签顺序不变。利用现有 `QuestionRecord.explanation` ReactNode 在答案页追加宿主评分点、分值、解答题得分率和证据环，不改 QuestionDetails API；教学定位保留教材章节未关联提示并追加知识点跳转，档案显示原 ID、题型、分值与来源未知状态。
+7. 题目卡完全离开控制条下方可视区后，学生控制条附一条题干摘要及“节选”标记，点击返回题目，保留已选学生；返回后隐藏。摘要自然换行适配窄容器，不截公式、不缩字，无过渡。运行时由 ResizeObserver 读取控制条高度参与纸张避让，关闭浏览器滚动锚定以免高度变化把视口反向拉回。
+8. 检查器选择题改为一句主要干扰项洞察；解答题移除重复评分点率，保留分布、四项统计、AI 原因和关联知识点；当前作答区保持原样。第一张扫描纸之前增加“学生作答 · 失分 30”等弱化分段标题。
+9. 控制条“题目页”改“题目”，H 行为不变。侧签测量仅取当前可见扫描纸，只有题目卡可见时退回画布右缘；在卡片处操作缩放／旋转针对首份扫描作答，卡片不参与扫描手势或 DocumentRegionViewer。
+
+### 组件缺口清单增量
+
+- **本轮唯一公开 API 增补**：`QuestionContent.optionExtra?: (optionId: string) => ReactNode`。未传入时 DOM 与变更前逐字相同，覆盖 20 个 QuestionRecord 的 SHA-256 基线；小问选项协议不变。调用方负责事实、动作与附加节点的布局，不在 QuestionContent 内推断正确项、名单或统计。
+- QuestionCard 尚无选项附加内容透传；QuestionDetails 尚无专门评分点／知识点导航插槽。本轮采用宿主组合及既有 ReactNode 扩展，不擅自增加 API。共同组件化时再审定这些槽位；数字内容与扫描内容混排、扫描工具的可见范围和摘要避让也仍是宿主协议。
+- 自动验证覆盖卡片和扫描变换分离、MathML 一致性、选项统计／默认展开、三页签／证据环、吸顶摘要意图、未选／已选时一／两个主数字、唯一主按钮、控件尺寸、统计夹具与冻结稿 SSR。旧的“题目 SVG／分组纸”断言按本任务替换，未放宽 coss 散列或冻结稿快照。
+- 本轮浏览器自动审批明确拒绝 `localhost:5173`（此前用户拒绝该访问），未尝试绕过。三主题、1440/1920、390/320、长中文／公式实际布局、滚动／吸顶／工具条贴边、触摸与焦点返回均待 Supervisor 视觉复验；SSR、宿主事件与内存 DOM 测试不能替代浏览器、真实服务、移动设备或读屏器验收。最终五项数字与 diff 见 `/tmp/prism-review2/Report-Q6.md` 和 `q6-checks/`。
