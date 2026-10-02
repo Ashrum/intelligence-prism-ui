@@ -33,9 +33,9 @@ function capture(props = {}, Component = api.QueueBoard) {
     return React.cloneElement(n, {}, React.Children.map(n.props.children, walk));
   }
   const html = render(walk(h(Component, { ...base, onRowAction() {}, onHeaderAction() {}, ...props })));
-  return { html, nodes, toggles: nodes.filter(n => n.type?.name === 'Toggle'), buttons: nodes.filter(n => n.type === api.SharedButton || n.type === probe.SharedButton) };
+  return { html, nodes, group: nodes.find(n => n.type?.name === 'ToggleGroup'), toggles: nodes.filter(n => n.type?.name === 'ToggleGroupItem'), buttons: nodes.filter(n => n.type === api.SharedButton || n.type === probe.SharedButton) };
 }
-const pressed = out => out.toggles.filter(n => n.props['aria-pressed']).map(n => n.props['aria-label']);
+const pressed = out => out.toggles.filter(n => out.group.props.value.includes(n.props.value)).map(n => n.props['aria-label']);
 const button = (out, label) => out.buttons.find(n => React.Children.toArray(n.props.children).includes(label));
 
 test('filter cards and multiline actions override desktop height and keep all card content inside the toggle', () => {
@@ -55,7 +55,8 @@ test('filter cards and multiline actions override desktop height and keep all ca
     assert.equal(parts[2].props.id, toggle.props['aria-describedby']);
   });
   const selected = capture({ filter: 'completed' });
-  assert.match(render(selected.toggles[0]), /data-pressed=""/);
+  assert.match(selected.html, /aria-pressed="true"/);
+  assert.equal(selected.group.props.multiple, false);
   const status = out.nodes.find(n => n.props.role === 'status');
   assert.equal(status.props.className, 'sr-only'); assert.equal(status.props['aria-live'], 'polite');
 });
@@ -76,7 +77,7 @@ test('controlled single filter emits selection/cancel while host remains authori
   const calls = [], props = { filter: 'completed', onFilterChange: id => calls.push(id) };
   const out = capture(props);
   assert.deepEqual(pressed(out), ['已完成：31']); assert.match(out.html, /张雨桐/); assert.doesNotMatch(out.html, /周可欣/);
-  out.toggles[0].props.onPressedChange(false); out.toggles[1].props.onPressedChange(true);
+  out.group.props.onValueChange([]); out.group.props.onValueChange(['waiting']);
   assert.deepEqual(calls, [null, 'waiting']); assert.deepEqual(pressed(capture(props)), ['已完成：31']);
   assert.deepEqual(pressed(capture({ filter: 'waiting' })), ['等待批阅：5']);
   assert.equal(pressed(capture({ filter: null })).length, 0);
@@ -86,9 +87,9 @@ test('uncontrolled selection changes, switches and cancels without requiring a h
   globalThis.__queueState = {}; t.after(() => delete globalThis.__queueState);
   let out = capture({ defaultFilter: 'error' }, probe.QueueBoard);
   assert.deepEqual(pressed(out), ['异常：2']);
-  out.toggles[1].props.onPressedChange(true); out = capture({}, probe.QueueBoard);
+  out.group.props.onValueChange(['waiting']); out = capture({}, probe.QueueBoard);
   assert.deepEqual(pressed(out), ['等待批阅：5']); assert.match(out.html, /周可欣/); assert.doesNotMatch(out.html, /张雨桐/);
-  out.toggles[1].props.onPressedChange(false); out = capture({}, probe.QueueBoard);
+  out.group.props.onValueChange([]); out = capture({}, probe.QueueBoard);
   assert.equal(pressed(out).length, 0); for (const row of base.rows) assert.ok(out.html.includes(row.name));
 });
 
@@ -149,8 +150,10 @@ test('loading/empty/error replace stale data and error retry stays an intent', (
 test('shared semantic badges, table scope and keyboard-scroll region preserve fact structure', () => {
   const out = capture({ maxHeight: 280 });
   const table = out.nodes.find(n => n.type?.name === 'Table');
-  assert.equal(table.props.render.props.tabIndex, 0); assert.equal(table.props.render.props.style.maxHeight, 280);
-  assert.match(out.html, /role="region" aria-label="试卷队列表，可横向滚动"/);
+  assert.equal(table.props.render.type.name, 'ScrollArea'); assert.equal(table.props.render.props.scrollFade, true); assert.equal(table.props.variant, 'card');
+  assert.match(out.html, /data-slot="scroll-area-viewport"/);
+  assert.equal(capture({ maxHeight: undefined }).nodes.find(n => n.type?.name === 'Table').props.render.props.tabIndex, 0); assert.equal(table.props.render.props.style.maxHeight, 280);
+  assert.match(out.html, /role="region"/); assert.match(out.html, /aria-label="试卷队列表，可横向滚动"/);
   assert.equal((out.html.match(/scope="col"/g) || []).length, 4);
   assert.deepEqual(out.nodes.filter(n => n.type === api.SharedBadge).map(n => n.props.variant), ['success', 'info', 'error', 'warning', 'success', 'info', 'error', 'warning']);
 });

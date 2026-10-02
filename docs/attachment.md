@@ -37,3 +37,11 @@
 - 动作使用 coss / Prism Button 的键盘与焦点行为；多行同时设置 h-auto / sm:h-auto，目标至少 44px，紧凑文字动作至少 48px。新增三主题 320px、长中文、有图/无图、A3 横版与占位示例。
 
 Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/边框、姓名“未交”前缀与推断文案；按业务显式传入 viewLabel、resolveLabel、onResolve、placeholder。缩略页始终表示查看意图；需要不同的未交处置流程时使用 onResolve，不把缩略页接到处置动作。
+
+## 2026-10-02 P2：PaperCardGrid ScrollArea
+
+- Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
+- 核对 `p-scroll-area-4` 与固定 ScrollArea，采用既有 scrollFade/overscrollContain；仅 maxHeight 存在时将 grid 外层改为渲染 section 的 ScrollArea，最大高度传入根与 viewport，卡片网格/状态内容置于 content。无 maxHeight 保留自然高度 section。
+- coss 内部 viewport 检测溢出后提供 Tab 入口，键盘与触屏通过实际滚动节点工作；区域保留 aria-label，内层 p-1 保留卡片焦点环空间；viewport 与 scrollbar 关闭 reduced-motion 过渡。
+- DOM/外观变化仅限限高 PaperCardGrid：新增 viewport/content/双轴 scrollbar 和渐隐边缘。PaperCard 本体、Attachment 上传 Progress、回调及 PaperPreview 原生视口均不改；后者的手势和锚点依赖原生滚动。
+- 三主题、320px、compact 与限高夹具继续覆盖该路径，demo 增加渐隐说明。实际键盘/触屏滚动、三主题外观交 Supervisor；不据 SSR 声称完成浏览器验收。

@@ -28,7 +28,7 @@ export const instrumentFixtures: readonly InstrumentPanelProps[] = [
   },
   {
     title: "正在接收学生试卷", description: "已收到 1 份；另一份正在扫描。",
-    metric: { value: "1/42", label: "已收到 / 预计提交", status: { label: "接收中", tone: "info" }, linkLabel: "查看名单 →", progress: { value: 1, max: 42, label: "学生试卷接收比例" } },
+    metric: { value: "1/42", label: "已收到 / 预计提交", status: { label: "接收中", tone: "info" }, linkLabel: "查看名单 →", progress: { kind: "meter", value: 1, max: 42, label: "学生试卷接收比例" } },
     list: { title: "实时任务状态", items: [
       { id: "receive", title: "学生试卷接收", description: "1 份已收到 · 1 份扫描中", status: { label: "接收中", tone: "info" } },
       { id: "grading", title: "后台智能批阅", description: "0 份完成 · 1 份处理中", status: { label: "自动进行", tone: "info" } },
@@ -93,6 +93,11 @@ export function InstrumentPanelDemo() {
     <DemoSection title="批阅任务 · 六个阶段" description="固定任务快照。操作仅记录请求；执行结果由调用方提供。">
       <div className="flex flex-wrap items-start gap-6">{instrumentFixtures.map(fixture => <div key={fixture.title} className="w-full max-w-[380px]"><InteractivePanel {...fixture} /></div>)}</div>
     </DemoSection>
+    <DemoSection title="已收到 5/6 · 宿主量值" description="数量来自当前收交快照；不根据操作推定新增或完成。">
+      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <InstrumentPanel compact title="收交情况" metric={{ value: "5/6", label: "已收到 / 应交", progress: { kind: "meter", value: 5, max: 6, label: "已收到跨页作答完整试卷的数量" } }} />
+      </div>)}</div>
+    </DemoSection>
     <DemoSection title="主操作不可用 · 原因关联" description="主按钮下方说明阻断原因，并通过 aria-describedby 关联。">
       <div className="w-80 max-w-full"><InteractivePanel title="等待批阅依据确认" primaryAction={{ label: "开始智能批阅", disabled: true, disabledReason: "请先确认批阅依据" }} actionNote="原卷与标准答案已接收，尚未完成核对。" /></div>
     </DemoSection>
@@ -106,7 +111,7 @@ export function InstrumentPanelDemo() {
           list={{ title: "实时任务状态", items: [{ id: "long", title: "补交跨页作答的学生试卷并重新核对页序与答题区域", description: "仅接收本轮尚未提交的试卷，接收范围由当前任务配置提供。", status: { label: "有限开放", tone: "warning" }, selectable: true }] }} />
       </div>)}</div>
     </DemoSection>
-    <DemoSection title="紧凑任务面板 · 三主题与 320px" description="指标不嵌套卡片；当前处理放在清单之后，所有业务事实仍由调用方提供。">
+    <DemoSection title="紧凑任务面板 · 三主题与 320px" description="分区采用统一面板；当前处理放在清单之后，所有业务事实仍由调用方提供。">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <InteractivePanel {...instrumentFixtures[4]} compact current={{ label: "当前处理", title: "核对长中文题干与跨页作答的完整性", description: <math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math> }} />
       </div>)}</div>

@@ -37,3 +37,13 @@ PO 批准候选 #8；目录「内容与数据」，入口 `/next/components/queu
 自动化覆盖筛选单选/取消、受控与非受控、aria-pressed、零值/缺失计数、行/头部/重试意图、禁用原因、空态与三状态、共享组件回归。数字与日志见 `/tmp/prism-queue/Report.md`、`checks/`。
 
 **ESCALATE：真实浏览器视觉/交互验收受阻。** 访问本地 5173 被浏览器安全策略拒绝，理由为用户已拒绝该权限；未绕过。SSR/回调和类型测试不等于浏览器验证。三主题配色、320px 实际布局、触控/键盘滚动和读屏器待独立验证；真实服务、移动设备与分页宿主接入也未验证。
+
+## 2026-10-02 P2：Frame、ToggleGroup 与 ScrollArea
+
+- Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
+- 核对 `p-frame-1/3/4`、`p-card-11`、`p-table-7/8`；采用 section 内 Frame + FrameHeader（标题与动作），筛选/替代状态使用 FramePanel，表格使用固定 Table `variant="card"`，沿用 p-table-7 的框架与表格内容分层；不复制 p-table-8 的排序、选择或依赖。
+- 核对 `p-toggle-group-4` 与固定 ToggleGroup。改用 `multiple=false` 的 ToggleGroup / ToggleGroupItem，value 在单项数组与空数组间适配，coss 提供选择、取消及 roving focus；组件仅将 onValueChange 映射为原 onFilterChange(id|null)。受控/非受控、缺失分类与 count=null 文案保持。
+- **未采用 outline 连续按钮外观**：其直接子项按 DOM 首尾去除中间边框与圆角，4/2/1 列换行会留下错误接缝，修补需要覆盖 coss 视觉。采用 coss 原有 default 变体和原网格断点，无视觉覆盖；解决当初为保留卡片网格而避开 ToggleGroup 的限制。多行 label/count/description、44px 触点保留。
+- 核对 `p-scroll-area-4`；maxHeight 存在时 Table 容器改为 ScrollArea（scrollFade、overscrollContain），maxHeight 同步限制内部 viewport；根节点关闭 Table 默认外层横向滚动，双轴滚动统一由 viewport 承担。无 maxHeight 保留原生有名称、tabIndex=0 的横向区域。
+- coss viewport 检测溢出后自动进入 Tab 顺序，原生触屏滚动由 Base UI 保留；viewport/scrollbar 过渡在 reduced-motion 下关闭。区域仍具名称，表头 scope 和四列结构不变。
+- DOM/外观变化：框架、默认变体筛选组、card 表格以及限高时的 viewport/content/双轴 scrollbar。组件页已有三主题限高长文公式夹具，补充键盘与渐隐说明；实际焦点、双轴触屏滚动与三主题视觉由 Supervisor 验收。

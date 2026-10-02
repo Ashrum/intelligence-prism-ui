@@ -18,7 +18,7 @@ PO 2026-09-30 批准候选 #3；目录「内容与数据」，入口 `/next/comp
 `InstrumentPanel` 来自 `components/prism-next/instrument-panel.tsx`。所有业务区块可省略，按头部 → 指标 → 当前处理 → 关注 → 清单 → 动作 → 下一步排序。
 
 - `eyebrow / title / description / headerAction`：可选头部；`aria-label` 用于无标题面板，默认“任务状态面板”。头部动作使用 `onHeaderAction()`。
-- `metric: { value, label, status?, linkLabel?, progress? }`：value 为调用方原样传入的文字/数字；progress 为 `{ value, max?, label }`，仅有限、合法范围显示，省略/非法不显示进度条，不从指标文本解析进度。`onMetricLink()` 只发出查看意图。
+- `metric: { value, label, status?, linkLabel?, progress? }`：value 为调用方原样传入的文字/数字；progress 为 `{ value, max?, label, kind?: "progress" | "meter" }`，仅有限、合法范围显示，省略/非法不显示进度条，不从指标文本解析进度。`onMetricLink()` 只发出查看意图。
 - `current: { label, title, description? }`；`attention: { label, title, description?, tone? }` 默认 warning。说明支持 ReactNode（如公式），由宿主负责内容安全与语义。
 - `list: { title, items }`：每行唯一 `id`、`title`、可选 `description / status / completed / selectable`；明确 `completed=true` 才显示完成勾，否则显示序号。`onItemSelect(id)` 仅对 selectable 行提供按钮。
 - 所有 `status` 为 `{ label, tone? }`，tone 为 neutral / info / success / warning / error。状态文字不可省；不从文字或色彩推断业务状态。
@@ -41,7 +41,7 @@ PO 2026-09-30 批准候选 #3；目录「内容与数据」，入口 `/next/comp
 
 组件页提供六个固定中文业务快照、禁用原因、三状态、三主题 320px 长中文和 MathML；交互反馈只记录“请求”，不会更改进度或模拟发布成功。具体测试数字、浏览器证据和未验证范围见本任务 `/tmp/prism-instrument/Report.md` 及 `checks/`。真实服务、移动真机、读屏器与业务接入不在本轮验证范围。
 
-## W4 可选紧凑模式
+## W4 可选紧凑模式（历史布局，P2 分区更新见下文）
 
 沿用本页 coss Card/Progress/Alert 与 particles p-progress-1/2/3、Beautiful UI status-panel/task-panel/inspector/side-panel 检索记录；本轮复查固定 Card、Button 与 MetricSummary，实现组合适配，不新增组件或第三方代码。
 
@@ -50,3 +50,11 @@ PO 2026-09-30 批准候选 #3；目录「内容与数据」，入口 `/next/comp
 多行按钮保留 h-auto / sm:h-auto；通用操作与清单链接的目标至少 44px，紧凑主要操作至少 48px（这是触控修正，默认业务语义不变）。新增三主题 320px、长中文与公式的紧凑示例。
 
 组件不提供 `brandAccent` 等品牌渐变变体，也不通过 className 改写面板边框或颜色。宿主页面若经 Product Owner 批准有品牌视觉例外，只能在组件外层布局容器中呈现，组件本身保持不变。
+
+## 2026-10-02 P2：Frame 分区与可选 Meter
+
+- Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
+- 核对 `p-frame-1/3/4` 的标题、多面板与堆叠结构、`p-card-11` 的头部动作、`p-meter-3/4` 的标签与值。采用 Frame + FramePanel 承载 header / metric / current / attention / list / actions / next；attention 仍组合原 Alert。默认与 compact 均使用 coss 分区外观，compact 收紧 padding 并保留 current 后置，替代上文 W4 的无框指标布局。aside、标题关联、清单语义和动作门禁保留。
+- `metric.progress` 新增 `kind?: "progress" | "meter"`。省略或 progress 保持原 Progress 语义；meter 表示量值，显示宿主 label 和 `value / max`，默认 max=100。两类共用原校验，非法数据隐藏，不从 metric.value 解析数字；MeterIndicator 关闭减少动态效果下的过渡。
+- 既有 Beautiful UI 与 Agent 组件检索取舍仍适用；本轮只扩展通用组件并复用固定 coss，不引入第三方代码。新增三主题 320px「已收到 5/6」Meter 夹具，旧阶段、长中文和公式夹具继续使用。
+- DOM/外观变化：Card 外壳改为 aside 内 Frame，各分区改为 FramePanel；compact 指标也有面板，next 不再单独 Separator。公开回调与默认 Progress 行为不变。浏览器验收交 Supervisor，SSR 不代表键盘、触屏或三主题视觉验收。

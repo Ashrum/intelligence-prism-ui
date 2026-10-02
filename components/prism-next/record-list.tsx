@@ -3,7 +3,7 @@
 import { useId, useState, type ReactNode } from "react"
 import { ChevronRight, Circle, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/coss/button"
-import { Card } from "@/components/coss/card"
+import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
 import { Empty } from "@/components/coss/empty"
 import { Input } from "@/components/coss/input"
 import { Menu, MenuTrigger, MenuPopup, MenuItem } from "@/components/coss/menu"
@@ -91,7 +91,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
         {visible.map(row => {
           const reason = row.action.disabledReason?.trim() || (!onRowAction ? "操作暂不可用" : undefined)
           return <li key={row.id} className="min-w-0">
-            <Card data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0" onClick={event => {
+            <FramePanel data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0" onClick={event => {
               // React portal events bubble too; isolate the entire menu subtree below.
               if (!reason && !(event.target as HTMLElement).closest("button,a,input,select,textarea,[role=menuitem],[data-record-menu]")) onRowAction?.(row.id, row.action.id)
             }}>
@@ -120,7 +120,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
                   {reason && <p className="w-full break-words text-ui-hint">{reason}</p>}
                 </div>
               </div>
-            </Card>
+            </FramePanel>
           </li>
         })}
       </ul>
@@ -134,15 +134,17 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       </div>}
     </>}
   </div>
-  return <section data-record-list data-state={state.kind} aria-labelledby={`${id}-title`} className="@container min-w-0 space-y-5">
-    <header className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+  return <section data-record-list data-state={state.kind} aria-labelledby={`${id}-title`} className="@container min-w-0">
+    <Frame>
+    <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
-    </header>
-    {tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
+    </FrameHeader>
+    <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
         {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} motion-reduce:transition-none`}>{item.label} <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}
       </TabsList>
       {tabs.map(item => <TabsPanel key={item.id} value={item.id} className="min-w-0">{item.id === selected ? content : null}</TabsPanel>)}
-    </Tabs> : content}
+    </Tabs> : content}</div>
+    </Frame>
   </section>
 }

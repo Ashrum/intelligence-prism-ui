@@ -2,12 +2,12 @@
 
 import { useId, type ReactNode } from "react"
 import { Check } from "lucide-react"
-import { Card } from "@/components/coss/card"
+import { Frame, FramePanel } from "@/components/coss/frame"
+import { Meter, MeterLabel, MeterValue, MeterTrack, MeterIndicator } from "@/components/coss/meter"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
 import { Alert, AlertTitle, AlertDescription } from "@/components/coss/alert"
 import { Empty } from "@/components/coss/empty"
 import { Skeleton } from "@/components/coss/skeleton"
-import { Separator } from "@/components/coss/separator"
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
 import { MetricSummary } from "./data-display"
@@ -28,7 +28,7 @@ export type InstrumentSecondaryAction = InstrumentAction & { id: string }
 export type InstrumentPanelProps = {
   compact?: boolean
   eyebrow?: string; title?: string; description?: ReactNode; headerAction?: InstrumentAction
-  metric?: { value: string | number; label: string; status?: InstrumentStatus; linkLabel?: string; progress?: { value: number; max?: number; label: string } }
+  metric?: { value: string | number; label: string; status?: InstrumentStatus; linkLabel?: string; progress?: { value: number; max?: number; label: string; kind?: "progress" | "meter" } }
   current?: { label: string; title: string; description?: ReactNode }
   attention?: { label: string; title: string; description?: ReactNode; tone?: "info" | "warning" | "error" }
   list?: { title: string; items: readonly InstrumentItem[] }
@@ -47,7 +47,6 @@ const defaultWrappingButton = "h-auto sm:h-auto min-h-11 min-w-11 max-w-full whi
 /** Present host facts and emit intent; there is no local execution or business state. */
 export function InstrumentPanel(props: InstrumentPanelProps) {
   const wrappingButton = cn(defaultWrappingButton, props.compact && "min-h-12")
-  const MetricContainer = props.compact ? "div" : Card
   const { eyebrow, title, description, headerAction, metric, current, attention, list, primaryAction, secondaryActions = [], actionNote, next, state = "ready" } = props
   const id = useId()
   const ready = state === "ready"
@@ -58,39 +57,43 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
   const knownProgress = progress && Number.isFinite(progress.value) && Number.isFinite(max) && max > 0 && progress.value >= 0 && progress.value <= max
   const hasHeader = eyebrow || title || description || (ready && headerAction)
 
-  const currentPanel = current && <section className="min-w-0 space-y-2" aria-labelledby={`${id}-current`} data-instrument-current>
+  const currentPanel = current && <FramePanel role="region" className={cn("min-w-0 space-y-2", props.compact && "p-4")} aria-labelledby={`${id}-current`} data-instrument-current>
           <h3 id={`${id}-current`} className="text-ui-hint">{current.label}</h3>{(!props.compact || current.title) && <p className="text-item-title">{current.title}</p>}
           {current.description && <div className="text-ui-hint">{current.description}</div>}
-        </section>
+        </FramePanel>
 
-  return <Card render={<aside />} data-instrument-panel data-state={state} data-compact={props.compact || undefined}
+  return <aside data-instrument-panel data-state={state} data-compact={props.compact || undefined}
     aria-labelledby={title ? `${id}-title` : undefined} aria-label={title ? undefined : props["aria-label"] || "任务状态面板"}
-    className={cn("min-w-0 w-full max-w-full self-start gap-5 p-5 [overflow-wrap:anywhere]", props.compact && "gap-4", props.className)}>
-    {hasHeader && <header className="flex min-w-0 flex-wrap items-start justify-between gap-3" data-instrument-header>
+    className={cn("min-w-0 w-full max-w-full self-start [overflow-wrap:anywhere]", props.className)}>
+    <Frame>
+    {hasHeader && <FramePanel className={cn("min-w-0", props.compact && "p-4")} data-instrument-header><header className="flex min-w-0 flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 flex-1 space-y-2">
         {eyebrow && <p className="text-ui-meta">{eyebrow}</p>}
         {title && <h2 id={`${id}-title`} className="text-block-title">{title}</h2>}
         {description && <div className="text-ui-hint">{description}</div>}
       </div>
       {ready && headerAction && <Button type="button" variant="ghost" className={wrappingButton} disabled={headerAction.disabled || !props.onHeaderAction} onClick={() => { if (!headerAction.disabled) props.onHeaderAction?.() }}>{headerAction.label}</Button>}
-    </header>}
-    {!ready ? state === "loading" ? <div role="status" aria-busy="true" className="grid gap-3">
+    </header></FramePanel>}
+    {!ready ? <FramePanel>{state === "loading" ? <div role="status" aria-busy="true" className="grid gap-3">
       <span className="text-ui-hint">正在加载任务状态…</span><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-12 w-full motion-reduce:animate-none" />
     </div> : state === "error" ? <Empty className="px-0 py-6 md:py-6"><p role="alert" className="text-ui-body">{props.errorMessage || "任务状态加载失败"}</p>{props.onRetry && <Button type="button" className={wrappingButton} onClick={props.onRetry}>重试</Button>}</Empty>
-      : <Empty className="px-0 py-6 md:py-6"><p className="text-ui-body">{props.emptyMessage || "暂无任务状态"}</p></Empty>
+      : <Empty className="px-0 py-6 md:py-6"><p className="text-ui-body">{props.emptyMessage || "暂无任务状态"}</p></Empty>}</FramePanel>
       : <>
-        {metric && <MetricContainer className={cn("@container min-w-0 [&>dl]:grid-cols-1!", props.compact ? "grid gap-1" : "gap-3 p-4")} data-instrument-metric>
+        {metric && <FramePanel className={cn("@container grid min-w-0 gap-3 [&>dl]:grid-cols-1!", props.compact && "gap-1 p-4")} data-instrument-metric>
           <MetricSummary layout="strip" items={[{ id: "metric", label: metric.label, value: metric.value }]} />
           {metric.status && <AgentStatus tone={metric.status.tone}>{metric.status.label}</AgentStatus>}
           {metric.linkLabel && <Button type="button" variant="link" className={cn(wrappingButton, "self-start")} disabled={!props.onMetricLink} onClick={props.onMetricLink}>{metric.linkLabel}</Button>}
-          {knownProgress && <Progress value={progress.value} max={max} aria-label={progress.label}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>}
-        </MetricContainer>}
+          {knownProgress && (progress.kind === "meter" ? <Meter value={progress.value} max={max}>
+            <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><MeterLabel className="min-w-0 text-ui-hint">{progress.label}</MeterLabel><MeterValue className="text-ui-hint">{(_formatted, value) => `${value} / ${max}`}</MeterValue></div>
+            <MeterTrack><MeterIndicator className="motion-reduce:transition-none" /></MeterTrack>
+          </Meter> : <Progress value={progress.value} max={max} aria-label={progress.label}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>)}
+        </FramePanel>}
         {!props.compact && currentPanel}
-        {attention && <Alert variant={attention.tone || "warning"} role="note" data-instrument-attention>
+        {attention && <FramePanel className={props.compact ? "p-4" : undefined} data-instrument-attention><Alert variant={attention.tone || "warning"} role="note">
           <AlertTitle><AgentStatus tone={attention.tone || "warning"}>{attention.label}</AgentStatus></AlertTitle>
           <AlertDescription><p className="text-item-title">{attention.title}</p>{attention.description && <div className="text-ui-hint">{attention.description}</div>}</AlertDescription>
-        </Alert>}
-        {list && <section className="min-w-0 space-y-3" aria-labelledby={`${id}-list`} data-instrument-list>
+        </Alert></FramePanel>}
+        {list && <FramePanel role="region" className={cn("min-w-0 space-y-3", props.compact && "p-4")} aria-labelledby={`${id}-list`} data-instrument-list>
           <h3 id={`${id}-list`} className="text-item-title">{list.title}</h3>
           <ol className="grid gap-4">{list.items.map((item, index) => <li key={item.id} className="flex min-w-0 items-start gap-3">
             <span className="flex min-h-6 min-w-6 shrink-0 items-center justify-center text-ui-hint" aria-hidden="true">{item.completed ? <Check className="size-4" /> : index + 1}</span>
@@ -103,17 +106,18 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
               {item.description && <div className="text-ui-hint">{item.description}</div>}
             </div>
           </li>)}</ol>
-        </section>}
+        </FramePanel>}
         {props.compact && currentPanel}
-        {(primaryAction || secondaryActions.length > 0 || actionNote) && <div className="grid min-w-0 gap-3" data-instrument-actions>
+        {(primaryAction || secondaryActions.length > 0 || actionNote) && <FramePanel className={cn("grid min-w-0 gap-3", props.compact && "p-4")} data-instrument-actions>
           {primaryAction && <Button type="button" data-instrument-primary className={wrappingButton} disabled={primaryDisabled} aria-describedby={reason || actionNote ? `${id}-action-note` : undefined} onClick={() => { if (!primaryDisabled) props.onPrimary?.() }}>{primaryAction.label}</Button>}
           {(reason || actionNote) && <div id={`${id}-action-note`} className="space-y-1 text-ui-hint">{reason && <p>{reason}</p>}{actionNote && <div>{actionNote}</div>}</div>}
           {secondaryActions.slice(0, 2).map(action => <Button type="button" key={action.id} variant="outline" className={wrappingButton} disabled={action.disabled || !props.onSecondary} onClick={() => { if (!action.disabled) props.onSecondary?.(action.id) }}>{action.label}</Button>)}
-        </div>}
-        {next && <><Separator /><div className="flex min-w-0 flex-wrap items-start justify-between gap-3" data-instrument-next>
+        </FramePanel>}
+        {next && <FramePanel className={cn("flex min-w-0 flex-wrap items-start justify-between gap-3", props.compact && "p-4")} data-instrument-next>
           <div className="min-w-0 flex-1 space-y-1"><p className="text-ui-hint">下一步</p><p className="text-ui-body">{next.text}</p></div>
           {next.status && <AgentStatus tone={next.status.tone}>{next.status.label}</AgentStatus>}
-        </div></>}
+        </FramePanel>}
       </>}
-  </Card>
+    </Frame>
+  </aside>
 }

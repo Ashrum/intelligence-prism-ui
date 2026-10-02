@@ -3,6 +3,7 @@
 import { Children, useId, useState, type ReactNode, type CSSProperties } from "react"
 import { FileText, FileImage, File } from "lucide-react"
 import { Card } from "@/components/coss/card"
+import { ScrollArea } from "@/components/coss/scroll-area"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
 import { Empty } from "@/components/coss/empty"
 import { Skeleton } from "@/components/coss/skeleton"
@@ -117,10 +118,11 @@ export type PaperCardGridProps = {
   emptyMessage?: string; errorMessage?: string; onRetry?: () => void; "aria-label"?: string
 }
 export function PaperCardGrid({ compact = false, className, children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
-  return <section data-paper-card-grid data-state={state} aria-label={label} tabIndex={maxHeight !== undefined ? 0 : undefined} className={cn("min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1", className)} style={{ maxHeight }}>
-    {state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
+  const content = state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
         : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
-          : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>}
-  </section>
+          : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
+  return maxHeight !== undefined
+    ? <ScrollArea render={<section />} data-paper-card-grid data-state={state} aria-label={label} scrollFade overscrollContain style={{ maxHeight }} className={cn("h-auto min-w-0 [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none", className)}><div className="p-1">{content}</div></ScrollArea>
+    : <section data-paper-card-grid data-state={state} aria-label={label} className={cn("min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1", className)}>{content}</section>
 }

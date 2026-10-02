@@ -23,7 +23,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - `search`、`filters[{id,label,value,options}]`、`activeFilters: string[]`、`summary{label,tone}` 全部由宿主提供。过滤项、发布状态与时间选项无内置业务含义；组件不执行搜索。activeFilters 用于已选条件摘要，`onClearFilters()` 由宿主决定重置哪些条件；清除搜索调用 `onSearch("")`。
 - `pagination{page,pages,label}` 接收宿主页码窗口，组件不算页数。页码按钮发出 `onPageChange(page)`，当前页保留 aria-current。大数据使用紧凑页码窗口，分页规则归宿主。
 - 意图：`onTabChange(id)`、`onSearch(query)`、`onFilterChange(id,value)`、`onRowAction(rowId,actionId)`、`onRowMenu(rowId,actionId)`、`onPageChange(page)`、`onPrimary()`、`onRetry()`、`onClearFilters()`。无回调的操作禁用；search 无回调时只读。行主操作可给 disabledReason，禁用整行快捷点击并显示原因；菜单项可给 disabledReason。
-- 行背景点击与可聚焦的主操作按钮调用同一个意图；Card 不包裹 Button，内部按钮与 Portal 菜单阻止冒泡，不出现嵌套按钮，也不抢夺内部控件键盘行为。
+- 行背景点击与可聚焦的主操作按钮调用同一个意图；FramePanel 不以 Button 包裹整行，内部按钮与 Portal 菜单阻止冒泡，不出现嵌套按钮，也不抢夺内部控件键盘行为。
 - `state` 默认 ready；ready + activeFilters 为 Filtered；search-empty 为搜索无结果；empty 为首次空；error 带 reason 与 retry；loading 呈现 Skeleton。隐去非 ready 的记录与分页，不把旧结果当作新回执；首次空不显示搜索工具栏。
 
 ## 页面、无障碍与验证边界
@@ -37,3 +37,11 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 ## 可选 tabs 适配依据
 
 本次按 `/tmp/prism-score2/record-list-adaptation.diff` 原样上游化五处改动。复核上文 coss Tabs、particles p-table-5/p-table-8 与 Beautiful UI Records Table/Filter Table/Task Rows 的既有检索取舍；本次仅扩展已有 RecordList 的可选属性，不引入新组件或上游代码。传非空 tabs 的既有路径保持不变。
+
+## 2026-10-02 P2：Frame 复用
+
+- Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
+- 核对 `p-frame-1/3/4`、`p-card-11`、`p-table-7/8` 和固定 Frame/Card；采用 section 内 Frame + FrameHeader 承载标题及主操作，每个记录行由 Card 改为 FramePanel。FramePanel 是普通 div，能保留列表 li、背景点击和按钮/Portal 冒泡隔离；因此卡片行无需保留 Card。
+- 未采用 card-style Table：当前每条记录是适应 320px 的完整事实与动作块，没有固定列头；套表格会改变列表语义与窄容器行为。沿用 p-table-7 的框架/内容分层，不移植其多列数据结构。
+- DOM/外观变化：新增 Frame 框架与 FrameHeader，记录行使用 FramePanel 的默认边框、圆角、背景和阴影；只适配 padding、溢出裁剪和布局。Tabs、搜索、分页、Progress、点击与菜单语义不变；既有 Beautiful UI 检索取舍继续适用，不复制上游代码。
+- demo 文案同步；原三主题、1366px、320px、长中文/公式与菜单夹具复用。浏览器视觉、Portal 焦点与移动触控交 Supervisor 验收。

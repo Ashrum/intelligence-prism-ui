@@ -39,7 +39,7 @@ export function AttachmentDemo() {
       <Feedback>{feedback}</Feedback>
       <div className="grid gap-6 lg:grid-cols-3">{(["sm", "md", "lg"] as const).map(size => <section key={size} className="min-w-0 space-y-3" aria-label={`${size} 附件`}><h3 className="text-block-title">{size}</h3>{attachmentFixtures.map(item => <Attachment key={item.id} size={size} item={item} view={{}} onAction={attachmentAction} />)}</section>)}</div>
     </DemoSection>
-    <DemoSection title="Paper Card 试卷卡 · 8 名学生" description="当前预览由调用方控制；未接入扫描图像时只显示纸张占位。网格内容可独立滚动。">
+    <DemoSection title="Paper Card 试卷卡 · 8 名学生" description="当前预览由调用方控制；未接入扫描图像时只显示纸张占位。网格内容可独立滚动，边缘渐隐提示尚有内容。">
       <Feedback>{feedback}</Feedback>
       <PaperCardGrid maxHeight={520}>{paperCardFixtures.map(item => <PaperCard key={item.id} {...item} selected={selected === item.id} onView={viewPaper} />)}</PaperCardGrid>
     </DemoSection>
