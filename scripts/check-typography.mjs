@@ -4,6 +4,12 @@ import { fileURLToPath } from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const dirs=['components/prism-next','examples','app/(next)'];
 const issues=[];let count=0;
+// The same semantic class registry drives merging, the guard, and parity tests.
+const registry=readFileSync(join(root,'lib/prism-next/typography.ts'),'utf8');
+const semanticClasses=new Set([...registry.matchAll(/(?:className["']?\s*:\s*)["'](text-[a-z-]+)["']/g)].map(m=>m[1]));
+const tokens=readFileSync(join(root,'app/(next)/next/typography.css'),'utf8');
+for(const name of semanticClasses)if(!tokens.includes(`--${name}:`))issues.push(`Missing semantic typography token: ${name}`);
+if(!semanticClasses.has('text-score-display'))issues.push('Missing registered score-display role');
 for(const dir of dirs)for(const name of readdirSync(join(root,dir),{recursive:true})){
  if(!/\.tsx$/.test(name))continue;
  const file=join(dir,name).split(sep).join('/'),src=readFileSync(join(root,file),'utf8');count++;

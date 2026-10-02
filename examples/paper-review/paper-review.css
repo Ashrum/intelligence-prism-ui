@@ -1,0 +1,58 @@
+.d1-review { height:100dvh; overflow:hidden; display:grid; grid-template-rows:minmax(0,1fr); }
+.d1-stage { position:relative; min-height:0; overflow:hidden; display:flex; justify-content:center; align-items:center; }
+.d1-frame { position:relative; flex-shrink:0; width:100%; height:100%; display:flex; flex-direction:column; overflow:hidden; transform-origin:center; container-type:inline-size; }
+.d1-topbar { min-height:56px; height:56px; flex-shrink:0; }
+.d1-columns { min-height:0; flex:1; display:grid; grid-template-columns:232px minmax(0,1fr) 380px; transition:grid-template-columns 160ms ease-out; }
+.d1-rail-shell { min-width:0; min-height:0; overflow:hidden; transition:opacity 160ms ease-out, visibility 160ms; }
+.d1-rail { height:100%; }
+.d1-rail-tabs { height:100%; display:grid; gap:0; grid-template-rows:56px 40px minmax(0,1fr); }
+.d1-frame[data-rail-ready="false"] { visibility:hidden; }
+.d1-frame[data-rail-animate="false"] .d1-columns, .d1-frame[data-rail-animate="false"] .d1-rail-shell { transition:none; }
+.d1-frame[data-rail-collapsed="true"] .d1-columns { grid-template-columns:0 minmax(0,1fr) 380px; }
+.d1-frame[data-rail-collapsed="true"] .d1-rail-shell { opacity:0; visibility:hidden; }
+.d1-frame[data-rail-collapsed="true"] .d1-rail { min-width:232px; }
+.d1-question { transition-duration:160ms; }
+.d1-inspector { display:grid; grid-template-rows:56px minmax(0,1fr) auto; }
+.d1-canvas { position:relative; min-width:0; min-height:0; display:grid; grid-template-columns:minmax(0,1fr); overflow:hidden; }
+.d1-mobile-nav { display:none; }
+.d1-paper-host { overflow:hidden; }
+.d1-continuous { height:100%; overflow:auto; overscroll-behavior:contain; touch-action:none; padding:8px; }
+.d1-paper-spread { margin-inline:auto; }
+.d1-paper-column { display:flex; flex-direction:column; gap:16px; }
+.d1-paper-host [data-paper-size] { isolation:isolate; }
+.d1-tool-dock { position:absolute; z-index:10; width:56px; min-height:0; display:flex; clip-path:inset(0 -40px -40px 0); }
+.d1-tool-scroll { min-height:0; max-height:inherit; overflow-y:auto; scrollbar-width:none; display:flex; align-items:flex-start; }
+.d1-rail-header,.d1-inspector-header { height:56px; min-height:56px; }
+.d1-frame[data-immersive="true"] .d1-topbar,
+.d1-frame[data-immersive="true"] .d1-mobile-nav,
+.d1-frame[data-immersive="true"] .d1-rail-shell,
+.d1-frame[data-immersive="true"] .d1-inspector { display:none; }
+.d1-frame[data-immersive="true"] .d1-columns { display:grid; grid-template-columns:minmax(0,1fr); }
+.d1-frame[data-immersive="true"][data-rail-collapsed="true"] .d1-columns { grid-template-columns:minmax(0,1fr); }
+.d1-frame[data-immersive="true"] .d1-canvas { display:grid; }
+.d1-paper-host [data-region] > button > span { visibility:hidden; }
+.d1-tools { gap:2px; width:56px; flex-shrink:0; }
+@container (min-width:1800px) { .d1-columns { grid-template-columns:264px minmax(0,1fr) 420px; } .d1-frame[data-rail-collapsed="true"] .d1-columns { grid-template-columns:0 minmax(0,1fr) 420px; } }
+@container (max-width:1250px) { .d1-student-meta { display:none; } .d1-topbar { gap:8px; } }
+@container (max-width:1099px) {
+  .d1-mobile-nav { display:flex; flex-shrink:0; align-items:center; min-height:72px; padding-right:72px; }
+  .d1-columns { display:block; position:relative; }
+  .d1-columns > * { height:100%; }
+  .d1-frame:not([data-mobile-pane="rail"]) .d1-rail-shell,
+  .d1-frame:not([data-mobile-pane="canvas"]) .d1-canvas,
+  .d1-frame:not([data-mobile-pane="inspector"]) .d1-inspector { display:none; }
+  .d1-inspector { max-width:600px; margin-inline:auto; }
+  .d1-return-label,.d1-student-label { display:none; }
+}
+@container (max-width:650px) {
+  .d1-topbar { overflow-x:auto; padding-inline:8px; }
+  .d1-total { gap:8px; }
+  .d1-total > :first-child { display:none; }
+  .d1-tools { gap:0; }
+}
+
+/* Host state changes only; no simulated processing. */
+.d1-paper-host [data-region] > button { transition:box-shadow 160ms ease-out; }
+@media (prefers-reduced-motion:reduce) {
+  .d1-paper-host [data-region] > button, .d1-columns, .d1-rail-shell, .d1-question { transition:none; }
+}
