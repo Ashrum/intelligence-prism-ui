@@ -1,0 +1,22 @@
+/* PO 2026-10-02: review utility accent, never a product/theme token. */
+.review-tools-trigger {
+  --review-accent: #F04A1A;
+  position: fixed;
+  z-index: 40;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  background: var(--review-accent);
+  color: white;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+.review-tools-trigger:hover { background: color-mix(in srgb, var(--review-accent), black 8%); }
+.review-tools-trigger:active { background: color-mix(in srgb, var(--review-accent), black 16%); cursor: grabbing; }
+.review-tools-trigger:focus-visible { outline: 3px solid var(--review-accent); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .review-tools-trigger, .review-tools-popup, .review-tools-popup *,
+  [data-slot="popover-positioner"]:has(> .review-tools-popup) { transition: none !important; animation: none !important; }
+}
