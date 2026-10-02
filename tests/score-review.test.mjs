@@ -194,3 +194,34 @@ test('numeric input itself keeps 44px sizing at base and sm, and required receip
   assert.match(html,/载入预设回执/); assert.match(html,/切换题项（焦点交接）/);
   assert.doesNotMatch(html,/已保存 \d+ 分/);
 });
+
+test('P1 quick scores filter invalid steps and duplicates; controlled/local drafts never save', t => {
+  assert.deepEqual(api.filterQuickScores([0,0,5,10,-1,11,NaN,1.3],10,.5),[0,5,10]);
+  assert.deepEqual(api.filterQuickScores([0,9.5],9.5,1),[0]);
+  assert.deepEqual(api.filterQuickScores([.3,.6],1,.1),[.3,.6]);
+  assert.deepEqual(api.filterQuickScores([0],10,0),[]);
+  globalThis.__scoreState={index:0,values:[]}; t.after(()=>delete globalThis.__scoreState);
+  const calls=[], props={quickScores:[0,5,10],onScoreChange:v=>calls.push(v),onSave:()=>assert.fail('quick score saved')};
+  let out=capture(props,probe); assert.match(out.html,/role="group" aria-label="快捷给分"/);
+  button(out,'满分 10').props.onClick(); out=capture(props,probe);
+  assert.equal(out.number.props.value,10); assert.equal(button(out,'满分 10').props['aria-pressed'],true);
+  assert.match(button(out,'0 分').props.className,/min-h-12/);
+  button(capture({...props,score:6}),'0 分').props.onClick(); assert.equal(capture({...props,score:6}).number.props.value,6);
+  button(capture({...props,state:{kind:'saving'}}),'5 分').props.onClick(); assert.deepEqual(calls,[10,0]);
+});
+const shortcut=(out,key,mods={})=>out.nodes.find(n=>n.props['data-score-review']!==undefined).props.onKeyDown({key,ctrlKey:false,metaKey:false,altKey:false,shiftKey:false,nativeEvent:{isComposing:false},preventDefault(){},...mods});
+test('P1 shortcuts use component scope, exact click gates, retries and composition guard',()=>{
+  let calls=[]; const props={shortcuts:true,onSave:v=>calls.push(['save',v]),onRetry:v=>calls.push(['retry',v]),onAcceptAi:v=>calls.push(['ai',v]),onPrev:()=>calls.push('prev'),onSkip:()=>calls.push('skip')};
+  for(const extra of [{requireReason:true},{score:7,reason:' '},{state:{kind:'saving'}},{state:{kind:'saved',score:6}},{disabledReason:'锁定'},{maxScore:NaN},{score:null}]) shortcut(capture({...props,...extra}),'Enter',{ctrlKey:true});
+  assert.deepEqual(calls,[]);
+  const out=capture(props); shortcut(out,'Enter',{ctrlKey:true}); shortcut(out,'Enter',{metaKey:true}); shortcut(out,'a',{altKey:true});shortcut(out,'ArrowLeft',{altKey:true});shortcut(out,'ArrowRight',{altKey:true});
+  assert.deepEqual(calls.map(v=>Array.isArray(v)?v[0]:v),['save','save','ai','prev','skip']);
+  calls=[];
+  for(const extra of [{state:{kind:'saving'}},{disabledReason:'锁定'}]) for(const key of ['a','ArrowLeft','ArrowRight'])shortcut(capture({...props,...extra}),key,{altKey:true});
+  shortcut(out,'Enter',{ctrlKey:true,nativeEvent:{isComposing:true}});shortcut(out,'a',{altKey:true,nativeEvent:{isComposing:true}});shortcut(out,'Enter',{ctrlKey:true,repeat:true});
+  assert.deepEqual(calls,[]);
+  shortcut(capture({...props,state:{kind:'failed',reason:'服务不可用'}}),'Enter',{metaKey:true});assert.equal(calls[0][0],'retry');
+  calls=[]; shortcut(capture({...props,onAcceptAi:undefined,onSave:undefined,onPrev:undefined,onSkip:undefined}),'a',{altKey:true}); assert.deepEqual(calls,[]);
+  assert.match(out.html,/<kbd/);assert.doesNotMatch(capture().html,/<kbd|快捷给分/);
+  assert.equal(capture().nodes.find(n=>n.props['data-score-review']!==undefined).props.onKeyDown,undefined);
+});

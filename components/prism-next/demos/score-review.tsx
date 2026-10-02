@@ -77,6 +77,10 @@ export function ScoreReviewDemo() {
       </div>
       <Feedback>{notice}</Feedback>
     </DemoSection>
+    <DemoSection title="快捷给分与键盘操作" description="快捷给分仅改草稿；Ctrl/⌘+Enter 保存仍需满足理由门禁。Alt+A 接受建议，Alt+← 上一题，Alt+→ 跳过。">
+      <ScoreFixture overrides={{ quickScores: [0, 5, 10], shortcuts: true }} onIntent={setNotice} />
+      <Feedback>{notice}</Feedback>
+    </DemoSection>
     <ScoreReviewReasonReceiptDemo />
     {scoreReviewFixtures.map(fixture => <DemoSection key={fixture.id} id={`score-${fixture.id}`} title={fixture.title}>
       <ScoreFixture overrides={fixture.props} onIntent={setNotice} />
@@ -85,7 +89,7 @@ export function ScoreReviewDemo() {
     <DemoSection title="三主题 · 320px 长中文与公式" description="浅色、暖纸、深色使用同一组语义字号与 coss 控件。">
       <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <p className="pb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</p>
-        <ScoreFixture overrides={{ questionLabel: "主观题 3：二次函数配方法的完整推导、取等条件与结论核对", step: 0.5, defaultScore: 7, defaultReason: "逐项核对学生的配方过程、最小值与取等条件，依据评分规则补计推导步骤分。" }} onIntent={setNotice} />
+        <ScoreFixture overrides={{ quickScores: [0, 5, 10], shortcuts: true, questionLabel: "主观题 3：二次函数配方法的完整推导、取等条件与结论核对", step: 0.5, defaultScore: 7, defaultReason: "逐项核对学生的配方过程、最小值与取等条件，依据评分规则补计推导步骤分。" }} onIntent={setNotice} />
       </div>)}</div>
       <Feedback>{notice}</Feedback>
     </DemoSection>

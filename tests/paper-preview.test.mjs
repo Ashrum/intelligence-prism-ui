@@ -15,9 +15,10 @@ await writeFile(file, (await build(options)).outputFiles[0].text);
 const api = await import(file);
 await writeFile(probe, (await build({ ...options, plugins: [{ name: 'paper-events', setup(build) {
   build.onLoad({ filter: /prism-next\/paper-preview\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8'))
-    .replace('useId, useRef, useState,', 'useId,')
+    .replace('useId, useRef, useState, useLayoutEffect,', 'useId,')
     .replace('export type PaperPreviewZoom', `const useState = (initial: any): any => { const p = (globalThis as any).__paper; const i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (v: any) => { p.values[i] = typeof v === 'function' ? v(p.values[i]) : v }]; };
-const useRef = <T,>(initial: T): {current:T} => { const p = (globalThis as any).__paper; return p.refs[p.refCursor++] ?? {current:initial}; };
+const useRef = <T,>(initial: T): {current:T} => { const p = (globalThis as any).__paper; return p.refs[p.refCursor++] ??= {current:initial}; };
+const useLayoutEffect = (effect: any) => { (globalThis as any).__paper.effects.push(effect) };
 export type PaperPreviewZoom`) }));
 } }] })).outputFiles[0].text);
 const probeApi = await import(probe);
@@ -29,6 +30,7 @@ const textOf = n => Array.isArray(n) ? n.map(textOf).join('') : React.isValidEle
 function reset() { globalThis.__paper = { values: [], refs: [], cursor: 0, refCursor: 0 }; }
 function capture(extra = {}, Component = probeApi.PaperPreview) {
   globalThis.__paper.cursor = globalThis.__paper.refCursor = 0;
+  globalThis.__paper.effects = [];
   const nodes = [];
   function walk(n) {
     if (Array.isArray(n)) return n.map(walk);
@@ -36,7 +38,9 @@ function capture(extra = {}, Component = probeApi.PaperPreview) {
     if (n.type === Component) return h(function Visit() { return walk(Component(n.props)); });
     nodes.push(n); return React.cloneElement(n, {}, React.Children.map(n.props.children, walk));
   }
-  return { html: render(walk(h(Component, { ...base, ...extra }))), nodes };
+  const result = { html: render(walk(h(Component, { ...base, ...extra }))), nodes };
+  globalThis.__paper.effects.forEach(effect => effect());
+  return result;
 }
 function button(extra, label) { const found = capture(extra).nodes.find(n => n.props.onClick && (n.props['aria-label'] === label || textOf(n) === label)); assert.ok(found, label); return found; }
 function click(extra, label) { const node = button(extra, label); assert.ok(!node.props.disabled, label); node.props.onClick(); }
@@ -331,4 +335,132 @@ export type DocumentRegion=`);
   const handler = findClick(tree); handler(); handler(); assert.equal(calls.length, count + 3);
   mount('modern'); const modernClick = findClick(draw()); modernClick(); modernClick();
   assert.equal(calls.slice(-3).filter(call => call.page === 'modern' && call.id === 'r').length, 3);
+});
+
+test('P1 rotation geometry swaps A3 landscape extents; fit calculations and regions rotate together',()=>{
+  const paper=api.paperDimensions('A3','landscape');
+  for(const rotation of [0,90,180,270]) {
+    const size=api.rotatedPaperDimensions(paper,rotation),swap=rotation===90||rotation===270;
+    assert.equal(size.width,swap?paper.height:paper.width);assert.equal(size.height,swap?paper.width:paper.height);
+    assert.equal(api.paperZoomPercent('width',{width:size.width/2,height:1},size),50);
+    assert.equal(api.paperZoomPercent('page',{width:size.width,height:size.height/4},size),25);
+    const markup=html({pages:[{id:'a3',paperSize:'A3',orientation:'landscape',regions:[{id:'r',label:'区域',rect:[8,20,30,40]}]}],rotation:{a3:rotation}});
+    assert.match(markup,/left:8%;top:20%;width:30%;height:40%/);
+    if(rotation)assert.match(markup,new RegExp(`rotate\\(${rotation}deg\\)`));else assert.doesNotMatch(markup,/rotate\(/);
+  }
+  assert.deepEqual(api.paperZoomAnchor({x:200,y:150},{x:.5,y:.25},{x:16,y:16},{width:800,height:1200}),{left:216,top:166});
+  assert.deepEqual(api.paperZoomAnchor({x:200,y:150},{x:0,y:0},{x:16,y:16},{width:800,height:1200}),{left:0,top:0});
+});
+const keyEvent=(key,extra={})=>({key,target:{closest:()=>null},nativeEvent:{isComposing:false},preventDefault(){},...extra});
+test('P1 per-page rotation, controlled callbacks and canvas keyboard keep host/local state separate',()=>{
+  reset(); const calls=[],zooms=[],props={pages:[{id:'a'},{id:'b'}],defaultRotation:{a:270},onRotationChange:(...v)=>calls.push(v),onZoomChange:v=>zooms.push(v)};
+  click(props,'向右旋转');assert.doesNotMatch(capture(props).html,/rotate\(/);click(props,'向右旋转');assert.match(capture(props).html,/rotate\(90deg\)/);
+  click(props,'下一页');assert.doesNotMatch(capture(props).html,/rotate\(/);click(props,'向左旋转');click(props,'上一页');assert.match(capture(props).html,/rotate\(90deg\)/);
+  assert.deepEqual(calls,[['a',0],['a',90],['b',270]]);
+  const controlled={...props,variant:'canvas',rotation:{a:180}};
+  const keyboard=()=>capture(controlled).nodes.find(n=>n.props.onKeyDown).props.onKeyDown;
+  keyboard()(keyEvent('R',{shiftKey:true}));assert.deepEqual(calls.at(-1),['a',90]);assert.match(capture(controlled).html,/rotate\(180deg\)/);
+  for(const key of ['+','=','-','0'])keyboard()(keyEvent(key));assert.equal(zooms.length,4);assert.equal(zooms.at(-1),'page');
+  keyboard()(keyEvent('r',{nativeEvent:{isComposing:true}}));assert.equal(calls.length,4);
+  keyboard()(keyEvent('r',{target:{closest:()=>({})}}));assert.equal(calls.length,4);
+  assert.ok(button(controlled,'向右旋转'));assert.match(button(controlled,'向右旋转').props.className,/min-h-11 min-w-11/);
+});
+function gestureFixture(t,extra={}) {
+  reset();const old=globalThis.ResizeObserver;globalThis.ResizeObserver=class{observe(){}disconnect(){}};
+  let wheel,cleanup,width=api.paperDimensions().width,height=api.paperDimensions().height;
+  const node={clientWidth:400,clientHeight:600,clientLeft:0,clientTop:0,scrollWidth:2400,scrollHeight:3400,scrollLeft:100,scrollTop:100,
+    getBoundingClientRect:()=>({left:10,top:20}),addEventListener:(name,cb,options)=>{assert.equal(options.passive,false);wheel=cb},removeEventListener(){}};
+  const paper={getBoundingClientRect:()=>({left:26-node.scrollLeft,top:36-node.scrollTop,width,height})};
+  const props={pages:[{id:'a',regions:[{id:'r',label:'区域',rect:[0,0,50,50]}]}],defaultZoom:100,...extra};
+  const draw=()=>capture(props), view=()=>draw().nodes.find(n=>n.props.className==='paper-preview-viewport');
+  let out=draw();out.nodes.find(n=>n.props['data-paper-size']).props.ref.current=paper;cleanup=view().props.ref(node);
+  t.after(()=>{cleanup?.();globalThis.ResizeObserver=old});
+  const target={setPointerCapture(){},hasPointerCapture:()=>false};
+  const event=(pointerId,x,y,timeStamp=0,pointerType='touch')=>({pointerId,clientX:x,clientY:y,timeStamp,pointerType,button:0,target,preventDefault(){}});
+  return {props,draw,view,node,event,wheel:e=>wheel(e),size:(w,h)=>{width=w;height=h}};
+}
+test('P1 wheel is local/nonpassive, ordinary scrolling untouched; controlled anchor waits for host',t=>{
+  const requests=[],f=gestureFixture(t,{zoom:100,onZoomChange:v=>requests.push(v)}),old=f.node.scrollLeft;
+  const factor=Math.exp(.2),wheel={deltaY:-20,deltaMode:0,clientX:210,clientY:220,preventDefault(){this.prevented=true}};
+  f.wheel(wheel);assert.equal(wheel.prevented,undefined);assert.deepEqual(requests,[]);
+  f.wheel({...wheel,ctrlKey:true});assert.equal(requests[0],100*factor);
+  f.draw();assert.equal(f.node.scrollLeft,old);
+  f.size(api.paperDimensions().width*factor,api.paperDimensions().height*factor);f.props.zoom=100*factor;f.draw();
+  assert.ok(Math.abs(f.node.scrollLeft-(284*factor-184))<1e-8);assert.ok(Math.abs(f.node.scrollTop-(284*factor-184))<1e-8);
+  f.wheel({...wheel,metaKey:true,deltaY:-10000});assert.equal(requests.at(-1),100*factor*Math.exp(.25));
+});
+test('F1 wheel bounds each normalized event to 25 while preserving small pinch deltas and zoom limits',t=>{
+  const requests=[],f=gestureFixture(t,{zoom:20,onZoomChange:v=>requests.push(v)});
+  for(const modifier of ['ctrlKey','metaKey']) for(const [deltaY,deltaMode,effective] of [
+    [-120,0,-25],[120,0,25],[-10000,0,-25],[10000,0,25],
+    [-25,0,-25],[25,0,25],[-2,0,-2],[.5,0,.5],[0,0,0],
+    [-1,1,-16],[1,1,16],[-120,1,-25],[120,1,25],[-1,2,-25],[1,2,25],
+  ]) {
+    let prevented=0;
+    f.wheel({deltaY,deltaMode,[modifier]:true,clientX:210,clientY:220,preventDefault(){prevented++}});
+    assert.equal(requests.at(-1),20*Math.exp(-effective*.01),`${modifier}: delta=${deltaY}, mode=${deltaMode}`);
+    assert.equal(prevented,1);
+  }
+  assert.ok(Math.abs(20*Math.exp(.25)-25.68050833375483)<1e-10);
+  for(const [zoom,deltaY,expected] of [[299,-120,300],[5,120,5]]) {
+    f.props.zoom=zoom;f.draw();
+    f.wheel({deltaY,deltaMode:0,ctrlKey:true,clientX:210,clientY:220,preventDefault(){}});
+    assert.equal(requests.at(-1),expected);
+  }
+});
+test('F2 touch viewport allows native pan and scroll chaining',async()=>{
+  const css=await readFile(new URL('../components/prism-next/paper-preview.css',import.meta.url),'utf8');
+  const viewport=css.match(/\.paper-preview-viewport\s*\{([^}]+)\}/)?.[1];
+  assert.ok(viewport);
+  assert.match(viewport,/touch-action:\s*pan-x pan-y\s*;/);
+  assert.doesNotMatch(viewport,/overscroll-behavior/);
+});
+test('F2 single touch does not prevent native scroll or pan; cancellation releases capture and resets the next gesture',t=>{
+  const zooms=[],f=gestureFixture(t,{onZoomChange:v=>zooms.push(v)}),e=f.event;
+  let prevented=0,released=0;
+  const target={setPointerCapture(){},hasPointerCapture:()=>true,releasePointerCapture(){released++}};
+  f.view().props.onPointerDown({...e(1,100,100),target});
+  f.view().props.onPointerMove({...e(1,140,170,20),target,preventDefault(){prevented++}});
+  assert.equal(prevented,0);assert.equal(f.node.scrollLeft,100);assert.equal(f.node.scrollTop,100);
+  f.view().props.onPointerCancel({...e(1,140,170,30),target});
+  assert.equal(released,1);
+  f.view().props.onPointerMove(e(1,200,200,40));assert.deepEqual(zooms,[]);
+  f.view().props.onPointerDown(e(2,100,100,50));f.view().props.onPointerDown(e(3,200,100,60));
+  f.view().props.onPointerMove(e(3,300,100,70));assert.deepEqual(zooms,[200]);
+  f.view().props.onPointerCancel(e(2,100,100,80));f.view().props.onLostPointerCapture(e(3,300,100,90));
+  f.view().props.onPointerMove(e(3,400,100,100));assert.deepEqual(zooms,[200]);
+  f.view().props.onPointerDown(e(4,100,100,110));f.view().props.onPointerDown(e(5,200,100,120));
+  f.view().props.onPointerUp(e(4,100,100,130));f.view().props.onPointerUp(e(5,200,100,140));
+  assert.deepEqual(zooms,[200,100]);
+  f.view().props.onPointerDown(e(6,100,100,150,'pen'));
+  const left=f.node.scrollLeft,top=f.node.scrollTop;
+  f.view().props.onPointerMove({...e(6,120,110,170,'pen'),preventDefault(){prevented++}});
+  assert.equal(prevented,1);assert.equal(f.node.scrollLeft,left-20);assert.equal(f.node.scrollTop,top-10);
+  f.view().props.onPointerUp(e(6,120,110,180,'pen'));
+});
+test('P1 pointer pan uses threshold, suppresses region clicks, and keeps keyboard clicks usable',t=>{
+  const f=gestureFixture(t),event=f.event;
+  f.view().props.onPointerDown(event(1,100,100,0,'mouse'));f.view().props.onPointerMove(event(1,103,103,10,'mouse'));assert.equal(f.node.scrollLeft,100);
+  f.view().props.onPointerMove(event(1,120,110,20,'mouse'));assert.equal(f.node.scrollLeft,80);assert.equal(f.node.scrollTop,90);
+  f.view().props.onPointerUp(event(1,120,110,30,'mouse'));
+  let stopped=0;f.view().props.onClickCapture({detail:1,preventDefault(){},stopPropagation(){stopped++}});assert.equal(stopped,1);
+  f.view().props.onClickCapture({detail:0,preventDefault(){},stopPropagation(){stopped++}});assert.equal(stopped,1);
+  f.view().props.onPointerDown(event(2,100,100));f.view().props.onPointerUp(event(2,100,100,40));f.view().props.onClickCapture({detail:1,preventDefault(){},stopPropagation(){stopped++}});assert.equal(stopped,1);
+});
+test('P1 pinch zoom, two-finger tap, double click and cancellation only update view intent',t=>{
+  const zooms=[],f=gestureFixture(t,{variant:'canvas',onZoomChange:v=>zooms.push(v)}),e=f.event;
+  f.view().props.onPointerDown(e(1,100,100));f.view().props.onPointerDown(e(2,200,100,10));f.view().props.onPointerMove(e(2,300,100,40));assert.equal(zooms.at(-1),200);
+  f.view().props.onPointerUp(e(2,300,100,50));f.view().props.onPointerUp(e(1,100,100,60));assert.equal(zooms.length,1);
+  f.view().props.onPointerDown(e(3,100,100,100));f.view().props.onPointerDown(e(4,200,100,110));f.view().props.onPointerUp(e(3,100,100,140));assert.equal(zooms.length,1);f.view().props.onPointerUp(e(4,200,100,150));assert.equal(zooms.at(-1),100);
+  f.view().props.onPointerDown(e(5,100,100,200));f.view().props.onPointerUp(e(5,100,100,210));f.view().props.onDoubleClick({clientX:100,clientY:100,preventDefault(){}});assert.equal(zooms.at(-1),'page');
+  const before=zooms.length;f.view().props.onPointerDown(e(6,100,100,300));f.view().props.onPointerDown(e(7,200,100,310));f.view().props.onPointerCancel(e(6,100,100,320));f.view().props.onPointerUp(e(7,200,100,330));assert.equal(zooms.length,before);
+  f.view().props.onPointerDown(e(8,100,100,400));f.view().props.onPointerDown(e(9,200,100,410));f.view().props.onPointerUp(e(8,100,100,440));f.view().props.onPointerUp(e(9,200,100,800));assert.equal(zooms.length,before);
+});
+
+test('P1 pinch keeps the starting paper point under the moving two-finger center',t=>{
+  const requests=[],f=gestureFixture(t,{zoom:100,onZoomChange:v=>requests.push(v)}),e=f.event;
+  f.view().props.onPointerDown(e(1,100,100));f.view().props.onPointerDown(e(2,200,100,10));f.view().props.onPointerMove(e(2,300,100,30));
+  assert.deepEqual(requests,[200]);assert.equal(f.node.scrollLeft,100);
+  f.size(api.paperDimensions().width*2,api.paperDimensions().height*2);f.props.zoom=200;f.draw();
+  assert.ok(Math.abs(f.node.scrollLeft-274)<1e-8);assert.ok(Math.abs(f.node.scrollTop-264)<1e-8);
 });

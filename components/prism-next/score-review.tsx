@@ -1,9 +1,11 @@
 "use client"
 
 import { useId, useState, useEffect, useRef } from "react"
+import type { KeyboardEvent } from "react"
 import { Card } from "@/components/coss/card"
 import { Alert, AlertDescription } from "@/components/coss/alert"
 import { Button } from "@/components/coss/button"
+import { Kbd } from "@/components/coss/kbd"
 import { Field, FieldLabel } from "@/components/coss/field"
 import { Textarea } from "@/components/coss/textarea"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldIncrement, NumberFieldDecrement } from "@/components/coss/number-field"
@@ -27,6 +29,7 @@ export type ScoreReviewProps = {
   eyebrow?: string; answer?: string; locationNotice?: string
   paper?: PaperPreviewProps
   maxScore: number; step?: number
+  quickScores?: readonly number[]; shortcuts?: boolean
   score?: number | null; defaultScore?: number | null; onScoreChange?: (score: number | null) => void
   aiSuggestion?: { score: number; reason?: string; basis?: readonly string[] }
   /** Score at the start of editing. Defaults to a valid AI suggestion; absent baseline requires a reason. */
@@ -48,6 +51,11 @@ export function normalizeReviewScore(value: number | null, max: number, step = 1
   const bounded = Math.min(max, Math.max(0, value))
   if (bounded === 0 || bounded === max) return bounded
   return Math.min(max, Math.max(0, Number((Math.round(bounded / step) * step).toFixed(10))))
+}
+/** Quick actions must be exact step multiples, including the maximum endpoint. */
+export function filterQuickScores(values: readonly number[], max: number, step = 1) {
+  if (!validScale(max, step)) return []
+  return [...new Set(values.filter(value => Number.isFinite(value) && value >= 0 && value <= max && Math.abs(value / step - Math.round(value / step)) < 1e-8))]
 }
 const known = (text?: string) => text?.trim() || "未提供"
 const actionClass = "min-h-11 h-auto sm:h-auto max-w-full whitespace-normal"
@@ -85,6 +93,21 @@ export function ScoreReview(props: ScoreReviewProps) {
   function submit(callback?: (draft: ScoreReviewDraft) => void) {
     if (!locked && !validation && score !== null) callback?.({ score, reason: reason.trim() })
   }
+  function acceptAi() {
+    if (!locked && aiValid && ai && props.onAcceptAi) { changeScore(ai.score); props.onAcceptAi(ai.score) }
+  }
+  const navigationLocked = state.kind === "saving" || !!props.disabledReason
+  function navigate(callback?: () => void) { if (!navigationLocked) callback?.() }
+  function handleShortcut(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.repeat) return
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key === "Enter") {
+      event.preventDefault(); submit(state.kind === "failed" ? props.onRetry : props.onSave)
+    } else if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+      if (event.key.toLowerCase() === "a") { event.preventDefault(); acceptAi() }
+      else if (event.key === "ArrowLeft" && props.onPrev) { event.preventDefault(); navigate(props.onPrev) }
+      else if (event.key === "ArrowRight" && props.onSkip) { event.preventDefault(); navigate(props.onSkip) }
+    }
+  }
   const panel = <Card render={<section aria-labelledby={`${id}-title`} />} className="min-w-0 gap-5 p-4" aria-busy={state.kind === "saving"} data-score-review-panel data-state={state.kind}>
     <header className="min-w-0 space-y-2">
       {props.eyebrow && <p className="text-ui-hint">{props.eyebrow}</p>}
@@ -111,6 +134,7 @@ export function ScoreReview(props: ScoreReviewProps) {
           <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput className="min-h-11 h-11 sm:h-11" aria-describedby={`${id}-instructions ${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
         </NumberField>
       </Field>
+      {props.quickScores && <div role="group" aria-label="快捷给分" className="flex flex-wrap gap-2">{filterQuickScores(props.quickScores, maxScore, step).map(value => <Button key={value} type="button" variant="outline" className="min-h-12 h-auto sm:h-auto whitespace-normal" disabled={locked} aria-pressed={score === value} onClick={() => changeScore(value)}>{value === maxScore && value !== 0 ? `满分 ${value}` : `${value} 分`}</Button>)}</div>}
       <p id={`${id}-instructions`} className="text-ui-hint">接受 AI 建议，或调整分数后保存。人工修改将保留审计记录。</p>
       {(props.showReason || props.requireReasonOnChange || props.requireReason) && <Field>
         <FieldLabel htmlFor={`${id}-reason`}>修改理由{reasonRequired ? "（必填）" : "（选填）"}</FieldLabel>
@@ -129,17 +153,17 @@ export function ScoreReview(props: ScoreReviewProps) {
         : state.kind === "saved" && <Alert variant="success" role={undefined}><AlertDescription className="break-words text-ui-body">已保存 {Number.isFinite(state.score) ? state.score : "未提供"} 分{state.auditUpdated ? "，审计记录已更新" : "；审计记录状态未提供"}</AlertDescription></Alert>}
     </div>
     <div className="flex min-w-0 flex-wrap gap-2" aria-label="评分操作">
-      <Button type="button" variant="outline" className={actionClass} disabled={locked || !aiValid || !props.onAcceptAi} onClick={() => { if (!locked && aiValid && ai && props.onAcceptAi) { changeScore(ai.score); props.onAcceptAi(ai.score) } }}>接受 AI 建议</Button>
-      {state.kind === "failed" ? <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onRetry} onClick={() => submit(props.onRetry)}>重试保存</Button>
-        : <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onSave} onClick={() => submit(props.onSave)}>保存并处理下一份</Button>}
-      {props.onPrev && <Button type="button" variant="outline" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => { if (state.kind !== "saving" && !props.disabledReason) props.onPrev?.() }}>上一题</Button>}
-      {props.onSkip && <Button type="button" variant="ghost" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => { if (state.kind !== "saving" && !props.disabledReason) props.onSkip?.() }}>跳过</Button>}
+      <Button type="button" variant="outline" className={actionClass} disabled={locked || !aiValid || !props.onAcceptAi} onClick={acceptAi}>接受 AI 建议{props.shortcuts && <Kbd>Alt+A</Kbd>}</Button>
+      {state.kind === "failed" ? <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onRetry} onClick={() => submit(props.onRetry)}>重试保存{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>
+        : <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onSave} onClick={() => submit(props.onSave)}>保存并处理下一份{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>}
+      {props.onPrev && <Button type="button" variant="outline" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onPrev)}>上一题{props.shortcuts && <Kbd>Alt+←</Kbd>}</Button>}
+      {props.onSkip && <Button type="button" variant="ghost" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onSkip)}>跳过{props.shortcuts && <Kbd>Alt+→</Kbd>}</Button>}
     </div>
     {props.history && <Collapsible><CollapsibleTrigger render={<Button type="button" variant="outline" className={actionClass} />}>历史记录（{props.history.length}）</CollapsibleTrigger><CollapsiblePanel>
       {props.history.length ? <ol className="space-y-3 pt-3">{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
     </CollapsiblePanel></Collapsible>}
   </Card>
-  return <div className="@container min-w-0" data-score-review><div className={paper ? "grid min-w-0 items-start gap-5 @min-[960px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]" : "min-w-0"}>
+  return <div className="@container min-w-0" data-score-review onKeyDown={props.shortcuts ? handleShortcut : undefined}><div className={paper ? "grid min-w-0 items-start gap-5 @min-[960px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]" : "min-w-0"}>
     {paper && <div className="min-w-0" data-score-review-paper><PaperPreview {...paper} variant="canvas" /></div>}{panel}
   </div></div>
 }
