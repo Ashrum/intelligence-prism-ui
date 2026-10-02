@@ -2773,3 +2773,5 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 - [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
 
 QuestionRail 同目录新增 QuestionRailClass（格内第二行、外部 marker、行式排序）；PaperPreview 增加 mixed 模式及 PaperPreviewMixed/PaperPreviewGroup 辅助导出，连续模式前置内容、纸外身份、分段、折叠和 topInset 避让。旧调用默认 DOM 不变。统计纯函数移至 `lib/prism-next/question-analysis.ts`，宿主提供输入并负责选用口径。
+
+QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmptyText?: string` 仅在对应数组为空且传入文本时显示 muted 说明；未传属性保留原 DOM。`actions[].disabledReason?: string` 仅在该动作实际禁用（显式禁用或缺少 `onIntent`）且有非空原因时显示“动作名：原因”，放在动作区下方，以实例唯一 ID 的 `aria-describedby` 关联按钮；按钮保留 coss 标准尺寸。evidence / knowledge / comparison 条目文案保持宿主事实，confidence 默认“未提供”不变。
