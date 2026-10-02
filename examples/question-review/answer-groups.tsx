@@ -1,21 +1,12 @@
 "use client"
-import { useEffect, useState } from 'react'
-import { Button } from '@/components/prism-next/button'
-import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/coss/collapsible'
-import { Avatar, AvatarFallback } from '@/components/coss/avatar'
-import { objectiveGroups } from './analysis'
-import { questionAnalyses, type ReviewQuestion, type StudentAnswer } from './fixture'
-import { reviewText } from './question-records'
-import { answerImage } from './artwork'
-
-// Local host composition; coss controls retain their standard sizes.
-export function AnswerGroups({question:q,answers,selected,onSelect,missing,annotations,onIncludeCorrect,filter}:{question:ReviewQuestion;answers:StudentAnswer[];selected:string|null;onSelect:(id:string)=>void;missing:boolean;annotations:boolean;onIncludeCorrect:()=>void;filter:string}) {
- const [correctOpen,setCorrectOpen]=useState(false)
- useEffect(()=>{if(filter==='loss')setCorrectOpen(false)},[filter])
+import {QuestionAnalysisGroups} from '@/components/prism-next/question-analysis-groups'
+import {objectiveGroups} from './analysis'
+import {questionAnalyses,type ReviewQuestion,type StudentAnswer} from './fixture'
+import {reviewText} from './question-records'
+import {answerImage} from './artwork'
+export {PaperPreviewGroup as FullScoreGroup} from '@/components/prism-next/paper-preview-group'
+export function makeAnswerGroups({question:q,answers,annotations,missing}:{question:ReviewQuestion;answers:StudentAnswer[];annotations:boolean;missing:boolean}) {
  const groups=objectiveGroups(q,answers,questionAnalyses[q.id])
- const names=(students:StudentAnswer[])=><div className="flex flex-wrap gap-2">{students.map(a=><Button key={a.student.id} variant="ghost" aria-pressed={selected===a.student.id} onClick={()=>onSelect(a.student.id)}><Avatar aria-hidden="true"><AvatarFallback>{a.student.name[0]}</AvatarFallback></Avatar>{a.student.name}</Button>)}</div>
- return <section data-objective-groups className="space-y-4"><h2 className="text-item-title">作答情况</h2>{groups.errors.map(g=><section key={g.label} className="space-y-2"><h3 className="text-ui-action">{q.number===6?reviewText(g.label.replace('(1,+∞)','$(1,+\\infty)$').replace(' R ',' $\\mathbb R$ ')):q.number===13&&/^\d+$/.test(g.label)?reviewText(`$${g.label}$`):g.label} · {g.students.length} 人</h3>{names(g.students)}{q.type==='填空题'&&<img src={answerImage(q,g.students[0],annotations,missing)} alt={`${g.students[0].student.name} · 代表性作答裁切`} className="w-full max-w-sm"/>}</section>)}{groups.correct.length>0&&<Collapsible data-correct-group open={correctOpen} onOpenChange={open=>{setCorrectOpen(open);if(open)onIncludeCorrect()}}><CollapsibleTrigger render={<Button variant="ghost"/>}>{groups.correctLabel} · {groups.correct.length} 人</CollapsibleTrigger><CollapsiblePanel className="motion-reduce:transition-none">{names(groups.correct)}</CollapsiblePanel></Collapsible>}{!answers.length&&<p className="text-ui-body">没有符合筛选的学生</p>}</section>
+ return {empty:!answers.length,groups:{correct:groups.correct.map(a=>a.student),correctLabel:groups.correctLabel,errors:groups.errors.map(g=>({label:q.number===6?reviewText(g.label.replace('(1,+∞)','$(1,+\\infty)$').replace(' R ',' $\\mathbb R$ ')):q.number===13&&/^\d+$/.test(g.label)?reviewText(`$${g.label}$`):g.label,students:g.students.map(a=>a.student),image:q.type==='填空题'?{src:answerImage(q,g.students[0],annotations,missing),alt:`${g.students[0].student.name} · 代表性作答裁切`}:undefined}))}}
 }
-export function FullScoreGroup({count,open,onOpenChange}:{count:number;open:boolean;onOpenChange:(open:boolean)=>void}) {
- return <Collapsible data-full-score-group open={open} onOpenChange={onOpenChange} className="p-4"><CollapsibleTrigger render={<Button variant="ghost"/>}>满分 {count} 人</CollapsibleTrigger><CollapsiblePanel className="motion-reduce:transition-none"><p className="text-ui-meta text-muted-foreground">满分作答已展开，见下方纸张。</p></CollapsiblePanel></Collapsible>
-}
+export function AnswerGroups(props:Parameters<typeof makeAnswerGroups>[0]&{selected:string|null;onSelect:(id:string)=>void;onIncludeCorrect:()=>void;filter:string}) {return <QuestionAnalysisGroups {...props} {...makeAnswerGroups(props)}/>}

@@ -1,4 +1,7 @@
 "use client"
+import {usePaperPreviewDock,useStudentControlLayout} from "@/components/prism-next/review-canvas-layout"
+import {QuestionAnalysisSummary} from "@/components/prism-next/question-analysis-card"
+import {StudentControlBar,StudentControlBarRow} from "@/components/prism-next/student-control-bar"
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactElement } from "react"
 import { PanelLeftOpen, ArrowLeft, ArrowUp, CircleHelp, Scan, RotateCw, Minus, Plus, MoreHorizontal, FileImage, Maximize, Minimize, Layers, PencilLine } from "lucide-react"
@@ -21,7 +24,6 @@ import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, Dial
 import { reviewQuestions, knowledgePoints, classStudents, answersForQuestion, filterAnswers, filterQuestions, filterKnowledge, reviewSelection } from "./fixture"
 import { answerImage, answerHeight, PAPER_WIDTH } from "./artwork"
 import { QuestionJump, StudentJump, QuestionKnowledgeRail, QuestionInspector, StudentLabel, StudentScale, Tip } from "./parts"
-import { dockPaperToolbar } from "@/components/prism-next/paper-preview-layout"
 import { FullScoreGroup } from "./answer-groups"
 import { questionExcerpts } from './question-records'
 import { QuestionDigitalCard } from './question-digital-card'
@@ -120,41 +122,8 @@ export function QuestionReviewDesign() {
       railFocus.current = false
     }
   }, [railCollapsed, immersive])
-  useLayoutEffect(() => {
-    const area = canvasArea.current, node = canvas.current, bar = toolbar.current
-    if (!area || !bar) return
-    const measure = () => {
-      const bounds = area.getBoundingClientRect(), factor = scale || 1
-      const papers = [...area.querySelectorAll<HTMLElement>('[data-scan-paper]')].filter(paper=>{const rect=paper.getBoundingClientRect();return rect.bottom>bounds.top+(controlLayout.height+16)*factor&&rect.top<bounds.bottom})
-      const right = papers.length ? Math.max(...papers.map(paper => paper.getBoundingClientRect().right)) : bounds.right - 64 * factor
-      const size = dockPaperToolbar({ canvasWidth: area.clientWidth, paperRight: (right - bounds.left) / factor, toolbarWidth: bar.offsetWidth })
-      const height = area.clientHeight, maxHeight = Math.max(44, height - 88 / factor - 16)
-      const top = Math.max(8, Math.min((height - bar.offsetHeight) / 2, height - 88 / factor - 8 - bar.offsetHeight))
-      setDockPosition(previous => previous.left === size.left && previous.top === top && previous.maxHeight === maxHeight ? previous : { left: size.left, top, maxHeight })
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(area); observer.observe(bar)
-    area.querySelectorAll<HTMLElement>('[data-review-page], [data-missing-paper]').forEach(paper => observer.observe(paper))
-    node?.addEventListener('scroll', measure, { passive: true })
-    return () => { observer.disconnect(); node?.removeEventListener('scroll', measure) }
-  }, [zoom, rotations, viewport, scale, missing, immersive, railCollapsed, mobilePane, selected, answerFilter, studentChosen, fullOpen, controlLayout.height])
-  useLayoutEffect(() => {
-    const area=canvasArea.current, node=canvas.current, bar=studentControls.current
-    if(!area||!node||!bar)return
-    const measure=()=>{
-      const paper=node.querySelector<HTMLElement>('.d1-paper-column'), bounds=area.getBoundingClientRect()
-      if(!paper||!area.clientWidth)return
-      const left=Math.max(8,Math.min((paper.getBoundingClientRect().left-bounds.left)/(scale||1),area.clientWidth-80))
-      const height=bar.offsetHeight
-      setControlLayout(previous=>previous.left===left&&previous.height===height?previous:{left,height})
-    }
-    measure();const observer=new ResizeObserver(measure)
-    observer.observe(area);observer.observe(bar)
-    const paper=node.querySelector<HTMLElement>('.d1-paper-column');if(paper)observer.observe(paper)
-    node.addEventListener('scroll',measure,{passive:true})
-    return()=>{observer.disconnect();node.removeEventListener('scroll',measure)}
-  },[scale,zoom,rotations,railCollapsed,immersive,mobilePane])
+  usePaperPreviewDock({canvasArea,canvas,toolbar,scale,controlLayout,layoutKey:JSON.stringify([zoom,rotations,viewport,missing,immersive,railCollapsed,mobilePane,selected,answerFilter,studentChosen,fullOpen]),setDockPosition})
+  useStudentControlLayout({canvasArea,canvas,studentControls,scale,layoutKey:JSON.stringify([zoom,rotations,railCollapsed,immersive,mobilePane]),setControlLayout})
   useLayoutEffect(() => {
     // F may originate from a pane that immersion hides; retain keyboard ownership.
     if (immersive) (canvas.current ?? frame.current)?.focus({ preventScroll: true })
@@ -197,12 +166,12 @@ export function QuestionReviewDesign() {
  return <TooltipProvider><main className="d1-review q1-review bg-background text-foreground"><ReviewTools device={device} onDeviceChange={setDevice} missing={missing} onMissingChange={setMissing} defaultPosition={reviewPosition} onResetRailPreferences={resetRailPreferences}/><div ref={stage} className="d1-stage bg-muted"><section ref={frame} aria-label="题目与知识点预览框架" tabIndex={-1} className="d1-frame bg-background" data-device={device} data-mobile-pane={mobilePane} data-immersive={immersive} data-rail-collapsed={railCollapsed} data-rail-ready={railState.ready} data-rail-animate={railState.animate} style={device==='auto'?undefined:{width:Number(device),height:device==='1440'?900:1080,transform:`scale(${scale})`}} onKeyDownCapture={keyboard} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setHoldOriginal(false)}}>
  <header className="d1-topbar flex items-center gap-4 border-b px-4"><Button variant="ghost" onClick={()=>intent('返回题目列表')} aria-label="返回题目列表"><ArrowLeft/><span className="d1-return-label">返回题目列表</span></Button><Avatar aria-hidden="true"><AvatarFallback>{q.number}</AvatarFallback></Avatar><div className="min-w-0"><h1 className="truncate text-section-title" title={`第 ${q.number} 题 · ${knowledgePoints.find(k=>k.id===q.knowledge)!.name}`}>第 {q.number} 题 <span className="d1-student-meta">· {knowledgePoints.find(k=>k.id===q.knowledge)!.name}</span></h1><p className="d1-student-meta text-ui-meta text-muted-foreground">{q.category==='subjective'?'主观题':q.type} · 满分 {q.max} 分 · {q.affected} / 36 名学生失分</p></div><QuestionJump current={q} open={questionOpen} onOpenChange={setQuestionOpen} onSelect={select} triggerRef={questionTrigger}/><div className="flex shrink-0 items-center gap-2"><span className="text-score-display">{q.rate}%</span><span className="d1-student-meta text-ui-meta text-muted-foreground">全班{rateLabel(q)}</span></div><Menu><MenuTrigger render={<Button variant="ghost" size="icon"/>} aria-label="更多"><MoreHorizontal/></MenuTrigger><MenuPopup className="surface-floating" align="end"><MenuItem onClick={()=>intent('导出')}>导出</MenuItem><MenuSeparator/><MenuItem onClick={()=>setHelp(true)}><CircleHelp/>快捷键表<Kbd>?</Kbd></MenuItem></MenuPopup></Menu></header>
  <nav ref={mobileNav} className="d1-mobile-nav border-b px-3" aria-label="预览分区"><ToggleGroup value={[mobilePane]} onValueChange={v=>{if(v.length){if(v[0]==='rail'&&railCollapsed)toggleRail();else setMobilePane(v[0])}}}>{[['rail','题目'],['canvas','作答'],['inspector','检查器']].map(([value,label])=><ToggleGroupItem key={value} value={value}>{label}</ToggleGroupItem>)}</ToggleGroup></nav>
- <div className="d1-columns"><div className="d1-rail-shell" inert={railCollapsed}><QuestionKnowledgeRail view={view} onView={changeView} question={q} knowledge={knowledge} filter={filter} onFilter={setFilter} sort={sort} onSort={setSort} onQuestion={select} onKnowledge={selectKnowledge} onEvidence={evidence} onLocate={locateRail} onCollapse={toggleRail} closeRef={closeRail}/></div><section ref={canvasArea} data-review-canvas aria-label="题目与作答画布" className="d1-canvas bg-border"><div ref={studentControls} data-student-controls aria-label="学生控制条" className="q1-student-controls surface-floating rounded-xl shadow-lg" style={{left:controlLayout.left,maxWidth:`calc(100% - ${controlLayout.left+64}px)`}}>
- <div className="q1-student-controls-row"><Tip label="回到题目" keys="H"><Button variant="ghost" aria-pressed={page===0} data-pressed={page===0?'':undefined} onClick={()=>locate('question')}><ArrowUp/>题目</Button></Tip><Separator orientation="vertical"/>
+ <div className="d1-columns"><div className="d1-rail-shell" inert={railCollapsed}><QuestionKnowledgeRail view={view} onView={changeView} question={q} knowledge={knowledge} filter={filter} onFilter={setFilter} sort={sort} onSort={setSort} onQuestion={select} onKnowledge={selectKnowledge} onEvidence={evidence} onLocate={locateRail} onCollapse={toggleRail} closeRef={closeRail}/></div><section ref={canvasArea} data-review-canvas aria-label="题目与作答画布" className="d1-canvas bg-border"><StudentControlBar ref={studentControls} data-student-controls style={{left:controlLayout.left,maxWidth:`calc(100% - ${controlLayout.left+64}px)`}}>
+ <StudentControlBarRow><Tip label="回到题目" keys="H"><Button variant="ghost" aria-pressed={page===0} data-pressed={page===0?'':undefined} onClick={()=>locate('question')}><ArrowUp/>题目</Button></Tip><Separator orientation="vertical"/>
  <Tabs value={answerFilter} onValueChange={filterStudents}><TabsList size="sm" aria-label="学生作答筛选"><TabsTab value="loss">{q.category==='objective'?'答错':'失分'} <CossBadge variant="outline">{q.affected}</CossBadge></TabsTab>{q.category==='subjective'&&<TabsTab value="pending">待复核 <CossBadge variant="outline">{q.pending}</CossBadge></TabsTab>}<TabsTab value="all">全部 <CossBadge variant="outline">{answers.length}</CossBadge></TabsTab></TabsList></Tabs><Separator orientation="vertical"/>
  <StudentJump answers={visibleAnswers} current={studentChosen?answer:null} max={q.max} open={studentOpen} onOpenChange={setStudentOpen} onSelect={changeStudent} triggerRef={studentTrigger}/>
  {railCollapsed&&!immersive&&<><Separator orientation="vertical"/><Tip label="展开题目栏" keys="T"><Button ref={openRail} variant="ghost" onClick={toggleRail} aria-label="展开题目栏"><PanelLeftOpen/>题目栏</Button></Tip></>}
- </div><StudentScale answers={visibleAnswers} current={studentChosen?answer:null} max={q.max} onSelect={changeStudent}/>{questionHidden&&<div data-question-sticky-summary className="px-2 pt-1"><Button variant="ghost" className="h-auto sm:h-auto whitespace-normal text-left" onClick={()=>locate('question')}><span className="text-ui-body">第 {q.number} 题 · {questionExcerpts[q.number-1]}</span> <CossBadge variant="outline">节选</CossBadge></Button></div>}</div>
+ </StudentControlBarRow><StudentScale answers={visibleAnswers} current={studentChosen?answer:null} max={q.max} onSelect={changeStudent}/>{questionHidden&&QuestionAnalysisSummary({children:<Button variant="ghost" className="h-auto sm:h-auto whitespace-normal text-left" onClick={()=>locate('question')}><span className="text-ui-body">第 {q.number} 题 · {questionExcerpts[q.number-1]}</span> <CossBadge variant="outline">节选</CossBadge></Button>})}</StudentControlBar>
  <div className="d1-paper-host min-h-0 min-w-0 [&_[data-region]>button]:border-0! [&_[data-region]>button]:ring-offset-0!"><QuestionPaperCanvas viewportRef={canvas} topInset={controlLayout.height+16} pages={pages} zoom={zoom} rotations={rotations} selected={answer.student.id} onQuestionHidden={setQuestionHidden} answerLabel={`学生作答 · ${answerFilter==='loss'?'失分':answerFilter==='pending'?'待复核':'全部'} ${visibleAnswers.length}`} activePage={studentChosen?answer.student.id:'question'} scale={scale} headers={headers} onSelect={id=>{if(id.startsWith('p'))setMarkedPoints([id]);else changeStudent(id)}} onZoom={setZoom} onVisiblePage={(next,actual)=>{setPage(next);if(actual!==undefined)setActualPercent(actual);const id=pages[next]?.id;if(q.category==='subjective'&&visibleAnswers.some(a=>a.student.id===id)){setStudentId(id);setStudentChosen(true)}}} onViewport={setViewport}/></div>
  <div className="d1-tool-dock rounded-r-xl shadow-lg" style={dockPosition}><div className="d1-tool-scroll"><Toolbar ref={toolbar} orientation="vertical" aria-label="作答侧签工具条" className="d1-tools surface-floating rounded-l-none rounded-r-xl flex-col items-center"><ToolbarGroup aria-label="视图" className="flex-col gap-0">{tool('放大','+',<Plus/>,()=>setZoom(clampPaperZoom(percent*1.25)),percent>=300)}<output aria-label="缩放比例" className="text-ui-meta tabular-nums">{Math.round(percent)}%</output>{tool('缩小','−',<Minus/>,()=>setZoom(clampPaperZoom(percent*.8)),percent<=5)}{tool(zoom==='width'?'适合页面':'适合宽度','0',<Scan/>,toggleFit)}{tool('旋转当前纸张','R',<RotateCw/>,rotate)}</ToolbarGroup><ToolbarSeparator orientation="horizontal"/><ToolbarGroup aria-label="图层" className="flex-col gap-0"><ToggleGroup orientation="vertical" className="flex-col" aria-label="查看版本" value={[original?'original':'marked']} onValueChange={v=>{if(v.length)setMode(v[0])}}><Tip label="标注效果" keys="Tab / Enter"><ToggleGroupItem size="default" value="marked" aria-label="标注效果"><PencilLine/></ToggleGroupItem></Tip><Tip label="扫描原稿；按住临时查看" keys="O"><ToggleGroupItem size="default" value="original" aria-label="扫描原稿"><FileImage/></ToggleGroupItem></Tip></ToggleGroup><Tip label="开关标注层" keys="L"><span className="inline-flex" tabIndex={original||missing?0:undefined}><Toggle size="default" aria-label="标注层" pressed={!original&&layer} disabled={original||missing} onPressedChange={setLayer}><Layers/></Toggle></span></Tip></ToolbarGroup><ToolbarSeparator orientation="horizontal"/><ToolbarGroup aria-label="沉浸视图"><Tip label={immersive?'退出沉浸':'沉浸'} keys="F"><ToolbarButton render={<Toggle size="default" pressed={immersive} onPressedChange={setImmersive}/>} aria-label="沉浸">{immersive?<Minimize/>:<Maximize/>}</ToolbarButton></Tip></ToolbarGroup></Toolbar></div></div></section><QuestionInspector question={q} answer={studentChosen?answer:null} knowledge={knowledge} onKnowledge={revealKnowledge} onEvidence={evidence} onIntent={intent}/></div><div role="status" className={notice?'absolute bottom-20 left-1/2 z-30 max-w-full -translate-x-1/2 surface-floating px-4 py-3 text-ui-hint':'sr-only'}>{notice}</div>
  </section></div><Dialog open={help} onOpenChange={setHelp}><DialogPopup className="surface-floating motion-reduce:transition-none" closeProps={{'aria-label':'关闭快捷键表'}}><DialogHeader><DialogTitle>快捷键</DialogTitle><DialogDescription>焦点在题目与知识点预览框架内时可用；输入框、菜单与跳转面板保留自身按键行为。</DialogDescription></DialogHeader><DialogPanel><dl className="space-y-3">{shortcuts.map(([key,label])=><div key={key} className="flex items-center justify-between gap-4 text-ui-body"><dt>{label}</dt><dd><Kbd>{key}</Kbd></dd></div>)}</dl></DialogPanel></DialogPopup></Dialog></main></TooltipProvider>

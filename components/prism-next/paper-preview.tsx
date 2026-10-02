@@ -2,6 +2,8 @@
 
 import { useCallback, useId, useRef, useState, useLayoutEffect, type PointerEvent, type ReactNode, type RefObject } from "react"
 import "./paper-preview.css"
+import {PaperPreviewMixed} from "./paper-preview-mixed"
+import type {ComponentProps} from "react"
 import { PaperPreviewContinuous, type PaperPreviewContinuousProps } from "./paper-preview-continuous"
 export { PaperPreviewContinuous, locatePaperTarget, type PaperPreviewLocation, type PaperPreviewContinuousProps } from "./paper-preview-continuous"
 export { PaperPreviewSurface, type PaperPreviewSurfaceProps } from "./paper-preview-surface"
@@ -27,7 +29,8 @@ export type PaperPreviewVersion = { id: string; label: string; current?: boolean
 export type PaperPreviewAction = { id: string; label: string; primary?: boolean; disabled?: boolean }
 export type PaperPreviewProps = {
   /** Opt-in continuous canvas; omitted keeps the original single-page DOM. */
-  layout?: "single" | "continuous"
+  layout?: "single" | "continuous" | "mixed"
+  mixed?: ComponentProps<typeof PaperPreviewMixed>
   continuous?: Omit<PaperPreviewContinuousProps, "pages" | "zoom" | "rotations" | "selected" | "onZoom" | "onSelect">
 
   /** Canvas omits document metadata, thumbnails, versions and document actions. */
@@ -228,6 +231,7 @@ export function PaperPreview(props: PaperPreviewProps) {
     }
     if ((event.target as HTMLElement).hasPointerCapture?.(event.pointerId)) (event.target as HTMLElement).releasePointerCapture(event.pointerId)
   }
+  if (props.layout === "mixed" && props.mixed) return <PaperPreviewMixed {...props.mixed}/>
   if (props.layout === "continuous") return <PaperPreviewContinuous {...props.continuous} viewportRef={props.continuous?.viewportRef ?? viewportNode} pages={pages} zoom={zoom} rotations={props.rotation ?? localRotation} selected={props.selectedRegionId} onZoom={changeZoom} onSelect={props.onRegionSelect ? (regionId, pageId) => props.onRegionSelect?.(pageId, regionId) : undefined} />
   return <section className="paper-preview min-w-0" aria-labelledby={variant === "canvas" ? undefined : `${id}-title`} aria-label={variant === "canvas" ? title || "试卷预览" : undefined} data-paper-preview data-state={state}>
     {variant !== "canvas" && <header className="flex flex-wrap items-start justify-between gap-3 pb-4">
@@ -301,3 +305,7 @@ export function PaperPreviewDialog({ open, onOpenChange, triggerLabel = "打开�
     </SheetPopup>
   </Sheet>
 }
+
+export { PaperPreviewMixed } from './paper-preview-mixed'
+export type { PaperPreviewMixedPage } from './paper-preview-mixed'
+export { PaperPreviewGroup } from './paper-preview-group'

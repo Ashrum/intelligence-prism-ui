@@ -7,6 +7,8 @@ import { Badge as CossBadge } from "@/components/coss/badge"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { ReviewTip as Tip, reviewToneClass, type ReviewTone } from "./review-parts"
 import "./review-workspace.css"
+import {ThinBar} from "./question-analysis-parts"
+import {ReviewRailList} from "./knowledge-rail"
 export type QuestionRailItem = {
   id: string; number: ReactNode; tone: ReviewTone; value: ReactNode; denominator?: ReactNode
   detail?: ReactNode; ratio?: number; ariaLabel: string; tooltip: ReactNode; content?: ReactNode
@@ -95,3 +97,9 @@ export function QuestionRail({ sections, selected, filter, onFilterChange, filte
     </Tabs>
   </aside>
 }
+export type QuestionRailClassSection = {id:string;label:ReactNode;summary?:ReactNode;layout:'cell'|'row';items:(QuestionRailItem&{kind?:ReactNode;marker?:boolean})[]}
+export type QuestionRailClassProps = {sections:QuestionRailClassSection[];overview:{segments:{count:number;tone:ReviewTone}[];text:ReactNode};selected:string;onSelect:(id:string)=>void;sort?:ReactNode;bodyOnly?:boolean;onLocate?:(id?:string)=>void}
+/** Class-rate presentation, with host ordering and external risk/discrimination markers. */
+export function QuestionRailClass({sections,overview,selected,onSelect,sort,bodyOnly=false,onLocate=()=>{}}:QuestionRailClassProps){const body=<><div className="space-y-1 py-1"><div className="flex h-1 gap-0.5 overflow-hidden rounded-full" aria-hidden="true">{overview.segments.map((segment,index)=><span key={index} className={segment.tone==='warning'?'bg-warning':segment.tone==='destructive'?'bg-destructive':'bg-muted'} style={{flex:segment.count}}/>)}</div><p className="text-ui-meta text-muted-foreground">{overview.text}</p></div>{sections.map(section=>{const items=section.items,rows=section.layout==='row';if(!items.length)return null;return <section key={section.id}><h3 className="mb-1 flex justify-between text-ui-meta text-muted-foreground"><span>{section.label}</span>{section.summary!=null&&<span>{section.summary}</span>}</h3><div className={rows?'grid gap-1':'grid grid-cols-4 gap-1'}>{items.map(q=>{const description=q.ariaLabel;return <Tooltip key={q.id}><TooltipTrigger render={<Button variant="ghost" role="option" aria-selected={q.id===selected} data-entry={q.id} data-selected={q.id===selected} aria-label={description} onClick={()=>onSelect(q.id)} className={`d1-question relative h-auto sm:h-auto ${rows?'':'min-h-11 flex-col gap-0.5'} ${q.tone==='destructive'?'bg-destructive/10 hover:bg-destructive/20':q.tone==='warning'?'bg-warning/10 hover:bg-warning/20':'bg-muted hover:bg-accent'} ${q.id===selected?'ring-2 ring-info shadow-sm':''}`}/>}>
+ {rows?<span className="grid flex-1 gap-1"><span className="flex items-center gap-2"><span className="text-ui-action tabular-nums">{q.number}</span>{q.kind&&<span className="text-ui-meta">{q.kind}</span>}<ThinBar value={q.ratio??0}/><span className="text-ui-meta tabular-nums">{q.value}</span></span><span className="text-left text-ui-meta text-muted-foreground">{q.detail}</span></span>:<><span className="text-ui-action tabular-nums">{q.number}</span><span className="text-ui-meta tabular-nums">{q.value}</span>{q.marker&&<span aria-hidden="true" className="absolute right-1 top-1 size-1.5 rounded-full bg-info"/>}</>}
+ </TooltipTrigger><TooltipPopup className="surface-floating">{description}</TooltipPopup></Tooltip>})}</div></section>})}</>;return bodyOnly?body:<aside className="knowledge-rail min-h-0 bg-background" aria-label="题目栏">{sort}<ScrollArea overscrollContain><ReviewRailList items={sections.flatMap(s=>s.items)} selected={selected} onSelect={onSelect} onLocate={onLocate} label="选择题目">{body}</ReviewRailList></ScrollArea></aside>}

@@ -148,3 +148,19 @@
 - 本节取代 Q7 的 744px 正文上限：题面、选项统计、填空作答情况、灰底详情区与页签条均撑满题目卡内容宽度（卡宽减左右各16px），左右边缘一致。灰底区横向 padding 移到三页签的内容面板，保留内容16px内缩、上下留白、页签到内容16px间距；页签条横跨灰底区并维持三等分，控件仍用 coss 默认尺寸。选项人数条与比例占据选项行最右列，末端对齐卡片内容右缘。
 - 题目卡与默认适合宽度的扫描作答纸等宽左对齐；扫描缩放与旋转协议不变。正文14/20、次要文字12/18、16px区块与8px清单间距保持不变。按既有尺寸公式，1440视口卡片/内容宽为756/724px，1920为1164/1132px；这是源码推算，非浏览器实测。
 - 更新既有20题SSR回归，断言内容无最大行宽、题面/作答情况/详情共用满宽块布局、页签条满宽三等分且横向留白只在内容面板；保留字体、公式、扫描变换、冻结稿SSR和coss散列回归。五项检查及diff见 `/tmp/prism-review2/Report-Q9.md`、`q9-checks/`。浏览器三主题、1440/1920/窄容器的实际宽度与视觉由Supervisor验收；未验证真实服务、真机或读屏器。
+
+
+## 组件化对照表 · C2（2026-10-02）
+
+| 冻结宿主能力 | 正式组件 / 工具 | 宿主保留 |
+| --- | --- | --- |
+| 专题、知识点、证据行 | KnowledgeRail / KnowledgeEvidenceList / ReviewRailList | Tabs 跨视角组合、夹具投影和定位 |
+| 学生浮动栏、跳转、刻度 | StudentControlBar / StudentControlSwitcher（ReviewSwitcher）/ StudentControlScale | 筛选集合、计数、状态档位和回执 |
+| 数字题目、统计名单、填空分组、三页签、摘要 | QuestionAnalysisCard / QuestionAnalysisDetails / QuestionAnalysisGroups / QuestionAnalysisSummary | QuestionRecord、代表图、知识点及统计事实 |
+| 本题分析、知识点概况 | QuestionAnalysisPanel | 统计格式化与当前作答反馈组合 |
+| 题号格与排序行 | QuestionRailClass（QuestionRail 同目录辅助） | 排序纯函数及档位文字 |
+| 数字/扫描连续画布、折叠纸组 | PaperPreviewMixed / PaperPreviewGroup | 裁切尺寸适配、身份页眉、分段标题和查看整卷链接 |
+| 均值、总体标准差、区分度、高低组、排序 | lib/prism-next/question-analysis.ts | 外部逐生事实与全卷总分 |
+
+先固化十态 SSR 快照并在原实现上通过，再提取。默认 Q17、Q01、Q06、椭圆证据 p2、选生、全部满分展开、收栏、沉浸、无扫描、按率排序逐字一致；试卷与旧 PaperPreview 冻结测试保持原文件。旧 examples 导出保留轻量夹具适配以兼容既有冻结测试，UI 实现迁入 components；布局 CSS 的冻结宿主规则保留作局部兼容。
+浏览器访问被策略明确拒绝（该地址此前被拒绝授权），未绕过；SSR 并非 Supervisor 1440×900 浏览器签名复验。未验证范围、最终数字与 diff 见 `/tmp/prism-comp/Report-C2.md` 与 `c2-checks/`。

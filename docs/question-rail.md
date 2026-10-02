@@ -25,3 +25,7 @@
 ## 验证与边界
 
 组件页提供三主题、320px、长中文与公式夹具；自动测试覆盖受控事实、意图与渲染。冻结页默认及六种附加状态采用重构前 SHA-256，原有 `paper-review-v1.sha256` 不变。浏览器三主题、窄容器、焦点、触摸和视觉签名由 Supervisor 验收；不声明真实服务、移动设备或读屏器已验证。
+
+## C2 全班正确率呈现
+
+同目录辅助 `QuestionRailClass` 复用现有目录项；`sections[{id,label,summary,layout,items}]` 接收已排序项目。item 沿用 QuestionRailItem，增加 `kind?` 和 `marker?`；value 为格内第二行，detail 为行内区分度文字。marker 的判断由宿主给定。overview 外部给段数与文字；sort 为外置 Select 插槽，bodyOnly 用于宿主 Tabs 与 ReviewRailList。未传新参数的 QuestionRail 行为与第一批快照不变。

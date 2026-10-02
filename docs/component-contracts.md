@@ -2761,3 +2761,13 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 新增「内容与数据」目录项：`ReviewWorkspace`、`QuestionRail`、`ReviewSwitcher`、`QuestionInspector`。分别见 [框架](review-workspace.md)、[题目栏](question-rail.md)、[切换器](review-switcher.md)、[单题检查器](question-inspector.md)。只呈现外部事实、发出意图；宿主保留筛选/排序、偏好存储、学生名册、路由与回执。顶栏可由宿主唯一流程顶栏接管。题目栏同一接口接受分数或全班正确率，不内置业务计算。
 
 `PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。
+
+
+## 2026-10-02 · C2 题目与知识点预览组件
+
+- [Knowledge Rail 知识点栏](knowledge-rail.md)：sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。
+- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。
+- [Question Analysis Card 题目分析卡](question-analysis-card.md)：question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。
+- [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
+
+QuestionRail 同目录新增 QuestionRailClass（格内第二行、外部 marker、行式排序）；PaperPreview 增加 mixed 模式及 PaperPreviewMixed/PaperPreviewGroup 辅助导出，连续模式前置内容、纸外身份、分段、折叠和 topInset 避让。旧调用默认 DOM 不变。统计纯函数移至 `lib/prism-next/question-analysis.ts`，宿主提供输入并负责选用口径。

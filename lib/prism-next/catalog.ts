@@ -40,6 +40,10 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("knowledge-rail","Knowledge Rail 知识点栏","专题分组、外部得分率与证据定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
+    {...item("student-control-bar","Student Control Bar 学生控制条","浮动学生导航、筛选计数与全班刻度。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
+    {...item("question-analysis-card","Question Analysis Card 题目分析卡","数字题面、选项统计、作答分组与三页签详情。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
+    {...item("question-analysis-panel","Question Analysis Panel 本题分析面板","全班统计、失分原因与知识点概况。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
     {...item("question-inspector","Question Inspector 本题检查器","单题评分点、AI 依据与班级对比，只发出操作意图。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/frame",sourceLabel:"coss / Prism 预览组合"},
     {...item("review-switcher","Review Switcher 切换与跳转","相邻导航与分组搜索跳转，供学生与题目共用。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/combobox",sourceLabel:"coss / Prism 预览组合"},
     {...item("question-rail","Question Rail 题目栏","外部状态、题型分段与成绩地图，支持筛选与宿主排序。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},

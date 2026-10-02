@@ -73,3 +73,11 @@ PO 2026-09-30 批准新增目录项，目录为 81 项。入口 `/next/component
 侧签观察纸/画布/工具尺寸与滚动，布局更新按外部内容重测；高度不足时内部滚动。拖动平移、Ctrl/⌘+滚轮与双指缩放沿用冻结锚点逻辑，点击与拖动分离，不设置计时器。Surface 的选中环和纸面视觉完全沿用冻结组合，CSS 不增加视觉令牌。`d1-*` 保留以确保冻结输出稳定。
 
 纸外页眉与前置内容是第二批接口预留；题目卡的吸顶摘要、学生筛选避让和知识点证据组合未在本批接入。连续模式暂无图像加载失败重试状态（无 URL 占位已支持）；真实扫描服务未接入。浏览器几何、三主题窄屏、触控和焦点验证交 Supervisor，不把 SSR/处理器测试当作浏览器验收。
+
+## C2 数字内容与裁切扫描混排
+
+`PaperPreview layout="mixed" mixed={...}` 或同目录 `PaperPreviewMixed` 使用同一引擎；mixed 中 pages 为 `{id,width,height,content?,imageUrl?,alt?,regions?}`。数字 content 按容器宽布局，不参与扫描缩放/旋转；每张扫描使用独立尺寸。`beforeContent` 是纸列前置插槽，`headers` 为纸外身份，`renderSectionHeading` 为分段标题；`PaperPreviewGroup` 提供受控满分组折叠，是否加入其后纸张由宿主决定。
+
+`topInset` 为浮动控制条实测高度 + 16，参与顶部 padding、fit-page 和可见页判定；`onQuestionHidden` 由完整 question 内容底边判定，`onScanVisibilityChange` 报告扫描纸是否可见。`activePage` 只控制外部选中事实，`onVisiblePage(index,percent)` 回传观测；显示选生由宿主选择是否跟随。`resolveScanLayout` 可适配来源裁切坐标，默认取各纸宽高与外部旋转。
+
+PaperPreviewSurface 可选 `scanOnly/topInset`，仅吸附当前可见扫描纸右缘，没有扫描纸时回到画布侧边（不隐藏工具，保持冻结行为）。题目宿主仍用同样几何协议；无扫描夹具由宿主提供等高图像。旧 single/continuous 参数与快照不变；辅助导出不新增目录条目。

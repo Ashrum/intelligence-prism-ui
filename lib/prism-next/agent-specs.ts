@@ -9,6 +9,39 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'knowledge-rail': {
+    component: 'KnowledgeRail v0.1 — component candidate',
+    source: 'Pinned coss and frozen question review v1.0; docs/knowledge-rail.md',
+    contract: ['sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。'],
+    states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
+    accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
+    dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
+  },
+  'student-control-bar': {
+    component: 'StudentControlBar v0.1 — component candidate',
+    source: 'Pinned coss and frozen question review v1.0; docs/student-control-bar.md',
+    contract: ['复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。'],
+    states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
+    accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
+    dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
+  },
+  'question-analysis-card': {
+    component: 'QuestionAnalysisCard v0.1 — component candidate',
+    source: 'Pinned coss and frozen question review v1.0; docs/question-analysis-card.md',
+    contract: ['question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。'],
+    states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
+    accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
+    dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
+  },
+  'question-analysis-panel': {
+    component: 'QuestionAnalysisPanel v0.1 — component candidate',
+    source: 'Pinned coss and frozen question review v1.0; docs/question-analysis-panel.md',
+    contract: ['statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。'],
+    states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
+    accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
+    dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
+  },
+
   'review-workspace': {
     component: 'ReviewWorkspace v0.1 — component candidate',
     source: 'Pinned coss + frozen paper-review v1.0; reuse evidence and full API: docs/review-workspace.md',
