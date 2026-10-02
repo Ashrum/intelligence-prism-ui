@@ -21,7 +21,7 @@ import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, Dial
 import { reviewQuestions, knowledgePoints, classStudents, answersForQuestion, filterAnswers, filterQuestions, filterKnowledge, reviewSelection } from "./fixture"
 import { answerImage, answerHeight, PAPER_WIDTH } from "./artwork"
 import { QuestionJump, StudentJump, QuestionKnowledgeRail, QuestionInspector, StudentLabel, StudentScale, Tip } from "./parts"
-import { dockPaperToolbar } from "../paper-review/paper-toolbar-layout"
+import { dockPaperToolbar } from "@/components/prism-next/paper-preview-layout"
 import { FullScoreGroup } from "./answer-groups"
 import { questionExcerpts } from './question-records'
 import { QuestionDigitalCard } from './question-digital-card'

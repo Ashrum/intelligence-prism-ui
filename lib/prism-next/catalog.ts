@@ -40,6 +40,10 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("question-inspector","Question Inspector 本题检查器","单题评分点、AI 依据与班级对比，只发出操作意图。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/frame",sourceLabel:"coss / Prism 预览组合"},
+    {...item("review-switcher","Review Switcher 切换与跳转","相邻导航与分组搜索跳转，供学生与题目共用。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/combobox",sourceLabel:"coss / Prism 预览组合"},
+    {...item("question-rail","Question Rail 题目栏","外部状态、题型分段与成绩地图，支持筛选与宿主排序。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
+    {...item("review-workspace","Review Workspace 预览框架","受控三栏、分区与沉浸，顶栏可由宿主接管。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/dialog",sourceLabel:"coss / Prism 预览组合"},
     {...item("record-list","Record List 记录列表","按状态目录、搜索与筛选查看记录，发出处理、更多操作和分页意图。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss Tabs / Select / Menu / Pagination / 共享状态原子组合"},
     {...item("score-review","Score Review 人工评分","核对原始作答与 AI 建议，调整教师评分并发出保存或重试请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/number-field",sourceLabel:"coss NumberField / PaperPreview / 共享复核原子组合"},
     {...item("queue-board","Queue Board 队列看板","按状态选择队列，查看试卷事实并发出预览、异常处理或复核请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/table",sourceLabel:"coss Table / Toggle / Prism Badge 组合"},

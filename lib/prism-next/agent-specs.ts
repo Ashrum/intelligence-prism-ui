@@ -9,6 +9,39 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'review-workspace': {
+    component: 'ReviewWorkspace v0.1 — component candidate',
+    source: 'Pinned coss + frozen paper-review v1.0; reuse evidence and full API: docs/review-workspace.md',
+    contract: ["topbar/rail/canvas/inspector slots; omit topbar when a host process header owns that content. open/onOpenChange, immersive and pane/onPaneChange are controlled. No duplicate topbar is injected.", "shortcuts map keys to explicit host intent IDs; repeat and disabled are explicit. Inputs, IME, portals, tablists and rail list navigation keep native behavior. ReviewWorkspaceShortcuts renders a controlled Dialog from host entries.", "PAPER_REVIEW_BEST_WIDTH=1440, railBand and railCollapsedForWidth are pure exported defaults. Host measures logical width and owns storage, preference keys, focus restoration, route and data."],
+    states: ["expanded/collapsed", "immersive", "narrow pane switching", "host-owned topbar"],
+    accessibility: ['Standard coss controls, semantic typography, reduced motion, named regions and external text alternatives. Three-theme 320px long Chinese and MathML fixtures; browser acceptance belongs to Supervisor.'],
+    dont: ['No store, persistence, executor, status inference, Workspace private types or business routes.'],
+  },
+  'question-rail': {
+    component: 'QuestionRail v0.1 — component candidate',
+    source: 'Pinned coss + frozen paper-review v1.0; reuse evidence and full API: docs/question-rail.md',
+    contract: ["Host supplies ordered sections/pages/items with explicit layout, tone, score or rate text, ratio, Tooltip and aria labels. All counts, overview segments, subtotals and empty text come from the host; no score classification or cohort statistics are computed.", "Controlled selected/filter with onSelect/onFilterChange/onLocate/onPage intents. Up/down follow the supplied order; Enter locates and page buttons retain native Enter. sort/collapse are slots; sorting and filtering projections stay in the host.", "Sections can express the same map as student scores or class percentages. Three sort modes use host-ordered rows; no student-only status vocabulary is forced. panelId must be unique within the page."],
+    states: ["answer map", "rows", "filtered empty", "class rates and host sorting"],
+    accessibility: ['Standard coss controls, semantic typography, reduced motion, named regions and external text alternatives. Three-theme 320px long Chinese and MathML fixtures; browser acceptance belongs to Supervisor.'],
+    dont: ['No store, persistence, executor, status inference, Workspace private types or business routes.'],
+  },
+  'review-switcher': {
+    component: 'ReviewSwitcher v0.1 — component candidate',
+    source: 'Pinned coss + frozen paper-review v1.0; reuse evidence and full API: docs/review-switcher.md',
+    contract: ["Controlled items/groups/current/open/onOpenChange/onSelect. itemKey supplies stable identity; itemToStringLabel supplies search text; renderItem supplies avatar/identity, main/subtext, value, bar and badge. Navigation labels, empty text and optional footer are external.", "Adjacent Group buttons and coss Combobox share onSelect(index). Group/list/input/item primitives retain filtering, keyboard highlight, selection marker and finalFocus to triggerRef. searchId must be unique.", "Same component supports students, questions and other ordered records. No status is inferred, no data is persisted or loaded after selecting."],
+    states: ["first/last", "open/search/empty", "grouped selection"],
+    accessibility: ['Standard coss controls, semantic typography, reduced motion, named regions and external text alternatives. Three-theme 320px long Chinese and MathML fixtures; browser acceptance belongs to Supervisor.'],
+    dont: ['No store, persistence, executor, status inference, Workspace private types or business routes.'],
+  },
+  'question-inspector': {
+    component: 'QuestionInspector v0.1 — component candidate',
+    source: 'Pinned coss + frozen paper-review v1.0; reuse evidence and full API: docs/question-inspector.md',
+    contract: ["title/status/navigation, score text/value/max/judgement, points with external tone/status/value/reason, evidence/confidence/knowledge, comparison and actions are host facts. Missing confidence says 未提供; null numeric values omit meters instead of inventing zero.", "onStep/onWrong/onIntent only emit intentions. Host provides at most one primary action and optional secondary actions; absent action handler or explicit disabled blocks the action. extraLink adds class navigation without embedding a route.", "The AI source line uses the approved --brand-ai-gradient and numbers use text-score-display. Frame, Meter, Badge and ScrollArea retain frozen structure."],
+    states: ["ready", "unknown confidence/numeric data", "disabled navigation/actions"],
+    accessibility: ['Standard coss controls, semantic typography, reduced motion, named regions and external text alternatives. Three-theme 320px long Chinese and MathML fixtures; browser acceptance belongs to Supervisor.'],
+    dont: ['No store, persistence, executor, status inference, Workspace private types or business routes.'],
+  },
+
   'record-list': {
     component: 'RecordList v0.1 — component candidate',
     source: 'Pinned coss Tabs / Input / Select / Menu / Frame / FramePanel / Pagination / Empty / Skeleton / Progress + shared AgentStatus; reuse evaluation in docs/record-list.md',
@@ -78,6 +111,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
     component: 'PaperPreview / PaperPreviewDialog v0.1 — component candidate',
     source: 'Prism DocumentRegionViewer + pinned coss Sheet / Card / Button / Badge / Skeleton / Empty',
     contract: [
+      'C1 opt-in layout=continuous adds independent page dimensions/rotations, fit width/page, gesture anchoring, visible page callback, explicit location requests, beforeContent and renderPageHeader slots. PaperPreviewSurface provides paper-edge toolbar docking, selected ring, missing-image text and host bottomInset; full API in docs/paper-preview.md. Omitted layout retains exact legacy DOM.',
       'See docs/paper-preview.md. pages is the complete ordered page-slot collection, including missing pages. page/defaultPage/onPageChange is zero-based; out-of-range display clamps without emitting facts.',
       'zoom/defaultZoom/onZoomChange accepts page (default), width or numeric percent, 5–300. Fit uses viewport dimensions; manual zoom starts from actual displayed scale. A4/A3 and portrait/landscape retain their physical aspect ratio.',
       'Unknown information remains 未提供. Missing images say 扫描图像未接入. Anomalies use visible labels; supplied percentage regions compose DocumentRegionViewer.pageLayout and controlled selectedRegionId/onRegionSelect.',
