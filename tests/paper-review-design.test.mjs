@@ -43,8 +43,9 @@ test('D1 built review route renders three panes and a single primary action with
   assert.deepEqual([...body.matchAll(/data-review-page="(\d)"/g)].map(match => match[1]), ['0', '1']);
   assert.match(body, /aria-label="试卷悬浮工具条"[^>]*aria-orientation="vertical"|aria-orientation="vertical"[^>]*aria-label="试卷悬浮工具条"/);
   assert.match(body, /data-immersive="false"/);
-  assert.match(body, /aria-label="更多视图操作"/);
-  for (const label of ['翻页', '视图', '图层']) assert.match(body, new RegExp(`aria-label="${label}"`));
+  assert.doesNotMatch(body, /aria-label="更多视图操作"/);
+  assert.match(body, /aria-label="沉浸"/);
+  for (const label of ['翻页', '视图', '图层', '沉浸视图']) assert.match(body, new RegExp(`aria-label="${label}"`));
   assert.equal([...body.matchAll(/data-ai-source/g)].length, 1);
   assert.equal([...body.matchAll(/class="text-score-display"/g)].length, 2);
   assert.match(body, /aria-label="选择学生，当前第 1 \/ 6 位"/);
@@ -61,7 +62,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const probeFile = new URL('../.sites-runtime/paper-review-test/probe.mjs', import.meta.url);
 await mkdir(new URL('.', probeFile), { recursive: true });
-const compiled = await build({ stdin: { contents: "export { PaperReviewDesign, StudentPanel } from './examples/paper-review/paper-review'", resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'review-host-events', setup(build) {
+const compiled = await build({ stdin: { contents: "export { PaperReviewDesign, StudentPanel, QuestionRail } from './examples/paper-review/paper-review'", resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'review-host-events', setup(build) {
   build.onLoad({ filter: /examples\/paper-review\/paper-review\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8'))
     .replace('import { ReviewTools } from "@/examples/review-tools/review-tools"', 'const ReviewTools = () => null')
     .replace('useEffect, useLayoutEffect, useMemo, useRef, useState,', 'useMemo,')
@@ -71,7 +72,7 @@ const useEffect = () => {}; const useLayoutEffect = () => {};
 const shortcuts =`) }));
 } }] });
 await writeFile(probeFile, compiled.outputFiles[0].text);
-const { PaperReviewDesign, StudentPanel } = await import(probeFile);
+const { PaperReviewDesign, StudentPanel, QuestionRail } = await import(probeFile);
 await rm(probeFile);
 function captureHost() {
   globalThis.__reviewHost.cursor = 0;
@@ -104,36 +105,32 @@ test('D2 immersion works with button, F and Escape and retains the vertical tool
   const frame = () => captureHost().find(n => n.props['data-immersive'] !== undefined);
   const toggle = () => captureHost().find(n => n.props['aria-label'] === '沉浸');
   assert.equal(frame().props['data-immersive'], false);
-  toggle().props.onClick();
+  toggle().props.render.props.onPressedChange(true);
   assert.equal(frame().props['data-immersive'], true);
   pressHost('Escape'); assert.equal(frame().props['data-immersive'], false);
   pressHost('f'); assert.equal(frame().props['data-immersive'], true);
   pressHost('f'); assert.equal(frame().props['data-immersive'], false);
   assert.equal(captureHost().find(n => n.props['aria-label'] === '试卷悬浮工具条').props.orientation, 'vertical');
 });
-test('D2 canvas reserves a right tool column with no bottom toolbar row and compact headers', async () => {
+test('D7 canvas uses a paper-attached overlay instead of a separate tool column', async () => {
   const css = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8');
   const canvas = css.match(/\.d1-canvas \{([^}]+)\}/)[1];
-  assert.match(canvas, /grid-template-columns:minmax\(0,1fr\) 72px/);
-  assert.doesNotMatch(canvas, /grid-template-rows/);
-  assert.match(css, /\.d1-continuous \{[^}]*padding:8px;[^}]*gap:16px/);
-  assert.match(css, /\.d1-rail-header,\.d1-inspector-header \{ height:56px; min-height:56px;/);
-  assert.match(css, /data-immersive="true"[^}]*\.d1-inspector \{ display:none;/);
-  assert.match(css, /\.d1-tools \{[^}]*width:56px;[^}]*flex-shrink:0;/);
-  assert.doesNotMatch(css.match(/\.d1-tools \{([^}]+)\}/)[1], /max-height/);
-  globalThis.__reviewHost = { cursor: 0, values: [] };
-  const nodes = captureHost();
-  assert.equal(nodes.find(n => n.props['data-review-canvas']).props.style.gridTemplateColumns, 'minmax(0,1fr) 72px');
-  assert.deepEqual(nodes.find(n => n.props.className === 'd1-tool-dock').props.style, { width: 72, gridTemplateRows: 'minmax(0,1fr) 88px' });
+  assert.match(canvas, /grid-template-columns:minmax\(0,1fr\);/);
+  assert.match(css, /\.d1-paper-column \{[^}]*gap:16px/);
+  assert.match(css, /\.d1-tool-dock \{[^}]*position:absolute/);
+  assert.match(css, /\.d1-tools \{[^}]*width:56px/);
+  const source = await readFile(new URL('../examples/paper-review/continuous-paper-canvas.tsx', import.meta.url), 'utf8');
+  assert.match(source, /node.clientWidth - 16 - 56/);
+  assert.match(source, /width: columnWidth \+ 56/);
 });
 
-test('D6 toolbar keeps page, view and layer controls in one column with rotation and more available', () => {
+test('D7 toolbar has four visible groups and moves keyboard help to the top menu', () => {
   globalThis.__reviewHost = { cursor: 0, values: [] };
   const nodes = captureHost();
   const toolbar = nodes.find(n => n.props['aria-label'] === '试卷悬浮工具条');
   const children = React.Children.toArray(toolbar.props.children);
-  const groups = children.filter(n => ['翻页', '视图', '图层'].includes(n.props['aria-label']));
-  assert.deepEqual(groups.map(n => n.props['aria-label']), ['翻页', '视图', '图层']);
+  const groups = children.filter(n => ['翻页', '视图', '图层', '沉浸视图'].includes(n.props['aria-label']));
+  assert.deepEqual(groups.map(n => n.props['aria-label']), ['翻页', '视图', '图层', '沉浸视图']);
   for (const group of groups) {
     assert.match(group.props.className, /flex-col/);
     assert.ok(React.Children.toArray(group.props.children).every(n => n.type !== 'div'), 'no horizontal wrapper rows');
@@ -145,9 +142,12 @@ test('D6 toolbar keeps page, view and layer controls in one column with rotation
   assert.equal(versions.props.orientation, 'vertical');
   assert.match(versions.props.className, /flex-col/);
   assert.match(toolbar.props.className, /surface-floating/);
-  const more = React.Children.toArray(children.at(-1).props.children)[0];
-  assert.equal(more.props['aria-label'], '更多视图操作');
-  for (const label of ['上一页', '下一页', '放大', '缩小', '适合页面', '旋转当前页', '标注效果', '扫描原稿', '标注层', '更多视图操作']) {
+  assert.equal(nodes.some(n => n.props['aria-label'] === '更多视图操作'), false);
+  assert.equal(groups[3].props['aria-label'], '沉浸视图');
+  const help = nodes.find(n => n.props.onClick && React.Children.toArray(n.props.children).includes('快捷键表'));
+  assert.ok(help); help.props.onClick();
+  assert.ok(captureHost().some(n => n.props.open === true && n.props.onOpenChange));
+  for (const label of ['上一页', '下一页', '放大', '缩小', '适合页面', '旋转当前页', '标注效果', '扫描原稿', '标注层', '沉浸']) {
     const control = nodes.find(n => n.props['aria-label'] === label);
     assert.match(control.props.render?.props.className ?? control.props.className, /min-h-11 min-w-11/, label);
   }
@@ -232,4 +232,97 @@ test('D2 G opens the student panel; bracket keys and panel selection share navig
   assert.match(source, /\["G", "选择学生"\]/);
   assert.match(source, /\["\[ \/ \]", "上一位 \/ 下一位学生"\]/);
   assert.match(source, /finalFocus=\{studentTrigger\}/);
+});
+
+
+import { dockPaperToolbar } from '../examples/paper-review/paper-toolbar-layout.ts';
+test('D7 toolbar follows paper edge for width fit, page fit, overwide zoom and panning', () => {
+  // 828 canvas - 16 margins - 56 toolbar = 756 paper; seam at x=764.
+  assert.deepEqual(dockPaperToolbar({ canvasWidth: 828, paperRight: 8 + 756 }), { left: 764 });
+  // Page fit: the 585.45 paper and 56 toolbar are centered as one spread.
+  const pageWidth = 585.454545;
+  const paperRight = (828 - pageWidth - 56) / 2 + pageWidth;
+  assert.deepEqual(dockPaperToolbar({ canvasWidth: 828, paperRight }), { left: paperRight });
+  assert.deepEqual(dockPaperToolbar({ canvasWidth: 668, paperRight: 1200 }), { left: 604 });
+  assert.deepEqual(dockPaperToolbar({ canvasWidth: 668, paperRight: 580 }), { left: 580 });
+  assert.deepEqual(dockPaperToolbar({ canvasWidth: 668, paperRight: -100 }), { left: 8 });
+});
+function railMarkup(paper, filter = false) {
+  return renderToStaticMarkup(React.createElement(QuestionRail, { questions: paper, selected: 'q17', filter, missing: false, closeRef: { current: null }, onCollapse() {}, onFilter() {}, onSelect() {}, onLocate() {}, onPage() {} }));
+}
+test('D7 answer map renders 12 choice cells, 4 fill cells, 4 rows, and fixture-derived overview/subtotals', () => {
+  const html = railMarkup(questions);
+  assert.equal([...html.matchAll(/data-question-layout="cell"/g)].length, 16);
+  assert.equal([...html.matchAll(/data-question-layout="row"/g)].length, 4);
+  for (const q of questions) {
+    assert.match(html, new RegExp(`data-question-id="${q.id}" data-question-layout="${q.number <= 16 ? 'cell' : 'row'}"`));
+  }
+  for (const record of studentRecords) {
+    const paper = questionsForStudent(studentRecords.indexOf(record));
+    const body = railMarkup(paper), text = body.replace(/<[^>]+>/g, '');
+    const totals = [paper.filter(q => q.score === q.max).length, paper.filter(q => q.score > 0 && q.score < q.max).length, paper.filter(q => q.score === 0).length];
+    assert.deepEqual([...body.matchAll(/data-overview-count="(\d+)"/g)].map(m => Number(m[1])), totals.filter(n => n > 0));
+    assert.ok(text.includes(`满分 ${totals[0]} · 部分 ${totals[1]} · 零分 ${totals[2]}`));
+    for (const type of ['选择', '填空', '解答']) {
+      const group = paper.filter(q => q.type === type);
+      assert.ok(text.includes(`${group.reduce((n, q) => n + q.score, 0)} / ${group.reduce((n, q) => n + q.max, 0)}`));
+    }
+  }
+  const markers = [...html.matchAll(/data-page-marker="true">([\s\S]*?)<\/div>/g)];
+  assert.equal(markers.length, 2);
+  for (const marker of markers) { assert.doesNotMatch(marker[1].replace(/<[^>]+>/g, ''), /清晰/); assert.match(marker[1], /aria-label="定位第 [12] 页，清晰"/); }
+  assert.doesNotMatch(html, /data-paper-thumbnail/);
+});
+test('D7 filtering packs wrong questions in order and hides empty type sections', () => {
+  const html = railMarkup(questions, true);
+  assert.deepEqual([...html.matchAll(/data-question-id="(q\d+)"/g)].map(m => m[1]), ['q8', 'q14', 'q17', 'q19']);
+  const full = railMarkup(questionsForStudent(5), true);
+  assert.match(full, /没有错题/);
+  for (const type of ['选择', '填空', '解答']) assert.doesNotMatch(full, new RegExp(`aria-label="${type}题"`));
+});
+test('D7 T/button collapse persists safely, restores through immersion and exposes the expand button', () => {
+  globalThis.__reviewHost = { cursor: 0, values: [] };
+  const prior = globalThis.localStorage;
+  const values = new Map();
+  globalThis.localStorage = { setItem(k, v) { values.set(k, v); } };
+  const frame = () => captureHost().find(n => n.props['data-rail-collapsed'] !== undefined);
+  try {
+    assert.equal(frame().props['data-rail-collapsed'], false);
+    pressHost('t'); assert.equal(frame().props['data-rail-collapsed'], true);
+    assert.equal(values.get('prism-paper-review-rail-collapsed'), 'true');
+    assert.ok(captureHost().some(n => n.props['aria-label'] === '展开题目栏'));
+    pressHost('f'); pressHost('t'); pressHost('Escape');
+    assert.equal(frame().props['data-rail-collapsed'], true);
+    captureHost().find(n => n.props['aria-label'] === '展开题目栏').props.onClick();
+    assert.equal(frame().props['data-rail-collapsed'], false);
+    globalThis.localStorage = { setItem() { throw Error('storage denied'); } };
+    assert.doesNotThrow(() => pressHost('t'));
+    assert.equal(frame().props['data-rail-collapsed'], true);
+  } finally { globalThis.localStorage = prior; }
+  const source = readFileSync(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
+  assert.match(source, /\["T", "显示 \/ 隐藏题目栏"\]/);
+});
+
+test('D7 rail keeps numeric arrow order, Enter location, tab order and page intents after filtering', () => {
+  let selected = 'q4', located = 0, page;
+  const props = { questions, filter: false, missing: false, closeRef: { current: null }, onCollapse() {}, onFilter() {}, onSelect(id) { selected = id; }, onLocate() { located++; }, onPage(value) { page = value; } };
+  function nodes() {
+    const result = [];
+    function walk(node) { if (Array.isArray(node)) return node.forEach(walk); if (!React.isValidElement(node)) return; result.push(node); React.Children.forEach(node.props.children, walk); if (node.props.render) walk(node.props.render); }
+    walk(QuestionRail({ ...props, selected })); return result;
+  }
+  function key(key) { nodes().find(n => n.props.role === 'listbox').props.onKeyDown({ key, preventDefault() {}, stopPropagation() {} }); }
+  key('ArrowDown'); assert.equal(selected, 'q5');
+  key('ArrowUp'); assert.equal(selected, 'q4');
+  key('Enter'); assert.equal(located, 1);
+  const railKey = () => nodes().find(n => n.props.role === 'listbox').props.onKeyDown;
+  railKey()({ key: 'Enter', target: { closest: selector => selector === '[data-page-marker]' ? {} : null }, preventDefault() { throw Error('page Enter must stay native'); } });
+  railKey()({ key: 'Enter', target: { closest: selector => selector === '[data-question-id]' ? { dataset: { questionId: 'q6' } } : null }, preventDefault() {}, stopPropagation() {} });
+  assert.equal(selected, 'q6'); assert.equal(located, 2);
+  for (const node of nodes().filter(n => n.props.role === 'option')) assert.equal(node.props.tabIndex, 0);
+  props.filter = true; selected = 'q8'; key('ArrowDown'); assert.equal(selected, 'q14');
+  nodes().find(n => n.props['aria-label'] === '定位第 2 页，清晰').props.onClick(); assert.equal(page, 1);
+  // If the first type no longer has errors, the remaining first-page type keeps its page navigation.
+  props.questions = questions.map(q => q.type === '选择' ? { ...q, score: q.max } : q);
+  assert.ok(nodes().some(n => n.props['aria-label'] === '定位第 1 页，清晰'));
 });

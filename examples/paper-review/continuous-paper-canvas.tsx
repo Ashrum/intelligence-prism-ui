@@ -34,7 +34,7 @@ export function ContinuousPaperCanvas({ viewportRef, pages, zoom, rotations, sel
     const node = viewportRef.current
     if (!node) return
     const measure = () => {
-      const size = { width: Math.max(1, node.clientWidth - 16), height: Math.max(1, node.clientHeight - 16) }
+      const size = { width: Math.max(1, node.clientWidth - 16 - 56), height: Math.max(1, node.clientHeight - 16) }
       setViewport(size); onViewport(size)
     }
     const handle = (event: WheelEvent) => wheel.current(event)
@@ -109,13 +109,20 @@ export function ContinuousPaperCanvas({ viewportRef, pages, zoom, rotations, sel
     pointers.current.delete(event.pointerId)
     if ((event.target as HTMLElement).hasPointerCapture?.(event.pointerId)) (event.target as HTMLElement).releasePointerCapture(event.pointerId)
   }
+  const layouts = pages.map(page => {
+    const rotation = rotations[page.id] ?? 0, dimensions = rotatedPaperDimensions(source, rotation)
+    const percent = paperZoomPercent(zoom, viewport, dimensions)
+    return { rotation, dimensions, percent }
+  })
+  const columnWidth = Math.max(...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
   return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="连续试卷画布" className="d1-continuous" onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
+    <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {pages.map((page, index) => {
-      const rotation = rotations[page.id] ?? 0, dimensions = rotatedPaperDimensions(source, rotation)
-      const percent = paperZoomPercent(zoom, viewport, dimensions)
+      const { rotation, dimensions, percent } = layouts[index]
       return <div key={page.id} data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size="A4" className="relative mx-auto shrink-0" style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
         <DocumentRegionViewer label={`第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={page.regions ?? []} selectedId={selected} onSelect={onSelect} background={<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />} />
       </div>
     })}
+    </div></div>
   </div>
 }
