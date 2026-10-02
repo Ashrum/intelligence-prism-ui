@@ -1,5 +1,6 @@
 export const TYPOGRAPHY_VERSION = "0.2.1"
 export const typographyRoles = [
+  { id: "score-display", label: "分数展示", size: 40, lineHeight: 44, weight: 600, usage: "总分、单题得分等主角数字；一屏不超过两处；分母与单位使用 ui-body", className: "text-score-display" },
   {
     "id": "page-title",
     "label": "页面标题",

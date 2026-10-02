@@ -39,11 +39,37 @@ Object.assign(questions[18], { prompt: '从 10 个球中不放回抽取两次，
 Object.assign(questions[19], { prompt: '已知 f(x) = x³ − 3x，求函数的极值并讨论零点个数。', answer: ['解：f′(x) = 3x² − 3 = 3(x − 1)(x + 1)。', 'x = −1 时取极大值 2；x = 1 时取极小值 −2。', '由 f(x) = x(x² − 3) 得三个零点：−√3，0，√3。'], knowledge: '导数与函数极值', points: [{ label: '求导与极值', score: 12, max: 12 }, { label: '零点讨论', score: 12, max: 12 }] })
 
 export const students = ['张雨桐', '李思远', '陈语安', '周子墨', '林书宁', '王予辰']
+// Per-student records are fixed external facts; no click infers confirmation.
+export const studentRecords = students.map((name, index) => ({
+  name, examId: `OLE-ST-${String(18 + index).padStart(4, '0')}`,
+  score: [118, 124, 127, 130, 133, 150][index], max: 150,
+  status: index % 2 === 0 ? '已确认' as const : '待复核' as const,
+}))
+export function filterStudents(query: string) {
+  const term = query.trim().toLocaleLowerCase()
+  return ['待复核', '已确认'].flatMap(status => studentRecords
+    .map((student, index) => ({ ...student, index }))
+    .filter(student => student.status === status && `${student.name} ${student.examId}`.toLocaleLowerCase().includes(term)))
+}
+// Preserve the first paper exactly. Other student totals agree with their rubric and scan.
+export function questionsForStudent(index: number): Question[] {
+  let extra = studentRecords[index].score - 118
+  return questions.map(q => {
+    if (!extra || q.score === q.max) return q
+    const added = Math.min(extra, q.max - q.score); extra -= added
+    let remainder = added
+    const points = q.points.map(point => {
+      const gain = Math.min(remainder, point.max - point.score); remainder -= gain
+      return { ...point, score: point.score + gain, reason: point.score + gain === point.max ? undefined : point.reason }
+    })
+    return { ...q, score: q.score + added, points, evidence: q.score + added === q.max ? '作答结果与条件一致，关键步骤完整。' : q.evidence }
+  })
+}
 const escape = (text: string) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 export function paperImage(page: number, student: string, annotations: boolean) {
   const ink = '#1F2328', blue = '#1769AA', red = '#B4233D', green = '#216440', white = '#FFFFFF'
   const text = (x: number, y: number, content: string, size = 16, color = ink, extra = '') => `<text x="${x}" y="${y}" font-size="${size}" fill="${color}" ${extra}>${escape(content)}</text>`
-  const content = questions.filter(q => q.page === page).map(q => {
+  const content = questionsForStudent(Math.max(0, students.indexOf(student))).filter(q => q.page === page).map(q => {
     const y = q.rect[1] * 11.23, compact = page === 0
     const left = q.rect[0] * 7.94
     const promptLines = compact ? (`${q.number}. ${q.prompt}`.match(/.{1,22}/gu) ?? []) : [`${q.number}. ${q.prompt}`]

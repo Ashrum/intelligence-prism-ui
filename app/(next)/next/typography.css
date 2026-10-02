@@ -1,5 +1,9 @@
 /* Typography v0.2.1: semantic roles. Keep coss size utilities intact. */
 @theme {
+  --text-score-display: 2.5rem;
+  --text-score-display--line-height: 1.1;
+  --text-score-display--font-weight: 600;
+  --text-score-display--letter-spacing: 0;
   --text-page-title: 1.625rem;
   --text-page-title--line-height: 1.38461538;
   --text-page-title--font-weight: 600;
@@ -124,3 +128,5 @@
   :where(html[data-ui-version="coss-v1"]) :is([data-slot="label"],[data-slot="accordion-trigger"],[data-slot="sidebar-menu-button"],[data-slot="command-item"],[data-slot="context-menu-item"],[data-slot="context-menu-checkbox-item"],[data-slot="context-menu-radio-item"],[data-slot="context-menu-sub-trigger"],[data-slot="menu-sub-trigger"],[data-slot="number-field-input"],[data-slot="command-input"],[data-slot="combobox-chips-input"]) { font-size:1rem; line-height:1.5; }
 }
 :where(html[data-ui-version="coss-v1"]) [data-slot="fieldset-legend"] { font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); }
+
+.text-score-display { font-variant-numeric:tabular-nums; }

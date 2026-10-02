@@ -5,7 +5,7 @@
 .d1-columns { min-height:0; flex:1; display:grid; grid-template-columns:232px minmax(0,1fr) 380px; }
 .d1-rail { display:grid; grid-template-rows:56px minmax(0,1fr); }
 .d1-inspector { display:grid; grid-template-rows:56px minmax(0,1fr) auto; }
-.d1-canvas { min-width:0; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 72px; overflow:hidden; }
+.d1-canvas { min-width:0; min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 120px; overflow:hidden; }
 .d1-mobile-nav { display:none; }
 .d1-paper-host { overflow:hidden; }
 .d1-continuous { height:100%; overflow:auto; overscroll-behavior:contain; touch-action:none; padding:8px; display:flex; flex-direction:column; gap:16px; }
@@ -21,7 +21,7 @@
 .d1-frame[data-immersive="true"] .d1-canvas { display:grid; }
 .d1-paper-host [data-region] > button > span { visibility:hidden; }
 .d1-paper-host [data-region] > button { min-height:44px; }
-.d1-tools { gap:2px; }
+.d1-tools { gap:2px; width:104px; flex-shrink:0; }
 @container (min-width:1800px) { .d1-columns { grid-template-columns:264px minmax(0,1fr) 420px; } }
 @container (max-width:1250px) { .d1-student-meta { display:none; } .d1-topbar { gap:8px; } }
 @container (max-width:1099px) {
@@ -39,4 +39,10 @@
   .d1-total { gap:8px; }
   .d1-total > :first-child { display:none; }
   .d1-tools { gap:0; }
+}
+
+/* Host state changes only; no simulated processing. */
+.d1-paper-host [data-region] > button { transition:box-shadow 160ms ease-out; }
+@media (prefers-reduced-motion:reduce) {
+  .d1-paper-host [data-region] > button { transition:none; }
 }
