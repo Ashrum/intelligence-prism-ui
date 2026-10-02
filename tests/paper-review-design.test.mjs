@@ -114,11 +114,47 @@ test('D2 immersion works with button, F and Escape and retains the vertical tool
 test('D2 canvas reserves a right tool column with no bottom toolbar row and compact headers', async () => {
   const css = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8');
   const canvas = css.match(/\.d1-canvas \{([^}]+)\}/)[1];
-  assert.match(canvas, /grid-template-columns:minmax\(0,1fr\) 120px/);
+  assert.match(canvas, /grid-template-columns:minmax\(0,1fr\) 72px/);
   assert.doesNotMatch(canvas, /grid-template-rows/);
   assert.match(css, /\.d1-continuous \{[^}]*padding:8px;[^}]*gap:16px/);
   assert.match(css, /\.d1-rail-header,\.d1-inspector-header \{ height:56px; min-height:56px;/);
   assert.match(css, /data-immersive="true"[^}]*\.d1-inspector \{ display:none;/);
+  assert.match(css, /\.d1-tools \{[^}]*width:56px;[^}]*flex-shrink:0;/);
+  assert.doesNotMatch(css.match(/\.d1-tools \{([^}]+)\}/)[1], /max-height/);
+  globalThis.__reviewHost = { cursor: 0, values: [] };
+  const nodes = captureHost();
+  assert.equal(nodes.find(n => n.props['data-review-canvas']).props.style.gridTemplateColumns, 'minmax(0,1fr) 72px');
+  assert.deepEqual(nodes.find(n => n.props.className === 'd1-tool-dock').props.style, { width: 72, gridTemplateRows: 'minmax(0,1fr) 88px' });
+});
+
+test('D6 toolbar keeps page, view and layer controls in one column with rotation and more available', () => {
+  globalThis.__reviewHost = { cursor: 0, values: [] };
+  const nodes = captureHost();
+  const toolbar = nodes.find(n => n.props['aria-label'] === '试卷悬浮工具条');
+  const children = React.Children.toArray(toolbar.props.children);
+  const groups = children.filter(n => ['翻页', '视图', '图层'].includes(n.props['aria-label']));
+  assert.deepEqual(groups.map(n => n.props['aria-label']), ['翻页', '视图', '图层']);
+  for (const group of groups) {
+    assert.match(group.props.className, /flex-col/);
+    assert.ok(React.Children.toArray(group.props.children).every(n => n.type !== 'div'), 'no horizontal wrapper rows');
+  }
+  const labels = group => React.Children.toArray(group.props.children).map(n => n.props.label ?? n.props['aria-label']);
+  assert.deepEqual(labels(groups[0]), ['上一页', '当前页', '下一页']);
+  assert.deepEqual(labels(groups[1]), ['放大', '缩放比例', '缩小', '适合页面', '旋转当前页']);
+  const versions = nodes.find(n => n.props['aria-label'] === '查看版本');
+  assert.equal(versions.props.orientation, 'vertical');
+  assert.match(versions.props.className, /flex-col/);
+  assert.match(toolbar.props.className, /surface-floating/);
+  const more = React.Children.toArray(children.at(-1).props.children)[0];
+  assert.equal(more.props['aria-label'], '更多视图操作');
+  for (const label of ['上一页', '下一页', '放大', '缩小', '适合页面', '旋转当前页', '标注效果', '扫描原稿', '标注层', '更多视图操作']) {
+    const control = nodes.find(n => n.props['aria-label'] === label);
+    assert.match(control.props.render?.props.className ?? control.props.className, /min-h-11 min-w-11/, label);
+  }
+  const canvas = () => captureHost().find(n => n.props.viewportRef);
+  nodes.find(n => n.props['aria-label'] === '旋转当前页').props.onClick();
+  assert.equal(canvas().props.rotations.p1, 90);
+  pressHost('r'); assert.equal(canvas().props.rotations.p1, 180);
 });
 
 

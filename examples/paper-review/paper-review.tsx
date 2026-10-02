@@ -162,7 +162,7 @@ export function PaperReviewDesign() {
   const studentTrigger = useRef<HTMLButtonElement>(null)
   const toolDock = useRef<HTMLDivElement>(null), mobileNav = useRef<HTMLElement>(null)
   const stage = useRef<HTMLDivElement>(null), frame = useRef<HTMLElement>(null), canvas = useRef<HTMLDivElement>(null)
-  const dockWidth = Math.max(120, 72 / scale)
+  const dockWidth = Math.max(72, 72 / scale)
   const questions = useMemo(() => questionsForStudent(studentIndex), [studentIndex])
   const record = studentRecords[studentIndex]
   const q = questions.find(item => item.id === selected)!, student = students[studentIndex]
@@ -287,14 +287,23 @@ export function PaperReviewDesign() {
             <div ref={toolDock} className="d1-tool-dock" style={{ width: dockWidth, gridTemplateRows: `minmax(0,1fr) ${88 / scale}px` }}>
               <div className="d1-tool-scroll">
               <Toolbar orientation="vertical" aria-label="试卷悬浮工具条" className="d1-tools surface-floating flex-col items-center">
-                <ToolbarGroup aria-label="翻页" className="w-full flex-col gap-0"><output aria-label="当前页" className="text-ui-meta tabular-nums">{page + 1} / 2</output><div className="flex">{tool('上一页', '←', <ArrowUp />, () => changePage(page - 1), page === 0)}{tool('下一页', '→', <ArrowDown />, () => changePage(page + 1), page === 1)}</div></ToolbarGroup><ToolbarSeparator orientation="horizontal" />
-                <ToolbarGroup aria-label="视图" className="w-full flex-col gap-0"><output aria-label="缩放比例" className="text-ui-meta tabular-nums">{missing ? '—' : `${Math.round(percent)}%`}</output><div className="flex">{tool('放大', '+', <Plus />, () => setZoom(clampPaperZoom(percent * 1.25)), missing || percent >= 300)}{tool('缩小', '−', <Minus />, () => setZoom(clampPaperZoom(percent * .8)), missing || percent <= 5)}</div><div className="flex">{tool(zoom === 'width' ? '适合页面' : '适合宽度', '0', zoom === 'width' ? <Scan /> : <ArrowLeftRight />, toggleFit, missing)}{tool('旋转当前页', 'R', <RotateCw />, rotate, missing)}</div></ToolbarGroup><ToolbarSeparator orientation="horizontal" />
+                <ToolbarGroup aria-label="翻页" className="w-full flex-col gap-0">
+                  {tool('上一页', '←', <ArrowUp />, () => changePage(page - 1), page === 0)}
+                  <output aria-label="当前页" className="text-ui-meta tabular-nums">{page + 1} / 2</output>
+                  {tool('下一页', '→', <ArrowDown />, () => changePage(page + 1), page === 1)}
+                </ToolbarGroup><ToolbarSeparator orientation="horizontal" />
+                <ToolbarGroup aria-label="视图" className="w-full flex-col gap-0">
+                  {tool('放大', '+', <Plus />, () => setZoom(clampPaperZoom(percent * 1.25)), missing || percent >= 300)}
+                  <output aria-label="缩放比例" className="text-ui-meta tabular-nums">{missing ? '—' : `${Math.round(percent)}%`}</output>
+                  {tool('缩小', '−', <Minus />, () => setZoom(clampPaperZoom(percent * .8)), missing || percent <= 5)}
+                  {tool(zoom === 'width' ? '适合页面' : '适合宽度', '0', zoom === 'width' ? <Scan /> : <ArrowLeftRight />, toggleFit, missing)}
+                  {tool('旋转当前页', 'R', <RotateCw />, rotate, missing)}
+                </ToolbarGroup><ToolbarSeparator orientation="horizontal" />
                 <ToolbarGroup aria-label="图层" className="w-full flex-col gap-0">
-                  <ToggleGroup aria-label="查看版本" value={[original ? 'original' : 'marked']} onValueChange={value => { if (value.length) setMode(value[0]) }}><Tip label="标注效果" keys="Tab / Enter"><ToggleGroupItem aria-label="标注效果" className="min-h-11 min-w-11" value="marked"><PencilLine /></ToggleGroupItem></Tip><Tip label="扫描原稿；按住临时查看" keys="O"><ToggleGroupItem aria-label="扫描原稿" className="min-h-11 min-w-11" value="original"><FileImage /></ToggleGroupItem></Tip></ToggleGroup>
-                  <div className="flex"><Tip label={missing ? '扫描图像未提供，标注层不可用' : original ? '扫描原稿不显示标注层' : '开关标注层'} keys="L"><span tabIndex={original || missing ? 0 : undefined} className="inline-flex" aria-label={original ? '扫描原稿不显示标注层' : undefined}><Toggle aria-label="标注层" className="min-h-11 min-w-11" pressed={!original && layer} disabled={original || missing} onPressedChange={setLayer}><Layers /></Toggle></span></Tip>
-                  <Menu><MenuTrigger render={<Button variant="ghost" size="icon" className="min-h-11 min-w-11" />} aria-label="更多视图操作"><MoreHorizontal /></MenuTrigger><MenuPopup className="surface-floating motion-reduce:transition-none" side="left"><MenuItem aria-label="沉浸" className="min-h-11" onClick={() => setImmersive(value => !value)}>{immersive ? <Minimize /> : <Maximize />}{immersive ? '退出沉浸' : '沉浸'}<Kbd>F</Kbd></MenuItem><MenuItem className="min-h-11" onClick={() => setHelp(true)}><CircleHelp />快捷键表<Kbd>?</Kbd></MenuItem></MenuPopup></Menu>
-                  </div>
+                  <ToggleGroup aria-label="查看版本" orientation="vertical" className="flex-col" value={[original ? 'original' : 'marked']} onValueChange={value => { if (value.length) setMode(value[0]) }}><Tip label="标注效果" keys="Tab / Enter"><ToggleGroupItem aria-label="标注效果" className="min-h-11 min-w-11" value="marked"><PencilLine /></ToggleGroupItem></Tip><Tip label="扫描原稿；按住临时查看" keys="O"><ToggleGroupItem aria-label="扫描原稿" className="min-h-11 min-w-11" value="original"><FileImage /></ToggleGroupItem></Tip></ToggleGroup>
+                  <Tip label={missing ? '扫描图像未提供，标注层不可用' : original ? '扫描原稿不显示标注层' : '开关标注层'} keys="L"><span tabIndex={original || missing ? 0 : undefined} className="inline-flex" aria-label={original ? '扫描原稿不显示标注层' : undefined}><Toggle aria-label="标注层" className="min-h-11 min-w-11" pressed={!original && layer} disabled={original || missing} onPressedChange={setLayer}><Layers /></Toggle></span></Tip>
                 </ToolbarGroup>
+                <Menu><MenuTrigger render={<Button variant="ghost" size="icon" className="min-h-11 min-w-11" />} aria-label="更多视图操作"><MoreHorizontal /></MenuTrigger><MenuPopup className="surface-floating motion-reduce:transition-none" side="left"><MenuItem aria-label="沉浸" className="min-h-11" onClick={() => setImmersive(value => !value)}>{immersive ? <Minimize /> : <Maximize />}{immersive ? '退出沉浸' : '沉浸'}<Kbd>F</Kbd></MenuItem><MenuItem className="min-h-11" onClick={() => setHelp(true)}><CircleHelp />快捷键表<Kbd>?</Kbd></MenuItem></MenuPopup></Menu>
               </Toolbar>
               </div>
             </div>
