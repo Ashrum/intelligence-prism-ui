@@ -2,15 +2,21 @@
 
 import { useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode, type RefObject } from "react"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
-import { clampPaperZoom, paperDimensions, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
+import { clampPaperZoom, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
+export type QuestionPaper = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
+function MeasuredContent({children,onHeight,percent}:{children:ReactNode;onHeight:(n:number)=>void;percent:number}){
+ const ref=useRef<HTMLDivElement>(null)
+ useLayoutEffect(()=>{const node=ref.current;if(!node)return;const measure=()=>onHeight(node.offsetHeight);measure();const observer=new ResizeObserver(measure);observer.observe(node);return()=>observer.disconnect()},[onHeight])
+ return <div ref={ref} data-agent-preview data-prism-theme="light" className="shrink-0 bg-background text-foreground" style={{width:794,transform:`scale(${percent/100})`,transformOrigin:'top left'}}>{children}</div>
+}
 // Review-host composition only. The shared viewer's public API remains unchanged.
 export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset }: {
   headers: Record<string, ReactNode>; activePage: string; topInset: number
-  viewportRef: RefObject<HTMLDivElement | null>; pages: PaperPreviewPage[]; zoom: PaperPreviewZoom
+  viewportRef: RefObject<HTMLDivElement | null>; pages: QuestionPaper[]; zoom: PaperPreviewZoom
   rotations: Record<string, PaperPreviewRotation>; selected: string; scale: number
   onSelect: (id: string) => void; onZoom: (zoom: PaperPreviewZoom) => void
-  onVisiblePage: (page: number) => void; onViewport: (size: { width: number; height: number }) => void
+  onVisiblePage: (page: number, percent?: number) => void; onViewport: (size: { width: number; height: number }) => void
 }) {
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
@@ -18,7 +24,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
   const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number }>())
   const gesture = useRef({ moved: false, pinch: false, distance: 0, percent: 100 })
   const suppressClick = useRef(false)
-  const source = paperDimensions()
+  const [contentHeights,setContentHeights]=useState<Record<string,number>>({})
   function visiblePage() {
     const node = viewportRef.current
     if (!node) return
@@ -29,7 +35,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
       const visible = Math.max(0, Math.min(rect.bottom, view.bottom) - Math.max(rect.top, view.top + topInset * scale)) * Math.max(0, Math.min(rect.right, view.right) - Math.max(rect.left, view.left))
       if (visible > area) { area = visible; best = index }
     })
-    onVisiblePage(best)
+    onVisiblePage(best,Number(node.querySelector<HTMLElement>(`[data-review-page="${best}"]`)?.dataset.percent ?? 100))
   }
   useLayoutEffect(() => {
     const node = viewportRef.current
@@ -56,7 +62,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
       anchor.current = null
     }
     visiblePage()
-  }, [zoom, viewport, rotations, scale])
+  }, [zoom, viewport, rotations, scale, contentHeights])
   function paperAt(x: number, y: number) {
     return [...viewportRef.current?.querySelectorAll<HTMLElement>('[data-review-page]') ?? []].find(node => { const rect = node.getBoundingClientRect(); return y >= rect.top && y <= rect.bottom && x >= rect.left && x <= rect.right })
   }
@@ -78,6 +84,7 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
   }
   function down(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType === 'mouse' && event.button !== 0) return
+    if ((event.target as HTMLElement).closest('[data-objective-groups] button,[data-full-score-group] button,a,input')) { suppressClick.current=false; return }
     const active = pointers.current
     if (!active.size) { suppressClick.current = false; gesture.current = { moved: false, pinch: false, distance: 0, percent: 100 } }
     active.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY })
@@ -111,17 +118,18 @@ export function QuestionPaperCanvas({ viewportRef, pages, zoom, rotations, selec
     if ((event.target as HTMLElement).hasPointerCapture?.(event.pointerId)) (event.target as HTMLElement).releasePointerCapture(event.pointerId)
   }
   const layouts = pages.map(page => {
+    const source={width:page.width,height:contentHeights[page.id]??page.height}
     const rotation = rotations[page.id] ?? 0, dimensions = rotatedPaperDimensions(source, rotation)
     const percent = paperZoomPercent(zoom, viewport, dimensions)
-    return { rotation, dimensions, percent }
+    return { source, rotation, dimensions, percent }
   })
   const columnWidth = Math.max(...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
   return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="题目与学生作答连续画布" className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
     <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {pages.map((page, index) => {
-      const { rotation, dimensions, percent } = layouts[index]
-      return <section key={page.id} style={{ width: dimensions.width * percent / 100 }} className="mx-auto shrink-0">{headers[page.id]}<div data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size="A4" className={`relative mx-auto shrink-0 shadow-2xl transition-opacity duration-150 motion-reduce:transition-none ${page.id === "question" || activePage === page.id ? "opacity-100" : "opacity-65"} ${activePage === page.id && page.id !== "question" ? "ring-2 ring-info" : ""}`} style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
-        <DocumentRegionViewer label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={page.regions ?? []} selectedId={undefined} onSelect={onSelect} background={<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />} />
+      const { source, rotation, dimensions, percent } = layouts[index]
+      return <section key={page.id} style={{ width: dimensions.width * percent / 100 }} className="mx-auto shrink-0">{headers[page.id]}<div data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size="crop" className={`relative mx-auto shrink-0 shadow-2xl transition-opacity duration-150 motion-reduce:transition-none ${page.id === "question" || !!page.content || activePage === page.id ? "opacity-100" : "opacity-65"} ${activePage === page.id && page.id !== "question" ? "ring-2 ring-info" : ""}`} style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
+        <DocumentRegionViewer label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={page.regions ?? []} selectedId={undefined} onSelect={onSelect} background={page.content?<MeasuredContent percent={percent} onHeight={height=>setContentHeights(previous=>previous[page.id]===height?previous:{...previous,[page.id]:height})}>{page.content}</MeasuredContent>:<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />} />
       </div></section>
     })}
     </div></div>

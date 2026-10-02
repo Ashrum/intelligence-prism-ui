@@ -1,3 +1,4 @@
+import { computeQuestionAnalysis, sortAnswers } from './analysis.ts'
 /** Review host facts. No runtime inference of risk, confirmation or mastery. */
 export type Rubric = { id: string; label: string; max: number; knowledge: string[]; rate: number }
 export type ReviewQuestion = { id: string; number: number; type: string; category: 'objective' | 'subjective'; page: number; max: number; rate: number; affected: number; distribution: [number, number, number]; pending: number; highLoss: boolean; tone: 'neutral' | 'warning' | 'destructive'; knowledge: string; weakness: string; prompt: string; answer: string[]; points: Rubric[]; options?: { label: string; count: number; correct: boolean }[] }
@@ -49,8 +50,8 @@ export const knowledgePoints: Knowledge[] = knowledgeSeeds.map(([id,name,topic,r
 const seedStudents: [string,string][]=[['0018','张雨桐'],['0020','周可欣'],['0022','陈思远'],['0026','李华'],['0028','王晨'],['0031','林子涵']]
 const otherNames=['李思远','陈语安','周子墨','林书宁','王予辰','赵嘉宁','孙悦','吴梓涵','郑宇轩','冯诗涵','蒋明哲','沈若曦','韩沐辰','杨书瑶','朱浩然','秦以安','许思齐','何知远','吕清越','施亦辰','张予安','孔嘉禾','曹明轩','严思宁','华子谦','金雨泽','魏安然','陶心怡','姜亦舟','谢知夏']
 export const classStudents=[...seedStudents,...otherNames.map((name,i)=>[String(40+i).padStart(4,'0'),name])].map(([id,name])=>({id:`OLE-ST-${id}`,name,examId:`2026${id}`}))
-export type StudentAnswer = {student: typeof classStudents[number]; score:number; status:'满分'|'部分得分'|'零分'; review:'待复核'|'已确认'; points:{id:string;score:number;reason?:string}[]; lines:string[]; annotation:string; option?:string}
-export function answersForQuestion(q:ReviewQuestion):StudentAnswer[]{
+export type StudentAnswer = {student: typeof classStudents[number]; score:number; status:'满分'|'部分得分'|'零分'; review:'待复核'|'已确认'; points:{id:string;score:number;reason?:string}[]; lines:string[]; annotation:string; option?:string; answerText?:string}
+function generateAnswers(q:ReviewQuestion):StudentAnswer[]{
  const [full,partial]=q.distribution
  // Distribute integer points so rounded class score rate agrees with the supplied fact.
  const target=Math.round(q.rate*q.max*36/100), remainder=target-full*q.max
@@ -65,16 +66,22 @@ export function answersForQuestion(q:ReviewQuestion):StudentAnswer[]{
   for(const p of order){allocated[p]=Math.min(left,q.points[p].max);left-=allocated[p]}
   const points=q.points.map((p,j)=>({id:p.id,score:allocated[j],...(allocated[j]<p.max?{reason:q.number===17&&j===1?'未把点 P(2,1) 代入，并与 a²=b²+c² 联立，焦点坐标缺少推导依据。':`缺少${p.label}的完整依据。`}:{})}))
   const status=score===q.max?'满分':score===0?'零分':'部分得分'
-  const option=q.options?(i<31?'A':i<33?'B':i===33?'C':'D'):undefined
-  const lines=option?[`选择 ${option}${option==='A'?'：充分不必要条件。':'。'}`]:score===q.max?q.answer:score===0?(i%2?['设所求结果为 0。','未继续推导。']:['直接写出结论，未列出条件。']):q.number===17?['由 e=c/a=√3/2，得 c=a√3/2。',i%2?'直接令 a=2，故 c=√3。':'取 c=1，焦点为 (±1,0)。','焦点坐标尚缺少联立求解。']:[q.answer[0],i%2?'据此直接得到结论。':'其余条件未继续检验。']
-  return {student,score,status,review:i===1||i===4?'待复核':'已确认',points,lines,annotation:score===q.max?(i%2?'推导完整，结论成立。':'条件使用正确。'):points.filter(p=>p.reason).map(p=>p.reason).join(' '),option}
+  const option=q.type==='选择题'?(score===q.max?'A':q.number===1?(i<33?'B':i===33?'C':'D'):['B','C','D'][i%3]):undefined
+  const answerText=q.type==='填空题'?(score===q.max?q.answer.join(' '):q.number===6?['在 (1,+∞) 上递减','在 R 上递增'][i%2]:['8','12'][i%2]):undefined
+  const lines=option?[`选择 ${option}${q.number===1&&option==='A'?'：充分不必要条件。':'。'}`]:answerText?[answerText]:score===q.max?q.answer:score===0?(i%2?['设所求结果为 0。','未继续推导。']:['直接写出结论，未列出条件。']):q.number===17?['由 e=c/a=√3/2，得 c=a√3/2。',i%2?'直接令 a=2，故 c=√3。':'取 c=1，焦点为 (±1,0)。','焦点坐标尚缺少联立求解。']:[q.answer[0],i%2?'据此直接得到结论。':'其余条件未继续检验。']
+  return {student,score,status,review:i===1||i===4?'待复核':'已确认',points,lines,annotation:score===q.max?(i%2?'推导完整，结论成立。':'条件使用正确。'):points.filter(p=>p.reason).map(p=>p.reason).join(' '),option,answerText}
  })
 }
-// Rubric aggregate rates are derived once by the fixture producer, not inferred by UI.
-for(const q of reviewQuestions){const answers=answersForQuestion(q);q.points.forEach((p,i)=>p.rate=Math.round(answers.reduce((sum,a)=>sum+a.points[i].score,0)/(36*p.max)*100))}
+// Capture deterministic per-student facts before deriving aggregate fields.
+for(const q of reviewQuestions) if(q.type==='选择题'&&!q.options) q.options=['A','B','C','D'].map(label=>({label,count:0,correct:label==='A'}))
+const answerRecords=Object.fromEntries(reviewQuestions.map(q=>[q.id,generateAnswers(q)]))
+export const answersForQuestion=(q:ReviewQuestion):StudentAnswer[]=>answerRecords[q.id]
+export const wholePaperTotals=Object.fromEntries(classStudents.map(s=>[s.id,reviewQuestions.reduce((sum,q)=>sum+answerRecords[q.id].find(a=>a.student.id===s.id)!.score,0)]))
+export const questionAnalyses=Object.fromEntries(reviewQuestions.map(q=>[q.id,computeQuestionAnalysis(q,answerRecords[q.id],wholePaperTotals)]))
+for(const q of reviewQuestions){const stats=questionAnalyses[q.id];Object.assign(q,{rate:stats.rate,distribution:stats.distribution,pending:stats.pending,affected:stats.affected,options:stats.options,highLoss:stats.rate<65,tone:stats.rate<45?'destructive':stats.rate<65?'warning':'neutral'});q.points.forEach(p=>p.rate=stats.pointRates.find(x=>x.id===p.id)!.rate)}
 export const questionFilters=[{value:'all',label:'全部',count:20},{value:'subjective',label:'主观题',count:8},{value:'objective',label:'客观题',count:12},{value:'loss',label:'高失分',count:6}]
 export const knowledgeFilters=[{value:'all',label:'全部',count:18},{value:'impact',label:'影响较大',count:6},{value:'sufficient',label:'证据充分',count:12},{value:'observe',label:'继续观察',count:6}]
 export const filterQuestions=(filter:string)=>reviewQuestions.filter(q=>filter==='all'||filter===q.category||filter==='loss'&&q.highLoss)
 export const filterKnowledge=(filter:string)=>knowledgePoints.filter(k=>filter==='all'||filter==='impact'&&k.impact||filter==='sufficient'&&k.sufficient||filter==='observe'&&!k.sufficient)
-export const filterAnswers=(answers:StudentAnswer[],filter:string)=>answers.filter(a=>filter==='all'||filter==='loss'&&a.status!=='满分'||filter==='pending'&&a.review==='待复核')
+export const filterAnswers=(answers:StudentAnswer[],filter:string)=>sortAnswers(answers.filter(a=>filter==='all'||filter==='loss'&&a.status!=='满分'||filter==='pending'&&a.review==='待复核'))
 export function reviewSelection(params:URLSearchParams){const raw=params.get('question')?.replace(/^q0?/,'');return {question:reviewQuestions.find(q=>String(q.number)===raw)?.id??'q17',student:classStudents.find(s=>s.id===params.get('student'))?.id??classStudents[0].id}}
