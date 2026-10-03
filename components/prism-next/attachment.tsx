@@ -100,7 +100,7 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
       <span className={faceClass}>{!placeholder && <span className="absolute inset-0 overflow-hidden rounded-sm">{thumbnail}</span>}</span>
       {!placeholder && status.tone === "success" && <span aria-hidden="true" data-paper-success className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-success-foreground text-background ring-2 ring-background"><Check className="size-3" /></span>}
       {!placeholder && status.tone && status.tone !== "success" && <Badge variant={badgeTones[status.tone]} title={statusLabel}
-        className={cn("absolute top-1.5 left-1.5 max-w-[calc(100%-0.75rem)] duration-150 motion-reduce:transition-none", error && "bg-destructive-foreground text-background dark:bg-destructive-foreground")}><span className="truncate">{statusLabel}</span></Badge>}
+        className={cn("absolute top-1.5 -left-1.5 max-w-[calc(100%-0.5rem)] px-0.5 duration-150 motion-reduce:transition-none", error && "bg-destructive-foreground text-background dark:bg-destructive-foreground")}><span className="truncate">{statusLabel}</span></Badge>}
     </>
     return <article data-paper-card={id} data-paper-variant="sheet" data-placeholder={placeholder || undefined} aria-labelledby={labelId} aria-current={selected ? "true" : undefined}
       className={cn("flex min-w-0 flex-col items-center gap-2 border border-transparent px-2 pt-3.5 pb-2.5", error && "rounded-2xl border-destructive-foreground bg-card text-card-foreground")}>
@@ -114,7 +114,9 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
       <span id={`${labelId}-status`} className="sr-only">{statusLabel}</span>
       <div className="flex w-full min-w-0 flex-col items-center gap-px">
         <h3 id={labelId} title={name} className={cn("max-w-full truncate text-item-title", placeholder && "text-muted-foreground")}>{name}</h3>
-        {information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : "text-muted-foreground")}>{information}</p>}
+        {information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : "text-muted-foreground")}>
+          {!placeholder && !error && exam ? <><span data-paper-exam-prefix>考号 </span>{[exam, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")}</> : information}
+        </p>}
       </div>
       {error && onResolve && <Button type="button" variant="outline" size="sm" data-paper-action="resolve" className="max-w-full duration-150 motion-reduce:transition-none" aria-label={`${resolveLabel}：${name}`} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate" title={resolveLabel}>{resolveLabel}</span></Button>}
     </article>
@@ -152,7 +154,7 @@ export function PaperCardGrid({ variant = "card", density = "comfortable", compa
   const content = state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
         : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
-          : <div className={cn("grid items-stretch", sheet ? dense ? "gap-x-2 gap-y-1 [&>[data-paper-variant=sheet]]:px-1.5 [&>[data-paper-variant=sheet]]:pt-2.5 [&>[data-paper-variant=sheet]]:pb-2 [&>[data-paper-variant=sheet]>[data-paper-sheet-media]]:w-[84px]" : "gap-x-3 gap-y-2" : "gap-3")} style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${sheet ? dense ? 112 : 136 : compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
+          : <div className={cn("grid items-stretch", sheet ? dense ? "gap-x-2 gap-y-1 [&>[data-paper-variant=sheet]]:px-0.5 [&>[data-paper-variant=sheet]]:pt-2.5 [&>[data-paper-variant=sheet]]:pb-2 [&>[data-paper-variant=sheet]>[data-paper-sheet-media]]:w-[84px] [&>[data-paper-variant=sheet]_[data-paper-exam-prefix]]:sr-only" : "gap-x-3 gap-y-2" : "gap-3")} style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${sheet ? dense ? 112 : 160 : compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
   return maxHeight !== undefined
     ? <ScrollArea render={<section />} data-paper-card-grid data-state={state} aria-label={label} scrollFade overscrollContain style={{ maxHeight }} className={cn("h-auto min-w-0 [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none", className)}><div className="p-1">{content}</div></ScrollArea>
     : <section data-paper-card-grid data-state={state} aria-label={label} className={cn("min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1", className)}>{content}</section>

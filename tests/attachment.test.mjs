@@ -360,7 +360,7 @@ test('sheet prevents all intents on empty IDs and disables viewing without a cal
 });
 
 test('sheet grid density sets column and paper layout without assigning child variants or changing scroll behavior', () => {
-  for (const [density, width, gap] of [['comfortable', 136, 'gap-x-3 gap-y-2'], ['dense', 112, 'gap-x-2 gap-y-1']]) {
+  for (const [density, width, gap] of [['comfortable', 160, 'gap-x-3 gap-y-2'], ['dense', 112, 'gap-x-2 gap-y-1']]) {
     const props = { variant: 'sheet', density, maxHeight: 300, children: h(PaperCard, paperCardFixtures[0]) };
     const out = html(PaperCardGrid, props);
     assert.ok(out.includes(`min(${width}px, 100%)`)); assert.ok(out.includes(gap));
@@ -368,9 +368,42 @@ test('sheet grid density sets column and paper layout without assigning child va
     assert.doesNotMatch(out, /data-paper-variant="sheet"/);
     const sheet = html(PaperCardGrid, { ...props, children: h(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', compact: true }) });
     assert.match(sheet, /data-paper-variant="sheet"/); assert.doesNotMatch(sheet, /data-compact/);
-    if (density === 'dense') assert.match(sheet, /w-\[84px\]/);
+    if (density === 'dense') {
+      assert.match(sheet, /w-\[84px\]/);
+      assert.ok(sheet.includes('[&amp;&gt;[data-paper-variant=sheet]]:px-0.5'));
+    }
   }
-  assert.match(html(PaperCardGrid, { variant: 'sheet', children: h(PaperCard, paperCardFixtures[0]) }), /min\(136px, 100%\)/);
+  assert.match(html(PaperCardGrid, { variant: 'sheet', children: h(PaperCard, paperCardFixtures[0]) }), /min\(160px, 100%\)/);
+});
+
+test('sheet dense metadata keeps an accessible exam prefix and full title without changing waiting or error text', () => {
+  const props = { ...sheetPaperFixtures[0], variant: 'sheet', examNumber: '20260118', pageCount: 2 };
+  const out = capture(PaperCard, props);
+  const prefix = out.nodes.find(n => n.props['data-paper-exam-prefix'] !== undefined);
+  assert.equal(prefix.props.children, '考号 ');
+  assert.equal(prefix.props['aria-hidden'], undefined);
+  assert.match(out.html, /title="考号 20260118 · 2 页"/);
+  assert.match(out.html, /data-paper-exam-prefix="true">考号 <\/span>20260118 · 2 页/);
+  for (const density of ['comfortable', 'dense']) {
+    const grid = capture(PaperCardGrid, { variant: 'sheet', density, children: h(PaperCard, props) });
+    const layout = grid.nodes.find(n => n.props.style?.gridTemplateColumns);
+    assert.equal(layout.props.className.includes('[&>[data-paper-variant=sheet]_[data-paper-exam-prefix]]:sr-only'), density === 'dense');
+  }
+  for (const overrides of [{ examNumber: undefined }, { placeholder: true }, { status: { label: '未匹配学生', tone: 'error' }, reason: '考号无法识别' }]) {
+    assert.doesNotMatch(html(PaperCard, { ...props, ...overrides }), /data-paper-exam-prefix/);
+  }
+  assert.match(html(PaperCard, { ...props, examNumber: '20260118123456789' }), /title="考号 20260118123456789 · 2 页"/);
+});
+
+test('sheet badges reserve the right check position and retain full long status titles', () => {
+  for (const label of ['已排除', '未匹配学生', '未匹配学生需要进一步核对']) {
+    const out = capture(PaperCard, { ...sheetPaperFixtures[5], variant: 'sheet', status: { label, tone: 'error' } });
+    const badge = out.nodes.find(n => n.props.title === label);
+    assert.equal(badge.props.children.props.children, label);
+    assert.equal(badge.props.children.props.className, 'truncate');
+    assert.match(badge.props.className, /-left-1\.5 max-w-\[calc\(100%-0\.5rem\)\] px-0\.5/);
+    assert.doesNotMatch(out.html, /data-paper-success/);
+  }
 });
 
 test('sheet fixtures cover all requested states with 24 dense papers', () => {
