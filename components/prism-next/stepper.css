@@ -12,11 +12,19 @@
 .prism-stepper[data-orientation="vertical"] .prism-stepper-content { flex-direction: row; width: 100%; min-height: 2rem; }
 .prism-stepper[data-orientation="vertical"] .prism-stepper-connector { top: 2.25rem; bottom: .25rem; left: 1rem; right: auto; width: 1px; height: auto; }
 
-/* Optional horizontal toolbar; vertical keeps its existing layout and summary. */
-.prism-stepper[data-compact="true"] .prism-stepper-item { flex: 1 0 auto; padding-right: 1.25rem; }
-.prism-stepper[data-compact="true"] .prism-stepper-content { flex-direction: row; align-items: center; width: auto; max-width: 16rem; gap: .5rem; }
-.prism-stepper[data-compact="true"] .prism-stepper-connector { display: none; }
-.prism-stepper[data-compact="true"] .prism-stepper-item:last-child { flex: 0 0 auto; padding-right: 0; }
-
-/* Interactive targets retain 44px height in vertical and compact layouts too. */
-.prism-stepper .prism-stepper-content:is(button) { min-height: 2.75rem; min-width: 2.75rem; }
+/* Optional horizontal toolbar; all overrides are compact-only. */
+.prism-stepper[data-compact="true"] { width: max-content; }
+.prism-stepper[data-compact="true"] .prism-stepper-viewport { overflow: visible; }
+.prism-stepper[data-compact="true"] .prism-stepper-list { min-width: 0; max-width: 100%; align-items: center; }
+.prism-stepper[data-compact="true"] .prism-stepper-item { display: flex; align-items: center; flex: 0 0 auto; padding: 0; max-width: 100%; }
+.prism-stepper[data-compact="true"] .prism-stepper-content { flex-direction: row; align-items: center; width: auto; max-width: 18rem; min-width: 0; gap: .5rem; }
+.prism-stepper[data-compact="true"] .prism-stepper-details { display: block; max-width: 16rem; }
+.prism-stepper[data-compact="true"] .prism-stepper-connector { position: static; flex: 0 0 1.5rem; width: 1.5rem; margin-inline: .25rem; }
+.prism-stepper[data-compact="true"] .prism-stepper-item:last-child { flex: 0 0 auto; padding: 0; }
+/* Very narrow hosts / eight-step lists may wrap; fixed marks and short lines
+   remain intact. No horizontal scrolling or lost steps, even below 320px. */
+.prism-stepper[data-compact="true"] [data-collapsed="true"] .prism-stepper-list { flex-wrap: wrap; row-gap: .5rem; }
+.prism-stepper[data-compact="true"] [data-collapsed="true"] .prism-stepper-item[aria-current="step"] { flex: 0 1 auto; }
+.prism-stepper[data-compact="true"] [data-collapsed="true"] .prism-stepper-item:not([aria-current="step"]) .prism-stepper-details { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Keep the original targets outside compact; compact follows coss coarse-pointer expansion. */
+.prism-stepper:not([data-compact="true"]) .prism-stepper-content:is(button) { min-height: 2.75rem; min-width: 2.75rem; }
