@@ -2784,3 +2784,5 @@ QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmpt
 - KnowledgeRail：item.rate 可缺失/null，`rateEmptyText` 替代值条；`emptyText` 同时覆盖整栏与 bodyOnly 空态。QuestionRailClass 现有 value 支持“未提供”等任意短文本，未知比例省略 ratio，无需新 API。
 - QuestionInspector：`bodyOnly` 仅输出主体及班级对比，无头部导航、动作、外框与内层滚动；宿主以单 ScrollArea 组合全班分析和当前作答。默认完整模式不变。
 - 属性可选、事实外部提供；新增空态只在对应数据缺失时出现。复用依据、示例与边界见各组件文档；coss 与冻结快照/一致性测试保持原文件。
+
+G3（2026-10-03）：`ReviewWorkspace.rail` 可省略（undefined/null/false），形成画布 + 右栏两栏；无左栏列或框架生成的展开/收起按钮，画布占据原左栏宽度。此时 `open/onOpenChange` 可省略，T 不消费也不发意图，默认与自定义 `panes` 均排除 rail，遗留 `pane=rail` 显示 canvas 而不回写。宿主须同步省略插槽中的题目栏按钮与帮助条目。有 rail 时原 DOM、受控行为及冻结快照保持不变；仍遵守独立全屏接入规则。

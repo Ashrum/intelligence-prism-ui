@@ -49,3 +49,36 @@ test('ReviewWorkspace three-theme fixtures retain long Chinese and MathML', () =
   assert.match(html, /<math>/); assert.match(html,/完整解题过程/);
 });
 test('ReviewWorkspace catalog route and Agent Spec render', () => assertRoute(assert,'review-workspace','Review Workspace'));
+
+test('ReviewWorkspace without rail omits the column and buttons, including stale custom rail panes', () => {
+  for (const rail of [undefined, null, false]) for (const open of [undefined, false, true]) {
+    const calls = [];
+    const props = { ...base, rail, open, onOpenChange: undefined, pane: 'rail', onPaneChange: value => calls.push(value) };
+    for (const panes of [undefined, [{ value: 'rail', label: '题目' }, { value: 'canvas', label: '试卷' }, { value: 'inspector', label: '接收信息' }]]) {
+      const out = capture(api.ReviewWorkspace, { ...props, panes });
+      assert.doesNotMatch(out.html, /d1-rail-shell|data-review-rail|>题目<|展开题目栏|收起题目栏/);
+      assert.match(out.html, /data-no-rail="true"/); assert.match(out.html, /data-mobile-pane="canvas"/);
+      const nav = out.nodes.find(n => n.type?.name === 'ToggleGroup');
+      assert.deepEqual(nav.props.value, ['canvas']);
+      assert.deepEqual(out.nodes.filter(n => n.type?.name === 'ToggleGroupItem').map(n => n.props.value), ['canvas', 'inspector']);
+      nav.props.onValueChange(['rail']); nav.props.onValueChange([]);
+      assert.deepEqual(calls, []);
+      nav.props.onValueChange(['inspector']); assert.deepEqual(calls.splice(0), ['inspector']);
+    }
+  }
+  const demo = render(h(api.ReviewWorkspaceNoRailFixture));
+  assert.doesNotMatch(demo, /d1-rail-shell|题目栏|展开|收起/);
+  assert.match(demo, /接收信息/); assert.match(demo, /<math>/);
+});
+test('ReviewWorkspace without rail ignores T without consuming it, preserving other shortcut intents', () => {
+  const calls = [], consumed = [];
+  const shortcuts = [{ key: 't', intent: 'toggle-questions' }, { key: 'f', intent: 'immersive' }];
+  for (const rail of [undefined, null, false, base.rail]) {
+    const out = capture(api.ReviewWorkspace, { ...base, rail, shortcuts, onShortcut: intent => calls.push(intent) });
+    const frame = out.nodes.find(n => n.type === 'section');
+    const press = key => frame.props.onKeyDownCapture({ key, target: { closest: () => null }, nativeEvent: {}, preventDefault: () => consumed.push(key), stopPropagation() {} });
+    press('t'); press('T'); press('f');
+    assert.deepEqual(calls.splice(0), rail ? ['toggle-questions', 'toggle-questions', 'immersive'] : ['immersive']);
+    assert.deepEqual(consumed.splice(0), rail ? ['t', 'T', 'f'] : ['f']);
+  }
+});
