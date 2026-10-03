@@ -16,7 +16,9 @@ for(const dir of dirs)for(const name of readdirSync(join(root,dir),{recursive:tr
  for(const [i,line]of src.split('\n').entries()){
   if(/text-brand-wordmark|prism-institution-wordmark/.test(line)&&file!=='components/prism-next/app-bar.tsx')issues.push(`${file}:${i+1}: brand typography is reserved for InstitutionWordmark`);
   if(/\btext-(?:xs|sm|base|lg|xl|[2-9]xl)\b|\btext-\[(?:\d|calc\(|clamp\()|\btracking-(?:tight|tighter|wide|wider|widest)|\bfont-(?:bold|extrabold|black)\b/.test(line))issues.push(`${file}:${i+1}: use a semantic typography role`);
-  if(/fontSize\s*[:=]/.test(line)&&!['components/prism-next/question-print.tsx','components/prism-next/fixtures/question-figure.tsx','components/prism-next/charts/scatter-chart.tsx','components/prism-next/charts/basic-charts.tsx'].includes(file))issues.push(`${file}:${i+1}: local fontSize requires a documented print, figure or chart exception`);
+  // P10 Fix3: aria-hidden paper-slot SVG numeral, documented in docs/attachment.md.
+  const paperSlotGlyph=file==='components/prism-next/attachment.tsx'&&/^\s*<text data-paper-slot-glyph .*fontSize="36" fontWeight="300">\{slotLabel\}<\/text>$/.test(line);
+  if(/fontSize\s*[:=]/.test(line)&&!paperSlotGlyph&&!['components/prism-next/question-print.tsx','components/prism-next/fixtures/question-figure.tsx','components/prism-next/charts/scatter-chart.tsx','components/prism-next/charts/basic-charts.tsx'].includes(file))issues.push(`${file}:${i+1}: local fontSize requires a documented print, figure or chart exception`);
  }
 }
 for(const dir of dirs)for(const name of readdirSync(join(root,dir),{recursive:true})){
