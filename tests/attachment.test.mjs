@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -346,6 +346,38 @@ test('sheet status badges depend on explicit tone, never label matching', () => 
   assert.doesNotMatch(out, /data-slot="badge"|border-destructive|data-paper-success/);
 });
 
+test('sheet badges have opaque merged backgrounds and at least 4.5:1 text contrast in all themes', async t => {
+  const css = await readFile(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
+  const tokens = block => Object.fromEntries([...block.matchAll(/--([\w-]+):\s*(#[\da-fA-F]{6})\s*;/g)].map(([, key, value]) => [key, value]));
+  const light = tokens(css.match(/:where\(\[data-agent-preview\]\[data-prism-theme\]\)\s*\{([^}]+)\}/)[1]);
+  const luminance = hex => hex.slice(1).match(/../g).map(channel => {
+    const value = parseInt(channel, 16) / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  }).reduce((sum, value, i) => sum + value * [0.2126, 0.7152, 0.0722][i], 0);
+  for (const theme of ['light', 'paper', 'dark']) {
+    const palette = theme === 'light' ? light : { ...light, ...tokens(css.match(new RegExp(`:where\\(\\[data-agent-preview\\]\\)\\[data-prism-theme="${theme}"\\]\\s*\\{([^}]+)\\}`))[1]) };
+    for (const [tone, pending, background, foreground] of [
+      ['neutral', false, 'card', 'foreground'], ['info', false, 'card', 'info-foreground'],
+      ['warning', false, 'card', 'warning-foreground'], ['error', false, 'destructive-foreground', 'background'],
+      ['warning', true, 'warning-foreground', 'background'],
+    ]) {
+      const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '五字状态签', tone }, onView() {}, onResolve: pending ? () => {} : undefined });
+      const tag = out.match(/<span\b[^>]*data-slot="badge"[^>]*>/)[0];
+      const classes = tag.match(/class="([^"]*)"/)[1].split(' ');
+      // Inspect final coss + Prism merged classes, including the dark override.
+      assert.deepEqual(classes.filter(value => /^(?:dark:)?bg-/.test(value)).sort(), [`bg-${background}`, `dark:bg-${background}`].sort());
+      assert.ok(classes.includes(`text-${foreground}`));
+      assert.match(palette[background], /^#[\da-fA-F]{6}$/);
+      assert.match(palette[foreground], /^#[\da-fA-F]{6}$/);
+      const a = luminance(palette[background]), b = luminance(palette[foreground]);
+      const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+      const label = `${theme} ${pending ? 'pending' : tone}: ${palette[foreground]} / ${palette[background]} = ${ratio.toFixed(3)}:1`;
+      assert.ok(ratio >= 4.5, label);
+      t.diagnostic(label);
+    }
+  }
+});
+
 test('warning with resolution presents a pending sheet and keeps view and resolution intents separate', () => {
   const events = [], props = { ...sheetPaperFixtures[5], variant: 'sheet', examNumber: '20260118', pageCount: 2, selected: true,
     reason: '姓名与考号未识别，请核对这份含有跨页作答的试卷后指定学生。',
@@ -474,6 +506,13 @@ test('sheet fixtures cover all requested states with 24 dense papers', () => {
   for (const label of ['已接收', '等待接收', '扫描异常', '未知学生', '已排除']) assert.ok(sheetPaperFixtures.some(item => item.status.label === label));
   for (const fixtures of [sheetPaperFixtures, denseSheetPaperFixtures]) {
     assert.ok(fixtures.some(item => item.status.tone === 'warning' && item.status.label === '未知学生' && item.reason === '姓名与考号未识别' && item.resolveLabel === '指定学生'));
+    for (const tone of ['info', 'warning']) {
+      const item = fixtures.find(item => item.status.tone === tone && item.thumbnailUrl && !item.resolveLabel && !item.onResolve);
+      assert.ok(item, `${tone} must have an image fixture without resolution`);
+      const out = html(PaperCard, { ...item, variant: 'sheet', onView() {} });
+      assert.match(out, /<img /);
+      assert.doesNotMatch(out, /data-paper-pending|data-paper-action="resolve"/);
+    }
   }
   const out = html(AttachmentDemo, {});
   assert.match(out, /comfortable/); assert.match(out, /dense · 24 份/);

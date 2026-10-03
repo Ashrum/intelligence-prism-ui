@@ -86,3 +86,9 @@ Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/
 装饰性序号按 PO Fix3 设计参考作为 aria-hidden、不可聚焦的 SVG 图形内字，108 单位画布、36 单位字号、300 字重、currentColor 继承 muted-foreground，随纸宽缩放（comfortable 约 36px / dense 约 28px，纸边框会略减实际值）。这是图形内字的局部例外，排版检查仅允许 attachment.tsx 中 data-paper-slot-glyph 的该固定声明，不扩展界面字号或新建令牌。与画布差异：虚线沿用原组件令牌与不透明度；短骨架用 muted 令牌，不复制画布 border 的 70% 透明度。
 
 夹具：comfortable 与 dense 各增 4/5/6 三个纸位，三主题 320px 夹具同步覆盖；另有“未知学生待处理卡 + 无姓名骨架”并排组。4/5 无回调，6 提供处置回调且点击只更新请求反馈。
+
+## 2026-10-03 P10 Fix4：纸面状态标签实底
+
+沿用 P10 的 coss particles / Beautiful UI 检索记录，继续复用 Prism / coss Badge、PaperThumbnail。sheet 的 neutral / info / 无 onResolve 的 warning 标签均使用 `bg-card dark:bg-card` 不透明底色，文字保留对应语气；error 与待处理保留既有语气实底及 `text-background`。覆盖 coss 的深色半透明背景，缩略图内容不再参与标签文字对比度；无新增令牌、组件或上游修改，card / compact 保持不变。
+
+comfortable、dense 与三主题 320px 网格增加 `sheet-info-image` / `sheet-warning-image` 两张有图夹具（林知夏“正在核对”、许书禾“待确认”，均无 onResolve），复用既有白底公式 SVG 样张，并保留原缺图夹具；这些图像是说明性样张，不是真实学生扫描记录。
