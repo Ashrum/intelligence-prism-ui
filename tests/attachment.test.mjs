@@ -12,7 +12,7 @@ const dir = new URL('../.sites-runtime/attachment-test/', import.meta.url);
 await mkdir(dir, { recursive: true });
 const file = new URL('bundle.mjs', dir);
 await writeFile(file, (await build({ stdin: { contents: `export * from './components/prism-next/attachment'; export * from './components/prism-next/demos/attachment';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false })).outputFiles[0].text);
-const { Attachment, PaperCard, PaperCardGrid, AttachmentDemo, attachmentFixtures, paperCardFixtures, sheetPaperFixtures, denseSheetPaperFixtures } = await import(file);
+const { Attachment, PaperCard, PaperCardGrid, AttachmentDemo, attachmentFixtures, paperCardFixtures, sheetPaperFixtures, denseSheetPaperFixtures, anonymousSheetPaperFixtures } = await import(file);
 await rm(file);
 const h = React.createElement;
 const html = (component, props) => render(h(component, props));
@@ -478,6 +478,67 @@ test('sheet fixtures cover all requested states with 24 dense papers', () => {
   const out = html(AttachmentDemo, {});
   assert.match(out, /comfortable/); assert.match(out, /dense · 24 份/);
   assert.doesNotMatch(out, /示例|演示/);
-  assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24) * 4);
-  assert.equal((out.match(/data-paper-pending="true"/g) || []).length, 12);
+  assert.deepEqual(anonymousSheetPaperFixtures.map(item => item.slotLabel), ['4', '5', '6']);
+  assert.ok(anonymousSheetPaperFixtures.every(item => !item.studentName && item.placeholder));
+  assert.match(out, /未知学生待处理卡 \+ 无姓名骨架/);
+  assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24 + 6) * 4 + 4);
+  assert.equal((out.match(/data-paper-identity-skeleton="true"/g) || []).length, 27);
+  assert.equal((out.match(/data-paper-pending="true"/g) || []).length, 13);
+});
+
+test('anonymous sheet placeholders expose a named static slot, description and two hidden skeleton bars', () => {
+  for (const studentName of ['', '  ']) for (const slotLabel of [undefined, '', '4']) {
+    const props = { id: 'slot', studentName, variant: 'sheet', placeholder: true, slotLabel, status: { label: '等待扫描回执', tone: 'error' }, onView: () => assert.fail('cannot view') };
+    const out = capture(PaperCard, props), card = out.nodes.find(n => n.type === 'article');
+    assert.equal(card.props['aria-label'], `等待接收的试卷位${slotLabel ? ` ${slotLabel}` : ''}`);
+    assert.equal(card.props['aria-labelledby'], undefined);
+    assert.ok(out.nodes.some(n => n.props.id === card.props['aria-describedby'] && n.props.children === props.status.label));
+    const skeleton = out.nodes.find(n => n.props['data-paper-identity-skeleton'] !== undefined);
+    assert.equal(skeleton.props['aria-hidden'], 'true');
+    const bars = React.Children.toArray(skeleton.props.children);
+    assert.equal(bars.length, 2);
+    assert.match(bars[0].props.className, /h-2\.5 w-14.*rounded-full bg-border/);
+    assert.match(bars[1].props.className, /h-2 w-9.*rounded-full bg-muted/);
+    const glyph = out.nodes.find(n => n.props['data-paper-slot-label'] !== undefined);
+    assert.equal(!!glyph, !!slotLabel);
+    if (glyph) { assert.equal(glyph.props['aria-hidden'], 'true'); assert.equal(glyph.props.focusable, 'false'); assert.equal(glyph.props.children.props.children, slotLabel); }
+    assert.equal(out.nodes.some(n => n.props.onClick || n.props.tabIndex !== undefined), false);
+    assert.match(out.html, /border-dashed/);
+    assert.doesNotMatch(out.html, /姓名未提供|<h3|<p |<button|tabindex|data-paper-action|animate-|animation|data-paper-success|data-paper-stack|data-slot="badge"/);
+  }
+});
+
+test('anonymous sheet resolution is explicit, native and controlled, with the slot accessible name', () => {
+  const calls = [], props = { id: 'slot-6', studentName: '', variant: 'sheet', placeholder: true, slotLabel: '6', status: { label: '等待接收' }, onResolve: id => calls.push(id), onView: () => assert.fail('cannot view') };
+  const out = capture(PaperCard, props), buttons = out.nodes.filter(n => n.type === 'button');
+  assert.equal(buttons.length, 1);
+  const button = buttons[0];
+  assert.equal(button.props.type, 'button'); assert.equal(button.props.disabled, false);
+  assert.equal(button.props['aria-label'], '等待接收的试卷位 6');
+  assert.ok(out.nodes.some(n => n.props.id === button.props['aria-describedby'] && n.props.children === '等待接收'));
+  button.props.onClick(); assert.deepEqual(calls, ['slot-6']);
+  assert.equal(capture(PaperCard, props).html, out.html);
+  const disabled = capture(PaperCard, { ...props, id: ' ' }).nodes.find(n => n.type === 'button');
+  assert.equal(disabled.props.disabled, true); disabled.props.onClick(); assert.deepEqual(calls, ['slot-6']);
+});
+
+test('anonymous sheet retains A4/A3 portrait/landscape paper proportions', () => {
+  for (const paperSize of ['A4', 'A3']) for (const orientation of ['portrait', 'landscape']) {
+    const out = capture(PaperCard, { ...anonymousSheetPaperFixtures[0], variant: 'sheet', paperSize, orientation });
+    const media = out.nodes.find(n => n.props['data-paper-sheet-media'] !== undefined);
+    const [w, h] = media.props.style.aspectRatio.split(' / ').map(Number);
+    const ratio = paperSize === 'A4' ? 210 / 297 : 297 / 420;
+    assert.ok(Math.abs(w / h - (orientation === 'portrait' ? ratio : 1 / ratio)) < .001);
+  }
+});
+
+test('slotLabel does not alter named waiting sheets, received sheets, default cards or compact cards', () => {
+  for (const props of [
+    ...[false, true].flatMap(compact => [false, true].map(placeholder => ({ ...paperCardFixtures[0], studentName: '', compact, placeholder }))),
+    ...[undefined, () => {}].map(onResolve => ({ ...sheetPaperFixtures[3], variant: 'sheet', onResolve })),
+    { ...sheetPaperFixtures[0], variant: 'sheet', studentName: '' },
+  ]) {
+    assert.equal(html(PaperCard, props), html(PaperCard, { ...props, slotLabel: '4' }));
+    assert.doesNotMatch(html(PaperCard, { ...props, slotLabel: '4' }), /data-paper-identity-skeleton|data-paper-slot-label/);
+  }
 });

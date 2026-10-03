@@ -75,13 +75,15 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
 export type PaperCardProps = {
   id: string; studentName: string; examNumber?: string; pageCount?: number; thumbnailUrl?: string
   variant?: "card" | "sheet"; compact?: boolean; placeholder?: boolean
+  /** Decorative slot identifier, only for sheet placeholders without a student name. */
+  slotLabel?: string
   /** Labels and resolution eligibility are supplied by the host, never inferred from status. */
   viewLabel?: string; resolveLabel?: string; onResolve?: (id: string) => void
   paperSize?: "A4" | "A3"; orientation?: "portrait" | "landscape"
   status: { label: string; tone?: AgentStatusTone }; reason?: string; selected?: boolean; onView?: (id: string) => void
 }
 const badgeTones = { neutral: "outline", info: "info", success: "success", warning: "warning", error: "error" } as const
-export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, variant = "card", compact = false, placeholder = false, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
+export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, variant = "card", compact = false, placeholder = false, slotLabel, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
   const labelId = useId(), dimensions = paperDimensions(paperSize, orientation)
   const count = Number.isInteger(pageCount) && pageCount! > 0 ? pageCount : undefined
   const exam = examNumber?.trim(), name = studentName || "姓名未提供"
@@ -91,6 +93,8 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
   const ratio = { aspectRatio: `${dimensions.width} / ${dimensions.height}` }
   const thumbnail = <PaperThumbnail page={{ id, thumbnailUrl, paperSize, orientation }} label={`${name}试卷缩略图`} />
   if (variant === "sheet") {
+    const anonymous = placeholder && !studentName.trim()
+    const slotName = `等待接收的试卷位${slotLabel ? ` ${slotLabel}` : ""}`
     const error = !placeholder && status.tone === "error"
     const pending = !placeholder && status.tone === "warning" && !!onResolve
     const showReason = error || (pending && !!reason)
@@ -99,28 +103,35 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
     const faceClass = cn("relative block h-full w-full rounded-sm border", placeholder ? "border-dashed border-muted-foreground" : "border-border bg-card shadow-md", error && "border-destructive-foreground", pending && "border-dashed border-warning-foreground", selected && "ring-2 ring-ring ring-offset-2 ring-offset-background")
     const face = <>
       {!placeholder && count !== undefined && count > 1 && <span aria-hidden="true" data-paper-stack className="absolute inset-0 translate-x-1 translate-y-1 rounded-sm border border-border bg-card" />}
-      <span className={faceClass}>{!placeholder && <span className="absolute inset-0 overflow-hidden rounded-sm">{thumbnail}</span>}</span>
+      <span className={faceClass}>{!placeholder && <span className="absolute inset-0 overflow-hidden rounded-sm">{thumbnail}</span>}
+        {anonymous && slotLabel && <svg data-paper-slot-label aria-hidden="true" focusable="false" viewBox="0 0 108 108" className="absolute inset-0 h-full w-full text-muted-foreground">
+          <text data-paper-slot-glyph x="54" y="54" textAnchor="middle" dominantBaseline="central" fill="currentColor" fontSize="36" fontWeight="300">{slotLabel}</text>
+        </svg>}
+      </span>
       {!placeholder && status.tone === "success" && <span aria-hidden="true" data-paper-success className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-success-foreground text-background ring-2 ring-background"><Check className="size-3" /></span>}
       {pending && <span aria-hidden="true" data-paper-pending className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-warning-foreground text-background text-ui-hint ring-2 ring-background">?</span>}
       {!placeholder && status.tone && status.tone !== "success" && <Badge variant={badgeTones[status.tone]} title={statusLabel}
         className={cn("absolute top-1.5 -left-1.5 max-w-[calc(100%-0.5rem)] px-0.5 duration-150 motion-reduce:transition-none", error && "bg-destructive-foreground text-background dark:bg-destructive-foreground", pending && "bg-warning-foreground text-background dark:bg-warning-foreground")}><span className="truncate">{statusLabel}</span></Badge>}
     </>
-    return <article data-paper-card={id} data-paper-variant="sheet" data-placeholder={placeholder || undefined} aria-labelledby={labelId} aria-current={selected ? "true" : undefined}
+    return <article data-paper-card={id} data-paper-variant="sheet" data-placeholder={placeholder || undefined} aria-labelledby={anonymous ? undefined : labelId} aria-label={anonymous ? slotName : undefined} aria-describedby={anonymous ? `${labelId}-status` : undefined} aria-current={selected ? "true" : undefined}
       className={cn("flex min-w-0 flex-col items-center gap-2 border border-transparent px-2 pt-3.5 pb-2.5", error && "rounded-2xl border-destructive-foreground bg-card text-card-foreground", pending && "rounded-2xl border-dashed border-warning-foreground bg-card text-card-foreground")}>
       <span data-paper-sheet-media className="relative block w-[108px] max-w-full shrink-0" style={ratio}>
-        {placeholder && !onResolve ? <span role="img" aria-label={`${name}：${statusLabel}`} className="block h-full w-full">{face}</span>
-          : <button type="button" data-paper-action={placeholder ? "resolve" : "thumbnail"} aria-label={placeholder ? `${resolveLabel}：${name}` : `查看/放大：${name}的试卷`}
+        {placeholder && !onResolve ? <span role={anonymous ? undefined : "img"} aria-label={anonymous ? undefined : `${name}：${statusLabel}`} aria-hidden={anonymous || undefined} className="block h-full w-full">{face}</span>
+          : <button type="button" data-paper-action={placeholder ? "resolve" : "thumbnail"} aria-label={anonymous ? slotName : placeholder ? `${resolveLabel}：${name}` : `查看/放大：${name}的试卷`}
             aria-describedby={`${labelId}-status${showReason && reason ? ` ${labelId}-information` : ""}`} aria-current={selected ? "true" : undefined}
             disabled={!id.trim() || (!placeholder && !onView)} onClick={placeholder ? () => { if (id.trim()) onResolve?.(id) } : view}
             className="relative block h-full w-full cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-default">{face}</button>}
       </span>
       <span id={`${labelId}-status`} className="sr-only">{statusLabel}</span>
-      <div className="flex w-full min-w-0 flex-col items-center gap-px">
+      {anonymous ? <div data-paper-identity-skeleton aria-hidden="true" className="flex max-w-full flex-col items-center gap-[7px] pt-[5px] pb-1">
+        <span className="h-2.5 w-14 max-w-full rounded-full bg-border" />
+        <span className="h-2 w-9 max-w-full rounded-full bg-muted" />
+      </div> : <div className="flex w-full min-w-0 flex-col items-center gap-px">
         <h3 id={labelId} title={name} className={cn("max-w-full truncate text-item-title", placeholder && "text-muted-foreground")}>{name}</h3>
         {information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : pending ? "text-warning-foreground" : "text-muted-foreground")}>
           {!placeholder && !showReason && exam ? <><span data-paper-exam-prefix>考号 </span>{[exam, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")}</> : information}
         </p>}
-      </div>
+      </div>}
       {(error || pending) && onResolve && <Button type="button" variant="outline" size="sm" data-paper-action="resolve" className="max-w-full duration-150 motion-reduce:transition-none" aria-label={`${resolveLabel}：${name}`} aria-describedby={pending ? `${labelId}-status${reason ? ` ${labelId}-information` : ""}` : undefined} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate" title={resolveLabel}>{resolveLabel}</span></Button>}
     </article>
   }
