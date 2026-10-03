@@ -161,7 +161,7 @@ test('D7 toolbar has four visible groups and moves keyboard help to the top menu
 
 
 test('D3 review accent stays in the review utility and the adaptive frame fills its viewport', async () => {
-  const css = await readFile(new URL('../examples/review-tools/review-tools.css', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../components/prism-next/review-tools.css', import.meta.url), 'utf8');
   const theme = await readFile(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
   const page = await readFile(new URL('../examples/paper-review/paper-review.css', import.meta.url), 'utf8') + await readFile(new URL('../components/prism-next/review-workspace.css', import.meta.url), 'utf8');
   assert.match(css, /\.review-tools-trigger\s*\{\s*--review-accent: #F04A1A;/);
@@ -387,7 +387,7 @@ test('D8 Tabs share one panel and list with native segmented sizing and count ba
 test('D8 coss size overrides remain only on own question cells and multiline question buttons', async () => {
   const source = await readFile(new URL('../examples/paper-review/paper-review.tsx', import.meta.url), 'utf8');
   const utility = await readFile(new URL('../examples/review-tools/review-tools.tsx', import.meta.url), 'utf8');
-  const css = await readFile(new URL('../examples/review-tools/review-tools.css', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../components/prism-next/review-tools.css', import.meta.url), 'utf8');
   const withoutQuestion = source.split('\n').filter(line => !line.includes('className={`d1-question')).join('\n');
   assert.doesNotMatch(withoutQuestion + utility, /min-h-1[1-4]|min-w-11|h-auto|(?:sm:)?h-11/);
   assert.doesNotMatch(css, /(?:^|[;\s])(?:width|height):/);

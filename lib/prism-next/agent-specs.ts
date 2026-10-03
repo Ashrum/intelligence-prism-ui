@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'review-tools': {
+    component: 'ReviewTools v0.1 — component candidate',
+    source: 'PO 2026-10-03; pinned coss Popover / Button / ToggleGroup / Switch / Select / AlertDialog; docs/review-tools.md',
+    contract: ['title/description/groups({id,title,children})/children/footer are host slots. No business actions are built in.', 'position undefined is uncontrolled; null follows defaultPosition (edge offsets or a host function). onPositionChange(next,{reason:move|reset}) emits null on reset. Controlled movement waits for host feedback. Resize only clamps display, preserving original edge offsets.', '56px circular trigger; scoped --review-accent #F04A1A in all themes. 仅用于评审/测试工具，不得用于产品界面。'],
+    states: ['closed / hovered / pinned / dragging', 'controlled / uncontrolled / reset', 'host groups and disabled reasons; three themes and narrow fixtures'],
+    accessibility: ['Drag threshold >5px; suppress click and hover after dragging until physical pointer exit. Arrow 16px / Shift+Arrow 64px. Esc uses coss finalFocus to return to trigger. Reduced motion disables transitions.'],
+    dont: ['No persistence, environment detection, timers, executor, store, service or Workspace private types. Host owns storage and DEV visibility.'],
+  },
   'knowledge-rail': {
     component: 'KnowledgeRail v0.1 — component candidate',
     source: 'Pinned coss and frozen question review v1.0; docs/knowledge-rail.md',

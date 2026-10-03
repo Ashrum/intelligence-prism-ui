@@ -3,6 +3,7 @@ export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
   { id:"actions",title:"操作与命令",items:[
+    {...item("review-tools","Review Tools 评审与测试工具","可拖动浮动入口、分组面板与宿主动作，仅供评审或开发测试。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/popover",sourceLabel:"coss Popover / Button / 标准表单组合"},
     item("button","Button 按钮","主要、次要、危险、图标与加载操作。"),
     item("group","Group 控件组","将相关操作连为一组，保留统一尺寸。"),
     item("toggle","Toggle 切换按钮","切换单个选项的开启状态。"),
