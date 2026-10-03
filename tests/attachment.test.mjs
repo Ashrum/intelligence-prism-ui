@@ -12,7 +12,7 @@ const dir = new URL('../.sites-runtime/attachment-test/', import.meta.url);
 await mkdir(dir, { recursive: true });
 const file = new URL('bundle.mjs', dir);
 await writeFile(file, (await build({ stdin: { contents: `export * from './components/prism-next/attachment'; export * from './components/prism-next/demos/attachment';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false })).outputFiles[0].text);
-const { Attachment, PaperCard, PaperCardGrid, AttachmentDemo, attachmentFixtures, paperCardFixtures } = await import(file);
+const { Attachment, PaperCard, PaperCardGrid, AttachmentDemo, attachmentFixtures, paperCardFixtures, sheetPaperFixtures, denseSheetPaperFixtures } = await import(file);
 await rm(file);
 const h = React.createElement;
 const html = (component, props) => render(h(component, props));
@@ -255,4 +255,130 @@ test('paper intents reject empty IDs and absent callbacks; compact grid keeps in
   const grid = capture(PaperCardGrid, { compact: true, className: 'max-w-xl', maxHeight: 300, children: h(PaperCard, paperCardFixtures[0]) });
   assert.match(grid.html, /min\(172px, 100%\)/); assert.match(grid.html, /max-w-xl/);
   assert.doesNotMatch(grid.html, /data-compact="true"/);
+});
+
+test('explicit card variant retains default and compact output; density cannot alter card grids', () => {
+  for (const compact of [false, true]) {
+    for (const item of paperCardFixtures) {
+      assert.equal(html(PaperCard, { ...item, compact }), html(PaperCard, { ...item, compact, variant: 'card' }));
+    }
+    const props = { compact, children: h(PaperCard, paperCardFixtures[0]) };
+    assert.equal(html(PaperCardGrid, props), html(PaperCardGrid, { ...props, variant: 'card', density: 'dense' }));
+  }
+});
+
+test('sheet paper is one native view button; controlled selection and status survive invocation', () => {
+  const events = [], props = { ...sheetPaperFixtures[1], variant: 'sheet', selected: true, onView: id => events.push(id) };
+  const out = capture(PaperCard, props);
+  const buttons = out.nodes.filter(n => n.type === 'button');
+  assert.equal(buttons.length, 1);
+  const button = buttons[0];
+  assert.equal(button.props.type, 'button'); assert.equal(button.props.disabled, false);
+  assert.equal(button.props['aria-label'], '查看/放大：李明泽的试卷');
+  assert.equal(button.props['aria-current'], 'true');
+  assert.ok(out.nodes.some(n => n.props.id === button.props['aria-describedby'] && n.props.children === '已接收'));
+  button.props.onClick(); assert.deepEqual(events, [props.id]);
+  assert.equal(capture(PaperCard, props).html, out.html);
+  assert.match(out.html, /data-paper-stack/); assert.match(out.html, /data-paper-success/); assert.match(out.html, /ring-2 ring-ring/);
+  assert.match(out.html, /考号 20260119 · 6 页/);
+  assert.doesNotMatch(out.html, /data-paper-action="view"|当前预览/);
+  assert.equal(out.nodes.find(n => n.type === 'article').props.onClick, undefined);
+});
+
+test('sheet known facts and paper proportions are preserved without fabricated counts or status', () => {
+  const props = { id: 'sheet', variant: 'sheet', studentName: '', status: { label: '已接收' } };
+  for (const pageCount of [undefined, NaN, 0, -1, 1.5, 1]) {
+    const out = html(PaperCard, { ...props, pageCount });
+    assert.match(out, /姓名未提供/); assert.match(out, /扫描图像未接入/);
+    assert.doesNotMatch(out, /data-paper-stack|data-paper-success|data-slot="badge"|考号|页数未提供/);
+    if (pageCount !== 1) assert.doesNotMatch(out, /<p /);
+  }
+  assert.match(html(PaperCard, { ...props, examNumber: ' 123 ' }), /考号 123/);
+  assert.match(html(PaperCard, { ...props, pageCount: 2 }), /2 页/);
+  for (const paperSize of ['A4', 'A3']) for (const orientation of ['portrait', 'landscape']) {
+    const out = capture(PaperCard, { ...props, paperSize, orientation });
+    const ratio = out.nodes.find(n => n.props['data-paper-sheet-media'] !== undefined).props.style.aspectRatio.split(' / ').map(Number);
+    const expected = paperSize === 'A4' ? 210 / 297 : 297 / 420;
+    assert.ok(Math.abs(ratio[0] / ratio[1] - (orientation === 'portrait' ? expected : 1 / expected)) < .001);
+  }
+});
+
+test('waiting sheet only resolves through a native button; absent resolver produces a static paper slot', () => {
+  const events = [], props = { ...sheetPaperFixtures[3], variant: 'sheet', pageCount: 6, thumbnailUrl: '/ignored.png', status: { label: '等待接收', tone: 'success' }, onView: () => assert.fail('waiting cannot view'), onResolve: id => events.push(id) };
+  const out = capture(PaperCard, props), actions = out.nodes.filter(n => n.props['data-paper-action']);
+  assert.equal(actions.length, 1); assert.equal(actions[0].type, 'button');
+  assert.equal(actions[0].props['data-paper-action'], 'resolve');
+  assert.equal(actions[0].props['aria-label'], '处置未交：陈思远');
+  actions[0].props.onClick(); assert.deepEqual(events, [props.id]);
+  assert.match(out.html, /border-dashed/); assert.match(out.html, /text-item-title text-muted-foreground/);
+  assert.doesNotMatch(out.html, /<img|data-paper-success|data-paper-stack|<svg|animate-/);
+  const passive = capture(PaperCard, { ...props, onResolve: undefined, status: { label: '等待接收', tone: 'error' } });
+  assert.doesNotMatch(passive.html, /<button|tabindex|data-slot="badge"|data-paper-action|border-destructive/);
+  assert.match(passive.html, /role="img" aria-label="陈思远：等待接收"/);
+  assert.equal(passive.nodes.some(n => n.props.onClick), false);
+});
+
+test('error sheet retains view intent, exposes full reason and renders a standard sm resolve button', () => {
+  const events = [], props = { ...sheetPaperFixtures[4], variant: 'sheet', onView: id => events.push(['view', id]), onResolve: id => events.push(['resolve', id]) };
+  const out = capture(PaperCard, props);
+  const view = out.nodes.find(n => n.props['data-paper-action'] === 'thumbnail');
+  const resolve = out.nodes.find(n => n.props['data-paper-action'] === 'resolve');
+  view.props.onClick(); resolve.props.onClick();
+  assert.deepEqual(events, [['view', props.id], ['resolve', props.id]]);
+  assert.equal(resolve.props.size, 'sm'); assert.equal(resolve.props.variant, 'outline');
+  assert.doesNotMatch(resolve.props.className, /min-h|h-auto/);
+  assert.match(out.html, /border-destructive-foreground bg-card/);
+  assert.match(out.html, /bg-destructive-foreground text-background/); assert.doesNotMatch(out.html, /data-paper-success/);
+  const reason = out.nodes.find(n => n.props.title === props.reason);
+  assert.equal(reason.props.children, props.reason); assert.match(reason.props.className, /truncate text-ui-hint text-destructive-foreground/);
+  assert.ok(view.props['aria-describedby'].split(' ').includes(reason.props.id));
+  assert.doesNotMatch(html(PaperCard, { ...props, onResolve: undefined }), /data-paper-action="resolve"/);
+  assert.doesNotMatch(html(PaperCard, { ...props, reason: undefined }), /<p /);
+});
+
+test('sheet status badges depend on explicit tone, never label matching', () => {
+  for (const tone of ['neutral', 'info', 'warning']) {
+    const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '已排除', tone }, onResolve: () => {} });
+    assert.match(out, /data-slot="badge"/); assert.match(out, /已排除/);
+    assert.doesNotMatch(out, /data-paper-success|data-paper-action="resolve"/);
+  }
+  const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '扫描异常' } });
+  assert.doesNotMatch(out, /data-slot="badge"|border-destructive|data-paper-success/);
+});
+
+test('sheet prevents all intents on empty IDs and disables viewing without a callback', () => {
+  const fail = () => assert.fail('ineligible sheet intent fired');
+  for (const placeholder of [false, true]) {
+    const out = capture(PaperCard, { ...sheetPaperFixtures[4], variant: 'sheet', id: ' ', placeholder, onView: fail, onResolve: fail });
+    for (const node of out.nodes.filter(n => n.props['data-paper-action'])) {
+      assert.equal(node.props.disabled, true); node.props.onClick();
+    }
+  }
+  const out = capture(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet' });
+  const view = out.nodes.find(n => n.props['data-paper-action'] === 'thumbnail');
+  assert.equal(view.props.disabled, true); view.props.onClick();
+});
+
+test('sheet grid density sets column and paper layout without assigning child variants or changing scroll behavior', () => {
+  for (const [density, width, gap] of [['comfortable', 136, 'gap-x-3 gap-y-2'], ['dense', 112, 'gap-x-2 gap-y-1']]) {
+    const props = { variant: 'sheet', density, maxHeight: 300, children: h(PaperCard, paperCardFixtures[0]) };
+    const out = html(PaperCardGrid, props);
+    assert.ok(out.includes(`min(${width}px, 100%)`)); assert.ok(out.includes(gap));
+    assert.match(out, /scroll-area-viewport/); assert.match(out, /max-height:300px/);
+    assert.doesNotMatch(out, /data-paper-variant="sheet"/);
+    const sheet = html(PaperCardGrid, { ...props, children: h(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', compact: true }) });
+    assert.match(sheet, /data-paper-variant="sheet"/); assert.doesNotMatch(sheet, /data-compact/);
+    if (density === 'dense') assert.match(sheet, /w-\[84px\]/);
+  }
+  assert.match(html(PaperCardGrid, { variant: 'sheet', children: h(PaperCard, paperCardFixtures[0]) }), /min\(136px, 100%\)/);
+});
+
+test('sheet fixtures cover all requested states with 24 dense papers', () => {
+  assert.equal(denseSheetPaperFixtures.length, 24);
+  assert.equal(new Set(denseSheetPaperFixtures.map(item => item.id)).size, 24);
+  for (const label of ['已接收', '等待接收', '扫描异常', '未匹配学生', '已排除']) assert.ok(sheetPaperFixtures.some(item => item.status.label === label));
+  const out = html(AttachmentDemo, {});
+  assert.match(out, /comfortable/); assert.match(out, /dense · 24 份/);
+  assert.doesNotMatch(out, /示例|演示/);
+  assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24) * 4);
 });

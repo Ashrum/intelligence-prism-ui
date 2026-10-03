@@ -29,11 +29,29 @@ export const paperCardFixtures: readonly PaperCardProps[] = [
 // Explicit illustrative page, not an actual received student scan.
 const exampleThumbnail = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 297"><rect width="210" height="297" fill="white"/><g fill="black" font-family="serif" font-size="12"><text x="20" y="35">Mathematics</text><text x="20" y="75">1. y = x² − 4</text><text x="20" y="125">2. a² + b² = c²</text></g><g stroke="gray"><path d="M20 95H190M20 145H190M20 170H190M20 195H190M20 220H190M20 245H190"/></g></svg>')}`
 
+export const sheetPaperFixtures: readonly PaperCardProps[] = [
+  { id: "sheet-single", studentName: "张雨桐", examNumber: "20260118", pageCount: 1, thumbnailUrl: exampleThumbnail, status: { label: "已接收", tone: "success" } },
+  { id: "sheet-multiple", studentName: "李明泽", examNumber: "20260119", pageCount: 6, thumbnailUrl: exampleThumbnail, status: { label: "已接收", tone: "success" } },
+  { id: "sheet-waiting", studentName: "王子睿", placeholder: true, status: { label: "等待接收" } },
+  { id: "sheet-waiting-resolve", studentName: "陈思远", placeholder: true, resolveLabel: "处置未交", status: { label: "等待接收" } },
+  { id: "sheet-error", studentName: "欧阳慕容雨桐长中文姓名待核对", thumbnailUrl: exampleThumbnail, status: { label: "扫描异常", tone: "error" }, reason: "第二页边缘裁切且第三页与第四页的作答区域存在重叠，请核对原件后重新扫描相关页，保留学生跨页作答的完整内容。", resolveLabel: "处理异常" },
+  { id: "sheet-unmatched", studentName: "未匹配学生", thumbnailUrl: exampleThumbnail, status: { label: "未匹配学生", tone: "error" }, reason: "考号无法识别", resolveLabel: "指定学生" },
+  { id: "sheet-excluded", studentName: "刘若曦", pageCount: 2, thumbnailUrl: exampleThumbnail, status: { label: "已排除", tone: "neutral" } },
+  { id: "sheet-selected", studentName: "周梓涵", pageCount: 3, thumbnailUrl: exampleThumbnail, selected: true, status: { label: "已接收", tone: "success" } },
+  { id: "sheet-landscape", studentName: "赵一诺", paperSize: "A3", orientation: "landscape", pageCount: 1, thumbnailUrl: exampleThumbnail, status: { label: "已接收" } },
+  { id: "sheet-no-image", studentName: "孙嘉言", pageCount: 2, status: { label: "已接收", tone: "success" } },
+  { id: "sheet-info", studentName: "吴知远", status: { label: "正在核对", tone: "info" } },
+  { id: "sheet-warning", studentName: "郑书宁", status: { label: "待确认", tone: "warning" } },
+]
+export const denseSheetPaperFixtures: readonly PaperCardProps[] = Array.from({ length: 24 }, (_, index) => ({ ...sheetPaperFixtures[index % sheetPaperFixtures.length], id: `dense-${index + 1}` }))
+
 export function AttachmentDemo() {
   const [feedback, setFeedback] = useState("尚未发出操作请求")
   const [selected, setSelected] = useState("student-1")
   const attachmentAction: AttachmentProps["onAction"] = intent => setFeedback(`已发出 ${intent.kind} 请求：${intent.fileId}；等待调用方处理`)
   const viewPaper = (id: string) => { setSelected(id); setFeedback(`已发出查看请求：${id}；当前预览选择已更新`) }
+  const sheetCard = (item: PaperCardProps) => <PaperCard key={item.id} {...item} variant="sheet" selected={selected === item.id || (selected === "student-1" && item.selected)} onView={viewPaper}
+    onResolve={item.resolveLabel ? id => setFeedback(`已发出处置请求：${id}；等待调用方处理`) : undefined} />
   return <>
     <DemoSection title="批阅资料 PDF · 生命周期 × 三尺寸" description="静态外部事实，点击只记录意图，不推进上传或处理状态。">
       <Feedback>{feedback}</Feedback>
@@ -50,6 +68,12 @@ export function AttachmentDemo() {
         <PaperCard {...paperCardFixtures[4]} compact placeholder viewLabel="查看提交记录" onView={viewPaper} />
         <PaperCard {...paperCardFixtures[5]} compact orientation="landscape" thumbnailUrl={exampleThumbnail} onView={viewPaper} />
       </PaperCardGrid><Feedback>{feedback}</Feedback>
+    </DemoSection>
+    <DemoSection title="纸面试卷卡 · comfortable" description="纸面支持点击、Enter 与 Space 查看；等待接收仅在允许处置时提供入口，状态来自调用方。">
+      <PaperCardGrid variant="sheet">{sheetPaperFixtures.map(sheetCard)}</PaperCardGrid><Feedback>{feedback}</Feedback>
+    </DemoSection>
+    <DemoSection title="纸面试卷卡 · dense · 24 份" description="112px 最小列宽；限高网格保留键盘滚动与边缘渐隐。">
+      <PaperCardGrid variant="sheet" density="dense" maxHeight={460}>{denseSheetPaperFixtures.map(sheetCard)}</PaperCardGrid><Feedback>{feedback}</Feedback>
     </DemoSection>
     <DemoSection title="缩略图 URL · 图片与文档" description="左侧为图片文件缩略图；右侧文档使用类型占位。">
       <div className="grid gap-4 sm:grid-cols-2"><Attachment item={{ ...base, id: "image", name: "数学样张.png", type: "image/png", status: { state: "uploaded" } }} thumbnailUrl={exampleThumbnail} view={{}} onAction={attachmentAction} /><Attachment item={{ ...base, id: "document", name: "评分依据.docx", type: "Word", status: { state: "selected" } }} onAction={attachmentAction} /></div>
@@ -69,6 +93,8 @@ export function AttachmentDemo() {
           <PaperCard {...paperCardFixtures[3]} compact thumbnailUrl={exampleThumbnail} onView={viewPaper} onResolve={id => setFeedback(`已发出核对请求：${id}`)} />
           <PaperCard {...paperCardFixtures[4]} compact placeholder onView={viewPaper} />
         </PaperCardGrid>
+        <PaperCardGrid variant="sheet" maxHeight={420}>{sheetPaperFixtures.map(sheetCard)}</PaperCardGrid>
+        <PaperCardGrid variant="sheet" density="dense" maxHeight={420}>{denseSheetPaperFixtures.map(sheetCard)}</PaperCardGrid>
         <Feedback>{feedback}</Feedback>
       </section>)}</div>
     </DemoSection>

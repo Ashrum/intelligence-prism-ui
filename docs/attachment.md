@@ -45,3 +45,21 @@ Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/
 - coss 内部 viewport 检测溢出后提供 Tab 入口，键盘与触屏通过实际滚动节点工作；区域保留 aria-label，内层 p-1 保留卡片焦点环空间；viewport 与 scrollbar 关闭 reduced-motion 过渡。
 - DOM/外观变化仅限限高 PaperCardGrid：新增 viewport/content/双轴 scrollbar 和渐隐边缘。PaperCard 本体、Attachment 上传 Progress、回调及 PaperPreview 原生视口均不改；后者的手势和锚点依赖原生滚动。
 - 三主题、320px、compact 与限高夹具继续覆盖该路径，demo 增加渐隐说明。实际键盘/触屏滚动、三主题外观交 Supervisor；不据 SSR 声称完成浏览器验收。
+
+## 2026-10-03 P10：纸面呈现 sheet
+
+复用依据：Supervisor 已检索 coss particles 注册索引 `p-card-1…11`，均无缩略图/媒体卡片；Beautiful UI 无学生试卷类卡片。本轮采用该记录，Builder 未重新联网。扩展既有 PaperCard，不新增目录项或复制上游代码。复用 PaperThumbnail 的图像、加载失败和缺图回退、paperDimensions 的 A4/A3 横竖比例、Prism Badge / Button 与 coss ScrollArea；等待接收使用静态虚线纸位，不使用 Skeleton。Grid 的 loading 继续沿用既有 Skeleton。
+
+- `PaperCard.variant?: "card" | "sheet"`，默认 `card`。原默认与 compact 的 DOM、样式和回调不变；`sheet` 优先于 compact。sheet 无普通外层卡片底色与可见边框，纸面居中，下方一行姓名 `text-item-title`、一行必要信息 `text-ui-hint`；缺姓名沿用“姓名未提供”，长姓名 title 保留全文。
+- 非 placeholder：整张纸面是 `type="button"` 的原生按钮，点击、Enter、Space 发出 `onView(id)`，可访问名称为“查看/放大：{姓名}的试卷”。缺 onView 或空 id 禁用，不另渲染“查看”按钮。有效 `pageCount > 1` 时显示一层错位纸边；比例保留，缺图/失败沿用 PaperThumbnail；不强改深色主题内的扫描图颜色。
+- `status.tone="success"` 仅在纸面右上显示成功色圆形勾标；未提供 tone 不推定 success。显式 neutral/info/warning 在左上以既有 Badge 显示 `status.label`，无勾标。必要信息只含已知考号、正整数页数，用 ` · ` 分隔，均未知则不显示。
+- `placeholder=true` 优先于 tone：静态虚线空纸位，姓名次要色，信息行显示宿主 `status.label`。有 onResolve 时纸位为原生按钮，发出 `onResolve(id)`，名称“{resolveLabel}：{姓名}”；无 onResolve 为不可聚焦、不可点击的纸位。不显示图像、勾标、叠纸或其他按钮，不调用 onView。
+- 非 placeholder 且 `tone="error"`：纸面错误色描边、左上实底状态 Badge，整体错误色细边与卡片底色；信息行仅显示 reason，单行省略、title 与辅助技术保留全文，使用 `text-destructive-foreground`。有 onResolve 时另提供标准 `outline / sm` 处置按钮，缺 id 禁用，不覆盖 coss 高度。
+- `selected` 由宿主控制：纸面 ring 与 `aria-current="true"` 表达当前项；状态全文由辅助文本提供，纸面按钮通过 aria-describedby 关联状态及错误原因。标签被截断时 title 保留全文；处置按钮保留完整可访问名称。点击不会自行选中、推进接收或处置状态。sheet 无动画，Badge / 处置按钮过渡沿用 150ms 并关闭 reduced-motion 过渡。
+- `PaperCardGrid.variant?: "card" | "sheet"`、`density?: "comfortable" | "dense"`；density 仅 sheet 生效。comfortable 最小列宽 136px、行/列间距 8/12px、纸宽 108px；dense 最小列宽 112px、行/列间距 4/8px、纸宽 84px。宽度不超容器；dense 仅以布局选择器调整直接 sheet 子卡纸宽和留白，不注入任何子卡属性。宿主需分别指定 Grid 与 PaperCard 的 variant。maxHeight、ScrollArea、ready/loading/empty/error 行为不变。
+
+选用：`card` 用于完整信息与独立查看按钮，`card + compact` 用于横向缩略页和动作并排，`sheet` 用于学生试卷接收的纸面浏览。原 compact 的“缩略页始终查看”约定保持；sheet 等待接收纸位明确使用 onResolve。
+
+画布适配：沿用 108/84px 纸宽、4px 叠纸、两档网格与留白；圆角、阴影、颜色改用现有语义令牌，标签不照搬 11px、信息不照搬 13px，处置按钮用 coss sm，不复刻固定 28px。dense 仍保留“考号”前缀；不引入画布 compact 中间档 96px 纸宽/124px 列宽。无 onResolve 的等待纸位不可交互。深色缺图纸位保持组件主题底色，不强制画布的浅色纸面。
+
+夹具入口 `/next/components/attachment`：comfortable 全状态与 dense 24 份，三主题各含 320px 窄容器和限高滚动，覆盖单/多页、可/不可处置等待、扫描异常、未匹配学生、已排除、选中、A3 横向、缺图、长姓名/原因与样张公式。真实键盘、焦点、主题视觉与滚动验收由 Supervisor 执行。

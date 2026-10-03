@@ -1,7 +1,7 @@
 "use client"
 
 import { Children, useId, useState, type ReactNode, type CSSProperties } from "react"
-import { FileText, FileImage, File } from "lucide-react"
+import { Check, FileText, FileImage, File } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
@@ -74,14 +74,14 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
 
 export type PaperCardProps = {
   id: string; studentName: string; examNumber?: string; pageCount?: number; thumbnailUrl?: string
-  compact?: boolean; placeholder?: boolean
+  variant?: "card" | "sheet"; compact?: boolean; placeholder?: boolean
   /** Labels and resolution eligibility are supplied by the host, never inferred from status. */
   viewLabel?: string; resolveLabel?: string; onResolve?: (id: string) => void
   paperSize?: "A4" | "A3"; orientation?: "portrait" | "landscape"
   status: { label: string; tone?: AgentStatusTone }; reason?: string; selected?: boolean; onView?: (id: string) => void
 }
 const badgeTones = { neutral: "outline", info: "info", success: "success", warning: "warning", error: "error" } as const
-export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, compact = false, placeholder = false, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
+export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, variant = "card", compact = false, placeholder = false, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
   const labelId = useId(), dimensions = paperDimensions(paperSize, orientation)
   const count = Number.isInteger(pageCount) && pageCount! > 0 ? pageCount : undefined
   const exam = examNumber?.trim(), name = studentName || "姓名未提供"
@@ -90,6 +90,35 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
   const view = () => { if (id.trim()) onView?.(id) }
   const ratio = { aspectRatio: `${dimensions.width} / ${dimensions.height}` }
   const thumbnail = <PaperThumbnail page={{ id, thumbnailUrl, paperSize, orientation }} label={`${name}试卷缩略图`} />
+  if (variant === "sheet") {
+    const error = !placeholder && status.tone === "error"
+    const information = placeholder ? status.label : error ? reason : [exam && `考号 ${exam}`, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")
+    const statusLabel = status.label || "状态未提供"
+    const faceClass = cn("relative block h-full w-full rounded-sm border", placeholder ? "border-dashed border-muted-foreground" : "border-border bg-card shadow-md", error && "border-destructive-foreground", selected && "ring-2 ring-ring ring-offset-2 ring-offset-background")
+    const face = <>
+      {!placeholder && count !== undefined && count > 1 && <span aria-hidden="true" data-paper-stack className="absolute inset-0 translate-x-1 translate-y-1 rounded-sm border border-border bg-card" />}
+      <span className={faceClass}>{!placeholder && <span className="absolute inset-0 overflow-hidden rounded-sm">{thumbnail}</span>}</span>
+      {!placeholder && status.tone === "success" && <span aria-hidden="true" data-paper-success className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-success-foreground text-background ring-2 ring-background"><Check className="size-3" /></span>}
+      {!placeholder && status.tone && status.tone !== "success" && <Badge variant={badgeTones[status.tone]} title={statusLabel}
+        className={cn("absolute top-1.5 left-1.5 max-w-[calc(100%-0.75rem)] duration-150 motion-reduce:transition-none", error && "bg-destructive-foreground text-background dark:bg-destructive-foreground")}><span className="truncate">{statusLabel}</span></Badge>}
+    </>
+    return <article data-paper-card={id} data-paper-variant="sheet" data-placeholder={placeholder || undefined} aria-labelledby={labelId} aria-current={selected ? "true" : undefined}
+      className={cn("flex min-w-0 flex-col items-center gap-2 border border-transparent px-2 pt-3.5 pb-2.5", error && "rounded-2xl border-destructive-foreground bg-card text-card-foreground")}>
+      <span data-paper-sheet-media className="relative block w-[108px] max-w-full shrink-0" style={ratio}>
+        {placeholder && !onResolve ? <span role="img" aria-label={`${name}：${statusLabel}`} className="block h-full w-full">{face}</span>
+          : <button type="button" data-paper-action={placeholder ? "resolve" : "thumbnail"} aria-label={placeholder ? `${resolveLabel}：${name}` : `查看/放大：${name}的试卷`}
+            aria-describedby={`${labelId}-status${error && reason ? ` ${labelId}-information` : ""}`} aria-current={selected ? "true" : undefined}
+            disabled={!id.trim() || (!placeholder && !onView)} onClick={placeholder ? () => { if (id.trim()) onResolve?.(id) } : view}
+            className="relative block h-full w-full cursor-pointer rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-default">{face}</button>}
+      </span>
+      <span id={`${labelId}-status`} className="sr-only">{statusLabel}</span>
+      <div className="flex w-full min-w-0 flex-col items-center gap-px">
+        <h3 id={labelId} title={name} className={cn("max-w-full truncate text-item-title", placeholder && "text-muted-foreground")}>{name}</h3>
+        {information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : "text-muted-foreground")}>{information}</p>}
+      </div>
+      {error && onResolve && <Button type="button" variant="outline" size="sm" data-paper-action="resolve" className="max-w-full duration-150 motion-reduce:transition-none" aria-label={`${resolveLabel}：${name}`} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate" title={resolveLabel}>{resolveLabel}</span></Button>}
+    </article>
+  }
   const media = compact ? <Button type="button" variant="outline" data-paper-action="thumbnail"
     className="relative h-auto min-h-11 w-20 min-w-11 shrink-0 overflow-hidden p-0 sm:h-auto" style={ratio}
     aria-label={`查看/放大：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}>
@@ -114,14 +143,16 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
 }
 
 export type PaperCardGridProps = {
+  variant?: "card" | "sheet"; density?: "comfortable" | "dense"
   compact?: boolean; className?: string; children?: ReactNode; maxHeight?: CSSProperties["maxHeight"]; state?: "ready" | "loading" | "empty" | "error"
   emptyMessage?: string; errorMessage?: string; onRetry?: () => void; "aria-label"?: string
 }
-export function PaperCardGrid({ compact = false, className, children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
+export function PaperCardGrid({ variant = "card", density = "comfortable", compact = false, className, children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
+  const sheet = variant === "sheet", dense = sheet && density === "dense"
   const content = state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
         : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
-          : <div className="grid items-stretch gap-3" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
+          : <div className={cn("grid items-stretch", sheet ? dense ? "gap-x-2 gap-y-1 [&>[data-paper-variant=sheet]]:px-1.5 [&>[data-paper-variant=sheet]]:pt-2.5 [&>[data-paper-variant=sheet]]:pb-2 [&>[data-paper-variant=sheet]>[data-paper-sheet-media]]:w-[84px]" : "gap-x-3 gap-y-2" : "gap-3")} style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${sheet ? dense ? 112 : 136 : compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
   return maxHeight !== undefined
     ? <ScrollArea render={<section />} data-paper-card-grid data-state={state} aria-label={label} scrollFade overscrollContain style={{ maxHeight }} className={cn("h-auto min-w-0 [&>[data-slot=scroll-area-viewport]]:max-h-[inherit] motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none", className)}><div className="p-1">{content}</div></ScrollArea>
     : <section data-paper-card-grid data-state={state} aria-label={label} className={cn("min-h-0 min-w-0 overflow-y-auto overscroll-contain p-1", className)}>{content}</section>
