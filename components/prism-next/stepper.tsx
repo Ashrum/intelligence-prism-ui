@@ -39,6 +39,20 @@ export function Stepper({ steps, currentStepId, onStepSelect, orientation = "hor
   useEffect(() => {
     const container = viewport.current, content = list.current
     if (!container || !content || orientation !== "horizontal") return
+    if (isCompact) {
+      // Measure the expanded content, including long/localized labels. Resize never
+      // changes position, eligibility or focus, and compact never scrolls.
+      const fit = () => {
+        delete container.dataset.collapsed
+        container.dataset.collapsed = String(content.scrollWidth > content.clientWidth)
+      }
+      fit()
+      if (typeof ResizeObserver === "undefined") return
+      const observer = new ResizeObserver(fit)
+      observer.observe(container)
+      observer.observe(content)
+      return () => observer.disconnect()
+    }
     const reveal = () => {
       const active = content.querySelector<HTMLElement>('[aria-current="step"] [data-step-content]')
       if (!active) return
@@ -57,7 +71,7 @@ export function Stepper({ steps, currentStepId, onStepSelect, orientation = "hor
 
   return <nav aria-label={label} className={cn("prism-stepper min-w-0 max-w-full", className)} data-orientation={orientation} data-compact={isCompact || undefined}>
     <p className={isCompact ? "sr-only" : "mb-3 break-words text-ui-hint"} data-step-summary>{current >= 0 ? `第 ${current + 1} / ${steps.length} 步 · ${steps[current].label}` : `共 ${steps.length} 步 · 未提供当前阶段`}</p>
-    <div ref={viewport} className="prism-stepper-viewport" tabIndex={orientation === "horizontal" ? 0 : undefined} role={orientation === "horizontal" ? "region" : undefined} aria-label={orientation === "horizontal" ? `${label}完整步骤，可横向滚动` : undefined}>
+    <div ref={viewport} className="prism-stepper-viewport" tabIndex={orientation === "horizontal" && !isCompact ? 0 : undefined} role={orientation === "horizontal" && !isCompact ? "region" : undefined} aria-label={orientation === "horizontal" && !isCompact ? `${label}完整步骤，可横向滚动` : undefined}>
       <ol ref={list} className="prism-stepper-list">
         {steps.map((step, index) => {
           const isCurrent = index === current
@@ -67,22 +81,27 @@ export function Stepper({ steps, currentStepId, onStepSelect, orientation = "hor
           const status = isCurrent ? `当前阶段${step.state === "current" || step.state === "upcoming" ? "" : ` · ${stateLabel}`}` : stateLabel
           const selectable = !!onStepSelect && step.selectable === true && !isCurrent
           const Content = selectable ? "button" : "div"
-          const Details = selectable ? "span" : "div"
-          const Text = selectable ? "span" : "p"
-          return <li key={step.id} className="prism-stepper-item" data-step-state={step.state} aria-current={isCurrent ? "step" : undefined}>
-            <Content className={cn("prism-stepper-content", selectable && "min-h-11 min-w-11 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring")}
+          const Details = selectable || isCompact ? "span" : "div"
+          const Text = selectable || isCompact ? "span" : "p"
+          const compactDescription = `第 ${index + 1} 步，${status}${step.description ? `。${step.description}` : ""}`
+          return <li key={step.id} className="prism-stepper-item" data-step-state={step.state} aria-current={isCurrent ? "step" : undefined} aria-label={isCompact && !selectable ? `${step.label} · ${compactDescription}` : undefined}>
+            <Content className={cn("prism-stepper-content", selectable && (isCompact
+              ? "relative cursor-pointer justify-center text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11"
+              : "min-h-11 min-w-11 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"))}
               data-step-content type={selectable ? "button" : undefined}
               aria-label={selectable ? step.selectLabel?.trim() || `前往：${step.label}` : undefined}
+              aria-description={isCompact && selectable ? compactDescription : undefined}
+              title={isCompact ? `${step.label} · ${compactDescription}` : undefined}
               onClick={selectable ? () => onStepSelect?.(step.id) : undefined}>
-              <span data-step-marker aria-hidden="true" className={cn("flex size-8 shrink-0 items-center justify-center rounded-full border text-ui-action", markerSurface(step.state, isCurrent))}>
+              <span data-step-marker aria-hidden="true" className={cn(isCompact ? "flex size-6 shrink-0 items-center justify-center rounded-full border text-ui-action" : "flex size-8 shrink-0 items-center justify-center rounded-full border text-ui-action", markerSurface(step.state, isCurrent))}>
                 {step.state === "done" ? <Check className="size-4" /> : blocked ? <CircleAlert className="size-4" /> : index + 1}
               </span>
-              <Details className="min-w-0 space-y-1">
-                <Text className={cn("break-words", selectable && "block", isCurrent ? "text-item-title" : "text-ui-body")}>{step.label}</Text>
+              <Details className={isCompact ? "prism-stepper-details min-w-0" : "min-w-0 space-y-1"}>
+                <Text className={cn(isCompact ? "prism-stepper-label block truncate" : "break-words", selectable && "block", isCurrent ? "text-item-title" : "text-ui-body", isCompact && !isCurrent && !special && step.state !== "done" && "text-muted-foreground")}>{step.label}</Text>
                 <span className="sr-only">第 {index + 1} 步，{status}</span>
-                {special && <Text aria-hidden="true" className={cn("text-ui-hint", selectable && "block")}>{status}</Text>}
+                {special && <Text aria-hidden="true" className={cn("text-ui-hint", (selectable || isCompact) && "block")}>{status}</Text>}
                 {step.description && step.description !== stateLabel && <>
-                  <Text aria-hidden="true" title={step.description} className="line-clamp-2 break-words text-ui-hint">{step.description}</Text>
+                  <Text aria-hidden="true" title={step.description} className={isCompact ? "sr-only" : "line-clamp-2 break-words text-ui-hint"}>{step.description}</Text>
                   <span className="sr-only">{step.description}</span>
                 </>}
               </Details>
