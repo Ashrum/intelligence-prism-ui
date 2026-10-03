@@ -1,6 +1,0 @@
-.paper-preview { container-type: inline-size; }
-.paper-preview-layout { display:grid; gap:1.5rem; grid-template-columns:minmax(0,1fr); }
-.paper-preview-viewport { height: min(65dvh, 44rem); min-height:18rem; overflow:auto; padding:1rem; touch-action:pan-x pan-y; }
-@container (min-width: 52rem) {
-  .paper-preview-layout { grid-template-columns:minmax(0,1fr) 19rem; }
-}
