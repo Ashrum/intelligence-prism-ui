@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+test('D2 approved Foundations roles are defined in all theme boundaries and documented', () => {
+  const theme = read('app/(next)/next/theme.css');
+  const boundaries = [theme.split('color-scheme:light;')[0], theme.split('[data-prism-theme="paper"] {')[1]?.split('}')[0], theme.split('[data-prism-theme="dark"] {')[1]?.split('}')[0]];
+  for (const boundary of boundaries) for (const name of ['brand-ai-1', 'brand-ai-2', 'brand-ai-3', 'brand-ai-gradient', 'surface-floating-background', 'surface-floating-blur']) assert.match(boundary, new RegExp(`--${name}:`));
+  assert.match(theme, /--brand-blue:#339FF2/); assert.match(theme, /--brand-magenta:#E0438F/); assert.match(theme, /--brand-green:#C2F25B/);
+  assert.match(theme, /\.surface-floating \{\s*background:var\(--popover\)/);
+  assert.match(theme, /@supports \(\(backdrop-filter/);
+  const type = read('app/(next)/next/typography.css');
+  assert.match(type, /--text-score-display: 2.5rem/); assert.match(type, /--text-score-display--line-height: 1.1/);
+  assert.match(type, /--text-score-display--font-weight: 600/); assert.match(type, /\.text-score-display \{ font-variant-numeric:tabular-nums/);
+  assert.match(read('docs/typography.md'), /\| score-display \| 40 \/ 44/);
+  const doc = read('docs/foundation-tokens.md');
+  for (const name of ['brand-ai-1', 'brand-ai-2', 'brand-ai-3', 'brand-ai-gradient', 'surface-floating']) assert.ok(doc.includes(name));
+  assert.match(read('components/prism-next/foundations.tsx'), /id="ai-floating"/);
+  assert.match(read('components/prism-next/typography-foundation.tsx'), /role.id==='score-display'/);
+  assert.match(read('scripts/check-typography.mjs'), /semanticClasses.has\('text-score-display'\)/);
+});

@@ -1,0 +1,3 @@
+@import "../../components/prism-next/review-workspace.css";
+.d1-review { height:100dvh; overflow:hidden; display:grid; grid-template-rows:minmax(0,1fr); }
+.d1-stage { position:relative; min-height:0; overflow:hidden; display:flex; justify-content:center; align-items:center; }

@@ -257,7 +257,7 @@ test('the published charter preserves the approved original, scoped PO amendment
   // Do not trim/normalize the remaining text: every original byte stays SHA-256 protected.
   const amendmentPattern = /^\*\*([^\n*]*修订)（(\d{4}-\d{2}-\d{2})，PO 批准）\*\*：[^\n]*\n\n/gm;
   const amendments = [...charter.matchAll(amendmentPattern)];
-  assert.deepEqual(amendments.map(match => [match[1], match[2]]), [['文案修订', '2026-09-29'], ['原型阶段修订', '2026-09-28']]);
+  assert.deepEqual(amendments.map(match => [match[1], match[2]]), [['文案修订', '2026-09-29'], ['预览框架修订', '2026-10-02'], ['原型阶段修订', '2026-09-28']]);
   const amendment = amendments.find(match => match[1] === '原型阶段修订')[0];
   assert.ok(amendment.startsWith('**原型阶段修订（2026-09-28，PO 批准）**：'), 'retain the approval date and PO approval');
   for (const condition of [
@@ -271,10 +271,27 @@ test('the published charter preserves the approved original, scoped PO amendment
   for (const condition of ['B 类对话中打开右栏 L2', '操作文案为‘查看详情’', '以明显按钮呈现', '行为不变']) {
     assert.ok(copyAmendment.includes(condition), `copy amendment must retain: ${condition}`);
   }
-  const original = charter.replace(amendmentPattern, '');
+  const previewAmendment = amendments.find(match => match[1] === '预览框架修订')[0];
+  assert.equal(previewAmendment, '**预览框架修订（2026-10-02，PO 批准）**：在三栏预览框架（试卷预览框架、题目与知识点预览框架，及今后同一外壳的预览框架）中，题目卡的题干、选项、小问与详情正文跟随两侧栏的正文字号与行高（ui-body，14/20），间距取两侧栏同一组间距值，公式随正文字号；由宿主通过 QuestionContent / QuestionSolution 的 textSize="ui" 传入，组件不自行判断场景。其他场景（组卷与题库页、Agent 右栏、正式试卷与打印等）仍按本款 16/28。\n\n');
+  const previewStatus = '2026-10-02 经 Product Owner 批准追加预览框架修订（“改章程”）。';
+  const previewReference = '三栏预览框架中的 L2 题目卡，字号、行高与间距按第七条的“预览框架修订（2026-10-02，PO 批准）”执行，呈现层级不变。\n\n';
+  assert.ok(charter.split('\n')[2].endsWith(previewStatus));
+  assert.ok(charter.includes(previewReference));
+  assert.ok(charter.includes('3. 题面：题干与选项 16/28，公式不缩小；选项在容器 ≥ 480 时两栏，否则一栏。\n\n' + previewAmendment));
+  // Strip only the exact approved status/reference additions and amendment separator;
+  // keep the original charter hash unchanged, including its numbered visual rules.
+  const original = charter.replace(previewStatus, '').replace(previewReference, '')
+    .replace('\n' + previewAmendment, '').replace(amendmentPattern, '');
   assert.equal(createHash('sha256').update(original).digest('hex'), 'c788f525296429a7f0280552c6f6d07f901f885b21e04a69a73a8a66030ca7f7');
   const contracts = await readFile(new URL('../docs/component-contracts.md', import.meta.url), 'utf8');
   assert.match(contracts, /question-presentation-charter\.md/);
+  const textSizeContract = contracts.split('## QuestionContent / QuestionSolution · 可选正文字号（Q7）')[1];
+  const reviewDesign = await readFile(new URL('../docs/question-review-design.md', import.meta.url), 'utf8');
+  for (const document of [textSizeContract, reviewDesign]) {
+    assert.match(document, /依据章程 2026-10-02 预览框架修订/);
+    assert.match(document, /question-presentation-charter\.md#第七条-视觉/);
+    assert.doesNotMatch(document, /偏离《题目呈现章程》|提请 PO 另行裁定/);
+  }
 });
 
 

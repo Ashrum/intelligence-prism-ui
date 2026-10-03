@@ -1,0 +1,25 @@
+.q1-rail-tabs { height:100%; display:grid; gap:0; grid-template-rows:56px auto minmax(0,1fr); }
+.q1-student-controls { position:absolute; top:8px; z-index:20; width:max-content; padding-bottom:4px; }
+.q1-student-controls-row { display:flex; align-items:center; gap:8px; padding:4px; overflow-x:auto; }
+.q1-student-controls-row > * { flex-shrink:0; }
+.q1-review .d1-rail [role=option] { justify-content:stretch; }
+@container (max-width:650px) { .q1-review .d1-topbar { gap:8px; } .q1-review .d1-topbar > [data-slot=avatar] { display:none; } }
+/* Digital content uses normal reading layout, independent of scan transforms. */
+.q6-question-card { container-type:inline-size; touch-action:pan-y; }
+@container (max-width:440px) {
+ .q6-question-card .prism-question-options > li { grid-template-columns:auto minmax(0,1fr); }
+ .q6-option-statistics { grid-column:2 / -1; }
+ .q6-question-card .prism-question-options > li > .col-span-2 { grid-column:2 / -1; }
+}
+
+.q1-review .d1-continuous { overflow-anchor:none; }
+
+/* Q7: reuse the inspector/rail 16px block and 8px list rhythm. Layout only. */
+.q7-question-content > .prism-question-copy { display:flex; flex-direction:column; gap:16px; }
+.q7-question-content > .prism-question-copy > * { margin-block:0; }
+.q7-question-content .prism-question-options { row-gap:8px; }
+.q7-question-content [aria-label="题目小问"] > li { margin-block:0; }
+.q7-question-content [aria-label="题目小问"] { display:flex; flex-direction:column; gap:8px; }
+.q7-question-content .question-solution { display:flex; flex-direction:column; gap:16px; }
+.q7-question-content .question-solution > section { margin-block:0; padding-block:0; }
+.q7-question-content .prism-question-copy p + p { margin-top:8px; }

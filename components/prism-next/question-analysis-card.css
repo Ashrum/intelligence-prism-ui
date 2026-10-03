@@ -1,0 +1,19 @@
+/* Digital content uses normal reading layout, independent of scan transforms. */
+.q6-question-card { container-type:inline-size; touch-action:pan-y; }
+@container (max-width:440px) {
+ .q6-question-card .prism-question-options > li { grid-template-columns:auto minmax(0,1fr); }
+ .q6-option-statistics { grid-column:2 / -1; }
+ .q6-question-card .prism-question-options > li > .col-span-2 { grid-column:2 / -1; }
+}
+
+
+
+/* Q7: reuse the inspector/rail 16px block and 8px list rhythm. Layout only. */
+.q7-question-content > .prism-question-copy { display:flex; flex-direction:column; gap:16px; }
+.q7-question-content > .prism-question-copy > * { margin-block:0; }
+.q7-question-content .prism-question-options { row-gap:8px; }
+.q7-question-content [aria-label="题目小问"] > li { margin-block:0; }
+.q7-question-content [aria-label="题目小问"] { display:flex; flex-direction:column; gap:8px; }
+.q7-question-content .question-solution { display:flex; flex-direction:column; gap:16px; }
+.q7-question-content .question-solution > section { margin-block:0; padding-block:0; }
+.q7-question-content .prism-question-copy p + p { margin-top:8px; }

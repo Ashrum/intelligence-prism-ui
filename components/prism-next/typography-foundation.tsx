@@ -22,7 +22,7 @@ export function TypographyFoundation(){
     <DemoSection id="type-roles" title="字号角色" description="数值以默认 16px 根字号为参照。字号使用 rem，行高使用比例；用户放大文字时，容器随内容展开。">
       <div>{typographyRoles.map(role=><div key={role.id} className="prism-type-role" data-type-sample={role.id}>
         <div><h3 className="text-item-title">{role.label}</h3><p className="mt-2 text-ui-meta font-mono text-muted-foreground">{role.id}</p><p className="mt-2 text-ui-body tabular-nums">{role.size} / {role.lineHeight} px · {role.weight}</p></div>
-        <div className="prism-type-specimen"><p className={role.className}>{role.id==='stat-display'?<span className="tabular-nums">−12.5%</span>:'清楚地阅读题目与学习证据'}</p><p className="mt-3 text-ui-hint text-muted-foreground">{role.usage}</p></div>
+        <div className="prism-type-specimen"><p className={role.className}>{role.id==='score-display'?<>118 <span className="text-ui-body text-muted-foreground">/ 150 分</span></>:role.id==='stat-display'?<span className="tabular-nums">−12.5%</span>:'清楚地阅读题目与学习证据'}</p><p className="mt-3 text-ui-hint text-muted-foreground">{role.usage}</p></div>
       </div>)}</div>
     </DemoSection>
     <DemoSection id="type-samples" title="解析工作区的五类样本" description="材料说明、任务状态、Agent 回复、题目阅读和题干编辑。切换页面顶部主题，比较相同内容。">

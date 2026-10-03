@@ -58,6 +58,12 @@
   --brand-blue:#339FF2;
   --brand-magenta:#E0438F;
   --brand-green:#C2F25B;
+  --brand-ai-1:var(--brand-blue);
+  --brand-ai-2:var(--brand-magenta);
+  --brand-ai-3:var(--brand-green);
+  --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
+  --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
+  --surface-floating-blur:12px;
   color-scheme:light;
 }
 
@@ -83,6 +89,13 @@
   --ring:#1D4ED8;
   --link:#1D4ED8;
   --disabled-foreground:#A5A29C;
+  --brand-ai-1:var(--brand-blue);
+  --brand-ai-2:var(--brand-magenta);
+  --brand-ai-3:var(--brand-green);
+  --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
+  --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
+  --surface-floating-blur:12px;
+
 }
 
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="dark"],
@@ -120,6 +133,12 @@
   --chart-3:#99DFB4;
   --chart-4:#F4CC86;
   --chart-5:#BDACED;
+  --brand-ai-1:var(--brand-blue);
+  --brand-ai-2:var(--brand-magenta);
+  --brand-ai-3:var(--brand-green);
+  --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
+  --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
+  --surface-floating-blur:12px;
   color-scheme:dark;
 }
 
@@ -392,3 +411,21 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 :where(html[data-ui-version="coss-v1"]) math { font-family:"Prism Math","Cambria Math",math,serif; }
 .review-equation { font-size:1.25rem; }
 .parsing-paper math { font-size:1.125em; }
+
+/* PO 2026-10-02: only floating tools/popups; opaque fallback comes first. */
+.surface-floating {
+  background:var(--popover);
+  color:var(--popover-foreground);
+  @apply shadow-lg;
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  .surface-floating {
+    background:var(--surface-floating-background);
+    -webkit-backdrop-filter:blur(var(--surface-floating-blur));
+    backdrop-filter:blur(var(--surface-floating-blur));
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .surface-floating, .surface-floating *, [data-slot$="-positioner"]:has(> .surface-floating) { transition:none !important; animation:none !important; }
+}

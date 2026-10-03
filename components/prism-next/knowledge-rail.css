@@ -1,0 +1,2 @@
+.knowledge-rail { display:flex; flex-direction:column; height:100%; }
+.knowledge-rail [role=option] { justify-content:stretch; }

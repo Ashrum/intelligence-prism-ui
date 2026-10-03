@@ -2406,6 +2406,7 @@ import { Badge } from "@/components/prism-next/badge"
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
 | `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
+| `QuestionContent.optionExtra` | Q6 授权增加的可选 `(optionId: string) => ReactNode`；按顶层选项顺序调用，内容接在该选项正文之后。省略或传 undefined 时既有 DOM 完全不变；传入时选项使用字母／正文／附加内容的网格布局，宿主负责统计、名单、动作及窄容器适配；不影响小问内选项，不推断正确性或执行状态 |
 | `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
 | `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
 | `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |
@@ -2707,3 +2708,79 @@ Beautiful UI（https://www.beautifului.dev/）注册源 `components/primitives/P
 Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 → muted-foreground；line → border / input；hover → accent；field → secondary；accent-ink → info-foreground；orange / red 状态文字 → warning-foreground / destructive-foreground。原 source 色值、12/12.5/13px 文字和 shadow-plugin 叠层不引入：分别使用 Prism 主题、text-ui-body / text-ui-action / text-ui-hint / text-ui-meta，以及 coss InputGroup / Menu / Popover 已有阴影。原 14/22/24px 输入框曲率映射为 rounded-xl / rounded-3xl，按钮圆角使用 coss 或 rounded-full；点阵 Dots 使用 rounded-full。没有对应精确值时使用最接近的现有令牌，保留 Prism 字号可读性。
 
 扫光仅按 [Agent-readable contract 的明确例外](agent-readable-contract.md#beautiful-ui-prompt-bar-扫光动效例外po-2026-09-29-批准) 使用 `glimm@0.3.1`（MIT）；不导入 Beautiful UI 的全局 foundation、shadow-plugin 或新字体。组件候选不等于 Workspace 接入或独立 Review 通过。
+
+
+## Paper Preview 试卷预览 v0.1
+
+**2026-10-03，PO 批准**：“预览一份试卷”的场景应使用全屏预览框架（`ReviewWorkspace` + `PaperPreview` 连续模式），遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)。旧的单页模式与 `PaperPreviewDialog` 标记为**待退役**，保留至 Workspace 全部迁移完成后移除；新接入不得再使用弹窗或内嵌预览。本次不删除代码，不改变现有类型、默认值与行为。
+
+`PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
+
+## Stepper 流程步骤条 v0.1
+
+`Stepper` 接收完整有序 `steps` 与显式 done/current/upcoming/pending/blocked/error 状态；可选 `currentStepId` 优先确定当前位置，省略时兼容 state=current，支持“当前阶段 · 受阻”。只读呈现当前位置、后续阶段和未完成事项。默认水平局部滚动并显露当前步，可选垂直；不提供点击导航，不从序号或执行状态推断完成。公开 API、连接段、无障碍、复用检索及未验证边界见 [Stepper 契约](stepper.md)。PO 2026-09-30 批准「导航」目录项；独立 Review 与浏览器验收尚待完成。
+
+
+## Instrument 任务状态面板 v0.1（PO 2026-09-30 候选 #3）
+
+`InstrumentPanel` 登记在「内容与数据」，入口 `/next/components/instrument-panel`。按头部、指标、当前处理、关注、清单、动作、下一步顺序组合可选区块；复用 coss 与 `MetricSummary` / `AgentStatus`。调用方提供所有事实、状态文字、完成标记与进度；组件不推定执行状态。主动作唯一，禁用原因关联 `aria-describedby`，次动作最多两个；所有回调仅发出意图。具备 Loading / Empty / Error 与 320px 三主题长中文、公式夹具。完整 API、复用检索、边界见 [Instrument 契约](instrument-panel.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
+
+## Attachment 附件 / Paper Card 试卷卡
+
+2026-10-01 · PO 批准候选 #4、#5，共用“内容与数据 / Attachment 附件”条目，Paper Card 为变体。复用 AgentFileStatus、文件状态标签和大小格式化、PaperThumbnail 与 coss / Prism 展示原子；上传与后续处理保持独立。支持 sm/md/lg、独立移除/重试/查看意图、已知或未知进度、学生身份/页数/状态/选中/异常原因及局部滚动网格。Loading / Empty / Error 由宿主传入；不内置执行或业务状态。完整 API、复用检索与未知值边界见 [Attachment 契约](attachment.md)。Builder 实现待独立 Review。
+
+
+## Material Intake 资料接收
+
+2026-10-01 · PO 批准候选 #6，位于「内容与数据」。组合 AgentFileInput（新增向后兼容的 renderItem 行内容插槽）、Attachment、Stepper 与 coss Card/Dialog。调用方提供设备/页数/接收状态/文件/能力/流程，组件仅发选择、移除、重试、更换数据站、取消、确认意图。页数未知显示「未提供」，文件选择不等于接收成功；单页替换固定只收 1 页并显示影响边界。等待、处理中、失败、Loading/Error、未知状态均阻止保存并关联原因。完整 API、复用取舍、页面夹具和验证边界见 [Material Intake 契约](material-intake.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
+
+## Data Station 教学数据站
+
+2026-10-01 · PO 批准候选 #7，位于「内容与数据」。默认受控 coss 右侧 Sheet，支持 inline；组合 RadioGroup/Card/Skeleton/Empty 和共享 DataStationConnectionStatus（MaterialIntake 旧 API 保持）。调用方提供设备可用性、推荐、选择、连接目标/状态、任务绑定说明与刷新文案；只发 onSelect/onConnect/onDisconnect/onRetry/onClose/onOpen 意图。离线、占用、未知不可选且说明原因；连接中锁定选择与连接，已连接先断开；失败重试携带原目标 ID。DataStationBadge 是同条目入口变体，接收明确的已连接/可用数量/未连接事实。缺失事实不推断，组件无计时器与设备执行。完整 API、复用检索限制、44px 目标与浏览器阻塞见 [Data Station 契约](data-station.md)。独立 Review 与产品验收另行确认。
+
+
+## Queue Board 队列看板 v0.1
+
+2026-10-01 · PO 批准候选 #8，位于「内容与数据」。评估 AgentReviewQueue / StatusComposition 后保持旧 API，复用 coss Card/Toggle/Table/Empty/Skeleton 与 Prism Badge/Button 组合。外部提供 2–6 分类计数与互斥状态；受控/非受控单选可取消，零值可见；行操作、头部和重试只发意图。禁用原因可见且关联 title/aria-describedby；缺失事实不推断。表格支持 maxHeight 和局部横向滚动，分页由宿主组合。完整 API、复用证据与浏览器验收阻塞见 [Queue Board 契约](queue-board.md)。独立 Review 与产品验收另行确认。
+
+## Score Review 人工评分（独立组件候选）
+
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 PaperPreview 与 DraftMathPreview。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
+
+## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
+
+`RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress 和共享 AgentStatus；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。
+
+## QuestionContent / QuestionSolution · 可选正文字号（Q7）
+
+2026-10-02 PO 对题目与知识点预览框架明确授权：两组件新增 `textSize?: "read" | "ui"`，默认 `"read"`。省略、显式 `undefined` 或 `"read"` 均保持原始 DOM（含类名、顺序、缺失值提示）完全一致；`"ui"` 使用 `text-ui-body`（14px / 20px），小问类型／分值与答案缺失提示改用 `text-ui-meta`（12px / 18px）及既有 muted 色。公式继承正文并沿用公共数学光学校准，不加局部缩放。属性不改变题面、答案、宿主事实或交互，不自动按宽度切换；组件不重写宿主 ReactNode 内自带的字号。
+
+本轮只授权这两个公开 API；`QuestionDetails` / `QuestionCard` 不增加透传属性。预览宿主以现有 coss Tabs、QuestionHeading、QuestionContent、QuestionSolution 组合，间距与 744px 内容最大宽度留在宿主。默认输出以修改前捕获的 20 题及缺失值夹具 SHA-256 验证。三栏预览框架依据章程 2026-10-02 预览框架修订，由宿主显式传入 `textSize="ui"`，见[《题目呈现章程》第七条](question-presentation-charter.md#第七条-视觉)；间距取两侧栏同一组间距值，组件不自行判断场景。其他场景仍按该款 16/28，其他调用方仍默认阅读字号；Foundations 保持不变。
+
+
+## C1 · 预览框架组件化（PO 2026-10-02 批准）
+
+新增「内容与数据」目录项：`ReviewWorkspace`、`QuestionRail`、`ReviewSwitcher`、`QuestionInspector`。分别见 [框架](review-workspace.md)、[题目栏](question-rail.md)、[切换器](review-switcher.md)、[单题检查器](question-inspector.md)。只呈现外部事实、发出意图；宿主保留筛选/排序、偏好存储、学生名册、路由与回执。遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)：ReviewWorkspace 始终独占整个视口，不嵌入应用外壳、流程外壳（步骤条、任务名行、底部状态条）或页面内容区块，不与宿主顶栏合并。其他页面通过入口打开，“返回”回到来源页面。`topbar` 是框架自己的顶栏，应始终提供；属性仅为兼容保留可选，类型与实现不变。题目栏同一接口接受分数或全班正确率，不内置业务计算。
+
+`PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。
+
+
+## 2026-10-02 · C2 题目与知识点预览组件
+
+- [Knowledge Rail 知识点栏](knowledge-rail.md)：sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。
+- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。
+- [Question Analysis Card 题目分析卡](question-analysis-card.md)：question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。
+- [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
+
+QuestionRail 同目录新增 QuestionRailClass（格内第二行、外部 marker、行式排序）；PaperPreview 增加 mixed 模式及 PaperPreviewMixed/PaperPreviewGroup 辅助导出，连续模式前置内容、纸外身份、分段、折叠和 topInset 避让。旧调用默认 DOM 不变。统计纯函数移至 `lib/prism-next/question-analysis.ts`，宿主提供输入并负责选用口径。
+
+QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmptyText?: string` 仅在对应数组为空且传入文本时显示 muted 说明；未传属性保留原 DOM。`actions[].disabledReason?: string` 仅在该动作实际禁用（显式禁用或缺少 `onIntent`）且有非空原因时显示“动作名：原因”，放在动作区下方，以实例唯一 ID 的 `aria-describedby` 关联按钮；按钮保留 coss 标准尺寸。evidence / knowledge / comparison 条目文案保持宿主事实，confidence 默认“未提供”不变。
+
+
+### G2 · 真实数据不全（2026-10-03）
+
+- QuestionAnalysisCard / Details：`pointsEmptyText`、`teaching` / `archive`（label/value/emptyText 条目）；移除组件写死档案/教材文本，冻结宿主显式传原文本。options 非空强制单列，count=0 无名单控件；`options[].highLow` 可单独缺 high/low，兼容旧可选 high/low。无选项统计时复用 groups 的答错/答对名单，新增可选 description，答对默认折叠。
+- QuestionAnalysisPanel：`reasonsEmptyText` / `relatedEmptyText` / `evidenceEmptyText` 在对应空列表标题下显示；knowledge.rate 可缺失/null，`rateEmptyText` 替代 Meter，0 仍是已知值；`volumeText` 为宿主完整证据量文字，无组件追加单位。旧 volume 仅原样回退。statistics 的非数字文案及已格式化百分比原样显示。
+- KnowledgeRail：item.rate 可缺失/null，`rateEmptyText` 替代值条；`emptyText` 同时覆盖整栏与 bodyOnly 空态。QuestionRailClass 现有 value 支持“未提供”等任意短文本，未知比例省略 ratio，无需新 API。
+- QuestionInspector：`bodyOnly` 仅输出主体及班级对比，无头部导航、动作、外框与内层滚动；宿主以单 ScrollArea 组合全班分析和当前作答。默认完整模式不变。
+- 属性可选、事实外部提供；新增空态只在对应数据缺失时出现。复用依据、示例与边界见各组件文档；coss 与冻结快照/一致性测试保持原文件。
