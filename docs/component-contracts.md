@@ -2784,3 +2784,9 @@ QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmpt
 - 属性可选、事实外部提供；新增空态只在对应数据缺失时出现。复用依据、示例与边界见各组件文档；coss 与冻结快照/一致性测试保持原文件。
 
 G3（2026-10-03）：`ReviewWorkspace.rail` 可省略（undefined/null/false），形成画布 + 右栏两栏；无左栏列或框架生成的展开/收起按钮，画布占据原左栏宽度。此时 `open/onOpenChange` 可省略，T 不消费也不发意图，默认与自定义 `panes` 均排除 rail，遗留 `pane=rail` 显示 canvas 而不回写。宿主须同步省略插槽中的题目栏按钮与帮助条目。有 rail 时原 DOM、受控行为及冻结快照保持不变；仍遵守独立全屏接入规则。
+
+## ReviewTools 评审与测试工具 v0.1
+
+PO 2026-10-03 批准新增目录；入口 `/next/components/review-tools`，完整 API、复用检索与宿主例子见 [review-tools.md](review-tools.md)。`ReviewTools` 接收 title / description / groups({id,title,children}) / children / footer，基础操作均以 coss 标准控件组合。56px 浮动圆形入口与作用域 `--review-accent: #F04A1A` 三主题一致，**仅用于评审/测试工具，不得用于产品界面**。
+
+position undefined 为非受控；null 为受控跟随 defaultPosition；默认位置可为宿主函数。`onPositionChange(next,{reason:'move'|'reset'})` 发移动或归位意图（归位 next=null），组件无持久化。受控位置等宿主回传；resize 只夹取显示。>5px 拖动、误弹抑制、最近边偏移、16/64px 键盘移动、Esc 回焦点及 reduced-motion 沿用评审交互。环境显示、存储、主题、测试场景、批量操作、危险确认与服务权限均归宿主；不导入 Workspace 私有类型。
