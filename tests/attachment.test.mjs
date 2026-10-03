@@ -338,12 +338,74 @@ test('error sheet retains view intent, exposes full reason and renders a standar
 
 test('sheet status badges depend on explicit tone, never label matching', () => {
   for (const tone of ['neutral', 'info', 'warning']) {
-    const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '已排除', tone }, onResolve: () => {} });
+    const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '已排除', tone }, onResolve: tone === 'warning' ? undefined : () => {} });
     assert.match(out, /data-slot="badge"/); assert.match(out, /已排除/);
     assert.doesNotMatch(out, /data-paper-success|data-paper-action="resolve"/);
   }
   const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '扫描异常' } });
   assert.doesNotMatch(out, /data-slot="badge"|border-destructive|data-paper-success/);
+});
+
+test('warning with resolution presents a pending sheet and keeps view and resolution intents separate', () => {
+  const events = [], props = { ...sheetPaperFixtures[5], variant: 'sheet', examNumber: '20260118', pageCount: 2, selected: true,
+    reason: '姓名与考号未识别，请核对这份含有跨页作答的试卷后指定学生。',
+    onView: id => events.push(['view', id]), onResolve: id => events.push(['resolve', id]) };
+  const out = capture(PaperCard, props);
+  const article = out.nodes.find(n => n.type === 'article');
+  const view = out.nodes.find(n => n.props['data-paper-action'] === 'thumbnail');
+  const resolve = out.nodes.find(n => n.props['data-paper-action'] === 'resolve');
+  const marker = out.nodes.find(n => n.props['data-paper-pending']);
+  const badge = out.nodes.find(n => n.props.title === props.status.label);
+  const reason = out.nodes.find(n => n.type === 'p');
+  assert.match(article.props.className, /border-dashed border-warning-foreground bg-card/);
+  assert.ok(out.nodes.some(n => n.type === 'span' && /shadow-md border-dashed border-warning-foreground/.test(n.props.className)));
+  assert.match(badge.props.className, /bg-warning-foreground text-background dark:bg-warning-foreground/);
+  assert.equal(marker.props['aria-hidden'], 'true'); assert.equal(marker.props.children, '?');
+  assert.match(marker.props.className, /rounded-full bg-warning-foreground/);
+  assert.equal(reason.props.children, props.reason); assert.equal(reason.props.title, props.reason);
+  assert.match(reason.props.className, /truncate text-ui-hint text-warning-foreground/);
+  for (const action of [view, resolve]) {
+    const descriptions = action.props['aria-describedby'].split(' ').map(id => out.nodes.find(n => n.props.id === id)?.props.children);
+    assert.deepEqual(descriptions, [props.status.label, props.reason]);
+  }
+  assert.equal(view.type, 'button'); assert.equal(view.props['aria-label'], '查看/放大：未知学生的试卷');
+  assert.equal(view.props['aria-current'], 'true');
+  assert.equal(resolve.props.size, 'sm'); assert.equal(resolve.props.variant, 'outline');
+  assert.equal(resolve.props['aria-label'], '指定学生：未知学生');
+  assert.doesNotMatch(resolve.props.className, /min-h|h-auto/);
+  assert.doesNotMatch(out.html, /data-paper-success|border-destructive|data-paper-exam-prefix/);
+  view.props.onClick(); resolve.props.onClick();
+  assert.deepEqual(events, [['view', props.id], ['resolve', props.id]]);
+  assert.equal(capture(PaperCard, props).html, out.html);
+});
+
+test('pending sheet without a reason falls back to known metadata and guards unavailable actions', () => {
+  const props = { ...sheetPaperFixtures[5], variant: 'sheet', reason: undefined, onResolve: () => {} };
+  for (const [metadata, title] of [[{ examNumber: ' 20260118 ', pageCount: 2 }, '考号 20260118 · 2 页'], [{ examNumber: '123' }, '考号 123'], [{ pageCount: 2 }, '2 页'], [{ pageCount: 0 }, undefined]]) {
+    const out = capture(PaperCard, { ...props, ...metadata });
+    const information = out.nodes.find(n => n.type === 'p');
+    assert.equal(information?.props.title, title);
+    assert.equal(out.nodes.find(n => n.props['data-paper-action'] === 'thumbnail').props['aria-describedby'].split(' ').length, 1);
+  }
+  const disabled = capture(PaperCard, { ...props, id: ' ', onView: () => assert.fail('view fired'), onResolve: () => assert.fail('resolve fired') });
+  for (const action of disabled.nodes.filter(n => n.props['data-paper-action'])) {
+    assert.equal(action.props.disabled, true); action.props.onClick();
+  }
+  const noView = capture(PaperCard, props);
+  assert.equal(noView.nodes.find(n => n.props['data-paper-action'] === 'thumbnail').props.disabled, true);
+  assert.equal(noView.nodes.find(n => n.props['data-paper-action'] === 'resolve').props.disabled, false);
+});
+
+test('pending presentation requires warning and resolution and never overrides placeholders', () => {
+  const props = { ...sheetPaperFixtures[5], variant: 'sheet', pageCount: 2 };
+  const passive = html(PaperCard, props);
+  assert.match(passive, /data-slot="badge"/); assert.match(passive, /title="2 页"/);
+  assert.doesNotMatch(passive, /data-paper-pending|data-paper-action="resolve"|border-dashed|bg-warning-foreground|姓名与考号未识别/);
+  const waiting = capture(PaperCard, { ...props, placeholder: true, onResolve: () => {} });
+  assert.doesNotMatch(waiting.html, /data-paper-pending|data-slot="badge"|border-warning-foreground|<img/);
+  assert.equal(waiting.nodes.filter(n => n.props['data-paper-action']).length, 1);
+  const renamed = html(PaperCard, { ...props, status: { tone: 'warning', label: '需要教师核对' }, onResolve: () => {} });
+  assert.match(renamed, /data-paper-pending/); assert.match(renamed, /需要教师核对/);
 });
 
 test('sheet prevents all intents on empty IDs and disables viewing without a callback', () => {
@@ -409,9 +471,13 @@ test('sheet badges reserve the right check position and retain full long status 
 test('sheet fixtures cover all requested states with 24 dense papers', () => {
   assert.equal(denseSheetPaperFixtures.length, 24);
   assert.equal(new Set(denseSheetPaperFixtures.map(item => item.id)).size, 24);
-  for (const label of ['已接收', '等待接收', '扫描异常', '未匹配学生', '已排除']) assert.ok(sheetPaperFixtures.some(item => item.status.label === label));
+  for (const label of ['已接收', '等待接收', '扫描异常', '未知学生', '已排除']) assert.ok(sheetPaperFixtures.some(item => item.status.label === label));
+  for (const fixtures of [sheetPaperFixtures, denseSheetPaperFixtures]) {
+    assert.ok(fixtures.some(item => item.status.tone === 'warning' && item.status.label === '未知学生' && item.reason === '姓名与考号未识别' && item.resolveLabel === '指定学生'));
+  }
   const out = html(AttachmentDemo, {});
   assert.match(out, /comfortable/); assert.match(out, /dense · 24 份/);
   assert.doesNotMatch(out, /示例|演示/);
   assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24) * 4);
+  assert.equal((out.match(/data-paper-pending="true"/g) || []).length, 12);
 });

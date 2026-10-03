@@ -35,7 +35,7 @@ export const sheetPaperFixtures: readonly PaperCardProps[] = [
   { id: "sheet-waiting", studentName: "王子睿", placeholder: true, status: { label: "等待接收" } },
   { id: "sheet-waiting-resolve", studentName: "陈思远", placeholder: true, resolveLabel: "处置未交", status: { label: "等待接收" } },
   { id: "sheet-error", studentName: "欧阳慕容雨桐长中文姓名待核对", thumbnailUrl: exampleThumbnail, status: { label: "扫描异常", tone: "error" }, reason: "第二页边缘裁切且第三页与第四页的作答区域存在重叠，请核对原件后重新扫描相关页，保留学生跨页作答的完整内容。", resolveLabel: "处理异常" },
-  { id: "sheet-unmatched", studentName: "未匹配学生", thumbnailUrl: exampleThumbnail, status: { label: "未匹配学生", tone: "error" }, reason: "考号无法识别", resolveLabel: "指定学生" },
+  { id: "sheet-unmatched", studentName: "未知学生", thumbnailUrl: exampleThumbnail, status: { label: "未知学生", tone: "warning" }, reason: "姓名与考号未识别", resolveLabel: "指定学生" },
   { id: "sheet-excluded", studentName: "刘若曦", pageCount: 2, thumbnailUrl: exampleThumbnail, status: { label: "已排除", tone: "neutral" } },
   { id: "sheet-selected", studentName: "周梓涵", pageCount: 3, thumbnailUrl: exampleThumbnail, selected: true, status: { label: "已接收", tone: "success" } },
   { id: "sheet-landscape", studentName: "赵一诺", paperSize: "A3", orientation: "landscape", pageCount: 1, thumbnailUrl: exampleThumbnail, status: { label: "已接收" } },

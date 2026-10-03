@@ -52,7 +52,7 @@ Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/
 
 - `PaperCard.variant?: "card" | "sheet"`，默认 `card`。原默认与 compact 的 DOM、样式和回调不变；`sheet` 优先于 compact。sheet 无普通外层卡片底色与可见边框，纸面居中，下方一行姓名 `text-item-title`、一行必要信息 `text-ui-hint`；缺姓名沿用“姓名未提供”，长姓名 title 保留全文。
 - 非 placeholder：整张纸面是 `type="button"` 的原生按钮，点击、Enter、Space 发出 `onView(id)`，可访问名称为“查看/放大：{姓名}的试卷”。缺 onView 或空 id 禁用，不另渲染“查看”按钮。有效 `pageCount > 1` 时显示一层错位纸边；比例保留，缺图/失败沿用 PaperThumbnail；不强改深色主题内的扫描图颜色。
-- `status.tone="success"` 仅在纸面右上显示成功色圆形勾标；未提供 tone 不推定 success。显式 neutral/info/warning 在左上以既有 Badge 显示 `status.label`，无勾标。必要信息只含已知考号、正整数页数，用 ` · ` 分隔，均未知则不显示。
+- `status.tone="success"` 仅在纸面右上显示成功色圆形勾标；未提供 tone 不推定 success。显式 neutral/info 及未提供 onResolve 的 warning 在左上以既有 Badge 显示 `status.label`，无勾标。必要信息只含已知考号、正整数页数，用 ` · ` 分隔，均未知则不显示。
 - `placeholder=true` 优先于 tone：静态虚线空纸位，姓名次要色，信息行显示宿主 `status.label`。有 onResolve 时纸位为原生按钮，发出 `onResolve(id)`，名称“{resolveLabel}：{姓名}”；无 onResolve 为不可聚焦、不可点击的纸位。不显示图像、勾标、叠纸或其他按钮，不调用 onView。
 - 非 placeholder 且 `tone="error"`：纸面错误色描边、左上实底状态 Badge，整体错误色细边与卡片底色；信息行仅显示 reason，单行省略、title 与辅助技术保留全文，使用 `text-destructive-foreground`。有 onResolve 时另提供标准 `outline / sm` 处置按钮，缺 id 禁用，不覆盖 coss 高度。
 - `selected` 由宿主控制：纸面 ring 与 `aria-current="true"` 表达当前项；状态全文由辅助文本提供，纸面按钮通过 aria-describedby 关联状态及错误原因。两档纸面标签均容纳 5 个汉字（14px 字号不变）：水平内边距 2px、左侧外伸 6px、最大宽度为纸宽减 8px，右侧保留 14px 勾标位置；更长标签单行省略并以 title 保留全文。处置按钮保留完整可访问名称。点击不会自行选中、推进接收或处置状态。sheet 无动画，Badge / 处置按钮过渡沿用 150ms 并关闭 reduced-motion 过渡。
@@ -62,4 +62,17 @@ Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/
 
 画布适配：沿用 108/84px 纸宽与 4px 叠纸；按 P10 Fix1 扩大 comfortable 列宽至 160px，dense 收紧水平留白与标签内边距，以保留必要信息。圆角、阴影、颜色改用现有语义令牌，标签不照搬 11px、信息不照搬 13px，处置按钮用 coss sm，不复刻固定 28px。dense 的“考号”前缀仅供读屏；不引入画布 compact 中间档 96px 纸宽/124px 列宽。无 onResolve 的等待纸位不可交互。深色缺图纸位保持组件主题底色，不强制画布的浅色纸面。
 
-夹具入口 `/next/components/attachment`：comfortable 全状态与 dense 24 份，三主题各含 320px 窄容器和限高滚动，覆盖单/多页、可/不可处置等待、扫描异常、未匹配学生、已排除、选中、A3 横向、缺图、长姓名/原因与样张公式。真实键盘、焦点、主题视觉与滚动验收由 Supervisor 执行。
+夹具入口 `/next/components/attachment`：comfortable 全状态与 dense 24 份，三主题各含 320px 窄容器和限高滚动，覆盖单/多页、可/不可处置等待、扫描异常、未知学生待处理、已排除、选中、A3 横向、缺图、长姓名/原因与样张公式。真实键盘、焦点、主题视觉与滚动验收由 Supervisor 执行。
+
+## 2026-10-03 P10 Fix2：三种需处置形态
+
+沿用 P10 的 coss particles `p-card-1…11` / Beautiful UI 检索依据及既有 PaperThumbnail、Badge、Button 组合，仅扩展 sheet 呈现，不新增属性或组件；card / compact 不变。
+
+| 形态 | 显式条件 | 纸面与信息 | 处置入口 |
+| --- | --- | --- | --- |
+| 等待接收 | `placeholder=true`，优先于 tone | 中性虚线空纸位；信息行显示 status.label | 提供 onResolve 时点纸位处置，否则不可交互 |
+| 待处理 | 非 placeholder，`tone="warning"` 且提供 onResolve | 警示色虚线纸边与外框、卡片底色；左上实底 status.label、右上圆形 `?`；信息行优先 reason，无 reason 回退已知考号/页数 | 纸面查看；下方 `outline / sm` 按钮显示 resolveLabel，发出 onResolve(id) |
+| 异常 | 非 placeholder，`tone="error"` | 错误色实线纸边与外框、实底状态标签；信息行仅显示 reason | 纸面查看；提供 onResolve 才显示独立处置按钮 |
+
+待处理代表试卷已收到但需教师处理，如 `status.label="未知学生"`、`reason="姓名与考号未识别"`、`resolveLabel="指定学生"`；组件不通过文案推断状态。warning 无 onResolve 仍仅呈现普通语气标签，无 `?` 或处置按钮。
+待处理原因单行省略、title 保留全文；纸面与处置按钮的 aria-describedby 同时关联状态与完整 reason（存在时），`?` 为 aria-hidden。使用既有 `warning-foreground` / `background` / `card` 令牌适配 light、paper、dark，无局部色值；标准 sm 按钮不覆盖高度。comfortable 与 dense 均含未知学生夹具。
