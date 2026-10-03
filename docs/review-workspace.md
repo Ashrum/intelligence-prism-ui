@@ -12,19 +12,23 @@
 
 采用相连导航、分组原生搜索、标准 Tabs/Badge、内容分区、量值与工具分组；不复制演示数据、计时器或局部视觉值。coss 没有完整三栏预览/成绩地图/单题反馈协议，因此从已冻结的宿主组合提取，不重新设计。连续纸张增强已有 PaperPreview，未另建目录。未联网刷新缓存，不声称本轮重新抓取上游。
 
+## G3 两栏复用核对（2026-10-03）
+
+本次复核固定 coss `ToggleGroup`、`Frame` 与既有 ReviewWorkspace：ToggleGroup 继续承担分区切换；Frame 是表面组合，不提供可选题目栏协议，因此扩展既有框架。检索 [particles](https://coss.com/ui/particles) 及 `p-frame-1` / `p-toolbar-1` 注册地址；列表可访问，注册 JSON 抓取失败，原 Supervisor 缓存已不存在，未声称重新读取条目源码。沿用上文已记录的 particles 组合依据；通用预览不涉及 Agent 执行，Beautiful UI 不适用。不新增组件、依赖或视觉令牌。
+
 ## 公开 API
 
 | 属性 / 导出 | 契约 |
 | --- | --- |
-| `label`、`topbar?`、`rail`、`canvas`、`inspector`、`children?` | 具名框架与原样插槽。topbar 为框架自己的完整顶栏节点，应始终提供；属性仅为兼容保留可选，不由宿主顶栏接管。children 可放意图回执。 |
-| `open/onOpenChange`、`immersive` | 受控题目栏和沉浸。窄分区请求展开时发 open=true；组件不持久化、不推定用户偏好。 |
-| `pane/onPaneChange`、`panes?` | 默认 rail/canvas/inspector 三分区，标签可由宿主给；窄容器沿用冻结布局。 |
-| `shortcuts?`、`shortcutsDisabled?`、`onShortcut?` | 条目 `{key,intent,repeat?,disabled?}`，key 为小写。只发 intent；跳过输入、组合输入法、菜单、Dialog、外部 listbox、Tabs 原生导航与题目栏 ↑↓/Enter。 |
+| `label`、`topbar?`、`rail?`、`canvas`、`inspector`、`children?` | 具名框架与原样插槽。省略 rail（undefined/null/false）时仅画布与右栏，不渲染左栏列；画布获得原左栏宽度。topbar 为框架自己的完整顶栏节点，应始终提供；属性仅为兼容保留可选，不由宿主顶栏接管。children 可放意图回执。 |
+| `open?/onOpenChange?`、`immersive` | 有 rail 时继续提供受控 open/onOpenChange；无 rail 时可省略且不发展开意图。受控沉浸。窄分区请求展开时发 open=true；组件不持久化、不推定用户偏好。 |
+| `pane/onPaneChange`、`panes?` | 有 rail 时默认 rail/canvas/inspector 三分区；无 rail 时默认仅 canvas/inspector，并过滤自定义 panes 的 rail 项。无 rail 且 pane=rail 时显示 canvas，不回写宿主状态。标签可由宿主给；窄容器沿用冻结布局。 |
+| `shortcuts?`、`shortcutsDisabled?`、`onShortcut?` | 条目 `{key,intent,repeat?,disabled?}`，key 为小写。只发 intent；无 rail 时忽略 T（含 Shift+T），不吞键、不发意图，其他快捷键保持原契约；跳过输入、组合输入法、菜单、Dialog、外部 listbox、Tabs 原生导航与题目栏 ↑↓/Enter。 |
 | `ready?=true`、`animate?=false`、`frameRef?`、`mobileNavRef?`、`device?`、`style?` | 布局测量、首次准备与评审设备框适配；不内置评审工具。`onBlurOutside` 发离开框架意图，宿主释放临时原稿状态。 |
 | `ReviewWorkspaceShortcuts` | 同目录辅助导出，受控 `open/onOpenChange`、`entries: [按键,说明][]`、可选 description；coss Dialog。 |
 | `PAPER_REVIEW_BEST_WIDTH`、`railBand(width)`、`railCollapsedForWidth(width, preferences)` | 1440 逻辑宽度分档；`{best?:boolean,compact?:boolean}` 表示折叠偏好。只算结果，不读写存储。可从 `.ts` 布局工具单独导入。 |
 
-框架宽度过渡与 reduced-motion 使用原 CSS。宿主负责量取容器宽度、两档存储、焦点回到展开/收起按钮、沉浸后焦点、临时原稿的 keyup/blur/visibility 释放。`d1-*` 是冻结稿保留的布局类名，不是新视觉令牌。
+框架宽度过渡与 reduced-motion 使用原 CSS。框架不自行生成题目栏收起/展开按钮；宿主在无 rail 时也须省略插槽内的题目栏按钮及快捷键帮助条目，框架不裁剪其他插槽节点。宿主负责量取容器宽度、两档存储、焦点回到展开/收起按钮、沉浸后焦点、临时原稿的 keyup/blur/visibility 释放。`d1-*` 是冻结稿保留的布局类名，不是新视觉令牌。
 
 ## 验证与边界
 
