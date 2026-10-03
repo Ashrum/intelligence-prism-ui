@@ -2712,9 +2712,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Paper Preview 试卷预览 v0.1
 
-**2026-10-03，PO 批准**：“预览一份试卷”的场景应使用全屏预览框架（`ReviewWorkspace` + `PaperPreview` 连续模式），遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)。旧的单页模式与 `PaperPreviewDialog` 标记为**待退役**，保留至 Workspace 全部迁移完成后移除；新接入不得再使用弹窗或内嵌预览。本次不删除代码，不改变现有类型、默认值与行为。
-
-`PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
+**2026-10-03，PO 批准，R1 已实现退役**：单页布局与 `PaperPreviewDialog` 已移除。预览一份试卷必须使用独立全屏 `ReviewWorkspace` + `PaperPreview` 连续模式；layout 默认 continuous，也支持 mixed。标题、版本、操作、关闭和页面导航由框架宿主提供，组件仅呈现连续／混排画布与区域定位。迁移和删除 API 清单见 [试卷预览契约](paper-preview.md)。目录项不变，独立 Review 待 Supervisor。
 
 ## Stepper 流程步骤条 v0.1
 
@@ -2745,7 +2743,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Score Review 人工评分（独立组件候选）
 
-2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 PaperPreview 与 DraftMathPreview。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 

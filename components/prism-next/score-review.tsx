@@ -12,7 +12,6 @@ import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldIncrement, 
 import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from "@/components/coss/collapsible"
 import { AgentMetaLine, AgentStatus } from "./agent-visual-parts"
 import { DraftMathPreview } from "./draft-math-preview"
-import { PaperPreview, type PaperPreviewProps } from "./paper-preview"
 
 export type ScoreReviewDraft = { score: number; reason: string }
 export type ScoreReviewState =
@@ -27,7 +26,6 @@ export type ScoreReviewProps = {
   questionId?: string; focusOnQuestionChange?: boolean
   confidencePercent?: number | null; confidenceLabel?: string; progress?: { current: number; total: number }
   eyebrow?: string; answer?: string; locationNotice?: string
-  paper?: PaperPreviewProps
   maxScore: number; step?: number
   quickScores?: readonly number[]; shortcuts?: boolean
   score?: number | null; defaultScore?: number | null; onScoreChange?: (score: number | null) => void
@@ -72,7 +70,7 @@ export function ScoreReview(props: ScoreReviewProps) {
   }, [props.questionId, props.focusOnQuestionChange])
   const [localScore, setLocalScore] = useState<number | null>(props.defaultScore ?? null)
   const [localReason, setLocalReason] = useState(props.defaultReason ?? "")
-  const { maxScore, step = 1, state = { kind: "ready" }, aiSuggestion: ai, paper } = props
+  const { maxScore, step = 1, state = { kind: "ready" }, aiSuggestion: ai } = props
   const scaleValid = validScale(maxScore, step)
   const score = normalizeReviewScore(props.score === undefined ? localScore : props.score, maxScore, step)
   const reason = props.reason ?? localReason
@@ -163,7 +161,7 @@ export function ScoreReview(props: ScoreReviewProps) {
       {props.history.length ? <ol className="space-y-3 pt-3">{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
     </CollapsiblePanel></Collapsible>}
   </Card>
-  return <div className="@container min-w-0" data-score-review onKeyDown={props.shortcuts ? handleShortcut : undefined}><div className={paper ? "grid min-w-0 items-start gap-5 @min-[960px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]" : "min-w-0"}>
-    {paper && <div className="min-w-0" data-score-review-paper><PaperPreview {...paper} variant="canvas" /></div>}{panel}
+  return <div className="@container min-w-0" data-score-review onKeyDown={props.shortcuts ? handleShortcut : undefined}><div className="min-w-0">
+    {panel}
   </div></div>
 }
