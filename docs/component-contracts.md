@@ -2165,6 +2165,7 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 | `title / items` | 必填 `string / readonly AgentExceptionItem[]` | 同一业务对象的异常集合；稳定唯一项 ID 由宿主提供，空数组仅表示暂无异常记录 |
 | `view` | `'inline' / 'workspace'`，默认 `inline` | 两态共用相同事实，workspace 只提供内容区，不创建浮层或路由 |
 | `density` | `'default' / 'compact'`，默认 `default` | compact 为可换行短列表；不缩字、不隐藏未知、失败、影响及禁用原因；可与任一 view 组合 |
+| `statusLabels` | 可选 `Partial<Record<AgentExceptionState, string>>` | 覆盖当前徽标与历史“当时状态”的展示词；未提供或空串使用组件默认词；不改变状态、语气、图标或动作 |
 | `inlineLimit` | `number`，默认 `2` | 有展开能力时显示前 N 项及所有 critical、failed、waiting 项，保留输入顺序；有限值向下取整且至少 1，非有限值回退 2 |
 | `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | inline 的“查看全部 N 项异常”；缺省不显示入口且保留全部项。存在 unknown 时同执行结果隐藏该入口并保留全部项；workspace 不显示入口 |
 | `onAction` | 可选 `(intent: AgentExceptionIntent) => void` | 仅发处置或查询意图，不变更输入、状态或历史；缺省时已提供的动作仍显示为禁用，并说明当前无法执行 |
@@ -2204,7 +2205,11 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 
 `AgentExceptionEvidence={ id, label, location, version?, preview?, unavailableReason? }`：前三项为 string；`preview` 是宿主提供的**只读** ReactNode 插槽。不提供版本时显示“来源版本未确认”，不提供预览时显示“暂未提供材料预览”；有 unavailableReason 时优先显示原因，不渲染不可用预览。组件不加载材料、不授予访问权，也不把预览提升为已读取／已引用记录。preview/details 不得塞入处置、重试或恢复按钮绕过受控动作，尤其 unknown。
 
-`AgentExceptionRecord={ id, state, description, scope, basis, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
+`AgentExceptionRecord={ id, state, description, scope, basis, statusLabel?, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
+
+P11 展示词扩展：历史 `statusLabel?: string` 优先于整组 `statusLabels[record.state]`，未提供条目覆盖才查整组映射；任一选中的覆盖为空串时直接回退内置默认词（条目空串不继续使用整组词）。宿主必须保证展示词与当前／当时事实一致；历史需要固定事件词时应逐条提供 `statusLabel`，组件不由当前处置补造历史。覆盖只改变徽标的可见文本及同一可访问文本，不改变七值状态语义、tone、图标、description 中的处置上下文或动作权限。比如 ignored 可在明确接受模板异常且保留扫描件的事实下显示“已接受异常”；waiting-human 显示“已撤销接受”须已有撤销事实且仍待人工处理；skipped 显示“已剔除”须已明确排除本次处理范围，均不表示内容正确或任务完成。
+
+改造前复用检索（离线）：Beautiful UI 本地参考记录 Approval Card / Context Cards / Task Rows / Diff Table；coss Card / Alert / Button；particles 本地示例与 p-input-group-28 / 29 / 23 参考记录，均无异常当前与历史展示词 API。沿用现有 ExceptionHandler，覆盖路径复用 AgentStatus 的原 tone，默认路径保留 AgentStepStatus；未联网核验 registry，未复制第三方代码。示例新增“扫描件处置”，三个固定状态各带一条历史，接受记录演示逐条覆盖优先。
 
 05 `AgentCaptureScan` 可承接本组件点名的补采／替换页入口；采集页质量与异常处置回执分别由页面提供。发出补采请求或查看大图不代表异常已解决，不自动恢复任务。
 

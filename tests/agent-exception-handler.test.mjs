@@ -1,6 +1,7 @@
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -54,6 +55,83 @@ function deepFreeze(value) {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) { Object.freeze(value); Object.values(value).forEach(deepFreeze); }
   return value;
 }
+
+// Pinned before P11 at main 463bf65; hash the unmodified SSR bytes, including React IDs.
+function defaultSnapshots() {
+  const snapshots = {};
+  const history = Object.keys(states).map(state => ({ id: `old-${state}`, state, description: '当时说明', scope: '当时范围', basis: '当时依据' }));
+  for (const mode of modes) {
+    const key = `${mode.view}-${mode.density ?? 'default'}`;
+    for (const state of Object.keys(states)) snapshots[`${key}-${state}`] = htmlFor({ ...mode, items: [itemWith(state, { history })] });
+    for (const purpose of ['scan', 'questions']) snapshots[`${key}-${purpose}`] = htmlFor({ ...mode, title: exceptionExamples[purpose].title, items: exceptionExamples[purpose].items });
+  }
+  return snapshots;
+}
+
+test('default SSR remains byte-identical to 36 pre-P11 main 463bf65 snapshots', async () => {
+  const expected = JSON.parse(await readFile(new URL('./fixtures/agent-exception-handler-default-463bf65.json', import.meta.url), 'utf8'));
+  const actual = Object.fromEntries(Object.entries(defaultSnapshots()).map(([key, html]) => [key, createHash('sha256').update(html).digest('hex')]));
+  assert.equal(Object.keys(actual).length, 36);
+  assert.deepEqual(actual, expected.hashes);
+});
+
+const defaultLabels = { 'waiting-human': '待人工处理', waiting: '等待处理', unknown: '状态未确认', resolved: '已处置', failed: '失败', ignored: '已忽略', skipped: '已跳过' };
+const oldRecord = state => ({ id: `then-${state}`, state, description: '当时说明', scope: '当时范围', basis: '当时依据' });
+
+test('all seven label overrides change only current and then badge text, keeping tone, glyphs and aria', () => {
+  for (const mode of modes) for (const state of Object.keys(states)) {
+    const extra = { ...mode, items: [itemWith(state, { history: [oldRecord(state)] })] };
+    const label = `外部展示词-${state}`;
+    const plain = htmlFor(extra);
+    const html = htmlFor({ ...extra, statusLabels: { [state]: label } });
+    assert.equal(html.split(label).length - 1, mode.view === 'workspace' ? 2 : 1);
+    assert.equal(html.replaceAll(label, defaultLabels[state]), plain, state);
+    // The visible label is the accessible text; no aria-label override or hidden old label.
+    const badges = [...html.matchAll(/<span[^>]*data-agent-status="[^"]+"[^>]*>.*?<\/svg><span[^>]*>(.*?)<\/span><\/span>/g)];
+    assert.equal(badges.length, mode.view === 'workspace' ? 2 : 1);
+    for (const badge of badges) {
+      assert.equal(badge[1], label);
+      assert.doesNotMatch(badge[0], /aria-label=|sr-only|aria-labelledby=/);
+      assert.match(badge[0], /<svg[^>]*aria-hidden="true"/);
+    }
+  }
+});
+
+test('then-label overrides group vocabulary without backfilling from current facts', () => {
+  const history = deepFreeze([{ ...oldRecord('ignored'), statusLabel: '当时接受异常' }, oldRecord('skipped')]);
+  const statusLabels = deepFreeze({ ignored: '当前接受异常', skipped: '已剔除' });
+  for (const density of ['default', 'compact']) {
+    const html = htmlFor({ view: 'workspace', density, statusLabels, items: [itemWith('ignored', { history })] });
+    for (const label of ['当前接受异常', '当时接受异常', '已剔除']) assert.equal(html.split(label).length - 1, 1);
+    assert.doesNotMatch(html, /已忽略|已跳过/);
+  }
+  assert.equal(history[0].statusLabel, '当时接受异常');
+});
+
+test('omitted keys and empty overrides restore defaults, including record-empty over nonempty group', () => {
+  for (const mode of modes) for (const state of Object.keys(states)) {
+    const extra = { ...mode, items: [itemWith(state, { history: [oldRecord(state)] })] };
+    const plain = htmlFor(extra);
+    assert.equal(htmlFor({ ...extra, statusLabels: {} }), plain);
+    assert.equal(htmlFor({ ...extra, statusLabels: { [state]: '' } }), plain);
+    assert.equal(htmlFor({ ...extra, items: [itemWith(state, { history: [{ ...oldRecord(state), statusLabel: '' }] })] }), plain);
+    if (mode.view === 'workspace') {
+      const html = htmlFor({ ...extra, statusLabels: { [state]: '当前覆盖' }, items: [itemWith(state, { history: [{ ...oldRecord(state), statusLabel: '' }] })] });
+      assert.equal(html.split('当前覆盖').length - 1, 1);
+      assert.equal(html.replace('当前覆盖', defaultLabels[state]), plain);
+    }
+  }
+});
+
+test('scan disposition fixture exposes all three truthful labels and one then-record per item', () => {
+  const example = exceptionExamples['scan-disposition'];
+  const html = htmlFor({ title: example.title, items: example.items, statusLabels: example.statusLabels, view: 'workspace' });
+  for (const label of ['已接受异常', '已撤销接受', '已剔除', '已接受异常（保留扫描件）']) assert.ok(html.includes(label));
+  assert.deepEqual(example.items.map(item => item.history.length), [1, 1, 1]);
+  assert.deepEqual(example.items.map(item => item.disposition.state), ['ignored', 'waiting-human', 'skipped']);
+  assert.doesNotMatch(html, /<button\b/);
+  assert.match(render(h(AgentExceptionHandlerDemo)), /扫描件处置/);
+});
 
 test('all seven dispositions render external facts in both views and densities without inferring completion', () => {
   const labels = { 'waiting-human': '待人工处理', waiting: '处置提交中。', unknown: '处置回执未确认。', resolved: '已处置', failed: '处置失败。', ignored: '已忽略', skipped: '已跳过' };
@@ -221,7 +299,7 @@ test('one optional notice and collapsed details never hide status, limits or dis
   }
 });
 
-test('two labelled example purposes cover all four kinds and three presentations with long Chinese and math', () => {
+test('labelled example purposes cover all four kinds and three presentations with long Chinese and math', () => {
   const kinds = new Set();
   for (const example of Object.values(exceptionExamples)) {
     assert.match(example.title, /示例/);
@@ -239,7 +317,7 @@ test('two labelled example purposes cover all four kinds and three presentations
 
 test('public types prohibit submit actions on unknown/waiting and require the original query request', async () => {
   const typeFile = new URL('type-contract.tsx', runtime), path = fileURLToPath(typeFile);
-  await writeFile(typeFile, `import type { AgentExceptionDisposition as D, AgentExceptionIntent as I } from '../../components/prism-next/agent-exception-handler';
+  await writeFile(typeFile, `import type { AgentExceptionDisposition as D, AgentExceptionIntent as I, AgentExceptionHandlerProps as P, AgentExceptionRecord as R } from '../../components/prism-next/agent-exception-handler';
 const action = { id: 'x', label: '处理', impact: '第 3 页' };
 const request = { id: 'old', label: '原请求' };
 const valid: D = { state: 'unknown', description: '未确认', request, query: action };
@@ -253,7 +331,13 @@ const missing: D = { state: 'unknown', description: '未确认', query: action }
 const resolved: D = { state: 'resolved', description: '已处理' };
 // @ts-expect-error query event must identify the original request
 const intent: I = { kind: 'query', exceptionId: 'x', actionId: 'query' };
-void [valid, unknown, waiting, missing, resolved, intent];
+const labels: P['statusLabels'] = { ignored: '已接受异常', 'waiting-human': '已撤销接受', skipped: '已剔除' };
+const record: R = { id: 'old', state: 'ignored', statusLabel: '当时已接受异常', description: '当时说明', scope: '当时范围', basis: '当时依据' };
+// @ts-expect-error presentation labels do not add new states
+const invalidLabels: P['statusLabels'] = { accepted: '已接受' };
+// @ts-expect-error labels are text only
+const invalidRecord: R = { ...record, statusLabel: 1 };
+void [valid, unknown, waiting, missing, resolved, intent, labels, record, invalidLabels, invalidRecord];
 `);
   try {
     const config = ts.readConfigFile(`${root}tsconfig.json`, ts.sys.readFile);
