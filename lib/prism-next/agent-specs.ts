@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'dialog-layout': {
+    component: 'DialogLayout v0.1 — component candidate',
+    source: 'PO 2026-10-04 approved canvas; pinned coss Dialog / RadioGroup / Button; docs/dialog-layout.md',
+    contract: ['Controlled open/onOpenChange; required non-empty title/closeLabel; optional eyebrow/description/media/accent/initialFocus; sizes sm/md/lg/xl = 520/640/720/820px at default root size.', 'footer overrides footerStart/footerEnd; split distributes operations, equal creates two equal tracks. Only the body scrolls. Media is hidden below 640px or viewport height 512px; critical facts and view actions must also appear in the body when needed.', 'Evidence/Section/OptionTile/QuietActions/QuietAction/OptionGrid/OptionGridItem/ChoiceList/Choice/Record/Notice present host facts and emit intentions. A grouped grid has one controlled RadioGroup; children or groups, no built-in search. Other input is a host slot.'],
+    states: ['open / closed', 'selected / empty / disabled with reason', 'optional media / equal footer / long body'],
+    accessibility: ['Title is the dialog name; coss owns initial focus, Esc, focus trapping and return focus. Radio arrows follow coss DOM order across groups; Space selects. Status dots include text. Reduced motion follows global coss adaptation.'],
+    dont: ['No timers, fetch, persistence, store, business types, inferred execution state or new visual tokens. Do not replace AlertDialog for destructive confirmation.'],
+  },
   'review-tools': {
     component: 'ReviewTools v0.1 — component candidate',
     source: 'PO 2026-10-03; pinned coss Popover / Button / ToggleGroup / Switch / Select / AlertDialog; docs/review-tools.md',
