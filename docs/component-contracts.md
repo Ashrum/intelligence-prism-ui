@@ -2752,7 +2752,15 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Score Review 人工评分（独立组件候选）
 
-2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
+
+### 错因核对 v0.1
+
+P16（PO 2026-10-05 批准新增）目录「内容与数据」`error-cause-review`，kind `pattern`。`ErrorCauseReview` 组合 coss Frame/RadioGroup/Input 与 Prism Button/Badge，受控 categories/value/editing/draft/state；其他说明必填、保存失败保稿、取消/修改/保存意图和宿主历史失效文字。业务分类、领域命令和审计由宿主负责。完整 API、离线复用记录、Workspace 替换映射和浏览器清单见 [Error Cause Review 契约](error-cause-review.md)。
+
+### 学生整卷报告 v0.1
+
+P16（PO 2026-10-05 批准新增）目录「内容与数据」`student-paper-report`，kind `pattern`。`StudentPaperReport` 组合 coss Frame 与 ReviewMeter/ReviewConfirmation、Prism Badge/Button；宿主提供分值、四档计数、统计范围、归因分布及量表分母、AI 分析/来源、待办和底部插槽。未知不当 0，不计算业务统计；定位第一道待办只发意图。完整 API、离线复用记录、Workspace 替换映射和浏览器清单见 [Student Paper Report 契约](student-paper-report.md)。两项均提供三主题 320px 长中文/公式及主要状态夹具，待 Supervisor 独立 Review。
 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 
