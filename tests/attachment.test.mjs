@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
@@ -340,10 +341,62 @@ test('sheet status badges depend on explicit tone, never label matching', () => 
   for (const tone of ['neutral', 'info', 'warning']) {
     const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '已排除', tone }, onResolve: tone === 'warning' ? undefined : () => {} });
     assert.match(out, /data-slot="badge"/); assert.match(out, /已排除/);
-    assert.doesNotMatch(out, /data-paper-success|data-paper-action="resolve"/);
+    assert.doesNotMatch(out, /data-paper-success/);
+    assert.equal(out.includes('data-paper-action="resolve"'), tone !== 'warning');
   }
   const out = html(PaperCard, { ...sheetPaperFixtures[0], variant: 'sheet', status: { label: '扫描异常' } });
   assert.doesNotMatch(out, /data-slot="badge"|border-destructive|data-paper-success/);
+});
+
+test('every sheet tone uses the host resolver independently of the view intent and preserves external facts', () => {
+  for (const tone of ['neutral', 'info', 'success', 'warning', 'error', undefined]) {
+    const events = [], props = { id: 'resolved-sheet', variant: 'sheet', studentName: '欧阳慕容雨桐长中文姓名待核对', examNumber: '20260118', pageCount: 2,
+      status: { label: '宿主状态', tone }, resolveLabel: '查看处置', onView: id => events.push(['view', id]), onResolve: id => events.push(['resolve', id]) };
+    const out = capture(PaperCard, props);
+    const actions = out.nodes.filter(n => n.props['data-paper-action']);
+    assert.deepEqual(actions.map(n => n.props['data-paper-action']), ['thumbnail', 'resolve']);
+    const [view, resolve] = actions;
+    assert.equal(resolve.props.size, 'sm'); assert.equal(resolve.props.variant, 'outline');
+    assert.equal(resolve.props['aria-label'], `查看处置：${props.studentName}`);
+    assert.equal(resolve.props.disabled, false);
+    assert.equal(resolve.props.children.props.children, '查看处置');
+    assert.doesNotMatch(resolve.props.className, /min-h|h-auto/);
+    assert.ok(out.html.indexOf('data-paper-action="resolve"') > out.html.indexOf('title="考号 20260118 · 2 页"') || tone === 'error');
+    view.props.onClick(); resolve.props.onClick();
+    assert.deepEqual(events, [['view', props.id], ['resolve', props.id]]);
+    assert.equal(capture(PaperCard, props).html, out.html);
+    const passive = capture(PaperCard, { ...props, onResolve: undefined });
+    assert.doesNotMatch(passive.html, /data-paper-action="resolve"/);
+    if (tone !== 'error' && tone !== 'warning') {
+      assert.equal(out.nodes.find(n => n.type === 'article').props.className, passive.nodes.find(n => n.type === 'article').props.className);
+      assert.doesNotMatch(out.html, /data-paper-pending|border-destructive-foreground|border-warning-foreground/);
+    }
+    const disabled = capture(PaperCard, { ...props, id: ' ', onResolve: () => assert.fail('empty ID resolved') }).nodes.find(n => n.props['data-paper-action'] === 'resolve');
+    assert.equal(disabled.props.disabled, true); disabled.props.onClick();
+    const unnamed = capture(PaperCard, { ...props, studentName: '', resolveLabel: undefined, onView: undefined });
+    assert.equal(unnamed.nodes.find(n => n.props['data-paper-action'] === 'resolve').props['aria-label'], '处理：姓名未提供');
+    assert.equal(unnamed.nodes.find(n => n.props['data-paper-action'] === 'thumbnail').props.disabled, true);
+    assert.equal(unnamed.nodes.find(n => n.props['data-paper-action'] === 'resolve').props.disabled, false);
+  }
+});
+
+test('P12 preserves 72 pre-change SSR outputs from f1aa4f8 byte for byte', async t => {
+  // Captured on the clean baseline before changing the sheet condition; hash the unmodified SSR bytes.
+  const baseline = JSON.parse(await readFile(new URL('./fixtures/paper-card-sheet-f1aa4f8.json', import.meta.url), 'utf8'));
+  const differences = [], counts = { sheetWithoutResolver: 0, placeholderWithResolver: 0, cardAndCompact: 0 };
+  for (const scenario of baseline.scenarios) for (const tone of baseline.tones) {
+    const props = { id: 'p12', studentName: '欧阳慕容雨桐长中文姓名待核对', resolveLabel: '查看处置', ...scenario.props,
+      status: { label: '宿主状态', tone: tone ?? undefined }, onView() {}, onResolve: scenario.resolve ? () => {} : undefined };
+    const key = `${scenario.name}/${tone ?? 'default'}`;
+    if (createHash('sha256').update(html(PaperCard, props)).digest('hex') !== baseline.sha256[key]) differences.push(key);
+    if (props.variant === 'card') counts.cardAndCompact++;
+    else if (scenario.resolve) counts.placeholderWithResolver++;
+    else counts.sheetWithoutResolver++;
+  }
+  assert.deepEqual(counts, { sheetWithoutResolver: 36, placeholderWithResolver: 12, cardAndCompact: 24 });
+  assert.equal(Object.keys(baseline.sha256).length, 72);
+  t.diagnostic(`SSR baseline ${baseline.baseline}: sheet without onResolve ${counts.sheetWithoutResolver}, placeholder with onResolve ${counts.placeholderWithResolver}, card/compact ${counts.cardAndCompact}; differences ${differences.length}`);
+  assert.deepEqual(differences, []);
 });
 
 test('sheet badges have opaque merged backgrounds and at least 4.5:1 text contrast in all themes', async t => {
@@ -506,6 +559,13 @@ test('sheet fixtures cover all requested states with 24 dense papers', () => {
   for (const label of ['已接收', '等待接收', '扫描异常', '未知学生', '已排除']) assert.ok(sheetPaperFixtures.some(item => item.status.label === label));
   for (const fixtures of [sheetPaperFixtures, denseSheetPaperFixtures]) {
     assert.ok(fixtures.some(item => item.status.tone === 'warning' && item.status.label === '未知学生' && item.reason === '姓名与考号未识别' && item.resolveLabel === '指定学生'));
+    for (const [tone, label] of [['neutral', '已接受异常'], ['success', '已重新扫描']]) {
+      const item = fixtures.find(item => item.status.tone === tone && item.status.label === label);
+      assert.ok(item); assert.equal(item.resolveLabel, '查看处置');
+      const out = html(PaperCard, { ...item, variant: 'sheet', onView() {}, onResolve() {} });
+      assert.ok(out.includes(`aria-label="查看处置：${item.studentName}"`));
+      assert.match(out, /data-paper-action="resolve"/);
+    }
     for (const tone of ['info', 'warning']) {
       const item = fixtures.find(item => item.status.tone === tone && item.thumbnailUrl && !item.resolveLabel && !item.onResolve);
       assert.ok(item, `${tone} must have an image fixture without resolution`);
