@@ -36,8 +36,8 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'student-control-bar': {
     component: 'StudentControlBar v0.1 — component candidate',
     source: 'Pinned coss and frozen question review v1.0; docs/student-control-bar.md',
-    contract: ['复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。'],
-    states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
+    contract: ['P14: StudentControlItem.score / ratio are number | null. Unknown stays unknown: omit ThinBar when either is null; null score renders caller scoreText without / max. Known zero remains numeric. No numeric sorting/filtering; items/groups retain caller order and null positions. Identity uses scoreText; navigation/search use identity and indices. Scale only renders caller tone/tooltip/summary in supplied order; never infer zero/loss/status from null.', '复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。'],
+    states: ['ready', 'ungraded/mixed/unknown-ratio', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
     accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
     dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
   },
