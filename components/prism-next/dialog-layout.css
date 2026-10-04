@@ -1,0 +1,32 @@
+/* Layout only; surfaces, typography and brand colors use existing theme utilities. */
+.dialog-layout { max-height:calc(100dvh - 2rem); }
+.dialog-layout[data-size="sm"] { max-width:32.5rem; }
+.dialog-layout[data-size="md"] { max-width:40rem; }
+.dialog-layout[data-size="lg"] { max-width:45rem; }
+.dialog-layout[data-size="xl"] { max-width:51.25rem; }
+.dialog-layout-frame { display:flex; min-height:0; flex:1; }
+.dialog-layout-media { flex:0 0 12.25rem; min-width:0; padding:1.5rem 1rem; }
+.dialog-layout-media-fallback { display:none; }
+.dialog-layout-main { display:flex; flex:1; flex-direction:column; min-width:0; min-height:0; }
+.dialog-layout-body { overflow:auto; overscroll-behavior:contain; min-height:0; flex:1; }
+.dialog-layout-footer { display:flex; flex:none; flex-wrap:wrap; align-items:center; gap:.5rem; }
+.dialog-layout-footer > div { display:flex; min-width:0; flex-wrap:wrap; align-items:center; gap:.5rem; }
+.dialog-layout-footer[data-layout="split"] { justify-content:space-between; }
+.dialog-layout-footer[data-layout="split"] > [data-dialog-footer-end] { margin-inline-start:auto; justify-content:flex-end; }
+.dialog-layout-footer[data-layout="equal"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.dialog-layout-footer[data-layout="equal"] > div > * { flex:1; width:100%; }
+.dialog-layout-footer :is(button,a) { max-width:100%; white-space:normal; height:auto; min-height:2.25rem; overflow-wrap:anywhere; }
+.dialog-option-grid-items { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; }
+[data-dialog-option-grid][data-columns="2"] .dialog-option-grid-items { grid-template-columns:repeat(2,minmax(0,1fr)); }
+[data-dialog-option-grid][data-columns="4"] .dialog-option-grid-items { grid-template-columns:repeat(4,minmax(0,1fr)); }
+@media (min-width:40rem) { .dialog-layout-footer :is(button,a) { min-height:2rem; } }
+@media (max-width:39.999rem), (max-height:32rem) {
+  .dialog-layout-media { display:none; }
+  .dialog-layout-media-fallback { display:block; }
+}
+@media (max-width:39.999rem) {
+  [data-dialog-option-grid][data-columns] .dialog-option-grid-items { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:23rem) {
+  [data-dialog-option-grid][data-columns] .dialog-option-grid-items { grid-template-columns:minmax(0,1fr); }
+}

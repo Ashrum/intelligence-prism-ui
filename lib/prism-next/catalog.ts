@@ -118,6 +118,7 @@ export const componentGroups:ComponentGroup[] = [
     item("menu","Menu 菜单","集中对象的次要操作。"),
     item("context-menu","Context Menu 上下文菜单","为当前对象提供上下文操作。"),
     item("dialog","Dialog 对话框","完成临时、聚焦的编辑任务。"),
+    {...item("dialog-layout","Dialog Layout 对话框版式","媒体栏、选项网格、理由列表与记录单的受控对话框组合。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/dialog",sourceLabel:"coss Dialog / RadioGroup / Prism 版式组合"},
     item("alert-dialog","Alert Dialog 确认对话框","在有影响的操作前说明对象与结果。"),
     item("drawer","Drawer 抽屉","从屏幕边缘展开补充任务。"),
     item("sheet","Sheet 侧面板","在保留上下文时查看与编辑详情。"),
