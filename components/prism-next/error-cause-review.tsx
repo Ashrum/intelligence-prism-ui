@@ -24,6 +24,7 @@ export type ErrorCauseReviewHistoryEntry = {
   status?: ReactNode
 }
 export type ErrorCauseReviewProps = {
+  density?: "default" | "compact"
   categories: ErrorCauseReviewCategory[]
   /** Committed fact. Draft changes never replace this value inside the component. */
   value: ErrorCauseReviewValue | null
@@ -43,11 +44,12 @@ export type ErrorCauseReviewProps = {
 
 /** Controlled facts and intentions only; the host owns draft, persistence and receipts. */
 export function ErrorCauseReview({
-  categories, value, editing = false, draft, state = { kind: "ready" }, disabledReason,
+  density = "default", categories, value, editing = false, draft, state = { kind: "ready" }, disabledReason,
   saveDisabledReason, history, title = "错因", missingText = "未提供",
   onEdit, onChange, onSave, onCancel,
 }: ErrorCauseReviewProps) {
   const id = useId()
+  const compact = density === "compact"
   const trigger = useRef<HTMLButtonElement>(null)
   const editor = useRef<HTMLDivElement>(null)
   const previousEditing = useRef(editing)
@@ -73,15 +75,15 @@ export function ErrorCauseReview({
     } else trigger.current?.focus({ preventScroll: true })
   }, [editing])
 
-  return <section aria-labelledby={`${id}-title`} aria-busy={saving || undefined} className="min-w-0 space-y-3" data-error-cause-review>
+  return <section aria-labelledby={`${id}-title`} aria-busy={saving || undefined} className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"} data-error-cause-review>
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 id={`${id}-title`} className="text-block-title">{title}</h3>
       {!editing && <Button ref={trigger} variant="ghost" disabled={saving || !!editReason}
         aria-describedby={editReason ? `${id}-blocked` : undefined}
         onClick={() => { if (!saving && !editReason) onEdit?.() }}><PencilLine />修改</Button>}
     </div>
-    {editing ? <div ref={editor} className="min-w-0 space-y-3">
-      <div className="space-y-3">
+    {editing ? <div ref={editor} className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
+      <div className={compact ? "space-y-2" : "space-y-3"}>
         <p id={`${id}-category-label`} className="text-ui-action">错因分类 · 必选</p>
         <RadioGroup aria-labelledby={`${id}-category-label`} aria-required="true"
           aria-invalid={!!categoryIssue || undefined} aria-describedby={categoryIssue ? `${id}-category-issue` : undefined}
@@ -106,16 +108,16 @@ export function ErrorCauseReview({
         <Button disabled={!canSave} aria-describedby={saveReason ? `${id}-blocked` : categoryIssue ? `${id}-category-issue` : explanationIssue ? `${id}-explanation-issue` : undefined}
           onClick={() => { if (canSave && draft) onSave?.({ ...draft }) }}>{state.kind === "failed" ? "重试保存" : "保存错因"}</Button>
       </div>
-    </div> : <Frame><FramePanel><div className="min-w-0 space-y-2">
+    </div> : <Frame><FramePanel className={compact ? "p-3" : undefined}><div className="min-w-0 space-y-2">
       {value ? <><Badge variant="outline" className="max-w-full whitespace-normal wrap-anywhere">{categoryLabel}</Badge><p className="wrap-anywhere whitespace-pre-wrap text-ui-body">{value.explanation.trim() ? value.explanation : missingText}</p></> : <p className="text-ui-body text-muted-foreground">{missingText}</p>}
     </div></FramePanel></Frame>}
     {(editing ? saveReason : editReason) && <p id={`${id}-blocked`} className="wrap-anywhere text-ui-hint text-muted-foreground">{editing ? saveReason : editReason}</p>}
     {state.kind === "saving" && <p role="status" className="text-ui-hint">{state.message ?? "正在保存错因…"}</p>}
     {state.kind === "failed" && <p role="alert" className="wrap-anywhere text-ui-hint text-destructive">保存失败：{state.reason}</p>}
     {state.kind === "saved" && <p role="status" className="wrap-anywhere text-ui-hint">{state.message}</p>}
-    {!!history?.length && <section aria-labelledby={`${id}-history-title`} className="space-y-3">
+    {!!history?.length && <section aria-labelledby={`${id}-history-title`} className={compact ? "space-y-2" : "space-y-3"}>
       <h4 id={`${id}-history-title`} className="text-item-title">修改记录</h4>
-      <ul className="space-y-3 text-ui-hint">{history.map(entry => <li key={entry.id} className="min-w-0 space-y-1 wrap-anywhere">
+      <ul className={compact ? "space-y-2 text-ui-hint" : "space-y-3 text-ui-hint"}>{history.map(entry => <li key={entry.id} className="min-w-0 space-y-1 wrap-anywhere">
         <p>{entry.category} · {entry.explanation === "" ? missingText : entry.explanation ?? missingText}</p>
         {(entry.operator || entry.time) && <p className="text-ui-meta text-muted-foreground">{entry.operator}{entry.operator && entry.time ? " · " : null}{entry.time && <time dateTime={entry.time.dateTime}>{entry.time.label}</time>}</p>}
         {entry.status && <p>{entry.status}</p>}

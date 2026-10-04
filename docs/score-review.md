@@ -99,3 +99,22 @@ SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输
 - Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
 - 核对 `p-meter-3/4`、固定 Meter/Progress 和 ScoreReview 当前源码：confidencePercent 通过 AgentMetaLine 呈现文字百分比，progress.current/total 也是题项文字，没有任何 Progress 组件或静态量值进度条。
 - **未采用 Meter**：没有错误进度条待替换；增加条形量表会是额外展示能力，超出本轮条件性替换范围。置信度文字和题项复核进度保持原样，不把复核过程改成量值语义。组件与 demo 无 DOM/外观变化，原置信度/题项测试及夹具复用。
+
+## P17 · 可选紧凑密度（2026-10-05）
+
+复用检索：本轮离线复读固定 coss Frame / Collapsible / Button / Tooltip 与现有实现；对照本仓库冻结设计页记载的 particles `p-frame-1`、`p-collapsible-1`、`p-tooltip-3/4`、`p-tabs-10`。旧 `/private/tmp/claude-503/` 注册缓存未找到，以上是已记录的匹配依据，未联网刷新上游。Beautiful UI Approval Card / Recommendation Card 沿用 ScoreReview 的既有检索结论：不匹配题目标记或评分/错因/整卷统计契约。现有组件公开属性扩展足够，不新建目录条目、不复制第三方代码。
+
+### API 与信息保留
+
+- `density?: "default" | "compact"` 默认 default；省略、undefined 或 default 均保留旧 SSR。compact 只改布局：外 Card `gap-5 p-4 → gap-3 p-3`，AI Card `gap-2 p-4 → gap-1 p-3`，评分点/理由主区 `space-y-3 → space-y-2`，历史 `space-y-3 pt-3 → space-y-2 pt-2`。
+- 身份头改为单行 flex 流，窄容器自然换行，保留 eyebrow、学生、题目、考号、置信度和进度。文字字号、字重不变，评分输入、快捷给分与操作按钮尺寸不变；原按钮内 Kbd 保留，不额外增加快捷键说明。操作说明合并为“接受建议或改分保存；人工修改保留审计记录。”，保留 gate 和回执。
+- `showIdentity?: boolean` 默认 true，false 视觉隐藏身份头，保留 sr-only 标题与面板可访问名称，适合宿主顶栏已有完整身份的情况。启用 `focusOnQuestionChange` 时隐藏身份模式聚焦可见面板，其他情况仍聚焦标题；首次挂载不抢焦点。
+- `standardAnswer?: string` 可选标准答案，使用现有 DraftMathPreview 公式链路；未提供时不新增区块，也不生成答案。default 模式直接呈现，compact 模式折叠呈现。
+- `sectionsDefaultOpen?: Partial<Record<"answer" | "standardAnswer" | "history", boolean>>` 由宿主声明各区初始展开状态；compact 的作答、标准答案与历史缺省折叠，default 的历史沿用缺省折叠，作答/标准答案直接呈现。初始化后用户通过 coss Collapsible 切换；更新初始值不会重置现有展开状态，切换复核对象时宿主可用 key 重新挂载。折叠仅控制显示，不提交或清空草稿。
+- 新区使用标准 coss Button 触发器、原生 Enter/Space、Tab 聚焦和 aria-expanded；展开时 aria-controls 对应内容 ID。compact 折叠动画遵守 reduced-motion。评分门禁、快捷键、历史和保存事实不变。
+
+### 比较与浏览器移交
+
+新增 `/next/components/score-review/compact`，原两个 demo 与扩展页保持不变；同一数据 default/compact 对照含长中文与公式、三主题和 320px 容器，另含宿主声明全部展开、showIdentity=false 示例。SSR 不能测高度：请在同一宽度与主题分别测 `[data-density-comparison] [data-score-review-panel]` 的高度（初始折叠、三个区全部展开各一次），记录 default/compact px 及差值；上述清单是已压缩/合并/折叠项，不作为高度实测值。
+
+操作：Tab 到“学生原始作答 / 标准答案 / 历史记录”，Enter/Space 展开/折叠，确认焦点留在按钮、aria-expanded 更新且内容可达；核对默认折叠与宿主全开。调整为 7 分后理由门禁仍生效；输入理由，保存或 Ctrl/⌘+Enter 仅提示请求，未出现伪回执。三主题、320/390/1440px 检查身份自然换行、按钮字号尺寸、长中文/公式与 Tooltip。浏览器验收：按分工由 Supervisor 执行；真实服务、Workspace 接入、真机、读屏器与真实焦点/键盘行为未验证。

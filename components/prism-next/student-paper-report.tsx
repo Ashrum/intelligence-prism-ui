@@ -26,6 +26,7 @@ export type StudentPaperReportCause = {
 }
 
 export type StudentPaperReportProps = {
+  density?: "default" | "compact"
   title?: ReactNode
   studentName?: ReactNode
   status?: ReactNode
@@ -75,12 +76,13 @@ function content(value: ReactNode) {
 
 /** All totals, judgments, distribution scales and completion facts belong to the host. */
 export function StudentPaperReport({
-  title = "整卷报告", studentName, status, score, maxScore, counts, complete, provided,
+  density = "default", title = "整卷报告", studentName, status, score, maxScore, counts, complete, provided,
   coverageText, causes = [], totalLost, missingCauses, unattributedLost, causesEmptyText,
   analysis, analysisSource = "AI", pendingCount, pendingText, onFirstPending,
   firstPendingDisabledReason, footer, className,
 }: StudentPaperReportProps) {
   const id = useId()
+  const compact = density === "compact"
   const hasPending = knownCount(pendingCount) && pendingCount > 0
   const pendingReason = firstPendingDisabledReason || (!onFirstPending ? "定位操作未提供。" : undefined)
   const coverage = coverageText ?? (complete === true ? null : complete === false && knownCount(provided)
@@ -91,17 +93,17 @@ export function StudentPaperReport({
 
   return <section aria-labelledby={`${id}-title`} data-student-paper-report className={cn("min-w-0", className)}>
     <Frame>
-      <FrameHeader className="gap-2">
+      <FrameHeader className={compact ? "gap-1 px-3 py-2" : "gap-2"}>
         <h2 id={`${id}-title`} className="text-block-title wrap-anywhere">{title}</h2>
         <p className="text-ui-hint wrap-anywhere">学生：{content(studentName)}</p>
       </FrameHeader>
-      <FramePanel className="space-y-7">
+      <FramePanel className={compact ? "space-y-4 p-3" : "space-y-7"}>
         <section aria-label="学生待办" className="space-y-2">
           <p className="text-ui-hint wrap-anywhere">{pending}</p>
           {hasPending && <Button variant="outline" disabled={!!pendingReason} aria-describedby={pendingReason ? `${id}-pending-reason` : undefined} onClick={() => { if (!pendingReason) onFirstPending?.() }}>定位第一道待办题</Button>}
           {hasPending && pendingReason && <p id={`${id}-pending-reason`} className="text-ui-hint text-muted-foreground wrap-anywhere">{pendingReason}</p>}
         </section>
-        <section aria-label="整卷得分" className="space-y-3">
+        <section aria-label="整卷得分" className={compact ? "space-y-2" : "space-y-3"}>
           <div className="flex flex-wrap items-baseline gap-1">
             <span className="text-score-display">{displayNumber(score)}</span>
             <span className="text-ui-body text-muted-foreground">/ {displayNumber(maxScore)} 分</span>
@@ -109,7 +111,7 @@ export function StudentPaperReport({
           <div className="flex flex-wrap items-center gap-2 text-ui-hint"><span>状态：</span><ReviewConfirmation><span className="whitespace-normal wrap-anywhere">{content(status)}</span></ReviewConfirmation></div>
         </section>
         {coverage !== null && <p data-report-coverage className="text-ui-hint text-muted-foreground wrap-anywhere">{coverage}</p>}
-        <section aria-label="每题对错" className="space-y-3">
+        <section aria-label="每题对错" className={compact ? "space-y-2" : "space-y-3"}>
           <h3 className="text-block-title">每题对错</h3>
           <dl className="grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-3">
             {judgements.map(({ key, label, variant }) => <div key={key} className="space-y-2">
@@ -119,10 +121,10 @@ export function StudentPaperReport({
           </dl>
           {counts?.unprovided !== undefined && <p className="text-ui-hint text-muted-foreground">另有 {displayCount(counts.unprovided)} 题未提供</p>}
         </section>
-        <section aria-label="失分原因" className="space-y-3">
+        <section aria-label="失分原因" className={compact ? "space-y-2" : "space-y-3"}>
           <h3 className="text-block-title">失分原因</h3>
           <p className="text-ui-hint text-muted-foreground">{knownNumber(totalLost) ? `${lostLabel} ${totalLost} 分` : "失分总量：未提供"}</p>
-          {causes.length ? <ul className="space-y-4">{causes.map(cause => <li key={cause.id} className="space-y-2">
+          {causes.length ? <ul className={compact ? "space-y-2" : "space-y-4"}>{causes.map(cause => <li key={cause.id} className="space-y-2">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-ui-body">
               <span className="min-w-0 wrap-anywhere">{content(cause.category)}</span>
               <span className="tabular-nums">{displayCount(cause.count)} 题 · 失 {displayNumber(cause.lost)} 分</span>
@@ -134,15 +136,15 @@ export function StudentPaperReport({
           {(missingCauses !== undefined || unattributedLost !== undefined) && <p className="text-ui-hint text-muted-foreground">{displayCount(missingCauses)} 题错因未提供 · 失 {displayNumber(unattributedLost)} 分</p>}
         </section>
       </FramePanel>
-      <FramePanel className="overflow-hidden">
+      <FramePanel className={compact ? "overflow-hidden p-3" : "overflow-hidden"}>
         <div aria-hidden="true" data-ai-source className="absolute inset-x-0 top-0 h-0.5" style={{ background: "var(--brand-ai-gradient)" }} />
-        <section aria-label="AI 分析" className="space-y-3">
+        <section aria-label="AI 分析" className={compact ? "space-y-2" : "space-y-3"}>
           <h3 className="flex items-center gap-2 text-block-title"><Sparkles className="size-4" aria-hidden="true" />AI 分析</h3>
           <p className="text-ui-hint text-muted-foreground wrap-anywhere">来源：{content(analysisSource)}</p>
           <div className="max-w-[40em] whitespace-pre-wrap text-read-body wrap-anywhere">{content(analysis)}</div>
         </section>
       </FramePanel>
-      {footer !== undefined && footer !== null && <FrameFooter className="text-ui-hint wrap-anywhere">{footer}</FrameFooter>}
+      {footer !== undefined && footer !== null && <FrameFooter className={compact ? "px-3 py-2 text-ui-hint wrap-anywhere" : "text-ui-hint wrap-anywhere"}>{footer}</FrameFooter>}
     </Frame>
   </section>
 }
