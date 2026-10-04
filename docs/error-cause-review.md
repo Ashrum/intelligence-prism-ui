@@ -41,3 +41,11 @@ URL：`/next/components/error-cause-review`。逐项覆盖 light / paper / dark�
 4. 核对历史失效文案、时间和长公式；窄容器下分类标签换行、操作可达，三主题均沿用标准控件与语义文字。无数据显示“未提供”，保存回执只显示宿主消息。
 
 未验证范围：浏览器验收：按分工由 Supervisor 执行；真实服务、真实移动设备和读屏器未验证。自动化仅覆盖 SSR 结构、受控回调、门禁和状态事实，不代表视觉签名或实际保存服务验收。
+
+## P17 · 可选紧凑密度（2026-10-05）
+
+复用检索：本轮离线复读固定 coss Frame / Collapsible / Button / Tooltip 与现有实现；对照本仓库冻结设计页记载的 particles `p-frame-1`、`p-collapsible-1`、`p-tooltip-3/4`、`p-tabs-10`。旧 `/private/tmp/claude-503/` 注册缓存未找到，以上是已记录的匹配依据，未联网刷新上游。Beautiful UI Approval Card / Recommendation Card 沿用 ScoreReview 的既有检索结论：不匹配题目标记或评分/错因/整卷统计契约。现有组件公开属性扩展足够，不新建目录条目、不复制第三方代码。
+
+`density?: "default" | "compact"`，默认 default。compact 将外层、编辑分类区和历史间距从 `space-y-3` 调为 `space-y-2`；只读 FramePanel 从默认 p-5 调为 p-3。分类、说明、历史、状态、门禁、字号和控件尺寸均不改变，不折叠任何信息。省略或 default 的 SSR 与 main a30c077 逐字节一致。
+
+新示例 `/next/components/error-cause-review/compact` 提供同一数据 default/compact、三主题、320px、长中文/公式和可编辑草稿，原 demo 输出不变。浏览器操作“修改”→“其他”→留空/填写说明→保存/取消，检查必填门禁、焦点交接、取消保留原事实、保存只显示请求；三主题 × 320/390/1440px 比对尺寸与完整内容。浏览器验收：按分工由 Supervisor 执行。

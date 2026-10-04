@@ -27,6 +27,11 @@ export type ScoreReviewState =
   | { kind: "saved"; score: number; auditUpdated?: boolean }
 export type ScoreReviewRecord = { id: string; score: number; reason?: string; time?: string }
 export type ScoreReviewProps = {
+  /** Compact changes spacing only; long sections use the existing coss Collapsible. */
+  density?: "default" | "compact"; showIdentity?: boolean
+  standardAnswer?: string
+  /** Initial open state; remount by review identity to apply new defaults. */
+  sectionsDefaultOpen?: Partial<Record<"answer" | "standardAnswer" | "history", boolean>>
   studentName: string; questionLabel: string; examNumber?: string
   /** Stable review target identity; include student/version when relevant. No focus on initial mount. */
   questionId?: string; focusOnQuestionChange?: boolean
@@ -88,13 +93,15 @@ function pointTotal(points: readonly ScoreReviewPoint[], step: number): number |
 /** UI draft only. Saving, receipts, audit and navigation remain host facts/intents. */
 export function ScoreReview(props: ScoreReviewProps) {
   const id = useId()
+  const compact = props.density === "compact"
+  const panelRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const previousQuestionId = useRef(props.questionId)
   useEffect(() => {
     const changed = previousQuestionId.current !== props.questionId
     previousQuestionId.current = props.questionId
-    if (props.focusOnQuestionChange && changed && props.questionId !== undefined) titleRef.current?.focus()
-  }, [props.questionId, props.focusOnQuestionChange])
+    if (props.focusOnQuestionChange && changed && props.questionId !== undefined) (props.showIdentity === false ? panelRef.current : titleRef.current)?.focus()
+  }, [props.questionId, props.focusOnQuestionChange, props.showIdentity])
   const [localScore, setLocalScore] = useState<number | null>(props.defaultScore ?? null)
   const [localReason, setLocalReason] = useState(props.defaultReason ?? "")
   const { maxScore, step = 1, state = { kind: "ready" }, aiSuggestion: ai } = props
@@ -167,31 +174,37 @@ export function ScoreReview(props: ScoreReviewProps) {
     <FieldLabel htmlFor={`${id}-reason`}>修改理由{reasonRequired ? "（必填）" : "（选填）"}</FieldLabel>
     <Textarea id={`${id}-reason`} value={effectiveReason} disabled={locked} required={reasonRequired} readOnly={props.reasonOptions !== undefined ? !!selectedReason && !selectedReason.isOther : undefined} aria-describedby={`${id}-gate`} onChange={event => changeReason(event.target.value)} />
   </Field>
-  const panel = <Card render={<section aria-labelledby={`${id}-title`} />} className="min-w-0 gap-5 p-4" aria-busy={state.kind === "saving"} data-score-review-panel data-state={state.kind}>
-    <header className="min-w-0 space-y-2">
+  const panel = <Card render={<section aria-labelledby={`${id}-title`} ref={props.showIdentity === false ? panelRef : undefined} tabIndex={props.showIdentity === false && props.focusOnQuestionChange ? -1 : undefined} />} className={compact ? "min-w-0 gap-3 p-3" : "min-w-0 gap-5 p-4"} aria-busy={state.kind === "saving"} data-score-review-panel data-state={state.kind}>
+    <header className={props.showIdentity === false ? "sr-only" : compact ? "flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1" : "min-w-0 space-y-2"}>
       {props.eyebrow && <p className="text-ui-hint">{props.eyebrow}</p>}
       <h2 ref={titleRef} tabIndex={props.focusOnQuestionChange ? -1 : undefined} id={`${id}-title`} className="break-words text-block-title">{known(props.studentName)} · {known(props.questionLabel)}</h2>
       <AgentMetaLine>考号 {known(props.examNumber)} · {confidenceKnown ? `${props.confidenceLabel || "置信度"} ${confidence}%` : "置信度 未提供"}</AgentMetaLine>
       {props.progress && <AgentMetaLine>第 {props.progress.current} / {props.progress.total} 题</AgentMetaLine>}
     </header>
-    <section aria-label="学生原始作答" className="min-w-0 space-y-2">
+    {compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.answer ?? false}>
+      <CollapsibleTrigger render={<Button type="button" variant="outline" />}>学生原始作答</CollapsibleTrigger>
+      <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 space-y-2 pt-2">
+        {props.answer?.trim() ? <DraftMathPreview label="OCR 文本" value={props.answer} showHelp={false} notice={null} /> : <p className="text-read-body">OCR 文本未提供</p>}
+        {props.locationNotice && <p className="break-words text-ui-hint">{props.locationNotice}</p>}
+      </div></CollapsiblePanel>
+    </Collapsible> : <section aria-label="学生原始作答" className="min-w-0 space-y-2">
       <h3 className="text-item-title">学生原始作答</h3>
       {props.answer?.trim() ? <DraftMathPreview label="OCR 文本" value={props.answer} showHelp={false} notice={null} /> : <p className="text-read-body">OCR 文本未提供</p>}
       {props.locationNotice && <p className="break-words text-ui-hint">{props.locationNotice}</p>}
-    </section>
-    <Card className="min-w-0 gap-2 p-4" render={<section aria-label="AI 建议评分" />}>
+    </section>}
+    <Card className={compact ? "min-w-0 gap-1 p-3" : "min-w-0 gap-2 p-4"} render={<section aria-label="AI 建议评分" />}>
       <h3 className="text-item-title">AI 建议评分</h3>
       <p className="text-block-title">{ai && Number.isFinite(ai.score) ? ai.score : "未提供"} / {Number.isFinite(maxScore) && maxScore >= 0 ? maxScore : "未提供"} 分</p>
       <p className="break-words text-read-body">{known(ai?.reason)}</p>
       <div className="space-y-1 text-ui-hint"><p>依据</p>{ai?.basis?.length ? <ul className="list-disc space-y-1 pl-5">{ai.basis.map((basis, index) => <li key={index} className="break-words">{known(basis)}</li>)}</ul> : <p>未提供</p>}</div>
       {ai && !aiValid && <p className="text-ui-hint">AI 建议分值不符合当前范围或步长，暂不可接受。</p>}
     </Card>
-    <div className="min-w-0 space-y-3">
+    <div className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
       {scoreReadOnly || props.unanswered !== undefined || props.onUnansweredChange ? <>
-        {props.points !== undefined && <section aria-label="评分点" className="min-w-0 space-y-3" data-score-review-points>
+        {props.points !== undefined && <section aria-label="评分点" className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"} data-score-review-points>
           <h3 className="text-block-title">评分点</h3>
           {!props.points.length && <p className="text-ui-hint">评分点未提供</p>}
-          <ul className="min-w-0 space-y-3">{props.points.map((point, index) => <li key={point.id} className="min-w-0 space-y-2">
+          <ul className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>{props.points.map((point, index) => <li key={point.id} className="min-w-0 space-y-2">
             {props.pointsReadOnly || !props.onPointsChange ? <div className="flex min-w-0 flex-wrap items-start gap-2 text-ui-body">
               <span role="img" aria-label={pointStatus(point)}>{point.uncertain ? <CircleHelp className="size-4" aria-hidden="true" /> : pointStatus(point) === "满分" ? <Check className="size-4" aria-hidden="true" /> : <Dot className="size-4" aria-hidden="true" />}</span>
               <span className="min-w-0 flex-1 break-words">{point.label}</span><span className="tabular-nums">{point.score !== null && Number.isFinite(point.score) ? point.score : "未提供"} / {Number.isFinite(point.maxScore) && point.maxScore >= 0 ? point.maxScore : "未提供"} 分</span>
@@ -216,8 +229,8 @@ export function ScoreReview(props: ScoreReviewProps) {
         </div>}
       </> : scoreField}
       {props.quickScores && !scoreReadOnly && <div role="group" aria-label="快捷给分" className="flex flex-wrap gap-2">{filterQuickScores(props.quickScores, maxScore, step).map(value => <Button key={value} type="button" variant="outline" className="min-h-12 h-auto sm:h-auto whitespace-normal" disabled={locked} aria-pressed={score === value} onClick={() => changeScore(value)}>{value === maxScore && value !== 0 ? `满分 ${value}` : `${value} 分`}</Button>)}</div>}
-      <p id={`${id}-instructions`} className="text-ui-hint">接受 AI 建议，或调整分数后保存。人工修改将保留审计记录。</p>
-      {props.reasonOptions !== undefined ? <div className="min-w-0 space-y-3">
+      <p id={`${id}-instructions`} className="text-ui-hint">{compact ? "接受建议或改分保存；人工修改保留审计记录。" : "接受 AI 建议，或调整分数后保存。人工修改将保留审计记录。"}</p>
+      {props.reasonOptions !== undefined ? <div className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
         <p className="text-item-title">预置修改理由{props.requireReasonSelection ? "（必选）" : "（选填）"}</p>
         <RadioGroup aria-label="预置修改理由" aria-required={!!props.requireReasonSelection} aria-describedby={`${id}-gate`} value={props.selectedReasonId ?? null} disabled={locked || !props.onReasonSelect} onValueChange={selectReason}>
           {props.reasonOptions.map(option => <Label key={option.id} className="flex min-w-0 items-start gap-2"><Radio value={option.id} /><span className="min-w-0 break-words text-ui-body">{option.label}</span></Label>)}
@@ -238,8 +251,14 @@ export function ScoreReview(props: ScoreReviewProps) {
       {props.onPrev && <Button type="button" variant="outline" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onPrev)}>{props.actionLabels?.previous ?? "上一题"}{props.shortcuts && <Kbd>Alt+←</Kbd>}</Button>}
       {props.onSkip && <Button type="button" variant="ghost" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onSkip)}>{props.actionLabels?.skip ?? "跳过"}{props.shortcuts && <Kbd>Alt+→</Kbd>}</Button>}
     </div>
-    {props.history && <Collapsible><CollapsibleTrigger render={<Button type="button" variant="outline" className={actionClass} />}>历史记录（{props.history.length}）</CollapsibleTrigger><CollapsiblePanel>
-      {props.history.length ? <ol className="space-y-3 pt-3">{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
+    {props.standardAnswer !== undefined ? <>
+      {compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.standardAnswer ?? false}>
+        <CollapsibleTrigger render={<Button type="button" variant="outline" />}>标准答案</CollapsibleTrigger>
+        <CollapsiblePanel className="motion-reduce:transition-none"><div className="pt-2"><DraftMathPreview label="标准答案" value={props.standardAnswer} showHelp={false} notice={null} /></div></CollapsiblePanel>
+      </Collapsible> : <section aria-label="标准答案" className="min-w-0 space-y-2"><h3 className="text-item-title">标准答案</h3><DraftMathPreview label="标准答案" value={props.standardAnswer} showHelp={false} notice={null} /></section>}
+    </> : null}
+    {props.history && <Collapsible defaultOpen={props.sectionsDefaultOpen?.history}><CollapsibleTrigger render={<Button type="button" variant="outline" className={actionClass} />}>历史记录（{props.history.length}）</CollapsibleTrigger><CollapsiblePanel className={compact ? "motion-reduce:transition-none" : undefined}>
+      {props.history.length ? <ol className={compact ? "space-y-2 pt-2" : "space-y-3 pt-3"}>{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
     </CollapsiblePanel></Collapsible>}
   </Card>
   return <div className="@container min-w-0" data-score-review onKeyDown={props.shortcuts ? handleShortcut : undefined}><div className="min-w-0">

@@ -41,3 +41,11 @@ particles 的 `p-frame-1`、`p-meter-3/4` 和 `p-progress-1/2/3` 依据来自仓
 交给 Supervisor 的浏览器验收：打开 `/next/components/student-paper-report`，light/paper/dark × 320px 窄容器及桌面；检查完整/部分/未知/零失分示例的字号、分区、AI 来源、长中文和公式；点击定位只看到“已请求定位第一道待办题”，报告与待办数保持不变；禁用示例关联并显示原因；Tab/Enter 可达定位按钮、底部说明可读，条形在减少动态效果偏好下无过渡。
 
 未验证范围：浏览器验收：按分工由 Supervisor 执行。未验证 Workspace 实际接入、真实 AI/扫描/统计服务、移动真机与读屏器。
+
+## P17 · 可选紧凑密度（2026-10-05）
+
+复用检索：本轮离线复读固定 coss Frame / Collapsible / Button / Tooltip 与现有实现；对照本仓库冻结设计页记载的 particles `p-frame-1`、`p-collapsible-1`、`p-tooltip-3/4`、`p-tabs-10`。旧 `/private/tmp/claude-503/` 注册缓存未找到，以上是已记录的匹配依据，未联网刷新上游。Beautiful UI Approval Card / Recommendation Card 沿用 ScoreReview 的既有检索结论：不匹配题目标记或评分/错因/整卷统计契约。现有组件公开属性扩展足够，不新建目录条目、不复制第三方代码。
+
+`density?: "default" | "compact"`，默认 default。compact 将 FrameHeader 从 gap-2/px-5/py-4 改为 gap-1/px-3/py-2；主 FramePanel 从 space-y-7/p-5 改为 space-y-4/p-3；内部 section 的 space-y-3 和原因列表 space-y-4 改为 space-y-2；AI Panel p-5→p-3，Footer px-5/py-4→px-3/py-2。统计、说明、分析、状态、字体和按钮尺寸全部保留，不折叠、不截断。省略或 default 的 SSR 与 main a30c077 逐字节一致。
+
+新示例 `/next/components/student-paper-report/compact` 提供同一数据 default/compact、三主题、320px、长中文/公式；原 demo 输出不变。浏览器比对所有统计、条形、AI 来源和说明，点击“定位第一道待办题”仅显示请求，报告数字保持不变；覆盖三主题 × 320/390/1440px。浏览器验收：按分工由 Supervisor 执行。
