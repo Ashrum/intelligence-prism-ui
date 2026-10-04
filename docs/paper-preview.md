@@ -67,6 +67,68 @@ R1 保留连续与混排引擎、侧签及两份评审页的冻结渲染；旧�
 
 PaperPreviewSurface 可选 `scanOnly/topInset`，仅吸附当前可见扫描纸右缘，没有扫描纸时回到画布侧边（不隐藏工具，保持冻结行为）。题目宿主仍用同样几何协议；无扫描夹具由宿主提供等高图像。连续与混排冻结快照不变；辅助导出不新增目录条目。
 
+## P15 可选作答区域编辑（PO 2026-10-04 批准）
+
+本节为实现候选，待 Supervisor 独立 Review。`regionEditing` 默认关闭；未传时保持原有 DOM 输出、区域呈现、缩放、平移与捏合行为，不改变两份冻结评审页。组件只发出区域变更意图，宿主持有 `pages[].regions`，决定区域身份、接受变更和退出编辑；没有保存、解析、裁切图像或持久化行为。
+
+### 属性与坐标
+
+连续模式在 `PaperPreview` 顶层传 `regionEditing`；mixed 模式传 `mixed.regionEditing`。低层 `PaperPreviewContinuous` / `PaperPreviewMixed` 同样接受此属性。
+
+```ts
+type PaperPreviewRegionChange = {
+  pageId: string
+  regionId: string | null
+  label: string
+  rect: [number, number, number, number]
+}
+
+regionEditing?: {
+  pageId: string
+  regionId: string | null
+  label: string
+  minSize?: number // 默认 0.02，即页面宽、高的 2%
+  onChange: (change: PaperPreviewRegionChange) => void
+  onCreate?: (change: PaperPreviewRegionChange) => void
+}
+```
+
+| 属性 / 导出 | 契约 |
+| --- | --- |
+| `pageId` | 只启用指定页面，其他页面仍按既有方式浏览。mixed 的数字 `content` 页不挂载编辑层。 |
+| `regionId` | `null` 表示新建；仅存在 `onCreate` 时开启框选。非空 ID 必须匹配该页已有区域，才显示调整框与八个手柄；不猜测或补造缺失区域。 |
+| `label` | 宿主提供的可读区域名称，用于编辑区可访问名与回调，不把内部 ID 当作名称。 |
+| `minSize` | 归一化最小宽、高，默认 `0.02`；移动和调整均约束在页面内。 |
+| `onChange` / `onCreate` | 分别请求调整已有区域 / 新建区域；拖动结束仅发一次，回调不是保存成功。新建回调的 `regionId` 为 `null`，宿主分配正式 ID 并回传区域。 |
+| `documentRectToPaperRegion` | 将既有 `DocumentRegion.rect` 的 0–100 百分比转换为编辑 API 的 0–1 矩形。 |
+| `paperRegionToDocumentRect` | 将编辑 API 的 0–1 矩形转换为既有 `DocumentRegion.rect` 的 0–100 百分比，供宿主回写 `pages[].regions`。 |
+
+编辑回调的 `rect=[x,y,width,height]` 相对于**未旋转页面**，四项使用 0–1 归一化坐标；页面缩放、滚动位置和 0/90/180/270° 查看旋转不改变此来源坐标。既有 `regions` 仍为 0–100 百分比，不能直接把回调的 `rect` 放入其中。任务草案将两者描述为相同口径，本实现明确分开并提供转换，不修改已有区域语义；这是 API 口径澄清。
+
+### 手势、键盘与受控更新
+
+- 新建时在指定页面按下并拖动画框；调整时拖动框内部移动，拖动四角或四边手柄改变大小。单指编辑优先于页面平移；调整框外仍可拖动平移。
+- 调整态由编辑层替换目标区域原有的定位按钮、边框与自定义区域覆盖内容，避免拖动中出现两个目标框；图像及其他区域保留，退出后恢复原呈现。显式区域定位仍可找到编辑框。
+- 拖动期间只显示临时草稿；`pointerup` 提交一次意图。`Esc`、`pointercancel` 或丢失指针捕获丢弃草稿，不发回调，显示宿主原区域。组件等待宿主回传接受后的区域，不把临时草稿当作已保存事实。
+- 第二指加入时取消当前草稿，把双指交还既有捏合缩放；Ctrl/⌘+滚轮先取消草稿，再按既有锚点缩放，避免一个手势同时改区域与页面。pointer events 覆盖鼠标、触笔和触屏；真实设备表现交 Supervisor 验收。
+- 调整区是单一可聚焦 `group`，使用可访问名称及 `aria-describedby` 关联操作说明。八个手柄仅是指针命中区，`aria-hidden`，不增加八个 Tab 停止位。
+- 聚焦调整区后，方向键按**屏幕方向**移动，每次为页面比例 `0.005`（0.5%）；Shift+方向键调整屏幕右边或下边，按查看旋转映射到来源边，遵守页面边界与最小尺寸。键盘处理只在编辑区，不注册全局 keydown，也不接管框架快捷键。
+- 新建区可聚焦，Enter/Space 请求在页面中心建立默认宽、高各 20% 的矩形，并遵守最小尺寸；这是拖动画框的键盘替代路径。
+- 宿主移除 `regionEditing` 即退出框选/调整；组件不自行切换业务阶段。mixed 数字内容页不支持区域编辑，不能用数字内容的 DOM 尺寸推定原卷坐标。
+
+组件页增加「框选作答区域」示例：宿主管理新建、调整、退出与重置，显示当前 0–1 坐标；示例接受的变更只保存在当前页面内存。浏览器验收应覆盖 `/next/components/paper-preview` 的鼠标新建、八手柄与框内拖动、退出/重置、缩放及四种旋转、双指中断与缩放、键盘移动/调整/创建及 Esc 取消，并核对 light/paper/dark、320px、长中文与公式。编辑描边、手柄和填充只用既有品牌/语义令牌；不新增视觉令牌或动效。浏览器验收按分工由 Supervisor 执行，SSR 与纯函数测试不代替该验收。
+
+### P15 离线复用依据
+
+本轮遵循 Builder 不联网约定，实际核对本地固定 coss 54 项、现有 particles 适配及上述历史记录；不声称重新抓取或穷举最新上游。
+
+| 来源 | 核对内容与取舍 |
+| --- | --- |
+| coss | `vendor/coss-manifest.json` 与现有 Button / Card / Toolbar / Slider / ScrollArea；本地没有二维裁剪、框选或八手柄组件。标准操作继续复用 Prism / coss Button，不修改固定源码。 |
+| coss particles | 核对本地 `demos/selection-particles.tsx`，其 `p-select-6/18/7/21` 和 `p-combobox-9/8/18` 是选项选择，并非矩形框选；复读冻结文档的 `p-toolbar-1` / `p-frame-1` 等组合记录。历史 registry 缓存本轮不可用，现有证据未提供可复用的区域编辑器，不据此断言完整上游不存在。 |
+| Beautiful UI | 复读本页 Context Cards 历史记录及 `docs/dialog-layout.md` 中 Approval Card / Selection Actions 记录；这些是内容卡片与内联对象操作，现有证据没有裁剪或八手柄实现。本轮未联网验证完整注册表、未复制 Beautiful UI 代码。 |
+| 既有 Prism | 复用 DocumentRegionViewer 的页面百分比、旋转与区域呈现，扩展 PaperPreview 的连续/mixed 扫描画布。AgentImageCanvas 的 `agentImageRectFromPoints` 只有单图百分比两点框选，缺少旋转、八手柄和连续画布；沿用其边界校验与意图原则，不引入 Agent 能力、业务状态或图像裁切服务。 |
+
 ## 历史复用检索与取舍（退役前记录）
 
 | 来源 | 实际查阅 | 匹配情况与选择 |
