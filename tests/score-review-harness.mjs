@@ -10,7 +10,7 @@ const options = { stdin: { contents: `export * from './components/prism-next/sco
 // SSR has no effects. The built-route test uses the real Vite URL/Temml asset.
 const urlPlugin = { name: 'url-asset', setup(build) { build.onResolve({ filter: /temml\.mjs\?url$/ }, () => ({ path: 'temml-url', namespace: 'url' })); build.onLoad({ filter: /.*/, namespace: 'url' }, () => ({ contents: 'export default "temml.mjs"' })); } };
 async function bundle(name, plugins) {
-  const file = new URL(name, dir);
+  const file = new URL(`${process.pid}-${name}`, dir);
   await writeFile(file, (await build({ ...options, plugins: [urlPlugin, ...plugins] })).outputFiles[0].text);
   const api = await import(file); await rm(file); return api;
 }

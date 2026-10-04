@@ -2,6 +2,49 @@
 
 PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/score-review`。独立 Review 与产品验收另行确认。
 
+## P16 · 评分扩展（2026-10-05，PO 批准实施）
+
+扩展示例单独位于 `/next/components/score-review/extensions`，不新增目录条目；原 `ScoreReviewDemo` 文件和输出保留。新增能力全部可选，未传／显式 undefined 时与 main `429726b` 的原始 SSR 逐字节比较，不归一化 React ID。以下是本轮契约，后文保留历史实施记录与当时的验证范围。
+
+### 复用取舍与离线检索
+
+本轮完整核对固定 coss NumberField、Field、RadioGroup/Radio、Label、ToggleGroup、Input、Textarea、Frame，现有 ScoreReview/QuestionInspector/ReviewMeter 与 Workspace 只读宿主。检索本仓库 `docs/score-review.md`、`docs/paper-review-design.md`、`docs/question-inspector.md` 已记录的 particles：p-number-field-1/7/9/10（范围/步长）、p-textarea-5（固定标签）、p-toggle-group-4（互斥选择）、p-frame-1、p-meter-3/4（分区与量值）。这些是历史检索记录；原临时缓存本轮不存在，未联网重新获取 registry 或 particles，不宣称读取当前官网源码。
+
+Beautiful UI Approval Card / Recommendation Card 的既有检索缺少逐点评分、理由必填与保存回执契约。本轮沿用其历史匹配结论，选择扩展 ScoreReview 并组合固定 coss；不复制 Beautiful UI 代码。逐点区为 ScoreReview 内部结构，不导出第二个可复用组件，避免将强耦合的合计、未作答和门禁另立协议。新增逐点 NumberField 和理由 RadioGroup 均使用标准尺寸；既有总分/按钮尺寸为了旧输出兼容保持不变。没有新增 CSS、令牌、依赖或 coss 修改。
+
+### API
+
+| 可选属性 | 契约 |
+| --- | --- |
+| `points: readonly ScoreReviewPoint[]` | 每项 `{id,label,maxScore,score:number\|null,uncertain?}`，id 唯一；受控数组按原顺序呈现。传入数组即由评分点合计决定总分，不分摊原 `score` 或 AI 分数。空数组、未齐、非有限/越界/不合步长或重复 id 使合计未知并禁止保存；小数合计去除浮点尾差，不把未知当 0。 |
+| `pointStep` / `onPointsChange(points)` | 步长默认继承 `step`。编辑只规范本次输入到对应评分点范围与步长，发出完整新数组；由宿主回传。不触发保存或 `onScoreChange`。总分超过 `maxScore` 显示原因并禁保存。 |
+| `pointsReadOnly` | 或缺少 `onPointsChange` 时显示只读列表：存疑问号、满分对勾、其余圆点；附可访问状态及“得分 / 满分”。未知显示未提供，不推定未满分。 |
+| `reasonOptions` / `selectedReasonId` / `onReasonSelect(id)` | 选项 `{id,label,isOther?}`，id 与理由文本由宿主控制。选择预置项发 id 和 `onReasonChange(label)`，唯一 Textarea 只读显示该 label；选择其他发 id 和 `onReasonChange("")`，在同一 Textarea 输入正文。不会增加第二个理由输入。 |
+| `requireReasonSelection` | 宿主声明必须选有效理由，与业务是否改分无隐式关联；需同时传 `reasonOptions`。其他选项无论此开关如何，都需非空白正文。未知选项 id 禁止保存。原 `requireReason` / `requireReasonOnChange` 仍兼容。 |
+| `unanswered` / `onUnansweredChange(boolean)` | 受控标记／撤销意图。true 时显示和提交 0 分并注明未作答，锁定评分点和 AI 接受；不清空原评分点或总分草稿。false 回到原草稿。点击不会自动保存或写结果。 |
+| `unansweredDisabledReason` | 只禁止标记／撤销按钮，并通过文字与 aria-describedby 解释，不代替宿主保存门禁。 |
+| `scoreReadOnly` | 用文字替代总分输入、移除快捷给分，保留理由和保存；原样呈现宿主总分，不按编辑步长舍入。非有限/越界值禁保存；`points` 或 `unanswered=true` 自动启用总分只读。 |
+| `saveDisabledReason` | 只阻止保存/重试，包括 Ctrl/⌘+Enter；在原 gate 显示宿主原因，不再退回“保存操作未提供”。不锁理由、评分点或导航。整体锁定仍由 `disabledReason/state` 提供。 |
+| `actionLabels` | `save/retry/accept/previous/skip/markUnanswered/clearUnanswered`，未提供的项沿原文或新功能默认文案。只改按钮文字，事件与快捷键不变。 |
+
+`ScoreReviewDraft` 保留 `{score,reason}`；仅传对应新属性时增加 `points`、`reasonOptionId`、`unanswered`，不改变旧调用的对象键。预置理由的保存文本来自选项 label；其他正文去除首尾空白。保存、重试、失败和历史仍由宿主维护。
+
+派生／只读总分时，接受 AI 建议只发 `onAcceptAi(score)`，不伪造评分点或发 `onScoreChange`；宿主决定如何回传点值。`unanswered=true` 禁止接受建议，先撤销标记。动作名称不改变这一契约，即使宿主文案提到下一题也不会自行导航或保存。
+
+### Workspace 接入对应（本轮只读，未迁移）
+
+- `AiGradingReviewEditor.tsx` 评分点 section：用 `points={scoringPoints.map(p=>({id:p.id,label:p.label,maxScore:p.max,score:draft.pointScores[p.id]??null,uncertain:p.uncertain}))}`、`pointStep={0.5}`、`onPointsChange` 写回宿主 `pointScores`；AI 评分点需要静态呈现时传 `pointsReadOnly`。宿主 `aiReviewTotal/aiReviewDecision` 继续作为领域裁定，不移入组件。
+- “标记为未作答” section：替换为 `unanswered/onUnansweredChange`；宿主仍记录 dirty、领域 action 和 0 分保存命令。原 `pointScoreNotice` 与纠正总分 handler 可移除，因为派生分没有输入框。
+- 预置理由 ToggleGroup 与原组件理由透传：统一传 `AI_REVIEW_REASONS`（other 映射 `isOther:true`）、`selectedReasonId=draft.reasonChoice`、`onReasonSelect`、`reason=draft.otherReason`、`onReasonChange`、`requireReasonSelection=reasonRequired`；是否必须理由仍由 `aiReviewDecision` 声明。
+- 原保存／重试回调不必为了禁用而撤掉：传 `saveDisabledReason=decision.error || (entry.handled&&!dirty ? '已保存；调整后可再次保存并留痕。' : undefined)`；running/stale 等整体禁用继续传 `disabledReason`。
+- `navigationUnit` 的下一题／下一份语义由宿主组装 `actionLabels`；`task.review`、请求号幂等性、后继导航、持久化、脏态确认与回执继续留宿主。本轮不改 Workspace。
+
+### 验证与移交
+
+SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输入名称、未知只读状态、预置/其他必填、未作答保稿与撤销、门禁与快捷键、失败/保存中以及默认字节兼容。新示例提供可操作草稿、只读、保存中、失败、只禁保存、三主题 320px 长中文与公式。
+
+浏览器验收：按分工由 Supervisor 执行。打开扩展 URL，检查逐点输入与方向键、唯一 Textarea 的预置/其他切换、未作答撤销保稿、只读外观、保存/重试及 Ctrl/⌘+Enter 门禁；覆盖 light/paper/dark、320px/390px/1440px 与长中文/公式。实际焦点、触摸、移动设备、读屏器、真实保存/模型及 Workspace 接入未验证。本节不继承历史浏览器拒绝为本轮结论。
+
 ## 实施前复用检索
 
 - 已读取 `agent-item-reviewer.tsx`、`agent-review-queue.tsx` 与 Workspace `GradingAnswerEditor.tsx`。AgentItemReviewer 的 item/version/request/resolution 是版本化通用复核协议，draft 插槽适合业务编辑器；AgentReviewQueue 是同协议的集合视图。本次独立评分组合无需队列版本、查询或重启协议，强塞入旧组件会扩张旧契约。保持旧 API，共享 AgentMetaLine、AgentStatus、coss 表单/反馈原子；宿主仍可将评分组合接入现有复核流程。
