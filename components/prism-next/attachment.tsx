@@ -132,7 +132,7 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
           {!placeholder && !showReason && exam ? <><span data-paper-exam-prefix>考号 </span>{[exam, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")}</> : information}
         </p>}
       </div>}
-      {(error || pending) && onResolve && <Button type="button" variant="outline" size="sm" data-paper-action="resolve" className="max-w-full duration-150 motion-reduce:transition-none" aria-label={`${resolveLabel}：${name}`} aria-describedby={pending ? `${labelId}-status${reason ? ` ${labelId}-information` : ""}` : undefined} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate" title={resolveLabel}>{resolveLabel}</span></Button>}
+      {!placeholder && onResolve && <Button type="button" variant="outline" size="sm" data-paper-action="resolve" className="max-w-full duration-150 motion-reduce:transition-none" aria-label={`${resolveLabel}：${name}`} aria-describedby={pending ? `${labelId}-status${reason ? ` ${labelId}-information` : ""}` : undefined} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate" title={resolveLabel}>{resolveLabel}</span></Button>}
     </article>
   }
   const media = compact ? <Button type="button" variant="outline" data-paper-action="thumbnail"

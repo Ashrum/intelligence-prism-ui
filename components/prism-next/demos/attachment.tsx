@@ -44,6 +44,8 @@ export const sheetPaperFixtures: readonly PaperCardProps[] = [
   { id: "sheet-warning", studentName: "郑书宁", status: { label: "待确认", tone: "warning" } },
   { id: "sheet-info-image", studentName: "林知夏", thumbnailUrl: exampleThumbnail, status: { label: "正在核对", tone: "info" } },
   { id: "sheet-warning-image", studentName: "许书禾", thumbnailUrl: exampleThumbnail, status: { label: "待确认", tone: "warning" } },
+  { id: "sheet-accepted", studentName: "沈星禾", thumbnailUrl: exampleThumbnail, status: { label: "已接受异常", tone: "neutral" }, resolveLabel: "查看处置" },
+  { id: "sheet-rescanned", studentName: "顾清越", thumbnailUrl: exampleThumbnail, status: { label: "已重新扫描", tone: "success" }, resolveLabel: "查看处置" },
 ]
 export const denseSheetPaperFixtures: readonly PaperCardProps[] = Array.from({ length: 24 }, (_, index) => ({ ...sheetPaperFixtures[index % sheetPaperFixtures.length], id: `dense-${index + 1}` }))
 export const anonymousSheetPaperFixtures: readonly PaperCardProps[] = ["4", "5", "6"].map(slotLabel => ({
