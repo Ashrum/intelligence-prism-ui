@@ -47,6 +47,8 @@ export type AgentExceptionEvidence = {
 export type AgentExceptionRecord = {
   id: string
   state: AgentExceptionState
+  /** Then-label override; empty string restores the built-in label, even with statusLabels. */
+  statusLabel?: string
   description: string
   scope: string
   basis: string
@@ -73,6 +75,8 @@ export type AgentExceptionHandlerProps = AgentRecordViewProps & {
   title: string
   items: readonly AgentExceptionItem[]
   inlineLimit?: number
+  /** Display vocabulary only; the host must preserve the meaning of each external state. */
+  statusLabels?: Partial<Record<AgentExceptionState, string>>
   notice?: string
   disabledReason?: string
   onAction?: (intent: AgentExceptionIntent) => void
@@ -84,11 +88,12 @@ const kindLabels: Record<AgentExceptionKind, string> = {
   "low-confidence": "识别不确定", conflict: "内容冲突", missing: "信息缺失", unparseable: "无法解析",
 }
 
-function ExceptionStatus({ state }: { state: AgentExceptionState }) {
+function ExceptionStatus({ state, label }: { state: AgentExceptionState; label?: string }) {
   const Icon = state === "resolved" ? Check : state === "unknown" ? CircleHelp : state === "waiting" ? Clock3 : state === "ignored" || state === "skipped" ? CircleMinus : CircleAlert
   return <span className="inline-flex max-w-full items-center gap-2">
     <Icon aria-hidden="true" className="size-4 shrink-0" />
-    {state === "resolved" || state === "ignored" || state === "skipped"
+    {label ? <AgentStatus tone={state === "resolved" ? "success" : state === "ignored" || state === "skipped" ? "neutral" : state === "failed" ? "error" : "warning"}>{label}</AgentStatus>
+      : state === "resolved" || state === "ignored" || state === "skipped"
       ? <AgentStatus tone={state === "resolved" ? "success" : "neutral"}>{{ resolved: "已处置", ignored: "已忽略", skipped: "已跳过" }[state]}</AgentStatus>
       : <AgentStepStatus state={state === "failed" ? "error" : state} />}
   </span>
@@ -126,11 +131,11 @@ function Evidence({ items }: { items: readonly AgentExceptionEvidence[] }) {
   </section>
 }
 
-function HistoryRecords({ records, compact }: { records: readonly AgentExceptionRecord[]; compact: boolean }) {
+function HistoryRecords({ records, compact, statusLabels }: { records: readonly AgentExceptionRecord[]; compact: boolean; statusLabels?: AgentExceptionHandlerProps["statusLabels"] }) {
   return <section className="min-w-0 space-y-3" aria-label="处置记录">
     <h5 className="text-ui-action">处置记录（当时事实）</h5>
     {records.length ? <ol className={compact ? "space-y-3" : "space-y-5"}>{records.map(record => <li key={record.id} data-exception-record={record.id} className="min-w-0 space-y-2">
-      <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当时状态</span><ExceptionStatus state={record.state} /></div>
+      <div className="flex flex-wrap items-center gap-2"><span className="text-ui-hint">当时状态</span><ExceptionStatus state={record.state} label={record.statusLabel ?? statusLabels?.[record.state]} /></div>
       <p className="break-words text-ui-body">{record.description}</p>
       <p className="break-words text-ui-hint">当时范围：{record.scope}</p>
       <p className="break-words text-ui-hint">当时依据：{record.basis}</p>
@@ -141,10 +146,11 @@ function HistoryRecords({ records, compact }: { records: readonly AgentException
   </section>
 }
 
-function ExceptionItem({ item, full, compact, disabledReason, onAction }: {
+function ExceptionItem({ item, full, compact, statusLabels, disabledReason, onAction }: {
   item: AgentExceptionItem
   full: boolean
   compact: boolean
+  statusLabels?: AgentExceptionHandlerProps["statusLabels"]
   disabledReason?: string
   onAction?: AgentExceptionHandlerProps["onAction"]
 }) {
@@ -161,7 +167,7 @@ function ExceptionItem({ item, full, compact, disabledReason, onAction }: {
   return <li data-exception-id={item.id} data-exception-state={disposition.state} className={compact ? "min-w-0 space-y-3" : "min-w-0 space-y-4"} aria-labelledby={id}>
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
       <div className="min-w-0 space-y-1"><h4 id={id} className="break-words text-item-title">{item.title}</h4><p className="text-ui-hint text-muted-foreground">{kindLabels[item.kind]}</p></div>
-      <div className="flex max-w-full flex-wrap items-center gap-2"><span className="text-ui-hint">当前处置</span><ExceptionStatus state={disposition.state} /></div>
+      <div className="flex max-w-full flex-wrap items-center gap-2"><span className="text-ui-hint">当前处置</span><ExceptionStatus state={disposition.state} label={statusLabels?.[disposition.state]} /></div>
     </div>
     <dl className={compact ? "flex min-w-0 flex-wrap gap-x-6 gap-y-2" : "grid min-w-0 gap-3 @min-[540px]:grid-cols-2"}>
       {[{ label: "影响范围", value: item.scope }, { label: "已保留", value: item.retained }].map(fact => <div key={fact.label} className="min-w-0"><dt className="text-ui-hint text-muted-foreground">{fact.label}</dt><dd className="break-words text-ui-body">{fact.value}</dd></div>)}
@@ -182,12 +188,12 @@ function ExceptionItem({ item, full, compact, disabledReason, onAction }: {
     </ul>}
     {pending && !query && <p className="text-ui-hint text-muted-foreground">暂未提供原请求查询入口。</p>}
     {!pending && !actions.length && <p className="text-ui-hint text-muted-foreground">暂无可用的处置操作。</p>}
-    {full && <HistoryRecords records={item.history ?? []} compact={compact} />}
+    {full && <HistoryRecords records={item.history ?? []} compact={compact} statusLabels={statusLabels} />}
   </li>
 }
 
 /** Inline + dedicated workspace content. All business facts and capabilities remain external. */
-export function AgentExceptionHandler({ title, items, view = "inline", density = "default", inlineLimit = 2, notice, details, disabledReason, onAction, onExpand, onBack }: AgentExceptionHandlerProps) {
+export function AgentExceptionHandler({ title, items, view = "inline", density = "default", inlineLimit = 2, statusLabels, notice, details, disabledReason, onAction, onExpand, onBack }: AgentExceptionHandlerProps) {
   const id = useId()
   const full = view === "workspace", compact = density === "compact"
   const limit = Number.isFinite(inlineLimit) ? Math.max(1, Math.floor(inlineLimit)) : 2
@@ -198,7 +204,7 @@ export function AgentExceptionHandler({ title, items, view = "inline", density =
   return <Card aria-labelledby={id} data-agent-exception-view={view} data-agent-exception-density={density} className={compact ? "@container min-w-0 gap-3 p-4" : "@container min-w-0 gap-5 p-5 sm:p-6"}>
     <div className="min-w-0 space-y-2"><h3 id={id} className="break-words text-block-title">{title}</h3><p className="text-ui-hint">共 {items.length} 项异常{shown.length < items.length && <> · 当前显示 {shown.length} 项</>}</p></div>
     {notice && <p role="status" className="break-words text-ui-hint text-muted-foreground">{notice}</p>}
-    {items.length ? <ol aria-label="异常列表" className={compact ? "space-y-4" : "space-y-6"}>{shown.map(item => <ExceptionItem key={item.id} item={item} full={full} compact={compact} disabledReason={disabledReason} onAction={onAction} />)}</ol>
+    {items.length ? <ol aria-label="异常列表" className={compact ? "space-y-4" : "space-y-6"}>{shown.map(item => <ExceptionItem key={item.id} item={item} full={full} compact={compact} statusLabels={statusLabels} disabledReason={disabledReason} onAction={onAction} />)}</ol>
       : <p className="text-ui-hint text-muted-foreground">暂无异常记录。</p>}
     {expandable && items.length > 0 && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">另有 {items.length - shown.length} 项异常，展开查看全部。</p>}<Button type="button" variant="outline" className="max-w-full whitespace-normal" onClick={event => onExpand?.(event.currentTarget)}>查看全部 {items.length} 项异常<ArrowUpRight aria-hidden="true" /></Button></div>}
     {full && onBack && <Button type="button" variant="outline" className="max-w-full self-start whitespace-normal" onClick={onBack}><ArrowLeft aria-hidden="true" />返回</Button>}
