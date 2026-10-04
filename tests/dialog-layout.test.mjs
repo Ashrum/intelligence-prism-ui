@@ -56,20 +56,36 @@ test('DialogLayout has a coss dialog with a required accessible title and named 
   assert.throws(() => html(api.DialogLayout, { ...base, closeLabel: ' ' }), /non-empty closeLabel/);
 });
 
-test('normal coss portal is absent during SSR; controlled open and initial focus are forwarded unchanged', () => {
+test('coss keeps controlled dismissal details, completion and explicit focus targets', () => {
   assert.equal(html(real.DialogLayout, { ...base, open: false, children: '不可见正文' }), '');
-  const initialFocus = { current: null }, changes = [];
-  const props = { ...base, initialFocus, onOpenChange: (...args) => changes.push(args) };
+  const initialFocus = { current: null }, finalFocus = { current: null }, changes = [], completions = [];
+  const props = { ...base, initialFocus, finalFocus, disablePointerDismissal: true, closeDisabled: true,
+    onOpenChange: (open, details) => { changes.push([open, details]); details.cancel(); }, onOpenChangeComplete: open => completions.push(open) };
   const out = capture(api.DialogLayout, props);
   const popup = out.nodes.find(n => n.props['data-dialog-layout'] !== undefined);
   assert.equal(popup.props.initialFocus, initialFocus);
+  assert.equal(popup.props.finalFocus, finalFocus);
   assert.equal(popup.props.showCloseButton, false);
   assert.equal(popup.props.bottomStickOnMobile, false);
   assert.equal(out.nodes[0].props.open, true);
-  const details = { reason: 'escape-key' };
+  assert.equal(out.nodes[0].props.disablePointerDismissal, true);
+  assert.equal(out.nodes.find(n => n.props['aria-label'] === base.closeLabel).props.disabled, true);
+  let canceled = 0;
+  const details = { reason: 'escape-key', cancel() { canceled++; } };
   out.nodes[0].props.onOpenChange(false, details);
   assert.deepEqual(changes, [[false, details]]);
+  assert.equal(canceled, 1);
   assert.equal(props.open, true);
+  out.nodes[0].props.onOpenChangeComplete(false);
+  assert.deepEqual(completions, [false]);
+});
+
+test('reading regions opt into a named keyboard scroll entry without describing all body text', () => {
+  const out = html(api.DialogLayout, { ...base, bodyLabel: '完整核对说明', children: '多段说明与公式' });
+  assert.match(out, /role="region" aria-label="完整核对说明" tabindex="0"/);
+  assert.doesNotMatch(out, /aria-describedby=/);
+  assert.doesNotMatch(html(api.DialogLayout, base), /role="region"/);
+  for (const bodyLabel of ['', '  ']) assert.throws(() => html(api.DialogLayout, { ...base, bodyLabel }), /non-empty bodyLabel/);
 });
 
 test('all optional slots are omitted and accent defaults on; sizes and split/equal are explicit', () => {
@@ -162,7 +178,7 @@ test('record uses dt/dd, sections are labelled, and notice uses all supported ho
   }
 });
 
-test('catalog grows by one pattern, names and six demo entries are registered', () => {
+test('catalog keeps one pattern and registers editing and reference examples', () => {
   assert.equal(components.length, 99);
   assert.equal(components.filter(item => !item.kind).length, 54);
   assert.equal(components.filter(item => item.kind === 'pattern').length, 35);
@@ -170,8 +186,10 @@ test('catalog grows by one pattern, names and six demo entries are registered', 
   assert.equal(searchComponents('Dialog Layout')[0].href, '/next/components/dialog-layout');
   assert.ok(coreAgentSpecs['dialog-layout'].accessibility.length);
   const demo = html(real.DialogLayoutDemo);
-  for (const id of ['dispose', 'assign', 'record', 'reason', 'small', 'long']) assert.ok(demo.includes(`id="${id}"`));
+  for (const id of ['dispose', 'assign', 'record', 'reason', 'small', 'long', 'form', 'references']) assert.ok(demo.includes(`id="${id}"`));
   assert.match(demo, /中性示例数据/);
+  assert.match(demo, /本页记录：材料甲/);
+  for (const domain of ['coss.com', 'base-ui.com', 'radix-ui.com', 'react-aria.adobe.com', 'carbondesignsystem.com']) assert.ok(demo.includes(domain), domain);
 });
 
 test('built component route renders its examples and Agent Spec', async () => {
@@ -179,5 +197,5 @@ test('built component route renders its examples and Agent Spec', async () => {
   const response = await worker.fetch(new Request('http://localhost/next/components/dialog-layout', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
   assert.equal(response.status, 200);
   const out = await response.text();
-  for (const text of ['Dialog Layout 对话框版式', '处理异常', '从多人中选择', '查看记录', '选择理由', '长内容滚动', 'Agent Spec']) assert.ok(out.includes(text), text);
+  for (const text of ['Dialog Layout 对话框版式', '处理异常', '从多人中选择', '查看记录', '选择理由', '长内容滚动', '表单、等待与关闭确认', '参考与取舍', 'Agent Spec']) assert.ok(out.includes(text), text);
 });

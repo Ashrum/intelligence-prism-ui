@@ -14,6 +14,7 @@
 .dialog-layout-footer[data-layout="split"] { justify-content:space-between; }
 .dialog-layout-footer[data-layout="split"] > [data-dialog-footer-end] { margin-inline-start:auto; justify-content:flex-end; }
 .dialog-layout-footer[data-layout="equal"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.dialog-layout-footer[data-layout="equal"] > :only-child { grid-column:1 / -1; }
 .dialog-layout-footer[data-layout="equal"] > div > * { flex:1; width:100%; }
 .dialog-layout-footer :is(button,a) { max-width:100%; white-space:normal; height:auto; min-height:2.25rem; overflow-wrap:anywhere; }
 .dialog-option-grid-items { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; }

@@ -25,16 +25,24 @@ export type DialogLayoutProps = {
   size?: "sm" | "md" | "lg" | "xl"
   accent?: boolean
   initialFocus?: ComponentProps<typeof DialogPopup>["initialFocus"]
+  finalFocus?: ComponentProps<typeof DialogPopup>["finalFocus"]
+  onOpenChangeComplete?: ComponentProps<typeof Dialog>["onOpenChangeComplete"]
+  disablePointerDismissal?: ComponentProps<typeof Dialog>["disablePointerDismissal"]
+  /** Only disables the header close control; the host still owns dismissal policy. */
+  closeDisabled?: boolean
+  /** Opts a reading body into a named, keyboard-scrollable region. */
+  bodyLabel?: string
 }
 
 /** The host owns every business fact and selection. Only coss owns modal mechanics. */
-export function DialogLayout({ open, onOpenChange, title, closeLabel, eyebrow, description, media, children, footer, footerStart, footerEnd, footerLayout = "split", size = "md", accent = true, initialFocus }: DialogLayoutProps) {
+export function DialogLayout({ open, onOpenChange, title, closeLabel, eyebrow, description, media, children, footer, footerStart, footerEnd, footerLayout = "split", size = "md", accent = true, initialFocus, finalFocus, onOpenChangeComplete, disablePointerDismissal, closeDisabled = false, bodyLabel }: DialogLayoutProps) {
   const id = useId()
   if (!title?.trim()) throw new Error("DialogLayout requires a non-empty title")
   if (!closeLabel?.trim()) throw new Error("DialogLayout requires a non-empty closeLabel")
+  if (bodyLabel != null && !bodyLabel.trim()) throw new Error("DialogLayout requires a non-empty bodyLabel when provided")
   const hasFooter = footer != null || footerStart != null || footerEnd != null
-  return <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogPopup showCloseButton={false} bottomStickOnMobile={false} initialFocus={initialFocus}
+  return <Dialog open={open} onOpenChange={onOpenChange} onOpenChangeComplete={onOpenChangeComplete} disablePointerDismissal={disablePointerDismissal}>
+    <DialogPopup showCloseButton={false} bottomStickOnMobile={false} initialFocus={initialFocus} finalFocus={finalFocus}
       aria-labelledby={`${id}-title`} aria-describedby={description != null ? `${id}-description` : undefined}
       className="dialog-layout overflow-hidden motion-reduce:transition-none" data-dialog-layout data-size={size}>
       {accent && <div data-dialog-accent aria-hidden="true" className="h-[3px] shrink-0 bg-[image:var(--brand-ai-gradient)]" />}
@@ -48,9 +56,9 @@ export function DialogLayout({ open, onOpenChange, title, closeLabel, eyebrow, d
               <DialogTitle id={`${id}-title`} className="text-section-title">{title}</DialogTitle>
               {description != null && <DialogDescription id={`${id}-description`} className="text-ui-hint">{description}</DialogDescription>}
             </div>
-            <DialogClose aria-label={closeLabel} render={<Button variant="ghost" size="icon" />}><X aria-hidden="true" /></DialogClose>
+            <DialogClose aria-label={closeLabel} disabled={closeDisabled} render={<Button variant="ghost" size="icon" />}><X aria-hidden="true" /></DialogClose>
           </header>
-          <div data-dialog-body className="dialog-layout-body flex flex-col gap-4 px-6 pb-5 text-ui-body [overflow-wrap:anywhere]">{children}</div>
+          <div data-dialog-body role={bodyLabel ? "region" : undefined} aria-label={bodyLabel} tabIndex={bodyLabel ? 0 : undefined} className="dialog-layout-body flex flex-col gap-4 px-6 pb-5 text-ui-body [overflow-wrap:anywhere]">{children}</div>
           {hasFooter && <footer data-dialog-footer data-layout={footerLayout} className="dialog-layout-footer border-t bg-muted/72 px-6 py-3">
             {footer != null ? footer : <>
               {footerStart != null && <div data-dialog-footer-start>{footerStart}</div>}
