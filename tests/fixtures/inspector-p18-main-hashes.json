@@ -1,0 +1,57 @@
+{
+  "commit": "4669a62a4dcf58d75667811db2c614489a077d10",
+  "components": {
+    "QuestionInspector": {
+      "default": "872da87f4e59a940523ce45695decc0da31c4acb19f0f39c6ba2de3fcd3dee04",
+      "bodyOnly": "25cea78a937e031c6d7aa7b4caec08438c22f8a7a1f41389897138d4547f07c2",
+      "missing": "985cd71d8e588e10779ca65101d0ace7e9fb1048e573ddaf6ea922e940f34681",
+      "disabled": "7ab76ef9b71594c5f7664d96c0cf775a5572ae0efd6c79526933dcc1db439040"
+    },
+    "ScoreReview": {
+      "default": "adaabcb7773c648fb8ad673c38a760acf5fd7e87105ab857884674ccb1949745",
+      "minimal": "df123cc8e897a983e00e1a1a104f2fa24271bd3d414009430508077037bfe29f",
+      "compact": "83b09a36adf5dedbc5059f7443735442bbf3ca7d8bd6af0b3aaa580f43d8c374",
+      "points": "1f75579e06080f9e32c9800a47f0d5098cb5a513a0b4e33ce54b1c42a0c5372b",
+      "adjusted": "a1b0604feb884d3059181ea2e3539b7a4fa2ee266581ddbaab9b0e9a20cc8f4c",
+      "half": "3bed6702786da7de0418cb8ebe5cda4d4e0f6fa7957a999761d0adf1f5879285",
+      "saving": "078b831a1068160d5a660020a40aab5ee3aa3d523c32610c2277fb6e987f6e62",
+      "failed": "7513f8f819214e4ad34954b027e13ee4c03ebd35b158535d716a953cd4fad06c",
+      "saved": "9a2faddcb601bc3a5bf16c8daf910805270af4e6861063a9569e1ef5eaccd98b",
+      "unknown": "5997e4e2657457e0a0967bacc0018a6a9d52e41a99d8eccece8c95a5347916b7"
+    },
+    "ErrorCauseReview": {
+      "default": "a0c039ad70130212b17f8793969b3cbcebf4ba074da08f29a80a367e43e8b865",
+      "compact": "fa2b4d576757f84d5823d9e87f17501c4e09ec36021081c98be75da756ca7e47",
+      "missing": "ed4fbae1f343973bd631b975faeff8844a6b72cf9675b125d7ce4832dd0c4e5a",
+      "editing": "e26979735fefde78a61d7b3d007526d53a1d52e8bd737b54e96f021de816b197",
+      "saving": "e670440311a1c7febeb1d6a59139e1483d480d8609c6d8f4dd4e357baa79b4a2",
+      "failed": "feb2796aa86c63e535d07d019cc853dbf74565bcbef165ecf1fccc3e01566706"
+    },
+    "StudentPaperReport": {
+      "default": "8689baee5c319e4905eda6f44a14f12eaacb8ff674247e1a67e7e72bd0416395",
+      "partial": "441376280414914184cb6034e3b3ff561c60aac150f2be3db1166484c1d898a9",
+      "compact": "11130ed1cd2f3469243546ffda449bf30a5b683d796c99924a6e3b5cb4e0f79c",
+      "missing": "3e8c42d4895d92da7018ccd31aafff6c38731a7b06195ef4c1ce5a2eb9c8fad8"
+    }
+  },
+  "demos": {
+    "QuestionInspectorDemo": "6ae0b234f6a0174d5331c5fd9685ac973470a3e82fe9fdd68d8d8cfda6aed33f",
+    "ScoreReviewDemo": "0c63e11cd15d317ffb4bf1823188908a2f445e5da0d4ef2437cf54be57ce37ba",
+    "ScoreReviewReasonReceiptDemo": "0395bba6d1e28af7b2935856dde1f0bf9c08b9cb320cf42a1c72695da1539172",
+    "ErrorCauseReviewDemo": "7e7b7289eb19ac7970e180b6d7060c33cbd23a0ebdd7ec4b4e1bbee07dc27018",
+    "StudentPaperReportDemo": "2c1a4e51fcdfeafe2acfb56b0359933b3287c6de02750db57f2dc132b227f669",
+    "ScoreReviewCompactDemo": "611df27f6790ceb2705b5984fcf527ff6af99cf6f791da8d6791f6669da86a61",
+    "ErrorCauseReviewCompactDemo": "394dc64646f97bfde23341d084e8452d7bd691f66f1dcd2647740f64bbdb77eb",
+    "StudentPaperReportCompactDemo": "547b0478d04ccc2211ee71b775e28a808466a1fbc558bc7e5ede0dd4f8503945"
+  },
+  "frozen": {
+    "question-review": {
+      "sha256": "da9bb4d076f0d531967ba9a5d6b002f7727905ea2b040af95033bce5baa51b6f",
+      "bytes": 303290
+    },
+    "paper-review": {
+      "sha256": "d030b92dd63cedb32e5dfdea528e86b35aeeb4e0fe504778ed67c63ff763c04a",
+      "bytes": 153012
+    }
+  }
+}
