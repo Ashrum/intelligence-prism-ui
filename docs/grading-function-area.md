@@ -74,3 +74,5 @@ URL：`/next/reviews/grading-function-area`。light / paper / dark × 固定 380
 自动化：`tests/grading-function-area.test.mjs` 覆盖 24 栏/主题/尺寸、八态显示与隐藏结构、手工未知点分、独立草稿与意图边界、渲染后焦点移交策略、构建路由。最终数字与冻结页 `<main>` 对比统一见 P18 总报告。
 
 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实 AI / OCR / 服务端保存、Workspace 接入、实际屏幕尺寸与滚动、真实键盘焦点、移动真机和读屏器未验证。
+
+P19：⑧ 整卷报告使用 `pendingEmphasis="strong"`，warning 色调待办区置于报告标题之前，数量加重，标准主按钮带右箭头；仍仅记录定位请求。
