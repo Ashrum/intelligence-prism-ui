@@ -9,6 +9,20 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'comparison-chart': {
+    component: 'ComparisonChart — optional reference lines',
+    source: 'Existing Recharts / coss Table; docs/comparison-chart.md',
+    contract: ['referenceLines?: {value,label,tone?:info|success|warning|destructive|neutral}[]; omitted props preserve legacy SSR. Finite in-domain values only; no domain expansion or inferred thresholds.', 'Optional data[].range=[start,end] maps values within ordered non-overlapping category bands, each with equal width. Half-open intervals, final upper bound included; 60 maps to the left edge of [60,70), 85 to the middle of [80,90). Never parse labels. Invalid/mixed ranges omit reference lines.', 'Without ranges, references use the value axis; domain is explicit finite ascending bounds or the finite data extent including zero (all zero/empty -> [0,1]). With active references, this exact domain clips out-of-domain bars. Horizontal bars have vertical reference lines, vertical bars horizontal lines; ranges target the category axis instead.'],
+    accessibility: ['Each reference has a dashed line with SVG title and a separate wrapping text label, chart aria-description and a read-only table inside 查看数据. Same-value labels occupy separate rows; references do not emit onSelect. Existing semantic tones work in all three themes.'],
+    dont: ['No binning, business outcomes, label parsing, timers, new dependency/token or coss edits.'],
+  },
+  'distribution-chart': {
+    component: 'ComparisonChart — host-supplied distribution',
+    source: 'Existing ComparisonChart; docs/comparison-chart.md',
+    contract: ['horizontal=false with explicit data[].range for score-band reference lines; referenceLines uses the category range, unit remains the frequency unit. See ComparisonChart for mapping, missing and out-of-domain behavior.'],
+    accessibility: ['Wrapping reference labels, chart description and read-only reference table; same-value references remain separate.'],
+    dont: ['Never infer score boundaries from labels or compute bins in the component.'],
+  },
   'dialog-layout': {
     component: 'DialogLayout v0.2 — component candidate',
     source: 'PO 2026-10-04 approved canvas; pinned coss Dialog / RadioGroup / Button; docs/dialog-layout.md',
@@ -52,7 +66,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'question-analysis-panel': {
     component: 'QuestionAnalysisPanel v0.1 — component candidate',
     source: 'Pinned coss and frozen question review v1.0; docs/question-analysis-panel.md',
-    contract: ['G2: optional reasonsEmptyText/relatedEmptyText/evidenceEmptyText render below their empty section headings. Unknown knowledge.rate omits Meter and uses rateEmptyText; known zero stays zero. volumeText is complete host wording, with raw legacy volume fallback and no appended unit/count. Non-numeric statistics and formatted percentages display literally.', 'statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。'],
+    contract: ['P20: affectedLabel defaults to 受影响 in knowledge view; supplementaryMetrics={label,value:ReactNode,hint?:ReactNode}[] appends in host order to the existing question statistics dl, or after knowledge volume in a matching dl. Values/hints are literal host facts, no calculations. Omission preserves byte-identical SSR.', 'G2: optional reasonsEmptyText/relatedEmptyText/evidenceEmptyText render below their empty section headings. Unknown knowledge.rate omits Meter and uses rateEmptyText; known zero stays zero. volumeText is complete host wording, with raw legacy volume fallback and no appended unit/count. Non-numeric statistics and formatted percentages display literally.', 'statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。'],
     states: ['ready', 'filtered/empty', 'selected/evidence', 'three themes and narrow containers'],
     accessibility: ['Native coss keyboard/focus behavior; semantic typography; reduced motion; long Chinese and MathML. Browser acceptance pending Supervisor.'],
     dont: ['No fixture imports, business store, persistence, service, timer, inferred status or private Workspace types.'],
