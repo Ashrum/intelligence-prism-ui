@@ -32,3 +32,11 @@ statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribu
 空态不是推断结果；reasons/related/evidence 数组仍由宿主必传，其他已知统计仍按原规则显示。
 
 本轮浏览器访问 `http://localhost:5173/next/components/question-analysis-card` 被工具安全策略拒绝（该地址此前被用户拒绝授权），未绕过。已提供三主题窄容器夹具与自动化证据，实际交互、视觉、焦点、滚动和读屏器留待 Supervisor 复验；不以 SSR 冒充浏览器验收。检查数字见 `/tmp/prism-comp/Report-G2.md`。
+
+## P20 · 自定义影响标签与补充统计（2026-10-05）
+
+复用检索见 [ComparisonChart P20 记录](comparison-chart.md#p20-复用依据2026-10-05)：沿用已有统计 dl/dt/dd、语义字号与固定 coss Badge；不新增组件、视觉令牌、依赖或业务推断。
+
+- `affectedLabel?: string`：仅替换知识点概况“受影响”，默认仍为“受影响”；不改既有人数/总人数格式。
+- `supplementaryMetrics?: { label: string; value: ReactNode; hint?: ReactNode }[]`：题目视图追加在原四项统计之后，保留原顺序、样式及两列布局；知识点视图在证据量之后、状态与证据清单之前追加同样的统计布局。新增项允许换行，hint 沿用 text-ui-hint / muted 角色；0、未知文字和公式都原样显示，不计算任何指标。
+- 未传属性或传空列表均不新增 DOM；原调用与 main SSR 逐字节一致。组件页新增三主题 320px 夹具，按钮切换题目/知识点，两者都可查看处理、错误影响、证据强度与本校差距及长中文/公式。

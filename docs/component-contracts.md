@@ -2478,7 +2478,7 @@ L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-
 | 组件 | 输入 | 返回 |
 | --- | --- | --- |
 | TrendChart | 任意数值序列、标签、单位、可选数值范围 | `onSelect(id)` |
-| ComparisonChart | 分类与数值、横/纵方向、单位 | `onSelect(id)` |
+| ComparisonChart | 分类与数值、横/纵方向、单位；可选 referenceLines 与 data[].range，见 [映射契约](comparison-chart.md) | `onSelect(id)` |
 | HeatmapChart | 行列定义、单元格值/标签、选中 ID、可选 sequentialColors | `onSelect(id)` |
 | ScatterChart / QuadrantScatterChart | x/y、分组与点形、范围、可选点大小；四象限额外传分界值与四个名称 | `onSelect(id)` |
 | PairedDotChart | 两个指标定义、每行两个值、同一单位与范围 | `onSelect(rowId, metricId?)` |
@@ -2807,3 +2807,5 @@ G3（2026-10-03）：`ReviewWorkspace.rail` 可省略（undefined/null/false）�
 PO 2026-10-03 批准新增目录；入口 `/next/components/review-tools`，完整 API、复用检索与宿主例子见 [review-tools.md](review-tools.md)。`ReviewTools` 接收 title / description / groups({id,title,children}) / children / footer，基础操作均以 coss 标准控件组合。56px 浮动圆形入口与作用域 `--review-accent: #F04A1A` 三主题一致，**仅用于评审/测试工具，不得用于产品界面**。
 
 position undefined 为非受控；null 为受控跟随 defaultPosition；默认位置可为宿主函数。`onPositionChange(next,{reason:'move'|'reset'})` 发移动或归位意图（归位 next=null），组件无持久化。受控位置等宿主回传；resize 只夹取显示。>5px 拖动、误弹抑制、最近边偏移、16/64px 键盘移动、Esc 回焦点及 reduced-motion 沿用评审交互。环境显示、存储、主题、测试场景、批量操作、危险确认与服务权限均归宿主；不导入 Workspace 私有类型。
+
+P20：QuestionAnalysisPanel 可选 affectedLabel（默认“受影响”）及 supplementaryMetrics（label/value/hint）；追加顺序、知识点位置与默认 SSR 兼容规则见 [组件契约](question-analysis-panel.md#p20--自定义影响标签与补充统计2026-10-05)。
