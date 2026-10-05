@@ -168,7 +168,7 @@ export function GradingFunctionAreaBoard({ initialState }: { initialState: Gradi
       </div></ScrollArea></div>}
       {mode === "report" && <>
         <div data-function-area-scroll className="min-h-0 flex-1 overflow-hidden"><ScrollArea overscrollContain scrollFade>
-          <StudentPaperReport density="compact" studentName="张同学" status="待处理 2 题" score={78} maxScore={100}
+          <StudentPaperReport pendingEmphasis="strong" density="compact" studentName="张同学" status="待处理 2 题" score={78} maxScore={100}
             counts={{ full: 14, partial: 4, wrong: 2, unanswered: 0 }} complete={false} provided={20}
             coverageText="已批 20 题 · 另有 2 题待处理，分数会变化" pendingCount={2} totalLost={18}
             causes={[

@@ -63,3 +63,11 @@ export function StudentPaperReportDemo() {
     </DemoSection>
   </>
 }
+
+export function StudentPaperReportPendingDemo() {
+  return (
+    <DemoSection title="醒目的待办入口" description="同一外部事实，标准与紧凑密度均将待办置顶；定位仅发出请求。">
+      <ReviewDemoThemes>{() => <div className="space-y-4">{(["default", "compact"] as const).map(density => <ReportExample key={density} value={{ ...studentPaperReportFixture, density, pendingEmphasis: "strong" }} />)}<ReportExample value={{ ...studentPaperReportPartialFixture, pendingEmphasis: "strong" }} /></div>}</ReviewDemoThemes>
+    </DemoSection>
+  )
+}

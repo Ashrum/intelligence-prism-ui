@@ -1,7 +1,7 @@
 "use client"
 
 import { useId, type ReactNode } from "react"
-import { Sparkles } from "lucide-react"
+import { ArrowRight, Sparkles } from "lucide-react"
 import { Frame, FrameFooter, FrameHeader, FramePanel } from "@/components/coss/frame"
 import { cn } from "@/lib/utils"
 import { Badge } from "./badge"
@@ -27,6 +27,7 @@ export type StudentPaperReportCause = {
 
 export type StudentPaperReportProps = {
   density?: "default" | "compact"
+  pendingEmphasis?: "default" | "strong"
   title?: ReactNode
   studentName?: ReactNode
   status?: ReactNode
@@ -76,13 +77,14 @@ function content(value: ReactNode) {
 
 /** All totals, judgments, distribution scales and completion facts belong to the host. */
 export function StudentPaperReport({
-  density = "default", title = "整卷报告", studentName, status, score, maxScore, counts, complete, provided,
+  density = "default", pendingEmphasis = "default", title = "整卷报告", studentName, status, score, maxScore, counts, complete, provided,
   coverageText, causes = [], totalLost, missingCauses, unattributedLost, causesEmptyText,
   analysis, analysisSource = "AI", pendingCount, pendingText, onFirstPending,
   firstPendingDisabledReason, footer, className,
 }: StudentPaperReportProps) {
   const id = useId()
   const compact = density === "compact"
+  const strong = pendingEmphasis === "strong"
   const hasPending = knownCount(pendingCount) && pendingCount > 0
   const pendingReason = firstPendingDisabledReason || (!onFirstPending ? "定位操作未提供。" : undefined)
   const coverage = coverageText ?? (complete === true ? null : complete === false && knownCount(provided)
@@ -93,16 +95,26 @@ export function StudentPaperReport({
 
   return <section aria-labelledby={`${id}-title`} data-student-paper-report className={cn("min-w-0", className)}>
     <Frame>
+      {strong && <FramePanel className={cn("bg-warning/15 text-warning-foreground", compact && "p-3")}>
+        <section aria-label="学生待办" className="space-y-2">
+          <p className="text-ui-body wrap-anywhere">{pendingText ?? (knownCount(pendingCount)
+            ? hasPending ? <>还有 <span className="text-block-title tabular-nums">{pendingCount}</span> 题待你处理</> : <>待办 <span className="text-block-title tabular-nums">0</span> 题</>
+            : "待办题数：未提供")}</p>
+          {pendingText != null && <p className="text-ui-body wrap-anywhere">待办题数：<span className="text-block-title tabular-nums">{displayCount(pendingCount)}</span></p>}
+          {hasPending && <Button variant="default" size="default" disabled={!!pendingReason} aria-describedby={pendingReason ? `${id}-pending-reason` : undefined} onClick={() => { if (!pendingReason) onFirstPending?.() }}>定位第一道待办题<ArrowRight aria-hidden="true" /></Button>}
+          {hasPending && pendingReason && <p id={`${id}-pending-reason`} className="text-ui-hint wrap-anywhere">{pendingReason}</p>}
+        </section>
+      </FramePanel>}
       <FrameHeader className={compact ? "gap-1 px-3 py-2" : "gap-2"}>
         <h2 id={`${id}-title`} className="text-block-title wrap-anywhere">{title}</h2>
         <p className="text-ui-hint wrap-anywhere">学生：{content(studentName)}</p>
       </FrameHeader>
       <FramePanel className={compact ? "space-y-4 p-3" : "space-y-7"}>
-        <section aria-label="学生待办" className="space-y-2">
+        {!strong && <section aria-label="学生待办" className="space-y-2">
           <p className="text-ui-hint wrap-anywhere">{pending}</p>
           {hasPending && <Button variant="outline" disabled={!!pendingReason} aria-describedby={pendingReason ? `${id}-pending-reason` : undefined} onClick={() => { if (!pendingReason) onFirstPending?.() }}>定位第一道待办题</Button>}
           {hasPending && pendingReason && <p id={`${id}-pending-reason`} className="text-ui-hint text-muted-foreground wrap-anywhere">{pendingReason}</p>}
-        </section>
+        </section>}
         <section aria-label="整卷得分" className={compact ? "space-y-2" : "space-y-3"}>
           <div className="flex flex-wrap items-baseline gap-1">
             <span className="text-score-display">{displayNumber(score)}</span>
