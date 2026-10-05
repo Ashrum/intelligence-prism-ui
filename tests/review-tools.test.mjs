@@ -4,12 +4,12 @@ import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 
-// Executes review host handlers with deterministic hooks, not browser input or coss internals.
+// Executes component and host handlers with deterministic hooks; browser focus remains separate.
 const root = fileURLToPath(new URL('../', import.meta.url));
 const probe = new URL('../.sites-runtime/review-tools-test/probe.mjs', import.meta.url);
 await mkdir(new URL('.', probe), { recursive: true });
-const result = await build({ stdin: { contents: "export { ReviewTools } from './examples/review-tools/review-tools'", resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'review-tools-events', setup(build) {
-  build.onLoad({ filter: /examples\/review-tools\/review-tools\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8'))
+const result = await build({ stdin: { contents: "export { ReviewTools as ReviewToolsHost } from './examples/review-tools/review-tools'; export { ReviewTools } from './components/prism-next/review-tools'", resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'review-tools-events', setup(build) {
+  build.onLoad({ filter: /(?:examples\/review-tools|components\/prism-next)\/review-tools\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8'))
     .replace(/import \{ useEffect[^\n]+from "react"/, `
 const useState = (initial: any): any => { const h = (globalThis as any).__toolsHost; const i = h.cursor++; if (!(i in h.values)) h.values[i] = initial; return [h.values[i], (v: any) => { h.values[i] = typeof v === 'function' ? v(h.values[i]) : v }]; };
 const useRef = (initial: any): any => { const h = (globalThis as any).__toolsHost; const i = h.cursor++; if (!(i in h.values)) h.values[i] = { current: initial }; return h.values[i]; };
@@ -18,10 +18,10 @@ const useId = () => 'review-test';`)
     .replace('import { ThemePicker } from "@/components/prism-next/shell"', 'const ThemePicker = () => null') }));
 } }] });
 await writeFile(probe, result.outputFiles[0].text);
-const { ReviewTools } = await import(probe);
+const { ReviewTools, ReviewToolsHost } = await import(probe);
 await rm(probe);
 
-function setup(t, { saved = null, failStorage = false, defaultPosition, toolSize = 56, onResetRailPreferences } = {}) {
+function setup(t, { saved = null, failStorage = false, defaultPosition, toolSize = 56, onResetRailPreferences, standalone = false, componentProps = {} } = {}) {
   const oldObserver = globalThis.ResizeObserver;
   globalThis.ResizeObserver = class { observe() {} disconnect() {} };
   const oldWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
@@ -40,14 +40,15 @@ function setup(t, { saved = null, failStorage = false, defaultPosition, toolSize
     globalThis.ResizeObserver = oldObserver;
     delete globalThis.__toolsHost;
   });
-  const render = () => { globalThis.__toolsHost.cursor = 0; const tree = ReviewTools({ device: 'auto', onDeviceChange() {}, missing: false, onMissingChange() {}, defaultPosition, onResetRailPreferences }); tree.props.children[0].props.ref.current = { offsetWidth: toolSize }; for (const effect of effects.splice(0)) cleanups.push(effect()); return tree; };
+  const renderOnce = () => { globalThis.__toolsHost.cursor = 0; const props = standalone ? { defaultPosition, ...componentProps } : ReviewToolsHost({ device: 'auto', onDeviceChange() {}, missing: false, onMissingChange() {}, defaultPosition, onResetRailPreferences }).props; const tree = ReviewTools(props); tree.props.children[0].props.ref.current = { offsetWidth: toolSize }; for (const effect of effects.splice(0)) cleanups.push(effect()); return tree; };
+  const render = () => { renderOnce(); return renderOnce(); };
   const trigger = () => render().props.children[0];
-  const target = { getBoundingClientRect: () => { const left = values[0]?.x ?? 920, top = values[0]?.y ?? 720; return { left, top, right: left + 56, bottom: top + 56 }; }, setPointerCapture() { captured = true; }, hasPointerCapture() { return captured; }, releasePointerCapture() { captured = false; } };
+  const target = { getBoundingClientRect: () => { const style = trigger().props.style; const left = style?.left ?? 920, top = style?.top ?? 720; return { left, top, right: left + 56, bottom: top + 56 }; }, setPointerCapture() { captured = true; }, hasPointerCapture() { return captured; }, releasePointerCapture() { captured = false; } };
   const pointer = (x, y, type = 'mouse', id = 1) => ({ button: 0, pointerId: id, pointerType: type, clientX: x, clientY: y, currentTarget: target });
   const key = (key, shiftKey = false) => trigger().props.onKeyDown({ key, shiftKey, currentTarget: target, preventDefault() {}, stopPropagation() {} });
   const change = (value, reason) => { let canceled = false; render().props.onOpenChange(value, { reason, cancel() { canceled = true; } }); return canceled; };
   render(); for (const effect of effects.splice(0)) cleanups.push(effect());
-  return { render, trigger, pointer, key, change, window, listeners, setDefault(value) { defaultPosition = value; render(); }, stored: () => stored, writes: () => writes, captured: () => captured };
+  return { render, trigger, pointer, key, change, window, listeners, setProps(value) { componentProps = value; render(); }, setDefault(value) { defaultPosition = value; render(); }, stored: () => stored, writes: () => writes, captured: () => captured };
 }
 
 function findReset(node) {
@@ -211,4 +212,56 @@ test('D8 floating utility positioning measures coss default sizes and reset acti
     assert.equal(resets, 1);
     assert.equal(h.writes(), 0);
   });
+});
+
+
+test('RT standalone defaults do not read or write storage, even on movement and reset', t => {
+  const h = setup(t, { standalone: true, saved: JSON.stringify({ horizontal: 'left', vertical: 'top', offsetX: 100, offsetY: 90 }) });
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw Error('Component must not access storage'); } });
+  assert.equal(h.trigger().props.style.left, 920);
+  h.key('ArrowLeft'); assert.equal(h.trigger().props.style.left, 904);
+  findReset(h.render()).props.onClick(); assert.equal(h.trigger().props.style.left, 920);
+  assert.equal(h.writes(), 0);
+});
+
+test('RT controlled position emits intents and waits for the host, reset emits null', t => {
+  const intents = [];
+  const position = { horizontal: 'left', vertical: 'top', offsetX: 100, offsetY: 90 };
+  const onPositionChange = (...args) => intents.push(args);
+  const h = setup(t, { standalone: true, componentProps: { position, onPositionChange } });
+  assert.equal(h.trigger().props.style.left, 100);
+  h.key('ArrowRight');
+  assert.equal(h.trigger().props.style.left, 100);
+  assert.deepEqual(intents[0], [{ ...position, offsetX: 116 }, { reason: 'move' }]);
+  h.setProps({ position: intents[0][0], onPositionChange });
+  assert.equal(h.trigger().props.style.left, 116);
+  findReset(h.render()).props.onClick();
+  assert.deepEqual(intents[1], [null, { reason: 'reset' }]);
+  assert.equal(h.trigger().props.style.left, 116);
+  h.setProps({ position: null, onPositionChange }); assert.equal(h.trigger().props.style.left, 920);
+  assert.equal(h.writes(), 0);
+});
+
+test('RT function default resolves latest host layout on resize and reset', t => {
+  let offsetX = 70;
+  const h = setup(t, { standalone: true, defaultPosition: () => ({ horizontal: 'left', vertical: 'top', offsetX, offsetY: 80 }) });
+  assert.equal(h.trigger().props.style.left, 70);
+  offsetX = 200; h.listeners.get('resize')(); assert.equal(h.trigger().props.style.left, 200);
+  h.key('ArrowRight'); offsetX = 300; h.listeners.get('resize')(); assert.equal(h.trigger().props.style.left, 216);
+  findReset(h.render()).props.onClick(); assert.equal(h.trigger().props.style.left, 300);
+});
+
+test('RT renders named host groups, slots and forwards Escape focus restoration to coss', t => {
+  const h = setup(t, { standalone: true, componentProps: { title: '测试工具', description: '仅当前示例', groups: [{ id: 'one', title: '数据分组', children: '宿主内容' }, { id: 'two', title: '操作分组', children: '宿主动作' }], footer: '宿主页脚' } });
+  const tree = h.render(), popup = tree.props.children[2];
+  const sections = popup.props.children[2].props.children[0];
+  assert.equal(sections.length, 2);
+  for (const section of sections) assert.equal(section.props['aria-labelledby'], section.props.children[0].props.id);
+  assert.equal(sections[0].props.children[1], '宿主内容');
+  assert.equal(popup.props.children[2].props.children[3], '宿主页脚');
+  assert.equal(h.trigger().props['aria-label'], '测试工具');
+  assert.equal(popup.props.finalFocus, h.trigger().props.ref);
+  h.change(true, 'trigger-press'); h.change(false, 'escape-key'); assert.equal(h.render().props.open, false);
+  assert.equal(popup.props.initialFocus('keyboard'), true);
+  assert.equal(popup.props.initialFocus('mouse'), false);
 });

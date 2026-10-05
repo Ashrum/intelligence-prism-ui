@@ -20,6 +20,10 @@
 | `comparison` | `{id,label,text,value:number或null,max,ariaLabel}[]`；宿主负责班级人数、比例和计算口径。 |
 | `actions`、`onIntent?` | `{id,label,primary?,disabled?,disabledReason?}[]`，宿主最多提供一个 primary；无回调或禁用时不可操作。点击仅发 ID，状态、得分不改变。实际禁用（显式 disabled 或缺 onIntent）且有非空 disabledReason 时，在动作区下方逐条显示“动作名：原因”，使用 text-ui-hint / muted 并以实例唯一 ID 的 aria-describedby 关联对应按钮；启用动作不显示原因。 |
 | `onStep(delta)`、`onWrong`、`extraLink?` | 相邻题/下一错题意图；额外链接完全由宿主决定，不内置路由。 |
+| `showEvidence?`、`showConfidence?`、`showKnowledge?`、`showComparison?` | 默认均为 true。false 移除对应内容及其标题；AI 依据整块隐藏时，块内置信度一并隐藏。仅隐藏置信度时，AI 依据仍在。隐藏班级对比同时移除其 extraLink 和空态文字。 |
+| `density?` | `"default" \| "compact"`，默认 default；compact 只压缩主体、评分点列表、依据、班级对比和动作行间距/内边距，保留字号角色和标准控件尺寸。 |
+| `scoreSource?`、`afterScore?` | ReactNode 插槽；来源放得分同行右侧，与原 judgement Badge 并列且可换行。afterScore 放数字行之后、得分 Meter 之前；原分、来源和理由完全由宿主传入。 |
+| `afterPoints?`、`footer?` | afterPoints 放评分点之后、AI 依据/知识点之前。footer 为底部动作插槽，提供时替代旧 actions，不重复渲染；undefined/null/false 视为未提供。插槽自行提供按钮回调及禁用事实。 |
 
 Frame/Header/Footer、ScrollArea scrollFade、Meter、Badge 和标准按钮保持冻结结构；text-score-display 仅用于本题得分。单个学生单题反馈，不承担全班分析的业务计算或教师评分保存。第二批可在外层组合全班分析并复用本组件。
 
@@ -42,3 +46,13 @@ Frame/Header/Footer、ScrollArea scrollFade、Meter、Badge 和标准按钮保�
 组件页保留 G1 空态与禁用原因示例，新增三主题 320px“数据不全 · 当前作答共用滚动区”，含长中文及 MathML；宿主只有一个 ScrollArea，默认完整模式 DOM 不变。
 
 本轮浏览器访问 `http://localhost:5173/next/components/question-analysis-card` 被工具安全策略拒绝（该地址此前被用户拒绝授权），未绕过。已提供三主题窄容器夹具与自动化证据，实际交互、视觉、焦点、滚动和读屏器留待 Supervisor 复验；不以 SSR 冒充浏览器验收。检查数字见 `/tmp/prism-comp/Report-G2.md`。
+
+## P18 · 批阅功能栏（2026-10-05）
+
+本次扩展仍为通用查看组件。复读固定 coss Frame / FrameFooter / ScrollArea 和 Prism Badge / Button，沿用上文冻结稿记录的 particles `p-frame-1`、`p-scroll-area-4`、`p-toolbar-1` 的分区、单一滚动与标准动作组合。旧 Supervisor 缓存路径本轮已不存在，因此不声称重新读取或联网刷新 particles；未复制新上游代码、演示样式或 Beautiful UI。既有原语已满足需求，无需新增目录组件。
+
+`bodyOnly` 未提供 footer 时继续仅输出内容片段，宿主可把它和分析区放在同一个 ScrollArea。显式提供 footer 时，bodyOnly 改为填满宿主高度的 flex 容器：一个正文 ScrollArea，footer 是其外部兄弟且不收缩；没有标题、导航或 Frame。宿主必须给定可用高度，且不再包裹第二个滚动区。完整模式原有正文 ScrollArea 与头部仍保留，footer 替代底部 actions。默认属性未改变任何现有示例输出。
+
+查看态接入组合：`bodyOnly density="compact" showEvidence={false} showConfidence={false} showKnowledge={false} showComparison={false}`；用 scoreSource 显示真实来源，用 afterScore 显示已知原分/理由，afterPoints 组合 ErrorCauseReview 与宿主折叠资料，footer 放修改评分、修改错因、重新批阅的标准按钮。score.judgement、得分 Meter 和评分点标题继续按既有协议呈现；没有新增隐藏它们的 API，也不从总分推算点分或错因。
+
+自动测试覆盖四类可见性、插槽顺序、两种外壳的单一滚动/底部兄弟结构、标准按钮尺寸保持以及显式默认值兼容；主任务另与 main 做逐字节 SSR 和冻结页回归。浏览器验收：按分工由 Supervisor 执行，覆盖新八状态示例 light/paper/dark × 380×844 与窄宽、长中文/公式、正文滚动时动作常驻、来源换行与键盘可达；不把源码结构断言当作实际滚动或视觉验收。

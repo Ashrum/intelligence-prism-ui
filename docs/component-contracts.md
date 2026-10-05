@@ -1,5 +1,9 @@
 # v1.14.0 字体实施候选 · 组件复用约定
 
+## Dialog Layout 对话框版式（P13）
+
+2026-10-04 PO 批准新增 pattern，基于 coss Dialog 组合媒体栏、选项网格、理由列表与记录单。受控属性、插槽、可访问性、窄屏规则、复用依据与画布差异见 [Dialog Layout 契约](dialog-layout.md)。Builder 候选，独立 Review 与浏览器验收由 Supervisor 执行。
+
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
 ## 组件来源与复用顺序（PO 2026-09-29）
@@ -2165,6 +2169,7 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 | `title / items` | 必填 `string / readonly AgentExceptionItem[]` | 同一业务对象的异常集合；稳定唯一项 ID 由宿主提供，空数组仅表示暂无异常记录 |
 | `view` | `'inline' / 'workspace'`，默认 `inline` | 两态共用相同事实，workspace 只提供内容区，不创建浮层或路由 |
 | `density` | `'default' / 'compact'`，默认 `default` | compact 为可换行短列表；不缩字、不隐藏未知、失败、影响及禁用原因；可与任一 view 组合 |
+| `statusLabels` | 可选 `Partial<Record<AgentExceptionState, string>>` | 覆盖当前徽标与历史“当时状态”的展示词；未提供或空串使用组件默认词；不改变状态、语气、图标或动作 |
 | `inlineLimit` | `number`，默认 `2` | 有展开能力时显示前 N 项及所有 critical、failed、waiting 项，保留输入顺序；有限值向下取整且至少 1，非有限值回退 2 |
 | `onExpand` | 可选 `(trigger: HTMLButtonElement) => void` | inline 的“查看全部 N 项异常”；缺省不显示入口且保留全部项。存在 unknown 时同执行结果隐藏该入口并保留全部项；workspace 不显示入口 |
 | `onAction` | 可选 `(intent: AgentExceptionIntent) => void` | 仅发处置或查询意图，不变更输入、状态或历史；缺省时已提供的动作仍显示为禁用，并说明当前无法执行 |
@@ -2204,7 +2209,11 @@ P04 轻量接入须在 Workspace `/teacher/agent/workspace` 复用既有试验�
 
 `AgentExceptionEvidence={ id, label, location, version?, preview?, unavailableReason? }`：前三项为 string；`preview` 是宿主提供的**只读** ReactNode 插槽。不提供版本时显示“来源版本未确认”，不提供预览时显示“暂未提供材料预览”；有 unavailableReason 时优先显示原因，不渲染不可用预览。组件不加载材料、不授予访问权，也不把预览提升为已读取／已引用记录。preview/details 不得塞入处置、重试或恢复按钮绕过受控动作，尤其 unknown。
 
-`AgentExceptionRecord={ id, state, description, scope, basis, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
+`AgentExceptionRecord={ id, state, description, scope, basis, statusLabel?, method?, time?, request? }`：前五项必填，state 同七值状态集合，其他均为文本或上述 request。始终标“当时状态／当时范围／当时依据”，时间与处置方式只取本条记录，缺省显示未确认／未记录；无执行动作。宿主按事件匹配到原任务、轮次、对象与版本后提供快照，不把当前状态映射回旧记录。接口内 readonly 数组不等于宿主已实现历史存储。
+
+P11 展示词扩展：历史 `statusLabel?: string` 优先于整组 `statusLabels[record.state]`，未提供条目覆盖才查整组映射；任一选中的覆盖为空串时直接回退内置默认词（条目空串不继续使用整组词）。宿主必须保证展示词与当前／当时事实一致；历史需要固定事件词时应逐条提供 `statusLabel`，组件不由当前处置补造历史。覆盖只改变徽标的可见文本及同一可访问文本，不改变七值状态语义、tone、图标、description 中的处置上下文或动作权限。比如 ignored 可在明确接受模板异常且保留扫描件的事实下显示“已接受异常”；waiting-human 显示“已撤销接受”须已有撤销事实且仍待人工处理；skipped 显示“已剔除”须已明确排除本次处理范围，均不表示内容正确或任务完成。
+
+改造前复用检索（离线）：Beautiful UI 本地参考记录 Approval Card / Context Cards / Task Rows / Diff Table；coss Card / Alert / Button；particles 本地示例与 p-input-group-28 / 29 / 23 参考记录，均无异常当前与历史展示词 API。沿用现有 ExceptionHandler，覆盖路径复用 AgentStatus 的原 tone，默认路径保留 AgentStepStatus；未联网核验 registry，未复制第三方代码。示例新增“扫描件处置”，三个固定状态各带一条历史，接受记录演示逐条覆盖优先。
 
 05 `AgentCaptureScan` 可承接本组件点名的补采／替换页入口；采集页质量与异常处置回执分别由页面提供。发出补采请求或查看大图不代表异常已解决，不自动恢复任务。
 
@@ -2712,9 +2721,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Paper Preview 试卷预览 v0.1
 
-**2026-10-03，PO 批准**：“预览一份试卷”的场景应使用全屏预览框架（`ReviewWorkspace` + `PaperPreview` 连续模式），遵循[全屏规则（2026-10-03，PO 批准）](paper-review-design.md#下一阶段冻结要求)。旧的单页模式与 `PaperPreviewDialog` 标记为**待退役**，保留至 Workspace 全部迁移完成后移除；新接入不得再使用弹窗或内嵌预览。本次不删除代码，不改变现有类型、默认值与行为。
-
-`PaperPreview` / `PaperPreviewDialog` 提供多页扫描预览、连续缩放、异常标记、区域定位与版本意图。公开类型、默认值、只读事实边界与检索依据见 [试卷预览契约](paper-preview.md)。PO 2026-09-30 批准独立目录项，第 81 项；组件候选，浏览器验收待 Supervisor。
+**2026-10-03，PO 批准，R1 已实现退役**：单页布局与 `PaperPreviewDialog` 已移除。预览一份试卷必须使用独立全屏 `ReviewWorkspace` + `PaperPreview` 连续模式；layout 默认 continuous，也支持 mixed。标题、版本、操作、关闭和页面导航由框架宿主提供，组件仅呈现连续／混排画布与区域定位。迁移和删除 API 清单见 [试卷预览契约](paper-preview.md)。目录项不变，独立 Review 待 Supervisor。
 
 ## Stepper 流程步骤条 v0.1
 
@@ -2745,7 +2752,15 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Score Review 人工评分（独立组件候选）
 
-2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 PaperPreview 与 DraftMathPreview。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索、职责边界与浏览器验收 ESCALATE 见 [Score Review 契约](score-review.md)。Builder 实现待独立 Review，不自我批准。
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
+
+### 错因核对 v0.1
+
+P16（PO 2026-10-05 批准新增）目录「内容与数据」`error-cause-review`，kind `pattern`。`ErrorCauseReview` 组合 coss Frame/RadioGroup/Input 与 Prism Button/Badge，受控 categories/value/editing/draft/state；其他说明必填、保存失败保稿、取消/修改/保存意图和宿主历史失效文字。业务分类、领域命令和审计由宿主负责。完整 API、离线复用记录、Workspace 替换映射和浏览器清单见 [Error Cause Review 契约](error-cause-review.md)。
+
+### 学生整卷报告 v0.1
+
+P16（PO 2026-10-05 批准新增）目录「内容与数据」`student-paper-report`，kind `pattern`。`StudentPaperReport` 组合 coss Frame 与 ReviewMeter/ReviewConfirmation、Prism Badge/Button；宿主提供分值、四档计数、统计范围、归因分布及量表分母、AI 分析/来源、待办和底部插槽。未知不当 0，不计算业务统计；定位第一道待办只发意图。完整 API、离线复用记录、Workspace 替换映射和浏览器清单见 [Student Paper Report 契约](student-paper-report.md)。两项均提供三主题 320px 长中文/公式及主要状态夹具，待 Supervisor 独立 Review。
 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 
@@ -2768,7 +2783,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 ## 2026-10-02 · C2 题目与知识点预览组件
 
 - [Knowledge Rail 知识点栏](knowledge-rail.md)：sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。
-- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。
+- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。 P14：score / ratio 允许 null；未知比例条省略，null score 原样显示 scoreText；顺序、筛选、刻度事实由宿主提供，未知不等于零分。
 - [Question Analysis Card 题目分析卡](question-analysis-card.md)：question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。
 - [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
 
@@ -2786,3 +2801,9 @@ QuestionInspector G1 可选扩展：`pointsEmptyText?: string` / `comparisonEmpt
 - 属性可选、事实外部提供；新增空态只在对应数据缺失时出现。复用依据、示例与边界见各组件文档；coss 与冻结快照/一致性测试保持原文件。
 
 G3（2026-10-03）：`ReviewWorkspace.rail` 可省略（undefined/null/false），形成画布 + 右栏两栏；无左栏列或框架生成的展开/收起按钮，画布占据原左栏宽度。此时 `open/onOpenChange` 可省略，T 不消费也不发意图，默认与自定义 `panes` 均排除 rail，遗留 `pane=rail` 显示 canvas 而不回写。宿主须同步省略插槽中的题目栏按钮与帮助条目。有 rail 时原 DOM、受控行为及冻结快照保持不变；仍遵守独立全屏接入规则。
+
+## ReviewTools 评审与测试工具 v0.1
+
+PO 2026-10-03 批准新增目录；入口 `/next/components/review-tools`，完整 API、复用检索与宿主例子见 [review-tools.md](review-tools.md)。`ReviewTools` 接收 title / description / groups({id,title,children}) / children / footer，基础操作均以 coss 标准控件组合。56px 浮动圆形入口与作用域 `--review-accent: #F04A1A` 三主题一致，**仅用于评审/测试工具，不得用于产品界面**。
+
+position undefined 为非受控；null 为受控跟随 defaultPosition；默认位置可为宿主函数。`onPositionChange(next,{reason:'move'|'reset'})` 发移动或归位意图（归位 next=null），组件无持久化。受控位置等宿主回传；resize 只夹取显示。>5px 拖动、误弹抑制、最近边偏移、16/64px 键盘移动、Esc 回焦点及 reduced-motion 沿用评审交互。环境显示、存储、主题、测试场景、批量操作、危险确认与服务权限均归宿主；不导入 Workspace 私有类型。

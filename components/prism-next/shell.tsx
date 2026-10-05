@@ -15,7 +15,7 @@ import { PrismBrandMark } from "@/components/prism-next/app-bar"
 function Navigation() {
   const pathname=usePathname()
   const {setOpenMobile}=useSidebar()
-  const receptionPage=["/next/components/attachment", "/next/components/material-intake", "/next/components/data-station", "/next/components/queue-board", "/next/components/score-review", "/next/components/record-list"].includes(pathname)
+  const receptionPage=["/next/components/attachment", "/next/components/material-intake", "/next/components/data-station", "/next/components/queue-board", "/next/components/score-review", "/next/components/record-list", "/next/components/error-cause-review", "/next/components/student-paper-report", "/next/components/score-review/extensions"].includes(pathname)
   const link=(href:string,label:string,icon?:React.ReactNode)=> <SidebarMenuItem key={href}>
     <SidebarMenuButton isActive={pathname===href || (href==="/next/components/agent-components" && pathname.startsWith(href+"/"))} render={<Link href={href} aria-current={pathname===href?'page':href==="/next/components/agent-components" && pathname.startsWith(href+"/")?'location':undefined}/>} onClick={()=>setOpenMobile(false)}>{icon}<span>{label}</span></SidebarMenuButton>
   </SidebarMenuItem>
@@ -40,7 +40,7 @@ function Navigation() {
       </SidebarGroup>)}
       <SidebarGroup><SidebarGroupLabel>页面骨架</SidebarGroupLabel><SidebarMenu>{link("/next/skeletons","教师工作台总骨架",<Layers/>)}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>标准页面</SidebarGroupLabel><SidebarMenu>{link("/next/pages","阶段与范围")}</SidebarMenu></SidebarGroup>
-      <SidebarGroup><SidebarGroupLabel>设计评审</SidebarGroupLabel><SidebarMenu>{link("/next/reviews/paper-review","试卷预览框架 · 设计稿")}{link("/next/reviews/question-review","题目与知识点预览框架 · 设计稿")}</SidebarMenu></SidebarGroup>
+      <SidebarGroup><SidebarGroupLabel>设计评审</SidebarGroupLabel><SidebarMenu>{link("/next/reviews/paper-review","试卷预览框架 · 设计稿")}{link("/next/reviews/question-review","题目与知识点预览框架 · 设计稿")}{link("/next/reviews/grading-function-area","批阅功能栏 · 八种状态")}</SidebarMenu></SidebarGroup>
       <SidebarGroup><SidebarGroupLabel>{receptionPage ? "应用页面" : "应用示例"}</SidebarGroupLabel><SidebarMenu>{applicationExamples.map(item=>link("/next/examples/"+item.id,item.title))}{link("/next/use-cases/workspace-app-bar","Workspace 顶部区域")}</SidebarMenu></SidebarGroup>
     </SidebarContent>
   </Sidebar>

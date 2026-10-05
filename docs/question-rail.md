@@ -37,3 +37,15 @@
 全班模式 `QuestionRailClass` 的 item.value 已是 ReactNode，直接支持任意短文本，例如 `{value:'未提供', tone:'neutral', ariaLabel:'第 2 题，正确率未提供', tooltip:'正确率未提供'}`；缺少比例时省略 ratio，不传假 0。新增三主题 320px“数据不全”示例验证第二行文字，未新增 API 或修改组件实现。
 
 本轮浏览器访问 `http://localhost:5173/next/components/question-analysis-card` 被工具安全策略拒绝（该地址此前被用户拒绝授权），未绕过。已提供三主题窄容器夹具与自动化证据，实际交互、视觉、焦点、滚动和读屏器留待 Supervisor 复验；不以 SSR 冒充浏览器验收。检查数字见 `/tmp/prism-comp/Report-G2.md`。
+
+## P17 · 可选题目图标标记（2026-10-05）
+
+复用检索：本轮离线复读固定 coss Frame / Collapsible / Button / Tooltip 与现有实现；对照本仓库冻结设计页记载的 particles `p-frame-1`、`p-collapsible-1`、`p-tooltip-3/4`、`p-tabs-10`。旧 `/private/tmp/claude-503/` 注册缓存未找到，以上是已记录的匹配依据，未联网刷新上游。Beautiful UI Approval Card / Recommendation Card 沿用 ScoreReview 的既有检索结论：不匹配题目标记或评分/错因/整卷统计契约。现有组件公开属性扩展足够，不新建目录条目、不复制第三方代码。
+
+### 题目图标标记
+
+`QuestionRailItem.marker?: QuestionRailMarker`，类型为 `{ icon: ReactNode; ariaLabel: string; tooltip?: ReactNode; tone?: ReviewTone }`。宿主传非交互图标（如 lucide CircleAlert/CircleHelp）和非空 ariaLabel；无内置待办判定。图标绝对定位在题目按钮右上角，10px 容器，颜色沿用 neutral / success / warning / destructive 语义文字令牌；不改变按钮大小、网格间隔、题号或得分。cell 和 row 都支持。ariaLabel 追加到题目可访问名称；tooltip 追加到原题提示，缺省采用标记 ariaLabel，不在格内增加状态文字；图标 aria-hidden 避免重复朗读。
+
+`QuestionRailClassSection.items` 使用 `Omit<QuestionRailItem, "marker"> & {kind?: ReactNode; marker?: boolean | QuestionRailMarker}`：旧 `marker: true` 仍只表示原 cell 的 info 圆点，原 aria/tooltip 不变；对象值启用新图标，cell/row 均支持，两者互斥。页级 `pages[].marker` 仍是页码定位协议，与题目级标记无关。省略标记时两种栏 SSR 与 main a30c077 逐字节一致。
+
+新示例 `/next/components/question-rail/extensions`；原 demo 输出保持不变。浏览器检查两种栏 × cell/row × light/paper/dark × 320/390/1440px，悬停或聚焦显示题目提示及完整标记说明；↑↓ 选题、Enter 定位只发请求，图标不消失。复核长中文/公式提示、图标不遮题号和得分、格子尺寸与原例相同。浏览器验收：按分工由 Supervisor 执行。

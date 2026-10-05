@@ -1,6 +1,8 @@
 /* PO 2026-10-02: review utility accent, never a product/theme token. */
 .review-tools-trigger {
   --review-accent: #F04A1A;
+  inline-size: 56px;
+  block-size: 56px;
   position: fixed;
   z-index: 40;
   right: 24px;

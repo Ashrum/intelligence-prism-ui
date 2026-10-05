@@ -52,7 +52,7 @@ const steps: StepperStep[] = [
 组件页含第 1/3/5 步、待完成、受阻、垂直、320px、长中文、公式、三主题及 3/8 步夹具。测试与类型检查结果见 `/tmp/prism-stepper/Fix1-Report.md` 和 `fix1-checks/`。
 真实浏览器验证因浏览器安全策略拒绝访问 localhost:5173 而未执行；SSR 与模拟尺寸测试不等于视觉、原生键盘滚动或真实读屏器验收。Workspace 未接入，移动真机、实际服务及业务流程均未验证。
 
-## W4 紧凑工具栏
+## W4 紧凑工具栏（历史，S1 已替代）
 
 沿用上述 coss（含 particles）/ Beautiful UI 检索与既有 Stepper；本轮补查 particles 索引可访问，registry 与 Beautiful UI stepper 注册文件访问失败，未取得新来源代码。
 
@@ -62,7 +62,22 @@ const steps: StepperStep[] = [
 
 - 延用本页 coss（含 particles）与 Beautiful UI 无同义步骤组件的检索；本轮复核 Supervisor 的 registry 快照（579 项），固定 coss Button/Tabs 均没有“位置事实 + 每步选择资格”契约，因此扩展现有 Stepper，不新增组件。Ant Design Steps onChange、MUI StepButton、Mantine onStepClick 仅为委派中的能力对照，未复制代码或声称重新联网核验。
 - 新增 `onStepSelect?: (id: string) => void`、`StepperStep.selectable?: boolean`、`StepperStep.selectLabel?: string`。只有回调存在、selectable 严格为 true、且不是解析后的当前位置，才用原生 button；不按 done/pending/upcoming 推断资格。currentStepId 优先规则不变，未知位置不补造。
-- 默认可访问名称为“前往：{label}”，宿主可用 selectLabel 提供“返回：{label}”。原生 Enter/Space、可见 focus-visible outline，最小 44×44px；button 内部使用 span，保持有效 HTML。horizontal/compact/vertical 共享资格规则。
+- 默认可访问名称为“前往：{label}”，宿主可用 selectLabel 提供“返回：{label}”。原生 Enter/Space、可见 focus-visible outline，非紧凑布局最小 44×44px（紧凑布局见 S1）；button 内部使用 span，保持有效 HTML。horizontal/compact/vertical 共享资格规则。
 - 仅发送 ID，组件不跳转、不改 state/currentStepId，不自动标记完成。未传回调或未授权时保持旧 div/p DOM；当前步骤始终只读。三布局交互夹具与三主题 320px 长文公式夹具已同步。
 
 检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。
+
+
+## 2026-10-03 S1：按内容收拢的紧凑步骤组
+
+PO 批准，委派 `/Users/OLE/HermesWork/.supervisor/prism/task-S1.md`。沿用上文 coss registry/particles、Beautiful UI 无同义组件的检索记录，本轮未重新联网核验；实现前复核固定 `components/coss/button.tsx` 的 `pointer-coarse:after` 命中区惯例。扩展已有 Stepper，不新建组件、不复制其他设计系统代码，也不修改固定 coss、依赖或视觉令牌。
+
+- 仅 `compact && orientation === "horizontal"` 生效。步骤组 `width: max-content`、`max-width: 100%`，每步不拉伸；宿主以 `flex items-center justify-center` 在 56px 顶栏居中，也可左对齐。
+- 24px 标记与文字组垂直居中；已完成显示勾、当前使用 `text-item-title`，普通后续标签使用 `text-muted-foreground`。pending / blocked / error 保留警示标记和状态事实。相邻步骤保留固定 24px 连线，两侧各 4px 间隔；已完成步骤的出线为现有 `info-foreground`，其余为 `border`。
+- 原生 button 的资格、回调与当前位置契约不变。紧凑布局不设置 44px 最小宽高，复用 coss 的 `pointer-coarse:after:size-full/min-h-11/min-w-11` 扩展触屏命中区；focus-visible outline 保留。非紧凑布局继续保留原有 44px 目标。
+- 首次挂载、外部内容/位置变化与 ResizeObserver 尺寸变化时，测量展开内容与实际容器宽度；放不下则所有非当前步骤只显示标记。标签及状态保留于 SR 文本，只读步骤有完整 `aria-label`，按钮有操作名称与 `aria-description`；原生 `title` 保留完整标签、状态及原因。无匹配当前位置时仍显示 SR 未知摘要，不推定当前。
+- 当前标签单行省略，完整文本仍可访问；常态标签区最多 16rem。说明不在紧凑工具栏占用多行，保留在完整名称/描述与 title。SR 摘要始终存在，紧凑容器没有滚动 Tab 停靠、滚动提示或自动滚动。
+- 极窄或 6–8 步时，若全部固定标记、短线与当前标签仍不能同排，按步骤顺序自然换行（容器需允许自然撑高）；不缩标记、不隐藏步骤、不出现横向滚动。56px 顶栏示例采用四步；多步长中文示例使用自然高度容器。
+- 默认水平、垂直（含 vertical + compact）的 SSR DOM/类名与 main `9673dc3` 六组快照逐字节对应；默认布局 CSS 规则保持不变。原有水平局部滚动与 reveal 行为保留。
+
+示例覆盖 56px 居中顶栏、三主题 320px、长中文、公式、受阻、未知位置与八步。自动化日志与基线在 `/Users/OLE/HermesWork/.supervisor/prism/s1-checks/`；实际浏览器访问被安全策略拒绝，不能据模拟尺寸测试宣称视觉、原生键盘或触屏验收通过。S1 Builder 报告见同目录上级 `Report-S1.md`，仍需 Supervisor 独立 Review。

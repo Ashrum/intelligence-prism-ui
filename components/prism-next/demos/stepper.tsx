@@ -15,12 +15,22 @@ export const stepperFixtures = {
   blocked: stages(["done", "done", "done", "done", "blocked", "upcoming"]).map(step => step.state === "blocked" ? { ...step, description: "答题区域无法匹配，请检查试卷模板" } : step),
 }
 const longSteps = stepperFixtures.pending.map((step, index) => ({ ...step, label: ["设置高二年级数学期中考试批阅任务", "准备试卷原卷、标准答案与评分依据", "扫描并核对学生试卷姓名与考号", "验收扫描页序、缺页及识别异常", "按已确认的评分依据进行 AI 批阅", "查看批阅结果并安排人工复核"][index] }))
+const toolbarSteps: StepperStep[] = [
+  { id: "settings", label: "设置任务", state: "done", selectable: true },
+  { id: "materials", label: "准备资料", state: "pending", selectable: true },
+  { id: "scan", label: "扫描试卷", state: "current" },
+  { id: "results", label: "查看结果", state: "upcoming" },
+]
 
 export function StepperDemo() {
   const [position, setPosition] = useState<"first" | "third" | "fifth">("third")
   const [narrow, setNarrow] = useState(false)
   const [intent, setIntent] = useState("尚未请求跳步")
   return <>
+    <DemoSection id="stepper-compact-toolbar" title="紧凑步骤 · 56px 顶栏居中" description="宿主用 flex 居中；步骤组按内容收拢，短连线表示相邻阶段。返回操作仅发送意图。">
+      <div className="flex h-14 min-w-0 items-center justify-center border-b"><Stepper compact steps={toolbarSteps} onStepSelect={id => setIntent(`请求前往 ${id}；等待宿主更新当前位置`)} aria-label="顶栏任务阶段" /></div>
+      <Feedback>{intent}</Feedback>
+    </DemoSection>
     <DemoSection title="六步批阅流程" description="步骤只读；下方按钮载入不同阶段的固定事实。窄容器保留全部步骤，可聚焦后用方向键横向滚动。">
       <div className="mb-4 flex flex-wrap gap-2">{(["first", "third", "fifth"] as const).map((key, index) => <Button key={key} variant={position === key ? "secondary" : "outline"} aria-pressed={position === key} onClick={() => setPosition(key)}>当前第 {[1, 3, 5][index]} 步</Button>)}<Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button></div>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><Stepper steps={stepperFixtures[position]} aria-label="批阅任务阶段" /></div>
@@ -41,10 +51,14 @@ export function StepperDemo() {
         <p className="mt-4 text-read-body">核对公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </div>)}</div>
     </DemoSection>
-    <DemoSection title="紧凑工具栏 · 三主题与 320px" description="只压缩横向布局；仍保留全部步骤、当前位置、待完成和受阻原因，垂直模式保持原样。">
+    <DemoSection title="紧凑工具栏 · 三主题与 320px" description="放不下时只保留当前标签，其余名称和状态供辅助技术与悬停查看；极窄或多步时自然换行，无横向滚动。">
       <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full space-y-3 p-3">
+        <div className="flex h-14 min-w-0 items-center justify-center border-b"><Stepper compact steps={toolbarSteps} onStepSelect={id => setIntent(`请求前往 ${id}`)} aria-label={`${theme} 窄顶栏阶段`} /></div>
         <Stepper compact steps={stepperFixtures.blocked} currentStepId="stage-5" aria-label={`${theme} 紧凑批阅阶段`} />
+        <Stepper compact steps={longSteps.map(step => ({ ...step, selectable: true }))} onStepSelect={id => setIntent(`请求前往 ${id}`)} aria-label={`${theme} 紧凑长中文阶段`} />
         <Stepper compact steps={[{ id: "unknown", label: "准备试卷原卷、标准答案与评分依据并核对跨页公式", state: "pending" }]} />
+        <Stepper compact steps={Array.from({ length: 8 }, (_, index) => ({ id: `compact-${index}`, label: `复核阶段 ${index + 1}`, state: index === 7 ? "error" : "done" }))} currentStepId="compact-7" aria-label={`${theme} 紧凑八步阶段`} />
+        <p className="text-read-body">核对公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </div>)}</div>
     </DemoSection>
     <DemoSection title="3–8 步与无当前阶段" description="步数不固定；未提供 current 时如实说明，不把受阻或最后一步自动视为当前。">

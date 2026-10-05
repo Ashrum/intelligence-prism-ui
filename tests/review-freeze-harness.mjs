@@ -8,7 +8,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 export async function freezeRenderer() {
   const file = new URL('../.sites-runtime/c1-freeze/probe.mjs', import.meta.url);
   await mkdir(new URL('.', file), { recursive: true });
-  const compiled = await build({ stdin: { contents: `export { PaperReviewDesign } from './examples/paper-review/paper-review'; export { PaperPreview } from './components/prism-next/paper-preview';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'freeze-states', setup(b) {
+  const compiled = await build({ stdin: { contents: `export { PaperReviewDesign } from './examples/paper-review/paper-review';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'freeze-states', setup(b) {
     b.onLoad({ filter: /examples\/paper-review\/paper-review\.tsx$/ }, async args => {
       let source = (await readFile(args.path, 'utf8')).replace('import { ReviewTools } from "@/examples/review-tools/review-tools"', 'const ReviewTools = () => null');
       for (const [name, initial] of [['selected', "'q17'"], ['missing','false'], ['mode',"'marked'"], ['immersive','false'], ['studentOpen','false']]) {
@@ -24,7 +24,6 @@ export async function freezeRenderer() {
   } }] });
   await writeFile(file, compiled.outputFiles[0].text);
   const api = await import(file);
-  return { review(state = {}) { globalThis.__freezeState = state; const html = normalizeReview(renderToStaticMarkup(React.createElement(api.PaperReviewDesign))); delete globalThis.__freezeState; return html; }, paper(props) { return normalizeReview(renderToStaticMarkup(React.createElement(api.PaperPreview, props))); } };
+  return { review(state = {}) { globalThis.__freezeState = state; const html = normalizeReview(renderToStaticMarkup(React.createElement(api.PaperReviewDesign))); delete globalThis.__freezeState; return html; } };
 }
 export const freezeStates = { default: {}, collapsed: { preferences: { best: true } }, immersive: { immersive: true }, original: { mode: 'original' }, missing: { missing: true }, question8: { selected: 'q8' }, studentOpen: { studentOpen: true } };
-export const legacyPapers = { default: { pages: [{ id: 'one', alt: '原卷', imageUrl: '/paper.svg' }] }, canvas: { variant: 'canvas', pages: [{ id: 'one', imageUrl: '/paper.svg', regions: [{ id: 'r', label: '第 8 题', rect: { x: .1, y: .1, width: .5, height: .2 } }] }], selectedRegionId: 'r', zoom: 'width', rotation: { one: 90 } }, missing: { pages: [{ id: 'missing' }] }, empty: { pages: [], state: 'empty' }, loading: { pages: [], state: 'loading' }, error: { pages: [], state: 'error', errorMessage: '加载失败' } };

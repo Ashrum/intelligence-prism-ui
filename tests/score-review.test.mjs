@@ -100,10 +100,9 @@ test('empty score, invalid scale and host disabled reason prevent submission and
   }
 });
 
-test('composition preserves PaperPreview region props and shared reviewer/queue APIs; multiline heights override desktop', () => {
-  const paper = {title:'原卷',pages:[{id:'p',regions:[{id:'a',label:'第3题',rect:[8,42,84,24]}]}],selectedRegionId:'a'};
-  const out = capture({paper}); assert.deepEqual(out.nodes.find(n=>n.type===api.PaperPreview).props,{...paper,variant:'canvas'}); assert.match(out.html,/data-paper-preview/);
-  assert.doesNotMatch(out.html, /aria-label="试卷信息"|aria-label="扫描页面"|aria-label="扫描版本"|上一份|>下一份</);
+test('standalone panel preserves shared reviewer/queue APIs; multiline heights override desktop', () => {
+  const out = capture();
+  assert.doesNotMatch(out.html, /data-paper-preview|data-score-review-paper|data-review-continuous/);
   for (const b of out.buttons) { assert.match(b.props.className,/h-auto sm:h-auto/); assert.doesNotMatch(render(b),/sm:h-8(?:\s|")/); }
   assert.match(render(h(api.AgentItemReviewer,{item:{id:'i',title:'旧复核器',version:'v1'},review:{state:'waiting-human',description:'待确认'},checkpoints:[],summary:'摘要'})),/旧复核器/);
   assert.match(render(h(api.AgentReviewQueue,{title:'旧复核队列',queue:{id:'q',version:'v1'},items:[]})),/旧复核队列/);

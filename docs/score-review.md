@@ -2,12 +2,75 @@
 
 PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/score-review`。独立 Review 与产品验收另行确认。
 
+## P18 · 右侧功能栏（2026-10-05）
+
+复用检索：本轮复读固定 coss Card / Collapsible / NumberField / Button 与现有 ScoreReview；检索本文及冻结设计页已记录的 particles `p-frame-1`、`p-collapsible-1`、`p-number-field-1/7/9/10`、`p-textarea-5`、`p-kbd-1`。固定分区、折叠、标签与输入足够，缺口是现有组件的显示和动作编排。Supervisor 旧 registry 缓存已不存在，以上单项是历史检索依据，未联网刷新；Beautiful UI Approval Card / Recommendation Card 沿用上述已记录的匹配结论。继续扩展原件，不复制第三方代码、不修改 coss、不新增目录项、依赖或令牌。
+
+| 可选属性 | 契约 |
+| --- | --- |
+| `mode?: "review" \| "confirm" \| "edit" \| "manual"` | 默认 review 保留旧结构。confirm 显示 AI 建议及原因、只读评分点，单一“采纳”和“改分”；edit 显示评分、合计、理由和宿主提供的未作答操作，底部“取消 / 保存”；manual 同 edit 且没有取消。edit/manual 均不挂 AI 卡、依据空态或接受/恢复 AI 按钮。 |
+| `onEdit?` / `onCancel?` | confirm 的改分与 edit 的取消意图；不自切换模式。改分服从整体锁；取消在保存中禁用，其他门禁下仍允许退出草稿。缺回调禁用。 |
+| `showBasis?` / `showConfidence?` | 默认 true；false 整块删除依据标题/正文或置信度文字，包括 sr-only 身份头中的置信度；考号和可访问标题仍保留。 |
+| `instruction?: ReactNode \| false` | 默认保留 review 旧说明；其他模式给出对应核对说明。传节点替换正文，false 删除说明及输入的对应 aria-describedby 引用，门禁提示仍保留。 |
+| `scoreContext?: ReactNode` | 总分标签/逐点合计旁的宿主文字，例如“原 6 分”。组件不从 AI、历史或当前分推断原分。 |
+| `sectionsPlacement?: "top" \| "bottom"` | 缺省/top 保留 review 旧顺序。bottom 将标准答案、学生作答、历史统一放在正文末尾、动作行之上。新模式 top 将三项放在主要评分信息之前；compact 沿用 coss 折叠，默认收起。 |
+| `sectionLabels?` | 可选 `answer/standardAnswer/history` 字符串覆盖各分区标题，历史仍保留条数；初始展开使用原 `sectionsDefaultOpen`。 |
+
+确认态的主动作和 Ctrl/⌘+Enter、Alt+A 共用 `onSave`（failed 时 `onRetry`）及全部保存门禁。提交分数/原因为外供 `aiSuggestion.score/reason`，不采用旧编辑草稿、未作答标记或评分点合计替换 AI 建议；可选 points 保留为外供只读明细。无效/缺失建议禁止采纳；points 与建议是否一致、是否可采纳仍由宿主通过 `saveDisabledReason` 裁定。确认态不显示理由编辑器、不要求隐藏编辑草稿的理由，不调用 `onAcceptAi`；后者仍仅用于 review 的草稿接受。edit/manual 的 Alt+A 不触发隐藏动作；新模式不提供旧上一题/跳过按钮或 Alt+左右导航，题目导航由宿主固定头部处理。
+
+`density="compact"` 搭配新 mode 或 `sectionsPlacement="bottom"` 时，根节点填充宿主可用高度，`[data-score-review-body]` 为唯一纵向滚动正文，`[data-score-review-footer]` 是不收缩的同级底栏。宿主必须给出受限高度和 `min-h-0`，不要再包纵向 ScrollArea。仅 compact 但未启用 P18 布局仍保留原输出，防止改变旧 demo。新模式按钮、总分与点分输入使用 coss 标准尺寸；原 review 的尺寸与 JSX 顺序保留。
+
+八态示例及可照抄组合见 [批阅功能栏](grading-function-area.md)，路由 `/next/reviews/grading-function-area`。旧 demo 文件不改。源码回调测试只验证意图及门禁，未宣称保存或导航成功；浏览器验收：按分工由 Supervisor 执行。
+
+## P16 · 评分扩展（2026-10-05，PO 批准实施）
+
+扩展示例单独位于 `/next/components/score-review/extensions`，不新增目录条目；原 `ScoreReviewDemo` 文件和输出保留。新增能力全部可选，未传／显式 undefined 时与 main `429726b` 的原始 SSR 逐字节比较，不归一化 React ID。以下是本轮契约，后文保留历史实施记录与当时的验证范围。
+
+### 复用取舍与离线检索
+
+本轮完整核对固定 coss NumberField、Field、RadioGroup/Radio、Label、ToggleGroup、Input、Textarea、Frame，现有 ScoreReview/QuestionInspector/ReviewMeter 与 Workspace 只读宿主。检索本仓库 `docs/score-review.md`、`docs/paper-review-design.md`、`docs/question-inspector.md` 已记录的 particles：p-number-field-1/7/9/10（范围/步长）、p-textarea-5（固定标签）、p-toggle-group-4（互斥选择）、p-frame-1、p-meter-3/4（分区与量值）。这些是历史检索记录；原临时缓存本轮不存在，未联网重新获取 registry 或 particles，不宣称读取当前官网源码。
+
+Beautiful UI Approval Card / Recommendation Card 的既有检索缺少逐点评分、理由必填与保存回执契约。本轮沿用其历史匹配结论，选择扩展 ScoreReview 并组合固定 coss；不复制 Beautiful UI 代码。逐点区为 ScoreReview 内部结构，不导出第二个可复用组件，避免将强耦合的合计、未作答和门禁另立协议。新增逐点 NumberField 和理由 RadioGroup 均使用标准尺寸；既有总分/按钮尺寸为了旧输出兼容保持不变。没有新增 CSS、令牌、依赖或 coss 修改。
+
+### API
+
+| 可选属性 | 契约 |
+| --- | --- |
+| `points: readonly ScoreReviewPoint[]` | 每项 `{id,label,maxScore,score:number\|null,uncertain?}`，id 唯一；受控数组按原顺序呈现。传入数组即由评分点合计决定总分，不分摊原 `score` 或 AI 分数。空数组、未齐、非有限/越界/不合步长或重复 id 使合计未知并禁止保存；小数合计去除浮点尾差，不把未知当 0。 |
+| `pointStep` / `onPointsChange(points)` | 步长默认继承 `step`。编辑只规范本次输入到对应评分点范围与步长，发出完整新数组；由宿主回传。不触发保存或 `onScoreChange`。总分超过 `maxScore` 显示原因并禁保存。 |
+| `pointsReadOnly` | 或缺少 `onPointsChange` 时显示只读列表：存疑问号、满分对勾、其余圆点；附可访问状态及“得分 / 满分”。未知显示未提供，不推定未满分。 |
+| `reasonOptions` / `selectedReasonId` / `onReasonSelect(id)` | 选项 `{id,label,isOther?}`，id 与理由文本由宿主控制。选择预置项发 id 和 `onReasonChange(label)`，唯一 Textarea 只读显示该 label；选择其他发 id 和 `onReasonChange("")`，在同一 Textarea 输入正文。不会增加第二个理由输入。 |
+| `requireReasonSelection` | 宿主声明必须选有效理由，与业务是否改分无隐式关联；需同时传 `reasonOptions`。其他选项无论此开关如何，都需非空白正文。未知选项 id 禁止保存。原 `requireReason` / `requireReasonOnChange` 仍兼容。 |
+| `unanswered` / `onUnansweredChange(boolean)` | 受控标记／撤销意图。true 时显示和提交 0 分并注明未作答，锁定评分点和 AI 接受；不清空原评分点或总分草稿。false 回到原草稿。点击不会自动保存或写结果。 |
+| `unansweredDisabledReason` | 只禁止标记／撤销按钮，并通过文字与 aria-describedby 解释，不代替宿主保存门禁。 |
+| `scoreReadOnly` | 用文字替代总分输入、移除快捷给分，保留理由和保存；原样呈现宿主总分，不按编辑步长舍入。非有限/越界值禁保存；`points` 或 `unanswered=true` 自动启用总分只读。 |
+| `saveDisabledReason` | 只阻止保存/重试，包括 Ctrl/⌘+Enter；在原 gate 显示宿主原因，不再退回“保存操作未提供”。不锁理由、评分点或导航。整体锁定仍由 `disabledReason/state` 提供。 |
+| `actionLabels` | `save/retry/accept/previous/skip/markUnanswered/clearUnanswered`，未提供的项沿原文或新功能默认文案。只改按钮文字，事件与快捷键不变。 |
+
+`ScoreReviewDraft` 保留 `{score,reason}`；仅传对应新属性时增加 `points`、`reasonOptionId`、`unanswered`，不改变旧调用的对象键。预置理由的保存文本来自选项 label；其他正文去除首尾空白。保存、重试、失败和历史仍由宿主维护。
+
+派生／只读总分时，接受 AI 建议只发 `onAcceptAi(score)`，不伪造评分点或发 `onScoreChange`；宿主决定如何回传点值。`unanswered=true` 禁止接受建议，先撤销标记。动作名称不改变这一契约，即使宿主文案提到下一题也不会自行导航或保存。
+
+### Workspace 接入对应（本轮只读，未迁移）
+
+- `AiGradingReviewEditor.tsx` 评分点 section：用 `points={scoringPoints.map(p=>({id:p.id,label:p.label,maxScore:p.max,score:draft.pointScores[p.id]??null,uncertain:p.uncertain}))}`、`pointStep={0.5}`、`onPointsChange` 写回宿主 `pointScores`；AI 评分点需要静态呈现时传 `pointsReadOnly`。宿主 `aiReviewTotal/aiReviewDecision` 继续作为领域裁定，不移入组件。
+- “标记为未作答” section：替换为 `unanswered/onUnansweredChange`；宿主仍记录 dirty、领域 action 和 0 分保存命令。原 `pointScoreNotice` 与纠正总分 handler 可移除，因为派生分没有输入框。
+- 预置理由 ToggleGroup 与原组件理由透传：统一传 `AI_REVIEW_REASONS`（other 映射 `isOther:true`）、`selectedReasonId=draft.reasonChoice`、`onReasonSelect`、`reason=draft.otherReason`、`onReasonChange`、`requireReasonSelection=reasonRequired`；是否必须理由仍由 `aiReviewDecision` 声明。
+- 原保存／重试回调不必为了禁用而撤掉：传 `saveDisabledReason=decision.error || (entry.handled&&!dirty ? '已保存；调整后可再次保存并留痕。' : undefined)`；running/stale 等整体禁用继续传 `disabledReason`。
+- `navigationUnit` 的下一题／下一份语义由宿主组装 `actionLabels`；`task.review`、请求号幂等性、后继导航、持久化、脏态确认与回执继续留宿主。本轮不改 Workspace。
+
+### 验证与移交
+
+SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输入名称、未知只读状态、预置/其他必填、未作答保稿与撤销、门禁与快捷键、失败/保存中以及默认字节兼容。新示例提供可操作草稿、只读、保存中、失败、只禁保存、三主题 320px 长中文与公式。
+
+浏览器验收：按分工由 Supervisor 执行。打开扩展 URL，检查逐点输入与方向键、唯一 Textarea 的预置/其他切换、未作答撤销保稿、只读外观、保存/重试及 Ctrl/⌘+Enter 门禁；覆盖 light/paper/dark、320px/390px/1440px 与长中文/公式。实际焦点、触摸、移动设备、读屏器、真实保存/模型及 Workspace 接入未验证。本节不继承历史浏览器拒绝为本轮结论。
+
 ## 实施前复用检索
 
 - 已读取 `agent-item-reviewer.tsx`、`agent-review-queue.tsx` 与 Workspace `GradingAnswerEditor.tsx`。AgentItemReviewer 的 item/version/request/resolution 是版本化通用复核协议，draft 插槽适合业务编辑器；AgentReviewQueue 是同协议的集合视图。本次独立评分组合无需队列版本、查询或重启协议，强塞入旧组件会扩张旧契约。保持旧 API，共享 AgentMetaLine、AgentStatus、coss 表单/反馈原子；宿主仍可将评分组合接入现有复核流程。
 - [Beautiful UI](https://www.beautifului.dev) 的 Approval Card 是执行前问答，Recommendation Card 是带置信信息的建议接受卡；均没有分值范围、半分步进、理由门禁与原卷定位。注册文件 `r/approval-card.json`、`r/recommendation-card.json` 本轮读取失败；未复制其代码，不将官网描述当成源码验证。
 - 阅读固定 coss NumberField、Textarea、Card、Alert、Button；[particles](https://coss.com/ui/particles) 显示 510 项，在线 [registry](https://coss.com/ui/r/registry.json) 和 `p-number-field-10.json` 读取失败。只读检查既有缓存 `.../f9a352c5-7ad1-4d06-9d0d-08fc4599e165/scratchpad/coss/particles-src/` 的 p-number-field-1、p-number-field-10、p-textarea-5：采用步进组合和固定标签，不复制提交执行和等待计时器。缓存位于 `/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/`，不声称在线最新。
-- 组合已合并 PaperPreview / DocumentRegionViewer；OCR 使用 DraftMathPreview 的固定 Temml + MathML 渲染链路。AI 卡使用普通 Card 和明确 AI 标题，不铺设 AI 底色。
+- 历史版本曾组合 PaperPreview / DocumentRegionViewer；R1 已移除内嵌原卷，现由独立全屏框架承载。OCR 使用 DraftMathPreview 的固定 Temml + MathML 渲染链路。AI 卡使用普通 Card 和明确 AI 标题，不铺设 AI 底色。
 - 已查看 S35 同名前缀 PNG，并只读核对 5174 TeacherGradingManualReviewPage 210–233 行。Figma 只取功能，不复制色值、局部字体或布局像素。
 
 ## API 与事实边界
@@ -26,7 +89,7 @@ PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/scor
 
 - `studentName / questionLabel / examNumber / eyebrow / progress`：宿主提供身份、可选小标及题项进度；缺失身份与考号显示「未提供」。`confidencePercent` 使用 0–100，缺失、非有限或越界值显示「置信度 未提供」；`confidenceLabel` 可显式传「低置信度」，组件不设置阈值。
 - `answer`：OCR 原文，复用 DraftMathPreview；支持 `\(...\)`、`\[...\]` 公式，非公式文本保留。缺失显示「OCR 文本未提供」。组件不识别图片、不判断数学结论。
-- `paper?: PaperPreviewProps`：完整复用既有原卷组件和区域定位；省略时只呈现评分面板。960px 容器以上左右排列，否则原卷在上、评分在下。`locationNotice` 仅展示宿主确认的定位事实；真实宿主可传「左侧已定位原始笔迹区域」，窄容器宜使用不含方位的文案。当前页面仅有区域框，明确说明原始笔迹图像未接入，不将框选当作已获得扫描原件。
+- **R1（PO 2026-10-03 批准）已移除 `paper` 属性及内嵌原卷渲染**；ScoreReview 始终只呈现评分面板。原卷迁移到独立全屏 `ReviewWorkspace` + `PaperPreview` 连续画布；评分、理由、保存回执与快捷键不变。`locationNotice` 仍仅显示宿主确认的事实，组件不自行定位或推定已取得原始笔迹。
 - `maxScore` 必需且有限、非负；`step` 默认 1，必须有限且大于 0，支持 0.5。无效配置锁定评分编辑和提交，显示原因。`score` 非 undefined 时受控，null 为空；否则本地草稿从 defaultScore（默认 null）初始化。草稿钳制到 0..满分并按从 0 起的步长就近取值，满分端点可达；源 AI 分数与历史回执从不被钳制。
 - `onScoreChange(number|null)` 接收规范化草稿；受控宿主须回传。`aiSuggestion` 提供 score/reason/basis；无效或不符合当前步长的 AI 分数保留原值展示但不可接受。接受建议先发 onScoreChange，再发 onAcceptAi(score)；非受控同步本地草稿，均不保存。
 - `reason / defaultReason / onReasonChange` 支持受控与非受控理由；`showReason` 默认 false，`requireReasonOnChange` 默认 false。开启必填策略时总显示理由字段；比较 baselineScore（优先）或有效 AI 建议，分数不同或基准未知时要求非空白理由。返回基准分数后理由可选，不擅自清空已填写内容。
@@ -45,7 +108,7 @@ PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/scor
 
 新增「每次保存必填理由 · 上一题保存回执」示例：保持基准分时验证必填门禁；独立「载入预设回执」和「清除回执」展示调用方控制；「切换题项（焦点交接）」变更标识、清除回执并重置受控草稿。保存仍只报告请求。
 
-新增小文件测试覆盖范围钳制、步长、受控/非受控、接受建议、保存与重试理由门禁、保存中禁用、未知置信度、精确意图回调及 PaperPreview/AgentItemReviewer/AgentReviewQueue 复用回归；真实构建路由测试检查所有状态、主题与禁用词。SSR 回调探针不等同 DOM 或浏览器验证。
+新增小文件测试覆盖范围钳制、步长、受控/非受控、接受建议、保存与重试理由门禁、保存中禁用、未知置信度、精确意图回调及独立评分面板/AgentItemReviewer/AgentReviewQueue 复用回归；真实构建路由测试检查所有状态、主题与禁用词。SSR 回调探针不等同 DOM 或浏览器验证。
 
 **ESCALATE：本轮真实浏览器验收被自动审批拒绝。** Chrome 打开本地 5173 返回 browser security policy / user declined permission，未尝试绕过。三主题实际配色、320px 视觉与触控、键盘输入/焦点、公式客户端渲染、区域定位滚动与折叠交互仍待 Supervisor 浏览器验证。真实保存/审计服务、移动设备、读屏器与 Workspace 接入未验证。数字及原始日志见 `/tmp/prism-score/Report.md`、`checks/`。
 
@@ -56,3 +119,22 @@ PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/scor
 - Supervisor 提供的本轮在线检索快照：`/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/registry.json`（Builder 核对 579 项），同目录 `particles/*.json`；Builder 读取固定 coss 源码与下列对应条目，不声称重新联网获取。
 - 核对 `p-meter-3/4`、固定 Meter/Progress 和 ScoreReview 当前源码：confidencePercent 通过 AgentMetaLine 呈现文字百分比，progress.current/total 也是题项文字，没有任何 Progress 组件或静态量值进度条。
 - **未采用 Meter**：没有错误进度条待替换；增加条形量表会是额外展示能力，超出本轮条件性替换范围。置信度文字和题项复核进度保持原样，不把复核过程改成量值语义。组件与 demo 无 DOM/外观变化，原置信度/题项测试及夹具复用。
+
+## P17 · 可选紧凑密度（2026-10-05）
+
+复用检索：本轮离线复读固定 coss Frame / Collapsible / Button / Tooltip 与现有实现；对照本仓库冻结设计页记载的 particles `p-frame-1`、`p-collapsible-1`、`p-tooltip-3/4`、`p-tabs-10`。旧 `/private/tmp/claude-503/` 注册缓存未找到，以上是已记录的匹配依据，未联网刷新上游。Beautiful UI Approval Card / Recommendation Card 沿用 ScoreReview 的既有检索结论：不匹配题目标记或评分/错因/整卷统计契约。现有组件公开属性扩展足够，不新建目录条目、不复制第三方代码。
+
+### API 与信息保留
+
+- `density?: "default" | "compact"` 默认 default；省略、undefined 或 default 均保留旧 SSR。compact 只改布局：外 Card `gap-5 p-4 → gap-3 p-3`，AI Card `gap-2 p-4 → gap-1 p-3`，评分点/理由主区 `space-y-3 → space-y-2`，历史 `space-y-3 pt-3 → space-y-2 pt-2`。
+- 身份头改为单行 flex 流，窄容器自然换行，保留 eyebrow、学生、题目、考号、置信度和进度。文字字号、字重不变，评分输入、快捷给分与操作按钮尺寸不变；原按钮内 Kbd 保留，不额外增加快捷键说明。操作说明合并为“接受建议或改分保存；人工修改保留审计记录。”，保留 gate 和回执。
+- `showIdentity?: boolean` 默认 true，false 视觉隐藏身份头，保留 sr-only 标题与面板可访问名称，适合宿主顶栏已有完整身份的情况。启用 `focusOnQuestionChange` 时隐藏身份模式聚焦可见面板，其他情况仍聚焦标题；首次挂载不抢焦点。
+- `standardAnswer?: string` 可选标准答案，使用现有 DraftMathPreview 公式链路；未提供时不新增区块，也不生成答案。default 模式直接呈现，compact 模式折叠呈现。
+- `sectionsDefaultOpen?: Partial<Record<"answer" | "standardAnswer" | "history", boolean>>` 由宿主声明各区初始展开状态；compact 的作答、标准答案与历史缺省折叠，default 的历史沿用缺省折叠，作答/标准答案直接呈现。初始化后用户通过 coss Collapsible 切换；更新初始值不会重置现有展开状态，切换复核对象时宿主可用 key 重新挂载。折叠仅控制显示，不提交或清空草稿。
+- 新区使用标准 coss Button 触发器、原生 Enter/Space、Tab 聚焦和 aria-expanded；展开时 aria-controls 对应内容 ID。compact 折叠动画遵守 reduced-motion。评分门禁、快捷键、历史和保存事实不变。
+
+### 比较与浏览器移交
+
+新增 `/next/components/score-review/compact`，原两个 demo 与扩展页保持不变；同一数据 default/compact 对照含长中文与公式、三主题和 320px 容器，另含宿主声明全部展开、showIdentity=false 示例。SSR 不能测高度：请在同一宽度与主题分别测 `[data-density-comparison] [data-score-review-panel]` 的高度（初始折叠、三个区全部展开各一次），记录 default/compact px 及差值；上述清单是已压缩/合并/折叠项，不作为高度实测值。
+
+操作：Tab 到“学生原始作答 / 标准答案 / 历史记录”，Enter/Space 展开/折叠，确认焦点留在按钮、aria-expanded 更新且内容可达；核对默认折叠与宿主全开。调整为 7 分后理由门禁仍生效；输入理由，保存或 Ctrl/⌘+Enter 仅提示请求，未出现伪回执。三主题、320/390/1440px 检查身份自然换行、按钮字号尺寸、长中文/公式与 Tooltip。浏览器验收：按分工由 Supervisor 执行；真实服务、Workspace 接入、真机、读屏器与真实焦点/键盘行为未验证。

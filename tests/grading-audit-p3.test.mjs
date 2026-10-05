@@ -36,7 +36,7 @@ test('Stepper selection requires explicit host eligibility, excludes current and
     const out = capture('Stepper', props), buttons = out.find('button');
     assert.equal(buttons.length, 2);
     assert.deepEqual(buttons.map(n => n.props['aria-label']), ['返回：准备资料', '前往：查看结果']);
-    for (const button of buttons) { assert.equal(button.props.type, 'button'); assert.match(button.props.className, /min-h-11.*min-w-11/); assert.match(button.props.className, /focus-visible/); button.props.onClick(); }
+    for (const button of buttons) { assert.equal(button.props.type, 'button'); assert.match(button.props.className, layout.compact ? /pointer-coarse:after:min-h-11.*pointer-coarse:after:min-w-11/ : /min-h-11.*min-w-11/); if (layout.compact) assert.doesNotMatch(button.props.className, /(?:^| )min-[hw]-11/); assert.match(button.props.className, /focus-visible/); button.props.onClick(); }
     assert.deepEqual(calls, ['pending', 'future']); assert.equal(capture('Stepper', props).html, out.html);
     assert.equal(capture('Stepper', { steps, ...layout }).find('button').length, 0);
     for (const match of out.html.matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)) assert.doesNotMatch(match[1], /<(?:div|p)\b/);

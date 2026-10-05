@@ -1,12 +1,14 @@
 "use client"
 
 import { useLayoutEffect, useRef, useState, type PointerEvent, type RefObject, type ReactNode } from "react"
+import { PaperPreviewRegionEditor, canEditPaperRegion, type PaperPreviewRegionEditing } from "./paper-preview-region-editor"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
 import { clampPaperZoom, paperDimensions, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
 import "./review-workspace.css"
 export type PaperPreviewLocation = { pageId?: string; regionId?: string; request?: number; focus?: boolean }
 export type PaperPreviewContinuousProps = {
+  regionEditing?: PaperPreviewRegionEditing
   viewportRef: RefObject<HTMLDivElement | null>; pages: readonly PaperPreviewPage[]; zoom: PaperPreviewZoom
   rotations: Record<string, PaperPreviewRotation>; selected?: string; scale?: number
   onSelect?: (id: string, pageId: string) => void; onZoom: (zoom: PaperPreviewZoom) => void
@@ -27,13 +29,24 @@ export function locatePaperTarget(node: HTMLDivElement | null, target: PaperPrev
   if (target.focus) node.focus({ preventScroll: true })
 }
 /** One scroll viewport, independent sheet sizes/rotations and gesture anchors. */
-export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, selected, scale = 1, onSelect, onZoom, onVisiblePage, onViewport, gap, toolbarWidth = 56, beforeContent, renderPageHeader, spotlight = false, original = false, emptyImageText = "扫描图像未提供", location }: PaperPreviewContinuousProps) {
+export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, selected, scale = 1, onSelect, onZoom, onVisiblePage, onViewport, gap, toolbarWidth = 56, beforeContent, renderPageHeader, spotlight = false, original = false, emptyImageText = "扫描图像未提供", location, regionEditing }: PaperPreviewContinuousProps) {
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
   const anchor = useRef<{ id: string; x: number; y: number; localX: number; localY: number } | null>(null)
-  const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number }>())
+  const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number; editing?: boolean }>())
   const gesture = useRef({ moved: false, pinch: false, distance: 0, percent: 100 })
   const suppressClick = useRef(false)
+  const cancelRegionEdit = useRef<(() => void) | null>(null)
+  const editingKey = regionEditing && pages.some(page => canEditPaperRegion(page.id, page.regions, regionEditing)) ? JSON.stringify([regionEditing.pageId, regionEditing.regionId]) : null
+  const previousEditingKey = useRef(editingKey)
+  useLayoutEffect(() => {
+    if (previousEditingKey.current === editingKey) return
+    previousEditingKey.current = editingKey
+    cancelRegionEdit.current?.()
+    pointers.current.clear()
+    gesture.current = { moved: false, pinch: false, distance: 0, percent: 100 }
+    suppressClick.current = false
+  }, [editingKey])
   function visiblePage() {
     const node = viewportRef.current
     if (!node) return
@@ -90,6 +103,7 @@ export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, se
   wheel.current = event => {
     if (!(event.ctrlKey || event.metaKey)) return
     event.preventDefault()
+    cancelRegionEdit.current?.()
     const paper = paperAt(event.clientX, event.clientY)
     if (!paper) return
     const percent = Number(paper.dataset.percent)
@@ -98,11 +112,13 @@ export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, se
   }
   function down(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType === 'mouse' && event.button !== 0) return
+    const editing = !!regionEditing && !!(event.target as HTMLElement).closest?.('[data-paper-region-editor]')
     const active = pointers.current
     if (!active.size) { suppressClick.current = false; gesture.current = { moved: false, pinch: false, distance: 0, percent: 100 } }
-    active.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY })
-    ;(event.target as HTMLElement).setPointerCapture?.(event.pointerId)
+    active.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, editing })
+    if (!editing || event.isPrimary === false) (event.target as HTMLElement).setPointerCapture?.(event.pointerId)
     if (active.size === 2) {
+      cancelRegionEdit.current?.()
       const [a, b] = [...active.values()]
       gesture.current.pinch = true
       gesture.current.distance = Math.hypot(a.x - b.x, a.y - b.y)
@@ -121,7 +137,7 @@ export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, se
     if (active.size === 2) {
       const [a, b] = [...active.values()]
       if (session.distance) anchoredZoom(session.percent * Math.hypot(a.x - b.x, a.y - b.y) / session.distance, (a.x + b.x) / 2, (a.y + b.y) / 2)
-    } else if (!session.pinch) {
+    } else if (!session.pinch && !previous.editing) {
       node.scrollLeft -= (event.clientX - (wasMoved ? previous.x : previous.startX)) / scale
       node.scrollTop -= (event.clientY - (wasMoved ? previous.y : previous.startY)) / scale
     }
@@ -143,8 +159,11 @@ export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, se
     {pages.map((page, index) => {
       const { source, rotation, dimensions, percent } = layouts[index]
       const header = renderPageHeader?.(page, index)
+      const editing = canEditPaperRegion(page.id, page.regions, regionEditing)
+      const visibleRegions = editing && regionEditing!.regionId !== null ? (page.regions ?? []).filter(region => region.id !== regionEditing!.regionId) : page.regions ?? []
+      const viewer = <DocumentRegionViewer label={`第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={spotlight ? visibleRegions.map(region => ({ ...region, content: <span aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-white/65 transition-opacity duration-200 motion-reduce:transition-none ${selected === region.id || original ? 'opacity-0' : 'opacity-100'}`} /> })) : visibleRegions} selectedId={selected} onSelect={onSelect ? id => onSelect(id, page.id) : undefined} background={page.imageUrl ? <img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">{emptyImageText}</div>} />
       const paper = <div key={page.id} data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size={page.paperSize ?? "A4"} className="relative mx-auto shrink-0" style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
-        <DocumentRegionViewer label={`第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={spotlight ? (page.regions ?? []).map(region => ({ ...region, content: <span aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-white/65 transition-opacity duration-200 motion-reduce:transition-none ${selected === region.id || original ? 'opacity-0' : 'opacity-100'}`} /> })) : page.regions ?? []} selectedId={selected} onSelect={onSelect ? id => onSelect(id, page.id) : undefined} background={page.imageUrl ? <img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">{emptyImageText}</div>} />
+        {editing ? <>{viewer}<PaperPreviewRegionEditor key={JSON.stringify([page.id, regionEditing!.regionId])} editing={regionEditing!} regions={page.regions ?? []} rotation={rotation} geometryKey={`${rotation}:${percent}:${source.width}:${source.height}:${scale}`} cancelRef={cancelRegionEdit} /></> : viewer}
       </div>
       return header == null ? paper : <section key={page.id}>{header}{paper}</section>
     })}

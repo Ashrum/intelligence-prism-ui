@@ -2,6 +2,7 @@
 import "./review-workspace.css"
 
 import { useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode, type RefObject } from "react"
+import { PaperPreviewRegionEditor, canEditPaperRegion, type PaperPreviewRegionEditing } from "./paper-preview-region-editor"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
 import { clampPaperZoom, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
@@ -10,7 +11,8 @@ const positiveSize=(value:number,fallback:number)=>Number.isFinite(value)&&value
 
 export type PaperPreviewMixedPage = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
 // Mixed digital/scan engine of PaperPreview continuous mode; all content is supplied.
-export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout }: {
+export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing }: {
+  regionEditing?: PaperPreviewRegionEditing
   resolveScanLayout?:(page:PaperPreviewMixedPage,rotation:PaperPreviewRotation)=>{source:{width:number;height:number};dimensions:{width:number;height:number}}
   beforeContent?: ReactNode; renderSectionHeading?: (page:PaperPreviewMixedPage,index:number)=>ReactNode; onScanVisibilityChange?: (visible:boolean)=>void
   onQuestionHidden?: (hidden:boolean) => void; answerLabel?: string
@@ -23,9 +25,20 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
   const anchor = useRef<{ id: string; x: number; y: number; localX: number; localY: number } | null>(null)
-  const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number }>())
+  const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number; editing?: boolean }>())
   const gesture = useRef({ moved: false, pinch: false, distance: 0, percent: 100 })
   const suppressClick = useRef(false)
+  const cancelRegionEdit = useRef<(() => void) | null>(null)
+  const editingKey = regionEditing && pages.some(page => !page.content && canEditPaperRegion(page.id, page.regions, regionEditing)) ? JSON.stringify([regionEditing.pageId, regionEditing.regionId]) : null
+  const previousEditingKey = useRef(editingKey)
+  useLayoutEffect(() => {
+    if (previousEditingKey.current === editingKey) return
+    previousEditingKey.current = editingKey
+    cancelRegionEdit.current?.()
+    pointers.current.clear()
+    gesture.current = { moved: false, pinch: false, distance: 0, percent: 100 }
+    suppressClick.current = false
+  }, [editingKey])
   function visiblePage() {
     const node = viewportRef.current
     if (!node) return
@@ -80,6 +93,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   wheel.current = event => {
     if (!(event.ctrlKey || event.metaKey)) return
     event.preventDefault()
+    cancelRegionEdit.current?.()
     const paper = paperAt(event.clientX, event.clientY)
     if (!paper) return
     const percent = Number(paper.dataset.percent)
@@ -88,12 +102,14 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   }
   function down(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType === 'mouse' && event.button !== 0) return
-    if ((event.target as HTMLElement).closest('[data-digital-question],[data-full-score-group],button,a,input')) { suppressClick.current=false; return }
+    const editing = !!regionEditing && !!(event.target as HTMLElement).closest?.('[data-paper-region-editor]')
+    if (!editing && !(regionEditing && pointers.current.size) && (event.target as HTMLElement).closest('[data-digital-question],[data-full-score-group],button,a,input')) { suppressClick.current=false; return }
     const active = pointers.current
     if (!active.size) { suppressClick.current = false; gesture.current = { moved: false, pinch: false, distance: 0, percent: 100 } }
-    active.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY })
-    ;(event.target as HTMLElement).setPointerCapture?.(event.pointerId)
+    active.set(event.pointerId, { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, editing })
+    if (!editing || event.isPrimary === false) (event.target as HTMLElement).setPointerCapture?.(event.pointerId)
     if (active.size === 2) {
+      cancelRegionEdit.current?.()
       const [a, b] = [...active.values()]
       gesture.current.pinch = true
       gesture.current.distance = Math.hypot(a.x - b.x, a.y - b.y)
@@ -112,7 +128,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     if (active.size === 2) {
       const [a, b] = [...active.values()]
       if (session.distance) anchoredZoom(session.percent * Math.hypot(a.x - b.x, a.y - b.y) / session.distance, (a.x + b.x) / 2, (a.y + b.y) / 2)
-    } else if (!session.pinch) {
+    } else if (!session.pinch && !previous.editing) {
       node.scrollLeft -= (event.clientX - (wasMoved ? previous.x : previous.startX)) / scale
       node.scrollTop -= (event.clientY - (wasMoved ? previous.y : previous.startY)) / scale
     }
@@ -136,8 +152,11 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
       const { source, rotation, dimensions, percent } = layouts[index]
       if(page.content)return <section key={page.id} className="shrink-0" style={{width:viewport.width}}><div data-review-page={index} data-page-id={page.id} data-percent={100}>{page.content}</div></section>
       const firstScan=pages.findIndex(p=>!p.content)===index
+      const editing = canEditPaperRegion(page.id, page.regions, regionEditing)
+      const visibleRegions = editing && regionEditing!.regionId !== null ? (page.regions ?? []).filter(region => region.id !== regionEditing!.regionId) : page.regions ?? []
+      const viewer = <DocumentRegionViewer label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={visibleRegions} selectedId={undefined} onSelect={onSelect} background={page.imageUrl?<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />:<div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">扫描图像未提供</div>} />
       return <section key={page.id} style={{ width: dimensions.width * percent / 100 }} className="shrink-0">{renderSectionHeading?.(page,index)}{!renderSectionHeading&&firstScan&&<h2 className="text-ui-body text-muted-foreground" data-answer-section>{answerLabel}</h2>}{headers[page.id]}<div data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size="crop" data-scan-paper className={`relative shrink-0 shadow-2xl transition-opacity duration-150 motion-reduce:transition-none ${page.id === "question" || !!page.content || activePage === page.id ? "opacity-100" : "opacity-65"} ${activePage === page.id && page.id !== "question" ? "ring-2 ring-info" : ""}`} style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
-        <DocumentRegionViewer label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={page.regions ?? []} selectedId={undefined} onSelect={onSelect} background={page.imageUrl?<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />:<div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">扫描图像未提供</div>} />
+        {editing ? <>{viewer}<PaperPreviewRegionEditor key={JSON.stringify([page.id, regionEditing!.regionId])} editing={regionEditing!} regions={page.regions ?? []} rotation={rotation} geometryKey={`${rotation}:${percent}:${source.width}:${source.height}:${scale}`} cancelRef={cancelRegionEdit} /></> : viewer}
       </div></section>
     })}
     </div></div>

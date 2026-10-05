@@ -124,7 +124,7 @@ test('compact retains SR-only summary, full blocked facts, and horizontal access
   assert.equal(html(api.stepperFixtures.blocked, { ...props, compact: false }), standard);
   assert.equal((out.match(/aria-current="step"/g) || []).length, 1);
   assert.equal((out.match(/<li /g) || []).length, 6);
-  assert.match(out, /当前阶段 · 受阻/); assert.match(out, /tabindex="0"/);
+  assert.match(out, /当前阶段 · 受阻/); assert.doesNotMatch(out, /tabindex=|可横向滚动/);
   assert.doesNotMatch(out, /<button|<a\s/);
   const unknown = html(api.stepperFixtures.blocked, { compact: true, currentStepId: 'missing' });
   assert.match(unknown, /<p class="sr-only" data-step-summary="true">共 6 步 · 未提供当前阶段<\/p>/); assert.doesNotMatch(unknown, /aria-current=/);

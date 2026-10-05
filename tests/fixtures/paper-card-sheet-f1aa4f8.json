@@ -1,0 +1,186 @@
+{
+  "baseline": "f1aa4f8",
+  "scenarios": [
+    {
+      "name": "sheet-basic",
+      "props": {
+        "variant": "sheet"
+      }
+    },
+    {
+      "name": "sheet-rich",
+      "props": {
+        "variant": "sheet",
+        "selected": true,
+        "thumbnailUrl": "/scan.png",
+        "examNumber": "20260118",
+        "pageCount": 6,
+        "paperSize": "A3",
+        "orientation": "landscape",
+        "reason": "第二页作答区域待核对，保留完整长中文原因。"
+      }
+    },
+    {
+      "name": "sheet-empty-id",
+      "props": {
+        "variant": "sheet",
+        "id": " "
+      }
+    },
+    {
+      "name": "sheet-no-name",
+      "props": {
+        "variant": "sheet",
+        "studentName": ""
+      }
+    },
+    {
+      "name": "sheet-waiting-false",
+      "props": {
+        "variant": "sheet",
+        "placeholder": true
+      },
+      "resolve": false
+    },
+    {
+      "name": "sheet-anonymous-false",
+      "props": {
+        "variant": "sheet",
+        "placeholder": true,
+        "studentName": "",
+        "slotLabel": "6"
+      },
+      "resolve": false
+    },
+    {
+      "name": "card-false",
+      "props": {
+        "variant": "card"
+      },
+      "resolve": false
+    },
+    {
+      "name": "compact-false",
+      "props": {
+        "variant": "card",
+        "compact": true
+      },
+      "resolve": false
+    },
+    {
+      "name": "sheet-waiting-true",
+      "props": {
+        "variant": "sheet",
+        "placeholder": true
+      },
+      "resolve": true
+    },
+    {
+      "name": "sheet-anonymous-true",
+      "props": {
+        "variant": "sheet",
+        "placeholder": true,
+        "studentName": "",
+        "slotLabel": "6"
+      },
+      "resolve": true
+    },
+    {
+      "name": "card-true",
+      "props": {
+        "variant": "card"
+      },
+      "resolve": true
+    },
+    {
+      "name": "compact-true",
+      "props": {
+        "variant": "card",
+        "compact": true
+      },
+      "resolve": true
+    }
+  ],
+  "tones": [
+    "neutral",
+    "info",
+    "success",
+    "warning",
+    "error",
+    null
+  ],
+  "sha256": {
+    "sheet-basic/neutral": "11db699909263776e31728139776e0b92ced60ba5aa212708dc9fe2342bdb490",
+    "sheet-basic/info": "caf227760ab97f4ec6c90d943ce806d0338375f5ac0227c4a423b689a304da39",
+    "sheet-basic/success": "754337493db87c396af623f8b8c6a569b293c0ee5d9fd654861f6bb13ff8ec98",
+    "sheet-basic/warning": "e0ae7e2a84e5580e1de0e9cfa9aa584f4a431459293bdef178a362aca5fb0d28",
+    "sheet-basic/error": "cd902052efdd2ec425b81c3b4c3e63a8cddf73860ae61501f6522f36d2045520",
+    "sheet-basic/default": "ac51591a378efe0be9327ffd36e0fc6e9340502c9d79febd6dd89f7b9e642100",
+    "sheet-rich/neutral": "70883d446833d3e96c06436f39955eaac18cf979ed19c5f9febfe335b32d4fda",
+    "sheet-rich/info": "e6b5b44049668ed67f12478e2dbe9bc7a5939f4b60c1e2d2ae97b728e049f13a",
+    "sheet-rich/success": "e4998eaa69c8d45ff4a62aeb2f183656ed1c1277ca94fe08873fca74bb99f01b",
+    "sheet-rich/warning": "cc2ac2b3bbca136d350b9baf5cee027ff8d708dafbe41849eeaa601765c44f2c",
+    "sheet-rich/error": "94ac0338a93fce43715cdabd5d4063c1cae2e7e65a9a9428f8d40dc4f498e29a",
+    "sheet-rich/default": "941df58b66fb06286b7502ed08dfc93a391d709c9cc1a2b95984bddda7c5a04e",
+    "sheet-empty-id/neutral": "ad9b2d679fdbe63d2dc329f023811adaf2b6a4cc288d8b5a48ba52460337d5e2",
+    "sheet-empty-id/info": "66b2b470df6be048ec4e5fb1f4bf7ab51fb1bcf28c19295a34651dce9e78d413",
+    "sheet-empty-id/success": "cdd8588ce8deb58af577d451af0550c8d599068f5965884842316de1b52acc43",
+    "sheet-empty-id/warning": "99988ddb5c314ca16011e7013931a978ca50addfaf7b7ffa429a5ff95ca0cf50",
+    "sheet-empty-id/error": "bdc2a3a1177f70d52b3782502010ea63d787e11b3e4b4de7f12a5d4b8494bd1b",
+    "sheet-empty-id/default": "6e87cec2cd6af4e303ed6e75a059645882866ebab409fc4809972dfea5f496a1",
+    "sheet-no-name/neutral": "ed2eae3c5d5facda9e925ad3475f3f8ce6b53fe8189030d3cf2d9f1ba438f862",
+    "sheet-no-name/info": "fa6b62416dfc234e0514724552ef237d8105880ca4d8a983444f2371fb27abaf",
+    "sheet-no-name/success": "4c9274a0d94971f8c63968c1d04e7789c90bef055ebb83821fbb021053be94cc",
+    "sheet-no-name/warning": "03b80afd24f3a527246c399bf59ebccd38e0ded666c60184132ff71ebbb26fe8",
+    "sheet-no-name/error": "b6a3a43737f77a885c9019082dcf5bd6b5673b983366ff96fe30b0d18e4b6502",
+    "sheet-no-name/default": "02c5fbfafcdc8a8635c89710dada957ce7fc6abcf269cbf5560999715dfee169",
+    "sheet-waiting-false/neutral": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-waiting-false/info": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-waiting-false/success": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-waiting-false/warning": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-waiting-false/error": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-waiting-false/default": "bebef0fc16a8f2ece38dcd73b7b1eb9282ca82898406c16d00c7d140abdc0850",
+    "sheet-anonymous-false/neutral": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "sheet-anonymous-false/info": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "sheet-anonymous-false/success": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "sheet-anonymous-false/warning": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "sheet-anonymous-false/error": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "sheet-anonymous-false/default": "e23a4dc7a31ae9fd4222194a60b561daa174321aea786d4d01c2c14724dcc686",
+    "card-false/neutral": "c330d9841a8bdf78010798950d44837fca1300d3efdc5eb2dded4974e2a3805f",
+    "card-false/info": "035c75d1614cc495a0f3c1125dfa1d799984e70b5b01e439fce1a1a3d6d55fae",
+    "card-false/success": "ac9d75c2bf417d2cac73c3f5c82c505f860064259c59c23249c6e589468f60bb",
+    "card-false/warning": "660f8f871f4e204c382528fea132ff5156656ef1e2b5b3b72bfbf2a5636bb615",
+    "card-false/error": "e2528b5c9824bc295e2c5f4f8057d5e0ac75ed7a21af42d9435aefc2a2e10271",
+    "card-false/default": "c330d9841a8bdf78010798950d44837fca1300d3efdc5eb2dded4974e2a3805f",
+    "compact-false/neutral": "668e1eea2ab723c09748f5e9affb1318816f3b77a2973bebf326a63897a35cd1",
+    "compact-false/info": "433c5051e75e75d74f85a56c31b422378d86e85b08ed8649646eceb9d3766819",
+    "compact-false/success": "4c49336fd18e5ff7ec2e6a0ee523c55d99aeb37b20b20fa05e9fee6c7c66c82d",
+    "compact-false/warning": "4857ca767c79988ec5af0bc08bf77703322a513a0591b7531bbd997da73839b2",
+    "compact-false/error": "7e7287ab2a0aff52f679f2de00420927d319b0cf364ad1276b69d0be3d64076d",
+    "compact-false/default": "668e1eea2ab723c09748f5e9affb1318816f3b77a2973bebf326a63897a35cd1",
+    "sheet-waiting-true/neutral": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-waiting-true/info": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-waiting-true/success": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-waiting-true/warning": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-waiting-true/error": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-waiting-true/default": "6aec7724590c704078f2a6c643e122cbf236e42d93291cd6e96f5d8dda6714d6",
+    "sheet-anonymous-true/neutral": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "sheet-anonymous-true/info": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "sheet-anonymous-true/success": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "sheet-anonymous-true/warning": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "sheet-anonymous-true/error": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "sheet-anonymous-true/default": "f6439ee0d4f2955535e2088bcf27f271f8259ced597ba593a5a6d8b205314367",
+    "card-true/neutral": "47f4a26da4ad02046bf002803bf3f4bee8f1c353c90226ba8ec88b2481533edd",
+    "card-true/info": "7038052c0bf671f56b26596a10a2359fde1b2c4d7fc958be05afaaf196e68675",
+    "card-true/success": "dd46bcf212134a75c18939a32cb6952accb376464622ea2fde841091b3ad5c1a",
+    "card-true/warning": "42c54af81352ae548d803f3618f043b2ff34de3d034760d2bd5993bf3e34964b",
+    "card-true/error": "053b93da76d7ef272e9a25edef6c24ed89bae9c3f437f2c0120d0c76bef85aa5",
+    "card-true/default": "47f4a26da4ad02046bf002803bf3f4bee8f1c353c90226ba8ec88b2481533edd",
+    "compact-true/neutral": "cdc2f6c0a708f23b5eb3395e60a6f67cd4548d720ebc203216d1c57beab220cf",
+    "compact-true/info": "19f58a4f19d325fefb0cae5bef819cec35a5b661e616d997f6f628ad17de2a6b",
+    "compact-true/success": "4c6cfeefb50116f4fa3d2c0f29203fb7b3a9bbdcf15cc0c29cead5888eae535d",
+    "compact-true/warning": "47407e25fd19f0787ad1dfe580620d91338c323bf6b7cf7bd45b1693a78c36a7",
+    "compact-true/error": "7b319679b7ccf33c9e49a98c8cd06a5e1c156c3b851f2c2231722ca091896167",
+    "compact-true/default": "cdc2f6c0a708f23b5eb3395e60a6f67cd4548d720ebc203216d1c57beab220cf"
+  }
+}

@@ -3,6 +3,7 @@ export type ComponentGroup = { id:string; title:string; items:ComponentEntry[] }
 const item = (id:string,title:string,summary:string):ComponentEntry => ({id,title,summary})
 export const componentGroups:ComponentGroup[] = [
   { id:"actions",title:"操作与命令",items:[
+    {...item("review-tools","Review Tools 评审与测试工具","可拖动浮动入口、分组面板与宿主动作，仅供评审或开发测试。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/popover",sourceLabel:"coss Popover / Button / 标准表单组合"},
     item("button","Button 按钮","主要、次要、危险、图标与加载操作。"),
     item("group","Group 控件组","将相关操作连为一组，保留统一尺寸。"),
     item("toggle","Toggle 切换按钮","切换单个选项的开启状态。"),
@@ -40,6 +41,8 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
+    {...item("error-cause-review","Error Cause Review 错因核对","分类与说明的受控核对、修改、保存回执和历史记录。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/radio-group",sourceLabel:"coss Frame / RadioGroup / Input 组合"},
+    {...item("student-paper-report","Student Paper Report 学生整卷报告","整卷得分、题目分布、失分原因与 AI 分析；仅呈现宿主事实。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/frame",sourceLabel:"coss Frame / ReviewMeter / Prism Badge 组合"},
     {...item("knowledge-rail","Knowledge Rail 知识点栏","专题分组、外部得分率与证据定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
     {...item("student-control-bar","Student Control Bar 学生控制条","浮动学生导航、筛选计数与全班刻度。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
     {...item("question-analysis-card","Question Analysis Card 题目分析卡","数字题面、选项统计、作答分组与三页签详情。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
@@ -49,13 +52,13 @@ export const componentGroups:ComponentGroup[] = [
     {...item("question-rail","Question Rail 题目栏","外部状态、题型分段与成绩地图，支持筛选与宿主排序。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss / Prism 预览组合"},
     {...item("review-workspace","Review Workspace 预览框架","受控三栏、分区与沉浸，顶栏可由宿主接管。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/dialog",sourceLabel:"coss / Prism 预览组合"},
     {...item("record-list","Record List 记录列表","按状态目录、搜索与筛选查看记录，发出处理、更多操作和分页意图。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/tabs",sourceLabel:"coss Tabs / Select / Menu / Pagination / 共享状态原子组合"},
-    {...item("score-review","Score Review 人工评分","核对原始作答与 AI 建议，调整教师评分并发出保存或重试请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/number-field",sourceLabel:"coss NumberField / PaperPreview / 共享复核原子组合"},
+    {...item("score-review","Score Review 人工评分","核对原始作答与 AI 建议，调整教师评分并发出保存或重试请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/number-field",sourceLabel:"coss NumberField / 共享复核原子组合"},
     {...item("queue-board","Queue Board 队列看板","按状态选择队列，查看试卷事实并发出预览、异常处理或复核请求。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/table",sourceLabel:"coss Table / Toggle / Prism Badge 组合"},
     {...item("data-station","Data Station 教学数据站","选择可用数据站、查看连接事实与任务绑定信息，支持右侧抽屉和入口徽标。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/sheet",sourceLabel:"coss Sheet / RadioGroup / 共享数据站状态组合"},
     {...item("material-intake","Material Intake 资料接收","扫描与上传汇入同一资料清单，支持资料核对、页数限制与单页替换。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileInput / Attachment / Stepper 组合"},
-    {...item("attachment","Attachment 附件","文件生命周期、独立操作与学生试卷卡；Paper Card 网格支持当前预览与异常说明。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileStatus / coss / PaperThumbnail 组合",searchTargets:[{terms:["Paper Card","PaperCard","试卷卡","学生试卷"]}]},
+    {...item("attachment","Attachment 附件","文件生命周期、独立操作与学生试卷卡；Paper Card 支持纸面浏览、紧凑呈现、当前预览与异常处置。"),kind:"pattern",sourceUrl:"https://coss.com/ui/r/p-input-5.json",sourceLabel:"AgentFileStatus / coss / PaperThumbnail 组合",searchTargets:[{terms:["Paper Card","PaperCard","试卷卡","学生试卷"]}]},
     {...item("instrument-panel","Instrument 任务状态面板","当前事实、状态原因与下一步操作；支持指标、处理提示和状态清单。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss / MetricSummary / AgentStatus 组合"},
-    {...item("paper-preview","Paper Preview 试卷预览","扫描页面、异常标记、区域定位与扫描版本；内嵌或全屏预览。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/sheet",sourceLabel:"coss Sheet / DocumentRegionViewer 组合"},
+    {...item("paper-preview","Paper Preview 试卷预览","全屏预览框架的连续扫描与数字内容混排画布，支持缩放、旋转和区域定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/toolbar",sourceLabel:"ReviewWorkspace / DocumentRegionViewer / coss Toolbar 组合"},
     {...item("icons","Icons 图标","搜索 41 个常用图标，统一名称、用途、尺寸与主题颜色。"),kind:"extension",sourceUrl:"https://lucide.dev/icons",sourceLabel:"Lucide"},
     { ...item("question","Question 题目","独立题面、可选详情与操作插槽；按需组合选择、编排、作答和复核。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
     {...item("answer-review-map","Document Region 文档区域","传入文档内容与区域坐标，支持缩放、选中与定位。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/drawer",sourceLabel:"coss Drawer 组合"},
@@ -117,6 +120,7 @@ export const componentGroups:ComponentGroup[] = [
     item("menu","Menu 菜单","集中对象的次要操作。"),
     item("context-menu","Context Menu 上下文菜单","为当前对象提供上下文操作。"),
     item("dialog","Dialog 对话框","完成临时、聚焦的编辑任务。"),
+    {...item("dialog-layout","Dialog Layout 对话框版式","媒体栏、选项网格、理由列表与记录单的受控对话框组合。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/dialog",sourceLabel:"coss Dialog / RadioGroup / Prism 版式组合"},
     item("alert-dialog","Alert Dialog 确认对话框","在有影响的操作前说明对象与结果。"),
     item("drawer","Drawer 抽屉","从屏幕边缘展开补充任务。"),
     item("sheet","Sheet 侧面板","在保留上下文时查看与编辑详情。"),

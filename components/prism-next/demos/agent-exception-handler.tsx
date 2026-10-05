@@ -4,7 +4,7 @@ import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-present
 
 import { useRef, useState } from "react"
 import { Button } from "@/components/coss/button"
-import { AgentExceptionHandler, type AgentExceptionAction, type AgentExceptionDisposition, type AgentExceptionItem, type AgentExceptionState } from "../agent-exception-handler"
+import { AgentExceptionHandler, type AgentExceptionAction, type AgentExceptionDisposition, type AgentExceptionItem, type AgentExceptionState, type AgentExceptionHandlerProps } from "../agent-exception-handler"
 
 const replace: AgentExceptionAction = { id: "replace", label: "替换清晰示例页", impact: "仅替换第 3 页；第 1、2 页及已校对内容保留。" }
 const skip: AgentExceptionAction = { id: "skip", label: "跳过模糊区域", impact: "保留原页和待核对标记，继续处理其他内容。" }
@@ -13,7 +13,7 @@ const query: AgentExceptionAction = { id: "query-original", label: "查询原请
 const resume: AgentExceptionAction = { id: "resume", label: "继续校对", impact: "返回已保留的校对稿，仍需逐题核对。" }
 
 /** Fixed examples only. Neither the data nor the manual state selector is a runtime. */
-export const exceptionExamples: Record<"scan" | "questions", { label: string; title: string; items: readonly AgentExceptionItem[] }> = {
+export const exceptionExamples: Record<"scan" | "questions" | "scan-disposition", { label: string; title: string; statusLabels?: AgentExceptionHandlerProps["statusLabels"]; items: readonly AgentExceptionItem[] }> = {
   scan: {
     label: "P04 扫描整理", title: "扫描材料局部问题 · 示例",
     items: [
@@ -63,6 +63,30 @@ export const exceptionExamples: Record<"scan" | "questions", { label: string; ti
       },
     ],
   },
+  "scan-disposition": {
+    label: "扫描件处置", title: "扫描件模板异常处置 · 示例",
+    statusLabels: { ignored: "已接受异常", "waiting-human": "已撤销接受", skipped: "已剔除" },
+    items: [
+      {
+        id: "scan-accepted", title: "第 1 份扫描件模板差异", kind: "conflict",
+        scope: "第 1 份扫描件的模板差异。", retained: "扫描原件与教师确认记录。", basis: "固定示例：教师已确认保留这份存在模板差异的扫描件；不表示内容正确。",
+        disposition: { state: "ignored", description: "教师已接受这份扫描件的模板异常，扫描件仍保留。", resolution: { method: "接受模板异常并保留扫描件" } },
+        history: [{ id: "accepted-then", state: "ignored", statusLabel: "已接受异常（保留扫描件）", description: "当时教师确认接受模板差异。", scope: "第 1 份扫描件", basis: "模板核对记录 v1", method: "接受模板异常并保留扫描件" }],
+      },
+      {
+        id: "scan-revoked", title: "第 2 份扫描件接受记录已撤销", kind: "conflict",
+        scope: "第 2 份扫描件的模板差异。", retained: "扫描原件与此前处置记录。", basis: "固定示例：撤销接受后，模板异常重新等待人工决定。",
+        disposition: { state: "waiting-human", description: "教师已撤销此前接受，模板异常仍待重新处理。" },
+        history: [{ id: "revoked-then", state: "waiting-human", description: "当时撤销接受并恢复待处理状态。", scope: "第 2 份扫描件", basis: "撤销记录 v2", method: "撤销接受" }],
+      },
+      {
+        id: "scan-excluded", title: "第 3 份扫描件已从处理范围剔除", kind: "conflict",
+        scope: "第 3 份扫描件的本次处理范围。", retained: "扫描原件和剔除记录。", basis: "固定示例：教师明确将这份扫描件排除在本次处理范围之外。",
+        disposition: { state: "skipped", description: "这份扫描件已剔除，不参与本次后续处理。", resolution: { method: "从本次处理范围剔除" } },
+        history: [{ id: "excluded-then", state: "skipped", description: "当时确认剔除这份扫描件。", scope: "第 3 份扫描件", basis: "剔除记录 v1", method: "从本次处理范围剔除" }],
+      },
+    ],
+  },
 }
 
 const stateOptions: readonly [AgentExceptionState, string][] = [["waiting-human", "待处理"], ["waiting", "提交中"], ["unknown", "回执未确认"], ["resolved", "已处置"], ["failed", "失败"], ["ignored", "已忽略"], ["skipped", "已跳过"]]
@@ -86,22 +110,23 @@ export function AgentExceptionHandlerDemo() {
     ignored: { state: "ignored", description: "已按示例记录忽略本项，不表示内容正确。", resolution: { method: "保留当前内容并标记忽略" } },
     skipped: { state: "skipped", description: "已跳过本项，待核对部分保留。", resolution: { method: "跳过当前区域", time: "示例时间 2026-09-25 09:20" }, actions: [resume] },
   }
-  const items = example.items.map((item, index) => index === 0 ? { ...item, disposition: dispositions[state] } : item)
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentExceptionHandler title={example.title} items={items}   inlineLimit={1}
+  const fixedDisposition = purpose === "scan-disposition"
+  const items = fixedDisposition ? example.items : example.items.map((item, index) => index === 0 ? { ...item, disposition: dispositions[state] } : item)
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentExceptionHandler title={example.title} items={items} statusLabels={example.statusLabels}   inlineLimit={fixedDisposition ? items.length : 1}
           notice="示例：尚未连接真实处理服务。"
           details={<p>查看材料不代表已核对；处理只针对当前异常，已保留的内容继续使用。历史记录保留当时事实。</p>}
           onAction={intent => { const item = items.find(value => value.id === intent.exceptionId); const action = intent.kind === "query" ? query : item && "actions" in item.disposition ? item.disposition.actions?.find(value => value.id === intent.actionId) : undefined; setFeedback(`示例：已选择“${action?.label ?? "处理"}”（${item?.title}）；记录保持原样。`) }}
            view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <section id={presentation.embedded ? undefined : "exception-handler"} className="mb-12 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">异常处理器</h2>}
-    <p className="text-ui-hint text-muted-foreground">固定示例：三种用法共享同一组记录。下方按钮手动切换首项状态，处置按钮只记录选择。</p>
+    <p className="text-ui-hint text-muted-foreground">{fixedDisposition ? "固定示例：已接受异常、已撤销接受、已剔除及各自当时记录；展示词不改变状态事实。" : "固定示例：三种用法共享同一组记录。下方按钮手动切换首项状态，处置按钮只记录选择。"}</p>
     <div className="flex flex-wrap gap-2" aria-label="异常示例用途">{Object.entries(exceptionExamples).map(([key, sample]) => <Button key={key} variant="outline" aria-pressed={purpose === key} onClick={() => { setPurpose(key as typeof purpose); setState("waiting-human"); setFeedback("") }}>{sample.label}</Button>)}</div>
-    <div className="flex flex-wrap gap-2" aria-label="首项示例状态">{stateOptions.map(([value, label]) => <Button key={value} variant="outline" aria-pressed={state === value} onClick={() => { setState(value); setFeedback("") }}>{label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
+    <div className="flex flex-wrap gap-2" aria-label="首项示例状态">{!fixedDisposition && stateOptions.map(([value, label]) => <Button key={value} variant="outline" aria-pressed={state === value} onClick={() => { setState(value); setFeedback("") }}>{label}</Button>)}<Button variant="ghost" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button></div>
     <p role="status" className="text-ui-hint">{feedback || "尚未选择处置操作。"}</p>
     <div className={narrow ? "grid max-w-80 gap-6" : "grid min-w-0 gap-6 @min-[1100px]:grid-cols-3"}>
       {([['inline', 'default', '对话摘要'], ['workspace', 'default', '完整处置'], ['inline', 'compact', '紧凑列表']] as const).map(([view, density, label], index) => <section key={label} className="min-w-0 space-y-3" aria-label={label}>
         <h3 ref={index === 1 ? workspaceHeading : index === 0 ? inlineHeading : undefined} tabIndex={-1} className="text-block-title">{label}</h3>
-        <AgentExceptionHandler title={example.title} items={items} view={view} density={density} inlineLimit={1}
+        <AgentExceptionHandler title={example.title} items={items} statusLabels={example.statusLabels} view={view} density={density} inlineLimit={fixedDisposition ? items.length : 1}
           notice="示例：尚未连接真实处理服务。"
           details={<p>查看材料不代表已核对；处理只针对当前异常，已保留的内容继续使用。历史记录保留当时事实。</p>}
           onAction={intent => { const item = items.find(value => value.id === intent.exceptionId); const action = intent.kind === "query" ? query : item && "actions" in item.disposition ? item.disposition.actions?.find(value => value.id === intent.actionId) : undefined; setFeedback(`示例：已选择“${action?.label ?? "处理"}”（${item?.title}）；记录保持原样。`) }}

@@ -60,19 +60,12 @@ export function ScoreReviewReasonReceiptDemo() {
 export function ScoreReviewDemo() {
   const [notice, setNotice] = useState("尚无操作请求。")
   const [narrow, setNarrow] = useState(false)
-  const [region, setRegion] = useState("answer-3")
   return <>
     <DemoSection title="李华 · 主观题 3" description="低置信度 62%。核对原始作答、AI 评分依据与教师最终评分。保存和重试只发出请求，回执状态由调用方提供。">
       <Button variant="outline" className="mb-4 h-auto sm:h-auto whitespace-normal" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
         <ScoreFixture onIntent={setNotice} overrides={{
-          locationNotice: "已标记第 3 题作答区域；原始笔迹图像未接入。",
-          paper: {
-            title: "李华 · 原卷", subtitle: "高二数学 · 第 3 题", status: { label: "待人工复核", variant: "warning" },
-            pages: [{ id: "paper-1", paperSize: "A4", regions: [{ id: "answer-3", label: "第 3 题作答区域", rect: [8, 42, 84, 24] }] }],
-            selectedRegionId: region, onRegionSelect: (_, next) => setRegion(next),
-            information: [{ label: "学生", value: "李华" }, { label: "考号", value: "20260126" }, { label: "原始笔迹", value: "图像未接入" }], versions: [],
-          },
+          locationNotice: "原始笔迹图像未接入；原卷由全屏预览框架呈现。",
         }} />
       </div>
       <Feedback>{notice}</Feedback>
