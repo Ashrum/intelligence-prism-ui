@@ -20,10 +20,11 @@
 | `disabledReason?`、`saveDisabledReason?` | 前者禁止进入/修改/保存，后者只禁止保存；取消在非 saving 状态仍可用。原因可见并通过 `aria-describedby` 关联动作。宿主负责脏值、冲突、权限、版本、必需业务条件及幂等操作门禁。 |
 | `history?` | `{id,category,explanation?,operator?,time?:{label,dateTime?},status?}[]`，全部只读。独立保存分类文案，避免分类表变化改写历史；`status` 原样显示“因重新批阅失效”等宿主事实，不自行判断失效。 |
 | `title?`、`missingText?` | 默认“错因”“未提供”。空说明和缺少当前事实使用缺省文案。 |
+| `editLabel?`、`hideEditAction?` | 默认“修改”、false。可改入口文案或隐藏组件内入口，宿主用自己的动作行控制 `editing`；隐藏时不显示仅针对入口的禁用原因（包括缺少 `onEdit`），编辑态的草稿、修改及保存门禁照常生效。 |
 
 分类必须来自本次 `categories`；未选择或未知 ID 显示“请选择有效的错因分类。”并禁止保存。选中 `isOther` 且说明为空/纯空白时，Input 保持固定“说明 · 必填”标签，使用 required / aria-invalid 和关联说明并禁止保存。普通类别允许空说明；是否需要更多业务理由由宿主判断。保存或失败不会清空、修剪或提交草稿到 `value`。回执与历史均独立于当前输入。
 
-编辑状态从 false 变为 true 时，尝试聚焦当前选中的可用单选项（否则首个）；退出编辑时返回“修改”按钮。首次挂载不会抢焦点。真实键盘、焦点和读屏器表现由 Supervisor 浏览器验收。
+编辑状态从 false 变为 true 时，尝试聚焦当前选中的可用单选项（否则首个）；退出编辑时返回组件内修改按钮。使用 `hideEditAction` 时内部没有可返回的入口，宿主负责退出编辑后把焦点交回自己的动作行。首次挂载不会抢焦点。真实键盘、焦点和读屏器表现由 Supervisor 浏览器验收。
 
 ## Workspace 接入对应关系
 
@@ -49,3 +50,11 @@ URL：`/next/components/error-cause-review`。逐项覆盖 light / paper / dark�
 `density?: "default" | "compact"`，默认 default。compact 将外层、编辑分类区和历史间距从 `space-y-3` 调为 `space-y-2`；只读 FramePanel 从默认 p-5 调为 p-3。分类、说明、历史、状态、门禁、字号和控件尺寸均不改变，不折叠任何信息。省略或 default 的 SSR 与 main a30c077 逐字节一致。
 
 新示例 `/next/components/error-cause-review/compact` 提供同一数据 default/compact、三主题、320px、长中文/公式和可编辑草稿，原 demo 输出不变。浏览器操作“修改”→“其他”→留空/填写说明→保存/取消，检查必填门禁、焦点交接、取消保留原事实、保存只显示请求；三主题 × 320/390/1440px 比对尺寸与完整内容。浏览器验收：按分工由 Supervisor 执行。
+
+## P18 · 修改入口组合（2026-10-05）
+
+本轮复读固定 coss Button / Frame 与 Prism Button、现有 ErrorCauseReview；对照本页及 QuestionInspector / ScoreReview 记载的 particles `p-frame-1`、`p-toolbar-1`、`p-textarea-5` 和 Beautiful UI Approval Card / Recommendation Card 检索记录。按钮文案与可见性可由原组件可选属性表达，不需要新增组件或替换基础控件；未联网刷新、未复制第三方代码。
+
+宿主外置入口时用 `<ErrorCauseReview hideEditAction editing={editing} draft={draft} onChange={setDraft} onSave={save} onCancel={cancel} {...facts} />`；无需提供 `onEdit`。隐藏入口仅改变只读态动作呈现，不允许跳过 `disabledReason`、`saveDisabledReason`、必填说明、saving 与缺少回调门禁；保存/取消仍只发意图。`editLabel="修改错因"` 可用于保留内部入口的组合。两属性省略、undefined 或显式默认值保持 main 4669a62 原有 SSR 字节与 demo 输出。
+
+Supervisor 补充验收：新“批阅功能栏八种状态”示例中外部“修改错因”→当前分类焦点→取消/保存请求→宿主焦点返回；确认只出现一个修改错因入口且无“修改操作未提供”残留。覆盖 light / paper / dark、380×844，既有 320px 长中文/公式夹具继续回归。浏览器验收：按分工由 Supervisor 执行。

@@ -2,6 +2,26 @@
 
 PO 批准候选 #9；目录「内容与数据」，入口 `/next/components/score-review`。独立 Review 与产品验收另行确认。
 
+## P18 · 右侧功能栏（2026-10-05）
+
+复用检索：本轮复读固定 coss Card / Collapsible / NumberField / Button 与现有 ScoreReview；检索本文及冻结设计页已记录的 particles `p-frame-1`、`p-collapsible-1`、`p-number-field-1/7/9/10`、`p-textarea-5`、`p-kbd-1`。固定分区、折叠、标签与输入足够，缺口是现有组件的显示和动作编排。Supervisor 旧 registry 缓存已不存在，以上单项是历史检索依据，未联网刷新；Beautiful UI Approval Card / Recommendation Card 沿用上述已记录的匹配结论。继续扩展原件，不复制第三方代码、不修改 coss、不新增目录项、依赖或令牌。
+
+| 可选属性 | 契约 |
+| --- | --- |
+| `mode?: "review" \| "confirm" \| "edit" \| "manual"` | 默认 review 保留旧结构。confirm 显示 AI 建议及原因、只读评分点，单一“采纳”和“改分”；edit 显示评分、合计、理由和宿主提供的未作答操作，底部“取消 / 保存”；manual 同 edit 且没有取消。edit/manual 均不挂 AI 卡、依据空态或接受/恢复 AI 按钮。 |
+| `onEdit?` / `onCancel?` | confirm 的改分与 edit 的取消意图；不自切换模式。改分服从整体锁；取消在保存中禁用，其他门禁下仍允许退出草稿。缺回调禁用。 |
+| `showBasis?` / `showConfidence?` | 默认 true；false 整块删除依据标题/正文或置信度文字，包括 sr-only 身份头中的置信度；考号和可访问标题仍保留。 |
+| `instruction?: ReactNode \| false` | 默认保留 review 旧说明；其他模式给出对应核对说明。传节点替换正文，false 删除说明及输入的对应 aria-describedby 引用，门禁提示仍保留。 |
+| `scoreContext?: ReactNode` | 总分标签/逐点合计旁的宿主文字，例如“原 6 分”。组件不从 AI、历史或当前分推断原分。 |
+| `sectionsPlacement?: "top" \| "bottom"` | 缺省/top 保留 review 旧顺序。bottom 将标准答案、学生作答、历史统一放在正文末尾、动作行之上。新模式 top 将三项放在主要评分信息之前；compact 沿用 coss 折叠，默认收起。 |
+| `sectionLabels?` | 可选 `answer/standardAnswer/history` 字符串覆盖各分区标题，历史仍保留条数；初始展开使用原 `sectionsDefaultOpen`。 |
+
+确认态的主动作和 Ctrl/⌘+Enter、Alt+A 共用 `onSave`（failed 时 `onRetry`）及全部保存门禁。提交分数/原因为外供 `aiSuggestion.score/reason`，不采用旧编辑草稿、未作答标记或评分点合计替换 AI 建议；可选 points 保留为外供只读明细。无效/缺失建议禁止采纳；points 与建议是否一致、是否可采纳仍由宿主通过 `saveDisabledReason` 裁定。确认态不显示理由编辑器、不要求隐藏编辑草稿的理由，不调用 `onAcceptAi`；后者仍仅用于 review 的草稿接受。edit/manual 的 Alt+A 不触发隐藏动作；新模式不提供旧上一题/跳过按钮或 Alt+左右导航，题目导航由宿主固定头部处理。
+
+`density="compact"` 搭配新 mode 或 `sectionsPlacement="bottom"` 时，根节点填充宿主可用高度，`[data-score-review-body]` 为唯一纵向滚动正文，`[data-score-review-footer]` 是不收缩的同级底栏。宿主必须给出受限高度和 `min-h-0`，不要再包纵向 ScrollArea。仅 compact 但未启用 P18 布局仍保留原输出，防止改变旧 demo。新模式按钮、总分与点分输入使用 coss 标准尺寸；原 review 的尺寸与 JSX 顺序保留。
+
+八态示例及可照抄组合见 [批阅功能栏](grading-function-area.md)，路由 `/next/reviews/grading-function-area`。旧 demo 文件不改。源码回调测试只验证意图及门禁，未宣称保存或导航成功；浏览器验收：按分工由 Supervisor 执行。
+
 ## P16 · 评分扩展（2026-10-05，PO 批准实施）
 
 扩展示例单独位于 `/next/components/score-review/extensions`，不新增目录条目；原 `ScoreReviewDemo` 文件和输出保留。新增能力全部可选，未传／显式 undefined 时与 main `429726b` 的原始 SSR 逐字节比较，不归一化 React ID。以下是本轮契约，后文保留历史实施记录与当时的验证范围。

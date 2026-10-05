@@ -36,6 +36,8 @@ export type ErrorCauseReviewProps = {
   history?: ErrorCauseReviewHistoryEntry[]
   title?: string
   missingText?: string
+  editLabel?: string
+  hideEditAction?: boolean
   onEdit?: () => void
   onChange?: (value: ErrorCauseReviewValue) => void
   onSave?: (value: ErrorCauseReviewValue) => void
@@ -45,7 +47,7 @@ export type ErrorCauseReviewProps = {
 /** Controlled facts and intentions only; the host owns draft, persistence and receipts. */
 export function ErrorCauseReview({
   density = "default", categories, value, editing = false, draft, state = { kind: "ready" }, disabledReason,
-  saveDisabledReason, history, title = "错因", missingText = "未提供",
+  saveDisabledReason, history, title = "错因", missingText = "未提供", editLabel = "修改", hideEditAction = false,
   onEdit, onChange, onSave, onCancel,
 }: ErrorCauseReviewProps) {
   const id = useId()
@@ -54,7 +56,7 @@ export function ErrorCauseReview({
   const editor = useRef<HTMLDivElement>(null)
   const previousEditing = useRef(editing)
   const saving = state.kind === "saving"
-  const editReason = disabledReason || (!onEdit ? "修改操作未提供" : undefined)
+  const editReason = hideEditAction ? undefined : disabledReason || (!onEdit ? "修改操作未提供" : undefined)
   const inputReason = disabledReason || (!draft ? "编辑草稿未提供" : !onChange ? "修改操作未提供" : undefined)
   const selected = categories.find(category => category.id === draft?.category)
   const categoryIssue = !selected ? "请选择有效的错因分类。" : undefined
@@ -78,9 +80,9 @@ export function ErrorCauseReview({
   return <section aria-labelledby={`${id}-title`} aria-busy={saving || undefined} className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"} data-error-cause-review>
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 id={`${id}-title`} className="text-block-title">{title}</h3>
-      {!editing && <Button ref={trigger} variant="ghost" disabled={saving || !!editReason}
+      {!editing && !hideEditAction && <Button ref={trigger} variant="ghost" disabled={saving || !!editReason}
         aria-describedby={editReason ? `${id}-blocked` : undefined}
-        onClick={() => { if (!saving && !editReason) onEdit?.() }}><PencilLine />修改</Button>}
+        onClick={() => { if (!saving && !editReason) onEdit?.() }}><PencilLine />{editLabel}</Button>}
     </div>
     {editing ? <div ref={editor} className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
       <div className={compact ? "space-y-2" : "space-y-3"}>
