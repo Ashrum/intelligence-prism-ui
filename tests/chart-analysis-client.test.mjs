@@ -23,7 +23,7 @@ class Element {
 const document={nodeType:9,addEventListener(){},removeEventListener(){},createElement(tag){return new Element(tag,this)},createElementNS(ns,tag){const el=this.createElement(tag);el.namespaceURI=ns;return el},createTextNode(text){return {nodeType:3,nodeValue:text,ownerDocument:this}},getElementById(){return null},activeElement:null};
 const window={document,HTMLElement:Element,HTMLIFrameElement:class {},addEventListener(){},removeEventListener(){}};
 document.defaultView=window;document.documentElement=document.createElement('html');document.body=document.createElement('body');document.activeElement=document.body;
-return {window,document};
+return {window,document,resize(nextWidth,nextHeight){width=nextWidth;height=nextHeight}};
 }
 
 test('P20 real Recharts client commit places dashed SVG references in the measured plot',async()=>{
@@ -56,6 +56,80 @@ test('P20 real Recharts client commit places dashed SVG references in the measur
  }finally{console.error=originalError;globalThis.window=previous.window;globalThis.document=previous.document;globalThis.ResizeObserver=previous.ResizeObserver;globalThis.IS_REACT_ACT_ENVIRONMENT=previous.act}
 });
 
+test('P21 Fix1 short charts keep every reference text box clear of every bar and value label',async t=>{
+ const previous={window:globalThis.window,document:globalThis.document,ResizeObserver:globalThis.ResizeObserver,act:globalThis.IS_REACT_ACT_ENVIRONMENT};
+ const errors=[],originalError=console.error;console.error=(...args)=>errors.push(args.join(' '));
+ const nodes=(host,predicate)=>{const all=[];function walk(n){if(predicate(n))all.push(n);n.childNodes?.forEach(walk)}walk(host);return all};
+ const marked=(host,key)=>nodes(host,n=>n.attributes?.[key]!==undefined);
+ const textWidth=text=>Array.from(text).reduce((sum,c)=>sum+(/^[\x20-\x7e]$/.test(c)?8:12),0);
+ const textBox=(node,reference,horizontal)=>{
+  const a=node.attributes,x=+a.x,y=+a.y;
+  const rows=reference?node.childNodes.filter(n=>n.tagName==='TSPAN').map(n=>n.textContent):[node.textContent];
+  const width=Math.max(...rows.map(textWidth)),left=a['text-anchor']==='end'?x-width:a['text-anchor']==='middle'?x-width/2:x;
+  const top=reference?y-12:horizontal?y-9:a['dominant-baseline']==='hanging'?y:y-12;
+  return {left,right:left+width,top,bottom:top+rows.length*18};
+ };
+ const apart=(a,b)=>a.right<=b.left||b.right<=a.left||a.bottom<=b.top||b.bottom<=a.top;
+ let pairs=0;
+ try{
+  globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+  globalThis.ResizeObserver=class{constructor(callback){this.callback=callback}observe(node){this.node=node}unobserve(){}disconnect(){}};
+  for(const [width,height,horizontal,binned] of [[620,140,false,true],[1078,360,false,true],[620,120,false,true],[620,460,true,true],[620,360,true,false],[620,360,false,false],[620,180,false,true]]){
+   const {window,document}=clientDOM(width,height);globalThis.window=window;globalThis.document=document;
+   const host=document.createElement('div'),client=createRoot(host);
+   const values=[0,2,7,8,7,8,7,8,7,8];
+   const data=values.map((v,i)=>({id:String(i),label:String(i),value:binned?v:v*12.5,...(binned?{range:[i*10,(i+1)*10]}:{})}));
+   const referenceLines=[{value:40,label:'参考线'},{value:height===180?40:60,label:'及格线'},{value:85,label:'优秀线'}];
+   try{
+    await act(()=>client.render(h(api.ComparisonChart,{label:'矮图高柱回归',data,domain:[0,binned?8:100],horizontal,height,showValueLabels:true,referenceLabelPlacement:'plot',referenceLines})));
+    const references=marked(host,'data-reference-label'),values=marked(host,'data-value-label');
+    const bars=nodes(host,n=>n.tagName==='PATH'&&n.attributes?.class?.split(' ').includes('recharts-rectangle'));
+    assert.equal(references.length,3,`${width}x${height}: band must fit`);assert.equal(values.length,10);assert.equal(bars.length,9);
+    const referenceBoxes=references.map(n=>textBox(n,true,horizontal));
+    const valueBoxes=values.map(n=>textBox(n,false,horizontal));
+    const barBoxes=bars.map(n=>{const a=n.attributes,x=+a.x,y=+a.y,w=+a.width,h=+a.height;return {left:Math.min(x,x+w),right:Math.max(x,x+w),top:Math.min(y,y+h),bottom:Math.max(y,y+h)}});
+    referenceBoxes.forEach((box,i)=>{
+     assert.ok(box.left>=0&&box.right<=width&&box.top>=0&&box.bottom<=height);
+     [...valueBoxes,...barBoxes,...referenceBoxes.slice(i+1)].forEach(other=>{assert.ok(apart(box,other),JSON.stringify({width,height,horizontal,binned,box,other}));pairs++});
+     // A stronger separation invariant also protects maximum-value tick text.
+     assert.ok(box.bottom<Math.min(...valueBoxes.map(b=>b.top)));
+     assert.ok(box.bottom+6<=Math.min(...barBoxes.map(b=>b.top)));
+    });
+    const lines=marked(host,'data-reference-value');
+    if(binned&&!horizontal)lines.forEach(n=>{assert.equal(+n.attributes.y1,12);assert.equal(+n.attributes.y2,height-36)});
+    if(height===180)assert.notEqual(references[0].attributes.y,references[1].attributes.y);
+    assert.equal(marked(host,'aria-label').filter(n=>n.attributes['aria-label']==='参考线标签').length,0);
+   }finally{await act(()=>client.unmount())}
+  }
+  assert.deepEqual(errors,[]);t.diagnostic(`${pairs} disjoint-box assertions across 7 actual Recharts commits (including 620x140, 1078x360, 620x120 and horizontal).`);
+ }finally{console.error=originalError;globalThis.window=previous.window;globalThis.document=previous.document;globalThis.ResizeObserver=previous.ResizeObserver;globalThis.IS_REACT_ACT_ENVIRONMENT=previous.act}
+});
+
+test('P21 Fix1 resizing restores legend on insufficient space and restores band when space returns',async()=>{
+ const previous={window:globalThis.window,document:globalThis.document,ResizeObserver:globalThis.ResizeObserver,act:globalThis.IS_REACT_ACT_ENVIRONMENT};
+ let client;
+ try{
+  globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+  const observers=new Set();
+  globalThis.ResizeObserver=class{constructor(callback){this.callback=callback}observe(node){this.node=node;observers.add(this)}unobserve(){}disconnect(){observers.delete(this)}};
+  const dom=clientDOM(1078,140);globalThis.window=dom.window;globalThis.document=dom.document;
+  const host=dom.document.createElement('div');client=createRoot(host);
+  const props={label:'尺寸变化',data:Array.from({length:10},(_,i)=>({id:String(i),label:String(i),value:8,range:[i*10,(i+1)*10]})),height:140,horizontal:false,showValueLabels:true,referenceLabelPlacement:'plot',dataDisclosure:'none',referenceLines:[{value:40,label:'参考线'},{value:60,label:'及格线'},{value:85,label:'优秀线'}]};
+  const count=key=>{let result=0;function walk(n){if(n.attributes?.[key]!==undefined)result++;n.childNodes?.forEach(walk)}walk(host);return result};
+  await act(()=>client.render(h(api.ComparisonChart,props)));
+  assert.equal(count('data-reference-label'),3);
+  for(const [width,height,expected] of [[320,140,0],[620,140,3],[620,80,0],[620,120,3]]){
+   dom.resize(width,height);
+   await act(()=>{client.render(h(api.ComparisonChart,{...props,height}));observers.forEach(observer=>observer.callback([{target:observer.node,contentRect:{width,height}}]))});
+   assert.equal(count('data-reference-label'),expected,`${width}x${height}`);assert.equal(count('data-reference-value'),3);assert.equal(count('data-value-label'),10);
+   const legends=[];function walk(n){if(n.attributes?.['aria-label']==='参考线标签')legends.push(n);n.childNodes?.forEach(walk)}walk(host);
+   assert.equal(legends.length,expected?0:1);if(!expected)assert.match(legends[0].textContent,/参考线：40及格线：60优秀线：85/);
+   const tables=[];function collect(n){if(n.attributes?.['aria-label']==='参考线数据')tables.push(n);n.childNodes?.forEach(collect)}collect(host);
+   assert.equal(tables.length,1);
+  }
+ }finally{if(client)await act(()=>client.unmount());globalThis.window=previous.window;globalThis.document=previous.document;globalThis.ResizeObserver=previous.ResizeObserver;globalThis.IS_REACT_ACT_ENVIRONMENT=previous.act}
+});
+
 test('P21 real Recharts renders optional value and plot labels without changing domain mapping',async()=>{
  const previous={window:globalThis.window,document:globalThis.document,ResizeObserver:globalThis.ResizeObserver,act:globalThis.IS_REACT_ACT_ENVIRONMENT};
  const errors=[],originalError=console.error;console.error=(...args)=>errors.push(args.join(' '));
@@ -76,7 +150,10 @@ test('P21 real Recharts renders optional value and plot labels without changing 
     if(width<=600)assert.notEqual(references[1].attributes.y,references[2].attributes.y);
     assert.equal(references[3].attributes['text-anchor'],'end');
     references.forEach((node,i)=>assert.equal(node.attributes.fill,lines[i].attributes.stroke));
-    const plotLeft=horizontal?110:45,plotRight=width-(horizontal?39.6:16),plotTop=30,plotBottom=height-36;
+    // The reserved band ends after the last occupied text row, plus padding;
+    // original 30px headroom for value labels remains below it.
+    const bandHeight=Math.max(...references.map(n=>+n.attributes.y-12+n.childNodes.filter(c=>c.tagName==='TSPAN').length*18))-12+6;
+    const plotLeft=horizontal?110:45,plotRight=width-(horizontal?39.6:16),plotTop=30+bandHeight,plotBottom=height-36;
     lines.forEach((node,i)=>{
      const vertical=binned?!horizontal:horizontal,ratio=referenceLines[i].value/100;
      assert.ok(Math.abs(+(vertical?node.attributes.x1:node.attributes.y1)-(vertical?plotLeft+ratio*(plotRight-plotLeft):plotTop+(binned?ratio:1-ratio)*(plotBottom-plotTop)))<.001);

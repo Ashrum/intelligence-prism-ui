@@ -59,12 +59,20 @@ export function comparisonReferenceLabels(lines:{id:string;position:number;text:
   const width=Math.min(available,Math.max(...rows.map(row=>comparisonTextWidth(row,fontSize)),0)),height=rows.length*lineHeight
   const x=anchor==='start'?segment.x1+gap:(vertical?segment.x1:segment.x2)-gap
   const left=anchor==='start'?x:x-width
-  const minY=plot.y+gap,maxY=Math.max(minY,plot.y+plot.height-height-gap)
-  const preferred=Math.max(minY,Math.min(maxY,vertical?minY:segment.y1-height-gap))
-  const candidates=[preferred]
-  for(let offset=lineHeight;offset<=plot.height;offset+=lineHeight)candidates.push(preferred+offset,preferred-offset)
-  const top=candidates.find(y=>y>=minY&&y<=maxY&&!occupied.some(box=>left<box.left+box.width+gap&&left+width+gap>box.left&&y<box.top+box.height+gap&&y+height+gap>box.top))??preferred
+  // Pack into an unbounded top band first. The caller reserves its full height
+  // or falls back to the legend; never clamp a colliding label into the plot.
+  let top=plot.y+gap
+  while(occupied.some(box=>left<box.left+box.width+gap&&left+width+gap>box.left&&top<box.top+box.height&&top+height>box.top))top+=lineHeight
   occupied.push({left,top,width,height})
   return {...line,x,y:top+fontSize,anchor:anchor as 'start'|'end',rows,lineHeight}
  })
+}
+
+/** Both orientations use a dedicated band above the plot and all axis ticks. */
+export function comparisonReferenceBand(lines:{id:string;position:number;text:string}[],plot:PlotArea,horizontal:boolean,binned:boolean,fontSize:number){
+ const labels=comparisonReferenceLabels(lines,plot,horizontal,binned,fontSize)
+ const height=Math.max(0,...labels.map(item=>item.y-fontSize+item.rows.length*item.lineHeight-plot.y))+6
+ // Retain two tick-font heights of actual plot after reserving all label rows.
+ const fits=lines.length>0&&plot.width>=fontSize+12&&plot.height-height>=fontSize*2
+ return {labels:fits?labels:[],height:fits?height:0}
 }

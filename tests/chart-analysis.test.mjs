@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import {api,h,render,legacySnapshots,panelProps,chartProps} from './chart-analysis-harness.mjs';
-import {comparisonReferenceLabels,comparisonTextWidth,comparisonDomain,comparisonReferencePosition as position,comparisonReferenceSegment as segment} from '../lib/prism-next/comparison-reference.ts';
+import {comparisonReferenceBand,comparisonReferenceLabels,comparisonTextWidth,comparisonDomain,comparisonReferencePosition as position,comparisonReferenceSegment as segment} from '../lib/prism-next/comparison-reference.ts';
 const before=JSON.parse(await readFile(new URL('./fixtures/chart-analysis-before.json',import.meta.url),'utf8'));
 const current=legacySnapshots();
 for(const [name,html] of Object.entries(before))test(`P20 default SSR matches main bytes: ${name}`,()=>assert.equal(current[name],html));
@@ -85,4 +86,25 @@ test('P21 reference text boxes wrap, flip and avoid collisions without shifting 
    boxes.slice(i+1).forEach(other=>assert.ok(box.right<=other.left||other.right<=box.left||box.bottom<=other.top||other.bottom<=box.top));
   });
  }
+});
+
+test('P21 Fix1 legend SSR remains byte-identical to 5cf7e84 across all label/disclosure options',async()=>{
+ const baseline=JSON.parse(await readFile(new URL('./fixtures/chart-label-band-before.json',import.meta.url),'utf8'));
+ for(const {props,sha256} of baseline)for(const explicit of [false,true]){
+  const html=render(h(api.ComparisonChart,{...props,...(explicit?{referenceLabelPlacement:'legend'}:{})}));
+  assert.equal(createHash('sha256').update(html).digest('hex'),sha256);
+ }
+});
+
+test('P21 Fix1 band grows for colliding rows and falls back as a whole at the exact capacity boundary',()=>{
+ const lines=[{id:'a',position:.6,text:'参考 60'},{id:'b',position:.6,text:'同值 60'}];
+ const plot={x:45,y:12,width:559,height:200};
+ const one=comparisonReferenceBand(lines.slice(0,1),plot,false,true,12);
+ const two=comparisonReferenceBand(lines,plot,false,true,12);
+ assert.equal(one.height,30);assert.equal(two.height,48);assert.notEqual(two.labels[0].y,two.labels[1].y);
+ assert.equal(comparisonReferenceBand(lines,{...plot,height:72},false,true,12).labels.length,2);
+ assert.deepEqual(comparisonReferenceBand(lines,{...plot,height:71},false,true,12),{height:0,labels:[]});
+ assert.deepEqual(comparisonReferenceBand(lines,{...plot,width:23},false,true,12),{height:0,labels:[]});
+ const html=render(h(api.ComparisonChart,{label:'过矮回退',data:bins,horizontal:false,height:80,referenceLines:[{value:60,label:'参考'}],referenceLabelPlacement:'plot',showValueLabels:true,dataDisclosure:'none'}));
+ assert.match(html,/aria-label="参考线标签"/);assert.match(html,/aria-description="参考线；参考：60"/);assert.match(html,/aria-label="参考线数据"/);assert.doesNotMatch(html,/<details|<summary/);
 });
