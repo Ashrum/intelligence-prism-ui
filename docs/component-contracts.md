@@ -2810,3 +2810,5 @@ PO 2026-10-03 批准新增目录；入口 `/next/components/review-tools`，完�
 position undefined 为非受控；null 为受控跟随 defaultPosition；默认位置可为宿主函数。`onPositionChange(next,{reason:'move'|'reset'})` 发移动或归位意图（归位 next=null），组件无持久化。受控位置等宿主回传；resize 只夹取显示。>5px 拖动、误弹抑制、最近边偏移、16/64px 键盘移动、Esc 回焦点及 reduced-motion 沿用评审交互。环境显示、存储、主题、测试场景、批量操作、危险确认与服务权限均归宿主；不导入 Workspace 私有类型。
 
 P20：QuestionAnalysisPanel 可选 affectedLabel（默认“受影响”）及 supplementaryMetrics（label/value/hint）；追加顺序、知识点位置与默认 SSR 兼容规则见 [组件契约](question-analysis-panel.md#p20--自定义影响标签与补充统计2026-10-05)。
+
+P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 SSR；首层至多三个关键数、默认三个参照和最多四个错因，说明承载其他统计/口径/来源/日期，按身份去重；复用 coss Popover/Collapsible/Meter 与 SegmentedBar。新增属性及迁移规则见 [精简版式契约](question-analysis-panel.md#p23--精简版式2026-10-06)。组件目录不变，浏览器验收由 Supervisor 执行。
