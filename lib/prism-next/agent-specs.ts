@@ -9,6 +9,15 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'segmented-bar': {
+    component: 'SegmentedBar 分段条',
+    source: 'Pinned coss MeterTrack + existing StatusComposition segment/keyboard conventions + Prism Button; docs/segmented-bar.md',
+    contract: ['用途：同一个总量的组成。segments={id,label,value,tone?,description?}[]，label 必填；unit、valueFormatter(value, originalSegment) 可选。tone=neutral|info|success|warning|destructive|chart-1…chart-5，默认 neutral。', 'total 默认有效值之和；大于合计保留轨道余量，小于合计或非法则回退合计并开发告警。负值和非有限值按 0 呈现并开发告警；零段不绘制但保留图例。空数组或全零的可访问名称含 无数据。', 'legend=below|none，默认 below；size=default|sm，沿用 h-2 / h-1.5。内部正值最小宽度分配有界，不公开 minSegmentWidth；文字占比为真实数据比例。onSelect(originalSegment) 仅发意图，不改变数据或缓存选中状态。'],
+    states: ['默认、无图例、total 余量、极小正值与零、空数组、可选择、长中文与三主题 320px'],
+    accessibility: ['role=img 的名称包含 label 和各段名称、值、占比；交互轨道置于 img 摘要之外，保留按钮语义。图例 ul/li 与文字说明分类；段间有内部分隔。', '无 onSelect 时无焦点目标；有 onSelect 时正值段与图例项为原生按钮，Tab / Enter / Space。无动画，三主题使用既有令牌。'],
+    do: ['保证 id 唯一，提供真实外部数据；极小段的精确占比读文字。'],
+    dont: ['比较独立类别大小请用 ComparisonChart；单值进度请用 Progress / Meter。', '不要把点击当作执行成功，不内置教学分类、路由或统计判断。'],
+  },
   'comparison-chart': {
     component: 'ComparisonChart — optional value and reference labels',
     source: 'Existing Recharts / coss Table; docs/comparison-chart.md',
