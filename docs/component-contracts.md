@@ -2478,7 +2478,7 @@ L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-
 | 组件 | 输入 | 返回 |
 | --- | --- | --- |
 | TrendChart | 任意数值序列、标签、单位、可选数值范围 | `onSelect(id)` |
-| ComparisonChart | 分类与数值、横/纵方向、单位；可选 referenceLines 与 data[].range，见 [映射契约](comparison-chart.md) | `onSelect(id)` |
+| ComparisonChart | 分类与数值、横/纵方向、单位；可选 referenceLines、data[].range、showValueLabels、valueLabelFormatter、referenceLabelPlacement、dataDisclosure（均保持旧默认），见 [映射与标签契约](comparison-chart.md) | `onSelect(id)` |
 | HeatmapChart | 行列定义、单元格值/标签、选中 ID、可选 sequentialColors | `onSelect(id)` |
 | ScatterChart / QuadrantScatterChart | x/y、分组与点形、范围、可选点大小；四象限额外传分界值与四个名称 | `onSelect(id)` |
 | PairedDotChart | 两个指标定义、每行两个值、同一单位与范围 | `onSelect(rowId, metricId?)` |

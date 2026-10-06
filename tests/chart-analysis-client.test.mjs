@@ -55,3 +55,45 @@ test('P20 real Recharts client commit places dashed SVG references in the measur
   assert.deepEqual(errors,[]);
  }finally{console.error=originalError;globalThis.window=previous.window;globalThis.document=previous.document;globalThis.ResizeObserver=previous.ResizeObserver;globalThis.IS_REACT_ACT_ENVIRONMENT=previous.act}
 });
+
+test('P21 real Recharts renders optional value and plot labels without changing domain mapping',async()=>{
+ const previous={window:globalThis.window,document:globalThis.document,ResizeObserver:globalThis.ResizeObserver,act:globalThis.IS_REACT_ACT_ENVIRONMENT};
+ const errors=[],originalError=console.error;console.error=(...args)=>errors.push(args.join(' '));
+ try{
+  globalThis.IS_REACT_ACT_ENVIRONMENT=true;globalThis.ResizeObserver=class{observe(){}unobserve(){}disconnect(){}};
+  for(const width of [320,600,1280,1440])for(const horizontal of [false,true])for(const binned of [false,true]){
+   const height=420,{window,document}=clientDOM(width,height);globalThis.window=window;globalThis.document=document;
+   const host=document.createElement('div'),client=createRoot(host);
+   const data=Array.from({length:10},(_,i)=>({id:String(i),label:String(i),value:i===9?null:i*10,...(binned?{range:[i*10,(i+1)*10]}:{})}));
+   const referenceLines=[{value:20,label:'下界',tone:'warning'},{value:60,label:'参考一',tone:'success'},{value:65,label:'参考二',tone:'info'},{value:100,label:'需要完整保留名称的长中文参考线',tone:'neutral'}];
+   const nodes=attribute=>{const all=[];function walk(n){if(n.attributes?.[attribute]!==undefined)all.push(n);n.childNodes?.forEach(walk)}walk(host);return all};
+   try{
+    const props={label:'分布',unit:'件',horizontal,height,data,domain:[0,100],referenceLines,showValueLabels:true,referenceLabelPlacement:'plot',dataDisclosure:'none'};
+    await act(()=>client.render(h(api.ComparisonChart,props)));
+    const labels=nodes('data-value-label'),references=nodes('data-reference-label'),lines=nodes('data-reference-value');
+    assert.equal(labels.length,9);assert.equal(labels[0].textContent,'0件');assert.equal(labels[8].textContent,'80件');
+    assert.equal(references.length,4);assert.equal(lines.length,4);
+    if(width<=600)assert.notEqual(references[1].attributes.y,references[2].attributes.y);
+    assert.equal(references[3].attributes['text-anchor'],'end');
+    references.forEach((node,i)=>assert.equal(node.attributes.fill,lines[i].attributes.stroke));
+    const plotLeft=horizontal?110:45,plotRight=width-(horizontal?39.6:16),plotTop=30,plotBottom=height-36;
+    lines.forEach((node,i)=>{
+     const vertical=binned?!horizontal:horizontal,ratio=referenceLines[i].value/100;
+     assert.ok(Math.abs(+(vertical?node.attributes.x1:node.attributes.y1)-(vertical?plotLeft+ratio*(plotRight-plotLeft):plotTop+(binned?ratio:1-ratio)*(plotBottom-plotTop)))<.001);
+    });
+    labels.forEach(node=>{assert.ok(+node.attributes.x>=0&&+node.attributes.x<=width);assert.ok(+node.attributes.y>=0&&+node.attributes.y<=height)});
+    assert.equal(nodes('aria-label').filter(n=>n.attributes['aria-label']==='参考线标签').length,0);
+    const seen=[];
+    await act(()=>client.render(h(api.ComparisonChart,{...props,valueLabelFormatter:(value,datum)=>{seen.push(datum);return value===0?'':`${datum.label}=${value}`}})));
+    assert.equal(nodes('data-value-label').length,8);assert.equal(nodes('data-value-label')[0].textContent,'1=10');assert.ok(seen.includes(data[0]));
+    await act(()=>client.render(h(api.ComparisonChart,{...props,referenceLines:[],domain:[-20,100],data:[{id:'zero',label:'零',value:0},{id:'missing',label:'缺测',value:null},{id:'positive',label:'正值',value:42},{id:'negative',label:'负值',value:-20}]})));
+    const mixedLabels=nodes('data-value-label');
+    assert.deepEqual(mixedLabels.map(n=>[n.attributes['data-value-label'],n.textContent]),[['zero','0件'],['positive','42件'],['negative','-20件']]);
+    mixedLabels.forEach(node=>{assert.ok(+node.attributes.x>=0&&+node.attributes.x<=width);assert.ok(+node.attributes.y>=0&&+node.attributes.y<=height)});
+    await act(()=>client.render(h(api.ComparisonChart,{...props,showValueLabels:false})));
+    assert.equal(nodes('data-value-label').length,0);
+   }finally{await act(()=>client.unmount())}
+  }
+  assert.deepEqual(errors,[]);
+ }finally{console.error=originalError;globalThis.window=previous.window;globalThis.document=previous.document;globalThis.ResizeObserver=previous.ResizeObserver;globalThis.IS_REACT_ACT_ENVIRONMENT=previous.act}
+});
