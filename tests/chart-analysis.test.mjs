@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {api,h,render,legacySnapshots,panelProps,chartProps} from './chart-analysis-harness.mjs';
-import {comparisonDomain,comparisonReferencePosition as position,comparisonReferenceSegment as segment} from '../lib/prism-next/comparison-reference.ts';
+import {comparisonReferenceLabels,comparisonTextWidth,comparisonDomain,comparisonReferencePosition as position,comparisonReferenceSegment as segment} from '../lib/prism-next/comparison-reference.ts';
 const before=JSON.parse(await readFile(new URL('./fixtures/chart-analysis-before.json',import.meta.url),'utf8'));
 const current=legacySnapshots();
 for(const [name,html] of Object.entries(before))test(`P20 default SSR matches main bytes: ${name}`,()=>assert.equal(current[name],html));
@@ -55,4 +55,34 @@ test('P20 knowledge custom affectedLabel and supplementary metrics follow existi
  assert.match(html,/错误影响 21 \/ 36 名学生/);assert.doesNotMatch(html,/受影响/);
  assert.ok(html.indexOf('12 分 · 1 道证据题')<html.indexOf('data-supplementary-statistics'));assert.ok(html.indexOf('data-supplementary-statistics')<html.indexOf('继续观察'));
  assert.equal(render(h(api.QuestionAnalysisPanel,{...panelProps,knowledge,affectedLabel:undefined,supplementaryMetrics:undefined})),render(h(api.QuestionAnalysisPanel,{...panelProps,knowledge})));
+});
+
+const beforeLabels=JSON.parse(await readFile(new URL('./fixtures/chart-labels-before.json',import.meta.url),'utf8'));
+test('P21 defaults preserve P20 reference chart SSR bytes in both axes with and without ranges',()=>{
+ for(const {props,html} of beforeLabels){
+  assert.equal(render(h(api.ComparisonChart,{...props,onSelect:()=>{}})),html);
+  assert.equal(render(h(api.ComparisonChart,{...props,onSelect:()=>{},showValueLabels:false,referenceLabelPlacement:'legend',dataDisclosure:'details'})),html);
+ }
+});
+test('P21 plot placement removes the legend but retains reference description and table',()=>{
+ const html=render(h(api.ComparisonChart,{...chartProps,referenceLines:[{value:60,label:'参考值'}],referenceLabelPlacement:'plot'}));
+ assert.doesNotMatch(html,/aria-label="参考线标签"/);assert.match(html,/aria-description="参考线；参考值：60分"/);assert.match(html,/aria-label="参考线数据"/);assert.match(html,/<details>/);
+});
+test('P21 disclosure none keeps screen-reader data and references without hidden focus targets',()=>{
+ const html=render(h(api.ComparisonChart,{...chartProps,dataDisclosure:'none',referenceLabelPlacement:'plot',referenceLines:[{value:60,label:'参考值'}]}));
+ assert.doesNotMatch(html,/<details|<summary|查看数据|<button/);assert.match(html,/class="sr-only" role="region" aria-label="外部数值：数据"/);assert.match(html,/长中文类别/);assert.match(html,/0分/);assert.match(html,/缺测/);assert.match(html,/参考值/);assert.match(html,/aria-label="参考线数据"/);
+});
+
+test('P21 reference text boxes wrap, flip and avoid collisions without shifting reference positions',()=>{
+ for(const width of [165,239,539,1174])for(const horizontal of [false,true]){
+  const plot={x:45,y:30,width,height:350};
+  const input=[{id:'a',position:.6,text:'参考一 60'},{id:'b',position:.65,text:'参考二 65'},{id:'c',position:1,text:'需要结合完整评分依据和证据范围解释的中文参考线 100'}];
+  const labels=comparisonReferenceLabels(input,plot,horizontal,true,12);
+  assert.equal(labels[2].anchor,'end');assert.deepEqual(labels.map(l=>l.position),input.map(l=>l.position));
+  const boxes=labels.map(label=>{const width=Math.max(...label.rows.map(row=>comparisonTextWidth(row,12)));return {left:label.anchor==='end'?label.x-width:label.x,right:label.anchor==='end'?label.x:label.x+width,top:label.y-12,bottom:label.y-12+label.rows.length*label.lineHeight}});
+  boxes.forEach((box,i)=>{
+   assert.ok(box.left>=plot.x&&box.right<=plot.x+plot.width);assert.ok(box.top>=plot.y&&box.bottom<=plot.y+plot.height);
+   boxes.slice(i+1).forEach(other=>assert.ok(box.right<=other.left||other.right<=box.left||box.bottom<=other.top||other.bottom<=box.top));
+  });
+ }
 });

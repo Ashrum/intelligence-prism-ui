@@ -31,3 +31,28 @@
 ```
 
 组件页含三条分数参考线、横/纵数值轴、同值与长中文、light/paper/dark 的 320px 夹具。单元测试覆盖映射、方向、标签/可访问描述/表格和旧调用逐字节 SSR；浏览器验收按分工由 Supervisor 执行。
+
+## P21 可选图内标签（2026-10-06）
+
+离线检索固定 coss 54 项（无 Chart 原始组件）、Table / Badge、particles 的 p-meter-3/4、p-frame-1、p-badge-16、p-tabs-10 本地记录；未找到柱顶或参考线图内标签实现。沿用 Recharts LabelList / Rectangle / usePlotArea 与 Prism 参考线层，不复制第三方代码。远端 registry 未联网刷新，检索记录在 Supervisor 的 `p21-checks/sourcing.md`。
+
+| 属性 | 默认 | 约定 |
+| --- | --- | --- |
+| `showValueLabels?: boolean` | `false` | 在柱末端显示值；正值为柱顶/柱右，负值为柱底/柱左。零值显示，null/非有限值不显示。开启后仅调整绘图留白，不改变数值轴 domain 或参考线含义。 |
+| `valueLabelFormatter?: (value: number, datum: ComparisonChartPoint) => string` | tooltip 的 `${value}${unit}` | 仅在开启标签时调用，传入原始 datum；空串隐藏该项标签（包括 0）。不改变 tooltip、表格、数值或位置，不解析回调文本。 |
+| `referenceLabelPlacement?: 'legend' \| 'plot'` | `'legend'` | plot 在图内线旁显示“名称 数值”，颜色与线一致；移除下方重复图例，保留 SVG title、aria-description 与参考线数据表。 |
+| `dataDisclosure?: 'details' \| 'none'` | `'details'` | none 不渲染可见 details，以 sr-only 只读表保留完整原始值及参考线，不留下隐藏按钮；宿主须提供可见数据入口及所需键盘选择操作。 |
+
+- 图内文字直接沿用刻度的字体样式，不新增视觉令牌、动画或主题判断。默认 API（包括 P20 参考线）保持逐字节 SSR。
+- 图内标签按实际 plot area 计算；参考线位置不移动，只移动文字。右侧容纳不下时将文字放在线左侧；长名称在线旁可用宽度内换行，title/可访问说明/表格均保留全文。碰撞按文本包围盒纵向错开，宿主应为密集参考线提供足够 height。
+- `range` 在本组件中是**类别分段**，并非误差范围；当前没有 ErrorBar 或误差区间 API。柱值标签从实际柱末端定位，不将 range 当作柱值/误差位置，也不增设误差条语义。将来若支持误差条，其端点避让需另立契约。
+- 横向为完整数值文本预留右侧留白；极长 formatter 文本宜由宿主缩短或提供足够容器宽度，不能靠缩字号容纳。参考线 unit 规则保持 P20：range 分段线不附频数单位。
+
+```tsx
+<ComparisonChart label="分段分布" data={bins} horizontal={false} unit="人"
+  showValueLabels referenceLines={references} referenceLabelPlacement="plot"
+  dataDisclosure="none" />
+// 宿主另提供可见数据入口；可选 valueLabelFormatter={(value, datum) => `${value}`}
+```
+
+两组件页的 `#plot-labels` 提供纵向和横向各十柱、四线、0 值、85/90 相邻线及长中文名称。横向示例展示 dataDisclosure=none 与宿主可见表格入口。
