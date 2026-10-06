@@ -64,7 +64,7 @@ test('G2 bodyOnly Inspector shares one host scroll region and emits no navigatio
  const combined=render(h(review.QuestionInspectorBodyFixture));assert.equal((combined.match(/data-slot="scroll-area-viewport"/g)||[]).length,1);assert.ok(combined.indexOf('本题分析')<combined.indexOf('当前作答'));assert.doesNotMatch(combined,/更正评分|教师批阅/);
 });
 for(const name of ['QuestionAnalysisCardDemo','QuestionAnalysisPanelDemo','KnowledgeRailDemo'])test(`G2 ${name} includes incomplete examples in all three narrow themes`,()=>{
- const html=render(h(api[name]));assert.match(html,/数据不全/);for(const theme of ['light','paper','dark'])assert.equal((html.match(new RegExp(`data-prism-theme="${theme}"`,'g'))||[]).length,name==='QuestionAnalysisPanelDemo'?3:2);
+ const html=render(h(api[name]));assert.match(html,/数据不全/);for(const theme of ['light','paper','dark'])assert.equal((html.match(new RegExp(`data-prism-theme="${theme}"`,'g'))||[]).length,name==='QuestionAnalysisPanelDemo'?6:2);
  if(name==='QuestionAnalysisPanelDemo')assert.match(html,/自定义影响标签与补充统计/);
 });
 
