@@ -600,3 +600,11 @@ test('toggle has a standard named control and tooltip; both instructions remain 
     assert.ok(html.includes(Object.keys(selections).length ? '点标题或复选框勾选，勾选父级包含全部下级。' : '点标题只看这一项，再点一次取消。'));
   }
 });
+
+test('P33 internal presentation seam preserves baseline split and embedded SSR hashes in all 16 mode/selection combinations', () => {
+  const before = JSON.parse(readFileSync(new URL('./fixtures/textbook-directory-p33-before.json', import.meta.url)));
+  for (const layout of ['split', 'embedded']) for (const titleAction of ['locate', 'select']) for (const multiSelect of ['always', 'toggle']) for (const selected of [false, true]) {
+    const selections = selected ? { 'math-1:course': ['math-1:course:c111'], 'math-2:knowledge': ['math-2:knowledge:k11'] } : {};
+    assert.equal(hash(htmlFor({ layout, titleAction, multiSelect, selections })), before.hashes[`${layout}:${titleAction}:${multiSelect}:${selected}`]);
+  }
+});

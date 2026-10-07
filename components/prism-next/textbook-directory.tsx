@@ -3,7 +3,7 @@
 import { checkboxesFeature, hotkeysCoreFeature, syncDataLoaderFeature, type TreeInstance } from "@headless-tree/core"
 import { useTree } from "@headless-tree/react"
 import { ArrowRightLeft, ChevronRight, Search, X } from "lucide-react"
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
+import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { Button } from "@/components/coss/button"
 import { Toggle } from "@/components/coss/toggle"
 import { Checkbox } from "@/components/coss/checkbox"
@@ -17,6 +17,7 @@ import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip
 import { Tree, TreeItem, TreeItemLabel } from "@/components/prism-next/tree"
 import { directoryLeaves, summarizeDirectory, projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
 import { cn } from "@/lib/utils"
+import { DirectoryPresentation } from "@/components/prism-next/directory-presentation"
 
 export type TextbookDefinition = { id: string; title: string; volume?: string; subject?: string; edition?: string; directories: Record<DirectoryKind, DirectoryData> }
 export type DirectorySelections = Record<string, string[]>
@@ -60,7 +61,10 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
 }) {
   const controlId = useId()
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
-  const [kind, setKind] = useState<DirectoryKind>("course")
+  const [localKind, setLocalKind] = useState<DirectoryKind>("course")
+  const presentation = useContext(DirectoryPresentation)
+  const kind = presentation?.kind ?? localKind
+  const setKind = presentation?.onKindChange ?? setLocalKind
   const [sessions, setSessions] = useState<Record<string, Session>>({})
   const book = textbooks.find(item => item.id === bookId) ?? textbooks[0]
   const bookOptions = textbooks.map(item => ({ value: item.id, label: item.title }))
@@ -138,6 +142,8 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   checkedIds: string[]; onCheckedChange: Dispatch<SetStateAction<string[]>>
   embedded: boolean; summary: React.ReactNode; titleAction: TitleAction; toggleMode: boolean
 }) {
+  const presentation = useContext(DirectoryPresentation)
+  const View = presentation?.View ?? DirectoryTreeView
   const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
   const helpId = `${inputId}-help`
@@ -193,7 +199,7 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
     {!embedded && search}
     {embedded ? <>{summary}{projection.normalized && <p className="break-words text-ui-hint text-muted-foreground" role="status">{projection.matchingIds.size} 处匹配{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p>}</> : <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>}
     {embedded ? <div className="sr-only"><p id={helpId}>{instructions}</p><p id={`${helpId}-keyboard`}>{keys}</p></div> : selecting ? <><p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p><p id={`${helpId}-keyboard`} className="sr-only">{keys}</p></> : <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p>}
-    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} titleAction={titleAction} showCheckboxes={showCheckboxes} currentId={currentId} onCurrentChange={activate} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded || selecting ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
+    {projection.nodes[data.rootId].children.length ? <View key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} titleAction={titleAction} showCheckboxes={showCheckboxes} currentId={currentId} onCurrentChange={activate} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded || selecting ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
     {!selecting && !multiple && <p className={embedded && !current ? "sr-only" : "mt-3 min-h-10 break-words text-ui-hint text-muted-foreground"} role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : embedded ? "" : keyboardHelp}</p>}
   </div>
 }

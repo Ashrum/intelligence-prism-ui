@@ -1,0 +1,13 @@
+/* Layout only. The fixture supplies the sidebar height; the directory scrolls
+   in the remaining space while the existing book/search controls stay fixed. */
+.directory-exploration-frame { height: max(32rem, calc(100dvh - 12rem)); display: flex; flex-direction: column; }
+.directory-exploration-frame > div,
+.directory-exploration-frame > div > div,
+.directory-exploration-frame [data-slot="tabs"],
+.directory-exploration-frame [data-slot="tabs-content"],
+.directory-exploration-frame [data-slot="tabs-content"] > div { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.directory-exploration-frame [data-slot="textbook-header"],
+.directory-exploration-frame [data-slot="tabs-list"],
+.directory-exploration-frame [data-slot="tabs-content"] > div > :not([data-exploration-view]) { flex-shrink: 0; }
+.directory-exploration-layout { container-type: inline-size; }
+@container (min-width: 1008px) { .directory-exploration-comparison { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
