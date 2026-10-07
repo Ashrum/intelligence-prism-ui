@@ -44,7 +44,7 @@ export type RecordListProps = {
   onPageChange?: (page: number) => void; onPrimary?: () => void; onRetry?: () => void; onClearFilters?: () => void
 }
 
-const targetClass = "h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal break-words"
+const targetClass = "max-w-full"
 const countLabel = (count: number | null) => count !== null && Number.isSafeInteger(count) && count >= 0 ? count : "未提供"
 const knownProgress = (value: number | null | undefined): value is number => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100
 
@@ -57,18 +57,18 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
   const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
-  const primary = <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}>{primaryLabel}</Button>
+  const primary = <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
     {state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
       <label className="grid min-w-0 flex-[2_1_240px] gap-2 text-ui-action" htmlFor={`${id}-search`}>{searchLabel}
         <Input id={`${id}-search`} type="search" value={search} placeholder={searchPlaceholder} readOnly={!onSearch}
-          className="h-auto sm:h-auto min-h-11 w-full" onChange={event => onSearch?.(event.target.value)} />
+          size="default" className="w-full items-center pointer-coarse:[&_[data-slot=input]]:min-h-11" onChange={event => onSearch?.(event.target.value)} />
       </label>
       {filters.map(filter => <div key={filter.id} className="grid min-w-0 flex-[1_1_150px] gap-2">
         <label htmlFor={`${id}-filter-${filter.id}`} className="break-words text-ui-action">{filter.label}</label>
         <Select items={filter.options} value={filter.value} disabled={!onFilterChange} onValueChange={value => { if (value !== null) onFilterChange?.(filter.id, value) }}>
-          <SelectTrigger id={`${id}-filter-${filter.id}`} className="min-h-11 sm:min-h-11 min-w-0 w-full whitespace-normal"><SelectValue /></SelectTrigger>
-          <SelectPopup>{filter.options.map(option => <SelectItem key={option.value} value={option.value} className="min-h-11 sm:min-h-11 whitespace-normal break-words">{option.label}</SelectItem>)}</SelectPopup>
+          <SelectTrigger id={`${id}-filter-${filter.id}`} size="default" className="min-w-0 w-full"><SelectValue /></SelectTrigger>
+          <SelectPopup>{filter.options.map(option => <SelectItem key={option.value} value={option.value} className="pointer-coarse:min-h-11 whitespace-normal break-words">{option.label}</SelectItem>)}</SelectPopup>
         </Select>
       </div>)}
     </div>}
@@ -110,11 +110,11 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
                   <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>
                   <Button variant="ghost" className={targetClass} disabled={!!reason} title={reason}
                     aria-label={`${row.action.label}：${row.name}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>
-                    {row.action.label}<ChevronRight aria-hidden="true" />
+                    <span className="truncate">{row.action.label}</span><ChevronRight aria-hidden="true" />
                   </Button>
                   {!!row.menu?.length && <div data-record-menu onClick={event => event.stopPropagation()}>
-                    <Menu><MenuTrigger render={<Button variant="ghost" className="min-h-11 min-w-11" aria-label={`更多操作：${row.name}`} disabled={!onRowMenu} />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
-                      <MenuPopup align="end">{row.menu.map(item => <MenuItem key={item.id} className="min-h-11 sm:min-h-11 whitespace-normal break-words" disabled={!!item.disabledReason?.trim() || !onRowMenu}
+                    <Menu><MenuTrigger render={<Button variant="ghost" size="icon" aria-label={`更多操作：${row.name}`} disabled={!onRowMenu} />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
+                      <MenuPopup align="end">{row.menu.map(item => <MenuItem key={item.id} className="pointer-coarse:min-h-11 whitespace-normal break-words" disabled={!!item.disabledReason?.trim() || !onRowMenu}
                         onClick={event => { event.stopPropagation(); if (!item.disabledReason?.trim()) onRowMenu?.(row.id, item.id) }}>{item.label}{item.disabledReason && <span className="text-ui-hint"> · {item.disabledReason}</span>}</MenuItem>)}</MenuPopup>
                     </Menu>
                   </div>}
@@ -131,8 +131,8 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
           <label htmlFor={`${id}-page-size`} className="break-words text-ui-action">{pagination.pageSize.label || "每页条数"}</label>
           <Select value={pagination.pageSize.value} items={pagination.pageSize.options.map(value => ({ value, label: `${value} 条` }))}
             disabled={!onPageSizeChange} onValueChange={value => { if (value !== null && pagination.pageSize?.options.includes(value) && Number.isSafeInteger(value) && value > 0) onPageSizeChange?.(value) }}>
-            <SelectTrigger id={`${id}-page-size`} className="h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal"><SelectValue /></SelectTrigger>
-            <SelectPopup>{pagination.pageSize.options.map(value => <SelectItem key={value} value={value} className="min-h-11 sm:min-h-11 whitespace-normal break-words">{value} 条</SelectItem>)}</SelectPopup>
+            <SelectTrigger id={`${id}-page-size`} size="default" className="max-w-full"><SelectValue /></SelectTrigger>
+            <SelectPopup>{pagination.pageSize.options.map(value => <SelectItem key={value} value={value} className="pointer-coarse:min-h-11 whitespace-normal break-words">{value} 条</SelectItem>)}</SelectPopup>
           </Select>
         </div>}
         <Pagination aria-label={`${title}分页`}><PaginationContent className="flex-wrap">
@@ -150,7 +150,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
     </FrameHeader>
     <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
-        {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} motion-reduce:transition-none`}>{item.label} <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}
+        {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce:transition-none`}><span className="truncate">{item.label}</span> <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}
       </TabsList>
       {tabs.map(item => <TabsPanel key={item.id} value={item.id} className="min-w-0">{item.id === selected ? content : null}</TabsPanel>)}
     </Tabs> : content}</div>
