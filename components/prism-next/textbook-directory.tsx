@@ -67,7 +67,9 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   const courseCount = groups.filter(group => group.kind === "course").reduce((sum, group) => sum + group.ids.length, 0)
   const knowledgeCount = groups.filter(group => group.kind === "knowledge").reduce((sum, group) => sum + group.ids.length, 0)
   const embedded = layout === "embedded"
-  const selectionCount = courseCount + knowledgeCount
+  const selectedNodes = embedded ? groups.flatMap(group => summarizeDirectory(group.data, group.ids).map(entry => group.data.nodes[entry.id])) : []
+  const selectionCount = selectedNodes.length
+  const selectionLabel = selectionCount === 1 ? `已选：${selectedNodes[0].title}` : selectionCount > 1 ? `已选 ${selectionCount} 项` : emptySelectionLabel
   if (!book) return <p className="py-6 text-ui-hint text-muted-foreground">暂无可用教材。</p>
   const scope = scopeKey(book.id, kind)
   const session = sessions[scope] ?? blankSession
@@ -83,7 +85,7 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
           </Tooltip>
         </div> : <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>}
         {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} titleAction={titleAction} embedded={embedded} summary={embedded && (selectionCount > 0 || emptySelectionLabel !== undefined) && <div className="my-1 flex min-w-0 items-center gap-2 text-ui-hint">
-          <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount ? undefined : emptySelectionLabel}>{selectionCount ? `已选 ${selectionCount} 项` : emptySelectionLabel}</p>
+          <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount <= 1 ? selectionLabel : undefined} aria-label={selectionCount === 1 ? selectionLabel : undefined}>{selectionLabel}</p>
           {selectionCount > 0 && <Button variant="ghost" size="sm" className="shrink-0" aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
             const next = { ...previous }
             for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []

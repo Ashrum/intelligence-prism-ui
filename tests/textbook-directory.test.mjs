@@ -369,3 +369,32 @@ test('knowledge title selection replaces knowledge only and leaves course and ot
     assert.deepEqual(control.selections[scope], []);
   }
 });
+
+test('embedded summarizes a selected eight-leaf chapter, partial choices and multiple scopes', () => {
+  const chapterTitle = '第二十四章 圆';
+  const makeBook = id => ({ id, title: id, directories: Object.fromEntries(['course', 'knowledge'].map(kind => [kind, createDirectory(`${id}:${kind}`, [
+    { id: 'chapter', title: chapterTitle, children: Array.from({ length: 8 }, (_, i) => ({ id: `leaf-${i}`, title: `圆的性质 ${i + 1}` })) },
+    { id: 'other', title: '其他节点' },
+  ])])) });
+  const books = [makeBook('a'), makeBook('b')];
+  const leaves = directoryLeaves(books[0].directories.course, 'a:course:chapter');
+  const summary = selections => capture({ layout: 'embedded', textbooks: books, selections }).find(node => node.props.className === 'my-1 flex min-w-0 items-center gap-2 text-ui-hint')?.props.children[0];
+  const single = summary({ 'a:course': [...leaves, leaves[0], 'unknown', 'a:course:chapter'], 'unrelated:course': ['external'] });
+  assert.equal(single.props.children, `已选：${chapterTitle}`);
+  assert.equal(single.props.title, `已选：${chapterTitle}`);
+  assert.equal(single.props['aria-label'], `已选：${chapterTitle}`);
+  assert.match(single.props.className, /min-w-0 truncate/);
+  assert.equal(summary({ 'a:course': [leaves[0]] }).props.children, '已选：圆的性质 1');
+  assert.equal(summary({ 'a:course': leaves.slice(0, 2) }).props.children, '已选 2 项');
+  assert.equal(summary({ 'a:course': [...leaves, 'a:course:other'] }).props.children, '已选 2 项');
+  assert.equal(summary({ 'a:course': leaves, 'a:knowledge': directoryLeaves(books[0].directories.knowledge, 'a:knowledge:chapter'), 'b:course': directoryLeaves(books[1].directories.course, 'b:course:chapter') }).props.children, '已选 3 项');
+  assert.equal(summary({ 'a:course': ['unknown', 'a:course:chapter'] }), undefined);
+});
+
+test('embedded long single selection preserves full title in SSR text, title and accessible name', () => {
+  const title = '从图像与代数表达式两种角度理解函数性质及其实际应用（含 f(x) = x²）';
+  const directory = createDirectory('long:course', [{ id: 'chapter', title, children: [{ id: 'one', title: '一' }, { id: 'two', title: '二' }] }]);
+  const html = htmlFor({ layout: 'embedded', textbooks: [{ id: 'long', title: '教材', directories: { course: directory, knowledge: directory } }], selections: { 'long:course': directory.leafIds } });
+  assert.ok(html.includes(`title="已选：${title}" aria-label="已选：${title}">已选：${title}</p>`));
+  assert.doesNotMatch(html, /已选 1 项|已选 2 项/);
+});
