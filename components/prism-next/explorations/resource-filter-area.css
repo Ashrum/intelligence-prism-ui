@@ -1,0 +1,12 @@
+.resource-filter-area { container-type: inline-size; }
+.resource-filter-row { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 9rem; align-items: start; gap: .5rem; }
+.resource-filter-row > :first-child { padding-block: .375rem; }
+.resource-filter-row > :last-child { max-width: 9rem; }
+.resource-filter-row[data-full] { grid-template-columns: 4.5rem minmax(0, 1fr); }
+.resource-filter-row[data-full] > :last-child { grid-column: 2; justify-content: flex-start; max-width: none; }
+.resource-filter-row > :last-child:empty { display: none; }
+@container (max-width: 450px) {
+  .resource-filter-row { grid-template-columns: 4rem minmax(0, 1fr); }
+  .resource-filter-row > :last-child { grid-column: 2; justify-content: flex-start; max-width: none; }
+  .resource-filter-row > :last-child:empty { display: none; }
+}
