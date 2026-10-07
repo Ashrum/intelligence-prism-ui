@@ -29,6 +29,38 @@ test('embedded is single-column without selected details and retains tree and di
     assert.ok(nodes.some(node => node.props['aria-label'] === '目录类型'));
   }
 });
+test('embedded instructions stay screen-reader accessible without visible paragraph space', () => {
+  const html = htmlFor({ layout: 'embedded' });
+  const descriptions = html.match(/role="tree"[^>]*aria-describedby="([^"]+)"/)[1].split(' ');
+  assert.equal(descriptions.length, 2);
+  const instructions = [
+    '箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。',
+    '方向键浏览和展开，Enter 定位，空格勾选或取消。',
+  ];
+  assert.ok(html.includes(`<div class="sr-only"><p id="${descriptions[0]}">${instructions[0]}</p><p id="${descriptions[1]}">${instructions[1]}</p></div>`));
+  for (const text of instructions) assert.equal(html.split(text).length - 1, 1);
+  assert.doesNotMatch(html, /mb-3 text-ui-hint text-muted-foreground|mt-3 min-h-10/);
+  assert.match(html, /<p class="sr-only" role="status"><\/p>/);
+  assert.doesNotMatch(htmlFor({ layout: 'split' }), /目录操作说明/);
+});
+test('embedded summary ends in a standard help button with both complete tooltip paragraphs', () => {
+  const nodes = capture({ layout: 'embedded', selections: mixedSelections });
+  const summary = nodes.find(node => node.type === 'div' && node.props.className === 'my-3 flex min-w-0 items-center gap-2 text-ui-hint');
+  const tooltip = summary.props.children.at(-1);
+  assert.equal(tooltip.props.open, false);
+  const [trigger, popup] = tooltip.props.children;
+  assert.equal(trigger.props.id, tooltip.props.triggerId);
+  assert.equal(trigger.props.closeOnClick, false);
+  assert.equal(typeof trigger.props.onClick, 'function');
+  assert.equal(trigger.props.render.props['aria-label'], '目录操作说明');
+  assert.equal(trigger.props.render.props.size, 'icon-sm');
+  assert.equal(trigger.props.render.props.className, 'ml-auto');
+  assert.deepEqual(popup.props.children.props.children.map(p => p.props.children), [
+    '箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。',
+    '方向键浏览和展开，Enter 定位，空格勾选或取消。',
+  ]);
+  assert.match(htmlFor({ layout: 'embedded' }), /<button[^>]*aria-label="目录操作说明"/);
+});
 test('embedded empty text is caller-owned, remains accessible, and clear is disabled at zero', () => {
   assert.match(htmlFor({ layout: 'embedded' }), />未选择<\/p>/);
   const label = '未选择（显示全部）'.repeat(12);

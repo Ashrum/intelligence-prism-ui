@@ -2,7 +2,7 @@
 
 import { checkboxesFeature, hotkeysCoreFeature, syncDataLoaderFeature, type TreeInstance } from "@headless-tree/core"
 import { useTree } from "@headless-tree/react"
-import { ChevronRight, Search, X } from "lucide-react"
+import { ChevronRight, CircleHelp, Search, X } from "lucide-react"
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
@@ -11,6 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/c
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/coss/input-group"
 import { ScrollArea } from "@/components/coss/scroll-area"
+import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
 import { Tree, TreeItem, TreeItemLabel } from "@/components/prism-next/tree"
 import { projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
 import { cn } from "@/lib/utils"
@@ -18,6 +19,8 @@ import { cn } from "@/lib/utils"
 export type TextbookDefinition = { id: string; title: string; directories: Record<DirectoryKind, DirectoryData> }
 export type DirectorySelections = Record<string, string[]>
 type Session = { query: string; currentId: string; expandedIds?: string[] }
+const selectionHelp = "箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。"
+const keyboardHelp = "方向键浏览和展开，Enter 定位，空格勾选或取消。"
 const blankSession: Session = { query: "", currentId: "" }
 const kinds: DirectoryKind[] = ["course", "knowledge"]
 const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : "知识点目录"
@@ -46,6 +49,7 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   emptySelectionLabel?: string
 }) {
   const controlId = useId()
+  const [helpOpen, setHelpOpen] = useState(false)
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
   const [kind, setKind] = useState<DirectoryKind>("course")
   const [sessions, setSessions] = useState<Record<string, Session>>({})
@@ -76,6 +80,10 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
             for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
             return next
           })}>清空</Button>
+          <Tooltip open={helpOpen} onOpenChange={setHelpOpen} triggerId={`${controlId}-instructions`}>
+            <TooltipTrigger id={`${controlId}-instructions`} closeOnClick={false} onClick={() => setHelpOpen(true)} render={<Button variant="ghost" size="icon-sm" className="ml-auto" aria-label="目录操作说明" />}><CircleHelp /></TooltipTrigger>
+            <TooltipPopup side="bottom" align="end" className="max-w-72"><div className="space-y-2 text-ui-hint"><p>{selectionHelp}</p><p>{keyboardHelp}</p></div></TooltipPopup>
+          </Tooltip>
         </div>} data={book.directories[kind]} kind={kind} scope={scope} session={session} setSessions={setSessions} checkedIds={selections[scope] ?? []} onCheckedChange={update => onSelectionsChange(previous => {
           const ids = typeof update === "function" ? update(previous[scope] ?? []) : update
           return { ...previous, [scope]: [...new Set(ids)].filter(id => book.directories[kind].leafIds.includes(id)) }
@@ -121,9 +129,9 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
     <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>
     <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={inputId} ref={inputRef} value={session.query} onChange={event => patch({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>
     {embedded ? <>{summary}{projection.normalized && <p className="mb-3 break-words text-ui-hint text-muted-foreground" role="status">{projection.matchingIds.size} 处匹配{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p>}</> : <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>}
-    <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。</p>
-    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
-    <p className="mt-3 min-h-10 break-words text-ui-hint text-muted-foreground" role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : "方向键浏览和展开，Enter 定位，空格勾选或取消。"}</p>
+    {embedded ? <div className="sr-only"><p id={helpId}>{selectionHelp}</p><p id={`${helpId}-keyboard`}>{keyboardHelp}</p></div> : <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{selectionHelp}</p>}
+    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
+    <p className={embedded && !current ? "sr-only" : "mt-3 min-h-10 break-words text-ui-hint text-muted-foreground"} role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : embedded ? "" : keyboardHelp}</p>
   </div>
 }
 
