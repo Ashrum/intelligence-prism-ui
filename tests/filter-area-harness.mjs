@@ -9,7 +9,8 @@ const runtime = new URL('../.sites-runtime/p34-tests/', import.meta.url);
 await mkdir(runtime, { recursive: true });
 const bundle = await build({
   stdin: { contents: `export * from './components/prism-next/explorations/resource-filter-area';
-export * from './components/prism-next/explorations/fixtures/resource-filter-fixture';`, resolveDir: root, loader: 'tsx' },
+export * from './components/prism-next/explorations/fixtures/resource-filter-fixture';
+export * from './components/prism-next/explorations/filter-area';`, resolveDir: root, loader: 'tsx' },
   bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { '.css': 'empty' },
   plugins: [{ name: 'owned-hook-probe', setup(builder) {
     builder.onLoad({ filter: /resource-filter-area\.tsx$/ }, async ({ path }) => ({ loader: 'tsx', contents: (await readFile(path, 'utf8'))
@@ -31,8 +32,8 @@ const file = new URL('bundle.mjs', runtime);
 await writeFile(file, bundle.outputFiles[0].text);
 const module = await import(file);
 await rm(file);
-export const { filterFixture, filterSortItems, initialFilterValue, applyFilterIntent } = module;
-const owned = new Set(['ResourceFilterArea', 'FacetRow', 'DimensionPopover', 'DimensionEditor', 'OptionChoices', 'OptionLabel', 'MultiChoices', 'DraftActions', 'FilterPanel', 'FilterResults']);
+export const { filterFixture, filterSortItems, initialFilterValue, previewFilterValue, applyFilterIntent } = module;
+const owned = new Set(['ResourceFilterArea', 'FacetRow', 'DimensionPopover', 'DimensionEditor', 'OptionChoices', 'OptionLabel', 'DimensionLabel', 'MultiChoices', 'DraftActions', 'FilterPanel', 'FilterResults']);
 export function ssr(variant, scale, width, extra = {}) {
   module.setTestContext(null);
   return renderToStaticMarkup(React.createElement('div', { style: { width }, 'data-prism-theme': extra.theme ?? 'light', 'data-ui-version': 'coss-v1' },
@@ -82,4 +83,9 @@ export function textOf(node) {
   if (typeof node === 'string' || typeof node === 'number') return String(node);
   if (Array.isArray(node)) return node.map(textOf).join('');
   return textOf(node.props?.children);
+}
+
+export function explorationSSR() {
+  module.setTestContext(null);
+  return renderToStaticMarkup(React.createElement(module.FilterAreaExploration));
 }

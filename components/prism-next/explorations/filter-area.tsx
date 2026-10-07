@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Toggle } from "@/components/coss/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { ResourceFilterArea } from "./resource-filter-area"
-import { applyFilterIntent, filterFixture, filterSortItems, initialFilterValue, type FilterScale } from "./fixtures/resource-filter-fixture"
+import { applyFilterIntent, filterFixture, filterSortItems, previewFilterValue, type FilterScale } from "./fixtures/resource-filter-fixture"
 import type { ResourceFilterAreaProps, ResourceFilterIntent } from "./resource-filter-types"
 
 const variants = [
@@ -19,8 +19,8 @@ function Choices({ label, value, options, onChange }: { label: string; value: st
   </ToggleGroup></div>
 }
 
-function Comparison({ variant, width, dimensions, sortItems }: Pick<ResourceFilterAreaProps, "dimensions" | "sortItems"> & { variant: typeof variants[number]; width: number }) {
-  const [value, setValue] = useState(initialFilterValue)
+function Comparison({ variant, width, dimensions, sortItems, scale }: Pick<ResourceFilterAreaProps, "dimensions" | "sortItems"> & { variant: typeof variants[number]; width: number; scale: FilterScale }) {
+  const [value, setValue] = useState(() => previewFilterValue(scale))
   const [intents, setIntents] = useState<ResourceFilterIntent[]>([])
   useEffect(() => {
     setValue(previous => sortItems.some(item => item.id === previous.sort) ? previous : { ...previous, sort: "relevance" })
@@ -31,9 +31,9 @@ function Comparison({ variant, width, dimensions, sortItems }: Pick<ResourceFilt
   }
   // The reduced sort set includes the same default; a hidden current sort is reset by the host.
   const presentedValue = sortItems.some(item => item.id === value.sort) ? value : { ...value, sort: "relevance" }
-  return <section className="min-w-0 space-y-3" aria-label={`${variant.id} 版${variant.title}`}>
-    <div><h2 className="text-block-title">{variant.id} · {variant.title}</h2><p className="text-ui-hint">{variant.description}</p></div>
-    <div className="max-w-full border p-4" style={{ width }} data-exploration-width={width}>
+  return <section id={`filter-${variant.id}`} className="min-w-0 scroll-mt-4 space-y-3" aria-label={`${variant.id} 版${variant.title}`}>
+    <div><div className="flex flex-wrap items-center gap-4"><h2 className="text-block-title">{variant.id} · {variant.title}</h2><nav aria-label={`${variant.id} 版跳转`} className="flex gap-3 text-ui-hint">{variants.map(item => <a key={item.id} href={`#filter-${item.id}`} className="underline">跳到 {item.id}</a>)}</nav></div><p className="text-ui-hint">{variant.description}</p></div>
+    <div className="max-w-full" style={{ width }} data-exploration-width={width}>
       <ResourceFilterArea variant={variant.id} dimensions={dimensions} sortItems={sortItems} value={presentedValue} resultCount={128} favoriteCount={23} onIntent={onIntent} />
     </div>
     <div className="max-w-full space-y-2 text-ui-hint" style={{ width }}>
@@ -45,7 +45,7 @@ function Comparison({ variant, width, dimensions, sortItems }: Pick<ResourceFilt
 
 export function FilterAreaExploration() {
   const [width, setWidth] = useState("720")
-  const [scale, setScale] = useState<FilterScale>("current")
+  const [scale, setScale] = useState<FilterScale>("future")
   const [counts, setCounts] = useState(true)
   const [sortSet, setSortSet] = useState("综合 / 最新 / 热门 / 难度")
   const dimensions = filterFixture(scale, counts)
@@ -57,7 +57,7 @@ export function FilterAreaExploration() {
       <Choices label="排序项集合" value={sortSet} options={["综合 / 最新", "综合 / 最新 / 热门 / 难度"]} onChange={setSortSet} />
       <Toggle pressed={counts} onPressedChange={setCounts}>提供选项数量</Toggle>
     </div>
-    <p className="text-ui-hint">三版共用组件示例数据，各自记录选择。切换规模会重置；其余开关保留筛选。128 题与收藏 23 题为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。框宽包含内边距，窄窗口以实际可用宽度为准。</p>
-    <div className="space-y-10">{variants.map(variant => <Comparison key={`${scale}:${variant.id}`} variant={variant} width={Number(width)} dimensions={dimensions} sortItems={sortItems} />)}</div>
+    <p className="text-ui-hint">三版共用组件示例数据，各自记录选择。切换规模会重置；其余开关保留筛选。128 题与收藏 23 题为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。所选宽度就是筛选区宽度，窄窗口以实际可用宽度为准。</p>
+    <div className="space-y-10">{variants.map(variant => <Comparison key={`${scale}:${variant.id}`} variant={variant} scale={scale} width={Number(width)} dimensions={dimensions} sortItems={sortItems} />)}</div>
   </div>
 }

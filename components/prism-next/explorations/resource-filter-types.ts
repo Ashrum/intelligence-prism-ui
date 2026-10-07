@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-export type FilterOption = { id: string; label: string; count?: number }
+export type FilterOption = { id: string; label: string; count?: number; tone?: "success" | "info" | "warning" }
 export type FilterDimension = {
   id: string
   label: string
@@ -42,7 +42,7 @@ export function filterIntent(dimension: FilterDimension, values: readonly string
   return { type: "filter", dimensionId: dimension.id, values: dimension.mode === "single" ? ordered.slice(0, 1) : ordered }
 }
 
-/** The first measured item is “不限”; remaining items are host options. */
+/** The first measured item is “全部”; remaining items are host options. */
 export function fittingOptions(width: number, itemWidths: readonly number[], gap = 2) {
   let used = itemWidths[0] ?? 0
   let count = 0
