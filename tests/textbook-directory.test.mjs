@@ -43,10 +43,11 @@ test('embedded instructions stay screen-reader accessible without visible paragr
   assert.match(html, /<p class="sr-only" role="status"><\/p>/);
   assert.doesNotMatch(htmlFor({ layout: 'split' }), /目录操作说明/);
 });
-test('embedded summary ends in a standard help button with both complete tooltip paragraphs', () => {
+test('embedded directory switch row ends in a standard help button with complete tooltip paragraphs', () => {
   const nodes = capture({ layout: 'embedded', selections: mixedSelections });
-  const summary = nodes.find(node => node.type === 'div' && node.props.className === 'my-3 flex min-w-0 items-center gap-2 text-ui-hint');
-  const tooltip = summary.props.children.at(-1);
+  const row = nodes.find(node => node.type === 'div' && node.props.className === 'flex min-w-0 items-center gap-1');
+  assert.equal(row.props.children[0].props['aria-label'], '目录类型');
+  const tooltip = row.props.children.at(-1);
   assert.equal(tooltip.props.open, false);
   const [trigger, popup] = tooltip.props.children;
   assert.equal(trigger.props.id, tooltip.props.triggerId);
@@ -61,16 +62,30 @@ test('embedded summary ends in a standard help button with both complete tooltip
   ]);
   assert.match(htmlFor({ layout: 'embedded' }), /<button[^>]*aria-label="目录操作说明"/);
 });
-test('embedded empty text is caller-owned, remains accessible, and clear is disabled at zero', () => {
-  assert.match(htmlFor({ layout: 'embedded' }), />未选择<\/p>/);
+test('embedded empty summary is absent by default and optional text has no clear button', () => {
+  const empty = htmlFor({ layout: 'embedded' });
+  assert.doesNotMatch(empty, /未选择|已选 \d+ 项|清空所有教材|my-1 flex min-w-0/);
+  assert.ok(empty.indexOf('目录操作说明') < empty.indexOf('搜索当前课程目录'));
   const label = '未选择（显示全部）'.repeat(12);
   const nodes = capture({ layout: 'embedded', emptySelectionLabel: label });
   const status = nodes.find(node => node.type === 'p' && node.props.children === label);
   assert.equal(status.props.role, 'status');
   assert.equal(status.props.title, label);
   assert.match(status.props.className, /min-w-0 truncate/);
-  assert.equal(nodes.find(node => node.props['aria-label'] === '清空所有教材的已选范围').props.disabled, true);
+  assert.equal(nodes.some(node => node.props['aria-label'] === '清空所有教材的已选范围'), false);
+  assert.ok(htmlFor({ layout: 'embedded', emptySelectionLabel: label }).includes(label));
   assert.equal(htmlFor({ layout: 'embedded', textbooks: [] }), htmlFor({ textbooks: [] }));
+});
+test('embedded selected summary is one row between search and tree without separator or help', () => {
+  const input = { layout: 'embedded', selections: mixedSelections, emptySelectionLabel: '空选择提示' };
+  const html = htmlFor(input);
+  assert.doesNotMatch(html, /空选择提示/);
+  assert.ok(html.indexOf('搜索当前课程目录') < html.indexOf('已选 3 项'));
+  assert.ok(html.indexOf('已选 3 项') < html.indexOf('role="tree"'));
+  const row = capture(input).find(node => node.type === 'div' && node.props.className === 'my-1 flex min-w-0 items-center gap-2 text-ui-hint');
+  assert.equal(row.props.children.length, 2);
+  assert.equal(row.props.children[0].props.children, '已选 3 项');
+  assert.equal(row.props.children[1].props.children, '清空');
 });
 test('embedded clear uses a functional controlled update across supplied books and keeps unrelated scopes', () => {
   let update;
@@ -78,7 +93,9 @@ test('embedded clear uses a functional controlled update across supplied books a
   const input = { layout: 'embedded', selections: mixedSelections, onSelectionsChange: value => { update = value; } };
   const nodes = capture(input);
   const clear = nodes.find(node => node.props['aria-label'] === '清空所有教材的已选范围');
-  assert.equal(clear.props.disabled, false);
+  assert.ok(!clear.props.disabled);
+  assert.equal(clear.props.size, 'sm');
+  assert.equal(clear.props.variant, 'ghost');
   clear.props.onClick();
   assert.equal(typeof update, 'function');
   const latest = { ...mixedSelections, 'arrived-later': ['external'] };
@@ -88,7 +105,7 @@ test('embedded clear uses a functional controlled update across supplied books a
   assert.deepEqual(result['arrived-later'], ['external']);
   assert.deepEqual(mixedSelections, before);
   assert.match(htmlFor(input), /已选 3 项/); // The event alone cannot change external facts.
-  assert.match(htmlFor({ ...input, selections: result }), />未选择<\/p>/);
+  assert.doesNotMatch(htmlFor({ ...input, selections: result }), /未选择|已选 \d+ 项|清空所有教材|my-1 flex min-w-0/);
 });
 test('both layouts keep the same leaf-normalizing selection callback and split current-directory clear', () => {
   for (const layout of ['split', 'embedded']) {

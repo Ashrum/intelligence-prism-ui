@@ -41,7 +41,7 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", emptySelectionLabel = "未选择" }: {
+export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", emptySelectionLabel }: {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
@@ -71,19 +71,21 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
     <div className="min-w-0">
       <div className="mb-5 max-w-sm"><Label htmlFor={`${controlId}-book`}>教材</Label><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>
       <Tabs value={kind} onValueChange={value => setKind(value as DirectoryKind)}>
-        <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>
-        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} embedded={embedded} summary={embedded && <div className="my-3 flex min-w-0 items-center gap-2 text-ui-hint">
-          <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount ? undefined : emptySelectionLabel}>{selectionCount ? `已选 ${selectionCount} 项` : emptySelectionLabel}</p>
-          <span aria-hidden="true">·</span>
-          <Button variant="ghost" size="sm" className="shrink-0" disabled={!selectionCount} aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
-            const next = { ...previous }
-            for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
-            return next
-          })}>清空</Button>
+        {embedded ? <div className="flex min-w-0 items-center gap-1">
+          <TabsList aria-label="目录类型" className="min-w-0 flex-1">{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 shrink"><span className="truncate" title={kindTitle(type)}>{kindTitle(type)}</span></TabsTab>)}</TabsList>
           <Tooltip open={helpOpen} onOpenChange={setHelpOpen} triggerId={`${controlId}-instructions`}>
             <TooltipTrigger id={`${controlId}-instructions`} closeOnClick={false} onClick={() => setHelpOpen(true)} render={<Button variant="ghost" size="icon-sm" className="ml-auto" aria-label="目录操作说明" />}><CircleHelp /></TooltipTrigger>
             <TooltipPopup side="bottom" align="end" className="max-w-72"><div className="space-y-2 text-ui-hint"><p>{selectionHelp}</p><p>{keyboardHelp}</p></div></TooltipPopup>
           </Tooltip>
+        </div> : <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>}
+        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} embedded={embedded} summary={embedded && (selectionCount > 0 || emptySelectionLabel !== undefined) && <div className="my-1 flex min-w-0 items-center gap-2 text-ui-hint">
+          <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount ? undefined : emptySelectionLabel}>{selectionCount ? `已选 ${selectionCount} 项` : emptySelectionLabel}</p>
+          {selectionCount > 0 && <Button variant="ghost" size="sm" className="shrink-0" aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
+            const next = { ...previous }
+            for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
+            return next
+          })}>清空</Button>}
+
         </div>} data={book.directories[kind]} kind={kind} scope={scope} session={session} setSessions={setSessions} checkedIds={selections[scope] ?? []} onCheckedChange={update => onSelectionsChange(previous => {
           const ids = typeof update === "function" ? update(previous[scope] ?? []) : update
           return { ...previous, [scope]: [...new Set(ids)].filter(id => book.directories[kind].leafIds.includes(id)) }
