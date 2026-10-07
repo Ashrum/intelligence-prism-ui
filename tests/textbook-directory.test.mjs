@@ -43,20 +43,102 @@ test('embedded instructions stay screen-reader accessible without visible paragr
   assert.match(html, /<p class="sr-only" role="status"><\/p>/);
   assert.doesNotMatch(htmlFor({ layout: 'split' }), /目录操作说明/);
 });
-test('embedded book header uses plain single-book text or a named standard select and full-width tabs', () => {
+test('embedded book header keeps title-only fallback and full-width tabs', () => {
   const single = htmlFor({ layout: 'embedded', textbooks: textbooks.slice(0, 1) });
   assert.ok(single.includes(textbooks[0].title));
-  assert.doesNotMatch(single, /role="combobox"|>教材<|目录操作说明/);
-  const nodes = capture({ layout: 'embedded' });
-  const select = nodes.find(node => node.props['aria-label'] === '切换教材');
-  assert.equal(select.props.size, undefined);
-  const options = nodes.filter(node => node.type.name === 'SelectItem');
-  assert.deepEqual(options.map(node => node.props.children), textbooks.map(book => book.title));
+  assert.doesNotMatch(single, /role="combobox"|切换教材|>教材<|目录操作说明/);
+  const nodes = capture({ layout: 'embedded', textbooks: textbooks.slice(0, 1) });
+  const cover = nodes.find(node => node.props['data-slot'] === 'textbook-cover');
+  assert.equal(cover.props['aria-hidden'], 'true');
+  assert.equal(cover.props.children[1].props.children, '');
+  const title = nodes.find(node => node.type === 'p' && node.props.title === textbooks[0].title);
+  assert.match(title.props.className, /truncate text-block-title/);
+  assert.equal(nodes.filter(node => node.type === 'p' && node.props.title).length, 1);
   const tabs = nodes.find(node => node.props['aria-label'] === '目录类型');
   assert.equal(tabs.props.className, 'w-full min-w-0');
   assert.ok(tabs.props.children.every(tab => tab.props.className.includes('flex-1 basis-0')));
-  assert.match(htmlFor({ layout: 'embedded' }), /aria-label="切换教材"/);
-  assert.doesNotMatch(htmlFor({ layout: 'embedded' }), /目录操作说明|>教材<|aria-label="多选"/);
+});
+test('embedded book metadata renders full accessible names and two Unicode cover characters', () => {
+  for (const metadata of [
+    { volume: '九年级上册', subject: '数学', edition: '人教版' },
+    { volume: '长册名'.repeat(30), subject: '𠮷语文', edition: '长版本'.repeat(30) },
+    { subject: '数学' }, { edition: '人教版' }, { volume: '册名' },
+    { volume: '', subject: '', edition: '' },
+  ]) {
+    const book = { ...textbooks[0], ...metadata };
+    const nodes = capture({ layout: 'embedded', textbooks: [book] });
+    const volume = metadata.volume || book.title;
+    const details = [metadata.subject, metadata.edition].filter(Boolean).join(' · ');
+    const name = [volume, details].filter(Boolean).join(' · ');
+    assert.ok(nodes.some(node => node.props.role === 'group' && node.props['aria-label'] === name));
+    const title = nodes.find(node => node.type === 'p' && node.props.title === volume);
+    assert.equal(title.props.children, volume);
+    assert.match(title.props.className, /truncate/);
+    const second = nodes.find(node => node.type === 'p' && node.props.title === details);
+    if (details) {
+      assert.equal(second.props.children, details);
+      assert.match(second.props.className, /truncate text-ui-hint text-muted-foreground/);
+    } else assert.equal(second, undefined);
+    const cover = nodes.find(node => node.props['data-slot'] === 'textbook-cover');
+    assert.equal(cover.props.children[1].props.children, Array.from(metadata.subject ?? '').slice(0, 2).join(''));
+  }
+});
+test('embedded multi-book menu uses standard switch button, full option labels and existing book selection', () => {
+  const books = textbooks.map((book, index) => ({ ...book, volume: `第 ${index + 1} 册`, subject: '数学', edition: '人教版' }));
+  let selectedId = books[0].id;
+  const selections = structuredClone(mixedSelections);
+  const nodes = capture({ layout: 'embedded', textbooks: books, selections }, { mounted: true, bookId: selectedId, onBookChange: value => { selectedId = value; } });
+  const trigger = nodes.find(node => node.type.name === 'MenuTrigger');
+  assert.equal(trigger.props['aria-label'], '切换教材');
+  assert.equal(trigger.props.render.type.name, 'Button');
+  assert.equal(trigger.props.render.props.variant, 'outline');
+  assert.equal(trigger.props.render.props.size, 'sm');
+  const group = nodes.find(node => node.type.name === 'MenuRadioGroup');
+  assert.equal(group.props.value, books[0].id);
+  const options = nodes.filter(node => node.type.name === 'MenuRadioItem');
+  assert.deepEqual(options.map(node => node.props['aria-label']), books.map(book => `${book.volume} · 数学 · 人教版`));
+  assert.deepEqual(options.map(node => node.props.value), books.map(book => book.id));
+  for (const node of options) assert.equal(node.props.children.props.title, node.props['aria-label']);
+  group.props.onValueChange(books[1].id);
+  assert.equal(selectedId, books[1].id);
+  const after = capture({ layout: 'embedded', textbooks: books, selections }, { mounted: true, bookId: selectedId });
+  assert.equal(after.find(node => node.type.name === 'MenuRadioGroup').props.value, books[1].id);
+  assert.equal(after.find(node => node.type.name === 'DirectorySession').props.scope, `${books[1].id}:course`);
+  assert.deepEqual(selections, mixedSelections);
+  const fallback = capture({ layout: 'embedded' }).filter(node => node.type.name === 'MenuRadioItem');
+  assert.deepEqual(fallback.map(node => node.props['aria-label']), textbooks.map(book => book.title));
+  const buttonTag = htmlFor({ layout: 'embedded' }).match(/<button[^>]*aria-label="切换教材"[^>]*>/)[0];
+  assert.match(buttonTag, /aria-haspopup="menu"/);
+});
+test('host callback wins for single or multiple books and never mounts the internal menu', () => {
+  for (const books of [textbooks.slice(0, 1), textbooks]) {
+    let calls = 0;
+    let bookWrites = 0;
+    const onTextbookSwitch = () => { calls++; };
+    const nodes = capture({ layout: 'embedded', textbooks: books, onTextbookSwitch }, { mounted: true, onBookChange: () => { bookWrites++; } });
+    assert.equal(nodes.some(node => ['MenuTrigger', 'MenuRadioGroup', 'MenuRadioItem', 'SelectItem'].includes(node.type.name)), false);
+    const button = nodes.find(node => node.props['aria-label'] === '切换教材');
+    assert.equal(button.type.name, 'Button');
+    assert.equal(button.props.variant, 'outline');
+    assert.equal(button.props.size, 'sm');
+    button.props.onClick();
+    assert.equal(calls, 1);
+    assert.equal(bookWrites, 0);
+    const html = htmlFor({ layout: 'embedded', textbooks: books, onTextbookSwitch });
+    assert.match(html, /aria-label="切换教材"/);
+    assert.doesNotMatch(html, /aria-haspopup="menu"/);
+  }
+});
+test('split ignores embedded header metadata and switch callback byte for byte', () => {
+  let calls = 0;
+  for (const [name, props] of Object.entries(baselineCases)) {
+    const books = (props.textbooks ?? textbooks).map(book => ({ ...book, volume: '册名', subject: '数学', edition: '版本' }));
+    for (const titleAction of ['locate', 'select']) assert.equal(
+      htmlFor({ ...props, textbooks: books, layout: 'split', titleAction, onTextbookSwitch: () => { calls++; } }),
+      htmlFor({ ...props, titleAction }), name,
+    );
+  }
+  assert.equal(calls, 0);
 });
 test('embedded empty summary is absent by default and optional text has no clear button', () => {
   const empty = htmlFor({ layout: 'embedded' });

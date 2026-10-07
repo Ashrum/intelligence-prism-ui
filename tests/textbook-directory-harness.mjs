@@ -16,8 +16,10 @@ export const { TextbookDirectory } = await import(file);
 await rm(file);
 // Headless Tree defers rows until mount. Initialize its real model in a separate
 // test-only bundle so row markup is testable without claiming browser coverage.
+// Inject book state at the owned hook boundary to inspect switch intents and
+// rerender a chosen book; actual React persistence/focus needs browser acceptance.
 const source = await readFile(root + 'components/prism-next/textbook-directory.tsx', 'utf8');
-const mountedSource = source.replace('useState<DirectoryKind>("course")', 'useState<DirectoryKind>(testInitialKind)') + '\nlet testInitialKind = "course"; export function setTestInitialKind(kind) { testInitialKind = kind; }';
+const mountedSource = source.replace('const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")', 'const [bookId, setBookId] = [testBookId ?? textbooks[0]?.id ?? "", testOnBookChange]').replace('useState<DirectoryKind>("course")', 'useState<DirectoryKind>(testInitialKind)') + '\nlet testInitialKind = "course"; let testBookId; let testOnBookChange = () => {}; export function setTestInitialKind(kind) { testInitialKind = kind; } export function setTestBookState(id, onChange) { testBookId = id; testOnBookChange = onChange; }';
 const mountedBundle = await build({ stdin: { contents: mountedSource.replace('import { useTree } from "@headless-tree/react"', `import { useTree as useUnmountedTree } from "@headless-tree/react"
 function useTree(...args) {
   const tree = useUnmountedTree(...args)
@@ -26,7 +28,7 @@ function useTree(...args) {
 }`), resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
 const mountedFile = new URL('mounted-test-bundle.mjs', runtime);
 await writeFile(mountedFile, mountedBundle.outputFiles[0].text);
-const { TextbookDirectory: MountedDirectory, setTestInitialKind } = await import(mountedFile);
+const { TextbookDirectory: MountedDirectory, setTestInitialKind, setTestBookState } = await import(mountedFile);
 await rm(mountedFile);
 export const mixedSelections = {
   'math-1:course': ['math-1:course:c111', 'math-1:course:c111', 'unknown', 'math-1:course:c1'],
@@ -46,7 +48,7 @@ export const mountedHtmlFor = extra => renderToStaticMarkup(React.createElement(
 export const hash = html => createHash('sha256').update(html).digest('hex');
 
 // Capture actual owned handlers under React's SSR dispatcher; no browser simulation.
-export function capture(extra, { mounted = false, session = {}, kind = "course" } = {}) {
+export function capture(extra, { mounted = false, session = {}, kind = "course", bookId, onBookChange = () => {} } = {}) {
   const nodes = [];
   const owned = new Set(['TextbookDirectory', 'DirectorySession', 'DirectoryTreeView']);
   function inspect(node) {
@@ -58,7 +60,8 @@ export function capture(extra, { mounted = false, session = {}, kind = "course" 
     return React.cloneElement(node, {}, React.Children.map(node.props.children, inspect));
   }
   setTestInitialKind(kind);
+  setTestBookState(bookId, onBookChange);
   try { renderToStaticMarkup(inspect(React.createElement(mounted ? MountedDirectory : TextbookDirectory, { ...props, ...extra }))); }
-  finally { setTestInitialKind("course"); }
+  finally { setTestInitialKind("course"); setTestBookState(undefined, () => {}); }
   return nodes;
 }

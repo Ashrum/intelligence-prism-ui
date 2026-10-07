@@ -2,13 +2,14 @@
 
 import { checkboxesFeature, hotkeysCoreFeature, syncDataLoaderFeature, type TreeInstance } from "@headless-tree/core"
 import { useTree } from "@headless-tree/react"
-import { ChevronRight, Search, X } from "lucide-react"
+import { ArrowRightLeft, ChevronRight, Search, X } from "lucide-react"
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { Button } from "@/components/coss/button"
 import { Toggle } from "@/components/coss/toggle"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Label } from "@/components/coss/label"
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
+import { Menu, MenuTrigger, MenuPopup, MenuRadioGroup, MenuRadioItem } from "@/components/coss/menu"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/coss/input-group"
 import { ScrollArea } from "@/components/coss/scroll-area"
@@ -17,7 +18,7 @@ import { Tree, TreeItem, TreeItemLabel } from "@/components/prism-next/tree"
 import { directoryLeaves, summarizeDirectory, projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
 import { cn } from "@/lib/utils"
 
-export type TextbookDefinition = { id: string; title: string; directories: Record<DirectoryKind, DirectoryData> }
+export type TextbookDefinition = { id: string; title: string; volume?: string; subject?: string; edition?: string; directories: Record<DirectoryKind, DirectoryData> }
 export type DirectorySelections = Record<string, string[]>
 type Session = { query: string; currentId: string; expandedIds?: string[]; multiSelect?: boolean }
 const selectionHelp = "箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。"
@@ -47,7 +48,7 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel }: {
+export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch }: {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
@@ -55,6 +56,7 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   titleAction?: TitleAction
   multiSelect?: "always" | "toggle"
   emptySelectionLabel?: string
+  onTextbookSwitch?: () => void
 }) {
   const controlId = useId()
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
@@ -76,11 +78,31 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   if (!book) return <p className="py-6 text-ui-hint text-muted-foreground">暂无可用教材。</p>
   const scope = scopeKey(book.id, kind)
   const session = sessions[scope] ?? blankSession
+  const volume = book.volume || book.title
+  const details = [book.subject, book.edition].filter(Boolean).join(" · ")
   return <div className={embedded ? "grid min-w-0 grid-cols-1" : "grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1.25fr)_minmax(17rem,.75fr)]"}>
     <div className="min-w-0">
-      {embedded ? <div className="mb-3 min-w-0">{textbooks.length === 1
-        ? <p className="truncate text-ui-hint text-muted-foreground" title={book.title}>{book.title}</p>
-        : <Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`} aria-label="切换教材"><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select>}
+      {embedded ? <div className="mb-3 flex min-w-0 items-center gap-3" data-slot="textbook-header">
+        <span aria-hidden="true" data-slot="textbook-cover" className="relative h-[60px] w-[46px] shrink-0 overflow-hidden rounded-sm border border-border [background:linear-gradient(135deg,color-mix(in_srgb,var(--brand-blue)_12%,var(--background)),color-mix(in_srgb,var(--brand-magenta)_7%,var(--background))_60%,color-mix(in_srgb,var(--brand-green)_12%,var(--background)))]">
+          <span className="absolute inset-y-0 left-1 w-px bg-[color-mix(in_srgb,var(--brand-blue)_25%,var(--border))]" />
+          <span className="absolute left-3 top-2 text-ui-hint text-foreground [writing-mode:vertical-rl]">{Array.from(book.subject ?? "").slice(0, 2).join("")}</span>
+          <span className="absolute bottom-2 left-3 right-2 h-0.5 [background:var(--brand-ai-gradient)]" />
+        </span>
+        <div className="min-w-0 flex-1" role="group" aria-label={[volume, details].filter(Boolean).join(" · ")}>
+          <p className="truncate text-block-title text-foreground" title={volume}>{volume}</p>
+          {details && <p className="truncate text-ui-hint text-muted-foreground" title={details}>{details}</p>}
+        </div>
+        {onTextbookSwitch ? <Button variant="outline" size="sm" aria-label="切换教材" onClick={onTextbookSwitch}><ArrowRightLeft aria-hidden="true" />切换</Button> : textbooks.length > 1 && <Menu>
+          <MenuTrigger render={<Button variant="outline" size="sm" />} aria-label="切换教材"><ArrowRightLeft aria-hidden="true" />切换</MenuTrigger>
+          <MenuPopup align="end" className="max-w-[min(24rem,var(--available-width))]" aria-label="选择教材">
+            <MenuRadioGroup value={book.id} onValueChange={value => { if (value) setBookId(value) }}>
+              {textbooks.map(item => {
+                const label = [item.volume || item.title, item.subject, item.edition].filter(Boolean).join(" · ")
+                return <MenuRadioItem key={item.id} value={item.id} aria-label={label} className="grid-cols-[.75rem_minmax(0,1fr)] [&>span]:min-w-0"><span className="block min-w-0 truncate text-ui-body" title={label}>{label}</span></MenuRadioItem>
+              })}
+            </MenuRadioGroup>
+          </MenuPopup>
+        </Menu>}
       </div> : <div className="mb-5 max-w-sm"><Label htmlFor={`${controlId}-book`}>教材</Label><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>}
       <Tabs value={kind} onValueChange={value => setKind(value as DirectoryKind)} className={embedded ? "gap-3" : undefined}>
         {embedded ? <TabsList aria-label="目录类型" className="w-full min-w-0">{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 flex-1 basis-0"><span className="truncate" title={kindTitle(type)}>{kindTitle(type)}</span></TabsTab>)}</TabsList> : <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>}
