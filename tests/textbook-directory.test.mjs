@@ -43,29 +43,25 @@ test('embedded instructions stay screen-reader accessible without visible paragr
   assert.match(html, /<p class="sr-only" role="status"><\/p>/);
   assert.doesNotMatch(htmlFor({ layout: 'split' }), /目录操作说明/);
 });
-test('embedded directory switch row ends in a standard help button with complete tooltip paragraphs', () => {
-  const nodes = capture({ layout: 'embedded', selections: mixedSelections });
-  const row = nodes.find(node => node.type === 'div' && node.props.className === 'flex min-w-0 items-center gap-1');
-  assert.equal(row.props.children[0].props['aria-label'], '目录类型');
-  const tooltip = row.props.children.at(-1);
-  assert.equal(tooltip.props.open, false);
-  const [trigger, popup] = tooltip.props.children;
-  assert.equal(trigger.props.id, tooltip.props.triggerId);
-  assert.equal(trigger.props.closeOnClick, false);
-  assert.equal(typeof trigger.props.onClick, 'function');
-  assert.equal(trigger.props.render.props['aria-label'], '目录操作说明');
-  assert.equal(trigger.props.render.props.size, 'icon-sm');
-  assert.equal(trigger.props.render.props.className, 'ml-auto');
-  assert.deepEqual(popup.props.children.props.children.map(p => p.props.children), [
-    '箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。',
-    '方向键浏览和展开，Enter 定位，空格勾选或取消。',
-  ]);
-  assert.match(htmlFor({ layout: 'embedded' }), /<button[^>]*aria-label="目录操作说明"/);
+test('embedded book header uses plain single-book text or a named standard select and full-width tabs', () => {
+  const single = htmlFor({ layout: 'embedded', textbooks: textbooks.slice(0, 1) });
+  assert.ok(single.includes(textbooks[0].title));
+  assert.doesNotMatch(single, /role="combobox"|>教材<|目录操作说明/);
+  const nodes = capture({ layout: 'embedded' });
+  const select = nodes.find(node => node.props['aria-label'] === '切换教材');
+  assert.equal(select.props.size, undefined);
+  const options = nodes.filter(node => node.type.name === 'SelectItem');
+  assert.deepEqual(options.map(node => node.props.children), textbooks.map(book => book.title));
+  const tabs = nodes.find(node => node.props['aria-label'] === '目录类型');
+  assert.equal(tabs.props.className, 'w-full min-w-0');
+  assert.ok(tabs.props.children.every(tab => tab.props.className.includes('flex-1 basis-0')));
+  assert.match(htmlFor({ layout: 'embedded' }), /aria-label="切换教材"/);
+  assert.doesNotMatch(htmlFor({ layout: 'embedded' }), /目录操作说明|>教材<|aria-label="多选"/);
 });
 test('embedded empty summary is absent by default and optional text has no clear button', () => {
   const empty = htmlFor({ layout: 'embedded' });
   assert.doesNotMatch(empty, /未选择|已选 \d+ 项|清空所有教材|my-1 flex min-w-0/);
-  assert.ok(empty.indexOf('目录操作说明') < empty.indexOf('搜索当前课程目录'));
+  assert.doesNotMatch(empty, /目录操作说明/);
   const label = '未选择（显示全部）'.repeat(12);
   const nodes = capture({ layout: 'embedded', emptySelectionLabel: label });
   const status = nodes.find(node => node.type === 'p' && node.props.children === label);
@@ -82,7 +78,7 @@ test('embedded selected summary is one row between search and tree without separ
   assert.doesNotMatch(html, /空选择提示/);
   assert.ok(html.indexOf('搜索当前课程目录') < html.indexOf('已选 3 项'));
   assert.ok(html.indexOf('已选 3 项') < html.indexOf('role="tree"'));
-  const row = capture(input).find(node => node.type === 'div' && node.props.className === 'my-1 flex min-w-0 items-center gap-2 text-ui-hint');
+  const row = capture(input).find(node => node.type === 'div' && node.props.className === 'flex min-w-0 items-center gap-2 text-ui-hint');
   assert.equal(row.props.children.length, 2);
   assert.equal(row.props.children[0].props.children, '已选 3 项');
   assert.equal(row.props.children[1].props.children, '清空');
@@ -214,8 +210,9 @@ test('search bulk selection excludes descendants of matching folders and keeps o
 // Exercise the component's actual handlers against real mounted Headless Tree
 // models. Renders deliberately wait for the host to apply the controlled update.
 function selectionController(extra = {}, initialSession = {}, kind = "course") {
-  let selections = extra.selections ?? {}, sessions = {}, pending;
+  let selections = extra.selections ?? {}, pending;
   const scope = `${(extra.textbooks ?? textbooks)[0].id}:${kind}`;
+  let sessions = { [scope]: { query: "", currentId: "", ...initialSession } };
   return {
     get selections() { return selections; },
     set selections(value) { selections = value; },
@@ -329,7 +326,7 @@ test('current rows follow complete subtree equivalence, ignore invalid IDs, and 
   rowFor(control.render(), 'chain:course:c').props.onClick(); control.apply();
   assert.equal(currentRows(control.render()).length, 0);
 });
-test('select instructions are complete in tooltip and accessible descriptions in both layouts with no locate feedback', () => {
+test('select instructions stay in accessible descriptions in both layouts with no locate feedback', () => {
   const instructions = ['点标题只看这一项，再点一次取消。勾选可以多选，勾选父级包含全部下级。搜索不会改变已选范围。', '方向键浏览和展开，Enter 选中这一项，空格勾选或取消。'];
   for (const layout of ['split', 'embedded']) {
     const html = htmlFor({ layout, titleAction: 'select' });
@@ -338,10 +335,7 @@ test('select instructions are complete in tooltip and accessible descriptions in
     assert.doesNotMatch(html, /当前位置|Enter 定位|mt-3 min-h-10/);
     const nodes = capture({ layout, titleAction: 'select' }, { session: { session: { query: '', currentId: 'math-1:course:c1' } } });
     assert.equal(nodes.some(node => typeof node.props.children === 'string' && node.props.children.startsWith('当前位置')), false);
-    if (layout === 'embedded') {
-      const row = nodes.find(node => node.type === 'div' && node.props.className === 'flex min-w-0 items-center gap-1');
-      assert.deepEqual(row.props.children.at(-1).props.children[1].props.children.props.children.map(p => p.props.children), instructions);
-    }
+    if (layout === 'embedded') assert.doesNotMatch(html, /目录操作说明/);
   }
 });
 test('explicit locate equals omitted mode and title/Enter remain navigation only without auto expansion', () => {
@@ -378,7 +372,7 @@ test('embedded summarizes a selected eight-leaf chapter, partial choices and mul
   ])])) });
   const books = [makeBook('a'), makeBook('b')];
   const leaves = directoryLeaves(books[0].directories.course, 'a:course:chapter');
-  const summary = selections => capture({ layout: 'embedded', textbooks: books, selections }).find(node => node.props.className === 'my-1 flex min-w-0 items-center gap-2 text-ui-hint')?.props.children[0];
+  const summary = selections => capture({ layout: 'embedded', textbooks: books, selections }).find(node => node.props.className === 'flex min-w-0 items-center gap-2 text-ui-hint')?.props.children[0];
   const single = summary({ 'a:course': [...leaves, leaves[0], 'unknown', 'a:course:chapter'], 'unrelated:course': ['external'] });
   assert.equal(single.props.children, `已选：${chapterTitle}`);
   assert.equal(single.props.title, `已选：${chapterTitle}`);
@@ -397,4 +391,130 @@ test('embedded long single selection preserves full title in SSR text, title and
   const html = htmlFor({ layout: 'embedded', textbooks: [{ id: 'long', title: '教材', directories: { course: directory, knowledge: directory } }], selections: { 'long:course': directory.leafIds } });
   assert.ok(html.includes(`title="已选：${title}" aria-label="已选：${title}">已选：${title}</p>`));
   assert.doesNotMatch(html, /已选 1 项|已选 2 项/);
+});
+
+const multiToggle = nodes => nodes.find(node => node.props.render?.props['aria-label'] === '多选').props.render;
+const toggleController = (extra = {}, session = {}, kind = 'course') => selectionController({ multiSelect: 'toggle', ...extra }, session, kind);
+
+test('pre-P29 split hashes remain unchanged for both title actions and all multiSelect values', () => {
+  const before = JSON.parse(readFileSync(new URL('./fixtures/textbook-directory-p29-before.json', import.meta.url)));
+  for (const [name, props] of Object.entries(baselineCases)) for (const titleAction of ['locate', 'select']) {
+    for (const multiSelect of [undefined, 'always', 'toggle']) assert.equal(hash(htmlFor({ ...props, titleAction, multiSelect })), before[`${name}:${titleAction}`]);
+    // embedded's header intentionally changes in P29; omitted vs explicit always
+    // must still produce identical complete SSR, including initialized tree rows.
+    for (const render of [htmlFor, mountedHtmlFor]) assert.equal(hash(render({ ...props, titleAction, layout: 'embedded' })), hash(render({ ...props, titleAction, layout: 'embedded', multiSelect: 'always' })));
+  }
+});
+
+test('toggle starts off with no checkbox, selects a complete subtree and cancels by title or keyboard', () => {
+  const control = toggleController();
+  const id = 'math-1:course:c11';
+  let nodes = control.render();
+  assert.equal(multiToggle(nodes).props.pressed, false);
+  assert.equal(nodes.some(node => node.type.name === 'Checkbox'), false);
+  assert.equal(rowFor(nodes, id).props['aria-checked'], undefined);
+  rowFor(nodes, id).props.onClick(); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], directoryLeaves(data, id));
+  nodes = control.render();
+  assert.equal(multiToggle(nodes).props.pressed, false); // Several leaves, one merged node.
+  assert.equal(currentRows(nodes)[0].props.item.getId(), id);
+  rowFor(nodes, id).props.onClick(); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], []);
+  keyOn(rowFor(control.render(), id), ' '); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], directoryLeaves(data, id));
+  keyOn(rowFor(control.render(), id), 'Enter'); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], []);
+});
+
+test('opening toggle shows checkboxes; titles, Space and checkboxes share full-tree propagation without current rows', async () => {
+  const control = toggleController({}, { query: '单调性' });
+  multiToggle(control.render()).props.onPressedChange(true);
+  let nodes = control.render();
+  assert.equal(multiToggle(nodes).props.pressed, true);
+  assert.ok(checkboxFor(nodes, '函数的基本性质'));
+  rowFor(nodes, 'math-1:course:c22').props.onClick(); await flushCheckbox(); control.apply();
+  assert.deepEqual(new Set(control.selections['math-1:course']), new Set(directoryLeaves(data, 'math-1:course:c22')));
+  nodes = control.render();
+  assert.equal(currentRows(nodes).length, 0);
+  assert.equal(rowFor(nodes, 'math-1:course:c22').props['aria-checked'], true);
+  checkboxFor(nodes, data.nodes['math-1:course:c221'].title).props.onCheckedChange(); await flushCheckbox(); control.apply();
+  assert.equal(rowFor(control.render(), 'math-1:course:c22').props['aria-checked'], 'mixed');
+  keyOn(rowFor(control.render(), 'math-1:course:c221'), ' '); await flushCheckbox(); control.apply();
+  assert.equal(rowFor(control.render(), 'math-1:course:c22').props['aria-checked'], true);
+  keyOn(rowFor(control.render(), 'math-1:course:c22'), 'Enter'); await flushCheckbox(); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], []);
+  assert.equal(multiToggle(control.render()).props.pressed, true);
+});
+
+test('closing multiSelect keeps zero or one merged node but clears multiple nodes only in the active scope', () => {
+  for (const kind of ['course', 'knowledge']) {
+    const scope = `math-1:${kind}`, directory = textbooks[0].directories[kind];
+    const parent = directory.nodes[directory.rootId].children[0];
+    const other = directory.nodes[directory.rootId].children[1];
+    for (const leaves of [[], directoryLeaves(directory, parent), [...directoryLeaves(directory, parent), ...directoryLeaves(directory, other)]]) {
+      const before = { ...mixedSelections, [scope]: leaves };
+      const control = toggleController({ selections: before }, { multiSelect: true }, kind);
+      multiToggle(control.render()).props.onPressedChange(false);
+      assert.deepEqual(control.selections, before); // Host has not applied the intent.
+      control.apply();
+      assert.deepEqual(control.selections[scope], summarizeDirectory(directory, leaves).length > 1 ? [] : leaves);
+      for (const key of Object.keys(before).filter(key => key !== scope)) assert.deepEqual(control.selections[key], before[key]);
+      assert.equal(multiToggle(control.render()).props.pressed, false);
+      assert.equal(control.render().some(node => node.type.name === 'Checkbox'), false);
+    }
+  }
+});
+
+test('closing evaluates the latest controlled selection, preserving newly arrived scopes', () => {
+  const control = toggleController({ selections: { 'math-1:course': ['math-1:course:c31'] } }, { multiSelect: true });
+  multiToggle(control.render()).props.onPressedChange(false);
+  control.apply({ 'math-1:course': ['math-1:course:c31', 'math-1:course:c221'], 'later:knowledge': ['keep'] });
+  assert.deepEqual(control.selections, { 'math-1:course': [], 'later:knowledge': ['keep'] });
+});
+
+test('external multiple merged nodes initialize the toggle on, while unrelated scopes and one complete parent do not', () => {
+  const extra = { layout: 'embedded', multiSelect: 'toggle', titleAction: 'select' };
+  const multiple = { 'math-1:course': ['math-1:course:c31', 'math-1:course:c221'] };
+  const html = mountedHtmlFor({ ...extra, selections: multiple });
+  assert.match(html, /aria-pressed="true"/);
+  assert.match(html, /role="checkbox"/);
+  assert.doesNotMatch(html, /data-current="true"|aria-current="location"/);
+  for (const selections of [{}, { 'math-1:course': directoryLeaves(data, 'math-1:course:c1') }, { 'math-2:course': textbooks[1].directories.course.leafIds }]) {
+    const single = mountedHtmlFor({ ...extra, selections });
+    assert.match(single, /aria-pressed="false"/);
+    assert.doesNotMatch(single, /role="checkbox"|aria-checked=/);
+  }
+  const control = toggleController();
+  control.selections = multiple;
+  assert.equal(multiToggle(control.render()).props.pressed, true);
+});
+
+test('toggle locate mode only locates when off and toggles checked state when on', async () => {
+  const control = toggleController({ titleAction: 'locate' });
+  const id = 'math-1:course:c11';
+  rowFor(control.render(), id).props.onClick();
+  keyOn(rowFor(control.render(), id), ' ');
+  assert.deepEqual(control.selections, {});
+  assert.equal(currentRows(control.render())[0].props.item.getId(), id);
+  multiToggle(control.render()).props.onPressedChange(true);
+  assert.equal(currentRows(control.render()).length, 0);
+  rowFor(control.render(), id).props.onClick(); await flushCheckbox(); control.apply();
+  assert.deepEqual(new Set(control.selections['math-1:course']), new Set(directoryLeaves(data, id)));
+});
+
+test('toggle has a standard named control and tooltip; both instructions remain sr-only and described by the tree', () => {
+  for (const selections of [{}, { 'math-1:course': ['math-1:course:c31', 'math-1:course:c221'] }]) {
+    const extra = { layout: 'embedded', titleAction: 'select', multiSelect: 'toggle', selections };
+    const html = htmlFor(extra);
+    const descriptions = html.match(/role="tree"[^>]*aria-describedby="([^"]+)"/)[1].split(' ');
+    assert.equal(descriptions.length, 2);
+    assert.ok(html.includes(`<div class="sr-only"><p id="${descriptions[0]}">`));
+    for (const id of descriptions) assert.ok(html.includes(`id="${id}"`));
+    assert.doesNotMatch(html, /目录操作说明/);
+    const nodes = capture(extra), toggle = multiToggle(nodes);
+    assert.equal(toggle.props.size, undefined);
+    assert.equal(toggle.props['aria-label'], '多选');
+    assert.ok(nodes.some(node => node.props.children === '打开后可以勾选多个章节或知识点'));
+    assert.ok(html.includes(Object.keys(selections).length ? '点标题或复选框勾选，勾选父级包含全部下级。' : '点标题只看这一项，再点一次取消。'));
+  }
 });
