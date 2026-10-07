@@ -23,7 +23,7 @@ export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinks
   return <Tabs value={active} onValueChange={value=>onTabChange(value as QuestionDetailTab)} className="@container/question-details min-w-0 gap-5">
     <TabsList variant="underline" className="grid w-full min-w-0 auto-cols-fr grid-flow-col" aria-label={`${question.title}详情分类`}>{orderedTabs.map(value => {
       const label = { answer: "答案与解析", teaching: "教学定位", archive: "题目档案" }[value]
-      return <TabsTab key={value} value={value} aria-label={label} className="min-h-11 min-w-0 whitespace-normal px-1">
+      return <TabsTab key={value} value={value} aria-label={label} className="pointer-coarse:min-h-11 pointer-coarse:min-w-11 min-w-0 whitespace-normal px-1">
         <span aria-hidden="true" className="@min-[400px]/question-details:hidden">{{ answer: "答案", teaching: "定位", archive: "档案" }[value]}</span>
         <span aria-hidden="true" className="hidden @min-[400px]/question-details:inline">{label}</span>
       </TabsTab>

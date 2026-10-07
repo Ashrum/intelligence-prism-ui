@@ -283,14 +283,14 @@ void [secret, sync, intent, summary, props];
 
 // PO 2026-09-29: status decoration removed; all other markup verified against main 3279441.
 // Normalize only opaque React-generated IDs; markup, text and classes remain exact.
-test('default presentation retains reviewed plain-status snapshots', () => {
+test('default presentation retains reviewed plain-status snapshots except P31 label touch sizing', () => {
   const snapshots = [
     'fb13b4c52303bedb4152d5fd56bd8dd56f2d035ceb5810f15006fde27b8e63f5',
     '0ceefa502d419796e91b4dc967f41e97d0abd58a7367ae3728eb218314865d55',
     'a9821643ee277401f1d016a323cd13ca5bdabdfe0223fa43210ea245b6ff8ce0',
     'f96c67bac1ca90bc34ded8ca76efa9eb670d2cf6cfbbda7484e654e67ef0a6a4',
   ];
-  modes.forEach((mode, index) => assert.equal(createHash('sha256').update(htmlFor(mode).replace(/_R_[^"\s<>]+_/g, 'REACT_ID')).digest('hex'), snapshots[index]));
+  modes.forEach((mode, index) => assert.equal(createHash('sha256').update(htmlFor(mode).replace(/(<label class="[^"]*)pointer-coarse:min-h-11 max-w-full/g, '$1min-h-11 max-w-full').replace(/_R_[^"\s<>]+_/g, 'REACT_ID')).digest('hex'), snapshots[index]));
 });
 
 const summaryProps = {

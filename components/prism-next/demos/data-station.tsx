@@ -49,7 +49,7 @@ export function DataStationDemo() {
       <Feedback>{feedback}</Feedback>
     </DemoSection>
     <DemoSection id="station-drawer" title="触控端 · 右侧 Drawer" description="宿主明确选择 drawer；Esc、遮罩、关闭与返回均请求关闭，连接状态不变。">
-      <Button variant="outline" className="h-auto sm:h-auto min-h-11 whitespace-normal" onClick={() => setDrawerOpen(true)}>打开触控抽屉</Button>
+      <Button variant="outline" onClick={() => setDrawerOpen(true)}>打开触控抽屉</Button>
       <DataStation {...dataStationBase} presentation="drawer" open={drawerOpen} onClose={() => setDrawerOpen(false)} selectedId={selectedId} onSelect={setSelectedId}
         onConnect={id => setFeedback(`已发出连接请求：${id}；等待调用方回执`)} />
     </DemoSection>
@@ -57,7 +57,7 @@ export function DataStationDemo() {
     <DemoSection title="选择其他可用数据站" description="单选只改变待连接目标；主按钮随推荐与所选目标变化。">
       <div className="max-w-xl"><StationFixture props={{ ...dataStationBase, selectedId: null, devices: [...dataStationBase.devices, { ...dataStationBase.devices[0], id: "03", name: "高中部教学数据站 03", number: "ST-HS-03" }] }} /></div>
     </DemoSection>
-    <DemoSection title="窄工具栏 · 多行数据站入口" description="入口名称可跨行，桌面断点仍使用自然高度，触控目标至少 44px。">
+    <DemoSection title="窄工具栏 · 标准尺寸数据站入口" description="入口使用 coss 标准尺寸，长名称省略且保留完整可访问名称；触控点击目标至少 44px。">
       <div className="w-44 max-w-full"><DataStationBadge state={{ kind: "connected", name: "高二年级数学期中考试资料接收专用教学数据站" }} onOpen={() => setFeedback("已发出长名称数据站查看请求")} /></div>
       <Feedback>{feedback}</Feedback>
     </DemoSection>

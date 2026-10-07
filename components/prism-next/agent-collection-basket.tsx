@@ -202,7 +202,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
     className="min-w-0"><AgentSurface presentation={summaryMode ? "inline" : "card"} className={summaryMode ? "relative gap-1 py-2" : "min-h-11 gap-2.5 p-3"}>
     <div data-collection-summary-row={summaryMode ? "" : undefined} className={summaryMode ? "flex min-w-0 items-start gap-2" : "flex min-w-0 flex-wrap items-start gap-3"}>
       {full && entry?.selectable && <div className={summaryMode ? "relative z-10 min-w-0 space-y-1" : "min-w-0 space-y-1"}>
-        <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "min-h-11 max-w-full"} htmlFor={`${id}-select`}>
+        <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "pointer-coarse:min-h-11 max-w-full"} htmlFor={`${id}-select`}>
           <Checkbox id={`${id}-select`} checked={props.selectedIds?.includes(item.id) ?? false} disabled={!!selectReason}
             aria-label={summaryMode ? `选择${rowTitle}` : `选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
             onCheckedChange={checked => {

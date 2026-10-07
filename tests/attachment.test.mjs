@@ -222,7 +222,7 @@ test('compact paper keeps a proportional thumbnail and emits the same view inten
   assert.equal(capture(PaperCard, props).html, before.html);
   assert.equal(before.nodes.find(n => n.props['data-paper-card']).props.onClick, undefined);
   const thumbnail = action('thumbnail');
-  assert.match(thumbnail.props.className, /w-20/); assert.match(thumbnail.props.className, /sm:h-auto/);
+  assert.match(thumbnail.props.className, /w-20/); assert.equal(thumbnail.props.size, null); assert.doesNotMatch(thumbnail.props.className, /h-auto|min-[hw]-11/);
   const ratio = thumbnail.props.style.aspectRatio.split(' / ').map(Number);
   assert.ok(Math.abs(ratio[0] / ratio[1] - 420 / 297) < .001);
   assert.match(before.html, /src="\/scan.png"/);
@@ -380,15 +380,17 @@ test('every sheet tone uses the host resolver independently of the view intent a
   }
 });
 
-test('P12 preserves 72 pre-change SSR outputs from f1aa4f8 byte for byte', async t => {
+test('P12 preserves 48 sheet SSR snapshots; 24 card snapshots reflect P31 control sizes', async t => {
   // Captured on the clean baseline before changing the sheet condition; hash the unmodified SSR bytes.
   const baseline = JSON.parse(await readFile(new URL('./fixtures/paper-card-sheet-f1aa4f8.json', import.meta.url), 'utf8'));
+  const sizing = JSON.parse(await readFile(new URL('./fixtures/paper-card-p31-sizes.json', import.meta.url), 'utf8'));
+  assert.equal(Object.keys(sizing.sha256).length, 24);
   const differences = [], counts = { sheetWithoutResolver: 0, placeholderWithResolver: 0, cardAndCompact: 0 };
   for (const scenario of baseline.scenarios) for (const tone of baseline.tones) {
     const props = { id: 'p12', studentName: '欧阳慕容雨桐长中文姓名待核对', resolveLabel: '查看处置', ...scenario.props,
       status: { label: '宿主状态', tone: tone ?? undefined }, onView() {}, onResolve: scenario.resolve ? () => {} : undefined };
     const key = `${scenario.name}/${tone ?? 'default'}`;
-    if (createHash('sha256').update(html(PaperCard, props)).digest('hex') !== baseline.sha256[key]) differences.push(key);
+    if (createHash('sha256').update(html(PaperCard, props)).digest('hex') !== (props.variant === 'card' ? sizing.sha256[key] : baseline.sha256[key])) differences.push(key);
     if (props.variant === 'card') counts.cardAndCompact++;
     else if (scenario.resolve) counts.placeholderWithResolver++;
     else counts.sheetWithoutResolver++;

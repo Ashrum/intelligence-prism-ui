@@ -1,0 +1,30 @@
+{
+  "task": "P31",
+  "reason": "Only card/compact control sizing and truncation spans; immutable f1aa4f8 sheet snapshots remain unchanged.",
+  "sha256": {
+    "card-false/neutral": "b64e261cbd3d5c672faae7012cb236e2792f1c87741574dc0d9bd54b2531271a",
+    "card-false/info": "0e2c54b2129e4bd0eff0fab9d6972c650f596995e9d00afa38f61c96778a9137",
+    "card-false/success": "907c72ee653e59e04177d729474aa7e9359b8ff18f909c7aaa695501b644ddea",
+    "card-false/warning": "a4e29ac5fd0a5640e3aa20bd49f67536acdec6f5b43a7756696a5b3142eafa22",
+    "card-false/error": "6f0ea791131f17991dc0b652944736506b197bdf8093ba7db06429a84338ecfe",
+    "card-false/default": "b64e261cbd3d5c672faae7012cb236e2792f1c87741574dc0d9bd54b2531271a",
+    "compact-false/neutral": "59f4fcb7a421707add69eedb06cc94e7d26dd787d1fb66d3f2c309bb14fdd920",
+    "compact-false/info": "8f9a6e8aa223765a8398ae93d7053a3729c920e1e5021041d3334d0d0a0c14c2",
+    "compact-false/success": "1da1de0119654497fa43328bca7a78af0c5bc21165b1941f91c274cbd2e1bf28",
+    "compact-false/warning": "70aa2967927e29776a439473b4421a6615b57bc7787266f3050b9d8bbef912a1",
+    "compact-false/error": "5b1a6fafeaaeac134ce804c4327644406e2d08dfab0ccc37efb061fcd06a92a3",
+    "compact-false/default": "59f4fcb7a421707add69eedb06cc94e7d26dd787d1fb66d3f2c309bb14fdd920",
+    "card-true/neutral": "57f32c8dfc9648f01385979b9ceba772002761e513fe6bbeaa16a4674857e08a",
+    "card-true/info": "56fbe52d25e6edbae0f783a2f1a1eff621ed668b20c8ed0f0ce1450ae3268eda",
+    "card-true/success": "1512e9d578fc8b8a15de1837ce1e4ad0a63eccca5c786c9ce5aa84bf4878a135",
+    "card-true/warning": "32f0cffc7022978524be13a60b070556dd8b236cc3c134ac21317a4a2b3f353a",
+    "card-true/error": "49ab34c007bead6da83b6cf13c07646af2380321dce5f6467a93f6ea9ba76068",
+    "card-true/default": "57f32c8dfc9648f01385979b9ceba772002761e513fe6bbeaa16a4674857e08a",
+    "compact-true/neutral": "34652d9a22a22e2639321f01710433889711ad72d4584ed9e152241e12fc725a",
+    "compact-true/info": "6a20486cb3262f873df985ebf2c6fbb6aa073573d2975796fb78fcd0dcdf0583",
+    "compact-true/success": "2df64b911b21aee19d42990a051ac6f317a4e928d4dd129f5c4fe05f093cf417",
+    "compact-true/warning": "f876cd66e1d849dd0c79284b9ed7990ee97c1af6298cb16b622dc88090fb3d69",
+    "compact-true/error": "a171ea057ec52efb349696f8373b82272273b44474baa000b8458a334f0b27dd",
+    "compact-true/default": "34652d9a22a22e2639321f01710433889711ad72d4584ed9e152241e12fc725a"
+  }
+}

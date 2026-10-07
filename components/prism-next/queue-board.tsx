@@ -46,8 +46,8 @@ function identity(row: QueueBoardRow) {
 function BoardAction({ label, accessibleLabel, reason, onClick, children }: { label: string; accessibleLabel?: string; reason?: string; onClick: () => void; children?: ReactNode }) {
   const id = useId()
   return <div className="min-w-0 space-y-1">
-    <Button type="button" variant="outline" className="h-auto sm:h-auto min-h-11 max-w-full whitespace-normal" disabled={!!reason}
-      title={reason} aria-label={accessibleLabel} aria-describedby={reason ? id : undefined} onClick={() => { if (!reason) onClick() }}>{label}{children}</Button>
+    <Button type="button" variant="outline" className="max-w-full" disabled={!!reason}
+      title={reason} aria-label={accessibleLabel} aria-describedby={reason ? id : undefined} onClick={() => { if (!reason) onClick() }}><span className="truncate">{label}</span>{children}</Button>
     {reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}
   </div>
 }
@@ -71,7 +71,7 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
     const direction = sort?.column === column ? sort.direction : undefined
     const next = direction === "asc" ? { column, direction: "desc" as const } : direction === "desc" ? null : { column, direction: "asc" as const }
     const Icon = direction === "asc" ? ChevronUp : direction === "desc" ? ChevronDown : ArrowUpDown
-    return <Button type="button" variant="ghost" className="h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal break-words motion-reduce:transition-none"
+    return <Button type="button" variant="ghost" className="max-w-full motion-reduce:transition-none"
       aria-label={`${label}：${direction === "asc" ? "当前升序，改为降序" : direction === "desc" ? "当前降序，取消排序" : "按升序排序"}`}
       onClick={() => onSortChange(next)}>{label}<Icon aria-hidden="true" className="shrink-0" /></Button>
   }

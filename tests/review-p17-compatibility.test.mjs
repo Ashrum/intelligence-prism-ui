@@ -1,3 +1,4 @@
+import { assertControlSizingOnly } from './prism-control-sizing-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { main, api, h, render, noop, rail, classRail } from './review-p17-harness.mjs';
@@ -9,12 +10,12 @@ const cases = [
   ...[{}, {editing:true,draft:{category:'other',explanation:''}}, {editing:true,draft:{category:'other',explanation:'理由'},state:{kind:'failed',reason:'失败'}}, {state:{kind:'saving'}}, {value:null}].map(props => ['ErrorCauseReview', {categories:api.errorCauseReviewCategories,value:api.errorCauseReviewValue,history:api.errorCauseReviewHistory,onSave:noop,onEdit:noop,onChange:noop,...props}]),
   ...[{},api.studentPaperReportFixture,api.studentPaperReportPartialFixture].map(props => ['StudentPaperReport',props]),
 ];
-for (const [index,[name,props]] of cases.entries()) test(`P17 exact main bytes, omitted and explicit defaults: ${name} ${index}`,()=>{
+for (const [index,[name,props]] of cases.entries()) test(`P17 main bytes except P31 control sizing, omitted and explicit defaults: ${name} ${index}`,()=>{
   const baseline=render(h(main[name],props));
-  assert.equal(render(h(api[name],props)),baseline);
+  (name.startsWith('QuestionRail') ? assert.equal : assertControlSizingOnly)(render(h(api[name],props)),baseline);
   if (!name.startsWith('Question')) {
-    assert.equal(render(h(api[name],{...props,density:undefined})),baseline);
-    assert.equal(render(h(api[name],{...props,density:'default',...(name==='ScoreReview'?{showIdentity:true,sectionsDefaultOpen:undefined,standardAnswer:undefined}:{})})),baseline);
+    assertControlSizingOnly(render(h(api[name],{...props,density:undefined})),baseline);
+    assertControlSizingOnly(render(h(api[name],{...props,density:'default',...(name==='ScoreReview'?{showIdentity:true,sectionsDefaultOpen:undefined,standardAnswer:undefined}:{})})),baseline);
   }
 });
-for(const name of ['QuestionRailDemo','ScoreReviewDemo','ScoreReviewReasonReceiptDemo','ErrorCauseReviewDemo','StudentPaperReportDemo']) test(`P17 existing demo exact main bytes: ${name}`,()=>assert.equal(render(h(api[name])),render(h(main[name]))));
+for(const name of ['QuestionRailDemo','ScoreReviewDemo','ScoreReviewReasonReceiptDemo','ErrorCauseReviewDemo','StudentPaperReportDemo']) test(`P17 existing demo main bytes except P31 control sizing: ${name}`,()=>(name==='QuestionRailDemo' ? assert.equal : assertControlSizingOnly)(render(h(api[name])),render(h(main[name]))));

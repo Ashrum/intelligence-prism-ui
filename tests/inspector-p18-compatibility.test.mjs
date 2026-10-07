@@ -1,3 +1,4 @@
+import { assertControlSizingOnly } from './prism-control-sizing-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -8,20 +9,20 @@ assert.equal(snapshot.commit, baselineCommit);
 const [main, current] = await Promise.all([buildApi(true), buildApi(false)]);
 for (const [component, variants] of Object.entries(cases(main))) {
   for (const [name, props] of Object.entries(variants)) {
-    test(`P18 original ${component} ${name}: omitted/undefined/default props keep raw main SSR bytes`, () => {
+    test(`P18 original ${component} ${name}: omitted/undefined/default props keep main SSR apart from P31 control sizing`, () => {
       const original = render(h(main[component], props));
       assert.equal(hash(original), snapshot.components[component][name], 'executed pinned source matches captured baseline');
-      assert.equal(render(h(current[component], props)), original, 'new props omitted');
-      assert.equal(render(h(current[component], { ...props, ...undefinedProps[component] })), original, 'new props undefined');
-      assert.equal(render(h(current[component], { ...props, ...defaultProps[component] })), original, 'new props explicit defaults');
+      assertControlSizingOnly(render(h(current[component], props)), original, 'new props omitted');
+      assertControlSizingOnly(render(h(current[component], { ...props, ...undefinedProps[component] })), original, 'new props undefined');
+      assertControlSizingOnly(render(h(current[component], { ...props, ...defaultProps[component] })), original, 'new props explicit defaults');
     });
   }
 }
 for (const name of demos) {
-  test(`P18 existing ${name} keeps raw main SSR bytes`, () => {
+  test(`P18 existing ${name} keeps main SSR apart from P31 control sizing`, () => {
     const original = render(h(main[name]));
     assert.equal(hash(original), snapshot.demos[name]);
-    assert.equal(render(h(current[name])), original);
+    assertControlSizingOnly(render(h(current[name])), original);
   });
 }
 for (const [slug, name] of Object.entries(frozenPages)) {

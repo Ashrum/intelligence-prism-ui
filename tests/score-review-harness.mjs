@@ -45,5 +45,5 @@ export function capture(props = {}, lib = api) {
   if (lib === focusProbe) globalThis.__scoreFocus.effects.forEach(effect => effect());
   return { html, nodes, buttons: nodes.filter(n => n.type === lib.Button), number: nodes.find(n => n.type === lib.NumberField), reason: nodes.find(n => n.type === lib.Textarea) };
 }
-export const button = (out, label) => out.buttons.find(n => React.Children.toArray(n.props.children).includes(label));
+export const button = (out, label) => out.buttons.find(n => render(n.props.children).replace(/<[^>]*>/g, '').includes(label));
 export { h, render };

@@ -44,9 +44,9 @@ export function ScoreReviewReasonReceiptDemo() {
   const [notice, setNotice] = useState("尚无保存请求。")
   return <DemoSection id="score-required-receipt" title="每次保存必填理由 · 上一题保存回执" description="当前分数等于 AI 建议仍需填写理由。回执控件载入独立预设数据，保存按钮只发出请求。切换题项后焦点移到面板标题。">
     <div className="mb-4 flex flex-wrap gap-2">
-      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" onClick={() => setLastSaved({ score: 7, label: "主观题 2" })}>载入预设回执</Button>
-      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" disabled={!lastSaved} onClick={() => setLastSaved(undefined)}>清除回执</Button>
-      <Button variant="outline" className="min-h-11 h-auto sm:h-auto whitespace-normal" onClick={() => { setQuestion(value => value + 1); setScore(6); setReason(""); setLastSaved(undefined) }}>切换题项（焦点交接）</Button>
+      <Button variant="outline" onClick={() => setLastSaved({ score: 7, label: "主观题 2" })}>载入预设回执</Button>
+      <Button variant="outline" disabled={!lastSaved} onClick={() => setLastSaved(undefined)}>清除回执</Button>
+      <Button variant="outline" onClick={() => { setQuestion(value => value + 1); setScore(6); setReason(""); setLastSaved(undefined) }}>切换题项（焦点交接）</Button>
     </div>
     <ScoreReview {...scoreReviewBase} questionId={`student-1-question-${question}`} questionLabel={`主观题 ${question}`} progress={undefined}
       focusOnQuestionChange requireReason requireReasonOnChange={false} lastSaved={lastSaved}

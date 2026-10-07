@@ -136,7 +136,7 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
     </article>
   }
   const media = compact ? <Button type="button" variant="outline" data-paper-action="thumbnail"
-    className="relative h-auto min-h-11 w-20 min-w-11 shrink-0 overflow-hidden p-0 sm:h-auto" style={ratio}
+    size={null} className="relative w-20 shrink-0 overflow-hidden p-0" style={ratio}
     aria-label={`查看/放大：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}>
     <span className="absolute inset-0">{thumbnail}</span>
   </Button> : <Card className="relative w-full min-w-0 gap-0 overflow-hidden p-0" style={ratio}>
@@ -152,8 +152,8 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
     {compact ? <div className="flex min-w-0 items-start gap-2">{media}<div className="min-w-0 flex-1 space-y-1">{identity}{badges}</div></div> : <>{media}{identity}{badges}</>}
     {reason && <p className="line-clamp-2 text-ui-hint [overflow-wrap:anywhere]" title={reason}>{reason}</p>}
     <div className="mt-auto flex flex-wrap gap-1">
-      {onResolve && <Button type="button" variant="outline" data-paper-action="resolve" className="h-auto min-h-12 min-w-11 max-w-full whitespace-normal [overflow-wrap:anywhere] sm:h-auto" aria-label={`${resolveLabel}：${name}`} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}>{resolveLabel}</Button>}
-      <Button type="button" variant="outline" size="sm" data-paper-action="view" className={cn("h-auto min-h-11 min-w-11 max-w-full flex-1 whitespace-normal [overflow-wrap:anywhere] sm:h-auto", compact && "min-h-12")} aria-label={`${viewLabel}：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}>{viewLabel}</Button>
+      {onResolve && <Button type="button" variant="outline" data-paper-action="resolve" className="max-w-full" aria-label={`${resolveLabel}：${name}`} disabled={!id.trim()} onClick={() => { if (id.trim()) onResolve(id) }}><span className="truncate">{resolveLabel}</span></Button>}
+      <Button type="button" variant="outline" data-paper-action="view" className="max-w-full flex-1" aria-label={`${viewLabel}：${name}的试卷`} disabled={!onView || !id.trim()} onClick={view}><span className="truncate">{viewLabel}</span></Button>
     </div>
   </Card>
 }

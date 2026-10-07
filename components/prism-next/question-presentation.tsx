@@ -40,7 +40,7 @@ type ReferenceProps = {
 export function QuestionReference({ question, number, status, href, onOpen }: ReferenceProps) {
   const title = questionDisplayTitle(question, number)
   return <span data-question-reference={question.id} className="inline-flex max-w-full flex-wrap items-center gap-1.5 align-middle">
-    <Button variant="ghost" size="sm" className="h-auto min-h-11 max-w-full justify-start whitespace-normal text-left sm:h-auto"
+    <Button variant="ghost" size={null} className="max-w-full justify-start whitespace-normal text-left"
       {...(href !== undefined ? { render: <a href={href} /> } : { type: "button" as const, onClick: (event: React.MouseEvent<HTMLButtonElement>) => onOpen?.(event.currentTarget) })}
       aria-label={`查看完整题目：${title}`}>
       <FileQuestion aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-words">{title}</span>
@@ -70,7 +70,7 @@ export function QuestionSummaryRow({ question, number, headingLevel = 3, checked
   return <article data-question-summary={question.id} data-question-excerpt={omitted || undefined} aria-labelledby={id}
     className={cn("prism-question min-w-0 space-y-2 py-2", checked && "bg-info/10")}>
     <header className="flex min-w-0 flex-wrap items-start gap-2">
-      {onCheckedChange && <label className="flex min-h-11 min-w-11 shrink-0 items-start justify-center">
+      {onCheckedChange && <label className="flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 shrink-0 items-start justify-center">
         <span className="flex h-5 items-center"><Checkbox checked={!!checked} onCheckedChange={onCheckedChange} aria-label={`批量勾选：${questionDisplayTitle(question, number)}`} /></span>
       </label>}
       <QuestionHeading question={question} number={number} id={id} headingLevel={headingLevel} showPoints={showPoints} displayPoints={displayPoints} trailing={(header || status) ? <>{header}{status}</> : undefined} />

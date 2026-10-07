@@ -159,7 +159,7 @@ test('compact keeps host facts and intents while moving current after list and u
   assert.equal(metric.type.name, 'FramePanel'); assert.match(out.html, /data-slot="frame"/); assert.match(metric.props.className, /\[&>dl\]:grid-cols-1!/);
   assert.doesNotMatch(out.html, /role="progressbar"|text-item-title"><\/p>/);
   for (const label of [props.primaryAction.label, '查看名单', '扫描记录']) {
-    const node = button(out, label); assert.match(node.props.className, /sm:h-auto/); assert.match(node.props.className, /min-h-1[12]/); node.props.onClick();
+    const node = button(out, label); assert.doesNotMatch(node.props.className, /sm:h-auto|min-h-1[12]/); assert.equal(node.props.size, label === "扫描记录" ? null : undefined); node.props.onClick();
   }
   assert.equal(calls, 3); assert.equal(capture(props).html, out.html);
   for (const state of ['loading', 'empty', 'error']) assert.doesNotMatch(html({ ...props, state }), /data-instrument-(metric|current|list|primary)/);

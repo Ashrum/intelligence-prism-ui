@@ -34,7 +34,7 @@
 - `placeholder?: boolean` 默认 false，显式启用虚线边框与既有 `bg-muted` 弱化背景；不由状态文案推断未交，不自动添加姓名前缀或改变动作。
 - `viewLabel?: string` 默认“查看”，`resolveLabel?: string` 默认“处理”，`onResolve(id)?` 显式提供才显示独立处理动作。两者仅发意图，不推定扫描异常或改变选中。姓名/状态/处置文案由宿主提供。
 - `PaperCardGrid.compact?: boolean` 默认 false，紧凑列最小 172px，默认仍 168px；`className?` 仅供布局。Grid 不隐式设置子卡 compact。
-- 动作使用 coss / Prism Button 的键盘与焦点行为；多行同时设置 h-auto / sm:h-auto，目标至少 44px，紧凑文字动作至少 48px。新增三主题 320px、长中文、有图/无图、A3 横版与占位示例。
+- 动作使用 coss / Prism Button 的标准尺寸、键盘与焦点行为；44px 点击目标由 coss pointer-coarse 伪元素提供。长动作文字省略，完整可访问名称保留；内容文字继续换行。缩略图是按纸张比例呈现的整图点击入口，使用 size={null} 保留比例，不设控件最小高。新增三主题 320px、长中文、有图/无图、A3 横版与占位示例。
 
 Workspace 同步时删除本地 onClick 卡片代理、扫描异常自动标记/边框、姓名“未交”前缀与推断文案；按业务显式传入 viewLabel、resolveLabel、onResolve、placeholder。缩略页始终表示查看意图；需要不同的未交处置流程时使用 onResolve，不把缩略页接到处置动作。
 

@@ -47,9 +47,9 @@ export function useQuestionPreview(questions: readonly QuestionRecord[] = []) {
     description="固定示例；查看题目不改变选择、保存或执行记录。" onClose={() => setSelected(null)} finalFocus={origin}
     className="question-charter-preview w-full max-w-full" showCloseButton={false}
     headerActions={<div className="flex flex-wrap gap-2">
-      <Button type="button" variant="ghost" className="min-h-11" onClick={() => setSelected(null)}>返回对话</Button>
-      {questions.length > 1 && <><Button type="button" variant="outline" className="min-h-11" disabled={index <= 0} onClick={() => navigate(-1)}>上一题</Button>
-        <Button type="button" variant="outline" className="min-h-11" disabled={index < 0 || index >= questions.length - 1} onClick={() => navigate(1)}>下一题</Button></>}
+      <Button type="button" variant="ghost" onClick={() => setSelected(null)}>返回对话</Button>
+      {questions.length > 1 && <><Button type="button" variant="outline" disabled={index <= 0} onClick={() => navigate(-1)}>上一题</Button>
+        <Button type="button" variant="outline" disabled={index < 0 || index >= questions.length - 1} onClick={() => navigate(1)}>下一题</Button></>}
     </div>}>
     {selected && <QuestionCard question={selected.question} number={selected.number} headingLevel={3} header={<AgentSampleTag />} detailsOpen={detailsOpen} onDetailsOpenChange={setDetailsOpen}
       details={<QuestionDetails question={selected.question} metadata={questionMetadata[selected.question.id] ?? missingMetadata} links={noLinks}

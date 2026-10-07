@@ -28,7 +28,7 @@ PO 批准候选 #7；目录「内容与数据」，入口 `/next/components/data
 
 ## 无障碍与验证边界
 
-设备整卡为 label，关联单选的名称和详细原因；RadioGroup 保留方向键与单选行为。动作、徽标、Sheet 关闭按钮与设备标签至少 44px，适用横屏触屏目标；实际 Android 1920×1080 仍需真机验证。实时状态单独 live region，Loading busy 不包裹状态播报。现有主题/语义字号、MathML 与减少动态效果策略保持不变。
+设备整卡为 label，关联单选的名称和详细原因；RadioGroup 保留方向键与单选行为。动作与徽标采用 coss 默认尺寸，关闭按钮采用 icon；44px 触屏目标沿用 coss pointer-coarse 伪元素。设备标签是多行整卡选择目标，保留最小高；实际 Android 1920×1080 仍需真机验证。实时状态单独 live region，Loading busy 不包裹状态播报。现有主题/语义字号、MathML 与减少动态效果策略保持不变。
 
 组件页提供待连接（02 可用/01 占用/初中部 01 离线）、连接中、已连接、失败、空态、加载中、加载失败、右侧抽屉、徽标三态、多可用设备选择、320px 三主题长中文与公式。夹具仅管理待选目标/抽屉可见性和意图反馈；不轮询，不推进连接状态。
 
@@ -36,13 +36,13 @@ PO 批准候选 #7；目录「内容与数据」，入口 `/next/components/data
 
 ## W4 多行操作适配
 
-沿用本页 coss Sheet/RadioGroup/Card/Button、particles 与 Beautiful UI 复用调查；本轮核对固定 Button 的 sm:h-8 默认尺寸，通用操作类补上 `sm:h-auto`（与 `h-auto` 配对），最小高 48px、最小宽 44px。关闭 Sheet 的图标入口仍为 44px。无需新增 prop；设备、连接、禁用与回调语义保持不变。新增 176px 长名称入口，桌面断点也可自然换行。三主题与实际点击/键盘验收由 Supervisor 执行。
+沿用本页 coss Sheet/RadioGroup/Card/Button、particles 与 Beautiful UI 复用调查；本轮核对固定 Button 的 sm:h-8 默认尺寸，P31 移除通用操作类的 `h-auto / sm:h-auto / min-h-12 / min-w-11`，默认尺寸保留。Sheet / Drawer 关闭入口使用 icon，粗指针点击区域由 coss 扩展至至少 44px。无需新增 prop；设备、连接、禁用与回调语义保持不变。176px 长名称入口使用单行省略，完整可访问名称保留；设备卡片的名称与原因继续换行。三主题与实际点击/键盘验收由 Supervisor 执行。
 
 ## 2026-10-02 P3：受控右侧 Drawer
 
 - 复核 Supervisor registry 快照（579 项）、`p-drawer-12` 与固定 coss Drawer/Sheet。p-drawer-12 在触控宽度用 Drawer、桌面用 Dialog；本次只采用复用同一内容的取舍，宿主显式选择 presentation，不复制媒体查询或自行按屏宽切换。
 - 新增 `presentation="drawer"`，与默认 sheet 同样必须提供 open/onClose；inline/sheet 分支保持原 DOM 与行为。Drawer `position="right"`，复用同一个 DataStationPanel、标题说明、选择与连接状态；不新建组件或业务状态。
-- coss/Base UI 提供焦点约束、初始焦点、关闭后返回之前聚焦元素、Escape/遮罩/滑动关闭请求；onOpenChange(false) 映射 onClose，open 必须由宿主回传。中文关闭按钮通过 DrawerClose + Prism Button 组合，44×44px，面板返回也仅发 onClose。
+- coss/Base UI 提供焦点约束、初始焦点、关闭后返回之前聚焦元素、Escape/遮罩/滑动关闭请求；onOpenChange(false) 映射 onClose，open 必须由宿主回传。中文关闭按钮通过 DrawerClose + Prism Button 组合，采用 icon 标准尺寸，粗指针点击目标至少 44×44px；面板返回也仅发 onClose。
 - 保留 Drawer 固定外观，仅设置面板宽度；portalProps 的局部 reduced-motion 选择器关闭遮罩与滚动控件过渡，popup 自身关闭过渡。固定版本类型支持上述契约，但实际触屏手势、焦点圈定/恢复尚待浏览器核验，不声称已经验收。
 
 检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。
