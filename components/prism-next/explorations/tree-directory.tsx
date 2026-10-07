@@ -8,7 +8,7 @@ import { Toggle } from "@/components/coss/toggle"
 import { Button } from "@/components/coss/button"
 import { OutlineView, DrillView, AncestorView, ExplorationFacts } from "./directory-views"
 import { explorationBooks } from "./directory-fixture"
-import type { DirectoryKind } from "@/lib/prism-next/textbook-directory"
+import type { DirectoryData, DirectoryKind } from "@/lib/prism-next/textbook-directory"
 import "./tree-directory.css"
 
 const variants = [
@@ -16,6 +16,10 @@ const variants = [
   { id: "B", title: "逐级钻取", idea: "每次只看一级，选择与进入下级分开。", View: DrillView },
   { id: "C", title: "吸顶祖先树", idea: "保留完整树，滚动时始终显示当前祖先路径。", View: AncestorView },
 ]
+
+export function initialDirectoryPath(data: DirectoryData) {
+  return Object.values(data.paths).reduce<string[]>((longest, path) => path.length > longest.length ? path : longest, []).slice(0, -1)
+}
 
 function Choices({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
   return <div className="grid gap-2"><p className="text-ui-action">{label}</p><ToggleGroup aria-label={label} multiple={false} value={[value]} onValueChange={values => { if (values[0]) onChange(values[0]) }} className="flex-wrap">
@@ -28,10 +32,10 @@ function ComparisonPanel({ variant, books, kind, onKindChange, width }: {
 }) {
   const [selections, setSelections] = useState<DirectorySelections>({})
   const entries = books.flatMap(book => (["course", "knowledge"] as DirectoryKind[]).flatMap(type => (selections[`${book.id}:${type}`] ?? []).map(id => ({ id, title: book.directories[type].nodes[id]?.title ?? id }))))
-  return <section className="min-w-0 space-y-3" aria-label={`${variant.id} 版${variant.title}`}>
-    <div><h2 className="text-block-title">{variant.id} · {variant.title}</h2><p className="text-ui-hint">{variant.idea}</p></div>
+  return <section id={`directory-${variant.id}`} className="min-w-0 scroll-mt-6 space-y-3" aria-label={`${variant.id} 版${variant.title}`}>
+    <div><div className="flex flex-wrap items-center gap-x-4 gap-y-1"><h2 className="text-block-title">{variant.id} · {variant.title}</h2><nav aria-label={`${variant.id} 版比较跳转`} className="flex gap-3 text-ui-hint">{variants.map(target => <a key={target.id} href={`#directory-${target.id}`} className="text-muted-foreground underline-offset-4 hover:underline focus-visible:outline-ring">跳到 {target.id}</a>)}</nav></div><p className="text-ui-hint">{variant.idea}</p></div>
     <div className="directory-exploration-frame max-w-full border p-2" style={{ width: Number(width) }}>
-      <DirectoryPresentation.Provider value={{ View: variant.View, kind, onKindChange }}>
+      <DirectoryPresentation.Provider value={{ View: variant.View, kind, onKindChange, initialExpanded: initialDirectoryPath }}>
         <TextbookDirectory textbooks={books} selections={selections} onSelectionsChange={setSelections} layout="embedded" titleAction="select" multiSelect="toggle" />
       </DirectoryPresentation.Provider>
     </div>
@@ -64,7 +68,7 @@ export function TreeDirectoryExploration() {
       <Button variant="outline" onClick={() => setReset(value => value + 1)}>重置三版选择与位置</Button>
     </div>
     <p className="text-ui-hint">教材及题数均为演示数据，包含 0 与未提供题数；切换层级或教材数量会重置三版，其他展示开关保留选择。每版选择独立，可按同一路径比较。</p>
-    <ExplorationFacts.Provider value={{ counts: fixture.counts, showCounts }}>
+    <ExplorationFacts.Provider value={{ counts: fixture.counts, showCounts, initialPath: initialDirectoryPath }}>
       <div className="directory-exploration-comparison grid items-start gap-6">
         {variants.map(variant => <ComparisonPanel key={`${depth}:${bookMode}:${reset}:${variant.id}`} variant={variant} books={books} kind={kind} onKindChange={setKind} width={width} />)}
       </div>

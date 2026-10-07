@@ -17,4 +17,5 @@ export const DirectoryPresentation = createContext<{
   View: ComponentType<DirectoryViewProps>
   kind: DirectoryKind
   onKindChange: (kind: DirectoryKind) => void
+  initialExpanded?: (data: DirectoryData) => string[]
 } | null>(null)
