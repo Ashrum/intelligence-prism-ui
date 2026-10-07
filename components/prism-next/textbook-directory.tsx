@@ -38,10 +38,12 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export function TextbookDirectory({ textbooks, selections, onSelectionsChange }: {
+export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", emptySelectionLabel = "未选择" }: {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
+  layout?: "split" | "embedded"
+  emptySelectionLabel?: string
 }) {
   const controlId = useId()
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
@@ -56,21 +58,31 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange }:
   })).filter(group => group.ids.length)
   const courseCount = groups.filter(group => group.kind === "course").reduce((sum, group) => sum + group.ids.length, 0)
   const knowledgeCount = groups.filter(group => group.kind === "knowledge").reduce((sum, group) => sum + group.ids.length, 0)
+  const embedded = layout === "embedded"
+  const selectionCount = courseCount + knowledgeCount
   if (!book) return <p className="py-6 text-ui-hint text-muted-foreground">暂无可用教材。</p>
   const scope = scopeKey(book.id, kind)
   const session = sessions[scope] ?? blankSession
-  return <div className="grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1.25fr)_minmax(17rem,.75fr)]">
+  return <div className={embedded ? "grid min-w-0 grid-cols-1" : "grid min-w-0 gap-7 xl:grid-cols-[minmax(0,1.25fr)_minmax(17rem,.75fr)]"}>
     <div className="min-w-0">
       <div className="mb-5 max-w-sm"><Label htmlFor={`${controlId}-book`}>教材</Label><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>
       <Tabs value={kind} onValueChange={value => setKind(value as DirectoryKind)}>
         <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>
-        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} data={book.directories[kind]} kind={kind} scope={scope} session={session} setSessions={setSessions} checkedIds={selections[scope] ?? []} onCheckedChange={update => onSelectionsChange(previous => {
+        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} embedded={embedded} summary={embedded && <div className="my-3 flex min-w-0 items-center gap-2 text-ui-hint">
+          <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount ? undefined : emptySelectionLabel}>{selectionCount ? `已选 ${selectionCount} 项` : emptySelectionLabel}</p>
+          <span aria-hidden="true">·</span>
+          <Button variant="ghost" size="sm" className="shrink-0" disabled={!selectionCount} aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
+            const next = { ...previous }
+            for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
+            return next
+          })}>清空</Button>
+        </div>} data={book.directories[kind]} kind={kind} scope={scope} session={session} setSessions={setSessions} checkedIds={selections[scope] ?? []} onCheckedChange={update => onSelectionsChange(previous => {
           const ids = typeof update === "function" ? update(previous[scope] ?? []) : update
           return { ...previous, [scope]: [...new Set(ids)].filter(id => book.directories[kind].leafIds.includes(id)) }
         })} />}</TabsPanel>)}
       </Tabs>
     </div>
-    <aside aria-label="已选范围" className="min-w-0 border-t pt-5 xl:border-t-0 xl:border-l xl:pt-0 xl:pl-7">
+    {!embedded && <aside aria-label="已选范围" className="min-w-0 border-t pt-5 xl:border-t-0 xl:border-l xl:pt-0 xl:pl-7">
       <h3 className="text-block-title">已选范围</h3>
       <p className="mt-1 text-ui-hint text-muted-foreground" role="status">{courseCount} 节课程 · {knowledgeCount} 个知识点</p>
       <p className="mt-3 text-ui-hint text-muted-foreground">切换教材或目录会保留各自选择。课程与知识点分别记录。</p>
@@ -78,14 +90,15 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange }:
         <h4 className="text-item-title">{group.book.title}</h4><p className="mb-2 mt-1 text-ui-hint text-muted-foreground">{kindTitle(group.kind)} · {group.ids.length} {unitTitle(group.kind)}</p>
         <ul className="space-y-2">{group.ids.map(id => <li key={id} className="flex min-w-0 items-start gap-2"><div className="min-w-0 flex-1"><p className="break-words text-ui-hint">{group.data.nodes[id].title}</p><p className="break-words text-ui-hint text-muted-foreground">{group.data.paths[id].slice(0, -1).map(parent => group.data.nodes[parent].title).join(" / ") || kindTitle(group.kind)}</p></div><Button size="icon-xs" variant="ghost" aria-label={`移除${group.book.title}${kindTitle(group.kind)}的${group.data.nodes[id].title}`} onClick={() => onSelectionsChange(previous => ({ ...previous, [group.scope]: (previous[group.scope] ?? []).filter(value => value !== id) }))}><X /></Button></li>)}</ul>
       </section>)}</div></ScrollArea> : <div className="py-10 text-ui-hint text-muted-foreground">尚未选择内容。<br />勾选左侧目录，选择需要的课程或知识点。</div>}
-    </aside>
+    </aside>}
   </div>
 }
 
-function DirectorySession({ data, kind, scope, session, setSessions, checkedIds, onCheckedChange }: {
+function DirectorySession({ data, kind, scope, session, setSessions, checkedIds, onCheckedChange, embedded, summary }: {
   data: DirectoryData; kind: DirectoryKind; scope: string; session: Session
   setSessions: Dispatch<SetStateAction<Record<string, Session>>>
   checkedIds: string[]; onCheckedChange: Dispatch<SetStateAction<string[]>>
+  embedded: boolean; summary: React.ReactNode
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
@@ -107,7 +120,7 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   return <div className="mt-4 min-w-0">
     <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>
     <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={inputId} ref={inputRef} value={session.query} onChange={event => patch({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>
-    <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>
+    {embedded ? <>{summary}{projection.normalized && <p className="mb-3 break-words text-ui-hint text-muted-foreground" role="status">{projection.matchingIds.size} 处匹配{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p>}</> : <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>}
     <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。</p>
     {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
     <p className="mt-3 min-h-10 break-words text-ui-hint text-muted-foreground" role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : "方向键浏览和展开，Enter 定位，空格勾选或取消。"}</p>

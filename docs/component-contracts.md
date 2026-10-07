@@ -2363,6 +2363,17 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### TextbookDirectory 内嵌形态
+
+| 属性 | 默认值 | 契约 |
+| --- | --- | --- |
+| `layout?: "split" \| "embedded"` | `"split"` | split 保留原有完整树与已选摘要布局（xl 双列）；embedded 始终单列，由宿主容器决定宽度，面向 200–320px 侧栏，复用同一棵树及展开、选择、半选、搜索、键盘行为 |
+| `emptySelectionLabel?: string` | `"未选择"` | 仅用于 embedded 的零选择摘要；例如宿主可传“未选择（显示全部）”。这只是显示文案，组件不推定零选择对应的业务过滤行为；长文案单行省略，完整文本保留在 DOM 与 title |
+
+embedded 在树上方显示一行“已选 n 项 · 清空”，不渲染已选明细与摘要列。n 为所传教材的课程、知识点中有效叶节点数量之和，各 scope 内去重并忽略未知 ID 与父节点；切换教材、目录或搜索不会缩小汇总范围。清空沿用受控 `onSelectionsChange` 更新数组为空的方式，清除所传教材的两类目录，保留不属于这些教材的 scope；零选择时禁用。split 的“清空当前目录”和逐项移除行为不变。`TextbookRangePicker` API、草稿与应用行为不变。
+
+组件页 `/next/components/tree` 的“内嵌目录树”提供 200/240/280/320px 容器、长中文与公式示例，可结合原有 2—5 级示例检查；没有新增组件目录条目。
+
 ### 实心信息色徽标
 
 `components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；变体和 render/ARIA 属性继续透传；Prism 默认采用 lg，状态文字统一为 14/20，短标签例外见字体规范。coss 原始源码及其来源校验保持不变。
