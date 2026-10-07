@@ -17,7 +17,8 @@ await rm(file);
 // Headless Tree defers rows until mount. Initialize its real model in a separate
 // test-only bundle so row markup is testable without claiming browser coverage.
 const source = await readFile(root + 'components/prism-next/textbook-directory.tsx', 'utf8');
-const mountedBundle = await build({ stdin: { contents: source.replace('import { useTree } from "@headless-tree/react"', `import { useTree as useUnmountedTree } from "@headless-tree/react"
+const mountedSource = source.replace('useState<DirectoryKind>("course")', 'useState<DirectoryKind>(testInitialKind)') + '\nlet testInitialKind = "course"; export function setTestInitialKind(kind) { testInitialKind = kind; }';
+const mountedBundle = await build({ stdin: { contents: mountedSource.replace('import { useTree } from "@headless-tree/react"', `import { useTree as useUnmountedTree } from "@headless-tree/react"
 function useTree(...args) {
   const tree = useUnmountedTree(...args)
   if (!tree.getItems().length) { tree.setMounted(true); tree.rebuildTree() }
@@ -25,7 +26,7 @@ function useTree(...args) {
 }`), resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
 const mountedFile = new URL('mounted-test-bundle.mjs', runtime);
 await writeFile(mountedFile, mountedBundle.outputFiles[0].text);
-const { TextbookDirectory: MountedDirectory } = await import(mountedFile);
+const { TextbookDirectory: MountedDirectory, setTestInitialKind } = await import(mountedFile);
 await rm(mountedFile);
 export const mixedSelections = {
   'math-1:course': ['math-1:course:c111', 'math-1:course:c111', 'unknown', 'math-1:course:c1'],
@@ -45,16 +46,19 @@ export const mountedHtmlFor = extra => renderToStaticMarkup(React.createElement(
 export const hash = html => createHash('sha256').update(html).digest('hex');
 
 // Capture actual owned handlers under React's SSR dispatcher; no browser simulation.
-export function capture(extra) {
+export function capture(extra, { mounted = false, session = {}, kind = "course" } = {}) {
   const nodes = [];
   const owned = new Set(['TextbookDirectory', 'DirectorySession', 'DirectoryTreeView']);
   function inspect(node) {
     if (Array.isArray(node)) return node.map(inspect);
     if (!React.isValidElement(node)) return node;
+    if (node.type.name === "DirectorySession") node = React.cloneElement(node, { ...session });
     nodes.push(node);
     if (typeof node.type === 'function' && owned.has(node.type.name)) return React.createElement(function Probe() { return inspect(node.type(node.props)); });
     return React.cloneElement(node, {}, React.Children.map(node.props.children, inspect));
   }
-  renderToStaticMarkup(inspect(React.createElement(TextbookDirectory, { ...props, ...extra })));
+  setTestInitialKind(kind);
+  try { renderToStaticMarkup(inspect(React.createElement(mounted ? MountedDirectory : TextbookDirectory, { ...props, ...extra }))); }
+  finally { setTestInitialKind("course"); }
   return nodes;
 }

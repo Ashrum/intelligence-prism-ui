@@ -13,7 +13,7 @@ import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/coss/
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
 import { Tree, TreeItem, TreeItemLabel } from "@/components/prism-next/tree"
-import { projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
+import { directoryLeaves, summarizeDirectory, projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
 import { cn } from "@/lib/utils"
 
 export type TextbookDefinition = { id: string; title: string; directories: Record<DirectoryKind, DirectoryData> }
@@ -21,6 +21,9 @@ export type DirectorySelections = Record<string, string[]>
 type Session = { query: string; currentId: string; expandedIds?: string[] }
 const selectionHelp = "箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。"
 const keyboardHelp = "方向键浏览和展开，Enter 定位，空格勾选或取消。"
+const selectHelp = "点标题只看这一项，再点一次取消。勾选可以多选，勾选父级包含全部下级。搜索不会改变已选范围。"
+const selectKeyboardHelp = "方向键浏览和展开，Enter 选中这一项，空格勾选或取消。"
+type TitleAction = "locate" | "select"
 const blankSession: Session = { query: "", currentId: "" }
 const kinds: DirectoryKind[] = ["course", "knowledge"]
 const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : "知识点目录"
@@ -41,11 +44,12 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", emptySelectionLabel }: {
+export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", emptySelectionLabel }: {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
   layout?: "split" | "embedded"
+  titleAction?: TitleAction
   emptySelectionLabel?: string
 }) {
   const controlId = useId()
@@ -75,10 +79,10 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
           <TabsList aria-label="目录类型" className="min-w-0 flex-1">{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 shrink"><span className="truncate" title={kindTitle(type)}>{kindTitle(type)}</span></TabsTab>)}</TabsList>
           <Tooltip open={helpOpen} onOpenChange={setHelpOpen} triggerId={`${controlId}-instructions`}>
             <TooltipTrigger id={`${controlId}-instructions`} closeOnClick={false} onClick={() => setHelpOpen(true)} render={<Button variant="ghost" size="icon-sm" className="ml-auto" aria-label="目录操作说明" />}><CircleHelp /></TooltipTrigger>
-            <TooltipPopup side="bottom" align="end" className="max-w-72"><div className="space-y-2 text-ui-hint"><p>{selectionHelp}</p><p>{keyboardHelp}</p></div></TooltipPopup>
+            <TooltipPopup side="bottom" align="end" className="max-w-72"><div className="space-y-2 text-ui-hint"><p>{titleAction === "select" ? selectHelp : selectionHelp}</p><p>{titleAction === "select" ? selectKeyboardHelp : keyboardHelp}</p></div></TooltipPopup>
           </Tooltip>
         </div> : <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>}
-        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} embedded={embedded} summary={embedded && (selectionCount > 0 || emptySelectionLabel !== undefined) && <div className="my-1 flex min-w-0 items-center gap-2 text-ui-hint">
+        {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} titleAction={titleAction} embedded={embedded} summary={embedded && (selectionCount > 0 || emptySelectionLabel !== undefined) && <div className="my-1 flex min-w-0 items-center gap-2 text-ui-hint">
           <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount ? undefined : emptySelectionLabel}>{selectionCount ? `已选 ${selectionCount} 项` : emptySelectionLabel}</p>
           {selectionCount > 0 && <Button variant="ghost" size="sm" className="shrink-0" aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
             const next = { ...previous }
@@ -104,11 +108,11 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   </div>
 }
 
-function DirectorySession({ data, kind, scope, session, setSessions, checkedIds, onCheckedChange, embedded, summary }: {
+function DirectorySession({ data, kind, scope, session, setSessions, checkedIds, onCheckedChange, embedded, summary, titleAction }: {
   data: DirectoryData; kind: DirectoryKind; scope: string; session: Session
   setSessions: Dispatch<SetStateAction<Record<string, Session>>>
   checkedIds: string[]; onCheckedChange: Dispatch<SetStateAction<string[]>>
-  embedded: boolean; summary: React.ReactNode
+  embedded: boolean; summary: React.ReactNode; titleAction: TitleAction
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const inputId = useId()
@@ -126,20 +130,36 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   }), [scope, setSessions])
   const hiddenCount = checked.filter(id => !projection.visibleIds.has(id)).length
   const clearSearch = () => { patch({ query: "" }); inputRef.current?.focus() }
-  const current = data.nodes[session.currentId]
+  const selecting = titleAction === "select"
+  const selectedEntries = selecting ? summarizeDirectory(data, checked) : []
+  const matchesSelection = (id: string, ids: string[]) => {
+    const leaves = directoryLeaves(data, id)
+    const selected = new Set(ids.filter(value => data.leafIds.includes(value)))
+    return leaves.length > 0 && leaves.length === selected.size && leaves.every(leaf => selected.has(leaf))
+  }
+  const currentId = selecting
+    ? matchesSelection(session.currentId, checked) ? session.currentId : selectedEntries.length === 1 ? selectedEntries[0].id : ""
+    : session.currentId
+  function activate(id: string) {
+    patch({ currentId: id })
+    if (selecting) onCheckedChange(previous => matchesSelection(id, previous) ? [] : directoryLeaves(data, id))
+  }
+  const current = data.nodes[currentId]
+  const instructions = selecting ? selectHelp : selectionHelp
+  const keys = selecting ? selectKeyboardHelp : keyboardHelp
   return <div className="mt-4 min-w-0">
     <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>
     <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={inputId} ref={inputRef} value={session.query} onChange={event => patch({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>
     {embedded ? <>{summary}{projection.normalized && <p className="mb-3 break-words text-ui-hint text-muted-foreground" role="status">{projection.matchingIds.size} 处匹配{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p>}</> : <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>}
-    {embedded ? <div className="sr-only"><p id={helpId}>{selectionHelp}</p><p id={`${helpId}-keyboard`}>{keyboardHelp}</p></div> : <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{selectionHelp}</p>}
-    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} currentId={session.currentId} onCurrentChange={id => patch({ currentId: id })} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
-    <p className={embedded && !current ? "sr-only" : "mt-3 min-h-10 break-words text-ui-hint text-muted-foreground"} role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : embedded ? "" : keyboardHelp}</p>
+    {embedded ? <div className="sr-only"><p id={helpId}>{instructions}</p><p id={`${helpId}-keyboard`}>{keys}</p></div> : selecting ? <><p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p><p id={`${helpId}-keyboard`} className="sr-only">{keys}</p></> : <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p>}
+    {projection.nodes[data.rootId].children.length ? <DirectoryTreeView key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} titleAction={titleAction} currentId={currentId} onCurrentChange={activate} initialExpanded={session.expandedIds ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded || selecting ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}
+    {!selecting && <p className={embedded && !current ? "sr-only" : "mt-3 min-h-10 break-words text-ui-hint text-muted-foreground"} role="status">{current ? `当前位置：${data.paths[current.id].map(id => data.nodes[id].title).join(" / ")}` : embedded ? "" : keyboardHelp}</p>}
   </div>
 }
 
-function DirectoryTreeView({ data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId }: {
+function DirectoryTreeView({ data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId, titleAction }: {
   data: DirectoryData; projection: ReturnType<typeof projectDirectory>; selectionTree: TreeInstance<DirectoryNode>
-  currentId: string; onCurrentChange: (id: string) => void; initialExpanded: string[]; onExpandedChange: (ids: string[]) => void; label: string; helpId: string
+  currentId: string; onCurrentChange: (id: string) => void; initialExpanded: string[]; onExpandedChange: (ids: string[]) => void; label: string; helpId: string; titleAction: TitleAction
 }) {
   // This instance navigates only projected children, so hidden matches cannot
   // receive keyboard focus. Remounting on the query preserves the input focus.
@@ -149,20 +169,25 @@ function DirectoryTreeView({ data, projection, selectionTree, currentId, onCurre
     getItemName: item => `${item.getItemData().code ?? ""} ${item.getItemData().title}`.trim(),
     isItemFolder: item => item.getItemData().children.length > 0,
     initialState: { expandedItems: projection.normalized ? data.folderIds.filter(id => projection.visibleIds.has(id)) : initialExpanded },
-    onPrimaryAction: item => onCurrentChange(item.getId()),
+    onPrimaryAction: item => activate(item.getId()),
     features: [syncDataLoaderFeature, hotkeysCoreFeature],
   })
   const expanded = tree.getState().expandedItems
   useEffect(() => { if (!projection.normalized) onExpandedChange(expanded) }, [expanded, onExpandedChange, projection.normalized])
+  function activate(id: string) {
+    onCurrentChange(id)
+    const item = tree.getItemInstance(id)
+    if (titleAction === "select" && item.isFolder() && !item.isExpanded()) void item.expand()
+  }
   function toggle(id: string) { void selectionTree.getItemInstance(id).toggleCheckedState() }
   return <ScrollArea className="h-[27rem]" fill><Tree tree={tree} aria-label={label} aria-describedby={helpId} className="gap-0.5 p-1 pr-3">
     {tree.getItems().map(item => {
       const id = item.getId(), node = item.getItemData(), checkedState = selectionTree.getItemInstance(id).getCheckedState()
       const focus = () => { item.setFocused(); tree.updateDomFocus() }
-      return <TreeItem key={id} item={item} current={currentId === id} aria-checked={checkedState === "indeterminate" ? "mixed" : checkedState === "checked"} onClick={() => { focus(); onCurrentChange(id) }} onKeyDown={event => {
+      return <TreeItem key={id} item={item} current={currentId === id} aria-current={titleAction === "select" && currentId === id ? "location" : undefined} aria-checked={checkedState === "indeterminate" ? "mixed" : checkedState === "checked"} onClick={() => { focus(); activate(id) }} onKeyDown={event => {
         if (event.target !== event.currentTarget) return
         if (event.key === " ") { event.preventDefault(); event.stopPropagation(); toggle(id) }
-        if (event.key === "Enter") { event.preventDefault(); event.stopPropagation(); onCurrentChange(id) }
+        if (event.key === "Enter") { event.preventDefault(); event.stopPropagation(); activate(id) }
       }}><TreeItemLabel>
         {item.isFolder() ? <Button variant="ghost" size="icon-xs" tabIndex={-1} aria-label={`${item.isExpanded() ? "收起" : "展开"}${node.title}`} aria-expanded={item.isExpanded()} onClick={event => { event.stopPropagation(); focus(); if (item.isExpanded()) item.collapse(); else item.expand() }} className="-ml-1 -mt-0.5 shrink-0"><ChevronRight className={cn("transition-transform", item.isExpanded() && "rotate-90")} /></Button> : <span className="w-5 shrink-0" aria-hidden="true" />}
         <Checkbox tabIndex={-1} className="mt-1" aria-label={`选择${node.title}`} checked={checkedState === "checked"} indeterminate={checkedState === "indeterminate"} onClick={event => event.stopPropagation()} onCheckedChange={() => { focus(); toggle(id) }} />

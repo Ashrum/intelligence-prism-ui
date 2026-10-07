@@ -210,3 +210,162 @@ test('search bulk selection excludes descendants of matching folders and keeps o
   assert.deepEqual(applied.search, ['search:d']);
   assert.deepEqual(draft.search, ['search:d','search:c']);
 });
+
+// Exercise the component's actual handlers against real mounted Headless Tree
+// models. Renders deliberately wait for the host to apply the controlled update.
+function selectionController(extra = {}, initialSession = {}, kind = "course") {
+  let selections = extra.selections ?? {}, sessions = {}, pending;
+  const scope = `${(extra.textbooks ?? textbooks)[0].id}:${kind}`;
+  return {
+    get selections() { return selections; },
+    set selections(value) { selections = value; },
+    render() {
+      return capture({ titleAction: 'select', layout: 'embedded', ...extra, selections, onSelectionsChange: update => { pending = update; } }, {
+        mounted: true, kind,
+        session: { session: { query: '', currentId: '', ...initialSession, ...sessions[scope] }, setSessions: update => { sessions = update(sessions); } },
+      });
+    },
+    apply(latest = selections) { assert.equal(typeof pending, 'function'); selections = pending(latest); pending = undefined; },
+  };
+}
+const rowFor = (nodes, id) => nodes.find(node => node.type.name === 'TreeItem' && node.props.item.getId() === id);
+const currentRows = nodes => nodes.filter(node => node.type.name === 'TreeItem' && node.props.current);
+const checkboxFor = (nodes, title) => nodes.find(node => node.props['aria-label'] === `选择${title}`);
+function keyOn(row, key, child = false) {
+  const target = {};
+  let prevented = false, stopped = false;
+  row.props.onKeyDown({ key, target, currentTarget: child ? {} : target, preventDefault() { prevented = true; }, stopPropagation() { stopped = true; } });
+  return { prevented, stopped };
+}
+const flushCheckbox = () => new Promise(resolve => setImmediate(resolve));
+
+test('title selection replaces only the active scope, waits for controlled facts, then toggles off in both layouts', () => {
+  for (const layout of ['split', 'embedded']) for (const firstBook of textbooks) {
+    const books = [firstBook, ...textbooks.filter(book => book !== firstBook)];
+    const scope = `${firstBook.id}:course`, id = `${scope}:c11`;
+    const control = selectionController({ layout, textbooks: books, selections: mixedSelections });
+    const before = structuredClone(control.selections);
+    rowFor(control.render(), id).props.onClick();
+    assert.deepEqual(control.selections, before);
+    assert.equal(currentRows(control.render()).some(row => row.props.item.getId() === id), false);
+    control.apply({ ...before, 'later:knowledge': ['external'] });
+    assert.deepEqual(control.selections[scope], directoryLeaves(firstBook.directories.course, id));
+    for (const otherScope of Object.keys(before).filter(key => key !== scope)) assert.deepEqual(control.selections[otherScope], before[otherScope]);
+    assert.deepEqual(control.selections['later:knowledge'], ['external']);
+    const rows = control.render();
+    assert.equal(rowFor(rows, id).props.current, true);
+    assert.equal(rowFor(rows, id).props['aria-current'], 'location');
+    assert.equal(rowFor(rows, `${scope}:c1`).props['aria-checked'], 'mixed');
+    rowFor(rows, id).props.onClick();
+    control.apply();
+    assert.deepEqual(control.selections[scope], []);
+    assert.equal(currentRows(control.render()).length, 0);
+  }
+});
+test('single title selection followed by checkbox addition/removal becomes multiselect without a current row', async () => {
+  const control = selectionController();
+  rowFor(control.render(), 'math-1:course:c11').props.onClick(); control.apply();
+  checkboxFor(control.render(), '指数函数与对数函数').props.onCheckedChange();
+  await flushCheckbox(); control.apply();
+  assert.deepEqual(new Set(control.selections['math-1:course']), new Set([...directoryLeaves(data, 'math-1:course:c11'), ...directoryLeaves(data, 'math-1:course:c3')]));
+  assert.equal(currentRows(control.render()).length, 0);
+  checkboxFor(control.render(), '指数函数与对数函数').props.onCheckedChange();
+  await flushCheckbox(); control.apply();
+  assert.equal(currentRows(control.render())[0].props.item.getId(), 'math-1:course:c11');
+});
+test('Enter selects or cancels; Space toggles additional leaves; nested control events are not handled twice', async () => {
+  const control = selectionController();
+  assert.deepEqual(keyOn(rowFor(control.render(), 'math-1:course:c31'), 'Enter'), { prevented: true, stopped: true });
+  control.apply();
+  assert.deepEqual(control.selections['math-1:course'], ['math-1:course:c31']);
+  assert.deepEqual(keyOn(rowFor(control.render(), 'math-1:course:c32'), ' '), { prevented: true, stopped: true });
+  await flushCheckbox(); control.apply();
+  assert.deepEqual(new Set(control.selections['math-1:course']), new Set(['math-1:course:c31', 'math-1:course:c32']));
+  assert.equal(currentRows(control.render()).length, 0);
+  keyOn(rowFor(control.render(), 'math-1:course:c31'), 'Enter'); control.apply();
+  keyOn(rowFor(control.render(), 'math-1:course:c31'), 'Enter'); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], []);
+  assert.deepEqual(keyOn(rowFor(control.render(), 'math-1:course:c31'), 'Enter', true), { prevented: false, stopped: false });
+});
+test('title activation opens collapsed parents but never closes them; arrow only expands/collapses', async () => {
+  const control = selectionController();
+  const rows = control.render(), row = rowFor(rows, 'math-1:course:c11');
+  const item = row.props.item;
+  assert.equal(item.isExpanded(), false);
+  row.props.onClick(); control.apply(); await flushCheckbox();
+  assert.equal(item.isExpanded(), true);
+  row.props.onClick(); control.apply(); await flushCheckbox();
+  assert.equal(item.isExpanded(), true);
+  const arrow = rows.find(node => node.props['aria-label'] === '展开集合的概念与运算');
+  const before = structuredClone(control.selections);
+  let stopped = false;
+  arrow.props.onClick({ stopPropagation() { stopped = true; } });
+  await flushCheckbox();
+  assert.equal(stopped, true);
+  assert.equal(item.isExpanded(), false);
+  assert.deepEqual(control.selections, before);
+});
+test('search title selection covers hidden descendants and current state derives from complete external leaf sets', () => {
+  const control = selectionController({}, { query: '单调性' });
+  rowFor(control.render(), 'math-1:course:c22').props.onClick(); control.apply();
+  assert.deepEqual(control.selections['math-1:course'], directoryLeaves(data, 'math-1:course:c22'));
+  assert.equal(currentRows(control.render())[0].props.item.getId(), 'math-1:course:c22');
+  control.selections = { 'math-1:course': ['math-1:course:c221', 'math-1:course:c31'] };
+  assert.equal(currentRows(control.render()).length, 0);
+  control.selections = {};
+  assert.equal(currentRows(control.render()).length, 0);
+});
+test('current rows follow complete subtree equivalence, ignore invalid IDs, and preserve clicked nodes on unary chains', () => {
+  for (const id of ['math-1:course:c1', 'math-1:course:c11', 'math-1:course:c31']) {
+    const html = mountedHtmlFor({ titleAction: 'select', selections: { 'math-1:course': [...directoryLeaves(data, id), 'invalid', id] } });
+    assert.equal((html.match(/aria-current="location"/g) ?? []).length, 1);
+    assert.match(html, /aria-selected="true"[^>]*data-current="true"/);
+  }
+  const directory = createDirectory('chain:course', [{ id: 'a', title: '甲', children: [{ id: 'b', title: '乙', children: [{ id: 'c', title: '丙' }] }] }]);
+  const books = [{ id: 'chain', title: '教材', directories: { course: directory, knowledge: directory } }];
+  const control = selectionController({ textbooks: books }, { expandedIds: ['chain:course:a', 'chain:course:b'] });
+  rowFor(control.render(), 'chain:course:c').props.onClick(); control.apply();
+  assert.equal(currentRows(control.render())[0].props.item.getId(), 'chain:course:c');
+  rowFor(control.render(), 'chain:course:c').props.onClick(); control.apply();
+  assert.equal(currentRows(control.render()).length, 0);
+});
+test('select instructions are complete in tooltip and accessible descriptions in both layouts with no locate feedback', () => {
+  const instructions = ['点标题只看这一项，再点一次取消。勾选可以多选，勾选父级包含全部下级。搜索不会改变已选范围。', '方向键浏览和展开，Enter 选中这一项，空格勾选或取消。'];
+  for (const layout of ['split', 'embedded']) {
+    const html = htmlFor({ layout, titleAction: 'select' });
+    for (const text of instructions) assert.ok(html.includes(text));
+    assert.equal(html.match(/role="tree"[^>]*aria-describedby="([^"]+)"/)[1].split(' ').length, 2);
+    assert.doesNotMatch(html, /当前位置|Enter 定位|mt-3 min-h-10/);
+    const nodes = capture({ layout, titleAction: 'select' }, { session: { session: { query: '', currentId: 'math-1:course:c1' } } });
+    assert.equal(nodes.some(node => typeof node.props.children === 'string' && node.props.children.startsWith('当前位置')), false);
+    if (layout === 'embedded') {
+      const row = nodes.find(node => node.type === 'div' && node.props.className === 'flex min-w-0 items-center gap-1');
+      assert.deepEqual(row.props.children.at(-1).props.children[1].props.children.props.children.map(p => p.props.children), instructions);
+    }
+  }
+});
+test('explicit locate equals omitted mode and title/Enter remain navigation only without auto expansion', () => {
+  for (const layout of ['split', 'embedded']) for (const extra of Object.values(baselineCases)) assert.equal(htmlFor({ ...extra, layout }), htmlFor({ ...extra, layout, titleAction: 'locate' }));
+  let writes = 0;
+  const nodes = capture({ titleAction: 'locate', onSelectionsChange() { writes++; } }, { mounted: true });
+  const row = rowFor(nodes, 'math-1:course:c11');
+  row.props.onClick(); keyOn(row, 'Enter');
+  assert.equal(writes, 0);
+  assert.equal(row.props.item.isExpanded(), false);
+  assert.equal(row.props['aria-current'], undefined);
+});
+
+
+test('knowledge title selection replaces knowledge only and leaves course and other books intact', () => {
+  for (const book of textbooks) {
+    const books = [book, ...textbooks.filter(other => other !== book)];
+    const scope = `${book.id}:knowledge`, id = `${scope}:k1`;
+    const before = { ...mixedSelections, [scope]: [`${scope}:k31`] };
+    const control = selectionController({ textbooks: books, selections: before }, {}, 'knowledge');
+    rowFor(control.render(), id).props.onClick(); control.apply();
+    assert.deepEqual(control.selections[scope], directoryLeaves(book.directories.knowledge, id));
+    for (const otherScope of Object.keys(before).filter(key => key !== scope)) assert.deepEqual(control.selections[otherScope], before[otherScope]);
+    rowFor(control.render(), id).props.onClick(); control.apply();
+    assert.deepEqual(control.selections[scope], []);
+  }
+});
