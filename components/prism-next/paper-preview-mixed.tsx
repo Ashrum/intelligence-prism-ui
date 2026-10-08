@@ -3,6 +3,7 @@ import "./review-workspace.css"
 
 import { useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode, type RefObject } from "react"
 import { PaperPreviewRegionEditor, canEditPaperRegion, type PaperPreviewRegionEditing } from "./paper-preview-region-editor"
+import { PaperAnnotationLayer, type PaperAnnotationOptions } from "./paper-annotation-layer"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
 import { clampPaperZoom, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
@@ -11,7 +12,7 @@ const positiveSize=(value:number,fallback:number)=>Number.isFinite(value)&&value
 
 export type PaperPreviewMixedPage = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
 // Mixed digital/scan engine of PaperPreview continuous mode; all content is supplied.
-export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing }: {
+export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal }: PaperAnnotationOptions & {
   regionEditing?: PaperPreviewRegionEditing
   resolveScanLayout?:(page:PaperPreviewMixedPage,rotation:PaperPreviewRotation)=>{source:{width:number;height:number};dimensions:{width:number;height:number}}
   beforeContent?: ReactNode; renderSectionHeading?: (page:PaperPreviewMixedPage,index:number)=>ReactNode; onScanVisibilityChange?: (visible:boolean)=>void
@@ -154,7 +155,8 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
       const firstScan=pages.findIndex(p=>!p.content)===index
       const editing = canEditPaperRegion(page.id, page.regions, regionEditing)
       const visibleRegions = editing && regionEditing!.regionId !== null ? (page.regions ?? []).filter(region => region.id !== regionEditing!.regionId) : page.regions ?? []
-      const viewer = <DocumentRegionViewer label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={visibleRegions} selectedId={undefined} onSelect={onSelect} background={page.imageUrl?<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />:<div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">扫描图像未提供</div>} />
+      const annotationLayer = (annotations?.length || paperTotal) && annotationsVisible !== false ? <PaperAnnotationLayer annotations={annotations} paperTotal={paperTotal} page={index + 1} pageSize={{ width: source.width * 25.4 / 96, height: source.height * 25.4 / 96 }} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} /> : undefined
+      const viewer = <DocumentRegionViewer footer={annotationLayer} label={page.alt ?? `第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={visibleRegions} selectedId={undefined} onSelect={onSelect} background={page.imageUrl?<img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" />:<div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">扫描图像未提供</div>} />
       return <section key={page.id} style={{ width: dimensions.width * percent / 100 }} className="shrink-0">{renderSectionHeading?.(page,index)}{!renderSectionHeading&&firstScan&&<h2 className="text-ui-body text-muted-foreground" data-answer-section>{answerLabel}</h2>}{headers[page.id]}<div data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size="crop" data-scan-paper className={`relative shrink-0 shadow-2xl transition-opacity duration-150 motion-reduce:transition-none ${page.id === "question" || !!page.content || activePage === page.id ? "opacity-100" : "opacity-65"} ${activePage === page.id && page.id !== "question" ? "ring-2 ring-info" : ""}`} style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
         {editing ? <>{viewer}<PaperPreviewRegionEditor key={JSON.stringify([page.id, regionEditing!.regionId])} editing={regionEditing!} regions={page.regions ?? []} rotation={rotation} geometryKey={`${rotation}:${percent}:${source.width}:${source.height}:${scale}`} cancelRef={cancelRegionEdit} /></> : viewer}
       </div></section>
