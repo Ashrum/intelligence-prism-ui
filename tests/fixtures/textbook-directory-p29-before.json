@@ -1,0 +1,10 @@
+{
+  "empty:locate": "0309a788d1fb38fe27e2b967db2f67d8ed2f17b1a21e6d74aff8d75f101ae6e3",
+  "empty:select": "397822f98b58faf39296dba11fc616a7b110033ba49e3812ab91c06277c1e3a5",
+  "selected:locate": "64363d0de2e525c44764e3c17172018660cb75a87e0983aac623bb120797092b",
+  "selected:select": "31c428df2a55fd702639f9dfa7f38412ebc612cd40244b8ffc99c458240ce81b",
+  "singleBook:locate": "433f1c6607348fa3bcdbee723bdc2043ee7a2ca1c74471f2ec8b8315efd70444",
+  "singleBook:select": "bc4f4534a6e83ac1c11b336453abaf3054316a4ba1e2a63ed57a3667fa6e7604",
+  "noBooks:locate": "ed5edc641242ff0f86fc6fad0578f7e80db02bf3ed3b52609e15796f8d32f3ac",
+  "noBooks:select": "ed5edc641242ff0f86fc6fad0578f7e80db02bf3ed3b52609e15796f8d32f3ac"
+}

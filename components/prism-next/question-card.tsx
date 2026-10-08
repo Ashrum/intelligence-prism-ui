@@ -37,7 +37,7 @@ export function QuestionCard({ question, number, headingLevel = 3, details, deta
     {summary ? <QuestionSummaryRow question={content} number={number} headingLevel={headingLevel} checked={checked} onCheckedChange={onCheckedChange}
       onOpen={onOpen} showPoints={showPoints} displayPoints={displayPoints} header={header} status={status} /> : <>
       <header className="mb-3 flex min-w-0 flex-wrap items-start gap-2.5">
-        {!reading && onCheckedChange && <label className="flex min-h-11 min-w-11 shrink-0 items-start justify-center">
+        {!reading && onCheckedChange && <label className="flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 shrink-0 items-start justify-center">
           <span className="flex h-5 items-center"><Checkbox checked={!!checked} onCheckedChange={onCheckedChange} aria-label={`批量勾选：${questionDisplayTitle(question, number)}`} /></span>
         </label>}
         <QuestionHeading question={question} number={number} id={id} headingLevel={headingLevel} showPoints={showPoints} displayPoints={displayPoints} reading={reading} trailing={!reading && (header || status) ? <>{header}{status}</> : undefined} />
@@ -45,7 +45,7 @@ export function QuestionCard({ question, number, headingLevel = 3, details, deta
       <QuestionContent question={content} />
     </>}
     {!reading && ((!summary && details) || secondaryActions || actions) && <Toolbar aria-label={`${question.title}操作`} className="mt-3 flex-wrap items-center gap-y-2 rounded-none border-0 bg-transparent p-0 text-foreground">
-      <ToolbarGroup className="flex-wrap">{!summary && details && <ToolbarButton render={<Button variant="ghost" size="sm" className="min-h-11" />}
+      <ToolbarGroup className="flex-wrap">{!summary && details && <ToolbarButton render={<Button variant="ghost" />}
         aria-label={`${number === undefined ? question.title : `第${number}题`}详情`} aria-expanded={open} aria-controls={`${id}-details`} onClick={() => changeOpen(!open)}>
         <ChevronDown aria-hidden="true" className={cn("motion-safe:transition-transform", open && "rotate-180")} />详情
       </ToolbarButton>}{secondaryActions}</ToolbarGroup>{actions && <ToolbarGroup className="ml-auto flex-wrap">{actions}</ToolbarGroup>}

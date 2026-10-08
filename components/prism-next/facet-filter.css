@@ -1,0 +1,13 @@
+.facet-filter { container-type: inline-size; }
+.facet-filter-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) 112px; align-items: start; gap: 8px; min-height: 40px; padding: 6px 8px; }
+.facet-filter-tools { display: grid; grid-template-columns: 64px 44px; justify-content: end; align-items: center; gap: 4px; padding-top: 2px; }
+.facet-filter-tools > span { display: flex; justify-content: flex-end; }
+.facet-filter-results { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.facet-filter-result-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-left: auto; }
+@container (max-width: 600px) {
+  .facet-filter-results { flex-direction: column; align-items: stretch; }
+}
+@container (max-width: 440px) {
+  .facet-filter-row { grid-template-columns: 72px minmax(0, 1fr); }
+  .facet-filter-tools { grid-column: 2; }
+}

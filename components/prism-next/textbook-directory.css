@@ -1,0 +1,24 @@
+/* Layout only. The fixture supplies the sidebar height; the directory scrolls
+   in the remaining space while the existing book/search controls stay fixed. */
+.textbook-directory-frame { height: max(32rem, calc(100dvh - 12rem)); display: flex; flex-direction: column; }
+.textbook-directory-embedded [data-slot="tabs"],
+.textbook-directory-embedded [data-slot="tabs-content"] { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.textbook-directory-embedded [data-slot="textbook-header"],
+.textbook-directory-embedded [data-slot="tabs-list"],
+.textbook-directory-embedded [data-picker-session] > :not([data-directory-outline]) { flex-shrink: 0; }
+.textbook-directory-demo { container-type: inline-size; }
+/* Scope modal geometry to the directory compositions only. */
+.dialog-layout:has(.directory-picker-columns) { height: 80dvh; max-height: 80dvh; }
+.dialog-layout-body:has(.directory-picker-columns) { overflow: hidden; }
+.directory-picker-columns { flex: 1; grid-template-rows: minmax(0, 3fr) minmax(0, 2fr); }
+.directory-picker-tree { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.dialog-layout:has(.textbook-picker-sections) { max-width: 47.5rem; max-height: 85dvh; }
+.textbook-picker-sections { min-width: 0; }
+.textbook-picker-books { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: .5rem; align-items: stretch; padding: .25rem; }
+.textbook-picker-books[data-scroll="true"] { max-height: 26rem; overflow-y: auto; overscroll-behavior: contain; }
+@media (min-width: 640px) {
+  .directory-picker-columns { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); grid-template-rows: minmax(0, 1fr); }
+}
+@media (max-width: 639px) {
+  .textbook-picker-books { grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); }
+}

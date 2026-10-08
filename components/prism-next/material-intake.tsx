@@ -91,12 +91,12 @@ function IntakeSelection({ select, canDrop, selectionReason, label, hint, limits
     {cameraCapture && <>
       <input ref={camera} type="file" className="sr-only" tabIndex={-1} aria-label="拍照" accept="image/*" capture="environment" disabled={!!selectionReason} aria-describedby={describedBy}
         onChange={event => { const files = Array.from(event.currentTarget.files ?? []); event.currentTarget.value = ""; select(files) }} />
-      <Button type="button" variant="outline" className="min-h-12 h-auto sm:h-auto whitespace-normal" disabled={!!selectionReason} aria-describedby={describedBy} onClick={() => { if (!selectionReason) camera.current?.click() }}>拍照</Button>
+      <Button type="button" variant="outline" disabled={!!selectionReason} aria-describedby={describedBy} onClick={() => { if (!selectionReason) camera.current?.click() }}>拍照</Button>
     </>}
     {dropState === "reject" && <Alert variant="error"><AlertDescription className="break-words text-ui-hint">不能接收：{dropReason}</AlertDescription></Alert>}
     {!!rejections?.length && <Alert variant="error"><AlertDescription>
       <ul className="min-w-0 space-y-1 text-ui-body">{rejections.map((item, index) => <li key={index} className="break-words [overflow-wrap:anywhere]">{item.name} · {item.reason}</li>)}</ul>
-      {onDismissRejections && <Button type="button" variant="outline" className="mt-2 min-h-12 h-auto sm:h-auto whitespace-normal" onClick={onDismissRejections}>知道了</Button>}
+      {onDismissRejections && <Button type="button" variant="outline" className="mt-2" onClick={onDismissRejections}>知道了</Button>}
     </AlertDescription></Alert>}
     <p id={`${id}-capabilities`} className="break-words text-ui-hint">{[upload.reason, capabilities.select.reason].filter(Boolean).join("；")}</p>
     <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {formatAgentFileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件{allowPaste && " · 也可粘贴图片"}</p>

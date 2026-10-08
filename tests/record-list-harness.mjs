@@ -30,5 +30,5 @@ export function capture(props = {}, lib = api) {
   const html = render(walk(h(lib.RecordList, { ...api.recordBase, onPrimary() {}, onRowAction() {}, onRowMenu() {}, ...props })));
   return { html, nodes, find: type => nodes.filter(node => node.type === lib[type]) };
 }
-export const button = (out, label) => out.find('Button').find(node => React.Children.toArray(node.props.children).includes(label));
+export const button = (out, label) => out.find('Button').find(node => React.Children.toArray(node.props.children).some(child => child === label || (React.isValidElement(child) && child.props.children === label)));
 export const click = () => ({ stopped: false, stopPropagation() { this.stopped = true; } });

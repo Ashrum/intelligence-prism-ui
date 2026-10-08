@@ -78,7 +78,7 @@ SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输
 ### 2026-10-02 P1：快捷给分与快捷键
 
 - 本轮 registry 由 Supervisor 在线提供（coss registry 579 项，位于审核 scratchpad/audit/registry.json），Builder 读取 particles `p-number-field-7`（范围）、`p-number-field-9`（step）、`p-kbd-1`（快捷键提示）源码；复用固定 coss NumberField/Button/Kbd。Beautiful UI Approval/Recommendation Card 的既有检索不匹配评分门禁；本轮扩展已有组件，不复制上游代码。coss、依赖、令牌及组件目录不变。
-- 可选 `quickScores?: readonly number[]`，缺省不渲染。过滤非有限、越界、非 step 整倍数并去重；满分端点不符合 step 也过滤。组标签“快捷给分”，按钮至少 48px，0 显示“0 分”，非零满分显示“满分 N”，aria-pressed 对应草稿。仅更新本地草稿/发 onScoreChange，不保存，受控与原编辑门禁不变。
+- 可选 `quickScores?: readonly number[]`，缺省不渲染。过滤非有限、越界、非 step 整倍数并去重；满分端点不符合 step 也过滤。组标签“快捷给分”，按钮采用 coss 默认尺寸，触屏点击目标由 coss pointer-coarse 扩展至至少 44px；0 显示“0 分”，非零满分显示“满分 N”，aria-pressed 对应草稿。仅更新本地草稿/发 onScoreChange，不保存，受控与原编辑门禁不变。
 - 可选 `shortcuts?: boolean`，默认 false。组件根 onKeyDown 处理 Ctrl/Cmd+Enter（保存或失败重试）、Alt+A（接受 AI）、Alt+左（上一题）、Alt+右（跳过），按钮内显示 coss Kbd。不挂 window，忽略组合输入、已处理事件、按键重复和额外修饰键。
 - 快捷键复用按钮处理器及全部门禁：保存/重试检查理由、评分范围、回调、saving/saved、disabledReason；导航仍按原规则，saving/disabledReason 禁止，saved 可导航。未传新增属性的 DOM 与 main 8ba0cd6 快照一致，仅归一化 React 不透明 ID。
 - 新增快捷操作夹具，三主题窄容器开启两项能力。自动检查覆盖过滤、草稿、受控/非受控、禁用/理由门禁和输入法；实际浏览器快捷键、读屏器交 Supervisor 验收。
@@ -94,7 +94,7 @@ SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输
 - `onScoreChange(number|null)` 接收规范化草稿；受控宿主须回传。`aiSuggestion` 提供 score/reason/basis；无效或不符合当前步长的 AI 分数保留原值展示但不可接受。接受建议先发 onScoreChange，再发 onAcceptAi(score)；非受控同步本地草稿，均不保存。
 - `reason / defaultReason / onReasonChange` 支持受控与非受控理由；`showReason` 默认 false，`requireReasonOnChange` 默认 false。开启必填策略时总显示理由字段；比较 baselineScore（优先）或有效 AI 建议，分数不同或基准未知时要求非空白理由。返回基准分数后理由可选，不擅自清空已填写内容。
 - `requireReason?: boolean` 默认 false；true 时每次保存及重试均需去除首尾空白后非空的理由，即使评分与基准相同。自动展示必填字段，按钮禁用且通过 aria-describedby 关联「请填写修改理由。」；与 requireReasonOnChange 取逻辑或。API 沿用 Workspace 适配命名与门禁语义；仅开启旧 requireReasonOnChange 时保留旧提示文案。
-- 教师最终评分的 NumberFieldInput 通过公开 className 设置 `min-h-11 h-11 sm:h-11`，输入本体在基础及 sm 断点均至少 44px；多行按钮的 `sm:h-auto` 保留。
+- P31：教师最终评分 NumberFieldInput 沿用默认尺寸，仅通过 `pointer-coarse:min-h-11` 补足触屏输入目标；默认输入内高 34px、sm 以上 30px，加边框后为 36/32px。操作、快捷分和历史按钮使用 coss 默认尺寸，取消无条件 44/48px 与 h-auto 覆盖；长动作文字省略且保留可访问名称，理由与题目内容继续换行。
 - `lastSaved?: {score:number;label?:string}` 是宿主已确认保存且审计已更新的事实，label 为可选题项标签。稳定挂载的 polite、atomic live 区域显示「[标签：]已保存 N 分，审计记录已更新」，读取回执分数而非当前草稿。它不锁定当前题项；出现、替换和清除（设 undefined）均由调用方控制，无计时器或点击推定成功。相同回执不会因草稿编辑而重挂载；连续相同文案需调用方先清除再提供。与 saved state 同时提供时只显示 lastSaved，state 的锁定规则仍有效；需分别展示上一题回执与当前题草稿时使用 ready state。缺少审计更新事实时使用原有 saved state，勿传 lastSaved。
 - `questionId?: string / focusOnQuestionChange?: boolean`：开关默认 false；开启后已挂载组件的 questionId 变化且新标识非 undefined 时 focus 标题（tabIndex=-1）。首次挂载、同标识编辑、单独开启开关、标签文字变化均不抢焦点。宿主应将学生/题目/版本纳入稳定标识，使用受控评分和理由重置，保持组件实例；React key 重挂载属于首次挂载，不执行交接。不推断题目标识，不改草稿或导航。
 - `state` 默认 `{kind:'ready'}`；saving 锁定编辑、接受建议、保存与前后导航；failed 显示 reason 和「重试保存」；saved 使用回执的 score，锁定编辑与重复保存。只有回执明确 `auditUpdated:true` 才显示「审计记录已更新」，否则明确审计状态未提供。`disabledReason` 锁定编辑与操作并显示原因。
@@ -104,7 +104,7 @@ SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输
 
 ## 夹具与验证
 
-页面提供可编辑 62% 主面板、调整为 7 分的理由门禁、0.5 分非受控评分、保存中、失败重试、成功回执、未知置信度、公式作答、历史、320px 开关，以及三主题 320px 长中文。夹具动作只报告请求，不把点击变成保存成功。所有可换行的新增 coss Button 同时含 h-auto 与 sm:h-auto。
+页面提供可编辑 62% 主面板、调整为 7 分的理由门禁、0.5 分非受控评分、保存中、失败重试、成功回执、未知置信度、公式作答、历史、320px 开关，以及三主题 320px 长中文。夹具动作只报告请求，不把点击变成保存成功。操作按钮按 P31 使用 coss 默认尺寸，题目与理由长文继续换行。
 
 新增「每次保存必填理由 · 上一题保存回执」示例：保持基准分时验证必填门禁；独立「载入预设回执」和「清除回执」展示调用方控制；「切换题项（焦点交接）」变更标识、清除回执并重置受控草稿。保存仍只报告请求。
 

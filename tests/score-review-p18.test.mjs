@@ -63,7 +63,7 @@ test('P18 total-only edit uses a standard NumberField, shows original score and 
   assert.match(out.html, /原 6 分/); assert.equal(out.reason.props.required, true);
   assert.equal(button(out, '保存').props.disabled, true);
   const input = out.html.match(/<input\b[^>]*data-slot="number-field-input"[^>]*>/)?.[0];
-  assert.ok(input); assert.doesNotMatch(input, /min-h-11|sm:h-11|-instructions/);
+  assert.ok(input); assert.match(input, /pointer-coarse:min-h-11/); assert.doesNotMatch(input, /(?:class="| )min-h-11|sm:h-11|-instructions/);
 });
 
 test('P18 manual has no suggestion, basis or AI draft action even when suggestion props are present', () => {

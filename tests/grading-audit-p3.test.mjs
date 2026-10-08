@@ -89,7 +89,7 @@ test('DataStation Drawer is controlled, right positioned and shares panel; closi
   assert.equal(capture('DataStation', props).find('Drawer')[0].props.open, true);
   assert.equal(out.find('DrawerTitle')[0].props.children, '教学数据站');
   assert.equal(out.find('DrawerClose')[0].props['aria-label'], '关闭教学数据站');
-  assert.match(out.find('DrawerClose')[0].props.render.props.className, /min-h-11 min-w-11/);
+  assert.equal(out.find('DrawerClose')[0].props.render.props.size, "icon"); assert.doesNotMatch(out.find('DrawerClose')[0].props.render.props.className, /min-[hw]-11/);
   assert.match(out.find('DrawerPopup')[0].props.portalProps.className, /motion-reduce.*drawer-backdrop/);
   const inline = capture('DataStation', api.dataStationBase);
   const panel = out.find('DrawerPanel')[0].props.children;

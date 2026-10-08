@@ -36,7 +36,7 @@ export type DataStationBadgeProps = {
 }
 const known = (value?: string) => value?.trim() || "未提供"
 const minutes = (value?: number) => typeof value === "number" && Number.isFinite(value) && value >= 0 ? `${value} 分钟` : undefined
-const actionClass = "h-auto sm:h-auto min-h-12 min-w-11 max-w-full whitespace-normal break-words py-2 motion-reduce:transition-none"
+const actionClass = "max-w-full motion-reduce:transition-none"
 
 function unavailable(device: DataStationDevice) {
   const state = device.availability
@@ -53,7 +53,7 @@ export function DataStationBadge({ state, onOpen }: DataStationBadgeProps) {
   return <span className="inline-flex min-w-0 max-w-full flex-col gap-1">
     <Button type="button" variant="outline" className={actionClass} data-station-badge disabled={!onOpen}
       aria-describedby={!onOpen ? `${id}-reason` : undefined} onClick={() => onOpen?.()}>
-      <span className="min-w-0 [overflow-wrap:anywhere]">教学数据站 {label}</span><ChevronRight aria-hidden="true" className="shrink-0" />
+      <span className="min-w-0 truncate">教学数据站 {label}</span><ChevronRight aria-hidden="true" className="shrink-0" />
     </Button>
     {!onOpen && <span id={`${id}-reason`} className="text-ui-hint">数据站入口暂不可用。</span>}
   </span>
@@ -68,12 +68,12 @@ export function DataStation(props: DataStationProps) {
       portalProps={{ className: "motion-reduce:[&_[data-slot=drawer-backdrop]]:transition-none motion-reduce:[&_[data-slot=scroll-area-viewport]]:transition-none motion-reduce:[&_[data-slot=scroll-area-scrollbar]]:transition-none" }}>
       <DrawerHeader className="pr-16"><DrawerTitle>教学数据站</DrawerTitle><DrawerDescription>{description}</DrawerDescription></DrawerHeader>
       <DrawerPanel><DataStationPanel {...props} description={description} hideHeading /></DrawerPanel>
-      <DrawerClose aria-label="关闭教学数据站" render={<Button variant="ghost" className="absolute end-2 top-2 min-h-11 min-w-11" />}><X aria-hidden="true" /></DrawerClose>
+      <DrawerClose aria-label="关闭教学数据站" render={<Button variant="ghost" size="icon" className="absolute end-2 top-2" />}><X aria-hidden="true" /></DrawerClose>
     </DrawerPopup>
   </Drawer>
   return <Sheet open={props.open} onOpenChange={open => { if (!open) props.onClose() }}>
     <SheetPopup side="right" className="w-full max-w-xl motion-reduce:transition-none" showCloseButton
-      closeProps={{ "aria-label": "关闭教学数据站", className: "absolute end-2 top-2 min-h-11 min-w-11" }}>
+      closeProps={{ "aria-label": "关闭教学数据站", className: "absolute end-2 top-2" }}>
       <SheetHeader className="pr-16"><SheetTitle>教学数据站</SheetTitle><SheetDescription>{description}</SheetDescription></SheetHeader>
       <SheetPanel><DataStationPanel {...props} description={description} hideHeading /></SheetPanel>
     </SheetPopup>
@@ -99,7 +99,7 @@ function DataStationPanel({ devices, recommendedId, selectedId, connection, stat
   function action(key: string, label: ReactNode, reason: string | undefined, intent: () => void, primary = false) {
     return <div className="min-w-0 space-y-1" key={key}>
       <Button type="button" variant={primary ? "default" : "outline"} className={`${actionClass} w-full`} data-station-action={key}
-        disabled={!!reason} aria-describedby={reason ? `${id}-${key}-reason` : undefined} onClick={() => { if (!reason) intent() }}>{label}</Button>
+        disabled={!!reason} aria-describedby={reason ? `${id}-${key}-reason` : undefined} onClick={() => { if (!reason) intent() }}><span className="truncate">{label}</span></Button>
       {reason && <p id={`${id}-${key}-reason`} className="break-words text-ui-hint">{reason}</p>}
     </div>
   }

@@ -42,11 +42,10 @@ export type InstrumentPanelProps = {
   "aria-label"?: string; className?: string
 }
 
-const defaultWrappingButton = "h-auto sm:h-auto min-h-11 min-w-11 max-w-full whitespace-normal [overflow-wrap:anywhere]"
+const actionClass = "max-w-full"
 
 /** Present host facts and emit intent; there is no local execution or business state. */
 export function InstrumentPanel(props: InstrumentPanelProps) {
-  const wrappingButton = cn(defaultWrappingButton, props.compact && "min-h-12")
   const { eyebrow, title, description, headerAction, metric, current, attention, list, primaryAction, secondaryActions = [], actionNote, next, state = "ready" } = props
   const id = useId()
   const ready = state === "ready"
@@ -72,17 +71,17 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
         {title && <h2 id={`${id}-title`} className="text-block-title">{title}</h2>}
         {description && <div className="text-ui-hint">{description}</div>}
       </div>
-      {ready && headerAction && <Button type="button" variant="ghost" className={wrappingButton} disabled={headerAction.disabled || !props.onHeaderAction} onClick={() => { if (!headerAction.disabled) props.onHeaderAction?.() }}>{headerAction.label}</Button>}
+      {ready && headerAction && <Button type="button" variant="ghost" className={actionClass} disabled={headerAction.disabled || !props.onHeaderAction} onClick={() => { if (!headerAction.disabled) props.onHeaderAction?.() }}><span className="truncate">{headerAction.label}</span></Button>}
     </header></FramePanel>}
     {!ready ? <FramePanel>{state === "loading" ? <div role="status" aria-busy="true" className="grid gap-3">
       <span className="text-ui-hint">正在加载任务状态…</span><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-12 w-full motion-reduce:animate-none" />
-    </div> : state === "error" ? <Empty className="px-0 py-6 md:py-6"><p role="alert" className="text-ui-body">{props.errorMessage || "任务状态加载失败"}</p>{props.onRetry && <Button type="button" className={wrappingButton} onClick={props.onRetry}>重试</Button>}</Empty>
+    </div> : state === "error" ? <Empty className="px-0 py-6 md:py-6"><p role="alert" className="text-ui-body">{props.errorMessage || "任务状态加载失败"}</p>{props.onRetry && <Button type="button" className={actionClass} onClick={props.onRetry}>重试</Button>}</Empty>
       : <Empty className="px-0 py-6 md:py-6"><p className="text-ui-body">{props.emptyMessage || "暂无任务状态"}</p></Empty>}</FramePanel>
       : <>
         {metric && <FramePanel className={cn("@container grid min-w-0 gap-3 [&>dl]:grid-cols-1!", props.compact && "gap-1 p-4")} data-instrument-metric>
           <MetricSummary layout="strip" items={[{ id: "metric", label: metric.label, value: metric.value }]} />
           {metric.status && <AgentStatus tone={metric.status.tone}>{metric.status.label}</AgentStatus>}
-          {metric.linkLabel && <Button type="button" variant="link" className={cn(wrappingButton, "self-start")} disabled={!props.onMetricLink} onClick={props.onMetricLink}>{metric.linkLabel}</Button>}
+          {metric.linkLabel && <Button type="button" variant="link" className={cn(actionClass, "self-start")} disabled={!props.onMetricLink} onClick={props.onMetricLink}><span className="truncate">{metric.linkLabel}</span></Button>}
           {knownProgress && (progress.kind === "meter" ? <Meter value={progress.value} max={max}>
             <div className="flex min-w-0 flex-wrap items-start justify-between gap-2"><MeterLabel className="min-w-0 text-ui-hint">{progress.label}</MeterLabel><MeterValue className="text-ui-hint">{(_formatted, value) => `${value} / ${max}`}</MeterValue></div>
             <MeterTrack><MeterIndicator className="motion-reduce:transition-none" /></MeterTrack>
@@ -99,7 +98,7 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
             <span className="flex min-h-6 min-w-6 shrink-0 items-center justify-center text-ui-hint" aria-hidden="true">{item.completed ? <Check className="size-4" /> : index + 1}</span>
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-                {item.selectable ? <Button type="button" variant="link" className="h-auto sm:h-auto min-h-11 min-w-11 max-w-full items-start justify-start whitespace-normal p-0 text-left [overflow-wrap:anywhere]" disabled={!props.onItemSelect} onClick={() => props.onItemSelect?.(item.id)}>{item.title}</Button> : <p className="min-w-0 text-ui-body">{item.title}</p>}
+                {item.selectable ? <Button type="button" variant="link" size={null} className="max-w-full justify-start whitespace-normal text-left" disabled={!props.onItemSelect} onClick={() => props.onItemSelect?.(item.id)}><span className="min-w-0 break-words">{item.title}</span></Button> : <p className="min-w-0 text-ui-body">{item.title}</p>}
                 {item.status && <AgentStatus tone={item.status.tone}>{item.status.label}</AgentStatus>}
               </div>
               {item.completed && <span className="sr-only">已完成</span>}
@@ -109,9 +108,9 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
         </FramePanel>}
         {props.compact && currentPanel}
         {(primaryAction || secondaryActions.length > 0 || actionNote) && <FramePanel className={cn("grid min-w-0 gap-3", props.compact && "p-4")} data-instrument-actions>
-          {primaryAction && <Button type="button" data-instrument-primary className={wrappingButton} disabled={primaryDisabled} aria-describedby={reason || actionNote ? `${id}-action-note` : undefined} onClick={() => { if (!primaryDisabled) props.onPrimary?.() }}>{primaryAction.label}</Button>}
+          {primaryAction && <Button type="button" data-instrument-primary className={actionClass} disabled={primaryDisabled} aria-describedby={reason || actionNote ? `${id}-action-note` : undefined} onClick={() => { if (!primaryDisabled) props.onPrimary?.() }}><span className="truncate">{primaryAction.label}</span></Button>}
           {(reason || actionNote) && <div id={`${id}-action-note`} className="space-y-1 text-ui-hint">{reason && <p>{reason}</p>}{actionNote && <div>{actionNote}</div>}</div>}
-          {secondaryActions.slice(0, 2).map(action => <Button type="button" key={action.id} variant="outline" className={wrappingButton} disabled={action.disabled || !props.onSecondary} onClick={() => { if (!action.disabled) props.onSecondary?.(action.id) }}>{action.label}</Button>)}
+          {secondaryActions.slice(0, 2).map(action => <Button type="button" key={action.id} variant="outline" className={actionClass} disabled={action.disabled || !props.onSecondary} onClick={() => { if (!action.disabled) props.onSecondary?.(action.id) }}><span className="truncate">{action.label}</span></Button>)}
         </FramePanel>}
         {next && <FramePanel className={cn("flex min-w-0 flex-wrap items-start justify-between gap-3", props.compact && "p-4")} data-instrument-next>
           <div className="min-w-0 flex-1 space-y-1"><p className="text-ui-hint">下一步</p><p className="text-ui-body">{next.text}</p></div>

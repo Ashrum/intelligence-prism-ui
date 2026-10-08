@@ -4,7 +4,7 @@ import { components, componentGroups, searchComponents } from '../lib/prism-next
 import { coreAgentSpecs } from '../lib/prism-next/agent-specs.ts';
 
 test('P16 registers exactly two new review patterns in the existing content category', () => {
-  assert.equal(components.length, 102);
+  assert.equal(components.length, 103);
   for (const id of ['error-cause-review', 'student-paper-report']) {
     const entries = componentGroups.find(group => group.id === 'content').items.filter(item => item.id === id);
     assert.equal(entries.length, 1); assert.equal(entries[0].kind, 'pattern');

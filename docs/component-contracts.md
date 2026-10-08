@@ -2363,6 +2363,28 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### TextbookDirectory 内嵌形态
+
+| 属性 | 默认值 | 契约 |
+| --- | --- | --- |
+| `layout?: "split" \| "embedded"` | `"split"` | split 保留原有完整树与已选摘要布局（xl 双列）；embedded 始终单列，由宿主容器决定宽度，面向 200–320px 侧栏，复用同一棵树及展开、选择、半选、搜索、键盘行为 |
+| `titleAction?: "locate" \| "select"` | `"locate"` | 所有 layout 可用；locate 保持标题/Enter 定位；select 为当前教材、当前目录种类单选替换，再次激活相同完整叶集取消，其他 scope 保持不变 |
+| `multiSelect?: "always" \| "toggle"` | `"always"` | 仅 embedded 生效；always 保留现有复选框和标题操作。toggle 默认关闭，当前 scope 归并后多于一个节点的外部选择会打开多选；模式按教材和目录分别保留。split 忽略此属性 |
+| `onTextbookSwitch?: () => void` | 未提供 | 仅 embedded；提供时“切换”直接发出宿主切换意图（即使单教材），不挂载内置选择菜单；未提供且多教材时使用内置单选菜单，单教材隐藏按钮；split 忽略 |
+| `emptySelectionLabel?: string` | 不显示 | 仅用于 embedded；不传时零选择整行不渲染，传入时仅显示该文字、不显示清空按钮；例如宿主可传“未选择（显示全部）”。这只是显示文案，组件不推定零选择对应的业务过滤行为；长文案单行省略，完整文本保留在 DOM 与 title |
+
+默认 `multiSelect="always"` 下，`titleAction="select"` 只通过受控 `onSelectionsChange` 发出选择意图；标题/Enter 选择节点的全部下级叶子（不受搜索过滤影响），点击父节点时只展开、不收起；箭头仍独立展开/收起。复选框/空格仍为增减多选。当前有效选择恰好是某一个完整节点的叶集时，复用 Tree 当前行样式并设置 `aria-current="location"`；多个不完整子树不标当前项。单子级链存在等价叶集时优先仍匹配的已点击节点，否则按既有摘要算法选最上层完整节点；外部改选/清空后重新推导，不使用点击推定受控选择已生效。select 不显示“当前位置”反馈，帮助改为“点标题只看这一项，再点一次取消。勾选可以多选，勾选父级包含全部下级。搜索不会改变已选范围。”及“方向键浏览和展开，Enter 选中这一项，空格勾选或取消。”，两种布局都提供完整可访问说明。split 默认 locate 的 DOM 和文案不变。
+
+推荐组合：`layout="embedded" multiSelect="toggle" titleAction="select"`。关闭多选时隐藏复选框，标题/Enter/空格单选或再次取消；仍复用 current 整行样式。若使用 locate，关闭时标题/Enter/空格只定位，不选择。打开后标题/Enter/空格与复选框均调用原有父子联动勾选，搜索仍对完整子树生效，所有行不标 current。关闭开关时按最新受控叶集归并：恰好一个节点保留，多个节点仅清空当前教材当前目录，其他 scope 不变；零个保持为空。UI 模式不代表受控选择已生效，等待宿主回传；外部新增多节点选择时也显露开关与复选框。
+
+embedded 头部为约 46×60 的书形封面、两行教材文字与可选“切换”按钮。`TextbookDefinition` 新增可选 `volume?: string`、`subject?: string`、`edition?: string`；第一行显示 volume（未提供或空字符串时回退 title），第二行拼接存在的 subject / edition 为“学科 · 版本”，均无值时不渲染第二行。封面仅显示 subject 的前两个 Unicode 字符，无 subject 不写字；封面为装饰，不重复朗读。长文字单行省略，完整文字保留在 DOM/title 与头部分组可访问名称中。切换用 coss Button outline/sm，可访问名称“切换教材”；内置 coss Menu 单选项显示“册名 · 学科 · 版本”（缺省沿用上述回退），标记当前教材，选择沿用各教材独立的会话与选择记录。封面与书脊复用现有品牌/语义令牌进行 color-mix，底部细条用 --brand-ai-gradient；文字仅 foreground / muted-foreground 单色。不新增令牌，不重绘基础控件。课程/知识点页签等宽铺满。教材、页签、搜索与“多选”、可选已选行、树依次排列，段间距统一；树原有行高和点击区域不变。
+
+embedded 的两段操作说明只保留 sr-only 与树的 `aria-describedby`，没有可见说明入口。toggle 关闭 + select：“点标题只看这一项，再点一次取消。搜索不会改变已选范围。”；打开：“点标题或复选框勾选，勾选父级包含全部下级。搜索不会缩小勾选范围。”；locate 关闭与键盘说明对应实际行为。搜索行末的标准 coss Toggle 可访问名称“多选”，Tooltip 为“打开后可以勾选多个章节或知识点”。当前 `TextbookDefinition` 要求提供两类目录，空目录也保留切换；未新增单目录或隐藏切换 API。
+
+embedded 仅在有选择时于搜索框与树之间显示紧凑的一行已选提示和“清空”按钮（无分隔符），不渲染已选明细与摘要列。先在各 scope 内去重并忽略未知 ID 与父节点，再复用 `summarizeDirectory` 将整棵全选子树归并为上级一个节点；n 为所传教材的课程、知识点中归并后的节点总数。恰好一个节点时显示“已选：节点标题”，单行省略并在 title 与可访问名称中保留完整文本；两项及以上显示“已选 n 项”；切换教材、目录或搜索不会缩小汇总范围。清空沿用受控 `onSelectionsChange` 更新数组为空的方式，清除所传教材的两类目录，保留不属于这些教材的 scope；零选择时不渲染清空按钮。split 的“清空当前目录”和逐项移除行为不变。`TextbookRangePicker` API、草稿与应用行为不变。
+
+组件页 `/next/components/tree` 的“内嵌目录树”默认使用 `multiSelect="toggle"` + `titleAction="select"`，提供 toggle/always、单教材无回调 / 单教材有宿主回调 / 多教材三种头部场景、长教材名称与版本、“标题单选 / 标题定位”对比开关与 200/240/280/320px 容器、长中文与公式示例，可结合原有 2—5 级示例检查；没有新增组件目录条目。
+
 ### 实心信息色徽标
 
 `components/prism-next/badge` 复用固定来源的 coss Badge，并增加 `variant="info-solid"`；变体和 render/ARIA 属性继续透传；Prism 默认采用 lg，状态文字统一为 14/20，短标签例外见字体规范。coss 原始源码及其来源校验保持不变。
@@ -2677,6 +2699,8 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 集合篮 SEL 头部操作：`headerActions` 将宿主菜单组合进现有标题行，操作区不收缩。默认沿用既有事实行；2026-09-29 PO 精简方案新增 `infoPlacement="menu"`，Workspace summary 可使用 `headerActions={({infoMenuItem}) => <Menu>…<MenuPopup>{infoMenuItem}…</MenuPopup></Menu>}`，由组件内置“题篮信息”项打开完整事实 Dialog。组件页 workspace 试题篮已启用；真实 Workspace 需按本节 API 接入。
 
+2026-10-07 试题篮参考图配色：`presentation="inline"` 复用 `AgentWell` 的行内表面，清单继承宿主背景；默认 `card` 保留原有内嵌底色。统计可由宿主组合 coss `Card`，难度分段复用 `SegmentedBar` 的 `success`（基础）、`info`（巩固）、`warning`（提升），图例使用相应 foreground 令牌保证文字对比度。未提供难度保持 neutral；不改变集合、选择或计分口径。
+
 ## Agent 对话组合（PO 2026-09-29）
 
 `AgentPromptBar`、`AgentVoiceButtons` / `AgentVoiceStatus`、`AgentMark` 与 `AgentMessage` 登记在 Agent 总览的「组合与既有组件」，是对话层组合，不追加基础组件或十二类业务语义：基础目录保持 80，业务语义保持 42。既有 `AgentComposer` API 保留。站点子页：
@@ -2812,3 +2836,18 @@ position undefined 为非受控；null 为受控跟随 defaultPosition；默认�
 P20：QuestionAnalysisPanel 可选 affectedLabel（默认“受影响”）及 supplementaryMetrics（label/value/hint）；追加顺序、知识点位置与默认 SSR 兼容规则见 [组件契约](question-analysis-panel.md#p20--自定义影响标签与补充统计2026-10-05)。
 
 P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 SSR；首层至多三个关键数、默认三个参照和最多四个错因，说明承载其他统计/口径/来源/日期，按身份去重；复用 coss Popover/Collapsible/Meter 与 SegmentedBar。新增属性及迁移规则见 [精简版式契约](question-analysis-panel.md#p23--精简版式2026-10-06)。组件目录不变，浏览器验收由 Supervisor 执行。
+
+### P41 正式化：TextbookDirectory 与 FacetFilter（2026-10-08）
+
+前述 TextbookDirectory embedded 说明保留为旧属性兼容契约；启用新属性时以 [内嵌大纲目录](textbook-directory.md) 为准。`allOption`、`counts`、`subjects`、精确身份 `currentNodes/onCurrentNodesChange`、`multiSelect="dialog"` 与可选教材/目录受控导航已公开；`firstLeafSelection` 只计算默认值，不自动应用。旧 split 与未用新属性的 embedded SSR 哈希回归。默认第一课与 sessionStorage 仅在 demo 宿主；教材和多选对话框只提交选择。
+
+新增 [FacetFilter 分面筛选](facet-filter.md)，PO 选定即认可目录项 `facet-filter`（组合组件），目录由 102 → 103；Tree 沿用原条目，Agent 42项语义清单不变。dimensions/value/sortItems/counts/endSlot/onIntent 受控协议、零数量、重置及草稿失效规则见专页；只保留 C。两项入口均在组件页，删除探索路由和探索实现目录；复用检索见各专页，不改变 coss 固定字节。
+
+
+### P42 TextbookDirectory 对话框重排（2026-10-08）
+
+只调整已启用新属性的 embedded 两个对话框，不新增公开 API，旧 split/旧 embedded/RangePicker 不变。教材 DialogLayout 改为学科横向选项（单学科隐藏）→小号换行版本（超过三行可展开）→放大既有封面的册次网格，无搜索框；最近版本由宿主标记。多选只操作当前教材当前目录 kind，无种类页签、教材信息或搜索；左树全选/清空及半选提示，右侧按第一祖先归并并可移除，确认仅更新该 scope。题数合计仅在所有归并条目宿主题数齐全时呈现。尺寸、响应式、键盘与取消契约见 [TextbookDirectory](textbook-directory.md)。
+
+### P43 TextbookDirectory 全部行压缩（2026-10-08）
+
+新版 embedded 提供 `allOption` 时，已选 n 项与 ghost/xs 清空合并到全部行右侧，多选结果替代整本题数；无独立摘要行、无点分隔符。全部行 36px，分隔线上下各 4px，搜索间距 8px；礼貌播报和“清空已选，回到全部”名称保留。仅清当前 scope；split 与旧调用不变，详见 [大纲目录契约](textbook-directory.md)。
