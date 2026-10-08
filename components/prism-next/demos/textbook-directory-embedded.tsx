@@ -62,7 +62,7 @@ export function EmbeddedTextbookDirectoryDemo() {
   const fixture = useMemo(() => directoryDemoBooks(depth, scale), [depth, scale])
   const books = useMemo(() => bookMode === "单教材" ? fixture.books.slice(0, 1) : fixture.books, [bookMode, fixture])
   return <div className="textbook-directory-demo space-y-6">
-    <p className="text-ui-body">大纲树保留完整教材结构。点标题只看这一项；看全部点“全部”；多选用“多选”按钮。</p>
+    <p className="text-ui-body">大纲树保留完整教材结构。点标题只看这一项；看全部点“全部”；多选用“多选”按钮，仅选择当前章节或知识点。切换教材时依次选择学科、版本和书册。</p>
     <div className="flex flex-wrap items-end gap-4">
       <Choices label="容器宽度（px）" value={width} options={["240", "280", "320"]} onChange={setWidth} />
       <Choices label="数据层级" value={depth} options={["2", "3", "4", "5"]} onChange={setDepth} />

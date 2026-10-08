@@ -2842,3 +2842,8 @@ P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 S
 前述 TextbookDirectory embedded 说明保留为旧属性兼容契约；启用新属性时以 [内嵌大纲目录](textbook-directory.md) 为准。`allOption`、`counts`、`subjects`、精确身份 `currentNodes/onCurrentNodesChange`、`multiSelect="dialog"` 与可选教材/目录受控导航已公开；`firstLeafSelection` 只计算默认值，不自动应用。旧 split 与未用新属性的 embedded SSR 哈希回归。默认第一课与 sessionStorage 仅在 demo 宿主；教材和多选对话框只提交选择。
 
 新增 [FacetFilter 分面筛选](facet-filter.md)，PO 选定即认可目录项 `facet-filter`（组合组件），目录由 102 → 103；Tree 沿用原条目，Agent 42项语义清单不变。dimensions/value/sortItems/counts/endSlot/onIntent 受控协议、零数量、重置及草稿失效规则见专页；只保留 C。两项入口均在组件页，删除探索路由和探索实现目录；复用检索见各专页，不改变 coss 固定字节。
+
+
+### P42 TextbookDirectory 对话框重排（2026-10-08）
+
+只调整已启用新属性的 embedded 两个对话框，不新增公开 API，旧 split/旧 embedded/RangePicker 不变。教材 DialogLayout 改为学科横向选项（单学科隐藏）→小号换行版本（超过三行可展开）→放大既有封面的册次网格，无搜索框；最近版本由宿主标记。多选只操作当前教材当前目录 kind，无种类页签、教材信息或搜索；左树全选/清空及半选提示，右侧按第一祖先归并并可移除，确认仅更新该 scope。题数合计仅在所有归并条目宿主题数齐全时呈现。尺寸、响应式、键盘与取消契约见 [TextbookDirectory](textbook-directory.md)。

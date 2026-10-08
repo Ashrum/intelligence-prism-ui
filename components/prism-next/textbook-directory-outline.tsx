@@ -11,7 +11,7 @@ import type { DirectoryViewProps } from "@/components/prism-next/directory-prese
 import type { DirectoryNode } from "@/lib/prism-next/textbook-directory"
 
 export const DirectoryFacts = createContext<{ counts: Readonly<Record<string, number>>; showCounts: boolean }>({ counts: {}, showCounts: true })
-export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; allOption?: { label: string; text: string; selected: boolean; onSelect: () => void } } | null>(null)
+export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; partialCounts?: Record<string, { selected: number; total: number }>; allOption?: { label: string; text: string; selected: boolean; onSelect: () => void } } | null>(null)
 export const OutlineView = (props: DirectoryViewProps) => <DirectoryOutlineTree {...props} />
 
 // Selection stays with the controlled host; the tree only owns navigation.
@@ -81,6 +81,8 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
       <Tree tree={tree} aria-label={label} aria-describedby={`${helpId} ${navigationHelpId}`} aria-multiselectable={showCheckboxes || (marks?.selected.size ?? 0) > 1} className="gap-0.5 p-1">
         {items.map(item => {
           const id = item.getId(), node = item.getItemData(), depth = data.paths[id].length
+          const progress = marks?.partialCounts?.[id]
+          const partialLabel = progress && progress.selected > 0 && progress.selected < progress.total ? `已选 ${progress.selected}/${progress.total}` : undefined
           const state = selectionTree.getItemInstance(id).getCheckedState()
           const indentation = Math.min(depth - 1, 2) * 12
           const folder = node.children.length > 0
@@ -91,7 +93,7 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
           const lastChild = parentNode.children.at(-1) === id
           return <TreeItem key={id} item={item} current={selected} aria-selected={selected} aria-current={!showCheckboxes && currentId === id ? "location" : undefined}
             aria-level={depth}
-            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} 题` : ""}${containsSelected ? "，包含已选" : ""}`}
+            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} 题` : ""}${containsSelected ? "，包含已选" : ""}${partialLabel ? `，${partialLabel}` : ""}`}
             aria-checked={showCheckboxes ? state === "indeterminate" ? "mixed" : state === "checked" : undefined}
             style={{ "--tree-padding": `${indentation}px` } as CSSProperties} className={`${rowClass} ${selected ? "bg-accent hover:bg-accent" : ""}`}
             onClick={() => { focus(id); activate(id) }} onKeyDown={event => {
@@ -114,6 +116,7 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
               </span>
               {containsSelected && <span aria-hidden="true" data-directory-contains-selected className="mt-3 size-1.5 shrink-0 rounded-full bg-primary" />}
               {showCounts && counts[id] !== undefined && <span data-directory-count className="w-7 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums" aria-hidden="true">{counts[id]}</span>}
+              {partialLabel && <span data-directory-partial className="shrink-0 pt-1 text-ui-hint text-muted-foreground" aria-hidden="true">{partialLabel}</span>}
             </div>
           </TreeItem>
         })}

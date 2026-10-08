@@ -37,7 +37,7 @@ function useState(initial) {
 const file = new URL('bundle.mjs', runtime);
 await writeFile(file, bundle.outputFiles[0].text);
 const module = await import(file); await rm(file);
-const owned = new Set(['TextbookDirectory', 'EmbeddedTextbookDirectory', 'PickerSession', 'BookHeader', 'KindTabs', 'OutlineView', 'DirectoryOutlineTree']);
+const owned = new Set(['TextbookDirectory', 'EmbeddedTextbookDirectory', 'PickerSession', 'BookHeader', 'BookCover', 'EditionOptions', 'KindTabs', 'OutlineView', 'DirectoryOutlineTree']);
 export function textOf(node) {
   if (node == null || typeof node === 'boolean') return '';
   if (typeof node === 'string' || typeof node === 'number') return String(node);
