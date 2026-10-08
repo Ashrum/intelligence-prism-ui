@@ -1,42 +1,42 @@
 import type { ReactNode } from "react"
 
-export type FilterOption = { id: string; label: string; count?: number; tone?: "success" | "info" | "warning" }
-export type FilterDimension = {
+export type FacetFilterOption = { id: string; label: string; count?: number; tone?: "success" | "info" | "warning" }
+export type FacetFilterDimension = {
   id: string
   label: string
   mode: "single" | "multiple"
-  options: readonly FilterOption[]
+  options: readonly FacetFilterOption[]
   description?: string
   common?: boolean
 }
-export type ResourceFilterValue = {
+export type FacetFilterValue = {
   filters: Readonly<Record<string, readonly string[]>>
   sort: string
   favoritesOnly: boolean
   search: string
 }
-export type ResourceFilterIntent =
+export type FacetFilterIntent =
   | { type: "filter"; dimensionId: string; values: string[] }
   | { type: "sort"; value: string }
   | { type: "favorites"; value: boolean }
   | { type: "search"; value: string }
   | { type: "reset" }
-export type ResourceFilterAreaProps = {
-  dimensions: readonly FilterDimension[]
-  value: ResourceFilterValue
+export type FacetFilterProps = {
+  dimensions: readonly FacetFilterDimension[]
+  value: FacetFilterValue
   sortItems: readonly { id: string; label: string }[]
   resultCount?: number
   favoriteCount?: number
   endSlot?: ReactNode
-  onIntent: (intent: ResourceFilterIntent) => void
+  onIntent: (intent: FacetFilterIntent) => void
 }
 
-export function dimensionSelection(dimension: FilterDimension, values: readonly string[]) {
+export function dimensionSelection(dimension: FacetFilterDimension, values: readonly string[]) {
   return values.map(id => dimension.options.find(option => option.id === id)?.label ?? id).join("、")
 }
 
 /** Keep host option order for identical intent payloads across presentation variants. */
-export function filterIntent(dimension: FilterDimension, values: readonly string[]): ResourceFilterIntent {
+export function filterIntent(dimension: FacetFilterDimension, values: readonly string[]): FacetFilterIntent {
   const ordered = dimension.options.filter(option => values.includes(option.id)).map(option => option.id)
   return { type: "filter", dimensionId: dimension.id, values: dimension.mode === "single" ? ordered.slice(0, 1) : ordered }
 }

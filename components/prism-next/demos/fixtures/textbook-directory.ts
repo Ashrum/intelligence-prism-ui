@@ -1,10 +1,10 @@
 import { directoryDepthExamples } from "@/lib/prism-next/fixtures/directory-depth"
 import { createDirectory, type DirectoryBranch, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
 import type { TextbookDefinition } from "@/components/prism-next/textbook-directory"
-import type { ExplorationTextbook, TextbookSubject } from "./directory-picker"
+import type { TextbookSubject } from "@/components/prism-next/textbook-directory"
 
 // Host-supplied demonstration facts only; original textbook fixtures stay intact.
-export function explorationBooks(depth: string, scale: "small" | "large" = "small"): { books: ExplorationTextbook[]; counts: Record<string, number>; subjects: TextbookSubject[] } {
+export function directoryDemoBooks(depth: string, scale: "small" | "large" = "small"): { books: TextbookDefinition[]; counts: Record<string, number>; subjects: TextbookSubject[] } {
   const source = directoryDepthExamples[depth][0]
   const counts: Record<string, number> = {}
   const editions = ["人教 A 版（2019）", "人教 B 版（2019）", "北师大版"]

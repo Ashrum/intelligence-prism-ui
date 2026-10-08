@@ -33,11 +33,11 @@ test('exploration searches stay label-free with accessible names, inline action 
   checkSearch('course', false); p.tab('knowledge'); checkSearch('knowledge', false);
   p.click('多选', true); checkSearch('knowledge', true);
   p.tab('course'); checkSearch('course', true);
-  assert.equal(p.dialog(multiTitle).props.description, '可跨课程与知识点选择，确认后同时筛选符合条件的题目。');
-  assert.equal(textOf(p.dialog(multiTitle).props.footerStart), '确认后将更新筛选范围与题目结果');
+  assert.equal(p.dialog(multiTitle).props.description, '可跨课程与知识点选择，确认后提交所选范围。');
+  assert.equal(textOf(p.dialog(multiTitle).props.footerStart), '确认后提交所选目录范围');
   p.click('取消'); p.click('切换教材', true);
-  assert.equal(p.dialog(bookTitle).props.description, '选择学科、版本与册次，确认后同步题目结果。');
-  assert.match(textOf(p.dialog(bookTitle).props.footerStart), /确认后将更新当前筛选范围与题目结果。/);
+  assert.equal(p.dialog(bookTitle).props.description, '选择学科、版本与册次，确认后切换当前教材。');
+  assert.match(textOf(p.dialog(bookTitle).props.footerStart), /确认后切换当前教材，保留各目录选择。/);
 });
 
 test('A: version/volume drafts, unchanged reason, cancel/Esc discard, apply and callback priority', () => {
@@ -77,7 +77,7 @@ test('A dialog handlers preserve leaf selections, compressed summaries, marks an
     p.state.selections = { 'unrelated:course': ['keep'] }; p.render();
     assert.equal(p.all(node => node.type.name === 'Checkbox').length, 0);
     p.click('多选', true); assert.equal(p.dialog(multiTitle).props.open, true);
-    assert.equal(p.find(node => node.props['data-exploration-view'])?.props['data-exploration-view'], 'A');
+    assert.ok(p.find(node => node.props['data-directory-outline'] !== undefined));
     assert.ok(p.dialog(multiTitle).props.initialFocus); assert.ok(p.dialog(multiTitle).props.finalFocus);
     assert.match(p.state.html, /aria-label="可选目录"/); assert.match(p.state.html, /aria-label="已选范围"/);
     await key(p, leaf); assert.equal(p.row(first).props['aria-checked'], 'mixed'); assert.equal(p.state.selections[scope], undefined);
@@ -214,8 +214,47 @@ test('P40 small catalog hides subject section; multi modal removes book header a
   assert.ok(p.find(node => node.type === 'section' && node.props.className?.includes('directory-picker-tree')));
   assert.ok(p.find(node => node.type === 'section' && node.props.className?.includes('directory-picker-selected')));
   const { readFile } = await import('node:fs/promises');
-  const css = await readFile(new URL('../components/prism-next/explorations/tree-directory.css', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../components/prism-next/textbook-directory.css', import.meta.url), 'utf8');
   assert.match(css, /max-height: 80dvh/); assert.match(css, /3fr\) minmax\(0, 2fr/);
   assert.match(css, /dialog-layout-body:has\(\.directory-picker-columns\).*overflow: hidden/);
   assert.doesNotMatch(css, /data-directory-scroll.*overflow: visible/);
+});
+
+test('P41 public all labels/counts and controlled identity wait for host feedback; stale identities are ignored', () => {
+  const p = probe(); const data = p.books[0].directories.course, scope = `${p.books[0].id}:course`, id = data.paths[data.leafIds[0]].at(-2);
+  p.state.extra = {allOption:{label:'整册',ariaLabel:'查看整册题目'}}; p.state.apply = false; p.render();
+  const before = structuredClone(p.state.selections);
+  p.row(id).props.onKeyDown(event('Enter')); p.render();
+  assert.deepEqual(p.state.selections, before); assert.equal(p.row(id).props.current, false);
+  assert.equal(p.state.requestsSelection.length, 1); assert.equal(p.state.requestsNodes.length, 1);
+  p.state.selections = p.state.requestsSelection[0](before); p.state.currentNodes = p.state.requestsNodes[0]({}); p.render();
+  assert.equal(p.row(id).props.current, true);
+  const all = p.find(node => node.props['data-directory-all'] !== undefined);
+  assert.equal(all.props['aria-label'], '查看整册题目'); assert.match(textOf(all), /整册/);
+  p.state.currentNodes = {[scope]:'removed'}; assert.doesNotThrow(()=>p.render());
+  p.state.selections = {[scope]:['removed']}; p.render(); assert.equal(p.find(node => node.props['data-directory-all'] !== undefined).props['aria-pressed'], true);
+  assert.equal(p.state.requestsSelection.length, 1, 'no automatic default/cleanup event');
+});
+
+test('P41 embedded locate and inline toggle/always coexist with all option without losing prior behavior', () => {
+  const p = probe(); p.state.extra = {titleAction:'locate'}; p.render();
+  const data=p.books[0].directories.course, leaf=data.leafIds[0], scope=`${p.books[0].id}:course`;
+  p.row(leaf).props.onKeyDown(event('Enter')); p.render(); assert.deepEqual(p.state.selections, {}); assert.equal(p.row(leaf).props['aria-current'], 'location');
+  p.state.extra = {multiSelect:'always'}; p.render();
+  assert.ok(p.find(node=>node.type.name==='Checkbox')); assert.ok(p.find(node=>node.props['data-directory-all']!==undefined));
+  p.row(leaf).props.onKeyDown(event('Enter')); p.render(); p.row(leaf).props.onKeyDown(event('Enter')); p.render();
+  assert.deepEqual(p.state.selections[scope],[leaf]);
+  p.row(leaf).props.onKeyDown(event(' ')); p.render(); assert.deepEqual(p.state.selections[scope],[]);
+  p.state.extra = {multiSelect:'toggle'}; p.render(); assert.equal(p.find(node=>node.type.name==='Checkbox'),undefined);
+  p.click('多选'); assert.ok(p.find(node=>node.type.name==='Checkbox'));
+  p.row(leaf).props.onKeyDown(event('Enter')); p.render(); assert.deepEqual(p.state.selections[scope],[leaf]);
+  p.click('多选'); assert.equal(p.find(node=>node.type.name==='Checkbox'),undefined); assert.deepEqual(p.state.selections[scope],[leaf]);
+});
+
+test('P41 controlled book selection emits id without assuming host applied it', () => {
+  const p=probe(); const first=p.books[0], second=p.books[1]; const requests=[];
+  p.state.extra={bookId:first.id,onBookChange:id=>requests.push(id)}; p.render(); p.click('切换教材',true);
+  p.find(node=>node.type.name==='DialogOptionGrid').props.onValueChange(second.id); p.render(); p.click('确认选择');
+  assert.deepEqual(requests,[second.id]); assert.equal(p.find(node=>node.type.name==='BookHeader').props.book.id,first.id);
+  p.state.extra.bookId=second.id; p.render(); assert.equal(p.find(node=>node.type.name==='BookHeader').props.book.id,second.id);
 });

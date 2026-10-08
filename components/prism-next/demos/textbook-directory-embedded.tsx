@@ -1,16 +1,15 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import type { DirectorySelections } from "@/components/prism-next/textbook-directory"
-import { ExplorationDirectory, type ExplorationTextbook, type TextbookSubject } from "./directory-picker"
+import { TextbookDirectory, type DirectorySelections } from "@/components/prism-next/textbook-directory"
+import type { TextbookDefinition, TextbookSubject } from "@/components/prism-next/textbook-directory"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Toggle } from "@/components/coss/toggle"
 import { Button } from "@/components/coss/button"
-import { OutlineView, ExplorationFacts } from "./directory-views"
-import { explorationBooks } from "./directory-fixture"
-import { clearDirectoryMemory, defaultDirectorySelections, restoreDirectorySelections, restoreDirectoryCurrentNodes, saveDirectorySelections } from "./directory-memory"
+import { directoryDemoBooks } from "./fixtures/textbook-directory"
+import { clearDirectoryMemory, defaultDirectorySelections, restoreDirectorySelections, restoreDirectoryCurrentNodes, saveDirectorySelections } from "./textbook-directory-memory"
 import type { DirectoryKind } from "@/lib/prism-next/textbook-directory"
-import "./tree-directory.css"
+import "../textbook-directory.css"
 
 function Choices({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (value: string) => void }) {
   return <div className="grid gap-2"><p className="text-ui-action">{label}</p><ToggleGroup aria-label={label} multiple={false} value={[value]} onValueChange={values => { if (values[0]) onChange(values[0]) }} className="flex-wrap">
@@ -18,9 +17,8 @@ function Choices({ label, value, options, onChange }: { label: string; value: st
   </ToggleGroup></div>
 }
 
-const noExpansion = () => []
-function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMode }: {
-  books: ExplorationTextbook[]; subjects: TextbookSubject[]; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; width: string; callbackMode: boolean
+function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMode, counts }: {
+  books: TextbookDefinition[]; subjects: TextbookSubject[]; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; width: string; callbackMode: boolean; counts?: Readonly<Record<string, number>>
 }) {
   const [switchRequests, setSwitchRequests] = useState(0)
   const [selections, setSelections] = useState<DirectorySelections>(() => defaultDirectorySelections(books))
@@ -39,11 +37,11 @@ function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMo
     if (saved !== selections && (JSON.stringify(saved) !== JSON.stringify(selections) || Object.keys(currentNodes).length)) { setSelections(saved); setCurrentNodes({}) }
   }, [books, ready, selections, currentNodes])
   const entries = books.flatMap(book => (["course", "knowledge"] as DirectoryKind[]).flatMap(type => (selections[`${book.id}:${type}`] ?? []).map(id => ({ id, title: book.directories[type].nodes[id]?.title ?? id }))))
-  return <section id="directory-A" className="min-w-0 space-y-3" aria-label="A 版大纲树">
-    <h2 className="text-block-title">A · 大纲树</h2>
+  return <section id="embedded-directory" className="min-w-0 space-y-3" aria-label="内嵌大纲目录">
+    <h2 className="text-block-title">教材大纲树</h2>
     <Button variant="outline" onClick={() => { clearDirectoryMemory(() => sessionStorage); setSelections(defaultDirectorySelections(books)); setCurrentNodes({}); setReset(value => value + 1) }}>清除记忆，回到首次进入状态</Button>
-    <div className="directory-exploration-frame max-w-full border p-2" style={{ width: Number(width) }}>
-      {ready ? <ExplorationDirectory key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} View={OutlineView} initialExpanded={noExpansion} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
+    <div className="textbook-directory-frame max-w-full border p-2" style={{ width: Number(width) }}>
+      {ready ? <TextbookDirectory layout="embedded" titleAction="select" multiSelect="dialog" allOption={{}} counts={counts} key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
     </div>
     <details className="max-w-full text-ui-hint" style={{ width: Number(width) }}>
       <summary className="cursor-pointer">宿主选择回显 · {entries.length} 个叶节点</summary>
@@ -53,7 +51,7 @@ function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMo
   </section>
 }
 
-export function TreeDirectoryExploration() {
+export function EmbeddedTextbookDirectoryDemo() {
   const [width, setWidth] = useState("280")
   const [depth, setDepth] = useState("5")
   const [scale, setScale] = useState<"small" | "large">("large")
@@ -61,9 +59,9 @@ export function TreeDirectoryExploration() {
   const [kind, setKind] = useState<DirectoryKind>("course")
   const [callbackMode, setCallbackMode] = useState(false)
   const [showCounts, setShowCounts] = useState(true)
-  const fixture = useMemo(() => explorationBooks(depth, scale), [depth, scale])
+  const fixture = useMemo(() => directoryDemoBooks(depth, scale), [depth, scale])
   const books = useMemo(() => bookMode === "单教材" ? fixture.books.slice(0, 1) : fixture.books, [bookMode, fixture])
-  return <div className="directory-exploration-layout space-y-6">
+  return <div className="textbook-directory-demo space-y-6">
     <p className="text-ui-body">大纲树保留完整教材结构。点标题只看这一项；看全部点“全部”；多选用“多选”按钮。</p>
     <div className="flex flex-wrap items-end gap-4">
       <Choices label="容器宽度（px）" value={width} options={["240", "280", "320"]} onChange={setWidth} />
@@ -75,8 +73,6 @@ export function TreeDirectoryExploration() {
       <Toggle pressed={showCounts} onPressedChange={setShowCounts} aria-label="显示题数">显示题数</Toggle>
     </div>
     <p className="text-ui-hint">教材及题数均为演示数据，包含 0 与未提供题数。首次进入课程选第一课，知识点选全部；宿主按教材与目录种类在当前会话中保存选择，刷新后恢复。</p>
-    <ExplorationFacts.Provider value={{ counts: fixture.counts, showCounts }}>
-      <DirectoryPanel key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} />
-    </ExplorationFacts.Provider>
+      <DirectoryPanel key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} counts={showCounts ? fixture.counts : undefined} />
   </div>
 }

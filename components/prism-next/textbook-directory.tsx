@@ -19,7 +19,14 @@ import { directoryLeaves, summarizeDirectory, projectDirectory, type DirectoryDa
 import { cn } from "@/lib/utils"
 import { DirectoryPresentation } from "@/components/prism-next/directory-presentation"
 
-export type TextbookDefinition = { id: string; title: string; volume?: string; subject?: string; edition?: string; directories: Record<DirectoryKind, DirectoryData> }
+import { EmbeddedTextbookDirectory } from "@/components/prism-next/textbook-directory-embedded"
+import type { TextbookSubject } from "@/components/prism-next/textbook-directory-embedded"
+export type { TextbookSubject } from "@/components/prism-next/textbook-directory-embedded"
+export { firstLeafSelection } from "@/lib/prism-next/textbook-directory"
+export type DirectoryAllOption = { label?: string; ariaLabel?: string }
+export type DirectoryCounts = Readonly<Record<string, number>>
+
+export type TextbookDefinition = { id: string; title: string; volume?: string; volumeDescription?: string; subject?: string; edition?: string; directories: Record<DirectoryKind, DirectoryData> }
 export type DirectorySelections = Record<string, string[]>
 type Session = { query: string; currentId: string; expandedIds?: string[]; multiSelect?: boolean }
 const selectionHelp = "箭头展开，标题定位，复选框选择。勾选父级包含全部下级，搜索不会缩小勾选范围。"
@@ -49,16 +56,28 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export function TextbookDirectory({ textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch }: {
+export type TextbookDirectoryProps = {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
   layout?: "split" | "embedded"
   titleAction?: TitleAction
-  multiSelect?: "always" | "toggle"
+  multiSelect?: "always" | "toggle" | "dialog"
   emptySelectionLabel?: string
   onTextbookSwitch?: () => void
-}) {
+  allOption?: DirectoryAllOption
+  counts?: DirectoryCounts
+  subjects?: TextbookSubject[]
+  currentNodes?: Record<string, string>
+  onCurrentNodesChange?: Dispatch<SetStateAction<Record<string, string>>>
+  kind?: DirectoryKind
+  onKindChange?: (kind: DirectoryKind) => void
+  bookId?: string
+  onBookChange?: (bookId: string) => void
+}
+
+export function TextbookDirectory(props: TextbookDirectoryProps) {
+  const { textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch, ...extension } = props
   const controlId = useId()
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
   const [localKind, setLocalKind] = useState<DirectoryKind>("course")
@@ -66,6 +85,10 @@ export function TextbookDirectory({ textbooks, selections, onSelectionsChange, l
   const kind = presentation?.kind ?? localKind
   const setKind = presentation?.onKindChange ?? setLocalKind
   const [sessions, setSessions] = useState<Record<string, Session>>({})
+  const formalEmbedded = layout === "embedded" && (extension.allOption !== undefined || extension.counts !== undefined || extension.subjects !== undefined || extension.currentNodes !== undefined || multiSelect === "dialog")
+  if (formalEmbedded) return <EmbeddedTextbookDirectory textbooks={textbooks} selections={selections} onSelectionsChange={onSelectionsChange} {...extension}
+    kind={extension.kind ?? kind} onKindChange={extension.onKindChange ?? setKind} titleAction={props.titleAction ?? "select"}
+    multiSelect={multiSelect} emptySelectionLabel={emptySelectionLabel} onTextbookSwitch={onTextbookSwitch} />
   const book = textbooks.find(item => item.id === bookId) ?? textbooks[0]
   const bookOptions = textbooks.map(item => ({ value: item.id, label: item.title }))
   const groups = textbooks.flatMap(item => kinds.map(type => {

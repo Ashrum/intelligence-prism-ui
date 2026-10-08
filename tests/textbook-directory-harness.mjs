@@ -10,7 +10,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const runtime = new URL('../.sites-runtime/textbook-directory/', import.meta.url);
 await mkdir(runtime, { recursive: true });
 const file = new URL('test-bundle.mjs', runtime);
-const bundle = await build({ entryPoints: [root + 'components/prism-next/textbook-directory.tsx'], bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
+const bundle = await build({ entryPoints: [root + 'components/prism-next/textbook-directory.tsx'], bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { ".css": "empty" } });
 await writeFile(file, bundle.outputFiles[0].text);
 export const { TextbookDirectory } = await import(file);
 await rm(file);
@@ -25,7 +25,7 @@ function useTree(...args) {
   const tree = useUnmountedTree(...args)
   if (!tree.getItems().length) { tree.setMounted(true); tree.rebuildTree() }
   return tree
-}`), resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
+}`), resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { ".css": "empty" } });
 const mountedFile = new URL('mounted-test-bundle.mjs', runtime);
 await writeFile(mountedFile, mountedBundle.outputFiles[0].text);
 const { TextbookDirectory: MountedDirectory, setTestInitialKind, setTestBookState } = await import(mountedFile);

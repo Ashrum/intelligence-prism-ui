@@ -38,6 +38,7 @@ export const componentGroups:ComponentGroup[] = [
     item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
     item("pagination","Pagination 分页","在明确的数据页之间移动。"),
     item("sidebar","Sidebar 侧栏","桌面导航、折叠与移动端抽屉。"),
+    {...item("facet-filter","FacetFilter 分面筛选","常用维度、全部筛选面板与结果栏；受控选择、排序、收藏与搜索。"),kind:"pattern",sourceUrl:"https://coss.com/ui/particles",sourceLabel:"coss ToggleGroup / Popover 组合"},
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[

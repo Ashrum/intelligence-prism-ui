@@ -608,3 +608,10 @@ test('P33 internal presentation seam preserves baseline split and embedded SSR h
     assert.equal(hash(htmlFor({ layout, titleAction, multiSelect, selections })), before.hashes[`${layout}:${titleAction}:${multiSelect}:${selected}`]);
   }
 });
+
+test('P41 split ignores embedded formal props, including dialog, byte for byte', () => {
+  for (const titleAction of ['locate','select']) {
+    const base={layout:'split',titleAction,selections:mixedSelections};
+    assert.equal(hash(htmlFor({...base,multiSelect:'dialog',allOption:{},counts:{},subjects:[],currentNodes:{}})),hash(htmlFor(base)));
+  }
+});

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { probe, ssr, filterFixture, textOf, explorationSSR, previewFilterValue } from './filter-area-harness.mjs';
-import { fittingOptions } from '../components/prism-next/explorations/resource-filter-types.ts';
+import { probe, ssr, filterFixture, textOf, demoSSR, previewFilterValue } from './facet-filter-harness.mjs';
+import { fittingOptions } from '../components/prism-next/facet-filter-types.ts';
 
 const click = (p, text) => { const node = p.find(node => node.type.name === 'Button' && textOf(node) === text); assert.ok(node, text); node.props.onClick(); p.render(); };
 const choose = (p, label, values) => { const node = p.find(node => node.type.name === 'ToggleGroup' && node.props['aria-label'] === label); assert.ok(node, label); const allValue = p.find(item => item.type.name === 'ToggleGroupItem' && item.props['aria-label'] === `${label}：全部`).props.value;
@@ -35,7 +35,7 @@ test('facet fit uses actual option widths, reserves unlimited, and expands capac
 
 for (const variant of ['C']) for (const scale of ['current', 'future']) for (const width of [520, 720, 960]) test(`${variant}/${scale}/${width}: SSR controlled facts and result controls`, () => {
   const html = ssr(variant, scale, width);
-  assert.match(html, new RegExp(`data-filter-variant="${variant}"`));
+  assert.match(html, /data-facet-filter/);
   assert.match(html, /我的收藏<span[^>]*>23<\/span>/); assert.match(html, /128 题/);
   assert.match(html, /在结果中搜索/); assert.match(html, /综合/); assert.match(html, /最新/); assert.match(html, /热门/);
   assert.match(html, /重置/); assert.doesNotMatch(html, /示例|演示/);
@@ -118,21 +118,20 @@ test('unknown result facts remain unknown, optional slot renders, reduced sorts 
   }
 });
 
-test('exploration has catalog and directory links without a new registry entry', async () => {
-  const [catalog, directory, page, registry] = await Promise.all([
-    readFile(new URL('../components/prism-next/catalog-overview.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../app/(next)/next/explorations/tree-directory/page.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../app/(next)/next/explorations/filter-area/page.tsx', import.meta.url), 'utf8'),
-    readFile(new URL('../lib/prism-next/catalog.ts', import.meta.url), 'utf8'),
-  ]);
-  assert.match(catalog, /\/next\/explorations\/filter-area/); assert.match(directory, /\/next\/explorations\/filter-area/);
-  assert.match(page, /\/next\/explorations\/tree-directory/); assert.doesNotMatch(registry, /ResourceFilterArea|id: "filter-area"/);
+test('FacetFilter has one formal catalog entry, spec and links; retired sources/routes are absent', async () => {
+  const { components } = await import('../lib/prism-next/catalog.ts');
+  const { coreAgentSpecs } = await import('../lib/prism-next/agent-specs.ts');
+  assert.equal(components.length, 103);
+  assert.equal(components.filter(item => item.id === 'facet-filter').length, 1);
+  assert.ok(coreAgentSpecs['facet-filter']);
+  const catalog = await readFile(new URL('../components/prism-next/catalog-overview.tsx', import.meta.url), 'utf8');
+  assert.match(catalog, /\/next\/components\/facet-filter/); assert.match(catalog, /\/next\/components\/tree/);
+  for (const path of ['components/prism-next/explorations/filter-area.tsx', 'app/(next)/next/explorations/filter-area/page.tsx', 'app/(next)/next/explorations/tree-directory/page.tsx']) await assert.rejects(readFile(new URL('../' + path, import.meta.url)), { code: 'ENOENT' });
 });
 
-
 test('review defaults show future scale, 720px, counts and preselected values with only the C section', () => {
-  const html = explorationSSR();
-  assert.equal((html.match(/data-exploration-width="720"/g) ?? []).length, 1);
+  const html = demoSSR();
+  assert.equal((html.match(/data-demo-width="720"/g) ?? []).length, 1);
   assert.match(html, /题型：单选题/);
   assert.match(html, /难度：巩固/);
   for (const variant of ['C']) {
@@ -186,7 +185,7 @@ test('P37 all result sort tabs are relevance/latest/popular, with no difficulty 
     const tabs = p.state.nodes.filter(({ node }) => node.type.name === 'TabsTab').map(({ node }) => node.props.value);
     assert.deepEqual(tabs, ['relevance', 'latest', 'popular']);
   }
-  const html = explorationSSR();
+  const html = demoSSR();
   assert.match(html, />综合</); assert.match(html, />最新</); assert.match(html, />热门</);
   assert.doesNotMatch(html, /综合 \/ 最新 \/ 热门 \/ 难度/);
 });
@@ -201,7 +200,43 @@ test('P40 all uses the standard pressed background and only C remains', async ()
   assert.match(button, /data-pressed:bg-input\/64/);
   choose(p, '题型', ['type-0']); choose(p, '题型', ['type-0', '']);
   assert.deepEqual(p.state.value.filters.type, []);
-  const html = explorationSSR(); assert.doesNotMatch(html, /filter-A|filter-B|三版|跳到/);
-  const page = await readFile(new URL('../app/(next)/next/explorations/filter-area/page.tsx', import.meta.url), 'utf8');
-  assert.match(page, /筛选功能区 · 定版探索/);
+  const html = demoSSR(); assert.doesNotMatch(html, /filter-A|filter-B|三版|跳到/);
+  const page = await readFile(new URL('../components/prism-next/demos/facet-filter.tsx', import.meta.url), 'utf8');
+  assert.match(page, /FacetFilterDemo/);
+});
+
+test('P41 no common dimensions still exposes all filters and reset, including empty input', () => {
+  for (const empty of [false, true]) {
+    const p = probe('C'); p.state.dimensions = empty ? [] : p.state.dimensions.map(d => ({ ...d, common: false })); p.render();
+    assert.ok(p.find(node => node.type.name === 'FilterPanel'));
+    p.openPanel();
+    assert.equal(p.state.nodes.filter(({node}) => node.type.name === 'FacetRow').length, p.state.dimensions.length);
+    click(p, '重置'); assert.deepEqual(p.state.intents, [{type:'reset'}]);
+  }
+});
+
+test('P41 intents remain controlled until host applies; invalidated drafts cannot overwrite refreshed dimensions/values', () => {
+  const p = probe('C'); p.state.apply = false; p.render();
+  choose(p, '难度', ['difficulty-1']);
+  assert.deepEqual(p.state.value.filters, {}); assert.equal(p.state.intents.length, 1);
+  for (const update of ['options', 'selection']) {
+    multi(p, 'C'); choose(p, '题型', ['type-0']);
+    if (update === 'options') p.state.dimensions = p.state.dimensions.map(d => d.id === 'type' ? {...d, options:d.options.map(o=>({...o, count:0}))}:d);
+    else p.state.value = {...p.state.value, filters:{type:['type-3']}};
+    p.render();
+    assert.equal(p.find(node => node.type.name === 'Button' && textOf(node) === '确定'), undefined);
+    assert.equal(p.state.intents.length, 1);
+  }
+});
+
+test('P41 counts zero are display facts and no-op host reset does not leave a pending draft', () => {
+  const html = ssr('C', 'current', 520, {resultCount:0, favoriteCount:0});
+  assert.match(html, /共 0 题/); assert.doesNotMatch(html, /数量未知/);
+  const p = probe('C'); p.state.apply = false; p.render(); multi(p,'C'); choose(p,'题型',['type-0']);
+  click(p,'重置'); assert.equal(p.find(node=>node.type.name==='Button' && textOf(node)==='确定'), undefined);
+  assert.deepEqual(p.state.intents,[{type:'reset'}]);
+});
+
+for (const theme of ['light','paper','dark']) for (const width of [520,720,960]) for (const scale of ['current','future']) test(`P41 formal SSR matrix ${theme}/${width}/${scale}`, () => {
+  const html = ssr('C',scale,width,{theme}); assert.match(html,/data-facet-filter/); assert.match(html,new RegExp(`data-prism-theme="${theme}"`)); assert.match(html,new RegExp(`width:${width}px`)); assert.match(html,/全部筛选/);
 });

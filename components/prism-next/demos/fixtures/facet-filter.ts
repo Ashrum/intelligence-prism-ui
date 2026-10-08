@@ -1,12 +1,12 @@
-import type { FilterDimension, ResourceFilterIntent, ResourceFilterValue } from "../resource-filter-types"
+import type { FacetFilterDimension, FacetFilterIntent, FacetFilterValue } from "@/components/prism-next/facet-filter-types"
 
 export type FilterScale = "current" | "future"
-const dimension = (id: string, label: string, mode: FilterDimension["mode"], labels: string[], common = false): FilterDimension => ({
+const dimension = (id: string, label: string, mode: FacetFilterDimension["mode"], labels: string[], common = false): FacetFilterDimension => ({
   id, label, mode, common,
   options: labels.map((label, index) => ({ id: `${id}-${index}`, label, ...(index === 1 ? {} : { count: index === 2 ? 0 : 128 - index * 9 }) })),
 })
 
-export function filterFixture(scale: FilterScale, counts = true): FilterDimension[] {
+export function filterFixture(scale: FilterScale, counts = true): FacetFilterDimension[] {
   const type = dimension("type", "题型", "multiple", ["单选题", "多选题", "判断题", "填空题", "解答题", "计算题", "证明题", "作图题", "实验探究题", "阅读理解题", "材料分析题", "跨学科综合实践与开放性探究题"].slice(0, scale === "current" ? 4 : 12), true)
   const difficulty = dimension("difficulty", "难度", "single", ["基础", "巩固", "提升"], true)
   difficulty.options = difficulty.options.map((option, index) => ({ ...option, count: [68, 42, 18][index], tone: (["success", "info", "warning"] as const)[index] }))
@@ -25,12 +25,12 @@ export function filterFixture(scale: FilterScale, counts = true): FilterDimensio
 export const filterSortItems = [
   { id: "relevance", label: "综合" }, { id: "latest", label: "最新" }, { id: "popular", label: "热门" },
 ]
-export function initialFilterValue(): ResourceFilterValue {
+export function initialFilterValue(): FacetFilterValue {
   return { filters: {}, sort: "relevance", favoritesOnly: false, search: "" }
 }
 
-/** Exploration host only: no matching engine, requests or fabricated query counts. */
-export function applyFilterIntent(value: ResourceFilterValue, intent: ResourceFilterIntent): ResourceFilterValue {
+/** Demo host only: no matching engine, requests or fabricated query counts. */
+export function applyFilterIntent(value: FacetFilterValue, intent: FacetFilterIntent): FacetFilterValue {
   switch (intent.type) {
     case "filter": return { ...value, filters: { ...value.filters, [intent.dimensionId]: intent.values } }
     case "sort": return { ...value, sort: intent.value }
@@ -41,7 +41,7 @@ export function applyFilterIntent(value: ResourceFilterValue, intent: ResourceFi
 }
 
 /** Preselected review fixture; reset still clears every filter. */
-export function previewFilterValue(scale: FilterScale): ResourceFilterValue {
+export function previewFilterValue(scale: FilterScale): FacetFilterValue {
   return { ...initialFilterValue(), filters: {
     type: ["type-0", "type-3"], difficulty: ["difficulty-1"],
     ...(scale === "future" ? { scenario: ["scenario-1"] } : {}),

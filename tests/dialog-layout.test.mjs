@@ -179,9 +179,9 @@ test('record uses dt/dd, sections are labelled, and notice uses all supported ho
 });
 
 test('catalog keeps one pattern and registers editing and reference examples', () => {
-  assert.equal(components.length, 102);
+  assert.equal(components.length, 103);
   assert.equal(components.filter(item => !item.kind).length, 54);
-  assert.equal(components.filter(item => item.kind === 'pattern').length, 38);
+  assert.equal(components.filter(item => item.kind === 'pattern').length, 39);
   assert.equal(components.filter(item => item.id === 'dialog-layout').length, 1);
   assert.equal(searchComponents('Dialog Layout')[0].href, '/next/components/dialog-layout');
   assert.ok(coreAgentSpecs['dialog-layout'].accessibility.length);

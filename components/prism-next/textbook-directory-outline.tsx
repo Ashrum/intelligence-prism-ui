@@ -10,15 +10,15 @@ import { Tree, TreeItem } from "@/components/prism-next/tree"
 import type { DirectoryViewProps } from "@/components/prism-next/directory-presentation"
 import type { DirectoryNode } from "@/lib/prism-next/textbook-directory"
 
-export const ExplorationFacts = createContext<{ counts: Record<string, number>; showCounts: boolean }>({ counts: {}, showCounts: true })
-export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; allOption?: { label: string; selected: boolean; onSelect: () => void } } | null>(null)
-export const OutlineView = (props: DirectoryViewProps) => <ExplorationTree {...props} />
+export const DirectoryFacts = createContext<{ counts: Readonly<Record<string, number>>; showCounts: boolean }>({ counts: {}, showCounts: true })
+export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; allOption?: { label: string; text: string; selected: boolean; onSelect: () => void } } | null>(null)
+export const OutlineView = (props: DirectoryViewProps) => <DirectoryOutlineTree {...props} />
 
 // Selection stays with the controlled host; the tree only owns navigation.
 const rowClass = "relative cursor-pointer rounded-md hover:bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 const rowContentClass = "relative flex min-h-9 min-w-0 items-start gap-1 py-1 pl-1 pr-2"
-export function ExplorationTree({ data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId, showCheckboxes }: DirectoryViewProps) {
-  const { counts, showCounts } = useContext(ExplorationFacts)
+export function DirectoryOutlineTree({ data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId, showCheckboxes }: DirectoryViewProps) {
+  const { counts, showCounts } = useContext(DirectoryFacts)
   const marks = useContext(DirectoryMarks)
   const allOption = marks?.allOption
   const allRef = useRef<HTMLButtonElement>(null)
@@ -62,7 +62,7 @@ export function ExplorationTree({ data, projection, selectionTree, currentId, on
     const row = reveal.current ? rows.current.get(reveal.current) : null
     if (row) { row.scrollIntoView({ block: "nearest", behavior: "instant" }); reveal.current = null }
   })
-  return <div data-exploration-view="A" className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
+  return <div data-directory-outline className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
     <p id={navigationHelpId} className="sr-only">上下方向键浏览，左右方向键展开或收起。标题或 Enter、空格选择。全部行按向下或向右方向键进入目录树。</p>
     {allOption && <div className="shrink-0 border-b p-1 pb-2">
       <button ref={allRef} type="button" data-directory-all aria-label={allOption.label} aria-pressed={allOption.selected}
@@ -71,7 +71,7 @@ export function ExplorationTree({ data, projection, selectionTree, currentId, on
           if ((event.key === "ArrowDown" || event.key === "ArrowRight") && items[0]) { event.preventDefault(); event.stopPropagation(); focus(items[0].getId()) }
         }}>
         <span className={rowContentClass}><span aria-hidden="true" className="h-7 w-5 shrink-0" />
-          <span className="min-w-0 flex-1 py-1 text-item-title text-foreground">全部</span>
+          <span className="min-w-0 flex-1 py-1 text-item-title text-foreground">{allOption.text}</span>
           {showCounts && counts[data.rootId] !== undefined && <span data-directory-count className="w-7 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums">{counts[data.rootId]}</span>}
         </span>
       </button>
@@ -84,7 +84,7 @@ export function ExplorationTree({ data, projection, selectionTree, currentId, on
           const state = selectionTree.getItemInstance(id).getCheckedState()
           const indentation = Math.min(depth - 1, 2) * 12
           const folder = node.children.length > 0
-          const selected = !showCheckboxes && (marks ? marks.selected.has(id) : currentId === id)
+          const selected = !showCheckboxes && (currentId ? currentId === id : marks?.selected.has(id))
           const containsSelected = !showCheckboxes && marks?.ancestors.has(id)
           const titleRole = depth > 3 ? "text-ui-body" : selected || depth === 1 ? "text-item-title" : "text-ui-action"
           const parentNode = projection.nodes[data.paths[id].at(-2) ?? data.rootId]
@@ -96,7 +96,7 @@ export function ExplorationTree({ data, projection, selectionTree, currentId, on
             style={{ "--tree-padding": `${indentation}px` } as CSSProperties} className={`${rowClass} ${selected ? "bg-accent hover:bg-accent" : ""}`}
             onClick={() => { focus(id); activate(id) }} onKeyDown={event => {
               if (event.target !== event.currentTarget) return
-              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); activate(id) }
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); event.stopPropagation(); if (event.key === " " && showCheckboxes) void selectionTree.getItemInstance(id).toggleCheckedState(); else activate(id) }
               if (event.key === "ArrowRight" && folder && !item.isExpanded()) { event.preventDefault(); event.stopPropagation(); expand(id) }
               if (allOption && (event.key === "Home" || (event.key === "ArrowUp" && id === items[0]?.getId()))) {
                 event.preventDefault(); event.stopPropagation(); allRef.current?.focus()
@@ -110,7 +110,7 @@ export function ExplorationTree({ data, projection, selectionTree, currentId, on
               </span>
               {node.code && <span data-directory-code title={node.code} className="w-4 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums" aria-hidden="true">{node.code.match(/^第\s*(\d+)\s*章$/)?.[1] ?? node.code}</span>}
               <span data-directory-title className={`min-w-0 flex-1 py-1 ${titleRole} ${depth > 3 ? "text-muted-foreground" : "text-foreground"}`} title={`${node.code ? `${node.code} ` : ""}${node.title}`}>
-                <span className="line-clamp-2 break-words">{node.title}</span>
+                <span className={depth === 1 ? "block truncate" : "line-clamp-2 break-words"}>{node.title}</span>
               </span>
               {containsSelected && <span aria-hidden="true" data-directory-contains-selected className="mt-3 size-1.5 shrink-0 rounded-full bg-primary" />}
               {showCounts && counts[id] !== undefined && <span data-directory-count className="w-7 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums" aria-hidden="true">{counts[id]}</span>}

@@ -2836,3 +2836,9 @@ position undefined 为非受控；null 为受控跟随 defaultPosition；默认�
 P20：QuestionAnalysisPanel 可选 affectedLabel（默认“受影响”）及 supplementaryMetrics（label/value/hint）；追加顺序、知识点位置与默认 SSR 兼容规则见 [组件契约](question-analysis-panel.md#p20--自定义影响标签与补充统计2026-10-05)。
 
 P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 SSR；首层至多三个关键数、默认三个参照和最多四个错因，说明承载其他统计/口径/来源/日期，按身份去重；复用 coss Popover/Collapsible/Meter 与 SegmentedBar。新增属性及迁移规则见 [精简版式契约](question-analysis-panel.md#p23--精简版式2026-10-06)。组件目录不变，浏览器验收由 Supervisor 执行。
+
+### P41 正式化：TextbookDirectory 与 FacetFilter（2026-10-08）
+
+前述 TextbookDirectory embedded 说明保留为旧属性兼容契约；启用新属性时以 [内嵌大纲目录](textbook-directory.md) 为准。`allOption`、`counts`、`subjects`、精确身份 `currentNodes/onCurrentNodesChange`、`multiSelect="dialog"` 与可选教材/目录受控导航已公开；`firstLeafSelection` 只计算默认值，不自动应用。旧 split 与未用新属性的 embedded SSR 哈希回归。默认第一课与 sessionStorage 仅在 demo 宿主；教材和多选对话框只提交选择。
+
+新增 [FacetFilter 分面筛选](facet-filter.md)，PO 选定即认可目录项 `facet-filter`（组合组件），目录由 102 → 103；Tree 沿用原条目，Agent 42项语义清单不变。dimensions/value/sortItems/counts/endSlot/onIntent 受控协议、零数量、重置及草稿失效规则见专页；只保留 C。两项入口均在组件页，删除探索路由和探索实现目录；复用检索见各专页，不改变 coss 固定字节。

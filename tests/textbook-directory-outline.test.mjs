@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createDirectory, firstLeafSelection, directoryLeaves } from '../lib/prism-next/textbook-directory.ts';
-import { probe, explorationBooks, event, defaultDirectorySelections, restoreDirectorySelections, saveDirectorySelections, clearDirectoryMemory, directoryMemoryKey, restoreDirectoryCurrentNodes } from './directory-picker-harness.mjs';
+import { probe, directoryDemoBooks, event, defaultDirectorySelections, restoreDirectorySelections, saveDirectorySelections, clearDirectoryMemory, directoryMemoryKey, restoreDirectoryCurrentNodes } from './directory-picker-harness.mjs';
 
 const allRow = p => p.find(node => node.props['data-directory-all'] !== undefined);
 const activate = (p, id, key = 'Enter') => { p.row(id).props.onKeyDown(event(key)); p.render(); };
@@ -14,7 +14,7 @@ function memory() {
 
 test('first lesson follows first-child order at 2–5 levels, one level and empty directories', () => {
   for (const depth of ['2', '3', '4', '5']) {
-    const { books, counts } = explorationBooks(depth);
+    const { books, counts } = directoryDemoBooks(depth);
     for (const book of books) for (const kind of ['course', 'knowledge']) {
       const data = book.directories[kind];
       let first = data.nodes[data.rootId].children[0];
@@ -104,7 +104,7 @@ test('A keeps capped indentation, one branch guide, compact count columns, full 
 });
 
 test('host memory round-trips all, multi and exact single target independently by book/kind; invalid and failed storage fall back', () => {
-  const { books } = explorationBooks('5'), storage = memory(), get = () => storage;
+  const { books } = directoryDemoBooks('5'), storage = memory(), get = () => storage;
   const defaults = defaultDirectorySelections(books), first = books[0], data = first.directories.course;
   const course = `${first.id}:course`, knowledge = `${first.id}:knowledge`, other = `${books[1].id}:course`;
   assert.deepEqual(restoreDirectorySelections(books, get), defaults);
@@ -144,17 +144,12 @@ test('restored late selection expands its ancestors, while empty and flat direct
   }
 });
 
-test('exploration route SSR presents only A and links; CSS stays layout-only', async () => {
+test('formal tree route includes embedded demo and layout-only CSS', async () => {
   const { default: worker } = await import('../dist/server/index.js');
-  for (const path of ['/next/explorations/tree-directory', '/next/components/tree']) {
-    const response = await worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
-    assert.equal(response.status, 200); const html = await response.text();
-    if (path.includes('explorations')) {
-      for (const text of ['教材目录 · 定版探索', '大纲树', '数据层级', '显示题数', '清除记忆，回到首次进入状态', '宿主选择回显', '多学科 · 大规模', '单学科 · 3 版本']) assert.ok(html.includes(text), text);
-      assert.doesNotMatch(html, /逐级钻取|吸顶祖先树|三版|id="directory-[BC]"/);
-      assert.ok(html.includes('id="directory-A"'));
-    } else assert.ok(html.includes('/next/explorations/tree-directory'));
-  }
-  const css = await readFile(new URL('../components/prism-next/explorations/tree-directory.css', import.meta.url), 'utf8');
+  const response = await worker.fetch(new Request('http://localhost/next/components/tree', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200); const html = await response.text();
+  for (const text of ['教材大纲树', '数据层级', '显示题数', '清除记忆，回到首次进入状态', '宿主选择回显', '多学科 · 大规模', '单学科 · 3 版本']) assert.ok(html.includes(text), text);
+  assert.doesNotMatch(html, /\/next\/explorations\/tree-directory/);
+  const css = await readFile(new URL('../components/prism-next/textbook-directory.css', import.meta.url), 'utf8');
   assert.ok(css.includes('[data-slot="tabs-content"]')); assert.doesNotMatch(css, /font-size|color:|box-shadow/);
 });

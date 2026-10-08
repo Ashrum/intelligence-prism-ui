@@ -9,6 +9,22 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'facet-filter': {
+    component: 'FacetFilter 分面筛选',
+    source: 'PO 2026-10-08 selected C; pinned coss ToggleGroup / Popover / Frame / Tabs; particles p-select-7, p-combobox-9, p-input-group-22; docs/facet-filter.md',
+    contract: ['dimensions={id,label,mode:single|multiple,options:{id,label,count?,tone?:success|info|warning}[],description?,common?}[]; value={filters,sort,favoritesOnly,search}; sortItems; resultCount?/favoriteCount?/endSlot?/onIntent.', 'Controlled facts only. Emits filter{dimensionId,values}, sort{value}, favorites{value}, search{value}, reset. Host applies values and decides reset defaults; no query, persistence or inferred result counts.', 'First three common dimensions in host order stay visible; all dimensions remain in the complete panel, including when none are common. Zero forbids new selection but existing zero can be removed; absent counts stay unknown. Multi drafts confirm in option order, cancel/close discard; changed dimension/value invalidates its draft.'],
+    states: ['single/multiple; zero/unknown; expanded/collapsed; panel; reset; 520/720/960 and two scales'],
+    accessibility: ['Named fieldsets and described help, coss ToggleGroup keyboard navigation, Popover Escape and focus return, confirmed/cancelled drafts return to the multi button; standard semantic tokens in light/paper/dark.'],
+    dont: ['No business store, service, persistence, timer or A/B variant API.'],
+  },
+  'tree': {
+    component: 'TextbookDirectory / TextbookRangePicker',
+    source: 'Pinned coss origin Tree, coss controls and DialogLayout; particles p-dialog-5, p-input-group-22; docs/textbook-directory.md',
+    contract: ['textbooks/selections/onSelectionsChange; layout=split|embedded. Existing split and embedded calls without new props retain byte-identical SSR. Embedded opts into outline with allOption/counts/subjects/currentNodes or multiSelect=dialog.', 'allOption={label?,ariaLabel?}: empty leaf set means all; title selection is idempotent. counts[nodeId] includes rootId total, only host facts; 0 is rendered, missing is omitted. multiSelect=dialog uses local draft and emits only at confirmation; always/toggle and titleAction=locate remain available.', 'currentNodes/onCurrentNodesChange pair stores exact single node per book:kind scope; matching leaves validate identity. Optional bookId/onBookChange and kind/onKindChange control navigation. subjects metadata supplies teaching/recent labels; volumeDescription is optional. firstLeafSelection(data) is a pure helper; defaults, restore and storage belong to host.'],
+    states: ['all/single/multiple; 2–5 levels; single/multiple textbooks; zero/missing counts; dialogs'],
+    accessibility: ['All is a separate button before the tree, ArrowDown/Right enters tree, first-row ArrowUp/Home returns. Tree arrows navigate/expand, Enter/Space activate; modal focus and Escape use coss DialogLayout. Three themes, capped indentation, full accessible names for long Chinese/formulas.'],
+    dont: ['No automatic first selection, persistence, recency inference, querying or Workspace private state.'],
+  },
   'segmented-bar': {
     component: 'SegmentedBar 分段条',
     source: 'Pinned coss MeterTrack + existing StatusComposition segment/keyboard conventions + Prism Button; docs/segmented-bar.md',
