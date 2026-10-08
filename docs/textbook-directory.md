@@ -29,3 +29,7 @@ P42 两个对话框继续复用 DialogLayout：
 默认第一课和记忆属于宿主。调用 `firstLeafSelection(courseData)` 初始化课程，知识点可设 `[]`；按教材+kind 保存 selections 与 currentNodes，先恢复再写入，外部删除节点时由宿主选择回退策略。组件本身不访问存储、不自动选择。组件页演示宿主使用 sessionStorage，包含坏 JSON/过期 ID/存储拒绝回退与清除本示例记忆；2–5级、单/多教材、题数开关、240/280/320px 与长中文公式。
 
 复用检索：既有 TextbookDirectory / Tree / DialogLayout，coss Button/InputGroup/Tabs/ToggleGroup/Separator/RadioGroup；本地 particles p-dialog-5、p-input-group-22、p-select-6/7/18。P42 采用 ToggleGroup 与既有封面/大纲组合，未采用搜索输入和下拉选择；无新增公共组件。沙箱不联网，未刷新上游；无 coss/依赖/令牌改动。浏览器验收按分工由 Supervisor 执行。
+
+P43：提供 `allOption` 时取消独立已选行；当前目录归并结果多于一项时，“全部”行右侧以次要提示文字显示“已选 n 项”和 coss ghost/xs“清空”，替代整本题数，全部无当前项底色。计数区域保持 `aria-live="polite"`，清空可访问名称“清空已选，回到全部”，仅清当前 scope 并回焦全部。无多选结果时恢复宿主整本题数（含 0，缺省隐藏）。全部行高 36px，无上下额外留白；分隔线上下各 4px，搜索到全部间距 8px。未提供 allOption 的新形态、旧 embedded 和 split 行为不变。
+
+P43 复用依据：检查 coss Button 的 ghost/xs（最小文字按钮）与本地 selection-particles 的 p-select-7（已选摘要）、p-select-21（随内容宽度）。下拉选择器不适合大纲首行；沿用 DirectoryOutlineTree，组合兄弟按钮与状态区域，避免嵌套交互控件。不新增组件、依赖或视觉令牌；沙箱不能联网，未刷新 particles 上游。

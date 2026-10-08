@@ -11,7 +11,7 @@ import type { DirectoryViewProps } from "@/components/prism-next/directory-prese
 import type { DirectoryNode } from "@/lib/prism-next/textbook-directory"
 
 export const DirectoryFacts = createContext<{ counts: Readonly<Record<string, number>>; showCounts: boolean }>({ counts: {}, showCounts: true })
-export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; partialCounts?: Record<string, { selected: number; total: number }>; allOption?: { label: string; text: string; selected: boolean; onSelect: () => void } } | null>(null)
+export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; partialCounts?: Record<string, { selected: number; total: number }>; allOption?: { label: string; text: string; selected: boolean; selectionCount?: number; onSelect: () => void } } | null>(null)
 export const OutlineView = (props: DirectoryViewProps) => <DirectoryOutlineTree {...props} />
 
 // Selection stays with the controlled host; the tree only owns navigation.
@@ -62,23 +62,27 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
     const row = reveal.current ? rows.current.get(reveal.current) : null
     if (row) { row.scrollIntoView({ block: "nearest", behavior: "instant" }); reveal.current = null }
   })
-  return <div data-directory-outline className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
+  return <div data-directory-outline className={`flex min-h-0 min-w-0 flex-1 flex-col ${allOption ? "gap-0" : "gap-2"}`}>
     <p id={navigationHelpId} className="sr-only">上下方向键浏览，左右方向键展开或收起。标题或 Enter、空格选择。全部行按向下或向右方向键进入目录树。</p>
-    {allOption && <div className="shrink-0 border-b p-1 pb-2">
+    {allOption && <div data-directory-all-section className="mb-1 shrink-0 border-b px-1 pb-1">
+      <div data-directory-all-row className="flex h-9 min-w-0 items-center">
       <button ref={allRef} type="button" data-directory-all aria-label={allOption.label} aria-pressed={allOption.selected}
-        className={`w-full text-left ${rowClass} ${allOption.selected ? "bg-accent hover:bg-accent" : ""}`}
+        className={`h-9 min-w-0 flex-1 text-left ${rowClass} ${allOption.selected ? "bg-accent hover:bg-accent" : ""}`}
         onClick={allOption.onSelect} onKeyDown={event => {
           if ((event.key === "ArrowDown" || event.key === "ArrowRight") && items[0]) { event.preventDefault(); event.stopPropagation(); focus(items[0].getId()) }
         }}>
-        <span className={rowContentClass}><span aria-hidden="true" className="h-7 w-5 shrink-0" />
-          <span className="min-w-0 flex-1 py-1 text-item-title text-foreground">{allOption.text}</span>
-          {showCounts && counts[data.rootId] !== undefined && <span data-directory-count className="w-7 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums">{counts[data.rootId]}</span>}
+        <span className="flex h-9 min-w-0 items-center gap-1 pl-1 pr-2"><span aria-hidden="true" className="w-5 shrink-0" />
+          <span className="min-w-0 flex-1 truncate text-item-title text-foreground">{allOption.text}</span>
+          {!allOption.selectionCount && showCounts && counts[data.rootId] !== undefined && <span data-directory-count className="w-7 shrink-0 text-right text-ui-hint text-muted-foreground tabular-nums">{counts[data.rootId]}</span>}
         </span>
       </button>
+      <span role="status" aria-live="polite" aria-atomic="true" className={allOption.selectionCount ? "shrink-0 whitespace-nowrap text-ui-hint text-muted-foreground" : "sr-only"}>{allOption.selectionCount ? `已选 ${allOption.selectionCount} 项` : ""}</span>
+      {allOption.selectionCount && <Button variant="ghost" size="xs" className="ml-1" aria-label="清空已选，回到全部" onClick={() => { allOption.onSelect(); allRef.current?.focus() }}>清空</Button>}
+      </div>
     </div>}
     <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain" data-directory-scroll>
       {!items.length && <p className="py-6 text-ui-hint">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>}
-      <Tree tree={tree} aria-label={label} aria-describedby={`${helpId} ${navigationHelpId}`} aria-multiselectable={showCheckboxes || (marks?.selected.size ?? 0) > 1} className="gap-0.5 p-1">
+      <Tree tree={tree} aria-label={label} aria-describedby={`${helpId} ${navigationHelpId}`} aria-multiselectable={showCheckboxes || (marks?.selected.size ?? 0) > 1} className={allOption ? "gap-0.5 px-1 pb-1 pt-0" : "gap-0.5 p-1"}>
         {items.map(item => {
           const id = item.getId(), node = item.getItemData(), depth = data.paths[id].length
           const progress = marks?.partialCounts?.[id]

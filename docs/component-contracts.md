@@ -2847,3 +2847,7 @@ P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 S
 ### P42 TextbookDirectory 对话框重排（2026-10-08）
 
 只调整已启用新属性的 embedded 两个对话框，不新增公开 API，旧 split/旧 embedded/RangePicker 不变。教材 DialogLayout 改为学科横向选项（单学科隐藏）→小号换行版本（超过三行可展开）→放大既有封面的册次网格，无搜索框；最近版本由宿主标记。多选只操作当前教材当前目录 kind，无种类页签、教材信息或搜索；左树全选/清空及半选提示，右侧按第一祖先归并并可移除，确认仅更新该 scope。题数合计仅在所有归并条目宿主题数齐全时呈现。尺寸、响应式、键盘与取消契约见 [TextbookDirectory](textbook-directory.md)。
+
+### P43 TextbookDirectory 全部行压缩（2026-10-08）
+
+新版 embedded 提供 `allOption` 时，已选 n 项与 ghost/xs 清空合并到全部行右侧，多选结果替代整本题数；无独立摘要行、无点分隔符。全部行 36px，分隔线上下各 4px，搜索间距 8px；礼貌播报和“清空已选，回到全部”名称保留。仅清当前 scope；split 与旧调用不变，详见 [大纲目录契约](textbook-directory.md)。

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { createDirectory, firstLeafSelection, directoryLeaves } from '../lib/prism-next/textbook-directory.ts';
+import { createDirectory, firstLeafSelection, directoryLeaves, summarizeDirectory } from '../lib/prism-next/textbook-directory.ts';
 import { probe, directoryDemoBooks, event, defaultDirectorySelections, restoreDirectorySelections, saveDirectorySelections, clearDirectoryMemory, directoryMemoryKey, restoreDirectoryCurrentNodes } from './directory-picker-harness.mjs';
 
 const allRow = p => p.find(node => node.props['data-directory-all'] !== undefined);
@@ -152,4 +152,57 @@ test('formal tree route includes embedded demo and layout-only CSS', async () =>
   assert.doesNotMatch(html, /\/next\/explorations\/tree-directory/);
   const css = await readFile(new URL('../components/prism-next/textbook-directory.css', import.meta.url), 'utf8');
   assert.ok(css.includes('[data-slot="tabs-content"]')); assert.doesNotMatch(css, /font-size|color:|box-shadow/);
+});
+
+
+test('P43 multi summary lives in the all row, replaces total and clears only the current scope', () => {
+  const p = probe(), book = p.books[0], data = book.directories.course;
+  const scope = `${book.id}:course`, other = `${book.id}:knowledge`;
+  const ids = [data.leafIds[0], data.leafIds.at(-1)];
+  p.state.selections = { [scope]: ids, [other]: [book.directories.knowledge.leafIds[0]], unrelated: ['keep'] };
+  p.state.currentNodes = { [scope]: 'stale', [other]: book.directories.knowledge.leafIds[0] };
+  p.render();
+  const count = summarizeDirectory(data, ids).length;
+  assert.ok(count > 1);
+  const row = p.find(node => node.props['data-directory-all-row'] !== undefined);
+  const status = descendants(row).find(node => node.props?.role === 'status');
+  assert.equal(status.props.children, `已选 ${count} 项`);
+  assert.equal(status.props['aria-live'], 'polite');
+  assert.match(status.props.className, /text-ui-hint text-muted-foreground/);
+  assert.ok(!descendants(row).some(node => node.props?.['data-directory-count'] !== undefined));
+  assert.equal(allRow(p).props['aria-pressed'], false);
+  assert.doesNotMatch(allRow(p).props.className, /bg-accent/);
+  assert.equal(p.find(node => node.type.name === 'PickerSession' && node.props.allOption).props.summary, false);
+  assert.equal((p.state.html.match(new RegExp(`已选 ${count} 项`, 'g')) ?? []).length, 1);
+  const clear = p.find(node => node.props['aria-label'] === '清空已选，回到全部');
+  assert.equal(clear.props.size, 'xs'); assert.equal(clear.props.variant, 'ghost');
+  assert.ok(!descendants(allRow(p)).includes(clear));
+  p.search('没有任何匹配');
+  assert.match(p.state.html, new RegExp(`已选 ${count} 项`));
+  const before = structuredClone(p.state.selections);
+  p.state.apply = false; p.click('清空已选，回到全部', true);
+  assert.deepEqual(p.state.selections, before);
+  p.state.apply = true;
+  let focuses = 0; allRow(p).props.ref.current = { focus() { focuses++; } };
+  p.click('清空已选，回到全部', true);
+  assert.equal(focuses, 1);
+  assert.deepEqual(p.state.selections, { ...before, [scope]: [] });
+  assert.deepEqual(p.state.currentNodes, { [other]: book.directories.knowledge.leafIds[0] });
+  assert.equal(allRow(p).props['aria-pressed'], true);
+  assert.equal(descendants(allRow(p)).find(node => node.props?.['data-directory-count'] !== undefined).props.children, 328);
+  assert.ok(!p.find(node => node.props['aria-label'] === '清空已选，回到全部'));
+});
+
+test('P43 all row has 36px height, 4px separator spacing and at most 8px search gap', () => {
+  const p = probe(); p.render();
+  assert.match(p.find(node => node.props['data-picker-session'] !== undefined).props.className, /gap-2$/);
+  assert.match(p.find(node => node.props['data-directory-outline'] !== undefined).props.className, /gap-0$/);
+  assert.equal(p.find(node => node.props['data-directory-all-section'] !== undefined).props.className, 'mb-1 shrink-0 border-b px-1 pb-1');
+  assert.match(p.find(node => node.props['data-directory-all-row'] !== undefined).props.className, /h-9/);
+  assert.match(allRow(p).props.className, /h-9/);
+  assert.doesNotMatch(allRow(p).props.children.props.className, /py-|pt-|pb-|min-h-/);
+  assert.match(p.find(node => node.type.name === 'Tree').props.className, /pt-0/);
+  activate(p, p.books[0].directories.course.leafIds[0]);
+  assert.ok(descendants(allRow(p)).some(node => node.props?.['data-directory-count'] !== undefined));
+  assert.ok(!p.find(node => node.props['aria-label'] === '清空已选，回到全部'));
 });
