@@ -6,8 +6,9 @@ import type { TextbookDefinition } from "@/components/prism-next/textbook-direct
 export function explorationBooks(depth: string): { books: TextbookDefinition[]; counts: Record<string, number> } {
   const source = directoryDepthExamples[depth][0]
   const counts: Record<string, number> = {}
-  const books = [1, 2].map(bookNumber => {
-    const id = `explore-${depth}-${bookNumber}`
+  const editions = ["人教 A 版（2019）", "人教 B 版（2019）", "北师大版"]
+  const books = editions.flatMap((edition, editionIndex) => [1, 2].map(bookNumber => {
+    const id = `explore-${depth}-${editionIndex * 2 + bookNumber}`
     const directories = Object.fromEntries((["course", "knowledge"] as DirectoryKind[]).map(kind => {
       const original = source.directories[kind]
       function copy(nodeId: string, chapter: number): DirectoryBranch {
@@ -30,7 +31,7 @@ export function explorationBooks(depth: string): { books: TextbookDefinition[]; 
       })
       return [kind, data]
     })) as TextbookDefinition["directories"]
-    return { id, title: `高中数学 · 必修第${bookNumber === 1 ? "一" : "二"}册`, volume: `必修第${bookNumber === 1 ? "一" : "二"}册`, subject: "数学", edition: "示例版", directories }
-  })
+    return { id, title: `高中数学 · 必修第${bookNumber === 1 ? "一" : "二"}册`, volume: `必修第${bookNumber === 1 ? "一" : "二"}册`, subject: "数学", edition, directories }
+  }))
   return { books, counts }
 }

@@ -13,14 +13,16 @@ import type { DirectoryViewProps } from "@/components/prism-next/directory-prese
 import type { DirectoryData, DirectoryNode } from "@/lib/prism-next/textbook-directory"
 
 export const ExplorationFacts = createContext<{ counts: Record<string, number>; showCounts: boolean; initialPath?: (data: DirectoryData) => string[] }>({ counts: {}, showCounts: true })
+export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string> } | null>(null)
 export const OutlineView = (props: DirectoryViewProps) => <ExplorationTree {...props} variant="A" />
 export const DrillView = (props: DirectoryViewProps) => <ExplorationTree {...props} variant="B" />
 export const AncestorView = (props: DirectoryViewProps) => <ExplorationTree {...props} variant="C" />
 
 // Navigation differs; all selection, search and summary callbacks belong to the
-// existing DirectorySession and its complete, unfiltered checkbox model.
+// host session and its complete, unfiltered checkbox model.
 export function ExplorationTree({ variant, data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId, showCheckboxes }: DirectoryViewProps & { variant: "A" | "B" | "C" }) {
   const { counts, showCounts, initialPath } = useContext(ExplorationFacts)
+  const marks = useContext(DirectoryMarks)
   const navigationHelpId = useId()
   const initialParent = projection.normalized ? data.rootId : initialPath?.(data).at(-1) ?? data.rootId
   const [parentId, setParentId] = useState(initialParent)
@@ -137,19 +139,20 @@ export function ExplorationTree({ variant, data, projection, selectionTree, curr
     {(drill || variant === "C") && path}
     {drill && parent !== data.rootId && <Button variant="ghost" size="sm" className="self-start" onClick={back}><ArrowLeft />返回上一级</Button>}
     <div ref={viewport} onScroll={readTopRow} className="min-h-0 flex-1 overflow-y-auto overscroll-contain" data-directory-scroll>
-      <Tree tree={tree} aria-label={drill ? `${label} · ${data.nodes[parent].title}` : label} aria-describedby={`${helpId} ${navigationHelpId}`} aria-multiselectable={showCheckboxes} className="gap-0.5 p-1">
+      <Tree tree={tree} aria-label={drill ? `${label} · ${data.nodes[parent].title}` : label} aria-describedby={`${helpId} ${navigationHelpId}`} aria-multiselectable={showCheckboxes || (marks?.selected.size ?? 0) > 1} className="gap-0.5 p-1">
         {items.map(item => {
           const id = item.getId(), node = item.getItemData(), depth = data.paths[id].length
           const state = selectionTree.getItemInstance(id).getCheckedState()
           const indentation = drill ? 0 : Math.min(depth - 1, 2) * 12
           const folder = node.children.length > 0
-          const selected = !showCheckboxes && currentId === id
+          const selected = !showCheckboxes && (marks ? marks.selected.has(id) : currentId === id)
+          const containsSelected = !showCheckboxes && marks?.ancestors.has(id)
           const titleRole = selected || depth === 1 ? "text-item-title" : depth <= 3 ? "text-ui-action" : "text-ui-body"
           const parentNode = projection.nodes[data.paths[id].at(-2) ?? data.rootId]
           const lastChild = parentNode.children.at(-1) === id
           return <TreeItem key={id} item={item} current={selected} aria-selected={selected} aria-current={!showCheckboxes && currentId === id ? "location" : undefined}
             aria-level={depth} aria-posinset={drill ? levelIds.indexOf(id) + 1 : undefined} aria-setsize={drill ? levelIds.length : undefined}
-            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} 题` : ""}`}
+            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} 题` : ""}${containsSelected ? "，包含已选" : ""}`}
             aria-checked={showCheckboxes ? state === "indeterminate" ? "mixed" : state === "checked" : undefined}
             style={{ "--tree-padding": `${indentation}px` } as CSSProperties} className={`relative cursor-pointer rounded-md hover:bg-muted ${selected ? "bg-accent hover:bg-accent" : ""}`}
             onClick={() => { focus(id); activate(id) }} onKeyDown={event => {
@@ -172,6 +175,7 @@ export function ExplorationTree({ variant, data, projection, selectionTree, curr
               <span data-directory-title className={`min-w-0 flex-1 py-1 ${titleRole} ${!selected && depth > 3 ? "text-muted-foreground" : "text-foreground"}`} title={`${node.code ? `${node.code} ` : ""}${node.title}`}>
                 <span className="line-clamp-2 break-words">{node.title}</span>
               </span>
+              {containsSelected && <span aria-hidden="true" data-directory-contains-selected className="mt-3 size-1.5 shrink-0 rounded-full bg-primary" />}
               {showCounts && counts[id] !== undefined && <span data-directory-count className="w-7 shrink-0 pt-1 text-right text-ui-hint text-muted-foreground tabular-nums" aria-hidden="true">{counts[id]}</span>}
               {drill && (folder ? <Button variant="ghost" size="icon-sm" className="size-7 shrink-0 sm:size-7" aria-label={`进入下级：${node.title}`} onClick={event => { event.stopPropagation(); enter(id) }}><ChevronRight /></Button> : <span className="w-7 shrink-0" aria-hidden="true" />)}
             </div>

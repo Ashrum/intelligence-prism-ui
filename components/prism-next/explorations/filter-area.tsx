@@ -47,14 +47,14 @@ export function FilterAreaExploration() {
   const [width, setWidth] = useState("720")
   const [scale, setScale] = useState<FilterScale>("future")
   const [counts, setCounts] = useState(true)
-  const [sortSet, setSortSet] = useState("综合 / 最新 / 热门 / 难度")
+  const [sortSet, setSortSet] = useState("综合 / 最新 / 热门")
   const dimensions = filterFixture(scale, counts)
   const sortItems = sortSet === "综合 / 最新" ? filterSortItems.slice(0, 2) : filterSortItems
   return <div className="space-y-8">
     <div className="flex flex-wrap items-end gap-4">
       <Choices label="容器宽度（px）" value={width} options={["520", "720", "960"]} onChange={setWidth} />
       <Choices label="数据规模" value={scale === "current" ? "现在的规模" : "将来的规模"} options={["现在的规模", "将来的规模"]} onChange={value => setScale(value === "现在的规模" ? "current" : "future")} />
-      <Choices label="排序项集合" value={sortSet} options={["综合 / 最新", "综合 / 最新 / 热门 / 难度"]} onChange={setSortSet} />
+      <Choices label="排序项集合" value={sortSet} options={["综合 / 最新", "综合 / 最新 / 热门"]} onChange={setSortSet} />
       <Toggle pressed={counts} onPressedChange={setCounts}>提供选项数量</Toggle>
     </div>
     <p className="text-ui-hint">三版共用组件示例数据，各自记录选择。切换规模会重置；其余开关保留筛选。128 题与收藏 23 题为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。所选宽度就是筛选区宽度，窄窗口以实际可用宽度为准。</p>

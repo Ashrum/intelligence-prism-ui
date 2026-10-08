@@ -23,7 +23,7 @@ export function filterFixture(scale: FilterScale, counts = true): FilterDimensio
 }
 
 export const filterSortItems = [
-  { id: "relevance", label: "综合" }, { id: "latest", label: "最新" }, { id: "popular", label: "热门" }, { id: "difficulty", label: "难度" },
+  { id: "relevance", label: "综合" }, { id: "latest", label: "最新" }, { id: "popular", label: "热门" },
 ]
 export function initialFilterValue(): ResourceFilterValue {
   return { filters: {}, sort: "relevance", favoritesOnly: false, search: "" }

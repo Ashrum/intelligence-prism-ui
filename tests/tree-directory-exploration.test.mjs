@@ -21,7 +21,7 @@ function search(p, query) { p.find(node => node.type.name === 'InputGroupInput')
 test('exploration fixture reuses each 2–5 level sample and supplies long formula titles, absent and zero counts', () => {
   for (const depth of ['2', '3', '4', '5']) {
     const { books, counts } = explorationBooks(depth);
-    assert.equal(books.length, 2);
+    assert.equal(books.length, 6);
     for (const book of books) for (const kind of kinds) {
       const data = book.directories[kind];
       assert.equal(Math.max(...Object.values(data.paths).map(path => path.length)), Number(depth));

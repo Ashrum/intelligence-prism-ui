@@ -200,3 +200,14 @@ test('all clears multi draft without applying until confirm; B single choice clo
   choose(p, '难度', ['difficulty-1']);
   assert.ok(!p.find(node => node.type.name === 'DimensionEditor'));
 });
+
+test('P37 all result sort tabs are relevance/latest/popular, and the exploration switch excludes difficulty', () => {
+  for (const variant of ['A', 'B', 'C']) {
+    const p = probe(variant); p.render();
+    const tabs = p.state.nodes.filter(({ node }) => node.type.name === 'TabsTab').map(({ node }) => node.props.value);
+    assert.deepEqual(tabs, ['relevance', 'latest', 'popular']);
+  }
+  const html = explorationSSR();
+  assert.match(html, /综合 \/ 最新 \/ 热门/);
+  assert.doesNotMatch(html, /综合 \/ 最新 \/ 热门 \/ 难度/);
+});
