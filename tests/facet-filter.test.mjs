@@ -205,11 +205,11 @@ test('P40 all uses the standard pressed background and only C remains', async ()
   assert.match(page, /FacetFilterDemo/);
 });
 
-test('P41 no common dimensions still exposes all filters and reset, including empty input', () => {
+test('P44 no common dimensions exposes all filters only for nonempty input, retaining reset', () => {
   for (const empty of [false, true]) {
     const p = probe('C'); p.state.dimensions = empty ? [] : p.state.dimensions.map(d => ({ ...d, common: false })); p.render();
-    assert.ok(p.find(node => node.type.name === 'FilterPanel'));
-    p.openPanel();
+    assert.equal(Boolean(p.find(node => node.type.name === 'FilterPanel')), !empty);
+    if (!empty) p.openPanel();
     assert.equal(p.state.nodes.filter(({node}) => node.type.name === 'FacetRow').length, p.state.dimensions.length);
     click(p, '重置'); assert.deepEqual(p.state.intents, [{type:'reset'}]);
   }
@@ -239,4 +239,31 @@ test('P41 counts zero are display facts and no-op host reset does not leave a pe
 
 for (const theme of ['light','paper','dark']) for (const width of [520,720,960]) for (const scale of ['current','future']) test(`P41 formal SSR matrix ${theme}/${width}/${scale}`, () => {
   const html = ssr('C',scale,width,{theme}); assert.match(html,/data-facet-filter/); assert.match(html,new RegExp(`data-prism-theme="${theme}"`)); assert.match(html,new RegExp(`width:${width}px`)); assert.match(html,/全部筛选/);
+});
+
+
+test('P44 favorites visibility defaults on and hiding preserves controlled facts and other actions', () => {
+  const normalize = html => html.replace(/_R_[^" ]*/g, '_ID_');
+  assert.equal(normalize(ssr('C', 'current', 520)), normalize(ssr('C', 'current', 520, { showFavorites: true })));
+  const p = probe('C'); p.state.value.favoritesOnly = true; p.state.showFavorites = false; p.render();
+  assert.doesNotMatch(p.state.html, /我的收藏/);
+  assert.match(p.state.html, /共 128 题/);
+  assert.equal(p.state.value.favoritesOnly, true); assert.deepEqual(p.state.intents, []);
+  p.find(node => node.type.name === 'Tabs').props.onValueChange('latest');
+  p.find(node => node.type.name === 'InputGroupInput').props.onChange({ target: { value: '函数' } }); p.render();
+  assert.deepEqual(p.state.intents, [{ type: 'sort', value: 'latest' }, { type: 'search', value: '函数' }]);
+  p.state.showFavorites = true; p.render();
+  assert.equal(p.find(node => node.type.name === 'Toggle' && textOf(node).includes('我的收藏')).props.pressed, true);
+  assert.match(ssr('C', 'current', 520, { showFavorites: false, endSlot: '宿主操作' }), /宿主操作/);
+});
+
+test('P44 all common hides empty panel, keeps reset/collapse, and retains overflow after three rows', () => {
+  for (const scale of ['current', 'future']) {
+    const p = probe('C', scale); p.state.dimensions = p.state.dimensions.map(d => ({ ...d, common: true })); p.render();
+    assert.equal(Boolean(p.find(node => node.type.name === 'FilterPanel')), scale === 'future');
+    if (scale === 'current') assert.doesNotMatch(p.state.html, /全部筛选/);
+    else { p.openPanel(); assert.match(p.state.html, /年份/); }
+    click(p, '收起'); click(p, '展开'); click(p, '重置');
+    assert.deepEqual(p.state.intents, [{ type: 'reset' }]);
+  }
 });

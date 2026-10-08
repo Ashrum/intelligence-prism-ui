@@ -26,6 +26,7 @@ export type FacetFilterProps = {
   value: FacetFilterValue
   sortItems: readonly { id: string; label: string }[]
   resultCount?: number
+  showFavorites?: boolean
   favoriteCount?: number
   endSlot?: ReactNode
   onIntent: (intent: FacetFilterIntent) => void

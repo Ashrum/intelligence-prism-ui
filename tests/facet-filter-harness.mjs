@@ -43,7 +43,7 @@ export function ssr(variant, scale, width, extra = {}) {
 // This probe invokes production handlers and persists only owned local hooks.
 // Popup content is rendered in place; it does not claim browser focus/keyboard acceptance.
 export function probe(variant, scale = 'future', width = 720) {
-  const state = { value: initialFilterValue(), dimensions: filterFixture(scale), intents: [], apply: true, nodes: [], html: '', store: new Map(), width };
+  const state = { value: initialFilterValue(), dimensions: filterFixture(scale), intents: [], apply: true, nodes: [], html: '', store: new Map(), width, showFavorites: undefined };
   const onIntent = intent => { state.intents.push(intent); if (state.apply) state.value = applyFilterIntent(state.value, intent); };
   function render() {
     const visited = new Set(); state.nodes = [];
@@ -60,7 +60,7 @@ export function probe(variant, scale = 'future', width = 720) {
       return React.cloneElement(node, {}, children.length ? children : node.props.children);
     }
     state.html = renderToStaticMarkup(inspect(React.createElement(module.FacetFilter, {
-      dimensions: state.dimensions, value: state.value, onIntent, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
+      dimensions: state.dimensions, value: state.value, onIntent, showFavorites: state.showFavorites, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
     })));
     for (const key of state.store.keys()) if (!visited.has(key)) state.store.delete(key);
     module.setTestContext(null);
