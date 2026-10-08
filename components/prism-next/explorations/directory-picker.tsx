@@ -53,25 +53,24 @@ function KindTabs({ kind, onKindChange, children }: { kind: DirectoryKind; onKin
   </Tabs>
 }
 
-function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple = false, session, onSessionChange, initialExpanded, searchAction, summary }: {
+function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple = false, session, onSessionChange, initialExpanded, searchAction, summary, currentNode, onCurrentNodeChange }: {
   data: DirectoryData; kind: DirectoryKind; checkedIds: string[]; onCheckedChange: Dispatch<SetStateAction<string[]>>
   View: ComponentType<DirectoryViewProps>; multiple?: boolean; session: Session; onSessionChange: (patch: Partial<Session>) => void
-  initialExpanded: string[]; searchAction?: ReactNode; summary?: ReactNode
+  initialExpanded: string[]; searchAction?: ReactNode; summary?: ReactNode; currentNode?: string; onCurrentNodeChange?: (id?: string) => void
 }) {
   const inputId = useId(), inputRef = useRef<HTMLInputElement>(null)
   const projection = useMemo(() => projectDirectory(data, session.query), [data, session.query])
   const selectionTree = useDirectorySelection(data, checkedIds, onCheckedChange)
-  const entries = summarizeDirectory(data, checkedIds)
+  const currentLeaves = currentNode ? directoryLeaves(data, currentNode) : []
+  const hasCurrent = currentLeaves.length > 0 && currentLeaves.length === checkedIds.length && currentLeaves.every(id => checkedIds.includes(id))
+  const entries = hasCurrent ? [{ id: currentNode!, leafIds: checkedIds }] : checkedIds.length === 1 ? [{ id: checkedIds[0], leafIds: checkedIds }] : summarizeDirectory(data, checkedIds)
   const selected = new Set(entries.map(entry => entry.id))
   const ancestors = new Set(entries.flatMap(entry => data.paths[entry.id].slice(0, -1)))
   const saveExpanded = useCallback((expandedIds: string[]) => onSessionChange({ expandedIds }), [onSessionChange])
   function activate(id: string) {
     if (multiple) { void selectionTree.getItemInstance(id).toggleCheckedState(); return }
-    const leaves = directoryLeaves(data, id)
-    onCheckedChange(previous => {
-      const valid = new Set(previous.filter(value => data.leafIds.includes(value)))
-      return valid.size === leaves.length && leaves.every(leaf => valid.has(leaf)) ? [] : leaves
-    })
+    onCurrentNodeChange?.(id)
+    onCheckedChange(directoryLeaves(data, id))
   }
   const clearSearch = () => { onSessionChange({ query: "" }); inputRef.current?.focus() }
   return <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-picker-session>
@@ -80,17 +79,18 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
     </div></div>
     {summary}
     {projection.normalized && <p role="status" className="text-ui-hint text-muted-foreground">{projection.matchingIds.size} 处匹配 · 搜索不改变已选范围</p>}
-    <p id={`${inputId}-help`} className="sr-only">{multiple ? "勾选父级包含全部下级，搜索不会缩小勾选范围。Enter 或空格勾选或取消。" : "点标题只看这一项，再点一次取消；替换当前目录的多选。"}</p>
-    <DirectoryMarks.Provider value={multiple ? null : { selected, ancestors }}>
-      {projection.nodes[data.rootId].children.length ? <View key={projection.normalized} data={data} projection={projection} selectionTree={selectionTree} currentId="" onCurrentChange={activate} initialExpanded={session.expandedIds ?? initialExpanded} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={`${inputId}-help`} titleAction="select" showCheckboxes={multiple} /> : <p className="py-6 text-ui-hint">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>}
+    <p id={`${inputId}-help`} className="sr-only">{multiple ? "勾选父级包含全部下级，搜索不会缩小勾选范围。Enter 或空格勾选或取消。" : "点标题只看这一项；看全部点“全部”；多选用“多选”按钮。"}</p>
+    <DirectoryMarks.Provider value={multiple ? null : { selected, ancestors, allOption: { label: kind === "course" ? "全部，整本教材" : "全部知识点", selected: checkedIds.length === 0, onSelect: () => { onCurrentNodeChange?.(); onCheckedChange([]) } } }}>
+      <View key={projection.normalized} data={data} projection={projection} selectionTree={selectionTree} currentId="" onCurrentChange={activate} initialExpanded={[...new Set([...(session.expandedIds ?? initialExpanded), ...ancestors])]} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={`${inputId}-help`} titleAction="select" showCheckboxes={multiple} />
     </DirectoryMarks.Provider>
   </div>
 }
 
-export function ExplorationDirectory({ textbooks, selections, onSelectionsChange, kind, onKindChange, View, initialExpanded, onTextbookSwitch }: {
+export function ExplorationDirectory({ textbooks, selections, onSelectionsChange, kind, onKindChange, View, initialExpanded, onTextbookSwitch, currentNodes = {}, onCurrentNodesChange }: {
   textbooks: TextbookDefinition[]; selections: DirectorySelections; onSelectionsChange: SelectionChange
   kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; View: ComponentType<DirectoryViewProps>
   initialExpanded: (data: DirectoryData) => string[]; onTextbookSwitch?: () => void
+  currentNodes?: Record<string, string>; onCurrentNodesChange?: Dispatch<SetStateAction<Record<string, string>>>
 }) {
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
   const [sessions, setSessions] = useState<Record<string, Session>>({})
@@ -113,7 +113,11 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
     return { ...previous, [draftScope]: { ...current, ...patch } }
   }), [draftScope])
   if (!book) return <p className="text-ui-hint">暂无可用教材。</p>
-  const entries = selectedEntries(textbooks, selections), draftEntries = selectedEntries(textbooks, multiDialog.selections)
+  const activeIds = selections[scope] ?? []
+  const currentLeaves = currentNodes[scope] ? directoryLeaves(book.directories[kind], currentNodes[scope]) : []
+  const hasCurrent = currentLeaves.length > 0 && currentLeaves.length === activeIds.length && currentLeaves.every(id => activeIds.includes(id))
+  const entries = hasCurrent ? [{ id: currentNodes[scope] }] : activeIds.length === 1 ? [{ id: activeIds[0] }] : summarizeDirectory(book.directories[kind], activeIds)
+  const draftEntries = selectedEntries(textbooks, multiDialog.selections)
   const editions = [...new Set(textbooks.map(editionTitle))]
   const selectedBook = textbooks.find(item => item.id === bookDialog.id && editionTitle(item) === bookDialog.edition)
   const disabledReason = !selectedBook ? "请选择册次。" : selectedBook.id === book.id ? "尚未改变教材选择。" : ""
@@ -131,9 +135,11 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
       setBookDialog({ open: true, edition: editionTitle(book), id: book.id })
     }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>
     <KindTabs kind={kind} onKindChange={onKindChange}>
-      <PickerSession key={scope} data={book.directories[kind]} kind={kind} checkedIds={selections[scope] ?? []} onCheckedChange={changeChecked(kind, onSelectionsChange)} View={View} session={sessions[scope] ?? { query: "" }} onSessionChange={patchSession} initialExpanded={initialExpanded(book.directories[kind])}
-        searchAction={<Button ref={multiRef} variant="outline" aria-label="多选" aria-haspopup="dialog" onClick={() => { setDraftSessions({}); setMultiDialog({ open: true, kind, selections: structuredClone(selections) }) }}>多选</Button>}
-        summary={entries.length > 0 && <div className="flex min-w-0 items-center gap-2 text-ui-hint"><p role="status" className="min-w-0 truncate text-muted-foreground" title={entries.length === 1 ? `已选：${entries[0].title}` : undefined}>{entries.length === 1 ? `已选：${entries[0].title}` : `已选 ${entries.length} 项`}</p><Button variant="ghost" size="sm" aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => clearSelections(textbooks, previous))}>清空</Button></div>} />
+      <PickerSession key={scope} currentNode={currentNodes[scope]} onCurrentNodeChange={id => onCurrentNodesChange?.(previous => {
+        const next = { ...previous }; if (id) next[scope] = id; else delete next[scope]; return next
+      })} data={book.directories[kind]} kind={kind} checkedIds={selections[scope] ?? []} onCheckedChange={changeChecked(kind, onSelectionsChange)} View={View} session={sessions[scope] ?? { query: "" }} onSessionChange={patchSession} initialExpanded={initialExpanded(book.directories[kind])}
+        searchAction={<Button ref={multiRef} variant="outline" aria-label="多选" title="点标题只看这一项；看全部点“全部”；多选用“多选”按钮。" aria-haspopup="dialog" onClick={() => { setDraftSessions({}); setMultiDialog({ open: true, kind, selections: structuredClone(selections) }) }}>多选</Button>}
+        summary={entries.length > 1 && <div className="flex min-w-0 items-center gap-2 text-ui-hint"><p role="status" className="min-w-0 truncate text-muted-foreground">已选 {entries.length} 项 ·</p><Button variant="ghost" size="sm" aria-label="清空当前目录的已选范围" onClick={() => { onCurrentNodesChange?.(previous => { const next = { ...previous }; delete next[scope]; return next }); onSelectionsChange(previous => ({ ...previous, [scope]: [] })) }}>清空</Button></div>} />
     </KindTabs>
     <DialogLayout open={bookDialog.open} onOpenChange={open => { if (!open) closeBook() }} title="选择教材版本" closeLabel="关闭教材版本选择" description="选择当前使用的教材版本与册次，确认后同步题目结果。" size="lg" initialFocus={bookFocus} finalFocus={switchRef}
       footerStart={<div className="space-y-1 text-ui-hint text-muted-foreground"><p>确认后将更新当前筛选范围与题目结果。</p>{disabledReason && <p id={reasonId}>{disabledReason}</p>}</div>}
@@ -145,6 +151,10 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
     <DialogLayout open={multiDialog.open} onOpenChange={open => { if (!open) closeMulti() }} title="选择目录范围" closeLabel="关闭目录多选" description="可跨课程与知识点选择，确认后同时筛选符合条件的题目。" size="xl" initialFocus={multiFocus} finalFocus={multiRef}
       footerStart={<p className="text-ui-hint text-muted-foreground">确认后将更新筛选范围与题目结果</p>}
       footerEnd={<div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={closeMulti}>取消</Button><Button variant="outline" onClick={() => {
+        onCurrentNodesChange?.(previous => Object.fromEntries(Object.entries(previous).filter(([scope]) => {
+          const before = selections[scope] ?? [], after = multiDialog.selections[scope] ?? []
+          return before.length === after.length && before.every(id => after.includes(id))
+        })))
         onSelectionsChange(previous => ({ ...previous, ...Object.fromEntries(textbooks.flatMap(item => kinds.map(type => {
           const key = `${item.id}:${type}`
           return [key, [...new Set(multiDialog.selections[key] ?? [])].filter(id => item.directories[type].leafIds.includes(id))]

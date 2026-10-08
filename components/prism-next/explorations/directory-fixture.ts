@@ -29,6 +29,7 @@ export function explorationBooks(depth: string): { books: TextbookDefinition[]; 
         // Deliberately include missing counts and numeric zero; never invent totals in the view.
         if (index % 4 !== 1) counts[nodeId] = [0, 0, 24, 136][index % 4]
       })
+      if (editionIndex === 0) counts[data.rootId] = bookNumber === 1 ? 328 : 0
       return [kind, data]
     })) as TextbookDefinition["directories"]
     return { id, title: `高中数学 · 必修第${bookNumber === 1 ? "一" : "二"}册`, volume: `必修第${bookNumber === 1 ? "一" : "二"}册`, subject: "数学", edition, directories }

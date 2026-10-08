@@ -7,7 +7,6 @@
 .directory-exploration-frame [data-slot="tabs-list"],
 .directory-exploration-frame [data-picker-session] > :not([data-exploration-view]) { flex-shrink: 0; }
 .directory-exploration-layout { container-type: inline-size; }
-@container (min-width: 1008px) { .directory-exploration-comparison { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 640px) { .directory-picker-columns { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); } }
 /* DialogLayout owns scrolling. The modal tree grows inside that single body. */
 .directory-picker-columns [data-directory-scroll] { overflow: visible; }
