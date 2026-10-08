@@ -3,7 +3,6 @@
 import { useCallback, useId, useMemo, useRef, useState, type ComponentType, type Dispatch, type ReactNode, type SetStateAction } from "react"
 import { ArrowRightLeft, Search, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
-import { Label } from "@/components/coss/label"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { DialogLayout, DialogOptionGrid, DialogOptionGridItem, DialogSection } from "@/components/prism-next/dialog-layout"
@@ -74,9 +73,9 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   }
   const clearSearch = () => { onSessionChange({ query: "" }); inputRef.current?.focus() }
   return <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-picker-session>
-    <div className="shrink-0"><Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label><div className="flex min-w-0 items-center gap-2">
+    <div className="flex min-w-0 shrink-0 items-center gap-2">
       <InputGroup className="min-w-0 flex-1"><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={inputId} ref={inputRef} aria-label={`搜索当前${kindTitle(kind)}`} value={session.query} onChange={event => onSessionChange({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>{searchAction}
-    </div></div>
+    </div>
     {summary}
     {projection.normalized && <p role="status" className="text-ui-hint text-muted-foreground">{projection.matchingIds.size} 处匹配 · 搜索不改变已选范围</p>}
     <p id={`${inputId}-help`} className="sr-only">{multiple ? "勾选父级包含全部下级，搜索不会缩小勾选范围。Enter 或空格勾选或取消。" : "点标题只看这一项；看全部点“全部”；多选用“多选”按钮。"}</p>

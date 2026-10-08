@@ -8,6 +8,38 @@ const key = async (p, id, key = ' ') => { assert.ok(p.row(id), id); p.row(id).pr
 const confirm = p => { p.find(node => node.type.name === 'Button' && textOf(node).startsWith('确认选择（')).props.onClick(); p.render() };
 const items = p => p.all(node => node.props['data-directory-selected']);
 
+test('exploration searches stay label-free with accessible names, inline action and linked hidden help', () => {
+  const p = probe(); p.render();
+  function checkSearch(kind, multiple) {
+    const name = `搜索当前${kind === 'course' ? '课程目录' : '知识点目录'}`;
+    const input = p.find(node => node.type.name === 'InputGroupInput');
+    assert.equal(input.props['aria-label'], name);
+    assert.doesNotMatch(p.state.html, /<label\b/);
+    const row = p.find(node => node.type === 'div' && Array.isArray(node.props.children)
+      && node.props.children[0]?.type?.name === 'InputGroup');
+    assert.match(row.props.className, /\bflex\b/);
+    assert.doesNotMatch(row.props.className, /flex-col|flex-wrap/);
+    assert.equal(row.props.children[1]?.props?.['aria-label'], multiple ? undefined : '多选');
+    for (const tree of p.all(node => node.type.name === 'Tree')) {
+      const ids = tree.props['aria-describedby'].split(' ');
+      assert.equal(ids.length, 2);
+      for (const id of ids) {
+        const help = p.find(node => node.type === 'p' && node.props.id === id);
+        assert.ok(help, `linked help ${id}`);
+        assert.equal(help.props.className, 'sr-only');
+      }
+    }
+  }
+  checkSearch('course', false); p.tab('knowledge'); checkSearch('knowledge', false);
+  p.click('多选', true); checkSearch('knowledge', true);
+  p.tab('course'); checkSearch('course', true);
+  assert.equal(p.dialog(multiTitle).props.description, '可跨课程与知识点选择，确认后同时筛选符合条件的题目。');
+  assert.equal(textOf(p.dialog(multiTitle).props.footerStart), '确认后将更新筛选范围与题目结果');
+  p.click('取消'); p.click('切换教材', true);
+  assert.equal(p.dialog(bookTitle).props.description, '选择当前使用的教材版本与册次，确认后同步题目结果。');
+  assert.match(textOf(p.dialog(bookTitle).props.footerStart), /确认后将更新当前筛选范围与题目结果。/);
+});
+
 test('A: version/volume drafts, unchanged reason, cancel/Esc discard, apply and callback priority', () => {
   const p = probe(); p.render();
   const first = p.books[0], target = p.books[3];
