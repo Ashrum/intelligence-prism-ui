@@ -22,7 +22,6 @@ export type ResourceFilterIntent =
   | { type: "search"; value: string }
   | { type: "reset" }
 export type ResourceFilterAreaProps = {
-  variant: "A" | "B" | "C"
   dimensions: readonly FilterDimension[]
   value: ResourceFilterValue
   sortItems: readonly { id: string; label: string }[]

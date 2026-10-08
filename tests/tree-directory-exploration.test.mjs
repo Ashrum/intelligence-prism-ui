@@ -150,8 +150,8 @@ test('exploration route SSR presents only A and links; CSS stays layout-only', a
     const response = await worker.fetch(new Request(`http://localhost${path}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
     assert.equal(response.status, 200); const html = await response.text();
     if (path.includes('explorations')) {
-      for (const text of ['教材目录 · 定版探索', '大纲树', '数据层级', '显示题数', '清除记忆，回到首次进入状态', '宿主选择回显']) assert.ok(html.includes(text), text);
-      assert.doesNotMatch(html, /逐级钻取|吸顶祖先树|三版|directory-B|directory-C/);
+      for (const text of ['教材目录 · 定版探索', '大纲树', '数据层级', '显示题数', '清除记忆，回到首次进入状态', '宿主选择回显', '多学科 · 大规模', '单学科 · 3 版本']) assert.ok(html.includes(text), text);
+      assert.doesNotMatch(html, /逐级钻取|吸顶祖先树|三版|id="directory-[BC]"/);
       assert.ok(html.includes('id="directory-A"'));
     } else assert.ok(html.includes('/next/explorations/tree-directory'));
   }

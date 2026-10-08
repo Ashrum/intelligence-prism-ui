@@ -1,14 +1,21 @@
 import { directoryDepthExamples } from "@/lib/prism-next/fixtures/directory-depth"
 import { createDirectory, type DirectoryBranch, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
 import type { TextbookDefinition } from "@/components/prism-next/textbook-directory"
+import type { ExplorationTextbook, TextbookSubject } from "./directory-picker"
 
 // Host-supplied demonstration facts only; original textbook fixtures stay intact.
-export function explorationBooks(depth: string): { books: TextbookDefinition[]; counts: Record<string, number> } {
+export function explorationBooks(depth: string, scale: "small" | "large" = "small"): { books: ExplorationTextbook[]; counts: Record<string, number>; subjects: TextbookSubject[] } {
   const source = directoryDepthExamples[depth][0]
   const counts: Record<string, number> = {}
   const editions = ["人教 A 版（2019）", "人教 B 版（2019）", "北师大版"]
-  const books = editions.flatMap((edition, editionIndex) => [1, 2].map(bookNumber => {
-    const id = `explore-${depth}-${editionIndex * 2 + bookNumber}`
+  const subjects: TextbookSubject[] = scale === "small" ? [{ name: "数学", editions: editions.map(title => ({ title })) }] : [
+    { name: "数学", teaching: true, editions: [...editions, "苏教版", "湘教版", "沪教版", "鲁教版", "冀教版", "华师大版", "浙教版", "粤教版", "北京版"].map((title, index) => ({ title, recent: index < 2 })) },
+    { name: "物理", teaching: true, editions: [{ title: "教科版", recent: true }, { title: "人教版" }, { title: "沪科版" }] },
+    { name: "语文", editions: [{ title: "统编版" }, { title: "苏教版" }] },
+    { name: "英语", editions: [{ title: "外研版", recent: true }, { title: "人教版" }] },
+  ]
+  const books = subjects.flatMap((subject, subjectIndex) => subject.editions.flatMap(({ title: edition }, editionIndex) => Array.from({ length: scale === "small" ? 2 : 4 + editionIndex % 5 }, (_, i) => i + 1).map(bookNumber => {
+    const id = scale === "small" ? `explore-${depth}-${editionIndex * 2 + bookNumber}` : `explore-large-${depth}-${subjectIndex}-${editionIndex}-${bookNumber}`
     const directories = Object.fromEntries((["course", "knowledge"] as DirectoryKind[]).map(kind => {
       const original = source.directories[kind]
       function copy(nodeId: string, chapter: number): DirectoryBranch {
@@ -32,7 +39,8 @@ export function explorationBooks(depth: string): { books: TextbookDefinition[]; 
       if (editionIndex === 0) counts[data.rootId] = bookNumber === 1 ? 328 : 0
       return [kind, data]
     })) as TextbookDefinition["directories"]
-    return { id, title: `高中数学 · 必修第${bookNumber === 1 ? "一" : "二"}册`, volume: `必修第${bookNumber === 1 ? "一" : "二"}册`, subject: "数学", edition, directories }
-  }))
-  return { books, counts }
+    const volume = bookNumber <= 2 ? `必修第${bookNumber === 1 ? "一" : "二"}册` : `选择性必修第${["一", "二", "三", "四", "五", "六"][bookNumber - 3]}册`
+    return { id, volumeDescription: scale === "large" ? `高${bookNumber < 3 ? "一" : bookNumber < 6 ? "二" : "三"} · ${bookNumber % 2 ? "上" : "下"}学期` : undefined, title: `高中${subject.name} · ${volume}`, volume, subject: subject.name, edition, directories }
+  })))
+  return { books, counts, subjects }
 }

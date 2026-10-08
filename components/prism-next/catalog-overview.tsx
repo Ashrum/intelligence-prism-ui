@@ -39,7 +39,7 @@ export function CatalogOverview() {
     })}
     {count===0&&relatedPages.length===0&&<div className="py-12 text-center"><p className="mb-4 text-muted-foreground">没有匹配的组件、骨架或示例。</p><Button variant="outline" onClick={()=>setQuery('')}>清除搜索</Button></div>}
     <section className="mt-10"><h2 className="text-section-title">应用示例 · 不计入组件数量</h2><div className="mt-3 grid gap-4 sm:grid-cols-2">{applicationExamples.map(item=><Link key={item.id} href={`/next/examples/${item.id}`} className="border-b py-3"><p className="text-ui-action">{item.title}</p><p className="mt-1 text-ui-hint text-muted-foreground">{item.summary}</p></Link>)}</div></section>
-    <section className="mt-10 space-y-3"><h2 className="text-section-title">设计探索 · 不计入组件数量</h2><div className="flex flex-wrap gap-4 text-ui-action"><Link href="/next/explorations/filter-area" className="underline">筛选功能区 · 三版比较</Link><Link href="/next/explorations/tree-directory" className="underline">教材目录 · 定版探索</Link></div></section>
+    <section className="mt-10 space-y-3"><h2 className="text-section-title">设计探索 · 不计入组件数量</h2><div className="flex flex-wrap gap-4 text-ui-action"><Link href="/next/explorations/filter-area" className="underline">筛选功能区 · 定版探索</Link><Link href="/next/explorations/tree-directory" className="underline">教材目录 · 定版探索</Link></div></section>
     <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-ui-hint text-muted-foreground"><p>coss 原始组件 · 系统字体 · 清晰的数学排版</p></footer>
   </div>
 }

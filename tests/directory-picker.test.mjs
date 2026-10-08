@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { directoryLeaves } from '../lib/prism-next/textbook-directory.ts';
 import { probe, event, textOf } from './directory-picker-harness.mjs';
-const multiTitle = '选择目录范围', bookTitle = '选择教材版本';
-const choose = (p, label, value) => { p.find(node => node.type.name === 'DialogOptionGrid' && node.props.label === label).props.onValueChange(value); p.render() };
+const multiTitle = '选择目录范围', bookTitle = '选择教材';
+const choose = (p, label, value) => { p.find(node => ['DialogOptionGrid', 'DialogChoiceList'].includes(node.type.name) && node.props.label === label).props.onValueChange(value); p.render() };
 const key = async (p, id, key = ' ') => { assert.ok(p.row(id), id); p.row(id).props.onKeyDown(event(key)); await new Promise(setImmediate); p.render() };
 const confirm = p => { p.find(node => node.type.name === 'Button' && textOf(node).startsWith('确认选择（')).props.onClick(); p.render() };
 const items = p => p.all(node => node.props['data-directory-selected']);
@@ -36,7 +36,7 @@ test('exploration searches stay label-free with accessible names, inline action 
   assert.equal(p.dialog(multiTitle).props.description, '可跨课程与知识点选择，确认后同时筛选符合条件的题目。');
   assert.equal(textOf(p.dialog(multiTitle).props.footerStart), '确认后将更新筛选范围与题目结果');
   p.click('取消'); p.click('切换教材', true);
-  assert.equal(p.dialog(bookTitle).props.description, '选择当前使用的教材版本与册次，确认后同步题目结果。');
+  assert.equal(p.dialog(bookTitle).props.description, '选择学科、版本与册次，确认后同步题目结果。');
   assert.match(textOf(p.dialog(bookTitle).props.footerStart), /确认后将更新当前筛选范围与题目结果。/);
 });
 
@@ -50,7 +50,7 @@ test('A: version/volume drafts, unchanged reason, cancel/Esc discard, apply and 
   assert.equal(confirmButton.props.disabled, true); assert.ok(confirmButton.props['aria-describedby']);
   assert.match(p.state.html, /尚未改变教材选择/);
   assert.ok(p.dialog(bookTitle).props.initialFocus); assert.ok(p.dialog(bookTitle).props.finalFocus);
-  assert.deepEqual(p.all(node => node.type.name === 'DialogOptionGridItem').slice(0, 3).map(node => node.props.title), ['人教 A 版（2019）', '人教 B 版（2019）', '北师大版']);
+  assert.deepEqual(p.all(node => node.type.name === 'DialogChoice').slice(0, 3).map(node => node.props.title), ['人教 A 版（2019）', '人教 B 版（2019）', '北师大版']);
   choose(p, '教材版本', target.edition); assert.match(p.state.html, /请选择册次/);
   choose(p, '教材册次', target.id);
   assert.equal(p.find(node => node.type.name === 'Button' && textOf(node) === '确认选择').props.disabled, false);
@@ -66,7 +66,7 @@ test('A: version/volume drafts, unchanged reason, cancel/Esc discard, apply and 
 
 test('missing optional edition/volume fields use honest fallbacks without new required metadata', () => {
   const p = probe(); p.state.books = p.books.slice(0, 2).map(({ edition, volume, ...book }) => book); p.render(); p.click('切换教材', true);
-  assert.ok(p.all(node => node.type.name === 'DialogOptionGridItem').some(node => node.props.title === '未提供版本'));
+  assert.ok(p.all(node => node.type.name === 'DialogChoice').some(node => node.props.title === '未提供版本'));
   assert.ok(p.all(node => node.type.name === 'DialogOptionGridItem').some(node => node.props.title === p.books[0].title));
 });
 
@@ -156,4 +156,66 @@ test('multi clear returns only the active directory to all; unchanged modal conf
   assert.equal(p.find(node => node.props['data-directory-all'] !== undefined).props['aria-pressed'], true);
   assert.equal(p.state.selections[knowledge].length, 1); assert.equal(p.state.selections[other].length, 1);
   assert.ok(p.rows().every(row => !row.props.current)); assert.doesNotMatch(p.state.html, /已选：|已选 \d+ 项/);
+});
+
+
+test('P40 large catalog subject/edition/volume linkage, host recency, search and cancellation', () => {
+  const p = probe('5', false, 'large'); p.render();
+  assert.equal(new Set(p.books.map(book => book.subject)).size, 4);
+  const maths = p.books.filter(book => book.subject === '数学');
+  assert.equal(new Set(maths.map(book => book.edition)).size, 12);
+  for (const subject of p.state.subjects) for (const edition of subject.editions) {
+    const count = p.books.filter(book => book.subject === subject.name && book.edition === edition.title).length;
+    assert.ok(count >= 4 && count <= 8);
+  }
+  // Input order differs from metadata order: the host supplies the ranking.
+  p.state.subjects = [...p.state.subjects].reverse();
+  const physics = p.state.subjects.find(item => item.name === '物理');
+  physics.editions = [{ title: '沪科版' }, { title: '人教版', recent: true }, { title: '教科版' }];
+  p.click('切换教材', true);
+  assert.equal(p.all(node => node.type.name === 'BookHeader').length, 1, 'book art remains only in sidebar');
+  const choices = label => p.find(node => node.type.name === 'DialogChoiceList' && node.props.label === label);
+  const subjectItems = () => choices('教材学科').props.children;
+  assert.deepEqual(subjectItems().map(node => node.props.title), ['物理', '数学', '英语', '语文']);
+  assert.equal(subjectItems().filter(node => node.props.description === '我的任教学科').length, 2);
+  const search = (label, value) => { p.find(node => node.type.name === 'InputGroupInput' && node.props['aria-label'] === label).props.onChange({ target: { value } }); p.render() };
+  search('搜索学科', '物'); assert.deepEqual(subjectItems().map(node => node.props.title), ['物理']);
+  search('搜索学科', '');
+  search('搜索版本', '北师大'); assert.deepEqual(choices('教材版本').props.children.map(node => node.props.title), ['北师大版']);
+  choose(p, '教材版本', '北师大版');
+  const volumes = () => p.find(node => node.type.name === 'DialogOptionGrid' && node.props.label === '教材册次');
+  assert.equal(volumes().props.children.length, 6);
+  choose(p, '教材册次', volumes().props.children[0].props.value);
+  choose(p, '教材学科', '物理');
+  assert.equal(choices('教材版本').props.value, '人教版');
+  assert.deepEqual(choices('教材版本').props.children.map(node => node.props.title), ['人教版', '沪科版', '教科版']);
+  assert.equal(choices('教材版本').props.children[0].props.description, '最近使用');
+  assert.equal(volumes().props.value, null);
+  assert.equal(p.find(node => node.type.name === 'Button' && textOf(node) === '确认选择').props.disabled, true);
+  const target = volumes().props.children[0].props.value;
+  choose(p, '教材册次', target); p.click('取消');
+  assert.equal(p.find(node => node.type.name === 'BookHeader').props.book.id, p.books[0].id);
+  p.click('切换教材', true);
+  assert.equal(volumes().props.children[0].props.status.label, '当前');
+  search('搜索版本', '不存在'); assert.match(p.state.html, /没有匹配的版本/);
+  choose(p, '教材学科', '语文'); assert.equal(choices('教材版本').props.value, '统编版');
+  choose(p, '教材学科', '物理'); choose(p, '教材册次', target); p.click('确认选择');
+  assert.equal(p.find(node => node.type.name === 'BookHeader').props.book.id, target);
+});
+
+test('P40 small catalog hides subject section; multi modal removes book header and has independent scroll layout', async () => {
+  const p = probe(); p.render(); p.click('切换教材', true);
+  assert.equal(p.find(node => node.type.name === 'DialogChoiceList' && node.props.label === '教材学科'), undefined);
+  assert.equal(p.find(node => node.props['aria-label'] === '搜索学科'), undefined);
+  assert.equal(p.find(node => node.type.name === 'DialogChoiceList' && node.props.label === '教材版本').props.children.length, 3);
+  p.click('取消'); p.click('多选', true);
+  assert.equal(p.all(node => node.type.name === 'BookHeader').length, 1);
+  assert.equal(p.dialog(multiTitle).props.size, 'xl');
+  assert.ok(p.find(node => node.type === 'section' && node.props.className?.includes('directory-picker-tree')));
+  assert.ok(p.find(node => node.type === 'section' && node.props.className?.includes('directory-picker-selected')));
+  const { readFile } = await import('node:fs/promises');
+  const css = await readFile(new URL('../components/prism-next/explorations/tree-directory.css', import.meta.url), 'utf8');
+  assert.match(css, /max-height: 80dvh/); assert.match(css, /3fr\) minmax\(0, 2fr/);
+  assert.match(css, /dialog-layout-body:has\(\.directory-picker-columns\).*overflow: hidden/);
+  assert.doesNotMatch(css, /data-directory-scroll.*overflow: visible/);
 });

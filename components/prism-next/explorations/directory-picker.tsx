@@ -4,8 +4,9 @@ import { useCallback, useId, useMemo, useRef, useState, type ComponentType, type
 import { ArrowRightLeft, Search, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
+import { Label } from "@/components/coss/label"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
-import { DialogLayout, DialogOptionGrid, DialogOptionGridItem, DialogSection } from "@/components/prism-next/dialog-layout"
+import { DialogLayout, DialogOptionGrid, DialogOptionGridItem, DialogSection, DialogChoiceList, DialogChoice } from "@/components/prism-next/dialog-layout"
 import { useDirectorySelection, type DirectorySelections, type TextbookDefinition } from "@/components/prism-next/textbook-directory"
 import type { DirectoryViewProps } from "@/components/prism-next/directory-presentation"
 import { directoryLeaves, projectDirectory, summarizeDirectory, type DirectoryData, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
@@ -14,6 +15,10 @@ import { DirectoryMarks, OutlineView } from "./directory-views"
 const kinds: DirectoryKind[] = ["course", "knowledge"]
 const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : "知识点目录"
 const editionTitle = (book: TextbookDefinition) => book.edition?.trim() || "未提供版本"
+export type TextbookSubject = { name: string; teaching?: boolean; editions: { title: string; recent?: boolean }[] }
+export type ExplorationTextbook = TextbookDefinition & { volumeDescription?: string }
+const hostRank = <T,>(items: T[], item: T) => items.indexOf(item) < 0 ? items.length : items.indexOf(item)
+const subjectTitle = (book: TextbookDefinition) => book.subject?.trim() || "未提供学科"
 type SelectionChange = Dispatch<SetStateAction<DirectorySelections>>
 type Session = { query: string; expandedIds?: string[] }
 
@@ -85,15 +90,15 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function ExplorationDirectory({ textbooks, selections, onSelectionsChange, kind, onKindChange, View, initialExpanded, onTextbookSwitch, currentNodes = {}, onCurrentNodesChange }: {
-  textbooks: TextbookDefinition[]; selections: DirectorySelections; onSelectionsChange: SelectionChange
+export function ExplorationDirectory({ textbooks, selections, onSelectionsChange, kind, onKindChange, View, initialExpanded, onTextbookSwitch, subjects: hostSubjects = [], currentNodes = {}, onCurrentNodesChange }: {
+  textbooks: ExplorationTextbook[]; subjects?: TextbookSubject[]; selections: DirectorySelections; onSelectionsChange: SelectionChange
   kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; View: ComponentType<DirectoryViewProps>
   initialExpanded: (data: DirectoryData) => string[]; onTextbookSwitch?: () => void
   currentNodes?: Record<string, string>; onCurrentNodesChange?: Dispatch<SetStateAction<Record<string, string>>>
 }) {
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
   const [sessions, setSessions] = useState<Record<string, Session>>({})
-  const [bookDialog, setBookDialog] = useState({ open: false, edition: "", id: "" })
+  const [bookDialog, setBookDialog] = useState({ open: false, subject: "", edition: "", id: "", subjectQuery: "", editionQuery: "" })
   const [multiDialog, setMultiDialog] = useState<{ open: boolean; kind: DirectoryKind; selections: DirectorySelections }>({ open: false, kind, selections: {} })
   const [draftSessions, setDraftSessions] = useState<Record<string, Session>>({})
   const switchRef = useRef<HTMLButtonElement>(null), multiRef = useRef<HTMLButtonElement>(null)
@@ -117,8 +122,20 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
   const hasCurrent = currentLeaves.length > 0 && currentLeaves.length === activeIds.length && currentLeaves.every(id => activeIds.includes(id))
   const entries = hasCurrent ? [{ id: currentNodes[scope] }] : activeIds.length === 1 ? [{ id: activeIds[0] }] : summarizeDirectory(book.directories[kind], activeIds)
   const draftEntries = selectedEntries(textbooks, multiDialog.selections)
-  const editions = [...new Set(textbooks.map(editionTitle))]
-  const selectedBook = textbooks.find(item => item.id === bookDialog.id && editionTitle(item) === bookDialog.edition)
+  // Metadata and order are supplied by the host; never infer recency from clicks.
+  const subjects = [...new Set(textbooks.map(subjectTitle))].map(name => hostSubjects.find(item => item.name === name) ?? { name, editions: [] })
+    .sort((a, b) => Number(!!b.teaching) - Number(!!a.teaching) || hostRank(hostSubjects, a) - hostRank(hostSubjects, b))
+  const editionsFor = (subject: string) => {
+    const order = hostSubjects.find(item => item.name === subject)?.editions ?? []
+    return [...new Set(textbooks.filter(item => subjectTitle(item) === subject).map(editionTitle))]
+      .map(title => order.find(item => item.title === title) ?? { title })
+      .sort((a, b) => Number(!!b.recent) - Number(!!a.recent) || hostRank(order, a) - hostRank(order, b))
+  }
+  const editions = editionsFor(bookDialog.subject)
+  const matches = (title: string, query: string) => title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
+  const visibleSubjects = subjects.filter(item => matches(item.name, bookDialog.subjectQuery))
+  const visibleEditions = editions.filter(item => matches(item.title, bookDialog.editionQuery))
+  const selectedBook = textbooks.find(item => item.id === bookDialog.id && subjectTitle(item) === bookDialog.subject && editionTitle(item) === bookDialog.edition)
   const disabledReason = !selectedBook ? "请选择册次。" : selectedBook.id === book.id ? "尚未改变教材选择。" : ""
   const changeChecked = (target: DirectoryKind, change: Dispatch<SetStateAction<DirectorySelections>>): Dispatch<SetStateAction<string[]>> => update => change(previous => {
     const key = `${book.id}:${target}`, data = book.directories[target]
@@ -131,7 +148,7 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
   return <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-exploration-directory>
     <BookHeader book={book}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
-      setBookDialog({ open: true, edition: editionTitle(book), id: book.id })
+      setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id, subjectQuery: "", editionQuery: "" })
     }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>
     <KindTabs kind={kind} onKindChange={onKindChange}>
       <PickerSession key={scope} currentNode={currentNodes[scope]} onCurrentNodeChange={id => onCurrentNodesChange?.(previous => {
@@ -140,12 +157,29 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
         searchAction={<Button ref={multiRef} variant="outline" aria-label="多选" title="点标题只看这一项；看全部点“全部”；多选用“多选”按钮。" aria-haspopup="dialog" onClick={() => { setDraftSessions({}); setMultiDialog({ open: true, kind, selections: structuredClone(selections) }) }}>多选</Button>}
         summary={entries.length > 1 && <div className="flex min-w-0 items-center gap-2 text-ui-hint"><p role="status" className="min-w-0 truncate text-muted-foreground">已选 {entries.length} 项 ·</p><Button variant="ghost" size="sm" aria-label="清空当前目录的已选范围" onClick={() => { onCurrentNodesChange?.(previous => { const next = { ...previous }; delete next[scope]; return next }); onSelectionsChange(previous => ({ ...previous, [scope]: [] })) }}>清空</Button></div>} />
     </KindTabs>
-    <DialogLayout open={bookDialog.open} onOpenChange={open => { if (!open) closeBook() }} title="选择教材版本" closeLabel="关闭教材版本选择" description="选择当前使用的教材版本与册次，确认后同步题目结果。" size="lg" initialFocus={bookFocus} finalFocus={switchRef}
+    <DialogLayout open={bookDialog.open} onOpenChange={open => { if (!open) closeBook() }} title="选择教材" closeLabel="关闭教材选择" description="选择学科、版本与册次，确认后同步题目结果。" size="xl" initialFocus={bookFocus} finalFocus={switchRef}
       footerStart={<div className="space-y-1 text-ui-hint text-muted-foreground"><p>确认后将更新当前筛选范围与题目结果。</p>{disabledReason && <p id={reasonId}>{disabledReason}</p>}</div>}
       footerEnd={<div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={closeBook}>取消</Button><Button variant="outline" disabled={!!disabledReason} aria-describedby={disabledReason ? reasonId : undefined} onClick={() => { if (selectedBook && !disabledReason) { setBookId(selectedBook.id); closeBook() } }}>确认选择</Button></div>}>
-      <div ref={bookFocus} tabIndex={-1} aria-label="当前教材" className="space-y-2 outline-none"><p className="text-ui-hint text-muted-foreground">当前教材</p><BookHeader book={book} /></div>
-      <DialogSection title="1. 选择版本"><DialogOptionGrid label="教材版本" value={bookDialog.edition} onValueChange={edition => setBookDialog(previous => ({ ...previous, edition, id: edition === previous.edition ? previous.id : "" }))}>{editions.map(edition => <DialogOptionGridItem key={edition} value={edition} title={edition} />)}</DialogOptionGrid></DialogSection>
-      <DialogSection title="2. 选择册次"><DialogOptionGrid label="教材册次" value={bookDialog.id || null} onValueChange={id => setBookDialog(previous => ({ ...previous, id }))}>{textbooks.filter(item => editionTitle(item) === bookDialog.edition).map(item => <DialogOptionGridItem key={item.id} value={item.id} title={item.volume || item.title} description={item.subject} />)}</DialogOptionGrid></DialogSection>
+      <div ref={bookFocus} tabIndex={-1} aria-label="当前教材" className="shrink-0 outline-none"><p className="text-ui-hint text-muted-foreground">当前：{[book.subject, editionTitle(book), book.volume || book.title].filter(Boolean).join(" · ")}</p></div>
+      <div className="textbook-picker-columns" data-subjects={subjects.length > 1}>
+        {subjects.length > 1 && <section aria-label="学科" className="textbook-picker-column">
+          <Label htmlFor={`${reasonId}-subject-search`}>搜索学科</Label>
+          <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={`${reasonId}-subject-search`} aria-label="搜索学科" value={bookDialog.subjectQuery} onChange={event => setBookDialog(previous => ({ ...previous, subjectQuery: event.target.value }))} /></InputGroup>
+          <div className="textbook-picker-list"><DialogChoiceList label="教材学科" value={bookDialog.subject} onValueChange={subject => setBookDialog(previous => ({ ...previous, subject, edition: editionsFor(subject)[0]?.title ?? "", id: "", editionQuery: "" }))}>
+            {visibleSubjects.map(subject => <DialogChoice key={subject.name} value={subject.name} title={subject.name} description={subject.teaching ? "我的任教学科" : undefined} />)}
+          </DialogChoiceList>{!visibleSubjects.length && <p role="status" className="text-ui-hint">没有匹配的学科。</p>}</div>
+        </section>}
+        <section aria-label="版本" className="textbook-picker-column">
+          <Label htmlFor={`${reasonId}-edition-search`}>搜索版本</Label>
+          <InputGroup><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput id={`${reasonId}-edition-search`} aria-label="搜索版本" value={bookDialog.editionQuery} onChange={event => setBookDialog(previous => ({ ...previous, editionQuery: event.target.value }))} /></InputGroup>
+          <div className="textbook-picker-list"><DialogChoiceList label="教材版本" value={bookDialog.edition} onValueChange={edition => setBookDialog(previous => ({ ...previous, edition, id: edition === previous.edition ? previous.id : "" }))}>
+            {visibleEditions.map(edition => <DialogChoice key={edition.title} value={edition.title} title={edition.title} description={edition.recent ? "最近使用" : undefined} />)}
+          </DialogChoiceList>{!visibleEditions.length && <p role="status" className="text-ui-hint">没有匹配的版本。</p>}</div>
+        </section>
+        <section aria-label="册次" className="textbook-picker-column textbook-picker-volumes"><DialogSection title="册次"><DialogOptionGrid label="教材册次" columns={2} value={bookDialog.id || null} onValueChange={id => setBookDialog(previous => ({ ...previous, id }))}>
+          {textbooks.filter(item => subjectTitle(item) === bookDialog.subject && editionTitle(item) === bookDialog.edition).map(item => <DialogOptionGridItem key={item.id} value={item.id} title={item.volume || item.title} description={item.volumeDescription} status={item.id === book.id ? { label: "当前" } : undefined} />)}
+        </DialogOptionGrid></DialogSection></section>
+      </div>
     </DialogLayout>
     <DialogLayout open={multiDialog.open} onOpenChange={open => { if (!open) closeMulti() }} title="选择目录范围" closeLabel="关闭目录多选" description="可跨课程与知识点选择，确认后同时筛选符合条件的题目。" size="xl" initialFocus={multiFocus} finalFocus={multiRef}
       footerStart={<p className="text-ui-hint text-muted-foreground">确认后将更新筛选范围与题目结果</p>}
@@ -159,15 +193,14 @@ export function ExplorationDirectory({ textbooks, selections, onSelectionsChange
           return [key, [...new Set(multiDialog.selections[key] ?? [])].filter(id => item.directories[type].leafIds.includes(id))]
         }))) })); onKindChange(multiDialog.kind); closeMulti()
       }}>确认选择（{draftEntries.length}）</Button></div>}>
-      <div ref={multiFocus} tabIndex={-1} className="outline-none"><BookHeader book={book} /></div>
-      <div className="directory-picker-columns grid min-w-0 gap-5">
-        <section aria-label="可选目录" className="min-w-0 space-y-3"><h3 className="text-item-title">可选目录</h3>
+      <div ref={multiFocus} tabIndex={-1} aria-label="目录范围选择" className="directory-picker-columns grid min-h-0 min-w-0 gap-5 outline-none">
+        <section aria-label="可选目录" className="directory-picker-tree min-h-0 min-w-0">
           <KindTabs kind={multiDialog.kind} onKindChange={value => setMultiDialog(previous => ({ ...previous, kind: value }))}>
             <PickerSession key={draftScope} data={book.directories[multiDialog.kind]} kind={multiDialog.kind} checkedIds={multiDialog.selections[draftScope] ?? []} onCheckedChange={changeChecked(multiDialog.kind, setDraft)} View={OutlineView} multiple session={draftSessions[draftScope] ?? { query: "" }} onSessionChange={patchDraftSession} initialExpanded={initialExpanded(book.directories[multiDialog.kind])} />
           </KindTabs>
         </section>
-        <section aria-label="已选范围" className="min-w-0 space-y-3"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-item-title">已选 {draftEntries.length} 项</h3><Button variant="ghost" size="sm" disabled={!draftEntries.length} onClick={() => setDraft(previous => clearSelections(textbooks, previous))}>清空已选</Button></div>
-          {draftEntries.length ? <ul className="space-y-3">{draftEntries.map(entry => <li key={`${entry.scope}:${entry.id}`} className="flex min-w-0 items-start gap-2" data-directory-selected={entry.id}><div className="min-w-0 flex-1 break-words"><p className="text-ui-body">{entry.title}</p><p className="text-ui-hint text-muted-foreground">{[entry.book.volume || entry.book.title, entry.book.edition, kindTitle(entry.kind)].filter(Boolean).join(" · ")}</p></div><Button variant="ghost" size="icon-sm" aria-label={`移除${entry.title}`} onClick={() => setDraft(previous => ({ ...previous, [entry.scope]: (previous[entry.scope] ?? []).filter(id => !entry.leafIds.includes(id)) }))}><X /></Button></li>)}</ul> : <p className="text-ui-hint text-muted-foreground">从左侧选择一个或多个章节或知识点。</p>}
+        <section aria-label="已选范围" className="directory-picker-selected flex min-h-0 min-w-0 flex-col gap-3"><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-item-title">已选 {draftEntries.length} 项</h3><Button variant="ghost" size="sm" disabled={!draftEntries.length} onClick={() => setDraft(previous => clearSelections(textbooks, previous))}>清空已选</Button></div>
+          {draftEntries.length ? <ul className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain">{draftEntries.map(entry => <li key={`${entry.scope}:${entry.id}`} className="flex min-w-0 items-start gap-2" data-directory-selected={entry.id}><div className="min-w-0 flex-1 break-words"><p className="text-ui-body">{entry.title}</p><p className="text-ui-hint text-muted-foreground">{[entry.book.volume || entry.book.title, entry.book.edition, kindTitle(entry.kind)].filter(Boolean).join(" · ")}</p></div><Button variant="ghost" size="icon-sm" aria-label={`移除${entry.title}`} onClick={() => setDraft(previous => ({ ...previous, [entry.scope]: (previous[entry.scope] ?? []).filter(id => !entry.leafIds.includes(id)) }))}><X /></Button></li>)}</ul> : <p className="text-ui-hint text-muted-foreground">从左侧选择一个或多个章节或知识点。</p>}
         </section>
       </div>
     </DialogLayout>

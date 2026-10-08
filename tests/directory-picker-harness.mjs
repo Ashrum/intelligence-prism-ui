@@ -45,9 +45,9 @@ export function textOf(node) {
 }
 // Runs actual owned handlers with retained hook state. Dialog portals are placed
 // inline only in the probe; browser focus, trapping and Esc routing need real QA.
-export function probe(depth = '5', hostDefaults = false) {
-  const { books, counts } = module.explorationBooks(depth);
-  const state = { books, selections: hostDefaults ? module.defaultDirectorySelections(books) : {}, currentNodes: {}, showCounts: true, kind: 'course', callback: false, requests: 0, nodes: [], store: new Map(), html: '' };
+export function probe(depth = '5', hostDefaults = false, scale = 'small') {
+  const { books, counts, subjects } = module.explorationBooks(depth, scale);
+  const state = { books, subjects, selections: hostDefaults ? module.defaultDirectorySelections(books) : {}, currentNodes: {}, showCounts: true, kind: 'course', callback: false, requests: 0, nodes: [], store: new Map(), html: '' };
   const View = module.OutlineView;
   function render() {
     const visited = new Set(); state.nodes = [];
@@ -68,7 +68,7 @@ export function probe(depth = '5', hostDefaults = false) {
       return React.cloneElement(node, { key: node.key ?? path }, children.length ? children : node.props.children);
     }
     state.html = renderToStaticMarkup(inspect(React.createElement(module.ExplorationFacts.Provider, { value: { counts, showCounts: state.showCounts } },
-      React.createElement(module.ExplorationDirectory, { textbooks: state.books, selections: state.selections, currentNodes: state.currentNodes,
+      React.createElement(module.ExplorationDirectory, { textbooks: state.books, subjects: state.subjects, selections: state.selections, currentNodes: state.currentNodes,
         onCurrentNodesChange(update) { state.currentNodes = typeof update === 'function' ? update(state.currentNodes) : update },
         onSelectionsChange(update) { state.selections = typeof update === 'function' ? update(state.selections) : update },
         kind: state.kind, onKindChange(value) { state.kind = value }, View, initialExpanded: data => hostDefaults ? [] : data.folderIds,

@@ -33,11 +33,11 @@ await writeFile(file, bundle.outputFiles[0].text);
 const module = await import(file);
 await rm(file);
 export const { filterFixture, filterSortItems, initialFilterValue, previewFilterValue, applyFilterIntent } = module;
-const owned = new Set(['ResourceFilterArea', 'FacetRow', 'DimensionPopover', 'DimensionEditor', 'OptionChoices', 'OptionLabel', 'DimensionLabel', 'MultiChoices', 'DraftActions', 'FilterPanel', 'FilterResults']);
+const owned = new Set(['ResourceFilterArea', 'FacetRow', 'OptionChoices', 'OptionLabel', 'DimensionLabel', 'MultiChoices', 'DraftActions', 'FilterPanel', 'FilterResults']);
 export function ssr(variant, scale, width, extra = {}) {
   module.setTestContext(null);
   return renderToStaticMarkup(React.createElement('div', { style: { width }, 'data-prism-theme': extra.theme ?? 'light', 'data-ui-version': 'coss-v1' },
-    React.createElement(module.ResourceFilterArea, { variant, dimensions: filterFixture(scale), value: initialFilterValue(), sortItems: filterSortItems, resultCount: 128, favoriteCount: 23, onIntent() {}, ...extra })));
+    React.createElement(module.ResourceFilterArea, { dimensions: filterFixture(scale), value: initialFilterValue(), sortItems: filterSortItems, resultCount: 128, favoriteCount: 23, onIntent() {}, ...extra })));
 }
 
 // This probe invokes production handlers and persists only owned local hooks.
@@ -60,23 +60,17 @@ export function probe(variant, scale = 'future', width = 720) {
       return React.cloneElement(node, {}, children.length ? children : node.props.children);
     }
     state.html = renderToStaticMarkup(inspect(React.createElement(module.ResourceFilterArea, {
-      variant, dimensions: state.dimensions, value: state.value, onIntent, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
+      dimensions: state.dimensions, value: state.value, onIntent, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
     })));
     for (const key of state.store.keys()) if (!visited.has(key)) state.store.delete(key);
     module.setTestContext(null);
   }
   const find = predicate => state.nodes.findLast(({ node, path }) => predicate(node, path))?.node;
-  const openDimension = id => {
-    const parent = state.nodes.find(({ node }) => node.type.name === 'DimensionPopover' && node.props.dimension.id === id);
-    if (!parent) return;
-    const popover = find((node, path) => path.startsWith(parent.path + '/') && typeof node.props.onOpenChange === 'function');
-    popover.props.onOpenChange(true); render();
-  };
   const openPanel = () => {
     const parent = state.nodes.find(({ node }) => node.type.name === 'FilterPanel');
     find((node, path) => path.startsWith(parent.path + '/') && typeof node.props.onOpenChange === 'function').props.onOpenChange(true); render();
   };
-  return { state, render, find, openDimension, openPanel };
+  return { state, render, find, openPanel };
 }
 export function textOf(node) {
   if (node == null || typeof node === 'boolean') return '';
