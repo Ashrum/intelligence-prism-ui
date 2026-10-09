@@ -70,6 +70,8 @@ export type AgentCollectionIntent = { collectionId: string; collectionVersion?: 
 )
 export type AgentCollectionBatchAction = AgentCollectionAction & { itemIds: readonly string[] }
 export type AgentCollectionBasketProps = AgentRecordViewProps & AgentVisualProps & {
+  /** Inline inherits its host surface; card retains the default inset well. */
+  presentation?: "card" | "inline"
   collection: AgentCollectionIdentity
   items: readonly AgentCollectionItem[]
   summary: AgentCollectionSummary
@@ -202,7 +204,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
     className="min-w-0"><AgentSurface presentation={summaryMode ? "inline" : "card"} className={summaryMode ? "relative gap-1 py-2" : "min-h-11 gap-2.5 p-3"}>
     <div data-collection-summary-row={summaryMode ? "" : undefined} className={summaryMode ? "flex min-w-0 items-start gap-2" : "flex min-w-0 flex-wrap items-start gap-3"}>
       {full && entry?.selectable && <div className={summaryMode ? "relative z-10 min-w-0 space-y-1" : "min-w-0 space-y-1"}>
-        <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "min-h-11 max-w-full"} htmlFor={`${id}-select`}>
+        <Label className={summaryMode ? "min-h-7 max-w-full pointer-coarse:min-h-11" : "pointer-coarse:min-h-11 max-w-full"} htmlFor={`${id}-select`}>
           <Checkbox id={`${id}-select`} checked={props.selectedIds?.includes(item.id) ?? false} disabled={!!selectReason}
             aria-label={summaryMode ? `选择${rowTitle}` : `选择：${rowTitle}`} aria-describedby={selectReason ? `${id}-selection-reason` : undefined}
             onCheckedChange={checked => {
@@ -303,7 +305,7 @@ export function AgentCollectionBasket({ view = "inline", density = "default", in
   const visibleSyncDescription = !compactHeader || sync.state === "failed" || !menuInfo && sync.state === "unknown"
   const issues = items.flatMap(item => item.access !== "restricted" && item.issue ? [`${item.issue.state === "invalid" ? "条目已失效" : "版本冲突"}：${item.issue.reason}`] : [])
   const urgent = [props.attention, sync.state === "failed" && `同步失败：${sync.description}`, ...issues].filter(Boolean)
-  return <AgentWell aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
+  return <AgentWell presentation={props.presentation} aria-labelledby={id} data-agent-collection-view={view} data-agent-collection-density={density} data-collection-id={collection.id}>
     <header className="min-w-0 space-y-1.5">
       {!compactHeader && <p className="break-words text-ui-hint text-muted-foreground">{historical ? `历史集合 · ${collection.snapshot || "当时记录"}` : "当前集合"} · {collection.type}</p>}
       <div className={hasHeaderActions ? "flex min-w-0 items-start justify-between gap-2" : "flex min-w-0 flex-wrap items-start justify-between gap-2"}><h3 id={id} className="min-w-0 flex-1 break-words text-item-title">{collection.title}{compactHeader && <> · {displayed(summary.count)}{summary.count !== null && (summary.unit || "项")}</>}</h3>

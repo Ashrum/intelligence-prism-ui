@@ -1,5 +1,9 @@
 # 智能曜彩 UI Design System
 
+## P41 目录与筛选正式化（2026-10-08）
+
+新增 [FacetFilter 分面筛选](docs/facet-filter.md)（`/next/components/facet-filter`），目录 **103 项：54 基础 / 39 组合 / 10 扩展**。已有 [TextbookDirectory](docs/textbook-directory.md)（`/next/components/tree`）扩展大纲树、全部、多选及教材切换对话框、外部题数和单选身份协议；旧调用的 SSR 输出保持。探索页和实现已迁移删除；默认第一课与会话记忆仅由示例宿主示范。当前为待 Supervisor 独立 Review 的组件交付，不代表 Workspace 接入或发布完成。
+
 
 
 ## 交互演示器 v0.1 · 设计候选（2026-09-27）

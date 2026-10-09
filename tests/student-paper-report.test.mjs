@@ -1,6 +1,7 @@
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -129,5 +130,60 @@ test('StudentPaperReport demo contains three themes, narrow fixtures, long Chine
   for (const theme of ['light', 'paper', 'dark']) assert.equal((html.match(new RegExp(`data-prism-theme="${theme}"`, 'g')) ?? []).length, 3);
   assert.equal((html.match(/data-ui-version="coss-v1"/g) ?? []).length, 9);
   for (const text of ['w-80', '仅统计已提供的 3 题', '本卷没有失分', '统计范围：未提供', '未完整说明参数范围与等价变形成立的前提条件']) assert.ok(html.includes(text), text);
+  assert.match(html, /<math>/);
+});
+
+for (const density of ['default', 'compact']) {
+  test(`StudentPaperReport strong ${density} puts named pending panel first with primary standard intent button`, () => {
+    let requests = 0;
+    const props = { ...api.studentPaperReportFixture, density, pendingEmphasis: 'strong', onFirstPending: () => requests++ };
+    const out = capture(props);
+    assert.ok(out.html.indexOf('aria-label="学生待办"') < out.html.indexOf('<header'));
+    assert.equal((out.html.match(/aria-label="学生待办"/g) ?? []).length, 1);
+    assert.match(out.html, /bg-warning\/15 text-warning-foreground/);
+    assert.match(out.html, /text-block-title tabular-nums">2<\/span>/);
+    const button = out.buttons[0];
+    assert.equal(button.props.variant, 'default');
+    assert.equal(button.props.size, 'default');
+    assert.equal(button.props.children[0], '定位第一道待办题');
+    assert.equal(button.props.children[1].props['aria-hidden'], 'true');
+    assert.match(out.html, /bg-primary text-primary-foreground/);
+    button.props.onClick();
+    assert.equal(requests, 1);
+    assert.equal(capture(props).html, out.html);
+    const disabled = capture({ ...props, firstPendingDisabledReason: '请先核对原始作答。' });
+    assert.equal(disabled.buttons[0].props.disabled, true);
+    assert.ok(disabled.html.includes(`id="${disabled.buttons[0].props['aria-describedby']}"`));
+    disabled.buttons[0].props.onClick();
+    assert.equal(requests, 1);
+    const missing = capture({ pendingEmphasis: 'strong', pendingCount: 1, density });
+    assert.equal(missing.buttons[0].props.disabled, true);
+    assert.match(missing.html, /定位操作未提供。/);
+  });
+}
+test('StudentPaperReport strong preserves unknown, zero and custom copy without inventing navigation', () => {
+  for (const pendingCount of [undefined, null, -1, 1.5, NaN, 0]) {
+    const html = render({ pendingEmphasis: 'strong', pendingCount });
+    assert.doesNotMatch(html, /定位第一道待办题/);
+    assert.match(html, pendingCount === 0 ? /tabular-nums">0<\/span>/ : /待办题数：未提供/);
+  }
+  const html = render({ pendingEmphasis: 'strong', pendingCount: 3, pendingText: '请核对这些题目的原始作答与公式。' });
+  assert.match(html, /请核对这些题目的原始作答与公式。/);
+  assert.match(html, /tabular-nums">3<\/span>/);
+});
+
+test('StudentPaperReport omitted and explicit default emphasis retain main 4b7e959 SSR bytes across 15 fixtures', async () => {
+  const baseline = JSON.parse(await readFile(new URL('./student-paper-report-main-baseline.json', import.meta.url), 'utf8'));
+  for (const fixture of baseline.fixtures) for (const pendingEmphasis of [undefined, 'default']) {
+    const props = { ...fixture.props, pendingEmphasis, onFirstPending: fixture.callback ? () => {} : undefined };
+    assert.equal(createHash('sha256').update(render(props)).digest('hex'), fixture.hash);
+  }
+});
+
+test('StudentPaperReport strong demo covers both densities, disabled state and three themes', () => {
+  const html = renderToStaticMarkup(h(api.StudentPaperReportPendingDemo));
+  for (const theme of ['light', 'paper', 'dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
+  assert.equal((html.match(/bg-warning\/15/g) ?? []).length, 9);
+  assert.match(html, /当前原始作答尚未提供/);
   assert.match(html, /<math>/);
 });

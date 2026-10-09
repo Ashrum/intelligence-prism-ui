@@ -30,7 +30,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 
 组件页含四个目录，28 条中文夹具（7 需处理、3 处理中、18 完成），五项筛选、分页和意图回显；夹具仅管理视图，不执行实际批阅。图中固定“12 页”未沿用，页数依据本夹具数据提供。系统处理中 183 份是 92+45+46，已完成 12 个已发布与 6 个未发布与夹具一致。
 
-使用共享 AgentStatus 语义色与可见状态文字，Circle 是状态点；关键文字使用语义 ui-hint。coss Tabs 管理 roving focus 与 TabPanel 关联；coss Menu/Select 管理弹层焦点、Escape 和选择。固定标签、44px 触点、多行按钮 h-auto + sm:h-auto、容器断点 720px、减少动态效果沿用既有机制。页面提供三主题、1366px 宽区与 320px 长中文/MathML；不新增视觉令牌。
+使用共享 AgentStatus 语义色与可见状态文字，Circle 是状态点；关键文字使用语义 ui-hint。coss Tabs 管理 roving focus 与 TabPanel 关联；coss Menu/Select 管理弹层焦点、Escape 和选择。固定标签、coss 默认尺寸（仅触屏补足 44px 点击目标）、容器断点 720px、减少动态效果沿用既有机制。页面提供三主题、1366px 宽区与 320px 长中文/MathML；不新增视觉令牌。
 
 浏览器尝试打开 `http://localhost:5173/next/components/score-review` 时被权限审核拒绝（工具返回用户拒绝该访问），未绕过。**ESCALATE：新路由的真实键盘交互、Portal 焦点返回、三主题/1366/320px 视觉与触点尺寸尚未浏览器验收**。SSR 和回调测试不能替代这些验收。真实服务、移动设备与读屏器未验证；其他仓库只读，未修改 `.git`，未提交/推送/发布。
 
@@ -54,3 +54,10 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - p-tabs-10 用 outline Badge 表达计数；现状 TabsTab 中已有 tabular-nums 文字计数，标签与数字可读且零/未知有明确文字，符合 coss children 用法。按委派允许保留文字计数，避免无必要的默认 DOM 与视觉变化；不引入 Badge。
 
 检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。
+
+## 2026-10-07 P30：恢复 coss 标准尺寸
+
+- Input / SelectTrigger / 操作与分页 Button 使用默认 size，更多操作使用 icon；移除无条件 h-auto、min-h-11、min-w-11。默认桌面输入外框、触发器与按钮为 32px；小于 sm 时为 36px。按钮长文单行省略但保留完整可访问文字，行名称与说明仍换行，固定标签 gap-2 与筛选 gap-3 不变。
+- Button 与 SelectTrigger 沿用 coss pointer-coarse 伪元素扩展；Input 内部输入框、SelectItem、MenuItem 与 TabsTab 仅在 pointer-coarse 下补 min-h-11，TabsTab 同时补 min-w-11。Input 的内部目标高至少 44px，边框外高 46px，文字垂直居中。选项可按内容换行，不强制桌面 44px。
+- 本轮复核固定 coss Input/Button/Select/Menu/Tabs/Pagination 与本地 input-particles 的 p-input-group-22 标准尺寸组合，并复核上文 p-table-5/8、Beautiful UI 的既有取舍；沙箱不联网，未声称重新获取注册文件。继续组合已有控件，无新增组件或依赖。
+- 浏览器验收：按分工由 Supervisor 执行；三主题、320px/1366px、长中文/公式、键盘焦点与粗指针点击区域见 P30 报告清单。

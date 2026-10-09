@@ -77,13 +77,13 @@ test('retry preserves the failed target, guards stale availability and loading r
   assert.deepEqual(calls, [{ kind: 'connect', stationId: '02' }, { kind: 'load' }]); assert.match(error.html, /网络失败/);
 });
 
-test('missing handlers have linked visible reasons and all panel actions retain 44px targets', () => {
+test('missing handlers have linked visible reasons and all panel actions use coss default sizes', () => {
   let closed = 0; capture({ onClose: () => closed++ }).action('close').props.onClick(); assert.equal(closed, 1);
   for (const connection of [{ kind: 'idle' }, { kind: 'connected', stationId: '02' }, { kind: 'failed', stationId: '02', reason: '失败原因' }]) {
     const out = capture({ connection }); out.group.props.onValueChange('02');
     for (const action of out.nodes.filter(n => n.props['data-station-action'])) {
       assert.equal(action.props.disabled, true); assert.ok(out.nodes.some(n => n.props.id === action.props['aria-describedby']));
-      assert.match(action.props.className, /min-h-12/); assert.match(action.props.className, /sm:h-auto/); action.props.onClick();
+      assert.doesNotMatch(action.props.className, /min-h-12|sm:h-auto/); assert.equal(action.props.size ?? "default", "default"); action.props.onClick();
     }
   }
 });
@@ -105,7 +105,7 @@ test('badge renders three states, count zero is real, invalid count unknown and 
   let opened = 0;
   for (const [state, label] of [[{ kind: 'connected', name: '02' }, '02 · 已连接'], [{ kind: 'available', count: 1 }, '1 台可用'], [{ kind: 'disconnected' }, '未连接'], [{ kind: 'available', count: 0 }, '0 台可用'], [{ kind: 'available', count: NaN }, '可用数量未提供']]) {
     const out = capture({ state, onOpen: () => opened++ }, DataStationBadge); assert.ok(out.html.includes(label));
-    const button = out.nodes.find(n => n.props['data-station-badge'] !== undefined); button.props.onClick(); assert.match(button.props.className, /min-h-12/); assert.match(button.props.className, /sm:h-auto/);
+    const button = out.nodes.find(n => n.props['data-station-badge'] !== undefined); button.props.onClick(); assert.doesNotMatch(button.props.className, /min-h-12|sm:h-auto/); assert.equal(button.props.size ?? "default", "default");
   }
   assert.equal(opened, 5); assert.match(capture({ state: { kind: 'disconnected' } }, DataStationBadge).html, /disabled|数据站入口暂不可用/);
 });
@@ -117,7 +117,7 @@ test('default presentation is a controlled Sheet; close intent does not mutate o
   sheet.props.onOpenChange(true); assert.equal(closed, 2);
   const panel = capture({ onClose: sheet.props.children.props.children[1].props.children.props.onClose });
   assert.equal(panel.action('close').props.disabled, false); panel.action('close').props.onClick(); assert.equal(closed, 3); assert.equal(sheet.props.open, false);
-  const popup = out.nodes.find(n => n.type?.name === 'SheetPopup'); assert.equal(popup.props.showCloseButton, true); assert.equal(popup.props.closeProps['aria-label'], '关闭教学数据站'); assert.equal(popup.props.side, 'right'); assert.match(popup.props.closeProps.className, /min-h-11 min-w-11/);
+  const popup = out.nodes.find(n => n.type?.name === 'SheetPopup'); assert.equal(popup.props.showCloseButton, true); assert.equal(popup.props.closeProps['aria-label'], '关闭教学数据站'); assert.equal(popup.props.side, 'right'); assert.doesNotMatch(popup.props.closeProps.className, /min-[hw]-11/);
 });
 
 test('catalog, fixtures and MaterialIntake keep shared connection semantics without old API changes', async () => {

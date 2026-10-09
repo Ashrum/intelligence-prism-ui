@@ -159,3 +159,23 @@ test('tabless content preserves action intents and loading, empty and error stat
     assert.doesNotMatch(result.html, /data-record-row=|role="tablist"/);
   }
 });
+
+
+test('record controls retain coss sizes and restrict touch expansion to coarse pointers', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const source = await readFile(new URL('../components/prism-next/record-list.tsx', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /(?:["`\s])(?:sm:)?(?:min-h-11|min-w-11|h-auto)(?=["`\s])/);
+  const out = capture({ pagination: { page: 1, pages: [1, 2], pageSize: { value: 5, options: [5, 10] } } });
+  assert.match(out.html, /h-8\.5[^"<>]*sm:h-7\.5/); // Input inner 34 / 30 + borders.
+  assert.match(out.html, /min-h-9[^"<>]*sm:min-h-8/); // Select 36 / 32.
+  assert.match(out.html, /h-9[^"<>]*sm:h-8/); // Button 36 / 32.
+  assert.match(out.html, /size-9 sm:size-8/); // More menu uses public icon size.
+  assert.match(out.html, /pointer-coarse:after:min-h-11/);
+  assert.match(out.html, /pointer-coarse:after:min-w-11/);
+  assert.ok(out.find('Input')[0].props.className.includes('pointer-coarse:[&_[data-slot=input]]:min-h-11'));
+  assert.match(source, /pointer-coarse:\[&_\[data-slot=input\]\]:min-h-11/);
+  for (const item of out.find('MenuItem')) assert.match(item.props.className, /pointer-coarse:min-h-11/);
+  assert.match(source, /<SelectItem[^>]*className="pointer-coarse:min-h-11/g);
+  assert.match(source, /pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce/);
+  assert.match(out.html, /class="truncate">开始 AI 批阅/);
+});

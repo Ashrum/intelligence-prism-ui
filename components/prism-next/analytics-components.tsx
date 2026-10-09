@@ -6,3 +6,4 @@ export { HeatmapChart, ScatterChart, BoxPlotChart } from "./charts/advanced-char
 export {PairedDotChart} from "./charts/paired-dot-chart"
 export {QuadrantScatterChart} from "./charts/scatter-chart"
 export {ComboChart} from "./charts/combo-chart"
+export { SegmentedBar, type SegmentedBarProps, type SegmentedBarSegment, type SegmentedBarTone } from "./charts/segmented-bar"

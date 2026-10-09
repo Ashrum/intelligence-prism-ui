@@ -63,7 +63,7 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
   return <>
     {externalNavigation && <nav aria-label="外部记录导航" className="mb-4 flex flex-wrap gap-2">
       {recordTabs.map(item => <Button key={item.id} variant="outline" aria-pressed={tab === item.id}
-        className="h-auto sm:h-auto min-h-11 whitespace-normal break-words"
+        size="default"
         onClick={() => { setTab(item.id); setPage(1) }}>{item.label}</Button>)}
     </nav>}
     <RecordList {...recordBase} tabs={externalNavigation ? undefined : recordTabs} tab={externalNavigation ? undefined : tab} search={search} filters={filters} activeFilters={activeFilters} rows={pageRows} summary={summary}
@@ -82,8 +82,8 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
-    <DemoSection title="批阅记录 · 四个状态目录" description="标题与记录分区呈现；按外部分类查看记录，计数、摘要、进度和操作回执均由调用方提供。">
-      <Button variant="outline" className="mb-4 h-auto sm:h-auto min-h-11 whitespace-normal" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
+    <DemoSection title="批阅记录 · 四个状态目录" description="控件使用 coss 标准尺寸，触屏点击目标至少 44px；标题与记录分区呈现；按外部分类查看记录，计数、摘要、进度和操作回执均由调用方提供。">
+      <Button variant="outline" className="mb-4" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}><RecordFixture /></div>
     </DemoSection>
     <DemoSection id="record-external-navigation" title="外部导航驱动、无内部 Tab" description="宿主导航先筛选、再分页；列表不传 tabs 与 tab，完整呈现当前页记录。">

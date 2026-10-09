@@ -103,12 +103,12 @@ test('empty score, invalid scale and host disabled reason prevent submission and
 test('standalone panel preserves shared reviewer/queue APIs; multiline heights override desktop', () => {
   const out = capture();
   assert.doesNotMatch(out.html, /data-paper-preview|data-score-review-paper|data-review-continuous/);
-  for (const b of out.buttons) { assert.match(b.props.className,/h-auto sm:h-auto/); assert.doesNotMatch(render(b),/sm:h-8(?:\s|")/); }
+  for (const b of out.buttons) { assert.doesNotMatch(b.props.className ?? "", /(?:^| )(?:min-h-11|h-auto|sm:h-auto)(?: |$)/); assert.match(render(b), /sm:h-8(?:\s|")/); }
   assert.match(render(h(api.AgentItemReviewer,{item:{id:'i',title:'旧复核器',version:'v1'},review:{state:'waiting-human',description:'待确认'},checkpoints:[],summary:'摘要'})),/旧复核器/);
   assert.match(render(h(api.AgentReviewQueue,{title:'旧复核队列',queue:{id:'q',version:'v1'},items:[]})),/旧复核队列/);
 });
 
-test('all review actions including history and retry retain 44px minimum and multiline sizing', () => {
+test('all review actions including history and retry use coss default sizes and coarse hit areas', () => {
   for (const state of [{kind:'ready'}, {kind:'failed',reason:'连接中断'}]) {
     const out = capture({ state, history: [], onPrev() {}, onSkip() {}, onRetry() {} });
     const actions = [...out.html.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)]
@@ -116,8 +116,8 @@ test('all review actions including history and retry retain 44px minimum and mul
     assert.equal(actions.length, 5);
     for (const [, attrs] of actions) {
       const classes = attrs.match(/class="([^"]*)"/)[1].split(' ');
-      for (const name of ['min-h-11','h-auto','sm:h-auto','whitespace-normal']) assert.ok(classes.includes(name), name);
-      assert.ok(!classes.includes('sm:h-8'));
+      for (const name of ['min-h-11','h-auto','sm:h-auto']) assert.ok(!classes.includes(name), name);
+      for (const name of ['h-9','sm:h-8','pointer-coarse:after:min-h-11','pointer-coarse:after:min-w-11']) assert.ok(classes.includes(name), name);
     }
     const primary = button(out, state.kind === 'ready' ? '保存并处理下一份' : '重试保存');
     assert.match(render(primary), /bg-primary /);
@@ -182,12 +182,12 @@ test('question identity transitions focus only when enabled, never on initial mo
   show({questionId:'d',focusOnQuestionChange:true}); assert.equal(calls,2);
 });
 
-test('numeric input itself keeps 44px sizing at base and sm, and required receipt example is present', () => {
+test('numeric input keeps native height and a coarse-only 44px target; receipt example is present', () => {
   const input = capture().html.match(/<input\b[^>]*data-slot="number-field-input"[^>]*>/)?.[0];
   assert.ok(input);
   const classes = input.match(/class="([^"]*)"/)[1].split(' ');
-  for (const cls of ['min-h-11','h-11','sm:h-11']) assert.ok(classes.includes(cls),cls);
-  assert.ok(!classes.includes('h-8.5')); assert.ok(!classes.includes('sm:h-7.5'));
+  for (const cls of ['min-h-11','h-11','sm:h-11']) assert.ok(!classes.includes(cls),cls);
+  for (const cls of ['h-8.5','sm:h-7.5','pointer-coarse:min-h-11']) assert.ok(classes.includes(cls),cls);
   const html = render(h(api.ScoreReviewReasonReceiptDemo));
   assert.match(html,/score-required-receipt/); assert.match(html,/请填写修改理由。/);
   assert.match(html,/载入预设回执/); assert.match(html,/切换题项（焦点交接）/);
@@ -204,7 +204,7 @@ test('P1 quick scores filter invalid steps and duplicates; controlled/local draf
   let out=capture(props,probe); assert.match(out.html,/role="group" aria-label="快捷给分"/);
   button(out,'满分 10').props.onClick(); out=capture(props,probe);
   assert.equal(out.number.props.value,10); assert.equal(button(out,'满分 10').props['aria-pressed'],true);
-  assert.match(button(out,'0 分').props.className,/min-h-12/);
+  assert.match(render(button(out,'0 分')), /h-9[^"]*sm:h-8/); assert.doesNotMatch(button(out,'0 分').props.className, /min-h-12|h-auto/);
   button(capture({...props,score:6}),'0 分').props.onClick(); assert.equal(capture({...props,score:6}).number.props.value,6);
   button(capture({...props,state:{kind:'saving'}}),'5 分').props.onClick(); assert.deepEqual(calls,[10,0]);
 });

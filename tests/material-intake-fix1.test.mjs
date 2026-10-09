@@ -122,7 +122,7 @@ test('P1 rejection list wraps host reasons and dismiss only emits intent',()=>{
   reset(); let dismissed=0; const props={rejections:[{name:'很长的文件名.zip',reason:'文件类型不符'},{name:'资料.pdf',reason:'文件大小超限'}],onDismissRejections:()=>dismissed++};
   const out=capture(props);assert.match(out.html,/role="alert"/);assert.match(out.html,/很长的文件名.zip · 文件类型不符/);assert.match(out.html,/资料.pdf · 文件大小超限/);
   assert.ok(out.nodes.some(n=>n.type==='li'&&n.props.className.includes('[overflow-wrap:anywhere]')));
-  const dismiss=out.nodes.find(n=>n.props.children==='知道了');assert.match(dismiss.props.className,/min-h-12/);dismiss.props.onClick();assert.equal(dismissed,1);assert.match(capture(props).html,/很长的文件名.zip/);
+  const dismiss=out.nodes.find(n=>n.props.children==='知道了');assert.doesNotMatch(dismiss.props.className,/min-h-12|h-auto/);dismiss.props.onClick();assert.equal(dismissed,1);assert.match(capture(props).html,/很长的文件名.zip/);
   assert.doesNotMatch(capture({rejections:props.rejections}).html,/知道了/);
 });
 test('P1 drag metadata rejects known mismatches/disabled selections and accepts unknown or mixed types',()=>{

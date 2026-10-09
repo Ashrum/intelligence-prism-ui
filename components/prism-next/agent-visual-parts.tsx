@@ -94,7 +94,7 @@ export function AgentTraceRows({ children, expanded, onExpandedChange, alwaysExp
 }) {
   if (alwaysExpanded) return <div data-agent-trace="">{children}</div>
   return <Collapsible data-agent-trace="" open={expanded} defaultOpen={false} onOpenChange={onExpandedChange}>
-    {(expanded === undefined || onExpandedChange) && <CollapsibleTrigger render={<Button type="button" variant="ghost" size="sm" className="min-h-11 max-w-full whitespace-normal" />}>
+    {(expanded === undefined || onExpandedChange) && <CollapsibleTrigger render={<Button type="button" variant="ghost" className="max-w-full" />}>
       <ChevronDown aria-hidden="true" />{expanded ? "收起步骤" : "查看步骤"}
     </CollapsibleTrigger>}
     <CollapsiblePanel className="motion-reduce:transition-none">{children}</CollapsiblePanel>

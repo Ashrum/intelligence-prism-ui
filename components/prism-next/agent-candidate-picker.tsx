@@ -141,7 +141,7 @@ function CandidateRow({ item, selected, disabledReason, onToggle, children, cont
   const repeatsStatus = (value: string) => value === statusLabels[item.status] || item.status === "in-collection" && value === reason
   const hasContent = content != null && typeof content !== "boolean"
   return <div data-agent-candidate-selected={selected || undefined} className={`min-w-0 space-y-1.5 rounded-lg p-2.5 ${selected ? "bg-info/10" : ""}`}>
-    <Label htmlFor={`${id}-choice`} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2.5 whitespace-normal">
+    <Label htmlFor={`${id}-choice`} className="flex pointer-coarse:min-h-11 min-w-0 flex-wrap items-center gap-2.5 whitespace-normal">
       <Checkbox id={`${id}-choice`} checked={selected} disabled={disabledReason !== undefined}
         aria-label={selectionLabel || `选择：${titleOf(item)}`} aria-describedby={`${id}-facts${reason ? ` ${id}-reason` : ""}${shared.map(fact => ` ${fact.anchor}`).join("")}${disabledReason !== undefined && disabledReason !== reasonOf(item) ? ` ${id}-disabled` : ""}`}
         onCheckedChange={checked => { if (disabledReason === undefined) onToggle(checked) }} />

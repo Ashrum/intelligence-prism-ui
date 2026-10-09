@@ -38,6 +38,7 @@ export const componentGroups:ComponentGroup[] = [
     item("tabs","Tabs 标签页","切换同一对象下的相关内容。"),
     item("pagination","Pagination 分页","在明确的数据页之间移动。"),
     item("sidebar","Sidebar 侧栏","桌面导航、折叠与移动端抽屉。"),
+    {...item("facet-filter","FacetFilter 分面筛选","常用维度、全部筛选面板与结果栏；受控选择、排序、收藏与搜索。"),kind:"pattern",sourceUrl:"https://coss.com/ui/particles",sourceLabel:"coss ToggleGroup / Popover 组合"},
     { ...item("tree","Tree 教材目录","完整树与弹出选择器；提供 2—5 级示例、父子联动与清楚的层级关系。"), kind:"extension", sourceUrl:"https://coss.com/origin/tree" },
   ]},
   { id:"content",title:"内容与数据",items:[
@@ -101,6 +102,7 @@ export const componentGroups:ComponentGroup[] = [
     {...item("metric-summary","Metric 指标摘要","显示数值、单位、有效样本和统计分母。"),kind:"pattern"},
     {...item("trend-chart","Trend 趋势","固定尺度，区分缺测和零分，保留时间断点。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
     {...item("comparison-chart","Comparison 比较","横向或纵向比较任意分类数据，接收标签、单位和点击回调。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
+    {...item("segmented-bar","Segmented Bar 分段条","按数值占比呈现总量组成，支持余量、图例与可选的分段选择。"),kind:"pattern",sourceUrl:"https://coss.com/ui/docs/components/meter",sourceLabel:"coss MeterTrack / StatusComposition 分段基元组合"},
     {...item("distribution-chart","Distribution 分布","展示外部已统计的区间频数，不在组件内固定分箱规则。"),kind:"extension",sourceUrl:"https://ui.shadcn.com/docs/components/base/chart",sourceLabel:"Recharts / shadcn Chart 组合方式"},
     {...item("goal-comparison","Goal Comparison 目标对照","接收基线、当前值、目标与单位；数值进展和业务判断分离。"),kind:"pattern"},
     {...item("status-composition","Composition 状态组成","分类数量与占比并列，支持选择、缺测和六分类配色。"),kind:"pattern",sourceUrl:"https://coss.com/ui",sourceLabel:"coss 基础组件"},

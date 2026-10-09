@@ -49,3 +49,11 @@ particles 的 `p-frame-1`、`p-meter-3/4` 和 `p-progress-1/2/3` 依据来自仓
 `density?: "default" | "compact"`，默认 default。compact 将 FrameHeader 从 gap-2/px-5/py-4 改为 gap-1/px-3/py-2；主 FramePanel 从 space-y-7/p-5 改为 space-y-4/p-3；内部 section 的 space-y-3 和原因列表 space-y-4 改为 space-y-2；AI Panel p-5→p-3，Footer px-5/py-4→px-3/py-2。统计、说明、分析、状态、字体和按钮尺寸全部保留，不折叠、不截断。省略或 default 的 SSR 与 main a30c077 逐字节一致。
 
 新示例 `/next/components/student-paper-report/compact` 提供同一数据 default/compact、三主题、320px、长中文/公式；原 demo 输出不变。浏览器比对所有统计、条形、AI 来源和说明，点击“定位第一道待办题”仅显示请求，报告数字保持不变；覆盖三主题 × 320/390/1440px。浏览器验收：按分工由 Supervisor 执行。
+
+## P19 · 待办入口加重（2026-10-05）
+
+实施前复用检索：离线复读固定 coss Frame / Alert / Button 和现有 Prism Button；对照本文与 `docs/score-review.md` 已记录的 particles `p-frame-1` 及 Beautiful UI Approval Card / Recommendation Card。Frame 匹配顶部独立分区，Button 的 default variant 与标准尺寸匹配主要定位意图；Alert 的默认 warning/4 底色较轻且 alert 实时播报不适合静态待办。按本任务授权，在现有 FramePanel 适配 warning/15 与 warning-foreground，不新增令牌、组件或第三方代码。particles / Beautiful UI 沿用历史记录，未联网刷新源码。
+
+`pendingEmphasis?: "default" | "strong"`，默认 default，保留 main 4b7e959 输出。strong 将待办区移至 Frame 第一个子项（标题之前），使用 `bg-warning/15 text-warning-foreground`，数量用语义 `text-block-title` 加重，标准尺寸主按钮带装饰性右箭头。compact 同样保留全部信息与按钮尺寸。自定义 pendingText 原样显示，同时单列外部待办数量；0 和未知保持各自事实，不显示定位按钮。禁用原因、可访问名称和 onFirstPending 意图契约不变。
+
+独立示例 `/next/components/student-paper-report/pending` 新增三主题 × default/compact 的 strong 示例；参照页 `/next/reviews/grading-function-area` 的 ⑧ 使用 strong。Supervisor 验收三主题与 320/390/1440px，确认顶部提示醒目、文字和按钮对比、长中文/公式、Tab/Enter 定位请求及禁用说明；点击不改变待办数或报告。浏览器验收：按分工由 Supervisor 执行。

@@ -63,7 +63,7 @@ test('P17 compact preserves gate, shortcut intents, draft and all standard contr
  const calls=[];
  const props={...score,shortcuts:true,score:7,reason:'已核对',onSave:d=>calls.push(d)};
  const out=capture(api.ScoreReview,props);
- const save=out.nodes.find(n=>n.type===api.Button && React.Children.toArray(n.props.children).includes('保存并处理下一份'));
+ const save=out.nodes.find(n=>n.type===api.Button && render(n.props.children).replace(/<[^>]*>/g, '').includes('保存并处理下一份'));
  save.props.onClick();
  const key=out.nodes.find(n=>n.props['data-score-review']!==undefined).props.onKeyDown;
  key({key:'Enter',ctrlKey:true,nativeEvent:{},preventDefault(){}});
@@ -76,7 +76,7 @@ test('P17 compact preserves gate, shortcut intents, draft and all standard contr
  const namedButtons=o=>o.nodes.filter(n=>n.type===api.Button).map(n=>[n.props.className,n.props.disabled]);
  // All scoring and history buttons retain their original dimensions.
  assert.deepEqual(namedButtons(out).slice(-3),namedButtons(defaults).slice(-3));
- assert.match(out.html,/min-h-11 h-11 sm:h-11/);
+ assert.match(out.html,/pointer-coarse:min-h-11/); assert.doesNotMatch(out.html,/min-h-11 h-11 sm:h-11/);
 });
 for(const [name,props] of [['ErrorCauseReview',{categories:api.errorCauseReviewCategories,value:api.errorCauseReviewValue,history:api.errorCauseReviewHistory,onEdit:noop}],['ErrorCauseReview',{categories:api.errorCauseReviewCategories,value:api.errorCauseReviewValue,editing:true,draft:{category:'other',explanation:'核对'},onSave:noop,onChange:noop}],['StudentPaperReport',api.studentPaperReportFixture]]) test(`P17 ${name} compact changes layout without losing information`,()=>{
  const strip=html=>html.replace(/ class="[^"]*"/g,'');

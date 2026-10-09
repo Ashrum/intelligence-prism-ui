@@ -36,15 +36,16 @@ function capture(props = {}, Component = api.QueueBoard) {
   return { html, nodes, group: nodes.find(n => n.type?.name === 'ToggleGroup'), toggles: nodes.filter(n => n.type?.name === 'ToggleGroupItem'), buttons: nodes.filter(n => n.type === api.SharedButton || n.type === probe.SharedButton) };
 }
 const pressed = out => out.toggles.filter(n => out.group.props.value.includes(n.props.value)).map(n => n.props['aria-label']);
-const button = (out, label) => out.buttons.find(n => React.Children.toArray(n.props.children).includes(label));
+const button = (out, label) => out.buttons.find(n => render(n.props.children).replace(/<[^>]*>/g, '').includes(label));
 
-test('filter cards and multiline actions override desktop height and keep all card content inside the toggle', () => {
+test('multiline filter cards retain content height while action buttons use coss default sizes', () => {
   const out = capture();
-  for (const control of [...out.toggles, ...out.buttons]) {
+  for (const control of out.toggles) {
     assert.ok(control.props.className.split(/\s+/).includes('sm:h-auto'));
     const html = render(control);
     assert.match(html, /sm:h-auto/); assert.doesNotMatch(html, /sm:h-8(?:\s|")/);
   }
+  for (const control of out.buttons) { assert.match(render(control), /h-9[^"]*sm:h-8/); assert.doesNotMatch(control.props.className, /h-auto|min-h-11/); }
   out.toggles.forEach((toggle, index) => {
     const category = base.categories[index];
     const parts = React.Children.toArray(toggle.props.children.props.children);
@@ -64,10 +65,10 @@ test('filter cards and multiline actions override desktop height and keep all ca
 test('same-label row actions include each student in their accessible name without changing visible labels', () => {
   const completed = api.queueBoardFixtures.find(f => f.id === 'completed').props;
   const out = capture(completed);
-  const previews = out.buttons.filter(n => React.Children.toArray(n.props.children).includes('预览试卷'));
+  const previews = out.buttons.filter(n => render(n.props.children).replace(/<[^>]*>/g, '').includes('预览试卷'));
   assert.equal(previews.length, completed.rows.length);
   assert.deepEqual(previews.map(n => n.props['aria-label']), completed.rows.map(row => `预览试卷：${row.name}`));
-  for (const preview of previews) assert.match(render(preview), />预览试卷<\/button>/);
+  for (const preview of previews) assert.match(render(preview), />预览试卷<\/span><\/button>/);
   const unknown = capture({ rows: [{ ...base.rows[0], name: '  ' }] });
   assert.equal(button(unknown, '预览试卷').props['aria-label'], '预览试卷：姓名未提供');
   assert.equal(button(out, '查看当前批阅结果').props['aria-label'], undefined);

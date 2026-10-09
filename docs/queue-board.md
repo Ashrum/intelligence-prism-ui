@@ -54,6 +54,6 @@ PO 批准候选 #8；目录「内容与数据」，入口 `/next/components/queu
 - 可选 `sort?: QueueBoardSort | null`，其中 `QueueBoardSort={column:"name"|"status",direction:"asc"|"desc"}`；`onSortChange?: (next: QueueBoardSort|null)=>void`。有回调才出现两个原生 Button 表头；同列循环 asc → desc → null，切另一列从 asc 开始。方向图标、th 的 aria-sort 和操作名称跟随外部 sort。
 - 组件不重排行、不更新 sort；宿主处理排序后回传 rows/sort。缺回调时表头保持文字，可用外部 sort 标明当前顺序。排序夹具由 demo 宿主排序固定数据；默认不传 sort/回调保持旧 DOM。
 - maxHeight 模式的 thead 在同一个 ScrollArea viewport 内 `sticky top-0`，保留表头正常流占位；用既有 bg-background 提供不透明主题表面，避免滚动行透出，不新增色值或令牌。去掉该模式 scrollFade：顶部遮罩会同时淡出吸顶表头。无 maxHeight 保留旧表头和横向滚动区域。
-- 两个排序按钮至少 44px，h-auto + sm:h-auto，文案可换行，coss 自带焦点；reduced-motion 下无按钮过渡。三主题 320px 长文公式夹具开启排序。没有多选或批量操作。
+- P31：排序与操作按钮使用 coss 默认尺寸，粗指针由 coss 扩展至少 44px 点击目标；长动作文字省略但完整可访问名称保留，表格事实文字继续换行。多行分类卡片保留自然高度与最小行高，coss 自带焦点；reduced-motion 下无按钮过渡。三主题 320px 长文公式夹具开启排序。没有多选或批量操作。
 
 检索来源为委派提供的本地快照 `/private/tmp/claude-503/-Users-OLE-HermesWork-intelligence-prism-ui/1d576e28-cd27-426e-9e4f-a7e83380d382/scratchpad/audit/` 下的 `registry.json` / `particles/*.json`，本轮未重新联网获取。浏览器工具拒绝访问 localhost:5173，P3 的实际视觉、键盘/触屏与焦点验收未完成；自动化证据见 `/tmp/prism-audit/Report-P3.md`。

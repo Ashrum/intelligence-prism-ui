@@ -310,7 +310,7 @@ test('16/19/20/21 examples provide L0 references without changing their componen
 test('question card and summary checkbox targets align to the first 20px title line', () => {
   for (const Component of [c.QuestionCard, c.QuestionSummaryRow]) {
     const html = render(h(Component, { question: { ...question, title: question.title.repeat(4) }, onCheckedChange() {} }));
-    assert.match(html, /<label class="[^"]*min-h-11[^"]*min-w-11[^"]*items-start[^"]*"><span class="flex h-5 items-center">/);
+    assert.match(html, /<label class="[^"]*pointer-coarse:min-h-11[^"]*pointer-coarse:min-w-11[^"]*items-start[^"]*"><span class="flex h-5 items-center">/);
     assert.match(html, /data-slot="checkbox"/);
   }
 });

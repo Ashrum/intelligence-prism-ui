@@ -1,3 +1,4 @@
+import { assertControlSizingOnly } from './prism-control-sizing-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
@@ -11,6 +12,6 @@ const baseline=JSON.parse(await readFile(new URL('./fixtures/grading-p1-baseline
 // React useId's tree-derived values may shift when optional siblings are added;
 // preserve every attribute/relationship and normalize only the opaque ID prefix.
 function normalize(html){const ids=new Map();return html.replace(/_R_[a-zA-Z0-9]+_/g,id=>{if(!ids.has(id))ids.set(id,`_ID${ids.size}_`);return ids.get(id)})}
-test('P1 default ScoreReview and MaterialIntake retain main 8ba0cd6 DOM without opt-in props',()=>{
-  for(const name of ['score','material'])assert.equal(normalize(snapshots[name]),normalize(baseline[name]),name);
+test('P1 default ScoreReview and MaterialIntake retain main 8ba0cd6 DOM without opt-in props except P31 control sizing',()=>{
+  for(const name of ['score','material'])assertControlSizingOnly(normalize(snapshots[name]),normalize(baseline[name]),name);
 });

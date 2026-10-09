@@ -82,7 +82,7 @@ export function filterQuickScores(values: readonly number[], max: number, step =
   return [...new Set(values.filter(value => Number.isFinite(value) && value >= 0 && value <= max && Math.abs(value / step - Math.round(value / step)) < 1e-8))]
 }
 const known = (text?: string) => text?.trim() || "未提供"
-const actionClass = "min-h-11 h-auto sm:h-auto max-w-full whitespace-normal"
+const actionClass = "max-w-full"
 
 function pointStatus(point: ScoreReviewPoint) {
   if (point.uncertain) return "存疑"
@@ -182,7 +182,7 @@ export function ScoreReview(props: ScoreReviewProps) {
   const scoreField = <Field>
     <FieldLabel htmlFor={`${id}-score`}>{props.scoreContext !== undefined ? <>教师最终评分{scaleValid ? `（0–${maxScore} 分，步长 ${step}）` : ""} <span className="text-ui-hint text-muted-foreground">{props.scoreContext}</span></> : <>教师最终评分{scaleValid ? `（0–${maxScore} 分，步长 ${step}）` : ""}</>}</FieldLabel>
     <NumberField id={`${id}-score`} value={score} min={0} max={scaleValid ? maxScore : 0} step={scaleValid ? step : 1} snapOnStep disabled={locked} onValueChange={changeScore}>
-      <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput className={mode === "review" ? "min-h-11 h-11 sm:h-11" : undefined} aria-describedby={instructionsVisible ? `${id}-instructions ${id}-gate` : `${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
+      <NumberFieldGroup><NumberFieldDecrement aria-label={`减少 ${step} 分`} /><NumberFieldInput className="pointer-coarse:min-h-11" aria-describedby={instructionsVisible ? `${id}-instructions ${id}-gate` : `${id}-gate`} /><NumberFieldIncrement aria-label={`增加 ${step} 分`} /></NumberFieldGroup>
     </NumberField>
   </Field>
   const reasonField = <Field>
@@ -238,11 +238,11 @@ export function ScoreReview(props: ScoreReviewProps) {
           <p className="text-block-title" aria-describedby={`${id}-gate`}>{score !== null && Number.isFinite(score) ? score : "未提供"} / {scaleValid ? maxScore : "未提供"} 分{props.unanswered ? " · 未作答" : ""}</p>
         </section> : scoreField}
         {!confirming && (props.unanswered !== undefined || props.onUnansweredChange) && <div className="space-y-2">
-          <Button type="button" variant="outline" className="max-w-full whitespace-normal h-auto sm:h-auto" aria-pressed={!!props.unanswered} aria-describedby={props.unansweredDisabledReason ? `${id}-unanswered-reason` : undefined} disabled={locked || !!props.unansweredDisabledReason || !props.onUnansweredChange} onClick={() => { if (!locked && !props.unansweredDisabledReason) props.onUnansweredChange?.(!props.unanswered) }}>{props.unanswered ? props.actionLabels?.clearUnanswered ?? "撤销未作答" : props.actionLabels?.markUnanswered ?? "标记为未作答"}</Button>
+          <Button type="button" variant="outline" className="max-w-full" aria-pressed={!!props.unanswered} aria-describedby={props.unansweredDisabledReason ? `${id}-unanswered-reason` : undefined} disabled={locked || !!props.unansweredDisabledReason || !props.onUnansweredChange} onClick={() => { if (!locked && !props.unansweredDisabledReason) props.onUnansweredChange?.(!props.unanswered) }}><span className="truncate">{props.unanswered ? props.actionLabels?.clearUnanswered ?? "撤销未作答" : props.actionLabels?.markUnanswered ?? "标记为未作答"}</span></Button>
           {props.unansweredDisabledReason && <p id={`${id}-unanswered-reason`} className="text-ui-hint">{props.unansweredDisabledReason}</p>}
         </div>}
       </> : scoreField}
-      {props.quickScores && !scoreReadOnly && <div role="group" aria-label="快捷给分" className="flex flex-wrap gap-2">{filterQuickScores(props.quickScores, maxScore, step).map(value => <Button key={value} type="button" variant="outline" className={mode === "review" ? "min-h-12 h-auto sm:h-auto whitespace-normal" : undefined} disabled={locked} aria-pressed={score === value} onClick={() => changeScore(value)}>{value === maxScore && value !== 0 ? `满分 ${value}` : `${value} 分`}</Button>)}</div>}
+      {props.quickScores && !scoreReadOnly && <div role="group" aria-label="快捷给分" className="flex flex-wrap gap-2">{filterQuickScores(props.quickScores, maxScore, step).map(value => <Button key={value} type="button" variant="outline" className="max-w-full" disabled={locked} aria-pressed={score === value} onClick={() => changeScore(value)}>{value === maxScore && value !== 0 ? `满分 ${value}` : `${value} 分`}</Button>)}</div>}
       {instructionsVisible && <p id={`${id}-instructions`} className="text-ui-hint">{props.instruction ?? (confirming ? "核对 AI 建议后采纳，或改分。" : mode !== "review" ? "核对评分后保存。" : compact ? "接受建议或改分保存；人工修改保留审计记录。" : "接受 AI 建议，或调整分数后保存。人工修改将保留审计记录。")}</p>}
       {confirming ? null : props.reasonOptions !== undefined ? <div className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-3"}>
         <p className="text-item-title">预置修改理由{props.requireReasonSelection ? "（必选）" : "（选填）"}</p>
@@ -259,11 +259,11 @@ export function ScoreReview(props: ScoreReviewProps) {
         : state.kind === "saved" && <Alert variant="success" role={undefined}><AlertDescription className="break-words text-ui-body">已保存 {Number.isFinite(state.score) ? state.score : "未提供"} 分{state.auditUpdated ? "，审计记录已更新" : "；审计记录状态未提供"}</AlertDescription></Alert>}
     </div>
   const actions = <div className="flex min-w-0 flex-wrap gap-2" aria-label="评分操作">
-      <Button type="button" variant="outline" className={actionClass} disabled={locked || !!props.unanswered || !aiValid || !props.onAcceptAi} onClick={acceptAi}>{props.actionLabels?.accept ?? "接受 AI 建议"}{props.shortcuts && <Kbd>Alt+A</Kbd>}</Button>
-      {state.kind === "failed" ? <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onRetry} onClick={() => submit(props.onRetry)}>{props.actionLabels?.retry ?? "重试保存"}{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>
-        : <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onSave} onClick={() => submit(props.onSave)}>{props.actionLabels?.save ?? "保存并处理下一份"}{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>}
-      {props.onPrev && <Button type="button" variant="outline" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onPrev)}>{props.actionLabels?.previous ?? "上一题"}{props.shortcuts && <Kbd>Alt+←</Kbd>}</Button>}
-      {props.onSkip && <Button type="button" variant="ghost" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onSkip)}>{props.actionLabels?.skip ?? "跳过"}{props.shortcuts && <Kbd>Alt+→</Kbd>}</Button>}
+      <Button type="button" variant="outline" className={actionClass} disabled={locked || !!props.unanswered || !aiValid || !props.onAcceptAi} onClick={acceptAi}><span className="truncate">{props.actionLabels?.accept ?? "接受 AI 建议"}</span>{props.shortcuts && <Kbd>Alt+A</Kbd>}</Button>
+      {state.kind === "failed" ? <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onRetry} onClick={() => submit(props.onRetry)}><span className="truncate">{props.actionLabels?.retry ?? "重试保存"}</span>{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>
+        : <Button type="button" className={actionClass} aria-describedby={`${id}-gate`} disabled={!!block || !props.onSave} onClick={() => submit(props.onSave)}><span className="truncate">{props.actionLabels?.save ?? "保存并处理下一份"}</span>{props.shortcuts && <Kbd>Ctrl/⌘+Enter</Kbd>}</Button>}
+      {props.onPrev && <Button type="button" variant="outline" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onPrev)}><span className="truncate">{props.actionLabels?.previous ?? "上一题"}</span>{props.shortcuts && <Kbd>Alt+←</Kbd>}</Button>}
+      {props.onSkip && <Button type="button" variant="ghost" className={actionClass} disabled={state.kind === "saving" || !!props.disabledReason} onClick={() => navigate(props.onSkip)}><span className="truncate">{props.actionLabels?.skip ?? "跳过"}</span>{props.shortcuts && <Kbd>Alt+→</Kbd>}</Button>}
     </div>
   const standardSection = props.standardAnswer !== undefined ? <>
       {compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.standardAnswer ?? false}>
@@ -271,7 +271,7 @@ export function ScoreReview(props: ScoreReviewProps) {
         <CollapsiblePanel className="motion-reduce:transition-none"><div className="pt-2"><DraftMathPreview label="标准答案" value={props.standardAnswer} showHelp={false} notice={null} /></div></CollapsiblePanel>
       </Collapsible> : <section aria-label={props.sectionLabels?.standardAnswer ?? "标准答案"} className="min-w-0 space-y-2"><h3 className="text-item-title">{props.sectionLabels?.standardAnswer ?? "标准答案"}</h3><DraftMathPreview label={props.sectionLabels?.standardAnswer ?? "标准答案"} value={props.standardAnswer} showHelp={false} notice={null} /></section>}
     </> : null
-  const historySection = props.history && <Collapsible defaultOpen={props.sectionsDefaultOpen?.history}><CollapsibleTrigger render={<Button type="button" variant="outline" className={mode === "review" ? actionClass : undefined} />}>{props.sectionLabels?.history ?? "历史记录"}（{props.history.length}）</CollapsibleTrigger><CollapsiblePanel className={compact ? "motion-reduce:transition-none" : undefined}>
+  const historySection = props.history && <Collapsible defaultOpen={props.sectionsDefaultOpen?.history}><CollapsibleTrigger render={<Button type="button" variant="outline" className={mode === "review" ? actionClass : undefined} />}><span className="truncate">{props.sectionLabels?.history ?? "历史记录"}（{props.history.length}）</span></CollapsibleTrigger><CollapsiblePanel className={compact ? "motion-reduce:transition-none" : undefined}>
       {props.history.length ? <ol className={compact ? "space-y-2 pt-2" : "space-y-3 pt-3"}>{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
     </CollapsiblePanel></Collapsible>
   const modeActions = mode === "review" ? actions : <div className="flex min-w-0 flex-wrap justify-end gap-2" aria-label="评分操作">

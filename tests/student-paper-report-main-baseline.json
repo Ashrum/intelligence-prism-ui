@@ -1,0 +1,152 @@
+{
+  "commit": "4b7e959846b5123dd3931b25b66785042d4243ba",
+  "fixtures": [
+    {
+      "props": {},
+      "callback": false,
+      "hash": "3e8c42d4895d92da7018ccd31aafff6c38731a7b06195ef4c1ce5a2eb9c8fad8"
+    },
+    {
+      "props": {
+        "pendingCount": 2
+      },
+      "callback": false,
+      "hash": "78507309115c137df842214f051529a94544aa5d8c8be46cff5f6c49f8a64667"
+    },
+    {
+      "props": {
+        "pendingCount": 0
+      },
+      "callback": false,
+      "hash": "fb6fc04385d703f0567fe9927fbd637556af2a2bf9c45a2dbdaffec45d240f12"
+    },
+    {
+      "props": {
+        "pendingCount": 3,
+        "pendingText": "请核对原卷",
+        "firstPendingDisabledReason": "等待原卷。"
+      },
+      "callback": false,
+      "hash": "688b9b3fe4ac8a46d7f222893e29c51c7a1ec99c46f3eaed574abd4d998d155e"
+    },
+    {
+      "props": {
+        "score": 78,
+        "maxScore": 100,
+        "studentName": "张同学",
+        "complete": true,
+        "pendingCount": 2,
+        "counts": {
+          "full": 12,
+          "partial": 4,
+          "wrong": 3,
+          "unanswered": 1
+        }
+      },
+      "callback": true,
+      "hash": "3cb2d6673c46b6c96a054b5870fc10e1b49c79d7ff31095c76524b6004d65a34"
+    },
+    {
+      "props": {
+        "density": "default"
+      },
+      "callback": false,
+      "hash": "3e8c42d4895d92da7018ccd31aafff6c38731a7b06195ef4c1ce5a2eb9c8fad8"
+    },
+    {
+      "props": {
+        "pendingCount": 2,
+        "density": "default"
+      },
+      "callback": false,
+      "hash": "78507309115c137df842214f051529a94544aa5d8c8be46cff5f6c49f8a64667"
+    },
+    {
+      "props": {
+        "pendingCount": 0,
+        "density": "default"
+      },
+      "callback": false,
+      "hash": "fb6fc04385d703f0567fe9927fbd637556af2a2bf9c45a2dbdaffec45d240f12"
+    },
+    {
+      "props": {
+        "pendingCount": 3,
+        "pendingText": "请核对原卷",
+        "firstPendingDisabledReason": "等待原卷。",
+        "density": "default"
+      },
+      "callback": false,
+      "hash": "688b9b3fe4ac8a46d7f222893e29c51c7a1ec99c46f3eaed574abd4d998d155e"
+    },
+    {
+      "props": {
+        "score": 78,
+        "maxScore": 100,
+        "studentName": "张同学",
+        "complete": true,
+        "pendingCount": 2,
+        "counts": {
+          "full": 12,
+          "partial": 4,
+          "wrong": 3,
+          "unanswered": 1
+        },
+        "density": "default"
+      },
+      "callback": true,
+      "hash": "3cb2d6673c46b6c96a054b5870fc10e1b49c79d7ff31095c76524b6004d65a34"
+    },
+    {
+      "props": {
+        "density": "compact"
+      },
+      "callback": false,
+      "hash": "f44de53174575e1354f0b5668bddf8e0b836592fb8faa35995325a9694125ed3"
+    },
+    {
+      "props": {
+        "pendingCount": 2,
+        "density": "compact"
+      },
+      "callback": false,
+      "hash": "1b8ee58881a8a2d8ccf430902947a85620fc8fc982491c6c7aee082aa2b95339"
+    },
+    {
+      "props": {
+        "pendingCount": 0,
+        "density": "compact"
+      },
+      "callback": false,
+      "hash": "0d3759543ee2d9bc059bf80c090159bf91b63ce327f4a93484c12053feb80c79"
+    },
+    {
+      "props": {
+        "pendingCount": 3,
+        "pendingText": "请核对原卷",
+        "firstPendingDisabledReason": "等待原卷。",
+        "density": "compact"
+      },
+      "callback": false,
+      "hash": "2cec548457ade5d61e10fc8cd4be1be051553ef2abc980e65dd9131975c9a68a"
+    },
+    {
+      "props": {
+        "score": 78,
+        "maxScore": 100,
+        "studentName": "张同学",
+        "complete": true,
+        "pendingCount": 2,
+        "counts": {
+          "full": 12,
+          "partial": 4,
+          "wrong": 3,
+          "unanswered": 1
+        },
+        "density": "compact"
+      },
+      "callback": true,
+      "hash": "445eefbed3979dd1f23cddd9a26b19c38c275fd67e53abec0860488be07478b5"
+    }
+  ]
+}

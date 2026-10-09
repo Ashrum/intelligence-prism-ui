@@ -21,6 +21,14 @@ export function createDirectory(scope: string, branches: DirectoryBranch[]): Dir
   return { rootId, nodes, leafIds, folderIds, paths }
 }
 
+// Host opt-in: follow source order, never the deepest path or a title sort.
+export function firstLeafSelection(data: DirectoryData): string[] {
+  let id = data.nodes[data.rootId].children[0]
+  if (!id) return []
+  while (data.nodes[id].children.length) id = data.nodes[id].children[0]
+  return [id]
+}
+
 export function projectDirectory(data: DirectoryData, query: string) {
   const normalized = query.trim().toLocaleLowerCase()
   const matchingIds = new Set<string>()

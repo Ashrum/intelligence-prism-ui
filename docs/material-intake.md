@@ -21,10 +21,10 @@ PO 批准候选 #6；目录「内容与数据」，入口 `/next/components/mate
 ### 2026-10-02 P1：拒绝原因、粘贴与拍照
 
 - 本轮 registry 由 Supervisor 在线提供（coss registry 579 项，审核 scratchpad/audit/registry.json），读取 particles `p-input-5` 原生 file input 源码及 coss Alert/Button；无专用 Dropzone。Mantine Dropzone、React Aria DropZone/FileTrigger 只沿用 Supervisor 能力对照，不复制代码。Beautiful UI 既有附件/上传检索不提供本接收协议，保留已有 AgentFileInput renderSelection/select，未扩展 AgentFileInput 公共 API。coss、依赖、令牌及目录项不变。
-- 可选 `rejections?: readonly {name:string;reason:string}[]`、`onDismissRejections?:()=>void`：选择区下方以 role=alert 列表显示“文件名 · 原因”，长文件名可任意位置换行。有回调时显示至少 48px“知道了”，仅发意图，由宿主清除。内容校验仍归宿主。
+- 可选 `rejections?: readonly {name:string;reason:string}[]`、`onDismissRejections?:()=>void`：选择区下方以 role=alert 列表显示“文件名 · 原因”，长文件名可任意位置换行。有回调时显示coss 默认尺寸“知道了”（触屏点击目标至少 44px），仅发意图，由宿主清除。内容校验仍归宿主。
 - 文件拖入显示 `data-drop-state=accept|reject`。选择禁用、拖放能力不可用、或已知 MIME 全不匹配 accept 时显示“不能接收：原因/文件类型不符”。支持 MIME/通配符；扩展名规则、空 MIME 等无法判断时按 accept，混合文件有匹配项也按 accept。离开/放下后清除；反馈不替代校验，drop 仍走原 canDrop/select。
 - 可选 `allowPaste?:boolean` 默认 false；组件内剪贴板文件走同一选择回调和禁用/能力门禁，限制说明加“也可粘贴图片”；普通文本不拦截，loading/error 不选择。
-- 可选 `cameraCapture?:boolean` 默认 false；增加至少 48px“拍照”及独立隐藏 file input，accept=image/*、capture=environment，结果走同一受限 select，读取后清空输入值；不推断摄像头是否存在。
+- 可选 `cameraCapture?:boolean` 默认 false；增加coss 默认尺寸“拍照”（触屏点击目标至少 44px）及独立隐藏 file input，accept=image/*、capture=environment，结果走同一受限 select，读取后清空输入值；不推断摄像头是否存在。
 - 新属性缺省时 DOM 与 main 8ba0cd6 快照一致，仅归一化 React 不透明 ID；拖入反馈为任务授权的显式变化。夹具的拒绝原因由宿主元数据校验提供，覆盖三主题窄容器长文件名。自动测试覆盖列表/清除意图、拖入类型反馈、粘贴与拍照门禁；真实剪贴板、设备拍照、触屏和读屏器交 Supervisor 补验。
 
 `MaterialIntake` 必填 `title, description, station, platform, state, files, limits, capabilities, steps`。文件、限制和能力复用 AgentFileInput 的类型。`station` 包含 name/connection/location/mode/receivedPages；connection 为 connected/available/disconnected/offline/unknown，文字与 AgentStatus 语义同步。缺失文字、未知/负数/非整数页数显示「未提供」，0 为真实零页。
