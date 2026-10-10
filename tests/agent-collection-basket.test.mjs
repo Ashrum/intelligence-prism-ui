@@ -283,6 +283,22 @@ void [secret, sync, intent, summary, props];
 
 // PO 2026-09-29: status decoration removed; all other markup verified against main 3279441.
 // Normalize only opaque React-generated IDs; markup, text and classes remain exact.
+test('inline surface changes only the outer well and preserves all basket content and actions', () => {
+  for (const mode of modes) {
+    const card = htmlFor({ ...mode, presentation: 'card' });
+    assert.equal(card, htmlFor(mode));
+    const inline = htmlFor({ ...mode, presentation: 'inline' });
+    assert.match(inline, /rounded-none bg-transparent p-0/);
+    const normalizeSurface = html => html.replace(/^(<div\b[^>]* class=")([^"]*)(")/, (_, before, classes, after) =>
+      before + classes.replace(/rounded-none|rounded-xl|bg-transparent|bg-secondary|p-0|p-3/g, '').split(/\s+/).filter(Boolean).sort().join(' ') + after);
+    assert.equal(normalizeSurface(inline), normalizeSurface(card));
+  }
+  const questions = render(h(CollectionBasketExample, { purpose: 'questions', narrow: true }));
+  assert.equal((questions.match(/rounded-none bg-transparent p-0/g) ?? []).length, 1);
+  const preparation = render(h(CollectionBasketExample, { purpose: 'preparation', narrow: true }));
+  assert.doesNotMatch(preparation, /rounded-none bg-transparent p-0/);
+});
+
 test('default presentation retains reviewed plain-status snapshots except P31 label touch sizing', () => {
   const snapshots = [
     'fb13b4c52303bedb4152d5fd56bd8dd56f2d035ceb5810f15006fde27b8e63f5',

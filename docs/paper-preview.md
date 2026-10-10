@@ -142,3 +142,71 @@ regionEditing?: {
 | 本仓库 | AgentObjectViewer、AgentCaptureScan、AgentImageCanvas、AgentFileInput | 分别侧重对象身份、采集事实、图像编辑意图与附件输入；不具备试卷多页/异常/扫描版本完整组合，故新建 PaperPreview 组合，保留职责边界。 |
 | Workspace（只读） | SmartGradingPaperPreview.tsx | 参考 fit 转手动前测量实际宽度；不导入任务、Submission、Store 或持久化。 |
 | Figma（只读） | S17 / S18 / S19 / S26 / S34 / S35 六张本地截图 | 只提取页面、缩略图、版本、异常和答题区域结构；不复刻视觉或搬入复核评分业务。 |
+
+## P46 原卷批阅图层与套打（2026-10-08）
+
+本次为现有 PaperPreview 的可选能力，不新增目录组件，不修改已冻结的左栏、中间画布结构、顶栏或工具。新增内容通过 DocumentRegionViewer 既有 footer 槽叠加在纸面内，随该纸统一旋转；未传新属性、空数组或 `annotationsVisible=false` 均保持旧调用 SSR 字节不变。批注可覆盖原题与学生作答，不改变扫描图像像素。Builder 实现与自动检查不代表独立 Review 通过。
+
+### API 与事实边界
+
+连续模式在 `PaperPreview` 顶层传以下属性；mixed 模式在 `mixed` 内传，低层 `PaperPreviewContinuous` / `PaperPreviewMixed` 同样支持。
+
+```ts
+type PaperAnnotation = {
+  id: string
+  page: number
+  rect: { x: number; y: number; width: number; height: number }
+  mark?: 'correct' | 'partial' | 'wrong' | 'blank'
+  score?: { earned: number; full: number }
+  note?: string
+}
+type PaperTotal = {
+  earned: number; full: number; page: number
+  anchor?: 'top-right' | 'top-left'
+}
+// All optional; visible defaults to true.
+annotations?: readonly PaperAnnotation[]
+annotationsVisible?: boolean
+paperTotal?: PaperTotal
+```
+
+`page` 是从 **1** 起的完整 `pages` 数组页槽编号（含缺图与 mixed 数字页），与零基 `onVisiblePage` 不同；mixed 数字 content 页不挂载批注。宿主必须将后端页码映射到本次预览数组，尤其是裁切页或重排页面。`rect` 是相对**未旋转源页**的 0–1 矩形，不是既有 DocumentRegion 的 0–100 坐标。对裁切扫描，宿主先转换来源位置至裁切页坐标，组件不猜测其来源偏移。
+
+页号非法、非有限矩形、零面积或超出页面的矩形不绘制；不夹取并伪造位置。标记和分数独立缺省，不由分数推断对错；非有限分数按未提供处理，不转成零。总分完全来自宿主，绝不合计批注分数。未知页上的事实不会移到其他页。缺图页若宿主仍提供有效批注则可呈现，但原有“扫描图像未提供”占位保留。
+
+### 绘制与可访问性
+
+- 全部图形使用同一 `800 × (800 × 高/宽)` SVG 坐标系；位置、干净的 26 单位勾/半勾/叉/圆斜线与文字随页宽等比缩放。题框右上附近放标记，右侧紧接分数；靠页边时组合向页内移动。只有显式 correct 且 earned=full 时省略分母，其他情况保留 `4 / 5`，不改变事实值。
+- 分数 `text-item-title`（14/600）与 tabular-nums；错因 `text-ui-meta`（12）；总分 `text-page-title`（26/600）加下划线。约 28px 总分要求沿用最近的已有 26px 语义字号，未新增局部字号/令牌。宽度缩放仅用于纸面文档坐标，不改变 UI 字号规范。
+- 错因从题框左下排版，允许覆盖原题和作答；固定 12 单位保守字格，按 Unicode 字素与显式换行排最多三行，超出尾部省略。右边与页底空间不足时向页内收拢，全文不丢失。普通字符串（含公式字符）按原文呈现，不解释 Markdown/LaTeX。
+- SVG 整体 `aria-hidden`，其外提供逐页 `sr-only` 事实列表，包含完整错因与整卷总分。本实现选择自动列表而不新增 `annotationsSummary`。列表使用“批注 id”，因为 API 不提供题号，不擅自用数组顺序推断第几题。
+- 每条非空 note 有位于同一纸面位置的透明聚焦入口，复用 coss Tooltip，悬停/Tab 聚焦显示全文，支持 Escape；入口不在 aria-hidden 内，按下不启动画布拖动。界面浮层沿用 coss 样式；打印隐藏入口、Tooltip 与 sr-only 列表，仅留红色绘制。除错因入口外图层不拦截画布手势。缩放/旋转后真实焦点与手势交 Supervisor 验收。
+
+### 白纸颜色依据
+
+复核 `theme.css`：destructive 基色 `#E0438F` 在白底约 3.91:1，且偏品牌洋红；文本语义 `destructive-foreground` 的 light/paper 值为 `#B4233D`（白底约 6.46:1），dark 为 `#FFB4CF`（白底约 1.66:1）。纸面在组件内部使用现有 light 主题边界与 `color:var(--destructive-foreground)`，把**已有 destructive 语义族的文本红色**固定在白纸上；不新增颜色/令牌，不将深色主题浅粉反相到纸面。具体比值以 P46 checks 的计算日志为准。原卷内容可能覆盖墨迹，对任意扫描底色的对比不作保证。
+
+### 仅图层与校准页
+
+同目录导出 `PaperAnnotationLayer`、`PaperAnnotationCalibration` 及 `PaperAnnotationLayerProps`、`PaperAnnotationPageProps`、`PaperAnnotationOptions`、`PaperAnnotation`、`PaperTotal`。
+
+```tsx
+<PaperAnnotationLayer
+  page={1}
+  pageSize={{ width: 210, height: 297 }} // mm; A3 = 297 × 420
+  annotations={annotations}
+  paperTotal={{ earned: 86, full: 100, page: 1 }}
+  offset={{ x: 2, y: -1 }} // mm; right / up
+/>
+<PaperAnnotationCalibration pageSize={{ width: 210, height: 297 }} />
+```
+
+横向交换 `pageSize.width/height`。Layer 接受与预览相同的批注属性；Calibration 接受 `pageSize/offset`。二者均支持宿主布局用 `className/style`；默认实际 mm 尺寸，无扫描图像、无纸面背景，仅红字/红线。屏幕宿主可设置等比例宽高；实体打印时移除屏幕尺寸覆盖，保持物理 mm 大小。非法尺寸不输出。`offset` 为校准平移，正 x 向右、正 y 向下；负值相反，超出纸边内容由纸面裁切，不挤回纸内。预览入口不接受 offset，校准只作用于打印入口。
+
+Calibration 包含距四边 10mm 的四角十字、中心十字、沿四边每 10mm 一刻度（刻度基线距边 10mm），同样支持偏移。宿主准备独立打印文档，加载 Prism 主题和字体 CSS，将纸型/方向与 `pageSize` 一致，设 `@page` 对应纸型、页边距 0，每个图层分页，打印实际大小 100%、关闭浏览器页眉页脚和自动适应。组件不调用 `window.print`，不修改全局打印设置或报告打印成功。先在空白纸打印校准页量取偏差，再以 offset 套打原卷；打印机不可打印区域及进纸误差仍需实机校准。
+
+### 离线复用与验收
+
+本轮实际读取固定 coss Tooltip、manifest、既有 PaperPreview/DocumentRegionViewer、Prism Button，复核本地 selection-particles 的 p-select-6/18/7 与冻结文档 p-toolbar-1、p-frame-1、p-toggle-group-4 记录。这些适合现有控件与工具组合，没有提供当前所需纸面套打协议；在 PaperPreview 内扩展共享绘制模块。复读 Beautiful UI Context Cards 历史记录：内容卡片与本次通用纸面图层不匹配，未复制代码。按 Builder 前置约定不联网刷新上游，不声称完整注册表不存在匹配项。
+
+组件页 `/next/components/paper-preview` 新增“原卷批阅图层与套打校准”，提供原卷示意、图层开关、仅图层、校准页、A4/A3 横竖、缩放/旋转、总分角位与毫米偏移。三主题 320px 夹具与长中文/公式同页。8 个 P45 SHA-256 基线覆盖旧调用，原冻结快照不改；自动测试覆盖四种标记、分数、截断/全文、总分页与角位、三档缩放×四角旋转共享绘制、mixed 页号、mm 比例/偏移、透明图层及校准几何。浏览器验收：按分工由 Supervisor 执行；真实打印机、纸张套印、触屏与读屏器未验证。

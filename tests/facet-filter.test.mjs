@@ -68,6 +68,14 @@ test('C handlers emit expected intents and host states for single, multi confirm
     results.push({ selected, intents: p.state.intents, value: p.state.value });
   }
   assert.equal(results[0].intents.length, 6, 'one event per applied operation; drafts and cancellation are silent');
+  assert.deepEqual(results[0].intents, [
+    { type: 'filter', dimensionId: 'difficulty', values: ['difficulty-1'] },
+    { type: 'filter', dimensionId: 'type', values: ['type-0', 'type-1'] },
+    { type: 'sort', value: 'latest' },
+    { type: 'favorites', value: true },
+    { type: 'search', value: '二次函数 x²' },
+    { type: 'reset' },
+  ], 'single selection and confirmed multi draft emit exact ordered payloads; cancellation stays silent');
 });
 
 for (const variant of ['C']) test(`${variant}: zero is disabled for new selection, retained zero can be removed; no count is not zero`, () => {

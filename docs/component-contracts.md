@@ -1785,6 +1785,7 @@ groups={[{
 | `groups` | 可选 `readonly AgentCollectionGroup[]` | `{id,label,count:number|null}`；组 ID 唯一。计数仅显示宿主值；不根据列表推算。按分组查看保留各组内输入顺序，未分组、未知分组与受限条目各自保留，不静默丢弃 |
 | `sync` | 可选 `AgentCollectionSync`，默认 unknown | local / synced / failed / unknown 分别呈现本页暂存／已同步／同步失败／状态未确认。failed 必填 description，其余可选。可带 action 请求检查同步等；点击不改变同步事实。没有时间、动画或回调返回值推断 |
 | `changes` | 可选 `readonly AgentCollectionChange[]` | `{id,kind:'added'/'removed',description}`；仅显示宿主给出的当时变化，加入与移除不由点击或数组差异生成，也不自动消失。描述须经宿主披露检查 |
+| `presentation` | card / inline，默认 card | 透传既有 AgentWell；card 使用 bg-secondary 内嵌面板，inline 使用 bg-transparent、rounded-none、p-0，继承宿主表面。独立于 view / density，不改变选择、汇总、权限或同步行为；文字沿用既有单色语义。三主题使用现有令牌，不新增配色。试题篮 demo 的完整集合管理采用 inline，对话摘要与备课素材仍使用 card |
 | `view / density` | inline / workspace 默认 inline；default / compact 默认 default | 两态及独立密度；compact 仅调整间距，不隐藏失效、冲突、受限、同步失败、未知与禁用原因，不缩字 |
 | `inlineLimit / onExpand` | 默认 3 / 可选 `(trigger:HTMLButtonElement)=>void` | 有 onExpand 时前 N 项加所有失效／冲突／受限项，保持原顺序；非有限 N 回退 3，其余向下取整至少 1。缺回调无“管理全部”入口且保留全部项。workspace 不重复显示入口；展开不操作集合 |
 | `groupBy / onGroupByChange` | none / group 默认 none；可选回调 | workspace 的受控列表排列方式；只改变呈现。分组视图禁用排序并说明“请切回集合顺序后调整”，避免组内视觉次序误当集合顺序 |
