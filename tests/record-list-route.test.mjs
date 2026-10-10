@@ -17,4 +17,14 @@ test('built Record List route exposes all states, themes, sizes and Agent Spec w
   assert.doesNotMatch(external, /role="(?:tablist|tab|tabpanel)"/);
   for (const theme of ['light','paper','dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
   assert.match(html,/data-ui-version="coss-v1"/); assert.match(html,/<math/); assert.match(html,/data-record-list/);
+  const homogeneous = html.split('id="record-homogeneous"')[1].split('id="record-processing"')[0];
+  assert.match(homogeneous, /同质列表 · 省略类型与状态/);
+  assert.match(homogeneous, /320px 同质列表/);
+  assert.match(homogeneous, /data-record-row="paper-algebra"/);
+  assert.match(homogeneous, /data-slot="badge"[^>]*>已收藏/);
+  assert.match(homogeneous, /<math/);
+  assert.match(homogeneous, /aria-label="查看试卷：/);
+  assert.match(homogeneous, /aria-label="更多操作：/);
+  assert.doesNotMatch(homogeneous, /data-agent-status=|class="break-words text-ui-meta"/);
+  assert.ok(text.includes('showType/showStatus default to true.'));
 });

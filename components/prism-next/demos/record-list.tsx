@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/coss/button"
+import { Badge } from "../badge"
 import { RecordList, type RecordListProps, type RecordListRow, type RecordListFilter } from "../record-list"
 import { DemoSection, Feedback } from "../demo-parts"
 
@@ -79,6 +80,30 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
   </>
 }
 
+export const homogeneousRecordRows: RecordListRow[] = [
+  { id: "paper-algebra", type: "正式试卷", name: "一元二次方程与二次函数综合复习：配方法的完整推导、取等条件与结论核对", metadata: "九年级数学 · 20 题 · 满分 100 分",
+    description: <div className="flex flex-wrap items-center gap-2"><Badge variant="outline">已收藏</Badge><span>函数关系：<math aria-label="y 等于 x 的平方"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math></span></div>,
+    status: { label: "已保存", tone: "success" }, action: { id: "open", label: "查看试卷" }, menu: [{ id: "download", label: "下载试卷" }] },
+  { id: "paper-geometry", type: "正式试卷", name: "相似三角形单元检测", metadata: "九年级数学 · 18 题 · 满分 100 分",
+    status: { label: "已保存", tone: "success" }, action: { id: "open", label: "查看试卷" }, menu: [{ id: "download", label: "下载试卷" }] },
+]
+
+function HomogeneousRecordFixture() {
+  const [notice, setNotice] = useState("尚无操作请求。")
+  const [narrow, setNarrow] = useState(false)
+  return <>
+    <Button variant="outline" className="mb-4" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 同质列表</Button>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="我的试卷" description="已保存的正式试卷，可查看或下载。" primaryLabel="新建试卷"
+        searchLabel="搜索试卷" searchPlaceholder="搜索试卷名称" rows={homogeneousRecordRows} showType={false} showStatus={false}
+        onPrimary={() => setNotice("已请求新建试卷，等待调用方导航。")}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -88,6 +113,9 @@ export function RecordListDemo() {
     </DemoSection>
     <DemoSection id="record-external-navigation" title="外部导航驱动、无内部 Tab" description="宿主导航先筛选、再分页；列表不传 tabs 与 tab，完整呈现当前页记录。">
       <RecordFixture externalNavigation />
+    </DemoSection>
+    <DemoSection id="record-homogeneous" title="同质列表 · 省略类型与状态" description="调用方为整张列表显式设置 showType=false、showStatus=false；已收藏标记、主操作与更多菜单保留。默认仍显示类型与状态，缺值仍显示未知。">
+      <HomogeneousRecordFixture />
     </DemoSection>
     <DemoSection id="record-processing" title="系统处理中 · 3 个批阅批次"><RecordFixture initialTab="processing" /></DemoSection>
     <DemoSection id="record-completed" title="已完成 · 发布状态"><RecordFixture initialTab="completed" /></DemoSection>
