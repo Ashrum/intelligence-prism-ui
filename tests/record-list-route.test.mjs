@@ -27,4 +27,16 @@ test('built Record List route exposes all states, themes, sizes and Agent Spec w
   assert.match(homogeneous, /aria-label="更多操作：/);
   assert.doesNotMatch(homogeneous, /data-agent-status=|class="break-words text-ui-meta"/);
   assert.ok(text.includes('showType/showStatus default to true.'));
+  const noPrimary = html.split('id="record-no-primary"')[1].split('id="record-wide"')[0];
+  assert.match(noPrimary, /320px 无主操作列表/);
+  assert.match(noPrimary, /data-record-row="requirement-algebra"/);
+  assert.match(noPrimary, /aria-label="复用要求：/);
+  assert.match(noPrimary, /<math/);
+  assert.match(noPrimary, /暂无记录/);
+  assert.match(noPrimary, /保存组卷要求后，可在这里查看并复用。/);
+  assert.doesNotMatch(noPrimary, /开始 AI 批阅|data-slot="empty-content"/);
+  const headers = [...noPrimary.matchAll(/<header\b[^>]*data-slot="frame-panel-header"[^>]*>([\s\S]*?)<\/header>/g)];
+  assert.equal(headers.length, 2);
+  for (const [, header] of headers) assert.doesNotMatch(header, /<button\b/);
+  assert.ok(text.includes('showPrimary defaults to true;'));
 });

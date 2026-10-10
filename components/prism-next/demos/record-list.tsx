@@ -104,6 +104,23 @@ function HomogeneousRecordFixture() {
   </>
 }
 
+function NoPrimaryRecordFixture() {
+  const [notice, setNotice] = useState("尚无操作请求。")
+  const [narrow, setNarrow] = useState(false)
+  return <>
+    <Button variant="outline" className="mb-4" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 无主操作列表</Button>
+    <div className="space-y-4" style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="最近的要求" description="查看并复用已保存的组卷要求。" showPrimary={false}
+        searchLabel="搜索组卷要求" searchPlaceholder="搜索要求名称" showType={false} showStatus={false}
+        rows={[{ ...homogeneousRecordRows[0], id: "requirement-algebra", type: "组卷要求", metadata: "九年级数学 · 单元复习", action: { id: "reuse", label: "复用要求" }, menu: undefined }]}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+      <RecordList title="最近的要求" description="查看并复用已保存的组卷要求。" showPrimary={false}
+        rows={[]} state={{ kind: "empty", description: "保存组卷要求后，可在这里查看并复用。" }} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -125,6 +142,9 @@ export function RecordListDemo() {
     <DemoSection id="record-empty" title="首次使用 · 暂无记录"><RecordFixture overrides={{ rows: [], tabs: recordTabs.map(tab => ({ ...tab, count: 0 })), state: { kind: "empty" } }} /></DemoSection>
     <DemoSection id="record-error" title="加载失败 · 可重试"><RecordFixture overrides={{ state: { kind: "error", reason: "批阅记录加载失败，当前结果可能不完整。请重试。" } }} /></DemoSection>
     <DemoSection id="record-loading" title="加载中"><RecordFixture overrides={{ state: { kind: "loading" } }} /></DemoSection>
+    <DemoSection id="record-no-primary" title="最近的要求 · 省略列表主操作" description="showPrimary 默认 true；显式设为 false 时页头与空状态都省略主操作且不留占位，空状态标题与说明、行操作仍保留。">
+      <NoPrimaryRecordFixture />
+    </DemoSection>
     <DemoSection id="record-wide" title="1366px 宽容器" description="本区域保留 1366px 宽度，可横向滚动检查完整布局。">
       <div className="overflow-x-auto" role="region" aria-label="1366px 记录列表预览" tabIndex={0}><div className="w-[1366px]"><RecordFixture /></div></div>
     </DemoSection>
