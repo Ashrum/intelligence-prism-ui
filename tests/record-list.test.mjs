@@ -179,3 +179,50 @@ test('record controls retain coss sizes and restrict touch expansion to coarse p
   assert.match(source, /pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce/);
   assert.match(out.html, /class="truncate">开始 AI 批阅/);
 });
+
+test('metadata visibility defaults to true and keeps unknown labels for visible missing values', () => {
+  const rows = [api.homogeneousRecordRows[0], { ...api.homogeneousRecordRows[1], type: ' ', status: undefined }];
+  const props = { tabs: undefined, rows, summary: undefined, filters: [] };
+  const out = capture(props);
+  assert.equal(out.html, capture({ ...props, showType: true, showStatus: true }).html);
+  for (const label of ['正式试卷', '已保存', '类型未提供', '状态未知']) assert.ok(out.html.includes(label), label);
+  assert.match(capture({ ...props, rows: [{ ...rows[1], status: { label: ' ' } }] }).html, /状态未知/);
+});
+
+for (const [showType, showStatus] of [[false, true], [true, false], [false, false]]) {
+  test(`list-wide metadata visibility SSR: showType=${showType}, showStatus=${showStatus}`, () => {
+    const rows = [
+      { ...api.homogeneousRecordRows[0], progress: 60 },
+      { ...api.homogeneousRecordRows[1], type: ' ', status: undefined },
+      { ...api.homogeneousRecordRows[1], id: 'blank-status', type: '', status: { label: ' ' } },
+    ];
+    const events = [];
+    const out = capture({ tabs: undefined, rows, filters: [], summary: { label: '宿主列表摘要' }, showType, showStatus,
+      onRowAction: (...args) => events.push(['row', ...args]), onRowMenu: (...args) => events.push(['menu', ...args]) });
+    assert.equal(out.find('FramePanel').length, 3);
+    assert.equal(out.html.includes('正式试卷'), showType);
+    assert.equal(out.html.includes('类型未提供'), showType);
+    assert.equal(out.html.includes('已保存'), showStatus);
+    assert.equal(out.html.includes('状态未知'), showStatus);
+    // Omitted elements leave no empty wrappers or reserved slots.
+    assert.equal(out.nodes.filter(n => n.type === 'p' && n.props.className === 'break-words text-ui-meta').length, showType ? 3 : 0);
+    assert.equal(out.nodes.filter(n => typeof n.type === 'function' && n.type.name === 'AgentStatus' && n.props.className === 'self-center text-ui-hint').length, showStatus ? 3 : 0);
+    assert.match(out.html, /data-slot="badge"[^>]*>已收藏/);
+    assert.match(out.html, /宿主列表摘要/);
+    assert.match(out.html, /aria-valuenow="60"/);
+    const action = out.find('Button').find(n => n.props['aria-label'] === `查看试卷：${rows[0].name}`);
+    assert.ok(action);
+    const event = click(); action.props.onClick(event); assert.equal(event.stopped, true);
+    out.find('FramePanel')[0].props.onClick({ target: { closest: () => null } });
+    out.find('FramePanel')[0].props.onClick({ target: { closest: () => ({}) } });
+    const menuEvent = click(); out.find('MenuItem')[0].props.onClick(menuEvent); assert.equal(menuEvent.stopped, true);
+    assert.deepEqual(events, [['row', rows[0].id, 'open'], ['row', rows[0].id, 'open'], ['menu', rows[0].id, 'download']]);
+    assert.ok(out.html.includes(`aria-label="更多操作：${rows[0].name}"`));
+    assert.match(out.html, /<button\b[^>]*aria-label="查看试卷：/);
+    assert.doesNotMatch(out.html, /aria-(?:label|labelledby|describedby)="\s*"|aria-label="[：·]/);
+    const ids = new Set([...out.html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
+    for (const [, refs] of out.html.matchAll(/aria-(?:labelledby|describedby)="([^"]+)"/g)) {
+      for (const ref of refs.split(/\s+/)) assert.ok(ids.has(ref), `dangling aria reference: ${ref}`);
+    }
+  });
+}

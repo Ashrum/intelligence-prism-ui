@@ -20,6 +20,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - 不传 `tabs` 或传 `[]` 时不渲染 Tabs、TabList 或 TabPanel，直接呈现内容。不传 `tab` 时忽略 `tabIds`（包括空数组），完整显示宿主页面，`defaultTab` 不参与过滤；显式传 `tab` 时仍按 `tabIds` 过滤，未标分类的行继续显示。外部导航负责筛选后分页，组件不会发出 Tab 切换意图。组件页「外部导航驱动、无内部 Tab」展示此用法。
 - `rows` 是宿主当前查询页面；可选 `tabIds` 是宿主显式分类，支持非受控 Tab；省略时当前页面全部呈现。分类文本不参与推导。宿主应先筛选、再分页，切换目录或查询时更新 rows、summary、page；计数不得从当前页面倒推。
 - 行提供 type/name/metadata、可选 description ReactNode、status `{label,tone}`、可选 0–100 progress。缺失身份显示「未提供」，缺失状态显示「状态未知」；非法或未知进度不画条。description 可组合现有公式呈现，组件不识别或解释公式。
+- `showType?: boolean`、`showStatus?: boolean` 均默认 `true`。同质列表可显式传 `false`，对整张列表移除类型小标题或行状态（无占位）；不是按行缺值自动隐藏。保持显示时，空类型仍为「类型未提供」，缺失或空状态仍为「状态未知」。列表 summary、进度、description 中的「已收藏」Badge、主操作、更多菜单与行背景点击不受影响；操作可访问名称仍由动作文案与记录名称组成。行 type 仍为必填字符串，本次不改变行数据契约。
 - `search`、`filters[{id,label,value,options}]`、`activeFilters: string[]`、`summary{label,tone}` 全部由宿主提供。过滤项、发布状态与时间选项无内置业务含义；组件不执行搜索。activeFilters 用于已选条件摘要，`onClearFilters()` 由宿主决定重置哪些条件；清除搜索调用 `onSearch("")`。
 - `pagination{page,pages,label}` 接收宿主页码窗口，组件不算页数。页码按钮发出 `onPageChange(page)`，当前页保留 aria-current。大数据使用紧凑页码窗口，分页规则归宿主。
 - 意图：`onTabChange(id)`、`onSearch(query)`、`onFilterChange(id,value)`、`onRowAction(rowId,actionId)`、`onRowMenu(rowId,actionId)`、`onPageChange(page)`、`onPrimary()`、`onRetry()`、`onClearFilters()`。无回调的操作禁用；search 无回调时只读。行主操作可给 disabledReason，禁用整行快捷点击并显示原因；菜单项可给 disabledReason。
@@ -61,3 +62,24 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - Button 与 SelectTrigger 沿用 coss pointer-coarse 伪元素扩展；Input 内部输入框、SelectItem、MenuItem 与 TabsTab 仅在 pointer-coarse 下补 min-h-11，TabsTab 同时补 min-w-11。Input 的内部目标高至少 44px，边框外高 46px，文字垂直居中。选项可按内容换行，不强制桌面 44px。
 - 本轮复核固定 coss Input/Button/Select/Menu/Tabs/Pagination 与本地 input-particles 的 p-input-group-22 标准尺寸组合，并复核上文 p-table-5/8、Beautiful UI 的既有取舍；沙箱不联网，未声称重新获取注册文件。继续组合已有控件，无新增组件或依赖。
 - 浏览器验收：按分工由 Supervisor 执行；三主题、320px/1366px、长中文/公式、键盘焦点与粗指针点击区域见 P30 报告清单。
+
+## P48：同质列表省略类型与状态
+
+组件页 `/next/components/record-list#record-homogeneous` 的「我的试卷」使用以下组合，所有行均为正式试卷。省略两个重复字段，保留已收藏 Badge、长中文与公式、行主操作及下载菜单；点击仅回显意图。提供 320px 容器开关，主题沿用页面的 light / paper / dark 切换。
+
+```tsx
+<RecordList
+  title="我的试卷"
+  description="已保存的正式试卷，可查看或下载。"
+  primaryLabel="新建试卷"
+  searchLabel="搜索试卷"
+  searchPlaceholder="搜索试卷名称"
+  rows={rows}
+  showType={false}
+  showStatus={false}
+  onRowAction={onRowAction}
+  onRowMenu={onRowMenu}
+/>
+```
+
+复用依据：本轮离线读取固定 coss Frame / Button / Badge、既有 Prism Badge / RecordList，以及本地 table-particle 的 p-table-3/4 组合；对照本页已有 p-table-5/8、p-frame-1/3/4、Beautiful UI Records Table / Filter Table / Task Rows 的检索记录。现有事实行与意图接口已覆盖需求，仅缺列表级显示开关，因此扩展原组件，不增加组件条目或复制第三方代码；未联网刷新注册文件。默认输出与既有断言保持不变，浏览器验收按分工由 Supervisor 执行。
