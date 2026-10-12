@@ -39,3 +39,23 @@ P43 复用依据：检查 coss Button 的 ghost/xs（最小文字按钮）与本
 ## P50：试卷单位与不可相加数量
 
 `<TextbookDirectory layout="embedded" multiSelect="dialog" allOption={{}} countUnit="份试卷" countsAdditive={false} ... />` 可用于同一试卷属于多个节点的目录。组件页 `/next/components/tree#embedded-directory` 增加“计数单位”和“节点数量可相加”控件；取消相加后多选页脚保留已选项数与确认，不改变草稿和提交语义。默认 `countUnit="题" countsAdditive={true}` 保持原输出；旧 split / embedded 的目录项数量单位（节课程、个知识点）不属于 counts，保持原契约。复核 coss ToggleGroup / Frame / Button 与本地 particles p-dialog-5、p-select-7、p-input-group-22，继续扩展现有大纲与 DialogLayout；无新组件或上游代码复制，未联网刷新上游。
+
+## P51：教材头部单独使用
+
+`layout="header"` 与 `split` / `embedded` 并列，直接复用正式 embedded 的同一段 `BookHeader`、切换按钮和教材选择 DialogLayout。仅呈现封面、册次（缺省用 title）、学科·版本及可用的切换入口；不渲染目录页签、搜索、多选按钮/对话框或树，不读取目录数据。默认仍是 split，已有用法输出不变。
+
+```tsx
+<TextbookDirectory
+  layout="header"
+  textbooks={[{ id: "math-1", title: "高中数学", volume: "必修第一册", subject: "数学", edition: "人教 A 版" }]}
+  bookId={bookId}
+  onBookChange={setBookId}
+  onTextbookSwitch={openHostTextbookPicker}
+/>
+```
+
+导出 `TextbookHeaderDefinition`：教材元数据与 `TextbookDefinition` 一致，但 `directories` 可省略；完整教材对象仍可传入。`TextbookDirectoryProps` 按 layout 区分：只有 header 可省略 `selections/onSelectionsChange`；split/embedded 继续要求完整目录和范围选择属性。header 忽略目录相关属性，不发出范围选择意图。
+
+不传 `onTextbookSwitch` 且有多本教材时，沿用内置学科→版本→册次草稿对话框，确认才更新局部教材或发出 `onBookChange`；受控 bookId 等待宿主更新，取消/关闭不提交。传 `onTextbookSwitch` 时优先交宿主处理；单教材无回调隐藏切换，空教材显示“暂无可用教材。”。完整册次/标题和学科版本保留 group 可访问名称，按钮名称为“切换教材”。
+
+组件页 `/next/components/tree#textbook-header-only` 提供无目录数据的受控教材、240/320/720px 和宿主接管开关。复核本地 coss Button/ToggleGroup、DialogLayout、particles p-dialog-5 及本页既有 p-select-6/7/18 取舍；原头部与对话框已匹配需求，仅扩展公开形态，不复制实现、增加目录条目或联网刷新上游。浏览器验收：按分工由 Supervisor 执行。

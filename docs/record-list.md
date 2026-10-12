@@ -94,3 +94,20 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 ## P50：省略完整页头与内置搜索行
 
 组件页 `/next/components/record-list#record-optional-regions` 提供 `showHeader={false} showSearch={false}` 试卷列表，可独立恢复两个区域并切换 320px 容器。保留 tabs、共 2 份试卷摘要、分页、长中文/公式、行主操作和更多菜单；外部页面负责自己的标题与筛选，省略属性不触发任何业务意图。未传属性保持原输出。复核固定 coss Frame / ToggleGroup 以及现有 Input / Select / Empty 组合、本地 particles p-table-3/4 的工具栏和内容分区，并沿用本页 Beautiful UI Records Table / Filter Table / Task Rows 的既有评估；仅扩展原组件，不新增条目或依赖，未联网刷新注册文件。
+
+## P51：标题类别与操作侧事实标记
+
+`RecordListRow.tag?: string` 在标题同一换行容器内、标题之前呈现中性的 coss `Badge variant="outline"`。`badges?: readonly string[]` 按输入顺序在操作侧、行主操作之前呈现 coss `Badge variant="secondary"`；它们是宿主提供的独立事实，与 `type/status` 无关，`showType={false}` / `showStatus={false}` 也不隐藏标记。
+
+```tsx
+const row: RecordListRow = {
+  id: "paper-1", type: "正式试卷", name: "一元二次方程单元复习",
+  metadata: "九年级数学 · 20 题", tag: "专题复习",
+  badges: ["已收藏", "本班用过"],
+  action: { id: "open", label: "查看试卷" },
+}
+```
+
+缺省、空字符串/纯空白 tag、缺省/空数组 badges 均不增加输出；标记文字去首尾空白，空白数组项省略。有标记的 li、主操作和更多菜单可访问名称包含类别、原名称与事实标记；无标记保留旧名称与 DOM。标记在窄容器自然换行，单个长标记也可换行，主操作不被标记压缩。组件不推断收藏、使用记录或状态，点击仍只发既有意图。
+
+组件页 `/next/components/record-list#record-tags` 包含双标记、长中文标记与标题、MathML、320px 开关和“显示行状态”开关。复用检索：本地 coss Badge/Frame/Button、table-particle 的 p-table-3/4，及本页已有 Beautiful UI Records Table/Filter Table/Task Rows 与 p-table-5/8 检索记录。现有行结构能承接两个属性，不引入第二套列表或第三方代码；本轮离线复核，未刷新在线注册索引。浏览器验收：按分工由 Supervisor 执行。

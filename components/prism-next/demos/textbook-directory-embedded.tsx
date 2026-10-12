@@ -51,6 +51,28 @@ function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMo
   </section>
 }
 
+function HeaderOnlyFixture() {
+  const { books, subjects } = useMemo(() => directoryDemoBooks("5", "large"), [])
+  const textbooks = useMemo(() => books.map(({ directories, ...metadata }) => metadata), [books])
+  const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
+  const [callbackMode, setCallbackMode] = useState(false)
+  const [requests, setRequests] = useState(0)
+  const [width, setWidth] = useState("320")
+  return <section id="textbook-header-only" className="space-y-3" aria-label="教材头部单独使用">
+    <h2 className="text-block-title">教材头部单独使用</h2>
+    <p className="text-ui-hint">只提供教材名称、学科、版本和册次，不传目录与范围选择。切换教材后由宿主更新当前教材。</p>
+    <div className="flex flex-wrap items-end gap-4">
+      <Choices label="头部宽度（px）" value={width} options={["240", "320", "720"]} onChange={setWidth} />
+      <Toggle pressed={callbackMode} onPressedChange={setCallbackMode}>头部切换由宿主接管</Toggle>
+    </div>
+    <div className="max-w-full" style={{ width: Number(width) }}>
+      <TextbookDirectory layout="header" textbooks={textbooks} subjects={subjects} bookId={bookId} onBookChange={setBookId}
+        onTextbookSwitch={callbackMode ? () => setRequests(value => value + 1) : undefined} />
+    </div>
+    <p role="status" className="text-ui-hint">当前教材：{textbooks.find(book => book.id === bookId)?.title}。宿主收到 {requests} 次头部切换请求。</p>
+  </section>
+}
+
 export function EmbeddedTextbookDirectoryDemo() {
   const [width, setWidth] = useState("280")
   const [depth, setDepth] = useState("5")
@@ -79,5 +101,6 @@ export function EmbeddedTextbookDirectoryDemo() {
     <p className="text-ui-hint">教材及题数均为演示数据，包含 0 与未提供题数。首次进入课程选第一课，知识点选全部；宿主按教材与目录种类在当前会话中保存选择，刷新后恢复。</p>
     <p className="text-ui-hint">countUnit 默认“题”。试卷可能同时属于多个章节：选择“份试卷”并关闭“节点数量可相加”，多选页脚只保留已选项数与确认按钮；节点和整本数量仍显示宿主事实。</p>
       <DirectoryPanel countUnit={countUnit} countsAdditive={countsAdditive} key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} counts={showCounts ? fixture.counts : undefined} />
+    <HeaderOnlyFixture />
   </div>
 }

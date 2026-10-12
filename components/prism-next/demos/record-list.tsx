@@ -146,6 +146,30 @@ function OptionalRegionsRecordFixture() {
   </>
 }
 
+export const markedRecordRows: RecordListRow[] = [
+  { ...homogeneousRecordRows[0], id: "tagged-paper", tag: "专题复习", badges: ["已收藏", "本班用过"],
+    description: <span>来源：校本资源 · 函数关系：<math aria-label="y 等于 x 的平方"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math></span> },
+  { ...homogeneousRecordRows[1], id: "long-tagged-paper", tag: "跨章节综合复习与阶段性学习诊断", badges: ["本班已用于单元复习并保留完整使用记录", "已收藏"], description: "来源：年级组共享资源 · 2026-10-12" },
+]
+
+function MarkedRecordFixture() {
+  const [narrow, setNarrow] = useState(false)
+  const [showStatus, setShowStatus] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 标记列表</Button>
+      <Button variant="outline" aria-pressed={showStatus} onClick={() => setShowStatus(!showStatus)}>显示行状态</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" rows={markedRecordRows} showHeader={false} showSearch={false} showPrimary={false} showType={false} showStatus={showStatus}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -175,6 +199,9 @@ export function RecordListDemo() {
     </DemoSection>
     <DemoSection id="record-wide" title="1366px 宽容器" description="本区域保留 1366px 宽度，可横向滚动检查完整布局。">
       <div className="overflow-x-auto" role="region" aria-label="1366px 记录列表预览" tabIndex={0}><div className="w-[1366px]"><RecordFixture /></div></div>
+    </DemoSection>
+    <DemoSection id="record-tags" title="标题类别与操作侧事实标记" description="类别显示在标题之前；已收藏、本班用过由宿主提供，与行状态独立。关闭行状态仍保留事实标记。">
+      <MarkedRecordFixture />
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">

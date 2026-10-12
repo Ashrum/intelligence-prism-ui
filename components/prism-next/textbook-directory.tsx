@@ -56,7 +56,7 @@ export function useDirectorySelection(data: DirectoryData, checkedIds: string[],
   })
 }
 
-export type TextbookDirectoryProps = {
+type DirectoryProps = {
   textbooks: TextbookDefinition[]
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
@@ -80,8 +80,17 @@ export type TextbookDirectoryProps = {
   onBookChange?: (bookId: string) => void
 }
 
+/** Header metadata needs no directory trees. Full definitions remain accepted. */
+export type TextbookHeaderDefinition = Omit<TextbookDefinition, "directories"> & { directories?: TextbookDefinition["directories"] }
+export type TextbookDirectoryProps = DirectoryProps | (Omit<DirectoryProps, "layout" | "textbooks" | "selections" | "onSelectionsChange"> & {
+  layout: "header"
+  textbooks: TextbookHeaderDefinition[]
+  selections?: DirectorySelections
+  onSelectionsChange?: Dispatch<SetStateAction<DirectorySelections>>
+})
+
 export function TextbookDirectory(props: TextbookDirectoryProps) {
-  const { textbooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch, ...extension } = props
+  const { textbooks } = props
   const controlId = useId()
   const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
   const [localKind, setLocalKind] = useState<DirectoryKind>("course")
@@ -89,13 +98,15 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
   const kind = presentation?.kind ?? localKind
   const setKind = presentation?.onKindChange ?? setLocalKind
   const [sessions, setSessions] = useState<Record<string, Session>>({})
+  if (props.layout === "header") return <EmbeddedTextbookDirectory {...props} />
+  const { textbooks: directoryBooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch, ...extension } = props
   const formalEmbedded = layout === "embedded" && (extension.allOption !== undefined || extension.counts !== undefined || extension.subjects !== undefined || extension.currentNodes !== undefined || multiSelect === "dialog")
-  if (formalEmbedded) return <EmbeddedTextbookDirectory textbooks={textbooks} selections={selections} onSelectionsChange={onSelectionsChange} {...extension}
+  if (formalEmbedded) return <EmbeddedTextbookDirectory textbooks={directoryBooks} selections={selections} onSelectionsChange={onSelectionsChange} {...extension}
     kind={extension.kind ?? kind} onKindChange={extension.onKindChange ?? setKind} titleAction={props.titleAction ?? "select"}
     multiSelect={multiSelect} emptySelectionLabel={emptySelectionLabel} onTextbookSwitch={onTextbookSwitch} />
-  const book = textbooks.find(item => item.id === bookId) ?? textbooks[0]
-  const bookOptions = textbooks.map(item => ({ value: item.id, label: item.title }))
-  const groups = textbooks.flatMap(item => kinds.map(type => {
+  const book = directoryBooks.find(item => item.id === bookId) ?? directoryBooks[0]
+  const bookOptions = directoryBooks.map(item => ({ value: item.id, label: item.title }))
+  const groups = directoryBooks.flatMap(item => kinds.map(type => {
     const scope = scopeKey(item.id, type), data = item.directories[type]
     const ids = [...new Set(selections[scope] ?? [])].filter(id => data.leafIds.includes(id))
     return { book: item, kind: type, scope, data, ids }
@@ -123,11 +134,11 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
           <p className="truncate text-block-title text-foreground" title={volume}>{volume}</p>
           {details && <p className="truncate text-ui-hint text-muted-foreground" title={details}>{details}</p>}
         </div>
-        {onTextbookSwitch ? <Button variant="outline" size="sm" aria-label="切换教材" onClick={onTextbookSwitch}><ArrowRightLeft aria-hidden="true" />切换</Button> : textbooks.length > 1 && <Menu>
+        {onTextbookSwitch ? <Button variant="outline" size="sm" aria-label="切换教材" onClick={onTextbookSwitch}><ArrowRightLeft aria-hidden="true" />切换</Button> : directoryBooks.length > 1 && <Menu>
           <MenuTrigger render={<Button variant="outline" size="sm" />} aria-label="切换教材"><ArrowRightLeft aria-hidden="true" />切换</MenuTrigger>
           <MenuPopup align="end" className="max-w-[min(24rem,var(--available-width))]" aria-label="选择教材">
             <MenuRadioGroup value={book.id} onValueChange={value => { if (value) setBookId(value) }}>
-              {textbooks.map(item => {
+              {directoryBooks.map(item => {
                 const label = [item.volume || item.title, item.subject, item.edition].filter(Boolean).join(" · ")
                 return <MenuRadioItem key={item.id} value={item.id} aria-label={label} className="grid-cols-[.75rem_minmax(0,1fr)] [&>span]:min-w-0"><span className="block min-w-0 truncate text-ui-body" title={label}>{label}</span></MenuRadioItem>
               })}
@@ -141,7 +152,7 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
           <p className="min-w-0 truncate text-muted-foreground" role="status" title={selectionCount <= 1 ? selectionLabel : undefined} aria-label={selectionCount === 1 ? selectionLabel : undefined}>{selectionLabel}</p>
           {selectionCount > 0 && <Button variant="ghost" size="sm" className="shrink-0" aria-label="清空所有教材的已选范围" onClick={() => onSelectionsChange(previous => {
             const next = { ...previous }
-            for (const item of textbooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
+            for (const item of directoryBooks) for (const type of kinds) next[scopeKey(item.id, type)] = []
             return next
           })}>清空</Button>}
 
