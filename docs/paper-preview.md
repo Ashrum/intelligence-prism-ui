@@ -210,3 +210,22 @@ Calibration 包含距四边 10mm 的四角十字、中心十字、沿四边每 1
 本轮实际读取固定 coss Tooltip、manifest、既有 PaperPreview/DocumentRegionViewer、Prism Button，复核本地 selection-particles 的 p-select-6/18/7 与冻结文档 p-toolbar-1、p-frame-1、p-toggle-group-4 记录。这些适合现有控件与工具组合，没有提供当前所需纸面套打协议；在 PaperPreview 内扩展共享绘制模块。复读 Beautiful UI Context Cards 历史记录：内容卡片与本次通用纸面图层不匹配，未复制代码。按 Builder 前置约定不联网刷新上游，不声称完整注册表不存在匹配项。
 
 组件页 `/next/components/paper-preview` 新增“原卷批阅图层与套打校准”，提供原卷示意、图层开关、仅图层、校准页、A4/A3 横竖、缩放/旋转、总分角位与毫米偏移。三主题 320px 夹具与长中文/公式同页。8 个 P45 SHA-256 基线覆盖旧调用，原冻结快照不改；自动测试覆盖四种标记、分数、截断/全文、总分页与角位、三档缩放×四角旋转共享绘制、mixed 页号、mm 比例/偏移、透明图层及校准几何。浏览器验收：按分工由 Supervisor 执行；真实打印机、纸张套印、触屏与读屏器未验证。
+
+## P52 · 数字分节标题与画布名称
+
+mixed 复用原有 `renderSectionHeading(page,index)` 与 `headers[page.id]`，现在对数字 content 分支同样生效；参数为完整原始 page 和完整 pages 中从 0 起的索引。顺序与扫描分支相同：分节标题 → 纸外页眉 → 正文。数字分支不自动生成“学生作答”标题；默认无回调、无对应页眉时保留原 DOM 子树和 React ID。已有回调如只面向扫描，应按 `page.content` 返回 null/undefined；扫描分支原有 fallback 与调用顺序不变。
+
+`mixed.label?: string`（低层 `PaperPreviewMixed.label` 同名）设置连续画布的可访问名称，默认仍为“题目与学生作答连续画布”。数字卷可传“试卷连续画布”，宿主应提供有意义的非空名称。不增加外层重复属性；`PaperPreview` 的 mixed 类型直接继承低层属性。
+
+```tsx
+<PaperPreview layout="mixed" mixed={{
+  ...mixedProps,
+  label: "试卷连续画布",
+  renderSectionHeading: (page, index) => sectionHeadings[page.id],
+  headers: pageHeaders,
+}} />
+```
+
+独立组件夹具 `/next/components/paper-preview/digital` 覆盖 light/paper/dark、320px、长中文与公式，开关“显示分节标题与页眉”只控制宿主插槽。整卷仍须组合独立全屏 ReviewWorkspace。数字页的 percent=100、自适应宽度与不参与扫描旋转保持不变；数字缩放/旋转、题号格内分值不在本轮范围。
+
+复用依据：离线核对 PaperPreviewMixed / Continuous、QuestionRail 和固定 coss Tabs；查阅现有冻结设计与本页 particles `p-tabs-10/14`、`p-frame-1`、`p-toolbar-1` 记录。既有 mixed 插槽签名适用，无需新建 renderContentHeader、组件或视觉令牌；通用预览能力不涉及 Beautiful UI。未联网刷新上游或复制第三方代码。浏览器验收：按分工由 Supervisor 执行。

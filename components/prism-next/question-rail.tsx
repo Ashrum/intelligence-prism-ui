@@ -24,15 +24,17 @@ export type QuestionRailSection = {
   pages: { id: string; marker?: { label: ReactNode; tooltip: string; ariaLabel: string }; items: QuestionRailItem[] }[]
 }
 export type QuestionRailProps = {
-  sections: QuestionRailSection[]; selected: string; filter: string; onFilterChange: (value: string) => void
-  filters: { value: string; label: ReactNode; count?: ReactNode; ariaLabel: string }[]
-  overview: { segments: { count: number; tone: ReviewTone }[]; text: ReactNode; label?: string }
+  sections: QuestionRailSection[]; selected: string; filter?: string; onFilterChange?: (value: string) => void
+  filters?: { value: string; label: ReactNode; count?: ReactNode; ariaLabel: string }[]
+  overview?: { segments: { count: number; tone: ReviewTone }[]; text: ReactNode; label?: string }
   collapse?: ReactNode; sort?: ReactNode; footer?: ReactNode; empty?: ReactNode; panelId: string
   label?: string; title?: string; filterLabel?: string; listLabel?: string
   onSelect: (id: string) => void; onLocate: () => void; onPage: (id: string) => void
 }
 /** Host orders sections/pages/items and supplies all classification, counts and text. */
 export function QuestionRail({ sections, selected, filter, onFilterChange, filters, overview, collapse, sort, footer, empty = "暂无题目", panelId, label = "题目栏", title = "题目", filterLabel = "题目筛选", listLabel = "选择题目", onSelect, onLocate, onPage }: QuestionRailProps) {
+  const RailRoot = filters ? Tabs : "div"
+  const activeFilter = filter ?? filters?.[0]?.value ?? ""
   const list = sections.flatMap(section => section.pages.flatMap(page => page.items))
   const orderKey = JSON.stringify(list.map(item => item.id))
   const root = useRef<HTMLElement>(null)
@@ -69,19 +71,7 @@ export function QuestionRail({ sections, selected, filter, onFilterChange, filte
     onSelect(next.id)
     ;[...root.current?.querySelectorAll<HTMLButtonElement>('[data-question-id]') ?? []].find(node => node.dataset.questionId === next.id)?.focus({ preventScroll: true })
   }
-  return <aside ref={root} aria-label={label} data-review-rail className="d1-rail min-h-0 bg-background">
-    <Tabs className="d1-rail-tabs" value={filter} onValueChange={onFilterChange}>
-    <header className="d1-rail-header flex items-center justify-between gap-1 px-3"><h2 className="sr-only">{title}</h2>
-      <TabsList size="sm" aria-label={filterLabel}>
-        {filters.map(item => <TabsTab key={item.value} value={item.value} aria-controls={panelId} aria-label={item.ariaLabel}>{item.label}{item.count !== undefined && <CossBadge variant="outline">{item.count}</CossBadge>}</TabsTab>)}
-      </TabsList>
-      {collapse}
-    </header>
-    <section aria-label={overview.label ?? "全卷概览"} className="d1-rail-overview space-y-1 px-3 py-1.5">
-      <div aria-hidden="true" className="flex h-1 gap-0.5 overflow-hidden rounded-full">{overview.segments.map(({ count, tone }, index) => count > 0 && <span key={index} data-overview-count={count} className={reviewToneClass[tone]} style={{ flex: count }} />)}</div>
-      <p className="text-ui-meta tabular-nums text-muted-foreground">{overview.text}</p>
-    </section>
-    <TabsPanel id={panelId} value={filter} className="min-h-0"><ScrollArea overscrollContain>{sort}<div role="listbox" aria-label={listLabel} onKeyDown={keyboard} className="space-y-4 px-3 py-2">
+  const body = <ScrollArea overscrollContain>{sort}<div role="listbox" aria-label={listLabel} onKeyDown={keyboard} className="space-y-4 px-3 py-2">
       {sections.map(section => {
         const type = section.id, row = section.layout === 'row'
         if (!section.pages.some(page => page.items.length)) return null
@@ -99,8 +89,21 @@ export function QuestionRail({ sections, selected, filter, onFilterChange, filte
         </div>
       })}
       {!list.length && <p className="py-6 text-ui-body text-muted-foreground">{empty}</p>}
-    </div><p className="px-3 pb-3 text-ui-meta text-muted-foreground">{footer}</p></ScrollArea></TabsPanel>
-    </Tabs>
+    </div><p className="px-3 pb-3 text-ui-meta text-muted-foreground">{footer}</p></ScrollArea>
+  return <aside ref={root} aria-label={label} data-review-rail className="d1-rail min-h-0 bg-background">
+    <RailRoot className="d1-rail-tabs" {...(filters ? { value: activeFilter, onValueChange: onFilterChange } : {})} style={overview ? undefined : { gridTemplateRows: "56px minmax(0,1fr)" }}>
+    <header className="d1-rail-header flex items-center justify-between gap-1 px-3"><h2 className={filters ? "sr-only" : "text-ui-body"}>{title}</h2>
+      {filters && <TabsList size="sm" aria-label={filterLabel}>
+        {filters.map(item => <TabsTab key={item.value} value={item.value} aria-controls={panelId} aria-label={item.ariaLabel}>{item.label}{item.count !== undefined && <CossBadge variant="outline">{item.count}</CossBadge>}</TabsTab>)}
+      </TabsList>}
+      {collapse}
+    </header>
+    {overview && <section aria-label={overview.label ?? "全卷概览"} className="d1-rail-overview space-y-1 px-3 py-1.5">
+      <div aria-hidden="true" className="flex h-1 gap-0.5 overflow-hidden rounded-full">{overview.segments.map(({ count, tone }, index) => count > 0 && <span key={index} data-overview-count={count} className={reviewToneClass[tone]} style={{ flex: count }} />)}</div>
+      <p className="text-ui-meta tabular-nums text-muted-foreground">{overview.text}</p>
+    </section>}
+    {filters ? <TabsPanel id={panelId} value={activeFilter} className="min-h-0">{body}</TabsPanel> : <div id={panelId} role="region" aria-label={listLabel} className="min-h-0">{body}</div>}
+    </RailRoot>
   </aside>
 }
 export type QuestionRailClassSection = {id:string;label:ReactNode;summary?:ReactNode;layout:'cell'|'row';items:(Omit<QuestionRailItem,"marker">&{kind?:ReactNode;marker?:boolean|QuestionRailMarker})[]}
