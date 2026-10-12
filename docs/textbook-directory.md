@@ -8,6 +8,8 @@ PO 2026-10-08 选定 A。仍使用 `tree` 目录项和 `/next/components/tree`�
 | --- | --- |
 | `allOption?: {label?,ariaLabel?}` | 独立首项，默认“全部”；空叶数组为全部，单选再点幂等，清空仅当前 scope。可访问名称默认区分课程/知识点 |
 | `counts?: Readonly<Record<string,number>>` | 按目录 nodeId；整本题数放该目录 rootId，保留0、缺省不显示；多选底部仅当归并条目均有宿主题数时求和，缺数不推算 |
+| `countUnit?: string` | 默认“题”；节点及多选对话框内的数量名称、页脚总数使用该单位。紧凑数字列保持数字；自定义单位时“全部”行在显示宿主 rootId 数量时把数量与单位补入可访问名称，默认名称保持原样 |
+| `countsAdditive?: boolean` | 默认 `true`；`false` 表示节点数量可能重叠，多选对话框不计算或呈现求和总数。保留“已选 N 项”、确认按钮、节点与整本宿主数量，不推算去重总数 |
 | `currentNodes? / onCurrentNodesChange?` | `Record<scope,string>` 与 React state updater，配对使用；scope 为 `${book.id}:${kind}`。选择叶集相同也保留精确父节点身份；只在 ID 有效且完整叶集匹配时呈现。全部或改变多选后清身份，未改多选确认保留 |
 | `subjects?` | `{name,teaching?,editions:{title,recent?}[]}[]`；任教/最近优先及标记来自宿主，不记录使用次数；缺省保持教材次序 |
 | `bookId? / onBookChange?` | 可选受控当前教材；未传 bookId 为局部导航，确认切换后回调；无效 ID 只显示首本回退，不自动发变更 |
@@ -33,3 +35,7 @@ P42 两个对话框继续复用 DialogLayout：
 P43：提供 `allOption` 时取消独立已选行；当前目录归并结果多于一项时，“全部”行右侧以次要提示文字显示“已选 n 项”和 coss ghost/xs“清空”，替代整本题数，全部无当前项底色。计数区域保持 `aria-live="polite"`，清空可访问名称“清空已选，回到全部”，仅清当前 scope 并回焦全部。无多选结果时恢复宿主整本题数（含 0，缺省隐藏）。全部行高 36px，无上下额外留白；分隔线上下各 4px，搜索到全部间距 8px。未提供 allOption 的新形态、旧 embedded 和 split 行为不变。
 
 P43 复用依据：检查 coss Button 的 ghost/xs（最小文字按钮）与本地 selection-particles 的 p-select-7（已选摘要）、p-select-21（随内容宽度）。下拉选择器不适合大纲首行；沿用 DirectoryOutlineTree，组合兄弟按钮与状态区域，避免嵌套交互控件。不新增组件、依赖或视觉令牌；沙箱不能联网，未刷新 particles 上游。
+
+## P50：试卷单位与不可相加数量
+
+`<TextbookDirectory layout="embedded" multiSelect="dialog" allOption={{}} countUnit="份试卷" countsAdditive={false} ... />` 可用于同一试卷属于多个节点的目录。组件页 `/next/components/tree#embedded-directory` 增加“计数单位”和“节点数量可相加”控件；取消相加后多选页脚保留已选项数与确认，不改变草稿和提交语义。默认 `countUnit="题" countsAdditive={true}` 保持原输出；旧 split / embedded 的目录项数量单位（节课程、个知识点）不属于 counts，保持原契约。复核 coss ToggleGroup / Frame / Button 与本地 particles p-dialog-5、p-select-7、p-input-group-22，继续扩展现有大纲与 DialogLayout；无新组件或上游代码复制，未联网刷新上游。

@@ -36,6 +36,8 @@ export type RecordListProps = {
   showType?: boolean; showStatus?: boolean
   /** List-level primary action visibility in both header and empty state; defaults to true. */
   showPrimary?: boolean
+  /** Omit the complete header or built-in search/filter row; both default to true. */
+  showHeader?: boolean; showSearch?: boolean
   tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
   rows: readonly RecordListRow[]; search?: string; searchLabel?: string; searchPlaceholder?: string
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
@@ -54,7 +56,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
-  showType = true, showStatus = true, showPrimary = true,
+  showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
   onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPageSizeChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
@@ -64,7 +66,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
   const primary = showPrimary && <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
-    {state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
+    {showSearch && state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
       <label className="grid min-w-0 flex-[2_1_240px] gap-2 text-ui-action" htmlFor={`${id}-search`}>{searchLabel}
         <Input id={`${id}-search`} type="search" value={search} placeholder={searchPlaceholder} readOnly={!onSearch}
           size="default" className="w-full items-center pointer-coarse:[&_[data-slot=input]]:min-h-11" onChange={event => onSearch?.(event.target.value)} />
@@ -148,11 +150,11 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       </div>}
     </>}
   </div>
-  return <section data-record-list data-state={state.kind} aria-labelledby={`${id}-title`} className="@container min-w-0">
+  return <section data-record-list data-state={state.kind} aria-labelledby={showHeader ? `${id}-title` : undefined} aria-label={showHeader ? undefined : title} className="@container min-w-0">
     <Frame>
-    <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
+    {showHeader && <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
-    </FrameHeader>
+    </FrameHeader>}
     <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
         {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce:transition-none`}><span className="truncate">{item.label}</span> <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}

@@ -16,6 +16,8 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
 
 - 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
+- `showHeader?: boolean` 默认 `true`；`false` 时不渲染整个 FrameHeader（标题、说明、页头主操作），根 section 改用 `title` 作为 `aria-label`，行列表的名称保留。首次空状态的主操作仍由 `showPrimary` 控制；需要一起移除时同时设置 `showPrimary={false}`。
+- `showSearch?: boolean` 默认 `true`；`false` 时不渲染内置搜索与筛选控件行。tabs、summary、分页、已选条件摘要与清除操作、各状态反馈保持原行为；宿主负责外部搜索与筛选。
 - `showPrimary?: boolean` 默认 `true`；显式设为 `false` 时页头与首次空状态均不渲染列表主操作按钮，不留占位或空操作区，空状态标题与说明、行主操作和菜单仍保留；省略 `onPrimary` 仍只禁用可见按钮，用法见组件页 `/next/components/record-list#record-no-primary`。
 - `tabs?: {id,label,count}[]` 由宿主提供，count 非负整数，零保留，null/无效显示「未提供」。`tab` 未提供时使用 `defaultTab` 或首项；受控模式只有新 props 改变选中项。传入非空 tabs 时，ID 唯一且 tab/defaultTab 须属于 tabs；切换对象时宿主应 key/remount 或控制 tab。
 - 不传 `tabs` 或传 `[]` 时不渲染 Tabs、TabList 或 TabPanel，直接呈现内容。不传 `tab` 时忽略 `tabIds`（包括空数组），完整显示宿主页面，`defaultTab` 不参与过滤；显式传 `tab` 时仍按 `tabIds` 过滤，未标分类的行继续显示。外部导航负责筛选后分页，组件不会发出 Tab 切换意图。组件页「外部导航驱动、无内部 Tab」展示此用法。
@@ -88,3 +90,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 ## P49：省略列表主操作
 
 复用依据：离线复核固定 coss Button / Frame / Empty、既有 RecordList 和本地 table-particle（p-table-3/4）的操作与空状态组合，并对照上文 p-table-5/8、p-frame-1/3/4 及 Beautiful UI Records Table / Filter Table / Task Rows 的既有检索记录；现有组件仅缺列表级显示开关，沿用 P48 风格扩展公开属性，不复制上游代码、不新增组件或依赖，未联网刷新注册文件。组件页新增有记录与首次空两种 `showPrimary={false}` 用法，并提供 320px 容器开关、长中文与公式；浏览器验收按分工由 Supervisor 执行。
+
+## P50：省略完整页头与内置搜索行
+
+组件页 `/next/components/record-list#record-optional-regions` 提供 `showHeader={false} showSearch={false}` 试卷列表，可独立恢复两个区域并切换 320px 容器。保留 tabs、共 2 份试卷摘要、分页、长中文/公式、行主操作和更多菜单；外部页面负责自己的标题与筛选，省略属性不触发任何业务意图。未传属性保持原输出。复核固定 coss Frame / ToggleGroup 以及现有 Input / Select / Empty 组合、本地 particles p-table-3/4 的工具栏和内容分区，并沿用本页 Beautiful UI Records Table / Filter Table / Task Rows 的既有评估；仅扩展原组件，不新增条目或依赖，未联网刷新注册文件。

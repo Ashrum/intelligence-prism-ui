@@ -67,6 +67,10 @@ export type TextbookDirectoryProps = {
   onTextbookSwitch?: () => void
   allOption?: DirectoryAllOption
   counts?: DirectoryCounts
+  /** Unit for host counts; defaults to 题. */
+  countUnit?: string
+  /** False omits the summed dialog total for overlapping node counts; defaults to true. */
+  countsAdditive?: boolean
   subjects?: TextbookSubject[]
   currentNodes?: Record<string, string>
   onCurrentNodesChange?: Dispatch<SetStateAction<Record<string, string>>>

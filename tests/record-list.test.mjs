@@ -269,3 +269,42 @@ test('showPrimary=false leaves complete empty-state text with no header button o
   }
   assert.match(capture({ showPrimary: false, state: { kind: 'empty' } }).html, /完成一次批阅后，处理进度、必要复核与最终结果会保存在这里。/);
 });
+
+test('P50 header/search visibility defaults preserve every state with and without tabs', () => {
+  for (const kind of ['ready', 'loading', 'empty', 'search-empty', 'error']) for (const tabs of [undefined, api.recordTabs]) {
+    const props = { state: { kind, reason: '加载失败' }, tabs };
+    assert.equal(capture(props).html, capture({ ...props, showHeader: true, showSearch: true }).html);
+    const hidden = capture({ ...props, title: '试卷库', showHeader: false, showSearch: false });
+    assert.match(hidden.html, /<section[^>]*aria-label="试卷库"/);
+    assert.doesNotMatch(hidden.html, /<section[^>]*aria-labelledby=|data-slot="frame-panel-header"|记录搜索与筛选|type="search"/);
+  }
+});
+
+for (const [showHeader, showSearch] of [[false, true], [true, false], [false, false]]) {
+  test(`P50 optional regions preserve independent controls, names and row intents: ${showHeader}/${showSearch}`, () => {
+    const events = [];
+    const out = capture({ title: '试卷库', description: '页头说明', primaryLabel: '新建试卷', showHeader, showSearch,
+      activeFilters: ['数学'], onClearFilters: () => events.push('clear'),
+      onRowAction: (...args) => events.push(['row', ...args]), onRowMenu: (...args) => events.push(['menu', ...args]) });
+    assert.equal(out.html.includes('data-slot="frame-panel-header"'), showHeader);
+    assert.equal(out.html.includes('页头说明'), showHeader);
+    assert.equal(out.html.includes('新建试卷'), showHeader);
+    assert.equal(out.html.includes('记录搜索与筛选'), showSearch);
+    assert.equal(out.find('Input').length > 0, showSearch);
+    assert.match(out.html, /aria-label="试卷库列表"/);
+    for (const label of ['role="tablist"', 'role="tabpanel"', 'aria-label="试卷库分页"', 'aria-live="polite"', '当前筛选：数学']) assert.ok(out.html.includes(label), label);
+    assert.match(out.html, /aria-label="继续处理：/); assert.match(out.html, /aria-label="更多操作：/);
+    button(out, '继续处理').props.onClick(click()); out.find('MenuItem')[0].props.onClick(click()); button(out, '清除筛选').props.onClick();
+    assert.deepEqual(events, [['row', 'linear', 'open'], ['menu', 'linear', 'details'], 'clear']);
+  });
+}
+
+test('P50 hidden header leaves empty primary under showPrimary and keeps state recovery controls', () => {
+  for (const showPrimary of [false, true]) {
+    const out = capture({ showHeader: false, showSearch: false, showPrimary, state: { kind: 'empty' } });
+    assert.match(out.html, /暂无记录/);
+    assert.equal(out.find('Button').length, showPrimary ? 1 : 0);
+  }
+  assert.match(capture({ showHeader: false, showSearch: false, search: '函数', state: { kind: 'search-empty' } }).html, /清除搜索/);
+  assert.match(capture({ showHeader: false, showSearch: false, state: { kind: 'error', reason: '查询失败' } }).html, /重试/);
+});

@@ -206,3 +206,54 @@ test('P43 all row has 36px height, 4px separator spacing and at most 8px search 
   assert.ok(descendants(allRow(p)).some(node => node.props?.['data-directory-count'] !== undefined));
   assert.ok(!p.find(node => node.props['aria-label'] === '清空已选，回到全部'));
 });
+
+test('P50 directory defaults keep byte-identical outlines and open multi-dialog output', () => {
+  for (const depth of ['2', '5']) {
+    const original = probe(depth), explicit = probe(depth);
+    explicit.state.extra = { countUnit: '题', countsAdditive: true };
+    original.render(); explicit.render(); assert.equal(original.state.html, explicit.state.html);
+    original.click('多选'); explicit.click('多选'); original.click('全选'); explicit.click('全选');
+    assert.equal(original.state.html, explicit.state.html);
+  }
+});
+
+test('P50 directory custom units name all and node counts, including zero, without inventing missing counts', () => {
+  const p = probe(); p.state.extra = { countUnit: '份试卷' }; p.render();
+  const data = p.books[0].directories.course;
+  assert.equal(allRow(p).props['aria-label'], '全部，整本教材，328 份试卷');
+  for (const row of p.rows()) {
+    const count = p.counts[row.props.item.getId()];
+    if (count !== undefined) assert.ok(row.props['aria-label'].includes(`，${count} 份试卷`));
+    else assert.doesNotMatch(row.props['aria-label'], /份试卷/);
+  }
+  p.counts[data.rootId] = 0; p.render(); assert.equal(allRow(p).props['aria-label'], '全部，整本教材，0 份试卷');
+  p.state.extra.allOption = { label: '整本', ariaLabel: '整本范围' }; p.render();
+  assert.equal(allRow(p).props['aria-label'], '整本范围，0 份试卷');
+  delete p.counts[data.rootId]; p.render(); assert.equal(allRow(p).props['aria-label'], '整本范围');
+  p.state.showCounts = false; p.render(); assert.doesNotMatch(p.state.html, /份试卷|data-directory-count/);
+});
+
+test('P50 non-additive dialog omits only summed facts, preserves item counts, node names and confirmation intents', () => {
+  const p = probe('2'), data = p.books[0].directories.course, scope = `${p.books[0].id}:course`;
+  const chapters = data.nodes[data.rootId].children.slice(0, 2);
+  const selected = chapters.flatMap(id => directoryLeaves(data, id));
+  for (const id of chapters) p.counts[id] = 12;
+  p.state.selections = { [scope]: selected, unrelated: ['keep'] };
+  p.state.extra = { countUnit: '份试卷' }; p.render(); p.click('多选');
+  const footer = () => p.dialog('选择多个章节').props.footerStart.props.children;
+  assert.equal(footer(), '已选 2 项 · 共 24 份试卷');
+  assert.match(p.state.html, /共 24 份试卷/);
+  assert.match(p.state.html, /aria-label="[^"]*，12 份试卷/);
+  p.state.extra.countsAdditive = false; p.render();
+  assert.equal(footer(), '已选 2 项'); assert.doesNotMatch(p.state.html, /共 \d+ (?:题|份试卷)/);
+  assert.ok(p.state.html.includes('确认（2）')); assert.match(p.state.html, /，12 份试卷/);
+  p.click('确认（2）'); assert.deepEqual(p.state.selections, { [scope]: selected, unrelated: ['keep'] });
+  assert.equal(p.state.requestsSelection.length, 1);
+  p.click('多选');
+  p.find((node, path) => path.includes('/dialog') && node.type.name === 'Button' && node.props.children === '清空').props.onClick(); p.render();
+  assert.equal(footer(), '已选 0 项');
+  assert.ok(p.state.html.includes('确认（0）')); p.click('取消');
+  assert.deepEqual(p.state.selections[scope], selected);
+  p.state.extra.countsAdditive = true; delete p.counts[chapters[1]]; p.render(); p.click('多选');
+  assert.equal(footer(), '已选 2 项');
+});

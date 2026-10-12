@@ -127,7 +127,7 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsChange, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange }: TextbookDirectoryProps) {
+export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsChange, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange }: TextbookDirectoryProps) {
   const View = OutlineView
   const initialExpanded = noExpansion
   const [localBookId, setLocalBookId] = useState(textbooks[0]?.id ?? "")
@@ -167,8 +167,8 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
   const draftIds = [...new Set(multiDialog.selections[draftScope] ?? [])].filter(id => draftData.leafIds.includes(id))
   const draftEntries = summarizeDirectory(draftData, draftIds)
   const draftGroups = draftData.nodes[draftData.rootId].children.map(id => ({ id, entries: draftEntries.filter(entry => draftData.paths[entry.id][0] === id) })).filter(group => group.entries.length)
-  const draftTotal = counts && draftEntries.every(entry => counts[entry.id] !== undefined) ? draftEntries.reduce((sum, entry) => sum + counts[entry.id], 0) : undefined
-  const draftSummary = `已选 ${draftEntries.length} 项${draftTotal === undefined ? "" : ` · 共 ${draftTotal} 题`}`
+  const draftTotal = countsAdditive && counts && draftEntries.every(entry => counts[entry.id] !== undefined) ? draftEntries.reduce((sum, entry) => sum + counts[entry.id], 0) : undefined
+  const draftSummary = `已选 ${draftEntries.length} 项${draftTotal === undefined ? "" : ` · 共 ${draftTotal} ${countUnit}`}`
   // Metadata and order are supplied by the host; never infer recency from clicks.
   const subjects = [...new Set(textbooks.map(subjectTitle))].map(name => hostSubjects.find(item => item.name === name) ?? { name, editions: [] })
     .sort((a, b) => Number(!!b.teaching) - Number(!!a.teaching) || hostRank(hostSubjects, a) - hostRank(hostSubjects, b))
@@ -189,7 +189,7 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
   const closeBook = () => setBookDialog(previous => ({ ...previous, open: false }))
   const closeMulti = () => setMultiDialog(previous => ({ ...previous, open: false }))
   const setDraft: SelectionChange = update => setMultiDialog(previous => ({ ...previous, selections: typeof update === "function" ? update(previous.selections) : update }))
-  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory="embedded">
+  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory="embedded">
     <BookHeader book={book}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
       setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })

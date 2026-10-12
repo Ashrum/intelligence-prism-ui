@@ -53,10 +53,11 @@ function DimensionLabel({ dimension, helpId }: { dimension: FacetFilterDimension
 type DimensionProps = {
   dimension: FacetFilterDimension
   selected: readonly string[]
+  countUnit?: string
   onIntent: (intent: FacetFilterIntent) => void
 }
 
-function OptionChoices({ dimension, selected, onSelect, options = dimension.options, multiple = false, list = false }: Omit<DimensionProps, "onIntent"> & {
+function OptionChoices({ dimension, selected, onSelect, options = dimension.options, multiple = false, list = false, countUnit = "题" }: Omit<DimensionProps, "onIntent"> & {
   options?: readonly FacetFilterOption[]
   onSelect: (values: string[]) => void
   multiple?: boolean
@@ -75,23 +76,23 @@ function OptionChoices({ dimension, selected, onSelect, options = dimension.opti
     applySelection(multiple ? ids : added ? [added] : ids)
   }}>
     <ToggleGroupItem value={allValue} aria-label={`${dimension.label}：全部`} className={list ? "w-full justify-start" : ""}><span className={!selected.length ? "text-ui-action" : "text-ui-body"}>全部</span></ToggleGroupItem>
-    {options.map(option => <ToggleGroupItem key={option.id} value={optionValue(option.id)} aria-label={`${dimension.label}：${option.label}${option.count !== undefined ? `，${option.count} 题` : ""}`} title={option.label} disabled={option.count === 0 && !selected.includes(option.id)} className={list ? "w-full justify-start" : "max-w-full"}>
+    {options.map(option => <ToggleGroupItem key={option.id} value={optionValue(option.id)} aria-label={`${dimension.label}：${option.label}${option.count !== undefined ? `，${option.count} ${countUnit}` : ""}`} title={option.label} disabled={option.count === 0 && !selected.includes(option.id)} className={list ? "w-full justify-start" : "max-w-full"}>
       <OptionLabel option={option} selected={selected.includes(option.id)} />
     </ToggleGroupItem>)}
   </ToggleGroup>
 }
 
-function MultiChoices({ dimension, draft, setDraft, options = dimension.options, list = false }: {
-  dimension: FacetFilterDimension; draft: readonly string[]; setDraft: (value: string[]) => void; options?: readonly FacetFilterOption[]; list?: boolean
+function MultiChoices({ dimension, draft, setDraft, options = dimension.options, list = false, countUnit }: {
+  dimension: FacetFilterDimension; draft: readonly string[]; setDraft: (value: string[]) => void; options?: readonly FacetFilterOption[]; list?: boolean; countUnit?: string
 }) {
-  return <OptionChoices dimension={dimension} selected={draft} onSelect={setDraft} options={options} multiple list={list} />
+  return <OptionChoices countUnit={countUnit} dimension={dimension} selected={draft} onSelect={setDraft} options={options} multiple list={list} />
 }
 
 function DraftActions({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   return <div className="flex gap-2"><Button size="xs" variant="outline" onClick={onConfirm}>确定</Button><Button size="xs" variant="ghost" onClick={onCancel}>取消</Button></div>
 }
 
-export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode }) {
+export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools, countUnit = "题" }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode }) {
   const id = useId()
   const [expanded, setExpanded] = useState(false)
   const signature = dimensionKey(dimension, selected)
@@ -135,8 +136,8 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
       <DimensionLabel dimension={dimension} helpId={`${id}-help`} />
       <div ref={optionsBox} className="relative min-w-0 space-y-2" id={`${id}-options`}>
         {searchable && <div className="space-y-2"><Label htmlFor={`${id}-search`}>搜索{dimension.label}选项</Label><Input size="sm" id={`${id}-search`} type="search" value={query} onChange={event => setQuery(event.target.value)} /></div>}
-        {draft !== null ? <><MultiChoices dimension={dimension} draft={draft} setDraft={setDraft} options={visible} /><DraftActions onConfirm={() => { onIntent(filterIntent(dimension, draft)); finishDraft() }} onCancel={finishDraft} /></> :
-          <OptionChoices dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
+        {draft !== null ? <><MultiChoices countUnit={countUnit} dimension={dimension} draft={draft} setDraft={setDraft} options={visible} /><DraftActions onConfirm={() => { onIntent(filterIntent(dimension, draft)); finishDraft() }} onCancel={finishDraft} /></> :
+          <OptionChoices countUnit={countUnit} dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
         {!visible.length && <p role="status" className="text-ui-hint">没有匹配的选项。</p>}
       </div>
       <div className="facet-filter-tools">
@@ -148,26 +149,26 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
   </fieldset>
 }
 
-function FilterPanel({ label, dimensions, value, onIntent, searchable = false, count = 0 }: Pick<FacetFilterProps, "dimensions" | "value" | "onIntent"> & { label: string; searchable?: boolean; count?: number }) {
+function FilterPanel({ label, dimensions, value, onIntent, searchable = false, count = 0, countUnit = "题" }: Pick<FacetFilterProps, "dimensions" | "value" | "onIntent" | "countUnit"> & { label: string; searchable?: boolean; count?: number }) {
   const [open, setOpen] = useState(false)
   return <Popover open={open} onOpenChange={setOpen}>
     <PopoverTrigger render={<Button size="sm" variant="outline" className="max-w-full gap-0.5 px-1.5" />}><ListFilter aria-hidden="true" />{label}{count > 0 && <Badge variant="secondary" size="sm" className="text-component-label">{count}</Badge>}</PopoverTrigger>
     <PopoverPopup align="start" className="facet-filter w-[40rem] max-w-[calc(100vw-2rem)]">
       <div className="mb-4 flex items-center justify-between gap-3"><PopoverTitle>{label}</PopoverTitle><PopoverClose render={<Button variant="ghost" />}>关闭</PopoverClose></div>
       <p className="mb-4 text-ui-hint">单选即时生效；多选需在所在维度确定，取消或关闭放弃未确认的勾选。</p>
-      {open && <FramePanel className="p-0">{dimensions.map(dimension => <FacetRow key={dimension.id} full searchable={searchable} dimension={dimension} selected={value.filters[dimension.id] ?? []} onIntent={onIntent} />)}</FramePanel>}
+      {open && <FramePanel className="p-0">{dimensions.map(dimension => <FacetRow countUnit={countUnit} key={dimension.id} full searchable={searchable} dimension={dimension} selected={value.filters[dimension.id] ?? []} onIntent={onIntent} />)}</FramePanel>}
     </PopoverPopup>
   </Popover>
 }
 
-export function FilterResults({ value, sortItems, resultCount, favoriteCount, showFavorites = true, endSlot, onIntent }: Omit<FacetFilterProps, "dimensions">) {
+export function FilterResults({ value, sortItems, resultCount, favoriteCount, showFavorites = true, endSlot, onIntent, countUnit = "题" }: Omit<FacetFilterProps, "dimensions">) {
   return <div className="facet-filter-results border-b pb-2" aria-label="筛选结果工具栏" role="group">
     {sortItems.length > 0 && <Tabs value={value.sort} onValueChange={value => { if (typeof value === "string") onIntent({ type: "sort", value }) }}>
       <TabsList variant="underline" size="sm" aria-label="排序">{sortItems.map(item => <TabsTab key={item.id} value={item.id}>{item.label}</TabsTab>)}</TabsList>
     </Tabs>}
     <div className="facet-filter-result-actions">
-      <span className="whitespace-nowrap text-ui-hint text-muted-foreground tabular-nums">{resultCount === undefined ? "题数未提供" : `共 ${resultCount} 题`}</span>
-      {showFavorites && <Toggle size="sm" variant="outline" pressed={value.favoritesOnly} onPressedChange={pressed => onIntent({ type: "favorites", value: pressed })}><Star aria-hidden="true" />我的收藏<span className="text-ui-hint text-muted-foreground tabular-nums">{favoriteCount ?? "数量未知"}</span></Toggle>}
+      <span className="whitespace-nowrap text-ui-hint text-muted-foreground tabular-nums">{resultCount === undefined ? (countUnit === "题" ? "题数未提供" : "数量未提供") : `共 ${resultCount} ${countUnit}`}</span>
+      {showFavorites && <Toggle size="sm" variant="outline" aria-label={countUnit !== "题" && favoriteCount !== undefined ? `我的收藏，${favoriteCount} ${countUnit}` : undefined} pressed={value.favoritesOnly} onPressedChange={pressed => onIntent({ type: "favorites", value: pressed })}><Star aria-hidden="true" />我的收藏<span className="text-ui-hint text-muted-foreground tabular-nums">{favoriteCount ?? "数量未知"}</span></Toggle>}
       <InputGroup className="w-[168px] shrink-0"><InputGroupAddon><Search aria-hidden="true" /></InputGroupAddon><InputGroupInput size="sm" aria-label="在结果中搜索" placeholder="在结果中搜索" type="search" value={value.search} onChange={event => onIntent({ type: "search", value: event.target.value })} /></InputGroup>
       {endSlot && <div className="max-w-full">{endSlot}</div>}
     </div>
@@ -175,7 +176,7 @@ export function FilterResults({ value, sortItems, resultCount, favoriteCount, sh
 }
 
 export function FacetFilter(props: FacetFilterProps) {
-  const { dimensions, value, onIntent } = props
+  const { dimensions, value, onIntent, countUnit = "题" } = props
   const { ref, width } = useContainerWidth()
   const id = useId()
   const [collapsed, setCollapsed] = useState(false)
@@ -196,9 +197,9 @@ export function FacetFilter(props: FacetFilterProps) {
   return <div ref={ref} data-facet-filter className="facet-filter min-w-0 space-y-2">
     <FramePanel className="p-0">
       {collapsed && <div className="flex h-10 items-center gap-2 px-2"><span className="shrink-0 text-ui-action">筛选</span><span className="min-w-0 flex-1 truncate text-ui-hint text-muted-foreground" title={summary}>{summary}</span><div className="flex shrink-0">{reset}{collapse}</div></div>}
-      {!collapsed && !rows.length && <div className="flex flex-wrap items-center justify-end gap-2 p-2">{remaining.length > 0 && <FilterPanel key={resetKey} label="全部筛选" count={otherActive} dimensions={dimensions} value={value} onIntent={onIntent} />}{reset}{collapse}</div>}
-      <div key={resetKey} id={`${id}-facets`} hidden={collapsed}>{rows.map((dimension, index) => <FacetRow key={dimension.id} dimension={dimension} selected={value.filters[dimension.id] ?? []} onIntent={onIntent} slots={slots} tools={!collapsed && index === rows.length - 1 ? <>
-        {remaining.length > 0 && <FilterPanel label="全部筛选" count={otherActive} dimensions={dimensions} value={value} onIntent={onIntent} />}{reset}{collapse}
+      {!collapsed && !rows.length && <div className="flex flex-wrap items-center justify-end gap-2 p-2">{remaining.length > 0 && <FilterPanel countUnit={countUnit} key={resetKey} label="全部筛选" count={otherActive} dimensions={dimensions} value={value} onIntent={onIntent} />}{reset}{collapse}</div>}
+      <div key={resetKey} id={`${id}-facets`} hidden={collapsed}>{rows.map((dimension, index) => <FacetRow countUnit={countUnit} key={dimension.id} dimension={dimension} selected={value.filters[dimension.id] ?? []} onIntent={onIntent} slots={slots} tools={!collapsed && index === rows.length - 1 ? <>
+        {remaining.length > 0 && <FilterPanel countUnit={countUnit} label="全部筛选" count={otherActive} dimensions={dimensions} value={value} onIntent={onIntent} />}{reset}{collapse}
       </> : undefined} />)}</div>
     </FramePanel>
     <FilterResults {...props} />

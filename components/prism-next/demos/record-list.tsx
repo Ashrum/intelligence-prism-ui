@@ -121,6 +121,31 @@ function NoPrimaryRecordFixture() {
   </>
 }
 
+function OptionalRegionsRecordFixture() {
+  const [showHeader, setShowHeader] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
+  const [narrow, setNarrow] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={showHeader} onClick={() => setShowHeader(!showHeader)}>显示列表页头</Button>
+      <Button variant="outline" aria-pressed={showSearch} onClick={() => setShowSearch(!showSearch)}>显示内置搜索与筛选</Button>
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 可省略区域</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" description="查看和下载已保存的试卷。" primaryLabel="新建试卷"
+        showHeader={showHeader} showSearch={showSearch} showType={false} showStatus={false}
+        searchLabel="搜索试卷" searchPlaceholder="搜索试卷名称" rows={homogeneousRecordRows}
+        tabs={[{ id: "all", label: "全部试卷", count: 2 }]} summary={{ label: "共 2 份试卷" }}
+        pagination={{ page: 1, pages: [1], label: "第 1 页" }}
+        onPrimary={() => setNotice("已请求新建试卷，等待调用方导航。")}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -144,6 +169,9 @@ export function RecordListDemo() {
     <DemoSection id="record-loading" title="加载中"><RecordFixture overrides={{ state: { kind: "loading" } }} /></DemoSection>
     <DemoSection id="record-no-primary" title="最近的要求 · 省略列表主操作" description="showPrimary 默认 true；显式设为 false 时页头与空状态都省略主操作且不留占位，空状态标题与说明、行操作仍保留。">
       <NoPrimaryRecordFixture />
+    </DemoSection>
+    <DemoSection id="record-optional-regions" title="试卷库 · 外部提供标题与筛选" description="showHeader、showSearch 默认 true；本例均设为 false。可分别恢复页头和内置搜索行；分类、摘要、分页及行操作始终保留，列表仍以 title 提供可访问名称。">
+      <OptionalRegionsRecordFixture />
     </DemoSection>
     <DemoSection id="record-wide" title="1366px 宽容器" description="本区域保留 1366px 宽度，可横向滚动检查完整布局。">
       <div className="overflow-x-auto" role="region" aria-label="1366px 记录列表预览" tabIndex={0}><div className="w-[1366px]"><RecordFixture /></div></div>

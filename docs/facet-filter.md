@@ -8,6 +8,7 @@ PO 2026-10-08 选定 C；正式目录项 `facet-filter`，页面 `/next/componen
 | `value` | `{filters: Record<string, readonly string[]>, sort:string, favoritesOnly:boolean, search:string}`；完全受控 |
 | `sortItems` | `{id,label}[]`；空数组不显示排序；示例用综合/最新/热门，不硬编码到组件 |
 | `resultCount? / favoriteCount?` | 宿主当前查询口径下的事实；0 正常显示，未提供写未知，不从选项求和 |
+| `countUnit?: string` | 默认“题”；结果文字与常用行、全部筛选、多选草稿中的选项可访问名称使用同一单位。例如 `countUnit="份试卷"` → “共 12 份试卷”。紧凑选项计数仍显示数字；自定义单位时收藏可访问名称也包含数量与单位。未知结果在默认单位下仍为“题数未提供”，自定义单位下为“数量未提供” |
 | `showFavorites?` | 默认 `true`；`false` 时结果栏不渲染“我的收藏”开关，不改变受控值或发出意图 |
 | `endSlot?` | 结果栏附加操作，组件不实现该操作 |
 | `onIntent` | `filter {dimensionId,values}` / `sort {value}` / `favorites {value}` / `search {value}` / `reset` |
@@ -21,3 +22,7 @@ PO 2026-10-08 选定 C；正式目录项 `facet-filter`，页面 `/next/componen
 复用检索（离线）：coss ToggleGroup/Toggle、Popover、FramePanel、Tabs、Button、InputGroup、Label、Tooltip；本地 `selection-particles.tsx` 的 p-select-7 / p-combobox-9、`input-particles.tsx` 的 p-input-group-22。FilterBar 缺少分面候选、多选确认与完整面板，因此复用已选 C 组合形成独立组件。无 Beautiful UI 需求；沙箱不联网，未刷新远端注册索引。coss 原件、依赖和视觉令牌不变。
 
 Workspace 接入：用查询层生成 dimensions/counts 与 value；收到意图后更新宿主状态、请求服务，再回传结果数。组件不负责查询、收藏持久化、权限或路由。浏览器验收按分工由 Supervisor 执行，真实服务尚未接入。
+
+## P50：试卷计数单位
+
+组件页的“计数单位”可在“题”和“份试卷”间切换，既有筛选、数量开关与宽度夹具保留。单位只影响文字，不改变数量、筛选值或意图；未传属性的输出逐字节不变。复核本地 coss ToggleGroup / Toggle / Frame / InputGroup 及 particles p-select-7、p-combobox-9、p-input-group-22 的既有组合，仅扩展现有公开属性，未联网刷新上游。
