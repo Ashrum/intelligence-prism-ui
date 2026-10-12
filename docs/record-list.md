@@ -16,6 +16,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
 
 - 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
+- `showPrimary?: boolean` 默认 `true`；显式设为 `false` 时页头与首次空状态均不渲染列表主操作按钮，不留占位或空操作区，空状态标题与说明、行主操作和菜单仍保留；省略 `onPrimary` 仍只禁用可见按钮，用法见组件页 `/next/components/record-list#record-no-primary`。
 - `tabs?: {id,label,count}[]` 由宿主提供，count 非负整数，零保留，null/无效显示「未提供」。`tab` 未提供时使用 `defaultTab` 或首项；受控模式只有新 props 改变选中项。传入非空 tabs 时，ID 唯一且 tab/defaultTab 须属于 tabs；切换对象时宿主应 key/remount 或控制 tab。
 - 不传 `tabs` 或传 `[]` 时不渲染 Tabs、TabList 或 TabPanel，直接呈现内容。不传 `tab` 时忽略 `tabIds`（包括空数组），完整显示宿主页面，`defaultTab` 不参与过滤；显式传 `tab` 时仍按 `tabIds` 过滤，未标分类的行继续显示。外部导航负责筛选后分页，组件不会发出 Tab 切换意图。组件页「外部导航驱动、无内部 Tab」展示此用法。
 - `rows` 是宿主当前查询页面；可选 `tabIds` 是宿主显式分类，支持非受控 Tab；省略时当前页面全部呈现。分类文本不参与推导。宿主应先筛选、再分页，切换目录或查询时更新 rows、summary、page；计数不得从当前页面倒推。
@@ -83,3 +84,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 ```
 
 复用依据：本轮离线读取固定 coss Frame / Button / Badge、既有 Prism Badge / RecordList，以及本地 table-particle 的 p-table-3/4 组合；对照本页已有 p-table-5/8、p-frame-1/3/4、Beautiful UI Records Table / Filter Table / Task Rows 的检索记录。现有事实行与意图接口已覆盖需求，仅缺列表级显示开关，因此扩展原组件，不增加组件条目或复制第三方代码；未联网刷新注册文件。默认输出与既有断言保持不变，浏览器验收按分工由 Supervisor 执行。
+
+## P49：省略列表主操作
+
+复用依据：离线复核固定 coss Button / Frame / Empty、既有 RecordList 和本地 table-particle（p-table-3/4）的操作与空状态组合，并对照上文 p-table-5/8、p-frame-1/3/4 及 Beautiful UI Records Table / Filter Table / Task Rows 的既有检索记录；现有组件仅缺列表级显示开关，沿用 P48 风格扩展公开属性，不复制上游代码、不新增组件或依赖，未联网刷新注册文件。组件页新增有记录与首次空两种 `showPrimary={false}` 用法，并提供 320px 容器开关、长中文与公式；浏览器验收按分工由 Supervisor 执行。

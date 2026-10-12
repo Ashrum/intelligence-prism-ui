@@ -226,3 +226,46 @@ for (const [showType, showStatus] of [[false, true], [true, false], [false, fals
     }
   });
 }
+
+test('primary visibility defaults to true for every state, with or without tabs and callbacks', () => {
+  const states = [{ kind: 'ready' }, { kind: 'empty' }, { kind: 'search-empty' }, { kind: 'loading' }, { kind: 'error', reason: '加载失败' }];
+  for (const state of states) for (const tabs of [undefined, api.recordTabs]) for (const enabled of [false, true]) {
+    const events = [];
+    const onPrimary = enabled ? () => events.push('primary') : undefined;
+    const props = { state, tabs, onPrimary, primaryLabel: '新建记录' };
+    const out = capture(props);
+    assert.equal(out.html, capture({ ...props, showPrimary: true }).html);
+    const primaryButtons = out.find('Button').filter(node => node.props.onClick === onPrimary && node.props.type === 'button');
+    assert.equal(primaryButtons.length, state.kind === 'empty' ? 2 : 1);
+    for (const node of primaryButtons) {
+      assert.equal(node.props.disabled, !enabled);
+      if (enabled) node.props.onClick();
+    }
+    assert.equal(events.length, enabled ? primaryButtons.length : 0);
+  }
+});
+
+test('showPrimary=false omits the header button without affecting row actions or menus', () => {
+  const events = [];
+  const out = capture({ showPrimary: false, primaryLabel: '新建记录', onPrimary: () => events.push('primary'),
+    onRowAction: (...args) => events.push(['row', ...args]), onRowMenu: (...args) => events.push(['menu', ...args]) });
+  assert.doesNotMatch(out.html, /新建记录/);
+  const header = out.html.match(/<header\b[^>]*data-slot="frame-panel-header"[^>]*>([\s\S]*?)<\/header>/)?.[1];
+  assert.ok(header);
+  assert.match(header, /^<div\b[^>]*><h3\b[^>]*>批阅记录<\/h3><p\b[^>]*>查看 AI 批阅进度、处理必要异常并管理最终结果<\/p><\/div>$/);
+  button(out, '继续处理').props.onClick(click());
+  out.find('FramePanel')[0].props.onClick({ target: { closest: () => null } });
+  out.find('MenuItem')[0].props.onClick(click());
+  assert.deepEqual(events, [['row', 'linear', 'open'], ['row', 'linear', 'open'], ['menu', 'linear', 'details']]);
+});
+
+test('showPrimary=false leaves complete empty-state text with no header button or empty action wrapper', () => {
+  for (const tabs of [undefined, api.recordTabs]) for (const onPrimary of [undefined, () => assert.fail('hidden primary emitted intent')]) {
+    const out = capture({ showPrimary: false, primaryLabel: '新建记录', rows: [], tabs, onPrimary,
+      state: { kind: 'empty', description: '保存组卷要求后，可在这里查看并复用。' } });
+    assert.equal(out.find('Button').length, 0);
+    assert.doesNotMatch(out.html, /新建记录|data-slot="button"|data-slot="empty-content"/);
+    assert.match(out.html, /data-slot="empty" role="status"><p class="text-block-title">暂无记录<\/p><p class="break-words text-ui-hint">保存组卷要求后，可在这里查看并复用。<\/p><\/div>/);
+  }
+  assert.match(capture({ showPrimary: false, state: { kind: 'empty' } }).html, /完成一次批阅后，处理进度、必要复核与最终结果会保存在这里。/);
+});

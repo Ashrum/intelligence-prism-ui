@@ -34,6 +34,8 @@ export type RecordListProps = {
   title?: string; description?: string; primaryLabel?: string
   /** List-wide visibility; defaults to true. Visible missing values retain their unknown labels. */
   showType?: boolean; showStatus?: boolean
+  /** List-level primary action visibility in both header and empty state; defaults to true. */
+  showPrimary?: boolean
   tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
   rows: readonly RecordListRow[]; search?: string; searchLabel?: string; searchPlaceholder?: string
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
@@ -52,7 +54,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
-  showType = true, showStatus = true,
+  showType = true, showStatus = true, showPrimary = true,
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
   onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPageSizeChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
@@ -60,7 +62,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
   const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
-  const primary = <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
+  const primary = showPrimary && <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
     {state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
       <label className="grid min-w-0 flex-[2_1_240px] gap-2 text-ui-action" htmlFor={`${id}-search`}>{searchLabel}
