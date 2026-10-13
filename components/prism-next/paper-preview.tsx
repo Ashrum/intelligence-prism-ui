@@ -2,6 +2,9 @@
 
 import { useRef, useState, type ComponentProps } from "react"
 import { FileImage } from "lucide-react"
+import type { PaperAnnotationOptions } from "./paper-annotation-layer"
+export { PaperAnnotationLayer, PaperAnnotationCalibration } from "./paper-annotation-layer"
+export type { PaperAnnotation, PaperTotal, PaperAnnotationOptions, PaperAnnotationLayerProps, PaperAnnotationPageProps } from "./paper-annotation-layer"
 import type { PaperPreviewRegionEditing } from "./paper-preview-region-editor"
 export type { PaperPreviewRegionEditing, PaperPreviewRegionChange } from "./paper-preview-region-editor"
 export { documentRectToPaperRegion, paperRegionToDocumentRect } from "./paper-preview-region-geometry"
@@ -21,16 +24,16 @@ export type PaperPreviewPage = {
   dimensions?: { width: number; height: number }
   regions?: DocumentRegion[]
 }
-export type PaperPreviewProps = {
+export type PaperPreviewProps = (PaperAnnotationOptions & {
   /** Continuous canvas is the default; compose it in a fullscreen ReviewWorkspace. */
   layout?: "continuous"
   pages: readonly PaperPreviewPage[]
   regionEditing?: PaperPreviewRegionEditing
-  continuous?: Omit<PaperPreviewContinuousProps, "pages" | "zoom" | "rotations" | "selected" | "onZoom" | "onSelect" | "regionEditing">
+  continuous?: Omit<PaperPreviewContinuousProps, "pages" | "zoom" | "rotations" | "selected" | "onZoom" | "onSelect" | "regionEditing" | keyof PaperAnnotationOptions>
   zoom?: PaperPreviewZoom; defaultZoom?: PaperPreviewZoom; onZoomChange?: (zoom: PaperPreviewZoom) => void
   rotation?: Record<string, PaperPreviewRotation>; defaultRotation?: Record<string, PaperPreviewRotation>
   selectedRegionId?: string; onRegionSelect?: (pageId: string, regionId: string) => void
-} | {
+}) | {
   layout: "mixed"
   mixed: ComponentProps<typeof PaperPreviewMixed>
 }
@@ -70,7 +73,7 @@ export function PaperPreview(props: PaperPreviewProps) {
     if (props.zoom === undefined) setLocalZoom(next)
     props.onZoomChange?.(next)
   }
-  return <PaperPreviewContinuous {...props.continuous} regionEditing={props.regionEditing} viewportRef={props.continuous?.viewportRef ?? viewportRef} pages={props.pages} zoom={props.zoom ?? localZoom} rotations={props.rotation ?? initialRotation} selected={props.selectedRegionId} onZoom={changeZoom} onSelect={props.onRegionSelect ? (regionId, pageId) => props.onRegionSelect?.(pageId, regionId) : undefined} />
+  return <PaperPreviewContinuous {...props.continuous} annotations={props.annotations} annotationsVisible={props.annotationsVisible} paperTotal={props.paperTotal} regionEditing={props.regionEditing} viewportRef={props.continuous?.viewportRef ?? viewportRef} pages={props.pages} zoom={props.zoom ?? localZoom} rotations={props.rotation ?? initialRotation} selected={props.selectedRegionId} onZoom={changeZoom} onSelect={props.onRegionSelect ? (regionId, pageId) => props.onRegionSelect?.(pageId, regionId) : undefined} />
 }
 
 export { PaperPreviewMixed } from './paper-preview-mixed'

@@ -2,6 +2,7 @@
 
 import { useId, useState, type ReactNode } from "react"
 import { ChevronRight, Circle, MoreHorizontal } from "lucide-react"
+import { Badge } from "@/components/coss/badge"
 import { Button } from "@/components/coss/button"
 import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
 import { Empty } from "@/components/coss/empty"
@@ -19,6 +20,8 @@ export type RecordListStatus = { label: string; tone?: AgentStatusTone }
 export type RecordListAction = { id: string; label: string; disabledReason?: string }
 export type RecordListRow = {
   id: string; type: string; name: string; metadata: string; description?: ReactNode
+  /** Independent host facts; omitted/empty values add no markup. */
+  tag?: string; badges?: readonly string[]
   /** Host-classified membership, never inferred from status text. Omit for an already projected page. */
   tabIds?: readonly string[]
   status?: RecordListStatus; progress?: number | null
@@ -32,6 +35,12 @@ export type RecordListState = { kind: "ready" | "loading" | "search-empty" }
   | { kind: "empty"; description?: string } | { kind: "error"; reason: string }
 export type RecordListProps = {
   title?: string; description?: string; primaryLabel?: string
+  /** List-wide visibility; defaults to true. Visible missing values retain their unknown labels. */
+  showType?: boolean; showStatus?: boolean
+  /** List-level primary action visibility in both header and empty state; defaults to true. */
+  showPrimary?: boolean
+  /** Omit the complete header or built-in search/filter row; both default to true. */
+  showHeader?: boolean; showSearch?: boolean
   tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
   rows: readonly RecordListRow[]; search?: string; searchLabel?: string; searchPlaceholder?: string
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
@@ -50,6 +59,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
+  showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
   onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPageSizeChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
@@ -57,9 +67,9 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
   const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
-  const primary = <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
+  const primary = showPrimary && <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
-    {state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
+    {showSearch && state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
       <label className="grid min-w-0 flex-[2_1_240px] gap-2 text-ui-action" htmlFor={`${id}-search`}>{searchLabel}
         <Input id={`${id}-search`} type="search" value={search} placeholder={searchPlaceholder} readOnly={!onSearch}
           size="default" className="w-full items-center pointer-coarse:[&_[data-slot=input]]:min-h-11" onChange={event => onSearch?.(event.target.value)} />
@@ -90,8 +100,12 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       {summary && <div role="status" aria-live="polite"><AgentStatus icon={Circle} tone={summary.tone} className="text-ui-hint">{summary.label}</AgentStatus></div>}
       <ul className="min-w-0 space-y-3" aria-label={`${title}列表`}>
         {visible.map(row => {
+          const tag = row.tag?.trim()
+          const badges = row.badges?.map(label => label.trim()).filter(Boolean) ?? []
+          const marked = !!tag || badges.length > 0
+          const rowName = marked ? [tag, row.name.trim() || "名称未提供", ...badges].filter(Boolean).join(" · ") : row.name
           const reason = row.action.disabledReason?.trim() || (!onRowAction ? "操作暂不可用" : undefined)
-          return <li key={row.id} className="min-w-0">
+          return <li key={row.id} className="min-w-0" aria-label={marked ? rowName : undefined}>
             <FramePanel data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0" onClick={event => {
               // React portal events bubble too; isolate the entire menu subtree below.
               if (!reason && !(event.target as HTMLElement).closest("button,a,input,select,textarea,[role=menuitem],[data-record-menu]")) onRowAction?.(row.id, row.action.id)
@@ -101,19 +115,23 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
               </Progress>}
               <div className="grid min-w-0 items-start gap-3 p-4 @min-[720px]:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="min-w-0 space-y-1">
-                  <p className="break-words text-ui-meta">{row.type.trim() || "类型未提供"}</p>
-                  <h4 className="break-words text-item-title">{row.name.trim() || "名称未提供"}</h4>
+                  {showType && <p className="break-words text-ui-meta">{row.type.trim() || "类型未提供"}</p>}
+                  {tag ? <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <Badge variant="outline" className="h-fit sm:h-fit max-w-full whitespace-normal break-words">{tag}</Badge>
+                    <h4 className="min-w-0 break-words text-item-title">{row.name.trim() || "名称未提供"}</h4>
+                  </div> : <h4 className="break-words text-item-title">{row.name.trim() || "名称未提供"}</h4>}
                   <p className="break-words text-ui-hint">{row.metadata.trim() || "记录信息未提供"}</p>
                   {row.description && <div className="min-w-0 break-words text-ui-hint">{row.description}</div>}
                 </div>
                 <div className="flex min-w-0 flex-wrap items-center gap-2 @min-[720px]:max-w-80 @min-[720px]:justify-end">
-                  <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>
-                  <Button variant="ghost" className={targetClass} disabled={!!reason} title={reason}
-                    aria-label={`${row.action.label}：${row.name}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>
+                  {showStatus && <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>}
+                  {badges.map((label, index) => <Badge key={index} variant="secondary" className="h-fit sm:h-fit max-w-full whitespace-normal break-words">{label}</Badge>)}
+                  <Button variant="ghost" className={marked ? `${targetClass} shrink-0` : targetClass} disabled={!!reason} title={reason}
+                    aria-label={`${row.action.label}：${rowName}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>
                     <span className="truncate">{row.action.label}</span><ChevronRight aria-hidden="true" />
                   </Button>
                   {!!row.menu?.length && <div data-record-menu onClick={event => event.stopPropagation()}>
-                    <Menu><MenuTrigger render={<Button variant="ghost" size="icon" aria-label={`更多操作：${row.name}`} disabled={!onRowMenu} />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
+                    <Menu><MenuTrigger render={<Button variant="ghost" size="icon" aria-label={`更多操作：${rowName}`} disabled={!onRowMenu} />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
                       <MenuPopup align="end">{row.menu.map(item => <MenuItem key={item.id} className="pointer-coarse:min-h-11 whitespace-normal break-words" disabled={!!item.disabledReason?.trim() || !onRowMenu}
                         onClick={event => { event.stopPropagation(); if (!item.disabledReason?.trim()) onRowMenu?.(row.id, item.id) }}>{item.label}{item.disabledReason && <span className="text-ui-hint"> · {item.disabledReason}</span>}</MenuItem>)}</MenuPopup>
                     </Menu>
@@ -143,11 +161,11 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       </div>}
     </>}
   </div>
-  return <section data-record-list data-state={state.kind} aria-labelledby={`${id}-title`} className="@container min-w-0">
+  return <section data-record-list data-state={state.kind} aria-labelledby={showHeader ? `${id}-title` : undefined} aria-label={showHeader ? undefined : title} className="@container min-w-0">
     <Frame>
-    <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
+    {showHeader && <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
-    </FrameHeader>
+    </FrameHeader>}
     <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
         {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce:transition-none`}><span className="truncate">{item.label}</span> <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}

@@ -10,7 +10,7 @@ import { Tree, TreeItem } from "@/components/prism-next/tree"
 import type { DirectoryViewProps } from "@/components/prism-next/directory-presentation"
 import type { DirectoryNode } from "@/lib/prism-next/textbook-directory"
 
-export const DirectoryFacts = createContext<{ counts: Readonly<Record<string, number>>; showCounts: boolean }>({ counts: {}, showCounts: true })
+export const DirectoryFacts = createContext<{ counts: Readonly<Record<string, number>>; showCounts: boolean; countUnit?: string }>({ counts: {}, showCounts: true })
 export const DirectoryMarks = createContext<{ selected: Set<string>; ancestors: Set<string>; partialCounts?: Record<string, { selected: number; total: number }>; allOption?: { label: string; text: string; selected: boolean; selectionCount?: number; onSelect: () => void } } | null>(null)
 export const OutlineView = (props: DirectoryViewProps) => <DirectoryOutlineTree {...props} />
 
@@ -18,7 +18,7 @@ export const OutlineView = (props: DirectoryViewProps) => <DirectoryOutlineTree 
 const rowClass = "relative cursor-pointer rounded-md hover:bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
 const rowContentClass = "relative flex min-h-9 min-w-0 items-start gap-1 py-1 pl-1 pr-2"
 export function DirectoryOutlineTree({ data, projection, selectionTree, currentId, onCurrentChange, initialExpanded, onExpandedChange, label, helpId, showCheckboxes }: DirectoryViewProps) {
-  const { counts, showCounts } = useContext(DirectoryFacts)
+  const { counts, showCounts, countUnit = "题" } = useContext(DirectoryFacts)
   const marks = useContext(DirectoryMarks)
   const allOption = marks?.allOption
   const allRef = useRef<HTMLButtonElement>(null)
@@ -66,7 +66,7 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
     <p id={navigationHelpId} className="sr-only">上下方向键浏览，左右方向键展开或收起。标题或 Enter、空格选择。全部行按向下或向右方向键进入目录树。</p>
     {allOption && <div data-directory-all-section className="mb-1 shrink-0 border-b px-1 pb-1">
       <div data-directory-all-row className="flex h-9 min-w-0 items-center">
-      <button ref={allRef} type="button" data-directory-all aria-label={allOption.label} aria-pressed={allOption.selected}
+      <button ref={allRef} type="button" data-directory-all aria-label={countUnit !== "题" && !allOption.selectionCount && showCounts && counts[data.rootId] !== undefined ? `${allOption.label}，${counts[data.rootId]} ${countUnit}` : allOption.label} aria-pressed={allOption.selected}
         className={`h-9 min-w-0 flex-1 text-left ${rowClass} ${allOption.selected ? "bg-accent hover:bg-accent" : ""}`}
         onClick={allOption.onSelect} onKeyDown={event => {
           if ((event.key === "ArrowDown" || event.key === "ArrowRight") && items[0]) { event.preventDefault(); event.stopPropagation(); focus(items[0].getId()) }
@@ -97,7 +97,7 @@ export function DirectoryOutlineTree({ data, projection, selectionTree, currentI
           const lastChild = parentNode.children.at(-1) === id
           return <TreeItem key={id} item={item} current={selected} aria-selected={selected} aria-current={!showCheckboxes && currentId === id ? "location" : undefined}
             aria-level={depth}
-            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} 题` : ""}${containsSelected ? "，包含已选" : ""}${partialLabel ? `，${partialLabel}` : ""}`}
+            aria-label={`${node.code ? `${node.code} ` : ""}${node.title}${showCounts && counts[id] !== undefined ? `，${counts[id]} ${countUnit}` : ""}${containsSelected ? "，包含已选" : ""}${partialLabel ? `，${partialLabel}` : ""}`}
             aria-checked={showCheckboxes ? state === "indeterminate" ? "mixed" : state === "checked" : undefined}
             style={{ "--tree-padding": `${indentation}px` } as CSSProperties} className={`${rowClass} ${selected ? "bg-accent hover:bg-accent" : ""}`}
             onClick={() => { focus(id); activate(id) }} onKeyDown={event => {

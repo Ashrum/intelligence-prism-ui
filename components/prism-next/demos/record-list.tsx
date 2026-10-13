@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/coss/button"
+import { Badge } from "../badge"
 import { RecordList, type RecordListProps, type RecordListRow, type RecordListFilter } from "../record-list"
 import { DemoSection, Feedback } from "../demo-parts"
 
@@ -79,6 +80,96 @@ function RecordFixture({ initialTab = "mine", initialSearch = "", filtered = fal
   </>
 }
 
+export const homogeneousRecordRows: RecordListRow[] = [
+  { id: "paper-algebra", type: "正式试卷", name: "一元二次方程与二次函数综合复习：配方法的完整推导、取等条件与结论核对", metadata: "九年级数学 · 20 题 · 满分 100 分",
+    description: <div className="flex flex-wrap items-center gap-2"><Badge variant="outline">已收藏</Badge><span>函数关系：<math aria-label="y 等于 x 的平方"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math></span></div>,
+    status: { label: "已保存", tone: "success" }, action: { id: "open", label: "查看试卷" }, menu: [{ id: "download", label: "下载试卷" }] },
+  { id: "paper-geometry", type: "正式试卷", name: "相似三角形单元检测", metadata: "九年级数学 · 18 题 · 满分 100 分",
+    status: { label: "已保存", tone: "success" }, action: { id: "open", label: "查看试卷" }, menu: [{ id: "download", label: "下载试卷" }] },
+]
+
+function HomogeneousRecordFixture() {
+  const [notice, setNotice] = useState("尚无操作请求。")
+  const [narrow, setNarrow] = useState(false)
+  return <>
+    <Button variant="outline" className="mb-4" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 同质列表</Button>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="我的试卷" description="已保存的正式试卷，可查看或下载。" primaryLabel="新建试卷"
+        searchLabel="搜索试卷" searchPlaceholder="搜索试卷名称" rows={homogeneousRecordRows} showType={false} showStatus={false}
+        onPrimary={() => setNotice("已请求新建试卷，等待调用方导航。")}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
+function NoPrimaryRecordFixture() {
+  const [notice, setNotice] = useState("尚无操作请求。")
+  const [narrow, setNarrow] = useState(false)
+  return <>
+    <Button variant="outline" className="mb-4" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 无主操作列表</Button>
+    <div className="space-y-4" style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="最近的要求" description="查看并复用已保存的组卷要求。" showPrimary={false}
+        searchLabel="搜索组卷要求" searchPlaceholder="搜索要求名称" showType={false} showStatus={false}
+        rows={[{ ...homogeneousRecordRows[0], id: "requirement-algebra", type: "组卷要求", metadata: "九年级数学 · 单元复习", action: { id: "reuse", label: "复用要求" }, menu: undefined }]}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+      <RecordList title="最近的要求" description="查看并复用已保存的组卷要求。" showPrimary={false}
+        rows={[]} state={{ kind: "empty", description: "保存组卷要求后，可在这里查看并复用。" }} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
+function OptionalRegionsRecordFixture() {
+  const [showHeader, setShowHeader] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
+  const [narrow, setNarrow] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={showHeader} onClick={() => setShowHeader(!showHeader)}>显示列表页头</Button>
+      <Button variant="outline" aria-pressed={showSearch} onClick={() => setShowSearch(!showSearch)}>显示内置搜索与筛选</Button>
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 可省略区域</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" description="查看和下载已保存的试卷。" primaryLabel="新建试卷"
+        showHeader={showHeader} showSearch={showSearch} showType={false} showStatus={false}
+        searchLabel="搜索试卷" searchPlaceholder="搜索试卷名称" rows={homogeneousRecordRows}
+        tabs={[{ id: "all", label: "全部试卷", count: 2 }]} summary={{ label: "共 2 份试卷" }}
+        pagination={{ page: 1, pages: [1], label: "第 1 页" }}
+        onPrimary={() => setNotice("已请求新建试卷，等待调用方导航。")}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
+export const markedRecordRows: RecordListRow[] = [
+  { ...homogeneousRecordRows[0], id: "tagged-paper", tag: "专题复习", badges: ["已收藏", "本班用过"],
+    description: <span>来源：校本资源 · 函数关系：<math aria-label="y 等于 x 的平方"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math></span> },
+  { ...homogeneousRecordRows[1], id: "long-tagged-paper", tag: "跨章节综合复习与阶段性学习诊断", badges: ["本班已用于单元复习并保留完整使用记录", "已收藏"], description: "来源：年级组共享资源 · 2026-10-12" },
+]
+
+function MarkedRecordFixture() {
+  const [narrow, setNarrow] = useState(false)
+  const [showStatus, setShowStatus] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 标记列表</Button>
+      <Button variant="outline" aria-pressed={showStatus} onClick={() => setShowStatus(!showStatus)}>显示行状态</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" rows={markedRecordRows} showHeader={false} showSearch={false} showPrimary={false} showType={false} showStatus={showStatus}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -89,6 +180,9 @@ export function RecordListDemo() {
     <DemoSection id="record-external-navigation" title="外部导航驱动、无内部 Tab" description="宿主导航先筛选、再分页；列表不传 tabs 与 tab，完整呈现当前页记录。">
       <RecordFixture externalNavigation />
     </DemoSection>
+    <DemoSection id="record-homogeneous" title="同质列表 · 省略类型与状态" description="调用方为整张列表显式设置 showType=false、showStatus=false；已收藏标记、主操作与更多菜单保留。默认仍显示类型与状态，缺值仍显示未知。">
+      <HomogeneousRecordFixture />
+    </DemoSection>
     <DemoSection id="record-processing" title="系统处理中 · 3 个批阅批次"><RecordFixture initialTab="processing" /></DemoSection>
     <DemoSection id="record-completed" title="已完成 · 发布状态"><RecordFixture initialTab="completed" /></DemoSection>
     <DemoSection id="record-all" title="全部记录 · 28 个批阅批次"><RecordFixture initialTab="all" /></DemoSection>
@@ -97,8 +191,17 @@ export function RecordListDemo() {
     <DemoSection id="record-empty" title="首次使用 · 暂无记录"><RecordFixture overrides={{ rows: [], tabs: recordTabs.map(tab => ({ ...tab, count: 0 })), state: { kind: "empty" } }} /></DemoSection>
     <DemoSection id="record-error" title="加载失败 · 可重试"><RecordFixture overrides={{ state: { kind: "error", reason: "批阅记录加载失败，当前结果可能不完整。请重试。" } }} /></DemoSection>
     <DemoSection id="record-loading" title="加载中"><RecordFixture overrides={{ state: { kind: "loading" } }} /></DemoSection>
+    <DemoSection id="record-no-primary" title="最近的要求 · 省略列表主操作" description="showPrimary 默认 true；显式设为 false 时页头与空状态都省略主操作且不留占位，空状态标题与说明、行操作仍保留。">
+      <NoPrimaryRecordFixture />
+    </DemoSection>
+    <DemoSection id="record-optional-regions" title="试卷库 · 外部提供标题与筛选" description="showHeader、showSearch 默认 true；本例均设为 false。可分别恢复页头和内置搜索行；分类、摘要、分页及行操作始终保留，列表仍以 title 提供可访问名称。">
+      <OptionalRegionsRecordFixture />
+    </DemoSection>
     <DemoSection id="record-wide" title="1366px 宽容器" description="本区域保留 1366px 宽度，可横向滚动检查完整布局。">
       <div className="overflow-x-auto" role="region" aria-label="1366px 记录列表预览" tabIndex={0}><div className="w-[1366px]"><RecordFixture /></div></div>
+    </DemoSection>
+    <DemoSection id="record-tags" title="标题类别与操作侧事实标记" description="类别显示在标题之前；已收藏、本班用过由宿主提供，与行状态独立。关闭行状态仍保留事实标记。">
+      <MarkedRecordFixture />
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">

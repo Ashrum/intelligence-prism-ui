@@ -25,6 +25,8 @@ export type FacetFilterProps = {
   dimensions: readonly FacetFilterDimension[]
   value: FacetFilterValue
   sortItems: readonly { id: string; label: string }[]
+  /** Unit for host counts; defaults to 题. */
+  countUnit?: string
   resultCount?: number
   showFavorites?: boolean
   favoriteCount?: number

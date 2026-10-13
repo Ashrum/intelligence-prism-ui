@@ -8,7 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Separator } from "@/components/coss/separator"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { DialogLayout, DialogSection } from "@/components/prism-next/dialog-layout"
-import { useDirectorySelection, type DirectorySelections, type TextbookDefinition, type TextbookDirectoryProps, type DirectoryAllOption } from "@/components/prism-next/textbook-directory"
+import { useDirectorySelection, type DirectorySelections, type TextbookHeaderDefinition, type TextbookDirectoryProps, type DirectoryAllOption } from "@/components/prism-next/textbook-directory"
 import type { DirectoryViewProps } from "@/components/prism-next/directory-presentation"
 import { directoryLeaves, projectDirectory, summarizeDirectory, type DirectoryData, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
 import { DirectoryFacts, DirectoryMarks, OutlineView } from "./textbook-directory-outline"
@@ -16,18 +16,18 @@ import "./textbook-directory.css"
 
 const kinds: DirectoryKind[] = ["course", "knowledge"]
 const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : "知识点目录"
-const editionTitle = (book: TextbookDefinition) => book.edition?.trim() || "未提供版本"
+const editionTitle = (book: TextbookHeaderDefinition) => book.edition?.trim() || "未提供版本"
 export type TextbookSubject = { name: string; teaching?: boolean; editions: { title: string; recent?: boolean }[] }
 const hostRank = <T,>(items: T[], item: T) => items.indexOf(item) < 0 ? items.length : items.indexOf(item)
-const subjectTitle = (book: TextbookDefinition) => book.subject?.trim() || "未提供学科"
+const subjectTitle = (book: TextbookHeaderDefinition) => book.subject?.trim() || "未提供学科"
 type SelectionChange = Dispatch<SetStateAction<DirectorySelections>>
 type Session = { query: string; expandedIds?: string[]; multiple?: boolean }
 const noExpansion = (_data: DirectoryData): string[] => []
 
 
-const bookName = (book: TextbookDefinition) => [book.subject, editionTitle(book), book.volume || book.title].filter(Boolean).join(" · ")
+const bookName = (book: TextbookHeaderDefinition) => [book.subject, editionTitle(book), book.volume || book.title].filter(Boolean).join(" · ")
 
-function BookCover({ book, large = false, current = false }: { book: TextbookDefinition; large?: boolean; current?: boolean }) {
+function BookCover({ book, large = false, current = false }: { book: TextbookHeaderDefinition; large?: boolean; current?: boolean }) {
   return <span aria-hidden="true" data-slot="textbook-cover" className={`relative ${large ? "h-[74px] w-[56px]" : "h-[60px] w-[46px]"} shrink-0 overflow-hidden rounded-sm border border-border [background:linear-gradient(135deg,color-mix(in_srgb,var(--brand-blue)_12%,var(--background)),color-mix(in_srgb,var(--brand-magenta)_7%,var(--background))_60%,color-mix(in_srgb,var(--brand-green)_12%,var(--background)))]`}>
       <span className="absolute inset-y-0 left-1 w-px bg-[color-mix(in_srgb,var(--brand-blue)_25%,var(--border))]" />
       <span className={`absolute left-3 ${large ? "top-6" : "top-2"} text-ui-hint text-foreground [writing-mode:vertical-rl]`}>{Array.from(book.subject ?? "").slice(0, 2).join("")}</span>
@@ -69,7 +69,7 @@ function EditionOptions({ editions, value, onChange }: { editions: TextbookSubje
 }
 
 // Shared formal embedded presentation; metadata comes only from the host.
-function BookHeader({ book, children }: { book: TextbookDefinition; children?: ReactNode }) {
+function BookHeader({ book, children }: { book: TextbookHeaderDefinition; children?: ReactNode }) {
   const volume = book.volume || book.title, details = [book.subject, book.edition].filter(Boolean).join(" · ")
   return <div className="flex min-w-0 items-center gap-3" data-slot="textbook-header">
     <BookCover book={book} />
@@ -127,7 +127,7 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsChange, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange }: TextbookDirectoryProps) {
+export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange }: TextbookDirectoryProps) {
   const View = OutlineView
   const initialExpanded = noExpansion
   const [localBookId, setLocalBookId] = useState(textbooks[0]?.id ?? "")
@@ -159,16 +159,17 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
     return { ...previous, [draftScope]: { ...current, ...patch } }
   }), [draftScope])
   if (!book) return <p className="text-ui-hint">暂无可用教材。</p>
-  const activeIds = [...new Set(selections[scope] ?? [])].filter(id => book.directories[kind].leafIds.includes(id))
-  const currentLeaves = currentNodes[scope] && book.directories[kind].paths[currentNodes[scope]] ? directoryLeaves(book.directories[kind], currentNodes[scope]) : []
+  const activeData = layout === "header" ? undefined : book.directories?.[kind]
+  const draftData = layout === "header" ? undefined : book.directories?.[multiDialog.kind]
+  const activeIds = [...new Set(selections[scope] ?? [])].filter(id => activeData?.leafIds.includes(id))
+  const currentLeaves = activeData && currentNodes[scope] && activeData.paths[currentNodes[scope]] ? directoryLeaves(activeData, currentNodes[scope]) : []
   const hasCurrent = currentLeaves.length > 0 && currentLeaves.length === activeIds.length && currentLeaves.every(id => activeIds.includes(id))
-  const entries = hasCurrent ? [{ id: currentNodes[scope] }] : activeIds.length === 1 ? [{ id: activeIds[0] }] : summarizeDirectory(book.directories[kind], activeIds)
-  const draftData = book.directories[multiDialog.kind]
-  const draftIds = [...new Set(multiDialog.selections[draftScope] ?? [])].filter(id => draftData.leafIds.includes(id))
-  const draftEntries = summarizeDirectory(draftData, draftIds)
-  const draftGroups = draftData.nodes[draftData.rootId].children.map(id => ({ id, entries: draftEntries.filter(entry => draftData.paths[entry.id][0] === id) })).filter(group => group.entries.length)
-  const draftTotal = counts && draftEntries.every(entry => counts[entry.id] !== undefined) ? draftEntries.reduce((sum, entry) => sum + counts[entry.id], 0) : undefined
-  const draftSummary = `已选 ${draftEntries.length} 项${draftTotal === undefined ? "" : ` · 共 ${draftTotal} 题`}`
+  const entries = hasCurrent ? [{ id: currentNodes[scope] }] : activeIds.length === 1 ? [{ id: activeIds[0] }] : activeData ? summarizeDirectory(activeData, activeIds) : []
+  const draftIds = [...new Set(multiDialog.selections[draftScope] ?? [])].filter(id => draftData?.leafIds.includes(id))
+  const draftEntries = draftData ? summarizeDirectory(draftData, draftIds) : []
+  const draftGroups = draftData ? draftData.nodes[draftData.rootId].children.map(id => ({ id, entries: draftEntries.filter(entry => draftData.paths[entry.id][0] === id) })).filter(group => group.entries.length) : []
+  const draftTotal = countsAdditive && counts && draftEntries.every(entry => counts[entry.id] !== undefined) ? draftEntries.reduce((sum, entry) => sum + counts[entry.id], 0) : undefined
+  const draftSummary = `已选 ${draftEntries.length} 项${draftTotal === undefined ? "" : ` · 共 ${draftTotal} ${countUnit}`}`
   // Metadata and order are supplied by the host; never infer recency from clicks.
   const subjects = [...new Set(textbooks.map(subjectTitle))].map(name => hostSubjects.find(item => item.name === name) ?? { name, editions: [] })
     .sort((a, b) => Number(!!b.teaching) - Number(!!a.teaching) || hostRank(hostSubjects, a) - hostRank(hostSubjects, b))
@@ -182,25 +183,26 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
   const selectedBook = textbooks.find(item => item.id === bookDialog.id && subjectTitle(item) === bookDialog.subject && editionTitle(item) === bookDialog.edition)
   const disabledReason = !selectedBook ? "请选择册次。" : selectedBook.id === book.id ? "尚未改变" : ""
   const changeChecked = (target: DirectoryKind, change: Dispatch<SetStateAction<DirectorySelections>>): Dispatch<SetStateAction<string[]>> => update => change(previous => {
-    const key = `${book.id}:${target}`, data = book.directories[target]
+    const key = `${book.id}:${target}`, data = book.directories?.[target]
+    if (!data) return previous
     const ids = typeof update === "function" ? update(previous[key] ?? []) : update
     return { ...previous, [key]: [...new Set(ids)].filter(id => data.leafIds.includes(id)) }
   })
   const closeBook = () => setBookDialog(previous => ({ ...previous, open: false }))
   const closeMulti = () => setMultiDialog(previous => ({ ...previous, open: false }))
   const setDraft: SelectionChange = update => setMultiDialog(previous => ({ ...previous, selections: typeof update === "function" ? update(previous.selections) : update }))
-  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory="embedded">
+  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory={layout === "header" ? "header" : "embedded"}>
     <BookHeader book={book}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
       setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
     }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>
-    <KindTabs kind={kind} onKindChange={onKindChange}>
+    {activeData && <KindTabs kind={kind} onKindChange={onKindChange}>
       <PickerSession key={scope} toggleTitles={multiSelect !== "always"} allOption={allOption} titleAction={titleAction} multiple={multiSelect === "always" || (multiSelect === "toggle" && (sessions[scope]?.multiple ?? entries.length > 1))} currentNode={currentNodes[scope]} onCurrentNodeChange={id => onCurrentNodesChange?.(previous => {
         const next = { ...previous }; if (id) next[scope] = id; else delete next[scope]; return next
-      })} data={book.directories[kind]} kind={kind} checkedIds={activeIds} onCheckedChange={changeChecked(kind, onSelectionsChange)} View={View} session={sessions[scope] ?? { query: "" }} onSessionChange={patchSession} initialExpanded={initialExpanded(book.directories[kind])}
+      })} data={activeData} kind={kind} checkedIds={activeIds} onCheckedChange={changeChecked(kind, onSelectionsChange)} View={View} session={sessions[scope] ?? { query: "" }} onSessionChange={patchSession} initialExpanded={initialExpanded(activeData)}
         searchAction={multiSelect === "toggle" ? <Button variant="outline" aria-pressed={sessions[scope]?.multiple ?? entries.length > 1} onClick={() => { const multiple = !(sessions[scope]?.multiple ?? entries.length > 1); patchSession({ multiple }); if (!multiple && entries.length > 1) { onCurrentNodesChange(previous => { const next = { ...previous }; delete next[scope]; return next }); onSelectionsChange(previous => ({ ...previous, [scope]: [] })) } }}>多选</Button> : multiSelect === "dialog" ? <Button ref={multiRef} variant="outline" aria-label="多选" title="打开对话框选择多个目录范围" aria-haspopup="dialog" onClick={() => { setDraftSessions({}); setMultiDialog({ open: true, kind, selections: structuredClone(selections) }) }}>多选</Button> : undefined}
         summary={!allOption && (entries.length > 1 || (!entries.length && emptySelectionLabel !== undefined)) && <div className="flex min-w-0 items-center gap-2 text-ui-hint"><p role="status" className="min-w-0 truncate text-muted-foreground">{entries.length ? `已选 ${entries.length} 项 ·` : emptySelectionLabel}</p>{entries.length > 0 && <Button variant="ghost" size="sm" aria-label="清空当前目录的已选范围" onClick={() => { onCurrentNodesChange?.(previous => { const next = { ...previous }; delete next[scope]; return next }); onSelectionsChange(previous => ({ ...previous, [scope]: [] })) }}>清空</Button>}</div>} />
-    </KindTabs>
+    </KindTabs>}
     <DialogLayout open={bookDialog.open} onOpenChange={open => { if (!open) closeBook() }} title="选择教材" closeLabel="关闭教材选择" description={`当前：${bookName(book)}`} size="xl" initialFocus={bookFocus} finalFocus={switchRef}
       footerStart={<p id={reasonId} className="text-ui-hint text-muted-foreground">{disabledReason || `确认后切换到 ${selectedBook ? bookName(selectedBook) : ""}`}</p>}
       footerEnd={<div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={closeBook}>取消</Button><Button variant="outline" disabled={!!disabledReason} aria-describedby={reasonId} onClick={() => { if (selectedBook && !disabledReason) { setBookId(selectedBook.id); closeBook() } }}>确认选择</Button></div>}>
@@ -226,7 +228,7 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
         </DialogSection>
       </div>
     </DialogLayout>
-    <DialogLayout open={multiDialog.open} onOpenChange={open => { if (!open) closeMulti() }} title={multiDialog.kind === "course" ? "选择多个章节" : "选择多个知识点"} closeLabel="关闭目录多选" size="xl" initialFocus={multiFocus} finalFocus={multiRef}
+    {draftData && <DialogLayout open={multiDialog.open} onOpenChange={open => { if (!open) closeMulti() }} title={multiDialog.kind === "course" ? "选择多个章节" : "选择多个知识点"} closeLabel="关闭目录多选" size="xl" initialFocus={multiFocus} finalFocus={multiRef}
       footerStart={<p role="status" className="text-ui-hint text-muted-foreground">{draftSummary}</p>}
       footerEnd={<div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={closeMulti}>取消</Button><Button variant="outline" onClick={() => {
         onCurrentNodesChange?.(previous => {
@@ -252,6 +254,6 @@ export function EmbeddedTextbookDirectory({ textbooks, selections, onSelectionsC
           </section>)}</div> : <p className="flex flex-1 items-center justify-center text-center text-ui-hint text-muted-foreground">在左侧勾选后，这里列出已选内容</p>}
         </section>
       </div>
-    </DialogLayout>
+    </DialogLayout>}
   </div></DirectoryFacts.Provider>
 }

@@ -117,7 +117,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
     // Supplementary collection guidance is disclosed by the basket information menu in workspace summary mode.
     details: <p>三个视图共用当前选题集合。题目分值与分组数量由本页示例提供。已选题目指篮内题目（包含失效题），不是批量勾选项；当前总分与题型分值采用相同口径。加入集合不代表已读取材料、创建成果或发布；真实同步和去向服务尚未接入。</p>,
   }
-  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
+  if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}>{questionPreview.panel}<AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common}   presentation={purpose === "questions" && presentation.view === "workspace" ? "inline" : "card"} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处呈现共用同一份本页集合与选择。</p>
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="同步记录示例"><span className="text-ui-action">同步记录</span>
@@ -136,7 +136,7 @@ export function CollectionBasketExample({ purpose, narrow }: { purpose: keyof ty
       ["inline", "default", "对话摘要"], ["workspace", "default", "完整集合管理"], ["inline", "compact", "紧凑集合摘要"],
     ] as const).map(([view, density, label]) => <section key={label} ref={view === "workspace" ? workspace : undefined} tabIndex={view === "workspace" ? -1 : undefined}
       aria-label={label} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
-      <h3 className="text-block-title">{label}</h3><AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} />
+      <h3 className="text-block-title">{label}</h3><AgentCollectionBasket visual={{ sample: true, disconnected: true }} {...common} view={view} density={density} presentation={purpose === "questions" && view === "workspace" ? "inline" : "card"} />
     </section>)}</div>
   </div>
 }

@@ -17,4 +17,46 @@ test('built Record List route exposes all states, themes, sizes and Agent Spec w
   assert.doesNotMatch(external, /role="(?:tablist|tab|tabpanel)"/);
   for (const theme of ['light','paper','dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
   assert.match(html,/data-ui-version="coss-v1"/); assert.match(html,/<math/); assert.match(html,/data-record-list/);
+  const homogeneous = html.split('id="record-homogeneous"')[1].split('id="record-processing"')[0];
+  assert.match(homogeneous, /同质列表 · 省略类型与状态/);
+  assert.match(homogeneous, /320px 同质列表/);
+  assert.match(homogeneous, /data-record-row="paper-algebra"/);
+  assert.match(homogeneous, /data-slot="badge"[^>]*>已收藏/);
+  assert.match(homogeneous, /<math/);
+  assert.match(homogeneous, /aria-label="查看试卷：/);
+  assert.match(homogeneous, /aria-label="更多操作：/);
+  assert.doesNotMatch(homogeneous, /data-agent-status=|class="break-words text-ui-meta"/);
+  assert.ok(text.includes('showType/showStatus default to true.'));
+  const noPrimary = html.split('id="record-no-primary"')[1].split('id="record-wide"')[0];
+  assert.match(noPrimary, /320px 无主操作列表/);
+  assert.match(noPrimary, /data-record-row="requirement-algebra"/);
+  assert.match(noPrimary, /aria-label="复用要求：/);
+  assert.match(noPrimary, /<math/);
+  assert.match(noPrimary, /暂无记录/);
+  assert.match(noPrimary, /保存组卷要求后，可在这里查看并复用。/);
+  assert.doesNotMatch(noPrimary, /开始 AI 批阅|data-slot="empty-content"/);
+  const headers = [...noPrimary.matchAll(/<header\b[^>]*data-slot="frame-panel-header"[^>]*>([\s\S]*?)<\/header>/g)];
+  assert.equal(headers.length, 2);
+  for (const [, header] of headers) assert.doesNotMatch(header, /<button\b/);
+  assert.ok(text.includes('showPrimary defaults to true;'));
+});
+
+test('P50 built component pages expose optional regions, count controls and updated Agent Specs', async () => {
+  const { default: worker } = await import('../dist/server/index.js');
+  for (const [component, labels] of [
+    ['record-list', ['showHeader/showSearch default to true.', '显示列表页头', '显示内置搜索与筛选']],
+    ['facet-filter', ['计数单位', '份试卷', 'countUnit?: string defaults to 题']],
+    ['tree', ['计数单位', '份试卷', '节点数量可相加', 'countsAdditive?: boolean defaults to true']],
+  ]) {
+    const response = await worker.fetch(new Request(`http://localhost/next/components/${component}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    for (const label of labels) assert.ok(html.includes(label), `${component}: ${label}`);
+    if (component === 'record-list') {
+      const optional = html.split('id="record-optional-regions"')[1].split('id="record-wide"')[0];
+      assert.match(optional, /<section[^>]*data-record-list[^>]*aria-label="试卷库"/);
+      assert.doesNotMatch(optional, /data-slot="frame-panel-header"|记录搜索与筛选|type="search"/);
+      for (const label of ['role="tablist"', '共 2 份试卷', 'aria-label="试卷库分页"', '<math', 'aria-label="查看试卷：', 'aria-label="更多操作：']) assert.ok(optional.includes(label), label);
+    }
+  }
 });

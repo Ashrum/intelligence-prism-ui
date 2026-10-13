@@ -2,12 +2,13 @@
 
 import { useLayoutEffect, useRef, useState, type PointerEvent, type RefObject, type ReactNode } from "react"
 import { PaperPreviewRegionEditor, canEditPaperRegion, type PaperPreviewRegionEditing } from "./paper-preview-region-editor"
+import { PaperAnnotationLayer, type PaperAnnotationOptions } from "./paper-annotation-layer"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
 import { clampPaperZoom, paperDimensions, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
 import "./review-workspace.css"
 export type PaperPreviewLocation = { pageId?: string; regionId?: string; request?: number; focus?: boolean }
-export type PaperPreviewContinuousProps = {
+export type PaperPreviewContinuousProps = PaperAnnotationOptions & {
   regionEditing?: PaperPreviewRegionEditing
   viewportRef: RefObject<HTMLDivElement | null>; pages: readonly PaperPreviewPage[]; zoom: PaperPreviewZoom
   rotations: Record<string, PaperPreviewRotation>; selected?: string; scale?: number
@@ -29,7 +30,7 @@ export function locatePaperTarget(node: HTMLDivElement | null, target: PaperPrev
   if (target.focus) node.focus({ preventScroll: true })
 }
 /** One scroll viewport, independent sheet sizes/rotations and gesture anchors. */
-export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, selected, scale = 1, onSelect, onZoom, onVisiblePage, onViewport, gap, toolbarWidth = 56, beforeContent, renderPageHeader, spotlight = false, original = false, emptyImageText = "扫描图像未提供", location, regionEditing }: PaperPreviewContinuousProps) {
+export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, selected, scale = 1, onSelect, onZoom, onVisiblePage, onViewport, gap, toolbarWidth = 56, beforeContent, renderPageHeader, spotlight = false, original = false, emptyImageText = "扫描图像未提供", location, regionEditing, annotations, annotationsVisible, paperTotal }: PaperPreviewContinuousProps) {
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
   const anchor = useRef<{ id: string; x: number; y: number; localX: number; localY: number } | null>(null)
@@ -161,7 +162,8 @@ export function PaperPreviewContinuous({ viewportRef, pages, zoom, rotations, se
       const header = renderPageHeader?.(page, index)
       const editing = canEditPaperRegion(page.id, page.regions, regionEditing)
       const visibleRegions = editing && regionEditing!.regionId !== null ? (page.regions ?? []).filter(region => region.id !== regionEditing!.regionId) : page.regions ?? []
-      const viewer = <DocumentRegionViewer label={`第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={spotlight ? visibleRegions.map(region => ({ ...region, content: <span aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-white/65 transition-opacity duration-200 motion-reduce:transition-none ${selected === region.id || original ? 'opacity-0' : 'opacity-100'}`} /> })) : visibleRegions} selectedId={selected} onSelect={onSelect ? id => onSelect(id, page.id) : undefined} background={page.imageUrl ? <img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">{emptyImageText}</div>} />
+      const annotationLayer = (annotations?.length || paperTotal) && annotationsVisible !== false ? <PaperAnnotationLayer annotations={annotations} paperTotal={paperTotal} page={index + 1} pageSize={{ width: source.width * 25.4 / 96, height: source.height * 25.4 / 96 }} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} /> : undefined
+      const viewer = <DocumentRegionViewer footer={annotationLayer} label={`第 ${index + 1} 页`} pageLayout={{ width: source.width * percent / 100, height: source.height * percent / 100 }} pageRotation={rotation} locateOnResize={false} regions={spotlight ? visibleRegions.map(region => ({ ...region, content: <span aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-white/65 transition-opacity duration-200 motion-reduce:transition-none ${selected === region.id || original ? 'opacity-0' : 'opacity-100'}`} /> })) : visibleRegions} selectedId={selected} onSelect={onSelect ? id => onSelect(id, page.id) : undefined} background={page.imageUrl ? <img src={page.imageUrl} alt={page.alt} draggable={false} className="h-full w-full object-contain" /> : <div className="flex h-full items-center justify-center bg-card p-6 text-ui-body">{emptyImageText}</div>} />
       const paper = <div key={page.id} data-review-page={index} data-page-id={page.id} data-percent={percent} data-paper-size={page.paperSize ?? "A4"} className="relative mx-auto shrink-0" style={{ width: dimensions.width * percent / 100, height: dimensions.height * percent / 100 }}>
         {editing ? <>{viewer}<PaperPreviewRegionEditor key={JSON.stringify([page.id, regionEditing!.regionId])} editing={regionEditing!} regions={page.regions ?? []} rotation={rotation} geometryKey={`${rotation}:${percent}:${source.width}:${source.height}:${scale}`} cancelRef={cancelRegionEdit} /></> : viewer}
       </div>
