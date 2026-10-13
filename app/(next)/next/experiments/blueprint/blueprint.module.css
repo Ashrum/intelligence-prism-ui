@@ -1,0 +1,436 @@
+/* Page structure only. Component appearance and all theme tokens stay upstream. */
+.experiment {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding: 2rem;
+  min-width: 0;
+}
+
+.labHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.labHeading[hidden],
+.reviewNotes[hidden] {
+  display: none;
+}
+
+.labDescription {
+  max-width: 27rem;
+}
+
+.reviewToolbar,
+.versionControls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.reviewToolbar {
+  justify-content: space-between;
+  padding-block: 1rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.comparisonCaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem 1.5rem;
+  margin-block: .25rem 1.5rem;
+}
+
+.sheet {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  padding: 2rem;
+}
+
+.sheet::before,
+.sheet::after {
+  content: "";
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  pointer-events: none;
+}
+
+.sheet::before {
+  inset-block-start: -1px;
+  inset-inline-start: -1px;
+  border-block-start: 1px solid var(--foreground);
+  border-inline-start: 1px solid var(--foreground);
+}
+
+.sheet::after {
+  inset-block-end: -1px;
+  inset-inline-end: -1px;
+  border-block-end: 1px solid var(--foreground);
+  border-inline-end: 1px solid var(--foreground);
+}
+
+.sheetBody {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.axisRail,
+.cornerMarks {
+  display: none;
+  pointer-events: none;
+}
+
+.sheetHeading {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: .25rem 2rem;
+}
+
+.sheetHeading::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -.75rem;
+  inset-inline-end: 0;
+  width: 10.5rem;
+  height: 4.5rem;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem;
+  opacity: .35;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.taskTitle {
+  display: grid;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.sheetLabel,
+.titleRow,
+.taskActions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.sheetLabel {
+  gap: 1.5rem;
+}
+
+.taskVersion {
+  display: inline-block;
+  margin-inline-start: .75rem;
+}
+
+.taskActions {
+  flex-shrink: 0;
+}
+
+.summaryWrap {
+  margin-block-end: 2.5rem;
+}
+
+.summaryLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.5rem 2rem;
+  padding: 1.5rem;
+}
+
+.summaryText {
+  display: grid;
+  gap: .5rem;
+  max-width: 40em;
+}
+
+.summaryMetrics {
+  display: flex;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.summaryMetric {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: .25rem;
+}
+
+.regionLinks {
+  display: none;
+}
+
+.workGrid {
+  display: grid;
+  grid-template-columns: minmax(14.5rem, .9fr) minmax(0, 1.85fr) minmax(16rem, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.zone {
+  min-width: 0;
+  position: relative;
+  scroll-margin-top: 5rem;
+}
+
+.zoneHeading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .5rem .75rem;
+  min-height: 3.75rem;
+  padding-block: 1rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.zoneCaption {
+  margin-inline-start: auto;
+}
+
+.stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.processingMetrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.conversation {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 40em;
+  min-width: 0;
+}
+
+.sourceNote {
+  display: grid;
+  gap: .75rem;
+}
+
+.aiSourceLine {
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  background: var(--brand-ai-gradient);
+}
+
+.evidenceList {
+  display: grid;
+  gap: .25rem;
+  margin-inline: -.75rem;
+}
+
+.flowFooter {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-block-start: 2rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.flowSteps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.reviewNotes {
+  margin-block: 2rem 1rem;
+}
+
+.reviewHeading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+  margin-block-end: 1rem;
+}
+
+.noteGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.reviewNote {
+  display: grid;
+  align-content: start;
+  gap: .5rem;
+}
+
+.detailRows {
+  display: grid;
+  gap: 1.25rem;
+  margin-block: .5rem;
+}
+
+.detailRow {
+  display: grid;
+  grid-template-columns: minmax(5rem, .75fr) minmax(0, 2fr);
+  gap: .5rem 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+/* v0.1 C's outer grammar, on the exact same component tree and fixture. */
+.sheet[data-version="v01"] {
+  padding: 2.25rem 1.75rem 1.75rem;
+  border-color: var(--input);
+  background-image: linear-gradient(color-mix(in srgb, var(--foreground) 3%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--foreground) 3%, transparent) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+}
+
+.sheet[data-version="v01"]::before {
+  inset: .5625rem;
+  width: auto;
+  height: auto;
+  border: 1px solid var(--border);
+}
+
+.sheet[data-version="v01"]::after,
+.sheet[data-version="v01"] .sheetHeading::before {
+  display: none;
+}
+
+.sheet[data-version="v01"] .axisRail {
+  position: absolute;
+  inset-block-start: .125rem;
+  inset-inline: 2.625rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted-foreground);
+}
+
+.sheet[data-version="v01"] .cornerMarks {
+  position: absolute;
+  inset: .625rem;
+  display: block;
+}
+
+.cornerMarks i {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+}
+
+.cornerMarks i::before,
+.cornerMarks i::after {
+  content: "";
+  position: absolute;
+  background: var(--muted-foreground);
+}
+
+.cornerMarks i::before {
+  width: 1rem;
+  height: 1px;
+  inset-block-start: .5rem;
+}
+
+.cornerMarks i::after {
+  height: 1rem;
+  width: 1px;
+  inset-inline-start: .5rem;
+}
+
+.cornerMarks i:nth-child(1) { inset-block-start: 0; inset-inline-start: 0; }
+.cornerMarks i:nth-child(2) { inset-block-start: 0; inset-inline-end: 0; }
+.cornerMarks i:nth-child(3) { inset-block-end: 0; inset-inline-start: 0; }
+.cornerMarks i:nth-child(4) { inset-block-end: 0; inset-inline-end: 0; }
+
+.sheet[data-version="v01"] .sheetHeading {
+  padding-block-end: 1.25rem;
+}
+
+.sheet[data-version="v01"] .summaryWrap {
+  margin-block-end: 1.5rem;
+}
+
+.sheet[data-version="v01"] .zoneHeading {
+  padding-block: .25rem .75rem;
+  border-block-start: 0;
+  border-block-end: 1px solid var(--border);
+  margin-block-end: .75rem;
+}
+
+.sheet[data-version="v01"] .zone:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -.75rem;
+  inset-block: 0 .25rem;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@container (max-width: 68rem) {
+  .sheetHeading { flex-wrap: wrap; }
+  .workGrid { grid-template-columns: minmax(14rem, .85fr) minmax(0, 1.9fr); }
+  .evidenceZone { grid-column: 1 / -1; }
+  .evidenceStack { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .sheet[data-version="v01"] .activityZone::after { display: none; }
+  .zoneCaption { display: none; }
+  .summaryLayout { grid-template-columns: minmax(0, 1fr); }
+  .summaryMetrics { gap: 2.5rem; }
+  .labDescription { max-width: 22rem; }
+}
+
+@container (max-width: 44rem) {
+  .labHeading { display: grid; gap: 1rem; margin-block-end: 1.5rem; }
+  .labDescription { max-width: 40em; }
+  .versionControls { gap: .75rem; }
+  .sheet,
+  .sheet[data-version="v01"] { padding: 1.25rem; }
+  .sheetHeading { padding-block-end: 1.5rem; }
+  .sheetHeading::before { display: none; }
+  .summaryWrap { margin-block-end: 1.5rem; }
+  .summaryLayout { padding: 1.25rem; gap: 1.25rem; }
+  .summaryMetrics { justify-content: space-between; gap: 1rem; }
+  .regionLinks { display: flex; flex-wrap: wrap; gap: .25rem; margin-block: -.5rem 1.25rem; }
+  .workGrid,
+  .evidenceStack { grid-template-columns: minmax(0, 1fr); }
+  .workGrid { gap: 2rem; }
+  .evidenceZone { grid-column: auto; }
+  .zoneCaption { display: inline; }
+  .zoneHeading { min-height: 0; }
+  .noteGrid { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .sheet[data-version="v01"] .axisRail,
+  .sheet[data-version="v01"] .cornerMarks,
+  .sheet[data-version="v01"]::before,
+  .sheet[data-version="v01"] .zone::after { display: none; }
+}
+
+@media (max-width: 48rem) {
+  .experiment { padding: 1.25rem 1rem; }
+}
+
+@media (max-width: 25rem) {
+  .experiment { padding-inline: .75rem; }
+  .detailRow { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .experiment { scroll-behavior: auto; }
+}
