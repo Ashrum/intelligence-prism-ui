@@ -1,6 +1,23 @@
-/* Page composition only. Component appearance and theme tokens stay upstream. */
+/*
+ * Page structure adapted from Answer me with HTML (MIT):
+ * site/src/style.css and site/template.html at
+ * 9a762d49927949a7df6657fbfea34f2fb1433f61.
+ * https://github.com/QingYunA/answer-me-with-html/tree/9a762d49927949a7df6657fbfea34f2fb1433f61/site
+ * Copyright (c) 2026 Answer me with HTML contributors
+ * License: /experiments/blueprint/answer-me-with-html-LICENSE.txt
+ *
+ * Ported: .sheet, .sheet::before, .ruler, .sheet-head, .sheet-id,
+ * .titleblock and the 40px page grid. Ink/paper map to Prism tokens;
+ * typography stays in Foundations semantic classes. Responsive columns
+ * and the compact footer adapt the original structure to this workspace.
+ * No upstream reset, fonts, button skins or component styles are copied.
+ */
 .themeScope {
   min-height: 100dvh;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--foreground) 5.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--foreground) 5.5%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
   /* No containment here: the local Dialog portal must stay viewport-fixed. */
 }
 
@@ -102,51 +119,62 @@
 .sheet {
   position: relative;
   min-width: 0;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--foreground);
   background-color: var(--background);
-  padding: 2rem 1.5rem 1.25rem;
-}
-
-.sheet::before,
-.sheet::after {
-  content: "";
-  position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
-  pointer-events: none;
+  padding: calc(2.25rem + 8px) 2.25rem 2.25rem;
 }
 
 .sheet::before {
-  inset-block-start: -1px;
-  inset-inline-start: -1px;
-  border-block-start: 1px solid var(--input);
-  border-inline-start: 1px solid var(--input);
-}
-
-.sheet::after {
-  inset-block-end: -1px;
-  inset-inline-end: -1px;
-  border-block-end: 1px solid var(--input);
-  border-inline-end: 1px solid var(--input);
-}
-
-.axisRail {
+  content: "";
   position: absolute;
-  inset-block-start: .25rem;
-  inset-inline: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted-foreground);
+  inset: 18px;
+  border: 1px solid var(--foreground);
   pointer-events: none;
 }
 
-.axisRail::after {
-  content: "";
+.ruler {
   position: absolute;
-  inset-inline: 0;
-  inset-block-end: -.375rem;
-  height: .25rem;
-  background: repeating-linear-gradient(90deg, var(--border), var(--border) 1px, transparent 1px, transparent 2.5rem);
+  display: flex;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ruler > span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.rulerTop,
+.rulerBottom {
+  inset-inline: 18px;
+  height: 18px;
+}
+
+.rulerTop { inset-block-start: 0; }
+.rulerBottom { inset-block-end: 0; }
+
+.rulerTop > span + span,
+.rulerBottom > span + span {
+  border-inline-start: 1px solid var(--foreground);
+}
+
+.rulerLeft,
+.rulerRight {
+  inset-block: 18px;
+  width: 18px;
+  flex-direction: column;
+}
+
+.rulerLeft { inset-inline-start: 0; }
+.rulerRight { inset-inline-end: 0; }
+
+.rulerLeft > span + span,
+.rulerRight > span + span {
+  border-block-start: 1px solid var(--foreground);
 }
 
 .sheetBody {
@@ -248,25 +276,53 @@
   content: "";
   position: absolute;
   inset-inline-end: -1rem;
-  inset-block: 0 .25rem;
+  inset-block: 4.25rem .25rem;
   width: 1px;
   background: color-mix(in srgb, var(--foreground) 9%, transparent);
   pointer-events: none;
 }
 
-.zoneHeading {
+.sheetHead {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-block-end: 18px;
+  margin-block-end: 22px;
+  border-block-end: 1.5px solid var(--foreground);
+}
+
+/* Join the source's heading baselines across this page's column gutters. */
+.zone:not(:last-child) .sheetHead::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -2rem;
+  inset-block-end: -1.5px;
+  width: 2rem;
+  height: 1.5px;
+  background: var(--foreground);
+  pointer-events: none;
+}
+
+.sheetId {
+  flex: none;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: .5rem .75rem;
-  min-height: 2.75rem;
-  margin-block-end: .875rem;
-  padding-block: .375rem .75rem;
-  border-block-end: 1px solid var(--border);
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.zoneTitle {
+  flex: 1;
+  min-width: 0;
 }
 
 .zoneCaption {
-  justify-self: end;
+  flex: none;
+  align-self: flex-start;
+  padding-block-start: 4px;
 }
 
 .stack {
@@ -319,15 +375,51 @@
   margin-inline: -.75rem;
 }
 
-.flowFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: .75rem 1.5rem;
+.sheetFooter {
   margin-block-start: 1.5rem;
-  padding-block-start: 1rem;
-  border-block-start: 1px solid var(--border);
+}
+
+.titleblock {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1.5px solid var(--foreground);
+  background: var(--background);
+}
+
+.titleblock > div {
+  min-width: 0;
+  padding: 9px 12px 10px;
+  border-inline-end: 1px solid var(--foreground);
+  border-block-end: 1px solid var(--foreground);
+}
+
+.titleblock > .titleblockMain {
+  grid-row: span 2;
+  display: grid;
+  align-content: center;
+  gap: .5rem;
+  border-block-end: 0;
+}
+
+.titleblock > div:nth-child(3),
+.titleblock > div:nth-child(5) {
+  border-inline-end: 0;
+}
+
+.titleblock > div:nth-last-child(-n + 2) {
+  border-block-end: 0;
+}
+
+.titleblockCell {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.titleblockFlow {
+  display: grid;
+  gap: .5rem;
 }
 
 .flowSteps {
@@ -335,6 +427,19 @@
   align-items: center;
   flex-wrap: wrap;
   gap: .5rem;
+}
+
+.sourceFooter,
+.sourceLinks {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .25rem .75rem;
+}
+
+.sourceFooter {
+  justify-content: space-between;
+  padding-block-start: .5rem;
 }
 
 .reviewNotes {
@@ -374,20 +479,27 @@
   overflow-wrap: anywhere;
 }
 
-/* Available paper width, including this route's padding, drives the column count. */
+/*
+ * The container is the route's content box. Three columns need at least
+ * 57.25rem of tracks + 4rem gutters + 4.5rem sheet padding + 3px borders.
+ * 68rem leaves room above that 65.94rem minimum; 1366/1440px stay three-up.
+ */
 @container (max-width: 68rem) {
   .sheetHeading { flex-wrap: wrap; }
   .workGrid { grid-template-columns: minmax(14rem, .82fr) minmax(0, 1.78fr); }
   .evidenceZone { grid-column: 1 / -1; }
   .evidenceStack { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .activityZone::after { display: none; }
+  .activityZone .sheetHead::after { display: none; }
   .labHeading { align-items: flex-start; flex-direction: column; gap: .5rem; }
   .labDescription { max-width: 40em; }
 }
 
-@container (max-width: 44rem) {
+/* Two reading columns stop before the side track squeezes the 16px body. */
+@container (max-width: 52rem) {
   .sheet { padding: 1.25rem 1rem 1rem; }
-  .axisRail { display: none; }
+  .sheet::before,
+  .ruler { display: none; }
   .sheetHeading { padding-block-end: 1rem; }
   .summaryWrap { margin-block-end: 1rem; }
   .summaryLayout { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding: 1rem; }
@@ -398,8 +510,12 @@
   .evidenceStack { grid-template-columns: minmax(0, 1fr); }
   .workGrid { gap: 1.5rem; }
   .evidenceZone { grid-column: auto; }
-  .zone::after { display: none; }
-  .zoneHeading { min-height: 0; }
+  .zone::after,
+  .zone .sheetHead::after { display: none; }
+  .sheetHead { gap: .75rem; padding-block-end: .75rem; margin-block-end: 1rem; }
+  .sheetId { width: 38px; height: 38px; }
+  .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .titleblock > .titleblockMain { grid-column: 1 / -1; grid-row: auto; border-inline-end: 0; border-block-end: 1px solid var(--foreground); }
   .noteGrid { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
   .referenceFrame { height: 60rem; }
 }

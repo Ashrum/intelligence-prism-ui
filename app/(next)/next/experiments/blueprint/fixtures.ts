@@ -63,9 +63,11 @@ export type BlueprintStage = "refined" | "original"
 export type BlueprintTheme = "light" | "paper" | "dark"
 
 export const originalReferenceHref = "/experiments/blueprint/OLE_Prism_Blueprint_Experiment_v0.1.html"
+export const officialStyleHref = "https://github.com/QingYunA/answer-me-with-html/blob/9a762d49927949a7df6657fbfea34f2fb1433f61/site/src/style.css"
+export const officialLicenseHref = "/experiments/blueprint/answer-me-with-html-LICENSE.txt"
 
 export const refinementNotes = {
-  structure: "全宽工作纸面、共用标题基线和轻淡纵向分隔共同建立三区秩序；顶部刻度只辅助定位。",
-  transition: "图框留在页面外层，内部直接使用当前智能曜彩组件。摘要以横向信息带连接页头与工作区。",
-  reading: "保留 14 / 16px 语义字号，通过列宽、间距和紧凑输入变体控制密度；全部关键数字在窄屏保留。",
+  structure: "v0.3 直接改编官网的双图框、18px 尺带、字母分区与底部图签；40px 极淡网格留在纸面之外。",
+  transition: "官网图纸结构只用于页面外层。A / B / C 共用标题基线，内部保留智能曜彩柔和组件，三主题使用现有语义色。",
+  reading: "沿用 14 / 16px 正文与 12px 坐标；按双图框后的净宽重排三栏，小屏收起尺带和内框，完整保留关键数字。",
 } as const

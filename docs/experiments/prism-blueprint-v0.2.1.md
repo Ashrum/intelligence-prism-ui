@@ -1,5 +1,7 @@
 # Prism Blueprint v0.2.1 · 恢复 C 的页面构成
 
+后续版本见 [v0.3 · 官网源样式移植](prism-blueprint-v0.3.md)。本文保留 v0.2.1 的实现与验证记录。
+
 - 日期：2026-10-13
 - 状态：页面实验，待 Product Owner 视觉审核
 - 路由：`/next/experiments/blueprint`

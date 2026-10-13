@@ -13,13 +13,13 @@ import { AgentMessage } from "@/components/prism-next/agent-message"
 import { Badge } from "@/components/prism-next/badge"
 import { Button } from "@/components/prism-next/button"
 import { cn } from "@/lib/utils"
-import { evidenceItems, originalReferenceHref, refinementNotes, taskDetails, taskMetrics, taskSteps, type BlueprintStage, type BlueprintTheme, type TaskDetailKey } from "./fixtures"
+import { evidenceItems, officialLicenseHref, officialStyleHref, originalReferenceHref, refinementNotes, taskDetails, taskMetrics, taskSteps, type BlueprintStage, type BlueprintTheme, type TaskDetailKey } from "./fixtures"
 import styles from "./blueprint.module.css"
 
-function ZoneHeading({ number, title, caption, id }: { number: string; title: string; caption: string; id: string }) {
-  return <header className={styles.zoneHeading}>
-    <span className="text-ui-meta tabular-nums text-muted-foreground" aria-hidden="true">{number}</span>
-    <h3 id={id} className="text-block-title">{title}</h3>
+function ZoneHeading({ letter, title, caption, id }: { letter: string; title: string; caption: string; id: string }) {
+  return <header className={styles.sheetHead}>
+    <span className={cn(styles.sheetId, "text-section-title")} aria-hidden="true">{letter}</span>
+    <h3 id={id} className={cn(styles.zoneTitle, "text-block-title")}>{title}</h3>
     <span className={cn(styles.zoneCaption, "text-ui-meta text-muted-foreground")} aria-hidden="true">{caption}</span>
   </header>
 }
@@ -67,13 +67,13 @@ export function BlueprintExperiment() {
     setDraft("")
   }
 
-  return <div ref={themeScope} data-agent-preview data-prism-theme={theme} className={cn(styles.themeScope, "bg-background text-foreground")} data-blueprint-experiment="v0.2.1" data-focused={focused}>
+  return <div ref={themeScope} data-agent-preview data-prism-theme={theme} className={cn(styles.themeScope, "bg-background text-foreground")} data-blueprint-experiment="v0.3" data-focused={focused}>
     <a className="prism-skip" href="#blueprint-main">跳到主要内容</a>
     <header className={styles.experimentBar}>
       <div className={styles.barContents}>
         <div className={styles.barIdentity}>
           <Button variant="ghost" render={<Link href="/next" />}><ArrowLeft aria-hidden="true" />返回组件库</Button>
-          <span className="text-ui-meta text-muted-foreground">Prism Blueprint · v0.2.1</span>
+          <span className="text-ui-meta text-muted-foreground">Prism Blueprint · v0.3</span>
         </div>
         <div className={styles.barControls}>
           <div className={styles.themeControls}>
@@ -110,7 +110,7 @@ export function BlueprintExperiment() {
             <h1 className="text-page-title">Prism Blueprint</h1>
             <p className="text-ui-hint text-muted-foreground">C · 轻量 Blueprint / 硬秩序 × 软组件</p>
           </div>
-          <p className={cn(styles.labDescription, "text-ui-hint text-muted-foreground")}>以精确构成衔接柔和组件，保留清楚、舒适的阅读节奏。</p>
+          <p className={cn(styles.labDescription, "text-ui-hint text-muted-foreground")}>直接移植 Answer me with HTML 官网的图纸结构，衔接智能曜彩现有组件。</p>
         </header>
 
         <section aria-label="实验对照工具" className={styles.reviewToolbar}>
@@ -125,7 +125,7 @@ export function BlueprintExperiment() {
               }}
               className="max-w-full flex-wrap"
             >
-              <ToggleGroupItem value="refined">v0.2.1 · 精修</ToggleGroupItem>
+              <ToggleGroupItem value="refined">v0.3 · 官网源样式</ToggleGroupItem>
               <ToggleGroupItem value="original">v0.1 · 原始 HTML</ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -149,10 +149,14 @@ export function BlueprintExperiment() {
       />}
     </section>
 
-    <section className={styles.sheet} data-version="v0.2.1" hidden={stage !== "refined"} aria-labelledby={`${id}-task-title`}>
-      <div className={styles.axisRail} aria-hidden="true">
-        {["00", "24", "48", "72", "96"].map(mark => <span className="text-ui-meta tabular-nums" key={mark}>{mark}</span>)}
-      </div>
+    <section className={styles.sheet} data-version="v0.3" hidden={stage !== "refined"} aria-labelledby={`${id}-task-title`}>
+      {/* The official site's decorative sheet rulers use 1–8 across and A–D down. */}
+      {[styles.rulerTop, styles.rulerBottom].map(side => <div className={cn(styles.ruler, side)} key={side} aria-hidden="true">
+        {["1", "2", "3", "4", "5", "6", "7", "8"].map(mark => <span className="text-ui-meta tabular-nums" key={mark}>{mark}</span>)}
+      </div>)}
+      {[styles.rulerLeft, styles.rulerRight].map(side => <div className={cn(styles.ruler, side)} key={side} aria-hidden="true">
+        {["A", "B", "C", "D"].map(mark => <span className="text-ui-meta" key={mark}>{mark}</span>)}
+      </div>)}
       <div className={styles.sheetBody}>
         <header className={styles.sheetHeading}>
           <div className={styles.taskTitle}>
@@ -195,7 +199,7 @@ export function BlueprintExperiment() {
 
         <div className={styles.workGrid}>
           <section id="blueprint-process" className={cn(styles.zone, styles.processZone)} aria-labelledby={`${id}-process`}>
-            <ZoneHeading number="01" title="任务进程" caption="Process" id={`${id}-process`} />
+            <ZoneHeading letter="A" title="任务进程" caption="Process" id={`${id}-process`} />
             <div className={styles.stack}>
               <Card>
                 <CardHeader>
@@ -222,7 +226,7 @@ export function BlueprintExperiment() {
           </section>
 
           <section id="blueprint-activity" className={cn(styles.zone, styles.activityZone)} aria-labelledby={`${id}-activity`}>
-            <ZoneHeading number="02" title="Agent 执行记录" caption="Activity" id={`${id}-activity`} />
+            <ZoneHeading letter="B" title="Agent 执行记录" caption="Activity" id={`${id}-activity`} />
             <Card>
               <CardHeader>
                 <CardTitle render={<h4 />}>任务会话</CardTitle>
@@ -273,7 +277,7 @@ export function BlueprintExperiment() {
           </section>
 
           <section id="blueprint-evidence" className={cn(styles.zone, styles.evidenceZone)} aria-labelledby={`${id}-evidence`}>
-            <ZoneHeading number="03" title="证据与产出" caption="Evidence" id={`${id}-evidence`} />
+            <ZoneHeading letter="C" title="证据与产出" caption="Evidence" id={`${id}-evidence`} />
             <div className={cn(styles.stack, styles.evidenceStack)}>
               <Card>
                 <CardHeader>
@@ -317,18 +321,35 @@ export function BlueprintExperiment() {
           </section>
         </div>
 
-        <footer className={styles.flowFooter}>
-          <span className="flex items-center gap-2 text-ui-hint"><Link2 aria-hidden="true" className="size-4" />任务证据链</span>
-          <ol className={styles.flowSteps} aria-label="处理顺序：输入、批阅、证据、诊断、报告">
-            {["Input", "Grading", "Evidence", "Diagnosis", "Output"].map((step, index) => <li key={step} className="flex items-center gap-2 text-ui-meta text-muted-foreground"><span lang="en">{step}</span>{index < 4 && <ArrowRight className="size-3" aria-hidden="true" />}</li>)}
-          </ol>
-          <span className="text-ui-meta text-muted-foreground">模拟数据 · 未连接业务 Runtime</span>
+        <footer className={styles.sheetFooter}>
+          <dl className={styles.titleblock} aria-label="工作纸面图签">
+            <div className={styles.titleblockMain}>
+              <dt className="flex items-center gap-2 text-ui-hint"><Link2 aria-hidden="true" className="size-4" />任务证据链</dt>
+              <dd className={styles.titleblockFlow}>
+                <ol className={styles.flowSteps} aria-label="处理顺序：输入、批阅、证据、诊断、报告">
+                  {["Input", "Grading", "Evidence", "Diagnosis", "Output"].map((step, index) => <li key={step} className="flex items-center gap-2 text-ui-meta text-muted-foreground"><span lang="en">{step}</span>{index < 4 && <ArrowRight className="size-3" aria-hidden="true" />}</li>)}
+                </ol>
+                <p className="text-ui-meta text-muted-foreground">模拟数据 · 未连接业务 Runtime</p>
+              </dd>
+            </div>
+            <div className={styles.titleblockCell}><dt className="text-ui-meta text-muted-foreground">任务编号</dt><dd className="text-ui-action tabular-nums">WK-042</dd></div>
+            <div className={styles.titleblockCell}><dt className="text-ui-meta text-muted-foreground">页面修订</dt><dd className="text-ui-action">Prism Blueprint v0.3</dd></div>
+            <div className={styles.titleblockCell}><dt className="text-ui-meta text-muted-foreground">任务版本</dt><dd className="text-ui-action">V1</dd></div>
+            <div className={styles.titleblockCell}><dt className="text-ui-meta text-muted-foreground">固定演示快照</dt><dd className="text-ui-action tabular-nums">第 3 / 4 步</dd></div>
+          </dl>
+          <div className={styles.sourceFooter}>
+            <span className="text-ui-meta text-muted-foreground">页面结构改编自 Answer me with HTML</span>
+            <div className={styles.sourceLinks}>
+              <Button variant="link" render={<a href={officialStyleHref} target="_blank" rel="noopener noreferrer" />}>样式来源<ArrowUpRight aria-hidden="true" /></Button>
+              <Button variant="link" render={<a href={officialLicenseHref} target="_blank" rel="noopener noreferrer" />}>MIT 许可</Button>
+            </div>
+          </div>
         </footer>
       </div>
     </section>
 
     <section className={styles.reviewNotes} aria-label="页面精修观察" hidden={focused || stage === "original"}>
-      <div className={styles.reviewHeading}><h2 className="text-block-title">精修观察</h2><p className="text-ui-hint text-muted-foreground">v0.2.1 · C 构成与密度</p></div>
+      <div className={styles.reviewHeading}><h2 className="text-block-title">精修观察</h2><p className="text-ui-hint text-muted-foreground">v0.3 · 官网源样式移植</p></div>
       <dl className={styles.noteGrid}>
         <Note title="空间秩序">{refinementNotes.structure}</Note>
         <Note title="组件衔接">{refinementNotes.transition}</Note>
