@@ -60,7 +60,7 @@ export function ThemePicker() {
 
 export function Shell({children}:{children:React.ReactNode}) {
   const pathname=usePathname()
-  if(["/next/skeletons/workbench", "/next/skeletons/agent", "/next/use-cases/parsing", "/next/reviews/paper-review", "/next/reviews/question-review"].includes(pathname)) return <>{children}</>
+  if(["/next/skeletons/workbench", "/next/skeletons/agent", "/next/use-cases/parsing", "/next/reviews/paper-review", "/next/reviews/question-review", "/next/experiments/blueprint"].includes(pathname)) return <>{children}</>
   return <div className="prism-root"><a className="prism-skip" href="#prism-main">跳到主要内容</a>
     <SidebarProvider style={{"--sidebar-width":"15rem"} as React.CSSProperties}>
       <Navigation/>

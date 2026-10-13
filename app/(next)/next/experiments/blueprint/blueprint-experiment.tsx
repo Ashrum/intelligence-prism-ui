@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useId, useRef, useState, type MouseEvent, type ReactNode } from "react"
-import { ArrowDown, ArrowRight, ArrowUpRight, ChartNoAxesCombined, Check, ChevronRight, Clock3, FileText, Focus, Layers, Link2, Minimize2 } from "lucide-react"
+import Link from "next/link"
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, ChartNoAxesCombined, Check, ChevronRight, Clock3, FileText, Focus, Layers, Link2, Minimize2 } from "lucide-react"
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardPanel, CardTitle } from "@/components/coss/card"
 import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "@/components/coss/dialog"
 import { Progress } from "@/components/coss/progress"
@@ -12,7 +13,7 @@ import { AgentMessage } from "@/components/prism-next/agent-message"
 import { Badge } from "@/components/prism-next/badge"
 import { Button } from "@/components/prism-next/button"
 import { cn } from "@/lib/utils"
-import { comparisonNotes, evidenceItems, taskDetails, taskMetrics, taskSteps, type BlueprintVersion, type TaskDetailKey } from "./fixtures"
+import { evidenceItems, originalReferenceHref, refinementNotes, taskDetails, taskMetrics, taskSteps, type BlueprintStage, type BlueprintTheme, type TaskDetailKey } from "./fixtures"
 import styles from "./blueprint.module.css"
 
 function ZoneHeading({ number, title, caption, id }: { number: string; title: string; caption: string; id: string }) {
@@ -30,17 +31,18 @@ function Note({ title, children }: { title: string; children: ReactNode }) {
   </div>
 }
 
-/** Page-only composition; the comparison changes wrappers, never component variants. */
+/** Isolated page composition. Local themes never write the site's theme preference. */
 export function BlueprintExperiment() {
-  const [version, setVersion] = useState<BlueprintVersion>("v02")
+  const [stage, setStage] = useState<BlueprintStage>("refined")
+  const [theme, setTheme] = useState<BlueprintTheme>("paper")
   const [focused, setFocused] = useState(false)
   const [detailKey, setDetailKey] = useState<TaskDetailKey | null>(null)
   const [draft, setDraft] = useState("")
   const [feedback, setFeedback] = useState<{ serial: number; text: string } | null>(null)
   const detailTrigger = useRef<HTMLButtonElement | null>(null)
   const focusTrigger = useRef<HTMLButtonElement | null>(null)
+  const themeScope = useRef<HTMLDivElement | null>(null)
   const id = useId()
-  const notes = comparisonNotes[version]
   const detail = detailKey ? taskDetails[detailKey] : null
 
   useEffect(() => {
@@ -65,48 +67,92 @@ export function BlueprintExperiment() {
     setDraft("")
   }
 
-  return <div className={styles.experiment} data-blueprint-experiment="v0.2" data-focused={focused}>
-    <header className={styles.labHeading} hidden={focused}>
-      <div>
-        <p className="text-ui-hint text-info-foreground">页面设计语言实验 / 02</p>
-        <h1 className="mt-2 text-page-title">Prism Blueprint</h1>
-        <p className="mt-3 text-read-body text-muted-foreground">硬秩序 × 软组件</p>
+  return <div ref={themeScope} data-agent-preview data-prism-theme={theme} className={cn(styles.themeScope, "bg-background text-foreground")} data-blueprint-experiment="v0.2.1" data-focused={focused}>
+    <a className="prism-skip" href="#blueprint-main">跳到主要内容</a>
+    <header className={styles.experimentBar}>
+      <div className={styles.barContents}>
+        <div className={styles.barIdentity}>
+          <Button variant="ghost" render={<Link href="/next" />}><ArrowLeft aria-hidden="true" />返回组件库</Button>
+          <span className="text-ui-meta text-muted-foreground">Prism Blueprint · v0.2.1</span>
+        </div>
+        <div className={styles.barControls}>
+          <div className={styles.themeControls}>
+            <span id={`${id}-theme`} className="text-ui-hint text-muted-foreground">精修版主题</span>
+            <ToggleGroup
+              aria-labelledby={`${id}-theme`}
+              value={[theme]}
+              disabled={stage === "original"}
+              onValueChange={values => {
+                const next = values[0]
+                if (next === "light" || next === "paper" || next === "dark") setTheme(next)
+              }}
+            >
+              <ToggleGroupItem value="light">Light</ToggleGroupItem>
+              <ToggleGroupItem value="paper">Paper</ToggleGroupItem>
+              <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <Button ref={focusTrigger} variant="outline" aria-pressed={focused} aria-label={focused ? "退出专注" : "专注查看精修版"} onClick={() => {
+            setStage("refined")
+            setFocused(value => !value)
+          }}>
+            {focused ? <Minimize2 aria-hidden="true" /> : <Focus aria-hidden="true" />}
+            {focused ? "退出专注" : "专注查看"}
+          </Button>
+        </div>
       </div>
-      <p className={cn(styles.labDescription, "text-ui-hint text-muted-foreground")}>C · 轻量 Blueprint。以图框、对齐和留白组织页面，保留智能曜彩组件的柔和形态。</p>
     </header>
 
-    <section aria-label="实验对照工具" className={styles.reviewToolbar}>
-      <div className={styles.versionControls}>
-        <span id={`${id}-comparison`} className="text-ui-action">结构对照</span>
-        <ToggleGroup
-          aria-labelledby={`${id}-comparison`}
-          value={[version]}
-          onValueChange={values => {
-            const next = values[0]
-            if (next === "v01" || next === "v02") setVersion(next)
-          }}
-          className="max-w-full flex-wrap"
-        >
-          <ToggleGroupItem value="v01">v0.1 C · 结构复现</ToggleGroupItem>
-          <ToggleGroupItem value="v02">v0.2 · 精修</ToggleGroupItem>
-        </ToggleGroup>
+    <main id="blueprint-main" tabIndex={-1} className={styles.experiment} aria-label="Prism Blueprint 页面风格实验">
+      <div className={styles.reviewArea} hidden={focused}>
+        <header className={styles.labHeading}>
+          <div className={styles.labTitle}>
+            <h1 className="text-page-title">Prism Blueprint</h1>
+            <p className="text-ui-hint text-muted-foreground">C · 轻量 Blueprint / 硬秩序 × 软组件</p>
+          </div>
+          <p className={cn(styles.labDescription, "text-ui-hint text-muted-foreground")}>以精确构成衔接柔和组件，保留清楚、舒适的阅读节奏。</p>
+        </header>
+
+        <section aria-label="实验对照工具" className={styles.reviewToolbar}>
+          <div className={styles.versionControls}>
+            <span id={`${id}-comparison`} className="text-ui-action">页面对照</span>
+            <ToggleGroup
+              aria-labelledby={`${id}-comparison`}
+              value={[stage]}
+              onValueChange={values => {
+                const next = values[0]
+                if (next === "original" || next === "refined") setStage(next)
+              }}
+              className="max-w-full flex-wrap"
+            >
+              <ToggleGroupItem value="refined">v0.2.1 · 精修</ToggleGroupItem>
+              <ToggleGroupItem value="original">v0.1 · 原始 HTML</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <Button variant="ghost" render={<a href={originalReferenceHref} target="_blank" rel="noopener noreferrer" />}>新窗口打开原稿<ArrowUpRight aria-hidden="true" /></Button>
+        </section>
+
+        <div className={styles.comparisonCaption} aria-live="polite">
+          <p className="text-ui-hint text-muted-foreground">{stage === "original"
+            ? "原稿按原样提供，默认 C / Paper；主题在原稿内切换，仅有 Light、Paper，无 Dark。"
+            : "精修版默认 Paper；本页主题独立切换，不改变组件库的主题偏好。"}</p>
+          <p className="text-ui-meta text-muted-foreground">同宽容器切换；原稿含自身导航与内边距，实际工作纸面宽度、字体及组件不同。</p>
+        </div>
       </div>
-      <Button ref={focusTrigger} variant="outline" aria-pressed={focused} onClick={() => setFocused(value => !value)}>
-        {focused ? <Minimize2 aria-hidden="true" /> : <Focus aria-hidden="true" />}
-        {focused ? "退出专注" : "专注查看"}
-      </Button>
+
+    <section className={styles.originalStage} aria-label="v0.1 原始 HTML 对照" hidden={stage !== "original"}>
+      {stage === "original" && <iframe
+        title="v0.1 原始实验 HTML，默认 C · 轻量 Blueprint / Paper"
+        src={originalReferenceHref}
+        className={styles.referenceFrame}
+        sandbox="allow-scripts"
+      />}
     </section>
 
-    <div className={styles.comparisonCaption} aria-live="polite">
-      <p className="text-ui-hint text-muted-foreground">{notes.description}</p>
-      {!focused && <p className="text-ui-meta text-muted-foreground">同数据 · 同组件 · 主题沿用站点右上角切换</p>}
-    </div>
-
-    <section className={styles.sheet} data-version={version} aria-labelledby={`${id}-task-title`}>
+    <section className={styles.sheet} data-version="v0.2.1" hidden={stage !== "refined"} aria-labelledby={`${id}-task-title`}>
       <div className={styles.axisRail} aria-hidden="true">
-        {["00", "12", "24", "36", "48", "60", "72", "84", "96"].map(mark => <span className="text-ui-meta tabular-nums" key={mark}>{mark}</span>)}
+        {["00", "24", "48", "72", "96"].map(mark => <span className="text-ui-meta tabular-nums" key={mark}>{mark}</span>)}
       </div>
-      <div className={styles.cornerMarks} aria-hidden="true"><i /><i /><i /><i /></div>
       <div className={styles.sheetBody}>
         <header className={styles.sheetHeading}>
           <div className={styles.taskTitle}>
@@ -126,8 +172,10 @@ export function BlueprintExperiment() {
         <div className={styles.summaryWrap}>
           <Card className={styles.summaryLayout}>
             <div className={styles.summaryText}>
-              <AgentMark state="idle" label="AI 辅助任务" />
-              <h3 className="text-block-title">为本次考试生成可信的学情诊断</h3>
+              <div className={styles.summaryTitle}>
+                <AgentMark state="idle" label="AI 辅助任务" />
+                <h3 className="text-block-title">为本次考试生成可信的学情诊断</h3>
+              </div>
               <p className="text-ui-hint text-muted-foreground">从批阅结果追溯证据，识别薄弱知识点，形成可供教师复核的分析报告。</p>
             </div>
             <dl className={styles.summaryMetrics}>
@@ -199,18 +247,25 @@ export function BlueprintExperiment() {
                     <span className={styles.aiSourceLine} aria-hidden="true" />
                     <p className="text-ui-hint text-muted-foreground"><span className="text-ui-action text-foreground">AI 来源说明</span>　来自本次已批阅试卷及已关联的作答记录；未经教师确认的结果仅作为候选。</p>
                   </div>
-                  <AgentComposer
-                    value={draft}
-                    onChange={setDraft}
-                    onSubmit={sendDemoMessage}
-                    label="发送给 Agent 的演示消息"
-                    placeholder="向 Agent 提出进一步要求（演示模式）"
-                    submitLabel="发送演示消息"
-                    maxLength={160}
-                    footerNote={`${draft.length} / 160`}
-                  />
-                  <div role="status" aria-live="polite" aria-atomic="true">
-                    <p key={feedback?.serial ?? 0} className="text-ui-hint text-muted-foreground">{feedback?.text ?? "仅体验输入反馈，未连接 Agent。"}</p>
+                  <div className={styles.composerGroup} role="group" aria-labelledby={`${id}-composer-label`}>
+                    {/* AgentComposer owns its input id and matching accessible label. */}
+                    <p id={`${id}-composer-label`} className="text-ui-action">发送给 Agent 的演示消息</p>
+                    <AgentComposer
+                      value={draft}
+                      onChange={setDraft}
+                      onSubmit={sendDemoMessage}
+                      label="发送给 Agent 的演示消息"
+                      placeholder="向 Agent 提出进一步要求（演示模式）"
+                      submitLabel="发送演示消息"
+                      variant="conversation"
+                      inputSize="compact"
+                      toolbarLayout="inline"
+                      maxLength={160}
+                      footerNote={<div className={styles.composerFoot}>
+                        <span className="tabular-nums">{draft.length} / 160</span>
+                        <span role="status" aria-live="polite" aria-atomic="true"><span key={feedback?.serial ?? 0}>{feedback?.text ?? "仅体验输入反馈，未连接 Agent。"}</span></span>
+                      </div>}
+                    />
                   </div>
                 </div>
               </CardPanel>
@@ -272,17 +327,18 @@ export function BlueprintExperiment() {
       </div>
     </section>
 
-    <section className={styles.reviewNotes} aria-label="页面精修观察" hidden={focused}>
-      <div className={styles.reviewHeading}><h2 className="text-block-title">精修观察</h2><p className="text-ui-hint text-muted-foreground">{notes.label}</p></div>
+    <section className={styles.reviewNotes} aria-label="页面精修观察" hidden={focused || stage === "original"}>
+      <div className={styles.reviewHeading}><h2 className="text-block-title">精修观察</h2><p className="text-ui-hint text-muted-foreground">v0.2.1 · C 构成与密度</p></div>
       <dl className={styles.noteGrid}>
-        <Note title="空间秩序">{notes.structure}</Note>
-        <Note title="组件衔接">{notes.transition}</Note>
-        <Note title="阅读舒适度">{notes.reading}</Note>
+        <Note title="空间秩序">{refinementNotes.structure}</Note>
+        <Note title="组件衔接">{refinementNotes.transition}</Note>
+        <Note title="阅读舒适度">{refinementNotes.reading}</Note>
       </dl>
     </section>
+    </main>
 
     <Dialog open={detail !== null} onOpenChange={open => { if (!open) setDetailKey(null) }}>
-      <DialogPopup finalFocus={detailTrigger} closeProps={{ "aria-label": "关闭详情" }}>
+      <DialogPopup portalProps={{ container: themeScope }} finalFocus={detailTrigger} closeProps={{ "aria-label": "关闭详情" }}>
         {detail && <>
           <DialogHeader>
             <DialogTitle>{detail.title}</DialogTitle>
