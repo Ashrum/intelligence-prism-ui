@@ -1,5 +1,6 @@
+import { createTestRuntime } from './test-runtime.mjs';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, readFile, rm } from 'node:fs/promises';
+import { writeFile, readFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -8,8 +9,7 @@ import { renderToStaticMarkup as render } from 'react-dom/server';
 // Handler/state probes only, not a DOM, keyboard browser or playback emulator.
 export async function mediaHarness(name, exported, base) {
   const root = fileURLToPath(new URL('../../', import.meta.url));
-  const runtime = new URL('../../.sites-runtime/media-workspaces/', import.meta.url);
-  await mkdir(runtime, { recursive: true });
+  const runtime = await createTestRuntime('media-workspaces');
   const options = { stdin: { contents: `export * from './components/prism-next/${name}'; export * from './components/prism-next/demos/agent-media-workspaces'; export * from './components/prism-next/agent-media-parts';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false };
   const file = new URL(`${name}-test.mjs`, runtime), probe = new URL(`${name}-probe.mjs`, runtime);
   await writeFile(file, (await build(options)).outputFiles[0].text);

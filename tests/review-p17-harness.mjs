@@ -1,4 +1,5 @@
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { createTestRuntime } from './helpers/test-runtime.mjs';
+import { writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
@@ -6,8 +7,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 export const baselineCommit = 'a30c077289311c88d59eb49c49bbeeba4c082805';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const dir = new URL('../.sites-runtime/review-p17/', import.meta.url);
-await mkdir(dir, { recursive: true });
+const dir = await createTestRuntime('review-p17');
 const names = ['question-rail', 'score-review', 'error-cause-review', 'student-paper-report'];
 const sources = new Map(names.map(name => {
   const path = `components/prism-next/${name}.tsx`;

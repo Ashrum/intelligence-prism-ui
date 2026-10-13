@@ -1,11 +1,11 @@
-import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { createTestRuntime } from './helpers/test-runtime.mjs';
+import { readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const runtime = new URL('../.sites-runtime/p38-picker-tests/', import.meta.url);
-await mkdir(runtime, { recursive: true });
+const runtime = await createTestRuntime('p38-picker-tests');
 const bundle = await build({
   stdin: { contents: `export { TextbookDirectory } from './components/prism-next/textbook-directory';
 export { EmbeddedTextbookDirectory, setTestContext as setPickerContext } from './components/prism-next/textbook-directory-embedded';

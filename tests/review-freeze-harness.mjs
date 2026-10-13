@@ -1,13 +1,14 @@
+import { createTestRuntime } from './helpers/test-runtime.mjs';
 import { build } from 'esbuild';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 export const normalizeReview = html => html.replace(/«[^»]*»|_R_[^\s"<>]*_/g, 'REACT_ID');
 const root = fileURLToPath(new URL('../', import.meta.url));
 export async function freezeRenderer() {
-  const file = new URL('../.sites-runtime/c1-freeze/probe.mjs', import.meta.url);
-  await mkdir(new URL('.', file), { recursive: true });
+  const runtime = await createTestRuntime('c1-freeze');
+  const file = new URL('probe.mjs', runtime);
   const compiled = await build({ stdin: { contents: `export { PaperReviewDesign } from './examples/paper-review/paper-review';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'freeze-states', setup(b) {
     b.onLoad({ filter: /examples\/paper-review\/paper-review\.tsx$/ }, async args => {
       let source = (await readFile(args.path, 'utf8')).replace('import { ReviewTools } from "@/examples/review-tools/review-tools"', 'const ReviewTools = () => null');

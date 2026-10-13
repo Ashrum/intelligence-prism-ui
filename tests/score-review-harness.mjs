@@ -1,11 +1,11 @@
-import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { createTestRuntime } from './helpers/test-runtime.mjs';
+import { readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
-const dir = new URL('../.sites-runtime/score-review-test/', import.meta.url);
-await mkdir(dir, { recursive: true });
+const dir = await createTestRuntime('score-review-test');
 const options = { stdin: { contents: `export * from './components/prism-next/score-review'; export * from './components/prism-next/demos/score-review'; export {Button} from './components/coss/button'; export {NumberField} from './components/coss/number-field'; export {Textarea} from './components/coss/textarea'; export {AgentItemReviewer} from './components/prism-next/agent-item-reviewer'; export {AgentReviewQueue} from './components/prism-next/agent-review-queue';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false };
 // SSR has no effects. The built-route test uses the real Vite URL/Temml asset.
 const urlPlugin = { name: 'url-asset', setup(build) { build.onResolve({ filter: /temml\.mjs\?url$/ }, () => ({ path: 'temml-url', namespace: 'url' })); build.onLoad({ filter: /.*/, namespace: 'url' }, () => ({ contents: 'export default "temml.mjs"' })); } };
