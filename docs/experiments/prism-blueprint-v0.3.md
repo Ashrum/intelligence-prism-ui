@@ -6,6 +6,8 @@
 - 开发基线：GPT Site 114，源码 `320480254369360ea84bc29a7314bf9119528460`
 - 同步分支：`feat/prism-blueprint-v021`，沿用 Draft PR #183
 
+后续基于真实 Paper 截图的集中精修见 [v0.4 · 主画面定调](./prism-blueprint-v0.4.md)。
+
 ## 依据与范围
 
 Product Owner 明确要求「直接从 GitHub 的官网 Blueprint 样式改」。本轮从 Answer me with HTML 官网的真实 CSS 和页面结构改编，继续使用当前 Agent 工作区演示内容。v0.1 C 原稿保留为历史对照，官网源样式成为本轮页面构成的直接依据。

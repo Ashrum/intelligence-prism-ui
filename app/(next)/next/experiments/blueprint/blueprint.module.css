@@ -61,36 +61,22 @@
   max-width: 96rem;
   min-width: 0;
   margin-inline: auto;
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: .875rem 1.5rem 1.5rem;
 }
 
 .reviewArea[hidden],
 .originalStage[hidden],
-.sheet[hidden],
-.reviewNotes[hidden] {
+.sheet[hidden] {
   display: none;
 }
 
-.labHeading {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-}
-
-.labTitle {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .25rem 1rem;
-}
-
-.labDescription {
-  max-width: 26rem;
+.reviewArea {
+  margin-block-end: .875rem;
 }
 
 .reviewToolbar,
-.versionControls {
+.versionControls,
+.reviewActions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -100,13 +86,24 @@
 
 .reviewToolbar {
   justify-content: space-between;
-  padding-block: .75rem .5rem;
 }
 
-.comparisonCaption {
+.experimentNotes {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: .75rem;
+  padding-block: .875rem;
+  border-block: 1px solid var(--border);
+}
+
+.notesIntroduction,
+.originalHeading {
   display: grid;
   gap: .25rem;
-  margin-block-end: 1rem;
+}
+
+.originalHeading {
+  margin-block-end: .875rem;
 }
 
 .referenceFrame {
@@ -276,7 +273,7 @@
   content: "";
   position: absolute;
   inset-inline-end: -1rem;
-  inset-block: 4.25rem .25rem;
+  inset-block: 2.875rem .25rem;
   width: 1px;
   background: color-mix(in srgb, var(--foreground) 9%, transparent);
   pointer-events: none;
@@ -286,9 +283,9 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding-block-end: 18px;
-  margin-block-end: 22px;
+  gap: .75rem;
+  padding-block-end: .75rem;
+  margin-block-end: 1rem;
   border-block-end: 1.5px solid var(--foreground);
 }
 
@@ -308,8 +305,8 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   background: var(--foreground);
   color: var(--background);
 }
@@ -321,8 +318,7 @@
 
 .zoneCaption {
   flex: none;
-  align-self: flex-start;
-  padding-block-start: 4px;
+  align-self: center;
 }
 
 .stack {
@@ -381,7 +377,7 @@
 
 .titleblock {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2.4fr) repeat(4, minmax(0, 1fr));
   margin: 0;
   border: 1.5px solid var(--foreground);
   background: var(--background);
@@ -391,24 +387,16 @@
   min-width: 0;
   padding: 9px 12px 10px;
   border-inline-end: 1px solid var(--foreground);
-  border-block-end: 1px solid var(--foreground);
 }
 
 .titleblock > .titleblockMain {
-  grid-row: span 2;
   display: grid;
   align-content: center;
-  gap: .5rem;
-  border-block-end: 0;
+  gap: .25rem;
 }
 
-.titleblock > div:nth-child(3),
-.titleblock > div:nth-child(5) {
+.titleblock > div:last-child {
   border-inline-end: 0;
-}
-
-.titleblock > div:nth-last-child(-n + 2) {
-  border-block-end: 0;
 }
 
 .titleblockCell {
@@ -430,7 +418,8 @@
 }
 
 .sourceFooter,
-.sourceLinks {
+.sourceLinks,
+.sourceMeta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -440,18 +429,6 @@
 .sourceFooter {
   justify-content: space-between;
   padding-block-start: .5rem;
-}
-
-.reviewNotes {
-  margin-block: 1.5rem .5rem;
-}
-
-.reviewHeading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .5rem 1.5rem;
-  margin-block-end: .875rem;
 }
 
 .noteGrid {
@@ -491,8 +468,11 @@
   .evidenceStack { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
   .activityZone::after { display: none; }
   .activityZone .sheetHead::after { display: none; }
-  .labHeading { align-items: flex-start; flex-direction: column; gap: .5rem; }
-  .labDescription { max-width: 40em; }
+  .titleblock { grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); }
+  .titleblock > div { border-block-end: 1px solid var(--foreground); }
+  .titleblock > .titleblockMain { grid-row: span 2; border-block-end: 0; }
+  .titleblock > div:nth-child(3) { border-inline-end: 0; }
+  .titleblock > div:nth-last-child(-n + 2) { border-block-end: 0; }
 }
 
 /* Two reading columns stop before the side track squeezes the 16px body. */
@@ -512,8 +492,6 @@
   .evidenceZone { grid-column: auto; }
   .zone::after,
   .zone .sheetHead::after { display: none; }
-  .sheetHead { gap: .75rem; padding-block-end: .75rem; margin-block-end: 1rem; }
-  .sheetId { width: 38px; height: 38px; }
   .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .titleblock > .titleblockMain { grid-column: 1 / -1; grid-row: auto; border-inline-end: 0; border-block-end: 1px solid var(--foreground); }
   .noteGrid { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
