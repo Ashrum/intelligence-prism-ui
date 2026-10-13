@@ -67,7 +67,7 @@ export const officialStyleHref = "https://github.com/QingYunA/answer-me-with-htm
 export const officialLicenseHref = "/experiments/blueprint/answer-me-with-html-LICENSE.txt"
 
 export const refinementNotes = {
-  structure: "v0.3 直接改编官网的双图框、18px 尺带、字母分区与底部图签；40px 极淡网格留在纸面之外。",
-  transition: "官网图纸结构只用于页面外层。A / B / C 共用标题基线，内部保留智能曜彩柔和组件，三主题使用现有语义色。",
-  reading: "沿用 14 / 16px 正文与 12px 坐标；按双图框后的净宽重排三栏，小屏收起尺带和内框，完整保留关键数字。",
+  structure: "v0.4 让任务标题成为主标题，实验说明默认收起；保留官网双图框、18px 尺带和纸面之外的 40px 极淡网格。",
+  transition: "A / B / C 字母块收为 32px，保留连续基线。桌面图签合为一行，内部仍使用智能曜彩组件与三主题语义色。",
+  reading: "证据行通过公开 navigation 尺寸随内容增高，完整显示标题与来源；保留 14 / 16px 正文、关键数字和窄屏重排。",
 } as const
