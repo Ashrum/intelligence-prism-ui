@@ -59,21 +59,13 @@ export const taskDetails = {
 } as const
 
 export type TaskDetailKey = keyof typeof taskDetails
-export type BlueprintVersion = "v01" | "v02"
+export type BlueprintStage = "refined" | "original"
+export type BlueprintTheme = "light" | "paper" | "dark"
 
-export const comparisonNotes = {
-  v01: {
-    label: "v0.1 C · 结构复现",
-    description: "复现 C 的双层图框、全幅淡网格、顶部刻度和分栏轴线；内部统一使用当前仓库组件。",
-    structure: "双层图框与连续轴线共同划分三区，标记密度较高。",
-    transition: "外部图框较密，圆角卡片逐列并排，边界之间的竞争需要观察。",
-    reading: "正文与 v0.2 一致；此模式仅比较结构，不是原 HTML 的像素复刻。",
-  },
-  v02: {
-    label: "v0.2 · 精修",
-    description: "单层图框、短定位线与局部网格；让中间会话成为阅读中心，侧栏承载进程和依据。",
-    structure: "一层图框建立外部秩序，分区线止于标题，留白连接内部组件。",
-    transition: "图纸标记停留在页面边缘；卡片、按钮和消息保留原有外观与行为。",
-    reading: "正文避开网格；侧栏宽度与行间留白优先保证中文阅读，窄屏按区域自然展开。",
-  },
+export const originalReferenceHref = "/experiments/blueprint/OLE_Prism_Blueprint_Experiment_v0.1.html"
+
+export const refinementNotes = {
+  structure: "全宽工作纸面、共用标题基线和轻淡纵向分隔共同建立三区秩序；顶部刻度只辅助定位。",
+  transition: "图框留在页面外层，内部直接使用当前智能曜彩组件。摘要以横向信息带连接页头与工作区。",
+  reading: "保留 14 / 16px 语义字号，通过列宽、间距和紧凑输入变体控制密度；全部关键数字在窄屏保留。",
 } as const
