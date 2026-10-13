@@ -61,6 +61,8 @@ R1 保留连续与混排引擎、侧签及两份评审页的冻结渲染；旧�
 
 ## C2 数字内容与裁切扫描混排
 
+P53（PO 2026-10-13）：数字卷面不提供缩放与旋转。mixed 全部为数字 content、没有扫描页时，宿主须省略缩放／适合宽度或整页／旋转／缩放读数整组、原因提示与多余分隔线，并从快捷键绑定和帮助中移除对应项；保留题目导航、题数、沉浸与帮助。含扫描页时保持既有输出。PaperPreview 没有内建工具条，Surface.toolbar 是宿主 ReactNode 插槽，ReviewWorkspace 的 shortcuts 与帮助 entries 也由宿主提供；应在拥有 pages 与工具条的宿主判断，不通过遍历插槽或 CSS 隐藏实现。本条是接入要求，Workspace 实际按钮修复需在对应仓库完成。
+
 `PaperPreview layout="mixed" mixed={...}` 或同目录 `PaperPreviewMixed` 使用同一引擎；mixed 中 pages 为 `{id,width,height,content?,imageUrl?,alt?,regions?}`。数字 content 按容器宽布局，不参与扫描缩放/旋转；每张扫描使用独立尺寸。`beforeContent` 是纸列前置插槽，`headers` 为纸外身份，`renderSectionHeading` 为分段标题；`PaperPreviewGroup` 提供受控满分组折叠，是否加入其后纸张由宿主决定。
 
 `topInset` 为浮动控制条实测高度 + 16，参与顶部 padding、fit-page 和可见页判定；`onQuestionHidden` 由完整 question 内容底边判定，`onScanVisibilityChange` 报告扫描纸是否可见。`activePage` 只控制外部选中事实，`onVisiblePage(index,percent)` 回传观测；显示选生由宿主选择是否跟随。`resolveScanLayout` 可适配来源裁切坐标，默认取各纸宽高与外部旋转。
