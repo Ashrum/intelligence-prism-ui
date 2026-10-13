@@ -14,7 +14,7 @@ function Choices({ label, value, options, onChange }: { label: string; value: st
   </ToggleGroup></div>
 }
 
-function FilterPreview({ width, dimensions, sortItems, scale, showFavorites }: Pick<FacetFilterProps, "dimensions" | "sortItems" | "showFavorites"> & { width: number; scale: FilterScale }) {
+function FilterPreview({ width, dimensions, sortItems, scale, showFavorites, countUnit }: Pick<FacetFilterProps, "dimensions" | "sortItems" | "showFavorites" | "countUnit"> & { width: number; scale: FilterScale }) {
   const [value, setValue] = useState(() => previewFilterValue(scale))
   const [intents, setIntents] = useState<FacetFilterIntent[]>([])
   const onIntent = (intent: FacetFilterIntent) => {
@@ -24,7 +24,7 @@ function FilterPreview({ width, dimensions, sortItems, scale, showFavorites }: P
   return <section id="filter-C" className="min-w-0 scroll-mt-4 space-y-3" aria-label="常用在外、其余进面板">
     <div><h2 className="text-block-title">常用在外、其余进面板</h2><p className="text-ui-hint">最多三个常用维度常驻；有剩余维度时提供全部筛选入口。</p></div>
     <div className="max-w-full" style={{ width }} data-demo-width={width}>
-      <FacetFilter showFavorites={showFavorites} dimensions={dimensions} sortItems={sortItems} value={value} resultCount={128} favoriteCount={23} onIntent={onIntent} />
+      <FacetFilter countUnit={countUnit} showFavorites={showFavorites} dimensions={dimensions} sortItems={sortItems} value={value} resultCount={128} favoriteCount={23} onIntent={onIntent} />
     </div>
     <div className="max-w-full space-y-2 text-ui-hint" style={{ width }}>
       <p role="status">宿主收到：{intents.length ? JSON.stringify(intents.at(-1)) : "尚无意图"}</p>
@@ -36,6 +36,7 @@ function FilterPreview({ width, dimensions, sortItems, scale, showFavorites }: P
 export function FacetFilterDemo() {
   const [width, setWidth] = useState("720")
   const [scale, setScale] = useState<FilterScale>("future")
+  const [countUnit, setCountUnit] = useState("题")
   const [counts, setCounts] = useState(true)
   const [showFavorites, setShowFavorites] = useState(true)
   const [allCommon, setAllCommon] = useState(false)
@@ -45,11 +46,13 @@ export function FacetFilterDemo() {
     <div className="flex flex-wrap items-end gap-4">
       <Choices label="容器宽度（px）" value={width} options={["520", "720", "960"]} onChange={setWidth} />
       <Choices label="数据规模" value={scale === "current" ? "现在的规模" : "将来的规模"} options={["现在的规模", "将来的规模"]} onChange={value => setScale(value === "现在的规模" ? "current" : "future")} />
+      <Choices label="计数单位" value={countUnit} options={["题", "份试卷"]} onChange={setCountUnit} />
       <Toggle pressed={showFavorites} onPressedChange={setShowFavorites}>显示收藏开关</Toggle>
       <Toggle pressed={allCommon} onPressedChange={setAllCommon}>所有维度标为常用</Toggle>
       <Toggle pressed={counts} onPressedChange={setCounts}>提供选项数量</Toggle>
     </div>
-    <p className="text-ui-hint">使用组件示例数据。切换规模会重置；其余开关保留筛选。128 题与收藏 23 题为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。所选宽度就是筛选区宽度，窄窗口以实际可用宽度为准。</p>
-    <FilterPreview showFavorites={showFavorites} key={scale} scale={scale} width={Number(width)} dimensions={dimensions} sortItems={sortItems} />
+    <p className="text-ui-hint">使用组件示例数据。切换规模会重置；其余开关保留筛选。128 {countUnit}与收藏 23 {countUnit}为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。所选宽度就是筛选区宽度，窄窗口以实际可用宽度为准。</p>
+    <p className="text-ui-hint">countUnit 默认“题”；选择“份试卷”后，结果数与选项可访问名称使用试卷单位。数量仍由宿主提供。</p>
+    <FilterPreview countUnit={countUnit} showFavorites={showFavorites} key={scale} scale={scale} width={Number(width)} dimensions={dimensions} sortItems={sortItems} />
   </div></DemoSection>
 }

@@ -14,8 +14,8 @@
 | --- | --- |
 | `sections` | 顺序由宿主给。每段 `{id,label,range?,summary?,layout:cell或row,pages}`，每页 `{id,marker?,items}`。marker 含 label/tooltip/ariaLabel；可省略页标，适应第二批全班视图。 |
 | `items` | `{id,number,tone,value,denominator?,detail?,ratio?,ariaLabel,tooltip,content?}`。tone 为 neutral/success/warning/destructive，数字文字可为 ReactNode；ratio 为已知 0–100 百分比，未提供时不画值条。无内置“学生得分”或正确率判定。 |
-| `overview`、`filters`、`footer?`、`empty?` | 分布段 count/tone、概览文字、筛选值/标签/计数/ariaLabel 全为宿主事实，过滤后不重算总量。 |
-| `selected/onSelect`、`filter/onFilterChange` | 受控选择和筛选；列表按宿主已过滤的 sections 展示。 |
+| `overview?`、`filters?`、`footer?`、`empty?` | 分布段 count/tone、概览文字、筛选值/标签/计数/ariaLabel 全为宿主事实，过滤后不重算总量。 |
+| `selected/onSelect`、`filter?/onFilterChange?` | 受控选择和筛选；列表按宿主已过滤的 sections 展示。 |
 | `onLocate`、`onPage(id)` | Enter 请求定位；页按钮保持原生 Enter。↑↓ 顺序与当前 sections 一致，触发选择并聚焦，选中项随列表/容器变化滚入可视区。 |
 | `collapse?`、`sort?` | 外部收起控件与排序控件；sort 位于 listbox 外。题号 / 正确率升序 / 正确率降序由宿主排序并回传，不在组件内计算统计。 |
 | `panelId`、`label?`、`title?`、`filterLabel?`、`listLabel?` | 唯一面板 ID 与可访问名称。题号格/多行按钮沿用冻结稿尺寸例外，其余 coss 标准尺寸。 |
@@ -49,3 +49,13 @@
 `QuestionRailClassSection.items` 使用 `Omit<QuestionRailItem, "marker"> & {kind?: ReactNode; marker?: boolean | QuestionRailMarker}`：旧 `marker: true` 仍只表示原 cell 的 info 圆点，原 aria/tooltip 不变；对象值启用新图标，cell/row 均支持，两者互斥。页级 `pages[].marker` 仍是页码定位协议，与题目级标记无关。省略标记时两种栏 SSR 与 main a30c077 逐字节一致。
 
 新示例 `/next/components/question-rail/extensions`；原 demo 输出保持不变。浏览器检查两种栏 × cell/row × light/paper/dark × 320/390/1440px，悬停或聚焦显示题目提示及完整标记说明；↑↓ 选题、Enter 定位只发请求，图标不消失。复核长中文/公式提示、图标不遮题号和得分、格子尺寸与原例相同。浏览器验收：按分工由 Supervisor 执行。
+
+## P52 · 非批阅题目栏的可选区域
+
+`filters?`、`filter?`、`onFilterChange?`、`overview?` 均可省略。筛选与概览独立：缺少 `filters` 时不渲染 Tabs/List/Panel，以可见 `title` 和具有 `listLabel` 的普通 region 承载原列表；缺少 `overview` 时省略概览节点与对应 40px 网格行，不留空位。四项全省略即可用于数字卷，标题、分节、选择、↑↓、Enter 定位、sort/collapse 插槽仍保留。`QuestionRailClass` 不变。
+
+提供 `filters` 时仍使用既有 coss Tabs；受控 `filter/onFilterChange` 原行为不变。仅提供 filters 时以第一项作为展示值，不自动过滤 sections；只有 filter 或回调、没有 filters 时不会捏造筛选项。空数组仍表示显式空筛选列表。概览仅呈现宿主提供的 segments/text，不推定成绩。所有旧必填参数齐全的调用保持原 SSR 字节；无页签时仍须提供唯一 panelId、完整题目 ariaLabel，外层 label 与列表 listLabel 保留。
+
+复用依据：本轮离线复核固定 coss Tabs 与现有 QuestionRail / PaperPreviewMixed，查阅本页及冻结设计记录的 particles `p-tabs-10/14`、`p-frame-1`、`p-toolbar-1`；Tabs 已匹配筛选，普通语义区域已满足无筛选列表，原组件扩展足够，无需新增组件。此为通用预览能力，Beautiful UI 不适用。未联网刷新 registry、未复制第三方代码。
+
+三主题、320px、长中文与 MathML 的新增夹具：`/next/components/paper-preview/digital`，依次切换“显示筛选”“显示概览”，检查四种组合与键盘定位。原组件主示例不变。浏览器验收：按分工由 Supervisor 执行。

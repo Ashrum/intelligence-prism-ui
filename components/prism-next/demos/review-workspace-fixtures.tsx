@@ -7,7 +7,7 @@ export const reviewFormula = <math><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><m
 export function ReviewDemoThemes({ children }: { children: (theme: string) => ReactNode }) {
   return <TooltipProvider><div className="flex flex-wrap items-start gap-4">{['light', 'paper', 'dark'].map(theme => <section key={theme} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 bg-background p-3 text-foreground"><h3 className="text-item-title">{theme} · 320px</h3>{children(theme)}</section>)}</div></TooltipProvider>
 }
-export const reviewRailFixture: Pick<QuestionRailProps, 'sections' | 'filters' | 'overview' | 'footer' | 'empty'> = {
+export const reviewRailFixture: Required<Pick<QuestionRailProps, 'sections' | 'filters' | 'overview' | 'footer' | 'empty'>> = {
   filters: [{ value: 'all', label: '全部', count: 4, ariaLabel: '全部题目，共 4 题' }, { value: 'attention', label: '关注', count: 2, ariaLabel: '需关注，共 2 题' }],
   overview: { segments: [{ count: 2, tone: 'success' }, { count: 1, tone: 'warning' }, { count: 1, tone: 'destructive' }], text: '稳定 2 · 待核对 2' },
   footer: '扫描质量未提供', empty: '当前筛选没有题目',

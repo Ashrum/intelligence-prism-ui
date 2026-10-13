@@ -17,8 +17,8 @@ function Choices({ label, value, options, onChange }: { label: string; value: st
   </ToggleGroup></div>
 }
 
-function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMode, counts }: {
-  books: TextbookDefinition[]; subjects: TextbookSubject[]; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; width: string; callbackMode: boolean; counts?: Readonly<Record<string, number>>
+function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMode, counts, countUnit, countsAdditive }: {
+  books: TextbookDefinition[]; subjects: TextbookSubject[]; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; width: string; callbackMode: boolean; counts?: Readonly<Record<string, number>>; countUnit: string; countsAdditive: boolean
 }) {
   const [switchRequests, setSwitchRequests] = useState(0)
   const [selections, setSelections] = useState<DirectorySelections>(() => defaultDirectorySelections(books))
@@ -41,13 +41,35 @@ function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMo
     <h2 className="text-block-title">教材大纲树</h2>
     <Button variant="outline" onClick={() => { clearDirectoryMemory(() => sessionStorage); setSelections(defaultDirectorySelections(books)); setCurrentNodes({}); setReset(value => value + 1) }}>清除记忆，回到首次进入状态</Button>
     <div className="textbook-directory-frame max-w-full border p-2" style={{ width: Number(width) }}>
-      {ready ? <TextbookDirectory layout="embedded" titleAction="select" multiSelect="dialog" allOption={{}} counts={counts} key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
+      {ready ? <TextbookDirectory layout="embedded" titleAction="select" multiSelect="dialog" allOption={{}} counts={counts} countUnit={countUnit} countsAdditive={countsAdditive} key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
     </div>
     <details className="max-w-full text-ui-hint" style={{ width: Number(width) }}>
       <summary className="cursor-pointer">宿主选择回显 · {entries.length} 个叶节点</summary>
       {entries.length ? <ul className="mt-2 space-y-2">{entries.map(entry => <li key={entry.id} className="break-words">{entry.title}<code className="block break-all text-ui-hint">{entry.id}</code></li>)}</ul> : <p>全部，宿主不限定目录范围。</p>}
     </details>
     {callbackMode && <p role="status" className="text-ui-hint">宿主收到 {switchRequests} 次教材切换请求；未接入教材服务。</p>}
+  </section>
+}
+
+function HeaderOnlyFixture() {
+  const { books, subjects } = useMemo(() => directoryDemoBooks("5", "large"), [])
+  const textbooks = useMemo(() => books.map(({ directories, ...metadata }) => metadata), [books])
+  const [bookId, setBookId] = useState(textbooks[0]?.id ?? "")
+  const [callbackMode, setCallbackMode] = useState(false)
+  const [requests, setRequests] = useState(0)
+  const [width, setWidth] = useState("320")
+  return <section id="textbook-header-only" className="space-y-3" aria-label="教材头部单独使用">
+    <h2 className="text-block-title">教材头部单独使用</h2>
+    <p className="text-ui-hint">只提供教材名称、学科、版本和册次，不传目录与范围选择。切换教材后由宿主更新当前教材。</p>
+    <div className="flex flex-wrap items-end gap-4">
+      <Choices label="头部宽度（px）" value={width} options={["240", "320", "720"]} onChange={setWidth} />
+      <Toggle pressed={callbackMode} onPressedChange={setCallbackMode}>头部切换由宿主接管</Toggle>
+    </div>
+    <div className="max-w-full" style={{ width: Number(width) }}>
+      <TextbookDirectory layout="header" textbooks={textbooks} subjects={subjects} bookId={bookId} onBookChange={setBookId}
+        onTextbookSwitch={callbackMode ? () => setRequests(value => value + 1) : undefined} />
+    </div>
+    <p role="status" className="text-ui-hint">当前教材：{textbooks.find(book => book.id === bookId)?.title}。宿主收到 {requests} 次头部切换请求。</p>
   </section>
 }
 
@@ -58,6 +80,8 @@ export function EmbeddedTextbookDirectoryDemo() {
   const [bookMode, setBookMode] = useState("多教材")
   const [kind, setKind] = useState<DirectoryKind>("course")
   const [callbackMode, setCallbackMode] = useState(false)
+  const [countUnit, setCountUnit] = useState("题")
+  const [countsAdditive, setCountsAdditive] = useState(true)
   const [showCounts, setShowCounts] = useState(true)
   const fixture = useMemo(() => directoryDemoBooks(depth, scale), [depth, scale])
   const books = useMemo(() => bookMode === "单教材" ? fixture.books.slice(0, 1) : fixture.books, [bookMode, fixture])
@@ -69,10 +93,14 @@ export function EmbeddedTextbookDirectoryDemo() {
       <Choices label="教材规模" value={scale === "large" ? "多学科 · 大规模" : "单学科 · 3 版本"} options={["多学科 · 大规模", "单学科 · 3 版本"]} onChange={value => setScale(value === "多学科 · 大规模" ? "large" : "small")} />
       <Choices label="教材数量" value={bookMode} options={["单教材", "多教材"]} onChange={setBookMode} />
       <Choices label="目录种类" value={kind === "course" ? "课程目录" : "知识点目录"} options={["课程目录", "知识点目录"]} onChange={value => setKind(value === "课程目录" ? "course" : "knowledge")} />
+      <Choices label="计数单位" value={countUnit} options={["题", "份试卷"]} onChange={setCountUnit} />
+      <Toggle pressed={countsAdditive} onPressedChange={setCountsAdditive}>节点数量可相加</Toggle>
       <Toggle pressed={callbackMode} onPressedChange={setCallbackMode}>宿主接管教材切换</Toggle>
       <Toggle pressed={showCounts} onPressedChange={setShowCounts} aria-label="显示题数">显示题数</Toggle>
     </div>
     <p className="text-ui-hint">教材及题数均为演示数据，包含 0 与未提供题数。首次进入课程选第一课，知识点选全部；宿主按教材与目录种类在当前会话中保存选择，刷新后恢复。</p>
-      <DirectoryPanel key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} counts={showCounts ? fixture.counts : undefined} />
+    <p className="text-ui-hint">countUnit 默认“题”。试卷可能同时属于多个章节：选择“份试卷”并关闭“节点数量可相加”，多选页脚只保留已选项数与确认按钮；节点和整本数量仍显示宿主事实。</p>
+      <DirectoryPanel countUnit={countUnit} countsAdditive={countsAdditive} key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} counts={showCounts ? fixture.counts : undefined} />
+    <HeaderOnlyFixture />
   </div>
 }

@@ -40,3 +40,23 @@ test('built Record List route exposes all states, themes, sizes and Agent Spec w
   for (const [, header] of headers) assert.doesNotMatch(header, /<button\b/);
   assert.ok(text.includes('showPrimary defaults to true;'));
 });
+
+test('P50 built component pages expose optional regions, count controls and updated Agent Specs', async () => {
+  const { default: worker } = await import('../dist/server/index.js');
+  for (const [component, labels] of [
+    ['record-list', ['showHeader/showSearch default to true.', '显示列表页头', '显示内置搜索与筛选']],
+    ['facet-filter', ['计数单位', '份试卷', 'countUnit?: string defaults to 题']],
+    ['tree', ['计数单位', '份试卷', '节点数量可相加', 'countsAdditive?: boolean defaults to true']],
+  ]) {
+    const response = await worker.fetch(new Request(`http://localhost/next/components/${component}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    for (const label of labels) assert.ok(html.includes(label), `${component}: ${label}`);
+    if (component === 'record-list') {
+      const optional = html.split('id="record-optional-regions"')[1].split('id="record-wide"')[0];
+      assert.match(optional, /<section[^>]*data-record-list[^>]*aria-label="试卷库"/);
+      assert.doesNotMatch(optional, /data-slot="frame-panel-header"|记录搜索与筛选|type="search"/);
+      for (const label of ['role="tablist"', '共 2 份试卷', 'aria-label="试卷库分页"', '<math', 'aria-label="查看试卷：', 'aria-label="更多操作：']) assert.ok(optional.includes(label), label);
+    }
+  }
+});

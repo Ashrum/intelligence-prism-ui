@@ -60,7 +60,7 @@ export function probe(variant, scale = 'future', width = 720) {
       return React.cloneElement(node, {}, children.length ? children : node.props.children);
     }
     state.html = renderToStaticMarkup(inspect(React.createElement(module.FacetFilter, {
-      dimensions: state.dimensions, value: state.value, onIntent, showFavorites: state.showFavorites, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
+      dimensions: state.dimensions, value: state.value, onIntent, countUnit: state.countUnit, showFavorites: state.showFavorites, sortItems: filterSortItems, resultCount: 128, favoriteCount: 23,
     })));
     for (const key of state.store.keys()) if (!visited.has(key)) state.store.delete(key);
     module.setTestContext(null);

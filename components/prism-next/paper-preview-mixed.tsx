@@ -12,7 +12,8 @@ const positiveSize=(value:number,fallback:number)=>Number.isFinite(value)&&value
 
 export type PaperPreviewMixedPage = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
 // Mixed digital/scan engine of PaperPreview continuous mode; all content is supplied.
-export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal }: PaperAnnotationOptions & {
+export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal, label = "题目与学生作答连续画布" }: PaperAnnotationOptions & {
+  label?: string
   regionEditing?: PaperPreviewRegionEditing
   resolveScanLayout?:(page:PaperPreviewMixedPage,rotation:PaperPreviewRotation)=>{source:{width:number;height:number};dimensions:{width:number;height:number}}
   beforeContent?: ReactNode; renderSectionHeading?: (page:PaperPreviewMixedPage,index:number)=>ReactNode; onScanVisibilityChange?: (visible:boolean)=>void
@@ -146,12 +147,17 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     return { source:resolved?.source??source, rotation, dimensions, percent }
   })
   const columnWidth = Math.max(0,...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
-  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label="题目与学生作答连续画布" className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
+  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label={label} className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
     <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {beforeContent}
     {pages.map((page, index) => {
       const { source, rotation, dimensions, percent } = layouts[index]
-      if(page.content)return <section key={page.id} className="shrink-0" style={{width:viewport.width}}><div data-review-page={index} data-page-id={page.id} data-percent={100}>{page.content}</div></section>
+      if(page.content) {
+        const heading = renderSectionHeading?.(page,index), header = headers?.[page.id]
+        const content = <div data-review-page={index} data-page-id={page.id} data-percent={100}>{page.content}</div>
+        // Keep the legacy child tree (including React-generated IDs) without headers.
+        return <section key={page.id} className="shrink-0" style={{width:viewport.width}}>{heading != null || header != null ? <>{heading}{header}{content}</> : content}</section>
+      }
       const firstScan=pages.findIndex(p=>!p.content)===index
       const editing = canEditPaperRegion(page.id, page.regions, regionEditing)
       const visibleRegions = editing && regionEditing!.regionId !== null ? (page.regions ?? []).filter(region => region.id !== regionEditing!.regionId) : page.regions ?? []

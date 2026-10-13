@@ -275,3 +275,36 @@ test('P44 all common hides empty panel, keeps reset/collapse, and retains overfl
     assert.deepEqual(p.state.intents, [{ type: 'reset' }]);
   }
 });
+
+test('P50 countUnit defaults preserve SSR and custom units name results, favorites, zero and unknown', () => {
+  for (const resultCount of [undefined, 0, 12]) {
+    assert.equal(ssr('C', 'future', 520, { resultCount }), ssr('C', 'future', 520, { resultCount, countUnit: '题' }));
+    const html = ssr('C', 'future', 520, { resultCount, countUnit: '份试卷', favoriteCount: 0 });
+    assert.ok(html.includes(resultCount === undefined ? '数量未提供' : `共 ${resultCount} 份试卷`));
+    assert.match(html, /aria-label="我的收藏，0 份试卷"/);
+    assert.doesNotMatch(html, /，\d+ 题|共 \d+ 题|题数未提供/);
+  }
+});
+
+test('P50 custom count units reach common rows, multi drafts and both full-panel entry paths', () => {
+  for (const common of [true, false]) {
+    const p = probe('C'); p.state.countUnit = '份试卷';
+    if (!common) p.state.dimensions = p.state.dimensions.map(d => ({ ...d, common: false }));
+    p.render();
+    if (common) {
+      assert.match(p.state.html, /aria-label="题型：单选题，128 份试卷"/);
+      multi(p); assert.match(p.state.html, /aria-label="题型：判断题，0 份试卷"/); click(p, '取消');
+    }
+    p.openPanel(); multi(p);
+    for (const { node } of p.state.nodes.filter(({ node }) => node.type.name === 'ToggleGroupItem' && node.props.value.startsWith('option-'))) {
+      assert.doesNotMatch(node.props['aria-label'], /，\d+ 题/);
+    }
+    assert.match(p.state.html, /aria-label="题型：判断题，0 份试卷"/);
+    assert.ok(p.find(node => node.type.name === 'ToggleGroupItem' && node.props.value === 'option-type-2').props.disabled);
+    assert.equal(p.find(node => node.type.name === 'ToggleGroupItem' && node.props.value === 'option-type-1').props['aria-label'], '题型：多选题');
+    const before = structuredClone(p.state.value);
+    p.state.countUnit = '份材料'; p.render();
+    assert.match(p.state.html, /，128 份材料/);
+    assert.deepEqual(p.state.value, before); assert.deepEqual(p.state.intents, []);
+  }
+});

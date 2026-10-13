@@ -121,6 +121,55 @@ function NoPrimaryRecordFixture() {
   </>
 }
 
+function OptionalRegionsRecordFixture() {
+  const [showHeader, setShowHeader] = useState(false)
+  const [showSearch, setShowSearch] = useState(false)
+  const [narrow, setNarrow] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={showHeader} onClick={() => setShowHeader(!showHeader)}>显示列表页头</Button>
+      <Button variant="outline" aria-pressed={showSearch} onClick={() => setShowSearch(!showSearch)}>显示内置搜索与筛选</Button>
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 可省略区域</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" description="查看和下载已保存的试卷。" primaryLabel="新建试卷"
+        showHeader={showHeader} showSearch={showSearch} showType={false} showStatus={false}
+        searchLabel="搜索试卷" searchPlaceholder="搜索试卷名称" rows={homogeneousRecordRows}
+        tabs={[{ id: "all", label: "全部试卷", count: 2 }]} summary={{ label: "共 2 份试卷" }}
+        pagination={{ page: 1, pages: [1], label: "第 1 页" }}
+        onPrimary={() => setNotice("已请求新建试卷，等待调用方导航。")}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
+export const markedRecordRows: RecordListRow[] = [
+  { ...homogeneousRecordRows[0], id: "tagged-paper", tag: "专题复习", badges: ["已收藏", "本班用过"],
+    description: <span>来源：校本资源 · 函数关系：<math aria-label="y 等于 x 的平方"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math></span> },
+  { ...homogeneousRecordRows[1], id: "long-tagged-paper", tag: "跨章节综合复习与阶段性学习诊断", badges: ["本班已用于单元复习并保留完整使用记录", "已收藏"], description: "来源：年级组共享资源 · 2026-10-12" },
+]
+
+function MarkedRecordFixture() {
+  const [narrow, setNarrow] = useState(false)
+  const [showStatus, setShowStatus] = useState(false)
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 标记列表</Button>
+      <Button variant="outline" aria-pressed={showStatus} onClick={() => setShowStatus(!showStatus)}>显示行状态</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" rows={markedRecordRows} showHeader={false} showSearch={false} showPrimary={false} showType={false} showStatus={showStatus}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -145,8 +194,14 @@ export function RecordListDemo() {
     <DemoSection id="record-no-primary" title="最近的要求 · 省略列表主操作" description="showPrimary 默认 true；显式设为 false 时页头与空状态都省略主操作且不留占位，空状态标题与说明、行操作仍保留。">
       <NoPrimaryRecordFixture />
     </DemoSection>
+    <DemoSection id="record-optional-regions" title="试卷库 · 外部提供标题与筛选" description="showHeader、showSearch 默认 true；本例均设为 false。可分别恢复页头和内置搜索行；分类、摘要、分页及行操作始终保留，列表仍以 title 提供可访问名称。">
+      <OptionalRegionsRecordFixture />
+    </DemoSection>
     <DemoSection id="record-wide" title="1366px 宽容器" description="本区域保留 1366px 宽度，可横向滚动检查完整布局。">
       <div className="overflow-x-auto" role="region" aria-label="1366px 记录列表预览" tabIndex={0}><div className="w-[1366px]"><RecordFixture /></div></div>
+    </DemoSection>
+    <DemoSection id="record-tags" title="标题类别与操作侧事实标记" description="类别显示在标题之前；已收藏、本班用过由宿主提供，与行状态独立。关闭行状态仍保留事实标记。">
+      <MarkedRecordFixture />
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
