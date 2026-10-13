@@ -15,5 +15,14 @@ for(const [name,state] of Object.entries(states))test(`C2 frozen question review
  if(name==='immersive')assert.match(html,/data-immersive="true"/);
  if(name==='missing')assert.match(html,/扫描图像未提供/);
  if(name==='sorted')assert.match(html,/排序结果/);
- assert.equal(createHash('sha256').update(html).digest('hex'),before[name]);
+ // P54 authorizes centered digital-only defaults. At the 740px SSR viewport,
+ // only the old 56px scan-tool reserve disappears; retain the frozen remainder.
+ let compatible=html;
+ if(name==='choice'||name==='fill'){
+  assert.doesNotMatch(html,/data-scan-paper/);
+  const centered='<div class="d1-paper-spread" style="width:740px">';
+  assert.equal(html.split(centered).length-1,1);
+  compatible=html.replace(centered,'<div class="d1-paper-spread" style="width:796px">');
+ }
+ assert.equal(createHash('sha256').update(compatible).digest('hex'),before[name]);
 });

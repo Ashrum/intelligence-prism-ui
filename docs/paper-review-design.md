@@ -223,3 +223,9 @@ P53（PO 2026-10-13）：数字卷面不提供缩放与旋转。当 mixed 的全
 | 评审工具、视口缩放、学生/题号参数、存储与回执 | examples/paper-review/paper-review.tsx + review-data.tsx + rail-preferences.ts；ReviewTools 原样保留 |
 
 删除本地 continuous-paper-canvas.tsx 与 paper-toolbar-layout.ts；第二冻结页仅调整已移动工具的 import。重构前 7 状态与 6 种旧 PaperPreview 调用在 `tests/fixtures/review-c1-before.json` 固化，测试先在未改代码上 13/13 通过；原 `paper-review-v1.sha256` 不变。布局 CSS 原声明移入 review-workspace.css，评审设备框两条样式仍在宿主。浏览器视觉签名对照由 Supervisor 执行。
+
+## P54 · 纯数字阅读宽度默认调整（PO 2026-10-13 授权）
+
+整卷预览框架的 mixed 纯数字路径默认启用 794 CSS px 阅读宽度上限，列在画布内水平居中；依据现有 `paperDimensions()` 的 A4 竖向 100% 宽度 793.70px 取整，与题目评审稿 794px 纸宽相称。可用宽度小于上限时使用原测量所得的全部可用宽度；标题、页眉和正文共同限宽，不改变字号或扫描缩放。纯数字列不再带右侧扫描工具占位，因此默认 DOM/布局有授权变化。
+
+公开覆盖属性为 `mixed.contentMaxWidth?: number | 'none'`：正有限数值覆盖，`'none'` 恢复旧不限宽布局，无效数值回退默认。只要 pages 包含任何扫描分支（包括无图占位），全混排输出保持逐字节不变并忽略该属性；continuous、空页和冻结扫描评审宿主不改。本节仅记录批准的框架行为变化，不表示 Workspace 接入或浏览器验收已完成。示例、兼容断言与细节见 `docs/paper-preview.md` 的 P54 节。

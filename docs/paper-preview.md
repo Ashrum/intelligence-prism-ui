@@ -231,3 +231,19 @@ mixed 复用原有 `renderSectionHeading(page,index)` 与 `headers[page.id]`，�
 独立组件夹具 `/next/components/paper-preview/digital` 覆盖 light/paper/dark、320px、长中文与公式，开关“显示分节标题与页眉”只控制宿主插槽。整卷仍须组合独立全屏 ReviewWorkspace。数字页的 percent=100、自适应宽度与不参与扫描旋转保持不变；数字缩放/旋转、题号格内分值不在本轮范围。
 
 复用依据：离线核对 PaperPreviewMixed / Continuous、QuestionRail 和固定 coss Tabs；查阅现有冻结设计与本页 particles `p-tabs-10/14`、`p-frame-1`、`p-toolbar-1` 记录。既有 mixed 插槽签名适用，无需新建 renderContentHeader、组件或视觉令牌；通用预览能力不涉及 Beautiful UI。未联网刷新上游或复制第三方代码。浏览器验收：按分工由 Supervisor 执行。
+
+## P54：纯数字卷面的阅读宽度（PO 已批准默认调整）
+
+`mixed.contentMaxWidth?: number | 'none'`（低层 `PaperPreviewMixed` 同名属性）默认 **794 CSS px**，来自 `Math.round(paperDimensions('A4', 'portrait').width)`：210mm × 96 ÷ 25.4 ≈ 793.70px，与冻结题目稿 100% 扫描纸宽 794px 相称。不新增视觉令牌。
+
+```tsx
+<PaperPreview layout="mixed" mixed={{ ...digitalProps, contentMaxWidth: 640 }} />
+<PaperPreview layout="mixed" mixed={{ ...digitalProps, contentMaxWidth: 'none' }} />
+```
+
+- 仅当非空 `pages` 全部进入 content 数字分支时生效。正文、分节标题、headers 和 beforeContent 共用受限宽度列，沿用 `.d1-paper-spread` 的 `margin-inline:auto` 居中；移除该纯数字列右侧旧扫描工具预留的 56px，使列中心与画布中心一致。窄容器继续使用现有测量的全部可用宽度（clientWidth − 16px 画布内边距 − 56px 原测量预留），不强制最小纸宽、不改变字号。
+- 正有限数值覆盖上限；`'none'` 关闭上限并恢复旧布局（包括旧右侧预留）。0、负值、NaN、Infinity 回退 794px。单位是布局 CSS px，与扫描 zoom 无关。
+- 只要存在一个扫描分支（包括缺少 imageUrl 的扫描占位），整个 mixed 布局忽略此属性，数字部分与扫描部分均保持原输出。continuous 扫描引擎不变；空 pages 输出也不变。
+- 纯数字默认输出是本次授权变化，替代 P52 的不限宽行为；仍 percent=100，不参与扫描旋转和缩放。P52 历史纯数字字节断言以显式 `'none'` 保留，新增 P54 默认及宽度断言；扫描与混排基线没有更新。
+
+`/next/components/paper-preview/digital` 新增“宽屏数字阅读”，可切换“默认 794px”“自定义 640px”“不限宽”。三主题 320px 示例复用同一夹具，含长中文、公式与可选分节标题。复用检索：读取现有 PaperPreviewMixed、paperDimensions、固定尺寸与 review-workspace.css，并复核本页 particles p-frame-1/p-toolbar-1 历史组合记录；现有布局已具备居中容器，直接调整数字列尺寸，无需新增组件。通用文档阅读不涉及 Agent 执行能力，未复制 Beautiful UI 代码。按 Builder 前置约定离线工作，未刷新上游注册表。浏览器验收：按分工由 Supervisor 执行。

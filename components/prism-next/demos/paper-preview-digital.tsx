@@ -25,13 +25,19 @@ export function DigitalQuestionRailFixture() {
 export function DigitalPaperPreviewFixture() {
   const viewportRef = useRef<HTMLDivElement>(null)
   const [headersVisible, setHeadersVisible] = useState(true)
+  const [contentMaxWidth, setContentMaxWidth] = useState<number | "none" | undefined>(undefined)
   const pages: PaperPreviewMixedPage[] = sections.map((section, index) => ({ id: section.id, width: 794, height: 1, content: <article className="space-y-3 bg-card p-4 text-read-body"><p>第 {index + 1} 题：请完整说明参数条件、等价变形依据与最终推导结论。</p>{reviewFormula}</article> }))
   return <div className="space-y-3">
     <Button variant="outline" aria-pressed={headersVisible} onClick={() => setHeadersVisible(!headersVisible)}>显示分节标题与页眉</Button>
-    <p className="text-ui-hint text-muted-foreground">数字卷面不提供缩放与旋转，按可用宽度阅读。</p>
-    <div className="h-[520px] min-w-0 overflow-hidden"><PaperPreview layout="mixed" mixed={{ viewportRef, pages, zoom: "width", rotations: {}, selected: "", scale: 1, activePage: "choice", topInset: 0, label: "试卷连续画布", headers: headersVisible ? { choice: <p className="text-ui-hint">共 1 题 · 5 分</p>, written: <p className="text-ui-hint">共 1 题 · 12 分</p> } : {}, renderSectionHeading: headersVisible ? (_page, index) => <h2 className="text-block-title">{sections[index].label}</h2> : undefined, onSelect() {}, onZoom() {}, onVisiblePage() {}, onViewport() {} }} /></div>
+    <div className="flex flex-wrap gap-2" role="group" aria-label="数字阅读宽度">
+      <Button variant="outline" aria-pressed={contentMaxWidth === undefined} onClick={() => setContentMaxWidth(undefined)}>默认 794px</Button>
+      <Button variant="outline" aria-pressed={contentMaxWidth === 640} onClick={() => setContentMaxWidth(640)}>自定义 640px</Button>
+      <Button variant="outline" aria-pressed={contentMaxWidth === "none"} onClick={() => setContentMaxWidth("none")}>不限宽</Button>
+    </div>
+    <p className="text-ui-hint text-muted-foreground">数字卷面不提供缩放与旋转；默认阅读上限 794px，居中显示，窄容器保持可用宽度。</p>
+    <div className="h-[520px] min-w-0 overflow-hidden"><PaperPreview layout="mixed" mixed={{ viewportRef, pages, contentMaxWidth, zoom: "width", rotations: {}, selected: "", scale: 1, activePage: "choice", topInset: 0, label: "试卷连续画布", headers: headersVisible ? { choice: <p className="text-ui-hint">共 1 题 · 5 分</p>, written: <p className="text-ui-hint">共 1 题 · 12 分</p> } : {}, renderSectionHeading: headersVisible ? (_page, index) => <h2 className="text-block-title">{sections[index].label}</h2> : undefined, onSelect() {}, onZoom() {}, onVisiblePage() {}, onViewport() {} }} /></div>
   </div>
 }
 export function DigitalPaperPreviewDemo() {
-  return <><DemoSection title="纯题目栏 · 可选筛选与概览" description="默认只显示标题和分节列表；分别打开筛选或概览，不需要批阅数据。"><ReviewDemoThemes>{() => <DigitalQuestionRailFixture />}</ReviewDemoThemes></DemoSection><DemoSection title="数字分节标题与画布名称" description="沿用 renderSectionHeading 与 headers，顺序为分节标题、页眉、数字正文；画布名称由宿主给定。"><ReviewDemoThemes>{() => <DigitalPaperPreviewFixture />}</ReviewDemoThemes></DemoSection></>
+  return <><DemoSection title="宽屏数字阅读" description="默认 794px，可切换 640px 或不限宽；宽屏下检查数字列居中。"><DigitalPaperPreviewFixture /></DemoSection><DemoSection title="纯题目栏 · 可选筛选与概览" description="默认只显示标题和分节列表；分别打开筛选或概览，不需要批阅数据。"><ReviewDemoThemes>{() => <DigitalQuestionRailFixture />}</ReviewDemoThemes></DemoSection><DemoSection title="数字分节标题与画布名称" description="沿用 renderSectionHeading 与 headers，顺序为分节标题、页眉、数字正文；画布名称由宿主给定。"><ReviewDemoThemes>{() => <DigitalPaperPreviewFixture />}</ReviewDemoThemes></DemoSection></>
 }

@@ -170,6 +170,28 @@ function MarkedRecordFixture() {
   </>
 }
 
+export function ToggleRecordFixture() {
+  const [pressed, setPressed] = useState<Record<string, boolean>>({ "tagged-paper": false, "long-tagged-paper": true })
+  const [apply, setApply] = useState(true), [narrow, setNarrow] = useState(false)
+  const [notice, setNotice] = useState("本页宿主提供收藏事实；关闭回填后点击只记录意图。")
+  const rows: RecordListRow[] = markedRecordRows.map((row, index) => ({ ...row, badges: ["本班用过"], menu: index ? [] : undefined,
+    toggle: { id: "favorite", label: "收藏试卷", pressedLabel: "取消收藏试卷", pressed: pressed[row.id], icon: index ? "bookmark" : "star" } }))
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 开关列表</Button>
+      <Button variant="outline" aria-pressed={apply} onClick={() => setApply(!apply)}>宿主回填收藏事实</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
+      <RecordList title="试卷库" rows={rows} showHeader={false} showSearch={false} showPrimary={false} showType={false} showStatus={false}
+        onRowAction={(id, action) => {
+          setNotice(`记录 ${id}：请求 ${action}${action === "favorite" ? apply ? "，本页宿主已回填收藏事实。" : "，等待宿主回填，状态保持不变。" : "，等待调用方导航。"}`)
+          if (action === "favorite" && apply) setPressed(current => ({ ...current, [id]: !current[id] }))
+        }} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -202,6 +224,10 @@ export function RecordListDemo() {
     </DemoSection>
     <DemoSection id="record-tags" title="标题类别与操作侧事实标记" description="类别显示在标题之前；已收藏、本班用过由宿主提供，与行状态独立。关闭行状态仍保留事实标记。">
       <MarkedRecordFixture />
+    </DemoSection>
+    <DemoSection id="record-toggle" title="行开关 · 收藏意图" description="标准 coss Toggle 位于主操作之前；外部 pressed 控制状态，空菜单不显示更多按钮。">
+      <ToggleRecordFixture />
+      <div className="mt-4 flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3"><p className="pb-3 text-item-title">{theme}</p><ToggleRecordFixture /></div>)}</div>
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">

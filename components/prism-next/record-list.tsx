@@ -1,7 +1,7 @@
 "use client"
 
 import { useId, useState, type ReactNode } from "react"
-import { ChevronRight, Circle, MoreHorizontal } from "lucide-react"
+import { Bookmark, ChevronRight, Circle, MoreHorizontal, Star } from "lucide-react"
 import { Badge } from "@/components/coss/badge"
 import { Button } from "@/components/coss/button"
 import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
@@ -13,6 +13,7 @@ import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/pr
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
 import { Skeleton } from "@/components/coss/skeleton"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
+import { Toggle } from "@/components/coss/toggle"
 import { AgentStatus, type AgentStatusTone } from "./agent-visual-parts"
 
 export type RecordListTab = { id: string; label: string; count: number | null }
@@ -26,6 +27,8 @@ export type RecordListRow = {
   tabIds?: readonly string[]
   status?: RecordListStatus; progress?: number | null
   action: RecordListAction; menu?: readonly RecordListAction[]
+  /** Controlled host fact; activation emits onRowAction(id, toggle.id). */
+  toggle?: { id: string; label: string; pressedLabel?: string; pressed: boolean; icon?: 'star' | 'bookmark' }
 }
 export type RecordListFilter = {
   id: string; label: string; value: string
@@ -105,6 +108,15 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
           const marked = !!tag || badges.length > 0
           const rowName = marked ? [tag, row.name.trim() || "名称未提供", ...badges].filter(Boolean).join(" · ") : row.name
           const reason = row.action.disabledReason?.trim() || (!onRowAction ? "操作暂不可用" : undefined)
+          // Reuse the existing badge child slot so absent toggles retain legacy React IDs.
+          const secondary = badges.map((label, index) => <Badge key={index} variant="secondary" className="h-fit sm:h-fit max-w-full whitespace-normal break-words">{label}</Badge>)
+          if (row.toggle) {
+            const toggle = row.toggle, Icon = toggle.icon === 'bookmark' ? Bookmark : Star
+            const label = toggle.pressed ? toggle.pressedLabel ?? toggle.label : toggle.label
+            secondary.push(<Toggle key="row-toggle" size="default" pressed={toggle.pressed} disabled={!onRowAction}
+              aria-label={`${label}：${rowName}`} title={label} onClick={event => event.stopPropagation()}
+              onPressedChange={() => onRowAction?.(row.id, toggle.id)}><Icon aria-hidden="true" /></Toggle>)
+          }
           return <li key={row.id} className="min-w-0" aria-label={marked ? rowName : undefined}>
             <FramePanel data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0" onClick={event => {
               // React portal events bubble too; isolate the entire menu subtree below.
@@ -125,7 +137,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
                 </div>
                 <div className="flex min-w-0 flex-wrap items-center gap-2 @min-[720px]:max-w-80 @min-[720px]:justify-end">
                   {showStatus && <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>}
-                  {badges.map((label, index) => <Badge key={index} variant="secondary" className="h-fit sm:h-fit max-w-full whitespace-normal break-words">{label}</Badge>)}
+                  {secondary}
                   <Button variant="ghost" className={marked ? `${targetClass} shrink-0` : targetClass} disabled={!!reason} title={reason}
                     aria-label={`${row.action.label}：${rowName}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>
                     <span className="truncate">{row.action.label}</span><ChevronRight aria-hidden="true" />
