@@ -44,6 +44,8 @@ export type RecordListProps = {
   showPrimary?: boolean
   /** Omit the complete header or built-in search/filter row; both default to true. */
   showHeader?: boolean; showSearch?: boolean
+  /** Row primary button and action-area alignment; existing defaults are ghost / start. */
+  actionVariant?: 'ghost' | 'outline' | 'primary'; actionAlign?: 'start' | 'center'
   tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
   rows: readonly RecordListRow[]; search?: string; searchLabel?: string; searchPlaceholder?: string
   filters?: readonly RecordListFilter[]; activeFilters?: readonly string[]
@@ -63,6 +65,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
   showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
+  actionVariant = 'ghost', actionAlign = 'start',
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
   onSearch, onFilterChange, onRowAction, onRowMenu, onPageChange, onPageSizeChange, onPrimary, onRetry, onClearFilters }: RecordListProps) {
@@ -135,10 +138,10 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
                   <p className="break-words text-ui-hint">{row.metadata.trim() || "记录信息未提供"}</p>
                   {row.description && <div className="min-w-0 break-words text-ui-hint">{row.description}</div>}
                 </div>
-                <div className="flex min-w-0 flex-wrap items-center gap-2 @min-[720px]:max-w-80 @min-[720px]:justify-end">
+                <div className={`flex min-w-0 flex-wrap items-center gap-2 @min-[720px]:max-w-80 @min-[720px]:justify-end${actionAlign === 'center' ? ' self-center' : ''}`}>
                   {showStatus && <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>}
                   {secondary}
-                  <Button variant="ghost" className={marked ? `${targetClass} shrink-0` : targetClass} disabled={!!reason} title={reason}
+                  <Button variant={actionVariant === 'primary' ? 'default' : actionVariant} className={marked ? `${targetClass} shrink-0` : targetClass} disabled={!!reason} title={reason}
                     aria-label={`${row.action.label}：${rowName}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>
                     <span className="truncate">{row.action.label}</span><ChevronRight aria-hidden="true" />
                   </Button>

@@ -192,6 +192,24 @@ export function ToggleRecordFixture() {
   </>
 }
 
+export function RecordActionFixture() {
+  const [variant, setVariant] = useState<NonNullable<RecordListProps['actionVariant']>>('ghost')
+  const [center, setCenter] = useState(false), [narrow, setNarrow] = useState(false)
+  const [notice, setNotice] = useState('尚无行操作请求。')
+  return <>
+    <div className="mb-4 flex flex-wrap gap-2">
+      {(['ghost', 'outline', 'primary'] as const).map(value => <Button key={value} variant={variant === value ? 'default' : 'outline'} aria-pressed={variant === value} onClick={() => setVariant(value)}>{value}</Button>)}
+      <Button variant="outline" aria-pressed={center} onClick={() => setCenter(!center)}>操作区垂直居中</Button>
+      <Button variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 操作列表</Button>
+    </div>
+    <div style={narrow ? { width: 320, maxWidth: '100%' } : undefined}>
+      <RecordList title="试卷记录" rows={markedRecordRows} showSearch={false} showPrimary={false} actionVariant={variant} actionAlign={center ? 'center' : 'start'}
+        onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方处理。`)}
+        onRowMenu={(id, action) => setNotice(`记录 ${id}：菜单请求 ${action}。`)} />
+    </div><Feedback>{notice}</Feedback>
+  </>
+}
+
 export function RecordListDemo() {
   const [narrow, setNarrow] = useState(false)
   return <>
@@ -228,6 +246,9 @@ export function RecordListDemo() {
     <DemoSection id="record-toggle" title="行开关 · 收藏意图" description="标准 coss Toggle 位于主操作之前；外部 pressed 控制状态，空菜单不显示更多按钮。">
       <ToggleRecordFixture />
       <div className="mt-4 flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3"><p className="pb-3 text-item-title">{theme}</p><ToggleRecordFixture /></div>)}</div>
+    </DemoSection>
+    <DemoSection id="record-actions" title="行主操作样式与对齐" description="默认 ghost / start；可选 outline / primary 与操作区垂直居中，菜单和列表主操作保持自身语义。">
+      <RecordActionFixture />
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">

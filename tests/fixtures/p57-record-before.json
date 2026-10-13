@@ -1,0 +1,230 @@
+[
+  {
+    "props": {},
+    "sha256": "5199916afc22666df465e74df1cd14cf7cd8cf5a3367e67b800608903039be50"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "empty"
+      },
+      "rows": []
+    },
+    "sha256": "28ca345a08b1a055f1108b7d3f9a57b42a62718f6be55aa18a79b47e152bf62a"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "loading"
+      }
+    },
+    "sha256": "c71f8ef227170956755a42451469886939255306318518e2146f3be4b36b84f7"
+  },
+  {
+    "props": {
+      "showType": false,
+      "showStatus": false,
+      "showHeader": false,
+      "showSearch": false
+    },
+    "sha256": "1a6003af0568a4a4b95bef63aa2613288dfe8dc43d813fb378f5eedf9f51241b"
+  },
+  {
+    "props": {
+      "rows": [
+        {
+          "id": "linear",
+          "type": "作业",
+          "name": "一元二次方程复习作业",
+          "metadata": "九年级 3 班 · 46 份",
+          "description": "L2 定向复核 · 7 项 · 影响 5 名学生 / 4 题",
+          "status": {
+            "label": "待复核",
+            "tone": "warning"
+          },
+          "action": {
+            "id": "open",
+            "label": "继续处理"
+          },
+          "tabIds": [
+            "mine",
+            "all"
+          ],
+          "menu": [
+            {
+              "id": "details",
+              "label": "查看批阅配置"
+            },
+            {
+              "id": "history",
+              "label": "查看操作记录"
+            }
+          ],
+          "progress": 72,
+          "tag": "试卷",
+          "badges": [
+            "已收藏"
+          ],
+          "toggle": {
+            "id": "star",
+            "label": "收藏",
+            "pressed": false
+          }
+        },
+        {
+          "id": "midterm",
+          "type": "试卷",
+          "name": "期中模拟试卷",
+          "metadata": "九年级 1、2 班 · 92 份",
+          "description": "L3 匹配待确认 · 3 份 · 总分未决",
+          "status": {
+            "label": "匹配待确认",
+            "tone": "neutral"
+          },
+          "action": {
+            "id": "open",
+            "label": "确认匹配"
+          },
+          "tabIds": [
+            "mine",
+            "all"
+          ],
+          "menu": [
+            {
+              "id": "details",
+              "label": "查看批阅配置"
+            },
+            {
+              "id": "history",
+              "label": "查看操作记录"
+            }
+          ],
+          "tag": "试卷",
+          "badges": [
+            "已收藏"
+          ],
+          "toggle": {
+            "id": "star",
+            "label": "收藏",
+            "pressed": false
+          }
+        },
+        {
+          "id": "pythagoras",
+          "type": "练习",
+          "name": "勾股定理练习",
+          "metadata": "八年级 3 班 · 44 份",
+          "description": "L1 抽样核验 · 3 份答卷",
+          "status": {
+            "label": "待抽样",
+            "tone": "info"
+          },
+          "action": {
+            "id": "open",
+            "label": "开始抽样"
+          },
+          "tabIds": [
+            "mine",
+            "all"
+          ],
+          "menu": [
+            {
+              "id": "details",
+              "label": "查看批阅配置"
+            },
+            {
+              "id": "history",
+              "label": "查看操作记录"
+            }
+          ],
+          "tag": "试卷",
+          "badges": [
+            "已收藏"
+          ],
+          "toggle": {
+            "id": "star",
+            "label": "收藏",
+            "pressed": false
+          }
+        },
+        {
+          "id": "circle",
+          "type": "作业",
+          "name": "圆的性质课后作业",
+          "metadata": "九年级 4 班 · 45 份",
+          "description": "评分规则缺失 · 2 题 · 影响 45 份答卷",
+          "status": {
+            "label": "规则待补充",
+            "tone": "warning"
+          },
+          "action": {
+            "id": "open",
+            "label": "补充规则"
+          },
+          "tabIds": [
+            "mine",
+            "all"
+          ],
+          "menu": [
+            {
+              "id": "details",
+              "label": "查看批阅配置"
+            },
+            {
+              "id": "history",
+              "label": "查看操作记录"
+            }
+          ],
+          "tag": "试卷",
+          "badges": [
+            "已收藏"
+          ],
+          "toggle": {
+            "id": "star",
+            "label": "收藏",
+            "pressed": false
+          }
+        },
+        {
+          "id": "correction",
+          "type": "试卷",
+          "name": "平行四边形试卷 · 更正 V2",
+          "metadata": "九年级 2 班 · 42 份",
+          "description": "已重新打开 · 1 项 · 影响 1 名学生总分",
+          "status": {
+            "label": "更正中",
+            "tone": "neutral"
+          },
+          "action": {
+            "id": "open",
+            "label": "继续更正"
+          },
+          "tabIds": [
+            "mine",
+            "all"
+          ],
+          "menu": [
+            {
+              "id": "details",
+              "label": "查看批阅配置"
+            },
+            {
+              "id": "history",
+              "label": "查看操作记录"
+            }
+          ],
+          "tag": "试卷",
+          "badges": [
+            "已收藏"
+          ],
+          "toggle": {
+            "id": "star",
+            "label": "收藏",
+            "pressed": false
+          }
+        }
+      ]
+    },
+    "sha256": "3bc9a59d4fbac68635942d9110ee6ec1e7a19a8eb251ca9cf30aecacda9c177c"
+  }
+]

@@ -1,5 +1,13 @@
 # 智能曜彩 UI Design System
 
+## 第四主题「蓝图」· 设计候选（2026-10-13）
+
+新增可选主题 `blueprint`（白图）：直角、1.5px 墨线、40px 网格图纸与偏移硬阴影，另含首期 `bp-*` 页面级呈现样式。核心三主题矩阵（`coreThemes`）与其原有令牌不变；几何覆盖集中在 `app/(next)/next/blueprint.css`，coss 源码不改。本次按 Product Owner 提供的补丁包接入第四主题，作为既有三主题约定的可选扩展。[令牌、验证与边界](docs/blueprint-theme.md)。
+
+已按 v2 → v3 接入网格与演示图纸修正、React 封装及 `/next/foundations/blueprint` 演示页；侧栏「字体与字号」下新增「蓝图组件」。v3 接入时目录为 103 项。接入自测：针对性测试 12/12、全量测试 1737/1737，字号、类型与构建检查通过；四主题 × 1280px / 320px 已做浏览器检查，详见上述记录。
+
+v4 已接入蓝图专用系列色、ECharts 图案、热力色阶、箱线配色，以及 ECharts / Recharts 墨线提示框；保留三套核心主题与调用方显式配色。接入期间另有并行组件扩展修改同一工作树，独立接入结果与最终混合工作树检查、窄屏限制分别记录在上述文档中。
+
 ## P41 目录与筛选正式化（2026-10-08）
 
 新增 [FacetFilter 分面筛选](docs/facet-filter.md)（`/next/components/facet-filter`），目录 **103 项：54 基础 / 39 组合 / 10 扩展**。已有 [TextbookDirectory](docs/textbook-directory.md)（`/next/components/tree`）扩展大纲树、全部、多选及教材切换对话框、外部题数和单选身份协议；旧调用的 SSR 输出保持。探索页和实现已迁移删除；默认第一课与会话记忆仅由示例宿主示范。当前为待 Supervisor 独立 Review 的组件交付，不代表 Workspace 接入或发布完成。

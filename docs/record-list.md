@@ -15,6 +15,9 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 
 导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
 
+- `actionVariant?: 'ghost' | 'outline' | 'primary'`：列表级行主操作样式，默认 `ghost`；`primary` 映射固定 coss Button 的 `default`，`outline` 原样复用。只作用于行主操作，不改变页头/空态主操作、Toggle 或更多菜单。
+- `actionAlign?: 'start' | 'center'`：默认 `start`；`center` 将完整操作区（状态、标记、开关、主操作、菜单和禁用说明）在行内垂直居中。窄容器继续按原规则换行，操作区位于内容下方。省略两项或显式传默认值，SSR 输出均保持原样。
+
 - 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
 - `showHeader?: boolean` 默认 `true`；`false` 时不渲染整个 FrameHeader（标题、说明、页头主操作），根 section 改用 `title` 作为 `aria-label`，行列表的名称保留。首次空状态的主操作仍由 `showPrimary` 控制；需要一起移除时同时设置 `showPrimary={false}`。
 - `showSearch?: boolean` 默认 `true`；`false` 时不渲染内置搜索与筛选控件行。tabs、summary、分页、已选条件摘要与清除操作、各状态反馈保持原行为；宿主负责外部搜索与筛选。
@@ -132,3 +135,15 @@ const row: RecordListRow = {
 `/next/components/record-list#record-toggle` 展示 star / bookmark、未按下 / 已按下、长中文与 MathML、三主题 320px。默认宿主在本页内存回填收藏事实，关闭“宿主回填收藏事实”后点击只回显意图、pressed 保持不变；不是远端保存成功的回执。两行分别省略 menu、提供空 menu，没有更多按钮。
 
 复用检索：实际读取固定 coss Toggle/Button/Frame、RecordList、本地 table-particle 的 p-table-3/4，复核本页 particles p-table-5/8、p-frame-1/3/4 与 Beautiful UI Records Table / Filter Table / Task Rows 历史取舍。表格选择与执行状态行不适用单行受控收藏开关；coss Toggle 已完整提供所需基本控件，在现有列表扩展公开属性即可。不新增组件或依赖、不复制第三方代码；未联网刷新上游。浏览器验收：按分工由 Supervisor 执行。
+
+
+## P57：行主操作样式与对齐
+
+`/next/components/record-list#record-actions` 可切换 ghost / outline / primary、操作区垂直居中和 320px 容器，包含长中文、MathML、事实标记与更多菜单。两项属性是列表级设置，点击只保留原有意图，禁用原因和冒泡隔离不变。
+
+```tsx
+<RecordList rows={rows} actionVariant="primary" actionAlign="center"
+  onRowAction={requestAction} />
+```
+
+复用检索：固定 coss Button 的 ghost/outline/default 与 FramePanel 原行布局、本地 particles p-table-3/4；复核本页 p-table-5/8、p-frame-1/3/4 和 Beautiful UI Records Table / Filter Table / Task Rows 的历史取舍。现有组件足以扩展，不创建另一套按钮样式或列表，不增依赖、令牌或复制第三方代码。按 Builder 前置约定离线复核，未刷新上游 registry。浏览器验收：按分工由 Supervisor 执行。

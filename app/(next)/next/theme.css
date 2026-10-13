@@ -2,8 +2,9 @@
 @import "tw-animate-css";
 @import "../../../vendor/coss-animations.css";
 @import "./typography.css";
+@import "./blueprint.css";
 /* Explicit preview themes form a boundary inside a dark site. */
-@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *):not([data-agent-preview][data-prism-theme="light"], [data-agent-preview][data-prism-theme="light"] *, [data-agent-preview][data-prism-theme="paper"], [data-agent-preview][data-prism-theme="paper"] *));
+@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *):not([data-agent-preview][data-prism-theme="light"], [data-agent-preview][data-prism-theme="light"] *, [data-agent-preview][data-prism-theme="paper"], [data-agent-preview][data-prism-theme="paper"] *, [data-agent-preview][data-prism-theme="blueprint"], [data-agent-preview][data-prism-theme="blueprint"] *));
 
 @font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
 
@@ -64,6 +65,17 @@
   --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
   --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
   --surface-floating-blur:12px;
+  /* Blueprint extension tokens. Neutral fallbacks keep bp-* components legible in the three core themes. */
+  --line:var(--border);
+  --line-width:1px;
+  --head-bg:var(--primary);
+  --head-fg:var(--primary-foreground);
+  --grid:transparent;
+  --grid-strong:transparent;
+  --shadow-offset:none;
+  --shadow-offset-sm:none;
+  --code-bg:var(--secondary);
+  --accent-ink:var(--primary-foreground);
   color-scheme:light;
 }
 
@@ -140,6 +152,73 @@
   --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
   --surface-floating-blur:12px;
   color-scheme:dark;
+}
+
+/* Theme 04 · Blueprint (白图). Declares every role explicitly; does not inherit status colors from :root. */
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="blueprint"],
+:where([data-agent-preview])[data-prism-theme="blueprint"] {
+  --background:#F6F6F3;
+  --foreground:#16181D;
+  --heading:#16181D;
+  --card:#FFFFFF;
+  --card-foreground:#16181D;
+  --popover:#FFFFFF;
+  --popover-foreground:#16181D;
+  --primary:#16181D;
+  --primary-foreground:#FFFFFF;
+  --secondary:#F3F5F8;
+  --secondary-foreground:#16181D;
+  --muted:#F3F5F8;
+  --muted-foreground:#4B5260;
+  --accent:#E4ECF8;
+  --accent-foreground:#16181D;
+  --border:#D6DAE1;
+  --input:#1D2026;
+  --ring:#1D5FBF;
+  --link:#1D5FBF;
+  --disabled-foreground:#8B929E;
+  --destructive:#C62828;
+  --destructive-foreground:#C62828;
+  --info:#1D5FBF;
+  --info-foreground:#1D5FBF;
+  --success:#2B8050;
+  --success-foreground:#216440;
+  --warning:#E8A33D;
+  --warning-foreground:#A8620A;
+  --chart-1:#1D5FBF;
+  --chart-2:#16181D;
+  --chart-3:#B8266E;
+  --chart-4:#2B8050;
+  --chart-5:#A57013;
+  --radius:0px;
+  --sidebar:#FFFFFF;
+  --sidebar-foreground:var(--foreground);
+  --sidebar-primary:var(--primary);
+  --sidebar-primary-foreground:var(--primary-foreground);
+  --sidebar-accent:var(--accent);
+  --sidebar-accent-foreground:var(--foreground);
+  --sidebar-border:var(--line);
+  --sidebar-ring:var(--ring);
+  --code:#F3F5F8;
+  --code-foreground:var(--foreground);
+  --code-highlight:var(--accent);
+  --brand-ai-1:var(--brand-blue);
+  --brand-ai-2:var(--brand-magenta);
+  --brand-ai-3:var(--brand-green);
+  --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
+  --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
+  --surface-floating-blur:12px;
+  --line:#1D2026;
+  --line-width:1.5px;
+  --head-bg:#16181D;
+  --head-fg:#FFFFFF;
+  --grid:rgba(29,32,38,.055);
+  --grid-strong:rgba(29,32,38,.09);
+  --shadow-offset:4px 4px 0 #1D5FBF;
+  --shadow-offset-sm:2px 2px 0 #1D5FBF;
+  --code-bg:#F3F5F8;
+  --accent-ink:#FFFFFF;
+  color-scheme:light;
 }
 
 @theme inline {
