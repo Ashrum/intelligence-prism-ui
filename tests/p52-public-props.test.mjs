@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { restoreDigitalLayout } from './p55-layout-compat.mjs';
 import { api, h, render, capture } from './review-components-harness.mjs';
 
 const noop = () => {};
@@ -10,11 +11,11 @@ const plain = { ...rail, filters: undefined, filter: undefined, onFilterChange: 
 const mixed = { viewportRef: { current: null }, pages: [{ id: 'digital', width: 794, height: 1, content: h('article', {}, '数字题面') }, { id: 'scan', width: 600, height: 820, alt: '扫描作答' }], zoom: 'width', rotations: {}, selected: '', scale: 1, activePage: 'scan', topInset: 0, headers: { scan: h('p', {}, '扫描页身份') }, answerLabel: '学生作答', onSelect: noop, onZoom: noop, onVisiblePage: noop, onViewport: noop };
 const preview = props => render(h(api.PaperPreview, { layout: 'mixed', mixed: props }));
 
-test('P52 preserves seven pre-change hashes with P54 digital opt-out', async () => {
+test('P52 preserves seven pre-change hashes outside approved P54/P55 digital layout', async () => {
   const baseline = JSON.parse(await readFile(new URL('./fixtures/p52-default-before.json', import.meta.url), 'utf8'));
   const hash = html => createHash('sha256').update(html).digest('hex');
   assert.deepEqual([rail, { ...rail, sections: [] }, { ...rail, filter: 'attention' }].map(p => hash(render(h(api.QuestionRail, p)))), baseline.rail);
-  assert.deepEqual([mixed, { ...mixed, pages: [] }, { ...mixed, pages: [mixed.pages[0]], contentMaxWidth: 'none' }, { ...mixed, renderSectionHeading: (page, index) => page.content ? null : h('h2', {}, `扫描分节 ${index}`) }].map(p => hash(preview(p))), baseline.mixed);
+  assert.deepEqual([mixed, { ...mixed, pages: [] }, { ...mixed, pages: [mixed.pages[0]], contentMaxWidth: 'none' }, { ...mixed, renderSectionHeading: (page, index) => page.content ? null : h('h2', {}, `扫描分节 ${index}`) }].map((p, index) => hash(index === 2 ? restoreDigitalLayout(preview(p)) : preview(p))), baseline.mixed);
   assert.equal(preview({ ...mixed, label: undefined }), preview(mixed));
   assert.equal(preview({ ...mixed, label: '题目与学生作答连续画布' }), preview(mixed));
   assert.equal(preview({ ...mixed, pages: [mixed.pages[0]], headers: undefined }), preview({ ...mixed, pages: [mixed.pages[0]], headers: {} }));

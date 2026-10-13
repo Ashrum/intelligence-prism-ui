@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { restoreDigitalLayout } from './p55-layout-compat.mjs';
 import { api, h, render, capture, records, captureRecord, click, mixed, digital, preview, baselineCases } from './p54-harness.mjs';
 const hash = text => createHash('sha256').update(text).digest('hex');
 const before = JSON.parse(await readFile(new URL('./fixtures/p54-default-before.json', import.meta.url), 'utf8'));
@@ -30,7 +31,7 @@ test('P54 scan-containing, continuous, empty and no-toggle outputs preserve pre-
     assert.equal(hash(html), before.sha256[name], name);
   }
   assert.notEqual(hash(cases.digital), before.sha256.digital, 'authorized default digital layout change');
-  assert.equal(hash(preview({ ...digital, contentMaxWidth: 'none' })), before.sha256.digital, 'explicit opt-out restores exact legacy bytes');
+  assert.equal(hash(restoreDigitalLayout(preview({ ...digital, contentMaxWidth: 'none' }))), before.sha256.digital, 'P55 only removes the legacy digital tool reserve and adds its layout marker');
 });
 
 test('P54 reading column caps at rounded A4 100%, centers and retains narrow available width', () => {
@@ -55,7 +56,7 @@ test('P54 public max-width override, opt-out and invalid values respect geometry
   }
   const uncapped = atWidth(1600, { ...digital, contentMaxWidth: 'none' });
   assert.equal(style(uncapped, 'd1-paper-column').width, 1600);
-  assert.equal(style(uncapped, 'd1-paper-spread').width, 1656);
+  assert.equal(style(uncapped, 'd1-paper-spread').width, 1600);
   const props = { ...digital, contentMaxWidth: 640 };
   assert.equal(preview(props), render(h(api.PaperPreviewMixed, props)));
   for (const pages of [mixed.pages, [mixed.pages[1]], [...mixed.pages, { id: 'missing', width: 794, height: 1123 }]]) {
@@ -128,7 +129,7 @@ test('P54 omitted/empty menus have no trigger and existing menu stays present wi
 
 test('P54 built routes include width controls, controlled-toggle fixture and Agent Specs', async () => {
   const { default: worker } = await import('../dist/server/index.js');
-  for (const [slug, texts] of [['paper-preview/digital', ['宽屏数字阅读', '默认 794px', '自定义 640px', '不限宽', '<math>']], ['record-list', ['record-toggle', '宿主回填收藏事实', '320px 开关列表', '取消收藏试卷', 'data-slot="toggle"']]]) {
+  for (const [slug, texts] of [['paper-preview/digital', ['宽屏数字阅读', '默认 794px', '自定义 640px', '不限宽', '<math>', 'P55:', '72px']], ['record-list', ['record-toggle', '宿主回填收藏事实', '320px 开关列表', '取消收藏试卷', 'data-slot="toggle"']]]) {
     const response = await worker.fetch(new Request(`http://localhost/next/components/${slug}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
     assert.equal(response.status, 200); const html = await response.text();
     for (const text of [...texts, 'P54:', 'Agent Spec', 'data-prism-theme="light"', 'data-prism-theme="paper"', 'data-prism-theme="dark"']) assert.ok(html.includes(text), `${slug}: ${text}`);

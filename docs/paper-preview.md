@@ -241,9 +241,11 @@ mixed 复用原有 `renderSectionHeading(page,index)` 与 `headers[page.id]`，�
 <PaperPreview layout="mixed" mixed={{ ...digitalProps, contentMaxWidth: 'none' }} />
 ```
 
-- 仅当非空 `pages` 全部进入 content 数字分支时生效。正文、分节标题、headers 和 beforeContent 共用受限宽度列，沿用 `.d1-paper-spread` 的 `margin-inline:auto` 居中；移除该纯数字列右侧旧扫描工具预留的 56px，使列中心与画布中心一致。窄容器继续使用现有测量的全部可用宽度（clientWidth − 16px 画布内边距 − 56px 原测量预留），不强制最小纸宽、不改变字号。
-- 正有限数值覆盖上限；`'none'` 关闭上限并恢复旧布局（包括旧右侧预留）。0、负值、NaN、Infinity 回退 794px。单位是布局 CSS px，与扫描 zoom 无关。
+- 仅当非空 `pages` 全部进入 content 数字分支时生效。正文、分节标题、headers 和 beforeContent 共用受限宽度列，沿用 `.d1-paper-spread` 的 `margin-inline:auto` 居中；移除该纯数字列右侧旧扫描工具预留的 56px，无侧边工具时使列中心与画布中心一致。P55 起窄容器使用所在滚动区域减去 16px 原画布内边距的宽度，不再重复减去扫描工具预留；不强制最小纸宽、不改变字号。
+- 正有限数值覆盖上限；`'none'` 关闭阅读上限；P55 起同样遵守按需让位，不恢复旧扫描预留。0、负值、NaN、Infinity 回退 794px。单位是布局 CSS px，与扫描 zoom 无关。
 - 只要存在一个扫描分支（包括缺少 imageUrl 的扫描占位），整个 mixed 布局忽略此属性，数字部分与扫描部分均保持原输出。continuous 扫描引擎不变；空 pages 输出也不变。
-- 纯数字默认输出是本次授权变化，替代 P52 的不限宽行为；仍 percent=100，不参与扫描旋转和缩放。P52 历史纯数字字节断言以显式 `'none'` 保留，新增 P54 默认及宽度断言；扫描与混排基线没有更新。
+- 纯数字默认输出是本次授权变化，替代 P52 的不限宽行为；仍 percent=100，不参与扫描旋转和缩放。P52 历史纯数字内容字节断言只还原 P54/P55 明确授权的 spread 宽度与布局标记后保留；新增默认及宽度断言，扫描与混排基线没有更新。
 
 `/next/components/paper-preview/digital` 新增“宽屏数字阅读”，可切换“默认 794px”“自定义 640px”“不限宽”。三主题 320px 示例复用同一夹具，含长中文、公式与可选分节标题。复用检索：读取现有 PaperPreviewMixed、paperDimensions、固定尺寸与 review-workspace.css，并复核本页 particles p-frame-1/p-toolbar-1 历史组合记录；现有布局已具备居中容器，直接调整数字列尺寸，无需新增组件。通用文档阅读不涉及 Agent 执行能力，未复制 Beautiful UI 代码。按 Builder 前置约定离线工作，未刷新上游注册表。浏览器验收：按分工由 Supervisor 执行。
+
+P55：纯数字卷面在 `PaperPreviewSurface.toolbar` 有实际渲染内容时，为既有侧边工具预留 72px（56px 工具 + 两侧各 8px），在剩余区域扣除原 16px 内边距后应用阅读上限并居中；无工具不预留，沉浸状态沿用相同规则，含扫描页的布局与输出保持不变。仅复用现有 Surface/Mixed 布局与本页 p-frame-1/p-toolbar-1 检索结论，不新增控件、视觉令牌或第三方代码。

@@ -14,7 +14,7 @@ export type PaperPreviewMixedPage = PaperPreviewPage & { width:number; height:nu
 // Mixed digital/scan engine of PaperPreview continuous mode; all content is supplied.
 export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal, contentMaxWidth, label = "题目与学生作答连续画布" }: PaperAnnotationOptions & {
   label?: string
-  /** CSS pixels for digital-only reading; defaults to rounded A4 portrait at 100%. 'none' restores the legacy layout. Ignored if any scan page exists. */
+  /** CSS pixels for digital-only reading; defaults to rounded A4 portrait at 100%. 'none' removes the cap. Ignored if any scan page exists. */
   contentMaxWidth?: number | 'none'
   regionEditing?: PaperPreviewRegionEditing
   resolveScanLayout?:(page:PaperPreviewMixedPage,rotation:PaperPreviewRotation)=>{source:{width:number;height:number};dimensions:{width:number;height:number}}
@@ -27,7 +27,8 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   onVisiblePage: (page: number, percent?: number) => void; onViewport: (size: { width: number; height: number }) => void
 }) {
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
-  const readingWidth = pages.length > 0 && pages.every(page => !!page.content) && contentMaxWidth !== 'none'
+  const digitalOnly = pages.length > 0 && pages.every(page => !!page.content)
+  const readingWidth = digitalOnly && contentMaxWidth !== 'none'
     ? positiveSize(contentMaxWidth ?? NaN, Math.round(paperDimensions().width)) : undefined
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
   const anchor = useRef<{ id: string; x: number; y: number; localX: number; localY: number } | null>(null)
@@ -64,7 +65,8 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     const node = viewportRef.current
     if (!node) return
     const measure = () => {
-      const size = { width: positiveSize(node.clientWidth - 16 - 56,1), height: positiveSize(node.clientHeight - topInset - 8,1) }
+      // Digital Surface space is reserved by CSS before measuring this viewport.
+      const size = { width: positiveSize(node.clientWidth - 16 - (digitalOnly ? 0 : 56),1), height: positiveSize(node.clientHeight - topInset - 8,1) }
       setViewport(size); onViewport(size)
     }
     const handle = (event: WheelEvent) => wheel.current(event)
@@ -72,7 +74,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     const observer = new ResizeObserver(measure); observer.observe(node)
     node.addEventListener('wheel', handle, { passive: false })
     return () => { observer.disconnect(); node.removeEventListener('wheel', handle) }
-  }, [viewportRef, onViewport, topInset])
+  }, [viewportRef, onViewport, topInset, digitalOnly])
   useLayoutEffect(() => {
     const request = anchor.current, node = viewportRef.current
     if (request && node) {
@@ -151,8 +153,8 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     return { source:resolved?.source??source, rotation, dimensions, percent }
   })
   const columnWidth = Math.max(0,...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
-  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label={label} className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
-    <div className="d1-paper-spread" style={{ width: columnWidth + (readingWidth === undefined ? 56 : 0) }}><div className="d1-paper-column" style={{ width: columnWidth }}>
+  return <div ref={viewportRef} data-review-continuous data-digital-paper={digitalOnly || undefined} data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label={label} className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
+    <div className="d1-paper-spread" style={{ width: columnWidth + (digitalOnly ? 0 : 56) }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {beforeContent}
     {pages.map((page, index) => {
       const { source, rotation, dimensions, percent } = layouts[index]

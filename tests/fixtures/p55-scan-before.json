@@ -1,0 +1,29 @@
+{
+  "baseline": "f43b775",
+  "sha256": {
+    "mixed-true-true": "0a324118d6ceeaf33abbcde526fbc022abc424431b57e56c470deeb69e9ba613",
+    "mixed-true-false": "0a324118d6ceeaf33abbcde526fbc022abc424431b57e56c470deeb69e9ba613",
+    "mixed-false-true": "9f7ebb1672ed39635241404b573e80d8055ba78eed3eba520f951a29b2ba4ed3",
+    "mixed-false-false": "9f7ebb1672ed39635241404b573e80d8055ba78eed3eba520f951a29b2ba4ed3",
+    "rotated-true-true": "64882222543c988f1a03add2bc15451c8387bf562496bb60944397382aacdbbb",
+    "rotated-true-false": "64882222543c988f1a03add2bc15451c8387bf562496bb60944397382aacdbbb",
+    "rotated-false-true": "f23e125a8ac1cdc031fa7aa4b9cca7bab6acb84bb00aba41f3eff6b4b34230ad",
+    "rotated-false-false": "f23e125a8ac1cdc031fa7aa4b9cca7bab6acb84bb00aba41f3eff6b4b34230ad",
+    "scan-true-true": "fef4bd3c67059ea44a0a5a516ae57cc2a84a89f42b4fca1fc9176b5fec245206",
+    "scan-true-false": "fef4bd3c67059ea44a0a5a516ae57cc2a84a89f42b4fca1fc9176b5fec245206",
+    "scan-false-true": "8d01db2ebd6c8bd439ac47940efd343e1817cfa3ca4e2ad58ffc66e21c1a2cff",
+    "scan-false-false": "8d01db2ebd6c8bd439ac47940efd343e1817cfa3ca4e2ad58ffc66e21c1a2cff",
+    "missing-true-true": "e64e090ac1030afd0de5ac62013de9ac28151f4f72963dc8c350a8bb4172f507",
+    "missing-true-false": "e64e090ac1030afd0de5ac62013de9ac28151f4f72963dc8c350a8bb4172f507",
+    "missing-false-true": "a77b7b9cac344494858cd32607dde5a860633bbe65627eb910cacb71fe71f8e5",
+    "missing-false-false": "a77b7b9cac344494858cd32607dde5a860633bbe65627eb910cacb71fe71f8e5",
+    "question-default": "ca3e5b0796140fc064478e2c19adbfde3edfb28d6665367334ff76c61cb89cc6",
+    "question-evidence": "78ed9c493ca31b396b071e3285310b291905dff6f16de4316d74d2b68483d6a2",
+    "question-student": "36fc8f36040d3182b0add05ff1d5e5be03e575e2c681a332ccd244d96fa53d1e",
+    "question-full": "ae2260d44008ef0514b8943f7b7fd4e689a6a25b79442b7a926918880f426703",
+    "question-collapsed": "bf9cdad7e293ec7bdbfc2774e119068a96e1a5090b4addf916bd76b6eaab810d",
+    "question-immersive": "6ad7f968c095ac38d218a09587450d1a5c1bbf561bfdc8412d0391b7772ca190",
+    "question-missing": "4e6de914d2c377773fd1bc7e2dbf4bcf1d259d989b4bfbe6e1f703bec81568ab",
+    "question-sorted": "07eb97894d0cc112dd8b4c1b15f97f98b9fb86a9d94eb8b8dd61d6a064611911"
+  }
+}
