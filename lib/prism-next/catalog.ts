@@ -93,6 +93,8 @@ export const componentGroups:ComponentGroup[] = [
     { ...item("learning-plan","Learning Plan 学习计划","任务列表接收日期、条件、状态与操作，流程由调用方组织。"), kind:"pattern", sourceUrl:"https://coss.com/ui", sourceLabel:"coss 基础组件" },
   ]},
   { id:"analytics",title:"数据分析",items:[
+    {...item("donut-chart","Donut 环形图","呈现最多六类总量组成，支持中心文字、图例与选择意图。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
+    {...item("radar-chart","Radar 雷达图","比较三至八个维度的一至两组数据，轴数不足时显示数据表。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("paired-dot-chart","Paired Dots 成对指标","同一刻度比较两个指标，支持缺测、边界与项目选择。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("quadrant-chart","Quadrant 四象限","自定义阈值、象限、分组点形和坐标范围。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},
     {...item("combo-chart","Combo 柱线组合","柱形与折线共同呈现，各系列明确绑定单位和坐标轴。"),kind:"extension",sourceUrl:"https://echarts.apache.org/examples/en/index.html",sourceLabel:"Apache ECharts"},

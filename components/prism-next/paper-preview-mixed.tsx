@@ -5,15 +5,17 @@ import { useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode, t
 import { PaperPreviewRegionEditor, canEditPaperRegion, type PaperPreviewRegionEditing } from "./paper-preview-region-editor"
 import { PaperAnnotationLayer, type PaperAnnotationOptions } from "./paper-annotation-layer"
 import { DocumentRegionViewer } from "@/components/prism-next/document-region-viewer"
-import { clampPaperZoom, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
+import { clampPaperZoom, paperDimensions, paperZoomPercent, rotatedPaperDimensions, type PaperPreviewPage, type PaperPreviewRotation, type PaperPreviewZoom } from "@/components/prism-next/paper-preview"
 
 // Measurements may be absent while a pane is hidden or content is not laid out.
 const positiveSize=(value:number,fallback:number)=>Number.isFinite(value)&&value>0?value:fallback
 
 export type PaperPreviewMixedPage = PaperPreviewPage & { width:number; height:number; content?:ReactNode }
 // Mixed digital/scan engine of PaperPreview continuous mode; all content is supplied.
-export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal, label = "题目与学生作答连续画布" }: PaperAnnotationOptions & {
+export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selected, scale, onSelect, onZoom, onVisiblePage, onViewport, headers, activePage, topInset, onQuestionHidden, answerLabel, beforeContent, renderSectionHeading, onScanVisibilityChange, resolveScanLayout, regionEditing, annotations, annotationsVisible, paperTotal, contentMaxWidth, label = "题目与学生作答连续画布" }: PaperAnnotationOptions & {
   label?: string
+  /** CSS pixels for digital-only reading; defaults to rounded A4 portrait at 100%. 'none' removes the cap. Ignored if any scan page exists. */
+  contentMaxWidth?: number | 'none'
   regionEditing?: PaperPreviewRegionEditing
   resolveScanLayout?:(page:PaperPreviewMixedPage,rotation:PaperPreviewRotation)=>{source:{width:number;height:number};dimensions:{width:number;height:number}}
   beforeContent?: ReactNode; renderSectionHeading?: (page:PaperPreviewMixedPage,index:number)=>ReactNode; onScanVisibilityChange?: (visible:boolean)=>void
@@ -25,6 +27,9 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   onVisiblePage: (page: number, percent?: number) => void; onViewport: (size: { width: number; height: number }) => void
 }) {
   const [viewport, setViewport] = useState({ width: 740, height: 828 })
+  const digitalOnly = pages.length > 0 && pages.every(page => !!page.content)
+  const readingWidth = digitalOnly && contentMaxWidth !== 'none'
+    ? positiveSize(contentMaxWidth ?? NaN, Math.round(paperDimensions().width)) : undefined
   const wheel = useRef<(event: WheelEvent) => void>(() => {})
   const anchor = useRef<{ id: string; x: number; y: number; localX: number; localY: number } | null>(null)
   const pointers = useRef(new Map<number, { x: number; y: number; startX: number; startY: number; editing?: boolean }>())
@@ -60,7 +65,8 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     const node = viewportRef.current
     if (!node) return
     const measure = () => {
-      const size = { width: positiveSize(node.clientWidth - 16 - 56,1), height: positiveSize(node.clientHeight - topInset - 8,1) }
+      // Digital Surface space is reserved by CSS before measuring this viewport.
+      const size = { width: positiveSize(node.clientWidth - 16 - (digitalOnly ? 0 : 56),1), height: positiveSize(node.clientHeight - topInset - 8,1) }
       setViewport(size); onViewport(size)
     }
     const handle = (event: WheelEvent) => wheel.current(event)
@@ -68,7 +74,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
     const observer = new ResizeObserver(measure); observer.observe(node)
     node.addEventListener('wheel', handle, { passive: false })
     return () => { observer.disconnect(); node.removeEventListener('wheel', handle) }
-  }, [viewportRef, onViewport, topInset])
+  }, [viewportRef, onViewport, topInset, digitalOnly])
   useLayoutEffect(() => {
     const request = anchor.current, node = viewportRef.current
     if (request && node) {
@@ -81,7 +87,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
       anchor.current = null
     }
     visiblePage()
-  }, [zoom, viewport, rotations, scale, pages.length])
+  }, [zoom, viewport, rotations, scale, pages.length, readingWidth])
   function paperAt(x: number, y: number) {
     return [...viewportRef.current?.querySelectorAll<HTMLElement>('[data-scan-paper]') ?? []].find(node => { const rect = node.getBoundingClientRect(); return y >= rect.top && y <= rect.bottom && x >= rect.left && x <= rect.right })
   }
@@ -141,14 +147,14 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
   }
   const layouts = pages.map(page => {
     const source={width:positiveSize(page.width,794),height:positiveSize(page.height,1)}
-    if(page.content)return {source,rotation:0 as PaperPreviewRotation,dimensions:{width:viewport.width,height:1},percent:100}
+    if(page.content)return {source,rotation:0 as PaperPreviewRotation,dimensions:{width:Math.min(viewport.width,readingWidth ?? viewport.width),height:1},percent:100}
     const rotation = rotations[page.id] ?? 0, resolved=resolveScanLayout?.(page,rotation), dimensions = resolved?.dimensions ?? rotatedPaperDimensions(source, rotation)
     const percent = paperZoomPercent(zoom, viewport, dimensions)
     return { source:resolved?.source??source, rotation, dimensions, percent }
   })
   const columnWidth = Math.max(0,...layouts.map(({ dimensions, percent }) => dimensions.width * percent / 100))
-  return <div ref={viewportRef} data-review-continuous data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label={label} className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
-    <div className="d1-paper-spread" style={{ width: columnWidth + 56 }}><div className="d1-paper-column" style={{ width: columnWidth }}>
+  return <div ref={viewportRef} data-review-continuous data-digital-paper={digitalOnly || undefined} data-zoom-mode={typeof zoom === 'number' ? 'custom' : zoom} tabIndex={0} aria-label={label} className="d1-continuous" style={{paddingTop:topInset}} onScroll={visiblePage} onPointerDown={down} onPointerMove={move} onPointerUp={end} onPointerCancel={end} onLostPointerCapture={end} onDragStart={event => event.preventDefault()} onClickCapture={event => { if (suppressClick.current && event.detail !== 0) { event.preventDefault(); event.stopPropagation() } }}>
+    <div className="d1-paper-spread" style={{ width: columnWidth + (digitalOnly ? 0 : 56) }}><div className="d1-paper-column" style={{ width: columnWidth }}>
     {beforeContent}
     {pages.map((page, index) => {
       const { source, rotation, dimensions, percent } = layouts[index]
@@ -156,7 +162,7 @@ export function PaperPreviewMixed({ viewportRef, pages, zoom, rotations, selecte
         const heading = renderSectionHeading?.(page,index), header = headers?.[page.id]
         const content = <div data-review-page={index} data-page-id={page.id} data-percent={100}>{page.content}</div>
         // Keep the legacy child tree (including React-generated IDs) without headers.
-        return <section key={page.id} className="shrink-0" style={{width:viewport.width}}>{heading != null || header != null ? <>{heading}{header}{content}</> : content}</section>
+        return <section key={page.id} className="shrink-0" style={{width:dimensions.width}}>{heading != null || header != null ? <>{heading}{header}{content}</> : content}</section>
       }
       const firstScan=pages.findIndex(p=>!p.content)===index
       const editing = canEditPaperRegion(page.id, page.regions, regionEditing)

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {restoreDigitalLayout} from './p55-layout-compat.mjs';
 import {renderer,states} from './question-review-c2-freeze-harness.mjs';
 const render=await renderer(),before=JSON.parse(await readFile(new URL('./fixtures/question-review-c2-before.json',import.meta.url),'utf8'));
 for(const [name,state] of Object.entries(states))test(`C2 frozen question review: ${name}`,()=>{
@@ -15,5 +16,11 @@ for(const [name,state] of Object.entries(states))test(`C2 frozen question review
  if(name==='immersive')assert.match(html,/data-immersive="true"/);
  if(name==='missing')assert.match(html,/扫描图像未提供/);
  if(name==='sorted')assert.match(html,/排序结果/);
- assert.equal(createHash('sha256').update(html).digest('hex'),before[name]);
+ // P54/P55 authorize digital centering and the CSS layout marker; retain all
+ // other frozen bytes, including every scan-containing state without normalization.
+ let compatible=html;
+ if(name==='choice'||name==='fill'){
+  compatible=restoreDigitalLayout(html);
+ }
+ assert.equal(createHash('sha256').update(compatible).digest('hex'),before[name]);
 });

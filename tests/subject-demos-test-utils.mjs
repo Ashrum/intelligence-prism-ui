@@ -1,12 +1,12 @@
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { createTestRuntime } from './helpers/test-runtime.mjs';
+import { writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 const root = fileURLToPath(new URL('../', import.meta.url));
 export async function loadSubjectDemos(name) {
-  const runtime = new URL('../.sites-runtime/subject-demos/', import.meta.url);
-  await mkdir(runtime, { recursive: true });
+  const runtime = await createTestRuntime('subject-demos');
   const file = new URL(`${name}-test-bundle.mjs`, runtime);
   await writeFile(file, (await build({ stdin: { contents: `export * from './components/prism-next/agent-interactive-demo'; export * from './components/prism-next/agent-simulation-lab'; export * from './components/prism-next/agent-subject-demo-parts'; export * from './components/prism-next/demos/agent-subject-demos';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false })).outputFiles[0].text);
   const result = await import(file); await rm(file); return result;

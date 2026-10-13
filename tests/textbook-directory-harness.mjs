@@ -1,4 +1,5 @@
-import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { createTestRuntime } from './helpers/test-runtime.mjs';
+import { writeFile, rm, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import React from 'react';
@@ -7,8 +8,7 @@ import { createHash } from 'node:crypto';
 import { textbooks } from '../lib/prism-next/textbook-directory.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const runtime = new URL('../.sites-runtime/textbook-directory/', import.meta.url);
-await mkdir(runtime, { recursive: true });
+const runtime = await createTestRuntime('textbook-directory');
 const file = new URL('test-bundle.mjs', runtime);
 const bundle = await build({ entryPoints: [root + 'components/prism-next/textbook-directory.tsx'], bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { ".css": "empty" } });
 await writeFile(file, bundle.outputFiles[0].text);

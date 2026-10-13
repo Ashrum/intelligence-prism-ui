@@ -18,6 +18,12 @@
 .d1-continuous { height:100%; overflow:auto; overscroll-behavior:contain; touch-action:none; padding:8px; }
 .d1-paper-spread { margin-inline:auto; }
 .d1-paper-column { display:flex; flex-direction:column; gap:16px; }
+/* Digital reading uses the area left of a supplied Surface toolbar (56 + 8 + 8).
+   Shrinking clips neither cards nor their actions while ResizeObserver catches up. */
+.d1-canvas:has(> .d1-tool-dock > .d1-tool-scroll:not(:empty)) > .d1-paper-host .d1-continuous[data-digital-paper] { width:calc(100% - 72px); }
+.d1-continuous[data-digital-paper] > .d1-paper-spread,
+.d1-continuous[data-digital-paper] > .d1-paper-spread > .d1-paper-column,
+.d1-continuous[data-digital-paper] > .d1-paper-spread > .d1-paper-column > section { max-width:100%; }
 .d1-paper-host [data-paper-size] { isolation:isolate; }
 .d1-tool-dock { position:absolute; z-index:10; width:56px; min-height:0; display:flex; clip-path:inset(0 -40px -40px 0); }
 .d1-tool-scroll { min-height:0; max-height:inherit; overflow-y:auto; scrollbar-width:none; display:flex; align-items:flex-start; }

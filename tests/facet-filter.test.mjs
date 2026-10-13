@@ -129,7 +129,7 @@ test('unknown result facts remain unknown, optional slot renders, reduced sorts 
 test('FacetFilter has one formal catalog entry, spec and links; retired sources/routes are absent', async () => {
   const { components } = await import('../lib/prism-next/catalog.ts');
   const { coreAgentSpecs } = await import('../lib/prism-next/agent-specs.ts');
-  assert.equal(components.length, 103);
+  assert.equal(components.length, 105);
   assert.equal(components.filter(item => item.id === 'facet-filter').length, 1);
   assert.ok(coreAgentSpecs['facet-filter']);
   const catalog = await readFile(new URL('../components/prism-next/catalog-overview.tsx', import.meta.url), 'utf8');

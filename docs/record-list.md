@@ -15,6 +15,9 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 
 导出 `RecordList`、`RecordListProps`、`RecordListTab`、`RecordListRow`、`RecordListAction`、`RecordListFilter`、`RecordListStatus`、`RecordListState`。
 
+- `actionVariant?: 'ghost' | 'outline' | 'primary'`：列表级行主操作样式，默认 `ghost`；`primary` 映射固定 coss Button 的 `default`，`outline` 原样复用。只作用于行主操作，不改变页头/空态主操作、Toggle 或更多菜单。
+- `actionAlign?: 'start' | 'center'`：默认 `start`；`center` 将完整操作区（状态、标记、开关、主操作、菜单和禁用说明）在行内垂直居中。窄容器继续按原规则换行，操作区位于内容下方。省略两项或显式传默认值，SSR 输出均保持原样。
+
 - 标题、说明、主操作文案均可覆盖。默认批阅记录，可用于组卷或工作记录；复用时同时覆盖 searchLabel/searchPlaceholder 和首次空状态说明。
 - `showHeader?: boolean` 默认 `true`；`false` 时不渲染整个 FrameHeader（标题、说明、页头主操作），根 section 改用 `title` 作为 `aria-label`，行列表的名称保留。首次空状态的主操作仍由 `showPrimary` 控制；需要一起移除时同时设置 `showPrimary={false}`。
 - `showSearch?: boolean` 默认 `true`；`false` 时不渲染内置搜索与筛选控件行。tabs、summary、分页、已选条件摘要与清除操作、各状态反馈保持原行为；宿主负责外部搜索与筛选。
@@ -111,3 +114,36 @@ const row: RecordListRow = {
 缺省、空字符串/纯空白 tag、缺省/空数组 badges 均不增加输出；标记文字去首尾空白，空白数组项省略。有标记的 li、主操作和更多菜单可访问名称包含类别、原名称与事实标记；无标记保留旧名称与 DOM。标记在窄容器自然换行，单个长标记也可换行，主操作不被标记压缩。组件不推断收藏、使用记录或状态，点击仍只发既有意图。
 
 组件页 `/next/components/record-list#record-tags` 包含双标记、长中文标记与标题、MathML、320px 开关和“显示行状态”开关。复用检索：本地 coss Badge/Frame/Button、table-particle 的 p-table-3/4，及本页已有 Beautiful UI Records Table/Filter Table/Task Rows 与 p-table-5/8 检索记录。现有行结构能承接两个属性，不引入第二套列表或第三方代码；本轮离线复核，未刷新在线注册索引。浏览器验收：按分工由 Supervisor 执行。
+
+## P54：行开关型次要操作
+
+`RecordListRow.toggle?: { id: string; label: string; pressedLabel?: string; pressed: boolean; icon?: 'star' | 'bookmark' }` 复用固定 coss `Toggle size="default"`，放在事实 Badge 后、行主操作之前。默认 star，可选 bookmark；不覆盖颜色、尺寸、圆角或按下样式。
+
+```tsx
+const row: RecordListRow = {
+  id: 'paper-1', type: '试卷', name: '二次函数单元复习', metadata: '九年级数学',
+  action: { id: 'open', label: '查看试卷' },
+  toggle: { id: 'favorite', label: '收藏', pressedLabel: '取消收藏', pressed: false, icon: 'star' },
+}
+<RecordList rows={[row]} onRowAction={(rowId, actionId) => requestAction(rowId, actionId)} />
+```
+
+- `pressed` 完全由宿主提供；激活仅发出 `onRowAction(row.id, toggle.id)`。组件不改变收藏事实、不持久化、不从 Badge 或状态文案反推 pressed。主操作的 disabledReason 不禁用独立开关；缺少 onRowAction 时开关禁用。
+- 可访问名称为“当前动作文案：记录身份”。未按下用 label，按下用 pressedLabel，未提供 pressedLabel 时沿用 label；身份包含已有 tag/name/badges，图标 aria-hidden。沿用 coss Toggle 的 aria-pressed、原生按钮键盘与标准触点机制。
+- 点击阻止冒泡，行背景仍只发主操作意图。无 toggle 时 SSR 字节完全不变。menu 未提供或为空数组时不渲染更多按钮（既有行为，本次补回归断言）。
+
+`/next/components/record-list#record-toggle` 展示 star / bookmark、未按下 / 已按下、长中文与 MathML、三主题 320px。默认宿主在本页内存回填收藏事实，关闭“宿主回填收藏事实”后点击只回显意图、pressed 保持不变；不是远端保存成功的回执。两行分别省略 menu、提供空 menu，没有更多按钮。
+
+复用检索：实际读取固定 coss Toggle/Button/Frame、RecordList、本地 table-particle 的 p-table-3/4，复核本页 particles p-table-5/8、p-frame-1/3/4 与 Beautiful UI Records Table / Filter Table / Task Rows 历史取舍。表格选择与执行状态行不适用单行受控收藏开关；coss Toggle 已完整提供所需基本控件，在现有列表扩展公开属性即可。不新增组件或依赖、不复制第三方代码；未联网刷新上游。浏览器验收：按分工由 Supervisor 执行。
+
+
+## P57：行主操作样式与对齐
+
+`/next/components/record-list#record-actions` 可切换 ghost / outline / primary、操作区垂直居中和 320px 容器，包含长中文、MathML、事实标记与更多菜单。两项属性是列表级设置，点击只保留原有意图，禁用原因和冒泡隔离不变。
+
+```tsx
+<RecordList rows={rows} actionVariant="primary" actionAlign="center"
+  onRowAction={requestAction} />
+```
+
+复用检索：固定 coss Button 的 ghost/outline/default 与 FramePanel 原行布局、本地 particles p-table-3/4；复核本页 p-table-5/8、p-frame-1/3/4 和 Beautiful UI Records Table / Filter Table / Task Rows 的历史取舍。现有组件足以扩展，不创建另一套按钮样式或列表，不增依赖、令牌或复制第三方代码。按 Builder 前置约定离线复核，未刷新上游 registry。浏览器验收：按分工由 Supervisor 执行。

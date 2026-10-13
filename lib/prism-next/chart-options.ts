@@ -1,6 +1,6 @@
 /** Theme axes without changing single-axis / multi-axis structure. */
-export function themeAxes(value:unknown,palette:{muted:string;border:string}){
- const merge=(entry:unknown)=>{const v=(entry??{}) as Record<string,any>;return {...v,axisLabel:{color:palette.muted,fontSize:12,...v.axisLabel},nameTextStyle:{color:palette.muted,...v.nameTextStyle},axisLine:{...v.axisLine,lineStyle:{color:palette.border,...v.axisLine?.lineStyle}},splitLine:{...v.splitLine,lineStyle:{color:palette.border,...v.splitLine?.lineStyle}}}}
+export function themeAxes(value:unknown,palette:{muted:string;border:string;line?:string}){
+ const merge=(entry:unknown)=>{const v=(entry??{}) as Record<string,any>;return {...v,axisLabel:{color:palette.muted,fontSize:12,...v.axisLabel},nameTextStyle:{color:palette.muted,...v.nameTextStyle},axisLine:{...v.axisLine,lineStyle:{color:palette.line??palette.border,...v.axisLine?.lineStyle}},splitLine:{...v.splitLine,lineStyle:{color:palette.border,...v.splitLine?.lineStyle}}}}
  return Array.isArray(value)?value.map(merge):merge(value)
 }
 export const isChartValue=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value)
