@@ -70,7 +70,7 @@ test('reuses compact MetricSummary and the existing TrendChart with the exact ho
     else assert.equal(chart, undefined);
   }
   const html = htmlFor({ view: 'workspace', groups });
-  assert.match(html, /查看数据/); assert.match(html, /7\.25%/); assert.match(html, /0%/); assert.match(html, />—</);
+  assert.match(html, /查看数据/); assert.match(html, /7%/); assert.doesNotMatch(html, /7\.25%/); assert.match(html, /0%/); assert.match(html, />—</);
 });
 
 test('missing/insufficient/unknown are always visible and reject stale value, unit, change and trend payloads', () => {

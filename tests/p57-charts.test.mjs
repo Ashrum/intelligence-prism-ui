@@ -105,10 +105,12 @@ test('P57 radar fewer than three axes, excess series, empty and invalid bounds u
 });
 
 const before = JSON.parse(await readFile(new URL('./fixtures/p57-heatmap-before.json', import.meta.url), 'utf8'));
-for (const snapshot of before) test(`P57 ${snapshot.theme}: default heatmap SSR and option configuration match pre-change output`, () => {
+for (const snapshot of before) test(`P57 ${snapshot.theme}: default heatmap preserves pre-change output except P59 disclosure placement`, () => {
   for (const props of [heatmapProps, { ...heatmapProps, compact: false }]) {
     const out = capture('HeatmapChart', props, snapshot.theme);
-    assert.equal(out.html, snapshot.html); assert.equal(optionJSON(out.charts[0].option), snapshot.option);
+    const start=snapshot.html.indexOf('<p class="text-ui-hint'),end=snapshot.html.indexOf('<details>');
+    const notes=snapshot.html.slice(start,end),expected=(snapshot.html.slice(0,start)+snapshot.html.slice(end)).replace('</summary>','</summary>'+notes);
+    assert.equal(out.html, expected); assert.equal(optionJSON(out.charts[0].option), snapshot.option);
   }
 });
 

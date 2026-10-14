@@ -42,9 +42,10 @@ export function DonutChart({ label, segments, centerText, centerSubtext, legend 
         })}
       </ul>
     </div>
-    <p className="text-ui-hint text-muted-foreground">{summary}</p>
+    {!model.ready && <p className="text-ui-hint text-muted-foreground">暂无可绘制的环形数据。</p>}
+    <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>    <p className="text-ui-hint text-muted-foreground">{summary}</p>
     {model.invalid > 0 && <p role="alert" className="text-ui-hint text-muted-foreground">{model.invalid} 项数值无效，未绘制；请核对数据表。</p>}
-    <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary><div role="region" aria-label={`${label}：数据`}><DataRecordTable rows={model.rows} columns={[
+<div role="region" aria-label={`${label}：数据`}><DataRecordTable rows={model.rows} columns={[
       { id: "label", label: "项目", render: row => <span className="whitespace-normal [overflow-wrap:anywhere]">{row.label}</span> },
       { id: "value", label: "数值", render: row => row.text },
     ]} /></div></details>

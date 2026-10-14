@@ -23,6 +23,12 @@ test('P58 real Recharts commits shape/dash/gap geometry and responsive labels wi
    assert.equal(shapes.filter(n=>n.attributes['data-trend-symbol']==='diamond').length,1);
    const curves=nodes(host,n=>n.tagName==='PATH'&&n.attributes?.class?.includes('recharts-line-curve'));
    assert.ok(curves.some(n=>n.attributes['stroke-dasharray']==='5 4'));
+   const visibleCurves=curves.filter(n=>n.attributes['stroke-opacity']!=='0');
+   assert.equal(visibleCurves.length,2);assert.ok(visibleCurves.every(n=>(n.attributes.d.match(/M/g)||[]).length===1),'P59 comparable actual/expected each has one continuous path across nulls');
+   await act(()=>client.render(h(api.TrendChart,{...props,series:props.series.map(s=>({...s,connectGaps:false}))})));
+   const broken=nodes(host,n=>n.tagName==='PATH'&&n.attributes?.class?.includes('recharts-line-curve')&&n.attributes['stroke-opacity']!=='0');
+   assert.ok(broken.every(n=>(n.attributes.d.match(/M/g)||[]).length>1),'opt-out retains original gaps');
+   await act(()=>client.render(h(api.TrendChart,props)));
    const labels=nodes(host,n=>n.attributes?.['data-trend-label']);assert.ok(labels.length>=8,`visible labels: ${labels.length}`);
    for(const label of labels){assert.equal(label.attributes.fill,'var(--foreground)');assert.equal(label.attributes['font-size'],'12');}
    const texts=labels.map(n=>n.textContent);assert.ok(texts.includes('高于预期 3'));assert.ok(texts.includes('65%'));

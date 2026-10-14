@@ -9,6 +9,24 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'trend-chart': {
+    component: 'TrendChart 趋势图',
+    source: 'Existing Recharts / chartToneColor / coss Table; docs/learning-chart-properties.md',
+    contract: ['ChartSeries lineStyle=solid|dashed, connect defaults true, connectGaps defaults false. connect=false always draws isolated points; connectGaps=true joins valid points across null without inventing values. tone uses the existing six-colour palette; explicit color wins.', 'ChartPoint symbol=circle|hollow-circle|diamond, valueLabel and annotation remain host text. Labels avoid points and connected segments, including gap-spanning segments; cramped labels remain in tooltip/table.', 'yDomain?: [number,number] | auto overrides legacy domain; omission retains legacy behavior. auto pads finite data, e.g. 55–75% -> 40–90%, with empty/constant handling. decimals?: 0|1; percentages default to integers and percent axis ticks are always integers. Geometry retains original values.'],
+    accessibility: ['Technical explanations belong in closed 查看数据 or accessible description, never a visible chart footer. Table and tooltip use the same formatted values; original host annotations remain complete.'],
+  },
+  'quadrant-chart': {
+    component: 'QuadrantScatterChart 四象限图',
+    source: 'Existing ScatterChart / EChart / chartToneColor; docs/learning-chart-properties.md',
+    contract: ['Host supplies data, domains, groups and quadrants={x,y,labels,highlight?}; highlight={quadrant,tone} uses the existing chart palette at 0.1 opacity.', 'labelMode?: auto|none defaults auto. Long/crowded labels are omitted with full names in tooltip/table; none also suppresses emphasis/responsive point labels. decimals?: 0|1; percentages default to integers without rounding coordinates or thresholds.'],
+    accessibility: ['Thresholds, quadrant explanations and excluded/missing counts live inside closed 查看数据; full names and selection buttons remain in the table.'],
+  },
+  'paired-dot-chart': {
+    component: 'PairedDotChart 双点图',
+    source: 'Existing EChart / coss Table; docs/learning-chart-properties.md',
+    contract: ['density=default|compact defaults default; connectPairs defaults false, connects only two valid in-domain values for the same row. Missing values are never zero-filled.', 'compact displays the complete wrapping name above each pair, with optional data[].tag: ReactNode at the right; each plot is 100px high and shares the same numeric domain. Default layout is unchanged.', 'decimals?: 0|1; percentages default to integers for point labels, tooltip and data table. Coordinates remain original. tag is external content, never inferred state.'],
+    accessibility: ['Missing/invalid and connector explanations live inside closed 查看数据; complete names and tags remain in the table. onSelect emits row/metric IDs only.'],
+  },
   'donut-chart': {
     component: 'DonutChart 环形图',
     source: 'Existing EChart SVG engine / useChartTheme palette / coss Button and Table; docs/polar-charts.md',
@@ -20,15 +38,15 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'radar-chart': {
     component: 'RadarChart 雷达图',
     source: 'Existing EChart SVG engine / useChartTheme palette / coss Table; docs/polar-charts.md',
-    contract: ['label, axes={id,label,max?}[] and series={id,label,values:number[],tone?}[]; values follow axis order. 3–8 axes and 1–2 series; fewer than three axes renders the visible data table only. Extra axes/series also use the table without silently slicing.', 'Each axis starts at zero. Explicit max must be positive and finite; omitted max uses finite nonnegative values on that axis, at least 1. A series with mismatched length, negative/nonfinite or over-max values is omitted and reported, never padded or clamped. All-zero values remain valid. height defaults to 280.', 'Long axis labels use the existing 12px chart typography, truncate at 64px, and preserve full text on hover and in the data table. Two series have solid-circle / dashed-diamond cues, existing palette colours and no animated transition.'],
+    contract: ['label, axes={id,label,max?}[] and series={id,label,values:number[],tone?}[]; values follow axis order. 3–8 axes and 1–2 series; fewer than three axes renders an empty state and the visible data table. Extra axes/series also use the table without silently slicing.', 'Each axis starts at zero. Explicit max must be positive and finite; omitted max uses finite nonnegative values on that axis, at least 1. A series with mismatched length, negative/nonfinite or over-max values is omitted and reported, never padded or clamped. All-zero values remain valid. height defaults to 280.', 'Long axis labels use the existing 12px chart typography, truncate at 64px, and preserve full text on hover and in the data table. Two series have solid-circle / dashed-diamond cues, existing palette colours and no animated transition.'],
     states: ['One/two series, 3–8 axes, fewer-axis table fallback, empty/all-zero/invalid; 300px and wide; light / paper / dark'],
-    accessibility: ['Named chart plus visible text summary and a named data-table region. Fallback table is directly visible. Chart geometry responds to resize and restores larger radius above 440px. SSR-safe shared engine; no colour-only identification.'],
+    accessibility: ['Named chart plus technical summary and a named data-table region inside closed 查看数据. Fallback table stays directly visible, with technical notes in screen-reader-only text. Chart geometry responds to resize and restores larger radius above 440px. SSR-safe shared engine; no colour-only identification.'],
     dont: ['No diagnostic conclusions, hidden normalisation, business thresholds, state machine or extra dependency.'],
   },
   'evidence-matrix': {
     component: 'HeatmapChart — optional compact matrix',
     source: 'Existing EChart heatmap and coss Table; docs/polar-charts.md',
-    contract: ['compact?: boolean = false. Opt-in grid and truncated axis labels fit 3×3 to 5×3 matrices in about 300px; cell values already render by default. Missing/zero, colours, selectedId and onSelect(id) are unchanged. Omitted or false preserves pre-P57 SSR and options.', 'Full row/column names remain in tooltips and the data table. Caller supplies labels, values, units and any sequentialColors.'],
+    contract: ['compact?: boolean = false. Opt-in grid and truncated axis labels fit 3×3 to 5×3 matrices in about 300px; cell values already render by default. Missing/zero, colours, selectedId and onSelect(id) are unchanged. Omitted or false preserves the plot options; P59 moves technical summaries into 查看数据 and formats percentages as integers.', 'Full row/column names remain in tooltips and the data table. Caller supplies labels, values, units and any sequentialColors.'],
     accessibility: ['Named chart, text summary and data-table keyboard alternative; EChart disables animation and resizes with container.'],
   },
   'facet-filter': {

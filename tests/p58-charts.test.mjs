@@ -4,9 +4,17 @@ import { readFile } from 'node:fs/promises';
 import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
 
 const before=JSON.parse(await readFile(new URL('./fixtures/p58-defaults-before.json',import.meta.url),'utf8'));
-for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options match pre-change bytes`,()=>{
+for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except P59 disclosure and labels`,()=>{
  const out=capture(snapshot.name,{...defaults[snapshot.name],...snapshot.extra},snapshot.theme);
- assert.equal(out.html,snapshot.html);assert.deepEqual(out.charts.map(c=>optionJSON(c.option)),snapshot.options);
+ let expected=snapshot.html;
+ if(['ScatterChart','PairedDotChart'].includes(snapshot.name)){
+  // P59 intentionally moves the exact former footer into the closed disclosure.
+  const start=expected.indexOf('<p class="text-ui-hint'),end=expected.indexOf('<details>');
+  if(start>=0&&start<end){const notes=expected.slice(start,end);expected=expected.slice(0,start)+expected.slice(end);expected=expected.replace('</summary>','</summary>'+notes);}
+ }
+ assert.equal(out.html.replace('</summary> ','</summary>'),expected);
+ const options=snapshot.options.map(text=>{const option=JSON.parse(text);if(snapshot.name==='ScatterChart')for(const series of option.series){series.label.formatter='[function]';delete series.label.overflow;}return JSON.stringify(option)});
+ assert.deepEqual(out.charts.map(c=>optionJSON(c.option)),options);
 });
 
 test('P58 explicit solid/connect/default density preserve the original output',()=>{
@@ -21,7 +29,7 @@ test('P58 trend passes dashed/point-only geometry, symbols, text disclosure, too
  const calls=[],out=capture('TrendChart',{label:'学情',series:api.learningTrendSeries,unit:'%',onSelect:(...args)=>calls.push(args)});
  const lines=out.nodes.filter(n=>n.type?.displayName==='Line'||n.type?.name==='Line');
  assert.equal(lines.length,4);assert.equal(lines[1].props.strokeDasharray,'5 4');assert.equal(lines[2].props.strokeOpacity,0);assert.equal(lines[3].props.strokeOpacity,0);
- assert.ok(lines.every(n=>n.props.connectNulls===false&&n.props.isAnimationActive===false));
+ assert.deepEqual(lines.map(n=>n.props.connectNulls),[true,true,false,false]);assert.ok(lines.every(n=>n.props.isAnimationActive===false));
  const dot=lines[2].props.dot({cx:100,cy:100,payload:{id:'week-3'}});
  assert.match(render(dot),/data-trend-symbol="hollow-circle"/);assert.match(render(dot),/fill="var\(--background\)"/);
  dot.props.onSelect();assert.deepEqual(calls,[['week-3','incomparable']]);
@@ -55,20 +63,20 @@ for(const theme of ['light','paper','dark'])test(`P58 ${theme}: four highlighted
 test('P58 paired compact connects only valid pairs, leaves missing/invalid as gaps, keeps zero and equal values',()=>{
  const data=[{id:'bounds',label:'边界',first:0,second:100},{id:'equal',label:'相等',first:50,second:50},{id:'missing',label:'缺一个值',first:null,second:30},{id:'invalid',label:'域外',first:120,second:40}];
  const calls=[],out=capture('PairedDotChart',{...defaults.PairedDotChart,data,density:'compact',connectPairs:true,onSelect:(...args)=>calls.push(args)}),chart=out.charts[0];
- assert.equal(chart.height,283);assert.equal(capture('PairedDotChart',{...defaults.PairedDotChart,data:data.slice(0,3),density:'compact'}).charts[0].height,231);
- assert.deepEqual(chart.option.series[0].markLine.data,[[{coord:[0,0]},{coord:[100,0]}],[{coord:[50,1]},{coord:[50,1]}]]);
- assert.equal(chart.option.series[0].data.length,2);assert.equal(chart.option.series[1].data.length,4);
+ assert.equal(out.charts.length,4);assert.ok(out.charts.every(c=>c.height===100));assert.equal(capture('PairedDotChart',{...defaults.PairedDotChart,data:data.slice(0,3),density:'compact'}).charts.length,3);
+ assert.deepEqual(out.charts.map(c=>c.option.series[0].markLine.data),[[[{coord:[0,0]},{coord:[100,0]}]],[[{coord:[50,0]},{coord:[50,0]}]],[],[]]);
+ assert.equal(out.charts.reduce((n,c)=>n+c.option.series[0].data.length,0),2);assert.equal(out.charts.reduce((n,c)=>n+c.option.series[1].data.length,0),4);
  assert.deepEqual(chart.option.series.map(s=>s.symbolOffset),[[0,0],[0,0]]);
  assert.equal(chart.option.series[0].markLine.z,1);assert.match(out.html,/缺测不补零/);assert.match(out.html,/另一项仍按原值显示/);
  chart.onSelect('missing','second');assert.deepEqual(calls,[['missing','second']]);
- assert.equal(chart.option.tooltip.formatter({data:chart.option.series[1].data[2],seriesName:'再错'}),'缺一个值\n再错：30');
+ assert.equal(chart.option.tooltip.formatter({data:out.charts[2].option.series[1].data[0],seriesName:'再错'}),'缺一个值\n再错：30');
 });
 
 test('P58 actual ECharts SVG renders highlight and compact connectors at both widths in three themes',()=>{
  for(const theme of ['light','paper','dark'])for(const width of [320,960])for(const name of ['ScatterChart','PairedDotChart']){
   const props=name==='ScatterChart'?{...defaults[name],quadrants:{...defaults[name].quadrants,highlight:{quadrant:'bottom-left',tone:'destructive'}}}:{...defaults[name],density:'compact',connectPairs:true};
   const out=capture(name,props,theme),chart=api.init(null,undefined,{renderer:'svg',ssr:true,width,height:out.charts[0].height});
-  try{chart.setOption({animation:false,...out.charts[0].option});const svg=chart.renderToSVGString();assert.match(svg,/<svg/);assert.doesNotMatch(svg,/NaN|Infinity/);if(name==='ScatterChart'){assert.ok(svg.includes(out.theme.colors[1]));assert.match(svg,/fill-opacity="0.1"/);}else{assert.ok(svg.includes(out.theme.palette.muted));assert.equal(chart.getModel().getSeriesByIndex(1).getData().count(),2);}}
+  try{chart.setOption({animation:false,...out.charts[0].option});const svg=chart.renderToSVGString();assert.match(svg,/<svg/);assert.doesNotMatch(svg,/NaN|Infinity/);if(name==='ScatterChart'){assert.ok(svg.includes(out.theme.colors[1]));assert.match(svg,/fill-opacity="0.1"/);}else{assert.ok(svg.includes(out.theme.palette.muted));assert.equal(chart.getModel().getSeriesByIndex(1).getData().count(),1);}}
   finally{chart.dispose();}
  }
 });
