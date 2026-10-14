@@ -151,3 +151,18 @@ test('SegmentedBar adds one searchable analytics pattern and an Agent Spec (101 
   assert.equal(searchComponents('分段条')[0].item.id, 'segmented-bar');
   assert.ok(coreAgentSpecs['segmented-bar'].dont.some(text => text.includes('ComparisonChart')));
 });
+
+test('P60 percentDecimals defaults preserve bytes; integer precision reaches legend, aria, buttons and remainder without changing geometry', () => {
+  const segments = [{ id: 'a', label: '已完成', value: 26 }, { id: 'tiny', label: '极小', value: 0.01 }, { id: 'zero', label: '零', value: 0 }];
+  const props = { segments, total: 45, onSelect() {} };
+  const original = capture(props), explicit = capture({ ...props, percentDecimals: 1 }), integer = capture({ ...props, percentDecimals: 0 });
+  assert.equal(original.html, explicit.html);
+  assert.match(original.html, /57.8%/); assert.match(original.html, /&lt;0.1%/); assert.match(original.html, /余量 42.2%/);
+  assert.match(integer.html, /已完成 26 项 58%/); assert.match(integer.html, /极小 0.01 项 0%/); assert.match(integer.html, /余量 42%/);
+  assert.doesNotMatch(integer.html, /57.8%|42.2%|&lt;0.1%/);
+  assert.deepEqual(integer.nodes.filter(n => n.props.style?.width).map(n => n.props.style.width), original.nodes.filter(n => n.props.style?.width).map(n => n.props.style.width));
+  assert.equal(integer.buttons[0].props['aria-label'], '已完成 26 项 58%');
+  const selected = [];
+  capture({ ...props, percentDecimals: 0, onSelect: segment => selected.push(segment) }).buttons[0].props.onClick();
+  assert.equal(selected[0], segments[0]);
+});

@@ -12,13 +12,13 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'trend-chart': {
     component: 'TrendChart 趋势图',
     source: 'Existing Recharts / chartToneColor / coss Table; docs/learning-chart-properties.md',
-    contract: ['ChartSeries lineStyle=solid|dashed, connect defaults true, connectGaps defaults false. connect=false always draws isolated points; connectGaps=true joins valid points across null without inventing values. tone uses the existing six-colour palette; explicit color wins.', 'ChartPoint symbol=circle|hollow-circle|diamond, valueLabel and annotation remain host text. Labels avoid points and connected segments, including gap-spanning segments; cramped labels remain in tooltip/table.', 'yDomain?: [number,number] | auto overrides legacy domain; omission retains legacy behavior. auto pads finite data, e.g. 55–75% -> 40–90%, with empty/constant handling. decimals?: 0|1; percentages default to integers and percent axis ticks are always integers. Geometry retains original values.'],
+    contract: ['xTickMode?: auto|all defaults auto; all retains every category. ChartPoint.tickLabel?: [string,string] renders exactly two rows, with endpoint space and per-row ellipsis when cramped; full text remains in title/table. Legend text uses foreground; only marks use series colours.', 'ChartSeries lineStyle=solid|dashed, connect defaults true, connectGaps defaults false. connect=false always draws isolated points; connectGaps=true joins valid points across null without inventing values. tone uses the existing six-colour palette; explicit color wins.', 'ChartPoint symbol=circle|hollow-circle|diamond, valueLabel and annotation remain host text. Labels avoid points and connected segments, including gap-spanning segments; cramped labels remain in tooltip/table.', 'yDomain?: [number,number] | auto overrides legacy domain; omission retains legacy behavior. auto pads finite data, e.g. 55–75% -> 40–90%, with empty/constant handling. decimals?: 0|1; percentages default to integers and percent axis ticks are always integers. Geometry retains original values.'],
     accessibility: ['Technical explanations belong in closed 查看数据 or accessible description, never a visible chart footer. Table and tooltip use the same formatted values; original host annotations remain complete.'],
   },
   'quadrant-chart': {
     component: 'QuadrantScatterChart 四象限图',
     source: 'Existing ScatterChart / EChart / chartToneColor; docs/learning-chart-properties.md',
-    contract: ['Host supplies data, domains, groups and quadrants={x,y,labels,highlight?}; highlight={quadrant,tone} uses the existing chart palette at 0.1 opacity.', 'labelMode?: auto|none defaults auto. Long/crowded labels are omitted with full names in tooltip/table; none also suppresses emphasis/responsive point labels. decimals?: 0|1; percentages default to integers without rounding coordinates or thresholds.'],
+    contract: ['xDomain/yDomain?: [number,number]|auto; auto pads finite data like TrendChart and uses integer percent ticks. Omission retains legacy domain. Quadrant titles occupy their respective outer corners; highlighted title uses highlight tone, others muted text.', 'Host supplies data, domains, groups and quadrants={x,y,labels,highlight?}; highlight={quadrant,tone} uses the existing chart palette at 0.1 opacity.', 'labelMode?: auto|none defaults auto. Long/crowded labels are omitted with full names in tooltip/table; none also suppresses emphasis/responsive point labels. decimals?: 0|1; percentages default to integers without rounding coordinates or thresholds.'],
     accessibility: ['Thresholds, quadrant explanations and excluded/missing counts live inside closed 查看数据; full names and selection buttons remain in the table.'],
   },
   'paired-dot-chart': {
@@ -69,7 +69,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'segmented-bar': {
     component: 'SegmentedBar 分段条',
     source: 'Pinned coss MeterTrack + existing StatusComposition segment/keyboard conventions + Prism Button; docs/segmented-bar.md',
-    contract: ['用途：同一个总量的组成。segments={id,label,value,tone?,description?}[]，label 必填；unit、valueFormatter(value, originalSegment) 可选。tone=neutral|info|success|warning|destructive|chart-1…chart-5，默认 neutral。', 'total 默认有效值之和；大于合计保留轨道余量，小于合计或非法则回退合计并开发告警。负值和非有限值按 0 呈现并开发告警；零段不绘制但保留图例。空数组或全零的可访问名称含 无数据。', 'legend=below|none，默认 below；size=default|sm，沿用 h-2 / h-1.5。内部正值最小宽度分配有界，不公开 minSegmentWidth；文字占比为真实数据比例。onSelect(originalSegment) 仅发意图，不改变数据或缓存选中状态。'],
+    contract: ['percentDecimals?: 0|1 defaults 1; 0 rounds all share text (legend, buttons, aria summary and remainder) to integers, without changing values or widths.', '用途：同一个总量的组成。segments={id,label,value,tone?,description?}[]，label 必填；unit、valueFormatter(value, originalSegment) 可选。tone=neutral|info|success|warning|destructive|chart-1…chart-5，默认 neutral。', 'total 默认有效值之和；大于合计保留轨道余量，小于合计或非法则回退合计并开发告警。负值和非有限值按 0 呈现并开发告警；零段不绘制但保留图例。空数组或全零的可访问名称含 无数据。', 'legend=below|none，默认 below；size=default|sm，沿用 h-2 / h-1.5。内部正值最小宽度分配有界，不公开 minSegmentWidth；文字占比为真实数据比例。onSelect(originalSegment) 仅发意图，不改变数据或缓存选中状态。'],
     states: ['默认、无图例、total 余量、极小正值与零、空数组、可选择、长中文与三主题 320px'],
     accessibility: ['role=img 的名称包含 label 和各段名称、值、占比；交互轨道置于 img 摘要之外，保留按钮语义。图例 ul/li 与文字说明分类；段间有内部分隔。', '无 onSelect 时无焦点目标；有 onSelect 时正值段与图例项为原生按钮，Tab / Enter / Space。无动画，三主题使用既有令牌。'],
     do: ['保证 id 唯一，提供真实外部数据；极小段的精确占比读文字。'],
@@ -510,7 +510,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'metric-summary': {
     component: 'MetricSummary',
     source: 'components/prism-next/data-display.tsx',
-    contract: ['density defaults to default; compact changes only layout to two columns with baseline-aligned label/value. Preserve analytics-value typography, external detail and onSelect intent.', 'AgentMetricSummary composes this primitive for semantic 19; its scope, version, missing-data and evidence contract is on agent-components#metric-summary. This generic primitive does not inherit Agent-specific semantics.'],
+    contract: ['visual sparkline connects finite observations across null/invalid slots using original indices, never zero-fills; accessible text still identifies missing values. Ring and help protocols are documented in docs/learning-chart-properties.md.', 'density defaults to default; compact changes only layout to two columns with baseline-aligned label/value. Preserve analytics-value typography, external detail and onSelect intent.', 'AgentMetricSummary composes this primitive for semantic 19; its scope, version, missing-data and evidence contract is on agent-components#metric-summary. This generic primitive does not inherit Agent-specific semantics.'],
   },
   'status-composition': {
     component: 'StatusComposition',
