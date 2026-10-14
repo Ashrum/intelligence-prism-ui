@@ -3,9 +3,9 @@ import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-
 import { useCallback, useState } from "react"
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
-import { fitTrendTick } from "@/lib/prism-next/trend-ticks"
+import { fitTrendTick, sparkTickLayout } from "@/lib/prism-next/trend-ticks"
 import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
-import { formatChartValue, chartAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
+import { formatChartValue, trendAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
 import { chartToneColor, type ChartTone } from "@/lib/prism-next/polar-chart-options"
 import { ChartLegend, ChartMarker, type ChartLegendItem } from "./chart-legend"
 import { useChartTheme } from "./chart-theme"
@@ -40,13 +40,13 @@ function TrendLabels({series,ids}:{series:ChartSeries[];ids:string[]}){
  }))
  const points=projected.flatMap(rows=>rows.flatMap(p=>p?[p]:[]))
  const lines=projected.flatMap((rows,i)=>series[i].connect===false?[]:(series[i].connectGaps?rows.filter(p=>p!==null):rows).flatMap((p,index,connected)=>{const next=connected[index+1];return p&&next?[{x1:p.x,y1:p.y,x2:next.x,y2:next.y}]:[]}))
- return <g aria-hidden="true" className="pointer-events-none" data-trend-labels>{trendLabelLayout(points,plot,lines).map(item=><text key={`${item.id}:${item.kind}`} {...axis.tick} fill="var(--foreground)" x={item.x+item.width/2} y={item.y+13} textAnchor="middle" data-trend-label={item.kind}>{item.text}</text>)}</g>
+ return <g aria-hidden="true" className="pointer-events-none" data-trend-labels>{trendLabelLayout(points,plot,lines).map(item=><text key={`${item.id}:${item.kind}`} {...axis.tick} fill="var(--foreground)" stroke="var(--card)" strokeWidth={4} strokeLinejoin="round" paintOrder="stroke" x={item.x+item.width/2} y={item.y+13} textAnchor="middle" data-trend-label={item.kind}>{item.text}</text>)}</g>
 }
 export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,xTickMode="auto",height=260,onSelect,showData=true,legendPosition}:BasicChartProps){
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
- const theme=useChartTheme(),autoScale=yDomain==="auto"?chartAutoScale(series.flatMap(s=>s.data.map(p=>p.value)),unit):undefined,activeDomain=yDomain==="auto"?autoScale!.domain:yDomain??domain
+ const theme=useChartTheme(),autoScale=yDomain==="auto"?trendAutoScale(series.flatMap(s=>s.data.map(p=>p.value)),unit):undefined,activeDomain=yDomain==="auto"?autoScale!.domain:yDomain??domain
  const format=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?formatChartValue(value,unit,decimals):"—"
  const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}))
  const tickRows=rows.map(row=>({id:row.id,lines:series.flatMap(s=>s.data).find(p=>p.id===row.id&&p.tickLabel)?.tickLabel??[row.label]}))
@@ -107,6 +107,11 @@ export function comparisonLegendItems({data,domain,referenceLines,unit=""}: Pick
  const numericDomain=comparisonDomain(data,domain),binned=data.some(p=>p.range!==undefined)
  return (referenceLines??[]).flatMap((line,index)=>comparisonReferencePosition(line.value,data,numericDomain)===null?[]:[{id:`reference-${index}`,label:`${line.label}：${formatChartValue(line.value,binned?"":unit)}`,marker:"dashed-line",color:referenceColor(line)}])
 }
+function SparkTicks({data}:{data:ComparisonChartPoint[]}){
+ const plot=usePlotArea()
+ if(!plot)return null
+ return <g aria-hidden="true">{sparkTickLayout(data.map(d=>d.label),plot.width).map(tick=><text key={tick.index} {...axis.tick} x={plot.x+tick.x} y={plot.y+plot.height+10} dominantBaseline="hanging" textAnchor="middle" data-spark-tick={tick.index}><title>{tick.label}</title>{tick.text}</text>)}</g>
+}
 export function ComparisonChart({label,data,unit="",domain,onSelect,variant='default',horizontal=variant!=='spark',height=variant==='spark'?120:260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details',legendPosition}:ComparisonChartProps){
  const spark=variant==='spark'&&!horizontal
  const [containerWidth,setContainerWidth]=useState(600)
@@ -135,7 +140,7 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,variant='def
    <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}} ref={referenceLabelPlacement==='plot'?measureContainer:undefined} onResize={referenceLabelPlacement==='plot'?measureWidth:undefined}>
     <BarChart data={data} layout={horizontal?"vertical":"horizontal"} accessibilityLayer margin={margin}>
      {!spark&&<CartesianGrid horizontal={!horizontal} vertical={horizontal} stroke="var(--border)" strokeDasharray="3 4"/>}
-     <XAxis {...axis} {...(spark?{axisLine:{stroke:"var(--border)"},interval:0}:{} )} {...(horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"number":"category"} dataKey={horizontal?undefined:"label"} domain={horizontal?activeDomain:undefined} allowDataOverflow={references.length&&!binned?true:undefined}/>
+     <XAxis {...axis} {...(spark?{axisLine:{stroke:"var(--border)"},interval:0,tick:false}:{} )} {...(horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"number":"category"} dataKey={horizontal?undefined:"label"} domain={horizontal?activeDomain:undefined} allowDataOverflow={references.length&&!binned?true:undefined}/>
      <YAxis {...axis} hide={spark} {...(!horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"category":"number"} dataKey={horizontal?"label":undefined} domain={horizontal?undefined:activeDomain} allowDataOverflow={references.length&&!binned?true:undefined} width={spark?0:horizontal?110:45}/>
      <Tooltip contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8}} formatter={v=>typeof v==="number"?formatChartValue(v,unit):"—"}/>
      {/* Recharts filters zero-sized bars unless shape is explicit; keep zero label entries without enlarging bars. */}
@@ -151,7 +156,7 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,variant='def
        return <text {...axis.tick} className="pointer-events-none" x={labelX} y={labelY} textAnchor={horizontal?(negative?'end':'start'):'middle'} dominantBaseline={horizontal?'central':negative?'hanging':'auto'} data-value-label={datum.id} aria-hidden="true">{text}</text>
       }}/>}
      </Bar>
-     {spark&&<SparkMissingWeeks data={data}/>}
+     {spark&&<><SparkMissingWeeks data={data}/><SparkTicks data={data}/></>}
      {references.length>0&&<ComparisonReferenceLayer lines={references} horizontal={horizontal} binned={binned} unit={unit} band={band}/>}
     </BarChart>
    </ResponsiveContainer>

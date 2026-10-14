@@ -82,8 +82,8 @@ test('route and navigation exist; blueprint.css draws DemoSection as a sheet onl
   assert.match(page, /BlueprintComponentsDemo/);
   assert.match(await readFile(new URL('../components/prism-next/shell.tsx', import.meta.url), 'utf8'), /\/next\/foundations\/blueprint/);
   const css = await readFile(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
-  assert.match(css, /\[data-prism-theme="blueprint"\] \.prism-demo-section[^{]*\{[^}]*counter-increment:bp-sheet/);
+  assert.match(css, /:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.prism-demo-section[^{]*\{[^}]*counter-increment:bp-sheet/);
   assert.match(css, /content:counter\(bp-sheet, upper-alpha\)/);
-  assert.match(css, /\[data-prism-theme="blueprint"\] :is\(\.prism-demo,\.analytics-panel\)/);
+  assert.match(css, /:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) :is\(\.prism-demo,\.analytics-panel\)/);
   assert.match(css, /:where\(\[data-slot="sidebar-inset"\]\)[^{]*\{[^}]*linear-gradient\(var\(--grid\)/);
 });

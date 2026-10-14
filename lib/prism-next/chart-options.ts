@@ -28,6 +28,15 @@ export function chartAutoScale(values:(number|null)[],unit=''):{domain:[number,n
  return {domain:[ticks[0],ticks[ticks.length-1]],interval:clean(interval),ticks}
 }
 export function trendAutoDomain(values:(number|null)[],unit=''):[number,number]{return chartAutoScale(values,unit).domain}
+/** Trend percentage grids use 10pp steps (5pp for an observed span below 20pp). */
+export function trendAutoScale(values:(number|null)[],unit=''){
+ const scale=chartAutoScale(values,unit)
+ if(!/[%％]/.test(unit))return scale
+ const valid=values.filter(isChartValue),span=valid.length?Math.max(...valid)-Math.min(...valid):100
+ const interval=span<20?5:10
+ const lower=Math.floor(scale.domain[0]/interval)*interval,upper=Math.ceil(scale.domain[1]/interval)*interval
+ return {domain:[lower,upper] as [number,number],interval,ticks:Array.from({length:Math.round((upper-lower)/interval)+1},(_,i)=>lower+i*interval)}
+}
 export function chartDomain(values:(number|null)[],range?:[number,number]):[number,number]{if(range&&range.every(isChartValue)&&range[0]<range[1])return range;const valid=values.filter(isChartValue);const min=Math.min(0,...valid),max=Math.max(0,...valid);return [min,max===min?min+1:max]}
 export function withinDomain(value:unknown,range:[number,number]){return isChartValue(value)&&value>=range[0]&&value<=range[1]}
 export function compositionSummary(items:{value:number|null}[]){return {total:items.reduce((sum,item)=>sum+(isChartValue(item.value)&&item.value>=0?item.value:0),0),invalid:items.filter(item=>item.value!==null&&(!isChartValue(item.value)||item.value<0)).length,missing:items.filter(item=>item.value===null).length}}

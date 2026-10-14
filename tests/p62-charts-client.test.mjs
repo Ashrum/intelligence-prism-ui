@@ -25,7 +25,8 @@ for (const theme of ['light', 'paper', 'dark']) test(`P62 ${theme}: real Rechart
         assert.equal(nodes(host, n => hasClass(n, 'recharts-cartesian-grid')).length, 0);
         assert.equal(nodes(host, n => hasClass(n, 'yAxis')).length, 0);
         const xaxis = nodes(host, n => hasClass(n, 'xAxis'))[0]; assert.ok(xaxis);
-        assert.equal(nodes(xaxis, n => hasClass(n, 'recharts-cartesian-axis-tick')).length, 8);
+        // P65 now renders sparsified ticks in the plot layer; these eight short names still all fit.
+        assert.equal(nodes(host, n => n.attributes?.['data-spark-tick'] !== undefined).length, 8);
         assert.equal(nodes(xaxis, n => hasClass(n, 'recharts-cartesian-axis-line')).length, 1);
         const markers = nodes(host, n => n.attributes?.['data-spark-empty']);
         assert.deepEqual(markers.map(n => n.attributes['data-spark-empty']), ['w0', 'w2', 'w5']);

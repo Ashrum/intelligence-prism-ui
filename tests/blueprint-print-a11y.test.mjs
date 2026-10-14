@@ -13,7 +13,8 @@ import { BLUEPRINT_SERIES, blueprintChartOverrides } from '../lib/prism-next/cha
 const root = fileURLToPath(new URL('../', import.meta.url));
 const css = postcss.parse(readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8'));
 const themeCSS = postcss.parse(readFileSync(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8'));
-const guard = ':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))';
+const guard = ':not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))';
+const nightGuard = ':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *))';
 const themes = ['light', 'paper', 'dark', 'blueprint'];
 const ratio = (a, b) => (Math.max(relativeLuminance(a), relativeLuminance(b)) + .05) / (Math.min(relativeLuminance(a), relativeLuminance(b)) + .05);
 const evidence = process.env.BPV8_EVIDENCE_DIR;
@@ -49,8 +50,8 @@ test('every print selector requires blueprint and excludes core preview roots an
     if (media.params !== 'print') return;
     media.walkRules(rule => {
       for (const selector of rule.selectors) {
-        assert.ok(selector.includes('[data-prism-theme="blueprint"]'), selector);
-        assert.ok(selector.includes(guard), selector);
+        assert.match(selector, /data-prism-theme="blueprint(?:-night)?"/);
+        assert.ok(selector.includes(guard) || selector.includes(nightGuard), selector);
         if (/::(?:before|after)/.test(selector)) assert.ok(selector.indexOf(guard) < selector.lastIndexOf('::'), selector);
       }
       rule.walkDecls(d => declarations.push([rule.selector, d.prop, d.value]));
@@ -64,12 +65,12 @@ test('every print selector requires blueprint and excludes core preview roots an
 });
 
 test('blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance', () => {
-  const focus = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith('[data-prism-theme="blueprint"] :focus-visible'));
+  const focus = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith(':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :focus-visible'));
   assert.ok(focus.selector.includes(guard));
   assert.equal(focus.nodes.find(d => d.prop === 'outline').value, '2px solid var(--ring)');
   assert.equal(focus.nodes.find(d => d.prop === 'outline-offset').value, '2px');
   assert.equal(tokens('blueprint')['--ring'], '#1D5FBF');
-  const clearance = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith('[data-prism-theme="blueprint"] .bp-seg-tabs'));
+  const clearance = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith(':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .bp-seg-tabs'));
   assert.ok(clearance.selector.includes(guard));
   assert.equal(clearance.nodes.find(d => d.prop === 'padding').value, '4px');
 });
