@@ -49,9 +49,9 @@
   - 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
   - coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
   - 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
-- 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。
+- 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。 Blueprint 的有限例外见 §10；其余范围继续遵守本条。
 - 文字使用语义字号类（`text-ui-body`、`text-ui-hint`、`text-read-body`、`text-block-title` 等），不写局部字号；排版检查脚本会拦截。
-- 主题保持 `light` / `paper` / `dark` 三套；根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。
+- 核心主题保持 `light` / `paper` / `dark` 三套；`blueprint` 为隔离的第四套实验主题，例外边界与生效条件见 §10。根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。
 - 基础表单使用常驻固定标签，不做浮动标签。
 - 组件目录可扩充，新增组件须经 Product Owner 认可（PO 2026-09-30）；页面骨架、应用示例与语义别名不计入组件数，不为搜索或演示另建组件条目。
 - 组件只呈现外部事实并发出意图：不内置模型、执行器、业务 Store、权限判断或持久化；不用计时器、按钮点击推定执行状态；未知就显示未知。
@@ -112,3 +112,30 @@
 ## 9. 语言
 
 与 Product Owner 的沟通、Review 与报告使用简体中文；代码标识符、命令、文件名、API 名称与结论标签保留英文。Agent 之间的内部提示可按效果选择语言。
+
+## 10. Blueprint 主题与交接（隔离实验线）
+
+本节须经 Product Owner 明确批准后生效；批准记录由 Supervisor 填入 `docs/blueprint/STATUS.md`，不得预填授权人或日期。它将已获单轮授权的蓝图接入约束明确化，不追溯否定此前授权，也不自动批准未来产品方案、全局 Token 或 API 变更。§3 的 2026-10-13 GPT Site 实验线特例继续有效，角色、评审、GitHub 合并与发布权限仍按 §2、§3、§8 执行。
+
+### 10.1 范围与隔离
+
+- 蓝图实现集中在 `app/(next)/next/blueprint.css`、`theme.css` 的蓝图令牌块、`lib/prism-next/chart-palette.ts`、`components/prism-next/blueprint/**`、蓝图演示页与对应文档、测试。主题注册、预览隔离、导航及共享图表适配的必要改动，须逐项列在当轮交接清单；仅允许接入本主题，不据此扩展到其他页面、基础组件或 API 设计。
+- §5 的视觉重绘限制仅对已授权的蓝图主题适配放宽。相对当轮记录的基线，核心三主题已有令牌值、默认视觉与交互保持不变，并提供受影响范围的回归证据；不要求 React/HTML 源文本逐字相同。`components/coss/**` 原始源码仍按 §5 保持字节不变。
+- 改变既有组件外观的规则必须限定在 `[data-prism-theme="blueprint"]` 范围，排除嵌套非蓝图预览的根节点及其全部后代，并检查伪元素。可沿用 `:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))`。禁止无主题限定的全局视觉覆盖。
+- 新增蓝图组件类使用 `bp-` 前缀。这些显式选用的类允许在核心三主题使用中性令牌回退；不因加载样式而改变普通 coss / Prism 组件。既有组件的蓝图适配可以定位现有稳定类名或 `data-slot`，但必须遵守上一条隔离要求，不修改 coss 源码、不全局重定义已有类。
+- `theme.css` 允许为显式选用的 `bp-*` 组件补充必要的中性回退令牌；已有核心令牌值不得改变。新增令牌逐项说明用途及回退，不以此授权无关全局视觉令牌。字号继续使用既有语义字号，不新增局部字号或字号令牌。
+- 图表的默认系列色、形状色和连续色阶以 `lib/prism-next/chart-palette.ts` 为统一来源。Recharts 可通过 `theme.css` 的 `--chart-*` 令牌桥接，并测试与调色板一致；轴线、提示框沿用既有语义令牌。组件内不得新增默认主题配色字面量；调用方显式传入的颜色仍按既有 API 生效。新增蓝图分支不得改变核心三主题的默认配色和配置。
+
+### 10.2 验证与数量约定
+
+- 蓝图运行时代码或样式改动覆盖：核心三主题回归、蓝图生效、嵌套预览隔离，以及受影响页面在 320px / 1280px 的实际浏览器表现；交互组件还按 §7 检查键盘、长内容等相关状态。记录实际通过、失败和未验范围，不把源码断言、SSR 或“无溢出”当作视觉验收。
+- 纯文档与规则补丁检查 diff、链接和证据真实性；不得沿用旧结果声称当前构建或全量通过。如运行全量测试，仍按 §6.1 先构建，测试使用对应源码的 `dist/`。
+- 组件目录数量以权威目录为准，避免在多处测试中重复写死总数。断言需能发现独立错误，例如重复 ID、必需条目缺失、目录与独立生成的路由或导航不一致，以及蓝图示例误登记为组件；不得用同一数组与自身派生长度比较来替代有效测试。54 个冻结 coss 文件、固定业务数量等有明确契约的断言继续保留。既有测试改动单独列入范围，不借交接规范降低校验强度。
+
+### 10.3 设计与实施交接
+
+- 设计侧提供 `patch-vN/`，包含逐文件清单、来源基线、diff / 手动适配片段及验收清单；按 §2 不直接修改本地仓库。§3 已授权的 GPT Site 页面实验继续执行，从 Site 回传时标明 Site 版本及对应 Git 基线。
+- 优先提供 unified diff。应用前核对目标路径、基线和未提交改动，先执行 `git apply --check`；仅在基线 blob 可用、索引与目标文件状态适合且相关改动已核对时使用 `git apply --3way`。冲突只暂停受影响文件并记录差异；有依据的本地适配须明确记录，禁止猜测覆盖或回滚他人改动。
+- Builder 每轮更新 `docs/blueprint/STATUS.md` 的“当前”，将原段落连同日期与基线移入“历史”。写明本轮范围、工作树状态、实际测试命令与结果、浏览器证据、偏差、未验限制和待 PO 决定项。历史结果与当前复验分开；Builder 自测不等同于 Supervisor Review 或 PO 批准。
+- 截图存入 `docs/blueprint/screens/vN/`，命名为 `<主题>-<视口宽度>-<内容>.<实际格式>`，例如 `blueprint-1280-patterns.jpg`；新截图优先 PNG，但扩展名必须匹配实际编码。证据索引记录主题、视口宽高、路由或夹具、日期与基线。报告正文使用仓库相对路径，Markdown 链接按文档位置解析。
+- `.sites-runtime/` 用作临时运行目录。需要交接的证据复制到 `docs/blueprint/`，核对内容与引用后再处理旧副本；不让历史链接失效，不把未复制的临时文件写成仓库已有证据。空目录不作为交付，至少提供实际证据或说明文件。
