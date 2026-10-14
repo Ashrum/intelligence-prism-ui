@@ -1,4 +1,4 @@
-# 学情分析图表公开属性（P58 / P59 / P60）
+# 学情分析图表公开属性（P58 / P59 / P60 / P61）
 
 适用组件：TrendChart、QuadrantScatterChart、PairedDotChart、MetricSummary。所有新属性可选。P59 明确修正技术脚注、百分比格式、紧凑双点行与四象限点标签；P60 修正图例文字、象限标题与缺测小走势，补充刻度和坐标域属性。除这些返工项外，未传入新属性保留原行为。仅呈现调用方事实，不计算学情结论。组件数量、依赖、Token、coss 源码均不变。
 
@@ -133,3 +133,20 @@ P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 T
 `SegmentedBar.percentDecimals?: 0 | 1` 默认 1，0 为整数占比；所有占比文字（图例、选择按钮、aria 摘要、余量）统一处理，valueFormatter 和原始比例/宽度不受影响。详见 `docs/segmented-bar.md`，示例 `/next/components/segmented-bar` 的“整数占比”。
 
 图例统一核查：Trend 的 Recharts Legend 由 formatter 显式设为正文色；Scatter、PairedDot、Combo、Comparison、Radar、Donut、SegmentedBar 已使用 HTML 图例且系列色只赋予标记，Heatmap 的连续刻度使用统一次要文字色，BoxPlot 无系列图例。P60 测试覆盖三主题、320/800/1440 宽度的真实引擎输出及注入尺寸的客户端提交；不等同于浏览器视觉验收。旧快照保留，仅在比较时迁移 P60 授权的象限标签位置/颜色。
+
+## P61：图例帮助与等距刻度
+
+`PairedMetric.help?: ReactNode`（`PairedDotChart.metrics` 的各项）在原生图例文字旁显示“?”，复用固定 coss Button / Popover；可访问名称为“指标名：指标说明”。两项可独立省略，未传 / null 不增加节点；帮助按钮不发出 `onSelect`，默认和 compact 密度均支持。键盘 Enter / Space 开合、Escape 关闭与关闭后焦点返回由 coss Popover 管理；真实浏览器验收交 Supervisor。宿主传入准确的分子分母说明，不隐藏原生图例再复制一套。
+
+```tsx
+<PairedDotChart label="错题：出错与再错" data={rows} unit="%" metrics={[
+  { id: 'error', label: '出错的学生占比', help: '未得满分学生数 / 有有效作答学生数，按学生去重。' },
+  { id: 'repeat', label: '再考时仍然出错', help: <p>原失分学生最近一次可比再考仍失分人数 / 原失分学生中有可比再考的人数。</p> },
+]} />
+```
+
+`TrendChart.yDomain="auto"` 与 `QuadrantScatterChart.xDomain/yDomain="auto"` 共用内部范围与步长计算。先留边，再按 1/2/5 × 10 的幂选等距步长并向外对齐两端；百分比步长至少为 1，数据都在 0–100 时仍限制在该区间。非百分比按数值量级取整步长，可保留小数刻度。48–83% 对应 30、40、50、60、70、80、90、100%，不会出现 30、40、60、80、100% 的短首段。ECharts 显式设置 interval，Recharts 显式设置 ticks 并保留全部 Y 轴刻度。上下界都是刻度；空、单点、恒定、负值仍有有效范围。原始值、象限阈值、提示框精度均不改。未传 auto 或显式数组域不增加刻度覆盖，不修改其原行为。
+
+复用检索：本轮读取固定 coss Popover / Button / Meter / Progress、既有 MetricSummary.help、DataRecordTable、RecordList、SegmentedBar、ComparisonChart 与 Prism Badge，读取本地 particles `table-particle.tsx` 的 p-table-3/4，复核本页及 SegmentedBar / RecordList / ComparisonChart 文档中 p-meter-3/4、p-progress-1/2/3、p-table-5/8 与 p-badge-16 的历史记录。量值条、标签、表格插槽已满足需求；图例帮助直接沿用 MetricSummary 的组合。按前置约定离线，未刷新远端 registry；通用数据组件不适用 Beautiful UI 执行组件，没有新第三方源码。
+
+示例仍在 `/next/components/paired-dot-chart#learning-properties`（两项分母帮助），以及 trend-chart / quadrant-chart 的同名锚点（auto 刻度）。表格与列表预查及可运行组合见 [学情记录组合](learning-record-composition.md)。

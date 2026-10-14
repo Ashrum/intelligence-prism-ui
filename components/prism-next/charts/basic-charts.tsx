@@ -4,7 +4,7 @@ import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAx
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 import { fitTrendTick } from "@/lib/prism-next/trend-ticks"
 import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
-import { formatChartValue, trendAutoDomain, type ChartDecimals } from "@/lib/prism-next/chart-options"
+import { formatChartValue, chartAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
 import { chartToneColor, type ChartTone } from "@/lib/prism-next/polar-chart-options"
 import { useChartTheme } from "./chart-theme"
 import { DataRecordTable } from "../data-display"
@@ -34,7 +34,7 @@ export function TrendChart({label,series,unit="",domain,yDomain,decimals,xTickMo
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
- const theme=useChartTheme(),activeDomain=yDomain==="auto"?trendAutoDomain(series.flatMap(s=>s.data.map(p=>p.value)),unit):yDomain??domain
+ const theme=useChartTheme(),autoScale=yDomain==="auto"?chartAutoScale(series.flatMap(s=>s.data.map(p=>p.value)),unit):undefined,activeDomain=yDomain==="auto"?autoScale!.domain:yDomain??domain
  const format=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?formatChartValue(value,unit,decimals):"—"
  const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}))
  const tickRows=rows.map(row=>({id:row.id,lines:series.flatMap(s=>s.data).find(p=>p.id===row.id&&p.tickLabel)?.tickLabel??[row.label]}))
@@ -52,7 +52,7 @@ export function TrendChart({label,series,unit="",domain,yDomain,decimals,xTickMo
  tick:({x,y,payload}:{x:string|number;y:string|number;payload:{value:string}})=>{
  const lines=tickRows.find(row=>row.id===payload.value)?.lines??[payload.value]
  return <text {...axis.tick} x={x} y={Number(y)+10} textAnchor="middle" dominantBaseline="hanging" data-trend-tick={payload.value}><title>{lines.join(" · ")}</title>{lines.map((line,i)=><tspan key={i} x={x} dy={i?18:0}>{fitTrendTick(line,tickWidth)}</tspan>)}</text>
- }}:{})}/><YAxis {...axis} {...(unit.includes("%")||unit.includes("％")?{allowDecimals:false}:{})} domain={activeDomain} tickFormatter={v=>formatChartValue(v,unit,unit.includes("%")||unit.includes("％")?0:decimals)}/><Tooltip {...(customTicks?{labelFormatter:(id:unknown)=>rows.find(row=>row.id===id)?.label??String(id)}:{})} contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8,...(enriched?{maxWidth:280,whiteSpace:"normal" as const}:{})}} formatter={enriched?(v,name,item)=>{
+ }}:{})}/><YAxis {...axis} {...(unit.includes("%")||unit.includes("％")?{allowDecimals:false}:{})} domain={activeDomain} {...(autoScale?{ticks:autoScale.ticks,interval:0,allowDataOverflow:true}:{})} tickFormatter={v=>formatChartValue(v,unit,unit.includes("%")||unit.includes("％")?0:decimals)}/><Tooltip {...(customTicks?{labelFormatter:(id:unknown)=>rows.find(row=>row.id===id)?.label??String(id)}:{})} contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8,...(enriched?{maxWidth:280,whiteSpace:"normal" as const}:{})}} formatter={enriched?(v,name,item)=>{
  const s=series.find(s=>s.id===item.dataKey),p=s?.data.find(p=>p.id===item.payload?.id)
  return [<span className="text-ui-hint text-foreground">{format(v)}{p?.symbol&&` · ${pointSymbolText[p.symbol]}`}{p?.valueLabel&&<span className="block">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>,name]
  }:v=>format(v)}/>{series.length>1&&<Legend formatter={value=><span className="text-ui-hint text-foreground">{value}</span>}/>}{series.map((s,i)=>{

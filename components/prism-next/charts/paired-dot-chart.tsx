@@ -1,12 +1,14 @@
 "use client"
 import type {ReactNode} from 'react'
 import type {EChartsOption} from 'echarts'
+import {Button} from '@/components/coss/button'
+import {Popover,PopoverTrigger,PopoverPopup} from '@/components/coss/popover'
 import {EChart} from './echart'
 import {useChartTheme} from './chart-theme'
 import {DataRecordTable} from '../data-display'
 import {chartDomain,withinDomain,formatChartValue,type ChartDecimals} from '@/lib/prism-next/chart-options'
 export type PairedRow={id:string;label:string;first:number|null;second:number|null;tag?:ReactNode}
-export type PairedMetric={id:string;label:string;color?:string}
+export type PairedMetric={id:string;label:string;color?:string;help?:ReactNode}
 export type PairedDotChartProps={data:PairedRow[];metrics:[PairedMetric,PairedMetric];label:string;unit?:string;decimals?:ChartDecimals;density?:"default"|"compact";connectPairs?:boolean;domain?:[number,number];selectedId?:string;onSelect?:(id:string,metricId?:string)=>void}
 export function PairedDotChart({data,metrics,label,unit='',decimals,domain,selectedId,onSelect,density='default',connectPairs=false}:PairedDotChartProps){
  const {palette,colors}=useChartTheme(),range=chartDomain(data.flatMap(d=>[d.first,d.second]),domain)
@@ -21,7 +23,7 @@ export function PairedDotChart({data,metrics,label,unit='',decimals,domain,selec
   return option
  }
  return <div className="min-w-0 space-y-4">
- <ul className="flex flex-wrap gap-x-5 gap-y-2 text-ui-body" aria-label="指标图例">{metrics.map((m,i)=><li key={m.id} className="flex items-center gap-2"><span aria-hidden className="inline-block size-2.5" style={{background:m.color??colors[i?3:1],borderRadius:i?0:'50%',transform:i?'rotate(45deg)':undefined}}/>{m.label}</li>)}</ul>
+ <ul className="flex flex-wrap gap-x-5 gap-y-2 text-ui-body" aria-label="指标图例">{metrics.map((m,i)=><li key={m.id} className="flex items-center gap-2"><span aria-hidden className="inline-block size-2.5" style={{background:m.color??colors[i?3:1],borderRadius:i?0:'50%',transform:i?'rotate(45deg)':undefined}}/>{m.label}{m.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs"/>} aria-label={`${m.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${m.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{m.help}</div></PopoverPopup></Popover>}</li>)}</ul>
  {data.length?(density==='compact'?<div className="space-y-3">{data.map(row=><div key={row.id} data-paired-row={row.id} className="min-w-0">
   <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-1 text-ui-body"><span className="min-w-0 flex-1 basis-40 whitespace-normal [overflow-wrap:anywhere]">{row.label}</span>{row.tag!=null&&<span className="min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere]">{row.tag}</span>}</div>
   <EChart label={`${label}：${row.label}`} onSelect={onSelect} height={100} option={chartOption([row],true)}/>
