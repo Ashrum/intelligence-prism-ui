@@ -11,7 +11,7 @@ import { useChartTheme } from "./chart-theme"
 import { DataRecordTable } from "../data-display"
 export type ChartPoint={id:string;label:string;value:number|null;tickLabel?:[string,string];symbol?:"circle"|"hollow-circle"|"diamond";valueLabel?:string;annotation?:string}
 export type ChartSeries={id:string;label:string;data:ChartPoint[];color?:string;lineStyle?:"solid"|"dashed";connect?:boolean;connectGaps?:boolean;tone?:ChartTone}
-export type BasicChartProps={dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
+export type BasicChartProps={legendPosition?:'bottom'|'top-left'|'none';dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
 const axis={tickLine:false,axisLine:false,tickMargin:10,tick:{fill:"var(--muted-foreground)",fontSize:12}}
 const pointSymbolText={circle:"圆点","hollow-circle":"空心圆",diamond:"菱形"}
 function TrendDot({cx,cy,point,color,active,onSelect}:{cx?:number;cy?:number;point?:ChartPoint;color:string;active?:boolean;onSelect?:()=>void}){
@@ -31,7 +31,7 @@ function TrendLabels({series,ids}:{series:ChartSeries[];ids:string[]}){
  const lines=projected.flatMap((rows,i)=>series[i].connect===false?[]:(series[i].connectGaps?rows.filter(p=>p!==null):rows).flatMap((p,index,connected)=>{const next=connected[index+1];return p&&next?[{x1:p.x,y1:p.y,x2:next.x,y2:next.y}]:[]}))
  return <g aria-hidden="true" className="pointer-events-none" data-trend-labels>{trendLabelLayout(points,plot,lines).map(item=><text key={`${item.id}:${item.kind}`} {...axis.tick} fill="var(--foreground)" x={item.x+item.width/2} y={item.y+13} textAnchor="middle" data-trend-label={item.kind}>{item.text}</text>)}</g>
 }
-export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,xTickMode="auto",height=260,onSelect,showData=true}:BasicChartProps){
+export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,xTickMode="auto",height=260,onSelect,showData=true,legendPosition}:BasicChartProps){
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
@@ -56,7 +56,7 @@ export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,d
  }}:{})}/><YAxis {...axis} {...(unit.includes("%")||unit.includes("％")?{allowDecimals:false}:{})} domain={activeDomain} {...(autoScale?{ticks:autoScale.ticks,interval:0,allowDataOverflow:true}:{})} tickFormatter={v=>formatChartValue(v,unit,unit.includes("%")||unit.includes("％")?0:decimals)}/><Tooltip {...(customTicks?{labelFormatter:(id:unknown)=>rows.find(row=>row.id===id)?.label??String(id)}:{})} contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8,...(enriched?{maxWidth:280,whiteSpace:"normal" as const}:{})}} formatter={enriched?(v,name,item)=>{
  const s=series.find(s=>s.id===item.dataKey),p=s?.data.find(p=>p.id===item.payload?.id)
  return [<span className="text-ui-hint text-foreground">{format(v)}{p?.symbol&&` · ${pointSymbolText[p.symbol]}`}{p?.valueLabel&&<span className="block">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>,name]
- }:v=>format(v)}/>{series.length>1&&<Legend formatter={value=><span className="text-ui-hint text-foreground">{value}</span>}/>}{series.map((s,i)=>{
+ }:v=>format(v)}/>{legendPosition!=="none"&&(series.length>1||legendPosition!==undefined&&series.length>0)&&<Legend {...(legendPosition==="top-left"?{verticalAlign:"top" as const,align:"left" as const}:{} )} formatter={value=><span className="text-ui-hint text-foreground">{value}</span>}/>}{series.map((s,i)=>{
  const color=s.color??(s.tone?chartToneColor(theme,i,s.tone):`var(--chart-${i%5+1})`),custom=s.connect===false||s.data.some(p=>p.symbol!==undefined)
  const dot=(props:{cx?:number;cy?:number;payload?:{id:string}},active=false)=><TrendDot {...props} active={active} color={color} point={s.data.find(p=>p.id===props.payload?.id)} onSelect={onSelect?()=>{if(props.payload)onSelect(props.payload.id,s.id)}:undefined}/>
  return <Line key={s.id} dataKey={s.id} name={s.label} type="linear" connectNulls={s.connect!==false&&s.connectGaps===true} stroke={color} {...(s.connect===false?{strokeOpacity:0}:{})} {...(s.lineStyle==="dashed"?{strokeDasharray:"5 4"}:{})} {...(custom?{dot:props=>dot(props),legendType:s.connect===false?"circle" as const:undefined}:{})} strokeWidth={2} isAnimationActive={false} activeDot={custom?props=>dot(props,true):{r:5,onClick:(_,payload:unknown)=>{const row=payload as {payload?:{id:string}};if(row.payload)onSelect?.(row.payload.id,s.id)}}}/>
@@ -83,6 +83,7 @@ function ComparisonReferenceLayer({lines,horizontal,binned,unit,band}:{lines:Pos
  </g>
 }
 export type ComparisonChartProps={
+ legendPosition?:'bottom'|'top-left'|'none'
  label:string;data:ComparisonChartPoint[];unit?:string;domain?:[number,number];onSelect?:(id:string)=>void;horizontal?:boolean;height?:number;referenceLines?:ComparisonReferenceLine[]
  showValueLabels?:boolean
  valueLabelFormatter?:(value:number,datum:ComparisonChartPoint)=>string
@@ -90,7 +91,7 @@ export type ComparisonChartProps={
  dataDisclosure?:ChartDataDisclosureMode|'details'|'none'
  variant?:'default'|'spark'
 }
-export function ComparisonChart({label,data,unit="",domain,onSelect,variant='default',horizontal=variant!=='spark',height=variant==='spark'?120:260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details'}:ComparisonChartProps){
+export function ComparisonChart({label,data,unit="",domain,onSelect,variant='default',horizontal=variant!=='spark',height=variant==='spark'?120:260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details',legendPosition}:ComparisonChartProps){
  const spark=variant==='spark'&&!horizontal
  const [containerWidth,setContainerWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setContainerWidth(Math.round(width))},[])
@@ -110,8 +111,10 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,variant='def
  ):undefined
  if(band)margin.top+=band.height
  const showReferenceLegend=referenceLabelPlacement==='legend'||band?.height===0
+ const referenceLegend=legendPosition!=="none"&&references.length>0&&(showReferenceLegend||legendPosition!==undefined)&&<ul aria-label="参考线标签" className="space-y-1 text-ui-hint">{references.map(line=><li key={line.id} className="flex min-w-0 items-start gap-2"><span aria-hidden className="mt-2 w-6 shrink-0 border-t border-dashed" style={{borderColor:referenceColor(line)}}/><span className="min-w-0 break-words [overflow-wrap:anywhere]">{referenceText(line)}</span></li>)}</ul>
  const dataTable=<><DataRecordTable rows={data} columns={[{id:"label",label:"项目",render:r=>r.label},{id:"value",label:unit||"数值",render:r=>r.value==null?"—":formatChartValue(r.value,unit)}]} onSelect={(dataDisclosure==='none'||dataDisclosure==='hidden')?undefined:onSelect}/>{references.length>0&&<section aria-label="参考线数据"><DataRecordTable rows={references} columns={[{id:"label",label:"参考线",render:r=><span className="whitespace-normal break-words">{r.label}</span>},{id:"value",label:binned?"分段轴数值":unit||"数值",render:r=>formatChartValue(r.value,binned?"":unit)} ]}/></section>}</>
  return <div className="space-y-3">
+  {legendPosition==="top-left"&&referenceLegend}
   <div role="group" aria-label={label} aria-description={description} style={{height}}>
    <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}} ref={referenceLabelPlacement==='plot'?measureContainer:undefined} onResize={referenceLabelPlacement==='plot'?measureWidth:undefined}>
     <BarChart data={data} layout={horizontal?"vertical":"horizontal"} accessibilityLayer margin={margin}>
@@ -137,7 +140,7 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,variant='def
     </BarChart>
    </ResponsiveContainer>
   </div>
-  {references.length>0&&showReferenceLegend&&<ul aria-label="参考线标签" className="space-y-1 text-ui-hint">{references.map(line=><li key={line.id} className="flex min-w-0 items-start gap-2"><span aria-hidden className="mt-2 w-6 shrink-0 border-t border-dashed" style={{borderColor:referenceColor(line)}}/><span className="min-w-0 break-words [overflow-wrap:anywhere]">{referenceText(line)}</span></li>)}</ul>}
+  {legendPosition!=="top-left"&&referenceLegend}
   {(dataDisclosure==='none'||dataDisclosure==='hidden')?<div className="sr-only" role="region" aria-label={`${label}：数据`}>{dataTable}</div>:<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{dataTable}</details>}
  </div>
 }

@@ -201,3 +201,29 @@ labelIds 是标签白名单，未传沿用既有 auto 行为；空数组不显�
 本次离线检索：读取本地固定 Card、Popover 及现有 DataRecordTable、MetricSummary、各图表；核对 `demos/table-particle.tsx` 的 Table/Badge/Frame 组合与本页记录的 coss particles p-table-3/4、p-meter-3/4、p-progress-1/2/3。披露复用已有表格与 sr-only 模式；绘图复用 Recharts / ECharts，无需新基础控件。按 Builder 前置约定未联网刷新 registry；此任务为通用数据分析图表，未引入 Beautiful UI 的 Agent 执行组件或第三方代码。coss、依赖、Token、目录数量不变。
 
 P62 自动回归包含 P61 默认 SSR/options 字节快照、所有披露路径、真实 ECharts 三主题多宽度与缩回恢复、真实 Recharts 客户端小柱图/空值/全缺测、指标网格与小图边界。仅 P58 已授权 compact 高度/新增轨道断言随本轮呈现调整，旧原始快照不改。浏览器验收：按分工由 Supervisor 执行。
+
+## P63：图例位置
+
+以下六项统一增加 `legendPosition?: 'bottom' | 'top-left' | 'none'`：`TrendChart`（`BasicChartProps`）、`ComparisonChart`（`ComparisonChartProps`）、`ComboChart`（`ComboChartProps`）、`ScatterChart` / `QuadrantScatterChart`（共用 `ScatterChartProps`）、`PairedDotChart`（`PairedDotChartProps`）。未传时保留原有行为，不统一改成 bottom。
+
+| 组件 | 省略属性 | top-left / bottom | none |
+| --- | --- | --- | --- |
+| TrendChart | 多系列图例在底部，单系列不显示 | 绘图区上方左对齐 / 底部；显式选用时单系列也显示 | 移除图例，释放图内图例空间 |
+| ComparisonChart | 有效参考线标签在下方；`referenceLabelPlacement='plot'` 时沿用图内标签及窄屏回退 | 将有效参考线图例置于绘图区上方左侧 / 下方；显式位置可与 plot 标签同时使用 | 不显示参考线图例；plot 标签与参考线本身保留 |
+| ComboChart | 上方左对齐，系列名附坐标轴及单位 | 上方左对齐 / 绘图下方、数据披露之前 | 移除系列图例 |
+| ScatterChart / QuadrantScatterChart | 有 groups 时上方左对齐 | 上方左对齐 / 绘图下方、数据披露之前；未提供 groups 不补造分组 | 移除点形图例，保留象限说明 |
+| PairedDotChart | 上方左对齐，含可选指标帮助 | 上方左对齐 / 整组绘图下方；default 与 compact 密度均适用 | 移除图例及其帮助按钮，宿主负责展示必要口径说明 |
+
+图例文字沿用单色正文，标记保留现有主题色、显式调用方颜色及形状；不更改数据、轴、缺测、点标签、提示框或选择意图。`none` 不等于 `dataDisclosure='hidden'`，数据表和已有的可访问披露保持原配置。ComparisonChart 无有效参考线时不补造柱系列图例；none 不删除参考线数据表。
+
+```tsx
+<TrendChart label="班级得分率与预期" series={series} legendPosition="top-left" />
+<QuadrantScatterChart {...quadrantProps} legendPosition="none" />
+<PairedDotChart {...pairedProps} legendPosition="bottom" />
+```
+
+六个组件页的 `#legend-position` 提供默认位置、上方左对齐、底部、隐藏图例四个按钮，以及 320px 容器、长中文与公式切换。默认展示 top-left；隐藏时由示例宿主提供说明。示例属于既有组件页评审夹具，不增加组件目录条目。
+
+复用依据：离线核对既有六个图表的 Recharts Legend / HTML 图例、固定 coss Button 与 Popover，以及本地 `demos/table-particle.tsx` 的 p-table-3/4 和本文已有的 particles 历史记录。基础控件与 Table / Frame 组合不提供图表图例定位；直接复用现有 Legend 和图例节点，仅调整公开属性和节点位置。通用数据分析图表不适用 Beautiful UI 的 Agent 执行组件；按 Builder 前置约定未联网刷新 registry，没有新增第三方代码、依赖、视觉令牌或 coss 改动。
+
+验证：`tests/p63-charts.test.mjs` 使用修改前从 `6ddecd2` 捕获的三主题快照，验证省略属性时 HTML 与 ECharts 配置一致，并检查节点顺序、隐藏图例后的披露与选择、Comparison plot 标签以及 PairedDot 帮助。`tests/p63-charts-client.test.mjs` 用真实 Recharts 和注入尺寸的 DOM 检查图例动态切换、单色文字、彩色标记和绘图区避让；此测试不是浏览器视觉、布局或键盘验收。浏览器验收按分工由 Supervisor 执行。
