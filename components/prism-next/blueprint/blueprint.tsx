@@ -2,6 +2,7 @@
 
 import { useId, useRef, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 
 /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */
@@ -65,6 +66,7 @@ export interface BpSegItem { value: string; label: ReactNode; description?: Reac
 export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; className?: string }
 /** Single choice as a segmented control (radiogroup). Arrow keys move and select; Home/End jump. For tab panels use coss Tabs. */
 export function BpSegTabs({ items, value, onValueChange, label, orientation = "horizontal", className }: BpSegTabsProps) {
+  const scroll = useHorizontalChoiceScroll(value, orientation === "horizontal")
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   const enabled = items.map((item, i) => item.disabled ? -1 : i).filter(i => i >= 0)
   const selected = items.findIndex(item => item.value === value && !item.disabled)
@@ -80,7 +82,7 @@ export function BpSegTabs({ items, value, onValueChange, label, orientation = "h
     if (next === undefined) return
     event.preventDefault(); refs.current[next]?.focus(); onValueChange(items[next].value)
   }
-  return <div role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)}>
+  return <div {...scroll} role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)}>
     {items.map((item, i) => <button key={item.value} ref={node => { refs.current[i] = node }} type="button" role="radio" aria-checked={item.value === value} tabIndex={i === current ? 0 : -1} disabled={item.disabled} onClick={() => onValueChange(item.value)} onKeyDown={event => move(event, i)}>
       {orientation === "vertical" ? <><b className="font-mono text-item-title">{item.label}</b>{item.description && <span className="text-ui-hint opacity-80">{item.description}</span>}</> : item.label}
     </button>)}

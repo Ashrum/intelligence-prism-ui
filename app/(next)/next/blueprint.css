@@ -77,7 +77,9 @@
 .bp-tool[data-icon] { width:32px; padding:0; }
 .bp-tool-count { font-family:var(--font-mono); font-weight:500; padding-left:8px; margin-left:2px; border-left:1px solid currentColor; }
 
-.bp-seg-tabs { display:flex; flex-wrap:wrap; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
+.bp-seg-tabs { display:flex; flex-wrap:nowrap; min-width:0; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
+.bp-seg-tabs[data-orientation="horizontal"] { overflow-x:auto; }
+.bp-seg-tabs[data-orientation="horizontal"] > button { flex-shrink:0; }
 .bp-seg-tabs > button { border:0; border-right:1px solid var(--border); background:none; padding:7px 14px; min-height:34px; font-size:var(--text-ui-action); font-weight:500; color:var(--muted-foreground); white-space:nowrap; cursor:pointer; }
 .bp-seg-tabs > button:last-child { border-right:0; }
 .bp-seg-tabs > button:hover { color:var(--foreground); background:var(--secondary); }

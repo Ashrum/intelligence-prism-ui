@@ -4,6 +4,60 @@
 
 ## 当前
 
+- 轮次：v7 · Tabs 320px 横向溢出；Builder 实现与自测完成，Supervisor 浏览器验收结论 `PASS WITH NOTES`（见下方「Supervisor 浏览器验收」）。
+- 日期 / 基线：2026-10-14，`feat/learning-charts` · `46303a46304955276af030c5059613096ef3be3f`（含 BPv6 `190f15d` 与 P64）。授权依据：`task-BPv7.md` 记录 PO 指示“继续做第 2 项 Tabs 溢出”。
+- 工作树：开工干净，沿用当前分支，不提交、推送、建 PR、启动服务或发布。P64、固定 coss、AGENTS、核心三主题 Token、依赖和既有测试均未改；[保护核对](evidence/v7/integrity.json)。
+- 范围：`components/prism-next/demos/navigation.tsx`、`components/prism-next/blueprint/blueprint.tsx`、内部布局 hook `components/prism-next/use-horizontal-choice-scroll.ts`、`app/(next)/next/blueprint.css`；新增 `tests/tabs-overflow.test.mjs`；本文、`docs/blueprint-theme.md` 与 `docs/blueprint/evidence/v7/`。[实际运行时 / 测试 diff](evidence/v7/scope.diff)。
+
+### 根因、修复与边界
+
+- 正式路由 `/next/components/tabs` 的第一组四个 coss Tab 使用 w-fit / shrink-0 / whitespace-nowrap，示例区没有滚动边界。Supervisor 修复前记录 light scrollWidth=339、末项“已锁定”right=337，历史 blueprint=342；这是标签行溢出，非面板内容。代码行号、[前](evidence/v7/tabs-before.html) / [后](evidence/v7/tabs-after.html) SSR 与完整定位见 [inspection.md](evidence/v7/inspection.md)。
+- 两组 Tabs 只增加局部滚动包装，面板留在外侧，核心视觉与尺寸保留。内部 hook 在焦点、选中值、容器 / 标签尺寸变化时调整局部 scrollLeft，不移动页面或主动聚焦；方向键只聚焦、Enter / Space 激活仍由 coss / Base UI 控制。
+- 两个 Agent 示例已有局部滚动包装，SSR 确认后保留原文件。bp-seg-tabs 原为换行，水平版本改为单行滚动；纵向布局及 radio 方向键选择契约保留。仅修改显式 bp-* 布局，不新增普通控件视觉覆盖、目录条目、Token、字号或依赖。
+- 离线检索 coss 缓存 registry 的 tabs / p-tabs-1…15 描述，读取 p-tabs-1 源码；无已确认的现成滚动组合，沿用本地 Agent 示例外层滚动方式。未联网刷新，没有复制第三方代码；[检索摘要](evidence/v7/reuse.json)。
+- Toast：源码和构建 CSS 为 fixed / right inset / 合法 calc 宽度，未确认它独立计入页面溢出；SSR 无法测量客户端 Portal。没有据假设覆盖 Toast，待 Supervisor 做临时隐藏前后 scrollWidth 对比。
+- 偏差：无设计 patch，按任务手动适配；只读离线检索代替联网，浏览器按前置约定交 Supervisor。没有新增待 PO 决定项。Builder 自测不是 Review 或视觉验收结论。
+
+### 本轮验证
+
+按 §6.1 顺序，构建后全量测试；README 对应运行目录变量位于 `.sites-runtime/`，保留进程 HOME。以下为最终代码的本轮结果，[命令 / 退出码](evidence/v7/checks.json)。
+
+| 命令 | 实际结果 |
+| --- | --- |
+| `node scripts/check-math-font.mjs` | 完整字体与许可通过，退出 0；[日志](evidence/v7/math-font.log) |
+| `node scripts/check-typography.mjs` | 304 个 owned TSX 通过，退出 0；[日志](evidence/v7/typography.log) |
+| `node node_modules/vinext/dist/cli.js build` | 构建成功，退出 0；保留 chunk 大小与静态路由分类提示；[日志](evidence/v7/build.log) |
+| `node --test tests/*.test.mjs` | 2023/2023，fail 0，skipped 0，退出 0；[日志](evidence/v7/full-tests.log) |
+| `node node_modules/typescript/bin/tsc --noEmit` | 0 条诊断，退出 0；[日志](evidence/v7/tsc.log) |
+| `node --test tests/tabs-overflow.test.mjs` | 7/7，fail 0，skipped 0，退出 0；[日志](evidence/v7/targeted-tests.log) |
+
+新增测试覆盖真实组件 SSR、两个 Agent 示例现有结构、Blueprint 横纵语义、局部滚动计算、长标签开头及宽容器无操作，并用构建 worker.fetch 验证正式路由 HTTP 200；不是源码正则或 SSR 替代视觉验收。初始测试 harness 的 next/link ESM 后缀、glimm CJS 导入问题已按既有测试的 ESM alias 方式修正；无最终失败需要干净基线复现。未修改既有断言。
+
+### Supervisor 浏览器验收（2026-10-14，5173，浏览器面板 Viewport 模拟 320×800）
+
+- 通过：`/next/components/tabs` 在 blueprint / light / paper / dark 下 `documentElement.scrollWidth` 均为 320（修复前 light 为 339）；临时隐藏 `toast-viewport` 前后都是 320，Toast 不造成横向溢出。
+- 通过（blueprint）：焦点在「内容」时按两次 → 移到「历史记录」，局部滚动容器 scrollLeft = 22.5，该项完整可见；按 Enter 后 aria-selected=true。
+- 通过：`/next/foundations/blueprint`（blueprint、light）和 `/next/components/agent-components`（blueprint、dark）在 320 下 scrollWidth 都是 320，其余越界元素都在局部滚动容器内。
+- 未验：1280 像素级回归（≥640px 默认视觉只有 SSR 对比）、触摸横滚、Home / End、禁用项「已锁定」、嵌套预览、真机与读屏器。没有截图存档。
+
+### 交给 Supervisor 的浏览器验收清单
+
+使用 Supervisor 已运行服务（以下以 `http://localhost:5173` 为例），四主题 light / paper / dark / blueprint × 320×800 / 1280×960；宽屏另对照 ≥640px 原视觉。
+
+1. `/next/components/tabs`：320px 时 `document.documentElement.scrollWidth` 应为 **320**，1280px 时应为 1280。两组保持单行，只有标签行可横滚，面板自然换行。横滚看“已锁定”，禁用状态不变；无第二行控件。页面宽度是待验期望，不是 Builder 实测。
+2. Tab 进入“内容”，ArrowRight 到“材料信息”再到“历史记录”：焦点标签自动进入可见区，未按 Enter / Space 前不切面板；Enter 显示“当前为初始示例版本，尚无修订记录。”；Space 切换同样生效。检查禁用“已锁定”不能激活、左右回移及 Home / End、焦点环、下划线指示器、触摸横滚。
+3. `/next/foundations/blueprint#actions`：水平“答卷状态”单行局部滚动，方向键按 radio 原语义选择，跳过禁用项；End 到“异常”，说明显示“当前：4 份未提交或扫描失败”。纵向“页面主题”布局不变。选末项后 1280→320 收窄应滚动可见；加入长中文 / 公式标签，单项过长时可滚动阅读且字号不缩小。
+4. `/next/components/agent-components#context-summary-review`：展开“从任务依据到执行结果”的全部示例，已有七项标签局部滚动；`/next/components/agent-components/artifact-preview`：呈现与说明标签键盘移动可见、hash 切换回归。全局 blueprint 下预览区分别设置 light / paper / dark、320px，检查嵌套主题及滚动边界；不把已有预览固定宽度的局部滚动记作页面溢出。
+5. Toast：记录内外视口宽度、scrollX、toast-viewport rect 与 computed inset / right / width；临时隐藏后还原 Toast，并比较页面 scrollWidth，应都为 320。若隐藏前超宽、隐藏后恢复，记录独立缺陷交 Prism 层修复。附实际主题、尺寸、路由、日期与基线截图。
+
+### 未验证范围
+
+浏览器验收：按分工由 Supervisor 执行。四主题真实像素、焦点 / 键盘 / 触摸交互、Toast 实际滚动贡献、移动设备、读屏器及全站视觉未验；本轮没有截图。核心三主题 ≥640px 默认视觉保持的判断目前基于 diff / SSR，不能记为浏览器通过。
+
+## 历史
+
+### v6-R1 · Supervisor 返工与复验 · 2026-10-14（原当前，原样保留）
+
 - 轮次：v6-R1 · Supervisor REWORK 返工；Builder 实现与自测完成；Supervisor 修复后复验结论 `PASS WITH NOTES`（见下方「修复后复验」）。
 - 日期 / 基线：2026-10-14，`feat/learning-charts` · `7c2783346081ed23fd70ebb9414f0e879745a60c` + 原 v5 文档与未提交 v6。按 `task-BPv6-R1.md` 执行；原 PO “仅蓝图主题（推荐）”授权范围保持不变。
 - 工作树：沿用现有分支及未提交改动，不提交、推送、创建 PR、发布或启动服务。AGENTS、v4/v5 归档与截图、冻结 coss 字节未变；P63 已提交内容未改动。本轮增量见 [scope.diff](evidence/v6-r1/scope.diff)，保护检查见 [integrity.json](evidence/v6-r1/integrity.json)。
@@ -67,7 +121,6 @@
 
 浏览器验收：按分工由 Supervisor 执行。真实移动设备、读屏器、实体打印和全组件视觉未验；本轮未生成截图。Builder 自测不等同于 Supervisor Review 或 PO 批准，无新增产品决定待 PO。
 
-## 历史
 
 ### v6 · 320px 热力图方案 B · 2026-10-14（原当前，原样保留）
 
