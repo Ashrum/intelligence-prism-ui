@@ -1,23 +1,34 @@
 "use client"
 import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 import { useCallback, useState } from "react"
-import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 import { fitTrendTick } from "@/lib/prism-next/trend-ticks"
 import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
 import { formatChartValue, chartAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
 import { chartToneColor, type ChartTone } from "@/lib/prism-next/polar-chart-options"
+import { ChartLegend, ChartMarker, type ChartLegendItem } from "./chart-legend"
 import { useChartTheme } from "./chart-theme"
 import { DataRecordTable } from "../data-display"
 export type ChartPoint={id:string;label:string;value:number|null;tickLabel?:[string,string];symbol?:"circle"|"hollow-circle"|"diamond";valueLabel?:string;annotation?:string}
 export type ChartSeries={id:string;label:string;data:ChartPoint[];color?:string;lineStyle?:"solid"|"dashed";connect?:boolean;connectGaps?:boolean;tone?:ChartTone}
+/** Pure props adapter: no theme hook or caller-side colour reconstruction required. */
+export function trendLegendItems(series: readonly ChartSeries[]): ChartLegendItem[] {
+ return series.flatMap<ChartLegendItem>((s,i)=>{
+  const color=s.color??(s.tone?undefined:`var(--chart-${i%5+1})`)
+  if(s.connect!==false)return [{id:s.id,label:s.label,marker:s.lineStyle==="dashed"?"dashed-line":"line",color,tone:s.tone}]
+  const symbols=[...new Set(s.data.filter(p=>p.value!==null&&Number.isFinite(p.value)).map(p=>p.symbol??"circle"))]
+  if(!symbols.length)symbols.push(s.data[0]?.symbol??"circle")
+  return symbols.map(symbol=>({id:symbols.length===1?s.id:`${s.id}:${symbol}`,label:symbols.length===1?s.label:`${s.label} · ${pointSymbolText[symbol]}`,marker:symbol==="diamond"?"diamond":symbol==="hollow-circle"?"hollow-dot":"dot",color,tone:s.tone}))
+ })
+}
 export type BasicChartProps={legendPosition?:'bottom'|'top-left'|'none';dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
 const axis={tickLine:false,axisLine:false,tickMargin:10,tick:{fill:"var(--muted-foreground)",fontSize:12}}
 const pointSymbolText={circle:"圆点","hollow-circle":"空心圆",diamond:"菱形"}
 function TrendDot({cx,cy,point,color,active,onSelect}:{cx?:number;cy?:number;point?:ChartPoint;color:string;active?:boolean;onSelect?:()=>void}){
  if(!point||point.value===null||!Number.isFinite(point.value)||cx===undefined||cy===undefined)return <g/>
  const r=active?6:4
- return <g onClick={onSelect} data-trend-symbol={point.symbol??"circle"}>{point.symbol==="diamond"?<path d={`M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`} fill={color} stroke={color}/>:<circle cx={cx} cy={cy} r={r} stroke={color} strokeWidth={2} fill={point.symbol==="hollow-circle"?"var(--background)":color}/>}</g>
+ return <g onClick={onSelect} data-trend-symbol={point.symbol??"circle"}><ChartMarker marker={point.symbol==="diamond"?"diamond":point.symbol==="hollow-circle"?"hollow-dot":"dot"} color={color} cx={cx} cy={cy} r={r}/></g>
 }
 function TrendLabels({series,ids}:{series:ChartSeries[];ids:string[]}){
  const plot=usePlotArea(),yScale=useYAxisScale()
@@ -47,7 +58,8 @@ export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,d
  const enriched=series.some(s=>s.connectGaps||s.connect===false||s.lineStyle==="dashed"||s.data.some(p=>p.symbol||p.valueLabel||p.annotation))
  const annotations=series.some(s=>s.data.some(p=>p.valueLabel||p.annotation))
  const description=enriched?series.map(s=>`${s.label}：${s.connect===false?"仅画点，不连线":(s.lineStyle==="dashed"?"虚线":"实线")+(s.connectGaps?"，跨缺测连线":"")}`).join("；"):undefined
- return <div className="space-y-3"><div role="group" aria-label={label} {...(description?{'aria-description':description}:{})} style={{height}}><ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}} ref={customTicks?measureContainer:undefined} onResize={customTicks?measureWidth:undefined}><LineChart data={rows} accessibilityLayer margin={annotations?{...margin,top:30,bottom:24}:margin}><CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 4"/><XAxis {...axis} dataKey={customTicks?"id":"label"} {...(customTicks?{
+ const legend=legendPosition!=="none"&&(series.length>1||legendPosition!==undefined&&series.length>0)?<ChartLegend items={trendLegendItems(series)} label="系列图例" align={legendPosition==="top-left"?"left":"center"}/>:null
+ return <div className="space-y-3">{legendPosition==="top-left"&&legend}<div role="group" aria-label={label} {...(description?{'aria-description':description}:{})} style={{height}}><ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}} ref={customTicks?measureContainer:undefined} onResize={customTicks?measureWidth:undefined}><LineChart data={rows} accessibilityLayer margin={annotations?{...margin,top:30,bottom:24}:margin}><CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 4"/><XAxis {...axis} dataKey={customTicks?"id":"label"} {...(customTicks?{
  interval:xTickMode==="all"?0:"preserveStartEnd" as const,height:tickHeight,
  tickFormatter:(id:string)=>{const lines=tickRows.find(row=>row.id===id)?.lines??[id];return fitTrendTick(lines.reduce((longest,line)=>comparisonTextWidth(line,axis.tick.fontSize)>comparisonTextWidth(longest,axis.tick.fontSize)?line:longest,""),tickWidth)},
  tick:({x,y,payload}:{x:string|number;y:string|number;payload:{value:string}})=>{
@@ -56,11 +68,11 @@ export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,d
  }}:{})}/><YAxis {...axis} {...(unit.includes("%")||unit.includes("％")?{allowDecimals:false}:{})} domain={activeDomain} {...(autoScale?{ticks:autoScale.ticks,interval:0,allowDataOverflow:true}:{})} tickFormatter={v=>formatChartValue(v,unit,unit.includes("%")||unit.includes("％")?0:decimals)}/><Tooltip {...(customTicks?{labelFormatter:(id:unknown)=>rows.find(row=>row.id===id)?.label??String(id)}:{})} contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8,...(enriched?{maxWidth:280,whiteSpace:"normal" as const}:{})}} formatter={enriched?(v,name,item)=>{
  const s=series.find(s=>s.id===item.dataKey),p=s?.data.find(p=>p.id===item.payload?.id)
  return [<span className="text-ui-hint text-foreground">{format(v)}{p?.symbol&&` · ${pointSymbolText[p.symbol]}`}{p?.valueLabel&&<span className="block">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>,name]
- }:v=>format(v)}/>{legendPosition!=="none"&&(series.length>1||legendPosition!==undefined&&series.length>0)&&<Legend {...(legendPosition==="top-left"?{verticalAlign:"top" as const,align:"left" as const}:{} )} formatter={value=><span className="text-ui-hint text-foreground">{value}</span>}/>}{series.map((s,i)=>{
+ }:v=>format(v)}/>{series.map((s,i)=>{
  const color=s.color??(s.tone?chartToneColor(theme,i,s.tone):`var(--chart-${i%5+1})`),custom=s.connect===false||s.data.some(p=>p.symbol!==undefined)
  const dot=(props:{cx?:number;cy?:number;payload?:{id:string}},active=false)=><TrendDot {...props} active={active} color={color} point={s.data.find(p=>p.id===props.payload?.id)} onSelect={onSelect?()=>{if(props.payload)onSelect(props.payload.id,s.id)}:undefined}/>
  return <Line key={s.id} dataKey={s.id} name={s.label} type="linear" connectNulls={s.connect!==false&&s.connectGaps===true} stroke={color} {...(s.connect===false?{strokeOpacity:0}:{})} {...(s.lineStyle==="dashed"?{strokeDasharray:"5 4"}:{})} {...(custom?{dot:props=>dot(props),legendType:s.connect===false?"circle" as const:undefined}:{})} strokeWidth={2} isAnimationActive={false} activeDot={custom?props=>dot(props,true):{r:5,onClick:(_,payload:unknown)=>{const row=payload as {payload?:{id:string}};if(row.payload)onSelect?.(row.payload.id,s.id)}}}/>
- })}{annotations&&<TrendLabels series={series} ids={rows.map(r=>r.id)}/>}</LineChart></ResponsiveContainer></div>{(dataDisclosure!==undefined||showData)&&<ChartDataDisclosure mode={dataDisclosure} label={label}>{description&&<p className="text-ui-hint text-muted-foreground">{description}。标注避让后放不下时仅在提示框和本表显示。</p>}<DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=><>{r.label}{tickRows.find(row=>row.id===r.id)?.lines.length===2&&<span className="block">{tickRows.find(row=>row.id===r.id)!.lines.join(" · ")}</span>}</>},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id],p=s.data.find(p=>p.id===r.id);return <span>{format(value)}{p?.symbol&&<span className="block">{pointSymbolText[p.symbol]}</span>}{p?.valueLabel&&<span className="block whitespace-normal break-words">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>}}))]} onSelect={dataDisclosure!=="hidden"&&onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></ChartDataDisclosure>}</div>
+ })}{annotations&&<TrendLabels series={series} ids={rows.map(r=>r.id)}/>}</LineChart></ResponsiveContainer></div>{legendPosition!=="top-left"&&legend}{(dataDisclosure!==undefined||showData)&&<ChartDataDisclosure mode={dataDisclosure} label={label}>{description&&<p className="text-ui-hint text-muted-foreground">{description}。标注避让后放不下时仅在提示框和本表显示。</p>}<DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=><>{r.label}{tickRows.find(row=>row.id===r.id)?.lines.length===2&&<span className="block">{tickRows.find(row=>row.id===r.id)!.lines.join(" · ")}</span>}</>},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id],p=s.data.find(p=>p.id===r.id);return <span>{format(value)}{p?.symbol&&<span className="block">{pointSymbolText[p.symbol]}</span>}{p?.valueLabel&&<span className="block whitespace-normal break-words">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>}}))]} onSelect={dataDisclosure!=="hidden"&&onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></ChartDataDisclosure>}</div>
 }
 export type { ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 export type ComparisonChartPoint=ChartPoint & {range?:[number,number]}
@@ -91,6 +103,10 @@ export type ComparisonChartProps={
  dataDisclosure?:ChartDataDisclosureMode|'details'|'none'
  variant?:'default'|'spark'
 }
+export function comparisonLegendItems({data,domain,referenceLines,unit=""}: Pick<ComparisonChartProps,"data"|"domain"|"referenceLines"|"unit">): ChartLegendItem[] {
+ const numericDomain=comparisonDomain(data,domain),binned=data.some(p=>p.range!==undefined)
+ return (referenceLines??[]).flatMap((line,index)=>comparisonReferencePosition(line.value,data,numericDomain)===null?[]:[{id:`reference-${index}`,label:`${line.label}：${formatChartValue(line.value,binned?"":unit)}`,marker:"dashed-line",color:referenceColor(line)}])
+}
 export function ComparisonChart({label,data,unit="",domain,onSelect,variant='default',horizontal=variant!=='spark',height=variant==='spark'?120:260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details',legendPosition}:ComparisonChartProps){
  const spark=variant==='spark'&&!horizontal
  const [containerWidth,setContainerWidth]=useState(600)
@@ -111,7 +127,7 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,variant='def
  ):undefined
  if(band)margin.top+=band.height
  const showReferenceLegend=referenceLabelPlacement==='legend'||band?.height===0
- const referenceLegend=legendPosition!=="none"&&references.length>0&&(showReferenceLegend||legendPosition!==undefined)&&<ul aria-label="参考线标签" className="space-y-1 text-ui-hint">{references.map(line=><li key={line.id} className="flex min-w-0 items-start gap-2"><span aria-hidden className="mt-2 w-6 shrink-0 border-t border-dashed" style={{borderColor:referenceColor(line)}}/><span className="min-w-0 break-words [overflow-wrap:anywhere]">{referenceText(line)}</span></li>)}</ul>
+ const referenceLegend=legendPosition!=="none"&&references.length>0&&(showReferenceLegend||legendPosition!==undefined)&&<ChartLegend label="参考线标签" items={comparisonLegendItems({data,domain,referenceLines,unit})}/>
  const dataTable=<><DataRecordTable rows={data} columns={[{id:"label",label:"项目",render:r=>r.label},{id:"value",label:unit||"数值",render:r=>r.value==null?"—":formatChartValue(r.value,unit)}]} onSelect={(dataDisclosure==='none'||dataDisclosure==='hidden')?undefined:onSelect}/>{references.length>0&&<section aria-label="参考线数据"><DataRecordTable rows={references} columns={[{id:"label",label:"参考线",render:r=><span className="whitespace-normal break-words">{r.label}</span>},{id:"value",label:binned?"分段轴数值":unit||"数值",render:r=>formatChartValue(r.value,binned?"":unit)} ]}/></section>}</>
  return <div className="space-y-3">
   {legendPosition==="top-left"&&referenceLegend}

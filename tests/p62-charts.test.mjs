@@ -1,3 +1,4 @@
+import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -18,9 +19,9 @@ function expectedAfterBPv6(entry) {
     }),
   };
 }
-for (const entry of baseline.map(expectedAfterBPv6)) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR and chart options`, () => {
+for (const entry of baseline.map(expectedAfterBPv6)) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR outside P64 legends and chart options`, () => {
   const out = capture(entry.name, entry.props, entry.theme);
-  assert.equal(out.html, entry.html);
+  assert.equal(withoutP64Legend(out.html), withoutP64Legend(entry.html));
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);
 });
 
@@ -31,7 +32,7 @@ for (const entry of baseline.map(expectedAfterBPv6).filter(e => e.name !== 'Metr
   assert.match(hidden, /<table/); assert.match(hidden, /<th/); assert.match(hidden, /<td/);
   assert.doesNotMatch(hidden, /<button|aria-hidden="true"|hidden=""/);
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), capture(entry.name, entry.props, entry.theme).charts.map(c => optionJSON(c.option)));
-  assert.equal(capture(entry.name, { ...entry.props, dataDisclosure: 'visible' }, entry.theme).html, entry.html);
+  assert.equal(withoutP64Legend(capture(entry.name, { ...entry.props, dataDisclosure: 'visible' }, entry.theme).html), withoutP64Legend(entry.html));
 });
 
 test('P62 disclosure compatibility: explicit Trend hidden wins over showData=false; Comparison legacy aliases agree', () => {

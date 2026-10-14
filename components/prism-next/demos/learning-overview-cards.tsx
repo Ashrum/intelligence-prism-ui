@@ -6,7 +6,8 @@ import { Button } from "@/components/coss/button"
 import { Badge } from "../badge"
 import { DemoSection, Feedback } from "../demo-parts"
 import { MetricSummary, DataRecordTable, type MetricSummaryItem } from "../data-display"
-import { TrendChart, ComparisonChart } from "../charts/basic-charts"
+import { TrendChart, ComparisonChart, trendLegendItems } from "../charts/basic-charts"
+import { ChartLegend } from "../charts/chart-legend"
 import { QuadrantScatterChart } from "../charts/scatter-chart"
 import { PairedDotChart } from "../charts/paired-dot-chart"
 import { SegmentedBar, type SegmentedBarSegment } from "../charts/segmented-bar"
@@ -50,8 +51,8 @@ export function LearningOverviewCards() {
       <div className="grid min-w-0 items-start gap-4 @min-[900px]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Card><MetricSummary layout="grid" items={edge ? overviewMetrics.map((item, i) => ({ ...item, label: i === 0 ? "近期得分率与长中文公式 x² + y² = 1 的适用范围" : item.label, visual: i === 0 ? { kind: "sparkline", values: [null, 0, null] } : item.visual })) : overviewMetrics} /></Card>
         <Card className="min-w-0 gap-3 p-4">
-          <h3 className="text-block-title">班级得分率与预期</h3>
-          <TrendChart label="班级得分率与预期" series={learningTrendSeries} unit="%" yDomain="auto" xTickMode="all" height={320} dataDisclosure={disclosure} onSelect={select} />
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><h3 className="text-block-title">班级得分率与预期</h3><ChartLegend items={trendLegendItems(learningTrendSeries)} align="right" className="ml-auto flex-1 basis-64" /></div>
+          <TrendChart legendPosition="none" label="班级得分率与预期" series={learningTrendSeries} unit="%" yDomain="auto" xTickMode="all" height={320} dataDisclosure={disclosure} onSelect={select} />
         </Card>
       </div>
       <Card className="min-w-0 gap-3 p-4">

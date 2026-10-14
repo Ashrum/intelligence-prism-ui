@@ -62,9 +62,10 @@ test('P60 trend defaults retain auto ticks; explicit two-row text is disclosed a
 
 for(const theme of ['light','paper','dark'])test(`P60 ${theme}: trend legend formatter uses foreground while series retain distinct colours`,()=>{
  const out=capture('TrendChart',{label:'趋势',series:api.learningTrendSeries},theme);
- const legend=out.nodes.find(n=>n.type?.displayName==='Legend'||n.type?.name==='Legend');
+ const legend=out.nodes.find(n=>n.type===api.ChartLegend);
  assert.ok(legend);
- for(const label of ['实际得分率','新情境检测'])assert.equal(render(legend.props.formatter(label)),`<span class="text-ui-hint text-foreground">${label}</span>`);
+ for(const label of ['实际得分率','新情境检测'])assert.ok(legend.props.items.some(item=>item.label===label));
+ assert.match(out.html,/text-ui-hint text-foreground/);
  const lines=out.nodes.filter(n=>n.type?.displayName==='Line'||n.type?.name==='Line');
  assert.notEqual(lines[0].props.stroke,lines[3].props.stroke);
 });

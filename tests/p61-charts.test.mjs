@@ -55,8 +55,8 @@ for (const theme of ['light', 'paper', 'dark']) test(`P61 ${theme}: paired legen
     assert.equal((out.html.match(/data-slot="popover-trigger"/g) || []).length, 1);
     assert.match(out.html, /aria-label="出错：指标说明"/); assert.match(out.html, /aria-haspopup="dialog"/); assert.match(out.html, /aria-expanded="false"/);
     assert.doesNotMatch(out.html, /再错：指标说明/);
-    const popup = out.nodes.find(n => n.props['aria-label'] === '出错：指标说明' && n.props.className === 'max-w-72');
-    assert.match(render(popup.props.children), /<strong>原失分学生的可比再考<\/strong>/);
+    const legend = out.nodes.find(n => n.type === api.ChartLegend);
+    assert.match(render(legend.props.items[0].help), /<strong>原失分学生的可比再考<\/strong>/);
     assert.equal(selections, 0);
   }
   assert.equal(optionJSON(original.charts[0].option), optionJSON(capture('PairedDotChart', props, theme).charts[0].option));

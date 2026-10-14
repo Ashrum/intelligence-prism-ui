@@ -21,21 +21,21 @@ for (const theme of ['light', 'paper', 'dark']) test(`P63 ${theme}: real Rechart
     for (const legendPosition of ['top-left', 'bottom', 'none', 'top-left']) {
      await act(() => root.render(h(api.TrendChart, { label: '趋势', series, legendPosition })));
      await act(() => { for (const o of observers) o.callback([{ contentRect: { width, height: 260 } }]); });
-     const wrappers = nodes(host, n => hasClass(n, 'recharts-legend-wrapper'));
+     const wrappers = nodes(host, n => n.attributes?.['data-chart-legend'] !== undefined);
      assert.equal(wrappers.length, legendPosition === 'none' ? 0 : 1);
      if (wrappers.length) {
-      const wrapper = wrappers[0], list = nodes(wrapper, n => n.tagName === 'UL')[0];
-      assert.equal(list.style.textAlign, legendPosition === 'top-left' ? 'left' : 'center');
-      assert.equal(parseFloat(wrapper.style[legendPosition === 'top-left' ? 'top' : 'bottom']), legendPosition === 'top-left' ? 12 : 6);
-      const labels = nodes(wrapper, n => hasClass(n, 'text-foreground'));
+      const list = wrappers[0];
+      assert.ok(hasClass(list, legendPosition === 'top-left' ? 'justify-start' : 'justify-center'));
+      const plot = nodes(host, n => n.attributes?.role === 'group')[0];
+      assert.equal(list.parentNode, plot.parentNode, 'normal-flow sibling cannot overlay the plot');
+      const siblings = list.parentNode.childNodes;
+      assert.equal(siblings.indexOf(list) < siblings.indexOf(plot), legendPosition === 'top-left');
+      const labels = nodes(list, n => hasClass(n, 'text-foreground'));
       assert.equal(labels.length, 2); assert.ok(labels.every(n => hasClass(n, 'text-ui-hint')));
-      const icons = nodes(wrapper, n => hasClass(n, 'recharts-legend-icon'));
+      const icons = nodes(list, n => n.tagName === 'LINE');
       assert.deepEqual(icons.map(n => n.attributes.stroke).sort(), ['#123456', '#654321']);
-      if (legendPosition === 'top-left') {
-       const horizontalGrid = nodes(host, n => hasClass(n, 'recharts-cartesian-grid-horizontal'))[0];
-       const lines = nodes(horizontalGrid, n => n.tagName === 'LINE');
-       assert.ok(lines.length > 0 && lines.every(n => +n.attributes.y1 >= 48), 'plot begins below injected 36px legend');
-      }
+      assert.equal(nodes(host, n => hasClass(n, 'recharts-legend-wrapper')).length, 0);
+
      }
      assert.equal(nodes(host, n => hasClass(n, 'recharts-line-curve')).length, 2);
      assert.equal(nodes(host, n => n.tagName === 'TABLE').length, 1);

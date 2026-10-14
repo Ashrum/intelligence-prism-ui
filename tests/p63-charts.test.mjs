@@ -1,15 +1,16 @@
+import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
+import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
 
 // Captured before P63 edits from 6ddecd2, including multi-series and grouped legends.
 const baseline = JSON.parse(await readFile(new URL('./fixtures/p63-defaults-before.json', import.meta.url), 'utf8'));
 const legendLabels = { ComparisonChart: '参考线标签', ComboChart: '系列与坐标轴', ScatterChart: '点形图例', QuadrantScatterChart: '点形图例', PairedDotChart: '指标图例' };
 for (const entry of baseline) {
- test(`P63 ${entry.theme} ${entry.name}: omitted position preserves baseline markup and options`, () => {
+ test(`P63 ${entry.theme} ${entry.name}: omitted position preserves non-legend baseline markup and options`, () => {
   const out = capture(entry.name, entry.props, entry.theme);
-  assert.equal(out.html, entry.html);
+  assert.equal(withoutP64Legend(out.html), withoutP64Legend(entry.html));
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);
  });
  test(`P63 ${entry.theme} ${entry.name}: positions affect only legend, data and callbacks survive none`, () => {
@@ -18,28 +19,17 @@ for (const entry of baseline) {
    assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);
    assert.equal(out.html.slice(out.html.indexOf('<details')), entry.html.slice(entry.html.indexOf('<details')));
   }
-  if (entry.name === 'TrendChart') {
-   const legend = out => out.nodes.find(n => n.props.formatter && !n.props.contentStyle && n.type?.displayName === 'Legend');
-   // Recharts Legend is a function with no stable displayName in all builds; its formatter and lack of a data key identify it.
-   const findLegend = out => legend(out) ?? out.nodes.find(n => n.props.formatter && !n.props.contentStyle && !n.props.dataKey);
-   assert.equal(findLegend(outputs['top-left']).props.verticalAlign, 'top');
-   assert.equal(findLegend(outputs['top-left']).props.align, 'left');
-   assert.equal(findLegend(outputs.bottom).props.verticalAlign, undefined);
-   assert.equal(findLegend(outputs.none), undefined);
-   assert.match(render(findLegend(outputs['top-left']).props.formatter('系列')), /text-foreground/);
-  } else {
-   const marker = `aria-label="${legendLabels[entry.name]}"`;
+   const marker = `aria-label="${(legendLabels[entry.name] ?? "系列图例")}"`;
    for (const position of ['top-left', 'bottom']) {
-    const html = outputs[position].html, li = html.indexOf(marker), plot = html.indexOf(entry.name === 'ComparisonChart' ? 'role="group"' : 'role="img"');
+    const html = outputs[position].html, li = html.indexOf(marker), plot = html.indexOf(['ComparisonChart','TrendChart'].includes(entry.name) ? 'role="group"' : 'role="img"');
     assert.ok(li >= 0 && plot >= 0);
     assert.equal(li < plot, position === 'top-left');
     assert.equal(html.split(marker).length - 1, 1);
     const list = html.slice(html.lastIndexOf('<ul', li), html.indexOf('</ul>', li));
     assert.doesNotMatch(list, /style="color:/);
-    assert.match(list, /(?:background|border-color):/);
+    assert.match(list, /data-legend-marker=/);
    }
    assert.ok(!outputs.none.html.includes(marker));
-  }
   const calls = [];
   const selected = capture(entry.name, { ...entry.props, legendPosition: 'none', onSelect: (...args) => calls.push(args) }, entry.theme);
   if (selected.charts.length) { selected.charts[0].onSelect('a'); assert.deepEqual(calls, [['a']]); }
@@ -48,7 +38,7 @@ for (const entry of baseline) {
 }
 
 test('P63 single-series Trend can explicitly opt into a legend; empty groups/series do not invent entries', () => {
- const isLegend = n => n.props.formatter && !n.props.contentStyle && !n.props.dataKey;
+ const isLegend = n => n.type === api.ChartLegend;
  assert.equal(capture('TrendChart', defaults.TrendChart).nodes.filter(isLegend).length, 0);
  assert.equal(capture('TrendChart', { ...defaults.TrendChart, legendPosition: 'top-left' }).nodes.filter(isLegend).length, 1);
  assert.equal(capture('TrendChart', { ...defaults.TrendChart, series: [], legendPosition: 'bottom' }).nodes.filter(isLegend).length, 0);

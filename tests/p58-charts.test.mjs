@@ -1,10 +1,11 @@
+import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
 
 const before=JSON.parse(await readFile(new URL('./fixtures/p58-defaults-before.json',import.meta.url),'utf8'));
-for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure and labels`,()=>{
+for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure, labels and P64 legend markup`,()=>{
  const out=capture(snapshot.name,{...defaults[snapshot.name],...snapshot.extra},snapshot.theme);
  let expected=snapshot.html;
  if(['ScatterChart','PairedDotChart'].includes(snapshot.name)){
@@ -12,7 +13,7 @@ for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSO
   const start=expected.indexOf('<p class="text-ui-hint'),end=expected.indexOf('<details>');
   if(start>=0&&start<end){const notes=expected.slice(start,end);expected=expected.slice(0,start)+expected.slice(end);expected=expected.replace('</summary>','</summary>'+notes);}
  }
- assert.equal(out.html.replace('</summary> ','</summary>'),expected);
+ assert.equal(withoutP64Legend(out.html.replace('</summary> ','</summary>')),withoutP64Legend(expected));
  const options=snapshot.options.map(text=>{const option=JSON.parse(text);if(snapshot.name==='ScatterChart')for(const series of option.series){series.label.formatter='[function]';delete series.label.overflow; if(series.markArea)series.markArea.data=series.markArea.data.map(([first,second],i)=>[{name:first.name,label:{position:['insideTopLeft','insideTopRight','insideBottomLeft','insideBottomRight'][i],color:series.markArea.label.color},...Object.fromEntries(Object.entries(first).filter(([key])=>key!=='name'))},second]);}return JSON.stringify(option)});
  assert.deepEqual(out.charts.map(c=>optionJSON(c.option)),options);
 });

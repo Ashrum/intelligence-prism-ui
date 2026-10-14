@@ -1,9 +1,8 @@
 "use client"
+import { ChartLegend, type ChartLegendItem } from "./chart-legend"
 import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 import type {ReactNode} from 'react'
 import type {EChartsOption} from 'echarts'
-import {Button} from '@/components/coss/button'
-import {Popover,PopoverTrigger,PopoverPopup} from '@/components/coss/popover'
 import {EChart} from './echart'
 import {useChartTheme} from './chart-theme'
 import {DataRecordTable} from '../data-display'
@@ -11,6 +10,9 @@ import {chartDomain,withinDomain,formatChartValue,type ChartDecimals} from '@/li
 export type PairedRow={id:string;label:string;first:number|null;second:number|null;tag?:ReactNode}
 export type PairedMetric={id:string;label:string;color?:string;help?:ReactNode}
 export type PairedDotChartProps={legendPosition?:'bottom'|'top-left'|'none';dataDisclosure?:ChartDataDisclosureMode;data:PairedRow[];metrics:[PairedMetric,PairedMetric];label:string;unit?:string;decimals?:ChartDecimals;density?:"default"|"compact";connectPairs?:boolean;domain?:[number,number];selectedId?:string;onSelect?:(id:string,metricId?:string)=>void}
+export function pairedDotLegendItems(metrics: readonly PairedMetric[]): ChartLegendItem[] {
+ return metrics.map((m,i)=>({id:m.id,label:m.label,marker:i?'diamond':'dot',color:m.color,tone:i?'chart-4':'chart-2',help:m.help}))
+}
 export function PairedDotChart({dataDisclosure="visible",data,metrics,label,unit='',decimals,domain,selectedId,onSelect,density='default',connectPairs=density==='compact',legendPosition}:PairedDotChartProps){
  const {palette,colors}=useChartTheme(),range=chartDomain(data.flatMap(d=>[d.first,d.second]),domain??(density==="compact"&&/[%％]/.test(unit)?[0,100]:undefined))
  const excluded=data.flatMap(d=>[d.first,d.second]).filter(v=>v!==null&&!withinDomain(v,range)).length
@@ -26,7 +28,7 @@ export function PairedDotChart({dataDisclosure="visible",data,metrics,label,unit
   }
   return option
  }
- const legend=legendPosition!=="none"&&<ul className="flex flex-wrap gap-x-5 gap-y-2 text-ui-body" aria-label="指标图例">{metrics.map((m,i)=><li key={m.id} className="flex items-center gap-2"><span aria-hidden className="inline-block size-2.5" style={{background:m.color??colors[i?3:1],borderRadius:i?0:'50%',transform:i?'rotate(45deg)':undefined}}/>{m.label}{m.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs"/>} aria-label={`${m.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${m.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{m.help}</div></PopoverPopup></Popover>}</li>)}</ul>
+ const legend=legendPosition!=="none"&&<ChartLegend label="指标图例" items={pairedDotLegendItems(metrics)}/>
  return <div className="min-w-0 space-y-4">
  {legendPosition!=="bottom"&&legend}
  {data.length?(density==='compact'?<div className="space-y-3">{data.map(row=><div key={row.id} data-paired-row={row.id} className="min-w-0">

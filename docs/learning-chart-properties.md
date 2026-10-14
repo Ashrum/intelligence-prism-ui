@@ -227,3 +227,66 @@ P62 自动回归包含 P61 默认 SSR/options 字节快照、所有披露路径�
 复用依据：离线核对既有六个图表的 Recharts Legend / HTML 图例、固定 coss Button 与 Popover，以及本地 `demos/table-particle.tsx` 的 p-table-3/4 和本文已有的 particles 历史记录。基础控件与 Table / Frame 组合不提供图表图例定位；直接复用现有 Legend 和图例节点，仅调整公开属性和节点位置。通用数据分析图表不适用 Beautiful UI 的 Agent 执行组件；按 Builder 前置约定未联网刷新 registry，没有新增第三方代码、依赖、视觉令牌或 coss 改动。
 
 验证：`tests/p63-charts.test.mjs` 使用修改前从 `6ddecd2` 捕获的三主题快照，验证省略属性时 HTML 与 ECharts 配置一致，并检查节点顺序、隐藏图例后的披露与选择、Comparison plot 标签以及 PairedDot 帮助。`tests/p63-charts-client.test.mjs` 用真实 Recharts 和注入尺寸的 DOM 检查图例动态切换、单色文字、彩色标记和绘图区避让；此测试不是浏览器视觉、布局或键盘验收。浏览器验收按分工由 Supervisor 执行。
+
+## P64：卡片标题行图例
+
+P64 将 P63 六个图表的图例统一提取为公开 `ChartLegend`；它是现有图例的可复用导出，不新增组件目录条目。`analytics-components.tsx` 和各图表源模块提供以下导出：
+
+```ts
+type ChartLegendMarker = 'line' | 'dashed-line' | 'dot' | 'hollow-dot'
+  | 'diamond' | 'triangle' | 'square' | 'bar'
+type ChartLegendItem = {
+  id: string
+  label: string
+  marker: ChartLegendMarker
+  color?: string
+  tone?: ChartTone
+  help?: ReactNode
+}
+type ChartLegendProps = {
+  items: readonly ChartLegendItem[]
+  align?: 'left' | 'center' | 'right' // 默认 left
+  label?: string // 默认“图例”，列表的可访问名称
+  className?: string // 宿主布局插槽
+}
+trendLegendItems(series: readonly ChartSeries[]): ChartLegendItem[]
+comparisonLegendItems(props: Pick<ComparisonChartProps,
+  'data' | 'domain' | 'referenceLines' | 'unit'>): ChartLegendItem[]
+comboLegendItems(series: readonly ComboSeries[], axes: readonly ComboAxis[]): ChartLegendItem[]
+scatterLegendItems(groups?: readonly ScatterGroup[]): ChartLegendItem[]
+quadrantLegendItems(groups?: readonly ScatterGroup[]): ChartLegendItem[] // 同 scatter
+pairedDotLegendItems(metrics: readonly PairedMetric[]): ChartLegendItem[]
+```
+
+以上辅助函数是纯 props 转换，不需要宿主读取主题或复制色板；图例跟随同一主题提供器。`color` 优先于 `tone`；Trend 未指定二者时保持原有 `--chart-1` 至 `--chart-5`，其余图表保持各自既有色板槽位。仅标记带色，文字统一正文色、使用语义字号；列表横排可换行，右对齐不反转输入顺序。空 items 不生成空列表。图例标记为装饰 SVG，不增加键盘焦点；指标帮助复用 coss Popover，按钮可访问名称仍为“指标名：指标说明”。
+
+`trendLegendItems` 用实线 / 虚线表示连接系列，用实心圆 / 空心圆 / 菱形表示 `connect=false` 的系列。一个仅画点的系列若有多种有效点形，按首次出现顺序拆为多个图例项，ID 为 `系列ID:点形`，名称附“圆点 / 空心圆 / 菱形”；0 是有效值，缺测与非有限值不参与点形选择。全缺测系列沿用首点声明的点形，无点时使用圆点。TrendDot 和图例使用同一个 `ChartMarker` SVG 绘制函数，普通点与悬停点只改变坐标和半径。Scatter 保留三角 / 方形，Combo 保留柱形，避免将既有图形语义改成圆点。
+
+Comparison 的辅助函数沿用绘图的参考线有效性、域范围筛选和分段轴格式；不补造柱系列图例。Combo 保留左右轴及单位说明；PairedDot 保留 `help`，宿主移动图例后不用复制帮助内容。Donut / Radar / SegmentedBar 的独立选择图例不在本轮位置协议范围内。
+
+### 卡片标题行图例示例
+
+```tsx
+import { Card } from '@/components/coss/card'
+import { ChartLegend, TrendChart, trendLegendItems } from '@/components/prism-next/analytics-components'
+
+<Card className="min-w-0 gap-3 p-4">
+  <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+    <h3 className="text-block-title">班级得分率与预期</h3>
+    <ChartLegend items={trendLegendItems(series)} align="right" className="ml-auto flex-1 basis-64" />
+  </div>
+  <TrendChart label="班级得分率与预期" series={series} legendPosition="none" />
+</Card>
+```
+
+图例属于整张卡片标题行右侧，窄容器不足时自然换行；不会绝对定位到绘图区。宿主同时保留数据披露。标题行与图表应处于同一主题边界内。
+
+`legendPosition='top-left'` 保留，但 Trend 现在同其他图表一样，将图例放在绘图容器之前的普通文档流；图例换成多行会增加组件整体高度，不侵入绘图区。底部与默认多系列图例也改为绘图容器之后的普通文档流，`height` 代表绘图容器高度，不包括图例和数据披露。默认单系列仍不显示；显式 top-left / bottom 显示单系列；none 不显示内部图例。此处替代 P63 的 Recharts 内部图例定位说明，其余数据、坐标域、缺测、选择回调和披露协议不变。
+
+六个组件页（trend-chart、comparison-chart、combo-chart、scatter-chart、quadrant-chart、paired-dot-chart）的 `#legend-position` 默认展示“卡片标题行图例”，支持切换原有四种位置、320px 容器和长中文与公式。Trend 页的 `#embedded-cards` 也同步为标题右侧图例，覆盖实线、虚线、空心圆和菱形。
+
+### 本轮复用与验证边界
+
+离线读取既有 Recharts Legend、Scatter / Combo / PairedDot / Comparison HTML 图例、TrendDot、固定 coss Card，以及本地 particles `demos/table-particle.tsx` 的 Table / Frame 组合；复核本页已有 p-table-3/4、p-meter-3/4、p-progress-1/2/3 记录。基础控件和 particles 不提供图表系列映射，故提取已有 HTML 图例和 PairedDot 帮助组合，共享 TrendDot 标记绘制；没有另建第二套图例。按 Builder 前置约定未联网刷新 registry；通用图表不涉及 Beautiful UI Agent 执行组件，无新第三方代码、依赖、Token 或 coss 修改。
+
+P21 的旧 SHA-256 继续保留：仅将当前参考线图例的包装节点还原为旧结构，标签文字和标记颜色仍取实际渲染输出，再核对原散列。P58 / P62 / P63 冻结快照保持原文件；比较时仅排除本轮明确替换的图例子树，其余 HTML 和 ECharts 配置仍逐字比较。P60 / P61 的图例与帮助断言改查公开图例输入。`tests/p64-charts.test.mjs` 独立检查各 helper 的形状、颜色、内容、筛选、显式色覆盖、空输入、混合点形、标题行、帮助和与实际曲线 / 点形的一致性；P63 客户端测试检查 320 / 1280 注入尺寸下实时切换后的 DOM 顺序与绘图容器兄弟关系。这些测试不执行浏览器布局、视觉或键盘验收；实际结果和数字见本轮 P64 报告，浏览器验收按分工由 Supervisor 执行。
