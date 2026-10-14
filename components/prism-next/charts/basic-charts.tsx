@@ -1,4 +1,5 @@
 "use client"
+import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 import { useCallback, useState } from "react"
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
@@ -10,7 +11,7 @@ import { useChartTheme } from "./chart-theme"
 import { DataRecordTable } from "../data-display"
 export type ChartPoint={id:string;label:string;value:number|null;tickLabel?:[string,string];symbol?:"circle"|"hollow-circle"|"diamond";valueLabel?:string;annotation?:string}
 export type ChartSeries={id:string;label:string;data:ChartPoint[];color?:string;lineStyle?:"solid"|"dashed";connect?:boolean;connectGaps?:boolean;tone?:ChartTone}
-export type BasicChartProps={label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
+export type BasicChartProps={dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
 const axis={tickLine:false,axisLine:false,tickMargin:10,tick:{fill:"var(--muted-foreground)",fontSize:12}}
 const pointSymbolText={circle:"圆点","hollow-circle":"空心圆",diamond:"菱形"}
 function TrendDot({cx,cy,point,color,active,onSelect}:{cx?:number;cy?:number;point?:ChartPoint;color:string;active?:boolean;onSelect?:()=>void}){
@@ -30,7 +31,7 @@ function TrendLabels({series,ids}:{series:ChartSeries[];ids:string[]}){
  const lines=projected.flatMap((rows,i)=>series[i].connect===false?[]:(series[i].connectGaps?rows.filter(p=>p!==null):rows).flatMap((p,index,connected)=>{const next=connected[index+1];return p&&next?[{x1:p.x,y1:p.y,x2:next.x,y2:next.y}]:[]}))
  return <g aria-hidden="true" className="pointer-events-none" data-trend-labels>{trendLabelLayout(points,plot,lines).map(item=><text key={`${item.id}:${item.kind}`} {...axis.tick} fill="var(--foreground)" x={item.x+item.width/2} y={item.y+13} textAnchor="middle" data-trend-label={item.kind}>{item.text}</text>)}</g>
 }
-export function TrendChart({label,series,unit="",domain,yDomain,decimals,xTickMode="auto",height=260,onSelect,showData=true}:BasicChartProps){
+export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,xTickMode="auto",height=260,onSelect,showData=true}:BasicChartProps){
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
@@ -59,11 +60,18 @@ export function TrendChart({label,series,unit="",domain,yDomain,decimals,xTickMo
  const color=s.color??(s.tone?chartToneColor(theme,i,s.tone):`var(--chart-${i%5+1})`),custom=s.connect===false||s.data.some(p=>p.symbol!==undefined)
  const dot=(props:{cx?:number;cy?:number;payload?:{id:string}},active=false)=><TrendDot {...props} active={active} color={color} point={s.data.find(p=>p.id===props.payload?.id)} onSelect={onSelect?()=>{if(props.payload)onSelect(props.payload.id,s.id)}:undefined}/>
  return <Line key={s.id} dataKey={s.id} name={s.label} type="linear" connectNulls={s.connect!==false&&s.connectGaps===true} stroke={color} {...(s.connect===false?{strokeOpacity:0}:{})} {...(s.lineStyle==="dashed"?{strokeDasharray:"5 4"}:{})} {...(custom?{dot:props=>dot(props),legendType:s.connect===false?"circle" as const:undefined}:{})} strokeWidth={2} isAnimationActive={false} activeDot={custom?props=>dot(props,true):{r:5,onClick:(_,payload:unknown)=>{const row=payload as {payload?:{id:string}};if(row.payload)onSelect?.(row.payload.id,s.id)}}}/>
- })}{annotations&&<TrendLabels series={series} ids={rows.map(r=>r.id)}/>}</LineChart></ResponsiveContainer></div>{showData&&<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{description&&<p className="text-ui-hint text-muted-foreground">{description}。标注避让后放不下时仅在提示框和本表显示。</p>}<DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=><>{r.label}{tickRows.find(row=>row.id===r.id)?.lines.length===2&&<span className="block">{tickRows.find(row=>row.id===r.id)!.lines.join(" · ")}</span>}</>},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id],p=s.data.find(p=>p.id===r.id);return <span>{format(value)}{p?.symbol&&<span className="block">{pointSymbolText[p.symbol]}</span>}{p?.valueLabel&&<span className="block whitespace-normal break-words">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>}}))]} onSelect={onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></details>}</div>
+ })}{annotations&&<TrendLabels series={series} ids={rows.map(r=>r.id)}/>}</LineChart></ResponsiveContainer></div>{(dataDisclosure!==undefined||showData)&&<ChartDataDisclosure mode={dataDisclosure} label={label}>{description&&<p className="text-ui-hint text-muted-foreground">{description}。标注避让后放不下时仅在提示框和本表显示。</p>}<DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=><>{r.label}{tickRows.find(row=>row.id===r.id)?.lines.length===2&&<span className="block">{tickRows.find(row=>row.id===r.id)!.lines.join(" · ")}</span>}</>},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id],p=s.data.find(p=>p.id===r.id);return <span>{format(value)}{p?.symbol&&<span className="block">{pointSymbolText[p.symbol]}</span>}{p?.valueLabel&&<span className="block whitespace-normal break-words">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>}}))]} onSelect={dataDisclosure!=="hidden"&&onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></ChartDataDisclosure>}</div>
 }
 export type { ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 export type ComparisonChartPoint=ChartPoint & {range?:[number,number]}
 type PositionedReference=ComparisonReferenceLine & {id:string;position:number}
+function SparkMissingWeeks({data}:{data:ComparisonChartPoint[]}){
+ const plot=usePlotArea(),scale=useYAxisScale()
+ if(!plot||!data.length)return null
+ const zero=scale?.(0)
+ const y=zero===undefined||!Number.isFinite(zero)?plot.y+plot.height:Math.max(plot.y,Math.min(plot.y+plot.height,zero)),slot=plot.width/data.length,half=Math.min(12,slot*.3)
+ return <g data-spark-missing-weeks>{data.map((point,index)=>point.value===null||!Number.isFinite(point.value)||point.value===0?<line key={point.id} data-spark-empty={point.id} x1={plot.x+slot*(index+.5)-half} x2={plot.x+slot*(index+.5)+half} y1={y} y2={y} stroke="var(--muted-foreground)" strokeWidth={2}><title>{point.label}：{point.value===0?formatChartValue(0):"缺测"}</title></line>:null)}</g>
+}
 const referenceColor=(line:ComparisonReferenceLine)=>line.tone&&line.tone!=="neutral"?`var(--${line.tone}-foreground)`:"var(--muted-foreground)"
 function ComparisonReferenceLayer({lines,horizontal,binned,unit,band}:{lines:PositionedReference[];horizontal:boolean;binned:boolean;unit:string;band?:ReturnType<typeof comparisonReferenceBand>}){
  const plot=usePlotArea()
@@ -79,9 +87,11 @@ export type ComparisonChartProps={
  showValueLabels?:boolean
  valueLabelFormatter?:(value:number,datum:ComparisonChartPoint)=>string
  referenceLabelPlacement?:'legend'|'plot'
- dataDisclosure?:'details'|'none'
+ dataDisclosure?:ChartDataDisclosureMode|'details'|'none'
+ variant?:'default'|'spark'
 }
-export function ComparisonChart({label,data,unit="",domain,onSelect,horizontal=true,height=260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details'}:ComparisonChartProps){
+export function ComparisonChart({label,data,unit="",domain,onSelect,variant='default',horizontal=variant!=='spark',height=variant==='spark'?120:260,referenceLines,showValueLabels=false,valueLabelFormatter,referenceLabelPlacement='legend',dataDisclosure='details'}:ComparisonChartProps){
+ const spark=variant==='spark'&&!horizontal
  const [containerWidth,setContainerWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setContainerWidth(Math.round(width))},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
@@ -100,17 +110,17 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,horizontal=t
  ):undefined
  if(band)margin.top+=band.height
  const showReferenceLegend=referenceLabelPlacement==='legend'||band?.height===0
- const dataTable=<><DataRecordTable rows={data} columns={[{id:"label",label:"项目",render:r=>r.label},{id:"value",label:unit||"数值",render:r=>r.value==null?"—":formatChartValue(r.value,unit)}]} onSelect={dataDisclosure==='none'?undefined:onSelect}/>{references.length>0&&<section aria-label="参考线数据"><DataRecordTable rows={references} columns={[{id:"label",label:"参考线",render:r=><span className="whitespace-normal break-words">{r.label}</span>},{id:"value",label:binned?"分段轴数值":unit||"数值",render:r=>formatChartValue(r.value,binned?"":unit)} ]}/></section>}</>
+ const dataTable=<><DataRecordTable rows={data} columns={[{id:"label",label:"项目",render:r=>r.label},{id:"value",label:unit||"数值",render:r=>r.value==null?"—":formatChartValue(r.value,unit)}]} onSelect={(dataDisclosure==='none'||dataDisclosure==='hidden')?undefined:onSelect}/>{references.length>0&&<section aria-label="参考线数据"><DataRecordTable rows={references} columns={[{id:"label",label:"参考线",render:r=><span className="whitespace-normal break-words">{r.label}</span>},{id:"value",label:binned?"分段轴数值":unit||"数值",render:r=>formatChartValue(r.value,binned?"":unit)} ]}/></section>}</>
  return <div className="space-y-3">
   <div role="group" aria-label={label} aria-description={description} style={{height}}>
    <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}} ref={referenceLabelPlacement==='plot'?measureContainer:undefined} onResize={referenceLabelPlacement==='plot'?measureWidth:undefined}>
     <BarChart data={data} layout={horizontal?"vertical":"horizontal"} accessibilityLayer margin={margin}>
-     <CartesianGrid horizontal={!horizontal} vertical={horizontal} stroke="var(--border)" strokeDasharray="3 4"/>
-     <XAxis {...axis} {...(horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"number":"category"} dataKey={horizontal?undefined:"label"} domain={horizontal?activeDomain:undefined} allowDataOverflow={references.length&&!binned?true:undefined}/>
-     <YAxis {...axis} {...(!horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"category":"number"} dataKey={horizontal?"label":undefined} domain={horizontal?undefined:activeDomain} allowDataOverflow={references.length&&!binned?true:undefined} width={horizontal?110:45}/>
+     {!spark&&<CartesianGrid horizontal={!horizontal} vertical={horizontal} stroke="var(--border)" strokeDasharray="3 4"/>}
+     <XAxis {...axis} {...(spark?{axisLine:{stroke:"var(--border)"},interval:0}:{} )} {...(horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"number":"category"} dataKey={horizontal?undefined:"label"} domain={horizontal?activeDomain:undefined} allowDataOverflow={references.length&&!binned?true:undefined}/>
+     <YAxis {...axis} hide={spark} {...(!horizontal&&unit.includes("%")?{tickFormatter:(v:number)=>formatChartValue(v,unit),allowDecimals:false}:{})} type={horizontal?"category":"number"} dataKey={horizontal?"label":undefined} domain={horizontal?undefined:activeDomain} allowDataOverflow={references.length&&!binned?true:undefined} width={spark?0:horizontal?110:45}/>
      <Tooltip contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8}} formatter={v=>typeof v==="number"?formatChartValue(v,unit):"—"}/>
      {/* Recharts filters zero-sized bars unless shape is explicit; keep zero label entries without enlarging bars. */}
-     <Bar shape={showValueLabels?<Rectangle/>:undefined} dataKey="value" name={label} fill="var(--chart-1)" barSize={20} isAnimationActive={false} onClick={row=>{if(row.id)onSelect?.(row.id)}}>
+     <Bar shape={showValueLabels?<Rectangle/>:undefined} dataKey="value" name={label} fill="var(--chart-1)" barSize={spark?24:20} {...(spark?{radius:[2,2,0,0] as [number,number,number,number]}:{})} isAnimationActive={false} onClick={row=>{if(row.id)onSelect?.(row.id)}}>
       {showValueLabels&&<LabelList dataKey="id" content={({viewBox,value})=>{
        // Recharts filters missing rectangles; its label index is not the original data index.
        const index=data.findIndex(datum=>datum.id===value),text=valueLabels[index],datum=data[index]
@@ -122,11 +132,12 @@ export function ComparisonChart({label,data,unit="",domain,onSelect,horizontal=t
        return <text {...axis.tick} className="pointer-events-none" x={labelX} y={labelY} textAnchor={horizontal?(negative?'end':'start'):'middle'} dominantBaseline={horizontal?'central':negative?'hanging':'auto'} data-value-label={datum.id} aria-hidden="true">{text}</text>
       }}/>}
      </Bar>
+     {spark&&<SparkMissingWeeks data={data}/>}
      {references.length>0&&<ComparisonReferenceLayer lines={references} horizontal={horizontal} binned={binned} unit={unit} band={band}/>}
     </BarChart>
    </ResponsiveContainer>
   </div>
   {references.length>0&&showReferenceLegend&&<ul aria-label="参考线标签" className="space-y-1 text-ui-hint">{references.map(line=><li key={line.id} className="flex min-w-0 items-start gap-2"><span aria-hidden className="mt-2 w-6 shrink-0 border-t border-dashed" style={{borderColor:referenceColor(line)}}/><span className="min-w-0 break-words [overflow-wrap:anywhere]">{referenceText(line)}</span></li>)}</ul>}
-  {dataDisclosure==='none'?<div className="sr-only" role="region" aria-label={`${label}：数据`}>{dataTable}</div>:<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{dataTable}</details>}
+  {(dataDisclosure==='none'||dataDisclosure==='hidden')?<div className="sr-only" role="region" aria-label={`${label}：数据`}>{dataTable}</div>:<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{dataTable}</details>}
  </div>
 }

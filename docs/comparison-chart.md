@@ -41,7 +41,7 @@
 | `showValueLabels?: boolean` | `false` | 在柱末端显示值；正值为柱顶/柱右，负值为柱底/柱左。零值显示，null/非有限值不显示。开启后仅调整绘图留白，不改变数值轴 domain 或参考线含义。 |
 | `valueLabelFormatter?: (value: number, datum: ComparisonChartPoint) => string` | tooltip 的 `${value}${unit}` | 仅在开启标签时调用，传入原始 datum；空串隐藏该项标签（包括 0）。不改变 tooltip、表格、数值或位置，不解析回调文本。 |
 | `referenceLabelPlacement?: 'legend' \| 'plot'` | `'legend'` | plot 在绘图区上方专用标注带显示“名称 数值”，颜色与线一致；移除下方重复图例，空间不足则回退图例，保留 SVG title、aria-description 与参考线数据表。 |
-| `dataDisclosure?: 'details' \| 'none'` | `'details'` | none 不渲染可见 details，以 sr-only 只读表保留完整原始值及参考线，不留下隐藏按钮；宿主须提供可见数据入口及所需键盘选择操作。 |
+| `dataDisclosure?: 'visible' \| 'hidden' \| 'details' \| 'none'` | `'details'` | hidden（兼容 none）不渲染可见 details，以 sr-only 只读表保留完整原始值及参考线，不留下隐藏按钮；宿主须提供可见数据入口及所需键盘选择操作。 |
 
 - 图内文字直接沿用刻度的字体样式，不新增视觉令牌、动画或主题判断。默认 API（包括 P20 参考线）保持逐字节 SSR。
 - `plot` 的纵向与横向图统一使用绘图区上方的专用标注带，位于数值轴最大刻度、类目刻度和柱末端标签之上。按实际容器宽度换行、按文本包围盒逐行避让；行高沿用刻度字号的 1.5 倍（18px），上下各留 6px，碰撞移至下一可用行并增加带高。右侧容纳不下时文字翻到线左侧；完整名称保留在 title/说明/表格。垂直参考线从标注带顶部延伸到绘图区底部，参考值映射与数值域不变。
@@ -58,3 +58,5 @@
 ```
 
 两组件页的 `#plot-labels` 提供 140px 纵向十柱矮图（40/60/85 三线），横向十柱四线保留 0 值、85/90 相邻线及长中文名称。横向示例展示 dataDisclosure=none 与宿主可见表格入口。
+
+P62 的 `variant?: 'default' | 'spark'` 卡片小柱图见[学情图表说明](learning-chart-properties.md#p62嵌入卡片公开属性)。`spark` 默认竖柱、120px；隐藏 y 轴和网格，保留底线及全部 x 刻度。空值和已知 0 以细灰线占位，数据表严格区分两者。`height` 仍由宿主控制。

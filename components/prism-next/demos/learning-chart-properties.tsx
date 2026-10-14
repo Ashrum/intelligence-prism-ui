@@ -27,7 +27,7 @@ export const learningMetrics:MetricSummaryItem[]=[
 const descriptions:Record<string,string>={
  "trend-chart":"lineStyle='dashed' 显示预期虚线；connect=false 仅画点。逐点 symbol 区分空心圆与菱形，valueLabel 在上、annotation 在下；避让后放不下时保留在提示框与数据表，不缩小字号。connectGaps=true 跨缺测连线；yDomain=auto 按有效数据留边，刻度等距且两端落在刻度上；xTickMode=all 展示全部刻度，tickLabel 固定两行。",
  "quadrant-chart":"quadrants.highlight 接收 quadrant 与 ChartTone；仅强调调用方指定的区域，沿用图表主题色；xDomain/yDomain=auto 自动留边，刻度等距且两端落在刻度上，象限标题位于外角。labelMode=none 可隐藏图上点标签；完整名称始终保留在提示框和数据表。",
- "paired-dot-chart":"density='compact' 将完整名称放在两点上方，tag 展示外部状态；connectPairs=true 连接同一题的两个有效值。缺一个值时保留另一个点，不补 0；相等值仍由点形和上下数值区分。metrics[].help 在原生图例旁提供问号说明。",
+ "paired-dot-chart":"density='compact' 将完整名称放在两点上方，tag 展示外部状态；connectPairs=true 连接同一题的两个有效值。缺一个值时保留另一个点，不补 0；共用比例细轨道不画刻度，两项数值在点上方；相等值保留点形，拥挤文字收进提示框与数据表。metrics[].help 在原生图例旁提供问号说明。",
  "metric-summary":"items[].visual 可传 ring 的 value/max 或 sparkline 的 values；装饰图形对读屏隐藏，文本披露原始数值。items[].help 在指标名旁提供 coss Popover，支持键盘与关闭后焦点返回。",
 }
 export function LearningChartProperties({kind}:{kind:string}){

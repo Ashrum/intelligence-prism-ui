@@ -63,10 +63,10 @@ for(const theme of ['light','paper','dark'])test(`P58 ${theme}: four highlighted
 test('P58 paired compact connects only valid pairs, leaves missing/invalid as gaps, keeps zero and equal values',()=>{
  const data=[{id:'bounds',label:'边界',first:0,second:100},{id:'equal',label:'相等',first:50,second:50},{id:'missing',label:'缺一个值',first:null,second:30},{id:'invalid',label:'域外',first:120,second:40}];
  const calls=[],out=capture('PairedDotChart',{...defaults.PairedDotChart,data,density:'compact',connectPairs:true,onSelect:(...args)=>calls.push(args)}),chart=out.charts[0];
- assert.equal(out.charts.length,4);assert.ok(out.charts.every(c=>c.height===100));assert.equal(capture('PairedDotChart',{...defaults.PairedDotChart,data:data.slice(0,3),density:'compact'}).charts.length,3);
+ assert.equal(out.charts.length,4);assert.ok(out.charts.every(c=>c.height===48));assert.equal(capture('PairedDotChart',{...defaults.PairedDotChart,data:data.slice(0,3),density:'compact'}).charts.length,3);
  assert.deepEqual(out.charts.map(c=>c.option.series[0].markLine.data),[[[{coord:[0,0]},{coord:[100,0]}]],[[{coord:[50,0]},{coord:[50,0]}]],[],[]]);
  assert.equal(out.charts.reduce((n,c)=>n+c.option.series[0].data.length,0),2);assert.equal(out.charts.reduce((n,c)=>n+c.option.series[1].data.length,0),4);
- assert.deepEqual(chart.option.series.map(s=>s.symbolOffset),[[0,0],[0,0]]);
+ assert.deepEqual(chart.option.series.slice(0,2).map(s=>s.symbolOffset),[[0,0],[0,0]]);
  assert.equal(chart.option.series[0].markLine.z,1);assert.match(out.html,/缺测不补零/);assert.match(out.html,/另一项仍按原值显示/);
  chart.onSelect('missing','second');assert.deepEqual(calls,[['missing','second']]);
  assert.equal(chart.option.tooltip.formatter({data:out.charts[2].option.series[1].data[0],seriesName:'再错'}),'缺一个值\n再错：30');

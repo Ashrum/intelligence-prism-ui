@@ -1,4 +1,4 @@
-# 学情分析图表公开属性（P58 / P59 / P60 / P61）
+# 学情分析图表公开属性（P58 / P59 / P60 / P61 / P62）
 
 适用组件：TrendChart、QuadrantScatterChart、PairedDotChart、MetricSummary。所有新属性可选。P59 明确修正技术脚注、百分比格式、紧凑双点行与四象限点标签；P60 修正图例文字、象限标题与缺测小走势，补充刻度和坐标域属性。除这些返工项外，未传入新属性保留原行为。仅呈现调用方事实，不计算学情结论。组件数量、依赖、Token、coss 源码均不变。
 
@@ -83,7 +83,7 @@ type PairedRow = {
 }
 ```
 
-compact 每行先显示完整名称和可选 tag，再放该行两点；名称自然换行，tag 在右侧、空间不足时换行，不截断或缩字号。每行图形高 100px，所有行共用同一数值范围；长名称增长的是 HTML 行高，不依赖字数估算或浏览器测量。默认仍为每行 80px、最小 230px 的原有整图。文字与点形尺寸不变。连接启用后两点放在同一行轴坐标；标签保持上/下位置与原有重叠隐藏策略，点形继续区分圆/菱形。连线仅连接两个均有效且在范围内的数值，位于数据点后方；相等值仍保留两个点；单边缺测或无效不画连线，不补零。表格与提示框保留原值，文字补充连线语义。
+compact 每行先显示完整名称和可选 tag，再放该行两点；名称自然换行，tag 在右侧、空间不足时换行，不截断或缩字号。P62 每行图形高 48px，百分比未指定 domain 时共用 0–100 细轨道，不画逐行坐标刻度；其他单位沿用全体有效值推导范围，显式 domain 优先；长名称增长的是 HTML 行高，不依赖字数估算或浏览器测量。默认仍为每行 80px、最小 230px 的原有整图。文字与点形尺寸不变。连接启用后两点放在同一行轴坐标；默认密度的标签保持上/下位置；compact 两项数值均在点上方，保留原有重叠隐藏策略，点形继续区分圆/菱形。连线仅连接两个均有效且在范围内的数值，位于数据点后方；相等值仍保留两个点；单边缺测或无效不画连线，不补零。表格与提示框保留原值，文字补充连线语义。
 
 组件页 `/next/components/paired-dot-chart#learning-properties`：三道错题的出错/再错率，示例使用既有 Badge 显示外部状态；边界开关覆盖长名称/公式、单边缺测、同值、0/100。
 
@@ -150,3 +150,54 @@ P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 T
 复用检索：本轮读取固定 coss Popover / Button / Meter / Progress、既有 MetricSummary.help、DataRecordTable、RecordList、SegmentedBar、ComparisonChart 与 Prism Badge，读取本地 particles `table-particle.tsx` 的 p-table-3/4，复核本页及 SegmentedBar / RecordList / ComparisonChart 文档中 p-meter-3/4、p-progress-1/2/3、p-table-5/8 与 p-badge-16 的历史记录。量值条、标签、表格插槽已满足需求；图例帮助直接沿用 MetricSummary 的组合。按前置约定离线，未刷新远端 registry；通用数据组件不适用 Beautiful UI 执行组件，没有新第三方源码。
 
 示例仍在 `/next/components/paired-dot-chart#learning-properties`（两项分母帮助），以及 trend-chart / quadrant-chart 的同名锚点（auto 刻度）。表格与列表预查及可运行组合见 [学情记录组合](learning-record-composition.md)。
+
+## P62：嵌入卡片公开属性
+
+### 统一披露
+
+`dataDisclosure?: 'visible' | 'hidden'` 已覆盖 TrendChart、ComparisonChart（含分布图）、ScatterChart / QuadrantScatterChart、PairedDotChart、ComboChart、HeatmapChart、BoxPlotChart、DonutChart、RadarChart 和 SegmentedBar。
+
+- hidden：移除展开控件，将完整数据、缺测说明与标注放进 `sr-only` region。表格不使用 display:none、hidden、aria-hidden，也不留在收起的 details 中。表内选择按钮移除，避免键盘聚焦不可见控件；图形、图例和宿主可见操作仍保留原回调。
+- visible：原有图表保留默认收起的“查看数据”。省略属性保留 P61 默认输出；SegmentedBar 过去没有展开表，省略仍保持原状，显式 visible 才增加表。
+- Comparison 保留 `details` / `none` 兼容别名，分别等价 visible / hidden；未传仍为 details。Trend 旧 `showData=false` 单独使用时行为不变；显式 dataDisclosure 优先，因此 hidden 即使搭配 showData=false 也保留读屏表。
+- Radar 无法绘制时仍显示空状态；hidden 将原替代表也视觉隐藏，visible / 未传沿用直接可见的无效数据替代表。
+
+### 卡片形态
+
+```ts
+// PairedDotChart
+ density?: 'default' | 'compact'
+ connectPairs?: boolean // default 密度默认 false；compact 默认 true，显式 false 可关闭
+// 行属性名沿用 data[].tag: ReactNode（任务书的 items[].tag 对应现有 data）
+
+// ComparisonChart
+ variant?: 'default' | 'spark'
+ height?: number
+
+// MetricSummary
+ layout?: 'row' | 'grid' | 'strip'
+
+// ScatterChart / QuadrantScatterChart
+ labelIds?: string[]
+
+// ChartPoint：已支持，无须新增协议
+ annotation?: string // 例如“高于预期 2”
+```
+
+Paired compact：名称与 tag 在第一行完整换行；第二行是共用比例的细轨道、两个点、有效值之间连线及点上方数值，不画 0 / 50 / 100 的轴。图形高 48px（包括标签空间），保持圆/菱形区分，使用既有主题 border / muted 色。单边缺测只留另一个点，同值保留原坐标与两点，拥挤数值由引擎避让后隐藏到提示框/表；不补零、不伪造偏移值。default 密度及其刻度不变。
+
+Comparison spark：未传 horizontal 时默认竖柱；移除 y 轴和坐标网格，保留底线及全部 x 刻度，默认高度 120px、柱宽 24px、小圆角，height 仍可控制。null / 无效 / 已知 0 在对应类别底部显示细灰线，title 与数据表保留“缺测”和 0 的区别；全缺测也保留所有位置。未更改数据来制造最小柱高。显式 horizontal=true 时沿用横柱呈现；spark 面向竖柱。默认 variant 与现有参考线/选择协议不变。
+
+MetricSummary：省略 layout 沿用旧自适应布局；显式 grid 切换为两列、有内部细分隔线的概览网格，四项组成 2×2。row 为旧 strip 的兼容入口，strip 保留。grid 使用标签 ui-body、数值 stat-display、说明 ui-hint；单位用现有 value: ReactNode 插入 `text-ui-body`，不从字符串拆分或猜测单位。环形盒为 56×56，走势为 72×40；网格宽度不足 440px 时，小图排在说明下方保持可读，仍保留两列、字号不缩小。数值少于两个有效点不输出 polyline：单点（含 0）只画一个点，全缺测不画点。装饰 SVG 继续 aria-hidden，原始数据文字可读。
+
+labelIds 是标签白名单，未传沿用既有 auto 行为；空数组不显示点标签；未知 ID 忽略。非白名单点在普通和悬停状态都不出现标签，仍有完整提示框及数据表；不会删除点或改变选择 ID。labelMode=none 优先。白名单仍服从既有 110px 名称宽度与 440px 窄图隐藏规则、引擎 hideOverlap 避让；缩回宽图恢复白名单。annotation 的短文不修改，继续在点下方避让，空间不足时完整保留在提示框和数据表。
+
+### 画布组合与复用依据
+
+新增评审夹具 `LearningOverviewCards`（不是组件目录条目）复用固定 coss Card / Button / Popover、Prism Badge / DataRecordTable / SegmentedBar 和现有图表，在以下组件页的 `#embedded-cards` 展示同一组合：trend-chart、metric-summary、quadrant-chart、paired-dot-chart、comparison-chart、distribution-chart。
+
+组合包含画布四个指标：近期得分率 72%、补回率 61%、保持率 78%、需要优先处理 9 人 · 2 个知识点；班级得分率与预期、课程聚焦（72/70、59/48、64/56、55/38），以及学生学习进展、三道错题（60/47、57/41、49/33）和批阅积累八周柱图。默认没有图表展开件，宿主详情按钮仅回显意图；不接 Store、路由、权限、持久化或模型。开关覆盖 320px、长中文/公式、单点 0、同值、端点和缺测、披露切换。
+
+本次离线检索：读取本地固定 Card、Popover 及现有 DataRecordTable、MetricSummary、各图表；核对 `demos/table-particle.tsx` 的 Table/Badge/Frame 组合与本页记录的 coss particles p-table-3/4、p-meter-3/4、p-progress-1/2/3。披露复用已有表格与 sr-only 模式；绘图复用 Recharts / ECharts，无需新基础控件。按 Builder 前置约定未联网刷新 registry；此任务为通用数据分析图表，未引入 Beautiful UI 的 Agent 执行组件或第三方代码。coss、依赖、Token、目录数量不变。
+
+P62 自动回归包含 P61 默认 SSR/options 字节快照、所有披露路径、真实 ECharts 三主题多宽度与缩回恢复、真实 Recharts 客户端小柱图/空值/全缺测、指标网格与小图边界。仅 P58 已授权 compact 高度/新增轨道断言随本轮呈现调整，旧原始快照不改。浏览器验收：按分工由 Supervisor 执行。

@@ -13,9 +13,9 @@ export type {MetricVisual} from "@/lib/prism-next/metric-visual"
 function MetricLabel({item}:{item:MetricSummaryItem}){
  return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs"/>} aria-label={`${item.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
 }
-function MetricMiniVisual({visual}:{visual:MetricVisual}){
+function MetricMiniVisual({visual,grid=false}:{visual:MetricVisual;grid?:boolean}){
  const model=metricVisualModel(visual)
- return <><svg aria-hidden="true" focusable="false" viewBox={model.kind==="ring"?"0 0 56 56":"0 0 72 40"} className="h-14 w-18 shrink-0" data-metric-visual={model.kind}>{model.kind==="ring"?<><circle cx={28} cy={28} r={22} fill="none" stroke="var(--border)" strokeWidth={6}/>{model.ratio!==null&&<circle cx={28} cy={28} r={22} fill="none" stroke="var(--chart-1)" strokeWidth={6} pathLength={1} strokeDasharray={`${model.ratio} 1`} transform="rotate(-90 28 28)"/>}</>:model.runs.map((run,index)=><g key={index}><polyline points={run.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke="var(--chart-1)" strokeWidth={2}/>{run.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={2} fill="var(--chart-1)"/>)}</g>)}</svg><span className="sr-only">{model.text}</span></>
+ return <><svg aria-hidden="true" focusable="false" viewBox={model.kind==="ring"?"0 0 56 56":"0 0 72 40"} className={grid?(model.kind==="ring"?"size-14 shrink-0":"h-10 w-18 shrink-0"):"h-14 w-18 shrink-0"} data-metric-visual={model.kind}>{model.kind==="ring"?<><circle cx={28} cy={28} r={22} fill="none" stroke="var(--border)" strokeWidth={6}/>{model.ratio!==null&&<circle cx={28} cy={28} r={22} fill="none" stroke="var(--chart-1)" strokeWidth={6} pathLength={1} strokeDasharray={`${model.ratio} 1`} transform="rotate(-90 28 28)"/>}</>:model.runs.map((run,index)=><g key={index}>{run.length>=2&&<polyline points={run.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke="var(--chart-1)" strokeWidth={2}/>}{run.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={2} fill="var(--chart-1)"/>)}</g>)}</svg><span className="sr-only">{model.text}</span></>
 }
 function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryItem;onSelect?:(id:string)=>void;compact:boolean;strip:boolean;index?:number}){
  return <div className={`grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 ${strip?`@min-[400px]:px-3 ${index?"@min-[400px]:border-l @min-[400px]:border-border":"@min-[400px]:pl-0"}`:""}`}>
@@ -26,8 +26,15 @@ function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryI
   {onSelect&&<dd className="col-span-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
  </div>
 }
-export function MetricSummary({items,onSelect,density="default",layout="grid"}:{items:MetricSummaryItem[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"grid"|"strip"}){
- if(layout==="strip") return <dl data-metric-layout="strip" className="grid min-w-0 grid-cols-1 gap-y-3 @min-[400px]:grid-cols-2 @min-[680px]:grid-cols-4">{items.map((item,index)=>item.visual?<VisualMetric key={item.id} item={item} onSelect={onSelect} compact={density==="compact"} strip index={index}/>:<div key={item.id} className={`min-w-0 space-y-1 @min-[400px]:px-3 ${index ? "@min-[400px]:border-l @min-[400px]:border-border" : "@min-[400px]:pl-0"}`}>
+export function MetricSummary({items,onSelect,density="default",layout}:{items:MetricSummaryItem[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"row"|"grid"|"strip"}){
+ if(layout==="grid") return <dl data-metric-layout="grid" className="@container grid min-w-0 grid-cols-2">{items.map((item,index)=><div key={item.id} className={`grid min-w-0 grid-cols-1 items-center gap-x-3 gap-y-1 p-4 @min-[440px]:grid-cols-[minmax(0,1fr)_auto] ${index%2?"border-l border-border":""} ${index>=2?"border-t border-border":""}`}>
+  <dt className="col-start-1 flex flex-wrap items-center gap-1 text-ui-body text-muted-foreground [overflow-wrap:anywhere]"><MetricLabel item={item}/></dt>
+  <dd className="col-start-1 break-words text-stat-display tabular-nums">{item.value}</dd>
+  {item.detail&&<dd className="col-start-1 text-ui-hint text-muted-foreground [overflow-wrap:anywhere]">{item.detail}</dd>}
+  {item.visual&&<dd className="@min-[440px]:col-start-2 @min-[440px]:row-span-3 @min-[440px]:row-start-1"><MetricMiniVisual visual={item.visual} grid/></dd>}
+  {onSelect&&<dd className="col-span-full"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
+ </div>)}</dl>
+ if(layout==="strip"||layout==="row") return <dl data-metric-layout="strip" className="grid min-w-0 grid-cols-1 gap-y-3 @min-[400px]:grid-cols-2 @min-[680px]:grid-cols-4">{items.map((item,index)=>item.visual?<VisualMetric key={item.id} item={item} onSelect={onSelect} compact={density==="compact"} strip index={index}/>:<div key={item.id} className={`min-w-0 space-y-1 @min-[400px]:px-3 ${index ? "@min-[400px]:border-l @min-[400px]:border-border" : "@min-[400px]:pl-0"}`}>
   <dt className="text-ui-meta text-muted-foreground"><MetricLabel item={item}/></dt><dd className="analytics-value my-0! break-words text-stat-display tabular-nums">{item.value}</dd>
   {item.detail&&<dd className="text-ui-hint text-muted-foreground">{item.detail}</dd>}
   {onSelect&&<dd><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}

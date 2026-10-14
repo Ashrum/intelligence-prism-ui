@@ -1,4 +1,5 @@
 "use client"
+import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 
 import { DataRecordTable } from "../data-display"
 import { EChart } from "./echart"
@@ -7,9 +8,9 @@ import { formatChartValue } from "@/lib/prism-next/chart-options"
 import { chartToneColor, polarValueText, radarChartOption, radarModel, type RadarAxis, type RadarSeries } from "@/lib/prism-next/polar-chart-options"
 
 export type { RadarAxis, RadarSeries } from "@/lib/prism-next/polar-chart-options"
-export type RadarChartProps = { label: string; axes: readonly RadarAxis[]; series: readonly RadarSeries[]; height?: number }
+export type RadarChartProps = { dataDisclosure?: ChartDataDisclosureMode; label: string; axes: readonly RadarAxis[]; series: readonly RadarSeries[]; height?: number }
 
-export function RadarChart({ label, axes, series, height = 280 }: RadarChartProps) {
+export function RadarChart({ dataDisclosure = "visible", label, axes, series, height = 280 }: RadarChartProps) {
   const theme = useChartTheme(), model = radarModel(axes, series)
   const chartHeight = Number.isFinite(height) && height > 0 ? height : 280
   const message = !model.dimensionOK ? "雷达图需要 3–8 个轴，当前仅显示数据表。" : !series.length ? "暂无雷达数据。" : !model.countOK ? "雷达图支持 1–2 组数据，当前仅显示数据表。" : model.invalidAxes ? "轴上限必须是正的有限数值，当前仅显示数据表。" : !model.ready ? "暂无有效雷达数据，请核对数据表。" : `${label}；各轴从 0 起，上限见数据表。`
@@ -27,6 +28,6 @@ export function RadarChart({ label, axes, series, height = 280 }: RadarChartProp
     </li>)}</ul>
     {model.ready && <EChart label={label} height={chartHeight} option={radarChartOption(axes, series, theme)} />}
     {!model.ready && <p className="text-ui-hint text-muted-foreground">暂无有效雷达数据，请核对数据表。</p>}
-    {model.ready ? <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{notes}{table}</details> : <><div className="sr-only">{notes}</div>{table}</>}
+    {model.ready || dataDisclosure === "hidden" ? <ChartDataDisclosure mode={dataDisclosure} label={label}>{notes}{table}</ChartDataDisclosure> : <><div className="sr-only">{notes}</div>{table}</>}
   </div>
 }
