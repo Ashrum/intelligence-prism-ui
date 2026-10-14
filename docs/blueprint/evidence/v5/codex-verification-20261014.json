@@ -1,0 +1,36 @@
+{
+  "verified_at": "2026-10-14T15:15:32.984800+08:00",
+  "reviewer": "Codex; independent scope and evidence verification after Claude Code application",
+  "baseline": "6ddecd27eb76f7e3694855df4ef42f904d03ead6",
+  "head": "6ddecd27eb76f7e3694855df4ef42f904d03ead6",
+  "branch": "feat/learning-charts",
+  "approved_rules_exact_match": true,
+  "git_diff_check": "pass",
+  "tracked_changed_files": [
+    "AGENTS.md"
+  ],
+  "runtime_tracked_changes": [],
+  "coss_files_byte_compared": 54,
+  "evidence_images": 18,
+  "image_hashes_and_originals": "match",
+  "relative_links": "all resolve",
+  "approval_and_limits_in_status": true,
+  "runtime_test_results": {
+    "executor": "Claude Code",
+    "command": "node --test tests/blueprint-theme.test.mjs tests/blueprint-components.test.mjs tests/blueprint-charts.test.mjs",
+    "tests": 18,
+    "pass": 18,
+    "fail": 0,
+    "log": "docs/blueprint/evidence/v5/apply-tests-20261014.log",
+    "log_sha256": "5180db9c89e09f312180feaa685fa68afc3e91f571de42a09b3900378a21f82b",
+    "verification": "Codex read and checked the current execution log; no duplicate run"
+  },
+  "build_full_suite_browser": "not rerun for documentation-only change",
+  "approved_package": {
+    "name": "Blueprint-v5-reviewed-20261014.zip",
+    "sha256": "72016e6b96cbdb006ad636b1e65e7ad58c3b445586f38147cc79727500b83044",
+    "original_draft_zip_sha256": "0086391e0c588345457309acb7783612541315a6f8e318a4c6e913df544665e6"
+  },
+  "scope_note": "Codex updated only the application STATUS and this verification record after Claude Code applied the approved rules and evidence archive.",
+  "record_updated_at": "2026-10-14T15:17:40.253111+08:00"
+}

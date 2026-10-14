@@ -1,0 +1,207 @@
+--- a/tests/blueprint-charts.test.mjs
++++ b/tests/blueprint-charts.test.mjs
+@@ -0,0 +1,56 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync } from 'node:fs';
++import { chartSeriesColors, chartShapeColors, chartSequentialDefault, blueprintChartOverrides, BLUEPRINT_SERIES, BLUEPRINT_SEQUENTIAL } from '../lib/prism-next/chart-palette.ts';
++import { sequentialColor, relativeLuminance, contrastForeground } from '../lib/prism-next/chart-color.ts';
++import { themeAxes } from '../lib/prism-next/chart-options.ts';
++const ratio = (a, b) => { const x = relativeLuminance(a), y = relativeLuminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05) };
++
++test('core theme chart colours are unchanged', () => {
++  assert.deepEqual([...chartSeriesColors('light')], ['#1769AA', '#B8266E', '#2B8050', '#A57013', '#7159A7', '#6B7280']);
++  assert.deepEqual([...chartSeriesColors('paper')], [...chartSeriesColors('light')]);
++  assert.deepEqual([...chartSeriesColors(undefined)], [...chartSeriesColors('light')]);
++  assert.deepEqual([...chartSeriesColors('dark')], ['#86C5FF', '#F296C2', '#99DFB4', '#F4CC86', '#BDACED', '#B6BEC9']);
++  assert.deepEqual(chartShapeColors('light'), { base: '#1769AA', selected: '#B8266E', fill: '#76A9D2' });
++  assert.deepEqual(chartShapeColors('dark'), { base: '#86C5FF', selected: '#F296C2', fill: '#365B7B' });
++  assert.deepEqual([...chartSequentialDefault('paper', '#EAE6DF')], ['#EAE6DF', '#76A9D2', '#1769AA']);
++  for (const t of ['light', 'paper', 'dark', undefined]) assert.deepEqual(blueprintChartOverrides(t), {});
++});
++
++test('blueprint series lead with accent then ink; every series ≥ 3:1 on card and ground', () => {
++  assert.equal(BLUEPRINT_SERIES[0], '#1D5FBF'); assert.equal(BLUEPRINT_SERIES[1], '#16181D');
++  assert.equal(new Set(BLUEPRINT_SERIES).size, 6);
++  for (const c of BLUEPRINT_SERIES) for (const bg of ['#FFFFFF', '#F6F6F3']) assert.ok(ratio(c, bg) >= 3, `${c}/${bg}`);
++});
++
++test('blueprint sequential ramp keeps labels ≥ 4.5:1 and luminance monotonic', () => {
++  let previous = Infinity;
++  for (let v = 0; v <= 1000; v++) {
++    const bg = sequentialColor(v, 0, 1000, BLUEPRINT_SEQUENTIAL);
++    assert.ok(ratio(bg, contrastForeground(bg)) >= 4.5, bg);
++    const l = relativeLuminance(bg); assert.ok(l <= previous + 1e-12); previous = l;
++  }
++});
++
++test('blueprint overrides: first series solid, the rest patterned; square ink tooltip', () => {
++  const o = blueprintChartOverrides('blueprint');
++  assert.equal(o.aria.decal.show, true);
++  assert.equal(o.aria.decal.decals[0].symbol, 'none');
++  assert.ok(o.aria.decal.decals.slice(1).every(d => d.symbol !== 'none'));
++  assert.equal(o.tooltip.borderRadius, 0); assert.equal(o.tooltip.shadowBlur, 0); assert.equal(o.tooltip.borderColor, '#1D2026');
++});
++
++test('axis line uses palette.line when present, border otherwise', () => {
++  assert.equal(themeAxes({}, { muted: '#bbb', border: '#444' }).axisLine.lineStyle.color, '#444');
++  assert.equal(themeAxes({}, { muted: '#bbb', border: '#444', line: '#1D2026' }).axisLine.lineStyle.color, '#1D2026');
++  assert.equal(themeAxes({}, { muted: '#bbb', border: '#444', line: '#1D2026' }).splitLine.lineStyle.color, '#444');
++});
++
++test('theme.css blueprint chart tokens follow the series order; Recharts tooltip squared only in blueprint', () => {
++  const theme = readFileSync(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
++  const block = theme.split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
++  BLUEPRINT_SERIES.slice(0, 5).forEach((c, i) => assert.match(block, new RegExp(`--chart-${i + 1}:${c}`)));
++  const css = readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
++  assert.match(css, /\[data-prism-theme="blueprint"\] \.recharts-default-tooltip[^{]*\{[^}]*border-radius:0 !important/);
++  assert.match(readFileSync(new URL('../lib/prism-next/config.ts', import.meta.url), 'utf8'), /blueprint: \{[^}]*line: "#1D2026"/);
++});
+--- a/components/prism-next/charts/echart.tsx
++++ b/components/prism-next/charts/echart.tsx
+@@ -5,6 +5,7 @@
+ import type { ECharts } from "echarts/core"
+ import { themeAxes } from "@/lib/prism-next/chart-options"
+ import { themePalette } from "@/lib/prism-next/config"
++import { blueprintChartOverrides } from "@/lib/prism-next/chart-palette"
+ 
+ let engine:Promise<typeof import("./echart-engine")>|undefined
+ export function loadChartEngine(){return engine??=import("./echart-engine")}
+@@ -13,7 +14,7 @@
+  const {theme}=useTheme();latest.current={option,onSelect,label,theme:theme??"light"}
+  const [error,setError]=useState(false)
+  useEffect(()=>{let gone=false;let observer:ResizeObserver|undefined;loadChartEngine().then(core=>{if(gone||!node.current)return;const instance=core.init(node.current,undefined,{renderer:"svg"});chart.current=instance;instance.on("click",event=>{const data=event.data as {id?:string}|undefined;if(data?.id)latest.current.onSelect?.(data.id,event.seriesId)});observer=new ResizeObserver(()=>instance.resize());observer.observe(node.current);apply();}).catch(()=>{if(!gone)setError(true)});return()=>{gone=true;observer?.disconnect();chart.current?.dispose();chart.current=null}},[])
+- function apply(){const palette=themePalette[latest.current.theme as keyof typeof themePalette]??themePalette.light;chart.current?.setOption({animation:false,aria:{enabled:true,label:{description:`${latest.current.label}。完整数值及缺测说明见下方数据表。`}},backgroundColor:"transparent",textStyle:{color:palette.foreground,fontFamily:"system-ui, sans-serif"},...latest.current.option,tooltip:{trigger:"item",renderMode:"richText",backgroundColor:palette.surface,borderColor:palette.border,textStyle:{color:palette.foreground},...latest.current.option.tooltip as object},xAxis:themeAxes(latest.current.option.xAxis,palette),yAxis:themeAxes(latest.current.option.yAxis,palette)},true)}
++ function apply(){const current=latest.current.theme;const palette=themePalette[current as keyof typeof themePalette]??themePalette.light;const bp=blueprintChartOverrides(current) as {aria?:object;tooltip?:object};const description=`${latest.current.label}。完整数值及缺测说明见下方数据表。`;chart.current?.setOption({animation:false,aria:{enabled:true,label:{description},...bp.aria},backgroundColor:"transparent",textStyle:{color:palette.foreground,fontFamily:"system-ui, sans-serif"},...latest.current.option,tooltip:{trigger:"item",renderMode:"richText",backgroundColor:palette.surface,borderColor:palette.border,textStyle:{color:palette.foreground},...bp.tooltip,...latest.current.option.tooltip as object},xAxis:themeAxes(latest.current.option.xAxis,palette),yAxis:themeAxes(latest.current.option.yAxis,palette)},true)}
+  useEffect(()=>{apply()},[option,theme])
+  return <div className="min-w-0"><div ref={node} role="img" aria-label={label} style={{height,width:"100%"}} data-chart-engine="echarts"/>{error&&<p role="alert" className="text-ui-body text-destructive">图形未能加载，请查看下方数据。</p>}</div>
+ }
+--- a/components/prism-next/charts/chart-theme.ts
++++ b/components/prism-next/charts/chart-theme.ts
+@@ -1,4 +1,5 @@
+ "use client"
+ import {useTheme} from 'next-themes'
+ import {themePalette} from '@/lib/prism-next/config'
+-export function useChartTheme(){const {theme}=useTheme();return {palette:themePalette[theme as keyof typeof themePalette]??themePalette.light,colors:theme==='dark'?['#86C5FF','#F296C2','#99DFB4','#F4CC86','#BDACED','#B6BEC9']:['#1769AA','#B8266E','#2B8050','#A57013','#7159A7','#6B7280']}}
++import {chartSeriesColors} from '@/lib/prism-next/chart-palette'
++export function useChartTheme(){const {theme}=useTheme();return {palette:themePalette[theme as keyof typeof themePalette]??themePalette.light,colors:chartSeriesColors(theme)}}
+--- a/components/prism-next/charts/advanced-charts.tsx
++++ b/components/prism-next/charts/advanced-charts.tsx
+@@ -4,14 +4,15 @@
+ import { DataRecordTable } from "../data-display"
+ import { matrixExtent, validBox, type AxisItem, type MatrixCell, type ScatterPoint, type BoxSummary } from "@/lib/prism-next/chart-data"
+ import { sequentialColor, contrastForeground, type SequentialColors } from "@/lib/prism-next/chart-color"
++import { chartShapeColors, chartSequentialDefault } from "@/lib/prism-next/chart-palette"
+ import { themePalette } from "@/lib/prism-next/config"
+ export type { AxisItem, MatrixCell, ScatterPoint, BoxSummary } from "@/lib/prism-next/chart-data"
+ type Shared={label:string;unit?:string;selectedId?:string;onSelect?:(id:string)=>void;height?:number}
+-function useChartColors(){const {theme}=useTheme();return theme==="dark"?{base:"#86C5FF",selected:"#F296C2",fill:"#365B7B"}:{base:"#1769AA",selected:"#B8266E",fill:"#76A9D2"}}
++function useChartColors(){const {theme}=useTheme();return chartShapeColors(theme)}
+ function DataSummary({children}:{children:React.ReactNode}){return <details><summary className="cursor-pointer py-2 text-ui-hint text-muted-foreground">查看数据与选择项目</summary>{children}</details>}
+ export function HeatmapChart({rows,columns,cells,label,unit="",selectedId,onSelect,height=320,sequentialColors}:Shared&{rows:AxisItem[];columns:AxisItem[];cells:MatrixCell[];sequentialColors?:SequentialColors}){
+  const {theme}=useTheme();const palette=themePalette[theme as keyof typeof themePalette]??themePalette.light;const extent=matrixExtent(cells)
+- const defaultColors:SequentialColors=[palette.secondary,"#76A9D2","#1769AA"]
++ const defaultColors=chartSequentialDefault(theme,palette.secondary) as SequentialColors
+  const ramp=sequentialColors?.every(c=>/^#[0-9a-f]{6}$/i.test(c))?sequentialColors:defaultColors
+  const cellLabel=(c:MatrixCell)=>c.label??(c.value===null||!Number.isFinite(c.value)?"缺测":`${c.value}${unit}`)
+  const data=cells.filter(c=>rows.some(r=>r.id===c.row)&&columns.some(r=>r.id===c.column)).map(c=>({id:c.id,value:[columns.findIndex(x=>x.id===c.column),rows.findIndex(x=>x.id===c.row),c.value===null||!Number.isFinite(c.value)?extent.missing:c.value],rawLabel:cellLabel(c),rowLabel:rows.find(r=>r.id===c.row)!.label,columnLabel:columns.find(r=>r.id===c.column)!.label,itemStyle:{borderWidth:c.id===selectedId?2:1,borderColor:c.id===selectedId?palette.foreground:palette.background},label:{color:c.value===null||!Number.isFinite(c.value)?palette.muted:contrastForeground(sequentialColor(c.value,extent.min,extent.max,ramp))}}))
+--- a/lib/prism-next/chart-palette.ts
++++ b/lib/prism-next/chart-palette.ts
+@@ -0,0 +1,40 @@
++/** Theme-aware chart colours. Core themes keep their existing values byte-for-byte; blueprint adds ink/accent + pattern decals.
++ *  Pure data (no React) so tests can import it directly. */
++import type { PrismTheme } from "./config"
++
++const LIGHT_SERIES = ["#1769AA", "#B8266E", "#2B8050", "#A57013", "#7159A7", "#6B7280"] as const
++const DARK_SERIES = ["#86C5FF", "#F296C2", "#99DFB4", "#F4CC86", "#BDACED", "#B6BEC9"] as const
++/** Accent first (current / primary series), ink second (baseline), then Prism's existing categorical hues. */
++export const BLUEPRINT_SERIES = ["#1D5FBF", "#16181D", "#B8266E", "#2B8050", "#A57013", "#6B7280"] as const
++/** secondary → mid → accent; mid is the RGB midpoint so contrastForeground stays ≥ 4.5 across the ramp. */
++export const BLUEPRINT_SEQUENTIAL = ["#F3F5F8", "#88AADD", "#1D5FBF"] as const
++
++export function chartSeriesColors(theme?: string): readonly string[] {
++  return theme === "dark" ? DARK_SERIES : theme === "blueprint" ? BLUEPRINT_SERIES : LIGHT_SERIES
++}
++/** base / selected / fill for single-series shapes (box plot). */
++export function chartShapeColors(theme?: string) {
++  if (theme === "dark") return { base: "#86C5FF", selected: "#F296C2", fill: "#365B7B" }
++  if (theme === "blueprint") return { base: "#16181D", selected: "#1D5FBF", fill: "#E4ECF8" }
++  return { base: "#1769AA", selected: "#B8266E", fill: "#76A9D2" }
++}
++export function chartSequentialDefault(theme: string | undefined, secondary: string): readonly [string, string, string] {
++  return theme === "blueprint" ? BLUEPRINT_SEQUENTIAL : [secondary, "#76A9D2", "#1769AA"]
++}
++
++/** ECharts surface overrides for blueprint: square ink tooltip with hard offset shadow, ink axis line, per-series decals.
++ *  Returns {} for the three core themes so their options are unchanged. */
++export function blueprintChartOverrides(theme?: PrismTheme | string) {
++  if (theme !== "blueprint") return {}
++  return {
++    aria: { enabled: true, decal: { show: true, decals: [
++      { symbol: "none" },
++      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: -Math.PI / 4, color: "rgba(255,255,255,.55)" },
++      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,.55)" },
++      { symbol: "circle", symbolSize: 0.6, dashArrayX: [4, 4], dashArrayY: [4, 4], color: "rgba(255,255,255,.6)" },
++      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: 0, color: "rgba(255,255,255,.5)" },
++      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: Math.PI / 2, color: "rgba(255,255,255,.5)" },
++    ] } },
++    tooltip: { borderRadius: 0, borderWidth: 1.5, borderColor: "#1D2026", shadowBlur: 0, shadowOffsetX: 6, shadowOffsetY: 6, shadowColor: "rgba(22,24,29,.06)", padding: [8, 12] },
++  }
++}
+--- a/lib/prism-next/chart-options.ts
++++ b/lib/prism-next/chart-options.ts
+@@ -1,6 +1,6 @@
+ /** Theme axes without changing single-axis / multi-axis structure. */
+-export function themeAxes(value:unknown,palette:{muted:string;border:string}){
+- const merge=(entry:unknown)=>{const v=(entry??{}) as Record<string,any>;return {...v,axisLabel:{color:palette.muted,fontSize:12,...v.axisLabel},nameTextStyle:{color:palette.muted,...v.nameTextStyle},axisLine:{...v.axisLine,lineStyle:{color:palette.border,...v.axisLine?.lineStyle}},splitLine:{...v.splitLine,lineStyle:{color:palette.border,...v.splitLine?.lineStyle}}}}
++export function themeAxes(value:unknown,palette:{muted:string;border:string;line?:string}){
++ const merge=(entry:unknown)=>{const v=(entry??{}) as Record<string,any>;return {...v,axisLabel:{color:palette.muted,fontSize:12,...v.axisLabel},nameTextStyle:{color:palette.muted,...v.nameTextStyle},axisLine:{...v.axisLine,lineStyle:{color:palette.line??palette.border,...v.axisLine?.lineStyle}},splitLine:{...v.splitLine,lineStyle:{color:palette.border,...v.splitLine?.lineStyle}}}}
+  return Array.isArray(value)?value.map(merge):merge(value)
+ }
+ export const isChartValue=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value)
+--- a/lib/prism-next/config.ts
++++ b/lib/prism-next/config.ts
+@@ -16,7 +16,7 @@
+   light: { background: "#FFFFFF", surface: "#FFFFFF", secondary: "#F4F5F7", border: "#E3E5E9", foreground: "#1F2328", heading: "#1F2328", muted: "#4B5563", disabled: "#B0B4BB", link: "#1769AA" },
+   paper: { background: "#F4F1EA", surface: "#FFFEFB", secondary: "#EAE6DF", border: "#D8D5CE", foreground: "#1E293B", heading: "#0F172A", muted: "#4B5563", disabled: "#A5A29C", link: "#1D4ED8" },
+   dark: { background: "#0F0F0F", surface: "#17191C", secondary: "#202328", border: "#34383E", foreground: "#E1E5EA", heading: "#F4F6F8", muted: "#B6BEC9", disabled: "#7A8593", link: "#86C5FF" },
+-  blueprint: { background: "#F6F6F3", surface: "#FFFFFF", secondary: "#F3F5F8", border: "#D6DAE1", foreground: "#16181D", heading: "#16181D", muted: "#4B5260", disabled: "#8B929E", link: "#1D5FBF" },
++  blueprint: { background: "#F6F6F3", surface: "#FFFFFF", secondary: "#F3F5F8", border: "#D6DAE1", foreground: "#16181D", heading: "#16181D", muted: "#4B5260", disabled: "#8B929E", link: "#1D5FBF", line: "#1D2026" },
+ } as const
+ 
+ /** Blueprint-only structure values; mirrored by theme.css. Not used by the three core themes. */
+--- a/app/(next)/next/theme.css
++++ b/app/(next)/next/theme.css
+@@ -186,10 +186,10 @@
+   --warning:#E8A33D;
+   --warning-foreground:#A8620A;
+   --chart-1:#1D5FBF;
+-  --chart-2:#B8266E;
+-  --chart-3:#2B8050;
+-  --chart-4:#A57013;
+-  --chart-5:#7159A7;
++  --chart-2:#16181D;
++  --chart-3:#B8266E;
++  --chart-4:#2B8050;
++  --chart-5:#A57013;
+   --radius:0px;
+   --sidebar:#FFFFFF;
+   --sidebar-foreground:var(--foreground);
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -180,6 +180,15 @@
+ [data-prism-theme="blueprint"] .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) > header h2 { font-size:var(--text-page-title); line-height:var(--text-page-title--line-height); font-weight:700; letter-spacing:-.02em; }
+ [data-prism-theme="blueprint"] .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) > :not(header) { position:relative; z-index:1; }
+ [data-prism-theme="blueprint"] .prism-page-heading:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) h1 { font-weight:700; letter-spacing:-.02em; }
++/* ── 8 · Charts ── */
++/* ECharts 6.1 richText fixes its border at 1px. Its SVG tooltip paints the stroke
++   before the fill, hiding the inner half; double the intended visible ink width. */
++[data-prism-theme="blueprint"] [data-chart-engine="echarts"] [filter][stroke="#1D2026"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { stroke-width:calc(var(--line-width) * 2); }
++[data-prism-theme="blueprint"] .recharts-default-tooltip:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) {
++  border-radius:0 !important; border:var(--line-width) solid var(--line) !important; box-shadow:6px 6px 0 rgb(22 24 29 / 6%);
++}
++[data-prism-theme="blueprint"] .recharts-cartesian-axis-line:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { stroke:var(--line); }
++
+ @media (max-width:760px) {
+   [data-prism-theme="blueprint"] .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { border-left:0; border-right:0; padding:36px 16px 28px; }
+   [data-prism-theme="blueprint"] .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))::before,

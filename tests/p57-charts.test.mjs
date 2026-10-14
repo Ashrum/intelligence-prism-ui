@@ -105,12 +105,15 @@ test('P57 radar fewer than three axes, excess series, empty and invalid bounds u
 });
 
 const before = JSON.parse(await readFile(new URL('./fixtures/p57-heatmap-before.json', import.meta.url), 'utf8'));
-for (const snapshot of before) test(`P57 ${snapshot.theme}: default heatmap preserves pre-change output except P59 disclosure placement`, () => {
+for (const snapshot of before) test(`P57 ${snapshot.theme}: default heatmap preserves pre-change output except P59 disclosure placement and BPv6 label marker/tap tooltip`, () => {
   for (const props of [heatmapProps, { ...heatmapProps, compact: false }]) {
     const out = capture('HeatmapChart', props, snapshot.theme);
     const start=snapshot.html.indexOf('<p class="text-ui-hint'),end=snapshot.html.indexOf('<details>');
     const notes=snapshot.html.slice(start,end),expected=(snapshot.html.slice(0,start)+snapshot.html.slice(end)).replace('</summary>','</summary>'+notes);
-    assert.equal(out.html, expected); assert.equal(optionJSON(out.charts[0].option), snapshot.option);
+    const expectedOption = JSON.parse(snapshot.option);
+    expectedOption.tooltip.triggerOn = 'mousemove|click';
+    assert.equal(out.html, expected.replace('<div class="space-y-3">', '<div class="space-y-3" data-heatmap-cell-labels="shown">'));
+    assert.deepEqual(JSON.parse(optionJSON(out.charts[0].option)), expectedOption);
   }
 });
 

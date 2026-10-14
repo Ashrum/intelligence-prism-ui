@@ -1,0 +1,9 @@
+{
+  "protected_files_checked": 86,
+  "changed": [],
+  "scope": "AGENTS.md, v4/v5 evidence, archived screenshots, components/coss/**",
+  "baseline": "7c2783346081ed23fd70ebb9414f0e879745a60c + pre-existing v5/v6 worktree",
+  "v6_current_preserved_verbatim": true,
+  "v5_and_older_history_preserved_verbatim": true,
+  "supervisor_review_preserved_verbatim": true
+}

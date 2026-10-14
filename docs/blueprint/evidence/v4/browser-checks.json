@@ -1,0 +1,193 @@
+[
+  {
+    "fixtureTheme": "light",
+    "data": [
+      {
+        "colors": [
+          "#1769AA",
+          "#B8266E",
+          "#2B8050",
+          "#A57013",
+          "#7159A7",
+          "#6B7280"
+        ],
+        "label": "六系列柱形。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      },
+      {
+        "colors": [
+          "#1769AA",
+          "#B8266E",
+          "#2B8050",
+          "#A57013",
+          "#7159A7",
+          "#6B7280",
+          "#000"
+        ],
+        "label": "六系列堆叠面积。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      }
+    ]
+  },
+  {
+    "fixtureTheme": "paper",
+    "data": [
+      {
+        "colors": [
+          "#1769AA",
+          "#B8266E",
+          "#2B8050",
+          "#A57013",
+          "#7159A7",
+          "#6B7280"
+        ],
+        "label": "六系列柱形。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      },
+      {
+        "colors": [
+          "#1769AA",
+          "#B8266E",
+          "#2B8050",
+          "#A57013",
+          "#7159A7",
+          "#6B7280",
+          "#000"
+        ],
+        "label": "六系列堆叠面积。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      }
+    ]
+  },
+  {
+    "fixtureTheme": "dark",
+    "data": [
+      {
+        "colors": [
+          "#86C5FF",
+          "#F296C2",
+          "#99DFB4",
+          "#F4CC86",
+          "#BDACED",
+          "#B6BEC9"
+        ],
+        "label": "六系列柱形。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      },
+      {
+        "colors": [
+          "#86C5FF",
+          "#F296C2",
+          "#99DFB4",
+          "#F4CC86",
+          "#BDACED",
+          "#B6BEC9",
+          "#000"
+        ],
+        "label": "六系列堆叠面积。完整数值及缺测说明见下方数据表。",
+        "patterns": 0
+      }
+    ]
+  },
+  {
+    "echartsTooltip": [
+      {
+        "paintOrder": "stroke",
+        "path": "M0 0l84.392 0l0 60l-84.392 0Z",
+        "stroke": "3px"
+      }
+    ]
+  },
+  {
+    "route": "quadrant-chart",
+    "symbols": {
+      "colors": [
+        "none",
+        "#1D5FBF",
+        "#2B8050"
+      ],
+      "patterns": 0
+    }
+  },
+  {
+    "route": "quadrant-chart",
+    "viewport": 320,
+    "dimensions": {
+      "pageWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "rechartsTooltip": {
+      "border": "1.5px",
+      "color": "rgb(29, 32, 38)",
+      "radius": "0px",
+      "shadow": "rgba(22, 24, 29, 0.06) 6px 6px 0px 0px",
+      "text": "甲组序列 A : 62分序列 B : 49.6分"
+    }
+  },
+  {
+    "rechartsTheme": "light",
+    "tooltip": {
+      "border": "1px",
+      "color": "rgb(227, 229, 233)",
+      "radius": "8px",
+      "shadow": "none"
+    },
+    "series": [
+      "rgb(23, 105, 170)",
+      "rgb(184, 38, 110)"
+    ]
+  },
+  {
+    "rechartsTheme": "paper",
+    "tooltip": {
+      "border": "1px",
+      "color": "rgb(216, 213, 206)",
+      "radius": "8px",
+      "shadow": "none"
+    },
+    "series": [
+      "rgb(23, 105, 170)",
+      "rgb(184, 38, 110)"
+    ]
+  },
+  {
+    "rechartsTheme": "dark",
+    "tooltip": {
+      "border": "1px",
+      "color": "rgb(52, 56, 62)",
+      "radius": "8px",
+      "shadow": "none"
+    },
+    "series": [
+      "rgb(134, 197, 255)",
+      "rgb(242, 150, 194)"
+    ]
+  },
+  {
+    "route": "trend-chart",
+    "viewport": 320,
+    "dimensions": {
+      "pageWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "evidence-matrix",
+    "viewport": 320,
+    "dimensions": {
+      "pageWidth": 320,
+      "viewport": 320
+    }
+  },
+  {
+    "route": "evidence-matrix",
+    "theme": "light",
+    "viewport": 320,
+    "dimensions": {
+      "pageWidth": 320,
+      "viewport": 320
+    }
+  }
+]

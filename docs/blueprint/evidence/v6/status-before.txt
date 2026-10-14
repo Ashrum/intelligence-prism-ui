@@ -1,0 +1,91 @@
+# Blueprint 主题 · 状态
+
+> 交接状态记录。每轮更新“当前”，旧“当前”连同日期与基线移入“历史”。正文路径均为仓库相对路径。
+
+## 当前
+
+- 轮次：v5 交接规则与证据归档，已由 Claude Code（Supervisor）应用到本地工作树。
+- 批准依据：Product Owner 2026-10-14 原话——经 Codex 转交：“批准 v5 修订版，由 Claude Code 应用，完成后验证并更新 STATUS.md。”；Product Owner 随后在 Claude Code 会话中直接确认：“批准应用 Blueprint v5 修订版到 intelligence-prism-ui”。批准对象是审核修订包 `Blueprint-v5-reviewed-20261014.zip`（SHA-256 `72016e6b…83044`）；修订包与原始草案的完整散列分别记于 [docs/blueprint/evidence/v5/codex-verification-20261014.json](evidence/v5/codex-verification-20261014.json)。原始草案的散列不作为修订包标识。
+- 应用日期：2026-10-14。
+- 实际分支 / HEAD：`feat/learning-charts` · `6ddecd27eb76f7e3694855df4ef42f904d03ead6`（未切换分支）。改动为该分支上的未提交改动：`AGENTS.md`（§5 两处说明、新增 §10）与新增 `docs/blueprint/`；与同分支的图表提交（P58–P62）无文件交集。本轮未提交、未推送、未合并、未发布。
+- 应用前基线：`AGENTS.md` SHA-256 `0a12c47b…ace86`，与 `review-baseline.json` 一致；应用后 `edff5266…5f7eb`，与包内 `AGENTS.proposed.md` 逐字节相同。§3 的 2026-10-13 GPT Site 实验线特例保持不变；`.sites-runtime/` 原历史证据保留未动。
+- Review 与复核：批准补丁由 Claude Code（Supervisor）应用并核对；Codex 随后独立核对规则、改动范围、54 个 coss 文件字节、截图散列、链接及本轮测试日志，结果均符合本次文档交接范围。详见 [复核记录](evidence/v5/codex-verification-20261014.json)。Codex 本次只补充此状态与复核记录，未修改生效规则或运行时。
+
+### 本轮验证（2026-10-14，上述 HEAD + 本轮未提交改动）
+
+| 检查 | 结果 |
+| --- | --- |
+| `git apply --check` / `git apply` | 均退出 0，无冲突，未使用 `--3way` |
+| 改动范围 | `git status` 仅 `AGENTS.md` 与 `docs/blueprint/`；`components/coss/**` 与 HEAD 相同；无运行时代码、样式、依赖、测试或组件目录改动 |
+| `docs/blueprint/` 与修订包 | `diff -r` 完全一致（本行所在 STATUS、新增测试日志与 Codex 复核记录除外） |
+| 18 张历史截图 | 文件头均为 JPEG（`FFD8FF`）；与 `screens/v4/manifest.json` 记录的 SHA-256 18/18 一致；与 `.sites-runtime/` 原文件 18/18 字节相同 |
+| 相对链接 | `AGENTS.md` 与 `docs/blueprint/**/*.md` 的仓库相对链接全部可解析 |
+| `node --test tests/blueprint-theme.test.mjs tests/blueprint-components.test.mjs tests/blueprint-charts.test.mjs` | 18/18 通过，fail 0，退出码 0。日志：[evidence/v5/apply-tests-20261014.log](evidence/v5/apply-tests-20261014.log) |
+| 全量测试、构建、类型、字号检查 | 本轮未运行（纯规则 / 文档归档，按 §10.2 不沿用旧结果） |
+| 浏览器、打印、读屏器 | 本轮未运行；`screens/v4/` 是 2026-10-13 历史截图，不是当前视图 |
+
+### 继续保留的限制与待决定
+
+- 320px 默认热力图文字拥挤仍是待复验限制；`<400px 隐藏格内数字` 未获批准，不实施。
+- 实体黑白打印、真实移动设备、读屏器与全组件视觉验收未做。
+- 目录数量断言中的重复 105 常量待日后以独立有效的目录完整性断言收敛（§10.2），本轮未改测试。
+- 320px 热力图的交互与布局方案仍待 Product Owner 决定。
+
+## 历史
+
+### v5 · 修订候选技术核对 · 2026-10-14（应用前）
+
+- 轮次：v5 交接规则技术核对，待 Product Owner 确认后由 Claude Code 应用。
+- 核对日期：2026-10-14。
+- 观察基线：`feat/learning-charts` · `6ddecd27eb76f7e3694855df4ef42f904d03ead6`；该快照的工作树干净；审核期间并行图表工作已形成 P62 提交。本轮未 fetch，未判定远端同步状态。
+- 规则授权：待 Product Owner 明确确认；不预填授权日期。
+- 应用状态：候选补丁已整理，尚未应用到生效的 `AGENTS.md`。应用时更新此行，并记录批准依据、应用提交及独立 Review 结果。
+- 范围：§5 两处说明、§10、本文与证据归档；无运行时代码、依赖或组件目录改动。
+
+#### 当时验证
+
+| 检查 | 结果与范围 |
+| --- | --- |
+| `node --test tests/blueprint-theme.test.mjs tests/blueprint-components.test.mjs tests/blueprint-charts.test.mjs` | 18/18 通过，退出码 0；在 `2abc127` 与当时未提交图表改动的工作树上执行；之后观察到 P62 提交，不代表新 HEAD 全量或候选规则已验收 |
+| v4 旧目录失败核对 | 5 处断言当前源码已为 105；不再将旧的 `105 !== 103` 写成当前失败；未据此推定全量通过 |
+| 当前全量、构建、类型与字号检查 | 本次规则审核未重跑；历史结果见下方 |
+| 当前浏览器与打印检查 | 本次未重跑；迁移的图片是 2026-10-13 证据，不是当前视图 |
+
+本轮测试摘要：[docs/blueprint/evidence/v5/review-checks.json](evidence/v5/review-checks.json)。
+
+#### 当时偏差、限制与待办
+
+- 原包的 `feat/blueprint-theme · 未提交` 不符合当前基线。v4 相关文件已在 `a86d6fa` 中进入提交历史；本次审核期间另有图表工作形成 P62 提交，不归入本补丁。
+- v4 的 1761/1766 属于 2026-10-13 并行改动期间的历史结果；保留记录，不覆盖成当前通过或失败。
+- `bp-*` 显式组件的跨主题中性回退，与蓝图对既有组件的隔离覆盖分别约束；核心三主题的已有令牌值与默认行为继续保持。
+- 目录数量断言仍有重复的 105 常量；未来以独立有效的目录完整性断言收敛，不在本轮修改测试或降低契约要求。
+- 320px 默认热力图文字拥挤仍是待复验限制；本轮没有决定隐藏格内数字，也未改运行时。
+
+#### 当时待 Product Owner 决定
+
+- 是否批准本候选 §5 / §10 的有限例外与交接约定；由 Claude Code 应用并记录批准依据。
+- 320px 热力图的交互与布局方案尚未选定；`<400px 隐藏格内数字` 仅为原包提案，不列为已批准实施项。
+
+
+### v4 · 图表配色 · 2026-10-13
+
+历史来源：[docs/blueprint-theme.md](../blueprint-theme.md) 的 v4 接入记录及此次复制的原始日志；不是当前提交的重新验收。v4 文件后来已进入提交 `a86d6fa`，不能再概括为“未提交”。
+
+**v4 范围**：`lib/prism-next/chart-palette.ts`、`components/prism-next/charts/chart-theme.ts`、`components/prism-next/charts/echart.tsx`、`components/prism-next/charts/advanced-charts.tsx`、`lib/prism-next/chart-options.ts`、`tests/blueprint-charts.test.mjs`，以及手动适配的 `lib/prism-next/config.ts`、`app/(next)/next/theme.css`、`app/(next)/next/blueprint.css`。范围 diff：[docs/blueprint/evidence/v4/v4-scope.diff](evidence/v4/v4-scope.diff)。
+
+| 当时检查 | 历史结果 |
+| --- | --- |
+| 首次相关测试 / 全量 | 29/29、1743/1743 |
+| 收尾新增图表测试 | 6/6 |
+| 混合工作树最后全量 | 1761/1766；目录扩展到 105 后，5 处仍断言 103 |
+| 数学字体、字号、构建、TypeScript | 当时记录为通过；不作为当前复验结论 |
+
+原全量日志：[初次 1743/1743](evidence/v4/tests.log)、[混合工作树 1761/1766](evidence/v4/final-tests.log)。
+
+**已记录的浏览器观察**：四主题 1280px 的六系列柱形/面积夹具和正式趋势页；蓝图箱线选中态、热力图、散点、比较及提示框；320px 局部抽查。箱线验证的是墨线、填充和蓝色选中态，不能记成已验多系列图案。柱形/面积有图案；Recharts 趋势/比较、ECharts 无填充折线没有对应填充图案；分组散点使用调用方点形。
+
+**继续保留的限制**：320px 默认热力图文字拥挤；实体黑白打印、真实移动设备、读屏器及全组件视觉验收未做。v4 之外的既有 Tabs 窄屏问题与并行 compact 热力图范围，仍以历史文档为准。
+
+**实现偏差**：ECharts 6.1 富文本提示框忽略配置的 1.5px 边框，v4 已加隔离的 SVG 描边适配；选中箱线和提示框均留有历史截图。
+
+截图索引：[docs/blueprint/screens/v4/README.md](screens/v4/README.md)；18 张图片字节保持不变，扩展名由误标 `.png` 修为实际的 `.jpg`。原临时文件保留，未移动或删除。夹具源文件与浏览器记录一并归档到 `docs/blueprint/evidence/v4/`；夹具入口已移除，图片不能当作当前线上路由的截图。

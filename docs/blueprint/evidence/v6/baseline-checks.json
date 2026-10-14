@@ -1,0 +1,12 @@
+[
+  {
+    "baseline": "head-clean",
+    "path": "/private/tmp/bpv6-head-jrom41kt",
+    "exit_code": 0
+  },
+  {
+    "baseline": "head-plus-v5",
+    "path": "/private/tmp/bpv6-head-jrom41kt",
+    "exit_code": 2
+  }
+]

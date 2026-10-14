@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-14",
+  "branch": "feat/learning-charts",
+  "head": "2abc127434f5a7652a830869f82b735ee53cd6a5",
+  "worktree": "dirty; unrelated chart work in progress",
+  "command": "node --test tests/blueprint-theme.test.mjs tests/blueprint-components.test.mjs tests/blueprint-charts.test.mjs",
+  "tests": 18,
+  "pass": 18,
+  "fail": 0,
+  "exit_code": 0,
+  "duration_ms": 122.203542,
+  "scope": "Current existing Blueprint code; proposal not applied. No build, full-suite or browser rerun in this review.",
+  "subsequent_observed_head": "6ddecd27eb76f7e3694855df4ef42f904d03ead6",
+  "subsequent_worktree": "clean at review package snapshot; other chart work committed as P62"
+}

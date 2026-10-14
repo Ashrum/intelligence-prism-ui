@@ -1,0 +1,374 @@
+--- a/components/prism-next/charts/advanced-charts.tsx
++++ b/components/prism-next/charts/advanced-charts.tsx
+@@ -11,7 +11,7 @@
+ import { chartShapeColors, chartSequentialDefault } from "@/lib/prism-next/chart-palette"
+ import { themePalette } from "@/lib/prism-next/config"
+ import { heatmapGrid, heatmapAxisLabel } from "@/lib/prism-next/heatmap-layout"
+-import { heatmapShowsCellLabels } from "@/lib/prism-next/heatmap-labels"
++import { heatmapShowsCellLabels, heatmapDescription } from "@/lib/prism-next/heatmap-labels"
+ export type { AxisItem, MatrixCell, ScatterPoint, BoxSummary } from "@/lib/prism-next/chart-data"
+ type Shared={dataDisclosure?:ChartDataDisclosureMode;label:string;unit?:string;selectedId?:string;onSelect?:(id:string)=>void;height?:number}
+ function useChartColors(){const {theme}=useTheme();return chartShapeColors(theme)}
+@@ -35,7 +35,7 @@
+  const ramp=sequentialColors?.every(c=>/^#[0-9a-f]{6}$/i.test(c))?sequentialColors:defaultColors
+  const cellLabel=(c:MatrixCell)=>c.label??(c.value===null||!Number.isFinite(c.value)?"缺测":formatChartValue(c.value,unit))
+  const data=cells.filter(c=>rows.some(r=>r.id===c.row)&&columns.some(r=>r.id===c.column)).map(c=>({id:c.id,value:[columns.findIndex(x=>x.id===c.column),rows.findIndex(x=>x.id===c.row),c.value===null||!Number.isFinite(c.value)?extent.missing:c.value],rawLabel:cellLabel(c),rowLabel:rows.find(r=>r.id===c.row)!.label,columnLabel:columns.find(r=>r.id===c.column)!.label,itemStyle:{borderWidth:c.id===selectedId?2:1,borderColor:c.id===selectedId?palette.foreground:palette.background},label:{color:c.value===null||!Number.isFinite(c.value)?palette.muted:contrastForeground(sequentialColor(c.value,extent.min,extent.max,ramp))}}))
+- return <div ref={frame} className="space-y-3" data-heatmap-cell-labels={showCellLabels?"shown":"hidden"}>{data.length?<EChart label={showCellLabels?label:`${label}。窄屏下格内数值已隐藏，点按格子或查看下方数据表。`} height={height} onSelect={onSelect} option={{tooltip:{triggerOn:heatmapTooltipTrigger,formatter:params=>{const p=Array.isArray(params)?params[0]:params;const cell=p.data as typeof data[number];return `${cell.rowLabel} · ${cell.columnLabel}\n${cell.rawLabel}`}},grid:heatmapGrid(compact),xAxis:{type:"category",data:columns.map(c=>c.label),splitArea:{show:false},...heatmapAxisLabel(compact,58)},yAxis:{type:"category",data:rows.map(r=>r.label),inverse:true,...heatmapAxisLabel(compact,64)},visualMap:{min:extent.min,max:extent.max,calculable:false,text:[formatChartValue(extent.max,unit),formatChartValue(extent.min,unit)],orient:"horizontal",left:"center",bottom:0,inRange:{color:[...ramp]},outOfRange:{color:[palette.secondary]},textStyle:{color:palette.muted}},series:[{type:"heatmap",data,label:{show:showCellLabels,formatter:p=>(p.data as typeof data[number]).rawLabel},emphasis:{itemStyle:{color:"inherit",borderColor:palette.foreground,borderWidth:2}}}]}}/>:<p className="py-10 text-ui-hint text-muted-foreground">暂无矩阵数据。</p>}<ChartDataDisclosure mode={dataDisclosure} label={label} summary="查看数据与选择项目" summaryClassName="cursor-pointer py-2 text-ui-hint text-muted-foreground"><p className="text-ui-hint text-muted-foreground">{label} · {unit||"数值"}；缺测单独标记，不按零值绘制。</p><DataRecordTable rows={cells} selectedId={selectedId} onSelect={dataDisclosure==="hidden"?undefined:onSelect} columns={[{id:"row",label:"行",render:c=>rows.find(x=>x.id===c.row)?.label},{id:"column",label:"列",render:c=>columns.find(x=>x.id===c.column)?.label},{id:"value",label:"数值",render:cellLabel}]}/></ChartDataDisclosure></div>
++ return <div ref={frame} className="space-y-3" data-heatmap-cell-labels={showCellLabels?"shown":"hidden"}>{data.length?<EChart preserveItemTooltip label={heatmapDescription(label,showCellLabels)} height={height} onSelect={onSelect} option={{tooltip:{triggerOn:heatmapTooltipTrigger,formatter:params=>{const p=Array.isArray(params)?params[0]:params;const cell=p.data as typeof data[number];return `${cell.rowLabel} · ${cell.columnLabel}\n${cell.rawLabel}`}},grid:heatmapGrid(compact),xAxis:{type:"category",data:columns.map(c=>c.label),splitArea:{show:false},...heatmapAxisLabel(compact,58)},yAxis:{type:"category",data:rows.map(r=>r.label),inverse:true,...heatmapAxisLabel(compact,64)},visualMap:{min:extent.min,max:extent.max,calculable:false,text:[formatChartValue(extent.max,unit),formatChartValue(extent.min,unit)],orient:"horizontal",left:"center",bottom:0,inRange:{color:[...ramp]},outOfRange:{color:[palette.secondary]},textStyle:{color:palette.muted}},series:[{type:"heatmap",data,label:{show:showCellLabels,formatter:p=>(p.data as typeof data[number]).rawLabel},emphasis:{itemStyle:{color:"inherit",borderColor:palette.foreground,borderWidth:2}}}]}}/>:<p className="py-10 text-ui-hint text-muted-foreground">暂无矩阵数据。</p>}<ChartDataDisclosure mode={dataDisclosure} label={label} summary="查看数据与选择项目" summaryClassName="cursor-pointer py-2 text-ui-hint text-muted-foreground"><p className="text-ui-hint text-muted-foreground">{label} · {unit||"数值"}；缺测单独标记，不按零值绘制。</p><DataRecordTable rows={cells} selectedId={selectedId} onSelect={dataDisclosure==="hidden"?undefined:onSelect} columns={[{id:"row",label:"行",render:c=>rows.find(x=>x.id===c.row)?.label},{id:"column",label:"列",render:c=>columns.find(x=>x.id===c.column)?.label},{id:"value",label:"数值",render:cellLabel}]}/></ChartDataDisclosure></div>
+ }
+ export {ScatterChart,QuadrantScatterChart} from "./scatter-chart"
+ export function BoxPlotChart({dataDisclosure="visible",data,label,unit="",selectedId,onSelect,height=320}:Shared&{data:BoxSummary[]}){const colors=useChartColors();const valid=data.filter(x=>validBox(x.values));return <div className="space-y-3">{valid.length?<EChart label={label} height={height} onSelect={onSelect} option={{grid:{left:55,right:20,top:25,bottom:45},xAxis:{type:"category",data:valid.map(d=>d.label)},yAxis:{type:"value",name:unit,axisLabel:{formatter:(value:number)=>formatChartValue(value,unit)}},tooltip:{formatter:params=>{const p=Array.isArray(params)?params[0]:params;const row=data.find(d=>d.id===(p.data as {id:string}).id);return row?`${row.label}\n${["下须","Q1","中位数","Q3","上须"].map((name,i)=>`${name}：${formatChartValue(row.values[i],unit)}`).join("\n")}`:""}},series:[{type:"boxplot",data:valid.map(d=>({id:d.id,value:d.values,itemStyle:{color:colors.fill,borderColor:d.id===selectedId?colors.selected:colors.base,borderWidth:d.id===selectedId?3:1.5}}))}]}}/>:<p className="py-10 text-ui-hint text-muted-foreground">暂无有效箱线数据。</p>}<ChartDataDisclosure mode={dataDisclosure} label={label} summary="查看数据与选择项目" summaryClassName="cursor-pointer py-2 text-ui-hint text-muted-foreground">{valid.length!==data.length&&<p role="alert" className="text-ui-body text-destructive">部分五数摘要顺序不正确，未绘制。</p>}<p className="text-ui-hint text-muted-foreground">输入顺序：下须、第一四分位、中位数、第三四分位、上须。统计方法由数据提供方确定。</p><DataRecordTable rows={data} selectedId={selectedId} onSelect={dataDisclosure==="hidden"?undefined:onSelect} columns={[{id:"label",label:"分组",render:r=>r.label},...["下须","Q1","中位数","Q3","上须"].map((label,i)=>({id:String(i),label,render:(r:BoxSummary)=>formatChartValue(r.values[i],unit)}))]}/></ChartDataDisclosure></div>}
+--- a/components/prism-next/charts/echart.tsx
++++ b/components/prism-next/charts/echart.tsx
+@@ -6,15 +6,46 @@
+ import { themeAxes } from "@/lib/prism-next/chart-options"
+ import { themePalette } from "@/lib/prism-next/config"
+ import { blueprintChartOverrides } from "@/lib/prism-next/chart-palette"
++import { createItemTooltipTracker } from "@/lib/prism-next/chart-item-tooltip"
++import { chartDescription } from "@/lib/prism-next/chart-description"
+ 
+ let engine:Promise<typeof import("./echart-engine")>|undefined
+ export function loadChartEngine(){return engine??=import("./echart-engine")}
+-export function EChart({option,label,height=300,onSelect}:{option:EChartsOption;label:string;height?:number;onSelect?:(id:string,seriesId?:string)=>void}){
+- const node=useRef<HTMLDivElement>(null),chart=useRef<ECharts|null>(null),latest=useRef({option,onSelect,label,theme:"light"})
+- const {theme}=useTheme();latest.current={option,onSelect,label,theme:theme??"light"}
++export function EChart({option,label,height=300,onSelect,preserveItemTooltip=false}:{option:EChartsOption;label:string;height?:number;onSelect?:(id:string,seriesId?:string)=>void;preserveItemTooltip?:boolean}){
++ const node=useRef<HTMLDivElement>(null),chart=useRef<ECharts|null>(null),latest=useRef({option,onSelect,label,theme:"light",preserveItemTooltip})
++ const tooltip=useRef(createItemTooltipTracker())
++ const {theme}=useTheme();latest.current={option,onSelect,label,theme:theme??"light",preserveItemTooltip}
+  const [error,setError]=useState(false)
+- useEffect(()=>{let gone=false;let observer:ResizeObserver|undefined;loadChartEngine().then(core=>{if(gone||!node.current)return;const instance=core.init(node.current,undefined,{renderer:"svg"});chart.current=instance;instance.on("click",event=>{const data=event.data as {id?:string}|undefined;if(data?.id)latest.current.onSelect?.(data.id,event.seriesId)});observer=new ResizeObserver(()=>instance.resize());observer.observe(node.current);apply();}).catch(()=>{if(!gone)setError(true)});return()=>{gone=true;observer?.disconnect();chart.current?.dispose();chart.current=null}},[])
+- function apply(){const current=latest.current.theme;const palette=themePalette[current as keyof typeof themePalette]??themePalette.light;const bp=blueprintChartOverrides(current) as {aria?:object;tooltip?:object};const description=`${latest.current.label}。完整数值及缺测说明见下方数据表。`;chart.current?.setOption({animation:false,aria:{enabled:true,label:{description},...bp.aria},backgroundColor:"transparent",textStyle:{color:palette.foreground,fontFamily:"system-ui, sans-serif"},...latest.current.option,tooltip:{trigger:"item",renderMode:"richText",backgroundColor:palette.surface,borderColor:palette.border,textStyle:{color:palette.foreground},...bp.tooltip,...latest.current.option.tooltip as object},xAxis:themeAxes(latest.current.option.xAxis,palette),yAxis:themeAxes(latest.current.option.yAxis,palette)},true)}
+- useEffect(()=>{apply()},[option,theme])
++ useEffect(()=>{
++  let gone=false;let observer:ResizeObserver|undefined
++  const outside=(event:PointerEvent)=>{if(latest.current.preserveItemTooltip&&chart.current&&event.target instanceof Node&&!node.current?.contains(event.target))tooltip.current.dismiss(chart.current)}
++  loadChartEngine().then(core=>{
++   if(gone||!node.current)return
++   const instance=core.init(node.current,undefined,{renderer:"svg"});chart.current=instance
++   instance.on("click",event=>{
++    if(latest.current.preserveItemTooltip)tooltip.current.click(event)
++    const data=event.data as {id?:string}|undefined
++    if(data?.id)latest.current.onSelect?.(data.id,event.seriesId)
++   })
++   // These listeners only maintain the opt-in tracker; ECharts owns normal hover/hide.
++   instance.on("hideTip",()=>tooltip.current.clear())
++   instance.on("mouseover",()=>tooltip.current.clear())
++   instance.getZr().on("globalout",()=>tooltip.current.clear())
++   instance.getZr().on("click",event=>{if(latest.current.preserveItemTooltip&&!event.target)tooltip.current.dismiss(instance)})
++   document.addEventListener("pointerdown",outside)
++   observer=new ResizeObserver(()=>instance.resize());observer.observe(node.current);apply()
++  }).catch(()=>{if(!gone)setError(true)})
++  return()=>{gone=true;document.removeEventListener("pointerdown",outside);observer?.disconnect();tooltip.current.clear();chart.current?.dispose();chart.current=null}
++ },[])
++ function apply(){
++  const instance=chart.current;if(!instance)return
++  const current=latest.current.theme;const palette=themePalette[current as keyof typeof themePalette]??themePalette.light
++  const bp=blueprintChartOverrides(current) as {aria?:object;tooltip?:object}
++  const description=chartDescription(latest.current.label)
++  const setOption=()=>instance.setOption({animation:false,aria:{enabled:true,label:{description},...bp.aria},backgroundColor:"transparent",textStyle:{color:palette.foreground,fontFamily:"system-ui, sans-serif"},...latest.current.option,tooltip:{trigger:"item",renderMode:"richText",backgroundColor:palette.surface,borderColor:palette.border,textStyle:{color:palette.foreground},...bp.tooltip,...latest.current.option.tooltip as object},xAxis:themeAxes(latest.current.option.xAxis,palette),yAxis:themeAxes(latest.current.option.yAxis,palette)},true)
++  if(latest.current.preserveItemTooltip)tooltip.current.apply(instance,latest.current.option.series,setOption)
++  else setOption()
++ }
++ useEffect(()=>{apply()},[option,theme,label,preserveItemTooltip])
+  return <div className="min-w-0"><div ref={node} role="img" aria-label={label} style={{height,width:"100%"}} data-chart-engine="echarts"/>{error&&<p role="alert" className="text-ui-body text-destructive">图形未能加载，请查看下方数据。</p>}</div>
+ }
+--- a/components/prism-next/demos/polar-charts.tsx
++++ b/components/prism-next/demos/polar-charts.tsx
+@@ -61,7 +61,7 @@
+   const [five, setFive] = useState(false), [notice, setNotice] = useState("选择单元格或数据表项目，查看项目 ID。")
+   const rows = ["运算求解", "推理论证", "数据分析", "模型建立", "综合应用"].slice(0, five ? 5 : 3).map((label, index) => ({ id: `row-${index}`, label }))
+   const columns = ["基础", "进阶", "综合"].map((label, index) => ({ id: `column-${index}`, label }))
+-  return <DemoSection id="compact-heatmap" title="300px 紧凑矩阵" description="可选 compact 布局，保留格内数值、零值与缺测；原热力矩阵默认布局保持不变。">
++  return <DemoSection id="compact-heatmap" title="300px 紧凑矩阵" description="可选 compact 布局：核心主题保留格内数值；蓝图主题在窄容器下隐藏格内数值，可点按查看。零值与缺测均保留在提示框和数据表中。">
+     <Button variant="outline" className="mb-4" aria-pressed={five} onClick={() => setFive(!five)}>{five ? "切到 3 × 3" : "切到 5 × 3"}</Button>
+     <div className="w-[300px] max-w-full"><HeatmapChart compact height={240} label="能力与题目层级" rows={rows} columns={columns} cells={rows.flatMap((row, r) => columns.map((column, c) => ({ id: `${row.id}-${column.id}`, row: row.id, column: column.id, value: r === 0 && c === 0 ? 0 : r === 1 && c === 2 ? null : (r + 1) * 10 + c * 5 })))} onSelect={id => setNotice(`请求查看：${id}；等待调用方处理。`)} /></div>
+     <Feedback>{notice}</Feedback>
+--- /dev/null
++++ b/lib/prism-next/chart-item-tooltip.ts
+@@ -0,0 +1,35 @@
++/** Opt-in preservation of a clicked item across setOption (heatmaps only).
++ * Resolve by stable item ID so reordered/removed data never displays a stale index. */
++type ItemTarget = { seriesIndex: number; id: string }
++type ItemEvent = { seriesIndex?: number; data?: unknown }
++type TooltipChart = { dispatchAction: (action: { type: "showTip" | "hideTip"; seriesIndex?: number; dataIndex?: number }) => void }
++
++export function createItemTooltipTracker() {
++  let target: ItemTarget | undefined
++  function clear() { target = undefined }
++  return {
++    clear,
++    click(event: ItemEvent) {
++      const data = event.data as { id?: unknown } | undefined
++      target = typeof data?.id === "string" && typeof event.seriesIndex === "number"
++        ? { seriesIndex: event.seriesIndex, id: data.id } : undefined
++    },
++    dismiss(chart: TooltipChart) {
++      clear()
++      chart.dispatchAction({ type: "hideTip" })
++    },
++    apply(chart: TooltipChart, seriesOption: unknown, setOption: () => void) {
++      // setOption may emit hideTip synchronously; retain only the pre-update intent.
++      const clicked = target
++      setOption()
++      if (!clicked) return
++      const series = Array.isArray(seriesOption) ? seriesOption : [seriesOption]
++      const data: unknown = series[clicked.seriesIndex]?.data
++      const dataIndex = Array.isArray(data)
++        ? data.findIndex(item => item && typeof item === "object" && item.id === clicked.id) : -1
++      if (dataIndex < 0) { clear(); return }
++      target = clicked
++      chart.dispatchAction({ type: "showTip", seriesIndex: clicked.seriesIndex, dataIndex })
++    },
++  }
++}
+--- /dev/null
++++ b/lib/prism-next/chart-description.ts
+@@ -0,0 +1,4 @@
++/** ECharts appends the common data-table guidance exactly once. */
++export function chartDescription(label: string) {
++  return `${label.replace(/[。.!！?？\s]+$/u, "")}。完整数值及缺测说明见下方数据表。`
++}
+--- a/lib/prism-next/heatmap-labels.ts
++++ b/lib/prism-next/heatmap-labels.ts
+@@ -1,6 +1,9 @@
+ /** Blueprint-only narrow-width rule (PO decision 2026-10-14, option B).
+  * Keep labels when width is unknown or the visible data disclosure is unavailable. */
+ export const HEATMAP_LABEL_MIN_WIDTH = 400
++export function heatmapDescription(label: string, showCellLabels: boolean) {
++  return showCellLabels ? label : `${label.replace(/[。.!！?？\s]+$/u, "")}。窄屏下格内数值已隐藏，点按格子查看数值`
++}
+ export function heatmapShowsCellLabels(
+   width: number | undefined,
+   dataDisclosure: "visible" | "hidden" = "visible",
+--- /dev/null
++++ b/tests/heatmap-tooltip.test.mjs
+@@ -0,0 +1,126 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { build } from 'esbuild';
++import { writeFile } from 'node:fs/promises';
++import { fileURLToPath } from 'node:url';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++import { chartDescription } from '../lib/prism-next/chart-description.ts';
++import { heatmapDescription } from '../lib/prism-next/heatmap-labels.ts';
++
++// Execute the real EChart component/effects with controlled hooks and engine events.
++// This verifies the update lifecycle, not browser rendering or pointer synthesis.
++const root = fileURLToPath(new URL('../', import.meta.url));
++const dir = await createTestRuntime('heatmap-tooltip');
++const file = new URL('bundle.mjs', dir);
++await writeFile(file, (await build({
++  stdin: { contents: `export {EChart} from './components/prism-next/charts/echart'`, resolveDir: root },
++  bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
++  plugins: [{ name: 'controlled-chart-host', setup(b) {
++    b.onResolve({ filter: /^(react|next-themes)$/ }, args => ({ path: args.path, namespace: 'host' }));
++    b.onLoad({ filter: /.*/, namespace: 'host' }, args => ({ contents: args.path === 'react'
++      ? 'export const useRef=(...a)=>globalThis.__tooltipHost.ref(...a);export const useState=(v)=>[v,()=>{}];export const useEffect=(...a)=>globalThis.__tooltipHost.effect(...a);'
++      : 'export const useTheme=()=>({theme:globalThis.__tooltipHost.theme});' }));
++    b.onLoad({ filter: /\/echart-engine\.ts$/ }, () => ({ contents: 'export const init=()=>{globalThis.__tooltipHost.inits++;return globalThis.__tooltipHost.chart}' }));
++  } }],
++})).outputFiles[0].text);
++const { EChart } = await import(file);
++
++async function host(theme, preserveItemTooltip = true) {
++  const refs = [], effects = [], events = new Map(), zr = new Map(), documentEvents = new Map();
++  let cursor = 0, effectCursor = 0, pending = [], props;
++  const state = {
++    theme, inits: 0, actions: [], options: [], visible: undefined, disposed: 0,
++    ref(initial) { const index = cursor++; return refs[index] ??= { current: initial }; },
++    effect(fn, deps) {
++      const index = effectCursor++, prior = effects[index];
++      if (!prior || deps.some((d, i) => !Object.is(d, prior.deps[i]))) pending.push(() => {
++        prior?.cleanup?.(); effects[index] = { deps, cleanup: fn() };
++      });
++    },
++    chart: {
++      on(name, fn) { events.set(name, fn); },
++      getZr() { return { on: (name, fn) => zr.set(name, fn) }; },
++      setOption(option) { state.options.push(option); state.visible = undefined; events.get('hideTip')?.(); },
++      dispatchAction(action) {
++        state.actions.push(action);
++        if (action.type === 'hideTip') { state.visible = undefined; events.get('hideTip')?.(); }
++        else {
++          const option = state.options.at(-1), item = option.series[action.seriesIndex].data[action.dataIndex];
++          state.visible = option.tooltip.formatter({ data: item });
++        }
++      },
++      resize() {}, dispose() { state.disposed++; },
++    },
++    render(next = {}) {
++      props = { ...props, ...next }; cursor = effectCursor = 0;
++      const element = EChart(props);
++      element.props.children[0].props.ref.current = container;
++      const jobs = pending; pending = []; jobs.forEach(fn => fn());
++    },
++    click(id = 'zero') { events.get('click')({ data: { id }, seriesIndex: 0, seriesId: 'matrix' }); },
++    outside() { documentEvents.get('pointerdown')({ target: new FakeNode() }); },
++    blank() { zr.get('click')({}); },
++    leave() { zr.get('globalout')(); },
++    hover() { events.get('mouseover')({}); },
++    hide() { state.chart.dispatchAction({ type: 'hideTip' }); },
++    cleanup() { effects.forEach(effect => effect.cleanup?.()); assert.equal(documentEvents.size, 0); saved.forEach(([key, value]) => { if(value === undefined) delete globalThis[key]; else globalThis[key] = value; }); },
++  };
++  class FakeNode { contains(node) { return this === node; } }
++  const container = new FakeNode();
++  const saved = ['__tooltipHost', 'document', 'Node', 'ResizeObserver'].map(key => [key, globalThis[key]]);
++  globalThis.__tooltipHost = state; globalThis.Node = FakeNode;
++  globalThis.document = { addEventListener: (name, fn) => documentEvents.set(name, fn), removeEventListener: name => documentEvents.delete(name) };
++  globalThis.ResizeObserver = class { observe() {} disconnect() {} };
++  state.render({ option: option(), label: '能力与题目层级', preserveItemTooltip, onSelect: (id, seriesId) => {
++    state.selected = [id, seriesId]; state.render({ option: option() });
++  } });
++  await new Promise(resolve => setImmediate(resolve));
++  assert.equal(state.inits, 1);
++  return state;
++}
++function option(data = [{ id: 'zero', row: '运算求解', column: '基础', value: '0' }, { id: 'missing', row: '推理论证', column: '综合', value: '缺测' }]) {
++  return { series: [{ type: 'heatmap', data }], tooltip: { triggerOn: 'mousemove|click', formatter: ({ data }) => `${data.row} · ${data.column}\n${data.value}` } };
++}
++for (const theme of ['light', 'paper', 'dark', 'blueprint']) {
++  test(`${theme}: click + synchronous host update restores zero/missing tooltip, repeat tap, no remount`, async () => {
++    const h = await host(theme);
++    try {
++      h.click(); assert.equal(h.visible, '运算求解 · 基础\n0'); assert.deepEqual(h.selected, ['zero', 'matrix']);
++      h.click(); assert.equal(h.visible, '运算求解 · 基础\n0');
++      h.click('missing'); assert.equal(h.visible, '推理论证 · 综合\n缺测');
++      assert.equal(h.inits, 1);
++    } finally { h.cleanup(); }
++    assert.equal(h.disposed, 1);
++  });
++}
++test('item identity survives reorder and selected styling updates; removed items are not restored', async () => {
++  const h = await host('blueprint');
++  try {
++    h.click();
++    const data = option().series[0].data.reverse(); data[1].itemStyle = { borderWidth: 2 };
++    h.render({ option: option(data) }); assert.equal(h.actions.at(-1).dataIndex, 1); assert.equal(h.visible, '运算求解 · 基础\n0');
++    h.render({ option: option([data[0]]) }); assert.equal(h.visible, undefined);
++    h.render({ option: option() }); assert.equal(h.visible, undefined);
++  } finally { h.cleanup(); }
++});
++for (const dismiss of ['outside', 'blank', 'leave', 'hover', 'hide']) {
++  test(`${dismiss}: later host renders do not resurrect dismissed click tooltip`, async () => {
++    const h = await host('blueprint');
++    try { h.click(); h[dismiss](); h.render({ option: option() }); assert.equal(h.visible, undefined); }
++    finally { h.cleanup(); }
++  });
++}
++test('other EChart callers retain normal setOption and never dispatch restoration', async () => {
++  const h = await host('light', false);
++  try { h.click(); h.render({ option: option() }); assert.equal(h.visible, undefined); assert.deepEqual(h.actions, []); }
++  finally { h.cleanup(); }
++});
++test('narrow accessible description has no repeated punctuation and one table instruction', () => {
++  for (const label of ['能力与题目层级', '能力与题目层级。']) {
++    const narrow = heatmapDescription(label, false);
++    assert.equal(chartDescription(narrow), '能力与题目层级。窄屏下格内数值已隐藏，点按格子查看数值。完整数值及缺测说明见下方数据表。');
++    assert.equal((chartDescription(narrow).match(/数据表/g) ?? []).length, 1);
++    assert.equal(heatmapDescription(label, true), label);
++    assert.equal(chartDescription(label), '能力与题目层级。完整数值及缺测说明见下方数据表。');
++  }
++});
+--- a/tests/heatmap-narrow.test.mjs
++++ b/tests/heatmap-narrow.test.mjs
+@@ -17,6 +17,7 @@
+       const chart = out.charts[0];
+       assert.equal(chart.option.series[0].label.show, true);
+       assert.equal(chart.option.tooltip.triggerOn, 'mousemove|click');
++      assert.equal(chart.preserveItemTooltip, true);
+       assert.equal(chart.label, heatmapProps.label);
+       assert.ok(out.html.includes('data-heatmap-cell-labels="shown"'));
+       assert.ok(!out.html.includes('窄屏下格内数值已隐藏'));
+@@ -40,5 +41,5 @@
+   assert.ok(src.includes('setWidth(entry.contentRect.width)'));
+   assert.ok(src.includes('label:{show:showCellLabels,'));
+   assert.ok(src.includes('data-heatmap-cell-labels={showCellLabels?"shown":"hidden"}'));
+-  assert.ok(src.includes('label={showCellLabels?label:`${label}。窄屏下格内数值已隐藏，点按格子或查看下方数据表。`}'));
++  assert.ok(src.includes('label={heatmapDescription(label,showCellLabels)}'));
+ });
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -31,5 +31,5 @@
+     ".next/dev/types/**/*.ts",
+     "**/*.mts"
+   ],
+-  "exclude": ["node_modules"]
++  "exclude": ["node_modules", "docs/**/evidence/**"]
+ }
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -3,6 +3,65 @@
+ > 交接状态记录。每轮更新“当前”，旧“当前”连同日期与基线移入“历史”。正文路径均为仓库相对路径。
+ 
+ ## 当前
++
++- 轮次：v6-R1 · Supervisor REWORK 返工；Builder 实现与自测完成，修复后待 Supervisor 复验，未自我批准。
++- 日期 / 基线：2026-10-14，`feat/learning-charts` · `7c2783346081ed23fd70ebb9414f0e879745a60c` + 原 v5 文档与未提交 v6。按 `task-BPv6-R1.md` 执行；原 PO “仅蓝图主题（推荐）”授权范围保持不变。
++- 工作树：沿用现有分支及未提交改动，不提交、推送、创建 PR、发布或启动服务。AGENTS、v4/v5 归档与截图、冻结 coss 字节未变；P63 已提交内容未改动。本轮增量见 [scope.diff](evidence/v6-r1/scope.diff)，保护检查见 [integrity.json](evidence/v6-r1/integrity.json)。
++- 范围：`components/prism-next/charts/echart.tsx`、`advanced-charts.tsx`、`components/prism-next/demos/polar-charts.tsx`、`lib/prism-next/chart-item-tooltip.ts`、`chart-description.ts`、`heatmap-labels.ts`、`tsconfig.json`、`tests/heatmap-tooltip.test.mjs`、`tests/heatmap-narrow.test.mjs`，以及本文与 `docs/blueprint/evidence/v6-r1/`。
++- 本轮没有继续修改 v6 的 P57/P62 测试适配；没有新增组件、依赖、视觉令牌、字号或 CSS。HeatmapChart 公开属性不变，内部 EChart 新增默认关闭的 `preserveItemTooltip` 开关。
++
++### 修复与影响
++
++- 失败 1：热力图点按时先记录 seriesIndex / 稳定 item ID，再发出原选择意图。setOption 完成后，若该 ID 仍在该系列中，重新定位 dataIndex 并 dispatchAction showTip；支持宿主重渲染、selectedId 边框更新及数据重排，不缓存旧数值。项目删除则不恢复；hideTip、移开、悬停另一项、点空白或图外均清除记录，图外/空白点按主动 hideTip。无新增计时器，不重挂载实例。
++- 恢复仅由 HeatmapChart 显式开启，四主题一致。其余 EChart 调用方仍执行原 setOption，不恢复提示框、不派发额外显示/隐藏 action；新增监听对未开启的调用方不改变交互。图表实例和 document 监听随卸载清理。
++- 失败 2：确认 EChart 原规则为 label 后无条件追加“。完整数值及缺测说明见下方数据表。”。现统一规范 label 尾部标点；热力图窄屏只添加“窄屏下格内数值已隐藏，点按格子查看数值”，数据表指引由包装层追加一次。其余 EChart 的说明内容不变，仅去除重复尾部标点；label 改变也会更新说明。
++- 失败 3：compact 示例改成“核心主题保留格内数值；蓝图主题在窄容器下隐藏格内数值，可点按查看。零值与缺测均保留在提示框和数据表中。”，沿用 DemoSection 的语义字号。
++- v5 归档修正：`tsconfig.json` 的 exclude 仅增加 `docs/**/evidence/**`，避免历史夹具被作为运行时代码编译；不改 `docs/blueprint/evidence/v4/fixture.tsx`，不关闭任何运行时代码类型检查。
++- 离线复用：沿用现有 HeatmapChart / EChart 与 ECharts dispatchAction；复核 `docs/polar-charts.md`、`docs/learning-chart-properties.md` 的 coss / particles p-table-3/4 记录，基础控件组合不处理引擎更新生命周期。未新增第三方代码、未联网刷新 registry；通用图表修复不涉及 Beautiful UI Agent 组件。
++- 偏差：直接按 Review 手动修复，没有设计 diff 可应用。未采用仅 memo option 的方案，因为实际 selectedId 改变仍须重绘。主题取值与嵌套 DOM 预览的 Context 限制沿用 v6，未扩大范围修复。
++
++### 本轮验证
++
++按 §6.1 顺序执行，先构建后全量测试；使用 `.sites-runtime/` 环境目录并保留进程 HOME。实际命令和退出码见 [checks.json](evidence/v6-r1/checks.json)。
++
++| 命令 | 实际结果 |
++| --- | --- |
++| `node scripts/check-math-font.mjs` | 字体与许可通过，退出 0；[日志](evidence/v6-r1/math-font.log) |
++| `node scripts/check-typography.mjs` | 303 个 owned TSX 通过，退出 0；[日志](evidence/v6-r1/typography.log) |
++| `node node_modules/vinext/dist/cli.js build` | 构建成功，退出 0；保留 chunk 大小、路由静态分类提示；[日志](evidence/v6-r1/build.log) |
++| `node --test tests/*.test.mjs` | 1992/1992，fail 0，skipped 0，退出 0；[日志](evidence/v6-r1/full-tests.log) |
++| `node node_modules/typescript/bin/tsc --noEmit` | 0 条诊断，退出 0；[日志](evidence/v6-r1/tsc.log) |
++
++新增 12 项行为测试，用真实 EChart 组件与 effects、受控 hooks / 引擎事件验证恢复调用、重复点按、四主题、零值/缺测、数据重排/删除、选中样式更新、清除后不复活、默认关闭路径、卸载清理和描述拼接；补充既有 Heatmap SSR 接线断言。定向 `node --test tests/heatmap-tooltip.test.mjs tests/heatmap-narrow.test.mjs` 34/34；全量已包含这些测试。受控事件测试不等于真实浏览器点按证据。
++
++### Supervisor 浏览器验收
++
++以下原样转录 Supervisor 在修复前的结果（2026-10-14，5173，`/next/components/evidence-matrix`），不是本轮修复后的结果：
++
++- 通过：蓝图 320 下两张热力图都是 hidden，格内无数字；dark / paper 320 下都是 shown；蓝图 1280 下宽 552px 的矩阵 shown、300px 的 compact 矩阵 hidden；容器宽度 380→450→380 时 hidden→shown→hidden，ECharts 实例未变，没有重新挂载；悬停时提示框显示「运算求解 · 基础」。
++- **失败 1（阻塞）**：蓝图 320 下点按 compact 矩阵的格子，选择意图正常（status 显示「请求查看：row-0-column-0；等待调用方处理。」），但提示框不出现，或出现后立即消失；点同一格也一样。推测：onSelect → 宿主重渲染 → HeatmapChart 生成新 option → EChart setOption 时隐藏了提示框。触屏设备只能点按，因此不满足「点按格子能显示提示框」。
++- **失败 2**：窄屏读屏描述出现双句号：「……点按格子或查看下方数据表。。完整数值及缺测说明见下方数据表。」原因是 EChart 包装层会在描述后追加句子。修正后不能出现重复标点，也不能重复「数据表」的指引；请先确认 EChart 追加的具体规则。
++- **失败 3**：`components/prism-next/demos/polar-charts.tsx` 的 compact 演示文案仍写「保留格内数值」，与蓝图窄容器下的行为不符。改成按主题如实描述的中性文案，例如核心主题保留、蓝图窄容器隐藏并可点按查看，用语义字号，不新增组件。
++
++
++本轮已实现上述三项修复；修复后待 Supervisor 复验。
++
++### 交给 Supervisor 的浏览器验收清单
++
++- URL：`http://localhost:5173/next/components/evidence-matrix` 及 `#compact-heatmap`；用已运行服务。四主题 light / paper / dark / blueprint × 320×800、1280×960 均检查悬停和点按；触屏模拟中不要以悬停代替点按。
++- compact 第一格：点按后保持“运算求解 · 基础”与“0”；status 为“请求查看：row-0-column-0；等待调用方处理。”；重复点同一格仍显示。点第二行第三列显示“推理论证 · 综合”与“缺测”。点击别格更新对应行列和值；点图外/空白或移开后隐藏，之后宿主更新不能恢复已取消的提示。
++- 回归普通热力图及 compact 3×3 / 5×3，补验调用方同步更新 selectedId、数据重排/删除；仍有效 ID 跟随当前数值，失效 ID 不恢复。其他 EChart 图表保留原悬停、选中和更新行为。
++- 容器 380→450→380：blueprint hidden→shown→hidden，核心主题始终 shown，实例不变。1280 下普通容器 552px 为 shown、compact 300px 在 blueprint 为 hidden；320 下两张 blueprint 均 hidden，核心三主题均 shown。
++- 窄屏说明应为“能力与题目层级。窄屏下格内数值已隐藏，点按格子查看数值。完整数值及缺测说明见下方数据表。”，无双句号、数据表指引仅一次；宽容器与核心主题无窄屏说明。compact 文案按主题如实说明。
++- 覆盖三核心主题回归、长中文/公式、键盘展开数据表与选择；嵌套 DOM 主题仍按现有 provider 取值，不能记作新增局部图表主题隔离。
++
++### 未验证范围
++
++浏览器验收：按分工由 Supervisor 执行。真实移动设备、读屏器、实体打印和全组件视觉未验；本轮未生成截图。Builder 自测不等同于 Supervisor Review 或 PO 批准，无新增产品决定待 PO。
++
++## 历史
++
++### v6 · 320px 热力图方案 B · 2026-10-14（原当前，原样保留）
+ 
+ - 轮次：v6 · 320px 热力图方案 B，仅蓝图主题；Builder 实现与自测完成，待 Supervisor 独立 Review。
+ - 批准依据：Product Owner 2026-10-14 在 Claude Code 会话中原话：“仅蓝图主题（推荐）”；Supervisor `task-BPv6.md` 记录方案 B：容器宽度小于 400px 隐藏数字，核心三主题仍显示；四主题均显式使用 `triggerOn:"mousemove|click"`。
+@@ -53,7 +112,6 @@
+ - compact 演示现有描述“保留格内数值”没有主题限定，本轮未扩大范围修改演示文案；请 Supervisor 记录后续文案修正。
+ - Builder 自测不等同于 Supervisor Review / PO 批准；本轮不预填 Review 结论，无新增产品选择待 PO 决定。
+ 
+-## 历史
+ 
+ ### v5 · 交接规则与证据归档 · 2026-10-14（原当前）
+ 

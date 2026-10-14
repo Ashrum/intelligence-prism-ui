@@ -1,0 +1,27 @@
+[
+  {
+    "name": "math-font",
+    "command": "node scripts/check-math-font.mjs",
+    "exit_code": 0
+  },
+  {
+    "name": "typography",
+    "command": "node scripts/check-typography.mjs",
+    "exit_code": 0
+  },
+  {
+    "name": "build",
+    "command": "node node_modules/vinext/dist/cli.js build",
+    "exit_code": 0
+  },
+  {
+    "name": "full-tests",
+    "command": "node --test tests/*.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "name": "tsc",
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exit_code": 0
+  }
+]

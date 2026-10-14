@@ -5,13 +5,26 @@ import { api, capture, defaults, optionJSON, h } from './p58-chart-harness.mjs';
 
 // Captured from clean P61 2abc127 before P62 implementation; never regenerated to fit changes.
 const baseline = JSON.parse(await readFile(new URL('./fixtures/p62-defaults-before.json', import.meta.url), 'utf8'));
-for (const entry of baseline) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR and chart options`, () => {
+// Apply only the BPv6-authorized heatmap marker and tooltip trigger to frozen expectations.
+function expectedAfterBPv6(entry) {
+  if (entry.name !== 'HeatmapChart') return entry;
+  return {
+    ...entry,
+    html: entry.html.replace('<div class="space-y-3">', '<div class="space-y-3" data-heatmap-cell-labels="shown">'),
+    options: entry.options.map(raw => {
+      const option = JSON.parse(raw);
+      option.tooltip = { triggerOn: 'mousemove|click', ...option.tooltip };
+      return JSON.stringify(option);
+    }),
+  };
+}
+for (const entry of baseline.map(expectedAfterBPv6)) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR and chart options`, () => {
   const out = capture(entry.name, entry.props, entry.theme);
   assert.equal(out.html, entry.html);
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);
 });
 
-for (const entry of baseline.filter(e => e.name !== 'MetricSummary')) test(`P62 ${entry.theme} ${entry.name}: hidden table is accessible outside details with no invisible selection controls`, () => {
+for (const entry of baseline.map(expectedAfterBPv6).filter(e => e.name !== 'MetricSummary')) test(`P62 ${entry.theme} ${entry.name}: hidden table is accessible outside details with no invisible selection controls`, () => {
   const out = capture(entry.name, { ...entry.props, dataDisclosure: 'hidden', onSelect() {} }, entry.theme);
   assert.doesNotMatch(out.html, /<details|<summary|查看数据|display:\s*none/);
   const hidden = out.html.slice(out.html.indexOf('<div class="sr-only" role="region"'));
