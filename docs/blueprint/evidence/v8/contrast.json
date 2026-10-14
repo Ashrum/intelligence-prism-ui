@@ -1,0 +1,74 @@
+{
+  "light": {
+    "foreground": {
+      "background": 15.797619425332647,
+      "card": 15.797619425332647
+    },
+    "muted-foreground": {
+      "background": 7.557378129674007,
+      "card": 7.557378129674007
+    },
+    "link": {
+      "background": 5.7731677831001,
+      "card": 5.7731677831001
+    },
+    "ring": {
+      "background": 5.7731677831001,
+      "card": 5.7731677831001
+    }
+  },
+  "paper": {
+    "foreground": {
+      "background": 12.96859591641287,
+      "card": 14.50453512777686
+    },
+    "muted-foreground": {
+      "background": 6.69973832427775,
+      "card": 7.493223668756167
+    },
+    "link": {
+      "background": 5.941093441155278,
+      "card": 6.6447284709967995
+    },
+    "ring": {
+      "background": 5.941093441155278,
+      "card": 6.6447284709967995
+    }
+  },
+  "dark": {
+    "foreground": {
+      "background": 15.149927524648263,
+      "card": 13.920997308099135
+    },
+    "muted-foreground": {
+      "background": 10.221276933552172,
+      "card": 9.392148473701635
+    },
+    "link": {
+      "background": 10.446151793757451,
+      "card": 9.598781958811298
+    },
+    "ring": {
+      "background": 10.446151793757451,
+      "card": 9.598781958811298
+    }
+  },
+  "blueprint": {
+    "foreground": {
+      "background": 16.40162689192204,
+      "card": 17.758836800979772
+    },
+    "muted-foreground": {
+      "background": 7.250515380043698,
+      "card": 7.850484601658984
+    },
+    "link": {
+      "background": 5.635741732731812,
+      "card": 6.1020908683971875
+    },
+    "ring": {
+      "background": 5.635741732731812,
+      "card": 6.1020908683971875
+    }
+  }
+}

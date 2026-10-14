@@ -27,13 +27,17 @@ export function chartSequentialDefault(theme: string | undefined, secondary: str
 export function blueprintChartOverrides(theme?: PrismTheme | string) {
   if (theme !== "blueprint") return {}
   return {
+    // Keep six texture signatures at CSS-pixel scale: solid, ±45° 2/4 hatch,
+    // 2.4px dots on an 8px grid, horizontal/vertical 3/3 stripes.
+    // White at .8 keeps pattern/base luminance contrast above 3:1 for all
+    // five default fills; printer halftoning and small marks still need paper QA.
     aria: { enabled: true, decal: { show: true, decals: [
       { symbol: "none" },
-      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: -Math.PI / 4, color: "rgba(255,255,255,.55)" },
-      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,.55)" },
-      { symbol: "circle", symbolSize: 0.6, dashArrayX: [4, 4], dashArrayY: [4, 4], color: "rgba(255,255,255,.6)" },
-      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: 0, color: "rgba(255,255,255,.5)" },
-      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: Math.PI / 2, color: "rgba(255,255,255,.5)" },
+      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: -Math.PI / 4, color: "rgba(255,255,255,.8)" },
+      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,.8)" },
+      { symbol: "circle", symbolSize: 0.6, dashArrayX: [4, 4], dashArrayY: [4, 4], color: "rgba(255,255,255,.8)" },
+      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: 0, color: "rgba(255,255,255,.8)" },
+      { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [3, 3], rotation: Math.PI / 2, color: "rgba(255,255,255,.8)" },
     ] } },
     tooltip: { borderRadius: 0, borderWidth: 1.5, borderColor: "#1D2026", shadowBlur: 0, shadowOffsetX: 6, shadowOffsetY: 6, shadowColor: "rgba(22,24,29,.06)", padding: [8, 12] },
   }

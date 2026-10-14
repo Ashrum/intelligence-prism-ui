@@ -1,0 +1,19 @@
+✔ WCAG calculation reference values and current four-theme text/UI tokens (0.5445ms)
+✔ every print selector requires blueprint and excludes core preview roots and descendants (0.473458ms)
+✔ blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance (0.209833ms)
+✔ six decals remain distinct without hue; default pattern/base contrasts exceed 3:1 (16.704792ms)
+✔ light: real component SSR exposes named regions, choices, tab panels and heatmap table (21.310083ms)
+✔ paper: real component SSR exposes named regions, choices, tab panels and heatmap table (6.835167ms)
+✔ dark: real component SSR exposes named regions, choices, tab panels and heatmap table (4.852625ms)
+✔ blueprint: real component SSR exposes named regions, choices, tab panels and heatmap table (4.657041ms)
+✔ built SSR route /next/foundations/blueprint (136.44325ms)
+✔ built SSR route /next/components/tabs (9.603417ms)
+✔ built SSR route /next/components/evidence-matrix (12.682291ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 575.950084

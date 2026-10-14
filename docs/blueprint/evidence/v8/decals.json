@@ -1,0 +1,117 @@
+[
+  {
+    "series": 1,
+    "base": "#1D5FBF",
+    "baseLuminance": 0.12207216717108631,
+    "texture": "solid"
+  },
+  {
+    "series": 2,
+    "base": "#16181D",
+    "baseLuminance": 0.009125494071890481,
+    "overlay": "#d0d1d2",
+    "overlayLuminance": 0.636639684505999,
+    "contrast": 11.613259141160261,
+    "decal": {
+      "symbol": "rect",
+      "symbolSize": 1,
+      "dashArrayX": [
+        1,
+        0
+      ],
+      "dashArrayY": [
+        2,
+        4
+      ],
+      "rotation": -0.7853981633974483,
+      "color": "rgba(255,255,255,.8)"
+    }
+  },
+  {
+    "series": 3,
+    "base": "#B8266E",
+    "baseLuminance": 0.12702362616334134,
+    "overlay": "#f1d4e2",
+    "overlayLuminance": 0.7127872601341707,
+    "contrast": 4.308957378549798,
+    "decal": {
+      "symbol": "rect",
+      "symbolSize": 1,
+      "dashArrayX": [
+        1,
+        0
+      ],
+      "dashArrayY": [
+        2,
+        4
+      ],
+      "rotation": 0.7853981633974483,
+      "color": "rgba(255,255,255,.8)"
+    }
+  },
+  {
+    "series": 4,
+    "base": "#2B8050",
+    "baseLuminance": 0.16531121336671747,
+    "overlay": "#d5e6dc",
+    "overlayLuminance": 0.7590706972772762,
+    "contrast": 3.7576802648883367,
+    "decal": {
+      "symbol": "circle",
+      "symbolSize": 0.6,
+      "dashArrayX": [
+        4,
+        4
+      ],
+      "dashArrayY": [
+        4,
+        4
+      ],
+      "color": "rgba(255,255,255,.8)"
+    }
+  },
+  {
+    "series": 5,
+    "base": "#A57013",
+    "baseLuminance": 0.19634690976018424,
+    "overlay": "#ede2d0",
+    "overlayLuminance": 0.7695130400069566,
+    "contrast": 3.3266625540573767,
+    "decal": {
+      "symbol": "rect",
+      "symbolSize": 1,
+      "dashArrayX": [
+        1,
+        0
+      ],
+      "dashArrayY": [
+        3,
+        3
+      ],
+      "rotation": 0,
+      "color": "rgba(255,255,255,.8)"
+    }
+  },
+  {
+    "series": 6,
+    "base": "#6B7280",
+    "baseLuminance": 0.16718939998127905,
+    "overlay": "#e1e3e6",
+    "overlayLuminance": 0.766588927090027,
+    "contrast": 3.7598010177311325,
+    "decal": {
+      "symbol": "rect",
+      "symbolSize": 1,
+      "dashArrayX": [
+        1,
+        0
+      ],
+      "dashArrayY": [
+        3,
+        3
+      ],
+      "rotation": 1.5707963267948966,
+      "color": "rgba(255,255,255,.8)"
+    }
+  }
+]

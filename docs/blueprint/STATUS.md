@@ -4,6 +4,66 @@
 
 ## 当前
 
+- 轮次：v8 · 打印图案密度与可访问性工程检查；Builder 实现与自测完成；Supervisor 浏览器验收结论 `PASS WITH NOTES`。
+- 日期 / 基线：2026-10-14，`feat/learning-charts` · `efe001ff6eaf3b228c41e5873fe22b9e3c4587ea`（含 BPv6 / BPv7）。授权依据：Supervisor `task-BPv8.md` 记录 PO 指示继续第 3 项“实体黑白打印时的图案密度、真机、读屏器验收”；本环境只做工程检查。
+- 工作树：开工干净，沿用当前分支；未提交、推送、联网、创建 PR、启动服务或发布。其他 P 系列图表、coss、AGENTS、核心三主题 Token、依赖及既有测试均未改；[保护核对](evidence/v8/integrity.json)。
+- 运行时范围：`app/(next)/next/blueprint.css`、`lib/prism-next/chart-palette.ts`；新增 `tests/blueprint-print-a11y.test.mjs`；本文与 `docs/blueprint/evidence/v8/`。[实际 diff](evidence/v8/scope.diff)。
+- 原“当前”正文连同日期、基线、Supervisor 记录原样移入历史；开工快照见 [status-before.txt](evidence/v8/status-before.txt)。
+
+### 修复与工程检查
+
+- 打印仅作用于 blueprint 并排除嵌套核心预览根、后代及伪元素：清除 body / 预览根 / SidebarInset / 卡片缩略图网格和已知硬投影（含 ECharts SVG filter）；保留边框墨线与 TitleBlock 结构分隔线，数据纹理请求 exact 打印。
+- 六系列保留实底、−45° / +45° 斜线（2px 线 / 4px 间隙）、2.4px 点径 / 8px 点阵、横 / 竖条纹（3px / 3px）。仅把图案白色 alpha 统一提高到 .8，图案/默认底色比值从部分不足 3:1 提高为 11.61、4.31、3.76、3.33、3.76:1。色相相近灰度用纹理方向和密度补充；不声称实体打印已能辨认。
+- 蓝图焦点统一为既有 #1D5FBF、2px 外框、外偏移 2px；分段控件加 4px 留白避免外框紧贴滚动裁切边缘。核心三主题保持原样；浏览器复验仍须检查首末项及横向滚动。
+- 四主题实际 React SSR 检查 Blueprint 具名 section、radio、步骤、数值替代文本、反馈角色，Tabs 关联面板及禁用态，热力图 details/table/零值/缺测。只替换 useTheme 值，未替换 EChart 或控件。三个正式路由由本轮构建 worker.fetch 返回 200；SSR 无真实主题切换或键盘证据。
+- 蓝图正文 / 次要 / 链接在 #F6F6F3 上分别 16.40 / 7.25 / 5.64:1，在白卡片上 17.76 / 7.85 / 6.10:1；焦点分别 5.64 / 6.10:1，墨线亦 ≥3:1。四主题正文类令牌均 ≥4.5、焦点 ≥3；详见 [令牌计算](evidence/v8/contrast.json)。
+- 完整线距、角度、点密度、灰度亮度差、离线 coss / particles 检索依据、SSR 解释与局限见 [工程检查](evidence/v8/inspection.md)；[同底灰六纹理 SVG](evidence/v8/six-textures-equal-grey.svg) 是 ECharts SSR 夹具，不是浏览器或打印截图。
+- 偏差：没有设计 patch，按任务手动适配；不联网刷新 registry。没有修改共享表格语义、三核心主题或 P 系列实现。Builder 自测不等同于 Review / PO 批准。
+
+### 本轮验证
+
+按 §6.1 顺序，先构建后全量测试；README 对应运行目录变量位于 `.sites-runtime/`，保留进程 HOME。所有结果来自本轮代码，[命令与退出码](evidence/v8/checks.json)。
+
+| 命令 | 实际结果 |
+| --- | --- |
+| `node scripts/check-math-font.mjs` | 字体与许可通过，退出 0；[日志](evidence/v8/math-font.log) |
+| `node scripts/check-typography.mjs` | 304 个 owned TSX 通过，退出 0；[日志](evidence/v8/typography.log) |
+| `node node_modules/vinext/dist/cli.js build` | 构建成功，退出 0；既有 chunk 大小、静态路由分类提示；[日志](evidence/v8/build.log) |
+| `node --test tests/*.test.mjs` | 2034/2034，fail 0，skipped 0，退出 0；[日志](evidence/v8/full-tests.log) |
+| `node node_modules/typescript/bin/tsc --noEmit` | 0 条诊断，退出 0；[日志](evidence/v8/tsc.log) |
+| `node --test tests/blueprint-print-a11y.test.mjs` | 11/11，fail 0，skipped 0，退出 0；[日志](evidence/v8/targeted-tests.log) |
+| 浏览器证据 | 见下方「Supervisor 浏览器验收」 |
+
+### Supervisor 浏览器验收（2026-10-14，5173，`/next/foundations/blueprint`）
+
+- 打印模拟方法：把页面全部 `@media print` 规则（共 28 条）取出，作为无 media 条件的样式注入后再读取计算样式。这不是浏览器原生的打印预览。
+- 通过（blueprint）：body 背景从 40px 网格渐变变为 none；bp-* 元素的非 none 投影从 2 个变为 0；`.bp-btn` 墨线仍为 1.5px。
+- 通过（light，1280 iframe）：注入打印规则前后，前 3000 个元素的背景、投影、外框、边框计算值完全一致，核心主题打印输出不变。
+- 未验：浏览器原生打印预览与灰度预览、六系列纹理的实际打印辨识、实体打印、真机、读屏器；焦点环裁切、Home / End 仅靠 Builder 的 SSR 检查。
+- 本轮附带的屏幕变化：蓝图六系列纹理的白色 alpha 统一为 .8，影响蓝图屏幕显示，不只影响打印。
+- 待 PO / 设计决定（来自 Builder 报告）：蓝色焦点环在墨底上对比度约 2.91:1，是否加分隔层；BpSizeBar 纯色填充是否另配图案。
+
+### 交给 Supervisor 的浏览器验收清单
+
+使用已运行服务，以下基址为 `http://localhost:5173`。light / paper / dark / blueprint × 320×800、1280×960；截图记录主题、视口、路由、日期与上述基线，存入 `docs/blueprint/screens/v8/`，本轮未预建空目录。
+
+1. `/next/foundations/blueprint`：Tab 到按钮、图标工具、卡片、“替换本页”及链接；蓝图浅底上的焦点为 2px #1D5FBF，偏移 2px。检查墨底面板上的焦点可见性（见待定项）。`#actions` 方向键 / Home / End 移动“答卷状态”，跳过“已锁定”；末项“异常”说明为“当前：4 份未提交或扫描失败”，首末项外框不得被横向滚动容器裁掉。补验长中文和公式。
+2. `/next/components/tabs`：键盘聚焦“内容”，→“材料信息”→“历史记录”，Enter / Space 激活；显示“当前为初始示例版本，尚无修订记录。”；禁用项不激活，焦点滚动可见，320px 仅标签行横滚。三核心主题原焦点与视觉保持不变。
+3. `/next/components/evidence-matrix#compact-heatmap`：点第一格保留“运算求解 · 基础”“0”，第二行第三列显示“推理论证 · 综合”“缺测”；蓝图窄容器隐藏格内数值但保留提示和完整数据。Tab 展开“查看数据与选择项目”，进入“查看”按钮，核对按键意图及行名，不把内部 ID 当作已通过读屏体验。
+4. **打印模拟（emulate print media）**：上述 3 页在 blueprint 应无 40px 页面网格、20px 缩略图网格及偏移硬投影；1.5px 墨线、数据图案、TitleBlock 内分隔线保留。检查背景图形开 / 关、灰度预览及 100% 缩放；核心三主题打印前后对照开工基线，不应受到本轮覆盖。
+5. 同底灰六纹理夹具 [SVG](evidence/v8/six-textures-equal-grey.svg)：在浏览器打开，再对照实际 ECharts 六系列柱 / 面积（可用 v4 归档夹具临时挂载，需记录路由）；仅凭实底、斜线方向、点阵、横竖纹应可对应系列。小图例、窄柱、薄面积须另验，不以此文件代替当前真实图表集成验收。
+6. 嵌套预览：全局 blueprint 内放 light / paper / dark 预览根，含按钮、卡片、伪元素；screen / print 各检查核心根与后代的背景、投影、焦点不被蓝图规则覆盖。反向核心主题内的显式 blueprint 预览也检查。此项只验证 CSS，既有 next-themes Context 不随 DOM 属性变更的图表限制保留。
+
+### 未验证范围与待决定
+
+- 浏览器验收：按分工由 Supervisor 执行。**真机、读屏器、实体打印未验**；本轮无浏览器截图，不能用 SSR / CSS 源码断言代替视觉或交互验收。
+- 待 PO / 设计决定：固定蓝色焦点在墨底 #16181D 上仅约 2.91:1，深色表面是否采用分隔层；共享 DataRecordTable 内部 ID 操作名及选择状态的语义约定；若要覆盖 BpSizeBar 多个纯色填充，须另定纹理映射。未擅自扩展本轮实现。
+- 六系列纹理结论只适用于既有 ECharts 填充图案；不覆盖 Recharts 无纹理图、无填充折线 / 散点、热力图连续色阶、调用方自定义色、透明面积及小图例的实体可读性。
+
+## 历史
+
+### v7 · Tabs 320px 横向溢出 · 2026-10-14（原当前，原样保留）
+
 - 轮次：v7 · Tabs 320px 横向溢出；Builder 实现与自测完成，Supervisor 浏览器验收结论 `PASS WITH NOTES`（见下方「Supervisor 浏览器验收」）。
 - 日期 / 基线：2026-10-14，`feat/learning-charts` · `46303a46304955276af030c5059613096ef3be3f`（含 BPv6 `190f15d` 与 P64）。授权依据：`task-BPv7.md` 记录 PO 指示“继续做第 2 项 Tabs 溢出”。
 - 工作树：开工干净，沿用当前分支，不提交、推送、建 PR、启动服务或发布。P64、固定 coss、AGENTS、核心三主题 Token、依赖和既有测试均未改；[保护核对](evidence/v7/integrity.json)。
@@ -54,7 +114,6 @@
 
 浏览器验收：按分工由 Supervisor 执行。四主题真实像素、焦点 / 键盘 / 触摸交互、Toast 实际滚动贡献、移动设备、读屏器及全站视觉未验；本轮没有截图。核心三主题 ≥640px 默认视觉保持的判断目前基于 diff / SSR，不能记为浏览器通过。
 
-## 历史
 
 ### v6-R1 · Supervisor 返工与复验 · 2026-10-14（原当前，原样保留）
 

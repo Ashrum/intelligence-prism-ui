@@ -1,0 +1,152 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { build } from 'esbuild';
+import postcss from 'postcss';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import * as echarts from 'echarts';
+import { relativeLuminance } from '../lib/prism-next/chart-color.ts';
+import { BLUEPRINT_SERIES, blueprintChartOverrides } from '../lib/prism-next/chart-palette.ts';
+
+const root = fileURLToPath(new URL('../', import.meta.url));
+const css = postcss.parse(readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8'));
+const themeCSS = postcss.parse(readFileSync(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8'));
+const guard = ':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))';
+const themes = ['light', 'paper', 'dark', 'blueprint'];
+const ratio = (a, b) => (Math.max(relativeLuminance(a), relativeLuminance(b)) + .05) / (Math.min(relativeLuminance(a), relativeLuminance(b)) + .05);
+const evidence = process.env.BPV8_EVIDENCE_DIR;
+function save(name, value) { if (evidence) { mkdirSync(evidence, { recursive: true }); writeFileSync(`${evidence}/${name}`, value); } }
+function tokens(theme) {
+  const result = {};
+  themeCSS.walkRules(rule => {
+    if (rule.selector === ':root:where([data-ui-version="coss-v1"]),\n:where([data-agent-preview][data-prism-theme])' || rule.selector.includes(`:where([data-agent-preview])[data-prism-theme="${theme}"]`)) {
+      rule.walkDecls(d => { result[d.prop] = d.value; });
+    }
+  });
+  return result;
+}
+const contrast = Object.fromEntries(themes.map(theme => {
+  const t = tokens(theme);
+  return [theme, Object.fromEntries(['foreground', 'muted-foreground', 'link', 'ring'].map(key => [key, Object.fromEntries(['background', 'card'].map(bg => [bg, ratio(t[`--${key}`], t[`--${bg}`])]))]))];
+}));
+save('contrast.json', JSON.stringify(contrast, null, 2));
+
+test('WCAG calculation reference values and current four-theme text/UI tokens', () => {
+  assert.equal(ratio('#000000', '#FFFFFF'), 21);
+  assert.equal(ratio('#123456', '#123456'), 1);
+  assert.ok(Math.abs(ratio('#777777', '#FFFFFF') - 4.478089) < .000001);
+  for (const theme of themes) for (const [role, backgrounds] of Object.entries(contrast[theme])) {
+    for (const value of Object.values(backgrounds)) assert.ok(value >= (role === 'ring' ? 3 : 4.5), `${theme}/${role}: ${value}`);
+  }
+  for (const bg of ['background', 'card']) assert.ok(ratio(tokens('blueprint')['--line'], tokens('blueprint')[`--${bg}`]) >= 3);
+});
+
+test('every print selector requires blueprint and excludes core preview roots and descendants', () => {
+  const declarations = [];
+  css.walkAtRules('media', media => {
+    if (media.params !== 'print') return;
+    media.walkRules(rule => {
+      for (const selector of rule.selectors) {
+        assert.ok(selector.includes('[data-prism-theme="blueprint"]'), selector);
+        assert.ok(selector.includes(guard), selector);
+        if (/::(?:before|after)/.test(selector)) assert.ok(selector.indexOf(guard) < selector.lastIndexOf('::'), selector);
+      }
+      rule.walkDecls(d => declarations.push([rule.selector, d.prop, d.value]));
+    });
+  });
+  for (const target of ['body', 'sidebar-inset', 'bp-card-thumb']) assert.ok(declarations.some(([s, p, v]) => s.includes(target) && p === 'background-image' && v === 'none'));
+  assert.ok(declarations.some(([s, p, v]) => s.includes('bp-error') && p === 'box-shadow' && v === 'none'));
+  assert.ok(declarations.some(([s, p, v]) => s.includes('echarts') && p === 'filter' && v === 'none'));
+  assert.ok(declarations.some(([s, p, v]) => s.includes('echarts') && p === 'print-color-adjust' && v === 'exact'));
+  assert.ok(!declarations.some(([, p]) => /^(border|stroke|fill)/.test(p)), 'print must preserve ink lines and data fills');
+});
+
+test('blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance', () => {
+  const focus = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith('[data-prism-theme="blueprint"] :focus-visible'));
+  assert.ok(focus.selector.includes(guard));
+  assert.equal(focus.nodes.find(d => d.prop === 'outline').value, '2px solid var(--ring)');
+  assert.equal(focus.nodes.find(d => d.prop === 'outline-offset').value, '2px');
+  assert.equal(tokens('blueprint')['--ring'], '#1D5FBF');
+  const clearance = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith('[data-prism-theme="blueprint"] .bp-seg-tabs'));
+  assert.ok(clearance.selector.includes(guard));
+  assert.equal(clearance.nodes.find(d => d.prop === 'padding').value, '4px');
+});
+
+test('six decals remain distinct without hue; default pattern/base contrasts exceed 3:1', () => {
+  const decals = blueprintChartOverrides('blueprint').aria.decal.decals;
+  assert.equal(decals.length, 6);
+  assert.equal(new Set(decals.map(({ color, ...shape }) => JSON.stringify(shape))).size, 6);
+  const rows = decals.map((d, i) => {
+    if (i === 0) return { series: 1, base: BLUEPRINT_SERIES[i], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i]), texture: 'solid' };
+    const alpha = Number(d.color.match(/,([.\d]+)\)$/)[1]);
+    const overlay = '#' + BLUEPRINT_SERIES[i].slice(1).match(/../g).map(v => Math.round(parseInt(v, 16) * (1 - alpha) + 255 * alpha).toString(16).padStart(2, '0')).join('');
+    assert.ok(ratio(overlay, BLUEPRINT_SERIES[i]) >= 3);
+    return { series: i + 1, base: BLUEPRINT_SERIES[i], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i]), overlay, overlayLuminance: relativeLuminance(overlay), contrast: ratio(overlay, BLUEPRINT_SERIES[i]), decal: d };
+  });
+  save('decals.json', JSON.stringify(rows, null, 2));
+  for (const theme of themes.filter(t => t !== 'blueprint')) assert.deepEqual(blueprintChartOverrides(theme), {});
+  const chart = echarts.init(null, null, { renderer: 'svg', ssr: true, width: 720, height: 320 });
+  try {
+    chart.setOption({ ...blueprintChartOverrides('blueprint'), animation: false, xAxis: { type: 'category', data: ['Texture only / identical grey base'] }, yAxis: {}, series: decals.map((_, i) => ({ name: `S${i + 1}`, type: 'bar', data: [10], itemStyle: { color: '#555555' } })) });
+    const svg = chart.renderToSVGString();
+    assert.equal((svg.match(/<pattern /g) || []).length, 6);
+    for (const angle of [-45, 45, 90]) assert.ok(svg.includes(`patternTransform="rotate(${angle})"`));
+    assert.match(svg, /<pattern width="8" height="8"/);
+    assert.match(svg, /fill-opacity="0.8"/);
+    save('six-textures-equal-grey.svg', svg);
+  } finally { chart.dispose(); }
+});
+
+const dir = new URL(`../.sites-runtime/bpv8-${process.pid}/`, import.meta.url);
+mkdirSync(dir, { recursive: true });
+const bundle = await build({ stdin: { contents: `export { BlueprintComponentsDemo } from './components/prism-next/demos/blueprint'; export { TabsDemo } from './components/prism-next/demos/navigation'; export { HeatmapChart } from './components/prism-next/charts/advanced-charts';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root, 'next/link': 'next/link.js', 'next/navigation': 'next/navigation.js' }, loader: { '.css': 'empty' }, write: false,
+  plugins: [{ name: 'theme-only-stub', setup(b) { b.onResolve({ filter: /^next-themes$/ }, () => ({ path: 'theme', namespace: 'bpv8' })); b.onLoad({ filter: /.*/, namespace: 'bpv8' }, () => ({ contents: 'export const useTheme=()=>({theme:globalThis.__bpv8Theme})' })); } }],
+});
+writeFileSync(new URL('bundle.mjs', dir), bundle.outputFiles[0].text);
+const api = await import(new URL('bundle.mjs', dir));
+rmSync(dir, { recursive: true });
+const h = React.createElement;
+function render(component, props, theme) {
+  globalThis.__bpv8Theme = theme;
+  try { return renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(component, props))); }
+  finally { delete globalThis.__bpv8Theme; }
+}
+function checkReferences(html) {
+  const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
+  for (const [, refs] of html.matchAll(/aria-(?:labelledby|describedby)="([^"]+)"/g)) for (const id of refs.split(' ')) assert.ok(ids.has(id), `missing ${id}`);
+}
+for (const theme of themes) test(`${theme}: real component SSR exposes named regions, choices, tab panels and heatmap table`, () => {
+  const bp = render(api.BlueprintComponentsDemo, {}, theme);
+  checkReferences(bp);
+  assert.equal((bp.match(/data-slot="bp-sheet"/g) || []).length, 4);
+  for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
+  assert.match(bp, /aria-current="step"/);
+  assert.match(bp, /aria-label="切换明暗"/);
+  assert.equal((bp.match(/aria-checked="true" tabindex="0"/g) || []).length, 2);
+  assert.match(bp, /aria-label="全班：已批阅 22人，待复核 7人，AI 处理中 9人，未提交 4人"/);
+  const tabs = render(api.TabsDemo, {}, theme);
+  checkReferences(tabs);
+  assert.equal((tabs.match(/role="tablist"/g) || []).length, 2);
+  assert.equal((tabs.match(/role="tabpanel"/g) || []).length, 2);
+  assert.equal((tabs.match(/aria-selected="true"/g) || []).length, 2);
+  assert.match(tabs, /aria-disabled="true"/);
+  const heatmap = render(api.HeatmapChart, { label: '长中文矩阵 x² + y²', rows: [{ id: 'r', label: '长中文行' }], columns: [{ id: 'a', label: '列一' }, { id: 'b', label: '列二' }], cells: [{ id: 'zero', row: 'r', column: 'a', value: 0 }, { id: 'missing', row: 'r', column: 'b', value: null }], selectedId: 'zero', onSelect() {} }, theme);
+  checkReferences(heatmap);
+  assert.match(heatmap, /role="img" aria-label="长中文矩阵 x² \+ y²"/);
+  assert.match(heatmap, /<details><summary[^>]*>查看数据与选择项目<\/summary>/);
+  assert.match(heatmap, /<table/); assert.match(heatmap, />0<\/td>/); assert.match(heatmap, />缺测<\/td>/);
+  assert.match(heatmap, /data-slot="table-row" data-state="selected"/);
+  assert.match(heatmap, /aria-label="查看 zero"/);
+  for (const [name, html] of Object.entries({ blueprint: bp, tabs, heatmap })) save(`${theme}-${name}.html`, html);
+});
+
+for (const route of ['/next/foundations/blueprint', '/next/components/tabs', '/next/components/evidence-matrix']) test(`built SSR route ${route}`, async () => {
+  const { default: worker } = await import('../dist/server/index.js');
+  const response = await worker.fetch(new Request(`http://localhost${route}`, { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200);
+  const html = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '');
+  assert.match(html, route.endsWith('blueprint') ? /data-slot="bp-sheet"/ : route.endsWith('tabs') ? /role="tablist"/ : /查看数据与选择项目/);
+  save(`route-${route.split('/').at(-1)}.html`, html);
+});
