@@ -1,18 +1,38 @@
 "use client"
 import { useId, type ReactNode } from "react"
 import { Button } from "@/components/coss/button"
+import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
+import { metricVisualModel, type MetricVisual } from "@/lib/prism-next/metric-visual"
 import { Progress } from "@/components/coss/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
 import { compositionSummary,formatChartValue,isChartValue } from "@/lib/prism-next/chart-options"
 import { QuestionSelect } from "./question-controls"
 
-export function MetricSummary({items,onSelect,density="default",layout="grid"}:{items:{id:string;label:string;value:ReactNode;detail?:ReactNode}[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"grid"|"strip"}){
- if(layout==="strip") return <dl data-metric-layout="strip" className="grid min-w-0 grid-cols-1 gap-y-3 @min-[400px]:grid-cols-2 @min-[680px]:grid-cols-4">{items.map((item,index)=><div key={item.id} className={`min-w-0 space-y-1 @min-[400px]:px-3 ${index ? "@min-[400px]:border-l @min-[400px]:border-border" : "@min-[400px]:pl-0"}`}>
-  <dt className="text-ui-meta text-muted-foreground">{item.label}</dt><dd className="analytics-value my-0! break-words text-stat-display tabular-nums">{item.value}</dd>
+export type MetricSummaryItem={id:string;label:string;value:ReactNode;detail?:ReactNode;visual?:MetricVisual;help?:ReactNode}
+export type {MetricVisual} from "@/lib/prism-next/metric-visual"
+function MetricLabel({item}:{item:MetricSummaryItem}){
+ return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs"/>} aria-label={`${item.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
+}
+function MetricMiniVisual({visual}:{visual:MetricVisual}){
+ const model=metricVisualModel(visual)
+ return <><svg aria-hidden="true" focusable="false" viewBox={model.kind==="ring"?"0 0 56 56":"0 0 72 40"} className="h-14 w-18 shrink-0" data-metric-visual={model.kind}>{model.kind==="ring"?<><circle cx={28} cy={28} r={22} fill="none" stroke="var(--border)" strokeWidth={6}/>{model.ratio!==null&&<circle cx={28} cy={28} r={22} fill="none" stroke="var(--chart-1)" strokeWidth={6} pathLength={1} strokeDasharray={`${model.ratio} 1`} transform="rotate(-90 28 28)"/>}</>:model.runs.map((run,index)=><g key={index}><polyline points={run.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke="var(--chart-1)" strokeWidth={2}/>{run.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={2} fill="var(--chart-1)"/>)}</g>)}</svg><span className="sr-only">{model.text}</span></>
+}
+function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryItem;onSelect?:(id:string)=>void;compact:boolean;strip:boolean;index?:number}){
+ return <div className={`grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 ${strip?`@min-[400px]:px-3 ${index?"@min-[400px]:border-l @min-[400px]:border-border":"@min-[400px]:pl-0"}`:""}`}>
+  <dt className={`${strip?"text-ui-meta":"text-ui-hint"} col-start-1 text-muted-foreground`}><MetricLabel item={item}/></dt>
+  <dd className={`analytics-value col-start-1 break-words ${strip?"my-0! text-stat-display tabular-nums":compact?"my-0!":""}`}>{item.value}</dd>
+  {item.detail&&<dd className="col-start-1 text-ui-hint text-muted-foreground">{item.detail}</dd>}
+  <dd className="col-start-2 row-span-3 row-start-1"><MetricMiniVisual visual={item.visual!}/></dd>
+  {onSelect&&<dd className="col-span-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
+ </div>
+}
+export function MetricSummary({items,onSelect,density="default",layout="grid"}:{items:MetricSummaryItem[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"grid"|"strip"}){
+ if(layout==="strip") return <dl data-metric-layout="strip" className="grid min-w-0 grid-cols-1 gap-y-3 @min-[400px]:grid-cols-2 @min-[680px]:grid-cols-4">{items.map((item,index)=>item.visual?<VisualMetric key={item.id} item={item} onSelect={onSelect} compact={density==="compact"} strip index={index}/>:<div key={item.id} className={`min-w-0 space-y-1 @min-[400px]:px-3 ${index ? "@min-[400px]:border-l @min-[400px]:border-border" : "@min-[400px]:pl-0"}`}>
+  <dt className="text-ui-meta text-muted-foreground"><MetricLabel item={item}/></dt><dd className="analytics-value my-0! break-words text-stat-display tabular-nums">{item.value}</dd>
   {item.detail&&<dd className="text-ui-hint text-muted-foreground">{item.detail}</dd>}
   {onSelect&&<dd><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
  </div>)}</dl>
- return <dl className={density==="compact"?"grid grid-cols-2 gap-x-4 gap-y-2":"analytics-metrics"}>{items.map(item=><div key={item.id} className={density==="compact"?"flex flex-wrap items-baseline gap-x-2":undefined}><dt className="text-ui-hint text-muted-foreground">{item.label}</dt><dd className={density==="compact"?"analytics-value my-0!":"analytics-value"}>{item.value}</dd>{item.detail&&<dd className={density==="compact"?"w-full text-ui-hint text-muted-foreground":"text-ui-hint text-muted-foreground"}>{item.detail}</dd>}{onSelect&&<dd className="mt-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}</div>)}</dl>}
+ return <dl style={items.some(item=>item.visual)?{gridTemplateColumns:"repeat(auto-fit, minmax(min(100%, 220px), 1fr))"}:undefined} className={density==="compact"?"grid grid-cols-2 gap-x-4 gap-y-2":"analytics-metrics"}>{items.map(item=>item.visual?<VisualMetric key={item.id} item={item} onSelect={onSelect} compact={density==="compact"} strip={false}/>:<div key={item.id} className={density==="compact"?"flex flex-wrap items-baseline gap-x-2":undefined}><dt className="text-ui-hint text-muted-foreground"><MetricLabel item={item}/></dt><dd className={density==="compact"?"analytics-value my-0!":"analytics-value"}>{item.value}</dd>{item.detail&&<dd className={density==="compact"?"w-full text-ui-hint text-muted-foreground":"text-ui-hint text-muted-foreground"}>{item.detail}</dd>}{onSelect&&<dd className="mt-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}</div>)}</dl>}
 export function GoalComparison({baseline,current,target,unit="",labels=["基线","当前","目标"],status,children}:{baseline:number|null;current:number|null;target:number|null;unit?:string;labels?:[string,string,string];status?:ReactNode;children?:ReactNode}){
  const progress=baseline!==null&&current!==null&&target!==null&&Number.isFinite(baseline+current+target)&&target>baseline?Math.max(0,Math.min(100,(current-baseline)/(target-baseline)*100)):null
  return <div className="space-y-4"><dl className="analytics-goal-values">{[baseline,current,target].map((value,i)=><div key={i}><dt className="text-ui-hint text-muted-foreground">{labels[i]}</dt><dd className="mt-2 text-section-title tabular-nums">{value===null?"—":`${value}${unit}`}</dd></div>)}</dl>{progress!==null&&<Progress value={progress} aria-label="基线至目标的数值进展"/>}{status}{children}</div>

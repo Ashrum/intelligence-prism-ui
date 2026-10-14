@@ -1,13 +1,45 @@
 "use client"
 import { useCallback, useState } from "react"
-import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LabelList, Rectangle, usePlotArea } from "recharts"
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
+import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
 import { DataRecordTable } from "../data-display"
-export type ChartPoint={id:string;label:string;value:number|null}
-export type ChartSeries={id:string;label:string;data:ChartPoint[];color?:string}
+export type ChartPoint={id:string;label:string;value:number|null;symbol?:"circle"|"hollow-circle"|"diamond";valueLabel?:string;annotation?:string}
+export type ChartSeries={id:string;label:string;data:ChartPoint[];color?:string;lineStyle?:"solid"|"dashed";connect?:boolean}
 export type BasicChartProps={label:string;series:ChartSeries[];unit?:string;domain?:[number,number];onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
 const axis={tickLine:false,axisLine:false,tickMargin:10,tick:{fill:"var(--muted-foreground)",fontSize:12}}
-export function TrendChart({label,series,unit="",domain,height=260,onSelect,showData=true}:BasicChartProps){const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}));return <div className="space-y-3"><div role="group" aria-label={label} style={{height}}><ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}}><LineChart data={rows} accessibilityLayer margin={{top:12,right:20,left:0,bottom:6}}><CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 4"/><XAxis {...axis} dataKey="label"/><YAxis {...axis} domain={domain} tickFormatter={v=>`${v}${unit}`}/><Tooltip contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8}} formatter={v=>`${v??"—"}${unit}`}/>{series.length>1&&<Legend/>}{series.map((s,i)=><Line key={s.id} dataKey={s.id} name={s.label} type="linear" connectNulls={false} stroke={s.color??`var(--chart-${i%5+1})`} strokeWidth={2} isAnimationActive={false} activeDot={{r:5,onClick:(_,payload:unknown)=>{const row=payload as {payload?:{id:string}};if(row.payload)onSelect?.(row.payload.id,s.id)}}}/>)}</LineChart></ResponsiveContainer></div>{showData&&<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary><DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=>r.label},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id];return <span>{value==null?"—":`${value}${unit}`}</span>}}))]} onSelect={onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></details>}</div>}
+const pointSymbolText={circle:"圆点","hollow-circle":"空心圆",diamond:"菱形"}
+function TrendDot({cx,cy,point,color,active,onSelect}:{cx?:number;cy?:number;point?:ChartPoint;color:string;active?:boolean;onSelect?:()=>void}){
+ if(!point||point.value===null||!Number.isFinite(point.value)||cx===undefined||cy===undefined)return <g/>
+ const r=active?6:4
+ return <g onClick={onSelect} data-trend-symbol={point.symbol??"circle"}>{point.symbol==="diamond"?<path d={`M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`} fill={color} stroke={color}/>:<circle cx={cx} cy={cy} r={r} stroke={color} strokeWidth={2} fill={point.symbol==="hollow-circle"?"var(--background)":color}/>}</g>
+}
+function TrendLabels({series,ids}:{series:ChartSeries[];ids:string[]}){
+ const plot=usePlotArea(),yScale=useYAxisScale()
+ if(!plot||!yScale)return null
+ // A category LineChart without padding uses the endpoints of the plot, including duplicate labels.
+ const projected=series.map(s=>ids.map((id,index)=>{
+  const p=s.data.find(p=>p.id===id),y=p?.value==null?undefined:yScale(p.value)
+  return !p||y===undefined||!Number.isFinite(y)||!Number.isFinite(p.value)?null:{id:`${s.id}:${p.id}`,x:plot.x+(ids.length===1?plot.width/2:index*plot.width/(ids.length-1)),y,valueLabel:p.valueLabel,annotation:p.annotation}
+ }))
+ const points=projected.flatMap(rows=>rows.flatMap(p=>p?[p]:[]))
+ const lines=projected.flatMap((rows,i)=>series[i].connect===false?[]:rows.flatMap((p,index)=>{const next=rows[index+1];return p&&next?[{x1:p.x,y1:p.y,x2:next.x,y2:next.y}]:[]}))
+ return <g aria-hidden="true" className="pointer-events-none" data-trend-labels>{trendLabelLayout(points,plot,lines).map(item=><text key={`${item.id}:${item.kind}`} {...axis.tick} fill="var(--foreground)" x={item.x+item.width/2} y={item.y+13} textAnchor="middle" data-trend-label={item.kind}>{item.text}</text>)}</g>
+}
+export function TrendChart({label,series,unit="",domain,height=260,onSelect,showData=true}:BasicChartProps){
+ const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}))
+ const enriched=series.some(s=>s.connect===false||s.lineStyle==="dashed"||s.data.some(p=>p.symbol||p.valueLabel||p.annotation))
+ const annotations=series.some(s=>s.data.some(p=>p.valueLabel||p.annotation))
+ const description=enriched?series.map(s=>`${s.label}：${s.connect===false?"仅画点，不连线":s.lineStyle==="dashed"?"虚线":"实线"}`).join("；"):undefined
+ return <div className="space-y-3"><div role="group" aria-label={label} {...(description?{'aria-description':description}:{})} style={{height}}><ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{width:600,height}}><LineChart data={rows} accessibilityLayer margin={annotations?{top:30,right:20,left:0,bottom:24}:{top:12,right:20,left:0,bottom:6}}><CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 4"/><XAxis {...axis} dataKey="label"/><YAxis {...axis} domain={domain} tickFormatter={v=>`${v}${unit}`}/><Tooltip contentStyle={{background:"var(--popover)",color:"var(--popover-foreground)",borderColor:"var(--border)",borderRadius:8,...(enriched?{maxWidth:280,whiteSpace:"normal" as const}:{})}} formatter={enriched?(v,name,item)=>{
+ const s=series.find(s=>s.id===item.dataKey),p=s?.data.find(p=>p.id===item.payload?.id)
+ return [<span className="text-ui-hint text-foreground">{`${v??"—"}${unit}`}{p?.symbol&&` · ${pointSymbolText[p.symbol]}`}{p?.valueLabel&&<span className="block">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>,name]
+ }:v=>`${v??"—"}${unit}`}/>{series.length>1&&<Legend/>}{series.map((s,i)=>{
+ const color=s.color??`var(--chart-${i%5+1})`,custom=s.connect===false||s.data.some(p=>p.symbol!==undefined)
+ const dot=(props:{cx?:number;cy?:number;payload?:{id:string}},active=false)=><TrendDot {...props} active={active} color={color} point={s.data.find(p=>p.id===props.payload?.id)} onSelect={onSelect?()=>{if(props.payload)onSelect(props.payload.id,s.id)}:undefined}/>
+ return <Line key={s.id} dataKey={s.id} name={s.label} type="linear" connectNulls={false} stroke={color} {...(s.connect===false?{strokeOpacity:0}:{})} {...(s.lineStyle==="dashed"?{strokeDasharray:"5 4"}:{})} {...(custom?{dot:props=>dot(props),legendType:s.connect===false?"circle" as const:undefined}:{})} strokeWidth={2} isAnimationActive={false} activeDot={custom?props=>dot(props,true):{r:5,onClick:(_,payload:unknown)=>{const row=payload as {payload?:{id:string}};if(row.payload)onSelect?.(row.payload.id,s.id)}}}/>
+ })}{annotations&&<TrendLabels series={series} ids={rows.map(r=>r.id)}/>}</LineChart></ResponsiveContainer></div>{showData&&<details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary>{description&&<p className="text-ui-hint text-muted-foreground">{description}。标注避让后放不下时仅在提示框和本表显示。</p>}<DataRecordTable rows={rows} columns={[{id:"label",label:"项目",render:r=>r.label},...series.map(s=>({id:s.id,label:s.label,render:(r:typeof rows[number])=>{const value=(r as Record<string,unknown>)[s.id],p=s.data.find(p=>p.id===r.id);return <span>{value==null?"—":`${value}${unit}`}{p?.symbol&&<span className="block">{pointSymbolText[p.symbol]}</span>}{p?.valueLabel&&<span className="block whitespace-normal break-words">{p.valueLabel}</span>}{p?.annotation&&<span className="block whitespace-normal break-words">{p.annotation}</span>}</span>}}))]} onSelect={onSelect?id=>onSelect(id,series[0]?.id??""):undefined}/></details>}</div>
+}
 export type { ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 export type ComparisonChartPoint=ChartPoint & {range?:[number,number]}
 type PositionedReference=ComparisonReferenceLine & {id:string;position:number}
