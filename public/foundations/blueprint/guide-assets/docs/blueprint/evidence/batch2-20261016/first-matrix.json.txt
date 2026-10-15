@@ -1,0 +1,272 @@
+{
+  "date": "2026-10-15T16:44:38.677Z",
+  "matrix": [
+    {
+      "theme": "light",
+      "width": 320,
+      "scrollWidth": 320,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 255, 255)"
+    },
+    {
+      "theme": "light",
+      "width": 768,
+      "scrollWidth": 753,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 255, 255)"
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1265,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 255, 255)"
+    },
+    {
+      "theme": "paper",
+      "width": 320,
+      "scrollWidth": 320,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 254, 251)"
+    },
+    {
+      "theme": "paper",
+      "width": 768,
+      "scrollWidth": 753,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 254, 251)"
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "scrollWidth": 1265,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(255, 254, 251)"
+    },
+    {
+      "theme": "dark",
+      "width": 320,
+      "scrollWidth": 320,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(23, 25, 28)"
+    },
+    {
+      "theme": "dark",
+      "width": 768,
+      "scrollWidth": 753,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(23, 25, 28)"
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1265,
+      "count": 12,
+      "inputBorder": "10px",
+      "cardBackground": "rgb(23, 25, 28)"
+    },
+    {
+      "theme": "blueprint",
+      "width": 320,
+      "scrollWidth": 320,
+      "count": 12,
+      "inputBorder": "0px",
+      "cardBackground": "rgb(255, 255, 255)"
+    },
+    {
+      "theme": "blueprint",
+      "width": 768,
+      "scrollWidth": 753,
+      "count": 12,
+      "inputBorder": "0px",
+      "cardBackground": "rgb(255, 255, 255)"
+    },
+    {
+      "theme": "blueprint",
+      "width": 1280,
+      "scrollWidth": 1265,
+      "count": 12,
+      "inputBorder": "0px",
+      "cardBackground": "rgb(255, 255, 255)"
+    }
+  ],
+  "portals": [
+    {
+      "name": "blueprint",
+      "dialog": {
+        "container": true,
+        "radius": "0px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(22, 24, 29)",
+        "border": "rgb(29, 32, 38)",
+        "shadow": "rgba(22, 24, 29, 0.06) 6px 6px 0px 0px"
+      },
+      "select": {
+        "container": true,
+        "radius": "0px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(22, 24, 29)",
+        "border": "rgb(29, 32, 38)",
+        "shadow": "rgba(22, 24, 29, 0.06) 6px 6px 0px 0px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "light",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(31, 35, 40)",
+        "border": "rgb(227, 229, 233)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(31, 35, 40)",
+        "border": "rgb(227, 229, 233)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "blueprint-global-local-light",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(31, 35, 40)",
+        "border": "rgb(227, 229, 233)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(31, 35, 40)",
+        "border": "rgb(227, 229, 233)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "paper",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(255, 254, 251)",
+        "color": "rgb(30, 41, 59)",
+        "border": "rgb(216, 213, 206)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(255, 254, 251)",
+        "color": "rgb(30, 41, 59)",
+        "border": "rgb(216, 213, 206)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "blueprint-global-local-paper",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(255, 254, 251)",
+        "color": "rgb(30, 41, 59)",
+        "border": "rgb(216, 213, 206)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(255, 254, 251)",
+        "color": "rgb(30, 41, 59)",
+        "border": "rgb(216, 213, 206)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "dark",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(32, 35, 40)",
+        "color": "rgb(225, 229, 234)",
+        "border": "rgb(52, 56, 62)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(32, 35, 40)",
+        "color": "rgb(225, 229, 234)",
+        "border": "rgb(52, 56, 62)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "blueprint-global-local-dark",
+      "dialog": {
+        "container": true,
+        "radius": "16px",
+        "bg": "rgb(32, 35, 40)",
+        "color": "rgb(225, 229, 234)",
+        "border": "rgb(52, 56, 62)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px"
+      },
+      "select": {
+        "container": true,
+        "radius": "10px",
+        "bg": "rgb(32, 35, 40)",
+        "color": "rgb(225, 229, 234)",
+        "border": "rgb(52, 56, 62)",
+        "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 10px 15px -3px, oklab(0 0 0 / 0.05) 0px 4px 6px -4px",
+        "outerBorder": "0px"
+      }
+    },
+    {
+      "name": "light-global-local-blueprint",
+      "dialog": {
+        "container": true,
+        "radius": "0px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(22, 24, 29)",
+        "border": "rgb(29, 32, 38)",
+        "shadow": "rgba(22, 24, 29, 0.06) 6px 6px 0px 0px"
+      },
+      "select": {
+        "container": true,
+        "radius": "0px",
+        "bg": "rgb(255, 255, 255)",
+        "color": "rgb(22, 24, 29)",
+        "border": "rgb(29, 32, 38)",
+        "shadow": "rgba(22, 24, 29, 0.06) 6px 6px 0px 0px",
+        "outerBorder": "0px"
+      }
+    }
+  ],
+  "nestedThemeComparisons": "all equal",
+  "magnification": {
+    "method": "CSS zoom 2, not native browser zoom",
+    "zoom": "2",
+    "innerWidth": 1280,
+    "dpr": 1.0000000298023224,
+    "scrollWidth": 1265
+  },
+  "nativeBrowserZoom": "Ctrl++ did not change viewport or DPR; not verified"
+}

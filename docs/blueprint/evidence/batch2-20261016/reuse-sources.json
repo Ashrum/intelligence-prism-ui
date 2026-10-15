@@ -1,0 +1,219 @@
+{
+  "date": "2026-10-16",
+  "scope": "coss official particles reviewed as composition references; pinned coss runtime unchanged; no new upstream runtime source copied",
+  "sources": [
+    {
+      "name": "p-input-group-22",
+      "url": "https://coss.com/ui/r/p-input-group-22.json",
+      "description": "Input group with clear button",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/input-group"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-input-group-22.tsx",
+          "sha256": "3e8cc88c243f9c662caf2bf11d5f256b57ff10409bf30872d227c558064db8c4"
+        }
+      ]
+    },
+    {
+      "name": "p-combobox-1",
+      "url": "https://coss.com/ui/r/p-combobox-1.json",
+      "description": "Basic combobox",
+      "registryDependencies": [
+        "@coss/combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-combobox-1.tsx",
+          "sha256": "c4674b4b8cc9a7217b8de3f57d5d1eb291496d0a1482311277cc4e4806afeb3f"
+        }
+      ]
+    },
+    {
+      "name": "p-combobox-2",
+      "url": "https://coss.com/ui/r/p-combobox-2.json",
+      "description": "Disabled combobox",
+      "registryDependencies": [
+        "@coss/combobox"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-combobox-2.tsx",
+          "sha256": "858489dd286c101aaf91ac1bda9f548d106cfb293d82ccbd95c3a6caa22b290c"
+        }
+      ]
+    },
+    {
+      "name": "p-toggle-group-1",
+      "url": "https://coss.com/ui/r/p-toggle-group-1.json",
+      "description": "Basic toggle group",
+      "registryDependencies": [
+        "@coss/toggle-group"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-toggle-group-1.tsx",
+          "sha256": "6fbf0532ee595a55338b43d49b084af51678fe5c64db6667cef55fa50031ac2e"
+        }
+      ]
+    },
+    {
+      "name": "p-progress-2",
+      "url": "https://coss.com/ui/r/p-progress-2.json",
+      "description": "Progress with label and value",
+      "registryDependencies": [
+        "@coss/progress"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-progress-2.tsx",
+          "sha256": "8d47ac0f4a760ea38705683ab790581dc2138bfaa2cb9b5f0ab1a9e76e0e5518"
+        }
+      ]
+    },
+    {
+      "name": "p-menu-1",
+      "url": "https://coss.com/ui/r/p-menu-1.json",
+      "description": "Basic menu",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/menu"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-menu-1.tsx",
+          "sha256": "a6be91941f66e18bed9fed84ef43af65caee4ac911a8921b71a82490f094421f"
+        }
+      ]
+    },
+    {
+      "name": "p-menu-3",
+      "url": "https://coss.com/ui/r/p-menu-3.json",
+      "description": "Menu with checkbox",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/menu"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-menu-3.tsx",
+          "sha256": "26396d4623466bbeff128ecff77b13180fa11163f1e354f149f0f5f47847a497"
+        }
+      ]
+    },
+    {
+      "name": "p-popover-1",
+      "url": "https://coss.com/ui/r/p-popover-1.json",
+      "description": "Popover with a form",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/field",
+        "@coss/form",
+        "@coss/popover",
+        "@coss/textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-popover-1.tsx",
+          "sha256": "7032887826c5b2ec47b82afa3c78c8bc3097f6ed84e5a42e3b99345d310df4be"
+        }
+      ]
+    },
+    {
+      "name": "p-tooltip-1",
+      "url": "https://coss.com/ui/r/p-tooltip-1.json",
+      "description": "Basic tooltip",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/tooltip"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-tooltip-1.tsx",
+          "sha256": "2a33b100c4fbaacd6d0fce1a01313c99d73a0036e311cb14e08d0e0b4e51bef1"
+        }
+      ]
+    },
+    {
+      "name": "p-toast-2",
+      "url": "https://coss.com/ui/r/p-toast-2.json",
+      "description": "Stacked toasts by semantic type (success, error, info, warning)",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/toast"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-toast-2.tsx",
+          "sha256": "e6b72d7bbf992c2a6aae9371e18babfbefdea21c68420373804cfc696e9906d8"
+        }
+      ]
+    },
+    {
+      "name": "p-alert-dialog-1",
+      "url": "https://coss.com/ui/r/p-alert-dialog-1.json",
+      "description": "Alert dialog",
+      "registryDependencies": [
+        "@coss/alert-dialog",
+        "@coss/button"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-alert-dialog-1.tsx",
+          "sha256": "f17c934a654c87c83da335eccd8165f4645a9b983d9be252fac6ab52613ce3b8"
+        }
+      ]
+    },
+    {
+      "name": "p-sheet-1",
+      "url": "https://coss.com/ui/r/p-sheet-1.json",
+      "description": "Basic sheet",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/field",
+        "@coss/form",
+        "@coss/input",
+        "@coss/sheet"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-sheet-1.tsx",
+          "sha256": "1b157722d15a8f82f0087d410024defe1216bbe2cb3570717d4f80f0bfb1f8e2"
+        }
+      ]
+    },
+    {
+      "name": "p-skeleton-1",
+      "url": "https://coss.com/ui/r/p-skeleton-1.json",
+      "description": "Basic skeleton",
+      "registryDependencies": [
+        "@coss/avatar",
+        "@coss/button",
+        "@coss/skeleton"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-skeleton-1.tsx",
+          "sha256": "3178c4fcc20b199e075229d73dffde9f178942cb308e1d64a1e4c9db4f797ed6"
+        }
+      ]
+    },
+    {
+      "name": "p-empty-1",
+      "url": "https://coss.com/ui/r/p-empty-1.json",
+      "description": "Empty state with icon and actions",
+      "registryDependencies": [
+        "@coss/button",
+        "@coss/empty"
+      ],
+      "files": [
+        {
+          "path": "registry/default/particles/p-empty-1.tsx",
+          "sha256": "165d618650170ab70c3b78833799f53424023011f2b1c9fa2ab154d0bd55c55b"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "theme": "light",
+    "track": {
+      "background": "rgba(31, 35, 40, 0.2)",
+      "color": "rgb(31, 35, 40)",
+      "radius": "2.23696e+07px",
+      "border": "0px solid rgb(227, 229, 233)",
+      "shadow": "none"
+    },
+    "fill": {
+      "background": "rgb(31, 35, 40)",
+      "color": "rgb(31, 35, 40)",
+      "radius": "0px",
+      "border": "0px solid rgb(227, 229, 233)",
+      "shadow": "none"
+    }
+  },
+  {
+    "theme": "paper",
+    "track": {
+      "background": "rgba(30, 41, 59, 0.24)",
+      "color": "rgb(30, 41, 59)",
+      "radius": "2.23696e+07px",
+      "border": "0px solid rgb(216, 213, 206)",
+      "shadow": "none"
+    },
+    "fill": {
+      "background": "rgb(15, 23, 42)",
+      "color": "rgb(30, 41, 59)",
+      "radius": "0px",
+      "border": "0px solid rgb(216, 213, 206)",
+      "shadow": "none"
+    }
+  },
+  {
+    "theme": "dark",
+    "track": {
+      "background": "rgb(85, 93, 105)",
+      "color": "rgb(225, 229, 234)",
+      "radius": "2.23696e+07px",
+      "border": "0px solid rgb(52, 56, 62)",
+      "shadow": "none"
+    },
+    "fill": {
+      "background": "rgb(231, 236, 242)",
+      "color": "rgb(225, 229, 234)",
+      "radius": "0px",
+      "border": "0px solid rgb(52, 56, 62)",
+      "shadow": "none"
+    }
+  }
+]

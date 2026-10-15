@@ -2380,6 +2380,8 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 embedded 头部为约 46×60 的书形封面、两行教材文字与可选“切换”按钮。`TextbookDefinition` 新增可选 `volume?: string`、`subject?: string`、`edition?: string`；第一行显示 volume（未提供或空字符串时回退 title），第二行拼接存在的 subject / edition 为“学科 · 版本”，均无值时不渲染第二行。封面仅显示 subject 的前两个 Unicode 字符，无 subject 不写字；封面为装饰，不重复朗读。长文字单行省略，完整文字保留在 DOM/title 与头部分组可访问名称中。切换用 coss Button outline/sm，可访问名称“切换教材”；内置 coss Menu 单选项显示“册名 · 学科 · 版本”（缺省沿用上述回退），标记当前教材，选择沿用各教材独立的会话与选择记录。封面与书脊复用现有品牌/语义令牌进行 color-mix，底部细条用 --brand-ai-gradient；文字仅 foreground / muted-foreground 单色。不新增令牌，不重绘基础控件。课程/知识点页签等宽铺满。教材、页签、搜索与“多选”、可选已选行、树依次排列，段间距统一；树原有行高和点击区域不变。
 
+2026-10-16 配色兼容说明（用户批准）：上段教材封面细条以及教材对话框所用 `DialogLayout` 顶部装饰复用的是既有品牌三色；`--brand-ai-gradient` 的历史名称不表示教材或对话框来自 AI，也不表示内容正确、已核验或任务完成。这些既有非语义装饰继续保留，真实 AI 来源仍由外部事实和可读 AI 标识独立呈现，见 [AI 来源与悬浮材质](foundation-tokens.md)。蓝图仍使用纸墨与 `#1D5FBF` 交互蓝，品牌标识和三原色不改；本条仅澄清教材用法，不修改教材业务源码、组件 API、公共令牌或执行全仓重命名，不扩展新的品牌渐变使用范围。通用组件第二批的实现与实测范围另见 [蓝图主题](blueprint-theme.md)，其通过结果不等于教材业务流程已经重新验收。
+
 embedded 的两段操作说明只保留 sr-only 与树的 `aria-describedby`，没有可见说明入口。toggle 关闭 + select：“点标题只看这一项，再点一次取消。搜索不会改变已选范围。”；打开：“点标题或复选框勾选，勾选父级包含全部下级。搜索不会缩小勾选范围。”；locate 关闭与键盘说明对应实际行为。搜索行末的标准 coss Toggle 可访问名称“多选”，Tooltip 为“打开后可以勾选多个章节或知识点”。当前 `TextbookDefinition` 要求提供两类目录，空目录也保留切换；未新增单目录或隐藏切换 API。
 
 embedded 仅在有选择时于搜索框与树之间显示紧凑的一行已选提示和“清空”按钮（无分隔符），不渲染已选明细与摘要列。先在各 scope 内去重并忽略未知 ID 与父节点，再复用 `summarizeDirectory` 将整棵全选子树归并为上级一个节点；n 为所传教材的课程、知识点中归并后的节点总数。恰好一个节点时显示“已选：节点标题”，单行省略并在 title 与可访问名称中保留完整文本；两项及以上显示“已选 n 项”；切换教材、目录或搜索不会缩小汇总范围。清空沿用受控 `onSelectionsChange` 更新数组为空的方式，清除所传教材的两类目录，保留不属于这些教材的 scope；零选择时不渲染清空按钮。split 的“清空当前目录”和逐项移除行为不变。`TextbookRangePicker` API、草稿与应用行为不变。

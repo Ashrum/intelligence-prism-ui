@@ -1,0 +1,70 @@
+{
+  "samples": [
+    {
+      "name": "材料关键词",
+      "outer": {
+        "outline": "rgb(29, 95, 191) solid 2px",
+        "outlineWidth": "2px",
+        "outlineColor": "rgb(29, 95, 191)",
+        "outlineOffset": "2px",
+        "shadow": "none",
+        "border": "rgb(29, 32, 38)",
+        "width": 439
+      },
+      "inner": {
+        "outline": "none",
+        "shadow": "none",
+        "width": 386.3333435058594
+      },
+      "focused": true,
+      "invalid": null,
+      "pass": true
+    },
+    {
+      "name": "起始页 · 必填校验",
+      "outer": {
+        "outline": "rgb(29, 95, 191) solid 2px",
+        "outlineWidth": "2px",
+        "outlineColor": "rgb(29, 95, 191)",
+        "outlineOffset": "2px",
+        "shadow": "none",
+        "border": "rgb(198, 40, 40)",
+        "width": 439
+      },
+      "inner": {
+        "outline": "none",
+        "shadow": "none",
+        "width": 411.3333435058594
+      },
+      "focused": true,
+      "invalid": "true",
+      "pass": true
+    },
+    {
+      "name": "材料编号 · 只读",
+      "outer": {
+        "outline": "rgb(29, 95, 191) solid 2px",
+        "outlineWidth": "2px",
+        "outlineColor": "rgb(29, 95, 191)",
+        "outlineOffset": "2px",
+        "shadow": "none",
+        "border": "rgb(29, 32, 38)",
+        "width": 439
+      },
+      "inner": {
+        "outline": "none",
+        "shadow": "none",
+        "width": 436.3333435058594
+      },
+      "focused": true,
+      "invalid": null,
+      "pass": true
+    }
+  ],
+  "clearButtonFocus": {
+    "focus": true,
+    "outline": "rgb(29, 95, 191) solid 2px",
+    "groupOutline": "none"
+  },
+  "allPass": true
+}

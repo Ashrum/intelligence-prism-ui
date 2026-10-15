@@ -12,14 +12,14 @@
 
 10px 仅为本次明确授权的 aria-hidden 装饰坐标例外，不新增公共字号令牌、不改变 ui-meta 或图表刻度。规则限定 blueprint，并排除嵌套核心主题预览；760px 媒体或容器断点继续隐藏标尺。Chrome 实测四主题 320px / 1280px，页面无横向溢出，蓝图默认及放大后的坐标无裁切。见 [本轮测量](blueprint/evidence/ruler-20261015/browser-results.json)、[调整前](blueprint/screens/ruler-20261015/blueprint-1280-before.png) 与 [调整后](blueprint/screens/ruler-20261015/blueprint-1280-after.png)；当前检查和限制见 [状态记录](blueprint/STATUS.md)。
 
-## 完善路线与当前执行（2026-10-15）
+## 完善路线与当前执行（更新于 2026-10-16）
 
-用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板第一批已完成容器布局、关键操作状态、墨底焦点与站内规范入口；当前按用户“同意。批准，开始实施”的明确授权，转入下述 12 类通用基础组件的 Blueprint 首批完善。Agent 业务页面与布局暂缓，现阶段先验证通用控件和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。
+用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板、通用基础组件首批及主行动悬停修复保留各自证据；2026-10-16 用户进一步批准蓝图配色规则和第二批 12 类通用组件实施，当前范围见下方。Agent 业务页面与布局仍暂缓，现阶段继续验证通用控件、浮层和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。
 
 | 阶段 | 目标 | 完成依据 |
 | --- | --- | --- |
 | 1 · 视觉规则 | 明确网格、双框、编号、标题、留白及主要行动的适用位置 | 现有蓝图样板的前后对照与长内容检查 |
-| 2 · 组件状态 | 当前首批完善 Button、Input、Textarea、Select、Checkbox、RadioGroup、Switch、Tabs、Card、Badge、Alert、Dialog | 按下方矩阵记录真实键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验 |
+| 2 · 组件状态 | 首批 12 类保留已验范围；当前第二批为 InputGroup、Combobox、ToggleGroup、Progress、Menu、Popover、Tooltip、Toast、AlertDialog、Sheet、Skeleton、Empty | 每轮按实际样例记录键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验 |
 | 3 · 密集内容 | 检查列表、图表、小图例、连续色阶及打印 | 可读性、零值与缺测、灰度和原生打印证据 |
 | 4 · 教师场景（暂缓） | 待通用组件收敛后，再规划 Agent、试卷阅读和学情报告的主题密度 | 当前不改 Agent 业务布局；后续沿用既有业务流程进行独立场景评审 |
 | 5 · 发布候选 | 收敛主题隔离、核心主题回归与剩余限制 | 独立 Review、视觉确认、发布版本及可追溯证据 |
@@ -27,6 +27,65 @@
 每批保持第四主题、核心三主题及轻量 Blueprint 页面实验的既有边界；不修改冻结 coss 源码、不增加依赖、不把示例中的按钮点击解释为真实业务执行。具体实现、验证与剩余问题统一记录在 [蓝图当前状态](blueprint/STATUS.md)，本表不代替验收结论。
 
 站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。
+
+### 通用基础组件第二批与配色规则 · 2026-10-16
+
+用户于 2026-10-16 批准本轮实施。开工基线为 `2865942bb755efaa516a0f6f4252cdf79b4b1969`，对应 Site v121；任务分支 `feat/blueprint-common-batch-two`。配色决策原位记入下方「颜色令牌」及 [AI 来源与悬浮材质](foundation-tokens.md)，第二批限定以下 12 类既有组件，保留第一批及原蓝图样板入口，不扩展 Agent 业务布局。
+
+| 组别 | 本轮组件 | 适配重点与操作边界 |
+| --- | --- | --- |
+| 输入、选择与进度 | InputGroup、Combobox、ToggleGroup、Progress | 复用已有输入表面与受控状态；检查组合输入单一外框、错误 / 禁用 / 焦点、搜索候选与无结果、选择与按下态、已知数值和未知进度的区别；不由点击或计时器推定真实任务完成 |
+| 菜单与轻浮层 | Menu、Popover、Tooltip、Toast | 纸墨表面、状态文字、真实触发器和关闭；键盘展开 / 导航 / Escape、焦点返回、Tooltip 键盘可达、Toast 可关闭及实际主题宿主；不把提示样例写成真实保存回执 |
+| 确认、侧栏与缺内容 | AlertDialog、Sheet、Skeleton、Empty | 确认与取消意图、焦点限制与返回、侧栏滚动和窄屏、明确加载占位与空状态；减少动态效果按真实样例核对，不让 Skeleton 自动变成完成事实或把 Empty 当成权限判断 |
+
+#### 第二批复用与实现边界
+
+本轮沿用固定 coss `e937becd2d5ffb5c621eed6f8b1f223cbb6051e7`。已离线核对 `components/coss/` 中上述 12 类对应文件的公开结构、`data-slot` 与 Portal 支持，以及本地 `demos/actions.tsx`、`demos/overlays.tsx`、`demos/feedback.tsx` 的既有组合。输入和搜索复核本地 `demos/input-particles.tsx` 的 p-input-group-22，以及 `demos/selection-particles.tsx` 的 p-combobox-9 / 8 / 18；确认与关闭返回复核 `demos/dialog-particles.tsx` 的 p-dialog-4 / 5 组合。沿用原语、常驻标签与弹层结构，不移植这些旧演示中的模拟保存计时器或业务完成文案。
+
+历史 `.sites-runtime/easyui-research-20261005/coss-registry.json` 在当前机器仍不存在。本轮实施另行下载并阅读全文的官方 particles 为 p-input-group-22、p-combobox-1 / 2、p-toggle-group-1、p-progress-2、p-menu-1 / 3、p-popover-1、p-tooltip-1、p-toast-2、p-alert-dialog-1、p-sheet-1、p-skeleton-1 和 p-empty-1；[复用来源记录](blueprint/evidence/batch2-20261016/reuse-sources.json) 保留来源 URL、依赖与已读文件散列，不据此声称穷举完整最新注册表。实际只借用组合结构，复用现有 coss、Prism Button 与 QuestionMath；拒绝复制演示计时器、远程 avatar 或任务成功事实。Toast 沿用现有私有 manager 属性，Sheet 复用 QuestionMath 呈现真实 MathML，浮层容器归属本样例。现有原语能承载本轮样例，采用主题隔离的外层适配，不新增组件目录条目或公共 API。此轮不新增 Agent 执行组件，不扩大 Beautiful UI 的适用范围。
+
+只允许蓝图范围内的几何、语义配色使用与对照夹具调整；不修改冻结 coss、既有公共令牌名称 / 数值、品牌原色、业务源码或依赖，不全仓重命名 `--brand-ai-gradient`。已有教材装饰与 AI 来源用法的命名差异仅作兼容说明，具体语义见下方配色分工。公共颜色、品牌标识、教材业务及核心三主题的既有行为不以文档更新为由改变。
+
+#### 第二批样例与已验范围
+
+样例位于 `/next/foundations/blueprint#common-components-two`。[第二批交互记录](blueprint/evidence/batch2-20261016/interactions.json) 的 47 项检查通过，包含 12 类样例存在与 ID 唯一性；下表只记录实际展示和操作的状态，不表示所有变体、内容与输入方式均已覆盖。
+
+| 组件 | 当前样例与实际检查 | 覆盖边界 |
+| --- | --- | --- |
+| InputGroup | 关键词清除并返回输入；空值时清除按钮禁用；页码错误 / 非整数 / 有效整数；只读、禁用与整组焦点 | 内输入 border 为 0，错误外框保留红色；系统剪贴板与所有 addon 排列未逐项验收 |
+| Combobox | 清除、无结果、真实选中值；输入文本不等于完成选择；键盘选择解除错误；Escape 返回、禁用输入 | 当前为单选本地候选，不扩为远程加载、多选或全部禁用选项组合 |
+| ToggleGroup | 单选键盘操作、多选切换及禁用项 | 保留真实按下状态；不代表所有尺寸、方向或极长标签组合已验 |
+| Progress | 0%、40%、100% 与未知四个固定快照；未知没有 aria-valuenow，保留“未提供进度” | 仅明确标注的快照，未接入任务执行；蓝图轨道与填充测得对比度约 16.26:1，不据此宣称全站对比度审计完成 |
+| Menu | 禁用项、复选项、单选项、键盘操作与 Escape 返回焦点 | 操作只更新本页反馈；未验全部子菜单或定位组合 |
+| Popover | 初始焦点、取消保留旧值、应用本页备注并返回焦点 | 不产生保存服务回执；未扩验多层嵌套弹层 |
+| Tooltip | 可访问描述、键盘触发与 Escape 关闭 | 补充说明不替代常驻标签；没有据 DOM 属性声称读屏器实测完成 |
+| Toast | 三类本页通知、局部 manager 无全局重复、关闭指定通知和全部通知 | 不推定真实任务成功或失败；未穷举全部通知堆叠与超时组合 |
+| AlertDialog | 初始焦点位于取消、焦点限制、取消保留备注、确认本页变更及关闭返回 | 仅清除可逆的本页演示备注，不删除真实材料 |
+| Sheet | 初始焦点、Escape 返回、320px 面板内长内容滚动；样例包含 QuestionMath 真实 MathML | 未作真机、读屏器或所有公式排版的完整验收 |
+| Skeleton | aria-busy、减少动态效果时三个占位动画均为 none、手动切换固定内容 | 不运行模拟加载计时器，不把切换视为真实请求完成 |
+| Empty | 切换固定材料样例并恢复空状态 | 不创建或上传材料，不推定权限或数据服务状态 |
+
+#### 第二批实施结果与证据边界
+
+[第二批矩阵](blueprint/evidence/batch2-20261016/matrix.json) 的 223 项检查通过：四主题 × 320px / 768px / 1280px 共 12 个布局检查、11 个主题与浮层情景、6 组双向主题比较，记录内对应计算属性全部相等。检查真正的 Portal 宿主和通知节点，包含全局蓝图内的核心主题预览与核心主题内显式蓝图预览；不只根据触发器推定浮层主题。结论限定本轮样例、所测属性和宽度，不代表全站逐像素回归。
+
+矩阵曾发现局部预览沿用外层已计算的派生值：coss 部分工具类读取 `--radius-lg` / `--radius-md` / `--color-muted`，只切换局部基础令牌仍会继承外层结果。修复仅在涉及 Blueprint 的真实 `data-agent-preview` 主题边界重新绑定这三个既有别名，使其使用该边界自己的 radius / muted；蓝图内核心预览也恢复自身值，普通核心全局主题不受这段规则影响。夹具另外显式使用 `text-foreground`。这不是新增公共令牌、改动品牌色或放宽几何覆盖到核心主题；修后以上双向比较和首批浮层回归均相等。
+
+用户追加的 InputGroup 聚焦蓝框只包中间输入区问题已修复并[实测焦点](blueprint/evidence/batch2-20261016/focus.json)：旧会话中焦点外框包住 439px 整组，而非 386px / 411px 的内部输入；外层为 2px 蓝色 outline、2px offset，内层 outline 与 shadow 均为 none。错误状态仍保留 `rgb(198, 40, 40)` 红边；正常、错误、只读三类通过，清除按钮有独立焦点，且获焦时不同时绘制整组焦点。见[正常整组焦点](blueprint/screens/batch2-20261016/batch2-input-group-valid-focus.png)与[错误整组焦点](blueprint/screens/batch2-20261016/batch2-input-group-error-focus.png)。这些数值保留为原会话测量，最终环境与页面宽度另以下方干净会话为准，不扩写为全部 InputGroup 变体已验。
+
+[正式组件页复验](blueprint/evidence/batch2-20261016/routes.json) 覆盖第二批 12 页 × 320px / 1280px 共 24 次访问，全部返回 200、存在真实样例且无页面横向溢出；具体交互仍以上方夹具记录为准。同份旧会话记录中的 320px InputGroup 整组为 246.67px，保持 2px 蓝色焦点线、内输入 outline / shadow 为 none。
+
+独立 Review 对旧窄屏截图底部滚动条提出复核后，另用[全新浏览器会话](blueprint/evidence/batch2-20261016/fresh-focus.json)检查 1280px / 320px：innerWidth、文档 clientWidth / scrollWidth、body clientWidth / scrollWidth 均等于相应视口；html / body 的 zoom 为 1、DPR 为 1、visualViewport.scale 为 1。干净会话整组宽度分别为 446.5px / 246px，均保留完整 2px 蓝色焦点线；窄屏仅存在既有 Tabs 的局部横向滚动，没有文档级横向溢出。[窄屏截图](blueprint/screens/batch2-20261016/blueprint-320-input-group-focus.png)已替换为本次结果，不将旧会话尺寸当作干净会话测量。
+
+本轮另行复跑[首批 31 项交互](blueprint/evidence/batch2-20261016/first-interactions.json)，全部通过。[原样板按钮回归](blueprint/evidence/batch2-20261016/first-hover.json) 覆盖四主题 × 320px / 1280px 共 8 个情景，原 8 个按钮均保留，蓝图主要行动的前景 / 背景对比度仍为 17.76:1。[首批矩阵](blueprint/evidence/batch2-20261016/first-matrix.json) 包含 12 个布局、8 个真实浮层情景，嵌套预览比较全部相等；CSS `zoom: 2` 检查通过，但不等于浏览器原生 200% 缩放已验。以上均为本轮重新运行，不借用旧轮结果代替当前回归。
+
+核心三主题 Progress 的[修改前](blueprint/evidence/batch2-20261016/core-before.json)、[修改后](blueprint/evidence/batch2-20261016/core-after.json)和[逐项对照](blueprint/evidence/batch2-20261016/core-comparison.json)记录一致；蓝图填充与轨道由[修前](blueprint/evidence/batch2-20261016/before.json)的约 1.09:1 提升到 16.26:1。这里只报告具体轨道 / 填充的计算样式与对比度，不据有限样本宣称所有核心组件视觉均已验。
+
+代表截图：[输入与进度](blueprint/screens/batch2-20261016/blueprint-1280-inputs.png)、[菜单与反馈](blueprint/screens/batch2-20261016/blueprint-1280-menus-and-feedback.png)、[确认与占位](blueprint/screens/batch2-20261016/blueprint-1280-dialogs-and-placeholders.png)、[Sheet 窄屏](blueprint/screens/batch2-20261016/global-blueprint-320-sheet.png)、[局部通知](blueprint/screens/batch2-20261016/global-blueprint-1280-toast.png)、[蓝图内深色 Combobox](blueprint/screens/batch2-20261016/global-blueprint-local-dark-1280-combobox.png)、[深色内蓝图 Popover](blueprint/screens/batch2-20261016/global-dark-local-blueprint-1280-popover.png)。品牌标识与教材装饰保留既有颜色和语义边界，不把品牌三色改成任务状态；未修改教材业务源码，亦不据文档澄清声称教材业务流程已经重新验收。
+
+数学字体、语义字号（308 个 owned TSX）、生产构建与 TypeScript 已在运行时代码最后修订后通过；生成物同步后再次生产构建通过，Blueprint 专项最终 39/39 通过。全量首次在 Windows 沙箱内运行得到 1923 项 / 1661 通过 / 262 失败，其中额外一项为 symlink EPERM；正常权限复跑为 1949 项 / 1688 通过 / 261 失败。随后修复预览别名并更新文档，规范生成物尚未同步时的 [release 中间结果](blueprint/evidence/batch2-20261016/release-failure-delta.json) 曾为 1949 项 / 1686 通过 / 263 失败，新增两项仅为 guide 完整字节与源散列不一致。最终重新生成、构建并复跑全量后恢复为 1949 项 / 1688 通过 / 261 既有失败，两项生成物失败已消除；[最终失败集合对照](blueprint/evidence/batch2-20261016/complete-failure-delta.json) 的 new 与 removed 均为空，与上一轮悬停修复的失败描述集合相同，不声称全量通过。[工程命令、时间与退出码](blueprint/evidence/batch2-20261016/engineering.json)、[本轮检查与审查](blueprint/evidence/batch2-20261016/checks.md)及[当前状态](blueprint/STATUS.md)记录具体依据；最终结果回填后的变更仅为说明与证据，规范及下载资源重新生成并校验。
+
+[独立 Review](blueprint/evidence/batch2-20261016/review.md) 最终结论为 PASS WITH NOTES，正式放行；源码、浏览器与工程收口条件已满足，发布提交 SHA、PR 与 Site 版本仍以实际合并和发布终态为准。真机、读屏器、实体打印、原生 200% 缩放、全站像素回归及未展示的状态组合未验；数学内容只覆盖本轮 Sheet 的样例，不据此扩展到全部公式和 Agent 业务场景。第四主题继续保持候选状态。
 
 ### 通用基础组件首批 · 2026-10-15
 
@@ -175,6 +234,21 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 | 深色变体 | 首期仅白图。`@custom-variant dark` 将蓝图预览排除在外。夜图以后作为独立值 `blueprint-night` 加入。 |
 
 ## 颜色令牌
+
+### 配色与品牌分工（用户批准 2026-10-16）
+
+蓝图延续纸色背景、墨色正文 / 结构和 `#1D5FBF` 交互蓝。主要行动仍使用成对的墨底与纸色文字，hover、focus-visible、pressed 不能只替换背景而留下不相配的前景；颜色取自既有语义令牌，不另建第二套蓝色色板。
+
+| 用途 | 既有规则 | 不能由外观推断的含义 |
+| --- | --- | --- |
+| 纸面与结构 | `background` / `card` / `popover` 承载内容；`foreground` / `heading` / `line` 形成文字和图框层级 | 墨底、网格或硬阴影不表示正在执行或已完成 |
+| 交互与信息 | 链接、焦点及信息色沿用 `#1D5FBF`；选中背景和前景配对，选中值由真实属性决定 | 交互蓝不是品牌原色的替代值，也不是正确性或成功状态 |
+| 成功、警告与错误 | 保留各自 `success` / `warning` / `destructive` 及 foreground 配对，状态仍有可读文字 | 成功绿不改为强调蓝或品牌青柠；不靠颜色单独宣布业务结果 |
+| 品牌标识与原色 | 保留 `--brand-blue: #339FF2`、`--brand-magenta: #E0438F`、`--brand-green: #C2F25B` 与现有品牌标识 | 品牌三色不成为普通按钮、正文、大面积表面或进度的默认配色 |
+| AI 来源 | `--brand-ai-gradient` 仍映射既有品牌三色；用于来源时配中性可读的 AI 文字，并有调用方提供的真实来源依据 | 渐变本身不证明内容由 AI 生成、已经核验、正确或完成 |
+| 既有教材品牌装饰 | 教材封面细条及现有 DialogLayout 装饰复用同一渐变，保留当前实现与命名兼容 | `brand-ai-gradient` 的历史变量名不赋予教材或对话框 AI 来源语义；不补造 AI 标签或生成事实 |
+
+这次批准确定语义使用边界，保持公共令牌、品牌资产和既有业务行为不变。教材细条是既有非语义装饰的兼容用法，不由此扩大新的渐变使用范围；新内容若声称 AI 来源，必须按来源事实和可读标签呈现。基础规则与兼容说明同步维护于 `docs/foundation-tokens.md` 和 `docs/component-contracts.md` 的原有段落，不新增规划副本或全仓重命名。
 
 | 角色 | 令牌 | 值 |
 | --- | --- | --- |

@@ -1,0 +1,5 @@
+{
+  "equal": true,
+  "before": "core-before.json",
+  "after": "core-after.json"
+}
