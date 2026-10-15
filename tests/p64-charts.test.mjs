@@ -20,7 +20,7 @@ for (const theme of ['light', 'paper', 'dark']) test(`P64 ${theme}: independent 
  assert.match(external, /flex-wrap/); assert.match(external, /justify-end/); assert.match(external, /overflow-wrap:anywhere/);
  assert.equal((external.match(/text-ui-hint text-foreground/g) ?? []).length, 5);
  assert.doesNotMatch(external, /style="color:|<button|tabindex/);
- assert.match(external, /stroke-dasharray="5 4"/); assert.match(external, /fill="var\(--background\)"/);
+ assert.match(external, /stroke-dasharray="5 4"/); assert.match(external, /fill="var\(--card\)"/);
  for (const [index, id] of [[2, 'week-3'], [3, 'week-6'], [4, 'a']]) {
   const dot = lines(out)[index].props.dot({ cx: 12, cy: 8, payload: { id } });
   const drawing = render(h(api.ChartMarker, { marker: items[index].marker, color: api.chartLegendColor(items[index], index, out.theme) }));

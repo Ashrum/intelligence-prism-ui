@@ -3,7 +3,7 @@ import { formatChartValue, isChartValue } from "./chart-options"
 
 /** All colours are supplied by useChartTheme; tones index its existing six-colour palette. */
 export type ChartTone = "neutral" | "info" | "success" | "warning" | "destructive" | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5" | "chart-6"
-export type ChartTheme = { palette: { foreground: string; muted: string; border: string; background: string }; colors: readonly string[] }
+export type ChartTheme = { palette: { foreground: string; muted: string; border: string; background: string; surface: string }; colors: readonly string[] }
 export type DonutSegment = { id: string; label: string; value: number; tone?: ChartTone }
 export type RadarAxis = { id: string; label: string; max?: number }
 export type RadarSeries = { id: string; label: string; values: number[]; tone?: ChartTone }
@@ -76,7 +76,7 @@ export function radarChartOption(axes: readonly RadarAxis[], series: readonly Ra
     series: [{ type: "radar", data: model.ready ? model.valid.map(item => {
       const index = series.indexOf(item), color = chartToneColor(theme, index, item.tone)
       return { id: item.id, name: item.label, value: [...item.values], symbol: index === 0 ? "circle" : "diamond", symbolSize: 13,
-        lineStyle: { color, width: 2.5, type: index === 0 ? "solid" : "dashed" }, itemStyle: { color } }
+        lineStyle: { color, width: 2.5, type: index === 0 ? "solid" : "dashed" }, itemStyle: { color, borderColor: theme.palette.surface, borderWidth: 2 } }
     }) : [] }],
     media: [{ option: { radar: { radius: "58%" } } }, { query: { maxWidth: 440 }, option: { radar: { radius: "42%" } } }],
   }

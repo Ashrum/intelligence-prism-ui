@@ -1,3 +1,4 @@
+import { p70Snapshot } from './helpers/p70-marker-migration.mjs';
 import { p69Snapshot } from './helpers/p69-palette-migration.mjs';
 import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
@@ -6,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
 
 const before=JSON.parse(await readFile(new URL('./fixtures/p58-defaults-before.json',import.meta.url),'utf8'));
-for(const snapshot of before.map(p69Snapshot)) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure, labels P64 legend markup and P69 palette`,()=>{
+for(const snapshot of before.map(p69Snapshot).map(p70Snapshot)) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure, labels P64 legend markup and P69 palette / P70 point outlines`,()=>{
  const out=capture(snapshot.name,{...defaults[snapshot.name],...snapshot.extra},snapshot.theme);
  let expected=snapshot.html;
  if(['ScatterChart','PairedDotChart'].includes(snapshot.name)){
@@ -33,7 +34,7 @@ test('P58 trend passes dashed/point-only geometry, symbols, text disclosure, too
  assert.equal(lines.length,4);assert.equal(lines[1].props.strokeDasharray,'5 4');assert.equal(lines[2].props.strokeOpacity,0);assert.equal(lines[3].props.strokeOpacity,0);
  assert.deepEqual(lines.map(n=>n.props.connectNulls),[true,true,false,false]);assert.ok(lines.every(n=>n.props.isAnimationActive===false));
  const dot=lines[2].props.dot({cx:100,cy:100,payload:{id:'week-3'}});
- assert.match(render(dot),/data-trend-symbol="hollow-circle"/);assert.match(render(dot),/fill="var\(--background\)"/);
+ assert.match(render(dot),/data-trend-symbol="hollow-circle"/);assert.match(render(dot),/fill="var\(--card\)"/);
  dot.props.onSelect();assert.deepEqual(calls,[['week-3','incomparable']]);
  assert.match(render(lines[3].props.activeDot({cx:150,cy:100,payload:{id:'week-6'}})),/data-trend-symbol="diamond"/);
  const tooltip=out.nodes.find(n=>n.props.formatter&&n.props.contentStyle);
