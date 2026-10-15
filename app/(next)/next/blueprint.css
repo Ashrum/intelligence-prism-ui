@@ -50,14 +50,17 @@
 /* ── 5 · Blueprint components (bp-*). Usable in any theme; tokens fall back to core values. ── */
 .bp-demo { container:blueprint-demo / inline-size; }
 .bp-demo-columns { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr)); gap:36px 48px; }
-.bp-sheet { position:relative; background:var(--card); border:var(--line-width) solid var(--line); padding:calc(var(--bp-pad,40px) + 8px) var(--bp-pad,40px) var(--bp-pad,40px); }
-.bp-sheet::before { content:""; position:absolute; inset:18px; border:1px solid var(--line); pointer-events:none; }
+.bp-sheet { --bp-ruler-size:18px; position:relative; background:var(--card); border:var(--line-width) solid var(--line); padding:calc(var(--bp-pad,40px) + 8px) var(--bp-pad,40px) var(--bp-pad,40px); }
+.bp-sheet::before { content:""; position:absolute; inset:var(--bp-ruler-size); border:1px solid var(--line); pointer-events:none; }
 .bp-ruler { position:absolute; display:flex; font:var(--text-ui-meta)/var(--text-ui-meta--line-height) var(--font-mono); color:var(--disabled-foreground); pointer-events:none; user-select:none; }
 .bp-ruler > span { flex:1; display:flex; align-items:center; justify-content:center; }
-.bp-ruler--top,.bp-ruler--bottom { left:18px; right:18px; height:18px; } .bp-ruler--top { top:0; } .bp-ruler--bottom { bottom:0; }
+.bp-ruler--top,.bp-ruler--bottom { left:var(--bp-ruler-size); right:var(--bp-ruler-size); height:var(--bp-ruler-size); } .bp-ruler--top { top:0; } .bp-ruler--bottom { bottom:0; }
 .bp-ruler--top > span + span,.bp-ruler--bottom > span + span { border-left:1px solid var(--line); }
-.bp-ruler--left,.bp-ruler--right { top:18px; bottom:18px; width:18px; flex-direction:column; } .bp-ruler--left { left:0; } .bp-ruler--right { right:0; }
+.bp-ruler--left,.bp-ruler--right { top:var(--bp-ruler-size); bottom:var(--bp-ruler-size); width:var(--bp-ruler-size); flex-direction:column; } .bp-ruler--left { left:0; } .bp-ruler--right { right:0; }
 .bp-ruler--left > span + span,.bp-ruler--right > span + span { border-top:1px solid var(--line); }
+/* PO 2026-10-15: smaller aria-hidden coordinates only; reading text keeps semantic sizes. */
+[data-prism-theme="blueprint"] .bp-sheet:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { --bp-ruler-size:0.875rem; }
+[data-prism-theme="blueprint"] .bp-ruler[aria-hidden="true"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { font-size:0.625rem; line-height:1; }
 .bp-sheet-head { display:flex; align-items:flex-start; gap:18px; padding-bottom:20px; margin-bottom:28px; border-bottom:var(--line-width) solid var(--line); }
 .bp-sheet-id { flex:none; width:48px; height:48px; display:grid; place-items:center; background:var(--head-bg); color:var(--head-fg); font-weight:700; font-size:var(--text-stat-display); }
 .bp-sheet-no { font:var(--text-ui-meta)/var(--text-ui-meta--line-height) var(--font-mono); color:var(--muted-foreground); letter-spacing:.08em; white-space:nowrap; align-self:flex-start; padding-top:4px; }

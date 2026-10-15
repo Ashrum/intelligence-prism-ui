@@ -1,0 +1,1792 @@
+{
+  "date": "2026-10-15T14:33:10.626Z",
+  "route": "http://127.0.0.1:5173/next/foundations/blueprint",
+  "baseline": "a36acadade4068a21f5bc9a0336d9714a812450f",
+  "before": {
+    "width": 1280,
+    "sheetWidth": 975,
+    "padding": "48px 40px 40px",
+    "inset": "18px",
+    "rulerHeight": "18px",
+    "font": "12px",
+    "lineHeight": "18px"
+  },
+  "results": [
+    {
+      "theme": "blueprint",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "sheets": [
+        {
+          "width": 975,
+          "padding": "48px 40px 40px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "14px",
+              "height": "715px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "14px",
+              "height": "715px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 975,
+          "padding": "48px 40px 40px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "14px",
+              "height": "781.266px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "14px",
+              "height": "781.266px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 975,
+          "padding": "48px 40px 40px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "14px",
+              "height": "491px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "14px",
+              "height": "491px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 975,
+          "padding": "48px 40px 40px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "945px",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "14px",
+              "height": "1010.64px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "14px",
+              "height": "1010.64px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "blueprint",
+      "width": 320,
+      "scrollWidth": 320,
+      "sheets": [
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "14px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "14px",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "14px",
+              "height": "auto",
+              "font": "10px",
+              "lineHeight": "10px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "sheets": [
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 320,
+      "scrollWidth": 320,
+      "sheets": [
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "sheets": [
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 320,
+      "scrollWidth": 320,
+      "sheets": [
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "sheets": [
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "691px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "773.469px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "483px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 976,
+          "padding": "48px 40px 40px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "flex",
+              "width": "938px",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "flex",
+              "width": "18px",
+              "height": "1000.64px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 320,
+      "scrollWidth": 320,
+      "sheets": [
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        },
+        {
+          "width": 280,
+          "padding": "28px 16px",
+          "inset": "18px",
+          "rulers": [
+            {
+              "side": "bp-ruler bp-ruler--top",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--bottom",
+              "display": "none",
+              "width": "auto",
+              "height": "18px",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--left",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            },
+            {
+              "side": "bp-ruler bp-ruler--right",
+              "display": "none",
+              "width": "18px",
+              "height": "auto",
+              "font": "12px",
+              "lineHeight": "18px",
+              "hiddenFromAT": "true",
+              "clippedGlyphs": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "isolation": [
+    {
+      "theme": "light",
+      "inset": "18px",
+      "rulerHeight": "18px",
+      "font": "12px"
+    },
+    {
+      "theme": "paper",
+      "inset": "18px",
+      "rulerHeight": "18px",
+      "font": "12px"
+    },
+    {
+      "theme": "dark",
+      "inset": "18px",
+      "rulerHeight": "18px",
+      "font": "12px"
+    }
+  ],
+  "enlarged": {
+    "theme": "blueprint",
+    "width": 1280,
+    "scrollWidth": 1280,
+    "sheets": [
+      {
+        "width": 934.015625,
+        "padding": "48px 40px 40px",
+        "inset": "17.5px",
+        "rulers": [
+          {
+            "side": "bp-ruler bp-ruler--top",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--bottom",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--left",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1280.94px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--right",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1280.94px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          }
+        ]
+      },
+      {
+        "width": 934.015625,
+        "padding": "48px 40px 40px",
+        "inset": "17.5px",
+        "rulers": [
+          {
+            "side": "bp-ruler bp-ruler--top",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--bottom",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--left",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1395.38px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--right",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1395.38px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          }
+        ]
+      },
+      {
+        "width": 934.015625,
+        "padding": "48px 40px 40px",
+        "inset": "17.5px",
+        "rulers": [
+          {
+            "side": "bp-ruler bp-ruler--top",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--bottom",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--left",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "933.922px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--right",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "933.922px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          }
+        ]
+      },
+      {
+        "width": 934.015625,
+        "padding": "48px 40px 40px",
+        "inset": "17.5px",
+        "rulers": [
+          {
+            "side": "bp-ruler bp-ruler--top",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--bottom",
+            "display": "flex",
+            "width": "897.016px",
+            "height": "17.5px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--left",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1670.98px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          },
+          {
+            "side": "bp-ruler bp-ruler--right",
+            "display": "flex",
+            "width": "17.5px",
+            "height": "1670.98px",
+            "font": "12.5px",
+            "lineHeight": "12.5px",
+            "hiddenFromAT": "true",
+            "clippedGlyphs": 0
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

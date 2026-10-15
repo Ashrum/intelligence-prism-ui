@@ -1,126 +1,131 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "beaf6982456b744ed838f42dcab61bfac55928d03717ee312408e325e3e5fd02",
+  "sourceSha256": "17dd238dae9b0c0e6392b587e11fe38fbb12334f89f56ce78bd0b90dec086050",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 第四主题「蓝图」",
   "headings": [
     {
       "id": "section-1",
+      "level": 3,
+      "text": "标尺密度微调 · 2026-10-15"
+    },
+    {
+      "id": "section-2",
       "level": 2,
       "text": "完善路线与当前执行（2026-10-15）"
     },
     {
-      "id": "section-2",
+      "id": "section-3",
       "level": 3,
       "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
-      "id": "section-3",
+      "id": "section-4",
       "level": 3,
       "text": "第一批结果与剩余验收"
     },
     {
-      "id": "section-4",
+      "id": "section-5",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-5",
+      "id": "section-6",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-6",
+      "id": "section-7",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-7",
+      "id": "section-8",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-8",
+      "id": "section-9",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-9",
+      "id": "section-10",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-10",
+      "id": "section-11",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-11",
+      "id": "section-12",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-12",
+      "id": "section-13",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-13",
+      "id": "section-14",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-14",
+      "id": "section-15",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-15",
+      "id": "section-16",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-16",
+      "id": "section-17",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-17",
+      "id": "section-18",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-18",
+      "id": "section-19",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-19",
+      "id": "section-20",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-20",
+      "id": "section-21",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-21",
+      "id": "section-22",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-22",
+      "id": "section-23",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-23",
+      "id": "section-24",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-24",
+      "id": "section-25",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -184,8 +189,101 @@
     },
     {
       "type": "heading",
-      "level": 2,
+      "level": 3,
       "id": "section-1",
+      "children": [
+        {
+          "type": "text",
+          "value": "标尺密度微调 · 2026-10-15"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按用户“降低宽度、减小字号，具体数据由你决策并实施”的授权，第四主题的外侧标尺带从 18px 收至 14px（约减少22%），坐标数字从 12px 收至 10px（约减少17%）。四边厚度、端点偏移与内框共用同一尺寸，保持工程图纸的连续结构；40px 内容侧内距、标题与 SHEET 编号不缩小，让标尺退到辅助层级。采用 rem，根字号放大25%时标尺带与数字分别变为17.5px与12.5px。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "10px 仅为本次明确授权的 aria-hidden 装饰坐标例外，不新增公共字号令牌、不改变 ui-meta 或图表刻度。规则限定 blueprint，并排除嵌套核心主题预览；760px 媒体或容器断点继续隐藏标尺。Chrome 实测四主题 320px / 1280px，页面无横向溢出，蓝图默认及放大后的坐标无裁切。见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "本轮测量"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/ruler-20261015/browser-results.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "调整前"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-before.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": " 与 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "调整后"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "；当前检查和限制见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "状态记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-2",
       "children": [
         {
           "type": "text",
@@ -364,7 +462,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-2",
+      "id": "section-3",
       "children": [
         {
           "type": "text",
@@ -400,7 +498,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-3",
+      "id": "section-4",
       "children": [
         {
           "type": "text",
@@ -525,7 +623,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-4",
+      "id": "section-5",
       "children": [
         {
           "type": "text",
@@ -545,7 +643,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-5",
+      "id": "section-6",
       "children": [
         {
           "type": "text",
@@ -726,7 +824,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-6",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -991,7 +1089,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-7",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1160,7 +1258,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-8",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -1352,7 +1450,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-9",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -1624,7 +1722,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-10",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -1790,7 +1888,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-11",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2134,7 +2232,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-12",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -2359,7 +2457,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-13",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -2411,7 +2509,7 @@
           },
           {
             "type": "text",
-            "value": "，含 18px 内框和 "
+            "value": "。蓝图主题的内框与四边 "
           },
           {
             "type": "code",
@@ -2419,7 +2517,7 @@
           },
           {
             "type": "text",
-            "value": " 坐标标尺。"
+            "value": " 标尺统一为 14px（0.875rem），装饰坐标为 10px（0.625rem）/ 1 行高；三套核心主题中显式使用该组件时保留 18px / 12px。"
           }
         ],
         [
@@ -2455,7 +2553,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-14",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -2664,7 +2762,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-15",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -2764,7 +2862,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-16",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -2838,7 +2936,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-17",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -2933,7 +3031,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-18",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -2985,7 +3083,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-19",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -3074,7 +3172,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -3127,7 +3225,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-21",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -3320,7 +3418,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-22",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -3452,7 +3550,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-23",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -3529,7 +3627,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-24",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -3606,9 +3704,24 @@
   ],
   "assets": [
     {
+      "source": "docs/blueprint/evidence/ruler-20261015/browser-results.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/ruler-20261015/browser-results.json.txt",
+      "sha256": "6c6e6b5cf1d11164b28d6cd5df0cf1abfd3ee7167f9072507b123dc962a1ed6d"
+    },
+    {
+      "source": "docs/blueprint/screens/ruler-20261015/blueprint-1280-before.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-before.png",
+      "sha256": "1f378d65a6dffce0ec4288bb06755c4b3324681e12e789615d7c10e0fc5b69be"
+    },
+    {
+      "source": "docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
+      "sha256": "73a16c7d50df6fd6e9729998526763d0d018a835813468b3141e818a05127a2a"
+    },
+    {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "060b84b73e51c230c663e689c0f36ef81c94f8c82167a0f4ff170de5de899469"
+      "sha256": "4c72b38d3b22ed1eac8e84ff120a47755d2ab69be4f97a8cde2139a605cd3ff8"
     },
     {
       "source": "docs/blueprint/evidence/v9/browser-results.json",
@@ -3688,7 +3801,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "beaf6982456b744ed838f42dcab61bfac55928d03717ee312408e325e3e5fd02"
+      "sha256": "17dd238dae9b0c0e6392b587e11fe38fbb12334f89f56ce78bd0b90dec086050"
     }
   ]
 }
