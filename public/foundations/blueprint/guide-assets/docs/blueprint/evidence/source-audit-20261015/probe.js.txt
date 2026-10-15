@@ -19,4 +19,3 @@ async page => {
  }
  return reports;
 }
-

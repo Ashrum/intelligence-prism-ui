@@ -15,3 +15,7 @@
 /docs/blueprint/evidence/v9/windows-test-analysis.md text eol=lf
 /lib/prism-next/blueprint-guide.json text eol=lf
 /public/foundations/blueprint/guide-assets/** text=auto eol=lf
+
+# Preserve raw CLI diagnostics, including aligned tables and blank-line padding.
+/docs/blueprint/evidence/v9/*.log -whitespace
+/docs/blueprint/evidence/sync-20261015/*.log -whitespace
