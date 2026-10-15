@@ -1,5 +1,9 @@
 # 智能曜彩 UI Design System
 
+## OLE Agent 前端规范 · 正式设计基线（2026-10-16）
+
+[蓝图 v1.0 正式版](docs/OLE_Agent_Frontend_Blueprint_v1.0.md) 已按用户指令定稿，保持单文件、89项M主编号、16项CI及32项AT。教师端Token用量属首期；实施准入仍未通过，服务签认、适用组件修复、样稿与真实链路须分别取得证据。本轮同步文档和组件仓规则，不代表业务能力已上线。站点从[蓝图规范页](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations/blueprint/guide)下载同源原文；后续契约只维护该文档第14章，站点副本由生成器产生，不手工编辑。
+
 ## 第四主题「蓝图」· 设计候选（2026-10-13）
 
 新增可选主题 `blueprint`（白图）：直角、1.5px 墨线、40px 网格图纸与偏移硬阴影，另含首期 `bp-*` 页面级呈现样式。核心三主题矩阵（`coreThemes`）与其原有令牌不变；几何覆盖集中在 `app/(next)/next/blueprint.css`，coss 源码不改。本次按 Product Owner 提供的补丁包接入第四主题，作为既有三主题约定的可选扩展。[令牌、验证与边界](docs/blueprint-theme.md)。
@@ -660,7 +664,7 @@ v1.7.4：
 - 应用模式：`/next/reading` 材料研读编辑、`/next/agent` Agent 工作区。
 - 54 项 coss 官方基础组件、6 项场景组合（Date Picker / Question / Evaluation / Diagnosis / Goals / Learning Plan）和 1 项教材目录扩展均有可操作示例。旧目录的 59 项规划是历史记录，不等同于本版交付范围。
 - 浅色 / 暖纸 / 深色一起提供；语义变量同时控制背景、标题、正文、公式、图标、状态与 Portal 浮层。
-- MD 浮动标签、Beautiful UI 和旧智能曜彩组件样式均不进入新版。保留 shadcn 的组件源码方式，采用 coss 视觉与 Base UI 行为；Motion 负责应用状态动效。
+- 基础表单不使用 MD 浮动标签，不引入 Beautiful UI 的全局样式或旧智能曜彩样式。Beautiful UI 可作局部组件与效果来源；Prism／coss 继续提供主题和基础控件。动效按正式规范 §5.5 分配给 CSS／Motion／合格既有 glimm。
 - Agent 借鉴任务、上下文、执行步骤、停止、失败重试、结果确认的交互结构。本版为本地演示，不调用模型，不需要 API key 或额度。采用建议追加到人工备注，超出 500 字时不改变原文。
 
 ### 组件复用顺序

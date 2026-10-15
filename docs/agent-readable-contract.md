@@ -6,22 +6,23 @@
 
 当信息发生冲突时，按以下顺序解释：
 
-1. 当前组件页的组件规范与 Agent Spec。
-2. Foundations 基础规范。
-3. 可复用 Pattern 与应用示例。
-4. 固定版本的 coss upstream 行为。
-5. Agent inference。
+1. [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) 的目标交互、来源取舍与实施门禁；未实现的目标不冒充现有 API。
+2. 当前组件页的组件规范与 Agent Spec（现有公开契约）。
+3. Foundations 基础规范。
+4. 可复用 Pattern 与应用示例。
+5. 固定版本的 coss upstream 行为。
+6. Agent inference。
 
 应用示例只说明组合方式，不覆盖组件契约。Agent inference 不得覆盖已经存在的规范。
 
-## 组件来源与复用顺序（PO 2026-09-29）
+## 组件来源与复用顺序（2026-10-16 正式基线）
 
-- 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
-- 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
-- coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
-- 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+- 先复用已有智能曜彩／Prism组件，再检索 coss（含 particles），然后做必要的 Prism 组合与适配；仍有稳定缺口才新建。
+- Beautiful UI 为可选来源与局部效果参考，不再强制优先检索，不因本次调整重写已验收实现。引用其代码须核对具体许可、保留 MIT 声明，并去掉演示计时器与自动播放。
+- coss 检索包含 [particles](https://coss.com/ui/particles)；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。适配在 `components/prism-next` 完成，冻结的 `components/coss/**` 原始字节不变；官方最新实现不视为已接入。
+- 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 
-以上是组件来源检索顺序，不改变规范权威顺序、主题与语义令牌要求，也不允许引入 Workspace 业务行为或私有类型。
+依据 [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) §11.6，同步用户已批准的来源取舍；目标设计与实施门禁以该规范为准，现有 props/API 的已实现事实仍须核对源码和组件契约。未实现项不因定稿自动升级为可用。主题、字体、冻结 coss 和双仓边界继续有效；本轮仅同步规则，未完成 CI 修复或服务签认。
 
 ## 缺失规范
 
@@ -52,3 +53,7 @@ Foundations / Typography v0.2.1 已落实为语义 Token 与公共适配层。�
 `prefers-reduced-motion: reduce` 时不创建或播放扫光；运行中开启减少动效立即取消并释放。WebGL 不可用、创建失败或 context lost 时静默降级为普通输入框；结束或卸载时取消动画并释放 shader。表面、正文、按钮、菜单与两种变体仍使用现有 Prism / coss 语义令牌。
 
 同次批准的 `AgentMark` 仅在宿主报告 thinking / working 时播放 Beautiful UI 3×3 点阵与微光标签；减少动效时冻结。用时必须有宿主开始时间；终态用时须同时有结束时间，无事实时间不从挂载时刻起计。禁止 Surfer 外链视频与任何演示计时器状态推进。
+
+## 动效实施边界（2026-10-16）
+
+依正式规范 §5.5：简单反馈使用 CSS，复杂布局连续性按需用现有 Motion，符合既有约束的 glimm 扫光保留。三者不得竞争同节点同属性。P0 唯一偏好源为系统 `prefers-reduced-motion`，须在初始及运行中变化时一致响应；MotionConfig 不能代替装饰性循环／扫光的显式停用。阅读用旋转、缩放、平移可直接更新静态结果。上述为实施与验收要求，本轮未复验运行表现。
