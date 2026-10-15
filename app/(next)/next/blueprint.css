@@ -77,7 +77,9 @@
 .bp-tool[data-icon] { width:32px; padding:0; }
 .bp-tool-count { font-family:var(--font-mono); font-weight:500; padding-left:8px; margin-left:2px; border-left:1px solid currentColor; }
 
-.bp-seg-tabs { display:flex; flex-wrap:wrap; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
+.bp-seg-tabs { display:flex; flex-wrap:nowrap; min-width:0; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
+.bp-seg-tabs[data-orientation="horizontal"] { overflow-x:auto; }
+.bp-seg-tabs[data-orientation="horizontal"] > button { flex-shrink:0; }
 .bp-seg-tabs > button { border:0; border-right:1px solid var(--border); background:none; padding:7px 14px; min-height:34px; font-size:var(--text-ui-action); font-weight:500; color:var(--muted-foreground); white-space:nowrap; cursor:pointer; }
 .bp-seg-tabs > button:last-child { border-right:0; }
 .bp-seg-tabs > button:hover { color:var(--foreground); background:var(--secondary); }
@@ -214,6 +216,29 @@
   .bp-btn,.bp-card,.bp-card-name { transition:none; }
   .bp-btn[data-variant="primary"]:hover,.bp-card:hover { transform:none; }
 }
+/* v8 · Keyboard outline and print output. Core previews retain their own styles. */
+[data-prism-theme="blueprint"] :focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)),
+[data-prism-theme="blueprint"] .bp-seg-tabs > button:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) {
+  outline:2px solid var(--ring); outline-offset:2px;
+}
+/* Reserve the full 2px offset + 2px stroke inside the segmented scrollport. */
+[data-prism-theme="blueprint"] .bp-seg-tabs:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { padding:4px; }
+
 @media print {
-  :where(html[data-prism-theme="blueprint"]) body { background:#fff; }
+  :where(html[data-prism-theme="blueprint"]) body:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)),
+  [data-agent-preview][data-prism-theme="blueprint"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)),
+  [data-prism-theme="blueprint"] :is([data-slot="sidebar-inset"],.bp-card-thumb):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) {
+    background-image:none; background-color:#fff;
+  }
+  /* Only offset shadows: title-block separator shadows and ink borders stay. */
+  [data-prism-theme="blueprint"] :is(.bp-btn,.bp-card,.bp-error,.surface-floating,.recharts-default-tooltip,[data-slot="popover-popup"],[data-slot="menu-popup"],[data-slot="select-popup"],[data-slot="dialog-popup"],[data-slot="toast"]):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)),
+  [data-prism-theme="blueprint"] :is(.bp-btn,.bp-card,.bp-error,.surface-floating):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))::before,
+  [data-prism-theme="blueprint"] :is(.bp-btn,.bp-card,.bp-error,.surface-floating):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))::after {
+    box-shadow:none !important;
+  }
+  [data-prism-theme="blueprint"] [data-chart-engine="echarts"] [filter]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { filter:none !important; }
+  /* Preserve data-bearing fills/hatches; no exact-colour request for page ground. */
+  [data-prism-theme="blueprint"] :is([data-chart-engine="echarts"],.bp-size-bar,.bp-size-legend,.bp-metric-bar):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) {
+    print-color-adjust:exact; -webkit-print-color-adjust:exact;
+  }
 }

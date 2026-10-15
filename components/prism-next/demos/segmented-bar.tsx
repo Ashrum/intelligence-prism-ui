@@ -25,6 +25,9 @@ export function SegmentedBarDemo() {
     <DemoSection title="默认分段与图例" description="同一个总量的组成；图例显示真实数值、占比及外部说明。">
       <SegmentedBar label="分类数量组成" segments={segmentedBarFixture} unit="项" />
     </DemoSection>
+    <DemoSection title="整数占比" description="percentDecimals=0 将图例、可访问名称与余量的占比四舍五入为整数；数值和段宽保持不变。">
+      <SegmentedBar label="学情分层组成" percentDecimals={0} total={45} unit="人" segments={[{id:"stable",label:"稳定保持",value:10,tone:"success"},{id:"improving",label:"持续改善",value:26,tone:"info"}]} />
+    </DemoSection>
     <DemoSection title="无图例与紧凑轨道" description="隐藏图例仍保留整条的可访问名称和所有分段数值。">
       <SegmentedBar label="紧凑分类组成" segments={segmentedBarFixture} legend="none" size="sm" />
     </DemoSection>

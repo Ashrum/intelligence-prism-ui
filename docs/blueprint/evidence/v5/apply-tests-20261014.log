@@ -1,0 +1,26 @@
+✔ core theme chart colours are unchanged (0.85025ms)
+✔ blueprint series lead with accent then ink; every series ≥ 3:1 on card and ground (0.207166ms)
+✔ blueprint sequential ramp keeps labels ≥ 4.5:1 and luminance monotonic (3.012042ms)
+✔ blueprint overrides: first series solid, the rest patterned; square ink tooltip (0.118333ms)
+✔ axis line uses palette.line when present, border otherwise (0.111084ms)
+✔ theme.css blueprint chart tokens follow the series order; Recharts tooltip squared only in blueprint (0.542958ms)
+✔ demo page renders all blueprint groups without changing the catalog count (16.992417ms)
+✔ sheet is a labelled region; rulers and letter block are hidden from assistive tech (1.030791ms)
+✔ segmented control is a radiogroup with one tab stop and aria-checked (4.706125ms)
+✔ segmented control keeps an enabled entry point when the selected item is missing or disabled (0.893875ms)
+✔ steps expose current step and textual state; bars write values out (0.832667ms)
+✔ buttons default to type=button; card element follows interaction (0.840792ms)
+✔ route and navigation exist; blueprint.css draws DemoSection as a sheet only in blueprint (8.616292ms)
+✔ blueprint is a fourth selectable theme; core matrix stays light/paper/dark (1.638042ms)
+✔ blueprint boundary declares every role explicitly, including status, chart and AI tokens (0.571708ms)
+✔ core theme tokens are unchanged (0.283833ms)
+✔ blueprint ink pairs exceed 4.5:1 numerically (0.645042ms)
+✔ blueprint geometry rules are scoped and do not touch coss sources (1.816875ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 238.005667

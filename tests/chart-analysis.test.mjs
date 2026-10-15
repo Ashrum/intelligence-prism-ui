@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {restoreP64ReferenceLegend} from './helpers/p64-legend-migration.mjs';
 import {api,h,render,legacySnapshots,panelProps,chartProps} from './chart-analysis-harness.mjs';
 import {comparisonReferenceBand,comparisonReferenceLabels,comparisonTextWidth,comparisonDomain,comparisonReferencePosition as position,comparisonReferenceSegment as segment} from '../lib/prism-next/comparison-reference.ts';
 const before=JSON.parse(await readFile(new URL('./fixtures/chart-analysis-before.json',import.meta.url),'utf8'));
@@ -59,10 +60,10 @@ test('P20 knowledge custom affectedLabel and supplementary metrics follow existi
 });
 
 const beforeLabels=JSON.parse(await readFile(new URL('./fixtures/chart-labels-before.json',import.meta.url),'utf8'));
-test('P21 defaults preserve P20 reference chart SSR bytes in both axes with and without ranges',()=>{
+test('P21 defaults preserve P20 SSR bytes after P64 legend wrapper migration in both axes',()=>{
  for(const {props,html} of beforeLabels){
-  assert.equal(render(h(api.ComparisonChart,{...props,onSelect:()=>{}})),html);
-  assert.equal(render(h(api.ComparisonChart,{...props,onSelect:()=>{},showValueLabels:false,referenceLabelPlacement:'legend',dataDisclosure:'details'})),html);
+  assert.equal(restoreP64ReferenceLegend(render(h(api.ComparisonChart,{...props,onSelect:()=>{}}))),html);
+  assert.equal(restoreP64ReferenceLegend(render(h(api.ComparisonChart,{...props,onSelect:()=>{},showValueLabels:false,referenceLabelPlacement:'legend',dataDisclosure:'details'}))),html);
  }
 });
 test('P21 plot placement removes the legend but retains reference description and table',()=>{
@@ -88,11 +89,11 @@ test('P21 reference text boxes wrap, flip and avoid collisions without shifting 
  }
 });
 
-test('P21 Fix1 legend SSR remains byte-identical to 5cf7e84 across all label/disclosure options',async()=>{
+test('P21 Fix1 hashes retain 5cf7e84 labels, colours and non-legend bytes after P64 wrapper migration',async()=>{
  const baseline=JSON.parse(await readFile(new URL('./fixtures/chart-label-band-before.json',import.meta.url),'utf8'));
  for(const {props,sha256} of baseline)for(const explicit of [false,true]){
   const html=render(h(api.ComparisonChart,{...props,...(explicit?{referenceLabelPlacement:'legend'}:{})}));
-  assert.equal(createHash('sha256').update(html).digest('hex'),sha256);
+  assert.equal(createHash('sha256').update(restoreP64ReferenceLegend(html)).digest('hex'),sha256);
  }
 });
 

@@ -9,6 +9,24 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'trend-chart': {
+    component: 'TrendChart 趋势图',
+    source: 'Existing Recharts / chartToneColor / coss Table; docs/learning-chart-properties.md',
+    contract: ['xTickMode?: auto|all defaults auto; all retains every category. ChartPoint.tickLabel?: [string,string] renders exactly two rows, with endpoint space and per-row ellipsis when cramped; full text remains in title/table. Legend text uses foreground; only marks use series colours.', 'ChartSeries lineStyle=solid|dashed, connect defaults true, connectGaps defaults false. connect=false always draws isolated points; connectGaps=true joins valid points across null without inventing values. tone uses the existing six-colour palette; explicit color wins.', 'ChartPoint symbol=circle|hollow-circle|diamond, valueLabel and annotation remain host text. Labels avoid points and connected segments, including gap-spanning segments; cramped labels remain in tooltip/table.', 'yDomain?: [number,number] | auto overrides legacy domain; omission retains legacy behavior. auto pads finite data, e.g. 55–75% -> 40–90%, with empty/constant handling. P61 shares a nice equal tick interval with scatter; both bounds are ticks and every Y tick stays visible. decimals?: 0|1; percentages default to integers and percent axis ticks are always integers. Geometry retains original values.'],
+    accessibility: ['Technical explanations belong in closed 查看数据 or accessible description, never a visible chart footer. Table and tooltip use the same formatted values; original host annotations remain complete.'],
+  },
+  'quadrant-chart': {
+    component: 'QuadrantScatterChart 四象限图',
+    source: 'Existing ScatterChart / EChart / chartToneColor; docs/learning-chart-properties.md',
+    contract: ['xDomain/yDomain?: [number,number]|auto; auto pads finite data like TrendChart and uses a shared nice equal interval with both bounds on ticks; percent ticks are integers. Omission retains legacy domain. Quadrant titles occupy their respective outer corners; highlighted title uses highlight tone, others muted text.', 'Host supplies data, domains, groups and quadrants={x,y,labels,highlight?}; highlight={quadrant,tone} uses the existing chart palette at 0.1 opacity.', 'labelMode?: auto|none defaults auto. Long/crowded labels are omitted with full names in tooltip/table; none also suppresses emphasis/responsive point labels. decimals?: 0|1; percentages default to integers without rounding coordinates or thresholds.'],
+    accessibility: ['Thresholds, quadrant explanations and excluded/missing counts live inside closed 查看数据; full names and selection buttons remain in the table.'],
+  },
+  'paired-dot-chart': {
+    component: 'PairedDotChart 双点图',
+    source: 'Existing EChart / coss Table; docs/learning-chart-properties.md',
+    contract: ['density=default|compact defaults default; connectPairs defaults false, connects only two valid in-domain values for the same row. Missing values are never zero-filled.', 'compact displays the complete wrapping name above each pair, with optional data[].tag: ReactNode at the right; each plot is 100px high and shares the same numeric domain. Default layout is unchanged.', 'metrics[].help?: ReactNode adds a named coss Popover question button beside the original legend item in both densities; null/omitted adds no markup. Keyboard/Escape/focus return follow coss, and help does not emit selection.', 'decimals?: 0|1; percentages default to integers for point labels, tooltip and data table. Coordinates remain original. tag is external content, never inferred state.'],
+    accessibility: ['Missing/invalid and connector explanations live inside closed 查看数据; complete names and tags remain in the table. onSelect emits row/metric IDs only.'],
+  },
   'donut-chart': {
     component: 'DonutChart 环形图',
     source: 'Existing EChart SVG engine / useChartTheme palette / coss Button and Table; docs/polar-charts.md',
@@ -20,15 +38,15 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'radar-chart': {
     component: 'RadarChart 雷达图',
     source: 'Existing EChart SVG engine / useChartTheme palette / coss Table; docs/polar-charts.md',
-    contract: ['label, axes={id,label,max?}[] and series={id,label,values:number[],tone?}[]; values follow axis order. 3–8 axes and 1–2 series; fewer than three axes renders the visible data table only. Extra axes/series also use the table without silently slicing.', 'Each axis starts at zero. Explicit max must be positive and finite; omitted max uses finite nonnegative values on that axis, at least 1. A series with mismatched length, negative/nonfinite or over-max values is omitted and reported, never padded or clamped. All-zero values remain valid. height defaults to 280.', 'Long axis labels use the existing 12px chart typography, truncate at 64px, and preserve full text on hover and in the data table. Two series have solid-circle / dashed-diamond cues, existing palette colours and no animated transition.'],
+    contract: ['label, axes={id,label,max?}[] and series={id,label,values:number[],tone?}[]; values follow axis order. 3–8 axes and 1–2 series; fewer than three axes renders an empty state and the visible data table. Extra axes/series also use the table without silently slicing.', 'Each axis starts at zero. Explicit max must be positive and finite; omitted max uses finite nonnegative values on that axis, at least 1. A series with mismatched length, negative/nonfinite or over-max values is omitted and reported, never padded or clamped. All-zero values remain valid. height defaults to 280.', 'Long axis labels use the existing 12px chart typography, truncate at 64px, and preserve full text on hover and in the data table. Two series have solid-circle / dashed-diamond cues, existing palette colours and no animated transition.'],
     states: ['One/two series, 3–8 axes, fewer-axis table fallback, empty/all-zero/invalid; 300px and wide; light / paper / dark'],
-    accessibility: ['Named chart plus visible text summary and a named data-table region. Fallback table is directly visible. Chart geometry responds to resize and restores larger radius above 440px. SSR-safe shared engine; no colour-only identification.'],
+    accessibility: ['Named chart plus technical summary and a named data-table region inside closed 查看数据. Fallback table stays directly visible, with technical notes in screen-reader-only text. Chart geometry responds to resize and restores larger radius above 440px. SSR-safe shared engine; no colour-only identification.'],
     dont: ['No diagnostic conclusions, hidden normalisation, business thresholds, state machine or extra dependency.'],
   },
   'evidence-matrix': {
     component: 'HeatmapChart — optional compact matrix',
     source: 'Existing EChart heatmap and coss Table; docs/polar-charts.md',
-    contract: ['compact?: boolean = false. Opt-in grid and truncated axis labels fit 3×3 to 5×3 matrices in about 300px; cell values already render by default. Missing/zero, colours, selectedId and onSelect(id) are unchanged. Omitted or false preserves pre-P57 SSR and options.', 'Full row/column names remain in tooltips and the data table. Caller supplies labels, values, units and any sequentialColors.'],
+    contract: ['compact?: boolean = false. Opt-in grid and truncated axis labels fit 3×3 to 5×3 matrices in about 300px; cell values already render by default. Missing/zero, colours, selectedId and onSelect(id) are unchanged. Omitted or false preserves the plot options; P59 moves technical summaries into 查看数据 and formats percentages as integers.', 'Full row/column names remain in tooltips and the data table. Caller supplies labels, values, units and any sequentialColors.'],
     accessibility: ['Named chart, text summary and data-table keyboard alternative; EChart disables animation and resizes with container.'],
   },
   'facet-filter': {
@@ -51,7 +69,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'segmented-bar': {
     component: 'SegmentedBar 分段条',
     source: 'Pinned coss MeterTrack + existing StatusComposition segment/keyboard conventions + Prism Button; docs/segmented-bar.md',
-    contract: ['用途：同一个总量的组成。segments={id,label,value,tone?,description?}[]，label 必填；unit、valueFormatter(value, originalSegment) 可选。tone=neutral|info|success|warning|destructive|chart-1…chart-5，默认 neutral。', 'total 默认有效值之和；大于合计保留轨道余量，小于合计或非法则回退合计并开发告警。负值和非有限值按 0 呈现并开发告警；零段不绘制但保留图例。空数组或全零的可访问名称含 无数据。', 'legend=below|none，默认 below；size=default|sm，沿用 h-2 / h-1.5。内部正值最小宽度分配有界，不公开 minSegmentWidth；文字占比为真实数据比例。onSelect(originalSegment) 仅发意图，不改变数据或缓存选中状态。'],
+    contract: ['percentDecimals?: 0|1 defaults 1; 0 rounds all share text (legend, buttons, aria summary and remainder) to integers, without changing values or widths.', '用途：同一个总量的组成。segments={id,label,value,tone?,description?}[]，label 必填；unit、valueFormatter(value, originalSegment) 可选。tone=neutral|info|success|warning|destructive|chart-1…chart-5，默认 neutral。', 'total 默认有效值之和；大于合计保留轨道余量，小于合计或非法则回退合计并开发告警。负值和非有限值按 0 呈现并开发告警；零段不绘制但保留图例。空数组或全零的可访问名称含 无数据。', 'legend=below|none，默认 below；size=default|sm，沿用 h-2 / h-1.5。内部正值最小宽度分配有界，不公开 minSegmentWidth；文字占比为真实数据比例。onSelect(originalSegment) 仅发意图，不改变数据或缓存选中状态。'],
     states: ['默认、无图例、total 余量、极小正值与零、空数组、可选择、长中文与三主题 320px'],
     accessibility: ['role=img 的名称包含 label 和各段名称、值、占比；交互轨道置于 img 摘要之外，保留按钮语义。图例 ul/li 与文字说明分类；段间有内部分隔。', '无 onSelect 时无焦点目标；有 onSelect 时正值段与图例项为原生按钮，Tab / Enter / Space。无动画，三主题使用既有令牌。'],
     do: ['保证 id 唯一，提供真实外部数据；极小段的精确占比读文字。'],
@@ -492,7 +510,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   'metric-summary': {
     component: 'MetricSummary',
     source: 'components/prism-next/data-display.tsx',
-    contract: ['density defaults to default; compact changes only layout to two columns with baseline-aligned label/value. Preserve analytics-value typography, external detail and onSelect intent.', 'AgentMetricSummary composes this primitive for semantic 19; its scope, version, missing-data and evidence contract is on agent-components#metric-summary. This generic primitive does not inherit Agent-specific semantics.'],
+    contract: ['visual sparkline connects finite observations across null/invalid slots using original indices, never zero-fills; accessible text still identifies missing values. Ring and help protocols are documented in docs/learning-chart-properties.md.', 'density defaults to default; compact changes only layout to two columns with baseline-aligned label/value. Preserve analytics-value typography, external detail and onSelect intent.', 'AgentMetricSummary composes this primitive for semantic 19; its scope, version, missing-data and evidence contract is on agent-components#metric-summary. This generic primitive does not inherit Agent-specific semantics.'],
   },
   'status-composition': {
     component: 'StatusComposition',

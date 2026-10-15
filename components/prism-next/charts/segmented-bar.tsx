@@ -1,5 +1,8 @@
 "use client"
 
+import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
+import { DataRecordTable } from "../data-display"
+import { formatChartValue } from "@/lib/prism-next/chart-options"
 import { useEffect } from "react"
 import { MeterTrack } from "@/components/coss/meter"
 import { Button } from "@/components/prism-next/button"
@@ -9,11 +12,13 @@ import { cn } from "@/lib/utils"
 export type SegmentedBarTone = "neutral" | "info" | "success" | "warning" | "destructive" | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5"
 export type SegmentedBarSegment = { id: string; label: string; value: number; tone?: SegmentedBarTone; description?: string }
 export type SegmentedBarProps = {
+  dataDisclosure?: ChartDataDisclosureMode
   segments: readonly SegmentedBarSegment[]
   label: string
   total?: number
   unit?: string
   valueFormatter?: (value: number, segment: SegmentedBarSegment) => string
+  percentDecimals?: 0 | 1
   legend?: "none" | "below"
   size?: "sm" | "default"
   onSelect?: (segment: SegmentedBarSegment) => void
@@ -26,7 +31,8 @@ const tones: Record<SegmentedBarTone, string> = {
 const number = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 15 })
 const percent = (ratio: number, positive = ratio > 0) => positive && ratio < 0.001 ? "<0.1%" : `${Math.round(ratio * 1000) / 10}%`
 
-export function SegmentedBar({ segments, label, total, unit = "", valueFormatter, legend = "below", size = "default", onSelect }: SegmentedBarProps) {
+export function SegmentedBar({ dataDisclosure, segments, label, total, unit = "", valueFormatter, percentDecimals = 1, legend = "below", size = "default", onSelect }: SegmentedBarProps) {
+  const shareText = (ratio: number, positive = ratio > 0) => percentDecimals === 0 ? `${Math.round(ratio * 100)}%` : percent(ratio, positive)
   const layout = segmentedBarLayout(segments.map(segment => segment.value), total)
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
@@ -38,10 +44,10 @@ export function SegmentedBar({ segments, label, total, unit = "", valueFormatter
     const value = layout.values[index]
     const formatted = valueFormatter ? valueFormatter(value, segment) : number.format(value)
     const text = `${formatted}${unit ? ` ${unit}` : ""}`
-    const share = percent(layout.ratios[index], value > 0)
+    const share = shareText(layout.ratios[index], value > 0)
     return { segment, value, text, share, name: `${segment.label} ${text} ${share}`, tone: tones[segment.tone ?? "neutral"], width: layout.widths[index] }
   })
-  const summary = [label, ...rows.map(row => row.name), ...(layout.empty ? ["无数据"] : []), ...(layout.remainderRatio > 0 ? [`余量 ${percent(layout.remainderRatio)}`] : [])].join("；")
+  const summary = [label, ...rows.map(row => row.name), ...(layout.empty ? ["无数据"] : []), ...(layout.remainderRatio > 0 ? [`余量 ${shareText(layout.remainderRatio)}`] : [])].join("；")
   return <div className="grid min-w-0 gap-3" data-segmented-bar>
     {/* Interactive children must not be hidden by the presentational descendants of role=img. */}
     {onSelect && <div role="img" aria-label={summary} className="sr-only" />}
@@ -64,5 +70,10 @@ export function SegmentedBar({ segments, label, total, unit = "", valueFormatter
           : <div className="text-ui-body flex min-w-0 items-start gap-2">{content}</div>}</li>
       })}
     </ul>}
+    {dataDisclosure!==undefined&&<ChartDataDisclosure mode={dataDisclosure} label={label}><DataRecordTable rows={[...segments]} columns={[
+      {id:"label",label:"项目",render:row=>row.label},
+      {id:"value",label:unit||"数值",render:row=>formatChartValue(row.value,unit)},
+      {id:"description",label:"说明",render:row=>row.description},
+    ]}/></ChartDataDisclosure>}
   </div>
 }

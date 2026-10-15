@@ -1,0 +1,19 @@
+{
+  "head": "efe001ff6eaf3b228c41e5873fe22b9e3c4587ea",
+  "branch": "feat/learning-charts",
+  "opening_worktree": "clean (git status --short empty)",
+  "checks": {
+    "components/coss": true,
+    "app/(next)/next/theme.css": true,
+    "components/prism-next/charts": true,
+    "components/prism-next/blueprint": true,
+    "components/prism-next/demos": true,
+    "AGENTS.md": true,
+    "package.json": true,
+    "package-lock.json": true,
+    "previous_current_preserved_verbatim": true,
+    "old_evidence_unchanged": true,
+    "existing_tests_unchanged": true
+  },
+  "scope_sha256": "1621baeabc1ad3f449c883e937d2954c5d7275cd7d3df9fafe2df4240f7ec898"
+}

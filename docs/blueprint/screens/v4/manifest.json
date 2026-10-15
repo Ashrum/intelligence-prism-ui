@@ -1,0 +1,110 @@
+[
+  {
+    "source": ".sites-runtime/blueprint-v4/patterns-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-patterns.jpg",
+    "sha256": "0c6fcd1cb9ffb33a0763f4a58a257eb053cbaa1ec8864a95eea0f81656030356",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/patterns-light-1280.png",
+    "target": "docs/blueprint/screens/v4/light-1280-patterns.jpg",
+    "sha256": "ad9e0f8a3488675b7e23144be8899d2a24d9dd136fee2e19948f0f21169a8ad0",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/patterns-paper-1280.png",
+    "target": "docs/blueprint/screens/v4/paper-1280-patterns.jpg",
+    "sha256": "cb41a6a020f7213420060dfd46ebb3eff8e3fac7314add09c4fa84145b99bb78",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/patterns-dark-1280.png",
+    "target": "docs/blueprint/screens/v4/dark-1280-patterns.jpg",
+    "sha256": "f2322005519c7a5814cd276f5ffda9745155c30da9cae3ccb3f4343f809e9e57",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/box-selected-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-box-selected.jpg",
+    "sha256": "819de86445769dd60598d2ad7d1963c86f70e0571139236174d36e360906182e",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/box-blueprint-320.png",
+    "target": "docs/blueprint/screens/v4/blueprint-320-box.jpg",
+    "sha256": "e9358947fef802d2bc931b7d709387e9ac42631433b9b4c370101f4a87a65624",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x800, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/combo-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-combo.jpg",
+    "sha256": "dbe36400815869fbe1e96823634bf689ae99759d761826322d1c097475039cd3",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/heatmap-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-heatmap.jpg",
+    "sha256": "c2f3c92f1d9949426a0e52c69d8016717ecb069d4dc7db2c26fb9f15d581328e",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/heatmap-blueprint-320.png",
+    "target": "docs/blueprint/screens/v4/blueprint-320-heatmap.jpg",
+    "sha256": "414e7ea2ee1134a56d06bf37cc9f6d432178285b630d7f8d2d8794fb8b443edd",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x800, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/heatmap-light-320.png",
+    "target": "docs/blueprint/screens/v4/light-320-heatmap.jpg",
+    "sha256": "9caf4b213cac9b1c6624cccefb5fc22dbbac475c72a4174fd72e57e5ec7db374",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x800, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/scatter-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-scatter.jpg",
+    "sha256": "7c8296492930b06d5a4bd59f7af82a5ccb3ed80e6d3e47e5fcb31efbca9d9a06",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/scatter-blueprint-320.png",
+    "target": "docs/blueprint/screens/v4/blueprint-320-scatter.jpg",
+    "sha256": "37ddc816c3eb25026d26331c04f009cc4645568e02c84c22c635b5bdcf634723",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x800, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/recharts-tooltip-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-trend-tooltip.jpg",
+    "sha256": "305eadd2c4f40329e5d302344b8f95805e01e0e501c69165e9726b0ff89228c6",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/recharts-blueprint-320.png",
+    "target": "docs/blueprint/screens/v4/blueprint-320-trend.jpg",
+    "sha256": "1195b92dca72810d91b470a988ccd1cef9de4de0bbb3a74d549cf5c4f5d777cc",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 320x800, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/recharts-light-1280.png",
+    "target": "docs/blueprint/screens/v4/light-1280-trend.jpg",
+    "sha256": "0d8e1c262d7d199f481606d0fdc4dafac9efcb46075c03ab3338fb1578969300",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/recharts-paper-1280.png",
+    "target": "docs/blueprint/screens/v4/paper-1280-trend.jpg",
+    "sha256": "432f2cbfa326b64f6271df1062d4e332e71cc0909f1024189c7a915dcb2f9101",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/recharts-dark-1280.png",
+    "target": "docs/blueprint/screens/v4/dark-1280-trend.jpg",
+    "sha256": "b53e5c3f091dad2c5d0975ea2c0ff7ce77a53a547a6ee8c889a98fe2a0cd8410",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  },
+  {
+    "source": ".sites-runtime/blueprint-v4/comparison-blueprint-1280.png",
+    "target": "docs/blueprint/screens/v4/blueprint-1280-comparison.jpg",
+    "sha256": "1ce8ec307eaa1c05f01e48158008f6a7d6bfb62718d0dec9a129c5179f2e90ed",
+    "image_info": "JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1280x960, components 3"
+  }
+]

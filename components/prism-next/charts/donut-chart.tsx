@@ -1,4 +1,5 @@
 "use client"
+import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 
 import { Button } from "../button"
 import { DataRecordTable } from "../data-display"
@@ -8,6 +9,7 @@ import { donutChartOption, donutModel, type DonutSegment } from "@/lib/prism-nex
 
 export type { DonutSegment, ChartTone } from "@/lib/prism-next/polar-chart-options"
 export type DonutChartProps = {
+  dataDisclosure?: ChartDataDisclosureMode
   label: string
   segments: readonly DonutSegment[]
   centerText?: string
@@ -18,7 +20,7 @@ export type DonutChartProps = {
   height?: number
 }
 
-export function DonutChart({ label, segments, centerText, centerSubtext, legend = "below", valueFormatter, onSelect, height = 180 }: DonutChartProps) {
+export function DonutChart({ dataDisclosure = "visible", label, segments, centerText, centerSubtext, legend = "below", valueFormatter, onSelect, height = 180 }: DonutChartProps) {
   const theme = useChartTheme(), model = donutModel(segments, theme, valueFormatter)
   const chartHeight = Number.isFinite(height) && height > 0 ? height : 180
   const summary = model.tooMany ? "环形图最多显示 6 个非零分段，请先合并“其他”；完整数据见下表。" : model.ready ? `${label}；零值仅保留在图例与数据表中。` : "暂无可绘制的环形数据。"
@@ -42,11 +44,12 @@ export function DonutChart({ label, segments, centerText, centerSubtext, legend 
         })}
       </ul>
     </div>
-    <p className="text-ui-hint text-muted-foreground">{summary}</p>
+    {!model.ready && <p className="text-ui-hint text-muted-foreground">暂无可绘制的环形数据。</p>}
+    <ChartDataDisclosure mode={dataDisclosure} label={label}>    <p className="text-ui-hint text-muted-foreground">{summary}</p>
     {model.invalid > 0 && <p role="alert" className="text-ui-hint text-muted-foreground">{model.invalid} 项数值无效，未绘制；请核对数据表。</p>}
-    <details><summary className="cursor-pointer text-ui-hint text-muted-foreground">查看数据</summary><div role="region" aria-label={`${label}：数据`}><DataRecordTable rows={model.rows} columns={[
+<div role="region" aria-label={`${label}：数据`}><DataRecordTable rows={model.rows} columns={[
       { id: "label", label: "项目", render: row => <span className="whitespace-normal [overflow-wrap:anywhere]">{row.label}</span> },
       { id: "value", label: "数值", render: row => row.text },
-    ]} /></div></details>
+    ]} /></div></ChartDataDisclosure>
   </div>
 }

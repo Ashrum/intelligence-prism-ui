@@ -1,0 +1,38 @@
+[
+  {
+    "name": "math-font",
+    "command": "node scripts/check-math-font.mjs",
+    "exit_code": 0,
+    "seconds": 0.02
+  },
+  {
+    "name": "typography",
+    "command": "node scripts/check-typography.mjs",
+    "exit_code": 0,
+    "seconds": 0.04
+  },
+  {
+    "name": "build",
+    "command": "node node_modules/vinext/dist/cli.js build",
+    "exit_code": 0,
+    "seconds": 4.95
+  },
+  {
+    "name": "full-tests",
+    "command": "node --test tests/*.test.mjs",
+    "exit_code": 0,
+    "seconds": 10.18
+  },
+  {
+    "name": "tsc",
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exit_code": 0,
+    "seconds": 0.99
+  },
+  {
+    "name": "targeted-tests",
+    "command": "node --test tests/blueprint-print-a11y.test.mjs",
+    "exit_code": 0,
+    "seconds": 0.6
+  }
+]

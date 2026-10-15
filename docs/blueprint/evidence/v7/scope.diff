@@ -1,0 +1,259 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index 3699e05..f3e8f8b 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -77,7 +77,9 @@
+ .bp-tool[data-icon] { width:32px; padding:0; }
+ .bp-tool-count { font-family:var(--font-mono); font-weight:500; padding-left:8px; margin-left:2px; border-left:1px solid currentColor; }
+ 
+-.bp-seg-tabs { display:flex; flex-wrap:wrap; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
++.bp-seg-tabs { display:flex; flex-wrap:nowrap; min-width:0; width:fit-content; max-width:100%; border:var(--line-width) solid var(--line); background:var(--card); }
++.bp-seg-tabs[data-orientation="horizontal"] { overflow-x:auto; }
++.bp-seg-tabs[data-orientation="horizontal"] > button { flex-shrink:0; }
+ .bp-seg-tabs > button { border:0; border-right:1px solid var(--border); background:none; padding:7px 14px; min-height:34px; font-size:var(--text-ui-action); font-weight:500; color:var(--muted-foreground); white-space:nowrap; cursor:pointer; }
+ .bp-seg-tabs > button:last-child { border-right:0; }
+ .bp-seg-tabs > button:hover { color:var(--foreground); background:var(--secondary); }
+diff --git a/components/prism-next/blueprint/blueprint.tsx b/components/prism-next/blueprint/blueprint.tsx
+index 17318e8..dfedf30 100644
+--- a/components/prism-next/blueprint/blueprint.tsx
++++ b/components/prism-next/blueprint/blueprint.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { useId, useRef, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
+ import { cn } from "@/lib/utils"
++import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ 
+ /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
+  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */
+@@ -65,6 +66,7 @@ export interface BpSegItem { value: string; label: ReactNode; description?: Reac
+ export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; className?: string }
+ /** Single choice as a segmented control (radiogroup). Arrow keys move and select; Home/End jump. For tab panels use coss Tabs. */
+ export function BpSegTabs({ items, value, onValueChange, label, orientation = "horizontal", className }: BpSegTabsProps) {
++  const scroll = useHorizontalChoiceScroll(value, orientation === "horizontal")
+   const refs = useRef<(HTMLButtonElement | null)[]>([])
+   const enabled = items.map((item, i) => item.disabled ? -1 : i).filter(i => i >= 0)
+   const selected = items.findIndex(item => item.value === value && !item.disabled)
+@@ -80,7 +82,7 @@ export function BpSegTabs({ items, value, onValueChange, label, orientation = "h
+     if (next === undefined) return
+     event.preventDefault(); refs.current[next]?.focus(); onValueChange(items[next].value)
+   }
+-  return <div role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)}>
++  return <div {...scroll} role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)}>
+     {items.map((item, i) => <button key={item.value} ref={node => { refs.current[i] = node }} type="button" role="radio" aria-checked={item.value === value} tabIndex={i === current ? 0 : -1} disabled={item.disabled} onClick={() => onValueChange(item.value)} onKeyDown={event => move(event, i)}>
+       {orientation === "vertical" ? <><b className="font-mono text-item-title">{item.label}</b>{item.description && <span className="text-ui-hint opacity-80">{item.description}</span>}</> : item.label}
+     </button>)}
+diff --git a/components/prism-next/demos/navigation.tsx b/components/prism-next/demos/navigation.tsx
+index d7b7bf3..2e67ed7 100644
+--- a/components/prism-next/demos/navigation.tsx
++++ b/components/prism-next/demos/navigation.tsx
+@@ -1,6 +1,7 @@
+ "use client"
+ 
+ import { useState } from "react"
++import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ import Link from "next/link"
+ import { Breadcrumb,BreadcrumbList,BreadcrumbItem,BreadcrumbLink,BreadcrumbSeparator,BreadcrumbPage } from "@/components/coss/breadcrumb"
+ import { Tabs,TabsList,TabsTab,TabsPanel } from "@/components/coss/tabs"
+@@ -10,7 +11,37 @@ import { Button } from "@/components/coss/button"
+ import { DemoSection,Feedback } from "@/components/prism-next/demo-parts"
+ 
+ export function BreadcrumbDemo(){return <DemoSection title="当前位置"><Breadcrumb><BreadcrumbList><BreadcrumbItem><BreadcrumbLink render={<Link href="/next"/>}>组件库</BreadcrumbLink></BreadcrumbItem><BreadcrumbSeparator/><BreadcrumbItem><BreadcrumbLink render={<Link href="/next/reading"/>}>材料研读</BreadcrumbLink></BreadcrumbItem><BreadcrumbSeparator/><BreadcrumbItem><BreadcrumbPage>二次方程的实数根</BreadcrumbPage></BreadcrumbItem></BreadcrumbList></Breadcrumb></DemoSection>}
+-export function TabsDemo(){return <><DemoSection title="分段式标签页"><Tabs defaultValue="content"><TabsList><TabsTab value="content">内容</TabsTab><TabsTab value="metadata">材料信息</TabsTab><TabsTab value="history">历史记录</TabsTab><TabsTab value="locked" disabled>已锁定</TabsTab></TabsList><TabsPanel value="content" className="py-5 text-read-body">以判别式判断实数根的情况，再使用求根公式。</TabsPanel><TabsPanel value="metadata" className="py-5 text-read-body">材料类型：例题讲解。预计研读：8 分钟。</TabsPanel><TabsPanel value="history" className="py-5 text-read-body">当前为初始示例版本，尚无修订记录。</TabsPanel></Tabs></DemoSection><DemoSection title="下划线标签页"><Tabs defaultValue="all"><TabsList variant="underline"><TabsTab value="all">全部材料</TabsTab><TabsTab value="pending">待复核</TabsTab><TabsTab value="done">已复核</TabsTab></TabsList><TabsPanel value="all" className="py-4 text-ui-body">4 份材料</TabsPanel><TabsPanel value="pending" className="py-4 text-ui-body">2 份材料需要复核</TabsPanel><TabsPanel value="done" className="py-4 text-ui-body">2 份材料已完成复核</TabsPanel></Tabs></DemoSection></>}
++export function TabsDemo() {
++  const [segment, setSegment] = useState("content"), [underline, setUnderline] = useState("all")
++  const segmentScroll = useHorizontalChoiceScroll(segment), underlineScroll = useHorizontalChoiceScroll(underline)
++  return <>
++    <DemoSection title="分段式标签页">
++      <Tabs value={segment} onValueChange={value => setSegment(String(value))} className="min-w-0">
++        <div {...segmentScroll} className="min-w-0 max-w-full overflow-x-auto py-1 -my-1">
++          <TabsList aria-label="材料详情">
++            <TabsTab value="content">内容</TabsTab><TabsTab value="metadata">材料信息</TabsTab>
++            <TabsTab value="history">历史记录</TabsTab><TabsTab value="locked" disabled>已锁定</TabsTab>
++          </TabsList>
++        </div>
++        <TabsPanel value="content" className="py-5 text-read-body">以判别式判断实数根的情况，再使用求根公式。</TabsPanel>
++        <TabsPanel value="metadata" className="py-5 text-read-body">材料类型：例题讲解。预计研读：8 分钟。</TabsPanel>
++        <TabsPanel value="history" className="py-5 text-read-body">当前为初始示例版本，尚无修订记录。</TabsPanel>
++      </Tabs>
++    </DemoSection>
++    <DemoSection title="下划线标签页">
++      <Tabs value={underline} onValueChange={value => setUnderline(String(value))} className="min-w-0">
++        <div {...underlineScroll} className="min-w-0 max-w-full overflow-x-auto py-1 -my-1">
++          <TabsList variant="underline" aria-label="材料复核状态">
++            <TabsTab value="all">全部材料</TabsTab><TabsTab value="pending">待复核</TabsTab><TabsTab value="done">已复核</TabsTab>
++          </TabsList>
++        </div>
++        <TabsPanel value="all" className="py-4 text-ui-body">4 份材料</TabsPanel>
++        <TabsPanel value="pending" className="py-4 text-ui-body">2 份材料需要复核</TabsPanel>
++        <TabsPanel value="done" className="py-4 text-ui-body">2 份材料已完成复核</TabsPanel>
++      </Tabs>
++    </DemoSection>
++  </>
++}
+ export function PaginationDemo(){const[page,setPage]=useState(1);const change=(next:number,e:React.MouseEvent)=>{e.preventDefault();setPage(Math.max(1,Math.min(4,next)))};return <DemoSection title="按页查看材料"><div className="mb-5 grid gap-2 text-ui-body">{[1,2,3].map(n=><p key={n} className="border-b py-2">材料 {(page-1)*3+n} · {['二次方程','函数性质','数列求和'][n-1]}</p>)}</div><Pagination><PaginationContent><PaginationItem><Button variant="ghost" aria-label="上一页" disabled={page===1} onClick={e=>change(page-1,e)}>上一页</Button></PaginationItem>{[1,2,3,4].map(n=><PaginationItem key={n}><PaginationLink href={'#page-'+n} isActive={page===n} aria-label={'第 '+n+' 页'} onClick={e=>change(n,e)}>{n}</PaginationLink></PaginationItem>)}<PaginationItem><Button variant="ghost" aria-label="下一页" disabled={page===4} onClick={e=>change(page+1,e)}>下一页</Button></PaginationItem></PaginationContent></Pagination><Feedback>第 {page} 页 / 共 4 页</Feedback></DemoSection>}
+ export function SidebarDemo(){const{open,isMobile,openMobile,toggleSidebar}=useSidebar();return <DemoSection title="当前页面的导航侧栏" description="本站导航直接使用同一个 coss Sidebar；窄屏切换为抽屉。"><Button variant="outline" onClick={toggleSidebar}>{(isMobile?openMobile:open)?'收起导航':'打开导航'}</Button><Feedback>可使用 Ctrl / ⌘ + B 切换。移动端关闭抽屉后，焦点回到触发按钮。</Feedback></DemoSection>}
+ export const navigationDemos={breadcrumb:BreadcrumbDemo,tabs:TabsDemo,pagination:PaginationDemo,sidebar:SidebarDemo}
+diff --git a/components/prism-next/use-horizontal-choice-scroll.ts b/components/prism-next/use-horizontal-choice-scroll.ts
+new file mode 100644
+index 0000000..702be28
+--- /dev/null
++++ b/components/prism-next/use-horizontal-choice-scroll.ts
+@@ -0,0 +1,44 @@
++"use client"
++
++import { useLayoutEffect, useRef, type FocusEvent } from "react"
++
++/** Reveal only within this scroller; never scroll the page or move focus. */
++export function revealHorizontalChoice(container: HTMLElement, item: HTMLElement) {
++  if (container.scrollWidth <= container.clientWidth) return
++  const viewport = container.getBoundingClientRect()
++  const choice = item.getBoundingClientRect()
++  const left = viewport.left + container.clientLeft
++  const right = left + container.clientWidth
++  if (choice.left < left || choice.right - choice.left > container.clientWidth) container.scrollLeft += choice.left - left
++  else if (choice.right > right) container.scrollLeft += choice.right - right
++}
++
++/** Internal layout adapter for the existing tab/radio demos, not a new control. */
++export function useHorizontalChoiceScroll(value: string, enabled = true) {
++  const ref = useRef<HTMLDivElement>(null)
++  useLayoutEffect(() => {
++    const container = ref.current
++    if (!container || !enabled) return
++    const selected = () => container.querySelector<HTMLElement>('[role="tab"][aria-selected="true"], [role="radio"][aria-checked="true"]')
++    const reveal = () => {
++      const focused = container.ownerDocument.activeElement
++      const item = focused instanceof HTMLElement && container.contains(focused) && focused.matches('[role="tab"], [role="radio"]')
++        ? focused
++        : selected()
++      if (item) revealHorizontalChoice(container, item)
++    }
++    const item = selected()
++    if (item) revealHorizontalChoice(container, item)
++    const observer = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(reveal)
++    observer?.observe(container)
++    // Font loading or label changes can resize the choices without resizing the viewport.
++    container.querySelectorAll('[role="tab"], [role="radio"]').forEach(item => observer?.observe(item))
++    return () => observer?.disconnect()
++  }, [value, enabled])
++  const onFocusCapture = (event: FocusEvent<HTMLDivElement>) => {
++    if (!enabled) return
++    const item = event.target.closest<HTMLElement>('[role="tab"], [role="radio"]')
++    if (item && event.currentTarget.contains(item)) revealHorizontalChoice(event.currentTarget, item)
++  }
++  return { ref, onFocusCapture }
++}
+diff --git a/tests/tabs-overflow.test.mjs b/tests/tabs-overflow.test.mjs
+new file mode 100644
+index 0000000..d071b43
+--- /dev/null
++++ b/tests/tabs-overflow.test.mjs
+@@ -0,0 +1,108 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const dir = new URL(`../.sites-runtime/tabs-overflow-${process.pid}/`, import.meta.url);
++await mkdir(dir, { recursive: true });
++const bundle = await build({ stdin: { contents: `
++  export { TabsDemo } from './components/prism-next/demos/navigation';
++  export { AgentSemanticGroupDemo } from './components/prism-next/demos/agent-semantic-group';
++  export { AgentComponentPage } from './components/prism-next/demos/agent-component-page';
++  export { agentComponentRegistry } from './lib/prism-next/agent-component-registry';
++  export { BpSegTabs } from './components/prism-next/blueprint/blueprint';
++  export { revealHorizontalChoice } from './components/prism-next/use-horizontal-choice-scroll';
++`, resolveDir: root, loader: 'tsx' }, bundle: true, platform: 'node', format: 'esm', packages: 'external', alias: { '@': root, 'next/link': 'next/link.js', 'next/navigation': 'next/navigation.js' }, loader: { '.css': 'empty' }, write: false });
++const file = new URL('bundle.mjs', dir);
++await writeFile(file, bundle.outputFiles[0].text);
++const api = await import(file);
++await rm(dir, { recursive: true });
++const render = (Component, props) => renderToStaticMarkup(React.createElement(Component, props));
++
++test('Tabs demo SSR bounds both single-line lists, leaving panels outside the scrollers', () => {
++  const html = render(api.TabsDemo);
++  const scrollers = [...html.matchAll(/<div class="min-w-0 max-w-full overflow-x-auto py-1 -my-1">([\s\S]*?)<\/div><div[^>]*role="tabpanel"/g)];
++  assert.equal(scrollers.length, 2);
++  assert.deepEqual(scrollers.map(([, list]) => (list.match(/role="tab"/g) || []).length), [4, 3]);
++  for (const [, list] of scrollers) {
++    assert.match(list, /role="tablist"/);
++    assert.match(list, /w-fit/);
++    assert.match(list, /shrink-0 grow[^"<>]*whitespace-nowrap/);
++    assert.equal((list.match(/aria-selected="true"/g) || []).length, 1);
++    assert.doesNotMatch(list, /flex-wrap|role="tabpanel"/);
++  }
++  assert.match(html, /aria-disabled="true"[^>]*>已锁定/);
++  assert.match(html, /以判别式判断实数根/);
++  assert.match(html, /4 份材料/);
++});
++
++test('Agent group SSR already bounds its seven tabs in a local scroll container', () => {
++  const html = render(api.AgentSemanticGroupDemo);
++  const list = html.match(/<div class="max-w-full overflow-x-auto pb-1">([\s\S]*?)<\/div><div class="flex flex-wrap items-end/);
++  assert.ok(list);
++  assert.equal((list[1].match(/role="tab"/g) || []).length, 7);
++  assert.match(list[1], /aria-label="Agent 语义组件"/);
++});
++
++test('Agent component page SSR keeps its navigation scroller and preview boundary', () => {
++  const entry = api.agentComponentRegistry.find(item => item.componentName === 'AgentArtifactPreview');
++  assert.ok(entry);
++  const html = render(api.AgentComponentPage, { entry, contract: [] });
++  assert.match(html, /<div class="min-w-0 max-w-full overflow-x-auto"><div[^>]*role="tablist"/);
++  assert.match(html, /data-agent-preview-scroll/);
++  assert.match(html, /data-preview-width="auto"/);
++});
++
++test('Blueprint SSR retains radio selection, disabled choice and the vertical variant', async () => {
++  const props = { label: '答卷状态', value: 'last', onValueChange() {}, items: [
++    { value: 'first', label: '首项' }, { value: 'locked', label: '已锁定', disabled: true },
++    { value: 'last', label: '长中文与公式 f(x) = x² − 2x + 1' },
++  ] };
++  for (const orientation of ['horizontal', 'vertical']) {
++    const html = render(api.BpSegTabs, { ...props, orientation });
++    assert.match(html, new RegExp(`role="radiogroup"[^>]*data-orientation="${orientation}" class="bp-seg-tabs"`));
++    assert.equal((html.match(/role="radio"/g) || []).length, 3);
++    assert.equal((html.match(/tabindex="0"/g) || []).length, 1);
++    assert.match(html, /aria-checked="true" tabindex="0"/);
++    assert.match(html, /disabled=""/);
++  }
++  const css = await readFile(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
++  assert.match(css, /\.bp-seg-tabs \{[^}]*flex-wrap:nowrap[^}]*max-width:100%/);
++  assert.match(css, /\.bp-seg-tabs\[data-orientation="horizontal"\] \{ overflow-x:auto; \}/);
++  assert.match(css, /\.bp-seg-tabs\[data-orientation="horizontal"\] > button \{ flex-shrink:0; \}/);
++});
++
++test('revealing a clipped choice scrolls only the owning viewport in either direction', () => {
++  const container = { scrollWidth: 400, clientWidth: 200, clientLeft: 1, scrollLeft: 0, getBoundingClientRect: () => ({ left: 40 }) };
++  api.revealHorizontalChoice(container, { getBoundingClientRect: () => ({ left: 230, right: 300 }) });
++  assert.equal(container.scrollLeft, 59);
++  api.revealHorizontalChoice(container, { getBoundingClientRect: () => ({ left: 20, right: 90 }) });
++  assert.equal(container.scrollLeft, 38);
++  api.revealHorizontalChoice(container, { getBoundingClientRect: () => ({ left: 60, right: 180 }) });
++  assert.equal(container.scrollLeft, 38);
++  // A label wider than the viewport keeps its beginning readable; no wrapping or shrinking.
++  api.revealHorizontalChoice(container, { getBoundingClientRect: () => ({ left: 100, right: 500 }) });
++  assert.equal(container.scrollLeft, 97);
++});
++
++test('wide lists do not scroll or measure choices', () => {
++  const container = { scrollWidth: 200, clientWidth: 500, scrollLeft: 0 };
++  api.revealHorizontalChoice(container, {});
++  assert.equal(container.scrollLeft, 0);
++});
++
++test('built /next/components/tabs serves the repaired demo inside the real shell', async () => {
++  const { default: worker } = await import('../dist/server/index.js');
++  const response = await worker.fetch(new Request('http://localhost/next/components/tabs', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
++  assert.equal(response.status, 200);
++  const html = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '');
++  assert.match(html, /data-ui-version="coss-v1"/);
++  assert.match(html, /分段式标签页/);
++  assert.equal((html.match(/class="min-w-0 max-w-full overflow-x-auto py-1 -my-1"/g) || []).length, 2);
++  assert.equal((html.match(/data-slot="tabs-tab"/g) || []).length, 7);
++  assert.doesNotMatch(html, /bp-seg-tabs/);
++});

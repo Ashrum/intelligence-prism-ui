@@ -1,0 +1,15 @@
+✔ Tabs demo SSR bounds both single-line lists, leaving panels outside the scrollers (14.885291ms)
+✔ Agent group SSR already bounds its seven tabs in a local scroll container (40.08675ms)
+✔ Agent component page SSR keeps its navigation scroller and preview boundary (23.357875ms)
+✔ Blueprint SSR retains radio selection, disabled choice and the vertical variant (13.710875ms)
+✔ revealing a clipped choice scrolls only the owning viewport in either direction (0.214625ms)
+✔ wide lists do not scroll or measure choices (0.070959ms)
+✔ built /next/components/tabs serves the repaired demo inside the real shell (378.061375ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4280.931417

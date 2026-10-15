@@ -1,0 +1,12 @@
+docs/blueprint/evidence/v4/fixture.tsx(10,63): error TS2538: Type 'undefined' cannot be used as an index type.
+docs/blueprint/evidence/v4/fixture.tsx(13,16): error TS7006: Parameter 'type' implicitly has an 'any' type.
+docs/blueprint/evidence/v4/fixture.tsx(14,476): error TS2322: Type '{ color: string[]; legend: { top: number; textStyle: { color: any; }; }; grid: { left: number; right: number; top: number; bottom: number; }; xAxis: { type: string; data: string[]; }; yAxis: { type: string; }; series: { ...; }[]; }' is not assignable to type 'EChartsOption'.
+  Types of property 'xAxis' are incompatible.
+    Type '{ type: string; data: string[]; }' is not assignable to type 'XAXisOption | XAXisOption[] | undefined'.
+      Type '{ type: string; data: string[]; }' is not assignable to type '(ValueAxisBaseOption & { gridIndex?: number | undefined; gridId?: string | undefined; position?: CartesianAxisPosition | undefined; offset?: number | undefined; categorySortInfo?: OrdinalSortInfo | undefined; } & { ...; }) | (LogAxisBaseOption & ... 1 more ... & { ...; }) | (CategoryAxisBaseOption & ... 1 more ... &...'.
+        Type '{ type: string; data: string[]; }' is not assignable to type 'CategoryAxisBaseOption & { gridIndex?: number | undefined; gridId?: string | undefined; position?: CartesianAxisPosition | undefined; offset?: number | undefined; categorySortInfo?: OrdinalSortInfo | undefined; } & { ...; }'.
+          Type '{ type: string; data: string[]; }' is not assignable to type 'CategoryAxisBaseOption'.
+            Types of property 'type' are incompatible.
+              Type 'string' is not assignable to type '"category"'.
+docs/blueprint/evidence/v4/fixture.tsx(16,12): error TS2345: Argument of type 'HTMLElement | null' is not assignable to parameter of type 'Container'.
+  Type 'null' is not assignable to type 'Container'.

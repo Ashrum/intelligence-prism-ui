@@ -61,7 +61,7 @@ export function CompactHeatmapFixture() {
   const [five, setFive] = useState(false), [notice, setNotice] = useState("选择单元格或数据表项目，查看项目 ID。")
   const rows = ["运算求解", "推理论证", "数据分析", "模型建立", "综合应用"].slice(0, five ? 5 : 3).map((label, index) => ({ id: `row-${index}`, label }))
   const columns = ["基础", "进阶", "综合"].map((label, index) => ({ id: `column-${index}`, label }))
-  return <DemoSection id="compact-heatmap" title="300px 紧凑矩阵" description="可选 compact 布局，保留格内数值、零值与缺测；原热力矩阵默认布局保持不变。">
+  return <DemoSection id="compact-heatmap" title="300px 紧凑矩阵" description="可选 compact 布局：核心主题保留格内数值；蓝图主题在窄容器下隐藏格内数值，可点按查看。零值与缺测均保留在提示框和数据表中。">
     <Button variant="outline" className="mb-4" aria-pressed={five} onClick={() => setFive(!five)}>{five ? "切到 3 × 3" : "切到 5 × 3"}</Button>
     <div className="w-[300px] max-w-full"><HeatmapChart compact height={240} label="能力与题目层级" rows={rows} columns={columns} cells={rows.flatMap((row, r) => columns.map((column, c) => ({ id: `${row.id}-${column.id}`, row: row.id, column: column.id, value: r === 0 && c === 0 ? 0 : r === 1 && c === 2 ? null : (r + 1) * 10 + c * 5 })))} onSelect={id => setNotice(`请求查看：${id}；等待调用方处理。`)} /></div>
     <Feedback>{notice}</Feedback>
