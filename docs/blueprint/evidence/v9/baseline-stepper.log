@@ -1,0 +1,21 @@
+✖ 320px reveal scrolls only local viewport instantly, reacts to resize and releases observer (8.6694ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 472.391
+
+✖ failing tests:
+
+test at tests\stepper.test.mjs:100:1
+✖ 320px reveal scrolls only local viewport instantly, reacts to resize and releases observer (8.6694ms)
+  TypeError: globalThis.__stepper.effect is not a function
+      at fixture (file:///D:/WorkFile/HermesWork/intelligence-prism-ui/.sites-runtime/baseline-head-1f575ea-windows/tests/stepper.test.mjs:96:40)
+      at TestContext.<anonymous> (file:///D:/WorkFile/HermesWork/intelligence-prism-ui/.sites-runtime/baseline-head-1f575ea-windows/tests/stepper.test.mjs:101:13)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.start (node:internal/test_runner/test:1015:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)

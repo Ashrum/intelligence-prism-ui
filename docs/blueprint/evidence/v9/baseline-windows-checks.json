@@ -1,0 +1,24 @@
+{
+  "baseline": "1f575ea142c7f3b5fa0ae8a41f5c63c310067251",
+  "export_exit_code": 0,
+  "baseline_directory": "D:\\WorkFile\\HermesWork\\intelligence-prism-ui\\.sites-runtime\\baseline-head-1f575ea-windows",
+  "commands": [
+    {
+      "exit_code": 1,
+      "command": "node --test --test-name-pattern='320px reveal' tests/stepper.test.mjs",
+      "log": "baseline-stepper.log"
+    },
+    {
+      "exit_code": 1,
+      "command": "node --test tests/review-tools.test.mjs",
+      "log": "baseline-esm.log"
+    },
+    {
+      "exit_code": 0,
+      "command": "node --test --test-name-pattern='compact CSS is scoped' tests/stepper-compact.test.mjs",
+      "log": "baseline-stepper-css.log"
+    }
+  ],
+  "archive_sha256": "0ca899b32f53f47a07730d056bb59fd2fec5be562b8753f0c0a5fd120c2cf7e2",
+  "export_command": "git -c core.autocrlf=false archive --format=zip --output='.sites-runtime/baseline-head-1f575ea-windows-lf.zip' HEAD"
+}

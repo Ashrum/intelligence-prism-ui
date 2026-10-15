@@ -1,0 +1,5 @@
+{
+  "log": "targeted-blueprint-tests.log",
+  "exit_code": 0,
+  "command": "node --test tests/blueprint-theme.test.mjs tests/blueprint-components.test.mjs tests/blueprint-charts.test.mjs tests/blueprint-guide.test.mjs tests/blueprint-print-a11y.test.mjs"
+}

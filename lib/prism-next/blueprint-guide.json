@@ -1,0 +1,3653 @@
+{
+  "sourcePath": "docs/blueprint-theme.md",
+  "sourceSha256": "10cca974f8623832314614b980a9ed702f558fc9344223aa4097b6d70ee6f8e6",
+  "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
+  "title": "Foundations · 第四主题「蓝图」",
+  "headings": [
+    {
+      "id": "section-1",
+      "level": 2,
+      "text": "完善路线与当前执行（2026-10-15）"
+    },
+    {
+      "id": "section-2",
+      "level": 3,
+      "text": "第一批结果与剩余验收"
+    },
+    {
+      "id": "section-3",
+      "level": 2,
+      "text": "原始参考风格提炼（2026-10-15）"
+    },
+    {
+      "id": "section-4",
+      "level": 3,
+      "text": "来源及三层边界"
+    },
+    {
+      "id": "section-5",
+      "level": 3,
+      "text": "令牌与排版提炼"
+    },
+    {
+      "id": "section-6",
+      "level": 3,
+      "text": "几何与布局规律"
+    },
+    {
+      "id": "section-7",
+      "level": 3,
+      "text": "交互状态与动效"
+    },
+    {
+      "id": "section-8",
+      "level": 3,
+      "text": "证据与验收范围"
+    },
+    {
+      "id": "section-9",
+      "level": 2,
+      "text": "与核心三主题的边界"
+    },
+    {
+      "id": "section-10",
+      "level": 2,
+      "text": "颜色令牌"
+    },
+    {
+      "id": "section-11",
+      "level": 2,
+      "text": "新增扩展令牌"
+    },
+    {
+      "id": "section-12",
+      "level": 2,
+      "text": "五条几何规则"
+    },
+    {
+      "id": "section-13",
+      "level": 2,
+      "text": "首期 `bp-*` React 封装（不计入组件目录）"
+    },
+    {
+      "id": "section-14",
+      "level": 2,
+      "text": "待验与已知限制"
+    },
+    {
+      "id": "section-15",
+      "level": 2,
+      "text": "首次本地接入适配"
+    },
+    {
+      "id": "section-16",
+      "level": 2,
+      "text": "首次本地验证（2026-10-13）"
+    },
+    {
+      "id": "section-17",
+      "level": 2,
+      "text": "v2 → v3 接入与验证（2026-10-13）"
+    },
+    {
+      "id": "section-18",
+      "level": 3,
+      "text": "本轮内容"
+    },
+    {
+      "id": "section-19",
+      "level": 3,
+      "text": "接入中修正"
+    },
+    {
+      "id": "section-20",
+      "level": 3,
+      "text": "验证结果"
+    },
+    {
+      "id": "section-21",
+      "level": 2,
+      "text": "v4 图表配色接入与验证（2026-10-13）"
+    },
+    {
+      "id": "section-22",
+      "level": 3,
+      "text": "自测与浏览器证据"
+    },
+    {
+      "id": "section-23",
+      "level": 3,
+      "text": "并行工作树说明"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 "
+        },
+        {
+          "type": "code",
+          "value": "app/(next)/next/theme.css"
+        },
+        {
+          "type": "text",
+          "value": "（颜色令牌）、"
+        },
+        {
+          "type": "code",
+          "value": "app/(next)/next/blueprint.css"
+        },
+        {
+          "type": "text",
+          "value": "（几何与 "
+        },
+        {
+          "type": "code",
+          "value": "bp-*"
+        },
+        {
+          "type": "text",
+          "value": " 样式）及 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "React 封装"
+            }
+          ],
+          "href": "https://github.com/Ashrum/intelligence-prism-ui/blob/main/components/prism-next/blueprint/blueprint.tsx",
+          "external": true
+        },
+        {
+          "type": "text",
+          "value": "。演示页为 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint"
+        },
+        {
+          "type": "text",
+          "value": "，从侧栏「蓝图组件」进入。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-1",
+      "children": [
+        {
+          "type": "text",
+          "value": "完善路线与当前执行（2026-10-15）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。本轮执行第一批：收敛现有蓝图样板、补齐关键操作状态、验证墨底焦点，并将本文件作为单一来源提供站内阅读入口。此次批准不等于所有页面的视觉验收已完成。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "阶段"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "目标"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "完成依据"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "1 · 视觉规则"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "明确网格、双框、编号、标题、留白及主要行动的适用位置"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "现有蓝图样板的前后对照与长内容检查"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "2 · 组件状态"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "完善禁用、焦点、按下、选择、只读与错误反馈"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "相关组件的真实键盘、鼠标和窄屏验证"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "3 · 密集内容"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "检查列表、图表、小图例、连续色阶及打印"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "可读性、零值与缺测、灰度和原生打印证据"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "4 · 教师场景"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "在 Agent、试卷阅读和学情报告中验证主题密度"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "沿用既有业务流程的代表性场景评审"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "5 · 发布候选"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "收敛主题隔离、核心主题回归与剩余限制"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "独立 Review、视觉确认、发布版本及可追溯证据"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "第一批保持第四主题、核心三主题及轻量 Blueprint 页面实验的既有边界；不修改冻结 coss 源码、不增加依赖、不把示例中的按钮点击解释为真实业务执行。具体实现、验证与剩余问题统一记录在 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "蓝图当前状态"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "，本表不代替验收结论。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。站点当前轻量页面实验与 GitHub 第四主题基线不同，文档可阅读不代表第四主题已在该部署启用；上线状态以页面说明与实际发布记录为准。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-2",
+      "children": [
+        {
+          "type": "text",
+          "value": "第一批结果与剩余验收"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "已完成样板容器布局、章节字号、禁用反馈、墨底焦点分隔、静态卡片语义及长中文与公式阅读。四主题在 320px / 1280px 均无页面横向溢出；主行动和墨底链接的键盘焦点、分段 Home / End、Tabs 手动激活及局部公式滚动已经浏览器验证。构建、类型检查与 37 项 Blueprint / 文档定向测试通过；全量 1947 项中仍有 261 项失败，代表性 Windows 路径与 ESM 问题在未修改的 HEAD 基线复现。详见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器测量"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/browser-results.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 与 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "Windows 测试分析"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/windows-test-analysis.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "代表截图："
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "桌面样板"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/blueprint-1280.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "主行动焦点"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/primary-focus-320.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "墨底链接焦点"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/pane-focus-320.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "长文与公式"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/reading-320.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "。本轮只完成第一批；真机、读屏器、原生/实体打印、全部密集数据与真实教师场景仍按阶段3—5继续验证，第四主题保留候选状态。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-3",
+      "children": [
+        {
+          "type": "text",
+          "value": "原始参考风格提炼（2026-10-15）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本节保留来源核对阶段的事实与接入建议，不替代既有验收记录。该阶段只补文档与证据，没有修改运行时代码、主题令牌、组件 API 或站点；后续完善执行见上方路线与当前状态记录。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-4",
+      "children": [
+        {
+          "type": "text",
+          "value": "来源及三层边界"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "在线参考："
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "Answer me with HTML 中文官网"
+              }
+            ],
+            "href": "https://answer-me-with-html.com/zh/",
+            "external": true
+          },
+          {
+            "type": "text",
+            "value": "，2026-10-15 采集。官网部署提交未知，不能把线上页面直接等同于仓库 HEAD。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "源码固定在 "
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "code",
+                "value": "99de9e56d5ca24e16604c8437f07e1b0c5e2af71"
+              }
+            ],
+            "href": "https://github.com/QingYunA/answer-me-with-html/tree/99de9e56d5ca24e16604c8437f07e1b0c5e2af71",
+            "external": true
+          },
+          {
+            "type": "text",
+            "value": "。"
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "MIT 许可"
+              }
+            ],
+            "href": "https://github.com/QingYunA/answer-me-with-html/blob/99de9e56d5ca24e16604c8437f07e1b0c5e2af71/LICENSE",
+            "external": true
+          },
+          {
+            "type": "text",
+            "value": "已核对；若后续复用实质源码须保留版权及许可声明。"
+          }
+        ],
+        [
+          {
+            "type": "strong",
+            "children": [
+              {
+                "type": "text",
+                "value": "官网呈现层"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "value": "："
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "site/src/style.css"
+              }
+            ],
+            "href": "https://github.com/QingYunA/answer-me-with-html/blob/99de9e56d5ca24e16604c8437f07e1b0c5e2af71/site/src/style.css",
+            "external": true
+          },
+          {
+            "type": "text",
+            "value": "。本轮分析的网格背景、主按钮硬阴影、官网卡片、导航与响应式主要来自这一层。"
+          }
+        ],
+        [
+          {
+            "type": "strong",
+            "children": [
+              {
+                "type": "text",
+                "value": "生成文档主题层"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "value": "："
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "src/themes/blueprint.js"
+              }
+            ],
+            "href": "https://github.com/QingYunA/answer-me-with-html/blob/99de9e56d5ca24e16604c8437f07e1b0c5e2af71/src/themes/blueprint.js",
+            "external": true
+          },
+          {
+            "type": "text",
+            "value": "。它定义明暗令牌、0px 圆角、1.5px 通用线宽、"
+          },
+          {
+            "type": "code",
+            "value": "--shadow: none"
+          },
+          {
+            "type": "text",
+            "value": "、双框和标尺；文档外框自身明确为 1px。不能把官网所有表现归为这一主题模块的能力。"
+          }
+        ],
+        [
+          {
+            "type": "strong",
+            "children": [
+              {
+                "type": "text",
+                "value": "智能曜彩接入层"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "value": "：当前本地基线 "
+          },
+          {
+            "type": "code",
+            "value": "1f575ea"
+          },
+          {
+            "type": "text",
+            "value": "，按本文件记录的第四主题适配；"
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "轻量 Blueprint 页面实验"
+              }
+            ],
+            "href": "/foundations/blueprint/guide-assets/docs/experiments/prism-blueprint-v0.2.md",
+            "external": false,
+            "download": true
+          },
+          {
+            "type": "text",
+            "value": "是另一条路线，保留原 coss / Prism 外观。两者不共用“所有组件直角化”的结论。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-5",
+      "children": [
+        {
+          "type": "text",
+          "value": "令牌与排版提炼"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "上方来源中的官网基础配色与下方现有令牌表大体一致；需要额外保留以下差异，避免从相同色值反推相同语义。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "项目"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "原始证据"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "智能曜彩应用原则"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "成功色"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网及生成主题 "
+            },
+            {
+              "type": "code",
+              "value": "--ok"
+            },
+            {
+              "type": "text",
+              "value": " 与强调蓝相同"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留当前独立成功绿；强调蓝、AI 来源与正确性不能互相代替"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "三级文字"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网亮色 "
+            },
+            {
+              "type": "code",
+              "value": "--ink-3: #6b7280"
+            },
+            {
+              "type": "text",
+              "value": "；生成主题为 "
+            },
+            {
+              "type": "code",
+              "value": "#8b929e"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不把三级文字无条件映射成禁用色；现有 "
+            },
+            {
+              "type": "code",
+              "value": "--disabled-foreground"
+            },
+            {
+              "type": "text",
+              "value": " 的语义单独审查"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "深色"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "原站深色背景 "
+            },
+            {
+              "type": "code",
+              "value": "#081322"
+            },
+            {
+              "type": "text",
+              "value": "、纸面 "
+            },
+            {
+              "type": "code",
+              "value": "#0d1c31"
+            },
+            {
+              "type": "text",
+              "value": "、强调 "
+            },
+            {
+              "type": "code",
+              "value": "#6ea8ff"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "仅作来源事实，不据此新增 "
+            },
+            {
+              "type": "code",
+              "value": "blueprint-night"
+            },
+            {
+              "type": "text",
+              "value": " 或改核心 dark"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "结构线"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网通用 "
+            },
+            {
+              "type": "code",
+              "value": "--bw: 1.5px"
+            },
+            {
+              "type": "text",
+              "value": "，内框 1px"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留结构线与次级分隔线层级；浏览器像素取整见证据说明"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "正文字体"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网系统无衬线栈，中文含 PingFang SC、Microsoft YaHei 等；正文 16px / 1.6"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "延续 Prism 字体与语义字号；字体栈不等于当前机器实际命中的字体"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "标题比例"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网中文 hero 为 "
+            },
+            {
+              "type": "code",
+              "value": "clamp(32px,4.6vw,62px)"
+            },
+            {
+              "type": "text",
+              "value": " / 1.16；区块标题为 "
+            },
+            {
+              "type": "code",
+              "value": "clamp(26px,3.4vw,40px)"
+            },
+            {
+              "type": "text",
+              "value": " / 1.1"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留“主标题—区块标题—技术元信息”的层级关系，不把营销页大标题尺寸复制进教师工具栏"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "技术元信息"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "标尺、编号、小标题使用等宽字；小标题大写、字距 0.08em"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "等宽用于编号和技术元信息；中文正文维持阅读字体，不采用原站 10px 标尺作为正文尺寸"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-6",
+      "children": [
+        {
+          "type": "text",
+          "value": "几何与布局规律"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "规律"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "来源确认"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "接入判断"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "页面底与纸面分离"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网 body 为 40px 双向细网格，sheet 为不透明纸面"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "网格表达纸面外的坐标环境；不在每个内容容器重复铺设"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "双框与坐标"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网 sheet 外框、18px 内缩细框、四边标尺，字母块与 SHEET 编号"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "适合章节或较大工作区域；不递归套在每张卡片上，避免结构线争夺注意力"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "宽度与留白"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网最大内容宽度 1320px；主要内距 "
+            },
+            {
+              "type": "code",
+              "value": "clamp(18px,4vw,56px)"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "提炼为受限阅读宽度和随容器调整的留白；本地侧栏布局应以可用内容宽度判断，不能照搬浏览器宽度"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "视觉重心"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网 hero 为主文案与 360px 信息栏两列，1024px 以下改单列"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "对应本地“主要工作区＋辅助信息”，具体列宽由任务阅读需求决定"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "低层级内容"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "卡片默认以边框、标题条、间距组织；可交互卡片 hover 才上浮并出现硬阴影"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不给所有静态卡片添加投影或悬停暗示；装饰不能伪装可点击能力"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "窄屏减法"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "760px 以下隐藏内框、标尺及部分序号；sheet 去左右边框，保留内容"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "先去装饰、再重排；任务数量、异常、当前步骤等业务事实不能当作装饰隐藏"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "“网格表达坐标环境”“不递归套框”等为本轮对源码和截图的设计归纳，不是上游 API 契约。轻量页面实验仅借用比例、对齐、分区编号与局部图框，不据此重绘原组件。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-7",
+      "children": [
+        {
+          "type": "text",
+          "value": "交互状态与动效"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "状态"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "官网源码 / 本轮观测"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "使用边界"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "主行动默认"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "墨底纸色文字、4px 4px 0 强调色硬阴影；实测一致"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "用于少量主要行动，不能把全部按钮升级为同等强调"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "主行动 hover"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "阴影变 2px 2px 0，元素移动 2px / 2px；实测一致"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "表达按压反馈；不是任务执行或成功状态"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "普通按钮 / 工具 hover"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "普通按钮填充次级底色；工具按钮墨底反白"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留本地 variant、键盘行为和组件状态契约"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "分段选择"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "aria-selected"
+            },
+            {
+              "type": "text",
+              "value": " 或 "
+            },
+            {
+              "type": "code",
+              "value": "aria-checked"
+            },
+            {
+              "type": "text",
+              "value": " 命中时墨底纸色文字，焦点线向内偏移"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "视觉状态应由真实受控值驱动，不能从颜色推断选择值"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "键盘焦点"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网 2px 强调色 outline、2px offset；主行动焦点环已抽查"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不删除 coss 焦点机制；本轮不是完整键盘或读屏器验收"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "禁用"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "官网编辑器行动区域有局部禁用样式，并无据此确认的全站统一协议"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不臆造通用禁用规则；沿用 Prism 原协议，按组件补测"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "减少动态效果"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "CSS 将动画及过渡压至 0.001ms，关闭部分装饰；实测按钮 transition 为 "
+            },
+            {
+              "type": "code",
+              "value": "1e-06s"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "原站注释明确 hero 打字循环仍保留，不能据此宣称完全静态或完全无障碍；本地不引入营销页循环演示"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-8",
+      "children": [
+        {
+          "type": "text",
+          "value": "证据与验收范围"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "使用隔离 Chrome / Playwright CLI 采集中文首页，视口为 1280×960、390×960，各含 light / dark。采集脚本与返回值保存在 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "计算样式 JSON"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/computed-styles.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "采集脚本"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/probe.js.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "状态采集脚本"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.js.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "状态日志"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.log.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。本轮直接采集相关元素的真实计算样式，未安装 Dembrandt 或 Design DNA MCP。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "观测"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "结果"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "四组页面宽度"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "document scrollWidth 均等于视口宽度；仅说明此次首页测量无横向溢出"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "标尺"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "1280px 为 flex；390px 为 none"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "中文 hero 字号"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "1280px 为 58.88px；390px 为 32px"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "外框计算值"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "本环境返回 1px，虽然源码 "
+            },
+            {
+              "type": "code",
+              "value": "--bw"
+            },
+            {
+              "type": "text",
+              "value": " 为 1.5px；保留二者，不把声明值写成实测 1.5px。像素取整与环境差异需在目标环境复查"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "焦点样本"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "捕获到 2px 蓝色焦点环；采样未等待 hover 退出后的变换完成，日志内 transform 不作为焦点位移规则"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "截图："
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "亮色桌面"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-1280.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "亮色窄屏"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-390.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "深色桌面"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-1280.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "深色窄屏"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-390.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "。均为视口截图，不是全页；动态演示内容可能处于不同时间点，不用于内容差异比较。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "尚未完成：全站所有状态、生成文档实例的浏览器核对、真实手机、打印、读屏器、完整对比度审计。没有把本次参考站测量当成智能曜彩或教师工作台验收；本轮未运行产品构建或测试。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "下一轮接入评审以三项为输入：现有语义令牌映射、结构装饰的适用位置、受影响组件的状态清单。优先核对三级文字与禁用色、框线密度、容器断点及静态卡片的交互暗示；本节不预先批准对应运行时代码变更。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-9",
+      "children": [
+        {
+          "type": "text",
+          "value": "与核心三主题的边界"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "约定"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "说明"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "可选，不进矩阵"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "themeOptions"
+            },
+            {
+              "type": "text",
+              "value": " 含四项；新增 "
+            },
+            {
+              "type": "code",
+              "value": "coreThemes = light / paper / dark"
+            },
+            {
+              "type": "text",
+              "value": " 明确核心矩阵；现有演示与测试中的三主题数组保持原意，不批量改写。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "只追加令牌块"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "蓝图块与 paper/dark 同级、同特异性，置于 dark 之后；三套核心令牌值不变。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "显式声明全部角色"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "状态色、图表色、AI 来源、悬浮材质全部在蓝图块内重写，不继承 "
+            },
+            {
+              "type": "code",
+              "value": ":root"
+            },
+            {
+              "type": "text",
+              "value": "。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "几何只在蓝图生效"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "现有组件的几何覆盖限定蓝图主题，并排除显式的其他主题预览；"
+            },
+            {
+              "type": "code",
+              "value": "bp-*"
+            },
+            {
+              "type": "text",
+              "value": " 是主动采用类名后才生效的呈现样式。几何规则未分层，活动标签的选择器与已有文字样式保持同等优先级。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "不改 coss"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "只按 "
+            },
+            {
+              "type": "code",
+              "value": "data-slot"
+            },
+            {
+              "type": "text",
+              "value": " 覆盖；coss 固定源码保持逐字节不变。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "深色变体"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "首期仅白图。"
+            },
+            {
+              "type": "code",
+              "value": "@custom-variant dark"
+            },
+            {
+              "type": "text",
+              "value": " 将蓝图预览排除在外。夜图以后作为独立值 "
+            },
+            {
+              "type": "code",
+              "value": "blueprint-night"
+            },
+            {
+              "type": "text",
+              "value": " 加入。"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-10",
+      "children": [
+        {
+          "type": "text",
+          "value": "颜色令牌"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "角色"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "令牌"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "值"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "正文背景"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--background"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#F6F6F3（叠 40px 网格 "
+            },
+            {
+              "type": "code",
+              "value": "--grid"
+            },
+            {
+              "type": "text",
+              "value": " rgba(29,32,38,.055)）"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "浮层表面 / 卡片"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--card"
+            },
+            {
+              "type": "text",
+              "value": " "
+            },
+            {
+              "type": "code",
+              "value": "--popover"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#FFFFFF"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "次级背景"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--secondary"
+            },
+            {
+              "type": "text",
+              "value": " "
+            },
+            {
+              "type": "code",
+              "value": "--muted"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#F3F5F8"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "分隔线"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--border"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#D6DAE1"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "墨线（新增）"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--line"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#1D2026"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "正文 / 标题"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--foreground"
+            },
+            {
+              "type": "text",
+              "value": " "
+            },
+            {
+              "type": "code",
+              "value": "--heading"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#16181D"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "次要文字"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--muted-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#4B5260"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "禁用文字"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--disabled-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#8B929E"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "链接 / 焦点 / 信息"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--link"
+            },
+            {
+              "type": "text",
+              "value": " "
+            },
+            {
+              "type": "code",
+              "value": "--ring"
+            },
+            {
+              "type": "text",
+              "value": " "
+            },
+            {
+              "type": "code",
+              "value": "--info-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#1D5FBF"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "强调底"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--accent"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#E4ECF8"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "错误"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--destructive-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#C62828"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "警告"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--warning-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#A8620A"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "成功"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--success-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#216440（沿用智能曜彩绿色，不随参照站点并入蓝色）"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-11",
+      "children": [
+        {
+          "type": "text",
+          "value": "新增扩展令牌"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "三套核心主题在 "
+        },
+        {
+          "type": "code",
+          "value": ":root"
+        },
+        {
+          "type": "text",
+          "value": " 中有中性回退值，因此 "
+        },
+        {
+          "type": "code",
+          "value": "bp-*"
+        },
+        {
+          "type": "text",
+          "value": " 组件放在任何主题里都可以读。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "令牌"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "核心主题回退"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "蓝图"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "code",
+              "value": "--line"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "var(--border)"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#1D2026"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--line-width"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "1px"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "1.5px"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--head-bg"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "--head-fg"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "primary / primary-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#16181D / #FFFFFF"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--grid"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "--grid-strong"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "transparent"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": ".055 / .09 墨色"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--shadow-offset"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "-sm"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "none"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "4px 4px 0 / 2px 2px 0 #1D5FBF"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--code-bg"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "var(--secondary)"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#F3F5F8"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "--accent-ink"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "primary-foreground"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "#FFFFFF"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-12",
+      "children": [
+        {
+          "type": "text",
+          "value": "五条几何规则"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": true,
+      "start": 1,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "直角：控件、卡片、徽标、浮层与品牌标识圆角归零；Radio 保持圆形。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "两级线：结构 1.5px "
+          },
+          {
+            "type": "code",
+            "value": "--line"
+          },
+          {
+            "type": "text",
+            "value": "，内部分隔 1px "
+          },
+          {
+            "type": "code",
+            "value": "--border"
+          },
+          {
+            "type": "text",
+            "value": "，虚线只用于分组。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "图纸：页面铺 40px 网格；区块用 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sheet"
+          },
+          {
+            "type": "text",
+            "value": "，含 18px 内框和 "
+          },
+          {
+            "type": "code",
+            "value": "bp-ruler"
+          },
+          {
+            "type": "text",
+            "value": " 坐标标尺。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "编号：区块以 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sheet-id"
+          },
+          {
+            "type": "text",
+            "value": " 墨底字母开头，右上角标 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sheet-no"
+          },
+          {
+            "type": "text",
+            "value": "；表头、小标题用等宽大写。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "硬阴影：主要行动与浮层用不模糊的偏移阴影，替代 coss 柔和投影。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-13",
+      "children": [
+        {
+          "type": "text",
+          "value": "首期 "
+        },
+        {
+          "type": "code",
+          "value": "bp-*"
+        },
+        {
+          "type": "text",
+          "value": " React 封装（不计入组件目录）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "bp-sheet"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "bp-ruler"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "bp-sheet-head"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-btn"
+        },
+        {
+          "type": "text",
+          "value": "（primary / danger / sm）· "
+        },
+        {
+          "type": "code",
+          "value": "bp-tool"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-seg-tabs"
+        },
+        {
+          "type": "text",
+          "value": "（水平 / 垂直）· "
+        },
+        {
+          "type": "code",
+          "value": "bp-steps"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-card"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "bp-card-note"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-pane-head"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-minor"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "bp-fig-cap"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-size-bar"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-metric"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-facts"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-titleblock"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-callout"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "bp-error"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-annot"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-codebox"
+        },
+        {
+          "type": "text",
+          "value": " · "
+        },
+        {
+          "type": "code",
+          "value": "bp-toast"
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "职责：coss 组件继续承担表单与操作；"
+        },
+        {
+          "type": "code",
+          "value": "bp-*"
+        },
+        {
+          "type": "text",
+          "value": " 只用于页面级呈现，两者不重名、不互相替换。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-14",
+      "children": [
+        {
+          "type": "text",
+          "value": "待验与已知限制"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "首期 "
+          },
+          {
+            "type": "code",
+            "value": "bp-*"
+          },
+          {
+            "type": "text",
+            "value": " 已有 React 封装及演示页；不登记组件目录，v3 接入时目录为 103 项。演示中的业务动作按钮、卡片内容为外观示例，不连接批阅、发布或保存服务。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "320px 的 Tabs 示例存在横向溢出：本次浏览器抽查中蓝图页面宽 342px，浅色对照宽 339px。基础规范页宽 320px，色值表使用局部横向滚动。保留既有示例的窄屏问题，本轮不扩展为 Tabs 重构。 "
+          },
+          {
+            "type": "strong",
+            "children": [
+              {
+                "type": "text",
+                "value": "v7（2026-10-14）已在 Prism 示例布局处理"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "value": "：Tabs 标签行改为单行局部横向滚动，水平 "
+          },
+          {
+            "type": "code",
+            "value": "bp-seg-tabs"
+          },
+          {
+            "type": "text",
+            "value": " 同步保持单行，并补充选中项 / 焦点项滚动可见。上句保留为历史原文；修复后实际页面宽度、四主题视觉及 Toast 隔离测量待 Supervisor 浏览器验收，见 "
+          },
+          {
+            "type": "link",
+            "children": [
+              {
+                "type": "text",
+                "value": "v7 当前状态"
+              }
+            ],
+            "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+            "external": false,
+            "download": true
+          },
+          {
+            "type": "text",
+            "value": "。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "v4 已接入专用图表配色，见下方记录。Recharts 趋势、比较尚无图案，ECharts 无填充的折线与散点不使用面积图案；散点分组使用调用方提供的点形。实体黑白打印效果未验。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "蓝图下默认热力图示例在 320px 页面中的格内文字拥挤；本轮只更改配色，未更改网格布局。并行新增的 "
+          },
+          {
+            "type": "code",
+            "value": "compact"
+          },
+          {
+            "type": "text",
+            "value": " 热力图不属于本轮验收范围。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "尚未遍历所有组件、复杂嵌套预览与跨预览的 Portal 浮层，触摸、减少动态效果和打印也未做完整浏览器验收。不据令牌定义宣称通过对比度认证。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-15",
+      "children": [
+        {
+          "type": "text",
+          "value": "首次本地接入适配"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按补丁映射将 "
+        },
+        {
+          "type": "code",
+          "value": "app/next/next/"
+        },
+        {
+          "type": "text",
+          "value": " 写入 "
+        },
+        {
+          "type": "code",
+          "value": "app/(next)/next/"
+        },
+        {
+          "type": "text",
+          "value": "，保持当前工作树与分支。README 追加第四主题说明；未新增 React 组件或组件目录条目。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "固定字号改为既有语义字号令牌，字号检查保持原规则。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "蓝图几何排除其他主题预览边界；基础规范主题卡使用真实主题属性。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "去阴影规则避开具有焦点的控件或控件组，保留 coss 键盘焦点环。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "修正实际 "
+          },
+          {
+            "type": "code",
+            "value": "tab-indicator"
+          },
+          {
+            "type": "text",
+            "value": " 插槽名及活动标签样式优先级；透明边框的 ghost、link 等按钮保留原边框语义。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-16",
+      "children": [
+        {
+          "type": "text",
+          "value": "首次本地验证（2026-10-13）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "基于本地 "
+        },
+        {
+          "type": "code",
+          "value": "feat/reading-width-and-row-toggle"
+        },
+        {
+          "type": "text",
+          "value": " 分支、接入前提交 "
+        },
+        {
+          "type": "code",
+          "value": "4c7bdfe"
+        },
+        {
+          "type": "text",
+          "value": " 完成自测；未提交、推送、合并或发布站点。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "数学字体检查与字号检查通过（290 个自有 TSX）；未放宽原检查规则。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "TypeScript 检查与 vinext 构建通过。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "完整测试 1730/1730 通过，含补丁新增的 5 项蓝图主题测试；无失败或跳过。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "与接入前提交逐项比较，原有 light / paper / dark 的 54 / 26 / 39 项令牌值均未改变；coss 源码无修改。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "浏览器抽查基础规范与 Tabs：主题菜单含四项；蓝图可切换且导航后保持；蓝图和深色页面内的四张主题卡保持各自的颜色、圆角与线宽。蓝图控件为 0px 圆角与 1.5px 墨线，其他三个主题预览按钮仍为 10px 圆角、1px 线宽。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "键盘抽查：Tab 可到达蓝图选择框，焦点环保留；Enter 打开菜单、Escape 关闭后焦点返回触发器。Tabs 可用方向键移动焦点、Enter 切换面板，选中项为白字墨底。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "日志和截图保存在本地忽略目录 "
+        },
+        {
+          "type": "code",
+          "value": ".sites-runtime/blueprint-port/"
+        },
+        {
+          "type": "text",
+          "value": "。以上为接入自测与局部浏览器抽查，不代表全组件视觉验收或独立评审通过。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-17",
+      "children": [
+        {
+          "type": "text",
+          "value": "v2 → v3 接入与验证（2026-10-13）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "先应用 "
+        },
+        {
+          "type": "code",
+          "value": "Blueprint theme components ported.zip"
+        },
+        {
+          "type": "text",
+          "value": " 中的 v2，再应用 "
+        },
+        {
+          "type": "code",
+          "value": "Blueprint theme components ported2.zip"
+        },
+        {
+          "type": "text",
+          "value": " 中的 v3。路径 "
+        },
+        {
+          "type": "code",
+          "value": "app/next/next/"
+        },
+        {
+          "type": "text",
+          "value": " 映射为 "
+        },
+        {
+          "type": "code",
+          "value": "app/(next)/next/"
+        },
+        {
+          "type": "text",
+          "value": "；保留首次接入的主题隔离、焦点修正与基础规范底部排版修复。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-18",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮内容"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "v2：网格铺到 "
+          },
+          {
+            "type": "code",
+            "value": "sidebar-inset"
+          },
+          {
+            "type": "text",
+            "value": "；提高演示与数据面板墨线优先级；既有 "
+          },
+          {
+            "type": "code",
+            "value": "DemoSection"
+          },
+          {
+            "type": "text",
+            "value": " 自动显示字母与 "
+          },
+          {
+            "type": "code",
+            "value": "SHEET"
+          },
+          {
+            "type": "text",
+            "value": " 序号、双线内框和刻度。760px 以下隐藏内框、刻度及序号，无需改动 "
+          },
+          {
+            "type": "code",
+            "value": "DemoSection"
+          },
+          {
+            "type": "text",
+            "value": "。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "v3：新增 React 封装、四组组件演示和侧栏入口；组件目录及原有计数测试保持不变。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "分段选择遵循受控单选组协议。方向键切换并跳过禁用项，Home/End 跳转，首尾循环；传入无效或禁用选中值时，首个可用项仍可通过 Tab 到达，不擅自回写选中值。没有可用项时不创建 Tab 停留点。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "步骤条、构成条、指标和批注带有可访问状态或数值文字；"
+          },
+          {
+            "type": "code",
+            "value": "BlueprintSheet"
+          },
+          {
+            "type": "text",
+            "value": " 的标尺和字母装饰标记为 "
+          },
+          {
+            "type": "code",
+            "value": "aria-hidden"
+          },
+          {
+            "type": "text",
+            "value": "。实际读屏器体验仍待专门验证。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-19",
+      "children": [
+        {
+          "type": "text",
+          "value": "接入中修正"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "code",
+            "value": ".bp-minor"
+          },
+          {
+            "type": "text",
+            "value": " 和 "
+          },
+          {
+            "type": "code",
+            "value": ".bp-facts"
+          },
+          {
+            "type": "text",
+            "value": " 不再用 margin 简写覆盖调用方的间距类。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "窄屏构成条占整行，图例取消桌面缩进；桌面指标列按内容分配宽度，数值与单位不拆行。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "演示增加禁用分段项，并补充无效选中值、禁用选中值、全禁用及空列表的键盘入口回归测试。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "复制示例改为复制当前演示链接，等待剪贴板写入成功再显示完成；失败显示重试，不用计时器伪造结果。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-20",
+      "children": [
+        {
+          "type": "text",
+          "value": "验证结果"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "检查"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "结果"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "code",
+              "value": "blueprint-theme"
+            },
+            {
+              "type": "text",
+              "value": " + "
+            },
+            {
+              "type": "code",
+              "value": "blueprint-components"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "12/12 通过（原 5 项主题测试、补丁 6 项、追加 1 项回归）"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "全量测试"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "1737/1737 通过；失败、跳过均为 0"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "字号检查"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "293 个自有 TSX 通过，未放宽规则"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "数学字体、TypeScript、vinext 构建"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "全部通过"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "四主题 × 1280px / 320px"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "8 组均已检查；页面及四组演示区块无横向溢出，窄屏标尺收起"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "键盘"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "横向与纵向方向键、Home/End、首尾循环、禁用项跳过正常；每组一个可用 Tab 入口"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "复制示例"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "浏览器实际写入后显示「已复制链接」；失败分支未做浏览器故障注入"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "v2 原页面回归"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "/next/foundations"
+            },
+            {
+              "type": "text",
+              "value": " 确认内容区网格、1.5px 墨线、A/B 与 SHEET 编号；320px 收起框线和刻度"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "控制台"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "演示页检查期间未捕获 error"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "截图、构建与测试日志以及 "
+        },
+        {
+          "type": "code",
+          "value": "browser-checks.json"
+        },
+        {
+          "type": "text",
+          "value": " 保存在本地忽略目录 "
+        },
+        {
+          "type": "code",
+          "value": ".sites-runtime/blueprint-v3/"
+        },
+        {
+          "type": "text",
+          "value": "。未提交、推送、合并或发布。以上为 Builder 自测；当时未验的图表数据序列配色在下方 v4 记录中更新，Tabs 窄屏问题和未完成的全组件验收范围继续保留。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-21",
+      "children": [
+        {
+          "type": "text",
+          "value": "v4 图表配色接入与验证（2026-10-13）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按 "
+        },
+        {
+          "type": "code",
+          "value": "patch-v4/README.md"
+        },
+        {
+          "type": "text",
+          "value": " 应用 6 个文件，并手动适配 "
+        },
+        {
+          "type": "code",
+          "value": "config.ts"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "theme.css"
+        },
+        {
+          "type": "text",
+          "value": " 和 "
+        },
+        {
+          "type": "code",
+          "value": "blueprint.css"
+        },
+        {
+          "type": "text",
+          "value": "。沿用现有 ECharts / Recharts，未改 coss、依赖、组件目录或业务逻辑；保留 BP-05 网格与投影分隔线修复。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "code",
+            "value": "chart-palette.ts"
+          },
+          {
+            "type": "text",
+            "value": " 集中提供主题系列色、箱线图形色与默认连续色阶。蓝图第 1 系列为 #1D5FBF，第 2 系列为 #16181D，第 3–6 系列为 #B8266E / #2B8050 / #A57013 / #6B7280；调用方显式颜色仍优先。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "ECharts 第 1 系列实色，后五系列依次为两种方向斜线、点阵、横线、竖线。用临时浏览器夹具验证六系列柱形与堆叠面积图，夹具入口已从 "
+          },
+          {
+            "type": "code",
+            "value": "public/"
+          },
+          {
+            "type": "text",
+            "value": " 移除，源文件与截图保留在忽略目录。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "箱线图普通线条 #16181D，选中线条 #1D5FBF，填充 #E4ECF8。热力图使用 #F3F5F8 → #88AADD → #1D5FBF，继续区分缺测与零值。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "轴线使用 "
+          },
+          {
+            "type": "code",
+            "value": "palette.line"
+          },
+          {
+            "type": "text",
+            "value": "，网格线仍使用 "
+          },
+          {
+            "type": "code",
+            "value": "border"
+          },
+          {
+            "type": "text",
+            "value": "；Recharts 只覆盖原本已显示的轴线，不强制开启隐藏的轴线。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "提示框为直角、1.5px 墨线与 6px 硬阴影。浏览器发现 ECharts 6.1 的 "
+          },
+          {
+            "type": "code",
+            "value": "richText"
+          },
+          {
+            "type": "text",
+            "value": " 内部固定 1px，忽略配置的 "
+          },
+          {
+            "type": "code",
+            "value": "borderWidth"
+          },
+          {
+            "type": "text",
+            "value": "；已在蓝图 CSS 中对带硬阴影与墨线的 SVG 提示框补充适配。SVG 先画描边再画填充，所以用 3px 描边得到外侧可见的 1.5px 边框，保留富文本渲染方式。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-22",
+      "children": [
+        {
+          "type": "text",
+          "value": "自测与浏览器证据"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "v4 初次接入时：相关 29/29、全量 1743/1743 通过，TypeScript、数学字体、字号检查与构建通过。收尾独立复跑新增的 "
+          },
+          {
+            "type": "code",
+            "value": "blueprint-charts"
+          },
+          {
+            "type": "text",
+            "value": " 6/6 通过。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "配色测试逐项核对核心主题系列色、形状色与连续色阶；蓝图系列色在白底和页面底色上均超过 3:1，1001 个连续色阶采样的数值标签均超过 4.5:1，亮度单调。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "1280px：实际检查六系列柱形、面积、箱线、热力、分组散点、趋势、比较；确认箱线选择回调与蓝色选中态、热力图缺测标识、散点圆形/菱形，以及两种引擎的提示框。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "四主题回归：六系列柱形/面积夹具与正式趋势页检查通过；核心三主题没有生成蓝图图案。Recharts 核心主题仍为 8px 圆角、1px 边框、无新增阴影；蓝图为 0px / 1.5px / 6px 硬阴影。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "320px：检查箱线、分组散点、趋势和热力图；默认热力图标签拥挤已如实保留，不据页面无溢出宣称布局验收通过。未做真实打印、移动设备或读屏器验收。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "浏览器检查期间未捕获 console error。测试日志、图案夹具、截图、"
+          },
+          {
+            "type": "code",
+            "value": "browser-checks.json"
+          },
+          {
+            "type": "text",
+            "value": " 和 v4 范围 diff 位于 "
+          },
+          {
+            "type": "code",
+            "value": ".sites-runtime/blueprint-v4/"
+          },
+          {
+            "type": "text",
+            "value": "。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-23",
+      "children": [
+        {
+          "type": "text",
+          "value": "并行工作树说明"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "收尾时同一工作树另有环形图、雷达图、紧凑热力图及记录列表改动，目录从 103 增至 105。这些改动均保留，不归入 v4 交付。最后一次全量检查为 1761/1766，5 项目录数量断言失败，均为 "
+        },
+        {
+          "type": "code",
+          "value": "105 !== 103"
+        },
+        {
+          "type": "text",
+          "value": "："
+        },
+        {
+          "type": "code",
+          "value": "blueprint-components"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "dialog-layout"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "facet-filter"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "grading-review-components-route"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "segmented-bar"
+        },
+        {
+          "type": "text",
+          "value": "。类型、构建和字号检查（296 个自有 TSX）仍通过；因此本次不能把当前混合工作树称为全量通过。目录数量断言需随并行组件扩展一起更新。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮仅更新本地文件；未提交、推送、合并或发布。以上均为 Builder 自测，不是独立 Review 结论。"
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+      "sha256": "db5549511701346cad4a8077ce62bd42080e361072cc62bf4b31a015d5de5584"
+    },
+    {
+      "source": "docs/blueprint/evidence/v9/browser-results.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/browser-results.json.txt",
+      "sha256": "7d750bc504da6203457eadbe7b930af0b3a03f25e22b600d87a14e60e046e5f0"
+    },
+    {
+      "source": "docs/blueprint/evidence/v9/windows-test-analysis.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/windows-test-analysis.md",
+      "sha256": "d7b445b35e0e19acf1070a85fdcae9027219a7be1f078cf494c3d3e195220213"
+    },
+    {
+      "source": "docs/blueprint/screens/v9/blueprint-1280.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/blueprint-1280.png",
+      "sha256": "be6bf20aa5eb0bf9f4a537d40fa43d7fd9c34118fd975532ab3c8813dbefa7ff"
+    },
+    {
+      "source": "docs/blueprint/screens/v9/primary-focus-320.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/primary-focus-320.png",
+      "sha256": "15e87c8944babd5a5d91994b094926facddaecbe1f15f0366709009a3e94e03b"
+    },
+    {
+      "source": "docs/blueprint/screens/v9/pane-focus-320.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/pane-focus-320.png",
+      "sha256": "fc8b541d006ade070df13f7b989769d1551e2531a1723d937b7545018401acc7"
+    },
+    {
+      "source": "docs/blueprint/screens/v9/reading-320.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/reading-320.png",
+      "sha256": "a2db3743bac0c3d1dad18344cc20a7e058796feeb8d87c714a2ad5d4cad60fed"
+    },
+    {
+      "source": "docs/experiments/prism-blueprint-v0.2.md",
+      "href": "/foundations/blueprint/guide-assets/docs/experiments/prism-blueprint-v0.2.md",
+      "sha256": "3062e5208dbfe827ee3b28c53f2b978099e396957b86e7f9bf564aba71c63a0b"
+    },
+    {
+      "source": "docs/blueprint/evidence/source-audit-20261015/computed-styles.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/computed-styles.json.txt",
+      "sha256": "d27bd23dc84e60f389fe054f38909bb6c69341edfc7cb8d8b7564bc835270ece"
+    },
+    {
+      "source": "docs/blueprint/evidence/source-audit-20261015/probe.js",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/probe.js.txt",
+      "sha256": "68739efef9f2fedc6cfd2d3c0402265d2095aed8641eab76e0b743a624e0c176"
+    },
+    {
+      "source": "docs/blueprint/evidence/source-audit-20261015/states.js",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.js.txt",
+      "sha256": "065adb9dfc6e158b6ad72ae4174e346e6188f838147879a510404f5ec61df58c"
+    },
+    {
+      "source": "docs/blueprint/evidence/source-audit-20261015/states.log",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.log.txt",
+      "sha256": "aca0d9824526f54155e9588207f4ff6bd3ff29ef92de685a86a68fe6dfc3fefd"
+    },
+    {
+      "source": "docs/blueprint/screens/source-audit-20261015/light-1280.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-1280.png",
+      "sha256": "5db4eb1836f36a03b989f445754c5ac0dc001a5910503e31177df66c41a6ce58"
+    },
+    {
+      "source": "docs/blueprint/screens/source-audit-20261015/light-390.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-390.png",
+      "sha256": "8b16af379426a64d030460c58a2bceaffa4e1ba7464a8bd991ed9f3e25564266"
+    },
+    {
+      "source": "docs/blueprint/screens/source-audit-20261015/dark-1280.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-1280.png",
+      "sha256": "0babe01ea7c4d1825485d0d2582723986513e8285c554e2e506dae9ffae329a0"
+    },
+    {
+      "source": "docs/blueprint/screens/source-audit-20261015/dark-390.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-390.png",
+      "sha256": "955d5a23612ad08b34cda5b90f0e0306dfb014fe12396289c6f01a51f734df83"
+    },
+    {
+      "source": "docs/blueprint-theme.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
+      "sha256": "10cca974f8623832314614b980a9ed702f558fc9344223aa4097b6d70ee6f8e6"
+    }
+  ]
+}
