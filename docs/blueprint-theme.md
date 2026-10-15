@@ -10,19 +10,75 @@
 
 ## 完善路线与当前执行（2026-10-15）
 
-用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。本轮执行第一批：收敛现有蓝图样板、补齐关键操作状态、验证墨底焦点，并将本文件作为单一来源提供站内阅读入口。此次批准不等于所有页面的视觉验收已完成。
+用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板第一批已完成容器布局、关键操作状态、墨底焦点与站内规范入口；当前按用户“同意。批准，开始实施”的明确授权，转入下述 12 类通用基础组件的 Blueprint 首批完善。Agent 业务页面与布局暂缓，现阶段先验证通用控件和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。
 
 | 阶段 | 目标 | 完成依据 |
 | --- | --- | --- |
 | 1 · 视觉规则 | 明确网格、双框、编号、标题、留白及主要行动的适用位置 | 现有蓝图样板的前后对照与长内容检查 |
-| 2 · 组件状态 | 完善禁用、焦点、按下、选择、只读与错误反馈 | 相关组件的真实键盘、鼠标和窄屏验证 |
+| 2 · 组件状态 | 当前首批完善 Button、Input、Textarea、Select、Checkbox、RadioGroup、Switch、Tabs、Card、Badge、Alert、Dialog | 按下方矩阵记录真实键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验 |
 | 3 · 密集内容 | 检查列表、图表、小图例、连续色阶及打印 | 可读性、零值与缺测、灰度和原生打印证据 |
-| 4 · 教师场景 | 在 Agent、试卷阅读和学情报告中验证主题密度 | 沿用既有业务流程的代表性场景评审 |
+| 4 · 教师场景（暂缓） | 待通用组件收敛后，再规划 Agent、试卷阅读和学情报告的主题密度 | 当前不改 Agent 业务布局；后续沿用既有业务流程进行独立场景评审 |
 | 5 · 发布候选 | 收敛主题隔离、核心主题回归与剩余限制 | 独立 Review、视觉确认、发布版本及可追溯证据 |
 
-第一批保持第四主题、核心三主题及轻量 Blueprint 页面实验的既有边界；不修改冻结 coss 源码、不增加依赖、不把示例中的按钮点击解释为真实业务执行。具体实现、验证与剩余问题统一记录在 [蓝图当前状态](blueprint/STATUS.md)，本表不代替验收结论。
+每批保持第四主题、核心三主题及轻量 Blueprint 页面实验的既有边界；不修改冻结 coss 源码、不增加依赖、不把示例中的按钮点击解释为真实业务执行。具体实现、验证与剩余问题统一记录在 [蓝图当前状态](blueprint/STATUS.md)，本表不代替验收结论。
 
 站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。
+
+### 通用基础组件首批 · 2026-10-15
+
+本轮开工基线为 `55f25df36af5a8aaaa2374fed0427d9379b501e2`，对应 Site v119。范围限定上述 12 类现有组件在第四主题下的适配和对照夹具，不新增组件目录条目、公共 API、依赖或业务流程。原始 coss 的状态、键盘、焦点管理与受控属性继续承担交互；展示夹具只管理输入、选择、弹层开合等可逆演示状态，不产生保存、批阅、发布或 Agent 执行事实。
+
+设计边界沿用现有主题令牌和语义字号：直角、结构墨线与次级分隔线按层级使用，选中状态仍由真实属性驱动；Radio 保留圆形识别。硬阴影用于少量主要行动和浮层，静态 Card、普通 Badge 与说明 Alert 不因主题适配变成可点击对象。输入标签常驻，错误同时保留文字与状态标识；只读与禁用分别表达，不能仅靠文字变淡说明原因。蓝色焦点在墨底上的分隔层沿用既有规则，不删除 coss 的焦点机制。
+
+所有既有组件的视觉覆盖限定在 `[data-prism-theme="blueprint"]`，排除嵌套核心主题预览的根、后代和伪元素。核心三主题的令牌、默认外观与交互保持原意；轻量 Blueprint v0.4 仍沿用原 coss / Prism 外观。Dialog、Select 的 Portal 需要单独核对真实挂载位置和主题，不能用触发器的主题推定浮层已隔离。装饰标尺维持上一轮授权的 14px / 10px，不扩散其局部字号例外。
+
+#### 复用依据（本轮离线核对）
+
+固定 coss 来源为 `e937becd2d5ffb5c621eed6f8b1f223cbb6051e7`，以 `lib/prism-next/config.ts` 与 `vendor/coss-manifest.json` 记录为准。本轮读取 `components/coss/` 下的 `button.tsx`、`input.tsx`、`textarea.tsx`、`select.tsx`、`checkbox.tsx`、`radio-group.tsx`、`switch.tsx`、`tabs.tsx`、`card.tsx`、`badge.tsx`、`alert.tsx`、`dialog.tsx`，以及既有 `components/prism-next/badge.tsx` 语义适配和 forms / navigation / feedback 示例。这些原语已提供当前所需状态与结构，无需重建基础组件。
+
+| 实际核对的本地材料 | 可复用内容 | 本轮取舍 |
+| --- | --- | --- |
+| `demos/selection-particles.tsx`：p-select-6 / 18 / 7 / 21 | 分组、带说明的选项、多选摘要、随内容确定宽度 | 复用既有 Select 结构，首批只验证所展示的单选状态、长中文、禁用项及浮层；不据已有多选示例声称全部 Select 用法完成验收 |
+| `demos/dialog-particles.tsx`：p-dialog-5 / 4 | 长内容与固定操作区、受控开合及关闭返回 | 沿用 Dialog Header / Panel / Footer 与真实焦点管理；不复制 p-dialog-4 本地演示的模拟保存计时器、失败开关或业务结果文案 |
+| `demos/input-particles.tsx`：p-input-group-22 | 常驻标签、输入与清除按钮组合、清除后返回输入 | 作为本地输入组合参考；InputGroup 不扩入本轮 12 类范围，不新增搜索或业务筛选能力 |
+| [v7 particles 检索摘要](blueprint/evidence/v7/reuse.json) 与 [v8 工程记录](blueprint/evidence/v8/inspection.md) | 历史 p-tabs-1…15 元信息与 Tabs 组合判断 | 当前机器的历史 registry / p-tabs-1 缓存路径均不存在；本轮只复核已归档摘要，实际实现复用当前 coss Tabs 及 `demos/navigation.tsx` 的局部滚动方式 |
+
+本轮未联网刷新 coss / particles 注册表，未声称读取不可用缓存中的完整源码或穷举最新上游；没有复制新第三方代码。任务为既有通用基础组件的主题适配，不涉及 Agent 执行组件新增，Beautiful UI 的 Agent 组件检索不适用于本轮。
+
+#### 首批样例与已验范围
+
+样例位于 `/next/foundations/blueprint#common-components`。本轮 [交互记录](blueprint/evidence/common-20261015/interactions.json) 的 31 项检查全部通过；这是所列样例的操作证据，不表示 12 类组件的全部变体、状态组合或所有内容类型均已验收。下表按当前实际样例和已做操作记录，未覆盖项继续保留。
+
+| 组件 | 当前样例 | 本轮已验与覆盖边界 |
+| --- | --- | --- |
+| Button | 主要、描边次要、ghost、图标、危险描边、禁用和固定加载 | 图标操作产生本页说明，禁用及加载不可用；没有真实任务调用。没有逐个穷举全部尺寸及 hover / pressed 组合 |
+| Input | 有效值、必填错误、只读、禁用 | 输入非空值解除错误，错误外框为红色；焦点落在单一外层 2px 外框，内层没有重复外框；只读与禁用属性已核对。未单独验系统剪贴板复制 |
+| Textarea | 中文多行、必填错误、只读、禁用 | 非空输入解除错误，单一外层焦点与只读 / 禁用已核对；本轮文字样例未加入真实 MathML |
+| Select | 单选、必填错误、禁用触发器及禁用选项、较长中文选项 | 键盘选择与校验、禁用项不可选、Escape 关闭和返回焦点已验；真实 Portal 挂在样例容器内。未扩验多选与全部定位组合 |
+| Checkbox | 可选、已选禁用、部分选中禁用、已选只读错误 | Space 可切换；已选错误样例的红色边框与 indicator 内描边已测，保留错误说明。部分选中样例为固定禁用事实，不声称已验可交互半选转换 |
+| RadioGroup | 个人 / 团队单选、全校禁用、长中文标签 | 方向键选择并跳过禁用项；维持单选与圆形识别。不产生真实权限变更 |
+| Switch | 开 / 关、固定禁用 | 键盘切换与文字反馈已验；开为墨底、关为次级底并有轮廓，状态位置保留。未将背景采样称作完整对比度审计 |
+| Tabs | 分段式与下划线式、长标签、禁用项 | 两种样式的键盘切换已验；禁用项可获焦点但不能激活，这是当前 Base UI 行为。320px 末项外侧焦点曾贴近裁切边缘，本夹具改为内侧 2px 蓝线加纸色隔离，已完成稳定焦点测量和目视复验；不要求禁用 Tab 跳过焦点 |
+| Card | 静态 Card 与 CardFrame、名称和类型说明 | 卡片无 button 角色；Dialog 更新仅反映到本页卡片。当前正文为文字，未据此验收卡片内真实公式或交互卡片 |
+| Badge | outline、info、success、warning、error 五种固定状态 | 五种状态文字存在并保持语义色；未扩验交互 Badge、所有尺寸或超长标签 |
+| Alert | 信息、成功、警告、错误四种固定说明 | 标题与文案存在；固定状态使用 note，不宣告真实业务完成。未扩验动态实时播报和带操作 Alert |
+| Dialog | 材料名称与类型编辑、校验、取消 / 关闭及本页保存 | 初始焦点、错误后聚焦、焦点限制、内 Select 的 Escape、关闭返回及本页卡片更新已验；底部圆角已修正。当前两字段样例不代表长正文滚动、真实公式和所有嵌套 Dialog 均通过 |
+
+#### 实施结果与证据边界
+
+本轮按实际着色面修正 Input / Textarea 的外层边框与单一焦点、Select 弹层内部表面、Checkbox indicator、Switch 关闭状态、CardFrame 裁切、下划线 Tabs 与 Dialog 底部几何。错误与危险语义边框保留对应颜色；选中 Checkbox 的错误指示增加红色内描边。适配仅在蓝图主题生效；未修改冻结 coss、依赖或核心主题令牌。起点测量见 [before.json](blueprint/evidence/common-20261015/before.json)。
+
+[四主题矩阵](blueprint/evidence/common-20261015/matrix.json) 覆盖 light / paper / dark / blueprint × 320px / 768px / 1280px，12 组均显示 12 类样例且无页面横向溢出。Dialog 与其内部 Select 真实挂载在同一主题容器中：三核心全局主题与全局蓝图内对应核心预览的圆角、背景、文字、边框和投影逐项相等；全局 light 内显式 blueprint 的反向对照也相等。此结论限定记录中的浮层样例与计算属性，不是全组件像素回归或所有 Portal 宿主组合的保证。
+
+[正式路由复验](blueprint/evidence/common-20261015/routes.json) 另检查 12 类组件页及 InputGroup 回归页，在 320px / 1280px 共 26 次访问均返回 200，页面宽度与视口一致；InputGroup 内部无样式输入继续为 border 0，Dialog 页的路由采样不替代上方实际开合检查。文件同时记录已选错误 Checkbox 和 Dialog 底部方角。Select 在打印媒介下的投影为 none，仅属于该属性检查，未完成原生打印预览或实体打印。
+
+Tabs 以 [final-focus.json](blueprint/evidence/common-20261015/final-focus.json) 的稳定采样为最终焦点依据，替代路由记录中尚在投影过渡的快照：激活与 focus-visible 均为 true，蓝色 outline 为 2px、offset 为 −3px、纸色内描边为 4px；320px 页面无横溢，[最终截图](blueprint/screens/common-20261015/blueprint-320-tabs.png) 已目视复验。
+
+代表截图：[蓝图桌面](blueprint/screens/common-20261015/blueprint-1280-foundations.png)、[蓝图 768px](blueprint/screens/common-20261015/blueprint-768-foundations.png)、[蓝图 320px](blueprint/screens/common-20261015/blueprint-320-foundations.png)、[已选 Checkbox 错误](blueprint/screens/common-20261015/blueprint-checkbox-error.png)、[Dialog 底部](blueprint/screens/common-20261015/blueprint-dialog-footer.png)、[蓝图内 dark 浮层](blueprint/screens/common-20261015/portal-blueprint-global-local-dark.png)、[light 内蓝图浮层](blueprint/screens/common-20261015/portal-light-global-local-blueprint.png)。
+
+CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/blueprint-css-zoom-200.png)，测量未出现页面横向溢出；这不是浏览器原生 200% 缩放。尝试 Ctrl++ 后 viewport / DPR 均未改变，因此原生缩放仍未验证。本轮未加入真实 MathML 公式内容，也未完成已选错误 Radio、真机、读屏器、完整对比度审计、长内容 Dialog、实体打印、全站像素回归及 Agent 业务场景；不把既往样板的公式结果转记为本轮通过。
+
+工程检查已运行：数学字体、语义字号（307 个 owned TSX）、生产构建与 TypeScript 通过。全量初跑为 1949 项 / 1686 通过 / 263 失败，其中 2 项是规范源文档更新后尚未同步生成物，其余 261 项与标尺轮既有失败描述相同；Blueprint 初跑为 39 项 / 37 通过 / 2 项同类生成物失败，不写成全部通过。同步生成物后，Blueprint 专项 39/39 通过，最终全量为 1949 项 / 1688 通过 / 261 失败，与标尺基线失败集合一致；构建、类型、字体和字号检查通过。独立 Review 为 PASS WITH NOTES，无阻断。详见 [本轮检查](blueprint/evidence/common-20261015/checks.md)、[失败集合对照](blueprint/evidence/common-20261015/final-failure-delta.json)、[审查记录](blueprint/evidence/common-20261015/review.md) 与 [当前状态](blueprint/STATUS.md)；发布版本以部署记录为准。
 
 ### Site、GitHub 与本地同步（2026-10-15）
 

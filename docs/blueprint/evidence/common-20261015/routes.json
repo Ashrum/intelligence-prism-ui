@@ -1,0 +1,1568 @@
+{
+  "date": "2026-10-15T15:22:16.195Z",
+  "routes": [
+    {
+      "route": "button",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(198, 40, 40)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "button",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(198, 40, 40)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 95, 191)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.1)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "input",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(198, 40, 40)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "input",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(198, 40, 40)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "textarea",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "textarea-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "textarea",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "textarea-control",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "select",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "select",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "select-trigger",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "checkbox",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "checkbox",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "radio-group",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio-indicator",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "radio-group",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio-indicator",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "switch",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "switch",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "switch-thumb",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 1px 3px 0px, oklab(0 0 0 / 0.05) 0px 1px 2px -1px"
+        }
+      ]
+    },
+    {
+      "route": "switch",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "switch",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "switch-thumb",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0 0 0 / 0.05) 0px 1px 3px 0px, oklab(0 0 0 / 0.05) 0px 1px 2px -1px"
+        }
+      ]
+    },
+    {
+      "route": "tabs",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "tabs-list",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-list",
+          "border": "0px none rgb(75, 82, 96)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "tabs",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "tabs-list",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-list",
+          "border": "0px none rgb(75, 82, 96)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "tabs-tab",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "card",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio-indicator",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "card",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio-indicator",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(22, 24, 29)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "radio",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "3.35544e+07px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "card",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "badge",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53604 -0.100453 0.0471548 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.764905 0.0410493 0.133744 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53858 0.173048 0.0871324 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53858 0.173048 0.0871324 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "badge",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(243, 245, 248)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53604 -0.100453 0.0471548 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.764905 0.0410493 0.133744 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53858 0.173048 0.0871324 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53858 0.173048 0.0871324 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.08)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        },
+        {
+          "slot": "button",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(255, 255, 255)",
+          "shadow": "none"
+        },
+        {
+          "slot": "badge",
+          "border": "1px solid rgba(0, 0, 0, 0)",
+          "borderRadius": "0px",
+          "background": "rgb(29, 95, 191)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "alert",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.501092 -0.0323436 -0.161344 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.04)",
+          "shadow": "none"
+        },
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.53604 -0.100453 0.0471548 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53604 -0.100453 0.0471548 / 0.04)",
+          "shadow": "none"
+        },
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.764905 0.0410493 0.133744 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.764905 0.0410493 0.133744 / 0.04)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "alert",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.501092 -0.0323436 -0.161344 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.501092 -0.0323436 -0.161344 / 0.04)",
+          "shadow": "none"
+        },
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.53604 -0.100453 0.0471548 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.53604 -0.100453 0.0471548 / 0.04)",
+          "shadow": "none"
+        },
+        {
+          "slot": "alert",
+          "border": "1px solid oklab(0.764905 0.0410493 0.133744 / 0.32)",
+          "borderRadius": "0px",
+          "background": "oklab(0.764905 0.0410493 0.133744 / 0.04)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "dialog",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "dialog",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "checkbox",
+          "border": "1px solid rgb(29, 32, 38)",
+          "borderRadius": "0px",
+          "background": "rgb(246, 246, 243)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "input-group",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "slots": [
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    },
+    {
+      "route": "input-group",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "slots": [
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input-control",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        },
+        {
+          "slot": "input",
+          "border": "0px solid rgb(214, 218, 225)",
+          "borderRadius": "0px",
+          "background": "rgba(0, 0, 0, 0)",
+          "shadow": "none"
+        }
+      ]
+    }
+  ],
+  "errorCheckbox": {
+    "checked": "true",
+    "border": "rgb(198, 40, 40)",
+    "indicatorShadow": "rgb(198, 40, 40) 0px 0px 0px 1px inset"
+  },
+  "dialogFooterRadius": "0px",
+  "tabsFocus": {
+    "outline": "rgb(29, 95, 191) solid 2px",
+    "offset": "-3px",
+    "shadow": "rgba(255, 255, 255, 0.82) 0px 0px 0px 3.27574px inset"
+  }
+}
