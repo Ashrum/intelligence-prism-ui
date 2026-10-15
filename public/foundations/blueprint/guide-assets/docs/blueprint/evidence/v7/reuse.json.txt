@@ -1,0 +1,71 @@
+{
+  "source": ".sites-runtime/easyui-research-20261005/coss-registry.json",
+  "refreshed": false,
+  "tabs": [
+    {
+      "name": "tabs"
+    },
+    {
+      "name": "p-tabs-1",
+      "description": "Segmented control built with tabs"
+    },
+    {
+      "name": "p-tabs-2",
+      "description": "Tabs with underline"
+    },
+    {
+      "name": "p-tabs-3",
+      "description": "Vertical tabs"
+    },
+    {
+      "name": "p-tabs-4",
+      "description": "Vertical tabs with underline"
+    },
+    {
+      "name": "p-tabs-5",
+      "description": "Tabs with full rounded triggers"
+    },
+    {
+      "name": "p-tabs-6",
+      "description": "Tabs with icon before name"
+    },
+    {
+      "name": "p-tabs-7",
+      "description": "Tabs with icon before name and underline"
+    },
+    {
+      "name": "p-tabs-8",
+      "description": "Tabs with icon only"
+    },
+    {
+      "name": "p-tabs-9",
+      "description": "Tabs with underline and icon on top"
+    },
+    {
+      "name": "p-tabs-10",
+      "description": "Tabs with count badge"
+    },
+    {
+      "name": "p-tabs-11",
+      "description": "Vertical tabs with underline and icon before name"
+    },
+    {
+      "name": "p-tabs-12",
+      "description": "Tabs with icon only and count badge"
+    },
+    {
+      "name": "p-tabs-13",
+      "description": "Tabs with icon only and grouped tooltips"
+    },
+    {
+      "name": "p-tabs-14",
+      "description": "Small segmented control built with tabs"
+    },
+    {
+      "name": "p-tabs-15",
+      "description": "Large segmented control built with tabs"
+    }
+  ],
+  "readSource": ".sites-runtime/easyui-research-20261005/coss-source/p-tabs-1.tsx",
+  "decision": "No scroll-specific candidate in cached descriptions; read p-tabs-1 source, reuse existing coss Tabs and local Agent demo scroll-wrapper pattern."
+}

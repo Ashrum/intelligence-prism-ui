@@ -5,6 +5,7 @@ import { Info } from "lucide-react"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
 import { BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
 const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
@@ -30,6 +31,7 @@ export function BlueprintComponentsDemo() {
     }
   }
   return <div className="bp-demo space-y-8">
+    <BlueprintFoundationDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
       <div className="bp-demo-columns">
