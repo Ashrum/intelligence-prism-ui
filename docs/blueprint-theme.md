@@ -2,6 +2,12 @@
 
 2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 `app/(next)/next/theme.css`（颜色令牌）、`app/(next)/next/blueprint.css`（几何与 `bp-*` 样式）及 [React 封装](../components/prism-next/blueprint/blueprint.tsx)。演示页为 `/next/foundations/blueprint`，从侧栏「蓝图组件」进入。
 
+### 标尺密度微调 · 2026-10-15
+
+按用户“降低宽度、减小字号，具体数据由你决策并实施”的授权，第四主题的外侧标尺带从 18px 收至 14px（约减少22%），坐标数字从 12px 收至 10px（约减少17%）。四边厚度、端点偏移与内框共用同一尺寸，保持工程图纸的连续结构；40px 内容侧内距、标题与 SHEET 编号不缩小，让标尺退到辅助层级。采用 rem，根字号放大25%时标尺带与数字分别变为17.5px与12.5px。
+
+10px 仅为本次明确授权的 aria-hidden 装饰坐标例外，不新增公共字号令牌、不改变 ui-meta 或图表刻度。规则限定 blueprint，并排除嵌套核心主题预览；760px 媒体或容器断点继续隐藏标尺。Chrome 实测四主题 320px / 1280px，页面无横向溢出，蓝图默认及放大后的坐标无裁切。见 [本轮测量](blueprint/evidence/ruler-20261015/browser-results.json)、[调整前](blueprint/screens/ruler-20261015/blueprint-1280-before.png) 与 [调整后](blueprint/screens/ruler-20261015/blueprint-1280-after.png)；当前检查和限制见 [状态记录](blueprint/STATUS.md)。
+
 ## 完善路线与当前执行（2026-10-15）
 
 用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。本轮执行第一批：收敛现有蓝图样板、补齐关键操作状态、验证墨底焦点，并将本文件作为单一来源提供站内阅读入口。此次批准不等于所有页面的视觉验收已完成。
@@ -144,7 +150,7 @@
 
 1. 直角：控件、卡片、徽标、浮层与品牌标识圆角归零；Radio 保持圆形。
 2. 两级线：结构 1.5px `--line`，内部分隔 1px `--border`，虚线只用于分组。
-3. 图纸：页面铺 40px 网格；区块用 `bp-sheet`，含 18px 内框和 `bp-ruler` 坐标标尺。
+3. 图纸：页面铺 40px 网格；区块用 `bp-sheet`。蓝图主题的内框与四边 `bp-ruler` 标尺统一为 14px（0.875rem），装饰坐标为 10px（0.625rem）/ 1 行高；三套核心主题中显式使用该组件时保留 18px / 12px。
 4. 编号：区块以 `bp-sheet-id` 墨底字母开头，右上角标 `bp-sheet-no`；表头、小标题用等宽大写。
 5. 硬阴影：主要行动与浮层用不模糊的偏移阴影，替代 coss 柔和投影。
 
