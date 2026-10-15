@@ -2,8 +2,8 @@ import type { Metadata } from "next"
 import { BlueprintExperiment } from "./blueprint-experiment"
 
 export const metadata: Metadata = {
-  title: "Prism Blueprint v0.2 · 页面风格实验",
-  description: "C · 轻量 Blueprint。复用智能曜彩现有组件，比较页面结构与阅读节奏。",
+  title: "Prism Blueprint v0.4 · 主画面精修",
+  description: "以教学任务为主画面的 Blueprint 页面实验：保留官网图纸结构，收紧评审说明与图签，完整呈现证据标题和来源。",
 }
 
 export default function BlueprintExperimentPage() {

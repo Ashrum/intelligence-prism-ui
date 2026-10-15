@@ -34,7 +34,7 @@ export function BlueprintSheet({ letter, sheetNo, title, description, rulers = t
     <header className="bp-sheet-head relative">
       {letter && <span aria-hidden="true" className="bp-sheet-id">{letter}</span>}
       <div className="min-w-0 flex-1">
-        <Heading id={id} className="text-page-title text-(--heading)">{title}</Heading>
+        <Heading id={id} className="text-section-title text-(--heading)">{title}</Heading>
         {description && <p className="mt-1 text-ui-hint text-muted-foreground">{description}</p>}
       </div>
       {sheetNo && <span className="bp-sheet-no">SHEET {sheetNo}</span>}

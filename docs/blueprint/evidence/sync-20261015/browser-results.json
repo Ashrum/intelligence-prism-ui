@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-15T14:05:23.516Z",
+  "themes": [
+    "浅色",
+    "暖纸",
+    "深色",
+    "蓝图"
+  ],
+  "results": [
+    {
+      "route": "experiments/blueprint",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "title": "高二数学 · 单元试卷分析",
+      "theme": "blueprint"
+    },
+    {
+      "route": "experiments/blueprint",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "title": "高二数学 · 单元试卷分析",
+      "theme": "blueprint"
+    },
+    {
+      "route": "foundations/blueprint",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "title": "蓝图组件",
+      "theme": "blueprint"
+    },
+    {
+      "route": "foundations/blueprint",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "title": "蓝图组件",
+      "theme": "blueprint"
+    },
+    {
+      "route": "foundations/blueprint/guide",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "title": "Foundations · 第四主题「蓝图」",
+      "theme": "blueprint"
+    },
+    {
+      "route": "foundations/blueprint/guide",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "title": "Foundations · 第四主题「蓝图」",
+      "theme": "blueprint"
+    }
+  ],
+  "nav": [
+    "基础规范",
+    "蓝图组件示例",
+    "轻量页面实验",
+    "下载 Markdown 原文"
+  ],
+  "links": [
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/browser-results.json.txt",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/v9/windows-test-analysis.md",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/blueprint-1280.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/primary-focus-320.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/pane-focus-320.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/v9/reading-320.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/experiments/prism-blueprint-v0.2.md",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/computed-styles.json.txt",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/probe.js.txt",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.js.txt",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/states.log.txt",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-1280.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/light-390.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-1280.png",
+      "status": 200
+    },
+    {
+      "url": "/foundations/blueprint/guide-assets/docs/blueprint/screens/source-audit-20261015/dark-390.png",
+      "status": 200
+    }
+  ],
+  "errors": []
+}
