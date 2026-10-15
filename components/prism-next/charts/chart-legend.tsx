@@ -1,6 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { CircleHelp } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
 import { chartToneColor, type ChartTone, type ChartTheme } from "@/lib/prism-next/polar-chart-options"
@@ -29,7 +30,7 @@ export function ChartLegend({ items, align = "left", label = "图例", className
     {items.map((item, index) => <li key={item.id} data-legend-id={item.id} className="flex min-w-0 max-w-full items-start gap-2">
       <svg aria-hidden="true" focusable="false" width={24} height={16} viewBox="0 0 24 16" className="mt-0.5 shrink-0" data-legend-marker={item.marker}><ChartMarker marker={item.marker} color={chartLegendColor(item, index, theme)} /></svg>
       <span className="text-ui-hint text-foreground"><span className="whitespace-normal [overflow-wrap:anywhere]">{item.label}</span></span>
-      {item.help != null && <Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" />} aria-label={`${item.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}
+      {item.help != null && <Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" className="text-muted-foreground hover:text-foreground" />} aria-label={`${item.label}：指标说明`}><CircleHelp size={14} className="size-3.5" aria-hidden="true" /></PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}
     </li>)}
   </ul>
 }
