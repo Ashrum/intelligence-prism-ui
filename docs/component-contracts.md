@@ -2362,6 +2362,7 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
 - Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
+- 蓝图编辑式标题（用户 2026-10-16 批准）：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px；章号保留默认 48×48 墨底块及 24px / 500 字形。间隔 12px，小节线 1px，章节保留结构墨线；普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行。`BlueprintSectionHeader` 接收 title、description、code、显式 kind / value 的 folio 与 headingLevel；`BlueprintSheet` 原 props 保持兼容并组合该 Header，只有 Sheet 生成图框和标尺。`BpMinor` 的可选 code / label 分离索引与中文，label 缺省回退 children，保留 id / className，可选 h2–h6；`BpFigCap` 继续为段落。Geist Mono 本地子集仅用于上述索引及英文短标签，中文 UI 与 STIX 数学字体保持原路径。完整 API、来源实值和实际验收范围见 [蓝图主题](blueprint-theme.md)；不新增组件目录，不将本轮扩展为 Agent 业务布局实施。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
 ### TextbookDirectory 内嵌形态

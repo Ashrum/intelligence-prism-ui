@@ -117,13 +117,24 @@
 /* PO 2026-10-15: smaller aria-hidden coordinates only; reading text keeps semantic sizes. */
 [data-prism-theme="blueprint"] .bp-sheet:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { --bp-ruler-size:0.875rem; }
 [data-prism-theme="blueprint"] .bp-ruler[aria-hidden="true"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { font-size:0.625rem; line-height:1; }
-.bp-sheet-head { display:flex; align-items:flex-start; gap:18px; padding-bottom:20px; margin-bottom:28px; border-bottom:var(--line-width) solid var(--line); }
-.bp-sheet-id { flex:none; width:48px; height:48px; display:grid; place-items:center; background:var(--head-bg); color:var(--head-fg); font-weight:700; font-size:var(--text-stat-display); }
-.bp-sheet-no { font:var(--text-ui-meta)/var(--text-ui-meta--line-height) var(--font-mono); color:var(--muted-foreground); letter-spacing:.08em; white-space:nowrap; align-self:flex-start; padding-top:4px; }
-.bp-minor { display:flex; align-items:center; gap:12px; margin-bottom:14px; font:600 var(--text-component-label)/var(--text-component-label--line-height) var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--muted-foreground); }
-.bp-minor::after { content:""; flex:1; height:1px; background:var(--border); }
-.bp-fig-cap { display:flex; gap:12px; align-items:baseline; font-size:var(--text-ui-meta); color:var(--muted-foreground); margin:12px 0 0; }
-.bp-fig-cap > span:first-child { color:var(--foreground); font-weight:600; letter-spacing:.06em; white-space:nowrap; }
+.bp-section-header { display:grid; grid-template-columns:minmax(0,1fr); align-items:start; gap:12px; padding-bottom:12px; margin-bottom:24px; border-bottom:var(--line-width) solid var(--line); }
+.bp-section-header[data-has-code] { grid-template-columns:minmax(0,auto) minmax(0,1fr); }
+.bp-section-main { min-width:0; }
+.bp-section-title-row { display:flex; flex-wrap:wrap; align-items:baseline; gap:12px; }
+.bp-section-title { flex:1 1 14rem; min-width:0; font-family:var(--font-sans); color:var(--heading); overflow-wrap:anywhere; }
+.bp-section-description { margin-top:8px; color:var(--muted-foreground); overflow-wrap:anywhere; }
+.bp-section-code,.bp-section-folio,.bp-minor-code,.bp-index,.bp-fig-cap > span:first-child { font-family:"Geist Mono Blueprint",var(--font-mono); font-size:var(--text-ui-meta); line-height:var(--text-ui-meta--line-height); font-weight:500; font-synthesis:none; font-variant-numeric:tabular-nums; letter-spacing:0; text-transform:none; }
+.bp-section-code { display:grid; place-items:center; width:48px; min-height:48px; background:var(--head-bg); color:var(--head-fg); font-size:var(--text-stat-display); line-height:var(--text-stat-display--line-height); overflow-wrap:anywhere; }
+.bp-section-folio { flex:0 1 auto; margin-inline-start:auto; font-weight:400; color:var(--muted-foreground); overflow-wrap:anywhere; }
+.bp-minor { display:flex; align-items:baseline; gap:12px; margin-bottom:16px; font-family:var(--font-sans); font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); font-weight:var(--text-block-title--font-weight); letter-spacing:0; text-transform:none; color:var(--heading); }
+.bp-minor-code { flex:0 1 auto; max-inline-size:45%; color:var(--muted-foreground); overflow-wrap:anywhere; }
+.bp-minor-label { min-width:0; overflow-wrap:anywhere; }
+.bp-minor::after { content:""; flex:1 0 24px; height:1px; align-self:center; background:var(--border); }
+.bp-sample-title { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; }
+.bp-index { overflow-wrap:anywhere; }
+.bp-fig-cap { display:flex; flex-wrap:wrap; gap:12px; align-items:baseline; font-size:var(--text-ui-meta); line-height:var(--text-ui-meta--line-height); color:var(--muted-foreground); margin:12px 0 0; }
+.bp-fig-cap > span:first-child { color:var(--foreground); }
+.bp-fig-cap > span:last-child { flex:1 1 12rem; min-width:0; overflow-wrap:anywhere; }
 
 .bp-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; max-width:100%; padding:10px 22px; border:var(--line-width) solid var(--line); background:var(--card); color:var(--foreground); font-weight:600; font-size:var(--text-ui-action); line-height:var(--text-ui-action--line-height); text-align:center; overflow-wrap:anywhere; cursor:pointer; transition:background .12s,color .12s,transform .12s,box-shadow .12s; }
 .bp-btn:not(:disabled):hover { background:var(--secondary); }
@@ -267,8 +278,7 @@
 
 @media (max-width:760px) {
   .bp-sheet { border-left:0; border-right:0; padding:36px 16px 28px; }
-  .bp-sheet::before,.bp-ruler,.bp-sheet-no { display:none; }
-  .bp-sheet-id { width:38px; height:38px; font-size:var(--text-section-title); }
+  .bp-sheet::before,.bp-ruler { display:none; }
   .bp-size-row { grid-template-columns:minmax(0,1fr) auto; gap:8px 12px; }
   .bp-size-bar { grid-column:1 / -1; grid-row:2; }
   .bp-size-legend { margin-left:0; }
@@ -281,9 +291,7 @@
 /* The sample sheet responds to its actual content width, including the open sidebar. */
 @container blueprint-demo (max-width:760px) {
   .bp-sheet { border-left:0; border-right:0; padding:28px 16px; }
-  .bp-sheet::before,.bp-ruler,.bp-sheet-no { display:none; }
-  .bp-sheet-head { gap:12px; }
-  .bp-sheet-id { width:38px; height:38px; font-size:var(--text-section-title); }
+  .bp-sheet::before,.bp-ruler { display:none; }
 }
 /* v8 · Keyboard outline and print output. Core previews retain their own styles. */
 [data-prism-theme="blueprint"] :focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)),

@@ -231,6 +231,8 @@ Where supported and relevant, this includes browser verification.
 
 Codex should return concise evidence rather than a long narrative.
 
+For the Blueprint experiment, the Product Owner approved a smaller-cycle cadence on 2026-10-16, recorded in `AGENTS.md` §10.2. Each cycle checks the changed content, affected interactions, and representative narrow layouts. Every three completed cycles requires full regression across the cumulative changes and an independent comprehensive review; `docs/blueprint/STATUS.md` records the count and completion state. Shared tokens, basic interaction behavior, or cross-component rules may require earlier expansion. First-time font adoption includes glyph coverage, failed-load fallback, and layout checks without automatically requiring a site-wide test run. A publication still requires a production build.
+
 ### Step 5 --- Claude performs independent Review
 
 Claude reviews what matters, including as appropriate:
@@ -246,6 +248,8 @@ Claude reviews what matters, including as appropriate:
 
 Claude should not repeat Codex's entire investigation unless evidence is
 insufficient.
+
+The Blueprint cadence preserves an independent lightweight diff and critical-evidence review before each publication. It schedules the comprehensive review every three completed cycles; it does not waive the Supervisor verdict, frozen boundaries, or review of higher-risk changes.
 
 ### Step 6 --- Claude issues one verdict
 

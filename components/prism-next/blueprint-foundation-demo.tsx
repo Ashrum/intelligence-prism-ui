@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { Textarea } from "@/components/coss/textarea"
 import { Badge } from "./badge"
 import { Button } from "./button"
+import { BlueprintSectionHeader, BpMinor } from "./blueprint/blueprint"
 import { useHorizontalChoiceScroll } from "./use-horizontal-choice-scroll"
 
 const kinds = [
@@ -34,7 +35,7 @@ const sampleIndex = [
 
 function Sample({ id, number, name, title, children }: { id: string; number: string; name: string; title: string; children: ReactNode }) {
   return <section id={id} data-blueprint-component={name} aria-labelledby={`${id}-heading`} className="min-w-0 space-y-4">
-    <h4 id={`${id}-heading`} className="text-block-title">{number} · {name} {title}</h4>
+    <h4 id={`${id}-heading`} className="bp-sample-title text-block-title"><span className="bp-index">{number} · {name}</span><span>{title}</span></h4>
     {children}
   </section>
 }
@@ -81,16 +82,13 @@ export function BlueprintFoundationDemo() {
   }
 
   return <section ref={setPortalRoot} id="common-components" data-blueprint-foundations="" aria-labelledby={`${id}-heading`} className="space-y-8 border bg-card p-4 sm:p-6">
-    <header className="space-y-2">
-      <h2 id={`${id}-heading`} className="text-section-title">常用基础组件 · 蓝图适配</h2>
-      <p className="text-ui-hint text-muted-foreground">首批 12 项，直接使用现有 Prism / coss 组件。状态和材料均为固定演示事实，输入、选择与保存只作用于本页预览。</p>
-    </header>
+    <BlueprintSectionHeader headingId={`${id}-heading`} code="01" folio={{ kind: "section", value: "01 / 02" }} title="常用基础组件 · 蓝图适配" description="首批 12 项，直接使用现有 Prism / coss 组件。状态和材料均为固定演示事实，输入、选择与保存只作用于本页预览。" />
     <nav aria-label="基础组件样例索引" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       {sampleIndex.map(([anchor, name], index) => <a key={anchor} href={`#${id}-${anchor}`}>{String(index + 1).padStart(2, "0")} {name}</a>)}
     </nav>
 
     <section aria-labelledby={`${id}-first-group`} data-blueprint-foundation-group="first-five" className="space-y-7">
-      <h3 id={`${id}-first-group`} className="text-item-title">操作与输入</h3>
+      <BpMinor id={`${id}-first-group`} code="01–05" label="操作与输入" />
       <Sample id={`${id}-button`} number="01" name="Button" title="按钮">
         <div className="flex flex-wrap items-center gap-3">
           <Button onClick={() => setAction("已查看主要按钮的点击反馈。")}>主要按钮示例</Button>
@@ -147,7 +145,7 @@ export function BlueprintFoundationDemo() {
     </section>
 
     <section aria-labelledby={`${id}-remaining-group`} data-blueprint-foundation-group="remaining-seven" className="space-y-7">
-      <h3 id={`${id}-remaining-group`} className="text-item-title">继续适配 · 选择、导航与内容反馈</h3>
+      <BpMinor id={`${id}-remaining-group`} code="06–12" label="选择、导航与内容反馈" />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-8">
         <Sample id={`${id}-checkbox`} number="06" name="Checkbox" title="复选框">
           <Label className="flex"><Checkbox aria-labelledby={`${id}-checkbox-label`} checked={checked} onCheckedChange={setChecked} /><span id={`${id}-checkbox-label`} className="min-w-0">将完整公式推导加入本页预览</span></Label>

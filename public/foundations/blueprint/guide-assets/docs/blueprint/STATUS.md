@@ -4,6 +4,23 @@
 
 ## 当前
 
+- 轮次：蓝图编辑式排版与 Geist Mono 子集 · 2026-10-16；开工基线 `9b5ac0c389abb5fb232b0356a920a60706d86e27`，Site v123，分支 `feat/blueprint-editorial-type`；开工工作树干净。
+- 授权：用户批准编辑式章节 / 小节排版、有限 Geist Mono 本地子集及每 3 个已完成小轮做完整回归与独立综合审查。本轮只作用于现有蓝图展示，不扩展 Agent 业务正式规范的实施范围。
+- 检查周期：本轮实施完成、定向检查通过，累计 1/3；下次普通小轮为 2/3，第 3 个完成轮收口时必须进行完整回归及独立综合审查。计数按已完成的授权小轮，不按提交 / 重试 / 同轮返工递增；高风险提前扩大检查时另记原因与计数处理。
+- 排版决定：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px，使用既有语义角色；章号保留默认 48×48 墨底块与 stat-display 24px / 500 字形。标题组间隔 12px，小节线 1px，章节沿用结构墨线。普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行，中文不缩字。
+- 字体实值：Geist Mono 官方 1.4.2，固定提交 `4d655731f83507f0258ce5541c297b6553d5d081`，OFL-1.1；本地 400 / 500 WOFF2 分别 10768 / 11048 字节，每份 204 码点、321 glyph。family 为 Geist Mono Blueprint，swap，回退既有 font-mono；仅用于章号 / 索引 / folio / 英文短标签，中文 UI 与 STIX 数学路径不变。两份资源及许可 SHA-256 已核对，完整实值见主题正文与 public/fonts/blueprint/manifest.json；Builder 的子集 --check 字节复现通过。
+- API：既有封装增加 BlueprintSectionHeader 的显式 code / folio kind，Sheet 原 props 保持兼容，只有 Sheet 生成框线 / 标尺；BpMinor 增加可选 code / label / headingLevel，label 缺省回退 children，id / className 保留；BpFigCap 仍为段落。API 已按源码及本轮定向测试核对。
+- 实现与文档：唯一 Builder 调整既有章节 Header / BpMinor / 字体；本轮原位更新 AGENTS、开发工作流、typography、component-contracts、本主题正文与状态。冻结 coss、核心主题、公共字号角色、品牌原色及业务布局保持原边界，不增目录条目或规划副本。
+- 本轮工程：[专项记录](evidence/editorial-20261016/engineering.json) 为 TypeScript 0 错误、Typography 308 文件、组件 / API 10/10、字体资源检查及子集字节复现通过；其时间为结果汇总时间。按已批准 1/3 节奏，本轮未运行全量工程测试或上轮完整组件交互矩阵。
+- 本轮浏览器：[browser.json](evidence/editorial-20261016/browser.json) 覆盖 1280px / 320px，6 个章节 Header、18 个分节标题，所有 folio 可见，尺寸和窄屏换行符合角色；Chrome 实际字体查询确认 Regular / Medium、中文系统字与 STIX 数学字形按用途命中。正常两字体 loaded，隔离上下文阻断两文件后为 error，320px 回退仍可读且无页面横溢；四主题普通 body / Input 与[改动前](evidence/editorial-20261016/before.json)属性相等，InputGroup 整组焦点保持。人工截图核对及精确边界见[定向检查](evidence/editorial-20261016/checks.md)。
+- 偏差处理：首次字体 CSS 二层导入造成开发页 500，已改 theme 同级导入并重启唯一服务后恢复 200；最终证据来自修复后的页面。没有以缓存中的 0 字节资源计时冒充字体文件体积。
+- 审查与发布：[独立轻量 Review](evidence/editorial-20261016/review.md) 结论为 PASS WITH NOTES；guide 同步校验与最终生产构建仍是发布门槛。生产构建在文档与 guide 冻结后执行，结果记入 PR / 最终部署记录，不为回填本文重复构建；不预写构建、提交或 Site 发布成功，第三轮综合审查不替代当轮门槛。
+- 历史基线与限制：最近完整回归记录为通用组件第二批的 1949 项 / 1688 通过 / 261 既有失败，无新增失败，见下方历史及对应证据；该结果不转记为本轮通过。真机、读屏器、实体打印、原生缩放及所有语言 / 状态组合不得在未实测时宣称通过。
+
+## 历史
+
+### 蓝图配色规则与通用组件第二批 · 2026-10-16（原当前，原样保留）
+
 - 轮次：蓝图配色规则与通用组件第二批 · 2026-10-16；开工基线 `2865942bb755efaa516a0f6f4252cdf79b4b1969`，Site v121；任务分支 `feat/blueprint-common-batch-two`，开工工作树干净。
 - 授权：用户于 2026-10-16 批准蓝图配色规则和第二批 12 类实施。范围为 InputGroup、Combobox、ToggleGroup、Progress；Menu、Popover、Tooltip、Toast；AlertDialog、Sheet、Skeleton、Empty。保留首批和原蓝图样板，Agent 业务页面与布局继续暂缓。
 - 配色决定：延续纸墨与 `#1D5FBF` 交互蓝，保留成功 / 警告 / 错误的独立语义及前景背景配对；品牌原色 `#339FF2` / `#E0438F` / `#C2F25B` 与品牌标识保持不变。AI 来源需真实来源依据与可读标识，品牌渐变不表达正确性、进度或完成。
@@ -19,7 +36,6 @@
 - 审查与当前进度：[独立 Review](evidence/batch2-20261016/review.md) 最终结论为 PASS WITH NOTES，正式放行；源码、浏览器与最终工程条件已满足。最终结果回填仅改说明与证据，规范 guide 和下载资源重新生成并检查 hash。发布提交 SHA、PR 与 Site 版本以实际合并和发布终态为准，不预写发布成功。
 - 未验：真机、读屏器、实体打印、原生 200% 缩放、全站像素回归与未展示的状态组合；CSS zoom 2 不代替原生缩放。未知进度不补为 0，Toast / Empty / Skeleton 不制造业务事实；Sheet 真实 MathML 样例不等于全部公式与 Agent 业务场景已验收。第四主题保持候选状态。
 
-## 历史
 
 ### 主行动按钮悬停可读性修复 · 2026-10-15（原当前，原样保留）
 

@@ -18,6 +18,7 @@ import { ToastPrimitive, ToastProvider } from "@/components/coss/toast"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Tooltip, TooltipPopup, TooltipProvider, TooltipTrigger } from "@/components/coss/tooltip"
 import { Button } from "./button"
+import { BlueprintSectionHeader, BpMinor } from "./blueprint/blueprint"
 import { QuestionMath } from "./question-content"
 
 type Topic = { value: string; label: string; disabled?: boolean }
@@ -42,7 +43,7 @@ const toastSamples = [
 
 function Sample({ id, number, name, title, children }: { id: string; number: string; name: string; title: string; children: ReactNode }) {
   return <section id={id} data-blueprint-component={name} aria-labelledby={`${id}-heading`} className="min-w-0 space-y-4">
-    <h4 id={`${id}-heading`} className="text-block-title">{number} · {name} {title}</h4>
+    <h4 id={`${id}-heading`} className="bp-sample-title text-block-title"><span className="bp-index">{number} · {name}</span><span>{title}</span></h4>
     {children}
   </section>
 }
@@ -91,16 +92,13 @@ export function BlueprintSecondBatchDemo() {
   const topicOptions = (item: Topic) => <ComboboxItem key={item.value} value={item} disabled={item.disabled}>{item.label}</ComboboxItem>
 
   return <section ref={setPortalRoot} id="common-components-two" data-blueprint-batch-two="" aria-labelledby={`${id}-heading`} className="space-y-8 border bg-card p-4 text-foreground sm:p-6">
-    <header className="space-y-2">
-      <h2 id={`${id}-heading`} className="text-section-title">常用组件 · 第二批</h2>
-      <p className="text-ui-hint text-muted-foreground">12 类现有组件的蓝图样例。进度、加载与通知均为明确标注的状态快照；输入、选项、备注和开合只作用于本页。</p>
-    </header>
+    <BlueprintSectionHeader headingId={`${id}-heading`} code="02" folio={{ kind: "section", value: "02 / 02" }} title="常用组件 · 第二批" description="12 类现有组件的蓝图样例。进度、加载与通知均为明确标注的状态快照；输入、选项、备注和开合只作用于本页。" />
     <nav aria-label="第二批组件样例索引" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       {sampleIndex.map(([anchor, name], index) => <a key={anchor} href={`#${id}-${anchor}`}>{index + 13} {name}</a>)}
     </nav>
 
     <section aria-labelledby={`${id}-input-section-heading`} data-blueprint-foundation-group="input-and-progress" className="space-y-7">
-      <h3 id={`${id}-input-section-heading`} className="text-item-title">输入、选择与进度</h3>
+      <BpMinor id={`${id}-input-section-heading`} code="13–16" label="输入、选择与进度" />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-8">
         <Sample id={`${id}-input-group`} number="13" name="InputGroup" title="输入组合">
           <Field>
@@ -166,7 +164,7 @@ export function BlueprintSecondBatchDemo() {
     </section>
 
     <section aria-labelledby={`${id}-overlay-heading`} data-blueprint-foundation-group="menus-and-feedback" className="space-y-7">
-      <h3 id={`${id}-overlay-heading`} className="text-item-title">菜单、浮层与通知</h3>
+      <BpMinor id={`${id}-overlay-heading`} code="17–20" label="菜单、浮层与通知" />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-8">
         <Sample id={`${id}-menu`} number="17" name="Menu" title="菜单">
           <Menu><MenuTrigger render={<Button variant="outline" />}>打开样例菜单</MenuTrigger>
@@ -208,7 +206,7 @@ export function BlueprintSecondBatchDemo() {
     </section>
 
     <section aria-labelledby={`${id}-dialog-group-heading`} data-blueprint-foundation-group="dialogs-and-placeholders" className="space-y-7">
-      <h3 id={`${id}-dialog-group-heading`} className="text-item-title">确认、侧面板与占位</h3>
+      <BpMinor id={`${id}-dialog-group-heading`} code="21–24" label="确认、侧面板与占位" />
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,20rem),1fr))] gap-8">
         <Sample id={`${id}-alert-dialog`} number="21" name="AlertDialog" title="操作确认">
           <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}><AlertDialogTrigger ref={alertTrigger} render={<Button variant="destructive-outline" />}>清空演示备注</AlertDialogTrigger>
