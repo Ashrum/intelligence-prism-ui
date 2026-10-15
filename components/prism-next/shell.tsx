@@ -32,6 +32,7 @@ function Navigation() {
         {link('/next/foundations','基础规范',<Palette/>)}
         {link('/next/foundations/typography','字体与字号',<BookOpen/>)}
         {link('/next/foundations/blueprint','蓝图组件',<Layers/>)}
+        {link('/next/foundations/blueprint/guide','蓝图主题规范',<BookOpen/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
         {link('/next/use-cases','教师用例与流程',<Layers/>)}
       </SidebarMenu></SidebarGroup>
