@@ -43,7 +43,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
       <div className="bp-demo-columns">
         <div className="min-w-0">
-          <BpMinor>BP-01 Button</BpMinor>
+          <BpMinor code="BP-01 · Button" label="按钮" />
           <div className="flex flex-wrap items-center gap-3.5"><BpButton variant="primary" onClick={() => setActionPreview("正在预览主行动：墨底与偏移阴影。")}>预览主行动 →</BpButton><BpButton onClick={() => setActionPreview("正在预览次要行动：边框与纸面。")}>预览次要行动</BpButton></div>
           <div className="mt-4 flex flex-wrap items-center gap-2.5"><BpButton size="sm" onClick={() => setActionPreview("正在预览小尺寸按钮。")}>小尺寸样式</BpButton><BpButton size="sm" variant="danger" onClick={() => setActionPreview("正在预览危险操作样式；未执行任何操作。")}>危险操作样式</BpButton></div>
           <p className="mt-3 text-ui-hint text-muted-foreground" role="status">{actionPreview}</p>
@@ -52,16 +52,16 @@ export function BlueprintComponentsDemo() {
             <div className="flex flex-wrap items-center gap-3"><BpButton variant="primary" disabled aria-describedby="bp-disabled-note">主行动不可用</BpButton><BpButton disabled aria-describedby="bp-disabled-note">次要行动不可用</BpButton><BpButton size="sm" variant="danger" disabled aria-describedby="bp-disabled-note">危险操作不可用</BpButton></div>
             <BpButton size="sm" disabled aria-busy="true">处理中 · 固定状态样例</BpButton>
           </div>
-          <BpMinor className="mt-6">BP-01.1 Tool</BpMinor>
+          <BpMinor className="mt-6" code="BP-01.1 · Tool" label="工具操作" />
           <div className="flex flex-wrap items-center gap-2"><BpTool onClick={() => setActionPreview("工具说明：工具按钮用于紧凑的页面级操作。")}>工具说明</BpTool><BpTool count="v1.14.0" onClick={() => setActionPreview("组件库版本标签的静态样例：v1.14.0。")}>版本样例</BpTool><BpTool iconOnly aria-label="查看工具说明" onClick={() => setActionPreview("图标按钮必须提供可访问名称；可用 Tab 聚焦后按 Enter 激活。")}><Info className="size-4" aria-hidden="true" /></BpTool><BpTool disabled aria-describedby="bp-disabled-note">不可用</BpTool><BpTool aria-live="polite" onClick={copyLink}>{copyState === "copied" ? "已复制链接" : copyState === "failed" ? "复制失败，重试" : "复制链接"}</BpTool></div>
         </div>
         <div className="min-w-0">
-          <BpMinor>BP-02 Segmented</BpMinor>
+          <BpMinor code="BP-02 · Segmented" label="分段选择" />
           <BpSegTabs label="答卷状态预览" items={tabs} value={tab} onValueChange={setTab} />
           <p className="mt-2.5 text-ui-hint text-muted-foreground" aria-live="polite">示例快照：{tabNotes[tab]}</p>
           <div className="mt-4 max-w-72"><BpSegTabs label="纵向选择样式预览" orientation="vertical" items={views} value={view} onValueChange={setView} /></div>
           <p className="mt-2.5 text-ui-hint text-muted-foreground">此选择仅演示纵向状态；整站主题由顶部设置切换。</p>
-          <BpMinor className="mt-6">BP-02.1 Stepper</BpMinor>
+          <BpMinor className="mt-6" code="BP-02.1 · Stepper" label="步骤快照" />
           <BpSteps steps={steps} current={1} label="固定步骤样例" status="示例快照 · 18 / 42" />
           <p className="mt-2.5 text-ui-hint text-muted-foreground">步骤位置来自固定快照，不通过点击推进任务。</p>
         </div>
@@ -69,20 +69,20 @@ export function BlueprintComponentsDemo() {
     </BlueprintSheet>
 
     <BlueprintSheet id="cards" letter="B" sheetNo="02 / 04" title="卡片与线条" description="前两张卡片可跳转到本页章节；静态卡片保持纸面。结构线、分隔线与虚线各有层级。">
-      <BpMinor>BP-03 Card</BpMinor>
+      <BpMinor code="BP-03 · Card" label="卡片" />
       <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-4">
         {cards.map(card => <li key={card.name} className="min-w-0"><BpCard name={card.name} description={card.description} thumb={<Thumb label={`${card.name} 缩略`} />} href={card.href} /></li>)}
         <li><BpCardNote><p>虚线卡用于说明与空位，不可点击。</p></BpCardNote></li>
       </ul>
       <div className="bp-demo-columns mt-9">
         <div className="min-w-0">
-          <BpMinor>BP-04 Pane</BpMinor>
+          <BpMinor code="BP-04 · Pane" label="阅读面板" />
           <BpPaneHead title="答题卡 · 第 3 页" action={<a href="#reading" className="text-ui-meta underline underline-offset-3">查看阅读样例</a>} />
           <div className="relative h-30 border-(length:--line-width) border-(--line) bg-background"><Thumb label="扫描页预览" /></div>
           <BpFigCap label="FIG. 1">面板头使用墨底白字，与下方内容共用一条墨线。</BpFigCap>
         </div>
         <div className="min-w-0">
-          <BpMinor>BP-05 Title Block</BpMinor>
+          <BpMinor code="BP-05 · Title Block" label="题目信息" />
           <BpTitleBlock items={[{ id: "paper", label: "试卷", value: "八年级数学期中" }, { id: "class", label: "班级", value: "初二（3）班" }, { id: "full", label: "满分", value: "120" }, { id: "due", label: "截止", value: "10 月 18 日 17:00" }]} />
         </div>
       </div>
@@ -91,12 +91,12 @@ export function BlueprintComponentsDemo() {
     <BlueprintSheet id="data" letter="C" sheetNo="03 / 04" title="进度与数据" description="实色、墨色与斜线纹区分系列，不依赖颜色深浅；数值始终以文字写出。">
       <div className="bp-demo-columns">
         <div className="min-w-0">
-          <BpMinor>BP-06 Size Bar</BpMinor>
+          <BpMinor code="BP-06 · Size Bar" label="人数构成" />
           <BpSizeBar rows={[{ id: "all", label: "全班", unit: "人", segments: [{ id: "done", label: "已批阅", value: 22, fill: "ink" }, { id: "review", label: "待复核", value: 7, fill: "hatch" }, { id: "ai", label: "AI 处理中", value: 9, fill: "accent" }, { id: "missing", label: "未提交", value: 4, fill: "quiet" }] }]} />
           <BpFacts className="mt-5" items={[{ id: "rate", value: "68%", label: "全班平均得分率" }, { id: "time", value: "3.2 min", label: "每份答卷平均复核时长" }, { id: "diff", value: "5", label: "AI 与教师评分不一致的题" }, { id: "unsaved", value: "0", label: "未保存的修改" }]} />
         </div>
         <div className="min-w-0">
-          <BpMinor>BP-07 Metric</BpMinor>
+          <BpMinor code="BP-07 · Metric" label="指标对照" />
           <BpMetricLegend baseline="上次测验" current="本次测验" />
           <div className="border-t-(length:--line-width) border-t-(--line)">
             <BpMetric name="平均分" max={120} baseline={{ label: "上次", value: 71.4 }} current={{ label: "本次", value: 78.9 }} gain="+7.5" gainUnit="分" />
@@ -110,23 +110,23 @@ export function BlueprintComponentsDemo() {
     <BlueprintSheet id="feedback" letter="D" sheetNo="04 / 04" title="反馈与文本" description="提示、错误与批注都指向具体位置，并给出可照做的修改。">
       <div className="bp-demo-columns">
         <div className="min-w-0 space-y-5">
-          <BpMinor>BP-08 Callout · Error</BpMinor>
+          <BpMinor code="BP-08 · Feedback" label="提示与错误" />
           <BpCallout title="为什么 AI 分数与教师分数不同" action={<a className="prism-link text-ui-action underline underline-offset-3" href="#rubric">查看评分点 →</a>}>示例记录：第 7 题的评分点 2 要求写出单位。AI 判定为漏写，教师改判为可接受。</BpCallout>
           <BpError location="第 12 行 · 选项" message="选择题缺少选项 D。单选题需要 4 个选项，每个以字母开头。" example="A. 3　B. 4　C. 5　D. 6" />
           <BpToast>成功状态样例 · 第 7 题评分已保存</BpToast>
         </div>
         <div className="min-w-0 space-y-5">
-          <BpMinor>BP-09 Annotation</BpMinor>
+          <BpMinor code="BP-09 · Annotation" label="批注" />
           <div>
             <BpAnnotatedText parts={["因为直角三角形两条直角边分别是 3 和 4，", { text: "所以斜边是 7", n: 1 }, "，", { text: "答案应该是对的", n: 2, tone: "warn" }, "。"]} />
             <BpAnnotationList className="mt-3" items={[{ n: 1, rule: "计算", message: "两直角边直接相加。", suggestion: "斜边 = √(3² + 4²) = 5" }, { n: 2, tone: "warn", rule: "表述", message: "结论缺少依据。", suggestion: "写出所用定理：勾股定理" }]} />
           </div>
-          <BpMinor id="rubric">BP-10 Codebox</BpMinor>
+          <BpMinor id="rubric" code="BP-10 · Codebox" label="评分点" />
           <BpCodebox file="rubric.md" meta="第 7 题 · 评分点">{"## 第 7 题 {score=6}\n- 写出勾股定理  +2\n- 代入并求得 5  +3\n- 带单位作答    +1"}</BpCodebox>
         </div>
       </div>
       <section id="reading" className="mt-9 border-t border-border pt-7" aria-labelledby="bp-reading-heading">
-        <BpMinor id="bp-reading-heading">BP-11 长中文与公式阅读</BpMinor>
+        <BpMinor id="bp-reading-heading" code="BP-11 · Reading" label="长中文与公式阅读" />
         <Tabs value={reading} onValueChange={value => setReading(String(value))} className="min-w-0">
           <div {...readingScroll} className="min-w-0 max-w-full overflow-x-auto px-1 py-1">
             <TabsList aria-label="长内容阅读样例">

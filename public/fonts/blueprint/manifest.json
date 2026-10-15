@@ -1,0 +1,40 @@
+{
+  "family": "Geist Mono Blueprint",
+  "sourceRepository": "https://github.com/vercel/geist-font",
+  "sourceTag": "1.4.2",
+  "sourceCommit": "4d655731f83507f0258ce5541c297b6553d5d081",
+  "license": "OFL-1.1",
+  "licenseUrl": "https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/OFL.txt",
+  "licenseSha256": "1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f",
+  "toolchain": {
+    "fontTools": "4.60.1",
+    "brotli": "1.1.0"
+  },
+  "fontDisplay": "swap",
+  "fonts": [
+    {
+      "weight": 400,
+      "file": "geist-mono-latin-400.woff2",
+      "sourceUrl": "https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/packages/next/dist/fonts/geist-mono/GeistMono-Regular.ttf",
+      "sourceBytes": 69936,
+      "sourceSha256": "dee3e2532c8db2b36dced0b9ddf9834e4b5a83ba8afecd01be0a97d4b0c13d7f",
+      "bytes": 10768,
+      "sha256": "be4d974db167fbe4d7ebd11dcee64b98dc269aa7db72f815f79725e33dd961c5",
+      "glyphCount": 321,
+      "codepointCount": 204,
+      "unicodeRange": "U+0020-007E, U+00A0-00AC, U+00AE-00FF, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2030, U+2032-2033, U+20AC"
+    },
+    {
+      "weight": 500,
+      "file": "geist-mono-latin-500.woff2",
+      "sourceUrl": "https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/packages/next/dist/fonts/geist-mono/GeistMono-Medium.ttf",
+      "sourceBytes": 70008,
+      "sourceSha256": "0b3a59c0273781c4d2b3713cf5f8cffebb25a060ebfde415c74ec61465657fcc",
+      "bytes": 11048,
+      "sha256": "15be64e881aeec1fd90c34e9c895cbc54fbd479a632763b67f52df910cd45e1c",
+      "glyphCount": 321,
+      "codepointCount": 204,
+      "unicodeRange": "U+0020-007E, U+00A0-00AC, U+00AE-00FF, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2030, U+2032-2033, U+20AC"
+    }
+  ]
+}

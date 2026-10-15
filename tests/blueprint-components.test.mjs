@@ -25,14 +25,30 @@ test('demo page renders all blueprint groups without changing the catalog count'
   assert.ok(!components.some(entry => entry.id.startsWith('blueprint')));
 });
 
-test('sheet is a labelled region; rulers and letter block are hidden from assistive tech', () => {
+test('sheet keeps its labelled region and decorative rulers; its chapter index is meaningful', () => {
   const out = html(h(api.BlueprintSheet, { letter: 'A', sheetNo: '01 / 02', title: '标题' }, 'x'));
   const id = out.match(/aria-labelledby="([^"]+)"/)[1];
   assert.match(out, new RegExp(`<h2 id="${id}"`));
   assert.equal((out.match(/class="bp-ruler/g) || []).length, 4);
   assert.equal((out.match(/aria-hidden="true" class="bp-ruler/g) || []).length, 4);
-  assert.match(out, /aria-hidden="true" class="bp-sheet-id">A</);
+  assert.match(out, /<span class="bp-section-code">A<\/span>/);
+  assert.doesNotMatch(out, /aria-hidden="true"[^>]*bp-section-code/);
   assert.doesNotMatch(html(h(api.BlueprintSheet, { title: 't', rulers: false }, 'x')), /bp-ruler/);
+  assert.match(html(h(api.BlueprintSheet, { title: '三级章节', headingLevel: 3, rulers: false }, 'x')), /<h3 id="[^"]+"[^>]*>三级章节<\/h3>/);
+});
+
+test('standalone chapter header and semantic subsection preserve caller ids, content and folio meaning', () => {
+  const header = html(h(api.BlueprintSectionHeader, { title: '长中文章节标题', code: '02', headingId: 'independent-heading', headingLevel: 3, folio: { kind: 'section', value: '02 / 12' }, description: '完整说明' }));
+  assert.match(header, /<h3 id="independent-heading"[^>]*>长中文章节标题<\/h3>/);
+  assert.match(header, />SECTION 02 \/ 12<\/p>/);
+  assert.doesNotMatch(header, /SHEET|bp-ruler|data-slot="bp-sheet"/);
+  const oldMinor = html(h(api.BpMinor, { id: 'old-minor', className: 'mt-6' }, '原有中文标题'));
+  assert.match(oldMinor, /^<h3 id="old-minor" class="[^"]*mt-6/);
+  assert.match(oldMinor, />原有中文标题<\/span><\/h3>/);
+  const minor = html(h(api.BpMinor, { id: 'semantic-minor', code: 'BP-01.1', label: '完整中文小节', headingLevel: 4 }));
+  assert.match(minor, /^<h4 id="semantic-minor"/);
+  assert.match(minor, /<span class="bp-minor-code">BP-01.1<\/span><span class="bp-minor-label">完整中文小节<\/span>/);
+  assert.match(html(h(api.BpFigCap, { label: 'FIG. 1' }, '图注')), /^<p[^>]*><span>FIG. 1<\/span><span>图注<\/span><\/p>$/);
 });
 
 test('segmented control is a radiogroup with one tab stop and aria-checked', () => {

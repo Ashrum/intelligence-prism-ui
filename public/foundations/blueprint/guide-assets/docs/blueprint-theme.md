@@ -21,12 +21,12 @@
 
 ## 完善路线与当前执行（更新于 2026-10-16）
 
-用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板、通用基础组件首批及主行动悬停修复保留各自证据；2026-10-16 用户进一步批准蓝图配色规则和第二批 12 类通用组件实施，当前范围见下方。Agent 业务页面与布局仍暂缓，现阶段继续验证通用控件、浮层和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。
+用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板、通用组件两批及主行动悬停修复保留各自证据；2026-10-16 用户进一步批准蓝图编辑式排版、Geist Mono 子集与每 3 个已完成小轮进行完整回归的新节奏，当前范围见下方。Agent 业务页面与布局仍暂缓，本轮不扩展其正式规范的实施范围。此次批准不等于所有页面的视觉验收已完成。
 
 | 阶段 | 目标 | 完成依据 |
 | --- | --- | --- |
-| 1 · 视觉规则 | 明确网格、双框、编号、标题、留白及主要行动的适用位置 | 现有蓝图样板的前后对照与长内容检查 |
-| 2 · 组件状态 | 首批 12 类保留已验范围；当前第二批为 InputGroup、Combobox、ToggleGroup、Progress、Menu、Popover、Tooltip、Toast、AlertDialog、Sheet、Skeleton、Empty | 每轮按实际样例记录键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验 |
+| 1 · 视觉规则 | 明确网格、双框、编号、标题、留白及主要行动的适用位置；当前校准编辑式章节 / 小节与有限字体使用 | 现有蓝图样板的前后对照与本轮字体、标题及窄屏专项 |
+| 2 · 组件状态 | 保留两批已验范围；第二批包括 InputGroup、Combobox、ToggleGroup、Progress、Menu、Popover、Tooltip、Toast、AlertDialog、Sheet、Skeleton、Empty | 每轮按实际样例记录键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验 |
 | 3 · 密集内容 | 检查列表、图表、小图例、连续色阶及打印 | 可读性、零值与缺测、灰度和原生打印证据 |
 | 4 · 教师场景（暂缓） | 待通用组件收敛后，再规划 Agent、试卷阅读和学情报告的主题密度 | 当前不改 Agent 业务布局；后续沿用既有业务流程进行独立场景评审 |
 | 5 · 发布候选 | 收敛主题隔离、核心主题回归与剩余限制 | 独立 Review、视觉确认、发布版本及可追溯证据 |
@@ -34,6 +34,33 @@
 每批保持第四主题、核心三主题及轻量 Blueprint 页面实验的既有边界；不修改冻结 coss 源码、不增加依赖、不把示例中的按钮点击解释为真实业务执行。具体实现、验证与剩余问题统一记录在 [蓝图当前状态](blueprint/STATUS.md)，本表不代替验收结论。
 
 站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。
+
+### 编辑式排版与 Geist Mono 子集 · 2026-10-16
+
+用户批准本轮实施，开工基线为 `9b5ac0c389abb5fb232b0356a920a60706d86e27`、Site v123，分支 `feat/blueprint-editorial-type`。本轮实施完成、定向检查通过，计为新检查周期的第 1/3 轮，发布以最终部署记录为准；只改既有蓝图章节 Header、`BpMinor` 与有限字体呈现，不新建规划文档或组件目录项，不改 Agent 业务布局、核心三主题普通组件及冻结 coss。
+
+章节标题使用现有 20/30 语义角色，中文小节为 16/24，小节索引、folio 和图注编号为 12px 元信息。章节章号保留默认 48×48 墨底纸色块，使用既有 `stat-display` 24px / 32px、真实 500 字重；长代码仍可随内容增高。标题组间隔 12px，章节保留 `--line-width` / `--line` 结构墨线，`BpMinor` 使用 1px `--border` 细线。普通章节标记 SECTION，SHEET 保留给真实图纸，不能将所有区块包装成图纸语义。窄屏 folio 可以换行，标题使用正常中文断行，不缩字或隐藏有意义编号。
+
+现有蓝图封装中的 `BlueprintSectionHeader` 仅呈现章节头，不生成图框或标尺；props 为 `title: ReactNode`、可选 `description`、`code: string`、`folio: { kind: "sheet" 或 "section"; value: string }`、`headingId`、`headingLevel: 2 或 3`（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION，不推断业务类型。`BlueprintSheet` 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，内部组合 Header，原装饰标尺继续 aria-hidden。`BpMinor` 新增可选 code、label 和 headingLevel（2–6，默认 3）；label 未提供时回退 children，id / className 继续透传，不自动拆解历史文本。`BpFigCap` 继续输出段落，不升为章节标题。这些为现有展示封装的组合调整，不新增目录条目。
+
+Geist Mono 采用本地 WOFF2 子集，只用于章号、小节索引、folio、图注编号和英文短标签；中文 UI、正文及数学内容继续沿用现有 UI 栈和 STIX Two Math，不切换公共 `font-mono` 或整页字体。来源固定为 [vercel/geist-font 1.4.2](https://github.com/vercel/geist-font/tree/4d655731f83507f0258ce5541c297b6553d5d081)，提交 `4d655731f83507f0258ce5541c297b6553d5d081`，许可为 [OFL-1.1](https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/OFL.txt)。许可副本、来源和生成清单随资源保存在 `public/fonts/blueprint/`，未增加 npm 依赖。
+
+| 字重 / 本地文件 | 字节数 | SHA-256 |
+| --- | --- | --- |
+| 400 · `geist-mono-latin-400.woff2` | 10768 | `be4d974db167fbe4d7ebd11dcee64b98dc269aa7db72f815f79725e33dd961c5` |
+| 500 · `geist-mono-latin-500.woff2` | 11048 | `15be64e881aeec1fd90c34e9c895cbc54fbd479a632763b67f52df910cd45e1c` |
+
+两份产物均为实际 204 个码点、321 个 glyph；字符范围为 `U+0020-007E, U+00A0-00AC, U+00AE-00FF, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2030, U+2032-2033, U+20AC`。这是实际保留字符，不声明未覆盖字形。OFL 副本 SHA-256 为 `1781d2806a07d91c4edf4740b88449fab7d0eadad53f7c351b94cd4d4eb8c00f`；两份 WOFF2 和许可的本地散列已核对。`scripts/subset-blueprint-mono.py` 固定上游源散列，使用 fontTools 4.60.1 / Brotli 1.1.0，可通过 `--check` 在内存重建并核对产物字节；该复现检查已由 Builder 执行通过。生成的 `blueprint-fonts.css` 从 theme 同级导入，CSS family 为 `Geist Mono Blueprint`，400 / 500 静态字重、normal、`font-display: swap` 与实际 unicode-range；有限选择器回退到既有 `var(--font-mono)`，不全局替换字体。
+
+每轮针对受影响内容、交互和代表窄屏进行验证；每累计完成 3 个已授权小轮做完整回归和独立综合审查，在 [状态记录](blueprint/STATUS.md) 维护计数与下一触发点。共享令牌、基础交互或跨组件规则等高风险变化按实际影响提前扩大检查。本轮首次字体单列缺字、失败回退、混排与布局专项，未运行全量工程测试或上轮完整组件交互矩阵，也不复用第二批通过数字。每次发布仍须生产构建和独立轻量 diff / 关键证据审查；最终生产构建在文档及 guide 冻结后执行，结果记入 PR 和最终部署记录，不为回填本文重复构建。
+
+[本轮工程记录](blueprint/evidence/editorial-20261016/engineering.json)显示 TypeScript 0 错误、语义字号 308 个 owned TSX 通过、现有组件 / API 定向测试 10/10 通过，字体资源检查及 Python 3.12.14 / fontTools 4.60.1 / Brotli 1.1.0 的 `--check` 字节复现通过。记录时间为结果汇总时间，不当作各命令开始时间。首次二层 CSS 导入曾导致开发页 500，已改为 theme 同级导入；重启唯一开发服务后恢复 200，最终浏览器记录来自修复后的页面。
+
+[浏览器专项](blueprint/evidence/editorial-20261016/browser.json)覆盖 Chrome 的 1280×960 / 320×960 桌面视口模拟：6 个章节 Header、18 个分节标题和所有 folio 均保留；20/30、16/24、12/18 与章号块 24/32 / 500 的实际计算值符合角色。Chrome 实际字体查询确认 folio 命中 GeistMono-Regular、分节索引命中 GeistMono-Medium，中文标题使用系统中文字体，MathML 的数学字形使用 STIX Two Math；不只凭 CSS 声明判断字体加载。两份 Geist 字体在正常会话均为 loaded；在隔离上下文阻断这两份 WOFF2 后均为 error，320px 仍保留完整页序与可读文本，页面 scrollWidth 为 320。浏览器缓存计时中的 0 字节不是文件大小，资源大小以上表本地字节为准。
+
+[改动前样本](blueprint/evidence/editorial-20261016/before.json)与修后记录中的四主题普通 body / Input 属性逐项相等；InputGroup 整组仍有 2px 蓝色焦点线，内部输入不产生第二道 outline。该回归仅覆盖所记录属性和操作，不外推为全站像素一致。人工查看[桌面图纸标题](blueprint/screens/editorial-20261016/blueprint-1280-actions.png)、[窄屏图纸标题](blueprint/screens/editorial-20261016/blueprint-320-actions.png)、[桌面章节](blueprint/screens/editorial-20261016/blueprint-1280-second-batch.png)、[窄屏章节](blueprint/screens/editorial-20261016/blueprint-320-second-batch.png)和[字体失败回退](blueprint/screens/editorial-20261016/blueprint-320-fallback.png)，确认中文与索引层级、分组线和窄屏 folio 换行；不只以无横溢判断视觉通过。
+
+具体过程与边界见[定向检查记录](blueprint/evidence/editorial-20261016/checks.md)。本轮[独立轻量审查](blueprint/evidence/editorial-20261016/review.md)结论为 PASS WITH NOTES；guide 同步校验与最终生产构建仍是发布门槛，构建及发布结果以最终记录为准。本轮未验真机、读屏器、原生缩放、实体打印及所有语言字形，不将桌面模拟或有限字形样本等同于这些场景的认证。下次普通小轮序号为 2/3，第 3 个完成小轮须做完整回归与独立综合审查。
 
 ### 通用基础组件第二批与配色规则 · 2026-10-16
 
@@ -297,7 +324,7 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 
 ## 首期 `bp-*` React 封装（不计入组件目录）
 
-`bp-sheet` / `bp-ruler` / `bp-sheet-head` · `bp-btn`（primary / danger / sm）· `bp-tool` · `bp-seg-tabs`（水平 / 垂直）· `bp-steps` · `bp-card` / `bp-card-note` · `bp-pane-head` · `bp-minor` / `bp-fig-cap` · `bp-size-bar` · `bp-metric` · `bp-facts` · `bp-titleblock` · `bp-callout` / `bp-error` · `bp-annot` · `bp-codebox` · `bp-toast`。
+`bp-sheet` / `bp-ruler` / `bp-section-header` / `bp-section-code` / `bp-section-folio` · `bp-btn`（primary / danger / sm）· `bp-tool` · `bp-seg-tabs`（水平 / 垂直）· `bp-steps` · `bp-card` / `bp-card-note` · `bp-pane-head` · `bp-minor` / `bp-fig-cap` · `bp-size-bar` · `bp-metric` · `bp-facts` · `bp-titleblock` · `bp-callout` / `bp-error` · `bp-annot` · `bp-codebox` · `bp-toast`。章节头类名已按 2026-10-16 编辑式排版更新，旧 `bp-sheet-head` / `bp-sheet-id` / `bp-sheet-no` 不作为现行使用入口。
 
 职责：coss 组件继续承担表单与操作；`bp-*` 只用于页面级呈现，两者不重名、不互相替换。
 
@@ -340,7 +367,7 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 - v2：网格铺到 `sidebar-inset`；提高演示与数据面板墨线优先级；既有 `DemoSection` 自动显示字母与 `SHEET` 序号、双线内框和刻度。760px 以下隐藏内框、刻度及序号，无需改动 `DemoSection`。
 - v3：新增 React 封装、四组组件演示和侧栏入口；组件目录及原有计数测试保持不变。
 - 分段选择遵循受控单选组协议。方向键切换并跳过禁用项，Home/End 跳转，首尾循环；传入无效或禁用选中值时，首个可用项仍可通过 Tab 到达，不擅自回写选中值。没有可用项时不创建 Tab 停留点。
-- 步骤条、构成条、指标和批注带有可访问状态或数值文字；`BlueprintSheet` 的标尺和字母装饰标记为 `aria-hidden`。实际读屏器体验仍待专门验证。
+- 步骤条、构成条、指标和批注带有可访问状态或数值文字；当时 `BlueprintSheet` 的标尺和字母装饰标记为 `aria-hidden`。2026-10-16 编辑式排版调整后，仅装饰标尺继续隐藏，有意义的章号 code 正常可读；本段旧行为不代表现行 API。实际读屏器体验仍待专门验证。
 
 ### 接入中修正
 
