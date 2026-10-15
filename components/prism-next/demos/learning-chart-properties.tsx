@@ -5,7 +5,8 @@ import { Button } from "@/components/coss/button"
 import { DemoSection, Feedback } from "../demo-parts"
 import { TrendChart, type ChartSeries } from "../charts/basic-charts"
 import { QuadrantScatterChart } from "../charts/scatter-chart"
-import { PairedDotChart } from "../charts/paired-dot-chart"
+import { PairedDotChart, pairedDotLegendItems, type PairedMetric } from "../charts/paired-dot-chart"
+import { ChartLegend } from "../charts/chart-legend"
 import { MetricSummary, type MetricSummaryItem } from "../data-display"
 
 const names=["21.1 小测","口算练习","21 章单元测","22.1 小测","应用题专项","22 章单元测"]
@@ -24,10 +25,12 @@ export const learningMetrics:MetricSummaryItem[]=[
  {id:"score",label:"近期得分率",value:"72%",detail:"四次可比检测 65%、68%、70%、72%",visual:{kind:"sparkline",values:[65,null,68,70,null,72]},help:"只呈现外部传入的得分率；跳过缺测连接有效观测，缺测位置不补零。"},
  {id:"evidence",label:"有效作答",value:"1,248 次",detail:"八周数据；0 表示当周无新增",visual:{kind:"sparkline",values:[0,168,0,248,212,0,284,336]},help:"已批阅且可用于本次统计的作答数。"},
 ]
+export const learningPairedMetrics:[PairedMetric,PairedMetric]=[{id:"error",label:"出错的学生占比",help:"分子是本题未得满分的学生数，分母是本题有有效作答的学生数；按学生去重。"},{id:"repeat",label:"再考时仍然出错",help:<><p>分子是原失分学生最近一次可比再考仍未得满分的人数，分母是原失分学生中有可比再考的人数。</p><p>两项分母不同；没有可比再考时保持缺测，不补零。</p></>}]
+
 const descriptions:Record<string,string>={
  "trend-chart":"lineStyle='dashed' 显示预期虚线；connect=false 仅画点。逐点 symbol 区分空心圆与菱形，valueLabel 在上、annotation 在下；避让后放不下时保留在提示框与数据表，不缩小字号。connectGaps=true 跨缺测连线；yDomain=auto 按有效数据留边，百分比刻度步长 10，数据跨度小于 20 时步长 5；标注以卡片表面色描边；xTickMode=all 展示全部刻度，tickLabel 固定两行。",
  "quadrant-chart":"quadrants.highlight 接收 quadrant 与 ChartTone；仅强调调用方指定的区域，沿用图表主题色；xDomain/yDomain=auto 自动留边，刻度等距且两端落在刻度上，象限标题位于外角。标签按右、上、左、下避让所有点和已放置文字，放不下则隐藏。labelMode=none 可隐藏图上点标签；完整名称始终保留在提示框和数据表。",
- "paired-dot-chart":"rowLayout='inline' 将名称、共用比例轨道和数值放在同一行，轨道不再标数；数值用圆点 / 菱形前缀区分指标，文字单色。名称默认 9em，可用 labelWidth 指定 px；完整名称保留在提示与数据表。meta / tag 为外部补充信息和状态。容器不足 360px 时上下排列，名称完整换行；默认 stacked 保留原布局。metrics[].help 在横排图例旁提供说明。",
+ "paired-dot-chart":"rowLayout='inline' 将名称、共用比例轨道和两列纯数值放在同一行；数值列等宽、右对齐，圆点 / 菱形与卡片标题右侧的图例对应。图内没有图例行或列头行。名称默认 9em，labelWidth 可指定 px；meta 仅进入名称的悬停 / 焦点提示与读屏，tag 可选并放在名称后。容器不足 360px 时上下排列，名称完整换行；默认 stacked 保留原布局。",
  "metric-summary":"items[].visual 可传 ring 的 value/max 或 sparkline 的 values；装饰图形对读屏隐藏，文本披露原始数值。items[].help 在指标名旁提供 coss Popover，支持键盘与关闭后焦点返回。",
 }
 export function LearningChartProperties({kind}:{kind:string}){
@@ -43,10 +46,10 @@ export function LearningChartProperties({kind}:{kind:string}){
     {id:"roots",label:edge?"根与系数的关系：x₁ + x₂ = −b/a，需要结合完整答题证据解释":"根与系数的关系",x:64,y:edge?null:76,group:"knowledge"},{id:"application",label:"二次函数的应用",x:62,y:63,group:"knowledge"},
     {id:"functions",label:"函数与方程",x:64,y:63,group:"knowledge"},
    ]} onSelect={select}/>}
-   {kind==="paired-dot-chart"&&<PairedDotChart label="错题：出错与再错" rowLayout={inline?"inline":"stacked"} labelWidth={wideLabel?180:undefined} dataDisclosure={hidden?"hidden":"visible"} density="compact" maxTrackWidth={420} decimals={precision?1:0} connectPairs domain={[0,100]} unit="%" metrics={[{id:"error",label:"出错的学生占比",help:"分子是本题未得满分的学生数，分母是本题有有效作答的学生数；按学生去重。"},{id:"repeat",label:"再考时仍然出错",help:<><p>分子是原失分学生最近一次可比再考仍未得满分的人数，分母是原失分学生中有可比再考的人数。</p><p>两项分母不同；没有可比再考时保持缺测，不补零。</p></>}]} data={[
+   {kind==="paired-dot-chart"&&<div className="min-w-0 space-y-3"><div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><h3 className="text-block-title">错题：出错与再错</h3><ChartLegend items={pairedDotLegendItems(learningPairedMetrics)} align="right" className="ml-auto"/></div><PairedDotChart legendPosition="none" label="错题：出错与再错" rowLayout={inline?"inline":"stacked"} labelWidth={wideLabel?180:undefined} dataDisclosure={hidden?"hidden":"visible"} density="compact" maxTrackWidth={420} decimals={precision?1:0} connectPairs domain={[0,100]} unit="%" metrics={learningPairedMetrics} data={[
     {id:"Q15",label:edge?"Q15 一元二次方程 x² − 3x + 2 = 0 的完整解题过程":"Q15 一元二次方程",meta:"有效作答 51 人",tag:<Badge variant="warning">继续巩固</Badge>,first:52.46929824561403,second:edge?null:44.222},
     {id:"Q7",label:"Q7 根与系数",tag:<Badge variant="success">已有改善</Badge>,first:45,second:edge?45:33},{id:"Q12",label:"Q12 二次函数应用",first:edge?0:36,second:edge?100:25},
-   ]} onSelect={select}/>}
+   ]} onSelect={select}/></div>}
    {kind==="metric-summary"&&<MetricSummary items={edge?learningMetrics.map((item,i)=>({...item,label:i===0?"需要结合长中文口径与公式 x² + y² = 1 解释的指标":item.label,visual:i===2?{kind:"sparkline",values:[null,0,null]}:item.visual})):learningMetrics} onSelect={select}/>}
   </div><Feedback>{notice}</Feedback>
  </DemoSection>

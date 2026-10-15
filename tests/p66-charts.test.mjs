@@ -26,7 +26,7 @@ for (const theme of ['light', 'paper', 'dark', 'blueprint']) {
  test(`P66 ${theme}: inline common scale, missing data, colors, labels, tooltip and selection`, () => {
   const calls = [], out = capture('PairedDotChart', { ...props, onSelect: (...args) => calls.push(args), selectedId: 'bounds' }, theme);
   assert.equal(out.charts.length, data.length, 'one chart per row, no duplicate responsive branch');
-  assert.match(out.html, /title="长中文与公式 x² − 3x \+ 2 = 0 的完整解题过程"/);
+  assert.match(out.html, /data-slot="tooltip-trigger"[^>]*>长中文与公式 x² − 3x \+ 2 = 0 的完整解题过程/);
   assert.match(out.html, /--paired-label-width:9em/);
   assert.match(out.html, /36 \/ 51 人/); assert.match(out.html, /继续巩固/);
   assert.equal((out.html.match(/aria-hidden="true">—<\/span>/g) || []).length, 5);
@@ -81,17 +81,16 @@ test('P66 inline composes with density, legend/help, hidden disclosure and optio
  for (const density of ['default', 'compact']) for (const legendPosition of [undefined, 'top-left', 'bottom', 'none']) for (const dataDisclosure of ['visible', 'hidden']) {
   const out = capture('PairedDotChart', { ...props, density, legendPosition, dataDisclosure, metrics: props.metrics.map(m => ({ ...m, help: `${m.label}的分母口径` })), onSelect() {} });
   assert.ok(out.charts.every(c => c.height === 36));
-  assert.equal((out.html.match(/data-slot="popover-trigger"/g) || []).length, legendPosition === 'none' ? 0 : 2);
-  if (legendPosition !== 'none') {
-   assert.match(out.html, /flex-nowrap/);
-   assert.equal(out.html.indexOf('aria-label="指标图例"') < out.html.indexOf('data-paired-layout'), legendPosition !== 'bottom');
-  }
-  assert.match(out.html, /<th[^>]*>补充信息<\/th>/);
+  // P67 moves inline legends to the host title and metadata to tooltip / screen readers.
+  assert.equal((out.html.match(/data-slot="popover-trigger"/g) || []).length, 0);
+  assert.doesNotMatch(out.html, /data-chart-legend/);
+  assert.doesNotMatch(out.html, /<th[^>]*>补充信息<\/th>/);
+  assert.match(out.html, /data-paired-meta="true" class="sr-only">36 \/ 51 人/);
   if (dataDisclosure === 'hidden') {
    assert.doesNotMatch(out.html, /<details|<summary/);
    const table = out.html.slice(out.html.indexOf('<div class="sr-only" role="region"'));
    assert.doesNotMatch(table, /<button|aria-hidden="true"/);
-   assert.match(table, /36 \/ 51 人/); assert.match(table, /完整解题过程/);
+   assert.match(table, /完整解题过程/);
   } else assert.match(out.html, /<details/);
  }
 });

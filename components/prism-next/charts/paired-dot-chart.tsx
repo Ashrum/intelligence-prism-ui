@@ -6,6 +6,7 @@ import type {EChartsOption} from 'echarts'
 import {EChart} from './echart'
 import {useChartTheme} from './chart-theme'
 import {DataRecordTable} from '../data-display'
+import {Tooltip,TooltipTrigger,TooltipPopup} from '@/components/coss/tooltip'
 import {chartDomain,withinDomain,formatChartValue,type ChartDecimals} from '@/lib/prism-next/chart-options'
 export type PairedRow={id:string;label:string;first:number|null;second:number|null;meta?:ReactNode;tag?:ReactNode}
 export type PairedMetric={id:string;label:string;color?:string;help?:ReactNode}
@@ -31,20 +32,22 @@ export function PairedDotChart({dataDisclosure="visible",data,metrics,label,unit
   }
   return option
  }
- const legend=legendPosition!=="none"&&<ChartLegend label="指标图例" items={pairedDotLegendItems(metrics)} className="flex-nowrap [&>li]:flex-1"/>
+ const legend=!inline&&legendPosition!=="none"&&<ChartLegend label="指标图例" items={pairedDotLegendItems(metrics)} className="flex-nowrap [&>li]:flex-1"/>
  return <div className={inline?"@container/paired min-w-0 space-y-4":"min-w-0 space-y-4"}>
  {legendPosition!=="bottom"&&legend}
  {data.length?(inline?<div data-paired-layout="inline" className="grid min-w-0 text-ui-body gap-x-2 gap-y-2 @min-[360px]/paired:grid-cols-[minmax(0,var(--paired-label-width))_minmax(48px,1fr)_minmax(0,max-content)] @min-[360px]/paired:gap-y-0" style={{'--paired-label-width':nameWidth} as CSSProperties}>
   {data.map(row=><div key={row.id} data-paired-row={row.id} className="grid min-w-0 items-center @min-[360px]/paired:col-span-full @min-[360px]/paired:min-h-9 @min-[360px]/paired:grid-cols-subgrid">
-   <span title={row.label} className="min-w-0 whitespace-normal text-ui-body [overflow-wrap:anywhere] @min-[360px]/paired:truncate">{row.label}</span>
+   <div data-paired-name className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+    {row.meta!=null?<Tooltip><TooltipTrigger render={<span tabIndex={0}/>} className="min-w-0 whitespace-normal text-ui-body [overflow-wrap:anywhere] @min-[360px]/paired:truncate">{row.label}</TooltipTrigger><TooltipPopup><div className="max-w-72 whitespace-normal [overflow-wrap:anywhere] text-ui-body"><p>{row.label}</p><div>{row.meta}</div></div></TooltipPopup></Tooltip>:<span title={row.label} className="min-w-0 whitespace-normal text-ui-body [overflow-wrap:anywhere] @min-[360px]/paired:truncate">{row.label}</span>}
+    {row.tag!=null&&<span data-paired-tag className="min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere]">{row.tag}</span>}
+    {row.meta!=null&&<div data-paired-meta className="sr-only">{row.meta}</div>}
+   </div>
    <div className="min-w-0 w-full" style={capped?{maxWidth:maxTrackWidth}:undefined}><EChart label={`${label}：${row.label}`} onSelect={onSelect} height={36} option={chartOption([row],true,true)}/></div>
-   <div data-paired-values className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-ui-body text-foreground @min-[360px]/paired:max-w-[45cqw]">
-    <span className="inline-flex min-w-0 flex-wrap items-center gap-x-1 tabular-nums">{metrics.map((metric,index)=><span key={metric.id} className="inline-flex items-center gap-1 whitespace-nowrap">
-     {index>0&&<span aria-hidden="true">·</span>}<svg aria-hidden="true" focusable="false" width={12} height={16} viewBox="0 0 12 16"><ChartMarker marker={index?'diamond':'dot'} color={metric.color??colors[index?3:1]} cx={6} r={3}/></svg>
+   <div data-paired-values className="grid min-w-0 grid-cols-2 items-center gap-x-3 text-ui-body text-foreground text-right tabular-nums">
+    {metrics.map((metric,index)=><span key={metric.id} data-paired-metric={metric.id} className="inline-flex items-center justify-end gap-1 whitespace-nowrap">
+     <svg aria-hidden="true" focusable="false" width={12} height={16} viewBox="0 0 12 16" className="shrink-0"><ChartMarker marker={index?'diamond':'dot'} color={metric.color??colors[index?3:1]} cx={6} r={3}/></svg>
      <span className="sr-only">{metric.label}：</span>{Number.isFinite(index?row.second:row.first)?formatChartValue(index?row.second:row.first,unit,decimals):<><span aria-hidden="true">—</span><span className="sr-only">缺测</span></>}
-    </span>)}</span>
-    {row.meta!=null&&<span className="min-w-0 whitespace-normal [overflow-wrap:anywhere]">{row.meta}</span>}
-    {row.tag!=null&&<span className="min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere]">{row.tag}</span>}
+    </span>)}
    </div>
   </div>)}
  </div>:density==='compact'?<div className="space-y-3">{data.map(row=><div key={row.id} data-paired-row={row.id} className="min-w-0" style={capped?{maxWidth:maxTrackWidth}:undefined}>
@@ -55,6 +58,6 @@ export function PairedDotChart({dataDisclosure="visible",data,metrics,label,unit
  <ChartDataDisclosure mode={dataDisclosure} label={label} summary="查看数据与选择项目"> {connectPairs&&<p className="text-ui-hint text-muted-foreground">连线仅连接同一项目的两个有效值；缺测不补零。</p>}
  {data.some(d=>d.first===null||d.second===null)&&<p className="text-ui-hint text-muted-foreground">缺测项不绘制；另一项仍按原值显示。</p>}
  {excluded>0&&<p role="alert" className="text-ui-body text-destructive">{excluded} 项数值无效或超出指定范围，未绘制，请核对数据表。</p>}
-<DataRecordTable rows={data} selectedId={selectedId} onSelect={dataDisclosure==="hidden"?undefined:onSelect} columns={[{id:'label',label:'项目',render:r=>r.label},...(data.some(r=>r.meta!=null)?[{id:'meta',label:'补充信息',render:(r:PairedRow)=>r.meta}]:[]),...(data.some(r=>r.tag!=null)?[{id:'tag',label:'状态',render:(r:PairedRow)=>r.tag}]:[]),...metrics.map((m,i)=>({id:m.id,label:m.label,render:(r:PairedRow)=>formatChartValue(i?r.second:r.first,unit,decimals)}))]}/></ChartDataDisclosure>
+<DataRecordTable rows={data} selectedId={selectedId} onSelect={dataDisclosure==="hidden"?undefined:onSelect} columns={[{id:'label',label:'项目',render:r=>r.label},...(!inline&&data.some(r=>r.meta!=null)?[{id:'meta',label:'补充信息',render:(r:PairedRow)=>r.meta}]:[]),...(data.some(r=>r.tag!=null)?[{id:'tag',label:'状态',render:(r:PairedRow)=>r.tag}]:[]),...metrics.map((m,i)=>({id:m.id,label:m.label,render:(r:PairedRow)=>formatChartValue(i?r.second:r.first,unit,decimals)}))]}/></ChartDataDisclosure>
  </div>
 }
