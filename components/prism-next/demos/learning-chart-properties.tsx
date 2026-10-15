@@ -15,7 +15,7 @@ const tickNames=["起点检测","口算练习","单元检测","阶段检测","�
 const points=(values:(number|null)[])=>values.map((value,i)=>({id:`week-${i+2}`,label:names[i],tickLabel:[`第 ${weeks[i]} 周`,tickNames[i]] as [string,string],value}))
 export const learningTrendSeries:ChartSeries[]=[
  {id:"actual",label:"实际得分率",connectGaps:true,data:points([65,null,68,70,null,72]).map((p,i)=>({...p,...(p.value===null?{}:{valueLabel:`${p.value}%`,annotation:`高于预期 ${[1,0,2,3,0,3][i]}`})}))},
- {id:"expected",label:"按题目难度推算的预期",lineStyle:"dashed",connectGaps:true,tone:"neutral",data:points([64,null,66,67,null,69])},
+ {id:"expected",label:"按题目难度推算的预期",lineStyle:"dashed",showPoints:false,connectGaps:true,tone:"neutral",data:points([64,null,66,67,null,69])},
  {id:"incomparable",label:"不可比检测",connect:false,tone:"neutral",data:points([null,66,null,null,null,null]).map(p=>({...p,symbol:"hollow-circle",...(p.value===null?{}:{valueLabel:"66%",annotation:"不可比：口径不同"})}))},
  {id:"new-context",label:"新情境检测",connect:false,tone:"chart-3",data:points([null,null,null,null,71,null]).map(p=>({...p,symbol:"diamond",...(p.value===null?{}:{valueLabel:"71%",annotation:"新情境：独立观察"})}))},
 ]
@@ -28,7 +28,7 @@ export const learningMetrics:MetricSummaryItem[]=[
 export const learningPairedMetrics:[PairedMetric,PairedMetric]=[{id:"error",label:"出错的学生占比",help:"分子是本题未得满分的学生数，分母是本题有有效作答的学生数；按学生去重。"},{id:"repeat",label:"再考时仍然出错",help:<><p>分子是原失分学生最近一次可比再考仍未得满分的人数，分母是原失分学生中有可比再考的人数。</p><p>两项分母不同；没有可比再考时保持缺测，不补零。</p></>}]
 
 const descriptions:Record<string,string>={
- "trend-chart":"lineStyle='dashed' 显示预期虚线；connect=false 仅画点。逐点 symbol 区分空心圆与菱形，valueLabel 在上、annotation 在下；避让后放不下时保留在提示框与数据表，不缩小字号。connectGaps=true 跨缺测连线；yDomain=auto 按有效数据留边，百分比轴显示 3–5 条刻度，从 5/10/20/25 个百分点中取最小可用步长；标注以卡片表面色描边；xTickMode=all 展示全部刻度，tickLabel 固定两行。",
+ "trend-chart":"lineStyle='dashed' 显示预期虚线，showPoints=false 关闭普通点与悬停点；connect=false 仅画点。逐点 symbol 区分空心圆与菱形，valueLabel 在上、annotation 在下；避让后放不下时保留在提示框与数据表，不缩小字号。connectGaps=true 跨缺测连线；yDomain=auto 按有效数据留边，百分比轴显示 3–5 条刻度，从 5/10/20/25 个百分点中取最小可用步长；标注以卡片表面色描边；xTickMode=all 展示全部刻度，tickLabel 固定两行。",
  "quadrant-chart":"quadrants.highlight 接收 quadrant 与 ChartTone；仅强调调用方指定的区域，沿用图表主题色；xDomain/yDomain=auto 自动留边，百分比轴显示 3–5 条等距刻度，两端落在刻度上，象限标题位于外角。标签按右、上、左、下避让所有点和已放置文字，放不下则隐藏。labelMode=none 可隐藏图上点标签；完整名称始终保留在提示框和数据表。",
  "paired-dot-chart":"rowLayout='inline' 将名称、共用比例轨道和两列纯数值放在同一行；数值列等宽、右对齐，圆点 / 菱形与卡片标题右侧的图例对应。图内没有图例行或列头行。名称默认 9em，labelWidth 可指定 px；meta 仅进入名称的悬停 / 焦点提示与读屏，tag 可选并放在名称后。容器不足 360px 时上下排列，名称完整换行；默认 stacked 保留原布局。",
  "metric-summary":"items[].visual 可传 ring 的 value/max 或 sparkline 的 values；装饰图形对读屏隐藏，文本披露原始数值。items[].help 在指标名旁提供 coss Popover，支持键盘与关闭后焦点返回。",

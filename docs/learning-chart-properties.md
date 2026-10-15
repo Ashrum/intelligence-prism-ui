@@ -14,7 +14,8 @@
 type ChartSeries = {
   // 原 id / label / data / color 保留
   lineStyle?: 'solid' | 'dashed' // 默认 solid
-  connect?: boolean            // 默认 true；false 仅画点
+  showPoints?: boolean         // 默认 true（含 dashed）；false 不画普通点或悬停点
+  connect?: boolean            // 默认 true；false 禁用连线，与 showPoints 独立
   connectGaps?: boolean        // 默认 false；true 跨 null 连线，connect=false 优先
   tone?: ChartTone             // 既有图表色板；color 显式指定时优先
 }
@@ -44,7 +45,11 @@ valueLabel 放点上方，annotation 放下方；文字始终使用正文色和�
 
 null 默认断线且不画点；`connectGaps=true` 跨缺位连接有效点，标签避让也计入跨缺位的线段；`connect=false` 对整个系列禁用可见连线，常态和悬停态保留同一点形。数据披露增加系列线型/是否连线、点形、原值与标注。未传 tone 时颜色沿用原系列色；`tone="neutral"` 读取既有第六色（light/paper #6B7280，dark #979CA6），`tone="chart-3"` 读取第三色；显式 color 优先。没有区间带属性。
 
-组件页 `/next/components/trend-chart#learning-properties`：四次可比检测实际值 65/68/70/72%，预期 64/66/67/69%；另有一次不可比空心点、一次新情境菱形点。六个时间类别按首个系列顺序输入；实际/预期显式启用 connectGaps，预期/不可比用 neutral，新情境用 chart-3，独立点系列禁用连线。示例使用 yDomain="auto"、xTickMode="all" 与两行 tickLabel（第 2 周 / 起点检测至第 8 周 / 数学检测）。
+P72：`showPoints=false` 仅关闭该系列的普通点与悬停点，提示框、数据表、原始数值和标注保留；图例使用对应实线/虚线标记。`lineStyle='dashed'` 不隐式关闭点，由宿主显式传 `showPoints:false`。`connect=false` 仍禁用连线；两者同时为 false 时不画线也不画点，数值仍可通过提示框和数据表读取。单个有效值在隐藏点后可能没有可见线段。
+
+复用依据（P72）：继续使用现有 TrendChart / ChartLegend / ChartMarker 和 Recharts 的 `dot` / `activeDot` 属性；离线核对 coss Table、particles `table-particle.tsx`（p-table-3/4）与 `docs/comparison-chart.md`、`docs/polar-charts.md` 的组合记录，均无须替换现有图表能力。按 Builder 前置约定不联网刷新；此为通用图表属性扩展，不新增组件或第三方代码。
+
+组件页 `/next/components/trend-chart#learning-properties`：四次可比检测实际值 65/68/70/72%，预期 64/66/67/69%；另有一次不可比空心点、一次新情境菱形点。六个时间类别按首个系列顺序输入；实际/预期显式启用 connectGaps，预期显式传 showPoints=false；预期/不可比用 neutral，新情境用 chart-3，独立点系列禁用连线。示例使用 yDomain="auto"、xTickMode="all" 与两行 tickLabel（第 2 周 / 起点检测至第 8 周 / 数学检测）。
 
 ## QuadrantScatterChart
 
