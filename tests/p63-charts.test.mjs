@@ -1,3 +1,4 @@
+import { p69Snapshot } from './helpers/p69-palette-migration.mjs';
 import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,8 +8,8 @@ import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harne
 // Captured before P63 edits from 6ddecd2, including multi-series and grouped legends.
 const baseline = JSON.parse(await readFile(new URL('./fixtures/p63-defaults-before.json', import.meta.url), 'utf8'));
 const legendLabels = { ComparisonChart: '参考线标签', ComboChart: '系列与坐标轴', ScatterChart: '点形图例', QuadrantScatterChart: '点形图例', PairedDotChart: '指标图例' };
-for (const entry of baseline) {
- test(`P63 ${entry.theme} ${entry.name}: omitted position preserves non-legend baseline markup and options`, () => {
+for (const entry of baseline.map(p69Snapshot)) {
+ test(`P63 ${entry.theme} ${entry.name}: omitted position preserves baseline outside P64 legends and P69 visuals`, () => {
   const out = capture(entry.name, entry.props, entry.theme);
   assert.equal(withoutP64Legend(out.html), withoutP64Legend(entry.html));
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);

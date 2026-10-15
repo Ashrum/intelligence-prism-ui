@@ -13,8 +13,8 @@ export type ChartLegendProps = { items: readonly ChartLegendItem[]; align?: "lef
 /** Shared by the public legend and chart geometry; explicit colours always win. */
 export const chartLegendColor = (item: Pick<ChartLegendItem, "color" | "tone">, index: number, theme: ChartTheme) => item.color ?? chartToneColor(theme, index, item.tone)
 
-export function ChartMarker({ marker, color, cx = 12, cy = 8, r = 4 }: { marker: ChartLegendMarker; color: string; cx?: number; cy?: number; r?: number }) {
-  if (marker === "line" || marker === "dashed-line") return <line x1={cx - 11} x2={cx + 11} y1={cy} y2={cy} stroke={color} strokeWidth={2} strokeDasharray={marker === "dashed-line" ? "5 4" : undefined} />
+export function ChartMarker({ marker, color, cx = 12, cy = 8, r = 6.5 }: { marker: ChartLegendMarker; color: string; cx?: number; cy?: number; r?: number }) {
+  if (marker === "line" || marker === "dashed-line") return <line x1={cx - 11} x2={cx + 11} y1={cy} y2={cy} stroke={color} strokeWidth={2.5} strokeDasharray={marker === "dashed-line" ? "5 4" : undefined} />
   if (marker === "diamond") return <path d={`M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`} fill={color} stroke={color} />
   if (marker === "triangle") return <path d={`M${cx},${cy-r} L${cx+r},${cy+r} L${cx-r},${cy+r} Z`} fill={color} />
   if (marker === "square" || marker === "bar") return <rect x={cx-r} y={cy-(marker === "bar" ? 6 : r)} width={r*2} height={marker === "bar" ? 12 : r*2} fill={color} />

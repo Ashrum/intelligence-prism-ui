@@ -42,7 +42,7 @@ P60 将 W148 的 `xTickMode` 正式收回 Prism 上游。`auto` 且未传 tickLa
 
 valueLabel 放点上方，annotation 放下方；文字始终使用正文色和既有图表字号。依据实际 plot / 数值轴位置，预留所有点的空间，再避让连线及已放置的文字；边缘文字向图内移动。plot 宽度不足 440px、文字过长或避让后放不下时不在图中放置该文字，提示框与数据表仍披露完整内容，不缩字号。提示框按点 ID 与系列 ID 取原始标注。
 
-null 默认断线且不画点；`connectGaps=true` 跨缺位连接有效点，标签避让也计入跨缺位的线段；`connect=false` 对整个系列禁用可见连线，常态和悬停态保留同一点形。数据披露增加系列线型/是否连线、点形、原值与标注。未传 tone 时颜色沿用原系列色；`tone="neutral"` 读取既有第六色（light/paper #6B7280，dark #B6BEC9），`tone="chart-3"` 读取第三色；显式 color 优先。没有区间带属性。
+null 默认断线且不画点；`connectGaps=true` 跨缺位连接有效点，标签避让也计入跨缺位的线段；`connect=false` 对整个系列禁用可见连线，常态和悬停态保留同一点形。数据披露增加系列线型/是否连线、点形、原值与标注。未传 tone 时颜色沿用原系列色；`tone="neutral"` 读取既有第六色（light/paper #6B7280，dark #979CA6），`tone="chart-3"` 读取第三色；显式 color 优先。没有区间带属性。
 
 组件页 `/next/components/trend-chart#learning-properties`：四次可比检测实际值 65/68/70/72%，预期 64/66/67/69%；另有一次不可比空心点、一次新情境菱形点。六个时间类别按首个系列顺序输入；实际/预期显式启用 connectGaps，预期/不可比用 neutral，新情境用 chart-3，独立点系列禁用连线。示例使用 yDomain="auto"、xTickMode="all" 与两行 tickLabel（第 2 周 / 起点检测至第 8 周 / 数学检测）。
 
@@ -64,7 +64,7 @@ P60：`ScatterChartProps.xDomain?: [number, number] | 'auto'` 与 `yDomain?: [nu
 
 `ScatterChartProps` / `QuadrantScatterChart` 同时支持 `labelMode?: 'auto' | 'none'`（默认 auto）与 `decimals?: 0 | 1`。auto 沿用窄容器隐藏、重叠避让；估算宽度超过 110px 的名称不画截断文本，完整名称放提示框与数据表。none 在普通态、悬停态及响应式配置中均关闭点标签；保留点形、象限标题和选择意图。
 
-ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart-1 … chart-6`；由 `chartToneColor` 读取对应主题色，区域透明度 0.1，位于数据点下方。其他象限仍透明。“查看数据”内的象限说明文字标记“高亮区域”；阈值非法时沿用不画象限的行为。三主题采用各自原有色板，不增 Token。
+ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart-1 … chart-6`；由 `chartToneColor` 读取对应主题色，区域透明度 light/paper 为 0.1、dark 为 0.16，位于数据点下方。其他象限仍透明。“查看数据”内的象限说明文字标记“高亮区域”；阈值非法时沿用不画象限的行为。三主题采用 P69 曜彩图表色板，详见 [Foundations 色板](foundation-tokens.md#p69-曜彩图表色板)。
 
 组件页 `/next/components/quadrant-chart#learning-properties`：章为圆点、知识点为菱形，xDomain/yDomain 使用 auto，数据集中在 60–90%，左下区域高亮；名称、阈值与优先处理文案均为外部示例事实。
 
@@ -365,3 +365,14 @@ TrendChart、ScatterChart / QuadrantScatterChart 的百分比 auto 轴共用 `ch
 非百分比自动轴、未选 auto 的旧域、显式域、数据披露、主题颜色和交互保持原行为。P59/P60/P61/P65 的旧 auto 刻度预期按 P68 更新，保留坐标、间距、标签、默认域和显式域断言；未重写默认快照。
 
 复用核对：读取既有 `chart-options.ts`、Trend / Scatter 的 Recharts / ECharts 接线，以及本地 particles `table-particle.tsx`（p-table-3/4）和本文已有量值组合记录。表格组合不提供数值坐标域，故修正现有共享函数；不引入新组件或第三方代码。按前置约定未联网刷新 registry；本任务为通用图表，不适用 Beautiful UI Agent 执行组件。
+
+
+## P69 曜彩与图形尺寸（2026-10-15）
+
+浅色 / 纸色与深色默认系列、形状、连续色阶统一见 [Foundations](foundation-tokens.md#p69-曜彩图表色板)。Recharts 核心主题从五色循环补齐为六色，与 ECharts 及 ChartLegend 对齐；显式 color / colors 与 tone 优先级保持。Blueprint / Blueprint Night 的色板及覆盖保留，夜图不跟随本轮核心 dark 更新。
+
+Trend 普通点与自定义点、Scatter 默认点、Combo 折线点、Radar 点形及 ChartLegend 默认标记半径为 6.5px（ECharts symbolSize=13），Trend 悬停半径 8px；主数据线和成对点连接线为 2.5px；PairedDot 的点保持半径 6px（symbolSize=12），细轨道、轴线和象限分界仍是辅助线。BoxPlot 默认轮廓 2.5px，选中 3px。显式 Scatter size 保留原有上下界；inline 数值旁的辅助标记保留 r=3。象限 highlight 浅色/纸色采用对应 tone 的 10% 叠加，深色采用 16%，标题和点仍为完整系列色。
+
+复用依据：读取现有 chart-palette / chart-theme / ChartLegend、固定 coss Table / Button / Popover 引用和本地 particles `demos/table-particle.tsx`（p-table-3/4），并复核本文、comparison-chart、polar-charts 的 p-meter-3/4、p-progress-1/2/3、p-frame-1 等记录。基础量值和表格组合不提供分类色或绘图尺寸，因此直接适配现有 ECharts / Recharts 图表。按 Builder 前置约定未联网刷新 registry；本任务为通用图表，不适用 Beautiful UI Agent 组件。未复制第三方代码、修改 coss 或增删依赖；只补齐图表第六色桥接。
+
+旧 P57/P58/P62/P63 快照文件保持原样；比较时仅迁移获准的图表颜色、热图文字对比色和图形尺寸。Blueprint Night 的冻结三主题哈希及“夜图等于核心 dark”断言与 P69 授权不兼容，交由 Supervisor 分线协调，不修改该测试或它的证据。

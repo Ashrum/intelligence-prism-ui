@@ -6,14 +6,14 @@ import { sequentialColor, relativeLuminance, contrastForeground } from '../lib/p
 import { themeAxes } from '../lib/prism-next/chart-options.ts';
 const ratio = (a, b) => { const x = relativeLuminance(a), y = relativeLuminance(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05) };
 
-test('core theme chart colours are unchanged', () => {
-  assert.deepEqual([...chartSeriesColors('light')], ['#1769AA', '#B8266E', '#2B8050', '#A57013', '#7159A7', '#6B7280']);
+test('P69 core chart palette is approved independently of Blueprint', () => {
+  assert.deepEqual([...chartSeriesColors('light')], ['#1E88E5', '#D6337F', '#3A9A2A', '#C27A00', '#7E5BD6', '#6B7280']);
   assert.deepEqual([...chartSeriesColors('paper')], [...chartSeriesColors('light')]);
   assert.deepEqual([...chartSeriesColors(undefined)], [...chartSeriesColors('light')]);
-  assert.deepEqual([...chartSeriesColors('dark')], ['#86C5FF', '#F296C2', '#99DFB4', '#F4CC86', '#BDACED', '#B6BEC9']);
-  assert.deepEqual(chartShapeColors('light'), { base: '#1769AA', selected: '#B8266E', fill: '#76A9D2' });
-  assert.deepEqual(chartShapeColors('dark'), { base: '#86C5FF', selected: '#F296C2', fill: '#365B7B' });
-  assert.deepEqual([...chartSequentialDefault('paper', '#EAE6DF')], ['#EAE6DF', '#76A9D2', '#1769AA']);
+  assert.deepEqual([...chartSeriesColors('dark')], ['#62ACED', '#E270A5', '#75B86A', '#D4A24D', '#A58CE2', '#979CA6']);
+  assert.deepEqual(chartShapeColors('light'), { base: '#1E88E5', selected: '#D6337F', fill: '#99C9F3' });
+  assert.deepEqual(chartShapeColors('dark'), { base: '#62ACED', selected: '#E270A5', fill: '#3C719F' });
+  assert.deepEqual([...chartSequentialDefault('paper', '#EAE6DF')], ['#EAE6DF', '#99C9F3', '#1E88E5']);
   for (const t of ['light', 'paper', 'dark', undefined]) assert.deepEqual(blueprintChartOverrides(t), {});
 });
 

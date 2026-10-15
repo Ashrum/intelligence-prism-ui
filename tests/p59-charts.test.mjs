@@ -19,7 +19,7 @@ test('P59 gap connection is opt-in and point-only wins; category order and missi
 
 for(const theme of ['light','paper','dark'])test(`P59 ${theme}: expected/hollow dots use neutral, diamonds use palette three, explicit color wins`,()=>{
  const out=capture('TrendChart',{label:'学情',series:api.learningTrendSeries},theme),paths=lines(out);
- assert.equal(paths[1].props.stroke,theme==='dark'?'#B6BEC9':'#6B7280');
+ assert.equal(paths[1].props.stroke,theme==='dark'?'#979CA6':'#6B7280');
  assert.equal(paths[2].props.stroke,paths[1].props.stroke);assert.equal(paths[3].props.stroke,out.theme.colors[2]);
  const custom=capture('TrendChart',{...defaults.TrendChart,series:[{...defaults.TrendChart.series[0],tone:'neutral',color:'#123456'}]},theme);
  assert.equal(lines(custom)[0].props.stroke,'#123456');

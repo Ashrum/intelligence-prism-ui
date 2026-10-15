@@ -75,8 +75,8 @@ export function radarChartOption(axes: readonly RadarAxis[], series: readonly Ra
     } },
     series: [{ type: "radar", data: model.ready ? model.valid.map(item => {
       const index = series.indexOf(item), color = chartToneColor(theme, index, item.tone)
-      return { id: item.id, name: item.label, value: [...item.values], symbol: index === 0 ? "circle" : "diamond", symbolSize: 6,
-        lineStyle: { color, width: 2, type: index === 0 ? "solid" : "dashed" }, itemStyle: { color } }
+      return { id: item.id, name: item.label, value: [...item.values], symbol: index === 0 ? "circle" : "diamond", symbolSize: 13,
+        lineStyle: { color, width: 2.5, type: index === 0 ? "solid" : "dashed" }, itemStyle: { color } }
     }) : [] }],
     media: [{ option: { radar: { radius: "58%" } } }, { query: { maxWidth: 440 }, option: { radar: { radius: "42%" } } }],
   }
