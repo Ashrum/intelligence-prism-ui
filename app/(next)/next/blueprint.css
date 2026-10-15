@@ -90,7 +90,7 @@
 .bp-btn:not(:disabled):hover { background:var(--secondary); }
 .bp-btn:not(:disabled):active { transform:translateY(1px); }
 .bp-btn[data-variant="primary"] { background:var(--foreground); color:var(--card); box-shadow:var(--shadow-offset); }
-.bp-btn[data-variant="primary"]:not(:disabled):hover { box-shadow:var(--shadow-offset-sm); transform:translate(2px,2px); }
+.bp-btn[data-variant="primary"]:not(:disabled):hover { background:var(--foreground); color:var(--card); box-shadow:var(--shadow-offset-sm); transform:translate(2px,2px); }
 .bp-btn[data-variant="danger"] { color:var(--destructive-foreground); border-color:var(--destructive-foreground); }
 .bp-btn[data-variant="danger"]:not(:disabled):hover { background:color-mix(in srgb,var(--destructive) 8%,var(--card)); }
 .bp-btn[data-size="sm"] { min-height:34px; padding:5px 14px; font-size:var(--text-ui-action); }

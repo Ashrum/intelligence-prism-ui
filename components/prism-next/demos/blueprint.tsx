@@ -31,6 +31,10 @@ export function BlueprintComponentsDemo() {
     }
   }
   return <div className="bp-demo space-y-8">
+    <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
+      <a href="#common-components">常用基础组件</a>
+      <a href="#actions">蓝图按钮与标签页</a>
+    </nav>
     <BlueprintFoundationDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">

@@ -2,6 +2,10 @@
 
 2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 `app/(next)/next/theme.css`（颜色令牌）、`app/(next)/next/blueprint.css`（几何与 `bp-*` 样式）及 [React 封装](../components/prism-next/blueprint/blueprint.tsx)。演示页为 `/next/foundations/blueprint`，从侧栏「蓝图组件」进入。
 
+### 主行动按钮悬停修复 · 2026-10-15
+
+用户指出“预览主行动”悬停时文字不可读。根因是通用 hover 浅底覆盖 primary 墨底，但文字仍为白色；现已在 primary hover 中成对保留主题前景底色与卡片文字色。蓝图下默认、悬停、键盘焦点与按下均为17.76:1，四主题 × 320/1280px复验通过。原有按钮未取消，仍位于“按钮与标签页”；顶部补充了直达入口，保留新增通用组件与原样板。见 [修前测量](blueprint/evidence/hover-20261015/before.json)、[修后测量](blueprint/evidence/hover-20261015/browser-results.json)、[桌面截图](blueprint/screens/hover-20261015/blueprint-1280-hover-after.png)、[窄屏截图](blueprint/screens/hover-20261015/blueprint-320-hover-after.png)、[检查与审查](blueprint/evidence/hover-20261015/checks.md) 和 [全量失败集合对照](blueprint/evidence/hover-20261015/failure-delta.json)。本轮修复不改变第四主题候选状态。
+
 ### 标尺密度微调 · 2026-10-15
 
 按用户“降低宽度、减小字号，具体数据由你决策并实施”的授权，第四主题的外侧标尺带从 18px 收至 14px（约减少22%），坐标数字从 12px 收至 10px（约减少17%）。四边厚度、端点偏移与内框共用同一尺寸，保持工程图纸的连续结构；40px 内容侧内距、标题与 SHEET 编号不缩小，让标尺退到辅助层级。采用 rem，根字号放大25%时标尺带与数字分别变为17.5px与12.5px。
