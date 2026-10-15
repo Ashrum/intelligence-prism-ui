@@ -6,14 +6,14 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
-## 组件来源与复用顺序（PO 2026-09-29）
+## 组件来源与复用顺序（2026-10-16 正式基线）
 
-- 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
-- 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
-- coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
-- 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+- 先复用已有智能曜彩／Prism组件，再检索 coss（含 particles），然后做必要的 Prism 组合与适配；仍有稳定缺口才新建。
+- Beautiful UI 为可选来源与局部效果参考，不再强制优先检索，不因本次调整重写已验收实现。引用其代码须核对具体许可、保留 MIT 声明，并去掉演示计时器与自动播放。
+- coss 检索包含 [particles](https://coss.com/ui/particles)；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。适配在 `components/prism-next` 完成，冻结的 `components/coss/**` 原始字节不变；官方最新实现不视为已接入。
+- 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 
-以上是组件来源检索顺序，不改变规范权威顺序、主题与语义令牌要求，也不允许引入 Workspace 业务行为或私有类型。
+依据 [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) §11.6，同步用户已批准的来源取舍；目标设计与实施门禁以该规范为准，现有 props/API 的已实现事实仍须核对源码和组件契约。未实现项不因定稿自动升级为可用。主题、字体、冻结 coss 和双仓边界继续有效；本轮仅同步规则，未完成 CI 修复或服务签认。
 
 ## 交互演示器 v0.1
 

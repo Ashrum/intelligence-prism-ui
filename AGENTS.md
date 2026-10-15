@@ -33,29 +33,30 @@
 
 ## 4. 规范权威顺序
 
-1. [Agent 组件规范 v0.2.1（已批准）](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)，以及各组件页的 Agent Spec
-2. Foundations：[字体规范](docs/typography.md)、主题与语义令牌
-3. [复用规划 v0.1.3](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)、[组件复用约定](docs/component-contracts.md)、[题目呈现章程 v0.1](docs/question-presentation-charter.md)、Pattern 与应用示例
-4. 固定版本的 coss upstream 行为
-5. Agent 自行推断
+1. [OLE Agent 前端界面设计规范 · 蓝图 v1.0](docs/OLE_Agent_Frontend_Blueprint_v1.0.md) 的目标交互、组件来源与实施门禁；现有 API 是否已支持仍须核对源码与组件契约，不以目标设计冒充已实现。
+2. [Agent 组件规范 v0.2.1（已批准）](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)，以及各组件页的 Agent Spec
+3. Foundations：[字体规范](docs/typography.md)、主题与语义令牌
+4. [复用规划 v0.1.3](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)、[组件复用约定](docs/component-contracts.md)、[题目呈现章程 v0.1](docs/question-presentation-charter.md)、Pattern 与应用示例
+5. 固定版本的 coss upstream 行为
+6. Agent 自行推断
 
 后一级不得覆盖前一级。缺失的值或行为先沿用 coss；仍无定义时报告规范缺口，不从截图或偏好补造。见 [docs/agent-readable-contract.md](docs/agent-readable-contract.md)。
 
 ## 5. 设计系统硬约束
 
 - `components/coss/**` 是固定来源的 54 个原始组件，字节受散列校验，禁止修改。需要调整时在 `components/prism-next` 组合或适配。
-- 先复用（PO 2026-09-29）：
-  - 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
-  - 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
-  - coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
-  - 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+- 复用顺序已按用户2026-10-16正式版发布指令同步（来源取舍见规范 §11.6）：
+  - 先复用已有智能曜彩／Prism组件，再检索 coss（含 particles），然后做必要的 Prism 组合与适配；仍有稳定缺口才新建。
+  - Beautiful UI 为可选来源与局部效果参考，不再强制优先检索，不因本次调整重写已验收实现。引用其代码须核对具体许可、保留 MIT 声明，并去掉演示计时器与自动播放。
+  - coss 检索包含 [particles](https://coss.com/ui/particles)；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。适配在 `components/prism-next` 完成，冻结的 `components/coss/**` 原始字节不变；官方最新实现不视为已接入。
+  - 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 - 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。 Blueprint 的有限例外见 §10；其余范围继续遵守本条。
 - 文字使用语义字号类（`text-ui-body`、`text-ui-hint`、`text-read-body`、`text-block-title` 等），不写局部字号；排版检查脚本会拦截。
 - 核心主题保持 `light` / `paper` / `dark` 三套；`blueprint` 为隔离的第四套实验主题，例外边界与生效条件见 §10。根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。
 - 基础表单使用常驻固定标签，不做浮动标签。
 - 组件目录可扩充，新增组件须经 Product Owner 认可（PO 2026-09-30）；页面骨架、应用示例与语义别名不计入组件数，不为搜索或演示另建组件条目。
 - 组件只呈现外部事实并发出意图：不内置模型、执行器、业务 Store、权限判断或持久化；不用计时器、按钮点击推定执行状态；未知就显示未知。
-- 动效只解释用户操作和外部状态变化，遵守减少动态效果设置。
+- 动效按正式规范 §5.5：简单反馈用 CSS，复杂过渡按需用现有 Motion，合格既有 glimm 保留；同节点同属性不得竞争。P0 统一响应系统 `prefers-reduced-motion` 的初始值和运行中变化，Motion 装饰循环／扫光也须显式停用；不以动画推定业务状态。
 
 ## 6. 本地环境
 
