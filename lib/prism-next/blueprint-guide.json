@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "10cca974f8623832314614b980a9ed702f558fc9344223aa4097b6d70ee6f8e6",
+  "sourceSha256": "beaf6982456b744ed838f42dcab61bfac55928d03717ee312408e325e3e5fd02",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 第四主题「蓝图」",
   "headings": [
@@ -12,110 +12,115 @@
     {
       "id": "section-2",
       "level": 3,
-      "text": "第一批结果与剩余验收"
+      "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
       "id": "section-3",
+      "level": 3,
+      "text": "第一批结果与剩余验收"
+    },
+    {
+      "id": "section-4",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-4",
+      "id": "section-5",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-5",
+      "id": "section-6",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-6",
+      "id": "section-7",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-7",
+      "id": "section-8",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-8",
+      "id": "section-9",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-9",
+      "id": "section-10",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-10",
+      "id": "section-11",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-11",
+      "id": "section-12",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-12",
+      "id": "section-13",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-13",
+      "id": "section-14",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-14",
+      "id": "section-15",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-15",
+      "id": "section-16",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-16",
+      "id": "section-17",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-17",
+      "id": "section-18",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-18",
+      "id": "section-19",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-19",
+      "id": "section-20",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-20",
+      "id": "section-21",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-21",
+      "id": "section-22",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-22",
+      "id": "section-23",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-23",
+      "id": "section-24",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -352,7 +357,7 @@
       "children": [
         {
           "type": "text",
-          "value": "站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。站点当前轻量页面实验与 GitHub 第四主题基线不同，文档可阅读不代表第四主题已在该部署启用；上线状态以页面说明与实际发布记录为准。"
+          "value": "站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。"
         }
       ]
     },
@@ -360,6 +365,42 @@
       "type": "heading",
       "level": 3,
       "id": "section-2",
+      "children": [
+        {
+          "type": "text",
+          "value": "Site、GitHub 与本地同步（2026-10-15）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "将 Site v117 的轻量 Blueprint v0.4、来源许可及实验历史合入 GitHub 主线，同时保留主线第四主题、图表更新及本地第一批完善。规范页恢复第四主题示例入口，两种蓝图实验各自沿用原有范围；核心三主题与冻结 coss 保持原样。规范直接引用的文本与下载快照固定 LF，避免 Windows 检出换行使来源散列失效。合并验证及发布边界记录在 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "当前状态"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。本次同步不将候选主题升级为正式验收完成。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-3",
       "children": [
         {
           "type": "text",
@@ -484,7 +525,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-3",
+      "id": "section-4",
       "children": [
         {
           "type": "text",
@@ -504,7 +545,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-4",
+      "id": "section-5",
       "children": [
         {
           "type": "text",
@@ -685,7 +726,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-5",
+      "id": "section-6",
       "children": [
         {
           "type": "text",
@@ -950,7 +991,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-6",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -1119,7 +1160,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-7",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1311,7 +1352,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-8",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -1583,7 +1624,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-9",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -1749,7 +1790,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-10",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -2093,7 +2134,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-11",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2318,7 +2359,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-12",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -2414,7 +2455,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-13",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -2623,7 +2664,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-14",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -2723,7 +2764,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-15",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -2797,7 +2838,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-16",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -2892,7 +2933,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-17",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -2944,7 +2985,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-18",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -3033,7 +3074,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-19",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -3086,7 +3127,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -3279,7 +3320,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-21",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -3411,7 +3452,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-22",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -3488,7 +3529,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-23",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -3567,7 +3608,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "db5549511701346cad4a8077ce62bd42080e361072cc62bf4b31a015d5de5584"
+      "sha256": "060b84b73e51c230c663e689c0f36ef81c94f8c82167a0f4ff170de5de899469"
     },
     {
       "source": "docs/blueprint/evidence/v9/browser-results.json",
@@ -3602,17 +3643,17 @@
     {
       "source": "docs/experiments/prism-blueprint-v0.2.md",
       "href": "/foundations/blueprint/guide-assets/docs/experiments/prism-blueprint-v0.2.md",
-      "sha256": "8fcd5785b87730cd17947f59fd35cf03ce979929439d2b3f7ccb536583eddf6e"
+      "sha256": "12831f4e7e2ee6fcfe93998cc34846cfb93dae868111e1b5110df36eec2de295"
     },
     {
       "source": "docs/blueprint/evidence/source-audit-20261015/computed-styles.json",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/computed-styles.json.txt",
-      "sha256": "d27bd23dc84e60f389fe054f38909bb6c69341edfc7cb8d8b7564bc835270ece"
+      "sha256": "533b35408301cb74be93d1398c32751be3513e9f360e32a38cd8bfdc0f282bce"
     },
     {
       "source": "docs/blueprint/evidence/source-audit-20261015/probe.js",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/source-audit-20261015/probe.js.txt",
-      "sha256": "68739efef9f2fedc6cfd2d3c0402265d2095aed8641eab76e0b743a624e0c176"
+      "sha256": "a74154bd687f0fb2dfa65fcbdde8c352ac24a5a7e61cd13ca5c52a7fd4b4e471"
     },
     {
       "source": "docs/blueprint/evidence/source-audit-20261015/states.js",
@@ -3647,7 +3688,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "10cca974f8623832314614b980a9ed702f558fc9344223aa4097b6d70ee6f8e6"
+      "sha256": "beaf6982456b744ed838f42dcab61bfac55928d03717ee312408e325e3e5fd02"
     }
   ]
 }

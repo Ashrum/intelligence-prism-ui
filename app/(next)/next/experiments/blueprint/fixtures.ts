@@ -59,21 +59,15 @@ export const taskDetails = {
 } as const
 
 export type TaskDetailKey = keyof typeof taskDetails
-export type BlueprintVersion = "v01" | "v02"
+export type BlueprintStage = "refined" | "original"
+export type BlueprintTheme = "light" | "paper" | "dark"
 
-export const comparisonNotes = {
-  v01: {
-    label: "v0.1 C · 结构复现",
-    description: "复现 C 的双层图框、全幅淡网格、顶部刻度和分栏轴线；内部统一使用当前仓库组件。",
-    structure: "双层图框与连续轴线共同划分三区，标记密度较高。",
-    transition: "外部图框较密，圆角卡片逐列并排，边界之间的竞争需要观察。",
-    reading: "正文与 v0.2 一致；此模式仅比较结构，不是原 HTML 的像素复刻。",
-  },
-  v02: {
-    label: "v0.2 · 精修",
-    description: "单层图框、短定位线与局部网格；让中间会话成为阅读中心，侧栏承载进程和依据。",
-    structure: "一层图框建立外部秩序，分区线止于标题，留白连接内部组件。",
-    transition: "图纸标记停留在页面边缘；卡片、按钮和消息保留原有外观与行为。",
-    reading: "正文避开网格；侧栏宽度与行间留白优先保证中文阅读，窄屏按区域自然展开。",
-  },
+export const originalReferenceHref = "/experiments/blueprint/OLE_Prism_Blueprint_Experiment_v0.1.html"
+export const officialStyleHref = "https://github.com/QingYunA/answer-me-with-html/blob/9a762d49927949a7df6657fbfea34f2fb1433f61/site/src/style.css"
+export const officialLicenseHref = "/experiments/blueprint/answer-me-with-html-LICENSE.txt"
+
+export const refinementNotes = {
+  structure: "v0.4 让任务标题成为主标题，实验说明默认收起；保留官网双图框、18px 尺带和纸面之外的 40px 极淡网格。",
+  transition: "A / B / C 字母块收为 32px，保留连续基线。桌面图签合为一行，内部仍使用智能曜彩组件与三主题语义色。",
+  reading: "证据行通过公开 navigation 尺寸随内容增高，完整显示标题与来源；保留 14 / 16px 正文、关键数字和窄屏重排。",
 } as const

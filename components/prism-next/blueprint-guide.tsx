@@ -45,7 +45,7 @@ export function BlueprintGuide({ showBlueprintDemo = true }: { showBlueprintDemo
       <a className="prism-link" href="/next/experiments/blueprint">轻量页面实验</a>
       <a className="prism-link" href={guide.sourceDownload} download>下载 Markdown 原文</a>
     </nav>
-    <p className="mb-7 text-ui-hint text-muted-foreground">本文记录第四主题的仓库规范与验证历史；各项历史结论以其日期、基线和已验范围为准。文档公开不代表当前站点已经启用第四主题，轻量页面实验按独立约定运行。</p>
+    <p className="mb-7 text-ui-hint text-muted-foreground">本文记录第四主题的规范与验证历史；各项结论以其日期、基线和已验范围为准。第四主题仍为隔离实验候选，轻量页面实验按独立约定运行。</p>
     <details className="mb-8 border-y py-4" open><summary className="cursor-pointer text-ui-action">文档目录</summary><nav aria-label="蓝图规范目录" className="mt-4 grid gap-3 text-ui-hint sm:grid-cols-2">{guide.headings.filter(heading => heading.level === 2).map(heading => <a className="prism-link" key={heading.id} href={`#${heading.id}`}>{heading.text}</a>)}</nav></details>
     <article aria-label={guide.title} className="max-w-5xl min-w-0 text-read-body">{(guide.blocks as Block[]).map((block, index) => <GuideBlock key={index} block={block} index={index}/>)}</article>
     <footer className="mt-10 border-t pt-5 text-ui-meta text-muted-foreground"><p>正文与直接引用的证据由仓库 Markdown 同步。日志和脚本仅作为文本证据提供。</p><p className="mt-2 break-all font-mono">来源 SHA-256：{guide.sourceSha256}</p></footer>
