@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "2f109387e53f686b02703f81d0c5ea234527c198da60974160e723f920878124",
+  "sourceSha256": "f2ac37d7abead56b75a3bff9ad049c702f15f7bb1d7eff4a6814f8a2ed856caa",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 第四主题「蓝图」",
   "headings": [
@@ -17,140 +17,165 @@
     {
       "id": "section-3",
       "level": 2,
-      "text": "完善路线与当前执行（2026-10-15）"
+      "text": "完善路线与当前执行（更新于 2026-10-16）"
     },
     {
       "id": "section-4",
       "level": 3,
-      "text": "通用基础组件首批 · 2026-10-15"
+      "text": "通用基础组件第二批与配色规则 · 2026-10-16"
     },
     {
       "id": "section-5",
       "level": 4,
-      "text": "复用依据（本轮离线核对）"
+      "text": "第二批复用与实现边界"
     },
     {
       "id": "section-6",
       "level": 4,
-      "text": "首批样例与已验范围"
+      "text": "第二批样例与已验范围"
     },
     {
       "id": "section-7",
       "level": 4,
-      "text": "实施结果与证据边界"
+      "text": "第二批实施结果与证据边界"
     },
     {
       "id": "section-8",
       "level": 3,
-      "text": "Site、GitHub 与本地同步（2026-10-15）"
+      "text": "通用基础组件首批 · 2026-10-15"
     },
     {
       "id": "section-9",
-      "level": 3,
-      "text": "第一批结果与剩余验收"
+      "level": 4,
+      "text": "复用依据（本轮离线核对）"
     },
     {
       "id": "section-10",
-      "level": 2,
-      "text": "原始参考风格提炼（2026-10-15）"
+      "level": 4,
+      "text": "首批样例与已验范围"
     },
     {
       "id": "section-11",
-      "level": 3,
-      "text": "来源及三层边界"
+      "level": 4,
+      "text": "实施结果与证据边界"
     },
     {
       "id": "section-12",
       "level": 3,
-      "text": "令牌与排版提炼"
+      "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
       "id": "section-13",
       "level": 3,
-      "text": "几何与布局规律"
+      "text": "第一批结果与剩余验收"
     },
     {
       "id": "section-14",
-      "level": 3,
-      "text": "交互状态与动效"
+      "level": 2,
+      "text": "原始参考风格提炼（2026-10-15）"
     },
     {
       "id": "section-15",
       "level": 3,
-      "text": "证据与验收范围"
+      "text": "来源及三层边界"
     },
     {
       "id": "section-16",
-      "level": 2,
-      "text": "与核心三主题的边界"
+      "level": 3,
+      "text": "令牌与排版提炼"
     },
     {
       "id": "section-17",
-      "level": 2,
-      "text": "颜色令牌"
+      "level": 3,
+      "text": "几何与布局规律"
     },
     {
       "id": "section-18",
-      "level": 2,
-      "text": "新增扩展令牌"
+      "level": 3,
+      "text": "交互状态与动效"
     },
     {
       "id": "section-19",
-      "level": 2,
-      "text": "五条几何规则"
+      "level": 3,
+      "text": "证据与验收范围"
     },
     {
       "id": "section-20",
       "level": 2,
-      "text": "首期 `bp-*` React 封装（不计入组件目录）"
+      "text": "与核心三主题的边界"
     },
     {
       "id": "section-21",
       "level": 2,
-      "text": "待验与已知限制"
+      "text": "颜色令牌"
     },
     {
       "id": "section-22",
-      "level": 2,
-      "text": "首次本地接入适配"
+      "level": 3,
+      "text": "配色与品牌分工（用户批准 2026-10-16）"
     },
     {
       "id": "section-23",
       "level": 2,
-      "text": "首次本地验证（2026-10-13）"
+      "text": "新增扩展令牌"
     },
     {
       "id": "section-24",
       "level": 2,
-      "text": "v2 → v3 接入与验证（2026-10-13）"
+      "text": "五条几何规则"
     },
     {
       "id": "section-25",
-      "level": 3,
-      "text": "本轮内容"
+      "level": 2,
+      "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
       "id": "section-26",
-      "level": 3,
-      "text": "接入中修正"
+      "level": 2,
+      "text": "待验与已知限制"
     },
     {
       "id": "section-27",
-      "level": 3,
-      "text": "验证结果"
+      "level": 2,
+      "text": "首次本地接入适配"
     },
     {
       "id": "section-28",
       "level": 2,
-      "text": "v4 图表配色接入与验证（2026-10-13）"
+      "text": "首次本地验证（2026-10-13）"
     },
     {
       "id": "section-29",
+      "level": 2,
+      "text": "v2 → v3 接入与验证（2026-10-13）"
+    },
+    {
+      "id": "section-30",
+      "level": 3,
+      "text": "本轮内容"
+    },
+    {
+      "id": "section-31",
+      "level": 3,
+      "text": "接入中修正"
+    },
+    {
+      "id": "section-32",
+      "level": 3,
+      "text": "验证结果"
+    },
+    {
+      "id": "section-33",
+      "level": 2,
+      "text": "v4 图表配色接入与验证（2026-10-13）"
+    },
+    {
+      "id": "section-34",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-30",
+      "id": "section-35",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -428,7 +453,7 @@
       "children": [
         {
           "type": "text",
-          "value": "完善路线与当前执行（2026-10-15）"
+          "value": "完善路线与当前执行（更新于 2026-10-16）"
         }
       ]
     },
@@ -437,7 +462,7 @@
       "children": [
         {
           "type": "text",
-          "value": "用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板第一批已完成容器布局、关键操作状态、墨底焦点与站内规范入口；当前按用户“同意。批准，开始实施”的明确授权，转入下述 12 类通用基础组件的 Blueprint 首批完善。Agent 业务页面与布局暂缓，现阶段先验证通用控件和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。"
+          "value": "用户已在本会话批准执行完善规划，并要求本文件记录到智能曜彩站点。既有样板、通用基础组件首批及主行动悬停修复保留各自证据；2026-10-16 用户进一步批准蓝图配色规则和第二批 12 类通用组件实施，当前范围见下方。Agent 业务页面与布局仍暂缓，现阶段继续验证通用控件、浮层和反馈表面的视觉与行为。此次批准不等于所有页面的视觉验收已完成。"
         }
       ]
     },
@@ -494,13 +519,13 @@
           [
             {
               "type": "text",
-              "value": "当前首批完善 Button、Input、Textarea、Select、Checkbox、RadioGroup、Switch、Tabs、Card、Badge、Alert、Dialog"
+              "value": "首批 12 类保留已验范围；当前第二批为 InputGroup、Combobox、ToggleGroup、Progress、Menu、Popover、Tooltip、Toast、AlertDialog、Sheet、Skeleton、Empty"
             }
           ],
           [
             {
               "type": "text",
-              "value": "按下方矩阵记录真实键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验"
+              "value": "每轮按实际样例记录键盘、鼠标、窄屏和主题隔离结果，逐项区分通过与未验"
             }
           ]
         ],
@@ -607,6 +632,1171 @@
       "children": [
         {
           "type": "text",
+          "value": "通用基础组件第二批与配色规则 · 2026-10-16"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "用户于 2026-10-16 批准本轮实施。开工基线为 "
+        },
+        {
+          "type": "code",
+          "value": "2865942bb755efaa516a0f6f4252cdf79b4b1969"
+        },
+        {
+          "type": "text",
+          "value": "，对应 Site v121；任务分支 "
+        },
+        {
+          "type": "code",
+          "value": "feat/blueprint-common-batch-two"
+        },
+        {
+          "type": "text",
+          "value": "。配色决策原位记入下方「颜色令牌」及 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "AI 来源与悬浮材质"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/foundation-tokens.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "，第二批限定以下 12 类既有组件，保留第一批及原蓝图样板入口，不扩展 Agent 业务布局。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "组别"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "本轮组件"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "适配重点与操作边界"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "输入、选择与进度"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "InputGroup、Combobox、ToggleGroup、Progress"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "复用已有输入表面与受控状态；检查组合输入单一外框、错误 / 禁用 / 焦点、搜索候选与无结果、选择与按下态、已知数值和未知进度的区别；不由点击或计时器推定真实任务完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "菜单与轻浮层"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "Menu、Popover、Tooltip、Toast"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "纸墨表面、状态文字、真实触发器和关闭；键盘展开 / 导航 / Escape、焦点返回、Tooltip 键盘可达、Toast 可关闭及实际主题宿主；不把提示样例写成真实保存回执"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "确认、侧栏与缺内容"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "AlertDialog、Sheet、Skeleton、Empty"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "确认与取消意图、焦点限制与返回、侧栏滚动和窄屏、明确加载占位与空状态；减少动态效果按真实样例核对，不让 Skeleton 自动变成完成事实或把 Empty 当成权限判断"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 4,
+      "id": "section-5",
+      "children": [
+        {
+          "type": "text",
+          "value": "第二批复用与实现边界"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮沿用固定 coss "
+        },
+        {
+          "type": "code",
+          "value": "e937becd2d5ffb5c621eed6f8b1f223cbb6051e7"
+        },
+        {
+          "type": "text",
+          "value": "。已离线核对 "
+        },
+        {
+          "type": "code",
+          "value": "components/coss/"
+        },
+        {
+          "type": "text",
+          "value": " 中上述 12 类对应文件的公开结构、"
+        },
+        {
+          "type": "code",
+          "value": "data-slot"
+        },
+        {
+          "type": "text",
+          "value": " 与 Portal 支持，以及本地 "
+        },
+        {
+          "type": "code",
+          "value": "demos/actions.tsx"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "demos/overlays.tsx"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "demos/feedback.tsx"
+        },
+        {
+          "type": "text",
+          "value": " 的既有组合。输入和搜索复核本地 "
+        },
+        {
+          "type": "code",
+          "value": "demos/input-particles.tsx"
+        },
+        {
+          "type": "text",
+          "value": " 的 p-input-group-22，以及 "
+        },
+        {
+          "type": "code",
+          "value": "demos/selection-particles.tsx"
+        },
+        {
+          "type": "text",
+          "value": " 的 p-combobox-9 / 8 / 18；确认与关闭返回复核 "
+        },
+        {
+          "type": "code",
+          "value": "demos/dialog-particles.tsx"
+        },
+        {
+          "type": "text",
+          "value": " 的 p-dialog-4 / 5 组合。沿用原语、常驻标签与弹层结构，不移植这些旧演示中的模拟保存计时器或业务完成文案。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "历史 "
+        },
+        {
+          "type": "code",
+          "value": ".sites-runtime/easyui-research-20261005/coss-registry.json"
+        },
+        {
+          "type": "text",
+          "value": " 在当前机器仍不存在。本轮实施另行下载并阅读全文的官方 particles 为 p-input-group-22、p-combobox-1 / 2、p-toggle-group-1、p-progress-2、p-menu-1 / 3、p-popover-1、p-tooltip-1、p-toast-2、p-alert-dialog-1、p-sheet-1、p-skeleton-1 和 p-empty-1；"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "复用来源记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/reuse-sources.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 保留来源 URL、依赖与已读文件散列，不据此声称穷举完整最新注册表。实际只借用组合结构，复用现有 coss、Prism Button 与 QuestionMath；拒绝复制演示计时器、远程 avatar 或任务成功事实。Toast 沿用现有私有 manager 属性，Sheet 复用 QuestionMath 呈现真实 MathML，浮层容器归属本样例。现有原语能承载本轮样例，采用主题隔离的外层适配，不新增组件目录条目或公共 API。此轮不新增 Agent 执行组件，不扩大 Beautiful UI 的适用范围。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "只允许蓝图范围内的几何、语义配色使用与对照夹具调整；不修改冻结 coss、既有公共令牌名称 / 数值、品牌原色、业务源码或依赖，不全仓重命名 "
+        },
+        {
+          "type": "code",
+          "value": "--brand-ai-gradient"
+        },
+        {
+          "type": "text",
+          "value": "。已有教材装饰与 AI 来源用法的命名差异仅作兼容说明，具体语义见下方配色分工。公共颜色、品牌标识、教材业务及核心三主题的既有行为不以文档更新为由改变。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 4,
+      "id": "section-6",
+      "children": [
+        {
+          "type": "text",
+          "value": "第二批样例与已验范围"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "样例位于 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint#common-components-two"
+        },
+        {
+          "type": "text",
+          "value": "。"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "第二批交互记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/interactions.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 的 47 项检查通过，包含 12 类样例存在与 ID 唯一性；下表只记录实际展示和操作的状态，不表示所有变体、内容与输入方式均已覆盖。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "组件"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "当前样例与实际检查"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "覆盖边界"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "InputGroup"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "关键词清除并返回输入；空值时清除按钮禁用；页码错误 / 非整数 / 有效整数；只读、禁用与整组焦点"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "内输入 border 为 0，错误外框保留红色；系统剪贴板与所有 addon 排列未逐项验收"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Combobox"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "清除、无结果、真实选中值；输入文本不等于完成选择；键盘选择解除错误；Escape 返回、禁用输入"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "当前为单选本地候选，不扩为远程加载、多选或全部禁用选项组合"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "ToggleGroup"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "单选键盘操作、多选切换及禁用项"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留真实按下状态；不代表所有尺寸、方向或极长标签组合已验"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Progress"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "0%、40%、100% 与未知四个固定快照；未知没有 aria-valuenow，保留“未提供进度”"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "仅明确标注的快照，未接入任务执行；蓝图轨道与填充测得对比度约 16.26:1，不据此宣称全站对比度审计完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Menu"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "禁用项、复选项、单选项、键盘操作与 Escape 返回焦点"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "操作只更新本页反馈；未验全部子菜单或定位组合"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Popover"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "初始焦点、取消保留旧值、应用本页备注并返回焦点"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不产生保存服务回执；未扩验多层嵌套弹层"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Tooltip"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "可访问描述、键盘触发与 Escape 关闭"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "补充说明不替代常驻标签；没有据 DOM 属性声称读屏器实测完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Toast"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "三类本页通知、局部 manager 无全局重复、关闭指定通知和全部通知"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不推定真实任务成功或失败；未穷举全部通知堆叠与超时组合"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "AlertDialog"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "初始焦点位于取消、焦点限制、取消保留备注、确认本页变更及关闭返回"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "仅清除可逆的本页演示备注，不删除真实材料"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Sheet"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "初始焦点、Escape 返回、320px 面板内长内容滚动；样例包含 QuestionMath 真实 MathML"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "未作真机、读屏器或所有公式排版的完整验收"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Skeleton"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "aria-busy、减少动态效果时三个占位动画均为 none、手动切换固定内容"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不运行模拟加载计时器，不把切换视为真实请求完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "Empty"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "切换固定材料样例并恢复空状态"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "不创建或上传材料，不推定权限或数据服务状态"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 4,
+      "id": "section-7",
+      "children": [
+        {
+          "type": "text",
+          "value": "第二批实施结果与证据边界"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "第二批矩阵"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/matrix.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 的 223 项检查通过：四主题 × 320px / 768px / 1280px 共 12 个布局检查、11 个主题与浮层情景、6 组双向主题比较，记录内对应计算属性全部相等。检查真正的 Portal 宿主和通知节点，包含全局蓝图内的核心主题预览与核心主题内显式蓝图预览；不只根据触发器推定浮层主题。结论限定本轮样例、所测属性和宽度，不代表全站逐像素回归。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "矩阵曾发现局部预览沿用外层已计算的派生值：coss 部分工具类读取 "
+        },
+        {
+          "type": "code",
+          "value": "--radius-lg"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--radius-md"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--color-muted"
+        },
+        {
+          "type": "text",
+          "value": "，只切换局部基础令牌仍会继承外层结果。修复仅在涉及 Blueprint 的真实 "
+        },
+        {
+          "type": "code",
+          "value": "data-agent-preview"
+        },
+        {
+          "type": "text",
+          "value": " 主题边界重新绑定这三个既有别名，使其使用该边界自己的 radius / muted；蓝图内核心预览也恢复自身值，普通核心全局主题不受这段规则影响。夹具另外显式使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-foreground"
+        },
+        {
+          "type": "text",
+          "value": "。这不是新增公共令牌、改动品牌色或放宽几何覆盖到核心主题；修后以上双向比较和首批浮层回归均相等。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "用户追加的 InputGroup 聚焦蓝框只包中间输入区问题已修复并"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "实测焦点"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/focus.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "：旧会话中焦点外框包住 439px 整组，而非 386px / 411px 的内部输入；外层为 2px 蓝色 outline、2px offset，内层 outline 与 shadow 均为 none。错误状态仍保留 "
+        },
+        {
+          "type": "code",
+          "value": "rgb(198, 40, 40)"
+        },
+        {
+          "type": "text",
+          "value": " 红边；正常、错误、只读三类通过，清除按钮有独立焦点，且获焦时不同时绘制整组焦点。见"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "正常整组焦点"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/batch2-input-group-valid-focus.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "与"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "错误整组焦点"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/batch2-input-group-error-focus.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "。这些数值保留为原会话测量，最终环境与页面宽度另以下方干净会话为准，不扩写为全部 InputGroup 变体已验。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "正式组件页复验"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/routes.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 覆盖第二批 12 页 × 320px / 1280px 共 24 次访问，全部返回 200、存在真实样例且无页面横向溢出；具体交互仍以上方夹具记录为准。同份旧会话记录中的 320px InputGroup 整组为 246.67px，保持 2px 蓝色焦点线、内输入 outline / shadow 为 none。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "独立 Review 对旧窄屏截图底部滚动条提出复核后，另用"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "全新浏览器会话"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/fresh-focus.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "检查 1280px / 320px：innerWidth、文档 clientWidth / scrollWidth、body clientWidth / scrollWidth 均等于相应视口；html / body 的 zoom 为 1、DPR 为 1、visualViewport.scale 为 1。干净会话整组宽度分别为 446.5px / 246px，均保留完整 2px 蓝色焦点线；窄屏仅存在既有 Tabs 的局部横向滚动，没有文档级横向溢出。"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "窄屏截图"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-320-input-group-focus.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "已替换为本次结果，不将旧会话尺寸当作干净会话测量。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮另行复跑"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "首批 31 项交互"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-interactions.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "，全部通过。"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "原样板按钮回归"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-hover.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 覆盖四主题 × 320px / 1280px 共 8 个情景，原 8 个按钮均保留，蓝图主要行动的前景 / 背景对比度仍为 17.76:1。"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "首批矩阵"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-matrix.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 包含 12 个布局、8 个真实浮层情景，嵌套预览比较全部相等；CSS "
+        },
+        {
+          "type": "code",
+          "value": "zoom: 2"
+        },
+        {
+          "type": "text",
+          "value": " 检查通过，但不等于浏览器原生 200% 缩放已验。以上均为本轮重新运行，不借用旧轮结果代替当前回归。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "核心三主题 Progress 的"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "修改前"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-before.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "修改后"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-after.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "和"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "逐项对照"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-comparison.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "记录一致；蓝图填充与轨道由"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "修前"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/before.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "的约 1.09:1 提升到 16.26:1。这里只报告具体轨道 / 填充的计算样式与对比度，不据有限样本宣称所有核心组件视觉均已验。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "代表截图："
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "输入与进度"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-inputs.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "菜单与反馈"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-menus-and-feedback.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "确认与占位"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-dialogs-and-placeholders.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "Sheet 窄屏"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-320-sheet.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "局部通知"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-1280-toast.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "蓝图内深色 Combobox"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-local-dark-1280-combobox.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "深色内蓝图 Popover"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-dark-local-blueprint-1280-popover.png",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "。品牌标识与教材装饰保留既有颜色和语义边界，不把品牌三色改成任务状态；未修改教材业务源码，亦不据文档澄清声称教材业务流程已经重新验收。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "数学字体、语义字号（308 个 owned TSX）、生产构建与 TypeScript 已在运行时代码最后修订后通过；生成物同步后再次生产构建通过，Blueprint 专项最终 39/39 通过。全量首次在 Windows 沙箱内运行得到 1923 项 / 1661 通过 / 262 失败，其中额外一项为 symlink EPERM；正常权限复跑为 1949 项 / 1688 通过 / 261 失败。随后修复预览别名并更新文档，规范生成物尚未同步时的 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "release 中间结果"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/release-failure-delta.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 曾为 1949 项 / 1686 通过 / 263 失败，新增两项仅为 guide 完整字节与源散列不一致。最终重新生成、构建并复跑全量后恢复为 1949 项 / 1688 通过 / 261 既有失败，两项生成物失败已消除；"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "最终失败集合对照"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/complete-failure-delta.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 的 new 与 removed 均为空，与上一轮悬停修复的失败描述集合相同，不声称全量通过。"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "工程命令、时间与退出码"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/engineering.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "本轮检查与审查"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/checks.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "及"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "当前状态"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "记录具体依据；最终结果回填后的变更仅为说明与证据，规范及下载资源重新生成并校验。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "独立 Review"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/review.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 最终结论为 PASS WITH NOTES，正式放行；源码、浏览器与工程收口条件已满足，发布提交 SHA、PR 与 Site 版本仍以实际合并和发布终态为准。真机、读屏器、实体打印、原生 200% 缩放、全站像素回归及未展示的状态组合未验；数学内容只覆盖本轮 Sheet 的样例，不据此扩展到全部公式和 Agent 业务场景。第四主题继续保持候选状态。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-8",
+      "children": [
+        {
+          "type": "text",
           "value": "通用基础组件首批 · 2026-10-15"
         }
       ]
@@ -657,7 +1847,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-5",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -971,7 +2161,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-6",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -1280,7 +2470,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-7",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -1626,7 +2816,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-8",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -1662,7 +2852,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-9",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -1787,7 +2977,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-10",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -1807,7 +2997,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-11",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -1988,7 +3178,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-12",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -2253,7 +3443,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-13",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -2422,7 +3612,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-14",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -2614,7 +3804,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-15",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -2886,7 +4076,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-16",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -3052,11 +4242,317 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-17",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
           "value": "颜色令牌"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-22",
+      "children": [
+        {
+          "type": "text",
+          "value": "配色与品牌分工（用户批准 2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "蓝图延续纸色背景、墨色正文 / 结构和 "
+        },
+        {
+          "type": "code",
+          "value": "#1D5FBF"
+        },
+        {
+          "type": "text",
+          "value": " 交互蓝。主要行动仍使用成对的墨底与纸色文字，hover、focus-visible、pressed 不能只替换背景而留下不相配的前景；颜色取自既有语义令牌，不另建第二套蓝色色板。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "用途"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "既有规则"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "不能由外观推断的含义"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "text",
+              "value": "纸面与结构"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "background"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "card"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "popover"
+            },
+            {
+              "type": "text",
+              "value": " 承载内容；"
+            },
+            {
+              "type": "code",
+              "value": "foreground"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "heading"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "line"
+            },
+            {
+              "type": "text",
+              "value": " 形成文字和图框层级"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "墨底、网格或硬阴影不表示正在执行或已完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "交互与信息"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "链接、焦点及信息色沿用 "
+            },
+            {
+              "type": "code",
+              "value": "#1D5FBF"
+            },
+            {
+              "type": "text",
+              "value": "；选中背景和前景配对，选中值由真实属性决定"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "交互蓝不是品牌原色的替代值，也不是正确性或成功状态"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "成功、警告与错误"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留各自 "
+            },
+            {
+              "type": "code",
+              "value": "success"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "warning"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "destructive"
+            },
+            {
+              "type": "text",
+              "value": " 及 foreground 配对，状态仍有可读文字"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "成功绿不改为强调蓝或品牌青柠；不靠颜色单独宣布业务结果"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "品牌标识与原色"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "保留 "
+            },
+            {
+              "type": "code",
+              "value": "--brand-blue: #339FF2"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "--brand-magenta: #E0438F"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "--brand-green: #C2F25B"
+            },
+            {
+              "type": "text",
+              "value": " 与现有品牌标识"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "品牌三色不成为普通按钮、正文、大面积表面或进度的默认配色"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "AI 来源"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "--brand-ai-gradient"
+            },
+            {
+              "type": "text",
+              "value": " 仍映射既有品牌三色；用于来源时配中性可读的 AI 文字，并有调用方提供的真实来源依据"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "渐变本身不证明内容由 AI 生成、已经核验、正确或完成"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "既有教材品牌装饰"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "教材封面细条及现有 DialogLayout 装饰复用同一渐变，保留当前实现与命名兼容"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "brand-ai-gradient"
+            },
+            {
+              "type": "text",
+              "value": " 的历史变量名不赋予教材或对话框 AI 来源语义；不补造 AI 标签或生成事实"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "这次批准确定语义使用边界，保持公共令牌、品牌资产和既有业务行为不变。教材细条是既有非语义装饰的兼容用法，不由此扩大新的渐变使用范围；新内容若声称 AI 来源，必须按来源事实和可读标签呈现。基础规则与兼容说明同步维护于 "
+        },
+        {
+          "type": "code",
+          "value": "docs/foundation-tokens.md"
+        },
+        {
+          "type": "text",
+          "value": " 和 "
+        },
+        {
+          "type": "code",
+          "value": "docs/component-contracts.md"
+        },
+        {
+          "type": "text",
+          "value": " 的原有段落，不新增规划副本或全仓重命名。"
         }
       ]
     },
@@ -3396,7 +4892,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-18",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -3621,7 +5117,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-19",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -3717,7 +5213,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-20",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -3926,7 +5422,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-21",
+      "id": "section-26",
       "children": [
         {
           "type": "text",
@@ -4026,7 +5522,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-22",
+      "id": "section-27",
       "children": [
         {
           "type": "text",
@@ -4100,7 +5596,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-23",
+      "id": "section-28",
       "children": [
         {
           "type": "text",
@@ -4195,7 +5691,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-24",
+      "id": "section-29",
       "children": [
         {
           "type": "text",
@@ -4247,7 +5743,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-25",
+      "id": "section-30",
       "children": [
         {
           "type": "text",
@@ -4336,7 +5832,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-26",
+      "id": "section-31",
       "children": [
         {
           "type": "text",
@@ -4389,7 +5885,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-27",
+      "id": "section-32",
       "children": [
         {
           "type": "text",
@@ -4582,7 +6078,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-28",
+      "id": "section-33",
       "children": [
         {
           "type": "text",
@@ -4714,7 +6210,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-29",
+      "id": "section-34",
       "children": [
         {
           "type": "text",
@@ -4791,7 +6287,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-30",
+      "id": "section-35",
       "children": [
         {
           "type": "text",
@@ -4915,7 +6411,152 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "f12d323526de46b27bf62019af6969a4159467662f0d2f880a346e0d26ecd923"
+      "sha256": "9142e41a0bf48d36340de28154bc11ef58596af5aa9929517e47f518e5502500"
+    },
+    {
+      "source": "docs/foundation-tokens.md",
+      "href": "/foundations/blueprint/guide-assets/docs/foundation-tokens.md",
+      "sha256": "14d8b48caf58e0e0f264b0b1eebf552e8c98faeb96e1edd16a02d38aac91c903"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/reuse-sources.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/reuse-sources.json.txt",
+      "sha256": "b2f288bb69f4065462b5aae4c91cc592b2d400694ac1703745686f450dcb5931"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/interactions.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/interactions.json.txt",
+      "sha256": "65a7001b9cdac04da80b30b7a841edbaffe7bb492c289961c38624c44b8cf028"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/matrix.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/matrix.json.txt",
+      "sha256": "a0b5f7be0232088457487c54f16d63e7b0f2424d248ce860aabcd8bf3cd4a4d7"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/focus.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/focus.json.txt",
+      "sha256": "c7338cadefd476a51d146c5b764c465dedef8f3f9092c85980256c12baeffba2"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/batch2-input-group-valid-focus.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/batch2-input-group-valid-focus.png",
+      "sha256": "bf243c047bd63ed240c3d63514827ebb4ed8ab8c903ae784769d1a63dcc7e041"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/batch2-input-group-error-focus.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/batch2-input-group-error-focus.png",
+      "sha256": "148f6091c51bec4dc74feb8fa6299ab2e6b4684c9e7eedd2a9013d9ec33c0832"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/routes.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/routes.json.txt",
+      "sha256": "70019a6248c87a07d4dd4b47fce10b0d97de521f5d63bee9525c19cea8d2752d"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/fresh-focus.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/fresh-focus.json.txt",
+      "sha256": "44a1bd73cf89195e90258763c64e47eaa1c17247c52e3792b959743c1e1d60e5"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/blueprint-320-input-group-focus.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-320-input-group-focus.png",
+      "sha256": "4d55cdb7bfad5bc06cb20d1cb0a283e883052c30ddc1c070671349e415b231ba"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/first-interactions.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-interactions.json.txt",
+      "sha256": "b96423a3b8e84742acc9edd29db6c26854066bfc328b57263dc50195db6eb120"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/first-hover.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-hover.json.txt",
+      "sha256": "84c0aee288de82df2e23ce37558ba25a5a7c61034646f5bec870818da9e6f182"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/first-matrix.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/first-matrix.json.txt",
+      "sha256": "c40370e2e6c36f92e238c2921ca7581e2966ea3322b2ac81b4e947203340646d"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/core-before.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-before.json.txt",
+      "sha256": "80178f20e4dd1aa03dbf7476696fb5f9fcd970a8dae5946e4c14edeb79878b2c"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/core-after.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-after.json.txt",
+      "sha256": "80178f20e4dd1aa03dbf7476696fb5f9fcd970a8dae5946e4c14edeb79878b2c"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/core-comparison.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/core-comparison.json.txt",
+      "sha256": "23873467ec60ba29c32f2a5594c9133766be1f4c415c47d95cb83ea47c93626f"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/before.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/before.json.txt",
+      "sha256": "2cf636bc9dd346d100154f7a4f186dd8076e216db3ea654e6fb682db7e65dffd"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/blueprint-1280-inputs.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-inputs.png",
+      "sha256": "d1aa0709f908aac66d44672b31c0cce12d04a01f9aa7388315d67fb0470e0458"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/blueprint-1280-menus-and-feedback.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-menus-and-feedback.png",
+      "sha256": "01179fe43c4f54b350f67d49f077899066ffeb5178c17d6f31a9c631625b2de3"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/blueprint-1280-dialogs-and-placeholders.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/blueprint-1280-dialogs-and-placeholders.png",
+      "sha256": "01179fe43c4f54b350f67d49f077899066ffeb5178c17d6f31a9c631625b2de3"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/global-blueprint-320-sheet.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-320-sheet.png",
+      "sha256": "70d3a4c62c4692173b05f9b738f69270672548823a20b43914bbda8508927fc9"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/global-blueprint-1280-toast.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-1280-toast.png",
+      "sha256": "0a923d3010e317af20e04c6008a759dec5b5b8ec609b6b45a3a9c0de33bfe140"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/global-blueprint-local-dark-1280-combobox.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-blueprint-local-dark-1280-combobox.png",
+      "sha256": "35f4fefc1563be9c085d9985c3583503279d972422a9ae8b2631f3711294beca"
+    },
+    {
+      "source": "docs/blueprint/screens/batch2-20261016/global-dark-local-blueprint-1280-popover.png",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/batch2-20261016/global-dark-local-blueprint-1280-popover.png",
+      "sha256": "cde51a88ab6a0733f6527132b50ce417af24c7bf5fd8a9bf2bc7528444351d6c"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/release-failure-delta.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/release-failure-delta.json.txt",
+      "sha256": "c7b8435e729896e1805a16a82e5d4392efcd72fe3565557a308a32c34e679657"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/complete-failure-delta.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/complete-failure-delta.json.txt",
+      "sha256": "eb617f66fde0c03011cfc4052cc186eabefb15d8cbd048362b84d6b365358886"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/engineering.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/engineering.json.txt",
+      "sha256": "5c5ecedf36441d8b7e4be00266d70e1a67eef6bb5fdf05ae2b3226cb3b14802a"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/checks.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/checks.md",
+      "sha256": "4f2d7487d058ef4fad2f7c83c7c4068d43174acec899680f4d77ed7580a25de7"
+    },
+    {
+      "source": "docs/blueprint/evidence/batch2-20261016/review.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/batch2-20261016/review.md",
+      "sha256": "dc3d3e5e52da195ec9ad83969113828f0713d7540458d96940ee8694771b6f39"
     },
     {
       "source": "docs/blueprint/evidence/v7/reuse.json",
@@ -5090,7 +6731,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "2f109387e53f686b02703f81d0c5ea234527c198da60974160e723f920878124"
+      "sha256": "f2ac37d7abead56b75a3bff9ad049c702f15f7bb1d7eff4a6814f8a2ed856caa"
     }
   ]
 }

@@ -4,6 +4,25 @@
 
 ## 当前
 
+- 轮次：蓝图配色规则与通用组件第二批 · 2026-10-16；开工基线 `2865942bb755efaa516a0f6f4252cdf79b4b1969`，Site v121；任务分支 `feat/blueprint-common-batch-two`，开工工作树干净。
+- 授权：用户于 2026-10-16 批准蓝图配色规则和第二批 12 类实施。范围为 InputGroup、Combobox、ToggleGroup、Progress；Menu、Popover、Tooltip、Toast；AlertDialog、Sheet、Skeleton、Empty。保留首批和原蓝图样板，Agent 业务页面与布局继续暂缓。
+- 配色决定：延续纸墨与 `#1D5FBF` 交互蓝，保留成功 / 警告 / 错误的独立语义及前景背景配对；品牌原色 `#339FF2` / `#E0438F` / `#C2F25B` 与品牌标识保持不变。AI 来源需真实来源依据与可读标识，品牌渐变不表达正确性、进度或完成。
+- 兼容澄清：既有教材封面及 DialogLayout 装饰复用 `--brand-ai-gradient`，变量名不赋予教材或对话框 AI 来源语义。仅原位澄清 `docs/foundation-tokens.md`、`docs/component-contracts.md` 与 `docs/blueprint-theme.md`，不改业务源码、公共令牌 / API、不全仓重命名，不扩展新渐变装饰范围。
+- 实现边界：复用固定 coss 与 Prism，只在蓝图范围调整样例相关几何和语义配色使用，几何覆盖继续排除嵌套核心预览根、后代及伪元素；浮层核对真正 Portal 宿主。针对矩阵发现的派生值继承问题，仅在涉及 Blueprint 的真实预览边界重绑既有 `--radius-lg` / `--radius-md` / `--color-muted`，使核心预览恢复自身令牌，夹具补 `text-foreground`；不新增公共令牌或改变普通核心全局主题。冻结 coss、品牌资产、依赖、组件目录与轻量 Blueprint v0.4 保持原边界。
+- 复用依据：已核对 12 类固定 coss 及 actions / overlays / feedback、本地 input / selection / dialog particles。另下载并阅读全文的官方 particles 共 14 项，来源 URL、依赖与文件散列见[复用记录](evidence/batch2-20261016/reuse-sources.json)，不发布上游全文。实际复用 coss、Prism Button / QuestionMath 与组合结构，Toast 沿用现有私有 manager 属性，Sheet 使用真实 MathML；不复制演示计时器、远程 avatar 或任务成功事实。历史 registry 缓存仍不存在，不声称穷举完整上游；此轮不新增 Agent 执行组件或公共 API。
+- 第二批浏览器：[交互](evidence/batch2-20261016/interactions.json) 47/47；[矩阵](evidence/batch2-20261016/matrix.json) 223/223，包含四主题 × 320px / 768px / 1280px 共 12 组布局、11 个真实浮层情景、6 组双向局部主题比较，记录内对应属性全部相等。覆盖所展示的输入、选择、错误、禁用、键盘、焦点、通知、确认取消、Sheet 长内容与减少动态效果；不称全部状态已验。
+- InputGroup 追加修复：[焦点实测](evidence/batch2-20261016/focus.json) 正常 / 错误 / 只读三类与独立清除按钮通过；旧会话 1280px 整组 439px、内部 386px / 411px，外层 2px 蓝色 outline / 2px offset，内层 outline / shadow 为 none，错误红边保留。[旧会话 320px 复验](evidence/batch2-20261016/routes.json) 整组 246.67px，焦点包住完整组合；旧尺寸不冒充干净环境结果。
+- 干净浏览器复验：[fresh-focus.json](evidence/batch2-20261016/fresh-focus.json) 的 1280px / 320px 下，innerWidth、文档和 body 的 clientWidth / scrollWidth 均等于视口；html / body zoom 为 1、DPR 为 1、visualViewport.scale 为 1。整组分别为 446.5px / 246px，保持完整 2px 蓝色焦点线；仅既有 Tabs 局部横向滚动，无文档级横溢。320px 截图已替换为本次证据。
+- 第一批与原样板回归：[首批交互](evidence/batch2-20261016/first-interactions.json) 31/31；[首批矩阵](evidence/batch2-20261016/first-matrix.json) 12 组布局与 8 个真实浮层，局部比较全部相等，CSS zoom 2 通过。[原按钮](evidence/batch2-20261016/first-hover.json) 四主题 × 320px / 1280px 共 8 情景通过，8 个原按钮均保留，蓝图主行动对比度 17.76:1。核心三主题 Progress [修改前后](evidence/batch2-20261016/core-comparison.json)完全一致。
+- 正式路由：[第二批 12 页 × 320px / 1280px](evidence/batch2-20261016/routes.json) 共 24 次访问返回 200、真实样例存在且无页面横向溢出；具体交互以夹具记录为准，截图索引见[检查记录](evidence/batch2-20261016/checks.md)。
+- 工程检查：数学字体、语义字号（308 个 owned TSX）、TypeScript 与最终生产构建通过，Blueprint 专项最终 39/39。全量首次 Windows 沙箱为 1923 / 1661 / 262，额外失败为 symlink EPERM；正常权限复跑为 1949 / 1688 / 261。随后 release 中间结果为 1949 / 1686 / 263，[新增两项](evidence/batch2-20261016/release-failure-delta.json)仅因文档生成物未同步。最终生成后重新构建并复跑为 1949 项 / 1688 通过 / 261 既有失败，两项生成物失败已消除，[最终失败描述集合](evidence/batch2-20261016/complete-failure-delta.json)与上一轮 hover 相同，new=[]、removed=[]；不声称全量通过。[命令、时间与退出码](evidence/batch2-20261016/engineering.json)已归档。
+- 审查与当前进度：[独立 Review](evidence/batch2-20261016/review.md) 最终结论为 PASS WITH NOTES，正式放行；源码、浏览器与最终工程条件已满足。最终结果回填仅改说明与证据，规范 guide 和下载资源重新生成并检查 hash。发布提交 SHA、PR 与 Site 版本以实际合并和发布终态为准，不预写发布成功。
+- 未验：真机、读屏器、实体打印、原生 200% 缩放、全站像素回归与未展示的状态组合；CSS zoom 2 不代替原生缩放。未知进度不补为 0，Toast / Empty / Skeleton 不制造业务事实；Sheet 真实 MathML 样例不等于全部公式与 Agent 业务场景已验收。第四主题保持候选状态。
+
+## 历史
+
+### 主行动按钮悬停可读性修复 · 2026-10-15（原当前，原样保留）
+
 - 轮次：主行动按钮悬停可读性修复 · 2026-10-15；基线main / 本地 / Site v120均为 `6cbbe50532495b7c1ca0b9d6b7bee9ed54e8b919`。
 - 用户问题：悬停文字不清楚，以及原蓝图按钮是否被取消。原样例未删除，仅被新增基础组件下推；在顶部补两项导航入口。
 - 实现：仅修正blueprint.css现有primary hover背景/文字成对令牌，demos/blueprint.tsx补锚点。原主/次/小/危险/禁用样例完整保留；不改coss、API、依赖或核心令牌。
@@ -11,8 +30,6 @@
 - 工程检查：构建、类型、数学字体、307文件字号通过；Blueprint39/39；全量1949/1688通过/261既有失败，无新增或消失。见 [验收和独立审查](evidence/hover-20261015/checks.md)。
 - 独立Review：PASS WITH NOTES，无阻断。规范原位更新并重新生成；PR合入后用同一main提交发布Site，最终SHA与版本以部署记录及会话终态为准。
 - 限制：只验本组按钮及导航；全站布局、真机、读屏器和原生缩放不在本轮完成声明中。
-
-## 历史
 
 ### 通用基础组件 Blueprint 首批 · 2026-10-15（原当前，原样保留）
 

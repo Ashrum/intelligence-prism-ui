@@ -1,0 +1,738 @@
+{
+  "date": "2026-10-15T16:39:23.437Z",
+  "results": [
+    {
+      "theme": "blueprint",
+      "width": 1280,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "rgb(29, 95, 191) 4px 4px 0px 0px",
+          "focusVisible": false,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "hover",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(29, 95, 191) 2px 2px 0px 0px",
+          "focusVisible": false,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "rgb(29, 95, 191) solid 2px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px",
+          "focusVisible": true,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "rgb(29, 95, 191) solid 2px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px",
+          "focusVisible": true,
+          "contrast": 17.758836800979772
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(243, 245, 248)",
+        "color": "rgb(139, 146, 158)",
+        "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.868440554458201
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(243, 245, 248)",
+        "color": "rgb(139, 146, 158)",
+        "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.868440554458201
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(243, 245, 248)",
+          "color": "rgb(22, 24, 29)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 16.259790213604944
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.982118 0.932549 0.932549)",
+          "color": "rgb(198, 40, 40)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 4.9580544584854405
+        }
+      ],
+      "scrollWidth": 1265
+    },
+    {
+      "theme": "blueprint",
+      "width": 320,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "rgb(29, 95, 191) 4px 4px 0px 0px",
+          "focusVisible": false,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "hover",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(29, 95, 191) 2px 2px 0px 0px",
+          "focusVisible": false,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "rgb(29, 95, 191) solid 2px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px",
+          "focusVisible": true,
+          "contrast": 17.758836800979772
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(22, 24, 29)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "rgb(29, 95, 191) solid 2px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px",
+          "focusVisible": true,
+          "contrast": 17.758836800979772
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(243, 245, 248)",
+        "color": "rgb(139, 146, 158)",
+        "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.868440554458201
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(243, 245, 248)",
+        "color": "rgb(139, 146, 158)",
+        "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.868440554458201
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(243, 245, 248)",
+          "color": "rgb(22, 24, 29)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 16.259790213604944
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.982118 0.932549 0.932549)",
+          "color": "rgb(198, 40, 40)",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 4.9580544584854405
+        }
+      ],
+      "scrollWidth": 320
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "hover",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 15.797619425332647
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(244, 245, 247)",
+        "color": "rgb(176, 180, 187)",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 1.907498989816573
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(244, 245, 247)",
+        "color": "rgb(176, 180, 187)",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 1.907498989816573
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(244, 245, 247)",
+          "color": "rgb(31, 35, 40)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.481649523380236
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.990274 0.94102 0.964863)",
+          "color": "rgb(180, 35, 61)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 5.833269066851962
+        }
+      ],
+      "scrollWidth": 1265
+    },
+    {
+      "theme": "light",
+      "width": 320,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "hover",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 15.797619425332647
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(31, 35, 40)",
+          "color": "rgb(255, 255, 255)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 15.797619425332647
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(244, 245, 247)",
+        "color": "rgb(176, 180, 187)",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 1.907498989816573
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(244, 245, 247)",
+        "color": "rgb(176, 180, 187)",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 1.907498989816573
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(244, 245, 247)",
+          "color": "rgb(31, 35, 40)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.481649523380236
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.990274 0.94102 0.964863)",
+          "color": "rgb(180, 35, 61)",
+          "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 5.833269066851962
+        }
+      ],
+      "scrollWidth": 320
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "hover",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 14.504535127776856
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(234, 230, 223)",
+        "color": "rgb(165, 162, 156)",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.046875988832651
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(234, 230, 223)",
+        "color": "rgb(165, 162, 156)",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.046875988832651
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(234, 230, 223)",
+          "color": "rgb(30, 41, 59)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 11.760620944775342
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.990274 0.937412 0.950431)",
+          "color": "rgb(180, 35, 61)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 5.786228309316819
+        }
+      ],
+      "scrollWidth": 1265
+    },
+    {
+      "theme": "paper",
+      "width": 320,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "hover",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 14.504535127776856
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(30, 41, 59)",
+          "color": "rgb(255, 254, 251)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 14.504535127776856
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(234, 230, 223)",
+        "color": "rgb(165, 162, 156)",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.046875988832651
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(234, 230, 223)",
+        "color": "rgb(165, 162, 156)",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 2.046875988832651
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(234, 230, 223)",
+          "color": "rgb(30, 41, 59)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 11.760620944775342
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.990274 0.937412 0.950431)",
+          "color": "rgb(180, 35, 61)",
+          "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 5.786228309316819
+        }
+      ],
+      "scrollWidth": 320
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "hover",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 13.920997308099135
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(32, 35, 40)",
+        "color": "rgb(122, 133, 147)",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 4.205611404834898
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(32, 35, 40)",
+        "color": "rgb(122, 133, 147)",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 4.205611404834898
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(32, 35, 40)",
+          "color": "rgb(225, 229, 234)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 12.456085477321812
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.153255 0.111216 0.145882)",
+          "color": "rgb(255, 180, 207)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 9.883612474190155
+        }
+      ],
+      "scrollWidth": 1265
+    },
+    {
+      "theme": "dark",
+      "width": 320,
+      "states": [
+        {
+          "state": "default",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "hover",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "hover+keyboard-focus",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 13.920997308099135
+        },
+        {
+          "state": "pressed",
+          "background": "rgb(225, 229, 234)",
+          "color": "rgb(23, 25, 28)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) auto 0.666667px",
+          "transform": "matrix(1, 0, 0, 1, 2, 2)",
+          "shadow": "none",
+          "focusVisible": true,
+          "contrast": 13.920997308099135
+        }
+      ],
+      "disabledBefore": {
+        "state": "disabled",
+        "background": "rgb(32, 35, 40)",
+        "color": "rgb(122, 133, 147)",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 4.205611404834898
+      },
+      "disabledHover": {
+        "state": "disabled-hover",
+        "background": "rgb(32, 35, 40)",
+        "color": "rgb(122, 133, 147)",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+        "transform": "none",
+        "shadow": "none",
+        "focusVisible": false,
+        "contrast": 4.205611404834898
+      },
+      "other": [
+        {
+          "state": "预览次要行动 hover",
+          "background": "rgb(32, 35, 40)",
+          "color": "rgb(225, 229, 234)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 12.456085477321812
+        },
+        {
+          "state": "危险操作样式 hover",
+          "background": "color(srgb 0.153255 0.111216 0.145882)",
+          "color": "rgb(255, 180, 207)",
+          "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 2.66667px",
+          "transform": "none",
+          "shadow": "none",
+          "focusVisible": false,
+          "contrast": 9.883612474190155
+        }
+      ],
+      "scrollWidth": 320
+    }
+  ],
+  "reducedMotion": {
+    "state": "reduced-motion-hover",
+    "background": "rgb(22, 24, 29)",
+    "color": "rgb(255, 255, 255)",
+    "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+    "transform": "none",
+    "shadow": "rgb(29, 95, 191) 2px 2px 0px 0px",
+    "focusVisible": false,
+    "contrast": 17.758836800979772
+  },
+  "originalButtons": [
+    "预览主行动 →",
+    "预览次要行动",
+    "小尺寸样式",
+    "危险操作样式",
+    "主行动不可用",
+    "次要行动不可用",
+    "危险操作不可用",
+    "处理中 · 固定状态样例"
+  ],
+  "anchorLinksPassed": true
+}

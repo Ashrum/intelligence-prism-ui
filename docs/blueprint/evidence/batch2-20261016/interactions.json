@@ -1,0 +1,255 @@
+{
+  "date": "2026-10-15T16:32:37.816Z",
+  "checks": [
+    {
+      "name": "12 second batch samples",
+      "pass": true
+    },
+    {
+      "name": "unique IDs",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "input group clear and focus",
+      "pass": true
+    },
+    {
+      "name": "empty clear disabled",
+      "pass": true
+    },
+    {
+      "name": "input group invalid outer surface",
+      "pass": true,
+      "detail": {
+        "invalid": "true",
+        "inner": "0px",
+        "outer": "rgb(198, 40, 40)"
+      }
+    },
+    {
+      "name": "invalid integer remains invalid",
+      "pass": true
+    },
+    {
+      "name": "valid integer clears invalid",
+      "pass": true
+    },
+    {
+      "name": "group readonly and disabled",
+      "pass": true
+    },
+    {
+      "name": "combobox clear",
+      "pass": true
+    },
+    {
+      "name": "combobox empty result",
+      "pass": true
+    },
+    {
+      "name": "combobox chosen value",
+      "pass": true
+    },
+    {
+      "name": "typed text is not selection",
+      "pass": true
+    },
+    {
+      "name": "keyboard option selection clears error",
+      "pass": true
+    },
+    {
+      "name": "combobox Escape focus",
+      "pass": true
+    },
+    {
+      "name": "disabled combobox",
+      "pass": true
+    },
+    {
+      "name": "single toggle keyboard",
+      "pass": true
+    },
+    {
+      "name": "multiple toggle selection",
+      "pass": true
+    },
+    {
+      "name": "disabled toggles",
+      "pass": true
+    },
+    {
+      "name": "0 middle 100 and unknown progress",
+      "pass": true,
+      "detail": [
+        {
+          "now": "0",
+          "text": "0%"
+        },
+        {
+          "now": "40",
+          "text": "40%"
+        },
+        {
+          "now": "100",
+          "text": "100%"
+        },
+        {
+          "now": null,
+          "text": "未提供进度"
+        }
+      ]
+    },
+    {
+      "name": "progress fill contrast",
+      "pass": true,
+      "detail": {
+        "track": {
+          "bg": "rgb(243, 245, 248)",
+          "color": "rgb(22, 24, 29)",
+          "border": "rgb(214, 218, 225)",
+          "width": "0px",
+          "radius": "0px",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "focus": false
+        },
+        "fill": {
+          "bg": "rgb(22, 24, 29)",
+          "color": "rgb(22, 24, 29)",
+          "border": "rgb(214, 218, 225)",
+          "width": "0px",
+          "radius": "0px",
+          "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px",
+          "focus": false
+        },
+        "contrast": 16.259790213604944
+      }
+    },
+    {
+      "name": "menu disabled item",
+      "pass": true
+    },
+    {
+      "name": "menu checkbox state",
+      "pass": true
+    },
+    {
+      "name": "menu radio state",
+      "pass": true
+    },
+    {
+      "name": "menu Escape returns focus",
+      "pass": true
+    },
+    {
+      "name": "menu keyboard action",
+      "pass": true
+    },
+    {
+      "name": "popover initial focus",
+      "pass": true
+    },
+    {
+      "name": "popover cancel preserves value",
+      "pass": true
+    },
+    {
+      "name": "popover apply and return focus",
+      "pass": true
+    },
+    {
+      "name": "tooltip accessible description",
+      "pass": true
+    },
+    {
+      "name": "keyboard tooltip",
+      "pass": true
+    },
+    {
+      "name": "tooltip Escape",
+      "pass": true
+    },
+    {
+      "name": "three local notifications",
+      "pass": true
+    },
+    {
+      "name": "no global toast duplicate",
+      "pass": true,
+      "detail": {
+        "count": 1,
+        "allLocal": true
+      }
+    },
+    {
+      "name": "toast action closes chosen item",
+      "pass": true
+    },
+    {
+      "name": "toast close all",
+      "pass": true
+    },
+    {
+      "name": "alert cancel initial focus",
+      "pass": true
+    },
+    {
+      "name": "alert focus contained",
+      "pass": true
+    },
+    {
+      "name": "alert cancel retains note",
+      "pass": true
+    },
+    {
+      "name": "confirm local change and final focus",
+      "pass": true
+    },
+    {
+      "name": "sheet initial focus",
+      "pass": true
+    },
+    {
+      "name": "sheet Escape return",
+      "pass": true
+    },
+    {
+      "name": "narrow sheet and internal scroll",
+      "pass": true,
+      "detail": {
+        "left": 48,
+        "right": 304.66668701171875,
+        "width": 320,
+        "scrollWidth": 320,
+        "panelHeight": 589,
+        "panelScroll": 2115
+      }
+    },
+    {
+      "name": "skeleton busy state",
+      "pass": true
+    },
+    {
+      "name": "reduced motion skeleton",
+      "pass": true,
+      "detail": [
+        "none",
+        "none",
+        "none"
+      ]
+    },
+    {
+      "name": "skeleton manual content switch",
+      "pass": true
+    },
+    {
+      "name": "empty switches fixed content",
+      "pass": true
+    },
+    {
+      "name": "empty restores",
+      "pass": true
+    }
+  ]
+}

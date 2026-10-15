@@ -8,6 +8,7 @@
 
 # Guide source and download snapshots must retain identical bytes across checkouts.
 /docs/blueprint-theme.md text eol=lf
+/docs/foundation-tokens.md text eol=lf
 /docs/blueprint/STATUS.md text eol=lf
 /docs/experiments/prism-blueprint-v0.2.md text eol=lf
 /docs/blueprint/evidence/source-audit-20261015/* text=auto eol=lf
@@ -18,6 +19,7 @@
 /docs/blueprint/evidence/ruler-20261015/* text=auto eol=lf
 /docs/blueprint/evidence/common-20261015/* text=auto eol=lf
 /docs/blueprint/evidence/hover-20261015/* text=auto eol=lf
+/docs/blueprint/evidence/batch2-20261016/* text=auto eol=lf
 /lib/prism-next/blueprint-guide.json text eol=lf
 /public/foundations/blueprint/guide-assets/** text=auto eol=lf
 

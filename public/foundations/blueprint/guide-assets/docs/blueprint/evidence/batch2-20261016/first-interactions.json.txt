@@ -1,0 +1,159 @@
+{
+  "date": "2026-10-15T16:42:11.601Z",
+  "checks": [
+    {
+      "name": "12 component samples",
+      "pass": true
+    },
+    {
+      "name": "icon action feedback",
+      "pass": true
+    },
+    {
+      "name": "disabled and static loading",
+      "pass": true
+    },
+    {
+      "name": "材料名称 · 必填校验 invalid surface",
+      "pass": true,
+      "detail": {
+        "invalid": "true",
+        "border": "rgb(198, 40, 40)",
+        "inner": "0px"
+      }
+    },
+    {
+      "name": "材料名称 · 必填校验 clears invalid",
+      "pass": true
+    },
+    {
+      "name": "材料名称 · 必填校验 one focus outline",
+      "pass": true,
+      "detail": {
+        "outline": "2px",
+        "inner": "none"
+      }
+    },
+    {
+      "name": "修改理由 · 必填校验 invalid surface",
+      "pass": true,
+      "detail": {
+        "invalid": "true",
+        "border": "rgb(198, 40, 40)",
+        "inner": "0px"
+      }
+    },
+    {
+      "name": "修改理由 · 必填校验 clears invalid",
+      "pass": true
+    },
+    {
+      "name": "修改理由 · 必填校验 one focus outline",
+      "pass": true,
+      "detail": {
+        "outline": "2px",
+        "inner": "none"
+      }
+    },
+    {
+      "name": "readonly inputs",
+      "pass": true
+    },
+    {
+      "name": "disabled input textarea select",
+      "pass": true
+    },
+    {
+      "name": "disabled select option",
+      "pass": true
+    },
+    {
+      "name": "select keyboard and validation",
+      "pass": true
+    },
+    {
+      "name": "select escape focus",
+      "pass": true
+    },
+    {
+      "name": "checkbox space",
+      "pass": true
+    },
+    {
+      "name": "radio keyboard",
+      "pass": true
+    },
+    {
+      "name": "radio skips disabled",
+      "pass": true
+    },
+    {
+      "name": "switch keyboard and contrast",
+      "pass": true,
+      "detail": {
+        "on": "rgb(22, 24, 29)",
+        "off": "rgb(243, 245, 248)"
+      }
+    },
+    {
+      "name": "基础组件材料预览 keyboard",
+      "pass": true
+    },
+    {
+      "name": "基础组件材料预览 disabled cannot activate",
+      "pass": true
+    },
+    {
+      "name": "基础组件补充信息 keyboard",
+      "pass": true
+    },
+    {
+      "name": "基础组件补充信息 disabled cannot activate",
+      "pass": true
+    },
+    {
+      "name": "dialog initial focus",
+      "pass": true
+    },
+    {
+      "name": "dialog invalid and focuses field",
+      "pass": true
+    },
+    {
+      "name": "nested escape retains dialog focus",
+      "pass": true
+    },
+    {
+      "name": "dialog focus trapped",
+      "pass": true
+    },
+    {
+      "name": "dialog final focus",
+      "pass": true
+    },
+    {
+      "name": "save updates local card",
+      "pass": true
+    },
+    {
+      "name": "static card has no button role",
+      "pass": true
+    },
+    {
+      "name": "badge text and 4 alerts",
+      "pass": true
+    },
+    {
+      "name": "320 tabs focus fits scrollport",
+      "pass": true,
+      "detail": {
+        "left": 104,
+        "right": 283.3333435058594,
+        "parentLeft": 36.66666793823242,
+        "parentRight": 283.3333396911621,
+        "scrollWidth": 320,
+        "width": 320
+      }
+    }
+  ]
+}

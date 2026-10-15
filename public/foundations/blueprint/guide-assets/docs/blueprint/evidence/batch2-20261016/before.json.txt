@@ -1,0 +1,8 @@
+{
+  "baseline": "2865942bb755efaa516a0f6f4252cdf79b4b1969",
+  "progress": {
+    "track": "rgb(29, 32, 38)",
+    "fill": "rgb(22, 24, 29)",
+    "radius": "0px"
+  }
+}
