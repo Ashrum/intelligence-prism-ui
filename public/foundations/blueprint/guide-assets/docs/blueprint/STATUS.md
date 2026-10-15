@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：主行动按钮悬停可读性修复 · 2026-10-15；基线main / 本地 / Site v120均为 `6cbbe50532495b7c1ca0b9d6b7bee9ed54e8b919`。
+- 用户问题：悬停文字不清楚，以及原蓝图按钮是否被取消。原样例未删除，仅被新增基础组件下推；在顶部补两项导航入口。
+- 实现：仅修正blueprint.css现有primary hover背景/文字成对令牌，demos/blueprint.tsx补锚点。原主/次/小/危险/禁用样例完整保留；不改coss、API、依赖或核心令牌。
+- 浏览器：四主题×320/1280，primary默认/hover/hover加焦点/按下均可读；蓝图17.76:1，其他主题最低13.92:1。次要/危险hover、禁用与减少动态效果通过定向检查；入口实际跳转成功。见 [浏览器测量](evidence/hover-20261015/browser-results.json)。
+- 工程检查：构建、类型、数学字体、307文件字号通过；Blueprint39/39；全量1949/1688通过/261既有失败，无新增或消失。见 [验收和独立审查](evidence/hover-20261015/checks.md)。
+- 独立Review：PASS WITH NOTES，无阻断。规范原位更新并重新生成；PR合入后用同一main提交发布Site，最终SHA与版本以部署记录及会话终态为准。
+- 限制：只验本组按钮及导航；全站布局、真机、读屏器和原生缩放不在本轮完成声明中。
+
+## 历史
+
+### 通用基础组件 Blueprint 首批 · 2026-10-15（原当前，原样保留）
+
 - 轮次：通用基础组件 Blueprint 首批 · 2026-10-15；开工基线 `55f25df36af5a8aaaa2374fed0427d9379b501e2`，Site v119。开工工作树干净。
 - 授权：用户在本会话明确“同意。批准，开始实施”。首批限定 Button、Input、Textarea、Select、Checkbox、RadioGroup、Switch、Tabs、Card、Badge、Alert、Dialog 共 12 类现有通用组件；Agent 业务页面与布局暂缓。
 - 实施范围：`app/(next)/next/blueprint.css` 的主题适配，`components/prism-next/blueprint-foundation-demo.tsx` 对照夹具及现有蓝图示例页接入，本文件和 `docs/blueprint-theme.md`、规范生成物及直接证据；`.gitattributes` 为本轮证据限定 LF。不新增组件目录、公共 API、依赖或业务流程；冻结 coss 与核心三主题保持原意，轻量 Blueprint v0.4 不扩入第四主题适配。
@@ -19,7 +31,6 @@
 - 文档与证据：范围、复用依据、当前实际样例和未验边界已原位更新；[起点测量](evidence/common-20261015/before.json) 及截图目录 `docs/blueprint/screens/common-20261015/` 已保存。规范 JSON 与下载资产已同步。[独立审查](evidence/common-20261015/review.md) PASS WITH NOTES，无阻断。按已授权流程合并 PR 后，以同一 main 提交构建并发布 Site；最终 SHA 与版本以部署记录和会话终态为准，不在自身源码中预填未来发布信息。
 - 未验范围：真实 MathML 公式、系统剪贴板复制、长正文 Dialog、已选错误 Radio、全部变体 / 状态组合、原生 200% 缩放、真机、读屏器、完整对比度审计、实体打印、全站像素回归及 Agent 业务场景。历史 v9 与标尺轮结果不当作本轮验证，第四主题继续为候选。
 
-## 历史
 
 ### 外侧标尺密度微调 · 2026-10-15（原当前，原样保留）
 
