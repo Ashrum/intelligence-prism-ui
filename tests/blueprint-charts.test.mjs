@@ -51,6 +51,6 @@ test('theme.css blueprint chart tokens follow the series order; Recharts tooltip
   const block = theme.split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
   BLUEPRINT_SERIES.slice(0, 5).forEach((c, i) => assert.match(block, new RegExp(`--chart-${i + 1}:${c}`)));
   const css = readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
-  assert.match(css, /:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.recharts-default-tooltip[^{]*\{[^}]*border-radius:0 !important/);
+  assert.match(css, /\[data-prism-theme="blueprint"\] \.recharts-default-tooltip[^{]*\{[^}]*border-radius:0 !important/);
   assert.match(readFileSync(new URL('../lib/prism-next/config.ts', import.meta.url), 'utf8'), /blueprint: \{[^}]*line: "#1D2026"/);
 });

@@ -46,7 +46,7 @@ test('blueprint geometry rules are scoped and do not touch coss sources', () => 
   const topLevel = s => { const out = []; let depth = 0, cur = ''; for (const ch of s) { if (ch === '(') depth++; if (ch === ')') depth--; if (ch === ',' && !depth) { out.push(cur); cur = ''; } else cur += ch; } return [...out, cur].map(x => x.trim()); };
   for (const selector of rules) {
     if (topLevel(selector).every(s => s.startsWith('.bp-'))) continue;
-    assert.match(selector, /data-prism-theme="blueprint(?:-night)?"/, selector);
+    assert.match(selector, /data-prism-theme="blueprint"/, selector);
   }
   assert.doesNotMatch(bp, /@layer/);
   assert.match(theme, /@import "\.\/blueprint\.css";/);

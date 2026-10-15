@@ -4,7 +4,7 @@
 @import "./typography.css";
 @import "./blueprint.css";
 /* Explicit preview themes form a boundary inside a dark site. */
-@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *, [data-prism-theme="blueprint-night"], [data-prism-theme="blueprint-night"] *):not([data-agent-preview][data-prism-theme="light"], [data-agent-preview][data-prism-theme="light"] *, [data-agent-preview][data-prism-theme="paper"], [data-agent-preview][data-prism-theme="paper"] *, [data-agent-preview][data-prism-theme="blueprint"], [data-agent-preview][data-prism-theme="blueprint"] *));
+@custom-variant dark (&:is([data-prism-theme="dark"], [data-prism-theme="dark"] *):not([data-agent-preview][data-prism-theme="light"], [data-agent-preview][data-prism-theme="light"] *, [data-agent-preview][data-prism-theme="paper"], [data-agent-preview][data-prism-theme="paper"] *, [data-agent-preview][data-prism-theme="blueprint"], [data-agent-preview][data-prism-theme="blueprint"] *));
 
 @font-face { font-family:"Prism Math"; src:url('/fonts/typography-review/stix-two-math.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:swap; }
 
@@ -219,74 +219,6 @@
   --code-bg:#F3F5F8;
   --accent-ink:#FFFFFF;
   color-scheme:light;
-}
-
-/* Theme 05 · Blueprint Night (夜图); BP.dark mapped through the white blueprint roles. Declares every role explicitly; does not inherit status colors from :root. */
-:root:where([data-ui-version="coss-v1"])[data-prism-theme="blueprint-night"],
-:where([data-agent-preview])[data-prism-theme="blueprint-night"] {
-  --background:#081322;
-  --foreground:#E6EDF7;
-  --heading:#E6EDF7;
-  --card:#0D1C31;
-  --card-foreground:#E6EDF7;
-  --popover:#0D1C31;
-  --popover-foreground:#E6EDF7;
-  --primary:#E6EDF7;
-  --primary-foreground:#081322;
-  --secondary:#12253F;
-  --secondary-foreground:#E6EDF7;
-  --muted:#12253F;
-  --muted-foreground:#A9B8CC;
-  --accent:#16305A;
-  --accent-foreground:#E6EDF7;
-  --border:#23385A;
-  --input:#C9D6E8;
-  --ring:#6EA8FF;
-  --link:#6EA8FF;
-  --disabled-foreground:#7D90AA;
-  --destructive:#FF7070;
-  --destructive-foreground:#FF7070;
-  --info:#6EA8FF;
-  --info-foreground:#6EA8FF;
-  /* Unspecified status fills retain the core dark fallback; foregrounds use BP.dark. */
-  --success:#62BD89;
-  --success-foreground:#7FD6A0;
-  --warning:#E8A33D;
-  --warning-foreground:#F0B14A;
-  --chart-1:#86C5FF;
-  --chart-2:#F296C2;
-  --chart-3:#99DFB4;
-  --chart-4:#F4CC86;
-  --chart-5:#BDACED;
-  --radius:0px;
-  --sidebar:#0D1C31;
-  --sidebar-foreground:var(--foreground);
-  --sidebar-primary:var(--primary);
-  --sidebar-primary-foreground:var(--primary-foreground);
-  --sidebar-accent:var(--accent);
-  --sidebar-accent-foreground:var(--foreground);
-  --sidebar-border:var(--line);
-  --sidebar-ring:var(--ring);
-  --code:#0A1729;
-  --code-foreground:var(--foreground);
-  --code-highlight:var(--accent);
-  --brand-ai-1:var(--brand-blue);
-  --brand-ai-2:var(--brand-magenta);
-  --brand-ai-3:var(--brand-green);
-  --brand-ai-gradient:linear-gradient(90deg,var(--brand-ai-1),var(--brand-ai-2),var(--brand-ai-3));
-  --surface-floating-background:color-mix(in srgb,var(--popover) 92%,transparent);
-  --surface-floating-blur:12px;
-  --line:#C9D6E8;
-  --line-width:1.5px;
-  --head-bg:#E6EDF7;
-  --head-fg:#081322;
-  --grid:rgba(201,214,232,.06);
-  --grid-strong:rgba(201,214,232,.1);
-  --shadow-offset:4px 4px 0 #6EA8FF;
-  --shadow-offset-sm:2px 2px 0 #6EA8FF;
-  --code-bg:#0A1729;
-  --accent-ink:#081322;
-  color-scheme:dark;
 }
 
 @theme inline {
