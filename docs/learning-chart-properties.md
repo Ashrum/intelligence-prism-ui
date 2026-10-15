@@ -74,7 +74,7 @@ ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart
 type PairedDotChartProps = {
   // 其他原属性保留
   density?: 'default' | 'compact' // 默认 default
-  connectPairs?: boolean        // 默认 false
+  connectPairs?: boolean        // compact / inline 默认 true，其他默认 false
   decimals?: 0 | 1
 }
 type PairedRow = {
@@ -301,5 +301,39 @@ P21 的旧 SHA-256 继续保留：仅将当前参考线图例的包装节点还�
 - **dataDisclosure="hidden"**：所有图表仅输出读屏可读的只读数据区域，不产生可见 details/summary 或隐藏选择按钮。此属性必须由宿主显式传入，默认 visible 未改变。只读检查 Workspace `src/features/teacher/analysis/LearningMistakes.tsx` 的“出错与再错” PairedDotChart 发现漏传；组件库不修改该仓库，Supervisor 接入时补传 hidden，并按卡片宽度选择 maxTrackWidth。
 
 示例：`/next/components/paired-dot-chart#learning-properties` 使用 `maxTrackWidth={420}`；`/next/components/quadrant-chart#learning-properties` 加入相邻“函数与方程”点；学情概览卡片中的 spark 使用 13 个周类别，供窄容器抽稀验收。
+
+## P66：成对指标单行布局
+
+本轮离线复查现有 PairedDotChart、ChartLegend / ChartMarker、EChart、DataRecordTable、固定 coss Button / Popover / Table，以及本地 particles `demos/table-particle.tsx`（p-table-3/4）和 `demos/dialog-particles.tsx`（p-dialog-5）。表格与弹窗组合不提供双点轨道，故扩展既有 PairedDotChart 并复用图例标记；未新增组件、依赖、颜色或字号令牌。按 Builder 前置约定不联网刷新 registry；本项为通用数据图表，未引入 Beautiful UI 的 Agent 组件。
+
+```tsx
+type PairedDotChartProps = {
+  // 其他属性沿用
+  rowLayout?: 'stacked' | 'inline' // 默认 stacked，原输出不变
+  labelWidth?: number            // inline 名称列宽度，单位 px；默认 9em
+}
+type PairedRow = {
+  // 原 id / label / first / second / tag 保留；通过 data 数组传入
+  meta?: ReactNode               // 调用方提供的人数、样本量等补充信息
+}
+
+<PairedDotChart label="错题：出错与再错" rowLayout="inline" density="compact"
+  unit="%" dataDisclosure="hidden" metrics={[
+    { id: 'error', label: '出错率', help: '未得满分人数 / 有效作答人数。' },
+    { id: 'repeat', label: '再错率', help: '原失分学生中再考仍失分人数 / 可比再考人数。' },
+  ]} data={[
+    { id: 'q1', label: '一元二次方程', first: 71, second: 25, meta: '36 / 51 人' },
+    { id: 'q2', label: '根与系数', first: 60, second: null },
+  ]} />
+```
+
+- `inline` 在容器宽度 ≥360px 时依次排列名称、轨道、数值与可选 meta / tag，常规短内容每行 36px。所有行通过共享 Grid 列对齐，轨道共用数值域；名称单行省略，完整名称留在原生 title 提示、图表提示框和数据表中，读屏可读完整文本。
+- 两项数值以圆点 / 菱形前缀区分，颜色复用指标显式 color 或现有主题图表色；数字和文字为正文色。图上与悬停态不标数。缺测项不画点、数值显示 `—`，读屏读作“缺测”；只连接两个有效且在域内的点。数据披露继续保留缺测、无效和域外提示，不把缺测补零。
+- `labelWidth` 仅接受正有限数，其他值回退 9em；它是名称列的期望宽度，空间不足时允许收缩。`maxTrackWidth` 在 inline 中仅限制中间画布的最大宽度，不限制整行；不传时轨道利用剩余空间。两项属性均不影响默认布局。
+- `inline` 可配合两种 density，均采用 36px 轨道；`connectPairs` 默认开启，显式 false 仍关闭。未显式传 domain 的百分比轨道使用 0–100；其他单位仍按所有行数据共用比例。
+- 使用命名 CSS 容器查询，容器 <360px 时同一行内容自动按名称 → 轨道 → 数值 / meta / tag 上下排列，名称完整换行。此回退保留 inline 的独立数值区与 36px 轨道；显式 `rowLayout="stacked"` 才使用原来的布局（compact 画布 48px、数值位于点上方）。没有重复图形或基于视口的 JS 猜测。长 meta / tag 或临界宽度允许增加行高，保证内容可读，不强裁为 36px。
+- `dataDisclosure`、横排图例、`metrics[].help`、图例位置、原始 `onSelect(rowId, metricId?)` 与 selectedId 继续有效。meta 也进入可访问数据表；compact stacked 有 meta 时显示在名称行，默认密度 stacked 通过数据表披露。
+
+验收入口：`/next/components/paired-dot-chart#learning-properties` 默认启用 inline，支持“单行布局”“320px 容器”“360px 容器”“名称列 180px”“隐藏数据披露”“长中文、公式与缺测”“保留一位小数”开关。`#embedded-cards` 的“错题：出错与再错”卡片也显式启用 inline。CSS 响应式、主题视觉、键盘帮助和焦点返回由 Supervisor 做真实浏览器验收，Builder 的 SSR / SVG 测试不替代该验收。
 
 复用依据：离线读取固定 coss Card、现有 ChartLegend / ChartDataDisclosure / EChart / Comparison / Trend / Scatter / PairedDot 与 `comparisonTextWidth`、本地 particles `table-particle.tsx`（p-table-3/4）及本文历史 p-meter / p-progress 检索记录。基础控件/量值条没有坐标碰撞布局，故适配现有 Recharts / ECharts。按前置约定未联网刷新 registry；本任务为通用图表，Beautiful UI 的 Agent 执行组件不适用。没有新增第三方源码、依赖、Token、组件条目或 coss 修改。

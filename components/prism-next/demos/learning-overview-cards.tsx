@@ -73,7 +73,7 @@ export function LearningOverviewCards() {
         </Card>
         <Card className="min-w-0 gap-3 p-4">
           <h3 className="text-block-title">错题：出错与再错</h3>
-          <PairedDotChart label="错题：出错与再错" density="compact" maxTrackWidth={420} unit="%" dataDisclosure={disclosure} metrics={[{ id: "error", label: "出错的学生占比", help: "本题未得满分学生数 / 本题有有效作答学生数。" }, { id: "repeat", label: "再考时仍然出错", help: "原失分学生中可比再考仍失分人数 / 有可比再考人数。" }]} data={[
+          <PairedDotChart label="错题：出错与再错" rowLayout="inline" density="compact" maxTrackWidth={420} unit="%" dataDisclosure={disclosure} metrics={[{ id: "error", label: "出错的学生占比", help: "本题未得满分学生数 / 本题有有效作答学生数。" }, { id: "repeat", label: "再考时仍然出错", help: "原失分学生中可比再考仍失分人数 / 有可比再考人数。" }]} data={[
             { id: "Q21", label: edge ? "第 21 题 矩形面积最大值 x(20 − x)，请结合完整中文题干核对" : "第 21 题 矩形面积最大值", first: 60, second: edge ? null : 47, tag: <Badge variant="secondary">优先重讲</Badge> },
             { id: "Q20", label: "第 20 题 销售利润", first: edge ? 50 : 57, second: edge ? 50 : 41, tag: <Badge variant="secondary">优先重讲</Badge> },
             { id: "Q14", label: "第 14 题 由两根求参数", first: edge ? 0 : 49, second: edge ? 100 : 33, tag: <Badge variant="secondary">继续观察</Badge> },
