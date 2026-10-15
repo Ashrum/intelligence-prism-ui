@@ -36,7 +36,7 @@ type BasicChartProps = {
 }
 ```
 
-`yDomain='auto'` 仅根据有限数值计算留边，忽略 null / 非有限值；55–75% 显示 40–90%。百分比数据均在 0–100 内时坐标边界限制在该区间，不截断域外事实；空数据回退 0–100%，恒定序列仍留边。Y 轴百分比刻度始终取整；值与标注坐标不四舍五入。
+`yDomain='auto'` 仅根据有限数值计算留边，忽略 null / 非有限值；55–75% 显示 50–80%（P68）。百分比数据均在 0–100 内时坐标边界限制在该区间，不截断域外事实；空数据回退 0–100%，恒定序列仍留边。Y 轴百分比刻度始终取整；值与标注坐标不四舍五入。
 
 P60 将 W148 的 `xTickMode` 正式收回 Prism 上游。`auto` 且未传 tickLabel 时保留原刻度；`all` 展示所有类别。传入 `tickLabel` 时每个元素占一行，不自动折成第三行；未传时 label 为单行。端点预留半个刻度槽，避免右侧文字被 SVG 裁切。窄容器每行放不下时使用省略号，完整内容保留在 SVG title 与数据表；提示框保留原 label，点 ID、分类顺序与原始数值不变。多系列同 ID 的 tickLabel 取首个已提供的定义，调用方应保持一致。图例文字统一使用正文色，仅标记使用系列色。
 
@@ -145,7 +145,7 @@ P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 T
 ]} />
 ```
 
-`TrendChart.yDomain="auto"` 与 `QuadrantScatterChart.xDomain/yDomain="auto"` 共用内部范围与步长计算。先留边，再按 1/2/5 × 10 的幂选等距步长并向外对齐两端；百分比步长至少为 1，数据都在 0–100 时仍限制在该区间。非百分比按数值量级取整步长，可保留小数刻度。48–83% 对应 30、40、50、60、70、80、90、100%，不会出现 30、40、60、80、100% 的短首段。ECharts 显式设置 interval，Recharts 显式设置 ticks 并保留全部 Y 轴刻度。上下界都是刻度；空、单点、恒定、负值仍有有效范围。原始值、象限阈值、提示框精度均不改。未传 auto 或显式数组域不增加刻度覆盖，不修改其原行为。
+`TrendChart.yDomain="auto"` 与 `QuadrantScatterChart.xDomain/yDomain="auto"` 共用内部范围与步长计算。P61 的通用算法先留边，再按 1/2/5 × 10 的幂选等距步长并向外对齐两端；非百分比仍按此算法，可保留小数刻度。百分比现按下方 P68 规则取 3–5 条刻度，数据都在 0–100 时仍限制在该区间。48–83% 现对应 20、40、60、80、100%，每段等长。ECharts 显式设置 interval，Recharts 显式设置 ticks 并保留全部 Y 轴刻度。上下界都是刻度；空、单点、恒定、负值仍有有效范围。原始值、象限阈值、提示框精度均不改。未传 auto 或显式数组域不增加刻度覆盖，不修改其原行为。
 
 复用检索：本轮读取固定 coss Popover / Button / Meter / Progress、既有 MetricSummary.help、DataRecordTable、RecordList、SegmentedBar、ComparisonChart 与 Prism Badge，读取本地 particles `table-particle.tsx` 的 p-table-3/4，复核本页及 SegmentedBar / RecordList / ComparisonChart 文档中 p-meter-3/4、p-progress-1/2/3、p-table-5/8 与 p-badge-16 的历史记录。量值条、标签、表格插槽已满足需求；图例帮助直接沿用 MetricSummary 的组合。按前置约定离线，未刷新远端 registry；通用数据组件不适用 Beautiful UI 执行组件，没有新第三方源码。
 
@@ -295,7 +295,7 @@ P21 的旧 SHA-256 继续保留：仅将当前参考线图例的包装节点还�
 ## P65：图表视觉细节
 
 - **ComparisonChart spark**：使用实际 plot 宽度选择等距索引步长，保留首尾类别，文字之间至少 8px；resize 时重新计算。只抽稀刻度文字，所有柱、0 / 缺测占位及提示框、数据表保持完整。首尾名称过长时截短并保留 SVG title，不缩字号；显式横向与 default 分支不变。
-- **TrendChart**：数值标签与注释使用 `var(--card)`、4px 背景描边（先描边后填字），保留既有点/线避让。仅 `yDomain="auto"` 且单位为百分比时使用 10 个百分点步长，有限原始值跨度小于 20 时使用 5 个百分点；沿用留边域并向外对齐。显式域、非百分比及 Scatter 自动轴不变。此条覆盖 P61 关于 Trend 与 Scatter 共用相同百分比步长的描述。
+- **TrendChart**：数值标签与注释使用 `var(--card)`、4px 背景描边（先描边后填字），保留既有点/线避让。P65 曾仅在百分比自动域按数据跨度选择 5/10 个百分点步长；此历史规则由下方 P68 的 3–5 条刻度规则替代。显式域与非百分比自动域不变。
 - **QuadrantScatterChart**：内部引擎按实际宽高预留全部点形（包括未指定标签的点）、象限标题，再按右、上、左、下候选位置放置文字。宽度超过 110px、超出绘图区或四个候选均碰撞时不画标签，悬停也不重新画出冲突标签；提示框、数据表仍保留全名。440px 及以下仍不画图内标签。更新数据与容器宽高时重新布局，分组间共用障碍集合。
 - **PairedDotChart**：新增 `maxTrackWidth?: number`，默认不限；正有限值以 CSS px 限制 compact 每行画布（包含两侧数值留边）的最大宽度，右侧留白，窄容器继续收缩。名称/状态按画布内轨道两端对齐。非正、NaN、Infinity 视为不限；default 密度不受此属性影响。两项图例保持横排，各项文字可在项内折行，帮助按钮保留。
 - **dataDisclosure="hidden"**：所有图表仅输出读屏可读的只读数据区域，不产生可见 details/summary 或隐藏选择按钮。此属性必须由宿主显式传入，默认 visible 未改变。只读检查 Workspace `src/features/teacher/analysis/LearningMistakes.tsx` 的“出错与再错” PairedDotChart 发现漏传；组件库不修改该仓库，Supervisor 接入时补传 hidden，并按卡片宽度选择 maxTrackWidth。
@@ -346,3 +346,22 @@ const metrics: [PairedMetric, PairedMetric] = [
 复用依据：离线读取固定 coss Card、现有 ChartLegend / ChartDataDisclosure / EChart / Comparison / Trend / Scatter / PairedDot 与 `comparisonTextWidth`、本地 particles `table-particle.tsx`（p-table-3/4）及本文历史 p-meter / p-progress 检索记录。基础控件/量值条没有坐标碰撞布局，故适配现有 Recharts / ECharts。按前置约定未联网刷新 registry；本任务为通用图表，Beautiful UI 的 Agent 执行组件不适用。没有新增第三方源码、依赖、Token、组件条目或 coss 修改。
 
 P67 复用核对：离线读取固定 coss Tooltip / Card / Button / Popover / Table、现有 ChartLegend / ChartMarker / PairedDotChart，以及本地 particles 的 p-table-3/4、p-dialog-5。表格组合不提供成对轨道，继续适配现有图表；补充信息直接复用 Tooltip，支持 ReactNode 与键盘聚焦。按 Builder 前置约定未联网刷新 registry；通用图表无需引入 Beautiful UI Agent 执行组件。未增加组件条目、依赖或视觉令牌。P66 测试只更新获授权的 inline 图例、meta 和名称提示断言；既有 stacked、数值域、缺测、选择与四主题 SVG 断言保留。
+
+
+## P68：自动百分比域的刻度数量
+
+TrendChart、ScatterChart / QuadrantScatterChart 的百分比 auto 轴共用 `chartAutoScale`。依次尝试 5、10、20、25 个百分点，按有效数据最小/最大值各留半档后向外对齐到该步长的整数倍；选择能容纳 3–5 条刻度的最小步长。上下界本身也是刻度，Trend 不隐藏其中任意一条。缺测和非有限数值不参与计算，不改写原始坐标或精度；各散点轴独立使用其单位和数据。
+
+| 原始范围 | 跨度 | 步长 | 刻度 |
+| --- | --- | --- | --- |
+| 60–65% | 5 | 5 | 55、60、65、70 |
+| 64–72% | 8 | 5 | 60、65、70、75 |
+| 55–75% | 20 | 10 | 50、60、70、80 |
+| 30–70% | 40 | 20 | 20、40、60、80 |
+| 15–85% | 70 | 25 | 0、25、50、75、100 |
+
+边界沿用既有百分比契约：当有效值全在 0–100 内时，留白会被 0/100 截止，因此边界侧可能不足半档；例如 0–100% 使用 0/25/50/75/100。靠边恒定序列向区间内部补足至少 3 条刻度，空数据回退同样的 5 条刻度。严格要求每侧至少半档、最多 5 条且步长最多 25 无法覆盖 0–100 数据，这一规格冲突已列入 P68 报告待确认，不宣称边界情形满足严格半档要求。域外百分比事实不截断：候选步长不能覆盖时保留既有通用刻度算法，可能超过 5 条，同列待确认范围。
+
+非百分比自动轴、未选 auto 的旧域、显式域、数据披露、主题颜色和交互保持原行为。P59/P60/P61/P65 的旧 auto 刻度预期按 P68 更新，保留坐标、间距、标签、默认域和显式域断言；未重写默认快照。
+
+复用核对：读取既有 `chart-options.ts`、Trend / Scatter 的 Recharts / ECharts 接线，以及本地 particles `table-particle.tsx`（p-table-3/4）和本文已有量值组合记录。表格组合不提供数值坐标域，故修正现有共享函数；不引入新组件或第三方代码。按前置约定未联网刷新 registry；本任务为通用图表，不适用 Beautiful UI Agent 执行组件。

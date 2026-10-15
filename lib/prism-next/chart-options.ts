@@ -18,6 +18,25 @@ function paddedAutoDomain(values:(number|null)[],unit=''):[number,number]{
 }
 /** Both engines share one nice interval; endpoints are ticks, never partial steps. */
 export function chartAutoScale(values:(number|null)[],unit=''):{domain:[number,number];interval:number;ticks:number[]}{
+ if(/[%％]/.test(unit)){
+  const valid=values.filter(isChartValue)
+  if(!valid.length)return {domain:[0,100],interval:25,ticks:[0,25,50,75,100]}
+  const min=Math.min(...valid),max=Math.max(...valid),bounded=min>=0&&max<=100
+  for(const interval of [5,10,20,25]){
+   let lower=Math.floor((min-interval/2)/interval)*interval,upper=Math.ceil((max+interval/2)/interval)*interval
+   // Preserve the existing 0–100 percentage boundary; only that boundary clips padding.
+   if(bounded){lower=Math.max(0,lower);upper=Math.min(100,upper)}
+   // Constant / near-boundary observations still need at least three ticks.
+   if(upper-lower<2*interval){
+    if(bounded&&lower===0)upper=2*interval
+    else lower=upper-2*interval
+   }
+   const count=Math.round((upper-lower)/interval)+1
+   if(count<=5)return {domain:[lower,upper],interval,ticks:Array.from({length:count},(_,i)=>lower+i*interval)}
+  }
+  // Out-of-range percentage facts may exceed what the four candidate steps can cover.
+  // Keep the previous general scale in that case rather than clip source observations.
+ }
  const padded=paddedAutoDomain(values,unit),percent=unit.includes('%')||unit.includes('％')
  const target=(padded[1]-padded[0])/4,power=10**Math.floor(Math.log10(target))
  const interval=Math.max(percent?1:0,([10,5,2,1].find(n=>n*power<=target)??1)*power)
@@ -28,14 +47,9 @@ export function chartAutoScale(values:(number|null)[],unit=''):{domain:[number,n
  return {domain:[ticks[0],ticks[ticks.length-1]],interval:clean(interval),ticks}
 }
 export function trendAutoDomain(values:(number|null)[],unit=''):[number,number]{return chartAutoScale(values,unit).domain}
-/** Trend percentage grids use 10pp steps (5pp for an observed span below 20pp). */
+/** Trend and scatter share the same automatic percentage grid. */
 export function trendAutoScale(values:(number|null)[],unit=''){
- const scale=chartAutoScale(values,unit)
- if(!/[%％]/.test(unit))return scale
- const valid=values.filter(isChartValue),span=valid.length?Math.max(...valid)-Math.min(...valid):100
- const interval=span<20?5:10
- const lower=Math.floor(scale.domain[0]/interval)*interval,upper=Math.ceil(scale.domain[1]/interval)*interval
- return {domain:[lower,upper] as [number,number],interval,ticks:Array.from({length:Math.round((upper-lower)/interval)+1},(_,i)=>lower+i*interval)}
+ return chartAutoScale(values,unit)
 }
 export function chartDomain(values:(number|null)[],range?:[number,number]):[number,number]{if(range&&range.every(isChartValue)&&range[0]<range[1])return range;const valid=values.filter(isChartValue);const min=Math.min(0,...valid),max=Math.max(0,...valid);return [min,max===min?min+1:max]}
 export function withinDomain(value:unknown,range:[number,number]){return isChartValue(value)&&value>=range[0]&&value<=range[1]}

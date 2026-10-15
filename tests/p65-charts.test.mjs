@@ -19,8 +19,8 @@ test('P65 spark uses equal index strides with both endpoints and >=8px text gaps
  assert.ok(api.sparkTickLayout(Array.from({length:13},(_,i)=>String(i+1)),120).length<13);
 });
 
-test('P65 Trend percentage steps follow the observed span, preserving raw values and other axes', () => {
- for(const unit of ['%','％'])for(const [values,step] of [[[65,85],10],[[65,84],5],[[68,68],5],[[],10],[[0,100],10],[[-5,15],10]]){
+test('P65/P68 Trend percentage steps bound the tick count, preserving raw values and other axes', () => {
+ for(const unit of ['%','％'])for(const [values,step] of [[[65,85],10],[[65,84],10],[[68,68],5],[[],25],[[0,100],25],[[-5,15],10]]){
   const scale=api.trendAutoScale(values,unit);
   assert.equal(scale.interval,step);assert.ok(values.every(v=>v>=scale.domain[0]&&v<=scale.domain[1]));
   assert.ok(scale.ticks.slice(1).every((v,i)=>v-scale.ticks[i]===step));

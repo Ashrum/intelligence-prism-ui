@@ -7,7 +7,7 @@ const props={...defaults.ScatterChart,data,xUnit:'%',unit:'%',xDomain:'auto',yDo
 
 test('P60 scatter auto domains frame clustered data, retain raw coordinates and integer percentage ticks',()=>{
  const out=capture('ScatterChart',props),o=out.charts[0].option;
- assert.deepEqual([o.xAxis.min,o.xAxis.max,o.yAxis.min,o.yAxis.max],[50,100,50,100]);
+ assert.deepEqual([o.xAxis.min,o.xAxis.max,o.yAxis.min,o.yAxis.max],[40,100,40,100]);
  assert.equal(o.xAxis.minInterval,1);assert.equal(o.yAxis.minInterval,1);
  assert.equal(o.xAxis.axisLabel.formatter(62.25),'62%');assert.equal(o.yAxis.axisLabel.formatter(64.5),'65%');
  assert.deepEqual(o.series[0].data.map(p=>p.value),[[62.25,64.5],[88.1,89.2]]);
@@ -37,7 +37,7 @@ for(const theme of ['light','paper','dark'])test(`P60 ${theme}: actual ECharts p
    const labels=chart.getZr().storage.getDisplayList().filter(el=>props.quadrants.labels.includes(el.style?.text));
    if(width===320){assert.equal(labels.length,0);continue;}
    assert.equal(labels.length,4);
-   const bounds=chart.convertToPixel({seriesIndex:0},[50,100]),end=chart.convertToPixel({seriesIndex:0},[100,50]);
+   const bounds=chart.convertToPixel({seriesIndex:0},[40,100]),end=chart.convertToPixel({seriesIndex:0},[100,40]);
    for(const element of labels){
     const index=props.quadrants.labels.indexOf(element.style.text),rect=element.getBoundingRect().clone();
     rect.applyTransform(element.getComputedTransform());

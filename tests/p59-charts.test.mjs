@@ -48,14 +48,14 @@ test('P59 percentage rounding is shared by table, tooltip, labels, threshold and
 });
 
 test('P59 trend yDomain auto pads finite observations; explicit yDomain overrides legacy domain, omission retains it',()=>{
- assert.deepEqual(api.trendAutoDomain([55,75,null,NaN],'%'),[40,90]);
+ assert.deepEqual(api.trendAutoDomain([55,75,null,NaN],'%'),[50,80]);
  assert.deepEqual(api.trendAutoDomain([], '%'),[0,100]);assert.deepEqual(api.trendAutoDomain([null,Infinity],''),[0,1]);
  for(const values of [[0],[100],[65,65],[0,100],[-15,-5],[.2,.3]]){
   const d=api.trendAutoDomain(values,'%');assert.ok(d[0]<d[1]);assert.ok(values.every(v=>v>=d[0]&&v<=d[1]));
  }
  const props={...defaults.TrendChart,series:[{id:'a',label:'值',data:[{id:'a',label:'一',value:55},{id:'b',label:'二',value:75}]}]};
  assert.deepEqual(axis(capture('TrendChart',props)).props.domain,[0,100]);
- assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:'auto'})).props.domain,[40,90]);
+ assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:'auto'})).props.domain,[50,80]);
  assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:[45,85]})).props.domain,[45,85]);
 });
 

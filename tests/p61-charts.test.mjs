@@ -9,7 +9,7 @@ const even = values => {
 };
 
 test('P61 auto scale has nice equal steps, covers values and makes both bounds ticks', () => {
-  assert.deepEqual(api.chartAutoScale([48, 83], '%'), { domain: [30, 100], interval: 10, ticks: [30, 40, 50, 60, 70, 80, 90, 100] });
+  assert.deepEqual(api.chartAutoScale([48, 83], '%'), { domain: [20, 100], interval: 20, ticks: [20, 40, 60, 80, 100] });
   for (const unit of ['%', '％', '分', '']) for (const values of [[], [null, NaN, Infinity], [65], [0], [100], [0, 100], [-20, -10], [-5, 7], [.2, .3], [31, 78], [62.25, 88.1]]) {
     const scale = api.chartAutoScale(values, unit);
     even(scale.ticks);
@@ -66,7 +66,7 @@ test('P61 auto Trend axis shares exact tick values; legacy and explicit domains 
   const props = { ...defaults.TrendChart, series: [{ id: 'a', label: '实际', data: [48, 83].map((value, i) => ({ id: String(i), label: String(i), value })) }] };
   const axis = out => out.nodes.find(n => n.props.tickFormatter && n.props.domain);
   const auto = axis(capture('TrendChart', { ...props, yDomain: 'auto' })).props;
-  assert.deepEqual(auto.domain, [30, 100]); assert.deepEqual(auto.ticks, [30, 40, 50, 60, 70, 80, 90, 100]); assert.equal(auto.interval, 0);
+  assert.deepEqual(auto.domain, [20, 100]); assert.deepEqual(auto.ticks, [20, 40, 60, 80, 100]); assert.equal(auto.interval, 0);
   for (const yDomain of [undefined, [31, 98]]) {
     const p = axis(capture('TrendChart', { ...props, yDomain })).props;
     assert.deepEqual(p.domain, yDomain ?? [0, 100]); assert.equal(p.ticks, undefined);
