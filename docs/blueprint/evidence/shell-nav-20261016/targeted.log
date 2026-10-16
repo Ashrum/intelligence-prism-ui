@@ -1,0 +1,29 @@
+✔ P76: both Blueprint AppBar/SpaceBar surfaces, selected underline, hover and square controls survive stylesheet order (127.81525ms)
+✔ P76: actual coss Sidebar surfaces, active accent/ink and weaker hover resolve in both themes (21.637541ms)
+✔ P76: collapsed 56px rail has 40px buttons despite frozen important utility; expanded geometry is untouched (18.459417ms)
+✔ P76: one focus outline keeps independent active indicators and suppresses the old nav pseudo outline (14.857542ms)
+✔ P76: core themes and nested core preview roots/descendants/pseudo-elements receive zero added declarations (2368.201542ms)
+✔ P76: portaled personal/space menu hooks are square and current rows use accent (2.43975ms)
+✔ P76: all new selectors guard their final target; badges, Tabs, Toggle, tokens and typography are untouched (4.3815ms)
+✔ P76: actual foreground/accent tokens meet selected text 4.5 and indicator 3 in both themes (0.223375ms)
+ℹ blueprint selected text and left ink / accent: 14.927942:1
+ℹ blueprint-night selected text and left ink / accent: 11.106881:1
+✔ P76: rollback, wrong tokens, focus duplication, rail-important and isolation mutations are detected (176.930417ms)
+✔ P76: review fixture bundles and SSR retains real shell, menu triggers and current conversation (5.006334ms)
+✔ blueprint is a fourth selectable theme; core matrix stays light/paper/dark (0.380042ms)
+✔ blueprint boundary declares every role explicitly, including status, chart and AI tokens (0.225625ms)
+✔ core theme tokens are unchanged (0.226125ms)
+✔ blueprint ink pairs exceed 4.5:1 numerically (0.259958ms)
+✔ core warning foreground values retain the main c5d2363 contract (0.113291ms)
+✔ blueprint warning text exceeds 4.5:1 on every supported surface (0.08875ms)
+✔ blueprint warning Badge exceeds 4.5:1 on its alpha-composited surfaces (0.067625ms)
+✔ blueprint white labels exceed 4.5:1 on the warning foreground fill (0.041333ms)
+✔ blueprint geometry rules are scoped and do not touch coss sources (18.262834ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2976.9035

@@ -4,6 +4,19 @@
 
 ## 当前
 
+- 轮次：P76 · 顶部导航与左侧目录 · 2026-10-16；分支 `feat/blueprint-shell-nav`，基线 `780c2ef0cb14e378fd72f21194ee7f2835d7e045`，开工工作树干净；叠加于未合并 P75。[基线](evidence/shell-nav-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P76.md` / `builder-preamble.md`；Builder 实施与工程自测，浏览器交 Supervisor；不提交、推送、改 `.git`、联网、安装依赖、启动或重启服务、发布。
+- 范围：运行时仅 `blueprint.css`，两蓝图 AppBar / SpaceBar / 本站顶栏 card + 结构底线，导航 foreground 下划线和 accent 直角悬停；Sidebar accent / foreground / 左侧 inset 2px，56px 轨道与 40px 按钮。核心主题、嵌套核心根/后代/伪元素、数字角标、Tabs/Toggle、字号、令牌、冻结 coss 和依赖保持。文档和既有 guide 生成物同步。[实现与取舍](evidence/shell-nav-20261016/inspection.md)、[保护核对](evidence/shell-nav-20261016/integrity.json)。
+- 工程：新增专项 10/10，与既有主题检查合计 19/19；15/15 专项及 5/5 层边界内存变异检出；包含真实 SSR、真实 Tailwind important 工具类编译、CSS 特异性 / 层与两种加载顺序、嵌套隔离。五项最终均退出 0：数学字体通过、排版 311 个 owned TSX 通过、生产构建通过、先构建后全量 **2202/2202，0 失败 / 0 跳过**、TypeScript 0 错误。[工程命令与时间](evidence/shell-nav-20261016/engineering.json)、[实际 diff](evidence/shell-nav-20261016/scope.diff)。首轮 2201/2202 的唯一失败为旧断言禁止所有 layer；已收紧为精确尺寸规则例外，并验证 5 个违规变异，不是基线失败。状态回填后的文档 / 夹具类型 / 构建复核另记[收尾记录](evidence/shell-nav-20261016/finalization.json)。
+- 对比度与焦点：foreground/accent 蓝图 14.927942:1、夜图 11.106881:1，满足文字 ≥4.5 / 选中线 ≥3；不新增令牌。选中线独立于单 outline；仅顶栏一级导航因横向裁切使用 −4px outline-offset，其他控件 +2px，交 Supervisor 复核。
+- 周期：Builder 实施 / 工程检查不等同 Supervisor Review / PO 批准，未计为已验收；继承 P75 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期。按任务提前执行全量工程回归，最近完整工程回归为本轮 2202/2202，累计完整浏览器仍待收口；Workspace R3 / R6 / R9 触发约定不变。
+- 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、菜单、焦点、56 图标轨、核心嵌套及 Workspace AppBar 主题 / Portal 接线见[清单](evidence/shell-nav-20261016/browser-checklist.md)。`fixture.tsx` 为评审夹具，未注册路由；实际浏览器挂载、Workspace 接入、真机、读屏、实体打印未验。
+- 待审阅：Supervisor 独立 Review、焦点内移的局部适配与实际浏览器验收；无新产品方向、公共 API 或令牌决策。
+
+## 历史
+
+### P75 · 题目详情虚线纸面与间距 · 2026-10-16（原当前，原样保留）
+
 - 轮次：P75 · 题目详情虚线纸面与间距 · 2026-10-16；基线 `ab14ab4a59ef593e9d29061c892256d5e233bc3d`，分支 `feat/blueprint-question-detail`，开工工作树干净。[基线](evidence/question-detail-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P75.md` + `builder-preamble.md`。Builder 仅实施与工程自测；未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
 - 范围：运行时仅 `app/(next)/next/blueprint.css`，复用 `.question-detail-region` / Tabs data-slot / `.question-solution`；两蓝图详情为 card 纸面、1px 虚线、直角、12px padding，压缩 Tabs 和三个面板间距。fine Tab 至少 32px，coarse 沿用原 44px 规则。夜图 border/card 1.453912:1，按授权改用既有 line，达到 11.622496:1；白图仍用既有 border。核心主题、组件结构/API、字号、令牌值、冻结 coss、依赖均未改。[实现与复用记录](evidence/question-detail-20261016/inspection.md)。
@@ -13,7 +26,6 @@
 - 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、真实三 Tab / coarse 高度、白底图、核心嵌套及 computedStyle 前后对比见[浏览器清单](evidence/question-detail-20261016/browser-checklist.md)。没有本轮截图；视觉、真实键盘/焦点/触屏、读屏器、实体打印和 Workspace 真实接入未验。
 - 待审阅：本轮无新增产品方向或令牌待 PO 决定；Builder 工程完成不等同 Supervisor Review / PO 批准。
 
-## 历史
 
 ### P74 · Agent 浮层容器契约补齐 · 2026-10-16（原当前，原样保留）
 

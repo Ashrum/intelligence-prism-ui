@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-16",
+  "branch": "feat/blueprint-shell-nav",
+  "head": "780c2ef0cb14e378fd72f21194ee7f2835d7e045",
+  "initialWorkingTree": "clean",
+  "stackedOn": "P75, not yet merged",
+  "source": "task-P76.md and live git read-only inspection"
+}

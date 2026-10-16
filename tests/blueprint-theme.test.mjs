@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import postcss from 'postcss';
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const theme = read('app/(next)/next/theme.css');
 const bp = read('app/(next)/next/blueprint.css');
@@ -91,7 +92,33 @@ test('blueprint geometry rules are scoped and do not touch coss sources', () => 
     if (topLevel(selector).every(s => s.startsWith('.bp-'))) continue;
     assert.match(selector, /data-prism-theme="blueprint(?:-night)?"/, selector);
   }
-  assert.doesNotMatch(bp, /@layer/);
+  // P76: only the exact scoped override for frozen coss size-8! may enter
+  // utilities. Normal unlayered !important loses to layered !important.
+  const family = ':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
+  const guard = `:not(:where([data-agent-preview][data-prism-theme]:not(${family}), [data-agent-preview][data-prism-theme]:not(${family}) *))`;
+  const allowed = `${family} [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-menu-button"]${guard}`;
+  const checkLayers = source => {
+    const layers = [];
+    postcss.parse(source).walkAtRules('layer', rule => layers.push(rule));
+    assert.equal(layers.length, 1);
+    const [layer] = layers;
+    assert.equal(layer.params, 'utilities');
+    assert.equal(layer.nodes.length, 1);
+    const [rule] = layer.nodes;
+    assert.equal(rule.type, 'rule');
+    assert.equal(rule.selector, allowed);
+    assert.deepEqual(rule.nodes.map(d => [d.type, d.prop, d.value, d.important]), [
+      ['decl', 'width', '40px', true], ['decl', 'height', '40px', true],
+    ]);
+  };
+  checkLayers(bp);
+  for (const mutate of [
+    source => source.replace('@layer utilities', '@layer base'),
+    source => source + '\n@layer utilities {}',
+    source => source.replace(allowed, allowed.replace(guard, '')),
+    source => source.replace(allowed, '[data-slot="sidebar-menu-button"]'),
+    source => source.replace('height:40px !important;', 'height:40px !important; color:red;'),
+  ]) assert.throws(() => checkLayers(mutate(bp)));
   assert.match(theme, /@import "\.\/blueprint\.css";/);
   assert.match(theme, /@custom-variant dark[^\n]+\[data-agent-preview\]\[data-prism-theme="blueprint"\]/);
 });
