@@ -17,6 +17,14 @@
 
 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
 
+## 教师消息轻背景 · P78（2026-10-16）
+
+按蓝图 §6.1 与 Workspace W193 的 P-R4-01，blueprint / blueprint-night 的教师气泡改用既有 `--secondary` 轻背景与 `--foreground` 正文，保留右对齐和直角，不加气泡边框/阴影。白图为 `#F3F5F8` / `#16181D`，夜图为 `#12253F` / `#E6EDF7`；夜图的“轻背景”指既有次级表面层级。附件文字、图标及现有边框继承正文色。正文链接保留下划线并使用 `--link`；旧 R1 白色链接焦点环改为两蓝图统一的 2px `--ring` 外环、2px offset、无叠环。
+
+核心 light / paper / dark 保留原 foreground 底 / background 反相文字与圆角；每条新规则排除嵌套核心预览根与后代。AgentMessage API、附件组件、共享布局、主题令牌、冻结 coss 和依赖不变，不新增 variant 或组件。此项不调整 PromptBar / AgentSurface 的既有焦点规则。
+
+正文与附件对气泡：白图 **16.259790:1**、夜图 **13.083512:1**；链接与焦点对气泡：白图 **5.587005:1**、夜图 **6.392999:1**。焦点对相邻 card / background 均 ≥4.5:1，见 [令牌与规则数值](blueprint/evidence/user-bubble-20261016/contrast.json)。这是工程计算，未代替浏览器测量。Builder 五项工程检查通过，全量 **2216/2216**，定向 **18/18**，回退变异 **17/17**；[实现与复用记录](blueprint/evidence/user-bubble-20261016/inspection.md)、[浏览器交接清单](blueprint/evidence/user-bubble-20261016/browser-checklist.md)与 [STATUS](blueprint/STATUS.md)保留证据边界。浏览器验收：按分工由 Supervisor 执行；组件站结果不表示 Workspace 已同步或真实服务已接入。
+
 ## 顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）
 
 blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。

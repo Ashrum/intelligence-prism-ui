@@ -191,11 +191,11 @@ test('CI-09: actual send and confirmation buttons keep a single blue 2px outline
   }
 });
 
-test('CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button', () => {
+test('CI-09 / P78: user-message links use a single blue outline on the secondary surface', () => {
   const bubble = node({ 'data-agent-message': 'user' }, boundary('blueprint'));
   const link = node({}, node({}, bubble, { classes: ['agent-message-content'] }), { tag: 'a', focused: true });
-  assert.deepEqual(style(link), { outline: '2px solid var(--primary-foreground)', 'outline-offset': '2px', 'box-shadow': 'none' });
-  assert.deepEqual(style({ ...link, focused: false }), {});
+  assert.deepEqual(style(link), { color: 'var(--link)', outline: '2px solid var(--ring)', 'outline-offset': '2px', 'box-shadow': 'none' });
+  assert.deepEqual(style({ ...link, focused: false }), { color: 'var(--link)' });
   assert.deepEqual(style(node({}, node({ 'data-agent-message': 'agent' }, boundary('blueprint')), { tag: 'a', focused: true })), {});
 });
 

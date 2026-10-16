@@ -92,7 +92,7 @@ export const agentComponentExamples: Record<string, { description: string; previ
 export const agentSupplementalExamples = [
   { ...agentConversationCompositions[0], description: "Beautiful UI Prompt Bar 与 coss 原件组合，含听写与语音对话受控状态。", preview: <AgentPromptBarPreview />, examples: <AgentConversationDemo /> },
   { ...agentConversationCompositions[1], description: "Beautiful UI 点阵标识：宿主状态与真实起止时间。", preview: <AgentMark state="idle" label="Agent" />, examples: <AgentConversationDemo section="agent-mark" /> },
-  { ...agentConversationCompositions[2], description: "用户右侧反相气泡与 Agent 左侧无底色消息。", preview: <a className="prism-link" href="/next/components/agent-components/agent-message">查看对话气泡示例</a>, examples: <AgentConversationDemo section="agent-message" /> },
+  { ...agentConversationCompositions[2], description: "用户右侧气泡（蓝图轻背景，核心主题反相）与 Agent 左侧无底色消息。", preview: <a className="prism-link" href="/next/components/agent-components/agent-message">查看对话气泡示例</a>, examples: <AgentConversationDemo section="agent-message" /> },
   { slug: "record-views", name: "任务记录三件套", description: "在同一组记录中比较上下文、进度和执行结果。", preview: <AgentCorePreview kind="progress" />, examples: <AgentRecordViewsDemo /> },
   { slug: "change-set-two-state", name: "对比查看器两态", description: "比较对话摘要和完整差异中的同一组采纳草稿。", preview: <AgentChangeSetDemo />, examples: <AgentChangeSetDemo /> },
   { slug: "context-summary-review", name: "从任务依据到执行结果", description: "观察确认范围、执行记录与成果摘要如何组合。", preview: <AgentCorePreview kind="preview" />, examples: <AgentSemanticGroupDemo initialSection="composition" /> },

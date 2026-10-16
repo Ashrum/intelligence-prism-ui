@@ -307,10 +307,8 @@
   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header::before { width:38px; height:38px; font-size:var(--text-section-title); }
 }
 /* Agent CI-09: ink buttons on paper keep the blue outer outline, without the coss shadow ring.
-   The white outline is limited to rich-text links actually surrounded by user-message ink.
-   Night focus is outside this white-Blueprint specification. */
+   Prompt/surface night focus is outside this white-Blueprint specification. */
 [data-prism-theme="blueprint"] :where([data-agent-prompt-bar],[data-agent-surface]) :where(button,[role="button"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
-[data-prism-theme="blueprint"] [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--primary-foreground); outline-offset:2px; box-shadow:none; }
 
 @media print {
   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::after { display:none; }
@@ -411,3 +409,11 @@
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline-offset:2px; }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"])[data-active="true"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 2px 0 0 var(--foreground); }
 /* End P76 shell navigation. */
+
+/* P78 user bubble: secondary surface reserves solid ink for primary actions.
+   Attachments retain currentColor for text, icon and border; no new bubble border/shadow.
+   Rich-text links use the existing link token and a single blue outer focus outline. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--secondary); color:var(--foreground); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
+/* End P78 user bubble. */

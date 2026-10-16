@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "b29818c4305ae7e90a80fcd92dba571bf745ae596e81cc8b38f95636fcf5d2a4",
+  "sourceSha256": "2127b06eb47905477c020bc27b9a3a4e5ebe106f1acd89ba3d5caf3b31567da3",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -12,195 +12,200 @@
     {
       "id": "section-2",
       "level": 2,
-      "text": "顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）"
+      "text": "教师消息轻背景 · P78（2026-10-16）"
     },
     {
       "id": "section-3",
       "level": 2,
-      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
+      "text": "顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）"
     },
     {
       "id": "section-4",
-      "level": 3,
-      "text": "主行动按钮悬停修复 · 2026-10-15"
+      "level": 2,
+      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
     },
     {
       "id": "section-5",
       "level": 3,
-      "text": "标尺密度微调 · 2026-10-15"
+      "text": "主行动按钮悬停修复 · 2026-10-15"
     },
     {
       "id": "section-6",
+      "level": 3,
+      "text": "标尺密度微调 · 2026-10-15"
+    },
+    {
+      "id": "section-7",
       "level": 2,
       "text": "完善路线与当前执行（更新于 2026-10-16）"
     },
     {
-      "id": "section-7",
+      "id": "section-8",
       "level": 3,
       "text": "成果标题 folio · P77（2026-10-16）"
     },
     {
-      "id": "section-8",
+      "id": "section-9",
       "level": 3,
       "text": "编辑式排版与 Geist Mono 子集 · 2026-10-16"
     },
     {
-      "id": "section-9",
+      "id": "section-10",
       "level": 3,
       "text": "通用基础组件第二批与配色规则 · 2026-10-16"
     },
     {
-      "id": "section-10",
+      "id": "section-11",
       "level": 4,
       "text": "第二批复用与实现边界"
     },
     {
-      "id": "section-11",
+      "id": "section-12",
       "level": 4,
       "text": "第二批样例与已验范围"
     },
     {
-      "id": "section-12",
+      "id": "section-13",
       "level": 4,
       "text": "第二批实施结果与证据边界"
     },
     {
-      "id": "section-13",
+      "id": "section-14",
       "level": 3,
       "text": "通用基础组件首批 · 2026-10-15"
     },
     {
-      "id": "section-14",
+      "id": "section-15",
       "level": 4,
       "text": "复用依据（本轮离线核对）"
     },
     {
-      "id": "section-15",
+      "id": "section-16",
       "level": 4,
       "text": "首批样例与已验范围"
     },
     {
-      "id": "section-16",
+      "id": "section-17",
       "level": 4,
       "text": "实施结果与证据边界"
     },
     {
-      "id": "section-17",
+      "id": "section-18",
       "level": 3,
       "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
-      "id": "section-18",
+      "id": "section-19",
       "level": 3,
       "text": "第一批结果与剩余验收"
     },
     {
-      "id": "section-19",
+      "id": "section-20",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-20",
+      "id": "section-21",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-21",
+      "id": "section-22",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-22",
+      "id": "section-23",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-23",
+      "id": "section-24",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-24",
+      "id": "section-25",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-25",
+      "id": "section-26",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-26",
+      "id": "section-27",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-27",
+      "id": "section-28",
       "level": 3,
       "text": "配色与品牌分工（用户批准 2026-10-16）"
     },
     {
-      "id": "section-28",
+      "id": "section-29",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-29",
+      "id": "section-30",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-30",
+      "id": "section-31",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-31",
+      "id": "section-32",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-32",
+      "id": "section-33",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-33",
+      "id": "section-34",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-34",
+      "id": "section-35",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-35",
+      "id": "section-36",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-36",
+      "id": "section-37",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-37",
+      "id": "section-38",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-38",
+      "id": "section-39",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-39",
+      "id": "section-40",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-40",
+      "id": "section-41",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -679,6 +684,263 @@
       "children": [
         {
           "type": "text",
+          "value": "教师消息轻背景 · P78（2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按蓝图 §6.1 与 Workspace W193 的 P-R4-01，blueprint / blueprint-night 的教师气泡改用既有 "
+        },
+        {
+          "type": "code",
+          "value": "--secondary"
+        },
+        {
+          "type": "text",
+          "value": " 轻背景与 "
+        },
+        {
+          "type": "code",
+          "value": "--foreground"
+        },
+        {
+          "type": "text",
+          "value": " 正文，保留右对齐和直角，不加气泡边框/阴影。白图为 "
+        },
+        {
+          "type": "code",
+          "value": "#F3F5F8"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#16181D"
+        },
+        {
+          "type": "text",
+          "value": "，夜图为 "
+        },
+        {
+          "type": "code",
+          "value": "#12253F"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#E6EDF7"
+        },
+        {
+          "type": "text",
+          "value": "；夜图的“轻背景”指既有次级表面层级。附件文字、图标及现有边框继承正文色。正文链接保留下划线并使用 "
+        },
+        {
+          "type": "code",
+          "value": "--link"
+        },
+        {
+          "type": "text",
+          "value": "；旧 R1 白色链接焦点环改为两蓝图统一的 2px "
+        },
+        {
+          "type": "code",
+          "value": "--ring"
+        },
+        {
+          "type": "text",
+          "value": " 外环、2px offset、无叠环。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "核心 light / paper / dark 保留原 foreground 底 / background 反相文字与圆角；每条新规则排除嵌套核心预览根与后代。AgentMessage API、附件组件、共享布局、主题令牌、冻结 coss 和依赖不变，不新增 variant 或组件。此项不调整 PromptBar / AgentSurface 的既有焦点规则。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "正文与附件对气泡：白图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "16.259790:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "、夜图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "13.083512:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "；链接与焦点对气泡：白图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "5.587005:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "、夜图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "6.392999:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "。焦点对相邻 card / background 均 ≥4.5:1，见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "令牌与规则数值"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/contrast.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。这是工程计算，未代替浏览器测量。Builder 五项工程检查通过，全量 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "2216/2216"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "，定向 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "18/18"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "，回退变异 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "17/17"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "；"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "实现与复用记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器交接清单"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "与 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "STATUS"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "保留证据边界。浏览器验收：按分工由 Supervisor 执行；组件站结果不表示 Workspace 已同步或真实服务已接入。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-3",
+      "children": [
+        {
+          "type": "text",
           "value": "顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）"
         }
       ]
@@ -785,7 +1047,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-3",
+      "id": "section-4",
       "children": [
         {
           "type": "text",
@@ -850,7 +1112,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-4",
+      "id": "section-5",
       "children": [
         {
           "type": "text",
@@ -966,7 +1228,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-5",
+      "id": "section-6",
       "children": [
         {
           "type": "text",
@@ -1059,7 +1321,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-6",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -1238,7 +1500,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-7",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1420,7 +1682,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-8",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -2036,7 +2298,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-9",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -2173,7 +2435,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-10",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -2315,7 +2577,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-11",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2624,7 +2886,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-12",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -3201,7 +3463,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-13",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -3255,7 +3517,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-14",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -3569,7 +3831,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-15",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -3878,7 +4140,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-16",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -4224,7 +4486,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-17",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -4260,7 +4522,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-18",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -4385,7 +4647,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-19",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -4405,7 +4667,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -4586,7 +4848,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-21",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -4843,7 +5105,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-22",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -5012,7 +5274,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-23",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -5204,7 +5466,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-24",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -5476,7 +5738,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-25",
+      "id": "section-26",
       "children": [
         {
           "type": "text",
@@ -5642,7 +5904,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-26",
+      "id": "section-27",
       "children": [
         {
           "type": "text",
@@ -5653,7 +5915,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-27",
+      "id": "section-28",
       "children": [
         {
           "type": "text",
@@ -6292,7 +6554,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-28",
+      "id": "section-29",
       "children": [
         {
           "type": "text",
@@ -6517,7 +6779,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-29",
+      "id": "section-30",
       "children": [
         {
           "type": "text",
@@ -6613,7 +6875,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-30",
+      "id": "section-31",
       "children": [
         {
           "type": "text",
@@ -6862,7 +7124,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-31",
+      "id": "section-32",
       "children": [
         {
           "type": "text",
@@ -6962,7 +7224,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-32",
+      "id": "section-33",
       "children": [
         {
           "type": "text",
@@ -7036,7 +7298,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-33",
+      "id": "section-34",
       "children": [
         {
           "type": "text",
@@ -7131,7 +7393,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-34",
+      "id": "section-35",
       "children": [
         {
           "type": "text",
@@ -7183,7 +7445,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-35",
+      "id": "section-36",
       "children": [
         {
           "type": "text",
@@ -7272,7 +7534,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-36",
+      "id": "section-37",
       "children": [
         {
           "type": "text",
@@ -7325,7 +7587,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-37",
+      "id": "section-38",
       "children": [
         {
           "type": "text",
@@ -7518,7 +7780,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-38",
+      "id": "section-39",
       "children": [
         {
           "type": "text",
@@ -7650,7 +7912,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-39",
+      "id": "section-40",
       "children": [
         {
           "type": "text",
@@ -7727,7 +7989,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-40",
+      "id": "section-41",
       "children": [
         {
           "type": "text",
@@ -7806,7 +8068,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "926efadaa73cbf9de44f8ee18ec3a31f664f818d27b438849e8a9e45a3121289"
+      "sha256": "075a441d2c526f755e1fe8abbb7564ba29c4edb37d346fff049b66a479fb1a11"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -7837,6 +8099,21 @@
       "source": "docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
       "sha256": "838ed5e99aeb09821681df610404a707280298ef967b3e2eb3be8daf3f69371f"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/contrast.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/contrast.json.txt",
+      "sha256": "2c6d07c8f3b893ac088e45493cc42f7b2aa090c0c97bca77b0cfb56038c1d868"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "sha256": "431bacd55e0319a4308851eaa0c8c446a437415b99e59bb882e2fa59e99d0d54"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+      "sha256": "4b5c2078fbb50269a0e2d67d6e5757b135e2ecabb39fba9ff95756689f6a6186"
     },
     {
       "source": "docs/blueprint/evidence/shell-nav-20261016/inspection.md",
@@ -8276,7 +8553,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "b29818c4305ae7e90a80fcd92dba571bf745ae596e81cc8b38f95636fcf5d2a4"
+      "sha256": "2127b06eb47905477c020bc27b9a3a4e5ebe106f1acd89ba3d5caf3b31567da3"
     }
   ]
 }

@@ -1,0 +1,88 @@
+✔ CI-01: omitted/true retain the old model entry, including a disabled empty menu (25.578333ms)
+✔ CI-01: false removes the complete model entry with empty or populated models in both variants (5.05875ms)
+✔ CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later (2.432792ms)
+✔ CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content (1.61425ms)
+✔ CI-08: message attachment exposes a stable styling hook without removing the legacy radius class (0.261417ms)
+✔ CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants (0.630583ms)
+✔ CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper (2.539667ms)
+✔ CI-09 / P78: user-message links use a single blue outline on the secondary surface (0.096041ms)
+✔ CI-09: core themes and night retain their focus behavior, including preview roots and descendants (0.220958ms)
+✔ CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes (0.478292ms)
+✔ CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface (0.341583ms)
+✔ SSR: Rounded/Pill retain visually hidden accessible label, controlled draft, disabled empty send and accessible voice controls (18.999667ms)
+✔ token parser supports Chinese source/command queries, boundaries and escaped menu dismissal inputs (0.307084ms)
+✔ all nine dictation facts and six conversation facts render verbatim without guessing state (1.652ms)
+✔ host transcripts and level are displayed, bounded, never inserted into the controlled draft (3.016334ms)
+✔ active dictation uses accented equalizer, coss ring and listening placeholder in all active phases (20.349042ms)
+✔ elapsed uses finite host timestamps only; level bars clamp and invalid levels use activity animation (1.374042ms)
+✔ host final replaces interim preview with normal editable draft without component insertion (1.466333ms)
+✔ equalizer and shimmer stop under reduced motion, with medium bars even when host level exists (1.710792ms)
+✔ voice intents remain requests; privacy blocks start and exposes confirm/cancel (1.50875ms)
+✔ AgentMark states, three patterns, host elapsed snapshots and unknown default (2.239458ms)
+✔ user and agent messages preserve rich content slots and inverse tokens without a visible user label (0.517875ms)
+✔ sweep: no autoplay, reduced motion prevents WebGL and dynamic reduction disposes a running sweep (0.165125ms)
+✔ sweep: null and throwing WebGL are silent; completion and unmount release resources (0.113167ms)
+✔ reduced motion freezes mark and label, inverse rich text and 88% narrow bubble rules exist (0.676042ms)
+✔ dictation live region announces entry and exit exactly once across phase, transcript and level changes (0.388417ms)
+✔ dictation indicator timer needs a host start, stops on exit/unmount, and never enters live output (1.2845ms)
+✔ keyboard handlers: arrows skip disabled options, Enter selects once, Esc suppresses reopening until edit (3.25025ms)
+✔ Escape capture stops active dictation once from any prompt child; respects IME and disabled (2.272042ms)
+✔ keyboard handlers: IME confirm cannot pick/send, empty matches cannot send, Shift+Enter remains newline (2.200917ms)
+✔ attachment/source/model handlers emit typed intents; attachment-only submit works; blocked submit does not (2.911125ms)
+✔ privacy confirm/cancel and active voice stop handlers do not manufacture next states (0.477459ms)
+✔ all three composition routes render from the built site without altering the semantic registry (163.183791ms)
+✔ three theme inverse token pairs exceed 4.5:1 numerically (not a browser contrast measurement) (1.187416ms)
+✔ prompt status hides unavailable facts but retains host errors, denied permissions and results (0.382417ms)
+✔ unavailable voice explanations never emit start intents or play the sweep (1.241542ms)
+✔ component fixture uses local rule label and documents Drive as the default (0.297416ms)
+✔ dictation level never renders visible text; unknown is only the active microphone description (37.370083ms)
+✔ published guide is generated from the complete current Markdown and current evidence bytes (19.627334ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (18.752125ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.223375ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (0.328625ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.169459ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.236333ms)
+✔ P78: actual message SSR retains core ink utilities, role, attachment currentColor and semantic content (5.56425ms)
+✔ P78: two Blueprint surfaces use secondary/foreground and retain square geometry without added border/shadow (3.511375ms)
+✔ P78: both Blueprint links use link color and a single 2px ring with 2px offset (2.481167ms)
+✔ P78: core delta is empty including preview roots, descendants and core islands; Agent body stays unchanged (6.946291ms)
+✔ P78: every new target excludes nested core previews and introduces no pseudo decoration, token or typography (0.379333ms)
+✔ P78: actual rule/token pairs for body, attachment, link and focus all exceed 4.5:1 (0.852583ms)
+ℹ {"theme":"blueprint","label":"text / bubble","foreground":"#16181D","background":"#F3F5F8","ratio":16.259790213604944}
+ℹ {"theme":"blueprint","label":"attachment text-icon-border / bubble","foreground":"#16181D","background":"#F3F5F8","ratio":16.259790213604944}
+ℹ {"theme":"blueprint","label":"link / bubble","foreground":"#1D5FBF","background":"#F3F5F8","ratio":5.587005415749903}
+ℹ {"theme":"blueprint","label":"focus / bubble","foreground":"#1D5FBF","background":"#F3F5F8","ratio":5.587005415749903}
+ℹ {"theme":"blueprint","label":"focus / card","foreground":"#1D5FBF","background":"#FFFFFF","ratio":6.1020908683971875}
+ℹ {"theme":"blueprint","label":"focus / canvas","foreground":"#1D5FBF","background":"#F6F6F3","ratio":5.635741732731812}
+ℹ {"theme":"blueprint-night","label":"text / bubble","foreground":"#E6EDF7","background":"#12253F","ratio":13.083512087739368}
+ℹ {"theme":"blueprint-night","label":"attachment text-icon-border / bubble","foreground":"#E6EDF7","background":"#12253F","ratio":13.083512087739368}
+ℹ {"theme":"blueprint-night","label":"link / bubble","foreground":"#6EA8FF","background":"#12253F","ratio":6.392999465265562}
+ℹ {"theme":"blueprint-night","label":"focus / bubble","foreground":"#6EA8FF","background":"#12253F","ratio":6.392999465265562}
+ℹ {"theme":"blueprint-night","label":"focus / card","foreground":"#6EA8FF","background":"#0D1C31","ratio":7.0937612315171386}
+ℹ {"theme":"blueprint-night","label":"focus / canvas","foreground":"#6EA8FF","background":"#081322","ratio":7.7296872276501825}
+✔ P78: rollback and isolation mutations fail the behavioral rule contracts (47.678459ms)
+ℹ detected: remove adaptation
+ℹ detected: ink background
+ℹ detected: inverse text
+ℹ detected: extra border
+ℹ detected: extra shadow
+ℹ detected: link inherits ink rule
+ℹ detected: white focus rollback
+ℹ detected: no focus offset
+ℹ detected: double focus
+ℹ detected: night omitted
+ℹ detected: unscoped rules
+ℹ detected: preview guard removed
+ℹ detected: preview root exclusion lost
+ℹ detected: preview descendant exclusion lost
+ℹ detected: assistant accidentally included
+ℹ detected: blueprint contrast regression
+ℹ detected: blueprint-night contrast regression
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 462.521583

@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P78 · 教师消息气泡轻背景 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线为 P77 `eecb471`（位于 main `7ad8dbc` 之上），开工工作树干净。[基线](evidence/user-bubble-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P78.md` / `builder-preamble.md`，对应 Workspace W193 的 P-R4-01 与蓝图 §6.1；不提交、推送、修改 `.git`、联网、安装依赖、启动/重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
+- 范围：仅 blueprint.css 的两蓝图用户气泡使用 secondary / foreground，正文链接使用 link、焦点使用 2px ring 外环与 2px offset；保留直角、不加气泡边框或阴影。附件文字/图标/现有边框继承前景。两处示例说明同步；组件 API、核心三主题、字号、令牌、依赖与 54 个冻结 coss 不变。[实现与复用](evidence/user-bubble-20261016/inspection.md)、[保护散列](evidence/user-bubble-20261016/integrity.json)、[实际 diff](evidence/user-bubble-20261016/scope.diff)。
+- 工程：五项检查均退出 0，数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建成功、先构建后全量 **2216/2216，0 失败 / 0 跳过**、TypeScript **0 错误**。定向 **18/18**；17 个内存回退变异均被检出。[工程记录](evidence/user-bubble-20261016/engineering.json)、[定向日志](evidence/user-bubble-20261016/targeted-initial.log)、[变异](evidence/user-bubble-20261016/mutations.json)。文档/状态回填后的生成物、构建与文档专项复核见 [finalization.json](evidence/user-bubble-20261016/finalization.json)。
+- 对比度与隔离：白图文字/附件为 **16.259790:1**，链接/焦点对气泡 **5.587005:1**；夜图分别 **13.083512:1**、**6.392999:1**。焦点对 card/background 也逐项 ≥4.5:1。[数值](evidence/user-bubble-20261016/contrast.json)。实际 SSR / CSS 规则测试覆盖两蓝图、核心零增量、嵌套核心根/后代及核心岛，保留助手正文；这些不等同浏览器视觉/层叠/焦点验收。
+- 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务全量工程回归；最近完整工程回归为本轮 2216/2216，下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、链接焦点、附件/公式/长中文及嵌套预览详见 [浏览器清单](evidence/user-bubble-20261016/browser-checklist.md)。无本轮浏览器截图；Workspace 未同步接入，真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
+
+## 历史
+
+### P77 · 顶部导航选中态加强与成果 folio · 2026-10-16（原当前，原样保留）
+
 - 轮次：P77 · 顶部导航选中态加强与成果 folio · 2026-10-16；分支 `feat/blueprint-nav-folio`，main 基线 `7ad8dbc2146324ed2999febaf35e6417084f03d7`，开工工作树干净。[基线](evidence/nav-folio-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P77.md` / `builder-preamble.md`；Builder 实施与工程自测，不提交、推送、修改 `.git`、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
 - 范围：两蓝图一级导航 36px primary / primary-foreground 直角实块，hover 保持、去掉下划线；单一 2px ring 外环 / 2px offset，滚动容器两端 4px 留白。SpaceBar / 侧栏不变。Header / Sheet 增加 REV、显式 folio、空值省略、补零与 folioAriaHidden；保留 sheetNo 并让显式 folio 优先。既有文件版本与作答页夹具补 REV / SHEET / 无 folio 样例；加入逻辑与读屏规则写入规范和契约。[实现 / 复用 / Workspace 接线](evidence/nav-folio-20261016/inspection.md)。
@@ -12,7 +24,6 @@
 - 周期：Builder 实施 / 工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务提前全量工程回归，最近完整工程回归为本轮 2209/2209；下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、首末导航项焦点 / hover、folio 换行 / 切页 / 可读性、嵌套核心预览隔离见 [浏览器清单](evidence/nav-folio-20261016/browser-checklist.md)。Workspace 仅只读定位接线，未修改 / 集成；真机、读屏器、真实学校数据、实体打印未验。Builder 不自我批准，无新增 PO 决策待定项。
 
-## 历史
 
 ### P76 · 顶部导航与左侧目录 · 2026-10-16（原当前，原样保留）
 

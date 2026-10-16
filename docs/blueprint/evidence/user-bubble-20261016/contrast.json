@@ -1,0 +1,90 @@
+{
+  "method": "Production CSS-rule/token calculation; not browser computed styles",
+  "minimum": 4.5,
+  "pairs": [
+    {
+      "theme": "blueprint",
+      "label": "text / bubble",
+      "foreground": "#16181D",
+      "background": "#F3F5F8",
+      "ratio": 16.259790213604944
+    },
+    {
+      "theme": "blueprint",
+      "label": "attachment text-icon-border / bubble",
+      "foreground": "#16181D",
+      "background": "#F3F5F8",
+      "ratio": 16.259790213604944
+    },
+    {
+      "theme": "blueprint",
+      "label": "link / bubble",
+      "foreground": "#1D5FBF",
+      "background": "#F3F5F8",
+      "ratio": 5.587005415749903
+    },
+    {
+      "theme": "blueprint",
+      "label": "focus / bubble",
+      "foreground": "#1D5FBF",
+      "background": "#F3F5F8",
+      "ratio": 5.587005415749903
+    },
+    {
+      "theme": "blueprint",
+      "label": "focus / card",
+      "foreground": "#1D5FBF",
+      "background": "#FFFFFF",
+      "ratio": 6.1020908683971875
+    },
+    {
+      "theme": "blueprint",
+      "label": "focus / canvas",
+      "foreground": "#1D5FBF",
+      "background": "#F6F6F3",
+      "ratio": 5.635741732731812
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "text / bubble",
+      "foreground": "#E6EDF7",
+      "background": "#12253F",
+      "ratio": 13.083512087739368
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "attachment text-icon-border / bubble",
+      "foreground": "#E6EDF7",
+      "background": "#12253F",
+      "ratio": 13.083512087739368
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "link / bubble",
+      "foreground": "#6EA8FF",
+      "background": "#12253F",
+      "ratio": 6.392999465265562
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "focus / bubble",
+      "foreground": "#6EA8FF",
+      "background": "#12253F",
+      "ratio": 6.392999465265562
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "focus / card",
+      "foreground": "#6EA8FF",
+      "background": "#0D1C31",
+      "ratio": 7.0937612315171386
+    },
+    {
+      "theme": "blueprint-night",
+      "label": "focus / canvas",
+      "foreground": "#6EA8FF",
+      "background": "#081322",
+      "ratio": 7.7296872276501825
+    }
+  ]
+}

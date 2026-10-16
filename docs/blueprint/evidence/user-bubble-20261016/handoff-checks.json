@@ -1,0 +1,68 @@
+{
+  "protectedFiles": 60,
+  "allProtectedEqual": true,
+  "P77CurrentPreservedVerbatim": true,
+  "evidenceLinks": [
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/baseline.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/inspection.md"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/integrity.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/scope.diff"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/engineering.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/targeted-initial.log"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/mutations.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/finalization.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/contrast.json"
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "link": "evidence/user-bubble-20261016/browser-checklist.md"
+    },
+    {
+      "document": "docs/blueprint-theme.md",
+      "link": "blueprint/evidence/user-bubble-20261016/contrast.json"
+    },
+    {
+      "document": "docs/blueprint-theme.md",
+      "link": "blueprint/evidence/user-bubble-20261016/inspection.md"
+    },
+    {
+      "document": "docs/blueprint-theme.md",
+      "link": "blueprint/evidence/user-bubble-20261016/browser-checklist.md"
+    },
+    {
+      "document": "docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "link": "baseline.json"
+    },
+    {
+      "document": "docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "link": "browser-checklist.md"
+    }
+  ],
+  "scopeDiff": "git diff for authored CSS/demo/test/docs plus git diff --no-index /dev/null for the new test; derived guide files and evidence logs are listed separately in the report"
+}
