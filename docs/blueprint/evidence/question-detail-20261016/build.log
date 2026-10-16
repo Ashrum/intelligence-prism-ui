@@ -1,0 +1,85 @@
+
+  vinext build  (Vite 8.0.13)
+
+[1/5] analyze client references...
+[2Ktransforming...✓ 205 modules transformed.
+rendering chunks...
+✓ built in 1.27s
+[2/5] analyze server references...
+[2Ktransforming...✓ 3655 modules transformed.
+rendering chunks...
+✓ built in 3.10s
+[3/5] build rsc environment...
+[2Ktransforming...✓ 211 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 648ms
+[4/5] build client environment...
+[2Ktransforming...✓ 5625 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 2.90s
+[5/5] build ssr environment...
+[2Ktransforming...✓ 3665 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 3.42s
+[0m
+  Route (app)
+  ┌ ? /                                              
+  ├ ? /next                                          
+  ├ ? /next/agent                                    
+  ├ ƒ /next/components/:slug                         
+  ├ ƒ /next/components/agent-components/:semantic    
+  ├ ? /next/components/agent-components/agent-mark   
+  ├ ? /next/components/agent-components/agent-message
+  ├ ? /next/components/agent-components/prompt-bar   
+  ├ ? /next/components/error-cause-review/compact    
+  ├ ? /next/components/paper-preview/digital         
+  ├ ? /next/components/question-rail/extensions      
+  ├ ? /next/components/score-review/compact          
+  ├ ? /next/components/score-review/extensions       
+  ├ ? /next/components/student-paper-report/compact  
+  ├ ? /next/components/student-paper-report/pending  
+  ├ ƒ /next/examples/:slug                           
+  ├ ? /next/experiments/blueprint                    
+  ├ ? /next/foundations                              
+  ├ ? /next/foundations/blueprint                    
+  ├ ? /next/foundations/blueprint/guide              
+  ├ ? /next/foundations/typography                   
+  ├ ? /next/pages                                    
+  ├ ? /next/reading                                  
+  ├ ? /next/reviews/grading-function-area            
+  ├ ? /next/reviews/paper-review                     
+  ├ ? /next/reviews/question-review                  
+  ├ ? /next/skeletons                                
+  ├ ? /next/skeletons/agent                          
+  ├ ? /next/skeletons/workbench                      
+  ├ ? /next/use-cases                                
+  ├ ? /next/use-cases/parsing                        
+  └ ? /next/use-cases/workspace-app-bar              
+
+  ƒ Dynamic  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugins. Here is a breakdown:
+  - rsc:virtual-client-package (39%)
+  - vinext:react-canary (21%)
+  - vinext:jsx-in-js (10%)
+  - vinext:config (9%)
+  - vinext:optimize-imports (5%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

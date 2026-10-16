@@ -4,6 +4,19 @@
 
 ## 当前
 
+- 轮次：P75 · 题目详情虚线纸面与间距 · 2026-10-16；基线 `ab14ab4a59ef593e9d29061c892256d5e233bc3d`，分支 `feat/blueprint-question-detail`，开工工作树干净。[基线](evidence/question-detail-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P75.md` + `builder-preamble.md`。Builder 仅实施与工程自测；未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
+- 范围：运行时仅 `app/(next)/next/blueprint.css`，复用 `.question-detail-region` / Tabs data-slot / `.question-solution`；两蓝图详情为 card 纸面、1px 虚线、直角、12px padding，压缩 Tabs 和三个面板间距。fine Tab 至少 32px，coarse 沿用原 44px 规则。夜图 border/card 1.453912:1，按授权改用既有 line，达到 11.622496:1；白图仍用既有 border。核心主题、组件结构/API、字号、令牌值、冻结 coss、依赖均未改。[实现与复用记录](evidence/question-detail-20261016/inspection.md)。
+- 工程：新增测试 8/8，内存变异 14/14 检出；真实 SSR + CSS 选择器/规则探针覆盖两蓝图与嵌套核心预览根/后代，不能替代真实 computedStyle。五项全套均退出 0：数学字体通过、排版 311 个 owned TSX 通过、生产构建通过、先构建后全量 **2192/2192，0 失败 / 0 跳过**、TypeScript 0 错误。[命令与时间](evidence/question-detail-20261016/engineering.json)、[实际 diff](evidence/question-detail-20261016/scope.diff)、[保护核对](evidence/question-detail-20261016/integrity.json)。
+- 验收夹具：证据目录新增真实 QuestionCard / QuestionDetails 交互夹具，白底图复用原 CoordinateDiagram；不登记目录或新增产品路由。夹具 bundle / SSR 通过，实际浏览器挂载未执行。
+- 周期：P75 是局部蓝图详情修正，Builder 实施/工程检查完成，待 Supervisor 独立 Review 与浏览器验收，尚未记为已验收。继承 P74 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期或另计已完成轮；本轮按任务提前执行全套工程回归，最近完整工程回归为本轮 2192/2192，累计完整浏览器仍待收口。Workspace R3 / R6 / R9 触发约定保持。
+- 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、真实三 Tab / coarse 高度、白底图、核心嵌套及 computedStyle 前后对比见[浏览器清单](evidence/question-detail-20261016/browser-checklist.md)。没有本轮截图；视觉、真实键盘/焦点/触屏、读屏器、实体打印和 Workspace 真实接入未验。
+- 待审阅：本轮无新增产品方向或令牌待 PO 决定；Builder 工程完成不等同 Supervisor Review / PO 批准。
+
+## 历史
+
+### P74 · Agent 浮层容器契约补齐 · 2026-10-16（原当前，原样保留）
+
 
 - 轮次：P74 · Agent 浮层容器契约补齐（R2 后续 / CI-11）· 2026-10-16；开工基线 `e750a963d53da4a3bba1cf53500616ebff4b16d2`，分支 `fix/agent-portal-container`，开工工作树干净。[基线](evidence/portal-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P74.md` + `builder-preamble.md`；Builder 实现与工程自测，浏览器由 Supervisor 执行。未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
@@ -14,7 +27,6 @@
 - 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。没有本轮浏览器截图，不宣称视觉、真实键盘/焦点、定位或裁切通过；1280 / 320、核心/蓝图双向嵌套、Toast 离页和图表操作见[浏览器清单与 Workspace 接线](evidence/portal-20261016/browser-checklist.md)。Workspace 固定来源同步/实际接线、真实服务、真机/触控、读屏、实体打印和全站视觉未验。
 - 待审阅：统一入口命名与容器/Toast 归属契约由 Supervisor 独立 Review；后续 Workspace 同步按其任务执行。本轮没有需要 Builder 自行决定的新产品方向、视觉令牌或业务规则。
 
-## 历史
 
 ### P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16（原当前，原样保留）
 
