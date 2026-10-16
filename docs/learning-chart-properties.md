@@ -14,7 +14,8 @@
 type ChartSeries = {
   // 原 id / label / data / color 保留
   lineStyle?: 'solid' | 'dashed' // 默认 solid
-  connect?: boolean            // 默认 true；false 仅画点
+  showPoints?: boolean         // 默认 true（含 dashed）；false 不画普通点或悬停点
+  connect?: boolean            // 默认 true；false 禁用连线，与 showPoints 独立
   connectGaps?: boolean        // 默认 false；true 跨 null 连线，connect=false 优先
   tone?: ChartTone             // 既有图表色板；color 显式指定时优先
 }
@@ -36,15 +37,19 @@ type BasicChartProps = {
 }
 ```
 
-`yDomain='auto'` 仅根据有限数值计算留边，忽略 null / 非有限值；55–75% 显示 40–90%。百分比数据均在 0–100 内时坐标边界限制在该区间，不截断域外事实；空数据回退 0–100%，恒定序列仍留边。Y 轴百分比刻度始终取整；值与标注坐标不四舍五入。
+`yDomain='auto'` 仅根据有限数值计算留边，忽略 null / 非有限值；55–75% 显示 50–80%（P68）。百分比数据均在 0–100 内时坐标边界限制在该区间，不截断域外事实；空数据回退 0–100%，恒定序列仍留边。Y 轴百分比刻度始终取整；值与标注坐标不四舍五入。
 
 P60 将 W148 的 `xTickMode` 正式收回 Prism 上游。`auto` 且未传 tickLabel 时保留原刻度；`all` 展示所有类别。传入 `tickLabel` 时每个元素占一行，不自动折成第三行；未传时 label 为单行。端点预留半个刻度槽，避免右侧文字被 SVG 裁切。窄容器每行放不下时使用省略号，完整内容保留在 SVG title 与数据表；提示框保留原 label，点 ID、分类顺序与原始数值不变。多系列同 ID 的 tickLabel 取首个已提供的定义，调用方应保持一致。图例文字统一使用正文色，仅标记使用系列色。
 
 valueLabel 放点上方，annotation 放下方；文字始终使用正文色和既有图表字号。依据实际 plot / 数值轴位置，预留所有点的空间，再避让连线及已放置的文字；边缘文字向图内移动。plot 宽度不足 440px、文字过长或避让后放不下时不在图中放置该文字，提示框与数据表仍披露完整内容，不缩字号。提示框按点 ID 与系列 ID 取原始标注。
 
-null 默认断线且不画点；`connectGaps=true` 跨缺位连接有效点，标签避让也计入跨缺位的线段；`connect=false` 对整个系列禁用可见连线，常态和悬停态保留同一点形。数据披露增加系列线型/是否连线、点形、原值与标注。未传 tone 时颜色沿用原系列色；`tone="neutral"` 读取既有第六色（light/paper #6B7280，dark #B6BEC9），`tone="chart-3"` 读取第三色；显式 color 优先。没有区间带属性。
+null 默认断线且不画点；`connectGaps=true` 跨缺位连接有效点，标签避让也计入跨缺位的线段；`connect=false` 对整个系列禁用可见连线，常态和悬停态保留同一点形。数据披露增加系列线型/是否连线、点形、原值与标注。未传 tone 时颜色沿用原系列色；`tone="neutral"` 读取既有第六色（light/paper #6B7280，dark #979CA6），`tone="chart-3"` 读取第三色；显式 color 优先。没有区间带属性。
 
-组件页 `/next/components/trend-chart#learning-properties`：四次可比检测实际值 65/68/70/72%，预期 64/66/67/69%；另有一次不可比空心点、一次新情境菱形点。六个时间类别按首个系列顺序输入；实际/预期显式启用 connectGaps，预期/不可比用 neutral，新情境用 chart-3，独立点系列禁用连线。示例使用 yDomain="auto"、xTickMode="all" 与两行 tickLabel（第 2 周 / 起点检测至第 8 周 / 数学检测）。
+P72：`showPoints=false` 仅关闭该系列的普通点与悬停点，提示框、数据表、原始数值和标注保留；图例使用对应实线/虚线标记。`lineStyle='dashed'` 不隐式关闭点，由宿主显式传 `showPoints:false`。`connect=false` 仍禁用连线；两者同时为 false 时不画线也不画点，数值仍可通过提示框和数据表读取。单个有效值在隐藏点后可能没有可见线段。
+
+复用依据（P72）：继续使用现有 TrendChart / ChartLegend / ChartMarker 和 Recharts 的 `dot` / `activeDot` 属性；离线核对 coss Table、particles `table-particle.tsx`（p-table-3/4）与 `docs/comparison-chart.md`、`docs/polar-charts.md` 的组合记录，均无须替换现有图表能力。按 Builder 前置约定不联网刷新；此为通用图表属性扩展，不新增组件或第三方代码。
+
+组件页 `/next/components/trend-chart#learning-properties`：四次可比检测实际值 65/68/70/72%，预期 64/66/67/69%；另有一次不可比空心点、一次新情境菱形点。六个时间类别按首个系列顺序输入；实际/预期显式启用 connectGaps，预期显式传 showPoints=false；预期/不可比用 neutral，新情境用 chart-3，独立点系列禁用连线。示例使用 yDomain="auto"、xTickMode="all" 与两行 tickLabel（第 2 周 / 起点检测至第 8 周 / 数学检测）。
 
 ## QuadrantScatterChart
 
@@ -64,7 +69,7 @@ P60：`ScatterChartProps.xDomain?: [number, number] | 'auto'` 与 `yDomain?: [nu
 
 `ScatterChartProps` / `QuadrantScatterChart` 同时支持 `labelMode?: 'auto' | 'none'`（默认 auto）与 `decimals?: 0 | 1`。auto 沿用窄容器隐藏、重叠避让；估算宽度超过 110px 的名称不画截断文本，完整名称放提示框与数据表。none 在普通态、悬停态及响应式配置中均关闭点标签；保留点形、象限标题和选择意图。
 
-ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart-1 … chart-6`；由 `chartToneColor` 读取对应主题色，区域透明度 0.1，位于数据点下方。其他象限仍透明。“查看数据”内的象限说明文字标记“高亮区域”；阈值非法时沿用不画象限的行为。三主题采用各自原有色板，不增 Token。
+ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart-1 … chart-6`；由 `chartToneColor` 读取对应主题色，区域透明度 light/paper 为 0.1、dark 为 0.16，位于数据点下方。其他象限仍透明。“查看数据”内的象限说明文字标记“高亮区域”；阈值非法时沿用不画象限的行为。三主题采用 P69 曜彩图表色板，详见 [Foundations 色板](foundation-tokens.md#p69-曜彩图表色板)。
 
 组件页 `/next/components/quadrant-chart#learning-properties`：章为圆点、知识点为菱形，xDomain/yDomain 使用 auto，数据集中在 60–90%，左下区域高亮；名称、阈值与优先处理文案均为外部示例事实。
 
@@ -74,7 +79,7 @@ ChartTone 沿用现有 `neutral | info | success | warning | destructive | chart
 type PairedDotChartProps = {
   // 其他原属性保留
   density?: 'default' | 'compact' // 默认 default
-  connectPairs?: boolean        // 默认 false
+  connectPairs?: boolean        // compact / inline 默认 true，其他默认 false
   decimals?: 0 | 1
 }
 type PairedRow = {
@@ -145,7 +150,7 @@ P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 T
 ]} />
 ```
 
-`TrendChart.yDomain="auto"` 与 `QuadrantScatterChart.xDomain/yDomain="auto"` 共用内部范围与步长计算。先留边，再按 1/2/5 × 10 的幂选等距步长并向外对齐两端；百分比步长至少为 1，数据都在 0–100 时仍限制在该区间。非百分比按数值量级取整步长，可保留小数刻度。48–83% 对应 30、40、50、60、70、80、90、100%，不会出现 30、40、60、80、100% 的短首段。ECharts 显式设置 interval，Recharts 显式设置 ticks 并保留全部 Y 轴刻度。上下界都是刻度；空、单点、恒定、负值仍有有效范围。原始值、象限阈值、提示框精度均不改。未传 auto 或显式数组域不增加刻度覆盖，不修改其原行为。
+`TrendChart.yDomain="auto"` 与 `QuadrantScatterChart.xDomain/yDomain="auto"` 共用内部范围与步长计算。P61 的通用算法先留边，再按 1/2/5 × 10 的幂选等距步长并向外对齐两端；非百分比仍按此算法，可保留小数刻度。百分比现按下方 P68 规则取 3–5 条刻度，数据都在 0–100 时仍限制在该区间。48–83% 现对应 20、40、60、80、100%，每段等长。ECharts 显式设置 interval，Recharts 显式设置 ticks 并保留全部 Y 轴刻度。上下界都是刻度；空、单点、恒定、负值仍有有效范围。原始值、象限阈值、提示框精度均不改。未传 auto 或显式数组域不增加刻度覆盖，不修改其原行为。
 
 复用检索：本轮读取固定 coss Popover / Button / Meter / Progress、既有 MetricSummary.help、DataRecordTable、RecordList、SegmentedBar、ComparisonChart 与 Prism Badge，读取本地 particles `table-particle.tsx` 的 p-table-3/4，复核本页及 SegmentedBar / RecordList / ComparisonChart 文档中 p-meter-3/4、p-progress-1/2/3、p-table-5/8 与 p-badge-16 的历史记录。量值条、标签、表格插槽已满足需求；图例帮助直接沿用 MetricSummary 的组合。按前置约定离线，未刷新远端 registry；通用数据组件不适用 Beautiful UI 执行组件，没有新第三方源码。
 
@@ -186,7 +191,7 @@ P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 T
 
 Paired compact：名称与 tag 在第一行完整换行；第二行是共用比例的细轨道、两个点、有效值之间连线及点上方数值，不画 0 / 50 / 100 的轴。图形高 48px（包括标签空间），保持圆/菱形区分，使用既有主题 border / muted 色。单边缺测只留另一个点，同值保留原坐标与两点，拥挤数值由引擎避让后隐藏到提示框/表；不补零、不伪造偏移值。default 密度及其刻度不变。
 
-Comparison spark：未传 horizontal 时默认竖柱；移除 y 轴和坐标网格，保留底线及全部 x 刻度，默认高度 120px、柱宽 24px、小圆角，height 仍可控制。null / 无效 / 已知 0 在对应类别底部显示细灰线，title 与数据表保留“缺测”和 0 的区别；全缺测也保留所有位置。未更改数据来制造最小柱高。显式 horizontal=true 时沿用横柱呈现；spark 面向竖柱。默认 variant 与现有参考线/选择协议不变。
+Comparison spark：未传 horizontal 时默认竖柱；移除 y 轴和坐标网格，保留底线；P65 起 x 刻度按可用宽度等距抽稀并保留首尾，默认高度 120px、柱宽 24px、小圆角，height 仍可控制。null / 无效 / 已知 0 在对应类别底部显示细灰线，title 与数据表保留“缺测”和 0 的区别；全缺测也保留所有位置。未更改数据来制造最小柱高。显式 horizontal=true 时沿用横柱呈现；spark 面向竖柱。默认 variant 与现有参考线/选择协议不变。
 
 MetricSummary：省略 layout 沿用旧自适应布局；显式 grid 切换为两列、有内部细分隔线的概览网格，四项组成 2×2。row 为旧 strip 的兼容入口，strip 保留。grid 使用标签 ui-body、数值 stat-display、说明 ui-hint；单位用现有 value: ReactNode 插入 `text-ui-body`，不从字符串拆分或猜测单位。环形盒为 56×56，走势为 72×40；网格宽度不足 440px 时，小图排在说明下方保持可读，仍保留两列、字号不缩小。数值少于两个有效点不输出 polyline：单点（含 0）只画一个点，全缺测不画点。装饰 SVG 继续 aria-hidden，原始数据文字可读。
 
@@ -290,3 +295,89 @@ import { ChartLegend, TrendChart, trendLegendItems } from '@/components/prism-ne
 离线读取既有 Recharts Legend、Scatter / Combo / PairedDot / Comparison HTML 图例、TrendDot、固定 coss Card，以及本地 particles `demos/table-particle.tsx` 的 Table / Frame 组合；复核本页已有 p-table-3/4、p-meter-3/4、p-progress-1/2/3 记录。基础控件和 particles 不提供图表系列映射，故提取已有 HTML 图例和 PairedDot 帮助组合，共享 TrendDot 标记绘制；没有另建第二套图例。按 Builder 前置约定未联网刷新 registry；通用图表不涉及 Beautiful UI Agent 执行组件，无新第三方代码、依赖、Token 或 coss 修改。
 
 P21 的旧 SHA-256 继续保留：仅将当前参考线图例的包装节点还原为旧结构，标签文字和标记颜色仍取实际渲染输出，再核对原散列。P58 / P62 / P63 冻结快照保持原文件；比较时仅排除本轮明确替换的图例子树，其余 HTML 和 ECharts 配置仍逐字比较。P60 / P61 的图例与帮助断言改查公开图例输入。`tests/p64-charts.test.mjs` 独立检查各 helper 的形状、颜色、内容、筛选、显式色覆盖、空输入、混合点形、标题行、帮助和与实际曲线 / 点形的一致性；P63 客户端测试检查 320 / 1280 注入尺寸下实时切换后的 DOM 顺序与绘图容器兄弟关系。这些测试不执行浏览器布局、视觉或键盘验收；实际结果和数字见本轮 P64 报告，浏览器验收按分工由 Supervisor 执行。
+
+
+## P65：图表视觉细节
+
+- **ComparisonChart spark**：使用实际 plot 宽度选择等距索引步长，保留首尾类别，文字之间至少 8px；resize 时重新计算。只抽稀刻度文字，所有柱、0 / 缺测占位及提示框、数据表保持完整。首尾名称过长时截短并保留 SVG title，不缩字号；显式横向与 default 分支不变。
+- **TrendChart**：数值标签与注释使用 `var(--card)`、4px 背景描边（先描边后填字），保留既有点/线避让。P65 曾仅在百分比自动域按数据跨度选择 5/10 个百分点步长；此历史规则由下方 P68 的 3–5 条刻度规则替代。显式域与非百分比自动域不变。
+- **QuadrantScatterChart**：内部引擎按实际宽高预留全部点形（包括未指定标签的点）、象限标题，再按右、上、左、下候选位置放置文字。宽度超过 110px、超出绘图区或四个候选均碰撞时不画标签，悬停也不重新画出冲突标签；提示框、数据表仍保留全名。440px 及以下仍不画图内标签。更新数据与容器宽高时重新布局，分组间共用障碍集合。
+- **PairedDotChart**：新增 `maxTrackWidth?: number`，默认不限；正有限值以 CSS px 限制 compact 每行画布（包含两侧数值留边）的最大宽度，右侧留白，窄容器继续收缩。名称/状态按画布内轨道两端对齐。非正、NaN、Infinity 视为不限；default 密度不受此属性影响。两项图例保持横排，各项文字可在项内折行，帮助按钮保留。
+- **dataDisclosure="hidden"**：所有图表仅输出读屏可读的只读数据区域，不产生可见 details/summary 或隐藏选择按钮。此属性必须由宿主显式传入，默认 visible 未改变。只读检查 Workspace `src/features/teacher/analysis/LearningMistakes.tsx` 的“出错与再错” PairedDotChart 发现漏传；组件库不修改该仓库，Supervisor 接入时补传 hidden，并按卡片宽度选择 maxTrackWidth。
+
+示例：`/next/components/paired-dot-chart#learning-properties` 使用 `maxTrackWidth={420}`；`/next/components/quadrant-chart#learning-properties` 加入相邻“函数与方程”点；学情概览卡片中的 spark 使用 13 个周类别，供窄容器抽稀验收。
+
+## P66 / P67：成对指标单行布局与数值列
+
+本轮离线复查现有 PairedDotChart、ChartLegend / ChartMarker、EChart、DataRecordTable、固定 coss Button / Popover / Table，以及本地 particles `demos/table-particle.tsx`（p-table-3/4）和 `demos/dialog-particles.tsx`（p-dialog-5）。表格与弹窗组合不提供双点轨道，故扩展既有 PairedDotChart 并复用图例标记；未新增组件、依赖、颜色或字号令牌。按 Builder 前置约定不联网刷新 registry；本项为通用数据图表，未引入 Beautiful UI 的 Agent 组件。
+
+```tsx
+type PairedDotChartProps = {
+  // 其他属性沿用
+  rowLayout?: 'stacked' | 'inline' // 默认 stacked，原输出不变
+  labelWidth?: number            // inline 名称列宽度，单位 px；默认 9em
+}
+type PairedRow = {
+  // 原 id / label / first / second / tag 保留；通过 data 数组传入
+  meta?: ReactNode               // 调用方提供的人数、样本量等补充信息
+}
+
+const metrics: [PairedMetric, PairedMetric] = [
+    { id: 'error', label: '出错率', help: '未得满分人数 / 有效作答人数。' },
+    { id: 'repeat', label: '再错率', help: '原失分学生中再考仍失分人数 / 可比再考人数。' },
+  ]
+<div className="flex flex-wrap items-start justify-between gap-3">
+  <h3 className="text-block-title">错题：出错与再错</h3>
+  <ChartLegend items={pairedDotLegendItems(metrics)} align="right" className="ml-auto" />
+</div>
+<PairedDotChart label="错题：出错与再错" rowLayout="inline" density="compact"
+  legendPosition="none" unit="%" dataDisclosure="hidden" metrics={metrics} data={[
+    { id: 'q1', label: '一元二次方程', first: 71, second: 25, meta: '36 / 51 人' },
+    { id: 'q2', label: '根与系数', first: 60, second: null },
+  ]} />
+```
+
+- `inline` 在容器宽度 ≥360px 时依次排列名称（可带一枚 tag）、轨道和两列数值，常规短内容每行 36px。所有行通过共享 Grid 列对齐，轨道共用数值域；名称单行省略，完整名称留在名称提示（有 meta 时为 coss Tooltip）、图表提示框和数据表中，读屏可读完整文本。
+- 两项数值各占一列，两列等宽、右对齐、使用等宽数字；不显示指标名称或分隔点。以圆点 / 菱形前缀区分，颜色复用指标显式 color 或现有主题图表色；数字和文字为正文色。图上与悬停态不标数。缺测项不画点、数值显示 `—`，读屏读作“缺测”；只连接两个有效且在域内的点。数据披露继续保留缺测、无效和域外提示，不把缺测补零。
+- `labelWidth` 仅接受正有限数，其他值回退 9em；它是名称列的期望宽度，空间不足时允许收缩。`maxTrackWidth` 在 inline 中仅限制中间画布的最大宽度，不限制整行；不传时轨道利用剩余空间。两项属性均不影响默认布局。
+- `inline` 可配合两种 density，均采用 36px 轨道；`connectPairs` 默认开启，显式 false 仍关闭。未显式传 domain 的百分比轨道使用 0–100；其他单位仍按所有行数据共用比例。
+- 使用命名 CSS 容器查询，容器 <360px 时同一行内容自动按名称（含可选 tag）→ 轨道 → 两列数值上下排列，名称完整换行。此回退保留 inline 的独立数值区与 36px 轨道；显式 `rowLayout="stacked"` 才使用原来的布局（compact 画布 48px、数值位于点上方）。没有重复图形或基于视口的 JS 猜测。长 tag 或临界宽度允许增加行高，保证内容可读，不强裁为 36px。
+- **P67 图例契约**：inline 不生成图例行或列头行，任何 `legendPosition` 值均不在图内输出图例；数值前的圆点 / 菱形始终保留，包括 `legendPosition="none"`。宿主在卡片标题行右侧使用 `ChartLegend items={pairedDotLegendItems(metrics)}`，沿用指标名称、颜色和 `metrics[].help`。stacked 的图例位置行为保持不变。
+- **P67 补充信息**：inline 的 `meta?: ReactNode` 仅在名称悬停 / 键盘聚焦的 coss Tooltip 和该行读屏文本中出现，不占数值列，也不出现在可见披露表中。Tooltip 直接接收原 ReactNode，不猜测或扁平化其文字；两项皆缺测时仍可查看。未传 meta 不增加焦点入口。`tag` 仍由宿主提供，名称后只渲染一个 tag 插槽，不推断状态；长标签允许换行。compact stacked 的 meta 仍在名称行显示，stacked 数据表仍保留补充信息列。
+- `dataDisclosure`、原始 `onSelect(rowId, metricId?)` 与 selectedId 继续有效；数值读屏名称始终保留对应的指标名，缺值读作“缺测”。未新增公开属性。
+
+验收入口：`/next/components/paired-dot-chart#learning-properties` 默认启用 inline，支持“单行布局”“320px 容器”“360px 容器”“名称列 180px”“隐藏数据披露”“长中文、公式与缺测”“保留一位小数”开关。`#embedded-cards` 的“错题：出错与再错”卡片也显式启用 inline。CSS 响应式、主题视觉、键盘帮助和焦点返回由 Supervisor 做真实浏览器验收，Builder 的 SSR / SVG 测试不替代该验收。
+
+复用依据：离线读取固定 coss Card、现有 ChartLegend / ChartDataDisclosure / EChart / Comparison / Trend / Scatter / PairedDot 与 `comparisonTextWidth`、本地 particles `table-particle.tsx`（p-table-3/4）及本文历史 p-meter / p-progress 检索记录。基础控件/量值条没有坐标碰撞布局，故适配现有 Recharts / ECharts。按前置约定未联网刷新 registry；本任务为通用图表，Beautiful UI 的 Agent 执行组件不适用。没有新增第三方源码、依赖、Token、组件条目或 coss 修改。
+
+P67 复用核对：离线读取固定 coss Tooltip / Card / Button / Popover / Table、现有 ChartLegend / ChartMarker / PairedDotChart，以及本地 particles 的 p-table-3/4、p-dialog-5。表格组合不提供成对轨道，继续适配现有图表；补充信息直接复用 Tooltip，支持 ReactNode 与键盘聚焦。按 Builder 前置约定未联网刷新 registry；通用图表无需引入 Beautiful UI Agent 执行组件。未增加组件条目、依赖或视觉令牌。P66 测试只更新获授权的 inline 图例、meta 和名称提示断言；既有 stacked、数值域、缺测、选择与四主题 SVG 断言保留。
+
+
+## P68：自动百分比域的刻度数量
+
+TrendChart、ScatterChart / QuadrantScatterChart 的百分比 auto 轴共用 `chartAutoScale`。依次尝试 5、10、20、25 个百分点，按有效数据最小/最大值各留半档后向外对齐到该步长的整数倍；选择能容纳 3–5 条刻度的最小步长。上下界本身也是刻度，Trend 不隐藏其中任意一条。缺测和非有限数值不参与计算，不改写原始坐标或精度；各散点轴独立使用其单位和数据。
+
+| 原始范围 | 跨度 | 步长 | 刻度 |
+| --- | --- | --- | --- |
+| 60–65% | 5 | 5 | 55、60、65、70 |
+| 64–72% | 8 | 5 | 60、65、70、75 |
+| 55–75% | 20 | 10 | 50、60、70、80 |
+| 30–70% | 40 | 20 | 20、40、60、80 |
+| 15–85% | 70 | 25 | 0、25、50、75、100 |
+
+边界沿用既有百分比契约：当有效值全在 0–100 内时，留白会被 0/100 截止，因此边界侧可能不足半档；例如 0–100% 使用 0/25/50/75/100。靠边恒定序列向区间内部补足至少 3 条刻度，空数据回退同样的 5 条刻度。严格要求每侧至少半档、最多 5 条且步长最多 25 无法覆盖 0–100 数据，这一规格冲突已列入 P68 报告待确认，不宣称边界情形满足严格半档要求。域外百分比事实不截断：候选步长不能覆盖时保留既有通用刻度算法，可能超过 5 条，同列待确认范围。
+
+非百分比自动轴、未选 auto 的旧域、显式域、数据披露、主题颜色和交互保持原行为。P59/P60/P61/P65 的旧 auto 刻度预期按 P68 更新，保留坐标、间距、标签、默认域和显式域断言；未重写默认快照。
+
+复用核对：读取既有 `chart-options.ts`、Trend / Scatter 的 Recharts / ECharts 接线，以及本地 particles `table-particle.tsx`（p-table-3/4）和本文已有量值组合记录。表格组合不提供数值坐标域，故修正现有共享函数；不引入新组件或第三方代码。按前置约定未联网刷新 registry；本任务为通用图表，不适用 Beautiful UI Agent 执行组件。
+
+
+## P69 曜彩与图形尺寸（2026-10-15）
+
+浅色 / 纸色与深色默认系列、形状、连续色阶统一见 [Foundations](foundation-tokens.md#p69-曜彩图表色板)。Recharts 核心主题从五色循环补齐为六色，与 ECharts 及 ChartLegend 对齐；显式 color / colors 与 tone 优先级保持。Blueprint / Blueprint Night 的色板及覆盖保留，夜图不跟随本轮核心 dark 更新。
+
+Trend 普通点与自定义点、Scatter 默认点、Combo 折线点、Radar 点形及 ChartLegend 默认标记半径为 6.5px（ECharts symbolSize=13），Trend 悬停半径 8px；主数据线和成对点连接线为 2.5px；PairedDot 的点保持半径 6px（symbolSize=12），细轨道、轴线和象限分界仍是辅助线。BoxPlot 默认轮廓 2.5px，选中 3px。显式 Scatter size 保留原有上下界；inline 数值旁的辅助标记保留 r=3。象限 highlight 浅色/纸色采用对应 tone 的 10% 叠加，深色采用 16%，标题和点仍为完整系列色。
+
+复用依据：读取现有 chart-palette / chart-theme / ChartLegend、固定 coss Table / Button / Popover 引用和本地 particles `demos/table-particle.tsx`（p-table-3/4），并复核本文、comparison-chart、polar-charts 的 p-meter-3/4、p-progress-1/2/3、p-frame-1 等记录。基础量值和表格组合不提供分类色或绘图尺寸，因此直接适配现有 ECharts / Recharts 图表。按 Builder 前置约定未联网刷新 registry；本任务为通用图表，不适用 Beautiful UI Agent 组件。未复制第三方代码、修改 coss 或增删依赖；只补齐图表第六色桥接。
+
+旧 P57/P58/P62/P63 快照文件保持原样；比较时仅迁移获准的图表颜色、热图文字对比色和图形尺寸。Blueprint Night 的冻结三主题哈希及“夜图等于核心 dark”断言与 P69 授权不兼容，交由 Supervisor 分线协调，不修改该测试或它的证据。

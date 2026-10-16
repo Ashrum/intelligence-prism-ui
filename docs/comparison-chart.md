@@ -59,7 +59,7 @@
 
 两组件页的 `#plot-labels` 提供 140px 纵向十柱矮图（40/60/85 三线），横向十柱四线保留 0 值、85/90 相邻线及长中文名称。横向示例展示 dataDisclosure=none 与宿主可见表格入口。
 
-P62 的 `variant?: 'default' | 'spark'` 卡片小柱图见[学情图表说明](learning-chart-properties.md#p62嵌入卡片公开属性)。`spark` 默认竖柱、120px；隐藏 y 轴和网格，保留底线及全部 x 刻度。空值和已知 0 以细灰线占位，数据表严格区分两者。`height` 仍由宿主控制。
+P62 的 `variant?: 'default' | 'spark'` 卡片小柱图见[学情图表说明](learning-chart-properties.md#p62嵌入卡片公开属性)。`spark` 默认竖柱、120px；隐藏 y 轴和网格，保留底线；x 刻度按可用宽度等距抽稀，始终保留首尾，文字间距至少 8px。空值和已知 0 以细灰线占位，数据表严格区分两者。`height` 仍由宿主控制。
 
 ## P63 图例位置
 

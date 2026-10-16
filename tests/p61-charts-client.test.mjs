@@ -22,7 +22,7 @@ for (const theme of ['light', 'paper', 'dark']) test(`P61 ${theme}: real Rechart
         const axis = nodes(host, n => n.attributes?.class?.split(' ').includes('recharts-yAxis-tick-labels'))[0];
         assert.ok(axis);
         const ticks = nodes(axis, n => n.tagName === 'TEXT');
-        assert.deepEqual(ticks.map(n => n.textContent), ['30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%']);
+        assert.deepEqual(ticks.map(n => n.textContent), ['20%', '40%', '60%', '80%', '100%']);
         const positions = ticks.map(n => +n.attributes.y);
         for (let i = 2; i < positions.length; i++) assert.ok(Math.abs((positions[i] - positions[i - 1]) - (positions[1] - positions[0])) < 1e-6);
         const points = nodes(host, n => n.tagName === 'CIRCLE' && n.attributes?.class?.includes('recharts-line-dot'));

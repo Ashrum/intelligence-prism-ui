@@ -19,7 +19,7 @@ test('P59 gap connection is opt-in and point-only wins; category order and missi
 
 for(const theme of ['light','paper','dark'])test(`P59 ${theme}: expected/hollow dots use neutral, diamonds use palette three, explicit color wins`,()=>{
  const out=capture('TrendChart',{label:'学情',series:api.learningTrendSeries},theme),paths=lines(out);
- assert.equal(paths[1].props.stroke,theme==='dark'?'#B6BEC9':'#6B7280');
+ assert.equal(paths[1].props.stroke,theme==='dark'?'#979CA6':'#6B7280');
  assert.equal(paths[2].props.stroke,paths[1].props.stroke);assert.equal(paths[3].props.stroke,out.theme.colors[2]);
  const custom=capture('TrendChart',{...defaults.TrendChart,series:[{...defaults.TrendChart.series[0],tone:'neutral',color:'#123456'}]},theme);
  assert.equal(lines(custom)[0].props.stroke,'#123456');
@@ -48,14 +48,14 @@ test('P59 percentage rounding is shared by table, tooltip, labels, threshold and
 });
 
 test('P59 trend yDomain auto pads finite observations; explicit yDomain overrides legacy domain, omission retains it',()=>{
- assert.deepEqual(api.trendAutoDomain([55,75,null,NaN],'%'),[40,90]);
+ assert.deepEqual(api.trendAutoDomain([55,75,null,NaN],'%'),[50,80]);
  assert.deepEqual(api.trendAutoDomain([], '%'),[0,100]);assert.deepEqual(api.trendAutoDomain([null,Infinity],''),[0,1]);
  for(const values of [[0],[100],[65,65],[0,100],[-15,-5],[.2,.3]]){
   const d=api.trendAutoDomain(values,'%');assert.ok(d[0]<d[1]);assert.ok(values.every(v=>v>=d[0]&&v<=d[1]));
  }
  const props={...defaults.TrendChart,series:[{id:'a',label:'值',data:[{id:'a',label:'一',value:55},{id:'b',label:'二',value:75}]}]};
  assert.deepEqual(axis(capture('TrendChart',props)).props.domain,[0,100]);
- assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:'auto'})).props.domain,[40,90]);
+ assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:'auto'})).props.domain,[50,80]);
  assert.deepEqual(axis(capture('TrendChart',{...props,yDomain:[45,85]})).props.domain,[45,85]);
 });
 

@@ -1,5 +1,6 @@
 "use client"
 import { useId, type ReactNode } from "react"
+import { CircleHelp } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
 import { metricVisualModel, type MetricVisual } from "@/lib/prism-next/metric-visual"
@@ -11,7 +12,7 @@ import { QuestionSelect } from "./question-controls"
 export type MetricSummaryItem={id:string;label:string;value:ReactNode;detail?:ReactNode;visual?:MetricVisual;help?:ReactNode}
 export type {MetricVisual} from "@/lib/prism-next/metric-visual"
 function MetricLabel({item}:{item:MetricSummaryItem}){
- return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs"/>} aria-label={`${item.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
+ return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" className="text-muted-foreground hover:text-foreground"/>} aria-label={`${item.label}：指标说明`}><CircleHelp size={14} className="size-3.5" aria-hidden="true" /></PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
 }
 function MetricMiniVisual({visual,grid=false}:{visual:MetricVisual;grid?:boolean}){
  const model=metricVisualModel(visual)

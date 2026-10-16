@@ -1,3 +1,5 @@
+import { p70Snapshot } from './helpers/p70-marker-migration.mjs';
+import { p69Snapshot } from './helpers/p69-palette-migration.mjs';
 import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -5,7 +7,7 @@ import { readFile } from 'node:fs/promises';
 import { api, capture, defaults, optionJSON, h, render } from './p58-chart-harness.mjs';
 
 const before=JSON.parse(await readFile(new URL('./fixtures/p58-defaults-before.json',import.meta.url),'utf8'));
-for(const snapshot of before) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure, labels and P64 legend markup`,()=>{
+for(const snapshot of before.map(p69Snapshot).map(p70Snapshot)) test(`P58 ${snapshot.theme} ${snapshot.name} ${JSON.stringify(snapshot.extra)}: default SSR/options retain pre-change bytes except authorized P59/P60 disclosure, labels P64 legend markup and P69 palette / P70 point outlines`,()=>{
  const out=capture(snapshot.name,{...defaults[snapshot.name],...snapshot.extra},snapshot.theme);
  let expected=snapshot.html;
  if(['ScatterChart','PairedDotChart'].includes(snapshot.name)){
@@ -32,7 +34,7 @@ test('P58 trend passes dashed/point-only geometry, symbols, text disclosure, too
  assert.equal(lines.length,4);assert.equal(lines[1].props.strokeDasharray,'5 4');assert.equal(lines[2].props.strokeOpacity,0);assert.equal(lines[3].props.strokeOpacity,0);
  assert.deepEqual(lines.map(n=>n.props.connectNulls),[true,true,false,false]);assert.ok(lines.every(n=>n.props.isAnimationActive===false));
  const dot=lines[2].props.dot({cx:100,cy:100,payload:{id:'week-3'}});
- assert.match(render(dot),/data-trend-symbol="hollow-circle"/);assert.match(render(dot),/fill="var\(--background\)"/);
+ assert.match(render(dot),/data-trend-symbol="hollow-circle"/);assert.match(render(dot),/fill="var\(--card\)"/);
  dot.props.onSelect();assert.deepEqual(calls,[['week-3','incomparable']]);
  assert.match(render(lines[3].props.activeDot({cx:150,cy:100,payload:{id:'week-6'}})),/data-trend-symbol="diamond"/);
  const tooltip=out.nodes.find(n=>n.props.formatter&&n.props.contentStyle);
@@ -55,7 +57,7 @@ for(const theme of ['light','paper','dark'])test(`P58 ${theme}: four highlighted
  for(const [index,quadrant] of ['top-left','top-right','bottom-left','bottom-right'].entries()){
   const props={...defaults.ScatterChart,quadrants:{...defaults.ScatterChart.quadrants,highlight:{quadrant,tone:'destructive'}}};
   const out=capture('ScatterChart',props,theme),area=out.charts[0].option.series[0].markArea;
-  assert.equal(area.data[index][0].itemStyle.color,out.theme.colors[1]);assert.equal(area.data[index][0].itemStyle.opacity,0.1);
+  assert.equal(area.data[index][0].itemStyle.color,out.theme.colors[1]);assert.equal(area.data[index][0].itemStyle.opacity,theme==='dark'?0.16:0.1);
   assert.ok(area.data.every((d,i)=>i===index||!d[0].itemStyle));assert.match(out.html,new RegExp(`${defaults.ScatterChart.quadrants.labels[index]}（高亮区域）`));
   assert.deepEqual(area.data[index].map(d=>d.coord),[[[0,100],[70,60]],[[70,100],[100,60]],[[0,60],[70,0]],[[70,60],[100,0]]][index]);
  }
@@ -77,7 +79,7 @@ test('P58 actual ECharts SVG renders highlight and compact connectors at both wi
  for(const theme of ['light','paper','dark'])for(const width of [320,960])for(const name of ['ScatterChart','PairedDotChart']){
   const props=name==='ScatterChart'?{...defaults[name],quadrants:{...defaults[name].quadrants,highlight:{quadrant:'bottom-left',tone:'destructive'}}}:{...defaults[name],density:'compact',connectPairs:true};
   const out=capture(name,props,theme),chart=api.init(null,undefined,{renderer:'svg',ssr:true,width,height:out.charts[0].height});
-  try{chart.setOption({animation:false,...out.charts[0].option});const svg=chart.renderToSVGString();assert.match(svg,/<svg/);assert.doesNotMatch(svg,/NaN|Infinity/);if(name==='ScatterChart'){assert.ok(svg.includes(out.theme.colors[1]));assert.match(svg,/fill-opacity="0.1"/);}else{assert.ok(svg.includes(out.theme.palette.muted));assert.equal(chart.getModel().getSeriesByIndex(1).getData().count(),1);}}
+  try{chart.setOption({animation:false,...out.charts[0].option});const svg=chart.renderToSVGString();assert.match(svg,/<svg/);assert.doesNotMatch(svg,/NaN|Infinity/);if(name==='ScatterChart'){assert.ok(svg.includes(out.theme.colors[1]));assert.match(svg,new RegExp(`fill-opacity="${theme==='dark'?0.16:0.1}"`));}else{assert.ok(svg.includes(out.theme.palette.muted));assert.equal(chart.getModel().getSeriesByIndex(1).getData().count(),1);}}
   finally{chart.dispose();}
  }
 });

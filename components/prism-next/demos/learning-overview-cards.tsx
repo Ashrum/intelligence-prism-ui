@@ -9,7 +9,7 @@ import { MetricSummary, DataRecordTable, type MetricSummaryItem } from "../data-
 import { TrendChart, ComparisonChart, trendLegendItems } from "../charts/basic-charts"
 import { ChartLegend } from "../charts/chart-legend"
 import { QuadrantScatterChart } from "../charts/scatter-chart"
-import { PairedDotChart } from "../charts/paired-dot-chart"
+import { PairedDotChart, pairedDotLegendItems, type PairedMetric } from "../charts/paired-dot-chart"
 import { SegmentedBar, type SegmentedBarSegment } from "../charts/segmented-bar"
 import { learningTrendSeries } from "./learning-chart-properties"
 
@@ -20,6 +20,7 @@ export const overviewMetrics: MetricSummaryItem[] = [
   { id: "retention", label: "保持率", value: value("78", "%"), detail: "两周后再考，仍然做对的比例", help: "保持率怎么算：至少间隔两周的可比再考中，仍然做对的比例。", visual: { kind: "ring", value: 78, max: 100 } },
   { id: "focus", label: "需要优先处理", value: value("9", "人 · 2 个知识点"), detail: "按关注规则筛出", help: "关注规则是什么：本例由宿主提供需要支持 6 人、近期回落 3 人；组件不推断规则。" },
 ]
+const mistakeMetrics: [PairedMetric, PairedMetric] = [{ id: "error", label: "出错的学生占比", help: "本题未得满分学生数 / 本题有有效作答学生数。" }, { id: "repeat", label: "再考时仍然出错", help: "原失分学生中可比再考仍失分人数 / 有可比再考人数。" }]
 const focus = [
   { id: "application", label: "二次函数的应用", group: "knowledge", x: 55, y: 38, note: "知识点 · 优先处理" },
   { id: "chapter-22", label: "第二十二章 二次函数", group: "chapter", x: 59, y: 48, note: "章 · 优先处理" },
@@ -72,8 +73,8 @@ export function LearningOverviewCards() {
           <Button variant="outline" className="h-auto whitespace-normal" onClick={() => select("需要支持和近期回落的 9 人")}>看需要支持和近期回落的 9 人</Button>
         </Card>
         <Card className="min-w-0 gap-3 p-4">
-          <h3 className="text-block-title">错题：出错与再错</h3>
-          <PairedDotChart label="错题：出错与再错" density="compact" unit="%" dataDisclosure={disclosure} metrics={[{ id: "error", label: "出错的学生占比", help: "本题未得满分学生数 / 本题有有效作答学生数。" }, { id: "repeat", label: "再考时仍然出错", help: "原失分学生中可比再考仍失分人数 / 有可比再考人数。" }]} data={[
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><h3 className="text-block-title">错题：出错与再错</h3><ChartLegend items={pairedDotLegendItems(mistakeMetrics)} align="right" className="ml-auto" /></div>
+          <PairedDotChart legendPosition="none" label="错题：出错与再错" rowLayout="inline" density="compact" maxTrackWidth={420} unit="%" dataDisclosure={disclosure} metrics={mistakeMetrics} data={[
             { id: "Q21", label: edge ? "第 21 题 矩形面积最大值 x(20 − x)，请结合完整中文题干核对" : "第 21 题 矩形面积最大值", first: 60, second: edge ? null : 47, tag: <Badge variant="secondary">优先重讲</Badge> },
             { id: "Q20", label: "第 20 题 销售利润", first: edge ? 50 : 57, second: edge ? 50 : 41, tag: <Badge variant="secondary">优先重讲</Badge> },
             { id: "Q14", label: "第 14 题 由两根求参数", first: edge ? 0 : 49, second: edge ? 100 : 33, tag: <Badge variant="secondary">继续观察</Badge> },
@@ -82,8 +83,8 @@ export function LearningOverviewCards() {
         </Card>
         <Card className="min-w-0 gap-3 p-4">
           <h3 className="text-block-title">批阅数据积累</h3>
-          <p className="text-ui-hint text-muted-foreground">近 8 周每周新增的有效作答</p>
-          <ComparisonChart label="每周新增有效作答" variant="spark" unit="次" dataDisclosure={disclosure} data={[0, 168, 0, 248, 212, edge ? null : 0, 284, 336].map((amount, i) => ({ id: `week-${i + 1}`, label: i === 7 ? "第 8 周" : String(i + 1), value: amount }))} onSelect={select} />
+          <p className="text-ui-hint text-muted-foreground">近 13 周每周新增的有效作答</p>
+          <ComparisonChart label="每周新增有效作答" variant="spark" unit="次" dataDisclosure={disclosure} data={[0, 168, 0, 248, 0, 212, 0, edge ? null : 0, 284, 0, 0, 0, 336].map((amount, i) => ({ id: `week-${i + 1}`, label: i === 12 ? "第 13 周" : String(i + 1), value: amount }))} onSelect={select} />
           <dl className="divide-y divide-border text-ui-body">{[["已批阅的检测", "6 次"], ["覆盖的知识点", "24 / 31 个"], ["已对应到知识点的作答", "1,128 / 1,248 次"]].map(([label, text]) => <div key={label} className="flex flex-wrap justify-between gap-2 py-2"><dt>{label}</dt><dd className="tabular-nums">{text}</dd></div>)}</dl>
           <Button variant="ghost" className="self-end" onClick={() => select("未对应的 120 次")}>查看未对应的 120 次 →</Button>
           <div className="mt-auto flex flex-wrap justify-end gap-2"><Button variant="ghost" onClick={() => select("批阅记录")}>查看批阅记录 →</Button><Button variant="ghost" onClick={() => select("AI 批阅")}>开始一次 AI 批阅 →</Button></div>

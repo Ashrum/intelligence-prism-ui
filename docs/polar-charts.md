@@ -8,7 +8,7 @@ PO 2026-10-13 批准为试卷分析新增两个图表目录条目：`/next/compo
 
 读取固定 coss Button/Table/Frame 与本地 particles p-table-3/4 组合；复核 SegmentedBar、ComparisonChart 文档中 p-meter-3/4、p-progress-1/2/3、p-frame-1、p-tabs-10、p-badge-16 的历史检索记录。基础控件和量值组合可承接图例、数据表，不能提供环形/雷达坐标。两项属于通用数值图表，Beautiful UI 不适用。本轮按 Builder 前置约定离线工作，未刷新远端注册索引或宣称阅读在线单项源码；无上游新代码复制、coss 修改、依赖或视觉令牌增加。
 
-颜色仅从 `useChartTheme()` 返回的既有六色色板及表面/文字色取得。light / paper / dark 沿用既有映射；`ChartTone` 为 `neutral | info | success | warning | destructive | chart-1…chart-6`，分别映射现有色板的第 6 / 1 / 3 / 4 / 2 色及直接编号。未传 tone 时按输入的正值分段或系列顺序分配颜色；文字与数字不用分类颜色。
+颜色仅从 `useChartTheme()` 返回的既有六色色板及表面/文字色取得。light / paper / dark 使用 [P69 曜彩图表色板](foundation-tokens.md#p69-曜彩图表色板)，Radar 默认 symbolSize=13、主线宽 2.5；`ChartTone` 为 `neutral | info | success | warning | destructive | chart-1…chart-6`，分别映射现有色板的第 6 / 1 / 3 / 4 / 2 色及直接编号。未传 tone 时按输入的正值分段或系列顺序分配颜色；文字与数字不用分类颜色。
 
 ## DonutChart
 

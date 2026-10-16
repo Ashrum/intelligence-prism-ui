@@ -1,6 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
+import { CircleHelp } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
 import { chartToneColor, type ChartTone, type ChartTheme } from "@/lib/prism-next/polar-chart-options"
@@ -13,12 +14,12 @@ export type ChartLegendProps = { items: readonly ChartLegendItem[]; align?: "lef
 /** Shared by the public legend and chart geometry; explicit colours always win. */
 export const chartLegendColor = (item: Pick<ChartLegendItem, "color" | "tone">, index: number, theme: ChartTheme) => item.color ?? chartToneColor(theme, index, item.tone)
 
-export function ChartMarker({ marker, color, cx = 12, cy = 8, r = 4 }: { marker: ChartLegendMarker; color: string; cx?: number; cy?: number; r?: number }) {
-  if (marker === "line" || marker === "dashed-line") return <line x1={cx - 11} x2={cx + 11} y1={cy} y2={cy} stroke={color} strokeWidth={2} strokeDasharray={marker === "dashed-line" ? "5 4" : undefined} />
-  if (marker === "diamond") return <path d={`M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`} fill={color} stroke={color} />
-  if (marker === "triangle") return <path d={`M${cx},${cy-r} L${cx+r},${cy+r} L${cx-r},${cy+r} Z`} fill={color} />
-  if (marker === "square" || marker === "bar") return <rect x={cx-r} y={cy-(marker === "bar" ? 6 : r)} width={r*2} height={marker === "bar" ? 12 : r*2} fill={color} />
-  return <circle cx={cx} cy={cy} r={r} stroke={color} strokeWidth={2} fill={marker === "hollow-dot" ? "var(--background)" : color} />
+export function ChartMarker({ marker, color, cx = 12, cy = 8, r = 6.5 }: { marker: ChartLegendMarker; color: string; cx?: number; cy?: number; r?: number }) {
+  if (marker === "line" || marker === "dashed-line") return <line x1={cx - 11} x2={cx + 11} y1={cy} y2={cy} stroke={color} strokeWidth={2.5} strokeDasharray={marker === "dashed-line" ? "5 4" : undefined} />
+  if (marker === "diamond") return <path d={`M${cx},${cy-r} L${cx+r},${cy} L${cx},${cy+r} L${cx-r},${cy} Z`} fill={color} stroke="var(--card)" strokeWidth={2} />
+  if (marker === "triangle") return <path d={`M${cx},${cy-r} L${cx+r},${cy+r} L${cx-r},${cy+r} Z`} fill={color} stroke="var(--card)" strokeWidth={2} />
+  if (marker === "square" || marker === "bar") return <rect x={cx-r} y={cy-(marker === "bar" ? 6 : r)} width={r*2} height={marker === "bar" ? 12 : r*2} fill={color} stroke="var(--card)" strokeWidth={2} />
+  return <circle cx={cx} cy={cy} r={r} stroke={marker === "hollow-dot" ? color : "var(--card)"} strokeWidth={2} fill={marker === "hollow-dot" ? "var(--card)" : color} />
 }
 
 /** Extracted shared HTML legend, also usable in a host-owned card title row. */
@@ -29,7 +30,7 @@ export function ChartLegend({ items, align = "left", label = "图例", className
     {items.map((item, index) => <li key={item.id} data-legend-id={item.id} className="flex min-w-0 max-w-full items-start gap-2">
       <svg aria-hidden="true" focusable="false" width={24} height={16} viewBox="0 0 24 16" className="mt-0.5 shrink-0" data-legend-marker={item.marker}><ChartMarker marker={item.marker} color={chartLegendColor(item, index, theme)} /></svg>
       <span className="text-ui-hint text-foreground"><span className="whitespace-normal [overflow-wrap:anywhere]">{item.label}</span></span>
-      {item.help != null && <Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" />} aria-label={`${item.label}：指标说明`}>?</PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}
+      {item.help != null && <Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" className="text-muted-foreground hover:text-foreground" />} aria-label={`${item.label}：指标说明`}><CircleHelp size={14} className="size-3.5" aria-hidden="true" /></PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}
     </li>)}
   </ul>
 }

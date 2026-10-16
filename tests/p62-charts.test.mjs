@@ -1,3 +1,5 @@
+import { p70Snapshot } from './helpers/p70-marker-migration.mjs';
+import { p69Snapshot } from './helpers/p69-palette-migration.mjs';
 import { withoutP64Legend } from "./helpers/p64-legend-migration.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,13 +21,13 @@ function expectedAfterBPv6(entry) {
     }),
   };
 }
-for (const entry of baseline.map(expectedAfterBPv6)) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR outside P64 legends and chart options`, () => {
+for (const entry of baseline.map(expectedAfterBPv6).map(p69Snapshot).map(p70Snapshot)) test(`P62 ${entry.theme} ${entry.name}: omitted props preserve P61 SSR outside P64 legends and P69 visuals / P70 point outlines`, () => {
   const out = capture(entry.name, entry.props, entry.theme);
   assert.equal(withoutP64Legend(out.html), withoutP64Legend(entry.html));
   assert.deepEqual(out.charts.map(c => optionJSON(c.option)), entry.options);
 });
 
-for (const entry of baseline.map(expectedAfterBPv6).filter(e => e.name !== 'MetricSummary')) test(`P62 ${entry.theme} ${entry.name}: hidden table is accessible outside details with no invisible selection controls`, () => {
+for (const entry of baseline.map(expectedAfterBPv6).map(p69Snapshot).map(p70Snapshot).filter(e => e.name !== 'MetricSummary')) test(`P62 ${entry.theme} ${entry.name}: hidden table is accessible outside details with no invisible selection controls`, () => {
   const out = capture(entry.name, { ...entry.props, dataDisclosure: 'hidden', onSelect() {} }, entry.theme);
   assert.doesNotMatch(out.html, /<details|<summary|查看数据|display:\s*none/);
   const hidden = out.html.slice(out.html.indexOf('<div class="sr-only" role="region"'));

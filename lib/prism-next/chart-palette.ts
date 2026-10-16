@@ -1,8 +1,10 @@
-/** Theme-aware chart colours. Core themes keep their existing values byte-for-byte; blueprint adds ink/accent + pattern decals.
+/** Theme-aware chart colours. Core themes use the approved Yaocai palette; Blueprint palettes stay isolated.
  *  Pure data (no React) so tests can import it directly. */
 import type { PrismTheme } from "./config"
 
-const LIGHT_SERIES = ["#1769AA", "#B8266E", "#2B8050", "#A57013", "#7159A7", "#6B7280"] as const
+const LIGHT_SERIES = ["#1E88E5", "#D6337F", "#3A9A2A", "#C27A00", "#7E5BD6", "#6B7280"] as const
+// P69: core dark mixes 30% white into LIGHT_SERIES; the legacy dark series stays for Blueprint themes that reuse it.
+const CORE_DARK_SERIES = ["#62ACED", "#E270A5", "#75B86A", "#D4A24D", "#A58CE2", "#979CA6"] as const
 const DARK_SERIES = ["#86C5FF", "#F296C2", "#99DFB4", "#F4CC86", "#BDACED", "#B6BEC9"] as const
 /** Accent first (current / primary series), ink second (baseline), then Prism's existing categorical hues. */
 export const BLUEPRINT_SERIES = ["#1D5FBF", "#16181D", "#B8266E", "#2B8050", "#A57013", "#6B7280"] as const
@@ -10,16 +12,17 @@ export const BLUEPRINT_SERIES = ["#1D5FBF", "#16181D", "#B8266E", "#2B8050", "#A
 export const BLUEPRINT_SEQUENTIAL = ["#F3F5F8", "#88AADD", "#1D5FBF"] as const
 
 export function chartSeriesColors(theme?: string): readonly string[] {
-  return theme === "dark" ? DARK_SERIES : theme === "blueprint" ? BLUEPRINT_SERIES : LIGHT_SERIES
+  return theme === "dark" ? CORE_DARK_SERIES : theme === "blueprint" ? BLUEPRINT_SERIES : LIGHT_SERIES
 }
 /** base / selected / fill for single-series shapes (box plot). */
 export function chartShapeColors(theme?: string) {
-  if (theme === "dark") return { base: "#86C5FF", selected: "#F296C2", fill: "#365B7B" }
+  if (theme === "dark") return { base: "#62ACED", selected: "#E270A5", fill: "#3C719F" }
   if (theme === "blueprint") return { base: "#16181D", selected: "#1D5FBF", fill: "#E4ECF8" }
-  return { base: "#1769AA", selected: "#B8266E", fill: "#76A9D2" }
+  return { base: "#1E88E5", selected: "#D6337F", fill: "#99C9F3" }
 }
 export function chartSequentialDefault(theme: string | undefined, secondary: string): readonly [string, string, string] {
-  return theme === "blueprint" ? BLUEPRINT_SEQUENTIAL : [secondary, "#76A9D2", "#1769AA"]
+  if (theme === "dark") return [secondary, "#3C719F", "#62ACED"]
+  return theme === "blueprint" ? BLUEPRINT_SEQUENTIAL : [secondary, "#99C9F3", "#1E88E5"]
 }
 
 /** ECharts surface overrides for blueprint: square ink tooltip with hard offset shadow, ink axis line, per-series decals.
