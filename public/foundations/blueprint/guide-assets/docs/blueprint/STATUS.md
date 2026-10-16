@@ -4,18 +4,6 @@
 
 ## 当前
 
-- 轮次：P80 · 蓝图会话目录 Sidebar · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线 P79 `bd0c8dd20c1453c25c3eef8db0e380f548a99c56`（P77–P79 尚未合并）。开工有任务外未跟踪文档，原样保留；本轮无提交/推送。[基线](evidence/sidebar-20261016/baseline.json)。
-- 授权与分工：Supervisor `task-P80.md` / `builder-preamble.md`，PO 批准两蓝图目录语汇；Builder 实现与工程检查，不修改 .git、联网、安装依赖、启动/重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
-- 范围：blueprint.css 的 P80 隔离块（表头/真实元信息、单一主按钮硬阴影与按下态、分段宽度、分组标题、账簿行、56/40 图标轨）、现有蓝图页内的目录交互样本、规则/契约及生成 guide。复用 coss Sidebar 与 BpSegTabs，无新公共 API / 目录项；核心主题、字号/令牌、依赖及冻结 coss 不改。[实现与 Workspace 接线](evidence/sidebar-20261016/inspection.md)、[保护散列](evidence/sidebar-20261016/integrity.json)、[实际 diff](evidence/sidebar-20261016/scope.diff)。
-- 工程：五项最终退出码均 0；数学字体/许可通过，排版 **312** 个 owned TSX 通过，生产构建成功，先构建后全量 **2230/2230，0 失败 / 0 跳过**，TypeScript **0 错误**。新增专项 **6/6**，含无障碍复核的定向 **18/18**；**14** 个 CSS + **3** 个语义/键盘回退变异检出。[五项记录](evidence/sidebar-20261016/engineering.json)、[定向日志](evidence/sidebar-20261016/targeted.log)、[样式变异](evidence/sidebar-20261016/mutations.json)。收尾文档/生成物回填后的构建与定向复验见 [收尾记录](evidence/sidebar-20261016/finalization.json)。
-- 返修与测试范围：初次专项暴露 P76 focus 清除主按钮阴影，已加定向焦点规则。首轮全量 2225/2230 的 5 项失败为旧无障碍断言固定 2 组；首次修正误纳入原生 RadioGroup，最终限定 BpSegTabs，逐组独立核对名称、2/6/3 个选项与唯一 tab stop。未降低旧测试；initial-* / intermediate-* 保留证据。真实 SSR、CSS 解析/特异性、两蓝图、核心零增量、嵌套核心根/后代/伪元素和实际 radio handlers 不等同浏览器 computedStyle / 布局 / 键盘验收。
-- 周期：Builder 实施/工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或重复计轮；本轮按任务执行全量工程回归，最近完整工程为本轮 2230/2230，下次触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
-- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、焦点/按下态、条数随过滤变化、图标轨/嵌套隔离与站点实际 Sidebar 见[浏览器清单](evidence/sidebar-20261016/browser-checklist.md)。无本轮浏览器截图；Workspace 只读核对 ConversationDirectory / AgentWorkspacePage，未接线。真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
-
-## 历史
-
-### P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16（原当前，原样保留）
-
 - 轮次：P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线 P78 `8270cced893de48b202a772b6db0c42c13988dc0`（P77 / P78 尚未合并），开工工作树干净。[基线](evidence/cards-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P79.md` / `builder-preamble.md`；PO 明确要求新增两种 bp-* 呈现组件，不计入正式目录。不提交、推送、修改 .git、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
 - 范围：BpFrameCard / BpSectionCard、blueprint.css 中显式 bp-* 规则、原件与 A/B 试卷分节示例、使用契约与新增专项测试。核心主题中性回退，直角无阴影，1.5px 外框，语义 heading / 状态文字 / 具名 action；不新增 Token 或字号，普通组件、54 个冻结 coss、catalog 与依赖不变。[复用与接入位置](evidence/cards-20261016/inspection.md)、[保护散列](evidence/cards-20261016/integrity.json)、[实际 diff](evidence/cards-20261016/scope.diff)。
@@ -24,6 +12,7 @@
 - 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮；本轮按任务全量工程回归，最近完整工程为本轮 2224/2224；下次触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、action 键盘与焦点、状态色块 / 文字及嵌套预览见 [浏览器清单](evidence/cards-20261016/browser-checklist.md)。本轮无浏览器截图；Workspace 仅只读定位文件，未接入；真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
 
+## 历史
 
 ### P78 · 教师消息气泡轻背景 · 2026-10-16（原当前，原样保留）
 
