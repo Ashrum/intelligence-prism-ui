@@ -25,6 +25,8 @@ export type AgentPromptIntent = AgentVoiceIntent
 export type AgentPromptBarProps = {
   value: string; onValueChange: (value: string) => void; onIntent: (intent: AgentPromptIntent) => void
   sources: readonly AgentPromptOption[]; commands: readonly AgentPromptOption[]; models: readonly AgentPromptOption[]; modelId?: string
+  /** Host-controlled availability; false omits the model menu entirely. Defaults to true for existing callers. */
+  showModelSelector?: boolean
   attachments?: readonly AgentPromptAttachment[]; variant?: "Rounded" | "Pill"; label?: string; placeholder?: string
   contextActions?: ReactNode; dictation: AgentDictation; voice: AgentVoiceMode; privacy?: AgentVoicePrivacy
   disabled?: boolean; sendDisabledReason?: string; activity?: ReactNode
@@ -33,7 +35,7 @@ export function parsePromptToken(draft: string) {
   const match = /(^|\s)([@/])([^\s@/]*)$/u.exec(draft)
   return match ? { kind: match[2] === "@" ? "source" as const : "command" as const, query: match[3].toLocaleLowerCase(), start: match.index + match[1].length } : null
 }
-export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, activity }: AgentPromptBarProps) {
+export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, activity }: AgentPromptBarProps) {
   const id = useId(), input = useRef<HTMLTextAreaElement>(null), anchor = useRef<HTMLDivElement>(null), root = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null)
   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
@@ -42,7 +44,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
   // Interim is a preview inside the input surface, never part of the editable draft.
   const interim = dictating ? dictation.interim : undefined
   const transcript = interim || (dictation.state === "inserted" && !value ? dictation.final : undefined)
-  const token = disabled || dismissed === value || plusOpen || modelOpen ? null : parsePromptToken(value)
+  const token = disabled || dismissed === value || plusOpen || (showModelSelector && modelOpen) ? null : parsePromptToken(value)
   const rows = token ? (token.kind === "source" ? sources : commands).filter(row => row.label.toLocaleLowerCase().replace(/^\//, "").includes(token.query)) : []
   const enabledRows = rows.filter(row => !row.disabled)
   const selected = enabledRows[Math.min(active, Math.max(0, enabledRows.length - 1))]
@@ -56,6 +58,9 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     element.addEventListener("webglcontextlost", lost)
     return () => { element.removeEventListener("webglcontextlost", lost); current.destroy(); sweep.current = null }
   }, [])
+  useEffect(() => {
+    if (!showModelSelector) setModelOpen(false)
+  }, [showModelSelector])
   const close = () => { setDismissed(value); setPlusOpen(false); setModelOpen(false) }
   const pick = (row: AgentPromptOption, kind: "source" | "command") => {
     if (disabled || row.disabled) return
@@ -126,12 +131,12 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
           </div>
           <div className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1">
             {activity}
-            <Menu open={modelOpen} onOpenChange={open => { setModelOpen(open); if (open) { setDismissed(value); setPlusOpen(false) } }}>
+            {showModelSelector && <Menu open={modelOpen} onOpenChange={open => { setModelOpen(open); if (open) { setDismissed(value); setPlusOpen(false) } }}>
               <MenuTrigger render={<Button type="button" variant="ghost" size="sm" className="h-auto max-w-full whitespace-normal" disabled={disabled || !models.length} aria-label={`选择模型：${model?.label ?? "尚未选择"}`} />}><span className="min-w-0 break-words">{model?.label ?? "选择模型"}</span><ChevronDown aria-hidden="true" /></MenuTrigger>
               <MenuPopup side="top" align="end" portalProps={{ container: root }}><MenuRadioGroup value={modelId ?? ""} onValueChange={next => { if (!disabled) onIntent({ type: "select-model", id: next }) }}>
                 {models.map(item => <MenuRadioItem key={item.id} value={item.id} disabled={item.disabled}>{item.label}{item.description && <span className="block text-ui-hint text-muted-foreground">{item.description}</span>}</MenuRadioItem>)}
               </MenuRadioGroup></MenuPopup>
-            </Menu>
+            </Menu>}
             <AgentDictationIndicator dictation={dictation} disabled={disabled} onIntent={onIntent} />
             <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
             <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>

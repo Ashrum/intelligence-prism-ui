@@ -1,0 +1,63 @@
+{
+  "baseline": "5644554aa6920fdbffdcbd1fdac617c20af1cc2e",
+  "branch": "feat/agent-blueprint-r1",
+  "date": "2026-10-16",
+  "node": "v24.14.0",
+  "environment": "README runtime paths under .sites-runtime; HOME unchanged; no dependency installation, network or server started",
+  "checks": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "startedAt": "2026-10-16T12:57:50.935015+08:00",
+      "endedAt": "2026-10-16T12:57:50.960596+08:00",
+      "durationSeconds": 0.026,
+      "exitCode": 0,
+      "log": "first-math-font.log"
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "startedAt": "2026-10-16T12:57:50.961119+08:00",
+      "endedAt": "2026-10-16T12:57:51.005538+08:00",
+      "durationSeconds": 0.044,
+      "exitCode": 0,
+      "log": "first-typography.log"
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-16T12:57:51.006030+08:00",
+      "endedAt": "2026-10-16T12:57:56.461030+08:00",
+      "durationSeconds": 5.455,
+      "exitCode": 0,
+      "log": "first-build.log"
+    },
+    {
+      "name": "full-tests",
+      "command": "node --test tests/*.test.mjs",
+      "startedAt": "2026-10-16T12:57:56.461716+08:00",
+      "endedAt": "2026-10-16T12:58:08.524660+08:00",
+      "durationSeconds": 12.063,
+      "exitCode": 1,
+      "log": "first-full-tests.log",
+      "counts": {
+        "tests": 2168,
+        "pass": 2167,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "typecheck",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "startedAt": "2026-10-16T12:58:08.529511+08:00",
+      "endedAt": "2026-10-16T12:58:11.097607+08:00",
+      "durationSeconds": 2.568,
+      "exitCode": 2,
+      "log": "first-typecheck.log",
+      "diagnostics": 1
+    }
+  ]
+}

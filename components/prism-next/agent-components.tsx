@@ -149,7 +149,7 @@ export function AgentQuestionCard({question,description,options,value,onValueCha
  value:string;onValueChange:(value:string)=>void;children?:ReactNode;disabled?:boolean;
 }) {
  const id=useId()
- return <Card className="gap-4 p-5" aria-labelledby={id}><div><p className="mb-2 text-ui-hint text-info-foreground">需要你确认</p><h3 id={id} className="text-block-title">{question}</h3>{description&&<p className="mt-2 text-ui-hint text-muted-foreground">{description}</p>}</div>
+ return <Card className="gap-4 p-5" aria-labelledby={id}><div><p className="mb-2 text-ui-hint text-info-foreground">补充一个信息</p><h3 id={id} className="text-block-title">{question}</h3>{description&&<p className="mt-2 text-ui-hint text-muted-foreground">{description}</p>}</div>
   <RadioGroup aria-labelledby={id} value={value} disabled={disabled} onValueChange={v=>typeof v==='string'&&onValueChange(v)}>{options.map((option,index)=><div key={option.value} className="flex items-start gap-3"><Radio id={`${id}-${index}`} value={option.value} disabled={option.disabled} className="mt-1"/><Label htmlFor={`${id}-${index}`} className="flex min-w-0 flex-1 flex-col items-start gap-1"><span className="text-ui-action">{option.label}</span>{option.description&&<span className="text-ui-hint font-normal text-muted-foreground">{option.description}</span>}</Label></div>)}</RadioGroup>{children}
  </Card>
 }

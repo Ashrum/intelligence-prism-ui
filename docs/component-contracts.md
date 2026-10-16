@@ -2587,7 +2587,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
 - `AgentArtifactOutput`：语义 33 的受控输出配置、文件交付与队列／历史呈现；27 报告执行事实，28 承载文稿内容，QuestionPrint 可作打印预览插槽。详见“成果物输出 v0.1”，不内建文件生成或下载服务。
 - `AgentContentInput`：语义 06 的任务材料／正文输入，复用 Textarea / InputGroup / Field，可选组合当前草稿公式预览；不承担已有文稿的完整阅读编辑（28）。详见“内容输入 v0.1”。
 - `AgentComposer` / `AgentTaskProgress`：给 Agent 的受控指令输入、提交/停止事件与外部步骤状态。Composer 不冒充内容编辑器，题干、答案与粘贴文章交给 06。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
-- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
+- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。固定提示为中性「补充一个信息」，不暗示批准或授权；具体问题和说明仍由调用方提供。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
 - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
 - `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
 - `AgentSubjectEditor`：语义 42，单公式原文编辑与排版，和 06 整段输入、28 已有文稿、MathContent 静态阅读分工；详见“学科专用编辑器 v0.1（数学公式）”。
@@ -2717,7 +2717,13 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 ### 输入与语音 API
 
-`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`showModelSelector`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+
+**R1 / CI-01（2026-10-16）**：`showModelSelector?: boolean` 默认 `true`，保持旧调用行为（包括空 `models` 时的禁用入口）；宿主传 `false` 时整个模型 Menu 不渲染，入口及选项均不进入 DOM。关闭可用性会清理菜单展开状态，再开放不会自动弹出；草稿、`modelId`、来源与命令保留。学校是否开放由宿主决定，组件不做权限判断。组件页提供模型入口显隐、五主题及 320px 夹具。
+
+**R1 / CI-08、CI-09**：用户气泡沿用 `data-agent-message="user"`；附件增加稳定 `data-slot="agent-message-attachment"`。仅 `blueprint.css` 将两者在 `blueprint` / `blueprint-night` 下归零圆角，并排除嵌套核心预览。白图 PromptBar / AgentSurface 内的按钮使用蓝色单 outline（2px、偏移 2px），去掉叠加的 coss ring；用户消息正文的链接实际处于墨底，单 outline 使用既有 `--primary-foreground` 白色。夜图焦点不属于本轮 §5.4 改造；核心主题样式保留。源码与单元检查不代替浏览器主题、键盘及裁切验收。
+
+**R1 / CI-11 组件侧核查**：固定 coss 的 Menu / Popover / Select / Dialog / Tooltip 均支持 `portalProps.container`，可承载宿主主题容器，不新增共享封装。PromptBar 的三个菜单／建议浮层和语音说明已使用输入表面外的根容器。其他未传容器的 Agent 内部浮层仍默认挂到 body，局部预览主题不会自然越过 Portal；R2 须按实际调用位置传递主题边界，不能把原语支持误记为所有嵌套预览已验收。
 
 **对话输入标签例外（PO 2026-09-29 确认）**：`AgentPromptBar` 的固定 label 默认「消息」，通过 `sr-only` 视觉隐藏并与输入关联，读屏仍获得可访问名；不使用 placeholder 代替标签。此处为对话输入，按 Codex / Claude / Beautiful UI 的对话惯例减少重复视觉信息，是 AGENTS.md「基础表单使用常驻固定标签」的特定例外；其他基础表单仍使用可见固定标签。
 

@@ -1,0 +1,310 @@
+TAP version 13
+# Subtest: CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+  ---
+  duration_ms: 28.026791
+  type: 'test'
+  ...
+# Subtest: CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+  ---
+  duration_ms: 5.310625
+  type: 'test'
+  ...
+# Subtest: CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+  ---
+  duration_ms: 2.447167
+  type: 'test'
+  ...
+# Subtest: CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+  ---
+  duration_ms: 1.923792
+  type: 'test'
+  ...
+# Subtest: CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+  ---
+  duration_ms: 0.280375
+  type: 'test'
+  ...
+# Subtest: CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+  ---
+  duration_ms: 0.545958
+  type: 'test'
+  ...
+# Subtest: CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+  ---
+  duration_ms: 2.666541
+  type: 'test'
+  ...
+# Subtest: CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+  ---
+  duration_ms: 0.093083
+  type: 'test'
+  ...
+# Subtest: CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+  ---
+  duration_ms: 0.249583
+  type: 'test'
+  ...
+# Subtest: CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+  ---
+  duration_ms: 0.514292
+  type: 'test'
+  ...
+# Subtest: CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+  ---
+  duration_ms: 0.366
+  type: 'test'
+  ...
+# Subtest: SSR: Rounded/Pill retain visually hidden accessible label, controlled draft, disabled empty send and accessible voice controls
+ok 12 - SSR: Rounded/Pill retain visually hidden accessible label, controlled draft, disabled empty send and accessible voice controls
+  ---
+  duration_ms: 18.61725
+  type: 'test'
+  ...
+# Subtest: token parser supports Chinese source/command queries, boundaries and escaped menu dismissal inputs
+ok 13 - token parser supports Chinese source/command queries, boundaries and escaped menu dismissal inputs
+  ---
+  duration_ms: 0.322209
+  type: 'test'
+  ...
+# Subtest: all nine dictation facts and six conversation facts render verbatim without guessing state
+ok 14 - all nine dictation facts and six conversation facts render verbatim without guessing state
+  ---
+  duration_ms: 1.643542
+  type: 'test'
+  ...
+# Subtest: host transcripts and level are displayed, bounded, never inserted into the controlled draft
+ok 15 - host transcripts and level are displayed, bounded, never inserted into the controlled draft
+  ---
+  duration_ms: 2.694791
+  type: 'test'
+  ...
+# Subtest: active dictation uses accented equalizer, coss ring and listening placeholder in all active phases
+ok 16 - active dictation uses accented equalizer, coss ring and listening placeholder in all active phases
+  ---
+  duration_ms: 20.732666
+  type: 'test'
+  ...
+# Subtest: elapsed uses finite host timestamps only; level bars clamp and invalid levels use activity animation
+ok 17 - elapsed uses finite host timestamps only; level bars clamp and invalid levels use activity animation
+  ---
+  duration_ms: 1.4955
+  type: 'test'
+  ...
+# Subtest: host final replaces interim preview with normal editable draft without component insertion
+ok 18 - host final replaces interim preview with normal editable draft without component insertion
+  ---
+  duration_ms: 1.367917
+  type: 'test'
+  ...
+# Subtest: equalizer and shimmer stop under reduced motion, with medium bars even when host level exists
+ok 19 - equalizer and shimmer stop under reduced motion, with medium bars even when host level exists
+  ---
+  duration_ms: 2.105792
+  type: 'test'
+  ...
+# Subtest: voice intents remain requests; privacy blocks start and exposes confirm/cancel
+ok 20 - voice intents remain requests; privacy blocks start and exposes confirm/cancel
+  ---
+  duration_ms: 1.727666
+  type: 'test'
+  ...
+# Subtest: AgentMark states, three patterns, host elapsed snapshots and unknown default
+ok 21 - AgentMark states, three patterns, host elapsed snapshots and unknown default
+  ---
+  duration_ms: 2.311167
+  type: 'test'
+  ...
+# Subtest: user and agent messages preserve rich content slots and inverse tokens without a visible user label
+ok 22 - user and agent messages preserve rich content slots and inverse tokens without a visible user label
+  ---
+  duration_ms: 0.533959
+  type: 'test'
+  ...
+# Subtest: sweep: no autoplay, reduced motion prevents WebGL and dynamic reduction disposes a running sweep
+ok 23 - sweep: no autoplay, reduced motion prevents WebGL and dynamic reduction disposes a running sweep
+  ---
+  duration_ms: 0.177875
+  type: 'test'
+  ...
+# Subtest: sweep: null and throwing WebGL are silent; completion and unmount release resources
+ok 24 - sweep: null and throwing WebGL are silent; completion and unmount release resources
+  ---
+  duration_ms: 0.108458
+  type: 'test'
+  ...
+# Subtest: reduced motion freezes mark and label, inverse rich text and 88% narrow bubble rules exist
+ok 25 - reduced motion freezes mark and label, inverse rich text and 88% narrow bubble rules exist
+  ---
+  duration_ms: 0.692916
+  type: 'test'
+  ...
+# Subtest: dictation live region announces entry and exit exactly once across phase, transcript and level changes
+ok 26 - dictation live region announces entry and exit exactly once across phase, transcript and level changes
+  ---
+  duration_ms: 0.34525
+  type: 'test'
+  ...
+# Subtest: dictation indicator timer needs a host start, stops on exit/unmount, and never enters live output
+ok 27 - dictation indicator timer needs a host start, stops on exit/unmount, and never enters live output
+  ---
+  duration_ms: 1.2555
+  type: 'test'
+  ...
+# Subtest: keyboard handlers: arrows skip disabled options, Enter selects once, Esc suppresses reopening until edit
+ok 28 - keyboard handlers: arrows skip disabled options, Enter selects once, Esc suppresses reopening until edit
+  ---
+  duration_ms: 3.315709
+  type: 'test'
+  ...
+# Subtest: Escape capture stops active dictation once from any prompt child; respects IME and disabled
+ok 29 - Escape capture stops active dictation once from any prompt child; respects IME and disabled
+  ---
+  duration_ms: 2.31125
+  type: 'test'
+  ...
+# Subtest: keyboard handlers: IME confirm cannot pick/send, empty matches cannot send, Shift+Enter remains newline
+ok 30 - keyboard handlers: IME confirm cannot pick/send, empty matches cannot send, Shift+Enter remains newline
+  ---
+  duration_ms: 2.215708
+  type: 'test'
+  ...
+# Subtest: attachment/source/model handlers emit typed intents; attachment-only submit works; blocked submit does not
+ok 31 - attachment/source/model handlers emit typed intents; attachment-only submit works; blocked submit does not
+  ---
+  duration_ms: 2.943041
+  type: 'test'
+  ...
+# Subtest: privacy confirm/cancel and active voice stop handlers do not manufacture next states
+ok 32 - privacy confirm/cancel and active voice stop handlers do not manufacture next states
+  ---
+  duration_ms: 0.476625
+  type: 'test'
+  ...
+# Subtest: all three composition routes render from the built site without altering the semantic registry
+ok 33 - all three composition routes render from the built site without altering the semantic registry
+  ---
+  duration_ms: 179.874209
+  type: 'test'
+  ...
+# Subtest: three theme inverse token pairs exceed 4.5:1 numerically (not a browser contrast measurement)
+ok 34 - three theme inverse token pairs exceed 4.5:1 numerically (not a browser contrast measurement)
+  ---
+  duration_ms: 1.346417
+  type: 'test'
+  ...
+# Subtest: prompt status hides unavailable facts but retains host errors, denied permissions and results
+ok 35 - prompt status hides unavailable facts but retains host errors, denied permissions and results
+  ---
+  duration_ms: 0.402875
+  type: 'test'
+  ...
+# Subtest: unavailable voice explanations never emit start intents or play the sweep
+ok 36 - unavailable voice explanations never emit start intents or play the sweep
+  ---
+  duration_ms: 1.2825
+  type: 'test'
+  ...
+# Subtest: component fixture uses local rule label and documents Drive as the default
+ok 37 - component fixture uses local rule label and documents Drive as the default
+  ---
+  duration_ms: 0.34875
+  type: 'test'
+  ...
+# Subtest: dictation level never renders visible text; unknown is only the active microphone description
+ok 38 - dictation level never renders visible text; unknown is only the active microphone description
+  ---
+  duration_ms: 38.608459
+  type: 'test'
+  ...
+# Subtest: configuration registers night after blueprint, palette covers every selectable value
+ok 39 - configuration registers night after blueprint, palette covers every selectable value
+  ---
+  duration_ms: 0.814041
+  type: 'test'
+  ...
+# Subtest: next-themes initialization restores every old stored value and night on the same attribute/key
+ok 40 - next-themes initialization restores every old stored value and night on the same attribute/key
+  ---
+  duration_ms: 3.74825
+  type: 'test'
+  ...
+# Subtest: all original core and white token blocks retain their baseline bytes
+ok 41 - all original core and white token blocks retain their baseline bytes
+  ---
+  duration_ms: 0.355375
+  type: 'test'
+  ...
+# Subtest: night maps BP.dark roles, SQUARE geometry, and documented fill fallbacks
+ok 42 - night maps BP.dark roles, SQUARE geometry, and documented fill fallbacks
+  ---
+  duration_ms: 0.179625
+  type: 'test'
+  ...
+# Subtest: dark selector retains original four-theme results for roots and up to two nested preview boundaries
+ok 43 - dark selector retains original four-theme results for roots and up to two nested preview boundaries
+  ---
+  duration_ms: 0.807916
+  type: 'test'
+  ...
+# Subtest: night dark utilities include root/descendants and dark-night nesting; light/paper/white previews are excluded
+ok 44 - night dark utilities include root/descendants and dark-night nesting; light/paper/white previews are excluded
+  ---
+  duration_ms: 0.097959
+  type: 'test'
+  ...
+# Subtest: shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements
+ok 45 - shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements
+  ---
+  duration_ms: 1.633458
+  type: 'test'
+  ...
+# Subtest: night charts retain their independent legacy fallback palette with Blueprint geometry and night tooltip ink/shadow
+ok 46 - night charts retain their independent legacy fallback palette with Blueprint geometry and night tooltip ink/shadow
+  ---
+  duration_ms: 0.142708
+  type: 'test'
+  ...
+# Subtest: night heatmap follows BPv6 width/disclosure rule and retains zero/missing tooltip/table facts
+ok 47 - night heatmap follows BPv6 width/disclosure rule and retains zero/missing tooltip/table facts
+  ---
+  duration_ms: 10.534166
+  type: 'test'
+  ...
+# Subtest: night WCAG text/status and non-text UI contrast on page/card; failures are explicit and design values stay fixed
+ok 48 - night WCAG text/status and non-text UI contrast on page/card; failures are explicit and design values stay fixed
+  ---
+  duration_ms: 0.271625
+  type: 'test'
+  ...
+# Subtest: night outlined controls keep real coss default/hover/pressed text above 4.5:1, including rendered triggers
+ok 49 - night outlined controls keep real coss default/hover/pressed text above 4.5:1, including rendered triggers
+  ---
+  duration_ms: 2.697041
+  type: 'test'
+  ...
+# Subtest: night solid danger text uses dark ink and loading keeps its transparent label; input surfaces retain placeholder contrast
+ok 50 - night solid danger text uses dark ink and loading keeps its transparent label; input surfaces retain placeholder contrast
+  ---
+  duration_ms: 0.185208
+  type: 'test'
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 483.321375

@@ -1,0 +1,163 @@
+{
+  "baseline": "5644554aa6920fdbffdcbd1fdac617c20af1cc2e",
+  "method": "in-memory esbuild source replacement and CSS read replacement; working files unchanged",
+  "total": 15,
+  "detected": 15,
+  "results": [
+    {
+      "id": "CI-01-rollback",
+      "source": "components/prism-next/agent-prompt-bar.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-01: false removes the complete model entry with empty or populated models in both variants",
+        "CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later"
+      ]
+    },
+    {
+      "id": "CI-01-default-hidden",
+      "source": "components/prism-next/agent-prompt-bar.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-01: omitted/true retain the old model entry, including a disabled empty menu",
+        "CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later",
+        "CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface"
+      ]
+    },
+    {
+      "id": "CI-01-stale-open",
+      "source": "components/prism-next/agent-prompt-bar.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later"
+      ]
+    },
+    {
+      "id": "CI-07-approval-copy",
+      "source": "components/prism-next/agent-components.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content"
+      ]
+    },
+    {
+      "id": "CI-08-drop-attachment-hook",
+      "source": "components/prism-next/agent-message.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-08: message attachment exposes a stable styling hook without removing the legacy radius class"
+      ]
+    },
+    {
+      "id": "CI-08-drop-radius",
+      "source": "app/(next)/next/blueprint.css",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants"
+      ]
+    },
+    {
+      "id": "CI-09-drop-button-reset",
+      "source": "app/(next)/next/blueprint.css",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper",
+        "CI-09: core themes and night retain their focus behavior, including preview roots and descendants"
+      ]
+    },
+    {
+      "id": "CI-09-drop-ink-outline",
+      "source": "app/(next)/next/blueprint.css",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button"
+      ]
+    },
+    {
+      "id": "CI-08-09-preview-leak",
+      "source": "app/(next)/next/blueprint.css",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants",
+        "CI-09: core themes and night retain their focus behavior, including preview roots and descendants"
+      ]
+    },
+    {
+      "id": "CI-11-drop-menu-forwarding",
+      "source": "components/coss/menu.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes"
+      ]
+    },
+    {
+      "id": "CI-11-drop-popover-forwarding",
+      "source": "components/coss/popover.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes"
+      ]
+    },
+    {
+      "id": "CI-11-drop-select-forwarding",
+      "source": "components/coss/select.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes"
+      ]
+    },
+    {
+      "id": "CI-11-drop-dialog-forwarding",
+      "source": "components/coss/dialog.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes"
+      ]
+    },
+    {
+      "id": "CI-11-drop-tooltip-forwarding",
+      "source": "components/coss/tooltip.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes"
+      ]
+    },
+    {
+      "id": "CI-11-drop-prompt-containers",
+      "source": "components/prism-next/agent-prompt-bar.tsx",
+      "exitCode": 1,
+      "tests": 11,
+      "detected": true,
+      "failing": [
+        "CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "method": "replace only the in-memory parsed CSS in a temporary copy of the existing boundary test",
+  "total": 2,
+  "detected": 2,
+  "results": [
+    {
+      "id": "existing-boundary-drop-white-guard",
+      "exitCode": 1,
+      "detected": true,
+      "failing": [
+        "shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements"
+      ]
+    },
+    {
+      "id": "existing-boundary-wrong-white-root",
+      "exitCode": 1,
+      "detected": true,
+      "failing": [
+        "shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements"
+      ]
+    }
+  ]
+}

@@ -17,5 +17,5 @@ export function AgentMessage({ speaker, children, attachments, details, classNam
   </section></div>
 }
 export function AgentMessageAttachment({ children }: { children: ReactNode }) {
-  return <span className="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{children}</span></span>
+  return <span data-slot="agent-message-attachment" className="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{children}</span></span>
 }

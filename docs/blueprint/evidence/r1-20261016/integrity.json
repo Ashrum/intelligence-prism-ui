@@ -1,0 +1,330 @@
+{
+  "baseline": "5644554aa6920fdbffdcbd1fdac617c20af1cc2e",
+  "headUnchanged": true,
+  "branch": "feat/agent-blueprint-r1",
+  "frozenCossFiles": 54,
+  "allProtectedFilesUnchanged": true,
+  "previousCurrentPreservedVerbatimInHistory": true,
+  "files": [
+    {
+      "path": "components/coss/accordion.tsx",
+      "unchanged": true,
+      "sha256": "1742451845a7bd3070911c6d0686006fa90922119bcca95cab3742d047a199be"
+    },
+    {
+      "path": "components/coss/alert-dialog.tsx",
+      "unchanged": true,
+      "sha256": "67911b2df718afd9036aaca3a78592d5ee0698a7f8c09a69e0ecf161b66bce57"
+    },
+    {
+      "path": "components/coss/alert.tsx",
+      "unchanged": true,
+      "sha256": "356c3ea12db94c730a81f8965932f0cd25862c8864f7fffaa2e0b589615f4a09"
+    },
+    {
+      "path": "components/coss/autocomplete.tsx",
+      "unchanged": true,
+      "sha256": "540a96d6ed95f80acdb7780dec380ff7078c0ea3c8812e219801be6c0f474cea"
+    },
+    {
+      "path": "components/coss/avatar.tsx",
+      "unchanged": true,
+      "sha256": "a6870c7ff6a0ef83c7a80f187d381dbef721d8a797c476b68a77560eeeee0eb0"
+    },
+    {
+      "path": "components/coss/badge.tsx",
+      "unchanged": true,
+      "sha256": "7a7ee3bec46d1cfb3980916175ca663ae0e74adc309866a5dae14d78717511d9"
+    },
+    {
+      "path": "components/coss/breadcrumb.tsx",
+      "unchanged": true,
+      "sha256": "2cd1c7bbcd8185db237b250d5b354cf205ff53368760974fe5d92f00b8697cf9"
+    },
+    {
+      "path": "components/coss/button.tsx",
+      "unchanged": true,
+      "sha256": "a3a27ae6c008666b4e37258d7e6bbecdbbf0ff1fe0f4299c2e22689cef5f1d50"
+    },
+    {
+      "path": "components/coss/calendar.tsx",
+      "unchanged": true,
+      "sha256": "a2cf7a593f72e8ad033c74a763fc759712c467284cacab3cb43483d9b7fd79f7"
+    },
+    {
+      "path": "components/coss/card.tsx",
+      "unchanged": true,
+      "sha256": "dbc899d3cc349da3ce6d40e3b03c2eeb714b9afcc0f88f7e859741cba7ab9217"
+    },
+    {
+      "path": "components/coss/checkbox-group.tsx",
+      "unchanged": true,
+      "sha256": "496fd17bb9078a83c2a179a6c75e0203719309c1d8a333fc8a58e8ce8168e088"
+    },
+    {
+      "path": "components/coss/checkbox.tsx",
+      "unchanged": true,
+      "sha256": "32a37e2dd7e6e2fdd307cf83c9410492e9c893f4a79b8f53f910d63f7a093d54"
+    },
+    {
+      "path": "components/coss/collapsible.tsx",
+      "unchanged": true,
+      "sha256": "e4771870c600286a79ce94be976a5210c70dcbd731bc52ffa0dca159f8abfff5"
+    },
+    {
+      "path": "components/coss/combobox.tsx",
+      "unchanged": true,
+      "sha256": "4870dc74673e0a74d4fff78a6a9ede5b599cc256b42cad3ba516db110aeb0c2b"
+    },
+    {
+      "path": "components/coss/command.tsx",
+      "unchanged": true,
+      "sha256": "b941ad083fa7cabfb29d7293eafdcfa5f0e9efaf41acb2bec065342d3807cbc8"
+    },
+    {
+      "path": "components/coss/context-menu.tsx",
+      "unchanged": true,
+      "sha256": "284814da21eb8676bb92f873088b4ab9fae4bb4efef6e3e7b653d68993a60cbf"
+    },
+    {
+      "path": "components/coss/dialog.tsx",
+      "unchanged": true,
+      "sha256": "2e07fcb3a7c10d4d53941b8f0d71777cf691f7c288c608764db3ce66b8bcf4f4"
+    },
+    {
+      "path": "components/coss/drawer.tsx",
+      "unchanged": true,
+      "sha256": "26ddd89d311c46ff7450df9b1c4fda405973e17683e30a1ede003badf7f3d17d"
+    },
+    {
+      "path": "components/coss/empty.tsx",
+      "unchanged": true,
+      "sha256": "00bbd99ea18965050ce5a9f0e335e9ccd5d1069a9b5263349c240379c97fe856"
+    },
+    {
+      "path": "components/coss/field.tsx",
+      "unchanged": true,
+      "sha256": "d0fd4903f5219b629e5a0be63ca0c87f261cea12a8ad8d5260d5c9da37ca0686"
+    },
+    {
+      "path": "components/coss/fieldset.tsx",
+      "unchanged": true,
+      "sha256": "0ed5c2437bbd396451ccf976d2ca2c6d5a3e97015dca9e6ddcbba9b2c454798c"
+    },
+    {
+      "path": "components/coss/form.tsx",
+      "unchanged": true,
+      "sha256": "c08b75b48a90dd349763720e4ffb5423ae348ec0ef43c8c96110695d6fcf7404"
+    },
+    {
+      "path": "components/coss/frame.tsx",
+      "unchanged": true,
+      "sha256": "cf181670a37815dc28fb629345340e339957662a55e8ae6f26cf8c5c16f1557f"
+    },
+    {
+      "path": "components/coss/group.tsx",
+      "unchanged": true,
+      "sha256": "b423e40bc9836c6b7f34c798553a3d2e6d1cd49ab21bc117e376d8234556f56a"
+    },
+    {
+      "path": "components/coss/input-group.tsx",
+      "unchanged": true,
+      "sha256": "2e9f9efba3071cc5af144a677f84600c9552ab20cb074922488b82594e104df0"
+    },
+    {
+      "path": "components/coss/input.tsx",
+      "unchanged": true,
+      "sha256": "9af36cf96d9e085dd2510cc6b46c2babbe2d0688f9da83cedd0ab8f42cd14222"
+    },
+    {
+      "path": "components/coss/kbd.tsx",
+      "unchanged": true,
+      "sha256": "c5c9efe162d4095da03beb7c4f6d7c4ba1b7462ef36be69a7841c494f250f69d"
+    },
+    {
+      "path": "components/coss/label.tsx",
+      "unchanged": true,
+      "sha256": "2745906b9d11edfafed2695223b61e436d029886eb7ed547d0bcc40da3070c96"
+    },
+    {
+      "path": "components/coss/menu.tsx",
+      "unchanged": true,
+      "sha256": "5e1cf980f2e2f407f26e4075440765df4ef29bb42260fcb078fd6f40d11c400b"
+    },
+    {
+      "path": "components/coss/meter.tsx",
+      "unchanged": true,
+      "sha256": "c4e2ee353705d4c4402d008066154b74561a78488e24e4471c9d1ad9b02f1cc0"
+    },
+    {
+      "path": "components/coss/number-field.tsx",
+      "unchanged": true,
+      "sha256": "dd99837f3ed21b92049ad97445785f510a2e4b9991e48a8407ebbc1b1eae1f65"
+    },
+    {
+      "path": "components/coss/otp-field.tsx",
+      "unchanged": true,
+      "sha256": "7d899f7e9d1746a9e969b08e28756e1310e8cc3d8ff2650009a231308c4bcfd5"
+    },
+    {
+      "path": "components/coss/pagination.tsx",
+      "unchanged": true,
+      "sha256": "86c09f586380bf966cf6a71c95c864ec3e178198d9448910ff6819998fc1c807"
+    },
+    {
+      "path": "components/coss/popover.tsx",
+      "unchanged": true,
+      "sha256": "2cf9c10502c464e957b99b1ca96e3c5f845a4ef12dd5068860933b84c271d991"
+    },
+    {
+      "path": "components/coss/preview-card.tsx",
+      "unchanged": true,
+      "sha256": "230b02c676486823ce7f5886df4b1113f547aba76b3a02bf255e18a327ceb878"
+    },
+    {
+      "path": "components/coss/progress.tsx",
+      "unchanged": true,
+      "sha256": "fd5b933380e2632ec6d63a9c6680326bf1bcfbb7ff8bd4815724f12a66c65d4d"
+    },
+    {
+      "path": "components/coss/radio-group.tsx",
+      "unchanged": true,
+      "sha256": "a33118b0cfcf4180aca7e5195d7654baa491dea9c99c95b7e8ab7fc50c111b68"
+    },
+    {
+      "path": "components/coss/scroll-area.tsx",
+      "unchanged": true,
+      "sha256": "383e9c73b537bb44e9a90d7b6f2366b7002a0cf1cba319ded8a7f89813cc664a"
+    },
+    {
+      "path": "components/coss/select.tsx",
+      "unchanged": true,
+      "sha256": "4813f781431445879423d34bfe4f8e88ca8248476ab20a9494f4b5a9436e516a"
+    },
+    {
+      "path": "components/coss/separator.tsx",
+      "unchanged": true,
+      "sha256": "c707557523cc2b3d16904b82692869f153a774b5db9e0c4f2ed17985682ca226"
+    },
+    {
+      "path": "components/coss/sheet.tsx",
+      "unchanged": true,
+      "sha256": "c7032ead7165b1b52d6ac4c3b8153014c32de6eedd2387bde7f192293e94f4fe"
+    },
+    {
+      "path": "components/coss/sidebar.tsx",
+      "unchanged": true,
+      "sha256": "c4f4d6bec5b0e820c795b048e05a3e1e2cdac47aeaf2d6b3f05d77ad7e043c99"
+    },
+    {
+      "path": "components/coss/skeleton.tsx",
+      "unchanged": true,
+      "sha256": "710dbf9edb6d063025d7e6adc8599eb5ff0d9228e49fc09b01e5417e5c21dbdf"
+    },
+    {
+      "path": "components/coss/slider.tsx",
+      "unchanged": true,
+      "sha256": "5ca5a183ff92a142564fefff51d3cbc373dbd2e936d1b33a0338770544ee0116"
+    },
+    {
+      "path": "components/coss/spinner.tsx",
+      "unchanged": true,
+      "sha256": "b04f8a7c117104280360491cf91f1a7cdea0f275fbe4382f0e61b68ccfb49435"
+    },
+    {
+      "path": "components/coss/switch.tsx",
+      "unchanged": true,
+      "sha256": "5cc7e21fd14986fa3300d3391eabb9b148a178f43aa817a583db95641354d5f1"
+    },
+    {
+      "path": "components/coss/table.tsx",
+      "unchanged": true,
+      "sha256": "9acd05cead691257e7a26d2bb020254d2514cfd8bfdbc3421c87262e8dbb3749"
+    },
+    {
+      "path": "components/coss/tabs.tsx",
+      "unchanged": true,
+      "sha256": "2ccafba4dcc7037e9dd73901c95db5d023f641c39ad2021153c7b369b9f0c5c3"
+    },
+    {
+      "path": "components/coss/textarea.tsx",
+      "unchanged": true,
+      "sha256": "cdbcc77cc30bdc4073ccc64eab69edfaa6238183b7cb00333a8af5ae557b3123"
+    },
+    {
+      "path": "components/coss/toast.tsx",
+      "unchanged": true,
+      "sha256": "cb8a1b0edc8ef5db572da975db5ae5c61dfa30339b7e57f651ca19da24982f5d"
+    },
+    {
+      "path": "components/coss/toggle-group.tsx",
+      "unchanged": true,
+      "sha256": "8540360fe7f0eebcf13c02532e3fd2c35661c294c165ef1dd350be24a52a86e0"
+    },
+    {
+      "path": "components/coss/toggle.tsx",
+      "unchanged": true,
+      "sha256": "3132bd5e984832263abb614591da51684267195810fdce414d84a1dade6c41b9"
+    },
+    {
+      "path": "components/coss/toolbar.tsx",
+      "unchanged": true,
+      "sha256": "035230428228e086a344b70eb09fea24f823a547cc37c5ea65d68f1f93c15229"
+    },
+    {
+      "path": "components/coss/tooltip.tsx",
+      "unchanged": true,
+      "sha256": "a9907430b86087e786b64c4ccae5c5b168b7dfa8ca5b2f1ae34f33ad40f7a023"
+    },
+    {
+      "path": "app/(next)/next/theme.css",
+      "unchanged": true,
+      "sha256": "403b8307181e00cd295ef2cad0c07fd7443cb3b028e898dc9a77e33d23c0273b"
+    },
+    {
+      "path": "package.json",
+      "unchanged": true,
+      "sha256": "cfe07fae0d5b08e3f8bf5225a75965eb2b54eb01e7e539b4109f6a92aac006c7"
+    },
+    {
+      "path": "package-lock.json",
+      "unchanged": true,
+      "sha256": "b4cb94516e1b01e2e6d7c7c35c48fc307afb5e5f2df148ce5d0f1831effb08f9"
+    },
+    {
+      "path": "lib/prism-next/config.ts",
+      "unchanged": true,
+      "sha256": "83f40cfe999deb16dcf2acbf6054f53929e438b43e8883c99b375bbde1216209"
+    },
+    {
+      "path": "lib/prism-next/chart-palette.ts",
+      "unchanged": true,
+      "sha256": "9b27314df9bff833053abff36bf28c46a845fb92df2c67be35677c738d9affa9"
+    },
+    {
+      "path": "lib/prism-next/agent-progress.ts",
+      "unchanged": true,
+      "sha256": "8594cf9c863f13e22d4631f7c33c357041586cfa0e77d041b74e0e1964b87a6e"
+    },
+    {
+      "path": "lib/prism-next/agent-component-registry.ts",
+      "unchanged": true,
+      "sha256": "caceea12b64326b67ccc651dbac9c7f5ccc8a9868119d8f90f524b09bfc5b12f"
+    },
+    {
+      "path": "lib/prism-next/catalog.ts",
+      "unchanged": true,
+      "sha256": "6c50a06321f31ea8d58ac766404741be576007fd32c16670792b1433992a5059"
+    },
+    {
+      "path": "docs/OLE_Agent_Frontend_Blueprint_v1.0.md",
+      "unchanged": true,
+      "sha256": "0f3973a60d6b67d15445ce33caee3f62140d881863c4e63ab0ca4f1b7293671c"
+    },
+    {
+      "path": "AGENTS.md",
+      "unchanged": true,
+      "sha256": "36db606fbe59432255a730dac0303e5c099182f29f80099d77cd57827973caf7"
+    }
+  ]
+}

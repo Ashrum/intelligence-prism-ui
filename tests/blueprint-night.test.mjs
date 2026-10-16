@@ -148,10 +148,11 @@ test('night dark utilities include root/descendants and dark-night nesting; ligh
   }
 });
 
-test('all shared Blueprint rules expand theme and guards, including pseudo-elements; night-only colours exclude white previews', () => {
+test('shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements', () => {
   const shared=':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
   const guard=`:not(:where([data-agent-preview][data-prism-theme]:not(${shared}), [data-agent-preview][data-prism-theme]:not(${shared}) *))`;
   const nightGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *))';
+  const whiteGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))';
   bp.walkRules(rule=>{
     for (const s of rule.selectors) {
       if (s.startsWith('.bp-')) continue;
@@ -160,18 +161,27 @@ test('all shared Blueprint rules expand theme and guards, including pseudo-eleme
         continue;
       }
       if (s === `:where(html${shared}) body`) continue;
-      const g=s.includes(guard)?guard:nightGuard;
+      const g=s.includes(guard)?guard:s.includes(nightGuard)?nightGuard:whiteGuard;
       assert.ok(s.includes(g),s);
       if (s.includes('::')) assert.ok(s.indexOf(g)<s.indexOf('::'),s);
       if (g===guard) assert.ok(s.slice(0,s.indexOf(g)).includes(shared),s);
+      if (g===whiteGuard) {
+        // Blueprint §5.4 excludes night. Only the authorized Agent focus repair
+        // is white-only; this is not a blanket exemption from the family guard.
+        assert.ok(s.startsWith('[data-prism-theme="blueprint"] '),s);
+        assert.match(s,/data-agent-prompt-bar|data-agent-message="user"/);
+        assert.ok(s.includes(':focus-visible'),s);
+        assert.ok(rule.nodes.every(d=>d.type==='decl'&&['outline','outline-offset','box-shadow'].includes(d.prop)),s);
+      }
     }
   });
-  const accept=parseSelector(`.probe${guard}`), nightAccept=parseSelector(`.probe${nightGuard}`);
+  const accept=parseSelector(`.probe${guard}`), nightAccept=parseSelector(`.probe${nightGuard}`), whiteAccept=parseSelector(`.probe${whiteGuard}`);
   for (const outer of values) for (const inner of values) {
     const preview=element(inner,element(outer),true);
     for (const n of [preview,element(undefined,preview)]) {
       assert.equal(matches(accept,n),isBlueprintTheme(inner),`${outer}/${inner}`);
       assert.equal(matches(nightAccept,n),inner===night,`${outer}/${inner}`);
+      assert.equal(matches(whiteAccept,n),inner==='blueprint',`${outer}/${inner}`);
     }
   }
 });

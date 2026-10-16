@@ -1,0 +1,269 @@
+CI-01-rollback
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+not ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+not ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 9
+# fail 2
+# cancelled 0
+# skipped 0
+
+CI-01-default-hidden
+not ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+not ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+not ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 8
+# fail 3
+# cancelled 0
+# skipped 0
+
+CI-01-stale-open
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+not ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-07-approval-copy
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+not ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-08-drop-attachment-hook
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+not ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-08-drop-radius
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+not ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-09-drop-button-reset
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+not ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+not ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 9
+# fail 2
+# cancelled 0
+# skipped 0
+
+CI-09-drop-ink-outline
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+not ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-08-09-preview-leak
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+not ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+not ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 9
+# fail 2
+# cancelled 0
+# skipped 0
+
+CI-11-drop-menu-forwarding
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-11-drop-popover-forwarding
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-11-drop-select-forwarding
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-11-drop-dialog-forwarding
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-11-drop-tooltip-forwarding
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0
+
+CI-11-drop-prompt-containers
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+not ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+# tests 11
+# pass 10
+# fail 1
+# cancelled 0
+# skipped 0

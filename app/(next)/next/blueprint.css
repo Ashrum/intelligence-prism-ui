@@ -38,6 +38,8 @@
 ):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)),
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="button"],[data-slot="dialog-trigger"].border,[data-slot="dialog-close"].border,[data-slot="input-control"].border,[data-slot="card"],[data-slot="input-group"],[data-slot="select-trigger"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { border-radius:0; }
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) .prism-brand-mark > span:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
+/* Agent messages have their own geometry; retain their original classes in core themes. */
+:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-agent-message="user"],[data-slot="agent-message-attachment"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
 /* Radio stays round: it is a semantic shape, not decoration. */
 
 /* ── 2 · 1.5px ink structure lines ─────────────────────── */
@@ -288,6 +290,12 @@
   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header { grid-template-columns:38px minmax(0,1fr); column-gap:12px; }
   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header::before { width:38px; height:38px; font-size:var(--text-section-title); }
 }
+/* Agent CI-09: ink buttons on paper keep the blue outer outline, without the coss shadow ring.
+   The white outline is limited to rich-text links actually surrounded by user-message ink.
+   Night focus is outside this white-Blueprint specification. */
+[data-prism-theme="blueprint"] :where([data-agent-prompt-bar],[data-agent-surface]) :where(button,[role="button"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
+[data-prism-theme="blueprint"] [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--primary-foreground); outline-offset:2px; box-shadow:none; }
+
 @media print {
   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::after { display:none; }
 }
