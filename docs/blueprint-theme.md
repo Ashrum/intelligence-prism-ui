@@ -1,7 +1,21 @@
-# Foundations · 第四主题「蓝图」
+# Foundations · 蓝图与夜图
 
 2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 `app/(next)/next/theme.css`（颜色令牌）、`app/(next)/next/blueprint.css`（几何与 `bp-*` 样式）及 [React 封装](../components/prism-next/blueprint/blueprint.tsx)。演示页为 `/next/foundations/blueprint`，从侧栏「蓝图组件」进入。
 
+
+## 夜图恢复 · 2026-10-16
+
+用户批准接续原 BPv9 夜图交接，以已合入警告色修复的 main `7737245` 为基线。`blueprint-night` 位于主题菜单「蓝图」之后，共用蓝图几何、当前通用组件适配与编辑式排版；保留 `prism-v1-theme` 存储键。next-themes 不再猜测自定义主题的原生色系，各主题由原有 CSS `color-scheme` 声明控制。当前四主题令牌（包括白图警告色 `#995909`）、核心曜彩图表配色和冻结 coss 原始字节不变。
+
+夜图采用既有 BP.dark 映射：画布 `#081322`、纸面 `#0D1C31`、正文 `#E6EDF7`、次要文字 `#A9B8CC`、交互蓝 `#6EA8FF`、结构线 `#C9D6E8`；成功与警告填充缺少独立设计值，沿原交接回退到 `#62BD89` / `#E8A33D`，前景分别为 `#7FD6A0` / `#F0B14A`。白图与夜图的共享规则排除核心主题预览；夜图专属阴影也排除白图预览。预览边界重新计算 radius / muted 别名，沿用当前 main 的隔离修复。
+
+夜图图表继续采用交接时的独立回退系列 `#86C5FF / #F296C2 / #99DFB4 / #F4CC86 / #BDACED / #B6BEC9`，箱线图为 `#86C5FF / #F296C2 / #365B7B`，连续色阶为 `secondary → #76A9D2 → #1769AA`。测试分别锁定夜图与 P69 核心深色的预期值，不再断言二者相同。图表仍从 `chart-palette.ts` 读取颜色，CSS 图表令牌与其桥接；提示框沿用直角、墨线和强调蓝硬阴影。
+
+**已知设计缺口保留：** 夜图普通分隔色 `#23385A` 对画布 / 纸面约 1.58 / 1.45:1，只能作为弱分隔，结构与控件使用 `--line`。沿用白图的白色半透明图案在夜图浅色系列上的对比度不足 3:1；夜图图表色与图案尚待设计确认，不能据此宣称黑白打印已通过。Recharts 仍主要靠颜色区分系列。实体打印、真机与读屏器验收继续单列。热力图窄于 400px 且可见数据披露可用时隐藏格内数字；数据披露隐藏时保留数字，原三核心主题不改变。
+
+通用描边按钮、Badge 与未选中 Toggle 在夜图中使用纸面，悬停使用现有 accent；输入表面使用设计稿的 `#0A1729`。这避免 `dark:bg-input/*` 把浅色结构墨线混成浅底。实色危险按钮 / Badge 使用夜图深墨文字，加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 `#E6EDF7` / `#16305A`，实色危险按钮为 `#081322` / `#FF7070`。
+
+当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
 
 ## OLE Agent 前端规范 · 正式版（2026-10-16）
 
@@ -207,7 +221,7 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 | --- | --- | --- |
 | 成功色 | 官网及生成主题 `--ok` 与强调蓝相同 | 保留当前独立成功绿；强调蓝、AI 来源与正确性不能互相代替 |
 | 三级文字 | 官网亮色 `--ink-3: #6b7280`；生成主题为 `#8b929e` | 不把三级文字无条件映射成禁用色；现有 `--disabled-foreground` 的语义单独审查 |
-| 深色 | 原站深色背景 `#081322`、纸面 `#0d1c31`、强调 `#6ea8ff` | 仅作来源事实，不据此新增 `blueprint-night` 或改核心 dark |
+| 深色 | 原站深色背景 `#081322`、纸面 `#0d1c31`、强调 `#6ea8ff` | 该来源核对轮仅记录事实；夜图后续按独立授权接入，不改核心 dark |
 | 结构线 | 官网通用 `--bw: 1.5px`，内框 1px | 保留结构线与次级分隔线层级；浏览器像素取整见证据说明 |
 | 正文字体 | 官网系统无衬线栈，中文含 PingFang SC、Microsoft YaHei 等；正文 16px / 1.6 | 延续 Prism 字体与语义字号；字体栈不等于当前机器实际命中的字体 |
 | 标题比例 | 官网中文 hero 为 `clamp(32px,4.6vw,62px)` / 1.16；区块标题为 `clamp(26px,3.4vw,40px)` / 1.1 | 保留“主标题—区块标题—技术元信息”的层级关系，不把营销页大标题尺寸复制进教师工具栏 |
@@ -260,12 +274,12 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 
 | 约定 | 说明 |
 | --- | --- |
-| 可选，不进矩阵 | `themeOptions` 含四项；新增 `coreThemes = light / paper / dark` 明确核心矩阵；现有演示与测试中的三主题数组保持原意，不批量改写。 |
+| 可选，不进矩阵 | `themeOptions` 含核心三主题、蓝图与夜图；`coreThemes = light / paper / dark` 明确核心矩阵；现有演示与测试中的三主题数组保持原意，不批量改写。 |
 | 只追加令牌块 | 蓝图块与 paper/dark 同级、同特异性，置于 dark 之后；三套核心令牌值不变。 |
 | 显式声明全部角色 | 状态色、图表色、AI 来源、悬浮材质全部在蓝图块内重写，不继承 `:root`。 |
 | 几何只在蓝图生效 | 现有组件的几何覆盖限定蓝图主题，并排除显式的其他主题预览；`bp-*` 是主动采用类名后才生效的呈现样式。几何规则未分层，活动标签的选择器与已有文字样式保持同等优先级。 |
 | 不改 coss | 只按 `data-slot` 覆盖；coss 固定源码保持逐字节不变。 |
-| 深色变体 | 首期仅白图。`@custom-variant dark` 将蓝图预览排除在外。夜图以后作为独立值 `blueprint-night` 加入。 |
+| 深色变体 | 夜图使用独立值 `blueprint-night`，`dark:` 同时匹配其根和后代；显式 light / paper / 白图预览根及后代仍排除，原四主题匹配结果不变。 |
 
 ## 颜色令牌
 

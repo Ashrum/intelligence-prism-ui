@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-16",
+  "base": "773724595ab36d0574252da8503821d93eb9c6a1",
+  "note": "HOME preserved; runtime outputs under ignored .sites-runtime; results refer to current source.",
+  "checks": [
+    {
+      "check": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "startedAt": "2026-10-16T02:11:37.534821+00:00",
+      "endedAt": "2026-10-16T02:11:37.565481+00:00",
+      "exitCode": 0,
+      "log": "math-font.log"
+    },
+    {
+      "check": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "startedAt": "2026-10-16T02:11:37.565646+00:00",
+      "endedAt": "2026-10-16T02:11:37.647660+00:00",
+      "exitCode": 0,
+      "log": "typography.log"
+    },
+    {
+      "check": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-16T02:11:37.647813+00:00",
+      "endedAt": "2026-10-16T02:11:43.143796+00:00",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "check": "full-tests",
+      "command": "node --test tests/*.test.mjs",
+      "startedAt": "2026-10-16T02:11:43.144009+00:00",
+      "endedAt": "2026-10-16T02:11:56.390488+00:00",
+      "exitCode": 0,
+      "log": "full-tests.log",
+      "summary": [
+        "\u2139 tests 2157",
+        "\u2139 pass 2157",
+        "\u2139 fail 0",
+        "\u2139 skipped 0"
+      ]
+    },
+    {
+      "check": "tsc",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "startedAt": "2026-10-16T02:11:56.391196+00:00",
+      "endedAt": "2026-10-16T02:11:59.178997+00:00",
+      "exitCode": 0,
+      "log": "tsc.log"
+    },
+    {
+      "check": "guide-check",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "startedAt": "2026-10-16T02:11:59.179271+00:00",
+      "endedAt": "2026-10-16T02:11:59.220739+00:00",
+      "exitCode": 0,
+      "log": "guide-check.log"
+    }
+  ]
+}
