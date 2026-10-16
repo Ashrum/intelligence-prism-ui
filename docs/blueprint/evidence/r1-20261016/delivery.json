@@ -1,0 +1,63 @@
+{
+  "baseline": "5644554aa6920fdbffdcbd1fdac617c20af1cc2e",
+  "files": [
+    {
+      "path": "app/(next)/next/blueprint.css",
+      "bytes": 74661,
+      "sha256": "edc27ed44c65a6daeca3e11ca3310f2a0c9822544d43ddf145014b02d64e4f5e"
+    },
+    {
+      "path": "components/prism-next/agent-components.tsx",
+      "bytes": 21601,
+      "sha256": "b764acb749eb2fd110562960c1f27f8806aab1254811ee07e2093e7e9cc7b816"
+    },
+    {
+      "path": "components/prism-next/agent-message.tsx",
+      "bytes": 1601,
+      "sha256": "0d8173a9595daecb67c98d63ad0a1e172171bc3db9fe96a2b5e011cb8fc3dd83"
+    },
+    {
+      "path": "components/prism-next/agent-prompt-bar.tsx",
+      "bytes": 13966,
+      "sha256": "e8d04dbca27ffc33dd3e769b792b06383630804e67c4eb47d7aff9b709bc61c6"
+    },
+    {
+      "path": "components/prism-next/demos/agent-conversation-demo.tsx",
+      "bytes": 13759,
+      "sha256": "161285ebfe368eb23ecdf52a5aef86f3770b484274b6d31a52b530155c68e1f0"
+    },
+    {
+      "path": "docs/component-contracts.md",
+      "bytes": 475451,
+      "sha256": "b1b05456e7d524cd453748affe487208bb6d838e7c587faca0ea1e7d536b7b6d"
+    },
+    {
+      "path": "docs/blueprint/STATUS.md",
+      "bytes": 77028,
+      "sha256": "dd9255d77736f4cf392dc151527626e834fa8be06379039c3f36e2f27db8bb3b"
+    },
+    {
+      "path": "lib/prism-next/blueprint-guide.json",
+      "bytes": 226655,
+      "sha256": "9393cee82d31bb9187e7406e7059061e7b9fc0bd220937b5702c59256352018c"
+    },
+    {
+      "path": "public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+      "bytes": 77028,
+      "sha256": "dd9255d77736f4cf392dc151527626e834fa8be06379039c3f36e2f27db8bb3b"
+    },
+    {
+      "path": "tests/blueprint-night.test.mjs",
+      "bytes": 18768,
+      "sha256": "4936ac03734eac5d914fce98f04f9e41add4efd6e0ff60adf5f301de58f6b04e"
+    },
+    {
+      "path": "tests/agent-blueprint-r1.test.mjs",
+      "bytes": 15012,
+      "sha256": "abf9283a447a94d8c2d40b8ce9fd3400595b79d99d3f060c87b7157cca105e90"
+    }
+  ],
+  "scopeDiffBytes": 61649,
+  "evidenceDirectory": "docs/blueprint/evidence/r1-20261016",
+  "externalReport": "/Users/OLE/HermesWork/.supervisor/prism/P73-Report.md"
+}

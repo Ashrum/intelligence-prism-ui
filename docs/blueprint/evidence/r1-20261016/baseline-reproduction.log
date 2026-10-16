@@ -1,0 +1,361 @@
+TAP version 13
+# Subtest: CI-01: omitted/true retain the old model entry, including a disabled empty menu
+ok 1 - CI-01: omitted/true retain the old model entry, including a disabled empty menu
+  ---
+  duration_ms: 25.285709
+  type: 'test'
+  ...
+# Subtest: CI-01: false removes the complete model entry with empty or populated models in both variants
+not ok 2 - CI-01: false removes the complete model entry with empty or populated models in both variants
+  ---
+  duration_ms: 1.835667
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:60:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    hidden models must not appear in SSR
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:63:12)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+not ok 3 - CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later
+  ---
+  duration_ms: 1.935209
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   '$$typeof': Symbol(react.transitional.element),
+    +   _owner: null,
+    +   _store: {},
+    +   key: null,
+    +   props: {
+    +     children: [
+    +       {
+    +         '$$typeof': Symbol(react.transitional.element),
+    +         _owner: null,
+    +         _store: {},
+    +         key: null,
+    +         props: {
+    +           children: [
+    +             {
+    +               '$$typeof': Symbol(react.transitional.element),
+    +               _owner: null,
+    +               _store: {},
+    +               key: null,
+    +               props: {
+    +                 children: '选择模型',
+    +                 className: 'min-w-0 break-words'
+    +               },
+    +               type: 'span'
+    +             },
+    +             {
+    +               '$$typeof': Symbol(react.transitional.element),
+    +               _owner: null,
+    +               _store: {},
+    +               key: null,
+    +               props: {
+    +                 'aria-hidden': 'true'
+    +               },
+    +               type: {
+    +                 '$$typeof': Symbol(react.forward_ref),
+    +                 render: [Function: ChevronDown] {
+    +                   displayName: 'ChevronDown'
+    +                 }
+    +               }
+    +             }
+    +           ],
+    +           render: {
+    +             '$$typeof': Symbol(react.transitional.element),
+    +             _owner: null,
+    +             _store: {},
+    +             key: null,
+    +             props: {
+    +               'aria-label': '选择模型：尚未选择',
+    +               className: 'h-auto max-w-full whitespace-normal',
+    +               disabled: false,
+    +               size: 'sm',
+    +               type: 'button',
+    +               variant: 'ghost'
+    +             },
+    +             type: [Function: Button]
+    +           }
+    +         },
+    +         type: [Function: MenuTrigger]
+    +       },
+    +       {
+    +         '$$typeof': Symbol(react.transitional.element),
+    +         _owner: null,
+    +         _store: {},
+    +         key: null,
+    +         props: {
+    +           align: 'end',
+    +           children: {
+    +             '$$typeof': Symbol(react.transitional.element),
+    +             _owner: null,
+    +             _store: {},
+    +             key: null,
+    +             props: {
+    +               children: [
+    +                 {
+    +                   '$$typeof': Symbol(react.transitional.element),
+    +                   _owner: null,
+    +                   _store: {},
+    +                   key: 'm',
+    +                   props: {
+    +                     children: [
+    +                       '教学助手',
+    +                       undefined
+    +                     ],
+    +                     disabled: undefined,
+    +                     value: 'm'
+    +                   },
+    +                   type: [Function: MenuRadioItem]
+    +                 }
+    +               ],
+    +               onValueChange: [Function: onValueChange],
+    +               value: ''
+    +             },
+    +             type: [Function: MenuRadioGroup]
+    +           },
+    +           portalProps: {
+    +             container: {
+    +               current: null
+    +             }
+    +           },
+    +           side: 'top'
+    +         },
+    +         type: [Function: MenuPopup]
+    +       }
+    +     ],
+    +     onOpenChange: [Function: onOpenChange],
+    +     open: true
+    +   },
+    +   type: [Function: FastComponent] {
+    +     displayName: 'MenuRoot'
+    +   }
+    + }
+    - undefined
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+not ok 4 - CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content
+  ---
+  duration_ms: 1.559834
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:104:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /补充一个信息/. Input:
+    
+    '<div class="relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] gap-4 p-5" data-slot="card" aria-labelledby="_R_0_"><div><p class="mb-2 text-ui-hint text-info-foreground">需要你确认</p><h3 id="_R_0_" class="text-block-title">需要哪些材料？</h3><p class="mt-2 text-ui-hint text-muted-foreground">选择仅暂存。</p></div><div role="radiogroup" aria-labelledby="_R_0_" data-slot="radio-group" class="flex flex-col gap-3"><div class="flex items-start gap-3"><span data-checked="" role="radio" tabindex="-1" aria-checked="true" data-composite-item-active="" id="base-ui-_R_2t_" data-slot="radio" class="relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full border border-input bg-background not-dark:bg-clip-padding shadow-xs/5 outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-full not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background aria-invalid:border-destructive/36 focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/48 data-disabled:cursor-not-allowed data-disabled:opacity-64 sm:size-4 dark:not-data-checked:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [[data-disabled],[data-checked],[aria-invalid]]:shadow-none mt-1"><span data-checked="" data-slot="radio-indicator" class="absolute -inset-px flex size-4.5 items-center justify-center rounded-full before:size-2 before:rounded-full before:bg-primary-foreground data-unchecked:hidden data-checked:bg-primary sm:size-4 sm:before:size-1.5"></span></span><input type="radio" id="_R_0_-0" tabindex="-1" style="clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;padding:0;width:1px;height:1px;margin:-1px;position:fixed;top:0;left:0" aria-hidden="true" checked="" value="a"/><label class="font-medium text-base/4.5 text-foreground sm:text-sm/4 flex min-w-0 flex-1 flex-col items-start gap-1" data-slot="label" for="_R_0_-0"><span class="text-ui-action">题目</span></label></div><div class="flex items-start gap-3"><span data-unchecked="" role="radio" tabindex="-1" aria-checked="false" id="base-ui-_R_3d_" data-slot="radio" class="relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full border border-input bg-background not-dark:bg-clip-padding shadow-xs/5 outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-full not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background aria-invalid:border-destructive/36 focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/48 data-disabled:cursor-not-allowed data-disabled:opacity-64 sm:size-4 dark:not-data-checked:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [[data-disabled],[data-checked],[aria-invalid]]:shadow-none mt-1"></span><input type="radio" id="_R_0_-1" tabindex="-1" style="clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;padding:0;width:1px;height:1px;margin:-1px;position:fixed;top:0;left:0" aria-hidden="true" value="b"/><label class="font-medium text-base/4.5 text-foreground sm:text-sm/4 flex min-w-0 flex-1 flex-col items-start gap-1" data-slot="label" for="_R_0_-1"><span class="text-ui-action">题目与解答</span></label></div></div><p>可以补充要求。</p></div>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="relative flex flex-col rounded-2xl border bg-card not-dark:bg-clip-padding text-card-foreground shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-2xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)] gap-4 p-5" data-slot="card" aria-labelledby="_R_0_"><div><p class="mb-2 text-ui-hint text-info-foreground">需要你确认</p><h3 id="_R_0_" class="text-block-title">需要哪些材料？</h3><p class="mt-2 text-ui-hint text-muted-foreground">选择仅暂存。</p></div><div role="radiogroup" aria-labelledby="_R_0_" data-slot="radio-group" class="flex flex-col gap-3"><div class="flex items-start gap-3"><span data-checked="" role="radio" tabindex="-1" aria-checked="true" data-composite-item-active="" id="base-ui-_R_2t_" data-slot="radio" class="relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full border border-input bg-background not-dark:bg-clip-padding shadow-xs/5 outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-full not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background aria-invalid:border-destructive/36 focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/48 data-disabled:cursor-not-allowed data-disabled:opacity-64 sm:size-4 dark:not-data-checked:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [[data-disabled],[data-checked],[aria-invalid]]:shadow-none mt-1"><span data-checked="" data-slot="radio-indicator" class="absolute -inset-px flex size-4.5 items-center justify-center rounded-full before:size-2 before:rounded-full before:bg-primary-foreground data-unchecked:hidden data-checked:bg-primary sm:size-4 sm:before:size-1.5"></span></span><input type="radio" id="_R_0_-0" tabindex="-1" style="clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;padding:0;width:1px;height:1px;margin:-1px;position:fixed;top:0;left:0" aria-hidden="true" checked="" value="a"/><label class="font-medium text-base/4.5 text-foreground sm:text-sm/4 flex min-w-0 flex-1 flex-col items-start gap-1" data-slot="label" for="_R_0_-0"><span class="text-ui-action">题目</span></label></div><div class="flex items-start gap-3"><span data-unchecked="" role="radio" tabindex="-1" aria-checked="false" id="base-ui-_R_3d_" data-slot="radio" class="relative inline-flex size-4.5 shrink-0 items-center justify-center rounded-full border border-input bg-background not-dark:bg-clip-padding shadow-xs/5 outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-full not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_1px_--theme(--color-black/4%)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background aria-invalid:border-destructive/36 focus-visible:aria-invalid:border-destructive/64 focus-visible:aria-invalid:ring-destructive/48 data-disabled:cursor-not-allowed data-disabled:opacity-64 sm:size-4 dark:not-data-checked:bg-input/32 dark:aria-invalid:ring-destructive/24 dark:not-data-disabled:not-data-checked:not-aria-invalid:before:shadow-[0_-1px_--theme(--color-white/6%)] [[data-disabled],[data-checked],[aria-invalid]]:shadow-none mt-1"></span><input type="radio" id="_R_0_-1" tabindex="-1" style="clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;padding:0;width:1px;height:1px;margin:-1px;position:fixed;top:0;left:0" aria-hidden="true" value="b"/><label class="font-medium text-base/4.5 text-foreground sm:text-sm/4 flex min-w-0 flex-1 flex-col items-start gap-1" data-slot="label" for="_R_0_-1"><span class="text-ui-action">题目与解答</span></label></div></div><p>可以补充要求。</p></div>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:107:10)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+not ok 5 - CI-08: message attachment exposes a stable styling hook without removing the legacy radius class
+  ---
+  duration_ms: 0.268042
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:115:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /data-slot="agent-message-attachment"[^>]*rounded-md/. Input:
+    
+    '<div class="agent-message-container min-w-0"><section aria-label="你说" data-agent-message="user" class="min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background"><div class="agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body">原消息</div><div class="mt-3 flex min-w-0 flex-wrap gap-2"><span class="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paperclip size-4 shrink-0" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"></path></svg><span class="min-w-0 break-all">长中文材料.pdf</span></span></div></section></div>'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: '<div class="agent-message-container min-w-0"><section aria-label="你说" data-agent-message="user" class="min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background"><div class="agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body">原消息</div><div class="mt-3 flex min-w-0 flex-wrap gap-2"><span class="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paperclip size-4 shrink-0" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"></path></svg><span class="min-w-0 break-all">长中文材料.pdf</span></span></div></section></div>'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:118:10)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+not ok 6 - CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants
+  ---
+  duration_ms: 0.120209
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:164:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    light/blueprint
+    
+    undefined !== '0'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '0'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:169:14)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+not ok 7 - CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper
+  ---
+  duration_ms: 2.689333
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:177:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + {}
+    - {
+    -   'box-shadow': 'none',
+    -   'outline-offset': '2px',
+    -   outline: '2px solid var(--ring)'
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    outline: '2px solid var(--ring)'
+    outline-offset: '2px'
+    box-shadow: 'none'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:184:12)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+not ok 8 - CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button
+  ---
+  duration_ms: 0.073791
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:189:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + {}
+    - {
+    -   'box-shadow': 'none',
+    -   'outline-offset': '2px',
+    -   outline: '2px solid var(--primary-foreground)'
+    - }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    outline: '2px solid var(--primary-foreground)'
+    outline-offset: '2px'
+    box-shadow: 'none'
+  actual:
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:192:10)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+not ok 9 - CI-09: core themes and night retain their focus behavior, including preview roots and descendants
+  ---
+  duration_ms: 0.11825
+  type: 'test'
+  location: '/Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:197:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    light/blueprint
+    + actual - expected
+    
+    + undefined
+    - '2px solid var(--ring)'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '2px solid var(--ring)'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-blueprint-r1.test.mjs:202:12)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+    Test.postRun (node:internal/test_runner/test:1247:19)
+    Test.run (node:internal/test_runner/test:1175:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+ok 10 - CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes
+  ---
+  duration_ms: 0.489958
+  type: 'test'
+  ...
+# Subtest: CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+ok 11 - CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface
+  ---
+  duration_ms: 0.232208
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 3
+# fail 8
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 251.992167

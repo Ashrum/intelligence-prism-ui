@@ -1,0 +1,571 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index 8be156c..1209216 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -38,6 +38,8 @@
+ ):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)),
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="button"],[data-slot="dialog-trigger"].border,[data-slot="dialog-close"].border,[data-slot="input-control"].border,[data-slot="card"],[data-slot="input-group"],[data-slot="select-trigger"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { border-radius:0; }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) .prism-brand-mark > span:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
++/* Agent messages have their own geometry; retain their original classes in core themes. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-agent-message="user"],[data-slot="agent-message-attachment"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
+ /* Radio stays round: it is a semantic shape, not decoration. */
+ 
+ /* ── 2 · 1.5px ink structure lines ─────────────────────── */
+@@ -288,6 +290,12 @@
+   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header { grid-template-columns:38px minmax(0,1fr); column-gap:12px; }
+   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header::before { width:38px; height:38px; font-size:var(--text-section-title); }
+ }
++/* Agent CI-09: ink buttons on paper keep the blue outer outline, without the coss shadow ring.
++   The white outline is limited to rich-text links actually surrounded by user-message ink.
++   Night focus is outside this white-Blueprint specification. */
++[data-prism-theme="blueprint"] :where([data-agent-prompt-bar],[data-agent-surface]) :where(button,[role="button"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
++[data-prism-theme="blueprint"] [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--primary-foreground); outline-offset:2px; box-shadow:none; }
++
+ @media print {
+   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::after { display:none; }
+ }
+diff --git a/components/prism-next/agent-components.tsx b/components/prism-next/agent-components.tsx
+index b6cd892..ec7000e 100644
+--- a/components/prism-next/agent-components.tsx
++++ b/components/prism-next/agent-components.tsx
+@@ -149,7 +149,7 @@ export function AgentQuestionCard({question,description,options,value,onValueCha
+  value:string;onValueChange:(value:string)=>void;children?:ReactNode;disabled?:boolean;
+ }) {
+  const id=useId()
+- return <Card className="gap-4 p-5" aria-labelledby={id}><div><p className="mb-2 text-ui-hint text-info-foreground">需要你确认</p><h3 id={id} className="text-block-title">{question}</h3>{description&&<p className="mt-2 text-ui-hint text-muted-foreground">{description}</p>}</div>
++ return <Card className="gap-4 p-5" aria-labelledby={id}><div><p className="mb-2 text-ui-hint text-info-foreground">补充一个信息</p><h3 id={id} className="text-block-title">{question}</h3>{description&&<p className="mt-2 text-ui-hint text-muted-foreground">{description}</p>}</div>
+   <RadioGroup aria-labelledby={id} value={value} disabled={disabled} onValueChange={v=>typeof v==='string'&&onValueChange(v)}>{options.map((option,index)=><div key={option.value} className="flex items-start gap-3"><Radio id={`${id}-${index}`} value={option.value} disabled={option.disabled} className="mt-1"/><Label htmlFor={`${id}-${index}`} className="flex min-w-0 flex-1 flex-col items-start gap-1"><span className="text-ui-action">{option.label}</span>{option.description&&<span className="text-ui-hint font-normal text-muted-foreground">{option.description}</span>}</Label></div>)}</RadioGroup>{children}
+  </Card>
+ }
+diff --git a/components/prism-next/agent-message.tsx b/components/prism-next/agent-message.tsx
+index 5a530c5..fe170c4 100644
+--- a/components/prism-next/agent-message.tsx
++++ b/components/prism-next/agent-message.tsx
+@@ -17,5 +17,5 @@ export function AgentMessage({ speaker, children, attachments, details, classNam
+   </section></div>
+ }
+ export function AgentMessageAttachment({ children }: { children: ReactNode }) {
+-  return <span className="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{children}</span></span>
++  return <span data-slot="agent-message-attachment" className="inline-flex max-w-full items-center gap-1 rounded-md border border-current px-2 py-1 text-ui-hint"><Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{children}</span></span>
+ }
+diff --git a/components/prism-next/agent-prompt-bar.tsx b/components/prism-next/agent-prompt-bar.tsx
+index 4080ff5..9fec54e 100644
+--- a/components/prism-next/agent-prompt-bar.tsx
++++ b/components/prism-next/agent-prompt-bar.tsx
+@@ -25,6 +25,8 @@ export type AgentPromptIntent = AgentVoiceIntent
+ export type AgentPromptBarProps = {
+   value: string; onValueChange: (value: string) => void; onIntent: (intent: AgentPromptIntent) => void
+   sources: readonly AgentPromptOption[]; commands: readonly AgentPromptOption[]; models: readonly AgentPromptOption[]; modelId?: string
++  /** Host-controlled availability; false omits the model menu entirely. Defaults to true for existing callers. */
++  showModelSelector?: boolean
+   attachments?: readonly AgentPromptAttachment[]; variant?: "Rounded" | "Pill"; label?: string; placeholder?: string
+   contextActions?: ReactNode; dictation: AgentDictation; voice: AgentVoiceMode; privacy?: AgentVoicePrivacy
+   disabled?: boolean; sendDisabledReason?: string; activity?: ReactNode
+@@ -33,7 +35,7 @@ export function parsePromptToken(draft: string) {
+   const match = /(^|\s)([@/])([^\s@/]*)$/u.exec(draft)
+   return match ? { kind: match[2] === "@" ? "source" as const : "command" as const, query: match[3].toLocaleLowerCase(), start: match.index + match[1].length } : null
+ }
+-export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, activity }: AgentPromptBarProps) {
++export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, activity }: AgentPromptBarProps) {
+   const id = useId(), input = useRef<HTMLTextAreaElement>(null), anchor = useRef<HTMLDivElement>(null), root = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null)
+   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
+   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
+@@ -42,7 +44,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
+   // Interim is a preview inside the input surface, never part of the editable draft.
+   const interim = dictating ? dictation.interim : undefined
+   const transcript = interim || (dictation.state === "inserted" && !value ? dictation.final : undefined)
+-  const token = disabled || dismissed === value || plusOpen || modelOpen ? null : parsePromptToken(value)
++  const token = disabled || dismissed === value || plusOpen || (showModelSelector && modelOpen) ? null : parsePromptToken(value)
+   const rows = token ? (token.kind === "source" ? sources : commands).filter(row => row.label.toLocaleLowerCase().replace(/^\//, "").includes(token.query)) : []
+   const enabledRows = rows.filter(row => !row.disabled)
+   const selected = enabledRows[Math.min(active, Math.max(0, enabledRows.length - 1))]
+@@ -56,6 +58,9 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
+     element.addEventListener("webglcontextlost", lost)
+     return () => { element.removeEventListener("webglcontextlost", lost); current.destroy(); sweep.current = null }
+   }, [])
++  useEffect(() => {
++    if (!showModelSelector) setModelOpen(false)
++  }, [showModelSelector])
+   const close = () => { setDismissed(value); setPlusOpen(false); setModelOpen(false) }
+   const pick = (row: AgentPromptOption, kind: "source" | "command") => {
+     if (disabled || row.disabled) return
+@@ -126,12 +131,12 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
+           </div>
+           <div className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1">
+             {activity}
+-            <Menu open={modelOpen} onOpenChange={open => { setModelOpen(open); if (open) { setDismissed(value); setPlusOpen(false) } }}>
++            {showModelSelector && <Menu open={modelOpen} onOpenChange={open => { setModelOpen(open); if (open) { setDismissed(value); setPlusOpen(false) } }}>
+               <MenuTrigger render={<Button type="button" variant="ghost" size="sm" className="h-auto max-w-full whitespace-normal" disabled={disabled || !models.length} aria-label={`选择模型：${model?.label ?? "尚未选择"}`} />}><span className="min-w-0 break-words">{model?.label ?? "选择模型"}</span><ChevronDown aria-hidden="true" /></MenuTrigger>
+               <MenuPopup side="top" align="end" portalProps={{ container: root }}><MenuRadioGroup value={modelId ?? ""} onValueChange={next => { if (!disabled) onIntent({ type: "select-model", id: next }) }}>
+                 {models.map(item => <MenuRadioItem key={item.id} value={item.id} disabled={item.disabled}>{item.label}{item.description && <span className="block text-ui-hint text-muted-foreground">{item.description}</span>}</MenuRadioItem>)}
+               </MenuRadioGroup></MenuPopup>
+-            </Menu>
++            </Menu>}
+             <AgentDictationIndicator dictation={dictation} disabled={disabled} onIntent={onIntent} />
+             <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
+             <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
+diff --git a/components/prism-next/demos/agent-conversation-demo.tsx b/components/prism-next/demos/agent-conversation-demo.tsx
+index 41e5984..6ae5793 100644
+--- a/components/prism-next/demos/agent-conversation-demo.tsx
++++ b/components/prism-next/demos/agent-conversation-demo.tsx
+@@ -9,6 +9,7 @@ import { AgentMark, agentMarkLabels, type AgentMarkState } from "../agent-mark"
+ import { AgentMessage, AgentMessageAttachment } from "../agent-message"
+ import { AgentVoiceStatus, dictationLabels, voiceModeLabels, type AgentDictation, type AgentVoiceMode } from "../agent-voice"
+ import { agentConversationCompositions } from "@/lib/prism-next/agent-conversation-compositions"
++import { themeOptions } from "@/lib/prism-next/config"
+ 
+ const sources = [{ id: "bank", label: "题库", description: "可选的题目来源" }, { id: "classes", label: "任教班级", description: "当前教师的班级范围" }, { id: "records", label: "工作记录", description: "以往任务的记录" }]
+ const commands = ["出题", "组卷", "批阅", "学情", "备课"].map(label => ({ id: label, label: `/${label}`, description: `提出${label}请求` }))
+@@ -21,11 +22,13 @@ export function AgentPromptBarPreview() {
+   return <div className="space-y-3"><AgentPromptBar {...fixtures} value={value} onValueChange={setValue} onIntent={() => {}} dictation={noService} voice={noService} sendDisabledReason="任务服务未接入" /><a className="prism-link text-ui-action" href="/next/components/agent-components/prompt-bar">打开输入框与语音示例</a></div>
+ }
+ function ConversationSample() {
++  const sourceId = useId()
+   return <div className="space-y-6" data-conversation-sample>
+     <AgentMessage speaker="user" attachments={<AgentMessageAttachment>函数单元复习材料与课堂练习.pdf</AgentMessageAttachment>}>
+       <p>请为高二三班准备一份函数单元复习练习，保留原题条件与出处，并说明每道题的解题依据。较长的中文会在气泡内自然换行。</p>
+       <p>请核对公式：<math aria-label="x 等于负 b 加减根号 b 平方减四 a c，除以二 a"><mrow><mi>x</mi><mo>=</mo><mfrac><mrow><mo>−</mo><mi>b</mi><mo>±</mo><msqrt><mrow><msup><mi>b</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>a</mi><mi>c</mi></mrow></msqrt></mrow><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></mrow></math></p>
+       <pre><code>{'const discriminant = b ** 2 - 4 * a * c;'}</code></pre>
++      <p><a href={`#${sourceId}`}>查看材料说明</a></p>
+     </AgentMessage>
+     <AgentMessage speaker="agent" details={<p className="text-ui-hint text-muted-foreground">范围：高二三班 · 材料：1 份 · 待你确认</p>}>
+       <p>可以先核对范围和题目条件，再决定练习题的数量。以下是可供确认的材料摘要。</p>
+@@ -33,6 +36,7 @@ function ConversationSample() {
+     </AgentMessage>
+     <AgentMessage speaker="user">保留解答过程，安排 5 道题。</AgentMessage>
+     <AgentMessage speaker="agent">收到。这里展示对话排版，未执行出题任务。</AgentMessage>
++    <p id={sourceId} className="text-ui-hint text-muted-foreground">材料说明：本页使用固定中文与公式夹具，链接不提交任务。</p>
+   </div>
+ }
+ function MarkSamples() {
+@@ -47,6 +51,7 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
+   const [theme, setTheme] = useState("light"), [width, setWidth] = useState("auto")
+   const [variant, setVariant] = useState<AgentPromptBarProps["variant"]>("Rounded")
+   const [value, setValue] = useState(""), [modelId, setModelId] = useState("local-rule")
++  const [showModelSelector, setShowModelSelector] = useState(true)
+   const [dictation, setDictation] = useState<AgentDictation["state"]>("not-connected")
+   const [voice, setVoice] = useState<AgentVoiceMode["state"]>("not-connected")
+   const [privacy, setPrivacy] = useState(false), [attachments, setAttachments] = useState(false)
+@@ -65,8 +70,8 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
+     <p className="text-ui-hint">组件评审示例。语音状态由下方控件明确切换，未连接麦克风、识别或对话服务。</p>
+     {section === "prompt-bar" && <p className="text-ui-hint text-muted-foreground">听写中点击状态、麦克风或按 Esc 仅发停止请求；用时依据宿主 startedAt，无开始时间不计时。interim 在输入框内以次要色预览，最终结果由宿主更新 value。电平未知时均衡条仅提示活动，减少动效时固定为三条中等高度，占位微光停止。</p>}
+     <div className="flex flex-wrap items-end gap-4">
+-      <div className="space-y-2"><Label htmlFor={`${id}-theme`}>预览主题</Label><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} onChange={setTheme} items={[{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
+-      <div className="space-y-2"><Label htmlFor={`${id}-width`}>预览宽度</Label><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} onChange={setWidth} items={[{ value: "auto", label: "自适应" }, { value: "390", label: "390 px" }]} /></div>
++      <div className="space-y-2"><Label htmlFor={`${id}-theme`}>预览主题</Label><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} onChange={setTheme} items={[...themeOptions]} /></div>
++      <div className="space-y-2"><Label htmlFor={`${id}-width`}>预览宽度</Label><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} onChange={setWidth} items={[{ value: "auto", label: "自适应" }, { value: "320", label: "320 px" }, { value: "390", label: "390 px" }]} /></div>
+       {section === "prompt-bar" && <>
+         <div className="space-y-2"><Label htmlFor={`${id}-variant`}>输入框变体</Label><QuestionSelect id={`${id}-variant`} label="输入框变体" value={variant!} onChange={v => setVariant(v as typeof variant)} items={[{ value: "Rounded", label: "Rounded" }, { value: "Pill", label: "Pill" }]} /></div>
+         <div className="space-y-2"><Label htmlFor={`${id}-dictation`}>听写状态</Label><QuestionSelect id={`${id}-dictation`} label="听写状态" value={dictation} onChange={v => { setDictation(v as typeof dictation); if (v === "inserted") setValue("请为高二三班准备函数练习。"); }} items={Object.entries(dictationLabels).map(([value, label]) => ({ value, label }))} /></div>
+@@ -80,14 +85,15 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
+       <Button variant="outline" size="sm" onClick={() => setLevel(level === undefined ? .25 : level === .25 ? .85 : undefined)}>电平：{level === undefined ? "未知" : level === .25 ? "低" : "高"}</Button>
+       <Button variant="outline" size="sm" onClick={() => setValue("请核对二次函数 f(x) = ax² + bx + c 的判别式 Δ = b² − 4ac，并为高二三班整理一份保留原题条件、完整推导过程与材料出处的函数单元复习练习。")}>长中文与公式草稿</Button>
+       <Button variant="outline" size="sm" aria-pressed={attachments} onClick={() => setAttachments(!attachments)}>附件夹具</Button><Button variant="outline" size="sm" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)}>隐私说明夹具</Button>
++      <Button variant="outline" size="sm" aria-pressed={showModelSelector} onClick={() => setShowModelSelector(!showModelSelector)}>模型入口：{showModelSelector ? "显示" : "隐藏"}</Button>
+     </div>}
+-    <div data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} data-preview-width={width} className="mx-auto min-w-0 max-w-full rounded-xl border bg-background p-4 text-foreground" style={{ width: width === "390" ? 390 : "100%" }}>
+-      {section === "prompt-bar" ? <AgentPromptBar {...fixtures} value={value} onValueChange={setValue} onIntent={onIntent} variant={variant} modelId={modelId} dictation={dictationFact} voice={{ state: voice }} attachments={attachments ? [{ id: "material", label: "函数单元复习材料.pdf" }] : []}
++    <div data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} data-preview-width={width} className="mx-auto min-w-0 max-w-full rounded-xl border bg-background p-4 text-foreground" style={{ width: width === "auto" ? "100%" : Number(width) }}>
++      {section === "prompt-bar" ? <AgentPromptBar {...fixtures} value={value} onValueChange={setValue} onIntent={onIntent} variant={variant} modelId={modelId} showModelSelector={showModelSelector} dictation={dictationFact} voice={{ state: voice }} attachments={attachments ? [{ id: "material", label: "函数单元复习材料.pdf" }] : []}
+         privacy={{ open: privacy, description: "启用后，录音可能交给宿主配置的识别服务处理。请确认服务提供方及保存方式。此示例不录音。" }}
+         contextActions={<><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("范围入口意图")}>范围</Button><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("材料入口意图")}>材料</Button><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("题篮入口意图")}>题篮</Button></>} />
+         : section === "agent-mark" ? <MarkSamples /> : <ConversationSample />}
+     </div>
+     {section === "prompt-bar" && <><p role="status" className="break-all text-ui-hint">最近意图：{intent}</p><details><summary className="cursor-pointer text-ui-action">全部语音状态样本</summary><div className="mt-4 grid gap-4 sm:grid-cols-2">{Object.keys(dictationLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={{ state: state as AgentDictation["state"], reason: state === "error" ? "宿主报告连接中断" : undefined }} voice={noService} onIntent={onIntent} /></Card>)}{Object.keys(voiceModeLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={noService} voice={{ state: state as AgentVoiceMode["state"] }} onIntent={onIntent} /></Card>)}<Card className="p-4"><AgentVoiceStatus dictation={{ state: "listening", level: .6 }} voice={noService} onIntent={onIntent} /></Card></div></details></>}
+-    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、attachments、contextActions、dictation、voice、privacy、onIntent。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。使用反相文字背景对，业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
++    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、showModelSelector、attachments、contextActions、dictation、voice、privacy、onIntent。showModelSelector 默认 true，false 时不渲染模型入口；学校是否开放由宿主提供。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。使用反相文字背景对，业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
+   </div>
+ }
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index 59b79b0..5077fad 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,19 @@
+ 
+ ## 当前
+ 
++- 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
++- 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
++- 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
++- CI-11：固定 Menu / Popover / Select / Dialog / Tooltip 已能传递 `portalProps.container`，PromptBar 已接外层根容器，不新增共享封装。其他未传容器的 Agent 浮层保留 body 默认值；局部主题传递归 Workspace R2，详见[Portal 调用清单](evidence/r1-20261016/portal-audit.md)。这不是全部浮层主题已通过的结论。
++- 定向证据：新增 11 项测试在修改前为 3 通过 / 8 失败；实现后连同既有对话 / 夜图测试 50/50 通过。新增测试 15/15 内存变异被检出，修改的既有隔离测试 2/2 内存变异被检出，冻结 coss 未写入；[变异明细](evidence/r1-20261016/mutations.json)。本轮五项完整工程检查均退出 0：`node scripts/check-math-font.mjs` 字体 / 许可通过；`node scripts/check-typography.mjs` 308 个 TSX 通过；`node node_modules/vinext/dist/cli.js build` 成功；先构建后 `node --test tests/*.test.mjs` 为 **2168/2168，0 失败、0 跳过**；`node node_modules/typescript/bin/tsc --noEmit` 0 错误。[命令与日志](evidence/r1-20261016/engineering.json)。状态及 guide 回填后的同步 / 构建 / 文档专项核对另记[收尾记录](evidence/r1-20261016/finalization.json)，不冒充浏览器验收。
++- 检查周期：Workspace 规划 S0 第 R1 轮，Builder 实施 / 自测不等同 Supervisor Review 或 PO 批准，尚未记为已验收。继承上一当前的 Blueprint 3/3 累计浏览器矩阵未收口状态，**不重置旧周期**。本轮按 P73 完成全套工程检查；R3 / R6 / R9 仍按 Workspace 规划触发累计完整回归，旧周期累计浏览器范围由 Supervisor 补齐或 PO 调整。
++- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
++- 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
++
++## 历史
++
++### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：夜图补丁恢复 · 2026-10-16；基线 `773724595ab36d0574252da8503821d93eb9c6a1`，分支 `feat/blueprint-night`。用户确认警告色修复已收尾并允许合并，已先合并 PR #194；下方 BPW1 原记录完整保留为历史。
+ - 授权与范围：接续 BPv9 交接、按最新 main 处理冲突、更新夜图配色测试、自测并同步合并。增加 `blueprint-night`，复用现有蓝图几何和本轮 main 的通用组件 / 编辑式排版；必要接入包括主题注册、Providers 的原生色系、Foundations 预览、图表与热力图；不新增组件目录条目。
+ - 冲突处理：原补丁与新 main 不直接兼容，先保留当前 201 条 CSS 规则，再扩展家族选择器与预览排除；适配 diff 经 `git apply --check` 后应用。夜图图表固定为交接时的独立回退色板，不覆盖 P69 核心深色；白图警告前景仍为 `#995909`。原 stash / 补丁保留，旧 `evidence/v9/` 不覆盖；来源与实际 stash 父提交修正见[检查记录](evidence/night-20261016/checks.md)。
+@@ -14,8 +27,6 @@
+ - 检查周期：本轮为当前周期第 3/3 轮，工程完整回归与独立代码综合审查完成；本次浏览器是上述受影响代表矩阵，未重跑此前所有组件 / 浮层的累计完整交互矩阵，因此**不将累计浏览器完整回归记为完成、不重置周期**。下一轮收口须补齐累计浏览器矩阵或由 PO 调整边界；同轮修复不另计数。
+ - 保留限制：夜图普通分隔线在画布 / 纸面约 1.58 / 1.45:1，结构控件应使用高对比 `--line`；夜图浅色系列上的白色图案不足 3:1，夜图色板 / 连续色阶 / 图案仍按原交接回退，待设计确认。Recharts 仍主要靠颜色区分系列。热力图隐藏披露例外仅单元 / SSR 验证；DOM 主题预览不证明 React 图表 Context 隔离；实体打印、真机、读屏器、原生缩放、全站像素与全图表视觉矩阵未验。
+ 
+-## 历史
+-
+ ### BPW1 · 蓝图警告前景色对比度 · 2026-10-16（原当前，原样保留）
+ 
+ - 轮次：BPW1 · 蓝图警告前景色对比度 · 2026-10-16；开工基线 `c5d236339d1d811df06982c753f3a29ecc786e51`，分支 `fix/blueprint-warning-contrast`；开工工作树干净。
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index a941e4c..9fabdac 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -2587,7 +2587,7 @@ AgentContextSummary 的选用、读取、Agent 本次参考与成果引用分别
+ - `AgentArtifactOutput`：语义 33 的受控输出配置、文件交付与队列／历史呈现；27 报告执行事实，28 承载文稿内容，QuestionPrint 可作打印预览插槽。详见“成果物输出 v0.1”，不内建文件生成或下载服务。
+ - `AgentContentInput`：语义 06 的任务材料／正文输入，复用 Textarea / InputGroup / Field，可选组合当前草稿公式预览；不承担已有文稿的完整阅读编辑（28）。详见“内容输入 v0.1”。
+ - `AgentComposer` / `AgentTaskProgress`：给 Agent 的受控指令输入、提交/停止事件与外部步骤状态。Composer 不冒充内容编辑器，题干、答案与粘贴文章交给 06。步骤可带 `detail`；`AgentStepStatus` 在两个 Agent 子流程及监视器详情中复用 14px 状态徽标，图标、状态文字及颜色共同表达。不连接模型或模拟执行器。
+-- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
++- `AgentQuestionCard`：`question / description / options / value / onValueChange / children / disabled`。固定提示为中性「补充一个信息」，不暗示批准或授权；具体问题和说明仍由调用方提供。选项用 RadioGroup；补充输入通过 children 组合。选中不等于执行或最终保存。
+ - `AgentContextList`：`items: {id,title,location,description?,status?}[]`，可选 `onInspect(id)`。来源、版本与页码由调用方提供，组件不检索、不读取文件。
+ - `AgentChangeReview`：`title / before / after / reason / decision / onDecision`，可传 `disabled / disabledReason`。新增可选 `beforeLabel / afterLabel / scope / beforePreview / afterPreview / onResetDecision`；原字符串调用兼容，预览插槽不代表领域差异算法。`decision` 必传；采纳、保留与重新选择只返回意图。调用方核验原文，负责草稿变更、撤销旧核对状态和独立保存。
+ - `AgentSubjectEditor`：语义 42，单公式原文编辑与排版，和 06 整段输入、28 已有文稿、MathContent 静态阅读分工；详见“学科专用编辑器 v0.1（数学公式）”。
+@@ -2717,7 +2717,13 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺
+ 
+ ### 输入与语音 API
+ 
+-`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
++`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`showModelSelector`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
++
++**R1 / CI-01（2026-10-16）**：`showModelSelector?: boolean` 默认 `true`，保持旧调用行为（包括空 `models` 时的禁用入口）；宿主传 `false` 时整个模型 Menu 不渲染，入口及选项均不进入 DOM。关闭可用性会清理菜单展开状态，再开放不会自动弹出；草稿、`modelId`、来源与命令保留。学校是否开放由宿主决定，组件不做权限判断。组件页提供模型入口显隐、五主题及 320px 夹具。
++
++**R1 / CI-08、CI-09**：用户气泡沿用 `data-agent-message="user"`；附件增加稳定 `data-slot="agent-message-attachment"`。仅 `blueprint.css` 将两者在 `blueprint` / `blueprint-night` 下归零圆角，并排除嵌套核心预览。白图 PromptBar / AgentSurface 内的按钮使用蓝色单 outline（2px、偏移 2px），去掉叠加的 coss ring；用户消息正文的链接实际处于墨底，单 outline 使用既有 `--primary-foreground` 白色。夜图焦点不属于本轮 §5.4 改造；核心主题样式保留。源码与单元检查不代替浏览器主题、键盘及裁切验收。
++
++**R1 / CI-11 组件侧核查**：固定 coss 的 Menu / Popover / Select / Dialog / Tooltip 均支持 `portalProps.container`，可承载宿主主题容器，不新增共享封装。PromptBar 的三个菜单／建议浮层和语音说明已使用输入表面外的根容器。其他未传容器的 Agent 内部浮层仍默认挂到 body，局部预览主题不会自然越过 Portal；R2 须按实际调用位置传递主题边界，不能把原语支持误记为所有嵌套预览已验收。
+ 
+ **对话输入标签例外（PO 2026-09-29 确认）**：`AgentPromptBar` 的固定 label 默认「消息」，通过 `sr-only` 视觉隐藏并与输入关联，读屏仍获得可访问名；不使用 placeholder 代替标签。此处为对话输入，按 Codex / Claude / Beautiful UI 的对话惯例减少重复视觉信息，是 AGENTS.md「基础表单使用常驻固定标签」的特定例外；其他基础表单仍使用可见固定标签。
+ 
+diff --git a/lib/prism-next/blueprint-guide.json b/lib/prism-next/blueprint-guide.json
+index bc536fb..5b9abd7 100644
+--- a/lib/prism-next/blueprint-guide.json
++++ b/lib/prism-next/blueprint-guide.json
+@@ -7496,7 +7496,7 @@
+     {
+       "source": "docs/blueprint/STATUS.md",
+       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+-      "sha256": "9ac96e40d024b997e18e4dc4efa892da7aa5de811da8d5324c34903ada3dfdc8"
++      "sha256": "dd9255d77736f4cf392dc151527626e834fa8be06379039c3f36e2f27db8bb3b"
+     },
+     {
+       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
+diff --git a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+index 59b79b0..5077fad 100644
+--- a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
++++ b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+@@ -4,6 +4,19 @@
+ 
+ ## 当前
+ 
++- 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
++- 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
++- 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
++- CI-11：固定 Menu / Popover / Select / Dialog / Tooltip 已能传递 `portalProps.container`，PromptBar 已接外层根容器，不新增共享封装。其他未传容器的 Agent 浮层保留 body 默认值；局部主题传递归 Workspace R2，详见[Portal 调用清单](evidence/r1-20261016/portal-audit.md)。这不是全部浮层主题已通过的结论。
++- 定向证据：新增 11 项测试在修改前为 3 通过 / 8 失败；实现后连同既有对话 / 夜图测试 50/50 通过。新增测试 15/15 内存变异被检出，修改的既有隔离测试 2/2 内存变异被检出，冻结 coss 未写入；[变异明细](evidence/r1-20261016/mutations.json)。本轮五项完整工程检查均退出 0：`node scripts/check-math-font.mjs` 字体 / 许可通过；`node scripts/check-typography.mjs` 308 个 TSX 通过；`node node_modules/vinext/dist/cli.js build` 成功；先构建后 `node --test tests/*.test.mjs` 为 **2168/2168，0 失败、0 跳过**；`node node_modules/typescript/bin/tsc --noEmit` 0 错误。[命令与日志](evidence/r1-20261016/engineering.json)。状态及 guide 回填后的同步 / 构建 / 文档专项核对另记[收尾记录](evidence/r1-20261016/finalization.json)，不冒充浏览器验收。
++- 检查周期：Workspace 规划 S0 第 R1 轮，Builder 实施 / 自测不等同 Supervisor Review 或 PO 批准，尚未记为已验收。继承上一当前的 Blueprint 3/3 累计浏览器矩阵未收口状态，**不重置旧周期**。本轮按 P73 完成全套工程检查；R3 / R6 / R9 仍按 Workspace 规划触发累计完整回归，旧周期累计浏览器范围由 Supervisor 补齐或 PO 调整。
++- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
++- 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
++
++## 历史
++
++### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：夜图补丁恢复 · 2026-10-16；基线 `773724595ab36d0574252da8503821d93eb9c6a1`，分支 `feat/blueprint-night`。用户确认警告色修复已收尾并允许合并，已先合并 PR #194；下方 BPW1 原记录完整保留为历史。
+ - 授权与范围：接续 BPv9 交接、按最新 main 处理冲突、更新夜图配色测试、自测并同步合并。增加 `blueprint-night`，复用现有蓝图几何和本轮 main 的通用组件 / 编辑式排版；必要接入包括主题注册、Providers 的原生色系、Foundations 预览、图表与热力图；不新增组件目录条目。
+ - 冲突处理：原补丁与新 main 不直接兼容，先保留当前 201 条 CSS 规则，再扩展家族选择器与预览排除；适配 diff 经 `git apply --check` 后应用。夜图图表固定为交接时的独立回退色板，不覆盖 P69 核心深色；白图警告前景仍为 `#995909`。原 stash / 补丁保留，旧 `evidence/v9/` 不覆盖；来源与实际 stash 父提交修正见[检查记录](evidence/night-20261016/checks.md)。
+@@ -14,8 +27,6 @@
+ - 检查周期：本轮为当前周期第 3/3 轮，工程完整回归与独立代码综合审查完成；本次浏览器是上述受影响代表矩阵，未重跑此前所有组件 / 浮层的累计完整交互矩阵，因此**不将累计浏览器完整回归记为完成、不重置周期**。下一轮收口须补齐累计浏览器矩阵或由 PO 调整边界；同轮修复不另计数。
+ - 保留限制：夜图普通分隔线在画布 / 纸面约 1.58 / 1.45:1，结构控件应使用高对比 `--line`；夜图浅色系列上的白色图案不足 3:1，夜图色板 / 连续色阶 / 图案仍按原交接回退，待设计确认。Recharts 仍主要靠颜色区分系列。热力图隐藏披露例外仅单元 / SSR 验证；DOM 主题预览不证明 React 图表 Context 隔离；实体打印、真机、读屏器、原生缩放、全站像素与全图表视觉矩阵未验。
+ 
+-## 历史
+-
+ ### BPW1 · 蓝图警告前景色对比度 · 2026-10-16（原当前，原样保留）
+ 
+ - 轮次：BPW1 · 蓝图警告前景色对比度 · 2026-10-16；开工基线 `c5d236339d1d811df06982c753f3a29ecc786e51`，分支 `fix/blueprint-warning-contrast`；开工工作树干净。
+diff --git a/tests/blueprint-night.test.mjs b/tests/blueprint-night.test.mjs
+index 67bbb77..d462198 100644
+--- a/tests/blueprint-night.test.mjs
++++ b/tests/blueprint-night.test.mjs
+@@ -148,10 +148,11 @@ test('night dark utilities include root/descendants and dark-night nesting; ligh
+   }
+ });
+ 
+-test('all shared Blueprint rules expand theme and guards, including pseudo-elements; night-only colours exclude white previews', () => {
++test('shared, white-only and night-only Blueprint rules enforce matching preview boundaries, including pseudo-elements', () => {
+   const shared=':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
+   const guard=`:not(:where([data-agent-preview][data-prism-theme]:not(${shared}), [data-agent-preview][data-prism-theme]:not(${shared}) *))`;
+   const nightGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *))';
++  const whiteGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))';
+   bp.walkRules(rule=>{
+     for (const s of rule.selectors) {
+       if (s.startsWith('.bp-')) continue;
+@@ -160,18 +161,27 @@ test('all shared Blueprint rules expand theme and guards, including pseudo-eleme
+         continue;
+       }
+       if (s === `:where(html${shared}) body`) continue;
+-      const g=s.includes(guard)?guard:nightGuard;
++      const g=s.includes(guard)?guard:s.includes(nightGuard)?nightGuard:whiteGuard;
+       assert.ok(s.includes(g),s);
+       if (s.includes('::')) assert.ok(s.indexOf(g)<s.indexOf('::'),s);
+       if (g===guard) assert.ok(s.slice(0,s.indexOf(g)).includes(shared),s);
++      if (g===whiteGuard) {
++        // Blueprint §5.4 excludes night. Only the authorized Agent focus repair
++        // is white-only; this is not a blanket exemption from the family guard.
++        assert.ok(s.startsWith('[data-prism-theme="blueprint"] '),s);
++        assert.match(s,/data-agent-prompt-bar|data-agent-message="user"/);
++        assert.ok(s.includes(':focus-visible'),s);
++        assert.ok(rule.nodes.every(d=>d.type==='decl'&&['outline','outline-offset','box-shadow'].includes(d.prop)),s);
++      }
+     }
+   });
+-  const accept=parseSelector(`.probe${guard}`), nightAccept=parseSelector(`.probe${nightGuard}`);
++  const accept=parseSelector(`.probe${guard}`), nightAccept=parseSelector(`.probe${nightGuard}`), whiteAccept=parseSelector(`.probe${whiteGuard}`);
+   for (const outer of values) for (const inner of values) {
+     const preview=element(inner,element(outer),true);
+     for (const n of [preview,element(undefined,preview)]) {
+       assert.equal(matches(accept,n),isBlueprintTheme(inner),`${outer}/${inner}`);
+       assert.equal(matches(nightAccept,n),inner===night,`${outer}/${inner}`);
++      assert.equal(matches(whiteAccept,n),inner==='blueprint',`${outer}/${inner}`);
+     }
+   }
+ });
+diff --git a/tests/agent-blueprint-r1.test.mjs b/tests/agent-blueprint-r1.test.mjs
+new file mode 100644
+index 0000000..7f48a5c
+--- /dev/null
++++ b/tests/agent-blueprint-r1.test.mjs
+@@ -0,0 +1,233 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import { transform } from 'lightningcss';
++import React from 'react';
++import { renderToStaticMarkup as render } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
++const runtime = await createTestRuntime('agent-blueprint-r1');
++const exports = `
++export { AgentPromptBar } from './components/prism-next/agent-prompt-bar';
++export { AgentQuestionCard } from './components/prism-next/agent-components';
++export { AgentMessage, AgentMessageAttachment } from './components/prism-next/agent-message';
++export { AgentExecutionConfirmation } from './components/prism-next/agent-semantic-components';
++export { MenuPopup } from './components/coss/menu';
++export { PopoverPopup } from './components/coss/popover';
++export { SelectPopup } from './components/coss/select';
++export { DialogPopup } from './components/coss/dialog';
++export { TooltipPopup } from './components/coss/tooltip';`;
++async function bundle(name, plugins = []) {
++  const result = await build({ stdin: { contents: exports, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins });
++  const file = new URL(`${name}.mjs`, runtime);
++  writeFileSync(file, result.outputFiles[0].text);
++  return import(file);
++}
++const api = await bundle('actual');
++const h = React.createElement;
++const base = { value: '', onValueChange() {}, onIntent() {}, sources: [], commands: [], models: [], dictation: { state: 'not-connected' }, voice: { state: 'not-connected' } };
++
++// Execute the actual component and callbacks with deterministic hook scheduling.
++// This tests state transitions and container plumbing, not DOM focus or portals.
++const probe = await bundle('hooks', [{ name: 'prompt-hooks', setup(b) {
++  b.onLoad({ filter: /agent-prompt-bar\.tsx$/ }, args => ({ loader: 'tsx', contents: readFileSync(args.path, 'utf8').replace(
++    'import { useEffect, useId, useRef, useState, type ReactNode } from "react"',
++    `import type { ReactNode } from "react";
++const useId = () => 'p73-prompt';
++const useRef = (initial: any) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; return p.values[i] ??= { current: initial }; };
++const useState = (initial: any) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (next: any) => { const v = typeof next === 'function' ? next(p.values[i]) : next; if (!Object.is(v, p.values[i])) { p.values[i] = v; p.dirty = true; } }]; };
++const useEffect = (effect: any, deps: any[]) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; if (!p.effects[i] || deps.some((d, j) => !Object.is(d, p.effects[i].deps[j]))) { p.pending.push(() => { p.effects[i]?.cleanup?.(); p.effects[i] = { deps, cleanup: effect() }; }); } };`
++  ) }));
++} }]);
++
++test('CI-01: omitted/true retain the old model entry, including a disabled empty menu', () => {
++  for (const variant of ['Rounded', 'Pill']) for (const models of [[], [{ id: 'm', label: '教学助手' }]]) {
++    const props = { ...base, variant, models, modelId: 'm' };
++    const normalize = html => html.replace(/_R_[^"\s<>]*/g, 'ID');
++    const legacy = render(h(api.AgentPromptBar, props));
++    assert.equal(normalize(legacy), normalize(render(h(api.AgentPromptBar, { ...props, showModelSelector: true }))));
++    assert.match(legacy, /<button[^>]*aria-label="选择模型：/);
++    const trigger = legacy.match(/<button[^>]*aria-label="选择模型：[^"]*"[^>]*>/)[0];
++    assert.equal(trigger.includes('disabled=""'), models.length === 0);
++  }
++});
++
++test('CI-01: false removes the complete model entry with empty or populated models in both variants', () => {
++  for (const variant of ['Rounded', 'Pill']) for (const models of [[], [{ id: 'm', label: '不应泄漏的模型名称' }]]) {
++    const html = render(h(api.AgentPromptBar, { ...base, variant, models, modelId: 'm', showModelSelector: false, value: '保留草稿' }));
++    assert.equal(/选择模型|不应泄漏的模型名称/.test(html), false, 'hidden models must not appear in SSR');
++    assert.match(html, /添加附件与来源/);
++    assert.match(html, /发送消息/);
++    assert.match(html, />保留草稿<\/textarea>/);
++  }
++});
++
++function prompt(extra = {}) {
++  const state = { cursor: 0, values: [], effects: [], pending: [], dirty: false }, intents = [];
++  const props = { ...base, models: [{ id: 'm', label: '教学助手' }], sources: [{ id: 's', label: '材料' }], ...extra, onIntent: i => intents.push(i), onValueChange: value => { props.value = value; } };
++  function nodes() {
++    globalThis.__p73Hooks = state;
++    let tree, retries = 0;
++    do {
++      assert.ok(++retries < 10, 'render must converge');
++      state.cursor = 0; state.dirty = false; state.pending = [];
++      tree = probe.AgentPromptBar(props);
++      state.pending.forEach(effect => effect());
++    } while (state.dirty);
++    const result = [];
++    const visit = node => { if (Array.isArray(node)) return node.forEach(visit); if (!React.isValidElement(node)) return; result.push(node); visit(node.props.children); };
++    visit(tree); return result;
++  }
++  const menu = () => nodes().find(n => n.props.onOpenChange && n.props.children?.[0]?.props.render?.props['aria-label']?.startsWith('选择模型：'));
++  return { props, nodes, menu, intents };
++}
++
++test('CI-01: closing availability while the model menu is open restores source suggestions and does not reopen later', () => {
++  const p = prompt({ value: '@' });
++  p.menu().props.onOpenChange(true);
++  assert.equal(p.menu().props.open, true);
++  p.props.showModelSelector = false;
++  assert.equal(p.menu(), undefined);
++  p.props.showModelSelector = true;
++  assert.equal(p.menu().props.open, false, 'reopening availability must not revive an old popup');
++  p.menu().props.onOpenChange(true);
++  p.props.showModelSelector = false;
++  assert.equal(p.menu(), undefined);
++  // Editing after dismissal must still open the source list; hiding an open menu cannot block it.
++  p.nodes().find(n => n.props.role === 'combobox').props.onChange({ target: { value: '@材' } });
++  assert.equal(p.nodes().find(n => n.props.role === 'combobox').props['aria-expanded'], true);
++  p.props.showModelSelector = true;
++  assert.equal(p.menu().props.open, false);
++  assert.deepEqual(p.intents, []);
++});
++
++test('CI-07: clarification has a neutral prompt and retains controlled choices, description and supplemental content', () => {
++  const changes = [];
++  const html = render(h(api.AgentQuestionCard, { question: '需要哪些材料？', description: '选择仅暂存。', options: [{ value: 'a', label: '题目' }, { value: 'b', label: '题目与解答' }], value: 'a', onValueChange: v => changes.push(v) }, h('p', null, '可以补充要求。')));
++  assert.match(html, /补充一个信息/);
++  assert.doesNotMatch(html, /需要你确认|批准|授权/);
++  for (const text of ['需要哪些材料？', '选择仅暂存。', '题目与解答', '可以补充要求。']) assert.ok(html.includes(text));
++  assert.match(html, /role="radiogroup"/);
++  assert.match(html, /role="radio"[^>]*aria-checked="true"/);
++  assert.deepEqual(changes, []);
++});
++
++test('CI-08: message attachment exposes a stable styling hook without removing the legacy radius class', () => {
++  const html = render(h(api.AgentMessage, { speaker: 'user', attachments: h(api.AgentMessageAttachment, null, '长中文材料.pdf') }, '原消息'));
++  assert.match(html, /data-agent-message="user"[^>]*rounded-xl/);
++  assert.match(html, /data-slot="agent-message-attachment"[^>]*rounded-md/);
++  assert.match(html, /长中文材料.pdf/);
++});
++
++// Parse production selectors, then evaluate their supported subset on synthetic
++// theme trees. This is isolation evidence, not browser cascade/layout evidence.
++function parseSelector(selector) {
++  let ast;
++  transform({ code: Buffer.from(`${selector}{color:red}`), visitor: { Selector(s) { ast = s; } } });
++  assert.ok(ast); return ast;
++}
++function matches(selector, node) {
++  const split = selector.findLastIndex(s => s.type === 'combinator');
++  if (split >= 0) {
++    assert.equal(selector[split].value, 'descendant');
++    if (!matches(selector.slice(split + 1), node)) return false;
++    for (let p = node.parent; p; p = p.parent) if (matches(selector.slice(0, split), p)) return true;
++    return false;
++  }
++  return selector.every(s => {
++    if (s.type === 'universal') return true;
++    if (s.type === 'type') return node.tag === s.name;
++    if (s.type === 'class') return node.classes?.includes(s.name) ?? false;
++    if (s.type === 'attribute') {
++      if (!s.operation) return Object.hasOwn(node.attrs, s.name);
++      assert.equal(s.operation.operator, 'equal'); return node.attrs[s.name] === s.operation.value;
++    }
++    if (s.type === 'pseudo-class') {
++      if (s.kind === 'focus-visible') return node.focused ?? false;
++      assert.ok(['is', 'where', 'not'].includes(s.kind), s.kind);
++      const any = s.selectors.some(child => matches(child, node)); return s.kind === 'not' ? !any : any;
++    }
++    assert.fail(`unsupported selector: ${JSON.stringify(s)}`);
++  });
++}
++const css = postcss.parse(read('app/(next)/next/blueprint.css'));
++const rules = css.nodes.filter(n => n.type === 'rule' && /data-agent-(?:message|prompt-bar|surface)|agent-message-attachment/.test(n.selector)).map(rule => ({ rule, selectors: rule.selectors.map(parseSelector) }));
++function style(node) {
++  const result = {};
++  for (const { rule, selectors } of rules) if (selectors.some(selector => matches(selector, node))) for (const d of rule.nodes) if (d.type === 'decl') result[d.prop] = d.value;
++  return result;
++}
++const node = (attrs = {}, parent, extra = {}) => ({ attrs, parent, ...extra });
++const themes = ['light', 'paper', 'dark', 'blueprint', 'blueprint-night'];
++const boundary = (outer, inner) => inner ? node({ 'data-prism-theme': inner, 'data-agent-preview': '' }, node({ 'data-prism-theme': outer })) : node({ 'data-prism-theme': outer });
++
++test('CI-08: square bubbles/attachments apply only to both blueprints, excluding core preview roots and descendants', () => {
++  for (const outer of themes) for (const inner of [undefined, ...themes]) {
++    const root = boundary(outer, inner), active = ['blueprint', 'blueprint-night'].includes(inner ?? outer);
++    for (const attrs of [{ 'data-agent-message': 'user' }, { 'data-slot': 'agent-message-attachment' }]) {
++      const expected = active ? '0' : undefined;
++      assert.equal(style(node(attrs, root))['border-radius'], expected, `${outer}/${inner}`);
++      // The preview root itself must also be excluded if it is a styled target.
++      if (inner && !active) assert.equal(style({ ...root, attrs: { ...root.attrs, ...attrs } })['border-radius'], undefined);
++    }
++    assert.equal(style(node({ 'data-agent-message': 'agent' }, root))['border-radius'], undefined);
++  }
++});
++
++test('CI-09: actual send and confirmation buttons keep a single blue 2px outline on adjacent paper', () => {
++  const send = render(h(api.AgentPromptBar, { ...base, value: '草稿' })).match(/<button[^>]*aria-label="发送消息"[^>]*>/)[0];
++  const confirmation = render(h(api.AgentExecutionConfirmation, { title: '范围', target: '材料', version: 'v1', effects: ['保留原文'], confirmation: { state: 'ready', confirm: { label: '提交', onAction() {} } } }));
++  assert.match(send, /bg-primary/); assert.match(confirmation, /bg-primary/);
++  assert.match(send, /focus-visible:ring-2/); // The pinned coss ring needs a Blueprint-only reset.
++  for (const marker of ['data-agent-prompt-bar', 'data-agent-surface']) {
++    const button = node({ 'data-slot': 'button' }, node({ [marker]: '' }, boundary('blueprint')), { tag: 'button', focused: true });
++    assert.deepEqual(style(button), { outline: '2px solid var(--ring)', 'outline-offset': '2px', 'box-shadow': 'none' });
++    assert.deepEqual(style({ ...button, focused: false }), {});
++  }
++});
++
++test('CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button', () => {
++  const bubble = node({ 'data-agent-message': 'user' }, boundary('blueprint'));
++  const link = node({}, node({}, bubble, { classes: ['agent-message-content'] }), { tag: 'a', focused: true });
++  assert.deepEqual(style(link), { outline: '2px solid var(--primary-foreground)', 'outline-offset': '2px', 'box-shadow': 'none' });
++  assert.deepEqual(style({ ...link, focused: false }), {});
++  assert.deepEqual(style(node({}, node({ 'data-agent-message': 'agent' }, boundary('blueprint')), { tag: 'a', focused: true })), {});
++});
++
++test('CI-09: core themes and night retain their focus behavior, including preview roots and descendants', () => {
++  for (const outer of themes) for (const inner of [undefined, ...themes]) {
++    const root = boundary(outer, inner);
++    const active = (inner ?? outer) === 'blueprint';
++    const button = node({ 'data-slot': 'button' }, node({ 'data-agent-surface': '' }, root), { tag: 'button', focused: true });
++    assert.equal(style(button).outline, active ? '2px solid var(--ring)' : undefined, `${outer}/${inner}`);
++    if (inner && inner !== 'blueprint') {
++      const previewButton = { ...root, parent: node({ 'data-agent-surface': '' }, root.parent), tag: 'button', focused: true };
++      assert.deepEqual(style(previewButton), {});
++    }
++  }
++});
++
++test('CI-11: existing Menu/Popover/Select/Dialog/Tooltip forward the exact host container and portal attributes', () => {
++  for (const name of ['MenuPopup', 'PopoverPopup', 'SelectPopup', 'DialogPopup', 'TooltipPopup']) {
++    const container = { current: { fixture: 'scoped-theme-root' } };
++    const tree = api[name]({ portalProps: { container, 'data-prism-theme': 'blueprint', 'data-agent-preview': '' }, children: '内容' });
++    assert.equal(tree.props.container, container, name);
++    assert.equal(tree.props['data-prism-theme'], 'blueprint', name);
++    assert.equal(tree.props['data-agent-preview'], '', name);
++    assert.equal(api[name]({ children: '内容' }).props.container, undefined, `${name} keeps its default`);
++  }
++});
++
++test('CI-11: PromptBar menus, suggestions and voice explanations share its root outside the clipped input surface', () => {
++  const p = prompt({ value: '@' }), nodes = p.nodes(), root = nodes[0].props.ref;
++  const popups = nodes.filter(n => n.props.portalProps);
++  assert.equal(popups.length, 3);
++  for (const popup of popups) assert.equal(popup.props.portalProps.container, root);
++  assert.equal(nodes.find(n => n.props.portalContainer).props.portalContainer, root);
++  assert.notEqual(nodes.find(n => n.props.className?.includes('agent-prompt-surface')).props.ref, root);
++});

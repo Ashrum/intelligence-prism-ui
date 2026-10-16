@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-16",
+  "branch": "feat/agent-blueprint-r1",
+  "head": "5644554aa6920fdbffdcbd1fdac617c20af1cc2e",
+  "initialWorktree": "clean (git status --short --branch returned only branch at task start)",
+  "authorization": "/Users/OLE/HermesWork/.supervisor/prism/task-P73.md",
+  "preamble": "/Users/OLE/HermesWork/.supervisor/builder-preamble.md",
+  "baselineReproduction": {
+    "command": "node --test --test-reporter=tap tests/agent-blueprint-r1.test.mjs",
+    "exitCode": 1,
+    "tests": 11,
+    "pass": 3,
+    "fail": 8,
+    "note": "New tests against the unchanged runtime before implementation; not an existing-suite regression."
+  }
+}

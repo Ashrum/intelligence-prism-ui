@@ -4,6 +4,19 @@
 
 ## 当前
 
+- 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
+- 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
+- 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
+- CI-11：固定 Menu / Popover / Select / Dialog / Tooltip 已能传递 `portalProps.container`，PromptBar 已接外层根容器，不新增共享封装。其他未传容器的 Agent 浮层保留 body 默认值；局部主题传递归 Workspace R2，详见[Portal 调用清单](evidence/r1-20261016/portal-audit.md)。这不是全部浮层主题已通过的结论。
+- 定向证据：新增 11 项测试在修改前为 3 通过 / 8 失败；实现后连同既有对话 / 夜图测试 50/50 通过。新增测试 15/15 内存变异被检出，修改的既有隔离测试 2/2 内存变异被检出，冻结 coss 未写入；[变异明细](evidence/r1-20261016/mutations.json)。本轮五项完整工程检查均退出 0：`node scripts/check-math-font.mjs` 字体 / 许可通过；`node scripts/check-typography.mjs` 308 个 TSX 通过；`node node_modules/vinext/dist/cli.js build` 成功；先构建后 `node --test tests/*.test.mjs` 为 **2168/2168，0 失败、0 跳过**；`node node_modules/typescript/bin/tsc --noEmit` 0 错误。[命令与日志](evidence/r1-20261016/engineering.json)。状态及 guide 回填后的同步 / 构建 / 文档专项核对另记[收尾记录](evidence/r1-20261016/finalization.json)，不冒充浏览器验收。
+- 检查周期：Workspace 规划 S0 第 R1 轮，Builder 实施 / 自测不等同 Supervisor Review 或 PO 批准，尚未记为已验收。继承上一当前的 Blueprint 3/3 累计浏览器矩阵未收口状态，**不重置旧周期**。本轮按 P73 完成全套工程检查；R3 / R6 / R9 仍按 Workspace 规划触发累计完整回归，旧周期累计浏览器范围由 Supervisor 补齐或 PO 调整。
+- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
+- 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
+
+## 历史
+
+### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
+
 - 轮次：夜图补丁恢复 · 2026-10-16；基线 `773724595ab36d0574252da8503821d93eb9c6a1`，分支 `feat/blueprint-night`。用户确认警告色修复已收尾并允许合并，已先合并 PR #194；下方 BPW1 原记录完整保留为历史。
 - 授权与范围：接续 BPv9 交接、按最新 main 处理冲突、更新夜图配色测试、自测并同步合并。增加 `blueprint-night`，复用现有蓝图几何和本轮 main 的通用组件 / 编辑式排版；必要接入包括主题注册、Providers 的原生色系、Foundations 预览、图表与热力图；不新增组件目录条目。
 - 冲突处理：原补丁与新 main 不直接兼容，先保留当前 201 条 CSS 规则，再扩展家族选择器与预览排除；适配 diff 经 `git apply --check` 后应用。夜图图表固定为交接时的独立回退色板，不覆盖 P69 核心深色；白图警告前景仍为 `#995909`。原 stash / 补丁保留，旧 `evidence/v9/` 不覆盖；来源与实际 stash 父提交修正见[检查记录](evidence/night-20261016/checks.md)。
@@ -13,8 +26,6 @@
 - 审查：独立只读代码 Review 返工后为 [PASS WITH NOTES](evidence/night-20261016/review.md)，没有代码阻断；它不是 Claude Supervisor 的产品 / 浏览器验收。用户本轮已授权合并，实际 PR 与合并提交以最终 GitHub 记录为准；本轮未发布 GPT Site。
 - 检查周期：本轮为当前周期第 3/3 轮，工程完整回归与独立代码综合审查完成；本次浏览器是上述受影响代表矩阵，未重跑此前所有组件 / 浮层的累计完整交互矩阵，因此**不将累计浏览器完整回归记为完成、不重置周期**。下一轮收口须补齐累计浏览器矩阵或由 PO 调整边界；同轮修复不另计数。
 - 保留限制：夜图普通分隔线在画布 / 纸面约 1.58 / 1.45:1，结构控件应使用高对比 `--line`；夜图浅色系列上的白色图案不足 3:1，夜图色板 / 连续色阶 / 图案仍按原交接回退，待设计确认。Recharts 仍主要靠颜色区分系列。热力图隐藏披露例外仅单元 / SSR 验证；DOM 主题预览不证明 React 图表 Context 隔离；实体打印、真机、读屏器、原生缩放、全站像素与全图表视觉矩阵未验。
-
-## 历史
 
 ### BPW1 · 蓝图警告前景色对比度 · 2026-10-16（原当前，原样保留）
 

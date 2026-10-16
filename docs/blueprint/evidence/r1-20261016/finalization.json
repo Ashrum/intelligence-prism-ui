@@ -1,0 +1,38 @@
+{
+  "reason": "Only STATUS and its generated guide asset/hash changed after the full runtime suite passed; rebuild final artifacts and recheck guide contracts. No new runtime code after engineering.json.",
+  "checks": [
+    {
+      "name": "guide-check",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "startedAt": "2026-10-16T13:04:27.058721+08:00",
+      "endedAt": "2026-10-16T13:04:27.097186+08:00",
+      "durationSeconds": 0.039,
+      "exitCode": 0,
+      "log": "guide-check.log"
+    },
+    {
+      "name": "final-build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-16T13:04:27.097916+08:00",
+      "endedAt": "2026-10-16T13:04:32.291702+08:00",
+      "durationSeconds": 5.194,
+      "exitCode": 0,
+      "log": "final-build.log"
+    },
+    {
+      "name": "guide-tests",
+      "command": "node --test tests/blueprint-guide.test.mjs",
+      "startedAt": "2026-10-16T13:04:32.292339+08:00",
+      "endedAt": "2026-10-16T13:04:32.386060+08:00",
+      "durationSeconds": 0.094,
+      "exitCode": 0,
+      "log": "guide-tests.log",
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "skipped": 0
+      }
+    }
+  ]
+}
