@@ -1,0 +1,45 @@
+✔ core theme chart colours are unchanged (1.1643ms)
+✔ blueprint series lead with accent then ink; every series ≥ 3:1 on card and ground (0.4202ms)
+✔ blueprint sequential ramp keeps labels ≥ 4.5:1 and luminance monotonic (4.7511ms)
+✔ blueprint overrides: first series solid, the rest patterned; square ink tooltip (0.1913ms)
+✔ axis line uses palette.line when present, border otherwise (0.1405ms)
+✔ theme.css blueprint chart tokens follow the series order; Recharts tooltip squared only in blueprint (3.1953ms)
+✔ demo page renders all blueprint groups without changing the catalog count (20.0695ms)
+✔ sheet is a labelled region; rulers and letter block are hidden from assistive tech (0.8021ms)
+✔ segmented control is a radiogroup with one tab stop and aria-checked (0.3017ms)
+✔ segmented control keeps an enabled entry point when the selected item is missing or disabled (0.6471ms)
+✔ steps expose current step and textual state; bars write values out (0.7213ms)
+✔ buttons default to type=button; card element follows interaction (0.6051ms)
+✔ unavailable blueprint controls preserve native disabled and accessible reason (0.2786ms)
+✔ foundation sample distinguishes fixed task facts, real local links and accessible reading panels (7.7273ms)
+✔ route and navigation exist; blueprint.css draws DemoSection as a sheet only in blueprint (6.1677ms)
+✔ published guide is generated from the complete current Markdown and current evidence bytes (35.0322ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (24.0088ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.3911ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (1.9149ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.7408ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.9755ms)
+✔ WCAG calculation reference values and current four-theme text/UI tokens (1.888ms)
+✔ every print selector requires blueprint and excludes core preview roots and descendants (1.2894ms)
+✔ blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance (0.5003ms)
+✔ six decals remain distinct without hue; default pattern/base contrasts exceed 3:1 (30.0459ms)
+✔ light: real component SSR exposes named regions, choices, tab panels and heatmap table (30.5373ms)
+✔ paper: real component SSR exposes named regions, choices, tab panels and heatmap table (10.4438ms)
+✔ dark: real component SSR exposes named regions, choices, tab panels and heatmap table (12.6557ms)
+✔ blueprint: real component SSR exposes named regions, choices, tab panels and heatmap table (14.5452ms)
+✔ built SSR route /next/foundations/blueprint (315.6183ms)
+✔ built SSR route /next/components/tabs (14.7905ms)
+✔ built SSR route /next/components/evidence-matrix (26.5629ms)
+✔ blueprint is a fourth selectable theme; core matrix stays light/paper/dark (2.3552ms)
+✔ blueprint boundary declares every role explicitly, including status, chart and AI tokens (0.5816ms)
+✔ core theme tokens are unchanged (0.36ms)
+✔ blueprint ink pairs exceed 4.5:1 numerically (0.587ms)
+✔ blueprint geometry rules are scoped and do not touch coss sources (2ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2049.9252

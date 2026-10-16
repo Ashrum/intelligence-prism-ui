@@ -1,0 +1,219 @@
+{
+  "date": "2026-10-15T13:27:53.575Z",
+  "viewport": [
+    {
+      "theme": "blueprint",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    {
+      "theme": "blueprint",
+      "width": 320,
+      "scrollWidth": 320,
+      "clientWidth": 320
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    {
+      "theme": "light",
+      "width": 320,
+      "scrollWidth": 320,
+      "clientWidth": 320
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    {
+      "theme": "paper",
+      "width": 320,
+      "scrollWidth": 320,
+      "clientWidth": 320
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "clientWidth": 1280
+    },
+    {
+      "theme": "dark",
+      "width": 320,
+      "scrollWidth": 320,
+      "clientWidth": 320
+    }
+  ],
+  "errors": [],
+  "segmentEnd": {
+    "text": "异常",
+    "checked": "true",
+    "rect": {
+      "left": 223,
+      "right": 279
+    },
+    "parent": {
+      "left": 36,
+      "right": 284
+    },
+    "scrollLeft": 159,
+    "outline": "rgb(29, 95, 191) solid 2px"
+  },
+  "segmentHome": {
+    "text": "全部",
+    "checked": "true",
+    "rect": {
+      "left": 41,
+      "right": 98
+    },
+    "parent": {
+      "left": 36,
+      "right": 284
+    },
+    "scrollLeft": 0
+  },
+  "disabledBefore": {
+    "background": "rgb(243, 245, 248)",
+    "color": "rgb(139, 146, 158)",
+    "transform": "none",
+    "boxShadow": "none",
+    "border": "rgb(214, 218, 225)",
+    "disabled": true
+  },
+  "disabledPressed": {
+    "background": "rgb(243, 245, 248)",
+    "color": "rgb(139, 146, 158)",
+    "transform": "none",
+    "boxShadow": "none",
+    "border": "rgb(214, 218, 225)",
+    "disabled": true
+  },
+  "primaryFocus": {
+    "theme": "blueprint",
+    "focused": true,
+    "visible": true,
+    "outline": "rgb(29, 95, 191) solid 2px",
+    "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px"
+  },
+  "paneFocus": {
+    "outline": "rgb(29, 95, 191) solid 2px",
+    "offset": "2px",
+    "shadow": "rgb(255, 255, 255) 0px 0px 0px 2px"
+  },
+  "tabsBeforeEnter": {
+    "focus": "完整公式推导与教学提示",
+    "selected": "false"
+  },
+  "tabsAfterEnter": {
+    "focus": "完整公式推导与教学提示",
+    "selected": "true",
+    "scrollWidth": 320,
+    "formula": []
+  },
+  "guide": {
+    "width": 320,
+    "scrollWidth": 320,
+    "tableScroll": [
+      {
+        "width": 280,
+        "scrollWidth": 512
+      },
+      {
+        "width": 280,
+        "scrollWidth": 512
+      },
+      {
+        "width": 280,
+        "scrollWidth": 512
+      }
+    ],
+    "unsafeLinks": 0
+  },
+  "formula": [
+    {
+      "className": "prism-question-equation",
+      "width": 248,
+      "scrollWidth": 327,
+      "overflow": "auto"
+    }
+  ],
+  "nestedCssFixture": [
+    {
+      "theme": "light",
+      "direct": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(75, 85, 99)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "doubleNested": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(75, 85, 99)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.508163 -0.0468736 -0.118001 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "equal": true
+    },
+    {
+      "theme": "paper",
+      "direct": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(75, 85, 99)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "doubleNested": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(75, 85, 99)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.488178 -0.0212675 -0.21611 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "equal": true
+    },
+    {
+      "theme": "dark",
+      "direct": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(182, 190, 201)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "doubleNested": {
+        "background": "rgba(0, 0, 0, 0)",
+        "color": "rgb(182, 190, 201)",
+        "border": "rgba(0, 0, 0, 0)",
+        "radius": "8px",
+        "shadow": "none",
+        "outline": "oklab(0.802824 -0.0405836 -0.0968139 / 0.5) none 3px",
+        "font": "16px"
+      },
+      "equal": true
+    }
+  ],
+  "notes": [
+    "Primary focus replaced with stable post-transition measurement.",
+    "Theme was selected using the real theme combobox; initial script sampled the wrong data-theme attribute, so viewport entries have no theme attribute value. The later focus check records data-prism-theme=blueprint.",
+    "Nested preview is a temporary DOM/CSS fixture, not React context or screen-reader verification."
+  ]
+}

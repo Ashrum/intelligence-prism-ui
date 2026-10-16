@@ -1,0 +1,56 @@
+{
+  "node": "v24.14.0",
+  "platform": "win32",
+  "baseline": "1f575ea142c7f3b5fa0ae8a41f5c63c310067251",
+  "baselineHasGitDirectory": false,
+  "paths": [
+    {
+      "path": "D:\\WorkFile\\HermesWork\\intelligence-prism-ui\\components\\prism-next\\charts\\echart.tsx",
+      "stepperFilterMatches": false,
+      "stepperNormalizedMatches": false,
+      "chartFilterMatches": false,
+      "chartNormalizedMatches": true
+    },
+    {
+      "path": "D:\\WorkFile\\HermesWork\\intelligence-prism-ui\\components\\prism-next\\stepper.tsx",
+      "stepperFilterMatches": false,
+      "stepperNormalizedMatches": true,
+      "chartFilterMatches": false,
+      "chartNormalizedMatches": false
+    }
+  ],
+  "stepperCSS": {
+    "rawHasCRLF": true,
+    "normalizedEqualHEAD": true,
+    "rawPrefixSHA256": "52a8636e3168a102ad78fcfedd45adb27338f303e030754c7d968783dd5ee7e3",
+    "normalizedPrefixSHA256": "a2dd8ab3eed77b950d57cc98b86a4239b130d0be6a9f892a9b746127e0dca897",
+    "headPrefixSHA256": "a2dd8ab3eed77b950d57cc98b86a4239b130d0be6a9f892a9b746127e0dca897"
+  },
+  "baselineIntegrity": [
+    {
+      "path": "tests/stepper.test.mjs",
+      "sameBytesAsHEAD": true,
+      "sha256": "fd75dced03e18918791a764f07f85428b2f7fc9c850c6c6da38c13b19e2dc1cb"
+    },
+    {
+      "path": "tests/review-tools.test.mjs",
+      "sameBytesAsHEAD": true,
+      "sha256": "b67a86d656bf44b59469c6a80a067ef29bc03d3c2c9378f89f271aff3f179359"
+    },
+    {
+      "path": "components/prism-next/stepper.tsx",
+      "sameBytesAsHEAD": true,
+      "sha256": "6d317529ba0d7f73ea899c9d7a9586648624f12d3a6d5bbe5700970dd984c4e6"
+    },
+    {
+      "path": "components/prism-next/stepper.css",
+      "sameBytesAsHEAD": true,
+      "sha256": "03262e71b96c300adaa3cf5cce0c284fafb0dd1bb122c243f49b4daf52247748"
+    },
+    {
+      "path": "examples/review-tools/review-tools.tsx",
+      "sameBytesAsHEAD": true,
+      "sha256": "c0419b691ba258d5756f673b452a6183f41649ce1bdd8589a8d9677eaa891915"
+    }
+  ]
+}

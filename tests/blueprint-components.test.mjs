@@ -25,14 +25,30 @@ test('demo page renders all blueprint groups without changing the catalog count'
   assert.ok(!components.some(entry => entry.id.startsWith('blueprint')));
 });
 
-test('sheet is a labelled region; rulers and letter block are hidden from assistive tech', () => {
+test('sheet keeps its labelled region and decorative rulers; its chapter index is meaningful', () => {
   const out = html(h(api.BlueprintSheet, { letter: 'A', sheetNo: '01 / 02', title: '标题' }, 'x'));
   const id = out.match(/aria-labelledby="([^"]+)"/)[1];
   assert.match(out, new RegExp(`<h2 id="${id}"`));
   assert.equal((out.match(/class="bp-ruler/g) || []).length, 4);
   assert.equal((out.match(/aria-hidden="true" class="bp-ruler/g) || []).length, 4);
-  assert.match(out, /aria-hidden="true" class="bp-sheet-id">A</);
+  assert.match(out, /<span class="bp-section-code">A<\/span>/);
+  assert.doesNotMatch(out, /aria-hidden="true"[^>]*bp-section-code/);
   assert.doesNotMatch(html(h(api.BlueprintSheet, { title: 't', rulers: false }, 'x')), /bp-ruler/);
+  assert.match(html(h(api.BlueprintSheet, { title: '三级章节', headingLevel: 3, rulers: false }, 'x')), /<h3 id="[^"]+"[^>]*>三级章节<\/h3>/);
+});
+
+test('standalone chapter header and semantic subsection preserve caller ids, content and folio meaning', () => {
+  const header = html(h(api.BlueprintSectionHeader, { title: '长中文章节标题', code: '02', headingId: 'independent-heading', headingLevel: 3, folio: { kind: 'section', value: '02 / 12' }, description: '完整说明' }));
+  assert.match(header, /<h3 id="independent-heading"[^>]*>长中文章节标题<\/h3>/);
+  assert.match(header, />SECTION 02 \/ 12<\/p>/);
+  assert.doesNotMatch(header, /SHEET|bp-ruler|data-slot="bp-sheet"/);
+  const oldMinor = html(h(api.BpMinor, { id: 'old-minor', className: 'mt-6' }, '原有中文标题'));
+  assert.match(oldMinor, /^<h3 id="old-minor" class="[^"]*mt-6/);
+  assert.match(oldMinor, />原有中文标题<\/span><\/h3>/);
+  const minor = html(h(api.BpMinor, { id: 'semantic-minor', code: 'BP-01.1', label: '完整中文小节', headingLevel: 4 }));
+  assert.match(minor, /^<h4 id="semantic-minor"/);
+  assert.match(minor, /<span class="bp-minor-code">BP-01.1<\/span><span class="bp-minor-label">完整中文小节<\/span>/);
+  assert.match(html(h(api.BpFigCap, { label: 'FIG. 1' }, '图注')), /^<p[^>]*><span>FIG. 1<\/span><span>图注<\/span><\/p>$/);
 });
 
 test('segmented control is a radiogroup with one tab stop and aria-checked', () => {
@@ -75,6 +91,33 @@ test('buttons default to type=button; card element follows interaction', () => {
   assert.match(html(h(api.BpCard, { name: 'n', description: 'd', onSelect() {} })), /^<button type="button" class="bp-card">/);
   assert.match(html(h(api.BpCard, { name: 'n', description: 'd' })), /^<div class="bp-card">/);
   assert.match(html(h(api.BpError, { location: 'L', message: 'm', example: 'e' })), /role="alert"[\s\S]*✓ 正确示例/);
+});
+
+test('unavailable blueprint controls preserve native disabled and accessible reason', () => {
+  for (const [Component, props] of [[api.BpButton, { variant: 'primary' }], [api.BpButton, { variant: 'danger' }], [api.BpTool, { iconOnly: true, 'aria-label': '查看材料' }]]) {
+    const out = html(h(Component, { ...props, disabled: true, 'aria-describedby': 'unavailable' }, '不可用'));
+    assert.match(out, /<button[^>]*disabled=""/);
+    assert.match(out, /aria-describedby="unavailable"/);
+    assert.match(out, /type="button"/);
+    assert.doesNotMatch(out, /tabindex="0"/);
+  }
+});
+
+test('foundation sample distinguishes fixed task facts, real local links and accessible reading panels', () => {
+  const out = html(h(api.BlueprintComponentsDemo));
+  assert.match(out, /均为固定示例数据/);
+  assert.match(out, /aria-label="固定步骤样例"/);
+  assert.doesNotMatch(out, />下一步<|>开始批阅/);
+  assert.equal((out.match(/<a[^>]*class="bp-card"/g) || []).length, 2);
+  assert.equal((out.match(/<div class="bp-card"/g) || []).length, 1);
+  const ids = new Set([...out.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]));
+  for (const [, id] of out.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.has(id), `missing anchor ${id}`);
+  for (const [, refs] of out.matchAll(/aria-(?:labelledby|describedby)="([^"]+)"/g)) for (const id of refs.split(' ')) assert.ok(ids.has(id), `missing accessible reference ${id}`);
+  assert.match(out, /role="tablist"[^>]*aria-label="长内容阅读样例"|aria-label="长内容阅读样例"[^>]*role="tablist"/);
+  assert.match(out, /aria-disabled="true"[^>]*>未提供的参考材料/);
+  assert.match(out, /role="tabpanel"/);
+  assert.match(out, /<math[^>]*display="block"[^>]*aria-label="一元二次方程的一般形式，a 不等于零"/);
+  assert.match(out, /role="group"[^>]*aria-label="[^"]*超出宽度时可横向滚动[^>]*tabindex="0"/);
 });
 
 test('route and navigation exist; blueprint.css draws DemoSection as a sheet only in blueprint', async () => {

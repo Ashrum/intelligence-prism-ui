@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-10-15T17:37:21Z",
+  "localDate": "2026-10-16 Asia/Taipei",
+  "baseline": "9b5ac0c389abb5fb232b0356a920a60706d86e27",
+  "branch": "feat/blueprint-editorial-type",
+  "scope": "Builder targeted checks for approved editorial typography; round 1 of 3. No production build, full suite, or full component matrix run by Builder.",
+  "recordsNote": "Results were observed in tool outputs in this implementation turn and consolidated here afterwards. This timestamp is the consolidation time, not a claimed start time for each command.",
+  "checks": [
+    {
+      "command": "node scripts/check-typography.mjs",
+      "exitCode": 0,
+      "result": "Typography guard: 308 owned TSX files use semantic sizes."
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false",
+      "exitCode": 0,
+      "result": "No TypeScript errors."
+    },
+    {
+      "command": "node --test tests/blueprint-components.test.mjs",
+      "exitCode": 0,
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "result": "Includes Sheet labelled region/rulers/meaningful chapter index, standalone Header, heading levels, code/label and legacy BpMinor children/id/className, plus existing Blueprint component contracts."
+    },
+    {
+      "command": "node scripts/check-blueprint-fonts.mjs",
+      "exitCode": 0,
+      "result": "Two WOFF2 assets verified against manifest, 21816 total bytes; OFL hash and generated CSS unicode-range match."
+    },
+    {
+      "command": "$env:PYTHONPATH = Join-Path (Get-Location) '.sites-runtime/editorial-20261016/font-tools'; & 'C:/Users/Ashrum/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe' scripts/subset-blueprint-mono.py --check",
+      "exitCode": 0,
+      "result": "Pinned fonts rebuilt in memory; all generated WOFF2, license, manifest and CSS bytes match delivered files."
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "No whitespace errors."
+    }
+  ],
+  "fontToolchain": {
+    "python": "3.12.14",
+    "pythonExecutable": "C:/Users/Ashrum/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+    "fontTools": "4.60.1",
+    "brotli": "1.1.0",
+    "dependencyTarget": ".sites-runtime/editorial-20261016/font-tools",
+    "install": "Set TEMP and TMP to .sites-runtime/editorial-20261016/tmp, then python -m pip install --no-cache-dir --target .sites-runtime/editorial-20261016/font-tools fonttools==4.60.1 brotli==1.1.0",
+    "initialAttempt": "The initial default sandbox temporary directory denied metadata access. Retrying with TEMP/TMP inside the repository succeeded. No HOME override, npm dependency, or global Python installation."
+  },
+  "assetsManifest": "public/fonts/blueprint/manifest.json",
+  "provenance": "public/fonts/blueprint/SOURCES.md",
+  "notes": [
+    "Blueprint CSS initially nested the font CSS import. Parent browser caught PostCSS resolving that nested import at the wrong root (500). Import moved to theme.css as a sibling of blueprint.css; parent is running the browser recheck.",
+    "Browser validation, production build and independent review belong to the parent task and are not represented as complete here."
+  ]
+}

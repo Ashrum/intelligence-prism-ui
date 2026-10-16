@@ -10,8 +10,33 @@ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 const RULER_TOP = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const RULER_SIDE = ["A", "B", "C", "D"]
 
+export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
+  title: ReactNode
+  description?: ReactNode
+  /** Meaningful chapter index, read along with the visible heading. */
+  code?: string
+  folio?: { kind: "sheet" | "section"; value: string }
+  headingId?: string
+  headingLevel?: 2 | 3
+}
+/** A chapter heading without a sheet frame or rulers. */
+export function BlueprintSectionHeader({ title, description, code, folio, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
+  const generatedId = useId()
+  const Heading = headingLevel === 2 ? "h2" : "h3"
+  return <header {...props} className={cn("bp-section-header", className)} data-slot="bp-section-header" data-has-code={code ? "" : undefined}>
+    {code && <span className="bp-section-code">{code}</span>}
+    <div className="bp-section-main">
+      <div className="bp-section-title-row">
+        <Heading id={headingId ?? generatedId} className="bp-section-title text-section-title">{title}</Heading>
+        {folio && <p className="bp-section-folio">{folio.kind === "sheet" ? "SHEET" : "SECTION"} {folio.value}</p>}
+      </div>
+      {description && <p className="bp-section-description text-ui-hint">{description}</p>}
+    </div>
+  </header>
+}
+
 export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "title"> {
-  /** Letter block, e.g. "A". Omit to hide the block. */
+  /** Meaningful chapter index, e.g. "A". Omit when no index is available. */
   letter?: string
   /** Sheet number shown top-right, e.g. "01 / 05". */
   sheetNo?: string
@@ -23,7 +48,6 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
 }
 export function BlueprintSheet({ letter, sheetNo, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
   const id = useId()
-  const Heading = headingLevel === 2 ? "h2" : "h3"
   return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
     {rulers && <>
       <div aria-hidden="true" className="bp-ruler bp-ruler--top">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
@@ -31,20 +55,19 @@ export function BlueprintSheet({ letter, sheetNo, title, description, rulers = t
       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
     </>}
-    <header className="bp-sheet-head relative">
-      {letter && <span aria-hidden="true" className="bp-sheet-id">{letter}</span>}
-      <div className="min-w-0 flex-1">
-        <Heading id={id} className="text-page-title text-(--heading)">{title}</Heading>
-        {description && <p className="mt-1 text-ui-hint text-muted-foreground">{description}</p>}
-      </div>
-      {sheetNo && <span className="bp-sheet-no">SHEET {sheetNo}</span>}
-    </header>
+    <BlueprintSectionHeader code={letter} folio={sheetNo ? { kind: "sheet", value: sheetNo } : undefined} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
     <div className="relative min-w-0">{children}</div>
   </section>
 }
 
-export function BpMinor({ className, ...props }: ComponentProps<"h3">) {
-  return <h3 {...props} className={cn("bp-minor", className)} />
+export interface BpMinorProps extends ComponentProps<"h3"> {
+  code?: string
+  label?: ReactNode
+  headingLevel?: 2 | 3 | 4 | 5 | 6
+}
+export function BpMinor({ className, code, label, headingLevel = 3, children, ...props }: BpMinorProps) {
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
+  return <Heading {...props} className={cn("bp-minor text-block-title", className)}>{code && <span className="bp-minor-code">{code}</span>}<span className="bp-minor-label">{label ?? children}</span></Heading>
 }
 
 export function BpFigCap({ label, children, className, ...props }: ComponentProps<"p"> & { label: string }) {

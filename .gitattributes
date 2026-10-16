@@ -5,3 +5,32 @@
 
 # Pinned binary asset: scripts/check-math-font.mjs.
 /public/fonts/typography-review/stix-two-math.woff2 -text
+
+# Reproducible Blueprint font subsets and generated metadata.
+/public/fonts/blueprint/*.woff2 -text
+/public/fonts/blueprint/OFL.txt text eol=lf
+/public/fonts/blueprint/manifest.json text eol=lf
+/app/(next)/next/blueprint-fonts.css text eol=lf
+
+# Guide source and download snapshots must retain identical bytes across checkouts.
+/docs/blueprint-theme.md text eol=lf
+/docs/foundation-tokens.md text eol=lf
+/docs/blueprint/STATUS.md text eol=lf
+/docs/OLE_Agent_Frontend_Blueprint_v1.0.md text eol=lf
+/docs/experiments/prism-blueprint-v0.2.md text eol=lf
+/docs/blueprint/evidence/source-audit-20261015/* text=auto eol=lf
+/docs/blueprint/evidence/v9/browser-results.json text eol=lf
+/docs/blueprint/evidence/v9/windows-test-analysis.md text eol=lf
+/docs/blueprint/evidence/v7/reuse.json text eol=lf
+/docs/blueprint/evidence/v8/inspection.md text eol=lf
+/docs/blueprint/evidence/ruler-20261015/* text=auto eol=lf
+/docs/blueprint/evidence/common-20261015/* text=auto eol=lf
+/docs/blueprint/evidence/hover-20261015/* text=auto eol=lf
+/docs/blueprint/evidence/batch2-20261016/* text=auto eol=lf
+/docs/blueprint/evidence/editorial-20261016/* text=auto eol=lf
+/lib/prism-next/blueprint-guide.json text eol=lf
+/public/foundations/blueprint/guide-assets/** text=auto eol=lf
+
+# Preserve raw CLI diagnostics, including aligned tables and blank-line padding.
+/docs/blueprint/evidence/v9/*.log -whitespace
+/docs/blueprint/evidence/sync-20261015/*.log -whitespace

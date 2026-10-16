@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-15T16:46:04.884Z",
+  "routes": [
+    {
+      "route": "input-group",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1265,
+      "demos": 2
+    },
+    {
+      "route": "input-group",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 2
+    },
+    {
+      "route": "combobox",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1265,
+      "demos": 4
+    },
+    {
+      "route": "combobox",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 4
+    },
+    {
+      "route": "toggle-group",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "toggle-group",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "progress",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "progress",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "menu",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "menu",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "popover",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "popover",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "tooltip",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "tooltip",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "toast",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "toast",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "alert-dialog",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "alert-dialog",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "sheet",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "sheet",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "skeleton",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "skeleton",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    },
+    {
+      "route": "empty",
+      "status": 200,
+      "width": 1280,
+      "scrollWidth": 1280,
+      "demos": 1
+    },
+    {
+      "route": "empty",
+      "status": 200,
+      "width": 320,
+      "scrollWidth": 320,
+      "demos": 1
+    }
+  ],
+  "focus": {
+    "viewport": 320,
+    "groupWidth": 246.6666717529297,
+    "groupOutline": "rgb(29, 95, 191) solid 2px",
+    "innerOutline": "none",
+    "innerShadow": "none"
+  }
+}

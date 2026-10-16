@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-15T16:51:12.679Z",
+  "freshSession": "batch2final",
+  "measurements": [
+    {
+      "innerWidth": 1280,
+      "clientWidth": 1280,
+      "scrollWidth": 1280,
+      "bodyClient": 1280,
+      "bodyScroll": 1280,
+      "htmlZoom": "1",
+      "bodyZoom": "1",
+      "dpr": 1,
+      "visualViewport": {
+        "width": 1280,
+        "scale": 1
+      },
+      "groupWidth": 446.5,
+      "groupOutline": "rgb(29, 95, 191) solid 2px",
+      "scrollingElement": "HTML",
+      "scrollable": []
+    },
+    {
+      "innerWidth": 320,
+      "clientWidth": 320,
+      "scrollWidth": 320,
+      "bodyClient": 320,
+      "bodyScroll": 320,
+      "htmlZoom": "1",
+      "bodyZoom": "1",
+      "dpr": 1,
+      "visualViewport": {
+        "width": 320,
+        "scale": 1
+      },
+      "groupWidth": 246,
+      "groupOutline": "rgb(29, 95, 191) solid 2px",
+      "scrollingElement": "HTML",
+      "scrollable": [
+        {
+          "tag": "DIV",
+          "id": "",
+          "cls": "min-w-0 max-w-full overflow-x-auto px-1 py-1",
+          "width": 246,
+          "scrollWidth": 382
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "cls": "min-w-0 max-w-full overflow-x-auto px-1 py-1",
+          "width": 246,
+          "scrollWidth": 328
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "cls": "bp-seg-tabs",
+          "width": 246,
+          "scrollWidth": 405
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "cls": "min-w-0 max-w-full overflow-x-auto px-1 py-1",
+          "width": 248,
+          "scrollWidth": 494
+        }
+      ]
+    }
+  ]
+}

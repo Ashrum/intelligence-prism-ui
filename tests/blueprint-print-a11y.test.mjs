@@ -21,7 +21,7 @@ function save(name, value) { if (evidence) { mkdirSync(evidence, { recursive: tr
 function tokens(theme) {
   const result = {};
   themeCSS.walkRules(rule => {
-    if (rule.selector === ':root:where([data-ui-version="coss-v1"]),\n:where([data-agent-preview][data-prism-theme])' || rule.selector.includes(`:where([data-agent-preview])[data-prism-theme="${theme}"]`)) {
+    if (rule.selector.replace(/\r\n/g, '\n') === ':root:where([data-ui-version="coss-v1"]),\n:where([data-agent-preview][data-prism-theme])' || rule.selector.includes(`:where([data-agent-preview])[data-prism-theme="${theme}"]`)) {
       rule.walkDecls(d => { result[d.prop] = d.value; });
     }
   });
@@ -72,6 +72,16 @@ test('blueprint focus uses the opaque ring token, 2px outer outline, with scroll
   const clearance = css.nodes.find(n => n.type === 'rule' && n.selector.startsWith('[data-prism-theme="blueprint"] .bp-seg-tabs'));
   assert.ok(clearance.selector.includes(guard));
   assert.equal(clearance.nodes.find(d => d.prop === 'padding').value, '4px');
+  const separator = css.nodes.find(n => n.type === 'rule' && n.nodes?.some(d => d.prop === 'box-shadow' && d.value === '0 0 0 2px var(--card)'));
+  assert.ok(separator);
+  for (const selector of separator.selectors) {
+    assert.ok(selector.startsWith('[data-prism-theme="blueprint"]'), selector);
+    assert.ok(selector.includes(guard), selector);
+    assert.ok(selector.includes(':focus-visible'), selector);
+  }
+  const bpTokens = tokens('blueprint');
+  assert.ok(ratio(bpTokens['--ring'], bpTokens['--card']) >= 3, 'ring must contrast with the paper separator');
+  assert.ok(ratio(bpTokens['--card'], bpTokens['--head-bg']) >= 3, 'paper separator must contrast with the ink surface');
 });
 
 test('six decals remain distinct without hue; default pattern/base contrasts exceed 3:1', () => {
@@ -123,7 +133,7 @@ for (const theme of themes) test(`${theme}: real component SSR exposes named reg
   assert.equal((bp.match(/data-slot="bp-sheet"/g) || []).length, 4);
   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
   assert.match(bp, /aria-current="step"/);
-  assert.match(bp, /aria-label="切换明暗"/);
+  assert.match(bp, /aria-label="查看工具说明"/);
   assert.equal((bp.match(/aria-checked="true" tabindex="0"/g) || []).length, 2);
   assert.match(bp, /aria-label="全班：已批阅 22人，待复核 7人，AI 处理中 9人，未提交 4人"/);
   const tabs = render(api.TabsDemo, {}, theme);

@@ -1,0 +1,28 @@
+{
+  "previousPath": ".sites-runtime/hover-20261015/full-tests.log",
+  "currentPath": ".sites-runtime/batch2-20261016/final-full-tests.log",
+  "previous": {
+    "tests": 1949,
+    "suites": 0,
+    "pass": 1688,
+    "fail": 261,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 39480.0679
+  },
+  "current": {
+    "tests": 1949,
+    "suites": 0,
+    "pass": 1688,
+    "fail": 261,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 40676.2723
+  },
+  "previousUniqueFailureDescriptions": 261,
+  "currentUniqueFailureDescriptions": 261,
+  "new": [],
+  "removed": []
+}

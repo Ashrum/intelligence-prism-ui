@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-15T15:24:32.521Z",
+  "focus": {
+    "active": true,
+    "focusVisible": true,
+    "outline": "rgb(29, 95, 191) solid 2px",
+    "offset": "-3px",
+    "shadow": "rgb(255, 255, 255) 0px 0px 0px 4px inset",
+    "width": 320,
+    "scrollWidth": 320
+  }
+}

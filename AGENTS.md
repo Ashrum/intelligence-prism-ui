@@ -33,29 +33,30 @@
 
 ## 4. 规范权威顺序
 
-1. [Agent 组件规范 v0.2.1（已批准）](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)，以及各组件页的 Agent Spec
-2. Foundations：[字体规范](docs/typography.md)、主题与语义令牌
-3. [复用规划 v0.1.3](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)、[组件复用约定](docs/component-contracts.md)、[题目呈现章程 v0.1](docs/question-presentation-charter.md)、Pattern 与应用示例
-4. 固定版本的 coss upstream 行为
-5. Agent 自行推断
+1. [OLE Agent 前端界面设计规范 · 蓝图 v1.0](docs/OLE_Agent_Frontend_Blueprint_v1.0.md) 的目标交互、组件来源与实施门禁；现有 API 是否已支持仍须核对源码与组件契约，不以目标设计冒充已实现。
+2. [Agent 组件规范 v0.2.1（已批准）](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)，以及各组件页的 Agent Spec
+3. Foundations：[字体规范](docs/typography.md)、主题与语义令牌
+4. [复用规划 v0.1.3](docs/智能曜彩_Agent语义组件复用与设计规划_v0.1.3.md)、[组件复用约定](docs/component-contracts.md)、[题目呈现章程 v0.1](docs/question-presentation-charter.md)、Pattern 与应用示例
+5. 固定版本的 coss upstream 行为
+6. Agent 自行推断
 
 后一级不得覆盖前一级。缺失的值或行为先沿用 coss；仍无定义时报告规范缺口，不从截图或偏好补造。见 [docs/agent-readable-contract.md](docs/agent-readable-contract.md)。
 
 ## 5. 设计系统硬约束
 
 - `components/coss/**` 是固定来源的 54 个原始组件，字节受散列校验，禁止修改。需要调整时在 `components/prism-next` 组合或适配。
-- 先复用（PO 2026-09-29）：
-  - 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
-  - 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
-  - coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
-  - 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+- 复用顺序已按用户2026-10-16正式版发布指令同步（来源取舍见规范 §11.6）：
+  - 先复用已有智能曜彩／Prism组件，再检索 coss（含 particles），然后做必要的 Prism 组合与适配；仍有稳定缺口才新建。
+  - Beautiful UI 为可选来源与局部效果参考，不再强制优先检索，不因本次调整重写已验收实现。引用其代码须核对具体许可、保留 MIT 声明，并去掉演示计时器与自动播放。
+  - coss 检索包含 [particles](https://coss.com/ui/particles)；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。适配在 `components/prism-next` 完成，冻结的 `components/coss/**` 原始字节不变；官方最新实现不视为已接入。
+  - 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 - 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。 Blueprint 的有限例外见 §10；其余范围继续遵守本条。
 - 文字使用语义字号类（`text-ui-body`、`text-ui-hint`、`text-read-body`、`text-block-title` 等），不写局部字号；排版检查脚本会拦截。
 - 核心主题保持 `light` / `paper` / `dark` 三套；`blueprint` 为隔离的第四套实验主题，例外边界与生效条件见 §10。根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。
 - 基础表单使用常驻固定标签，不做浮动标签。
 - 组件目录可扩充，新增组件须经 Product Owner 认可（PO 2026-09-30）；页面骨架、应用示例与语义别名不计入组件数，不为搜索或演示另建组件条目。
 - 组件只呈现外部事实并发出意图：不内置模型、执行器、业务 Store、权限判断或持久化；不用计时器、按钮点击推定执行状态；未知就显示未知。
-- 动效只解释用户操作和外部状态变化，遵守减少动态效果设置。
+- 动效按正式规范 §5.5：简单反馈用 CSS，复杂过渡按需用现有 Motion，合格既有 glimm 保留；同节点同属性不得竞争。P0 统一响应系统 `prefers-reduced-motion` 的初始值和运行中变化，Motion 装饰循环／扫光也须显式停用；不以动画推定业务状态。
 
 ## 6. 本地环境
 
@@ -63,7 +64,7 @@
 
 ### 6.1 通用验证路径（所有系统）
 
-以下命令只调用 `node`，Windows、macOS、Linux 均可执行，作为标准验证方式：
+以下命令只调用 `node`，Windows、macOS、Linux 均可执行，作为标准验证入口。实际执行范围按变更风险和验收要求选择；Blueprint 小轮按 §10.2 的已批准节奏执行，不把本清单解释为每轮都必须运行全量：
 
 1. `node scripts/check-math-font.mjs`
 2. `node scripts/check-typography.mjs`
@@ -128,7 +129,10 @@
 
 ### 10.2 验证与数量约定
 
-- 蓝图运行时代码或样式改动覆盖：核心三主题回归、蓝图生效、嵌套预览隔离，以及受影响页面在 320px / 1280px 的实际浏览器表现；交互组件还按 §7 检查键盘、长内容等相关状态。记录实际通过、失败和未验范围，不把源码断言、SSR 或“无溢出”当作视觉验收。
+- 用户于 2026-10-16 批准 Blueprint 小轮检查节奏：每轮检查本次受影响的内容、交互和代表窄屏，按影响范围复核蓝图生效、核心主题回归及嵌套预览隔离；实际浏览器至少包含相关页面的代表窄屏与桌面状态。记录实际通过、失败和未验范围，不把源码断言、SSR 或“无溢出”当作视觉验收。
+- 每累计完成 3 个已授权小轮，执行完整回归（全量工程测试及累计改动涉及的主题、页面与交互矩阵）和独立综合审查；在 `docs/blueprint/STATUS.md` 记录本轮序号、完成状态、最近完整回归与下次触发点。第 3 轮收口后开始下一周期，不按提交次数、重试次数或同轮返工重复计数。编辑式排版与 Geist Mono 子集轮为新周期第 1/3 轮，未完成前不得记为已验收。
+- 共享令牌、基础交互、跨组件规则等高风险变化须按实际影响提前扩大回归；必要时提前执行完整回归与独立综合审查，并记录原因及计数处理，不等第 3 轮才处理风险。首次引入字体单独检查缺字、加载失败回退、布局与代表窄屏；首次字体本身不自动触发全站全量。
+- 每轮发布前仍需针对当前 diff、关键证据和冻结边界的独立轻量审查；第 3 轮的综合审查不替代该门槛，也不取消既有 Supervisor 放行要求。发布仍需生产构建，构建通过不自动扩大为全站浏览器验收或全量测试结论。
 - 纯文档与规则补丁检查 diff、链接和证据真实性；不得沿用旧结果声称当前构建或全量通过。如运行全量测试，仍按 §6.1 先构建，测试使用对应源码的 `dist/`。
 - 组件目录数量以权威目录为准，避免在多处测试中重复写死总数。断言需能发现独立错误，例如重复 ID、必需条目缺失、目录与独立生成的路由或导航不一致，以及蓝图示例误登记为组件；不得用同一数组与自身派生长度比较来替代有效测试。54 个冻结 coss 文件、固定业务数量等有明确契约的断言继续保留。既有测试改动单独列入范围，不借交接规范降低校验强度。
 

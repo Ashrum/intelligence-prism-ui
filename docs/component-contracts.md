@@ -6,14 +6,14 @@
 
 组件负责呈现数据与返回事件。统计口径、流程跳转、业务判断、存储与模拟数据由调用方负责。所有 UI 使用现有 coss 控件、语义主题和数学字体；不重新实现按钮、选择框或 Drawer。
 
-## 组件来源与复用顺序（PO 2026-09-29）
+## 组件来源与复用顺序（2026-10-16 正式基线）
 
-- 通用组件：优先检索并复用 coss → 没有匹配项再修改已有组件（组合、适配或公开属性扩展）→ 仍无可复用方案且确有稳定缺口才新建。
-- 所有 Agent 相关组件：优先检索并复用 [Beautiful UI](https://www.beautifului.dev)（MIT；注册文件 `https://www.beautifului.dev/r/<name>.json`）→ 没有匹配项再修改已有组件 → 仍无可复用方案且确有稳定缺口才新建；基础控件仍复用既有 coss / Prism。
-- coss 检索必须包含 [particles](https://coss.com/ui/particles)（PO 2026-09-29 提供的 510 个组合示例，组件列表中未直接列出）；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。particles 可作为组合参考，适配在 `components/prism-next` 完成，`components/coss/**` 原始组件字节保持不变。
-- 新增或改造前记录检索依据：查过哪些 coss（含 particles）/ Beautiful UI 条目、匹配情况、取舍原因。复用 Beautiful UI 代码须保留 MIT 声明，去掉演示计时器与自动播放。
+- 先复用已有智能曜彩／Prism组件，再检索 coss（含 particles），然后做必要的 Prism 组合与适配；仍有稳定缺口才新建。
+- Beautiful UI 为可选来源与局部效果参考，不再强制优先检索，不因本次调整重写已验收实现。引用其代码须核对具体许可、保留 MIT 声明，并去掉演示计时器与自动播放。
+- coss 检索包含 [particles](https://coss.com/ui/particles)；[注册索引](https://coss.com/ui/r/registry.json)，单项 `https://coss.com/ui/r/p-<name>.json`。适配在 `components/prism-next` 完成，冻结的 `components/coss/**` 原始字节不变；官方最新实现不视为已接入。
+- 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 
-以上是组件来源检索顺序，不改变规范权威顺序、主题与语义令牌要求，也不允许引入 Workspace 业务行为或私有类型。
+依据 [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) §11.6，同步用户已批准的来源取舍；目标设计与实施门禁以该规范为准，现有 props/API 的已实现事实仍须核对源码和组件契约。未实现项不因定稿自动升级为可用。主题、字体、冻结 coss 和双仓边界继续有效；本轮仅同步规则，未完成 CI 修复或服务签认。
 
 ## 交互演示器 v0.1
 
@@ -2362,6 +2362,7 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
 - Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
+- 蓝图编辑式标题（用户 2026-10-16 批准）：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px；章号保留默认 48×48 墨底块及 24px / 500 字形。间隔 12px，小节线 1px，章节保留结构墨线；普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行。`BlueprintSectionHeader` 接收 title、description、code、显式 kind / value 的 folio 与 headingLevel；`BlueprintSheet` 原 props 保持兼容并组合该 Header，只有 Sheet 生成图框和标尺。`BpMinor` 的可选 code / label 分离索引与中文，label 缺省回退 children，保留 id / className，可选 h2–h6；`BpFigCap` 继续为段落。Geist Mono 本地子集仅用于上述索引及英文短标签，中文 UI 与 STIX 数学字体保持原路径。完整 API、来源实值和实际验收范围见 [蓝图主题](blueprint-theme.md)；不新增组件目录，不将本轮扩展为 Agent 业务布局实施。
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
 ### TextbookDirectory 内嵌形态
@@ -2379,6 +2380,8 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 推荐组合：`layout="embedded" multiSelect="toggle" titleAction="select"`。关闭多选时隐藏复选框，标题/Enter/空格单选或再次取消；仍复用 current 整行样式。若使用 locate，关闭时标题/Enter/空格只定位，不选择。打开后标题/Enter/空格与复选框均调用原有父子联动勾选，搜索仍对完整子树生效，所有行不标 current。关闭开关时按最新受控叶集归并：恰好一个节点保留，多个节点仅清空当前教材当前目录，其他 scope 不变；零个保持为空。UI 模式不代表受控选择已生效，等待宿主回传；外部新增多节点选择时也显露开关与复选框。
 
 embedded 头部为约 46×60 的书形封面、两行教材文字与可选“切换”按钮。`TextbookDefinition` 新增可选 `volume?: string`、`subject?: string`、`edition?: string`；第一行显示 volume（未提供或空字符串时回退 title），第二行拼接存在的 subject / edition 为“学科 · 版本”，均无值时不渲染第二行。封面仅显示 subject 的前两个 Unicode 字符，无 subject 不写字；封面为装饰，不重复朗读。长文字单行省略，完整文字保留在 DOM/title 与头部分组可访问名称中。切换用 coss Button outline/sm，可访问名称“切换教材”；内置 coss Menu 单选项显示“册名 · 学科 · 版本”（缺省沿用上述回退），标记当前教材，选择沿用各教材独立的会话与选择记录。封面与书脊复用现有品牌/语义令牌进行 color-mix，底部细条用 --brand-ai-gradient；文字仅 foreground / muted-foreground 单色。不新增令牌，不重绘基础控件。课程/知识点页签等宽铺满。教材、页签、搜索与“多选”、可选已选行、树依次排列，段间距统一；树原有行高和点击区域不变。
+
+2026-10-16 配色兼容说明（用户批准）：上段教材封面细条以及教材对话框所用 `DialogLayout` 顶部装饰复用的是既有品牌三色；`--brand-ai-gradient` 的历史名称不表示教材或对话框来自 AI，也不表示内容正确、已核验或任务完成。这些既有非语义装饰继续保留，真实 AI 来源仍由外部事实和可读 AI 标识独立呈现，见 [AI 来源与悬浮材质](foundation-tokens.md)。蓝图仍使用纸墨与 `#1D5FBF` 交互蓝，品牌标识和三原色不改；本条仅澄清教材用法，不修改教材业务源码、组件 API、公共令牌或执行全仓重命名，不扩展新的品牌渐变使用范围。通用组件第二批的实现与实测范围另见 [蓝图主题](blueprint-theme.md)，其通过结果不等于教材业务流程已经重新验收。
 
 embedded 的两段操作说明只保留 sr-only 与树的 `aria-describedby`，没有可见说明入口。toggle 关闭 + select：“点标题只看这一项，再点一次取消。搜索不会改变已选范围。”；打开：“点标题或复选框勾选，勾选父级包含全部下级。搜索不会缩小勾选范围。”；locate 关闭与键盘说明对应实际行为。搜索行末的标准 coss Toggle 可访问名称“多选”，Tooltip 为“打开后可以勾选多个章节或知识点”。当前 `TextbookDefinition` 要求提供两类目录，空目录也保留切换；未新增单目录或隐藏切换 API。
 

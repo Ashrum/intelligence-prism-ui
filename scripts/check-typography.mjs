@@ -27,7 +27,12 @@ for(const dir of dirs)for(const name of readdirSync(join(root,dir),{recursive:tr
  if(['app/(next)/next/theme.css','app/(next)/next/typography.css'].includes(file))continue;
  const src=readFileSync(join(root,file),'utf8');
  if(/text-brand-wordmark|prism-institution-wordmark/.test(src)&&file!=='components/prism-next/app-bar.css')issues.push(`${file}: brand typography is reserved for InstitutionWordmark`);
- for(const m of src.matchAll(/font-size\s*:\s*([^;}]+)/g))if(!m[1].startsWith('var(--text-'))issues.push(`${file}: local CSS size must use a semantic token`);
+ // PO 2026-10-15: exact decorative-coordinate exception, documented in blueprint-theme.md.
+ const rulerRule='[data-prism-theme="blueprint"] .bp-ruler[aria-hidden="true"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { font-size:0.625rem; line-height:1; }';
+ for(const rule of src.replace(/\/\*[\s\S]*?\*\//g,'').split('}')){
+  if(file==='app/(next)/next/blueprint.css'&&rule.trim()+' }'===rulerRule)continue;
+  for(const m of rule.matchAll(/font-size\s*:\s*([^;}]+)/g))if(!m[1].startsWith('var(--text-'))issues.push(`${file}: local CSS size must use a semantic token`);
+ }
 }
 if(issues.length){console.error(issues.join('\n'));process.exit(1);}
 console.log(`Typography guard: ${count} owned TSX files use semantic sizes; pinned coss, print units, figure and chart labels have documented boundaries.`);

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-15",
+  "project_id": "appgprj_6a91438238648191b4a656759c597bbb",
+  "version_number": 117,
+  "version_id": "appgprj_6a91438238648191b4a656759c597bbb~appgver_7a6d6b590e048191ae17246b17988c78",
+  "commit_sha": "c59c0caf0aa65d5c1b0e44b96d3516ddb4ee04c4",
+  "deployment_id": "appgdep_6ad0d7f43db48191868b9228e3006c00",
+  "status": "succeeded",
+  "url": "https://intelligence-prism-ui.ashrvm.chatgpt.site",
+  "guide_url": "https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations/blueprint/guide",
+  "source_sha256": "10cca974f8623832314614b980a9ed702f558fc9344223aa4097b6d70ee6f8e6",
+  "scope": "Guide and navigation only. Existing Site core themes and Blueprint v0.4 experiment preserved. Fourth-theme runtime changes remain local.",
+  "validation": {
+    "build": "passed",
+    "typescript": "passed",
+    "guideTests": "6/6",
+    "assets": "17/17 HTTP 200",
+    "viewport": "320 and 1280 no document overflow"
+  },
+  "packaging": "Official site-workflow.mjs. Windows PATH includes Git Bash; TAR_OPTIONS=--force-local for drive-letter paths. Direct documented Vinext build used after official build helper npm shim failure."
+}

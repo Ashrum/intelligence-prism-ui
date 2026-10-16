@@ -4,6 +4,123 @@
 
 ## 当前
 
+- 轮次：蓝图编辑式排版与 Geist Mono 子集 · 2026-10-16；开工基线 `9b5ac0c389abb5fb232b0356a920a60706d86e27`，Site v123，分支 `feat/blueprint-editorial-type`；开工工作树干净。
+- 授权：用户批准编辑式章节 / 小节排版、有限 Geist Mono 本地子集及每 3 个已完成小轮做完整回归与独立综合审查。本轮只作用于现有蓝图展示，不扩展 Agent 业务正式规范的实施范围。
+- 检查周期：本轮实施完成、定向检查通过，累计 1/3；下次普通小轮为 2/3，第 3 个完成轮收口时必须进行完整回归及独立综合审查。计数按已完成的授权小轮，不按提交 / 重试 / 同轮返工递增；高风险提前扩大检查时另记原因与计数处理。
+- 排版决定：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px，使用既有语义角色；章号保留默认 48×48 墨底块与 stat-display 24px / 500 字形。标题组间隔 12px，小节线 1px，章节沿用结构墨线。普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行，中文不缩字。
+- 字体实值：Geist Mono 官方 1.4.2，固定提交 `4d655731f83507f0258ce5541c297b6553d5d081`，OFL-1.1；本地 400 / 500 WOFF2 分别 10768 / 11048 字节，每份 204 码点、321 glyph。family 为 Geist Mono Blueprint，swap，回退既有 font-mono；仅用于章号 / 索引 / folio / 英文短标签，中文 UI 与 STIX 数学路径不变。两份资源及许可 SHA-256 已核对，完整实值见主题正文与 public/fonts/blueprint/manifest.json；Builder 的子集 --check 字节复现通过。
+- API：既有封装增加 BlueprintSectionHeader 的显式 code / folio kind，Sheet 原 props 保持兼容，只有 Sheet 生成框线 / 标尺；BpMinor 增加可选 code / label / headingLevel，label 缺省回退 children，id / className 保留；BpFigCap 仍为段落。API 已按源码及本轮定向测试核对。
+- 实现与文档：唯一 Builder 调整既有章节 Header / BpMinor / 字体；本轮原位更新 AGENTS、开发工作流、typography、component-contracts、本主题正文与状态。冻结 coss、核心主题、公共字号角色、品牌原色及业务布局保持原边界，不增目录条目或规划副本。
+- 本轮工程：[专项记录](evidence/editorial-20261016/engineering.json) 为 TypeScript 0 错误、Typography 308 文件、组件 / API 10/10、字体资源检查及子集字节复现通过；其时间为结果汇总时间。按已批准 1/3 节奏，本轮未运行全量工程测试或上轮完整组件交互矩阵。
+- 本轮浏览器：[browser.json](evidence/editorial-20261016/browser.json) 覆盖 1280px / 320px，6 个章节 Header、18 个分节标题，所有 folio 可见，尺寸和窄屏换行符合角色；Chrome 实际字体查询确认 Regular / Medium、中文系统字与 STIX 数学字形按用途命中。正常两字体 loaded，隔离上下文阻断两文件后为 error，320px 回退仍可读且无页面横溢；四主题普通 body / Input 与[改动前](evidence/editorial-20261016/before.json)属性相等，InputGroup 整组焦点保持。人工截图核对及精确边界见[定向检查](evidence/editorial-20261016/checks.md)。
+- 偏差处理：首次字体 CSS 二层导入造成开发页 500，已改 theme 同级导入并重启唯一服务后恢复 200；最终证据来自修复后的页面。没有以缓存中的 0 字节资源计时冒充字体文件体积。
+- 审查与发布：[独立轻量 Review](evidence/editorial-20261016/review.md) 结论为 PASS WITH NOTES；guide 同步校验与最终生产构建仍是发布门槛。生产构建在文档与 guide 冻结后执行，结果记入 PR / 最终部署记录，不为回填本文重复构建；不预写构建、提交或 Site 发布成功，第三轮综合审查不替代当轮门槛。
+- 历史基线与限制：最近完整回归记录为通用组件第二批的 1949 项 / 1688 通过 / 261 既有失败，无新增失败，见下方历史及对应证据；该结果不转记为本轮通过。真机、读屏器、实体打印、原生缩放及所有语言 / 状态组合不得在未实测时宣称通过。
+
+## 历史
+
+### 蓝图配色规则与通用组件第二批 · 2026-10-16（原当前，原样保留）
+
+- 轮次：蓝图配色规则与通用组件第二批 · 2026-10-16；开工基线 `2865942bb755efaa516a0f6f4252cdf79b4b1969`，Site v121；任务分支 `feat/blueprint-common-batch-two`，开工工作树干净。
+- 授权：用户于 2026-10-16 批准蓝图配色规则和第二批 12 类实施。范围为 InputGroup、Combobox、ToggleGroup、Progress；Menu、Popover、Tooltip、Toast；AlertDialog、Sheet、Skeleton、Empty。保留首批和原蓝图样板，Agent 业务页面与布局继续暂缓。
+- 配色决定：延续纸墨与 `#1D5FBF` 交互蓝，保留成功 / 警告 / 错误的独立语义及前景背景配对；品牌原色 `#339FF2` / `#E0438F` / `#C2F25B` 与品牌标识保持不变。AI 来源需真实来源依据与可读标识，品牌渐变不表达正确性、进度或完成。
+- 兼容澄清：既有教材封面及 DialogLayout 装饰复用 `--brand-ai-gradient`，变量名不赋予教材或对话框 AI 来源语义。仅原位澄清 `docs/foundation-tokens.md`、`docs/component-contracts.md` 与 `docs/blueprint-theme.md`，不改业务源码、公共令牌 / API、不全仓重命名，不扩展新渐变装饰范围。
+- 实现边界：复用固定 coss 与 Prism，只在蓝图范围调整样例相关几何和语义配色使用，几何覆盖继续排除嵌套核心预览根、后代及伪元素；浮层核对真正 Portal 宿主。针对矩阵发现的派生值继承问题，仅在涉及 Blueprint 的真实预览边界重绑既有 `--radius-lg` / `--radius-md` / `--color-muted`，使核心预览恢复自身令牌，夹具补 `text-foreground`；不新增公共令牌或改变普通核心全局主题。冻结 coss、品牌资产、依赖、组件目录与轻量 Blueprint v0.4 保持原边界。
+- 复用依据：已核对 12 类固定 coss 及 actions / overlays / feedback、本地 input / selection / dialog particles。另下载并阅读全文的官方 particles 共 14 项，来源 URL、依赖与文件散列见[复用记录](evidence/batch2-20261016/reuse-sources.json)，不发布上游全文。实际复用 coss、Prism Button / QuestionMath 与组合结构，Toast 沿用现有私有 manager 属性，Sheet 使用真实 MathML；不复制演示计时器、远程 avatar 或任务成功事实。历史 registry 缓存仍不存在，不声称穷举完整上游；此轮不新增 Agent 执行组件或公共 API。
+- 第二批浏览器：[交互](evidence/batch2-20261016/interactions.json) 47/47；[矩阵](evidence/batch2-20261016/matrix.json) 223/223，包含四主题 × 320px / 768px / 1280px 共 12 组布局、11 个真实浮层情景、6 组双向局部主题比较，记录内对应属性全部相等。覆盖所展示的输入、选择、错误、禁用、键盘、焦点、通知、确认取消、Sheet 长内容与减少动态效果；不称全部状态已验。
+- InputGroup 追加修复：[焦点实测](evidence/batch2-20261016/focus.json) 正常 / 错误 / 只读三类与独立清除按钮通过；旧会话 1280px 整组 439px、内部 386px / 411px，外层 2px 蓝色 outline / 2px offset，内层 outline / shadow 为 none，错误红边保留。[旧会话 320px 复验](evidence/batch2-20261016/routes.json) 整组 246.67px，焦点包住完整组合；旧尺寸不冒充干净环境结果。
+- 干净浏览器复验：[fresh-focus.json](evidence/batch2-20261016/fresh-focus.json) 的 1280px / 320px 下，innerWidth、文档和 body 的 clientWidth / scrollWidth 均等于视口；html / body zoom 为 1、DPR 为 1、visualViewport.scale 为 1。整组分别为 446.5px / 246px，保持完整 2px 蓝色焦点线；仅既有 Tabs 局部横向滚动，无文档级横溢。320px 截图已替换为本次证据。
+- 第一批与原样板回归：[首批交互](evidence/batch2-20261016/first-interactions.json) 31/31；[首批矩阵](evidence/batch2-20261016/first-matrix.json) 12 组布局与 8 个真实浮层，局部比较全部相等，CSS zoom 2 通过。[原按钮](evidence/batch2-20261016/first-hover.json) 四主题 × 320px / 1280px 共 8 情景通过，8 个原按钮均保留，蓝图主行动对比度 17.76:1。核心三主题 Progress [修改前后](evidence/batch2-20261016/core-comparison.json)完全一致。
+- 正式路由：[第二批 12 页 × 320px / 1280px](evidence/batch2-20261016/routes.json) 共 24 次访问返回 200、真实样例存在且无页面横向溢出；具体交互以夹具记录为准，截图索引见[检查记录](evidence/batch2-20261016/checks.md)。
+- 工程检查：数学字体、语义字号（308 个 owned TSX）、TypeScript 与最终生产构建通过，Blueprint 专项最终 39/39。全量首次 Windows 沙箱为 1923 / 1661 / 262，额外失败为 symlink EPERM；正常权限复跑为 1949 / 1688 / 261。随后 release 中间结果为 1949 / 1686 / 263，[新增两项](evidence/batch2-20261016/release-failure-delta.json)仅因文档生成物未同步。最终生成后重新构建并复跑为 1949 项 / 1688 通过 / 261 既有失败，两项生成物失败已消除，[最终失败描述集合](evidence/batch2-20261016/complete-failure-delta.json)与上一轮 hover 相同，new=[]、removed=[]；不声称全量通过。[命令、时间与退出码](evidence/batch2-20261016/engineering.json)已归档。
+- 审查与当前进度：[独立 Review](evidence/batch2-20261016/review.md) 最终结论为 PASS WITH NOTES，正式放行；源码、浏览器与最终工程条件已满足。最终结果回填仅改说明与证据，规范 guide 和下载资源重新生成并检查 hash。发布提交 SHA、PR 与 Site 版本以实际合并和发布终态为准，不预写发布成功。
+- 未验：真机、读屏器、实体打印、原生 200% 缩放、全站像素回归与未展示的状态组合；CSS zoom 2 不代替原生缩放。未知进度不补为 0，Toast / Empty / Skeleton 不制造业务事实；Sheet 真实 MathML 样例不等于全部公式与 Agent 业务场景已验收。第四主题保持候选状态。
+
+
+### 主行动按钮悬停可读性修复 · 2026-10-15（原当前，原样保留）
+
+- 轮次：主行动按钮悬停可读性修复 · 2026-10-15；基线main / 本地 / Site v120均为 `6cbbe50532495b7c1ca0b9d6b7bee9ed54e8b919`。
+- 用户问题：悬停文字不清楚，以及原蓝图按钮是否被取消。原样例未删除，仅被新增基础组件下推；在顶部补两项导航入口。
+- 实现：仅修正blueprint.css现有primary hover背景/文字成对令牌，demos/blueprint.tsx补锚点。原主/次/小/危险/禁用样例完整保留；不改coss、API、依赖或核心令牌。
+- 浏览器：四主题×320/1280，primary默认/hover/hover加焦点/按下均可读；蓝图17.76:1，其他主题最低13.92:1。次要/危险hover、禁用与减少动态效果通过定向检查；入口实际跳转成功。见 [浏览器测量](evidence/hover-20261015/browser-results.json)。
+- 工程检查：构建、类型、数学字体、307文件字号通过；Blueprint39/39；全量1949/1688通过/261既有失败，无新增或消失。见 [验收和独立审查](evidence/hover-20261015/checks.md)。
+- 独立Review：PASS WITH NOTES，无阻断。规范原位更新并重新生成；PR合入后用同一main提交发布Site，最终SHA与版本以部署记录及会话终态为准。
+- 限制：只验本组按钮及导航；全站布局、真机、读屏器和原生缩放不在本轮完成声明中。
+
+### 通用基础组件 Blueprint 首批 · 2026-10-15（原当前，原样保留）
+
+- 轮次：通用基础组件 Blueprint 首批 · 2026-10-15；开工基线 `55f25df36af5a8aaaa2374fed0427d9379b501e2`，Site v119。开工工作树干净。
+- 授权：用户在本会话明确“同意。批准，开始实施”。首批限定 Button、Input、Textarea、Select、Checkbox、RadioGroup、Switch、Tabs、Card、Badge、Alert、Dialog 共 12 类现有通用组件；Agent 业务页面与布局暂缓。
+- 实施范围：`app/(next)/next/blueprint.css` 的主题适配，`components/prism-next/blueprint-foundation-demo.tsx` 对照夹具及现有蓝图示例页接入，本文件和 `docs/blueprint-theme.md`、规范生成物及直接证据；`.gitattributes` 为本轮证据限定 LF。不新增组件目录、公共 API、依赖或业务流程；冻结 coss 与核心三主题保持原意，轻量 Blueprint v0.4 不扩入第四主题适配。
+- 设计边界：沿用现有语义字号与主题令牌，区分结构线、次级分隔线、静态表面和真实操作；Radio 保留圆形。只读、禁用、加载、错误分别表达；选中态由真实属性驱动。墨底焦点保留分隔层，标尺保留上一轮 14px / 10px 及其限定例外。
+- 复用核对：已读取固定 coss `e937becd2d5ffb5c621eed6f8b1f223cbb6051e7` 的 12 类源码及 Prism Badge 适配；读取本地 `selection-particles.tsx`（p-select-6 / 18 / 7 / 21）、`dialog-particles.tsx`（p-dialog-5 / 4）、`input-particles.tsx`（p-input-group-22）和 forms / navigation / feedback 组合。历史 registry 与 p-tabs-1 缓存当前不存在，只复核 [v7 已归档检索摘要](evidence/v7/reuse.json) 和 [v8 记录](evidence/v8/inspection.md)，未联网刷新或复制新第三方代码。通用基础组件主题适配不涉及 Beautiful UI 的 Agent 执行组件新增。
+- 交互边界：复用 coss / Base UI 的键盘、焦点、受控状态与 Portal；夹具只管理可逆输入、选中、开合状态，不复制模拟保存计时器或产生业务完成回执。
+- 已实现修正：Input / Textarea 外层边框、单一焦点与错误色；Select 实际弹层表面；Checkbox indicator 方角与已选错误红色内描边；Switch 关闭状态；CardFrame 裁切；下划线 Tabs；Dialog 底部方角。320px 下本样例激活 Tab 的外侧焦点靠近裁切边缘，已限定在基础组件夹具内改为内侧 2px 蓝线加纸色隔离；[稳定采样](evidence/common-20261015/final-focus.json) 确认 active / focus-visible 均为 true、outline 2px、offset −3px、纸色 inset 4px，最终截图已目视复验。此记录替代路由快照中尚未结束的投影过渡值。
+- 真实交互：[31 项检查](evidence/common-20261015/interactions.json) 全部通过，涵盖输入校验及错误清除、只读 / 禁用、Select 键盘 / Escape、Checkbox / RadioGroup / Switch、两种 Tabs、Dialog 初始焦点 / 校验聚焦 / 内 Select 关闭 / 焦点限制 / 关闭返回、本页卡片更新及静态状态文字。禁用 Tabs 可获焦点但不能激活，沿用实际 Base UI 行为；不写成所有禁用项均跳过焦点。没有以这 31 项宣称所有变体和状态组合通过。
+- 四主题矩阵：[matrix.json](evidence/common-20261015/matrix.json) 中 light / paper / dark / blueprint × 320px / 768px / 1280px 共 12 组均展示 12 类样例，无页面横向溢出。Dialog 和内部 Select 挂在同一主题容器内；三个核心全局主题与全局蓝图内对应核心预览的 radius / background / color / border / shadow 逐项相等；全局 light 内显式蓝图的反向对照相等。结论限定这些浮层和属性，不外推到所有 Portal 宿主或全站像素。
+- 正式路由：[routes.json](evidence/common-20261015/routes.json) 记录 12 类组件页及 InputGroup 回归页 × 320px / 1280px，共 26 次访问均为 200 且无页面横溢；InputGroup 内部无样式控件保持 border 0，并追加 Checkbox 错误内描边和 Dialog 底部方角测量。Dialog 开合行为以上述真实交互为据，不能仅从路由 HTML 推定已验。
+- 打印与缩放：Select 打印媒介投影检查为 none；未做原生打印预览或实体输出。CSS `zoom: 2` 截图及测量无页面横溢，但 Ctrl++ 未改变 viewport / DPR，原生浏览器 200% 缩放仍未验证。
+- 工程初跑：math-font 通过，typography 307 个 owned TSX 通过，生产构建与 TypeScript 通过。全量 1949 项 / 1686 通过 / 263 失败：其中 2 项为规范更新后尚未同步生成物；其余 261 项与标尺轮既有失败描述相同。Blueprint 初跑 39 项 / 37 通过 / 2 项同类生成物失败；同步后复跑：数学字体、307 文件字号、生产构建、TypeScript 均通过，Blueprint 39/39 通过；全量 1949 / 1688 通过 / 261 失败 / 0 skipped，与标尺基线失败描述集合完全一致，无新增或消失，详见 [检查记录](evidence/common-20261015/checks.md) 和 [失败集合对照](evidence/common-20261015/final-failure-delta.json)。不宣称全量通过。
+- 文档与证据：范围、复用依据、当前实际样例和未验边界已原位更新；[起点测量](evidence/common-20261015/before.json) 及截图目录 `docs/blueprint/screens/common-20261015/` 已保存。规范 JSON 与下载资产已同步。[独立审查](evidence/common-20261015/review.md) PASS WITH NOTES，无阻断。按已授权流程合并 PR 后，以同一 main 提交构建并发布 Site；最终 SHA 与版本以部署记录和会话终态为准，不在自身源码中预填未来发布信息。
+- 未验范围：真实 MathML 公式、系统剪贴板复制、长正文 Dialog、已选错误 Radio、全部变体 / 状态组合、原生 200% 缩放、真机、读屏器、完整对比度审计、实体打印、全站像素回归及 Agent 业务场景。历史 v9 与标尺轮结果不当作本轮验证，第四主题继续为候选。
+
+
+### 外侧标尺密度微调 · 2026-10-15（原当前，原样保留）
+
+- 轮次：外侧标尺密度微调 · 2026-10-15；基线 GitHub main / 本地 / Site v118 均为 a36acadade4068a21f5bc9a0336d9714a812450f。开工工作树干净。
+- 授权：用户明确要求降低外侧标尺宽度、减小字号，并授权自行决定数据与实施；本轮仅以此允许装饰坐标的局部10px字号例外。
+- 运行时范围：blueprint.css。蓝图标尺18→14px，数字12→10px / 行高1，内框及四边同步；rem随根字号缩放。正文、内容留白、核心主题、冻结coss与依赖保持不变。字号检查仅新增完整选择器、aria-hidden、文件路径和精确声明的单条例外，并由独立最小仓库执行测试证明其他局部字号与失去隔离的规则仍被拒绝。
+- 真实浏览器：四主题 × 320/1280px；蓝图1280的标尺14/10px，320隐藏；核心三主题与双层核心预览保留18/12px；根字号放大25%后为17.5/12.5px，数字无裁切。见 [测量](evidence/ruler-20261015/browser-results.json) 与 docs/blueprint/screens/ruler-20261015/。
+- 文档：原位更新蓝图规范、当前状态并重新生成站点正文及证据下载。检查结果见 [本轮验证](evidence/ruler-20261015/checks.md)。发布按任务PR合入main后将同一提交同步到Site；最终版本以部署记录和会话终态为准。
+- 独立审查：PASS WITH NOTES，无阻断；[审查记录](evidence/ruler-20261015/review.md)。构建、类型、字号与39项蓝图测试通过；全量1949项中1688通过、261失败，失败集合与输入基线一致。
+- 未验范围：真机、读屏器、实体打印及全站像素回归。本轮是已批准的装饰调整，不改变第四主题候选状态。
+
+### 三方同步 · 2026-10-15（原当前，原样保留）
+
+- 轮次：三方同步 · 2026-10-15。用户明确要求将 Site、GitHub 与本地同步。
+- 输入基线：GitHub main 1f575ea；Site v117 / c59c0ca；本地第一批完善 74790e7。共同祖先为 5ba6277。
+- 合并范围：保留 GitHub 第四主题与图表更新，导入 Site 轻量 Blueprint v0.4、MIT 许可和实验历史，同时保存本地第一批完善、规范全文与证据。
+- 冲突处理：保留第四主题侧栏和规范页示例入口；生成的 JSON 与实验说明下载文件从合并后的源文档重新生成。两条蓝图实验不互相替换。
+- 跨系统一致性：仅将规范直接引用文本及下载快照限定 LF，避免 Windows CRLF 改变来源 SHA-256；没有修改冻结 coss 或依赖。
+- 同步流程：任务分支经 PR 合入 GitHub main，再由相同 Git 提交更新 Site 并发布，本地回到 main。发布结果以会话终态与 Site 部署记录为准。
+- 本轮实际检查、结果和限制见 [同步验证](evidence/sync-20261015/checks.md)。历史 v9 结果保留，不作为本轮全量测试通过依据。
+- 第四主题仍为候选；真机、读屏器、实体打印等未验范围继续保留。
+
+### v9 · 来源提炼后第一批完善与站点规范入口 · 2026-10-15（原当前，原样保留）
+
+- 轮次：v9 · 来源提炼后的第一批完善与站点规范阅读入口。
+- 日期 / 基线：2026-10-15，GitHub main 1f575ea；工作分支 docs/blueprint-source-audit-20261015。用户在本会话明确批准执行，并要求将《Foundations · 第四主题「蓝图」》记录到智能曜彩站点。
+- 本轮范围：现有样板的容器布局、标题层级、禁用态、墨底焦点分隔层、静态卡片与示例动作语义、长中文与公式阅读；规范原文生成站内页面、目录和直接证据下载。冻结 coss、依赖和核心三主题 Token 未改。
+- 站点边界：以线上 v116 的 Site 源码为基线，仅添加规范页面及导航。Site 现有三主题和轻量 Blueprint v0.4 保留；GitHub 第四主题运行时修改仍在本地工作分支，不能从文档发布推断主题已经部署。
+- GitHub 工作分支尚未提交或推送；Site 文档发布由独立 Site 源码流程保存。上线版本和地址以会话发布结果为准。
+
+### 实现与浏览器验收
+
+- 标题采用章节语义字号；两列与双框按内容容器宽度重排，320px 去除外层装饰，长标签可换行。
+- 禁用按钮、工具和分段项不产生悬停/按压动作反馈；固定数据明确标注为样例，移除模拟业务推进，静态卡片不伪装可点击。
+- 蓝图墨底主行动、选择项及面板链接采用 2px 白纸色分隔层与 2px 蓝色外框；真实键盘焦点稳定后计算值与截图一致。
+- Chrome 桌面视口模拟：light/paper/dark/blueprint × 320×800、1280×960，页面 scrollWidth 均等于 viewport。并非真机或全站像素回归。
+- Home/End 到首项「全部」和末项「异常」，焦点外框均留在滚动边界内；禁用「主行动不可用」按下前后的背景、文字、边框、投影和位移一致。
+- Tabs 方向键只移动焦点，Enter 才激活；长公式自身 248px/327px 横滚；规范表格自身 280px/512px 横滚，页面仍为320px。
+- 双层核心预览 DOM/CSS 夹具的字体、颜色、圆角和外框与单层对应预览一致；未据此声称 React Theme Context 或读屏器通过。
+- 浏览器记录：[browser-results.json](evidence/v9/browser-results.json)；截图目录 docs/blueprint/screens/v9/。独立代码审查为 PASS WITH NOTES，无阻断问题；上述浏览器复验补齐其主要待验项。
+
+### 验证与限制
+
+| 检查 | 本轮结果 |
+| --- | --- |
+| 字体与语义字号 | math-font 通过；306 个 owned TSX 通过。Windows CRLF 导致的 attachment 例外匹配先恢复该文件 Git LF，内容 diff 为空 |
+| Vinext build | 通过；见 [build.log](evidence/v9/build.log) |
+| TypeScript --noEmit | 通过；见 [tsc.log](evidence/v9/tsc.log) |
+| Blueprint 与规范页定向测试 | 37/37 通过；见 [实际运行记录](evidence/v9/targeted-blueprint-checks.json) 及 [测试日志](evidence/v9/targeted-blueprint-tests.log) |
+| 全量测试 | 1947 项，1686 通过、261 失败；不得引用历史 2034/2034 作为本轮结果 |
+| 失败调查 | Windows 路径过滤、CRLF 字节、ESM 子路径及虚拟文件匹配问题；代表性 HEAD 基线复现见 [分析](evidence/v9/windows-test-analysis.md)。未逐项解决261项失败 |
+| 文档安全同步 | 来源hash、资源字节、路径边界与恶意协议检查通过；最终发布源需再运行 sync --check |
+
+本轮完成第一批，整体仍为候选状态。后续按规范的阶段3—5继续检查密集数据、打印与真实教师场景。真机、触摸、读屏器、实体打印、全站像素回归及全部历史测试的Windows适配未完成；本轮不据此批准第四主题全站发布。
+
+### v8 · 打印图案密度与可访问性工程检查 · 2026-10-14（原当前，原样保留）
+
 - 轮次：v8 · 打印图案密度与可访问性工程检查；Builder 实现与自测完成；Supervisor 浏览器验收结论 `PASS WITH NOTES`。
 - 日期 / 基线：2026-10-14，`feat/learning-charts` · `efe001ff6eaf3b228c41e5873fe22b9e3c4587ea`（含 BPv6 / BPv7）。授权依据：Supervisor `task-BPv8.md` 记录 PO 指示继续第 3 项“实体黑白打印时的图案密度、真机、读屏器验收”；本环境只做工程检查。
 - 工作树：开工干净，沿用当前分支；未提交、推送、联网、创建 PR、启动服务或发布。其他 P 系列图表、coss、AGENTS、核心三主题 Token、依赖及既有测试均未改；[保护核对](evidence/v8/integrity.json)。
@@ -59,8 +176,6 @@
 - 浏览器验收：按分工由 Supervisor 执行。**真机、读屏器、实体打印未验**；本轮无浏览器截图，不能用 SSR / CSS 源码断言代替视觉或交互验收。
 - 待 PO / 设计决定：固定蓝色焦点在墨底 #16181D 上仅约 2.91:1，深色表面是否采用分隔层；共享 DataRecordTable 内部 ID 操作名及选择状态的语义约定；若要覆盖 BpSizeBar 多个纯色填充，须另定纹理映射。未擅自扩展本轮实现。
 - 六系列纹理结论只适用于既有 ECharts 填充图案；不覆盖 Recharts 无纹理图、无填充折线 / 散点、热力图连续色阶、调用方自定义色、透明面积及小图例的实体可读性。
-
-## 历史
 
 ### v7 · Tabs 320px 横向溢出 · 2026-10-14（原当前，原样保留）
 

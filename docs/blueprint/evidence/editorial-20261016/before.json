@@ -1,0 +1,91 @@
+{
+  "baseline": "9b5ac0c389abb5fb232b0356a920a60706d86e27",
+  "date": "2026-10-15T17:27:27.243Z",
+  "source": "Captured by .sites-runtime/editorial-20261016/before.js; body/input fields retained for comparison",
+  "rows": [
+    {
+      "theme": "light",
+      "body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(31, 35, 40)",
+        "background": "rgb(255, 255, 255)"
+      },
+      "input": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(31, 35, 40)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "theme": "paper",
+      "body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(30, 41, 59)",
+        "background": "rgb(244, 241, 234)"
+      },
+      "input": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(30, 41, 59)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "theme": "dark",
+      "body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(225, 229, 234)",
+        "background": "rgb(15, 15, 15)"
+      },
+      "input": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(225, 229, 234)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "theme": "blueprint",
+      "body": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(22, 24, 29)",
+        "background": "rgb(246, 246, 243)"
+      },
+      "input": {
+        "fontFamily": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Noto Sans CJK SC\", sans-serif",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": "400",
+        "letterSpacing": "normal",
+        "color": "rgb(22, 24, 29)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    }
+  ]
+}
