@@ -1,0 +1,822 @@
+{
+  "date": "2026-10-16",
+  "base": "773724595ab36d0574252da8503821d93eb9c6a1",
+  "browser": "Codex in-app Chromium desktop viewport simulation",
+  "records": [
+    {
+      "alert": false,
+      "bg": "#FFFFFF",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "light",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#895509",
+      "width": 1280
+    },
+    {
+      "alert": false,
+      "bg": "#F4F1EA",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "paper",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#895509",
+      "width": 1280
+    },
+    {
+      "alert": false,
+      "bg": "#0F0F0F",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "dark",
+      "theme": "dark",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#F4CC86",
+      "width": 1280
+    },
+    {
+      "alert": false,
+      "bg": "#F6F6F3",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "blueprint",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#995909",
+      "width": 1280
+    },
+    {
+      "alert": false,
+      "bg": "#081322",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "dark",
+      "theme": "blueprint-night",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#F0B14A",
+      "width": 1280
+    },
+    {
+      "alert": false,
+      "bg": "#FFFFFF",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "light",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#895509",
+      "width": 320
+    },
+    {
+      "alert": false,
+      "bg": "#F4F1EA",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "paper",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#895509",
+      "width": 320
+    },
+    {
+      "alert": false,
+      "bg": "#0F0F0F",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "dark",
+      "theme": "dark",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#F4CC86",
+      "width": 320
+    },
+    {
+      "alert": false,
+      "bg": "#F6F6F3",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "light",
+      "theme": "blueprint",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#995909",
+      "width": 320
+    },
+    {
+      "alert": false,
+      "bg": "#081322",
+      "body": "14px",
+      "heading": "26px",
+      "height": 960,
+      "overflow": false,
+      "scheme": "dark",
+      "theme": "blueprint-night",
+      "url": "http://127.0.0.1:5173/next/foundations/blueprint",
+      "warning": "#F0B14A",
+      "width": 320
+    },
+    {
+      "check": "night-dialog-320",
+      "border": "rgb(201, 214, 232)",
+      "focus": "_R_2t9l6_-dialog-name",
+      "radius": "0px",
+      "rect": {
+        "height": 423,
+        "width": 320
+      },
+      "shadow": "rgba(0, 0, 0, 0.3) 6px 6px 0px 0px",
+      "text": "编辑本页演示材料保存仅更新下方的卡片样例，不发送网络请求；取消或关闭会放弃本次输入。演示材料名称演示材料类型例题讲解取消保存本页演示"
+    },
+    {
+      "check": "night-tabs-320",
+      "states": [
+        {
+          "focus": false,
+          "selected": "false",
+          "text": "题干内容"
+        },
+        {
+          "focus": true,
+          "selected": "true",
+          "text": "长中文推导与复核说明"
+        },
+        {
+          "focus": false,
+          "selected": "false",
+          "text": "不可用材料"
+        }
+      ],
+      "dialogClosed": true
+    },
+    {
+      "check": "five-theme-nested-matrix-1280",
+      "states": [
+        {
+          "outer": "light",
+          "previews": [
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(227, 229, 233)",
+              "fg": "rgb(31, 35, 40)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "light"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 254, 251)",
+              "border": "rgb(216, 213, 206)",
+              "fg": "rgb(30, 41, 59)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "paper"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(23, 25, 28)",
+              "border": "rgb(52, 56, 62)",
+              "fg": "rgb(225, 229, 234)",
+              "radius": "10px",
+              "scheme": "dark",
+              "theme": "dark"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(214, 218, 225)",
+              "fg": "rgb(22, 24, 29)",
+              "radius": "0px",
+              "scheme": "light",
+              "theme": "blueprint"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(13, 28, 49)",
+              "border": "rgb(35, 56, 90)",
+              "fg": "rgb(230, 237, 247)",
+              "radius": "0px",
+              "scheme": "dark",
+              "theme": "blueprint-night"
+            }
+          ]
+        },
+        {
+          "outer": "paper",
+          "previews": [
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(227, 229, 233)",
+              "fg": "rgb(31, 35, 40)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "light"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 254, 251)",
+              "border": "rgb(216, 213, 206)",
+              "fg": "rgb(30, 41, 59)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "paper"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(23, 25, 28)",
+              "border": "rgb(52, 56, 62)",
+              "fg": "rgb(225, 229, 234)",
+              "radius": "10px",
+              "scheme": "dark",
+              "theme": "dark"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(214, 218, 225)",
+              "fg": "rgb(22, 24, 29)",
+              "radius": "0px",
+              "scheme": "light",
+              "theme": "blueprint"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(13, 28, 49)",
+              "border": "rgb(35, 56, 90)",
+              "fg": "rgb(230, 237, 247)",
+              "radius": "0px",
+              "scheme": "dark",
+              "theme": "blueprint-night"
+            }
+          ]
+        },
+        {
+          "outer": "dark",
+          "previews": [
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(227, 229, 233)",
+              "fg": "rgb(31, 35, 40)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "light"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 254, 251)",
+              "border": "rgb(216, 213, 206)",
+              "fg": "rgb(30, 41, 59)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "paper"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(23, 25, 28)",
+              "border": "rgb(52, 56, 62)",
+              "fg": "rgb(225, 229, 234)",
+              "radius": "10px",
+              "scheme": "dark",
+              "theme": "dark"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(214, 218, 225)",
+              "fg": "rgb(22, 24, 29)",
+              "radius": "0px",
+              "scheme": "light",
+              "theme": "blueprint"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(13, 28, 49)",
+              "border": "rgb(35, 56, 90)",
+              "fg": "rgb(230, 237, 247)",
+              "radius": "0px",
+              "scheme": "dark",
+              "theme": "blueprint-night"
+            }
+          ]
+        },
+        {
+          "outer": "blueprint",
+          "previews": [
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(227, 229, 233)",
+              "fg": "rgb(31, 35, 40)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "light"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 254, 251)",
+              "border": "rgb(216, 213, 206)",
+              "fg": "rgb(30, 41, 59)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "paper"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(23, 25, 28)",
+              "border": "rgb(52, 56, 62)",
+              "fg": "rgb(225, 229, 234)",
+              "radius": "10px",
+              "scheme": "dark",
+              "theme": "dark"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(214, 218, 225)",
+              "fg": "rgb(22, 24, 29)",
+              "radius": "0px",
+              "scheme": "light",
+              "theme": "blueprint"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(13, 28, 49)",
+              "border": "rgb(35, 56, 90)",
+              "fg": "rgb(230, 237, 247)",
+              "radius": "0px",
+              "scheme": "dark",
+              "theme": "blueprint-night"
+            }
+          ]
+        },
+        {
+          "outer": "blueprint-night",
+          "previews": [
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(227, 229, 233)",
+              "fg": "rgb(31, 35, 40)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "light"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(255, 254, 251)",
+              "border": "rgb(216, 213, 206)",
+              "fg": "rgb(30, 41, 59)",
+              "radius": "10px",
+              "scheme": "light",
+              "theme": "paper"
+            },
+            {
+              "beforeRadius": "9px",
+              "bg": "rgb(23, 25, 28)",
+              "border": "rgb(52, 56, 62)",
+              "fg": "rgb(225, 229, 234)",
+              "radius": "10px",
+              "scheme": "dark",
+              "theme": "dark"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(255, 255, 255)",
+              "border": "rgb(214, 218, 225)",
+              "fg": "rgb(22, 24, 29)",
+              "radius": "0px",
+              "scheme": "light",
+              "theme": "blueprint"
+            },
+            {
+              "beforeRadius": "0px",
+              "bg": "rgb(13, 28, 49)",
+              "border": "rgb(35, 56, 90)",
+              "fg": "rgb(230, 237, 247)",
+              "radius": "0px",
+              "scheme": "dark",
+              "theme": "blueprint-night"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check": "night-heatmap-zero-1280",
+      "state": {
+        "charts": [
+          {
+            "description": "测评数据。完整数值及缺测说明见下方数据表。",
+            "labels": "shown",
+            "texts": [
+              "甲组",
+              "乙组",
+              "丙组",
+              "第一轮",
+              "第二轮",
+              "50分",
+              "62分",
+              "缺测",
+              "78分",
+              "69分",
+              "86分",
+              "50分",
+              "86分"
+            ],
+            "width": 792.703125
+          },
+          {
+            "description": "能力与题目层级。窄屏下格内数值已隐藏，点按格子查看数值。完整数值及缺测说明见下方数据表。",
+            "labels": "hidden",
+            "texts": [
+              "运算求解",
+              "推理论证",
+              "数据分析",
+              "基础",
+              "进阶",
+              "综合",
+              "0",
+              "40",
+              "运算求解 · 基础",
+              "0"
+            ],
+            "width": 300
+          }
+        ]
+      }
+    },
+    {
+      "check": "night-heatmap-table-and-zero-320",
+      "charts": [
+        {
+          "description": "测评数据。窄屏下格内数值已隐藏，点按格子查看数值。完整数值及缺测说明见下方数据表。",
+          "labels": "hidden",
+          "rows": [
+            "甲组第一轮50分查看",
+            "甲组第二轮62分查看",
+            "乙组第一轮缺测查看",
+            "乙组第二轮78分查看",
+            "丙组第一轮69分查看",
+            "丙组第二轮86分查看"
+          ],
+          "texts": [
+            "甲组",
+            "乙组",
+            "丙组",
+            "50分",
+            "86分"
+          ],
+          "width": 162
+        },
+        {
+          "description": "能力与题目层级。窄屏下格内数值已隐藏，点按格子查看数值。完整数值及缺测说明见下方数据表。",
+          "labels": "hidden",
+          "rows": [
+            "运算求解基础0查看",
+            "运算求解进阶15查看",
+            "运算求解综合20查看",
+            "推理论证基础20查看",
+            "推理论证进阶25查看",
+            "推理论证综合缺测查看",
+            "数据分析基础30查看",
+            "数据分析进阶35查看",
+            "数据分析综合40查看"
+          ],
+          "texts": [
+            "运算求解",
+            "推理论证",
+            "数据分析",
+            "基础",
+            "进阶",
+            "综合",
+            "0",
+            "0",
+            "40",
+            "运算求解 · 基础",
+            "0"
+          ],
+          "width": 205
+        }
+      ],
+      "overflow": false,
+      "width": 320
+    },
+    {
+      "check": "final-outline-hover",
+      "bg": "rgb(22, 48, 90)",
+      "fg": "rgb(230, 237, 247)",
+      "hover": true,
+      "text": "次要按钮示例"
+    },
+    {
+      "check": "final-filled-danger",
+      "bg": "rgb(255, 112, 112)",
+      "fg": "rgb(8, 19, 34)",
+      "radius": "0px"
+    },
+    {
+      "check": "final-dialog-escape-320",
+      "active": "打开演示对话框",
+      "overflow": false,
+      "theme": "blueprint-night"
+    },
+    {
+      "check": "tabs-320",
+      "overflow": false,
+      "panels": [
+        "材料类型：例题讲解。预计研读：8 分钟。",
+        "4 份材料"
+      ],
+      "selected": [
+        "材料信息",
+        "全部材料"
+      ],
+      "theme": "blueprint-night",
+      "width": 320
+    },
+    {
+      "check": "tabs-1280",
+      "overflow": false,
+      "width": 1280
+    }
+  ],
+  "nestedPreviews": [
+    {
+      "outer": "light",
+      "previews": [
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(227, 229, 233)",
+          "fg": "rgb(31, 35, 40)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "light"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 254, 251)",
+          "border": "rgb(216, 213, 206)",
+          "fg": "rgb(30, 41, 59)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "paper"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(23, 25, 28)",
+          "border": "rgb(52, 56, 62)",
+          "fg": "rgb(225, 229, 234)",
+          "radius": "10px",
+          "scheme": "dark",
+          "theme": "dark"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(214, 218, 225)",
+          "fg": "rgb(22, 24, 29)",
+          "radius": "0px",
+          "scheme": "light",
+          "theme": "blueprint"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(13, 28, 49)",
+          "border": "rgb(35, 56, 90)",
+          "fg": "rgb(230, 237, 247)",
+          "radius": "0px",
+          "scheme": "dark",
+          "theme": "blueprint-night"
+        }
+      ]
+    },
+    {
+      "outer": "paper",
+      "previews": [
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(227, 229, 233)",
+          "fg": "rgb(31, 35, 40)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "light"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 254, 251)",
+          "border": "rgb(216, 213, 206)",
+          "fg": "rgb(30, 41, 59)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "paper"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(23, 25, 28)",
+          "border": "rgb(52, 56, 62)",
+          "fg": "rgb(225, 229, 234)",
+          "radius": "10px",
+          "scheme": "dark",
+          "theme": "dark"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(214, 218, 225)",
+          "fg": "rgb(22, 24, 29)",
+          "radius": "0px",
+          "scheme": "light",
+          "theme": "blueprint"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(13, 28, 49)",
+          "border": "rgb(35, 56, 90)",
+          "fg": "rgb(230, 237, 247)",
+          "radius": "0px",
+          "scheme": "dark",
+          "theme": "blueprint-night"
+        }
+      ]
+    },
+    {
+      "outer": "dark",
+      "previews": [
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(227, 229, 233)",
+          "fg": "rgb(31, 35, 40)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "light"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 254, 251)",
+          "border": "rgb(216, 213, 206)",
+          "fg": "rgb(30, 41, 59)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "paper"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(23, 25, 28)",
+          "border": "rgb(52, 56, 62)",
+          "fg": "rgb(225, 229, 234)",
+          "radius": "10px",
+          "scheme": "dark",
+          "theme": "dark"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(214, 218, 225)",
+          "fg": "rgb(22, 24, 29)",
+          "radius": "0px",
+          "scheme": "light",
+          "theme": "blueprint"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(13, 28, 49)",
+          "border": "rgb(35, 56, 90)",
+          "fg": "rgb(230, 237, 247)",
+          "radius": "0px",
+          "scheme": "dark",
+          "theme": "blueprint-night"
+        }
+      ]
+    },
+    {
+      "outer": "blueprint",
+      "previews": [
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(227, 229, 233)",
+          "fg": "rgb(31, 35, 40)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "light"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 254, 251)",
+          "border": "rgb(216, 213, 206)",
+          "fg": "rgb(30, 41, 59)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "paper"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(23, 25, 28)",
+          "border": "rgb(52, 56, 62)",
+          "fg": "rgb(225, 229, 234)",
+          "radius": "10px",
+          "scheme": "dark",
+          "theme": "dark"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(214, 218, 225)",
+          "fg": "rgb(22, 24, 29)",
+          "radius": "0px",
+          "scheme": "light",
+          "theme": "blueprint"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(13, 28, 49)",
+          "border": "rgb(35, 56, 90)",
+          "fg": "rgb(230, 237, 247)",
+          "radius": "0px",
+          "scheme": "dark",
+          "theme": "blueprint-night"
+        }
+      ]
+    },
+    {
+      "outer": "blueprint-night",
+      "previews": [
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(227, 229, 233)",
+          "fg": "rgb(31, 35, 40)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "light"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(255, 254, 251)",
+          "border": "rgb(216, 213, 206)",
+          "fg": "rgb(30, 41, 59)",
+          "radius": "10px",
+          "scheme": "light",
+          "theme": "paper"
+        },
+        {
+          "beforeRadius": "9px",
+          "bg": "rgb(23, 25, 28)",
+          "border": "rgb(52, 56, 62)",
+          "fg": "rgb(225, 229, 234)",
+          "radius": "10px",
+          "scheme": "dark",
+          "theme": "dark"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(255, 255, 255)",
+          "border": "rgb(214, 218, 225)",
+          "fg": "rgb(22, 24, 29)",
+          "radius": "0px",
+          "scheme": "light",
+          "theme": "blueprint"
+        },
+        {
+          "beforeRadius": "0px",
+          "bg": "rgb(13, 28, 49)",
+          "border": "rgb(35, 56, 90)",
+          "fg": "rgb(230, 237, 247)",
+          "radius": "0px",
+          "scheme": "dark",
+          "theme": "blueprint-night"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Not a physical mobile device or native screen reader check.",
+    "Theme DOM preview isolation does not prove React chart context isolation.",
+    "Hidden heatmap data-table exception is unit/SSR verified only.",
+    "Core theme captures preceded documentation wording changes; runtime tokens and styles are unchanged.",
+    "No physical print or native browser zoom acceptance."
+  ]
+}

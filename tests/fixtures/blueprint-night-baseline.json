@@ -1,0 +1,11 @@
+{
+  "head": "773724595ab36d0574252da8503821d93eb9c6a1",
+  "themeBlockHashes": [
+    "d63b8b9c7b07a131b8c46f6afd671b8a64e1b7803fc4d5e11c57f2b09cdb8dd7",
+    "25b1f0989be23ef6c64f057fb98fe64b77425f61a4c6f4e32a2077d8373dcffa",
+    "3f237694cfbce322962333e3345f9cd3bff298adec42639222492d35a3c299cb",
+    "b13e89a074aa089dbba33667daee8f46dcb00b703931c0b33fc1ce83633e8fa1",
+    "9f59b6c90d4a5259e8b937c9199a9455691b4774930a0f600a423e60eb321102"
+  ],
+  "darkSelector": "&:is([data-prism-theme=\"dark\"], [data-prism-theme=\"dark\"] *):not([data-agent-preview][data-prism-theme=\"light\"], [data-agent-preview][data-prism-theme=\"light\"] *, [data-agent-preview][data-prism-theme=\"paper\"], [data-agent-preview][data-prism-theme=\"paper\"] *, [data-agent-preview][data-prism-theme=\"blueprint\"], [data-agent-preview][data-prism-theme=\"blueprint\"] *)"
+}

@@ -1,0 +1,85 @@
+{
+  "baseline": "773724595ab36d0574252da8503821d93eb9c6a1",
+  "unchanged": {
+    "components/coss": true,
+    "package.json": true,
+    "package-lock.json": true,
+    "docs/OLE_Agent_Frontend_Blueprint_v1.0.md": true,
+    "AGENTS.md": true
+  },
+  "stashPreserved": "d94d5ab650569302c6c1cc8e473ecc410e1df1a6",
+  "screenshots": {
+    "blueprint-1280-components.jpg": {
+      "sha256": "f229f6cf65d41377659ac1a86537262c770972098851c198dbbbff6e38e37259",
+      "format": "JPEG"
+    },
+    "blueprint-320-components.jpg": {
+      "sha256": "5344efc9d6de08570efc8c986a973ac57bdda69121b354ef8eb1b7b7587e32cf",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-components.jpg": {
+      "sha256": "d06ed77b0a8fd94fc8fa24f6b4ea520806e610262ef16d4851f12561e003e165",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-controls.jpg": {
+      "sha256": "f05c3c72a3082fa3f6985def65714aa47973cae235445748045f632eb2118414",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-danger.jpg": {
+      "sha256": "7381043ff5cbc2ab7d0999de05d386a23c1627a011364f6a6fa9fec0d6069e6d",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-heatmap-zero.jpg": {
+      "sha256": "76ca85a9934eb008b67d413bda87c9f05e9b9e8cf5d87d121da6431bd1eadbf0",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-nested.jpg": {
+      "sha256": "2821ccbad87bef4ab5573f1e81008513313c30378883cedfbab5e8bca71a312c",
+      "format": "JPEG"
+    },
+    "blueprint-night-1280-tabs.jpg": {
+      "sha256": "be821a80ae7a60792be86bae65f68306c63ae6e79b45c6212a49a9dfe5167120",
+      "format": "JPEG"
+    },
+    "blueprint-night-320-components.jpg": {
+      "sha256": "598791227711d8800bdf22b747d7e0b2d22ff17ae87210f3a223cd663abb8a0b",
+      "format": "JPEG"
+    },
+    "blueprint-night-320-dialog.jpg": {
+      "sha256": "838ed5e99aeb09821681df610404a707280298ef967b3e2eb3be8daf3f69371f",
+      "format": "JPEG"
+    },
+    "blueprint-night-320-heatmap-zero.jpg": {
+      "sha256": "e0fcceef6fcce02927223e15633010291291c9d4369d1a3fb9cc6ef51872a65f",
+      "format": "JPEG"
+    },
+    "blueprint-night-320-tabs.jpg": {
+      "sha256": "ae1d83bb55fb123e21342d94cc20bf47b929d3fc688d94bbd778d2a1b8813468",
+      "format": "JPEG"
+    },
+    "dark-1280-components.jpg": {
+      "sha256": "89d5274afc6bce94491a449fd0c2357f2e5c080e4b30e3313731947e6d79e585",
+      "format": "JPEG"
+    },
+    "dark-320-components.jpg": {
+      "sha256": "e21dec99ecfc6f0ea33fc72b4107b8fc6a3cffb5c8b3731bd1ea51ed1f582846",
+      "format": "JPEG"
+    },
+    "light-1280-components.jpg": {
+      "sha256": "80c7c781454f36cd1c01583754f4a1d14791f119ebb9ad31a9d927eb6b399193",
+      "format": "JPEG"
+    },
+    "light-320-components.jpg": {
+      "sha256": "a2d727e9eff868d5c83de9171e3ae8b7e45951a1198567d7299574c0c42364e1",
+      "format": "JPEG"
+    },
+    "paper-1280-components.jpg": {
+      "sha256": "d1648c8696fc93801914e7ef16d738561d8e9343528b69a456f88380a81537b9",
+      "format": "JPEG"
+    },
+    "paper-320-components.jpg": {
+      "sha256": "c6ce75b71903df7d55d140dfc36fc26343b5f3ca53d571b7843cfa8eecdc6d88",
+      "format": "JPEG"
+    }
+  }
+}

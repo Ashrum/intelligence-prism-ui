@@ -1,191 +1,196 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "fb9a40968c8cc9b9ee2a5b56b1d3f1f4209da3f05fd38399f61bdfb2b5b47901",
+  "sourceSha256": "bd617cc5612ac0945fb2aab3b806d523380353230d1f7c4b5e9ca92f224fbf33",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-  "title": "Foundations · 第四主题「蓝图」",
+  "title": "Foundations · 蓝图与夜图",
   "headings": [
     {
       "id": "section-1",
       "level": 2,
-      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
+      "text": "夜图恢复 · 2026-10-16"
     },
     {
       "id": "section-2",
-      "level": 3,
-      "text": "主行动按钮悬停修复 · 2026-10-15"
+      "level": 2,
+      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
     },
     {
       "id": "section-3",
       "level": 3,
-      "text": "标尺密度微调 · 2026-10-15"
+      "text": "主行动按钮悬停修复 · 2026-10-15"
     },
     {
       "id": "section-4",
+      "level": 3,
+      "text": "标尺密度微调 · 2026-10-15"
+    },
+    {
+      "id": "section-5",
       "level": 2,
       "text": "完善路线与当前执行（更新于 2026-10-16）"
     },
     {
-      "id": "section-5",
+      "id": "section-6",
       "level": 3,
       "text": "编辑式排版与 Geist Mono 子集 · 2026-10-16"
     },
     {
-      "id": "section-6",
+      "id": "section-7",
       "level": 3,
       "text": "通用基础组件第二批与配色规则 · 2026-10-16"
     },
     {
-      "id": "section-7",
+      "id": "section-8",
       "level": 4,
       "text": "第二批复用与实现边界"
     },
     {
-      "id": "section-8",
+      "id": "section-9",
       "level": 4,
       "text": "第二批样例与已验范围"
     },
     {
-      "id": "section-9",
+      "id": "section-10",
       "level": 4,
       "text": "第二批实施结果与证据边界"
     },
     {
-      "id": "section-10",
+      "id": "section-11",
       "level": 3,
       "text": "通用基础组件首批 · 2026-10-15"
     },
     {
-      "id": "section-11",
+      "id": "section-12",
       "level": 4,
       "text": "复用依据（本轮离线核对）"
     },
     {
-      "id": "section-12",
+      "id": "section-13",
       "level": 4,
       "text": "首批样例与已验范围"
     },
     {
-      "id": "section-13",
+      "id": "section-14",
       "level": 4,
       "text": "实施结果与证据边界"
     },
     {
-      "id": "section-14",
+      "id": "section-15",
       "level": 3,
       "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
-      "id": "section-15",
+      "id": "section-16",
       "level": 3,
       "text": "第一批结果与剩余验收"
     },
     {
-      "id": "section-16",
+      "id": "section-17",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-17",
+      "id": "section-18",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-18",
+      "id": "section-19",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-19",
+      "id": "section-20",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-20",
+      "id": "section-21",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-21",
+      "id": "section-22",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-22",
+      "id": "section-23",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-23",
+      "id": "section-24",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-24",
+      "id": "section-25",
       "level": 3,
       "text": "配色与品牌分工（用户批准 2026-10-16）"
     },
     {
-      "id": "section-25",
+      "id": "section-26",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-26",
+      "id": "section-27",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-27",
+      "id": "section-28",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-28",
+      "id": "section-29",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-29",
+      "id": "section-30",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-30",
+      "id": "section-31",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-31",
+      "id": "section-32",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-32",
+      "id": "section-33",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-33",
+      "id": "section-34",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-34",
+      "id": "section-35",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-35",
+      "id": "section-36",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-36",
+      "id": "section-37",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-37",
+      "id": "section-38",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -254,6 +259,416 @@
       "children": [
         {
           "type": "text",
+          "value": "夜图恢复 · 2026-10-16"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "用户批准接续原 BPv9 夜图交接，以已合入警告色修复的 main "
+        },
+        {
+          "type": "code",
+          "value": "7737245"
+        },
+        {
+          "type": "text",
+          "value": " 为基线。"
+        },
+        {
+          "type": "code",
+          "value": "blueprint-night"
+        },
+        {
+          "type": "text",
+          "value": " 位于主题菜单「蓝图」之后，共用蓝图几何、当前通用组件适配与编辑式排版；保留 "
+        },
+        {
+          "type": "code",
+          "value": "prism-v1-theme"
+        },
+        {
+          "type": "text",
+          "value": " 存储键。next-themes 不再猜测自定义主题的原生色系，各主题由原有 CSS "
+        },
+        {
+          "type": "code",
+          "value": "color-scheme"
+        },
+        {
+          "type": "text",
+          "value": " 声明控制。当前四主题令牌（包括白图警告色 "
+        },
+        {
+          "type": "code",
+          "value": "#995909"
+        },
+        {
+          "type": "text",
+          "value": "）、核心曜彩图表配色和冻结 coss 原始字节不变。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "夜图采用既有 BP.dark 映射：画布 "
+        },
+        {
+          "type": "code",
+          "value": "#081322"
+        },
+        {
+          "type": "text",
+          "value": "、纸面 "
+        },
+        {
+          "type": "code",
+          "value": "#0D1C31"
+        },
+        {
+          "type": "text",
+          "value": "、正文 "
+        },
+        {
+          "type": "code",
+          "value": "#E6EDF7"
+        },
+        {
+          "type": "text",
+          "value": "、次要文字 "
+        },
+        {
+          "type": "code",
+          "value": "#A9B8CC"
+        },
+        {
+          "type": "text",
+          "value": "、交互蓝 "
+        },
+        {
+          "type": "code",
+          "value": "#6EA8FF"
+        },
+        {
+          "type": "text",
+          "value": "、结构线 "
+        },
+        {
+          "type": "code",
+          "value": "#C9D6E8"
+        },
+        {
+          "type": "text",
+          "value": "；成功与警告填充缺少独立设计值，沿原交接回退到 "
+        },
+        {
+          "type": "code",
+          "value": "#62BD89"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#E8A33D"
+        },
+        {
+          "type": "text",
+          "value": "，前景分别为 "
+        },
+        {
+          "type": "code",
+          "value": "#7FD6A0"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#F0B14A"
+        },
+        {
+          "type": "text",
+          "value": "。白图与夜图的共享规则排除核心主题预览；夜图专属阴影也排除白图预览。预览边界重新计算 radius / muted 别名，沿用当前 main 的隔离修复。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "夜图图表继续采用交接时的独立回退系列 "
+        },
+        {
+          "type": "code",
+          "value": "#86C5FF / #F296C2 / #99DFB4 / #F4CC86 / #BDACED / #B6BEC9"
+        },
+        {
+          "type": "text",
+          "value": "，箱线图为 "
+        },
+        {
+          "type": "code",
+          "value": "#86C5FF / #F296C2 / #365B7B"
+        },
+        {
+          "type": "text",
+          "value": "，连续色阶为 "
+        },
+        {
+          "type": "code",
+          "value": "secondary → #76A9D2 → #1769AA"
+        },
+        {
+          "type": "text",
+          "value": "。测试分别锁定夜图与 P69 核心深色的预期值，不再断言二者相同。图表仍从 "
+        },
+        {
+          "type": "code",
+          "value": "chart-palette.ts"
+        },
+        {
+          "type": "text",
+          "value": " 读取颜色，CSS 图表令牌与其桥接；提示框沿用直角、墨线和强调蓝硬阴影。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "已知设计缺口保留："
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": " 夜图普通分隔色 "
+        },
+        {
+          "type": "code",
+          "value": "#23385A"
+        },
+        {
+          "type": "text",
+          "value": " 对画布 / 纸面约 1.58 / 1.45:1，只能作为弱分隔，结构与控件使用 "
+        },
+        {
+          "type": "code",
+          "value": "--line"
+        },
+        {
+          "type": "text",
+          "value": "。沿用白图的白色半透明图案在夜图浅色系列上的对比度不足 3:1；夜图图表色与图案尚待设计确认，不能据此宣称黑白打印已通过。Recharts 仍主要靠颜色区分系列。实体打印、真机与读屏器验收继续单列。热力图窄于 400px 且可见数据披露可用时隐藏格内数字；数据披露隐藏时保留数字，原三核心主题不改变。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "通用描边按钮、Badge 与未选中 Toggle 在夜图中使用纸面，悬停使用现有 accent；输入表面使用设计稿的 "
+        },
+        {
+          "type": "code",
+          "value": "#0A1729"
+        },
+        {
+          "type": "text",
+          "value": "。这避免 "
+        },
+        {
+          "type": "code",
+          "value": "dark:bg-input/*"
+        },
+        {
+          "type": "text",
+          "value": " 把浅色结构墨线混成浅底。实色危险按钮 / Badge 使用夜图深墨文字，加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 "
+        },
+        {
+          "type": "code",
+          "value": "#E6EDF7"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#16305A"
+        },
+        {
+          "type": "text",
+          "value": "，实色危险按钮为 "
+        },
+        {
+          "type": "code",
+          "value": "#081322"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#FF7070"
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "当前验证与合并记录见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "STATUS"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。 本轮"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "工程记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/engineering.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/browser.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "检查边界"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/checks.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "与"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "独立代码审查"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/review.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "单独归档；可查看"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "夜图控件"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "和"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "窄屏对话框"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
+          "external": false,
+          "download": false
+        },
+        {
+          "type": "text",
+          "value": "。原 stash / 补丁保留；历史 "
+        },
+        {
+          "type": "code",
+          "value": "evidence/v9/"
+        },
+        {
+          "type": "text",
+          "value": " 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-2",
+      "children": [
+        {
+          "type": "text",
           "value": "OLE Agent 前端规范 · 正式版（2026-10-16）"
         }
       ]
@@ -315,7 +730,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-2",
+      "id": "section-3",
       "children": [
         {
           "type": "text",
@@ -431,7 +846,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-3",
+      "id": "section-4",
       "children": [
         {
           "type": "text",
@@ -524,7 +939,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-4",
+      "id": "section-5",
       "children": [
         {
           "type": "text",
@@ -703,7 +1118,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-5",
+      "id": "section-6",
       "children": [
         {
           "type": "text",
@@ -1311,7 +1726,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-6",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -1448,7 +1863,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-7",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1590,7 +2005,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-8",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -1899,7 +2314,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-9",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -2476,7 +2891,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-10",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -2530,7 +2945,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-11",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2844,7 +3259,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-12",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -3153,7 +3568,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-13",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -3499,7 +3914,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-14",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -3535,7 +3950,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-15",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -3660,7 +4075,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-16",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -3680,7 +4095,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-17",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -3861,7 +4276,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-18",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -4005,15 +4420,7 @@
           [
             {
               "type": "text",
-              "value": "仅作来源事实，不据此新增 "
-            },
-            {
-              "type": "code",
-              "value": "blueprint-night"
-            },
-            {
-              "type": "text",
-              "value": " 或改核心 dark"
+              "value": "该来源核对轮仅记录事实；夜图后续按独立授权接入，不改核心 dark"
             }
           ]
         ],
@@ -4126,7 +4533,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-19",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -4295,7 +4702,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -4487,7 +4894,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-21",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -4759,7 +5166,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-22",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -4798,7 +5205,7 @@
             },
             {
               "type": "text",
-              "value": " 含四项；新增 "
+              "value": " 含核心三主题、蓝图与夜图；"
             },
             {
               "type": "code",
@@ -4900,15 +5307,7 @@
           [
             {
               "type": "text",
-              "value": "首期仅白图。"
-            },
-            {
-              "type": "code",
-              "value": "@custom-variant dark"
-            },
-            {
-              "type": "text",
-              "value": " 将蓝图预览排除在外。夜图以后作为独立值 "
+              "value": "夜图使用独立值 "
             },
             {
               "type": "code",
@@ -4916,7 +5315,15 @@
             },
             {
               "type": "text",
-              "value": " 加入。"
+              "value": "，"
+            },
+            {
+              "type": "code",
+              "value": "dark:"
+            },
+            {
+              "type": "text",
+              "value": " 同时匹配其根和后代；显式 light / paper / 白图预览根及后代仍排除，原四主题匹配结果不变。"
             }
           ]
         ]
@@ -4925,7 +5332,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-23",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -4936,7 +5343,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-24",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -5575,7 +5982,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-25",
+      "id": "section-26",
       "children": [
         {
           "type": "text",
@@ -5800,7 +6207,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-26",
+      "id": "section-27",
       "children": [
         {
           "type": "text",
@@ -5896,7 +6303,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-27",
+      "id": "section-28",
       "children": [
         {
           "type": "text",
@@ -6145,7 +6552,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-28",
+      "id": "section-29",
       "children": [
         {
           "type": "text",
@@ -6245,7 +6652,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-29",
+      "id": "section-30",
       "children": [
         {
           "type": "text",
@@ -6319,7 +6726,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-30",
+      "id": "section-31",
       "children": [
         {
           "type": "text",
@@ -6414,7 +6821,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-31",
+      "id": "section-32",
       "children": [
         {
           "type": "text",
@@ -6466,7 +6873,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-32",
+      "id": "section-33",
       "children": [
         {
           "type": "text",
@@ -6555,7 +6962,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-33",
+      "id": "section-34",
       "children": [
         {
           "type": "text",
@@ -6608,7 +7015,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-34",
+      "id": "section-35",
       "children": [
         {
           "type": "text",
@@ -6801,7 +7208,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-35",
+      "id": "section-36",
       "children": [
         {
           "type": "text",
@@ -6933,7 +7340,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-36",
+      "id": "section-37",
       "children": [
         {
           "type": "text",
@@ -7010,7 +7417,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-37",
+      "id": "section-38",
       "children": [
         {
           "type": "text",
@@ -7087,6 +7494,41 @@
   ],
   "assets": [
     {
+      "source": "docs/blueprint/STATUS.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+      "sha256": "9ac96e40d024b997e18e4dc4efa892da7aa5de811da8d5324c34903ada3dfdc8"
+    },
+    {
+      "source": "docs/blueprint/evidence/night-20261016/engineering.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/engineering.json.txt",
+      "sha256": "d7073d3f27462233a53a2c8c5d45dce56a2d46775ed9f0b620610f4692445d7b"
+    },
+    {
+      "source": "docs/blueprint/evidence/night-20261016/browser.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/browser.json.txt",
+      "sha256": "c1287beb8b0e2ad8299691e4b8a83b561fda6118ccf55d7716c481839f339785"
+    },
+    {
+      "source": "docs/blueprint/evidence/night-20261016/checks.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/checks.md",
+      "sha256": "962bafc84b9f6f40c916b51bd7b7e2eb699be39964ae9508e6b5f0f1612c94f0"
+    },
+    {
+      "source": "docs/blueprint/evidence/night-20261016/review.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/night-20261016/review.md",
+      "sha256": "c811e203452b9610f7fc5dc7a197e6b33c55a8d6b682f583b96c52590b7e109e"
+    },
+    {
+      "source": "docs/blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg",
+      "sha256": "f05c3c72a3082fa3f6985def65714aa47973cae235445748045f632eb2118414"
+    },
+    {
+      "source": "docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
+      "sha256": "838ed5e99aeb09821681df610404a707280298ef967b3e2eb3be8daf3f69371f"
+    },
+    {
       "source": "docs/OLE_Agent_Frontend_Blueprint_v1.0.md",
       "href": "/foundations/blueprint/guide-assets/docs/OLE_Agent_Frontend_Blueprint_v1.0.md",
       "sha256": "0f3973a60d6b67d15445ce33caee3f62140d881863c4e63ab0ca4f1b7293671c"
@@ -7135,11 +7577,6 @@
       "source": "docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
       "sha256": "73a16c7d50df6fd6e9729998526763d0d018a835813468b3141e818a05127a2a"
-    },
-    {
-      "source": "docs/blueprint/STATUS.md",
-      "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "a750da786ebb445ad477d5d013bf5139be920c32b8b95fe6bce9b104cff60eb7"
     },
     {
       "source": "docs/blueprint/evidence/editorial-20261016/engineering.json",
@@ -7509,7 +7946,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "fb9a40968c8cc9b9ee2a5b56b1d3f1f4209da3f05fd38399f61bdfb2b5b47901"
+      "sha256": "bd617cc5612ac0945fb2aab3b806d523380353230d1f7c4b5e9ca92f224fbf33"
     }
   ]
 }

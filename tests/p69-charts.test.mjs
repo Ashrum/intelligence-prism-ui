@@ -71,15 +71,18 @@ test('P69 dark lightening is exactly 30% white per sRGB channel; contrast refere
   assert.equal(contrast('#000000', '#FFFFFF'), 21);
   assert.deepEqual(chartSeriesColors('dark'), chartSeriesColors('light').map(hex => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * .7 + 255 * .3).toString(16).padStart(2, '0')).join('').toUpperCase()));
 });
-test('P69 preserves Blueprint palettes, ramps, shapes and tooltip/decal overrides', () => {
+test('P69 preserves white/night palettes, ramps, shapes and tooltip/decal overrides', () => {
   assert.deepEqual(chartSeriesColors('blueprint'), ['#1D5FBF', '#16181D', '#B8266E', '#2B8050', '#A57013', '#6B7280']);
+  assert.deepEqual(chartSeriesColors('blueprint-night'), ['#86C5FF', '#F296C2', '#99DFB4', '#F4CC86', '#BDACED', '#B6BEC9']);
   assert.deepEqual(chartShapeColors('blueprint'), { base: '#16181D', selected: '#1D5FBF', fill: '#E4ECF8' });
+  assert.deepEqual(chartShapeColors('blueprint-night'), { base: '#86C5FF', selected: '#F296C2', fill: '#365B7B' });
   assert.deepEqual(chartSequentialDefault('blueprint', '#unused'), ['#F3F5F8', '#88AADD', '#1D5FBF']);
-  for (const theme of ['blueprint']) {
+  assert.deepEqual(chartSequentialDefault('blueprint-night', '#12253F'), ['#12253F', '#76A9D2', '#1769AA']);
+  for (const theme of ['blueprint', 'blueprint-night']) {
     const values = tokens(theme), colors = chartSeriesColors(theme);
     colors.slice(0, 5).forEach((color, i) => assert.equal(values[`--chart-${i + 1}`], color));
     const overrides = blueprintChartOverrides(theme);
-    assert.equal(overrides.tooltip.borderColor, '#1D2026');
+    assert.equal(overrides.tooltip.borderColor, theme === 'blueprint' ? '#1D2026' : '#C9D6E8');
     assert.equal(overrides.aria.decal.decals.length, 6);
   }
 });

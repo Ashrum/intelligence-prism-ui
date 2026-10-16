@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-16",
+  "base": "773724595ab36d0574252da8503821d93eb9c6a1",
+  "note": "HOME preserved; runtime outputs under ignored .sites-runtime; results refer to current source.",
+  "checks": [
+    {
+      "check": "release-guide",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "startedAt": "2026-10-16T02:14:00.130490+00:00",
+      "endedAt": "2026-10-16T02:14:00.180005+00:00",
+      "exitCode": 0,
+      "log": "release-guide.log"
+    },
+    {
+      "check": "release-doc-tests",
+      "command": "node --test tests/blueprint-guide.test.mjs",
+      "startedAt": "2026-10-16T02:14:00.180173+00:00",
+      "endedAt": "2026-10-16T02:14:00.296845+00:00",
+      "exitCode": 0,
+      "log": "release-doc-tests.log"
+    },
+    {
+      "check": "release-build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-16T02:14:00.297023+00:00",
+      "endedAt": "2026-10-16T02:14:06.237285+00:00",
+      "exitCode": 0,
+      "log": "release-build.log"
+    },
+    {
+      "check": "release-diff",
+      "command": "git diff --check",
+      "startedAt": "2026-10-16T02:14:06.237470+00:00",
+      "endedAt": "2026-10-16T02:14:06.300988+00:00",
+      "exitCode": 0,
+      "log": "release-diff.log"
+    }
+  ],
+  "logNormalization": "Build formatter trailing spaces and final blank lines removed for Git whitespace checks; diagnostic content unchanged. Raw copies retained in the local temporary task directory."
+}

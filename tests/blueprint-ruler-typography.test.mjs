@@ -19,7 +19,7 @@ test('typography guard permits only the approved decorative ruler rule', () => {
     const run=source=>{writeFileSync(file,source);return spawnSync(process.execPath,[join(root,'scripts/check-typography.mjs')],{encoding:'utf8'});};
     assert.equal(run(approved).status,0);
     const invalid=[
-      approved.replace('[data-prism-theme="blueprint"] ',''),
+      approved.replace(':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) ',''),
       approved.replace(/:not\(:where\([\s\S]*? \*\)\)/,''),
       '.ordinary-label,\n'+approved,
       approved.replace('.bp-ruler','.bp-sheet-no'),

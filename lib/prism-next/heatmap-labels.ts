@@ -1,3 +1,5 @@
+import { isBlueprintTheme } from "./config.ts"
+
 /** Blueprint-only narrow-width rule (PO decision 2026-10-14, option B).
  * Keep labels when width is unknown or the visible data disclosure is unavailable. */
 export const HEATMAP_LABEL_MIN_WIDTH = 400
@@ -9,6 +11,6 @@ export function heatmapShowsCellLabels(
   dataDisclosure: "visible" | "hidden" = "visible",
   theme?: string,
 ) {
-  if (theme !== "blueprint" || dataDisclosure === "hidden") return true
+  if (!isBlueprintTheme(theme) || dataDisclosure === "hidden") return true
   return width === undefined || width >= HEATMAP_LABEL_MIN_WIDTH
 }
