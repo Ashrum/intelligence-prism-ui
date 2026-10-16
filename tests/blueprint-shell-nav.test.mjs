@@ -132,12 +132,19 @@ function top(source = block) {
         assert.equal(s.height, name === 'prism-app-bar' ? '56px' : '48px');
       }
       for (const [i, n] of f.nav.entries()) {
-        assert.equal(style(n, combined).color, i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)');
+        n.states = [];
+        assert.equal(style(n, combined).color, i === 0 ? 'var(--primary-foreground)' : 'var(--muted-foreground)');
+        assert.equal(style(n, combined).background, i === 0 ? 'var(--primary)' : 'transparent');
         n.states = ['hover'];
+        assert.equal(style(n, combined).color, i === 0 ? 'var(--primary-foreground)' : 'var(--muted-foreground)');
         assert.equal(style(n, combined, 'before')['border-radius'], '0');
-        assert.equal(style(n, combined, 'before').background, 'var(--accent)');
+        assert.equal(style(n, combined, 'before').background, i === 0 ? 'transparent' : 'var(--accent)');
+        assert.equal(style(n, combined).background, i === 0 ? 'var(--primary)' : 'transparent');
+        assert.equal(style(n, combined).height, '36px');
+        assert.equal(style(n, combined)['align-self'], 'center');
       }
-      assert.equal(style(f.nav[0], combined)['box-shadow'], 'inset 0 -2px 0 var(--foreground)');
+      assert.equal(style(f.nav[0], combined)['box-shadow'], 'none');
+      assert.equal(style(f.cls('prism-app-bar-navigation'), combined)['padding-inline'], '4px');
       for (const c of ['prism-app-bar-identity','prism-bar-icon-button','prism-app-bar-space-trigger']) assert.equal(style(f.cls(c), combined, undefined, width)['border-radius'], '0');
       const trigger = style(f.cls('prism-app-bar-space-trigger'), combined);
       assert.equal(trigger.background, 'var(--card)'); assert.equal(trigger.border, '1px solid var(--border)');
@@ -191,17 +198,17 @@ function focus(source = block) {
       n.states = ['hover','focus-visible'];
       const s = style(n, appCss + source);
       assert.equal(s.outline, '2px solid var(--ring)');
-      assert.equal(s['box-shadow'], n === f.nav[0] ? 'inset 0 -2px 0 var(--foreground)' : n === f.items[0] ? 'inset 2px 0 0 var(--foreground)' : 'none');
+      assert.equal(s['box-shadow'], n === f.items[0] ? 'inset 2px 0 0 var(--foreground)' : 'none');
     }
     assert.equal(style(f.nav[0], appCss + source, 'before').outline, 'none');
-    assert.equal(style(f.nav[0], appCss + source)['outline-offset'], '-4px');
+    assert.equal(style(f.nav[0], appCss + source)['outline-offset'], '2px');
   }
 }
 
-test('P76: both Blueprint AppBar/SpaceBar surfaces, selected underline, hover and square controls survive stylesheet order', () => top());
+test('P77: both Blueprint AppBar/SpaceBar surfaces, 36px selected ink block, hover and square controls survive stylesheet order', () => top());
 test('P76: actual coss Sidebar surfaces, active accent/ink and weaker hover resolve in both themes', () => sidebar());
 test('P76: collapsed 56px rail has 40px buttons despite frozen important utility; expanded geometry is untouched', () => rail());
-test('P76: one focus outline keeps independent active indicators and suppresses the old nav pseudo outline', () => focus());
+test('P77: one outer focus outline keeps independent selection and suppresses the nav pseudo outline', () => focus());
 test('P76: core themes and nested core preview roots/descendants/pseudo-elements receive zero added declarations', () => isolation());
 test('P76: portaled personal/space menu hooks are square and current rows use accent', () => {
   for (const t of themes) for (const kind of ['space','personal']) {
@@ -235,12 +242,27 @@ test('P76: actual foreground/accent tokens meet selected text 4.5 and indicator 
     t.diagnostic(`${name} selected text and left ink / accent: ${ratio.toFixed(6)}:1`);
   }
 });
+test('P77: primary text and the outer ring on card meet contrast in both Blueprint palettes', t => {
+  for (const name of themes) {
+    const tokens = Object.fromEntries([...themeCss.split(`:where([data-agent-preview])[data-prism-theme="${name}"] {`)[1].split('}')[0].matchAll(/(--[\w-]+):([^;]+);/g)].map(m => [m[1], m[2]]));
+    for (const [foreground, background, minimum] of [['--primary-foreground', '--primary', 4.5], ['--ring', '--card', 3]]) {
+      const a = relativeLuminance(tokens[foreground]), b = relativeLuminance(tokens[background]);
+      const ratio = (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
+      assert.ok(ratio >= minimum);
+      t.diagnostic(`${name} ${foreground}/${background}: ${ratio.toFixed(6)}:1`);
+    }
+  }
+});
 test('P76: rollback, wrong tokens, focus duplication, rail-important and isolation mutations are detected', () => {
   const cases = [
     ['whole rollback', () => '', top],
     ['card rollback', s => s.replace('background:var(--card); border-bottom', 'background:var(--background); border-bottom'), top],
     ['border rollback', s => s.replace('border-bottom:var(--line-width) solid var(--line)', 'border-bottom:1px solid var(--border)'), top],
-    ['nav primary rollback', s => s.replaceAll('inset 0 -2px 0 var(--foreground)', 'inset 0 -2px 0 var(--primary)'), top],
+    ['P76 nav rollback', s => s.replace('background:var(--primary); color:var(--primary-foreground); box-shadow:none;', 'color:var(--foreground); box-shadow:inset 0 -2px 0 var(--foreground);'), top],
+    ['nav height rollback', s => s.replace('height:36px; align-self:center;', 'height:100%; align-self:stretch;'), top],
+    ['nav focus clipping', s => s.replace('padding-inline:4px;', 'padding-inline:0;'), top],
+    ['current hover washout', s => s.replace('background:transparent; box-shadow:none;', 'background:var(--accent); box-shadow:none;'), top],
+    ['old inset focus', s => s.replace('outline-offset:2px; }\n:is', 'outline-offset:-4px; }\n:is'), focus],
     ['hover rollback', s => s.replaceAll('background:var(--accent); }', 'background:var(--secondary); }'), top],
     ['square rollback', s => s.replaceAll('border-radius:0;', 'border-radius:8px;'), top],
     ['ink background rollback', s => s.replaceAll('background:var(--accent); color:var(--foreground); border-radius', 'background:var(--primary); color:var(--primary-foreground); border-radius'), sidebar],

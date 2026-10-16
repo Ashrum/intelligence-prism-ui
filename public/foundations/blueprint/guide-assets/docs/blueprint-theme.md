@@ -17,13 +17,13 @@
 
 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
 
-## 顶栏与侧栏蓝图适配 · P76（2026-10-16）
+## 顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）
 
-blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；一级当前项为 foreground 文字与底部 2px 墨线，悬停 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
+blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
 
-运行时只修改 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌、冻结 coss 与组件 API 保持。AppBar 56px / SpaceBar 48px 和断点不变。焦点仅一套 outline，顶栏一级项因横向裁切采用 −4px 内偏移，其他导航控件 +2px；当前项的 inset 选择标识独立保留。蓝图 / 夜图 foreground 对 accent 的理论对比度为 14.927942 / 11.106881:1；不以数值计算替代真实浏览器验收。
+导航运行时适配限于 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌和冻结 coss 保持。一级导航使用强选中以便快速定位当前工作空间；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变。AppBar 56px / SpaceBar 48px 和断点不变。P77 选择纸面上的单一 2px `--ring` 外环、偏移 2px；白图为蓝色，夜图沿用已有夜图 ring。36px 导航项垂直居中，导航滚动容器两端各留 4px，容纳外环并避免首末项裁切；伪元素不再画第二道焦点框，box-shadow 不叠环。实际裁切、焦点与相邻背景仍须 Supervisor 浏览器复核。
 
-本轮基线为 P75 提交 780c2ef，尚未合并。Builder 已提供实现、SSR / CSS 规则测试与评审夹具，工程结果见状态记录；独立 Review 与浏览器验收仍交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
+P76 历史基线为 P75 提交 780c2ef；P77 基线为 main 7ad8dbc，分支 feat/blueprint-nav-folio。Builder 提供实现与 SSR / CSS 规则测试，工程结果见状态记录；独立 Review 与浏览器验收交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
 
 ## OLE Agent 前端规范 · 正式版（2026-10-16）
 
@@ -57,13 +57,26 @@ blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 car
 
 站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。
 
+### 成果标题 folio · P77（2026-10-16）
+
+folio 只呈现真实定位事实，由宿主选择，不由组件根据点击、数组猜测业务顺序或生成版本：
+
+- 有真实序列（题目分页、原件页码、作答份数等当前项 / 总数）时用 `SHEET 03 / 03`，数字至少两位补零，不截断三位及以上数值。
+- 无序列但有真实已保存版本时用 `REV 01`，来源为版本号 vN；未保存草稿不显示 REV。
+- 同时有序列和版本时只显示 SHEET（位置优先）；都没有则省略 folio。普通章节编号仍用 SECTION，不把章节序号当作成果页码。
+- `value` 是宿主给定的事实字符串；组件只去首尾空白、为纯数字或数字序列补零，并将 REV 的 vN 规范为 NN。非数字旧标签保持可读，不从任意 ID / 版本描述中提取数字。缺省或空白 value 不输出元素或前缀。
+- folio 采用现有 `.bp-section-folio`：Geist Mono Blueprint、`text-ui-meta` 对应语义字号、muted-foreground、右对齐与窄屏换行。没有新增字号或令牌。
+- 是否 `aria-hidden` 由“标题区是否已有同等可读信息”决定：版本栏、标题说明或分页器已完整呈现时传 `folioAriaHidden={true}`；否则省略或传 false，保留读屏信息。组件不分析 ReactNode、不自动隐藏，也不隐藏标题或其他元信息。
+
+[蓝图示例页](/next/foundations/blueprint#artifact-folio) 复用现有 `artifactOutputExamples.paper.output` 的 ready 文件版本（v2 → REV 02）及 `continuousPreviewPages` 的两份作答（SHEET 01 / 02，可切到 02 / 02）；标题说明重复完整定位信息，因此这两处 folio 显式对读屏隐藏。第三例没有序列 / 已保存版本，不显示 folio。均为现有演示夹具事实，不称为真实学校记录。实现 / 复用与未验边界见[本轮说明](blueprint/evidence/nav-folio-20261016/inspection.md)，[浏览器清单](blueprint/evidence/nav-folio-20261016/browser-checklist.md)。
+
 ### 编辑式排版与 Geist Mono 子集 · 2026-10-16
 
 用户批准本轮实施，开工基线为 `9b5ac0c389abb5fb232b0356a920a60706d86e27`、Site v123，分支 `feat/blueprint-editorial-type`。本轮实施完成、定向检查通过，计为新检查周期的第 1/3 轮，发布以最终部署记录为准；只改既有蓝图章节 Header、`BpMinor` 与有限字体呈现，不新建规划文档或组件目录项，不改 Agent 业务布局、核心三主题普通组件及冻结 coss。
 
 章节标题使用现有 20/30 语义角色，中文小节为 16/24，小节索引、folio 和图注编号为 12px 元信息。章节章号保留默认 48×48 墨底纸色块，使用既有 `stat-display` 24px / 32px、真实 500 字重；长代码仍可随内容增高。标题组间隔 12px，章节保留 `--line-width` / `--line` 结构墨线，`BpMinor` 使用 1px `--border` 细线。普通章节标记 SECTION，SHEET 保留给真实图纸，不能将所有区块包装成图纸语义。窄屏 folio 可以换行，标题使用正常中文断行，不缩字或隐藏有意义编号。
 
-现有蓝图封装中的 `BlueprintSectionHeader` 仅呈现章节头，不生成图框或标尺；props 为 `title: ReactNode`、可选 `description`、`code: string`、`folio: { kind: "sheet" 或 "section"; value: string }`、`headingId`、`headingLevel: 2 或 3`（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION，不推断业务类型。`BlueprintSheet` 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，内部组合 Header，原装饰标尺继续 aria-hidden。`BpMinor` 新增可选 code、label 和 headingLevel（2–6，默认 3）；label 未提供时回退 children，id / className 继续透传，不自动拆解历史文本。`BpFigCap` 继续输出段落，不升为章节标题。这些为现有展示封装的组合调整，不新增目录条目。
+现有蓝图封装中的 `BlueprintSectionHeader` 仅呈现章节头，不生成图框或标尺；props 为 `title: ReactNode`、可选 `description`、`code: string`、`folio: { kind: "sheet" 或 "section" 或 "rev"; value: string }`、`headingId`、`headingLevel: 2 或 3`（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION / REV，不推断业务类型；Header / Sheet 都支持 `folioAriaHidden?: boolean`，默认可读。`BlueprintSheet` 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，新增同类型可选 folio；两者同时传入时以 folio 为准，包括显式空 value（不回退旧 sheetNo）。内部组合 Header，原装饰标尺继续 aria-hidden。`BpMinor` 新增可选 code、label 和 headingLevel（2–6，默认 3）；label 未提供时回退 children，id / className 继续透传，不自动拆解历史文本。`BpFigCap` 继续输出段落，不升为章节标题。这些为现有展示封装的组合调整，不新增目录条目。
 
 Geist Mono 采用本地 WOFF2 子集，只用于章号、小节索引、folio、图注编号和英文短标签；中文 UI、正文及数学内容继续沿用现有 UI 栈和 STIX Two Math，不切换公共 `font-mono` 或整页字体。来源固定为 [vercel/geist-font 1.4.2](https://github.com/vercel/geist-font/tree/4d655731f83507f0258ce5541c297b6553d5d081)，提交 `4d655731f83507f0258ce5541c297b6553d5d081`，许可为 [OFL-1.1](https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/OFL.txt)。许可副本、来源和生成清单随资源保存在 `public/fonts/blueprint/`，未增加 npm 依赖。
 

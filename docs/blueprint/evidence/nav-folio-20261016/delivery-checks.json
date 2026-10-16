@@ -1,0 +1,93 @@
+{
+  "diffCheckExitCode": 0,
+  "previousCurrentPreserved": true,
+  "scopeDiffPaths": [
+    "app/(next)/next/blueprint.css",
+    "components/prism-next/blueprint/blueprint.tsx",
+    "components/prism-next/demos/blueprint.tsx",
+    "docs/blueprint-theme.md",
+    "docs/component-contracts.md",
+    "docs/blueprint/STATUS.md",
+    "tests/blueprint-components.test.mjs",
+    "tests/blueprint-shell-nav.test.mjs",
+    "tests/blueprint-print-a11y.test.mjs",
+    "tests/blueprint-folio.test.mjs"
+  ],
+  "links": [
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "target": "baseline.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "target": "engineering.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "target": "scope.diff",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "target": "integrity.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md",
+      "target": "baseline.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md",
+      "target": "inspection.md",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/baseline.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/inspection.md",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/engineering.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/targeted.log",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/initial-tests.log",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/scope.diff",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/finalization.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/integrity.json",
+      "exists": true
+    },
+    {
+      "document": "docs/blueprint/STATUS.md",
+      "target": "evidence/nav-folio-20261016/browser-checklist.md",
+      "exists": true
+    }
+  ]
+}

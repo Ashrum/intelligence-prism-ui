@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P77 · 顶部导航选中态加强与成果 folio · 2026-10-16；分支 `feat/blueprint-nav-folio`，main 基线 `7ad8dbc2146324ed2999febaf35e6417084f03d7`，开工工作树干净。[基线](evidence/nav-folio-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P77.md` / `builder-preamble.md`；Builder 实施与工程自测，不提交、推送、修改 `.git`、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
+- 范围：两蓝图一级导航 36px primary / primary-foreground 直角实块，hover 保持、去掉下划线；单一 2px ring 外环 / 2px offset，滚动容器两端 4px 留白。SpaceBar / 侧栏不变。Header / Sheet 增加 REV、显式 folio、空值省略、补零与 folioAriaHidden；保留 sheetNo 并让显式 folio 优先。既有文件版本与作答页夹具补 REV / SHEET / 无 folio 样例；加入逻辑与读屏规则写入规范和契约。[实现 / 复用 / Workspace 接线](evidence/nav-folio-20261016/inspection.md)。
+- 工程：五项最终均退出 0：字体检查通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2209/2209，0 失败 / 0 跳过**、TypeScript **0 错误**。定向 **38/38**；导航 19 个与 folio 9 个回退变异均检出。首轮全量 2204/2208，4 项失败均为新增两 Sheet 后旧固定 4 个的断言；现已独立核对六个区域标题 / aria-labelledby、两处 folio 隐藏及夜图覆盖，不是既有失败。[命令与时间](evidence/nav-folio-20261016/engineering.json)、[定向日志](evidence/nav-folio-20261016/targeted.log)、[初轮日志](evidence/nav-folio-20261016/initial-tests.log)、[实际 diff](evidence/nav-folio-20261016/scope.diff)。文档 / 状态回填后的生成物与构建检查另记 [finalization.json](evidence/nav-folio-20261016/finalization.json)。
+- 保护与对比度：54 个冻结 coss 文件、theme.css、AppBar 原 TSX / CSS、依赖与 AGENTS 共 60 文件逐一哈希相同。[保护核对](evidence/nav-folio-20261016/integrity.json)。两蓝图 primary 文字对比度分别 17.758837 / 15.819093:1，ring 对 card 为 6.102091 / 7.093761:1；解析规则与理论数值不冒充浏览器验收。
+- 周期：Builder 实施 / 工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务提前全量工程回归，最近完整工程回归为本轮 2209/2209；下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、首末导航项焦点 / hover、folio 换行 / 切页 / 可读性、嵌套核心预览隔离见 [浏览器清单](evidence/nav-folio-20261016/browser-checklist.md)。Workspace 仅只读定位接线，未修改 / 集成；真机、读屏器、真实学校数据、实体打印未验。Builder 不自我批准，无新增 PO 决策待定项。
+
+## 历史
+
+### P76 · 顶部导航与左侧目录 · 2026-10-16（原当前，原样保留）
+
 - 轮次：P76 · 顶部导航与左侧目录 · 2026-10-16；分支 `feat/blueprint-shell-nav`，基线 `780c2ef0cb14e378fd72f21194ee7f2835d7e045`，开工工作树干净；叠加于未合并 P75。[基线](evidence/shell-nav-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P76.md` / `builder-preamble.md`；Builder 实施与工程自测，浏览器交 Supervisor；不提交、推送、改 `.git`、联网、安装依赖、启动或重启服务、发布。
 - 范围：运行时仅 `blueprint.css`，两蓝图 AppBar / SpaceBar / 本站顶栏 card + 结构底线，导航 foreground 下划线和 accent 直角悬停；Sidebar accent / foreground / 左侧 inset 2px，56px 轨道与 40px 按钮。核心主题、嵌套核心根/后代/伪元素、数字角标、Tabs/Toggle、字号、令牌、冻结 coss 和依赖保持。文档和既有 guide 生成物同步。[实现与取舍](evidence/shell-nav-20261016/inspection.md)、[保护核对](evidence/shell-nav-20261016/integrity.json)。
@@ -12,8 +24,6 @@
 - 周期：Builder 实施 / 工程检查不等同 Supervisor Review / PO 批准，未计为已验收；继承 P75 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期。按任务提前执行全量工程回归，最近完整工程回归为本轮 2202/2202，累计完整浏览器仍待收口；Workspace R3 / R6 / R9 触发约定不变。
 - 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、菜单、焦点、56 图标轨、核心嵌套及 Workspace AppBar 主题 / Portal 接线见[清单](evidence/shell-nav-20261016/browser-checklist.md)。`fixture.tsx` 为评审夹具，未注册路由；实际浏览器挂载、Workspace 接入、真机、读屏、实体打印未验。
 - 待审阅：Supervisor 独立 Review、焦点内移的局部适配与实际浏览器验收；无新产品方向、公共 API 或令牌决策。
-
-## 历史
 
 ### P75 · 题目详情虚线纸面与间距 · 2026-10-16（原当前，原样保留）
 

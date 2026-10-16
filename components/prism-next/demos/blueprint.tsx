@@ -7,7 +7,9 @@ import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
 import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
-import { BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+import { artifactOutputExamples } from "./agent-artifact-output"
+import { continuousPreviewPages } from "./paper-preview-continuous"
+import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
 const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
 const tabNotes: Record<string, string> = { all: "42 份答卷", todo: "9 份等待 AI 批阅", review: "7 份需要教师确认", done: "22 份已出分", issue: "4 份未提交或扫描失败" }
@@ -23,6 +25,9 @@ export function BlueprintComponentsDemo() {
   const readingScroll = useHorizontalChoiceScroll(reading)
   const [actionPreview, setActionPreview] = useState("点击按钮查看样式反馈；此页不执行批阅或发布。")
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle")
+  const [folioPage, setFolioPage] = useState(0)
+  const output = artifactOutputExamples.paper.output
+  const revision = output?.status.state === "ready" ? output.version.label.match(/^v(\d+)\b/)?.[1] : undefined
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -36,10 +41,25 @@ export function BlueprintComponentsDemo() {
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#actions">蓝图按钮与标签页</a>
+      <a href="#artifact-folio">成果标题定位</a>
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
+    <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
+      <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
+        description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>
+        <p className="text-ui-hint text-muted-foreground">固定文件记录：{output?.status.state === "ready" ? output.status.file.name : "—"}。本页不执行保存或导出。</p>
+      </BlueprintSheet>
+      <BlueprintSheet rulers={false} title={continuousPreviewPages[folioPage].alt} folio={{ kind: "sheet", value: `${folioPage + 1} / ${continuousPreviewPages.length}` }} folioAriaHidden
+        description={`第 ${folioPage + 1} / ${continuousPreviewPages.length} 份作答；沿用连续纸张夹具的实际顺序。`}>
+        <div className="flex flex-wrap gap-3">
+          <BpButton disabled={folioPage === 0} onClick={() => setFolioPage(page => page - 1)}>上一份作答</BpButton>
+          <BpButton disabled={folioPage === continuousPreviewPages.length - 1} onClick={() => setFolioPage(page => page + 1)}>下一份作答</BpButton>
+        </div>
+      </BlueprintSheet>
+      <BlueprintSectionHeader title="本页样式预览" description="没有成果序列或已保存版本，不显示 folio。" />
+    </section>
     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
       <div className="bp-demo-columns">
         <div className="min-w-0">

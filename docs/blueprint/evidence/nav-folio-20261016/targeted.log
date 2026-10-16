@@ -1,0 +1,52 @@
+✔ demo page renders all blueprint groups without changing the catalog count (73.374333ms)
+✔ sheet keeps its labelled region and decorative rulers; its chapter index is meaningful (0.964708ms)
+✔ standalone chapter header and semantic subsection preserve caller ids, content and folio meaning (0.527417ms)
+✔ segmented control is a radiogroup with one tab stop and aria-checked (0.211875ms)
+✔ segmented control keeps an enabled entry point when the selected item is missing or disabled (0.416833ms)
+✔ steps expose current step and textual state; bars write values out (0.713458ms)
+✔ buttons default to type=button; card element follows interaction (0.49175ms)
+✔ unavailable blueprint controls preserve native disabled and accessible reason (0.256791ms)
+✔ foundation sample distinguishes fixed task facts, real local links and accessible reading panels (31.40625ms)
+✔ route and navigation exist; blueprint.css draws DemoSection as a sheet only in blueprint (3.474125ms)
+✔ P77 folio: three kinds format supplied numeric facts, preserve legacy labels and do not truncate large values (9.636583ms)
+✔ P77 folio: absent, empty and whitespace values render no folio element or prefix (2.702958ms)
+✔ P77 folio: sheetNo remains compatible; explicit folio wins including explicit empty value (2.710208ms)
+✔ P77 folio: readable by default; only host-confirmed equivalent information hides the folio, never the title (3.82425ms)
+✔ P77 folio: rollback mutations are rejected by rendered output contracts (54.034ms)
+✔ WCAG calculation reference values and current four-theme text/UI tokens (1.060834ms)
+✔ every print selector requires blueprint and excludes core preview roots and descendants (1.310459ms)
+✔ blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance (0.817334ms)
+✔ six decals remain distinct without hue; default pattern/base contrasts exceed 3:1 (23.416875ms)
+✔ light: real component SSR exposes named regions, choices, tab panels and heatmap table (66.837958ms)
+✔ paper: real component SSR exposes named regions, choices, tab panels and heatmap table (26.56625ms)
+✔ dark: real component SSR exposes named regions, choices, tab panels and heatmap table (22.392625ms)
+✔ blueprint: real component SSR exposes named regions, choices, tab panels and heatmap table (21.305875ms)
+✔ blueprint-night: real component SSR exposes named regions, choices, tab panels and heatmap table (11.990708ms)
+✔ built SSR route /next/foundations/blueprint (177.167583ms)
+✔ built SSR route /next/components/tabs (9.161083ms)
+✔ built SSR route /next/components/evidence-matrix (13.711583ms)
+✔ P77: both Blueprint AppBar/SpaceBar surfaces, 36px selected ink block, hover and square controls survive stylesheet order (164.858625ms)
+✔ P76: actual coss Sidebar surfaces, active accent/ink and weaker hover resolve in both themes (19.68375ms)
+✔ P76: collapsed 56px rail has 40px buttons despite frozen important utility; expanded geometry is untouched (17.761375ms)
+✔ P77: one outer focus outline keeps independent selection and suppresses the nav pseudo outline (14.433125ms)
+✔ P76: core themes and nested core preview roots/descendants/pseudo-elements receive zero added declarations (2454.011792ms)
+✔ P76: portaled personal/space menu hooks are square and current rows use accent (2.471583ms)
+✔ P76: all new selectors guard their final target; badges, Tabs, Toggle, tokens and typography are untouched (4.287459ms)
+✔ P76: actual foreground/accent tokens meet selected text 4.5 and indicator 3 in both themes (0.23275ms)
+ℹ blueprint selected text and left ink / accent: 14.927942:1
+ℹ blueprint-night selected text and left ink / accent: 11.106881:1
+✔ P77: primary text and the outer ring on card meet contrast in both Blueprint palettes (0.13175ms)
+ℹ blueprint --primary-foreground/--primary: 17.758837:1
+ℹ blueprint --ring/--card: 6.102091:1
+ℹ blueprint-night --primary-foreground/--primary: 15.819093:1
+ℹ blueprint-night --ring/--card: 7.093761:1
+✔ P76: rollback, wrong tokens, focus duplication, rail-important and isolation mutations are detected (217.919042ms)
+✔ P76: review fixture bundles and SSR retains real shell, menu triggers and current conversation (3.103125ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3181.632084

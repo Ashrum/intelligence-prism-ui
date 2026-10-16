@@ -1,0 +1,50 @@
+{
+  "node": "v24.14.0",
+  "homePreserved": true,
+  "environment": {
+    "runtime": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/p77",
+    "WRANGLER_WRITE_LOGS": "false"
+  },
+  "records": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "started": "2026-10-16T09:52:53.972Z",
+      "finished": "2026-10-16T09:52:53.997Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "started": "2026-10-16T09:52:53.998Z",
+      "finished": "2026-10-16T09:52:54.043Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "started": "2026-10-16T09:52:54.043Z",
+      "finished": "2026-10-16T09:52:59.397Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "tests",
+      "command": "node --test tests/*.test.mjs",
+      "started": "2026-10-16T09:52:59.397Z",
+      "finished": "2026-10-16T09:53:12.943Z",
+      "exitCode": 1,
+      "signal": null
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "started": "2026-10-16T09:53:12.943Z",
+      "finished": "2026-10-16T09:53:14.627Z",
+      "exitCode": 0,
+      "signal": null
+    }
+  ]
+}

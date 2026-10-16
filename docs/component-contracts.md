@@ -2386,6 +2386,11 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
 - 蓝图编辑式标题（用户 2026-10-16 批准）：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px；章号保留默认 48×48 墨底块及 24px / 500 字形。间隔 12px，小节线 1px，章节保留结构墨线；普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行。`BlueprintSectionHeader` 接收 title、description、code、显式 kind / value 的 folio 与 headingLevel；`BlueprintSheet` 原 props 保持兼容并组合该 Header，只有 Sheet 生成图框和标尺。`BpMinor` 的可选 code / label 分离索引与中文，label 缺省回退 children，保留 id / className，可选 h2–h6；`BpFigCap` 继续为段落。Geist Mono 本地子集仅用于上述索引及英文短标签，中文 UI 与 STIX 数学字体保持原路径。完整 API、来源实值和实际验收范围见 [蓝图主题](blueprint-theme.md)；不新增组件目录，不将本轮扩展为 Agent 业务布局实施。
+- Blueprint 成果 folio（P77）：`BlueprintSectionHeader` / `BlueprintSheet` 共用 `BlueprintFolio = { kind: "sheet" | "section" | "rev"; value: string }`。Sheet 保留 `sheetNo`，显式 folio 优先（即使 value 为空）；缺省 / 空白 value 不渲染。纯数字 / 数字序列最少两位补零，REV 接受 vN → NN，长数字与非数字旧标签不截断。普通章节 SECTION 保持。
+- 加入规则由宿主读取真实事实：有当前项 / 总数（题目分页、原件页码、作答份数）用 SHEET；没有序列且有真实已保存版本才用 REV；两者都有只用 SHEET；都没有则省略；未保存草稿不显示 REV。组件不接业务 Store，不推断编号或保存成功。
+- folio 沿用 Geist Mono Blueprint / text-ui-meta / muted-foreground、右对齐与窄屏换行。Header / Sheet 的 `folioAriaHidden?: boolean` 默认 false；标题区的版本栏 / 分页器已有同等可读信息时才传 true，否则保留可读，不连带隐藏标题。
+- Blueprint 顶部一级导航（P77）：blueprint / blueprint-night 的当前项是 36px 直角 primary / primary-foreground 实块，悬停保持，去掉底线；非当前项 hover 为 accent。使用 card 纸面上的单一 2px ring 外环（offset 2px），两端各留 4px 防裁切。一级导航强选中；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变；核心三主题和嵌套核心预览不接收蓝图增量。
+
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
 ### TextbookDirectory 内嵌形态

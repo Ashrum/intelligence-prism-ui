@@ -128,10 +128,17 @@ function checkReferences(html) {
   const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
   for (const [, refs] of html.matchAll(/aria-(?:labelledby|describedby)="([^"]+)"/g)) for (const id of refs.split(' ')) assert.ok(ids.has(id), `missing ${id}`);
 }
-for (const theme of themes) test(`${theme}: real component SSR exposes named regions, choices, tab panels and heatmap table`, () => {
+for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real component SSR exposes named regions, choices, tab panels and heatmap table`, () => {
   const bp = render(api.BlueprintComponentsDemo, {}, theme);
   checkReferences(bp);
-  assert.equal((bp.match(/data-slot="bp-sheet"/g) || []).length, 4);
+  const sheets = [...bp.matchAll(/<section\b([^>]*data-slot="bp-sheet"[^>]*)>/g)];
+  const labels = sheets.map(([, attrs]) => {
+    const id = attrs.match(/aria-labelledby="([^"]+)"/)[1];
+    return bp.match(new RegExp(`<h2 id="${id}"[^>]*>([^<]+)</h2>`))[1];
+  });
+  assert.deepEqual(labels, ['函数单元练习 PDF（示例）', '完整扫描纸', '按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本']);
+  assert.match(bp, /class="bp-section-folio" aria-hidden="true">REV 02<\/p>/);
+  assert.match(bp, /class="bp-section-folio" aria-hidden="true">SHEET 01 \/ 02<\/p>/);
   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
   assert.match(bp, /aria-current="step"/);
   assert.match(bp, /aria-label="查看工具说明"/);
