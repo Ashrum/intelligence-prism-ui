@@ -1,0 +1,29 @@
+{
+  "scope": "Documentation/status and derived guide after full engineering checks; runtime and test code unchanged",
+  "records": [
+    {
+      "name": "guide-sync",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "started": "2026-10-16T10:07:10.895Z",
+      "finished": "2026-10-16T10:07:10.934Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "final-build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "started": "2026-10-16T10:07:10.935Z",
+      "finished": "2026-10-16T10:07:16.235Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "final-targeted",
+      "command": "node --test tests/blueprint-user-bubble.test.mjs tests/agent-blueprint-r1.test.mjs tests/blueprint-guide.test.mjs tests/agent-conversation.test.mjs",
+      "started": "2026-10-16T10:07:16.235Z",
+      "finished": "2026-10-16T10:07:16.718Z",
+      "exitCode": 0,
+      "signal": null
+    }
+  ]
+}

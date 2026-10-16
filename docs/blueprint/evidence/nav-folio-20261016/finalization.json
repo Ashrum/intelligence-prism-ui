@@ -1,0 +1,33 @@
+{
+  "reason": "Documentation/status finalization only; runtime sources unchanged since full 2209-test run.",
+  "records": [
+    {
+      "name": "guide-sync",
+      "command": "node scripts/sync-blueprint-guide.mjs",
+      "started": "2026-10-16T09:56:07.090Z",
+      "finished": "2026-10-16T09:56:07.136Z",
+      "exitCode": 0
+    },
+    {
+      "name": "guide-check",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "started": "2026-10-16T09:56:07.137Z",
+      "finished": "2026-10-16T09:56:07.176Z",
+      "exitCode": 0
+    },
+    {
+      "name": "final-build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "started": "2026-10-16T09:56:07.176Z",
+      "finished": "2026-10-16T09:56:12.383Z",
+      "exitCode": 0
+    },
+    {
+      "name": "guide-tests",
+      "command": "node --test tests/blueprint-guide.test.mjs",
+      "started": "2026-10-16T09:56:12.383Z",
+      "finished": "2026-10-16T09:56:12.479Z",
+      "exitCode": 0
+    }
+  ]
+}

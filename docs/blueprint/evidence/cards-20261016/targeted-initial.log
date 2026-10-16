@@ -1,0 +1,16 @@
+✔ P79 headings: labelled sections, configurable levels, unique ids and host attributes (6.658667ms)
+✔ P79 status: all five tones retain fact text; no status means no status subtree (0.855333ms)
+✔ P79 section: meaningful letter belongs to heading; named action and existing BpCodebox compose; absent options disappear (0.728542ms)
+✔ P79 style: five themes, 25 nested theme pairs, neutral core fallback and ordinary-component isolation (42.209417ms)
+✔ P79 narrow contract: intrinsic wrapping, shrinkable long text, square letter and no clipping (browser 320 check separate) (0.357959ms)
+✔ P79 contrast: five themes x five tones; text >=4.5 and visible square outline >=3 (4.992916ms)
+✔ P79 demo: original preview and genuine A/B sections use fixture facts, semantic formula and named actions (2.3515ms)
+✔ P79 rollback mutations fail rendered/accessibility and theme/wrapping contracts (23.528542ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 466.103875

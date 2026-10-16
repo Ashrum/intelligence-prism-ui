@@ -1,0 +1,37 @@
+{
+  "purpose": "After STATUS/documentation fill and generated guide sync; runtime source unchanged since full 2224 test run",
+  "checks": [
+    {
+      "name": "guide-sync",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "start": "2026-10-16T10:31:18.237549+00:00",
+      "end": "2026-10-16T10:31:18.288530+00:00",
+      "exitCode": 0,
+      "log": "guide-sync.log"
+    },
+    {
+      "name": "final-build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "start": "2026-10-16T10:31:18.289079+00:00",
+      "end": "2026-10-16T10:31:23.530152+00:00",
+      "exitCode": 0,
+      "log": "final-build.log"
+    },
+    {
+      "name": "final-targeted",
+      "command": "node --test tests/blueprint-cards.test.mjs tests/blueprint-components.test.mjs tests/blueprint-guide.test.mjs",
+      "start": "2026-10-16T10:31:23.530484+00:00",
+      "end": "2026-10-16T10:31:23.963831+00:00",
+      "exitCode": 0,
+      "log": "final-targeted.log"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "start": "2026-10-16T10:31:23.964145+00:00",
+      "end": "2026-10-16T10:31:24.002834+00:00",
+      "exitCode": 0,
+      "log": "diff-check.log"
+    }
+  ]
+}

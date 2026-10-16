@@ -1,0 +1,23 @@
+{
+  "method": "In-memory CSS/token mutations; no production file writes",
+  "detected": 17,
+  "mutations": [
+    "remove adaptation",
+    "ink background",
+    "inverse text",
+    "extra border",
+    "extra shadow",
+    "link inherits ink rule",
+    "white focus rollback",
+    "no focus offset",
+    "double focus",
+    "night omitted",
+    "unscoped rules",
+    "preview guard removed",
+    "preview root exclusion lost",
+    "preview descendant exclusion lost",
+    "assistant accidentally included",
+    "blueprint contrast regression",
+    "blueprint-night contrast regression"
+  ]
+}

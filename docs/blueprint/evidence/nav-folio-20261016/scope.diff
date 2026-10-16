@@ -1,0 +1,465 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index eac7479..9d1bd27 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -388,11 +388,12 @@
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar-identity[data-slot],.prism-bar-icon-button[data-slot],.prism-app-bar-space-trigger[data-slot],.prism-app-bar-personal-trigger[data-slot],.prism-app-bar-space-popup,.prism-app-bar-personal-popup,.prism-app-bar-space-item[data-slot],.prism-app-bar-personal-popup [data-slot="menu-item"],.prism-app-bar-personal-popup [data-slot="menu-link-item"],.prism-space-bar [data-slot="button"],.prism-space-bar [data-slot="menu-trigger"],.prism-space-bar [data-slot="select-trigger"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-space-trigger[data-slot]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); border:1px solid var(--border); }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar-space-item,.prism-app-bar-personal-popup [data-slot="menu-item"],.prism-app-bar-personal-popup [data-slot="menu-link-item"])[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--accent); color:var(--foreground); }
+-:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:transparent; color:var(--muted-foreground); border-radius:0; box-shadow:none; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-navigation:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { padding-inline:4px; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { height:36px; align-self:center; background:transparent; color:var(--muted-foreground); border-radius:0; box-shadow:none; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { border-radius:0; }
+-:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:hover:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { background:var(--accent); }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:not([aria-current="page"]):hover:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { background:var(--accent); }
+-:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--foreground); box-shadow:inset 0 -2px 0 var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--primary); color:var(--primary-foreground); box-shadow:none; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { background:transparent; box-shadow:none; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar"],[data-slot="sidebar-inner"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-side="left"] > [data-slot="sidebar-container"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-right:var(--line-width) solid var(--line); }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-side="right"] > [data-slot="sidebar-container"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-left:var(--line-width) solid var(--line); }
+@@ -406,8 +407,7 @@
+ }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar [data-slot],.prism-space-bar [data-slot],.prism-app-bar-space-popup [data-slot],.prism-app-bar-personal-popup [data-slot],[data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"],[data-slot="sidebar-group-label"],[data-slot="sidebar-menu-action"],[data-slot="sidebar-group-action"],[data-slot="sidebar-trigger"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { outline:none; box-shadow:none; }
+-/* Keep the single outline inside the clipped nav, clear of its 2px selection line. */
+-:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline-offset:-4px; }
+-:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 0 -2px 0 var(--foreground); }
++/* P77: one outer ring on card; 4px inline padding keeps it inside the scroll clip. */
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline-offset:2px; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"])[data-active="true"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 2px 0 0 var(--foreground); }
+ /* End P76 shell navigation. */
+diff --git a/components/prism-next/blueprint/blueprint.tsx b/components/prism-next/blueprint/blueprint.tsx
+index ec783ee..5e4489a 100644
+--- a/components/prism-next/blueprint/blueprint.tsx
++++ b/components/prism-next/blueprint/blueprint.tsx
+@@ -10,25 +10,43 @@ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ const RULER_TOP = ["1", "2", "3", "4", "5", "6", "7", "8"]
+ const RULER_SIDE = ["A", "B", "C", "D"]
+ 
++export interface BlueprintFolio {
++  kind: "sheet" | "section" | "rev"
++  value: string
++}
++
++/** Format supplied facts only; sequence/version selection belongs to the host. */
++function folioValue(folio?: BlueprintFolio) {
++  const value = folio?.value.trim() ?? ""
++  if (!value) return ""
++  const revision = folio?.kind === "rev" ? value.match(/^v?(\d+)$/i) : undefined
++  if (revision) return revision[1].padStart(2, "0")
++  if (/^\d+(\s*\/\s*\d+)?$/.test(value)) return value.split("/").map(part => part.trim().padStart(2, "0")).join(" / ")
++  return value
++}
++
+ export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
+   title: ReactNode
+   description?: ReactNode
+   /** Meaningful chapter index, read along with the visible heading. */
+   code?: string
+-  folio?: { kind: "sheet" | "section"; value: string }
++  folio?: BlueprintFolio
++  /** Hide only when equivalent readable information exists in the title area. */
++  folioAriaHidden?: boolean
+   headingId?: string
+   headingLevel?: 2 | 3
+ }
+ /** A chapter heading without a sheet frame or rulers. */
+-export function BlueprintSectionHeader({ title, description, code, folio, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
++export function BlueprintSectionHeader({ title, description, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
+   const generatedId = useId()
+   const Heading = headingLevel === 2 ? "h2" : "h3"
++  const value = folioValue(folio)
+   return <header {...props} className={cn("bp-section-header", className)} data-slot="bp-section-header" data-has-code={code ? "" : undefined}>
+     {code && <span className="bp-section-code">{code}</span>}
+     <div className="bp-section-main">
+       <div className="bp-section-title-row">
+         <Heading id={headingId ?? generatedId} className="bp-section-title text-section-title">{title}</Heading>
+-        {folio && <p className="bp-section-folio">{folio.kind === "sheet" ? "SHEET" : "SECTION"} {folio.value}</p>}
++        {folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>}
+       </div>
+       {description && <p className="bp-section-description text-ui-hint">{description}</p>}
+     </div>
+@@ -38,15 +56,17 @@ export function BlueprintSectionHeader({ title, description, code, folio, headin
+ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "title"> {
+   /** Meaningful chapter index, e.g. "A". Omit when no index is available. */
+   letter?: string
+-  /** Sheet number shown top-right, e.g. "01 / 05". */
++  /** Legacy sheet number, e.g. "01 / 05". Explicit folio takes precedence, even when empty. */
+   sheetNo?: string
++  folio?: BlueprintFolio
++  folioAriaHidden?: boolean
+   title: ReactNode
+   description?: ReactNode
+   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
+   rulers?: boolean
+   headingLevel?: 2 | 3
+ }
+-export function BlueprintSheet({ letter, sheetNo, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
++export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
+   const id = useId()
+   return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
+     {rulers && <>
+@@ -55,7 +75,7 @@ export function BlueprintSheet({ letter, sheetNo, title, description, rulers = t
+       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+     </>}
+-    <BlueprintSectionHeader code={letter} folio={sheetNo ? { kind: "sheet", value: sheetNo } : undefined} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
++    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
+     <div className="relative min-w-0">{children}</div>
+   </section>
+ }
+diff --git a/components/prism-next/demos/blueprint.tsx b/components/prism-next/demos/blueprint.tsx
+index 7c494a6..36d0140 100644
+--- a/components/prism-next/demos/blueprint.tsx
++++ b/components/prism-next/demos/blueprint.tsx
+@@ -7,7 +7,9 @@ import { QuestionMath } from "../question-content"
+ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
+ import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
+-import { BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
++import { artifactOutputExamples } from "./agent-artifact-output"
++import { continuousPreviewPages } from "./paper-preview-continuous"
++import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+ 
+ const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
+ const tabNotes: Record<string, string> = { all: "42 份答卷", todo: "9 份等待 AI 批阅", review: "7 份需要教师确认", done: "22 份已出分", issue: "4 份未提交或扫描失败" }
+@@ -23,6 +25,9 @@ export function BlueprintComponentsDemo() {
+   const readingScroll = useHorizontalChoiceScroll(reading)
+   const [actionPreview, setActionPreview] = useState("点击按钮查看样式反馈；此页不执行批阅或发布。")
+   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle")
++  const [folioPage, setFolioPage] = useState(0)
++  const output = artifactOutputExamples.paper.output
++  const revision = output?.status.state === "ready" ? output.version.label.match(/^v(\d+)\b/)?.[1] : undefined
+   const copyLink = async () => {
+     try {
+       await navigator.clipboard.writeText(window.location.href)
+@@ -36,10 +41,25 @@ export function BlueprintComponentsDemo() {
+       <a href="#common-components">常用基础组件</a>
+       <a href="#common-components-two">第二批常用组件</a>
+       <a href="#actions">蓝图按钮与标签页</a>
++      <a href="#artifact-folio">成果标题定位</a>
+     </nav>
+     <BlueprintFoundationDemo />
+     <BlueprintSecondBatchDemo />
+     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
++    <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
++      <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
++        description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>
++        <p className="text-ui-hint text-muted-foreground">固定文件记录：{output?.status.state === "ready" ? output.status.file.name : "—"}。本页不执行保存或导出。</p>
++      </BlueprintSheet>
++      <BlueprintSheet rulers={false} title={continuousPreviewPages[folioPage].alt} folio={{ kind: "sheet", value: `${folioPage + 1} / ${continuousPreviewPages.length}` }} folioAriaHidden
++        description={`第 ${folioPage + 1} / ${continuousPreviewPages.length} 份作答；沿用连续纸张夹具的实际顺序。`}>
++        <div className="flex flex-wrap gap-3">
++          <BpButton disabled={folioPage === 0} onClick={() => setFolioPage(page => page - 1)}>上一份作答</BpButton>
++          <BpButton disabled={folioPage === continuousPreviewPages.length - 1} onClick={() => setFolioPage(page => page + 1)}>下一份作答</BpButton>
++        </div>
++      </BlueprintSheet>
++      <BlueprintSectionHeader title="本页样式预览" description="没有成果序列或已保存版本，不显示 folio。" />
++    </section>
+     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
+       <div className="bp-demo-columns">
+         <div className="min-w-0">
+diff --git a/docs/blueprint-theme.md b/docs/blueprint-theme.md
+index bb9f409..21f399d 100644
+--- a/docs/blueprint-theme.md
++++ b/docs/blueprint-theme.md
+@@ -17,13 +17,13 @@
+ 
+ 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
+ 
+-## 顶栏与侧栏蓝图适配 · P76（2026-10-16）
++## 顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）
+ 
+-blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；一级当前项为 foreground 文字与底部 2px 墨线，悬停 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
++blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
+ 
+-运行时只修改 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌、冻结 coss 与组件 API 保持。AppBar 56px / SpaceBar 48px 和断点不变。焦点仅一套 outline，顶栏一级项因横向裁切采用 −4px 内偏移，其他导航控件 +2px；当前项的 inset 选择标识独立保留。蓝图 / 夜图 foreground 对 accent 的理论对比度为 14.927942 / 11.106881:1；不以数值计算替代真实浏览器验收。
++导航运行时适配限于 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌和冻结 coss 保持。一级导航使用强选中以便快速定位当前工作空间；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变。AppBar 56px / SpaceBar 48px 和断点不变。P77 选择纸面上的单一 2px `--ring` 外环、偏移 2px；白图为蓝色，夜图沿用已有夜图 ring。36px 导航项垂直居中，导航滚动容器两端各留 4px，容纳外环并避免首末项裁切；伪元素不再画第二道焦点框，box-shadow 不叠环。实际裁切、焦点与相邻背景仍须 Supervisor 浏览器复核。
+ 
+-本轮基线为 P75 提交 780c2ef，尚未合并。Builder 已提供实现、SSR / CSS 规则测试与评审夹具，工程结果见状态记录；独立 Review 与浏览器验收仍交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
++P76 历史基线为 P75 提交 780c2ef；P77 基线为 main 7ad8dbc，分支 feat/blueprint-nav-folio。Builder 提供实现与 SSR / CSS 规则测试，工程结果见状态记录；独立 Review 与浏览器验收交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
+ 
+ ## OLE Agent 前端规范 · 正式版（2026-10-16）
+ 
+@@ -57,13 +57,26 @@ blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 car
+ 
+ 站点记录采用本 Markdown 生成的安全阅读视图及原文下载，避免另写一份摘要作为第二份规范。v117 文档发布时，Site 轻量页面实验与 GitHub 第四主题基线不同；随后用户授权三方同步，统一源码并保留两条实验线。上线状态以实际发布记录为准。
+ 
++### 成果标题 folio · P77（2026-10-16）
++
++folio 只呈现真实定位事实，由宿主选择，不由组件根据点击、数组猜测业务顺序或生成版本：
++
++- 有真实序列（题目分页、原件页码、作答份数等当前项 / 总数）时用 `SHEET 03 / 03`，数字至少两位补零，不截断三位及以上数值。
++- 无序列但有真实已保存版本时用 `REV 01`，来源为版本号 vN；未保存草稿不显示 REV。
++- 同时有序列和版本时只显示 SHEET（位置优先）；都没有则省略 folio。普通章节编号仍用 SECTION，不把章节序号当作成果页码。
++- `value` 是宿主给定的事实字符串；组件只去首尾空白、为纯数字或数字序列补零，并将 REV 的 vN 规范为 NN。非数字旧标签保持可读，不从任意 ID / 版本描述中提取数字。缺省或空白 value 不输出元素或前缀。
++- folio 采用现有 `.bp-section-folio`：Geist Mono Blueprint、`text-ui-meta` 对应语义字号、muted-foreground、右对齐与窄屏换行。没有新增字号或令牌。
++- 是否 `aria-hidden` 由“标题区是否已有同等可读信息”决定：版本栏、标题说明或分页器已完整呈现时传 `folioAriaHidden={true}`；否则省略或传 false，保留读屏信息。组件不分析 ReactNode、不自动隐藏，也不隐藏标题或其他元信息。
++
++[蓝图示例页](/next/foundations/blueprint#artifact-folio) 复用现有 `artifactOutputExamples.paper.output` 的 ready 文件版本（v2 → REV 02）及 `continuousPreviewPages` 的两份作答（SHEET 01 / 02，可切到 02 / 02）；标题说明重复完整定位信息，因此这两处 folio 显式对读屏隐藏。第三例没有序列 / 已保存版本，不显示 folio。均为现有演示夹具事实，不称为真实学校记录。实现 / 复用与未验边界见[本轮说明](blueprint/evidence/nav-folio-20261016/inspection.md)，[浏览器清单](blueprint/evidence/nav-folio-20261016/browser-checklist.md)。
++
+ ### 编辑式排版与 Geist Mono 子集 · 2026-10-16
+ 
+ 用户批准本轮实施，开工基线为 `9b5ac0c389abb5fb232b0356a920a60706d86e27`、Site v123，分支 `feat/blueprint-editorial-type`。本轮实施完成、定向检查通过，计为新检查周期的第 1/3 轮，发布以最终部署记录为准；只改既有蓝图章节 Header、`BpMinor` 与有限字体呈现，不新建规划文档或组件目录项，不改 Agent 业务布局、核心三主题普通组件及冻结 coss。
+ 
+ 章节标题使用现有 20/30 语义角色，中文小节为 16/24，小节索引、folio 和图注编号为 12px 元信息。章节章号保留默认 48×48 墨底纸色块，使用既有 `stat-display` 24px / 32px、真实 500 字重；长代码仍可随内容增高。标题组间隔 12px，章节保留 `--line-width` / `--line` 结构墨线，`BpMinor` 使用 1px `--border` 细线。普通章节标记 SECTION，SHEET 保留给真实图纸，不能将所有区块包装成图纸语义。窄屏 folio 可以换行，标题使用正常中文断行，不缩字或隐藏有意义编号。
+ 
+-现有蓝图封装中的 `BlueprintSectionHeader` 仅呈现章节头，不生成图框或标尺；props 为 `title: ReactNode`、可选 `description`、`code: string`、`folio: { kind: "sheet" 或 "section"; value: string }`、`headingId`、`headingLevel: 2 或 3`（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION，不推断业务类型。`BlueprintSheet` 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，内部组合 Header，原装饰标尺继续 aria-hidden。`BpMinor` 新增可选 code、label 和 headingLevel（2–6，默认 3）；label 未提供时回退 children，id / className 继续透传，不自动拆解历史文本。`BpFigCap` 继续输出段落，不升为章节标题。这些为现有展示封装的组合调整，不新增目录条目。
++现有蓝图封装中的 `BlueprintSectionHeader` 仅呈现章节头，不生成图框或标尺；props 为 `title: ReactNode`、可选 `description`、`code: string`、`folio: { kind: "sheet" 或 "section" 或 "rev"; value: string }`、`headingId`、`headingLevel: 2 或 3`（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION / REV，不推断业务类型；Header / Sheet 都支持 `folioAriaHidden?: boolean`，默认可读。`BlueprintSheet` 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，新增同类型可选 folio；两者同时传入时以 folio 为准，包括显式空 value（不回退旧 sheetNo）。内部组合 Header，原装饰标尺继续 aria-hidden。`BpMinor` 新增可选 code、label 和 headingLevel（2–6，默认 3）；label 未提供时回退 children，id / className 继续透传，不自动拆解历史文本。`BpFigCap` 继续输出段落，不升为章节标题。这些为现有展示封装的组合调整，不新增目录条目。
+ 
+ Geist Mono 采用本地 WOFF2 子集，只用于章号、小节索引、folio、图注编号和英文短标签；中文 UI、正文及数学内容继续沿用现有 UI 栈和 STIX Two Math，不切换公共 `font-mono` 或整页字体。来源固定为 [vercel/geist-font 1.4.2](https://github.com/vercel/geist-font/tree/4d655731f83507f0258ce5541c297b6553d5d081)，提交 `4d655731f83507f0258ce5541c297b6553d5d081`，许可为 [OFL-1.1](https://raw.githubusercontent.com/vercel/geist-font/4d655731f83507f0258ce5541c297b6553d5d081/OFL.txt)。许可副本、来源和生成清单随资源保存在 `public/fonts/blueprint/`，未增加 npm 依赖。
+ 
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index a29d8fd..a9f26c3 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,18 @@
+ 
+ ## 当前
+ 
++- 轮次：P77 · 顶部导航选中态加强与成果 folio · 2026-10-16；分支 `feat/blueprint-nav-folio`，main 基线 `7ad8dbc2146324ed2999febaf35e6417084f03d7`，开工工作树干净。[基线](evidence/nav-folio-20261016/baseline.json)。
++- 授权与分工：Supervisor `task-P77.md` / `builder-preamble.md`；Builder 实施与工程自测，不提交、推送、修改 `.git`、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
++- 范围：两蓝图一级导航 36px primary / primary-foreground 直角实块，hover 保持、去掉下划线；单一 2px ring 外环 / 2px offset，滚动容器两端 4px 留白。SpaceBar / 侧栏不变。Header / Sheet 增加 REV、显式 folio、空值省略、补零与 folioAriaHidden；保留 sheetNo 并让显式 folio 优先。既有文件版本与作答页夹具补 REV / SHEET / 无 folio 样例；加入逻辑与读屏规则写入规范和契约。[实现 / 复用 / Workspace 接线](evidence/nav-folio-20261016/inspection.md)。
++- 工程：五项最终均退出 0：字体检查通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2209/2209，0 失败 / 0 跳过**、TypeScript **0 错误**。定向 **38/38**；导航 19 个与 folio 9 个回退变异均检出。首轮全量 2204/2208，4 项失败均为新增两 Sheet 后旧固定 4 个的断言；现已独立核对六个区域标题 / aria-labelledby、两处 folio 隐藏及夜图覆盖，不是既有失败。[命令与时间](evidence/nav-folio-20261016/engineering.json)、[定向日志](evidence/nav-folio-20261016/targeted.log)、[初轮日志](evidence/nav-folio-20261016/initial-tests.log)、[实际 diff](evidence/nav-folio-20261016/scope.diff)。文档 / 状态回填后的生成物与构建检查另记 [finalization.json](evidence/nav-folio-20261016/finalization.json)。
++- 保护与对比度：54 个冻结 coss 文件、theme.css、AppBar 原 TSX / CSS、依赖与 AGENTS 共 60 文件逐一哈希相同。[保护核对](evidence/nav-folio-20261016/integrity.json)。两蓝图 primary 文字对比度分别 17.758837 / 15.819093:1，ring 对 card 为 6.102091 / 7.093761:1；解析规则与理论数值不冒充浏览器验收。
++- 周期：Builder 实施 / 工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务提前全量工程回归，最近完整工程回归为本轮 2209/2209；下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、首末导航项焦点 / hover、folio 换行 / 切页 / 可读性、嵌套核心预览隔离见 [浏览器清单](evidence/nav-folio-20261016/browser-checklist.md)。Workspace 仅只读定位接线，未修改 / 集成；真机、读屏器、真实学校数据、实体打印未验。Builder 不自我批准，无新增 PO 决策待定项。
++
++## 历史
++
++### P76 · 顶部导航与左侧目录 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P76 · 顶部导航与左侧目录 · 2026-10-16；分支 `feat/blueprint-shell-nav`，基线 `780c2ef0cb14e378fd72f21194ee7f2835d7e045`，开工工作树干净；叠加于未合并 P75。[基线](evidence/shell-nav-20261016/baseline.json)。
+ - 授权与分工：Supervisor `task-P76.md` / `builder-preamble.md`；Builder 实施与工程自测，浏览器交 Supervisor；不提交、推送、改 `.git`、联网、安装依赖、启动或重启服务、发布。
+ - 范围：运行时仅 `blueprint.css`，两蓝图 AppBar / SpaceBar / 本站顶栏 card + 结构底线，导航 foreground 下划线和 accent 直角悬停；Sidebar accent / foreground / 左侧 inset 2px，56px 轨道与 40px 按钮。核心主题、嵌套核心根/后代/伪元素、数字角标、Tabs/Toggle、字号、令牌、冻结 coss 和依赖保持。文档和既有 guide 生成物同步。[实现与取舍](evidence/shell-nav-20261016/inspection.md)、[保护核对](evidence/shell-nav-20261016/integrity.json)。
+@@ -13,8 +25,6 @@
+ - 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、菜单、焦点、56 图标轨、核心嵌套及 Workspace AppBar 主题 / Portal 接线见[清单](evidence/shell-nav-20261016/browser-checklist.md)。`fixture.tsx` 为评审夹具，未注册路由；实际浏览器挂载、Workspace 接入、真机、读屏、实体打印未验。
+ - 待审阅：Supervisor 独立 Review、焦点内移的局部适配与实际浏览器验收；无新产品方向、公共 API 或令牌决策。
+ 
+-## 历史
+-
+ ### P75 · 题目详情虚线纸面与间距 · 2026-10-16（原当前，原样保留）
+ 
+ - 轮次：P75 · 题目详情虚线纸面与间距 · 2026-10-16；基线 `ab14ab4a59ef593e9d29061c892256d5e233bc3d`，分支 `feat/blueprint-question-detail`，开工工作树干净。[基线](evidence/question-detail-20261016/baseline.json)。
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index 2b8b782..d0b3944 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -2386,6 +2386,11 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，
+ - Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
+ - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
+ - 蓝图编辑式标题（用户 2026-10-16 批准）：章节 20/30、中文小节 16/24、小节索引 / folio / 图注编号 12px；章号保留默认 48×48 墨底块及 24px / 500 字形。间隔 12px，小节线 1px，章节保留结构墨线；普通章节用 SECTION，真实图纸才用 SHEET，窄屏 folio 换行。`BlueprintSectionHeader` 接收 title、description、code、显式 kind / value 的 folio 与 headingLevel；`BlueprintSheet` 原 props 保持兼容并组合该 Header，只有 Sheet 生成图框和标尺。`BpMinor` 的可选 code / label 分离索引与中文，label 缺省回退 children，保留 id / className，可选 h2–h6；`BpFigCap` 继续为段落。Geist Mono 本地子集仅用于上述索引及英文短标签，中文 UI 与 STIX 数学字体保持原路径。完整 API、来源实值和实际验收范围见 [蓝图主题](blueprint-theme.md)；不新增组件目录，不将本轮扩展为 Agent 业务布局实施。
++- Blueprint 成果 folio（P77）：`BlueprintSectionHeader` / `BlueprintSheet` 共用 `BlueprintFolio = { kind: "sheet" | "section" | "rev"; value: string }`。Sheet 保留 `sheetNo`，显式 folio 优先（即使 value 为空）；缺省 / 空白 value 不渲染。纯数字 / 数字序列最少两位补零，REV 接受 vN → NN，长数字与非数字旧标签不截断。普通章节 SECTION 保持。
++- 加入规则由宿主读取真实事实：有当前项 / 总数（题目分页、原件页码、作答份数）用 SHEET；没有序列且有真实已保存版本才用 REV；两者都有只用 SHEET；都没有则省略；未保存草稿不显示 REV。组件不接业务 Store，不推断编号或保存成功。
++- folio 沿用 Geist Mono Blueprint / text-ui-meta / muted-foreground、右对齐与窄屏换行。Header / Sheet 的 `folioAriaHidden?: boolean` 默认 false；标题区的版本栏 / 分页器已有同等可读信息时才传 true，否则保留可读，不连带隐藏标题。
++- Blueprint 顶部一级导航（P77）：blueprint / blueprint-night 的当前项是 36px 直角 primary / primary-foreground 实块，悬停保持，去掉底线；非当前项 hover 为 accent。使用 card 纸面上的单一 2px ring 外环（offset 2px），两端各留 4px 防裁切。一级导航强选中；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变；核心三主题和嵌套核心预览不接收蓝图增量。
++
+ - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
+ 
+ ### TextbookDirectory 内嵌形态
+diff --git a/tests/blueprint-components.test.mjs b/tests/blueprint-components.test.mjs
+index 8031efe..d2a6afc 100644
+--- a/tests/blueprint-components.test.mjs
++++ b/tests/blueprint-components.test.mjs
+@@ -20,7 +20,7 @@ const html = el => renderToStaticMarkup(el);
+ 
+ test('demo page renders all blueprint groups without changing the catalog count', () => {
+   const out = html(h(api.BlueprintComponentsDemo));
+-  for (const text of ['按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本', 'SHEET 01 / 04', 'bp-sheet', 'bp-btn', 'bp-seg-tabs', 'bp-steps', 'bp-card', 'bp-size-bar', 'bp-metric', 'bp-facts', 'bp-titleblock', 'bp-callout', 'bp-error', 'bp-annot', 'bp-codebox', 'bp-toast']) assert.ok(out.includes(text), text);
++  for (const text of ['按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本', 'SHEET 01 / 04', 'REV 02', 'SHEET 01 / 02', '没有成果序列或已保存版本，不显示 folio。', 'bp-sheet', 'bp-btn', 'bp-seg-tabs', 'bp-steps', 'bp-card', 'bp-size-bar', 'bp-metric', 'bp-facts', 'bp-titleblock', 'bp-callout', 'bp-error', 'bp-annot', 'bp-codebox', 'bp-toast']) assert.ok(out.includes(text), text);
+   assert.equal(components.length, 105);
+   assert.ok(!components.some(entry => entry.id.startsWith('blueprint')));
+ });
+diff --git a/tests/blueprint-print-a11y.test.mjs b/tests/blueprint-print-a11y.test.mjs
+index 5709af8..3aec41f 100644
+--- a/tests/blueprint-print-a11y.test.mjs
++++ b/tests/blueprint-print-a11y.test.mjs
+@@ -128,10 +128,17 @@ function checkReferences(html) {
+   const ids = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]));
+   for (const [, refs] of html.matchAll(/aria-(?:labelledby|describedby)="([^"]+)"/g)) for (const id of refs.split(' ')) assert.ok(ids.has(id), `missing ${id}`);
+ }
+-for (const theme of themes) test(`${theme}: real component SSR exposes named regions, choices, tab panels and heatmap table`, () => {
++for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real component SSR exposes named regions, choices, tab panels and heatmap table`, () => {
+   const bp = render(api.BlueprintComponentsDemo, {}, theme);
+   checkReferences(bp);
+-  assert.equal((bp.match(/data-slot="bp-sheet"/g) || []).length, 4);
++  const sheets = [...bp.matchAll(/<section\b([^>]*data-slot="bp-sheet"[^>]*)>/g)];
++  const labels = sheets.map(([, attrs]) => {
++    const id = attrs.match(/aria-labelledby="([^"]+)"/)[1];
++    return bp.match(new RegExp(`<h2 id="${id}"[^>]*>([^<]+)</h2>`))[1];
++  });
++  assert.deepEqual(labels, ['函数单元练习 PDF（示例）', '完整扫描纸', '按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本']);
++  assert.match(bp, /class="bp-section-folio" aria-hidden="true">REV 02<\/p>/);
++  assert.match(bp, /class="bp-section-folio" aria-hidden="true">SHEET 01 \/ 02<\/p>/);
+   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
+   assert.match(bp, /aria-current="step"/);
+   assert.match(bp, /aria-label="查看工具说明"/);
+diff --git a/tests/blueprint-shell-nav.test.mjs b/tests/blueprint-shell-nav.test.mjs
+index 97227b9..27d950a 100644
+--- a/tests/blueprint-shell-nav.test.mjs
++++ b/tests/blueprint-shell-nav.test.mjs
+@@ -132,12 +132,19 @@ function top(source = block) {
+         assert.equal(s.height, name === 'prism-app-bar' ? '56px' : '48px');
+       }
+       for (const [i, n] of f.nav.entries()) {
+-        assert.equal(style(n, combined).color, i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)');
++        n.states = [];
++        assert.equal(style(n, combined).color, i === 0 ? 'var(--primary-foreground)' : 'var(--muted-foreground)');
++        assert.equal(style(n, combined).background, i === 0 ? 'var(--primary)' : 'transparent');
+         n.states = ['hover'];
++        assert.equal(style(n, combined).color, i === 0 ? 'var(--primary-foreground)' : 'var(--muted-foreground)');
+         assert.equal(style(n, combined, 'before')['border-radius'], '0');
+-        assert.equal(style(n, combined, 'before').background, 'var(--accent)');
++        assert.equal(style(n, combined, 'before').background, i === 0 ? 'transparent' : 'var(--accent)');
++        assert.equal(style(n, combined).background, i === 0 ? 'var(--primary)' : 'transparent');
++        assert.equal(style(n, combined).height, '36px');
++        assert.equal(style(n, combined)['align-self'], 'center');
+       }
+-      assert.equal(style(f.nav[0], combined)['box-shadow'], 'inset 0 -2px 0 var(--foreground)');
++      assert.equal(style(f.nav[0], combined)['box-shadow'], 'none');
++      assert.equal(style(f.cls('prism-app-bar-navigation'), combined)['padding-inline'], '4px');
+       for (const c of ['prism-app-bar-identity','prism-bar-icon-button','prism-app-bar-space-trigger']) assert.equal(style(f.cls(c), combined, undefined, width)['border-radius'], '0');
+       const trigger = style(f.cls('prism-app-bar-space-trigger'), combined);
+       assert.equal(trigger.background, 'var(--card)'); assert.equal(trigger.border, '1px solid var(--border)');
+@@ -191,17 +198,17 @@ function focus(source = block) {
+       n.states = ['hover','focus-visible'];
+       const s = style(n, appCss + source);
+       assert.equal(s.outline, '2px solid var(--ring)');
+-      assert.equal(s['box-shadow'], n === f.nav[0] ? 'inset 0 -2px 0 var(--foreground)' : n === f.items[0] ? 'inset 2px 0 0 var(--foreground)' : 'none');
++      assert.equal(s['box-shadow'], n === f.items[0] ? 'inset 2px 0 0 var(--foreground)' : 'none');
+     }
+     assert.equal(style(f.nav[0], appCss + source, 'before').outline, 'none');
+-    assert.equal(style(f.nav[0], appCss + source)['outline-offset'], '-4px');
++    assert.equal(style(f.nav[0], appCss + source)['outline-offset'], '2px');
+   }
+ }
+ 
+-test('P76: both Blueprint AppBar/SpaceBar surfaces, selected underline, hover and square controls survive stylesheet order', () => top());
++test('P77: both Blueprint AppBar/SpaceBar surfaces, 36px selected ink block, hover and square controls survive stylesheet order', () => top());
+ test('P76: actual coss Sidebar surfaces, active accent/ink and weaker hover resolve in both themes', () => sidebar());
+ test('P76: collapsed 56px rail has 40px buttons despite frozen important utility; expanded geometry is untouched', () => rail());
+-test('P76: one focus outline keeps independent active indicators and suppresses the old nav pseudo outline', () => focus());
++test('P77: one outer focus outline keeps independent selection and suppresses the nav pseudo outline', () => focus());
+ test('P76: core themes and nested core preview roots/descendants/pseudo-elements receive zero added declarations', () => isolation());
+ test('P76: portaled personal/space menu hooks are square and current rows use accent', () => {
+   for (const t of themes) for (const kind of ['space','personal']) {
+@@ -235,12 +242,27 @@ test('P76: actual foreground/accent tokens meet selected text 4.5 and indicator
+     t.diagnostic(`${name} selected text and left ink / accent: ${ratio.toFixed(6)}:1`);
+   }
+ });
++test('P77: primary text and the outer ring on card meet contrast in both Blueprint palettes', t => {
++  for (const name of themes) {
++    const tokens = Object.fromEntries([...themeCss.split(`:where([data-agent-preview])[data-prism-theme="${name}"] {`)[1].split('}')[0].matchAll(/(--[\w-]+):([^;]+);/g)].map(m => [m[1], m[2]]));
++    for (const [foreground, background, minimum] of [['--primary-foreground', '--primary', 4.5], ['--ring', '--card', 3]]) {
++      const a = relativeLuminance(tokens[foreground]), b = relativeLuminance(tokens[background]);
++      const ratio = (Math.max(a, b) + .05) / (Math.min(a, b) + .05);
++      assert.ok(ratio >= minimum);
++      t.diagnostic(`${name} ${foreground}/${background}: ${ratio.toFixed(6)}:1`);
++    }
++  }
++});
+ test('P76: rollback, wrong tokens, focus duplication, rail-important and isolation mutations are detected', () => {
+   const cases = [
+     ['whole rollback', () => '', top],
+     ['card rollback', s => s.replace('background:var(--card); border-bottom', 'background:var(--background); border-bottom'), top],
+     ['border rollback', s => s.replace('border-bottom:var(--line-width) solid var(--line)', 'border-bottom:1px solid var(--border)'), top],
+-    ['nav primary rollback', s => s.replaceAll('inset 0 -2px 0 var(--foreground)', 'inset 0 -2px 0 var(--primary)'), top],
++    ['P76 nav rollback', s => s.replace('background:var(--primary); color:var(--primary-foreground); box-shadow:none;', 'color:var(--foreground); box-shadow:inset 0 -2px 0 var(--foreground);'), top],
++    ['nav height rollback', s => s.replace('height:36px; align-self:center;', 'height:100%; align-self:stretch;'), top],
++    ['nav focus clipping', s => s.replace('padding-inline:4px;', 'padding-inline:0;'), top],
++    ['current hover washout', s => s.replace('background:transparent; box-shadow:none;', 'background:var(--accent); box-shadow:none;'), top],
++    ['old inset focus', s => s.replace('outline-offset:2px; }\n:is', 'outline-offset:-4px; }\n:is'), focus],
+     ['hover rollback', s => s.replaceAll('background:var(--accent); }', 'background:var(--secondary); }'), top],
+     ['square rollback', s => s.replaceAll('border-radius:0;', 'border-radius:8px;'), top],
+     ['ink background rollback', s => s.replaceAll('background:var(--accent); color:var(--foreground); border-radius', 'background:var(--primary); color:var(--primary-foreground); border-radius'), sidebar],
+diff --git a/tests/blueprint-folio.test.mjs b/tests/blueprint-folio.test.mjs
+new file mode 100644
+index 0000000..79dff28
+--- /dev/null
++++ b/tests/blueprint-folio.test.mjs
+@@ -0,0 +1,84 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const source = readFileSync(new URL('../components/prism-next/blueprint/blueprint.tsx', import.meta.url), 'utf8');
++const runtime = await createTestRuntime('p77-folio');
++let serial = 0;
++async function load(contents = source) {
++  const result = await build({ stdin: { contents, resolveDir: root + 'components/prism-next/blueprint', loader: 'tsx' },
++    bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
++  const file = new URL(`folio-${serial++}.mjs`, runtime);
++  writeFileSync(file, result.outputFiles[0].text);
++  return import(file);
++}
++const api = await load();
++const render = (api, component, props) => renderToStaticMarkup(React.createElement(api[component], { title: '成果标题', ...props }));
++const folios = html => [...html.matchAll(/<p class="bp-section-folio"([^>]*)>([^<]*)<\/p>/g)];
++const components = ['BlueprintSectionHeader', 'BlueprintSheet'];
++
++function kinds(api) {
++  for (const component of components) for (const [kind, value, expected] of [
++    ['sheet', '3/3', 'SHEET 03 / 03'], ['section', '2 / 12', 'SECTION 02 / 12'],
++    ['rev', 'v1', 'REV 01'], ['rev', '2', 'REV 02'], ['rev', '123', 'REV 123'],
++    ['sheet', '01 / 05', 'SHEET 01 / 05'], ['section', 'A-02', 'SECTION A-02'],
++  ]) {
++    const out = render(api, component, { folio: { kind, value } });
++    assert.equal(folios(out).length, 1);
++    assert.equal(folios(out)[0][2], expected);
++    assert.doesNotMatch(out, /folio=|folioAriaHidden=/);
++  }
++}
++function empty(api) {
++  for (const component of components) for (const folio of [undefined, ...['sheet','section','rev'].flatMap(kind => ['', '  '].map(value => ({ kind, value })))]) {
++    assert.equal(folios(render(api, component, { folio })).length, 0);
++  }
++}
++function compatibility(api) {
++  assert.equal(folios(render(api, 'BlueprintSheet', { sheetNo: '1/5' }))[0][2], 'SHEET 01 / 05');
++  assert.equal(folios(render(api, 'BlueprintSheet', { sheetNo: '原件 A' }))[0][2], 'SHEET 原件 A');
++  for (const kind of ['rev', 'section', 'sheet']) {
++    assert.equal(folios(render(api, 'BlueprintSheet', { sheetNo: '9/9', folio: { kind, value: '2' } }))[0][2], `${kind.toUpperCase()} 02`);
++    assert.equal(folios(render(api, 'BlueprintSheet', { sheetNo: '9/9', folio: { kind, value: ' ' } })).length, 0);
++  }
++}
++function accessibility(api) {
++  for (const component of components) for (const kind of ['sheet', 'section', 'rev']) {
++    for (const hidden of [undefined, false, true]) {
++      const out = render(api, component, { folio: { kind, value: '1' }, folioAriaHidden: hidden });
++      assert.equal(folios(out)[0][1].includes('aria-hidden="true"'), hidden === true);
++      assert.doesNotMatch(out, /<(?:header|section|h2)[^>]*aria-hidden/);
++    }
++  }
++  assert.match(folios(render(api, 'BlueprintSheet', { sheetNo: '1', folioAriaHidden: true }))[0][1], /aria-hidden="true"/);
++}
++
++test('P77 folio: three kinds format supplied numeric facts, preserve legacy labels and do not truncate large values', () => kinds(api));
++test('P77 folio: absent, empty and whitespace values render no folio element or prefix', () => empty(api));
++test('P77 folio: sheetNo remains compatible; explicit folio wins including explicit empty value', () => compatibility(api));
++test('P77 folio: readable by default; only host-confirmed equivalent information hides the folio, never the title', () => accessibility(api));
++test('P77 folio: rollback mutations are rejected by rendered output contracts', async () => {
++  const mutations = [
++    ['REV lost', s => s.replace('folio.kind.toUpperCase()', 'folio.kind === "sheet" ? "SHEET" : "SECTION"'), kinds],
++    ['zero padding lost', s => s.replaceAll('.padStart(2, "0")', ''), kinds],
++    ['v prefix kept', s => s.replace('/^v?(\\d+)$/i', '/^(\\d+)$/i'), kinds],
++    ['empty element', s => s.replace('folio && value &&', 'folio &&'), empty],
++    ['legacy ignored', s => s.replace('folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)', 'folio'), compatibility],
++    ['legacy wins', s => s.replace('folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)', '(sheetNo ? { kind: "sheet", value: sheetNo } : folio)'), compatibility],
++    ['always hidden', s => s.replace('folioAriaHidden || undefined', 'true'), accessibility],
++    ['never hidden', s => s.replace('folioAriaHidden || undefined', 'undefined'), accessibility],
++    ['sheet drops aria', s => s.replace('folioAriaHidden={folioAriaHidden}', ''), accessibility],
++  ];
++  for (const [name, mutate, check] of mutations) {
++    const changed = mutate(source);
++    assert.notEqual(changed, source, name);
++    const mutant = await load(changed);
++    assert.throws(() => check(mutant), undefined, name);
++  }
++});

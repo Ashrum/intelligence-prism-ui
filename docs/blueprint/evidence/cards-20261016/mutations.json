@@ -1,0 +1,72 @@
+{
+  "test": "tests/blueprint-cards.test.mjs",
+  "mode": "esbuild-bundled in-memory TSX variants and parsed CSS variants; no working tree mutation",
+  "count": 13,
+  "results": [
+    {
+      "mutation": "frame heading becomes div",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "unlabelled frame",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "status fact lost",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "decorative letter",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "action dropped",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "hardcoded ink breaks night/core fallback",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "coloured card replaces neutral surface",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "global header leaks",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "nowrap header",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "intrinsic text minimum",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "long metadata cannot wrap",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "square edge loses contrast",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    },
+    {
+      "mutation": "warning incorrectly uses success",
+      "expected": "contract throws",
+      "observed": "rejected by contract in passing targeted run"
+    }
+  ]
+}

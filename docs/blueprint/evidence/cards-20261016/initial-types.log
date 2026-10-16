@@ -1,0 +1,2 @@
+components/prism-next/demos/blueprint.tsx(33,85): error TS18048: 'page.dimensions' is possibly 'undefined'.
+components/prism-next/demos/blueprint.tsx(33,116): error TS18048: 'page.dimensions' is possibly 'undefined'.

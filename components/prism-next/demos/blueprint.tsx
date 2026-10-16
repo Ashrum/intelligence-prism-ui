@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import { Info } from "lucide-react"
+import { ArrowLeft, ArrowRight, Info } from "lucide-react"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
 import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
-import { BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+import { artifactOutputExamples } from "./agent-artifact-output"
+import { continuousPreviewPages } from "./paper-preview-continuous"
+import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
 const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
 const tabNotes: Record<string, string> = { all: "42 份答卷", todo: "9 份等待 AI 批阅", review: "7 份需要教师确认", done: "22 份已出分", issue: "4 份未提交或扫描失败" }
@@ -16,6 +18,33 @@ const steps = [{ id: "upload", label: "上传答卷" }, { id: "ai", label: "AI �
 const cards = [{ name: "flow", description: "查看本页的固定步骤快照。", href: "#actions" }, { name: "timeline", description: "查看本页的数据排版示例。", href: "#data" }, { name: "limits", description: "静态卡片：展示得分与及格线的关系。", href: undefined }]
 const Thumb = ({ label }: { label: string }) => <span className="absolute inset-3.5 grid place-items-center border border-dashed border-border font-mono text-ui-meta text-muted-foreground">{label}</span>
 
+/** Fixed source records and an ordered two-section paper, not a live task. */
+export function BlueprintCardsDemo() {
+  const [pageIndex, setPageIndex] = useState(0)
+  const [showNote, setShowNote] = useState(false)
+  const page = continuousPreviewPages[pageIndex]
+  return <section id="object-section-cards" aria-label="原件卡片与试卷分节" className="space-y-6">
+    <BlueprintSectionHeader title="原件与成果分节" description="原件沿用现有固定扫描夹具；下方试卷有 A / B 两个实际分节。状态和计数均来自当前示例内容。" />
+    <BpFrameCard title={`作答原件 · ${page.alt}`} status={{ tone: page.imageUrl ? "info" : "warning", label: `第 ${pageIndex + 1} / ${continuousPreviewPages.length} 份作答${page.imageUrl ? "" : " · 未提供原图"}` }}
+      actions={<>
+        <BpTool iconOnly aria-label="查看上一份原件" disabled={pageIndex === 0} onClick={() => setPageIndex(index => index - 1)}><ArrowLeft className="size-4" aria-hidden="true" /></BpTool>
+        <BpTool iconOnly aria-label="查看下一份原件" disabled={pageIndex === continuousPreviewPages.length - 1} onClick={() => setPageIndex(index => index + 1)}><ArrowRight className="size-4" aria-hidden="true" /></BpTool>
+      </>}>
+      {page.imageUrl ? <img src={page.imageUrl} alt={`${page.alt} · 固定扫描夹具`} width={page.dimensions?.width} height={page.dimensions?.height} className="mx-auto h-auto w-full max-w-60" /> : <p className="text-ui-body">此份作答未提供原图，无法预览。</p>}
+    </BpFrameCard>
+    <BpSectionCard letter="A" title="选择题" meta="第 1 题 · 共 1 题"
+      action={<BpTool iconOnly aria-label="查看选择题作答说明" aria-expanded={showNote} aria-controls="bp-choice-note" onClick={() => setShowNote(value => !value)}><Info className="size-4" aria-hidden="true" /></BpTool>}>
+      <p className="text-read-body">1. 一元二次方程的最高次数是（　）。</p>
+      <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-read-body"><li>A. 1</li><li>B. 2</li><li>C. 3</li><li>D. 4</li></ul>
+      <p id="bp-choice-note" hidden={!showNote} className="mt-4 text-ui-hint text-muted-foreground">每题只有一个正确选项，请在答题卡中填写。</p>
+    </BpSectionCard>
+    <BpSectionCard letter="B" title="填空题" meta="第 2 题 · 共 1 题">
+      <p className="text-read-body">2. 若下列方程有两个相等的实数根，则判别式的值为______。</p>
+      <QuestionMath block label="x 平方减二 x 加一等于零"><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></QuestionMath>
+    </BpSectionCard>
+  </section>
+}
+
 export function BlueprintComponentsDemo() {
   const [tab, setTab] = useState("all")
   const [view, setView] = useState("blueprint")
@@ -23,6 +52,9 @@ export function BlueprintComponentsDemo() {
   const readingScroll = useHorizontalChoiceScroll(reading)
   const [actionPreview, setActionPreview] = useState("点击按钮查看样式反馈；此页不执行批阅或发布。")
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle")
+  const [folioPage, setFolioPage] = useState(0)
+  const output = artifactOutputExamples.paper.output
+  const revision = output?.status.state === "ready" ? output.version.label.match(/^v(\d+)\b/)?.[1] : undefined
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -36,10 +68,27 @@ export function BlueprintComponentsDemo() {
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#actions">蓝图按钮与标签页</a>
+      <a href="#artifact-folio">成果标题定位</a>
+      <a href="#object-section-cards">原件与成果分节</a>
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
+    <BlueprintCardsDemo />
+    <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
+      <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
+        description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>
+        <p className="text-ui-hint text-muted-foreground">固定文件记录：{output?.status.state === "ready" ? output.status.file.name : "—"}。本页不执行保存或导出。</p>
+      </BlueprintSheet>
+      <BlueprintSheet rulers={false} title={continuousPreviewPages[folioPage].alt} folio={{ kind: "sheet", value: `${folioPage + 1} / ${continuousPreviewPages.length}` }} folioAriaHidden
+        description={`第 ${folioPage + 1} / ${continuousPreviewPages.length} 份作答；沿用连续纸张夹具的实际顺序。`}>
+        <div className="flex flex-wrap gap-3">
+          <BpButton disabled={folioPage === 0} onClick={() => setFolioPage(page => page - 1)}>上一份作答</BpButton>
+          <BpButton disabled={folioPage === continuousPreviewPages.length - 1} onClick={() => setFolioPage(page => page + 1)}>下一份作答</BpButton>
+        </div>
+      </BlueprintSheet>
+      <BlueprintSectionHeader title="本页样式预览" description="没有成果序列或已保存版本，不显示 folio。" />
+    </section>
     <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
       <div className="bp-demo-columns">
         <div className="min-w-0">

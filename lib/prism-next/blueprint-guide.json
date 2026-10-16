@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "f73a9d56f717a45a53cfc5cf7f4061333864d5fc4fae21fce2b5b42e7e20648f",
+  "sourceSha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -12,190 +12,205 @@
     {
       "id": "section-2",
       "level": 2,
-      "text": "顶栏与侧栏蓝图适配 · P76（2026-10-16）"
+      "text": "对象卡片与成果分节 · P79（2026-10-16）"
     },
     {
       "id": "section-3",
       "level": 2,
-      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
+      "text": "教师消息轻背景 · P78（2026-10-16）"
     },
     {
       "id": "section-4",
+      "level": 2,
+      "text": "顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）"
+    },
+    {
+      "id": "section-5",
+      "level": 2,
+      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
+    },
+    {
+      "id": "section-6",
       "level": 3,
       "text": "主行动按钮悬停修复 · 2026-10-15"
     },
     {
-      "id": "section-5",
+      "id": "section-7",
       "level": 3,
       "text": "标尺密度微调 · 2026-10-15"
     },
     {
-      "id": "section-6",
+      "id": "section-8",
       "level": 2,
       "text": "完善路线与当前执行（更新于 2026-10-16）"
     },
     {
-      "id": "section-7",
+      "id": "section-9",
+      "level": 3,
+      "text": "成果标题 folio · P77（2026-10-16）"
+    },
+    {
+      "id": "section-10",
       "level": 3,
       "text": "编辑式排版与 Geist Mono 子集 · 2026-10-16"
     },
     {
-      "id": "section-8",
+      "id": "section-11",
       "level": 3,
       "text": "通用基础组件第二批与配色规则 · 2026-10-16"
     },
     {
-      "id": "section-9",
+      "id": "section-12",
       "level": 4,
       "text": "第二批复用与实现边界"
     },
     {
-      "id": "section-10",
+      "id": "section-13",
       "level": 4,
       "text": "第二批样例与已验范围"
     },
     {
-      "id": "section-11",
+      "id": "section-14",
       "level": 4,
       "text": "第二批实施结果与证据边界"
     },
     {
-      "id": "section-12",
+      "id": "section-15",
       "level": 3,
       "text": "通用基础组件首批 · 2026-10-15"
     },
     {
-      "id": "section-13",
+      "id": "section-16",
       "level": 4,
       "text": "复用依据（本轮离线核对）"
     },
     {
-      "id": "section-14",
+      "id": "section-17",
       "level": 4,
       "text": "首批样例与已验范围"
     },
     {
-      "id": "section-15",
+      "id": "section-18",
       "level": 4,
       "text": "实施结果与证据边界"
     },
     {
-      "id": "section-16",
+      "id": "section-19",
       "level": 3,
       "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
-      "id": "section-17",
+      "id": "section-20",
       "level": 3,
       "text": "第一批结果与剩余验收"
     },
     {
-      "id": "section-18",
+      "id": "section-21",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-19",
+      "id": "section-22",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-20",
+      "id": "section-23",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-21",
+      "id": "section-24",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-22",
+      "id": "section-25",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-23",
+      "id": "section-26",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-24",
+      "id": "section-27",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-25",
+      "id": "section-28",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-26",
+      "id": "section-29",
       "level": 3,
       "text": "配色与品牌分工（用户批准 2026-10-16）"
     },
     {
-      "id": "section-27",
+      "id": "section-30",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-28",
+      "id": "section-31",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-29",
+      "id": "section-32",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-30",
+      "id": "section-33",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-31",
+      "id": "section-34",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-32",
+      "id": "section-35",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-33",
+      "id": "section-36",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-34",
+      "id": "section-37",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-35",
+      "id": "section-38",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-36",
+      "id": "section-39",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-37",
+      "id": "section-40",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-38",
+      "id": "section-41",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-39",
+      "id": "section-42",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -674,7 +689,7 @@
       "children": [
         {
           "type": "text",
-          "value": "顶栏与侧栏蓝图适配 · P76（2026-10-16）"
+          "value": "对象卡片与成果分节 · P79（2026-10-16）"
         }
       ]
     },
@@ -683,7 +698,274 @@
       "children": [
         {
           "type": "text",
-          "value": "blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；一级当前项为 foreground 文字与底部 2px 墨线，悬停 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。"
+          "value": "两种显式选用的 "
+        },
+        {
+          "type": "code",
+          "value": "bp-*"
+        },
+        {
+          "type": "text",
+          "value": " 呈现组件位于 "
+        },
+        {
+          "type": "code",
+          "value": "components/prism-next/blueprint/blueprint.tsx"
+        },
+        {
+          "type": "text",
+          "value": "，不登记为正式组件目录条目。五主题（light / paper / dark / blueprint / blueprint-night）读取当前位置的既有令牌；不新增令牌、字号、阴影或运行状态，不修改普通 coss / Prism 组件。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "组件"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "使用场景"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "边界"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpFrameCard"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "一个可独立识别的对象被整体框住阅读：原件、文件、打印或导出预览、外部来源片段"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "墨色标题栏写对象名；不用于消息气泡、输入器或普通列表项"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpSectionCard"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "成果内有先后或编号意义的分节：试卷大题、任务详情的范围 / 阶段 / 异常、复核分组"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "字母必须对应真实分节顺序；不在对话消息流逐条使用，不嵌套 SHEET 标尺"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BlueprintSheet"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "整张成果图纸的外框与标尺"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "负责成果面层级；不为每个内部小节重复画图纸"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpPaneHead"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "轻量面板头"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "只提供头部，不负责整卡外框、语义标题或内容区"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "BpFrameCard"
+        },
+        {
+          "type": "text",
+          "value": " 接收 "
+        },
+        {
+          "type": "code",
+          "value": "title: ReactNode"
+        },
+        {
+          "type": "text",
+          "value": "、可选 "
+        },
+        {
+          "type": "code",
+          "value": "status: { tone: \"success\" / \"warning\" / \"danger\" / \"info\" / \"neutral\"; label: ReactNode }"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "actions"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "headingLevel"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "children"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "className"
+        },
+        {
+          "type": "text",
+          "value": " 与普通 section 属性。标题栏使用 header，默认 h3，支持 h2–h6；默认通过稳定唯一 id 的 "
+        },
+        {
+          "type": "code",
+          "value": "aria-labelledby"
+        },
+        {
+          "type": "text",
+          "value": " 关联标题，宿主可显式覆盖。状态必须提供可见文字，只写真实可得事实（如“已解除同步”“第 3 / 3 页”“加载失败”），未知就省略；不写无依据的 live、耗时。省略 status 时不输出状态容器或色块；组件不主动建立 live region，也不从点击推定执行状态。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "BpSectionCard"
+        },
+        {
+          "type": "text",
+          "value": " 接收 "
+        },
+        {
+          "type": "code",
+          "value": "letter?: string"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "title"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "meta?: ReactNode"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "action?: ReactNode"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "headingLevel"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "children"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "className"
+        },
+        {
+          "type": "text",
+          "value": " 与普通 section 属性。标题同样默认 h3 / 支持 h2–h6；字母属于可读标题，不设 aria-hidden；未提供或空白 letter 不渲染字母块。meta 使用等宽语义元信息字号，仅写真实文件名、页码或计数；action 为调用方提供可访问名的图标按钮槽。需要代码时直接嵌现有 "
+        },
+        {
+          "type": "code",
+          "value": "BpCodebox"
+        },
+        {
+          "type": "text",
+          "value": "，不另造代码块。"
         }
       ]
     },
@@ -692,7 +974,47 @@
       "children": [
         {
           "type": "text",
-          "value": "运行时只修改 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌、冻结 coss 与组件 API 保持。AppBar 56px / SpaceBar 48px 和断点不变。焦点仅一套 outline，顶栏一级项因横向裁切采用 −4px 内偏移，其他导航控件 +2px；当前项的 inset 选择标识独立保留。蓝图 / 夜图 foreground 对 accent 的理论对比度为 14.927942 / 11.106881:1；不以数值计算替代真实浏览器验收。"
+          "value": "整卡直角、无阴影、1.5px 外框；分节表头下方同宽结构线，正文留白。Frame 标题栏使用 "
+        },
+        {
+          "type": "code",
+          "value": "--primary"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--primary-foreground"
+        },
+        {
+          "type": "text",
+          "value": "；方块用 success / warning / destructive / info，neutral 用 primary-foreground，并用 primary-foreground 描边确保反相标题栏上边界可辨。语义色填充本身不保证在五主题都达 3:1，状态由文字完整披露；对比数值与浏览器边界见本轮证据。核心主题的 "
+        },
+        {
+          "type": "code",
+          "value": "--line"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--head-bg"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--head-fg"
+        },
+        {
+          "type": "text",
+          "value": " 沿现有中性回退；嵌套预览就地读取令牌，不沿蓝图祖先强制重绘。表头、操作槽可换行，标题与元信息可收缩并断长词；320px 的实际布局、焦点与视觉由 Supervisor 验收。"
         }
       ]
     },
@@ -701,7 +1023,382 @@
       "children": [
         {
           "type": "text",
-          "value": "本轮基线为 P75 提交 780c2ef，尚未合并。Builder 已提供实现、SSR / CSS 规则测试与评审夹具，工程结果见状态记录；独立 Review 与浏览器验收仍交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见"
+          "value": "示例入口 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint#object-section-cards"
+        },
+        {
+          "type": "text",
+          "value": "：原件使用现有两份扫描夹具；按钮切换夹具序号，缺图显示“未提供原图”，不假称网络加载失败；试卷实际包含 A 选择题和 B 填空题，计数对应页面内容。图标按钮可展开选择题作答说明。完整 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "实现与复用记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/cards-20261016/inspection.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器验收清单"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/cards-20261016/browser-checklist.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 与 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "当前状态"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": " 分开记录。浏览器验收：按分工由 Supervisor 执行；本轮未修改或验收 Workspace 接入。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-3",
+      "children": [
+        {
+          "type": "text",
+          "value": "教师消息轻背景 · P78（2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按蓝图 §6.1 与 Workspace W193 的 P-R4-01，blueprint / blueprint-night 的教师气泡改用既有 "
+        },
+        {
+          "type": "code",
+          "value": "--secondary"
+        },
+        {
+          "type": "text",
+          "value": " 轻背景与 "
+        },
+        {
+          "type": "code",
+          "value": "--foreground"
+        },
+        {
+          "type": "text",
+          "value": " 正文，保留右对齐和直角，不加气泡边框/阴影。白图为 "
+        },
+        {
+          "type": "code",
+          "value": "#F3F5F8"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#16181D"
+        },
+        {
+          "type": "text",
+          "value": "，夜图为 "
+        },
+        {
+          "type": "code",
+          "value": "#12253F"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "#E6EDF7"
+        },
+        {
+          "type": "text",
+          "value": "；夜图的“轻背景”指既有次级表面层级。附件文字、图标及现有边框继承正文色。正文链接保留下划线并使用 "
+        },
+        {
+          "type": "code",
+          "value": "--link"
+        },
+        {
+          "type": "text",
+          "value": "；旧 R1 白色链接焦点环改为两蓝图统一的 2px "
+        },
+        {
+          "type": "code",
+          "value": "--ring"
+        },
+        {
+          "type": "text",
+          "value": " 外环、2px offset、无叠环。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "核心 light / paper / dark 保留原 foreground 底 / background 反相文字与圆角；每条新规则排除嵌套核心预览根与后代。AgentMessage API、附件组件、共享布局、主题令牌、冻结 coss 和依赖不变，不新增 variant 或组件。此项不调整 PromptBar / AgentSurface 的既有焦点规则。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "正文与附件对气泡：白图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "16.259790:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "、夜图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "13.083512:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "；链接与焦点对气泡：白图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "5.587005:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "、夜图 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "6.392999:1"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "。焦点对相邻 card / background 均 ≥4.5:1，见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "令牌与规则数值"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/contrast.json.txt",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。这是工程计算，未代替浏览器测量。Builder 五项工程检查通过，全量 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "2216/2216"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "，定向 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "18/18"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "，回退变异 "
+        },
+        {
+          "type": "strong",
+          "children": [
+            {
+              "type": "text",
+              "value": "17/17"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "；"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "实现与复用记录"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器交接清单"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "与 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "STATUS"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "保留证据边界。浏览器验收：按分工由 Supervisor 执行；组件站结果不表示 Workspace 已同步或真实服务已接入。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-4",
+      "children": [
+        {
+          "type": "text",
+          "value": "顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 "
+        },
+        {
+          "type": "code",
+          "value": "--primary"
+        },
+        {
+          "type": "text",
+          "value": " 底与 "
+        },
+        {
+          "type": "code",
+          "value": "--primary-foreground"
+        },
+        {
+          "type": "text",
+          "value": " 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "导航运行时适配限于 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌和冻结 coss 保持。一级导航使用强选中以便快速定位当前工作空间；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变。AppBar 56px / SpaceBar 48px 和断点不变。P77 选择纸面上的单一 2px "
+        },
+        {
+          "type": "code",
+          "value": "--ring"
+        },
+        {
+          "type": "text",
+          "value": " 外环、偏移 2px；白图为蓝色，夜图沿用已有夜图 ring。36px 导航项垂直居中，导航滚动容器两端各留 4px，容纳外环并避免首末项裁切；伪元素不再画第二道焦点框，box-shadow 不叠环。实际裁切、焦点与相邻背景仍须 Supervisor 浏览器复核。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "P76 历史基线为 P75 提交 780c2ef；P77 基线为 main 7ad8dbc，分支 feat/blueprint-nav-folio。Builder 提供实现与 SSR / CSS 规则测试，工程结果见状态记录；独立 Review 与浏览器验收交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见"
         },
         {
           "type": "link",
@@ -756,7 +1453,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-3",
+      "id": "section-5",
       "children": [
         {
           "type": "text",
@@ -821,7 +1518,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-4",
+      "id": "section-6",
       "children": [
         {
           "type": "text",
@@ -937,7 +1634,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-5",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -1030,7 +1727,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-6",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1209,7 +1906,189 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-7",
+      "id": "section-9",
+      "children": [
+        {
+          "type": "text",
+          "value": "成果标题 folio · P77（2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "folio 只呈现真实定位事实，由宿主选择，不由组件根据点击、数组猜测业务顺序或生成版本："
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "有真实序列（题目分页、原件页码、作答份数等当前项 / 总数）时用 "
+          },
+          {
+            "type": "code",
+            "value": "SHEET 03 / 03"
+          },
+          {
+            "type": "text",
+            "value": "，数字至少两位补零，不截断三位及以上数值。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "无序列但有真实已保存版本时用 "
+          },
+          {
+            "type": "code",
+            "value": "REV 01"
+          },
+          {
+            "type": "text",
+            "value": "，来源为版本号 vN；未保存草稿不显示 REV。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "同时有序列和版本时只显示 SHEET（位置优先）；都没有则省略 folio。普通章节编号仍用 SECTION，不把章节序号当作成果页码。"
+          }
+        ],
+        [
+          {
+            "type": "code",
+            "value": "value"
+          },
+          {
+            "type": "text",
+            "value": " 是宿主给定的事实字符串；组件只去首尾空白、为纯数字或数字序列补零，并将 REV 的 vN 规范为 NN。非数字旧标签保持可读，不从任意 ID / 版本描述中提取数字。缺省或空白 value 不输出元素或前缀。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "folio 采用现有 "
+          },
+          {
+            "type": "code",
+            "value": ".bp-section-folio"
+          },
+          {
+            "type": "text",
+            "value": "：Geist Mono Blueprint、"
+          },
+          {
+            "type": "code",
+            "value": "text-ui-meta"
+          },
+          {
+            "type": "text",
+            "value": " 对应语义字号、muted-foreground、右对齐与窄屏换行。没有新增字号或令牌。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "是否 "
+          },
+          {
+            "type": "code",
+            "value": "aria-hidden"
+          },
+          {
+            "type": "text",
+            "value": " 由“标题区是否已有同等可读信息”决定：版本栏、标题说明或分页器已完整呈现时传 "
+          },
+          {
+            "type": "code",
+            "value": "folioAriaHidden={true}"
+          },
+          {
+            "type": "text",
+            "value": "；否则省略或传 false，保留读屏信息。组件不分析 ReactNode、不自动隐藏，也不隐藏标题或其他元信息。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "蓝图示例页"
+            }
+          ],
+          "href": "/next/foundations/blueprint#artifact-folio",
+          "external": false
+        },
+        {
+          "type": "text",
+          "value": " 复用现有 "
+        },
+        {
+          "type": "code",
+          "value": "artifactOutputExamples.paper.output"
+        },
+        {
+          "type": "text",
+          "value": " 的 ready 文件版本（v2 → REV 02）及 "
+        },
+        {
+          "type": "code",
+          "value": "continuousPreviewPages"
+        },
+        {
+          "type": "text",
+          "value": " 的两份作答（SHEET 01 / 02，可切到 02 / 02）；标题说明重复完整定位信息，因此这两处 folio 显式对读屏隐藏。第三例没有序列 / 已保存版本，不显示 folio。均为现有演示夹具事实，不称为真实学校记录。实现 / 复用与未验边界见"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "本轮说明"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "，"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器清单"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -1340,7 +2219,7 @@
         },
         {
           "type": "code",
-          "value": "folio: { kind: \"sheet\" 或 \"section\"; value: string }"
+          "value": "folio: { kind: \"sheet\" 或 \"section\" 或 \"rev\"; value: string }"
         },
         {
           "type": "text",
@@ -1360,7 +2239,15 @@
         },
         {
           "type": "text",
-          "value": "（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION，不推断业务类型。"
+          "value": "（默认 2）及普通 header HTML props。code 是有意义的可读章号，不设 aria-hidden；folio 按显式 kind 输出 SHEET / SECTION / REV，不推断业务类型；Header / Sheet 都支持 "
+        },
+        {
+          "type": "code",
+          "value": "folioAriaHidden?: boolean"
+        },
+        {
+          "type": "text",
+          "value": "，默认可读。"
         },
         {
           "type": "code",
@@ -1368,7 +2255,7 @@
         },
         {
           "type": "text",
-          "value": " 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，内部组合 Header，原装饰标尺继续 aria-hidden。"
+          "value": " 的 letter / sheetNo / rulers / headingLevel 和 section props 保持兼容，新增同类型可选 folio；两者同时传入时以 folio 为准，包括显式空 value（不回退旧 sheetNo）。内部组合 Header，原装饰标尺继续 aria-hidden。"
         },
         {
           "type": "code",
@@ -1817,7 +2704,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-8",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -1954,7 +2841,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-9",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2096,7 +2983,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-10",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -2405,7 +3292,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-11",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -2982,7 +3869,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-12",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -3036,7 +3923,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-13",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -3350,7 +4237,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-14",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -3659,7 +4546,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-15",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -4005,7 +4892,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-16",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -4041,7 +4928,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-17",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -4166,7 +5053,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-18",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -4186,7 +5073,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-19",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -4367,7 +5254,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -4624,7 +5511,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-21",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -4793,7 +5680,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-22",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -4985,7 +5872,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-23",
+      "id": "section-26",
       "children": [
         {
           "type": "text",
@@ -5257,7 +6144,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-24",
+      "id": "section-27",
       "children": [
         {
           "type": "text",
@@ -5423,7 +6310,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-25",
+      "id": "section-28",
       "children": [
         {
           "type": "text",
@@ -5434,7 +6321,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-26",
+      "id": "section-29",
       "children": [
         {
           "type": "text",
@@ -6073,7 +6960,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-27",
+      "id": "section-30",
       "children": [
         {
           "type": "text",
@@ -6298,7 +7185,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-28",
+      "id": "section-31",
       "children": [
         {
           "type": "text",
@@ -6394,7 +7281,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-29",
+      "id": "section-32",
       "children": [
         {
           "type": "text",
@@ -6643,7 +7530,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-30",
+      "id": "section-33",
       "children": [
         {
           "type": "text",
@@ -6743,7 +7630,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-31",
+      "id": "section-34",
       "children": [
         {
           "type": "text",
@@ -6817,7 +7704,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-32",
+      "id": "section-35",
       "children": [
         {
           "type": "text",
@@ -6912,7 +7799,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-33",
+      "id": "section-36",
       "children": [
         {
           "type": "text",
@@ -6964,7 +7851,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-34",
+      "id": "section-37",
       "children": [
         {
           "type": "text",
@@ -7053,7 +7940,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-35",
+      "id": "section-38",
       "children": [
         {
           "type": "text",
@@ -7106,7 +7993,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-36",
+      "id": "section-39",
       "children": [
         {
           "type": "text",
@@ -7299,7 +8186,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-37",
+      "id": "section-40",
       "children": [
         {
           "type": "text",
@@ -7431,7 +8318,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-38",
+      "id": "section-41",
       "children": [
         {
           "type": "text",
@@ -7508,7 +8395,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-39",
+      "id": "section-42",
       "children": [
         {
           "type": "text",
@@ -7587,7 +8474,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "fa0dc22d9bad7178d89536e6e37a3dade3461c189a63398ec54fd4bdc2149d36"
+      "sha256": "ec201afd1aead5ddef79f36c22c842618bbc6c918626d6a127676997bfe3e3b7"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -7618,6 +8505,31 @@
       "source": "docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg",
       "sha256": "838ed5e99aeb09821681df610404a707280298ef967b3e2eb3be8daf3f69371f"
+    },
+    {
+      "source": "docs/blueprint/evidence/cards-20261016/inspection.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/cards-20261016/inspection.md",
+      "sha256": "0f2280d13ea45bfec0ae97b06546d4d800a9c084c5655868d9e88db06b213bc9"
+    },
+    {
+      "source": "docs/blueprint/evidence/cards-20261016/browser-checklist.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/cards-20261016/browser-checklist.md",
+      "sha256": "f0f62982e81f96e95bea2764813304723a020c63b1b3c48e86654b702d7f2f8f"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/contrast.json",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/contrast.json.txt",
+      "sha256": "2c6d07c8f3b893ac088e45493cc42f7b2aa090c0c97bca77b0cfb56038c1d868"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/inspection.md",
+      "sha256": "431bacd55e0319a4308851eaa0c8c446a437415b99e59bb882e2fa59e99d0d54"
+    },
+    {
+      "source": "docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md",
+      "sha256": "4b5c2078fbb50269a0e2d67d6e5757b135e2ecabb39fba9ff95756689f6a6186"
     },
     {
       "source": "docs/blueprint/evidence/shell-nav-20261016/inspection.md",
@@ -7678,6 +8590,16 @@
       "source": "docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/screens/ruler-20261015/blueprint-1280-after.png",
       "sha256": "73a16c7d50df6fd6e9729998526763d0d018a835813468b3141e818a05127a2a"
+    },
+    {
+      "source": "docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/nav-folio-20261016/inspection.md",
+      "sha256": "27b1bce4fff2cec844b82dd923781b102b12c777c36940a146f614cf5bdef584"
+    },
+    {
+      "source": "docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md",
+      "sha256": "28567ec2890dc67cd62357c49f18ed7eb3d24d2b9effc7cb450499a34ad8ccf3"
     },
     {
       "source": "docs/blueprint/evidence/editorial-20261016/engineering.json",
@@ -8047,7 +8969,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "f73a9d56f717a45a53cfc5cf7f4061333864d5fc4fae21fce2b5b42e7e20648f"
+      "sha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99"
     }
   ]
 }

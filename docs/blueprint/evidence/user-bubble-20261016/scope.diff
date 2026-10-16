@@ -1,0 +1,349 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index 9d1bd27..9ef1401 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -307,10 +307,8 @@
+   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) > header::before { width:38px; height:38px; font-size:var(--text-section-title); }
+ }
+ /* Agent CI-09: ink buttons on paper keep the blue outer outline, without the coss shadow ring.
+-   The white outline is limited to rich-text links actually surrounded by user-message ink.
+-   Night focus is outside this white-Blueprint specification. */
++   Prompt/surface night focus is outside this white-Blueprint specification. */
+ [data-prism-theme="blueprint"] :where([data-agent-prompt-bar],[data-agent-surface]) :where(button,[role="button"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
+-[data-prism-theme="blueprint"] [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *)) { outline:2px solid var(--primary-foreground); outline-offset:2px; box-shadow:none; }
+ 
+ @media print {
+   :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-demo-section:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::after { display:none; }
+@@ -411,3 +409,11 @@
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline-offset:2px; }
+ :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"])[data-active="true"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 2px 0 0 var(--foreground); }
+ /* End P76 shell navigation. */
++
++/* P78 user bubble: secondary surface reserves solid ink for primary actions.
++   Attachments retain currentColor for text, icon and border; no new bubble border/shadow.
++   Rich-text links use the existing link token and a single blue outer focus outline. */
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--secondary); color:var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
++/* End P78 user bubble. */
+diff --git a/components/prism-next/demos/agent-component-examples.tsx b/components/prism-next/demos/agent-component-examples.tsx
+index 405fcce..99ac0d6 100644
+--- a/components/prism-next/demos/agent-component-examples.tsx
++++ b/components/prism-next/demos/agent-component-examples.tsx
+@@ -92,7 +92,7 @@ export const agentComponentExamples: Record<string, { description: string; previ
+ export const agentSupplementalExamples = [
+   { ...agentConversationCompositions[0], description: "Beautiful UI Prompt Bar 与 coss 原件组合，含听写与语音对话受控状态。", preview: <AgentPromptBarPreview />, examples: <AgentConversationDemo /> },
+   { ...agentConversationCompositions[1], description: "Beautiful UI 点阵标识：宿主状态与真实起止时间。", preview: <AgentMark state="idle" label="Agent" />, examples: <AgentConversationDemo section="agent-mark" /> },
+-  { ...agentConversationCompositions[2], description: "用户右侧反相气泡与 Agent 左侧无底色消息。", preview: <a className="prism-link" href="/next/components/agent-components/agent-message">查看对话气泡示例</a>, examples: <AgentConversationDemo section="agent-message" /> },
++  { ...agentConversationCompositions[2], description: "用户右侧气泡（蓝图轻背景，核心主题反相）与 Agent 左侧无底色消息。", preview: <a className="prism-link" href="/next/components/agent-components/agent-message">查看对话气泡示例</a>, examples: <AgentConversationDemo section="agent-message" /> },
+   { slug: "record-views", name: "任务记录三件套", description: "在同一组记录中比较上下文、进度和执行结果。", preview: <AgentCorePreview kind="progress" />, examples: <AgentRecordViewsDemo /> },
+   { slug: "change-set-two-state", name: "对比查看器两态", description: "比较对话摘要和完整差异中的同一组采纳草稿。", preview: <AgentChangeSetDemo />, examples: <AgentChangeSetDemo /> },
+   { slug: "context-summary-review", name: "从任务依据到执行结果", description: "观察确认范围、执行记录与成果摘要如何组合。", preview: <AgentCorePreview kind="preview" />, examples: <AgentSemanticGroupDemo initialSection="composition" /> },
+diff --git a/components/prism-next/demos/agent-conversation-demo.tsx b/components/prism-next/demos/agent-conversation-demo.tsx
+index 6ae5793..1bfb02e 100644
+--- a/components/prism-next/demos/agent-conversation-demo.tsx
++++ b/components/prism-next/demos/agent-conversation-demo.tsx
+@@ -94,6 +94,6 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
+         : section === "agent-mark" ? <MarkSamples /> : <ConversationSample />}
+     </div>
+     {section === "prompt-bar" && <><p role="status" className="break-all text-ui-hint">最近意图：{intent}</p><details><summary className="cursor-pointer text-ui-action">全部语音状态样本</summary><div className="mt-4 grid gap-4 sm:grid-cols-2">{Object.keys(dictationLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={{ state: state as AgentDictation["state"], reason: state === "error" ? "宿主报告连接中断" : undefined }} voice={noService} onIntent={onIntent} /></Card>)}{Object.keys(voiceModeLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={noService} voice={{ state: state as AgentVoiceMode["state"] }} onIntent={onIntent} /></Card>)}<Card className="p-4"><AgentVoiceStatus dictation={{ state: "listening", level: .6 }} voice={noService} onIntent={onIntent} /></Card></div></details></>}
+-    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、showModelSelector、attachments、contextActions、dictation、voice、privacy、onIntent。showModelSelector 默认 true，false 时不渲染模型入口；学校是否开放由宿主提供。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。使用反相文字背景对，业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
++    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、showModelSelector、attachments、contextActions、dictation、voice、privacy、onIntent。showModelSelector 默认 true，false 时不渲染模型入口；学校是否开放由宿主提供。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details。教师消息在蓝图与夜图使用轻背景，核心三主题保留反相文字背景对；业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
+   </div>
+ }
+diff --git a/docs/blueprint-theme.md b/docs/blueprint-theme.md
+index 21f399d..259ed1f 100644
+--- a/docs/blueprint-theme.md
++++ b/docs/blueprint-theme.md
+@@ -17,6 +17,14 @@
+ 
+ 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
+ 
++## 教师消息轻背景 · P78（2026-10-16）
++
++按蓝图 §6.1 与 Workspace W193 的 P-R4-01，blueprint / blueprint-night 的教师气泡改用既有 `--secondary` 轻背景与 `--foreground` 正文，保留右对齐和直角，不加气泡边框/阴影。白图为 `#F3F5F8` / `#16181D`，夜图为 `#12253F` / `#E6EDF7`；夜图的“轻背景”指既有次级表面层级。附件文字、图标及现有边框继承正文色。正文链接保留下划线并使用 `--link`；旧 R1 白色链接焦点环改为两蓝图统一的 2px `--ring` 外环、2px offset、无叠环。
++
++核心 light / paper / dark 保留原 foreground 底 / background 反相文字与圆角；每条新规则排除嵌套核心预览根与后代。AgentMessage API、附件组件、共享布局、主题令牌、冻结 coss 和依赖不变，不新增 variant 或组件。此项不调整 PromptBar / AgentSurface 的既有焦点规则。
++
++正文与附件对气泡：白图 **16.259790:1**、夜图 **13.083512:1**；链接与焦点对气泡：白图 **5.587005:1**、夜图 **6.392999:1**。焦点对相邻 card / background 均 ≥4.5:1，见 [令牌与规则数值](blueprint/evidence/user-bubble-20261016/contrast.json)。这是工程计算，未代替浏览器测量。Builder 五项工程检查通过，全量 **2216/2216**，定向 **18/18**，回退变异 **17/17**；[实现与复用记录](blueprint/evidence/user-bubble-20261016/inspection.md)、[浏览器交接清单](blueprint/evidence/user-bubble-20261016/browser-checklist.md)与 [STATUS](blueprint/STATUS.md)保留证据边界。浏览器验收：按分工由 Supervisor 执行；组件站结果不表示 Workspace 已同步或真实服务已接入。
++
+ ## 顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）
+ 
+ blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index a9f26c3..597f221 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,18 @@
+ 
+ ## 当前
+ 
++- 轮次：P78 · 教师消息气泡轻背景 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线为 P77 `eecb471`（位于 main `7ad8dbc` 之上），开工工作树干净。[基线](evidence/user-bubble-20261016/baseline.json)。
++- 授权与分工：Supervisor `task-P78.md` / `builder-preamble.md`，对应 Workspace W193 的 P-R4-01 与蓝图 §6.1；不提交、推送、修改 `.git`、联网、安装依赖、启动/重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
++- 范围：仅 blueprint.css 的两蓝图用户气泡使用 secondary / foreground，正文链接使用 link、焦点使用 2px ring 外环与 2px offset；保留直角、不加气泡边框或阴影。附件文字/图标/现有边框继承前景。两处示例说明同步；组件 API、核心三主题、字号、令牌、依赖与 54 个冻结 coss 不变。[实现与复用](evidence/user-bubble-20261016/inspection.md)、[保护散列](evidence/user-bubble-20261016/integrity.json)、[实际 diff](evidence/user-bubble-20261016/scope.diff)。
++- 工程：五项检查均退出 0，数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建成功、先构建后全量 **2216/2216，0 失败 / 0 跳过**、TypeScript **0 错误**。定向 **18/18**；17 个内存回退变异均被检出。[工程记录](evidence/user-bubble-20261016/engineering.json)、[定向日志](evidence/user-bubble-20261016/targeted-initial.log)、[变异](evidence/user-bubble-20261016/mutations.json)。文档/状态回填后的生成物、构建与文档专项复核见 [finalization.json](evidence/user-bubble-20261016/finalization.json)。
++- 对比度与隔离：白图文字/附件为 **16.259790:1**，链接/焦点对气泡 **5.587005:1**；夜图分别 **13.083512:1**、**6.392999:1**。焦点对 card/background 也逐项 ≥4.5:1。[数值](evidence/user-bubble-20261016/contrast.json)。实际 SSR / CSS 规则测试覆盖两蓝图、核心零增量、嵌套核心根/后代及核心岛，保留助手正文；这些不等同浏览器视觉/层叠/焦点验收。
++- 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务全量工程回归；最近完整工程回归为本轮 2216/2216，下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、链接焦点、附件/公式/长中文及嵌套预览详见 [浏览器清单](evidence/user-bubble-20261016/browser-checklist.md)。无本轮浏览器截图；Workspace 未同步接入，真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
++
++## 历史
++
++### P77 · 顶部导航选中态加强与成果 folio · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P77 · 顶部导航选中态加强与成果 folio · 2026-10-16；分支 `feat/blueprint-nav-folio`，main 基线 `7ad8dbc2146324ed2999febaf35e6417084f03d7`，开工工作树干净。[基线](evidence/nav-folio-20261016/baseline.json)。
+ - 授权与分工：Supervisor `task-P77.md` / `builder-preamble.md`；Builder 实施与工程自测，不提交、推送、修改 `.git`、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
+ - 范围：两蓝图一级导航 36px primary / primary-foreground 直角实块，hover 保持、去掉下划线；单一 2px ring 外环 / 2px offset，滚动容器两端 4px 留白。SpaceBar / 侧栏不变。Header / Sheet 增加 REV、显式 folio、空值省略、补零与 folioAriaHidden；保留 sheetNo 并让显式 folio 优先。既有文件版本与作答页夹具补 REV / SHEET / 无 folio 样例；加入逻辑与读屏规则写入规范和契约。[实现 / 复用 / Workspace 接线](evidence/nav-folio-20261016/inspection.md)。
+@@ -12,7 +24,6 @@
+ - 周期：Builder 实施 / 工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务提前全量工程回归，最近完整工程回归为本轮 2209/2209；下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、首末导航项焦点 / hover、folio 换行 / 切页 / 可读性、嵌套核心预览隔离见 [浏览器清单](evidence/nav-folio-20261016/browser-checklist.md)。Workspace 仅只读定位接线，未修改 / 集成；真机、读屏器、真实学校数据、实体打印未验。Builder 不自我批准，无新增 PO 决策待定项。
+ 
+-## 历史
+ 
+ ### P76 · 顶部导航与左侧目录 · 2026-10-16（原当前，原样保留）
+ 
+diff --git a/tests/agent-blueprint-r1.test.mjs b/tests/agent-blueprint-r1.test.mjs
+index 7f48a5c..ada923d 100644
+--- a/tests/agent-blueprint-r1.test.mjs
++++ b/tests/agent-blueprint-r1.test.mjs
+@@ -191,11 +191,11 @@ test('CI-09: actual send and confirmation buttons keep a single blue 2px outline
+   }
+ });
+ 
+-test('CI-09: a link surrounded by the actual user-message ink uses a white single outline, not a white outline on a paper button', () => {
++test('CI-09 / P78: user-message links use a single blue outline on the secondary surface', () => {
+   const bubble = node({ 'data-agent-message': 'user' }, boundary('blueprint'));
+   const link = node({}, node({}, bubble, { classes: ['agent-message-content'] }), { tag: 'a', focused: true });
+-  assert.deepEqual(style(link), { outline: '2px solid var(--primary-foreground)', 'outline-offset': '2px', 'box-shadow': 'none' });
+-  assert.deepEqual(style({ ...link, focused: false }), {});
++  assert.deepEqual(style(link), { color: 'var(--link)', outline: '2px solid var(--ring)', 'outline-offset': '2px', 'box-shadow': 'none' });
++  assert.deepEqual(style({ ...link, focused: false }), { color: 'var(--link)' });
+   assert.deepEqual(style(node({}, node({ 'data-agent-message': 'agent' }, boundary('blueprint')), { tag: 'a', focused: true })), {});
+ });
+ 
+diff --git a/tests/blueprint-user-bubble.test.mjs b/tests/blueprint-user-bubble.test.mjs
+new file mode 100644
+index 0000000..bc3d222
+--- /dev/null
++++ b/tests/blueprint-user-bubble.test.mjs
+@@ -0,0 +1,221 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import { transform } from 'lightningcss';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++import { relativeLuminance } from '../lib/prism-next/chart-color.ts';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const read = p => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
++const css = read('app/(next)/next/blueprint.css');
++const theme = read('app/(next)/next/theme.css');
++const conversation = read('components/prism-next/agent-conversation.css');
++const family = ':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
++const guard = `:not(:where([data-agent-preview][data-prism-theme]:not(${family}), [data-agent-preview][data-prism-theme]:not(${family}) *))`;
++const blueprints = ['blueprint', 'blueprint-night'];
++const core = ['light', 'paper', 'dark'];
++const themes = [...core, ...blueprints];
++const runtime = await createTestRuntime('p78-user-bubble');
++const result = await build({ stdin: { contents: `export { AgentMessage, AgentMessageAttachment } from './components/prism-next/agent-message';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', loader: { '.css': 'empty' }, alias: { '@': root }, write: false });
++const file = new URL('message.mjs', runtime);
++writeFileSync(file, result.outputFiles[0].text);
++const api = await import(file);
++const h = React.createElement;
++const markup = speaker => renderToStaticMarkup(h(api.AgentMessage, {
++  speaker, attachments: h(api.AgentMessageAttachment, null, '函数单元复习材料与课堂练习.pdf'),
++}, h('p', null, '保留原题条件与出处，长中文自然换行。'), h('a', { href: '#materials' }, '查看材料说明'), h('math', null, h('mi', null, 'x')), h('pre', null, h('code', null, 'x = 1'))));
++
++// Parse actual SSR into a selector probe; this is not a browser cascade/layout engine.
++function tree(html, parent) {
++  const nodes = [], stack = [parent];
++  for (const tag of html.matchAll(/<\/?[a-zA-Z][^>]*>/g)) {
++    if (tag[0].startsWith('</')) { stack.pop(); continue; }
++    const name = tag[0].match(/^<([\w-]+)/)[1];
++    const attrs = Object.fromEntries([...tag[0].matchAll(/([\w:-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]));
++    const n = { name, attrs, classes: (attrs.class ?? '').split(/\s+/), parent: stack.at(-1), focused: false };
++    nodes.push(n);
++    if (!['input','img','br','hr','link','meta','source','wbr','area','embed'].includes(name) && !tag[0].endsWith('/>')) stack.push(n);
++  }
++  return nodes;
++}
++const element = (t, parent, preview = false) => ({ name: 'div', attrs: { 'data-prism-theme': t, ...(preview ? { 'data-agent-preview': '' } : {}) }, classes: [], parent });
++function parse(selector) {
++  let ast;
++  transform({ code: Buffer.from(`${selector}{color:red}`), visitor: { Selector(s) { ast = s; } } });
++  assert.ok(ast); return ast;
++}
++function matches(s, n) {
++  if (!n) return false;
++  const split = s.findLastIndex(p => p.type === 'combinator');
++  if (split >= 0) {
++    assert.equal(s[split].value, 'descendant');
++    if (!matches(s.slice(split + 1), n)) return false;
++    for (let p = n.parent; p; p = p.parent) if (matches(s.slice(0, split), p)) return true;
++    return false;
++  }
++  return s.every(p => {
++    if (p.type === 'universal') return true;
++    if (p.type === 'type') return n.name === p.name;
++    if (p.type === 'class') return n.classes.includes(p.name);
++    if (p.type === 'attribute') {
++      if (!p.operation) return Object.hasOwn(n.attrs, p.name);
++      assert.equal(p.operation.operator, 'equal'); return n.attrs[p.name] === p.operation.value;
++    }
++    if (p.type === 'pseudo-class') {
++      if (p.kind === 'focus-visible') return n.focused;
++      assert.ok(['is', 'where', 'not'].includes(p.kind), p.kind);
++      const any = p.selectors.some(child => matches(child, n)); return p.kind === 'not' ? !any : any;
++    }
++    if (p.type === 'pseudo-element') return p.kind === n.pseudo;
++    assert.fail(`Unsupported selector ${JSON.stringify(p)}`);
++  });
++}
++function rules(source = css) {
++  const found = [];
++  postcss.parse(source).walkRules(r => {
++    if (!/data-agent-message|agent-message-attachment/.test(r.selector)) return;
++    assert.equal(r.parent.type, 'root', 'message rules must not rely on viewport/media gates');
++    found.push({ selectors: r.selectors.map(parse), declarations: Object.fromEntries(r.nodes.filter(d => d.type === 'decl').map(d => [d.prop, d.value])) });
++  });
++  return found;
++}
++const current = rules();
++function style(node, parsed = current) {
++  const out = {};
++  for (const rule of parsed) if (rule.selectors.some(s => matches(s, node))) Object.assign(out, rule.declarations);
++  return out;
++}
++function fixture(t, outer, speaker = 'user') {
++  const parent = outer ? element(t, element(outer), true) : element(t);
++  const nodes = tree(markup(speaker), parent);
++  return { parent, nodes, bubble: nodes.find(n => n.attrs['data-agent-message']), link: nodes.find(n => n.name === 'a'), attachment: nodes.find(n => n.attrs['data-slot'] === 'agent-message-attachment') };
++}
++function surface(parsed = current) {
++  for (const t of blueprints) for (const outer of [undefined, ...themes]) {
++    const f = fixture(t, outer);
++    assert.deepEqual(style(f.bubble, parsed), { 'border-radius': '0', background: 'var(--secondary)', color: 'var(--foreground)' }, `${outer}/${t}`);
++    assert.deepEqual(style(f.attachment, parsed), { 'border-radius': '0' });
++  }
++}
++function links(parsed = current) {
++  for (const t of blueprints) for (const outer of [undefined, ...themes]) {
++    const f = fixture(t, outer);
++    assert.deepEqual(style(f.link, parsed), { color: 'var(--link)' });
++    f.link.focused = true;
++    assert.deepEqual(style(f.link, parsed), { color: 'var(--link)', outline: '2px solid var(--ring)', 'outline-offset': '2px', 'box-shadow': 'none' });
++  }
++}
++function isolation(parsed = current) {
++  for (const t of core) for (const outer of [undefined, ...themes]) {
++    const f = fixture(t, outer);
++    for (const n of f.nodes) {
++      n.focused = true;
++      assert.deepEqual(style(n, parsed), {}, `${outer}/${t}/${n.name}`);
++      if (outer) {
++        // A styled target can itself be the excluded preview root.
++        const preview = { ...n, attrs: { ...n.attrs, ...f.parent.attrs }, parent: f.parent.parent };
++        assert.deepEqual(style(preview, parsed), {}, `preview root ${outer}/${t}/${n.name}`);
++      }
++    }
++    // A core island inside a user bubble must not acquire Blueprint link rules.
++    if (blueprints.includes(outer)) {
++      const host = fixture(outer);
++      f.parent.parent = host.bubble;
++      for (const n of f.nodes) assert.deepEqual(style(n, parsed), {}, `island ${outer}/${t}/${n.name}`);
++    }
++  }
++  for (const t of themes) {
++    const f = fixture(t, undefined, 'agent'); f.link.focused = true;
++    assert.deepEqual(style(f.bubble, parsed), {});
++    assert.deepEqual(style(f.link, parsed), {});
++  }
++}
++function tokens(t, source = theme) {
++  const body = source.split(`:where([data-agent-preview])[data-prism-theme="${t}"] {`)[1].split('}')[0];
++  return Object.fromEntries([...body.matchAll(/(--[\w-]+):([^;]+);/g)].map(m => [m[1], m[2].trim()]));
++}
++const ratio = (a, b) => (Math.max(relativeLuminance(a), relativeLuminance(b)) + .05) / (Math.min(relativeLuminance(a), relativeLuminance(b)) + .05);
++function contrast(parsed = current, source = theme) {
++  const evidence = [];
++  for (const t of blueprints) {
++    const f = fixture(t), values = tokens(t, source);
++    const resolve = value => { const key = value.match(/var\((--[\w-]+)\)/)?.[1]; assert.ok(key, value); assert.ok(values[key], key); return values[key]; };
++    const bubble = style(f.bubble, parsed); f.link.focused = true;
++    const link = style(f.link, parsed);
++    for (const [label, foreground, background] of [
++      ['text / bubble', resolve(bubble.color), resolve(bubble.background)],
++      ['attachment text-icon-border / bubble', resolve(bubble.color), resolve(bubble.background)],
++      ['link / bubble', resolve(link.color), resolve(bubble.background)],
++      ['focus / bubble', resolve(link.outline), resolve(bubble.background)],
++      ['focus / card', resolve(link.outline), values['--card']],
++      ['focus / canvas', resolve(link.outline), values['--background']],
++    ]) {
++      const value = ratio(foreground, background);
++      assert.ok(value >= 4.5, `${t}: ${label} = ${value}`);
++      evidence.push({ theme: t, label, foreground, background, ratio: value });
++    }
++  }
++  return evidence;
++}
++
++test('P78: actual message SSR retains core ink utilities, role, attachment currentColor and semantic content', () => {
++  const f = fixture('light');
++  for (const c of ['bg-foreground', 'text-background', 'rounded-xl', 'ml-auto']) assert.ok(f.bubble.classes.includes(c));
++  assert.equal(f.bubble.attrs['aria-label'], '你说');
++  assert.ok(f.attachment.classes.includes('border-current'));
++  assert.ok(f.nodes.some(n => n.name === 'svg' && n.attrs.stroke === 'currentColor'));
++  assert.ok(f.nodes.some(n => n.name === 'math'));
++  assert.ok(f.nodes.some(n => n.name === 'code'));
++  assert.match(conversation, /\.agent-user-message \.agent-message-content a \{ text-decoration: underline; \}/);
++  assert.match(conversation, /\.agent-user-message \.agent-message-content :is\(p, span, a, pre, code, math, \.katex, \[data-slot="badge"\]\) \{ color: inherit; background-color: transparent; \}/);
++});
++test('P78: two Blueprint surfaces use secondary/foreground and retain square geometry without added border/shadow', () => surface());
++test('P78: both Blueprint links use link color and a single 2px ring with 2px offset', () => links());
++test('P78: core delta is empty including preview roots, descendants and core islands; Agent body stays unchanged', () => isolation());
++test('P78: every new target excludes nested core previews and introduces no pseudo decoration, token or typography', () => {
++  const block = css.match(/\/\* P78 user bubble:[\s\S]*?\/\* End P78 user bubble\. \*\//)[0];
++  postcss.parse(block).walkRules(r => {
++    for (const s of r.selectors) { assert.ok(s.startsWith(family)); assert.ok(s.endsWith(guard)); assert.ok(!s.includes('::')); }
++    for (const d of r.nodes) assert.ok(!/^(--|font|line-height|border|text-shadow)/.test(d.prop), d.prop);
++  });
++});
++test('P78: actual rule/token pairs for body, attachment, link and focus all exceed 4.5:1', t => {
++  for (const row of contrast()) t.diagnostic(JSON.stringify(row));
++});
++test('P78: rollback and isolation mutations fail the behavioral rule contracts', t => {
++  const block = css.match(/\/\* P78 user bubble:[\s\S]*?\/\* End P78 user bubble\. \*\//)[0];
++  const cases = [
++    ['remove adaptation', s => s.replace(block, ''), surface],
++    ['ink background', s => s.replace('background:var(--secondary)', 'background:var(--foreground)'), surface],
++    ['inverse text', s => s.replace('color:var(--foreground)', 'color:var(--background)'), surface],
++    ['extra border', s => s.replace('background:var(--secondary)', 'border:1px solid; background:var(--secondary)'), surface],
++    ['extra shadow', s => s.replace('background:var(--secondary)', 'box-shadow:0 0 0 1px; background:var(--secondary)'), surface],
++    ['link inherits ink rule', s => s.replace('color:var(--link)', 'color:inherit'), links],
++    ['white focus rollback', s => s.replace('solid var(--ring)', 'solid var(--primary-foreground)'), links],
++    ['no focus offset', s => s.replace('outline-offset:2px', 'outline-offset:0'), links],
++    ['double focus', s => s.replace('box-shadow:none', 'box-shadow:0 0 0 4px var(--ring)'), links],
++    ['night omitted', s => s.replaceAll(family, '[data-prism-theme="blueprint"]'), surface],
++    ['unscoped rules', s => s.replaceAll(`${family} [data-agent-message`, '[data-agent-message'), isolation],
++    ['preview guard removed', s => s.replaceAll(guard, ''), isolation],
++    ['preview root exclusion lost', s => s.replaceAll(`[data-agent-preview][data-prism-theme]:not(${family}), `, ''), isolation],
++    ['preview descendant exclusion lost', s => s.replaceAll(`, [data-agent-preview][data-prism-theme]:not(${family}) *`, ''), isolation],
++    ['assistant accidentally included', s => s.replaceAll('[data-agent-message="user"]', '[data-agent-message]'), isolation],
++  ];
++  for (const [name, mutate, check] of cases) {
++    const changed = mutate(block); assert.notEqual(changed, block, name);
++    assert.throws(() => check(rules(css.replace(block, changed))), undefined, name);
++    t.diagnostic(`detected: ${name}`);
++  }
++  for (const name of blueprints) {
++    const start = theme.indexOf(`:where([data-agent-preview])[data-prism-theme="${name}"] {`);
++    const changed = theme.slice(0, start) + theme.slice(start).replace(/--link:#[\da-f]+;/i, `--link:${tokens(name)['--secondary']};`);
++    assert.notEqual(changed, theme);
++    assert.throws(() => contrast(current, changed), undefined, `${name} contrast regression`);
++    t.diagnostic(`detected: ${name} contrast regression`);
++  }
++});

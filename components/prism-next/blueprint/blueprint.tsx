@@ -10,25 +10,43 @@ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 const RULER_TOP = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const RULER_SIDE = ["A", "B", "C", "D"]
 
+export interface BlueprintFolio {
+  kind: "sheet" | "section" | "rev"
+  value: string
+}
+
+/** Format supplied facts only; sequence/version selection belongs to the host. */
+function folioValue(folio?: BlueprintFolio) {
+  const value = folio?.value.trim() ?? ""
+  if (!value) return ""
+  const revision = folio?.kind === "rev" ? value.match(/^v?(\d+)$/i) : undefined
+  if (revision) return revision[1].padStart(2, "0")
+  if (/^\d+(\s*\/\s*\d+)?$/.test(value)) return value.split("/").map(part => part.trim().padStart(2, "0")).join(" / ")
+  return value
+}
+
 export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   title: ReactNode
   description?: ReactNode
   /** Meaningful chapter index, read along with the visible heading. */
   code?: string
-  folio?: { kind: "sheet" | "section"; value: string }
+  folio?: BlueprintFolio
+  /** Hide only when equivalent readable information exists in the title area. */
+  folioAriaHidden?: boolean
   headingId?: string
   headingLevel?: 2 | 3
 }
 /** A chapter heading without a sheet frame or rulers. */
-export function BlueprintSectionHeader({ title, description, code, folio, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
+export function BlueprintSectionHeader({ title, description, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
   const generatedId = useId()
   const Heading = headingLevel === 2 ? "h2" : "h3"
+  const value = folioValue(folio)
   return <header {...props} className={cn("bp-section-header", className)} data-slot="bp-section-header" data-has-code={code ? "" : undefined}>
     {code && <span className="bp-section-code">{code}</span>}
     <div className="bp-section-main">
       <div className="bp-section-title-row">
         <Heading id={headingId ?? generatedId} className="bp-section-title text-section-title">{title}</Heading>
-        {folio && <p className="bp-section-folio">{folio.kind === "sheet" ? "SHEET" : "SECTION"} {folio.value}</p>}
+        {folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>}
       </div>
       {description && <p className="bp-section-description text-ui-hint">{description}</p>}
     </div>
@@ -38,15 +56,17 @@ export function BlueprintSectionHeader({ title, description, code, folio, headin
 export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "title"> {
   /** Meaningful chapter index, e.g. "A". Omit when no index is available. */
   letter?: string
-  /** Sheet number shown top-right, e.g. "01 / 05". */
+  /** Legacy sheet number, e.g. "01 / 05". Explicit folio takes precedence, even when empty. */
   sheetNo?: string
+  folio?: BlueprintFolio
+  folioAriaHidden?: boolean
   title: ReactNode
   description?: ReactNode
   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
   rulers?: boolean
   headingLevel?: 2 | 3
 }
-export function BlueprintSheet({ letter, sheetNo, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
+export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
   const id = useId()
   return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
     {rulers && <>
@@ -55,7 +75,7 @@ export function BlueprintSheet({ letter, sheetNo, title, description, rulers = t
       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
     </>}
-    <BlueprintSectionHeader code={letter} folio={sheetNo ? { kind: "sheet", value: sheetNo } : undefined} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
+    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
     <div className="relative min-w-0">{children}</div>
   </section>
 }
@@ -141,6 +161,58 @@ export function BpCardNote({ className, ...props }: ComponentProps<"div">) {
 
 export function BpPaneHead({ title, action, className, ...props }: Omit<ComponentProps<"div">, "title"> & { title: ReactNode; action?: ReactNode }) {
   return <div {...props} className={cn("bp-pane-head", className)}><span>{title}</span>{action}</div>
+}
+
+export interface BpFrameCardProps extends Omit<ComponentProps<"section">, "title"> {
+  title: ReactNode
+  /** Host-supplied fact, always accompanied by readable text. Never infer a live/execution state. */
+  status?: { tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }
+  actions?: ReactNode
+  headingLevel?: 2 | 3 | 4 | 5 | 6
+}
+/** An independently identifiable object, such as an original document or export preview. */
+export function BpFrameCard({ title, status, actions, headingLevel = 3, children, className, ...props }: BpFrameCardProps) {
+  const id = useId()
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
+  return <section aria-labelledby={id} {...props} className={cn("bp-frame-card", className)} data-slot="bp-frame-card">
+    <header className="bp-frame-card-head">
+      <Heading id={id} className="bp-frame-card-title text-ui-action">{title}</Heading>
+      {status && <div className="bp-frame-card-status text-ui-hint" data-tone={status.tone}>
+        <span className="bp-frame-card-dot" aria-hidden="true" />
+        <span className="bp-frame-card-status-label">{status.label}</span>
+      </div>}
+      {actions != null && <div className="bp-card-actions">{actions}</div>}
+    </header>
+    <div className="bp-card-body">{children}</div>
+  </section>
+}
+
+export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "title"> {
+  /** Supply only a meaningful section sequence; omit otherwise. */
+  letter?: string
+  title: ReactNode
+  /** Real identifiers only: filename, page, count. */
+  meta?: ReactNode
+  /** Host provides the icon button and its accessible name. */
+  action?: ReactNode
+  headingLevel?: 2 | 3 | 4 | 5 | 6
+}
+/** A numbered/ordered subdivision within a result, without sheet rulers. */
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, children, className, ...props }: BpSectionCardProps) {
+  const id = useId()
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
+  const code = letter?.trim()
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", className)} data-slot="bp-section-card">
+    <header className="bp-section-card-head">
+      <Heading id={id} className="bp-section-card-title text-block-title">
+        {code && <span className="bp-section-card-letter font-mono text-stat-display">{code}</span>}
+        <span className="bp-section-card-label">{title}</span>
+      </Heading>
+      {meta != null && <div className="bp-section-card-meta font-mono text-ui-meta">{meta}</div>}
+      {action != null && <div className="bp-card-actions">{action}</div>}
+    </header>
+    <div className="bp-card-body">{children}</div>
+  </section>
 }
 
 export type BpFill = "ink" | "hatch" | "accent" | "quiet"

@@ -1,0 +1,177 @@
+[
+  {
+    "theme": "light",
+    "tone": "success",
+    "text": 15.797619425332647,
+    "dotFill": 5.216394707758836,
+    "dotBoundary": 15.797619425332647
+  },
+  {
+    "theme": "light",
+    "tone": "warning",
+    "text": 15.797619425332647,
+    "dotFill": 7.32514738209108,
+    "dotBoundary": 15.797619425332647
+  },
+  {
+    "theme": "light",
+    "tone": "danger",
+    "text": 15.797619425332647,
+    "dotFill": 4.038890591366875,
+    "dotBoundary": 15.797619425332647
+  },
+  {
+    "theme": "light",
+    "tone": "info",
+    "text": 15.797619425332647,
+    "dotFill": 5.5533727176177665,
+    "dotBoundary": 15.797619425332647
+  },
+  {
+    "theme": "light",
+    "tone": "neutral",
+    "text": 15.797619425332647,
+    "dotFill": 15.797619425332647,
+    "dotBoundary": 15.797619425332647
+  },
+  {
+    "theme": "paper",
+    "tone": "success",
+    "text": 15.826561887574877,
+    "dotFill": 5.894930520462849,
+    "dotBoundary": 15.826561887574877
+  },
+  {
+    "theme": "paper",
+    "tone": "warning",
+    "text": 15.826561887574877,
+    "dotFill": 8.277984563811806,
+    "dotBoundary": 15.826561887574877
+  },
+  {
+    "theme": "paper",
+    "tone": "danger",
+    "text": 15.826561887574877,
+    "dotFill": 4.564259560428871,
+    "dotBoundary": 15.826561887574877
+  },
+  {
+    "theme": "paper",
+    "tone": "info",
+    "text": 15.826561887574877,
+    "dotFill": 6.275741802263973,
+    "dotBoundary": 15.826561887574877
+  },
+  {
+    "theme": "paper",
+    "tone": "neutral",
+    "text": 15.826561887574877,
+    "dotFill": 15.826561887574877,
+    "dotBoundary": 15.826561887574877
+  },
+  {
+    "theme": "dark",
+    "tone": "success",
+    "text": 13.716118075820463,
+    "dotFill": 1.9300105777939407,
+    "dotBoundary": 13.716118075820463
+  },
+  {
+    "theme": "dark",
+    "tone": "warning",
+    "text": 13.716118075820463,
+    "dotFill": 1.815483190434653,
+    "dotBoundary": 13.716118075820463
+  },
+  {
+    "theme": "dark",
+    "tone": "danger",
+    "text": 13.716118075820463,
+    "dotFill": 3.2926571390838566,
+    "dotBoundary": 13.716118075820463
+  },
+  {
+    "theme": "dark",
+    "tone": "info",
+    "text": 13.716118075820463,
+    "dotFill": 2.394703654133177,
+    "dotBoundary": 13.716118075820463
+  },
+  {
+    "theme": "dark",
+    "tone": "neutral",
+    "text": 13.716118075820463,
+    "dotFill": 13.716118075820463,
+    "dotBoundary": 13.716118075820463
+  },
+  {
+    "theme": "blueprint",
+    "tone": "success",
+    "text": 17.758836800979772,
+    "dotFill": 3.641596856762353,
+    "dotBoundary": 17.758836800979772
+  },
+  {
+    "theme": "blueprint",
+    "tone": "warning",
+    "text": 17.758836800979772,
+    "dotFill": 8.234537964187002,
+    "dotBoundary": 17.758836800979772
+  },
+  {
+    "theme": "blueprint",
+    "tone": "danger",
+    "text": 17.758836800979772,
+    "dotFill": 3.158798379863779,
+    "dotBoundary": 17.758836800979772
+  },
+  {
+    "theme": "blueprint",
+    "tone": "info",
+    "text": 17.758836800979772,
+    "dotFill": 2.910287175983077,
+    "dotBoundary": 17.758836800979772
+  },
+  {
+    "theme": "blueprint",
+    "tone": "neutral",
+    "text": 17.758836800979772,
+    "dotFill": 17.758836800979772,
+    "dotBoundary": 17.758836800979772
+  },
+  {
+    "theme": "blueprint-night",
+    "tone": "success",
+    "text": 15.819093498579672,
+    "dotFill": 1.9456473655253457,
+    "dotBoundary": 15.819093498579672
+  },
+  {
+    "theme": "blueprint-night",
+    "tone": "warning",
+    "text": 15.819093498579672,
+    "dotFill": 1.8301920866476515,
+    "dotBoundary": 15.819093498579672
+  },
+  {
+    "theme": "blueprint-night",
+    "tone": "danger",
+    "text": 15.819093498579672,
+    "dotFill": 2.283723596327197,
+    "dotBoundary": 15.819093498579672
+  },
+  {
+    "theme": "blueprint-night",
+    "tone": "info",
+    "text": 15.819093498579672,
+    "dotFill": 2.0465373349121476,
+    "dotBoundary": 15.819093498579672
+  },
+  {
+    "theme": "blueprint-night",
+    "tone": "neutral",
+    "text": 15.819093498579672,
+    "dotFill": 15.819093498579672,
+    "dotBoundary": 15.819093498579672
+  }
+]

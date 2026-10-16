@@ -1,0 +1,14 @@
+✔ published guide is generated from the complete current Markdown and current evidence bytes (21.123208ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (21.429708ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.2465ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (0.402792ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.217375ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.294875ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75.364542
