@@ -265,7 +265,7 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 | 显式声明全部角色 | 状态色、图表色、AI 来源、悬浮材质全部在蓝图块内重写，不继承 `:root`。 |
 | 几何只在蓝图生效 | 现有组件的几何覆盖限定蓝图主题，并排除显式的其他主题预览；`bp-*` 是主动采用类名后才生效的呈现样式。几何规则未分层，活动标签的选择器与已有文字样式保持同等优先级。 |
 | 不改 coss | 只按 `data-slot` 覆盖；coss 固定源码保持逐字节不变。 |
-| 深色变体 | v9 已接入独立值 `blueprint-night`（夜图），与白图共享隔离几何；`dark:` 覆盖夜图并排除 light / paper / blueprint 预览。图表配色按核心深色回退，浏览器验收待 Supervisor，见 [v9 状态](blueprint/STATUS.md)。 |
+| 深色变体 | 首期仅白图。`@custom-variant dark` 将蓝图预览排除在外。夜图以后作为独立值 `blueprint-night` 加入。 |
 
 ## 颜色令牌
 
