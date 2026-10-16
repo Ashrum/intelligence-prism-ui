@@ -17,6 +17,25 @@
 
 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
 
+## 对象卡片与成果分节 · P79（2026-10-16）
+
+两种显式选用的 `bp-*` 呈现组件位于 `components/prism-next/blueprint/blueprint.tsx`，不登记为正式组件目录条目。五主题（light / paper / dark / blueprint / blueprint-night）读取当前位置的既有令牌；不新增令牌、字号、阴影或运行状态，不修改普通 coss / Prism 组件。
+
+| 组件 | 使用场景 | 边界 |
+| --- | --- | --- |
+| `BpFrameCard` | 一个可独立识别的对象被整体框住阅读：原件、文件、打印或导出预览、外部来源片段 | 墨色标题栏写对象名；不用于消息气泡、输入器或普通列表项 |
+| `BpSectionCard` | 成果内有先后或编号意义的分节：试卷大题、任务详情的范围 / 阶段 / 异常、复核分组 | 字母必须对应真实分节顺序；不在对话消息流逐条使用，不嵌套 SHEET 标尺 |
+| `BlueprintSheet` | 整张成果图纸的外框与标尺 | 负责成果面层级；不为每个内部小节重复画图纸 |
+| `BpPaneHead` | 轻量面板头 | 只提供头部，不负责整卡外框、语义标题或内容区 |
+
+`BpFrameCard` 接收 `title: ReactNode`、可选 `status: { tone: "success" / "warning" / "danger" / "info" / "neutral"; label: ReactNode }`、`actions`、`headingLevel`、`children`、`className` 与普通 section 属性。标题栏使用 header，默认 h3，支持 h2–h6；默认通过稳定唯一 id 的 `aria-labelledby` 关联标题，宿主可显式覆盖。状态必须提供可见文字，只写真实可得事实（如“已解除同步”“第 3 / 3 页”“加载失败”），未知就省略；不写无依据的 live、耗时。省略 status 时不输出状态容器或色块；组件不主动建立 live region，也不从点击推定执行状态。
+
+`BpSectionCard` 接收 `letter?: string`、`title`、`meta?: ReactNode`、`action?: ReactNode`、`headingLevel`、`children`、`className` 与普通 section 属性。标题同样默认 h3 / 支持 h2–h6；字母属于可读标题，不设 aria-hidden；未提供或空白 letter 不渲染字母块。meta 使用等宽语义元信息字号，仅写真实文件名、页码或计数；action 为调用方提供可访问名的图标按钮槽。需要代码时直接嵌现有 `BpCodebox`，不另造代码块。
+
+整卡直角、无阴影、1.5px 外框；分节表头下方同宽结构线，正文留白。Frame 标题栏使用 `--primary` / `--primary-foreground`；方块用 success / warning / destructive / info，neutral 用 primary-foreground，并用 primary-foreground 描边确保反相标题栏上边界可辨。语义色填充本身不保证在五主题都达 3:1，状态由文字完整披露；对比数值与浏览器边界见本轮证据。核心主题的 `--line` / `--head-bg` / `--head-fg` 沿现有中性回退；嵌套预览就地读取令牌，不沿蓝图祖先强制重绘。表头、操作槽可换行，标题与元信息可收缩并断长词；320px 的实际布局、焦点与视觉由 Supervisor 验收。
+
+示例入口 `/next/foundations/blueprint#object-section-cards`：原件使用现有两份扫描夹具；按钮切换夹具序号，缺图显示“未提供原图”，不假称网络加载失败；试卷实际包含 A 选择题和 B 填空题，计数对应页面内容。图标按钮可展开选择题作答说明。完整 [实现与复用记录](blueprint/evidence/cards-20261016/inspection.md)、[浏览器验收清单](blueprint/evidence/cards-20261016/browser-checklist.md) 与 [当前状态](blueprint/STATUS.md) 分开记录。浏览器验收：按分工由 Supervisor 执行；本轮未修改或验收 Workspace 接入。
+
 ## 教师消息轻背景 · P78（2026-10-16）
 
 按蓝图 §6.1 与 Workspace W193 的 P-R4-01，blueprint / blueprint-night 的教师气泡改用既有 `--secondary` 轻背景与 `--foreground` 正文，保留右对齐和直角，不加气泡边框/阴影。白图为 `#F3F5F8` / `#16181D`，夜图为 `#12253F` / `#E6EDF7`；夜图的“轻背景”指既有次级表面层级。附件文字、图标及现有边框继承正文色。正文链接保留下划线并使用 `--link`；旧 R1 白色链接焦点环改为两蓝图统一的 2px `--ring` 外环、2px offset、无叠环。

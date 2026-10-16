@@ -1,0 +1,32 @@
+✔ P79 headings: labelled sections, configurable levels, unique ids and host attributes (6.926708ms)
+✔ P79 status: all five tones retain fact text; no status means no status subtree (0.863667ms)
+✔ P79 section: meaningful letter belongs to heading; named action and existing BpCodebox compose; absent options disappear (0.745583ms)
+✔ P79 style: five themes, 25 nested theme pairs, neutral core fallback and ordinary-component isolation (46.057333ms)
+✔ P79 narrow contract: intrinsic wrapping, shrinkable long text, square letter and no clipping (browser 320 check separate) (0.364417ms)
+✔ P79 contrast: five themes x five tones; text >=4.5 and visible square outline >=3 (4.880584ms)
+✔ P79 demo: original preview and genuine A/B sections use fixture facts, semantic formula and named actions (2.495666ms)
+✔ P79 rollback mutations fail rendered/accessibility and theme/wrapping contracts (25.444959ms)
+✔ demo page renders all blueprint groups without changing the catalog count (63.208875ms)
+✔ sheet keeps its labelled region and decorative rulers; its chapter index is meaningful (0.7735ms)
+✔ standalone chapter header and semantic subsection preserve caller ids, content and folio meaning (0.391916ms)
+✔ segmented control is a radiogroup with one tab stop and aria-checked (0.180084ms)
+✔ segmented control keeps an enabled entry point when the selected item is missing or disabled (0.373666ms)
+✔ steps expose current step and textual state; bars write values out (0.370583ms)
+✔ buttons default to type=button; card element follows interaction (0.382625ms)
+✔ unavailable blueprint controls preserve native disabled and accessible reason (0.138375ms)
+✔ foundation sample distinguishes fixed task facts, real local links and accessible reading panels (22.625709ms)
+✔ route and navigation exist; blueprint.css draws DemoSection as a sheet only in blueprint (2.152709ms)
+✔ published guide is generated from the complete current Markdown and current evidence bytes (22.69825ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (24.319875ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.277166ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (0.374459ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.186958ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.381791ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 411.362959

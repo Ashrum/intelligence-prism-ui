@@ -1,0 +1,46 @@
+{
+  "base": "8270cced893de48b202a772b6db0c42c13988dc0",
+  "environment": "Repository runtime paths; original HOME preserved; no server started",
+  "checks": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "start": "2026-10-16T10:29:02.173469+00:00",
+      "end": "2026-10-16T10:29:02.198601+00:00",
+      "exitCode": 0,
+      "log": "math-font.log"
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "start": "2026-10-16T10:29:02.198859+00:00",
+      "end": "2026-10-16T10:29:02.243340+00:00",
+      "exitCode": 0,
+      "log": "typography.log"
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "start": "2026-10-16T10:29:02.243561+00:00",
+      "end": "2026-10-16T10:29:07.529247+00:00",
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "name": "tests",
+      "command": "node --test tests/*.test.mjs",
+      "start": "2026-10-16T10:29:07.529561+00:00",
+      "end": "2026-10-16T10:29:21.419066+00:00",
+      "exitCode": 0,
+      "log": "tests.log"
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "start": "2026-10-16T10:29:21.419363+00:00",
+      "end": "2026-10-16T10:29:23.184504+00:00",
+      "exitCode": 2,
+      "log": "types.log"
+    }
+  ]
+}

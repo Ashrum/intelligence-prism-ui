@@ -2393,6 +2393,13 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### Blueprint 对象卡片与有序分节（P79）
+
+- `BpFrameCard({ title, status?, actions?, headingLevel?, children, className, ...sectionProps })`：整卡包住一个可独立识别的对象，用于原件 / 文件 / 打印预览、导出预览和外部来源片段。标题栏写对象名；status 为 `{ tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }`，色块必须配可见文字，只写真实可得的“已解除同步”“第 3 / 3 页”“加载失败”等事实；未知省略，不使用装饰性假 live / 耗时。无 status 不渲染状态区。不用于消息气泡、输入器、普通列表项。
+- `BpSectionCard({ letter?, title, meta?, action?, headingLevel?, children, className, ...sectionProps })`：用于成果内有先后或编号意义的分节，包括试卷大题（A 选择题、B 填空题）、任务详情分项（范围 / 阶段 / 异常）和复核分组。letter 仅来自真实序列，未传 / 空白不渲染；meta 是等宽真实标识（文件名、页码、计数），action 图标按钮由调用方提供可访问名。可嵌既有 `BpCodebox`；不在对话消息流逐条使用，不嵌套 SHEET 标尺。
+- 两者为显式 `bp-*` 呈现封装，不计入组件目录。header 包含默认 h3 / 可选 h2–h6；默认 aria-labelledby 对应稳定唯一标题 id，宿主可覆盖 section 属性；字母是标题的一部分。组件不内置业务状态、计时器或副作用。五主题用既有语义令牌，核心三主题中性回退，直角无阴影，表头与操作槽允许换行，长标题与元信息断词；不改变普通 coss / Prism 组件。
+- 层级分工：`BlueprintSheet` 是整张成果面外框与标尺，`BpFrameCard` 是独立对象整卡，`BpSectionCard` 是内部有序分节，`BpPaneHead` 仅为轻量面板头。完整 API 与证据见 [蓝图卡片规则](blueprint-theme.md)。Workspace 原件对照 / 文件预览适用 FrameCard，成果内分节适用 SectionCard；本轮仅组件仓实现，不表示业务接入完成。
+
 ### TextbookDirectory 内嵌形态
 
 | 属性 | 默认值 | 契约 |

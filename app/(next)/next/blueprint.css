@@ -196,6 +196,27 @@
 .bp-card-note { border:1px dashed var(--border); display:flex; flex-direction:column; justify-content:center; gap:12px; padding:20px; color:var(--muted-foreground); }
 .bp-pane-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; min-height:34px; padding:8px 12px; border:var(--line-width) solid var(--line); border-bottom-width:0; background:var(--head-bg); color:var(--head-fg); font-size:var(--text-ui-meta); }
 
+/* P79 cards: explicit bp-* opt-in; closest theme tokens also serve nested core previews. */
+.bp-frame-card,.bp-section-card { min-width:0; max-width:100%; border:1.5px solid var(--line); border-radius:0; box-shadow:none; background:var(--card); color:var(--card-foreground); }
+.bp-frame-card-head,.bp-section-card-head { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:12px; }
+.bp-frame-card-head { background:var(--primary); color:var(--primary-foreground); }
+.bp-frame-card-title { flex:1 1 12rem; min-width:0; margin:0; color:inherit; overflow-wrap:anywhere; }
+.bp-frame-card-status { display:flex; align-items:center; gap:8px; min-width:0; max-width:100%; margin-inline-start:auto; }
+.bp-frame-card-status-label { min-width:0; overflow-wrap:anywhere; }
+.bp-frame-card-dot { flex:0 0 10px; width:10px; height:10px; border:1px solid var(--primary-foreground); background:var(--primary-foreground); }
+.bp-frame-card-status[data-tone="success"] > .bp-frame-card-dot { background:var(--success); }
+.bp-frame-card-status[data-tone="warning"] > .bp-frame-card-dot { background:var(--warning); }
+.bp-frame-card-status[data-tone="danger"] > .bp-frame-card-dot { background:var(--destructive); }
+.bp-frame-card-status[data-tone="info"] > .bp-frame-card-dot { background:var(--info); }
+.bp-section-card-head { border-bottom:1.5px solid var(--line); }
+.bp-section-card-title { display:flex; flex:1 1 12rem; align-items:center; gap:12px; min-width:0; margin:0; color:var(--heading); }
+.bp-section-card-letter { display:grid; place-items:center; flex:0 0 48px; width:48px; height:48px; background:var(--head-bg); color:var(--head-fg); }
+.bp-section-card-label { min-width:0; overflow-wrap:anywhere; }
+.bp-section-card-meta { min-width:0; max-width:100%; margin-inline-start:auto; color:var(--muted-foreground); overflow-wrap:anywhere; }
+.bp-card-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; max-width:100%; }
+.bp-card-body { min-width:0; padding:20px; overflow-wrap:anywhere; }
+/* End P79 cards. */
+
 .bp-size-row { display:grid; grid-template-columns:64px minmax(0,1fr) 84px; align-items:center; gap:12px; }
 .bp-size-legend { margin-left:76px; }
 .bp-size-bar { height:22px; border:1px solid var(--line); display:flex; background:var(--background); overflow:hidden; }

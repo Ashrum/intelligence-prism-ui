@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线 P78 `8270cced893de48b202a772b6db0c42c13988dc0`（P77 / P78 尚未合并），开工工作树干净。[基线](evidence/cards-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P79.md` / `builder-preamble.md`；PO 明确要求新增两种 bp-* 呈现组件，不计入正式目录。不提交、推送、修改 .git、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
+- 范围：BpFrameCard / BpSectionCard、blueprint.css 中显式 bp-* 规则、原件与 A/B 试卷分节示例、使用契约与新增专项测试。核心主题中性回退，直角无阴影，1.5px 外框，语义 heading / 状态文字 / 具名 action；不新增 Token 或字号，普通组件、54 个冻结 coss、catalog 与依赖不变。[复用与接入位置](evidence/cards-20261016/inspection.md)、[保护散列](evidence/cards-20261016/integrity.json)、[实际 diff](evidence/cards-20261016/scope.diff)。
+- 工程：五项检查均退出 0；数学字体 / 许可通过，语义字号 **311** 个 owned TSX 通过，生产构建成功，先构建后全量 **2224/2224，0 失败 / 0 跳过**，TypeScript **0 错误**。新增卡片专项 **8/8**，**13** 项内存回退变异被检出。首轮 types 发现示例图片尺寸可选属性的 2 条诊断，已用可选访问修复并重跑五项；initial-* 保留首轮原始结果。[工程记录](evidence/cards-20261016/engineering.json)、[专项日志](evidence/cards-20261016/targeted.log)、[变异记录](evidence/cards-20261016/mutations.json)。最终文档 / 状态回填后的 guide、构建与专项复核另见 [收尾检查](evidence/cards-20261016/finalization.json)。
+- 样式证据：SSR / CSS 解析覆盖五主题、25 种嵌套主题组合、普通元素零增量、无 letter / status、BpCodebox 组合与长文本换行约束。五主题标题栏文字与色块边界对比度最低 **13.716118:1**；部分填充低于 3:1（最低 **1.815483:1**），使用 1px 高对比描边与完整文字识别，不宣称填充均通过。[数值](evidence/cards-20261016/contrast.json)。源级断言不是浏览器像素布局 / 键盘 / 视觉验收。
+- 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮；本轮按任务全量工程回归，最近完整工程为本轮 2224/2224；下次触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、action 键盘与焦点、状态色块 / 文字及嵌套预览见 [浏览器清单](evidence/cards-20261016/browser-checklist.md)。本轮无浏览器截图；Workspace 仅只读定位文件，未接入；真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
+
+## 历史
+
+### P78 · 教师消息气泡轻背景 · 2026-10-16（原当前，原样保留）
+
 - 轮次：P78 · 教师消息气泡轻背景 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线为 P77 `eecb471`（位于 main `7ad8dbc` 之上），开工工作树干净。[基线](evidence/user-bubble-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P78.md` / `builder-preamble.md`，对应 Workspace W193 的 P-R4-01 与蓝图 §6.1；不提交、推送、修改 `.git`、联网、安装依赖、启动/重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
 - 范围：仅 blueprint.css 的两蓝图用户气泡使用 secondary / foreground，正文链接使用 link、焦点使用 2px ring 外环与 2px offset；保留直角、不加气泡边框或阴影。附件文字/图标/现有边框继承前景。两处示例说明同步；组件 API、核心三主题、字号、令牌、依赖与 54 个冻结 coss 不变。[实现与复用](evidence/user-bubble-20261016/inspection.md)、[保护散列](evidence/user-bubble-20261016/integrity.json)、[实际 diff](evidence/user-bubble-20261016/scope.diff)。
@@ -12,7 +24,6 @@
 - 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮。本轮按任务全量工程回归；最近完整工程回归为本轮 2216/2216，下一触发点仍是旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定不变。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、链接焦点、附件/公式/长中文及嵌套预览详见 [浏览器清单](evidence/user-bubble-20261016/browser-checklist.md)。无本轮浏览器截图；Workspace 未同步接入，真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
 
-## 历史
 
 ### P77 · 顶部导航选中态加强与成果 folio · 2026-10-16（原当前，原样保留）
 

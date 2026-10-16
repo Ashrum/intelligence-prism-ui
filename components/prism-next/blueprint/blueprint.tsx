@@ -163,6 +163,58 @@ export function BpPaneHead({ title, action, className, ...props }: Omit<Componen
   return <div {...props} className={cn("bp-pane-head", className)}><span>{title}</span>{action}</div>
 }
 
+export interface BpFrameCardProps extends Omit<ComponentProps<"section">, "title"> {
+  title: ReactNode
+  /** Host-supplied fact, always accompanied by readable text. Never infer a live/execution state. */
+  status?: { tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }
+  actions?: ReactNode
+  headingLevel?: 2 | 3 | 4 | 5 | 6
+}
+/** An independently identifiable object, such as an original document or export preview. */
+export function BpFrameCard({ title, status, actions, headingLevel = 3, children, className, ...props }: BpFrameCardProps) {
+  const id = useId()
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
+  return <section aria-labelledby={id} {...props} className={cn("bp-frame-card", className)} data-slot="bp-frame-card">
+    <header className="bp-frame-card-head">
+      <Heading id={id} className="bp-frame-card-title text-ui-action">{title}</Heading>
+      {status && <div className="bp-frame-card-status text-ui-hint" data-tone={status.tone}>
+        <span className="bp-frame-card-dot" aria-hidden="true" />
+        <span className="bp-frame-card-status-label">{status.label}</span>
+      </div>}
+      {actions != null && <div className="bp-card-actions">{actions}</div>}
+    </header>
+    <div className="bp-card-body">{children}</div>
+  </section>
+}
+
+export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "title"> {
+  /** Supply only a meaningful section sequence; omit otherwise. */
+  letter?: string
+  title: ReactNode
+  /** Real identifiers only: filename, page, count. */
+  meta?: ReactNode
+  /** Host provides the icon button and its accessible name. */
+  action?: ReactNode
+  headingLevel?: 2 | 3 | 4 | 5 | 6
+}
+/** A numbered/ordered subdivision within a result, without sheet rulers. */
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, children, className, ...props }: BpSectionCardProps) {
+  const id = useId()
+  const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
+  const code = letter?.trim()
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", className)} data-slot="bp-section-card">
+    <header className="bp-section-card-head">
+      <Heading id={id} className="bp-section-card-title text-block-title">
+        {code && <span className="bp-section-card-letter font-mono text-stat-display">{code}</span>}
+        <span className="bp-section-card-label">{title}</span>
+      </Heading>
+      {meta != null && <div className="bp-section-card-meta font-mono text-ui-meta">{meta}</div>}
+      {action != null && <div className="bp-card-actions">{action}</div>}
+    </header>
+    <div className="bp-card-body">{children}</div>
+  </section>
+}
+
 export type BpFill = "ink" | "hatch" | "accent" | "quiet"
 export interface BpSizeSegment { id: string; label: string; value: number; fill: BpFill }
 export interface BpSizeBarProps { rows: { id: string; label: string; total?: number; unit?: string; segments: BpSizeSegment[] }[]; legend?: boolean; className?: string }
