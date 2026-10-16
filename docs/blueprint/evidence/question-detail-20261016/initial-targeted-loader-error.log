@@ -1,0 +1,49 @@
+✘ [ERROR] Cannot import "components/prism-next/textbook-directory.css" into a JavaScript file without an output path configured
+
+    components/prism-next/textbook-directory-embedded.tsx:15:7:
+      15 │ import "./textbook-directory.css"
+         ╵        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+✘ [ERROR] Cannot import "components/prism-next/dialog-layout.css" into a JavaScript file without an output path configured
+
+    components/prism-next/dialog-layout.tsx:12:7:
+      12 │ import "./dialog-layout.css"
+         ╵        ~~~~~~~~~~~~~~~~~~~~~
+
+node:internal/test_runner/harness:121
+      throw err;
+      ^
+
+Error: Build failed with 2 errors:
+components/prism-next/dialog-layout.tsx:12:7: ERROR: Cannot import "components/prism-next/dialog-layout.css" into a JavaScript file without an output path configured
+components/prism-next/textbook-directory-embedded.tsx:15:7: ERROR: Cannot import "components/prism-next/textbook-directory.css" into a JavaScript file without an output path configured
+    at failureErrorWithLog (/Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:1748:15)
+    at /Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:1207:25
+    at /Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:1159:52
+    at buildResponseToResult (/Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:1205:7)
+    at /Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:1232:16
+    at responseCallbacks.<computed> (/Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:884:9)
+    at handleIncomingPacket (/Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:939:12)
+    at Socket.readFromStdout (/Users/OLE/HermesWork/intelligence-prism-ui/node_modules/esbuild/lib/main.js:862:7)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:563:12) {
+  errors: [Getter/Setter],
+  warnings: [Getter/Setter]
+}
+
+Node.js v24.14.0
+✖ tests/blueprint-question-detail.test.mjs (102.74925ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.083291
+
+✖ failing tests:
+
+test at tests/blueprint-question-detail.test.mjs:1:1
+✖ tests/blueprint-question-detail.test.mjs (102.74925ms)
+  'test failed'

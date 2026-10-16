@@ -1,0 +1,463 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index e4296cb..eac7479 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -56,8 +56,8 @@
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="button"],[data-slot="dialog-trigger"].border,[data-slot="dialog-close"].border,[data-slot="input-control"].border,[data-slot="card"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { box-shadow:none; }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where(.surface-floating,[data-slot="popover-popup"],[data-slot="menu-popup"],[data-slot="select-popup"] > div:has(> [data-slot="select-list"]),[data-slot="dialog-popup"],[data-slot="toast-viewport"] > [data-position],[data-slot="toast-popup"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:6px 6px 0 rgb(22 24 29 / 6%); }
+ 
+-/* ── 4 · Active navigation: ink block ──────────────────── */
+-:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :is([data-slot="sidebar-menu-button"][data-active="true"],[data-slot="tabs-tab"][data-active],[data-slot="toggle"][data-pressed]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--primary); color:var(--primary-foreground); }
++/* ── 4 · Tabs / Toggle: preserve their existing ink selection ── */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :is([data-slot="tabs-tab"][data-active],[data-slot="toggle"][data-pressed]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--primary); color:var(--primary-foreground); }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="tab-indicator"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:none; }
+ 
+ /* Common components: preserve semantic states and the actual painted surfaces. */
+@@ -382,3 +382,32 @@
+   [data-agent-preview][data-prism-theme="blueprint-night"]:not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *)),
+   [data-prism-theme="blueprint-night"] :is([data-slot="sidebar-inset"],.bp-card-thumb):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *)) { background-color:var(--background); }
+ }
++
++/* P76 shell navigation: existing Prism / coss hooks, no core-theme changes. */
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar,.prism-space-bar,[data-slot="sidebar-inset"] > header):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); border-bottom:var(--line-width) solid var(--line); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar-identity[data-slot],.prism-bar-icon-button[data-slot],.prism-app-bar-space-trigger[data-slot],.prism-app-bar-personal-trigger[data-slot],.prism-app-bar-space-popup,.prism-app-bar-personal-popup,.prism-app-bar-space-item[data-slot],.prism-app-bar-personal-popup [data-slot="menu-item"],.prism-app-bar-personal-popup [data-slot="menu-link-item"],.prism-space-bar [data-slot="button"],.prism-space-bar [data-slot="menu-trigger"],.prism-space-bar [data-slot="select-trigger"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-space-trigger[data-slot]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); border:1px solid var(--border); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar-space-item,.prism-app-bar-personal-popup [data-slot="menu-item"],.prism-app-bar-personal-popup [data-slot="menu-link-item"])[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--accent); color:var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:transparent; color:var(--muted-foreground); border-radius:0; box-shadow:none; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { border-radius:0; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:hover:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { background:var(--accent); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:not([aria-current="page"]):hover:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { background:var(--accent); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--foreground); box-shadow:inset 0 -2px 0 var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar"],[data-slot="sidebar-inner"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-side="left"] > [data-slot="sidebar-container"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-right:var(--line-width) solid var(--line); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-side="right"] > [data-slot="sidebar-container"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-left:var(--line-width) solid var(--line); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar-group-label"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--muted-foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"]):hover:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--secondary); border-radius:0; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"])[data-active="true"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--accent); color:var(--foreground); border-radius:0; box-shadow:inset 2px 0 0 var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-collapsible="icon"] > :is([data-slot="sidebar-gap"],[data-slot="sidebar-container"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { width:56px; }
++/* coss size-8! lives in utilities; an unlayered !important cannot beat it. */
++@layer utilities {
++  :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-menu-button"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { width:40px !important; height:40px !important; }
++}
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.prism-app-bar [data-slot],.prism-space-bar [data-slot],.prism-app-bar-space-popup [data-slot],.prism-app-bar-personal-popup [data-slot],[data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"],[data-slot="sidebar-group-label"],[data-slot="sidebar-menu-action"],[data-slot="sidebar-group-action"],[data-slot="sidebar-trigger"]):focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { outline:none; box-shadow:none; }
++/* Keep the single outline inside the clipped nav, clear of its 2px selection line. */
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[data-slot="button"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline-offset:-4px; }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .prism-app-bar-nav-link[aria-current="page"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 0 -2px 0 var(--foreground); }
++:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="sidebar-menu-button"],[data-slot="sidebar-menu-sub-button"])[data-active="true"]:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:inset 2px 0 0 var(--foreground); }
++/* End P76 shell navigation. */
+diff --git a/docs/blueprint-theme.md b/docs/blueprint-theme.md
+index 69e2f12..bb9f409 100644
+--- a/docs/blueprint-theme.md
++++ b/docs/blueprint-theme.md
+@@ -17,6 +17,14 @@
+ 
+ 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
+ 
++## 顶栏与侧栏蓝图适配 · P76（2026-10-16）
++
++blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；一级当前项为 foreground 文字与底部 2px 墨线，悬停 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
++
++运行时只修改 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌、冻结 coss 与组件 API 保持。AppBar 56px / SpaceBar 48px 和断点不变。焦点仅一套 outline，顶栏一级项因横向裁切采用 −4px 内偏移，其他导航控件 +2px；当前项的 inset 选择标识独立保留。蓝图 / 夜图 foreground 对 accent 的理论对比度为 14.927942 / 11.106881:1；不以数值计算替代真实浏览器验收。
++
++本轮基线为 P75 提交 780c2ef，尚未合并。Builder 已提供实现、SSR / CSS 规则测试与评审夹具，工程结果见状态记录；独立 Review 与浏览器验收仍交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
++
+ ## OLE Agent 前端规范 · 正式版（2026-10-16）
+ 
+ [下载 OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md)。这是教师工作台的正式设计基线，包含首期教师端Token用量、M01—M89映射、CI-01—CI-16及AT01—AT32；组件主题实现与已验边界仍以本页各项证据为准。
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index f6a85b8..a29d8fd 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,19 @@
+ 
+ ## 当前
+ 
++- 轮次：P76 · 顶部导航与左侧目录 · 2026-10-16；分支 `feat/blueprint-shell-nav`，基线 `780c2ef0cb14e378fd72f21194ee7f2835d7e045`，开工工作树干净；叠加于未合并 P75。[基线](evidence/shell-nav-20261016/baseline.json)。
++- 授权与分工：Supervisor `task-P76.md` / `builder-preamble.md`；Builder 实施与工程自测，浏览器交 Supervisor；不提交、推送、改 `.git`、联网、安装依赖、启动或重启服务、发布。
++- 范围：运行时仅 `blueprint.css`，两蓝图 AppBar / SpaceBar / 本站顶栏 card + 结构底线，导航 foreground 下划线和 accent 直角悬停；Sidebar accent / foreground / 左侧 inset 2px，56px 轨道与 40px 按钮。核心主题、嵌套核心根/后代/伪元素、数字角标、Tabs/Toggle、字号、令牌、冻结 coss 和依赖保持。文档和既有 guide 生成物同步。[实现与取舍](evidence/shell-nav-20261016/inspection.md)、[保护核对](evidence/shell-nav-20261016/integrity.json)。
++- 工程：新增专项 10/10，与既有主题检查合计 19/19；15/15 专项及 5/5 层边界内存变异检出；包含真实 SSR、真实 Tailwind important 工具类编译、CSS 特异性 / 层与两种加载顺序、嵌套隔离。五项最终均退出 0：数学字体通过、排版 311 个 owned TSX 通过、生产构建通过、先构建后全量 **2202/2202，0 失败 / 0 跳过**、TypeScript 0 错误。[工程命令与时间](evidence/shell-nav-20261016/engineering.json)、[实际 diff](evidence/shell-nav-20261016/scope.diff)。首轮 2201/2202 的唯一失败为旧断言禁止所有 layer；已收紧为精确尺寸规则例外，并验证 5 个违规变异，不是基线失败。状态回填后的文档 / 夹具类型 / 构建复核另记[收尾记录](evidence/shell-nav-20261016/finalization.json)。
++- 对比度与焦点：foreground/accent 蓝图 14.927942:1、夜图 11.106881:1，满足文字 ≥4.5 / 选中线 ≥3；不新增令牌。选中线独立于单 outline；仅顶栏一级导航因横向裁切使用 −4px outline-offset，其他控件 +2px，交 Supervisor 复核。
++- 周期：Builder 实施 / 工程检查不等同 Supervisor Review / PO 批准，未计为已验收；继承 P75 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期。按任务提前执行全量工程回归，最近完整工程回归为本轮 2202/2202，累计完整浏览器仍待收口；Workspace R3 / R6 / R9 触发约定不变。
++- 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。没有本轮截图；五主题 × 1280 / 320、菜单、焦点、56 图标轨、核心嵌套及 Workspace AppBar 主题 / Portal 接线见[清单](evidence/shell-nav-20261016/browser-checklist.md)。`fixture.tsx` 为评审夹具，未注册路由；实际浏览器挂载、Workspace 接入、真机、读屏、实体打印未验。
++- 待审阅：Supervisor 独立 Review、焦点内移的局部适配与实际浏览器验收；无新产品方向、公共 API 或令牌决策。
++
++## 历史
++
++### P75 · 题目详情虚线纸面与间距 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P75 · 题目详情虚线纸面与间距 · 2026-10-16；基线 `ab14ab4a59ef593e9d29061c892256d5e233bc3d`，分支 `feat/blueprint-question-detail`，开工工作树干净。[基线](evidence/question-detail-20261016/baseline.json)。
+ - 授权与分工：Supervisor `task-P75.md` + `builder-preamble.md`。Builder 仅实施与工程自测；未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
+ - 范围：运行时仅 `app/(next)/next/blueprint.css`，复用 `.question-detail-region` / Tabs data-slot / `.question-solution`；两蓝图详情为 card 纸面、1px 虚线、直角、12px padding，压缩 Tabs 和三个面板间距。fine Tab 至少 32px，coarse 沿用原 44px 规则。夜图 border/card 1.453912:1，按授权改用既有 line，达到 11.622496:1；白图仍用既有 border。核心主题、组件结构/API、字号、令牌值、冻结 coss、依赖均未改。[实现与复用记录](evidence/question-detail-20261016/inspection.md)。
+@@ -13,7 +26,6 @@
+ - 浏览器与未验：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、真实三 Tab / coarse 高度、白底图、核心嵌套及 computedStyle 前后对比见[浏览器清单](evidence/question-detail-20261016/browser-checklist.md)。没有本轮截图；视觉、真实键盘/焦点/触屏、读屏器、实体打印和 Workspace 真实接入未验。
+ - 待审阅：本轮无新增产品方向或令牌待 PO 决定；Builder 工程完成不等同 Supervisor Review / PO 批准。
+ 
+-## 历史
+ 
+ ### P74 · Agent 浮层容器契约补齐 · 2026-10-16（原当前，原样保留）
+ 
+diff --git a/tests/blueprint-theme.test.mjs b/tests/blueprint-theme.test.mjs
+index 5f754e9..c415888 100644
+--- a/tests/blueprint-theme.test.mjs
++++ b/tests/blueprint-theme.test.mjs
+@@ -1,6 +1,7 @@
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import { readFileSync } from 'node:fs';
++import postcss from 'postcss';
+ const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+ const theme = read('app/(next)/next/theme.css');
+ const bp = read('app/(next)/next/blueprint.css');
+@@ -91,7 +92,33 @@ test('blueprint geometry rules are scoped and do not touch coss sources', () =>
+     if (topLevel(selector).every(s => s.startsWith('.bp-'))) continue;
+     assert.match(selector, /data-prism-theme="blueprint(?:-night)?"/, selector);
+   }
+-  assert.doesNotMatch(bp, /@layer/);
++  // P76: only the exact scoped override for frozen coss size-8! may enter
++  // utilities. Normal unlayered !important loses to layered !important.
++  const family = ':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
++  const guard = `:not(:where([data-agent-preview][data-prism-theme]:not(${family}), [data-agent-preview][data-prism-theme]:not(${family}) *))`;
++  const allowed = `${family} [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-menu-button"]${guard}`;
++  const checkLayers = source => {
++    const layers = [];
++    postcss.parse(source).walkAtRules('layer', rule => layers.push(rule));
++    assert.equal(layers.length, 1);
++    const [layer] = layers;
++    assert.equal(layer.params, 'utilities');
++    assert.equal(layer.nodes.length, 1);
++    const [rule] = layer.nodes;
++    assert.equal(rule.type, 'rule');
++    assert.equal(rule.selector, allowed);
++    assert.deepEqual(rule.nodes.map(d => [d.type, d.prop, d.value, d.important]), [
++      ['decl', 'width', '40px', true], ['decl', 'height', '40px', true],
++    ]);
++  };
++  checkLayers(bp);
++  for (const mutate of [
++    source => source.replace('@layer utilities', '@layer base'),
++    source => source + '\n@layer utilities {}',
++    source => source.replace(allowed, allowed.replace(guard, '')),
++    source => source.replace(allowed, '[data-slot="sidebar-menu-button"]'),
++    source => source.replace('height:40px !important;', 'height:40px !important; color:red;'),
++  ]) assert.throws(() => checkLayers(mutate(bp)));
+   assert.match(theme, /@import "\.\/blueprint\.css";/);
+   assert.match(theme, /@custom-variant dark[^\n]+\[data-agent-preview\]\[data-prism-theme="blueprint"\]/);
+ });
+diff --git a/tests/blueprint-shell-nav.test.mjs b/tests/blueprint-shell-nav.test.mjs
+new file mode 100644
+index 0000000..97227b9
+--- /dev/null
++++ b/tests/blueprint-shell-nav.test.mjs
+@@ -0,0 +1,265 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import { transform } from 'lightningcss';
++import { compile } from 'tailwindcss';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++import { relativeLuminance } from '../lib/prism-next/chart-color.ts';
++
++const read = p => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
++const root = fileURLToPath(new URL('../', import.meta.url));
++const css = read('app/(next)/next/blueprint.css');
++const appCss = read('components/prism-next/app-bar.css');
++const themeCss = read('app/(next)/next/theme.css');
++const block = css.match(/\/\* P76 shell navigation:[\s\S]*?\/\* End P76 shell navigation\. \*\//)[0];
++const family = ':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
++const guard = `:not(:where([data-agent-preview][data-prism-theme]:not(${family}), [data-agent-preview][data-prism-theme]:not(${family}) *))`;
++const themes = ['blueprint', 'blueprint-night'];
++const core = ['light', 'paper', 'dark'];
++const runtime = await createTestRuntime('p76-shell-nav');
++const bundle = await build({ stdin: { contents: `export * from './components/prism-next/app-bar'; export * from './components/coss/sidebar'; export { ShellNavFixture } from './docs/blueprint/evidence/shell-nav-20261016/fixture';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', loader: { '.css': 'empty' }, alias: { '@': root }, write: false });
++const file = new URL('fixture.mjs', runtime);
++writeFileSync(file, bundle.outputFiles[0].text);
++const api = await import(file);
++const h = React.createElement;
++const utilityCompiler = await compile('@theme {--spacing:0.25rem;} @layer utilities { @tailwind utilities; }');
++const upstream = transform({ code: Buffer.from(utilityCompiler.build(['group-data-[collapsible=icon]:size-8!'])), targets: { chrome: 90 << 16 } }).code.toString();
++const markup = collapsed => renderToStaticMarkup(h('div', null,
++  h(api.AppBar, { identity: h(api.AppBarIdentity, { institution: '长中文实验学校', href: '/agent' }), navigation: h(api.AppBarNavigation, { compact: h(api.AppBarSpaceMenu, { currentId: 'agent', items: [{ id: 'agent', label: 'Agent' }] }) }, h(api.AppBarNavLink, { href: '/agent', 'aria-current': 'page' }, 'Agent'), h(api.AppBarNavLink, { href: '/papers' }, '组卷')), tools: h(api.BarIconButton, { label: '通知', count: 6 }, h('svg')) }),
++  h(api.SpaceBar, { side: { title: '对话目录', collapsed, onToggle() {} }, tools: h(api.BarIconButton, { label: '更多', size: 'space' }, h('svg')) }, '当前对话'),
++  h(api.SidebarProvider, { defaultOpen: !collapsed }, h(api.Sidebar, { collapsible: 'icon' }, h(api.SidebarGroup, null, h(api.SidebarGroupLabel, null, '最近对话'), h(api.SidebarMenu, null, ...[true, false].map((active, i) => h(api.SidebarMenuItem, { key: i }, h(api.SidebarMenuButton, { isActive: active }, h('svg'), h('span', null, active ? '函数复习' : '待复核'))))))))));
++
++// Actual SSR + parsed selectors / specificity / layer probes. These do not run
++// layout, render pseudo-elements, emulate a browser, or claim computedStyle.
++const node = (parent, attrs = {}, name = 'div') => {
++  const n = { name, attrs, classes: (attrs.class ?? '').split(/\s+/), states: [], parent, children: [] };
++  parent?.children.push(n); return n;
++};
++function tree(html, parent) {
++  const nodes = [], stack = [parent];
++  for (const tag of html.matchAll(/<\/?[a-zA-Z][^>]*>/g)) {
++    if (tag[0].startsWith('</')) { stack.pop(); continue; }
++    const name = tag[0].match(/^<([\w-]+)/)[1];
++    const attrs = Object.fromEntries([...tag[0].matchAll(/([\w:-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]));
++    const n = node(stack.at(-1), attrs, name); nodes.push(n);
++    if (!['input', 'img', 'br', 'hr', 'link', 'meta', 'source', 'wbr'].includes(name) && !tag[0].endsWith('/>')) stack.push(n);
++  }
++  return nodes;
++}
++function fixture(t, collapsed = false, outer) {
++  const parent = node(outer ? node(null, { 'data-prism-theme': outer }) : null, { 'data-prism-theme': t, ...(outer ? { 'data-agent-preview': '' } : {}) });
++  const nodes = tree(markup(collapsed), parent);
++  const cls = c => nodes.find(n => n.classes.includes(c));
++  const slot = s => nodes.find(n => n.attrs['data-slot'] === s);
++  return { parent, nodes, cls, slot, nav: nodes.filter(n => n.classes.includes('prism-app-bar-nav-link')), items: nodes.filter(n => n.attrs['data-slot'] === 'sidebar-menu-button') };
++}
++const cache = new Map();
++function parse(s) {
++  if (cache.has(s)) return cache.get(s);
++  let result;
++  transform({ code: Buffer.from(`${s}{color:red}`), visitor: { Selector(ast) { result = ast; } } });
++  assert.ok(result); cache.set(s, result); return result;
++}
++function matches(s, n, pseudo) {
++  if (!n) return false;
++  const split = s.findLastIndex(p => p.type === 'combinator');
++  if (split >= 0) {
++    if (!matches(s.slice(split + 1), n, pseudo)) return false;
++    if (s[split].value === 'child') return matches(s.slice(0, split), n.parent);
++    if (s[split].value === 'next-sibling') return matches(s.slice(0, split), n.parent?.children[n.parent.children.indexOf(n) - 1]);
++    assert.equal(s[split].value, 'descendant');
++    for (let p = n.parent; p; p = p.parent) if (matches(s.slice(0, split), p)) return true;
++    return false;
++  }
++  if (pseudo && !s.some(p => p.type === 'pseudo-element')) return false;
++  return s.every(p => {
++    if (p.type === 'universal') return true;
++    if (p.type === 'type') return p.name === n.name;
++    if (p.type === 'class') return n.classes.includes(p.name);
++    if (p.type === 'attribute') {
++      if (!p.operation) return Object.hasOwn(n.attrs, p.name);
++      assert.equal(p.operation.operator, 'equal'); return n.attrs[p.name] === p.operation.value;
++    }
++    if (p.type === 'pseudo-element') return p.kind === pseudo;
++    if (p.type === 'pseudo-class') {
++      if (['hover', 'focus-visible', 'focus-within', 'active'].includes(p.kind)) return n.states.includes(p.kind);
++      if (p.kind === 'nth-child') return false; // brand colours are preserved, not evaluated by this probe.
++      assert.ok(['is', 'where', 'not'].includes(p.kind), p.kind);
++      const any = p.selectors.some(c => matches(c, n)); return p.kind === 'not' ? !any : any;
++    }
++    assert.fail(JSON.stringify(p));
++  });
++}
++function specificity(s) {
++  return s.reduce((sum, p) => sum + (p.type === 'id' ? 10000 : ['class','attribute'].includes(p.type) ? 100 : ['type','pseudo-element'].includes(p.type) ? 1 : p.type === 'pseudo-class' ? p.kind === 'where' ? 0 : p.selectors ? Math.max(...p.selectors.map(specificity)) : 100 : 0), 0);
++}
++function rules(source) {
++  const result = [];
++  postcss.parse(source).walkRules(r => {
++    // Exclude the unrelated page-head and reduced-motion subtree selectors.
++    if (r.selector.includes(':root') || r.selector.includes('prism-page-head') || r.parent.params === '(prefers-reduced-motion:reduce)') return;
++    result.push({ selectors: r.selectors.map(parse), declarations: r.nodes.filter(d => d.type === 'decl'), layer: r.parent.name === 'layer', condition: r.parent.name === 'container' ? r.parent.params : undefined });
++  });
++  return result;
++}
++function style(n, source = block, pseudo, width = 1280) {
++  const result = {}, ranks = {};
++  for (const r of rules(source)) {
++    if (r.condition && width >= Number(r.condition.match(/< (\d+)/)[1])) continue;
++    const matching = r.selectors.filter(s => matches(s, n, pseudo));
++    if (!matching.length) continue;
++    const score = Math.max(...matching.map(specificity));
++    for (const d of r.declarations) {
++      const rank = (d.important ? 1e8 + (r.layer ? 1e7 : 0) : r.layer ? 0 : 1e6) + score;
++      if (ranks[d.prop] === undefined || rank >= ranks[d.prop]) { result[d.prop] = d.value; ranks[d.prop] = rank; }
++    }
++  }
++  return result;
++}
++function top(source = block) {
++  for (const t of themes) for (const width of [1280, 320]) {
++    const f = fixture(t);
++    // Test both import orders: AppBar's component stylesheet can be loaded later.
++    for (const combined of [appCss + source, source + appCss]) {
++      for (const name of ['prism-app-bar','prism-space-bar']) {
++        const s = style(f.cls(name), combined, undefined, width);
++        assert.equal(s.background, 'var(--card)'); assert.equal(s['border-bottom'], 'var(--line-width) solid var(--line)');
++        assert.equal(s.height, name === 'prism-app-bar' ? '56px' : '48px');
++      }
++      for (const [i, n] of f.nav.entries()) {
++        assert.equal(style(n, combined).color, i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)');
++        n.states = ['hover'];
++        assert.equal(style(n, combined, 'before')['border-radius'], '0');
++        assert.equal(style(n, combined, 'before').background, 'var(--accent)');
++      }
++      assert.equal(style(f.nav[0], combined)['box-shadow'], 'inset 0 -2px 0 var(--foreground)');
++      for (const c of ['prism-app-bar-identity','prism-bar-icon-button','prism-app-bar-space-trigger']) assert.equal(style(f.cls(c), combined, undefined, width)['border-radius'], '0');
++      const trigger = style(f.cls('prism-app-bar-space-trigger'), combined);
++      assert.equal(trigger.background, 'var(--card)'); assert.equal(trigger.border, '1px solid var(--border)');
++    }
++  }
++}
++function sidebar(source = block) {
++  for (const t of themes) for (const collapsed of [false, true]) {
++    const f = fixture(t, collapsed);
++    for (const s of ['sidebar', 'sidebar-inner']) assert.equal(style(f.slot(s), source).background, 'var(--card)');
++    assert.equal(style(f.slot('sidebar-container'), source)['border-right'], 'var(--line-width) solid var(--line)');
++    assert.equal(style(f.slot('sidebar-group-label'), source).color, 'var(--muted-foreground)');
++    for (const hover of [false,true]) {
++      f.items.forEach(n => n.states = hover ? ['hover'] : []);
++      const active = style(f.items[0], source);
++      assert.equal(active.background, 'var(--accent)'); assert.equal(active.color, 'var(--foreground)');
++      assert.equal(active['box-shadow'], 'inset 2px 0 0 var(--foreground)');
++      if (hover) assert.equal(style(f.items[1], source).background, 'var(--secondary)');
++    }
++  }
++}
++function rail(source = block) {
++  for (const t of themes) {
++    const f = fixture(t, true);
++    for (const slot of ['sidebar-gap','sidebar-container']) assert.equal(style(f.slot(slot), source).width, '56px');
++    assert.ok(f.items[0].classes.includes('group-data-[collapsible=icon]:size-8!'));
++    // Compile the exact frozen coss class with the installed Tailwind version.
++    for (const combined of [upstream + source, source + upstream]) for (const item of f.items) {
++      assert.equal(style(item, combined).width, '40px'); assert.equal(style(item, combined).height, '40px');
++      assert.equal(style(item, source)['border-radius'] ?? '0', '0');
++    }
++    assert.equal(style(fixture(t).items[0], source).width, undefined);
++  }
++}
++function isolation(source = block) {
++  for (const t of core) for (const outer of [undefined, ...themes]) {
++    const f = fixture(t, true, outer);
++    for (const n of f.nodes) for (const states of [[], ['hover'], ['focus-visible'], ['hover','focus-visible']]) {
++      n.states = states;
++      for (const pseudo of [undefined, 'before', 'after']) assert.deepEqual(style(n, source, pseudo), {}, `${outer}/${t}/${n.attrs.class}/${pseudo}`);
++      // The preview root itself must also be excluded, even with target hooks.
++      const targetRoot = { ...n, attrs: { ...n.attrs, ...f.parent.attrs }, parent: f.parent.parent };
++      for (const pseudo of [undefined, 'before', 'after']) assert.deepEqual(style(targetRoot, source, pseudo), {});
++    }
++  }
++}
++function focus(source = block) {
++  for (const t of themes) {
++    const f = fixture(t);
++    for (const n of [...f.nav,...f.items,f.cls('prism-bar-icon-button'),f.cls('prism-app-bar-space-trigger')]) {
++      n.states = ['hover','focus-visible'];
++      const s = style(n, appCss + source);
++      assert.equal(s.outline, '2px solid var(--ring)');
++      assert.equal(s['box-shadow'], n === f.nav[0] ? 'inset 0 -2px 0 var(--foreground)' : n === f.items[0] ? 'inset 2px 0 0 var(--foreground)' : 'none');
++    }
++    assert.equal(style(f.nav[0], appCss + source, 'before').outline, 'none');
++    assert.equal(style(f.nav[0], appCss + source)['outline-offset'], '-4px');
++  }
++}
++
++test('P76: both Blueprint AppBar/SpaceBar surfaces, selected underline, hover and square controls survive stylesheet order', () => top());
++test('P76: actual coss Sidebar surfaces, active accent/ink and weaker hover resolve in both themes', () => sidebar());
++test('P76: collapsed 56px rail has 40px buttons despite frozen important utility; expanded geometry is untouched', () => rail());
++test('P76: one focus outline keeps independent active indicators and suppresses the old nav pseudo outline', () => focus());
++test('P76: core themes and nested core preview roots/descendants/pseudo-elements receive zero added declarations', () => isolation());
++test('P76: portaled personal/space menu hooks are square and current rows use accent', () => {
++  for (const t of themes) for (const kind of ['space','personal']) {
++    const parent = node(null, { 'data-prism-theme': t });
++    const popup = node(parent, { class: `prism-app-bar-${kind}-popup` });
++    const item = node(popup, { class: kind === 'space' ? 'prism-app-bar-space-item' : '', 'data-slot': 'menu-link-item', 'aria-current': 'page' });
++    assert.equal(style(popup)['border-radius'], '0');
++    assert.equal(style(item)['border-radius'], '0'); assert.equal(style(item).background, 'var(--accent)');
++  }
++});
++test('P76: all new selectors guard their final target; badges, Tabs, Toggle, tokens and typography are untouched', () => {
++  postcss.parse(block).walkRules(r => {
++    for (const s of r.selectors) assert.ok(s.endsWith(guard) || s.endsWith(guard + '::before'), s);
++    for (const d of r.nodes.filter(d => d.type === 'decl')) assert.ok(!/^(font|line-height)/.test(d.prop), d.prop);
++  });
++  for (const t of themes) {
++    const f = fixture(t);
++    assert.deepEqual(style(f.cls('prism-icon-count-badge')), {});
++    for (const slot of ['tabs-tab','toggle']) assert.deepEqual(style(node(f.parent, { 'data-slot': slot, 'data-active': '', 'data-pressed': '' })), {});
++  }
++  assert.ok(!css.includes('[data-slot="sidebar-menu-button"][data-active="true"],[data-slot="tabs-tab"]'));
++  assert.match(css, /:is\(\[data-slot="tabs-tab"\]\[data-active\],\[data-slot="toggle"\]\[data-pressed\]\)[^{]*\{ background:var\(--primary\); color:var\(--primary-foreground\); \}/);
++  assert.match(read('components/coss/sidebar.tsx'), /group-data-\[collapsible=icon\]:size-8!/);
++});
++test('P76: actual foreground/accent tokens meet selected text 4.5 and indicator 3 in both themes', t => {
++  for (const name of themes) {
++    const tokens = Object.fromEntries([...themeCss.split(`:where([data-agent-preview])[data-prism-theme="${name}"] {`)[1].split('}')[0].matchAll(/(--[\w-]+):([^;]+);/g)].map(m => [m[1],m[2]]));
++    const a = relativeLuminance(tokens['--foreground']), b = relativeLuminance(tokens['--accent']);
++    const ratio = (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
++    assert.ok(ratio >= 4.5); assert.ok(ratio >= 3);
++    t.diagnostic(`${name} selected text and left ink / accent: ${ratio.toFixed(6)}:1`);
++  }
++});
++test('P76: rollback, wrong tokens, focus duplication, rail-important and isolation mutations are detected', () => {
++  const cases = [
++    ['whole rollback', () => '', top],
++    ['card rollback', s => s.replace('background:var(--card); border-bottom', 'background:var(--background); border-bottom'), top],
++    ['border rollback', s => s.replace('border-bottom:var(--line-width) solid var(--line)', 'border-bottom:1px solid var(--border)'), top],
++    ['nav primary rollback', s => s.replaceAll('inset 0 -2px 0 var(--foreground)', 'inset 0 -2px 0 var(--primary)'), top],
++    ['hover rollback', s => s.replaceAll('background:var(--accent); }', 'background:var(--secondary); }'), top],
++    ['square rollback', s => s.replaceAll('border-radius:0;', 'border-radius:8px;'), top],
++    ['ink background rollback', s => s.replaceAll('background:var(--accent); color:var(--foreground); border-radius', 'background:var(--primary); color:var(--primary-foreground); border-radius'), sidebar],
++    ['left line rollback', s => s.replaceAll('inset 2px 0 0 var(--foreground)', 'none'), sidebar],
++    ['rail width rollback', s => s.replace('width:56px;', 'width:48px;'), rail],
++    ['rail 32 rollback', s => s.replaceAll('40px !important', '32px !important'), rail],
++    ['rail important removed', s => s.replaceAll(' !important', ''), rail],
++    ['rail layer removed', s => s.replace('@layer utilities {', '@layerless {'), rail],
++    ['focus double ring', s => s.replace('outline:none; box-shadow:none;', 'outline:2px solid var(--ring); box-shadow:none;'), focus],
++    ['guard removal', s => s.replaceAll(guard, ''), isolation],
++    ['family removal', s => s.replaceAll(family + ' ', ''), isolation],
++  ];
++  for (const [name, mutate, check] of cases) {
++    const changed = mutate(block); assert.notEqual(changed, block, name);
++    assert.throws(() => check(changed), undefined, name);
++  }
++});
++
++test('P76: review fixture bundles and SSR retains real shell, menu triggers and current conversation', () => {
++  const html = renderToStaticMarkup(h(api.ShellNavFixture));
++  for (const text of ['data-agent-preview', 'prism-app-bar', 'prism-space-bar', 'sidebar-menu-button', 'data-active="true"', '通知，6', '更多：']) assert.ok(html.includes(text), text);
++});
+diff --git a/docs/blueprint/evidence/shell-nav-20261016/fixture.tsx b/docs/blueprint/evidence/shell-nav-20261016/fixture.tsx
+new file mode 100644
+index 0000000..7d79347
+--- /dev/null
++++ b/docs/blueprint/evidence/shell-nav-20261016/fixture.tsx
+@@ -0,0 +1,40 @@
++"use client";
++
++import { useState } from "react";
++import type { CSSProperties } from "react";
++import { Bell, Folder, MessageSquare } from "lucide-react";
++import { AppBar, AppBarIdentity, AppBarNavigation, AppBarNavLink, AppBarSpaceMenu, AppBarPersonalMenu, BarIconButton, SpaceBar } from "@/components/prism-next/app-bar";
++import { Sidebar, SidebarProvider, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction } from "@/components/coss/sidebar";
++import { MenuItem } from "@/components/coss/menu";
++import type { PrismTheme } from "@/lib/prism-next/config";
++
++// Review-only composition: host mounts this at an existing fixture entry point.
++// State is reversible local selection/open state, never a simulated business fact.
++export function ShellNavFixture({ theme = "blueprint", outerTheme = "light" }: { theme?: PrismTheme; outerTheme?: PrismTheme }) {
++  const [host, setHost] = useState<HTMLDivElement | null>(null);
++  const [open, setOpen] = useState(true);
++  const [current, setCurrent] = useState("agent");
++  const [conversation, setConversation] = useState(0);
++  const spaces = [{ id: "agent", label: "Agent" }, { id: "papers", label: "组卷" }];
++  const popupProps = { portalProps: { container: host } };
++  return <div data-prism-theme={outerTheme}>
++    <div ref={setHost} data-agent-preview data-prism-theme={theme} className="bg-background text-foreground">
++      <AppBar
++        identity={<AppBarIdentity institution="长中文实验学校第二分校" href="#shell-nav-fixture" />}
++        navigation={<AppBarNavigation compact={<AppBarSpaceMenu items={spaces} currentId={current} onSelect={setCurrent} popupProps={popupProps} />}>
++          {spaces.map(space => <AppBarNavLink key={space.id} href={`#${space.id}`} aria-current={current === space.id ? "page" : undefined} onClick={event => { event.preventDefault(); setCurrent(space.id); }}>{space.label}</AppBarNavLink>)}
++        </AppBarNavigation>}
++        tools={<><BarIconButton label="通知" count={6}><Bell /></BarIconButton><AppBarPersonalMenu identity={{ name: "李老师", institution: "实验学校", detail: "评审夹具", initials: "李" }} popupProps={popupProps}><MenuItem aria-current="page">个人资料</MenuItem><MenuItem>偏好设置</MenuItem></AppBarPersonalMenu></>}
++      />
++      <SpaceBar side={{ title: "会话目录", collapsed: !open, onToggle: () => setOpen(!open) }} tools={<BarIconButton label="资料" size="space"><Folder /></BarIconButton>}>函数与方程复习讨论</SpaceBar>
++      <SidebarProvider open={open} onOpenChange={setOpen} className="relative min-h-0" style={{ height: 360, "--sidebar-width": "232px" } as CSSProperties}>
++        <Sidebar collapsible="icon" className="absolute inset-y-0">
++          <SidebarGroup><SidebarGroupLabel>最近对话</SidebarGroupLabel><SidebarMenu>
++            {["函数与方程复习讨论及完整长中文标题", "二次函数的图像"].map((title, index) => <SidebarMenuItem key={title}><SidebarMenuButton isActive={conversation === index} onClick={() => setConversation(index)} tooltip={title}><MessageSquare /><span>{title}</span></SidebarMenuButton><SidebarMenuAction showOnHover aria-label={`更多：${title}`}><Folder /></SidebarMenuAction></SidebarMenuItem>)}
++          </SidebarMenu></SidebarGroup>
++        </Sidebar>
++        <div className="min-w-0 flex-1 p-4 text-read-body">仅用于样式评审。选择与开合不产生执行状态。</div>
++      </SidebarProvider>
++    </div>
++  </div>;
++}

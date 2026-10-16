@@ -1,0 +1,46 @@
+{
+  "node": "v24.14.0",
+  "homePreserved": true,
+  "records": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "started": "2026-10-16T08:47:52.110Z",
+      "finished": "2026-10-16T08:47:52.135Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "started": "2026-10-16T08:47:52.137Z",
+      "finished": "2026-10-16T08:47:52.199Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "started": "2026-10-16T08:47:52.199Z",
+      "finished": "2026-10-16T08:47:57.608Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "tests",
+      "command": "node --test tests/*.test.mjs",
+      "started": "2026-10-16T08:47:57.608Z",
+      "finished": "2026-10-16T08:48:11.944Z",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "started": "2026-10-16T08:48:11.944Z",
+      "finished": "2026-10-16T08:48:13.406Z",
+      "exitCode": 0,
+      "signal": null
+    }
+  ]
+}

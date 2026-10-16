@@ -1,0 +1,62 @@
+{
+  "protectedFiles": {
+    "app/(next)/next/theme.css": {
+      "baseline": "403b8307181e00cd295ef2cad0c07fd7443cb3b028e898dc9a77e33d23c0273b",
+      "current": "403b8307181e00cd295ef2cad0c07fd7443cb3b028e898dc9a77e33d23c0273b",
+      "unchanged": true
+    },
+    "components/prism-next/question-card.tsx": {
+      "baseline": "e7ffea07d4719388e4aac8e27e6f20abd874a112205287a6cd3309270482b6e1",
+      "current": "e7ffea07d4719388e4aac8e27e6f20abd874a112205287a6cd3309270482b6e1",
+      "unchanged": true
+    },
+    "components/prism-next/question-details.tsx": {
+      "baseline": "c34d008fc48c832aa6ea03011c5e811be3c0210ce08b28acac61418929276dc2",
+      "current": "c34d008fc48c832aa6ea03011c5e811be3c0210ce08b28acac61418929276dc2",
+      "unchanged": true
+    },
+    "components/prism-next/question-content.tsx": {
+      "baseline": "386c9c3aaab815ce2bca724e01af7336b600dab1804dba2a373d6f80dadc3cb0",
+      "current": "386c9c3aaab815ce2bca724e01af7336b600dab1804dba2a373d6f80dadc3cb0",
+      "unchanged": true
+    },
+    "components/coss/tabs.tsx": {
+      "baseline": "2ccafba4dcc7037e9dd73901c95db5d023f641c39ad2021153c7b369b9f0c5c3",
+      "current": "2ccafba4dcc7037e9dd73901c95db5d023f641c39ad2021153c7b369b9f0c5c3",
+      "unchanged": true
+    },
+    "lib/coss/segmented-control.ts": {
+      "baseline": "c1cb84d02ac5b75aa08a70c205feb9cc8668ffbc19751e013364f547ae41a8a8",
+      "current": "c1cb84d02ac5b75aa08a70c205feb9cc8668ffbc19751e013364f547ae41a8a8",
+      "unchanged": true
+    },
+    "package.json": {
+      "baseline": "cfe07fae0d5b08e3f8bf5225a75965eb2b54eb01e7e539b4109f6a92aac006c7",
+      "current": "cfe07fae0d5b08e3f8bf5225a75965eb2b54eb01e7e539b4109f6a92aac006c7",
+      "unchanged": true
+    },
+    "package-lock.json": {
+      "baseline": "b4cb94516e1b01e2e6d7c7c35c48fc307afb5e5f2df148ce5d0f1831effb08f9",
+      "current": "b4cb94516e1b01e2e6d7c7c35c48fc307afb5e5f2df148ce5d0f1831effb08f9",
+      "unchanged": true
+    },
+    "AGENTS.md": {
+      "baseline": "36db606fbe59432255a730dac0303e5c099182f29f80099d77cd57827973caf7",
+      "current": "36db606fbe59432255a730dac0303e5c099182f29f80099d77cd57827973caf7",
+      "unchanged": true
+    }
+  },
+  "preexistingBlueprintCSSUnchangedAfterRemovingP75Block": true,
+  "cossTrackedFiles": 54,
+  "cossByteIdentical": 54,
+  "oldCurrentPreservedVerbatim": true,
+  "runtimeDiffFiles": [
+    "app/(next)/next/blueprint.css"
+  ],
+  "fixtureBundleSSR": {
+    "exitCode": 0,
+    "note": "esbuild bundle + renderToStaticMarkup; no browser mount; SSR image URI normalized to adjacent SVG"
+  },
+  "mutationCases": 14,
+  "mutationsDetected": 14
+}

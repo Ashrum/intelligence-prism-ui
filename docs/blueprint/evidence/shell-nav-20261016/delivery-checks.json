@@ -1,0 +1,20 @@
+{
+  "protectedFilesUnchanged": 61,
+  "cossFilesUnchanged": 54,
+  "diffCheckExitCode": 0,
+  "currentEvidenceLinksExist": [
+    "docs/blueprint/evidence/shell-nav-20261016/inspection.md",
+    "docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md",
+    "docs/blueprint/evidence/shell-nav-20261016/baseline.json",
+    "docs/blueprint/evidence/shell-nav-20261016/inspection.md",
+    "docs/blueprint/evidence/shell-nav-20261016/integrity.json",
+    "docs/blueprint/evidence/shell-nav-20261016/engineering.json",
+    "docs/blueprint/evidence/shell-nav-20261016/scope.diff",
+    "docs/blueprint/evidence/shell-nav-20261016/finalization.json",
+    "docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md"
+  ],
+  "scopeDiffIsFinal": true,
+  "browserExecuted": false,
+  "committed": false,
+  "pushed": false
+}

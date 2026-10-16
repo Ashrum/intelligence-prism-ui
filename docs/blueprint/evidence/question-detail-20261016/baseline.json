@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-16",
+  "head": "ab14ab4a59ef593e9d29061c892256d5e233bc3d",
+  "branch": "feat/blueprint-question-detail",
+  "status": "",
+  "sha256": {
+    "app/(next)/next/blueprint.css": "edc27ed44c65a6daeca3e11ca3310f2a0c9822544d43ddf145014b02d64e4f5e",
+    "app/(next)/next/theme.css": "403b8307181e00cd295ef2cad0c07fd7443cb3b028e898dc9a77e33d23c0273b",
+    "components/prism-next/question-card.tsx": "e7ffea07d4719388e4aac8e27e6f20abd874a112205287a6cd3309270482b6e1",
+    "components/prism-next/question-details.tsx": "c34d008fc48c832aa6ea03011c5e811be3c0210ce08b28acac61418929276dc2",
+    "components/prism-next/question-content.tsx": "386c9c3aaab815ce2bca724e01af7336b600dab1804dba2a373d6f80dadc3cb0",
+    "components/coss/tabs.tsx": "2ccafba4dcc7037e9dd73901c95db5d023f641c39ad2021153c7b369b9f0c5c3",
+    "lib/coss/segmented-control.ts": "c1cb84d02ac5b75aa08a70c205feb9cc8668ffbc19751e013364f547ae41a8a8",
+    "package.json": "cfe07fae0d5b08e3f8bf5225a75965eb2b54eb01e7e539b4109f6a92aac006c7",
+    "package-lock.json": "b4cb94516e1b01e2e6d7c7c35c48fc307afb5e5f2df148ce5d0f1831effb08f9",
+    "AGENTS.md": "36db606fbe59432255a730dac0303e5c099182f29f80099d77cd57827973caf7"
+  }
+}
