@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "041e54b1b8f21a0243f04e14dd8bf27bcb0db9804c55afbc49575ab38cc74d59",
+  "sourceSha256": "fb9a40968c8cc9b9ee2a5b56b1d3f1f4209da3f05fd38399f61bdfb2b5b47901",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 第四主题「蓝图」",
   "headings": [
@@ -5546,7 +5546,7 @@
           [
             {
               "type": "text",
-              "value": "#A8620A"
+              "value": "#995909"
             }
           ]
         ],
@@ -7139,7 +7139,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "c69acec23401d583661b844cab3f1b108c17472dbbc942e2bbd8f17ce36abf53"
+      "sha256": "a750da786ebb445ad477d5d013bf5139be920c32b8b95fe6bce9b104cff60eb7"
     },
     {
       "source": "docs/blueprint/evidence/editorial-20261016/engineering.json",
@@ -7509,7 +7509,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "041e54b1b8f21a0243f04e14dd8bf27bcb0db9804c55afbc49575ab38cc74d59"
+      "sha256": "fb9a40968c8cc9b9ee2a5b56b1d3f1f4209da3f05fd38399f61bdfb2b5b47901"
     }
   ]
 }

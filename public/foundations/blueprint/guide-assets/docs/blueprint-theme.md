@@ -297,7 +297,7 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 | 链接 / 焦点 / 信息 | `--link` `--ring` `--info-foreground` | #1D5FBF |
 | 强调底 | `--accent` | #E4ECF8 |
 | 错误 | `--destructive-foreground` | #C62828 |
-| 警告 | `--warning-foreground` | #A8620A |
+| 警告 | `--warning-foreground` | #995909 |
 | 成功 | `--success-foreground` | #216440（沿用智能曜彩绿色，不随参照站点并入蓝色） |
 
 ## 新增扩展令牌
