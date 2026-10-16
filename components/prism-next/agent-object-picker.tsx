@@ -1,9 +1,11 @@
 "use client"
 
+import { ComboboxPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId } from "react"
 import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxPopup } from "@/components/coss/combobox"
+import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/coss/combobox"
 import { Label } from "@/components/coss/label"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"

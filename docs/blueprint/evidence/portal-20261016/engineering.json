@@ -1,0 +1,57 @@
+{
+  "task": "P74",
+  "baseline": "e750a963d53da4a3bba1cf53500616ebff4b16d2",
+  "branch": "fix/agent-portal-container",
+  "node": "v24.14.0",
+  "environment": "README project-scoped runtime paths; HOME unchanged; no network, dependency install or listening service",
+  "checks": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "startedAt": "2026-10-16T14:18:03.185279+08:00",
+      "durationSeconds": 0.023,
+      "exitCode": 0,
+      "log": "math-font.log"
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "startedAt": "2026-10-16T14:18:03.209003+08:00",
+      "durationSeconds": 0.047,
+      "exitCode": 0,
+      "log": "typography.log"
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-16T14:18:03.256459+08:00",
+      "durationSeconds": 5.163,
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "name": "full-tests",
+      "command": "node --test tests/*.test.mjs",
+      "startedAt": "2026-10-16T14:18:08.420602+08:00",
+      "durationSeconds": 13.151,
+      "exitCode": 0,
+      "log": "full-tests.log",
+      "counts": {
+        "tests": 2184,
+        "pass": 2184,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "startedAt": "2026-10-16T14:18:21.573136+08:00",
+      "durationSeconds": 1.225,
+      "exitCode": 0,
+      "log": "types.log"
+    }
+  ]
+}

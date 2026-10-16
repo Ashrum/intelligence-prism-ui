@@ -9,6 +9,7 @@ const runtime = new URL('../.sites-runtime/p34-tests/', import.meta.url);
 await mkdir(runtime, { recursive: true });
 const bundle = await build({
   stdin: { contents: `export * from './components/prism-next/facet-filter';
+export { PopoverPopup } from './components/prism-next/scoped-overlays';
 export * from './components/prism-next/demos/fixtures/facet-filter';
 export * from './components/prism-next/demos/facet-filter';`, resolveDir: root, loader: 'tsx' },
   bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { '.css': 'empty' },
@@ -56,7 +57,7 @@ export function probe(variant, scale = 'future', width = 720) {
         return inspect(node.type(node.props), path + '/' + node.type.name);
       }, { key: node.key ?? path });
       const children = React.Children.toArray(node.props.children).map((child, index) => inspect(child, path + '/' + (child?.key ?? index)));
-      if (node.type.name === 'PopoverPopup') return React.createElement('div', { key: node.key ?? path, 'data-probe-popup': '' }, children);
+      if (node.type === module.PopoverPopup) return React.createElement('div', { key: node.key ?? path, 'data-probe-popup': '' }, children);
       return React.cloneElement(node, {}, children.length ? children : node.props.children);
     }
     state.html = renderToStaticMarkup(inspect(React.createElement(module.FacetFilter, {

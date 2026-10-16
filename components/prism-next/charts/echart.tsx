@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
-import { useTheme } from "next-themes"
+import { useChartTheme } from "./chart-theme"
 import type { EChartsOption } from "echarts"
 import type { ECharts } from "echarts/core"
 import { themeAxes } from "@/lib/prism-next/chart-options"
@@ -14,7 +14,7 @@ export function loadChartEngine(){return engine??=import("./echart-engine")}
 export function EChart({option,label,height=300,onSelect,preserveItemTooltip=false,resolveLayout}:{option:EChartsOption;label:string;height?:number;onSelect?:(id:string,seriesId?:string)=>void;preserveItemTooltip?:boolean;resolveLayout?:(option:EChartsOption,width:number,height:number)=>EChartsOption}){
  const node=useRef<HTMLDivElement>(null),chart=useRef<ECharts|null>(null),latest=useRef({option,onSelect,label,theme:"light",preserveItemTooltip,resolveLayout})
  const tooltip=useRef(createItemTooltipTracker())
- const {theme}=useTheme();latest.current={option,onSelect,label,theme:theme??"light",preserveItemTooltip,resolveLayout}
+ const {theme}=useChartTheme();latest.current={option,onSelect,label,theme:theme??"light",preserveItemTooltip,resolveLayout}
  const [error,setError]=useState(false)
  useEffect(()=>{
   let gone=false;let observer:ResizeObserver|undefined

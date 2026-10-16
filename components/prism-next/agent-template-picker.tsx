@@ -1,10 +1,12 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId, useState, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Label } from "@/components/coss/label"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Button } from "./button"
 import { AgentStatus } from "./agent-visual-parts"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"

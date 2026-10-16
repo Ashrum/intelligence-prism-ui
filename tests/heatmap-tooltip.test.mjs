@@ -18,7 +18,8 @@ await writeFile(file, (await build({
   plugins: [{ name: 'controlled-chart-host', setup(b) {
     b.onResolve({ filter: /^(react|next-themes)$/ }, args => ({ path: args.path, namespace: 'host' }));
     b.onLoad({ filter: /.*/, namespace: 'host' }, args => ({ contents: args.path === 'react'
-      ? 'export const useRef=(...a)=>globalThis.__tooltipHost.ref(...a);export const useState=(v)=>[v,()=>{}];export const useEffect=(...a)=>globalThis.__tooltipHost.effect(...a);'
+      // This controller-only host is unscoped; real Context/Portal behavior is covered in portal-scope.test.mjs.
+      ? 'export const createContext=value=>({defaultValue:value});export const useContext=context=>context.defaultValue;export const useMemo=fn=>fn();export const useRef=(...a)=>globalThis.__tooltipHost.ref(...a);export const useState=(v)=>[v,()=>{}];export const useEffect=(...a)=>globalThis.__tooltipHost.effect(...a);'
       : 'export const useTheme=()=>({theme:globalThis.__tooltipHost.theme});' }));
     b.onLoad({ filter: /\/echart-engine\.ts$/ }, () => ({ contents: 'export const init=()=>{globalThis.__tooltipHost.inits++;return globalThis.__tooltipHost.chart}' }));
   } }],

@@ -4,6 +4,20 @@
 
 ## 当前
 
+
+- 轮次：P74 · Agent 浮层容器契约补齐（R2 后续 / CI-11）· 2026-10-16；开工基线 `e750a963d53da4a3bba1cf53500616ebff4b16d2`，分支 `fix/agent-portal-container`，开工工作树干净。[基线](evidence/portal-20261016/baseline.json)。
+- 授权与分工：Supervisor `task-P74.md` + `builder-preamble.md`；Builder 实现与工程自测，浏览器由 Supervisor 执行。未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
+- 范围：统一 `PrismScopeProvider` + `scoped-overlays`，补齐 18 处 Agent / 24 处静态依赖 / 1 处旧 Drawer；公开子菜单容器契约、Providers 受控 Toast 入口和局部图表主题。只替换相关 Popup import，不给 18 个业务组件逐一加 prop；热力图、箱线图及 ECharts 渲染层同用局部主题。现有 Menu 页增加嵌套复验夹具。详见[复用取舍](evidence/portal-20261016/inspection.md)、[调用清单](evidence/portal-20261016/call-sites.json)及[新契约](../component-contracts.md)。
+- 兼容边界：显式目标优先，未提供 scope 保留原始父 Portal / body 默认；null 等待、未附着 ref 回退严格沿用 Base UI。Toast 容器按整队列控制，Agent 页内通知须独立 manager，AppBar/其他页仍全局；离页局部队列卸载。核心主题令牌、默认色板和配置、冻结 coss、目录与依赖不改，新增 API 不写 DOM 主题或持久化。
+- 工程：新增 16 项测试；含旧夹具修复的定向复验 86/86 通过；43 处绑定回退 + 4 个挂载透传/优先级回退 + 1 个局部图表回退，共 48/48 内存变异检出。真实 React Context / Base UI Portal append/remove 与队列隔离是工程证据，原语定位/焦点仍为探针。本轮五项工程检查退出码均为 0：数学字体/许可通过、排版 311 个 TSX 通过、生产构建通过、先构建后全量 **2184/2184，0 失败 / 0 跳过**、TypeScript 0 错误。实际命令、日志与初轮 9 项夹具失败的修复见[工程 JSON](evidence/portal-20261016/engineering.json)及[检查记录](evidence/portal-20261016/checks.md)，不沿用 P73 结果。
+- 周期：P74 属 Workspace R2 后续组件契约修复；共享适配与图表变更按任务提前执行全量工程回归。Builder 自测不等同 Supervisor Review / PO 批准，Builder 实施/工程检查完成，尚未记为已验收；最近完整工程回归为本轮 2184/2184，最近完整浏览器矩阵仍为历史记录；继承 P73 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期，Workspace R3 / R6 / R9 的累计触发仍保留。
+- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。没有本轮浏览器截图，不宣称视觉、真实键盘/焦点、定位或裁切通过；1280 / 320、核心/蓝图双向嵌套、Toast 离页和图表操作见[浏览器清单与 Workspace 接线](evidence/portal-20261016/browser-checklist.md)。Workspace 固定来源同步/实际接线、真实服务、真机/触控、读屏、实体打印和全站视觉未验。
+- 待审阅：统一入口命名与容器/Toast 归属契约由 Supervisor 独立 Review；后续 Workspace 同步按其任务执行。本轮没有需要 Builder 自行决定的新产品方向、视觉令牌或业务规则。
+
+## 历史
+
+### P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16（原当前，原样保留）
+
 - 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
 - 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
 - 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
@@ -13,7 +27,6 @@
 - 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
 - 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
 
-## 历史
 
 ### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
 

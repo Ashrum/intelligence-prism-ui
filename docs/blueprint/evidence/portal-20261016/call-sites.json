@@ -1,0 +1,260 @@
+[
+  {
+    "file": "components/prism-next/agent-artifact-output.tsx",
+    "baselineLine": 114,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-capture-scan.tsx",
+    "baselineLine": 191,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-collection-basket.tsx",
+    "baselineLine": 263,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-collection-basket.tsx",
+    "baselineLine": 300,
+    "popup": "MenuPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-collection-basket.tsx",
+    "baselineLine": 328,
+    "popup": "DialogPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-constraint-builder.tsx",
+    "baselineLine": 142,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-distribution-matrix.tsx",
+    "baselineLine": 112,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-material-pack.tsx",
+    "baselineLine": 266,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-object-picker.tsx",
+    "baselineLine": 174,
+    "popup": "ComboboxPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-parameter-config.tsx",
+    "baselineLine": 136,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-path-priority.tsx",
+    "baselineLine": 161,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-path-priority.tsx",
+    "baselineLine": 175,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-plan-builder.tsx",
+    "baselineLine": 199,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-structure-arranger.tsx",
+    "baselineLine": 78,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-structure-arranger.tsx",
+    "baselineLine": 191,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-suggestion-set.tsx",
+    "baselineLine": 150,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-template-picker.tsx",
+    "baselineLine": 123,
+    "popup": "SelectPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/agent-visual-parts.tsx",
+    "baselineLine": 81,
+    "popup": "PopoverPopup",
+    "group": "agent"
+  },
+  {
+    "file": "components/prism-next/charts/chart-legend.tsx",
+    "baselineLine": 33,
+    "popup": "PopoverPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/data-display.tsx",
+    "baselineLine": 15,
+    "popup": "PopoverPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/dialog-layout.tsx",
+    "baselineLine": 45,
+    "popup": "DialogPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/facet-filter.tsx",
+    "baselineLine": 48,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/facet-filter.tsx",
+    "baselineLine": 156,
+    "popup": "PopoverPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/knowledge-rail.tsx",
+    "baselineLine": 13,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/paper-annotation-layer.tsx",
+    "baselineLine": 124,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-actions.tsx",
+    "baselineLine": 13,
+    "popup": "MenuPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-analysis-parts.tsx",
+    "baselineLine": 6,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-controls.tsx",
+    "baselineLine": 6,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-rail.tsx",
+    "baselineLine": 86,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-rail.tsx",
+    "baselineLine": 114,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/record-list.tsx",
+    "baselineLine": 87,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/record-list.tsx",
+    "baselineLine": 150,
+    "popup": "MenuPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/record-list.tsx",
+    "baselineLine": 168,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/review-parts.tsx",
+    "baselineLine": 10,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/review-workspace.tsx",
+    "baselineLine": 43,
+    "popup": "DialogPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-directory.tsx",
+    "baselineLine": 139,
+    "popup": "MenuPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-directory.tsx",
+    "baselineLine": 148,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-directory.tsx",
+    "baselineLine": 235,
+    "popup": "TooltipPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-range-picker.tsx",
+    "baselineLine": 78,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-range-picker.tsx",
+    "baselineLine": 87,
+    "popup": "DialogPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-range-picker.tsx",
+    "baselineLine": 91,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/textbook-range-picker.tsx",
+    "baselineLine": 170,
+    "popup": "SelectPopup",
+    "group": "dependency"
+  },
+  {
+    "file": "components/prism-next/question-work-panel.tsx",
+    "baselineLine": 13,
+    "popup": "DrawerPopup",
+    "group": "legacy-drawer"
+  }
+]

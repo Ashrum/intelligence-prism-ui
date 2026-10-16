@@ -1,9 +1,11 @@
 "use client"
 
+import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
+
 import type { ReactNode } from "react"
 import { CircleHelp } from "lucide-react"
 import { Button } from "@/components/coss/button"
-import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
+import { Popover, PopoverTrigger } from "@/components/coss/popover"
 import { chartToneColor, type ChartTone, type ChartTheme } from "@/lib/prism-next/polar-chart-options"
 import { useChartTheme } from "./chart-theme"
 

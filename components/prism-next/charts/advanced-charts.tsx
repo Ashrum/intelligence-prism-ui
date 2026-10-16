@@ -3,18 +3,17 @@ import { useEffect, useRef, useState } from "react"
 import type { TooltipComponentOption } from "echarts"
 import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
 import { formatChartValue } from "@/lib/prism-next/chart-options"
-import { useTheme } from "next-themes"
+import { useChartTheme } from "./chart-theme"
 import { EChart } from "./echart"
 import { DataRecordTable } from "../data-display"
 import { matrixExtent, validBox, type AxisItem, type MatrixCell, type ScatterPoint, type BoxSummary } from "@/lib/prism-next/chart-data"
 import { sequentialColor, contrastForeground, type SequentialColors } from "@/lib/prism-next/chart-color"
 import { chartShapeColors, chartSequentialDefault } from "@/lib/prism-next/chart-palette"
-import { themePalette } from "@/lib/prism-next/config"
 import { heatmapGrid, heatmapAxisLabel } from "@/lib/prism-next/heatmap-layout"
 import { heatmapShowsCellLabels, heatmapDescription } from "@/lib/prism-next/heatmap-labels"
 export type { AxisItem, MatrixCell, ScatterPoint, BoxSummary } from "@/lib/prism-next/chart-data"
 type Shared={dataDisclosure?:ChartDataDisclosureMode;label:string;unit?:string;selectedId?:string;onSelect?:(id:string)=>void;height?:number}
-function useChartColors(){const {theme}=useTheme();return chartShapeColors(theme)}
+function useChartColors(){const {theme}=useChartTheme();return chartShapeColors(theme)}
 // ECharts 6.1 accepts pipe-separated triggers at runtime; its union omits this pair.
 const heatmapTooltipTrigger = "mousemove|click" as TooltipComponentOption["triggerOn"]
 function useWidth<T extends HTMLElement>() {
@@ -29,7 +28,7 @@ function useWidth<T extends HTMLElement>() {
  return [ref,width] as const
 }
 export function HeatmapChart({dataDisclosure="visible",rows,columns,cells,label,unit="",selectedId,onSelect,height=320,sequentialColors,compact=false}:Shared&{rows:AxisItem[];columns:AxisItem[];cells:MatrixCell[];sequentialColors?:SequentialColors;compact?:boolean}){
- const {theme}=useTheme();const palette=themePalette[theme as keyof typeof themePalette]??themePalette.light;const extent=matrixExtent(cells)
+ const {theme,palette}=useChartTheme();const extent=matrixExtent(cells)
  const [frame,width]=useWidth<HTMLDivElement>();const showCellLabels=heatmapShowsCellLabels(width,dataDisclosure,theme)
  const defaultColors=chartSequentialDefault(theme,palette.secondary) as SequentialColors
  const ramp=sequentialColors?.every(c=>/^#[0-9a-f]{6}$/i.test(c))?sequentialColors:defaultColors

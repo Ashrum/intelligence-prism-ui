@@ -1,10 +1,12 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId, useRef, type DragEvent, type ReactNode } from "react"
 import { GripVertical } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Label } from "@/components/coss/label"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"

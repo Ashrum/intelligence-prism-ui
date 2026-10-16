@@ -15,6 +15,29 @@
 
 依据 [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) §11.6，同步用户已批准的来源取舍；目标设计与实施门禁以该规范为准，现有 props/API 的已实现事实仍须核对源码和组件契约。未实现项不因定稿自动升级为可用。主题、字体、冻结 coss 和双仓边界继续有效；本轮仅同步规则，未完成 CI 修复或服务签认。
 
+## 局部主题与浮层容器（P74 · CI-11）
+
+源码：`components/prism-next/prism-scope.tsx`、`scoped-overlays.tsx`、`providers.tsx`。这是宿主接入契约，不增加组件目录条目。
+
+- `PrismScopeProvider({ portalContainer?, theme?, children })` 提供局部默认值。`portalContainer` 沿用 coss / Base UI 的 `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null`；`theme` 为现有 `PrismTheme`。Provider 不创建 DOM、不写 `html/body`、不调用 `setTheme`、不读写持久化。宿主必须令 `theme` 与其 DOM `data-prism-theme` 一致，并保留 `data-agent-preview` 隔离标记。
+- 新边界替换外层上下文；省略字段恢复原始默认，不合并外层值。这样嵌套核心主题可以明确退出蓝图。仅改变 DOM 属性不会自动更新 JS 图表主题，宿主需同步传入 `theme`。
+- `scoped-overlays.tsx` 的 `SelectPopup`、`ComboboxPopup`、`MenuPopup`、`MenuSubPopup`、`DialogPopup`、`PopoverPopup`、`TooltipPopup`、`DrawerPopup`、`ToastProvider` 复用冻结 coss。优先级为 **调用方显式 `portalProps.container` → 本层 `portalContainer` → Base UI 原始解析**；未设置 Context 时保留原有 props 与默认行为。Base UI 1.8.0 的原始解析为父 Portal 节点优先、无父 Portal 才到 body，并非所有嵌套浮层都直接落 body。
+- `null` 是明确“等待容器”的值，不回退到 body；已有 ref 的 `.current === null` 则沿用 Base UI 的父 Portal / body 回退，不能当作等待。默认展开场景应先挂载 ref 目标再挂载消费者，或用 `useState<HTMLElement | null>` 的 callback ref 显式等待；ref 目标被替换时应更新传入的元素/引用身份。容器须在正确主题根内、滚动或裁切容器之外，离页由宿主卸载。
+- 原 props、ref、定位、焦点、Escape、受控状态与业务回调继续交给 coss / Base UI。`MenuSubPopup` 新增合法的 `portalProps` 类型，保持 coss 的 `side="inline-end"`、`sideOffset=0`、默认 `align="start"` 与非 center 的 `alignOffset=-5`。父 Portal 继承只在没有显式容器/上下文覆盖时可用；宿主不能假定独立 inline 调用也会继承主题。
+- 已接入 W188 的 18 处 Agent 浮层、额外静态依赖扫描 24 处，以及旧 `QuestionWorkPanel` Drawer（在 Agent managed 路径不挂载，本轮一并补齐其容器默认）。逐项见 [调用清单](blueprint/evidence/portal-20261016/call-sites.json)。PromptBar / Voice / 紧凑分析 Popover 已有显式内部根容器，保持原行为。直接导入 coss 的其他宿主调用不会自动读取本上下文，沿用其公开 `portalProps` 或按需改用本适配层；这不是全仓浮层自动迁移。
+
+### Toast 归属
+
+`Providers` 新增可选 `toastPortalProps`（coss `ToastProviderProps['portalProps']`）和 `toastManager`。未传入时仍使用原全局 manager、body 默认目标及 bottom-right 位置。`toastPortalProps` 控制该 Provider **整条队列**，没有按事件来源或路由分流；把全局 Provider 随 Agent 路由切换容器会连同 AppBar、其他页面及存量 Toast 一起迁移，宿主不应这样实现来源隔离。
+
+Agent 局部通知使用 `PrismScopeProvider` 内的 scoped `ToastProvider`，传入独立、稳定的 `ToastPrimitive.createToastManager()`，页内组件用其最近的 `ToastPrimitive.useToastManager()`，或显式注入同一局部 manager。AppBar / 其他页继续全局 Provider / manager。局部 Provider 随 Agent 页卸载时，该局部队列丢弃；离页后仍调用已卸载 manager 的事件不投递到全局，也不会在重进页面时重放。若某项异步结果需要离页后显示，由宿主在发起时明确选全局通知归属，不由组件猜测。React 所有者在局部 Provider 外的业务（如外层题篮 Provider）需显式注入目标 scope / manager，DOM 位于 Agent 根内不等于 React Context 已接通。
+
+### 图表主题与验证边界
+
+`useChartTheme()` 优先使用本层 scope 的 `theme`，否则保持既有 next-themes `theme` 及 light 回退；热力图、箱线图和 ECharts 渲染层也读取同一入口。系列色、形状色、连续色阶仍来自 `lib/prism-next/chart-palette.ts`，核心三主题默认值与配置、调用方既有显式颜色覆盖不变。无新增色值、主题、令牌或字号。
+
+组件页 `/next/components/menu#portal-scope` 提供外层核心 / 内层蓝图、Select、AgentObjectPicker Combobox、子菜单、含 Select 的 Dialog、隔离 Toast 与图表的复验夹具。工程测试覆盖真实 React Context、冻结 coss 透传及 Base UI Portal 的 append/remove；开合/定位/焦点原语使用探针，不能代替浏览器验收。详见 [浏览器交接](blueprint/evidence/portal-20261016/browser-checklist.md) 和 [检查记录](blueprint/evidence/portal-20261016/checks.md)。
+
 ## 交互演示器 v0.1
 
 2026-09-27 · 设计候选，语义 **39 AgentInteractiveDemo**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-interactive-demo.tsx`；组件页 `#interactive-demo`。未合并分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`。

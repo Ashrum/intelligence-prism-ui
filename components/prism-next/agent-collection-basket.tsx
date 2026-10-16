@@ -1,13 +1,15 @@
 "use client"
 
+import { MenuPopup, DialogPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight, MoreHorizontal, X } from "lucide-react"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/coss/menu"
-import { Dialog, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "@/components/coss/dialog"
+import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
+import { Dialog, DialogHeader, DialogPanel, DialogTitle } from "@/components/coss/dialog"
 import { Separator } from "@/components/coss/separator"
 import { Label } from "@/components/coss/label"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Button } from "./button"
 import type { AgentRecordViewProps } from "./agent-record-parts"
 import { AgentMetaLine, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, AgentWell, type AgentVisualProps } from "./agent-visual-parts"

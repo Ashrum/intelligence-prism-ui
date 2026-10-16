@@ -1,5 +1,7 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
@@ -7,7 +9,7 @@ import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"

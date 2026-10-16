@@ -1,8 +1,10 @@
 "use client"
+
+import { MenuPopup } from "@/components/prism-next/scoped-overlays"
 import { Maximize, Layers, Star, MoreHorizontal, Flag, ArrowUp, ArrowDown, Copy, Pencil, X, FolderInput } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { ToolbarButton } from "@/components/coss/toolbar"
-import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuSeparator } from "@/components/coss/menu"
+import { Menu, MenuTrigger, MenuItem, MenuSeparator } from "@/components/coss/menu"
 
 export function QuestionActions({title,favorite,onFavorite,onRelated,onReport,onRead,onMove,onMoveGroup,first,last,onRemove,removeLabel,onCopy,onEdit}:{
  title:string;favorite?:boolean;onFavorite?:()=>void;onRelated?:()=>void;onReport?:()=>void;onRead?:()=>void;onMoveGroup?:()=>void

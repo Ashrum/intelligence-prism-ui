@@ -1,5 +1,7 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId, type ReactNode } from "react"
 import { ArrowLeft, ArrowUpRight, CircleAlert } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/coss/alert"
@@ -9,7 +11,7 @@ import { Fieldset, FieldsetLegend } from "@/components/coss/fieldset"
 import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"

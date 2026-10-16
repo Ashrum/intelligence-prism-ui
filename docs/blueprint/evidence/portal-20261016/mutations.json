@@ -1,0 +1,23 @@
+{
+  "method": "in-memory build/source overrides; production source never overwritten",
+  "total": 48,
+  "detected": 48,
+  "groups": [
+    {
+      "name": "independent JSX call-site binding regression",
+      "count": 43,
+      "test": "portal-scope.test.mjs: reverting each of the 43 call-site bindings"
+    },
+    {
+      "name": "scope forwarding removed / explicit priority lost / submenu bypass / Toast forwarding removed",
+      "count": 4,
+      "test": "portal-scope.test.mjs: context, explicit precedence, submenu and Toast regressions"
+    },
+    {
+      "name": "chart local theme removed",
+      "count": 1,
+      "test": "portal-scope.test.mjs: dropping the local chart theme"
+    }
+  ],
+  "limits": "Portal transport and source binding assertions; not visual, positioning or focus acceptance"
+}

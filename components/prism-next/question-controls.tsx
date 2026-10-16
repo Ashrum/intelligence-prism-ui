@@ -1,5 +1,7 @@
 "use client"
-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
+
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
 
 export function QuestionSelect({id,label,value,items,onChange,disabled=false}:{id?:string;disabled?:boolean;label:string;value:string;items:{value:string;label:string}[];onChange:(value:string)=>void}) {
