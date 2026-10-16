@@ -1,9 +1,11 @@
 "use client"
 
+import { DrawerPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useRef, type ComponentProps, type ReactNode, type RefObject } from "react"
 import { XIcon } from "lucide-react"
 import { Button } from "@/components/coss/button"
-import { Drawer, DrawerPopup, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerFooter, DrawerClose } from "@/components/coss/drawer"
+import { Drawer, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerFooter, DrawerClose } from "@/components/coss/drawer"
 
 /** Reuse coss's edge Drawer motion, with the work surface still usable. */
 export function QuestionWorkPanel({id,open,title,description,onClose,children,footer,footerVariant="default",headerActions,className="",scrollMemory,position="right",initialFocus,finalFocus,showCloseButton=true}:{id:string;open:boolean;title:string;description:string;onClose:()=>void;children:ReactNode;footer?:ReactNode;footerVariant?:ComponentProps<typeof DrawerFooter>["variant"];headerActions?:ReactNode;className?:string;scrollMemory?:RefObject<number>;position?:"right"|"bottom";initialFocus?:ComponentProps<typeof DrawerPopup>["initialFocus"];finalFocus?:ComponentProps<typeof DrawerPopup>["finalFocus"];showCloseButton?:boolean}) {

@@ -1,9 +1,11 @@
 "use client"
+
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 import {useLayoutEffect,useRef,type ReactNode,type KeyboardEvent,type RefObject} from 'react'
 import {Button} from './button'
-import {Badge as CossBadge} from '@/components/coss/badge'
-import {Select,SelectTrigger,SelectValue,SelectPopup,SelectItem} from '@/components/coss/select'
-import {ScrollArea} from '@/components/coss/scroll-area'
+import { Badge as CossBadge } from '@/components/coss/badge'
+import { Select, SelectTrigger, SelectValue, SelectItem } from '@/components/coss/select'
+import { ScrollArea } from '@/components/coss/scroll-area'
 import {ThinBar} from './question-analysis-parts'
 import './knowledge-rail.css'
 export type KnowledgeEvidence = {question:string;points:string[];label:ReactNode}

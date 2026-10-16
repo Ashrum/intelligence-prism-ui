@@ -1,7 +1,9 @@
 "use client"
+
+import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
 import { useLayoutEffect, useRef, type KeyboardEvent, type ReactNode } from "react"
 import { Button } from "./button"
-import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
+import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { Badge as CossBadge } from "@/components/coss/badge"
 import { ScrollArea } from "@/components/coss/scroll-area"

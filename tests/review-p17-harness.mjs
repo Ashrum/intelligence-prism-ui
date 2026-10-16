@@ -19,7 +19,8 @@ async function bundle(original) {
     stdin: { contents: names.map(name => `export * from './components/prism-next/${name}'; export * from './components/prism-next/demos/${name}';`).join('\n') + `
       export * from './components/prism-next/demos/review-workspace-fixtures';
       export {Collapsible,CollapsibleTrigger,CollapsiblePanel} from './components/coss/collapsible';
-      export {TooltipPopup,TooltipTrigger} from './components/coss/tooltip';
+      export {TooltipTrigger} from './components/coss/tooltip';
+      export {TooltipPopup} from './components/${original ? 'coss/tooltip' : 'prism-next/scoped-overlays'}';
       export {Button} from './components/coss/button';
     `, resolveDir: root, loader: 'tsx' },
     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false,

@@ -1,11 +1,13 @@
 "use client"
 
+import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useRef, type ComponentProps, type ReactNode } from "react"
 import { Check, ChevronDown, Circle, CircleAlert, CircleHelp, Clock3, Info, LoaderCircle, Unplug, X, type LucideIcon } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Button } from "@/components/coss/button"
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
-import { Popover, PopoverClose, PopoverPopup, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
+import { Popover, PopoverClose, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
 import { cn } from "@/lib/utils"
 
 /** Presentation metadata supplied explicitly by the host; never inferred from prose or clicks. */

@@ -12,6 +12,7 @@ await mkdir(dir, { recursive: true });
 const file = new URL('test-bundle.mjs', dir);
 const result = await build({ stdin: { contents: `
 export * from './components/prism-next/agent-visual-parts';
+export { PopoverPopup } from './components/prism-next/scoped-overlays';
 export * from './components/prism-next/agent-text-diff';
 export * from './components/prism-next/agent-semantic-components';
 export * from './components/prism-next/agent-candidate-picker';
@@ -69,7 +70,7 @@ test('source chip is a native keyboard-reachable dialog trigger; coss owns Escap
   }
   render(h(Probe));
   const trigger = nodes.find(n => n.type.name === 'PopoverTrigger');
-  const popup = nodes.find(n => n.type.name === 'PopoverPopup');
+  const popup = nodes.find(n => n.type === c.PopoverPopup);
   assert.strictEqual(popup.props.finalFocus, trigger.props.ref);
   assert.equal(trigger.props.onKeyDown, undefined);
   assert.ok(nodes.some(n => n.type.name === 'PopoverClose'));

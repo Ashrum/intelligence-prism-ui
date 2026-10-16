@@ -27,8 +27,9 @@ export function capture(name, props, theme = 'light') {
     return React.cloneElement(node, {}, React.Children.map(node.props.children, walk));
   }
   try {
-    const html = render(h(function Probe() { return walk(api[name](props)); }));
-    return { html, nodes, charts: globalThis.__p58Charts, theme: api.useChartTheme() };
+    let chartTheme;
+    const html = render(h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); }));
+    return { html, nodes, charts: globalThis.__p58Charts, theme: chartTheme };
   } finally { delete globalThis.__p58Theme; delete globalThis.__p58Charts; }
 }
 export const defaults = {

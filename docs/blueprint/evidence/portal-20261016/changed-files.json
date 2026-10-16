@@ -1,0 +1,263 @@
+{
+  "baseline": "e750a963d53da4a3bba1cf53500616ebff4b16d2",
+  "patch": "implementation.patch",
+  "patchSha256": "f032901a66068a69aef6837050123b9edb71593b1cd92dd649cfcb27e2828b2a",
+  "scope": "runtime, tests, contracts, STATUS and generated guide; evidence directory is supplied alongside patch",
+  "files": [
+    {
+      "path": "components/prism-next/agent-artifact-output.tsx",
+      "new": false,
+      "sha256": "46c3da1d434d4e25da7bdcf91c5e72ab771d8a132f7010b562f33e47de59ccb8"
+    },
+    {
+      "path": "components/prism-next/agent-capture-scan.tsx",
+      "new": false,
+      "sha256": "abe9b60b08bb62bfb3821595e5f36533b4cf70ef2e63c231a8af2d47a777e2d0"
+    },
+    {
+      "path": "components/prism-next/agent-collection-basket.tsx",
+      "new": false,
+      "sha256": "6d6912805c8de4c2c20d6174657fe1742cabbc8c668c2131ed041c76b6662e1d"
+    },
+    {
+      "path": "components/prism-next/agent-constraint-builder.tsx",
+      "new": false,
+      "sha256": "434967d8a27d9f30d0902a0468cccdfc374ec33bcb24ff29fb7e8a0b45831768"
+    },
+    {
+      "path": "components/prism-next/agent-distribution-matrix.tsx",
+      "new": false,
+      "sha256": "f0025e4491f0130d378ab1dcfa0207953f07d2016dbcf95dfdbac953f487bc8a"
+    },
+    {
+      "path": "components/prism-next/agent-material-pack.tsx",
+      "new": false,
+      "sha256": "1488d9b4cd1df1dfefe0a6a160ba97c8f8a774a80eab8abfb472058e7264feb4"
+    },
+    {
+      "path": "components/prism-next/agent-object-picker.tsx",
+      "new": false,
+      "sha256": "4d8eaee15258ea629c07667ee78d9e49236e663ee3137d8932a30c67876bb6e6"
+    },
+    {
+      "path": "components/prism-next/agent-parameter-config.tsx",
+      "new": false,
+      "sha256": "8b6a12788d708d1b608fb8e66c35d361e6e7f1e303849aa18eaf6331865cd3c8"
+    },
+    {
+      "path": "components/prism-next/agent-path-priority.tsx",
+      "new": false,
+      "sha256": "92614d679508509589da57c4d521d61a7ad69feaab37a661bfc634735165976a"
+    },
+    {
+      "path": "components/prism-next/agent-plan-builder.tsx",
+      "new": false,
+      "sha256": "ed04b365e1a349f08dcc1722e4652a724a4ef94c2c9f0a724765213409d87c8a"
+    },
+    {
+      "path": "components/prism-next/agent-structure-arranger.tsx",
+      "new": false,
+      "sha256": "7370664b87c359007fe3b87e84727a05fee1c557c2df7c7c6e2bfa5fd8239c42"
+    },
+    {
+      "path": "components/prism-next/agent-suggestion-set.tsx",
+      "new": false,
+      "sha256": "a7622e8c202bd99edcf27b632b2b5e8b8c585a84a2c1a94d4d60b3c221d2bee0"
+    },
+    {
+      "path": "components/prism-next/agent-template-picker.tsx",
+      "new": false,
+      "sha256": "27b5e9fa0e1383c0ef97a26dc2cd0f8efe62dda40374dea786eb5f57856cfed9"
+    },
+    {
+      "path": "components/prism-next/agent-visual-parts.tsx",
+      "new": false,
+      "sha256": "5c1817fa62b1daeef12fc45c63ac7ba1033d475cf2aabaf545356304093a6f03"
+    },
+    {
+      "path": "components/prism-next/charts/advanced-charts.tsx",
+      "new": false,
+      "sha256": "7a5e2c57ef2fea5c078e84214d4d9128a79e9ff79cfae9bd05f398bca60d2c80"
+    },
+    {
+      "path": "components/prism-next/charts/chart-legend.tsx",
+      "new": false,
+      "sha256": "ef5c006327271781977628b8094848d6fb48768c427ee193d9e5ef632f052345"
+    },
+    {
+      "path": "components/prism-next/charts/chart-theme.ts",
+      "new": false,
+      "sha256": "53bc72f294dadd6332788ed6b483af43437e7476c8d5d01b866ef5abb5bb134e"
+    },
+    {
+      "path": "components/prism-next/charts/echart.tsx",
+      "new": false,
+      "sha256": "347efc2dd727effffdecfeb9b6f3c4822c6b9c766cb0121f1ea5e042d5ccc516"
+    },
+    {
+      "path": "components/prism-next/data-display.tsx",
+      "new": false,
+      "sha256": "6442185ed8513eedc484eb053c269225c49ab6ed43e0aa0785dcb8ff66f970aa"
+    },
+    {
+      "path": "components/prism-next/demo-renderer.tsx",
+      "new": false,
+      "sha256": "f0a7eb672fcc793f2955f3ec38dc004cf381690642a3b935d84d39460fdb8827"
+    },
+    {
+      "path": "components/prism-next/dialog-layout.tsx",
+      "new": false,
+      "sha256": "c2acc5b7188b3c05401f6718e705ee0639474c62f17a99fa64a32820bd38a2d0"
+    },
+    {
+      "path": "components/prism-next/facet-filter.tsx",
+      "new": false,
+      "sha256": "24f7f65bcf6bb272fc89d873034759fe188ac93f6ee859e22429b8958e019fbd"
+    },
+    {
+      "path": "components/prism-next/knowledge-rail.tsx",
+      "new": false,
+      "sha256": "843f5af4f2fb4e1efe42bf60c48a6fe80478ee1b82252827b4b0b13df6d4a75e"
+    },
+    {
+      "path": "components/prism-next/paper-annotation-layer.tsx",
+      "new": false,
+      "sha256": "532d59c127cd3a3dc67e50fd680f83624bfcd518cafa6b31b3bf4cf91dbbf0f3"
+    },
+    {
+      "path": "components/prism-next/providers.tsx",
+      "new": false,
+      "sha256": "b850185809f887796041e910017be5e8243376a195fc3dd728d99f68ca70f090"
+    },
+    {
+      "path": "components/prism-next/question-actions.tsx",
+      "new": false,
+      "sha256": "5d45dc6b6f5e35a0ad4f48ecbf1939cdfcc7736aa8f67e406ab08a6e65fae3b7"
+    },
+    {
+      "path": "components/prism-next/question-analysis-parts.tsx",
+      "new": false,
+      "sha256": "f9d77aab94b4dc16895c46432897844f6543ec0f32d5bb32ba37c17bfaf53eee"
+    },
+    {
+      "path": "components/prism-next/question-controls.tsx",
+      "new": false,
+      "sha256": "04da8bfa77c60edee261caf670621ed93c1c59ad5f1c96533b53553bfb30414f"
+    },
+    {
+      "path": "components/prism-next/question-rail.tsx",
+      "new": false,
+      "sha256": "16edde175e85ffa01858b5d64c27ae24e1d0b09ad717ba14235e91cd43670e23"
+    },
+    {
+      "path": "components/prism-next/question-work-panel.tsx",
+      "new": false,
+      "sha256": "3ae33eee44749cb2e79f720808adfafe377d174ed69128e305cb39a0c60109e3"
+    },
+    {
+      "path": "components/prism-next/record-list.tsx",
+      "new": false,
+      "sha256": "0077f8a7bd6212166cf46061f56eb7b4ea9f8fc82f5f8c77f4d814dacba16bf3"
+    },
+    {
+      "path": "components/prism-next/review-parts.tsx",
+      "new": false,
+      "sha256": "0d45af5c7b15596d168adc623bbf8f5858e349eee4d2fe2b86f4820d0e473b3b"
+    },
+    {
+      "path": "components/prism-next/review-workspace.tsx",
+      "new": false,
+      "sha256": "2ba58ac08d909fcd2267d581717157bc9b0d8fe5dd1256b5097cb01fbb23afa9"
+    },
+    {
+      "path": "components/prism-next/textbook-directory.tsx",
+      "new": false,
+      "sha256": "9f609ac9bb698fdb1a8e39a87c6800b73ddb4bf9627b888a460142a6102ec3ff"
+    },
+    {
+      "path": "components/prism-next/textbook-range-picker.tsx",
+      "new": false,
+      "sha256": "901af067487e5da15bac8d1de58ebcd133dda29ef2ae861ed5aba779655fdc6e"
+    },
+    {
+      "path": "docs/blueprint/STATUS.md",
+      "new": false,
+      "sha256": "bedca84ffaf68952bdc94bf51972e1fd56dcbe9afcdb9f4e88807c7e23d58dc3"
+    },
+    {
+      "path": "docs/component-contracts.md",
+      "new": false,
+      "sha256": "b76100c043996eeaa9b21f92606a54fdd2c16728025d00b31e2cb08f66e54f9b"
+    },
+    {
+      "path": "lib/prism-next/blueprint-guide.json",
+      "new": false,
+      "sha256": "eb0743eb91fb9a3a8c5b7cc8532f5dc5623752ee26a496e6c79b90ce0f2938b7"
+    },
+    {
+      "path": "public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+      "new": false,
+      "sha256": "bedca84ffaf68952bdc94bf51972e1fd56dcbe9afcdb9f4e88807c7e23d58dc3"
+    },
+    {
+      "path": "tests/agent-visual-batch1.test.mjs",
+      "new": false,
+      "sha256": "89b7ec9331c8b7501e3c3d4e84fc6a2d0b1213099db7e5e8ddba0c20cf4dd6b7"
+    },
+    {
+      "path": "tests/facet-filter-harness.mjs",
+      "new": false,
+      "sha256": "7f71fab1d908fc168a6b2c6e4b742a57decd7ad9fece3201da0a9097cc3d58d1"
+    },
+    {
+      "path": "tests/heatmap-tooltip.test.mjs",
+      "new": false,
+      "sha256": "9299d90f813d37f8e91b9b1a152666c016958fb1aec64d6e971a50c767462da1"
+    },
+    {
+      "path": "tests/p57-chart-harness.mjs",
+      "new": false,
+      "sha256": "6b3728f7ec34df31528ee7bc004977278708156d5c8ee28be0a665dc49204ad1"
+    },
+    {
+      "path": "tests/p58-chart-harness.mjs",
+      "new": false,
+      "sha256": "c567b8245a94f4542fb5b4ec7c476cb95f51a6a2c5358fe5b8a260870811a78b"
+    },
+    {
+      "path": "tests/review-p17-harness.mjs",
+      "new": false,
+      "sha256": "a0e556bc1c97f74d11cdeccbd7b7d091e0d7fd1d8106759faeb7941063f19886"
+    },
+    {
+      "path": "components/prism-next/demos/portal-scope.tsx",
+      "new": true,
+      "sha256": "795a251dfe63b76e7b7c82bc8479ca5a4414f8da83db4528d8f65c47366fa2fa"
+    },
+    {
+      "path": "components/prism-next/prism-scope.tsx",
+      "new": true,
+      "sha256": "d11d0bdb16bbd0da461f34b3d6a1356ff79c59da27a61f71626a6f531139c2bf"
+    },
+    {
+      "path": "components/prism-next/scoped-overlays.tsx",
+      "new": true,
+      "sha256": "8bebb7585538ce7e64dcd63376a08c12609fc514a5e79232b9dd1218b3c1b38c"
+    },
+    {
+      "path": "tests/helpers/portal-scope-harness.mjs",
+      "new": true,
+      "sha256": "f39cb81b1356193940abbc6948df0a34fa620fe72422603700d9197e9a6369e6"
+    },
+    {
+      "path": "tests/portal-chart-options.test.mjs",
+      "new": true,
+      "sha256": "450fd7ac67d08544a5ba9962074ad93046763de818b16851c680c19a0956a1cb"
+    },
+    {
+      "path": "tests/portal-scope.test.mjs",
+      "new": true,
+      "sha256": "50c1b98133e836481dbb2c44123a1fed557f3418005bccead046360986ac770b"
+    }
+  ]
+}

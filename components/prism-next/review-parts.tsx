@@ -1,6 +1,8 @@
 "use client"
+
+import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
 import type { ReactElement, ReactNode } from "react"
-import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
+import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
 import { Kbd } from "@/components/coss/kbd"
 import { Meter, MeterTrack, MeterIndicator } from "@/components/coss/meter"
 import { Badge } from "./badge"

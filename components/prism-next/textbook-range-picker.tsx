@@ -1,13 +1,15 @@
 "use client"
 
+import { DialogPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
 import { Check, ChevronRight, ListChecks, Search, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/coss/dialog"
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/coss/dialog"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
 import { Label } from "@/components/coss/label"
-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
+import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { useDirectorySelection, type TextbookDefinition, type DirectorySelections } from "@/components/prism-next/textbook-directory"
 import { directoryLeaves, projectDirectory, summarizeDirectory, type DirectoryData, type DirectoryKind } from "@/lib/prism-next/textbook-directory"

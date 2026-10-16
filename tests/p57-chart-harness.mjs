@@ -29,8 +29,9 @@ export function capture(name, props, theme = 'light') {
     return React.cloneElement(node, {}, React.Children.map(node.props.children, walk));
   }
   try {
-    const html = render(h(function Probe() { return walk(api[name](props)); }));
-    return { html, nodes, charts: globalThis.__p57Charts, theme: api.useChartTheme() };
+    let chartTheme;
+    const html = render(h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); }));
+    return { html, nodes, charts: globalThis.__p57Charts, theme: chartTheme };
   } finally { delete globalThis.__p57Theme; delete globalThis.__p57Charts; }
 }
 export const heatmapProps = { label: '原热力矩阵', rows: [{ id: 'r', label: '长中文行' }], columns: [{ id: 'c', label: '列一' }, { id: 'd', label: '列二' }], cells: [{ id: 'zero', row: 'r', column: 'c', value: 0 }, { id: 'missing', row: 'r', column: 'd', value: null }] };

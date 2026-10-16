@@ -1,9 +1,11 @@
 "use client"
 
+import { DialogPopup } from "@/components/prism-next/scoped-overlays"
+
 import { Children, useId, type ComponentProps, type ReactNode } from "react"
 import { AlertCircle, ArrowRight, Check, Info, X, ZoomIn } from "lucide-react"
 import { Button, buttonVariants } from "@/components/coss/button"
-import { Dialog, DialogClose, DialogDescription, DialogPopup, DialogTitle } from "@/components/coss/dialog"
+import { Dialog, DialogClose, DialogDescription, DialogTitle } from "@/components/coss/dialog"
 import { Radio, RadioGroup, RadioPrimitive } from "@/components/coss/radio-group"
 import { Badge } from "./badge"
 import { cn } from "@/lib/utils"

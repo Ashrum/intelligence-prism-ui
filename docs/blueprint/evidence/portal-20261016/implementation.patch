@@ -1,0 +1,1527 @@
+diff --git a/components/prism-next/agent-artifact-output.tsx b/components/prism-next/agent-artifact-output.tsx
+index d2c6aae..6081cf9 100644
+--- a/components/prism-next/agent-artifact-output.tsx
++++ b/components/prism-next/agent-artifact-output.tsx
+@@ -1,10 +1,12 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, type ReactNode } from "react"
+ import { ArrowLeft, ArrowUpRight, Download } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Field, FieldLabel } from "@/components/coss/field"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { AgentStatus, type AgentStatusTone } from "./agent-visual-parts"
+ import { Button } from "./button"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-capture-scan.tsx b/components/prism-next/agent-capture-scan.tsx
+index c977f79..40cc2bf 100644
+--- a/components/prism-next/agent-capture-scan.tsx
++++ b/components/prism-next/agent-capture-scan.tsx
+@@ -1,11 +1,13 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useRef, type DragEvent, type ReactNode } from "react"
+ import { GripVertical } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Label } from "@/components/coss/label"
+ import { Progress, ProgressIndicator, ProgressTrack } from "@/components/coss/progress"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Badge } from "./badge"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+diff --git a/components/prism-next/agent-collection-basket.tsx b/components/prism-next/agent-collection-basket.tsx
+index 33b9e3a..9a6323d 100644
+--- a/components/prism-next/agent-collection-basket.tsx
++++ b/components/prism-next/agent-collection-basket.tsx
+@@ -1,13 +1,15 @@
+ "use client"
+ 
++import { MenuPopup, DialogPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useEffect, useId, useRef, useState, type ReactNode } from "react"
+ import { ArrowDown, ArrowUp, ArrowUpRight, MoreHorizontal, X } from "lucide-react"
+ import { Checkbox } from "@/components/coss/checkbox"
+-import { Menu, MenuItem, MenuPopup, MenuTrigger } from "@/components/coss/menu"
+-import { Dialog, DialogHeader, DialogPanel, DialogPopup, DialogTitle } from "@/components/coss/dialog"
++import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
++import { Dialog, DialogHeader, DialogPanel, DialogTitle } from "@/components/coss/dialog"
+ import { Separator } from "@/components/coss/separator"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Button } from "./button"
+ import type { AgentRecordViewProps } from "./agent-record-parts"
+ import { AgentMetaLine, AgentSourceChip, AgentStatus, AgentSurface, AgentVisibleMarkers, AgentWell, type AgentVisualProps } from "./agent-visual-parts"
+diff --git a/components/prism-next/agent-constraint-builder.tsx b/components/prism-next/agent-constraint-builder.tsx
+index a233dc1..2292916 100644
+--- a/components/prism-next/agent-constraint-builder.tsx
++++ b/components/prism-next/agent-constraint-builder.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, type ReactNode } from "react"
+ import { ArrowLeft, ArrowUpRight, CircleAlert } from "lucide-react"
+ import { Alert, AlertDescription, AlertTitle } from "@/components/coss/alert"
+@@ -9,7 +11,7 @@ import { Fieldset, FieldsetLegend } from "@/components/coss/fieldset"
+ import { Label } from "@/components/coss/label"
+ import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
+ import { Radio, RadioGroup } from "@/components/coss/radio-group"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-distribution-matrix.tsx b/components/prism-next/agent-distribution-matrix.tsx
+index 583addb..bc359e9 100644
+--- a/components/prism-next/agent-distribution-matrix.tsx
++++ b/components/prism-next/agent-distribution-matrix.tsx
+@@ -1,10 +1,12 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
+ import { ArrowLeft, ArrowUpRight, Check } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
+ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
+ import { Badge, type BadgeProps } from "./badge"
+ import { AgentStatus } from "./agent-visual-parts"
+diff --git a/components/prism-next/agent-material-pack.tsx b/components/prism-next/agent-material-pack.tsx
+index 05bd323..8ce8163 100644
+--- a/components/prism-next/agent-material-pack.tsx
++++ b/components/prism-next/agent-material-pack.tsx
+@@ -1,12 +1,14 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useMemo, useRef, type DragEvent, type ReactNode } from "react"
+ import { ArrowDown, ArrowUp, ArrowUpRight, GripVertical } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { Textarea } from "@/components/coss/textarea"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Badge } from "./badge"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+diff --git a/components/prism-next/agent-object-picker.tsx b/components/prism-next/agent-object-picker.tsx
+index e8f7400..e5f5057 100644
+--- a/components/prism-next/agent-object-picker.tsx
++++ b/components/prism-next/agent-object-picker.tsx
+@@ -1,9 +1,11 @@
+ "use client"
+ 
++import { ComboboxPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId } from "react"
+ import { Card } from "@/components/coss/card"
+ import { Checkbox } from "@/components/coss/checkbox"
+-import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxPopup } from "@/components/coss/combobox"
++import { Combobox, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/coss/combobox"
+ import { Label } from "@/components/coss/label"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+diff --git a/components/prism-next/agent-parameter-config.tsx b/components/prism-next/agent-parameter-config.tsx
+index b54ad26..35221d0 100644
+--- a/components/prism-next/agent-parameter-config.tsx
++++ b/components/prism-next/agent-parameter-config.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId } from "react"
+ import { ArrowLeft, ArrowUpRight } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+@@ -7,7 +9,7 @@ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
+ import { Radio, RadioGroup } from "@/components/coss/radio-group"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Switch } from "@/components/coss/switch"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+diff --git a/components/prism-next/agent-path-priority.tsx b/components/prism-next/agent-path-priority.tsx
+index 89e8fdc..4bad811 100644
+--- a/components/prism-next/agent-path-priority.tsx
++++ b/components/prism-next/agent-path-priority.tsx
+@@ -1,10 +1,12 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useRef, type DragEvent, type ReactNode } from "react"
+ import { GripVertical } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Badge } from "./badge"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+diff --git a/components/prism-next/agent-plan-builder.tsx b/components/prism-next/agent-plan-builder.tsx
+index a047ec7..3faf47a 100644
+--- a/components/prism-next/agent-plan-builder.tsx
++++ b/components/prism-next/agent-plan-builder.tsx
+@@ -1,11 +1,13 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, type ReactNode } from "react"
+ import { Card } from "@/components/coss/card"
+ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { Textarea } from "@/components/coss/textarea"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-structure-arranger.tsx b/components/prism-next/agent-structure-arranger.tsx
+index 91ebdc5..4749303 100644
+--- a/components/prism-next/agent-structure-arranger.tsx
++++ b/components/prism-next/agent-structure-arranger.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useMemo, useRef, type ReactNode, type DragEvent } from "react"
+ import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, GripVertical, Plus } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+@@ -7,7 +9,7 @@ import { Checkbox } from "@/components/coss/checkbox"
+ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-suggestion-set.tsx b/components/prism-next/agent-suggestion-set.tsx
+index eeb603a..017cb85 100644
+--- a/components/prism-next/agent-suggestion-set.tsx
++++ b/components/prism-next/agent-suggestion-set.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, type ReactNode } from "react"
+ import { Card } from "@/components/coss/card"
+ import { Checkbox } from "@/components/coss/checkbox"
+@@ -7,7 +9,7 @@ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { Textarea } from "@/components/coss/textarea"
+ import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { Button } from "./button"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-template-picker.tsx b/components/prism-next/agent-template-picker.tsx
+index 3a372e5..4539c7c 100644
+--- a/components/prism-next/agent-template-picker.tsx
++++ b/components/prism-next/agent-template-picker.tsx
+@@ -1,10 +1,12 @@
+ "use client"
+ 
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useState, type ReactNode } from "react"
+ import { Card } from "@/components/coss/card"
+ import { Checkbox } from "@/components/coss/checkbox"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
++import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
+ import { Button } from "./button"
+ import { AgentStatus } from "./agent-visual-parts"
+ import { RecordDetails, type AgentRecordViewProps } from "./agent-record-parts"
+diff --git a/components/prism-next/agent-visual-parts.tsx b/components/prism-next/agent-visual-parts.tsx
+index 02b4694..0237f1f 100644
+--- a/components/prism-next/agent-visual-parts.tsx
++++ b/components/prism-next/agent-visual-parts.tsx
+@@ -1,11 +1,13 @@
+ "use client"
+ 
++import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useRef, type ComponentProps, type ReactNode } from "react"
+ import { Check, ChevronDown, Circle, CircleAlert, CircleHelp, Clock3, Info, LoaderCircle, Unplug, X, type LucideIcon } from "lucide-react"
+ import { Card } from "@/components/coss/card"
+ import { Button } from "@/components/coss/button"
+ import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/components/coss/collapsible"
+-import { Popover, PopoverClose, PopoverPopup, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
++import { Popover, PopoverClose, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
+ import { cn } from "@/lib/utils"
+ 
+ /** Presentation metadata supplied explicitly by the host; never inferred from prose or clicks. */
+diff --git a/components/prism-next/charts/advanced-charts.tsx b/components/prism-next/charts/advanced-charts.tsx
+index 21be084..151850d 100644
+--- a/components/prism-next/charts/advanced-charts.tsx
++++ b/components/prism-next/charts/advanced-charts.tsx
+@@ -3,18 +3,17 @@ import { useEffect, useRef, useState } from "react"
+ import type { TooltipComponentOption } from "echarts"
+ import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
+ import { formatChartValue } from "@/lib/prism-next/chart-options"
+-import { useTheme } from "next-themes"
++import { useChartTheme } from "./chart-theme"
+ import { EChart } from "./echart"
+ import { DataRecordTable } from "../data-display"
+ import { matrixExtent, validBox, type AxisItem, type MatrixCell, type ScatterPoint, type BoxSummary } from "@/lib/prism-next/chart-data"
+ import { sequentialColor, contrastForeground, type SequentialColors } from "@/lib/prism-next/chart-color"
+ import { chartShapeColors, chartSequentialDefault } from "@/lib/prism-next/chart-palette"
+-import { themePalette } from "@/lib/prism-next/config"
+ import { heatmapGrid, heatmapAxisLabel } from "@/lib/prism-next/heatmap-layout"
+ import { heatmapShowsCellLabels, heatmapDescription } from "@/lib/prism-next/heatmap-labels"
+ export type { AxisItem, MatrixCell, ScatterPoint, BoxSummary } from "@/lib/prism-next/chart-data"
+ type Shared={dataDisclosure?:ChartDataDisclosureMode;label:string;unit?:string;selectedId?:string;onSelect?:(id:string)=>void;height?:number}
+-function useChartColors(){const {theme}=useTheme();return chartShapeColors(theme)}
++function useChartColors(){const {theme}=useChartTheme();return chartShapeColors(theme)}
+ // ECharts 6.1 accepts pipe-separated triggers at runtime; its union omits this pair.
+ const heatmapTooltipTrigger = "mousemove|click" as TooltipComponentOption["triggerOn"]
+ function useWidth<T extends HTMLElement>() {
+@@ -29,7 +28,7 @@ function useWidth<T extends HTMLElement>() {
+  return [ref,width] as const
+ }
+ export function HeatmapChart({dataDisclosure="visible",rows,columns,cells,label,unit="",selectedId,onSelect,height=320,sequentialColors,compact=false}:Shared&{rows:AxisItem[];columns:AxisItem[];cells:MatrixCell[];sequentialColors?:SequentialColors;compact?:boolean}){
+- const {theme}=useTheme();const palette=themePalette[theme as keyof typeof themePalette]??themePalette.light;const extent=matrixExtent(cells)
++ const {theme,palette}=useChartTheme();const extent=matrixExtent(cells)
+  const [frame,width]=useWidth<HTMLDivElement>();const showCellLabels=heatmapShowsCellLabels(width,dataDisclosure,theme)
+  const defaultColors=chartSequentialDefault(theme,palette.secondary) as SequentialColors
+  const ramp=sequentialColors?.every(c=>/^#[0-9a-f]{6}$/i.test(c))?sequentialColors:defaultColors
+diff --git a/components/prism-next/charts/chart-legend.tsx b/components/prism-next/charts/chart-legend.tsx
+index cda0324..225d90d 100644
+--- a/components/prism-next/charts/chart-legend.tsx
++++ b/components/prism-next/charts/chart-legend.tsx
+@@ -1,9 +1,11 @@
+ "use client"
+ 
++import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
++
+ import type { ReactNode } from "react"
+ import { CircleHelp } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+-import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
++import { Popover, PopoverTrigger } from "@/components/coss/popover"
+ import { chartToneColor, type ChartTone, type ChartTheme } from "@/lib/prism-next/polar-chart-options"
+ import { useChartTheme } from "./chart-theme"
+ 
+diff --git a/components/prism-next/charts/chart-theme.ts b/components/prism-next/charts/chart-theme.ts
+index ba40651..925fe02 100644
+--- a/components/prism-next/charts/chart-theme.ts
++++ b/components/prism-next/charts/chart-theme.ts
+@@ -2,4 +2,5 @@
+ import {useTheme} from 'next-themes'
+ import {themePalette} from '@/lib/prism-next/config'
+ import {chartSeriesColors} from '@/lib/prism-next/chart-palette'
+-export function useChartTheme(){const {theme}=useTheme();return {theme,palette:themePalette[theme as keyof typeof themePalette]??themePalette.light,colors:chartSeriesColors(theme)}}
++import {usePrismScope} from '../prism-scope'
++export function useChartTheme(){const {theme:globalTheme}=useTheme();const {theme:localTheme}=usePrismScope();const theme=localTheme??globalTheme;return {theme,palette:themePalette[theme as keyof typeof themePalette]??themePalette.light,colors:chartSeriesColors(theme)}}
+diff --git a/components/prism-next/charts/echart.tsx b/components/prism-next/charts/echart.tsx
+index d9a44c1..3d30c3b 100644
+--- a/components/prism-next/charts/echart.tsx
++++ b/components/prism-next/charts/echart.tsx
+@@ -1,6 +1,6 @@
+ "use client"
+ import { useEffect, useRef, useState } from "react"
+-import { useTheme } from "next-themes"
++import { useChartTheme } from "./chart-theme"
+ import type { EChartsOption } from "echarts"
+ import type { ECharts } from "echarts/core"
+ import { themeAxes } from "@/lib/prism-next/chart-options"
+@@ -14,7 +14,7 @@ export function loadChartEngine(){return engine??=import("./echart-engine")}
+ export function EChart({option,label,height=300,onSelect,preserveItemTooltip=false,resolveLayout}:{option:EChartsOption;label:string;height?:number;onSelect?:(id:string,seriesId?:string)=>void;preserveItemTooltip?:boolean;resolveLayout?:(option:EChartsOption,width:number,height:number)=>EChartsOption}){
+  const node=useRef<HTMLDivElement>(null),chart=useRef<ECharts|null>(null),latest=useRef({option,onSelect,label,theme:"light",preserveItemTooltip,resolveLayout})
+  const tooltip=useRef(createItemTooltipTracker())
+- const {theme}=useTheme();latest.current={option,onSelect,label,theme:theme??"light",preserveItemTooltip,resolveLayout}
++ const {theme}=useChartTheme();latest.current={option,onSelect,label,theme:theme??"light",preserveItemTooltip,resolveLayout}
+  const [error,setError]=useState(false)
+  useEffect(()=>{
+   let gone=false;let observer:ResizeObserver|undefined
+diff --git a/components/prism-next/data-display.tsx b/components/prism-next/data-display.tsx
+index 8865603..7759f14 100644
+--- a/components/prism-next/data-display.tsx
++++ b/components/prism-next/data-display.tsx
+@@ -1,8 +1,10 @@
+ "use client"
++
++import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
+ import { useId, type ReactNode } from "react"
+ import { CircleHelp } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+-import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
++import { Popover, PopoverTrigger } from "@/components/coss/popover"
+ import { metricVisualModel, type MetricVisual } from "@/lib/prism-next/metric-visual"
+ import { Progress } from "@/components/coss/progress"
+ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
+diff --git a/components/prism-next/demo-renderer.tsx b/components/prism-next/demo-renderer.tsx
+index 17acdcc..389862c 100644
+--- a/components/prism-next/demo-renderer.tsx
++++ b/components/prism-next/demo-renderer.tsx
+@@ -21,4 +21,5 @@ const chartDemos=Object.fromEntries(["metric-summary","trend-chart","comparison-
+ const learningDemos=Object.fromEntries(["evaluation","diagnosis","goals","learning-plan","goal-milestones","workload-calendar","answer-review-map"].map(kind=>[kind,lazy(()=>import("./demos/learning-components").then(m=>({default:()=> <m.LearningComponentDemo kind={kind}/>})))]))
+ export const demos:Record<string,React.ComponentType>={"donut-chart":lazy(()=>import("./demos/polar-charts").then(m=>({default:m.DonutChartDemo}))),"radar-chart":lazy(()=>import("./demos/polar-charts").then(m=>({default:m.RadarChartDemo}))),"facet-filter":lazy(()=>import("./demos/facet-filter").then(m=>({default:m.FacetFilterDemo}))),"segmented-bar":lazy(()=>import("./demos/segmented-bar").then(m=>({default:m.SegmentedBarDemo}))),"error-cause-review":lazy(()=>import("./demos/error-cause-review").then(m=>({default:m.ErrorCauseReviewDemo}))),"student-paper-report":lazy(()=>import("./demos/student-paper-report").then(m=>({default:m.StudentPaperReportDemo}))),"dialog-layout":lazy(()=>import("./demos/dialog-layout").then(m=>({default:m.DialogLayoutDemo}))),"review-tools":lazy(()=>import("./demos/review-tools").then(m=>({default:m.ReviewToolsDemo}))),"knowledge-rail":lazy(()=>import("./demos/knowledge-rail").then(m=>({default:m.KnowledgeRailDemo}))),"student-control-bar":lazy(()=>import("./demos/student-control-bar").then(m=>({default:m.StudentControlBarDemo}))),"question-analysis-card":lazy(()=>import("./demos/question-analysis-card").then(m=>({default:m.QuestionAnalysisCardDemo}))),"question-analysis-panel":lazy(()=>import("./demos/question-analysis-panel").then(m=>({default:m.QuestionAnalysisPanelDemo}))),"question-inspector":lazy(()=>import("./demos/question-inspector").then(m=>({default:m.QuestionInspectorDemo}))),"review-switcher":lazy(()=>import("./demos/review-switcher").then(m=>({default:m.ReviewSwitcherDemo}))),"question-rail":lazy(()=>import("./demos/question-rail").then(m=>({default:m.QuestionRailDemo}))),"review-workspace":lazy(()=>import("./demos/review-workspace").then(m=>({default:m.ReviewWorkspaceDemo}))),"record-list":lazy(()=>import("./demos/record-list").then(m=>({default:m.RecordListDemo}))),"score-review":lazy(()=>import("./demos/score-review").then(m=>({default:m.ScoreReviewDemo}))),"queue-board":lazy(()=>import("./demos/queue-board").then(m=>({default:m.QueueBoardDemo}))),"data-station":lazy(()=>import("./demos/data-station").then(m=>({default:m.DataStationDemo}))),"material-intake":lazy(()=>import("./demos/material-intake").then(m=>({default:m.MaterialIntakeDemo}))),attachment:lazy(()=>import("./demos/attachment").then(m=>({default:m.AttachmentDemo}))),"instrument-panel":lazy(()=>import("./demos/instrument-panel").then(m=>({default:m.InstrumentPanelDemo}))),stepper:StepperDemo,"paper-preview":lazy(()=>import("./demos/paper-preview").then(m=>({default:m.PaperPreviewDemo}))),...actionDemos,...formDemos,...contentDemos,...feedbackDemos,...navigationDemos,...overlayDemos,...chartDemos,...learningDemos,'agent-components':lazy(()=>import('./demos/agent-components-page').then(m=>({default:m.AgentComponentsPage}))),icons:IconCatalogDemo,'date-picker':DatePickerDemo,tree:TreeDirectoryDemo,question:QuestionComponent}
+ const particles:Record<string,React.ComponentType>={select:SelectParticles,combobox:ComboboxParticles,'input-group':SearchInputParticle,'number-field':NumberRangeParticle,table:MaterialTableParticle,dialog:DialogParticles}
+-export function DemoRenderer({id}:{id:string}) { const Demo=demos[id];const Particles=particles[id];return Demo?<Suspense fallback={<p role="status">正在加载组件…</p>}><Demo/>{Particles&&<Particles/>}</Suspense>:<p>未找到此组件。</p> }
++const PortalScopeDemo=lazy(()=>import("./demos/portal-scope").then(m=>({default:m.PortalScopeDemo})))
++export function DemoRenderer({id}:{id:string}) { const Demo=demos[id];const Particles=particles[id];return Demo?<Suspense fallback={<p role="status">正在加载组件…</p>}><Demo/>{Particles&&<Particles/>}{id==="menu"&&<PortalScopeDemo/>}</Suspense>:<p>未找到此组件。</p> }
+diff --git a/components/prism-next/dialog-layout.tsx b/components/prism-next/dialog-layout.tsx
+index 180422d..1661db8 100644
+--- a/components/prism-next/dialog-layout.tsx
++++ b/components/prism-next/dialog-layout.tsx
+@@ -1,9 +1,11 @@
+ "use client"
+ 
++import { DialogPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { Children, useId, type ComponentProps, type ReactNode } from "react"
+ import { AlertCircle, ArrowRight, Check, Info, X, ZoomIn } from "lucide-react"
+ import { Button, buttonVariants } from "@/components/coss/button"
+-import { Dialog, DialogClose, DialogDescription, DialogPopup, DialogTitle } from "@/components/coss/dialog"
++import { Dialog, DialogClose, DialogDescription, DialogTitle } from "@/components/coss/dialog"
+ import { Radio, RadioGroup, RadioPrimitive } from "@/components/coss/radio-group"
+ import { Badge } from "./badge"
+ import { cn } from "@/lib/utils"
+diff --git a/components/prism-next/facet-filter.tsx b/components/prism-next/facet-filter.tsx
+index 7a4bb24..8170d44 100644
+--- a/components/prism-next/facet-filter.tsx
++++ b/components/prism-next/facet-filter.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { TooltipPopup, PopoverPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useEffect, useId, useRef, useState, type ReactNode } from "react"
+ import { Circle, Info, ListFilter, Search, Star, ChevronDown, ChevronUp } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+@@ -7,12 +9,12 @@ import { Badge } from "@/components/coss/badge"
+ import { FramePanel } from "@/components/coss/frame"
+ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
+ import { Tabs, TabsList, TabsTab } from "@/components/coss/tabs"
+-import { Tooltip, TooltipPopup, TooltipTrigger } from "@/components/coss/tooltip"
++import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
+ import { Input } from "@/components/coss/input"
+ import { Label } from "@/components/coss/label"
+ import { Toggle } from "@/components/coss/toggle"
+ import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
+-import { Popover, PopoverClose, PopoverPopup, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
++import { Popover, PopoverClose, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
+ import { dimensionSelection, filterIntent, fittingOptions, type FacetFilterDimension, type FacetFilterOption, type FacetFilterProps, type FacetFilterIntent } from "./facet-filter-types"
+ import "./facet-filter.css"
+ export type { FacetFilterProps, FacetFilterValue, FacetFilterIntent, FacetFilterDimension, FacetFilterOption } from "./facet-filter-types"
+diff --git a/components/prism-next/knowledge-rail.tsx b/components/prism-next/knowledge-rail.tsx
+index ee46bee..cd9bb4e 100644
+--- a/components/prism-next/knowledge-rail.tsx
++++ b/components/prism-next/knowledge-rail.tsx
+@@ -1,9 +1,11 @@
+ "use client"
++
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+ import {useLayoutEffect,useRef,type ReactNode,type KeyboardEvent,type RefObject} from 'react'
+ import {Button} from './button'
+-import {Badge as CossBadge} from '@/components/coss/badge'
+-import {Select,SelectTrigger,SelectValue,SelectPopup,SelectItem} from '@/components/coss/select'
+-import {ScrollArea} from '@/components/coss/scroll-area'
++import { Badge as CossBadge } from '@/components/coss/badge'
++import { Select, SelectTrigger, SelectValue, SelectItem } from '@/components/coss/select'
++import { ScrollArea } from '@/components/coss/scroll-area'
+ import {ThinBar} from './question-analysis-parts'
+ import './knowledge-rail.css'
+ export type KnowledgeEvidence = {question:string;points:string[];label:ReactNode}
+diff --git a/components/prism-next/paper-annotation-layer.tsx b/components/prism-next/paper-annotation-layer.tsx
+index d079f65..1b27af8 100644
+--- a/components/prism-next/paper-annotation-layer.tsx
++++ b/components/prism-next/paper-annotation-layer.tsx
+@@ -1,7 +1,9 @@
+ "use client"
+ 
++import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
++
+ import type { CSSProperties, ReactNode } from "react"
+-import { Tooltip, TooltipPopup, TooltipProvider, TooltipTrigger } from "@/components/coss/tooltip"
++import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/coss/tooltip"
+ 
+ export type PaperAnnotation = {
+   id: string
+diff --git a/components/prism-next/providers.tsx b/components/prism-next/providers.tsx
+index 2e0c19f..83e1219 100644
+--- a/components/prism-next/providers.tsx
++++ b/components/prism-next/providers.tsx
+@@ -3,15 +3,23 @@
+ import { ThemeProvider } from "next-themes"
+ import { MotionConfig } from "motion/react"
+ import { TooltipProvider } from "@/components/coss/tooltip"
+-import { ToastProvider } from "@/components/coss/toast"
++import type { ToastProviderProps } from "@/components/coss/toast"
++import { ToastProvider } from "./scoped-overlays"
+ import { themeOptions } from "@/lib/prism-next/config"
+ 
+ const themes = themeOptions.map(option => option.value)
+ 
+-export function Providers({children}:{children:React.ReactNode}) {
++export type ProvidersProps = {
++  children: React.ReactNode
++  /** Controls this provider's entire toast queue; use separate managers for separate page scopes. */
++  toastPortalProps?: ToastProviderProps["portalProps"]
++  toastManager?: ToastProviderProps["toastManager"]
++}
++
++export function Providers({children, toastPortalProps, toastManager}:ProvidersProps) {
+   return <ThemeProvider attribute="data-prism-theme" themes={themes} defaultTheme="light" enableSystem={false} enableColorScheme={false} storageKey="prism-v1-theme" disableTransitionOnChange>
+     <MotionConfig reducedMotion="user">
+-      <TooltipProvider delay={400}><ToastProvider position="bottom-right">{children}</ToastProvider></TooltipProvider>
++      <TooltipProvider delay={400}><ToastProvider position="bottom-right" portalProps={toastPortalProps} {...(toastManager === undefined ? {} : { toastManager })}>{children}</ToastProvider></TooltipProvider>
+     </MotionConfig>
+   </ThemeProvider>
+ }
+diff --git a/components/prism-next/question-actions.tsx b/components/prism-next/question-actions.tsx
+index a6d0642..7caf92a 100644
+--- a/components/prism-next/question-actions.tsx
++++ b/components/prism-next/question-actions.tsx
+@@ -1,8 +1,10 @@
+ "use client"
++
++import { MenuPopup } from "@/components/prism-next/scoped-overlays"
+ import { Maximize, Layers, Star, MoreHorizontal, Flag, ArrowUp, ArrowDown, Copy, Pencil, X, FolderInput } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+ import { ToolbarButton } from "@/components/coss/toolbar"
+-import { Menu, MenuTrigger, MenuPopup, MenuItem, MenuSeparator } from "@/components/coss/menu"
++import { Menu, MenuTrigger, MenuItem, MenuSeparator } from "@/components/coss/menu"
+ 
+ export function QuestionActions({title,favorite,onFavorite,onRelated,onReport,onRead,onMove,onMoveGroup,first,last,onRemove,removeLabel,onCopy,onEdit}:{
+  title:string;favorite?:boolean;onFavorite?:()=>void;onRelated?:()=>void;onReport?:()=>void;onRead?:()=>void;onMoveGroup?:()=>void
+diff --git a/components/prism-next/question-analysis-parts.tsx b/components/prism-next/question-analysis-parts.tsx
+index 57c267b..83549d0 100644
+--- a/components/prism-next/question-analysis-parts.tsx
++++ b/components/prism-next/question-analysis-parts.tsx
+@@ -1,8 +1,10 @@
+ "use client"
++
++import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
+ import type {ReactElement} from 'react'
+-import {Tooltip,TooltipTrigger,TooltipPopup} from '@/components/coss/tooltip'
+-import {Kbd} from '@/components/coss/kbd'
+-import {Meter,MeterTrack,MeterIndicator} from '@/components/coss/meter'
++import { Tooltip, TooltipTrigger } from '@/components/coss/tooltip'
++import { Kbd } from '@/components/coss/kbd'
++import { Meter, MeterTrack, MeterIndicator } from '@/components/coss/meter'
+ export function Tip({label,keys,children}:{label:string;keys:string;children:ReactElement}){return <Tooltip><TooltipTrigger render={children}/><TooltipPopup className="surface-floating motion-reduce:transition-none" side="left">{label} <Kbd>{keys}</Kbd></TooltipPopup></Tooltip>}
+ export function Rate({value,label}:{value:number;label:string}){return <div className="flex items-center gap-2"><div className="min-w-0 flex-1"><Meter value={value} max={100} aria-label={label}><MeterTrack><MeterIndicator className="motion-reduce:transition-none"/></MeterTrack></Meter></div><span className="text-ui-meta tabular-nums">{value}%</span></div>}
+ export function ThinBar({value}:{value:number}){return <span aria-hidden="true" className="block h-1 flex-1 overflow-hidden rounded-full bg-muted"><span className="block h-full bg-foreground" style={{width:`${Number.isFinite(value)?Math.max(0,Math.min(100,value)):0}%`}}/></span>}
+diff --git a/components/prism-next/question-controls.tsx b/components/prism-next/question-controls.tsx
+index 52756ac..859099f 100644
+--- a/components/prism-next/question-controls.tsx
++++ b/components/prism-next/question-controls.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
++
++import { SelectPopup } from "@/components/prism-next/scoped-overlays"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
+ import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
+ 
+ export function QuestionSelect({id,label,value,items,onChange,disabled=false}:{id?:string;disabled?:boolean;label:string;value:string;items:{value:string;label:string}[];onChange:(value:string)=>void}) {
+diff --git a/components/prism-next/question-rail.tsx b/components/prism-next/question-rail.tsx
+index 8903787..2cb73b5 100644
+--- a/components/prism-next/question-rail.tsx
++++ b/components/prism-next/question-rail.tsx
+@@ -1,7 +1,9 @@
+ "use client"
++
++import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
+ import { useLayoutEffect, useRef, type KeyboardEvent, type ReactNode } from "react"
+ import { Button } from "./button"
+-import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
++import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
+ import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
+ import { Badge as CossBadge } from "@/components/coss/badge"
+ import { ScrollArea } from "@/components/coss/scroll-area"
+diff --git a/components/prism-next/question-work-panel.tsx b/components/prism-next/question-work-panel.tsx
+index 19ac851..2457dac 100644
+--- a/components/prism-next/question-work-panel.tsx
++++ b/components/prism-next/question-work-panel.tsx
+@@ -1,9 +1,11 @@
+ "use client"
+ 
++import { DrawerPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useRef, type ComponentProps, type ReactNode, type RefObject } from "react"
+ import { XIcon } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+-import { Drawer, DrawerPopup, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerFooter, DrawerClose } from "@/components/coss/drawer"
++import { Drawer, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerFooter, DrawerClose } from "@/components/coss/drawer"
+ 
+ /** Reuse coss's edge Drawer motion, with the work surface still usable. */
+ export function QuestionWorkPanel({id,open,title,description,onClose,children,footer,footerVariant="default",headerActions,className="",scrollMemory,position="right",initialFocus,finalFocus,showCloseButton=true}:{id:string;open:boolean;title:string;description:string;onClose:()=>void;children:ReactNode;footer?:ReactNode;footerVariant?:ComponentProps<typeof DrawerFooter>["variant"];headerActions?:ReactNode;className?:string;scrollMemory?:RefObject<number>;position?:"right"|"bottom";initialFocus?:ComponentProps<typeof DrawerPopup>["initialFocus"];finalFocus?:ComponentProps<typeof DrawerPopup>["finalFocus"];showCloseButton?:boolean}) {
+diff --git a/components/prism-next/record-list.tsx b/components/prism-next/record-list.tsx
+index b1aba4a..e753e95 100644
+--- a/components/prism-next/record-list.tsx
++++ b/components/prism-next/record-list.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { MenuPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useId, useState, type ReactNode } from "react"
+ import { Bookmark, ChevronRight, Circle, MoreHorizontal, Star } from "lucide-react"
+ import { Badge } from "@/components/coss/badge"
+@@ -7,10 +9,10 @@ import { Button } from "@/components/coss/button"
+ import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
+ import { Empty } from "@/components/coss/empty"
+ import { Input } from "@/components/coss/input"
+-import { Menu, MenuTrigger, MenuPopup, MenuItem } from "@/components/coss/menu"
++import { Menu, MenuTrigger, MenuItem } from "@/components/coss/menu"
+ import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "@/components/coss/pagination"
+ import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
+ import { Skeleton } from "@/components/coss/skeleton"
+ import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
+ import { Toggle } from "@/components/coss/toggle"
+diff --git a/components/prism-next/review-parts.tsx b/components/prism-next/review-parts.tsx
+index 968bc1a..e7bd159 100644
+--- a/components/prism-next/review-parts.tsx
++++ b/components/prism-next/review-parts.tsx
+@@ -1,6 +1,8 @@
+ "use client"
++
++import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
+ import type { ReactElement, ReactNode } from "react"
+-import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
++import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
+ import { Kbd } from "@/components/coss/kbd"
+ import { Meter, MeterTrack, MeterIndicator } from "@/components/coss/meter"
+ import { Badge } from "./badge"
+diff --git a/components/prism-next/review-workspace.tsx b/components/prism-next/review-workspace.tsx
+index 41ecf81..c7ff884 100644
+--- a/components/prism-next/review-workspace.tsx
++++ b/components/prism-next/review-workspace.tsx
+@@ -1,7 +1,9 @@
+ "use client"
++
++import { DialogPopup } from "@/components/prism-next/scoped-overlays"
+ import type { CSSProperties, KeyboardEvent, ReactNode, RefObject } from "react"
+ import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
+-import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
++import { Dialog, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
+ import { Kbd } from "@/components/coss/kbd"
+ import "./review-workspace.css"
+ export { PAPER_REVIEW_BEST_WIDTH, railBand, railCollapsedForWidth, type RailPreferences } from "./review-workspace-layout"
+diff --git a/components/prism-next/textbook-directory.tsx b/components/prism-next/textbook-directory.tsx
+index 906b93d..a176b2d 100644
+--- a/components/prism-next/textbook-directory.tsx
++++ b/components/prism-next/textbook-directory.tsx
+@@ -1,5 +1,7 @@
+ "use client"
+ 
++import { SelectPopup, MenuPopup, TooltipPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { checkboxesFeature, hotkeysCoreFeature, syncDataLoaderFeature, type TreeInstance } from "@headless-tree/core"
+ import { useTree } from "@headless-tree/react"
+ import { ArrowRightLeft, ChevronRight, Search, X } from "lucide-react"
+@@ -8,12 +10,12 @@ import { Button } from "@/components/coss/button"
+ import { Toggle } from "@/components/coss/toggle"
+ import { Checkbox } from "@/components/coss/checkbox"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
+-import { Menu, MenuTrigger, MenuPopup, MenuRadioGroup, MenuRadioItem } from "@/components/coss/menu"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
++import { Menu, MenuTrigger, MenuRadioGroup, MenuRadioItem } from "@/components/coss/menu"
+ import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
+ import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/coss/input-group"
+ import { ScrollArea } from "@/components/coss/scroll-area"
+-import { Tooltip, TooltipTrigger, TooltipPopup } from "@/components/coss/tooltip"
++import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
+ import { Tree, TreeItem, TreeItemLabel } from "@/components/prism-next/tree"
+ import { directoryLeaves, summarizeDirectory, projectDirectory, type DirectoryData, type DirectoryKind, type DirectoryNode } from "@/lib/prism-next/textbook-directory"
+ import { cn } from "@/lib/utils"
+diff --git a/components/prism-next/textbook-range-picker.tsx b/components/prism-next/textbook-range-picker.tsx
+index e85b555..9d0faa0 100644
+--- a/components/prism-next/textbook-range-picker.tsx
++++ b/components/prism-next/textbook-range-picker.tsx
+@@ -1,13 +1,15 @@
+ "use client"
+ 
++import { DialogPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
++
+ import { useEffect, useId, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
+ import { Check, ChevronRight, ListChecks, Search, X } from "lucide-react"
+ import { Button } from "@/components/coss/button"
+ import { Checkbox } from "@/components/coss/checkbox"
+-import { Dialog, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/coss/dialog"
++import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/coss/dialog"
+ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
+ import { Label } from "@/components/coss/label"
+-import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem } from "@/components/coss/select"
++import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
+ import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
+ import { useDirectorySelection, type TextbookDefinition, type DirectorySelections } from "@/components/prism-next/textbook-directory"
+ import { directoryLeaves, projectDirectory, summarizeDirectory, type DirectoryData, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index 5077fad..4e8ae43 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,20 @@
+ 
+ ## 当前
+ 
++
++- 轮次：P74 · Agent 浮层容器契约补齐（R2 后续 / CI-11）· 2026-10-16；开工基线 `e750a963d53da4a3bba1cf53500616ebff4b16d2`，分支 `fix/agent-portal-container`，开工工作树干净。[基线](evidence/portal-20261016/baseline.json)。
++- 授权与分工：Supervisor `task-P74.md` + `builder-preamble.md`；Builder 实现与工程自测，浏览器由 Supervisor 执行。未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
++- 范围：统一 `PrismScopeProvider` + `scoped-overlays`，补齐 18 处 Agent / 24 处静态依赖 / 1 处旧 Drawer；公开子菜单容器契约、Providers 受控 Toast 入口和局部图表主题。只替换相关 Popup import，不给 18 个业务组件逐一加 prop；热力图、箱线图及 ECharts 渲染层同用局部主题。现有 Menu 页增加嵌套复验夹具。详见[复用取舍](evidence/portal-20261016/inspection.md)、[调用清单](evidence/portal-20261016/call-sites.json)及[新契约](../component-contracts.md)。
++- 兼容边界：显式目标优先，未提供 scope 保留原始父 Portal / body 默认；null 等待、未附着 ref 回退严格沿用 Base UI。Toast 容器按整队列控制，Agent 页内通知须独立 manager，AppBar/其他页仍全局；离页局部队列卸载。核心主题令牌、默认色板和配置、冻结 coss、目录与依赖不改，新增 API 不写 DOM 主题或持久化。
++- 工程：新增 16 项测试；含旧夹具修复的定向复验 86/86 通过；43 处绑定回退 + 4 个挂载透传/优先级回退 + 1 个局部图表回退，共 48/48 内存变异检出。真实 React Context / Base UI Portal append/remove 与队列隔离是工程证据，原语定位/焦点仍为探针。本轮五项工程检查退出码均为 0：数学字体/许可通过、排版 311 个 TSX 通过、生产构建通过、先构建后全量 **2184/2184，0 失败 / 0 跳过**、TypeScript 0 错误。实际命令、日志与初轮 9 项夹具失败的修复见[工程 JSON](evidence/portal-20261016/engineering.json)及[检查记录](evidence/portal-20261016/checks.md)，不沿用 P73 结果。
++- 周期：P74 属 Workspace R2 后续组件契约修复；共享适配与图表变更按任务提前执行全量工程回归。Builder 自测不等同 Supervisor Review / PO 批准，Builder 实施/工程检查完成，尚未记为已验收；最近完整工程回归为本轮 2184/2184，最近完整浏览器矩阵仍为历史记录；继承 P73 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期，Workspace R3 / R6 / R9 的累计触发仍保留。
++- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。没有本轮浏览器截图，不宣称视觉、真实键盘/焦点、定位或裁切通过；1280 / 320、核心/蓝图双向嵌套、Toast 离页和图表操作见[浏览器清单与 Workspace 接线](evidence/portal-20261016/browser-checklist.md)。Workspace 固定来源同步/实际接线、真实服务、真机/触控、读屏、实体打印和全站视觉未验。
++- 待审阅：统一入口命名与容器/Toast 归属契约由 Supervisor 独立 Review；后续 Workspace 同步按其任务执行。本轮没有需要 Builder 自行决定的新产品方向、视觉令牌或业务规则。
++
++## 历史
++
++### P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
+ - 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
+ - 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
+@@ -13,7 +27,6 @@
+ - 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
+ - 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
+ 
+-## 历史
+ 
+ ### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
+ 
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index 9fabdac..2b8b782 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -15,6 +15,29 @@
+ 
+ 依据 [OLE Agent 前端界面设计规范 · 蓝图 v1.0](OLE_Agent_Frontend_Blueprint_v1.0.md) §11.6，同步用户已批准的来源取舍；目标设计与实施门禁以该规范为准，现有 props/API 的已实现事实仍须核对源码和组件契约。未实现项不因定稿自动升级为可用。主题、字体、冻结 coss 和双仓边界继续有效；本轮仅同步规则，未完成 CI 修复或服务签认。
+ 
++## 局部主题与浮层容器（P74 · CI-11）
++
++源码：`components/prism-next/prism-scope.tsx`、`scoped-overlays.tsx`、`providers.tsx`。这是宿主接入契约，不增加组件目录条目。
++
++- `PrismScopeProvider({ portalContainer?, theme?, children })` 提供局部默认值。`portalContainer` 沿用 coss / Base UI 的 `HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null`；`theme` 为现有 `PrismTheme`。Provider 不创建 DOM、不写 `html/body`、不调用 `setTheme`、不读写持久化。宿主必须令 `theme` 与其 DOM `data-prism-theme` 一致，并保留 `data-agent-preview` 隔离标记。
++- 新边界替换外层上下文；省略字段恢复原始默认，不合并外层值。这样嵌套核心主题可以明确退出蓝图。仅改变 DOM 属性不会自动更新 JS 图表主题，宿主需同步传入 `theme`。
++- `scoped-overlays.tsx` 的 `SelectPopup`、`ComboboxPopup`、`MenuPopup`、`MenuSubPopup`、`DialogPopup`、`PopoverPopup`、`TooltipPopup`、`DrawerPopup`、`ToastProvider` 复用冻结 coss。优先级为 **调用方显式 `portalProps.container` → 本层 `portalContainer` → Base UI 原始解析**；未设置 Context 时保留原有 props 与默认行为。Base UI 1.8.0 的原始解析为父 Portal 节点优先、无父 Portal 才到 body，并非所有嵌套浮层都直接落 body。
++- `null` 是明确“等待容器”的值，不回退到 body；已有 ref 的 `.current === null` 则沿用 Base UI 的父 Portal / body 回退，不能当作等待。默认展开场景应先挂载 ref 目标再挂载消费者，或用 `useState<HTMLElement | null>` 的 callback ref 显式等待；ref 目标被替换时应更新传入的元素/引用身份。容器须在正确主题根内、滚动或裁切容器之外，离页由宿主卸载。
++- 原 props、ref、定位、焦点、Escape、受控状态与业务回调继续交给 coss / Base UI。`MenuSubPopup` 新增合法的 `portalProps` 类型，保持 coss 的 `side="inline-end"`、`sideOffset=0`、默认 `align="start"` 与非 center 的 `alignOffset=-5`。父 Portal 继承只在没有显式容器/上下文覆盖时可用；宿主不能假定独立 inline 调用也会继承主题。
++- 已接入 W188 的 18 处 Agent 浮层、额外静态依赖扫描 24 处，以及旧 `QuestionWorkPanel` Drawer（在 Agent managed 路径不挂载，本轮一并补齐其容器默认）。逐项见 [调用清单](blueprint/evidence/portal-20261016/call-sites.json)。PromptBar / Voice / 紧凑分析 Popover 已有显式内部根容器，保持原行为。直接导入 coss 的其他宿主调用不会自动读取本上下文，沿用其公开 `portalProps` 或按需改用本适配层；这不是全仓浮层自动迁移。
++
++### Toast 归属
++
++`Providers` 新增可选 `toastPortalProps`（coss `ToastProviderProps['portalProps']`）和 `toastManager`。未传入时仍使用原全局 manager、body 默认目标及 bottom-right 位置。`toastPortalProps` 控制该 Provider **整条队列**，没有按事件来源或路由分流；把全局 Provider 随 Agent 路由切换容器会连同 AppBar、其他页面及存量 Toast 一起迁移，宿主不应这样实现来源隔离。
++
++Agent 局部通知使用 `PrismScopeProvider` 内的 scoped `ToastProvider`，传入独立、稳定的 `ToastPrimitive.createToastManager()`，页内组件用其最近的 `ToastPrimitive.useToastManager()`，或显式注入同一局部 manager。AppBar / 其他页继续全局 Provider / manager。局部 Provider 随 Agent 页卸载时，该局部队列丢弃；离页后仍调用已卸载 manager 的事件不投递到全局，也不会在重进页面时重放。若某项异步结果需要离页后显示，由宿主在发起时明确选全局通知归属，不由组件猜测。React 所有者在局部 Provider 外的业务（如外层题篮 Provider）需显式注入目标 scope / manager，DOM 位于 Agent 根内不等于 React Context 已接通。
++
++### 图表主题与验证边界
++
++`useChartTheme()` 优先使用本层 scope 的 `theme`，否则保持既有 next-themes `theme` 及 light 回退；热力图、箱线图和 ECharts 渲染层也读取同一入口。系列色、形状色、连续色阶仍来自 `lib/prism-next/chart-palette.ts`，核心三主题默认值与配置、调用方既有显式颜色覆盖不变。无新增色值、主题、令牌或字号。
++
++组件页 `/next/components/menu#portal-scope` 提供外层核心 / 内层蓝图、Select、AgentObjectPicker Combobox、子菜单、含 Select 的 Dialog、隔离 Toast 与图表的复验夹具。工程测试覆盖真实 React Context、冻结 coss 透传及 Base UI Portal 的 append/remove；开合/定位/焦点原语使用探针，不能代替浏览器验收。详见 [浏览器交接](blueprint/evidence/portal-20261016/browser-checklist.md) 和 [检查记录](blueprint/evidence/portal-20261016/checks.md)。
++
+ ## 交互演示器 v0.1
+ 
+ 2026-09-27 · 设计候选，语义 **39 AgentInteractiveDemo**，Inline + 专用扩展内容，独立 compact。源码 `components/prism-next/agent-interactive-demo.tsx`；组件页 `#interactive-demo`。未合并分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`。
+diff --git a/lib/prism-next/blueprint-guide.json b/lib/prism-next/blueprint-guide.json
+index 5b9abd7..3e4e012 100644
+--- a/lib/prism-next/blueprint-guide.json
++++ b/lib/prism-next/blueprint-guide.json
+@@ -7496,7 +7496,7 @@
+     {
+       "source": "docs/blueprint/STATUS.md",
+       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+-      "sha256": "dd9255d77736f4cf392dc151527626e834fa8be06379039c3f36e2f27db8bb3b"
++      "sha256": "bedca84ffaf68952bdc94bf51972e1fd56dcbe9afcdb9f4e88807c7e23d58dc3"
+     },
+     {
+       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
+diff --git a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+index 5077fad..4e8ae43 100644
+--- a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
++++ b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+@@ -4,6 +4,20 @@
+ 
+ ## 当前
+ 
++
++- 轮次：P74 · Agent 浮层容器契约补齐（R2 后续 / CI-11）· 2026-10-16；开工基线 `e750a963d53da4a3bba1cf53500616ebff4b16d2`，分支 `fix/agent-portal-container`，开工工作树干净。[基线](evidence/portal-20261016/baseline.json)。
++- 授权与分工：Supervisor `task-P74.md` + `builder-preamble.md`；Builder 实现与工程自测，浏览器由 Supervisor 执行。未提交、推送、修改 `.git`、联网、安装依赖、管理开发服务或发布。
++- 范围：统一 `PrismScopeProvider` + `scoped-overlays`，补齐 18 处 Agent / 24 处静态依赖 / 1 处旧 Drawer；公开子菜单容器契约、Providers 受控 Toast 入口和局部图表主题。只替换相关 Popup import，不给 18 个业务组件逐一加 prop；热力图、箱线图及 ECharts 渲染层同用局部主题。现有 Menu 页增加嵌套复验夹具。详见[复用取舍](evidence/portal-20261016/inspection.md)、[调用清单](evidence/portal-20261016/call-sites.json)及[新契约](../component-contracts.md)。
++- 兼容边界：显式目标优先，未提供 scope 保留原始父 Portal / body 默认；null 等待、未附着 ref 回退严格沿用 Base UI。Toast 容器按整队列控制，Agent 页内通知须独立 manager，AppBar/其他页仍全局；离页局部队列卸载。核心主题令牌、默认色板和配置、冻结 coss、目录与依赖不改，新增 API 不写 DOM 主题或持久化。
++- 工程：新增 16 项测试；含旧夹具修复的定向复验 86/86 通过；43 处绑定回退 + 4 个挂载透传/优先级回退 + 1 个局部图表回退，共 48/48 内存变异检出。真实 React Context / Base UI Portal append/remove 与队列隔离是工程证据，原语定位/焦点仍为探针。本轮五项工程检查退出码均为 0：数学字体/许可通过、排版 311 个 TSX 通过、生产构建通过、先构建后全量 **2184/2184，0 失败 / 0 跳过**、TypeScript 0 错误。实际命令、日志与初轮 9 项夹具失败的修复见[工程 JSON](evidence/portal-20261016/engineering.json)及[检查记录](evidence/portal-20261016/checks.md)，不沿用 P73 结果。
++- 周期：P74 属 Workspace R2 后续组件契约修复；共享适配与图表变更按任务提前执行全量工程回归。Builder 自测不等同 Supervisor Review / PO 批准，Builder 实施/工程检查完成，尚未记为已验收；最近完整工程回归为本轮 2184/2184，最近完整浏览器矩阵仍为历史记录；继承 P73 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置旧周期，Workspace R3 / R6 / R9 的累计触发仍保留。
++- 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。没有本轮浏览器截图，不宣称视觉、真实键盘/焦点、定位或裁切通过；1280 / 320、核心/蓝图双向嵌套、Toast 离页和图表操作见[浏览器清单与 Workspace 接线](evidence/portal-20261016/browser-checklist.md)。Workspace 固定来源同步/实际接线、真实服务、真机/触控、读屏、实体打印和全站视觉未验。
++- 待审阅：统一入口命名与容器/Toast 归属契约由 Supervisor 独立 Review；后续 Workspace 同步按其任务执行。本轮没有需要 Builder 自行决定的新产品方向、视觉令牌或业务规则。
++
++## 历史
++
++### P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P73 · Agent 蓝图 S0 / R1 组件铺路 · 2026-10-16；开工基线 `5644554aa6920fdbffdcbd1fdac617c20af1cc2e`（PR #195 merge），分支 `feat/agent-blueprint-r1`，开工工作树干净。[基线记录](evidence/r1-20261016/baseline.json)。
+ - 授权：Supervisor `task-P73.md`，按 `builder-preamble.md` 分工实现、自测并交接；不写 `.git`、不提交 / 推送 / 发布、不联网或启动服务，浏览器由 Supervisor 执行。
+ - 范围：CI-01 增加兼容默认值的 `showModelSelector?: boolean`；CI-07 默认提示改为「补充一个信息」；CI-08 为附件补稳定 data-slot，在蓝图家族内归零消息 / 附件圆角；CI-09 仅修白图 PromptBar / AgentSurface 按钮叠环和墨底消息链接。五主题 / 320px / 模型显隐及墨底链接复用现有对话示例。运行时、测试、文档 diff 与保护范围见[检查记录](evidence/r1-20261016/checks.md)。
+@@ -13,7 +27,6 @@
+ - 浏览器与限制：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；选择器测试、SSR 与回调探针不证明布局、焦点裁切或真实 Portal 挂载。五主题 × 1280 / 320、嵌套双向预览、模型有 / 无、澄清、圆角、焦点及浮层路径见[交接清单](evidence/r1-20261016/browser-checklist.md)。真实服务、Workspace 接入、真机、读屏器、实体打印及全部 Agent 组件整体适配未验；夜图焦点按 §5.4 留待其专项。
+ - 待审阅：CMP 接口审阅确认 `showModelSelector` 命名；Supervisor 独立 Review 与浏览器验收。没有新增产品规则、依赖、组件目录条目、令牌、字号或状态枚举。
+ 
+-## 历史
+ 
+ ### 夜图补丁恢复 · 2026-10-16（原当前，原样保留）
+ 
+diff --git a/tests/agent-visual-batch1.test.mjs b/tests/agent-visual-batch1.test.mjs
+index c20a6f8..71550c8 100644
+--- a/tests/agent-visual-batch1.test.mjs
++++ b/tests/agent-visual-batch1.test.mjs
+@@ -12,6 +12,7 @@ await mkdir(dir, { recursive: true });
+ const file = new URL('test-bundle.mjs', dir);
+ const result = await build({ stdin: { contents: `
+ export * from './components/prism-next/agent-visual-parts';
++export { PopoverPopup } from './components/prism-next/scoped-overlays';
+ export * from './components/prism-next/agent-text-diff';
+ export * from './components/prism-next/agent-semantic-components';
+ export * from './components/prism-next/agent-candidate-picker';
+@@ -69,7 +70,7 @@ test('source chip is a native keyboard-reachable dialog trigger; coss owns Escap
+   }
+   render(h(Probe));
+   const trigger = nodes.find(n => n.type.name === 'PopoverTrigger');
+-  const popup = nodes.find(n => n.type.name === 'PopoverPopup');
++  const popup = nodes.find(n => n.type === c.PopoverPopup);
+   assert.strictEqual(popup.props.finalFocus, trigger.props.ref);
+   assert.equal(trigger.props.onKeyDown, undefined);
+   assert.ok(nodes.some(n => n.type.name === 'PopoverClose'));
+diff --git a/tests/facet-filter-harness.mjs b/tests/facet-filter-harness.mjs
+index f4d5741..570aef6 100644
+--- a/tests/facet-filter-harness.mjs
++++ b/tests/facet-filter-harness.mjs
+@@ -9,6 +9,7 @@ const runtime = new URL('../.sites-runtime/p34-tests/', import.meta.url);
+ await mkdir(runtime, { recursive: true });
+ const bundle = await build({
+   stdin: { contents: `export * from './components/prism-next/facet-filter';
++export { PopoverPopup } from './components/prism-next/scoped-overlays';
+ export * from './components/prism-next/demos/fixtures/facet-filter';
+ export * from './components/prism-next/demos/facet-filter';`, resolveDir: root, loader: 'tsx' },
+   bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false, loader: { '.css': 'empty' },
+@@ -56,7 +57,7 @@ export function probe(variant, scale = 'future', width = 720) {
+         return inspect(node.type(node.props), path + '/' + node.type.name);
+       }, { key: node.key ?? path });
+       const children = React.Children.toArray(node.props.children).map((child, index) => inspect(child, path + '/' + (child?.key ?? index)));
+-      if (node.type.name === 'PopoverPopup') return React.createElement('div', { key: node.key ?? path, 'data-probe-popup': '' }, children);
++      if (node.type === module.PopoverPopup) return React.createElement('div', { key: node.key ?? path, 'data-probe-popup': '' }, children);
+       return React.cloneElement(node, {}, children.length ? children : node.props.children);
+     }
+     state.html = renderToStaticMarkup(inspect(React.createElement(module.FacetFilter, {
+diff --git a/tests/heatmap-tooltip.test.mjs b/tests/heatmap-tooltip.test.mjs
+index 17d3ef4..79cb23a 100644
+--- a/tests/heatmap-tooltip.test.mjs
++++ b/tests/heatmap-tooltip.test.mjs
+@@ -18,7 +18,8 @@ await writeFile(file, (await build({
+   plugins: [{ name: 'controlled-chart-host', setup(b) {
+     b.onResolve({ filter: /^(react|next-themes)$/ }, args => ({ path: args.path, namespace: 'host' }));
+     b.onLoad({ filter: /.*/, namespace: 'host' }, args => ({ contents: args.path === 'react'
+-      ? 'export const useRef=(...a)=>globalThis.__tooltipHost.ref(...a);export const useState=(v)=>[v,()=>{}];export const useEffect=(...a)=>globalThis.__tooltipHost.effect(...a);'
++      // This controller-only host is unscoped; real Context/Portal behavior is covered in portal-scope.test.mjs.
++      ? 'export const createContext=value=>({defaultValue:value});export const useContext=context=>context.defaultValue;export const useMemo=fn=>fn();export const useRef=(...a)=>globalThis.__tooltipHost.ref(...a);export const useState=(v)=>[v,()=>{}];export const useEffect=(...a)=>globalThis.__tooltipHost.effect(...a);'
+       : 'export const useTheme=()=>({theme:globalThis.__tooltipHost.theme});' }));
+     b.onLoad({ filter: /\/echart-engine\.ts$/ }, () => ({ contents: 'export const init=()=>{globalThis.__tooltipHost.inits++;return globalThis.__tooltipHost.chart}' }));
+   } }],
+diff --git a/tests/p57-chart-harness.mjs b/tests/p57-chart-harness.mjs
+index b55ecb5..2cd6975 100644
+--- a/tests/p57-chart-harness.mjs
++++ b/tests/p57-chart-harness.mjs
+@@ -29,8 +29,9 @@ export function capture(name, props, theme = 'light') {
+     return React.cloneElement(node, {}, React.Children.map(node.props.children, walk));
+   }
+   try {
+-    const html = render(h(function Probe() { return walk(api[name](props)); }));
+-    return { html, nodes, charts: globalThis.__p57Charts, theme: api.useChartTheme() };
++    let chartTheme;
++    const html = render(h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); }));
++    return { html, nodes, charts: globalThis.__p57Charts, theme: chartTheme };
+   } finally { delete globalThis.__p57Theme; delete globalThis.__p57Charts; }
+ }
+ export const heatmapProps = { label: '原热力矩阵', rows: [{ id: 'r', label: '长中文行' }], columns: [{ id: 'c', label: '列一' }, { id: 'd', label: '列二' }], cells: [{ id: 'zero', row: 'r', column: 'c', value: 0 }, { id: 'missing', row: 'r', column: 'd', value: null }] };
+diff --git a/tests/p58-chart-harness.mjs b/tests/p58-chart-harness.mjs
+index 7cef30c..de67708 100644
+--- a/tests/p58-chart-harness.mjs
++++ b/tests/p58-chart-harness.mjs
+@@ -27,8 +27,9 @@ export function capture(name, props, theme = 'light') {
+     return React.cloneElement(node, {}, React.Children.map(node.props.children, walk));
+   }
+   try {
+-    const html = render(h(function Probe() { return walk(api[name](props)); }));
+-    return { html, nodes, charts: globalThis.__p58Charts, theme: api.useChartTheme() };
++    let chartTheme;
++    const html = render(h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); }));
++    return { html, nodes, charts: globalThis.__p58Charts, theme: chartTheme };
+   } finally { delete globalThis.__p58Theme; delete globalThis.__p58Charts; }
+ }
+ export const defaults = {
+diff --git a/tests/review-p17-harness.mjs b/tests/review-p17-harness.mjs
+index 61c826d..5381dff 100644
+--- a/tests/review-p17-harness.mjs
++++ b/tests/review-p17-harness.mjs
+@@ -19,7 +19,8 @@ async function bundle(original) {
+     stdin: { contents: names.map(name => `export * from './components/prism-next/${name}'; export * from './components/prism-next/demos/${name}';`).join('\n') + `
+       export * from './components/prism-next/demos/review-workspace-fixtures';
+       export {Collapsible,CollapsibleTrigger,CollapsiblePanel} from './components/coss/collapsible';
+-      export {TooltipPopup,TooltipTrigger} from './components/coss/tooltip';
++      export {TooltipTrigger} from './components/coss/tooltip';
++      export {TooltipPopup} from './components/${original ? 'coss/tooltip' : 'prism-next/scoped-overlays'}';
+       export {Button} from './components/coss/button';
+     `, resolveDir: root, loader: 'tsx' },
+     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false,
+diff --git a/components/prism-next/demos/portal-scope.tsx b/components/prism-next/demos/portal-scope.tsx
+new file mode 100644
+index 0000000..126e6e5
+--- /dev/null
++++ b/components/prism-next/demos/portal-scope.tsx
+@@ -0,0 +1,99 @@
++"use client"
++
++import { useId, useRef, useState, type ReactNode } from "react"
++import { Button } from "@/components/coss/button"
++import { Input } from "@/components/coss/input"
++import { Label } from "@/components/coss/label"
++import { Menu, MenuTrigger, MenuItem, MenuSub, MenuSubTrigger } from "@/components/coss/menu"
++import { Dialog, DialogTrigger, DialogTitle, DialogDescription, DialogClose } from "@/components/coss/dialog"
++import { ToastPrimitive, toastManager } from "@/components/coss/toast"
++import { MenuPopup, MenuSubPopup, DialogPopup, ToastProvider } from "../scoped-overlays"
++import { PrismScopeProvider } from "../prism-scope"
++import { QuestionSelect } from "../question-controls"
++import { AgentObjectPicker } from "../agent-object-picker"
++import { ComparisonChart } from "../charts/basic-charts"
++import type { PrismTheme } from "@/lib/prism-next/config"
++
++const kinds = [{ value: "example", label: "例题讲解" }, { value: "practice", label: "长中文课堂练习与讲评材料" }]
++const candidates = [{ id: "class-a", name: "高二三班", status: "available" as const }, { id: "class-b", name: "高二四班 · 长中文教学主题与跨课次讲评材料", status: "available" as const }]
++const chartData = [{ id: "a", label: "例题", value: 32 }, { id: "b", label: "练习", value: 48 }]
++
++function PreviewScope({ theme, children }: { theme: PrismTheme; children: ReactNode }) {
++  const [target, setTarget] = useState<HTMLDivElement | null>(null)
++  // Each mounted preview owns its queue. Leaving it discards its notifications.
++  const [manager] = useState(() => ToastPrimitive.createToastManager())
++  return <section data-agent-preview="" data-ui-version="coss-v1" data-prism-theme={theme} className="min-w-0 space-y-4 border bg-background p-4 text-foreground">
++    <div ref={setTarget} data-portal-scope-target={theme} />
++    <PrismScopeProvider theme={theme} portalContainer={target}>
++      <ToastProvider toastManager={manager} timeout={0}>{children}</ToastProvider>
++    </PrismScopeProvider>
++  </section>
++}
++
++function LocalToastButton({ label }: { label: string }) {
++  const manager = ToastPrimitive.useToastManager()
++  return <div className="flex flex-wrap gap-2">
++    <Button variant="outline" onClick={() => manager.add({ title: `${label}通知`, description: "固定示例提示，没有提交业务任务。", type: "info" })}>触发{label}通知</Button>
++    <Button variant="ghost" onClick={() => manager.close()}>关闭{label}通知</Button>
++  </div>
++}
++
++function ScopedControls() {
++  const id = useId()
++  const [kind, setKind] = useState("example")
++  const [selected, setSelected] = useState<readonly string[]>([])
++  const [query, setQuery] = useState("")
++  const [feedback, setFeedback] = useState("")
++  const input = useRef<HTMLInputElement>(null)
++  const trigger = useRef<HTMLButtonElement>(null)
++  return <>
++    <h3 className="text-block-title">局部主题预览</h3>
++    <div className="space-y-2"><Label htmlFor={`${id}-kind`}>材料类型</Label><QuestionSelect id={`${id}-kind`} label="局部材料类型" value={kind} items={kinds} onChange={setKind} /></div>
++    <AgentObjectPicker title="搜索班级" objectType={{ id: "class", label: "班级" }} selection={{ mode: "single" }} view="workspace" density="compact"
++      candidates={candidates.filter(item => item.name.includes(query))} selectedCandidates={candidates} selectedIds={selected} onSelectionChange={setSelected}
++      searchValue={query} onSearchChange={setQuery} result={{ state: "ready" }} />
++    <div className="flex flex-wrap gap-2">
++      <Menu><MenuTrigger render={<Button variant="outline" />}>局部材料操作</MenuTrigger>
++        <MenuPopup><MenuItem onClick={() => setFeedback("已选择示例材料。")}>选择材料</MenuItem>
++          <MenuSub><MenuSubTrigger>材料示例子菜单</MenuSubTrigger><MenuSubPopup><MenuItem onClick={() => setFeedback("已选择长中文讲评材料示例。")}>长中文讲评材料示例</MenuItem></MenuSubPopup></MenuSub>
++        </MenuPopup>
++      </Menu>
++      <Dialog><DialogTrigger ref={trigger} render={<Button variant="outline" />}>局部对话框</DialogTrigger>
++        <DialogPopup initialFocus={input} finalFocus={trigger} closeProps={{ "aria-label": "关闭局部对话框" }} className="gap-4 p-6">
++          <DialogTitle>材料说明</DialogTitle><DialogDescription>检查局部主题、嵌套选择与关闭回焦。</DialogDescription>
++          <Label htmlFor={`${id}-title`}>材料标题</Label><Input ref={input} id={`${id}-title`} defaultValue="二次函数课堂讲评" />
++          <Label htmlFor={`${id}-dialog-kind`}>对话框材料类型</Label><QuestionSelect id={`${id}-dialog-kind`} label="对话框材料类型" value={kind} items={kinds} onChange={setKind} />
++          <p className="text-read-body">长中文材料中的公式：<math className="prism-math" aria-label="x 等于负 b 除以二 a"><mi>x</mi><mo>=</mo><mo>−</mo><mfrac><mi>b</mi><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></math>。</p>
++          <DialogClose render={<Button variant="outline" />}>完成查看</DialogClose>
++        </DialogPopup>
++      </Dialog>
++    </div>
++    {feedback && <p role="status" className="text-ui-hint">{feedback}</p>}
++    <LocalToastButton label="局部" />
++    <ComparisonChart label="局部主题材料数量 · 固定示例" data={chartData} height={220} />
++  </>
++}
++
++/** Review fixture on the existing Menu page; not a catalog component or a Workspace flow. */
++export function PortalScopeDemo() {
++  const [outerTheme, setOuterTheme] = useState<"light" | "paper" | "dark">("light")
++  const [innerTheme, setInnerTheme] = useState<PrismTheme>("blueprint")
++  const [mounted, setMounted] = useState(true)
++  const id = useId()
++  return <section id="portal-scope" className="min-w-0 space-y-4">
++    <h2 className="text-section-title">嵌套主题与浮层容器</h2>
++    <p className="text-ui-hint">外层和局部预览各自持有通知；离开局部预览后再进入，局部通知不会恢复。</p>
++    <div className="flex flex-wrap items-end gap-4">
++      <div className="space-y-2"><Label htmlFor={`${id}-outer`}>外层核心主题</Label><QuestionSelect id={`${id}-outer`} label="外层核心主题" value={outerTheme} onChange={value => setOuterTheme(value as typeof outerTheme)} items={[{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
++      <div className="space-y-2"><Label htmlFor={`${id}-inner`}>局部主题</Label><QuestionSelect id={`${id}-inner`} label="局部主题" value={innerTheme} onChange={value => setInnerTheme(value as PrismTheme)} items={[{ value: "blueprint", label: "蓝图" }, { value: "blueprint-night", label: "蓝图夜色" }, { value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
++      <Button variant="outline" onClick={() => setMounted(value => !value)}>{mounted ? "离开局部预览" : "进入局部预览"}</Button>
++      <Button variant="outline" onClick={() => toastManager.add({ title: "全局通知", description: "保持页面全局主题。", type: "info" })}>触发全局通知</Button>
++    </div>
++    <PreviewScope theme={outerTheme}>
++      <h3 className="text-block-title">外层核心主题对照</h3>
++      <LocalToastButton label="外层" />
++      <ComparisonChart label="核心主题材料数量 · 固定示例" data={chartData} height={220} />
++      {mounted && <PreviewScope theme={innerTheme}><ScopedControls /></PreviewScope>}
++    </PreviewScope>
++  </section>
++}
+diff --git a/components/prism-next/prism-scope.tsx b/components/prism-next/prism-scope.tsx
+new file mode 100644
+index 0000000..c7d9117
+--- /dev/null
++++ b/components/prism-next/prism-scope.tsx
+@@ -0,0 +1,33 @@
++"use client"
++
++import { createContext, useContext, useMemo, type ComponentProps, type ReactNode } from "react"
++import type { SelectPopup } from "@/components/coss/select"
++import type { PrismTheme } from "@/lib/prism-next/config"
++
++export type PrismPortalContainer = NonNullable<ComponentProps<typeof SelectPopup>["portalProps"]>["container"]
++
++export type PrismScope = {
++  /** The host owns this target and places it inside its theme boundary, outside clipping surfaces. */
++  portalContainer?: PrismPortalContainer
++  /** Match the host's data-prism-theme; this does not change DOM attributes or next-themes. */
++  theme?: PrismTheme
++}
++
++const PrismScopeContext = createContext<PrismScope>({})
++
++/** A new boundary replaces the outer scope. Omitted fields use the original global defaults. */
++export function PrismScopeProvider({ children, portalContainer, theme }: PrismScope & { children: ReactNode }) {
++  const value = useMemo(() => ({ portalContainer, theme }), [portalContainer, theme])
++  return <PrismScopeContext.Provider value={value}>{children}</PrismScopeContext.Provider>
++}
++
++export function usePrismScope(): PrismScope {
++  return useContext(PrismScopeContext)
++}
++
++/** Explicit containers (including null, which waits for a target) take priority over the scope. */
++export function usePrismPortalProps<T extends { container?: PrismPortalContainer }>(portalProps?: T): T | (T & { container: PrismPortalContainer }) | { container: PrismPortalContainer } | undefined {
++  const { portalContainer } = usePrismScope()
++  if (portalProps?.container !== undefined || portalContainer === undefined) return portalProps
++  return { ...portalProps, container: portalContainer }
++}
+diff --git a/components/prism-next/scoped-overlays.tsx b/components/prism-next/scoped-overlays.tsx
+new file mode 100644
+index 0000000..c8c2469
+--- /dev/null
++++ b/components/prism-next/scoped-overlays.tsx
+@@ -0,0 +1,47 @@
++"use client"
++
++import type { ComponentProps } from "react"
++import { SelectPopup as CossSelectPopup } from "@/components/coss/select"
++import { ComboboxPopup as CossComboboxPopup } from "@/components/coss/combobox"
++import { MenuPopup as CossMenuPopup, type MenuSubPopup as CossMenuSubPopup } from "@/components/coss/menu"
++import { DialogPopup as CossDialogPopup } from "@/components/coss/dialog"
++import { PopoverPopup as CossPopoverPopup } from "@/components/coss/popover"
++import { TooltipPopup as CossTooltipPopup } from "@/components/coss/tooltip"
++import { DrawerPopup as CossDrawerPopup } from "@/components/coss/drawer"
++import { ToastProvider as CossToastProvider } from "@/components/coss/toast"
++import { usePrismPortalProps } from "./prism-scope"
++
++// Preserve the pinned coss props, refs, markup, focus and positioning behavior.
++// Only the Portal target gains a host-owned default.
++export function SelectPopup({ portalProps, ...props }: ComponentProps<typeof CossSelectPopup>) {
++  return <CossSelectPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function ComboboxPopup({ portalProps, ...props }: ComponentProps<typeof CossComboboxPopup>) {
++  return <CossComboboxPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function MenuPopup({ portalProps, ...props }: ComponentProps<typeof CossMenuPopup>) {
++  return <CossMenuPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function DialogPopup({ portalProps, ...props }: ComponentProps<typeof CossDialogPopup>) {
++  return <CossDialogPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function PopoverPopup({ portalProps, ...props }: ComponentProps<typeof CossPopoverPopup>) {
++  return <CossPopoverPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function TooltipPopup({ portalProps, ...props }: ComponentProps<typeof CossTooltipPopup>) {
++  return <CossTooltipPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function DrawerPopup({ portalProps, ...props }: ComponentProps<typeof CossDrawerPopup>) {
++  return <CossDrawerPopup {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++export function ToastProvider({ portalProps, ...props }: ComponentProps<typeof CossToastProvider>) {
++  return <CossToastProvider {...props} portalProps={usePrismPortalProps(portalProps)} />
++}
++
++export type MenuSubPopupProps = ComponentProps<typeof CossMenuSubPopup> & Pick<ComponentProps<typeof CossMenuPopup>, "portalProps">
++
++/** Same submenu positioning as coss; adds the missing public Portal contract without editing coss. */
++export function MenuSubPopup({ sideOffset = 0, alignOffset, align = "start", ...props }: MenuSubPopupProps) {
++  return <MenuPopup align={align} alignOffset={alignOffset ?? (align !== "center" ? -5 : undefined)}
++    data-slot="menu-sub-content" side="inline-end" sideOffset={sideOffset} {...props} />
++}
+diff --git a/tests/helpers/portal-scope-harness.mjs b/tests/helpers/portal-scope-harness.mjs
+new file mode 100644
+index 0000000..2a2ff5e
+--- /dev/null
++++ b/tests/helpers/portal-scope-harness.mjs
+@@ -0,0 +1,70 @@
++import { build } from 'esbuild';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import { createTestRuntime } from './test-runtime.mjs';
++import { clientDOM } from './chart-client-dom.mjs';
++
++const root = fileURLToPath(new URL('../../', import.meta.url));
++const runtime = await createTestRuntime('portal-scope');
++let serial = 0;
++export async function compileScope(overrides = {}) {
++  const output = await build({
++    stdin: { contents: `export * from './components/prism-next/prism-scope';
++      export * from './components/prism-next/scoped-overlays';
++      export * from './components/prism-next/providers';
++      export * from './components/prism-next/charts/chart-theme';
++      export * from './components/prism-next/charts/echart';
++      export * from './lib/prism-next/config';
++      export * from './lib/prism-next/chart-palette';
++      export { ToastPrimitive, toastManager } from './components/coss/toast';`, resolveDir: root, loader: 'tsx' },
++    bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
++    plugins: [{ name: 'portal-transport-probe', setup(b) {
++      b.onLoad({ filter: /\.(?:tsx|ts)$/ }, args => {
++        const relative = args.path.slice(root.length);
++        return Object.hasOwn(overrides, relative) ? { contents: overrides[relative], loader: args.path.endsWith('tsx') ? 'tsx' : 'ts' } : undefined;
++      });
++      b.onResolve({ filter: /^next-themes$|^motion\/react$|^@base-ui\/react\/(?:select|combobox|menu|dialog|popover|tooltip|drawer|toast)$/ }, args => ({ path: args.path, namespace: 'p74' }));
++      b.onLoad({ filter: /.*/, namespace: 'p74' }, args => {
++        if (args.path === 'next-themes') return { contents: 'export const useTheme=()=>({theme:globalThis.__p74GlobalTheme}); export const ThemeProvider=({children})=>children;' };
++        if (args.path === 'motion/react') return { contents: 'export const MotionConfig=({children})=>children;' };
++        const name = args.path.split('/').at(-1), cap = name[0].toUpperCase() + name.slice(1);
++        return { loader: 'tsx', resolveDir: root, contents: `
++          import React from 'react';
++          import { FloatingPortal } from ${JSON.stringify(root + 'node_modules/@base-ui/react/floating-ui-react/components/FloatingPortal.mjs')};
++          ${name === 'toast' ? `import { Toast as ActualToast } from ${JSON.stringify(root + 'node_modules/@base-ui/react/toast/index.mjs')};` : ''}
++          const primitives = new Map();
++          export const ${cap} = new Proxy(${name === 'toast' ? 'ActualToast' : '{}'}, {get(target,key) {
++            // Toast keeps its real queue, Provider, hooks and Portal (FloatingPortalLite).
++            if (${name === 'toast'} && ['Provider','createToastManager','useToastManager','Portal'].includes(key)) return target[key];
++            if (key === 'Portal') return FloatingPortal;
++            if (!primitives.has(key)) primitives.set(key, function Primitive(props) {
++              (globalThis.__p74Primitives ??= []).push({kind:${JSON.stringify(name)} + '.' + String(key), props});
++              return React.createElement('div', {'data-probe-primitive':String(key)}, props.children);
++            });
++            return primitives.get(key);
++          }});
++        ` };
++      });
++      b.onLoad({ filter: /\/charts\/echart-engine\.tsx?$/ }, () => ({ contents: 'export const init=()=>globalThis.__p74Engine;' }));
++    } }],
++  });
++  const file = new URL(`scope-${serial++}.mjs`, runtime);
++  writeFileSync(file, output.outputFiles[0].text);
++  return import(file);
++}
++
++// Commit-only DOM: React + the installed Base UI Portal resolver really append/remove nodes.
++// Store/positioning/focus primitives are probes, so this is not browser acceptance.
++export function portalDOM() {
++  const dom = clientDOM(1280, 720), Element = dom.window.HTMLElement;
++  dom.window.Node = Element;
++  dom.window.Element = Element;
++  Element.prototype.hasAttribute = function (key) { return key in this.attributes; };
++  Element.prototype.contains = function (node) { for (let n = node; n; n = n.parentNode) if (n === this) return true; return false; };
++  Element.prototype.querySelectorAll = function () { return []; };
++  Element.prototype.remove = function () { this.parentNode?.removeChild(this); };
++  dom.document.documentElement.appendChild(dom.document.body);
++  return dom;
++}
++
++export const read = path => readFileSync(root + path, 'utf8');
+diff --git a/tests/portal-chart-options.test.mjs b/tests/portal-chart-options.test.mjs
+new file mode 100644
+index 0000000..eee132c
+--- /dev/null
++++ b/tests/portal-chart-options.test.mjs
+@@ -0,0 +1,77 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { build } from 'esbuild';
++import { writeFile } from 'node:fs/promises';
++import { fileURLToPath } from 'node:url';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const file = new URL('charts.mjs', await createTestRuntime('portal-chart-options'));
++await writeFile(file, (await build({
++  stdin: { contents: `export * from './components/prism-next/prism-scope';
++    export { PortalScopeDemo } from './components/prism-next/demos/portal-scope';
++    export { HeatmapChart, BoxPlotChart } from './components/prism-next/charts/advanced-charts';
++    export { DonutChart } from './components/prism-next/charts/donut-chart';
++    export { ComboChart } from './components/prism-next/charts/combo-chart';
++    export * from './lib/prism-next/chart-palette';`, resolveDir: root, loader: 'tsx' },
++  bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
++  plugins: [{ name: 'scoped-chart-options', setup(b) {
++    b.onResolve({ filter: /^next-themes$/ }, () => ({ path: 'theme', namespace: 'p74-chart' }));
++    b.onLoad({ filter: /.*/, namespace: 'p74-chart' }, () => ({ contents: 'export const useTheme=()=>({theme:globalThis.__p74ChartGlobal})' }));
++    b.onLoad({ filter: /\/charts\/echart\.tsx$/ }, () => ({ loader: 'tsx', contents: 'export function EChart(props){globalThis.__p74ChartOptions.push(props.option);return null}' }));
++  } }],
++})).outputFiles[0].text);
++const api = await import(file), h = React.createElement;
++const heatmap = { label: 'scope matrix', rows: [{ id: 'r', label: '行' }], columns: [{ id: 'c', label: '列' }], cells: [{ id: 'zero', row: 'r', column: 'c', value: 0 }, { id: 'missing', row: 'r', column: 'c', value: null }] };
++const box = { label: 'scope box', selectedId: 'b', data: [{ id: 'a', label: 'A', values: [0, 10, 20, 30, 40] }, { id: 'b', label: 'B', values: [1, 11, 21, 31, 41] }] };
++const donut = { label: 'scope donut', segments: [{ id: 'a', label: 'A', value: 4 }, { id: 'b', label: 'B', value: 6 }] };
++function capture(name, props, globalTheme, localTheme) {
++  globalThis.__p74ChartGlobal = globalTheme; globalThis.__p74ChartOptions = [];
++  try {
++    const element = h(api[name], props);
++    renderToStaticMarkup(localTheme ? h(api.PrismScopeProvider, { theme: localTheme }, element) : element);
++    return globalThis.__p74ChartOptions[0];
++  } finally { delete globalThis.__p74ChartGlobal; delete globalThis.__p74ChartOptions; }
++}
++const normalize = option => JSON.stringify(option, (_, value) => typeof value === 'function' ? '[function]' : value);
++
++test('P74: full chart option objects retain core defaults under a local scope, including shapes and sequential colors', () => {
++  for (const [name, props] of [['HeatmapChart', heatmap], ['BoxPlotChart', box], ['DonutChart', donut]]) {
++    for (const core of ['light', 'paper', 'dark']) {
++      const original = capture(name, props, core);
++      assert.equal(normalize(capture(name, props, 'blueprint', core)), normalize(original), `${name}/${core}`);
++    }
++  }
++});
++
++test('P74: local Blueprint and Blueprint Night use the central series, shape and ramp palettes instead of global colors', () => {
++  for (const theme of ['blueprint', 'blueprint-night']) {
++    const matrix = capture('HeatmapChart', heatmap, 'light', theme);
++    assert.equal(normalize(matrix), normalize(capture('HeatmapChart', heatmap, theme)));
++    if (theme === 'blueprint') assert.deepEqual(matrix.visualMap.inRange.color, [...api.BLUEPRINT_SEQUENTIAL]);
++    assert.notEqual(matrix.series[0].data[0].value[2], matrix.series[0].data[1].value[2], 'zero and missing remain distinct');
++    const shape = capture('BoxPlotChart', box, 'light', theme).series[0].data;
++    const colors = api.chartShapeColors(theme);
++    assert.equal(shape[0].itemStyle.color, colors.fill); assert.equal(shape[0].itemStyle.borderColor, colors.base); assert.equal(shape[1].itemStyle.borderColor, colors.selected);
++    const pie = capture('DonutChart', donut, 'light', theme).series[0].data;
++    assert.equal(pie[0].itemStyle.color, api.chartSeriesColors(theme)[0]); assert.equal(pie[1].itemStyle.color, api.chartSeriesColors(theme)[1]);
++  }
++});
++
++test('P74: explicit caller colors still override a scoped theme', () => {
++  const sequentialColors = ['#112233', '#445566', '#778899'];
++  assert.deepEqual(capture('HeatmapChart', { ...heatmap, sequentialColors }, 'light', 'blueprint').visualMap.inRange.color, sequentialColors);
++  const combo = { label: 'explicit', categories: [{ id: 'a', label: 'A' }], axes: [{ id: 'y', label: '数量', unit: '项' }],
++    series: [{ id: 's', label: '材料', type: 'bar', axisId: 'y', color: '#123456', data: [{ id: 'a', value: 3 }] }] };
++  assert.equal(capture('ComboChart', combo, 'light', 'blueprint').series[0].itemStyle.color, '#123456');
++});
++
++test('P74: the existing Menu page fixture exposes the real Agent Combobox and the requested review actions', () => {
++  const html = renderToStaticMarkup(h(api.PortalScopeDemo));
++  for (const text of ['查看班级候选', '局部材料类型', '局部材料操作', '局部对话框', '触发局部通知', '触发外层通知', '触发全局通知', '离开局部预览', '局部主题材料数量', '核心主题材料数量']) assert.ok(html.includes(text), text);
++  assert.match(html, /role="combobox"/);
++  assert.match(html, /data-portal-scope-target="blueprint"/);
++  assert.match(html, /data-portal-scope-target="light"/);
++});
+diff --git a/tests/portal-scope.test.mjs b/tests/portal-scope.test.mjs
+new file mode 100644
+index 0000000..e379ee0
+--- /dev/null
++++ b/tests/portal-scope.test.mjs
+@@ -0,0 +1,275 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import React, { act } from 'react';
++import { createRoot } from 'react-dom/client';
++import { renderToStaticMarkup } from 'react-dom/server';
++import ts from 'typescript';
++import { compileScope, portalDOM, read } from './helpers/portal-scope-harness.mjs';
++
++// Base UI chooses its client layout-effect implementation at module evaluation.
++const bootstrap = portalDOM(), savedDocument = globalThis.document;
++globalThis.document = bootstrap.document;
++const api = await compileScope(), h = React.createElement;
++globalThis.document = savedDocument;
++const themes = ['light', 'paper', 'dark', 'blueprint', 'blueprint-night'];
++// Independent W188 handoff inventory; do not derive expectations from the implementation.
++const agentSites = {
++  'agent-artifact-output': ['SelectPopup'], 'agent-capture-scan': ['SelectPopup'],
++  'agent-collection-basket': ['SelectPopup', 'MenuPopup', 'DialogPopup'],
++  'agent-constraint-builder': ['SelectPopup'], 'agent-distribution-matrix': ['SelectPopup'],
++  'agent-material-pack': ['SelectPopup'], 'agent-object-picker': ['ComboboxPopup'],
++  'agent-parameter-config': ['SelectPopup'], 'agent-path-priority': ['SelectPopup', 'SelectPopup'],
++  'agent-plan-builder': ['SelectPopup'], 'agent-structure-arranger': ['SelectPopup', 'SelectPopup'],
++  'agent-suggestion-set': ['SelectPopup'], 'agent-template-picker': ['SelectPopup'], 'agent-visual-parts': ['PopoverPopup'],
++};
++const dependencySites = {
++  'charts/chart-legend': ['PopoverPopup'], 'data-display': ['PopoverPopup'], 'dialog-layout': ['DialogPopup'],
++  'facet-filter': ['TooltipPopup', 'PopoverPopup'], 'knowledge-rail': ['SelectPopup'], 'paper-annotation-layer': ['TooltipPopup'],
++  'question-actions': ['MenuPopup'], 'question-analysis-parts': ['TooltipPopup'], 'question-controls': ['SelectPopup'],
++  'question-rail': ['TooltipPopup', 'TooltipPopup'], 'record-list': ['SelectPopup', 'MenuPopup', 'SelectPopup'],
++  'review-parts': ['TooltipPopup'], 'review-workspace': ['DialogPopup'], 'textbook-directory': ['MenuPopup', 'SelectPopup', 'TooltipPopup'],
++  'textbook-range-picker': ['SelectPopup', 'DialogPopup', 'SelectPopup', 'SelectPopup'],
++};
++const sites = { ...agentSites, ...dependencySites, 'question-work-panel': ['DrawerPopup'] };
++
++function checkBindings(file, expected, source = read(`components/prism-next/${file}.tsx`)) {
++  const ast = ts.createSourceFile(file + '.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
++  const imports = new Map(), calls = [];
++  for (const statement of ast.statements) if (ts.isImportDeclaration(statement)) {
++    for (const binding of statement.importClause?.namedBindings?.elements ?? []) imports.set(binding.name.text, { from: statement.moduleSpecifier.text, imported: binding.propertyName?.text ?? binding.name.text });
++  }
++  function visit(node) {
++    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
++      const tag = node.tagName.getText(ast), binding = imports.get(tag);
++      if (tag.endsWith('Popup')) {
++        assert.equal(binding?.from, '@/components/prism-next/scoped-overlays', `${file}:${tag} must use the host-aware adapter`);
++        calls.push({ name: binding.imported, node });
++      }
++    }
++    ts.forEachChild(node, visit);
++  }
++  visit(ast);
++  assert.deepEqual(calls.map(c => c.name).sort(), [...expected].sort(), `${file} retains the handoff call sites`);
++  return calls;
++}
++
++async function mounted(run) {
++  const saved = Object.fromEntries(['window', 'document', 'Node', 'HTMLElement', 'Element', 'IS_REACT_ACT_ENVIRONMENT', 'ResizeObserver'].map(key => [key, globalThis[key]]));
++  const dom = portalDOM(), errors = [], originalError = console.error;
++  Object.assign(globalThis, { window: dom.window, document: dom.document, Node: dom.window.Node, Element: dom.window.Element, HTMLElement: dom.window.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true });
++  globalThis.ResizeObserver = class { observe() {} disconnect() {} };
++  console.error = (...args) => errors.push(args.join(' '));
++  const host = dom.document.createElement('div'); dom.document.body.appendChild(host);
++  const root = createRoot(host);
++  try { await run({ ...dom, host, root, render: tree => act(() => root.render(tree)) }); }
++  finally { await act(() => root.unmount()); console.error = originalError; Object.assign(globalThis, saved); delete globalThis.__p74Primitives; }
++  assert.deepEqual(errors, [], 'no React warnings');
++}
++const all = (node, predicate) => [ ...(predicate(node) ? [node] : []), ...(node.childNodes ?? []).flatMap(child => all(child, predicate)) ];
++const portals = node => all(node, item => item.hasAttribute?.('data-base-ui-portal'));
++const marker = (node, id) => all(node, item => item.getAttribute?.('data-p74-marker') === id);
++const scope = (runtime, container, theme, child) => h(runtime.PrismScopeProvider, { portalContainer: container, theme }, child);
++const popup = (runtime, name, id, props = {}) => h(runtime[name], { ...props, children: h('span', { 'data-p74-marker': id }, id) });
++
++test('P74: all 18 Agent and 24 dependency call sites plus the legacy Drawer bind to scoped adapters', () => {
++  for (const [file, names] of Object.entries(sites)) checkBindings(file, names);
++});
++
++test('P74: all 43 call-site bindings mount through real Base UI Portal transport in the supplied container; unscoped uses body', async () => {
++  await mounted(async ({ document, render }) => {
++    const container = document.createElement('section'); document.body.appendChild(container);
++    let index = 0;
++    for (const [file, names] of Object.entries(sites)) for (const name of names) {
++      const id = `${file}-${index++}`;
++      await render(scope(api, container, 'blueprint', popup(api, name, id)));
++      assert.equal(marker(container, id).length, 1, id);
++      assert.equal(portals(document.body).filter(p => !container.contains(p)).length, 0);
++      await render(popup(api, name, id));
++      assert.equal(marker(container, id).length, 0);
++      assert.equal(portals(document.body).filter(p => p.parentNode === document.body).length, 1);
++      assert.equal(marker(document.body, id).length, 1);
++    }
++  });
++});
++
++test('P74: explicit element/ref/null, portal attributes and the default props retain their semantics', async () => {
++  await mounted(async ({ document, render }) => {
++    const target = document.createElement('section'), other = document.createElement('aside');
++    document.body.appendChild(target); document.body.appendChild(other);
++    for (const name of ['SelectPopup', 'ComboboxPopup', 'MenuPopup', 'MenuSubPopup', 'DialogPopup', 'PopoverPopup', 'TooltipPopup', 'DrawerPopup']) {
++      for (const container of [other, { current: other }]) {
++        const props = { portalProps: { container, className: 'portal-marker', 'data-extra': 'kept' } };
++        await render(scope(api, target, 'blueprint', popup(api, name, name, props)));
++        assert.equal(marker(other, name).length, 1); assert.equal(marker(target, name).length, 0);
++        assert.equal(portals(other)[0].getAttribute('class'), 'portal-marker');
++        assert.equal(portals(other)[0].getAttribute('data-extra'), 'kept');
++      }
++      await render(scope(api, target, 'blueprint', popup(api, name, name, { portalProps: { container: null } })));
++      assert.equal(marker(document.body, name).length, 0, 'explicit null waits instead of falling through to the scope/body');
++    }
++    let input, result;
++    function PropsProbe() { result = api.usePrismPortalProps(input); return null; }
++    for (input of [undefined, { className: 'original' }, { container: null }]) {
++      await render(h(PropsProbe)); assert.equal(result, input, 'no scope preserves the original props object');
++    }
++  });
++});
++
++test('P74: scoped null waits for a target, ref attachment precedes Portal effects, changing/unmounting a scope cleans old nodes', async () => {
++  await mounted(async ({ document, render }) => {
++    await render(scope(api, null, 'blueprint', popup(api, 'SelectPopup', 'waiting')));
++    assert.equal(portals(document.body).length, 0);
++    const ref = React.createRef();
++    await render(h('section', null, h('div', { ref }), scope(api, ref, 'blueprint', popup(api, 'SelectPopup', 'ref'))));
++    assert.equal(marker(ref.current, 'ref').length, 1);
++    const previous = ref.current, target = document.createElement('section'); document.body.appendChild(target);
++    await render(scope(api, target, 'paper', popup(api, 'SelectPopup', 'new')));
++    assert.equal(portals(previous).length, 0); assert.equal(marker(target, 'new').length, 1);
++    await render(null); assert.equal(portals(document.body).length, 0);
++  });
++});
++
++test('P74: submenu keeps coss offsets, scoped/explicit targets and real parent Portal inheritance', async () => {
++  await mounted(async ({ document, render }) => {
++    const target = document.createElement('section'); document.body.appendChild(target);
++    await render(h(api.MenuPopup, { portalProps: { container: target } }, popup(api, 'MenuSubPopup', 'inherited')));
++    assert.equal(marker(target, 'inherited').length, 1);
++    assert.equal(portals(target).length, 2);
++    assert.equal(portals(target)[1].parentNode, portals(target)[0], 'no scope keeps Base UI parent inheritance');
++    for (const [align, offset] of [[undefined, -5], ['start', -5], ['center', undefined], ['end', -5]]) {
++      globalThis.__p74Primitives = [];
++      await render(scope(api, target, 'blueprint', popup(api, 'MenuSubPopup', 'scoped', { align })));
++      const positioner = globalThis.__p74Primitives.filter(p => p.kind === 'menu.Positioner').at(-1).props;
++      assert.equal(positioner.side, 'inline-end'); assert.equal(positioner.sideOffset, 0); assert.equal(positioner.alignOffset, offset);
++      assert.equal(marker(target, 'scoped').length, 1);
++    }
++  });
++});
++
++test('P74: chart scope uses the local palette in both directions and empty nested boundaries restore global defaults', () => {
++  function capture(tree) { let result; function Probe() { result = api.useChartTheme(); return null; } renderToStaticMarkup(tree(h(Probe))); return result; }
++  for (const globalTheme of [...themes, undefined]) {
++    globalThis.__p74GlobalTheme = globalTheme;
++    const original = capture(child => child);
++    assert.equal(original.theme, globalTheme);
++    assert.deepEqual(original.colors, api.chartSeriesColors(globalTheme));
++    assert.deepEqual(original.palette, api.themePalette[globalTheme] ?? api.themePalette.light);
++    for (const theme of themes) {
++      const local = capture(child => scope(api, undefined, theme, child));
++      assert.equal(local.theme, theme); assert.deepEqual(local.colors, api.chartSeriesColors(theme)); assert.deepEqual(local.palette, api.themePalette[theme]);
++      assert.deepEqual(capture(child => scope(api, undefined, theme, h(api.PrismScopeProvider, null, child))), original);
++    }
++  }
++  delete globalThis.__p74GlobalTheme;
++});
++
++test('P74: Providers forwards its controlled Toast container and preserves the original global singleton by default', async () => {
++  await mounted(async ({ document, render }) => {
++    const target = document.createElement('section'); document.body.appendChild(target);
++    let manager;
++    function Probe() { manager = api.ToastPrimitive.useToastManager(); return null; }
++    await render(h(api.Providers, null, h(Probe)));
++    await act(() => api.toastManager.add({ title: 'global', timeout: 0 }));
++    assert.equal(manager.toasts.at(-1).title, 'global');
++    assert.equal(portals(document.body)[0].parentNode, document.body);
++    await render(h(api.Providers, { toastPortalProps: { container: target, className: 'toast-host' } }, h(Probe)));
++    assert.equal(portals(target).length, 1); assert.equal(portals(target)[0].getAttribute('class'), 'toast-host');
++    assert.equal(manager.toasts.at(-1).title, 'global', 'controlled target moves this whole queue, not selected origins');
++  });
++});
++
++test('P74: separate Toast managers isolate Agent and global origins; leaving a page discards its queue and ignores late events', async () => {
++  await mounted(async ({ document, render }) => {
++    const target = document.createElement('section'); document.body.appendChild(target);
++    const agentManager = api.ToastPrimitive.createToastManager(), globalManager = api.ToastPrimitive.createToastManager();
++    const stores = {};
++    function Probe({ id }) { stores[id] = api.ToastPrimitive.useToastManager(); return null; }
++    function Tree({ agent }) {
++      return h(api.Providers, { toastManager: globalManager }, h(Probe, { id: 'global' }), agent && scope(api, target, 'blueprint', h(api.ToastProvider, { toastManager: agentManager, timeout: 0 }, h(Probe, { id: 'agent' }))));
++    }
++    await render(h(Tree, { agent: true }));
++    await act(() => { agentManager.add({ title: 'Agent', timeout: 0 }); globalManager.add({ title: 'AppBar', timeout: 0 }); });
++    assert.deepEqual(stores.agent.toasts.map(t => t.title), ['Agent']);
++    assert.deepEqual(stores.global.toasts.map(t => t.title), ['AppBar']);
++    assert.equal(portals(target).length, 1);
++    await render(h(Tree, { agent: false }));
++    assert.equal(portals(target).length, 0);
++    await act(() => { agentManager.add({ title: 'late Agent event', timeout: 0 }); globalManager.add({ title: 'other page', timeout: 0 }); });
++    await render(h(Tree, { agent: true }));
++    assert.deepEqual(stores.agent.toasts, []);
++    assert.deepEqual(stores.global.toasts.map(t => t.title).sort(), ['AppBar', 'other page']);
++  });
++});
++
++test('P74: EChart applies local axis/tooltip/decal options on mount and live theme changes without mutating core defaults', async () => {
++  await mounted(async ({ render }) => {
++    const calls = [];
++    let disposals = 0;
++    globalThis.__p74Engine = { on() {}, getZr: () => ({ on() {} }), getWidth: () => 1280, getHeight: () => 300, resize() {}, setOption: option => calls.push(option), dispose() { disposals++; } };
++    const props = { label: 'scope', option: { series: [{ type: 'bar', data: [1] }], xAxis: { type: 'value' } } };
++    try {
++      const baselines = new Map();
++      for (const theme of themes) {
++        globalThis.__p74GlobalTheme = theme;
++        await render(h(api.EChart, props));
++        baselines.set(theme, calls.at(-1));
++      }
++      globalThis.__p74GlobalTheme = 'light';
++      for (const theme of themes) {
++        await render(scope(api, undefined, theme, h(api.EChart, props)));
++        assert.deepEqual(calls.at(-1), baselines.get(theme), `${theme}: local and global options must agree`);
++        assert.equal(calls.at(-1).textStyle.color, api.themePalette[theme].foreground);
++        assert.equal(calls.at(-1).tooltip.borderRadius, theme.startsWith('blueprint') ? 0 : undefined);
++      }
++      assert.equal(disposals, 1, 'only entering the scope remounts; subsequent local theme changes reuse the chart');
++    } finally { delete globalThis.__p74Engine; delete globalThis.__p74GlobalTheme; }
++  });
++});
++
++test('P74: reverting each of the 43 call-site bindings is rejected independently', () => {
++  let rejected = 0;
++  for (const [file, names] of Object.entries(sites)) {
++    const source = read(`components/prism-next/${file}.tsx`);
++    for (const { name, node } of checkBindings(file, names, source)) {
++      const edits = [node.tagName];
++      if (ts.isJsxOpeningElement(node)) edits.push(node.parent.closingElement.tagName);
++      let mutant = source;
++      for (const tag of edits.sort((a, b) => b.getStart() - a.getStart())) mutant = mutant.slice(0, tag.getStart()) + 'LegacyPopup' + mutant.slice(tag.end);
++      const primitive = { SelectPopup: 'select', MenuPopup: 'menu', DialogPopup: 'dialog', ComboboxPopup: 'combobox', PopoverPopup: 'popover', TooltipPopup: 'tooltip', DrawerPopup: 'drawer' }[name];
++      mutant += `\nimport { ${name} as LegacyPopup } from '@/components/coss/${primitive}';\n`;
++      assert.throws(() => checkBindings(file, names, mutant)); rejected++;
++    }
++  }
++  assert.equal(rejected, 43);
++});
++
++test('P74: context, explicit precedence, submenu and Toast regressions fail the same mounted transport assertions', async () => {
++  const scopePath = 'components/prism-next/prism-scope.tsx', overlayPath = 'components/prism-next/scoped-overlays.tsx';
++  const source = read(scopePath), overlays = read(overlayPath);
++  const mutants = [
++    { file: scopePath, text: source.replace('return { ...portalProps, container: portalContainer }', 'return portalProps'), name: 'SelectPopup', explicit: false },
++    { file: scopePath, text: source.replace('portalProps?.container !== undefined || ', ''), name: 'SelectPopup', explicit: true },
++    { file: overlayPath, text: overlays.replace('<MenuPopup align={align}', '<CossMenuPopup align={align}'), name: 'MenuSubPopup', explicit: false },
++    { file: overlayPath, text: overlays.replace('<CossToastProvider {...props} portalProps={usePrismPortalProps(portalProps)} />', '<CossToastProvider {...props} portalProps={portalProps} />'), name: 'ToastProvider', explicit: false },
++  ];
++  for (const mutant of mutants) {
++    const runtime = await compileScope({ [mutant.file]: mutant.text });
++    await mounted(async ({ document, render }) => {
++      const target = document.createElement('section'), explicit = document.createElement('aside');
++      document.body.appendChild(target); document.body.appendChild(explicit);
++      await render(scope(runtime, target, 'blueprint', popup(runtime, mutant.name, 'mutation', mutant.explicit ? { portalProps: { container: explicit } } : {})));
++      const expected = mutant.explicit ? explicit : target;
++      assert.throws(() => assert.equal(portals(expected).length, 1), `${mutant.name} regression must fail`);
++    });
++  }
++});
++
++test('P74: dropping the local chart theme is caught by the palette assertion', async () => {
++  const path = 'components/prism-next/charts/chart-theme.ts';
++  const runtime = await compileScope({ [path]: read(path).replace('localTheme??globalTheme', 'globalTheme') });
++  globalThis.__p74GlobalTheme = 'light';
++  let result; function Probe() { result = runtime.useChartTheme(); return null; }
++  renderToStaticMarkup(scope(runtime, undefined, 'blueprint', h(Probe)));
++  assert.throws(() => assert.deepEqual(result.colors, api.BLUEPRINT_SERIES));
++  delete globalThis.__p74GlobalTheme;
++});

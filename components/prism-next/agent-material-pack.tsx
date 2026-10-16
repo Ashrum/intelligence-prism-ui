@@ -1,12 +1,14 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId, useMemo, useRef, type DragEvent, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight, GripVertical } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"

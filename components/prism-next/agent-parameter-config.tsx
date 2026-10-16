@@ -1,5 +1,7 @@
 "use client"
 
+import { SelectPopup } from "@/components/prism-next/scoped-overlays"
+
 import { useId } from "react"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { Card } from "@/components/coss/card"
@@ -7,7 +9,7 @@ import { Input } from "@/components/coss/input"
 import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
-import { Select, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/coss/select"
+import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Switch } from "@/components/coss/switch"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"

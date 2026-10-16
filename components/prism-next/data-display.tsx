@@ -1,8 +1,10 @@
 "use client"
+
+import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
 import { useId, type ReactNode } from "react"
 import { CircleHelp } from "lucide-react"
 import { Button } from "@/components/coss/button"
-import { Popover, PopoverTrigger, PopoverPopup } from "@/components/coss/popover"
+import { Popover, PopoverTrigger } from "@/components/coss/popover"
 import { metricVisualModel, type MetricVisual } from "@/lib/prism-next/metric-visual"
 import { Progress } from "@/components/coss/progress"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"

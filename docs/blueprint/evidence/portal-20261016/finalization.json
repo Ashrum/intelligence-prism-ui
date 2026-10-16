@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-16T14:19:25.700634+08:00",
+  "baseline": "e750a963d53da4a3bba1cf53500616ebff4b16d2",
+  "branch": "fix/agent-portal-container",
+  "records": [
+    {
+      "name": "guide",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "exitCode": 0,
+      "log": "guide.log"
+    },
+    {
+      "name": "whitespace",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "log": "whitespace.log"
+    },
+    {
+      "name": "reverse-patch",
+      "command": "git apply --reverse --check /Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/portal-20261016/implementation.patch",
+      "exitCode": 0,
+      "log": "reverse-patch.log"
+    },
+    {
+      "name": "new-document-links",
+      "checked": 28,
+      "missing": [],
+      "exitCode": 0
+    },
+    {
+      "name": "final-five-checks-after-status-guide",
+      "record": "engineering.json",
+      "checks": [
+        {
+          "name": "math-font",
+          "exitCode": 0
+        },
+        {
+          "name": "typography",
+          "exitCode": 0
+        },
+        {
+          "name": "build",
+          "exitCode": 0
+        },
+        {
+          "name": "full-tests",
+          "exitCode": 0
+        },
+        {
+          "name": "types",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "name": "protected-bytes-and-import-only-AST",
+      "record": "boundaries.json",
+      "cossUnchanged": 54,
+      "allProtectedUnchanged": 62,
+      "importOnlyUnchanged": 30
+    },
+    {
+      "name": "supervisor-report-readback",
+      "path": "/Users/OLE/HermesWork/.supervisor/prism/P74-Report.md",
+      "links": 12,
+      "missing": 0,
+      "exitCode": 0
+    }
+  ],
+  "browser": "浏览器验收：按分工由 Supervisor 执行",
+  "review": "Builder self-check; Supervisor independent Review pending"
+}

@@ -1,7 +1,9 @@
 "use client"
+
+import { DialogPopup } from "@/components/prism-next/scoped-overlays"
 import type { CSSProperties, KeyboardEvent, ReactNode, RefObject } from "react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
-import { Dialog, DialogPopup, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
+import { Dialog, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
 import { Kbd } from "@/components/coss/kbd"
 import "./review-workspace.css"
 export { PAPER_REVIEW_BEST_WIDTH, railBand, railCollapsedForWidth, type RailPreferences } from "./review-workspace-layout"

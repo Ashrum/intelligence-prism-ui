@@ -1,7 +1,9 @@
 "use client"
 
+import { TooltipPopup } from "@/components/prism-next/scoped-overlays"
+
 import type { CSSProperties, ReactNode } from "react"
-import { Tooltip, TooltipPopup, TooltipProvider, TooltipTrigger } from "@/components/coss/tooltip"
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/coss/tooltip"
 
 export type PaperAnnotation = {
   id: string
