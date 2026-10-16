@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99",
+  "sourceSha256": "e3ee7828ab187d56a749aa0b30c1e3bb853a55291f54e15e59e1401abaeffd0f",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -27,190 +27,195 @@
     {
       "id": "section-5",
       "level": 2,
-      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
+      "text": "会话目录 Sidebar · P80（2026-10-16）"
     },
     {
       "id": "section-6",
-      "level": 3,
-      "text": "主行动按钮悬停修复 · 2026-10-15"
+      "level": 2,
+      "text": "OLE Agent 前端规范 · 正式版（2026-10-16）"
     },
     {
       "id": "section-7",
       "level": 3,
-      "text": "标尺密度微调 · 2026-10-15"
+      "text": "主行动按钮悬停修复 · 2026-10-15"
     },
     {
       "id": "section-8",
+      "level": 3,
+      "text": "标尺密度微调 · 2026-10-15"
+    },
+    {
+      "id": "section-9",
       "level": 2,
       "text": "完善路线与当前执行（更新于 2026-10-16）"
     },
     {
-      "id": "section-9",
+      "id": "section-10",
       "level": 3,
       "text": "成果标题 folio · P77（2026-10-16）"
     },
     {
-      "id": "section-10",
+      "id": "section-11",
       "level": 3,
       "text": "编辑式排版与 Geist Mono 子集 · 2026-10-16"
     },
     {
-      "id": "section-11",
+      "id": "section-12",
       "level": 3,
       "text": "通用基础组件第二批与配色规则 · 2026-10-16"
     },
     {
-      "id": "section-12",
+      "id": "section-13",
       "level": 4,
       "text": "第二批复用与实现边界"
     },
     {
-      "id": "section-13",
+      "id": "section-14",
       "level": 4,
       "text": "第二批样例与已验范围"
     },
     {
-      "id": "section-14",
+      "id": "section-15",
       "level": 4,
       "text": "第二批实施结果与证据边界"
     },
     {
-      "id": "section-15",
+      "id": "section-16",
       "level": 3,
       "text": "通用基础组件首批 · 2026-10-15"
     },
     {
-      "id": "section-16",
+      "id": "section-17",
       "level": 4,
       "text": "复用依据（本轮离线核对）"
     },
     {
-      "id": "section-17",
+      "id": "section-18",
       "level": 4,
       "text": "首批样例与已验范围"
     },
     {
-      "id": "section-18",
+      "id": "section-19",
       "level": 4,
       "text": "实施结果与证据边界"
     },
     {
-      "id": "section-19",
+      "id": "section-20",
       "level": 3,
       "text": "Site、GitHub 与本地同步（2026-10-15）"
     },
     {
-      "id": "section-20",
+      "id": "section-21",
       "level": 3,
       "text": "第一批结果与剩余验收"
     },
     {
-      "id": "section-21",
+      "id": "section-22",
       "level": 2,
       "text": "原始参考风格提炼（2026-10-15）"
     },
     {
-      "id": "section-22",
+      "id": "section-23",
       "level": 3,
       "text": "来源及三层边界"
     },
     {
-      "id": "section-23",
+      "id": "section-24",
       "level": 3,
       "text": "令牌与排版提炼"
     },
     {
-      "id": "section-24",
+      "id": "section-25",
       "level": 3,
       "text": "几何与布局规律"
     },
     {
-      "id": "section-25",
+      "id": "section-26",
       "level": 3,
       "text": "交互状态与动效"
     },
     {
-      "id": "section-26",
+      "id": "section-27",
       "level": 3,
       "text": "证据与验收范围"
     },
     {
-      "id": "section-27",
+      "id": "section-28",
       "level": 2,
       "text": "与核心三主题的边界"
     },
     {
-      "id": "section-28",
+      "id": "section-29",
       "level": 2,
       "text": "颜色令牌"
     },
     {
-      "id": "section-29",
+      "id": "section-30",
       "level": 3,
       "text": "配色与品牌分工（用户批准 2026-10-16）"
     },
     {
-      "id": "section-30",
+      "id": "section-31",
       "level": 2,
       "text": "新增扩展令牌"
     },
     {
-      "id": "section-31",
+      "id": "section-32",
       "level": 2,
       "text": "五条几何规则"
     },
     {
-      "id": "section-32",
+      "id": "section-33",
       "level": 2,
       "text": "首期 `bp-*` React 封装（不计入组件目录）"
     },
     {
-      "id": "section-33",
+      "id": "section-34",
       "level": 2,
       "text": "待验与已知限制"
     },
     {
-      "id": "section-34",
+      "id": "section-35",
       "level": 2,
       "text": "首次本地接入适配"
     },
     {
-      "id": "section-35",
+      "id": "section-36",
       "level": 2,
       "text": "首次本地验证（2026-10-13）"
     },
     {
-      "id": "section-36",
+      "id": "section-37",
       "level": 2,
       "text": "v2 → v3 接入与验证（2026-10-13）"
     },
     {
-      "id": "section-37",
+      "id": "section-38",
       "level": 3,
       "text": "本轮内容"
     },
     {
-      "id": "section-38",
+      "id": "section-39",
       "level": 3,
       "text": "接入中修正"
     },
     {
-      "id": "section-39",
+      "id": "section-40",
       "level": 3,
       "text": "验证结果"
     },
     {
-      "id": "section-40",
+      "id": "section-41",
       "level": 2,
       "text": "v4 图表配色接入与验证（2026-10-13）"
     },
     {
-      "id": "section-41",
+      "id": "section-42",
       "level": 3,
       "text": "自测与浏览器证据"
     },
     {
-      "id": "section-42",
+      "id": "section-43",
       "level": 3,
       "text": "并行工作树说明"
     }
@@ -1372,7 +1377,7 @@
         },
         {
           "type": "text",
-          "value": " 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。"
+          "value": " 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题在 P80 更新为 link 色与 text-ui-meta，中文不加字距、不全大写。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。"
         }
       ]
     },
@@ -1457,6 +1462,194 @@
       "children": [
         {
           "type": "text",
+          "value": "会话目录 Sidebar · P80（2026-10-16）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "只在 blueprint / blueprint-night 增量生效，排除嵌套核心预览根、后代及伪元素。一级导航以墨块强选中；目录仍为 accent + foreground + 左侧 inset 2px 墨线轻选中，悬停 secondary。普通 coss 组件与核心三主题不接收这些增量。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "表头在现有 SidebarHeader 上显式加 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sidebar-header"
+          },
+          {
+            "type": "text",
+            "value": "：左侧「对话」用既有语义字号，右侧 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sidebar-meta text-ui-meta"
+          },
+          {
+            "type": "text",
+            "value": " 展示真实条数，最右收起按钮。元信息沿用 Geist Mono Blueprint / muted-foreground，缺未知计数时省略，不写样例常量。表头底边为 "
+          },
+          {
+            "type": "code",
+            "value": "var(--line-width) solid var(--line)"
+          },
+          {
+            "type": "text",
+            "value": "。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "目录的「新建对话」在 SidebarMenuButton 上显式加 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sidebar-primary"
+          },
+          {
+            "type": "text",
+            "value": "：整宽 primary / primary-foreground 直角墨块，"
+          },
+          {
+            "type": "code",
+            "value": "2px 2px 0 var(--link)"
+          },
+          {
+            "type": "text",
+            "value": " 无模糊硬阴影；按下偏移 2px 并收回阴影，焦点保留单一 ring 外环。禁用无阴影、不位移。依据正式蓝图 §5.2 / §7.3，硬阴影仅用于少量强调动作，每区只标一个主操作，同阶段至多一个强调主按钮；不批量用于目录项、普通卡或所有按钮。"
+          }
+        ],
+        [
+          {
+            "type": "code",
+            "value": "BpSegTabs"
+          },
+          {
+            "type": "text",
+            "value": " 加 "
+          },
+          {
+            "type": "code",
+            "value": "bp-sidebar-segments"
+          },
+          {
+            "type": "text",
+            "value": " 呈现全宽两段「近期 / 已归档」，使用 radiogroup / radio / aria-checked 与 roving tabIndex。方向键移动焦点并选择、首尾循环，Home / End 跳转；这是列表过滤单选，不是 tabpanel 导航。当前段 primary / primary-foreground，其他段沿用现有线框；没有新增切换 API。"
+          }
+        ],
+        [
+          {
+            "type": "code",
+            "value": "sidebar-group-label"
+          },
+          {
+            "type": "text",
+            "value": " 使用 link 色、text-ui-meta，中文不大写、不加字距。"
+          },
+          {
+            "type": "code",
+            "value": "sidebar-menu-item"
+          },
+          {
+            "type": "text",
+            "value": " 行间 1px border 分隔、末行无分隔；按钮直角、行高和截断不变。分隔置于 item，避免与左侧选中 inset 相互覆盖；更多按钮沿用原显隐规则。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "56px 图标轨保留 40×40 按钮：其他操作线框，「新建」墨块，选中目录项仍有左墨线。轨道主按钮不使用硬阴影或按下位移，以免在窄轨造成外溢；菜单 40px 居中，group 去掉横向 padding，留出结构边线。此处的 56 / 40 / 2px 均为既有轨道尺寸或授权几何，不新增视觉令牌/字号。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "会话目录交互示例"
+            }
+          ],
+          "href": "/next/foundations/blueprint#conversation-directory",
+          "external": false
+        },
+        {
+          "type": "text",
+          "value": "采用已有 coss Sidebar / Menu 家族与 BpSegTabs，计数由固定样本筛选结果派生，点击只报告操作意图。组件站导航自身仅采用分组标题和账簿行，不添加没有用途的「近期 / 已归档」或会话数量。无标尺、图纸编号、行序号，不新增目录组件。参见"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "复用与 Workspace 接线"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/sidebar-20261016/inspection.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "浏览器验收清单"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/sidebar-20261016/browser-checklist.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "和 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "STATUS"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。工程检查与浏览器验收分别记录，Workspace 尚未接入。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-6",
+      "children": [
+        {
+          "type": "text",
           "value": "OLE Agent 前端规范 · 正式版（2026-10-16）"
         }
       ]
@@ -1518,7 +1711,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-6",
+      "id": "section-7",
       "children": [
         {
           "type": "text",
@@ -1634,7 +1827,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-7",
+      "id": "section-8",
       "children": [
         {
           "type": "text",
@@ -1727,7 +1920,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-8",
+      "id": "section-9",
       "children": [
         {
           "type": "text",
@@ -1906,7 +2099,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-9",
+      "id": "section-10",
       "children": [
         {
           "type": "text",
@@ -2088,7 +2281,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-10",
+      "id": "section-11",
       "children": [
         {
           "type": "text",
@@ -2704,7 +2897,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-11",
+      "id": "section-12",
       "children": [
         {
           "type": "text",
@@ -2841,7 +3034,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-12",
+      "id": "section-13",
       "children": [
         {
           "type": "text",
@@ -2983,7 +3176,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-13",
+      "id": "section-14",
       "children": [
         {
           "type": "text",
@@ -3292,7 +3485,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-14",
+      "id": "section-15",
       "children": [
         {
           "type": "text",
@@ -3869,7 +4062,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-15",
+      "id": "section-16",
       "children": [
         {
           "type": "text",
@@ -3923,7 +4116,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-16",
+      "id": "section-17",
       "children": [
         {
           "type": "text",
@@ -4237,7 +4430,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-17",
+      "id": "section-18",
       "children": [
         {
           "type": "text",
@@ -4546,7 +4739,7 @@
     {
       "type": "heading",
       "level": 4,
-      "id": "section-18",
+      "id": "section-19",
       "children": [
         {
           "type": "text",
@@ -4892,7 +5085,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-19",
+      "id": "section-20",
       "children": [
         {
           "type": "text",
@@ -4928,7 +5121,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-20",
+      "id": "section-21",
       "children": [
         {
           "type": "text",
@@ -5053,7 +5246,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-21",
+      "id": "section-22",
       "children": [
         {
           "type": "text",
@@ -5073,7 +5266,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-22",
+      "id": "section-23",
       "children": [
         {
           "type": "text",
@@ -5254,7 +5447,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-23",
+      "id": "section-24",
       "children": [
         {
           "type": "text",
@@ -5511,7 +5704,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-24",
+      "id": "section-25",
       "children": [
         {
           "type": "text",
@@ -5680,7 +5873,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-25",
+      "id": "section-26",
       "children": [
         {
           "type": "text",
@@ -5872,7 +6065,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-26",
+      "id": "section-27",
       "children": [
         {
           "type": "text",
@@ -6144,7 +6337,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-27",
+      "id": "section-28",
       "children": [
         {
           "type": "text",
@@ -6310,7 +6503,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-28",
+      "id": "section-29",
       "children": [
         {
           "type": "text",
@@ -6321,7 +6514,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-29",
+      "id": "section-30",
       "children": [
         {
           "type": "text",
@@ -6960,7 +7153,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-30",
+      "id": "section-31",
       "children": [
         {
           "type": "text",
@@ -7185,7 +7378,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-31",
+      "id": "section-32",
       "children": [
         {
           "type": "text",
@@ -7281,7 +7474,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-32",
+      "id": "section-33",
       "children": [
         {
           "type": "text",
@@ -7530,7 +7723,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-33",
+      "id": "section-34",
       "children": [
         {
           "type": "text",
@@ -7630,7 +7823,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-34",
+      "id": "section-35",
       "children": [
         {
           "type": "text",
@@ -7704,7 +7897,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-35",
+      "id": "section-36",
       "children": [
         {
           "type": "text",
@@ -7799,7 +7992,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-36",
+      "id": "section-37",
       "children": [
         {
           "type": "text",
@@ -7851,7 +8044,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-37",
+      "id": "section-38",
       "children": [
         {
           "type": "text",
@@ -7940,7 +8133,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-38",
+      "id": "section-39",
       "children": [
         {
           "type": "text",
@@ -7993,7 +8186,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-39",
+      "id": "section-40",
       "children": [
         {
           "type": "text",
@@ -8186,7 +8379,7 @@
     {
       "type": "heading",
       "level": 2,
-      "id": "section-40",
+      "id": "section-41",
       "children": [
         {
           "type": "text",
@@ -8318,7 +8511,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-41",
+      "id": "section-42",
       "children": [
         {
           "type": "text",
@@ -8395,7 +8588,7 @@
     {
       "type": "heading",
       "level": 3,
-      "id": "section-42",
+      "id": "section-43",
       "children": [
         {
           "type": "text",
@@ -8474,7 +8667,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "ec201afd1aead5ddef79f36c22c842618bbc6c918626d6a127676997bfe3e3b7"
+      "sha256": "74c1a33519821037c70853723442d90e65411956a7ce38627d61331a23a4c763"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -8540,6 +8733,16 @@
       "source": "docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md",
       "sha256": "3f113363c39fadfb5ad7ead2d20e0297712c0b0df5d0f8ac18712b5c90ec00d5"
+    },
+    {
+      "source": "docs/blueprint/evidence/sidebar-20261016/inspection.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/sidebar-20261016/inspection.md",
+      "sha256": "dee38676213fce0623daf71e109f8a0a22cb4b5cf713956c56e5201f3ddd4583"
+    },
+    {
+      "source": "docs/blueprint/evidence/sidebar-20261016/browser-checklist.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint/evidence/sidebar-20261016/browser-checklist.md",
+      "sha256": "35eb64210a1353dc7b144ce415b97239e29d7c72c3d933446e6b819b9d429d71"
     },
     {
       "source": "docs/OLE_Agent_Frontend_Blueprint_v1.0.md",
@@ -8969,7 +9172,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99"
+      "sha256": "e3ee7828ab187d56a749aa0b30c1e3bb853a55291f54e15e59e1401abaeffd0f"
     }
   ]
 }

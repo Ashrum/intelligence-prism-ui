@@ -46,11 +46,23 @@
 
 ## 顶栏与侧栏蓝图适配 · P76 / P77（2026-10-16）
 
-blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题仅改 muted-foreground，保留语义字号。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
+blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 `--primary` 底与 `--primary-foreground` 文字 / 图标；悬停保持实块，去掉 P76 下划线。非当前项悬停仍为 accent 直角底。身份、图标、空间切换与空间 / 个人菜单项直角，空间触发器采用 card + 1px border；数字角标保持原样。Sidebar 选中为 accent + foreground + 左侧 inset 2px 墨线，悬停 secondary；分组标题在 P80 更新为 link 色与 text-ui-meta，中文不加字距、不全大写。56px 折叠图标轨的按钮为 40×40，保持左墨线；Tabs / Toggle 原选中态不变。
 
 导航运行时适配限于 blueprint.css；核心三主题、嵌套核心预览根 / 后代 / 伪元素、主题令牌和冻结 coss 保持。一级导航使用强选中以便快速定位当前工作空间；密集侧栏继续 accent + 左墨线轻选中，SpaceBar 不变。AppBar 56px / SpaceBar 48px 和断点不变。P77 选择纸面上的单一 2px `--ring` 外环、偏移 2px；白图为蓝色，夜图沿用已有夜图 ring。36px 导航项垂直居中，导航滚动容器两端各留 4px，容纳外环并避免首末项裁切；伪元素不再画第二道焦点框，box-shadow 不叠环。实际裁切、焦点与相邻背景仍须 Supervisor 浏览器复核。
 
 P76 历史基线为 P75 提交 780c2ef；P77 基线为 main 7ad8dbc，分支 feat/blueprint-nav-folio。Builder 提供实现与 SSR / CSS 规则测试，工程结果见状态记录；独立 Review 与浏览器验收交 Supervisor。组件站与真实 Workspace 接线分别验收，不从组件实现推断已接入。参见[复用与实现说明](blueprint/evidence/shell-nav-20261016/inspection.md)、[浏览器清单与接线要求](blueprint/evidence/shell-nav-20261016/browser-checklist.md)及[当前状态](blueprint/STATUS.md)。
+
+## 会话目录 Sidebar · P80（2026-10-16）
+
+只在 blueprint / blueprint-night 增量生效，排除嵌套核心预览根、后代及伪元素。一级导航以墨块强选中；目录仍为 accent + foreground + 左侧 inset 2px 墨线轻选中，悬停 secondary。普通 coss 组件与核心三主题不接收这些增量。
+
+- 表头在现有 SidebarHeader 上显式加 `bp-sidebar-header`：左侧「对话」用既有语义字号，右侧 `bp-sidebar-meta text-ui-meta` 展示真实条数，最右收起按钮。元信息沿用 Geist Mono Blueprint / muted-foreground，缺未知计数时省略，不写样例常量。表头底边为 `var(--line-width) solid var(--line)`。
+- 目录的「新建对话」在 SidebarMenuButton 上显式加 `bp-sidebar-primary`：整宽 primary / primary-foreground 直角墨块，`2px 2px 0 var(--link)` 无模糊硬阴影；按下偏移 2px 并收回阴影，焦点保留单一 ring 外环。禁用无阴影、不位移。依据正式蓝图 §5.2 / §7.3，硬阴影仅用于少量强调动作，每区只标一个主操作，同阶段至多一个强调主按钮；不批量用于目录项、普通卡或所有按钮。
+- `BpSegTabs` 加 `bp-sidebar-segments` 呈现全宽两段「近期 / 已归档」，使用 radiogroup / radio / aria-checked 与 roving tabIndex。方向键移动焦点并选择、首尾循环，Home / End 跳转；这是列表过滤单选，不是 tabpanel 导航。当前段 primary / primary-foreground，其他段沿用现有线框；没有新增切换 API。
+- `sidebar-group-label` 使用 link 色、text-ui-meta，中文不大写、不加字距。`sidebar-menu-item` 行间 1px border 分隔、末行无分隔；按钮直角、行高和截断不变。分隔置于 item，避免与左侧选中 inset 相互覆盖；更多按钮沿用原显隐规则。
+- 56px 图标轨保留 40×40 按钮：其他操作线框，「新建」墨块，选中目录项仍有左墨线。轨道主按钮不使用硬阴影或按下位移，以免在窄轨造成外溢；菜单 40px 居中，group 去掉横向 padding，留出结构边线。此处的 56 / 40 / 2px 均为既有轨道尺寸或授权几何，不新增视觉令牌/字号。
+
+[会话目录交互示例](/next/foundations/blueprint#conversation-directory)采用已有 coss Sidebar / Menu 家族与 BpSegTabs，计数由固定样本筛选结果派生，点击只报告操作意图。组件站导航自身仅采用分组标题和账簿行，不添加没有用途的「近期 / 已归档」或会话数量。无标尺、图纸编号、行序号，不新增目录组件。参见[复用与 Workspace 接线](blueprint/evidence/sidebar-20261016/inspection.md)、[浏览器验收清单](blueprint/evidence/sidebar-20261016/browser-checklist.md)和 [STATUS](blueprint/STATUS.md)。工程检查与浏览器验收分别记录，Workspace 尚未接入。
 
 ## OLE Agent 前端规范 · 正式版（2026-10-16）
 

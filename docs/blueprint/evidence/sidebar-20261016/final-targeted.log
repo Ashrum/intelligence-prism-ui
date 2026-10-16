@@ -1,0 +1,32 @@
+✔ published guide is generated from the complete current Markdown and current evidence bytes (23.203333ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (22.192833ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.235959ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (0.316959ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.158833ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.2315ms)
+✔ WCAG calculation reference values and current four-theme text/UI tokens (0.746542ms)
+✔ every print selector requires blueprint and excludes core preview roots and descendants (1.398042ms)
+✔ blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance (4.510834ms)
+✔ six decals remain distinct without hue; default pattern/base contrasts exceed 3:1 (18.806791ms)
+✔ light: real component SSR exposes named regions, choices, tab panels and heatmap table (70.625709ms)
+✔ paper: real component SSR exposes named regions, choices, tab panels and heatmap table (27.442958ms)
+✔ dark: real component SSR exposes named regions, choices, tab panels and heatmap table (22.469292ms)
+✔ blueprint: real component SSR exposes named regions, choices, tab panels and heatmap table (21.565666ms)
+✔ blueprint-night: real component SSR exposes named regions, choices, tab panels and heatmap table (8.160834ms)
+✔ built SSR route /next/foundations/blueprint (165.972334ms)
+✔ built SSR route /next/components/tabs (10.069542ms)
+✔ built SSR route /next/components/evidence-matrix (13.86725ms)
+✔ P80: actual coss directory SSR has count, named controls, real radio semantics and rail (9.574667ms)
+✔ P80: two Blueprint themes resolve header, primary/pressed/disabled, radio, ledger and rail (55.711167ms)
+✔ P80: core themes and nested preview roots, descendants and pseudo-elements receive zero delta (3321.1145ms)
+✔ P80: actual BpSegTabs handlers move focus, wrap, select and keep one tab stop (0.815542ms)
+✔ P80: stylesheet rollback mutations are rejected by independent expectations (270.217416ms)
+✔ P80: semantic and arrow-handler rollback mutations are rejected (13.907333ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3849.833667

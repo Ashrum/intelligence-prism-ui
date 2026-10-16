@@ -2393,6 +2393,14 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### Blueprint 会话目录（P80）
+
+- 仅 blueprint / blueprint-night 增量与嵌套核心隔离。一级导航为 primary 墨块强选中；目录项保留 accent + 左侧 2px foreground 墨线轻选中，hover 为 secondary。coss 字节与核心主题不改。
+- 复用 SidebarHeader / GroupLabel / Menu / MenuItem / MenuButton / MenuAction；新增显式样式挂点 `bp-sidebar-header`、`bp-sidebar-meta`、`bp-sidebar-primary`、`bp-sidebar-segments`，不新增公共组件或 API。前两者分别为行式结构表头与真实计数的等宽元信息槽（text-ui-meta）；后两者分别限定单一强调主操作与全宽单选布局。
+- 主操作硬阴影为 2px / 2px / 无模糊 link 色；按下位移并收回，禁用无投影/位移。依据蓝图 §5.2 / §7.3，每区一个、同阶段至多一个强调主按钮，列表项与普通按钮不得普遍套用。56px 轨道的 40px 主按钮无阴影、不位移，其余按钮线框；轨道 menu 居中避开结构边线。
+- 近期 / 已归档复用 BpSegTabs 的受控 `value` / `onValueChange`，语义是 radiogroup / radio，方向键移动并选择（循环）、Home / End 跳转、单一 tab stop；不声明 tabpanel。宿主提供过滤后的真实条数；未知时省略，不把点击或样本条数当服务事实。
+- 分组标题 link / text-ui-meta、不大写不加字距；账簿分隔放在 sidebar-menu-item，末项无分隔。按钮行高、截断和更多按钮显隐保持。Workspace 使用原 `onArchived` / `onNew` 等业务意图；不得复制 Store / 持久化进入组件仓。表头、分组与图标轨接线详见 [P80 交接](blueprint/evidence/sidebar-20261016/inspection.md)。
+
 ### Blueprint 对象卡片与有序分节（P79）
 
 - `BpFrameCard({ title, status?, actions?, headingLevel?, children, className, ...sectionProps })`：整卡包住一个可独立识别的对象，用于原件 / 文件 / 打印预览、导出预览和外部来源片段。标题栏写对象名；status 为 `{ tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }`，色块必须配可见文字，只写真实可得的“已解除同步”“第 3 / 3 页”“加载失败”等事实；未知省略，不使用装饰性假 live / 耗时。无 status 不渲染状态区。不用于消息气泡、输入器、普通列表项。

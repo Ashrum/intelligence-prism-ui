@@ -1,0 +1,26 @@
+✔ WCAG calculation reference values and current four-theme text/UI tokens (1.047375ms)
+✔ every print selector requires blueprint and excludes core preview roots and descendants (0.9265ms)
+✔ blueprint focus uses the opaque ring token, 2px outer outline, with scrollport clearance (6.302208ms)
+✔ six decals remain distinct without hue; default pattern/base contrasts exceed 3:1 (33.264042ms)
+✔ light: real component SSR exposes named regions, choices, tab panels and heatmap table (88.634208ms)
+✔ paper: real component SSR exposes named regions, choices, tab panels and heatmap table (26.642625ms)
+✔ dark: real component SSR exposes named regions, choices, tab panels and heatmap table (23.033875ms)
+✔ blueprint: real component SSR exposes named regions, choices, tab panels and heatmap table (22.350875ms)
+✔ blueprint-night: real component SSR exposes named regions, choices, tab panels and heatmap table (8.361667ms)
+✔ built SSR route /next/foundations/blueprint (185.946041ms)
+✔ built SSR route /next/components/tabs (9.6625ms)
+✔ built SSR route /next/components/evidence-matrix (14.212875ms)
+✔ P80: actual coss directory SSR has count, named controls, real radio semantics and rail (12.175125ms)
+✔ P80: two Blueprint themes resolve header, primary/pressed/disabled, radio, ledger and rail (74.22725ms)
+✔ P80: core themes and nested preview roots, descendants and pseudo-elements receive zero delta (3451.239875ms)
+✔ P80: actual BpSegTabs handlers move focus, wrap, select and keep one tab stop (0.803792ms)
+✔ P80: stylesheet rollback mutations are rejected by independent expectations (279.914167ms)
+✔ P80: semantic and arrow-handler rollback mutations are rejected (16.855125ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4046.213833

@@ -1,0 +1,37 @@
+{
+  "reason": "STATUS/documentation and generated guide changed after full engineering pass; runtime source unchanged",
+  "checks": [
+    {
+      "name": "guide",
+      "command": "node scripts/sync-blueprint-guide.mjs --check",
+      "start": "2026-10-16T10:44:36.707505+00:00",
+      "end": "2026-10-16T10:44:36.751323+00:00",
+      "exitCode": 0,
+      "log": "final-guide.log"
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "start": "2026-10-16T10:44:36.751687+00:00",
+      "end": "2026-10-16T10:44:42.064763+00:00",
+      "exitCode": 0,
+      "log": "final-build.log"
+    },
+    {
+      "name": "targeted",
+      "command": "node --test tests/blueprint-sidebar.test.mjs tests/blueprint-print-a11y.test.mjs tests/blueprint-guide.test.mjs",
+      "start": "2026-10-16T10:44:42.065067+00:00",
+      "end": "2026-10-16T10:44:45.938573+00:00",
+      "exitCode": 0,
+      "log": "final-targeted.log"
+    },
+    {
+      "name": "diff-check",
+      "command": "git diff --check",
+      "start": "2026-10-16T10:44:45.938884+00:00",
+      "end": "2026-10-16T10:44:45.979899+00:00",
+      "exitCode": 0,
+      "log": "final-diff-check.log"
+    }
+  ]
+}

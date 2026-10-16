@@ -7,6 +7,7 @@ import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
 import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
+import { BlueprintSidebarDemo } from "./blueprint-sidebar"
 import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
 import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
@@ -75,6 +76,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
+    <BlueprintSidebarDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
         description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>

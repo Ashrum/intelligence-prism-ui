@@ -1,0 +1,41 @@
+✔ P80: actual coss directory SSR has count, named controls, real radio semantics and rail (8.937709ms)
+✖ P80: two Blueprint themes resolve header, primary/pressed/disabled, radio, ledger and rail (12.698334ms)
+✔ P80: core themes and nested preview roots, descendants and pseudo-elements receive zero delta (2758.850958ms)
+✔ P80: actual BpSegTabs handlers move focus, wrap, select and keep one tab stop (0.701709ms)
+✔ P80: stylesheet rollback mutations are rejected by independent expectations (207.086125ms)
+✔ P80: semantic and arrow-handler rollback mutations are rejected (13.229917ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3153.415292
+
+✖ failing tests:
+
+test at tests/blueprint-sidebar.test.mjs:190:1
+✖ P80: two Blueprint themes resolve header, primary/pressed/disabled, radio, ledger and rail (12.698334ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'none'
+  - '2px 2px 0 var(--link)'
+  
+      at visuals (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-sidebar.test.mjs:126:256)
+      at TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-sidebar.test.mjs:190:106)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'none',
+    expected: '2px 2px 0 var(--link)',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
