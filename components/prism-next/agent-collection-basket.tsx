@@ -42,6 +42,8 @@ export type AgentCollectionEntry = {
   version?: string
   groupId?: string | null
   summary?: string
+  /** Passive, host-supplied version identity; never inferred from basket membership. */
+  versionSummary?: ReactNode
   fields?: readonly AgentCollectionField[]
   issue?: { state: "invalid" | "conflict"; reason: string }
   selectable?: AgentCollectionAvailability
@@ -227,7 +229,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
           {(!entry.source || entry.source !== props.collection.source) && <> · 来源：{entry.source || "未确认"}</>}
           {showSummaryGroup && <> · 分组：{groupLabel}</>}
         </AgentMetaLine> : <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}</AgentMetaLine>)}
-        {stem?.content != null && <BasketSummary {...stem} />}
+        {entry?.versionSummary != null ? <><div data-collection-version-summary className="break-words text-ui-meta text-muted-foreground">{entry.versionSummary}</div>{stem?.content != null && <BasketSummary {...stem} />}</> : stem?.content != null && <BasketSummary {...stem} />}
       </div>
       {summaryMode && moveButtons()}
       {summaryMode && item.actions?.remove && <Button type="button" size="icon-sm" variant="ghost" className="relative z-10 shrink-0 pointer-coarse:min-h-11 pointer-coarse:min-w-11"

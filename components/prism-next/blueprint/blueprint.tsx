@@ -28,6 +28,8 @@ function folioValue(folio?: BlueprintFolio) {
 export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
   title: ReactNode
   description?: ReactNode
+  /** Named native controls beside the heading, never inside its accessible name. */
+  titleActions?: ReactNode
   /** Meaningful chapter index, read along with the visible heading. */
   code?: string
   folio?: BlueprintFolio
@@ -37,16 +39,17 @@ export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header
   headingLevel?: 2 | 3
 }
 /** A chapter heading without a sheet frame or rulers. */
-export function BlueprintSectionHeader({ title, description, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
+export function BlueprintSectionHeader({ title, description, titleActions, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
   const generatedId = useId()
   const Heading = headingLevel === 2 ? "h2" : "h3"
   const value = folioValue(folio)
+  const folioContent = folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>
   return <header {...props} className={cn("bp-section-header", className)} data-slot="bp-section-header" data-has-code={code ? "" : undefined}>
     {code && <span className="bp-section-code">{code}</span>}
     <div className="bp-section-main">
       <div className="bp-section-title-row">
         <Heading id={headingId ?? generatedId} className="bp-section-title text-section-title">{title}</Heading>
-        {folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>}
+        {titleActions != null ? <>{folioContent}<div data-slot="bp-section-title-actions" className="flex min-w-0 max-w-full flex-wrap items-center gap-2">{titleActions}</div></> : folioContent}
       </div>
       {description && <p className="bp-section-description text-ui-hint">{description}</p>}
     </div>
@@ -62,11 +65,12 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
   folioAriaHidden?: boolean
   title: ReactNode
   description?: ReactNode
+  titleActions?: ReactNode
   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
   rulers?: boolean
   headingLevel?: 2 | 3
 }
-export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
+export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
   const id = useId()
   return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
     {rulers && <>
@@ -75,7 +79,7 @@ export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title,
       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
     </>}
-    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
+    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} titleActions={titleActions} headingId={id} headingLevel={headingLevel} className="relative" />
     <div className="relative min-w-0">{children}</div>
   </section>
 }

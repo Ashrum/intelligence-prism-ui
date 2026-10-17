@@ -142,7 +142,20 @@ for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real compone
   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
   assert.match(bp, /aria-current="step"/);
   assert.match(bp, /aria-label="查看工具说明"/);
-  assert.equal((bp.match(/aria-checked="true" tabindex="0"/g) || []).length, 2);
+  // Each independently named choice group owns exactly one selected tab stop.
+  // R9 adds material/confirmation record selectors without weakening the old groups.
+  const choices = [...bp.matchAll(/<div(?=[^>]*class="[^"]*\bbp-seg-tabs\b)[^>]*role="radiogroup"[^>]*aria-label="([^"]+)"[^>]*>([\s\S]*?)<\/div>/g)];
+  const expectedChoices = new Map([
+    ['材料记录状态', '已选择'], ['确认记录状态', '已记录'],
+    ['答卷状态预览', '全部'], ['纵向选择样式预览', 'blueprint'],
+  ]);
+  assert.deepEqual(choices.map(([, label]) => label).sort(), [...expectedChoices.keys()].sort());
+  for (const [, label, content] of choices) {
+    assert.equal((content.match(/aria-checked="true" tabindex="0"/g) || []).length, 1, label);
+    assert.equal((content.match(/tabindex="0"/g) || []).length, 1, label);
+    const selected = content.match(/<button[^>]*aria-checked="true"[^>]*>([\s\S]*?)<\/button>/)[1].replace(/<[^>]*>/g, '');
+    assert.ok(selected.startsWith(expectedChoices.get(label)), label);
+  }
   assert.match(bp, /aria-label="全班：已批阅 22人，待复核 7人，AI 处理中 9人，未提交 4人"/);
   const tabs = render(api.TabsDemo, {}, theme);
   checkReferences(tabs);

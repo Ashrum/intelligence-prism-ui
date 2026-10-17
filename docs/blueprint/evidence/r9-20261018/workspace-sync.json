@@ -1,0 +1,67 @@
+{
+  "repository": "Ashrum/intelligence-prism-ui",
+  "candidateBase": "433969ab29679669c78fde816dfec96c4db31cfb",
+  "candidateCommit": null,
+  "status": "uncommitted-builder-candidate",
+  "workspaceBaseline": "5f37e1781e8ba496523a5dda90fab57321731c56",
+  "manifest": "src/vendor/prism-source-manifest.json",
+  "instruction": "Supervisor 合并后用实际 merge commit 填写每文件 commit/upstreamUrl；先校验此清单 blob 和 SHA-256，再按字节复制。若合并修改候选字节，重生成清单，不伪填基线为新源码 commit。",
+  "files": [
+    {
+      "path": "components/prism-next/agent-file-input.tsx",
+      "destination": "src/components/prism-next/agent-file-input.tsx",
+      "gitBlobSha": "67590d51c118322129714d889ded8693a229e2ad",
+      "sha256": "19071a60d212d6aeea697a20ea3d7d2ea2a0c6b8ab621ac016049cc1ca1d387d",
+      "bytes": 28618,
+      "modified": false,
+      "previousCommit": "4a5f295c262575f245f631384c2def4127e5c390",
+      "previousGitBlobSha": "fbd2985a6a99f49df54c46b3bcb3edb58b4cced5",
+      "previousLocalSha256": "2a06dcb3a2e458f2684d0364f11621d9abf88c2f3fe99f839b00b16e099c2290",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务映射单独留在 Workspace。"
+    },
+    {
+      "path": "components/prism-next/agent-semantic-components.tsx",
+      "destination": "src/components/prism-next/agent-semantic-components.tsx",
+      "gitBlobSha": "e943cc2fab057e685e1b0059a45f2bf6a18b55d4",
+      "sha256": "40c4ce3cd7ca624c339d8a7cab3423bd49a80e2f0d48135a6cfe46281396d3e1",
+      "bytes": 21129,
+      "modified": false,
+      "previousCommit": "d28d802fd269b99cfc91a4a8de73e453c3036b9e",
+      "previousGitBlobSha": "d33678821a79ce13958409e9aa4162aad41cea46",
+      "previousLocalSha256": "b645cfb2cb57ae513edca78182a3948159215eb7c0438b13edc9c6ec983e958b",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务映射单独留在 Workspace。"
+    },
+    {
+      "path": "components/prism-next/agent-collection-basket.tsx",
+      "destination": "src/components/prism-next/agent-collection-basket.tsx",
+      "gitBlobSha": "1877f082cb549520a1a1e7199292fe8f67a505d7",
+      "sha256": "46794913ee0996542b6f7c0f008f235f29db35c101f15f7d618b84fa056ceab5",
+      "bytes": 34293,
+      "modified": false,
+      "previousCommit": "ab14ab4a59ef593e9d29061c892256d5e233bc3d",
+      "previousGitBlobSha": "9a6323d5298ac3b74ed7cb1d0c11e9c57ddc9483",
+      "previousLocalSha256": "6d6912805c8de4c2c20d6174657fe1742cabbc8c668c2131ed041c76b6662e1d",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务映射单独留在 Workspace。"
+    },
+    {
+      "path": "components/prism-next/blueprint/blueprint.tsx",
+      "destination": "src/components/prism-next/blueprint/blueprint.tsx",
+      "gitBlobSha": "7d3a01466ac01ed3c74978fa64b3d2a53cf088f3",
+      "sha256": "9061bf417e243835a8dc323a9953aa44ec1ccbdae1dd75d3ab691409a226003d",
+      "bytes": 22331,
+      "modified": false,
+      "previousCommit": "bb85dd96270a421db5fa5626a1dda17c97e1e8e7",
+      "previousGitBlobSha": "cd7aaa45b3d30b51796956e07f5c8360df51797a",
+      "previousLocalSha256": "a601ac70bf6e1c79c0592cfe8f8d109b4c1b1c0d54842c1e2297ed7c0b778b78",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务映射单独留在 Workspace。"
+    }
+  ],
+  "excluded": [
+    "示例、测试、契约和证据留在 Prism；Workspace 可引用最终 PR 或契约链接，不新增 manifest 中不存在的文档目标。",
+    "blueprint.css、theme.css、依赖和 coss 本轮未改，不需要本轮重新同步。"
+  ]
+}

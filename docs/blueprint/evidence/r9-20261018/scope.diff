@@ -1,0 +1,1123 @@
+diff --git a/components/prism-next/agent-collection-basket.tsx b/components/prism-next/agent-collection-basket.tsx
+index 9a6323d..1877f08 100644
+--- a/components/prism-next/agent-collection-basket.tsx
++++ b/components/prism-next/agent-collection-basket.tsx
+@@ -42,6 +42,8 @@ export type AgentCollectionEntry = {
+   version?: string
+   groupId?: string | null
+   summary?: string
++  /** Passive, host-supplied version identity; never inferred from basket membership. */
++  versionSummary?: ReactNode
+   fields?: readonly AgentCollectionField[]
+   issue?: { state: "invalid" | "conflict"; reason: string }
+   selectable?: AgentCollectionAvailability
+@@ -227,7 +229,7 @@ function BasketRow({ item, previous, next, props, baseReason }: {
+           {(!entry.source || entry.source !== props.collection.source) && <> · 来源：{entry.source || "未确认"}</>}
+           {showSummaryGroup && <> · 分组：{groupLabel}</>}
+         </AgentMetaLine> : <AgentMetaLine><span className="sr-only">类型：</span>{entry.type} · <span className="sr-only">分组：</span>{groupLabel} · 版本：{entry.version || "未确认"}{!!extraFields?.length && <> · <BasketFields fields={extraFields} /></>}</AgentMetaLine>)}
+-        {stem?.content != null && <BasketSummary {...stem} />}
++        {entry?.versionSummary != null ? <><div data-collection-version-summary className="break-words text-ui-meta text-muted-foreground">{entry.versionSummary}</div>{stem?.content != null && <BasketSummary {...stem} />}</> : stem?.content != null && <BasketSummary {...stem} />}
+       </div>
+       {summaryMode && moveButtons()}
+       {summaryMode && item.actions?.remove && <Button type="button" size="icon-sm" variant="ghost" className="relative z-10 shrink-0 pointer-coarse:min-h-11 pointer-coarse:min-w-11"
+diff --git a/components/prism-next/agent-file-input.tsx b/components/prism-next/agent-file-input.tsx
+index fbd2985..67590d5 100644
+--- a/components/prism-next/agent-file-input.tsx
++++ b/components/prism-next/agent-file-input.tsx
+@@ -20,7 +20,12 @@ export type AgentFileCapabilities = {
+   drop: AgentFileCapability
+ }
+ export type AgentFileLimits = { accept: string; acceptLabel: string; maxFileSize: number; maxFiles: number }
++/** Local picker hints only; missing constraints are not invented service limits. */
++export type AgentFileSelectionLimits = Partial<AgentFileLimits>
++export type AgentFileUploadPolicy = Partial<Omit<AgentFileLimits, "accept">> & { maxPages?: number }
++export type AgentFileScopedLimits = { selection: AgentFileSelectionLimits; upload?: AgentFileUploadPolicy }
+ export type AgentFileAction = { disabledReason?: string }
++export type AgentFileRemoveAction = AgentFileAction & { label?: string; description?: string }
+ export type AgentFileRequest = { id: string; label: string }
+ /** Independent input/upload facts. Reading and parsing never follow implicitly. */
+ export type AgentFileStatus =
+@@ -38,11 +43,17 @@ export type AgentFileItem = {
+   sizeBytes?: number
+   source: { kind: "local" | "existing"; label?: string }
+   version?: string
++  /** Opt in to readable identity. Raw IDs/versions stay in intent payloads only. */
++  displayName?: string
++  versionLabel?: string
++  requestName?: string
+   status: AgentFileStatus
+   processing?: { label: string; description?: string }
+-  actions?: { remove?: AgentFileAction; replace?: AgentFileAction; move?: AgentFileAction }
++  actions?: { remove?: AgentFileRemoveAction; replace?: AgentFileAction; move?: AgentFileAction }
+   /** Passive, already-authorized details. These slots do not read a File or grant actions. */
+   details?: ReactNode
++  /** Keep policy/adoption facts visible when replacing a custom host row. */
++  detailsPlacement?: "disclosure" | "inline"
+   preview?: ReactNode
+ }
+ type FileTarget = { fileId: string; version?: string }
+@@ -60,10 +71,10 @@ export type AgentFileBatchAction = {
+   disabledReason?: string
+ }
+ export type AgentFileBatchIntent = Pick<AgentFileBatchAction, "id" | "kind" | "fileIds">
+-export type AgentFileInputProps = AgentRecordViewProps & {
++export type AgentFileInputProps<TLimits extends AgentFileLimits | AgentFileScopedLimits = AgentFileLimits> = AgentRecordViewProps & {
+   title: string
+   items: readonly AgentFileItem[]
+-  limits: AgentFileLimits
++  limits: TLimits
+   capabilities: AgentFileCapabilities
+   onSelect: (files: File[]) => void
+   /** Optional row content; the host preserves file action eligibility. The list owns li. */
+@@ -97,15 +108,29 @@ export function formatAgentFileSize(bytes?: number) {
+ }
+ const fileSize = formatAgentFileSize
+ 
+-function FileActionButton({ label, name, action, reason, onClick, children }: {
+-  label: string; name: string; action: string; reason?: string; onClick: () => void; children?: ReactNode
++function limitsText(limits: AgentFileLimits | AgentFileScopedLimits) {
++  if (!("selection" in limits)) return <>{limits.acceptLabel} · 单个文件不超过 {fileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</>
++  const { selection, upload } = limits
++  const size = (value: number | undefined, missing: string) => value !== undefined && Number.isFinite(value) && value > 0 ? fileSize(value) : missing
++  const count = (value: number | undefined, unit: string, missing: string) => value !== undefined && Number.isSafeInteger(value) && value > 0 ? `${value} ${unit}` : missing
++  return <>
++    <span>本机选择：{selection.acceptLabel?.trim() || "类型约束未提供"} · 单文件大小：{size(selection.maxFileSize, "未提供")} · 文件数量：{count(selection.maxFiles, "个", "未提供")}</span><br />
++    <span>服务上传类型：{upload?.acceptLabel?.trim() || "尚未核验"}</span>{" · "}
++    <span>服务单文件大小：{size(upload?.maxFileSize, "尚未核验")}</span>{" · "}
++    <span>服务文件数量：{count(upload?.maxFiles, "个", "尚未核验")}</span>{" · "}
++    <span>服务页数上限：{count(upload?.maxPages, "页", "尚未核验")}</span>
++  </>
++}
++
++function FileActionButton({ label, name, action, reason, description, onClick, children }: {
++  label: string; name: string; action: string; reason?: string; description?: string; onClick: () => void; children?: ReactNode
+ }) {
+   const id = useId()
+   return <div className="min-w-0 space-y-1">
+     <Button type="button" size="navigation" variant="outline" className="max-w-full whitespace-normal"
+-      aria-label={`${label}：${name}`} disabled={!!reason} aria-describedby={reason ? id : undefined}
++      aria-label={`${label}：${name}`} disabled={!!reason} aria-describedby={[reason ? id : undefined, description ? `${id}-description` : undefined].filter(Boolean).join(" ") || undefined}
+       data-file-action={action} onClick={() => { if (!reason) onClick() }}>{children}{label}</Button>
+-    {reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}
++    {description ? <>{reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}<p id={`${id}-description`} className="break-words text-ui-hint">{description}</p></> : reason && <p id={id} className="break-words text-ui-hint">{reason}</p>}
+   </div>
+ }
+ 
+@@ -117,6 +142,12 @@ function FileRow({ item, items, view, compact, groupBy, upload, onAction }: {
+   const status = item.status
+   const target = { fileId: item.id, version: item.version }
+   const request = "request" in status ? status.request : undefined
++  const readable = item.displayName !== undefined || item.versionLabel !== undefined || item.requestName !== undefined
++  const name = item.displayName ?? item.name
++  const version = readable ? item.versionLabel || "未确认" : item.version || "未确认"
++  const requestName = item.requestName ?? request?.label
++  const removeLabel = item.actions?.remove?.label ?? "移除"
++  const removeDescription = item.actions?.remove?.description
+   const progress = status.state === "uploading" && Number.isFinite(status.progress) && status.progress! >= 0 && status.progress! <= 100 ? status.progress : undefined
+   const index = items.findIndex(value => value.id === item.id)
+   const unavailable = !item.id.trim() ? "文件标识未确认。" : !onAction ? "此操作暂不可用。" : undefined
+@@ -124,85 +155,85 @@ function FileRow({ item, items, view, compact, groupBy, upload, onAction }: {
+   const attention = status.state === "invalid" || status.state === "failed" || status.state === "unknown"
+   const compactInline = compact && view === "inline"
+   const actions = <div className="flex min-w-0 flex-wrap items-start gap-2">
+-      {status.state === "unknown" ? status.query ? <FileActionButton label="查询原请求" name={item.name} action="query"
++      {status.state === "unknown" ? status.query ? <FileActionButton label="查询原请求" name={name} action="query"
+         reason={unavailable || status.query.disabledReason || (!status.request?.id?.trim() ? "原请求标识未确认，暂不能查询。" : undefined)}
+         onClick={() => onAction?.({ ...target, kind: "query", requestId: status.request.id })} />
+         : <p className="text-ui-hint">暂未提供原请求查询。</p>
+         : status.state !== "removed" && <>
+-          {status.state === "failed" && status.retry && <FileActionButton label="重试上传" name={item.name} action="retry"
++          {status.state === "failed" && status.retry && <FileActionButton label="重试上传" name={name} action="retry"
+             reason={unavailable || status.retry.disabledReason || uploadReason}
+             onClick={() => onAction?.({ ...target, kind: "retry", requestId: status.request?.id })} />}
+           {(["remove", "replace"] as const).map(kind => (kind !== "remove" || !compactInline) && item.actions?.[kind] && <FileActionButton key={kind}
+-            label={kind === "remove" ? "移除" : "替换"} name={item.name} action={kind} reason={unavailable || item.actions[kind].disabledReason}
++            label={kind === "remove" ? removeLabel : "替换"} name={name} action={kind} reason={unavailable || item.actions[kind].disabledReason}
++            description={kind === "remove" ? removeDescription : undefined}
+             onClick={() => onAction?.({ ...target, kind })} />)}
+           {view === "workspace" && item.actions?.move && (["up", "down"] as const).map(direction => {
+             const adjacent = items[index + (direction === "up" ? -1 : 1)]
+             const reason = unavailable || item.actions?.move?.disabledReason || (groupBy === "status" ? "请切回文件顺序后调整。" : !adjacent ? direction === "up" ? "已是第一项。" : "已是最后一项。"
+               : adjacent.status.state === "unknown" ? "相邻文件状态未确认，请先查询原请求。" : undefined)
+-            return <FileActionButton key={direction} label={direction === "up" ? "上移" : "下移"} name={item.name} action={`move-${direction}`} reason={reason}
++            return <FileActionButton key={direction} label={direction === "up" ? "上移" : "下移"} name={name} action={`move-${direction}`} reason={reason}
+               onClick={() => { if (adjacent) onAction?.({ ...target, kind: "move", direction, adjacentId: adjacent.id }) }}>{direction === "up" ? <ArrowUp aria-hidden="true" /> : <ArrowDown aria-hidden="true" />}</FileActionButton>
+           })}
+         </>}
+     </div>
+   if (compactInline) {
+-    const name = item.name || "名称未确认"
++    const name = (item.displayName ?? item.name) || "名称未确认"
+     const reason = "reason" in status ? status.reason : undefined
+     const removeReason = unavailable || item.actions?.remove?.disabledReason
+     const removable = status.state !== "unknown" && status.state !== "removed" && item.actions?.remove
+-    return <li data-file-id={item.id} data-file-state={status.state} className="min-w-0">
+-      <Collapsible defaultOpen={false}>
++    const row = <Collapsible defaultOpen={false}>
+         <div data-file-compact-row="" className="flex min-w-0 items-center gap-1">
+           <CollapsibleTrigger aria-controls={`${id}-details`} render={<Button type="button" size="sm" variant="ghost" className="min-w-0 flex-1 justify-start"
+             title={name} aria-label={`${reason ? "查看原因与文件详情" : "文件详情"}：${name}${reason ? `；${reason}` : ""}${removable && removeReason ? `；不可移除：${removeReason}` : ""}`} />}>
+             <span className="min-w-0 truncate">{name}</span><ChevronDown aria-hidden="true" />
+           </CollapsibleTrigger>
+           <AgentStatus className="shrink-0" tone={attention ? "warning" : "neutral"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</AgentStatus>
+-          {removable && <Button type="button" size="icon-sm" variant="ghost" aria-label={`移除：${name}`}
+-            disabled={!!removeReason} aria-describedby={removeReason ? `${id}-remove-reason` : undefined} data-file-action="remove"
++          {removable && <Button type="button" size="icon-sm" variant="ghost" aria-label={`${removeLabel}：${name}`}
++            disabled={!!removeReason} aria-describedby={[removeReason ? `${id}-remove-reason` : undefined, removeDescription ? `${id}-remove-description` : undefined].filter(Boolean).join(" ") || undefined} data-file-action="remove"
+             onClick={() => { if (!removeReason) onAction?.({ ...target, kind: "remove" }) }}><X aria-hidden="true" /></Button>}
+         </div>
+         <CollapsiblePanel id={`${id}-details`} keepMounted className="motion-reduce:transition-none">
+           <div className="min-w-0 space-y-2 pt-2">
+             <p className="break-words text-ui-hint [overflow-wrap:anywhere]">{name}</p>
+-            <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {fileSize(item.sizeBytes)} · {item.source.kind === "local" ? "本机" : "已有资料"}{item.source.label && ` · ${item.source.label}`}</p>
++            <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {fileSize(item.sizeBytes)} · {item.source.kind === "local" ? "本机" : "已有资料"}{item.source.label && ` · ${item.source.label}`}{readable && ` · 版本：${version}`}</p>
+             {status.state === "invalid" && <p className="break-words text-ui-hint">{validationLabels[status.validation]}：{status.reason}</p>}
+             {(status.state === "failed" || status.state === "unknown") && <p className="break-words text-ui-hint">{status.reason}</p>}
+-            {request && <p className="break-words text-ui-hint">原请求：{request.label || "名称未确认"} · {request.id || "标识未确认"}</p>}
++            {request && <p className="break-words text-ui-hint">原请求：{readable ? requestName || "名称未确认" : <>{request.label || "名称未确认"} · {request.id || "标识未确认"}</>}</p>}
+             {status.state === "uploading" && (progress === undefined ? <p className="text-ui-hint">进度未确认</p> : <div className="space-y-2">
+               <p className="text-ui-hint tabular-nums">上传进度 {progress}%</p>
+-              <Progress value={progress} aria-label={`${item.name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
++              <Progress value={progress} aria-label={`${name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
+             </div>)}
+-            {status.state === "uploaded" && <p className="break-words text-ui-hint">版本：{item.version || "未确认"} · 上传时间：{status.uploadedAt || "未确认"}</p>}
++            {status.state === "uploaded" && <p className="break-words text-ui-hint">{!readable && <>版本：{version} · </>}上传时间：{status.uploadedAt || "未确认"}</p>}
+             {item.processing && <p className="break-words text-ui-hint">后续处理：{item.processing.label}{item.processing.description && ` · ${item.processing.description}`}</p>}
+-            {removable && removeReason && <p id={`${id}-remove-reason`} className="break-words text-ui-hint">不可移除：{removeReason}</p>}
++            {removable && (removeDescription ? <>{removeReason && <p id={`${id}-remove-reason`} className="break-words text-ui-hint">不可移除：{removeReason}</p>}<p id={`${id}-remove-description`} className="break-words text-ui-hint">{removeDescription}</p></> : removeReason && <p id={`${id}-remove-reason`} className="break-words text-ui-hint">不可移除：{removeReason}</p>)}
+             {actions}
+-            {item.details}
++            {item.detailsPlacement !== "inline" && item.details}
+           </div>
+         </CollapsiblePanel>
+       </Collapsible>
+-    </li>
++    return <li data-file-id={item.id} data-file-state={status.state} className="min-w-0">{item.detailsPlacement === "inline" ? <>{row}<div className="min-w-0 space-y-2 pt-2" data-file-inline-details>{item.details}</div></> : row}</li>
+   }
+   return <li data-file-id={item.id} data-file-state={status.state} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
+     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+-      <h4 id={`${id}-name`} className="min-w-0 break-words text-item-title [overflow-wrap:anywhere]">{item.name || "名称未确认"}</h4>
++      <h4 id={`${id}-name`} className="min-w-0 break-words text-item-title [overflow-wrap:anywhere]">{name || "名称未确认"}</h4>
+       <AgentStatus tone={attention ? "warning" : "neutral"}>{status.state === "selected" ? item.source.kind === "local" ? "已选择（仅本机）" : "已选择（已有资料）" : statusLabels[status.state] ?? "状态未确认"}</AgentStatus>
+     </div>
+-    <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {fileSize(item.sizeBytes)} · {item.source.kind === "local" ? "本机" : "已有资料"}{item.source.label && ` · ${item.source.label}`}</p>
++    <p className="break-words text-ui-hint">{item.type || "类型未确认"} · {fileSize(item.sizeBytes)} · {item.source.kind === "local" ? "本机" : "已有资料"}{item.source.label && ` · ${item.source.label}`}{readable && ` · 版本：${version}`}</p>
+     {status.state === "invalid" && <p className="break-words text-ui-hint">{validationLabels[status.validation]}：{status.reason}</p>}
+     {(status.state === "failed" || status.state === "unknown") && <p className="break-words text-ui-hint">{status.reason}</p>}
+-    {request && <p className="break-words text-ui-hint">原请求：{request.label || "名称未确认"} · {request.id || "标识未确认"}</p>}
++    {request && <p className="break-words text-ui-hint">原请求：{readable ? requestName || "名称未确认" : <>{request.label || "名称未确认"} · {request.id || "标识未确认"}</>}</p>}
+     {status.state === "uploading" && (progress === undefined ? <p className="text-ui-hint">进度未确认</p> : <div className="space-y-2">
+       <p className="text-ui-hint tabular-nums">上传进度 {progress}%</p>
+-      <Progress value={progress} aria-label={`${item.name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
++      <Progress value={progress} aria-label={`${name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
+     </div>)}
+-    {status.state === "uploaded" && <p className="break-words text-ui-hint">版本：{item.version || "未确认"} · 上传时间：{status.uploadedAt || "未确认"}</p>}
++    {status.state === "uploaded" && <p className="break-words text-ui-hint">{!readable && <>版本：{version} · </>}上传时间：{status.uploadedAt || "未确认"}</p>}
+     {item.processing && <p className="break-words text-ui-hint">后续处理：{item.processing.label}{item.processing.description && ` · ${item.processing.description}`}</p>}
+-    {actions}
++    {item.detailsPlacement === "inline" ? <><div className="min-w-0 space-y-2" data-file-inline-details>{item.details}</div>{actions}</> : actions}
+     {view === "workspace" && <Collapsible defaultOpen={false}>
+-      <CollapsibleTrigger render={<Button type="button" size="navigation" variant="ghost" aria-label={`文件详情：${item.name}`} />}><ChevronDown aria-hidden="true" />文件详情</CollapsibleTrigger>
++      <CollapsibleTrigger render={<Button type="button" size="navigation" variant="ghost" aria-label={`文件详情：${name}`} />}><ChevronDown aria-hidden="true" />文件详情</CollapsibleTrigger>
+       <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 space-y-3 pt-3 text-ui-hint">
+-        <p className="break-words">文件：{item.id || "标识未确认"} · 版本：{item.version || "未确认"}</p>
+-        {item.details}
++        <p className="break-words">文件：{readable ? name || "名称未确认" : item.id || "标识未确认"} · 版本：{version}</p>
++        {item.detailsPlacement !== "inline" && item.details}
+         {item.preview ?? <p>暂未提供预览。</p>}
+       </div></CollapsiblePanel>
+     </Collapsible>}
+@@ -231,10 +262,11 @@ function FileBatchButton({ action, items, upload, onBatchAction }: {
+ export function AgentFileInput({ title, items, limits, capabilities, onSelect, selectionDisabledReason, onAction,
+   view = "inline", density = "default", inlineLimit = 3, onExpand, groupBy = "none", onGroupByChange,
+   batchActions = [], onBatchAction, onBack, notice, details, renderItem, renderSelection,
+-}: AgentFileInputProps) {
++}: AgentFileInputProps<AgentFileLimits | AgentFileScopedLimits>) {
+   const id = useId()
+   const compact = density === "compact"
+   const compactInline = compact && view === "inline"
++  const selection = "selection" in limits ? limits.selection : limits
+   const selectionReason = selectionDisabledReason || (capabilities.select?.status !== "supported" || !onSelect ? "文件选择暂不可用。" : undefined)
+   const canDrop = !selectionReason && (capabilities.drop.status === "supported" || capabilities.drop.status === "limited")
+   const limit = Number.isFinite(inlineLimit) ? Math.max(1, Math.floor(inlineLimit)) : 3
+@@ -258,7 +290,7 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
+       onDragOver={event => { if (event.dataTransfer.types.includes("Files")) { event.preventDefault(); event.dataTransfer.dropEffect = canDrop ? "copy" : "none" } }}
+       onDrop={event => { event.preventDefault(); event.stopPropagation(); if (canDrop) select(Array.from(event.dataTransfer.files)) }}>
+       <Field className={compactInline ? "w-full flex-row items-center gap-2" : "w-full"}><FieldLabel className={compactInline ? "shrink-0" : undefined} htmlFor={`${id}-input`}>选择文件</FieldLabel>
+-        <Input nativeInput size={compactInline ? "sm" : "default"} className={compactInline ? "min-w-0 flex-1" : undefined} id={`${id}-input`} type="file" accept={limits.accept} multiple={limits.maxFiles > 1} disabled={!!selectionReason}
++        <Input nativeInput size={compactInline ? "sm" : "default"} className={compactInline ? "min-w-0 flex-1" : undefined} id={`${id}-input`} type="file" accept={selection.accept} multiple={selection.maxFiles === undefined || selection.maxFiles > 1} disabled={!!selectionReason}
+           aria-describedby={`${id}-limits ${id}-capabilities ${id}-drop${selectionReason ? ` ${id}-disabled` : ""}`}
+           onChange={event => { const files = Array.from(event.currentTarget.files ?? []); event.currentTarget.value = ""; select(files) }} />
+       </Field>
+@@ -269,12 +301,12 @@ export function AgentFileInput({ title, items, limits, capabilities, onSelect, s
+         </div>
+         <CollapsiblePanel keepMounted className="motion-reduce:transition-none"><div className="min-w-0 space-y-2 pt-2 text-ui-hint">
+           <p id={`${id}-capabilities`} className="break-words">选择：{capabilities.select.status === "supported" ? "支持" : "未确认"}{capabilities.select.reason && ` · ${capabilities.select.reason}`}；上传：{capabilityLabels[capabilities.upload.status]}{capabilities.upload.reason && ` · ${capabilities.upload.reason}`}</p>
+-          <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {fileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</p>
++          <p id={`${id}-limits`} className="break-words text-ui-hint">{limitsText(limits)}</p>
+           <p id={`${id}-drop`} className="break-words text-ui-hint">{canDrop ? "可拖入此处，也可选择文件。" : "请使用“选择文件”。"}{capabilities.drop.reason && ` ${capabilities.drop.reason}`}</p>
+           {notice && <p className="break-words">{notice}</p>}
+           {details}
+         </div></CollapsiblePanel>
+-      </Collapsible> : <p id={`${id}-limits`} className="break-words text-ui-hint">{limits.acceptLabel} · 单个文件不超过 {fileSize(limits.maxFileSize)} · 最多 {limits.maxFiles} 个文件</p>}
++      </Collapsible> : <p id={`${id}-limits`} className="break-words text-ui-hint">{limitsText(limits)}</p>}
+       {!compactInline && <p id={`${id}-drop`} className="break-words text-ui-hint">{canDrop ? "可拖入此处，也可选择文件。" : "请使用“选择文件”。"}{capabilities.drop.reason && ` ${capabilities.drop.reason}`}</p>}
+       {!compactInline && selectionReason && <p id={`${id}-disabled`} className="break-words text-ui-hint">{selectionReason}</p>}
+     </section>}
+diff --git a/components/prism-next/agent-semantic-components.tsx b/components/prism-next/agent-semantic-components.tsx
+index d336788..e943cc2 100644
+--- a/components/prism-next/agent-semantic-components.tsx
++++ b/components/prism-next/agent-semantic-components.tsx
+@@ -53,22 +53,26 @@ export type AgentConfirmationState =
+   | { state: "unknown"; description: string; query?: AgentSemanticAction }
+ 
+ /** Host owns all conditions and authorization. No implicit acknowledgement or local gate. */
+-export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, conditions, presentation = "card", visual }: AgentVisualProps & {
++export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, conditions, presentation = "card", visual, stateLabels, effectTense = "future" }: AgentVisualProps & {
+   title: string; target: string; version: string; effects: readonly string[];
+   confirmation: AgentConfirmationState; conditions?: ReactNode; presentation?: Presentation;
++  stateLabels?: Partial<Record<AgentConfirmationState["state"], string>>;
++  /** Legacy default is future. Use by-state for live facts, neutral for read-only records. */
++  effectTense?: "future" | "by-state" | "neutral";
+ }) {
+   const id = useId(), heading = useRef<HTMLHeadingElement>(null)
+   const labels = { ready: "待确认", submitting: "正在提交", received: "请求已接收", recorded: "确认记录", blocked: "暂不可确认", unknown: "回执未确认" }
+   const blocked = confirmation.state === "blocked" || confirmation.state === "unknown"
++  const future = effectTense === "future" || effectTense === "by-state" && (confirmation.state === "ready" || confirmation.state === "blocked")
+   return <AgentSurface level={confirmation.state === "ready" || confirmation.state === "blocked" ? "decision" : "normal"} aria-labelledby={id} presentation={presentation}>
+-    <div className="flex flex-wrap items-start justify-between gap-2.5"><h3 ref={heading} tabIndex={-1} id={id} className="min-w-0 break-words text-item-title outline-none">{title}</h3><AgentStatus unknown={confirmation.state === "unknown"} tone={blocked ? "warning" : "neutral"}>{labels[confirmation.state]}</AgentStatus></div>
++    <div className="flex flex-wrap items-start justify-between gap-2.5"><h3 ref={heading} tabIndex={-1} id={id} className="min-w-0 break-words text-item-title outline-none">{title}</h3><AgentStatus unknown={confirmation.state === "unknown"} tone={blocked ? "warning" : "neutral"}>{stateLabels?.[confirmation.state] ?? labels[confirmation.state]}</AgentStatus></div>
+     <AgentVisibleMarkers visual={visual} />
+     {confirmation.state === "ready" && <AgentStatus>未提交</AgentStatus>}
+     {confirmation.state === "unknown" && <AgentUpdatedAt value={visual?.updatedAt} />}
+     <Facts items={[{ label: "操作对象", value: target }, { label: "依据版本", value: version }]} />
+-    <div className="space-y-1.5"><p className="text-ui-action">{confirmation.state === "ready" || confirmation.state === "blocked" ? "确认后的影响" : "本次确认范围"}</p><ul className="space-y-1.5 text-ui-body">{effects.map(effect => <li key={effect} className="flex min-w-0 items-start gap-2 break-words">
++    <div className="space-y-1.5"><p className="text-ui-action">{effectTense !== "neutral" && (confirmation.state === "ready" || confirmation.state === "blocked") ? "确认后的影响" : "本次确认范围"}</p><ul className="space-y-1.5 text-ui-body">{effects.map(effect => <li key={effect} className="flex min-w-0 items-start gap-2 break-words">
+       {effect.trim().startsWith("不会") ? <Circle aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" /> : <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-success-foreground" />}
+-      <span>{!effect.trim().startsWith("不会") && <span className="mr-1 text-ui-meta text-muted-foreground">将会</span>}{effect}</span>
++      <span>{future && !effect.trim().startsWith("不会") && <span className="mr-1 text-ui-meta text-muted-foreground">将会</span>}{effect}</span>
+     </li>)}</ul></div>
+     {conditions && <div className="min-w-0" data-execution-conditions="">{conditions}</div>}
+     {confirmation.state !== "ready" && (confirmation.state === "blocked" ? <Alert variant="warning" role="status"><CircleAlert aria-hidden="true" /><AlertDescription>{confirmation.description}</AlertDescription></Alert> : <p role="status" className="text-ui-hint text-muted-foreground">{confirmation.description}</p>)}
+diff --git a/components/prism-next/blueprint/blueprint.tsx b/components/prism-next/blueprint/blueprint.tsx
+index cd7aaa4..7d3a014 100644
+--- a/components/prism-next/blueprint/blueprint.tsx
++++ b/components/prism-next/blueprint/blueprint.tsx
+@@ -28,6 +28,8 @@ function folioValue(folio?: BlueprintFolio) {
+ export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
+   title: ReactNode
+   description?: ReactNode
++  /** Named native controls beside the heading, never inside its accessible name. */
++  titleActions?: ReactNode
+   /** Meaningful chapter index, read along with the visible heading. */
+   code?: string
+   folio?: BlueprintFolio
+@@ -37,16 +39,17 @@ export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header
+   headingLevel?: 2 | 3
+ }
+ /** A chapter heading without a sheet frame or rulers. */
+-export function BlueprintSectionHeader({ title, description, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
++export function BlueprintSectionHeader({ title, description, titleActions, code, folio, folioAriaHidden = false, headingId, headingLevel = 2, className, ...props }: BlueprintSectionHeaderProps) {
+   const generatedId = useId()
+   const Heading = headingLevel === 2 ? "h2" : "h3"
+   const value = folioValue(folio)
++  const folioContent = folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>
+   return <header {...props} className={cn("bp-section-header", className)} data-slot="bp-section-header" data-has-code={code ? "" : undefined}>
+     {code && <span className="bp-section-code">{code}</span>}
+     <div className="bp-section-main">
+       <div className="bp-section-title-row">
+         <Heading id={headingId ?? generatedId} className="bp-section-title text-section-title">{title}</Heading>
+-        {folio && value && <p className="bp-section-folio" aria-hidden={folioAriaHidden || undefined}>{folio.kind.toUpperCase()} {value}</p>}
++        {titleActions != null ? <>{folioContent}<div data-slot="bp-section-title-actions" className="flex min-w-0 max-w-full flex-wrap items-center gap-2">{titleActions}</div></> : folioContent}
+       </div>
+       {description && <p className="bp-section-description text-ui-hint">{description}</p>}
+     </div>
+@@ -62,11 +65,12 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
+   folioAriaHidden?: boolean
+   title: ReactNode
+   description?: ReactNode
++  titleActions?: ReactNode
+   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
+   rulers?: boolean
+   headingLevel?: 2 | 3
+ }
+-export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
++export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
+   const id = useId()
+   return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
+     {rulers && <>
+@@ -75,7 +79,7 @@ export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title,
+       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+     </>}
+-    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} headingId={id} headingLevel={headingLevel} className="relative" />
++    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} titleActions={titleActions} headingId={id} headingLevel={headingLevel} className="relative" />
+     <div className="relative min-w-0">{children}</div>
+   </section>
+ }
+diff --git a/components/prism-next/demos/blueprint.tsx b/components/prism-next/demos/blueprint.tsx
+index c875626..5a662b9 100644
+--- a/components/prism-next/demos/blueprint.tsx
++++ b/components/prism-next/demos/blueprint.tsx
+@@ -1,8 +1,12 @@
+ "use client"
+ 
+ import { useState } from "react"
+-import { ArrowLeft, ArrowRight, Info } from "lucide-react"
++import { ArrowLeft, ArrowRight, Info, MoreHorizontal } from "lucide-react"
+ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
++import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
++import { MenuPopup } from "../scoped-overlays"
++import { Button } from "../button"
++import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
+ import { QuestionMath } from "../question-content"
+ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
+@@ -53,6 +57,7 @@ export function BlueprintComponentsDemo() {
+   const [actionPreview, setActionPreview] = useState("点击按钮查看样式反馈；此页不执行批阅或发布。")
+   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle")
+   const [folioPage, setFolioPage] = useState(0)
++  const [showVersionNote, setShowVersionNote] = useState(false)
+   const output = artifactOutputExamples.paper.output
+   const revision = output?.status.state === "ready" ? output.version.label.match(/^v(\d+)\b/)?.[1] : undefined
+   const copyLink = async () => {
+@@ -70,15 +75,20 @@ export function BlueprintComponentsDemo() {
+       <a href="#actions">蓝图按钮与标签页</a>
+       <a href="#artifact-folio">成果标题定位</a>
+       <a href="#object-section-cards">原件与成果分节</a>
++      <a href="#workspace-contracts">Agent 工作区稳定交互</a>
+     </nav>
+     <BlueprintFoundationDemo />
+     <BlueprintSecondBatchDemo />
+     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
+     <BlueprintCardsDemo />
++    <AgentWorkspacePatternsDemo />
+     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
+       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
++        titleActions={<Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="成果标题更多操作" />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
++          <MenuPopup align="end"><MenuItem onClick={() => setShowVersionNote(value => !value)}>版本说明</MenuItem></MenuPopup></Menu>}
+         description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>
+         <p className="text-ui-hint text-muted-foreground">固定文件记录：{output?.status.state === "ready" ? output.status.file.name : "—"}。本页不执行保存或导出。</p>
++        {showVersionNote && <p role="status" className="text-ui-hint">当前成果有已保存版本，尚未提供分页事实，因此显示 REV。</p>}
+       </BlueprintSheet>
+       <BlueprintSheet rulers={false} title={continuousPreviewPages[folioPage].alt} folio={{ kind: "sheet", value: `${folioPage + 1} / ${continuousPreviewPages.length}` }} folioAriaHidden
+         description={`第 ${folioPage + 1} / ${continuousPreviewPages.length} 份作答；沿用连续纸张夹具的实际顺序。`}>
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index f4b91c1..25c2297 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,18 @@
+ 
+ ## 当前
+ 
++- 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
++- 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
++- 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
++- 工程：AGENTS §6.1 五项退出码均 0；数学字体／许可通过，排版 **312** 个 owned TSX 通过，生产构建通过；先构建后全量 **2244/2244，0 失败／0 跳过**，TypeScript **0 错误**。专项 116/116，新增 11 项中含 66 组旧输出逐字快照、25 组主题嵌套 SSR、13 项独立回退变异全部检出。[实际命令与退出码](evidence/r9-20261018/engineering.json)、[全量日志](evidence/r9-20261018/tests.log)、[实际 diff](evidence/r9-20261018/scope.diff)。首次全量因新增两个状态选择器触发 5 项旧数量断言失败；现改为独立核对四个具名 BpSegTabs 的唯一选中项，未放宽校验。P84 测试修正及检查迭代见交付报告。
++- 保护：54 个冻结 coss 文件及 CSS／Token／字号／目录／依赖／AGENTS 共 61 文件与基线字节一致，Workspace 工作树保持干净，4 个同步 blob 已核对。[散列核对](evidence/r9-20261018/integrity.json)。
++- 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
++
++## 历史
++
++### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
++
+ - 轮次：P83 · AgentMark 列表行首 glyph · 2026-10-17；分支 `feat/agent-mark-glyph`，基线 `bb85dd96270a421db5fa5626a1dda17c97e1e8e7`，开工工作树干净。[基线](evidence/agent-mark-glyph-20261017/baseline.json)。
+ - 范围：AgentMark 新增 glyph（16px 固定槽 / 13px 点阵），role=img + aria-label，无文字、live region、耗时和计时器；仅运行态动画，两蓝图 glyph 直角。复用现有 foreground / warning / destructive 及 reduce 媒体规则；既有 inline/loading 行为保留。组件页必要示例和契约同步。[复用与实现](evidence/agent-mark-glyph-20261017/inspection.md)、[实际 diff](evidence/agent-mark-glyph-20261017/scope.diff)。
+ - 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2233/2233，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **5/5**；72 组 inline/loading SSR 与基线逐字一致，9 项内存回退变异检出。[实际命令与退出码](evidence/agent-mark-glyph-20261017/engineering.json)、[专项日志](evidence/agent-mark-glyph-20261017/targeted.log)。
+@@ -11,8 +23,6 @@
+ - 周期：Builder 实施和工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承 P82 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增完成轮；最近完整工程回归为本轮 2233/2233，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 保持。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/agent-mark-glyph-20261017/browser-checklist.md) 含五主题 × 1280 / 320、三变体六状态、reduce 初始/动态切换、accessibility tree、嵌套预览与既有尺寸回归。CSS/SSR/Effect 探针不代表真实浏览器已验；Workspace 接入、真实服务、真机、读屏器未验。无新增 PO 决策项，Builder 不自我批准。
+ 
+-## 历史
+-
+ ### P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17（原当前，原样保留）
+ 
+ - 轮次：P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17；分支 `fix/blueprint-facts-narrow`，基线 `2f9c77644571c9475341f240cebe8e6248d7e62b`，开工工作树干净。[基线](evidence/facts-narrow-20261017/baseline.json)。
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index bd44874..117cfa8 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -1833,7 +1833,7 @@ groups={[{
+ 
+ ### 条目、权限与动作
+ 
+-`AgentCollectionEntry={id,title,type,access?:'available',source?,version?,groupId?,summary?,fields?,issue?,selectable?,actions?}`。source、version 缺省各自未确认；不从内容或集合版本补值。`issue={state:'invalid'/'conflict',reason}` 由宿主标记下架、版本变化等，原因常驻；是否仍可移除、分组、选中或用于其他操作由宿主明确给出，组件不自行解决冲突。`selectable={disabledReason?}` 明确提供才有选择控件。
++`AgentCollectionEntry={id,title,type,access?:'available',source?,version?,groupId?,summary?,versionSummary?,fields?,issue?,selectable?,actions?}`。source、version 缺省各自未确认；不从内容或集合版本补值。`issue={state:'invalid'/'conflict',reason}` 由宿主标记下架、版本变化等，原因常驻；是否仍可移除、分组、选中或用于其他操作由宿主明确给出，组件不自行解决冲突。`selectable={disabledReason?}` 明确提供才有选择控件。
+ 
+ `AgentCollectionRestrictedEntry={id,access:'restricted',disclosure:{label,reason},actions?:{remove?,resolve?}}` 只接受可披露名称、原因与明确可用的移除／处理动作。不会读取误传的 title/source/version/summary/fields/groupId/issue/selectable/move/group，也不挂载 renderItem。受限条目的版本不传出。集合标题、总量、分组、最近变化与 details 同样必须由宿主事先按当前权限处理；此分支只呈现授权结果，不是服务端授权。
+ 
+@@ -1879,7 +1879,7 @@ groups={[{
+ | 属性 | 约定 |
+ | --- | --- |
+ | `title / items` | 标题与只读受控队列；条目 `id` 唯一且稳定。宿主只提供当前获权可见的文件名、类型、来源、元数据与内容 |
+-| `limits` | 必填 `{accept,acceptLabel,maxFileSize,maxFiles}`；大小单位字节，大小／数量为正值。`accept` 是原生选择器提示，`acceptLabel` 是可读类型说明；两者须一致，不是内容安全校验 |
++| `limits` | 保留旧 `{accept,acceptLabel,maxFileSize,maxFiles}`；新增可选用结构 `{selection,upload?}`，将本机选择约束与服务上传策略分开。大小单位字节，大小／数量为正值；原生 accept 仅取 selection，不代替内容安全校验。服务未返回的类型／大小／数量／页数逐项显示“尚未核验”。详见下文 R9 契约 |
+ | `capabilities` | 必填 `select:{status:'supported',reason?}`、`upload`、`drop`。后两者为 `supported`（可选 reason）或 `limited / unsupported`（必填 reason）；上传 unsupported 显示“未接入”。宿主按设备声明拖放能力，触屏始终可用原生选择入口 |
+ | `onSelect(files: File[])` | 选择／拖入后唯一回调；完整交付所选文件，不截断超量文件、不判定合法、不读取内容。空选择不回调，原生 input 值立即清空。不得把接到此事件视为上传、读取或解析回执 |
+ | `selectionDisabledReason?` | 阻止选择及拖入并显示关联原因；不会禁用独立的原请求查询。宿主按当前权限决定 |
+@@ -1892,7 +1892,7 @@ groups={[{
+ 
+ ### 条目与状态
+ 
+-`AgentFileItem={id,name,type,sizeBytes?,source:{kind:'local'/'existing',label?},version?,status,processing?,actions?,details?,preview?}`。条目没有 File 字段，组件不把文件对象放入状态、全局缓存或存储。未知名称／类型／大小／版本／时间显示未确认；不从扩展名、当前时间或查看动作补造外部事实。
++`AgentFileItem={id,name,displayName?,versionLabel?,requestName?,type,sizeBytes?,source:{kind:'local'/'existing',label?},version?,status,processing?,actions?,details?,detailsPlacement?,preview?}`。条目没有 File 字段，组件不把文件对象放入状态、全局缓存或存储。未知名称／类型／大小／版本／时间显示未确认；不从扩展名、当前时间或查看动作补造外部事实。
+ 
+ | `status.state` | 专属字段与呈现 |
+ | --- | --- |
+@@ -2904,3 +2904,121 @@ P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 S
+ ### P43 TextbookDirectory 全部行压缩（2026-10-08）
+ 
+ 新版 embedded 提供 `allOption` 时，已选 n 项与 ghost/xs 清空合并到全部行右侧，多选结果替代整本题数；无独立摘要行、无点分隔符。全部行 36px，分隔线上下各 4px，搜索间距 8px；礼貌播报和“清空已选，回到全部”名称保留。仅清当前 scope；split 与旧调用不变，详见 [大纲目录契约](textbook-directory.md)。
++
++
++## Agent 工作区稳定交互与 R9 可选接口
++
++P84 基于 Prism `433969ab29679669c78fde816dfec96c4db31cfb`，只读核对 Workspace `5f37e1781e8ba496523a5dda90fab57321731c56` 的 R3–R8 呈现组合。本节记录组件接口、宿主接线和稳定模式，不表示 Workspace 已同步或真实服务已接入。规范目标仍以 [前端界面设计规范](OLE_Agent_Frontend_Blueprint_v1.0.md) 为准。新增可操作内容位于 `/next/foundations/blueprint#workspace-contracts`；成果标题操作位于同页 `#artifact-folio`。不新增组件目录条目，记录切换不会自动产生执行回执。
++
++### 复用与兼容
++
++先核对现有 AgentFileInput、AgentExecutionConfirmation、AgentCollectionBasket、BlueprintSheet、BpTitleBlock、BpSectionCard 与作用域浮层；所需能力均可在原组件增加可选字段完成。复用固定 coss Button / Input / Collapsible / Progress / Menu 与 Prism scoped-overlays，不新建基础控件；未引入 coss particles 或 Beautiful UI 代码，不把官方最新实现当成本地来源。CSS、主题 Token、字号、冻结 coss 和依赖均保持基线。没有把 Workspace Store、材料规则、停止协议、权限、用量模型或私有类型搬入 Prism。
++
++未传新增字段的调用保持旧 DOM、文案、动作与 ID；`tests/fixtures/agent-r9-main-433969a.json` 保存修改前四个源文件 blob 和 66 组 SSR SHA-256。旧文件行的技术标识回退和确认的未来时态仅为兼容保留，教师界面不推荐继续使用。
++
++### 文件的可读身份、移除与两类限制
++
++| 新接口 | 行为 |
++| --- | --- |
++| `AgentFileItem.displayName?: string` | 教师可读名称，覆盖默认标题、详情、进度可访问名与动作可访问名；未提供仍用 name |
++| `versionLabel?: string` | 教师可读版本，如 V12 或“版本未锁定”；与原始 version 分开，不解析版本 ID、不推导锁定状态 |
++| `requestName?: string` | 有原请求时显示其可读名称，缺省回退 request.label；不生成请求身份 |
++| `actions.remove.label? / description?` | 仅修改移除文案和关联说明，如“移除此引用”与“不会取消上传或删除原件”；紧凑图标按钮也保留新可访问名及 aria-describedby。原 remove 意图、禁用条件、unknown 仅查询门禁不变；没有 cancel-upload 意图 |
++| `detailsPlacement?: 'disclosure' | 'inline'` | 不传沿用原披露位置；inline 将已有 details 在四种 view/density 组合中常驻显示，用于材料策略、采用说明等不可隐藏的事实，不重复放入详情。details 仍是已授权的被动内容；动作通过 actions / 选择入口提供 |
++
++传入任一可读身份字段即启用可读行：请求不再附带 request.id，详情不再输出 file id，版本只取 versionLabel，缺省显示“未确认”。技术 id / version / request.id 仍原样出现在内部 DOM 数据属性或意图载荷，不以可读文案充当幂等或授权身份。只传 displayName 时不会把原始技术版本回填到可见文字；宿主必须保证 name、request.label、source.label、details 等本身是允许公开的内容。旧调用不传这些字段时，历史 ID 回退保持兼容但不推荐。
++
++`AgentFileLimits` 旧类型不变；`AgentFileScopedLimits = { selection: AgentFileSelectionLimits; upload?: AgentFileUploadPolicy }` 是新增可选用结构：
++
++- `selection` 为旧四字段的可选版本：accept、acceptLabel、maxFileSize、maxFiles；只约束本机选择入口。未提供的约束明确“未提供”，不填 Infinity 或假上限。未给 maxFiles 时原生选择器允许多选，表示未声明单选约束，不表示服务无限额。
++- `upload` 可含 acceptLabel、maxFileSize、maxFiles、maxPages；未提供整个对象或某字段时，服务类型／单文件大小／文件数量／页数上限分别“尚未核验”。无效数值同样不冒充已核验上限；数量／页数须为正安全整数。部分服务事实只显示已返回字段，绝不从 selection 回填。
++- selection.accept 是选择器提示；onSelect 仍原样交付全部 File[]，不读文件、不截断、不验证内容。上传能力由 capabilities 提供；拿到策略不等于已获上传能力或已完成安全检查。
++- 类型兼容：`AgentFileInputProps<TLimits = AgentFileLimits>` 默认维持旧 limits 类型，既有 MaterialIntake 等投影无需改动。需要显式声明新 props 对象时使用 `AgentFileInputProps<AgentFileScopedLimits>`；JSX 可直接传新结构。
++
++```tsx
++<AgentFileInput
++  title="本次材料"
++  items={[{
++    ...material,
++    displayName: material.name,
++    versionLabel: materialVersionLabel,
++    requestName: originalRequestName,
++    actions: { remove: { label: "移除此引用", description: "不会取消上传或删除原件", disabledReason } },
++    details: policyAndAdoptionFacts,
++    detailsPlacement: "inline",
++  }]}
++  limits={{ selection: localSelectionConstraints, upload: returnedUploadPolicy }}
++  capabilities={capabilities}
++  onSelect={selectFiles}
++  onAction={fileAction}
++/>
++```
++
++Workspace 的 MaterialFileRow 可由默认行接管名称／版本／原请求、进度、只查原请求、移除与详情。W207 必须同时改造 `modules/files/actions.tsx` 的 presentedFiles：去掉 `actions: undefined`，把移除按钮移入 actions.remove；把策略、采用说明放入 `detailsPlacement="inline"`，移除 details 内重复按钮；失败后的重新选择复用常驻原生文件入口。服务策略未知时不再借必填旧字段编造上传上限。宿主继续拥有禁用原因、页数／安全／权限校验、projectMaterial、原请求查询与快照；`renderItem` 保留给确有领域布局需要的宿主。新默认行采用既有大小格式 B/KB/MB、inline compact 披露与 workspace 预览位置，不承诺与旧 MaterialFileRow 布局逐字一致，W207 仍须验证两种视图的浏览器行为。
++
++### 确认六态的短标签与时态
++
++`AgentExecutionConfirmation` 新增两个可选 props：
++
++| 属性 | 默认值与约定 |
++| --- | --- |
++| `stateLabels?: Partial<Record<AgentConfirmationState['state'], string>>` | 只覆盖提供的状态短标签，其他沿用原文；不改变 state、徽标语义或动作能力 |
++| `effectTense?: 'future' | 'by-state' | 'neutral'` | 不传为 future，保持旧输出。by-state 仅 ready / blocked 的正向影响加“将会”，submitting / received / recorded / unknown 为中性原文；neutral 全部不加前缀，并以“本次确认范围”为标题，供只读、归档记录使用。“不会”开头的边界不加前缀 |
++
++推荐正常当前记录传 `effectTense="by-state"`，只读记录传 `"neutral"`。这只是文案配置，不能授予或撤销权限；只读宿主必须继续隐藏或禁用真实动作，不能只改时态却保留可提交 confirm。六态仍为 ready / submitting / received / recorded / blocked / unknown，不增加“已完成”第七态。recorded 表示确认记录保存，不等于执行结果 succeeded；unknown 只查询原请求，不提供重提。
++
++### 题篮版本身份与成果标题操作
++
++`AgentCollectionEntry.versionSummary?: ReactNode` 是每条授权条目的被动版本身份摘要，如“题目版本 V2 · 入篮版本未锁定”。default / summary、inline / workspace 均可显示，位于事实行之后、题干节选之前，独立于 onOpenItem，不占用 line-clamp-2 的题干区域。`renderSummary` 的 `{content, excerpt?}`、公式及实际截断判断不变；受限项即使误传 versionSummary 也不读取。版本事实和已锁定／未锁定文案由宿主提供，入篮不产生任务依据或版本锁定。
++
++W207 将 `modules/basket/fragments.tsx` 中放进 renderSummary 的版本段落迁到条目的 versionSummary，renderSummary 只留 QuestionContent 和真实 excerpt；不把同一段版本信息放两次。原始 version 仍随意图发出。
++
++`BlueprintSheet.titleActions?: ReactNode`（透传到 `BlueprintSectionHeader` 同名插槽）把具名原生按钮或作用域菜单放在标题行内、heading 外。支持窄容器换行，不把菜单文字混入 heading 可访问名；未传时无新包装节点。菜单必须使用已有 scoped-overlays 容器和焦点契约，不在 Sheet 内创建持久化或业务操作。
++
++folio 选择仍归宿主：有真实分页／成果序列用 **SHEET > 已保存版本 REV > 无**；普通章节可显式 SECTION。传入已选定的 folio，Sheet 不从 children 或 title 猜测页数／版本。既有 API 优先级另行保持：显式 folio 优先于 sheetNo（包括显式空值），空白 value 不渲染，数字补足两位，folioAriaHidden 只在标题区已有等价可读事实时启用。
++
++### 任务条、详情与停止后的部分结果
++
++任务条收起时保留任务名、外部阶段／停止结果、已处理范围、最后确认时间和必要动作，unknown／过期事实不隐藏；不把 Token 数当进度。展开详情使用 BlueprintSheet、BpTitleBlock 与 BpSectionCard 的现有组合：状态 → 处理／材料／可复核／异常事实栏 → 最新活动与时间 → 动作 → A–D 分节。四项事实在窄容器（≤480px）为 2×2，较宽时为一行；值未知就写未知，不填零。A–D 按实际存在的“材料分项、结果范围、异常、阶段记录”顺序排列，缺分节不造空卡，字母按可见分节顺序生成；阶段记录为只读历史。
++
++停止必须区分三阶段：发出停止请求、停止请求已接收、执行已终止的权威结果。前两者均不提前显示“已停止”；未知结果提供“核对停止结果”，不以超时、按钮点击或收起卡片推定终止。终止后保留完成／保留／未完成的确切范围；原执行不因查询、晚到用量或确认操作重开。
++
++E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult 的 partial 与可复核产出；明确“本次执行已停止，部分结果已保留”，同时保留未完成范围。E 的查看、修订、保存和确认只作用于已有可用结果，不能替代剩余执行，也不能隐式扩充确认范围。这里不把停止状态搬入组件枚举或新增任务详情组件。
++
++### 确认六态与结果四态分别呈现
++
++| 确认态 | 允许呈现的动作与事实 |
++| --- | --- |
++| ready | 外部资格有效时允许一次 confirm；展示对象、版本、影响和边界 |
++| submitting | 不重复提交，等待原请求 |
++| received | 仅请求已接收，不宣布确认成功 |
++| recorded | 确认记录已保存，成果执行结果独立显示 |
++| blocked | 具体阻断原因；宿主可提供重新审阅，不自动沿用旧版本资格 |
++| unknown | 回执待核对；只查询原请求，不用查询失败或暂时查无记录证明未执行 |
++
++结果沿用 succeeded / partial / failed / unknown 四态：成功明确已完成范围，部分结果同时列已完成与未完成，失败保留已有成果并说明未完成，未知不猜结果且仅提供原请求查询。已保存、已确认、已发布三者不混用；状态均来自宿主事实，不由动作返回值、定时器或动画决定。
++
++### 用量详情与规范 §9.3.4
++
++复用轻量键值、表线和 Collapsible。信息顺序固定为：**范围／周期 → 已返回用量及完整性 → 输入／输出及“其中” → 尝试／调用覆盖 → 有权额度 → 可选费用 → 更新时间／只读刷新**。入口仍是任务详情、会话标题菜单、个人设置“用量与额度”、成果标题菜单；不新增一级导航或第三常驻栏。320px 以单列与可展开明细呈现，关闭返回原阅读位置、滚动锚点与触发焦点。
++
++| §9.3.4 分支 | 呈现与保留规则 |
++| --- | --- |
++| 首次读取无统计 | “正在读取用量”，不补 0 |
++| 部分返回 | “已返回 8,000 Token · 统计未齐”，同时说明覆盖范围 |
++| 完整权威统计 | “本次任务 15,100 Token”，注明时间和范围；统计完整不代表费用结算 |
++| 查询失败有旧值 | “用量暂未更新”＋“截至某时”的旧值，可只读刷新 |
++| 查询失败无旧值 | “暂未取得用量”，不改任务结果 |
++| 服务不提供 | “当前服务尚未提供用量统计”，不放无效刷新 |
++| 权限撤销 | “当前无权查看此范围用量”，清除受限数值和越权预览 |
++| 服务明确完整零值 | 显示“0 Token”及范围、时间；缺失值不能走此分支 |
++
++停止／失败后的迟到统计仍归原任务、尝试和调用，不重开执行；累计快照 100 → 200 → 250 用 250 替换，不累加为 550。权威更正可调低，注明“用量已更正”、时间与修订依据；旧查询不能盖过新修订。输入／输出及缓存／推理“其中”的口径由服务确认，不重复相加、不把调用数或字符数当 Token；只读刷新不调用模型。额度和费用分别授权、有独立单位与新鲜度，费用缺失不补零、不在前端乘单价。
++
++### 依据摘要与材料九态
++
++依据摘要只列本次已受理任务快照中实际使用的材料／版本；当前会话材料独立列出“本次已使用／未作为本次依据／已移除引用”。**题篮不是依据**：收集、移除引用、改名或打开预览不修改已受理任务快照；入篮版本未锁定不能显示成执行版本已确认。
++
++材料沿用九态：selected / invalid / queued / received / uploading / uploaded / failed / unknown / removed。selected 区分本机和已有资料；invalid 只使用既有 type / size / count；queued 不等于已接收；received 不等于上传成功；uploading 只用已知 0–100 进度，100 也不自动完成；uploaded 不证明解析、安全或已使用；failed 必须是明确上传失败；unknown 只查询原请求；removed 只是引用移除，不取消上传、不删除原件。页数、安全检查、预览失败、解析和实际采用保持独立事实，通过 details / processing / preview 与宿主资格展示，不新增假上传态。
++
++下一轮按 [P84 同步清单](blueprint/evidence/r9-20261018/workspace-sync.json) 核对源字节、目标路径与每文件 blob，再更新 Workspace 既有 prism-source-manifest；本轮只交付清单，未写入 Workspace。
+diff --git a/lib/prism-next/blueprint-guide.json b/lib/prism-next/blueprint-guide.json
+index 5d38e2b..c821a3e 100644
+--- a/lib/prism-next/blueprint-guide.json
++++ b/lib/prism-next/blueprint-guide.json
+@@ -8597,7 +8597,7 @@
+     {
+       "source": "docs/blueprint/STATUS.md",
+       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+-      "sha256": "047952432909f0fe84560a560d673c487c3cb019b107db8261a8d4e56299a233"
++      "sha256": "95d268331017edaf093facdcf7f4ed7fd2522c32a8167c48b6c79eb2abeb174f"
+     },
+     {
+       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
+diff --git a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+index f4b91c1..25c2297 100644
+--- a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
++++ b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+@@ -4,6 +4,18 @@
+ 
+ ## 当前
+ 
++- 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
++- 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
++- 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
++- 工程：AGENTS §6.1 五项退出码均 0；数学字体／许可通过，排版 **312** 个 owned TSX 通过，生产构建通过；先构建后全量 **2244/2244，0 失败／0 跳过**，TypeScript **0 错误**。专项 116/116，新增 11 项中含 66 组旧输出逐字快照、25 组主题嵌套 SSR、13 项独立回退变异全部检出。[实际命令与退出码](evidence/r9-20261018/engineering.json)、[全量日志](evidence/r9-20261018/tests.log)、[实际 diff](evidence/r9-20261018/scope.diff)。首次全量因新增两个状态选择器触发 5 项旧数量断言失败；现改为独立核对四个具名 BpSegTabs 的唯一选中项，未放宽校验。P84 测试修正及检查迭代见交付报告。
++- 保护：54 个冻结 coss 文件及 CSS／Token／字号／目录／依赖／AGENTS 共 61 文件与基线字节一致，Workspace 工作树保持干净，4 个同步 blob 已核对。[散列核对](evidence/r9-20261018/integrity.json)。
++- 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
++
++## 历史
++
++### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
++
+ - 轮次：P83 · AgentMark 列表行首 glyph · 2026-10-17；分支 `feat/agent-mark-glyph`，基线 `bb85dd96270a421db5fa5626a1dda17c97e1e8e7`，开工工作树干净。[基线](evidence/agent-mark-glyph-20261017/baseline.json)。
+ - 范围：AgentMark 新增 glyph（16px 固定槽 / 13px 点阵），role=img + aria-label，无文字、live region、耗时和计时器；仅运行态动画，两蓝图 glyph 直角。复用现有 foreground / warning / destructive 及 reduce 媒体规则；既有 inline/loading 行为保留。组件页必要示例和契约同步。[复用与实现](evidence/agent-mark-glyph-20261017/inspection.md)、[实际 diff](evidence/agent-mark-glyph-20261017/scope.diff)。
+ - 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2233/2233，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **5/5**；72 组 inline/loading SSR 与基线逐字一致，9 项内存回退变异检出。[实际命令与退出码](evidence/agent-mark-glyph-20261017/engineering.json)、[专项日志](evidence/agent-mark-glyph-20261017/targeted.log)。
+@@ -11,8 +23,6 @@
+ - 周期：Builder 实施和工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承 P82 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增完成轮；最近完整工程回归为本轮 2233/2233，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 保持。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/agent-mark-glyph-20261017/browser-checklist.md) 含五主题 × 1280 / 320、三变体六状态、reduce 初始/动态切换、accessibility tree、嵌套预览与既有尺寸回归。CSS/SSR/Effect 探针不代表真实浏览器已验；Workspace 接入、真实服务、真机、读屏器未验。无新增 PO 决策项，Builder 不自我批准。
+ 
+-## 历史
+-
+ ### P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17（原当前，原样保留）
+ 
+ - 轮次：P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17；分支 `fix/blueprint-facts-narrow`，基线 `2f9c77644571c9475341f240cebe8e6248d7e62b`，开工工作树干净。[基线](evidence/facts-narrow-20261017/baseline.json)。
+diff --git a/tests/blueprint-print-a11y.test.mjs b/tests/blueprint-print-a11y.test.mjs
+index 3aec41f..f308569 100644
+--- a/tests/blueprint-print-a11y.test.mjs
++++ b/tests/blueprint-print-a11y.test.mjs
+@@ -142,7 +142,20 @@ for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real compone
+   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));
+   assert.match(bp, /aria-current="step"/);
+   assert.match(bp, /aria-label="查看工具说明"/);
+-  assert.equal((bp.match(/aria-checked="true" tabindex="0"/g) || []).length, 2);
++  // Each independently named choice group owns exactly one selected tab stop.
++  // R9 adds material/confirmation record selectors without weakening the old groups.
++  const choices = [...bp.matchAll(/<div(?=[^>]*class="[^"]*\bbp-seg-tabs\b)[^>]*role="radiogroup"[^>]*aria-label="([^"]+)"[^>]*>([\s\S]*?)<\/div>/g)];
++  const expectedChoices = new Map([
++    ['材料记录状态', '已选择'], ['确认记录状态', '已记录'],
++    ['答卷状态预览', '全部'], ['纵向选择样式预览', 'blueprint'],
++  ]);
++  assert.deepEqual(choices.map(([, label]) => label).sort(), [...expectedChoices.keys()].sort());
++  for (const [, label, content] of choices) {
++    assert.equal((content.match(/aria-checked="true" tabindex="0"/g) || []).length, 1, label);
++    assert.equal((content.match(/tabindex="0"/g) || []).length, 1, label);
++    const selected = content.match(/<button[^>]*aria-checked="true"[^>]*>([\s\S]*?)<\/button>/)[1].replace(/<[^>]*>/g, '');
++    assert.ok(selected.startsWith(expectedChoices.get(label)), label);
++  }
+   assert.match(bp, /aria-label="全班：已批阅 22人，待复核 7人，AI 处理中 9人，未提交 4人"/);
+   const tabs = render(api.TabsDemo, {}, theme);
+   checkReferences(tabs);
+diff --git a/components/prism-next/demos/agent-workspace-patterns.tsx b/components/prism-next/demos/agent-workspace-patterns.tsx
+new file mode 100644
+index 0000000..6b56a78
+--- /dev/null
++++ b/components/prism-next/demos/agent-workspace-patterns.tsx
+@@ -0,0 +1,71 @@
++"use client"
++
++import { useRef, useState } from "react"
++import { AgentFileInput, agentFileStatusLabels, type AgentFileStatus } from "../agent-file-input"
++import { AgentExecutionConfirmation, type AgentConfirmationState } from "../agent-semantic-components"
++import { AgentCollectionBasket } from "../agent-collection-basket"
++import { BlueprintSectionHeader, BpSegTabs } from "../blueprint/blueprint"
++import { Button } from "../button"
++import { QuestionMath } from "../question-content"
++
++const request = { id: "upload-request-12", label: "周测材料上传" }
++const materialStates: AgentFileStatus[] = [
++  { state: "selected" }, { state: "invalid", validation: "size", reason: "文件超过本机选择上限，请重新选择。" },
++  { state: "queued" }, { state: "received", request }, { state: "uploading", request, progress: 42 },
++  { state: "uploaded", uploadedAt: "2026-10-18 09:30" },
++  { state: "failed", request, reason: "上传失败，原请求未完成。", retry: {} },
++  { state: "unknown", request, reason: "上传回执未确认，请查询原请求。", query: {} }, { state: "removed" },
++]
++const confirmationLabels = { ready: "待确认", submitting: "提交中", received: "已接收", recorded: "已记录", blocked: "暂不可确认", unknown: "待核对" }
++const confirmationDescriptions = {
++  submitting: "正在提交当前范围的确认请求。", received: "原确认请求已接收，尚未取得完成回执。",
++  recorded: "本次确认记录已保存，成果执行结果单独核对。", blocked: "当前版本尚未完成必要核对。", unknown: "确认回执未取得，请查询原请求。",
++}
++
++/** Controls select fixed records or emit intent; no action manufactures a receipt. */
++export function AgentWorkspacePatternsDemo() {
++  const [material, setMaterial] = useState("selected")
++  const [confirmation, setConfirmation] = useState<AgentConfirmationState["state"]>("recorded")
++  const [readOnly, setReadOnly] = useState(false)
++  const [feedback, setFeedback] = useState("")
++  const [questionOpen, setQuestionOpen] = useState(false)
++  const questionTrigger = useRef<HTMLButtonElement | null>(null)
++  const status = materialStates.find(value => value.state === material) ?? materialStates[0]
++  const confirmationFact: AgentConfirmationState = readOnly && confirmation === "ready"
++    ? { state: "blocked", description: "归档记录只读，请恢复对话后重新核对资格。" }
++    : confirmation === "ready" ? { state: "ready", confirm: { label: "确认这 2 份作答", onAction: () => setFeedback("已发出确认意图，等待原请求回执。") } }
++      : confirmation === "unknown" ? { state: "unknown", description: confirmationDescriptions.unknown,
++        query: { label: "查询原请求", disabledReason: readOnly ? "归档记录只读" : undefined, onAction: () => setFeedback("已请求查询原确认，确认状态保持待核对。") } }
++        : { state: confirmation, description: confirmationDescriptions[confirmation] }
++  const stem = <p>求函数 <QuestionMath label="y 等于 x 平方减二 x 加三"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>3</mn></QuestionMath> 的最小值，并说明取值时的自变量。</p>
++  return <section id="workspace-contracts" aria-label="Agent 工作区稳定交互" className="min-w-0 space-y-6">
++    <BlueprintSectionHeader title="Agent 工作区稳定交互" description="材料、确认和题目版本分别呈现外部事实；操作等待对应回执。" />
++    <section aria-label="材料身份与上传策略" className="min-w-0 space-y-3">
++      <BpSegTabs label="材料记录状态" value={material} onValueChange={setMaterial} items={materialStates.map(value => ({ value: value.state, label: agentFileStatusLabels[value.state] }))} />
++      <AgentFileInput title="本次材料" view="workspace"
++        items={[{ id: "material-12", name: "source.pdf", displayName: "九年级（2）班周测原卷.pdf", version: "material_v12", versionLabel: "V12", requestName: "周测材料上传",
++          type: "PDF", sizeBytes: 1048576, source: { kind: "local", label: "本机材料" }, status,
++          actions: { remove: { label: "移除此引用", description: "不会取消上传或删除原件" } },
++          detailsPlacement: "inline", details: <p className="text-ui-hint">页数与安全检查尚未核验，暂不能用于正式处理。</p>,
++          preview: <p className="text-ui-hint">原卷第一页尚未取得预览。</p> }]}
++        limits={{ selection: { accept: ".pdf,.png,.jpg", acceptLabel: "PDF、PNG、JPG", maxFileSize: 20 * 1024 * 1024, maxFiles: 4 } }}
++        capabilities={{ select: { status: "supported" }, upload: { status: "unsupported", reason: "当前入口未连接上传服务。" }, drop: { status: "unsupported", reason: "请使用选择文件。" } }}
++        onSelect={files => setFeedback(`已收到 ${files.length} 份本机选择；未发起上传。`)}
++        onAction={intent => setFeedback(intent.kind === "query" ? "已发出原上传请求查询意图，等待回执。" : "已发出移除引用意图，等待队列更新；不会取消上传或删除原件。")} />
++    </section>
++    <section aria-label="确认六态" className="min-w-0 space-y-3">
++      <BpSegTabs label="确认记录状态" value={confirmation} onValueChange={value => setConfirmation(value as AgentConfirmationState["state"])}
++        items={Object.entries(confirmationLabels).map(([value, label]) => ({ value, label }))} />
++      <Button variant="outline" size="sm" aria-pressed={readOnly} onClick={() => setReadOnly(value => !value)}>只读记录</Button>
++      <AgentExecutionConfirmation title="确认本次可复核成果" target="作答 01、02" version="V2"
++        effects={["保留当前修订与来源定位", "不会纳入仍未完成的作答 03、04"]}
++        confirmation={confirmationFact} stateLabels={confirmationLabels} effectTense={readOnly ? "neutral" : "by-state"} />
++    </section>
++    <AgentCollectionBasket collection={{ id: "basket-1", title: "试题篮", type: "题目", source: "本次检索" }}
++      summary={{ count: 1, unit: "题" }} sync={{ state: "local" }} itemPresentation="summary"
++      items={[{ id: "question-1", title: "二次函数最值", type: "解答题", version: "question_v2", source: "本次检索", versionSummary: "题目版本 V2 · 入篮版本未锁定" }]}
++      renderSummary={() => ({ content: stem })} onOpenItem={(_, trigger) => { questionTrigger.current = trigger; setQuestionOpen(true) }} />
++    {questionOpen && <section aria-label="题目全文" className="space-y-2 text-read-body">{stem}<Button variant="outline" size="sm" onClick={() => { setQuestionOpen(false); questionTrigger.current?.focus() }}>关闭题目全文</Button></section>}
++    {feedback && <p role="status" className="break-words text-ui-hint">{feedback}</p>}
++  </section>
++}
+diff --git a/tests/agent-r9.test.mjs b/tests/agent-r9.test.mjs
+new file mode 100644
+index 0000000..9de9963
+--- /dev/null
++++ b/tests/agent-r9.test.mjs
+@@ -0,0 +1,228 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { createHash } from 'node:crypto';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import React from 'react';
++import { renderToStaticMarkup as render } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++import { r9Baseline, r9Sources, legacyCases, fileItem, fileProps, fileStates, request, confirmationStates, confirmationProps, confirmationFor, basketProps } from './helpers/agent-r9-fixtures.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const runtime = await createTestRuntime('p84');
++const sources = Object.fromEntries(r9Sources.map(path => [path, readFileSync(root + path, 'utf8')]));
++let serial = 0;
++async function load(overrides = {}) {
++  const result = await build({ stdin: { contents: r9Sources.map(path => `export * from './${path}';`).join('\n'), resolveDir: root, loader: 'tsx' },
++    bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
++    plugins: [{ name: 'in-memory-rollback', setup(build) {
++      build.onLoad({ filter: /\.tsx$/ }, args => {
++        const contents = overrides[args.path.slice(root.length)];
++        if (contents !== undefined) return { contents, loader: 'tsx' };
++      });
++    } }],
++  });
++  const file = new URL(`bundle-${serial++}.mjs`, runtime);
++  writeFileSync(file, result.outputFiles[0].text);
++  return import(file);
++}
++const api = await load(), h = React.createElement;
++const htmlFor = (api, name, props) => render(h(api[name], props));
++const text = html => html.replace(/<[^>]*>/g, '');
++const modes = ['inline', 'workspace'].flatMap(view => ['default', 'compact'].map(density => ({ view, density })));
++const readableItem = { ...fileItem, name: 'internal-file-name', displayName: '九年级二班周测原卷.pdf', versionLabel: 'V12', requestName: '周测材料上传' };
++
++// Event/prop probes are not browser, focus or visual acceptance.
++function capture(api, name, props) {
++  const nodes = [];
++  const owned = new Set(['AgentFileInput', 'FileRow', 'FileActionButton', 'FileBatchButton', 'AgentCollectionBasket', 'BasketRow', 'BasketActionButton', 'AgentExecutionConfirmation', 'Action']);
++  function inspect(node) {
++    if (Array.isArray(node)) return node.map(inspect);
++    if (!React.isValidElement(node)) return node;
++    if (typeof node.type === 'function' && owned.has(node.type.name)) return h(function Probe() { return inspect(node.type(node.props)); });
++    nodes.push(node);
++    return React.cloneElement(node, {}, React.Children.map(node.props.children, inspect));
++  }
++  render(inspect(h(api[name], props)));
++  return nodes;
++}
++
++function readableContract(api) {
++  for (const mode of modes) for (const status of fileStates) {
++    const props = { ...fileProps, ...mode, items: [{ ...readableItem, status }] };
++    const html = htmlFor(api, 'AgentFileInput', props);
++    assert.ok(text(html).includes(readableItem.displayName));
++    assert.match(text(html), /版本：V12/);
++    assert.doesNotMatch(text(html), /file-internal|request-internal|material-internal|internal-file-name/);
++    assert.doesNotMatch(html, /aria-label="[^"]*(?:internal-file-name|material-internal|request-internal)/);
++    if ('request' in status) assert.match(text(html), /原请求：周测材料上传/);
++    // Inspect the actual default detail subtree even when its disclosure is closed.
++    const details = capture(api, 'AgentFileInput', props).filter(n => n.type === 'p').map(n => text(render(n))).join('\n');
++    assert.doesNotMatch(details, /file-internal|request-internal|material-internal|internal-file-name/);
++  }
++  const missing = htmlFor(api, 'AgentFileInput', { ...fileProps, items: [{ ...fileItem, displayName: '原卷', status: fileStates[5] }] });
++  assert.match(text(missing), /版本：未确认/);
++  assert.doesNotMatch(text(missing), /material-internal/);
++}
++test('P84: readable file identities cover nine states, four modes and collapsed details without exposing technical IDs', () => readableContract(api));
++
++function removalContract(api) {
++  for (const mode of modes) for (const disabled of [false, true]) {
++    const calls = [], description = '不会取消上传或删除原件';
++    const props = { ...fileProps, ...mode, onAction: intent => calls.push(intent), items: [{ ...readableItem, actions: { remove: { label: '移除此引用', description, disabledReason: disabled ? '归档记录只读' : undefined } } }] };
++    const nodes = capture(api, 'AgentFileInput', props);
++    const action = nodes.find(n => n.props['data-file-action'] === 'remove');
++    assert.equal(action.props['aria-label'], `移除此引用：${readableItem.displayName}`);
++    const described = action.props['aria-describedby'].split(' ').map(id => nodes.find(n => n.props.id === id));
++    assert.ok(described.every(Boolean));
++    assert.ok(described.some(n => text(render(n)) === description));
++    action.props.onClick();
++    assert.deepEqual(calls, disabled ? [] : [{ kind: 'remove', fileId: fileItem.id, version: fileItem.version }]);
++  }
++}
++test('P84: remove copy and associated description preserve the original intent and disabled gate in all modes', () => removalContract(api));
++test('P84: readable unknown files remain query-only and retain exact request identity', () => {
++  for (const mode of modes) {
++    const calls = [], props = { ...fileProps, ...mode, onAction: v => calls.push(v), items: [{ ...readableItem, status: fileStates[7] }] };
++    const nodes = capture(api, 'AgentFileInput', props).filter(n => n.props['data-file-action']);
++    assert.deepEqual(nodes.map(n => n.props['data-file-action']), ['query']);
++    nodes[0].props.onClick();
++    assert.deepEqual(calls, [{ kind: 'query', fileId: fileItem.id, version: fileItem.version, requestId: request.id }]);
++    assert.match(htmlFor(api, 'AgentFileInput', props), /data-file-state="unknown"/);
++  }
++});
++
++function detailsContract(api) {
++  for (const mode of modes) {
++    const html = htmlFor(api, 'AgentFileInput', { ...fileProps, ...mode,
++      items: [{ ...readableItem, detailsPlacement: 'inline', details: h('p', null, '安全检查尚未核验') }] });
++    assert.equal((html.match(/安全检查尚未核验/g) ?? []).length, 1);
++    assert.match(html, /data-file-inline-details/);
++    assert.match(html, /<div[^>]*data-file-inline-details[^>]*><p>安全检查尚未核验<\/p><\/div>/);
++    assert.doesNotMatch(html.match(/<div[^>]*data-file-inline-details[^>]*>/)[0], /hidden|display:none/);
++  }
++}
++test('P84: host policy facts can remain visible once outside the collapsed file details in all four modes', () => detailsContract(api));
++
++function limitsContract(api) {
++  for (const mode of modes) {
++    const props = { ...fileProps, ...mode, limits: { selection: { accept: '.png', acceptLabel: 'PNG', maxFileSize: 1024, maxFiles: 1 } } };
++    const html = htmlFor(api, 'AgentFileInput', props);
++    for (const label of ['服务上传类型', '服务单文件大小', '服务文件数量', '服务页数上限']) assert.ok(text(html).includes(`${label}：尚未核验`));
++    assert.match(text(html), /本机选择：PNG · 单文件大小：1 KB · 文件数量：1 个/);
++    const input = capture(api, 'AgentFileInput', props).find(n => n.props.type === 'file');
++    assert.equal(input.props.accept, '.png'); assert.equal(input.props.multiple, false);
++    const known = text(htmlFor(api, 'AgentFileInput', { ...props, limits: { ...props.limits, upload: { acceptLabel: 'PDF', maxFileSize: 2097152, maxPages: 20 } } }));
++    assert.match(known, /服务上传类型：PDF · 服务单文件大小：2 MB · 服务文件数量：尚未核验 · 服务页数上限：20 页/);
++    const absent = text(htmlFor(api, 'AgentFileInput', { ...props, limits: { selection: {}, upload: { maxFileSize: NaN, maxFiles: -1, maxPages: 1.5 } } }));
++    assert.match(absent, /本机选择：类型约束未提供 · 单文件大小：未提供 · 文件数量：未提供/);
++    assert.equal((absent.match(/尚未核验/g) ?? []).length, 4);
++  }
++}
++test('P84: scoped limits never copy local constraints into missing service policy and accept partial service facts', () => limitsContract(api));
++
++function confirmationContract(api) {
++  for (const state of confirmationStates) {
++    const props = { ...confirmationProps, confirmation: confirmationFor(state), stateLabels: { [state]: `短标签-${state}` } };
++    const stateHtml = htmlFor(api, 'AgentExecutionConfirmation', { ...props, effectTense: 'by-state' });
++    assert.ok(text(stateHtml).includes(`短标签-${state}`));
++    assert.equal(text(stateHtml).includes('将会'), ['ready', 'blocked'].includes(state));
++    assert.ok(text(stateHtml).includes('不会纳入未完成作答'));
++    const readonly = htmlFor(api, 'AgentExecutionConfirmation', { ...props, effectTense: 'neutral' });
++    assert.doesNotMatch(readonly, /将会|确认后的影响/);
++    assert.match(readonly, /本次确认范围/);
++    assert.equal(readonly.includes('>确认成果<'), state === 'ready', 'presentation cannot grant or revoke a capability');
++  }
++  assert.match(htmlFor(api, 'AgentExecutionConfirmation', { ...confirmationProps, confirmation: confirmationFor('recorded'), stateLabels: { ready: '确认' } }), /确认记录/);
++}
++test('P84: six short labels and state-aware/read-only effect tense do not change confirmation capabilities', () => confirmationContract(api));
++
++function basketContract(api) {
++  for (const mode of modes) for (const itemPresentation of ['default', 'summary']) for (const canOpen of [false, true]) {
++    const props = { ...basketProps, ...mode, itemPresentation, onOpenItem: canOpen ? basketProps.onOpenItem : undefined,
++      items: basketProps.items.map(item => ({ ...item, versionSummary: item.access === 'restricted' ? '不得披露的版本' : '题目版本 V2 · 入篮版本未锁定' })) };
++    const html = htmlFor(api, 'AgentCollectionBasket', props);
++    assert.match(html, /data-collection-version-summary/);
++    assert.match(text(html), /题目版本 V2 · 入篮版本未锁定/);
++    assert.doesNotMatch(html, /不得披露的版本/);
++    assert.equal(html.includes('求函数的最小值'), itemPresentation === 'summary' && canOpen);
++    assert.equal((html.match(/data-collection-version-summary/g) ?? []).length, 1);
++  }
++}
++test('P84: version identity stays outside the summary clamp, preserves renderSummary and never discloses restricted entries', () => basketContract(api));
++
++function sheetContract(api) {
++  for (const [sheetNo, revision, expected] of [['2/4', 'v3', 'SHEET 02 / 04'], [undefined, 'v3', 'REV 03'], [undefined, undefined, null]]) {
++    // Fact selection is a host decision: actual page order > saved revision > absent.
++    const folio = sheetNo ? { kind: 'sheet', value: sheetNo } : revision ? { kind: 'rev', value: revision } : undefined;
++    const html = htmlFor(api, 'BlueprintSheet', { title: '周测成果', folio, titleActions: h('button', { type: 'button', 'aria-label': '成果标题更多操作' }, '更多'), children: h('p', null, '正文') });
++    assert.match(html, /data-slot="bp-section-title-actions"/);
++    assert.match(html, /aria-label="成果标题更多操作"/);
++    assert.match(html, /<h2[^>]*>周测成果<\/h2>/);
++    assert.doesNotMatch(html, /<section[^>]*titleActions/);
++    assert.doesNotMatch(html.match(/<h2[^>]*>(.*?)<\/h2>/)[1], /<button/);
++    assert.equal((html.match(/class="bp-section-folio"/g) ?? []).length, expected ? 1 : 0);
++    if (expected) assert.ok(text(html).includes(expected));
++  }
++  const explicit = htmlFor(api, 'BlueprintSheet', { title: '成果', sheetNo: '4/9', folio: { kind: 'rev', value: '' }, titleActions: h('button', null, '更多') });
++  assert.doesNotMatch(explicit, /bp-section-folio|SHEET|REV/);
++}
++test('P84: Sheet title actions stay outside the heading, preserve host SHEET > REV > absent selection and explicit-empty compatibility', () => sheetContract(api));
++
++function isolationContract(api) {
++  const themes = ['light', 'paper', 'dark', 'blueprint', 'blueprint-night'];
++  const content = h(api.BlueprintSheet, { title: '成果', titleActions: h('button', { type: 'button' }, '更多') },
++    h(api.AgentFileInput, { ...fileProps, items: [readableItem] }),
++    h(api.AgentExecutionConfirmation, { ...confirmationProps, confirmation: confirmationFor('recorded'), effectTense: 'neutral' }));
++  let reference;
++  for (const outer of themes) for (const inner of themes) {
++    const html = render(h('div', { 'data-ui-version': 'coss-v1', 'data-prism-theme': outer }, h('div', { 'data-agent-preview': '', 'data-prism-theme': inner }, content)));
++    assert.equal((html.match(/data-prism-theme=/g) ?? []).length, 2, 'only the host supplies the two theme roots');
++    const slot = html.match(/<div data-slot="bp-section-title-actions"[^>]*>/)[0];
++    assert.doesNotMatch(slot, /style=|bg-|rounded-|shadow-|text-|font-/);
++    assert.match(slot, /min-w-0.*max-w-full.*flex-wrap/);
++    const normalized = html.replace(/data-prism-theme="[^"]*"/g, 'data-prism-theme="HOST"');
++    reference ??= normalized;
++    assert.equal(normalized, reference, `${outer}/${inner}`);
++  }
++}
++test('P84: 25 nested theme roots remain host-owned; the new Sheet action container adds layout only (SSR scope contract)', () => isolationContract(api));
++
++test('P84: 66 legacy calls render byte-identically to the verified original main source, including generated IDs', () => {
++  const baseline = JSON.parse(readFileSync(root + 'tests/fixtures/agent-r9-main-433969a.json', 'utf8'));
++  assert.equal(baseline.baseline, r9Baseline);
++  const entries = legacyCases();
++  assert.deepEqual(entries.map(e => e.name).sort(), Object.keys(baseline.cases).sort());
++  for (const entry of entries) {
++    const html = htmlFor(api, entry.component, entry.props);
++    assert.equal(createHash('sha256').update(html).digest('hex'), baseline.cases[entry.name], entry.name);
++  }
++});
++
++test('P84: independent in-memory rollback mutations are caught by rendered and intent contracts', async t => {
++  const [files, confirmations, baskets, sheets] = r9Sources;
++  const mutations = [
++    ['display name ignored', files, s => s.replaceAll('item.displayName ?? item.name', 'item.name'), readableContract],
++    ['raw version exposed', files, s => s.replace('const version = readable ?', 'const version = false ?'), readableContract],
++    ['raw request exposed', files, s => s.replaceAll('readable ? requestName', 'false ? requestName'), readableContract],
++    ['remove copy dropped', files, s => s.replace('item.actions?.remove?.label ?? "移除"', '"移除"'), removalContract],
++    ['remove explanation dropped', files, s => s.replace('const removeDescription = item.actions?.remove?.description', 'const removeDescription = undefined'), removalContract],
++    ['inline policy details dropped', files, s => s.replaceAll('item.detailsPlacement === "inline"', 'false'), detailsContract],
++    ['service limit invented from local', files, s => s.replace('upload?.maxFileSize', 'selection.maxFileSize'), limitsContract],
++    ['state tense lost', confirmations, s => s.replace('const future = effectTense === "future"', 'const future = true || effectTense === "future"'), confirmationContract],
++    ['short label lost', confirmations, s => s.replace('stateLabels?.[confirmation.state] ?? labels[confirmation.state]', 'labels[confirmation.state]'), confirmationContract],
++    ['version summary dropped', baskets, s => s.replace('entry?.versionSummary != null', 'false'), basketContract],
++    ['title actions dropped', sheets, s => s.replace('titleActions={titleActions}', ''), sheetContract],
++    ['empty folio leaks', sheets, s => s.replaceAll('folio && value &&', 'folio &&'), sheetContract],
++    ['title action visual override', sheets, s => s.replace('data-slot="bp-section-title-actions"', 'data-slot="bp-section-title-actions" style={{ color: "red" }}'), isolationContract],
++  ];
++  for (const [name, path, mutate, check] of mutations) {
++    check(api);
++    const changed = mutate(sources[path]);
++    assert.notEqual(changed, sources[path], name);
++    const mutant = await load({ [path]: changed });
++    assert.throws(() => check(mutant), undefined, name);
++    t.diagnostic(`${name}: rejected`);
++  }
++});
+diff --git a/tests/fixtures/agent-r9-main-433969a.json b/tests/fixtures/agent-r9-main-433969a.json
+new file mode 100644
+index 0000000..4722e9f
+--- /dev/null
++++ b/tests/fixtures/agent-r9-main-433969a.json
+@@ -0,0 +1,77 @@
++{
++  "baseline": "433969ab29679669c78fde816dfec96c4db31cfb",
++  "sources": {
++    "components/prism-next/agent-file-input.tsx": "fbd2985a6a99f49df54c46b3bcb3edb58b4cced5",
++    "components/prism-next/agent-semantic-components.tsx": "d33678821a79ce13958409e9aa4162aad41cea46",
++    "components/prism-next/agent-collection-basket.tsx": "9a6323d5298ac3b74ed7cb1d0c11e9c57ddc9483",
++    "components/prism-next/blueprint/blueprint.tsx": "cd7aaa45b3d30b51796956e07f5c8360df51797a"
++  },
++  "cases": {
++    "file-inline-default-selected": "3166e5a4c6b1a0701a57ac0e0811a43aac29ab07230320ca11323a77c2620832",
++    "file-inline-default-invalid": "d7e3e85c6b9c3855e0748498b27d1bc93a48de11e82d8692618e6ac1d3262cda",
++    "file-inline-default-queued": "0f5812ff72a7a240dfed5efd6de488472c2f4ae1d200890179f39dc887090287",
++    "file-inline-default-received": "7b9956911ae1baabdb0ff1d6d9c43fe1d6ae3ff0231b29659d2191d91a0b12b6",
++    "file-inline-default-uploading": "b0cbc50356493128ec4487ce44db4f8308a83e437848a2339e091b830f7f667e",
++    "file-inline-default-uploaded": "23d8853c302a8fa7425e8dbca7e8def7f26f389faa66b7590bd3af3aff2a9100",
++    "file-inline-default-failed": "c6dd9e64a1df71401c8f4111984ec8930f2fe3f28839f1eba11207596d080817",
++    "file-inline-default-unknown": "7a76a0eb7624c46e1951ef946a2c5c2336f8bfd61e0d717b6235264c1a81c52d",
++    "file-inline-default-removed": "0af7e9959675cf4f6250a0e7a8b0c2cb83d40ed8546c8fad7e52f24ece109555",
++    "file-inline-default-empty": "3f5bdfeee35c74a04adb5846fa05df7c24557c1a8e6e782c84a3510944fb83b4",
++    "basket-inline-default-default": "c637cf0c9cfd933e8b4826fd0feea1a42591b7d0e2e74fb24dd5650a3e174e36",
++    "basket-inline-default-summary": "a9a6bf283d0c7ba9174e06a568103c9343e70f873cd511d9c3a3b38e54c8d36a",
++    "file-inline-compact-selected": "f7ba7908e43466b71b1bc60b8cec38a9be04af21bfac9f95595e1c4358c92070",
++    "file-inline-compact-invalid": "8087e550f4b18a465d9655e3cdb207b01c8783abd285e710625c87f29cdf2164",
++    "file-inline-compact-queued": "9c325c15584df11438f72078ab0905cd15c8d42d1452754b54595bb9451ec954",
++    "file-inline-compact-received": "5f4d0d4617ab4c5c3f11f425627814d5086058df546681d226105a03551fd4a0",
++    "file-inline-compact-uploading": "a0a0933c9d4066b5c251052bec680221b69aaf82e02403240481fe2f282b0d32",
++    "file-inline-compact-uploaded": "be75c9b1c42414de76ad99326f5bf647cbcb827e9ce795c58f5fbca67f84c8c2",
++    "file-inline-compact-failed": "a352cab542a6b7b62bdae992149af50c91c67b4d359f9afb61c8033aadf0fd5f",
++    "file-inline-compact-unknown": "e964afee74f1bde02ec57188136ceaea39da42ac840c4d3d4d0e4a7d2bc89885",
++    "file-inline-compact-removed": "b3a4ad7d18af4bd972772d1e9484f88b26e0841799d0a0800f221fe5940a904b",
++    "file-inline-compact-empty": "23e3188a2f275b89260dccae5491232f5881210f6c1bd40bda669e76327fe1de",
++    "basket-inline-compact-default": "638bc65b795d07c89df1f697a676780a8983cea95be494bc582076d7703c41c7",
++    "basket-inline-compact-summary": "b7a03845c46dde0ec3d8df6be5fe2946b33bd48f2f14a8efda949c4be9c4cd01",
++    "file-workspace-default-selected": "9cc0572ddae66a7a025e5d9cf00ce55d8ca082fe323282758f921113bb271fb6",
++    "file-workspace-default-invalid": "37480547c4c8e97add4bf8969b304d55b2559fc2ad6dc9853283989dc0556a45",
++    "file-workspace-default-queued": "4653e066f29d2616a5f11d74d19eb52a45e5fdd6cf8845289c97b8cb6ed9dea5",
++    "file-workspace-default-received": "f0e392102f90cdd7dd8111ff14de478a5a4ac65823bb3994833601b2801b62dd",
++    "file-workspace-default-uploading": "0d478cccf89dbef87116b950fe1afcc546fe5ff3eb1a76ffebdb353d792b3e70",
++    "file-workspace-default-uploaded": "cf8dd6fa65cc4a12015502e49e50bd78abb64cc64b27e72e5754fcf232a69885",
++    "file-workspace-default-failed": "e12128c614a17cf5ff60d29f09aff11480595ccfb40044aa7acb27d07cfaa500",
++    "file-workspace-default-unknown": "78c5b6373b58193d58ee1c92bf5c8d8652cb50526a19ccf44ff7b11f9aaf8db9",
++    "file-workspace-default-removed": "6bad85b5dedf145bc9e0ee14b9de1ccf987abe38d66a19c6f5c7f0e16a0c66e7",
++    "file-workspace-default-empty": "ba14aab639943fcf821ffe9948145945128219d21c64aea99ca84ce77ef7eae0",
++    "basket-workspace-default-default": "49ca89645c0b6de41614b093688e945a6f763edddad6d96f4b100292abbcb890",
++    "basket-workspace-default-summary": "518b94a5fda18f3fa039ba580871722ddbecd4a97461c329ac4f4053095092b8",
++    "file-workspace-compact-selected": "331168dabbbf783fe61fc1b86600be86959ab858f7dd989f9c5684f7ca95cbf2",
++    "file-workspace-compact-invalid": "8ee5032ac0e0b798808051b248e76f701827c6ed7f588bb1de0d4a781c3bdb29",
++    "file-workspace-compact-queued": "ae8174d14c2f821c00b919146dda95a96dabc326525ab087458b697381abaacf",
++    "file-workspace-compact-received": "6cfd63fe89827ce1d26dd7baefbf838b1474c844a75dda670b031c1ff7fe8f26",
++    "file-workspace-compact-uploading": "4ce91730e524512032f37fe543551c4295962c763c5068b59f45b4066df2a534",
++    "file-workspace-compact-uploaded": "4562b1d22fd424407d3f065864c957632b657cc693808f017458e21b0b157c4f",
++    "file-workspace-compact-failed": "e23b43358d7f4e5982941f387f51ac7570a2d0e7e9e08cf8492fff4e6bae4d13",
++    "file-workspace-compact-unknown": "4e5f738cff80b9ccb8ccb496e7470e9cc34c7f186ed1ef131124e1cc55737295",
++    "file-workspace-compact-removed": "fb74c88528822e4e52b35b6f69ea5819919fe74f59da308d7099cc167b8add40",
++    "file-workspace-compact-empty": "3279c697e3825c49508900e3e5c8e9bed8cb11b897f6c3256fa1b048a73e7be8",
++    "basket-workspace-compact-default": "39df40f616010842c94849d702355f7bd2ed805efed4c3cc3b52050153bca97d",
++    "basket-workspace-compact-summary": "116db19d335119a039c9fd2570b448edd240a32f95b9d33e4f847f9d35c5c94e",
++    "confirmation-ready-card": "16a8c4b30b7094256d1b5fa0105042e6f0d4c874760e80e7c5825537019046f7",
++    "confirmation-ready-inline": "b998207e2a5fee42dbb513cc386a8f60b19649b38ec8390ba2cc84653a27a9d3",
++    "confirmation-submitting-card": "6050814b414c2e036d5abe4715f6347da5df11a33d66a1e62bf97f99fb8fc2f6",
++    "confirmation-submitting-inline": "3a0d2a4ee843c6f5294a6895004eb2ee39a09903368b31bf6c5e043845f3ed36",
++    "confirmation-received-card": "9053eca912b32ae153ff8afdfb7554566fec11992eaff40c30b36dc54106b88a",
++    "confirmation-received-inline": "a8213e03a08d1f12c3d4132d56e315037d7d50b55effe958857dbc629863ad5c",
++    "confirmation-recorded-card": "92dd316a6308d82ca74598915a18c80133a88d343e9254b2eed0cd1ce77d9cd4",
++    "confirmation-recorded-inline": "774d700a53e782d0c9cd8b3a4d93482c9d6f5e8debcc8ea5499e211ac15565f2",
++    "confirmation-blocked-card": "1b0176f020b3bc9981f26d534ee0c6fa33c4707de80498daf8645a5b042f1062",
++    "confirmation-blocked-inline": "7378577d985c1849ed099d1be1f35ec54b330a2cb2634382f33f3829d3218c41",
++    "confirmation-unknown-card": "5651eb4b3e4c839e88f5c0eed5da5339e6e79b6d68598e7665cc48bee2783dd3",
++    "confirmation-unknown-inline": "f1b203edb696ef23e91465923a97c39709f690c0870aebf8172592d0c5e9a6a8",
++    "sheet-none": "fe4c14ea315bfcd3025d03868c1fd9eab3049b457266f7d8e62ccd3522da55f4",
++    "sheet-legacy": "46de4c5210d815c75a1c646a2239baf4246e9edd301c0d94464b52955399470b",
++    "sheet-sheet": "46de4c5210d815c75a1c646a2239baf4246e9edd301c0d94464b52955399470b",
++    "sheet-rev": "cddff6a331ecc7c36985e80c4689eb00af2e76297b587907d3c7627604438c15",
++    "sheet-empty": "fe4c14ea315bfcd3025d03868c1fd9eab3049b457266f7d8e62ccd3522da55f4",
++    "sheet-override": "e7daf9f11d0f238fed83b71ac545f339a03c7789c7b9f49e9fb325876655e83a"
++  }
++}
+diff --git a/tests/helpers/agent-r9-fixtures.mjs b/tests/helpers/agent-r9-fixtures.mjs
+new file mode 100644
+index 0000000..ad57e59
+--- /dev/null
++++ b/tests/helpers/agent-r9-fixtures.mjs
+@@ -0,0 +1,63 @@
++import React from 'react';
++
++export const r9Baseline = '433969ab29679669c78fde816dfec96c4db31cfb';
++export const r9Sources = [
++  'components/prism-next/agent-file-input.tsx',
++  'components/prism-next/agent-semantic-components.tsx',
++  'components/prism-next/agent-collection-basket.tsx',
++  'components/prism-next/blueprint/blueprint.tsx',
++];
++const noop = () => {};
++export const request = { id: 'request-internal-91', label: '原上传请求' };
++export const fileStates = [
++  { state: 'selected' }, { state: 'invalid', validation: 'size', reason: '文件超出本机选择范围' },
++  { state: 'queued' }, { state: 'received', request }, { state: 'uploading', request, progress: 42 },
++  { state: 'uploaded', uploadedAt: '2026-10-18 10:00' },
++  { state: 'failed', reason: '上传明确失败', request, retry: {} },
++  { state: 'unknown', reason: '尚未取得回执', request, query: {} }, { state: 'removed' },
++];
++export const fileItem = {
++  id: 'file-internal-81', name: '周测原卷.pdf', type: 'PDF', sizeBytes: 1024,
++  version: 'material-internal-v12', source: { kind: 'local', label: '本机材料' },
++  actions: { remove: {}, replace: {}, move: {} }, status: fileStates[0],
++  details: '材料来源已核对', preview: React.createElement('p', null, '原卷第一页'),
++};
++export const fileProps = {
++  title: '本次材料', items: [fileItem],
++  limits: { accept: '.pdf', acceptLabel: 'PDF', maxFileSize: 1048576, maxFiles: 3 },
++  capabilities: { select: { status: 'supported' }, upload: { status: 'supported' }, drop: { status: 'supported' } },
++  onSelect: noop, onAction: noop,
++};
++export const confirmationStates = ['ready', 'submitting', 'received', 'recorded', 'blocked', 'unknown'];
++export const confirmationProps = {
++  title: '确认当前成果', target: '周测作答', version: 'V2', effects: ['保留修订', '不会纳入未完成作答'],
++};
++export const confirmationFor = state => state === 'ready' ? { state, confirm: { label: '确认成果', onAction: noop } }
++  : { state, description: '本次确认范围已记录', ...(state === 'unknown' ? { query: { label: '查询原请求', onAction: noop } } : {}) };
++export const basketProps = {
++  collection: { id: 'basket-1', title: '试题篮', type: '题目', version: 'v2', source: '题库' },
++  summary: { count: 2, unit: '题' }, sync: { state: 'local' },
++  items: [
++    { id: 'q1', title: '二次函数', type: '解答题', version: 'question-internal-v2', source: '题库', selectable: {}, actions: { remove: {} } },
++    { id: 'restricted', access: 'restricted', disclosure: { label: '受限题目', reason: '当前无权读取' } },
++  ],
++  onAction: noop, onSelectionChange: noop, onOpenItem: noop,
++  renderSummary: () => ({ content: React.createElement('span', null, '求函数的最小值。'), excerpt: true }),
++};
++
++/** Fixed pre-R9 calls; do not add new props here or regenerate from the candidate. */
++export function legacyCases() {
++  const cases = [];
++  for (const view of ['inline', 'workspace']) for (const density of ['default', 'compact']) {
++    for (const status of fileStates) cases.push({ name: `file-${view}-${density}-${status.state}`, component: 'AgentFileInput', props: { ...fileProps, view, density, items: [{ ...fileItem, status }] } });
++    cases.push({ name: `file-${view}-${density}-empty`, component: 'AgentFileInput', props: { ...fileProps, view, density, items: [] } });
++    for (const itemPresentation of ['default', 'summary']) cases.push({ name: `basket-${view}-${density}-${itemPresentation}`, component: 'AgentCollectionBasket', props: { ...basketProps, view, density, itemPresentation } });
++  }
++  for (const state of confirmationStates) for (const presentation of ['card', 'inline']) cases.push({ name: `confirmation-${state}-${presentation}`, component: 'AgentExecutionConfirmation', props: { ...confirmationProps, confirmation: confirmationFor(state), presentation } });
++  for (const [name, props] of [
++    ['none', {}], ['legacy', { sheetNo: '2/4' }], ['sheet', { folio: { kind: 'sheet', value: '2/4' } }],
++    ['rev', { folio: { kind: 'rev', value: 'v3' } }], ['empty', { sheetNo: '2/4', folio: { kind: 'rev', value: '' } }],
++    ['override', { sheetNo: '2/4', folio: { kind: 'rev', value: 'v3' }, folioAriaHidden: true }],
++  ]) cases.push({ name: `sheet-${name}`, component: 'BlueprintSheet', props: { title: '周测成果', description: '本次可复核范围', children: React.createElement('p', null, '正文'), ...props } });
++  return cases;
++}

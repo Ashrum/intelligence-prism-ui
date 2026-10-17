@@ -1,0 +1,68 @@
+{
+  "diffCheckExitCode": 0,
+  "sourceAndDocsFiles": [
+    "components/prism-next/agent-collection-basket.tsx",
+    "components/prism-next/agent-file-input.tsx",
+    "components/prism-next/agent-semantic-components.tsx",
+    "components/prism-next/blueprint/blueprint.tsx",
+    "components/prism-next/demos/blueprint.tsx",
+    "docs/blueprint/STATUS.md",
+    "docs/component-contracts.md",
+    "lib/prism-next/blueprint-guide.json",
+    "public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+    "tests/blueprint-print-a11y.test.mjs",
+    "components/prism-next/demos/agent-workspace-patterns.tsx",
+    "tests/agent-r9.test.mjs",
+    "tests/fixtures/agent-r9-main-433969a.json",
+    "tests/helpers/agent-r9-fixtures.mjs"
+  ],
+  "scopeDiffSha256": "2353e9cbe0e93378844f04c5db990347388b67799f8e0f3e03280fcb4b263845",
+  "newLocalLinks": [
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/baseline.json",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/workspace-sync.json",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/engineering.json",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/tests.log",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/scope.diff",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/integrity.json",
+      "exists": true
+    },
+    {
+      "from": "docs/blueprint/STATUS.md",
+      "target": "evidence/r9-20261018/browser-checklist.md",
+      "exists": true
+    },
+    {
+      "from": "docs/component-contracts.md",
+      "target": "OLE_Agent_Frontend_Blueprint_v1.0.md",
+      "exists": true
+    },
+    {
+      "from": "docs/component-contracts.md",
+      "target": "blueprint/evidence/r9-20261018/workspace-sync.json",
+      "exists": true
+    }
+  ],
+  "newSupervisorPathReferences": 0
+}

@@ -53,22 +53,26 @@ export type AgentConfirmationState =
   | { state: "unknown"; description: string; query?: AgentSemanticAction }
 
 /** Host owns all conditions and authorization. No implicit acknowledgement or local gate. */
-export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, conditions, presentation = "card", visual }: AgentVisualProps & {
+export function AgentExecutionConfirmation({ title, target, version, effects, confirmation, conditions, presentation = "card", visual, stateLabels, effectTense = "future" }: AgentVisualProps & {
   title: string; target: string; version: string; effects: readonly string[];
   confirmation: AgentConfirmationState; conditions?: ReactNode; presentation?: Presentation;
+  stateLabels?: Partial<Record<AgentConfirmationState["state"], string>>;
+  /** Legacy default is future. Use by-state for live facts, neutral for read-only records. */
+  effectTense?: "future" | "by-state" | "neutral";
 }) {
   const id = useId(), heading = useRef<HTMLHeadingElement>(null)
   const labels = { ready: "待确认", submitting: "正在提交", received: "请求已接收", recorded: "确认记录", blocked: "暂不可确认", unknown: "回执未确认" }
   const blocked = confirmation.state === "blocked" || confirmation.state === "unknown"
+  const future = effectTense === "future" || effectTense === "by-state" && (confirmation.state === "ready" || confirmation.state === "blocked")
   return <AgentSurface level={confirmation.state === "ready" || confirmation.state === "blocked" ? "decision" : "normal"} aria-labelledby={id} presentation={presentation}>
-    <div className="flex flex-wrap items-start justify-between gap-2.5"><h3 ref={heading} tabIndex={-1} id={id} className="min-w-0 break-words text-item-title outline-none">{title}</h3><AgentStatus unknown={confirmation.state === "unknown"} tone={blocked ? "warning" : "neutral"}>{labels[confirmation.state]}</AgentStatus></div>
+    <div className="flex flex-wrap items-start justify-between gap-2.5"><h3 ref={heading} tabIndex={-1} id={id} className="min-w-0 break-words text-item-title outline-none">{title}</h3><AgentStatus unknown={confirmation.state === "unknown"} tone={blocked ? "warning" : "neutral"}>{stateLabels?.[confirmation.state] ?? labels[confirmation.state]}</AgentStatus></div>
     <AgentVisibleMarkers visual={visual} />
     {confirmation.state === "ready" && <AgentStatus>未提交</AgentStatus>}
     {confirmation.state === "unknown" && <AgentUpdatedAt value={visual?.updatedAt} />}
     <Facts items={[{ label: "操作对象", value: target }, { label: "依据版本", value: version }]} />
-    <div className="space-y-1.5"><p className="text-ui-action">{confirmation.state === "ready" || confirmation.state === "blocked" ? "确认后的影响" : "本次确认范围"}</p><ul className="space-y-1.5 text-ui-body">{effects.map(effect => <li key={effect} className="flex min-w-0 items-start gap-2 break-words">
+    <div className="space-y-1.5"><p className="text-ui-action">{effectTense !== "neutral" && (confirmation.state === "ready" || confirmation.state === "blocked") ? "确认后的影响" : "本次确认范围"}</p><ul className="space-y-1.5 text-ui-body">{effects.map(effect => <li key={effect} className="flex min-w-0 items-start gap-2 break-words">
       {effect.trim().startsWith("不会") ? <Circle aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-muted-foreground" /> : <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-success-foreground" />}
-      <span>{!effect.trim().startsWith("不会") && <span className="mr-1 text-ui-meta text-muted-foreground">将会</span>}{effect}</span>
+      <span>{future && !effect.trim().startsWith("不会") && <span className="mr-1 text-ui-meta text-muted-foreground">将会</span>}{effect}</span>
     </li>)}</ul></div>
     {conditions && <div className="min-w-0" data-execution-conditions="">{conditions}</div>}
     {confirmation.state !== "ready" && (confirmation.state === "blocked" ? <Alert variant="warning" role="status"><CircleAlert aria-hidden="true" /><AlertDescription>{confirmation.description}</AlertDescription></Alert> : <p role="status" className="text-ui-hint text-muted-foreground">{confirmation.description}</p>)}
