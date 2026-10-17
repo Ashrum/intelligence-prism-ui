@@ -1,0 +1,13 @@
+✔ glyph six states and three variants: image name, no text/live region/time, active animation only (9.993042ms)
+✔ inline/loading SSR markup remains byte-identical to baseline (34.260917ms)
+✔ effect probe: glyph allocates no timer, other sizes retain interval and cleanup; size is dependency (4.984125ms)
+✔ CSS contract: dimensions, reduce initial/live media response, blueprint-only square with nested preview exclusion (0.300708ms)
+✔ rollback mutations are rejected by behavioral and CSS checks (27.936833ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.024291

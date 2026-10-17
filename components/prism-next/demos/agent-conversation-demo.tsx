@@ -42,6 +42,11 @@ function ConversationSample() {
 function MarkSamples() {
   return <div className="space-y-6"><div className="flex flex-wrap gap-6">{(["Drive", "Orbit", "Dots"] as const).map(variant => <div key={variant} className="space-y-2"><p className="text-item-title">{variant}</p><AgentMark state="thinking" variant={variant} size="loading" label="正在整理题目" /></div>)}</div>
     <div className="flex flex-wrap gap-5">{(Object.keys(agentMarkLabels) as AgentMarkState[]).map(state => <AgentMark key={state} state={state} label={agentMarkLabels[state]} />)}</div>
+    <div className="space-y-2">
+      <p className="text-item-title">列表行首状态位 · glyph</p>
+      {(["Drive", "Orbit", "Dots"] as const).map(variant => <div key={variant} className="space-y-2">{(Object.keys(agentMarkLabels) as AgentMarkState[]).map(state => <div key={state} className="flex items-center gap-2"><AgentMark size="glyph" state={state} variant={variant} startedAt={0} /><span className="text-ui-body">{variant} · {agentMarkLabels[state]}</span></div>)}</div>)}
+      <p className="text-ui-hint text-muted-foreground">固定 16px 状态位内为 13px 点阵；图形提供可访问名称，不播报状态变化、不显示耗时。</p>
+    </div>
     <AgentMark state="working" size="loading" label="正在核对材料" startedAt={0} endedAt={65000} />
     <p className="text-ui-hint text-muted-foreground">默认前景色，Drive 为默认动画，Orbit / Dots 为可选变体；上方 1 分 5 秒来自固定起止时间。无开始时间不显示用时，减少动态效果时点阵和文字静止。</p>
   </div>

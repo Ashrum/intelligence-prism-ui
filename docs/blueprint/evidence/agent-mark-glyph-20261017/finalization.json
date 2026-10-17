@@ -1,0 +1,20 @@
+[
+  {
+    "name": "guide",
+    "command": "node scripts/sync-blueprint-guide.mjs --check",
+    "exit_code": 0,
+    "seconds": 0.04
+  },
+  {
+    "name": "final-build",
+    "command": "node node_modules/vinext/dist/cli.js build",
+    "exit_code": 0,
+    "seconds": 5.25
+  },
+  {
+    "name": "final-tests",
+    "command": "node --test tests/blueprint-guide.test.mjs tests/agent-mark-glyph.test.mjs",
+    "exit_code": 0,
+    "seconds": 0.14
+  }
+]

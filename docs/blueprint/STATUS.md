@@ -4,6 +4,16 @@
 
 ## 当前
 
+- 轮次：P83 · AgentMark 列表行首 glyph · 2026-10-17；分支 `feat/agent-mark-glyph`，基线 `bb85dd96270a421db5fa5626a1dda17c97e1e8e7`，开工工作树干净。[基线](evidence/agent-mark-glyph-20261017/baseline.json)。
+- 范围：AgentMark 新增 glyph（16px 固定槽 / 13px 点阵），role=img + aria-label，无文字、live region、耗时和计时器；仅运行态动画，两蓝图 glyph 直角。复用现有 foreground / warning / destructive 及 reduce 媒体规则；既有 inline/loading 行为保留。组件页必要示例和契约同步。[复用与实现](evidence/agent-mark-glyph-20261017/inspection.md)、[实际 diff](evidence/agent-mark-glyph-20261017/scope.diff)。
+- 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2233/2233，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **5/5**；72 组 inline/loading SSR 与基线逐字一致，9 项内存回退变异检出。[实际命令与退出码](evidence/agent-mark-glyph-20261017/engineering.json)、[专项日志](evidence/agent-mark-glyph-20261017/targeted.log)。
+- 保护：54 个 coss 文件以及 theme.css / package.json / package-lock.json 共 57 文件与 HEAD 字节一致。[散列](evidence/agent-mark-glyph-20261017/integrity.json)。无提交、推送、发布、依赖安装或开发服务操作。
+- 周期：Builder 实施和工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承 P82 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增完成轮；最近完整工程回归为本轮 2233/2233，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 保持。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/agent-mark-glyph-20261017/browser-checklist.md) 含五主题 × 1280 / 320、三变体六状态、reduce 初始/动态切换、accessibility tree、嵌套预览与既有尺寸回归。CSS/SSR/Effect 探针不代表真实浏览器已验；Workspace 接入、真实服务、真机、读屏器未验。无新增 PO 决策项，Builder 不自我批准。
+
+## 历史
+
+### P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17（原当前，原样保留）
 
 - 轮次：P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17；分支 `fix/blueprint-facts-narrow`，基线 `2f9c77644571c9475341f240cebe8e6248d7e62b`，开工工作树干净。[基线](evidence/facts-narrow-20261017/baseline.json)。
 - 范围：BpFacts / BpTitleBlock 新增独立查询容器，≤480px 两列、奇数末项跨满；>480px 等宽单行。五主题共用布局，颜色、字号、Token 不变；原事实栏固定两列与原标题块 auto-fit 按本轮目标统一。两份指定文档及 guide 必要生成物同步。[实现与取舍](evidence/facts-narrow-20261017/inspection.md)、[实际 diff](evidence/facts-narrow-20261017/scope.diff)。
@@ -11,8 +21,6 @@
 - 保护：54 个 coss 文件及 theme.css / package.json / package-lock.json / catalog.ts 共 58 文件与 HEAD 字节一致。[散列](evidence/facts-narrow-20261017/integrity.json)。无提交、推送、发布、依赖安装或开发服务操作。
 - 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承 P79 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增已完成轮；最近完整工程回归为本轮 2228/2228，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[交接清单](evidence/facts-narrow-20261017/browser-checklist.md) 含五主题、组件内容宽 280 / 360 / 640 / 1000 与 480 / 481 临界值、2 / 3 / 4 / 5 项、长中文和数值、真实 scrollWidth 与格线。CSS/SSR/轨道计算不代表视觉或实际像素溢出已验。新增外层对宿主直接子节点选择器的影响已写契约；真实服务、Workspace 接入、真机和读屏器未验。无新增 PO 决策项，Builder 不自我批准。
-
-## 历史
 
 ### P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16（原当前，原样保留）
 

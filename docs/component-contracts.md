@@ -2751,7 +2751,7 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 `AgentPromptBar`、`AgentVoiceButtons` / `AgentVoiceStatus`、`AgentMark` 与 `AgentMessage` 登记在 Agent 总览的「组合与既有组件」，是对话层组合，不追加基础组件或十二类业务语义：基础目录保持 80，业务语义保持 42。既有 `AgentComposer` API 保留。站点子页：
 
 - `/next/components/agent-components/prompt-bar`：Rounded / Pill、受控草稿、来源和命令菜单、模型选择、听写、语音对话与隐私说明。
-- `/next/components/agent-components/agent-mark`：六状态、Orbit / Drive / Dots、行内与加载尺寸、宿主用时。
+- `/next/components/agent-components/agent-mark`：六状态、Orbit / Drive / Dots、行内、加载与列表行首 glyph 尺寸、宿主用时。
 - `/next/components/agent-components/agent-message`：交替消息、长中文、MathML、代码与附件；三主题与 390 宽预览。
 
 ### 输入与语音 API
@@ -2781,6 +2781,8 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 ### 标识与消息 API
 
 `AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Drive`（Orbit / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
+
+新增 `size="glyph"` 用于列表行首固定 16px 状态位，内部 13px 九宫格，无可见文字与耗时；即使传入 startedAt / endedAt，也不启动计时器。根节点为 `role="img"`，`aria-label` 默认取 agentMarkLabels[state]，可用 label 覆盖；点阵对读屏隐藏，不提供 status / live region，不可用于主状态播报。仅 thinking / working 有动画类；CSS 媒体查询在初始与系统偏好运行中切换到 reduce 时立即停止动画并显示完整静态点阵。蓝图 / 夜图 glyph 强制直角，运行沿用 foreground（身份状态位而非链接，不引入 link 色）；错误与等待仍沿用 destructive / warning 前景色。核心三主题保留变体形状逻辑，inline / loading 行为不变。
 
 `AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
 

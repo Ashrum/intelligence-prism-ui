@@ -449,3 +449,6 @@
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-message="user"] .agent-message-content a:focus-visible:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { outline:2px solid var(--ring); outline-offset:2px; box-shadow:none; }
 /* End P78 user bubble. */
+
+/* P83: glyph only; existing inline/loading geometry remains unchanged. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-mark][data-size="glyph"] .agent-mark-pixel:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
