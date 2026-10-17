@@ -478,3 +478,13 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 收尾时同一工作树另有环形图、雷达图、紧凑热力图及记录列表改动，目录从 103 增至 105。这些改动均保留，不归入 v4 交付。最后一次全量检查为 1761/1766，5 项目录数量断言失败，均为 `105 !== 103`：`blueprint-components`、`dialog-layout`、`facet-filter`、`grading-review-components-route`、`segmented-bar`。类型、构建和字号检查（296 个自有 TSX）仍通过；因此本次不能把当前混合工作树称为全量通过。目录数量断言需随并行组件扩展一起更新。
 
 本轮仅更新本地文件；未提交、推送、合并或发布。以上均为 Builder 自测，不是独立 Review 结论。
+
+
+### 事实栏与标题块的容器布局（P82 · 2026-10-17）
+
+`BpFacts` / `BpTitleBlock` 各自增加无视觉样式的 `bp-fact-container` 外层，使用具名 inline-size container query；`className` 继续传给内部 `dl`，dt/dd 内容与顺序不变。若宿主依赖直接子节点选择器，需注意新增外层。
+
+- 容器内容宽度 ≤480px：固定两列，4 项为 2×2，3 / 5 项的末项跨满整行，2 项保持一行。超过 480px：所有项等宽单行。480px 来自原标题块 160px 最小单元 ×3，以开始容纳第三个完整单元为宽布局分界，不依赖视口或页面侧栏。
+- 轨道使用 `minmax(0,1fr)`，单元 `min-width:0` / `overflow-wrap:anywhere`，长中文及连续数字可换行；既有数值字号和 tabular-nums 不变。事实栏仅内部列右侧画线，标题块沿用右/下单向分隔线，无叠加边框。
+- 五主题（light / paper / dark / blueprint / blueprint-night）共用显式 bp-* 布局，普通组件不受影响。基线事实栏实际为固定两列、标题块为 auto-fit 160px，并非五主题已有独立窄屏规则；本轮按统一目标修正。
+- 工程声明级网格检查不能代替实际 scrollWidth 与视觉检查；浏览器验收按分工由 Supervisor 执行。证据目录：`docs/blueprint/evidence/facts-narrow-20261017/`。

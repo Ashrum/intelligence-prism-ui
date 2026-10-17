@@ -1,0 +1,18 @@
+✔ BpFacts: SSR keeps definition pairs, caller class and independent container for 2/3/4/5 items (5.897917ms)
+✔ BpTitleBlock: SSR keeps definition pairs, caller class and independent container for 2/3/4/5 items (0.670584ms)
+✔ both layouts: container boundary, 2/3/4/5 items, track overflow guards and single separators (192.252542ms)
+✔ layout contracts detect independent rollback mutations in memory (290.484792ms)
+✔ published guide is generated from the complete current Markdown and current evidence bytes (20.277167ms)
+✔ every directly referenced local evidence asset has a working public URL and matching hash (19.822958ms)
+✔ Markdown conversion preserves Chinese, code, strong labels, nested link parentheses and table pipes (0.23925ms)
+✔ unsafe links, local absolute paths, docs escapes and executable image formats are rejected (0.354958ms)
+✔ unsupported syntax and raw HTML stay literal; malformed structure cannot silently discard content (0.168875ms)
+✔ guide route and existing navigation expose one authored source without a raw HTML renderer (0.264125ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 553.184

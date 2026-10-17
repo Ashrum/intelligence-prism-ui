@@ -4,6 +4,18 @@
 
 ## 当前
 
+
+- 轮次：P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17；分支 `fix/blueprint-facts-narrow`，基线 `2f9c77644571c9475341f240cebe8e6248d7e62b`，开工工作树干净。[基线](evidence/facts-narrow-20261017/baseline.json)。
+- 范围：BpFacts / BpTitleBlock 新增独立查询容器，≤480px 两列、奇数末项跨满；>480px 等宽单行。五主题共用布局，颜色、字号、Token 不变；原事实栏固定两列与原标题块 auto-fit 按本轮目标统一。两份指定文档及 guide 必要生成物同步。[实现与取舍](evidence/facts-narrow-20261017/inspection.md)、[实际 diff](evidence/facts-narrow-20261017/scope.diff)。
+- 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 311 个 owned TSX 通过、生产构建通过、先构建后全量 **2228/2228，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **4/4**，**9/9** 内存回退变异检出。初轮 2 项作用域测试失败已通过选择器改写修复，未修改既有测试。[工程记录](evidence/facts-narrow-20261017/engineering.json)、[专项](evidence/facts-narrow-20261017/targeted.log)。
+- 保护：54 个 coss 文件及 theme.css / package.json / package-lock.json / catalog.ts 共 58 文件与 HEAD 字节一致。[散列](evidence/facts-narrow-20261017/integrity.json)。无提交、推送、发布、依赖安装或开发服务操作。
+- 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承 P79 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增已完成轮；最近完整工程回归为本轮 2228/2228，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[交接清单](evidence/facts-narrow-20261017/browser-checklist.md) 含五主题、组件内容宽 280 / 360 / 640 / 1000 与 480 / 481 临界值、2 / 3 / 4 / 5 项、长中文和数值、真实 scrollWidth 与格线。CSS/SSR/轨道计算不代表视觉或实际像素溢出已验。新增外层对宿主直接子节点选择器的影响已写契约；真实服务、Workspace 接入、真机和读屏器未验。无新增 PO 决策项，Builder 不自我批准。
+
+## 历史
+
+### P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16（原当前，原样保留）
+
 - 轮次：P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线 P78 `8270cced893de48b202a772b6db0c42c13988dc0`（P77 / P78 尚未合并），开工工作树干净。[基线](evidence/cards-20261016/baseline.json)。
 - 授权与分工：Supervisor `task-P79.md` / `builder-preamble.md`；PO 明确要求新增两种 bp-* 呈现组件，不计入正式目录。不提交、推送、修改 .git、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
 - 范围：BpFrameCard / BpSectionCard、blueprint.css 中显式 bp-* 规则、原件与 A/B 试卷分节示例、使用契约与新增专项测试。核心主题中性回退，直角无阴影，1.5px 外框，语义 heading / 状态文字 / 具名 action；不新增 Token 或字号，普通组件、54 个冻结 coss、catalog 与依赖不变。[复用与接入位置](evidence/cards-20261016/inspection.md)、[保护散列](evidence/cards-20261016/integrity.json)、[实际 diff](evidence/cards-20261016/scope.diff)。
@@ -12,7 +24,6 @@
 - 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮；本轮按任务全量工程回归，最近完整工程为本轮 2224/2224；下次触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、action 键盘与焦点、状态色块 / 文字及嵌套预览见 [浏览器清单](evidence/cards-20261016/browser-checklist.md)。本轮无浏览器截图；Workspace 仅只读定位文件，未接入；真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
 
-## 历史
 
 ### P78 · 教师消息气泡轻背景 · 2026-10-16（原当前，原样保留）
 

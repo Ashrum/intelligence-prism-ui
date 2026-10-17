@@ -231,16 +231,27 @@
 .bp-metric-bar > span { flex:none; white-space:nowrap; }
 .bp-metric-bar > i { display:block; height:100%; min-width:4px; border:1px solid var(--line); background:repeating-linear-gradient(135deg,var(--disabled-foreground) 0 1.5px,transparent 1.5px 6px),var(--secondary); }
 .bp-metric-bar[data-series="current"] > i { border-color:var(--link); background:var(--link); }
-.bp-facts { display:grid; grid-template-columns:1fr 1fr; border-top:var(--line-width) solid var(--line); }
+.bp-fact-container { container:bp-fact-layout / inline-size; min-width:0; }
+.bp-facts { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); border-top:var(--line-width) solid var(--line); }
 .bp-facts > div { padding:14px 16px 14px 0; border-bottom:1px solid var(--border); }
-.bp-facts > div:nth-child(odd) { border-right:1px solid var(--border); }
-.bp-facts > div:nth-child(even) { padding-left:16px; }
+.bp-facts > div:not(:last-child) { border-right:1px solid var(--border); }
+.bp-facts > div:not(:first-child) { padding-left:16px; }
 .bp-facts dt { font-size:var(--text-stat-display); font-weight:700; letter-spacing:-.03em; line-height:1.1; font-variant-numeric:tabular-nums; }
 .bp-facts dd { margin:4px 0 0; font-size:var(--text-ui-body); color:var(--muted-foreground); }
-.bp-titleblock { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); margin:0; border:var(--line-width) solid var(--line); background:var(--card); overflow:hidden; }
+.bp-titleblock { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); margin:0; border:var(--line-width) solid var(--line); background:var(--card); overflow:hidden; }
 .bp-titleblock > div { padding:10px 14px; box-shadow:1px 0 0 var(--line), 0 1px 0 var(--line); }
 .bp-titleblock dt { font:600 var(--text-ui-meta)/var(--text-ui-meta--line-height) var(--font-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--muted-foreground); }
 .bp-titleblock dd { margin:3px 0 0; font-size:var(--text-ui-body); font-weight:600; }
+
+/* 480px = three legacy title cells at 160px. Query each component, not the page.
+   Odd tails fill the row so their text and separator do not end at a half-cell. */
+.bp-facts > div,.bp-titleblock > div { min-width:0; overflow-wrap:anywhere; }
+@container bp-fact-layout (max-width:480px) {
+  .bp-facts,.bp-titleblock { grid-auto-flow:row; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .bp-facts > div:last-child:nth-child(odd),.bp-titleblock > div:last-child:nth-child(odd) { grid-column:1 / -1; }
+  .bp-facts > div:nth-child(odd) { padding-left:0; }
+  .bp-facts > div:nth-child(even) { border-right:0; }
+}
 
 .bp-callout { border:var(--line-width) solid var(--line); border-left:5px solid var(--warning-foreground); background:color-mix(in srgb,var(--warning) 10%,var(--card)); padding:16px 18px; }
 .bp-error { background:var(--card); border:var(--line-width) solid var(--destructive-foreground); box-shadow:6px 6px 0 rgb(22 24 29 / 6%); padding:16px 18px; }

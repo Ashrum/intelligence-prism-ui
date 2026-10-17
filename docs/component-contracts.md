@@ -2393,6 +2393,10 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### Blueprint 事实栏与标题块布局（P82）
+
+`BpFacts` / `BpTitleBlock` 保留 items / className 与 dt/dd 契约，新增 `bp-fact-container` 外层作为自身容器查询边界，className 仍在 dl。宿主直接子节点选择器须考虑该外层。五主题一致：容器 ≤480px 固定两列，奇数末项跨满；>480px 所有项等宽单行。断点取原标题块单元 160px ×3。事实栏原固定两列也统一为此规则；不改字号、颜色或 Token。长中文 / 连续数字允许换行，数值保留 tabular-nums。只保证文本换行策略，不替调用方强制缩小固定宽媒体或不可断行的自定义 ReactNode。工程测试覆盖 2 / 3 / 4 / 5 项、宽窄声明与回退变异；实际像素溢出及视觉由 Supervisor 浏览器验收。
+
 ### Blueprint 对象卡片与有序分节（P79）
 
 - `BpFrameCard({ title, status?, actions?, headingLevel?, children, className, ...sectionProps })`：整卡包住一个可独立识别的对象，用于原件 / 文件 / 打印预览、导出预览和外部来源片段。标题栏写对象名；status 为 `{ tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }`，色块必须配可见文字，只写真实可得的“已解除同步”“第 3 / 3 页”“加载失败”等事实；未知省略，不使用装饰性假 live / 耗时。无 status 不渲染状态区。不用于消息气泡、输入器、普通列表项。

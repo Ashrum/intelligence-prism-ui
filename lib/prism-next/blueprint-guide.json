@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99",
+  "sourceSha256": "85f0be1de4233ae09fcb5a9ce893a725a002554fd9d5d6659ccae3bf22ff6eea",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -213,6 +213,11 @@
       "id": "section-42",
       "level": 3,
       "text": "并行工作树说明"
+    },
+    {
+      "id": "section-43",
+      "level": 3,
+      "text": "事实栏与标题块的容器布局（P82 · 2026-10-17）"
     }
   ],
   "blocks": [
@@ -8468,13 +8473,131 @@
           "value": "本轮仅更新本地文件；未提交、推送、合并或发布。以上均为 Builder 自测，不是独立 Review 结论。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-43",
+      "children": [
+        {
+          "type": "text",
+          "value": "事实栏与标题块的容器布局（P82 · 2026-10-17）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "BpFacts"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "BpTitleBlock"
+        },
+        {
+          "type": "text",
+          "value": " 各自增加无视觉样式的 "
+        },
+        {
+          "type": "code",
+          "value": "bp-fact-container"
+        },
+        {
+          "type": "text",
+          "value": " 外层，使用具名 inline-size container query；"
+        },
+        {
+          "type": "code",
+          "value": "className"
+        },
+        {
+          "type": "text",
+          "value": " 继续传给内部 "
+        },
+        {
+          "type": "code",
+          "value": "dl"
+        },
+        {
+          "type": "text",
+          "value": "，dt/dd 内容与顺序不变。若宿主依赖直接子节点选择器，需注意新增外层。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "容器内容宽度 ≤480px：固定两列，4 项为 2×2，3 / 5 项的末项跨满整行，2 项保持一行。超过 480px：所有项等宽单行。480px 来自原标题块 160px 最小单元 ×3，以开始容纳第三个完整单元为宽布局分界，不依赖视口或页面侧栏。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "轨道使用 "
+          },
+          {
+            "type": "code",
+            "value": "minmax(0,1fr)"
+          },
+          {
+            "type": "text",
+            "value": "，单元 "
+          },
+          {
+            "type": "code",
+            "value": "min-width:0"
+          },
+          {
+            "type": "text",
+            "value": " / "
+          },
+          {
+            "type": "code",
+            "value": "overflow-wrap:anywhere"
+          },
+          {
+            "type": "text",
+            "value": "，长中文及连续数字可换行；既有数值字号和 tabular-nums 不变。事实栏仅内部列右侧画线，标题块沿用右/下单向分隔线，无叠加边框。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "五主题（light / paper / dark / blueprint / blueprint-night）共用显式 bp-* 布局，普通组件不受影响。基线事实栏实际为固定两列、标题块为 auto-fit 160px，并非五主题已有独立窄屏规则；本轮按统一目标修正。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "工程声明级网格检查不能代替实际 scrollWidth 与视觉检查；浏览器验收按分工由 Supervisor 执行。证据目录："
+          },
+          {
+            "type": "code",
+            "value": "docs/blueprint/evidence/facts-narrow-20261017/"
+          },
+          {
+            "type": "text",
+            "value": "。"
+          }
+        ]
+      ]
     }
   ],
   "assets": [
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "ec201afd1aead5ddef79f36c22c842618bbc6c918626d6a127676997bfe3e3b7"
+      "sha256": "14433c6ef4dfda9c3662fa125e779f055e0cedfffdfc2fdbe437c569ee036a94"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -8969,7 +9092,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "6c42e29c2789a35636c831594fa6a4c029a5480a3cafb4093d68665539c67b99"
+      "sha256": "85f0be1de4233ae09fcb5a9ce893a725a002554fd9d5d6659ccae3bf22ff6eea"
     }
   ]
 }
