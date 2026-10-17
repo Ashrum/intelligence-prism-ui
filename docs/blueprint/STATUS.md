@@ -4,14 +4,24 @@
 
 ## 当前
 
+- 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
+- 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
+- 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
+- 工程：AGENTS §6.1 五项退出码均 0；数学字体／许可通过，排版 **312** 个 owned TSX 通过，生产构建通过；先构建后全量 **2244/2244，0 失败／0 跳过**，TypeScript **0 错误**。专项 116/116，新增 11 项中含 66 组旧输出逐字快照、25 组主题嵌套 SSR、13 项独立回退变异全部检出。[实际命令与退出码](evidence/r9-20261018/engineering.json)、[全量日志](evidence/r9-20261018/tests.log)、[实际 diff](evidence/r9-20261018/scope.diff)。首次全量因新增两个状态选择器触发 5 项旧数量断言失败；现改为独立核对四个具名 BpSegTabs 的唯一选中项，未放宽校验。P84 测试修正及检查迭代见交付报告。
+- 保护：54 个冻结 coss 文件及 CSS／Token／字号／目录／依赖／AGENTS 共 61 文件与基线字节一致，Workspace 工作树保持干净，4 个同步 blob 已核对。[散列核对](evidence/r9-20261018/integrity.json)。
+- 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
+
+## 历史
+
+### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
+
 - 轮次：P83 · AgentMark 列表行首 glyph · 2026-10-17；分支 `feat/agent-mark-glyph`，基线 `bb85dd96270a421db5fa5626a1dda17c97e1e8e7`，开工工作树干净。[基线](evidence/agent-mark-glyph-20261017/baseline.json)。
 - 范围：AgentMark 新增 glyph（16px 固定槽 / 13px 点阵），role=img + aria-label，无文字、live region、耗时和计时器；仅运行态动画，两蓝图 glyph 直角。复用现有 foreground / warning / destructive 及 reduce 媒体规则；既有 inline/loading 行为保留。组件页必要示例和契约同步。[复用与实现](evidence/agent-mark-glyph-20261017/inspection.md)、[实际 diff](evidence/agent-mark-glyph-20261017/scope.diff)。
 - 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 **311** 个 owned TSX 通过、生产构建通过、先构建后全量 **2233/2233，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **5/5**；72 组 inline/loading SSR 与基线逐字一致，9 项内存回退变异检出。[实际命令与退出码](evidence/agent-mark-glyph-20261017/engineering.json)、[专项日志](evidence/agent-mark-glyph-20261017/targeted.log)。
 - 保护：54 个 coss 文件以及 theme.css / package.json / package-lock.json 共 57 文件与 HEAD 字节一致。[散列](evidence/agent-mark-glyph-20261017/integrity.json)。无提交、推送、发布、依赖安装或开发服务操作。
 - 周期：Builder 实施和工程检查完成，待 Supervisor 独立 Review 与浏览器验收，未记为已验收。继承 P82 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增完成轮；最近完整工程回归为本轮 2233/2233，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 保持。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/agent-mark-glyph-20261017/browser-checklist.md) 含五主题 × 1280 / 320、三变体六状态、reduce 初始/动态切换、accessibility tree、嵌套预览与既有尺寸回归。CSS/SSR/Effect 探针不代表真实浏览器已验；Workspace 接入、真实服务、真机、读屏器未验。无新增 PO 决策项，Builder 不自我批准。
-
-## 历史
 
 ### P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17（原当前，原样保留）
 

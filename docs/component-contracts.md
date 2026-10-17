@@ -1833,7 +1833,7 @@ groups={[{
 
 ### 条目、权限与动作
 
-`AgentCollectionEntry={id,title,type,access?:'available',source?,version?,groupId?,summary?,fields?,issue?,selectable?,actions?}`。source、version 缺省各自未确认；不从内容或集合版本补值。`issue={state:'invalid'/'conflict',reason}` 由宿主标记下架、版本变化等，原因常驻；是否仍可移除、分组、选中或用于其他操作由宿主明确给出，组件不自行解决冲突。`selectable={disabledReason?}` 明确提供才有选择控件。
+`AgentCollectionEntry={id,title,type,access?:'available',source?,version?,groupId?,summary?,versionSummary?,fields?,issue?,selectable?,actions?}`。source、version 缺省各自未确认；不从内容或集合版本补值。`issue={state:'invalid'/'conflict',reason}` 由宿主标记下架、版本变化等，原因常驻；是否仍可移除、分组、选中或用于其他操作由宿主明确给出，组件不自行解决冲突。`selectable={disabledReason?}` 明确提供才有选择控件。
 
 `AgentCollectionRestrictedEntry={id,access:'restricted',disclosure:{label,reason},actions?:{remove?,resolve?}}` 只接受可披露名称、原因与明确可用的移除／处理动作。不会读取误传的 title/source/version/summary/fields/groupId/issue/selectable/move/group，也不挂载 renderItem。受限条目的版本不传出。集合标题、总量、分组、最近变化与 details 同样必须由宿主事先按当前权限处理；此分支只呈现授权结果，不是服务端授权。
 
@@ -1879,7 +1879,7 @@ groups={[{
 | 属性 | 约定 |
 | --- | --- |
 | `title / items` | 标题与只读受控队列；条目 `id` 唯一且稳定。宿主只提供当前获权可见的文件名、类型、来源、元数据与内容 |
-| `limits` | 必填 `{accept,acceptLabel,maxFileSize,maxFiles}`；大小单位字节，大小／数量为正值。`accept` 是原生选择器提示，`acceptLabel` 是可读类型说明；两者须一致，不是内容安全校验 |
+| `limits` | 保留旧 `{accept,acceptLabel,maxFileSize,maxFiles}`；新增可选用结构 `{selection,upload?}`，将本机选择约束与服务上传策略分开。大小单位字节，大小／数量为正值；原生 accept 仅取 selection，不代替内容安全校验。服务未返回的类型／大小／数量／页数逐项显示“尚未核验”。详见下文 R9 契约 |
 | `capabilities` | 必填 `select:{status:'supported',reason?}`、`upload`、`drop`。后两者为 `supported`（可选 reason）或 `limited / unsupported`（必填 reason）；上传 unsupported 显示“未接入”。宿主按设备声明拖放能力，触屏始终可用原生选择入口 |
 | `onSelect(files: File[])` | 选择／拖入后唯一回调；完整交付所选文件，不截断超量文件、不判定合法、不读取内容。空选择不回调，原生 input 值立即清空。不得把接到此事件视为上传、读取或解析回执 |
 | `selectionDisabledReason?` | 阻止选择及拖入并显示关联原因；不会禁用独立的原请求查询。宿主按当前权限决定 |
@@ -1892,7 +1892,7 @@ groups={[{
 
 ### 条目与状态
 
-`AgentFileItem={id,name,type,sizeBytes?,source:{kind:'local'/'existing',label?},version?,status,processing?,actions?,details?,preview?}`。条目没有 File 字段，组件不把文件对象放入状态、全局缓存或存储。未知名称／类型／大小／版本／时间显示未确认；不从扩展名、当前时间或查看动作补造外部事实。
+`AgentFileItem={id,name,displayName?,versionLabel?,requestName?,type,sizeBytes?,source:{kind:'local'/'existing',label?},version?,status,processing?,actions?,details?,detailsPlacement?,preview?}`。条目没有 File 字段，组件不把文件对象放入状态、全局缓存或存储。未知名称／类型／大小／版本／时间显示未确认；不从扩展名、当前时间或查看动作补造外部事实。
 
 | `status.state` | 专属字段与呈现 |
 | --- | --- |
@@ -2904,3 +2904,121 @@ P23：QuestionAnalysisPanel 可选 `layout="compact"`，保留 detailed 默认 S
 ### P43 TextbookDirectory 全部行压缩（2026-10-08）
 
 新版 embedded 提供 `allOption` 时，已选 n 项与 ghost/xs 清空合并到全部行右侧，多选结果替代整本题数；无独立摘要行、无点分隔符。全部行 36px，分隔线上下各 4px，搜索间距 8px；礼貌播报和“清空已选，回到全部”名称保留。仅清当前 scope；split 与旧调用不变，详见 [大纲目录契约](textbook-directory.md)。
+
+
+## Agent 工作区稳定交互与 R9 可选接口
+
+P84 基于 Prism `433969ab29679669c78fde816dfec96c4db31cfb`，只读核对 Workspace `5f37e1781e8ba496523a5dda90fab57321731c56` 的 R3–R8 呈现组合。本节记录组件接口、宿主接线和稳定模式，不表示 Workspace 已同步或真实服务已接入。规范目标仍以 [前端界面设计规范](OLE_Agent_Frontend_Blueprint_v1.0.md) 为准。新增可操作内容位于 `/next/foundations/blueprint#workspace-contracts`；成果标题操作位于同页 `#artifact-folio`。不新增组件目录条目，记录切换不会自动产生执行回执。
+
+### 复用与兼容
+
+先核对现有 AgentFileInput、AgentExecutionConfirmation、AgentCollectionBasket、BlueprintSheet、BpTitleBlock、BpSectionCard 与作用域浮层；所需能力均可在原组件增加可选字段完成。复用固定 coss Button / Input / Collapsible / Progress / Menu 与 Prism scoped-overlays，不新建基础控件；未引入 coss particles 或 Beautiful UI 代码，不把官方最新实现当成本地来源。CSS、主题 Token、字号、冻结 coss 和依赖均保持基线。没有把 Workspace Store、材料规则、停止协议、权限、用量模型或私有类型搬入 Prism。
+
+未传新增字段的调用保持旧 DOM、文案、动作与 ID；`tests/fixtures/agent-r9-main-433969a.json` 保存修改前四个源文件 blob 和 66 组 SSR SHA-256。旧文件行的技术标识回退和确认的未来时态仅为兼容保留，教师界面不推荐继续使用。
+
+### 文件的可读身份、移除与两类限制
+
+| 新接口 | 行为 |
+| --- | --- |
+| `AgentFileItem.displayName?: string` | 教师可读名称，覆盖默认标题、详情、进度可访问名与动作可访问名；未提供仍用 name |
+| `versionLabel?: string` | 教师可读版本，如 V12 或“版本未锁定”；与原始 version 分开，不解析版本 ID、不推导锁定状态 |
+| `requestName?: string` | 有原请求时显示其可读名称，缺省回退 request.label；不生成请求身份 |
+| `actions.remove.label? / description?` | 仅修改移除文案和关联说明，如“移除此引用”与“不会取消上传或删除原件”；紧凑图标按钮也保留新可访问名及 aria-describedby。原 remove 意图、禁用条件、unknown 仅查询门禁不变；没有 cancel-upload 意图 |
+| `detailsPlacement?: 'disclosure' | 'inline'` | 不传沿用原披露位置；inline 将已有 details 在四种 view/density 组合中常驻显示，用于材料策略、采用说明等不可隐藏的事实，不重复放入详情。details 仍是已授权的被动内容；动作通过 actions / 选择入口提供 |
+
+传入任一可读身份字段即启用可读行：请求不再附带 request.id，详情不再输出 file id，版本只取 versionLabel，缺省显示“未确认”。技术 id / version / request.id 仍原样出现在内部 DOM 数据属性或意图载荷，不以可读文案充当幂等或授权身份。只传 displayName 时不会把原始技术版本回填到可见文字；宿主必须保证 name、request.label、source.label、details 等本身是允许公开的内容。旧调用不传这些字段时，历史 ID 回退保持兼容但不推荐。
+
+`AgentFileLimits` 旧类型不变；`AgentFileScopedLimits = { selection: AgentFileSelectionLimits; upload?: AgentFileUploadPolicy }` 是新增可选用结构：
+
+- `selection` 为旧四字段的可选版本：accept、acceptLabel、maxFileSize、maxFiles；只约束本机选择入口。未提供的约束明确“未提供”，不填 Infinity 或假上限。未给 maxFiles 时原生选择器允许多选，表示未声明单选约束，不表示服务无限额。
+- `upload` 可含 acceptLabel、maxFileSize、maxFiles、maxPages；未提供整个对象或某字段时，服务类型／单文件大小／文件数量／页数上限分别“尚未核验”。无效数值同样不冒充已核验上限；数量／页数须为正安全整数。部分服务事实只显示已返回字段，绝不从 selection 回填。
+- selection.accept 是选择器提示；onSelect 仍原样交付全部 File[]，不读文件、不截断、不验证内容。上传能力由 capabilities 提供；拿到策略不等于已获上传能力或已完成安全检查。
+- 类型兼容：`AgentFileInputProps<TLimits = AgentFileLimits>` 默认维持旧 limits 类型，既有 MaterialIntake 等投影无需改动。需要显式声明新 props 对象时使用 `AgentFileInputProps<AgentFileScopedLimits>`；JSX 可直接传新结构。
+
+```tsx
+<AgentFileInput
+  title="本次材料"
+  items={[{
+    ...material,
+    displayName: material.name,
+    versionLabel: materialVersionLabel,
+    requestName: originalRequestName,
+    actions: { remove: { label: "移除此引用", description: "不会取消上传或删除原件", disabledReason } },
+    details: policyAndAdoptionFacts,
+    detailsPlacement: "inline",
+  }]}
+  limits={{ selection: localSelectionConstraints, upload: returnedUploadPolicy }}
+  capabilities={capabilities}
+  onSelect={selectFiles}
+  onAction={fileAction}
+/>
+```
+
+Workspace 的 MaterialFileRow 可由默认行接管名称／版本／原请求、进度、只查原请求、移除与详情。W207 必须同时改造 `modules/files/actions.tsx` 的 presentedFiles：去掉 `actions: undefined`，把移除按钮移入 actions.remove；把策略、采用说明放入 `detailsPlacement="inline"`，移除 details 内重复按钮；失败后的重新选择复用常驻原生文件入口。服务策略未知时不再借必填旧字段编造上传上限。宿主继续拥有禁用原因、页数／安全／权限校验、projectMaterial、原请求查询与快照；`renderItem` 保留给确有领域布局需要的宿主。新默认行采用既有大小格式 B/KB/MB、inline compact 披露与 workspace 预览位置，不承诺与旧 MaterialFileRow 布局逐字一致，W207 仍须验证两种视图的浏览器行为。
+
+### 确认六态的短标签与时态
+
+`AgentExecutionConfirmation` 新增两个可选 props：
+
+| 属性 | 默认值与约定 |
+| --- | --- |
+| `stateLabels?: Partial<Record<AgentConfirmationState['state'], string>>` | 只覆盖提供的状态短标签，其他沿用原文；不改变 state、徽标语义或动作能力 |
+| `effectTense?: 'future' | 'by-state' | 'neutral'` | 不传为 future，保持旧输出。by-state 仅 ready / blocked 的正向影响加“将会”，submitting / received / recorded / unknown 为中性原文；neutral 全部不加前缀，并以“本次确认范围”为标题，供只读、归档记录使用。“不会”开头的边界不加前缀 |
+
+推荐正常当前记录传 `effectTense="by-state"`，只读记录传 `"neutral"`。这只是文案配置，不能授予或撤销权限；只读宿主必须继续隐藏或禁用真实动作，不能只改时态却保留可提交 confirm。六态仍为 ready / submitting / received / recorded / blocked / unknown，不增加“已完成”第七态。recorded 表示确认记录保存，不等于执行结果 succeeded；unknown 只查询原请求，不提供重提。
+
+### 题篮版本身份与成果标题操作
+
+`AgentCollectionEntry.versionSummary?: ReactNode` 是每条授权条目的被动版本身份摘要，如“题目版本 V2 · 入篮版本未锁定”。default / summary、inline / workspace 均可显示，位于事实行之后、题干节选之前，独立于 onOpenItem，不占用 line-clamp-2 的题干区域。`renderSummary` 的 `{content, excerpt?}`、公式及实际截断判断不变；受限项即使误传 versionSummary 也不读取。版本事实和已锁定／未锁定文案由宿主提供，入篮不产生任务依据或版本锁定。
+
+W207 将 `modules/basket/fragments.tsx` 中放进 renderSummary 的版本段落迁到条目的 versionSummary，renderSummary 只留 QuestionContent 和真实 excerpt；不把同一段版本信息放两次。原始 version 仍随意图发出。
+
+`BlueprintSheet.titleActions?: ReactNode`（透传到 `BlueprintSectionHeader` 同名插槽）把具名原生按钮或作用域菜单放在标题行内、heading 外。支持窄容器换行，不把菜单文字混入 heading 可访问名；未传时无新包装节点。菜单必须使用已有 scoped-overlays 容器和焦点契约，不在 Sheet 内创建持久化或业务操作。
+
+folio 选择仍归宿主：有真实分页／成果序列用 **SHEET > 已保存版本 REV > 无**；普通章节可显式 SECTION。传入已选定的 folio，Sheet 不从 children 或 title 猜测页数／版本。既有 API 优先级另行保持：显式 folio 优先于 sheetNo（包括显式空值），空白 value 不渲染，数字补足两位，folioAriaHidden 只在标题区已有等价可读事实时启用。
+
+### 任务条、详情与停止后的部分结果
+
+任务条收起时保留任务名、外部阶段／停止结果、已处理范围、最后确认时间和必要动作，unknown／过期事实不隐藏；不把 Token 数当进度。展开详情使用 BlueprintSheet、BpTitleBlock 与 BpSectionCard 的现有组合：状态 → 处理／材料／可复核／异常事实栏 → 最新活动与时间 → 动作 → A–D 分节。四项事实在窄容器（≤480px）为 2×2，较宽时为一行；值未知就写未知，不填零。A–D 按实际存在的“材料分项、结果范围、异常、阶段记录”顺序排列，缺分节不造空卡，字母按可见分节顺序生成；阶段记录为只读历史。
+
+停止必须区分三阶段：发出停止请求、停止请求已接收、执行已终止的权威结果。前两者均不提前显示“已停止”；未知结果提供“核对停止结果”，不以超时、按钮点击或收起卡片推定终止。终止后保留完成／保留／未完成的确切范围；原执行不因查询、晚到用量或确认操作重开。
+
+E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult 的 partial 与可复核产出；明确“本次执行已停止，部分结果已保留”，同时保留未完成范围。E 的查看、修订、保存和确认只作用于已有可用结果，不能替代剩余执行，也不能隐式扩充确认范围。这里不把停止状态搬入组件枚举或新增任务详情组件。
+
+### 确认六态与结果四态分别呈现
+
+| 确认态 | 允许呈现的动作与事实 |
+| --- | --- |
+| ready | 外部资格有效时允许一次 confirm；展示对象、版本、影响和边界 |
+| submitting | 不重复提交，等待原请求 |
+| received | 仅请求已接收，不宣布确认成功 |
+| recorded | 确认记录已保存，成果执行结果独立显示 |
+| blocked | 具体阻断原因；宿主可提供重新审阅，不自动沿用旧版本资格 |
+| unknown | 回执待核对；只查询原请求，不用查询失败或暂时查无记录证明未执行 |
+
+结果沿用 succeeded / partial / failed / unknown 四态：成功明确已完成范围，部分结果同时列已完成与未完成，失败保留已有成果并说明未完成，未知不猜结果且仅提供原请求查询。已保存、已确认、已发布三者不混用；状态均来自宿主事实，不由动作返回值、定时器或动画决定。
+
+### 用量详情与规范 §9.3.4
+
+复用轻量键值、表线和 Collapsible。信息顺序固定为：**范围／周期 → 已返回用量及完整性 → 输入／输出及“其中” → 尝试／调用覆盖 → 有权额度 → 可选费用 → 更新时间／只读刷新**。入口仍是任务详情、会话标题菜单、个人设置“用量与额度”、成果标题菜单；不新增一级导航或第三常驻栏。320px 以单列与可展开明细呈现，关闭返回原阅读位置、滚动锚点与触发焦点。
+
+| §9.3.4 分支 | 呈现与保留规则 |
+| --- | --- |
+| 首次读取无统计 | “正在读取用量”，不补 0 |
+| 部分返回 | “已返回 8,000 Token · 统计未齐”，同时说明覆盖范围 |
+| 完整权威统计 | “本次任务 15,100 Token”，注明时间和范围；统计完整不代表费用结算 |
+| 查询失败有旧值 | “用量暂未更新”＋“截至某时”的旧值，可只读刷新 |
+| 查询失败无旧值 | “暂未取得用量”，不改任务结果 |
+| 服务不提供 | “当前服务尚未提供用量统计”，不放无效刷新 |
+| 权限撤销 | “当前无权查看此范围用量”，清除受限数值和越权预览 |
+| 服务明确完整零值 | 显示“0 Token”及范围、时间；缺失值不能走此分支 |
+
+停止／失败后的迟到统计仍归原任务、尝试和调用，不重开执行；累计快照 100 → 200 → 250 用 250 替换，不累加为 550。权威更正可调低，注明“用量已更正”、时间与修订依据；旧查询不能盖过新修订。输入／输出及缓存／推理“其中”的口径由服务确认，不重复相加、不把调用数或字符数当 Token；只读刷新不调用模型。额度和费用分别授权、有独立单位与新鲜度，费用缺失不补零、不在前端乘单价。
+
+### 依据摘要与材料九态
+
+依据摘要只列本次已受理任务快照中实际使用的材料／版本；当前会话材料独立列出“本次已使用／未作为本次依据／已移除引用”。**题篮不是依据**：收集、移除引用、改名或打开预览不修改已受理任务快照；入篮版本未锁定不能显示成执行版本已确认。
+
+材料沿用九态：selected / invalid / queued / received / uploading / uploaded / failed / unknown / removed。selected 区分本机和已有资料；invalid 只使用既有 type / size / count；queued 不等于已接收；received 不等于上传成功；uploading 只用已知 0–100 进度，100 也不自动完成；uploaded 不证明解析、安全或已使用；failed 必须是明确上传失败；unknown 只查询原请求；removed 只是引用移除，不取消上传、不删除原件。页数、安全检查、预览失败、解析和实际采用保持独立事实，通过 details / processing / preview 与宿主资格展示，不新增假上传态。
+
+下一轮按 [P84 同步清单](blueprint/evidence/r9-20261018/workspace-sync.json) 核对源字节、目标路径与每文件 blob，再更新 Workspace 既有 prism-source-manifest；本轮只交付清单，未写入 Workspace。

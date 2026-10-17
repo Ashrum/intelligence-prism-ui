@@ -1,0 +1,42 @@
+✔ P84: readable file identities cover nine states, four modes and collapsed details without exposing technical IDs (97.445417ms)
+✔ P84: remove copy and associated description preserve the original intent and disabled gate in all modes (7.360042ms)
+✔ P84: readable unknown files remain query-only and retain exact request identity (6.767292ms)
+✔ P84: scoped limits never copy local constraints into missing service policy and accept partial service facts (21.131416ms)
+✔ P84: six short labels and state-aware/read-only effect tense do not change confirmation capabilities (6.696917ms)
+✔ P84: version identity stays outside the summary clamp, preserves renderSummary and never discloses restricted entries (11.928459ms)
+✖ P84: Sheet title actions stay outside the heading, preserve host SHEET > REV > absent selection and explicit-empty compatibility (0.616042ms)
+✔ P84: 66 legacy calls render byte-identically to the verified original main source, including generated IDs (11.969583ms)
+✔ P84: independent in-memory rollback mutations are caught by rendered and intent contracts (128.714542ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 533.901542
+
+✖ failing tests:
+
+test at tests/agent-r9.test.mjs:158:1
+✖ P84: Sheet title actions stay outside the heading, preserve host SHEET > REV > absent selection and explicit-empty compatibility (0.616042ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /<section[^>]*titleActions|<h2[^>]*>.*<button/. Input:
+  
+  '<section aria-labelledby="_R_0_" class="bp-sheet" data-slot="bp-sheet"><div aria-hidden="true" class="bp-ruler bp-ruler--top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--left"><span>A</span><span>B</span><span>C</span><span>D</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--right"><span>A</span><span>B</span><span>C</span><span>D</span></div><header class="bp-section-header relative" data-slot="bp-section-header"><div class="bp-section-main"><div class="bp-section-title-row"><h2 id="_R_0_" class="bp-section-title text-section-title">周测成果</h2><p class="bp-section-folio">SHEET 02 / 04</p><div data-slot="bp-section-title-actions" class="flex min-w-0 max-w-full flex-wrap items-center gap-2"><button type="button" aria-label="成果标题更多操作">更多</button></div></div></div></header><div class="relative min-w-0"><p>正文</p></div></section>'
+  
+      at sheetContract (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-r9.test.mjs:151:12)
+      at TestContext.<anonymous> (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/agent-r9.test.mjs:158:144)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<section aria-labelledby="_R_0_" class="bp-sheet" data-slot="bp-sheet"><div aria-hidden="true" class="bp-ruler bp-ruler--top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--left"><span>A</span><span>B</span><span>C</span><span>D</span></div><div aria-hidden="true" class="bp-ruler bp-ruler--right"><span>A</span><span>B</span><span>C</span><span>D</span></div><header class="bp-section-header relative" data-slot="bp-section-header"><div class="bp-section-main"><div class="bp-section-title-row"><h2 id="_R_0_" class="bp-section-title text-section-title">周测成果</h2><p class="bp-section-folio">SHEET 02 / 04</p><div data-slot="bp-section-title-actions" class="flex min-w-0 max-w-full flex-wrap items-center gap-2"><button type="button" aria-label="成果标题更多操作">更多</button></div></div></div></header><div class="relative min-w-0"><p>正文</p></div></section>',
+    expected: /<section[^>]*titleActions|<h2[^>]*>.*<button/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

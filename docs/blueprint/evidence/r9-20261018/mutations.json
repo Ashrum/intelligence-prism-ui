@@ -1,0 +1,59 @@
+{
+  "test": "tests/agent-r9.test.mjs",
+  "count": 13,
+  "allDetected": true,
+  "results": [
+    {
+      "name": "display name ignored",
+      "result": "rejected"
+    },
+    {
+      "name": "raw version exposed",
+      "result": "rejected"
+    },
+    {
+      "name": "raw request exposed",
+      "result": "rejected"
+    },
+    {
+      "name": "remove copy dropped",
+      "result": "rejected"
+    },
+    {
+      "name": "remove explanation dropped",
+      "result": "rejected"
+    },
+    {
+      "name": "inline policy details dropped",
+      "result": "rejected"
+    },
+    {
+      "name": "service limit invented from local",
+      "result": "rejected"
+    },
+    {
+      "name": "state tense lost",
+      "result": "rejected"
+    },
+    {
+      "name": "short label lost",
+      "result": "rejected"
+    },
+    {
+      "name": "version summary dropped",
+      "result": "rejected"
+    },
+    {
+      "name": "title actions dropped",
+      "result": "rejected"
+    },
+    {
+      "name": "empty folio leaks",
+      "result": "rejected"
+    },
+    {
+      "name": "title action visual override",
+      "result": "rejected"
+    }
+  ]
+}

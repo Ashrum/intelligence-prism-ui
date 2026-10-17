@@ -1,8 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, ArrowRight, Info } from "lucide-react"
+import { ArrowLeft, ArrowRight, Info, MoreHorizontal } from "lucide-react"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
+import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
+import { MenuPopup } from "../scoped-overlays"
+import { Button } from "../button"
+import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
@@ -53,6 +57,7 @@ export function BlueprintComponentsDemo() {
   const [actionPreview, setActionPreview] = useState("点击按钮查看样式反馈；此页不执行批阅或发布。")
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle")
   const [folioPage, setFolioPage] = useState(0)
+  const [showVersionNote, setShowVersionNote] = useState(false)
   const output = artifactOutputExamples.paper.output
   const revision = output?.status.state === "ready" ? output.version.label.match(/^v(\d+)\b/)?.[1] : undefined
   const copyLink = async () => {
@@ -70,15 +75,20 @@ export function BlueprintComponentsDemo() {
       <a href="#actions">蓝图按钮与标签页</a>
       <a href="#artifact-folio">成果标题定位</a>
       <a href="#object-section-cards">原件与成果分节</a>
+      <a href="#workspace-contracts">Agent 工作区稳定交互</a>
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
+    <AgentWorkspacePatternsDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
+        titleActions={<Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="成果标题更多操作" />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
+          <MenuPopup align="end"><MenuItem onClick={() => setShowVersionNote(value => !value)}>版本说明</MenuItem></MenuPopup></Menu>}
         description={`版本：${output?.version.label}；沿用成果导出的已有文件夹具，无分页信息。`}>
         <p className="text-ui-hint text-muted-foreground">固定文件记录：{output?.status.state === "ready" ? output.status.file.name : "—"}。本页不执行保存或导出。</p>
+        {showVersionNote && <p role="status" className="text-ui-hint">当前成果有已保存版本，尚未提供分页事实，因此显示 REV。</p>}
       </BlueprintSheet>
       <BlueprintSheet rulers={false} title={continuousPreviewPages[folioPage].alt} folio={{ kind: "sheet", value: `${folioPage + 1} / ${continuousPreviewPages.length}` }} folioAriaHidden
         description={`第 ${folioPage + 1} / ${continuousPreviewPages.length} 份作答；沿用连续纸张夹具的实际顺序。`}>

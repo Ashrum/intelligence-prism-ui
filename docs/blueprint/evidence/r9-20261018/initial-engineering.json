@@ -1,0 +1,60 @@
+{
+  "baseline": "433969ab29679669c78fde816dfec96c4db31cfb",
+  "node": "v24.14.0",
+  "environment": {
+    "SITES_ENV_READY": "1",
+    "SITES_PROJECT_ROOT": "/Users/OLE/HermesWork/intelligence-prism-ui",
+    "XDG_CONFIG_HOME": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/xdg-config",
+    "TMPDIR": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/tmp",
+    "WRANGLER_WRITE_LOGS": "false",
+    "WRANGLER_LOG_PATH": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/wrangler/logs",
+    "MINIFLARE_REGISTRY_PATH": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/wrangler/registry",
+    "npm_config_cache": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/npm-cache",
+    "npm_config_audit": "false",
+    "npm_config_fund": "false",
+    "npm_config_update_notifier": "false"
+  },
+  "homeOverride": false,
+  "checks": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "startedAt": "2026-10-17T17:56:20.711393+00:00",
+      "durationSeconds": 0.023,
+      "exitCode": 0,
+      "log": "math-font.log"
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "startedAt": "2026-10-17T17:56:20.734802+00:00",
+      "durationSeconds": 0.046,
+      "exitCode": 0,
+      "log": "typography.log"
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-17T17:56:20.780881+00:00",
+      "durationSeconds": 5.338,
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    {
+      "name": "tests",
+      "command": "node --test tests/*.test.mjs",
+      "startedAt": "2026-10-17T17:56:26.119403+00:00",
+      "durationSeconds": 13.678,
+      "exitCode": 1,
+      "log": "tests.log"
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "startedAt": "2026-10-17T17:56:39.798052+00:00",
+      "durationSeconds": 1.652,
+      "exitCode": 0,
+      "log": "types.log"
+    }
+  ]
+}

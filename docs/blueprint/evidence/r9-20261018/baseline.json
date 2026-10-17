@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-18",
+  "branch": "feat/agent-r9-extract",
+  "prism": "433969ab29679669c78fde816dfec96c4db31cfb",
+  "workspace": "5f37e1781e8ba496523a5dda90fab57321731c56",
+  "initialWorkingTree": "clean",
+  "workspaceAccess": "read-only",
+  "baselineSnapshots": "tests/fixtures/agent-r9-main-433969a.json",
+  "legacyCases": 66
+}
