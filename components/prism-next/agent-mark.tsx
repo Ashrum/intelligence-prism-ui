@@ -16,23 +16,28 @@ const patterns = {
   Dots: { delays: Array.from({ length: 9 }, (_, i) => (i % 3 + Math.abs(Math.floor(i / 3) - 1)) * 90), duration: 650 },
 }
 export function AgentMark({ state = "unknown", variant = "Drive", size = "inline", label, startedAt, endedAt }: {
-  state?: AgentMarkState; variant?: keyof typeof patterns; size?: "inline" | "loading"; label?: string
+  state?: AgentMarkState; variant?: keyof typeof patterns; size?: "inline" | "loading" | "glyph"; label?: string
   /** Epoch milliseconds from the host. A terminal snapshot needs endedAt. */
   startedAt?: number; endedAt?: number
 }) {
   const active = state === "thinking" || state === "working"
   const [now, setNow] = useState<number>()
   useEffect(() => {
-    if (!active || endedAt !== undefined || startedAt === undefined || !Number.isFinite(startedAt)) return
+    if (size === "glyph" || !active || endedAt !== undefined || startedAt === undefined || !Number.isFinite(startedAt)) return
     setNow(Date.now())
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
-  }, [active, startedAt, endedAt])
+  }, [size, active, startedAt, endedAt])
   const end = endedAt ?? (active ? now : undefined)
   const elapsed = startedAt !== undefined && end !== undefined && Number.isFinite(startedAt) && Number.isFinite(end)
     ? Math.max(0, Math.floor((end - startedAt) / 1000)) : undefined
   const text = label ?? agentMarkLabels[state]
   const { delays, duration } = patterns[variant]
+  if (size === "glyph") return <span data-agent-mark data-state={state} data-size={size} data-variant={variant} role="img" aria-label={text} className={cn("inline-flex shrink-0 items-center justify-center", state === "error" ? "text-destructive-foreground" : state === "waiting-for-user" ? "text-warning-foreground" : "text-foreground")}>
+    <span aria-hidden="true" className="agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5">
+      {delays.map((delay, index) => <span key={index} className={cn("agent-mark-pixel bg-current", variant === "Dots" && "rounded-full", active && delay !== null && "agent-mark-glyph-pulse")} style={{ opacity: active && delay === null ? .15 : 1, animationDuration: active && delay !== null ? `${duration}ms` : undefined, animationDelay: active && delay !== null ? `${delay}ms` : undefined }} />)}
+    </span>
+  </span>
   return <span data-agent-mark data-state={state} data-size={size} data-variant={variant} className={cn("inline-flex max-w-full items-center gap-2 text-ui-hint", state === "error" ? "text-destructive-foreground" : state === "waiting-for-user" ? "text-warning-foreground" : "text-foreground")}>
     <span aria-hidden="true" className="agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5">
       {delays.map((delay, index) => <span key={index} className={cn("agent-mark-pixel bg-current", variant === "Dots" && "rounded-full")} style={{ opacity: active && delay === null ? .15 : 1, animation: active && delay !== null ? `prism-agent-pixel ${duration}ms ease-in-out ${delay}ms infinite` : undefined }} />)}
