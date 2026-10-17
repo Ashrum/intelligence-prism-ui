@@ -1,0 +1,222 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index c855873..0c7e29d 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -231,17 +231,28 @@
+ .bp-metric-bar > span { flex:none; white-space:nowrap; }
+ .bp-metric-bar > i { display:block; height:100%; min-width:4px; border:1px solid var(--line); background:repeating-linear-gradient(135deg,var(--disabled-foreground) 0 1.5px,transparent 1.5px 6px),var(--secondary); }
+ .bp-metric-bar[data-series="current"] > i { border-color:var(--link); background:var(--link); }
+-.bp-facts { display:grid; grid-template-columns:1fr 1fr; border-top:var(--line-width) solid var(--line); }
++.bp-fact-container { container:bp-fact-layout / inline-size; min-width:0; }
++.bp-facts { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); border-top:var(--line-width) solid var(--line); }
+ .bp-facts > div { padding:14px 16px 14px 0; border-bottom:1px solid var(--border); }
+-.bp-facts > div:nth-child(odd) { border-right:1px solid var(--border); }
+-.bp-facts > div:nth-child(even) { padding-left:16px; }
++.bp-facts > div:not(:last-child) { border-right:1px solid var(--border); }
++.bp-facts > div:not(:first-child) { padding-left:16px; }
+ .bp-facts dt { font-size:var(--text-stat-display); font-weight:700; letter-spacing:-.03em; line-height:1.1; font-variant-numeric:tabular-nums; }
+ .bp-facts dd { margin:4px 0 0; font-size:var(--text-ui-body); color:var(--muted-foreground); }
+-.bp-titleblock { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); margin:0; border:var(--line-width) solid var(--line); background:var(--card); overflow:hidden; }
++.bp-titleblock { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); margin:0; border:var(--line-width) solid var(--line); background:var(--card); overflow:hidden; }
+ .bp-titleblock > div { padding:10px 14px; box-shadow:1px 0 0 var(--line), 0 1px 0 var(--line); }
+ .bp-titleblock dt { font:600 var(--text-ui-meta)/var(--text-ui-meta--line-height) var(--font-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--muted-foreground); }
+ .bp-titleblock dd { margin:3px 0 0; font-size:var(--text-ui-body); font-weight:600; }
+ 
++/* 480px = three legacy title cells at 160px. Query each component, not the page.
++   Odd tails fill the row so their text and separator do not end at a half-cell. */
++.bp-facts > div,.bp-titleblock > div { min-width:0; overflow-wrap:anywhere; }
++@container bp-fact-layout (max-width:480px) {
++  .bp-facts,.bp-titleblock { grid-auto-flow:row; grid-template-columns:repeat(2,minmax(0,1fr)); }
++  .bp-facts > div:last-child:nth-child(odd),.bp-titleblock > div:last-child:nth-child(odd) { grid-column:1 / -1; }
++  .bp-facts > div:nth-child(odd) { padding-left:0; }
++  .bp-facts > div:nth-child(even) { border-right:0; }
++}
++
+ .bp-callout { border:var(--line-width) solid var(--line); border-left:5px solid var(--warning-foreground); background:color-mix(in srgb,var(--warning) 10%,var(--card)); padding:16px 18px; }
+ .bp-error { background:var(--card); border:var(--line-width) solid var(--destructive-foreground); box-shadow:6px 6px 0 rgb(22 24 29 / 6%); padding:16px 18px; }
+ .bp-annot mark { background:none; color:inherit; border-bottom:2px solid var(--destructive-foreground); padding-bottom:1px; }
+diff --git a/components/prism-next/blueprint/blueprint.tsx b/components/prism-next/blueprint/blueprint.tsx
+index 0e4fca5..cd7aaa4 100644
+--- a/components/prism-next/blueprint/blueprint.tsx
++++ b/components/prism-next/blueprint/blueprint.tsx
+@@ -259,10 +259,10 @@ export function BpMetricLegend({ baseline, current }: { baseline: string; curren
+ }
+ 
+ export function BpFacts({ items, className }: { items: { id: string; value: ReactNode; label: ReactNode }[]; className?: string }) {
+-  return <dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl>
++  return <div className="bp-fact-container"><dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl></div>
+ }
+ export function BpTitleBlock({ items, className }: { items: { id: string; label: ReactNode; value: ReactNode }[]; className?: string }) {
+-  return <dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
++  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>
+ }
+ 
+ export function BpCallout({ title, action, children, className }: { title: ReactNode; action?: ReactNode; children?: ReactNode; className?: string }) {
+diff --git a/docs/blueprint-theme.md b/docs/blueprint-theme.md
+index 5c3094e..23819fb 100644
+--- a/docs/blueprint-theme.md
++++ b/docs/blueprint-theme.md
+@@ -478,3 +478,13 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
+ 收尾时同一工作树另有环形图、雷达图、紧凑热力图及记录列表改动，目录从 103 增至 105。这些改动均保留，不归入 v4 交付。最后一次全量检查为 1761/1766，5 项目录数量断言失败，均为 `105 !== 103`：`blueprint-components`、`dialog-layout`、`facet-filter`、`grading-review-components-route`、`segmented-bar`。类型、构建和字号检查（296 个自有 TSX）仍通过；因此本次不能把当前混合工作树称为全量通过。目录数量断言需随并行组件扩展一起更新。
+ 
+ 本轮仅更新本地文件；未提交、推送、合并或发布。以上均为 Builder 自测，不是独立 Review 结论。
++
++
++### 事实栏与标题块的容器布局（P82 · 2026-10-17）
++
++`BpFacts` / `BpTitleBlock` 各自增加无视觉样式的 `bp-fact-container` 外层，使用具名 inline-size container query；`className` 继续传给内部 `dl`，dt/dd 内容与顺序不变。若宿主依赖直接子节点选择器，需注意新增外层。
++
++- 容器内容宽度 ≤480px：固定两列，4 项为 2×2，3 / 5 项的末项跨满整行，2 项保持一行。超过 480px：所有项等宽单行。480px 来自原标题块 160px 最小单元 ×3，以开始容纳第三个完整单元为宽布局分界，不依赖视口或页面侧栏。
++- 轨道使用 `minmax(0,1fr)`，单元 `min-width:0` / `overflow-wrap:anywhere`，长中文及连续数字可换行；既有数值字号和 tabular-nums 不变。事实栏仅内部列右侧画线，标题块沿用右/下单向分隔线，无叠加边框。
++- 五主题（light / paper / dark / blueprint / blueprint-night）共用显式 bp-* 布局，普通组件不受影响。基线事实栏实际为固定两列、标题块为 auto-fit 160px，并非五主题已有独立窄屏规则；本轮按统一目标修正。
++- 工程声明级网格检查不能代替实际 scrollWidth 与视觉检查；浏览器验收按分工由 Supervisor 执行。证据目录：`docs/blueprint/evidence/facts-narrow-20261017/`。
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index d94a018..355a858 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,18 @@
+ 
+ ## 当前
+ 
++
++- 轮次：P82 · 事实栏 / 标题块窄容器两列 · 2026-10-17；分支 `fix/blueprint-facts-narrow`，基线 `2f9c77644571c9475341f240cebe8e6248d7e62b`，开工工作树干净。[基线](evidence/facts-narrow-20261017/baseline.json)。
++- 范围：BpFacts / BpTitleBlock 新增独立查询容器，≤480px 两列、奇数末项跨满；>480px 等宽单行。五主题共用布局，颜色、字号、Token 不变；原事实栏固定两列与原标题块 auto-fit 按本轮目标统一。两份指定文档及 guide 必要生成物同步。[实现与取舍](evidence/facts-narrow-20261017/inspection.md)、[实际 diff](evidence/facts-narrow-20261017/scope.diff)。
++- 工程：AGENTS §6.1 五项退出码均 0；数学字体/许可通过、排版 311 个 owned TSX 通过、生产构建通过、先构建后全量 **2228/2228，0 失败 / 0 跳过**、TypeScript **0 错误**。专项 **4/4**，**9/9** 内存回退变异检出。初轮 2 项作用域测试失败已通过选择器改写修复，未修改既有测试。[工程记录](evidence/facts-narrow-20261017/engineering.json)、[专项](evidence/facts-narrow-20261017/targeted.log)。
++- 保护：54 个 coss 文件及 theme.css / package.json / package-lock.json / catalog.ts 共 58 文件与 HEAD 字节一致。[散列](evidence/facts-narrow-20261017/integrity.json)。无提交、推送、发布、依赖安装或开发服务操作。
++- 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承 P79 所记旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或新增已完成轮；最近完整工程回归为本轮 2228/2228，下一触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[交接清单](evidence/facts-narrow-20261017/browser-checklist.md) 含五主题、组件内容宽 280 / 360 / 640 / 1000 与 480 / 481 临界值、2 / 3 / 4 / 5 项、长中文和数值、真实 scrollWidth 与格线。CSS/SSR/轨道计算不代表视觉或实际像素溢出已验。新增外层对宿主直接子节点选择器的影响已写契约；真实服务、Workspace 接入、真机和读屏器未验。无新增 PO 决策项，Builder 不自我批准。
++
++## 历史
++
++### P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16（原当前，原样保留）
++
+ - 轮次：P79 · 墨色标题栏卡片与字母分节卡片 · 2026-10-16；分支 `feat/blueprint-nav-folio`，基线 P78 `8270cced893de48b202a772b6db0c42c13988dc0`（P77 / P78 尚未合并），开工工作树干净。[基线](evidence/cards-20261016/baseline.json)。
+ - 授权与分工：Supervisor `task-P79.md` / `builder-preamble.md`；PO 明确要求新增两种 bp-* 呈现组件，不计入正式目录。不提交、推送、修改 .git、联网、安装依赖、启动 / 重启服务或发布。浏览器验收：按分工由 Supervisor 执行。
+ - 范围：BpFrameCard / BpSectionCard、blueprint.css 中显式 bp-* 规则、原件与 A/B 试卷分节示例、使用契约与新增专项测试。核心主题中性回退，直角无阴影，1.5px 外框，语义 heading / 状态文字 / 具名 action；不新增 Token 或字号，普通组件、54 个冻结 coss、catalog 与依赖不变。[复用与接入位置](evidence/cards-20261016/inspection.md)、[保护散列](evidence/cards-20261016/integrity.json)、[实际 diff](evidence/cards-20261016/scope.diff)。
+@@ -12,7 +24,6 @@
+ - 周期：Builder 实施与工程检查完成，待 Supervisor 独立 Review 和浏览器验收，未记为已验收。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不重置或另计完成轮；本轮按任务全量工程回归，最近完整工程为本轮 2224/2224；下次触发点仍为旧周期累计浏览器收口，Workspace R3 / R6 / R9 约定保持。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。五主题 × 1280 / 320、action 键盘与焦点、状态色块 / 文字及嵌套预览见 [浏览器清单](evidence/cards-20261016/browser-checklist.md)。本轮无浏览器截图；Workspace 仅只读定位文件，未接入；真实服务、真机、读屏器、实体打印未验。无新增 PO 决策待定项，Builder 不自我批准。
+ 
+-## 历史
+ 
+ ### P78 · 教师消息气泡轻背景 · 2026-10-16（原当前，原样保留）
+ 
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index d4c1c38..a111280 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -2393,6 +2393,10 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，
+ 
+ - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
+ 
++### Blueprint 事实栏与标题块布局（P82）
++
++`BpFacts` / `BpTitleBlock` 保留 items / className 与 dt/dd 契约，新增 `bp-fact-container` 外层作为自身容器查询边界，className 仍在 dl。宿主直接子节点选择器须考虑该外层。五主题一致：容器 ≤480px 固定两列，奇数末项跨满；>480px 所有项等宽单行。断点取原标题块单元 160px ×3。事实栏原固定两列也统一为此规则；不改字号、颜色或 Token。长中文 / 连续数字允许换行，数值保留 tabular-nums。只保证文本换行策略，不替调用方强制缩小固定宽媒体或不可断行的自定义 ReactNode。工程测试覆盖 2 / 3 / 4 / 5 项、宽窄声明与回退变异；实际像素溢出及视觉由 Supervisor 浏览器验收。
++
+ ### Blueprint 对象卡片与有序分节（P79）
+ 
+ - `BpFrameCard({ title, status?, actions?, headingLevel?, children, className, ...sectionProps })`：整卡包住一个可独立识别的对象，用于原件 / 文件 / 打印预览、导出预览和外部来源片段。标题栏写对象名；status 为 `{ tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }`，色块必须配可见文字，只写真实可得的“已解除同步”“第 3 / 3 页”“加载失败”等事实；未知省略，不使用装饰性假 live / 耗时。无 status 不渲染状态区。不用于消息气泡、输入器、普通列表项。
+diff --git a/tests/blueprint-facts-narrow.test.mjs b/tests/blueprint-facts-narrow.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/tests/blueprint-facts-narrow.test.mjs
+@@ -0,0 +1,99 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { fileURLToPath } from 'node:url';
++import postcss from 'postcss';
++import { build } from 'esbuild';
++import React from 'react';
++import { renderToStaticMarkup } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const source = readFileSync(root + 'components/prism-next/blueprint/blueprint.tsx', 'utf8');
++const css = readFileSync(root + 'app/(next)/next/blueprint.css', 'utf8');
++const runtime = await createTestRuntime('p82-facts');
++const bundle = await build({ stdin: { contents: source, resolveDir: root + 'components/prism-next/blueprint', loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
++const file = new URL('facts.mjs', runtime);
++writeFileSync(file, bundle.outputFiles[0].text);
++const api = await import(file);
++const names = ['BpFacts', 'BpTitleBlock'];
++const classes = ['bp-facts', 'bp-titleblock'];
++const widths = [280, 360, 480, 481, 640, 1000];
++
++// Parsed declaration/track arithmetic contract, NOT a browser layout engine.
++// Exact selectors keep theme-specific or viewport-specific regressions visible.
++function declarations(text, selector, width) {
++  const result = {};
++  postcss.parse(text).walkRules(rule => {
++    if (rule.selector !== selector) return;
++    if (rule.parent.type !== 'root') {
++      assert.equal(rule.parent.name, 'container');
++      const query = rule.parent.params.match(/^bp-fact-layout \(max-width:(\d+)px\)$/);
++      assert.ok(query, rule.parent.params);
++      if (width > Number(query[1])) return;
++    }
++    for (const d of rule.nodes) if (d.type === 'decl') result[d.prop] = d.value;
++  });
++  return result;
++}
++function contract(text = css) {
++  assert.equal(declarations(text, '.bp-fact-container', 280).container, 'bp-fact-layout / inline-size');
++  assert.equal(declarations(text, '.bp-fact-container', 280)['min-width'], '0');
++  for (const width of widths) for (const count of [2, 3, 4, 5]) for (const cls of classes) {
++    const grid = { ...declarations(text, '.' + cls, width), ...declarations(text, '.bp-facts,.bp-titleblock', width) };
++    const cell = declarations(text, '.bp-facts > div,.bp-titleblock > div', width);
++    const tail = declarations(text, '.bp-facts > div:last-child:nth-child(odd),.bp-titleblock > div:last-child:nth-child(odd)', width);
++    assert.equal(cell['min-width'], '0');
++    assert.equal(cell['overflow-wrap'], 'anywhere');
++    assert.equal(grid['grid-auto-columns'], 'minmax(0,1fr)');
++    const narrow = width <= 480;
++    assert.equal(grid['grid-auto-flow'], narrow ? 'row' : 'column');
++    assert.equal(grid['grid-template-columns'], narrow ? 'repeat(2,minmax(0,1fr))' : undefined);
++    assert.equal(tail['grid-column'], narrow ? '1 / -1' : undefined);
++    const columns = grid['grid-auto-flow'] === 'row' ? 2 : count;
++    // Track arithmetic excludes intrinsic text measurement, which needs a browser.
++    const trackWidth = width / columns;
++    for (let i = 0; i < count; i++) {
++      const col = i % columns;
++      const span = narrow && count % 2 && i === count - 1 ? 2 : 1;
++      assert.ok((col + span) * trackWidth <= width + 0.001, 'declared tracks must not overflow horizontally');
++      assert.ok(trackWidth > (cls === 'bp-facts' ? 32 : 28), 'padding leaves positive content width');
++    }
++  }
++  assert.equal(declarations(text, '.bp-facts > div:not(:last-child)', 1000)['border-right'], '1px solid var(--border)');
++  assert.equal(declarations(text, '.bp-facts > div:nth-child(even)', 280)['border-right'], '0');
++  assert.equal(declarations(text, '.bp-facts > div:nth-child(odd)', 280)['padding-left'], '0');
++  assert.equal(declarations(text, '.bp-titleblock > div', 280)['box-shadow'], '1px 0 0 var(--line), 0 1px 0 var(--line)');
++  assert.equal(declarations(text, '.bp-facts dt', 280)['font-variant-numeric'], 'tabular-nums');
++  assert.equal(declarations(text, '.bp-facts dt', 280)['font-size'], 'var(--text-stat-display)');
++}
++for (const name of names) test(`${name}: SSR keeps definition pairs, caller class and independent container for 2/3/4/5 items`, () => {
++  for (const count of [2, 3, 4, 5]) {
++    const items = Array.from({ length: count }, (_, i) => ({ id: String(i), label: '长中文标签需要完整呈现'.repeat(6), value: `12345678901234567890-${i}` }));
++    const html = renderToStaticMarkup(React.createElement(api[name], { items, className: 'mt-5' }));
++    assert.match(html, /^<div class="bp-fact-container"><dl class="bp-(?:facts|titleblock) mt-5">/);
++    assert.equal((html.match(/<div><dt>/g) ?? []).length, count);
++    assert.equal((html.match(/<dd>/g) ?? []).length, count);
++    assert.ok(html.includes(items.at(-1).value));
++    assert.ok(html.includes(items.at(-1).label));
++    assert.match(html, /<\/dl><\/div>$/);
++  }
++});
++test('both layouts: container boundary, 2/3/4/5 items, track overflow guards and single separators', () => contract());
++test('layout contracts detect independent rollback mutations in memory', () => {
++  const mutations = [
++    ['container removed', 'container:bp-fact-layout / inline-size;', ''],
++    ['viewport regression', '@container bp-fact-layout (max-width:480px)', '@media (max-width:480px)'],
++    ['threshold shifted', 'max-width:480px', 'max-width:640px'],
++    ['single column', 'repeat(2,minmax(0,1fr))', 'repeat(1,minmax(0,1fr))'],
++    ['intrinsic tracks', 'grid-auto-columns:minmax(0,1fr)', 'grid-auto-columns:1fr'],
++    ['tail half-cell', 'grid-column:1 / -1;', 'grid-column:auto;'],
++    ['unbreakable value', '.bp-facts > div,.bp-titleblock > div { min-width:0; overflow-wrap:anywhere;', '.bp-facts > div,.bp-titleblock > div { min-width:0; overflow-wrap:normal;'],
++    ['cell intrinsic minimum', '.bp-facts > div,.bp-titleblock > div { min-width:0;', '.bp-facts > div,.bp-titleblock > div { min-width:auto;'],
++    ['double separator', '.bp-facts > div:nth-child(even) { border-right:0;', '.bp-facts > div:nth-child(even) { border-right:1px solid var(--border);'],
++  ];
++  for (const [name, from, to] of mutations) {
++    assert.ok(css.includes(from), name);
++    assert.throws(() => contract(css.replace(from, to)), undefined, name);
++  }
++});

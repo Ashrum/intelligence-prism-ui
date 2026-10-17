@@ -259,10 +259,10 @@ export function BpMetricLegend({ baseline, current }: { baseline: string; curren
 }
 
 export function BpFacts({ items, className }: { items: { id: string; value: ReactNode; label: ReactNode }[]; className?: string }) {
-  return <dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl>
+  return <div className="bp-fact-container"><dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl></div>
 }
 export function BpTitleBlock({ items, className }: { items: { id: string; label: ReactNode; value: ReactNode }[]; className?: string }) {
-  return <dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
+  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>
 }
 
 export function BpCallout({ title, action, children, className }: { title: ReactNode; action?: ReactNode; children?: ReactNode; className?: string }) {

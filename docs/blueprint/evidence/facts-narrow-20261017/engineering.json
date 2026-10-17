@@ -1,0 +1,32 @@
+[
+  {
+    "name": "math",
+    "command": "node scripts/check-math-font.mjs",
+    "exitCode": 0,
+    "seconds": 0.02
+  },
+  {
+    "name": "typography",
+    "command": "node scripts/check-typography.mjs",
+    "exitCode": 0,
+    "seconds": 0.06
+  },
+  {
+    "name": "build",
+    "command": "node node_modules/vinext/dist/cli.js build",
+    "exitCode": 0,
+    "seconds": 5.25
+  },
+  {
+    "name": "tests",
+    "command": "node --test tests/*.test.mjs",
+    "exitCode": 0,
+    "seconds": 13.76
+  },
+  {
+    "name": "types",
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "seconds": 0.99
+  }
+]

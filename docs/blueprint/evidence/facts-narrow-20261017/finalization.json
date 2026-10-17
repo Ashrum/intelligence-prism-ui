@@ -1,0 +1,14 @@
+[
+  {
+    "command": "node scripts/sync-blueprint-guide.mjs --check",
+    "exitCode": 0
+  },
+  {
+    "command": "node node_modules/vinext/dist/cli.js build",
+    "exitCode": 0
+  },
+  {
+    "command": "node --test tests/blueprint-guide.test.mjs tests/blueprint-facts-narrow.test.mjs",
+    "exitCode": 0
+  }
+]

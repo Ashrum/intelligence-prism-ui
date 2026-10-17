@@ -1,0 +1,12 @@
+✔ BpFacts: SSR keeps definition pairs, caller class and independent container for 2/3/4/5 items (5.342583ms)
+✔ BpTitleBlock: SSR keeps definition pairs, caller class and independent container for 2/3/4/5 items (0.643875ms)
+✔ both layouts: container boundary, 2/3/4/5 items, track overflow guards and single separators (176.196708ms)
+✔ layout contracts detect independent rollback mutations in memory (263.519625ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 503.473166
