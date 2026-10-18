@@ -2756,7 +2756,9 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 ### 输入与语音 API
 
-`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`showModelSelector`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`activity`。
+`AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`showModelSelector`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`announceDisabledReason`、`activity`。
+
+**禁用原因播报**：`announceDisabledReason?: boolean` 默认 `true`，禁用原因段落保留 `role="status"`。宿主已有全局连接提示时传 `false`，仅移除该段落的 live status 角色，避免重复主动播报；原因文字仍显示，发送按钮与输入框仍通过 `aria-describedby` 关联。无 `sendDisabledReason`（含空字符串）时不渲染原因段落，发送按钮无此关联。不传新参数时，唯一 SSR 变化是有原因的发送按钮新增描述关联；不改变禁用、草稿、提交或焦点行为。
 
 **R1 / CI-01（2026-10-16）**：`showModelSelector?: boolean` 默认 `true`，保持旧调用行为（包括空 `models` 时的禁用入口）；宿主传 `false` 时整个模型 Menu 不渲染，入口及选项均不进入 DOM。关闭可用性会清理菜单展开状态，再开放不会自动弹出；草稿、`modelId`、来源与命令保留。学校是否开放由宿主决定，组件不做权限判断。组件页提供模型入口显隐、五主题及 320px 夹具。
 

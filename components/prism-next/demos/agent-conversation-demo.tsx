@@ -57,6 +57,7 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
   const [variant, setVariant] = useState<AgentPromptBarProps["variant"]>("Rounded")
   const [value, setValue] = useState(""), [modelId, setModelId] = useState("local-rule")
   const [showModelSelector, setShowModelSelector] = useState(true)
+  const [blocked, setBlocked] = useState(false), [announceDisabledReason, setAnnounceDisabledReason] = useState(true)
   const [dictation, setDictation] = useState<AgentDictation["state"]>("not-connected")
   const [voice, setVoice] = useState<AgentVoiceMode["state"]>("not-connected")
   const [privacy, setPrivacy] = useState(false), [attachments, setAttachments] = useState(false)
@@ -90,10 +91,12 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
       <Button variant="outline" size="sm" onClick={() => setLevel(level === undefined ? .25 : level === .25 ? .85 : undefined)}>电平：{level === undefined ? "未知" : level === .25 ? "低" : "高"}</Button>
       <Button variant="outline" size="sm" onClick={() => setValue("请核对二次函数 f(x) = ax² + bx + c 的判别式 Δ = b² − 4ac，并为高二三班整理一份保留原题条件、完整推导过程与材料出处的函数单元复习练习。")}>长中文与公式草稿</Button>
       <Button variant="outline" size="sm" aria-pressed={attachments} onClick={() => setAttachments(!attachments)}>附件夹具</Button><Button variant="outline" size="sm" aria-pressed={privacy} onClick={() => setPrivacy(!privacy)}>隐私说明夹具</Button>
+      <Button variant="outline" size="sm" aria-pressed={blocked} onClick={() => setBlocked(!blocked)}>禁用原因夹具：{blocked ? "有" : "无"}</Button>
+      <Button variant="outline" size="sm" aria-pressed={announceDisabledReason} onClick={() => setAnnounceDisabledReason(!announceDisabledReason)}>原因播报：{announceDisabledReason ? "开启" : "关闭（宿主已提示）"}</Button>
       <Button variant="outline" size="sm" aria-pressed={showModelSelector} onClick={() => setShowModelSelector(!showModelSelector)}>模型入口：{showModelSelector ? "显示" : "隐藏"}</Button>
     </div>}
     <div data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} data-preview-width={width} className="mx-auto min-w-0 max-w-full rounded-xl border bg-background p-4 text-foreground" style={{ width: width === "auto" ? "100%" : Number(width) }}>
-      {section === "prompt-bar" ? <AgentPromptBar {...fixtures} value={value} onValueChange={setValue} onIntent={onIntent} variant={variant} modelId={modelId} showModelSelector={showModelSelector} dictation={dictationFact} voice={{ state: voice }} attachments={attachments ? [{ id: "material", label: "函数单元复习材料.pdf" }] : []}
+      {section === "prompt-bar" ? <AgentPromptBar {...fixtures} value={value} onValueChange={setValue} onIntent={onIntent} variant={variant} modelId={modelId} showModelSelector={showModelSelector} sendDisabledReason={blocked ? "暂时无法连接服务，草稿仍可编辑；连接恢复后可提交。" : undefined} announceDisabledReason={announceDisabledReason} dictation={dictationFact} voice={{ state: voice }} attachments={attachments ? [{ id: "material", label: "函数单元复习材料.pdf" }] : []}
         privacy={{ open: privacy, description: "启用后，录音可能交给宿主配置的识别服务处理。请确认服务提供方及保存方式。此示例不录音。" }}
         contextActions={<><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("范围入口意图")}>范围</Button><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("材料入口意图")}>材料</Button><Button type="button" variant="ghost" size="sm" onClick={() => setIntent("题篮入口意图")}>题篮</Button></>} />
         : section === "agent-mark" ? <MarkSamples /> : <ConversationSample />}
