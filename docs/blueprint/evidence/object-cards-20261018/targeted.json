@@ -1,0 +1,8 @@
+{
+  "name": "targeted",
+  "command": "node --test tests/blueprint-object-cards.test.mjs",
+  "startedAt": "2026-10-18T05:14:34.090226+00:00",
+  "log": "targeted.log",
+  "durationSeconds": 0.649,
+  "exitCode": 0
+}

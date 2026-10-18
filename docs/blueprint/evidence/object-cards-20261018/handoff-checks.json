@@ -1,0 +1,80 @@
+{
+  "diffCheck": {
+    "command": "git diff --check",
+    "exitCode": 0
+  },
+  "links": [
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/baseline.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/inspection.md",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/workspace-sync.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/engineering.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/targeted.log",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/mutations.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/scope.diff",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/integrity.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/STATUS.md",
+      "target": "evidence/object-cards-20261018/browser-checklist.md",
+      "exists": true
+    },
+    {
+      "source": "docs/component-contracts.md",
+      "target": "blueprint/evidence/object-cards-20261018/inspection.md",
+      "exists": true
+    },
+    {
+      "source": "docs/component-contracts.md",
+      "target": "blueprint/evidence/object-cards-20261018/browser-checklist.md",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/evidence/object-cards-20261018/inspection.md",
+      "target": "../cards-20261016/inspection.md",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/evidence/object-cards-20261018/inspection.md",
+      "target": "engineering.json",
+      "exists": true
+    },
+    {
+      "source": "docs/blueprint/evidence/object-cards-20261018/browser-checklist.md",
+      "target": "workspace-sync.json",
+      "exists": true
+    }
+  ],
+  "task": "P85b",
+  "workspaceManifestHashesVerified": true
+}

@@ -1,0 +1,87 @@
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -239,6 +239,8 @@
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status] > span:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { min-width:0; overflow-wrap:anywhere; }
+ /* bp-card-actions alias: existing top-level action containers retain DOM/focus order. */
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]) > div:has(> [data-slot="button"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; max-width:100%; }
++/* P85c: empty capability reasons must not create a second flex gap. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view] > h3 + ul:empty:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:none; }
+ /* End P85 object cards. */
+ 
+ .bp-size-row { display:grid; grid-template-columns:64px minmax(0,1fr) 84px; align-items:center; gap:12px; }
+--- a/tests/blueprint-object-cards.test.mjs
++++ b/tests/blueprint-object-cards.test.mjs
+@@ -57,12 +57,14 @@
+   const split = s.findLastIndex(p => p.type === 'combinator');
+   if (split >= 0) {
+     if (!matches(s.slice(split + 1), n)) return false;
++    if (s[split].value === 'next-sibling') return matches(s.slice(0, split), n.parent?.children[n.parent.children.indexOf(n) - 1]);
+     if (s[split].value === 'child') return matches(s.slice(0, split), n.parent);
+     assert.equal(s[split].value, 'descendant');
+     for (let p = n.parent; p; p = p.parent) if (matches(s.slice(0, split), p)) return true;
+     return false;
+   }
+   return s.every(p => {
++    if (p.type === 'pseudo-class' && p.kind === 'empty') return n.children.length === 0; // SSR abilities contain li elements or no content.
+     if (p.type === 'class') return n.classes.includes(p.name);
+     if (p.type === 'type') return n.name === p.name;
+     if (p.type === 'universal') return true;
+@@ -145,6 +147,42 @@
+   }
+ }
+ 
++// Walk the actual SSR siblings to the first visible text container, counting every flex gap.
++function emptyListContract(source = css) {
++  const parsed = rules(source), rows = [];
++  for (const theme of themes) for (const outer of [undefined, 'blueprint', 'blueprint-night'])
++    for (const density of ['default', 'compact']) for (const mode of ['empty', 'unsupported', 'supported-reason']) {
++      const capabilities = mode === 'empty' ? graphProps.capabilities : { ...graphProps.capabilities,
++        view: { supported: mode === 'supported-reason', reason: '资料说明' } };
++      const card = fixture({ component: 'AgentRelationGraph', props: { ...graphProps, density, capabilities } }, theme, outer)[0];
++      const [title, abilities] = card.children;
++      assert.equal(title.name, 'h3'); assert.equal(abilities.name, 'ul');
++      assert.ok(abilities.attrs.id.endsWith('-abilities'));
++      assert.equal(abilities.children.length, mode === 'empty' ? 0 : 1);
++      assert.equal(declarations(abilities, parsed).display, blueprint(theme) && mode === 'empty' ? 'none' : undefined);
++      // A different, empty body list must remain untouched.
++      const unrelated = node('ul', {}, card);
++      assert.equal(declarations(unrelated, parsed).display, undefined);
++      if (!blueprint(theme)) continue;
++      const firstText = card.children.findIndex((n, i) => i > 0 && (n.name === 'p' || n.children.length > 0));
++      const visibleSiblings = card.children.slice(1, firstText + 1).filter(n => declarations(n, parsed).display !== 'none');
++      const gap = Number(card.classes.find(c => /^gap-\d+$/.test(c)).slice(4)) * 4;
++      const margin = declarations(title, parsed)['margin-block-end'].match(/^calc\((\d+)px - var\(--spacing\) \* (\d+)\)$/);
++      const graphDistance = visibleSiblings.length * gap + Number(margin[1]) - Number(margin[2]) * 4;
++      const arranger = fixture({ component: 'AgentStructureArranger', props: { ...arrangerProps, density } }, theme, outer)[0];
++      const header = arranger.children.find(n => n.name === 'header');
++      assert.equal(header.children[1].name, 'p');
++      const arrangerDistance = parseFloat(declarations(header.children[0], parsed)['margin-block-end']);
++      assert.equal(graphDistance, density === 'compact' ? 12 : 20);
++      assert.ok(Math.abs(graphDistance - arrangerDistance) <= 4);
++      rows.push({ theme, outer: outer ?? null, density, mode, graphLineBoxGap: graphDistance, arrangerLineBoxGap: arrangerDistance, difference: graphDistance - arrangerDistance });
++    }
++  return rows;
++}
++test('P85c: empty abilities remove the extra gap; populated lists and core previews stay unchanged', () => {
++  const rows = emptyListContract();
++  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/p85c-spacing.json`, JSON.stringify({ method: 'SSR sibling traversal + CSS declarations; line-box distances, not browser glyph measurements', rows }, null, 2) + '\n');
++});
+ function statusContract(a = api) {
+   for (const snapshot of [undefined, '', '历史记录']) for (const state of ['unknown', 'saving', 'saved-draft', 'submitted', 'error']) {
+     const html = render(h(a.AgentStructureArranger, { ...arrangerProps, structure: { ...arrangerProps.structure, snapshot }, save: { state } }));
+@@ -198,8 +236,13 @@
+     ['graph compact spacing rollback', css.replace('margin-block-end:calc(12px - var(--spacing) * 3);', '')],
+   ];
+   for (const [name, mutation] of spacingMutations) { assert.notEqual(mutation, css); assert.throws(() => spacingContract(mutation), name); }
++  const emptyMutations = [
++    ['empty list rollback', css.replace(/\/\* P85c:[\s\S]*?(?=\/\* End P85)/, '')],
++    ['populated lists hidden', css.replace('ul:empty', 'ul')],
++  ];
++  for (const [name, mutation] of emptyMutations) { assert.notEqual(mutation, css); assert.throws(() => emptyListContract(mutation), name); }
+   const source = read(objectCardSources[0]);
+   const changed = source.replace('historical ? "历史编排" : "当前编排"', 'historical ? "历史编排" : "已保存草稿"'); assert.notEqual(changed, source);
+   const mutant = await load({ [objectCardSources[0]]: changed }); assert.throws(() => statusContract(mutant));
+-  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/mutations.json`, JSON.stringify({ baseline: objectCardBase, total: mutations.length + spacingMutations.length + 1, detected: [...mutations.map(([name]) => name), ...spacingMutations.map(([name]) => name), 'fabricated saved identity'], method: 'in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback' }, null, 2) + '\n');
+-});
++  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/mutations.json`, JSON.stringify({ baseline: objectCardBase, total: mutations.length + spacingMutations.length + emptyMutations.length + 1, detected: [...mutations.map(([name]) => name), ...spacingMutations.map(([name]) => name), ...emptyMutations.map(([name]) => name), 'fabricated saved identity'], method: 'in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback' }, null, 2) + '\n');
++});

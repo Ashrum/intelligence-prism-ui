@@ -1,0 +1,57 @@
+{
+  "repository": "Ashrum/intelligence-prism-ui",
+  "candidateBase": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
+  "candidateCommit": null,
+  "status": "uncommitted-builder-candidate",
+  "workspaceBaseline": "e14cb78783bed96af4cda7fd0097d5390bf08ab7",
+  "manifest": "src/vendor/prism-source-manifest.json",
+  "instruction": "Supervisor 合并后用实际 merge commit 填写每文件 commit/upstreamUrl；先校验此清单 blob 和 SHA-256，再按字节复制。若合并修改候选字节，重生成清单，不伪填基线为新源码 commit。",
+  "files": [
+    {
+      "path": "app/(next)/next/blueprint.css",
+      "destination": "src/theme/blueprint.css",
+      "gitBlobSha": "5f0a22962d5fa19755502ca2994bb2902e0fa806",
+      "sha256": "bd1f6c8198da90a2e590a508d8ad59fca5fea0a2750af08f95cd8dcdb521e035",
+      "bytes": 102362,
+      "modified": false,
+      "previousCommit": "433969ab29679669c78fde816dfec96c4db31cfb",
+      "previousGitBlobSha": "de14e5e240afff02a9168c4dbebf368d443d0183",
+      "previousLocalSha256": "9a87e4b70bc50e6160900c24fa752d7b675d5ea1d3c7cc37eb13d6de6904bf33",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务与宿主宽度处理留在 Workspace。"
+    }
+  ],
+  "requiredUnchangedSources": [
+    {
+      "path": "components/prism-next/agent-structure-arranger.tsx",
+      "destination": "src/components/prism-next/agent-structure-arranger.tsx",
+      "gitBlobSha": "47493032925b7991459fd2fc49a492fd37eb72ad",
+      "sha256": "7370664b87c359007fe3b87e84727a05fee1c557c2df7c7c6e2bfa5fd8239c42",
+      "bytes": 30130,
+      "modified": false,
+      "previousCommit": "ab14ab4a59ef593e9d29061c892256d5e233bc3d",
+      "previousGitBlobSha": "47493032925b7991459fd2fc49a492fd37eb72ad",
+      "previousLocalSha256": "7370664b87c359007fe3b87e84727a05fee1c557c2df7c7c6e2bfa5fd8239c42",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务与宿主宽度处理留在 Workspace。"
+    },
+    {
+      "path": "components/prism-next/agent-relation-graph.tsx",
+      "destination": "src/components/prism-next/agent-relation-graph.tsx",
+      "gitBlobSha": "1c841256c2c8f30a6ce352f6b3f3516ace06c52e",
+      "sha256": "b1201a62ffd177ad60cb3f95063e8c0da2979e8d37c96fabecb349e4a5acde6f",
+      "bytes": 22656,
+      "modified": false,
+      "previousCommit": "3c3adb110b117bd0f7b5201e875ed88331dc6e1c",
+      "previousGitBlobSha": "1c841256c2c8f30a6ce352f6b3f3516ace06c52e",
+      "previousLocalSha256": "b1201a62ffd177ad60cb3f95063e8c0da2979e8d37c96fabecb349e4a5acde6f",
+      "previousManifestMatchesLocal": true,
+      "adaptation": "按字节同步，无本地适配；业务与宿主宽度处理留在 Workspace。"
+    }
+  ],
+  "excluded": [
+    "两个 Agent TSX 本轮未改；requiredUnchangedSources 用于检查现有 Workspace 锚点，不要求重复覆盖。",
+    "示例、测试、契约、状态和证据留在 Prism。theme.css、BpFrameCard、coss、依赖无本轮变化。"
+  ],
+  "task": "P85c"
+}

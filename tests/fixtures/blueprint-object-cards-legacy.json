@@ -1,0 +1,73 @@
+{
+  "base": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
+  "sources": {
+    "components/prism-next/agent-structure-arranger.tsx": "47493032925b7991459fd2fc49a492fd37eb72ad",
+    "components/prism-next/agent-relation-graph.tsx": "1c841256c2c8f30a6ce352f6b3f3516ace06c52e"
+  },
+  "snapshots": {
+    "arranger-current-inline-default": {
+      "bytes": 5845,
+      "sha256": "011e3984be29709ed6387f10466970dd83783b074b7968bdd50e3b6f56bdec90"
+    },
+    "arranger-history-inline-default": {
+      "bytes": 6155,
+      "sha256": "93b6bf781308a4eca9e3ec76d625be118a2a5dbed50d2f8f04761e2dca3d3533"
+    },
+    "graph-inline-default": {
+      "bytes": 5169,
+      "sha256": "ac345d46a8e6b64a890b218beb43a7c852ab17a9592ebcc6ed5dba99bfa0d108"
+    },
+    "graph-unavailable-inline-default": {
+      "bytes": 696,
+      "sha256": "a8899e1d54b122eceebe2e3d9ac1e31c876d11f19b96a6f2b928ca2927edeffa"
+    },
+    "arranger-current-inline-compact": {
+      "bytes": 5845,
+      "sha256": "c6b91a4f93d8b8cf8ef12966a0f918ba1f27056f53de46b6566d745c52324d5f"
+    },
+    "arranger-history-inline-compact": {
+      "bytes": 6155,
+      "sha256": "b742cccfc737b9e46f289d1e8dcf36f071b183c401b87803853669cf60cae14c"
+    },
+    "graph-inline-compact": {
+      "bytes": 5169,
+      "sha256": "39d9bfb03b093ce59bdce63841bf2144b32a25d3767ccbe95c4e4ad93f833dc3"
+    },
+    "graph-unavailable-inline-compact": {
+      "bytes": 696,
+      "sha256": "59cf7fb0703f3736c14b58606bef5890980e9e692c517c769c0f30ba153d9db8"
+    },
+    "arranger-current-workspace-default": {
+      "bytes": 7679,
+      "sha256": "7b7a38036cdb18643e9df2593dc70d56a53784796f4f5a8268f371f15aad5e70"
+    },
+    "arranger-history-workspace-default": {
+      "bytes": 8048,
+      "sha256": "6d5cab0d534d049e6dc69b0a3033a89361d9e299d6815ead2b2376015c656906"
+    },
+    "graph-workspace-default": {
+      "bytes": 28608,
+      "sha256": "96f051fee68f4b4ef05c1a8d39e9c378424e55f968163102247976ec155da6ea"
+    },
+    "graph-unavailable-workspace-default": {
+      "bytes": 2221,
+      "sha256": "f5271dcffde9b7450cd1d0467b8f87a878ff71ed96f1ef4dba562ee723e57c64"
+    },
+    "arranger-current-workspace-compact": {
+      "bytes": 7679,
+      "sha256": "0e2a8294a4c17bee814ebd1914f54bc1e0aa54a8863feee048ae5411fa638161"
+    },
+    "arranger-history-workspace-compact": {
+      "bytes": 8048,
+      "sha256": "1de49c0e48614e960db053655cba6ee76e82b5554a5121a5c88c0c63f83d7e8a"
+    },
+    "graph-workspace-compact": {
+      "bytes": 28608,
+      "sha256": "b7f29f950f532b5f2d70d1d68841ab52325674341c6b0f8c4c966eb407262f33"
+    },
+    "graph-unavailable-workspace-compact": {
+      "bytes": 2221,
+      "sha256": "cdb1d27d99de70275ce2b1077e63bdfd2823aa970686f88e4a153d08e8272fd2"
+    }
+  }
+}

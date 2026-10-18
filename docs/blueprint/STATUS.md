@@ -4,6 +4,35 @@
 
 ## 当前
 
+- 轮次：P85c · 关系图空能力列表间距修复 · 2026-10-18；沿用 `fix/blueprint-object-card-ink` 与 main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，在 P85 / P85b 未提交改动上继续。
+- 范围：仅 P85 CSS 块隐藏关系图标题紧邻的空能力说明列表，保留有内容列表与嵌套核心主题预览；组件 TSX 未改。[增量 diff](evidence/object-cards-20261018/p85c.diff)。
+- 工程：本轮五项全套、专项和回退变异的实际结果见[工程记录](evidence/object-cards-20261018/engineering.json)、[变异记录](evidence/object-cards-20261018/mutations.json)。P85b 结果另存为 p85b-*，不充当当前证据。
+- 间距：SSR 兄弟节点遍历推算 default 两卡均 20px、compact 均 12px，差值 0；这是标题底边至正文行盒顶边，实际文字顶边须浏览器测量。[推算明细](evidence/object-cards-20261018/p85c-spacing.json)、[浏览器清单](evidence/object-cards-20261018/browser-checklist.md)、[同步清单](evidence/object-cards-20261018/workspace-sync.json)。
+- 周期与未验：继承旧周期 3/3 累计浏览器矩阵待收口，不新增完成轮、不重置周期。浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、真机、读屏器、打印未验；无本轮截图，未提交、推送或启动服务。Builder 自测不等同独立 Review 或 PO 批准。
+
+## 历史
+
+### P85b · 2026-10-18（P85c 前记录，工程证据另存 p85b-*）
+
+- 轮次：P85b · 对象卡片标题与正文间距统一 · 2026-10-18；分支 `fix/blueprint-object-card-ink`，main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`；在 P85 未提交改动上继续，不另计已完成小轮。
+- 范围：运行时仅修改 `blueprint.css` 的 P85 块；两蓝图标题到正文默认 20px，与 `.bp-card-body` 上内边距对齐，compact 按 12/20 比例取 12px。编排标题覆盖自身 space-y 下边距，关系图标题扣除原父级 gap；其余正文间距、横向内边距与测量语义保持。[取舍](evidence/object-cards-20261018/inspection.md)。
+- 工程：本轮五项全套、专项及回退变异的实际命令、数字、退出码见[工程记录](evidence/object-cards-20261018/engineering.json)、[专项记录](evidence/object-cards-20261018/targeted.json)、[变异](evidence/object-cards-20261018/mutations.json)。旧 P85 结果已另存，不能代替本轮复验。[累计 diff](evidence/object-cards-20261018/scope.diff)、[P85b 增量](evidence/object-cards-20261018/p85b.diff)。
+- 保护：组件 TSX、核心三主题、coss、Token、依赖不改，嵌套预览排除沿用 P85。[Workspace 同步清单](evidence/object-cards-20261018/workspace-sync.json)更新 CSS blob / SHA-256，尚未同步 Workspace。
+- 周期与未验：Builder 自测不等同独立 Review 或 PO 批准；继承旧周期 3/3 累计浏览器矩阵待收口状态，不新增完成轮、不重置周期。浏览器验收：按分工由 Supervisor 执行，见[待验清单](evidence/object-cards-20261018/browser-checklist.md)。无本轮截图；真实服务、Workspace、真机、读屏器和打印未验。未提交、推送或启动服务。
+
+
+### P85 · 2026-10-18（P85b 前记录，旧工程证据另存）
+
+- 轮次：P85 · 成果图纸对象卡片墨线标题 · 2026-10-18；分支 `fix/blueprint-object-card-ink`，main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，开工工作树干净。[基线](evidence/object-cards-20261018/baseline.json)。
+- 范围：仅两蓝图作用域的 AgentStructureArranger / AgentRelationGraph 外框、标题、状态与操作容器样式，以及现有图纸内示例、契约、专项测试与证据。选择方案 (b)：原 DOM 为 bp-frame-card / status / actions 的 CSS 别名；操作仍在正文后，核心默认输出不变，关系图无整体状态不补造。[取舍与逐项盘点](evidence/object-cards-20261018/inspection.md)。
+- 宽度：外框 100% 且无组件外侧水平留白；标题仅抵消自身 20 / 16 / 12px 内边距，正文密度与关系图 ResizeObserver 内容盒语义保持。Workspace 宿主图纸宽度另行处理。[同步清单](evidence/object-cards-20261018/workspace-sync.json) 仅一个变更 CSS，附两个未改 TSX 的前置 blob / SHA-256；未实际同步 Workspace。
+- 工程：AGENTS §6.1 五项退出码均 0；数学字体通过，排版 **313** 个 owned TSX 通过，生产构建通过；先构建后全量 **2249/2249，0 失败 / 0 跳过**，TypeScript **0 错误**。专项 **5/5**，48 组核心 SSR 字节摘要与基线一致，480 组 CSS / SSR 主题组合，**13/13** 回退变异检出。[实际命令](evidence/object-cards-20261018/p85-engineering.json)、[专项日志](evidence/object-cards-20261018/p85-targeted.log)、[变异](evidence/object-cards-20261018/p85-mutations.json)、[实际 diff](evidence/object-cards-20261018/p85-scope.diff)。初次专项的选择器测试探针漏处理 :has 的 scope AST，已修正探针，非运行时失败；STATUS 回填后一度有 2 项 guide 字节检查失败，已通过现有生成器同步必要索引与下载副本；没有修改既有测试。
+- 保护：冻结 coss、核心主题 Token、两个目标 TSX、BpFrameCard、目录、依赖与 AGENTS 字节保持，blueprint.css 除 P85 新增块外与基线一致。[散列核对](evidence/object-cards-20261018/integrity.json)。未读取 / 修改其他解析批阅文档工作线，无提交、推送、.git 写入、依赖安装、联网、服务或站点操作。
+- 周期：Builder 实施与工程自测完成，待 Supervisor 独立 Review / 浏览器验收；不自我批准。继承 P84 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮、不重置周期；最近完整工程回归为本轮 2249/2249，下次触发点仍为旧周期累计浏览器收口与独立综合审查。
+- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/object-cards-20261018/browser-checklist.md) 覆盖相关三路由、五主题 × 1280 / 320、嵌套核心预览、状态事实、原操作顺序与卡片宽度。无本轮截图；真实服务、Workspace 接入、真机、读屏器、打印未验。其他独立对象是否同轮式适配列为待 PO 决定，未扩大本轮范围。
+
+### P84 · R9 稳定交互接口提炼 · 2026-10-18（原当前，原样保留）
+
 - 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
 - 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
 - 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
@@ -12,7 +41,6 @@
 - 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
 - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
 
-## 历史
 
 ### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
 

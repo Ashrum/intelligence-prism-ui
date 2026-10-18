@@ -1,0 +1,8 @@
+{
+  "command": "node --test tests/blueprint-object-cards.test.mjs",
+  "exitCode": 0,
+  "durationSeconds": 0.557,
+  "tests": 5,
+  "pass": 5,
+  "log": "targeted.log"
+}

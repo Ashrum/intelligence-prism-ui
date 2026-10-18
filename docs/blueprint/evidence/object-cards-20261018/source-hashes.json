@@ -1,0 +1,62 @@
+[
+  {
+    "path": "app/(next)/next/blueprint.css",
+    "sha256": "c08ba597b223083bd7a16ca08ccdd01fbf73271ea8b8fc1408e7f78432317116",
+    "bytes": 101880
+  },
+  {
+    "path": "components/prism-next/demos/blueprint.tsx",
+    "sha256": "c896fd6965eb522ac32d01f9ca1a24144c34a96df64dd3628fa3f17312e7af18",
+    "bytes": 20781
+  },
+  {
+    "path": "components/prism-next/demos/blueprint-object-cards.tsx",
+    "sha256": "9cd872efa0ae531d32cc6acdddb6ae7c815f141b9be4a3fb3e14280ffeff384b",
+    "bytes": 1924
+  },
+  {
+    "path": "docs/component-contracts.md",
+    "sha256": "0942a9a4de5eb1cb8554887482412a4901ed10beb2634bacf020e4df39914b3c",
+    "bytes": 502445
+  },
+  {
+    "path": "docs/blueprint/STATUS.md",
+    "sha256": "18d9abd75abcfab01797ec0abcf5ab9827c38e215cdfc8c82294802134a4f62f",
+    "bytes": 108217
+  },
+  {
+    "path": "tests/blueprint-object-cards.test.mjs",
+    "sha256": "bd63d08028e9f864e7559f64fe89f1a72a4c14f3ab065225af901097adb419a1",
+    "bytes": 16595
+  },
+  {
+    "path": "tests/helpers/blueprint-object-card-fixtures.mjs",
+    "sha256": "e41656b3c522a3f6225513ca1a20aed69b6704dbffc881ee1e21bcd0a3751345",
+    "bytes": 2106
+  },
+  {
+    "path": "tests/fixtures/blueprint-object-cards-legacy.json",
+    "sha256": "e5486f07f40f70f5116960e8e272a48bd0b45529d82c97fd3995af3e3534fea7",
+    "bytes": 2713
+  },
+  {
+    "path": "lib/prism-next/blueprint-guide.json",
+    "sha256": "53f0d8774b27944655921f3961b96173b402b2d6dd9f5fb4224a74b502ecba62",
+    "bytes": 259744
+  },
+  {
+    "path": "public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+    "sha256": "18d9abd75abcfab01797ec0abcf5ab9827c38e215cdfc8c82294802134a4f62f",
+    "bytes": 108217
+  },
+  {
+    "path": "docs/blueprint/evidence/object-cards-20261018/inspection.md",
+    "sha256": "b62a277713505d2e3b96e9ead234c5ee1269c37860ea5bf042635e0e524575de",
+    "bytes": 10130
+  },
+  {
+    "path": "docs/blueprint/evidence/object-cards-20261018/browser-checklist.md",
+    "sha256": "3e3a0e2704cd6d953a655e347d982d80bc8daf76ebc7fc5df8356e480415c751",
+    "bytes": 4525
+  }
+]

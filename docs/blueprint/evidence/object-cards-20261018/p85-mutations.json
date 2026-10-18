@@ -1,0 +1,20 @@
+{
+  "baseline": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
+  "total": 13,
+  "detected": [
+    "missing adaptation",
+    "lost night scope",
+    "core preview exclusion removed",
+    "frame rollback",
+    "ink rollback",
+    "title gutter returns",
+    "card width shrinks",
+    "status loses right alignment",
+    "status low contrast",
+    "dot rollback",
+    "actions no wrap",
+    "pseudo shadow returns",
+    "fabricated saved identity"
+  ],
+  "method": "in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback"
+}
