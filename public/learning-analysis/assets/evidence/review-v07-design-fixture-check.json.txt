@@ -1,0 +1,1346 @@
+{
+  "purpose": "Independent design-fixture calculation and document provenance only; NOT business code/browser/service acceptance",
+  "generated_at_utc": "2026-10-18T07:05:11.688169+00:00",
+  "main_file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/OLE-学情分析系统设计与规划-决策修订稿-v0.7.md",
+  "main_sha256": "a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a",
+  "historical_source_review_head": "3d32d4f3d06cd66b739665101778ff32757ce357",
+  "current_source_replay_evidence": "review-v07r1-expected-impact.json",
+  "no_business_code_imports": true,
+  "table_approval": "80/60/40 and label adaptation explicitly approved by user; per-item expectations take priority; design only",
+  "checks": [
+    {
+      "name": "R1 old seed 1",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "expected": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 seed 1 read-only",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "expected": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "pass": true
+    },
+    {
+      "name": "R1 old seed 2",
+      "inputs": {
+        "learningSeedVersion": 2,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "expected": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 seed 2 read-only",
+      "inputs": {
+        "learningSeedVersion": 2,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": {
+        "learningSeedVersion": 2,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "expected": {
+        "learningSeedVersion": 2,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "pass": true
+    },
+    {
+      "name": "R1 old seed 3",
+      "inputs": {
+        "learningSeedVersion": 3,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "expected": [
+        36,
+        40,
+        "legacy-learning-read-v1"
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 seed 3 read-only",
+      "inputs": {
+        "learningSeedVersion": 3,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": {
+        "learningSeedVersion": 3,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "expected": {
+        "learningSeedVersion": 3,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "pass": true
+    },
+    {
+      "name": "R1 new/missing/invalid 4",
+      "inputs": {
+        "learningSeedVersion": 4,
+        "ResultVersion.version": "v3",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40,
+        null
+      ],
+      "expected": [
+        35,
+        40,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 new/missing/invalid 5",
+      "inputs": {
+        "learningSeedVersion": 5,
+        "ResultVersion.version": "v3",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40,
+        null
+      ],
+      "expected": [
+        35,
+        40,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 new/missing/invalid None",
+      "inputs": {
+        "learningSeedVersion": null,
+        "ResultVersion.version": "v3",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40,
+        null
+      ],
+      "expected": [
+        35,
+        40,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 new/missing/invalid 9",
+      "inputs": {
+        "learningSeedVersion": 9,
+        "ResultVersion.version": "v3",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40,
+        null
+      ],
+      "expected": [
+        35,
+        40,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 prior publication task-A",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [
+          {
+            "objectId": "task-A",
+            "label": "发布结果"
+          }
+        ],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40
+      ],
+      "expected": [
+        35,
+        40
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 prior publication result-A1",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [
+          {
+            "objectId": "result-A1",
+            "label": "发布结果"
+          }
+        ],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40
+      ],
+      "expected": [
+        35,
+        40
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 prior publication result-A2",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [
+          {
+            "objectId": "result-A2",
+            "label": "发布结果"
+          }
+        ],
+        "other_qualifications": true
+      },
+      "actual": [
+        35,
+        40
+      ],
+      "expected": [
+        35,
+        40
+      ],
+      "pass": true
+    },
+    {
+      "name": "R1 unrelated publication",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [
+          {
+            "objectId": "task-B",
+            "label": "发布结果"
+          }
+        ],
+        "other_qualifications": true
+      },
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "R1 other version published",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": true,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": false,
+      "expected": false,
+      "pass": true
+    },
+    {
+      "name": "R1 wrong task/context or unfinished",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": false,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": false,
+      "expected": false,
+      "pass": true
+    },
+    {
+      "name": "R1 withdrawn or unauthorized",
+      "inputs": {
+        "learningSeedVersion": 1,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": false,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": false
+      },
+      "actual": false,
+      "expected": false,
+      "pass": true
+    },
+    {
+      "name": "R1 new published",
+      "inputs": {
+        "learningSeedVersion": 5,
+        "ResultVersion.version": "v99",
+        "same_task_and_context_completed": true,
+        "published": true,
+        "any_task_version_published": false,
+        "events": [],
+        "other_qualifications": true
+      },
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "MET10 weighted approved v0 fallback",
+      "inputs": {
+        "points": [
+          2,
+          3,
+          5
+        ],
+        "scores": [
+          1,
+          3,
+          3
+        ],
+        "rates": [
+          "4/5",
+          "3/5",
+          "2/5"
+        ]
+      },
+      "actual": [
+        70.0,
+        54.0,
+        16.0
+      ],
+      "expected": [
+        70.0,
+        54.0,
+        16.0
+      ],
+      "pass": true
+    },
+    {
+      "name": "MET10 retained two-question example",
+      "inputs": {
+        "points": [
+          2,
+          3
+        ],
+        "scores": [
+          1,
+          3
+        ],
+        "rates": [
+          "4/5",
+          "3/5"
+        ]
+      },
+      "actual": [
+        80.0,
+        68.0,
+        12.0
+      ],
+      "expected": [
+        80.0,
+        68.0,
+        12.0
+      ],
+      "pass": true
+    },
+    {
+      "name": "MET10 neither expected source available item 1",
+      "inputs": {
+        "rates": [
+          null,
+          "3/5",
+          "2/5"
+        ]
+      },
+      "actual": [
+        70.0,
+        null,
+        null
+      ],
+      "expected": [
+        70.0,
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "MET10 neither expected source available item 2",
+      "inputs": {
+        "rates": [
+          "4/5",
+          null,
+          "2/5"
+        ]
+      },
+      "actual": [
+        70.0,
+        null,
+        null
+      ],
+      "expected": [
+        70.0,
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "MET10 neither expected source available item 3",
+      "inputs": {
+        "rates": [
+          "4/5",
+          "3/5",
+          null
+        ]
+      },
+      "actual": [
+        70.0,
+        null,
+        null
+      ],
+      "expected": [
+        70.0,
+        null,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "name": "V2 mastery 2 questions",
+      "inputs": [
+        2,
+        "0",
+        "80",
+        null,
+        false
+      ],
+      "actual": "数据不足",
+      "expected": "数据不足",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery H 80",
+      "inputs": [
+        3,
+        "0",
+        "80",
+        null,
+        false
+      ],
+      "actual": "已掌握",
+      "expected": "已掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery confirmed no H",
+      "inputs": [
+        3,
+        "0",
+        null,
+        null,
+        true
+      ],
+      "actual": "基本掌握",
+      "expected": "基本掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery H 79.9",
+      "inputs": [
+        3,
+        "0",
+        "79.9",
+        null,
+        false
+      ],
+      "actual": "基本掌握",
+      "expected": "基本掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery H 0",
+      "inputs": [
+        3,
+        "0",
+        "0",
+        null,
+        false
+      ],
+      "actual": "基本掌握",
+      "expected": "基本掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery C 60",
+      "inputs": [
+        3,
+        "-0.01",
+        null,
+        "60",
+        false
+      ],
+      "actual": "基本掌握",
+      "expected": "基本掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery C 59.9",
+      "inputs": [
+        3,
+        "-0.01",
+        null,
+        "59.9",
+        false
+      ],
+      "actual": "待巩固",
+      "expected": "待巩固",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery missing C",
+      "inputs": [
+        3,
+        "-0.01",
+        null,
+        null,
+        false
+      ],
+      "actual": "—",
+      "expected": "—",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery unknown H not absent",
+      "inputs": [
+        3,
+        "0",
+        null,
+        null,
+        false
+      ],
+      "actual": "—",
+      "expected": "—",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery no complete G",
+      "inputs": [
+        3,
+        null,
+        "80",
+        "100",
+        false
+      ],
+      "actual": "—",
+      "expected": "—",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery H unrounded 79.95",
+      "inputs": [
+        3,
+        "0",
+        "79.95",
+        null,
+        false
+      ],
+      "actual": "基本掌握",
+      "expected": "基本掌握",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery C unrounded 59.95",
+      "inputs": [
+        3,
+        "-1",
+        null,
+        "59.95",
+        false
+      ],
+      "actual": "待巩固",
+      "expected": "待巩固",
+      "pass": true
+    },
+    {
+      "name": "V2 mastery negative G overrides low H shorthand",
+      "inputs": [
+        3,
+        "-1",
+        "79",
+        "30",
+        false
+      ],
+      "actual": "待巩固",
+      "expected": "待巩固",
+      "pass": true
+    },
+    {
+      "name": "V2 exact-version distinct count",
+      "inputs": [
+        [
+          "Q1",
+          "v1"
+        ],
+        [
+          "Q1",
+          "v1"
+        ],
+        [
+          "Q2",
+          "v1"
+        ]
+      ],
+      "actual": [
+        2,
+        3
+      ],
+      "expected": [
+        2,
+        3
+      ],
+      "pass": true
+    },
+    {
+      "name": "V2 most recent complete with later gap",
+      "inputs": [
+        {
+          "id": "D1",
+          "date": "2026-10-01",
+          "complete": true
+        },
+        {
+          "id": "D2",
+          "date": "2026-10-08",
+          "complete": true
+        },
+        {
+          "id": "D3",
+          "date": "2026-10-15",
+          "complete": false
+        }
+      ],
+      "actual": [
+        "D2",
+        [
+          "D3"
+        ]
+      ],
+      "expected": [
+        "D2",
+        [
+          "D3"
+        ]
+      ],
+      "pass": true
+    },
+    {
+      "name": "V2 progress fallback",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress upward before support",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "-5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/4",
+          "2/4"
+        ],
+        "c": "37.5"
+      },
+      "actual": "正在巩固",
+      "expected": "正在巩固",
+      "pass": true
+    },
+    {
+      "name": "V2 progress decline before stable, interval10",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [
+          [
+            2,
+            4
+          ]
+        ],
+        "gaps": [
+          "0",
+          "0",
+          "0"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "近期回落",
+      "expected": "近期回落",
+      "pass": true
+    },
+    {
+      "name": "V2 progress stable before pending",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "0",
+          "0",
+          "0"
+        ],
+        "pending_correction": true,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "稳定保持",
+      "expected": "稳定保持",
+      "pass": true
+    },
+    {
+      "name": "V2 progress pending before upward",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": true,
+        "recovery_rounds": [
+          "1/4",
+          "2/4"
+        ],
+        "c": "50"
+      },
+      "actual": "已纠正待验证",
+      "expected": "已纠正待验证",
+      "pass": true
+    },
+    {
+      "name": "V2 progress support",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "-5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "需要支持",
+      "expected": "需要支持",
+      "pass": true
+    },
+    {
+      "name": "V2 progress support boundary C60",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "-5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "60"
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress missing C not zero",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "-5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": null
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress missing numeric G retained",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          null,
+          null,
+          null
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": null
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress context history short",
+      "inputs": {
+        "context_counts": [
+          3,
+          2
+        ],
+        "answer_items": 3,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "数据不足",
+      "expected": "数据不足",
+      "pass": true
+    },
+    {
+      "name": "V2 progress item history short",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 2,
+        "latest_retests": [],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "数据不足",
+      "expected": "数据不足",
+      "pass": true
+    },
+    {
+      "name": "V2 progress decline exactly70 not below",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [
+          [
+            3,
+            10
+          ]
+        ],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress two lost but80 retained",
+      "inputs": {
+        "context_counts": [
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [
+          [
+            2,
+            10
+          ]
+        ],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "V2 progress context slips not accumulated",
+      "inputs": {
+        "context_counts": [
+          3,
+          3
+        ],
+        "answer_items": 3,
+        "latest_retests": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "gaps": [
+          "-5",
+          "5",
+          "-5"
+        ],
+        "pending_correction": false,
+        "recovery_rounds": [
+          "1/2",
+          "1/2"
+        ],
+        "c": "50"
+      },
+      "actual": "继续观察",
+      "expected": "继续观察",
+      "pass": true
+    },
+    {
+      "name": "progress decline not MET08",
+      "inputs": {
+        "days": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "full": [
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      "actual": 0,
+      "expected": 0,
+      "pass": true
+    },
+    {
+      "name": "main hash matches manifest",
+      "inputs": {},
+      "actual": "a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a",
+      "expected": "a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a",
+      "pass": true
+    },
+    {
+      "name": "spec provenance 01-数据投影与指标规范.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "spec provenance 02-教学行动与支持逻辑规范.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "spec provenance 03-独立页重构与迁移规范.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "spec provenance 04-Agent协同与Blueprint承载规范.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "spec provenance 05-多角色与跨域披露规范.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "spec provenance 06-全周期验证协议与夹具矩阵.md",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "LA05 restored G precondition",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    },
+    {
+      "name": "legacy registration is design-only identity",
+      "inputs": {},
+      "actual": true,
+      "expected": true,
+      "pass": true
+    }
+  ],
+  "spec_provenance": [
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/01-数据投影与指标规范.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§6 指标与比较",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.1 正式对象与实例界限",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.3 证据与状态",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.4 权限水位失效与驻留",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.5 案例与能力资产",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    },
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/02-教学行动与支持逻辑规范.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§5 教学闭环",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.1 应用行动与支持映射",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.2 事实与匹配",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§10.2 教育语义补强",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    },
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/03-独立页重构与迁移规范.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§7 独立页面",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§10.1 整改清单",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§10.3 迁移与回滚",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    },
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/04-Agent协同与Blueprint承载规范.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§8 Agent与Blueprint",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§11 批次与阶段",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    },
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/05-多角色与跨域披露规范.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§4 职责与授权",
+          "hash_matches": true,
+          "exact_text_present": true
+        },
+        {
+          "key": "§9.6 共享模型与披露",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    },
+    {
+      "file": "/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/06-全周期验证协议与夹具矩阵.md",
+      "hash_matches": true,
+      "segments": [
+        {
+          "key": "§12 全周期验证",
+          "hash_matches": true,
+          "exact_text_present": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "passed": 62,
+    "failed": 0
+  }
+}

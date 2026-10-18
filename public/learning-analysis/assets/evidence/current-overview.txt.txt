@@ -1,0 +1,565 @@
+Browser tab: 2139594140, Title: "学情分析 · 教师工作台 · 启明实验学校", URL: "http://127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview".
+1 AXWebArea 学情分析 · 教师工作台 · 启明实验学校, URL: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview
+	2 container
+		3 container root
+			4 link Description: 跳至主要内容, Value: 127.0.0.1:5175/?dataset=teaching-cycle#main-content
+			5 container
+				6 link Description: 启明实验学校 · 回到 Agent, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/workspace
+				7 container 新工作台一级导航
+					8 link Description: Agent, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/workspace
+					9 link Description: 工作记录, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/records
+					10 link Description: 智能批阅, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/grading
+					11 link Description: 教学资源, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/papers
+					12 link Description: 学情分析, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis
+				13 pop up button (collapsed) Description: 任教班级与教材：九年级（1）班 · 数学, ID: base-ui-_r_7_, Secondary Actions: Expand
+				14 button Description: 搜索工作台页面, Help: 搜索页面 · Ctrl / ⌘ K
+				15 link Description: 通知，2 条未读, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/notifications
+				16 pop up button (collapsed) Description: 设置, ID: base-ui-_r_c_, Secondary Actions: Expand
+				17 pop up button (collapsed) Description: 王建国的个人菜单, ID: base-ui-_r_h_, Secondary Actions: Expand
+			18 container 空间工具
+				19 text 工作目录
+				20 button (expanded) Description: 收起工作目录, Secondary Actions: Collapse
+				21 button (collapsed) Description: 试题篮，0 题, Secondary Actions: Expand
+			22 container 学情分析二级导航
+				23 content list
+					24 link Description: 概览, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview&view=overview
+					25 link Description: 学生与班级, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview&view=students
+					26 link Description: 课程与知识点, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview&view=curriculum
+					27 link Description: 错题, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview&view=mistakes
+					28 link Description: 专题报表, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=overview&view=reports
+			29 container main-content
+				32 container
+					33 heading 概览, Value: 1
+						34 text 概览
+					35 container 学情范围
+						36 pop up button (collapsed) 班级 · 九年级（1）班, ID: base-ui-_r_17_, Secondary Actions: Expand
+						37 pop up button (collapsed) 学科 · 数学, ID: base-ui-_r_19_, Secondary Actions: Expand
+						38 pop up button (collapsed) 时间 · 本学期 · 08/01–10/26, ID: base-ui-_r_1b_, Secondary Actions: Expand
+						39 pop up button (collapsed) 数据范围 · 全部数据, ID: base-ui-_r_1d_, Secondary Actions: Expand
+					40 text 51  名学生 · 9  次批阅任务 · 4,374  次作答 · 截至 10/26
+				41 container
+					42 text 这 13 周
+					43 heading 近期表现高于预期 5 个百分点；此前失分的内容，再考时补回了 68%。, Value: 2
+						44 text 近期表现高于预期 5 个百分点；此前失分的内容，再考时补回了 68%。
+					45 text 依据  4  次可比批阅任务、 30 道有再考记录的错题。结论按规则得出，不是 AI 判断。
+					46 button 看依据
+						47 text 看依据
+					48 definition list
+						49 container 近期得分率 近期得分率：指标说明
+							50 text 近期得分率
+							51 pop up button (collapsed) Description: 近期得分率：指标说明, ID: base-ui-_r_1f_, Secondary Actions: Expand
+						52 text 75%
+						53 text 高于预期 5 个百分点
+						54 text 走势数值：76、78、72、75
+						55 container 补回率 补回率：指标说明
+							56 text 补回率
+							57 pop up button (collapsed) Description: 补回率：指标说明, ID: base-ui-_r_1h_, Secondary Actions: Expand
+						58 text 68%
+						59 text 之前失分的内容，再考时补回的比例
+						60 text 环形数值：227 / 333
+						61 container 保持率 保持率：指标说明
+							62 text 保持率
+							63 pop up button (collapsed) Description: 保持率：指标说明, ID: base-ui-_r_1j_, Secondary Actions: Expand
+						64 text 80%
+						65 text 两周后再考，仍然做对的比例
+						66 text 环形数值：817 / 1,020
+						67 container 需要优先处理 需要优先处理：指标说明
+							68 text 需要优先处理
+							69 pop up button (collapsed) Description: 需要优先处理：指标说明, ID: base-ui-_r_1l_, Secondary Actions: Expand
+						70 container
+							71 text 12 人
+						72 text 5 个知识点 · 按关注规则筛出
+				73 container
+					74 heading 班级得分率与预期, Value: 2
+						75 text 班级得分率与预期
+					76 content list 班级得分率与预期图例
+						77 text 实际得分率
+						78 text 按题目难度推算的预期
+						79 text 不可比
+						80 text 新情境
+					81 text 每次批阅任务难度不同，所以不直接比前后分数，而是看每一次比预期高多少。
+					82 container 班级得分率与预期
+						83 container
+							84 container 第 6 周 · 起点检测
+								85 text 第 6 周 起点检测
+							86 container 第 7 周 · 课堂练习
+								87 text 第 7 周 课堂练习
+							88 container 第 8 周 · 单元复查
+								89 text 第 8 周 单元复查
+							90 container 第 9 周 · 二次函数与方程 · 九人再练
+								91 text 第 9 周 二次函数与方程 ·…
+							92 container 第 10 周 · 二次函数与方程 · 一班单元巩固
+								93 text 第 10 周 二次函数与方程 ·…
+							94 container 第 10 周 · 二次函数与方程 · 一班前测
+								95 text 第 10 周 二次函数与方程 ·…
+							96 container 第 11 周 · 巩固检测
+								97 text 第 11 周 巩固检测
+							98 container 第 12 周 · 新情境应用
+								99 text 第 12 周 新情境应用
+							100 container 第 13 周 · 间隔复查
+								101 text 第 13 周 间隔复查
+							102 text 65%
+							103 text 70%
+							104 text 75%
+							105 text 80%
+							106 text 85%
+					107 container 班级得分率与预期：数据
+						108 container
+							109 text 实际得分率：实线，跨缺测连线；按题目难度推算的预期：虚线，跨缺测连线，不画点；不可比：仅画点，不连线；新情境：仅画点，不连线 。标注避让后放不下时仅在提示框和本表显示。
+						110 table
+							111 row
+								112 cell
+									113 text 项目
+								114 cell
+									115 text 实际得分率
+								116 cell
+									117 text 按题目难度推算的预期
+								118 cell
+									119 text 不可比
+								120 cell
+									121 text 新情境
+							122 container
+								123 row
+									124 cell
+										125 text 09/08 · 起点检测 第 6 周 · 起点检测
+									126 cell
+										127 text 76% 76% 高于预期 2
+									128 cell
+										129 text 74%
+									130 cell
+										131 text —
+									132 cell
+										133 text —
+								134 row
+									135 cell
+										136 text 09/15 · 课堂练习 第 7 周 · 课堂练习
+									137 cell
+										138 text —
+									139 cell
+										140 text —
+									141 cell
+										142 text 71% 空心圆 71% · 不可比
+									143 cell
+										144 text —
+								145 row
+									146 cell
+										147 text 09/22 · 单元复查 第 8 周 · 单元复查
+									148 cell
+										149 text 78% 78% 高于预期 3
+									150 cell
+										151 text 75%
+									152 cell
+										153 text —
+									154 cell
+										155 text —
+								156 row
+									157 cell
+										158 text 09/28 · 二次函数与方程 · 九人再练 第 9 周 · 二次函数与方程 · 九人再练
+									159 cell
+										160 text —
+									161 cell
+										162 text —
+									163 cell
+										164 text 76% 空心圆 76% · 不可比
+									165 cell
+										166 text —
+								167 row
+									168 cell
+										169 text 10/05 · 二次函数与方程 · 一班单元巩固 第 10 周 · 二次函数与方程 · 一班单元巩固
+									170 cell
+										171 text —
+									172 cell
+										173 text —
+									174 cell
+										175 text 74% 空心圆 74% · 不可比
+									176 cell
+										177 text —
+								178 row
+									179 cell
+										180 text 10/06 · 二次函数与方程 · 一班前测 第 10 周 · 二次函数与方程 · 一班前测
+									181 cell
+										182 text —
+									183 cell
+										184 text —
+									185 cell
+										186 text 74% 空心圆 74% · 不可比
+									187 cell
+										188 text —
+								189 row
+									190 cell
+										191 text 10/10 · 巩固检测 第 11 周 · 巩固检测
+									192 cell
+										193 text 72% 72% 低于预期 2
+									194 cell
+										195 text 74%
+									196 cell
+										197 text —
+									198 cell
+										199 text —
+								200 row
+									201 cell
+										202 text 10/17 · 新情境应用 第 12 周 · 新情境应用
+									203 cell
+										204 text —
+									205 cell
+										206 text —
+									207 cell
+										208 text —
+									209 cell
+										210 text 75% 菱形 75% · 新情境
+								211 row
+									212 cell
+										213 text 10/24 · 间隔复查 第 13 周 · 间隔复查
+									214 cell
+										215 text 75% 75% 高于预期 5
+									216 cell
+										217 text 70%
+									218 cell
+										219 text —
+									220 cell
+										221 text —
+					222 text 可比批阅任务 4 次 · 新情境 1 次 · 不可比 4 次
+					223 link Description: 查看学生与班级, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=students
+				224 container
+					225 heading 课程与知识点聚焦, Value: 2
+						226 text 课程与知识点聚焦
+					227 text 横轴看现在得分多少，纵轴看失分后补回多少；越靠左下越需要先处理。
+					228 container 课程与知识点聚焦。完整数值及缺测说明见下方数据表。
+					229 container 课程与知识点聚焦：数据
+						230 container
+							231 text 分界： 近期得分率 75% ； 补回率 68% 。分界线上的点保留原坐标。
+						232 content list 象限说明
+							233 container
+								234 text 左上  ·  得分低 · 补得快
+							235 container
+								236 text 右上  ·  得分高 · 补得快
+							237 container
+								238 text 左下  ·  优先处理 （高亮区域）
+							239 container
+								240 text 右下  ·  得分高 · 补得慢
+						241 table
+							242 row
+								243 cell
+									244 text 项目
+								245 cell
+									246 text 近期得分率
+								247 cell
+									248 text 补回率
+							249 container
+								250 row
+									251 cell
+										252 text 第二十一章 一元二次方程
+									253 cell
+										254 text 73%
+									255 cell
+										256 text 65%
+								257 row
+									258 cell
+										259 text 第二十二章 二次函数
+									260 cell
+										261 text 76%
+									262 cell
+										263 text 68%
+								264 row
+									265 cell
+										266 text 第二十四章 圆
+									267 cell
+										268 text 73%
+									269 cell
+										270 text 76%
+								271 row
+									272 cell
+										273 text 第二十三章 旋转
+									274 cell
+										275 text 77%
+									276 cell
+										277 text 70%
+					278 table
+						279 row
+							280 cell
+								281 text ●  章
+							282 cell
+								283 text 得分率
+							284 cell
+								285 text 补回率
+						286 container
+							287 row
+								288 cell
+									289 button 第二十一章 一元二次方程
+										290 text 第二十一章 一元二次方程
+									291 container
+										292 text 章  · 优先处理
+								293 cell
+									294 text 73%
+								295 cell
+									296 text 65%
+							297 row
+								298 cell
+									299 button 第二十二章 二次函数
+										300 text 第二十二章 二次函数
+									301 container
+										302 text 章  · 继续观察
+								303 cell
+									304 text 76%
+								305 cell
+									306 text 68%
+							307 row
+								308 cell
+									309 button 第二十四章 圆
+										310 text 第二十四章 圆
+									311 container
+										312 text 章  · 继续观察
+								313 cell
+									314 text 73%
+								315 cell
+									316 text 76%
+							317 row
+								318 cell
+									319 button 第二十三章 旋转
+										320 text 第二十三章 旋转
+									321 container
+										322 text 章  · 保持
+								323 cell
+									324 text 77%
+								325 cell
+									326 text 70%
+					327 link Description: 查看全部明细, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=curriculum
+				328 container
+					329 heading 学生学习进展, Value: 2
+						330 text 学生学习进展
+					331 image 学生学习进展；稳定保持 10 人 20%；正在巩固 19 人 37%；已纠正待验证 4 人 8%；需要支持 2 人 4%；近期回落 10 人 20%；数据不足 6 人 12%
+					332 container 学生学习进展：数据
+						333 table
+							334 row
+								335 cell
+									336 text 项目
+								337 cell
+									338 text 人
+								339 cell
+									340 text 说明
+							341 container
+								342 row
+									343 cell
+										344 text 稳定保持
+									345 cell
+										346 text 10人
+									347 cell
+										348 text 连续 3 次不低于预期
+								349 row
+									350 cell
+										351 text 正在巩固
+									352 cell
+										353 text 19人
+									354 cell
+										355 text 补回率在上升，或满 3 次批阅任务后继续观察
+								356 row
+									357 cell
+										358 text 已纠正待验证
+									359 cell
+										360 text 4人
+									361 cell
+										362 text 已订正，等下一次批阅任务验证
+								363 row
+									364 cell
+										365 text 需要支持
+									366 cell
+										367 text 2人
+									368 cell
+										369 text 连续两次低于预期，补回不足六成
+								370 row
+									371 cell
+										372 text 近期回落
+									373 cell
+										374 text 10人
+									375 cell
+										376 text 最近一次可比再考又错至少 2 项，且该次保持率低于 70%
+								377 row
+									378 cell
+										379 text 数据不足
+									380 cell
+										381 text 6人
+									382 cell
+										383 text 有效批阅任务不足 3 次
+					384 content list
+						385 container
+							386 text 稳定保持 连续 3 次不低于预期 10 人
+						387 container
+							388 text 正在巩固
+							389 text 补回率上升，或继续观察
+							390 text 19 人
+						391 container
+							392 text 已纠正待验证 已订正，等下一次批阅任务验证 4 人
+						393 container
+							394 text 需要支持
+							395 text 连续低于预期，补回不足六成
+							396 text 2 人
+						397 container
+							398 text 近期回落
+							399 text 最近再考又错，保持率低于七成
+							400 text 10 人
+						401 container
+							402 text 数据不足 有效批阅任务不足 3 次 6 人
+					403 link Description: 查看学生与班级, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=students&progress=priority
+				404 container
+					405 heading 错题：出错与再错, Value: 2
+						406 text 错题：出错与再错
+					407 content list 出错与再错指标图例
+						408 container
+							409 text 出错的学生占比
+							410 pop up button (collapsed) Description: 出错的学生占比：指标说明, ID: base-ui-_r_1n_, Secondary Actions: Expand
+						411 container
+							412 text 再考时仍然出错
+							413 pop up button (collapsed) Description: 再考时仍然出错：指标说明, ID: base-ui-_r_1p_, Secondary Actions: Expand
+					414 text 矩形面积最大值
+					415 text 42 / 51 人
+					416 container 错题的出错与再错占比：矩形面积最大值。完整数值及缺测说明见下方数据表。
+					417 text 出错的学生占比 ： 82% 再考时仍然出错 ： 39%
+					418 text 与 x 轴的交点
+					419 text 37 / 45 人
+					420 container 错题的出错与再错占比：与 x 轴的交点。完整数值及缺测说明见下方数据表。
+					421 text 出错的学生占比 ： 82% 再考时仍然出错 ： 20%
+					422 text 开口方向与最值
+					423 text 38 / 51 人
+					424 container 错题的出错与再错占比：开口方向与最值。完整数值及缺测说明见下方数据表。
+					425 text 出错的学生占比 ： 75% 再考时仍然出错 ： 18%
+					426 container 错题的出错与再错占比：数据
+						427 text 连线仅连接同一项目的两个有效值；缺测不补零。
+						428 table
+							429 row
+								430 cell
+									431 text 项目
+								432 cell
+									433 text 出错的学生占比
+								434 cell
+									435 text 再考时仍然出错
+							436 container
+								437 row
+									438 cell
+										439 text 矩形面积最大值
+									440 cell
+										441 text 82%
+									442 cell
+										443 text 39%
+								444 row
+									445 cell
+										446 text 与 x 轴的交点
+									447 cell
+										448 text 82%
+									449 cell
+										450 text 20%
+								451 row
+									452 cell
+										453 text 开口方向与最值
+									454 cell
+										455 text 75%
+									456 cell
+										457 text 18%
+					458 link Description: 查看错题, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=mistakes
+				459 container
+					460 heading 批阅数据积累, Value: 2
+						461 text 批阅数据积累
+					462 text 近 13 周每周新增的有效作答
+					463 container 每周新增有效作答
+						464 container
+							465 image 第 1 周：0
+							466 image 第 2 周：0
+							467 image 第 3 周：0
+							468 image 第 4 周：0
+							469 image 第 5 周：0
+					470 container 每周新增有效作答：数据
+						471 table
+							472 row
+								473 cell
+									474 text 项目
+								475 cell
+									476 text 次
+							477 container
+								478 row
+									479 cell
+										480 text 第 1 周
+									481 cell
+										482 text 0次
+								483 row
+									484 cell
+										485 text 第 2 周
+									486 cell
+										487 text 0次
+								488 row
+									489 cell
+										490 text 第 3 周
+									491 cell
+										492 text 0次
+								493 row
+									494 cell
+										495 text 第 4 周
+									496 cell
+										497 text 0次
+								498 row
+									499 cell
+										500 text 第 5 周
+									501 cell
+										502 text 0次
+								503 row
+									504 cell
+										505 text 第 6 周
+									506 cell
+										507 text 540次
+								508 row
+									509 cell
+										510 text 第 7 周
+									511 cell
+										512 text 540次
+								513 row
+									514 cell
+										515 text 第 8 周
+									516 cell
+										517 text 540次
+								518 row
+									519 cell
+										520 text 第 9 周
+									521 cell
+										522 text 90次
+								523 row
+									524 cell
+										525 text 第 10 周
+									526 cell
+										527 text 900次
+								528 row
+									529 cell
+										530 text 第 11 周
+									531 cell
+										532 text 540次
+								533 row
+									534 cell
+										535 text 第 12 周
+									536 cell
+										537 text 612次
+								538 row
+									539 cell
+										540 text 第 13 周
+									541 cell
+										542 text 612次
+					543 definition list
+						544 container 已批阅的批阅任务
+							545 text 已批阅的批阅任务
+						546 container
+							547 text 9 次
+						548 container 覆盖的知识点
+							549 text 覆盖的知识点
+						550 container
+							551 text 24 /  35  个
+						552 container 已对应到知识点的作答 查看未对应的 45 次
+							553 text 已对应到知识点的作答
+							554 button 查看未对应的 45 次
+								555 text 查看未对应的
+								556 text 45
+								557 text 次
+						558 container
+							559 text 4,329 /  4,374  次
+					560 link Description: 查看批阅记录, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/grading
+					561 link Description: 开始一次 AI 批阅, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/grading/new
+			562 pop up button (collapsed) Description: 评审工具, ID: base-ui-_r_24_, Secondary Actions: Expand
+			563 text 可拖动；方向键移动 16 像素，Shift 加方向键移动 64 像素。
+		31 container Notifications
+
+The focused UI element is 29 container main-content

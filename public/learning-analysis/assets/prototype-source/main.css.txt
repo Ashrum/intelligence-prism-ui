@@ -1,0 +1,5 @@
+@import "/Users/OLE/HermesWork/ole-school-workbench/src/theme/prism.css";
+@source "/Users/OLE/HermesWork/ole-school-workbench/src/components/coss";
+@source "/Users/OLE/HermesWork/ole-school-workbench/src/components/prism-next";
+@source "./main.tsx";
+@import "./styles.css";

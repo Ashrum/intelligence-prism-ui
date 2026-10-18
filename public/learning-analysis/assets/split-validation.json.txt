@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "revision": "v0.7 r2",
+  "baseline_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
+  "specs": 6,
+  "verbatim_segments": 17,
+  "section4_to12_continuous": true,
+  "gate_rows_identical": true,
+  "section6_rules_unchanged": true,
+  "scope": "document integrity and deterministic publication; not production admission"
+}

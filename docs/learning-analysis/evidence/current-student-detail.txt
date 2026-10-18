@@ -1,0 +1,1036 @@
+- link:
+  - /url: "#main-content"
+  - text: 跳至主要内容
+- banner:
+  - link:
+    - /url: "#/teacher/agent/workspace"
+    - generic: 启明实验学校
+  - navigation:
+    - link:
+      - /url: "#/teacher/agent/workspace"
+      - generic: Agent
+    - link:
+      - /url: "#/teacher/agent/records"
+      - generic: 工作记录
+    - link:
+      - /url: "#/teacher/grading"
+      - generic: 智能批阅
+    - link:
+      - /url: "#/teacher/papers"
+      - generic: 教学资源
+    - link:
+      - /url: "#/teacher/learning-analysis"
+      - generic: 学情分析
+  - button:
+  - button:
+  - link:
+    - /url: "#/teacher/notifications"
+    - generic: "2"
+  - button:
+  - separator
+  - button:
+    - generic: 王
+- generic: 工作目录
+- button [expanded]:
+- button:
+  - generic: "0"
+- complementary:
+  - navigation:
+    - list:
+      - link:
+        - /url: "#/teacher/learning-analysis?view=overview&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=students&student=cycle-stu-1-04"
+        - generic: 概览
+      - link:
+        - /url: "#/teacher/learning-analysis?view=students&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=students&student=cycle-stu-1-04"
+        - generic: 学生与班级
+      - link:
+        - /url: "#/teacher/learning-analysis?view=curriculum&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=students&student=cycle-stu-1-04"
+        - generic: 课程与知识点
+      - link:
+        - /url: "#/teacher/learning-analysis?view=mistakes&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=students&student=cycle-stu-1-04"
+        - generic: 错题
+      - link:
+        - /url: "#/teacher/learning-analysis?view=reports&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=students&student=cycle-stu-1-04"
+        - generic: 专题报表
+- main:
+  - heading [level=1]: 学生与班级
+  - button:
+    - text: 班级 · 九年级（1）班
+  - button:
+    - text: 学科 · 数学
+  - button:
+    - text: 时间 · 本学期 · 08/01–10/26
+  - button:
+    - text: 数据范围 · 全部数据
+  - paragraph: 51 名学生 · 9 次批阅任务 · 4,374 次作答 · 截至 10/26
+  - paragraph: 这 13 周
+  - heading [level=2]: 近期表现高于预期 5 个百分点；此前失分的内容，再考时补回了 68%。
+  - generic: 依据 4 次可比批阅任务、30 道有再考记录的错题。结论按规则得出，不是 AI 判断。
+  - button:
+    - text: 看依据
+  - term:
+    - text: 近期得分率
+    - button:
+  - definition: 75%
+  - definition: 高于预期 5 个百分点
+  - definition:
+    - generic: 走势数值：76、78、72、75
+  - term:
+    - text: 补回率
+    - button:
+  - definition: 68%
+  - definition: 之前失分的内容，再考时补回的比例
+  - definition:
+    - generic: 环形数值：227 / 333
+  - term:
+    - text: 保持率
+    - button:
+  - definition: 80%
+  - definition: 两周后再考，仍然做对的比例
+  - definition:
+    - generic: 环形数值：817 / 1,020
+  - term:
+    - text: 需要优先处理
+    - button:
+  - definition: 12人
+  - definition: 5 个知识点 · 按关注规则筛出
+  - heading [level=2]: 班级得分率与预期
+  - list:
+    - generic: 实际得分率
+    - generic: 按题目难度推算的预期
+    - generic: 不可比
+    - generic: 新情境
+  - generic: 每次批阅任务难度不同，所以不直接比前后分数，而是看每一次比预期高多少。
+  - group "班级得分率与预期":
+    - application:
+      - generic: 76%
+      - generic: 高于预期 2
+      - generic: 78%
+      - generic: 高于预期 3
+      - generic: 72%
+      - generic: 低于预期 2
+      - generic: 75%
+      - generic: 高于预期 5
+      - generic: 71% · 不可比
+      - generic: 76% · 不可比
+      - generic: 74% · 不可比
+      - generic: 74% · 不可比
+      - generic: 75% · 新情境
+      - generic: 第 6 周起点检测
+      - generic: 第 7 周课堂练习
+      - generic: 第 8 周单元复查
+      - generic: 第 9 周二次函数与方程 ·…
+      - generic: 第 10 周二次函数与方程 ·…
+      - generic: 第 10 周二次函数与方程 ·…
+      - generic: 第 11 周巩固检测
+      - generic: 第 12 周新情境应用
+      - generic: 第 13 周间隔复查
+      - generic: 65%
+      - generic: 70%
+      - generic: 75%
+      - generic: 80%
+      - generic: 85%
+  - region:
+    - paragraph: 实际得分率：实线，跨缺测连线；按题目难度推算的预期：虚线，跨缺测连线，不画点；不可比：仅画点，不连线；新情境：仅画点，不连线。标注避让后放不下时仅在提示框和本表显示。
+    - table:
+      - rowgroup:
+        - row:
+          - columnheader: 项目
+          - columnheader: 实际得分率
+          - columnheader: 按题目难度推算的预期
+          - columnheader: 不可比
+          - columnheader: 新情境
+      - rowgroup:
+        - row:
+          - cell:
+            - text: 09/08 · 起点检测
+            - generic: 第 6 周 · 起点检测
+          - cell:
+            - text: 76%
+            - generic: 76%
+            - generic: 高于预期 2
+          - cell: 74%
+          - cell: —
+          - cell: —
+        - row:
+          - cell:
+            - text: 09/15 · 课堂练习
+            - generic: 第 7 周 · 课堂练习
+          - cell: —
+          - cell: —
+          - cell:
+            - text: 71%
+            - generic: 空心圆
+            - generic: 71% · 不可比
+          - cell: —
+        - row:
+          - cell:
+            - text: 09/22 · 单元复查
+            - generic: 第 8 周 · 单元复查
+          - cell:
+            - text: 78%
+            - generic: 78%
+            - generic: 高于预期 3
+          - cell: 75%
+          - cell: —
+          - cell: —
+        - row:
+          - cell:
+            - text: 09/28 · 二次函数与方程 · 九人再练
+            - generic: 第 9 周 · 二次函数与方程 · 九人再练
+          - cell: —
+          - cell: —
+          - cell:
+            - text: 76%
+            - generic: 空心圆
+            - generic: 76% · 不可比
+          - cell: —
+        - row:
+          - cell:
+            - text: 10/05 · 二次函数与方程 · 一班单元巩固
+            - generic: 第 10 周 · 二次函数与方程 · 一班单元巩固
+          - cell: —
+          - cell: —
+          - cell:
+            - text: 74%
+            - generic: 空心圆
+            - generic: 74% · 不可比
+          - cell: —
+        - row:
+          - cell:
+            - text: 10/06 · 二次函数与方程 · 一班前测
+            - generic: 第 10 周 · 二次函数与方程 · 一班前测
+          - cell: —
+          - cell: —
+          - cell:
+            - text: 74%
+            - generic: 空心圆
+            - generic: 74% · 不可比
+          - cell: —
+        - row:
+          - cell:
+            - text: 10/10 · 巩固检测
+            - generic: 第 11 周 · 巩固检测
+          - cell:
+            - text: 72%
+            - generic: 72%
+            - generic: 低于预期 2
+          - cell: 74%
+          - cell: —
+          - cell: —
+        - row:
+          - cell:
+            - text: 10/17 · 新情境应用
+            - generic: 第 12 周 · 新情境应用
+          - cell: —
+          - cell: —
+          - cell: —
+          - cell:
+            - text: 75%
+            - generic: 菱形
+            - generic: 75% · 新情境
+        - row:
+          - cell:
+            - text: 10/24 · 间隔复查
+            - generic: 第 13 周 · 间隔复查
+          - cell:
+            - text: 75%
+            - generic: 75%
+            - generic: 高于预期 5
+          - cell: 70%
+          - cell: —
+          - cell: —
+  - button:
+    - text: 查看批阅任务依据
+  - heading "学生分析 显示 51 / 51 人" [level=2]:
+    - text: 学生分析
+    - button:
+    - generic: 显示 51 / 51 人
+  - searchbox
+  - button:
+    - text: 进展状态 · 全部
+  - button:
+    - text: 排序 · 需要关注优先
+  - region:
+    - table:
+      - rowgroup:
+        - row:
+          - columnheader:
+            - button:
+              - text: 姓名
+          - columnheader:
+            - button:
+              - text: 进展状态
+            - button:
+          - columnheader:
+            - button:
+              - text: 近期得分率
+            - button:
+          - columnheader:
+            - button:
+              - text: 补回率
+            - button:
+          - columnheader:
+            - button:
+              - text: 保持率
+            - button:
+          - columnheader: 主要失分知识点
+      - rowgroup:
+        - row:
+          - cell:
+            - button: 李思远
+          - cell:
+            - generic: 需要支持
+          - cell:
+            - meter: x
+            - generic: 57%
+            - generic: 低于预期 13 个百分点
+          - cell:
+            - meter: x
+            - generic: 20%
+          - cell:
+            - meter: x
+            - generic: 56%
+          - cell: 开口与图像变换、公式法
+        - row:
+          - cell:
+            - button: 袁明哲
+          - cell:
+            - generic: 需要支持
+          - cell:
+            - meter: x
+            - generic: 60%
+            - generic: 低于预期 10 个百分点
+          - cell:
+            - meter: x
+            - generic: 19%
+          - cell:
+            - meter: x
+            - generic: 59%
+          - cell: 顶点与对称轴、待定系数法求解析式
+        - row:
+          - cell:
+            - button: 彭雨晴
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 44%
+            - generic: 低于预期 26 个百分点
+          - cell:
+            - meter: x
+            - generic: 56%
+          - cell:
+            - meter: x
+            - generic: 67%
+          - cell: 顶点与对称轴、中心对称图形
+        - row:
+          - cell:
+            - button: 叶晓棠
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 50%
+            - generic: 低于预期 20 个百分点
+          - cell:
+            - meter: x
+            - generic: 40%
+          - cell:
+            - meter: x
+            - generic: 75%
+          - cell: 函数与方程、旋转的性质
+        - row:
+          - cell:
+            - button: 罗嘉宁
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 53%
+            - generic: 低于预期 18 个百分点
+          - cell:
+            - meter: x
+            - generic: 70%
+          - cell:
+            - meter: x
+            - generic: 57%
+          - cell: 弧弦圆心角的关系、顶点与对称轴
+        - row:
+          - cell:
+            - button: 林晨
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 54%
+            - generic: 低于预期 16 个百分点
+          - cell:
+            - meter: x
+            - generic: 47%
+          - cell:
+            - meter: x
+            - generic: 72%
+          - cell: 开口与图像变换、顶点与对称轴
+        - row:
+          - cell:
+            - button: 王沐阳
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 55%
+            - generic: 低于预期 15 个百分点
+          - cell:
+            - meter: x
+            - generic: 69%
+          - cell:
+            - meter: x
+            - generic: 50%
+          - cell: 开口与图像变换、二次函数的应用
+        - row:
+          - cell:
+            - button: 吴宇航
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 56%
+            - generic: 低于预期 14 个百分点
+          - cell:
+            - meter: x
+            - generic: 83%
+          - cell:
+            - meter: x
+            - generic: 70%
+          - cell: 二次函数的应用、顶点与对称轴
+        - row:
+          - cell:
+            - button: 侯致远
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 64%
+            - generic: 低于预期 6 个百分点
+          - cell:
+            - meter: x
+            - generic: 78%
+          - cell:
+            - meter: x
+            - generic: 71%
+          - cell: 二次函数的应用、公式法
+        - row:
+          - cell:
+            - button: 程星野
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 65%
+            - generic: 低于预期 5 个百分点
+          - cell:
+            - meter: x
+            - generic: 80%
+          - cell:
+            - meter: x
+            - generic: 65%
+          - cell: 顶点与对称轴、中心对称
+        - row:
+          - cell:
+            - button: 许星辰
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 70%
+            - generic: 与预期持平
+          - cell:
+            - meter: x
+            - generic: 89%
+          - cell:
+            - meter: x
+            - generic: 67%
+          - cell: 开口与图像变换、二次函数的应用
+        - row:
+          - cell:
+            - button: 顾云舒
+          - cell:
+            - generic: 近期回落
+          - cell:
+            - meter: x
+            - generic: 80%
+            - generic: 高于预期 10 个百分点
+          - cell:
+            - meter: x
+            - generic: 90%
+          - cell:
+            - meter: x
+            - generic: 70%
+          - cell: 开口与图像变换、公式法
+        - row:
+          - cell:
+            - button: 曹清越
+          - cell:
+            - generic: 已纠正待验证
+          - cell:
+            - meter: x
+            - generic: 51%
+            - generic: 低于预期 19 个百分点
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell: 顶点与对称轴、开口与图像变换
+        - row:
+          - cell:
+            - button: 周子涵
+          - cell:
+            - generic: 已纠正待验证
+          - cell:
+            - meter: x
+            - generic: 59%
+            - generic: 低于预期 11 个百分点
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell: 开口与图像变换、直接开平方法
+        - row:
+          - cell:
+            - button: 汪一川
+          - cell:
+            - generic: 已纠正待验证
+          - cell:
+            - meter: x
+            - generic: 68%
+            - generic: 低于预期 3 个百分点
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell: 开口与图像变换、函数与方程
+        - row:
+          - cell:
+            - button: 高梓墨
+          - cell:
+            - generic: 已纠正待验证
+          - cell:
+            - meter: x
+            - generic: 88%
+            - generic: 高于预期 17 个百分点
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell:
+            - text: 数据不足
+            - button:
+          - cell: 开口与图像变换、二次函数的应用
+        - row:
+          - cell:
+            - button: 何书瑶
+          - cell:
+            - generic: 正在巩固
+          - cell:
+            - meter: x
+            - generic: 57%
+            - generic: 低于预期 13 个百分点
+          - cell:
+            - meter: x
+            - generic: 77%
+          - cell:
+            - meter: x
+            - generic: 75%
+          - cell: 顶点与对称轴、开口与图像变换
+        - row:
+          - cell:
+            - button: 钟子骞
+          - cell:
+            - generic: 正在巩固
+          - cell:
+            - meter: x
+            - generic: 68%
+            - generic: 低于预期 3 个百分点
+          - cell:
+            - meter: x
+            - generic: 73%
+          - cell:
+            - meter: x
+            - generic: 73%
+          - cell: 顶点与对称轴、二次函数的应用
+        - row:
+          - cell:
+            - button: 邓可昕
+          - cell:
+            - generic: 正在巩固
+          - cell:
+            - meter: x
+            - generic: 70%
+            - generic: 与预期持平
+          - cell:
+            - meter: x
+            - generic: 86%
+          - cell:
+            - meter: x
+            - generic: 81%
+          - cell: 开口与图像变换、待定系数法求解析式
+        - row:
+          - cell:
+            - button: 韩若溪
+          - cell:
+            - generic: 正在巩固
+          - cell:
+            - meter: x
+            - generic: 70%
+            - generic: 与预期持平
+          - cell:
+            - meter: x
+            - generic: 80%
+          - cell:
+            - meter: x
+            - generic: 86%
+          - cell: 开口与图像变换、顶点与对称轴
+  - button: 显示全部 51 项
+- button:
+- generic: 可拖动；方向键移动 16 像素，Shift 加方向键移动 64 像素。
+- region "Notifications"
+- generic: 100%
+- dialog "学情详情预览":
+  - region "学情详情预览框架":
+    - button "返回学生与班级" [active]:
+      - text: 返回学生与班级
+    - heading "李思远" [level=1]
+    - paragraph: 数学 · 本学期 08/01–10/26 · 全部数据
+    - paragraph: 来源名单 · 第 1 / 51 位
+    - complementary "来源学生名单":
+      - heading "来源名单" [level=2]
+      - generic: 51 人
+      - button "收起列表":
+      - textbox "搜索学生"
+      - listbox "选择学生":
+        - option "李思远 · 需要支持 · 57%" [selected]:
+          - generic: 李思远
+          - generic: 需要支持
+          - generic: 57%
+        - option "袁明哲 · 需要支持 · 60%":
+          - generic: 袁明哲
+          - generic: 需要支持
+          - generic: 60%
+        - option "彭雨晴 · 近期回落 · 44%":
+          - generic: 彭雨晴
+          - generic: 近期回落
+          - generic: 44%
+        - option "叶晓棠 · 近期回落 · 50%":
+          - generic: 叶晓棠
+          - generic: 近期回落
+          - generic: 50%
+        - option "罗嘉宁 · 近期回落 · 53%":
+          - generic: 罗嘉宁
+          - generic: 近期回落
+          - generic: 53%
+        - option "林晨 · 近期回落 · 54%":
+          - generic: 林晨
+          - generic: 近期回落
+          - generic: 54%
+        - option "王沐阳 · 近期回落 · 55%":
+          - generic: 王沐阳
+          - generic: 近期回落
+          - generic: 55%
+        - option "吴宇航 · 近期回落 · 56%":
+          - generic: 吴宇航
+          - generic: 近期回落
+          - generic: 56%
+        - option "侯致远 · 近期回落 · 64%":
+          - generic: 侯致远
+          - generic: 近期回落
+          - generic: 64%
+        - option "程星野 · 近期回落 · 65%":
+          - generic: 程星野
+          - generic: 近期回落
+          - generic: 65%
+        - option "许星辰 · 近期回落 · 70%":
+          - generic: 许星辰
+          - generic: 近期回落
+          - generic: 70%
+        - option "顾云舒 · 近期回落 · 80%":
+          - generic: 顾云舒
+          - generic: 近期回落
+          - generic: 80%
+        - option "曹清越 · 已纠正待验证 · 51%":
+          - generic: 曹清越
+          - generic: 已纠正待验证
+          - generic: 51%
+        - option "周子涵 · 已纠正待验证 · 59%":
+          - generic: 周子涵
+          - generic: 已纠正待验证
+          - generic: 59%
+        - option "汪一川 · 已纠正待验证 · 68%":
+          - generic: 汪一川
+          - generic: 已纠正待验证
+          - generic: 68%
+        - option "高梓墨 · 已纠正待验证 · 88%":
+          - generic: 高梓墨
+          - generic: 已纠正待验证
+          - generic: 88%
+        - option "何书瑶 · 正在巩固 · 57%":
+          - generic: 何书瑶
+          - generic: 正在巩固
+          - generic: 57%
+        - option "钟子骞 · 正在巩固 · 68%":
+          - generic: 钟子骞
+          - generic: 正在巩固
+          - generic: 68%
+        - option "邓可昕 · 正在巩固 · 70%":
+          - generic: 邓可昕
+          - generic: 正在巩固
+          - generic: 70%
+        - option "韩若溪 · 正在巩固 · 70%":
+          - generic: 韩若溪
+          - generic: 正在巩固
+          - generic: 70%
+        - option "孟思齐 · 正在巩固 · 70%":
+          - generic: 孟思齐
+          - generic: 正在巩固
+          - generic: 70%
+        - option "谢言希 · 正在巩固 · 75%":
+          - generic: 谢言希
+          - generic: 正在巩固
+          - generic: 75%
+        - option "曾念初 · 正在巩固 · 76%":
+          - generic: 曾念初
+          - generic: 正在巩固
+          - generic: 76%
+        - option "梁亦辰 · 正在巩固 · 78%":
+          - generic: 梁亦辰
+          - generic: 正在巩固
+          - generic: 78%
+        - option "卢晴岚 · 正在巩固 · 80%":
+          - generic: 卢晴岚
+          - generic: 正在巩固
+          - generic: 80%
+        - option "苏慕言 · 正在巩固 · 80%":
+          - generic: 苏慕言
+          - generic: 正在巩固
+          - generic: 80%
+        - option "潘以宁 · 正在巩固 · 85%":
+          - generic: 潘以宁
+          - generic: 正在巩固
+          - generic: 85%
+        - option "徐知夏 · 正在巩固 · 89%":
+          - generic: 徐知夏
+          - generic: 正在巩固
+          - generic: 89%
+        - option "白星月 · 正在巩固 · 90%":
+          - generic: 白星月
+          - generic: 正在巩固
+          - generic: 90%
+        - option "廖承泽 · 正在巩固 · 90%":
+          - generic: 廖承泽
+          - generic: 正在巩固
+          - generic: 90%
+        - option "郑明轩 · 正在巩固 · 93%":
+          - generic: 郑明轩
+          - generic: 正在巩固
+          - generic: 93%
+        - option "姜语桐 · 正在巩固 · 94%":
+          - generic: 姜语桐
+          - generic: 正在巩固
+          - generic: 94%
+        - option "孙可欣 · 正在巩固 · 94%":
+          - generic: 孙可欣
+          - generic: 正在巩固
+          - generic: 94%
+        - option "石乐安 · 正在巩固 · 100%":
+          - generic: 石乐安
+          - generic: 正在巩固
+          - generic: 100%
+        - option "宋予安 · 正在巩固 · 100%":
+          - generic: 宋予安
+          - generic: 正在巩固
+          - generic: 100%
+        - option "方景澄 · 数据不足 · 60%":
+          - generic: 方景澄
+          - generic: 数据不足
+          - generic: 60%
+        - option "邵书禾 · 数据不足 · 66%":
+          - generic: 邵书禾
+          - generic: 数据不足
+          - generic: 66%
+        - option "龚雨桐 · 数据不足 · 69%":
+          - generic: 龚雨桐
+          - generic: 数据不足
+          - generic: 69%
+        - option "董亦宁 · 数据不足 · 70%":
+          - generic: 董亦宁
+          - generic: 数据不足
+          - generic: 70%
+        - option "许乐言 · 数据不足 · 73%":
+          - generic: 许乐言
+          - generic: 数据不足
+          - generic: 73%
+        - option "贺星遥 · 数据不足 · 90%":
+          - generic: 贺星遥
+          - generic: 数据不足
+          - generic: 90%
+        - option "冯景行 · 稳定保持 · 74%":
+          - generic: 冯景行
+          - generic: 稳定保持
+          - generic: 74%
+        - option "江时雨 · 稳定保持 · 74%":
+          - generic: 江时雨
+          - generic: 稳定保持
+          - generic: 74%
+        - option "沈南乔 · 稳定保持 · 74%":
+          - generic: 沈南乔
+          - generic: 稳定保持
+          - generic: 74%
+        - option "唐乐知 · 稳定保持 · 74%":
+          - generic: 唐乐知
+          - generic: 稳定保持
+          - generic: 74%
+        - option "马书航 · 稳定保持 · 80%":
+          - generic: 马书航
+          - generic: 稳定保持
+          - generic: 80%
+        - option "吕奕然 · 稳定保持 · 90%":
+          - generic: 吕奕然
+          - generic: 稳定保持
+          - generic: 90%
+        - option "赵安宁 · 稳定保持 · 94%":
+          - generic: 赵安宁
+          - generic: 稳定保持
+          - generic: 94%
+        - option "陈一诺 · 稳定保持 · 100%":
+          - generic: 陈一诺
+          - generic: 稳定保持
+          - generic: 100%
+        - option "杜嘉禾 · 稳定保持 · 100%":
+          - generic: 杜嘉禾
+          - generic: 稳定保持
+          - generic: 100%
+        - option "蒋雨桐 · 稳定保持 · 100%":
+          - generic: 蒋雨桐
+          - generic: 稳定保持
+          - generic: 100%
+    - region "试卷画布":
+      - heading "需要支持" [level=2]:
+        - generic: 需要支持
+      - generic: 最近两次可比批阅任务都低于预期；此前失分的 15 处内容，再考补回 3 处。
+      - paragraph:
+        - text: 依据 9 次批阅任务 · 102 次作答
+        - text: 结论按规则得出，不是 AI 判断
+      - text: 与预期的差距
+      - button "与预期的差距：指标说明":
+      - paragraph: −13 个百分点
+      - paragraph: 10/24 间隔复查：实际 57%，预期 70%
+      - text: 补回率
+      - button "补回率：指标说明":
+      - paragraph: 20%
+      - paragraph: 此前失分 15 处，再考补回 3 处
+      - text: 保持率
+      - button "保持率：指标说明":
+      - paragraph: 56%
+      - paragraph: 此前做对 18 处，至少两周后仍对 10 处
+      - tablist "学生详情页签":
+        - tab "学习概况" [selected]
+        - tab "知识点（35）"
+        - tab "作答记录（9）"
+      - tabpanel "学习概况":
+        - generic: 值得先看
+        - generic: 10/24
+        - heading "勾股定理求弦长 · 再考仍失分" [level=3]
+        - generic: 10/10 与 10/24 的同知识点题均失分（0/4、2/8）
+        - button "查看作答":
+          - text: 查看作答
+        - generic: 10/24
+        - heading "由对称条件解参数 · 延迟再考仍做对" [level=3]
+        - generic: 间隔 14 天，4/4 → 8/8
+        - button "查看作答":
+          - text: 查看作答
+        - generic: 得分率与预期
+        - list "学生得分率与预期图例":
+          - generic: 实际得分率
+          - generic: 按题目难度推算的预期
+          - generic: 不可比
+          - generic: 新情境
+        - generic: 每次批阅任务难度不同，只看每一次与当次预期的差距。
+        - group "学生得分率与预期趋势":
+          - application:
+            - generic: 低于预期 20
+            - generic: 低于预期 20
+            - generic: 低于预期 20
+            - generic: 57%
+            - generic: 低于预期 13
+            - generic: 57% · 不可比
+            - generic: 62% · 不可比
+            - generic: 48% · 新情境
+            - generic "09/08 · 起点检测": 09/08起点检测
+            - generic "09/15 · 课堂练习": 09/15课堂练习
+            - generic "09/22 · 单元复查": 09/22单元复查
+            - generic "09/28 · 二次函数与方程 · 九人再练": 09/28二次函数与…
+            - generic "10/05 · 二次函数与方程 · 一班单元巩固": 10/05二次函数与…
+            - generic "10/06 · 二次函数与方程 · 一班前测": 10/06二次函数与…
+            - generic "10/10 · 巩固检测": 10/10巩固检测
+            - generic "10/17 · 新情境应用": 10/17新情境应用
+            - generic "10/24 · 间隔复查": 10/24间隔复查
+            - generic: 20%
+            - generic: 40%
+            - generic: 60%
+            - generic: 80%
+            - generic: 100%
+        - region "学生得分率与预期趋势：数据":
+          - paragraph: 实际得分率：实线，跨缺测连线；按题目难度推算的预期：虚线，跨缺测连线，不画点；不可比：仅画点，不连线；新情境：仅画点，不连线。标注避让后放不下时仅在提示框和本表显示。
+          - table:
+            - rowgroup:
+              - row "项目 实际得分率 按题目难度推算的预期 不可比 新情境":
+                - columnheader "项目"
+                - columnheader "实际得分率"
+                - columnheader "按题目难度推算的预期"
+                - columnheader "不可比"
+                - columnheader "新情境"
+            - rowgroup:
+              - row "09/08 · 起点检测 09/08 · 起点检测 54% 54% 低于预期 20 74% — —":
+                - cell "09/08 · 起点检测 09/08 · 起点检测":
+                  - text: 09/08 · 起点检测
+                  - generic: 09/08 · 起点检测
+                - cell "54% 54% 低于预期 20":
+                  - text: 54%
+                  - generic: 54%
+                  - generic: 低于预期 20
+                - cell "74%"
+                - cell "—"
+                - cell "—"
+              - row "09/15 · 课堂练习 09/15 · 课堂练习 — — 57% 空心圆 57% · 不可比 —":
+                - cell "09/15 · 课堂练习 09/15 · 课堂练习":
+                  - text: 09/15 · 课堂练习
+                  - generic: 09/15 · 课堂练习
+                - cell "—"
+                - cell "—"
+                - cell "57% 空心圆 57% · 不可比":
+                  - text: 57%
+                  - generic: 空心圆
+                  - generic: 57% · 不可比
+                - cell "—"
+              - row "09/22 · 单元复查 09/22 · 单元复查 55% 55% 低于预期 20 75% — —":
+                - cell "09/22 · 单元复查 09/22 · 单元复查":
+                  - text: 09/22 · 单元复查
+                  - generic: 09/22 · 单元复查
+                - cell "55% 55% 低于预期 20":
+                  - text: 55%
+                  - generic: 55%
+                  - generic: 低于预期 20
+                - cell "75%"
+                - cell "—"
+                - cell "—"
+              - row "09/28 · 二次函数与方程 · 九人再练 09/28 · 二次函数与方程 · 九人再练 — — 85% 空心圆 85% · 不可比 —":
+                - cell "09/28 · 二次函数与方程 · 九人再练 09/28 · 二次函数与方程 · 九人再练":
+                  - text: 09/28 · 二次函数与方程 · 九人再练
+                  - generic: 09/28 · 二次函数与方程 · 九人再练
+                - cell "—"
+                - cell "—"
+                - cell "85% 空心圆 85% · 不可比":
+                  - text: 85%
+                  - generic: 空心圆
+                  - generic: 85% · 不可比
+                - cell "—"
+              - row "10/05 · 二次函数与方程 · 一班单元巩固 10/05 · 二次函数与方程 · 一班单元巩固 — — 85% 空心圆 85% · 不可比 —":
+                - cell "10/05 · 二次函数与方程 · 一班单元巩固 10/05 · 二次函数与方程 · 一班单元巩固":
+                  - text: 10/05 · 二次函数与方程 · 一班单元巩固
+                  - generic: 10/05 · 二次函数与方程 · 一班单元巩固
+                - cell "—"
+                - cell "—"
+                - cell "85% 空心圆 85% · 不可比":
+                  - text: 85%
+                  - generic: 空心圆
+                  - generic: 85% · 不可比
+                - cell "—"
+              - row "10/06 · 二次函数与方程 · 一班前测 10/06 · 二次函数与方程 · 一班前测 — — 62% 空心圆 62% · 不可比 —":
+                - cell "10/06 · 二次函数与方程 · 一班前测 10/06 · 二次函数与方程 · 一班前测":
+                  - text: 10/06 · 二次函数与方程 · 一班前测
+                  - generic: 10/06 · 二次函数与方程 · 一班前测
+                - cell "—"
+                - cell "—"
+                - cell "62% 空心圆 62% · 不可比":
+                  - text: 62%
+                  - generic: 空心圆
+                  - generic: 62% · 不可比
+                - cell "—"
+              - row "10/10 · 巩固检测 10/10 · 巩固检测 54% 54% 低于预期 20 74% — —":
+                - cell "10/10 · 巩固检测 10/10 · 巩固检测":
+                  - text: 10/10 · 巩固检测
+                  - generic: 10/10 · 巩固检测
+                - cell "54% 54% 低于预期 20":
+                  - text: 54%
+                  - generic: 54%
+                  - generic: 低于预期 20
+                - cell "74%"
+                - cell "—"
+                - cell "—"
+              - row "10/17 · 新情境应用 10/17 · 新情境应用 — — — 48% 菱形 48% · 新情境":
+                - cell "10/17 · 新情境应用 10/17 · 新情境应用":
+                  - text: 10/17 · 新情境应用
+                  - generic: 10/17 · 新情境应用
+                - cell "—"
+                - cell "—"
+                - cell "—"
+                - cell "48% 菱形 48% · 新情境":
+                  - text: 48%
+                  - generic: 菱形
+                  - generic: 48% · 新情境
+              - row "10/24 · 间隔复查 10/24 · 间隔复查 57% 57% 低于预期 13 70% — —":
+                - cell "10/24 · 间隔复查 10/24 · 间隔复查":
+                  - text: 10/24 · 间隔复查
+                  - generic: 10/24 · 间隔复查
+                - cell "57% 57% 低于预期 13":
+                  - text: 57%
+                  - generic: 57%
+                  - generic: 低于预期 13
+                - cell "70%"
+                - cell "—"
+                - cell "—"
+        - generic: 知识点
+        - button "全部 35 个":
+          - text: 全部 35 个
+        - button "查看待巩固知识点":
+          - generic: 待巩固
+          - generic: "8"
+        - button "查看基本掌握知识点":
+          - generic: 基本掌握
+          - generic: "7"
+        - button "查看已掌握知识点":
+          - generic: 已掌握
+          - generic: "5"
+        - button "查看数据不足知识点":
+          - generic: 数据不足
+          - generic: "15"
+      - toolbar "详情阅读工具":
+        - group "条目定位":
+          - button "上一项" [disabled]:
+          - status "当前条目": 1 / 51
+          - button "下一项":
+        - separator
+        - group "沉浸视图":
+          - button "沉浸阅读":
+    - complementary "学生身份与安排":
+      - generic: 李
+      - heading "李思远" [level=2]
+      - paragraph: 九年级（1）班 · 4 号 · 学号 2026001004
+      - term: 学科
+      - definition: 数学 · 王建国
+      - term: 本范围
+      - definition: 参加 9 / 9 次批阅任务
+      - term: 订正
+      - definition: 已订正 0 处 · 0 处待再考验证
+      - heading "为这名学生安排" [level=3]
+      - generic: 巩固练习
+      - generic: 覆盖 开口与图像变换、函数与方程、公式法等 8 个待巩固知识点
+      - button "去组卷"
+      - generic: 错题变式
+      - generic: 近 4 周失分的 27 道题，每题换一道变式
+      - button "加入试题篮"

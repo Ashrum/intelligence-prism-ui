@@ -35,6 +35,7 @@ function Navigation() {
         {link('/next/foundations/blueprint/guide','蓝图主题规范',<BookOpen/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
         {link('/next/use-cases','教师用例与流程',<Layers/>)}
+        {link('/next/learning-analysis','学情分析设计',<BookOpen/>)}
       </SidebarMenu></SidebarGroup>
       {componentGroups.map(group=><SidebarGroup key={group.id}>
         <SidebarGroupLabel>{group.title}</SidebarGroupLabel>

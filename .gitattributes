@@ -34,3 +34,8 @@
 # Preserve raw CLI diagnostics, including aligned tables and blank-line padding.
 /docs/blueprint/evidence/v9/*.log -whitespace
 /docs/blueprint/evidence/sync-20261015/*.log -whitespace
+
+# Learning-analysis document projections and immutable machine evidence.
+lib/prism-next/learning-analysis-docs.json linguist-generated=true
+public/learning-analysis/** linguist-generated=true
+docs/learning-analysis/evidence/*.json linguist-generated=true
