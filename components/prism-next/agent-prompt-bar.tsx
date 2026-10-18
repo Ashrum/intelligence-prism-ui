@@ -29,13 +29,13 @@ export type AgentPromptBarProps = {
   showModelSelector?: boolean
   attachments?: readonly AgentPromptAttachment[]; variant?: "Rounded" | "Pill"; label?: string; placeholder?: string
   contextActions?: ReactNode; dictation: AgentDictation; voice: AgentVoiceMode; privacy?: AgentVoicePrivacy
-  disabled?: boolean; sendDisabledReason?: string; activity?: ReactNode
+  disabled?: boolean; sendDisabledReason?: string; announceDisabledReason?: boolean; activity?: ReactNode
 }
 export function parsePromptToken(draft: string) {
   const match = /(^|\s)([@/])([^\s@/]*)$/u.exec(draft)
   return match ? { kind: match[2] === "@" ? "source" as const : "command" as const, query: match[3].toLocaleLowerCase(), start: match.index + match[1].length } : null
 }
-export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, activity }: AgentPromptBarProps) {
+export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, announceDisabledReason = true, activity }: AgentPromptBarProps) {
   const id = useId(), input = useRef<HTMLTextAreaElement>(null), anchor = useRef<HTMLDivElement>(null), root = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null)
   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
@@ -139,13 +139,13 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
             </Menu>}
             <AgentDictationIndicator dictation={dictation} disabled={disabled} onIntent={onIntent} />
             <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
-            <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
+            <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
           </div>
         </InputGroupAddon>
       </InputGroup>
     </div>
     <p id={`${id}-help`} className="text-ui-meta text-muted-foreground">@ 来源 · / 命令 · Enter 发送 · Shift + Enter 换行</p>
-    {sendDisabledReason && <p id={`${id}-blocked`} role="status" className="text-ui-hint">{sendDisabledReason}</p>}
+    {sendDisabledReason && <p id={`${id}-blocked`} role={announceDisabledReason ? "status" : undefined} className="text-ui-hint">{sendDisabledReason}</p>}
     <AgentVoiceStatus hideUnavailable promptStatus dictation={dictation} voice={voice} privacy={privacy} onIntent={onIntent} />
   </div>
 }

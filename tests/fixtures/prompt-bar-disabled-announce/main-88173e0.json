@@ -1,0 +1,172 @@
+{
+  "baseline": "88173e0976bd1d0c27acb27327b58798709cae1a",
+  "normalization": "none; candidate removes only send-button aria-describedby before comparison",
+  "cases": [
+    {
+      "name": "Rounded/plain",
+      "props": {
+        "variant": "Rounded"
+      },
+      "bytes": 12656,
+      "sha256": "9e7c722b064f498e10a15097675f8447e71eb668e3e3436bb58d42700fb2b7de"
+    },
+    {
+      "name": "Rounded/blocked",
+      "props": {
+        "variant": "Rounded",
+        "sendDisabledReason": "暂时无法连接服务，草稿仍可编辑；连接恢复后可提交。"
+      },
+      "bytes": 12818,
+      "sha256": "023d27aa3be20a6aedd5c1f51ebc465be14646b1e2895da6b12463a9fe776cad"
+    },
+    {
+      "name": "Rounded/empty-reason",
+      "props": {
+        "variant": "Rounded",
+        "sendDisabledReason": ""
+      },
+      "bytes": 12656,
+      "sha256": "9e7c722b064f498e10a15097675f8447e71eb668e3e3436bb58d42700fb2b7de"
+    },
+    {
+      "name": "Rounded/disabled",
+      "props": {
+        "variant": "Rounded",
+        "disabled": true,
+        "sendDisabledReason": "权限不足"
+      },
+      "bytes": 12820,
+      "sha256": "c0d6bd10a2d42106f6f3576311d615545e08ea1c90ea7d81df8e703fcf1297a6"
+    },
+    {
+      "name": "Rounded/attachments",
+      "props": {
+        "variant": "Rounded",
+        "value": "",
+        "attachments": [
+          {
+            "id": "a",
+            "label": "材料.pdf"
+          }
+        ]
+      },
+      "bytes": 15473,
+      "sha256": "fbebe97656f95daec51ed6528662a2f8be22c8b216debb583772e0b90bfa7b4c"
+    },
+    {
+      "name": "Rounded/dictating",
+      "props": {
+        "variant": "Rounded",
+        "dictation": {
+          "state": "listening",
+          "interim": "识别中"
+        }
+      },
+      "bytes": 14404,
+      "sha256": "be2a50dd1702d11e9eaaf6e1b7854c79f46189d055ad6ce4f391f2c3ab6502a8"
+    },
+    {
+      "name": "Rounded/hidden-model",
+      "props": {
+        "variant": "Rounded",
+        "showModelSelector": false
+      },
+      "bytes": 11097,
+      "sha256": "d8e5f162802989cdd0afa35c305ce8e032da9e472c92869bec5602d32e5a7a98"
+    },
+    {
+      "name": "Rounded/voice",
+      "props": {
+        "variant": "Rounded",
+        "voice": {
+          "state": "connecting"
+        }
+      },
+      "bytes": 14481,
+      "sha256": "3001674b15f7ec20de8bb311f346111306bb59713c82e0a92ce1c3cfd28b38d9"
+    },
+    {
+      "name": "Pill/plain",
+      "props": {
+        "variant": "Pill"
+      },
+      "bytes": 12656,
+      "sha256": "3a5b39eebca39b1dd51dec681cedf213317ffac5bf55462a4bc6c46bd5353454"
+    },
+    {
+      "name": "Pill/blocked",
+      "props": {
+        "variant": "Pill",
+        "sendDisabledReason": "暂时无法连接服务，草稿仍可编辑；连接恢复后可提交。"
+      },
+      "bytes": 12818,
+      "sha256": "229e27f98a9d4b549e5bd92dc582a05873363486a780c325c07ee20b85dd2f99"
+    },
+    {
+      "name": "Pill/empty-reason",
+      "props": {
+        "variant": "Pill",
+        "sendDisabledReason": ""
+      },
+      "bytes": 12656,
+      "sha256": "3a5b39eebca39b1dd51dec681cedf213317ffac5bf55462a4bc6c46bd5353454"
+    },
+    {
+      "name": "Pill/disabled",
+      "props": {
+        "variant": "Pill",
+        "disabled": true,
+        "sendDisabledReason": "权限不足"
+      },
+      "bytes": 12820,
+      "sha256": "97571b46083d1a20475fb270afc8a226c7fe8dca48b5f1f96cc9149eb636e54f"
+    },
+    {
+      "name": "Pill/attachments",
+      "props": {
+        "variant": "Pill",
+        "value": "",
+        "attachments": [
+          {
+            "id": "a",
+            "label": "材料.pdf"
+          }
+        ]
+      },
+      "bytes": 15473,
+      "sha256": "20a8ff664a4e9cef2b11d0cc7b70fddab4579ae1831321dcaba8c7b73f2a913a"
+    },
+    {
+      "name": "Pill/dictating",
+      "props": {
+        "variant": "Pill",
+        "dictation": {
+          "state": "listening",
+          "interim": "识别中"
+        }
+      },
+      "bytes": 14404,
+      "sha256": "0846be9289a2e2d51cadccbb23c2c0e655939d39b5be38e5ba6c37ffc32190b5"
+    },
+    {
+      "name": "Pill/hidden-model",
+      "props": {
+        "variant": "Pill",
+        "showModelSelector": false
+      },
+      "bytes": 11097,
+      "sha256": "1808d15371459e6e2004a2afcf8d157591d537677024ba99df1cc793e94e06bd"
+    },
+    {
+      "name": "Pill/voice",
+      "props": {
+        "variant": "Pill",
+        "voice": {
+          "state": "connecting"
+        }
+      },
+      "bytes": 14481,
+      "sha256": "03e0da09ded021ac2bd82cdbe18e9a0ef5944fa268e1a3cf7d7116cdf72f1a4e"
+    }
+  ]
+}
