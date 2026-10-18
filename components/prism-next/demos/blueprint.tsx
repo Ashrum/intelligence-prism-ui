@@ -11,6 +11,7 @@ import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
 import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
+import { BlueprintObjectCardsDemo } from "./blueprint-object-cards"
 import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
 import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
@@ -145,6 +146,7 @@ export function BlueprintComponentsDemo() {
           <BpTitleBlock items={[{ id: "paper", label: "试卷", value: "八年级数学期中" }, { id: "class", label: "班级", value: "初二（3）班" }, { id: "full", label: "满分", value: "120" }, { id: "due", label: "截止", value: "10 月 18 日 17:00" }]} />
         </div>
       </div>
+      <BlueprintObjectCardsDemo />
     </BlueprintSheet>
 
     <BlueprintSheet id="data" letter="C" sheetNo="03 / 04" title="进度与数据" description="实色、墨色与斜线纹区分系列，不依赖颜色深浅；数值始终以文字写出。">

@@ -1,0 +1,60 @@
+{
+  "baseline": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
+  "node": "v24.14.0",
+  "environment": {
+    "SITES_ENV_READY": "1",
+    "SITES_PROJECT_ROOT": "/Users/OLE/HermesWork/intelligence-prism-ui",
+    "XDG_CONFIG_HOME": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/xdg-config",
+    "TMPDIR": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/tmp",
+    "WRANGLER_WRITE_LOGS": "false",
+    "WRANGLER_LOG_PATH": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/wrangler/logs",
+    "MINIFLARE_REGISTRY_PATH": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/wrangler/registry",
+    "npm_config_cache": "/Users/OLE/HermesWork/intelligence-prism-ui/.sites-runtime/npm-cache",
+    "npm_config_audit": "false",
+    "npm_config_fund": "false",
+    "npm_config_update_notifier": "false"
+  },
+  "homeOverride": false,
+  "checks": [
+    {
+      "name": "math-font",
+      "command": "node scripts/check-math-font.mjs",
+      "startedAt": "2026-10-18T04:56:35.305101+00:00",
+      "log": "math-font.log",
+      "durationSeconds": 0.035,
+      "exitCode": 0
+    },
+    {
+      "name": "typography",
+      "command": "node scripts/check-typography.mjs",
+      "startedAt": "2026-10-18T04:56:35.340683+00:00",
+      "log": "typography.log",
+      "durationSeconds": 0.067,
+      "exitCode": 0
+    },
+    {
+      "name": "build",
+      "command": "node node_modules/vinext/dist/cli.js build",
+      "startedAt": "2026-10-18T04:56:35.407521+00:00",
+      "log": "build.log",
+      "durationSeconds": 5.517,
+      "exitCode": 0
+    },
+    {
+      "name": "tests",
+      "command": "node --test tests/*.test.mjs",
+      "startedAt": "2026-10-18T04:56:40.924748+00:00",
+      "log": "tests.log",
+      "durationSeconds": 14.053,
+      "exitCode": 0
+    },
+    {
+      "name": "types",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "startedAt": "2026-10-18T04:56:54.978036+00:00",
+      "log": "types.log",
+      "durationSeconds": 1.387,
+      "exitCode": 0
+    }
+  ]
+}

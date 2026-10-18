@@ -1,0 +1,45 @@
+✔ P85: frozen core SSR snapshot digests match baseline raw bytes for 16 legacy calls in all three core themes (41.909542ms)
+✖ P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated (9.896958ms)
+✔ P85: states stay supplied facts; graph summary never becomes a whole-object status (6.235125ms)
+✔ P85: example renders both objects in an existing sheet, with no invented save receipt (3.425167ms)
+✔ P85: rollback mutations detect missing ink, inset, isolation, state and action rules (31.500959ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 4
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 582.177125
+
+✖ failing tests:
+
+test at tests/blueprint-object-cards.test.mjs:139:1
+✖ P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated (9.896958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   kind: 'scope',
+  +   type: 'pseudo-class'
+  -   type: 'combinator',
+  -   value: 'child'
+    }
+  
+      at file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:71:94
+      at Array.some (<anonymous>)
+      at file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:71:75
+      at Array.every (<anonymous>)
+      at matches (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:65:12)
+      at matches (file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:59:10)
+      at file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:77:174
+      at Array.some (<anonymous>)
+      at file:///Users/OLE/HermesWork/intelligence-prism-ui/tests/blueprint-object-cards.test.mjs:77:62
+      at Array.filter (<anonymous>) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { type: 'pseudo-class', kind: 'scope' },
+    expected: { type: 'combinator', value: 'child' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

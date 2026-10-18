@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-18",
+  "branch": "fix/blueprint-object-card-ink",
+  "commit": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
+  "statusWhenRecorded": "?? docs/blueprint/evidence/object-cards-20261018/\n",
+  "statusAtTaskStart": "",
+  "note": "初始 git status --short --branch 仅输出任务分支；记录 statusWhenRecorded 时已经创建本轮证据目录。"
+}

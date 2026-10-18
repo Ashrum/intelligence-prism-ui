@@ -3022,3 +3022,15 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 材料沿用九态：selected / invalid / queued / received / uploading / uploaded / failed / unknown / removed。selected 区分本机和已有资料；invalid 只使用既有 type / size / count；queued 不等于已接收；received 不等于上传成功；uploading 只用已知 0–100 进度，100 也不自动完成；uploaded 不证明解析、安全或已使用；failed 必须是明确上传失败；unknown 只查询原请求；removed 只是引用移除，不取消上传、不删除原件。页数、安全检查、预览失败、解析和实际采用保持独立事实，通过 details / processing / preview 与宿主资格展示，不新增假上传态。
 
 下一轮按 [P84 同步清单](blueprint/evidence/r9-20261018/workspace-sync.json) 核对源字节、目标路径与每文件 blob，再更新 Workspace 既有 prism-source-manifest；本轮只交付清单，未写入 Workspace。
+
+## P85 · 成果图纸内的对象卡片（蓝图 / 夜图）
+
+`AgentStructureArranger` 与 `AgentRelationGraph` 在 `blueprint` / `blueprint-night` 下复用 `BpFrameCard` 的墨线框、墨色标题和右侧状态样式；默认调用无需新增参数。实现采用 CSS 适配：以 `data-slot="card"` 加既有 `data-agent-arranger-view` / `data-agent-relation-view` 为边界，将现有标题、状态与顶层操作容器作为 `bp-frame-card-head` / `bp-frame-card-status` / `bp-card-actions` 的作用域内别名，保留原 DOM、操作位置和 Tab 顺序，不向核心三主题追加 class 或 wrapper。明示使用 BpFrameCard 时仍用原有 `status` 与 `actions` 插槽。
+
+- 编排的「当前编排 / 历史编排」来自传入 `structure.snapshot` 是否存在的既有契约，属于记录身份，**不代表已保存、已提交或执行完成**；保存事实仍在原位置展示，未知仍为未知。标题右侧点为装饰，文字始终可读。
+- 关系图没有整体状态入参，标题右侧省略状态；节点状态、计数、可用能力不用于推断整体状态。本轮不新增状态 API。
+- 外框 `width:100%`、无组件外侧水平留白；仅标题抵消自身既有内边距，铺至框线。正文保留 default / compact 密度，关系图 ResizeObserver 的内容盒语义保持；不对宿主图纸的 margin / padding 作补偿。宿主应让各对象共享同一内容容器，不重复包普通 Card。
+- 排除嵌套 `data-agent-preview` 的非蓝图根节点、全部后代及伪元素；核心三主题默认 SSR 与基线逐字节摘要一致。普通 Card、内部题目 Card 不在适配范围。
+- 组件级操作容器采用 `bp-card-actions` 的 flex / wrap / gap 规则，动作资格、回调、禁用说明与原先的正文后操作位置保持；标题只放标题和已有身份，不把操作视觉搬到标题而留下不同的键盘顺序。
+
+示例：`/next/foundations/blueprint#sheet-object-cards`，位于已有“卡片与线条”图纸内，包含数学课堂练习与知识点关系图。只切换 inline / workspace；固定示例没有保存回执。清单与待定范围见 [P85 盘点](blueprint/evidence/object-cards-20261018/inspection.md)，待执行的浏览器矩阵见 [验收清单](blueprint/evidence/object-cards-20261018/browser-checklist.md)。工程检查不等于视觉验收。

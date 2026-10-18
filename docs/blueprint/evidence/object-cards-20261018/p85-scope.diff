@@ -1,0 +1,570 @@
+diff --git a/app/(next)/next/blueprint.css b/app/(next)/next/blueprint.css
+index de14e5e..a64132f 100644
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -217,6 +217,28 @@
+ .bp-card-body { min-width:0; padding:20px; overflow-wrap:anywhere; }
+ /* End P79 cards. */
+ 
++/* P85 object cards: scoped aliases of P79 frame/status/actions; keep legacy SSR byte-identical. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-sizing:border-box; width:100%; min-width:0; max-width:100%; margin-inline:0; border:1.5px solid var(--line); border-radius:0; box-shadow:none; background:var(--card); color:var(--card-foreground); }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { display:none; }
++/* bp-frame-card-head / title aliases. The graph has no whole-object status input. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)),
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:12px; margin:0; background:var(--primary); color:var(--primary-foreground); }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { flex:1 1 12rem; min-width:0; margin:0; color:inherit; overflow-wrap:anywhere; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { overflow-wrap:anywhere; }
++/* Bleed only the header across the existing padding. Preserve ResizeObserver content width and body density. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="default"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-20px; margin-top:-20px; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="compact"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="default"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-16px; margin-top:-16px; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="compact"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; }
++/* bp-frame-card-status / dot / label aliases; the existing decorative SVG is the dot. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; align-items:center; align-self:center; gap:8px; min-width:0; max-width:100%; margin-inline-start:auto; color:inherit; font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status] > svg:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { flex:0 0 10px; width:10px; height:10px; border:1px solid var(--primary-foreground); background:var(--primary-foreground); }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status] > svg > *:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:none; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status] > span:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { min-width:0; overflow-wrap:anywhere; }
++/* bp-card-actions alias: existing top-level action containers retain DOM/focus order. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]) > div:has(> [data-slot="button"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:0; max-width:100%; }
++/* End P85 object cards. */
++
+ .bp-size-row { display:grid; grid-template-columns:64px minmax(0,1fr) 84px; align-items:center; gap:12px; }
+ .bp-size-legend { margin-left:76px; }
+ .bp-size-bar { height:22px; border:1px solid var(--line); display:flex; background:var(--background); overflow:hidden; }
+diff --git a/components/prism-next/demos/blueprint.tsx b/components/prism-next/demos/blueprint.tsx
+index 5a662b9..e5603a3 100644
+--- a/components/prism-next/demos/blueprint.tsx
++++ b/components/prism-next/demos/blueprint.tsx
+@@ -11,6 +11,7 @@ import { QuestionMath } from "../question-content"
+ import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+ import { BlueprintFoundationDemo } from "../blueprint-foundation-demo"
+ import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
++import { BlueprintObjectCardsDemo } from "./blueprint-object-cards"
+ import { artifactOutputExamples } from "./agent-artifact-output"
+ import { continuousPreviewPages } from "./paper-preview-continuous"
+ import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+@@ -145,6 +146,7 @@ export function BlueprintComponentsDemo() {
+           <BpTitleBlock items={[{ id: "paper", label: "试卷", value: "八年级数学期中" }, { id: "class", label: "班级", value: "初二（3）班" }, { id: "full", label: "满分", value: "120" }, { id: "due", label: "截止", value: "10 月 18 日 17:00" }]} />
+         </div>
+       </div>
++      <BlueprintObjectCardsDemo />
+     </BlueprintSheet>
+ 
+     <BlueprintSheet id="data" letter="C" sheetNo="03 / 04" title="进度与数据" description="实色、墨色与斜线纹区分系列，不依赖颜色深浅；数值始终以文字写出。">
+diff --git a/components/prism-next/demos/blueprint-object-cards.tsx b/components/prism-next/demos/blueprint-object-cards.tsx
+new file mode 100644
+index 0000000..e76df24
+--- /dev/null
++++ b/components/prism-next/demos/blueprint-object-cards.tsx
+@@ -0,0 +1,24 @@
++"use client"
++
++import { useState } from "react"
++import { AgentStructureArranger } from "../agent-structure-arranger"
++import { AgentRelationGraph } from "../agent-relation-graph"
++import { arrangementExamples } from "./agent-structure-arranger"
++import { coverageNodes, coverageEdges, relationCapabilities } from "./agent-relation-graph"
++
++/** Fixed records: expanding a view never changes the supplied object/save state. */
++export function BlueprintObjectCardsDemo() {
++  const [arrangementView, setArrangementView] = useState<"inline" | "workspace">("inline")
++  const [graphView, setGraphView] = useState<"inline" | "workspace">("inline")
++  const record = arrangementExamples.paper
++  return <section id="sheet-object-cards" aria-label="图纸内的独立对象卡片" className="mt-9 min-w-0 space-y-4">
++    <h3 className="text-block-title">图纸内的独立对象卡片</h3>
++    <p className="text-ui-body">固定示例：蓝图与夜图使用墨线外框和墨色标题；编排右侧显示当前记录身份。关系图未提供整体状态，标题右侧留空。展开只切换视图，不代表保存或完成。</p>
++    <AgentRelationGraph title="知识点关系图（固定示例）" graphId="blueprint-coverage" version="example-v1" versionLabel="示例 v1"
++      nodes={coverageNodes} edges={coverageEdges} capabilities={relationCapabilities} density="compact" view={graphView}
++      onExpand={() => setGraphView("workspace")} onBack={() => setGraphView("inline")} />
++    <AgentStructureArranger structure={{ id: "blueprint-arrangement", title: "数学课堂练习（固定示例）", version: { id: "example-v1", label: "示例 v1" }, baseVersion: { id: "example-v1", label: "示例 v1" } }}
++      items={record.items} groups={record.groups} validation={[]} density="compact" view={arrangementView}
++      onExpand={() => setArrangementView("workspace")} onBack={() => setArrangementView("inline")} />
++  </section>
++}
+diff --git a/docs/component-contracts.md b/docs/component-contracts.md
+index 117cfa8..ec0cb34 100644
+--- a/docs/component-contracts.md
++++ b/docs/component-contracts.md
+@@ -3022,3 +3022,15 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult 
+ 材料沿用九态：selected / invalid / queued / received / uploading / uploaded / failed / unknown / removed。selected 区分本机和已有资料；invalid 只使用既有 type / size / count；queued 不等于已接收；received 不等于上传成功；uploading 只用已知 0–100 进度，100 也不自动完成；uploaded 不证明解析、安全或已使用；failed 必须是明确上传失败；unknown 只查询原请求；removed 只是引用移除，不取消上传、不删除原件。页数、安全检查、预览失败、解析和实际采用保持独立事实，通过 details / processing / preview 与宿主资格展示，不新增假上传态。
+ 
+ 下一轮按 [P84 同步清单](blueprint/evidence/r9-20261018/workspace-sync.json) 核对源字节、目标路径与每文件 blob，再更新 Workspace 既有 prism-source-manifest；本轮只交付清单，未写入 Workspace。
++
++## P85 · 成果图纸内的对象卡片（蓝图 / 夜图）
++
++`AgentStructureArranger` 与 `AgentRelationGraph` 在 `blueprint` / `blueprint-night` 下复用 `BpFrameCard` 的墨线框、墨色标题和右侧状态样式；默认调用无需新增参数。实现采用 CSS 适配：以 `data-slot="card"` 加既有 `data-agent-arranger-view` / `data-agent-relation-view` 为边界，将现有标题、状态与顶层操作容器作为 `bp-frame-card-head` / `bp-frame-card-status` / `bp-card-actions` 的作用域内别名，保留原 DOM、操作位置和 Tab 顺序，不向核心三主题追加 class 或 wrapper。明示使用 BpFrameCard 时仍用原有 `status` 与 `actions` 插槽。
++
++- 编排的「当前编排 / 历史编排」来自传入 `structure.snapshot` 是否存在的既有契约，属于记录身份，**不代表已保存、已提交或执行完成**；保存事实仍在原位置展示，未知仍为未知。标题右侧点为装饰，文字始终可读。
++- 关系图没有整体状态入参，标题右侧省略状态；节点状态、计数、可用能力不用于推断整体状态。本轮不新增状态 API。
++- 外框 `width:100%`、无组件外侧水平留白；仅标题抵消自身既有内边距，铺至框线。正文保留 default / compact 密度，关系图 ResizeObserver 的内容盒语义保持；不对宿主图纸的 margin / padding 作补偿。宿主应让各对象共享同一内容容器，不重复包普通 Card。
++- 排除嵌套 `data-agent-preview` 的非蓝图根节点、全部后代及伪元素；核心三主题默认 SSR 与基线逐字节摘要一致。普通 Card、内部题目 Card 不在适配范围。
++- 组件级操作容器采用 `bp-card-actions` 的 flex / wrap / gap 规则，动作资格、回调、禁用说明与原先的正文后操作位置保持；标题只放标题和已有身份，不把操作视觉搬到标题而留下不同的键盘顺序。
++
++示例：`/next/foundations/blueprint#sheet-object-cards`，位于已有“卡片与线条”图纸内，包含数学课堂练习与知识点关系图。只切换 inline / workspace；固定示例没有保存回执。清单与待定范围见 [P85 盘点](blueprint/evidence/object-cards-20261018/inspection.md)，待执行的浏览器矩阵见 [验收清单](blueprint/evidence/object-cards-20261018/browser-checklist.md)。工程检查不等于视觉验收。
+diff --git a/docs/blueprint/STATUS.md b/docs/blueprint/STATUS.md
+index 25c2297..eaffb78 100644
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -4,6 +4,19 @@
+ 
+ ## 当前
+ 
++
++- 轮次：P85 · 成果图纸对象卡片墨线标题 · 2026-10-18；分支 `fix/blueprint-object-card-ink`，main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，开工工作树干净。[基线](evidence/object-cards-20261018/baseline.json)。
++- 范围：仅两蓝图作用域的 AgentStructureArranger / AgentRelationGraph 外框、标题、状态与操作容器样式，以及现有图纸内示例、契约、专项测试与证据。选择方案 (b)：原 DOM 为 bp-frame-card / status / actions 的 CSS 别名；操作仍在正文后，核心默认输出不变，关系图无整体状态不补造。[取舍与逐项盘点](evidence/object-cards-20261018/inspection.md)。
++- 宽度：外框 100% 且无组件外侧水平留白；标题仅抵消自身 20 / 16 / 12px 内边距，正文密度与关系图 ResizeObserver 内容盒语义保持。Workspace 宿主图纸宽度另行处理。[同步清单](evidence/object-cards-20261018/workspace-sync.json) 仅一个变更 CSS，附两个未改 TSX 的前置 blob / SHA-256；未实际同步 Workspace。
++- 工程：AGENTS §6.1 五项退出码均 0；数学字体通过，排版 **313** 个 owned TSX 通过，生产构建通过；先构建后全量 **2249/2249，0 失败 / 0 跳过**，TypeScript **0 错误**。专项 **5/5**，48 组核心 SSR 字节摘要与基线一致，480 组 CSS / SSR 主题组合，**13/13** 回退变异检出。[实际命令](evidence/object-cards-20261018/engineering.json)、[专项日志](evidence/object-cards-20261018/targeted.log)、[变异](evidence/object-cards-20261018/mutations.json)、[实际 diff](evidence/object-cards-20261018/scope.diff)。初次专项的选择器测试探针漏处理 :has 的 scope AST，已修正探针，非运行时失败；STATUS 回填后一度有 2 项 guide 字节检查失败，已通过现有生成器同步必要索引与下载副本；没有修改既有测试。
++- 保护：冻结 coss、核心主题 Token、两个目标 TSX、BpFrameCard、目录、依赖与 AGENTS 字节保持，blueprint.css 除 P85 新增块外与基线一致。[散列核对](evidence/object-cards-20261018/integrity.json)。未读取 / 修改其他解析批阅文档工作线，无提交、推送、.git 写入、依赖安装、联网、服务或站点操作。
++- 周期：Builder 实施与工程自测完成，待 Supervisor 独立 Review / 浏览器验收；不自我批准。继承 P84 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮、不重置周期；最近完整工程回归为本轮 2249/2249，下次触发点仍为旧周期累计浏览器收口与独立综合审查。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/object-cards-20261018/browser-checklist.md) 覆盖相关三路由、五主题 × 1280 / 320、嵌套核心预览、状态事实、原操作顺序与卡片宽度。无本轮截图；真实服务、Workspace 接入、真机、读屏器、打印未验。其他独立对象是否同轮式适配列为待 PO 决定，未扩大本轮范围。
++
++## 历史
++
++### P84 · R9 稳定交互接口提炼 · 2026-10-18（原当前，原样保留）
++
+ - 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
+ - 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
+ - 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
+@@ -12,7 +25,6 @@
+ - 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
+ 
+-## 历史
+ 
+ ### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
+ 
+diff --git a/tests/blueprint-object-cards.test.mjs b/tests/blueprint-object-cards.test.mjs
+new file mode 100644
+index 0000000..d7bf14d
+--- /dev/null
++++ b/tests/blueprint-object-cards.test.mjs
+@@ -0,0 +1,170 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync, writeFileSync } from 'node:fs';
++import { execFileSync } from 'node:child_process';
++import { createHash } from 'node:crypto';
++import { fileURLToPath } from 'node:url';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import { transform } from 'lightningcss';
++import React from 'react';
++import { renderToStaticMarkup as render } from 'react-dom/server';
++import { createTestRuntime } from './helpers/test-runtime.mjs';
++import { objectCardSources, objectCardBase, objectCardCases, arrangerProps, graphProps } from './helpers/blueprint-object-card-fixtures.mjs';
++
++const root = fileURLToPath(new URL('../', import.meta.url));
++const read = p => readFileSync(root + p, 'utf8');
++const fullCSS = read('app/(next)/next/blueprint.css');
++const css = fullCSS.match(/\/\* P85 object cards:[\s\S]*?\/\* End P85 object cards\. \*\//)[0];
++const p79 = fullCSS.match(/\/\* P79 cards:[\s\S]*?\/\* End P79 cards\. \*\//)[0];
++const themes = ['light', 'paper', 'dark', 'blueprint', 'blueprint-night'];
++const runtime = await createTestRuntime('p85-object-cards');
++let serial = 0;
++async function load(overrides = {}, demo = false) {
++  const result = await build({ stdin: { contents: objectCardSources.map(p => `export * from './${p}'`).join(';') + (demo ? ';export * from "./components/prism-next/demos/blueprint-object-cards"' : ''), resolveDir: root, loader: 'tsx' },
++    bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false,
++    plugins: [{ name: 'rollback', setup(b) { b.onLoad({ filter: /\.tsx$/ }, args => { const contents = overrides[args.path.slice(root.length)]; if (contents !== undefined) return { contents, loader: 'tsx' }; }); } }],
++  });
++  const file = new URL(`bundle-${serial++}.mjs`, runtime); writeFileSync(file, result.outputFiles[0].text); return import(file);
++}
++const api = await load({}, true), h = React.createElement;
++const htmlFor = (entry, a = api) => render(h(a[entry.component], entry.props));
++const digest = html => ({ bytes: Buffer.byteLength(html), sha256: createHash('sha256').update(html).digest('hex') });
++const fixturePath = 'tests/fixtures/blueprint-object-cards-legacy.json';
++// Explicit one-time capture from the named Git baseline, never from the candidate implementation.
++if (process.env.P85_CAPTURE_BASELINE === '1') {
++  const originals = Object.fromEntries(objectCardSources.map(p => [p, execFileSync('git', ['show', `${objectCardBase}:${p}`], { cwd: root, encoding: 'utf8' })]));
++  const before = await load(originals);
++  writeFileSync(root + fixturePath, JSON.stringify({ base: objectCardBase, sources: Object.fromEntries(objectCardSources.map(p => [p, execFileSync('git', ['rev-parse', `${objectCardBase}:${p}`], { cwd: root, encoding: 'utf8' }).trim()])), snapshots: Object.fromEntries(objectCardCases().map(c => [c.name, digest(htmlFor(c, before))])) }, null, 2) + '\n');
++}
++
++function node(name, attrs = {}, parent) { const n = { name, attrs, classes: (attrs.class ?? '').split(/\s+/), parent, children: [] }; parent?.children.push(n); return n; }
++function tree(html, parent) {
++  const nodes = [], stack = [parent];
++  for (const match of html.matchAll(/<\/?[a-zA-Z][^>]*>/g)) {
++    const tag = match[0];
++    if (tag.startsWith('</')) { stack.pop(); continue; }
++    const n = node(tag.match(/^<([\w-]+)/)[1], Object.fromEntries([...tag.matchAll(/([\w:-]+)="([^"]*)"/g)].map(m => [m[1], m[2]])), stack.at(-1)); nodes.push(n);
++    if (!['img', 'link', 'br', 'hr', 'input', 'meta'].includes(n.name) && !tag.endsWith('/>')) stack.push(n);
++  }
++  return nodes;
++}
++// Production selector AST probe only; no claim about browser cascade, layout or focus.
++const cache = new Map();
++function parse(selector) { if (!cache.has(selector)) { let ast; transform({ code: Buffer.from(`${selector}{color:red}`), visitor: { Selector(v) { ast = v; } } }); cache.set(selector, ast); } return cache.get(selector); }
++function matches(s, n) {
++  if (!n) return false;
++  const split = s.findLastIndex(p => p.type === 'combinator');
++  if (split >= 0) {
++    if (!matches(s.slice(split + 1), n)) return false;
++    if (s[split].value === 'child') return matches(s.slice(0, split), n.parent);
++    assert.equal(s[split].value, 'descendant');
++    for (let p = n.parent; p; p = p.parent) if (matches(s.slice(0, split), p)) return true;
++    return false;
++  }
++  return s.every(p => {
++    if (p.type === 'class') return n.classes.includes(p.name);
++    if (p.type === 'type') return n.name === p.name;
++    if (p.type === 'universal') return true;
++    if (p.type === 'attribute') return p.operation ? n.attrs[p.name] === p.operation.value : Object.hasOwn(n.attrs, p.name);
++    if (p.type === 'pseudo-class' && ['is', 'where', 'not'].includes(p.kind)) { const any = p.selectors.some(s => matches(s, n)); return p.kind === 'not' ? !any : any; }
++    if (p.type === 'pseudo-class' && p.kind === 'has') return p.selectors.some(s => { assert.deepEqual(s[0], { type: 'pseudo-class', kind: 'scope' }); assert.deepEqual(s[1], { type: 'combinator', value: 'child' }); return n.children.some(c => matches(s.slice(2), c)); });
++    assert.fail(`Unsupported selector ${JSON.stringify(p)}`);
++  });
++}
++function rules(source) { const list = []; postcss.parse(source).walkRules(r => list.push({ selectors: r.selectors.map(parse), decls: Object.fromEntries(r.nodes.filter(n => n.type === 'decl').map(n => [n.prop, n.value])) })); return list; }
++function declarations(n, parsed, pseudo) {
++  return Object.assign({}, ...parsed.filter(r => r.selectors.some(s => { const pe = s.at(-1)?.type === 'pseudo-element' ? s.at(-1).kind : undefined; return pe === pseudo && matches(pe ? s.slice(0, -1) : s, n); })).map(r => r.decls));
++}
++function fixture(entry, theme, outer) { const p = outer ? node('div', { 'data-prism-theme': outer }) : undefined; return tree(htmlFor(entry), node('div', { 'data-prism-theme': theme, ...(outer ? { 'data-agent-preview': '' } : {}) }, p)); }
++const blueprint = t => t === 'blueprint' || t === 'blueprint-night';
++function styleContract(source = css) {
++  const parsed = rules(source), reference = rules(p79);
++  const ref = name => declarations(node('div', { class: name }), reference);
++  for (const entry of objectCardCases()) for (const theme of themes) for (const outer of [undefined, ...themes]) {
++    const nodes = fixture(entry, theme, outer), card = nodes[0];
++    if (!blueprint(theme)) {
++      for (const n of nodes) for (const pseudo of [undefined, 'before', 'after']) assert.deepEqual(declarations(n, parsed, pseudo), {}, `core isolated: ${outer}/${theme}/${entry.name}`);
++      // The preview root itself is excluded too, even when it has an object-card slot.
++      const rootCard = node('div', { 'data-slot': 'card', 'data-agent-arranger-view': 'inline', 'data-agent-preview': '', 'data-prism-theme': theme }, card.parent.parent);
++      assert.deepEqual(declarations(rootCard, parsed), {}); continue;
++    }
++    const style = n => declarations(n, parsed);
++    const c = style(card);
++    for (const key of ['border', 'border-radius', 'box-shadow', 'background', 'color']) assert.equal(c[key], ref('bp-frame-card')[key], `frame ${key}`);
++    assert.equal(c.width, '100%'); assert.equal(c['margin-inline'], '0'); assert.equal(c.padding, undefined); assert.equal(c['box-sizing'], 'border-box');
++    assert.equal(declarations(card, parsed, 'before').display, 'none');
++    const isArranger = entry.component === 'AgentStructureArranger';
++    const head = isArranger ? card.children.find(n => n.name === 'header').children[0] : card.children.find(n => n.name === 'h3');
++    for (const key of ['display', 'flex-wrap', 'align-items', 'gap', 'padding', 'background', 'color']) assert.equal(style(head)[key], ref('bp-frame-card-head')[key], `head ${key}`);
++    assert.equal(style(head).margin, '0');
++    const inset = entry.props.density === 'compact' ? 12 : isArranger ? 20 : 16;
++    assert.equal(style(head)['margin-inline'], `-${inset}px`); assert.equal(style(head)['margin-top'], `-${inset}px`);
++    if (isArranger) {
++      const status = head.children.find(n => n.attrs['data-agent-status']); assert.ok(status);
++      for (const key of ['display', 'align-items', 'gap', 'min-width', 'max-width', 'margin-inline-start']) assert.equal(style(status)[key], ref('bp-frame-card-status')[key], `status ${key}`);
++      assert.equal(style(status).color, 'inherit');
++      const dot = status.children.find(n => n.name === 'svg'); assert.equal(dot.attrs['aria-hidden'], 'true');
++      for (const key of ['flex', 'width', 'height', 'border', 'background']) assert.equal(style(dot)[key], ref('bp-frame-card-dot')[key]);
++      for (const child of dot.children) assert.equal(style(child).display, 'none');
++      assert.equal(style(status.children.find(n => n.name === 'span'))['overflow-wrap'], 'anywhere');
++      assert.equal(style(head.children.find(n => n.name === 'h3')).flex, '1 1 12rem');
++    } else assert.equal(head.children.length, 0, 'no invented graph status');
++    const actions = card.children.filter(n => n.name === 'div' && n.children.some(c => c.attrs['data-slot'] === 'button'));
++    if (!entry.name.startsWith('graph-unavailable-inline')) assert.ok(actions.length);
++    for (const action of actions) for (const [key, value] of Object.entries(ref('bp-card-actions'))) assert.equal(style(action)[key], value, `actions ${key}`);
++    // Inner question Cards and ordinary cards do not acquire object frames/headers.
++    for (const inner of nodes.filter(n => n !== card && n.attrs['data-slot'] === 'card')) assert.equal(style(inner).border, undefined);
++    assert.deepEqual(style(node('div', { 'data-slot': 'card' }, card.parent)), {});
++  }
++}
++function statusContract(a = api) {
++  for (const snapshot of [undefined, '', '历史记录']) for (const state of ['unknown', 'saving', 'saved-draft', 'submitted', 'error']) {
++    const html = render(h(a.AgentStructureArranger, { ...arrangerProps, structure: { ...arrangerProps.structure, snapshot }, save: { state } }));
++    const heading = html.match(/<header[\s\S]*?<\/header>/)[0], titleRow = heading.slice(0, heading.indexOf('</div>'));
++    assert.ok(titleRow.includes(snapshot === undefined ? '当前编排' : '历史编排'));
++    assert.doesNotMatch(titleRow, /保存中|已保存草稿|已提交|已完成|运行中/);
++    if (state === 'unknown') assert.ok(heading.includes('保存状态'));
++  }
++  const graph = render(h(a.AgentRelationGraph, graphProps));
++  assert.match(graph, /未覆盖 1/); assert.doesNotMatch(graph.match(/<h3[\s\S]*?<\/h3>/)[0], /当前|完成|保存|已覆盖/);
++}
++
++test('P85: frozen core SSR snapshot digests match baseline raw bytes for 16 legacy calls in all three core themes', () => {
++  const baseline = JSON.parse(read(fixturePath)); assert.equal(baseline.base, objectCardBase);
++  for (const theme of themes.filter(t => !blueprint(t))) for (const entry of objectCardCases()) {
++    const html = htmlFor(entry); assert.deepEqual(digest(html), baseline.snapshots[entry.name], `${theme}/${entry.name}`);
++    // CSS theme roots cannot alter the component SSR bytes.
++    assert.equal(render(h('div', { 'data-prism-theme': theme }, h(api[entry.component], entry.props))), `<div data-prism-theme="${theme}">${html}</div>`);
++  }
++});
++test('P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated', () => styleContract());
++test('P85: states stay supplied facts; graph summary never becomes a whole-object status', () => statusContract());
++test('P85: example renders both objects in an existing sheet, with no invented save receipt', () => {
++  const html = render(h(api.BlueprintObjectCardsDemo));
++  for (const value of ['sheet-object-cards', 'data-agent-arranger-view', 'data-agent-relation-view', '当前编排', '保存状态']) assert.ok(html.includes(value));
++  assert.doesNotMatch(html, /已保存草稿|保存成功/);
++  const demo = read('components/prism-next/demos/blueprint.tsx');
++  assert.match(demo, /<BlueprintSheet id="cards"[\s\S]*?<BlueprintObjectCardsDemo \/>[\s\S]*?<\/BlueprintSheet>/);
++});
++test('P85: rollback mutations detect missing ink, inset, isolation, state and action rules', async () => {
++  const mutations = [
++    ['missing adaptation', ''],
++    ['lost night scope', css.replaceAll('[data-prism-theme="blueprint-night"]', '[data-prism-theme="unused"]')],
++    ['core preview exclusion removed', css.replaceAll(/:not\(:where\(\[data-agent-preview\][\s\S]*?\*\)\)/g, '')],
++    ['frame rollback', css.replace('border:1.5px solid var(--line)', 'border:1px solid var(--border)')],
++    ['ink rollback', css.replace('background:var(--primary); color:var(--primary-foreground)', 'background:var(--card); color:var(--foreground)')],
++    ['title gutter returns', css.replace('margin-inline:-20px', 'margin-inline:0')],
++    ['card width shrinks', css.replace('width:100%; min-width:0', 'width:90%; min-width:0')],
++    ['status loses right alignment', css.replace('margin-inline-start:auto', 'margin-inline-start:0')],
++    ['status low contrast', css.replace('margin-inline-start:auto; color:inherit', 'margin-inline-start:auto; color:var(--muted-foreground)')],
++    ['dot rollback', css.replace('width:10px; height:10px', 'width:14px; height:14px')],
++    ['actions no wrap', css.replace(/(\/\* bp-card-actions alias:[\s\S]*)flex-wrap:wrap/, '$1flex-wrap:nowrap')],
++    ['pseudo shadow returns', css.replace('::before { display:none; }', '::before { display:block; }')],
++  ];
++  for (const [name, mutation] of mutations) assert.throws(() => styleContract(mutation), name);
++  const source = read(objectCardSources[0]);
++  const changed = source.replace('historical ? "历史编排" : "当前编排"', 'historical ? "历史编排" : "已保存草稿"'); assert.notEqual(changed, source);
++  const mutant = await load({ [objectCardSources[0]]: changed }); assert.throws(() => statusContract(mutant));
++  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/mutations.json`, JSON.stringify({ baseline: objectCardBase, total: mutations.length + 1, detected: [...mutations.map(([name]) => name), 'fabricated saved identity'], method: 'in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback' }, null, 2) + '\n');
++});
+diff --git a/tests/helpers/blueprint-object-card-fixtures.mjs b/tests/helpers/blueprint-object-card-fixtures.mjs
+new file mode 100644
+index 0000000..289d50c
+--- /dev/null
++++ b/tests/helpers/blueprint-object-card-fixtures.mjs
+@@ -0,0 +1,21 @@
++export const objectCardSources = ['components/prism-next/agent-structure-arranger.tsx', 'components/prism-next/agent-relation-graph.tsx'];
++export const objectCardBase = '21560ebca1e4e8b45fe57125b8fdb619bece113c';
++export const arrangerProps = {
++  structure: { id: 'arrangement', title: '数学课堂练习与长中文条件核对'.repeat(3), version: { id: 'v2', label: '草稿 v2' }, baseVersion: { id: 'v1', label: '基准 v1' } },
++  items: [{ id: 'q1', title: '求 f(x) = x² − 4x + 3 的对称轴', type: '试题', groupId: 'g1', source: null, attributes: [] }],
++  groups: [{ id: 'g1', title: '一、函数' }], validation: [], actions: { confirm: {}, groupCreate: {} }, onIntent() {}, onExpand() {}, onBack() {},
++};
++export const graphProps = {
++  graphId: 'graph', version: 'v1', versionLabel: '示例 v1', title: '知识点关系与长中文条件核对'.repeat(3),
++  nodes: [{ id: 'n1', label: '函数图像 f(x) = x²', type: '知识点', status: '未覆盖' }], edges: [],
++  capabilities: Object.fromEntries(['view', 'filter', 'edit-node', 'edit-edge', 'layout'].map(name => [name, { supported: true }])),
++  summary: { statusCounts: [{ label: '未覆盖', count: 1 }], gaps: [] }, onIntent() {}, onExpand() {}, onBack() {},
++};
++export function objectCardCases() {
++  return ['inline', 'workspace'].flatMap(view => ['default', 'compact'].flatMap(density => [
++    { name: `arranger-current-${view}-${density}`, component: 'AgentStructureArranger', props: { ...arrangerProps, view, density } },
++    { name: `arranger-history-${view}-${density}`, component: 'AgentStructureArranger', props: { ...arrangerProps, view, density, structure: { ...arrangerProps.structure, snapshot: '上次保存的编排记录' }, save: { state: 'saved-draft' } } },
++    { name: `graph-${view}-${density}`, component: 'AgentRelationGraph', props: { ...graphProps, view, density } },
++    { name: `graph-unavailable-${view}-${density}`, component: 'AgentRelationGraph', props: { ...graphProps, view, density, capabilities: { ...graphProps.capabilities, view: { supported: false, reason: '资料尚未提供' } } } },
++  ]));
++}
+diff --git a/tests/fixtures/blueprint-object-cards-legacy.json b/tests/fixtures/blueprint-object-cards-legacy.json
+new file mode 100644
+index 0000000..3264015
+--- /dev/null
++++ b/tests/fixtures/blueprint-object-cards-legacy.json
+@@ -0,0 +1,73 @@
++{
++  "base": "21560ebca1e4e8b45fe57125b8fdb619bece113c",
++  "sources": {
++    "components/prism-next/agent-structure-arranger.tsx": "47493032925b7991459fd2fc49a492fd37eb72ad",
++    "components/prism-next/agent-relation-graph.tsx": "1c841256c2c8f30a6ce352f6b3f3516ace06c52e"
++  },
++  "snapshots": {
++    "arranger-current-inline-default": {
++      "bytes": 5845,
++      "sha256": "011e3984be29709ed6387f10466970dd83783b074b7968bdd50e3b6f56bdec90"
++    },
++    "arranger-history-inline-default": {
++      "bytes": 6155,
++      "sha256": "93b6bf781308a4eca9e3ec76d625be118a2a5dbed50d2f8f04761e2dca3d3533"
++    },
++    "graph-inline-default": {
++      "bytes": 5169,
++      "sha256": "ac345d46a8e6b64a890b218beb43a7c852ab17a9592ebcc6ed5dba99bfa0d108"
++    },
++    "graph-unavailable-inline-default": {
++      "bytes": 696,
++      "sha256": "a8899e1d54b122eceebe2e3d9ac1e31c876d11f19b96a6f2b928ca2927edeffa"
++    },
++    "arranger-current-inline-compact": {
++      "bytes": 5845,
++      "sha256": "c6b91a4f93d8b8cf8ef12966a0f918ba1f27056f53de46b6566d745c52324d5f"
++    },
++    "arranger-history-inline-compact": {
++      "bytes": 6155,
++      "sha256": "b742cccfc737b9e46f289d1e8dcf36f071b183c401b87803853669cf60cae14c"
++    },
++    "graph-inline-compact": {
++      "bytes": 5169,
++      "sha256": "39d9bfb03b093ce59bdce63841bf2144b32a25d3767ccbe95c4e4ad93f833dc3"
++    },
++    "graph-unavailable-inline-compact": {
++      "bytes": 696,
++      "sha256": "59cf7fb0703f3736c14b58606bef5890980e9e692c517c769c0f30ba153d9db8"
++    },
++    "arranger-current-workspace-default": {
++      "bytes": 7679,
++      "sha256": "7b7a38036cdb18643e9df2593dc70d56a53784796f4f5a8268f371f15aad5e70"
++    },
++    "arranger-history-workspace-default": {
++      "bytes": 8048,
++      "sha256": "6d5cab0d534d049e6dc69b0a3033a89361d9e299d6815ead2b2376015c656906"
++    },
++    "graph-workspace-default": {
++      "bytes": 28608,
++      "sha256": "96f051fee68f4b4ef05c1a8d39e9c378424e55f968163102247976ec155da6ea"
++    },
++    "graph-unavailable-workspace-default": {
++      "bytes": 2221,
++      "sha256": "f5271dcffde9b7450cd1d0467b8f87a878ff71ed96f1ef4dba562ee723e57c64"
++    },
++    "arranger-current-workspace-compact": {
++      "bytes": 7679,
++      "sha256": "0e2a8294a4c17bee814ebd1914f54bc1e0aa54a8863feee048ae5411fa638161"
++    },
++    "arranger-history-workspace-compact": {
++      "bytes": 8048,
++      "sha256": "1de49c0e48614e960db053655cba6ee76e82b5554a5121a5c88c0c63f83d7e8a"
++    },
++    "graph-workspace-compact": {
++      "bytes": 28608,
++      "sha256": "b7f29f950f532b5f2d70d1d68841ab52325674341c6b0f8c4c966eb407262f33"
++    },
++    "graph-unavailable-workspace-compact": {
++      "bytes": 2221,
++      "sha256": "cdb1d27d99de70275ce2b1077e63bdfd2823aa970686f88e4a153d08e8272fd2"
++    }
++  }
++}
+diff --git a/lib/prism-next/blueprint-guide.json b/lib/prism-next/blueprint-guide.json
+index c821a3e..394afb7 100644
+--- a/lib/prism-next/blueprint-guide.json
++++ b/lib/prism-next/blueprint-guide.json
+@@ -8597,7 +8597,7 @@
+     {
+       "source": "docs/blueprint/STATUS.md",
+       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+-      "sha256": "95d268331017edaf093facdcf7f4ed7fd2522c32a8167c48b6c79eb2abeb174f"
++      "sha256": "128b38752ee35edf53a6c8bb4b2da78dac8d84d3c8e81fc22cc31000cc2dd9b1"
+     },
+     {
+       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
+diff --git a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+index 25c2297..eaffb78 100644
+--- a/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
++++ b/public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md
+@@ -4,6 +4,19 @@
+ 
+ ## 当前
+ 
++
++- 轮次：P85 · 成果图纸对象卡片墨线标题 · 2026-10-18；分支 `fix/blueprint-object-card-ink`，main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，开工工作树干净。[基线](evidence/object-cards-20261018/baseline.json)。
++- 范围：仅两蓝图作用域的 AgentStructureArranger / AgentRelationGraph 外框、标题、状态与操作容器样式，以及现有图纸内示例、契约、专项测试与证据。选择方案 (b)：原 DOM 为 bp-frame-card / status / actions 的 CSS 别名；操作仍在正文后，核心默认输出不变，关系图无整体状态不补造。[取舍与逐项盘点](evidence/object-cards-20261018/inspection.md)。
++- 宽度：外框 100% 且无组件外侧水平留白；标题仅抵消自身 20 / 16 / 12px 内边距，正文密度与关系图 ResizeObserver 内容盒语义保持。Workspace 宿主图纸宽度另行处理。[同步清单](evidence/object-cards-20261018/workspace-sync.json) 仅一个变更 CSS，附两个未改 TSX 的前置 blob / SHA-256；未实际同步 Workspace。
++- 工程：AGENTS §6.1 五项退出码均 0；数学字体通过，排版 **313** 个 owned TSX 通过，生产构建通过；先构建后全量 **2249/2249，0 失败 / 0 跳过**，TypeScript **0 错误**。专项 **5/5**，48 组核心 SSR 字节摘要与基线一致，480 组 CSS / SSR 主题组合，**13/13** 回退变异检出。[实际命令](evidence/object-cards-20261018/engineering.json)、[专项日志](evidence/object-cards-20261018/targeted.log)、[变异](evidence/object-cards-20261018/mutations.json)、[实际 diff](evidence/object-cards-20261018/scope.diff)。初次专项的选择器测试探针漏处理 :has 的 scope AST，已修正探针，非运行时失败；STATUS 回填后一度有 2 项 guide 字节检查失败，已通过现有生成器同步必要索引与下载副本；没有修改既有测试。
++- 保护：冻结 coss、核心主题 Token、两个目标 TSX、BpFrameCard、目录、依赖与 AGENTS 字节保持，blueprint.css 除 P85 新增块外与基线一致。[散列核对](evidence/object-cards-20261018/integrity.json)。未读取 / 修改其他解析批阅文档工作线，无提交、推送、.git 写入、依赖安装、联网、服务或站点操作。
++- 周期：Builder 实施与工程自测完成，待 Supervisor 独立 Review / 浏览器验收；不自我批准。继承 P84 的旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮、不重置周期；最近完整工程回归为本轮 2249/2249，下次触发点仍为旧周期累计浏览器收口与独立综合审查。
++- 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/object-cards-20261018/browser-checklist.md) 覆盖相关三路由、五主题 × 1280 / 320、嵌套核心预览、状态事实、原操作顺序与卡片宽度。无本轮截图；真实服务、Workspace 接入、真机、读屏器、打印未验。其他独立对象是否同轮式适配列为待 PO 决定，未扩大本轮范围。
++
++## 历史
++
++### P84 · R9 稳定交互接口提炼 · 2026-10-18（原当前，原样保留）
++
+ - 轮次：P84 · R9 稳定交互接口提炼 · 2026-10-18；分支 `feat/agent-r9-extract`，main 基线 `433969ab29679669c78fde816dfec96c4db31cfb`，开工工作树干净。[基线](evidence/r9-20261018/baseline.json)。
+ - 范围：文件可读身份／移除文案与说明／本机选择和服务策略／可选常驻事实；确认六态短标签与时态；题篮版本摘要；Sheet 标题操作插槽。新增可操作蓝图内容，契约记录任务详情、停止与 E 部分结果、确认／结果、用量、依据与九态模式；四个运行时文件待 W207 按 [清单](evidence/r9-20261018/workspace-sync.json) 同步。coss、CSS、Token、字号、依赖和目录不变。
+ - 兼容：修改前核对四个 main blob，66 组既有调用 SSR 原始字节（含 ID）一致。保留旧 limits 类型的默认泛型，既有 MaterialIntake 无需修改；新增接口均须宿主主动启用。服务策略缺值不从本机上限补造，显示名不改动作身份，文案配置不改变资格。
+@@ -12,7 +25,6 @@
+ - 周期：本轮属于 Workspace R9 组件收口，Builder 实施与工程自测完成，最近完整工程回归为本轮 2244/2244；不等同 Supervisor Review／PO 批准。继承旧 Blueprint 3/3 累计浏览器矩阵未收口状态，不新增已完成轮或重置周期；独立综合审查及浏览器收口仍由 Supervisor 执行。
+ - 未验与待审阅：浏览器验收：按分工由 Supervisor 执行。[清单](evidence/r9-20261018/browser-checklist.md) 覆盖五主题 × 1280 / 320、嵌套隔离、新旧接口与动作焦点。没有本轮截图，Workspace 尚未接线，真实服务、真机和读屏器未验。无新增 PO 决策项，不提交、推送、改 `.git`、联网、启动／重启服务或发布。
+ 
+-## 历史
+ 
+ ### P83 · AgentMark 列表行首 glyph · 2026-10-17（原当前，原样保留）
+ 
+diff --git a/docs/blueprint/evidence/object-cards-20261018/inspection.md b/docs/blueprint/evidence/object-cards-20261018/inspection.md
+new file mode 100644
+index 0000000..bc7bbe3
+--- /dev/null
++++ b/docs/blueprint/evidence/object-cards-20261018/inspection.md
+@@ -0,0 +1,70 @@
++# P85 · 对象卡片复用、范围与盘点
++
++日期 2026-10-18，main 基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，任务分支 `fix/blueprint-object-card-ink`，开工工作树干净。
++
++## 取舍与检索
++
++采用任务方案 (b)。已有 Prism `BpFrameCard` 的 frame / head / title / status / dot / actions 已满足视觉要求；先核对其 TSX 和 P79 CSS，再核对两个 Agent 组件的实际 DOM。冻结 coss Card 只有普通卡片骨架；沿用其语义与行为，不修改原件。particles 沿用 [P79 的离线检索记录](../cards-20261016/inspection.md)：本地已有 particles 中无 Card / p-card，未联网刷新 registry，未引入第三方代码。既有 Prism 规则足够，无新增组件、令牌、字号或依赖。
++
++没有选择 (a)，因为引入随主题变动的 JSX 封装会改变 SSR / ID / DOM 与焦点顺序，且现有 Agent 预览仅设 DOM 主题，不自动建立主题 React context。CSS 方案直接使用现有主题边界，涵盖嵌套预览。P85 新增块复制既有 BpFrameCard 的适用声明，专项测试逐项与 P79 真实规则比较，防止两份规则漂移。
++
++现有 `[data-slot="card"][data-agent-arranger-view]` / `[data-slot="card"][data-agent-relation-view]` 是稳定根锚点。标题、状态和顶层操作容器为 bp-* 规则的 CSS 别名，**没有真的增加 bp-* class 或将操作移动到标题栏**；这是方案 (b) 保留核心 SSR 字节与交互顺序的具体选择。操作容器复用 `bp-card-actions` 规则；两者原有正文后操作保持，内层逐题操作不套对象级规则。
++
++编排标题右侧仍是 `structure.snapshot !== undefined` 决定的当前 / 历史身份，保存状态不移入身份栏。关系图无整体状态，不补造状态。现有 aria-hidden SVG 适配为 10px 装饰方点，文字保持；无新增 live region、计时器或业务判断。
++
++## 宽度核对
++
++两个根 Card 没有外侧 margin。编排默认 p-5 / compact p-3，关系图默认 p-4 / compact p-3；这不是卡片外框缩窄的来源，但使原先标题位于框内。本轮外框按宿主内容盒 100% 展开，仅标题抵消相应 20 / 16 / 12px 内边距并使用 P79 的 12px 标题内边距，正文密度保持。保留根 padding 是为了让关系图 ResizeObserver 的 contentRect 与既有窄容器判断一致。
++
++只读核对 Workspace `RecordStructureArranger.tsx` / `RecordRelationGraph.tsx`：组件密度为 compact，关系图与编排在宿主组合层排列。宿主侧图纸 / 包裹容器宽度另行处理，本轮不修改 Workspace，也不使用跨出 Card 的外层负边距。真实几何对齐待 Supervisor 浏览器确认。
++
++## 独立对象卡片盘点
++
++依据本仓库 Agent 目录与运行时源码；“候选”表示可承载独立成果，不等于已在当前 Workspace 成果图纸展示。另只读核对 Workspace 的 RecordStructureArranger、RecordRelationGraph、FormalPaperView、RecordFrozenReport、RecordPlanBuilder 等实际调用点。以下逐项说明，未列为本轮处理的组件均未改。
++
++| 组件 | 同一规则的适用判断与本轮决定 |
++| --- | --- |
++| AgentStructureArranger | 已有独立编排身份和标题，当前 Workspace 实际使用；本轮处理。 |
++| AgentRelationGraph | 已有独立图及版本，当前 Workspace 实际使用；本轮处理，右侧无状态。 |
++| AgentArtifactPreview | 独立成果预览，FormalPaperView 实际使用；原则适用，暂不处理。与执行组件共享 AgentSurface，不能用共享 surface 选择器一并重绘；需单独锚点和 inline 范围，待 PO 确认下一轮。 |
++| AgentArtifactOutput | FormalPaperView / RecordFrozenReport 的输出配置与输出记录混合；只读输出对象适用，整个生成表单是否套对象标题待 PO 决定，暂不处理。 |
++| AgentStructuredContent | 独立结构对象，原则适用；头部还含第二个保存状态与能力说明，需明确主状态选择，待 PO 决定，暂不处理。 |
++| AgentPlanBuilder | RecordPlanBuilder 实际使用；计划对象原则适用，但确认、执行与保存状态有多个层次，待 PO 决定主状态后另轮处理。 |
++| AgentObjectViewer | 独立对象完整查看适用；已有 minimal 呈现用于宿主嵌入，统一加外框会重复框线。待 PO 确认 full / minimal 的范围。 |
++| AgentDocumentWorkspace | 文档是独立对象，原则适用；编辑区域、版本与工具条需一并设计验收，暂不扩大，待 PO 决定。 |
++| AgentSlideWorkspace | 文稿是独立对象，原则适用；分页、演讲稿与保存事实并存，待 PO 决定标题状态后另轮处理。 |
++| AgentImageCanvas | 图像是独立对象，原则适用；标题、画布与工具区尺度另需验收，暂不处理，待 PO 决定。 |
++| AgentAudioTranscript | 音频及转写为独立媒体对象候选；播放、转写、保存状态不能合并推断，待 PO 决定。 |
++| AgentVideoTimeline | 视频及片段是独立媒体对象候选；同样需区分播放 / 处理 / 保存，待 PO 决定。 |
++| AgentMaterialPack | 独立素材包，原则适用；已有标题编辑和集合版本，待 PO 决定只读包与编辑包适用范围。 |
++| AgentInteractiveDemo | 独立可交互演示候选；预览 / 运行 / 参数是工具行为，是否归入成果对象待 PO 决定。 |
++| AgentCalcTool | 计算工具及输出候选；不将输入工具整体等同已产出的成果，待 PO 决定外框层级。 |
++| AgentSimulationLab | 仿真工具及结果候选；不把运行态等同成果状态，待 PO 决定。 |
++| AgentSubjectEditor | 学科内容对象候选；嵌入式编辑与独立成果边界需确认，待 PO 决定。 |
++| AgentCollectionBasket | 候选集合 / 输入工作集，AgentWell 呈现；不自动视为已产出的独立成果，本轮不处理。 |
++| AgentMaterialExtractor | 材料提取操作面板，标题是操作任务而非独立成果对象；本轮不处理。 |
++| AgentExecutionConfirmation | 行动确认，不是对象，不套墨线对象标题。 |
++| AgentExecutionProgress | 执行进展，不是对象，不套墨线对象标题。 |
++| AgentExecutionResult | 执行回执，可包含成果，但回执本身不是成果对象；保留执行语义。 |
++| AgentMetricSummary / AgentDistributionMatrix / AgentEvidenceDrilldown | 分析内容、矩阵和证据片段由宿主报告组合，不自动给每片段加对象外框。若未来独立版本化为报告，再由 PO 定义对象层。 |
++| AgentSuggestionSet / AgentPathPriority | 建议与优先级片段，不自动当作独立固化成果；本轮不处理。 |
++| AgentObjectPicker / AgentScopeBuilder / AgentContextSummary | 输入范围与上下文，不套成果对象标题。 |
++| AgentFileInput / AgentCaptureScan / AgentContentInput | 输入采集，不套成果对象标题；独立原件预览可另用现有 BpFrameCard。 |
++| AgentParameterConfig / AgentConstraintBuilder / AgentTemplatePicker / AgentCandidatePicker | 参数、约束与选择器，不套成果对象标题。 |
++| AgentChangeSet / AgentReviewQueue / AgentItemReviewer / AgentExceptionHandler | 变更审核及异常流程，不批量改成成果对象卡。 |
++| AgentResourceRetriever | 检索工作区，不套成果对象标题；其选中资源的独立预览另看 ObjectViewer。 |
++| BpFrameCard | 已具有所需标题 / 状态 / actions；直接复用，无需修改。 |
++| BpSectionCard | 同一对象里的大题 / 分节，不属于独立对象；保持分节标题。 |
++| PaperPreview / QuestionSummaryRow / QuestionContent | 内容呈现层，不增加第二重对象外框；已有独立对象卡包裹时保持原内容。 |
++
++以上待 PO 项不阻塞已授权两个组件，也不代表自动批准后续批量适配。
++
++## 验证边界
++
++专项含基线 16 个默认调用 × 核心三主题 = 48 组 SSR 字节摘要比对；五主题 × 无外层及五种外层 × 16 调用 = 480 组 CSS/SSR 规则探针，检查标题、状态、操作、宽度规则、内部 Card 排除和伪元素。13 项回退变异。探针不模拟浏览器层叠、像素布局或键盘焦点。
++
++浏览器验收：按分工由 Supervisor 执行。没有本轮截图；Workspace 同步、真实服务、真机、读屏器和实体打印未验。当前工程命令与退出码见 [engineering.json](engineering.json)，Builder 不自我批准。
++
++## 收尾生成物
++
++STATUS 回填后全量中有 2 项 guide 字节检查失败（2247/2249）；不是既有失败。使用 `node scripts/sync-blueprint-guide.mjs` 同步必要的 blueprint-guide.json 与 public STATUS 下载副本，再重建并重跑五项。原始失败保留为 pre-guide-tests.log / pre-guide-engineering.json；最终 engineering.json 为修复后结果。未修改 guide 的源规范或既有测试。
+diff --git a/docs/blueprint/evidence/object-cards-20261018/browser-checklist.md b/docs/blueprint/evidence/object-cards-20261018/browser-checklist.md
+new file mode 100644
+index 0000000..cfccf91
+--- /dev/null
++++ b/docs/blueprint/evidence/object-cards-20261018/browser-checklist.md
+@@ -0,0 +1,26 @@
++# P85 · 交给 Supervisor 的浏览器验收清单
++
++本文件是待执行清单，不是通过记录。基线 `21560ebca1e4e8b45fe57125b8fdb619bece113c`，分支 `fix/blueprint-object-card-ink`。浏览器验收：按分工由 Supervisor 执行。Builder 未启动 / 重启开发服务，未打开浏览器，无本轮截图。
++
++## 路由与矩阵
++
++使用当前工作树对应的 5173 服务；每条路由覆盖 `light / paper / dark / blueprint / blueprint-night` × **1280×900 / 320×900**。另在桌面把预览内容容器收窄至 320，覆盖长中文、公式和 default / compact。
++
++1. `http://localhost:5173/next/foundations/blueprint#sheet-object-cards`：位于“卡片与线条”图纸，依次出现“知识点关系图（固定示例）”和“数学课堂练习（固定示例）”。两蓝图中外框是 1.5px 墨线、标题铺到框内左右边；编排右侧有装饰点和“当前编排”，关系图标题没有伪造状态。正文仍提示保存状态未知。五主题检查外框与同一图纸内容盒对齐，标题不跑出外框，外侧不额外内缩。
++2. 同处：点“查看关系图”进入 workspace，出现筛选及只读条件说明；点“返回原位置”回 inline。点“展开编排”进入 workspace，再返回。状态不因展开变已保存 / 已完成；操作容器保持正文后原位置，布局可换行。该固定示例未提供编辑 onIntent，禁用说明应保留。
++3. `http://localhost:5173/next/components/agent-components/structure-arranger`：对话态、专用工作区、紧凑呈现、状态示例。确认当前 / 历史身份、保存未知 / 保存中 / 已保存 / 冲突等说明分开；上移下移、分组选择、确认编排资格和说明、展开返回焦点均回归。标题长中文仍可换行，右侧状态不遮挡。标题墨线只应用外层对象，内部题目卡片不被重复套墨色标题。
++4. `http://localhost:5173/next/components/agent-components/relation-graph`：对话态 / 专用工作区 / 紧凑与大图场景；320 内容盒默认列表、仍查看关系图、筛选、选中节点、查看来源及返回路径回归。资料不可用时标题仍存在；任何节点统计都不得变成整体“完成”状态。检查标题铺满但内容测量 / 图示阈值不因边距改动改变原行为。
++
++## 隔离、视觉与键盘
++
++- 外层 blueprint 与 blueprint-night 分别在组件页选择内层 light / paper / dark：整个预览根、标题、状态点、操作及 Card 伪元素保持核心主题原貌。跟随站点时才回到墨线标题；检查反向核心外层 / 蓝图局部预览（如需现有夹具）及两蓝图互嵌令牌。
++- 核心三主题与 `21560eb` 默认卡片对照；SSR 一致仅为工程证据，仍需视觉检查字号、圆角、间距及操作位置。
++- Tab / Shift+Tab 顺序与 DOM 一致，操作焦点环清晰；标题栏不包含伪按钮，装饰点不进入可访问名。读屏器另行实测，未实测不得写通过。
++- 对比现有 BpFrameCard：墨底 / 文字颜色一致，状态有完整文字和可辨边界。1280 与 320 下检查真实像素布局、长标题、公式、操作换行；不以只有 scrollWidth 无溢出作为合格。
++- 记录真实主题、视口宽高、路由、操作、看到的文案和截图；不要把本文件、源码探针或旧截图写成当前浏览器已通过。
++
++## Workspace 后续同步
++
++先按 [workspace-sync.json](workspace-sync.json) 校验 CSS 的 blob / SHA-256，核对两个未改 TSX 的前置散列，再由 Workspace 任务处理宿主图纸宽度。复验 R10 编排对象内关系图与编排卡共同左右对齐，以及原题打开 / 返回、保存状态和数据版本不变。此清单不代表 Workspace 已同步。
++
++未验：真实浏览器、Workspace 接入、真实服务、移动真机、读屏器、实体打印。CSS / SSR 测试仅验证规则与输出，不代替这些验收。

@@ -1,0 +1,15 @@
+✔ P85c: empty abilities remove the extra gap; populated lists and core previews stay unchanged (69.29725ms)
+✔ P85: frozen core SSR snapshot digests match baseline raw bytes for 16 legacy calls in all three core themes (44.28325ms)
+✔ P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated (135.374041ms)
+✔ P85b: both object titles use 20px body spacing, compact uses the same 3/5 ratio (5.554ms)
+✔ P85: states stay supplied facts; graph summary never becomes a whole-object status (1.669209ms)
+✔ P85: example renders both objects in an existing sheet, with no invented save receipt (1.408292ms)
+✔ P85: rollback mutations detect missing ink, inset, isolation, state and action rules (82.683334ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 625.836333

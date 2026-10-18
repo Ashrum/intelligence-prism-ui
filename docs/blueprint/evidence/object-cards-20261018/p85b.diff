@@ -1,0 +1,82 @@
+--- a/app/(next)/next/blueprint.css
++++ b/app/(next)/next/blueprint.css
+@@ -225,11 +225,13 @@
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:12px; margin:0; background:var(--primary); color:var(--primary-foreground); }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { flex:1 1 12rem; min-width:0; margin:0; color:inherit; overflow-wrap:anywhere; }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { overflow-wrap:anywhere; }
+-/* Bleed only the header across the existing padding. Preserve ResizeObserver content width and body density. */
+-:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="default"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-20px; margin-top:-20px; }
+-:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="compact"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; }
+-:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="default"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-16px; margin-top:-16px; }
+-:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="compact"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; }
++/* Bleed only the header across existing padding. P85b: title/body spacing is 20px, compact 12px (3/5).
++   Arranger overrides the title row space-y margin; graph compensates its existing flex gap.
++   Preserve all later body gaps and ResizeObserver content width. */
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="default"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-20px; margin-top:-20px; margin-block-end:20px; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view][data-density="compact"] > header > div:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; margin-block-end:12px; }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="default"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-16px; margin-top:-16px; margin-block-end:calc(20px - var(--spacing) * 4); }
++:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-relation-view][data-density="compact"] > h3:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline:-12px; margin-top:-12px; margin-block-end:calc(12px - var(--spacing) * 3); }
+ /* bp-frame-card-status / dot / label aliases; the existing decorative SVG is the dot. */
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:flex; align-items:center; align-self:center; gap:8px; min-width:0; max-width:100%; margin-inline-start:auto; color:inherit; font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); }
+ :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"][data-agent-arranger-view] > header > div > [data-agent-status] > svg:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { flex:0 0 10px; width:10px; height:10px; border:1px solid var(--primary-foreground); background:var(--primary-foreground); }
+--- a/tests/blueprint-object-cards.test.mjs
++++ b/tests/blueprint-object-cards.test.mjs
+@@ -118,6 +118,33 @@
+     assert.deepEqual(style(node('div', { 'data-slot': 'card' }, card.parent)), {});
+   }
+ }
++// Rule arithmetic over real SSR hierarchy, not a browser pixel measurement.
++function spacingContract(source = css) {
++  const parsed = rules(source);
++  const bodyPadding = Number(fullCSS.match(/\.bp-card-body \{[^}]*padding:(\d+)px/)[1]);
++  assert.equal(bodyPadding, 20);
++  for (const theme of themes.filter(blueprint)) for (const entry of objectCardCases()) {
++    const card = fixture(entry, theme)[0];
++    const arranger = entry.component === 'AgentStructureArranger';
++    const container = arranger ? card.children.find(n => n.name === 'header') : card;
++    const title = container.children[0];
++    assert.equal(container.children[1].name, arranger ? 'p' : 'ul');
++    const compact = entry.props.density === 'compact';
++    const expected = bodyPadding * (compact ? 3 / 5 : 1);
++    const margin = declarations(title, parsed)['margin-block-end'];
++    if (arranger) {
++      assert.ok(container.classes.includes('space-y-2'));
++      assert.equal(margin, `${expected}px`, `${theme}/${entry.name}: override title space-y margin`);
++    } else {
++      const gap = Number(container.classes.find(c => /^gap-\d+$/.test(c)).slice(4));
++      const expression = margin?.match(/^calc\((\d+)px - var\(--spacing\) \* (\d+)\)$/);
++      assert.ok(expression, `${entry.name}: title compensates existing flex gap`);
++      // Independent class-derived gap; works with the inherited spacing scale.
++      for (const spacing of [4, 6]) assert.equal(gap * spacing + Number(expression[1]) - Number(expression[2]) * spacing, expected, `${theme}/${entry.name}`);
++    }
++  }
++}
++
+ function statusContract(a = api) {
+   for (const snapshot of [undefined, '', '历史记录']) for (const state of ['unknown', 'saving', 'saved-draft', 'submitted', 'error']) {
+     const html = render(h(a.AgentStructureArranger, { ...arrangerProps, structure: { ...arrangerProps.structure, snapshot }, save: { state } }));
+@@ -139,6 +166,7 @@
+   }
+ });
+ test('P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated', () => styleContract());
++test('P85b: both object titles use 20px body spacing, compact uses the same 3/5 ratio', () => spacingContract());
+ test('P85: states stay supplied facts; graph summary never becomes a whole-object status', () => statusContract());
+ test('P85: example renders both objects in an existing sheet, with no invented save receipt', () => {
+   const html = render(h(api.BlueprintObjectCardsDemo));
+@@ -163,8 +191,15 @@
+     ['pseudo shadow returns', css.replace('::before { display:none; }', '::before { display:block; }')],
+   ];
+   for (const [name, mutation] of mutations) assert.throws(() => styleContract(mutation), name);
++  const spacingMutations = [
++    ['arranger default spacing rollback', css.replace('margin-block-end:20px;', '')],
++    ['arranger compact spacing rollback', css.replace('margin-block-end:12px;', '')],
++    ['graph default spacing rollback', css.replace('margin-block-end:calc(20px - var(--spacing) * 4);', '')],
++    ['graph compact spacing rollback', css.replace('margin-block-end:calc(12px - var(--spacing) * 3);', '')],
++  ];
++  for (const [name, mutation] of spacingMutations) { assert.notEqual(mutation, css); assert.throws(() => spacingContract(mutation), name); }
+   const source = read(objectCardSources[0]);
+   const changed = source.replace('historical ? "历史编排" : "当前编排"', 'historical ? "历史编排" : "已保存草稿"'); assert.notEqual(changed, source);
+   const mutant = await load({ [objectCardSources[0]]: changed }); assert.throws(() => statusContract(mutant));
+-  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/mutations.json`, JSON.stringify({ baseline: objectCardBase, total: mutations.length + 1, detected: [...mutations.map(([name]) => name), 'fabricated saved identity'], method: 'in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback' }, null, 2) + '\n');
++  if (process.env.P85_EVIDENCE_DIR) writeFileSync(`${process.env.P85_EVIDENCE_DIR}/mutations.json`, JSON.stringify({ baseline: objectCardBase, total: mutations.length + spacingMutations.length + 1, detected: [...mutations.map(([name]) => name), ...spacingMutations.map(([name]) => name), 'fabricated saved identity'], method: 'in-memory CSS/source rollback; every mutation fails its behavioral contract; no working-tree rollback' }, null, 2) + '\n');
+ });

@@ -1,0 +1,13 @@
+✔ P85: frozen core SSR snapshot digests match baseline raw bytes for 16 legacy calls in all three core themes (61.347791ms)
+✔ P85: frame/head/status/action aliases match P79, full width and nested core previews stay isolated (145.956083ms)
+✔ P85: states stay supplied facts; graph summary never becomes a whole-object status (1.645208ms)
+✔ P85: example renders both objects in an existing sheet, with no invented save receipt (1.41225ms)
+✔ P85: rollback mutations detect missing ink, inset, isolation, state and action rules (62.095167ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 533.36425

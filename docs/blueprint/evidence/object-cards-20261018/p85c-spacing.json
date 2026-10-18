@@ -1,0 +1,329 @@
+{
+  "method": "SSR sibling traversal + CSS declarations; line-box distances, not browser glyph measurements",
+  "rows": [
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": null,
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": null,
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint",
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "empty",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "unsupported",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "default",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 20,
+      "arrangerLineBoxGap": 20,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "empty",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "unsupported",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    },
+    {
+      "theme": "blueprint-night",
+      "outer": "blueprint-night",
+      "density": "compact",
+      "mode": "supported-reason",
+      "graphLineBoxGap": 12,
+      "arrangerLineBoxGap": 12,
+      "difference": 0
+    }
+  ]
+}
