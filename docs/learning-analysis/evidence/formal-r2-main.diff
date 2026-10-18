@@ -1,0 +1,245 @@
+--- approved-v0.7-r1
++++ formal-v0.7-r2
+@@ -1,12 +1,12 @@
+-# OLE 学情分析系统设计与规划 审核定稿 v0.7
+-
+-2026-10-18 · v0.7 r1 审核收口 · 已批准设计基线 · 实施规格拆分基线 · Derived / Non-canonical
++# OLE 学情分析系统设计与规划 v0.7 r2 正式发布版
++
++2026-10-18 · v0.7 r2 正式发布 · 已批准设计基线 · 实施规格拆分基线 · Derived / Non-canonical
+ 
+ 本文件供产品、教育、架构、数据、交互和实施负责人完整审核。正文整合学情分析总体规划、Agent 设计、独立页面整改、教育理论依据和验证协议，无需切换原六份主稿。来源、阅读范围及本地核验记录见附录。
+ 
+ **核心方案：帮助教师及各级教育管理者掌握自己负责的教学情况，找到其有权、有资源改变的条件，并以实际行动对照下一轮学习证据，持续作出教学和支持决定。**
+ 
+-**审核状态：**本轮处理 Claude 独立审核 F1—F7。用户已明确批准80%/60%/40%及基础→易、巩固→中、提升→难，并同意修复F1/F2后批准整体v0.7；有参照的概览、逐题预期优先规则及真实种子对照已落实，条件满足，按本轮授权登记设计批准。MET08日期口径依用户委托按教学日历习惯决定，见§13.7。六份规格同步为已批准设计的派生规格；G01—G05、能力申请、真实服务及生产准入仍须各自证据，不因本次设计签发自动通过。
++**审核状态：**v0.7 r1 已获 Claude 增量复核 PASS，F1—F7 全部核销。本次依用户“形成正式文档，并同步本地-github-组件站点”授权形成 r2，收口三处非阻塞遗留；独立 PASS 对应 r1，r2 增量由 Codex 验证，见 §13.8。前轮处理记录如下：用户已明确批准80%/60%/40%及基础→易、巩固→中、提升→难，并同意修复F1/F2后批准整体v0.7；有参照的概览、逐题预期优先规则及真实种子对照已落实，条件满足，按本轮授权登记设计批准。MET08日期口径依用户委托按教学日历习惯决定，见§13.7。六份规格同步为已批准设计的派生规格；G01—G05、能力申请、真实服务及生产准入仍须各自证据，不因本次设计签发自动通过。
+ 
+ 阅读顺序为第 1—4 章确认方向与教育责任，第 5—9 章审核具体产品和合同，第 10—12 章审核整改、依赖与验证，最后按第 13 章记录决定。LA、ED 为整改编号；T、E、EDU、M、AG 为第 12 章验收编号（如验收 E01）；附录来源使用“来源”前缀，避免与验收编号混淆。
+ 
+@@ -18,6 +18,8 @@
+ | v0.6，2026-10-18 | 按三份审核决策修订，恢复 PO 产品口径、补确定规则与 Agent 能力/四画面；原稿及规格保留历史，未获整体签发 |
+ | v0.7，2026-10-18 | 初稿落实四项已批决定和R1—R7，后经Claude独立审核；本轮r1修复F1—F7并完成真实种子对照和隔离画面验证，满足用户F1/F2条件批准，整体设计及六份派生规格定格；原稿和证据备份保留 |
+ 
++| v0.7 r2，2026-10-18 | 正式发布修订：登记 r1 独立复核 PASS；统一更正页失分比例标签、补建议变化提示与显式替换/教师自拟确认、明确优先处理人数与知识点关系；六份规格同源派生，指标规则与准入门禁不变 |
++
+ ## 1 设计目标与范围
+ 
+ ### 1.1 贯穿 STEP1 的工作主线
+@@ -75,7 +77,7 @@
+ 
+ 本轮代码审查基线为 `84fe49136588e8b2fe06abf8215dfda18c53a391`；开始时工作区无未提交改动，2026-10-18 11:13 收尾时已有其他并行 Agent/试题篮改动。本研究未修改或回滚业务文件；第 10 章发现以实际读取时点为准，文档建议不代表已整改。
+ 
+-v0.7 增量核对以用户直接提供的第二轮复核与 PO 2026-10-18 决定为依据，当前源码用于确认迁移起点。逐文件来源、读取 Git 基线与本地画面版本见[本轮回传清单](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/v0.7-审核决策与差异清单.md)。2026-10-14—15 的五入口、分层范围条、详情冻结预览框架、数据范围默认全部数据及本阶段报表不动继续承接；10-17 收起导航隐藏窄栏和本轮临时结果标题范围调整见 §8.3。
++v0.7 增量核对以用户直接提供的第二轮复核与 PO 2026-10-18 决定为依据，当前源码用于确认迁移起点。逐文件来源、读取 Git 基线与本地画面版本见[本轮回传清单](v0.7-审核决策与差异清单.md)。2026-10-14—15 的五入口、分层范围条、详情冻结预览框架、数据范围默认全部数据及本阶段报表不动继续承接；10-17 收起导航隐藏窄栏和本轮临时结果标题范围调整见 §8.3。
+ 
+ ## 3 教育理念与理论的产品化
+ 
+@@ -416,7 +418,7 @@
+ 
+ 现有种子已保存逐题预期与来源说明：基础75%、巩固70%、提升65%，指定第3/4轮另加3个百分点；不是没有预期，不能用80/60/40覆盖。旧档字段若缺少新的版本字段，通过只读兼容适配显式绑定种子包与版本、原任务/题目引用、当时命题要求、实际存值和来源摘要，登记兼容规则版本；不得伪称旧档原有正式版本，也不得因字段缺失一律清零。是否可用于真实来源由G01核验；报告保留原值及原版本。补足MET10预期不授予MET07/08再考资格，禁止沿用当前comparable因预期存在而放行的耦合。
+ 
+-本轮已用真实种子与未经改写的分类函数进行A现存逐题值、B直接覆盖80/60/40反事实、C逐题优先且保留原再考资格三路对照；详见[预期来源影响报告](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/review-v07r1-expected-impact.md)。报告单列分类改变、不可比转可比及名单，不把种子验证当真实迁移验收。首次接入真实数据前，G01按同样方法固定快照复跑，登记来源、资格与分类差异；表与标注校准升版，不静默重写历史。
++本轮已用真实种子与未经改写的分类函数进行A现存逐题值、B直接覆盖80/60/40反事实、C逐题优先且保留原再考资格三路对照；详见[预期来源影响报告](evidence/review-v07r1-expected-impact.md)。报告单列分类改变、不可比转可比及名单，不把种子验证当真实迁移验收。首次接入真实数据前，G01按同样方法固定快照复跑，登记来源、资格与分类差异；表与标注校准升版，不静默重写历史。
+ 
+ 同一检测的同批合格作答项，令得分为sᵢ、满分为mᵢ>0、按上述优先级选得的该项预期率为eᵢ（0—1）：R=Σsᵢ/Σmᵢ，E=Σ(mᵢ×eᵢ)/Σmᵢ，G=100×(R−E)个百分点。不能简单平均题目预期率。本次声明检测范围任一题没有有效逐题预期且没有合格难度兜底，完整检测显示“— / 不可比（缺少预期依据）”；不补零或由模型猜测。教师主动选择完整且获准的子范围另看时须另名、另列范围，不能替代原完整检测。实际率、补回率和保持率各自合格即可展示，不统一等待3次检测；观测分类与换算表已批准，但真实缺源、缺数和用途门禁仍按事实执行。
+ 
+@@ -629,6 +631,8 @@
+ 
+ 采纳交互提供“采纳”“改后采纳”“暂不采纳”。直接采用AI内容的草稿字段标“来自AI建议”，教师基于该内容改写后标“由AI建议改写”，保留原建议/证据引用和编辑链；纯手工输入且未采用建议不附AI来源。教师未编辑的派生字段随决定变化更新或清空，已编辑字段保留原文，仅提示差异，由教师明确选择替换；取消修改不改决定。不同建议与字段分别追溯，已保存成果走修订流程，不被临时决定自动重写。暂不采纳仍可自行起草，不要求附已拒绝建议的引用。
+ 
++**r2 补充交互约束：**已编辑字段遇到所采用建议或决定变化时，显示“建议已变化，你的内容未改动”，提供新旧内容核对、保留原文和显式替换；取消不改变内容，确认替换后字段内容及来源标记必须同时更新。教师可经明确确认将当前重写内容标为“教师自拟”；此操作只调整当前文字的可见来源声明，原建议引用、采用决定和编辑链仍保留。不能自动删掉引用，也不能仅凭当前采纳按钮状态重标旧文字来源。
++
+ ### 8.3 Blueprint UI
+ 
+ | 承载区 | 内容与规则 |
+@@ -660,44 +664,44 @@
+ | 1 独立页带范围进入 | 沿用已批准的概览标准视图，仅第一排加次要按钮“带当前范围问Agent” | 数据范围、五入口、分层范围条和冻结预览不变；概览仅作有参照比较，优先处理与进展卡同一学生集合；进入保留范围、筛选和返回位置 |
+ | 2 重讲结果与 AI 建议 | 真实Agent外壳：AppBar、目录、SpaceBar、对话及输入器、结果区；临时结果紧凑标题 | 范围和36人有作答/4人缺考按事实；题行展示失分比例及人数、主要错误、待订正/待再考、预期差距、典型错答L0与有依据AI建议，不挂学生进展或掌握度；可采纳、改后采纳、暂不采纳 |
+ | 3 行动与练习草稿 | 同一结果区编辑，BpSectionCard组织内容 | 草稿未保存状态真实；采用AI文字带来源，改写保留引用，未编辑字段跟随决定，手工内容受保护。巩固练习/错题变式接获准practice.draft.create与全局题篮；保存/未知/失败按真实结果，不自动发布 |
+-| 4 来源更新后的核对 | 紧凑标题及原工作面内的差异，不增第三栏 | 用“批阅结果更新了 2 份”等教师语言；有权查看的学生显示姓名，旧/新作答与受影响建议可核对；旧草稿和教师否决记录保留，教师选择是否据新结果调整，已执行事实不自动取消 |
++| 4 来源更新后的核对 | 紧凑标题及原工作面内的差异，不增第三栏 | 用“批阅结果更新了 2 份”等教师语言；有权查看的学生显示姓名，对照表中的人数占比统一显示“失分比例”，旧/新作答与受影响建议可核对；旧草稿和教师否决记录保留，教师选择是否据新结果调整，已执行事实不自动取消 |
+ 
+ 36/40 设计画面的前提在评审记录说明：owner 已结束处理，36 人满足分析用途、4 人具有已核实的缺测原因，必要聚合已更新。页面只说教师需要知道的事实；确为缺考才写“4 人缺考”，原因未知不能改写成缺考。若评分、复核或聚合尚未就绪，按真实情况写“还有 4 份待批阅”等，不冒充全量完成或完整建议。每题继续显示自身分母。模型调用、能力登记和 HANDOFF 是否接入写在验证说明，不能放到每张画面作为产品文案；需要教师采取行动的实际失败或未保存状态则必须如实可见。
+ 
+-本版概览夹具同范围40人：稳定保持14、正在巩固8、已纠正待验证2、需要支持5、近期回落3、数据不足4、继续观察4，合计40；需要优先处理=5+3=8。合成展示用于校对口径，不是实际班级数据；切换范围后两处从同一投影重算，不能分别硬编码。
+-
+-题目遵守[题目呈现章程](/Users/OLE/HermesWork/intelligence-prism-ui/docs/question-presentation-charter.md)：引用L0、候选L1、详情右栏L2，同屏一个可交互题目；对话不展开题干/答案长内容。试题篮保持全局唯一入口与数据源，以临时浮层打开，不替换右栏工作对象；题目详情与行动编辑轮换既有右栏，最多两个主工作面。
+-
+-四画面采用独立 Vite/React 宿主；[本地目录入口](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/index.html)须按[运行与验证说明](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/README.md)启动后预览。直接导入工作台及组件仓的 AppBar、SpaceBar、AgentPromptBar、COSS 控件和 Blueprint 对象/分节组件，复用来源与文件哈希见说明；未挂载业务 AgentWorkspacePage/Store，未接模型、业务 owner 或 HANDOFF。画面使用合成数据及本地草稿状态；1440/1280、浅色及交互检查只验证此设计宿主，不代表业务应用或服务准入。
++本版概览夹具同范围40人：稳定保持14、正在巩固8、已纠正待验证2、需要支持5、近期回落3、数据不足4、继续观察4，合计40；需要优先处理=5+3=8；如同时显示知识点数量，写“集中在2个知识点”，不把人数与知识点相加。合成展示用于校对口径，不是实际班级数据；切换范围后两处从同一投影重算，不能分别硬编码。
++
++题目遵守[题目呈现章程](https://github.com/Ashrum/intelligence-prism-ui/blob/a2adebf22341c67916fca67ce492cb27b6825194/docs/question-presentation-charter.md)：引用L0、候选L1、详情右栏L2，同屏一个可交互题目；对话不展开题干/答案长内容。试题篮保持全局唯一入口与数据源，以临时浮层打开，不替换右栏工作对象；题目详情与行动编辑轮换既有右栏，最多两个主工作面。
++
++四画面采用独立 Vite/React 宿主；[本地目录入口](SCREENS.md)须按[运行与验证说明](SCREENS.md)启动后预览。直接导入工作台及组件仓的 AppBar、SpaceBar、AgentPromptBar、COSS 控件和 Blueprint 对象/分节组件，复用来源与文件哈希见说明；未挂载业务 AgentWorkspacePage/Store，未接模型、业务 owner 或 HANDOFF。画面使用合成数据及本地草稿状态；1440/1280、浅色及交互检查只验证此设计宿主，不代表业务应用或服务准入。
+ 
+ 
+ 画面1 从独立页带范围进入
+ 
+-![画面1 从独立页带范围进入 Blueprint 1440](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/01-overview-1440.png)
+-
+-![画面1 从独立页带范围进入 Blueprint 1280](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/01-overview-1280.png)
++![画面1 从独立页带范围进入 r2 浏览器实拍](agent-ui-v0.7/screens/01-overview-r2.png)
++
++
+ 
+ 画面2 重讲问题的核查结果
+ 
+-![画面2 重讲问题与 AI 建议 Blueprint 1440](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/02-analysis-1440.png)
+-
+-![画面2 重讲问题与 AI 建议 Blueprint 1280](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/02-analysis-1280.png)
++![画面2 重讲问题与 AI 建议 Blueprint 1440](agent-ui-v0.7/screens/02-analysis-1440.png)
++
++![画面2 重讲问题与 AI 建议 Blueprint 1280](agent-ui-v0.7/screens/02-analysis-1280.png)
+ 
+ 画面3 教学行动草稿编辑
+ 
+-![画面3 教学行动与练习草稿 Blueprint 1440](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/03-draft-1440.png)
+-
+-![画面3 教学行动与练习草稿 Blueprint 1280](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/03-draft-1280.png)
++![画面3 教学行动与练习草稿 Blueprint 1440](agent-ui-v0.7/screens/03-draft-1440.png)
++
++![画面3 教学行动与练习草稿 Blueprint 1280](agent-ui-v0.7/screens/03-draft-1280.png)
+ 
+ 画面4 来源更正后的差异核对
+ 
+-![画面4 批阅更新后的差异核对 Blueprint 1440](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/04-revision-1440.png)
+-
+-![画面4 批阅更新后的差异核对 Blueprint 1280](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/04-revision-1280.png)
++![画面4 来源更新后的核对 r2 浏览器实拍](agent-ui-v0.7/screens/04-revision-r2.png)
++
++
+ 
+ 浅色对照 重讲问题与 AI 建议 1440
+ 
+-![浅色对照 重讲问题与 AI 建议 1440](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/agent-ui-v0.7/screens/05-analysis-light-1440.png)
++![浅色对照 重讲问题与 AI 建议 1440](agent-ui-v0.7/screens/05-analysis-light-1440.png)
+ 
+ 可及性采用 [WCAG 2.2 AA（2024-12-12 Recommendation）](https://www.w3.org/TR/2024/REC-WCAG22-20241212/) 作为设计与验证目标，尚非符合性声明。重点检查颜色外文本/程序语义（1.4.1）、文本与非文本对比（1.4.3/1.4.11）、键盘与焦点顺序/可见/不遮挡（2.1.1/2.1.2/2.4.3/2.4.7/2.4.11）、读屏表头和状态（1.3.1/4.1.2/4.1.3）、200% 文本缩放及等效 320 CSS px 重排（1.4.4/1.4.10）、图表文字/数据表和非拖拽替代（1.1.1/2.5.7）。验收固定浏览器/辅助技术/主题版本，留实际操作与朗读证据；二维局部例外不免除整页重排。以上是优先用例，AA 仍须覆盖全部适用 A/AA 准则及完整流程，不能以自动扫描或单页通过替代。
+ 
+@@ -719,6 +723,8 @@
+ | 权限/组织变化 | 阻止继续访问，不从缓存或对话泄漏旧明细 |
+ | 教师否决解释 | 保留事实与修订/否决，更新后续草案，不传播为确定结论 |
+ 
++![建议变化提示与教师内容保护 r2](agent-ui-v0.7/screens/08-advice-change-r2.png)
++
+ ## 9 数据来源 正式合同与架构
+ 
+ ### 9.1 单一事实与对象映射
+@@ -915,7 +921,7 @@
+ | LA07 | LearningAction 保存单结果、学生、题目、diagnosis/plan，开始动作生成再练纸卷和任务 | 支持非试卷动作及实际执行；扩展前完成正式对象映射 | 重讲、口头检查和资源支持无需伪造一张试卷 |
+ | LA08 | 图形 meter 的无障碍数值与可见文本在示例中出现 58%/57%差异 | 数字、图形、辅助技术与导出共用精度策略 | 同一值仅有一种约定显示，不产生互相矛盾读数 |
+ 
+-主要源码定位：[learning-contract.ts](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/analysis/learning-contract.ts)、[learning-selectors.ts](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/analysis/learning-selectors.ts)、[AnalysisPage.tsx](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/analysis/AnalysisPage.tsx)、[learning-facts-validation.ts](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/analysis/learning-facts-validation.ts)、[model.ts](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/shared/model.ts)、[engine.ts](/Users/OLE/HermesWork/ole-school-workbench/src/features/teacher/shared/engine.ts)、[学情业务数据待办](/Users/OLE/HermesWork/ole-school-workbench/docs/学情业务数据待办.md)。
++主要源码定位：[learning-contract.ts](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/analysis/learning-contract.ts)、[learning-selectors.ts](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/analysis/learning-selectors.ts)、[AnalysisPage.tsx](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/analysis/AnalysisPage.tsx)、[learning-facts-validation.ts](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/analysis/learning-facts-validation.ts)、[model.ts](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/shared/model.ts)、[engine.ts](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/src/features/teacher/shared/engine.ts)、[学情业务数据待办](https://github.com/Ashrum/ole-school-workbench/blob/84fe49136588e8b2fe06abf8215dfda18c53a391/docs/学情业务数据待办.md)。
+ 
+ LA01/LA02 记录并存规则，差值在各类输入下是否出现仍需回归，不能称“所有报表已错误”。LA08 记录 DOM 与可见值不一致，精度适配根因待定位。源码与截图见附录本地证据；本轮未实施整改。
+ 
+@@ -1121,6 +1127,7 @@
+ | AG06 教师用语 | 展示覆盖、更正、草稿及学生差异 | 不出现能力待申请、owner、投影V1、正式ID、资格核验等开发解释；显示有依据的姓名与教师语言。缺测原因未知不改称缺考，实际未保存/失败仍可见 |
+ | 首批适用性 | C01—03 与练习链适用；C04—08 尚未接入 | 本批验证前锁定适用子例；后置能力不算本批通过，也不反向卡住本批；不因延期省掉首批否决记录和真实写恢复 |
+ | AG03 教师自行起草 | 教师否决全部 AI 建议后输入正常教学安排，或没有学习证据但职责/范围及安排输入齐备 | C03 可按教师意图起草，不强制附 AI 引用或学习证据；实际依赖学习结果或已采纳建议时才核对应引用，不能以文案起草绕过真实写能力门禁 |
++| AG02 / r2 建议变化与来源 | 改后采纳→草稿整段手改→返回改为采纳→再进入草稿；分别取消、保留、确认替换及确认本人撰写 | 提示建议变化，手写文字不被覆盖；取消保留提示及旧文，保留操作仅确认维持原文；显式替换同时更新实际字段值和来源；教师自拟须确认且原引用/编辑链仍在；无正式保存或交接成功回执 |
+ 
+ ### 12.6 低负担可用性与真实教学试点
+ 
+@@ -1213,16 +1220,16 @@
+ 
+ ### 13.3 审核后拆分
+ 
+-本v0.7 r1为已批准设计与实施规格拆分基线；implementation-specs-v0.7六份规格为同步的已批准设计派生规格，待实施核验。v0.5/v0.6及本次修订前v0.7保留历史，不作为当前规则源。总纲、教育理念、调研及决定在本稿，§4—§12连续片段各有一份主承接；变更先回写本稿再重出摘录。设计批准依据和合同承接见§13.7，真实功能及生产门禁不随文档状态自动升级。
++本v0.7 r2为正式发布的已批准设计与实施规格拆分基线；本目录01—06六份规格为同步的已批准设计派生规格，待实施核验。v0.5/v0.6及本次修订前v0.7保留历史，不作为当前规则源。总纲、教育理念、调研及决定在本稿，§4—§12连续片段各有一份主承接；变更先回写本稿再重出摘录。设计批准依据和合同承接见§13.7，真实功能及生产门禁不随文档状态自动升级。
+ 
+ | 规格 | 主承接范围 | 关联门禁 |
+ | --- | --- | --- |
+-| [数据投影与指标规范](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/01-数据投影与指标规范.md) | P0；§6、§9.1 正式对象、§9.3—9.5；资格、指标、集合、比较、水位与测量 | G01、G03、G04 |
+-| [教学行动与支持逻辑规范](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/02-教学行动与支持逻辑规范.md) | P1；§5、§9.1 应用行动、§9.2、§10.2；事实、修订、匹配和支持事件 | G01、G02、G04、G05 |
+-| [独立页重构与迁移规范](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/03-独立页重构与迁移规范.md) | P2；§7、§10.1/10.3；页面、整改、旧深链、历史报告与回滚 | G01、G02、G04、G05 |
+-| [Agent协同与Blueprint承载规范](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/04-Agent协同与Blueprint承载规范.md) | P3；§8、§11；阶段、双入口、模型调用边界与真实交接 | G01、G02、G03、G04、G05 |
+-| [多角色与跨域披露规范](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/05-多角色与跨域披露规范.md) | P4；§4、§9.6；职责、字段、共享、模型数据治理与披露 | G01、G02、G03、G04、G05 |
+-| [全周期验证协议与夹具矩阵](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/implementation-specs-v0.7/06-全周期验证协议与夹具矩阵.md) | 全周期；§12；T/E/EDU/M/AG、计算夹具与本轮反例、记录模板 | G01—G05 |
++| [数据投影与指标规范](01-数据投影与指标规范.md) | P0；§6、§9.1 正式对象、§9.3—9.5；资格、指标、集合、比较、水位与测量 | G01、G03、G04 |
++| [教学行动与支持逻辑规范](02-教学行动与支持逻辑规范.md) | P1；§5、§9.1 应用行动、§9.2、§10.2；事实、修订、匹配和支持事件 | G01、G02、G04、G05 |
++| [独立页重构与迁移规范](03-独立页重构与迁移规范.md) | P2；§7、§10.1/10.3；页面、整改、旧深链、历史报告与回滚 | G01、G02、G04、G05 |
++| [Agent协同与Blueprint承载规范](04-Agent协同与Blueprint承载规范.md) | P3；§8、§11；阶段、双入口、模型调用边界与真实交接 | G01、G02、G03、G04、G05 |
++| [多角色与跨域披露规范](05-多角色与跨域披露规范.md) | P4；§4、§9.6；职责、字段、共享、模型数据治理与披露 | G01、G02、G03、G04、G05 |
++| [全周期验证协议与夹具矩阵](06-全周期验证协议与夹具矩阵.md) | 全周期；§12；T/E/EDU/M/AG、计算夹具与本轮反例、记录模板 | G01—G05 |
+ 
+ 六份规格保留原章节/要求/场景 ID，头部列 §13.5 对应门禁；完整映射、源文件摘要与抽取校验记录见实施目录 00 索引。共用规则指定主承接文件，其他规格引用；门禁是必须同步的基线摘录。修改先更新设计决定与版本，再更新受影响规格，禁止复制后各自演进。
+ 
+@@ -1340,7 +1347,7 @@
+ | F6 比例标签 | 采纳；§8.2及LA09 | 显示失分比例及人数分子分母，非丢失分值占比 |
+ | F7 日期口径 | 依用户委托决定；§6.4、E05 | 学校时区日历日期差≥14，含第14天；符合按日期安排两周后复查的现有交互，不要求336小时，不声称已由真实用户研究验证 |
+ 
+-用户在本轮对话明确批准换算值和标签对应，并对“改完F1、F2后是否批准整体v0.7”回答“是”。本轮已落实两条件，登记整体设计批准；MET08由Codex按用户委托作出产品默认选择。具体证据与限制见[审核收口与批准记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/v0.7-审核收口与批准记录.md)。本记录不是实际服务、真实教学或生产签发。
++用户在本轮对话明确批准换算值和标签对应，并对“改完F1、F2后是否批准整体v0.7”回答“是”。本轮已落实两条件，登记整体设计批准；MET08由Codex按用户委托作出产品默认选择。具体证据与限制见[审核收口与批准记录](v0.7-审核收口与批准记录.md)。本记录不是实际服务、真实教学或生产签发。
+ 
+ #### 合同承接与实际接入事项
+ 
+@@ -1356,6 +1363,22 @@
+ 
+ 后续规则变化先说明教学与用户收益、代价及依据，再升本稿修订号并同步六份规格。已批准产品规则不交Builder重新决定；C01—C03能力与真实来源/服务仍按实际依赖核验，Canonical承接和其余未执行事项不被本次文档签发冒充完成。
+ 
++### 13.8 正式发布与增量收口
++
++本轮用户授权正式成文及本地、GitHub、既有组件站点同步。版本为 **v0.7 r2 正式发布版 · 已批准设计基线 · Derived / Non-canonical**，不跳称新的 Canonical 版本。
++
++Claude 的 r1 增量结论为 PASS，审核对象主稿 SHA-256 为 `a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a`；F1—F7 核销，且 F2 独立重放结果一致。本记录转录用户提交的结论及范围，不冒称另有签字文件或将其 PASS 移植到 r2 新哈希。用户此前对整体 v0.7 的 F1/F2 条件批准继续有效。
++
++| r1 剩余项 | r2 处理 | 核验与边界 |
++| --- | --- | --- |
++| R-1 | 来源更正对照表统一为“失分比例” | 对照值 50.0%→44.4%，人数分母仍18/36→16/36；不是分值占比 |
++| R-2 | 教师编辑保护、建议变化提示、新旧核对、显式替换；支持确认“教师自拟”且保留引用链 | 实走原复现路径、取消、确认来源与显式替换；修复隔离宿主只改状态而输入框未同步的问题；正式业务持久化和读屏待实施验证 |
++| R-3 | 改为“集中在2个知识点” | 概览人数仍来自支持5+回落3的去重学生集合；正式实现须同源计算，不照抄合成常量 |
++
++r2 未改 MET01—MET10、资格、分母、80/60/40、掌握与进展判定、MET08 学校时区日历日或任何生产门禁。六份规格重新从本主稿的17段连续正文提取。站点只发布阅读材料与设计证据；真实 Agent、服务写入、HANDOFF、BKT、教师试点、工作台全链路、辅助技术和生产开放仍按 G01—G05 及适用场景验收。
++
++[正式发布说明与核验](RELEASE.md)记录本轮实际执行范围；[拆分索引](00-实施规格索引.md)与 `split-manifest.json` 保持单一规则源。历史研究档保留原样；本目录为可移植发布副本，本地与 GitHub 采用同字节文件，组件站点由同一 Markdown 生成。
++
+ ## 附录 A 来源与证据
+ 
+ 来源编号仅在本附录内有效：“来源 E01”指竞品来源，“验收 E01”指第 12 章反例，不可混用。附录完整保留可读 URL、来源性质、版本及本次阅读范围；理论主张与 OLE 产品推导分开理解。
+@@ -1380,30 +1403,30 @@
+ 
+ | 基线 | 核验版本与阅读范围 | 本轮用途与限制 |
+ | --- | --- | --- |
+-| [OLE PTA v5.1 主文档](https://github.com/Ashrum/open-learning-engine/blob/main/docs/architecture/OLEPTAv5.1.MD) | 冻结标识 `OLE-PTA-v5.1-FROZEN-20260829`；Git blob `2db728e72ae86b21a90e39d3867e78870dd9d636`；本轮完整重读 2743 行。[读取快照](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/sources/OLEPTAv5.1.github-2026-10-18.md) | 愿景、教育价值、六层七引擎八图谱、阶段与正式验证基线；本专项不修改冻结正文。根目录另有不同内容副本，本轮未采用该副本作为规范。 |
+-| [STEP1 当前索引](https://outline.wj985.cc/doc/00ole-step1-e3zdBslfWl) | rev277；updatedAt 2026-10-16T10:14:00.893Z；读取当前完整正文。[快照](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/sources/authority-step1-index-2026-10-18.md) | 原本地索引为 rev274，不能替代当前版本；索引是权威入口，不是运行通过报告。 |
++| [OLE PTA v5.1 主文档](https://github.com/Ashrum/open-learning-engine/blob/main/docs/architecture/OLEPTAv5.1.MD) | 冻结标识 `OLE-PTA-v5.1-FROZEN-20260829`；Git blob `2db728e72ae86b21a90e39d3867e78870dd9d636`；本轮完整重读 2743 行。[读取快照](sources/OLEPTAv5.1.github-2026-10-18.md) | 愿景、教育价值、六层七引擎八图谱、阶段与正式验证基线；本专项不修改冻结正文。根目录另有不同内容副本，本轮未采用该副本作为规范。 |
++| [STEP1 当前索引](https://outline.wj985.cc/doc/00ole-step1-e3zdBslfWl) | rev277；updatedAt 2026-10-16T10:14:00.893Z；读取当前完整正文。[快照](sources/authority-step1-index-2026-10-18.md) | 原本地索引为 rev274，不能替代当前版本；索引是权威入口，不是运行通过报告。 |
+ | [STEP1 GUIDE](https://outline.wj985.cc/doc/guideole-step1-v01-A95ws3PntA) | rev45；本地全文 1185 行；与 live 正文去除首尾空白后逐字符一致 | Derived / Non-canonical 导读，不替代 canonical 合同。 |
+-| [Six Graph Scope v0.4](https://outline.wj985.cc/doc/02step1-six-graph-scope-v04approved-DnaJurjjtA) | rev53；补充精读 §§1–4，并检索所有权、失效、兼容边界；[完整快照](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/sources/authority-step1-sixgraph-2026-10-18.md) | 核实 STEP1 六图施工范围与 PTA 八图关系；未宣称全文精读。 |
+-| [Core Processing Contracts v0.3](https://outline.wj985.cc/doc/03step1-core-processing-contracts-v03approved-KSe6X34mvu) | rev150；精读 §§10、12.3–12.4、13、14，并扫描全文章节及对象命名；[完整快照](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/sources/authority-step1-core-2026-10-18.md) | 核实评价、状态和诊断的 canonical 对象；未宣称全文精读。 |
++| [Six Graph Scope v0.4](https://outline.wj985.cc/doc/02step1-six-graph-scope-v04approved-DnaJurjjtA) | rev53；补充精读 §§1–4，并检索所有权、失效、兼容边界；[完整快照](sources/authority-step1-sixgraph-2026-10-18.md) | 核实 STEP1 六图施工范围与 PTA 八图关系；未宣称全文精读。 |
++| [Core Processing Contracts v0.3](https://outline.wj985.cc/doc/03step1-core-processing-contracts-v03approved-KSe6X34mvu) | rev150；精读 §§10、12.3–12.4、13、14，并扫描全文章节及对象命名；[完整快照](sources/authority-step1-core-2026-10-18.md) | 核实评价、状态和诊断的 canonical 对象；未宣称全文精读。 |
+ | [Learning Package and Task DSL v0.2](https://outline.wj985.cc/doc/04learning-package-task-dsl-specification-v02approved-j55w4GPdgU) | rev51；本地全文 325 行；与 live 正文去除首尾空白后逐字符一致 | 材料定义、任务定义与实例、授权边界；不视为服务验证。 |
+ | [Vertical Validation v0.3](https://outline.wj985.cc/doc/10step1-vertical-validation-plan-v03approved-qjle8hmhHO) | rev109；全文 546 行，长表截断处补读；与 live 正文去除首尾空白后逐字符一致 | 验收要求，不是已执行测试报告。 |
+ | [教师工作台 Agent 体系规划 v1.0](https://github.com/Ashrum/open-learning-engine/blob/main/stages/OLE-Step1/engineering/OLE_Teacher_Workspace_Agent_Architecture_v1.0.md) | 本地全文 1283 行；GitHub blob `c7a21b09bd561d24d38abc4e6767a1595d24389a` 与本地一致 | 用户指定主基线；本轮核验时三项 P0 能力仍为 `CLOSED_TO_TRAFFIC`，不得由设计稿解除准入。 |
+ | [Agent 前端 Blueprint v1.0](https://github.com/Ashrum/intelligence-prism-ui/blob/main/docs/OLE_Agent_Frontend_Blueprint_v1.0.md) | 本地全文 1791 行；GitHub blob `9e53ec8e7f54685f3d49d0c9b2e07a2e53b9f5d3` 与本地一致 | 既有会话、任务、成果、材料和主工作对象的 UI 基线，不证明业务服务已实现。 |
+ 
+-基线底稿中的旧 v4.0 愿景摘要仅供历史追溯，不作现行规范。核验依据见[原始合同对照底稿](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/research-ole-contracts.md)；“全文阅读八份指定本地文件”不等于全文阅读全部 STEP1 01–11 规范。
+-
+-主题复核区分两条事实：Blueprint v1.0 采用源码快照 `1f575ea142c7f3b5fa0ae8a41f5c63c310067251` 的四主题范围；本轮只读组件仓 HEAD `21560ebca1e4e8b45fe57125b8fdb619bece113c` 的 [主题配置](/Users/OLE/HermesWork/intelligence-prism-ui/lib/prism-next/config.ts:4) 与 theme.css，确认已注册并实现第五主题 blueprint-night。该组件事实不证明教师工作台已接入或已完成主题验收。
++基线底稿中的旧 v4.0 愿景摘要仅供历史追溯，不作现行规范。核验依据见[原始合同对照底稿](research-ole-contracts.md)；“全文阅读八份指定本地文件”不等于全文阅读全部 STEP1 01–11 规范。
++
++主题复核区分两条事实：Blueprint v1.0 采用源码快照 `1f575ea142c7f3b5fa0ae8a41f5c63c310067251` 的四主题范围；本轮只读组件仓 HEAD `21560ebca1e4e8b45fe57125b8fdb619bece113c` 的 [主题配置](https://github.com/Ashrum/intelligence-prism-ui/blob/a2adebf22341c67916fca67ce492cb27b6825194/lib/prism-next/config.ts#L4) 与 theme.css，确认已注册并实现第五主题 blueprint-night。该组件事实不证明教师工作台已接入或已完成主题验收。
+ 
+ #### 旧版与当前产品的观察证据
+ 
+ | 观察对象 | 本轮读取或操作范围 | 能支持与不能支持的结论 |
+ | --- | --- | --- |
+-| [指定旧版离线 HTML](/Users/OLE/HermesWork/ole-demo-site/ole-demo-site-offline-2026-08-20.html)，路由 `#/teacher/learning-analysis` | 静态核对及对应源码；file:// 浏览器读取受策略限制 | 支持历史信息结构和演示设计判断；未完成该文件排版、键盘或完整交互验证。 |
+-| 当前总览 | [文本记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-overview.txt)、[截图](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-overview.png) | 支持当前范围、截止、指标和组织的观察；不能证明所有输入的计算正确。 |
+-| 当前学生详情 | [文本记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-student-detail.txt)、[截图](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-student-detail.png) | 支持切换、结果、再考条件和后续观察的呈现；不是真实轨迹或测量有效性验证。 |
+-| 当前课程页 | [文本记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-curriculum.txt) | 支持教材、目标、散点、标签和缺失状态观察；未完成全部分支、主题和键盘验收。 |
+-| 当前错题页 | [文本记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-mistakes.txt)、[截图](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-mistakes.png) | 支持出错、订正、再考、分母与后续动作关系；未执行任务派发、改分或删除。 |
+-| 当前报表页 | [文本记录](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-reports.txt)、[截图](/Users/OLE/HermesWork/ole-learning-analysis-research-2026-10-18/evidence/current-reports.png) | 支持已保存报告入口和组织观察；不构成生成、打印、发布全链验收。 |
++| [指定旧版离线 HTML](REFERENCE-ARCHIVE.md)，路由 `#/teacher/learning-analysis` | 静态核对及对应源码；file:// 浏览器读取受策略限制 | 支持历史信息结构和演示设计判断；未完成该文件排版、键盘或完整交互验证。 |
++| 当前总览 | [文本记录](evidence/current-overview.txt)、[截图](evidence/current-overview.png) | 支持当前范围、截止、指标和组织的观察；不能证明所有输入的计算正确。 |
++| 当前学生详情 | [文本记录](evidence/current-student-detail.txt)、[截图](evidence/current-student-detail.png) | 支持切换、结果、再考条件和后续观察的呈现；不是真实轨迹或测量有效性验证。 |
++| 当前课程页 | [文本记录](evidence/current-curriculum.txt) | 支持教材、目标、散点、标签和缺失状态观察；未完成全部分支、主题和键盘验收。 |
++| 当前错题页 | [文本记录](evidence/current-mistakes.txt)、[截图](evidence/current-mistakes.png) | 支持出错、订正、再考、分母与后续动作关系；未执行任务派发、改分或删除。 |
++| 当前报表页 | [文本记录](evidence/current-reports.txt)、[截图](evidence/current-reports.png) | 支持已保存报告入口和组织观察；不构成生成、打印、发布全链验收。 |
+ | LA01–LA08 整改定位 | 审查时 HEAD `84fe49136588e8b2fe06abf8215dfda18c53a391`；代码及 DOM 观察见既有整改记录 | 只反映该轮审查时点；整改建议不等于已修复，也不能替代下一次实现复核。 |
+ 
+ 上述当前产品浏览器记录使用合成教学周期数据，未导入学校真实学生资料。本轮未执行保存行动、发布、改分或删除；代码、可见 UI、真实服务、权限与真实教学须分别验收。

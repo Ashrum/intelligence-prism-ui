@@ -932,3 +932,7 @@ The timeout defaults can be overridden for a controlled canary with `SITES_INSTA
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
 
 2026-09-20：AI 活动监视器按旧版离线教师工作台重新组合，只接收本人批阅/解析任务。支持筛选、阶段详情、执行状态与后续复核分别呈现；九种显式演示场景及手动推进由共享fixture提供。快捷设置图文容器已修复。总骨架和Agent骨架本轮同步原智能曜彩站点「页面骨架」分类，不另建站点。
+
+## 学情分析正式设计
+
+[OLE 学情分析 v0.7 r2 正式发布入口](docs/learning-analysis/README.md)：整体主稿、六份实施规格、四画面、分类影响与审核记录。组件站点同源阅读路径为 `/next/learning-analysis`；Derived / Non-canonical，实际服务与生产门禁另行核验。

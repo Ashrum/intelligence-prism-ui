@@ -1,0 +1,658 @@
+{
+  "generated_at": "2026-10-18T07:04:18.032909+00:00",
+  "rule": "design-oracle-v07r1",
+  "status": "passed",
+  "passed": 20,
+  "total": 20,
+  "implementation": "Python standard library datetime + zoneinfo; Decimal for MET10",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "tzpath": [
+    "/usr/share/zoneinfo",
+    "/usr/lib/zoneinfo",
+    "/usr/share/lib/zoneinfo",
+    "/etc/zoneinfo"
+  ],
+  "script_sha256": "fc8db91d1d1ec604f585b4d81773a35e9eb37598eafc9c10157e98d60f9b9751",
+  "scope": "Independent design boundary fixtures only; no business application/model/service acceptance",
+  "notes": [
+    "MET10 source availability never supplies MET07/08 qualification; this fixture does not authorize any evidence use.",
+    "Invalidated or conflicting upper-tier sources stay pending until an approved rebinding/revision; a fallback does not bypass qualification.",
+    "School-local trusted event dates need no invented timestamp or timezone; instant-only inputs require the registered school IANA zone.",
+    "An offset-free local time string is not silently treated as a trusted school event date; explicit date provenance is required.",
+    "Calendar >=14 is only the MET08 time predicate; all other relation/independence/exposure/qualification conditions must still pass."
+  ],
+  "cases": [
+    {
+      "id": "MET10-01",
+      "kind": "MET10-source",
+      "input": {
+        "explicit_state": "qualified",
+        "explicit_sources": [
+          {
+            "id": "exp-1",
+            "version": "exp-v3",
+            "eligible": true,
+            "rate": 65
+          }
+        ],
+        "difficulty": "提升",
+        "difficulty_eligible": true,
+        "question_version": "q-v1",
+        "difficulty_rule_version": "difficulty-v0"
+      },
+      "expected": {
+        "state": "available",
+        "rate": "65",
+        "source": "versioned-item-expectation"
+      },
+      "actual": {
+        "state": "available",
+        "rate": "65",
+        "source": "versioned-item-expectation",
+        "reason": null
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-02",
+      "kind": "MET10-source",
+      "input": {
+        "explicit_state": "qualified",
+        "explicit_sources": [
+          {
+            "id": "exp-1",
+            "version": "exp-v3",
+            "eligible": true,
+            "rate": 65
+          }
+        ],
+        "difficulty": null
+      },
+      "expected": {
+        "state": "available",
+        "rate": "65",
+        "source": "versioned-item-expectation"
+      },
+      "actual": {
+        "state": "available",
+        "rate": "65",
+        "source": "versioned-item-expectation",
+        "reason": null
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-03",
+      "kind": "MET10-detection",
+      "input": [
+        {
+          "max": 2,
+          "score": 1,
+          "explicit_state": "qualified",
+          "explicit_sources": [
+            {
+              "version": "exp-v1",
+              "eligible": true,
+              "rate": 75
+            }
+          ],
+          "difficulty": "提升",
+          "difficulty_eligible": true,
+          "question_version": "q-v1",
+          "difficulty_rule_version": "difficulty-v0"
+        },
+        {
+          "max": 3,
+          "score": 3,
+          "difficulty": "巩固",
+          "difficulty_eligible": true,
+          "question_version": "q-v1",
+          "difficulty_rule_version": "difficulty-v0"
+        },
+        {
+          "max": 5,
+          "score": 3,
+          "difficulty": "提升",
+          "difficulty_eligible": true,
+          "question_version": "q-v1",
+          "difficulty_rule_version": "difficulty-v0"
+        }
+      ],
+      "expected": {
+        "state": "available",
+        "actual": "70.0",
+        "expected": "53.00",
+        "gap": "17.00"
+      },
+      "actual": {
+        "state": "available",
+        "actual": "70.0",
+        "expected": "53.00",
+        "gap": "17.00",
+        "sources": [
+          {
+            "state": "available",
+            "rate": "75",
+            "source": "versioned-item-expectation",
+            "reason": null
+          },
+          {
+            "state": "available",
+            "rate": "60",
+            "source": "approved-difficulty-fallback-v0",
+            "reason": null
+          },
+          {
+            "state": "available",
+            "rate": "40",
+            "source": "approved-difficulty-fallback-v0",
+            "reason": null
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-04",
+      "kind": "MET10-detection",
+      "input": [
+        {
+          "max": 2,
+          "score": 1,
+          "explicit_state": "qualified",
+          "explicit_sources": [
+            {
+              "version": "exp-v1",
+              "eligible": true,
+              "rate": 75
+            }
+          ],
+          "difficulty": "提升",
+          "difficulty_eligible": true,
+          "question_version": "q-v1",
+          "difficulty_rule_version": "difficulty-v0"
+        },
+        {
+          "max": 3,
+          "score": 3,
+          "difficulty": null
+        }
+      ],
+      "expected": {
+        "state": "incomparable",
+        "actual": "80.0",
+        "expected": null,
+        "gap": null
+      },
+      "actual": {
+        "state": "incomparable",
+        "actual": "80.0",
+        "expected": null,
+        "gap": null,
+        "sources": [
+          {
+            "state": "available",
+            "rate": "75",
+            "source": "versioned-item-expectation",
+            "reason": null
+          },
+          {
+            "state": "incomparable",
+            "rate": null,
+            "source": null,
+            "reason": "both-sources-unavailable"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-05",
+      "kind": "MET10-source",
+      "input": {
+        "explicit_state": "qualified",
+        "explicit_sources": [
+          {
+            "version": "a",
+            "eligible": true,
+            "rate": 65
+          },
+          {
+            "version": "b",
+            "eligible": true,
+            "rate": 70
+          }
+        ],
+        "difficulty": "提升",
+        "difficulty_eligible": true,
+        "question_version": "q-v1",
+        "difficulty_rule_version": "difficulty-v0"
+      },
+      "expected": {
+        "state": "pending-verification",
+        "rate": null,
+        "reason": "same-tier-conflict"
+      },
+      "actual": {
+        "state": "pending-verification",
+        "rate": null,
+        "source": null,
+        "reason": "same-tier-conflict"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-06",
+      "kind": "MET10-source",
+      "input": {
+        "explicit_state": "invalidated",
+        "explicit_sources": [
+          {
+            "id": "exp-1",
+            "version": "exp-v3",
+            "eligible": true,
+            "rate": 65
+          }
+        ],
+        "difficulty": "提升",
+        "difficulty_eligible": true,
+        "question_version": "q-v1",
+        "difficulty_rule_version": "difficulty-v0"
+      },
+      "expected": {
+        "state": "pending-verification",
+        "rate": null,
+        "reason": "invalidated"
+      },
+      "actual": {
+        "state": "pending-verification",
+        "rate": null,
+        "source": null,
+        "reason": "invalidated"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-07",
+      "kind": "MET10-source",
+      "input": {
+        "difficulty": "提升",
+        "difficulty_eligible": false,
+        "question_version": "q-v1",
+        "difficulty_rule_version": "difficulty-v0"
+      },
+      "expected": {
+        "state": "incomparable",
+        "rate": null,
+        "reason": "both-sources-unavailable"
+      },
+      "actual": {
+        "state": "incomparable",
+        "rate": null,
+        "source": null,
+        "reason": "both-sources-unavailable"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET10-08",
+      "kind": "MET10-source",
+      "input": {
+        "explicit_state": "qualified",
+        "explicit_sources": [
+          {
+            "version": null,
+            "eligible": true,
+            "rate": 65
+          }
+        ],
+        "difficulty": "提升",
+        "difficulty_eligible": true,
+        "question_version": "q-v1",
+        "difficulty_rule_version": "difficulty-v0"
+      },
+      "expected": {
+        "state": "pending-verification",
+        "rate": null,
+        "reason": "source-not-qualified"
+      },
+      "actual": {
+        "state": "pending-verification",
+        "rate": null,
+        "source": null,
+        "reason": "source-not-qualified"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-01",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00+08:00"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 328.0,
+        "utc_date_days": 14
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-01T16:00:00+08:00",
+          "2026-10-15T08:00:00+08:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 328.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-02",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T20:00:00Z",
+        "after": "2026-10-15T10:00:00Z"
+      },
+      "expected": {
+        "state": "short-term-only",
+        "calendar_days": 13,
+        "elapsed_hours": 326.0,
+        "utc_date_days": 14,
+        "school_dates": [
+          "2026-10-02",
+          "2026-10-15"
+        ]
+      },
+      "actual": {
+        "state": "short-term-only",
+        "school_dates": [
+          "2026-10-02",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-02T04:00:00+08:00",
+          "2026-10-15T18:00:00+08:00"
+        ],
+        "calendar_days": 13,
+        "elapsed_hours": 326.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-03",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T10:00:00Z",
+        "after": "2026-10-14T20:00:00Z"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 322.0,
+        "utc_date_days": 13,
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ]
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-01T18:00:00+08:00",
+          "2026-10-15T04:00:00+08:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 322.0,
+        "utc_date_days": 13
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-04",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "America/New_York",
+        "before": "2026-03-01T10:00:00-05:00",
+        "after": "2026-03-15T10:00:00-04:00"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 335.0
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-03-01",
+          "2026-03-15"
+        ],
+        "school_local_times": [
+          "2026-03-01T10:00:00-05:00",
+          "2026-03-15T10:00:00-04:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 335.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-05",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "America/New_York",
+        "before": "2026-10-25T10:00:00-04:00",
+        "after": "2026-11-08T10:00:00-05:00"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 337.0
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-25",
+          "2026-11-08"
+        ],
+        "school_local_times": [
+          "2026-10-25T10:00:00-04:00",
+          "2026-11-08T10:00:00-05:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 337.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-06",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00+08:00",
+        "device_zone": "America/Los_Angeles"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 328.0
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-01T16:00:00+08:00",
+          "2026-10-15T08:00:00+08:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 328.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-07",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00+08:00",
+        "device_zone": "Asia/Tokyo"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 328.0
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-01T16:00:00+08:00",
+          "2026-10-15T08:00:00+08:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 328.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-08",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00+08:00",
+        "device_zone": "UTC"
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": 328.0
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_local_times": [
+          "2026-10-01T16:00:00+08:00",
+          "2026-10-15T08:00:00+08:00"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": 328.0,
+        "utc_date_days": 14
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-09",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": null,
+        "grading_at": "2026-10-15T09:00:00+08:00",
+        "created_at": "2026-10-15T09:05:00+08:00"
+      },
+      "expected": {
+        "state": "interval-unknown",
+        "reason": "missing-event-time"
+      },
+      "actual": {
+        "state": "interval-unknown",
+        "reason": "missing-event-time"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-10",
+      "kind": "MET08",
+      "input": {
+        "school_zone": null,
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00+08:00",
+        "device_zone": "Asia/Taipei"
+      },
+      "expected": {
+        "state": "interval-unknown",
+        "reason": "missing-required-school-zone"
+      },
+      "actual": {
+        "state": "interval-unknown",
+        "reason": "missing-required-school-zone"
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-11",
+      "kind": "MET08",
+      "input": {
+        "trusted_school_event_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "school_zone": null
+      },
+      "expected": {
+        "state": "included",
+        "calendar_days": 14,
+        "elapsed_hours": null
+      },
+      "actual": {
+        "state": "included",
+        "school_dates": [
+          "2026-10-01",
+          "2026-10-15"
+        ],
+        "calendar_days": 14,
+        "elapsed_hours": null,
+        "utc_date_days": null
+      },
+      "passed": true
+    },
+    {
+      "id": "MET08-12",
+      "kind": "MET08",
+      "input": {
+        "school_zone": "Asia/Taipei",
+        "before": "2026-10-01T16:00:00+08:00",
+        "after": "2026-10-15T08:00:00"
+      },
+      "expected": {
+        "state": "interval-unknown",
+        "reason": "event-instant-offset-missing"
+      },
+      "actual": {
+        "state": "interval-unknown",
+        "reason": "event-instant-offset-missing"
+      },
+      "passed": true
+    }
+  ]
+}

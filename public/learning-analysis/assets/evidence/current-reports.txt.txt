@@ -1,0 +1,115 @@
+Browser tab: 2139594140, Title: "学情分析 · 教师工作台 · 启明实验学校", URL: "http://127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=reports&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum".
+0 AXWebArea 学情分析 · 教师工作台 · 启明实验学校, URL: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=reports&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+	1 container
+		2 container root
+			3 link Description: 跳至主要内容, Value: 127.0.0.1:5175/?dataset=teaching-cycle#main-content
+			4 container
+				5 link Description: 启明实验学校 · 回到 Agent, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/workspace
+				6 container 新工作台一级导航
+					7 link Description: Agent, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/workspace
+					8 link Description: 工作记录, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/agent/records
+					9 link Description: 智能批阅, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/grading
+					10 link Description: 教学资源, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/papers
+					11 link Description: 学情分析, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis
+				12 pop up button (collapsed) Description: 任教班级与教材：九年级（1）班 · 数学, ID: base-ui-_r_7_, Secondary Actions: Expand
+				13 button Description: 搜索工作台页面, Help: 搜索页面 · Ctrl / ⌘ K
+				14 link Description: 通知，2 条未读, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/notifications
+				15 pop up button (collapsed) Description: 设置, ID: base-ui-_r_c_, Secondary Actions: Expand
+				16 pop up button (collapsed) Description: 王建国的个人菜单, ID: base-ui-_r_h_, Secondary Actions: Expand
+			17 container 空间工具
+				18 text 工作目录
+				19 button (expanded) Description: 收起工作目录, Secondary Actions: Collapse
+				20 button (collapsed) Description: 试题篮，0 题, Secondary Actions: Expand
+			21 container 学情分析二级导航
+				22 content list
+					23 link Description: 概览, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=overview&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+					24 link Description: 学生与班级, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=students&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+					25 link Description: 课程与知识点, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=curriculum&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+					26 link Description: 错题, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=mistakes&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+					27 link Description: 专题报表, Value: 127.0.0.1:5175/?dataset=teaching-cycle#/teacher/learning-analysis?view=reports&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum
+			28 container main-content
+				29 container
+					30 heading 专题报表, Value: 1
+						31 text 专题报表
+					32 container 报表范围
+						33 pop up button (collapsed) 全部已完成任务, ID: base-ui-_r_17_, Secondary Actions: Expand
+						34 pop up button (collapsed) 全部时间, ID: base-ui-_r_19_, Secondary Actions: Expand
+						35 pop up button (collapsed) 各任务最新活动版本, ID: base-ui-_r_1b_, Secondary Actions: Expand
+						36 pop up button (collapsed) Description: 范围与排除说明, ID: base-ui-_r_1d_, Secondary Actions: Expand
+						37 button 建立教学行动
+					38 text 51  名学生 · 4,374  项作答
+				39 container
+					40 heading 生成专题报表, Value: 2
+						41 text 生成专题报表
+					42 text 保存生成时的参数、结果版本和正文。后续评分更正不会静默修改已保存报表。
+					43 text 报表类型
+					44 combo box (collapsed) Description: 专题报表类型, Value: 班级阶段总结, ID: base-ui-_r_1e_, Secondary Actions: Expand
+						45 text 班级阶段总结
+					46 text 报表名称
+					47 container
+						48 text field (settable) 报表名称, Value: 课堂学习证据总结, ID: analysis-report-title
+					49 text 本次报表引用
+					50 container
+						51 text 九年级（1）班  ·  全部已完成结果
+					52 container
+						53 text 固定引用  数学 · 间隔复查 · 结果 v1；数学 · 新情境应用 · 结果 v1；数学 · 巩固检测 · 结果 v1；二次函数与方程 · 一班前测 · 结果 v2；二次函数与方程 · 一班单元巩固 · 结果 v1；二次函数与方程 · 九人再练 · 结果 v1；数学 · 单元复查 · 结果 v1；数学 · 课堂练习 · 结果 v1；数学 · 起点检测 · 结果 v1
+					54 container
+						55 text 模板 teacher-report-v1 · 操作者  王建国
+					56 text 教师补充
+					57 container
+						58 text entry area (settable) 教师补充, ID: analysis-report-note
+					59 container
+						60 text 部分证据
+						61 container base-ui-_r_1k_-label
+							62 checkbox Description: 当前证据不完整。我确认将缺失范围与排除项写入正文后生成。, Value: 0, ID: base-ui-_r_1j_
+							63 text 当前证据不完整。我确认将缺失范围与排除项写入正文后生成。
+					64 text 再次生成会保存新报表版本；失败重试复用同一请求。
+					65 button (disabled) 生成并保存快照
+				66 container
+					67 heading 已保存的报表版本, Value: 2
+						68 text 已保存的报表版本
+					69 text 按当前班级授权范围展示；打开、下载均使用保存的快照。
+					70 table
+						71 row
+							72 cell
+								73 text 报表
+							74 cell
+								75 text 版本
+							76 cell
+								77 text 范围
+							78 cell
+								79 text 生成时间
+							80 cell
+								81 text 操作
+						82 container
+							83 row
+								84 cell
+									85 text 一班前测 · 更正前固定报告
+									86 text 班级阶段总结
+								87 cell
+									88 text v 1
+								89 cell
+									90 text 45 名学生 · 1 个结果版本
+								91 cell
+									92 text 2026/9/21 17:00:00
+								93 cell
+									94 button 查看报告：一班前测 · 更正前固定报告
+										95 text 查看报告
+							96 row
+								97 cell
+									98 text 一班教学周期 · 三时点复盘
+									99 text 班级阶段总结
+								100 cell
+									101 text v 1
+								102 cell
+									103 text 45 名学生 · 3 个结果版本
+								104 cell
+									105 text 2026/10/5 17:00:00
+								106 cell
+									107 button 查看报告：一班教学周期 · 三时点复盘
+										108 text 查看报告
+			109 pop up button (collapsed) Description: 评审工具, ID: base-ui-_r_14_, Secondary Actions: Expand
+			110 text 可拖动；方向键移动 16 像素，Shift 加方向键移动 64 像素。
+		111 container Notifications
+
+The focused UI element is 28 container main-content

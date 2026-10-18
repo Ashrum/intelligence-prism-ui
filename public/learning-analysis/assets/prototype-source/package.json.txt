@@ -1,0 +1,1 @@
+{"name":"ole-learning-analysis-review-v07","private":true,"type":"module","scripts":{"dev":"vite --host 127.0.0.1 --port 8767 --strictPort","build":"vite build"}}

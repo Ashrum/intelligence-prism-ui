@@ -1,0 +1,290 @@
+- link "跳至主要内容":
+  - /url: "#main-content"
+- banner:
+  - link "启明实验学校 · 回到 Agent":
+    - /url: "#/teacher/agent/workspace"
+    - generic "启明实验学校"
+  - navigation "新工作台一级导航":
+    - link "Agent":
+      - /url: "#/teacher/agent/workspace"
+      - generic: Agent
+    - link "工作记录":
+      - /url: "#/teacher/agent/records"
+      - generic: 工作记录
+    - link "智能批阅":
+      - /url: "#/teacher/grading"
+      - generic: 智能批阅
+    - link "教学资源":
+      - /url: "#/teacher/papers"
+      - generic: 教学资源
+    - link "学情分析":
+      - /url: "#/teacher/learning-analysis"
+      - generic: 学情分析
+  - button "任教班级与教材：九年级（1）班 · 数学":
+  - button "搜索工作台页面":
+  - link "通知，2 条未读":
+    - /url: "#/teacher/notifications"
+    - generic: "2"
+  - button "设置":
+  - separator
+  - button "王建国的个人菜单":
+    - generic: 王
+- group "空间工具":
+  - generic: 工作目录
+  - button "收起工作目录" [expanded]:
+  - button "试题篮，0 题":
+    - generic: "0"
+- complementary:
+  - navigation "学情分析二级导航":
+    - list:
+      - link "概览":
+        - /url: "#/teacher/learning-analysis?view=overview&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum"
+        - generic: 概览
+      - link "学生与班级":
+        - /url: "#/teacher/learning-analysis?view=students&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum"
+        - generic: 学生与班级
+      - link "课程与知识点" [active]:
+        - /url: "#/teacher/learning-analysis?view=curriculum&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum"
+        - generic: 课程与知识点
+      - link "错题":
+        - /url: "#/teacher/learning-analysis?view=mistakes&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum"
+        - generic: 错题
+      - link "专题报表":
+        - /url: "#/teacher/learning-analysis?view=reports&class=cycle-class-91&subject=%E6%95%B0%E5%AD%A6&time=term&dataScope=all&task=all&scopePage=curriculum"
+        - generic: 专题报表
+- main:
+  - heading "课程与知识点" [level=1]
+  - generic "学情范围":
+    - button "班级 · 九年级（1）班":
+      - text: 班级 · 九年级（1）班
+    - button "学科 · 数学":
+      - text: 学科 · 数学
+    - button "时间 · 本学期 · 08/01–10/26":
+      - text: 时间 · 本学期 · 08/01–10/26
+    - button "数据范围 · 全部数据":
+      - text: 数据范围 · 全部数据
+  - paragraph: 51 名学生 · 9 次批阅任务 · 4,374 次作答 · 截至 10/26
+  - tablist "课程与知识点统计":
+    - tab "课程统计（按章）" [selected]
+    - tab "知识点统计"
+  - tabpanel "课程统计（按章）":
+    - heading "先看第二十一章 一元二次方程，近期得分与补回都需要关注。" [level=2]
+    - generic: 依据 9 次批阅任务、4,329 次已对应内容的作答，判断来自批阅任务与再考记录。
+    - button "看依据":
+      - text: 看依据
+    - term:
+      - text: 有作答的章
+      - button "有作答的章：指标说明":
+    - definition: 4章
+    - definition: 当前范围已有作答记录的章
+    - term:
+      - text: 有效对应作答
+      - button "有效对应作答：指标说明":
+    - definition: 4,329次
+    - definition: 51 名学生 · 9 次批阅任务
+    - definition:
+      - generic: 环形数值：4,329 / 4,374
+    - term:
+      - text: 近期得分率
+      - button "近期得分率：指标说明":
+    - definition: 75%
+    - definition: 高于预期 5 个百分点
+    - definition:
+      - generic: 走势数值：76、78、72、75
+    - term:
+      - text: 需要优先处理
+      - button "需要优先处理：指标说明":
+    - definition: 1章
+    - definition: 近期得分与补回均低于当前范围平均
+    - heading "课程聚焦 优先处理分界：指标说明" [level=2]:
+      - text: 课程聚焦
+      - button "优先处理分界：指标说明":
+    - generic: 横轴看现在得分多少，纵轴看失分后补回多少；越靠左下越需要先处理。
+    - img "课程聚焦。完整数值及缺测说明见下方数据表。":
+    - region "课程聚焦：数据":
+      - paragraph: 分界：近期得分率 75%；补回率 68%。分界线上的点保留原坐标。
+      - list "象限说明":
+        - listitem: 左上 · 得分低 · 补得快
+        - listitem: 右上 · 得分高 · 补得快
+        - listitem: 左下 · 优先处理（高亮区域）
+        - listitem: 右下 · 得分高 · 补得慢
+      - table:
+        - rowgroup:
+          - row "项目 近期得分率 补回率":
+            - columnheader "项目"
+            - columnheader "近期得分率"
+            - columnheader "补回率"
+        - rowgroup:
+          - row "第二十一章 一元二次方程 73% 65%":
+            - cell "第二十一章 一元二次方程"
+            - cell "73%"
+            - cell "65%"
+          - row "第二十二章 二次函数 76% 68%":
+            - cell "第二十二章 二次函数"
+            - cell "76%"
+            - cell "68%"
+          - row "第二十四章 圆 73% 76%":
+            - cell "第二十四章 圆"
+            - cell "73%"
+            - cell "76%"
+          - row "第二十三章 旋转 77% 70%":
+            - cell "第二十三章 旋转"
+            - cell "77%"
+            - cell "70%"
+    - table:
+      - rowgroup:
+        - row "● 章 得分率 得分率：指标说明 补回率 补回率：指标说明":
+          - columnheader "● 章"
+          - columnheader "得分率 得分率：指标说明":
+            - text: 得分率
+            - button "得分率：指标说明":
+          - columnheader "补回率 补回率：指标说明":
+            - text: 补回率
+            - button "补回率：指标说明":
+      - rowgroup:
+        - row "第二十一章 一元二次方程 优先处理 73% 65%":
+          - cell "第二十一章 一元二次方程 优先处理":
+            - button "第二十一章 一元二次方程"
+            - generic: 优先处理
+          - cell "73%"
+          - cell "65%"
+        - row "第二十二章 二次函数 继续观察 76% 68%":
+          - cell "第二十二章 二次函数 继续观察":
+            - button "第二十二章 二次函数"
+            - generic: 继续观察
+          - cell "76%"
+          - cell "68%"
+        - row "第二十四章 圆 继续观察 73% 76%":
+          - cell "第二十四章 圆 继续观察":
+            - button "第二十四章 圆"
+            - generic: 继续观察
+          - cell "73%"
+          - cell "76%"
+        - row "第二十三章 旋转 保持 77% 70%":
+          - cell "第二十三章 旋转 保持":
+            - button "第二十三章 旋转"
+            - generic: 保持
+          - cell "77%"
+          - cell "70%"
+    - button "查看全部明细":
+      - text: 查看全部明细
+    - heading "各章学习情况 数据情况：指标说明" [level=2]:
+      - text: 各章学习情况
+      - button "数据情况：指标说明":
+    - region "章分析表格":
+      - table:
+        - rowgroup:
+          - row "章 知识点掌握分布 知识点掌握分布：指标说明 近期得分率 近期得分率：指标说明 补回率 补回率：指标说明 保持率 保持率：指标说明":
+            - columnheader "章":
+              - button "章":
+                - text: 章
+            - columnheader "知识点掌握分布 知识点掌握分布：指标说明":
+              - text: 知识点掌握分布
+              - button "知识点掌握分布：指标说明":
+            - columnheader "近期得分率 近期得分率：指标说明":
+              - button "近期得分率":
+                - text: 近期得分率
+              - button "近期得分率：指标说明":
+            - columnheader "补回率 补回率：指标说明":
+              - button "补回率":
+                - text: 补回率
+              - button "补回率：指标说明":
+            - columnheader "保持率 保持率：指标说明":
+              - button "保持率":
+                - text: 保持率
+              - button "保持率：指标说明":
+        - rowgroup:
+          - row "查看第二十一章 一元二次方程的学习证据 待巩固 1 基本掌握 2 已掌握 5 数据不足 0 73% 73% 与预期持平 65% 65% 81% 81%":
+            - cell "查看第二十一章 一元二次方程的学习证据":
+              - button "查看第二十一章 一元二次方程的学习证据": 第二十一章 一元二次方程
+            - cell "待巩固 1 基本掌握 2 已掌握 5 数据不足 0":
+              - generic: 待巩固 1
+              - generic: 基本掌握 2
+              - generic: 已掌握 5
+              - generic: 数据不足 0
+            - cell "73% 73% 与预期持平":
+              - meter "第二十一章 一元二次方程近期得分率": x
+              - generic: 73%
+              - generic: 与预期持平
+            - cell "65% 65%":
+              - meter "第二十一章 一元二次方程补回率": x
+              - generic: 65%
+            - cell "81% 81%":
+              - meter "第二十一章 一元二次方程保持率": x
+              - generic: 81%
+          - row "查看第二十二章 二次函数的学习证据 待巩固 0 基本掌握 4 已掌握 3 数据不足 0 76% 76% 高于预期 8 个百分点 68% 68% 80% 80%":
+            - cell "查看第二十二章 二次函数的学习证据":
+              - button "查看第二十二章 二次函数的学习证据": 第二十二章 二次函数
+            - cell "待巩固 0 基本掌握 4 已掌握 3 数据不足 0":
+              - generic: 待巩固 0
+              - generic: 基本掌握 4
+              - generic: 已掌握 3
+              - generic: 数据不足 0
+            - cell "76% 76% 高于预期 8 个百分点":
+              - meter "第二十二章 二次函数近期得分率": x
+              - generic: 76%
+              - generic: 高于预期 8 个百分点
+            - cell "68% 68%":
+              - meter "第二十二章 二次函数补回率": x
+              - generic: 68%
+            - cell "80% 80%":
+              - meter "第二十二章 二次函数保持率": x
+              - generic: 80%
+          - row "查看第二十四章 圆的学习证据 待巩固 0 基本掌握 3 已掌握 0 数据不足 8 73% 73% 高于预期 3 个百分点 76% 76% 73% 73%":
+            - cell "查看第二十四章 圆的学习证据":
+              - button "查看第二十四章 圆的学习证据": 第二十四章 圆
+            - cell "待巩固 0 基本掌握 3 已掌握 0 数据不足 8":
+              - generic: 待巩固 0
+              - generic: 基本掌握 3
+              - generic: 已掌握 0
+              - generic: 数据不足 8
+            - cell "73% 73% 高于预期 3 个百分点":
+              - meter "第二十四章 圆近期得分率": x
+              - generic: 73%
+              - generic: 高于预期 3 个百分点
+            - cell "76% 76%":
+              - meter "第二十四章 圆补回率": x
+              - generic: 76%
+            - cell "73% 73%":
+              - meter "第二十四章 圆保持率": x
+              - generic: 73%
+          - row "查看第二十三章 旋转的学习证据 待巩固 0 基本掌握 2 已掌握 3 数据不足 0 77% 77% 高于预期 9 个百分点 70% 70% 81% 81%":
+            - cell "查看第二十三章 旋转的学习证据":
+              - button "查看第二十三章 旋转的学习证据": 第二十三章 旋转
+            - cell "待巩固 0 基本掌握 2 已掌握 3 数据不足 0":
+              - generic: 待巩固 0
+              - generic: 基本掌握 2
+              - generic: 已掌握 3
+              - generic: 数据不足 0
+            - cell "77% 77% 高于预期 9 个百分点":
+              - meter "第二十三章 旋转近期得分率": x
+              - generic: 77%
+              - generic: 高于预期 9 个百分点
+            - cell "70% 70%":
+              - meter "第二十三章 旋转补回率": x
+              - generic: 70%
+            - cell "81% 81%":
+              - meter "第二十三章 旋转保持率": x
+              - generic: 81%
+          - row "查看第二十五章 概率初步的学习证据 待巩固 0 基本掌握 0 已掌握 0 数据不足 4 数据不足 第二十五章 概率初步近期得分率：指标说明 与预期的差距：数据不足；有效批阅任务不足 3 次 数据不足 第二十五章 概率初步补回率：指标说明 数据不足 第二十五章 概率初步保持率：指标说明":
+            - cell "查看第二十五章 概率初步的学习证据":
+              - button "查看第二十五章 概率初步的学习证据": 第二十五章 概率初步
+            - cell "待巩固 0 基本掌握 0 已掌握 0 数据不足 4":
+              - generic: 待巩固 0
+              - generic: 基本掌握 0
+              - generic: 已掌握 0
+              - generic: 数据不足 4
+            - cell "数据不足 第二十五章 概率初步近期得分率：指标说明 与预期的差距：数据不足；有效批阅任务不足 3 次":
+              - text: 数据不足
+              - button "第二十五章 概率初步近期得分率：指标说明":
+              - generic: 与预期的差距：数据不足；有效批阅任务不足 3 次
+            - cell "数据不足 第二十五章 概率初步补回率：指标说明":
+              - text: 数据不足
+              - button "第二十五章 概率初步补回率：指标说明":
+            - cell "数据不足 第二十五章 概率初步保持率：指标说明":
+              - text: 数据不足
+              - button "第二十五章 概率初步保持率：指标说明":
+- button "评审工具":
+- generic: 可拖动；方向键移动 16 像素，Shift 加方向键移动 64 像素。
+- region "Notifications"
+- generic: 100%

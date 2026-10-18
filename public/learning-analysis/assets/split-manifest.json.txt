@@ -1,0 +1,232 @@
+{
+  "baseline_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+  "baseline_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
+  "schema": "split-manifest-v2-portable",
+  "design_revision": "v0.7 r2",
+  "design_status": "approved-derived-baseline",
+  "implementation_status": "requires-applicable-gate-evidence",
+  "retained_in_baseline": [
+    "§1—§3 产品定位、研究与教育基础",
+    "§13 决定、审核台账与定稿管理",
+    "附录A/B 来源与历史追溯"
+  ],
+  "specs": [
+    {
+      "number": 1,
+      "file": "01-数据投影与指标规范.md",
+      "title": "数据投影与指标规范",
+      "batch": "P0",
+      "gates": [
+        "G01",
+        "G03",
+        "G04"
+      ],
+      "sha256": "33ec127993e0fe51234053027f3079d220dd66fe6d5808c70e9c710e3f3d4671",
+      "characters": 25245,
+      "segments": [
+        {
+          "key": "§6 指标与比较",
+          "source_line": 241,
+          "source_start": 12581,
+          "source_end": 31871,
+          "sha256": "87de7e14cb5cef0c33d74bad57b56b6cefcd4ddc5f752a6e6b244c464d6b08d6"
+        },
+        {
+          "key": "§9.1 正式对象与实例界限",
+          "source_line": 728,
+          "source_start": 47281,
+          "source_end": 48354,
+          "sha256": "8a7cd47bacb739648f790af73c1c048b3df4b0a9e0954d6c668d51ddcc008b04"
+        },
+        {
+          "key": "§9.3 证据与状态",
+          "source_line": 847,
+          "source_start": 54034,
+          "source_end": 54837,
+          "sha256": "6b6909dfa5213feb5108697ae6fe93c98941a8e5572074aec400cff811304723"
+        },
+        {
+          "key": "§9.4 权限水位失效与驻留",
+          "source_line": 857,
+          "source_start": 54837,
+          "source_end": 56914,
+          "sha256": "fa6da96444ce46e5f316c4b72a8d8bd2eb9171b42792c03e83ee643d42ee5b74"
+        },
+        {
+          "key": "§9.5 案例与能力资产",
+          "source_line": 881,
+          "source_start": 56914,
+          "source_end": 57160,
+          "sha256": "36e1713c4b26e7481d4ebee53f68d8f5e2d4ec262963d9b1d0823159b534fa63"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "file": "02-教学行动与支持逻辑规范.md",
+      "title": "教学行动与支持逻辑规范",
+      "batch": "P1",
+      "gates": [
+        "G01",
+        "G02",
+        "G04",
+        "G05"
+      ],
+      "sha256": "6d83156c0ceaf5109663d4050f7a2353eb9a94c85cf703e33ef1beddeefec82a",
+      "characters": 10693,
+      "segments": [
+        {
+          "key": "§5 教学闭环",
+          "source_line": 170,
+          "source_start": 9669,
+          "source_end": 12581,
+          "sha256": "c1b2d04c86948628a1936a63972d696aaecaaea91da691ed5b81062f21374025"
+        },
+        {
+          "key": "§9.1 应用行动与支持映射",
+          "source_line": 748,
+          "source_start": 48354,
+          "source_end": 49704,
+          "sha256": "f0016cedc299531b9838de9504415bf6460cdffa0e4d0d2905436ed171828a4f"
+        },
+        {
+          "key": "§9.2 事实与匹配",
+          "source_line": 768,
+          "source_start": 49704,
+          "source_end": 54034,
+          "sha256": "fae958344298d433a871d9467bf2068baa0802d9166acd64215f2db44bd6dae5"
+        },
+        {
+          "key": "§10.2 教育语义补强",
+          "source_line": 932,
+          "source_start": 61537,
+          "source_end": 61877,
+          "sha256": "5351265e76f52f4e906c231db6a35a69a220e804d2d9b751dee0b4bb2c75d63f"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "file": "03-独立页重构与迁移规范.md",
+      "title": "独立页重构与迁移规范",
+      "batch": "P2",
+      "gates": [
+        "G01",
+        "G02",
+        "G04",
+        "G05"
+      ],
+      "sha256": "3843575f3336312fc3e1a3b0b8677eb07ea73c6912ed3e19e9a529e0a6b4ed52",
+      "characters": 7187,
+      "segments": [
+        {
+          "key": "§7 独立页面",
+          "source_line": 509,
+          "source_start": 31871,
+          "source_end": 33916,
+          "sha256": "59e3140517f2cc93dd4fb6374f8610834f2c8ba940642e41d509665f3ad6c524"
+        },
+        {
+          "key": "§10.1 整改清单",
+          "source_line": 909,
+          "source_start": 58978,
+          "source_end": 61537,
+          "sha256": "94631468534011092d4231fcf0bc37d06bce4eebbee5772174a75bb41e5f114f"
+        },
+        {
+          "key": "§10.3 迁移与回滚",
+          "source_line": 943,
+          "source_start": 61877,
+          "source_end": 62782,
+          "sha256": "7fa02b32a43e5229b8fc5395f9ebd9959248afbe8ac0ba1f969cd0a95ffbd5f5"
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "file": "04-Agent协同与Blueprint承载规范.md",
+      "title": "Agent协同与Blueprint承载规范",
+      "batch": "P3",
+      "gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05"
+      ],
+      "sha256": "2eb8332eea8b01edb088f2e355146630df03d044259343d2b2a5a3109be51dcf",
+      "characters": 18730,
+      "segments": [
+        {
+          "key": "§8 Agent与Blueprint",
+          "source_line": 552,
+          "source_start": 33916,
+          "source_end": 47281,
+          "sha256": "568b4abf54d5057df40aa03c6397088d015b81e8a1941400175af5a201a53bd6"
+        },
+        {
+          "key": "§11 批次与阶段",
+          "source_line": 960,
+          "source_start": 62782,
+          "source_end": 66234,
+          "sha256": "6bce073d5c478350c69fd96d837d67052ed0c2648a785b8765d159ef4e8bbc1b"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "file": "05-多角色与跨域披露规范.md",
+      "title": "多角色与跨域披露规范",
+      "batch": "P4",
+      "gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05"
+      ],
+      "sha256": "5295af00300026cba796a253edc8e76d41e8c0e930cdb3555d2c7ff68e19f590",
+      "characters": 6546,
+      "segments": [
+        {
+          "key": "§4 职责与授权",
+          "source_line": 123,
+          "source_start": 6708,
+          "source_end": 9669,
+          "sha256": "e5fabad92b5f2f44b0a65b0f27712d3b6c1dfb96431e73f6c96d0d4c8ddee4af"
+        },
+        {
+          "key": "§9.6 共享模型与披露",
+          "source_line": 887,
+          "source_start": 57160,
+          "source_end": 58978,
+          "sha256": "8dd63a68fd8a20a04f7a09298e67613c62241f61284a784daa4f7aea0670bbe9"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "file": "06-全周期验证协议与夹具矩阵.md",
+      "title": "全周期验证协议与夹具矩阵",
+      "batch": "P0—P4",
+      "gates": [
+        "G01",
+        "G02",
+        "G03",
+        "G04",
+        "G05"
+      ],
+      "sha256": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3",
+      "characters": 21735,
+      "segments": [
+        {
+          "key": "§12 全周期验证",
+          "source_line": 998,
+          "source_start": 66234,
+          "source_end": 80332,
+          "sha256": "ce9a4b85dc2713b1e0d6082d496bda7765aee8ad5d2465490218262e75f7b9c0"
+        }
+      ]
+    }
+  ]
+}

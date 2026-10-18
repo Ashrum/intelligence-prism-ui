@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import guide from "@/lib/prism-next/blueprint-guide.json"
 
 type Inline = { type: string; value?: string; children?: Inline[]; href?: string; external?: boolean; download?: boolean; alt?: string }
-type Block = { type: string; children?: Inline[]; level?: number; id?: string; value?: string; ordered?: boolean; start?: number; items?: Inline[][]; headers?: Inline[][]; rows?: Inline[][][] }
+export type Block = { type: string; children?: Inline[]; level?: number; id?: string; value?: string; ordered?: boolean; start?: number; items?: Inline[][]; headers?: Inline[][]; rows?: Inline[][][] }
 
 function InlineContent({ nodes }: { nodes: Inline[] }): ReactNode {
   return nodes.map((node, index) => {
@@ -14,7 +14,7 @@ function InlineContent({ nodes }: { nodes: Inline[] }): ReactNode {
   })
 }
 
-function GuideBlock({ block, index }: { block: Block; index: number }) {
+export function GuideBlock({ block, index }: { block: Block; index: number }) {
   const content = <InlineContent nodes={block.children ?? []}/>
   if (block.type === "heading") {
     const Tag = `h${Math.min(6, Math.max(2, block.level ?? 2))}` as "h2" | "h3" | "h4" | "h5" | "h6"

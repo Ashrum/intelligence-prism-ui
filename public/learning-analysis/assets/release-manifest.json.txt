@@ -1,0 +1,302 @@
+{
+  "revision": "v0.7 r2",
+  "status": "approved-derived-design",
+  "implementationStatus": "requires-applicable-gates",
+  "files": [
+    {
+      "path": "00-实施规格索引.md",
+      "sha256": "b9b3599a6a5e54637b9898672ee5aeb8073f40a90a8949f8ba178de2ed59b8e5",
+      "bytes": 4236
+    },
+    {
+      "path": "01-数据投影与指标规范.md",
+      "sha256": "33ec127993e0fe51234053027f3079d220dd66fe6d5808c70e9c710e3f3d4671",
+      "bytes": 59423
+    },
+    {
+      "path": "02-教学行动与支持逻辑规范.md",
+      "sha256": "6d83156c0ceaf5109663d4050f7a2353eb9a94c85cf703e33ef1beddeefec82a",
+      "bytes": 27092
+    },
+    {
+      "path": "03-独立页重构与迁移规范.md",
+      "sha256": "3843575f3336312fc3e1a3b0b8677eb07ea73c6912ed3e19e9a529e0a6b4ed52",
+      "bytes": 16038
+    },
+    {
+      "path": "04-Agent协同与Blueprint承载规范.md",
+      "sha256": "2eb8332eea8b01edb088f2e355146630df03d044259343d2b2a5a3109be51dcf",
+      "bytes": 42410
+    },
+    {
+      "path": "05-多角色与跨域披露规范.md",
+      "sha256": "5295af00300026cba796a253edc8e76d41e8c0e930cdb3555d2c7ff68e19f590",
+      "bytes": 16215
+    },
+    {
+      "path": "06-全周期验证协议与夹具矩阵.md",
+      "sha256": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3",
+      "bytes": 51929
+    },
+    {
+      "path": "agent-ui-v0.7/screens/01-overview-r2.png",
+      "sha256": "2f7acd730c6528316f3f2114af5de10053f30108b963313876d7bfedb995d080",
+      "bytes": 114246
+    },
+    {
+      "path": "agent-ui-v0.7/screens/02-analysis-1280.png",
+      "sha256": "11ae44bbeb2ee19cce3d684ccfac15b7e269ba4eec1c9c8c8c6fdb8407a77deb",
+      "bytes": 225804
+    },
+    {
+      "path": "agent-ui-v0.7/screens/02-analysis-1440.png",
+      "sha256": "d194abfba12938e6811baac0404ae9a0682fde2b14420b06b4b7f424742eebf4",
+      "bytes": 230943
+    },
+    {
+      "path": "agent-ui-v0.7/screens/03-draft-1280.png",
+      "sha256": "f41316f4bd6babf439d4a938c949285228bc2ac390d90e9cccdc2e588fed72eb",
+      "bytes": 136486
+    },
+    {
+      "path": "agent-ui-v0.7/screens/03-draft-1440.png",
+      "sha256": "8aa4e0c69b5fae28fd38ca403b741f74e131acb878861417b901e283f6fbb415",
+      "bytes": 139572
+    },
+    {
+      "path": "agent-ui-v0.7/screens/04-revision-r2.png",
+      "sha256": "6678911f37f8355cb01fd79b9e784fd9d12b35ab8a41d168ed8af1d4682731a8",
+      "bytes": 102719
+    },
+    {
+      "path": "agent-ui-v0.7/screens/05-analysis-light-1440.png",
+      "sha256": "1e69bd0ab15fff61ae4cf6e1a4681604f9548f057de695aecc80f7ba218e079c",
+      "bytes": 235200
+    },
+    {
+      "path": "agent-ui-v0.7/screens/06-draft-390.png",
+      "sha256": "a691edb4d348ac00432774d9ac694f5c88411fc021fa1816b879f5ed567ad7ba",
+      "bytes": 42359
+    },
+    {
+      "path": "agent-ui-v0.7/screens/07-advice-modified-1440.png",
+      "sha256": "769b9dfd8495a4787036ad1e9deba37a040ea77a5567dbdb867d6a25a5de9894",
+      "bytes": 234493
+    },
+    {
+      "path": "agent-ui-v0.7/screens/08-advice-change-r2.png",
+      "sha256": "c6111200f66c2e5e58f4ef063189afa434fc7b80ba81ab515c7948ff759e0783",
+      "bytes": 105585
+    },
+    {
+      "path": "evidence/approved-v0.7-r1.md",
+      "sha256": "a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a",
+      "bytes": 253400
+    },
+    {
+      "path": "evidence/current-curriculum.txt",
+      "sha256": "45a9bbb8fc6ad9aad1147b560f0aded66832de5c93cdd7e91753145fd44ba5bd",
+      "bytes": 14301
+    },
+    {
+      "path": "evidence/current-mistakes.png",
+      "sha256": "2da72c96c55cef0e9049cf77ea2651795558220eb8d8a16a753a5e7ce77296ed",
+      "bytes": 149392
+    },
+    {
+      "path": "evidence/current-mistakes.txt",
+      "sha256": "a814d4d6c34b7862afcf2c845d2887f4f9d019f51973af52d9e7359083d6c6c1",
+      "bytes": 41284
+    },
+    {
+      "path": "evidence/current-overview.png",
+      "sha256": "ee49e9b1c74ce6a6a5f7822e6ab0c0df2bfdd8654393b1146727829420db2cb5",
+      "bytes": 123199
+    },
+    {
+      "path": "evidence/current-overview.txt",
+      "sha256": "3c2e6edcf88e3a52096dcd322f8b7fff5cbc0ab84387fd5168ddded1404c4f9f",
+      "bytes": 21676
+    },
+    {
+      "path": "evidence/current-reports.png",
+      "sha256": "5455e42ee7844afe0e5eca5fdd225e1d12c153cbb277625be15479638a6d89c4",
+      "bytes": 101716
+    },
+    {
+      "path": "evidence/current-reports.txt",
+      "sha256": "2f88019803a1da9383261099c9b9436b6d8c9b33266ca3b067c8de572983306f",
+      "bytes": 7323
+    },
+    {
+      "path": "evidence/current-student-detail.png",
+      "sha256": "7c5ae408c9067e5ef97795636bd594ac3308f077f55dcd5d030e2fbc12be463c",
+      "bytes": 139585
+    },
+    {
+      "path": "evidence/current-student-detail.txt",
+      "sha256": "5ae8dfbfcf4264221a1c98bc818da1fee6174de00285431acb3363ced6452459",
+      "bytes": 36196
+    },
+    {
+      "path": "evidence/formal-r2-main.diff",
+      "sha256": "8db760d9555cc75895e57bc4caff9e05d46662277f7bc93cdbdba877f780905f",
+      "bytes": 39819
+    },
+    {
+      "path": "evidence/review-round2-fixture-cases.md",
+      "sha256": "9b43b9f677e1543bf99467ce93330a1bfeee6ad037a91c72d4a155a2458305a1",
+      "bytes": 12887
+    },
+    {
+      "path": "evidence/review-v07-design-fixture-check.json",
+      "sha256": "125a6bf494048d2b591a87795134b40fdbd013036f76e07a4a8b10f9cf3ce3fa",
+      "bytes": 29358
+    },
+    {
+      "path": "evidence/review-v07-design-fixture-check.py",
+      "sha256": "03ad544145c6f2c416f2d9df10c3628be07e015ef9ef0a89450c7705dfa47941",
+      "bytes": 11092
+    },
+    {
+      "path": "evidence/review-v07r1-boundary-fixtures.json",
+      "sha256": "d0d8c67322350b686522585da72cdd041a9dbe43361d308901d2e61455a9718e",
+      "bytes": 16786
+    },
+    {
+      "path": "evidence/review-v07r1-boundary-fixtures.py",
+      "sha256": "fc8db91d1d1ec604f585b4d81773a35e9eb37598eafc9c10157e98d60f9b9751",
+      "bytes": 11438
+    },
+    {
+      "path": "evidence/review-v07r1-expected-impact-changes.csv",
+      "sha256": "c311d2b7d6bc8cf97ef4f2a171b2e89176ff8ca1c627cc0cad144cc479875654",
+      "bytes": 129319
+    },
+    {
+      "path": "evidence/review-v07r1-expected-impact-report.py",
+      "sha256": "1a01035e1a5893f114c49a87bd8b8c6d8698be8948d2b10bd0d178ec241febe6",
+      "bytes": 13971
+    },
+    {
+      "path": "evidence/review-v07r1-expected-impact.json",
+      "sha256": "098a3ca0643d408d0a28d5f55d6bdbbfd33a6631660159d76c20dafcdc06ed28",
+      "bytes": 2979147
+    },
+    {
+      "path": "evidence/review-v07r1-expected-impact.md",
+      "sha256": "9d1c72d2dde53d3407fe6b8622c9626ac7d15f23fd85be4120175b0cb4e3cafe",
+      "bytes": 13756
+    },
+    {
+      "path": "evidence/review-v07r1-expected-impact.mjs",
+      "sha256": "e0a67ec4c2254ed299c6190dd3fa2732c3f1fdb2525776ace48c6434a4b703a6",
+      "bytes": 12625
+    },
+    {
+      "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+      "sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
+      "bytes": 254988
+    },
+    {
+      "path": "prototype-source/app.js",
+      "sha256": "9e2d253430fbec4d09db2ad02d89f338969a8bf7de5473d6243dbd44a19fd4a4",
+      "bytes": 47512
+    },
+    {
+      "path": "prototype-source/index.html",
+      "sha256": "21a48770596e86cdb58ae0ada13da30c30c0bd746694c06445553cd31bd99d02",
+      "bytes": 390
+    },
+    {
+      "path": "prototype-source/main.css",
+      "sha256": "299401a5bd94f71bbc6cac356500e86e7a3c6252a1ad163089537fcb23da1872",
+      "bytes": 274
+    },
+    {
+      "path": "prototype-source/main.tsx",
+      "sha256": "d6ba6b63f41adaeb097dc2723c6061515142f7bfc7cbf7b056dece0942a01111",
+      "bytes": 6631
+    },
+    {
+      "path": "prototype-source/package.json",
+      "sha256": "f1d97b04601ac60351b7003737a04515620663d4407344628f4fca365f23a4dd",
+      "bytes": 163
+    },
+    {
+      "path": "prototype-source/styles.css",
+      "sha256": "0cd15f86a5c6a0b21b947e2b37ab8d31969a6a37d65797d071067fba81df72ec",
+      "bytes": 23845
+    },
+    {
+      "path": "prototype-source/vite.config.mjs",
+      "sha256": "f82fd3cde21c5339c845f1234900df45d1eccc19dc4bcffa9203e400b85d3bdd",
+      "bytes": 565
+    },
+    {
+      "path": "README.md",
+      "sha256": "8a17cefc991f54c3841f2776c8b71b3faf5d8cb48a74f1be73a725e555a34b1b",
+      "bytes": 1893
+    },
+    {
+      "path": "REFERENCE-ARCHIVE.md",
+      "sha256": "c812ce3d847bd9dd327fbf96b5b35e4916a900b9455264b702523d32450300ab",
+      "bytes": 1920
+    },
+    {
+      "path": "RELEASE.md",
+      "sha256": "ff7283df267d5a0e05ecdfbfa5a7ee15d5149623e889531fe1095256db157eed",
+      "bytes": 4833
+    },
+    {
+      "path": "research-ole-contracts.md",
+      "sha256": "0df54e9f75d0758709b32116dfeed08308d43ba921384d2156dfd638c2729551",
+      "bytes": 26496
+    },
+    {
+      "path": "SCREENS.md",
+      "sha256": "1d0ca88a803420adae5e3391f305f7d5f562bbbc50d65025a8d4497b58551b34",
+      "bytes": 3164
+    },
+    {
+      "path": "sources/authority-step1-core-2026-10-18.md",
+      "sha256": "9667f30a5584413376c999827b2363958ed29f789e6108878d4de2eb9fcacdcb",
+      "bytes": 87693
+    },
+    {
+      "path": "sources/authority-step1-index-2026-10-18.md",
+      "sha256": "6d389e86cd10cc2e3242ec93562589c0cf6bed548369785ccbdc6390441ca2b5",
+      "bytes": 26202
+    },
+    {
+      "path": "sources/authority-step1-sixgraph-2026-10-18.md",
+      "sha256": "49e97bb0c636f542b701c074cd6fda6c635a30bcb30438d2b8462dc9b00c9795",
+      "bytes": 26884
+    },
+    {
+      "path": "sources/OLEPTAv5.1.github-2026-10-18.md",
+      "sha256": "8b33e878bef4b062d8325806b91dcf267e4b38c356c975b745e6297cfecc582f",
+      "bytes": 168351
+    },
+    {
+      "path": "split-manifest.json",
+      "sha256": "89a7f35b1d4efa86d49040aa99d7cf369c9b37704cfc20c030d35e46e457bd58",
+      "bytes": 7039
+    },
+    {
+      "path": "split-validation.json",
+      "sha256": "4579edb623c1fde71b3688e72e3e54e11c17df04382e6f1e0ef8c75ef2f98ddd",
+      "bytes": 370
+    },
+    {
+      "path": "v0.7-审核决策与差异清单.md",
+      "sha256": "798f640b6986d567321317330d64857cb586e5a2b95cf0c502a656edb4d025d1",
+      "bytes": 6555
+    },
+    {
+      "path": "v0.7-审核收口与批准记录.md",
+      "sha256": "89ed23d62d905363d233811a3f8dce2d0bc9fd802bdb12df23eadc20e0f4893b",
+      "bytes": 5007
+    }
+  ]
+}
