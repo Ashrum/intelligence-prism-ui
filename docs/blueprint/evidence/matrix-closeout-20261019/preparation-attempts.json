@@ -1,0 +1,19 @@
+{
+  "attempts": [
+    {
+      "command": "python3 - (inline documentation writer)",
+      "exitCode": 1,
+      "stderr": "SyntaxError: Non-UTF-8 code starting with '\\xe8' in file <stdin> on line 8, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details",
+      "impact": "文档写入未开始；不是产品或浏览器失败",
+      "resolution": "改用 Node 写入 route-index.md 与 STATUS.md"
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+      "exitCode": 1,
+      "evidence": "validation-error.json",
+      "impact": "上述文档尚未写入导致历史保留断言失败",
+      "resolution": "文档写入后修正审计内 scope.diff 的生成顺序并重跑，最终结果见 validation.json"
+    }
+  ],
+  "browserAttempts": 0
+}

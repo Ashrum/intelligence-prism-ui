@@ -1,0 +1,62 @@
+{'可自动化': 59, '需目检': 18, '不适用或已被其他项覆盖': 72}
+P73 7 | URL / 区域 | 操作路径 | 应看到的内容或状态 |
+P73 8 | --- | --- | --- |
+P74 9 | 操作路径 | 预期与需记录事项 |
+P74 10 | --- | --- |
+P75 9 1. 五主题 `light / paper / dark / blueprint / blueprint-night` × 视口宽度 **1280 / 320**，记录实际 viewport 宽高。
+P78 7 - URL：`http://127.0.0.1:5173/next/components/agent-components/agent-message`（使用 Supervisor 确认的当前工作树服务；若端口不同，替换 origin）。
+P78 8 - 主题：`light` / `paper` / `dark` / `blueprint` / `blueprint-night`。
+P78 9 - 视口：每主题均检查 1280×900、320×900，共 10 个情景；记录实际尺寸、提交/工作树、截图与计算样式。
+P79 5 - URL：`http://localhost:5173/next/foundations/blueprint#object-section-cards`，以 Supervisor 当前服务端口为准；基线 `8270cce` + P79 工作树。
+P85/P85b/P85c 20 - 记录真实主题、视口宽高、路由、操作、看到的文案和截图；不要把本文件、源码探针或旧截图写成当前浏览器已通过。
+首批 7 - `before.json`: existing 12 component pages before this change, all HTTP 200 at 1280px.
+首批 17 - Math font integrity, typography (307 owned TSX), TypeScript and vinext production build passed.
+首批 18 - Initial full suite: 1949 total / 1686 passed / 263 failed / 0 skipped. Compared with the immediately preceding ruler baseline, exactly two additiona
+首批 19 - Initial Blueprint suite: 39 total / 37 passed / 2 generated-guide failures. Final results are recorded after guide synchronization below.
+首批 20 - Frozen coss sources, core theme tokens and dependencies have no changes.
+第二批 7 - 复用既有 InputGroup、Combobox、ToggleGroup、Progress、Menu、Popover、Tooltip、Toast、AlertDialog、Sheet、Skeleton、Empty；新夹具仍属于蓝图示例页，不新增组件目录项或业务能力。
+第二批 11 - 不修改冻结 coss、核心三主题色值、依赖、组件目录、品牌原色或业务源码。配色语义原位记入现有规范。
+第二批 17 | 范围 | 结果与证据 |
+第二批 18 | --- | --- |
+第二批 33 - 蓝图 / 320×960：[完整组合焦点](../../screens/batch2-20261016/blueprint-320-input-group-focus.png)。
+第二批 34 - 蓝图 / 1280×960：[输入与进度](../../screens/batch2-20261016/blueprint-1280-inputs.png)、[菜单与反馈](../../screens/batch2-20261016/blueprint-1280-menus-and-feedba
+第二批 35 - 蓝图 / 1280×960：[Combobox](../../screens/batch2-20261016/global-blueprint-1280-combobox.png)、[Toast](../../screens/batch2-20261016/global-blueprint-12
+第二批 36 - 蓝图 / 320×960：[AlertDialog](../../screens/batch2-20261016/global-blueprint-320-alertDialog.png)、[Sheet](../../screens/batch2-20261016/global-blueprin
+第二批 37 - 1280×960 双向预览：[蓝图内深色 Combobox](../../screens/batch2-20261016/global-blueprint-local-dark-1280-combobox.png)、[深色内蓝图 Popover](../../screens/batch2-202
+第二批 41 - `node scripts/check-math-font.mjs`：通过。
+第二批 42 - `node scripts/check-typography.mjs`：308 个 owned TSX，通过。
+第二批 43 - `node node_modules/vinext/dist/cli.js build`：运行时代码最后修订后通过。
+第二批 44 - `node node_modules/typescript/bin/tsc --noEmit --incremental false`：运行时代码最后修订后通过。
+第二批 45 - Blueprint 专项最终 39/39 通过（包含 6 项 guide 检查）。
+第二批 46 - 全量：文档生成完成后重新构建并复跑，最终 1949 项 / 1688 通过 / 261 既有失败，[最终失败集合对照](complete-failure-delta.json) 的 `new=[]`、`removed=[]`。中间一次曾为 263 失败，其中两项为文档生成物未同步（内容与资产 h
+第二批 47 - 独立 Reviewer 已复核源码、真实预览边界及冻结范围：源码 PASS。六组矩阵随后全部通过；最终文档和工程检查完成后按同一 main 提交同步 GitHub 与 Site。正式结论见 [独立审查](review.md)。
+编辑式排版与字体 3 - 日期：2026-10-16（Asia/Taipei）；基线 `9b5ac0c389abb5fb232b0356a920a60706d86e27`，Site v123。
+编辑式排版与字体 4 - 节奏：新周期第 1/3 轮。用户批准每轮定向检查，第 3 个完成小轮进行完整回归与独立综合审查；本轮未运行全量工程测试或上轮组件交互矩阵。
+编辑式排版与字体 5 - 改动：复用 `BlueprintSheet`、`BpMinor`、`BpFigCap`，提炼独立章节 Header 并应用两批常用组件展示；本地托管真实 Geist Mono 子集。冻结 coss、依赖和核心主题令牌值未改。
+编辑式排版与字体 9 - [Builder 工程记录](engineering.json)：TypeScript 0 错误；Typography 308 文件；现有组件/API 定向测试 10/10；两份 WOFF2、许可、manifest 检查通过；固定 Python / fontTools / Brotli 的 `-
+编辑式排版与字体 14 - 已修复首次字体 CSS 二层导入造成的开发页 500；改为 `theme.css` 同级导入并重启唯一开发服务后恢复 200。脚本增加等待交互初始化，排除 SSR 阶段提前点击导致的自动化超时；最终结果来自修复后的页面。
+编辑式排版与字体 18 - [桌面原图纸标题](../../screens/editorial-20261016/blueprint-1280-actions.png)
+编辑式排版与字体 19 - [窄屏原图纸标题](../../screens/editorial-20261016/blueprint-320-actions.png)
+编辑式排版与字体 20 - [桌面第二批章节](../../screens/editorial-20261016/blueprint-1280-second-batch.png)
+编辑式排版与字体 21 - [窄屏第二批章节](../../screens/editorial-20261016/blueprint-320-second-batch.png)
+编辑式排版与字体 22 - [字体加载失败回退](../../screens/editorial-20261016/blueprint-320-fallback.png)
+夜图 3 - 日期：2026-10-16。实施基线：main 773724595ab36d0574252da8503821d93eb9c6a1（含警告色 PR #194）；分支 feat/blueprint-night。
+夜图 4 - 来源：本机交接 bpv9-wip-20261016.patch，SHA-256 cf598cb902e8267e37313bd48e9adcdc6b14d1e90fbd5598eb6014140fa2ee5e。原 stash d94d5ab650569302c6c1cc8e473ecc410e1
+夜图 5 - 原补丁在最新 main 不能直接应用；逐文件适配后 git apply --check 通过再应用。保留 main 的通用组件、字体、警告色与 P69 核心深色色板；未导入旧 STATUS 或旧 evidence/v9。
+夜图 6 - 夜图回退与已知限制以 docs/blueprint-theme.md 的夜图恢复段为准。核心三主题及白图 CSS 令牌使用本轮基线独立散列锁定；冻结 coss 与依赖不变。
+夜图 32 | 文件 | 路由 |
+夜图 33 | --- | --- |
+夜图 34 | [blueprint-1280-components.jpg](../../screens/night-20261016/blueprint-1280-components.jpg) | `/next/foundations/blueprint` |
+夜图 35 | [blueprint-320-components.jpg](../../screens/night-20261016/blueprint-320-components.jpg) | `/next/foundations/blueprint` |
+夜图 36 | [blueprint-night-1280-components.jpg](../../screens/night-20261016/blueprint-night-1280-components.jpg) | `/next/foundations/blueprint` |
+夜图 37 | [blueprint-night-1280-controls.jpg](../../screens/night-20261016/blueprint-night-1280-controls.jpg) | `/next/foundations/blueprint` |
+夜图 38 | [blueprint-night-1280-danger.jpg](../../screens/night-20261016/blueprint-night-1280-danger.jpg) | `/next/foundations/blueprint` |
+夜图 40 | [blueprint-night-1280-nested.jpg](../../screens/night-20261016/blueprint-night-1280-nested.jpg) | `/next/foundations` |
+夜图 42 | [blueprint-night-320-components.jpg](../../screens/night-20261016/blueprint-night-320-components.jpg) | `/next/foundations/blueprint` |
+夜图 43 | [blueprint-night-320-dialog.jpg](../../screens/night-20261016/blueprint-night-320-dialog.jpg) | `/next/foundations/blueprint` |
+夜图 46 | [dark-1280-components.jpg](../../screens/night-20261016/dark-1280-components.jpg) | `/next/foundations/blueprint` |
+夜图 47 | [dark-320-components.jpg](../../screens/night-20261016/dark-320-components.jpg) | `/next/foundations/blueprint` |
+夜图 48 | [light-1280-components.jpg](../../screens/night-20261016/light-1280-components.jpg) | `/next/foundations/blueprint` |
+夜图 49 | [light-320-components.jpg](../../screens/night-20261016/light-320-components.jpg) | `/next/foundations/blueprint` |
+夜图 50 | [paper-1280-components.jpg](../../screens/night-20261016/paper-1280-components.jpg) | `/next/foundations/blueprint` |
+夜图 51 | [paper-320-components.jpg](../../screens/night-20261016/paper-320-components.jpg) | `/next/foundations/blueprint` |

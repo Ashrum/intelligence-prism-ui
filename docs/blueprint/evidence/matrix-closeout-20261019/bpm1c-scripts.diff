@@ -1,0 +1,1424 @@
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs
+@@ -4,9 +4,13 @@
+ import path from 'node:path';
+ import assert from 'node:assert/strict';
+ import {screenshotName, contrastPolicy, waitForStableElements} from './measurement-utils.mjs';
++import {legacyProbes, hiddenNode} from './legacy-probes.mjs';
++import {roundProbes} from './round-probes.mjs';
++import {checklistRows, manualMarkdown, representative} from './plan-utils.mjs';
+ const dir = path.dirname(fileURLToPath(import.meta.url));
+ const root = path.resolve(dir, '../../../..');
+ const manifest = JSON.parse(await readFile(path.join(dir,'manifest.json'),'utf8'));
++const classification=JSON.parse(await readFile(path.join(dir,'checklist-classification.json'),'utf8'));
+ const base = process.env.BPM1_BASE_URL || 'http://localhost:5173';
+ if (!['localhost','127.0.0.1'].includes(new URL(base).hostname)) throw Error('Only the existing local review service is supported.');
+ const mode = process.argv.includes('--plan') ? 'plan' : process.argv.includes('--run') ? 'run' : null;
+@@ -48,18 +52,22 @@
+  }
+  for(const [id,name,slot,scope,activation,parent] of overlays) add('interactions',`overlay-${theme}-${width}-${id}`,`真实浮层 / ${id}`,theme,width,scope==='#portal-scope'?'/next/components/menu':foundation,{recipe:{name,slot,scope,activation,parent}});
+  for(const probe of ['common-controls','cards-folio','prompt-states','mark-motion','toast-queues']) add('interactions',`${probe}-${theme}-${width}`,probe,theme,width,probe==='prompt-states'?prompt:probe==='mark-motion'?'/next/components/agent-components/agent-mark':foundation,{probe});
+- for(const obligation of manifest.legacy) add('interactions',`legacy-${theme}-${width}-${obligation.id}`,`累计旧项：${obligation.name}`,theme,width,foundation,{source:obligation.source,criteria:'须对当前基线逐项复验；通用探针不能自动核销这一旧项。'});
++ for(const obligation of manifest.legacy) add('interactions',`legacy-${theme}-${width}-${obligation.id}`,`累计旧项：${obligation.name}`,theme,width,foundation,{source:obligation.source,legacyProbe:obligation.id,captureKey:`legacy-${obligation.id}`,criteria:obligation.name});
+  for(const inner of manifest.themes) add('isolation',`isolation-${theme}-${inner}-${width}`,`嵌套 ${inner} 根/后代/伪元素与同主题外层对照`,theme,width,'/next/foundations',{innerTheme:inner});
+- for(const round of manifest.rounds) add('per-round',`round-${round.name}-${theme}-${width}`,`${round.name} 原清单逐项验收`,theme,width,round.routes[0],{routes:round.routes,sources:round.sources,criteria:'按 manifest 中原文行号逐项执行；本行只有 Supervisor 完成整份清单后可核销。'});
++
+  for(const probe of ['contrast','facts','object-spacing','font']) add('per-round',`${probe}-${theme}-${width}`,probe,theme,width,foundation,{probe});
+ }
++result['per-round'].push(...checklistRows(classification,manifest));
++for(const row of result.interactions.filter(r=>r.legacyProbe))assert.equal(typeof legacyProbes[row.legacyProbe],'function',row.legacyProbe);
++for(const row of result['per-round'].filter(r=>r.roundProbe))assert.equal(typeof roundProbes[row.roundProbe],'function',row.roundProbe);
+ async function save() {
+  for(const [key,rows] of Object.entries(result)) {
+   if(mode==='run' && group!=='all' && key!==group) continue;
+   const summary=Object.fromEntries(['pass','fail','error','unstable',pending,'pending-visual','known-limitation','observed'].map(s=>[s,rows.filter(r=>r.status===s).length]));
+-  await writeFile(path.join(dir,`${key}.json`),JSON.stringify({schemaVersion:1,baseline:manifest.baseline,generatedAt:new Date().toISOString(),execution:mode==='plan'?'not-run':group,summary,results:rows},null,2)+'\n');
+- }
+- if(mode==='run') await writeFile(path.join(dir,`screenshots-${group}.json`),JSON.stringify(shots,null,2)+'\n');
++  await writeFile(path.join(dir,`${key}.json`),JSON.stringify({schemaVersion:2,baseline:manifest.baseline,generatedAt:new Date().toISOString(),execution:mode==='plan'?'not-run':group,summary,results:rows},null,2)+'\n');
++ }
++ if(mode==='run' && ['all','per-round'].includes(group))await writeFile(path.join(dir,'manual-review.md'),manualMarkdown(result['per-round'],manifest.baseline));
++ if(mode==='run'){for(const key of (group==='all'?Object.keys(result):[group])){const files=new Set(result[key].flatMap(r=>r.screenshots));await writeFile(path.join(dir,`screenshots-${key}.json`),JSON.stringify(shots.filter(s=>files.has(s.file)),null,2)+'\n');}}
+ }
+ if(mode==='plan') {
+  // Offline planning is read-only once evidence exists: never erase a Supervisor run.
+@@ -68,7 +76,9 @@
+   let previous; try { previous=JSON.parse(await readFile(path.join(dir,`${key}.json`),'utf8')); } catch(e) { if(e.code!=='ENOENT') throw e; }
+   if(previous && previous.execution!=='not-run') preserved.push(key);
+  }
+- if(!preserved.length) await save();
++ await writeFile(path.join(dir,'plan.json'),JSON.stringify({schemaVersion:2,baseline:manifest.baseline,browserLaunched:false,counts:Object.fromEntries(Object.entries(result).map(([k,v])=>[k,v.length])),classificationCounts:classification.counts,results:result},null,2)+'\n');
++ let actual;try{actual=JSON.parse(await readFile(path.join(dir,'per-round.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
++ if(actual?.schemaVersion!==2)await writeFile(path.join(dir,'manual-review.md'),manualMarkdown(result['per-round'],manifest.baseline));
+  console.log(JSON.stringify({mode:'plan',browserLaunched:false,evidencePreserved:preserved,counts:Object.fromEntries(Object.entries(result).map(([k,v])=>[k,v.length]))})); process.exit(0);
+ }
+ for(const key of Object.keys(result)) {
+@@ -85,8 +95,8 @@
+  const trigger=page.getByRole('combobox',{name,exact:true});
+  await trigger.click(); await page.getByRole('option',{name:value,exact:true}).click();
+ }
+-async function open(theme,width,route,{reduce='no-preference',blockFont=false}={}) {
+- const context=await browser.newContext({viewport:{width,height:manifest.height},deviceScaleFactor:1,reducedMotion:reduce});
++async function open(theme,width,route,{reduce='no-preference',blockFont=false,hasTouch=false}={}) {
++ const context=await browser.newContext({viewport:{width,height:manifest.height},deviceScaleFactor:1,reducedMotion:reduce,hasTouch});
+  await context.addInitScript(t=>localStorage.setItem('prism-v1-theme',t),theme);
+  if(blockFont) await context.route('**/fonts/blueprint/*.woff2',r=>r.abort());
+  const page=await context.newPage(); page.setDefaultTimeout(10000);
+@@ -109,8 +119,11 @@
+  } catch(e) { await context.close(); throw e; }
+ }
+ async function capture(page,row,suffix='') {
++ if((row.legacyProbe||row.roundProbe||row.visual||row.probe==='font'||row.probe==='facts'||row.probe==='object-spacing')&&!representative(row.theme,row.viewport.width))return;
++ // Each captured state gets a readable unique filename; no row silently overwrites another.
++ if(row.visual&&row.selector&&await page.locator(row.selector).count()&&!await page.locator('[data-slot$="popup"]:visible').count())await page.locator(row.selector).first().scrollIntoViewIfNeeded().catch(()=>{});
+  const file=screenshotName(row,suffix);
+- await page.screenshot({path:path.join(screenDir,file),fullPage:true,timeout:30000});
++ await page.screenshot({path:path.join(screenDir,file),fullPage:!row.visual,timeout:30000});
+  const relative=`docs/blueprint/screens/matrix-closeout-20261019/${file}`;
+  row.screenshots.push(relative); shots.push({file:relative,theme:row.theme,viewport:row.viewport,route:row.route,date:new Date().toISOString(),baseline:manifest.baseline});
+ }
+@@ -118,7 +131,9 @@
+  let session;
+  try {
+   session=await open(row.theme,row.viewport.width,row.route);
++  row.diagnostics=[];session.page.on('pageerror',e=>row.diagnostics.push({type:'pageerror',text:String(e)}));session.page.on('console',m=>{if(m.type()==='error')row.diagnostics.push({type:'console-error',text:m.text()});});
+   row.measured=await fn(session.page,row);
++  assert.equal(row.diagnostics.filter(x=>x.type==='pageerror').length,0,'uncaught browser errors');
+   if(row.pass===null && row.status===pending) { row.pass=true; row.status='pass'; }
+   await capture(session.page,row);
+   if(row.id.startsWith('layout-')) result.matrix.find(r=>r.id===row.id.replace('layout-','reading-')).screenshots=[...row.screenshots];
+@@ -198,12 +213,12 @@
+  assert.equal(measurement.theme,row.theme,'Portal effective theme');
+  assert.ok(measurement.rect.left>=-1 && measurement.rect.right<=measurement.viewport.width+1,'Popup horizontal bounds');
+  assert.ok(measurement.rect.top>=-1 && measurement.rect.bottom<=measurement.viewport.height+1,'Popup vertical bounds');
+- await page.keyboard.press('Escape');await popupElement.waitForElementState('hidden');
++ await page.keyboard.press('Escape');await hiddenNode(page,popupElement);
+  measurement.returned=await focusReturned(page,trigger);
+  if(r.activation==='submenu') {
+   measurement.firstEscape={submenuClosed:true,parentOpen:await parentPopup.isVisible(),returnedToSubmenuTrigger:measurement.returned};
+   assert.ok(measurement.firstEscape.parentOpen,'First Escape keeps parent menu open');
+-  await page.keyboard.press('Escape');await parentPopup.waitForElementState('hidden');
++  await page.keyboard.press('Escape');await hiddenNode(page,parentPopup);
+   measurement.secondEscape={parentClosed:true,returnedToOriginalTrigger:await focusReturned(page,parentTrigger)};
+   assert.ok(measurement.secondEscape.returnedToOriginalTrigger,'Second Escape returns to original trigger');
+  }
+@@ -341,6 +356,8 @@
+  const fallback=await open(row.theme,row.viewport.width,foundation,{blockFont:true});
+  try {
+   const values=await fallback.page.evaluate(()=>({fonts:[...document.fonts].filter(f=>f.family.includes('Geist')).map(f=>({family:f.family,status:f.status})),html:{clientWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth}}));
++  assert.equal(values.html.scrollWidth,values.html.clientWidth,'font fallback overflow');
++  if(['blueprint','blueprint-night'].includes(row.theme)){assert.ok(loaded.some(f=>f.status==='loaded'),'Geist loaded');assert.ok(values.fonts.some(f=>f.status==='error'),'blocked font failed as intended');}
+   await capture(fallback.page,row,'-font-blocked');
+   return {loaded,fallback:values,judgment:'observed；实际字形命中需 Chrome Fonts/CDP 复核；截图目检缺字和回退布局。'};
+  }finally{await fallback.context.close();}
+@@ -351,6 +368,8 @@
+   if(group!=='all'&&group!==category)continue;
+   for(const row of result[category]) {
+    if(category==='matrix'&&row.id.startsWith('layout-')) await execute(row,layout);
++   else if(row.legacyProbe)await execute(row,(page,r)=>legacyProbes[r.legacyProbe](page,r));
++   else if(row.roundProbe||row.visual)await execute(row,async(page,r)=>{const value=r.roundProbe?await roundProbes[r.roundProbe](page,r,{capture,open,styles,choose}):{state:'initial',criterion:r.criteria};if(r.visual){r.status='pending-visual';r.pass=null;}return value;});
+    else if(row.recipe) await execute(row,overlay);
+    else if(category==='isolation') await execute(row,isolation);
+    else if(row.probe) await execute(row,async(page,r)=>{
+@@ -358,7 +377,7 @@
+     const value=await funcs[r.probe](page,r);
+     r.measured=value;
+     if(r.probe==='facts'){assert.ok(value.length>0);assert.ok(value.every(x=>x.pass),'fact grid counts/overflow');}
+-    if(['object-spacing','font'].includes(r.probe))r.status='observed';
++    if(r.probe==='object-spacing')r.status='observed';
+     return value;
+    });
+   }
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs
+@@ -2,9 +2,9 @@
+ export function screenshotName(row, suffix = '') {
+  const parts = row.route.split('#')[0].split('/').filter(Boolean);
+  const short = parts.at(-1) === 'blueprint' ? parts.slice(-2).join('-') : parts.at(-1);
+- const content = row.id.startsWith('layout-') ? ''
++ const content = row.captureKey || (row.id.startsWith('layout-') ? ''
+   : row.innerTheme ? `isolation-${row.innerTheme}`
+-  : row.probe || row.id.replace(`overlay-${row.theme}-${row.viewport.width}-`, '');
++  : row.probe || row.id.replace(`overlay-${row.theme}-${row.viewport.width}-`, ''));
+  return `${row.theme}-${row.viewport.width}-${short}${content ? '-'+content : ''}${suffix}.png`;
+ }
+ 
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
+@@ -7,6 +7,9 @@
+ import assert from 'node:assert/strict';
+ import {gunzipSync} from 'node:zlib';
+ import {screenshotName} from './measurement-utils.mjs';
++import {legacyProbes} from './legacy-probes.mjs';
++import {roundProbes} from './round-probes.mjs';
++import {checklistRows,representative} from './plan-utils.mjs';
+ const dir=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(dir,'../../../..');
+ const relative=path.relative(root,dir),read=p=>readFile(path.join(root,p),'utf8');
+ const sha=s=>createHash('sha256').update(s).digest('hex');
+@@ -14,10 +17,11 @@
+ function command(args){const startedAt=new Date().toISOString();const r=spawnSync(args[0],args.slice(1),{cwd:root,encoding:'utf8'});commands.push({command:args.join(' '),startedAt,exitCode:r.status,stdout:r.stdout,stderr:r.stderr});assert.equal(r.status,0,args.join(' '));}
+ async function check(name,fn){const detail=await fn();checks.push({name,pass:true,detail:detail??null});}
+ try{
+-for(const script of ['prepare.mjs','measure.mjs','measurement-utils.mjs','rename-screenshots.mjs','offline-audit.mjs','validate.mjs'])command(['node','--check',`${relative}/${script}`]);
++for(const script of ['prepare.mjs','measure.mjs','measurement-utils.mjs','rename-screenshots.mjs','offline-audit.mjs','legacy-probes.mjs','round-probes.mjs','plan-utils.mjs','validate-fixture.mjs','validate.mjs'])command(['node','--check',`${relative}/${script}`]);
+ const evidenceNames=['matrix','interactions','isolation','per-round'].flatMap(g=>[`${g}.json`,`screenshots-${g}.json`]);
+ const beforePlan=await Promise.all(evidenceNames.map(async name=>sha(await read(`${relative}/${name}`))));
+ command(['node',`${relative}/offline-audit.mjs`]);
++command(['node',`${relative}/validate-fixture.mjs`]);
+ command(['node',`${relative}/measure.mjs`,'--plan']);
+ command(['git','diff','--check']);
+ await check('offline plan preserves all browser evidence bytes',async()=>{const afterPlan=await Promise.all(evidenceNames.map(async name=>sha(await read(`${relative}/${name}`))));assert.deepEqual(afterPlan,beforePlan);return evidenceNames.length;});
+@@ -46,7 +50,31 @@
+  assert.equal(totals.matrix,m.routes.length*m.themes.length*m.widths.length*2);
+  assert.equal(totals.isolation,m.themes.length**2*m.widths.length);
+  assert.equal(totals.interactions,(17+5+m.legacy.length)*15);
+- assert.equal(totals['per-round'],(m.rounds.length+4)*15);return {totals,summaries};
++ const perRound=JSON.parse(await read(`${relative}/per-round.json`));const catalog=JSON.parse(await read(`${relative}/checklist-classification.json`));assert.equal(totals['per-round'],perRound.schemaVersion===2?checklistRows(catalog,m).length+4*15:(m.rounds.length+4)*15);return {totals,summaries};
++});
++await check('78 historical obligations have distinct executable registry entries and 15 plan combinations',async()=>{
++ const plan=JSON.parse(await read(`${relative}/plan.json`));
++ assert.deepEqual(Object.keys(legacyProbes).sort(),m.legacy.map(x=>x.id).sort());
++ for(const obligation of m.legacy){assert.equal(typeof legacyProbes[obligation.id],'function');const rows=plan.results.interactions.filter(r=>r.legacyProbe===obligation.id);assert.equal(rows.length,15);assert.ok(rows.every(r=>r.source===obligation.source&&r.criteria===obligation.name&&r.pass===null&&r.measured===null));assert.equal(new Set(rows.map(r=>r.theme+'-'+r.viewport.width)).size,15);}
++ return {legacyFunctions:Object.keys(legacyProbes).length,plannedRows:1170,browserRun:false};
++});
++await check('17 checklists have complete source line ledger and all automatic probes resolve',async()=>{
++ const c=JSON.parse(await read(`${relative}/checklist-classification.json`));assert.equal(c.baseline,m.baseline);const ids=new Set();
++ for(const item of c.items){assert.ok(!ids.has(item.id));ids.add(item.id);assert.ok(item.criterion);const source=(await read(item.source)).split('\n');for(const [i,line]of item.lines.entries())assert.equal(source[line-1],item.original[i]);if(item.category==='可自动化'||item.probe)assert.equal(typeof roundProbes[item.probe],'function',item.probe);else assert.ok(['需目检','不适用或已被其他项覆盖'].includes(item.category));}
++ for(const round of m.rounds){assert.ok(c.items.some(i=>i.round===round.name));for(const line of round.checklist)assert.ok(c.items.some(i=>i.round===round.name&&i.lines.includes(line.line))||c.sourceContext.some(i=>i.round===round.name&&i.line===line.line&&i.text===line.text),round.name+':'+line.line);}
++ for(const [name,count]of Object.entries(c.counts))assert.equal(count,c.items.filter(i=>i.category===name).length);
++ return {rounds:m.rounds.length,obligations:c.items.length,counts:c.counts,contextLines:c.sourceContext.length,roundFunctions:Object.keys(roundProbes).length};
++});
++await check('new per-round plan is atomic; 90 manual rows only use five representative combinations',async()=>{
++ const c=JSON.parse(await read(`${relative}/checklist-classification.json`)),plan=JSON.parse(await read(`${relative}/plan.json`));const rows=checklistRows(c,m);assert.deepEqual(plan.results['per-round'].filter(r=>r.checklistId),rows);
++ const visual=rows.filter(r=>r.visual);assert.equal(visual.length,c.counts['需目检']*5);assert.ok(visual.every(r=>representative(r.theme,r.viewport.width)&&r.pass===null&&r.status==='pending-visual'));
++ assert.ok(!rows.some(r=>r.id.startsWith('round-')));const shots=rows.map(r=>screenshotName(r));assert.equal(new Set(shots).size,shots.length);assert.equal((await read(`${relative}/manual-review.md`)).match(/^- \[ \]/gm).length,visual.length);
++ return {automatic:rows.filter(r=>!r.visual).length,visual:visual.length,coveredOrNotApplicable:c.counts['不适用或已被其他项覆盖'],screenshotNamesUnique:shots.length};
++});
++await check('BPM1b Supervisor run archived and not promoted to current passes',async()=>{
++ const archive=JSON.parse(gunzipSync(await readFile(path.join(dir,'bpm1b-supervisor-run.json.gz'))));assert.equal(archive.files['interactions.json'].summary.error,15);assert.equal(archive.files['interactions.json'].summary['pending-supervisor-browser'],1170);assert.equal(archive.files['per-round.json'].summary['pending-supervisor-browser'],255);
++ const data=JSON.parse(await read(`${relative}/interactions.json`));if(data.schemaVersion!==2)for(const name of evidenceNames)assert.equal(sha(await read(`${relative}/${name}`)),archive.sha256[name],name);
++ return {archivedError:15,archivedPending:1425,existingRunPreserved:data.schemaVersion!==2};
+ });
+ await check('645 renamed PNG bytes match original hashes and all screenshot references resolve',async()=>{
+  const migration=JSON.parse(await read(`${relative}/screenshot-renames.json`));assert.equal(migration.entries.length,645);
+@@ -77,12 +105,13 @@
+  }
+  return {files:Object.keys(archive.files).length,sha256:sha(await readFile(path.join(dir,'first-browser-run.json.gz')))};
+ });
++await check('BPM1b current preserved verbatim',async()=>{const before=await read(`${relative}/bpm1c-before-status.txt`);const now=await read('docs/blueprint/STATUS.md');assert.ok(now.includes('### BPM1b · 2026-10-19（BPM1c 前当前，原样保留）\n'+before.split('## 当前\n')[1].split('## 历史\n')[0]));});
+ await check('BPM1 current preserved verbatim',async()=>{const before=await read(`${relative}/bpm1b-before-status.txt`);const now=await read('docs/blueprint/STATUS.md');assert.ok(now.includes('### BPM1 · 2026-10-19（BPM1b 前当前，原样保留）\n'+before.split('## 当前\n')[1].split('## 历史\n')[0]));});
+ await check('old current moved verbatim; earlier history unchanged',async()=>{const old=execFileSync('git',['show','HEAD:docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'});const now=await read('docs/blueprint/STATUS.md');const current=old.split('## 当前\n')[1].split('## 历史\n')[0];assert.ok(now.includes('### P85c · 2026-10-18（BPM1 前当前，原样保留）\n'+current));assert.ok(now.endsWith(old.split('## 历史\n')[1]));return {oldCurrentSha256:sha(current)};});
+ await check('only authorized tracked/untracked repository paths changed',()=>{const tracked=execFileSync('git',['diff','--name-only','-z','HEAD'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);const untracked=execFileSync('git',['ls-files','--others','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);for(const p of [...tracked,...untracked])assert.ok(p==='docs/blueprint/STATUS.md'||p.startsWith(relative+'/')||p.startsWith('docs/blueprint/screens/matrix-closeout-20261019/'),p);return {tracked,untracked};});
+-await check('new repository prose has no machine-local supervisor links',async()=>{for(const p of ['docs/blueprint/STATUS.md',`${relative}/checks.md`,`${relative}/route-index.md`])assert.ok(!(await read(p)).includes('/Users/OLE/HermesWork/.supervisor/'),p);});
++await check('new repository prose has no machine-local supervisor links',async()=>{for(const p of ['docs/blueprint/STATUS.md',`${relative}/checks.md`,`${relative}/route-index.md`,`${relative}/manual-review.md`,`${relative}/classification.md`])assert.ok(!(await read(p)).includes('/Users/OLE/HermesWork/.supervisor/'),p);});
+ await writeFile(path.join(dir,'scope.diff'),execFileSync('git',['diff','--','docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'}));
+-await check('new Markdown links resolve',async()=>{let links=0;for(const f of ['checks.md','route-index.md']){const content=await read(`${relative}/${f}`);for(const match of content.matchAll(/\]\(([^)]+)\)/g)){if(/^https?:/.test(match[1]))continue;const target=path.resolve(dir,match[1].split('#')[0]);if(target.endsWith('/validation.json'))continue;await readFile(target);links++;}}return links;});
++await check('new Markdown links resolve',async()=>{let links=0;for(const f of ['checks.md','route-index.md','manual-review.md','classification.md']){const content=await read(`${relative}/${f}`);for(const match of content.matchAll(/\]\(([^)]+)\)/g)){if(/^https?:/.test(match[1]))continue;const target=path.resolve(dir,match[1].split('#')[0]);if(target.endsWith('/validation.json'))continue;await readFile(target);links++;}}return links;});
+ const patch=execFileSync('git',['diff','--','docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'});await writeFile(path.join(dir,'scope.diff'),patch);
+ const inventory=[];for(const f of (await readdir(dir)).sort()){if(f==='validation.json')continue;const bytes=await readFile(path.join(dir,f));inventory.push({path:`${relative}/${f}`,bytes:bytes.length,sha256:sha(bytes)});}
+ await writeFile(path.join(dir,'validation.json'),JSON.stringify({at:new Date().toISOString(),baseline:m.baseline,browserExecuted:false,commands,checks,summary:{pass:checks.length,fail:0},inventory,excludedSelf:'validation.json omits its own hash'},null,2)+'\n');
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/checks.md
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/checks.md
+@@ -1,3 +1,45 @@
++# BPM1c · 自动探针与目检交接
++
++本轮只测不改。Builder未运行浏览器、未启动/重启服务。新增脚本当前只完成离线验证，自动探针尚待Supervisor实跑；不能把有执行函数等同于浏览器通过。
++
++## 重跑
++
++使用Supervisor已核对工作树/分支的现有Vite开发服务，按顺序执行（不需要因本轮重跑 matrix / isolation）：
++
++```sh
++node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=interactions --replace
++node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=per-round --replace
++node docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
++```
++
++现有BPM1b结果已归档为[bpm1b-supervisor-run.json.gz](bpm1b-supervisor-run.json.gz)；重跑更多次前另行归档当前结果和分组截图索引。`--replace`明确允许覆盖对应组结果及同名截图。`BPM1_BASE_URL`可指向现有localhost/127.0.0.1端口；`BPM1_PLAYWRIGHT`可指定现有Playwright模块绝对路径。脚本不安装依赖或启动服务。
++
++`--plan`离线可用：只更新[plan.json](plan.json)及尚无schemaVersion=2实跑时的目检计划；不会导入Playwright，不会覆盖8个浏览器结果/索引文件。最终组结果记录schemaVersion=2；校验器仍识别保留的BPM1b schemaVersion=1，并分别核对两种结构。
++
++## 义务与数量
++
++- 78项历史交互逐项注册于[legacy-probes.mjs](legacy-probes.mjs)，原名/原detail逐一列在[分类表](classification.md)。没有旧项留作手工执行。5主题×3宽度为1170个自动行；原有17浮层+5组合探针为330行，interactions共1500行。
++- 17份原始来源拆成149个验收义务：**59可自动化、18需目检、72不适用或已有覆盖**。具体理由、准确来源行和原文保留在[机器账本](checklist-classification.json)。来源/历史/记录格式等非验收正文另列sourceContext，不混入149。72项不是72个通过，范围外义务仍保留原限制。
++- per-round：59×15=885自动行，18×5=90目检行，原4×15=60附加测量，共1035。原30观察中的font加入加载/回退断言；object-spacing保持observed，新增矩阵使用首个文本Range进行明确断言。
++- 目检仅blueprint与blueprint-night各320/1280，再加light/1280。执行过程生成实际截图后自动刷新[manual-review.md](manual-review.md)；截图只是证据，pass保持null且不会代勾。自动行仍全5×3执行；新增自动行截图同样限代表组合，避免给非代表组合制造额外目检任务。
++- 43路由/645布局与75隔离仍保留Supervisor实测；matrix中645项长文阅读待目检没有在本轮被自动核销。18类本轮目检是17份原始清单的精简视觉义务，并非全站645项阅读已经完成。
++
++## 断言与证据边界
++
++local-submenu通过`hiddenNode`轮询真实ElementHandle的isConnected/display/visibility/rect，接受移除或隐藏；随后必须回到子菜单入口，父菜单保持可见；第二次Esc关闭父菜单并回原入口。不等待元素stable，不重定位到仍显示的父Popup。窗口动画后的几何采样仍保留原稳定检查。
++
++旧交互每项独立全新context，从初态自行准备，不依赖前一项。字段invalid同时核查错误出现/消失、内外表面；Tabs保留coss手动激活及禁用项可焦不可激活；弹窗初始/陷阱/嵌套Esc/最终焦点分别断言。Blueprint原实测色值改为同主题当前令牌，三核心主题保留上游焦点和颜色，不强制蓝图几何。
++
++逐轮探针使用真实页面；缺少入口、字段或实际测量值一律失败/错误，不通过catch跳过。部分DOM几何/嵌套样式检查使用临时渲染副本，清楚区别于React Context或宿主接入；材料/确认只读取外部事实与演示意图。Vite临时React夹具位于[review-fixture.tsx](review-fixture.tsx)，复用既有组件及P75/P76原夹具；只在隔离页面DOM挂载，关context即移除，不注册产品路由。生产预览服务若不能提供TSX模块会明确报error，需Supervisor改用已经管理的Vite服务。
++
++CDP查询字形实际字体；reduce运行中切换、hasTouch指针模拟、CSS zoom2、print media均为模拟，不能替代真实系统IME/原生浏览器缩放、真机触控、读屏器或实体打印。历史基线像素不可由当前渲染副本重建，P77/P78已替代旧设计预期，逐项记在分类理由；夜图border和浅色系列白图案保持已知限制。
++
++## Builder实测
++
++本轮实际增量见[bpm1c-scripts.diff](bpm1c-scripts.diff)（开工备份对比与新增脚本/分类说明），STATUS累计Git差异见[scope.diff](scope.diff)。当前离线命令与退出码以[validation.json](validation.json)为准，包括脚本语法、8项既有合成审计、定向夹具类型检查、78项映射、17份来源行、代表组合、截图命名与旧证据字节保护。未执行本轮工程构建/全量测试，不沿用旧数字。初次定向类型校验未包含仓库MathML ambient声明导致诊断；校验入口已加载现有.d.ts并重新检查，未改产品源码。
++
++## BPM1b历史交接（以下原文保留，不是本轮待办）
++
+ # BPM1b · 测量脚本修正与累计矩阵执行交接
+ 
+ 日期：2026-10-19。基线 `19309411a5b936b0b06e7fd63ac8e39f03551337`；分支 `docs/blueprint-matrix-closeout`；BPM1 开工干净，BPM1b 开工已有 BPM1 文档、脚本及 Supervisor 首轮实测证据。
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs
+@@ -0,0 +1,139 @@
++// Browser functions are inert until the Supervisor calls them. One registry key per historical check.
++import assert from 'node:assert/strict';
++export const legacyProbes = {};
++const register=(batch,index,fn)=>{legacyProbes[`${batch===1?'first-interactions':'interactions'}.json-${index+1}`]=fn;};
++const role=(scope,r,name)=>scope.getByRole(r,{name,exact:true});
++const btn=(scope,name)=>role(scope,'button',name);
++const field=(scope,name)=>scope.locator('input,textarea').and(scope.getByLabel(name,{exact:true}));
++const one=page=>page.locator('#common-components');
++const two=page=>page.locator('#common-components-two');
++const sample=(scope,name)=>scope.locator(`[data-blueprint-component="${name}"]`);
++export async function poll(page,fn,arg) {await page.waitForFunction(fn,arg,{timeout:7000});}
++export async function focused(page,locator) {
++ const handle=await locator.elementHandle();assert.ok(handle);
++ await poll(page,el=>el===document.activeElement||el.contains(document.activeElement),handle);
++ return true;
++}
++export async function hiddenNode(page,handle) {
++ assert.ok(handle,'popup handle must exist');
++ // Do not use ElementHandle.waitForElementState: Base UI may remove a portal node during Esc.
++ await poll(page,el=>!el.isConnected||el.hidden||getComputedStyle(el).display==='none'||getComputedStyle(el).visibility==='hidden'||!el.getClientRects().length,handle);
++}
++export async function trap(page,popup) {
++ const observations=[];
++ const count=await popup.locator('button,input,textarea,select,a[href],[tabindex="0"]').count();
++ assert.ok(count>0,'focus trap has controls');
++ for(const key of ['Tab','Shift+Tab']) for(let i=0;i<count+3;i++) {
++  await page.keyboard.press(key);
++  const state=await popup.evaluate(el=>({inside:el.contains(document.activeElement),tag:document.activeElement?.tagName,name:document.activeElement?.getAttribute('aria-label')||document.activeElement?.textContent}));
++  observations.push({key,...state});assert.ok(state.inside,'focus escaped modal');
++ }
++ return observations;
++}
++async function disabled(locator){assert.ok(await locator.isDisabled());return {disabled:await locator.isDisabled(),value:await locator.getAttribute('aria-disabled')};}
++async function readonly(page,input){assert.ok(await input.evaluate(el=>el.readOnly));const value=await input.inputValue();await input.focus();await input.press('End');await input.press('x');assert.equal(await input.inputValue(),value);await focused(page,input);return {value,readOnly:true,focusable:true};}
++async function invalid(input,expected){assert.equal(await input.getAttribute('aria-invalid')==='true',expected);}
++async function surface(input){return input.evaluate(el=>{
++ const outer=el.closest('[data-slot="input-group"]')||el.parentElement;
++ const read=e=>{const s=getComputedStyle(e);return {outline:s.outlineStyle,outlineWidth:s.outlineWidth,outlineOffset:s.outlineOffset,shadow:s.boxShadow,border:s.borderTopColor,borderWidth:s.borderTopWidth};};
++ const token=document.createElement('span');outer.append(token);token.style.color='var(--destructive)';const destructive=getComputedStyle(token).color;token.remove();
++ return {invalid:el.getAttribute('aria-invalid'),outer:read(outer),inner:read(el),wrapper:read(el.parentElement),destructive};
++});}
++async function errorTransition(page,input,error,text){await input.fill('');await invalid(input,true);await error.waitFor({state:'visible'});await input.fill(text);await invalid(input,false);await error.waitFor({state:'hidden'});return {value:await input.inputValue(),errorCleared:true};}
++async function keyboardFocus(page,input){await input.focus();await page.keyboard.press('Tab');await page.keyboard.press('Shift+Tab');await focused(page,input);}
++const blue=row=>['blueprint','blueprint-night'].includes(row.theme);
++async function openPopup(page,trigger,slot){await trigger.click();const popup=page.locator(`[data-slot="${slot}"]:visible`).last();await popup.waitFor({state:'visible'});return popup;}
++async function closePopup(page,popup,trigger){const handle=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,trigger);return {closed:true,returned:true};}
++async function dialog(page){const trigger=btn(one(page),'打开演示对话框');const popup=await openPopup(page,trigger,'dialog-popup');return {trigger,popup,input:field(popup,'演示材料名称')};}
++async function menu(page){const trigger=btn(two(page),'打开样例菜单');return {trigger,popup:await openPopup(page,trigger,'menu-popup')};}
++async function popover(page){const trigger=btn(two(page),'编辑本页备注');const popup=await openPopup(page,trigger,'popover-popup');return {trigger,popup,input:field(popup,'演示备注')};}
++async function alert(page){const trigger=btn(two(page),'清空演示备注');return {trigger,popup:await openPopup(page,trigger,'alert-dialog-popup')};}
++async function sheet(page){const trigger=btn(two(page),'打开长内容侧面板');return {trigger,popup:await openPopup(page,trigger,'sheet-popup')};}
++async function tooltip(page){const trigger=btn(two(page),'查看字段说明');await keyboardFocus(page,trigger);const popup=page.locator('[data-slot="tooltip-popup"]:visible');await popup.waitFor({state:'visible'});return {trigger,popup};}
++async function threeToasts(page){for(const label of ['信息','成功','错误'])await btn(two(page),`${label}通知样例`).click();const items=two(page).locator('[data-slot="toast-viewport"] > [data-position]:visible');await poll(page,()=>document.querySelectorAll('#common-components-two [data-slot="toast-viewport"] > [data-position]').length===3);await two(page).locator('[data-slot="toast-viewport"]').hover();return items;}
++export async function actualContrast(locator,foreground='color',background='backgroundColor') {
++ return locator.evaluate((el,{foreground,background})=>{
++  const rgba=css=>{const c=document.createElement('canvas');c.width=c.height=1;const ctx=c.getContext('2d');ctx.fillStyle=css;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].map((v,i)=>i===3?v/255:v);};
++  const composite=(fg,bg)=>fg.slice(0,3).map((v,i)=>v*fg[3]+bg[i]*(1-fg[3])).concat(1);
++  const effective=e=>{const stack=[];for(let n=e;n;n=n.parentElement)stack.push(rgba(getComputedStyle(n).backgroundColor));return stack.reverse().reduce((bg,fg)=>composite(fg,bg),[255,255,255,1]);};
++  const s=getComputedStyle(el),bg=background==='parent'?effective(el.parentElement):effective(el),fg=composite(rgba(s[foreground]),bg);
++  const l=c=>c.slice(0,3).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
++  const x=l(fg),y=l(bg);return {foreground:s[foreground],background:bg,contrast:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
++ },{foreground,background});
++}
++register(1,0,async page=>{const names=await one(page).locator('[data-blueprint-component]').evaluateAll(es=>es.map(e=>e.dataset.blueprintComponent));assert.deepEqual(names,['Button','Input','Textarea','Select','Dialog','Checkbox','RadioGroup','Switch','Tabs','Card','Badge','Alert']);return names;});
++register(1,1,async page=>{await btn(one(page),'查看图标按钮说明').click();const text=await sample(one(page),'Button').innerText();assert.match(text,/已查看图标按钮的点击反馈/);return {text};});
++register(1,2,async page=>{const s=sample(one(page),'Button'),loading=btn(s,'处理中，固定状态演示');await disabled(btn(s,'禁用按钮'));await disabled(loading);assert.equal(await loading.getAttribute('aria-busy'),'true');return {disabled:true,busy:await loading.getAttribute('aria-busy'),text:await loading.innerText()};});
++for(const [start,label,errorText] of [[3,'材料名称 · 必填校验','请输入材料名称。'],[6,'修改理由 · 必填校验','请补充修改理由。']]){
++ register(1,start,async(page,row)=>{const input=field(one(page),label);await input.fill('');await input.blur();await invalid(input,true);await one(page).getByText(errorText,{exact:true}).waitFor({state:'visible'});const value=await surface(input);row.measured=value;assert.equal(value.inner.borderWidth,'0px');if(blue(row))assert.equal(value.outer.border,value.destructive);return value;});
++ register(1,start+1,async page=>errorTransition(page,field(one(page),label),one(page).getByText(errorText,{exact:true}),'复核中文与 f(x)=x²'));
++ register(1,start+2,async(page,row)=>{const input=field(one(page),label);await input.fill('完整复核');await keyboardFocus(page,input);const value=await surface(input);row.measured=value;assert.equal(value.inner.outline,'none');assert.equal(value.inner.shadow,'none');if(blue(row)){assert.equal(value.outer.outlineWidth,'2px');assert.equal(value.outer.outline,'solid');assert.equal(value.outer.shadow,'none');}else assert.ok(value.outer.shadow!=='none'||value.outer.outline!=='none','core focus indicator');return value;});
++}
++register(1,9,async page=>{const values=[];for(const name of ['材料编号 · 只读','原始说明 · 只读'])values.push({name,...await readonly(page,field(one(page),name))});return values;});
++register(1,10,async page=>{const out=[];for(const name of ['归档名称 · 禁用','归档说明 · 禁用'])out.push({name,...await disabled(field(one(page),name))});out.push(await disabled(role(one(page),'combobox','归档类型 · 禁用')));return out;});
++register(1,11,async page=>{await role(one(page),'combobox','材料类型').click();const item=role(page,'option','已归档材料（不可选）');await item.waitFor({state:'visible'});await disabled(item);return {text:await item.innerText(),disabled:true};});
++register(1,12,async page=>{const trigger=role(one(page),'combobox','用途 · 必填校验');await invalid(trigger,true);await trigger.focus();await trigger.press('ArrowDown');await page.locator('[data-slot="select-popup"]:visible').waitFor();await page.keyboard.press('Home');await page.keyboard.press('Enter');await invalid(trigger,false);await one(page).getByText('请选择一种用途。',{exact:true}).waitFor({state:'hidden'});assert.match(await trigger.innerText(),/例题讲解/);return {text:await trigger.innerText(),invalid:false};});
++register(1,13,async page=>{const trigger=role(one(page),'combobox','材料类型');return closePopup(page,await openPopup(page,trigger,'select-popup'),trigger);});
++register(1,14,async page=>{const control=role(one(page),'checkbox','将完整公式推导加入本页预览');await control.focus();await control.press('Space');assert.equal(await control.getAttribute('aria-checked'),'true');await control.press('Space');assert.equal(await control.getAttribute('aria-checked'),'false');return {afterSpace:true,afterSecondSpace:false};});
++for(const [index,skip]of [[15,false],[16,true]])register(1,index,async page=>{const a=role(one(page),'radio','个人预览'),b=role(one(page),'radio','教研团队共同核对长中文题干与公式'),c=role(one(page),'radio','全校范围 · 禁用样例');await a.focus();await a.press('ArrowRight');await focused(page,b);assert.equal(await b.getAttribute('aria-checked'),'true');if(skip){await b.press('ArrowRight');await focused(page,a);assert.equal(await a.getAttribute('aria-checked'),'true');assert.equal(await c.getAttribute('aria-checked'),'false');}return {selected:await role(one(page),'radiogroup','示例材料可见范围').locator('[aria-checked="true"]').innerText(),skipped:skip};});
++register(1,17,async(page,row)=>{const sw=role(one(page),'switch','显示本页补充说明');const color=()=>sw.evaluate(e=>getComputedStyle(e).backgroundColor);const on=await color();await sw.focus();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'false');const off=await color();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'true');const ratio=await actualContrast(sw,'backgroundColor','parent');const value={on,off,ratio};row.measured=value;assert.notEqual(on,off);if(blue(row))assert.ok(ratio.contrast>=3);return value;});
++for(const [index,label,second]of [[18,'基础组件材料预览','长中文推导与复核说明'],[20,'基础组件补充信息','来源与版本记录']]){
++ register(1,index,async page=>{const list=role(one(page),'tablist',label),tabs=list.getByRole('tab');await tabs.first().focus();await tabs.first().press('ArrowRight');await focused(page,role(list,'tab',second));await page.keyboard.press('Enter');assert.equal(await role(list,'tab',second).getAttribute('aria-selected'),'true');return {label,selected:second};});
++ register(1,index+1,async page=>{const list=role(one(page),'tablist',label),tabs=list.getByRole('tab');const before=await list.locator('[aria-selected="true"]').innerText();await tabs.first().focus();await tabs.first().press('End');await page.keyboard.press('Enter');assert.ok(await tabs.last().isDisabled());assert.notEqual(await tabs.last().getAttribute('aria-selected'),'true');assert.equal(await list.locator('[aria-selected="true"]').innerText(),before);return {disabled:true,selection:before};});
++}
++register(1,22,async page=>{const {input}=await dialog(page);await focused(page,input);return {initialFocus:await input.getAttribute('id')};});
++register(1,23,async page=>{const {input,popup}=await dialog(page);await input.fill('');await btn(popup,'保存本页演示').click();await invalid(input,true);await focused(page,input);await popup.getByText('请输入演示材料名称。',{exact:true}).waitFor();return {invalid:true,focused:true};});
++register(1,24,async page=>{const {popup}=await dialog(page),trigger=role(popup,'combobox','演示材料类型');const nested=await openPopup(page,trigger,'select-popup');const closed=await closePopup(page,nested,trigger);assert.ok(await popup.isVisible());return {...closed,dialogStillOpen:true};});
++register(1,25,async page=>{const {popup,input}=await dialog(page);await focused(page,input);return trap(page,popup);});
++register(1,26,async page=>{const {popup,trigger}=await dialog(page);return closePopup(page,popup,trigger);});
++register(1,27,async page=>{const {popup,input,trigger}=await dialog(page);await input.fill('BPM1c 中文本页样例');await btn(popup,'保存本页演示').click();await popup.waitFor({state:'hidden'});await focused(page,trigger);const text=await sample(one(page),'Card').innerText();assert.match(text,/名称：BPM1c 中文本页样例/);return {text,returned:true};});
++register(1,28,async page=>{const cards=sample(one(page),'Card');assert.equal(await cards.locator('[data-slot="card"][role="button"], [data-slot="card"][tabindex="0"], button').count(),0);assert.ok(await cards.locator('[data-slot="card"]').count()>=2);return {cards:await cards.locator('[data-slot="card"]').count(),interactive:0};});
++register(1,29,async page=>{const badges=await sample(one(page),'Badge').locator('[data-slot="badge"]').allTextContents();assert.deepEqual(badges,['草稿','待确认','已通过','需补充','有错误']);assert.equal(await sample(one(page),'Alert').getByRole('note').count(),4);return {badges,alerts:4};});
++register(1,30,async(page,row)=>{const list=role(one(page),'tablist','基础组件材料预览'),tab=role(list,'tab','长中文推导与复核说明');await list.getByRole('tab').first().focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('Enter');await focused(page,tab);await poll(page,el=>{const r=el.getBoundingClientRect(),p=el.parentElement.parentElement.getBoundingClientRect();return r.left>=p.left-1&&r.right<=p.right+1;},await tab.elementHandle());const value=await tab.evaluate(el=>{const r=el.getBoundingClientRect(),p=el.parentElement.parentElement;const b=p.getBoundingClientRect();return {left:r.left,right:r.right,parentLeft:b.left,parentRight:b.right,scrollLeft:p.scrollLeft,scrollWidth:document.documentElement.scrollWidth,width:innerWidth};});row.measured=value;assert.ok(value.left>=value.parentLeft-1&&value.right<=value.parentRight+1);assert.equal(value.scrollWidth,value.width);return value;});
++register(2,0,async page=>{const names=await two(page).locator('[data-blueprint-component]').evaluateAll(es=>es.map(e=>e.dataset.blueprintComponent));assert.deepEqual(names,['InputGroup','Combobox','ToggleGroup','Progress','Menu','Popover','Tooltip','Toast','AlertDialog','Sheet','Skeleton','Empty']);return names;});
++register(2,1,async page=>{const duplicates=await page.locator('[id]').evaluateAll(es=>{const ids=es.map(e=>e.id);return [...new Set(ids.filter((id,i)=>ids.indexOf(id)!==i))];});assert.deepEqual(duplicates,[]);return {duplicates};});
++register(2,2,async page=>{const input=field(two(page),'材料关键词');await input.fill('新关键词');await btn(two(page),'清除本页关键词').click();assert.equal(await input.inputValue(),'');await focused(page,input);return {value:'',focused:true};});
++register(2,3,async page=>{await field(two(page),'材料关键词').fill('');return disabled(btn(two(page),'清除本页关键词'));});
++register(2,4,async(page,row)=>{const input=field(two(page),'起始页 · 必填校验');await input.fill('');await input.blur();await invalid(input,true);const value=await surface(input);row.measured=value;assert.equal(value.inner.borderWidth,'0px');assert.equal(value.wrapper.borderWidth,'0px');if(blue(row))assert.equal(value.outer.border,value.destructive);return value;});
++register(2,5,async page=>{const input=field(two(page),'起始页 · 必填校验'),values=[];for(const v of ['0','-1','1.5','abc',' ']){await input.fill(v);await invalid(input,true);values.push({value:v,invalid:true});}return values;});
++register(2,6,async page=>errorTransition(page,field(two(page),'起始页 · 必填校验'),two(page).getByText('请输入大于零的整数页码。',{exact:true}),'12'));
++register(2,7,async page=>({readonly:await readonly(page,field(two(page),'材料编号 · 只读')),disabled:await disabled(field(two(page),'归档关键词 · 禁用'))}));
++register(2,8,async page=>{await btn(two(page),'清除关联知识点').click();const input=role(two(page),'combobox','关联知识点');assert.equal(await input.inputValue(),'');assert.match(await sample(two(page),'Combobox').innerText(),/当前选择：尚未选择/);return {value:'',selection:'尚未选择'};});
++register(2,9,async page=>{await role(two(page),'combobox','关联知识点').fill('zzzz-no-result');await page.getByText('没有匹配的知识点。',{exact:true}).waitFor({state:'visible'});assert.equal(await page.getByRole('option').count(),0);return {query:'zzzz-no-result',options:0};});
++register(2,10,async page=>{const input=role(two(page),'combobox','关联知识点');await input.fill('平面几何');await role(page,'option','平面几何与辅助线').click();assert.equal(await input.inputValue(),'平面几何与辅助线');assert.match(await sample(two(page),'Combobox').innerText(),/当前选择：平面几何与辅助线/);return {selection:await input.inputValue()};});
++register(2,11,async page=>{const input=role(two(page),'combobox','必选知识点 · 校验');await input.fill('一元二次方程');await invalid(input,true);await two(page).getByText('请从候选项中选择知识点，仅输入文字不算选中。',{exact:true}).waitFor({state:'visible'});return {typed:await input.inputValue(),invalid:true};});
++register(2,12,async page=>{const input=role(two(page),'combobox','必选知识点 · 校验');await input.fill('平面几何');await role(page,'option','平面几何与辅助线').waitFor();await input.press('ArrowDown');await input.press('Enter');await invalid(input,false);assert.equal(await input.inputValue(),'平面几何与辅助线');await two(page).getByText('请从候选项中选择知识点，仅输入文字不算选中。',{exact:true}).waitFor({state:'hidden'});return {value:await input.inputValue(),invalid:false};});
++register(2,13,async page=>{const trigger=role(two(page),'combobox','关联知识点');await trigger.focus();await trigger.press('ArrowDown');const popup=page.locator('[data-slot="combobox-popup"]:visible');await popup.waitFor();return closePopup(page,popup,trigger);});
++register(2,14,async page=>disabled(role(two(page),'combobox','归档知识点 · 禁用')));
++register(2,15,async page=>{const s=sample(two(page),'ToggleGroup'),read=btn(s,'阅读'),review=btn(s,'复核');await read.focus();await read.press('ArrowRight');await focused(page,review);await review.press('Space');assert.equal(await review.getAttribute('aria-pressed'),'true');assert.equal(await read.getAttribute('aria-pressed'),'false');return {selected:'复核',single:true};});
++register(2,16,async page=>{const s=sample(two(page),'ToggleGroup');await btn(s,'完整推导说明').click();for(const name of ['题干条件','完整推导说明'])assert.equal(await btn(s,name).getAttribute('aria-pressed'),'true');return {selected:['题干条件','完整推导说明']};});
++register(2,17,async page=>{const out=[];for(const name of ['归档','未提供'])out.push({name,...await disabled(btn(sample(two(page),'ToggleGroup'),name))});return out;});
++register(2,18,async page=>{const values=await sample(two(page),'Progress').getByRole('progressbar').evaluateAll(es=>es.map(e=>({now:e.getAttribute('aria-valuenow'),text:e.getAttribute('aria-valuetext')})));assert.deepEqual(values,[{now:'0',text:'0%'},{now:'40',text:'40%'},{now:'100',text:'100%'},{now:null,text:'未提供进度'}]);return values;});
++register(2,19,async(page,row)=>{const fill=sample(two(page),'Progress').locator('[data-slot="progress-indicator"]').nth(1);const value=await actualContrast(fill,'backgroundColor','parent');row.measured=value;if(blue(row))assert.ok(value.contrast>=3,'fill/track >=3');else assert.ok(value.contrast>1,'core fill distinct; preserve upstream color contract');return value;});
++register(2,20,async page=>{const {popup}=await menu(page);return disabled(role(popup,'menuitem','发布材料（未接入）'));});
++register(2,21,async page=>{const {popup,trigger}=await menu(page),item=role(popup,'menuitemcheckbox','显示补充说明');assert.equal(await item.getAttribute('aria-checked'),'true');await item.click();if(!await popup.isVisible())await trigger.click();assert.equal(await role(page,'menuitemcheckbox','显示补充说明').getAttribute('aria-checked'),'false');return {before:true,after:false};});
++register(2,22,async page=>{const {popup,trigger}=await menu(page);await role(popup,'menuitemradio','紧凑摘要').click();if(!await popup.isVisible())await trigger.click();assert.equal(await role(page,'menuitemradio','紧凑摘要').getAttribute('aria-checked'),'true');assert.equal(await role(page,'menuitemradio','完整阅读').getAttribute('aria-checked'),'false');return {selection:'紧凑摘要'};});
++register(2,23,async page=>{const {popup,trigger}=await menu(page);return closePopup(page,popup,trigger);});
++register(2,24,async page=>{const {popup}=await menu(page),item=role(popup,'menuitem','查看完整的中文题干与推导说明');await item.focus();await item.press('Enter');const text=await sample(two(page),'Menu').innerText();assert.match(text,/已选择查看完整说明/);return {text};});
++register(2,25,async page=>{const {input}=await popover(page);await focused(page,input);return {initialFocus:await input.getAttribute('id')};});
++register(2,26,async page=>{const {popup,input}=await popover(page);const old=await input.inputValue();await input.fill('不保存的备注');await btn(popup,'取消备注编辑').click();await popup.waitFor({state:'hidden'});const next=await popover(page);assert.equal(await next.input.inputValue(),old);return {old,afterCancel:await next.input.inputValue()};});
++register(2,27,async page=>{const {popup,input,trigger}=await popover(page);await input.fill('BPM1c 已应用备注');await btn(popup,'应用本页备注').click();await popup.waitFor({state:'hidden'});await focused(page,trigger);assert.match(await sample(two(page),'Popover').innerText(),/本页备注：BPM1c 已应用备注/);return {value:'BPM1c 已应用备注',returned:true};});
++register(2,28,async page=>{const {trigger,popup}=await tooltip(page);const id=await popup.getAttribute('id');assert.ok((await trigger.getAttribute('aria-describedby')).split(/\s+/).includes(id));assert.equal(await popup.getAttribute('role'),'tooltip');return {id,text:await popup.innerText(),describedby:await trigger.getAttribute('aria-describedby')};});
++register(2,29,async page=>{const {trigger,popup}=await tooltip(page);await focused(page,trigger);return {visible:await popup.isVisible(),focus:true};});
++register(2,30,async page=>{const {trigger,popup}=await tooltip(page);return closePopup(page,popup,trigger);});
++register(2,31,async page=>{const items=await threeToasts(page);assert.equal(await items.count(),3);return {count:3,text:await items.allTextContents()};});
++register(2,32,async page=>{await btn(two(page),'信息通知样例').click();await btn(two(page),'关闭信息状态样例').waitFor();const values=await page.locator('[data-slot="toast-viewport"] > [data-position]').evaluateAll(es=>es.map(e=>({local:!!e.closest('#common-components-two'),text:e.textContent})));assert.equal(values.length,1);assert.ok(values.every(v=>v.local));return {count:values.length,allLocal:true,values};});
++register(2,33,async page=>{await threeToasts(page);await btn(two(page),'关闭成功状态样例').click();await btn(two(page),'关闭成功状态样例').waitFor({state:'hidden'});assert.equal(await two(page).locator('[data-slot="toast-viewport"] > [data-position]:visible').count(),2);await btn(two(page),'关闭信息状态样例').waitFor();await btn(two(page),'关闭错误状态样例').waitFor();return {remaining:['信息','错误']};});
++register(2,34,async page=>{await threeToasts(page);await btn(two(page),'关闭本页全部通知').click();await poll(page,()=>!document.querySelector('#common-components-two [data-slot="toast-viewport"] > [data-position]'));return {remaining:0};});
++register(2,35,async page=>{const {popup}=await alert(page);await focused(page,btn(popup,'保留本页备注'));return {initialFocus:'保留本页备注'};});
++register(2,36,async page=>{const {popup}=await alert(page);await focused(page,btn(popup,'保留本页备注'));return trap(page,popup);});
++register(2,37,async page=>{const old=await sample(two(page),'Popover').innerText(),{popup}=await alert(page);await btn(popup,'保留本页备注').click();await popup.waitFor({state:'hidden'});assert.equal(await sample(two(page),'Popover').innerText(),old);return {noteUnchanged:old};});
++register(2,38,async page=>{const {popup,trigger}=await alert(page);await btn(popup,'确认清空本页示例').click();await popup.waitFor({state:'hidden'});await focused(page,trigger);assert.match(await sample(two(page),'Popover').innerText(),/本页备注：空白/);return {note:'空白',returned:true};});
++register(2,39,async page=>{const {popup}=await sheet(page);await focused(page,btn(popup,'关闭长内容侧面板'));return {initialFocus:'关闭长内容侧面板'};});
++register(2,40,async page=>{const {popup,trigger}=await sheet(page);return closePopup(page,popup,trigger);});
++register(2,41,async(page,row)=>{const {popup}=await sheet(page);await focused(page,btn(popup,'关闭长内容侧面板'));const value=await popup.evaluate(el=>{const r=el.getBoundingClientRect(),p=el.querySelector('[data-slot="sheet-panel"]');const before=p.scrollTop;p.scrollTop=p.scrollHeight;return {left:r.left,right:r.right,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,panelHeight:p.clientHeight,panelScroll:p.scrollHeight,before,after:p.scrollTop};});row.measured=value;assert.ok(value.left>=-1&&value.right<=value.width+1);assert.equal(value.scrollWidth,value.width);assert.ok(value.panelScroll>value.panelHeight&&value.after>value.before);return value;});
++register(2,42,async page=>{const s=sample(two(page),'Skeleton'),busy=s.locator('[aria-label="材料内容快照"]');assert.equal(await busy.getAttribute('aria-busy'),'true');assert.equal(await busy.locator('[data-slot="skeleton"]').count(),3);return {busy:true,skeletons:3};});
++register(2,43,async page=>{await page.emulateMedia({reducedMotion:'reduce'});const animations=await sample(two(page),'Skeleton').locator('[data-slot="skeleton"]').evaluateAll(es=>es.map(e=>getComputedStyle(e).animationName));assert.equal(animations.length,3);assert.ok(animations.every(a=>a==='none'));return animations;});
++register(2,44,async page=>{const s=sample(two(page),'Skeleton');await btn(s,'显示内容快照').click();assert.equal(await s.locator('[aria-label="材料内容快照"]').getAttribute('aria-busy'),'false');assert.equal(await s.locator('[data-slot="skeleton"]').count(),0);assert.match(await s.innerText(),/固定内容样例：先核对二次项系数/);return {busy:false,text:await s.innerText()};});
++register(2,45,async page=>{const s=sample(two(page),'Empty');await btn(s,'显示固定材料样例').click();assert.match(await s.innerText(),/固定材料样例：二次方程的实数根/);return {text:await s.innerText()};});
++register(2,46,async page=>{const s=sample(two(page),'Empty');await btn(s,'显示固定材料样例').click();await btn(s,'恢复空状态样例').click();assert.match(await s.innerText(),/暂无本页演示材料/);await btn(s,'显示固定材料样例').waitFor();return {text:await s.innerText()};});
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs
+@@ -0,0 +1,240 @@
++import assert from 'node:assert/strict';
++import {waitForStableElements} from './measurement-utils.mjs';
++import {focused, hiddenNode, trap, poll, actualContrast} from './legacy-probes.mjs';
++const role=(p,r,name)=>p.getByRole(r,{name,exact:true}),button=(p,name)=>role(p,'button',name);
++const isBlue=r=>['blueprint','blueprint-night'].includes(r.theme);
++const labels={light:'浅色',paper:'暖纸',dark:'深色',blueprint:'蓝图','blueprint-night':'蓝图夜色'};
++const foundation='/next/foundations/blueprint';
++async function textareaFocus(page){await page.locator('[data-agent-prompt-bar] textarea').focus();}
++export const roundProbes={};
++async function mount(page,kind,row){
++ await page.evaluate(async({kind,theme})=>{const host=document.createElement('div');host.id='bpm-review-host';document.querySelector('main').prepend(host);const m=await import('/docs/blueprint/evidence/matrix-closeout-20261019/review-fixture.tsx');m.mount(host,kind,theme);},{kind,theme:row.theme});
++ const scope=page.locator(`[data-bpm-review="${kind}"]`);await scope.waitFor();return scope;
++}
++async function choose(page,name,value){const c=role(page,'combobox',name);await c.click();await role(page,'option',value).click();}
++async function keyboard(page,locator){await locator.focus();await locator.press('Tab');await page.keyboard.press('Shift+Tab');await focused(page,locator);}
++async function snapshot(locator){const stable=await locator.evaluateAll(waitForStableElements,{allowInfinite:true});assert.ok(stable.stable,JSON.stringify(stable));return locator.evaluateAll(es=>es.map(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {tag:e.tagName,text:e.textContent,background:s.backgroundColor,color:s.color,border:s.borderTop,borderRadius:s.borderRadius,padding:s.padding,gap:s.gap,outline:s.outline,outlineOffset:s.outlineOffset,boxShadow:s.boxShadow,font:s.font,fontSize:s.fontSize,lineHeight:s.lineHeight,width:r.width,height:r.height,left:r.left,right:r.right,top:r.top,bottom:r.bottom};}));}
++roundProbes['prompt-extra']=async(page,row,ctx)=>{
++ const records=[];
++ for(const variant of ['Rounded','Pill']){
++  await choose(page,'输入框变体',variant);await button(page,'载入草稿').click();
++  const model=page.getByRole('button',{name:/^选择模型：/});await model.click();await page.locator('[data-slot="menu-popup"]:visible').waitFor();
++  await button(page,'模型入口：显示').evaluate(el=>el.click());assert.equal(await page.getByRole('button',{name:/^选择模型：/}).count(),0);assert.equal(await page.locator('[data-slot="menu-popup"]:visible').count(),0);
++  for(const name of ['打开来源示例','打开命令示例']){await button(page,name).click();const popup=page.locator('[data-slot="popover-popup"]:visible');await popup.waitFor();const theme=await popup.evaluate(e=>e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme'));assert.equal(theme,row.theme);await textareaFocus(page);await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');records.push({variant,name,text:await page.locator('[data-agent-prompt-bar] textarea').inputValue()});}
++  await button(page,'模型入口：隐藏').click();assert.equal(await page.locator('[data-slot="menu-popup"]:visible').count(),0);
++  const textarea=page.locator('[data-agent-prompt-bar] textarea');await textarea.fill('中文草稿');await textarea.press('Shift+Enter');assert.equal(await textarea.inputValue(),'中文草稿\n');
++  await keyboard(page,button(page,'发送消息'));const styles=await snapshot(button(page,'发送消息'));if(row.theme==='blueprint'){assert.match(styles[0].outline,/solid 2px/);assert.equal(styles[0].outlineOffset,'2px');assert.equal(styles[0].boxShadow,'none');}
++  await ctx.capture(page,row,`-${variant}-focus`);records.push({variant,styles,draft:await textarea.inputValue()});
++ }
++ return records;
++};
++roundProbes['scoped-controls']=async(page,row,ctx)=>{
++ const out=[];
++ for(const outer of ['light','paper','dark']){
++  await choose(page,'外层核心主题',labels[outer]);await choose(page,'局部主题',labels[row.theme]);
++  const trigger=role(page,'combobox','局部材料类型');await trigger.focus();await trigger.press('ArrowDown');await page.keyboard.press('End');await page.keyboard.press('Enter');assert.match(await trigger.innerText(),/长中文课堂练习/);
++  const picker=role(page,'combobox','搜索班级');await picker.fill('高二');await page.getByRole('option').first().waitFor();await picker.press('ArrowDown');await picker.press('Enter');
++  const dt=button(page,'局部对话框');await dt.click();const popup=page.locator('[data-slot="dialog-popup"]:visible');await popup.waitFor();await focused(page,role(popup,'textbox','材料标题'));const focus=await trap(page,popup);
++  const inner=role(popup,'combobox','对话框材料类型');await inner.click();const sp=page.locator('[data-slot="select-popup"]:visible');await sp.waitFor();const handle=await sp.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,inner);assert.ok(await popup.isVisible());
++  const d=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,d);await focused(page,dt);
++  out.push({outer,inner:row.theme,select:await trigger.innerText(),focus});
++ }
++ return out;
++};
++roundProbes['scoped-toasts']=async(page,row)=>{
++ const out=[];
++ for(const outer of ['light','paper','dark']){
++  await choose(page,'外层核心主题',labels[outer]);await choose(page,'局部主题',labels[row.theme]);
++  for(const name of ['局部','外层','全局'])await button(page,`触发${name}通知`).click();
++  const state=()=>page.locator('[data-slot="toast-viewport"] > [data-position]').evaluateAll(es=>es.map(e=>({text:e.textContent,theme:e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme'),target:e.closest('[data-portal-scope-target]')?.getAttribute('data-portal-scope-target')})));
++  await poll(page,()=>document.querySelectorAll('[data-slot="toast-viewport"] > [data-position]').length>=3);
++  const before=await state();for(const [name,theme]of [['局部',row.theme],['外层',outer],['全局',row.theme]]){const item=before.filter(x=>x.text.startsWith(name+'通知'));assert.equal(item.length,1);assert.equal(item[0].theme,theme);}
++  await button(page,'离开局部预览').click();const after=await state();assert.ok(!after.some(x=>x.text.startsWith('局部通知')));assert.ok(after.some(x=>x.text.startsWith('外层通知'))&&after.some(x=>x.text.startsWith('全局通知')));
++  await button(page,'进入局部预览').click();assert.ok(!(await state()).some(x=>x.text.startsWith('局部通知')));await button(page,'关闭外层通知').click();
++  // Global queue has its own close control; clear only its visible items before the next outer theme.
++  await page.evaluate(async()=>{(await import('/components/coss/toast.tsx')).toastManager.close();});
++  await poll(page,()=>!document.querySelector('[data-slot="toast-viewport"] > [data-position]'));
++  out.push({outer,before,after,reenteredWithoutLocal:true});
++ }
++ return out;
++};
++roundProbes['scoped-chart']=async(page,row)=>{
++ const out=[];for(const outer of ['light','paper','dark']){await choose(page,'外层核心主题',labels[outer]);await choose(page,'局部主题',labels[row.theme]);
++ const values=await page.locator('#portal-scope svg.recharts-surface').evaluateAll(es=>es.map(e=>({theme:e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme'),fills:[...e.querySelectorAll('.recharts-bar-rectangle path')].map(p=>getComputedStyle(p).fill)})));
++ assert.equal(values.length,2);const expected={light:'rgb(30, 136, 229)',paper:'rgb(30, 136, 229)',dark:'rgb(98, 172, 237)',blueprint:'rgb(29, 95, 191)','blueprint-night':'rgb(134, 197, 255)'};
++ for(const v of values){assert.ok(v.fills.length>0);assert.equal(v.fills[0],expected[v.theme]);}assert.equal(await page.locator('html').getAttribute('data-prism-theme'),row.theme);out.push({outer,values});}return out;
++};
++roundProbes['question-details']=async(page,row,ctx)=>{
++ await choose(page,'题型样本','解答题 · 动点与矩形面积');await page.getByRole('button',{name:/详情$/}).first().click();
++ const list=page.getByRole('tablist',{name:/详情分类/}),details=page.locator('.question-detail-region:visible');
++ // Actual stable class in QuestionCard is checked below; fail on a missing surface, never skip.
++ const out=[];for(const [name,text] of [['答案与解析','参考答案'],['教学定位','核心知识点'],['题目档案','Q-M-004']]){
++  const tab=role(list,'tab',name);await tab.focus();await tab.press('Enter');assert.equal(await tab.getAttribute('aria-selected'),'true');const panel=page.getByRole('tabpanel').filter({hasText:text});await panel.waitFor();
++  const current=await snapshot(list.getByRole('tab'));assert.ok(current.every(s=>s.height>=32));out.push({name,buttons:current,panel:await panel.innerText()});await ctx.capture(page,row,`-${name}`);
++ }
++ const surface=await snapshot(details);assert.equal(surface.length,1);row.measured={out,surface};if(isBlue(row)){assert.equal(surface[0].padding,'12px');assert.equal(surface[0].borderRadius,'0px');assert.match(surface[0].border,/1px dashed/);}else assert.equal(surface[0].padding,'16px');
++ const tabs=await snapshot(list.locator('..'));assert.equal(tabs[0].gap,isBlue(row)?'12px':'20px');
++ await role(list,'tab','答案与解析').focus();await page.keyboard.press('ArrowRight');await page.keyboard.press('Space');assert.equal(await role(list,'tab','教学定位').getAttribute('aria-selected'),'true');return {out,surface,tabs};
++};
++roundProbes['question-fixture']=async(page,row,ctx)=>{
++ await page.evaluate(async()=>{const host=document.createElement('div');host.id='bpm-question';document.querySelector('main').prepend(host);(await import('/docs/blueprint/evidence/question-detail-20261016/fixture.tsx')).mount(host);});
++ const scope=page.locator('[data-p75-fixture]');await scope.waitFor();await button(scope,row.theme).click();await button(scope,'嵌套核心主题').click();
++ for(const b of await scope.getByRole('button',{name:/详情$/}).all())await b.click();
++ await page.waitForFunction(()=>[...document.querySelectorAll('#bpm-question img')].every(e=>e.complete&&e.naturalWidth>0));
++ const images=scope.getByRole('img',{name:'白底矩形 ONMP 坐标图，复用题目样本的既有图形',exact:true});const loaded=await images.evaluateAll(es=>es.map(e=>({complete:e.complete,width:e.naturalWidth})));assert.ok(loaded.length>=4&&loaded.every(x=>x.complete&&x.width>0));
++ const samples=await snapshot(scope.locator('.question-detail-region:visible'));assert.equal(samples.length,4);await ctx.capture(page,row,'-white-image');return {loaded,samples};
++};
++roundProbes['shell']=async(page,row,ctx)=>{
++ const scope=await mount(page,'shell',row);const out=[];
++ const bars=await snapshot(scope.locator('.prism-app-bar,.prism-space-bar'));assert.equal(bars.length,2);assert.ok(Math.abs(bars[0].height-56)<1&&Math.abs(bars[1].height-48)<1);out.push({bars});
++ const toggle=scope.getByRole('button',{name:/收起|打开|展开/}).first();await toggle.click();
++ if(row.viewport.width>=768){const rail=scope.locator('[data-slot="sidebar"][data-collapsible="icon"]');await rail.waitFor();const r=await snapshot(rail.locator('[data-slot="sidebar-container"]'));const buttons=await snapshot(rail.locator('[data-slot="sidebar-menu-button"]'));if(isBlue(row)){assert.equal(r.length,1);assert.ok(Math.abs(r[0].width-56)<1);assert.ok(buttons.length>0);assert.ok(buttons.every(b=>Math.abs(b.width-40)<1&&Math.abs(b.height-40)<1));}out.push({rail:r,buttons});}
++ else {const popup=page.locator('[data-slot="sheet-popup"]:visible');if(await popup.count()){await trap(page,popup);const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,toggle);}await toggle.click();}
++ await ctx.capture(page,row,'-rail');return out;
++};
++roundProbes['site-sidebar']=async(page,row)=>{
++ const trigger=page.locator('[data-slot="sidebar-trigger"]').first();await trigger.click();
++ if(row.viewport.width<768){const popup=page.locator('[data-slot="sheet-popup"]:visible');await popup.waitFor();await trap(page,popup);const handle=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,trigger);return {drawer:true,escape:true};}
++ const before=await page.locator('[data-slot="sidebar"]').first().getAttribute('data-state');await page.keyboard.press('Control+b');await poll(page,({before})=>document.querySelector('[data-slot="sidebar"]')?.getAttribute('data-state')!==before,{before});return {before,after:await page.locator('[data-slot="sidebar"]').first().getAttribute('data-state')};
++};
++roundProbes['message']=async(page,row,ctx)=>{
++ const bubble=page.locator('[data-agent-message="user"]').first(),link=role(page,'link','查看材料说明');await keyboard(page,link);const values=await snapshot(bubble),focus=await snapshot(link),contrast=await actualContrast(link);row.measured={values,focus,contrast};
++ if(isBlue(row)){assert.equal(values[0].borderRadius,'0px');assert.equal(values[0].background,row.theme==='blueprint'?'rgb(243, 245, 248)':'rgb(18, 37, 63)');assert.equal(values[0].color,row.theme==='blueprint'?'rgb(22, 24, 29)':'rgb(230, 237, 247)');assert.match(focus[0].outline,/solid 2px/);assert.equal(focus[0].outlineOffset,'2px');assert.ok(contrast.contrast>=4.5);}
++ await ctx.capture(page,row,'-link-focus');const href=await link.getAttribute('href');await link.press('Enter');assert.equal(new URL(page.url()).hash,href);assert.match(await page.locator(href).innerText(),/本页使用固定中文与公式夹具/);
++ const selected=await bubble.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);return s.toString();});assert.ok(selected.length>10);return {values,focus,contrast,href,selection:selected};
++};
++roundProbes['folio']=async(page,row,ctx)=>{
++ const s=page.locator('#artifact-folio');assert.match(await s.innerText(),/REV 02/);const hidden=await s.locator('.bp-section-folio').evaluateAll(es=>es.map(e=>({text:e.textContent,hidden:e.getAttribute('aria-hidden')})));assert.ok(hidden.every(x=>x.hidden==='true'));
++ const trigger=button(s,'成果标题更多操作');await trigger.focus();await trigger.press('Enter');const item=role(page,'menuitem','版本说明');await item.waitFor();await item.press('Enter');assert.match(await s.innerText(),/v2|V2|REV 02/);
++ await trigger.press('Enter');const popup=page.locator('[data-slot="menu-popup"]:visible');await popup.waitFor();const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,trigger);
++ assert.equal(await trigger.evaluate(el=>!!el.closest('h1,h2,h3,h4')),false);await button(s,'下一份作答').click();assert.match(await s.innerText(),/SHEET 02 \/ 02/);assert.ok(await button(s,'下一份作答').isDisabled());await button(s,'上一份作答').click();assert.ok(await button(s,'上一份作答').isDisabled());
++ const fixture=await mount(page,'cards',row);const sheets=fixture.locator('[data-review-folio] [data-slot="bp-sheet"]');assert.equal(await sheets.count(),5);assert.match(await sheets.nth(0).innerText(),/SHEET 01 \/ 04/);assert.match(await sheets.nth(1).innerText(),/REV 02/);for(const i of [2,3])assert.equal(await sheets.nth(i).locator('.bp-section-folio').count(),0);assert.equal(await sheets.nth(4).locator('.bp-section-folio').getAttribute('aria-hidden'),'true');assert.ok(await sheets.nth(4).getByRole('heading').isVisible());await ctx.capture(page,row,'-api');return {hidden,api:await sheets.allTextContents()};
++};
++roundProbes['card-options']=async(page,row,ctx)=>{
++ const scope=await mount(page,'cards',row);const omitted=scope.locator('[data-review-omitted]');assert.equal(await omitted.locator('.bp-frame-card-status,.bp-section-card-letter,.bp-section-card-meta,.bp-card-actions,.bp-ruler').count(),0);
++ const frames=await snapshot(scope.locator('.bp-frame-card,.bp-section-card'));assert.ok(frames.every(f=>f.borderRadius==='0px'&&f.boxShadow==='none'));
++ const states=await scope.locator('.bp-frame-card-status').evaluateAll(es=>es.map(e=>({tone:e.dataset.tone,text:e.textContent,decorative:e.querySelector('.bp-frame-card-dot')?.getAttribute('aria-hidden')})));assert.equal(states.length,5);assert.ok(states.every(s=>s.text.includes('外部事实')&&s.decorative==='true'));
++ const code=scope.locator('.bp-codebox pre');await code.evaluate(e=>e.scrollLeft=e.scrollWidth);const geometry=await code.evaluate(e=>({client:e.clientWidth,scroll:e.scrollWidth,left:e.scrollLeft}));assert.ok(geometry.scroll>geometry.client&&geometry.left>0);await ctx.capture(page,row,'-omitted-and-tones');return {states,geometry};
++};
++roundProbes['material-states']=async(page,row,ctx)=>{
++ const s=page.locator('#workspace-contracts'),section=role(s,'region','材料身份与上传策略');const tabs=role(s,'radiogroup','材料记录状态').getByRole('radio');assert.equal(await tabs.count(),9);const out=[];
++ for(const tab of await tabs.all()){
++  await tab.click();const text=await section.innerText();assert.match(text,/九年级（2）班周测原卷.pdf/);assert.match(text,/V12/);assert.doesNotMatch(text,/material-12|material_v12|upload-request-12/);assert.match(text,/页数与安全检查尚未核验/);
++  const selected=await tab.innerText();const remove=section.locator('[data-file-action="remove"]'),query=section.locator('[data-file-action="query"]');assert.equal(await remove.count(),['状态未确认','已移除'].includes(selected)?0:1);assert.equal(await query.count(),selected==='状态未确认'?1:0);if(selected==='上传失败'){const retry=section.locator('[data-file-action="retry"]');assert.ok(await retry.isDisabled());assert.ok(await retry.getAttribute('aria-describedby'));}
++  if(await remove.count()){await remove.click();assert.match(await s.innerText(),/不会取消上传或删除原件/);assert.equal(await tab.getAttribute('aria-checked'),'true');}
++  if(await query.count()){await query.click();assert.match(await s.innerText(),/等待回执/);assert.equal(await tab.getAttribute('aria-checked'),'true');}
++  out.push({selected,text,remove:await remove.count(),query:await query.count()});await ctx.capture(page,row,`-material-${out.length}`);
++ }
++ return out;
++};
++roundProbes['confirmation-states']=async(page,row,ctx)=>{
++ const s=role(page,'region','确认六态'),tabs=role(s,'radiogroup','确认记录状态').getByRole('radio');const out=[];assert.equal(await tabs.count(),6);
++ for(const tab of await tabs.all()){
++  await tab.click();const label=await tab.innerText(),content=s.locator('[data-agent-surface]');const text=await content.innerText();const query=button(content,'查询原请求');assert.equal(await query.count(),label==='待核对'?1:0);if(label==='待核对'){await query.click();assert.equal(await tab.getAttribute('aria-checked'),'true');}
++  const future=['待确认','暂不可确认'].includes(label);assert.equal(text.includes('将会'),future);const confirm=button(content,'确认这 2 份作答');assert.equal(await confirm.count(),label==='待确认'?1:0);if(label==='待确认'){await confirm.click();assert.equal(await tab.getAttribute('aria-checked'),'true');}
++  await button(s,'只读记录').click();const readonly=await content.innerText();assert.ok(!readonly.includes('将会'));assert.match(readonly,/本次确认范围/);assert.equal(await button(content,'确认这 2 份作答').count(),0);await button(s,'只读记录').click();out.push({label,text,readonly});await ctx.capture(page,row,`-confirmation-${out.length}`);
++ }
++ return out;
++};
++roundProbes['basket']=async(page)=>{const s=page.locator('#workspace-contracts');assert.match(await s.innerText(),/题目版本 V2 · 入篮版本未锁定/);const trigger=s.getByRole('button',{name:/二次函数最值/});await trigger.click();const full=role(s,'region','题目全文');await full.waitFor();assert.ok(await full.locator('math').count()>0);await button(s,'关闭题目全文').click();await full.waitFor({state:'hidden'});await focused(page,trigger);return {version:'题目版本 V2 · 入篮版本未锁定',math:true,returned:true};};
++roundProbes['object-expand']=async(page,row,ctx)=>{const s=page.locator('#sheet-object-cards'),out=[];for(const [attr,label]of [['data-agent-relation-view','查看关系图'],['data-agent-arranger-view','展开编排']]){const card=s.locator(`[${attr}]`),before=await card.innerText();await button(card,label).click();assert.equal(await card.getAttribute(attr),'workspace');const expanded=await card.innerText();if(attr.includes('arranger'))assert.match(expanded,/保存状态未知/);await ctx.capture(page,row,`-${attr}-workspace`);await button(card,'返回原位置').click();assert.equal(await card.getAttribute(attr),'inline');assert.equal(await card.innerText(),before);out.push({attr,before,expanded});}return out;};
++roundProbes['editorial']=async(page,row)=>{
++ const headings=await snapshot(page.locator('.bp-section-title')),indices=await snapshot(page.locator('.bp-minor-code,.bp-section-folio')),codes=await snapshot(page.locator('.bp-section-code'));assert.ok(headings.length>=6&&indices.length>=18);
++ if(isBlue(row)){assert.ok(headings.every(x=>x.fontSize==='20px'&&x.lineHeight==='30px'));assert.ok(codes.every(x=>x.width===48&&x.height===48));}
++ const cdp=await page.context().newCDPSession(page);try{await cdp.send('DOM.enable');await cdp.send('CSS.enable');const {root}=await cdp.send('DOM.getDocument');const fonts=[];for(const selector of ['.bp-section-folio','.bp-minor-code','.bp-section-title','math']){const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});assert.ok(nodeId,selector);fonts.push({selector,...await cdp.send('CSS.getPlatformFontsForNode',{nodeId})});}if(isBlue(row)){assert.ok(fonts[0].fonts.some(x=>/Geist/i.test(x.familyName)));assert.ok(fonts[1].fonts.some(x=>/Geist/i.test(x.familyName)));}assert.ok(fonts[3].fonts.some(x=>/STIX/i.test(x.familyName)));return {headings,indices,codes,fonts};}finally{await cdp.detach();}
++};
++roundProbes['warning-composite']=async(page,row)=>{const badge=page.locator('#common-components [data-slot="badge"]').filter({hasText:'需补充'});const result=await actualContrast(badge);row.measured=result;assert.ok(result.contrast>=4.5);return result;};
++roundProbes['print-zoom']=async(page,row,ctx)=>{const records=[];await page.emulateMedia({media:'print'});const select=page.locator('#common-components [data-slot="select-trigger"]').first();const print=await snapshot(select);if(isBlue(row))assert.equal(print[0].boxShadow,'none');records.push({print});await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='2');const geometry=await page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,zoom:getComputedStyle(document.documentElement).zoom}));assert.ok(geometry.scroll<=geometry.client+1);records.push({cssZoom:geometry,nativeZoom:false});await ctx.capture(page,row,'-css-zoom');await page.evaluate(()=>document.documentElement.style.zoom='');return records;};
++roundProbes['glyph-api']=async(page,row)=>{const s=await mount(page,'glyph',row);await s.locator('[data-agent-mark] [role="status"]').waitFor();await button(s,'glyph').click();const glyph=s.locator('[data-agent-mark]');assert.equal(await glyph.getAttribute('role'),'img');assert.equal(await glyph.getAttribute('aria-label'),'自定义运行状态');assert.equal(await glyph.locator('[role="status"],[aria-live]').count(),0);assert.equal(await glyph.innerText(),'');assert.equal(await glyph.locator('.agent-mark-grid').getAttribute('aria-hidden'),'true');const grid=await snapshot(glyph.locator('.agent-mark-grid'));assert.equal(grid[0].width,13);assert.equal(grid[0].height,13);await button(s,'loading').click();await s.getByText(/已用时/).waitFor();return {glyphText:'',name:'自定义运行状态',grid,returnedLoading:await s.innerText()};};
++roundProbes['seg-tabs']=async(page)=>{const group=role(page,'radiogroup','答卷状态预览'),first=group.getByRole('radio').first();await first.focus();await first.press('End');assert.equal(await role(group,'radio','异常').getAttribute('aria-checked'),'true');assert.ok(await role(group,'radio','已锁定').isDisabled());return {end:'异常',disabled:'已锁定'};};
++roundProbes['question-coarse']=async(page,row,ctx)=>{const session=await ctx.open(row.theme,row.viewport.width,row.route,{hasTouch:true});try{const values=await roundProbes['question-details'](session.page,row,ctx);assert.equal(await session.page.evaluate(()=>matchMedia('(pointer: coarse)').matches),true);assert.ok(values.out.every(x=>x.buttons.every(b=>b.height>=44)));return values;}finally{await session.context.close();}};
++roundProbes['heatmap']=async(page,row,ctx)=>{
++ const maps=page.locator('[data-heatmap-cell-labels]');assert.ok(await maps.count()>=2);const out=[];
++ for(const map of await maps.all()){
++  const width=await map.evaluate(e=>e.getBoundingClientRect().width),labels=await map.getAttribute('data-heatmap-cell-labels');assert.equal(labels,isBlue(row)&&width<400?'hidden':'shown');
++  const chart=map.locator('[data-chart-engine="echarts"]');if(labels==='hidden')assert.match(await chart.getAttribute('aria-label'),/窄屏下格内数值已隐藏/);
++  const summary=map.locator('summary');if(await summary.count())await summary.click();const text=await map.innerText();assert.match(text,/缺测/);out.push({width,labels,text});
++ }
++ const compact=page.locator('#compact-heatmap');assert.ok(await compact.count());assert.match(await compact.innerText(),/\b0\b/);
++ await ctx.capture(page,row,'-data');return out;
++};
++roundProbes['nested-styles']=async(page,row)=>{
++ // CSS isolation check on rendered copies, including a preview root that itself matches the selector.
++ // This is not a second React Theme Context / business-runtime integration claim.
++ const selectors=['[data-agent-preview]','[data-agent-message="user"]','.bp-frame-card','.bp-section-card','[data-agent-relation-view]','[data-agent-arranger-view]'];
++ return page.evaluate(({selectors,theme})=>{
++  const source=selectors.flatMap(s=>[...document.querySelectorAll(s)]).filter(e=>e.getClientRects().length).slice(0,16);if(!source.length)throw Error('No rendered isolation samples');
++  const props=['backgroundColor','color','borderRadius','borderTop','borderRight','borderBottom','borderLeft','boxShadow','outline','outlineOffset','fontSize','lineHeight'];
++  const measure=root=>[root,...root.querySelectorAll('*')].map(e=>[null,'::before','::after'].map(p=>{const s=getComputedStyle(e,p);return props.map(k=>s[k]);}));
++  const results=[];for(const original of source){const outer=document.createElement('div'),clone=original.cloneNode(true);outer.style.width='600px';outer.dataset.prismTheme=theme;clone.setAttribute('data-agent-preview','');clone.dataset.prismTheme=theme;clone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));clone.removeAttribute('id');outer.append(clone);document.body.append(outer);try{const baseline=measure(clone);for(const outerTheme of ['light','paper','dark','blueprint','blueprint-night']){outer.dataset.prismTheme=outerTheme;const actual=measure(clone);results.push({selector:original.tagName,inner:theme,outer:outerTheme,nodes:actual.length,equal:JSON.stringify(actual)===JSON.stringify(baseline)});}}finally{outer.remove();}}
++  if(!results.every(r=>r.equal))throw Error('Rendered-copy nested style mismatch: '+JSON.stringify(results.filter(r=>!r.equal)));return results;
++ },{selectors,theme:row.theme});
++};
++roundProbes['facts-extra']=async(page,row,ctx)=>{
++ const hosts=page.locator('.bp-fact-container');assert.ok(await hosts.count()>=2);
++ const values=await page.evaluate(()=>{const hosts=[...document.querySelectorAll('.bp-fact-container')].slice(0,2);return hosts.map((host,i)=>{host.style.width=i?'640px':'280px';host.style.maxWidth='none';const dl=host.querySelector('dl');return {width:host.getBoundingClientRect().width,columns:getComputedStyle(dl).gridTemplateColumns.split(' ').length,items:dl.children.length};});});assert.equal(values[0].columns,2);assert.equal(values[1].columns,values[1].items);
++ // Capture the long-text/odd-count fixture while it is actually mounted, before restoration.
++ for(const count of [3,5]){await page.evaluate(count=>{for(const host of document.querySelectorAll('.bp-fact-container')){host.style.width='280px';const dl=host.querySelector('dl');while(dl.children.length<count)dl.append(dl.firstElementChild.cloneNode(true));while(dl.children.length>count)dl.lastElementChild.remove();for(const item of dl.children){item.querySelector('dt').textContent='长中文事实名称核对换行与格线';item.querySelector('dd').textContent='12345678901234567890';}}},count);await ctx.capture(page,row,`-odd-${count}`);}
++ const geometry=await page.locator('.bp-fact-container dl,.bp-fact-container dl > *').evaluateAll(es=>es.map(e=>({width:e.clientWidth,scroll:e.scrollWidth,font:getComputedStyle(e).fontSize})));assert.ok(geometry.every(x=>x.scroll<=x.width+1));return {independent:values,geometry};
++};
++roundProbes['group-focus']=async(page,row,ctx)=>{
++ const s=page.locator('#common-components-two'),out=[];for(const label of ['材料关键词','起始页 · 必填校验','材料编号 · 只读']){
++ const input=s.locator('input').and(s.getByLabel(label,{exact:true}));await keyboard(page,input);const value=await input.evaluate(e=>{const g=e.closest('[data-slot="input-group"]'),s=getComputedStyle(g),i=getComputedStyle(e),w=getComputedStyle(e.parentElement);return {outer:{outline:s.outline,offset:s.outlineOffset,shadow:s.boxShadow},inner:{outline:i.outlineStyle,shadow:i.boxShadow},wrapper:{outline:w.outlineStyle,shadow:w.boxShadow}};});if(isBlue(row)){assert.match(value.outer.outline,/solid 2px/);assert.equal(value.outer.offset,'2px');assert.equal(value.outer.shadow,'none');}assert.equal(value.inner.outline,'none');assert.equal(value.inner.shadow,'none');out.push({label,...value});await ctx.capture(page,row,`-field-${out.length}`);}
++ const clear=button(s,'清除本页关键词');await keyboard(page,clear);const clearStyle=await snapshot(clear);assert.ok(clearStyle[0].outline.includes('solid')||clearStyle[0].boxShadow!=='none');out.push({clearStyle});return out;
++};
++roundProbes['common-extras']=async(page,row)=>{const c=role(page,'checkbox','已选中 · 错误样例'),value=await snapshot(c.locator('[data-slot="checkbox-indicator"]'));assert.equal(await c.getAttribute('aria-invalid'),'true');if(isBlue(row))assert.match(value[0].boxShadow,/inset/);await button(page,'打开演示对话框').click();const footer=await snapshot(page.locator('[data-slot="dialog-footer"]:visible'));assert.equal(footer.length,1);if(isBlue(row))assert.equal(footer[0].borderRadius,'0px');return {checkbox:value,footer};};
++roundProbes['card-return']=async(page)=>{const s=page.locator('#object-section-cards');assert.match(await s.innerText(),/第 1 \/ 2/);assert.ok(await button(s,'查看上一份原件').isDisabled());await button(s,'查看下一份原件').press('Enter');assert.match(await s.innerText(),/未提供原图/);await button(s,'查看上一份原件').press('Space');assert.match(await s.innerText(),/完整扫描纸/);assert.ok(await s.locator('img').isVisible());const text=await s.locator('.bp-section-card-letter').allTextContents();assert.deepEqual(text,['A','B']);const note=button(s,'查看选择题作答说明');await note.press('Enter');assert.equal(await note.getAttribute('aria-expanded'),'true');await note.press('Space');assert.equal(await note.getAttribute('aria-expanded'),'false');return {letters:text,text:await s.innerText()};};
++roundProbes['facts-390']=async(page,row,ctx)=>{const s=await ctx.open(row.theme,390,foundation);try{const value=await s.page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,containers:[...document.querySelectorAll('.bp-fact-container')].map(e=>({width:e.clientWidth,scroll:e.scrollWidth}))}));assert.equal(value.client,390);assert.equal(value.client,value.scroll);assert.ok(value.containers.length>=2);return value;}finally{await s.context.close();}};
++roundProbes['glyph-colors']=async(page,row)=>{const glyphs=page.locator('[data-agent-mark][data-size="glyph"]'),samples=await glyphs.evaluateAll(es=>es.map(e=>({state:e.dataset.state,name:e.getAttribute('aria-label'),color:getComputedStyle(e).color,variant:e.dataset.variant,animations:[...e.querySelectorAll('.agent-mark-pixel')].map(p=>getComputedStyle(p).animationName),radius:getComputedStyle(e.querySelector('.agent-mark-pixel')).borderRadius,live:e.querySelectorAll('[role="status"],[aria-live]').length})));
++ assert.equal(samples.length,18);for(const s of samples){assert.equal(s.live,0);assert.ok(s.name);assert.equal(s.animations.some(a=>a!=='none'),['thinking','working'].includes(s.state));if(s.variant==='Dots')assert.equal(s.radius==='0px',isBlue(row));}assert.ok(await page.locator('[data-agent-mark][data-size="inline"]').count()>=6);assert.ok(await page.locator('[data-agent-mark][data-size="loading"]').count()>=3);assert.match(await page.locator('[data-agent-preview]').innerText(),/已用时 1 分 5 秒/);
++ const cdp=await page.context().newCDPSession(page);try{const tree=await cdp.send('Accessibility.getFullAXTree');const images=tree.nodes.filter(n=>n.role?.value==='image'&&samples.some(s=>s.name===n.name?.value));assert.equal(images.length,18);return {samples,ax:images.map(x=>({role:x.role.value,name:x.name.value}))};}finally{await cdp.detach();}};
++roundProbes['prompt-api']=async(page,row)=>{const s=await mount(page,'prompt',row),out=[];for(const variant of ['Rounded','Pill']){const root=s.locator('[data-agent-prompt-bar]');assert.equal(await root.getAttribute('data-variant'),variant);for(const enabled of [true,false]){const send=button(s,'发送消息'),id=await send.getAttribute('aria-describedby');assert.ok(id);const reason=s.locator(`[id=${JSON.stringify(id)}]`);assert.ok(await reason.isVisible());assert.equal(await reason.getAttribute('role'),enabled?'status':null);assert.ok(await send.isDisabled());await root.locator('textarea').fill('中文草稿仍可编辑');out.push({variant,enabled,reason:await reason.innerText()});await button(s,'切换播报').click();}await button(s,'切换原因').click();assert.equal(await button(s,'发送消息').getAttribute('aria-describedby'),null);assert.ok(await button(s,'发送消息').isEnabled());await button(s,'切换原因').click();if(variant==='Rounded')await button(s,'切换变体').click();}return out;};
++roundProbes['shell-nav-state']=async(page,row,ctx)=>{
++ const s=await mount(page,'shell',row),out=[];const nav=s.locator('.prism-app-bar-navigation');
++ if(await nav.isVisible()){const current=nav.locator('[aria-current="page"]');await keyboard(page,current);const v=await snapshot(current);if(isBlue(row)){assert.ok(Math.abs(v[0].height-36)<1);assert.equal(v[0].borderRadius,'0px');assert.match(v[0].outline,/solid 2px/);assert.equal(v[0].outlineOffset,'2px');}const contrast=await actualContrast(current);assert.ok(contrast.contrast>=4.5);await current.hover();out.push({focus:v,hover:await snapshot(current),contrast});const papers=role(nav,'link','组卷');await papers.press('Enter');assert.equal(await papers.getAttribute('aria-current'),'page');}
++ else{const trigger=s.getByRole('button',{name:/当前空间.*切换空间/});await trigger.click();await role(page,'menuitem','组卷').click();assert.match(await trigger.getAttribute('aria-label'),/组卷/);await trigger.click();const h=await page.locator('.prism-app-bar-space-popup:visible').elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,trigger);out.push({compact:true});}
++ const personal=button(s,'李老师的个人菜单');await personal.click();const menus=page.locator('[data-slot="menu-popup"]:visible');await menus.waitFor();assert.equal(await menus.evaluate(e=>e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme')),row.theme);const h=await menus.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,personal);
++ const side=s.locator('[data-slot="sidebar-menu-button"]:visible');if(await side.count()){const active=side.first();await keyboard(page,active);out.push({sidebar:await snapshot(active)});await active.hover();out.push({sidebarHover:await snapshot(active)});}await ctx.capture(page,row,'-navigation');return out;
++};
++roundProbes['shell-isolation']=async(page,row,ctx)=>{await mount(page,'shell',row);return roundProbes['nested-styles'](page,row,ctx);};
++roundProbes['question-isolation']=async(page,row,ctx)=>{await roundProbes['question-fixture'](page,row,ctx);return roundProbes['nested-styles'](page,row,ctx);};
++roundProbes['question-spacing']=async(page,row,ctx)=>{
++ await roundProbes['question-details'](page,row,ctx);const out=[];
++ for(const name of ['答案与解析','教学定位','题目档案']){
++  await role(page,'tab',name).click();const panel=page.locator('.question-detail-region [role="tabpanel"]:visible');
++  const samples=await panel.evaluate(el=>{const get=e=>({tag:e.tagName,class:e.className,gap:getComputedStyle(e).rowGap,marginTop:getComputedStyle(e).marginTop,marginBottom:getComputedStyle(e).marginBottom});
++   const select=q=>[...el.querySelectorAll(q)].map(get);
++   return {answer:select(':scope > .question-solution > :not(:last-child)'),grid:select(':scope > .grid'),fields:select(':scope > .grid > dl > :not(:last-child)'),archive:select(':scope > dl.grid')};});
++  row.measured=out;out.push({name,samples});const blue=isBlue(row);
++  if(name==='答案与解析'){assert.ok(samples.answer.length);for(const v of samples.answer)assert.equal(v.marginBottom,blue?'12px':'20px');}
++  if(name==='教学定位'){assert.equal(samples.grid.length,1);assert.equal(samples.grid[0].gap,blue?'16px':'24px');assert.ok(samples.fields.length);for(const v of samples.fields)assert.equal(v.marginBottom,blue?'12px':'16px');}
++  if(name==='题目档案'){assert.equal(samples.archive.length,1);assert.equal(samples.archive[0].gap,blue?'12px':'16px');}
++ }return out;
++};
++roundProbes['material-policy']=async(page,row)=>{const s=role(page,'region','材料身份与上传策略');const text=await s.innerText();for(const value of ['PDF','PNG','JPG','20 MB','尚未核验'])assert.ok(text.includes(value),value);assert.ok((text.match(/尚未核验/g)||[]).length>=4);const input=s.locator('input[type="file"]');assert.equal(await input.count(),1);await input.setInputFiles({name:'bpm1c-local.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n% local selection fixture only\n')});await page.getByText(/已收到 1 份本机选择；未发起上传/).waitFor();return {policy:text,selectedFile:'bpm1c-local.pdf',upload:false};};
++roundProbes['title-actions']=async(page,row,ctx)=>{const trigger=button(page.locator('#artifact-folio'),'成果标题更多操作'),out=[];for(const motion of ['reduce','no-preference','reduce']){await page.emulateMedia({reducedMotion:motion});await keyboard(page,trigger);out.push({motion,focus:await snapshot(trigger)});await trigger.hover();out.push({motion,hover:await snapshot(trigger)});}assert.equal(await trigger.evaluate(e=>!!e.closest('h1,h2,h3,h4')),false);await ctx.capture(page,row,'-focus');return out;};
++roundProbes['object-geometry']=async(page,row)=>{const s=page.locator('#sheet-object-cards'),out=[];for(const selector of ['[data-agent-relation-view]','[data-agent-arranger-view]']){const card=s.locator(selector);const value=await card.evaluate(e=>{const title=e.matches('[data-agent-relation-view]')?e.querySelector(':scope > h3'):e.querySelector(':scope > header > div');const a=e.getBoundingClientRect(),b=title.getBoundingClientRect(),s=getComputedStyle(e);return {card:{left:a.left,right:a.right,width:a.width},title:{left:b.left,right:b.right,width:b.width},border:s.borderTopWidth,radius:s.borderRadius,shadow:s.boxShadow,titleText:title.textContent};});if(isBlue(row)){assert.equal(value.radius,'0px');assert.ok(Math.abs(value.title.left-value.card.left)<=2&&Math.abs(value.title.right-value.card.right)<=2);}out.push({selector,...value});}assert.ok(Math.abs(out[0].card.left-out[1].card.left)<=1&&Math.abs(out[0].card.right-out[1].card.right)<=1);return out;};
++roundProbes['object-spacing-matrix']=async(page,row,ctx)=>{const s=await mount(page,'objects',row);await page.evaluate(()=>document.fonts.ready);const values=await s.locator('[data-object-pair]').evaluateAll(es=>es.map(pair=>({pair:pair.dataset.objectPair,cards:[...pair.querySelectorAll('[data-agent-relation-view],[data-agent-arranger-view]')].map(e=>{const relation=e.hasAttribute('data-agent-relation-view'),title=e.querySelector(relation?':scope > h3':':scope > header > div');const walker=document.createTreeWalker(e,NodeFilter.SHOW_TEXT);let first;while(walker.nextNode()){const n=walker.currentNode;if(title.contains(n)||!n.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(n);const r=range.getClientRects()[0];if(r?.height&&r.top>=title.getBoundingClientRect().bottom-1){first={text:n.textContent,top:r.top,gap:r.top-title.getBoundingClientRect().bottom};break;}}const list=e.querySelector(':scope > ul');return {relation,first,list:list?{count:list.children.length,display:getComputedStyle(list).display}:null};})})));
++ row.measured=values;assert.equal(values.length,24);for(const v of values){assert.ok(v.cards.every(x=>x.first));if(isBlue(row)&&v.pair.endsWith('-empty')){assert.equal(v.cards[0].list.display,'none');assert.ok(Math.abs(v.cards[0].first.gap-v.cards[1].first.gap)<=4,JSON.stringify(v));}if(!v.pair.endsWith('-empty'))assert.notEqual(v.cards[0].list.display,'none');}await ctx.capture(page,row,'-pairs');return values;};
++roundProbes['object-capabilities']=roundProbes['object-spacing-matrix'];
++roundProbes['ink-pairs']=async(page,row)=>{
++ const values=await page.evaluate(()=>{const el=document.createElement('span');document.body.append(el);const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const c=canvas.getContext('2d');const rgb=key=>{el.style.color=`var(--${key})`;c.clearRect(0,0,1,1);c.fillStyle=getComputedStyle(el).color;c.fillRect(0,0,1,1);return [...c.getImageData(0,0,1,1).data];};const l=a=>a.slice(0,3).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);const pairs=[['foreground','background'],['muted-foreground','card'],['link','card'],['primary-foreground','primary'],['destructive-foreground','card'],['success-foreground','card'],...['background','secondary','muted','accent','card'].map(bg=>['warning-foreground',bg]),['primary-foreground','warning-foreground'],['card','warning-foreground']];const values=pairs.map(([fg,bg])=>{const a=rgb(fg),b=rgb(bg),x=l(a),y=l(b);return {fg,bg,a,b,contrast:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};});el.remove();return values;});row.measured=values;for(const v of values){if(!isBlue(row)&&v.bg==='warning-foreground')continue;if(row.theme==='blueprint-night'&&v.bg==='warning-foreground')continue;assert.ok(v.contrast>=4.5,JSON.stringify(v));}return values;};
++roundProbes['button-states']=async(page,row,ctx)=>{const nodes=page.locator('#common-components [data-blueprint-component="Button"] button,.bp-btn,.bp-tool'),out=[];assert.ok(await nodes.count()>=8);for(const control of await nodes.all()){if(!await control.isVisible())continue;const name=await control.innerText();if(await control.isDisabled()){out.push({name,disabled:true});continue;}const normal=await snapshot(control);await control.hover();const hover=await snapshot(control);await page.mouse.down();const pressed=await snapshot(control);await page.mouse.up();await keyboard(page,control);const focus=await snapshot(control);out.push({name,normal,hover,pressed,focus});}await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),true);const reduced=await nodes.evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({name:e.textContent,animation:getComputedStyle(e).animationName})));assert.ok(reduced.every(v=>v.animation==='none'));return {out,reduced};};
++roundProbes['night-buttons']=async(page,row,ctx)=>{const primary=button(page,'次要按钮示例');await primary.hover();const hover=await snapshot(primary);const trigger=button(page,'清空演示备注');const old=await page.locator('[data-blueprint-component="Popover"]').innerText();await trigger.click();const danger=button(page,'确认清空本页示例');const values=await snapshot(danger);if(row.theme==='blueprint-night'){assert.equal(hover[0].background,'rgb(22, 48, 90)');assert.equal(values[0].background,'rgb(255, 112, 112)');assert.equal(values[0].color,'rgb(8, 19, 34)');}await ctx.capture(page,row,'-danger');await button(page,'保留本页备注').click();assert.equal(await page.locator('[data-blueprint-component="Popover"]').innerText(),old);return {hover,danger:values,cancelPreserved:true};};
++roundProbes['formal-tabs']=async(page,row)=>{const list=page.getByRole('tablist').first(),tabs=list.getByRole('tab');assert.ok(await tabs.count()>=2);const first=tabs.first();await first.focus();await first.press('ArrowRight');await page.keyboard.press('Enter');const selected=await list.locator('[aria-selected="true"]').innerText();assert.ok(selected);const disabled=list.locator('[aria-disabled="true"],button:disabled');const values=[];for(const d of await disabled.all()){await d.focus();await d.press('Enter');assert.notEqual(await d.getAttribute('aria-selected'),'true');values.push(await d.innerText());}return {selected,disabled:values};};
++roundProbes['heatmap-zero']=async(page,row,ctx)=>{const chart=page.locator('#compact-heatmap [data-chart-engine="echarts"]').first();await chart.scrollIntoViewIfNeeded();await chart.locator('svg').waitFor();const value=await chart.evaluate(async el=>(await import('/docs/blueprint/evidence/matrix-closeout-20261019/review-fixture.tsx')).zeroCell(el));assert.ok(Array.isArray(value.point)&&value.point.length===2);await chart.click({position:{x:value.point[0],y:value.point[1]}});await poll(page,({rowLabel,columnLabel})=>[...document.querySelectorAll('#compact-heatmap svg text')].some(e=>e.textContent.includes(`${rowLabel} · ${columnLabel}`)),value.data);const text=await chart.locator('svg text').allTextContents();assert.ok(text.some(t=>/^0$/.test(t)));await ctx.capture(page,row,'-zero-tooltip');return {...value,text};};
++roundProbes['prompt-portals']=async(page,row,ctx)=>{const root=page.locator('[data-agent-prompt-bar]'),out=[];for(const name of ['添加附件与来源','选择模型：本机规则','开始听写','开始语音对话']){const trigger=button(root,name);await trigger.click();const popup=root.locator('[data-slot="menu-popup"]:visible,[data-slot="popover-popup"]:visible');await popup.waitFor();const value=await popup.evaluate(e=>({theme:e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme'),inside:!!e.closest('[data-agent-prompt-bar]'),text:e.textContent}));assert.equal(value.theme,row.theme);assert.ok(value.inside);await ctx.capture(page,row,`-portal-${out.length}`);const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,trigger);out.push({name,...value});}return out;};
++roundProbes['question-card']=async(page)=>{const region=page.locator('#existing-agent-inputs');const heading=region.getByRole('heading',{name:'这次需要整理哪些内容？',exact:true});await heading.waitFor();const card=heading.locator('xpath=ancestor::*[@data-slot="card"][1]');assert.match(await card.innerText(),/补充一个信息/);assert.doesNotMatch(await card.innerText(),/需要你确认/);await card.getByRole('radio').first().click();const input=card.getByPlaceholder('也可以补充自己的要求');await input.fill('保留原题与公式');assert.match(await region.innerText(),/已选择：.*尚未执行任务/);return {text:await card.innerText(),draft:await input.inputValue()};};
++async function presentationTabs(page){const list=page.locator('[data-agent-component-page] > [data-slot="tabs"] [data-slot="tabs-list"]').first();return await list.count()?list:page.getByRole('tablist').first();}
++roundProbes['execution']=async(page,row)=>{const list=await presentationTabs(page),out=[];const tabs=list.getByRole('tab');for(const tab of await tabs.all()){const name=await tab.innerText();if(!/对话|专用|紧凑|状态|扩展/.test(name))continue;await tab.click();const preview=page.locator('[data-agent-preview]');await preview.waitFor();const text=await preview.innerText();assert.ok(text.trim());out.push({name,text,actions:await preview.getByRole('button').allTextContents()});}assert.ok(out.length>=3);return out;};
++roundProbes['old-agent-calls']=async(page,row,ctx)=>{const out=[];for(const slug of ['file-input','execution-confirmation','collection-basket']){const session=await ctx.open(row.theme,row.viewport.width,`/next/components/agent-components/${slug}`);try{const values=await roundProbes.execution(session.page,row,ctx);out.push({slug,values});}finally{await session.context.close();}}return out;};
++roundProbes['overlay-regression']=async(page,row,ctx)=>{const out=[];for(const route of ['/next/components/dialog-layout','/next/components/record-list','/next/components/tree','/next/components/evidence-matrix','/next/components/box-plot']){const session=await ctx.open(row.theme,row.viewport.width,route);try{const p=session.page,trigger=p.locator('main [aria-haspopup="dialog"]:visible,main [aria-haspopup="menu"]:visible,main [role="combobox"]:visible').first();assert.ok(await trigger.count(),`No real popup trigger on ${route}`);await trigger.click();const popup=p.locator('[data-slot="dialog-popup"]:visible,[data-slot="menu-popup"]:visible,[data-slot="select-popup"]:visible,[data-slot="combobox-popup"]:visible').last();await popup.waitFor();const value={route,theme:await popup.evaluate(e=>e.closest('[data-prism-theme]')?.getAttribute('data-prism-theme')),text:await popup.innerText()};assert.equal(value.theme,row.theme);const h=await popup.elementHandle();await p.keyboard.press('Escape');await hiddenNode(p,h);await focused(p,trigger);out.push(value);}finally{await session.context.close();}}return out;};
++roundProbes['arranger-interactions']=async(page,row)=>{await page.getByRole('button',{name:'展开编排',exact:true}).first().click();const card=page.locator('[data-agent-arranger-view="workspace"]').first();await card.waitFor();const rows=card.locator('[data-arranger-row] [id$="-title"]'),before=await rows.allTextContents();const down=card.locator('[data-arranger-action="down"]:not(:disabled)').first();await down.click();const after=await rows.allTextContents();assert.notDeepEqual(after,before);await card.locator('[data-arranger-action="up"]:not(:disabled)').first().click();assert.deepEqual(await rows.allTextContents(),before);const group=card.getByRole('combobox',{name:'移到分组末尾',exact:true}).first();await group.click();await page.getByRole('option').last().click();assert.notDeepEqual(await rows.allTextContents(),before);const confirm=card.locator('[data-arranger-action="confirm"]');assert.equal(await confirm.count(),1);const state={disabled:await confirm.isDisabled(),description:await confirm.getAttribute('aria-describedby')};if(state.disabled)assert.ok(state.description);else{await confirm.click();assert.match(await page.locator('[data-agent-preview]').innerText(),/保存状态未改变/);}await button(card,'返回原位置').click();await page.locator('[data-agent-arranger-view="inline"]').first().waitFor();return {before,after,confirm:state};};
++roundProbes['relation-interactions']=async(page,row)=>{await button(page,'查看关系图').first().click();const card=page.locator('[data-agent-relation-view="workspace"]').first();await card.waitFor();const filter=role(card,'group','按类型筛选').getByRole('button');assert.ok(await filter.count()>1);await filter.nth(1).click();assert.equal(await filter.nth(1).getAttribute('aria-pressed'),'true');await filter.first().click();const node=card.locator('[aria-label="节点与关系列表"] button').first();await node.click();const detail=role(card,'region','选中节点的邻接关系');await detail.waitFor();const text=await detail.innerText();const source=button(detail,'查看来源');if(await source.count()){await source.click();assert.match(await page.locator('[data-agent-preview]').innerText(),/来源|请求/);}await button(card,'返回原位置').click();await page.locator('[data-agent-relation-view="inline"]').first().waitFor();return {text,filterApplied:true,returned:true};};
++// Visual preparation performs actual state changes; screenshots never mark an obligation passed.
++roundProbes['visual-portals']=async(page,row,ctx)=>{await choose(page,'局部主题',labels[row.theme]);await button(page,'局部对话框').click();await page.locator('[data-slot="dialog-popup"]:visible').waitFor();await ctx.capture(page,row,'-dialog');await page.keyboard.press('Escape');await page.locator('[data-slot="dialog-popup"]:visible').waitFor({state:'hidden'});await button(page,'局部材料操作').click();const sub=role(page,'menuitem','材料示例子菜单');await sub.focus();await sub.press('ArrowRight');await page.getByRole('menuitem',{name:'长中文讲评材料示例',exact:true}).waitFor();await ctx.capture(page,row,'-submenu');return {states:['dialog','submenu']};};
++roundProbes['visual-cards']=async(page,row,ctx)=>{await page.locator('#object-section-cards .bp-frame-card-title').evaluate(e=>e.textContent='非常长的中文原件名称与条件说明 '+ 'Continuous_English_File_Name_'.repeat(6)+'.pdf');await ctx.capture(page,row,'-long-title');return {injected:'long Chinese and continuous English filename'};};
++roundProbes['visual-workspace']=async(page,row,ctx)=>{const output=await roundProbes['material-states'](page,row,ctx);await roundProbes['confirmation-states'](page,row,ctx);await roundProbes.basket(page,row,ctx);return {materialStates:output.length};};
++roundProbes['visual-common']=async(page,row,ctx)=>{const s=page.locator('#common-components'),input=s.locator('input').and(s.getByLabel('材料名称 · 必填校验',{exact:true}));await keyboard(page,input);await ctx.capture(page,row,'-invalid-focus');await button(s,'打开演示对话框').click();await page.locator('[data-slot="dialog-popup"]:visible').waitFor();await ctx.capture(page,row,'-dialog');return {states:['invalid-focus','dialog']};};
++roundProbes['visual-batch-two']=async(page,row,ctx)=>{const s=page.locator('#common-components-two');const input=s.locator('input').and(s.getByLabel('材料关键词',{exact:true}));await keyboard(page,input);await ctx.capture(page,row,'-group-focus');for(const [name,slot]of [['打开样例菜单','menu-popup'],['打开长内容侧面板','sheet-popup']]){await button(s,name).click();const popup=page.locator(`[data-slot="${slot}"]:visible`);await popup.waitFor();await ctx.capture(page,row,`-${slot}`);const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);}await button(s,'信息通知样例').click();await button(s,'关闭信息状态样例').waitFor();await ctx.capture(page,row,'-toast');return {states:['group-focus','menu','sheet','toast']};};
++roundProbes['visual-fonts']=async(page,row,ctx)=>{await ctx.capture(page,row,'-loaded');const session=await ctx.open(row.theme,row.viewport.width,foundation,{blockFont:true});try{await ctx.capture(session.page,row,'-blocked');return {blocked:true};}finally{await session.context.close();}};
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/review-fixture.tsx
+@@ -0,0 +1,50 @@
++"use client"
++// Review-only mount, fetched by Supervisor from the existing Vite server. No route or catalog entry.
++import { useState } from "react"
++import { createRoot } from "react-dom/client"
++import { ShellNavFixture } from "../shell-nav-20261016/fixture"
++import { AgentMark } from "@/components/prism-next/agent-mark"
++import { AgentPromptBar } from "@/components/prism-next/agent-prompt-bar"
++import { BlueprintSheet, BpFrameCard, BpSectionCard, BpCodebox } from "@/components/prism-next/blueprint/blueprint"
++import { Button } from "@/components/prism-next/button"
++import type { PrismTheme } from "@/lib/prism-next/config"
++import { AgentRelationGraph, type AgentRelationCapabilities } from "@/components/prism-next/agent-relation-graph"
++import { AgentStructureArranger } from "@/components/prism-next/agent-structure-arranger"
++import { coverageNodes, coverageEdges } from "@/components/prism-next/demos/agent-relation-graph"
++import { arrangementExamples } from "@/components/prism-next/demos/agent-structure-arranger"
++function Objects() {
++ return <>{(["default","compact"] as const).flatMap(density=>(["inline","workspace"] as const).flatMap(view=>["current","historical"].flatMap(era=>["empty","reason","unavailable"].map(mode=>{
++ const capabilities=Object.fromEntries(["view","filter","edit-node","edit-edge","layout"].map(k=>[k,mode==="unavailable"?{supported:false,reason:"资料不可用，保留原因"}:mode==="reason"?{supported:true,reason:"已提供能力说明"}:{supported:true}])) as AgentRelationCapabilities
++ return <section key={`${density}-${view}-${era}-${mode}`} data-object-pair={`${density}-${view}-${era}-${mode}`}>
++ <AgentRelationGraph title="关系图长中文标题与原始资料" graphId="review" version="v1" versionLabel="示例 v1" nodes={coverageNodes} edges={coverageEdges} capabilities={capabilities} readOnlyReason={era==="historical"?"历史关系快照只读。":undefined} density={density} view={view}/>
++ <AgentStructureArranger structure={{id:"review",title:"编排长中文标题与材料",version:{id:"v1",label:"示例 v1"},snapshot:era==="historical"?"历史编排快照只读。":undefined}} items={arrangementExamples.paper.items} groups={arrangementExamples.paper.groups} validation={[]} density={density} view={view}/>
++ </section>
++ }))))}</>
++}
++function Glyph() {
++ const [size,setSize]=useState<"inline"|"glyph"|"loading">("inline")
++ return <><div>{(["inline","glyph","loading"] as const).map(s=><Button key={s} onClick={()=>setSize(s)}>{s}</Button>)}</div><AgentMark state="working" size={size} startedAt={0} label="自定义运行状态" /></>
++}
++function Prompt() {
++ const [value,setValue]=useState("保留草稿 f(x)=x²"),[reason,setReason]=useState("暂时无法连接服务，草稿仍可编辑；连接恢复后可提交。")
++ const [announce,setAnnounce]=useState(true),[variant,setVariant]=useState<"Rounded"|"Pill">("Rounded")
++ return <><Button onClick={()=>setReason(reason?"":"暂时无法连接服务，草稿仍可编辑；连接恢复后可提交。")}>切换原因</Button><Button onClick={()=>setAnnounce(!announce)}>切换播报</Button><Button onClick={()=>setVariant(variant==="Rounded"?"Pill":"Rounded")}>切换变体</Button><AgentPromptBar value={value} onValueChange={setValue} onIntent={()=>{}} sources={[]} commands={[]} models={[]} dictation={{state:"idle"}} voice={{state:"idle"}} variant={variant} sendDisabledReason={reason} announceDisabledReason={announce}/></>
++}
++function Cards() {
++ return <><div data-review-omitted><BpFrameCard title="仅标题"><p>无状态或动作。</p></BpFrameCard><BpSectionCard title="无序号分节"><BpCodebox file="代码片段">{`const material = "${"long_file_name_".repeat(15)}"`}</BpCodebox></BpSectionCard></div>{(["success","warning","danger","info","neutral"] as const).map(tone=><BpFrameCard key={tone} title={`状态样例 ${tone}`} status={{tone,label:`外部事实 ${tone}`}}>中文状态文字</BpFrameCard>)}<div data-review-folio><BlueprintSheet title="旧序列" sheetNo="1 / 4"/><BlueprintSheet title="版本优先" sheetNo="1 / 4" folio={{kind:"rev",value:"v2"}}/><BlueprintSheet title="空版本优先" sheetNo="1 / 4" folio={{kind:"rev",value:""}}/><BlueprintSheet title="无定位事实"/><BlueprintSheet title="有等价标题版本 V2" folio={{kind:"rev",value:"v2"}} folioAriaHidden/></div></>
++}
++export function mount(container:HTMLElement,kind:string,theme:PrismTheme,outerTheme:PrismTheme=theme) {
++ const root=createRoot(container)
++ root.render(<section data-bpm-review={kind} data-agent-preview data-prism-theme={theme} className="min-w-0 space-y-4 bg-background p-3 text-foreground">{kind==="objects"?<Objects/>:kind==="shell"?<ShellNavFixture theme={theme} outerTheme={outerTheme}/>:kind==="glyph"?<Glyph/>:kind==="prompt"?<Prompt/>:<Cards/>}</section>)
++ return ()=>root.unmount()
++}
++// Read the renderer's real data/coordinate conversion; the caller still performs a real pointer click.
++export async function zeroCell(element:HTMLElement) {
++ const {getInstanceByDom}=await import('echarts/core')
++ const chart=getInstanceByDom(element)
++ if(!chart)throw Error('Heatmap instance not ready')
++ const option=chart.getOption() as {series:{data:{value:number[];rawLabel:string}[]}[]}
++ const zero=option.series[0].data.find(d=>d.value[2]===0&&d.rawLabel==='0')
++ if(!zero)throw Error('Zero cell missing')
++ return {point:chart.convertToPixel({seriesIndex:0},zero.value.slice(0,2)),data:zero}
++}
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs
+@@ -0,0 +1,23 @@
++import {screenshotName} from './measurement-utils.mjs';
++export const representative=(theme,width)=>['blueprint','blueprint-night'].includes(theme)?[320,1280].includes(width):theme==='light'&&width===1280;
++export function checklistRows(catalog,manifest){
++ const rows=[];
++ for(const [index,item]of catalog.items.entries()){
++  if(item.category==='不适用或已被其他项覆盖')continue;
++  for(const theme of manifest.themes)for(const width of manifest.widths){
++   if(item.category==='需目检'&&!representative(theme,width))continue;
++   rows.push({id:`check-${index+1}-${theme}-${width}`,name:`${item.round} / ${item.criterion}`,theme,viewport:{width,height:manifest.height},route:item.route,pass:null,status:item.category==='需目检'?'pending-visual':'pending-supervisor-browser',measured:null,screenshots:[],source:item.source,sourceLines:item.lines,checklistId:item.id,classification:item.category,roundProbe:item.probe,visual:item.category==='需目检',selector:item.selector,captureKey:`check-${String(index+1).padStart(3,'0')}-${item.probe||'reading'}`,criteria:item.criterion});
++  }
++ }
++ return rows;
++}
++export function manualMarkdown(rows,baseline){
++ const lines=['# BPM1c · Supervisor 目检清单','',`基线：\`${baseline}\`。这里只列需要视觉判断的 18 类义务；每类 5 个代表组合。自动断言与来源排除项见 checklist-classification.json。`,'','截图状态以每行标注为准：未生成的路径是执行计划，不是已有证据。运行 per-round 后本文件自动刷新实际截图索引；生成截图不会自动勾选或判通过。非代表组合没有被宣称目检通过。',''];
++ for(const r of rows.filter(x=>x.visual)){
++  lines.push(`- [ ] **${r.checklistId} · ${r.theme} · ${r.viewport.width}×${r.viewport.height}**`, `  - 路由：\`${r.route}\`；操作：${r.roundProbe?`脚本准备 \`${r.roundProbe}\` 状态`:'打开原始页面并定位指定区域'}；区域：\`${r.selector||'main'}\`。`, `  - 要看：${r.criteria}`,`  - 来源：\`${r.source}:${r.sourceLines.join(',')}\`。`);
++  if(r.screenshots.length){for(const file of r.screenshots)lines.push(`  - 已生成：[${file.split('/').at(-1)}](../../screens/matrix-closeout-20261019/${file.split('/').at(-1)})`);}
++  else lines.push(`  - 待生成：\`docs/blueprint/screens/matrix-closeout-20261019/${screenshotName(r)}\`（若准备状态失败，看同项 -failure 文件与 per-round.json 的 error）。`);
++  lines.push('');
++ }
++ return lines.join('\n');
++}
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs
+@@ -0,0 +1,13 @@
++// Typecheck only the evidence fixture's dependency graph; no emit/build/browser/server.
++import ts from 'typescript';
++import {fileURLToPath} from 'node:url';
++import path from 'node:path';
++const dir=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(dir,'../../../..');
++const configPath=ts.findConfigFile(root,ts.sys.fileExists,'tsconfig.json');
++const raw=ts.readConfigFile(configPath,ts.sys.readFile);
++const config=ts.parseJsonConfigFileContent(raw.config,ts.sys,root);
++const program=ts.createProgram([path.join(dir,'review-fixture.tsx'),...config.fileNames.filter(f=>f.endsWith('.d.ts'))],{...config.options,noEmit:true,incremental:false});
++const diagnostics=ts.getPreEmitDiagnostics(program);
++if(diagnostics.length)console.error(ts.formatDiagnosticsWithColorAndContext(diagnostics,{getCanonicalFileName:f=>f,getCurrentDirectory:()=>root,getNewLine:()=> '\n'}));
++console.log(JSON.stringify({scope:'review-fixture.tsx and imported dependencies',diagnostics:diagnostics.length,noEmit:true}));
++if(diagnostics.length)process.exitCode=1;
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/classify.py
+@@ -0,0 +1,185 @@
++"""Offline source-to-obligation ledger. No browser or product mutation."""
++from pathlib import Path
++import json
++D=Path(__file__).resolve().parent
++M=json.loads((D/'manifest.json').read_text())
++R={r['name']:r for r in M['rounds']}
++items=[]
++F='/next/foundations/blueprint'
++P='/next/components/agent-components/'
++def add(round,needle,category,key,criterion,route=F,probe=None,selector=None,refs=None):
++    source=R[round]['sources'][0]
++    lines=[x for x in R[round]['checklist'] if needle in x['text']]
++    if not lines:raise ValueError((round,needle))
++    items.append(dict(id=f'{round.replace("/","-")}-{key}',round=round,source=source,lines=[x['line'] for x in lines],original=[x['text'] for x in lines],category=category,criterion=criterion,route=route,probe=probe,selector=selector,refs=refs or []))
++def A(r,n,k,c,route=F,probe=None):add(r,n,'可自动化',k,c,route,probe or k)
++def V(r,n,k,c,route=F,probe=None,selector='main'):add(r,n,'需目检',k,c,route,probe,selector)
++def C(r,n,k,c,refs=None):add(r,n,'不适用或已被其他项覆盖',k,c,refs=refs)
++A('P73','Rounded / Pill','prompt-extra','两个变体：打开模型后宿主关闭可用性，入口与菜单移除；来源/命令键盘选择；Shift+Enter；白图发送单外框。',P+'prompt-bar')
++C('P73','IME','native-ime','中文 IME 实体候选确认需系统输入法，本轮 Chromium 自动化不等于该验收；列为范围外且不关闭原义务。')
++C('P73','打开模型菜单','prompt-covered','模型关闭后来源/命令选择由 prompt-extra 执行；没有把 IME 伪造为键盘 Enter。',['round:prompt-extra'])
++V('P73','加入附件','prompt-reading','加载附件与长中文公式；核对发送、范围、材料、语音入口及附件删除的焦点边缘、换行和正文。',P+'prompt-bar',selector='[data-agent-preview]')
++A('P73','浅底上的墨色','prompt-focus','白图 2px 单 outline / offset 2px；其余主题记录原样式。',P+'prompt-bar','prompt-extra')
++A('P73','五类浮层','prompt-portals','逐个打开附件、模型、来源、命令、听写/语音说明，检查本地主题与根容器。',P+'prompt-bar','prompt-portals')
++C('P73','白图墨色消息','old-message','气泡浅底及链接同主题 ring 由 P78 替代；沿 P78 当前预期复验。',['round:message'])
++A('P73','追问、依据','question-card','当前 Agent 总览追问单选及补充输入，仅反馈已选择、尚未执行。',P[:-1]+'#existing-agent-inputs','question-card')
++A('P73','ready 态 Tab','execution','六态/card/inline 的展示与资格在 P84 确认夹具及正式组件页复验。',P+'execution-confirmation','execution')
++C('P73','实际 Select / Menu','shared-portals','由 17 个 overlay 探针及 scoped-controls、scoped-toasts、isolation 组合核销对应浮层；无容器宿主业务分支不算通过。',['group:interactions','group:isolation'])
++A('P74','局部“材料类型”','scoped-controls','三种外层核心 × 本轮局部主题：Select 键盘、ObjectPicker 选择、Dialog trap/初始焦点/嵌套 Esc。','/next/components/menu')
++C('P74','搜索班级','picker-covered','输入高二并选中候选由 scoped-controls，实际 Portal 祖先/边界由 overlay-local-picker 检查。',['round:scoped-controls','overlay:local-picker'])
++C('P74','材料示例子菜单','submenu-covered','overlay-local-submenu 保留真实节点；第一次 Esc 移除/隐藏子菜单且回 submenu trigger，第二次回原 trigger。',['overlay:local-submenu'])
++C('P74','初始材料标题','local-dialog-covered','scoped-controls 与 overlay-local-dialog-select 覆盖初始聚焦、陷阱、两次 Esc。',['round:scoped-controls','overlay:local-dialog-select'])
++A('P74','三个队列','scoped-toasts','三队列主题、局部卸载不搬至 body、重入不恢复；三种外层核心逐一检查。','/next/components/menu')
++C('P74','离开局部预览','unmount-covered','由 scoped-toasts 同一探针执行卸载、外层/全局保留和重入。',['round:scoped-toasts'])
++A('P74','两张“材料数量','scoped-chart','两图首色随本地主题与外层核心，保留全局主题。','/next/components/menu')
++V('P74','目视可读性','portal-visual','真实打开局部对话框、子菜单；检查长中文/公式、浮层翻转、焦点圈、阴影与纸面比例。','/next/components/menu','visual-portals','#portal-scope')
++A('P74','额外回归路由','overlay-regression','额外五页实际可达 Popup 打开/Esc；不把初始页面 200 当操作通过。','/next/components/dialog-layout','overlay-regression')
++C('P74','以下以该仓','workspace','Workspace 接线是另一仓任务，原 1–6 步全部保留，BPM1c 不实施也不宣布通过。')
++A('P75','题型样本','question-details','正式题卡展开三 Tab、键盘选择、内容、detail 样式与按钮 ≥32px。','/next/components/question')
++C('P75','依次选择','question-tabs','同 question-details 的三 Tab 实测。',['round:question-details'])
++C('P75','四边 **1px dashed**','question-style','同 question-details 采样背景/四边/padding/radius/gap，并按两蓝图/核心分支断言。',['round:question-details'])
++A('P75','coarse 模拟','question-coarse','额外 hasTouch 上下文验证 pointer:coarse 且真实 Tab 高度 ≥44px。','/next/components/question')
++A('P75','三面板的间距','question-spacing','三面板实际 gap/margin 与规定 12/16px、核心原值采样比较。','/next/components/question','question-spacing')
++A('P75','三核心主题','question-isolation','题目详情根/后代/伪元素的内层样式与自身主题对照；不冒充历史像素基线。','/next/components/question','question-isolation')
++A('P75','在夹具顶部','question-fixture','加载已有 P75 React fixture；白底 SVG naturalWidth、三核心嵌套详情；使用现有 Vite，生产服务不支持时明确报错。','/next/components/question')
++C('P75','点击「嵌套核心主题」','nested-question-covered','question-fixture 挂载真实嵌套样本，question-isolation 比较详情与伪元素。',['round:question-fixture','round:question-isolation'])
++C('P75','原页面外层为夜图','reverse-question-covered','五主题外层 × fixture 本地五主题矩阵由 question-isolation 执行。',['round:question-isolation'])
++V('P75','长内容以及公式','question-reading','逐一看三面板长中文、公式、图片、短标签与焦点间距；白图白底图连续，夜图白图不反色。','/next/components/question','question-fixture','#bpm-question')
++A('P76','`/next`：','site-sidebar','桌面切换与 Ctrl+B，320 抽屉 trap/Esc 回焦。','/next')
++A('P76','`/next/components/sidebar`','sidebar-page','正式 Sidebar 页面开关和键盘捷径。','/next/components/sidebar','site-sidebar')
++A('P76','ShellNavFixture','shell','挂载原 ShellNavFixture，AppBar/SpaceBar 高度与菜单、图标轨、移动抽屉，保存实测。','/next/use-cases/workspace-app-bar')
++C('P76','顶部「Agent / 组卷」','appbar-current','一级导航下划线预期已由 P77 实块替代，使用 shell-nav-state；其他 AppBar 高度/SpaceBar 由 shell。',['round:shell','round:shell-nav-state'])
++A('P76','身份、品牌条','shell-nav-state','顶栏链接选中、hover/focus、个人/空间菜单开合及回焦。','/next/use-cases/workspace-app-bar')
++C('P76','offset −4px','old-nav-focus','一级导航 offset -4px/底线已由 P77 的 offset 2px 实块替代；不把旧规范再断言。',['round:shell-nav-state'])
++A('P76','Sidebar：外层','shell-sidebar-style','当前/非当前 hover/focus、sidebar 背景/边界、2px inset 和单焦点采样。','/next/use-cases/workspace-app-bar','shell-nav-state')
++C('P76','图标轨：实际宽','rail-covered','shell 探针测实际图标轨和 40px 按钮。',['round:shell'])
++A('P76','理论对比度','shell-contrast','当前项最终 computed 前景/背景 ≥4.5、线条对比度 ≥3。','/next/use-cases/workspace-app-bar','shell-nav-state')
++A('P76','包含 ::before','shell-isolation','原 ShellNavFixture 渲染后复制的根/后代/伪元素，五种外层与本主题自身对照；没有历史环境像素复现。','/next/use-cases/workspace-app-bar','shell-isolation')
++V('P76','回归 Tabs / Toggle','shell-reading','导航不能挤压阅读区；桌面首末焦点边界，320 compact 菜单和抽屉，数字角标与身份层次。','/next/use-cases/workspace-app-bar','shell-nav-state','[data-bpm-review="shell"]')
++C('P76','Agent 页选择','workspace','全站/Agent 主题接线属于 Workspace 后续任务，本仓无接入通过声明。')
++A('P77','当前一级项','appbar-selected','一级导航按 P77 现行实块、36px、单 2px offset2 焦点；键盘切换意图。','/next/use-cases/workspace-app-bar','shell-nav-state')
++C('P77','同路由 320','compact-covered','shell + shell-nav-state 覆盖 compact 空间菜单和抽屉，窄屏不要求出现桌面链接。',['round:shell','round:shell-nav-state'])
++A('P77','显示 REV 02','folio','REV/SHEET 顺序、前后禁用、标题可访问名、菜单 Esc 回焦，挂载 folio 优先级/空值 fixture。')
++C('P77','不出现空 folio','empty-folio','folio 的 API fixture 核对显式空值与未传值，没有残留前缀。',['round:folio'])
++V('P77','标题右侧 folio','folio-reading','长中文标题自然换行、folio 右对齐且不挤正文，REV/SECTION/SHEET 层次与字体回退。',F,'folio','#artifact-folio')
++C('P77','五主题逐一','matrix-covered','当前矩阵 5×3；nested-styles 和 shell-isolation 复核隔离，字体另有 font。',['round:shell-isolation','probe:font'])
++C('P77','省略 folioAriaHidden','folio-api-covered','folio 临时 React fixture 覆盖 sheetNo/folio 优先级、空值、aria-hidden 与标题保留；真实读屏不在本轮。',['round:folio'])
++A('P78','打开消息示例','message','两蓝图气泡实色/直角、链接焦点/对比与 Enter 锚点定位、文本 Range 选择。',P+'agent-message')
++V('P78','函数单元复习材料与课堂练习.pdf','message-reading','附件图标边框、长中文与公式/代码局部滚动、链接换行 focus 环无裁切；不能只看无横溢。',P+'agent-message','message','[data-agent-preview]')
++C('P78','Tab 至','link-covered','message 采样焦点与实际合成对比；焦点裁切和各状态可读性仍见目检。',['round:message'])
++C('P78','Enter 激活','message-action-covered','message 核对锚点与选择文本；系统剪贴板/实体触屏属于未验范围。',['round:message'])
++A('P78','隔离夹具','message-isolation','渲染消息根本身匹配 user、嵌套根/后代/伪元素对照，包括两蓝图互嵌。',P+'agent-message','nested-styles')
++C('P78','反向嵌套','reverse-message','nested-styles 每种 inner 对五种 outer，颜色取自身令牌。',['round:nested-styles'])
++C('P79','Frame 初态','frame-covered','cards-folio 执行原件下一页、缺图及禁用；card-return 补回原图。',['probe:cards-folio','round:card-return'])
++A('P79','Section：','card-return','Section Enter/Space 与展开说明、原件首末来回；A/B 实际顺序。')
++V('P79','320：','cards-reading','长中文和连续英文文件名注入后，标题/状态/meta/操作换行，A/B 方形、公式与两种密度的阅读比例。',F,'visual-cards','#object-section-cards')
++A('P79','状态：五 tone','card-options','五 tone 带真实文字/装饰图标；省略 status/letter/meta/action 不留槽；Codebox 可横向滚动。')
++C('P79','扩展夹具','omitted-covered','card-options 的真实 React fixture 逐项省略可选槽并保留代码滚动。',['round:card-options'])
++V('P79','小方块可辨','card-tones','五状态小色块边界、文字与标题可辨；不足3:1填充依靠边界的设计需目检。',F,'card-options','[data-bpm-review="cards"]')
++A('P79','嵌套隔离','cards-isolation','显式 bp-* 卡片与普通 coss 的 nested-styles 根/后代/伪元素对照。',F,'nested-styles')
++C('P79','Workspace 未来','workspace','Workspace 接入另行验证，不在 BPM1c 修改范围。')
++C('P82','使用 Supervisor','route','路由/区域定位由 facts 与 facts-extra 行携带。',['probe:facts','round:facts-extra'])
++C('P82','280 / 360 / 640','facts-matrix','facts 已实现两组件 × 6 内容宽度 × 4 项数；facts-extra 补同视口独立容器。',['probe:facts','round:facts-extra'])
++C('P82','分别保留或复制','facts-counts','facts 已实现 2/3/4/5；facts-extra 在截图前保留奇数长文本 DOM。',['probe:facts','round:facts-extra'])
++V('P82','格线清晰','facts-lines','查看奇数3/5项与长文本：无双线/半格线，末项满行、第二/四项无多余右线，字号未缩小。',F,'facts-extra','.bp-fact-container')
++A('P82','label / value','facts-extra','独立容器 280/640 与长文本/连续数字，检查实际 dl/子项宽度，奇数夹具现场截图。')
++V('P82','390px','facts-flow','原页面流与新增容器的 mt-5、邻接内容、标题块框线；代表窄屏用任务指定320，390补充自动几何记录。',F,selector='.bp-fact-container')
++A('P82','390px','facts-390','额外390px实际页面流文档宽度与事实容器可见；截图仍仅5个代表组合。',F,'facts-390')
++C('P83','选择预览主题','glyph-matrix','mark-motion 已包含全部三变体、六态及5×3。',['probe:mark-motion'])
++A('P83','行首槽','glyph-api','真实React大小切换、13px网格、custom label、glyph不显示耗时；loading恢复计时。',P+'agent-mark')
++A('P83','只有 thinking','glyph-colors','六态运行/静态、状态颜色、Dots蓝图直角与核心圆点；固定loading/inline样例计数与文字。',P+'agent-mark','glyph-colors')
++C('P83','系统 reduce','motion-covered','mark-motion 首次 reduce 导航、运行中往返变更均执行；每个 glyph 九点。',['probe:mark-motion'])
++C('P83','accessibility tree','glyph-aria','glyph-api/mark-motion 检查 role/name/隐藏点阵与无live；AX树由 glyph-colors 读取，真实读屏另验。',['round:glyph-api','round:glyph-colors'])
++C('P83','既有三个 loading','old-glyph-covered','glyph-colors 对原 loading/inline 数量及 1分5秒核对；不是再用接口文档替代实测。',['round:glyph-colors'])
++A('P83','外层 blueprint','glyph-isolation','实际渲染点阵在五外层的根/后代/伪元素隔离对照。',P+'agent-mark','nested-styles')
++C('P83','宿主动态切换','glyph-switch','glyph-api 临时 React 宿主切换 inline→glyph→loading；无真实执行状态接入声明。',['round:glyph-api'])
++V('P83','中文长名称','glyph-reading','行首16px槽/13px图形与长中文并排；三变体各状态可辨，reduce九点完整。',P+'agent-mark',selector='[data-agent-preview]')
++A('P84','材料记录九个状态','material-states','九态逐项核对文件显示身份、版本、请求名、常驻检查，动作仅意图不改变记录。')
++A('P84','本机 PDF/PNG/JPG','material-policy','本机选择限制和服务四项尚未核验分开；本机文件选择反馈与未发起上传、重试禁用说明。')
++C('P84','可移除记录','material-actions','material-states 每态动作与回执边界；material-policy核对原生选择和禁用原因。',['round:material-states','round:material-policy'])
++A('P84','切换确认六态','confirmation-states','六短标签、ready资格、unknown查询、future时态与只读记录。')
++A('P84','试题篮常驻','basket','版本行常驻、MathML、打开全文/关闭并回焦。')
++C('P84','成果标题的“更多”','title-menu','由 folio 记录真实菜单、Esc、标题独立及folio事实。',['round:folio'])
++A('P84','定位“文件输入”','old-agent-calls','当前既有公开示例 file/confirmation/basket 多呈现切换、非空内容及可用按钮采样；交互另由材料/确认/篮子探针检查，不宣称历史SSR字节通过。',P[:-1],'old-agent-calls')
++C('P84','已有预览主题选择器','portal-isolation','scoped-controls/overlay + nested-styles/isolation 已覆盖同主题Portal与样式隔离。',['round:scoped-controls','group:isolation'])
++A('P84','正常／hover','title-actions','标题操作正常/hover/focus/disabled与reduce首次/动态；四项事实由facts。',F,'title-actions')
++V('P84','题干两行裁切','workspace-reading','材料策略行、确认六态与题篮版本行/全文的视觉层级、公式与窄容器，不被裁切或操作挤压。',F,'visual-workspace','#workspace-contracts')
++C('P84','按 workspace-sync.json','workspace','R9/W207 宿主同步与阶段审计是另仓后续任务；不移植业务验收到本仓静态页。')
++A('P85/P85b/P85c','位于“卡片与线条”','object-geometry','两卡墨线外框/标题铺满/状态点/操作位置，对齐现有图纸内容盒。',F,'object-geometry')
++A('P85/P85b/P85c','点“查看关系图”','object-expand','两卡展开到 workspace、返回 inline，事实与保存未知不因展开改变。')
++A('P85/P85b/P85c','structure-arranger`','arranger-interactions','正式编排页展开返回、分组/上移下移/确认资格与既有状态示例。',P+'structure-arranger','arranger-interactions')
++A('P85/P85b/P85c','relation-graph`','relation-interactions','正式关系图页窄容器列表、展开/筛选/节点/来源和返回。',P+'relation-graph','relation-interactions')
++A('P85/P85b/P85c','整个预览根','objects-isolation','当前渲染对象根/标题/状态/操作及伪元素独立主题对照。',F,'nested-styles')
++C('P85/P85b/P85c','`21560eb`','historical-core','旧基线没有运行中的可比较浏览器环境；保留原历史证据，不将当前同主题隔离比对叫历史视觉回归。')
++V('P85/P85b/P85c','Tab / Shift+Tab','objects-focus','对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。',F,'object-expand','#sheet-object-cards')
++V('P85/P85b/P85c','对比现有 BpFrameCard','objects-reading','与 BpFrameCard 比较墨底标题/正文留白、状态边界、图纸左右对齐及320长标题；default/compact分别看。',F,'object-geometry','#sheet-object-cards')
++C('P85/P85b/P85c','先按 [workspace-sync','workspace','Workspace来源同步和R10宿主宽度属于后续另仓任务，保留未验。')
++A('P85/P85b/P85c','在上述三路由','object-spacing-matrix','default/compact、current/historical、available/unavailable、inline/workspace的标题到正文几何。',F,'object-spacing-matrix')
++C('P85/P85b/P85c','两卡标题条','range-method','object-spacing-matrix 对真实首个可见文本Range测量；旧 object-spacing 仅观察记录不当通过。',['round:object-spacing-matrix'])
++C('P85/P85b/P85c','空能力列表场景','empty-list','object-spacing-matrix 包含空ul display及首文字Range；两卡同density差≤4。',['round:object-spacing-matrix'])
++A('P85/P85b/P85c','有能力说明场景','object-capabilities','真实组件React夹具生成supported+reason/unsupported/无说明，核对列表显示与首行顺序。',F,'object-capabilities')
++C('P85/P85b/P85c','SSR 行盒推算','not-ssr','20/12是历史SSR推算，不做实际文字Range绝对值断言；只断言相同density两卡差≤4。')
++# Evidence documents contain historical records, not a second authorization to rebuild or publish.
++C('首批','31 assertions','legacy-first','31项逐一绑定 legacy first-interactions.json-1..31，5×3自动执行。',['legacy:first'])
++C('首批','four themes','old-matrix','当前matrix/isolation/overlay扩展为5×3，旧四主题数字只保留出处。',['group:matrix','group:isolation','group:interactions'])
++A('首批','Checked invalid Checkbox','common-extras','Checked-invalid Checkbox indicator destructive inset、DialogFooter方角与unstyled InputGroup。',F,'common-extras')
++C('首批','final-focus.json','tabs-focus','legacy首批31检查真实scrollport聚焦范围；纸面focus环的视觉由基础控件目检。',['legacy:first-interactions.json-31'])
++V('首批','Screens in','common-visual','首批表单无效态、只读/禁用、单外框、Tabs两变体与真实Dialog焦点：层级清楚、焦点未裁切。',F,'visual-common','#common-components')
++A('首批','CSS `zoom: 2`','print-zoom','CSS zoom2与print media的真实投影；不等于原生缩放或实体打印。')
++C('第二批','InputGroup 焦点','group-focus-covered','legacy第二批5的invalid表面、group-focus的整组/readonly/clear focus全部自动。',['legacy:interactions.json-5','round:group-focus'])
++A('第二批','InputGroup 焦点','group-focus','编辑/只读/无效整组与独立清除焦点；蓝图外2px、内outline/shadow均无。',F,'group-focus')
++C('第二批','47/47','legacy-second','47项逐一绑定 legacy interactions.json-1..47，5×3自动执行。',['legacy:second'])
++C('第二批','223/223','current-matrix','旧223不能替代当前结果；matrix/isolation/overlay在当前版本测。',['group:matrix','group:isolation'])
++C('第二批','31/31','first-regression','同首批31探针与print-zoom，避免重复手工义务。',['legacy:first','round:print-zoom'])
++C('第二批','原按钮','buttons-covered','common-controls采样hover/pressed/keyboard，disabled/loading由旧交互3；button-states补reduce。',['probe:common-controls','round:button-states'])
++A('第二批','原按钮','button-states','八个原bp按钮与首批按钮 normal/hover/pressed/keyboard/disabled/reduce实际样式、白图主色对比。',F,'button-states')
++C('第二批','正式组件页','routes','matrix 43路由当前实际布局与页面内容检查覆盖原12页。',['group:matrix'])
++C('第二批','核心主题 Progress','historical-progress','旧修改前后记录仅历史；legacy progress测当前值，不能复造旧页面计算样式。')
++C('第二批','追加全新会话','clean-context','每项全新context，浏览器zoom默认1；legacy tabs/Sheet及matrix都测document scrollWidth。',['group:matrix','legacy:first-interactions.json-31'])
++V('第二批','实际浏览器截图','batch-two-visual','InputGroup整组焦点、Combobox候选/菜单/Toast、Sheet长文公式、Skeleton/Empty层次；按实际打开状态截图查看。',F,'visual-batch-two','#common-components-two')
++A('编辑式排版与字体','Chrome 实际字体查询','editorial','CDP实际字形字体、章节索引/folio/MathML字体与尺寸；不只查font-family。')
++C('编辑式排版与字体','6 个章节','heading-covered','editorial当前计数/尺寸与字体检查；不冻结会随示例增加的旧总数。',['round:editorial'])
++C('编辑式排版与字体','阻断两份','fallback-covered','font探针已有隔离上下文阻断，新增断言error/无溢出，目检回退字形。',['probe:font'])
++C('编辑式排版与字体','普通 body / Input','historical-font','旧前后body/Input样式属于历史比较；当前core隔离由isolation，整组焦点由group-focus复验。',['group:isolation','round:group-focus'])
++V('编辑式排版与字体','已人工查看','editorial-reading','章节/中文/编号/横线层级，窄屏folio换行；加载失败后无缺字遮挡且正文仍可读。',F,'visual-fonts','main')
++A('BPW1',"test('blueprint ink",'ink-pairs','读取实际最终令牌颜色核对前景/背景、次要字、链接、主按钮、危险/成功/警告文字 ≥4.5。',F,'ink-pairs')
++A('BPW1',"test('blueprint warning Badge",'warning-composite','实际Badge透明背景逐祖先合成，文字对比≥4.5。')
++C('BPW1',"test('blueprint warning text",'warning-surfaces','现有contrast与ink-pairs补muted覆盖全部支持表面。',['probe:contrast','round:ink-pairs'])
++C('BPW1',"test('blueprint white labels",'warning-white','ink-pairs测primary-foreground/card对warning-foreground填充。',['round:ink-pairs'])
++C('BPW1',"test('core warning",'core-warning','静态固定色契约由原测试负责，本任务不改/不冒称重跑；浏览器warning由contrast测。',['probe:contrast'])
++C('BPW1',"test('blueprint geometry",'css-contract','原postcss作用域/变异测试是工程测试，本轮禁改测试且不调用全量；浏览器隔离对应isolation/nested-styles。',['group:isolation','round:nested-styles'])
++C('BPW1',"test('blueprint boundary",'token-declarations','声明枚举为源码契约；浏览器无法证明未使用令牌均显式声明，原测试保留，当前样式由isolation检查。',['group:isolation'])
++C('BPW1',"test('blueprint is a fourth",'theme-registration','当前已五主题，第四套历史命名不表示夜图不应存在；theme选择由每次open验证。',['group:matrix'])
++C('BPW1',"test('core theme tokens",'core-tokens','原静态源码固定色断言保留；当前三主题最终颜色及隔离由contrast/isolation覆盖。',['probe:contrast','group:isolation'])
++C('夜图','/next/foundations/blueprint：','night-layout','当前matrix五主题×三宽度，以及contrast覆盖正文/警告；原截图不冒充当前验收。',['group:matrix','probe:contrast'])
++C('夜图','/next/foundations：','night-isolation','当前isolation 5×5×3覆盖根/子孙/伪元素，未声称React Context业务接线。',['group:isolation'])
++A('夜图','夜图实际描边 hover','night-buttons','夜图hover和实底危险按钮最终色；确认取消保持备注。',F,'night-buttons')
++C('夜图','夜图 320px Dialog','night-dialog','legacy dialog初始/陷阱/最终焦点与overlay边界覆盖；视觉见common-visual。',['legacy:first-interactions.json-23','overlay:dialog'])
++A('夜图','/next/components/tabs','formal-tabs','正式Tabs手动激活、disabled可聚焦不能激活、可局部滚动。','/next/components/tabs','formal-tabs')
++A('夜图','单选分段 End','seg-tabs','蓝图自有分段End选异常、已锁定禁用。')
++A('夜图','/next/components/evidence-matrix','heatmap','实际宽度决定格内数字/ARIA说明、数据表保留0与缺测。','/next/components/evidence-matrix')
++V('夜图','点按零值格','heatmap-reading','热图图形、零值真实tooltip、数据表缺测；数字隐去后仍能找到格子，图案/墨线/硬阴影可辨。','/next/components/evidence-matrix','heatmap-zero','#compact-heatmap')
++A('夜图','点按零值格','heatmap-zero','在紧凑图找到零值格真实坐标点按，校验tooltip含0并截取打开状态。','/next/components/evidence-matrix')
++C('夜图','控制台最终','console','所有新execute记录pageerror及console error；旧空error声明不会继承为当前。')
++C('夜图','已知弱分隔','known-limitations','夜图普通border及浅色系列白图案是已登记限制；本轮不改阈值、不伪装成视觉通过。')
++A('P86','announcement=${announce}','prompt-api','临时真实React夹具：两变体 × 开关播报，原因可见关联、草稿可编辑、空原因无描述。',P+'prompt-bar','prompt-api')
++C('P86','absent/empty reason','prompt-empty-covered','prompt-api在真实DOM切空原因，prompt-states含现有页面两变体。',['round:prompt-api','probe:prompt-states'])
++C('P86','default API: exact main','ssr-snapshots','SSR字节与main固定hash属于原工程测试；本轮无构建/全量，不用浏览器声称等价SSR。')
++for round,key,needle in [('P79','card-options','矩阵：'),('P79','cards-reading','矩阵：'),('第二批','group-focus','InputGroup 的焦点线'),('第二批','legacy-second','修正实际 Combobox'),('第二批','current-matrix','局部主题在 Blueprint')]:
++    item=next(i for i in items if i['id']==f'{round}-{key}')
++    for line in R[round]['checklist']:
++        if needle in line['text'] and line['line'] not in item['lines']:item['lines'].append(line['line']);item['original'].append(line['text'])
++workspace=next(i for i in items if i['id']=='P74-workspace')
++for line in R['P74']['checklist']:
++    if 26<=line['line']<=31:workspace['lines'].append(line['line']);workspace['original'].append(line['text'])
++# Add source context ledger: every source line has at least one classification, with no lost action line.
++context=[]
++for r in M['rounds']:
++    used={n for i in items if i['round']==r['name'] for n in i['lines']}
++    for line in r['checklist']:
++        if line['line'] not in used:
++            context.append(dict(round=r['name'],source=r['sources'][0],line=line['line'],text=line['text'],category='不适用或已被其他项覆盖',reason='原始来源/矩阵/环境/记录格式/历史结果/实现代码上下文；具体本轮验收义务见同份清单的逐项分类，不把历史结果转为当前通过。'))
++(D/'checklist-classification.json').write_text(json.dumps(dict(schemaVersion=1,baseline=M['baseline'],items=items,sourceContext=context,counts={c:sum(i['category']==c for i in items) for c in ['可自动化','需目检','不适用或已被其他项覆盖']},contextLines=len(context)),ensure_ascii=False,indent=2)+'\n')
++print({c:sum(i['category']==c for i in items) for c in ['可自动化','需目检','不适用或已被其他项覆盖']})
++for c in context:
++ if c['text'].lstrip().startswith(('- ', '| ', '1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.')):print(c['round'],c['line'],c['text'][:150])
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/classification.md
+@@ -0,0 +1,456 @@
++# BPM1c · 原始清单逐项分类
++
++59 项可自动化、18 项需目检、72 项不适用或由其他检查覆盖，共149个验收义务。另将非验收正文保留在 JSON 的 sourceContext；此上下文行数不混入义务计数。旧78项交互另列，全部自动化。
++
++所有分类均为执行计划，不是浏览器通过证据。
++
++## P73
++
++原始来源：`docs/blueprint/evidence/r1-20261016/browser-checklist.md`。
++
++- **P73-prompt-extra · 可自动化**（原文行 9）：两个变体：打开模型后宿主关闭可用性，入口与菜单移除；来源/命令键盘选择；Shift+Enter；白图发送单外框。
++  - 自动探针/截图准备：`prompt-extra`；路由：`/next/components/agent-components/prompt-bar`。
++- **P73-native-ime · 不适用或已被其他项覆盖**（原文行 10）：中文 IME 实体候选确认需系统输入法，本轮 Chromium 自动化不等于该验收；列为范围外且不关闭原义务。
++- **P73-prompt-covered · 不适用或已被其他项覆盖**（原文行 10）：模型关闭后来源/命令选择由 prompt-extra 执行；没有把 IME 伪造为键盘 Enter。
++  - 对应项：`round:prompt-extra`。
++- **P73-prompt-reading · 需目检**（原文行 11）：加载附件与长中文公式；核对发送、范围、材料、语音入口及附件删除的焦点边缘、换行和正文。
++- **P73-prompt-focus · 可自动化**（原文行 11）：白图 2px 单 outline / offset 2px；其余主题记录原样式。
++  - 自动探针/截图准备：`prompt-extra`；路由：`/next/components/agent-components/prompt-bar`。
++- **P73-prompt-portals · 可自动化**（原文行 12）：逐个打开附件、模型、来源、命令、听写/语音说明，检查本地主题与根容器。
++  - 自动探针/截图准备：`prompt-portals`；路由：`/next/components/agent-components/prompt-bar`。
++- **P73-old-message · 不适用或已被其他项覆盖**（原文行 13）：气泡浅底及链接同主题 ring 由 P78 替代；沿 P78 当前预期复验。
++  - 对应项：`round:message`。
++- **P73-question-card · 可自动化**（原文行 14）：当前 Agent 总览追问单选及补充输入，仅反馈已选择、尚未执行。
++  - 自动探针/截图准备：`question-card`；路由：`/next/components/agent-components#existing-agent-inputs`。
++- **P73-execution · 可自动化**（原文行 15）：六态/card/inline 的展示与资格在 P84 确认夹具及正式组件页复验。
++  - 自动探针/截图准备：`execution`；路由：`/next/components/agent-components/execution-confirmation`。
++- **P73-shared-portals · 不适用或已被其他项覆盖**（原文行 16）：由 17 个 overlay 探针及 scoped-controls、scoped-toasts、isolation 组合核销对应浮层；无容器宿主业务分支不算通过。
++  - 对应项：`group:interactions`, `group:isolation`。
++
++## P74
++
++原始来源：`docs/blueprint/evidence/portal-20261016/browser-checklist.md`。
++
++- **P74-scoped-controls · 可自动化**（原文行 11）：三种外层核心 × 本轮局部主题：Select 键盘、ObjectPicker 选择、Dialog trap/初始焦点/嵌套 Esc。
++  - 自动探针/截图准备：`scoped-controls`；路由：`/next/components/menu`。
++- **P74-picker-covered · 不适用或已被其他项覆盖**（原文行 12）：输入高二并选中候选由 scoped-controls，实际 Portal 祖先/边界由 overlay-local-picker 检查。
++  - 对应项：`round:scoped-controls`, `overlay:local-picker`。
++- **P74-submenu-covered · 不适用或已被其他项覆盖**（原文行 13）：overlay-local-submenu 保留真实节点；第一次 Esc 移除/隐藏子菜单且回 submenu trigger，第二次回原 trigger。
++  - 对应项：`overlay:local-submenu`。
++- **P74-local-dialog-covered · 不适用或已被其他项覆盖**（原文行 14）：scoped-controls 与 overlay-local-dialog-select 覆盖初始聚焦、陷阱、两次 Esc。
++  - 对应项：`round:scoped-controls`, `overlay:local-dialog-select`。
++- **P74-scoped-toasts · 可自动化**（原文行 15）：三队列主题、局部卸载不搬至 body、重入不恢复；三种外层核心逐一检查。
++  - 自动探针/截图准备：`scoped-toasts`；路由：`/next/components/menu`。
++- **P74-unmount-covered · 不适用或已被其他项覆盖**（原文行 16）：由 scoped-toasts 同一探针执行卸载、外层/全局保留和重入。
++  - 对应项：`round:scoped-toasts`。
++- **P74-scoped-chart · 可自动化**（原文行 17）：两图首色随本地主题与外层核心，保留全局主题。
++  - 自动探针/截图准备：`scoped-chart`；路由：`/next/components/menu`。
++- **P74-portal-visual · 需目检**（原文行 18）：真实打开局部对话框、子菜单；检查长中文/公式、浮层翻转、焦点圈、阴影与纸面比例。
++  - 自动探针/截图准备：`visual-portals`；路由：`/next/components/menu`。
++- **P74-overlay-regression · 可自动化**（原文行 20）：额外五页实际可达 Popup 打开/Esc；不把初始页面 200 当操作通过。
++  - 自动探针/截图准备：`overlay-regression`；路由：`/next/components/dialog-layout`。
++- **P74-workspace · 不适用或已被其他项覆盖**（原文行 24,26,27,28,29,30,31）：Workspace 接线是另一仓任务，原 1–6 步全部保留，BPM1c 不实施也不宣布通过。
++
++## P75
++
++原始来源：`docs/blueprint/evidence/question-detail-20261016/browser-checklist.md`。
++
++- **P75-question-details · 可自动化**（原文行 10）：正式题卡展开三 Tab、键盘选择、内容、detail 样式与按钮 ≥32px。
++  - 自动探针/截图准备：`question-details`；路由：`/next/components/question`。
++- **P75-question-tabs · 不适用或已被其他项覆盖**（原文行 11）：同 question-details 的三 Tab 实测。
++  - 对应项：`round:question-details`。
++- **P75-question-style · 不适用或已被其他项覆盖**（原文行 12）：同 question-details 采样背景/四边/padding/radius/gap，并按两蓝图/核心分支断言。
++  - 对应项：`round:question-details`。
++- **P75-question-coarse · 可自动化**（原文行 13）：额外 hasTouch 上下文验证 pointer:coarse 且真实 Tab 高度 ≥44px。
++  - 自动探针/截图准备：`question-coarse`；路由：`/next/components/question`。
++- **P75-question-spacing · 可自动化**（原文行 14）：三面板实际 gap/margin 与规定 12/16px、核心原值采样比较。
++  - 自动探针/截图准备：`question-spacing`；路由：`/next/components/question`。
++- **P75-question-isolation · 可自动化**（原文行 15）：题目详情根/后代/伪元素的内层样式与自身主题对照；不冒充历史像素基线。
++  - 自动探针/截图准备：`question-isolation`；路由：`/next/components/question`。
++- **P75-question-fixture · 可自动化**（原文行 34）：加载已有 P75 React fixture；白底 SVG naturalWidth、三核心嵌套详情；使用现有 Vite，生产服务不支持时明确报错。
++  - 自动探针/截图准备：`question-fixture`；路由：`/next/components/question`。
++- **P75-nested-question-covered · 不适用或已被其他项覆盖**（原文行 35）：question-fixture 挂载真实嵌套样本，question-isolation 比较详情与伪元素。
++  - 对应项：`round:question-fixture`, `round:question-isolation`。
++- **P75-reverse-question-covered · 不适用或已被其他项覆盖**（原文行 36）：五主题外层 × fixture 本地五主题矩阵由 question-isolation 执行。
++  - 对应项：`round:question-isolation`。
++- **P75-question-reading · 需目检**（原文行 37）：逐一看三面板长中文、公式、图片、短标签与焦点间距；白图白底图连续，夜图白图不反色。
++  - 自动探针/截图准备：`question-fixture`；路由：`/next/components/question`。
++
++## P76
++
++原始来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md`。
++
++- **P76-site-sidebar · 可自动化**（原文行 9）：桌面切换与 Ctrl+B，320 抽屉 trap/Esc 回焦。
++  - 自动探针/截图准备：`site-sidebar`；路由：`/next`。
++- **P76-sidebar-page · 可自动化**（原文行 10）：正式 Sidebar 页面开关和键盘捷径。
++  - 自动探针/截图准备：`site-sidebar`；路由：`/next/components/sidebar`。
++- **P76-shell · 可自动化**（原文行 12）：挂载原 ShellNavFixture，AppBar/SpaceBar 高度与菜单、图标轨、移动抽屉，保存实测。
++  - 自动探针/截图准备：`shell`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-appbar-current · 不适用或已被其他项覆盖**（原文行 11）：一级导航下划线预期已由 P77 实块替代，使用 shell-nav-state；其他 AppBar 高度/SpaceBar 由 shell。
++  - 对应项：`round:shell`, `round:shell-nav-state`。
++- **P76-shell-nav-state · 可自动化**（原文行 17）：顶栏链接选中、hover/focus、个人/空间菜单开合及回焦。
++  - 自动探针/截图准备：`shell-nav-state`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-old-nav-focus · 不适用或已被其他项覆盖**（原文行 16）：一级导航 offset -4px/底线已由 P77 的 offset 2px 实块替代；不把旧规范再断言。
++  - 对应项：`round:shell-nav-state`。
++- **P76-shell-sidebar-style · 可自动化**（原文行 18）：当前/非当前 hover/focus、sidebar 背景/边界、2px inset 和单焦点采样。
++  - 自动探针/截图准备：`shell-nav-state`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-rail-covered · 不适用或已被其他项覆盖**（原文行 19）：shell 探针测实际图标轨和 40px 按钮。
++  - 对应项：`round:shell`。
++- **P76-shell-contrast · 可自动化**（原文行 20）：当前项最终 computed 前景/背景 ≥4.5、线条对比度 ≥3。
++  - 自动探针/截图准备：`shell-nav-state`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-shell-isolation · 可自动化**（原文行 21）：原 ShellNavFixture 渲染后复制的根/后代/伪元素，五种外层与本主题自身对照；没有历史环境像素复现。
++  - 自动探针/截图准备：`shell-isolation`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-shell-reading · 需目检**（原文行 22）：导航不能挤压阅读区；桌面首末焦点边界，320 compact 菜单和抽屉，数字角标与身份层次。
++  - 自动探针/截图准备：`shell-nav-state`；路由：`/next/use-cases/workspace-app-bar`。
++- **P76-workspace · 不适用或已被其他项覆盖**（原文行 26）：全站/Agent 主题接线属于 Workspace 后续任务，本仓无接入通过声明。
++
++## P77
++
++原始来源：`docs/blueprint/evidence/nav-folio-20261016/browser-checklist.md`。
++
++- **P77-appbar-selected · 可自动化**（原文行 9）：一级导航按 P77 现行实块、36px、单 2px offset2 焦点；键盘切换意图。
++  - 自动探针/截图准备：`shell-nav-state`；路由：`/next/use-cases/workspace-app-bar`。
++- **P77-compact-covered · 不适用或已被其他项覆盖**（原文行 10）：shell + shell-nav-state 覆盖 compact 空间菜单和抽屉，窄屏不要求出现桌面链接。
++  - 对应项：`round:shell`, `round:shell-nav-state`。
++- **P77-folio · 可自动化**（原文行 11）：REV/SHEET 顺序、前后禁用、标题可访问名、菜单 Esc 回焦，挂载 folio 优先级/空值 fixture。
++  - 自动探针/截图准备：`folio`；路由：`/next/foundations/blueprint`。
++- **P77-empty-folio · 不适用或已被其他项覆盖**（原文行 12）：folio 的 API fixture 核对显式空值与未传值，没有残留前缀。
++  - 对应项：`round:folio`。
++- **P77-folio-reading · 需目检**（原文行 12）：长中文标题自然换行、folio 右对齐且不挤正文，REV/SECTION/SHEET 层次与字体回退。
++  - 自动探针/截图准备：`folio`；路由：`/next/foundations/blueprint`。
++- **P77-matrix-covered · 不适用或已被其他项覆盖**（原文行 13）：当前矩阵 5×3；nested-styles 和 shell-isolation 复核隔离，字体另有 font。
++  - 对应项：`round:shell-isolation`, `probe:font`。
++- **P77-folio-api-covered · 不适用或已被其他项覆盖**（原文行 17）：folio 临时 React fixture 覆盖 sheetNo/folio 优先级、空值、aria-hidden 与标题保留；真实读屏不在本轮。
++  - 对应项：`round:folio`。
++
++## P78
++
++原始来源：`docs/blueprint/evidence/user-bubble-20261016/browser-checklist.md`。
++
++- **P78-message · 可自动化**（原文行 13）：两蓝图气泡实色/直角、链接焦点/对比与 Enter 锚点定位、文本 Range 选择。
++  - 自动探针/截图准备：`message`；路由：`/next/components/agent-components/agent-message`。
++- **P78-message-reading · 需目检**（原文行 14）：附件图标边框、长中文与公式/代码局部滚动、链接换行 focus 环无裁切；不能只看无横溢。
++  - 自动探针/截图准备：`message`；路由：`/next/components/agent-components/agent-message`。
++- **P78-link-covered · 不适用或已被其他项覆盖**（原文行 15）：message 采样焦点与实际合成对比；焦点裁切和各状态可读性仍见目检。
++  - 对应项：`round:message`。
++- **P78-message-action-covered · 不适用或已被其他项覆盖**（原文行 16）：message 核对锚点与选择文本；系统剪贴板/实体触屏属于未验范围。
++  - 对应项：`round:message`。
++- **P78-message-isolation · 可自动化**（原文行 17）：渲染消息根本身匹配 user、嵌套根/后代/伪元素对照，包括两蓝图互嵌。
++  - 自动探针/截图准备：`nested-styles`；路由：`/next/components/agent-components/agent-message`。
++- **P78-reverse-message · 不适用或已被其他项覆盖**（原文行 18）：nested-styles 每种 inner 对五种 outer，颜色取自身令牌。
++  - 对应项：`round:nested-styles`。
++
++## P79
++
++原始来源：`docs/blueprint/evidence/cards-20261016/browser-checklist.md`。
++
++- **P79-frame-covered · 不适用或已被其他项覆盖**（原文行 7）：cards-folio 执行原件下一页、缺图及禁用；card-return 补回原图。
++  - 对应项：`probe:cards-folio`, `round:card-return`。
++- **P79-card-return · 可自动化**（原文行 8）：Section Enter/Space 与展开说明、原件首末来回；A/B 实际顺序。
++  - 自动探针/截图准备：`card-return`；路由：`/next/foundations/blueprint`。
++- **P79-cards-reading · 需目检**（原文行 9,6）：长中文和连续英文文件名注入后，标题/状态/meta/操作换行，A/B 方形、公式与两种密度的阅读比例。
++  - 自动探针/截图准备：`visual-cards`；路由：`/next/foundations/blueprint`。
++- **P79-card-options · 可自动化**（原文行 10,6）：五 tone 带真实文字/装饰图标；省略 status/letter/meta/action 不留槽；Codebox 可横向滚动。
++  - 自动探针/截图准备：`card-options`；路由：`/next/foundations/blueprint`。
++- **P79-omitted-covered · 不适用或已被其他项覆盖**（原文行 11）：card-options 的真实 React fixture 逐项省略可选槽并保留代码滚动。
++  - 对应项：`round:card-options`。
++- **P79-card-tones · 需目检**（原文行 10）：五状态小色块边界、文字与标题可辨；不足3:1填充依靠边界的设计需目检。
++  - 自动探针/截图准备：`card-options`；路由：`/next/foundations/blueprint`。
++- **P79-cards-isolation · 可自动化**（原文行 12）：显式 bp-* 卡片与普通 coss 的 nested-styles 根/后代/伪元素对照。
++  - 自动探针/截图准备：`nested-styles`；路由：`/next/foundations/blueprint`。
++- **P79-workspace · 不适用或已被其他项覆盖**（原文行 13）：Workspace 接入另行验证，不在 BPM1c 修改范围。
++
++## P82
++
++原始来源：`docs/blueprint/evidence/facts-narrow-20261017/browser-checklist.md`。
++
++- **P82-route · 不适用或已被其他项覆盖**（原文行 6）：路由/区域定位由 facts 与 facts-extra 行携带。
++  - 对应项：`probe:facts`, `round:facts-extra`。
++- **P82-facts-matrix · 不适用或已被其他项覆盖**（原文行 7）：facts 已实现两组件 × 6 内容宽度 × 4 项数；facts-extra 补同视口独立容器。
++  - 对应项：`probe:facts`, `round:facts-extra`。
++- **P82-facts-counts · 不适用或已被其他项覆盖**（原文行 8）：facts 已实现 2/3/4/5；facts-extra 在截图前保留奇数长文本 DOM。
++  - 对应项：`probe:facts`, `round:facts-extra`。
++- **P82-facts-lines · 需目检**（原文行 9）：查看奇数3/5项与长文本：无双线/半格线，末项满行、第二/四项无多余右线，字号未缩小。
++  - 自动探针/截图准备：`facts-extra`；路由：`/next/foundations/blueprint`。
++- **P82-facts-extra · 可自动化**（原文行 10）：独立容器 280/640 与长文本/连续数字，检查实际 dl/子项宽度，奇数夹具现场截图。
++  - 自动探针/截图准备：`facts-extra`；路由：`/next/foundations/blueprint`。
++- **P82-facts-flow · 需目检**（原文行 11）：原页面流与新增容器的 mt-5、邻接内容、标题块框线；代表窄屏用任务指定320，390补充自动几何记录。
++- **P82-facts-390 · 可自动化**（原文行 11）：额外390px实际页面流文档宽度与事实容器可见；截图仍仅5个代表组合。
++  - 自动探针/截图准备：`facts-390`；路由：`/next/foundations/blueprint`。
++
++## P83
++
++原始来源：`docs/blueprint/evidence/agent-mark-glyph-20261017/browser-checklist.md`。
++
++- **P83-glyph-matrix · 不适用或已被其他项覆盖**（原文行 5）：mark-motion 已包含全部三变体、六态及5×3。
++  - 对应项：`probe:mark-motion`。
++- **P83-glyph-api · 可自动化**（原文行 6）：真实React大小切换、13px网格、custom label、glyph不显示耗时；loading恢复计时。
++  - 自动探针/截图准备：`glyph-api`；路由：`/next/components/agent-components/agent-mark`。
++- **P83-glyph-colors · 可自动化**（原文行 7）：六态运行/静态、状态颜色、Dots蓝图直角与核心圆点；固定loading/inline样例计数与文字。
++  - 自动探针/截图准备：`glyph-colors`；路由：`/next/components/agent-components/agent-mark`。
++- **P83-motion-covered · 不适用或已被其他项覆盖**（原文行 8）：mark-motion 首次 reduce 导航、运行中往返变更均执行；每个 glyph 九点。
++  - 对应项：`probe:mark-motion`。
++- **P83-glyph-aria · 不适用或已被其他项覆盖**（原文行 9）：glyph-api/mark-motion 检查 role/name/隐藏点阵与无live；AX树由 glyph-colors 读取，真实读屏另验。
++  - 对应项：`round:glyph-api`, `round:glyph-colors`。
++- **P83-old-glyph-covered · 不适用或已被其他项覆盖**（原文行 10）：glyph-colors 对原 loading/inline 数量及 1分5秒核对；不是再用接口文档替代实测。
++  - 对应项：`round:glyph-colors`。
++- **P83-glyph-isolation · 可自动化**（原文行 11）：实际渲染点阵在五外层的根/后代/伪元素隔离对照。
++  - 自动探针/截图准备：`nested-styles`；路由：`/next/components/agent-components/agent-mark`。
++- **P83-glyph-switch · 不适用或已被其他项覆盖**（原文行 12）：glyph-api 临时 React 宿主切换 inline→glyph→loading；无真实执行状态接入声明。
++  - 对应项：`round:glyph-api`。
++- **P83-glyph-reading · 需目检**（原文行 6）：行首16px槽/13px图形与长中文并排；三变体各状态可辨，reduce九点完整。
++
++## P84
++
++原始来源：`docs/blueprint/evidence/r9-20261018/browser-checklist.md`。
++
++- **P84-material-states · 可自动化**（原文行 11）：九态逐项核对文件显示身份、版本、请求名、常驻检查，动作仅意图不改变记录。
++  - 自动探针/截图准备：`material-states`；路由：`/next/foundations/blueprint`。
++- **P84-material-policy · 可自动化**（原文行 12）：本机选择限制和服务四项尚未核验分开；本机文件选择反馈与未发起上传、重试禁用说明。
++  - 自动探针/截图准备：`material-policy`；路由：`/next/foundations/blueprint`。
++- **P84-material-actions · 不适用或已被其他项覆盖**（原文行 13）：material-states 每态动作与回执边界；material-policy核对原生选择和禁用原因。
++  - 对应项：`round:material-states`, `round:material-policy`。
++- **P84-confirmation-states · 可自动化**（原文行 14）：六短标签、ready资格、unknown查询、future时态与只读记录。
++  - 自动探针/截图准备：`confirmation-states`；路由：`/next/foundations/blueprint`。
++- **P84-basket · 可自动化**（原文行 15）：版本行常驻、MathML、打开全文/关闭并回焦。
++  - 自动探针/截图准备：`basket`；路由：`/next/foundations/blueprint`。
++- **P84-title-menu · 不适用或已被其他项覆盖**（原文行 16）：由 folio 记录真实菜单、Esc、标题独立及folio事实。
++  - 对应项：`round:folio`。
++- **P84-old-agent-calls · 可自动化**（原文行 20）：当前既有公开示例 file/confirmation/basket 多呈现切换、非空内容及可用按钮采样；交互另由材料/确认/篮子探针检查，不宣称历史SSR字节通过。
++  - 自动探针/截图准备：`old-agent-calls`；路由：`/next/components/agent-components`。
++- **P84-portal-isolation · 不适用或已被其他项覆盖**（原文行 21）：scoped-controls/overlay + nested-styles/isolation 已覆盖同主题Portal与样式隔离。
++  - 对应项：`round:scoped-controls`, `group:isolation`。
++- **P84-title-actions · 可自动化**（原文行 22）：标题操作正常/hover/focus/disabled与reduce首次/动态；四项事实由facts。
++  - 自动探针/截图准备：`title-actions`；路由：`/next/foundations/blueprint`。
++- **P84-workspace-reading · 需目检**（原文行 15）：材料策略行、确认六态与题篮版本行/全文的视觉层级、公式与窄容器，不被裁切或操作挤压。
++  - 自动探针/截图准备：`visual-workspace`；路由：`/next/foundations/blueprint`。
++- **P84-workspace · 不适用或已被其他项覆盖**（原文行 26）：R9/W207 宿主同步与阶段审计是另仓后续任务；不移植业务验收到本仓静态页。
++
++## P85/P85b/P85c
++
++原始来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md`。
++
++- **P85-P85b-P85c-object-geometry · 可自动化**（原文行 9）：两卡墨线外框/标题铺满/状态点/操作位置，对齐现有图纸内容盒。
++  - 自动探针/截图准备：`object-geometry`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-object-expand · 可自动化**（原文行 10）：两卡展开到 workspace、返回 inline，事实与保存未知不因展开改变。
++  - 自动探针/截图准备：`object-expand`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-arranger-interactions · 可自动化**（原文行 11）：正式编排页展开返回、分组/上移下移/确认资格与既有状态示例。
++  - 自动探针/截图准备：`arranger-interactions`；路由：`/next/components/agent-components/structure-arranger`。
++- **P85-P85b-P85c-relation-interactions · 可自动化**（原文行 12）：正式关系图页窄容器列表、展开/筛选/节点/来源和返回。
++  - 自动探针/截图准备：`relation-interactions`；路由：`/next/components/agent-components/relation-graph`。
++- **P85-P85b-P85c-objects-isolation · 可自动化**（原文行 16）：当前渲染对象根/标题/状态/操作及伪元素独立主题对照。
++  - 自动探针/截图准备：`nested-styles`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-historical-core · 不适用或已被其他项覆盖**（原文行 17）：旧基线没有运行中的可比较浏览器环境；保留原历史证据，不将当前同主题隔离比对叫历史视觉回归。
++- **P85-P85b-P85c-objects-focus · 需目检**（原文行 18）：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
++  - 自动探针/截图准备：`object-expand`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-objects-reading · 需目检**（原文行 19）：与 BpFrameCard 比较墨底标题/正文留白、状态边界、图纸左右对齐及320长标题；default/compact分别看。
++  - 自动探针/截图准备：`object-geometry`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-workspace · 不适用或已被其他项覆盖**（原文行 24）：Workspace来源同步和R10宿主宽度属于后续另仓任务，保留未验。
++- **P85-P85b-P85c-object-spacing-matrix · 可自动化**（原文行 30）：default/compact、current/historical、available/unavailable、inline/workspace的标题到正文几何。
++  - 自动探针/截图准备：`object-spacing-matrix`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-range-method · 不适用或已被其他项覆盖**（原文行 36）：object-spacing-matrix 对真实首个可见文本Range测量；旧 object-spacing 仅观察记录不当通过。
++  - 对应项：`round:object-spacing-matrix`。
++- **P85-P85b-P85c-empty-list · 不适用或已被其他项覆盖**（原文行 37）：object-spacing-matrix 包含空ul display及首文字Range；两卡同density差≤4。
++  - 对应项：`round:object-spacing-matrix`。
++- **P85-P85b-P85c-object-capabilities · 可自动化**（原文行 38）：真实组件React夹具生成supported+reason/unsupported/无说明，核对列表显示与首行顺序。
++  - 自动探针/截图准备：`object-capabilities`；路由：`/next/foundations/blueprint`。
++- **P85-P85b-P85c-not-ssr · 不适用或已被其他项覆盖**（原文行 39）：20/12是历史SSR推算，不做实际文字Range绝对值断言；只断言相同density两卡差≤4。
++
++## 首批
++
++原始来源：`docs/blueprint/evidence/common-20261015/checks.md`。
++
++- **首批-legacy-first · 不适用或已被其他项覆盖**（原文行 8）：31项逐一绑定 legacy first-interactions.json-1..31，5×3自动执行。
++  - 对应项：`legacy:first`。
++- **首批-old-matrix · 不适用或已被其他项覆盖**（原文行 9）：当前matrix/isolation/overlay扩展为5×3，旧四主题数字只保留出处。
++  - 对应项：`group:matrix`, `group:isolation`, `group:interactions`。
++- **首批-common-extras · 可自动化**（原文行 10）：Checked-invalid Checkbox indicator destructive inset、DialogFooter方角与unstyled InputGroup。
++  - 自动探针/截图准备：`common-extras`；路由：`/next/foundations/blueprint`。
++- **首批-tabs-focus · 不适用或已被其他项覆盖**（原文行 11）：legacy首批31检查真实scrollport聚焦范围；纸面focus环的视觉由基础控件目检。
++  - 对应项：`legacy:first-interactions.json-31`。
++- **首批-common-visual · 需目检**（原文行 13）：首批表单无效态、只读/禁用、单外框、Tabs两变体与真实Dialog焦点：层级清楚、焦点未裁切。
++  - 自动探针/截图准备：`visual-common`；路由：`/next/foundations/blueprint`。
++- **首批-print-zoom · 可自动化**（原文行 24）：CSS zoom2与print media的真实投影；不等于原生缩放或实体打印。
++  - 自动探针/截图准备：`print-zoom`；路由：`/next/foundations/blueprint`。
++
++## 第二批
++
++原始来源：`docs/blueprint/evidence/batch2-20261016/checks.md`。
++
++- **第二批-group-focus-covered · 不适用或已被其他项覆盖**（原文行 19）：legacy第二批5的invalid表面、group-focus的整组/readonly/clear focus全部自动。
++  - 对应项：`legacy:interactions.json-5`, `round:group-focus`。
++- **第二批-group-focus · 可自动化**（原文行 19,8）：编辑/只读/无效整组与独立清除焦点；蓝图外2px、内outline/shadow均无。
++  - 自动探针/截图准备：`group-focus`；路由：`/next/foundations/blueprint`。
++- **第二批-legacy-second · 不适用或已被其他项覆盖**（原文行 20,9）：47项逐一绑定 legacy interactions.json-1..47，5×3自动执行。
++  - 对应项：`legacy:second`。
++- **第二批-current-matrix · 不适用或已被其他项覆盖**（原文行 21,10）：旧223不能替代当前结果；matrix/isolation/overlay在当前版本测。
++  - 对应项：`group:matrix`, `group:isolation`。
++- **第二批-first-regression · 不适用或已被其他项覆盖**（原文行 22）：同首批31探针与print-zoom，避免重复手工义务。
++  - 对应项：`legacy:first`, `round:print-zoom`。
++- **第二批-buttons-covered · 不适用或已被其他项覆盖**（原文行 23）：common-controls采样hover/pressed/keyboard，disabled/loading由旧交互3；button-states补reduce。
++  - 对应项：`probe:common-controls`, `round:button-states`。
++- **第二批-button-states · 可自动化**（原文行 23）：八个原bp按钮与首批按钮 normal/hover/pressed/keyboard/disabled/reduce实际样式、白图主色对比。
++  - 自动探针/截图准备：`button-states`；路由：`/next/foundations/blueprint`。
++- **第二批-routes · 不适用或已被其他项覆盖**（原文行 24）：matrix 43路由当前实际布局与页面内容检查覆盖原12页。
++  - 对应项：`group:matrix`。
++- **第二批-historical-progress · 不适用或已被其他项覆盖**（原文行 25）：旧修改前后记录仅历史；legacy progress测当前值，不能复造旧页面计算样式。
++- **第二批-clean-context · 不适用或已被其他项覆盖**（原文行 27）：每项全新context，浏览器zoom默认1；legacy tabs/Sheet及matrix都测document scrollWidth。
++  - 对应项：`group:matrix`, `legacy:first-interactions.json-31`。
++- **第二批-batch-two-visual · 需目检**（原文行 31）：InputGroup整组焦点、Combobox候选/菜单/Toast、Sheet长文公式、Skeleton/Empty层次；按实际打开状态截图查看。
++  - 自动探针/截图准备：`visual-batch-two`；路由：`/next/foundations/blueprint`。
++
++## 编辑式排版与字体
++
++原始来源：`docs/blueprint/evidence/editorial-20261016/checks.md`。
++
++- **编辑式排版与字体-editorial · 可自动化**（原文行 11）：CDP实际字形字体、章节索引/folio/MathML字体与尺寸；不只查font-family。
++  - 自动探针/截图准备：`editorial`；路由：`/next/foundations/blueprint`。
++- **编辑式排版与字体-heading-covered · 不适用或已被其他项覆盖**（原文行 10）：editorial当前计数/尺寸与字体检查；不冻结会随示例增加的旧总数。
++  - 对应项：`round:editorial`。
++- **编辑式排版与字体-fallback-covered · 不适用或已被其他项覆盖**（原文行 12）：font探针已有隔离上下文阻断，新增断言error/无溢出，目检回退字形。
++  - 对应项：`probe:font`。
++- **编辑式排版与字体-historical-font · 不适用或已被其他项覆盖**（原文行 13）：旧前后body/Input样式属于历史比较；当前core隔离由isolation，整组焦点由group-focus复验。
++  - 对应项：`group:isolation`, `round:group-focus`。
++- **编辑式排版与字体-editorial-reading · 需目检**（原文行 24）：章节/中文/编号/横线层级，窄屏folio换行；加载失败后无缺字遮挡且正文仍可读。
++  - 自动探针/截图准备：`visual-fonts`；路由：`/next/foundations/blueprint`。
++
++## BPW1
++
++原始来源：`tests/blueprint-theme.test.mjs`。
++
++- **BPW1-ink-pairs · 可自动化**（原文行 48）：读取实际最终令牌颜色核对前景/背景、次要字、链接、主按钮、危险/成功/警告文字 ≥4.5。
++  - 自动探针/截图准备：`ink-pairs`；路由：`/next/foundations/blueprint`。
++- **BPW1-warning-composite · 可自动化**（原文行 70）：实际Badge透明背景逐祖先合成，文字对比≥4.5。
++  - 自动探针/截图准备：`warning-composite`；路由：`/next/foundations/blueprint`。
++- **BPW1-warning-surfaces · 不适用或已被其他项覆盖**（原文行 63）：现有contrast与ink-pairs补muted覆盖全部支持表面。
++  - 对应项：`probe:contrast`, `round:ink-pairs`。
++- **BPW1-warning-white · 不适用或已被其他项覆盖**（原文行 81）：ink-pairs测primary-foreground/card对warning-foreground填充。
++  - 对应项：`round:ink-pairs`。
++- **BPW1-core-warning · 不适用或已被其他项覆盖**（原文行 53）：静态固定色契约由原测试负责，本任务不改/不冒称重跑；浏览器warning由contrast测。
++  - 对应项：`probe:contrast`。
++- **BPW1-css-contract · 不适用或已被其他项覆盖**（原文行 88）：原postcss作用域/变异测试是工程测试，本轮禁改测试且不调用全量；浏览器隔离对应isolation/nested-styles。
++  - 对应项：`group:isolation`, `round:nested-styles`。
++- **BPW1-token-declarations · 不适用或已被其他项覆盖**（原文行 29）：声明枚举为源码契约；浏览器无法证明未使用令牌均显式声明，原测试保留，当前样式由isolation检查。
++  - 对应项：`group:isolation`。
++- **BPW1-theme-registration · 不适用或已被其他项覆盖**（原文行 21）：当前已五主题，第四套历史命名不表示夜图不应存在；theme选择由每次open验证。
++  - 对应项：`group:matrix`。
++- **BPW1-core-tokens · 不适用或已被其他项覆盖**（原文行 38）：原静态源码固定色断言保留；当前三主题最终颜色及隔离由contrast/isolation覆盖。
++  - 对应项：`probe:contrast`, `group:isolation`。
++
++## 夜图
++
++原始来源：`docs/blueprint/evidence/night-20261016/checks.md`。
++
++- **夜图-night-layout · 不适用或已被其他项覆盖**（原文行 12）：当前matrix五主题×三宽度，以及contrast覆盖正文/警告；原截图不冒充当前验收。
++  - 对应项：`group:matrix`, `probe:contrast`。
++- **夜图-night-isolation · 不适用或已被其他项覆盖**（原文行 13）：当前isolation 5×5×3覆盖根/子孙/伪元素，未声称React Context业务接线。
++  - 对应项：`group:isolation`。
++- **夜图-night-buttons · 可自动化**（原文行 14）：夜图hover和实底危险按钮最终色；确认取消保持备注。
++  - 自动探针/截图准备：`night-buttons`；路由：`/next/foundations/blueprint`。
++- **夜图-night-dialog · 不适用或已被其他项覆盖**（原文行 15）：legacy dialog初始/陷阱/最终焦点与overlay边界覆盖；视觉见common-visual。
++  - 对应项：`legacy:first-interactions.json-23`, `overlay:dialog`。
++- **夜图-formal-tabs · 可自动化**（原文行 16,41,45）：正式Tabs手动激活、disabled可聚焦不能激活、可局部滚动。
++  - 自动探针/截图准备：`formal-tabs`；路由：`/next/components/tabs`。
++- **夜图-seg-tabs · 可自动化**（原文行 16）：蓝图自有分段End选异常、已锁定禁用。
++  - 自动探针/截图准备：`seg-tabs`；路由：`/next/foundations/blueprint`。
++- **夜图-heatmap · 可自动化**（原文行 17,39,44）：实际宽度决定格内数字/ARIA说明、数据表保留0与缺测。
++  - 自动探针/截图准备：`heatmap`；路由：`/next/components/evidence-matrix`。
++- **夜图-heatmap-reading · 需目检**（原文行 17）：热图图形、零值真实tooltip、数据表缺测；数字隐去后仍能找到格子，图案/墨线/硬阴影可辨。
++  - 自动探针/截图准备：`heatmap-zero`；路由：`/next/components/evidence-matrix`。
++- **夜图-heatmap-zero · 可自动化**（原文行 17）：在紧凑图找到零值格真实坐标点按，校验tooltip含0并截取打开状态。
++  - 自动探针/截图准备：`heatmap-zero`；路由：`/next/components/evidence-matrix`。
++- **夜图-console · 不适用或已被其他项覆盖**（原文行 18）：所有新execute记录pageerror及console error；旧空error声明不会继承为当前。
++- **夜图-known-limitations · 不适用或已被其他项覆盖**（原文行 24）：夜图普通border及浅色系列白图案是已登记限制；本轮不改阈值、不伪装成视觉通过。
++
++## P86
++
++原始来源：`tests/agent-prompt-disabled-announce.test.mjs`。
++
++- **P86-prompt-api · 可自动化**（原文行 25）：临时真实React夹具：两变体 × 开关播报，原因可见关联、草稿可编辑、空原因无描述。
++  - 自动探针/截图准备：`prompt-api`；路由：`/next/components/agent-components/prompt-bar`。
++- **P86-prompt-empty-covered · 不适用或已被其他项覆盖**（原文行 38）：prompt-api在真实DOM切空原因，prompt-states含现有页面两变体。
++  - 对应项：`round:prompt-api`, `probe:prompt-states`。
++- **P86-ssr-snapshots · 不适用或已被其他项覆盖**（原文行 50）：SSR字节与main固定hash属于原工程测试；本轮无构建/全量，不用浏览器声称等价SSR。
++
++## 78 项历史交互映射
++
++每项在 legacy-probes.mjs 中以原证据文件名与原数组的1起始序号注册；名称、detail来自原始证据，所有条目覆盖5主题×3宽度。样式中的原蓝图色值按同主题令牌检查；三核心主题保持既有上游焦点与颜色，不硬套蓝图2px单环要求。
++
++- `first-interactions.json-1`：12 component samples
++- `first-interactions.json-2`：icon action feedback
++- `first-interactions.json-3`：disabled and static loading
++- `first-interactions.json-4`：材料名称 · 必填校验 invalid surface；原实测 detail：`{"invalid": "true", "border": "rgb(198, 40, 40)", "inner": "0px"}`
++- `first-interactions.json-5`：材料名称 · 必填校验 clears invalid
++- `first-interactions.json-6`：材料名称 · 必填校验 one focus outline；原实测 detail：`{"outline": "2px", "inner": "none"}`
++- `first-interactions.json-7`：修改理由 · 必填校验 invalid surface；原实测 detail：`{"invalid": "true", "border": "rgb(198, 40, 40)", "inner": "0px"}`
++- `first-interactions.json-8`：修改理由 · 必填校验 clears invalid
++- `first-interactions.json-9`：修改理由 · 必填校验 one focus outline；原实测 detail：`{"outline": "2px", "inner": "none"}`
++- `first-interactions.json-10`：readonly inputs
++- `first-interactions.json-11`：disabled input textarea select
++- `first-interactions.json-12`：disabled select option
++- `first-interactions.json-13`：select keyboard and validation
++- `first-interactions.json-14`：select escape focus
++- `first-interactions.json-15`：checkbox space
++- `first-interactions.json-16`：radio keyboard
++- `first-interactions.json-17`：radio skips disabled
++- `first-interactions.json-18`：switch keyboard and contrast；原实测 detail：`{"on": "rgb(22, 24, 29)", "off": "rgb(243, 245, 248)"}`
++- `first-interactions.json-19`：基础组件材料预览 keyboard
++- `first-interactions.json-20`：基础组件材料预览 disabled cannot activate
++- `first-interactions.json-21`：基础组件补充信息 keyboard
++- `first-interactions.json-22`：基础组件补充信息 disabled cannot activate
++- `first-interactions.json-23`：dialog initial focus
++- `first-interactions.json-24`：dialog invalid and focuses field
++- `first-interactions.json-25`：nested escape retains dialog focus
++- `first-interactions.json-26`：dialog focus trapped
++- `first-interactions.json-27`：dialog final focus
++- `first-interactions.json-28`：save updates local card
++- `first-interactions.json-29`：static card has no button role
++- `first-interactions.json-30`：badge text and 4 alerts
++- `first-interactions.json-31`：320 tabs focus fits scrollport；原实测 detail：`{"left": 104, "right": 283.3333435058594, "parentLeft": 36.66666793823242, "parentRight": 283.3333396911621, "scrollWidth": 320, "width": 320}`
++- `interactions.json-1`：12 second batch samples
++- `interactions.json-2`：unique IDs；原实测 detail：`[]`
++- `interactions.json-3`：input group clear and focus
++- `interactions.json-4`：empty clear disabled
++- `interactions.json-5`：input group invalid outer surface；原实测 detail：`{"invalid": "true", "inner": "0px", "outer": "rgb(198, 40, 40)"}`
++- `interactions.json-6`：invalid integer remains invalid
++- `interactions.json-7`：valid integer clears invalid
++- `interactions.json-8`：group readonly and disabled
++- `interactions.json-9`：combobox clear
++- `interactions.json-10`：combobox empty result
++- `interactions.json-11`：combobox chosen value
++- `interactions.json-12`：typed text is not selection
++- `interactions.json-13`：keyboard option selection clears error
++- `interactions.json-14`：combobox Escape focus
++- `interactions.json-15`：disabled combobox
++- `interactions.json-16`：single toggle keyboard
++- `interactions.json-17`：multiple toggle selection
++- `interactions.json-18`：disabled toggles
++- `interactions.json-19`：0 middle 100 and unknown progress；原实测 detail：`[{"now": "0", "text": "0%"}, {"now": "40", "text": "40%"}, {"now": "100", "text": "100%"}, {"now": null, "text": "未提供进度"}]`
++- `interactions.json-20`：progress fill contrast；原实测 detail：`{"track": {"bg": "rgb(243, 245, 248)", "color": "rgb(22, 24, 29)", "border": "rgb(214, 218, 225)", "width": "0px", "radius": "0px", "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px", "focus": false}, "fill": {"bg": "rgb(22, 24, 29)", "color": "rgb(22, 24, 29)", "border": "rgb(214, 218, 225)", "width": "0px", "radius": "0px", "outline": "oklab(0.501092 -0.0323436 -0.161344 / 0.5) none 2.66667px", "focus": false}, "contrast": 16.259790213604944}`
++- `interactions.json-21`：menu disabled item
++- `interactions.json-22`：menu checkbox state
++- `interactions.json-23`：menu radio state
++- `interactions.json-24`：menu Escape returns focus
++- `interactions.json-25`：menu keyboard action
++- `interactions.json-26`：popover initial focus
++- `interactions.json-27`：popover cancel preserves value
++- `interactions.json-28`：popover apply and return focus
++- `interactions.json-29`：tooltip accessible description
++- `interactions.json-30`：keyboard tooltip
++- `interactions.json-31`：tooltip Escape
++- `interactions.json-32`：three local notifications
++- `interactions.json-33`：no global toast duplicate；原实测 detail：`{"count": 1, "allLocal": true}`
++- `interactions.json-34`：toast action closes chosen item
++- `interactions.json-35`：toast close all
++- `interactions.json-36`：alert cancel initial focus
++- `interactions.json-37`：alert focus contained
++- `interactions.json-38`：alert cancel retains note
++- `interactions.json-39`：confirm local change and final focus
++- `interactions.json-40`：sheet initial focus
++- `interactions.json-41`：sheet Escape return
++- `interactions.json-42`：narrow sheet and internal scroll；原实测 detail：`{"left": 48, "right": 304.66668701171875, "width": 320, "scrollWidth": 320, "panelHeight": 589, "panelScroll": 2115}`
++- `interactions.json-43`：skeleton busy state
++- `interactions.json-44`：reduced motion skeleton；原实测 detail：`["none", "none", "none"]`
++- `interactions.json-45`：skeleton manual content switch
++- `interactions.json-46`：empty switches fixed content
++- `interactions.json-47`：empty restores
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -3,6 +3,19 @@
+ > 交接状态记录。每轮更新“当前”，旧“当前”连同日期与基线移入“历史”。正文路径均为仓库相对路径。
+ 
+ ## 当前
++
++- 轮次：BPM1c · 自动探针迁移与逐项分类 · 2026-10-19；基线 `19309411a5b936b0b06e7fd63ac8e39f03551337`，分支 `docs/blueprint-matrix-closeout`。在已有 BPM1/BPM1b 证据、截图与 STATUS 改动上继续；没有改源码、样式、工程测试或依赖。
++- 范围：78 项历史交互逐项注册自动探针，计划 5 主题 × 320/768/1280 共 1170 行；修正 local-submenu 为真实节点移除/隐藏条件等待，保留两次 Esc 与回焦断言。17 份原始清单拆为 **59 可自动化 / 18 需目检 / 72 不适用或已有覆盖**，共149个义务；原文与行号见[逐项分类](evidence/matrix-closeout-20261019/classification.md)及[机器账本](evidence/matrix-closeout-20261019/checklist-classification.json)。非验收来源/历史正文单列，不混入义务计数。
++- 计划：interactions 1500 行，其中1170行旧交互现在都有执行函数；per-round由整份清单占位改成885行自动检查、90行代表组合目检、60行既有附加探针，共1035行。目检限 blueprint / blueprint-night × 320/1280，加 light × 1280；[目检清单](evidence/matrix-closeout-20261019/manual-review.md)写明路由、状态、内容与待生成截图路径。截图由 Supervisor 重跑生成，Builder未创建本轮浏览器截图。
++- 当前实测仍为 Supervisor 的 BPM1b 重跑：matrix 645 pass +645待目检；isolation 75 pass；interactions 315 pass /15 error /1170待执行；per-round 30 pass /30 observed /255待执行。[原重跑归档](evidence/matrix-closeout-20261019/bpm1b-supervisor-run.json.gz)与原 JSON 保留，不把脚本完成改写成实测通过。离线 `--plan` 只写独立计划和未运行的目检索引。
++- Builder 验证：`node --check`、离线计划、脚本/账本/证据校验、临时React夹具定向类型检查，实际数字与退出码见[validation.json](evidence/matrix-closeout-20261019/validation.json)。未运行生产构建或全量工程测试；首次夹具定向类型检查漏载仓库 MathML ambient声明，修正校验入口后复验，不修改产品类型。
++- 交接：Supervisor 使用 `--run --group=interactions --replace` 与 `--run --group=per-round --replace`；matrix/isolation不因本轮脚本补充重跑，既有645项阅读目检未自动核销。重跑后执行validate并逐项目检；详细命令、截图索引和限制见[交接说明](evidence/matrix-closeout-20261019/checks.md)。
++- 周期：仍为旧周期3/3累计浏览器矩阵待收口；本轮为同轮自动化返工，**不新增完成轮、不重置周期、不宣布收口**。Builder自测不等于Supervisor Review或PO批准。
++- 未验证范围：浏览器验收：按分工由 Supervisor 执行。新增探针尚未浏览器试跑；Vite临时fixture、CDP字形与新版定位器需本轮实际运行核实。Workspace、真实服务、原生IME/缩放、真机触控、读屏器与实体打印未验；历史基线像素对照不以当前CSS隔离替代。无提交、推送、PR、服务启动、发布或站点同步。
++
++## 历史
++
++### BPM1b · 2026-10-19（BPM1c 前当前，原样保留）
+ 
+ - 轮次：BPM1b · 测量脚本修正与截图改名 · 2026-10-19；基线 `19309411a5b936b0b06e7fd63ac8e39f03551337`，分支 `docs/blueprint-matrix-closeout`。开工已有 BPM1 证据/截图目录及 STATUS 改动，保留全部实测判断。
+ - 范围：仅当前矩阵证据目录、对应截图目录和本状态。修正浮层动画后测量、Combobox 定位、子菜单两次 Esc、input 严格定位、核心主题线条观察策略与 mark-motion 稳定采样；645 张布局 PNG 改为可读路由名并更新引用，图片字节不变。源码、样式、测试、冻结 coss、Token、依赖不改。[修正说明与重跑清单](evidence/matrix-closeout-20261019/checks.md)、[改名映射](evidence/matrix-closeout-20261019/screenshot-renames.json)。
+@@ -12,7 +25,6 @@
+ - 周期：仍为旧周期第 3/3 轮累计浏览器矩阵待收口；BPM1b 是同轮脚本返工，**不新增完成轮、不重置周期、不宣布收口**。须由 Supervisor 完成重跑、目检与独立综合审查。
+ - 未验证范围：浏览器验收：按分工由 Supervisor 执行；真机、读屏器、IME、实体打印、原生缩放、真实服务和 Workspace 接入未验。未提交、推送、发布或同步站点；Builder 自测不等同 Supervisor Review 或 PO 批准。
+ 
+-## 历史
+ 
+ ### BPM1 · 2026-10-19（BPM1b 前当前，原样保留）
+ 

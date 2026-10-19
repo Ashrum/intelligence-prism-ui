@@ -1,0 +1,177 @@
+{
+  "at": "2026-10-19T08:05:44.930Z",
+  "commands": [
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
+      "startedAt": "2026-10-19T08:05:43.945Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
+      "startedAt": "2026-10-19T08:05:43.967Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
+      "startedAt": "2026-10-19T08:05:43.986Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/rename-screenshots.mjs",
+      "startedAt": "2026-10-19T08:05:44.006Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-19T08:05:44.028Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+      "startedAt": "2026-10-19T08:05:44.048Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-19T08:05:44.132Z",
+      "exitCode": 0,
+      "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\n{\"offlineChecks\":8,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --plan",
+      "startedAt": "2026-10-19T08:05:44.160Z",
+      "exitCode": 0,
+      "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":75,\"per-round\":315}}\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "startedAt": "2026-10-19T08:05:44.246Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "checks": [
+    {
+      "name": "offline plan preserves all browser evidence bytes",
+      "pass": true,
+      "detail": 8
+    },
+    {
+      "name": "all 23 source hashes match current source",
+      "pass": true,
+      "detail": 23
+    },
+    {
+      "name": "every existing round browser checklist included",
+      "pass": true,
+      "detail": 11
+    },
+    {
+      "name": "43 route patterns match complete segment shape",
+      "pass": true,
+      "detail": 43
+    },
+    {
+      "name": "P73 outdated URL mapped without editing source checklist",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "source-derived sample names unique and legacy obligations complete",
+      "pass": true,
+      "detail": {
+        "samples": 24,
+        "legacy": 78
+      }
+    },
+    {
+      "name": "browser evidence schema and summaries remain truthful",
+      "pass": true,
+      "detail": {
+        "totals": {
+          "matrix": 1290,
+          "interactions": 1500,
+          "isolation": 75,
+          "per-round": 315
+        },
+        "summaries": {
+          "matrix": {
+            "pass": 645,
+            "fail": 0,
+            "error": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 645,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "interactions": {
+            "pass": 239,
+            "fail": 31,
+            "error": 60,
+            "pending-supervisor-browser": 1170,
+            "pending-visual": 0,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "isolation": {
+            "pass": 75,
+            "fail": 0,
+            "error": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 0,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "per-round": {
+            "pass": 21,
+            "fail": 9,
+            "error": 0,
+            "pending-supervisor-browser": 255,
+            "pending-visual": 0,
+            "known-limitation": 0,
+            "observed": 30
+          }
+        }
+      }
+    },
+    {
+      "name": "645 renamed PNG bytes match original hashes and all screenshot references resolve",
+      "pass": true,
+      "detail": {
+        "renamed": 645,
+        "indexed": 1440
+      }
+    },
+    {
+      "name": "first Supervisor run archived without reclassifying failures",
+      "pass": true,
+      "detail": {
+        "files": 8,
+        "sha256": "fb2fbb8393b52347f2c6ced84f1dff199682dced8b716794225df2751c41a39e"
+      }
+    },
+    {
+      "name": "old current moved verbatim; earlier history unchanged",
+      "pass": true,
+      "detail": {
+        "oldCurrentSha256": "78c5e7ef94db7a003bf4685c30e6f2c907453ac602b68a105a5460f16564f61f"
+      }
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: \"docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-toast-queues-blueprint-1280-\\344\\277\\241\\346\\201\\257.png\"\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:81:396\n    at check (file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:15:50)\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:81:7"
+}
