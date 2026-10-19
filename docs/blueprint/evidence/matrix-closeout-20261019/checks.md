@@ -1,0 +1,163 @@
+# BPM1c · 自动探针与目检交接
+
+本轮只测不改。Builder未运行浏览器、未启动/重启服务。新增脚本当前只完成离线验证，自动探针尚待Supervisor实跑；不能把有执行函数等同于浏览器通过。
+
+## 重跑
+
+使用Supervisor已核对工作树/分支的现有Vite开发服务，按顺序执行（不需要因本轮重跑 matrix / isolation）：
+
+```sh
+node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=interactions --replace
+node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=per-round --replace
+node docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
+```
+
+现有BPM1b结果已归档为[bpm1b-supervisor-run.json.gz](bpm1b-supervisor-run.json.gz)；重跑更多次前另行归档当前结果和分组截图索引。`--replace`明确允许覆盖对应组结果及同名截图。`BPM1_BASE_URL`可指向现有localhost/127.0.0.1端口；`BPM1_PLAYWRIGHT`可指定现有Playwright模块绝对路径。脚本不安装依赖或启动服务。
+
+`--plan`离线可用：只更新[plan.json](plan.json)及尚无schemaVersion=2实跑时的目检计划；不会导入Playwright，不会覆盖8个浏览器结果/索引文件。最终组结果记录schemaVersion=2；校验器仍识别保留的BPM1b schemaVersion=1，并分别核对两种结构。
+
+## 义务与数量
+
+- 78项历史交互逐项注册于[legacy-probes.mjs](legacy-probes.mjs)，原名/原detail逐一列在[分类表](classification.md)。没有旧项留作手工执行。5主题×3宽度为1170个自动行；原有17浮层+5组合探针为330行，interactions共1500行。
+- 17份原始来源拆成149个验收义务：**59可自动化、18需目检、72不适用或已有覆盖**。具体理由、准确来源行和原文保留在[机器账本](checklist-classification.json)。来源/历史/记录格式等非验收正文另列sourceContext，不混入149。72项不是72个通过，范围外义务仍保留原限制。
+- per-round：59×15=885自动行，18×5=90目检行，原4×15=60附加测量，共1035。原30观察中的font加入加载/回退断言；object-spacing保持observed，新增矩阵使用首个文本Range进行明确断言。
+- 目检仅blueprint与blueprint-night各320/1280，再加light/1280。执行过程生成实际截图后自动刷新[manual-review.md](manual-review.md)；截图只是证据，pass保持null且不会代勾。自动行仍全5×3执行；新增自动行截图同样限代表组合，避免给非代表组合制造额外目检任务。
+- 43路由/645布局与75隔离仍保留Supervisor实测；matrix中645项长文阅读待目检没有在本轮被自动核销。18类本轮目检是17份原始清单的精简视觉义务，并非全站645项阅读已经完成。
+
+## 断言与证据边界
+
+local-submenu通过`hiddenNode`轮询真实ElementHandle的isConnected/display/visibility/rect，接受移除或隐藏；随后必须回到子菜单入口，父菜单保持可见；第二次Esc关闭父菜单并回原入口。不等待元素stable，不重定位到仍显示的父Popup。窗口动画后的几何采样仍保留原稳定检查。
+
+旧交互每项独立全新context，从初态自行准备，不依赖前一项。字段invalid同时核查错误出现/消失、内外表面；Tabs保留coss手动激活及禁用项可焦不可激活；弹窗初始/陷阱/嵌套Esc/最终焦点分别断言。Blueprint原实测色值改为同主题当前令牌，三核心主题保留上游焦点和颜色，不强制蓝图几何。
+
+逐轮探针使用真实页面；缺少入口、字段或实际测量值一律失败/错误，不通过catch跳过。部分DOM几何/嵌套样式检查使用临时渲染副本，清楚区别于React Context或宿主接入；材料/确认只读取外部事实与演示意图。Vite临时React夹具位于[review-fixture.tsx](review-fixture.tsx)，复用既有组件及P75/P76原夹具；只在隔离页面DOM挂载，关context即移除，不注册产品路由。生产预览服务若不能提供TSX模块会明确报error，需Supervisor改用已经管理的Vite服务。
+
+CDP查询字形实际字体；reduce运行中切换、hasTouch指针模拟、CSS zoom2、print media均为模拟，不能替代真实系统IME/原生浏览器缩放、真机触控、读屏器或实体打印。历史基线像素不可由当前渲染副本重建，P77/P78已替代旧设计预期，逐项记在分类理由；夜图border和浅色系列白图案保持已知限制。
+
+## Builder实测
+
+本轮实际增量见[bpm1c-scripts.diff](bpm1c-scripts.diff)（开工备份对比与新增脚本/分类说明），STATUS累计Git差异见[scope.diff](scope.diff)。当前离线命令与退出码以[validation.json](validation.json)为准，包括脚本语法、8项既有合成审计、定向夹具类型检查、78项映射、17份来源行、代表组合、截图命名与旧证据字节保护。未执行本轮工程构建/全量测试，不沿用旧数字。初次定向类型校验未包含仓库MathML ambient声明导致诊断；校验入口已加载现有.d.ts并重新检查，未改产品源码。
+
+## BPM1b历史交接（以下原文保留，不是本轮待办）
+
+# BPM1b · 测量脚本修正与累计矩阵执行交接
+
+日期：2026-10-19。基线 `19309411a5b936b0b06e7fd63ac8e39f03551337`；分支 `docs/blueprint-matrix-closeout`；BPM1 开工干净，BPM1b 开工已有 BPM1 文档、脚本及 Supervisor 首轮实测证据。
+
+## 当前结果
+
+**浏览器验收：按分工由 Supervisor 执行。** BPM1b Builder 只做离线修正与校验，没有启动浏览器、连接 localhost 或管理服务。以下为 Supervisor 已写入 JSON 的首轮实测；修正后尚未重跑，原失败/错误状态不改写成通过。
+
+| 输出 | 记录数 | 首轮通过 / 失败 / 错误 | 待验与观察 |
+| --- | ---: | --- | --- |
+| [matrix.json](matrix.json) | 1290 | 645 / 0 / 0 | 645 项阅读目检待验 |
+| [interactions.json](interactions.json) | 1500 | 239 / 31 / 60 | 1170 条历史交互义务待验 |
+| [isolation.json](isolation.json) | 75 | 75 / 0 / 0 | Foundations 嵌套隔离自动项完成，其他 Agent 场景仍按原清单 |
+| [per-round.json](per-round.json) | 315 | 21 / 9 / 0 | 255 条逐轮义务待验，30 条观察 |
+
+合计 3180 条。Supervisor 将首轮所列失败/错误归因为测量脚本问题；除 dark/320 的一次 mark-motion 采样失败外，其余问题在相同适用场景跨主题/宽度重复。此归因来自 Supervisor 实际浏览器排查，Builder 未独立复验，不等于整轮产品验收通过。首轮结果和截图索引保存在 [压缩归档](first-browser-run.json.gz)（8 个 JSON；布局截图引用已更新，其余实值与判断不变）。
+
+已有 1440 张 PNG，其中本次按任务要求重命名 645 张布局截图，另外 795 张首轮交互/隔离/逐轮历史图保留原名；将来所有新截图均走新命名规则。645 张图片逐一核对 PNG 签名、字节数与 SHA-256，文件内容未变。[改名映射](screenshot-renames.json) 同时保留旧名、新名和哈希；[布局截图索引](screenshots-matrix.json)、[交互截图索引](screenshots-interactions.json)、[隔离截图索引](screenshots-isolation.json)、[逐轮截图索引](screenshots-per-round.json) 均指向实际文件。
+
+## BPM1b 修正与首轮归因
+
+1. **浮层测量过早（30 项失败）**：dialog、alert-dialog、local-dialog 在 320px 各 5 项，sheet 全宽度 15 项。测量前等待 Popup 及祖先动画结束且 rect 连续两次帧间比较不变；5 秒上限，超时记 `unstable` /「未稳定」，保留最后 rect/动画状态并以非零退出，不能通过。Supervisor 的 dialog 320px 实例由初开 bottom=915 稳定到 900，是首轮时序问题的排查证据，不是本轮 Builder 测值。
+2. **Combobox（30 项错误）**：从 `components/prism-next/blueprint-second-batch-demo.tsx` 的 `aria-labelledby` 确认输入可访问名为“关联知识点”“必选知识点 · 校验”。使用 `getByRole('combobox', {name, exact:true})` 与 ArrowDown 打开，再 Esc 回焦输入；不再用展开按钮名称定位。
+3. **local-submenu（15 项错误）**：保留打开时的真实子菜单节点，避免 `:visible.last()` 在子菜单关闭后重新命中父菜单。第一次 Esc 确认子菜单关闭、父菜单保留、焦点回到“材料示例子菜单”；第二次 Esc 确认父菜单关闭、焦点回到“局部材料操作”。
+4. **common-controls（15 项错误）**：必填输入限定到 `input, textarea`。同一源码中的“材料关键词”也由 group 和 input 共用标签，清除探针同步限定为 input，避免下一处相同 strict 冲突。
+5. **对比度（9 项失败）**：`--line` ≥3:1 只适用于 blueprint/blueprint-night。核心三主题线条每个配对保留实测，`threshold:null`、`status:observed`；其余文字仍按 ≥4.5:1 检查，不放宽文字要求。夜图 `border` 继续记录 `known-limitation`；首轮 background/card 实测 1.584249 / 1.453912，不能套用到 `--line`。
+6. **mark-motion（1 项失败）**：reduce 首次加载及来回动态切换均等待有限动画与 opacity 收敛后采样。no-preference 允许原有无限装饰循环，仍等待有限过渡及 rect 稳定；reduce 不忽略任何活动动画。每次先写入 `{mode, stability, marks}` 再断言，失败也有 measured。
+7. **截图命名**：布局图改为 `<主题>-<宽度>-<路由短名>.png`；交互等新图追加 probe/浮层/内层主题/状态。两个 blueprint 路由分别使用 `foundations-blueprint` 与 `experiments-blueprint`，避免同名覆盖。例：[蓝图 320 AgentMessage](../../screens/matrix-closeout-20261019/blueprint-320-agent-message.png)、[蓝图 320 Foundations](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint.png)。
+
+Builder 交付为脚本和执行交接，不是周期收口。旧周期仍为 3/3 待累计浏览器矩阵及独立综合审查，不新增完成轮、不重置周期；是否满足收口条件由 Supervisor 复核决定。
+
+## 输入与当前入口
+
+[manifest.json](manifest.json) 保存 23 份输入的 SHA-256、完整逐轮原文及行号、17 个轮次组、43 条当前路由与对应页面源码、两批 24 个具名样例，以及 31 + 47 条历史交互名称。P85/P85b/P85c 共用原清单，保留三个阶段条款；没有漏掉 P85c 文字 Range 要求。P86 未找到单独的仓库 `browser-checklist.md`，依据现有 `agent-prompt-disabled-announce.test.mjs`、`agent-prompt-bar.tsx` 和输入框示例核对。
+
+[route-index.md](route-index.md) 逐个列出访问 URL、来源与需要展开的区域。清单的历史要求按最新已实现行为解释：
+
+- P73 的旧教师气泡与白色链接焦点预期由 P78 替代；不得据旧断言把当前浅色气泡、同主题 ring 判为回归。
+- P76 一级 AppBar 的底线预期由 P77 的 primary 实块选中态替代；SpaceBar/Sidebar 仍核对各自原有轻选中行为。
+- P85b 20/12px 行盒推算不能代替 P85c 的标题底边到文字 Range 顶边实测，两卡同 density 差应 ≤4px。
+
+静态发现（不是已观察的浏览器缺陷）：
+
+1. P73 旧路径 `/next/components/agent-components/existing-agent-inputs` 没有对应语义注册项。当前入口是 `/next/components/agent-components#existing-agent-inputs`，由总览的补充示例与锚点解析承载。脚本使用当前总览路由，旧清单原文不改；尚未实测旧 URL 的 HTTP 状态。
+2. `/next/experiments/blueprint` 的“精修版主题”只有 Light/Paper/Dark。脚本在核心外层选择相同局部主题；在两蓝图外层保留 paper 局部并记录。这两个场景是嵌套覆盖，不能算实验页局部五主题通过。
+3. 当前 Agent 语义页的局部选择器只有核心三主题与“跟随站点”；两蓝图通过跟随站点测量。对话组合页的选择器则有完整五主题，脚本分别处理。
+
+## Supervisor 运行说明
+
+仅在 Supervisor 核对现有 5173 服务确实对应上述基线及当前工作树之后运行。以下命令不安装依赖、不改业务文件，也不管理服务；运行在仓库根目录。Playwright 默认绝对导入任务指定缓存，已静态确认 `index.mjs` 存在。
+
+只需重跑 **interactions** 与 **per-round** 两组（共 390 条自动/观察探针，1425 条手工义务仍待验）；matrix 与 isolation 的首轮通过结果无需因本次脚本修正重跑。首轮已归档，可使用 `--replace`：
+
+```sh
+node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=interactions --replace
+node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=per-round --replace
+```
+
+`BPM1_BASE_URL` 可设为已运行服务的 localhost 或 127.0.0.1 地址；`BPM1_PLAYWRIGHT` 可替换成实际缓存的绝对 `index.mjs` 路径。每条探针关闭自己的隔离 browser context；通过 localStorage 初始值及真实主题选择器设置主题。
+
+- `--plan` 可离线执行，不导入 Playwright。没有实测结果时生成占位；已有任一组实测时只打印计划计数与 `evidencePreserved`，不写结果文件。`validate.mjs` 比较执行前后的 8 个结果/索引哈希。
+- 分组执行只覆盖对应 JSON，`--replace` 是明确重跑参数。首次结果已保存在压缩归档；后续重跑前另行归档新结果。
+- 断言失败为 `fail`，定位等异常为 `error`，稳定性超时为 `unstable`，均非通过；`unstable` 保存最后采样，退出 1。正常退出也不核销手工/视觉条目。
+- 新截图写入 `docs/blueprint/screens/matrix-closeout-20261019/`，统一为 `<主题>-<宽度>-<路由短名>[-<内容>].png`。每组索引保留真实日期、基线、路由和视口。新旧图片都是真实 PNG；图片内容不作编辑。
+- 当前 `screenshots-*.json` 是首轮索引；本轮 Builder 只更新被改名图片的引用，尚无修正版脚本运行截图。`screenshot-index.json` 是 BPM1 初始空占位历史文件，以分组索引为准。
+
+## 交给 Supervisor 的浏览器验收清单
+
+所有下列路径使用现有 `http://localhost:5173`，覆盖 light / paper / dark / blueprint / blueprint-night × 320 / 768 / 1280（高 900）。
+
+- `/next/foundations/blueprint#common-components` 和 `#common-components-two`：打开 Dialog / AlertDialog / Sheet；等入场完成后边界应在视口内，5 秒未稳定应记录 `unstable`，不得通过。Dialog/AlertDialog 的 320px 与 Sheet 全宽度为重点。
+- 同页 Combobox：聚焦“关联知识点”“必选知识点 · 校验”，ArrowDown 显示候选、Esc 关闭并回到输入；“起始页 · 必填校验”填写 3 后错误消失，“材料关键词”填写后清除并回焦 input。继续原 common-controls 其余路径。
+- `/next/components/menu#portal-scope`：“局部材料操作”→“材料示例子菜单”→ArrowRight；第一次 Esc 只关子菜单并回到父菜单子项，第二次 Esc 关父菜单回到原按钮。局部 Dialog 320px 同时核对入场稳定后的边界。
+- `/next/components/agent-components/agent-mark`：首次 reduce 加载与 reduce/no-preference/reduce/no-preference 切换。reduce 后九点 glyph 全可见、无动画，glyph 16×16；重点复验 dark 320，并核对失败 JSON 也有 measured。
+- `/next/foundations/blueprint`：per-round 对比度中核心线条仅观察，文字门槛保留，两蓝图结构线 ≥3:1；夜图普通 border 实值继续记录已知限制。其余 facts、object-spacing、font 探针随该组回归。
+- matrix 的 645 项阅读目检、1170 条旧交互义务、255 条逐轮义务继续按下表和原清单核销；已有自动通过不能代替它们。
+
+## 自动化覆盖与剩余清单
+
+自动探针支持：43 路由文档 html/body 宽度；两批 24 样例名称；可见长文本/MathML 与裁切/滚动祖先采样；首批 Select（含必填和 Dialog 内）、Dialog，第二批 Combobox（含必填）、Menu/Popover/Tooltip/AlertDialog/Sheet，以及 P74 局部 Select/ObjectPicker/Menu/Submenu/Dialog/内部 Select。浮层通过真实入口开启，记录 Portal 祖先、主题、边界、Esc 回焦与打开截图。
+
+交互探针包括文本校验、关键词清除/回焦、Checkbox/Switch、按钮 normal/hover/pressed/Tab 样式、原件缺图切换、Section 说明、folio、Rounded/Pill 禁用原因和播报、模型入口隐藏、来源列表、AgentMark reduce 首次加载及动态来回切换、第二批五类 Toast 显式关闭。布局、语义与动画断言和视觉评价保持分开。
+
+逐轮附加测量为：实际计算样式解析后的警告/文字/结构线对比度；两个事实组件 × 6 内容宽度（280/360/480/481/640/1000）× 4 项数（2/3/4/5）临时 DOM 夹具；两对象卡标题到第一可见文字的 Range；字体正常和资源阻断后的 FontFace 状态/截图。事实夹具运行后还原 DOM，关闭隔离 context，不修改组件源码。
+
+仍须 Supervisor 完成以下清单并按原文细项记值；脚本目前不自动核销这些完整义务：
+
+| 范围 | URL / 操作与应见结果 |
+| --- | --- |
+| 旧 78 项交互 | `/next/foundations/blueprint`；逐项使用 manifest 的 legacy 名称核对原断言，含菜单勾选/单选、必填与只读、禁用、Tooltip 关联、AlertDialog 确认/取消、Sheet 长内容与焦点。不能用五行组合探针替代 78 项逐项结论。 |
+| P73 | 输入框模型显隐、来源/命令方向键与选中、语音未接入说明；总览锚点的澄清卡显示“补充一个信息”；执行确认六态与焦点。 |
+| P74 | `/next/components/menu#portal-scope`；三 Toast 队列归属、离开局部预览后不复活；嵌套 Dialog 首焦/Tab 限制/两次 Esc；子菜单翻转、内外图表 React Context 色板；五条额外回归路由的实际 Popup。 |
+| P75 | `/next/components/question`；动点与矩形样本 → 详情 → 三 Tab；测四边虚线/padding/gap、fine/coarse Tab 高度、三面板间距；按原目录 fixture.tsx 说明挂载白底图片/反向嵌套夹具。 |
+| P76/P77 | `/next`、Sidebar、workspace-app-bar；320 抽屉、Ctrl/⌘+B、图标轨 56px、compact 菜单、当前/hover/focus、个人/空间菜单；使用原 ShellNavFixture，不增加产品路由。 |
+| P78 | agent-message；长中文/公式/代码/附件、同主题链接焦点，Enter 到材料说明、复制；嵌套根本身与后代/伪元素分别比较。 |
+| P79 | `#object-section-cards`；五 tone、长标题、状态/meta/action 换行、省略插槽、Codebox、A/B 真实分节；自动探针只覆盖缺图与说明开合。 |
+| P82 | `#data`；独立容器同时为 280/640px，390 视口、格线不双线与末项跨满、长中文/数字实际可读；DOM 宽度探针不代替目检。 |
+| P83 | agent-mark；glyph/inline/loading 动态切换、所有九点、颜色、辅助技术名称；自动 reduce 不证明计时器清理或真实读屏。 |
+| P84 | `#workspace-contracts` 九材料态、六确认态和只读切换；常驻未知服务事实、移除只发意图、题篮 V2；`#artifact-folio` 更多→版本说明与 Esc 回焦；旧组件例子展开回归。 |
+| P85/b/c | `#sheet-object-cards` 与两语义组件页；default/compact、inline/workspace、空/非空能力说明、保存身份与资格、展开/返回/焦点；Range 按相同 density/状态配对，差 ≤4px，截图核对首行真实文字。自动记录找不到实例时不得按 0 差通过。 |
+| P86 | prompt-bar；“载入草稿”→禁用原因“有”→原因播报“关闭（宿主已提示）”；文字持续可见、发送按钮禁用且描述关联保留，草稿可编辑；开启恢复 role=status，去掉原因移除关联；Rounded/Pill 均验，真实播报另验。 |
+| 编辑排版/字体 | 章节/分节/folio 长中文，font loaded 与阻断两份 WOFF2 后回退截图；Chrome Fonts/CDP 实际字形命中需补测，fontFamily 声明不能证明实际字体。 |
+| BPW1/夜图 | 补真实 Badge 8% 透明底合成、反白标签、实际图表浅色系列上的白图案；保留实值及对应表面，不能仅测探针令牌就声称全部场景通过。 |
+
+初始 Foundations 隔离脚本比较完整预览根、后代、`::before`、`::after` 的圆角、背景、文字、四边、阴影等属性，参考是当前版本同内层主题的外层，而非历史基线。Agent 各类预览、交互状态及 Portal 的完整隔离仍按原清单执行；静态属性相等不证明整个 React 图表 Context 一致。
+
+## 失败、待目检与已知限制
+
+首轮失败/错误数量及 Supervisor 归因见上；当前 JSON 保留首轮状态，待修正版重跑后才更新。运行后的每个 fail/error 须记录实际 URL、全局/局部主题、视口、操作顺序、期望与实值、对应 PNG。按行 `recipe` 或上表步骤复现，运行异常与产品缺陷分列，**只记录不修源码**。
+
+全部阅读/视觉项待 Supervisor 目检。自动脚本保存可见长中文与公式的文本、rect、scrollWidth、line-clamp 和裁切祖先，逐项给出待判依据；截图中须确认字形、行距、层级、换行、内容完整、焦点未裁切及局部滚动可达。页面无溢出或样例计数正确不构成视觉合格。
+
+已知限制只作为历史事实保留，不计作本轮新失败：夜图普通分隔线约 1.58 / 1.45:1；夜图浅色系列的白图案不足 3:1。首轮夜图 border/background 与 border/card 实值见上；结构控件的 `--line` 仅两蓝图按 ≥3:1 检查，核心三主题仅观察；正文/警告文字仍按 ≥4.5:1 检查。
+
+未验证范围：浏览器验收：按分工由 Supervisor 执行；真机、读屏器、IME、实体打印、原生缩放、真实服务和 Workspace 接入。没有当前生产构建、全量测试、类型/排版/字体工程检查结论；本轮为证据与测量脚本修正，未改源码、样式、测试或依赖。未同步 guide 生成物（不在授权范围）。
+
+## Builder 静态校验
+
+[validation.json](validation.json) 记录本轮实际命令、退出码、计数、证据文件哈希；[scope.diff](scope.diff) 为 STATUS 相对 HEAD 的 diff，[bpm1b-scripts.diff](bpm1b-scripts.diff) 为本轮 measure/validate 相对 BPM1 的实际修订。`offline-audit.mjs` 用合成节点与时钟验证动画等待、rect/opacity 收敛、超时、无限动效处理、核心/蓝图对比度边界及命名冲突；不启动浏览器，不冒充真实 DOM 验收。静态证据审计检查来源哈希、矩阵数量、摘要与行状态一致、PNG 哈希/引用、首轮归档、历史段落保留及授权范围。
+
+BPM1 的初始准备失败摘要保留在 [准备迭代](preparation-attempts.json)。[审计失败日志](validation-error.json) 由审计脚本更新为 BPM1b 首次静态审计失败：Git 默认转义中文截图名，旧路径检查错误拒绝授权范围内的文件；改为 `git ... -z` 解析原始路径后复验。此文件不再是 BPM1 初次审计原文；上述记录均非产品失败。本轮没有运行生产构建、全量测试、类型/字体/排版工程检查；源码、样式、测试、依赖均未修改。

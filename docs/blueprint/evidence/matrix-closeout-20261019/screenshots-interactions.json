@@ -1,0 +1,970 @@
+[
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:08.139Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:08.333Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-required-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:09.719Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-required-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:09.915Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:11.400Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:11.860Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-dialog-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:13.576Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-dialog-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:13.825Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-combobox-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:15.090Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-combobox.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:15.377Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-required-combobox-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:16.599Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-required-combobox.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:16.889Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-menu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:18.132Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-menu.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:18.445Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-popover-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:19.863Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-popover.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:20.172Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-tooltip-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:21.466Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-tooltip.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:21.727Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-alert-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:23.209Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-alert-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:23.724Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-sheet-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:25.178Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-sheet.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:25.679Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:26.950Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:26.983Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-picker-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:28.276Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-picker.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:28.325Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-menu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:29.485Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-menu.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:29.541Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-submenu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:30.801Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-submenu-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:37.862Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:39.251Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:39.519Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-dialog-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:41.117Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-menu-local-dialog-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:00:41.159Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-common-controls.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:42.673Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-cards-folio.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:43.909Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-prompt-bar-prompt-states.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/agent-components/prompt-bar",
+    "date": "2026-10-19T09:00:45.417Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-agent-mark-mark-motion.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/components/agent-components/agent-mark",
+    "date": "2026-10-19T09:00:47.299Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues-信息.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:48.449Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues-成功.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:49.540Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues-错误.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:50.638Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues-提醒.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:51.722Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues-加载.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:52.814Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-toast-queues.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:00:53.851Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:46.176Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:46.515Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-required-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:48.063Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-required-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:48.384Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:50.089Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:50.686Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-dialog-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:52.592Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-dialog-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:52.981Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-combobox-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:54.346Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-combobox.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:54.756Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-required-combobox-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:56.141Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-required-combobox.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:56.541Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-menu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:57.986Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-menu.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:58.427Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-popover-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:02:59.933Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-popover.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:00.397Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-tooltip-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:01.870Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-tooltip.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:02.255Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-alert-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:03.844Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-alert-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:04.514Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-sheet-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:06.246Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-sheet.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:06.945Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:08.379Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:08.438Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-picker-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:09.672Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-picker.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:09.755Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-menu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:11.148Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-menu.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:11.238Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-submenu-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:12.589Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-submenu-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:19.661Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-dialog-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:21.187Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-dialog.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:21.479Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-dialog-select-open.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:23.173Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-menu-local-dialog-select.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/menu",
+    "date": "2026-10-19T09:03:23.286Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-common-controls.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:25.112Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-cards-folio.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:26.485Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-prompt-bar-prompt-states.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/agent-components/prompt-bar",
+    "date": "2026-10-19T09:03:28.035Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-agent-mark-mark-motion.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/components/agent-components/agent-mark",
+    "date": "2026-10-19T09:03:29.926Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues-信息.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:31.196Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues-成功.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:32.488Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues-错误.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:33.761Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues-提醒.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:34.990Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues-加载.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:36.260Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-toast-queues.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T09:03:37.415Z",
+    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "execution": "not-run",
+  "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337",
+  "screenshots": [],
+  "note": "Builder 未执行浏览器，无本轮截图；Supervisor 运行后读取 screenshots-<group>.json 实际索引。"
+}
