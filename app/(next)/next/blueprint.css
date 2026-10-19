@@ -512,6 +512,8 @@
 .bp-entry-row:not(:disabled):is(:hover,:focus-visible) .bp-entry-row-arrow { transform:translateX(2px); }
 /* Theme accent never crosses a nested non-blueprint preview boundary. */
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.bp-target-lock,.bp-diagram-callout,.bp-entry-row[data-emphasis] .bp-entry-row-action):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
+/* P88: annotations can be the theme root themselves; keep preview isolation. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]):is(.bp-target-lock,.bp-diagram-callout):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
 @media (max-width:759px) {
   .bp-entry-row { grid-template-columns:1.75rem 20px minmax(0,1fr); column-gap:8px; }
   .bp-entry-row-action { grid-column:3; }

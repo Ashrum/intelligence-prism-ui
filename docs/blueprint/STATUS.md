@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P88 · P87 标注组件自身主题根强调色修复 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `fix/blueprint-p87-self-root`；开工工作树干净。本轮属于缺陷修复小轮。
+- 范围与取舍：复用 P87 既有样式及 CSS AST 测试，只为 `.bp-target-lock`、`.bp-diagram-callout` 补充自身带 `blueprint` / `blueprint-night` 的 `color:var(--link)` 规则，沿用非蓝图预览根及全部后代排除条件。无需新增组件或外部来源；`.bp-entry-row[data-emphasis]` 自身为主题根时，其 action 已是后代，现有规则有效，新增回归断言而不改该规则。核心三主题中普通组件、coss、令牌、组件 API、依赖和矩阵证据 / 截图不改。
+- 工程：数学字体检查退出 0；排版检查 317 TSX、退出 0；生产构建退出 0；构建后全量测试 **2277/2277，fail / skipped 均 0**、退出 0；`tsc --noEmit` 退出 2，仅任务允许的既有 1 条 TS2306（learning-analysis/prototype-source/main.tsx:57，app.js 非模块）。修改前在干净基线执行 `tsc --noEmit --incremental false` 已复现同一诊断，候选日志逐字相同，无新增类型错误；未人工读取或修改该工作线源码。
+- 专项与变异：entry-annotations **15/15**，新增 3 项覆盖两种蓝图自身根 / 后代命中、嵌套核心预览根 / 深层后代 / 再嵌套蓝图根排除、核心外层普通组件排除和入口 action 回归。删除新增变体后，运行同一自身根正向断言确实失败（退出 1）；恢复 CSS 原字节。AST 只证明选择器匹配边界，不代替浏览器计算样式。guide 随本状态同步，最终同步校验及文档相关复验另记于本轮报告。
+- 周期：P88 Builder 实施与工程自测完成，尚未记为已验收；继承旧周期 3/3 累计浏览器矩阵待收口，不新增已完成轮、不重置周期、不宣布矩阵收口。最近完整工程回归为本轮（2277/2277，类型检查保留上述基线问题）；下一触发点仍为 Supervisor 的 isolation 复验、累计浏览器收口与独立综合审查。
+- 交接：`/next/foundations` isolation 组，外层 light / paper / dark × 内层 blueprint / blueprint-night × 320 / 768 / 1280（高 900），共 18 个原失败组合全部复验。reduced-motion 下等待稳定后，自身为预览根的两个标注组件 `color` 应与同内层主题对照一致并解析为 `--link`；同时复核核心内层隔离、普通组件、bp-sheet 后代和入口 action。`/next/foundations/blueprint#entry-annotations` 补看桌面 / 窄屏节点与标注强调色。本轮未生成浏览器截图。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。未验真实服务、Workspace、真机、读屏器或打印；未提交、推送、创建 PR、启动或重启服务、发布或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。
+
+## 历史
+
+### P87 · 2026-10-19（P88 前当前，原样保留）
+
 - 轮次：P87 · 图纸坐标追踪、图形标注与入口行 · 2026-10-19；基线 `f472fa64e1761e85e26416a09e9fc333ba202d03`，分支 `feat/blueprint-entry-annotations`；开工工作树干净。
 - 范围：BlueprintSheet 可选 rulerTracking / rulerMark；新增 BpTargetLock、BpDiagramCallout、BpEntryRow；blueprint.css 的 P87 隔离样式、图纸 E、API 文档与同源 guide 生成物、新专项测试及 main SSR 夹具。既有 blueprint-components / blueprint-print-a11y 测试更新图纸总数与标题期望；blueprint-theme / blueprint-night 改用或沿用 CSS AST 区分 bp 关键帧，全部普通选择器隔离断言保持；不改组件目录总数、冻结 coss、theme.css、依赖或 Workspace。
 - 实现与来源：[组件 API 与离线复用取舍](../blueprint-theme.md)。三种 bp 呈现导出沿用本模块登记，不另建正式 catalog 页面。SSR 默认路径四组与 main 逐字节一致，受控 null 优先级回退变异被捕获。
@@ -12,7 +24,6 @@
 - 交接：`/next/foundations/blueprint#entry-annotations`，blueprint / light × 320 / 1280。检查图纸空白处细指针四边同步反白、离开清除；三行 hover / Tab focus 对应节点框、标签和图纸坐标；链接跳转与两按钮内容；68px 行高、窄屏动作换行、无行分割线；动态 reduced-motion 停装饰动画但保留静态高亮；嵌套核心预览不被蓝图强调规则覆盖。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。Workspace 接入、真实服务、真机触控、读屏器与打印未验；无本轮浏览器截图。不提交、推送、创建 PR、启动或重启服务、部署或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。
 
-## 历史
 
 ### BPM1c · 2026-10-19（P87 前当前，原样保留）
 
