@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P87 · 图纸坐标追踪、图形标注与入口行 · 2026-10-19；基线 `f472fa64e1761e85e26416a09e9fc333ba202d03`，分支 `feat/blueprint-entry-annotations`；开工工作树干净。
+- 范围：BlueprintSheet 可选 rulerTracking / rulerMark；新增 BpTargetLock、BpDiagramCallout、BpEntryRow；blueprint.css 的 P87 隔离样式、图纸 E、API 文档与同源 guide 生成物、新专项测试及 main SSR 夹具。既有 blueprint-components / blueprint-print-a11y 测试更新图纸总数与标题期望；blueprint-theme / blueprint-night 改用或沿用 CSS AST 区分 bp 关键帧，全部普通选择器隔离断言保持；不改组件目录总数、冻结 coss、theme.css、依赖或 Workspace。
+- 实现与来源：[组件 API 与离线复用取舍](../blueprint-theme.md)。三种 bp 呈现导出沿用本模块登记，不另建正式 catalog 页面。SSR 默认路径四组与 main 逐字节一致，受控 null 优先级回退变异被捕获。
+- 工程：`node scripts/check-math-font.mjs` 退出 0；`node scripts/check-typography.mjs` 317 TSX、退出 0；`node node_modules/vinext/dist/cli.js build` 退出 0；构建后 `node --test tests/*.test.mjs` 2274/2274（fail / skipped 均 0）、退出 0；`node node_modules/typescript/bin/tsc --noEmit` 退出 2，仅 1 条既有 TS2306（learning-analysis/prototype-source/main.tsx:57，app.js 非模块）。在 f472fa6 的 TypeScript / JSON 源码基线上以 `--incremental false` 同样复现此 1 条，未查看或修改该工作线内容；恢复候选输入字节后诊断一致。专项 12/12（含 1 个受控 null 优先级回退变异），受影响定向 55/55；guide 同步 / 校验与 diff 检查通过。
+- 周期：P87 为新的已授权 Blueprint 小轮，Builder 实施与工程自测完成，尚未记为已验收；继承旧周期 3/3 累计浏览器矩阵待收口，不重置周期、不新增已完成轮、不宣布收口。最近完整工程回归为本轮（测试 2274/2274；类型检查保留上述基线问题），本轮无新增浏览器验收结论；下一触发点仍为累计浏览器收口与独立综合审查。
+- 交接：`/next/foundations/blueprint#entry-annotations`，blueprint / light × 320 / 1280。检查图纸空白处细指针四边同步反白、离开清除；三行 hover / Tab focus 对应节点框、标签和图纸坐标；链接跳转与两按钮内容；68px 行高、窄屏动作换行、无行分割线；动态 reduced-motion 停装饰动画但保留静态高亮；嵌套核心预览不被蓝图强调规则覆盖。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。Workspace 接入、真实服务、真机触控、读屏器与打印未验；无本轮浏览器截图。不提交、推送、创建 PR、启动或重启服务、部署或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。
+
+## 历史
+
+### BPM1c · 2026-10-19（P87 前当前，原样保留）
+
 - 轮次：BPM1c · 自动探针迁移与逐项分类 · 2026-10-19；基线 `19309411a5b936b0b06e7fd63ac8e39f03551337`，分支 `docs/blueprint-matrix-closeout`。在已有 BPM1/BPM1b 证据、截图与 STATUS 改动上继续；没有改源码、样式、工程测试或依赖。
 - 范围：78 项历史交互逐项注册自动探针，计划 5 主题 × 320/768/1280 共 1170 行；修正 local-submenu 为真实节点移除/隐藏条件等待，保留两次 Esc 与回焦断言。17 份原始清单拆为 **59 可自动化 / 18 需目检 / 72 不适用或已有覆盖**，共149个义务；原文与行号见[逐项分类](evidence/matrix-closeout-20261019/classification.md)及[机器账本](evidence/matrix-closeout-20261019/checklist-classification.json)。非验收来源/历史正文单列，不混入义务计数。
 - 计划：interactions 1500 行，其中1170行旧交互现在都有执行函数；per-round由整份清单占位改成885行自动检查、90行代表组合目检、60行既有附加探针，共1035行。目检限 blueprint / blueprint-night × 320/1280，加 light × 1280；[目检清单](evidence/matrix-closeout-20261019/manual-review.md)写明路由、状态、内容与待生成截图路径。截图由 Supervisor 重跑生成，Builder未创建本轮浏览器截图。
@@ -13,8 +25,6 @@
 - 周期：仍为旧周期3/3累计浏览器矩阵待收口；本轮为同轮自动化返工，**不新增完成轮、不重置周期、不宣布收口**。Builder自测不等于Supervisor Review或PO批准。
 - 截图入库：PO 2026-10-19 决定 `docs/blueprint/screens/matrix-closeout-20261019/`（2190 张 PNG，约 2.3 GB）不提交到仓库，只留在 Supervisor 本机；证据 JSON 与清单中的截图路径指向该本机目录，仓库内不可直接打开。本次合并只入库 STATUS 与 evidence 目录，作为中途记录，不代表矩阵已收口。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。新增探针尚未浏览器试跑；Vite临时fixture、CDP字形与新版定位器需本轮实际运行核实。Workspace、真实服务、原生IME/缩放、真机触控、读屏器与实体打印未验；历史基线像素对照不以当前CSS隔离替代。无提交、推送、PR、服务启动、发布或站点同步。
-
-## 历史
 
 ### BPM1b · 2026-10-19（BPM1c 前当前，原样保留）
 

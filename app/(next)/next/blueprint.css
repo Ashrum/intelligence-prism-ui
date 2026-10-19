@@ -478,3 +478,47 @@
 
 /* P83: glyph only; existing inline/loading geometry remains unchanged. */
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-agent-mark][data-size="glyph"] .agent-mark-pixel:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
+
+/* P87 entry annotations: explicit bp-* opt-in, neutral core-theme defaults. */
+.bp-ruler > span[data-active] { background:var(--head-bg); color:var(--head-fg); }
+.bp-target-lock { color:var(--foreground); pointer-events:none; }
+.bp-target-lock-brackets { transform-box:fill-box; transform-origin:center; animation:bp-target-lock-in .38s cubic-bezier(.2,.8,.2,1); }
+.bp-target-lock-brackets path { fill:none; stroke:currentColor; stroke-width:1.6; }
+.bp-target-lock-halo { fill:none; stroke:currentColor; stroke-width:1; stroke-dasharray:2.5 3.5; transform-box:fill-box; transform-origin:center; animation:bp-target-halo-spin 7s linear infinite; }
+@keyframes bp-target-lock-in { from { transform:scale(2.4) rotate(45deg); opacity:0; } to { transform:scale(1) rotate(0deg); opacity:1; } }
+@keyframes bp-target-halo-spin { to { transform:rotate(360deg); } }
+.bp-diagram-callout { position:absolute; height:0; pointer-events:none; color:var(--foreground); }
+.bp-diagram-callout[hidden] { display:none; }
+.bp-diagram-callout-branch { display:flex; align-items:flex-start; }
+.bp-diagram-callout[data-direction^="n"] .bp-diagram-callout-branch { transform:translateY(-100%); align-items:flex-end; }
+.bp-diagram-callout[data-direction$="w"] { transform:translateX(-100%); }
+.bp-diagram-callout[data-direction$="w"] .bp-diagram-callout-branch { flex-direction:row-reverse; }
+.bp-diagram-callout[data-direction$="w"] .bp-diagram-callout-leader { transform:scaleX(-1); }
+.bp-diagram-callout-leader { flex:0 0 32px; fill:none; stroke:currentColor; stroke-width:1; }
+.bp-diagram-callout-copy { position:relative; min-width:0; max-width:14rem; overflow-wrap:anywhere; }
+.bp-diagram-callout-label { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; padding:5px 8px; background:var(--head-bg); color:var(--head-fg); }
+.bp-diagram-callout-code,.bp-diagram-callout-meta,.bp-entry-row-code { font-family:"Geist Mono Blueprint",var(--font-mono); font-synthesis:none; font-variant-numeric:tabular-nums; }
+.bp-diagram-callout-meta { position:absolute; top:100%; left:0; width:100%; margin:4px 0 0; }
+.bp-entry-row { display:grid; grid-template-columns:2rem 20px minmax(0,1fr) auto; align-items:center; gap:4px 14px; width:100%; min-height:68px; padding:10px 12px; border:0; border-radius:0; background:transparent; color:var(--foreground); text-align:left; text-decoration:none; cursor:pointer; transition:background-color .15s; }
+.bp-entry-row:is(a,button):not(:disabled):is(:hover,:focus-visible) { background:var(--accent); }
+.bp-entry-row:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.bp-entry-row:disabled { cursor:not-allowed; color:var(--disabled-foreground); }
+.bp-entry-row-code,.bp-entry-row-description,.bp-entry-row-action { color:var(--muted-foreground); }
+.bp-entry-row-icon,.bp-entry-row-icon > svg { width:20px; height:20px; }
+.bp-entry-row-copy,.bp-entry-row-title,.bp-entry-row-description { display:block; min-width:0; overflow-wrap:anywhere; }
+.bp-entry-row-action { display:flex; align-items:center; gap:6px; min-width:0; overflow-wrap:anywhere; }
+.bp-entry-row[data-emphasis] .bp-entry-row-action { color:var(--foreground); font-weight:600; }
+.bp-entry-row-arrow { flex-shrink:0; transition:transform .15s; }
+.bp-entry-row:not(:disabled):is(:hover,:focus-visible) .bp-entry-row-arrow { transform:translateX(2px); }
+/* Theme accent never crosses a nested non-blueprint preview boundary. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.bp-target-lock,.bp-diagram-callout,.bp-entry-row[data-emphasis] .bp-entry-row-action):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--link); }
+@media (max-width:759px) {
+  .bp-entry-row { grid-template-columns:1.75rem 20px minmax(0,1fr); column-gap:8px; }
+  .bp-entry-row-action { grid-column:3; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .bp-target-lock-brackets,.bp-target-lock-halo { animation:none; }
+  .bp-entry-row,.bp-entry-row-arrow { transition:none; }
+  .bp-entry-row:not(:disabled):is(:hover,:focus-visible) .bp-entry-row-arrow { transform:none; }
+}
+/* End P87 entry annotations. */
