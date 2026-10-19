@@ -86,7 +86,16 @@ test('blueprint white labels exceed 4.5:1 on the warning foreground fill', () =>
 });
 
 test('blueprint geometry rules are scoped and do not touch coss sources', () => {
-  const rules = bp.replace(/\/\*[\s\S]*?\*\//g, '').split('}').map(r => r.split('{')[0].trim()).filter(Boolean).filter(s => !s.startsWith('@'));
+  const rules = [];
+  postcss.parse(bp).walkRules(rule => {
+    // Keyframe offsets are not DOM selectors; all actual selectors remain checked.
+    if (rule.parent.type === 'atrule' && rule.parent.name === 'keyframes') {
+      assert.match(rule.parent.params, /^bp-/);
+      assert.match(rule.selector, /^(?:from|to|[\d.]+%)$/);
+      return;
+    }
+    rules.push(rule.selector);
+  });
   const topLevel = s => { const out = []; let depth = 0, cur = ''; for (const ch of s) { if (ch === '(') depth++; if (ch === ')') depth--; if (ch === ',' && !depth) { out.push(cur); cur = ''; } else cur += ch; } return [...out, cur].map(x => x.trim()); };
   for (const selector of rules) {
     if (topLevel(selector).every(s => s.startsWith('.bp-'))) continue;

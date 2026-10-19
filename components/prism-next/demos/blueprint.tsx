@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowLeft, ArrowRight, Info, MoreHorizontal } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { ArrowLeft, ArrowRight, FileText, Info, Layers, MoreHorizontal, Network } from "lucide-react"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
 import { MenuPopup } from "../scoped-overlays"
@@ -14,7 +14,7 @@ import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
 import { BlueprintObjectCardsDemo } from "./blueprint-object-cards"
 import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
-import { BlueprintSectionHeader, BlueprintSheet, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+import { BlueprintSectionHeader, BlueprintSheet, BpTargetLock, BpDiagramCallout, BpEntryRow, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
 const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
 const tabNotes: Record<string, string> = { all: "42 份答卷", todo: "9 份等待 AI 批阅", review: "7 份需要教师确认", done: "22 份已出分", issue: "4 份未提交或扫描失败" }
@@ -74,6 +74,7 @@ export function BlueprintComponentsDemo() {
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#actions">蓝图按钮与标签页</a>
+      <a href="#entry-annotations">图形标注与入口</a>
       <a href="#artifact-folio">成果标题定位</a>
       <a href="#object-section-cards">原件与成果分节</a>
       <a href="#workspace-contracts">Agent 工作区稳定交互</a>
@@ -100,7 +101,7 @@ export function BlueprintComponentsDemo() {
       </BlueprintSheet>
       <BlueprintSectionHeader title="本页样式预览" description="没有成果序列或已保存版本，不显示 folio。" />
     </section>
-    <BlueprintSheet id="actions" letter="A" sheetNo="01 / 04" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
+    <BlueprintSheet id="actions" letter="A" sheetNo="01 / 05" title="按钮与标签页" description="页面级行动用蓝图按钮；表单与工具操作继续使用 coss Button。">
       <div className="bp-demo-columns">
         <div className="min-w-0">
           <BpMinor code="BP-01 · Button" label="按钮" />
@@ -128,7 +129,7 @@ export function BlueprintComponentsDemo() {
       </div>
     </BlueprintSheet>
 
-    <BlueprintSheet id="cards" letter="B" sheetNo="02 / 04" title="卡片与线条" description="前两张卡片可跳转到本页章节；静态卡片保持纸面。结构线、分隔线与虚线各有层级。">
+    <BlueprintSheet id="cards" letter="B" sheetNo="02 / 05" title="卡片与线条" description="前两张卡片可跳转到本页章节；静态卡片保持纸面。结构线、分隔线与虚线各有层级。">
       <BpMinor code="BP-03 · Card" label="卡片" />
       <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-4">
         {cards.map(card => <li key={card.name} className="min-w-0"><BpCard name={card.name} description={card.description} thumb={<Thumb label={`${card.name} 缩略`} />} href={card.href} /></li>)}
@@ -149,7 +150,7 @@ export function BlueprintComponentsDemo() {
       <BlueprintObjectCardsDemo />
     </BlueprintSheet>
 
-    <BlueprintSheet id="data" letter="C" sheetNo="03 / 04" title="进度与数据" description="实色、墨色与斜线纹区分系列，不依赖颜色深浅；数值始终以文字写出。">
+    <BlueprintSheet id="data" letter="C" sheetNo="03 / 05" title="进度与数据" description="实色、墨色与斜线纹区分系列，不依赖颜色深浅；数值始终以文字写出。">
       <div className="bp-demo-columns">
         <div className="min-w-0">
           <BpMinor code="BP-06 · Size Bar" label="人数构成" />
@@ -168,7 +169,7 @@ export function BlueprintComponentsDemo() {
       </div>
     </BlueprintSheet>
 
-    <BlueprintSheet id="feedback" letter="D" sheetNo="04 / 04" title="反馈与文本" description="提示、错误与批注都指向具体位置，并给出可照做的修改。">
+    <BlueprintSheet id="feedback" letter="D" sheetNo="04 / 05" title="反馈与文本" description="提示、错误与批注都指向具体位置，并给出可照做的修改。">
       <div className="bp-demo-columns">
         <div className="min-w-0 space-y-5">
           <BpMinor code="BP-08 · Feedback" label="提示与错误" />
@@ -207,5 +208,70 @@ export function BlueprintComponentsDemo() {
         </Tabs>
       </section>
     </BlueprintSheet>
+    <BlueprintEntryAnnotationsDemo />
   </div>
+}
+
+
+const entryNodes = [
+  { code: "R01", title: "资料索引", description: "查看资料与图纸之间的关联。", actionLabel: "查看索引", x: 80, y: 100, direction: "se" as const, Icon: FileText },
+  { code: "R02", title: "结构关系", description: "查看三个节点的连接关系。", actionLabel: "查看关系", x: 200, y: 160, direction: "ne" as const, Icon: Network },
+  { code: "R03", title: "分层内容", description: "查看不同层次的内容说明。", actionLabel: "阅读说明", x: 320, y: 100, direction: "sw" as const, Icon: Layers },
+]
+
+function BlueprintEntryAnnotationsDemo() {
+  const sheetRef = useRef<HTMLElement>(null)
+  const diagramRef = useRef<SVGSVGElement>(null)
+  const [hovered, setHovered] = useState<number | null>(null)
+  const [focused, setFocused] = useState<number | null>(null)
+  const active = hovered ?? focused
+  const [mark, setMark] = useState<{ column: number; row: number } | null>(null)
+  const [selection, setSelection] = useState("选择入口可查看对应内容。")
+  useEffect(() => {
+    if (active === null) { setMark(null); return }
+    const sheet = sheetRef.current
+    const diagram = diagramRef.current
+    if (!sheet || !diagram) return
+    const measure = () => {
+      const frame = sheet.getBoundingClientRect()
+      const node = diagram.querySelector(`[data-entry-node="${active}"]`)?.getBoundingClientRect()
+      if (!node || !frame.width || !frame.height) { setMark(null); return }
+      setMark({ column: Math.min(7, Math.max(0, Math.floor((node.x + node.width / 2 - frame.x) / frame.width * 8))), row: Math.min(3, Math.max(0, Math.floor((node.y + node.height / 2 - frame.y) / frame.height * 4))) })
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(sheet)
+    observer.observe(diagram)
+    return () => observer.disconnect()
+  }, [active])
+  return <BlueprintSheet ref={sheetRef} id="entry-annotations" letter="E" sheetNo="05 / 05" title="图形标注与入口" description="移动指针查看图纸坐标，聚焦入口查看对应节点。" rulerTracking rulerMark={active === null ? undefined : mark}>
+    <div className="bp-demo-columns">
+      <div className="min-w-0">
+        <div className="relative mx-auto w-full max-w-100">
+          <svg ref={diagramRef} viewBox="0 0 400 260" className="block h-auto w-full" aria-hidden="true">
+            <path d="M80 100 L200 160 L320 100" fill="none" stroke="var(--line)" strokeWidth="1" />
+            {entryNodes.map((node, index) => <g key={node.code}>
+              <circle data-entry-node={index} cx={node.x} cy={node.y} r="6" fill="var(--foreground)" />
+              <BpTargetLock x={node.x} y={node.y} active={active === index} halo />
+            </g>)}
+          </svg>
+          {entryNodes.map((node, index) => <BpDiagramCallout key={node.code} x={node.x} y={node.y} viewBox={[400, 260]} direction={node.direction} code={node.code} label={node.title} meta={active === index && mark ? `${String.fromCharCode(65 + mark.row)}${mark.column + 1} · ${node.code}` : node.code} active={active === index} />)}
+        </div>
+        <BpFigCap label="FIG. 2">资料索引连接结构关系，结构关系连接分层内容；节点与内容入口一一对应。{active !== null && mark && <span className="block">当前定位：{entryNodes[active].title} · {String.fromCharCode(65 + mark.row)}{mark.column + 1} · {entryNodes[active].code}</span>}</BpFigCap>
+      </div>
+      <div className="min-w-0">
+        <BpMinor code="BP-11" label="内容入口" />
+        <div className="space-y-2">
+          {entryNodes.map((node, index) => {
+            const rowProps = { code: node.code, icon: <node.Icon />, title: node.title, description: node.description, actionLabel: node.actionLabel, emphasis: index === 0,
+              onPointerEnter: (event: { pointerType: string }) => { if (event.pointerType !== "touch") setHovered(index) }, onPointerLeave: () => setHovered(null),
+              onFocus: () => setFocused(index), onBlur: () => setFocused(null),
+              onSelect: () => setSelection(`${node.title}：${node.description}`) }
+            return index === 0 ? <BpEntryRow key={node.code} {...rowProps} href="#entry-index" /> : <BpEntryRow key={node.code} {...rowProps} />
+          })}
+        </div>
+        <p id="entry-index" role="status" className="mt-4 text-ui-hint">{selection}</p>
+      </div>
+    </div>
+  </BlueprintSheet>
 }

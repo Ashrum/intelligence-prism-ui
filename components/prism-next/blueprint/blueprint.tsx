@@ -1,8 +1,11 @@
 "use client"
 
-import { useId, useRef, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
+import { useId, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
+
+export { BpTargetLock, BpDiagramCallout, BpEntryRow } from "./entry-annotations"
+export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "./entry-annotations"
 
 /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */
@@ -68,16 +71,33 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
   titleActions?: ReactNode
   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
   rulers?: boolean
+  /** Fine-pointer feedback, unless rulerMark is supplied (including null). */
+  rulerTracking?: boolean
+  /** Zero-based column 0–7 / row 0–3. null explicitly clears the controlled mark. */
+  rulerMark?: { column: number; row: number } | null
   headingLevel?: 2 | 3
 }
-export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, headingLevel = 2, className, children, ...props }: BlueprintSheetProps) {
+export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, rulerTracking = false, rulerMark, headingLevel = 2, className, children, onPointerMove, onPointerLeave, ...props }: BlueprintSheetProps) {
   const id = useId()
-  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet">
+  const [pointerMark, setPointerMark] = useState<{ column: number; row: number } | null>(null)
+  const mark = rulerMark !== undefined ? rulerMark : rulerTracking ? pointerMark : null
+  const validMark = mark && Number.isInteger(mark.column) && mark.column >= 0 && mark.column < 8 && Number.isInteger(mark.row) && mark.row >= 0 && mark.row < 4 ? mark : null
+  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet"
+    onPointerMove={event => {
+      onPointerMove?.(event)
+      if (!rulerTracking || rulerMark !== undefined || event.pointerType === "touch" || event.defaultPrevented) return
+      const rect = event.currentTarget.getBoundingClientRect()
+      if (rect.width <= 0 || rect.height <= 0) return
+      const column = Math.min(7, Math.max(0, Math.floor((event.clientX - rect.left) / rect.width * 8)))
+      const row = Math.min(3, Math.max(0, Math.floor((event.clientY - rect.top) / rect.height * 4)))
+      setPointerMark(previous => previous?.column === column && previous.row === row ? previous : { column, row })
+    }}
+    onPointerLeave={event => { onPointerLeave?.(event); setPointerMark(null) }}>
     {rulers && <>
-      <div aria-hidden="true" className="bp-ruler bp-ruler--top">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
-      <div aria-hidden="true" className="bp-ruler bp-ruler--bottom">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
-      <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
-      <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+      <div aria-hidden="true" className="bp-ruler bp-ruler--top">{RULER_TOP.map((n, index) => <span key={n} data-active={validMark?.column === index ? "" : undefined}>{n}</span>)}</div>
+      <div aria-hidden="true" className="bp-ruler bp-ruler--bottom">{RULER_TOP.map((n, index) => <span key={n} data-active={validMark?.column === index ? "" : undefined}>{n}</span>)}</div>
+      <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map((n, index) => <span key={n} data-active={validMark?.row === index ? "" : undefined}>{n}</span>)}</div>
+      <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map((n, index) => <span key={n} data-active={validMark?.row === index ? "" : undefined}>{n}</span>)}</div>
     </>}
     <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} titleActions={titleActions} headingId={id} headingLevel={headingLevel} className="relative" />
     <div className="relative min-w-0">{children}</div>

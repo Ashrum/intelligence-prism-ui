@@ -154,6 +154,11 @@ test('shared, white-only and night-only Blueprint rules enforce matching preview
   const nightGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *))';
   const whiteGuard=':not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint"]) *))';
   bp.walkRules(rule=>{
+    if (rule.parent.type === 'atrule' && rule.parent.name === 'keyframes') {
+      assert.match(rule.parent.params, /^bp-/);
+      assert.match(rule.selector, /^(?:from|to|[\d.]+%)$/);
+      return;
+    }
     for (const s of rule.selectors) {
       if (s.startsWith('.bp-')) continue;
       if (rule.nodes.every(d => d.type === 'decl' && ['--radius-lg','--radius-md','--color-muted'].includes(d.prop))) {

@@ -3,6 +3,29 @@
 2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 `app/(next)/next/theme.css`（颜色令牌）、`app/(next)/next/blueprint.css`（几何与 `bp-*` 样式）及 [React 封装](../components/prism-next/blueprint/blueprint.tsx)。演示页为 `/next/foundations/blueprint`，从侧栏「蓝图组件」进入。
 
 
+## 图纸坐标、图形标注与入口行 · P87（2026-10-19）
+
+来源：Workspace《入口与 Intro 页面规划设计》v0.6（2026-10-19）§3.3、§6.3 C、§6.4，以及同日入口与 Intro 视觉稿。只提炼已获认可的标尺追踪、瞄准框 / 引线标签和单目标入口行；不移入页面轨道、光束、转场或角色文案。入口为 `/next/foundations/blueprint#entry-annotations`，图纸 E / SHEET 05 / 05。
+
+| 组件 | 参数与用途 | 边界 |
+| --- | --- | --- |
+| `BlueprintSheet` | 新增 `rulerTracking?: boolean = false`；`rulerMark?: { column: number; row: number }`（或 null） | 列 0–7、行 0–3；显式 mark 优先于指针，`null` 清空并关闭追踪，`undefined` 允许追踪；越界 / 非整数 mark 不显示。不传新参数保持 main f472fa6 的 SSR 原样。 |
+| `BpTargetLock` | `x`、`y` 为宿主 viewBox 坐标；`size = 32` 为四角框总宽；`active`；`halo = false` | 在宿主 SVG 内输出 `g`；激活时 380ms 从 2.4 倍 / 45° 收拢。可选虚线环 7s 一周；仅呈现外部激活事实。 |
+| `BpDiagramCallout` | `x`、`y`；`viewBox: [width, height]`；`direction: ne / nw / se / sw`；`code?`、`label`、`meta?`、`active` | HTML 百分比定位、32px 斜线与水平段、自然换行的墨底标签和标签外等宽元信息；code 使用 Geist Mono Blueprint。 |
+| `BpEntryRow` | `code?`、`icon?`、`title`、`description?`、`actionLabel`、`emphasis?`、`href?` / `target?` / `onSelect?` 与对应原生属性 | 有 href 为 a，否则 button type=button；onClick 先运行，未 preventDefault 时再发 onSelect。原生 hover / focus / ref / disabled / download 等属性按元素透传。 |
+
+图纸按自身边界等分 8 列 × 4 行，细指针移动时四边同一坐标同步 `data-active`；触摸不追踪，离开清除指针状态。标尺始终 `aria-hidden`，沿用现有 max-width:760px 隐藏规则，没有新增过渡。宿主控制外部节点时，负责把节点在整张图纸的位置换成坐标；本页按真实节点边界测量，并在图纸 / SVG 尺寸变化后重新计算。
+
+标注容器必须 `position:relative`，HTML 覆盖层与 SVG 的实际 viewBox 画面同宽高（避免 preserveAspectRatio 留白造成偏移）；width / height 必须为正、x / y 在范围内。调用方选择留白充足的方向；长文字自然换行，组件不猜测避障或业务关系。两种图形标注均 `aria-hidden`、不接收指针，**只复述页面上已有的文字，不能作为唯一信息来源**。本页节点关系与当前坐标另有可读图注，名称和说明保留在入口行中。
+
+入口行的可访问名称由 title、description 和 actionLabel 对应的 `aria-labelledby` 组成，code、装饰图标和箭头隐藏；文本参数使用 string，icon 只允许无交互装饰内容，不放按钮、链接或可聚焦元素。行最小高度 68px，换行自然增高；小于 760px 动作移到说明下方；同组用留白和悬停浅底区分，**不画行间分割线**。焦点保留 2px ring；emphasis 的动作文字加粗，在蓝图主题使用 link 色；分组继续使用 `BpMinor`。
+
+样式集中在 blueprint.css 的 P87 区块，新增组件均显式 `bp-*` 选用。核心主题用 foreground / accent / head-bg / head-fg 等现有中性令牌；仅两蓝图的强调色规则带主题及嵌套非蓝图预览排除选择器，不修改普通组件、theme.css 或依赖，不新增 Token。CSS `prefers-reduced-motion` 在初始与运行中生效：取消收拢、光环循环和箭头位移，保留静态框及标尺反白；无计时器、自动状态推进或延迟操作。
+
+复用检索（离线）：已有 BlueprintSheet / BpMinor / BpCard 提供纸面、标题和整卡目标，但没有图形锁定、HTML 引线及无分割入口行；固定 coss Button / Card 与本地 particles（selection、input、table）提供控件组合，没有上述标注契约。因此扩展 Sheet，新增三种 bp 呈现导出。受运行约定限制，未联网刷新 coss registry / particles，不声称检索最新远端；未复制第三方实现。沿用已有 bp 呈现件登记方式：本节 API 表和 blueprint 模块导出为入口，不增加正式 catalog 的独立组件页，也不重复写死总数。
+
+工程验证见 [当前状态](blueprint/STATUS.md)；SSR 与事件探针不是实际浏览器验收。浏览器验收：按分工由 Supervisor 执行；须覆盖 blueprint / light、320 / 1280、鼠标 / 键盘、受控 null、动态减少动效及嵌套核心预览。
+
 ## 夜图恢复 · 2026-10-16
 
 用户批准接续原 BPv9 夜图交接，以已合入警告色修复的 main `7737245` 为基线。`blueprint-night` 位于主题菜单「蓝图」之后，共用蓝图几何、当前通用组件适配与编辑式排版；保留 `prism-v1-theme` 存储键。next-themes 不再猜测自定义主题的原生色系，各主题由原有 CSS `color-scheme` 声明控制。当前四主题令牌（包括白图警告色 `#995909`）、核心曜彩图表配色和冻结 coss 原始字节不变。
