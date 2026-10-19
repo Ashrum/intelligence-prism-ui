@@ -1,6 +1,6 @@
-# BPM1c · Supervisor 目检清单
+# BPM1d · Supervisor 目检清单
 
-基线：`19309411a5b936b0b06e7fd63ac8e39f03551337`。这里只列需要视觉判断的 18 类义务；每类 5 个代表组合。自动断言与来源排除项见 checklist-classification.json。
+基线：`c2dd2239b97963e12f7cf7cb3924328958e68a68`。逐项列出视觉义务；通常为 5 个代表组合，P87 增加 light/320。自动断言与来源排除项见 checklist-classification.json。
 
 截图状态以每行标注为准：未生成的路径是执行计划，不是已有证据。运行 per-round 后本文件自动刷新实际截图索引；生成截图不会自动勾选或判通过。非代表组合没有被宣称目检通过。
 
@@ -494,35 +494,40 @@
   - 要看：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
   - 来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md:18`。
   - 已生成：[light-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png)
-  - 已生成：[light-1280-foundations-blueprint-check-097-object-expand-failure.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-097-object-expand-failure.png)
+  - 已生成：[light-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png)
+  - 已生成：[light-1280-foundations-blueprint-check-097-object-expand.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-097-object-expand.png)
 
 - [ ] **P85-P85b-P85c-objects-focus · blueprint · 320×900**
   - 路由：`/next/foundations/blueprint`；操作：脚本准备 `object-expand` 状态；区域：`#sheet-object-cards`。
   - 要看：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
   - 来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md:18`。
   - 已生成：[blueprint-320-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png)
-  - 已生成：[blueprint-320-foundations-blueprint-check-097-object-expand-failure.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-097-object-expand-failure.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-097-object-expand.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-097-object-expand.png)
 
 - [ ] **P85-P85b-P85c-objects-focus · blueprint · 1280×900**
   - 路由：`/next/foundations/blueprint`；操作：脚本准备 `object-expand` 状态；区域：`#sheet-object-cards`。
   - 要看：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
   - 来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md:18`。
   - 已生成：[blueprint-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png)
-  - 已生成：[blueprint-1280-foundations-blueprint-check-097-object-expand-failure.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-097-object-expand-failure.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-097-object-expand.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-097-object-expand.png)
 
 - [ ] **P85-P85b-P85c-objects-focus · blueprint-night · 320×900**
   - 路由：`/next/foundations/blueprint`；操作：脚本准备 `object-expand` 状态；区域：`#sheet-object-cards`。
   - 要看：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
   - 来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md:18`。
   - 已生成：[blueprint-night-320-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png)
-  - 已生成：[blueprint-night-320-foundations-blueprint-check-097-object-expand-failure.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-097-object-expand-failure.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-097-object-expand.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-097-object-expand.png)
 
 - [ ] **P85-P85b-P85c-objects-focus · blueprint-night · 1280×900**
   - 路由：`/next/foundations/blueprint`；操作：脚本准备 `object-expand` 状态；区域：`#sheet-object-cards`。
   - 要看：对象卡片 Tab 顺序、标题无伪按钮、焦点圈完整，长中文与公式、操作换行保持自然。
   - 来源：`docs/blueprint/evidence/object-cards-20261018/browser-checklist.md:18`。
   - 已生成：[blueprint-night-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-097-object-expand-data-agent-relation-view-workspace.png)
-  - 已生成：[blueprint-night-1280-foundations-blueprint-check-097-object-expand-failure.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-097-object-expand-failure.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-097-object-expand-data-agent-arranger-view-workspace.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-097-object-expand.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-097-object-expand.png)
 
 - [ ] **P85-P85b-P85c-objects-reading · light · 1280×900**
   - 路由：`/next/foundations/blueprint`；操作：脚本准备 `object-geometry` 状态；区域：`#sheet-object-cards`。
@@ -718,3 +723,159 @@
   - 来源：`docs/blueprint/evidence/night-20261016/checks.md:17`。
   - 已生成：[blueprint-night-1280-evidence-matrix-check-143-heatmap-zero-zero-tooltip.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-evidence-matrix-check-143-heatmap-zero-zero-tooltip.png)
   - 已生成：[blueprint-night-1280-evidence-matrix-check-143-heatmap-zero.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-evidence-matrix-check-143-heatmap-zero.png)
+
+- [ ] **P87-reading · light · 320×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[light-320-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/light-320-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P87-reading · light · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[light-1280-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P87-reading · blueprint · 320×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[blueprint-320-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P87-reading · blueprint · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[blueprint-1280-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P87-reading · blueprint-night · 320×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P87-reading · blueprint-night · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：脚本准备 `visual-entry` 状态；区域：`#entry-annotations`。
+  - 要看：图纸 E 四边反白与节点/标签对应清晰；68px 基准、窄屏换行、行间无分割线；reduce 静态高亮仍可辨。覆盖 blueprint / light ×320/1280，另保留 night 代表组合。
+  - 来源：`docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt:12`。
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-1.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-1.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-2.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-2.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-3.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-hover-3.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-1.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-2.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-keyboard-3.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-no-preference-1.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-reduce-2.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-no-preference-3.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry-reduce-4.png)
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-155-visual-entry.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-155-visual-entry.png)
+
+- [ ] **P76-shell-mobile-manual · light · 1280×900**
+  - 路由：`/next/use-cases/workspace-app-bar`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：320/768 下历史 ShellNavFixture SpaceBar 仅写 desktop open，没有 openMobile 接线；不能以本站 drawer 通过代替夹具或 Workspace 的移动导航。Supervisor 复核真实宿主接线。
+  - 来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md:12`。
+  - 已生成：[light-1280-workspace-app-bar-check-157-reading.png](../../screens/matrix-closeout-20261019/light-1280-workspace-app-bar-check-157-reading.png)
+
+- [ ] **P76-shell-mobile-manual · blueprint · 320×900**
+  - 路由：`/next/use-cases/workspace-app-bar`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：320/768 下历史 ShellNavFixture SpaceBar 仅写 desktop open，没有 openMobile 接线；不能以本站 drawer 通过代替夹具或 Workspace 的移动导航。Supervisor 复核真实宿主接线。
+  - 来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md:12`。
+  - 已生成：[blueprint-320-workspace-app-bar-check-157-reading.png](../../screens/matrix-closeout-20261019/blueprint-320-workspace-app-bar-check-157-reading.png)
+
+- [ ] **P76-shell-mobile-manual · blueprint · 1280×900**
+  - 路由：`/next/use-cases/workspace-app-bar`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：320/768 下历史 ShellNavFixture SpaceBar 仅写 desktop open，没有 openMobile 接线；不能以本站 drawer 通过代替夹具或 Workspace 的移动导航。Supervisor 复核真实宿主接线。
+  - 来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md:12`。
+  - 已生成：[blueprint-1280-workspace-app-bar-check-157-reading.png](../../screens/matrix-closeout-20261019/blueprint-1280-workspace-app-bar-check-157-reading.png)
+
+- [ ] **P76-shell-mobile-manual · blueprint-night · 320×900**
+  - 路由：`/next/use-cases/workspace-app-bar`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：320/768 下历史 ShellNavFixture SpaceBar 仅写 desktop open，没有 openMobile 接线；不能以本站 drawer 通过代替夹具或 Workspace 的移动导航。Supervisor 复核真实宿主接线。
+  - 来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md:12`。
+  - 已生成：[blueprint-night-320-workspace-app-bar-check-157-reading.png](../../screens/matrix-closeout-20261019/blueprint-night-320-workspace-app-bar-check-157-reading.png)
+
+- [ ] **P76-shell-mobile-manual · blueprint-night · 1280×900**
+  - 路由：`/next/use-cases/workspace-app-bar`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：320/768 下历史 ShellNavFixture SpaceBar 仅写 desktop open，没有 openMobile 接线；不能以本站 drawer 通过代替夹具或 Workspace 的移动导航。Supervisor 复核真实宿主接线。
+  - 来源：`docs/blueprint/evidence/shell-nav-20261016/browser-checklist.md:12`。
+  - 已生成：[blueprint-night-1280-workspace-app-bar-check-157-reading.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-workspace-app-bar-check-157-reading.png)
+
+- [ ] **首批-native-zoom-review · light · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：CSS zoom2 320 下溢出保留失败与 geometry；按真实浏览器 200% 缩放复核重排、长中文和公式可达性，不把 CSS 投影等同原生缩放。
+  - 来源：`docs/blueprint/evidence/common-20261015/checks.md:24`。
+  - 已生成：[light-1280-foundations-blueprint-check-158-reading.png](../../screens/matrix-closeout-20261019/light-1280-foundations-blueprint-check-158-reading.png)
+
+- [ ] **首批-native-zoom-review · blueprint · 320×900**
+  - 路由：`/next/foundations/blueprint`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：CSS zoom2 320 下溢出保留失败与 geometry；按真实浏览器 200% 缩放复核重排、长中文和公式可达性，不把 CSS 投影等同原生缩放。
+  - 来源：`docs/blueprint/evidence/common-20261015/checks.md:24`。
+  - 已生成：[blueprint-320-foundations-blueprint-check-158-reading.png](../../screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-check-158-reading.png)
+
+- [ ] **首批-native-zoom-review · blueprint · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：CSS zoom2 320 下溢出保留失败与 geometry；按真实浏览器 200% 缩放复核重排、长中文和公式可达性，不把 CSS 投影等同原生缩放。
+  - 来源：`docs/blueprint/evidence/common-20261015/checks.md:24`。
+  - 已生成：[blueprint-1280-foundations-blueprint-check-158-reading.png](../../screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-check-158-reading.png)
+
+- [ ] **首批-native-zoom-review · blueprint-night · 320×900**
+  - 路由：`/next/foundations/blueprint`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：CSS zoom2 320 下溢出保留失败与 geometry；按真实浏览器 200% 缩放复核重排、长中文和公式可达性，不把 CSS 投影等同原生缩放。
+  - 来源：`docs/blueprint/evidence/common-20261015/checks.md:24`。
+  - 已生成：[blueprint-night-320-foundations-blueprint-check-158-reading.png](../../screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-check-158-reading.png)
+
+- [ ] **首批-native-zoom-review · blueprint-night · 1280×900**
+  - 路由：`/next/foundations/blueprint`；操作：打开原始页面并定位指定区域；区域：`main`。
+  - 要看：CSS zoom2 320 下溢出保留失败与 geometry；按真实浏览器 200% 缩放复核重排、长中文和公式可达性，不把 CSS 投影等同原生缩放。
+  - 来源：`docs/blueprint/evidence/common-20261015/checks.md:24`。
+  - 已生成：[blueprint-night-1280-foundations-blueprint-check-158-reading.png](../../screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-check-158-reading.png)

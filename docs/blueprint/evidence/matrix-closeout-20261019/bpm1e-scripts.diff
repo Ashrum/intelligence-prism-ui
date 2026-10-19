@@ -1,0 +1,326 @@
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs
+@@ -35,15 +35,26 @@
+  return records;
+ };
+ roundProbes['scoped-controls']=async(page,row,ctx)=>{
+- const out=[];
++ const out=[];row.measured=out;
+  for(const outer of ['light','paper','dark']){
++  const record={outer,inner:row.theme};out.push(record);
+   await choose(page,'外层核心主题',labels[outer]);await choose(page,'局部主题',labels[row.theme]);
+-  const trigger=role(page,'combobox','局部材料类型');await trigger.focus();await trigger.press('ArrowDown');await page.keyboard.press('End');await page.keyboard.press('Enter');assert.match(await trigger.innerText(),/长中文课堂练习/);
+-  const picker=role(page,'combobox','搜索班级');await picker.fill('高二');await page.getByRole('option').first().waitFor();await picker.press('ArrowDown');await picker.press('Enter');
++  const trigger=role(page,'combobox','局部材料类型');await trigger.focus();await trigger.press('ArrowDown');const selectOptions=page.locator('[data-slot="select-popup"]:visible');await selectOptions.getByRole('option',{name:'长中文课堂练习与讲评材料',exact:true}).waitFor();await page.keyboard.press('End');await page.keyboard.press('Enter');await selectOptions.waitFor({state:'hidden'});assert.match(await trigger.innerText(),/长中文课堂练习/);
++  record.select=await trigger.innerText();
++  const picker=role(page,'combobox','搜索班级'),pickerCard=page.locator('[data-object-picker-view="workspace"]').filter({has:picker});
++  // The outer-theme loop retains query/selection state. Filling the same text is not an open action.
++  for(const remove of await pickerCard.getByRole('button',{name:/^移除选择：/}).all())await remove.click();
++  await picker.fill('高二');record.pickerBeforeOpen={query:await picker.inputValue(),expanded:await picker.getAttribute('aria-expanded')};
++  if(await picker.getAttribute('aria-expanded')!=='true')await button(pickerCard,'查看班级候选').click();
++  const candidates=page.locator('[data-slot="combobox-popup"]:visible');await candidates.waitFor();
++  await candidates.getByRole('option').filter({hasText:'高二三班'}).waitFor();record.options=await candidates.getByRole('option').allTextContents();assert.equal(record.options.length,2);
++  await picker.press('ArrowDown');await picker.press('Enter');
++  const selected=role(pickerCard,'region','已选对象');await selected.getByText('已选 1 项',{exact:true}).waitFor();record.selected=await selected.innerText();assert.match(record.selected,/高二[三四]班/);
++  await candidates.waitFor({state:'hidden'});
+   const dt=button(page,'局部对话框');await dt.click();const popup=page.locator('[data-slot="dialog-popup"]:visible');await popup.waitFor();await focused(page,role(popup,'textbox','材料标题'));const focus=await trap(page,popup);
+   const inner=role(popup,'combobox','对话框材料类型');await inner.click();const sp=page.locator('[data-slot="select-popup"]:visible');await sp.waitFor();const handle=await sp.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,inner);assert.ok(await popup.isVisible());
+   const d=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,d);await focused(page,dt);
+-  out.push({outer,inner:row.theme,select:await trigger.innerText(),focus});
++  record.focus=focus;
+  }
+  return out;
+ };
+@@ -153,7 +164,10 @@
+ roundProbes['print-zoom']=async(page,row,ctx)=>{
+  const records=[];row.measured=records;
+  try{await page.emulateMedia({media:'print'});const select=page.locator('#common-components [data-slot="select-trigger"]').first();const print=await snapshot(select);records.push({print});if(isBlue(row))assert.equal(print[0].boxShadow,'none');await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='2');await snapshot(page.locator('main'));
+- const geometry=await page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,zoom:getComputedStyle(document.documentElement).zoom,innerWidth,devicePixelRatio,offenders:[...document.querySelectorAll('main *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.left< -1||r.right>innerWidth+1);}).slice(0,40).map(e=>({tag:e.tagName,class:e.className,text:e.textContent?.slice(0,80),left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right}))}));records.push({cssZoom:geometry,nativeZoom:false,judgment:'CSS zoom projection only; native zoom/reflow remains manual'});await ctx.capture(page,row,'-css-zoom');assert.ok(geometry.scroll<=geometry.client+1,JSON.stringify(geometry));return records;}
++ const geometry=await page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,zoom:getComputedStyle(document.documentElement).zoom,innerWidth,devicePixelRatio,offenders:[...document.querySelectorAll('main *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.left< -1||r.right>innerWidth+1);}).slice(0,40).map(e=>({tag:e.tagName,class:e.className,text:e.textContent?.slice(0,80),left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right}))}));const outsideOriginalScope=row.viewport.width===320;
++ records.push({cssZoom:geometry,nativeZoom:false,originalAcceptance:{source:'docs/blueprint/evidence/common-20261015/checks.md:24',measurement:'docs/blueprint/evidence/common-20261015/matrix.json:magnification',width:1280},judgment:outsideOriginalScope?'超出原验收范围的观察：320px + CSS zoom 2；保留越界数据，原生 200% 缩放待目检':'CSS zoom projection only; native zoom/reflow remains manual'});await ctx.capture(page,row,'-css-zoom');
++ // Only the explicitly authorized 320px projection is observational. Print and >=768px checks stay strict.
++ if(outsideOriginalScope){row.status='observed';row.pass=null;}else assert.ok(geometry.scroll<=geometry.client+1,JSON.stringify(geometry));return records;}
+  finally{await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='');}
+ };
+ roundProbes['glyph-api']=async(page,row)=>{const s=await mount(page,'glyph',row);await s.locator('[data-agent-mark] [role="status"]').waitFor();await button(s,'glyph').click();const glyph=s.locator('[data-agent-mark]');assert.equal(await glyph.getAttribute('role'),'img');assert.equal(await glyph.getAttribute('aria-label'),'自定义运行状态');assert.equal(await glyph.locator('[role="status"],[aria-live]').count(),0);assert.equal(await glyph.innerText(),'');assert.equal(await glyph.locator('.agent-mark-grid').getAttribute('aria-hidden'),'true');const grid=await snapshot(glyph.locator('.agent-mark-grid'));assert.equal(grid[0].width,13);assert.equal(grid[0].height,13);await button(s,'loading').click();await s.getByText(/已用时/).waitFor();return {glyphText:'',name:'自定义运行状态',grid,returnedLoading:await s.innerText()};};
+@@ -269,6 +283,12 @@
+  await page.evaluate(()=>document.querySelector('#entry-annotations').scrollIntoView({block:'start'}));
+  const rect=await sheet.boundingBox();assert.ok(rect);assert.equal(await page.evaluate(()=>matchMedia('(pointer: fine)').matches),true);
+  const x=rect.x+rect.width/2,y=Math.max(rect.y,0)+12;
++ if(row.viewport.width<760){
++  const hiddenState=()=>sheet.evaluate(el=>({rulers:[...el.querySelectorAll('.bp-ruler')].map(n=>({class:n.className,display:getComputedStyle(n).display,rects:n.getClientRects().length})),active:el.querySelectorAll('.bp-ruler [data-active]').length,visibleActive:[...el.querySelectorAll('.bp-ruler [data-active]')].filter(n=>n.getClientRects().length).length}));
++  await page.mouse.move(x,y);const during=await hiddenState();row.measured={trackingApplicable:false,reason:'viewport <760px: rulers hidden; no visible highlight',during};
++  assert.equal(during.rulers.length,4);assert.ok(during.rulers.every(n=>n.display==='none'&&n.rects===0));assert.equal(during.visibleActive,0);
++  await page.mouse.move(0,0);await poll(page,el=>el.querySelectorAll('.bp-ruler [data-active]').length===0,await sheet.elementHandle());const after=await hiddenState();row.measured.after=after;assert.equal(after.active,0);assert.equal(after.visibleActive,0);assert.ok(after.rulers.every(n=>n.display==='none'&&n.rects===0));await ctx.capture(page,row,'-rulers-hidden');return row.measured;
++ }
+  assert.ok(y<rect.y+rect.height);await page.mouse.move(x,y);
+  const column=Math.min(7,Math.floor((x-rect.x)/rect.width*8)),r=Math.min(3,Math.floor((y-rect.y)/rect.height*4));
+  await poll(page,el=>el.querySelectorAll('.bp-ruler [data-active]').length===4,await sheet.elementHandle());
+@@ -304,14 +324,35 @@
+  }return out;
+ };
+ roundProbes['entry-isolation']=async(page,row)=>{
++ await page.emulateMedia({reducedMotion:'reduce'});
+  const sheet=page.locator('#entry-annotations');await sheet.locator('.bp-entry-row').first().hover();
+- return sheet.evaluate((source,{outerTheme,innerTheme})=>{
+-  const props=['color','backgroundColor','borderTop','borderBottom','outline','boxShadow','fontSize','fontWeight'];
+-  const read=e=>[e,...e.querySelectorAll('*')].map(n=>[null,'::before','::after'].map(p=>props.map(k=>getComputedStyle(n,p)[k])));
++ const measured=await sheet.evaluate(async(source,{outerTheme,innerTheme})=>{
++  const props=['color','backgroundColor','borderTop','borderRight','borderBottom','borderLeft','borderRadius','outline','outlineOffset','boxShadow','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textShadow','fill','stroke','strokeWidth','content','display','visibility','transform','opacity'];
++  const nodePath=(n,root)=>{const parts=[];for(let e=n;e&&e!==root;e=e.parentElement)parts.unshift(`${e.localName}:nth-child(${[...e.parentElement.children].indexOf(e)+1})`);return ':scope'+(parts.length?' > '+parts.join(' > '):'');};
++  const accentSelector=':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.bp-target-lock,.bp-diagram-callout,.bp-entry-row[data-emphasis] .bp-entry-row-action):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))';
++  const read=root=>[root,...root.querySelectorAll('*')].flatMap(n=>[null,'::before','::after'].map(p=>{const s=getComputedStyle(n,p);return {selector:nodePath(n,root),class:n.getAttribute('class'),pseudo:p,values:Object.fromEntries(props.map(k=>[k,s[k]])),accentSelectorMatches:n.matches(accentSelector),tokens:{foreground:s.getPropertyValue('--foreground'),link:s.getPropertyValue('--link')}};}));
++  const bounded=async promise=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('P87 isolation animation stabilization timed out')),5000);})]);}finally{clearTimeout(timer);}};
++  const settle=async clone=>{
++   clone.getBoundingClientRect();
++   const animations=clone.getAnimations({subtree:true}),paused=[];
++   await bounded(Promise.all(animations.map(async a=>{if(a.effect?.getComputedTiming().iterations===Infinity){a.pause();a.currentTime=0;await a.ready;paused.push({name:a.animationName||null,time:0,properties:[...new Set(a.effect.getKeyframes().flatMap(k=>Object.keys(k)))].filter(k=>!['offset','computedOffset','easing','composite'].includes(k))});}else await a.finished;})));
++   await bounded(new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
++   return {animations:animations.length,paused,remainingRunning:clone.getAnimations({subtree:true}).filter(a=>a.pending||a.playState==='running').length};
++  };
+   const results=[];for(const original of [source,...source.querySelectorAll('.bp-entry-row,.bp-target-lock,.bp-diagram-callout')]){
+    const outer=document.createElement('div');outer.dataset.prismTheme=innerTheme;outer.style.width='600px';const clone=original.cloneNode(true);clone.dataset.agentPreview='';clone.dataset.prismTheme=innerTheme;clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));outer.append(clone);document.body.append(outer);
+-   try{const expected=read(clone);outer.dataset.prismTheme=outerTheme;const actual=read(clone);results.push({root:original.getAttribute('class'),outerTheme,innerTheme,nodes:actual.length,equal:JSON.stringify(expected)===JSON.stringify(actual)});}finally{outer.remove();}
+-  }if(results.length!==10||results.some(r=>!r.equal))throw Error('P87 nested root/descendant/pseudo mismatch '+JSON.stringify(results));return {results,scope:'Rendered CSS copies; no React context/runtime integration claim'};
++   try{
++    const expectedMotion=await settle(clone),expected=read(clone);outer.dataset.prismTheme=outerTheme;const actualMotion=await settle(clone),actual=read(clone),differences=[];
++    for(let i=0;i<expected.length;i++)for(const property of props)if(expected[i].values[property]!==actual[i].values[property])differences.push({selector:actual[i].selector,class:actual[i].class,pseudo:actual[i].pseudo,property,expected:expected[i].values[property],actual:actual[i].values[property],accentSelectorMatches:{expected:expected[i].accentSelectorMatches,actual:actual[i].accentSelectorMatches},tokens:{expected:expected[i].tokens,actual:actual[i].tokens}});
++    results.push({root:original.getAttribute('class'),outerTheme,innerTheme,nodes:actual.length/3,equal:!differences.length,differences,motion:{expected:expectedMotion,actual:actualMotion}});
++   }finally{outer.remove();}
++  }
++  return {results,properties:props,excludedProperties:[],reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,source:{path:'app/(next)/next/blueprint.css',section:'P87 entry annotations, lines 482-524',accentLine:514,accentSelector,neutralSelectors:['.bp-target-lock','.bp-diagram-callout']},scope:'Rendered CSS copies; root/descendants/pseudo-elements; no React context/runtime integration claim'};
+  },{outerTheme:row.theme,innerTheme:row.innerTheme});
++ row.measured=measured;assert.equal(measured.reducedMotion,true);assert.equal(measured.results.length,10);
++ assert.ok(measured.results.every(r=>r.motion.expected.remainingRunning===0&&r.motion.actual.remainingRunning===0),'P87 samples must have no running animations');
++ const mismatches=measured.results.filter(r=>!r.equal);
++ if(mismatches.length)measured.judgment='疑似缺陷：已稳定动画后仍有严格样式差异；属性/两侧值/选择器见 results.differences 与 source';
++ assert.deepEqual(mismatches,[],JSON.stringify({judgment:measured.judgment,source:measured.source,mismatches}));return measured;
+ };
+ roundProbes['visual-entry']=async(page,row,ctx)=>{await roundProbes['entry-selection'](page,row,ctx);await roundProbes['entry-motion'](page,row,ctx);return {note:'Review 68px baseline, narrow wrapping, four ruler sides, node brackets/callouts and static reduce emphasis in captures; geometry alone is not visual acceptance.'};};
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
+@@ -17,10 +17,11 @@
+ function command(args){const startedAt=new Date().toISOString();const r=spawnSync(args[0],args.slice(1),{cwd:root,encoding:'utf8'});commands.push({command:args.join(' '),startedAt,exitCode:r.status,stdout:r.stdout,stderr:r.stderr});assert.equal(r.status,0,args.join(' '));}
+ async function check(name,fn){const detail=await fn();checks.push({name,pass:true,detail:detail??null});}
+ try{
+-for(const script of ['prepare.mjs','measure.mjs','measurement-utils.mjs','rename-screenshots.mjs','offline-audit.mjs','legacy-probes.mjs','round-probes.mjs','plan-utils.mjs','validate-fixture.mjs','validate.mjs'])command(['node','--check',`${relative}/${script}`]);
++for(const script of ['prepare.mjs','measure.mjs','measurement-utils.mjs','rename-screenshots.mjs','offline-audit.mjs','bpm1e-audit.mjs','legacy-probes.mjs','round-probes.mjs','plan-utils.mjs','validate-fixture.mjs','validate.mjs'])command(['node','--check',`${relative}/${script}`]);
+ const evidenceNames=['matrix','interactions','isolation','per-round'].flatMap(g=>[`${g}.json`,`screenshots-${g}.json`]);
+ const beforePlan=await Promise.all(evidenceNames.map(async name=>sha(await read(`${relative}/${name}`))));
+ command(['node',`${relative}/offline-audit.mjs`]);
++command(['node',`${relative}/bpm1e-audit.mjs`]);
+ command(['node',`${relative}/validate-fixture.mjs`]);
+ command(['node',`${relative}/measure.mjs`,'--plan']);
+ command(['git','diff','--check']);
+@@ -115,13 +116,22 @@
+  }
+  return {files:Object.keys(archive.files).length,sha256:sha(await readFile(path.join(dir,'first-browser-run.json.gz')))};
+ });
++await check('BPM1d rerun archived with exact bytes and original zoom scope verified',async()=>{
++ const archive=JSON.parse(gunzipSync(await readFile(path.join(dir,'bpm1d-supervisor-run.json.gz'))));
++ for(const [name,bytes]of Object.entries(archive.files))assert.equal(sha(bytes),archive.sha256[name],name);
++ const isolation=JSON.parse(archive.files['isolation.json']),rounds=JSON.parse(archive.files['per-round.json']);assert.equal(isolation.summary.error,18);assert.equal(rounds.summary.fail,5);assert.equal(rounds.summary.error,20);assert.equal(JSON.parse(archive.files['interactions.json']).summary.pass,1500);
++ const original=JSON.parse(await read('docs/blueprint/evidence/common-20261015/matrix.json'));assert.equal(original.magnification.innerWidth,1280);assert.equal(original.magnification.zoom,'2');assert.match((await read('docs/blueprint/evidence/common-20261015/checks.md')).split('\n')[23],/at 1280px/);
++ const probes=await read(`${relative}/round-probes.mjs`),css=await read('app/(next)/next/blueprint.css');const selector=probes.match(/const accentSelector='([^']+)'/)[1];assert.equal(css.split('\n')[513],selector+' { color:var(--link); }');
++ return {archivedFiles:Object.keys(archive.files).length,originalCSSZoomWidth:1280,sourceSelectorLine:514,browserExecuted:false};
++});
++await check('BPM1d current preserved verbatim in BPM1e history',async()=>{const before=await read(`${relative}/bpm1e-before-status.txt`),now=await read('docs/blueprint/STATUS.md');assert.ok(now.includes('### BPM1d · 2026-10-19（BPM1e 前当前，原样保留）\n'+before.split('## 当前\n')[1].split('## 历史\n')[0]));assert.ok(now.endsWith(before.split('## 历史\n')[1]));});
+ await check('BPM1b current preserved verbatim',async()=>{const before=await read(`${relative}/bpm1c-before-status.txt`);const now=await read('docs/blueprint/STATUS.md');assert.ok(now.includes('### BPM1b · 2026-10-19（BPM1c 前当前，原样保留）\n'+before.split('## 当前\n')[1].split('## 历史\n')[0]));});
+ await check('BPM1 current preserved verbatim',async()=>{const before=await read(`${relative}/bpm1b-before-status.txt`);const now=await read('docs/blueprint/STATUS.md');assert.ok(now.includes('### BPM1 · 2026-10-19（BPM1b 前当前，原样保留）\n'+before.split('## 当前\n')[1].split('## 历史\n')[0]));});
+ await check('old current moved verbatim; earlier history unchanged',async()=>{const old=execFileSync('git',['show','HEAD:docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'});const now=await read('docs/blueprint/STATUS.md');const current=old.split('## 当前\n')[1].split('## 历史\n')[0];assert.ok(now.includes('### P87 · 2026-10-19（BPM1d 前当前，原样保留）\n'+current));assert.ok(now.endsWith(old.split('## 历史\n')[1]));return {oldCurrentSha256:sha(current)};});
+ await check('only authorized tracked/untracked repository paths changed',()=>{const tracked=execFileSync('git',['diff','--name-only','-z','HEAD'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);const untracked=execFileSync('git',['ls-files','--others','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean);for(const p of [...tracked,...untracked])assert.ok(p==='docs/blueprint/STATUS.md'||p.startsWith(relative+'/')||p.startsWith('docs/blueprint/screens/matrix-closeout-20261019/'),p);return {tracked,untracked};});
+-await check('new repository prose has no machine-local supervisor links',async()=>{for(const p of ['docs/blueprint/STATUS.md',`${relative}/checks.md`,`${relative}/route-index.md`,`${relative}/manual-review.md`,`${relative}/classification.md`])assert.ok(!(await read(p)).includes('/Users/OLE/HermesWork/.supervisor/'),p);});
++await check('new repository prose has no machine-local supervisor links',async()=>{for(const p of ['docs/blueprint/STATUS.md',`${relative}/checks.md`,`${relative}/route-index.md`,`${relative}/manual-review.md`,`${relative}/classification.md`,`${relative}/bpm1e-analysis.md`])assert.ok(!(await read(p)).includes('/Users/OLE/HermesWork/.supervisor/'),p);});
+ await writeFile(path.join(dir,'scope.diff'),execFileSync('git',['diff','--','docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'}));
+-await check('new Markdown links resolve',async()=>{let links=0;for(const f of ['checks.md','route-index.md','manual-review.md','classification.md','manual-review-plan.md','bpm1d-analysis.md']){const content=await read(`${relative}/${f}`);for(const match of content.matchAll(/\]\(([^)]+)\)/g)){if(/^https?:/.test(match[1]))continue;const target=path.resolve(dir,match[1].split('#')[0]);if(target.endsWith('/validation.json'))continue;await readFile(target);links++;}}return links;});
++await check('new Markdown links resolve',async()=>{let links=0;for(const f of ['checks.md','route-index.md','manual-review.md','classification.md','manual-review-plan.md','bpm1d-analysis.md','bpm1e-analysis.md']){const content=await read(`${relative}/${f}`);for(const match of content.matchAll(/\]\(([^)]+)\)/g)){if(/^https?:/.test(match[1]))continue;const target=path.resolve(dir,match[1].split('#')[0]);if(target.endsWith('/validation.json'))continue;await readFile(target);links++;}}return links;});
+ const patch=execFileSync('git',['diff','--','docs/blueprint/STATUS.md'],{cwd:root,encoding:'utf8'});await writeFile(path.join(dir,'scope.diff'),patch);
+ const inventory=[];for(const f of (await readdir(dir)).sort()){if(f==='validation.json')continue;const bytes=await readFile(path.join(dir,f));inventory.push({path:`${relative}/${f}`,bytes:bytes.length,sha256:sha(bytes)});}
+ await writeFile(path.join(dir,'validation.json'),JSON.stringify({at:new Date().toISOString(),baseline:m.baseline,browserExecuted:false,commands,checks,summary:{pass:checks.length,fail:0},inventory,excludedSelf:'validation.json omits its own hash'},null,2)+'\n');
+--- a/docs/blueprint/evidence/matrix-closeout-20261019/checks.md
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/checks.md
+@@ -1,6 +1,6 @@
+ # BPM1d · 当前交接
+ 
+-当前任务说明、逐类归因、P87覆盖和四组重跑命令以 [BPM1d交接](bpm1d-analysis.md) 为准。以下BPM1c/BPM1b原交接仅为历史，不是当前结果或重跑范围。
++当前任务说明、四类结论和两组重跑命令以 [BPM1e交接](bpm1e-analysis.md) 为准。BPM1d 及以下 BPM1c/BPM1b 交接均为历史；当前结果是 BPM1d Supervisor 重跑，未宣称 BPM1e 浏览器通过。
+ 
+ # BPM1c · 自动探针与目检交接
+ 
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs
+@@ -0,0 +1,64 @@
++// Synthetic harness for the actual evidence probes. No browser, port, product or test changes.
++import assert from 'node:assert/strict';
++import vm from 'node:vm';
++import {roundProbes} from './round-probes.mjs';
++let checks=0;
++async function check(name,fn){await fn();checks++;console.log('ok '+name);}
++function isolationPage(mismatch=false){
++ let appended=0,removed=0,finiteFinished=0;
++ const clone=cls=>{
++  const finite={playState:'running',pending:false,effect:{getComputedTiming:()=>({iterations:1})},get finished(){return Promise.resolve().then(()=>{this.playState='finished';finiteFinished++;});}};
++  const infinite={playState:'running',pending:false,animationName:'synthetic-spin',effect:{getComputedTiming:()=>({iterations:Infinity}),getKeyframes:()=>[{offset:0,transform:'none'},{offset:1,transform:'rotate(360deg)'}]},pause(){this.playState='paused';},ready:Promise.resolve()};
++  return {dataset:{},cls,querySelectorAll:()=>[],removeAttribute(){},getAttribute:()=>cls,getBoundingClientRect:()=>({width:600}),getAnimations:()=>[finite,infinite],matches(){return this.parentElement.dataset.prismTheme==='blueprint';}};
++ };
++ const originals=Array.from({length:9},(_,i)=>({getAttribute:()=>`node-${i}`,cloneNode:()=>clone(`node-${i}`)}));
++ const source={getAttribute:()=> 'bp-sheet',cloneNode:()=>clone('bp-sheet'),querySelectorAll:()=>originals};
++ const document={createElement:()=>({dataset:{},style:{},append(el){el.parentElement=this;},remove(){removed++;}}),body:{append(){appended++;}}};
++ const globals={document,setTimeout,clearTimeout,requestAnimationFrame:fn=>queueMicrotask(fn),matchMedia:()=>({matches:true}),getComputedStyle:(n,p)=>new Proxy({getPropertyValue:k=>k==='--link'?'blue':'black'},{get:(target,k)=>k in target?target[k]:mismatch&&n.cls==='node-0'&&p==='::after'&&k==='borderRadius'?(n.matches()?'0px':'8px'):'same'})};
++ const sheet={locator:()=>({first:()=>({hover:async()=>{}})}),evaluate:async(fn,args)=>JSON.parse(JSON.stringify(await vm.runInNewContext(`(${fn.toString()})`,globals)(source,args)))};
++ return {page:{emulateMedia:async()=>{},locator:()=>sheet},counts:()=>({appended,removed,finiteFinished})};
++}
++await check('isolation waits finite animations, freezes loops at same time, removes all temporary roots',async()=>{
++ const harness=isolationPage(),row={theme:'light',innerTheme:'blueprint'};
++ const result=await roundProbes['entry-isolation'](harness.page,row);
++ assert.equal(result.results.length,10);assert.equal(harness.counts().removed,10);assert.equal(harness.counts().appended,10);assert.ok(harness.counts().finiteFinished>=20);
++ for(const r of result.results){assert.equal(r.equal,true);assert.equal(r.motion.expected.paused[0].time,0);assert.deepEqual(Array.from(r.motion.actual.paused[0].properties),['transform']);}
++ assert.deepEqual(Array.from(result.excludedProperties),[]);assert.ok(result.properties.includes('opacity')&&result.properties.includes('transform'));
++});
++await check('post-stabilization pseudo-element mutation fails and preserves named values and source',async()=>{
++ const harness=isolationPage(true),row={theme:'light',innerTheme:'blueprint'};
++ await assert.rejects(()=>roundProbes['entry-isolation'](harness.page,row),{code:'ERR_ASSERTION'});
++ const differences=row.measured.results.flatMap(r=>r.differences);assert.equal(differences.length,1);
++ const d=differences[0];assert.equal(d.property,'borderRadius');assert.equal(d.pseudo,'::after');assert.equal(d.expected,'0px');assert.equal(d.actual,'8px');assert.equal(d.selector,':scope');assert.equal(row.measured.source.accentLine,514);assert.match(row.measured.judgment,/疑似缺陷/);assert.equal(harness.counts().removed,10);
++});
++function zoomPage(width,shadow='none'){
++ const root={style:{},clientWidth:width,scrollWidth:width*2};
++ const globals={document:{documentElement:root,querySelectorAll:()=>[]},innerWidth:width,devicePixelRatio:1,getComputedStyle:()=>({zoom:root.style.zoom})};
++ const locator={first(){return this;},evaluateAll:async fn=>fn.name==='waitForStableElements'?{stable:true}:[{boxShadow:shadow}]};
++ return {root,page:{emulateMedia:async()=>{},locator:()=>locator,evaluate:(fn,args)=>vm.runInNewContext(`(${fn.toString()})`,globals)(args)}};
++}
++await check('320 CSS zoom is observed with raw overflow retained and zoom restored',async()=>{
++ const h=zoomPage(320),row={theme:'blueprint',viewport:{width:320},pass:null};await roundProbes['print-zoom'](h.page,row,{capture:async()=>{}});
++ assert.equal(row.status,'observed');assert.equal(row.pass,null);assert.equal(row.measured[1].cssZoom.scroll,640);assert.equal(row.measured[1].originalAcceptance.width,1280);assert.equal(h.root.style.zoom,'');
++});
++await check('768 and 1280 overflow remain failures; 320 print-shadow regression cannot become observed',async()=>{
++ for(const [width,shadow]of [[768,'none'],[1280,'none'],[320,'bad-shadow']]){
++  const h=zoomPage(width,shadow),row={theme:'blueprint',viewport:{width}};await assert.rejects(()=>roundProbes['print-zoom'](h.page,row,{capture:async()=>{}}),{code:'ERR_ASSERTION'});assert.notEqual(row.status,'observed');assert.equal(h.root.style.zoom,'');assert.ok(row.measured.length);
++ }
++});
++function narrowPage({visible=false,residual=false}={}){
++ let active=0;
++ const ruler={className:'bp-ruler',getClientRects:()=>visible?[{}]:[]};
++ const element={scrollIntoView(){},querySelectorAll:selector=>selector==='.bp-ruler'?Array(4).fill(ruler):Array(active).fill(ruler)};
++ const globals={document:{querySelector:()=>element},matchMedia:()=>({matches:true}),getComputedStyle:()=>({display:visible?'flex':'none'})};
++ const evaluate=(fn,arg)=>vm.runInNewContext(`(${fn.toString()})`,globals)(arg);
++ const sheet={scrollIntoViewIfNeeded:async()=>{},boundingBox:async()=>({x:0,y:0,width:320,height:600}),elementHandle:async()=>element,evaluate:async fn=>evaluate(fn,element)};
++ return {locator:()=>sheet,evaluate,mouse:{move:async x=>{active=x===0?(residual?1:0):4;}},waitForFunction:async(fn,arg)=>{assert.equal(evaluate(fn,arg),true,'residual active ruler must fail');}};
++}
++await check('320 asserts four hidden rulers and clears active marks instead of waiting for tracking',async()=>{
++ const row={viewport:{width:320}};await roundProbes['entry-pointer'](narrowPage(),row,{capture:async()=>{}});assert.equal(row.measured.trackingApplicable,false);assert.equal(row.measured.during.visibleActive,0);assert.equal(row.measured.after.active,0);
++});
++await check('320 visible ruler or stale mark remains a failure',async()=>{
++ for(const state of [{visible:true},{residual:true}])await assert.rejects(()=>roundProbes['entry-pointer'](narrowPage(state),{viewport:{width:320}},{capture:async()=>{}}),{code:'ERR_ASSERTION'});
++});
++console.log(JSON.stringify({offlineChecks:checks,browserExecuted:false}));
+--- /dev/null
++++ b/docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-analysis.md
+@@ -0,0 +1,77 @@
++# BPM1e · 剩余四类探针修正
++
++2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`；分支 `docs/blueprint-matrix-closeout-2`。开工已有 BPM1d 修改和 Supervisor 重跑证据，不是干净工作树。本轮只改本目录证据脚本、说明与 `STATUS.md`；产品源码、CSS、工程测试、依赖、冻结 coss 均未修改。本轮无浏览器执行、服务管理、提交、推送或发布；不作 Builder 自我批准。
++
++## 已有实测与保留策略
++
++| 组 | BPM1d Supervisor 重跑结果（BPM1e 未重跑） |
++| --- | --- |
++| matrix | 645 pass；645 pending-visual |
++| isolation | 132 pass；18 error |
++| interactions | 1500 pass / 1500 |
++| per-round | 955 pass；15 observed；116 pending-visual；20 error；5 fail |
++
++四组结果及四组截图索引保持原字节。[BPM1d 归档](bpm1d-supervisor-run.json.gz) 保存 14 份文件的完整 UTF-8 文本与 SHA-256（含结果/索引、来源目录、当时脚本和 validation）。原失败仍在 [isolation.json](isolation.json) 与 [per-round.json](per-round.json)，未改写为修正后通过。开工状态见 [快照](bpm1e-before-status.txt)。本轮增量见 [bpm1e-scripts.diff](bpm1e-scripts.diff)；[scope.diff](scope.diff) 是 STATUS 相对 HEAD 的累计差异。
++
++## 四类结论
++
++### 1. P87 嵌套隔离：诊断缺失已修正，另有源码支持的疑似缺陷
++
++18 error 均是外层 light/paper/dark、内层 blueprint/blueprint-night、宽度 320/768/1280。旧探针只比较 `color / backgroundColor / borderTop / borderBottom / outline / boxShadow / fontSize / fontWeight`，**没有 transform / opacity**；不能仅凭锁框和 halo 动画解释旧失败。旧结果未保存不同属性的值，无法还原实测的具体颜色。
++
++源码依据：`app/(next)/next/blueprint.css` P87 段 482–524 行：
++
++- 484 行 `.bp-target-lock` 和 490 行 `.bp-diagram-callout` 默认使用 `color:var(--foreground)`。
++- 514 行主题强调规则是主题祖先 + 后代组合：`:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.bp-target-lock,.bp-diagram-callout,.bp-entry-row[data-emphasis] .bp-entry-row-action):not(...)`，设为 `color:var(--link)`。
++- 当这两个组件**自身就是** `[data-agent-preview][data-prism-theme="blueprint"]` 根、外层为核心主题时，根没有匹配的蓝图祖先；而同主题外层对照有此祖先。整张 sheet 中的后代与 entry-row 的 action 后代不具备同样的根匹配缺口。此推理与现有“sheet/entry-row 相等，lock/callout 不等”的分布一致，但尚不是动画稳定后的实测结论。
++
++修正后的 `entry-isolation`：先设置 reduced-motion；克隆前后均等待有限动画 finished，若有无限动画则暂停并置于同一个 `currentTime=0`，等待 ready；超时仍失败。**不排除任何比较属性**，扩大为 25 个属性，含四边边框、圆角、字体、阴影、fill/stroke、transform/opacity 和根/全部后代/`::before`/`::after`。每条差异保存节点路径、class、伪元素、属性名、expected/actual、两侧主题强调选择器是否匹配、foreground/link token；记录 P87 来源路径、行号和完整选择器。断言前先写 `row.measured`，稳定后仍不等则明确标为“疑似缺陷”并 fail，交 Supervisor 复核，不改 CSS 或放宽颜色等断言。
++
++### 2. P74 选项超时：探针问题
++
++原错误栈指向 `scoped-controls` 中 `picker.fill('高二')` 后的全页 `getByRole('option').first()`。实际是 [AgentObjectPicker](../../../../components/prism-next/agent-object-picker.tsx) 的搜索候选，**不是材料 Select**。[P74 夹具](../../../../components/prism-next/demos/portal-scope.tsx) 保留 query/selected 状态；循环只切换外层主题，重复 fill 同一个字符串不保证重新打开 Combobox。候选为“高二三班”“高二四班 · 长中文教学主题与跨课次讲评材料”，真实打开按钮为“查看班级候选”；选项仍使用 option 角色。
++
++修正：每个外层循环先移除旧选择，搜索“高二”；若 `aria-expanded` 不是 true，使用真实候选按钮打开；在**可见 combobox-popup 内**等待并核对两条候选，再 ArrowDown/Enter 选择，核对“已选 1 项”和具体班级。保留材料 Select 的 ArrowDown/End/Enter，增加其真实 select-popup 内选项等待。Dialog 首焦、Tab/Shift+Tab trap、内层 Select Esc 和 Dialog Esc 回焦仍严格检查。逐外层记录选中值、打开前 query/expanded、候选和选中摘要，便于后续失败定位。
++
++### 3. P87 320px 标尺追踪：探针适用范围问题
++
++`app/(next)/next/blueprint.css` 375–377 行在 max-width:760px 下隐藏标尺，388–390 行还有内容容器宽度规则。320px 下不等待四个反白标记。改为鼠标进入图纸时检查四条标尺全部 `display:none`、无布局矩形、无可见反白；离开后还须无 `data-active` 残留。本项记录 `trackingApplicable:false`，通过只表示隐藏/清理契约通过。当前矩阵的 768/1280 仍执行原坐标与离开清除断言；entry-selection / entry-motion 保持原状态测试，视觉解释仍须结合隐藏规则。
++
++### 4. 首批 320px + CSS zoom 2：超出原验收范围的观察
++
++原始 [checks.md 第 24 行](../common-20261015/checks.md) 明确写“CSS zoom: 2 at 1280px”；[原始 matrix.json](../common-20261015/matrix.json) 的 `magnification` 记录 `innerWidth:1280, zoom:"2", scrollWidth:1265`；第二批回归的 [first-matrix.json](../batch2-20261016/first-matrix.json) 同样为 1280。普通布局包含 320/768/1280 不等于在这些宽度都验证过 zoom 2。
++
++现有 5 个失败均为 320 + zoom2，实测 client=320 / scroll=640，越界元素已有 header、主题选择器、prism-content、图纸等；这些旧记录和诊断原样保留。按本次委派，仅在未来重跑时将 **320 的 CSS zoom 投影**记为 `observed / pass:null`，保留 geometry、offenders、原证据路径与 1280 范围说明。768/1280 仍保留无溢出门槛；print 的断言先执行，不因 320 观察分类而略过。CSS zoom 与原生 200% 缩放不等价，原生缩放列入下方目检。
++
++## 离线验证
++
++- `node --check`：11 个证据脚本退出 0，含本轮 `round-probes.mjs`、`bpm1e-audit.mjs`。
++- `offline-audit.mjs`：原 12/12 合成时序/焦点/策略检查通过。
++- `bpm1e-audit.mjs`：6/6 合成检查通过；直接调用本轮探针，覆盖有限动画等待、无限动画统一时间、伪元素属性故障能失败并保留值、320 观察保留溢出、768/1280 溢出仍失败、320 print 回归仍失败、标尺隐藏与无残留、标尺可见/残留故障仍失败。使用模拟 DOM/时钟接口，不是浏览器执行。开发中修正了合成 harness 的 VM 跨 realm 数组序列化，使其模拟 Playwright 返回 JSON 的行为；未为此改变探针断言。
++- fixture 定向 TypeScript：0 诊断；不是全仓类型检查结论。
++- `measure.mjs --plan`：只生成独立计划，四组结果及索引共 8 文件 SHA-256 不变；计划 4051 行。
++- `validate.mjs`：22/22 静态检查，16 条子命令退出 0；包括原始 zoom 范围、P87 选择器行号、归档散列和历史段落完整性。最终数字与命令见 [validation.json](validation.json)。
++- 本轮不需要产品构建或全量工程测试；未运行、未沿用旧通过数。
++
++## 交给 Supervisor 的浏览器验收清单
++
++使用 Supervisor 已核对工作树/分支的现有服务，只需重跑 **isolation、per-round**。matrix 和 interactions 当前实测不受本轮探针修改影响，不要求重复；历史目检义务仍在。
++
++```sh
++node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=isolation --replace
++node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --run --group=per-round --replace
++node docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs
++```
++
++`--replace` 覆盖相应组 JSON 和同名截图。本轮 BPM1d JSON/索引已归档；如需保留旧截图像素，应在重跑前复制到有版本的本机证据目录，归档不内嵌 PNG。本轮 Builder 未生成或修改截图。
++
++| URL（现有默认服务） | 操作路径与应看到的状态 | 主题、宽度 |
++| --- | --- | --- |
++| `http://localhost:5173/next/foundations/blueprint#entry-annotations` | 重跑 isolation，重点查看 lock/callout 自身为预览根的 `differences`；reduce 后如仍有颜色/边框/字体/伪元素差异，以两侧值和 P87 选择器为依据登记疑似缺陷；不将无动画等同隔离通过 | 外/内层各 light、paper、dark、blueprint、blueprint-night；320/768/1280，重点核心外层 × 蓝图/夜图内层的 18 组合 |
++| `http://localhost:5173/next/components/menu#portal-scope` | 每个外层：Select ArrowDown/End/Enter 显示“长中文课堂练习与讲评材料”；搜索“高二”，打开“查看班级候选”，两条班级候选，键盘选择后“已选 1 项”；打开“局部对话框”，首焦“材料标题”，Tab/Shift+Tab 不逃出；嵌套 Select 一次 Esc 回内触发器，再 Esc 回“局部对话框” | 局部五主题 × 外层 light/paper/dark；320/768/1280 |
++| `http://localhost:5173/next/foundations/blueprint#entry-annotations` | 320：鼠标进入/离开后标尺不可见，无可见反白，离开无 active 残留。768/1280：坐标标记与离开清除；另检查入口 hover/Tab、节点框/标签、reduce 静态高亮与内容换行。注意内容容器规则也可能隐藏标尺，不把 DOM active 当作视觉可见证据 | 五主题 ×320/768/1280；重点 blueprint/light 的320/1280，补夜图 |
++| `http://localhost:5173/next/foundations/blueprint#common-components` | 保留 CSS zoom2 的真实 geometry；320 显示观察而非通过，1280 对照原验收，768 仍严格断言。用浏览器菜单进行原生 200% 缩放，记录缩放前后 CSS viewport/DPR/visualViewport、正文重排、长中文/公式滚动、浮层及焦点；不要用 CSS zoom 替代。print media 无投影也不等于打印预览通过 | 五主题；CSS 320/768/1280；原生至少桌面1280与代表窄窗320，记录缩放后的实际可用宽度 |
++
++## 未验证范围
++
++浏览器验收：按分工由 Supervisor 执行。修改后的实际 DOM 交互、稳定后 P87 两侧属性值、主题/视觉/键盘、原生 200% 缩放与打印预览待 Supervisor；真实服务、Workspace、真机触控、读屏器和实体打印未验。本轮属于同轮探针返工，旧周期 3/3 累计浏览器矩阵与独立综合审查仍待收口；P87 未验收，不新增完成轮、不重置周期、不宣布收口。
+--- a/docs/blueprint/STATUS.md
++++ b/docs/blueprint/STATUS.md
+@@ -3,6 +3,19 @@
+ > 交接状态记录。每轮更新“当前”，旧“当前”连同日期与基线移入“历史”。正文路径均为仓库相对路径。
+ 
+ ## 当前
++
++- 轮次：BPM1e · 剩余四类探针修正 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `docs/blueprint-matrix-closeout-2`；开工已有 BPM1d 修改与 Supervisor 重跑证据。
++- 范围：仅本轮 evidence 和本状态；P87 隔离先稳定动画并保留属性/两侧值/来源，P74 真实候选打开与选中，320 标尺隐藏/无反白残留，320 CSS zoom2 依原验收1280范围改为未来重跑的观察项。产品源码、CSS、测试与依赖不变。[逐类结论及交接](evidence/matrix-closeout-20261019/bpm1e-analysis.md)。
++- 当前浏览器实测为 BPM1d Supervisor 重跑：matrix 645通过 /645待目检；isolation 132通过 /18错误；interactions 1500/1500；per-round 955通过 /15观察 /116待目检 /20错误 /5失败。四组结果与截图索引原字节保留并[归档](evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz)，未改写为 BPM1e 通过。
++- 风险：P87 旧比较不含 transform/opacity，动画不能直接解释旧失败；514行主题祖先选择器可能漏掉自身为蓝图预览根的 target-lock/callout，记录为源码支持的疑似缺陷，待稳定后的两侧值复核，未修改样式。
++- Builder 离线验证：11个脚本语法、原12/12与新增6/6合成检查、fixture定向类型0诊断、离线计划4051行、validate 22/22静态检查（16条子命令退出0）。[实际命令与数字](evidence/matrix-closeout-20261019/validation.json)；本轮无生产构建/全量测试或浏览器执行。
++- 交接：仅 isolation、per-round 使用 `--replace` 重跑，再 validate；matrix/interactions 不必因本轮重跑。原生200%缩放、18个隔离差异重点组合及URL/操作/预期/宽度见[浏览器清单](evidence/matrix-closeout-20261019/bpm1e-analysis.md)。既有截图不改，本轮无新截图。
++- 周期：同轮自动化返工；旧周期3/3累计浏览器矩阵与独立综合审查仍待收口，P87未验收，不新增完成轮、不重置周期、不宣布收口。Builder 自测不等同 Supervisor Review 或 PO 批准。
++- 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、原生IME/缩放、真机、读屏器与实体打印未验。无提交/推送/PR、联网/依赖安装、服务启动/重启、部署/站点同步。
++
++## 历史
++
++### BPM1d · 2026-10-19（BPM1e 前当前，原样保留）
+ 
+ - 轮次：BPM1d · 误报探针修正与 P87 纳入累计矩阵 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `docs/blueprint-matrix-closeout-2`；开工工作树干净。
+ - 范围：仅本轮 evidence 与本状态；修正焦点哨兵等待、coarse采样、核心reduce契约、子菜单定位/两次Esc、Toast、Sheet、Switch、Sidebar断点/slot、编排未知文案、定点键盘入焦与按钮采样；CSS zoom保留失败门槛并补诊断，移动ShellNavFixture能力缺口转目检。产品源码、CSS、工程测试、依赖与冻结coss不改。[逐类结论与依据](evidence/matrix-closeout-20261019/bpm1d-analysis.md)。
+@@ -13,7 +26,6 @@
+ - 周期：同轮自动化返工，旧周期3/3累计浏览器矩阵和独立综合审查仍待收口；P87保持未验收，不新增完成轮、不重置周期、不宣布收口。Builder自测不等同Supervisor Review或PO批准。
+ - 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、原生IME/缩放、真机触控、读屏器与实体打印未验。无提交、推送、PR、联网、依赖安装、服务启动/重启、部署或站点同步。
+ 
+-## 历史
+ 
+ ### P87 · 2026-10-19（BPM1d 前当前，原样保留）
+ 

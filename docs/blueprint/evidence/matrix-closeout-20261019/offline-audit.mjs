@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
-import {screenshotName,contrastPolicy,waitForStableElements} from './measurement-utils.mjs';
+import {screenshotName,contrastPolicy,waitForStableElements,waitForStableFocus,reducedAnimationOK} from './measurement-utils.mjs';
 let checks=0;
 async function check(name,fn){await fn();checks++;console.log('ok '+name);}
 async function simulate({animationUntil=0,infinite=false,opacityUntil=0,movingUntil=0,empty=false}={}) {
@@ -52,5 +52,24 @@ await check('route names are readable and unique across all 645 layout screensho
  const dir=path.dirname(fileURLToPath(import.meta.url)),m=JSON.parse(await readFile(path.join(dir,'manifest.json'),'utf8'));
  const names=[];for(const theme of m.themes)for(const width of m.widths)for(const route of m.routes)names.push(screenshotName({theme,viewport:{width},route:route.route,id:'layout-fixture'}));
  assert.equal(names.length,645);assert.equal(new Set(names).size,645);assert.ok(names.includes('blueprint-320-agent-message.png'));assert.ok(names.includes('blueprint-320-foundations-blueprint.png'));assert.ok(names.includes('blueprint-320-experiments-blueprint.png'));
+});
+
+
+async function simulateFocus(sequence,timeoutMs=2000) {
+ let time=0,id=0;const tasks=new Map(),inside={tagName:'INPUT',getAttribute:()=>null,textContent:''},outside={tagName:'BUTTON',getAttribute:()=>null,textContent:'outside'},guard={tagName:'SPAN',getAttribute:()=>null,textContent:''};
+ for(const el of [inside,outside,guard])el.matches=()=>el===guard;
+ const doc={get activeElement(){return {inside,outside,guard}[sequence(time)];}},popup={contains:el=>el===inside};
+ const schedule=(fn,delay)=>{const key=++id;tasks.set(key,{fn,at:time+delay});return key;};
+ const fn=vm.runInNewContext(`(${waitForStableFocus.toString()})`,{document:doc,performance:{now:()=>time},setTimeout:(fn,ms)=>schedule(fn,ms),clearTimeout:id=>tasks.delete(id),requestAnimationFrame:fn=>schedule(fn,16),cancelAnimationFrame:id=>tasks.delete(id)});
+ const promise=fn(popup,{timeoutMs});while(tasks.size){const [key,task]=[...tasks].sort((a,b)=>a[1].at-b[1].at)[0];tasks.delete(key);time=task.at;task.fn();}return promise;
+}
+await check('focus guard transition waits for redirect and two unchanged frames',async()=>{const s=await simulateFocus(t=>t<1500?'guard':'inside');assert.ok(s.stable&&s.inside);assert.ok(s.guards>0&&s.elapsedMs>=1532);});
+await check('stable real outside focus is rejected, not hidden by guard tolerance',async()=>{const s=await simulateFocus(t=>t<32?'guard':'outside');assert.ok(s.stable);assert.equal(s.inside,false);});
+await check('permanent focus guard times out instead of passing containment',async()=>{const s=await simulateFocus(()=>'guard',80);assert.equal(s.stable,false);assert.equal(s.inside,false);assert.equal(s.elapsedMs,80);});
+await check('reduced motion accepts contractual .01ms one iteration, rejects loops and long duration',()=>{
+ for(const duration of ['0.00001s','0.01ms','0s'])assert.ok(reducedAnimationOK({name:'pulse',duration,iterations:'1'}));
+ assert.ok(reducedAnimationOK({name:'none',duration:'2s',iterations:'infinite'}));
+ for(const [duration,iterations]of [['0.00002s','1'],['1s','1'],['0.01ms','infinite'],['0.01ms','2']])assert.equal(reducedAnimationOK({name:'pulse',duration,iterations}),false);
+ assert.equal(reducedAnimationOK({name:'none, pulse',duration:'0s, 2s',iterations:'1'}),false);
 });
 console.log(JSON.stringify({offlineChecks:checks,browserExecuted:false}));

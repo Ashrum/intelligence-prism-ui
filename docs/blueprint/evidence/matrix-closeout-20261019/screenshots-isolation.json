@@ -1,827 +1,1652 @@
 [
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-isolation-light-light-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-isolation-light.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:16.362Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:28.627Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-isolation-light-paper-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-isolation-paper.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:18.031Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:30.759Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-isolation-light-dark-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-isolation-dark.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:19.680Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:32.356Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-isolation-light-blueprint-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:21.300Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:34.027Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-isolation-light-blueprint-night-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:22.863Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:35.637Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-isolation-light-light-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-light.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:37.396Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:39.284Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:41.126Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:43.100Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:45.059Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-isolation-light.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:24.541Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:46.824Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-isolation-light-paper-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-isolation-paper.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:26.207Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:48.515Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-isolation-light-dark-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-isolation-dark.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:27.935Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:50.210Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-isolation-light-blueprint-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:29.635Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:51.894Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-isolation-light-blueprint-night-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:31.332Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:15:53.577Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-isolation-light-light-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-light.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:55.551Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:57.581Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:15:59.630Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:01.821Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:03.867Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-isolation-light.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:33.073Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:05.651Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-isolation-light-paper-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-isolation-paper.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:34.846Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:07.357Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-isolation-light-dark-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-isolation-dark.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:36.568Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:09.093Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-isolation-light-blueprint-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:38.314Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:10.821Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-isolation-light-blueprint-night-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:40.088Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:12.537Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-isolation-paper-light-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-light.png",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:14.719Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:16.986Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:19.329Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:21.617Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:23.932Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-isolation-light.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:41.759Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:25.624Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-isolation-paper-paper-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-isolation-paper.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:43.403Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:27.308Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-isolation-paper-dark-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-isolation-dark.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:45.093Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:28.962Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-isolation-paper-blueprint-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:46.731Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:30.618Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-isolation-paper-blueprint-night-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:48.341Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:32.343Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-isolation-paper-light-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-light.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:34.107Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:36.084Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:37.890Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:39.838Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:41.792Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-isolation-light.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:50.072Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:43.495Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-isolation-paper-paper-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-isolation-paper.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:51.795Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:45.199Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-isolation-paper-dark-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-isolation-dark.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:53.508Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:46.927Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-isolation-paper-blueprint-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:55.198Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:48.633Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-isolation-paper-blueprint-night-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:56.977Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:16:50.334Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-isolation-paper-light-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-light.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:52.312Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:54.470Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:56.481Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:16:58.699Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:00.758Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-isolation-light.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:33:58.719Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:02.573Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-isolation-paper-paper-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-isolation-paper.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:00.466Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:04.321Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-isolation-paper-dark-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-isolation-dark.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:02.220Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:06.039Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-isolation-paper-blueprint-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:03.965Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:07.772Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-isolation-paper-blueprint-night-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:05.721Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:09.501Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-isolation-dark-light-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-light.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:11.698Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:14.083Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:16.277Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:18.703Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "paper",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:20.982Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-isolation-light.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:07.464Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:22.700Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-isolation-dark-paper-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-isolation-paper.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:09.224Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:24.341Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-isolation-dark-dark-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-isolation-dark.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:10.889Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:25.985Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-isolation-dark-blueprint-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:12.536Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:27.625Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-isolation-dark-blueprint-night-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:14.174Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:29.255Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-isolation-dark-light-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-light.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:31.090Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:33.115Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:34.949Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:37.016Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:38.922Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-isolation-light.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:15.879Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:40.724Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-isolation-dark-paper-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-isolation-paper.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:17.616Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:42.442Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-isolation-dark-dark-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-isolation-dark.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:19.349Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:44.161Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-isolation-dark-blueprint-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:21.032Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:45.878Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-isolation-dark-blueprint-night-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:22.757Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:47.582Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-isolation-dark-light-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-light.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:49.588Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:51.803Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:53.815Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:56.042Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:17:58.127Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-isolation-light.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:24.494Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:17:59.963Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-isolation-dark-paper-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-isolation-paper.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:26.252Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:01.716Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-isolation-dark-dark-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-isolation-dark.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:28.015Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:03.460Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-isolation-dark-blueprint-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:29.760Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:05.185Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-isolation-dark-blueprint-night-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:31.504Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:06.928Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-isolation-blueprint-light-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-light.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:09.127Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:11.572Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:13.877Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:16.357Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:18.671Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-isolation-light.png",
     "theme": "blueprint",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:33.178Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:20.400Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-isolation-blueprint-paper-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-isolation-paper.png",
     "theme": "blueprint",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:34.868Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:22.097Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-isolation-blueprint-dark-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-isolation-dark.png",
     "theme": "blueprint",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:36.549Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:23.776Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-isolation-blueprint-blueprint-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-isolation-blueprint.png",
     "theme": "blueprint",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:38.226Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:25.503Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-isolation-blueprint-blueprint-night-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-isolation-blueprint-night.png",
     "theme": "blueprint",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:39.907Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:27.164Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-isolation-blueprint-light-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:29.164Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:31.273Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:33.263Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:35.329Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-320-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:37.311Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-isolation-light.png",
     "theme": "blueprint",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:41.660Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:39.142Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-isolation-blueprint-paper-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-isolation-paper.png",
     "theme": "blueprint",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:43.409Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:40.884Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-isolation-blueprint-dark-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-isolation-dark.png",
     "theme": "blueprint",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:45.181Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:42.629Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-isolation-blueprint-blueprint-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-isolation-blueprint.png",
     "theme": "blueprint",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:46.926Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:44.366Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-isolation-blueprint-blueprint-night-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-isolation-blueprint-night.png",
     "theme": "blueprint",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:48.707Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:46.137Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-isolation-blueprint-light-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:48.414Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:50.802Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:53.085Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:55.478Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-768-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:18:57.753Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-isolation-light.png",
     "theme": "blueprint",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:50.501Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:18:59.647Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-isolation-blueprint-paper-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-isolation-paper.png",
     "theme": "blueprint",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:52.300Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:01.431Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-isolation-blueprint-dark-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-isolation-dark.png",
     "theme": "blueprint",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:54.129Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:03.254Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-isolation-blueprint-blueprint-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-isolation-blueprint.png",
     "theme": "blueprint",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:55.926Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:05.039Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-isolation-blueprint-blueprint-night-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-isolation-blueprint-night.png",
     "theme": "blueprint",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:57.745Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:06.897Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-isolation-blueprint-night-light-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:09.395Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:12.028Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:14.537Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:17.152Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:19.673Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-isolation-light.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:34:59.425Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:21.445Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-isolation-blueprint-night-paper-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-isolation-paper.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:01.093Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:23.146Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-isolation-blueprint-night-dark-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-isolation-dark.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:02.780Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:24.824Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-isolation-blueprint-night-blueprint-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-isolation-blueprint.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:04.465Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:26.524Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-isolation-blueprint-night-blueprint-night-320.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-isolation-blueprint-night.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:06.131Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:28.239Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-isolation-blueprint-night-light-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:30.222Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:32.339Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:34.325Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:36.438Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-320-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 320,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:38.446Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-isolation-light.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:07.905Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:40.307Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-isolation-blueprint-night-paper-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-isolation-paper.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:09.654Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:42.130Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-isolation-blueprint-night-dark-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-isolation-dark.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:11.406Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:43.948Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-isolation-blueprint-night-blueprint-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-isolation-blueprint.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:13.121Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:45.756Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-isolation-blueprint-night-blueprint-night-768.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-isolation-blueprint-night.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:14.906Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:19:47.505Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-isolation-blueprint-night-light-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:49.747Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:52.182Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:54.424Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:56.812Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-768-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 768,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:19:59.121Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-isolation-light.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:16.692Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:20:01.031Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-isolation-blueprint-night-paper-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-isolation-paper.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:18.491Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:20:02.883Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-isolation-blueprint-night-dark-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-isolation-dark.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:20.286Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:20:04.725Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-isolation-blueprint-night-blueprint-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-isolation-blueprint.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:22.077Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:20:06.559Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-isolation-blueprint-night-blueprint-night-1280.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-isolation-blueprint-night.png",
     "theme": "blueprint-night",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T07:35:23.858Z",
-    "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
+    "date": "2026-10-19T13:20:08.395Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-entry-isolation-light.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:20:10.915Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-entry-isolation-paper.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:20:13.532Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-entry-isolation-dark.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:20:16.047Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-entry-isolation-blueprint.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:20:18.658Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
+  },
+  {
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/blueprint-night-1280-foundations-blueprint-entry-isolation-blueprint-night.png",
+    "theme": "blueprint-night",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "route": "/next/foundations/blueprint",
+    "date": "2026-10-19T13:20:21.173Z",
+    "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   }
 ]

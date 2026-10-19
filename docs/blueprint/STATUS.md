@@ -4,6 +4,31 @@
 
 ## 当前
 
+- 轮次：BPM1e · 剩余四类探针修正 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `docs/blueprint-matrix-closeout-2`；开工已有 BPM1d 修改与 Supervisor 重跑证据。
+- 范围：仅本轮 evidence 和本状态；P87 隔离先稳定动画并保留属性/两侧值/来源，P74 真实候选打开与选中，320 标尺隐藏/无反白残留，320 CSS zoom2 依原验收1280范围改为未来重跑的观察项。产品源码、CSS、测试与依赖不变。[逐类结论及交接](evidence/matrix-closeout-20261019/bpm1e-analysis.md)。
+- 当前浏览器实测为 BPM1d Supervisor 重跑：matrix 645通过 /645待目检；isolation 132通过 /18错误；interactions 1500/1500；per-round 955通过 /15观察 /116待目检 /20错误 /5失败。四组结果与截图索引原字节保留并[归档](evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz)，未改写为 BPM1e 通过。
+- 风险：P87 旧比较不含 transform/opacity，动画不能直接解释旧失败；514行主题祖先选择器可能漏掉自身为蓝图预览根的 target-lock/callout，记录为源码支持的疑似缺陷，待稳定后的两侧值复核，未修改样式。
+- Builder 离线验证：11个脚本语法、原12/12与新增6/6合成检查、fixture定向类型0诊断、离线计划4051行、validate 22/22静态检查（16条子命令退出0）。[实际命令与数字](evidence/matrix-closeout-20261019/validation.json)；本轮无生产构建/全量测试或浏览器执行。
+- 交接：仅 isolation、per-round 使用 `--replace` 重跑，再 validate；matrix/interactions 不必因本轮重跑。原生200%缩放、18个隔离差异重点组合及URL/操作/预期/宽度见[浏览器清单](evidence/matrix-closeout-20261019/bpm1e-analysis.md)。既有截图不改，本轮无新截图。
+- 周期：同轮自动化返工；旧周期3/3累计浏览器矩阵与独立综合审查仍待收口，P87未验收，不新增完成轮、不重置周期、不宣布收口。Builder 自测不等同 Supervisor Review 或 PO 批准。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、原生IME/缩放、真机、读屏器与实体打印未验。无提交/推送/PR、联网/依赖安装、服务启动/重启、部署/站点同步。
+
+## 历史
+
+### BPM1d · 2026-10-19（BPM1e 前当前，原样保留）
+
+- 轮次：BPM1d · 误报探针修正与 P87 纳入累计矩阵 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `docs/blueprint-matrix-closeout-2`；开工工作树干净。
+- 范围：仅本轮 evidence 与本状态；修正焦点哨兵等待、coarse采样、核心reduce契约、子菜单定位/两次Esc、Toast、Sheet、Switch、Sidebar断点/slot、编排未知文案、定点键盘入焦与按钮采样；CSS zoom保留失败门槛并补诊断，移动ShellNavFixture能力缺口转目检。产品源码、CSS、工程测试、依赖与冻结coss不改。[逐类结论与依据](evidence/matrix-closeout-20261019/bpm1d-analysis.md)。
+- 当前浏览器实测仍为BPM1c Supervisor结果：interactions 1376通过 /64失败 /60错误；per-round 821通过 /57失败 /57错误 /85待目检 /15观察；四组结果/索引原字节保留并[归档](evidence/matrix-closeout-20261019/bpm1c-supervisor-run.json.gz)，不改写为修正后通过。
+- 计划：18轮来源、158项义务，63可自动化 /21需目检 /74不适用或覆盖；per-round 1111行，interactions1500，matrix1290，isolation150。P87新增60自动行、6代表目检行及75隔离行；原Foundations Blueprint布局15组合重跑含图纸E。P87包含blueprint/light×320/1280，非代表组合不宣称视觉通过。[本轮目检计划](evidence/matrix-closeout-20261019/manual-review-plan.md)。
+- Builder离线验证：语法检查、`--plan`、12/12项合成时序/策略检查、fixture定向类型0诊断、`validate.mjs`20/20静态检查（14条子命令退出0）；实际退出码、数字和证据散列以[validation.json](evidence/matrix-closeout-20261019/validation.json)为准。无本轮生产构建/全量工程测试或浏览器结果，不沿用P87历史工程数字。
+- 交接：Supervisor使用`--replace`重跑interactions、per-round、matrix、isolation四组，再执行validate与目检；具体URL、操作、预期文案、主题/宽度及CSS投影/移动夹具复核点见[交接清单](evidence/matrix-closeout-20261019/bpm1d-analysis.md)。截图按既有PO决定仅留本机；本轮Builder无新截图。
+- 周期：同轮自动化返工，旧周期3/3累计浏览器矩阵和独立综合审查仍待收口；P87保持未验收，不新增完成轮、不重置周期、不宣布收口。Builder自测不等同Supervisor Review或PO批准。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、原生IME/缩放、真机触控、读屏器与实体打印未验。无提交、推送、PR、联网、依赖安装、服务启动/重启、部署或站点同步。
+
+
+### P87 · 2026-10-19（BPM1d 前当前，原样保留）
+
 - 轮次：P87 · 图纸坐标追踪、图形标注与入口行 · 2026-10-19；基线 `f472fa64e1761e85e26416a09e9fc333ba202d03`，分支 `feat/blueprint-entry-annotations`；开工工作树干净。
 - 范围：BlueprintSheet 可选 rulerTracking / rulerMark；新增 BpTargetLock、BpDiagramCallout、BpEntryRow；blueprint.css 的 P87 隔离样式、图纸 E、API 文档与同源 guide 生成物、新专项测试及 main SSR 夹具。既有 blueprint-components / blueprint-print-a11y 测试更新图纸总数与标题期望；blueprint-theme / blueprint-night 改用或沿用 CSS AST 区分 bp 关键帧，全部普通选择器隔离断言保持；不改组件目录总数、冻结 coss、theme.css、依赖或 Workspace。
 - 实现与来源：[组件 API 与离线复用取舍](../blueprint-theme.md)。三种 bp 呈现导出沿用本模块登记，不另建正式 catalog 页面。SSR 默认路径四组与 main 逐字节一致，受控 null 优先级回退变异被捕获。
@@ -12,7 +37,6 @@
 - 交接：`/next/foundations/blueprint#entry-annotations`，blueprint / light × 320 / 1280。检查图纸空白处细指针四边同步反白、离开清除；三行 hover / Tab focus 对应节点框、标签和图纸坐标；链接跳转与两按钮内容；68px 行高、窄屏动作换行、无行分割线；动态 reduced-motion 停装饰动画但保留静态高亮；嵌套核心预览不被蓝图强调规则覆盖。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。Workspace 接入、真实服务、真机触控、读屏器与打印未验；无本轮浏览器截图。不提交、推送、创建 PR、启动或重启服务、部署或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。
 
-## 历史
 
 ### BPM1c · 2026-10-19（P87 前当前，原样保留）
 

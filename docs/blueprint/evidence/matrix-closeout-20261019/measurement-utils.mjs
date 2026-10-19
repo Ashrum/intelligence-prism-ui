@@ -51,3 +51,20 @@ export function waitForStableElements(elements, {timeoutMs = 5000, pixels = fals
   raf = requestAnimationFrame(tick);
  });
 }
+
+// Base UI focus guards are transient; a stable non-guard outside remains a real failure.
+export function waitForStableFocus(popup, {timeoutMs=5000}={}) {
+ return new Promise(resolve=>{
+  const start=performance.now();let previous=null,unchanged=0,frames=0,guards=0,last=null,raf,done=false;
+  const finish=stable=>{if(done)return;done=true;clearTimeout(timer);cancelAnimationFrame(raf);resolve({stable,frames,guards,elapsedMs:performance.now()-start,...last});};
+  const timer=setTimeout(()=>finish(false),timeoutMs);
+  const tick=()=>{if(done)return;frames++;const active=document.activeElement,guard=!!active?.matches('[data-base-ui-focus-guard]');if(guard)guards++;unchanged=!guard&&active===previous?unchanged+1:0;previous=active;
+   last={inside:!!active&&popup.contains(active),guard,tag:active?.tagName,name:active?.getAttribute('aria-label')||active?.textContent?.slice(0,160)};
+   if(active&&!guard&&unchanged>=2)finish(true);else raf=requestAnimationFrame(tick);
+  };raf=requestAnimationFrame(tick);
+ });
+}
+export function reducedAnimationOK({name,duration,iterations}) {
+ const names=name.split(',').map(s=>s.trim()),times=duration.split(',').map(s=>s.trim()),counts=iterations.split(',').map(s=>s.trim());
+ return names.every((n,i)=>{if(n==='none')return true;const time=times[i%times.length];const ms=parseFloat(time)*(time.endsWith('ms')?1:1000);return Number.isFinite(ms)&&ms<=0.01&&Number(counts[i%counts.length])===1;});
+}

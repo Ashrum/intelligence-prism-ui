@@ -1,3 +1,7 @@
+# BPM1d · 当前交接
+
+当前任务说明、四类结论和两组重跑命令以 [BPM1e交接](bpm1e-analysis.md) 为准。BPM1d 及以下 BPM1c/BPM1b 交接均为历史；当前结果是 BPM1d Supervisor 重跑，未宣称 BPM1e 浏览器通过。
+
 # BPM1c · 自动探针与目检交接
 
 本轮只测不改。Builder未运行浏览器、未启动/重启服务。新增脚本当前只完成离线验证，自动探针尚待Supervisor实跑；不能把有执行函数等同于浏览器通过。
