@@ -19,12 +19,16 @@
     {
       "source": "effective checklist precedence",
       "note": "P78 覆盖 P73 用户气泡与链接焦点旧预期；P77 覆盖 P76 一级 AppBar 选中态；P85b/P85c 追加 P85 间距要求。"
+    },
+    {
+      "source": "BPM1d",
+      "note": "BPW1 原 tests/blueprint-theme.test.mjs 清单按 1930941 快照保留；P87 main 只将字符串切分解析改为 CSS AST，旧义务未删。新浏览器基线 c2dd223，BPM1c 实测按归档哈希识别，不冒充当前执行。"
     }
   ],
   "schemaVersion": 1,
   "preparedAt": "2026-10-19T07:20:46.957Z",
-  "baseline": "19309411a5b936b0b06e7fd63ac8e39f03551337",
-  "branch": "docs/blueprint-matrix-closeout",
+  "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68",
+  "branch": "docs/blueprint-matrix-closeout-2",
   "themes": [
     "light",
     "paper",
@@ -83,8 +87,9 @@
         "docs/blueprint/evidence/common-20261015/checks.md",
         "docs/blueprint/evidence/batch2-20261016/checks.md",
         "docs/blueprint/evidence/editorial-20261016/checks.md",
-        "tests/blueprint-theme.test.mjs",
-        "docs/blueprint/evidence/night-20261016/checks.md"
+        "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt",
+        "docs/blueprint/evidence/night-20261016/checks.md",
+        "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt"
       ],
       "pageSource": "app/(next)/next/foundations/blueprint/page.tsx"
     },
@@ -459,9 +464,11 @@
       "lines": 29
     },
     {
-      "path": "tests/blueprint-theme.test.mjs",
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt",
       "sha256": "e236d1297f4b728b6c1c79b756e301e29514ab2c03a09d34787d46d6a4ff5ee0",
-      "lines": 125
+      "lines": 125,
+      "originalPath": "tests/blueprint-theme.test.mjs",
+      "sourceBaseline": "19309411a5b936b0b06e7fd63ac8e39f03551337"
     },
     {
       "path": "docs/blueprint/evidence/night-20261016/checks.md",
@@ -496,6 +503,11 @@
     {
       "path": "components/prism-next/blueprint-second-batch-demo.tsx",
       "sha256": "f315443c4a5efd2088597fcfc15d49ee770276359c1ee3c71561e54d499cc27b"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt",
+      "sha256": "7f2ca8055bd1d786c805b89d0d18a4e744487457098b8d072bf37f62719fcbe2",
+      "lines": 643
     }
   ],
   "rounds": [
@@ -1736,7 +1748,7 @@
     {
       "name": "BPW1",
       "sources": [
-        "tests/blueprint-theme.test.mjs"
+        "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt"
       ],
       "routes": [
         "/next/foundations/blueprint"
@@ -2631,6 +2643,25 @@
           "text": "test.after(() => rm(temp, { recursive: true, force: true }));"
         }
       ]
+    },
+    {
+      "name": "P87",
+      "sources": [
+        "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt"
+      ],
+      "routes": [
+        "/next/foundations/blueprint#entry-annotations"
+      ],
+      "checklist": [
+        {
+          "line": 12,
+          "text": "- 交接：`/next/foundations/blueprint#entry-annotations`，blueprint / light × 320 / 1280。检查图纸空白处细指针四边同步反白、离开清除；三行 hover / Tab focus 对应节点框、标签和图纸坐标；链接跳转与两按钮内容；68px 行高、窄屏动作换行、无行分割线；动态 reduced-motion 停装饰动画但保留静态高亮；嵌套核心预览不被蓝图强调规则覆盖。"
+        },
+        {
+          "line": 13,
+          "text": "- 未验证范围：浏览器验收：按分工由 Supervisor 执行。Workspace 接入、真实服务、真机触控、读屏器与打印未验；无本轮浏览器截图。不提交、推送、创建 PR、启动或重启服务、部署或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。"
+        }
+      ]
     }
   ],
   "legacy": [
@@ -3115,5 +3146,6 @@
   "knownLimitations": [
     "夜图普通分隔线历史约 1.58 / 1.45:1，须另测 --line 结构线",
     "夜图浅色系列上的白色图案历史不足 3:1；不计新失败，必须记录实际值与适用表面"
-  ]
+  ],
+  "revision": "BPM1d"
 }

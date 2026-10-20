@@ -4,7 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {screenshotName, contrastPolicy, waitForStableElements} from './measurement-utils.mjs';
-import {legacyProbes, hiddenNode} from './legacy-probes.mjs';
+import {legacyProbes, hiddenNode, poll} from './legacy-probes.mjs';
 import {roundProbes} from './round-probes.mjs';
 import {checklistRows, manualMarkdown, representative} from './plan-utils.mjs';
 const dir = path.dirname(fileURLToPath(import.meta.url));
@@ -54,6 +54,7 @@ for(const theme of manifest.themes) for(const width of manifest.widths) {
  for(const probe of ['common-controls','cards-folio','prompt-states','mark-motion','toast-queues']) add('interactions',`${probe}-${theme}-${width}`,probe,theme,width,probe==='prompt-states'?prompt:probe==='mark-motion'?'/next/components/agent-components/agent-mark':foundation,{probe});
  for(const obligation of manifest.legacy) add('interactions',`legacy-${theme}-${width}-${obligation.id}`,`累计旧项：${obligation.name}`,theme,width,foundation,{source:obligation.source,legacyProbe:obligation.id,captureKey:`legacy-${obligation.id}`,criteria:obligation.name});
  for(const inner of manifest.themes) add('isolation',`isolation-${theme}-${inner}-${width}`,`嵌套 ${inner} 根/后代/伪元素与同主题外层对照`,theme,width,'/next/foundations',{innerTheme:inner});
+ for(const inner of manifest.themes) add('isolation',`entry-isolation-${theme}-${inner}-${width}`,`P87 嵌套 ${inner} 根/后代/伪元素`,theme,width,foundation,{innerTheme:inner,entryAnnotations:true,captureKey:`entry-isolation-${inner}`});
 
  for(const probe of ['contrast','facts','object-spacing','font']) add('per-round',`${probe}-${theme}-${width}`,probe,theme,width,foundation,{probe});
 }
@@ -78,7 +79,7 @@ if(mode==='plan') {
  }
  await writeFile(path.join(dir,'plan.json'),JSON.stringify({schemaVersion:2,baseline:manifest.baseline,browserLaunched:false,counts:Object.fromEntries(Object.entries(result).map(([k,v])=>[k,v.length])),classificationCounts:classification.counts,results:result},null,2)+'\n');
  let actual;try{actual=JSON.parse(await readFile(path.join(dir,'per-round.json'),'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
- if(actual?.schemaVersion!==2)await writeFile(path.join(dir,'manual-review.md'),manualMarkdown(result['per-round'],manifest.baseline));
+ await writeFile(path.join(dir,'manual-review-plan.md'),manualMarkdown(result['per-round'],manifest.baseline));
  console.log(JSON.stringify({mode:'plan',browserLaunched:false,evidencePreserved:preserved,counts:Object.fromEntries(Object.entries(result).map(([k,v])=>[k,v.length]))})); process.exit(0);
 }
 for(const key of Object.keys(result)) {
@@ -119,7 +120,7 @@ async function open(theme,width,route,{reduce='no-preference',blockFont=false,ha
  } catch(e) { await context.close(); throw e; }
 }
 async function capture(page,row,suffix='') {
- if((row.legacyProbe||row.roundProbe||row.visual||row.probe==='font'||row.probe==='facts'||row.probe==='object-spacing')&&!representative(row.theme,row.viewport.width))return;
+ if(!row.visual&&(row.legacyProbe||row.roundProbe||row.probe==='font'||row.probe==='facts'||row.probe==='object-spacing')&&!representative(row.theme,row.viewport.width))return;
  // Each captured state gets a readable unique filename; no row silently overwrites another.
  if(row.visual&&row.selector&&await page.locator(row.selector).count()&&!await page.locator('[data-slot$="popup"]:visible').count())await page.locator(row.selector).first().scrollIntoViewIfNeeded().catch(()=>{});
  const file=screenshotName(row,suffix);
@@ -199,7 +200,8 @@ async function overlay(page,row) {
  if(r.activation==='fill') await trigger.fill('高二');
  else if(r.activation==='hover') {await trigger.focus();await trigger.hover();}
  else {await trigger.focus();await trigger.press(r.activation==='submenu'?'ArrowRight':r.activation==='input'?'ArrowDown':'Enter');}
- const popup=page.locator(`[data-slot="${r.slot}"]:visible`).last();await popup.waitFor({state:'visible'});
+ if(r.activation==='submenu')await poll(page,()=>[...document.querySelectorAll('[role="menu"]')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').length===2);
+ const popup=r.activation==='submenu'?page.getByRole('menu').filter({has:page.getByRole('menuitem',{name:'长中文讲评材料示例',exact:true})}):page.locator(`[data-slot="${r.slot}"]:visible`).last();await popup.waitFor({state:'visible'});
  // Keep the actual node: a live :visible.last() locator would retarget the parent after submenu closes.
  const popupElement=await popup.elementHandle();
  const stability=await popup.evaluateAll(waitForStableElements,{});
@@ -213,12 +215,14 @@ async function overlay(page,row) {
  assert.equal(measurement.theme,row.theme,'Portal effective theme');
  assert.ok(measurement.rect.left>=-1 && measurement.rect.right<=measurement.viewport.width+1,'Popup horizontal bounds');
  assert.ok(measurement.rect.top>=-1 && measurement.rect.bottom<=measurement.viewport.height+1,'Popup vertical bounds');
- await page.keyboard.press('Escape');await hiddenNode(page,popupElement);
+ await page.keyboard.press('Escape');
+ if(r.activation==='submenu')await poll(page,el=>[...document.querySelectorAll('[role="menu"]')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden').length===1&&document.activeElement===el,await trigger.elementHandle(),15000);
+ else await hiddenNode(page,popupElement);
  measurement.returned=await focusReturned(page,trigger);
  if(r.activation==='submenu') {
   measurement.firstEscape={submenuClosed:true,parentOpen:await parentPopup.isVisible(),returnedToSubmenuTrigger:measurement.returned};
   assert.ok(measurement.firstEscape.parentOpen,'First Escape keeps parent menu open');
-  await page.keyboard.press('Escape');await hiddenNode(page,parentPopup);
+  await page.keyboard.press('Escape');await poll(page,el=>![...document.querySelectorAll('[role="menu"]')].some(e=>e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden')&&document.activeElement===el,await parentTrigger.elementHandle(),15000);
   measurement.secondEscape={parentClosed:true,returnedToOriginalTrigger:await focusReturned(page,parentTrigger)};
   assert.ok(measurement.secondEscape.returnedToOriginalTrigger,'Second Escape returns to original trigger');
  }
@@ -299,6 +303,7 @@ async function toastQueues(page,row) {
  return {measurements,escape:'Toast 非模态队列；本探针使用显式关闭，Esc 与三队列卸载路径见 P74 待验清单。'};
 }
 async function isolation(page,row) {
+ if(row.entryAnnotations)return roundProbes['entry-isolation'](page,row);
  const selector=`[data-agent-preview][data-prism-theme="${row.innerTheme}"]`;
  const nodes=page.locator(selector);assert.ok(await nodes.count()>0,'missing nested theme');
  const actual=await styles(page.locator(`${selector}, ${selector} *`));

@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 D=Path(__file__).resolve().parent
 M=json.loads((D/'manifest.json').read_text())
+if M.get('revision') == 'BPM1d': raise SystemExit('Historical BPM1c generator: use reviewed BPM1d ledger and measure.mjs --plan; do not erase P87.')
 R={r['name']:r for r in M['rounds']}
 items=[]
 F='/next/foundations/blueprint'

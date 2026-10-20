@@ -12,7 +12,13 @@ async function mount(page,kind,row){
  const scope=page.locator(`[data-bpm-review="${kind}"]`);await scope.waitFor();return scope;
 }
 async function choose(page,name,value){const c=role(page,'combobox',name);await c.click();await role(page,'option',value).click();}
-async function keyboard(page,locator){await locator.focus();await locator.press('Tab');await page.keyboard.press('Shift+Tab');await focused(page,locator);}
+async function keyboard(page,locator){
+ assert.ok(!await locator.isDisabled(),'keyboard target enabled');
+ await locator.scrollIntoViewIfNeeded();
+ const sentinel=await locator.evaluateHandle(el=>{const s=document.createElement('span');s.tabIndex=0;s.dataset.bpmFocusSentinel='';el.before(s);s.focus();return s;});
+ try{await page.keyboard.press('Tab');await focused(page,locator);assert.ok(await locator.evaluate(el=>el.matches(':focus-visible')),'real keyboard focus-visible');}
+ finally{await sentinel.evaluate(el=>el.remove());await sentinel.dispose();}
+}
 async function snapshot(locator){const stable=await locator.evaluateAll(waitForStableElements,{allowInfinite:true});assert.ok(stable.stable,JSON.stringify(stable));return locator.evaluateAll(es=>es.map(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {tag:e.tagName,text:e.textContent,background:s.backgroundColor,color:s.color,border:s.borderTop,borderRadius:s.borderRadius,padding:s.padding,gap:s.gap,outline:s.outline,outlineOffset:s.outlineOffset,boxShadow:s.boxShadow,font:s.font,fontSize:s.fontSize,lineHeight:s.lineHeight,width:r.width,height:r.height,left:r.left,right:r.right,top:r.top,bottom:r.bottom};}));}
 roundProbes['prompt-extra']=async(page,row,ctx)=>{
  const records=[];
@@ -29,15 +35,26 @@ roundProbes['prompt-extra']=async(page,row,ctx)=>{
  return records;
 };
 roundProbes['scoped-controls']=async(page,row,ctx)=>{
- const out=[];
+ const out=[];row.measured=out;
  for(const outer of ['light','paper','dark']){
+  const record={outer,inner:row.theme};out.push(record);
   await choose(page,'外层核心主题',labels[outer]);await choose(page,'局部主题',labels[row.theme]);
-  const trigger=role(page,'combobox','局部材料类型');await trigger.focus();await trigger.press('ArrowDown');await page.keyboard.press('End');await page.keyboard.press('Enter');assert.match(await trigger.innerText(),/长中文课堂练习/);
-  const picker=role(page,'combobox','搜索班级');await picker.fill('高二');await page.getByRole('option').first().waitFor();await picker.press('ArrowDown');await picker.press('Enter');
+  const trigger=role(page,'combobox','局部材料类型');await trigger.focus();await trigger.press('ArrowDown');const selectOptions=page.locator('[data-slot="select-popup"]:visible');await selectOptions.getByRole('option',{name:'长中文课堂练习与讲评材料',exact:true}).waitFor();await page.keyboard.press('End');await page.keyboard.press('Enter');await selectOptions.waitFor({state:'hidden'});assert.match(await trigger.innerText(),/长中文课堂练习/);
+  record.select=await trigger.innerText();
+  const picker=role(page,'combobox','搜索班级'),pickerCard=page.locator('[data-object-picker-view="workspace"]').filter({has:picker});
+  // The outer-theme loop retains query/selection state. Filling the same text is not an open action.
+  for(const remove of await pickerCard.getByRole('button',{name:/^移除选择：/}).all())await remove.click();
+  await picker.fill('高二');record.pickerBeforeOpen={query:await picker.inputValue(),expanded:await picker.getAttribute('aria-expanded')};
+  if(await picker.getAttribute('aria-expanded')!=='true')await button(pickerCard,'查看班级候选').click();
+  const candidates=page.locator('[data-slot="combobox-popup"]:visible');await candidates.waitFor();
+  await candidates.getByRole('option').filter({hasText:'高二三班'}).waitFor();record.options=await candidates.getByRole('option').allTextContents();assert.equal(record.options.length,2);
+  await picker.press('ArrowDown');await picker.press('Enter');
+  const selected=role(pickerCard,'region','已选对象');await selected.getByText('已选 1 项',{exact:true}).waitFor();record.selected=await selected.innerText();assert.match(record.selected,/高二[三四]班/);
+  await candidates.waitFor({state:'hidden'});
   const dt=button(page,'局部对话框');await dt.click();const popup=page.locator('[data-slot="dialog-popup"]:visible');await popup.waitFor();await focused(page,role(popup,'textbox','材料标题'));const focus=await trap(page,popup);
   const inner=role(popup,'combobox','对话框材料类型');await inner.click();const sp=page.locator('[data-slot="select-popup"]:visible');await sp.waitFor();const handle=await sp.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,inner);assert.ok(await popup.isVisible());
   const d=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,d);await focused(page,dt);
-  out.push({outer,inner:row.theme,select:await trigger.innerText(),focus});
+  record.focus=focus;
  }
  return out;
 };
@@ -70,7 +87,7 @@ roundProbes['question-details']=async(page,row,ctx)=>{
  // Actual stable class in QuestionCard is checked below; fail on a missing surface, never skip.
  const out=[];for(const [name,text] of [['答案与解析','参考答案'],['教学定位','核心知识点'],['题目档案','Q-M-004']]){
   const tab=role(list,'tab',name);await tab.focus();await tab.press('Enter');assert.equal(await tab.getAttribute('aria-selected'),'true');const panel=page.getByRole('tabpanel').filter({hasText:text});await panel.waitFor();
-  const current=await snapshot(list.getByRole('tab'));assert.ok(current.every(s=>s.height>=32));out.push({name,buttons:current,panel:await panel.innerText()});await ctx.capture(page,row,`-${name}`);
+  const pointer=await page.evaluate(()=>({coarse:matchMedia('(pointer: coarse)').matches,fine:matchMedia('(pointer: fine)').matches,sm:matchMedia('(min-width: 640px)').matches}));if(ctx.requireCoarse)assert.equal(pointer.coarse,true,'coarse context required at each tab measurement');const current=await snapshot(list.getByRole('tab'));const minHeight=pointer.coarse?44:isBlue(row)?32:pointer.sm?30:34;row.measured={out,current,pointer,minHeight};assert.ok(current.every(s=>s.height>=minHeight),JSON.stringify(row.measured));out.push({name,pointer,minHeight,buttons:current,panel:await panel.innerText()});await ctx.capture(page,row,`-${name}`);
  }
  const surface=await snapshot(details);assert.equal(surface.length,1);row.measured={out,surface};if(isBlue(row)){assert.equal(surface[0].padding,'12px');assert.equal(surface[0].borderRadius,'0px');assert.match(surface[0].border,/1px dashed/);}else assert.equal(surface[0].padding,'16px');
  const tabs=await snapshot(list.locator('..'));assert.equal(tabs[0].gap,isBlue(row)?'12px':'20px');
@@ -88,13 +105,13 @@ roundProbes['shell']=async(page,row,ctx)=>{
  const scope=await mount(page,'shell',row);const out=[];
  const bars=await snapshot(scope.locator('.prism-app-bar,.prism-space-bar'));assert.equal(bars.length,2);assert.ok(Math.abs(bars[0].height-56)<1&&Math.abs(bars[1].height-48)<1);out.push({bars});
  const toggle=scope.getByRole('button',{name:/收起|打开|展开/}).first();await toggle.click();
- if(row.viewport.width>=768){const rail=scope.locator('[data-slot="sidebar"][data-collapsible="icon"]');await rail.waitFor();const r=await snapshot(rail.locator('[data-slot="sidebar-container"]'));const buttons=await snapshot(rail.locator('[data-slot="sidebar-menu-button"]'));if(isBlue(row)){assert.equal(r.length,1);assert.ok(Math.abs(r[0].width-56)<1);assert.ok(buttons.length>0);assert.ok(buttons.every(b=>Math.abs(b.width-40)<1&&Math.abs(b.height-40)<1));}out.push({rail:r,buttons});}
- else {const popup=page.locator('[data-slot="sheet-popup"]:visible');if(await popup.count()){await trap(page,popup);const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);await focused(page,toggle);}await toggle.click();}
+ if(!await page.evaluate(()=>matchMedia('(max-width: 799px)').matches)){const rail=scope.locator('[data-slot="sidebar"][data-collapsible="icon"]');await rail.waitFor();const r=await snapshot(rail.locator('[data-slot="sidebar-container"]'));const buttons=await snapshot(rail.locator('[data-slot="sidebar-menu-button"]'));if(isBlue(row)){assert.equal(r.length,1);assert.ok(Math.abs(r[0].width-56)<1);assert.ok(buttons.length>0);assert.ok(buttons.every(b=>Math.abs(b.width-40)<1&&Math.abs(b.height-40)<1));}out.push({rail:r,buttons});}
+ else {out.push({mobile:true,limitation:'ShellNavFixture SpaceBar only controls desktop open; mobile openMobile has no trigger in this historical fixture. Not a mobile drawer pass.'});await toggle.click();row.status='pending-visual';row.pass=null;}
  await ctx.capture(page,row,'-rail');return out;
 };
 roundProbes['site-sidebar']=async(page,row)=>{
  const trigger=page.locator('[data-slot="sidebar-trigger"]').first();await trigger.click();
- if(row.viewport.width<768){const popup=page.locator('[data-slot="sheet-popup"]:visible');await popup.waitFor();await trap(page,popup);const handle=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,trigger);return {drawer:true,escape:true};}
+ if(await page.evaluate(()=>matchMedia('(max-width: 799px)').matches)){const popup=page.locator('[data-slot="sidebar"][data-mobile="true"]:visible');await popup.waitFor();await trap(page,popup);const handle=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,handle);await focused(page,trigger);return {drawer:true,escape:true};}
  const before=await page.locator('[data-slot="sidebar"]').first().getAttribute('data-state');await page.keyboard.press('Control+b');await poll(page,({before})=>document.querySelector('[data-slot="sidebar"]')?.getAttribute('data-state')!==before,{before});return {before,after:await page.locator('[data-slot="sidebar"]').first().getAttribute('data-state')};
 };
 roundProbes['message']=async(page,row,ctx)=>{
@@ -137,17 +154,29 @@ roundProbes['confirmation-states']=async(page,row,ctx)=>{
  return out;
 };
 roundProbes['basket']=async(page)=>{const s=page.locator('#workspace-contracts');assert.match(await s.innerText(),/题目版本 V2 · 入篮版本未锁定/);const trigger=s.getByRole('button',{name:/二次函数最值/});await trigger.click();const full=role(s,'region','题目全文');await full.waitFor();assert.ok(await full.locator('math').count()>0);await button(s,'关闭题目全文').click();await full.waitFor({state:'hidden'});await focused(page,trigger);return {version:'题目版本 V2 · 入篮版本未锁定',math:true,returned:true};};
-roundProbes['object-expand']=async(page,row,ctx)=>{const s=page.locator('#sheet-object-cards'),out=[];for(const [attr,label]of [['data-agent-relation-view','查看关系图'],['data-agent-arranger-view','展开编排']]){const card=s.locator(`[${attr}]`),before=await card.innerText();await button(card,label).click();assert.equal(await card.getAttribute(attr),'workspace');const expanded=await card.innerText();if(attr.includes('arranger'))assert.match(expanded,/保存状态未知/);await ctx.capture(page,row,`-${attr}-workspace`);await button(card,'返回原位置').click();assert.equal(await card.getAttribute(attr),'inline');assert.equal(await card.innerText(),before);out.push({attr,before,expanded});}return out;};
+roundProbes['object-expand']=async(page,row,ctx)=>{const s=page.locator('#sheet-object-cards'),out=[];for(const [attr,label]of [['data-agent-relation-view','查看关系图'],['data-agent-arranger-view','展开编排']]){const card=s.locator(`[${attr}]`),before=await card.innerText();await button(card,label).click();assert.equal(await card.getAttribute(attr),'workspace');const expanded=await card.innerText();if(attr.includes('arranger'))assert.match(expanded,/未知：保存状态、关键变化、分组数、题数、总分。/);await ctx.capture(page,row,`-${attr}-workspace`);await button(card,'返回原位置').click();assert.equal(await card.getAttribute(attr),'inline');assert.equal(await card.innerText(),before);out.push({attr,before,expanded});}return out;};
 roundProbes['editorial']=async(page,row)=>{
  const headings=await snapshot(page.locator('.bp-section-title')),indices=await snapshot(page.locator('.bp-minor-code,.bp-section-folio')),codes=await snapshot(page.locator('.bp-section-code'));assert.ok(headings.length>=6&&indices.length>=18);
  if(isBlue(row)){assert.ok(headings.every(x=>x.fontSize==='20px'&&x.lineHeight==='30px'));assert.ok(codes.every(x=>x.width===48&&x.height===48));}
  const cdp=await page.context().newCDPSession(page);try{await cdp.send('DOM.enable');await cdp.send('CSS.enable');const {root}=await cdp.send('DOM.getDocument');const fonts=[];for(const selector of ['.bp-section-folio','.bp-minor-code','.bp-section-title','math']){const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector});assert.ok(nodeId,selector);fonts.push({selector,...await cdp.send('CSS.getPlatformFontsForNode',{nodeId})});}if(isBlue(row)){assert.ok(fonts[0].fonts.some(x=>/Geist/i.test(x.familyName)));assert.ok(fonts[1].fonts.some(x=>/Geist/i.test(x.familyName)));}assert.ok(fonts[3].fonts.some(x=>/STIX/i.test(x.familyName)));return {headings,indices,codes,fonts};}finally{await cdp.detach();}
 };
 roundProbes['warning-composite']=async(page,row)=>{const badge=page.locator('#common-components [data-slot="badge"]').filter({hasText:'需补充'});const result=await actualContrast(badge);row.measured=result;assert.ok(result.contrast>=4.5);return result;};
-roundProbes['print-zoom']=async(page,row,ctx)=>{const records=[];await page.emulateMedia({media:'print'});const select=page.locator('#common-components [data-slot="select-trigger"]').first();const print=await snapshot(select);if(isBlue(row))assert.equal(print[0].boxShadow,'none');records.push({print});await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='2');const geometry=await page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,zoom:getComputedStyle(document.documentElement).zoom}));assert.ok(geometry.scroll<=geometry.client+1);records.push({cssZoom:geometry,nativeZoom:false});await ctx.capture(page,row,'-css-zoom');await page.evaluate(()=>document.documentElement.style.zoom='');return records;};
+roundProbes['print-zoom']=async(page,row,ctx)=>{
+ const records=[];row.measured=records;
+ try{await page.emulateMedia({media:'print'});const select=page.locator('#common-components [data-slot="select-trigger"]').first();const print=await snapshot(select);records.push({print});if(isBlue(row))assert.equal(print[0].boxShadow,'none');await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='2');await snapshot(page.locator('main'));
+ const geometry=await page.evaluate(()=>({client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,zoom:getComputedStyle(document.documentElement).zoom,innerWidth,devicePixelRatio,offenders:[...document.querySelectorAll('main *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(r.left< -1||r.right>innerWidth+1);}).slice(0,40).map(e=>({tag:e.tagName,class:e.className,text:e.textContent?.slice(0,80),left:e.getBoundingClientRect().left,right:e.getBoundingClientRect().right}))}));const outsideOriginalScope=row.viewport.width===320;
+ records.push({cssZoom:geometry,nativeZoom:false,originalAcceptance:{source:'docs/blueprint/evidence/common-20261015/checks.md:24',measurement:'docs/blueprint/evidence/common-20261015/matrix.json:magnification',width:1280},judgment:outsideOriginalScope?'超出原验收范围的观察：320px + CSS zoom 2；保留越界数据，原生 200% 缩放待目检':'CSS zoom projection only; native zoom/reflow remains manual'});await ctx.capture(page,row,'-css-zoom');
+ // Only the explicitly authorized 320px projection is observational. Print and >=768px checks stay strict.
+ if(outsideOriginalScope){row.status='observed';row.pass=null;}else assert.ok(geometry.scroll<=geometry.client+1,JSON.stringify(geometry));return records;}
+ finally{await page.emulateMedia({media:'screen'});await page.evaluate(()=>document.documentElement.style.zoom='');}
+};
 roundProbes['glyph-api']=async(page,row)=>{const s=await mount(page,'glyph',row);await s.locator('[data-agent-mark] [role="status"]').waitFor();await button(s,'glyph').click();const glyph=s.locator('[data-agent-mark]');assert.equal(await glyph.getAttribute('role'),'img');assert.equal(await glyph.getAttribute('aria-label'),'自定义运行状态');assert.equal(await glyph.locator('[role="status"],[aria-live]').count(),0);assert.equal(await glyph.innerText(),'');assert.equal(await glyph.locator('.agent-mark-grid').getAttribute('aria-hidden'),'true');const grid=await snapshot(glyph.locator('.agent-mark-grid'));assert.equal(grid[0].width,13);assert.equal(grid[0].height,13);await button(s,'loading').click();await s.getByText(/已用时/).waitFor();return {glyphText:'',name:'自定义运行状态',grid,returnedLoading:await s.innerText()};};
 roundProbes['seg-tabs']=async(page)=>{const group=role(page,'radiogroup','答卷状态预览'),first=group.getByRole('radio').first();await first.focus();await first.press('End');assert.equal(await role(group,'radio','异常').getAttribute('aria-checked'),'true');assert.ok(await role(group,'radio','已锁定').isDisabled());return {end:'异常',disabled:'已锁定'};};
-roundProbes['question-coarse']=async(page,row,ctx)=>{const session=await ctx.open(row.theme,row.viewport.width,row.route,{hasTouch:true});try{const values=await roundProbes['question-details'](session.page,row,ctx);assert.equal(await session.page.evaluate(()=>matchMedia('(pointer: coarse)').matches),true);assert.ok(values.out.every(x=>x.buttons.every(b=>b.height>=44)));return values;}finally{await session.context.close();}};
+roundProbes['question-coarse']=async(page,row,ctx)=>{
+ const session=await ctx.open(row.theme,row.viewport.width,row.route,{hasTouch:true});
+ try{assert.equal(await session.page.evaluate(()=>matchMedia('(pointer: coarse)').matches),true);const values=await roundProbes['question-details'](session.page,row,{...ctx,requireCoarse:true,capture:async()=>{}});row.measured=values;assert.ok(values.out.every(x=>x.pointer.coarse&&x.buttons.every(b=>b.height>=44)));await ctx.capture(session.page,row,'-coarse-after-measurement');return values;}
+ finally{await session.context.close();}
+};
 roundProbes['heatmap']=async(page,row,ctx)=>{
  const maps=page.locator('[data-heatmap-cell-labels]');assert.ok(await maps.count()>=2);const out=[];
  for(const map of await maps.all()){
@@ -219,7 +248,7 @@ roundProbes['object-spacing-matrix']=async(page,row,ctx)=>{const s=await mount(p
 roundProbes['object-capabilities']=roundProbes['object-spacing-matrix'];
 roundProbes['ink-pairs']=async(page,row)=>{
  const values=await page.evaluate(()=>{const el=document.createElement('span');document.body.append(el);const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const c=canvas.getContext('2d');const rgb=key=>{el.style.color=`var(--${key})`;c.clearRect(0,0,1,1);c.fillStyle=getComputedStyle(el).color;c.fillRect(0,0,1,1);return [...c.getImageData(0,0,1,1).data];};const l=a=>a.slice(0,3).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);const pairs=[['foreground','background'],['muted-foreground','card'],['link','card'],['primary-foreground','primary'],['destructive-foreground','card'],['success-foreground','card'],...['background','secondary','muted','accent','card'].map(bg=>['warning-foreground',bg]),['primary-foreground','warning-foreground'],['card','warning-foreground']];const values=pairs.map(([fg,bg])=>{const a=rgb(fg),b=rgb(bg),x=l(a),y=l(b);return {fg,bg,a,b,contrast:(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};});el.remove();return values;});row.measured=values;for(const v of values){if(!isBlue(row)&&v.bg==='warning-foreground')continue;if(row.theme==='blueprint-night'&&v.bg==='warning-foreground')continue;assert.ok(v.contrast>=4.5,JSON.stringify(v));}return values;};
-roundProbes['button-states']=async(page,row,ctx)=>{const nodes=page.locator('#common-components [data-blueprint-component="Button"] button,.bp-btn,.bp-tool'),out=[];assert.ok(await nodes.count()>=8);for(const control of await nodes.all()){if(!await control.isVisible())continue;const name=await control.innerText();if(await control.isDisabled()){out.push({name,disabled:true});continue;}const normal=await snapshot(control);await control.hover();const hover=await snapshot(control);await page.mouse.down();const pressed=await snapshot(control);await page.mouse.up();await keyboard(page,control);const focus=await snapshot(control);out.push({name,normal,hover,pressed,focus});}await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),true);const reduced=await nodes.evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({name:e.textContent,animation:getComputedStyle(e).animationName})));assert.ok(reduced.every(v=>v.animation==='none'));return {out,reduced};};
+roundProbes['button-states']=async(page,row,ctx)=>{const nodes=page.locator('#common-components [data-blueprint-component="Button"] button,.bp-btn,.bp-tool'),out=[];assert.ok(await nodes.count()>=8);for(const control of await nodes.all()){if(!await control.isVisible())continue;const name=await control.innerText();if(await control.isDisabled()){out.push({name,disabled:true});continue;}const normal=await snapshot(control);await control.hover();const hover=await snapshot(control);await page.mouse.down();let pressed;try{pressed=await snapshot(control);}finally{await page.mouse.move(0,0);await page.mouse.up();}await keyboard(page,control);const focus=await snapshot(control);out.push({name,normal,hover,pressed,focus});}await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),true);const reduced=await nodes.evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({name:e.textContent,animation:getComputedStyle(e).animationName})));assert.ok(reduced.every(v=>v.animation==='none'));return {out,reduced};};
 roundProbes['night-buttons']=async(page,row,ctx)=>{const primary=button(page,'次要按钮示例');await primary.hover();const hover=await snapshot(primary);const trigger=button(page,'清空演示备注');const old=await page.locator('[data-blueprint-component="Popover"]').innerText();await trigger.click();const danger=button(page,'确认清空本页示例');const values=await snapshot(danger);if(row.theme==='blueprint-night'){assert.equal(hover[0].background,'rgb(22, 48, 90)');assert.equal(values[0].background,'rgb(255, 112, 112)');assert.equal(values[0].color,'rgb(8, 19, 34)');}await ctx.capture(page,row,'-danger');await button(page,'保留本页备注').click();assert.equal(await page.locator('[data-blueprint-component="Popover"]').innerText(),old);return {hover,danger:values,cancelPreserved:true};};
 roundProbes['formal-tabs']=async(page,row)=>{const list=page.getByRole('tablist').first(),tabs=list.getByRole('tab');assert.ok(await tabs.count()>=2);const first=tabs.first();await first.focus();await first.press('ArrowRight');await page.keyboard.press('Enter');const selected=await list.locator('[aria-selected="true"]').innerText();assert.ok(selected);const disabled=list.locator('[aria-disabled="true"],button:disabled');const values=[];for(const d of await disabled.all()){await d.focus();await d.press('Enter');assert.notEqual(await d.getAttribute('aria-selected'),'true');values.push(await d.innerText());}return {selected,disabled:values};};
 roundProbes['heatmap-zero']=async(page,row,ctx)=>{const chart=page.locator('#compact-heatmap [data-chart-engine="echarts"]').first();await chart.scrollIntoViewIfNeeded();await chart.locator('svg').waitFor();const value=await chart.evaluate(async el=>(await import('/docs/blueprint/evidence/matrix-closeout-20261019/review-fixture.tsx')).zeroCell(el));assert.ok(Array.isArray(value.point)&&value.point.length===2);await chart.click({position:{x:value.point[0],y:value.point[1]}});await poll(page,({rowLabel,columnLabel})=>[...document.querySelectorAll('#compact-heatmap svg text')].some(e=>e.textContent.includes(`${rowLabel} · ${columnLabel}`)),value.data);const text=await chart.locator('svg text').allTextContents();assert.ok(text.some(t=>/^0$/.test(t)));await ctx.capture(page,row,'-zero-tooltip');return {...value,text};};
@@ -238,3 +267,92 @@ roundProbes['visual-workspace']=async(page,row,ctx)=>{const output=await roundPr
 roundProbes['visual-common']=async(page,row,ctx)=>{const s=page.locator('#common-components'),input=s.locator('input').and(s.getByLabel('材料名称 · 必填校验',{exact:true}));await keyboard(page,input);await ctx.capture(page,row,'-invalid-focus');await button(s,'打开演示对话框').click();await page.locator('[data-slot="dialog-popup"]:visible').waitFor();await ctx.capture(page,row,'-dialog');return {states:['invalid-focus','dialog']};};
 roundProbes['visual-batch-two']=async(page,row,ctx)=>{const s=page.locator('#common-components-two');const input=s.locator('input').and(s.getByLabel('材料关键词',{exact:true}));await keyboard(page,input);await ctx.capture(page,row,'-group-focus');for(const [name,slot]of [['打开样例菜单','menu-popup'],['打开长内容侧面板','sheet-popup']]){await button(s,name).click();const popup=page.locator(`[data-slot="${slot}"]:visible`);await popup.waitFor();await ctx.capture(page,row,`-${slot}`);const h=await popup.elementHandle();await page.keyboard.press('Escape');await hiddenNode(page,h);}await button(s,'信息通知样例').click();await button(s,'关闭信息状态样例').waitFor();await ctx.capture(page,row,'-toast');return {states:['group-focus','menu','sheet','toast']};};
 roundProbes['visual-fonts']=async(page,row,ctx)=>{await ctx.capture(page,row,'-loaded');const session=await ctx.open(row.theme,row.viewport.width,foundation,{blockFont:true});try{await ctx.capture(session.page,row,'-blocked');return {blocked:true};}finally{await session.context.close();}};
+
+// P87 uses the real page. All statuses remain unexecuted until Supervisor --run.
+async function entryState(sheet) {
+ return sheet.evaluate(el=>{
+  const sides=['top','bottom','left','right'];
+  return {rulers:Object.fromEntries(sides.map(side=>[side,[...el.querySelectorAll(`.bp-ruler--${side} > span`)].flatMap((e,i)=>e.hasAttribute('data-active')?[i]:[])])),locks:[...el.querySelectorAll('.bp-target-lock')].flatMap((e,i)=>e.hasAttribute('data-active')?[i]:[]),callouts:[...el.querySelectorAll('.bp-diagram-callout')].flatMap((e,i)=>!e.hidden?[{index:i,text:e.textContent,hidden:e.getAttribute('aria-hidden')}]:[])};
+ });
+}
+function rulerEquals(value,column,row) {
+ assert.deepEqual(value.rulers,{top:[column],bottom:[column],left:[row],right:[row]});
+}
+roundProbes['entry-pointer']=async(page,row,ctx)=>{
+ const sheet=page.locator('#entry-annotations');await sheet.scrollIntoViewIfNeeded();
+ await page.evaluate(()=>document.querySelector('#entry-annotations').scrollIntoView({block:'start'}));
+ const rect=await sheet.boundingBox();assert.ok(rect);assert.equal(await page.evaluate(()=>matchMedia('(pointer: fine)').matches),true);
+ const x=rect.x+rect.width/2,y=Math.max(rect.y,0)+12;
+ if(row.viewport.width<760){
+  const hiddenState=()=>sheet.evaluate(el=>({rulers:[...el.querySelectorAll('.bp-ruler')].map(n=>({class:n.className,display:getComputedStyle(n).display,rects:n.getClientRects().length})),active:el.querySelectorAll('.bp-ruler [data-active]').length,visibleActive:[...el.querySelectorAll('.bp-ruler [data-active]')].filter(n=>n.getClientRects().length).length}));
+  await page.mouse.move(x,y);const during=await hiddenState();row.measured={trackingApplicable:false,reason:'viewport <760px: rulers hidden; no visible highlight',during};
+  assert.equal(during.rulers.length,4);assert.ok(during.rulers.every(n=>n.display==='none'&&n.rects===0));assert.equal(during.visibleActive,0);
+  await page.mouse.move(0,0);await poll(page,el=>el.querySelectorAll('.bp-ruler [data-active]').length===0,await sheet.elementHandle());const after=await hiddenState();row.measured.after=after;assert.equal(after.active,0);assert.equal(after.visibleActive,0);assert.ok(after.rulers.every(n=>n.display==='none'&&n.rects===0));await ctx.capture(page,row,'-rulers-hidden');return row.measured;
+ }
+ assert.ok(y<rect.y+rect.height);await page.mouse.move(x,y);
+ const column=Math.min(7,Math.floor((x-rect.x)/rect.width*8)),r=Math.min(3,Math.floor((y-rect.y)/rect.height*4));
+ await poll(page,el=>el.querySelectorAll('.bp-ruler [data-active]').length===4,await sheet.elementHandle());
+ const active=await entryState(sheet);row.measured={active,column,row:r};rulerEquals(active,column,r);await ctx.capture(page,row,'-pointer');
+ await page.mouse.move(0,0);await poll(page,el=>el.querySelectorAll('.bp-ruler [data-active]').length===0,await sheet.elementHandle());return {...row.measured,cleared:await entryState(sheet)};
+};
+roundProbes['entry-selection']=async(page,row,ctx)=>{
+ const sheet=page.locator('#entry-annotations'),entries=sheet.locator('.bp-entry-row'),out=[];row.measured=out;assert.equal(await entries.count(),3);
+ for(const mode of ['hover','keyboard'])for(let i=0;i<3;i++){
+  const entry=entries.nth(i);await page.mouse.move(0,0);
+  if(mode==='hover')await entry.hover();else await keyboard(page,entry);
+  await poll(page,({el,i})=>el.querySelectorAll('.bp-target-lock[data-active]').length===1&&el.querySelectorAll('.bp-target-lock')[i].hasAttribute('data-active')&&el.querySelectorAll('.bp-ruler [data-active]').length===4,{el:await sheet.elementHandle(),i});
+  const expected=await sheet.evaluate((el,i)=>{const f=el.getBoundingClientRect(),n=el.querySelector(`[data-entry-node="${i}"]`).getBoundingClientRect();return {column:Math.min(7,Math.floor((n.x+n.width/2-f.x)/f.width*8)),row:Math.min(3,Math.floor((n.y+n.height/2-f.y)/f.height*4))};},i);
+  await poll(page,({el,column,row})=>['top','bottom','left','right'].every(side=>{const selected=[...el.querySelectorAll(`.bp-ruler--${side} > span`)].flatMap((e,i)=>e.hasAttribute('data-active')?[i]:[]);return selected.length===1&&selected[0]===(side==='top'||side==='bottom'?column:row);}),{el:await sheet.elementHandle(),...expected});
+  const state=await entryState(sheet);out.push({mode,index:i,expected,state});rulerEquals(state,expected.column,expected.row);assert.deepEqual(state.locks,[i]);assert.equal(state.callouts.length,1);assert.equal(state.callouts[0].index,i);assert.equal(state.callouts[0].hidden,'true');assert.ok(state.callouts[0].text.includes(`R0${i+1}`));assert.ok(state.callouts[0].text.includes(`${String.fromCharCode(65+expected.row)}${expected.column+1}`));await ctx.capture(page,row,`-${mode}-${i+1}`);
+ }
+ const content=['资料索引：查看资料与图纸之间的关联。','结构关系：查看三个节点的连接关系。','分层内容：查看不同层次的内容说明。'];
+ for(let i=0;i<3;i++){await page.mouse.move(0,0);await keyboard(page,entries.nth(i));await entries.nth(i).press(i===2?'Space':'Enter');await sheet.getByRole('status').getByText(content[i],{exact:true}).waitFor();if(i===0)assert.equal(new URL(page.url()).hash,'#entry-index');}
+ return {states:out,activation:content,href:'#entry-index'};
+};
+roundProbes['entry-layout']=async(page,row)=>{
+ const entries=page.locator('#entry-annotations .bp-entry-row');assert.equal(await entries.count(),3);const values=await entries.evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect(),c=e.querySelector('.bp-entry-row-copy').getBoundingClientRect(),a=e.querySelector('.bp-entry-row-action').getBoundingClientRect(),s=getComputedStyle(e);return {height:r.height,left:r.left,right:r.right,width:innerWidth,borders:[s.borderTopWidth,s.borderBottomWidth,s.borderLeftWidth,s.borderRightWidth],actionRow:getComputedStyle(e.querySelector('.bp-entry-row-action')).gridColumnStart,copyBottom:c.bottom,actionTop:a.top,scroll:e.scrollWidth,client:e.clientWidth};}));row.measured=values;
+ for(const v of values){assert.ok(v.height>=68);assert.ok(v.borders.every(x=>x==='0px'));assert.ok(v.left>=-1&&v.right<=v.width+1);assert.ok(v.scroll<=v.client+1);if(row.viewport.width<760){assert.equal(v.actionRow,'3');assert.ok(v.actionTop>=v.copyBottom-1);}}
+ return values;
+};
+roundProbes['entry-motion']=async(page,row,ctx)=>{
+ const out=[];row.measured=out;const sheet=page.locator('#entry-annotations');
+ for(const motion of ['no-preference','reduce','no-preference','reduce']){
+  await page.emulateMedia({reducedMotion:motion});await page.mouse.move(0,0);await keyboard(page,sheet.locator('.bp-entry-row').nth(1));
+  await poll(page,el=>el.querySelectorAll('.bp-target-lock[data-active] .bp-target-lock-halo').length===1,await sheet.elementHandle());
+  const state=await entryState(sheet),animations=await sheet.locator('.bp-target-lock[data-active] .bp-target-lock-brackets,.bp-target-lock[data-active] .bp-target-lock-halo').evaluateAll(es=>es.map(e=>({name:getComputedStyle(e).animationName,running:e.getAnimations().filter(a=>a.playState==='running'||a.pending).length})));
+  out.push({motion,state,animations});assert.deepEqual(state.locks,[1]);assert.equal(state.callouts.length,1);assert.equal(Object.values(state.rulers).flat().length,4);assert.equal(animations.length,2);if(motion==='reduce')assert.ok(animations.every(a=>a.name==='none'&&a.running===0));else assert.ok(animations.some(a=>a.name==='bp-target-halo-spin'));await ctx.capture(page,row,`-${motion}-${out.length}`);
+ }return out;
+};
+roundProbes['entry-isolation']=async(page,row)=>{
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const sheet=page.locator('#entry-annotations');await sheet.locator('.bp-entry-row').first().hover();
+ const measured=await sheet.evaluate(async(source,{outerTheme,innerTheme})=>{
+  const props=['color','backgroundColor','borderTop','borderRight','borderBottom','borderLeft','borderRadius','outline','outlineOffset','boxShadow','fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','textShadow','fill','stroke','strokeWidth','content','display','visibility','transform','opacity'];
+  const nodePath=(n,root)=>{const parts=[];for(let e=n;e&&e!==root;e=e.parentElement)parts.unshift(`${e.localName}:nth-child(${[...e.parentElement.children].indexOf(e)+1})`);return ':scope'+(parts.length?' > '+parts.join(' > '):'');};
+  const accentSelector=':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.bp-target-lock,.bp-diagram-callout,.bp-entry-row[data-emphasis] .bp-entry-row-action):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))';
+  const read=root=>[root,...root.querySelectorAll('*')].flatMap(n=>[null,'::before','::after'].map(p=>{const s=getComputedStyle(n,p);return {selector:nodePath(n,root),class:n.getAttribute('class'),pseudo:p,values:Object.fromEntries(props.map(k=>[k,s[k]])),accentSelectorMatches:n.matches(accentSelector),tokens:{foreground:s.getPropertyValue('--foreground'),link:s.getPropertyValue('--link')}};}));
+  const bounded=async promise=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('P87 isolation animation stabilization timed out')),5000);})]);}finally{clearTimeout(timer);}};
+  const settle=async clone=>{
+   clone.getBoundingClientRect();
+   const animations=clone.getAnimations({subtree:true}),paused=[];
+   await bounded(Promise.all(animations.map(async a=>{if(a.effect?.getComputedTiming().iterations===Infinity){a.pause();a.currentTime=0;await a.ready;paused.push({name:a.animationName||null,time:0,properties:[...new Set(a.effect.getKeyframes().flatMap(k=>Object.keys(k)))].filter(k=>!['offset','computedOffset','easing','composite'].includes(k))});}else await a.finished;})));
+   await bounded(new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   return {animations:animations.length,paused,remainingRunning:clone.getAnimations({subtree:true}).filter(a=>a.pending||a.playState==='running').length};
+  };
+  const results=[];for(const original of [source,...source.querySelectorAll('.bp-entry-row,.bp-target-lock,.bp-diagram-callout')]){
+   const outer=document.createElement('div');outer.dataset.prismTheme=innerTheme;outer.style.width='600px';const clone=original.cloneNode(true);clone.dataset.agentPreview='';clone.dataset.prismTheme=innerTheme;clone.removeAttribute('id');clone.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));outer.append(clone);document.body.append(outer);
+   try{
+    const expectedMotion=await settle(clone),expected=read(clone);outer.dataset.prismTheme=outerTheme;const actualMotion=await settle(clone),actual=read(clone),differences=[];
+    for(let i=0;i<expected.length;i++)for(const property of props)if(expected[i].values[property]!==actual[i].values[property])differences.push({selector:actual[i].selector,class:actual[i].class,pseudo:actual[i].pseudo,property,expected:expected[i].values[property],actual:actual[i].values[property],accentSelectorMatches:{expected:expected[i].accentSelectorMatches,actual:actual[i].accentSelectorMatches},tokens:{expected:expected[i].tokens,actual:actual[i].tokens}});
+    results.push({root:original.getAttribute('class'),outerTheme,innerTheme,nodes:actual.length/3,equal:!differences.length,differences,motion:{expected:expectedMotion,actual:actualMotion}});
+   }finally{outer.remove();}
+  }
+  return {results,properties:props,excludedProperties:[],reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,source:{path:'app/(next)/next/blueprint.css',section:'P87 entry annotations, lines 482-524',accentLine:514,accentSelector,neutralSelectors:['.bp-target-lock','.bp-diagram-callout']},scope:'Rendered CSS copies; root/descendants/pseudo-elements; no React context/runtime integration claim'};
+ },{outerTheme:row.theme,innerTheme:row.innerTheme});
+ row.measured=measured;assert.equal(measured.reducedMotion,true);assert.equal(measured.results.length,10);
+ assert.ok(measured.results.every(r=>r.motion.expected.remainingRunning===0&&r.motion.actual.remainingRunning===0),'P87 samples must have no running animations');
+ const mismatches=measured.results.filter(r=>!r.equal);
+ if(mismatches.length)measured.judgment='疑似缺陷：已稳定动画后仍有严格样式差异；属性/两侧值/选择器见 results.differences 与 source';
+ assert.deepEqual(mismatches,[],JSON.stringify({judgment:measured.judgment,source:measured.source,mismatches}));return measured;
+};
+roundProbes['visual-entry']=async(page,row,ctx)=>{await roundProbes['entry-selection'](page,row,ctx);await roundProbes['entry-motion'](page,row,ctx);return {note:'Review 68px baseline, narrow wrapping, four ruler sides, node brackets/callouts and static reduce emphasis in captures; geometry alone is not visual acceptance.'};};

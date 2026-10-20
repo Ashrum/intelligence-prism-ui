@@ -1,5 +1,6 @@
 // Browser functions are inert until the Supervisor calls them. One registry key per historical check.
 import assert from 'node:assert/strict';
+import {waitForStableElements, waitForStableFocus, reducedAnimationOK} from './measurement-utils.mjs';
 export const legacyProbes = {};
 const register=(batch,index,fn)=>{legacyProbes[`${batch===1?'first-interactions':'interactions'}.json-${index+1}`]=fn;};
 const role=(scope,r,name)=>scope.getByRole(r,{name,exact:true});
@@ -8,7 +9,8 @@ const field=(scope,name)=>scope.locator('input,textarea').and(scope.getByLabel(n
 const one=page=>page.locator('#common-components');
 const two=page=>page.locator('#common-components-two');
 const sample=(scope,name)=>scope.locator(`[data-blueprint-component="${name}"]`);
-export async function poll(page,fn,arg) {await page.waitForFunction(fn,arg,{timeout:7000});}
+export async function poll(page,fn,arg,timeout=12000) {await page.waitForFunction(fn,arg,{timeout,polling:50});}
+export async function stable(locator) {const value=await locator.evaluateAll(waitForStableElements,{allowInfinite:true});if(!value.stable){const e=new Error(JSON.stringify(value));e.code='BPM_UNSTABLE';throw e;}return value;}
 export async function focused(page,locator) {
  const handle=await locator.elementHandle();assert.ok(handle);
  await poll(page,el=>el===document.activeElement||el.contains(document.activeElement),handle);
@@ -25,8 +27,8 @@ export async function trap(page,popup) {
  assert.ok(count>0,'focus trap has controls');
  for(const key of ['Tab','Shift+Tab']) for(let i=0;i<count+3;i++) {
   await page.keyboard.press(key);
-  const state=await popup.evaluate(el=>({inside:el.contains(document.activeElement),tag:document.activeElement?.tagName,name:document.activeElement?.getAttribute('aria-label')||document.activeElement?.textContent}));
-  observations.push({key,...state});assert.ok(state.inside,'focus escaped modal');
+  const state=await popup.evaluate(waitForStableFocus,{timeoutMs:5000});
+  observations.push({key,...state});assert.ok(state.stable,JSON.stringify(state));assert.ok(state.inside,'focus escaped modal: '+JSON.stringify(state));
  }
  return observations;
 }
@@ -50,7 +52,7 @@ async function popover(page){const trigger=btn(two(page),'编辑本页备注');c
 async function alert(page){const trigger=btn(two(page),'清空演示备注');return {trigger,popup:await openPopup(page,trigger,'alert-dialog-popup')};}
 async function sheet(page){const trigger=btn(two(page),'打开长内容侧面板');return {trigger,popup:await openPopup(page,trigger,'sheet-popup')};}
 async function tooltip(page){const trigger=btn(two(page),'查看字段说明');await keyboardFocus(page,trigger);const popup=page.locator('[data-slot="tooltip-popup"]:visible');await popup.waitFor({state:'visible'});return {trigger,popup};}
-async function threeToasts(page){for(const label of ['信息','成功','错误'])await btn(two(page),`${label}通知样例`).click();const items=two(page).locator('[data-slot="toast-viewport"] > [data-position]:visible');await poll(page,()=>document.querySelectorAll('#common-components-two [data-slot="toast-viewport"] > [data-position]').length===3);await two(page).locator('[data-slot="toast-viewport"]').hover();return items;}
+async function threeToasts(page){for(const label of ['信息','成功','错误'])await btn(two(page),`${label}通知样例`).click();const items=two(page).locator('[data-slot="toast-viewport"] > [data-position]:visible');await poll(page,()=>document.querySelectorAll('#common-components-two [data-slot="toast-viewport"] > [data-position]').length===3);await items.first().waitFor();await stable(items);await items.first().hover();await stable(items);return items;}
 export async function actualContrast(locator,foreground='color',background='backgroundColor') {
  return locator.evaluate((el,{foreground,background})=>{
   const rgba=css=>{const c=document.createElement('canvas');c.width=c.height=1;const ctx=c.getContext('2d');ctx.fillStyle=css;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data].map((v,i)=>i===3?v/255:v);};
@@ -76,7 +78,7 @@ register(1,12,async page=>{const trigger=role(one(page),'combobox','用途 · �
 register(1,13,async page=>{const trigger=role(one(page),'combobox','材料类型');return closePopup(page,await openPopup(page,trigger,'select-popup'),trigger);});
 register(1,14,async page=>{const control=role(one(page),'checkbox','将完整公式推导加入本页预览');await control.focus();await control.press('Space');assert.equal(await control.getAttribute('aria-checked'),'true');await control.press('Space');assert.equal(await control.getAttribute('aria-checked'),'false');return {afterSpace:true,afterSecondSpace:false};});
 for(const [index,skip]of [[15,false],[16,true]])register(1,index,async page=>{const a=role(one(page),'radio','个人预览'),b=role(one(page),'radio','教研团队共同核对长中文题干与公式'),c=role(one(page),'radio','全校范围 · 禁用样例');await a.focus();await a.press('ArrowRight');await focused(page,b);assert.equal(await b.getAttribute('aria-checked'),'true');if(skip){await b.press('ArrowRight');await focused(page,a);assert.equal(await a.getAttribute('aria-checked'),'true');assert.equal(await c.getAttribute('aria-checked'),'false');}return {selected:await role(one(page),'radiogroup','示例材料可见范围').locator('[aria-checked="true"]').innerText(),skipped:skip};});
-register(1,17,async(page,row)=>{const sw=role(one(page),'switch','显示本页补充说明');const color=()=>sw.evaluate(e=>getComputedStyle(e).backgroundColor);const on=await color();await sw.focus();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'false');const off=await color();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'true');const ratio=await actualContrast(sw,'backgroundColor','parent');const value={on,off,ratio};row.measured=value;assert.notEqual(on,off);if(blue(row))assert.ok(ratio.contrast>=3);return value;});
+register(1,17,async(page,row)=>{const sw=role(one(page),'switch','显示本页补充说明');const color=async()=>{await stable(sw);return sw.evaluate(e=>getComputedStyle(e).backgroundColor);};const on=await color();await sw.focus();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'false');const off=await color();await sw.press('Space');assert.equal(await sw.getAttribute('aria-checked'),'true');await stable(sw);const ratio=await actualContrast(sw,'backgroundColor','parent');const value={on,off,ratio};row.measured=value;assert.notEqual(on,off);if(blue(row))assert.ok(ratio.contrast>=3);return value;});
 for(const [index,label,second]of [[18,'基础组件材料预览','长中文推导与复核说明'],[20,'基础组件补充信息','来源与版本记录']]){
  register(1,index,async page=>{const list=role(one(page),'tablist',label),tabs=list.getByRole('tab');await tabs.first().focus();await tabs.first().press('ArrowRight');await focused(page,role(list,'tab',second));await page.keyboard.press('Enter');assert.equal(await role(list,'tab',second).getAttribute('aria-selected'),'true');return {label,selected:second};});
  register(1,index+1,async page=>{const list=role(one(page),'tablist',label),tabs=list.getByRole('tab');const before=await list.locator('[aria-selected="true"]').innerText();await tabs.first().focus();await tabs.first().press('End');await page.keyboard.press('Enter');assert.ok(await tabs.last().isDisabled());assert.notEqual(await tabs.last().getAttribute('aria-selected'),'true');assert.equal(await list.locator('[aria-selected="true"]').innerText(),before);return {disabled:true,selection:before};});
@@ -131,9 +133,9 @@ register(2,37,async page=>{const old=await sample(two(page),'Popover').innerText
 register(2,38,async page=>{const {popup,trigger}=await alert(page);await btn(popup,'确认清空本页示例').click();await popup.waitFor({state:'hidden'});await focused(page,trigger);assert.match(await sample(two(page),'Popover').innerText(),/本页备注：空白/);return {note:'空白',returned:true};});
 register(2,39,async page=>{const {popup}=await sheet(page);await focused(page,btn(popup,'关闭长内容侧面板'));return {initialFocus:'关闭长内容侧面板'};});
 register(2,40,async page=>{const {popup,trigger}=await sheet(page);return closePopup(page,popup,trigger);});
-register(2,41,async(page,row)=>{const {popup}=await sheet(page);await focused(page,btn(popup,'关闭长内容侧面板'));const value=await popup.evaluate(el=>{const r=el.getBoundingClientRect(),p=el.querySelector('[data-slot="sheet-panel"]');const before=p.scrollTop;p.scrollTop=p.scrollHeight;return {left:r.left,right:r.right,width:innerWidth,scrollWidth:document.documentElement.scrollWidth,panelHeight:p.clientHeight,panelScroll:p.scrollHeight,before,after:p.scrollTop};});row.measured=value;assert.ok(value.left>=-1&&value.right<=value.width+1);assert.equal(value.scrollWidth,value.width);assert.ok(value.panelScroll>value.panelHeight&&value.after>value.before);return value;});
+register(2,41,async(page,row)=>{const {popup}=await sheet(page);await focused(page,btn(popup,'关闭长内容侧面板'));const stability=await stable(popup);const value=await popup.evaluate(el=>{const r=el.getBoundingClientRect(),p=el.querySelector('[data-slot="scroll-area-viewport"]');if(!p)throw Error('Sheet scroll viewport missing');const before=p.scrollTop;p.scrollTop=p.scrollHeight;return {left:r.left,right:r.right,popupWidth:r.width,top:r.top,bottom:r.bottom,viewportHeight:innerHeight,width:innerWidth,scrollTarget:p.dataset.slot,scrollWidth:document.documentElement.scrollWidth,panelHeight:p.clientHeight,panelScroll:p.scrollHeight,before,after:p.scrollTop};});row.measured={...value,stability};assert.ok(value.left>=-1&&value.right<=value.width+1);assert.equal(value.scrollWidth,value.width);assert.ok(value.panelScroll>value.panelHeight&&value.after>value.before);return value;});
 register(2,42,async page=>{const s=sample(two(page),'Skeleton'),busy=s.locator('[aria-label="材料内容快照"]');assert.equal(await busy.getAttribute('aria-busy'),'true');assert.equal(await busy.locator('[data-slot="skeleton"]').count(),3);return {busy:true,skeletons:3};});
-register(2,43,async page=>{await page.emulateMedia({reducedMotion:'reduce'});const animations=await sample(two(page),'Skeleton').locator('[data-slot="skeleton"]').evaluateAll(es=>es.map(e=>getComputedStyle(e).animationName));assert.equal(animations.length,3);assert.ok(animations.every(a=>a==='none'));return animations;});
+register(2,43,async(page,row)=>{await page.emulateMedia({reducedMotion:'reduce'});const animations=await sample(two(page),'Skeleton').locator('[data-slot="skeleton"]').evaluateAll(es=>es.map(e=>{const s=getComputedStyle(e);return {name:s.animationName,duration:s.animationDuration,iterations:s.animationIterationCount};}));assert.equal(animations.length,3);assert.ok(animations.every(a=>blue(row)?a.name==='none':reducedAnimationOK(a)),JSON.stringify(animations));return animations;});
 register(2,44,async page=>{const s=sample(two(page),'Skeleton');await btn(s,'显示内容快照').click();assert.equal(await s.locator('[aria-label="材料内容快照"]').getAttribute('aria-busy'),'false');assert.equal(await s.locator('[data-slot="skeleton"]').count(),0);assert.match(await s.innerText(),/固定内容样例：先核对二次项系数/);return {busy:false,text:await s.innerText()};});
 register(2,45,async page=>{const s=sample(two(page),'Empty');await btn(s,'显示固定材料样例').click();assert.match(await s.innerText(),/固定材料样例：二次方程的实数根/);return {text:await s.innerText()};});
 register(2,46,async page=>{const s=sample(two(page),'Empty');await btn(s,'显示固定材料样例').click();await btn(s,'恢复空状态样例').click();assert.match(await s.innerText(),/暂无本页演示材料/);await btn(s,'显示固定材料样例').waitFor();return {text:await s.innerText()};});

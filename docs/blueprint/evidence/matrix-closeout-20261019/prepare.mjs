@@ -7,6 +7,8 @@ import path from 'node:path';
 const dir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(dir, '../../../..');
 const read = p => readFile(path.join(root, p), 'utf8');
+const existing=JSON.parse(await readFile(path.join(dir,'manifest.json'),'utf8'));
+if(existing.revision==='BPM1d')throw Error('Historical BPM1 generator: would erase BPM1d scope. Use measure.mjs --plan with the reviewed manifest.');
 const hash = s => createHash('sha256').update(s).digest('hex');
 const mapping = {
  'r1-20261016': 'P73', 'portal-20261016': 'P74', 'question-detail-20261016': 'P75',

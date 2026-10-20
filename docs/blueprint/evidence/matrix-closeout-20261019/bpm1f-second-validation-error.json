@@ -1,0 +1,370 @@
+{
+  "at": "2026-10-20T02:35:28.646Z",
+  "commands": [
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
+      "startedAt": "2026-10-20T02:34:36.577Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
+      "startedAt": "2026-10-20T02:34:36.597Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
+      "startedAt": "2026-10-20T02:34:36.615Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/rename-screenshots.mjs",
+      "startedAt": "2026-10-20T02:34:36.633Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-20T02:34:36.652Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:34:36.670Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
+      "startedAt": "2026-10-20T02:34:36.688Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs",
+      "startedAt": "2026-10-20T02:34:36.706Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
+      "startedAt": "2026-10-20T02:34:36.724Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:34:36.741Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+      "startedAt": "2026-10-20T02:34:36.759Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-20T02:34:36.862Z",
+      "exitCode": 0,
+      "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\nok focus guard transition waits for redirect and two unchanged frames\nok stable real outside focus is rejected, not hidden by guard tolerance\nok permanent focus guard times out instead of passing containment\nok reduced motion accepts contractual .01ms one iteration, rejects loops and long duration\n{\"offlineChecks\":12,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:34:36.889Z",
+      "exitCode": 0,
+      "stdout": "ok isolation waits finite animations, freezes loops at same time, removes all temporary roots\nok post-stabilization pseudo-element mutation fails and preserves named values and source\nok 320 CSS zoom is observed with raw overflow retained and zoom restored\nok 768 and 1280 overflow remain failures; 320 print-shadow regression cannot become observed\nok 320 asserts four hidden rulers and clears active marks instead of waiting for tracking\nok 320 visible ruler or stale mark remains a failure\n{\"offlineChecks\":6,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:34:36.919Z",
+      "exitCode": 0,
+      "stdout": "{\"scope\":\"review-fixture.tsx and imported dependencies\",\"diagnostics\":0,\"noEmit\":true}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --plan",
+      "startedAt": "2026-10-20T02:34:38.725Z",
+      "exitCode": 0,
+      "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":150,\"per-round\":1111}}\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "startedAt": "2026-10-20T02:34:38.862Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "checks": [
+    {
+      "name": "offline plan preserves all browser evidence bytes",
+      "pass": true,
+      "detail": 8
+    },
+    {
+      "name": "all pinned source hashes match source or explicitly archived original",
+      "pass": true,
+      "detail": 24
+    },
+    {
+      "name": "every existing round browser checklist included",
+      "pass": true,
+      "detail": 11
+    },
+    {
+      "name": "43 route patterns match complete segment shape",
+      "pass": true,
+      "detail": 43
+    },
+    {
+      "name": "P73 outdated URL mapped without editing source checklist",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "source-derived sample names unique and legacy obligations complete",
+      "pass": true,
+      "detail": {
+        "samples": 24,
+        "legacy": 78
+      }
+    },
+    {
+      "name": "browser evidence schema and summaries remain truthful",
+      "pass": true,
+      "detail": {
+        "totals": {
+          "matrix": 1290,
+          "interactions": 1500,
+          "isolation": 150,
+          "per-round": 1111
+        },
+        "summaries": {
+          "matrix": {
+            "pass": 645,
+            "fail": 0,
+            "error": 0,
+            "unstable": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 645,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "interactions": {
+            "pass": 1500,
+            "fail": 0,
+            "error": 0,
+            "unstable": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 0,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "isolation": {
+            "pass": 150,
+            "fail": 0,
+            "error": 0,
+            "unstable": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 0,
+            "known-limitation": 0,
+            "observed": 0
+          },
+          "per-round": {
+            "pass": 975,
+            "fail": 0,
+            "error": 0,
+            "unstable": 0,
+            "pending-supervisor-browser": 0,
+            "pending-visual": 116,
+            "known-limitation": 0,
+            "observed": 20
+          }
+        }
+      }
+    },
+    {
+      "name": "78 historical obligations have distinct executable registry entries and 15 plan combinations",
+      "pass": true,
+      "detail": {
+        "legacyFunctions": 78,
+        "plannedRows": 1170,
+        "browserRun": false
+      }
+    },
+    {
+      "name": "18 round sources have complete source line ledger and automatic probes resolve",
+      "pass": true,
+      "detail": {
+        "rounds": 18,
+        "obligations": 158,
+        "counts": {
+          "可自动化": 63,
+          "不适用或已被其他项覆盖": 74,
+          "需目检": 21
+        },
+        "contextLines": 330,
+        "roundFunctions": 63
+      }
+    },
+    {
+      "name": "new per-round plan is atomic with explicit P87 light narrow coverage",
+      "pass": true,
+      "detail": {
+        "automatic": 945,
+        "visual": 106,
+        "coveredOrNotApplicable": 74,
+        "screenshotNamesUnique": 1051
+      }
+    },
+    {
+      "name": "BPM1d archive and P87 coverage are independent of old browser passes",
+      "pass": true,
+      "detail": {
+        "P87Automatic": 60,
+        "P87Manual": 6,
+        "P87Isolation": 75,
+        "layoutRouteCombinations": 15
+      }
+    },
+    {
+      "name": "BPM1b Supervisor run archived and not promoted to current passes",
+      "pass": true,
+      "detail": {
+        "archivedError": 15,
+        "archivedPending": 1425,
+        "existingRunPreserved": false
+      }
+    },
+    {
+      "name": "645 renamed PNG bytes match original hashes and all screenshot references resolve",
+      "pass": true,
+      "detail": {
+        "renamed": 645,
+        "indexed": 2871,
+        "historicalLayoutHashesChecked": false,
+        "note": "new layout rerun replaces local PNGs; original hashes retained in migration record"
+      }
+    },
+    {
+      "name": "first Supervisor run archived without reclassifying failures",
+      "pass": true,
+      "detail": {
+        "files": 8,
+        "sha256": "fb2fbb8393b52347f2c6ced84f1dff199682dced8b716794225df2751c41a39e"
+      }
+    },
+    {
+      "name": "BPM1d rerun archived with exact bytes and original zoom scope verified",
+      "pass": true,
+      "detail": {
+        "archivedFiles": 14,
+        "originalCSSZoomWidth": 1280,
+        "sourceSelectorLine": 514,
+        "browserExecuted": false
+      }
+    },
+    {
+      "name": "BPM1d current preserved verbatim in BPM1e history",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "BPM1b current preserved verbatim",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "BPM1 current preserved verbatim",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "old current moved verbatim; earlier history unchanged",
+      "pass": true,
+      "detail": {
+        "oldCurrentSha256": "c6a0b206f06c5eefdcb33ff27159a5b09f4c1a0ccf026021ff17efdddd87c1c3"
+      }
+    },
+    {
+      "name": "only authorized tracked/untracked repository paths changed",
+      "pass": true,
+      "detail": {
+        "tracked": [
+          "docs/blueprint/STATUS.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1c-supervisor-run.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-analysis.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-scripts.diff",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-analysis.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-before-status.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-scripts.diff",
+          "docs/blueprint/evidence/matrix-closeout-20261019/checklist-classification.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/checks.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/classification.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/classify.py",
+          "docs/blueprint/evidence/matrix-closeout-20261019/interactions.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/isolation.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/manifest.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/manual-review-plan.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/manual-review.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/matrix.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/per-round.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/plan.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/route-index.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/scope.diff",
+          "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-interactions.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-isolation.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-matrix.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-per-round.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/validation-error.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/validation.json"
+        ],
+        "untracked": [
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-main.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-ours.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-first-validation-error.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-isolation-before-P88.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-provenance.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-screenshots-isolation-before-P88.json.gz"
+        ]
+      }
+    },
+    {
+      "name": "new repository prose has no machine-local supervisor links",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "error": "Error: EISDIR: illegal operation on a directory, read\n    at async readFileHandle (node:internal/fs/promises:553:24)\n    at async file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:135:454\n    at async check (file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:18:44)\n    at async file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:135:1"
+}
