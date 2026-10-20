@@ -1,5 +1,15 @@
 # 智能曜彩 UI Design System
 
+## Agent 文档导航
+
+- [OLE Agent 总入口](https://github.com/Ashrum/open-learning-engine/blob/8683c935a573d7340b0105aa852dd4bc081029dc/docs/agent/README.md)：Navigation Only；规则归属见其 R01–R12。
+- [Blueprint v1.0](docs/OLE_Agent_Frontend_Blueprint_v1.0.md)：已批准的前端设计基线。
+- [Agent 组件规范 v0.2.1 APPROVED](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)：已批准的组件规范。
+- [Prism STATUS](docs/blueprint/STATUS.md)：当前进度；组件实现与验证状态结合逐项 PR 及 Workspace 来源／接入证据核对。
+- [组件复用约定](docs/component-contracts.md)：本仓维护的组件契约。
+- [Agent 组件进度清单](docs/Agent组件进度清单.md)：2026-09 历史快照。
+- [Agent 业务流程组件覆盖矩阵 v0.1](docs/Agent业务流程组件覆盖矩阵_v0.1.md)：历史快照。
+
 ## OLE Agent 前端规范 · 正式设计基线（2026-10-16）
 
 [蓝图 v1.0 正式版](docs/OLE_Agent_Frontend_Blueprint_v1.0.md) 已按用户指令定稿，保持单文件、89项M主编号、16项CI及32项AT。教师端Token用量属首期；实施准入仍未通过，服务签认、适用组件修复、样稿与真实链路须分别取得证据。本轮同步文档和组件仓规则，不代表业务能力已上线。站点从[蓝图规范页](https://intelligence-prism-ui.ashrvm.chatgpt.site/next/foundations/blueprint/guide)下载同源原文；后续契约只维护该文档第14章，站点副本由生成器产生，不手工编辑。
@@ -30,7 +40,7 @@ v4 已接入蓝图专用系列色、ECharts 图案、热力色阶、箱线配色
 
 组件页 `/next/components/agent-components#simulation-lab`：抛硬币次数仅映射 10/100/1000 次固定模拟结果，其他次数未知；导出不支持。两态共享数据，compact 与 320px 独立切换。[公开契约](docs/component-contracts.md#模拟器--虚拟实验-v01)及 `.sites-runtime/subject-demos/REPORT.md` 记录两个组件 API、五项数字、实际 diff、Workspace 只读方案和未验证范围。候选分支 `feat/agent-subject-demos`，本地 main 基线 `27d4593`；本轮不写 `.git`、不启动服务、不修改 Workspace，浏览器和真实服务未验。
 
-31/32 按本仓 #105（`27d4593`）／Workspace #73（`693cc8d`）和 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当前计数：Workspace 已验证 **40**、组件候选 **2（39、41）**、未开始 **0**、真实业务接入 **0**。下方各节保留历史口径，当前状态以本节及[进度清单](docs/Agent组件进度清单.md)为准。
+2026-09-27 记录：31/32 按本仓 #105（`27d4593`）／Workspace #73（`693cc8d`）和 Supervisor 浏览器交接登记为两态已验证，未在本轮独立复验。当时计数：Workspace 已验证 **40**、组件候选 **2（39、41）**、未开始 **0**、真实业务接入 **0**。下方各节保留历史口径，当前状态以 [Prism STATUS](docs/blueprint/STATUS.md)、逐项 PR 及 Workspace 来源／接入证据为准；[进度清单](docs/Agent组件进度清单.md)为 2026-09 历史快照。
 
 ## 音频与转写 v0.1 · 设计候选（2026-09-27）
 
