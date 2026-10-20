@@ -38,7 +38,7 @@ function ConversationSample() {
       <pre><code>{'const discriminant = b ** 2 - 4 * a * c;'}</code></pre>
       <p><a href={`#${sourceId}`}>查看材料说明</a></p>
     </AgentMessage>
-    <AgentMessage speaker="agent" bodyRole="read-body" copyAction={{ state: copyState, onCopy: copy }}
+    <AgentMessage speaker="agent" bodyRole="read-body" timestamp={{ dateTime: "2026-10-20T15:59:30+08:00", now: "2026-10-20T16:00:00+08:00" }} copyAction={{ state: copyState, onCopy: copy }}
       moreActions={<MenuItem onClick={() => setAction("已选择查看回答详情（示例）")}>查看回答详情</MenuItem>}
       details={<p className="text-ui-hint text-muted-foreground">范围：高二三班 · 材料：1 份 · 待你确认</p>}>
       <p>可以先核对范围和题目条件，再决定练习题的数量。以下是可供确认的材料摘要。</p>

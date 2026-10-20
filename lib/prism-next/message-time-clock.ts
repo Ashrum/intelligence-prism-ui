@@ -39,5 +39,7 @@ const snapshot = () => current
 const serverSnapshot = () => 0
 const noSubscribe = () => () => {}
 export function useMessageTimeClock(enabled: boolean) {
-  return useSyncExternalStore(enabled ? subscribeMessageTime : noSubscribe, snapshot, serverSnapshot)
+  // Keep the external-store snapshot stable between ticks; read real time on every render.
+  useSyncExternalStore(enabled ? subscribeMessageTime : noSubscribe, snapshot, serverSnapshot)
+  return Date.now()
 }

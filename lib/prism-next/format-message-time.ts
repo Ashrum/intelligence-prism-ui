@@ -31,10 +31,9 @@ export function formatMessageTime(
     const title = `${value.year}年${day} ${hour < 12 ? "上午" : "下午"}${hour % 12 || 12}:${value.minute}`
     const daysApart = (Date.UTC(Number(current.year), Number(current.month) - 1, Number(current.day)) - Date.UTC(Number(value.year), Number(value.month) - 1, Number(value.day))) / 86400000
     const minutes = Math.floor((reference.getTime() - date.getTime()) / 60000)
-    // Future timestamps use their calendar date; do not label them as a past event.
+    // Clock skew and just-completed messages share the just-now label.
     const calendar = `${value.year === current.year ? "" : `${value.year}年`}${day}`
-    const label = minutes < 0 ? calendar
-      : minutes < 1 ? "刚刚"
+    const label = minutes < 1 ? "刚刚"
       : minutes < 60 ? `${minutes} 分钟前`
       : daysApart === 0 ? `${Math.floor(minutes / 60)} 小时前`
       : daysApart === 1 ? "昨天"
