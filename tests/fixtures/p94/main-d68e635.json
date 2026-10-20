@@ -1,0 +1,87 @@
+{
+  "baseline": "d68e635a5ffa45c2d99bb30fc466804d65c85dc7",
+  "cases": [
+    {
+      "props": {
+        "speaker": "user"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"你说\" data-agent-message=\"user\" class=\"min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background\"><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section></div>"
+    },
+    {
+      "props": {
+        "speaker": "user",
+        "bodyRole": "read-body",
+        "attachments": "附件",
+        "details": "来源"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"你说\" data-agent-message=\"user\" class=\"min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background\"><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body [&amp;&gt;p]:text-read-body [&amp;&gt;ul]:text-read-body [&amp;&gt;ol]:text-read-body\"><p>正文与公式 x²</p></div><div class=\"mt-2 flex min-w-0 flex-wrap gap-2\">附件</div><div class=\"mt-2 min-w-0\">来源</div></section></div>"
+    },
+    {
+      "props": {
+        "speaker": "user",
+        "actions": "操作",
+        "persistentActions": "必要动作"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"你说\" data-agent-message=\"user\" class=\"min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background\"><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section><div data-message-actions=\"true\" data-actions-visible=\"false\" class=\"mt-1 flex min-w-0 flex-wrap items-center gap-2 justify-end\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\">必要动作</div><div class=\"agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2\">操作</div></div></div>"
+    },
+    {
+      "props": {
+        "speaker": "user",
+        "moreActions": "更多",
+        "copyAction": {
+          "state": "copied"
+        }
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"你说\" data-agent-message=\"user\" class=\"min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background\"><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section><div data-message-actions=\"true\" data-actions-visible=\"true\" class=\"mt-1 flex min-w-0 flex-wrap items-center gap-2 justify-end\"><div class=\"agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2\"><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 size-8 sm:size-7 border-transparent text-foreground hover:bg-accent data-pressed:bg-accent *:data-[slot=button-loading-indicator]:text-foreground m-1 min-h-9 min-w-9\" data-slot=\"tooltip-trigger\" aria-label=\"已复制\" id=\"base-ui-_R_3ra_\" data-base-ui-tooltip-trigger=\"\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-check\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"></path></svg></button><span role=\"status\" class=\"text-ui-hint\">已复制</span><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 size-8 sm:size-7 border-transparent text-foreground hover:bg-accent data-pressed:bg-accent *:data-[slot=button-loading-indicator]:text-foreground m-1 min-h-9 min-w-9\" data-slot=\"tooltip-trigger\" aria-label=\"更多消息操作\" tabindex=\"0\" aria-haspopup=\"menu\" aria-expanded=\"false\" id=\"base-ui-_R_urq_\" data-base-ui-tooltip-trigger=\"\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-ellipsis\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1\"></circle><circle cx=\"19\" cy=\"12\" r=\"1\"></circle><circle cx=\"5\" cy=\"12\" r=\"1\"></circle></svg></button></div></div></div>"
+    },
+    {
+      "props": {
+        "speaker": "user",
+        "actions": [],
+        "details": "详情"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"你说\" data-agent-message=\"user\" class=\"min-w-0 agent-user-message ml-auto rounded-xl bg-foreground px-4 py-3 text-background\"><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div><div class=\"mt-2 min-w-0\">详情</div></section></div>"
+    },
+    {
+      "props": {
+        "speaker": "agent"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"Agent 说\" data-agent-message=\"agent\" class=\"min-w-0 mr-auto w-full space-y-3\"><div class=\"flex items-center gap-2 text-ui-action\"><span data-agent-mark=\"true\" data-state=\"idle\" data-size=\"inline\" data-variant=\"Drive\" class=\"inline-flex max-w-full items-center gap-2 text-ui-hint text-foreground\"><span aria-hidden=\"true\" class=\"agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5\"><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span></span><span role=\"status\" class=\"sr-only\">就绪</span></span>Agent</div><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section></div>"
+    },
+    {
+      "props": {
+        "speaker": "agent",
+        "bodyRole": "read-body",
+        "attachments": "附件",
+        "details": "来源"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"Agent 说\" data-agent-message=\"agent\" class=\"min-w-0 mr-auto flex w-full flex-col gap-2\"><div class=\"flex items-center gap-2 text-ui-action\"><span data-agent-mark=\"true\" data-state=\"idle\" data-size=\"inline\" data-variant=\"Drive\" class=\"inline-flex max-w-full items-center gap-2 text-ui-hint text-foreground\"><span aria-hidden=\"true\" class=\"agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5\"><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span></span><span role=\"status\" class=\"sr-only\">就绪</span></span>Agent</div><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body [&amp;&gt;p]:text-read-body [&amp;&gt;ul]:text-read-body [&amp;&gt;ol]:text-read-body\"><p>正文与公式 x²</p></div><div class=\"flex min-w-0 flex-wrap gap-2\">附件</div><div class=\"min-w-0\">来源</div></section></div>"
+    },
+    {
+      "props": {
+        "speaker": "agent",
+        "actions": "操作",
+        "persistentActions": "必要动作"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"Agent 说\" data-agent-message=\"agent\" class=\"min-w-0 mr-auto flex w-full flex-col gap-2\"><div class=\"flex items-center gap-2 text-ui-action\"><span data-agent-mark=\"true\" data-state=\"idle\" data-size=\"inline\" data-variant=\"Drive\" class=\"inline-flex max-w-full items-center gap-2 text-ui-hint text-foreground\"><span aria-hidden=\"true\" class=\"agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5\"><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span></span><span role=\"status\" class=\"sr-only\">就绪</span></span>Agent</div><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section><div data-message-actions=\"true\" data-actions-visible=\"false\" class=\"mt-1 flex min-w-0 flex-wrap items-center gap-2\"><div class=\"flex min-w-0 flex-wrap items-center gap-2\">必要动作</div><div class=\"agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2\">操作</div></div></div>"
+    },
+    {
+      "props": {
+        "speaker": "agent",
+        "moreActions": "更多",
+        "copyAction": {
+          "state": "copied"
+        }
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"Agent 说\" data-agent-message=\"agent\" class=\"min-w-0 mr-auto flex w-full flex-col gap-2\"><div class=\"flex items-center gap-2 text-ui-action\"><span data-agent-mark=\"true\" data-state=\"idle\" data-size=\"inline\" data-variant=\"Drive\" class=\"inline-flex max-w-full items-center gap-2 text-ui-hint text-foreground\"><span aria-hidden=\"true\" class=\"agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5\"><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span></span><span role=\"status\" class=\"sr-only\">就绪</span></span>Agent</div><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div></section><div data-message-actions=\"true\" data-actions-visible=\"true\" class=\"mt-1 flex min-w-0 flex-wrap items-center gap-2\"><div class=\"agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2\"><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 size-8 sm:size-7 border-transparent text-foreground hover:bg-accent data-pressed:bg-accent *:data-[slot=button-loading-indicator]:text-foreground m-1 min-h-9 min-w-9\" data-slot=\"tooltip-trigger\" aria-label=\"已复制\" id=\"base-ui-_R_3ra_\" data-base-ui-tooltip-trigger=\"\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-check\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"></path></svg></button><span role=\"status\" class=\"text-ui-hint\">已复制</span><button type=\"button\" class=\"relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg border font-medium text-base outline-none transition-shadow before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:select-none data-loading:text-transparent sm:text-sm [&amp;_svg:not([class*=&#x27;opacity-&#x27;])]:opacity-80 [&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4.5 sm:[&amp;_svg:not([class*=&#x27;size-&#x27;])]:size-4 [&amp;_svg]:pointer-events-none [&amp;_svg]:-mx-0.5 [&amp;_svg]:shrink-0 size-8 sm:size-7 border-transparent text-foreground hover:bg-accent data-pressed:bg-accent *:data-[slot=button-loading-indicator]:text-foreground m-1 min-h-9 min-w-9\" data-slot=\"tooltip-trigger\" aria-label=\"更多消息操作\" tabindex=\"0\" aria-haspopup=\"menu\" aria-expanded=\"false\" id=\"base-ui-_R_urq_\" data-base-ui-tooltip-trigger=\"\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-ellipsis\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"1\"></circle><circle cx=\"19\" cy=\"12\" r=\"1\"></circle><circle cx=\"5\" cy=\"12\" r=\"1\"></circle></svg></button></div></div></div>"
+    },
+    {
+      "props": {
+        "speaker": "agent",
+        "actions": [],
+        "details": "详情"
+      },
+      "html": "<div class=\"agent-message-container min-w-0\"><section aria-label=\"Agent 说\" data-agent-message=\"agent\" class=\"min-w-0 mr-auto w-full space-y-3\"><div class=\"flex items-center gap-2 text-ui-action\"><span data-agent-mark=\"true\" data-state=\"idle\" data-size=\"inline\" data-variant=\"Drive\" class=\"inline-flex max-w-full items-center gap-2 text-ui-hint text-foreground\"><span aria-hidden=\"true\" class=\"agent-mark-grid grid shrink-0 grid-cols-3 gap-0.5\"><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span><span class=\"agent-mark-pixel bg-current\" style=\"opacity:1\"></span></span><span role=\"status\" class=\"sr-only\">就绪</span></span>Agent</div><div class=\"agent-message-content min-w-0 whitespace-pre-wrap break-words text-read-body\"><p>正文与公式 x²</p></div><div class=\"mt-2 min-w-0\">详情</div></section></div>"
+    }
+  ]
+}
