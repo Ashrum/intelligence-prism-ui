@@ -18,12 +18,12 @@
 | `AppBarNavLink` | `href / icon? / hideIcon?`、Button `render` 和链接事件；`aria-current="page"` 必须由宿主传。默认 ui-action 14/20/500，当前态 600 + foreground + primary 2px 内阴影下划线；默认态悬停有 36px 高、8px 圆角的 secondary 区域，当前态保持透明；焦点 ring 与下划线可共存。 |
 | `AppBarSpaceMenu` | `items:readonly AppBarSpace[] / currentId? / onSelect? / placeholder? / menuProps? / popupProps?`；条目 `{id,label,icon?,href?,render?}`。有 href/render 用 coss MenuLinkItem，否则 MenuItem 只发选择意图；不改变 currentId。未知当前空间用“切换空间”，不猜第一项。触发器 40px、16px；条目 44px、16px，当前项勾与 aria-current。 |
 | `AppBarToolGroup` | `visibility="always|desktop|wide|compact|phone"`，分别为总是、≥600、≥900、<900、<600；仅在 AppBar 查询容器内使用。负责工具组的可见性与布局。 |
-| `BarIconButton` | `label / children / size? / count? / countUnit?`，size 为 global（40px）或 space（36px），手机各 44px；接受其余 Button 属性。有效计数自动加入可访问名，未知不补零；调用方不要在 label 再重复计数。 |
+| `BarIconButton` | `label / children / size? / count? / countUnit?`，size 为 global（40px）或 space（32px，图标 16px），手机各 44px；接受其余 Button 属性。有效计数自动加入可访问名，未知不补零；调用方不要在 label 再重复计数。 |
 | `IconCountBadge` | `count?:number|null`。仅显示非负安全整数（包括 0），其他值不显示。复用 Prism Badge sm + component-label，12/16/500，位于相对定位父容器右上。独立使用时宿主须在所属控件可访问名中提供计数，徽标自身 aria-hidden 防重复读出。 |
 | `AppBarTeachingContext` | 顶栏 School 图标 + coss Popover；任教事实、切换意图、设置入口，完整属性见下文 PO 2026-09-29 契约。 |
 | `AppBarStatusButton` | Button 属性及宿主传入的 children / aria-label；28px 高、component-label、secondary 底，仅提供状态入口外观。状态与说明不在组件中内置。 |
 | `AppBarPersonalMenu` | `identity:{name,institution,detail,initials} / children / menuProps? / popupProps?`；32px 头像，手机 44px 触点；300px 菜单、身份卡、40px 菜单项。宿主组合 MenuGroup / MenuGroupLabel / MenuItem 提供栏目和行为；不内置用户、审阅项或权限。 |
-| `SpaceBar` | `side?:{title,collapsed,onToggle,controls?} / sideWidth? / children / tools?`，默认 sideWidth 248px；48px 高。展开左段 sidebar 语义底（核心主题等同 secondary）+右边框，目录 item-title；收起时只显示图标按钮。中段 min-width:0、右段放空间工具。使用 role=group 与正常 Tab 顺序，不伪装具有方向键行为的 toolbar。 |
+| `SpaceBar` | `side?:{title,collapsed,onToggle,controls?} / sideWidth? / children / tools?`，默认 sideWidth 248px；容器宽度 ≥600px 时 40px 高、<600px 时 44px 高；侧区随栏拉伸，侧区与工具图标按钮桌面 32×32px、窄屏 44×44px。展开左段 sidebar 语义底（核心主题等同 secondary）+右边框，目录 item-title；收起时只显示图标按钮。中段 min-width:0、右段放空间工具。使用 role=group 与正常 Tab 顺序，不伪装具有方向键行为的 toolbar。 |
 | `SpaceBarTitle` | span 属性；默认 item-title，手机用既有 block-title 字号/行高 16/24，单行省略，可传 title 保留完整名称。 |
 | `PageHead` | `title / description? / actions?` 及 div 属性；h1 section-title 20/30/600，说明 ui-hint 14/22 + muted-foreground。默认内边距 24/32/16；内容区不足 600 时 20/16/12，操作区下移整行，按钮至少 44px，字号使用既有 16px token。 |
 

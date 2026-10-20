@@ -19,6 +19,54 @@ const h = React.createElement;
 const css = await readFile(new URL('../components/prism-next/app-bar.css', import.meta.url), 'utf8');
 const typography = await readFile(new URL('../app/(next)/next/typography.css', import.meta.url), 'utf8');
 
+test('P93: SpaceBar desktop is 40px with 32px controls and 16px icons; AppBar stays 56px', () => {
+  const styles = postcss.parse(css);
+  const declarations = selector => {
+    const result = {};
+    styles.walkRules(selector, rule => {
+      if (rule.parent.type === 'root') rule.walkDecls(decl => { result[decl.prop] = decl.value; });
+    });
+    return result;
+  };
+  assert.equal(declarations('.prism-space-bar').height, '40px');
+  assert.equal(declarations('.prism-app-bar').height, '56px');
+  assert.equal(declarations('.prism-space-bar-side')['align-self'], 'stretch');
+  for (const selector of [
+    '.prism-bar-icon-button[data-bar-size="space"]',
+    '.prism-space-bar-side .prism-bar-icon-button',
+    '.prism-space-bar[data-side="collapsed"] .prism-space-bar-side .prism-bar-icon-button',
+  ]) {
+    assert.equal(declarations(selector).width, '32px', selector);
+    assert.equal(declarations(selector).height, '32px', selector);
+  }
+  const icon = declarations('.prism-bar-icon-button[data-bar-size="space"] .prism-bar-button-icon > svg');
+  assert.equal(icon.width, '16px');
+  assert.equal(icon.height, '16px');
+});
+
+test('P93: below 600px SpaceBar is 44px with 44px touch controls in both side states', () => {
+  const styles = postcss.parse(css);
+  const rules = new Map();
+  styles.walkAtRules('container', container => {
+    if (container.params !== 'prism-space-bar (width < 600px)') return;
+    container.walkRules(rule => {
+      const declarations = {};
+      rule.walkDecls(decl => { declarations[decl.prop] = decl.value; });
+      for (const selector of rule.selectors) rules.set(selector, declarations);
+    });
+  });
+  assert.equal(rules.get('.prism-space-bar')?.height, '44px');
+  for (const selector of [
+    '.prism-bar-icon-button[data-bar-size="space"]',
+    '.prism-space-bar-side .prism-bar-icon-button',
+    '.prism-space-bar[data-side="collapsed"] .prism-space-bar-side .prism-bar-icon-button',
+    '.prism-space-bar-tools .prism-bar-icon-button',
+  ]) {
+    assert.equal(rules.get(selector)?.width, '44px', selector);
+    assert.equal(rules.get(selector)?.height, '44px', selector);
+  }
+});
+
 test('SpaceBar side uses sidebar semantics and stays transparent when collapsed', async t => {
   const styles = postcss.parse(css);
   const background = selector => {

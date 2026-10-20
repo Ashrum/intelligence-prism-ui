@@ -129,7 +129,7 @@ function top(source = block) {
       for (const name of ['prism-app-bar','prism-space-bar']) {
         const s = style(f.cls(name), combined, undefined, width);
         assert.equal(s.background, 'var(--card)'); assert.equal(s['border-bottom'], 'var(--line-width) solid var(--line)');
-        assert.equal(s.height, name === 'prism-app-bar' ? '56px' : '48px');
+        assert.equal(s.height, name === 'prism-app-bar' ? '56px' : width < 600 ? '44px' : '40px');
       }
       for (const [i, n] of f.nav.entries()) {
         n.states = [];
