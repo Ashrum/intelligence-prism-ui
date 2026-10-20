@@ -38,11 +38,11 @@
 .prism-app-bar-space-item[aria-current="page"] { background:var(--secondary); color:var(--foreground); font-weight:var(--text-item-title--font-weight); }
 
 .prism-bar-icon-button[data-slot] { position:relative; width:40px; height:40px; padding:0; border:0; border-radius:8px; color:var(--muted-foreground); }
-.prism-bar-icon-button[data-bar-size="space"] { width:36px; height:36px; }
+.prism-bar-icon-button[data-bar-size="space"] { width:32px; height:32px; }
 .prism-bar-icon-button:hover, .prism-bar-icon-button[aria-current="page"] { background:var(--secondary); color:var(--foreground); }
 .prism-bar-button-icon { display:inline-flex; align-items:center; justify-content:center; }
 .prism-bar-button-icon > svg { width:18px; height:18px; margin:0; opacity:1; }
-.prism-bar-icon-button[data-bar-size="space"] .prism-bar-button-icon > svg { width:17px; height:17px; }
+.prism-bar-icon-button[data-bar-size="space"] .prism-bar-button-icon > svg { width:16px; height:16px; }
 .prism-icon-count-badge[data-slot="badge"].text-component-label { position:absolute; top:5px; right:3px; min-width:18px; height:16px; min-height:16px; border:0; padding:0 4px; border-radius:8px; font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); font-variant-numeric:tabular-nums; pointer-events:none; }
 .prism-bar-icon-button[data-bar-size="space"] .prism-icon-count-badge { top:2px; right:0; }
 .prism-app-bar-status[data-slot] { height:28px; padding:0 10px; gap:6px; margin-right:8px; border:0; border-radius:14px; color:var(--muted-foreground); font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); font-weight:var(--text-component-label--font-weight); }
@@ -58,7 +58,7 @@
 .prism-app-bar-personal-institution { display:flex; align-items:center; gap:6px; min-width:0; }
 
 .prism-space-bar-root { container:prism-space-bar / inline-size; min-width:0; flex-shrink:0; }
-.prism-space-bar { display:flex; align-items:center; height:48px; box-sizing:border-box; background:var(--background); color:var(--foreground); border-bottom:1px solid var(--border); }
+.prism-space-bar { display:flex; align-items:center; height:40px; box-sizing:border-box; background:var(--background); color:var(--foreground); border-bottom:1px solid var(--border); }
 .prism-space-bar-side { flex-shrink:0; display:flex; align-items:center; align-self:stretch; justify-content:space-between; min-width:0; box-sizing:border-box; padding:0 8px 0 24px; background:var(--sidebar); border-right:1px solid var(--border); }
 .prism-space-bar-side-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .prism-space-bar-side .prism-bar-icon-button { width:32px; height:32px; }
@@ -67,7 +67,7 @@
 .prism-space-bar-content > :is([data-slot="button"],[data-slot="menu-trigger"],[data-slot="select-trigger"]) { min-width:0; flex-shrink:1; }
 .prism-space-bar-tools { display:flex; align-items:center; flex-shrink:0; gap:2px; padding-right:16px; }
 .prism-space-bar[data-side="collapsed"] .prism-space-bar-side { padding:0 0 0 16px; background:transparent; border:0; }
-.prism-space-bar[data-side="collapsed"] .prism-space-bar-side .prism-bar-icon-button { width:36px; height:36px; }
+.prism-space-bar[data-side="collapsed"] .prism-space-bar-side .prism-bar-icon-button { width:32px; height:32px; }
 .prism-space-bar[data-side="collapsed"] .prism-space-bar-content { padding-left:8px; }
 .prism-space-bar[data-side="none"] .prism-space-bar-content { padding-left:24px; }
 .prism-space-bar-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -98,7 +98,10 @@
   .prism-app-bar .prism-bar-icon-button, .prism-app-bar-personal-trigger[data-slot] { width:44px; height:44px; }
 }
 @container prism-space-bar (width < 600px) {
+  .prism-space-bar { height:44px; }
   .prism-space-bar[data-side="collapsed"] .prism-space-bar-side { padding-left:8px; }
+  .prism-bar-icon-button[data-bar-size="space"],
+  .prism-space-bar-side .prism-bar-icon-button,
   .prism-space-bar[data-side="collapsed"] .prism-space-bar-side .prism-bar-icon-button,
   .prism-space-bar-tools .prism-bar-icon-button { width:44px; height:44px; }
   .prism-space-bar[data-side="collapsed"] .prism-space-bar-content { padding:0 12px 0 4px; }

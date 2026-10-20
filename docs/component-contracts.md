@@ -2382,6 +2382,8 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 ## 常用展示约定
 
+- SpaceBar（P93）：五主题统一，容器宽度 ≥600px 时栏高 40px、space 图标按钮及展开／收起侧区按钮 32×32px、图标 16px；<600px 时栏高 44px、图标按钮 44×44px。侧区随栏拉伸；AppBar 仍为 56px。详见 [Workspace 顶部区域契约](workspace-app-bar.md)。
+
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。
 - Card：内容操作、横向条目、指标、人物、选择与分组由同一套 Card 子组件组合，不新增六套独立组件。
 - Frame：保留 coss 默认外框内边距 4px、面板内部 20px；多面板之间间隔 4px。
