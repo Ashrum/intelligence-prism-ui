@@ -186,6 +186,66 @@ test('P87: accent selector includes new classes, excludes nested core roots/desc
   assert.doesNotMatch(css, /--[\w-]+\s*:/, 'no new token declarations');
   assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b|rgba?\(|oklch\(/i, 'no literal palette');
 });
+// Parse every link-color selector: assertions exercise their union, including new variants.
+function accentSelectors(source) {
+  const selectors = [];
+  postcss.parse(source).walkRules(rule => {
+    if (!rule.nodes.some(n => n.type === 'decl' && n.prop === 'color' && n.value === 'var(--link)')) return;
+    transform({ code: Buffer.from(`${rule.selector}{color:red}`), visitor: { Selector(value) { selectors.push(value); } } });
+  });
+  assert.ok(selectors.length > 0);
+  return selectors;
+}
+const isAccented = (selectors, element) => selectors.some(selector => matches(selector, element));
+const blueprintThemes = ['blueprint', 'blueprint-night'];
+const coreThemes = ['light', 'paper', 'dark'];
+const annotationClasses = ['bp-target-lock', 'bp-diagram-callout'];
+function assertSelfRootAccent(source) {
+  const selectors = accentSelectors(source);
+  for (const outerTheme of coreThemes) for (const theme of blueprintThemes) for (const cls of annotationClasses) {
+    const outer = node([], { 'data-prism-theme': outerTheme });
+    // Neither this root nor its core-theme ancestor has a blueprint ancestor.
+    const root = node([cls], { 'data-agent-preview': '', 'data-prism-theme': theme }, outer);
+    assert.equal(isAccented(selectors, root), true, `${outerTheme} / ${theme} / ${cls}: self-root accent`);
+    assert.equal(isAccented(selectors, node([cls], {}, node([], {}, root))), true, 'descendant accent');
+  }
+}
+test('P88: both annotation roots and descendants receive accent inside every core outer theme', () => assertSelfRootAccent(css));
+test('P88: all accent variants exclude nested core roots, all descendants and unthemed core components', () => {
+  const selectors = accentSelectors(css);
+  for (const theme of blueprintThemes) for (const core of coreThemes) {
+    const outer = node([], { 'data-prism-theme': theme });
+    for (const cls of annotationClasses) {
+      const preview = node([cls], { 'data-agent-preview': '', 'data-prism-theme': core }, outer);
+      assert.equal(isAccented(selectors, preview), false, 'core preview root');
+      assert.equal(isAccented(selectors, node([cls], {}, preview)), false, 'direct descendant');
+      assert.equal(isAccented(selectors, node([cls], {}, node([], {}, preview))), false, 'deep descendant');
+      for (const nestedTheme of blueprintThemes) {
+        const nested = node([cls], { 'data-agent-preview': '', 'data-prism-theme': nestedTheme }, preview);
+        assert.equal(isAccented(selectors, nested), false, 'blueprint self-root inside excluded core preview');
+        assert.equal(isAccented(selectors, node([cls], {}, nested)), false, 'descendant of excluded blueprint self-root');
+      }
+      assert.equal(isAccented(selectors, node([cls], {}, node([], { 'data-prism-theme': core }))), false, 'ordinary component in core theme');
+    }
+    const rowRoot = node(['bp-entry-row'], { 'data-emphasis': '', 'data-agent-preview': '', 'data-prism-theme': theme }, node([], { 'data-prism-theme': core }));
+    assert.equal(isAccented(selectors, node(['bp-entry-row-action'], {}, rowRoot)), true, 'action is already a descendant of the themed row');
+    const coreRow = node(['bp-entry-row'], { 'data-emphasis': '', 'data-agent-preview': '', 'data-prism-theme': core }, outer);
+    assert.equal(isAccented(selectors, node(['bp-entry-row-action'], {}, coreRow)), false, 'core row action remains isolated');
+    const plainRow = node(['bp-entry-row'], { 'data-emphasis': '' }, node([], { 'data-prism-theme': core }));
+    assert.equal(isAccented(selectors, node(['bp-entry-row-action'], {}, plainRow)), false, 'ordinary core row action');
+  }
+});
+test('P88: rollback removing only the self-root variant fails the same positive assertions', () => {
+  const mutant = postcss.parse(css);
+  let removed = 0;
+  mutant.walkRules(rule => {
+    if (rule.selector.startsWith(':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]):is(.bp-target-lock,.bp-diagram-callout)')) {
+      rule.remove(); removed++;
+    }
+  });
+  assert.equal(removed, 1);
+  assert.throws(() => assertSelfRootAccent(mutant.toString()), { name: 'AssertionError', message: /self-root accent/ });
+});
 test('P87: motion and responsive rules preserve static lock and single-target entry layout', () => {
   assert.match(css, /animation:bp-target-lock-in \.38s/);
   assert.match(css, /transform:scale\(2\.4\) rotate\(45deg\)/);
