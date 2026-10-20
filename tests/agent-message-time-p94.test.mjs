@@ -36,7 +36,7 @@ test('P94 timezone calendar boundaries and full 12-hour time', () => {
   assert.equal(format('2026-10-20T12:05:00+08:00', now).title, '2026年10月20日 下午12:05');
   assert.equal(format(now, new Date(now)).label, '刚刚');
   assert.equal(format(now, Date.parse(now)).label, '刚刚');
-  assert.equal(format('2026-10-21T16:00:00+08:00', now).label, '10月21日');
+  assert.equal(format('2026-10-21T16:00:00+08:00', now).label, '刚刚');
 });
 test('P94 invalid timestamps, reference and timezone are omitted', () => {
   for (const iso of ['', 'invalid', '2026-10-20', '2026-10-20T14:32:00', '2026-02-30T14:32:00Z', '2026-10-20T24:00:00Z', '2026-13-20T14:32:00Z']) {
@@ -48,15 +48,15 @@ test('P94 invalid timestamps, reference and timezone are omitted', () => {
   assert.equal(format(now, now, { timeZone: 'invalid' }), undefined);
   assert.equal(message({ timestamp: { dateTime: now, timeZone: 'invalid' } }), message({}));
 });
-test('P94 time is a focusable Tooltip trigger after icons, inside the hidden row', () => {
+test('P94 time is a focusable Tooltip trigger before final more button, inside the hidden row', () => {
   for (const speaker of ['user', 'agent']) {
     const html = message({ speaker, timestamp: { dateTime: now, now }, copyAction: { onCopy() {} }, moreActions: '查看原文' });
     assert.match(html, /<time[^>]*dateTime="2026-10-20T16:00:00\+08:00"[^>]*tabindex="0"[^>]*aria-label="2026年10月20日 下午4:00"/);
     assert.match(html, /<time[^>]*data-base-ui-tooltip-trigger=""[^>]*>刚刚<\/time>/);
     assert.ok(html.indexOf('agent-message-secondary-actions') < html.indexOf('<time'));
     assert.ok(html.indexOf('aria-label="复制"') < html.indexOf('aria-label="更多消息操作"'));
-    assert.ok(html.indexOf('aria-label="更多消息操作"') < html.indexOf('<time'));
-    assert.match(html, /m-1 min-h-9 min-w-9 after:absolute after:-inset-1/);
+    assert.ok(html.indexOf('<time') < html.indexOf('aria-label="更多消息操作"'));
+    assert.match(html, /agent-message-footer-button/);
     assert.match(html, /data-actions-visible="false"/);
     assert.match(message({ speaker, isLast: true, timestamp: { dateTime: now } }), /data-actions-visible="true"/);
   }

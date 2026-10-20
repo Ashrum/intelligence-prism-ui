@@ -57,18 +57,19 @@ function MessageActions({ speaker, actions, moreActions, persistentActions, acti
   const secondaryControls = [
     isValidElement(actions) ? cloneElement(actions, { key: actions.key ?? "actions" }) : actions,
     copyAction && <Fragment key="copy">
-        <Tooltip><TooltipTrigger render={<Button type="button" variant="ghost" size="icon-sm" className={timestamp ? "m-1 min-h-9 min-w-9 after:absolute after:-inset-1 text-muted-foreground" : "m-1 min-h-9 min-w-9"} aria-label={copyLabel} disabled={copyAction.disabled} onClick={copyAction.onCopy} />}>{copyAction.state === "copied" ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}</TooltipTrigger><TooltipPopup portalProps={{ container: root }}>{copyLabel}</TooltipPopup></Tooltip>
+        <Tooltip><TooltipTrigger render={<Button type="button" variant="ghost" size="icon-sm" className={timestamp ? "agent-message-footer-button text-muted-foreground" : "m-1 min-h-9 min-w-9"} aria-label={copyLabel} disabled={copyAction.disabled} onClick={copyAction.onCopy} />}>{copyAction.state === "copied" ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}</TooltipTrigger><TooltipPopup portalProps={{ container: root }}>{copyLabel}</TooltipPopup></Tooltip>
         <span role="status" className={timestamp ? "sr-only" : "text-ui-hint"}>{copyAction.state === "copied" ? "已复制" : copyAction.state === "error" ? "复制失败，请重试" : null}</span>
     </Fragment>,
+    ...(timestamp ? [<MessageTime key="time" timestamp={timestamp} root={root} />] : []),
     moreActions && <Menu key="more" open={menuOpen} onOpenChange={setMenuOpen}>
-        <Tooltip><TooltipTrigger render={<MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" className={timestamp ? "m-1 min-h-9 min-w-9 after:absolute after:-inset-1 text-muted-foreground" : "m-1 min-h-9 min-w-9"} aria-label="更多消息操作" />} />}><MoreHorizontal aria-hidden="true" /></TooltipTrigger><TooltipPopup portalProps={{ container: root }}>更多消息操作</TooltipPopup></Tooltip>
+        <Tooltip><TooltipTrigger render={<MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" className={timestamp ? "agent-message-footer-button text-muted-foreground" : "m-1 min-h-9 min-w-9"} aria-label="更多消息操作" />} />}><MoreHorizontal aria-hidden="true" /></TooltipTrigger><TooltipPopup portalProps={{ container: root }}>更多消息操作</TooltipPopup></Tooltip>
         <MenuPopup align="end" portalProps={{ container: root }}>{moreActions}</MenuPopup>
     </Menu>,
   ]
   const controls = [
     persistentActions && <div key="persistent" className="flex min-w-0 flex-wrap items-center gap-2">{persistentActions}</div>,
-    (actions || moreActions || copyAction || timestamp) && <div key="secondary" className="agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2">
-      {timestamp ? [...secondaryControls, <MessageTime key="time" timestamp={timestamp} root={root} />] : secondaryControls}
+    (actions || moreActions || copyAction || timestamp) && <div key="secondary" className={cn("agent-message-secondary-actions flex min-w-0 flex-wrap items-center gap-2", timestamp && "agent-message-timed-footer")}>
+      {secondaryControls}
     </div>,
   ]
   return <div ref={root} data-message-actions data-actions-visible={isLast || actionsVisibility === "always" || menuOpen || copyAction?.state === "copied" || copyAction?.state === "error"}
@@ -78,10 +79,10 @@ function MessageActions({ speaker, actions, moreActions, persistentActions, acti
 }
 function MessageTime({ timestamp, root }: { timestamp: NonNullable<AgentMessageProps["timestamp"]>; root: React.RefObject<HTMLDivElement | null> }) {
   const now = useMessageTimeClock(timestamp.now === undefined && !timestamp.label)
-  const formatted = formatMessageTime(timestamp.dateTime, timestamp.now ?? (now || timestamp.dateTime), { timeZone: timestamp.timeZone })!
+  const formatted = formatMessageTime(timestamp.dateTime, timestamp.now ?? now, { timeZone: timestamp.timeZone })!
   const title = timestamp.title || formatted.title
   return <Tooltip>
-    <TooltipTrigger render={<time dateTime={timestamp.dateTime} tabIndex={0} aria-label={title} className="min-w-0 break-words text-ui-meta text-muted-foreground" />}>{timestamp.label || formatted.label}</TooltipTrigger>
+    <TooltipTrigger render={<time suppressHydrationWarning dateTime={timestamp.dateTime} tabIndex={0} aria-label={title} className="min-w-0 break-words text-ui-meta text-muted-foreground" />}>{timestamp.label || formatted.label}</TooltipTrigger>
     <TooltipPopup portalProps={{ container: root }} data-agent-preview data-prism-theme="dark">{title}</TooltipPopup>
   </Tooltip>
 }

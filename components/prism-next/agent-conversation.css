@@ -57,3 +57,19 @@
 @media (pointer: coarse) {
   .agent-message-container [data-message-actions] .agent-message-secondary-actions { opacity: 1; pointer-events: auto; }
 }
+
+/* P95: timestamp opt-in only; preserve P94 untimed rows and touch hit areas.
+   Existing Prism row + frozen coss icon-sm are sufficient (offline reuse review). */
+.agent-message-timed-footer { gap: 4px; }
+.agent-message-timed-footer > time { margin-inline: 4px; }
+.agent-message-timed-footer > time:first-child { margin-inline-start: 0; }
+.agent-message-timed-footer > time:last-child { margin-inline-end: 0; }
+.agent-message-timed-footer .agent-message-footer-button { width: 28px; height: 28px; min-width: 28px; min-height: 28px; margin: 8px; }
+@media (pointer: fine) {
+  .agent-message-timed-footer { min-height: 28px; }
+  .agent-message-timed-footer .agent-message-footer-button { margin: 0; }
+}
+/* Reserve the expanded target in layout, without enlarging its visible icon. */
+@media (pointer: coarse) {
+  .agent-message-timed-footer .agent-message-footer-button::after { position: absolute; inset: -8px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+}
