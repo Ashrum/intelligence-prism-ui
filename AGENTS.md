@@ -146,7 +146,7 @@
 
 ## 11. 设计线与工程线
 
-- 双线规则见 [OLE 设计线与工程线 v1.0](https://github.com/Ashrum/open-learning-engine/blob/main/docs/governance/OLE_DESIGN_AND_ENGINEERING_TRACKS_v1.0.md)。设计线快速迭代交互、用户体验、功能构成与演进方向，工程只做到设计和粗略验证；工程线负责生产研发，另行规划。
+- 双线规则见 [OLE 设计线与工程线 v1.0](https://github.com/Ashrum/open-learning-engine/blob/555a1cd1e2d1f2d8850666aeb444dbaa2d487cfe/docs/governance/OLE_DESIGN_AND_ENGINEERING_TRACKS_v1.0.md)。设计线快速迭代交互、用户体验、功能构成与演进方向，工程只做到设计和粗略验证；工程线负责生产研发，另行规划。
 - 设计文档头部分列「设计状态」（候选 / 设计正式版 vX.Y / 历史记录）与「工程准入」（未开始 / 工程线进行中 / 已准入）。工程准入由工程线维护，不阻塞设计转正；设计正式版不代表生产准入。
 - 本仓组件文档和蓝图类文档此后转正须满足四条标准：决策清零；以 Mock / 合成数据可体验页面完成粗略验证，且 Supervisor 浏览器验收通过（桌面 1280 与窄屏 390，主题按适用范围）；Schema、迁移、压测、流量准入等工程内容移入工程线交接附录或工程线文档；登记版本、内容指纹、PO 批准人与日期，并同步 GitHub 与 Outline。
 - 浏览器验收仍由 Supervisor 负责，Builder 实施与自测不等同于独立 Review、浏览器验收或 PO 批准。正式版后续修改按版本修订，不退回候选。

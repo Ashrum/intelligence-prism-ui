@@ -2,7 +2,7 @@
 
 ## Agent 文档导航
 
-- [OLE 设计线与工程线 v1.0](https://github.com/Ashrum/open-learning-engine/blob/main/docs/governance/OLE_DESIGN_AND_ENGINEERING_TRACKS_v1.0.md)：双线职责、设计状态与工程准入、设计正式版标准。
+- [OLE 设计线与工程线 v1.0](https://github.com/Ashrum/open-learning-engine/blob/555a1cd1e2d1f2d8850666aeb444dbaa2d487cfe/docs/governance/OLE_DESIGN_AND_ENGINEERING_TRACKS_v1.0.md)：双线职责、设计状态与工程准入、设计正式版标准。
 - [OLE Agent 总入口](https://github.com/Ashrum/open-learning-engine/blob/8683c935a573d7340b0105aa852dd4bc081029dc/docs/agent/README.md)：Navigation Only；规则归属见其 R01–R12。
 - [Blueprint v1.0](docs/OLE_Agent_Frontend_Blueprint_v1.0.md)：已批准的前端设计基线。
 - [Agent 组件规范 v0.2.1 APPROVED](docs/OLE_Teacher_Workspace_Agent_Component_Spec_v0.2.1_APPROVED.md)：已批准的组件规范。
