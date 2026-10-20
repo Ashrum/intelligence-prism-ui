@@ -2806,6 +2806,18 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
 
+**P94-fix1 可选消息时间戳（组件候选）**：
+
+`timestamp?: { dateTime: string; label?: string; title?: string; timeZone?: string; now?: string | number | Date }` 接收含时区的 ISO 时间（含秒）。底部次要操作行顺序为 actions → 复制 → 更多 → 相对时间。内置操作为 ghost 图标按钮，timestamp 路径有效命中区至少 44×44，带可访问名与 Tooltip；宿主 actions 插槽须提供同等规格的无文字图标按钮，不自动改造任意 ReactNode。必要的 persistentActions 继续常驻。未传 timestamp 的输出与 P94 基线 `d68e635` 逐字节一致。
+
+时间与图标共用 P92 显隐：历史消息悬停或焦点进入显示、隐藏时保留空间，最后一条与触屏常驻，菜单打开及复制结果仍保持可见。时间为可聚焦 `<time dateTime aria-label="完整时间">`，复用既有 Tooltip，悬停或键盘焦点显示完整时间；深色气泡以既有 data-agent-preview / dark 主题作用域复用 popover 语义色，无新令牌。正文与业务状态不受刷新影响。
+
+纯函数 `formatMessageTime(iso, now, { timeZone = "Asia/Taipei" } = {})` 返回 `{ label, title }`：小于一分钟“刚刚”，不足一小时“N 分钟前”，同日“N 小时前”，本地日历昨天“昨天”，2–6 天“N 天前”，7 天起同年“10月13日”、跨年“2025年10月13日”。不足一小时优先于跨日；未来时间显示日期，不伪称过去。title 示例“2026年10月20日 下午5:25”，使用指定时区、12 小时制，无秒。非法 ISO / now / 时区返回 undefined，组件省略非法时间。
+
+默认共享页面级每分钟时钟，仅有订阅者且 document.hidden 为 false 时运行一个计时器；恢复可见立即刷新，最后订阅者卸载后清理。SSR / 首次 hydration 用消息自身时间作为稳定参考，挂载后更新实际相对时间。`now` 可固定参考时刻用于夹具；兼容显式 label / title，非空值覆盖默认文案；固定 now 或 label 不订阅时钟。时间刷新局限于时间子组件。
+
+P94-fix1 复用检索（离线）：AgentMessage、P92 操作行、coss Button / Menu / Tooltip 已匹配；沿用既有 particles 来源记录，不联网、不新增组件或依赖、不修改冻结 coss。组件页展示七档、长用户消息、更多菜单、历史与最后一条，以及实际共享时钟样本；桌面 / 触屏 / 焦点由 Supervisor 验收。
+
 **P92 可选正文与操作区（组件候选）**：
 
 | Prop | 默认 | 契约 |
