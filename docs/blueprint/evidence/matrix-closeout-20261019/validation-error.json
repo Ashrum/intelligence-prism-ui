@@ -1,177 +1,119 @@
 {
-  "at": "2026-10-19T08:05:44.930Z",
+  "at": "2026-10-20T02:35:56.604Z",
   "commands": [
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
-      "startedAt": "2026-10-19T08:05:43.945Z",
+      "startedAt": "2026-10-20T02:35:54.370Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
-      "startedAt": "2026-10-19T08:05:43.967Z",
+      "startedAt": "2026-10-20T02:35:54.394Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
-      "startedAt": "2026-10-19T08:05:43.986Z",
+      "startedAt": "2026-10-20T02:35:54.413Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/rename-screenshots.mjs",
-      "startedAt": "2026-10-19T08:05:44.006Z",
+      "startedAt": "2026-10-20T02:35:54.432Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
-      "startedAt": "2026-10-19T08:05:44.028Z",
+      "startedAt": "2026-10-20T02:35:54.450Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.468Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
+      "startedAt": "2026-10-20T02:35:54.485Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs",
+      "startedAt": "2026-10-20T02:35:54.503Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
+      "startedAt": "2026-10-20T02:35:54.522Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:35:54.540Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
-      "startedAt": "2026-10-19T08:05:44.048Z",
+      "startedAt": "2026-10-20T02:35:54.556Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
-      "startedAt": "2026-10-19T08:05:44.132Z",
+      "startedAt": "2026-10-20T02:35:54.655Z",
       "exitCode": 0,
-      "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\n{\"offlineChecks\":8,\"browserExecuted\":false}\n",
+      "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\nok focus guard transition waits for redirect and two unchanged frames\nok stable real outside focus is rejected, not hidden by guard tolerance\nok permanent focus guard times out instead of passing containment\nok reduced motion accepts contractual .01ms one iteration, rejects loops and long duration\n{\"offlineChecks\":12,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.680Z",
+      "exitCode": 0,
+      "stdout": "ok isolation waits finite animations, freezes loops at same time, removes all temporary roots\nok post-stabilization pseudo-element mutation fails and preserves named values and source\nok 320 CSS zoom is observed with raw overflow retained and zoom restored\nok 768 and 1280 overflow remain failures; 320 print-shadow regression cannot become observed\nok 320 asserts four hidden rulers and clears active marks instead of waiting for tracking\nok 320 visible ruler or stale mark remains a failure\n{\"offlineChecks\":6,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:35:54.708Z",
+      "exitCode": 0,
+      "stdout": "{\"scope\":\"review-fixture.tsx and imported dependencies\",\"diagnostics\":0,\"noEmit\":true}\n",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --plan",
-      "startedAt": "2026-10-19T08:05:44.160Z",
+      "startedAt": "2026-10-20T02:35:56.351Z",
       "exitCode": 0,
-      "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":75,\"per-round\":315}}\n",
+      "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":150,\"per-round\":1111}}\n",
       "stderr": ""
     },
     {
       "command": "git diff --check",
-      "startedAt": "2026-10-19T08:05:44.246Z",
-      "exitCode": 0,
-      "stdout": "",
+      "startedAt": "2026-10-20T02:35:56.481Z",
+      "exitCode": 2,
+      "stdout": "docs/blueprint/evidence/matrix-closeout-20261019/scope.diff:6: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:8: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:32: trailing whitespace.\n++ \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:58: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:61: trailing whitespace.\n+  \n",
       "stderr": ""
     }
   ],
-  "checks": [
-    {
-      "name": "offline plan preserves all browser evidence bytes",
-      "pass": true,
-      "detail": 8
-    },
-    {
-      "name": "all 23 source hashes match current source",
-      "pass": true,
-      "detail": 23
-    },
-    {
-      "name": "every existing round browser checklist included",
-      "pass": true,
-      "detail": 11
-    },
-    {
-      "name": "43 route patterns match complete segment shape",
-      "pass": true,
-      "detail": 43
-    },
-    {
-      "name": "P73 outdated URL mapped without editing source checklist",
-      "pass": true,
-      "detail": null
-    },
-    {
-      "name": "source-derived sample names unique and legacy obligations complete",
-      "pass": true,
-      "detail": {
-        "samples": 24,
-        "legacy": 78
-      }
-    },
-    {
-      "name": "browser evidence schema and summaries remain truthful",
-      "pass": true,
-      "detail": {
-        "totals": {
-          "matrix": 1290,
-          "interactions": 1500,
-          "isolation": 75,
-          "per-round": 315
-        },
-        "summaries": {
-          "matrix": {
-            "pass": 645,
-            "fail": 0,
-            "error": 0,
-            "pending-supervisor-browser": 0,
-            "pending-visual": 645,
-            "known-limitation": 0,
-            "observed": 0
-          },
-          "interactions": {
-            "pass": 239,
-            "fail": 31,
-            "error": 60,
-            "pending-supervisor-browser": 1170,
-            "pending-visual": 0,
-            "known-limitation": 0,
-            "observed": 0
-          },
-          "isolation": {
-            "pass": 75,
-            "fail": 0,
-            "error": 0,
-            "pending-supervisor-browser": 0,
-            "pending-visual": 0,
-            "known-limitation": 0,
-            "observed": 0
-          },
-          "per-round": {
-            "pass": 21,
-            "fail": 9,
-            "error": 0,
-            "pending-supervisor-browser": 255,
-            "pending-visual": 0,
-            "known-limitation": 0,
-            "observed": 30
-          }
-        }
-      }
-    },
-    {
-      "name": "645 renamed PNG bytes match original hashes and all screenshot references resolve",
-      "pass": true,
-      "detail": {
-        "renamed": 645,
-        "indexed": 1440
-      }
-    },
-    {
-      "name": "first Supervisor run archived without reclassifying failures",
-      "pass": true,
-      "detail": {
-        "files": 8,
-        "sha256": "fb2fbb8393b52347f2c6ced84f1dff199682dced8b716794225df2751c41a39e"
-      }
-    },
-    {
-      "name": "old current moved verbatim; earlier history unchanged",
-      "pass": true,
-      "detail": {
-        "oldCurrentSha256": "78c5e7ef94db7a003bf4685c30e6f2c907453ac602b68a105a5460f16564f61f"
-      }
-    }
-  ],
-  "error": "AssertionError [ERR_ASSERTION]: \"docs/blueprint/screens/matrix-closeout-20261019/blueprint-1280-toast-queues-blueprint-1280-\\344\\277\\241\\346\\201\\257.png\"\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:81:396\n    at check (file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:15:50)\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:81:7"
+  "checks": [],
+  "error": "AssertionError [ERR_ASSERTION]: git diff --check\n\n2 !== 0\n\n    at command (file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:17:240)\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:27:1"
 }

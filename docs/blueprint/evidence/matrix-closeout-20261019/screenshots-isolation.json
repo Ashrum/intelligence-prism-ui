@@ -7,7 +7,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:28.627Z",
+    "date": "2026-10-19T14:05:56.660Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -18,7 +18,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:30.759Z",
+    "date": "2026-10-19T14:05:58.159Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -29,7 +29,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:32.356Z",
+    "date": "2026-10-19T14:05:59.679Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -40,7 +40,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:34.027Z",
+    "date": "2026-10-19T14:06:01.185Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -51,7 +51,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:35.637Z",
+    "date": "2026-10-19T14:06:02.686Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -62,7 +62,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:37.396Z",
+    "date": "2026-10-19T14:06:04.454Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -73,7 +73,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:39.284Z",
+    "date": "2026-10-19T14:06:06.244Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -84,29 +84,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:41.126Z",
+    "date": "2026-10-19T14:06:08.007Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:43.100Z",
+    "date": "2026-10-19T14:06:09.755Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-320-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:45.059Z",
+    "date": "2026-10-19T14:06:11.554Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -117,7 +117,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:46.824Z",
+    "date": "2026-10-19T14:06:13.150Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -128,7 +128,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:48.515Z",
+    "date": "2026-10-19T14:06:14.737Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -139,7 +139,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:50.210Z",
+    "date": "2026-10-19T14:06:16.334Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -150,7 +150,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:51.894Z",
+    "date": "2026-10-19T14:06:17.920Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -161,7 +161,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:15:53.577Z",
+    "date": "2026-10-19T14:06:19.504Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -172,7 +172,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:55.551Z",
+    "date": "2026-10-19T14:06:21.458Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -183,7 +183,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:57.581Z",
+    "date": "2026-10-19T14:06:23.370Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -194,29 +194,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:15:59.630Z",
+    "date": "2026-10-19T14:06:25.323Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:01.821Z",
+    "date": "2026-10-19T14:06:27.280Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-768-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:03.867Z",
+    "date": "2026-10-19T14:06:29.236Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -227,7 +227,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:05.651Z",
+    "date": "2026-10-19T14:06:30.857Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -238,7 +238,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:07.357Z",
+    "date": "2026-10-19T14:06:32.487Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -249,7 +249,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:09.093Z",
+    "date": "2026-10-19T14:06:34.112Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -260,7 +260,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:10.821Z",
+    "date": "2026-10-19T14:06:35.736Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -271,7 +271,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:12.537Z",
+    "date": "2026-10-19T14:06:37.353Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -282,7 +282,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:14.719Z",
+    "date": "2026-10-19T14:06:39.510Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -293,7 +293,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:16.986Z",
+    "date": "2026-10-19T14:06:41.662Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -304,29 +304,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:19.329Z",
+    "date": "2026-10-19T14:06:43.834Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:21.617Z",
+    "date": "2026-10-19T14:06:46.019Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/light-1280-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "light",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:23.932Z",
+    "date": "2026-10-19T14:06:48.192Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -337,7 +337,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:25.624Z",
+    "date": "2026-10-19T14:06:49.721Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -348,7 +348,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:27.308Z",
+    "date": "2026-10-19T14:06:51.246Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -359,7 +359,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:28.962Z",
+    "date": "2026-10-19T14:06:52.755Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -370,7 +370,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:30.618Z",
+    "date": "2026-10-19T14:06:54.264Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -381,7 +381,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:32.343Z",
+    "date": "2026-10-19T14:06:55.772Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -392,7 +392,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:34.107Z",
+    "date": "2026-10-19T14:06:57.535Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -403,7 +403,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:36.084Z",
+    "date": "2026-10-19T14:06:59.327Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -414,29 +414,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:37.890Z",
+    "date": "2026-10-19T14:07:01.127Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:39.838Z",
+    "date": "2026-10-19T14:07:02.933Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-320-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:41.792Z",
+    "date": "2026-10-19T14:07:04.698Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -447,7 +447,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:43.495Z",
+    "date": "2026-10-19T14:07:06.303Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -458,7 +458,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:45.199Z",
+    "date": "2026-10-19T14:07:07.894Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -469,7 +469,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:46.927Z",
+    "date": "2026-10-19T14:07:09.487Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -480,7 +480,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:48.633Z",
+    "date": "2026-10-19T14:07:11.077Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -491,7 +491,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:16:50.334Z",
+    "date": "2026-10-19T14:07:12.670Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -502,7 +502,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:52.312Z",
+    "date": "2026-10-19T14:07:14.635Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -513,7 +513,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:54.470Z",
+    "date": "2026-10-19T14:07:16.644Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -524,29 +524,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:56.481Z",
+    "date": "2026-10-19T14:07:18.602Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:16:58.699Z",
+    "date": "2026-10-19T14:07:20.574Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-768-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:00.758Z",
+    "date": "2026-10-19T14:07:22.554Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -557,7 +557,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:02.573Z",
+    "date": "2026-10-19T14:07:24.178Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -568,7 +568,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:04.321Z",
+    "date": "2026-10-19T14:07:25.825Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -579,7 +579,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:06.039Z",
+    "date": "2026-10-19T14:07:27.459Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -590,7 +590,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:07.772Z",
+    "date": "2026-10-19T14:07:29.085Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -601,7 +601,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:09.501Z",
+    "date": "2026-10-19T14:07:30.712Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -612,7 +612,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:11.698Z",
+    "date": "2026-10-19T14:07:32.878Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -623,7 +623,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:14.083Z",
+    "date": "2026-10-19T14:07:35.086Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -634,29 +634,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:16.277Z",
+    "date": "2026-10-19T14:07:37.285Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:18.703Z",
+    "date": "2026-10-19T14:07:39.461Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/paper-1280-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "paper",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:20.982Z",
+    "date": "2026-10-19T14:07:41.584Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -667,7 +667,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:22.700Z",
+    "date": "2026-10-19T14:07:43.101Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -678,7 +678,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:24.341Z",
+    "date": "2026-10-19T14:07:44.627Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -689,7 +689,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:25.985Z",
+    "date": "2026-10-19T14:07:46.160Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -700,7 +700,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:27.625Z",
+    "date": "2026-10-19T14:07:47.687Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -711,7 +711,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:29.255Z",
+    "date": "2026-10-19T14:07:49.197Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -722,7 +722,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:31.090Z",
+    "date": "2026-10-19T14:07:51.000Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -733,7 +733,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:33.115Z",
+    "date": "2026-10-19T14:07:52.808Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -744,29 +744,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:34.949Z",
+    "date": "2026-10-19T14:07:54.624Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:37.016Z",
+    "date": "2026-10-19T14:07:56.426Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-320-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 320,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:38.922Z",
+    "date": "2026-10-19T14:07:58.285Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -777,7 +777,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:40.724Z",
+    "date": "2026-10-19T14:07:59.904Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -788,7 +788,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:42.442Z",
+    "date": "2026-10-19T14:08:01.519Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -799,7 +799,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:44.161Z",
+    "date": "2026-10-19T14:08:03.131Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -810,7 +810,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:45.878Z",
+    "date": "2026-10-19T14:08:04.730Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -821,7 +821,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:47.582Z",
+    "date": "2026-10-19T14:08:06.334Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -832,7 +832,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:49.588Z",
+    "date": "2026-10-19T14:08:08.314Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -843,7 +843,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:51.803Z",
+    "date": "2026-10-19T14:08:10.301Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -854,29 +854,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:53.815Z",
+    "date": "2026-10-19T14:08:12.270Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:56.042Z",
+    "date": "2026-10-19T14:08:14.248Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-768-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 768,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:17:58.127Z",
+    "date": "2026-10-19T14:08:16.249Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -887,7 +887,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:17:59.963Z",
+    "date": "2026-10-19T14:08:17.892Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -898,7 +898,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:01.716Z",
+    "date": "2026-10-19T14:08:19.540Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -909,7 +909,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:03.460Z",
+    "date": "2026-10-19T14:08:21.185Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -920,7 +920,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:05.185Z",
+    "date": "2026-10-19T14:08:22.817Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -931,7 +931,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:06.928Z",
+    "date": "2026-10-19T14:08:24.454Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -942,7 +942,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:09.127Z",
+    "date": "2026-10-19T14:08:26.647Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -953,7 +953,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:11.572Z",
+    "date": "2026-10-19T14:08:28.917Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -964,29 +964,29 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:13.877Z",
+    "date": "2026-10-19T14:08:31.147Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:16.357Z",
+    "date": "2026-10-19T14:08:33.339Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
-    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint-night-failure.png",
+    "file": "docs/blueprint/screens/matrix-closeout-20261019/dark-1280-foundations-blueprint-entry-isolation-blueprint-night.png",
     "theme": "dark",
     "viewport": {
       "width": 1280,
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:18.671Z",
+    "date": "2026-10-19T14:08:35.521Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -997,7 +997,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:20.400Z",
+    "date": "2026-10-19T14:08:37.084Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1008,7 +1008,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:22.097Z",
+    "date": "2026-10-19T14:08:38.649Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1019,7 +1019,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:23.776Z",
+    "date": "2026-10-19T14:08:40.211Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1030,7 +1030,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:25.503Z",
+    "date": "2026-10-19T14:08:41.762Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1041,7 +1041,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:27.164Z",
+    "date": "2026-10-19T14:08:43.318Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1052,7 +1052,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:29.164Z",
+    "date": "2026-10-19T14:08:45.201Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1063,7 +1063,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:31.273Z",
+    "date": "2026-10-19T14:08:47.101Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1074,7 +1074,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:33.263Z",
+    "date": "2026-10-19T14:08:49.001Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1085,7 +1085,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:35.329Z",
+    "date": "2026-10-19T14:08:50.903Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1096,7 +1096,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:37.311Z",
+    "date": "2026-10-19T14:08:52.800Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1107,7 +1107,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:39.142Z",
+    "date": "2026-10-19T14:08:54.449Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1118,7 +1118,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:40.884Z",
+    "date": "2026-10-19T14:08:56.100Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1129,7 +1129,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:42.629Z",
+    "date": "2026-10-19T14:08:57.755Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1140,7 +1140,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:44.366Z",
+    "date": "2026-10-19T14:08:59.388Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1151,7 +1151,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:46.137Z",
+    "date": "2026-10-19T14:09:01.026Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1162,7 +1162,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:48.414Z",
+    "date": "2026-10-19T14:09:03.227Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1173,7 +1173,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:50.802Z",
+    "date": "2026-10-19T14:09:05.460Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1184,7 +1184,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:53.085Z",
+    "date": "2026-10-19T14:09:07.635Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1195,7 +1195,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:55.478Z",
+    "date": "2026-10-19T14:09:09.826Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1206,7 +1206,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:18:57.753Z",
+    "date": "2026-10-19T14:09:11.977Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1217,7 +1217,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:18:59.647Z",
+    "date": "2026-10-19T14:09:13.665Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1228,7 +1228,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:01.431Z",
+    "date": "2026-10-19T14:09:15.357Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1239,7 +1239,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:03.254Z",
+    "date": "2026-10-19T14:09:17.045Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1250,7 +1250,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:05.039Z",
+    "date": "2026-10-19T14:09:18.724Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1261,7 +1261,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:06.897Z",
+    "date": "2026-10-19T14:09:20.406Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1272,7 +1272,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:09.395Z",
+    "date": "2026-10-19T14:09:22.815Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1283,7 +1283,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:12.028Z",
+    "date": "2026-10-19T14:09:25.239Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1294,7 +1294,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:14.537Z",
+    "date": "2026-10-19T14:09:27.655Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1305,7 +1305,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:17.152Z",
+    "date": "2026-10-19T14:09:30.063Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1316,7 +1316,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:19.673Z",
+    "date": "2026-10-19T14:09:32.489Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1327,7 +1327,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:21.445Z",
+    "date": "2026-10-19T14:09:34.062Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1338,7 +1338,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:23.146Z",
+    "date": "2026-10-19T14:09:35.636Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1349,7 +1349,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:24.824Z",
+    "date": "2026-10-19T14:09:37.217Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1360,7 +1360,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:26.524Z",
+    "date": "2026-10-19T14:09:38.777Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1371,7 +1371,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:28.239Z",
+    "date": "2026-10-19T14:09:40.340Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1382,7 +1382,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:30.222Z",
+    "date": "2026-10-19T14:09:42.249Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1393,7 +1393,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:32.339Z",
+    "date": "2026-10-19T14:09:44.176Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1404,7 +1404,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:34.325Z",
+    "date": "2026-10-19T14:09:46.082Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1415,7 +1415,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:36.438Z",
+    "date": "2026-10-19T14:09:48.002Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1426,7 +1426,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:38.446Z",
+    "date": "2026-10-19T14:09:49.909Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1437,7 +1437,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:40.307Z",
+    "date": "2026-10-19T14:09:51.571Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1448,7 +1448,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:42.130Z",
+    "date": "2026-10-19T14:09:53.213Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1459,7 +1459,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:43.948Z",
+    "date": "2026-10-19T14:09:54.879Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1470,7 +1470,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:45.756Z",
+    "date": "2026-10-19T14:09:56.546Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1481,7 +1481,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:19:47.505Z",
+    "date": "2026-10-19T14:09:58.203Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1492,7 +1492,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:49.747Z",
+    "date": "2026-10-19T14:10:00.389Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1503,7 +1503,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:52.182Z",
+    "date": "2026-10-19T14:10:02.600Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1514,7 +1514,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:54.424Z",
+    "date": "2026-10-19T14:10:04.818Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1525,7 +1525,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:56.812Z",
+    "date": "2026-10-19T14:10:07.031Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1536,7 +1536,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:19:59.121Z",
+    "date": "2026-10-19T14:10:09.251Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1547,7 +1547,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:20:01.031Z",
+    "date": "2026-10-19T14:10:10.955Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1558,7 +1558,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:20:02.883Z",
+    "date": "2026-10-19T14:10:12.668Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1569,7 +1569,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:20:04.725Z",
+    "date": "2026-10-19T14:10:14.377Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1580,7 +1580,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:20:06.559Z",
+    "date": "2026-10-19T14:10:16.074Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1591,7 +1591,7 @@
       "height": 900
     },
     "route": "/next/foundations",
-    "date": "2026-10-19T13:20:08.395Z",
+    "date": "2026-10-19T14:10:17.776Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1602,7 +1602,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:20:10.915Z",
+    "date": "2026-10-19T14:10:20.227Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1613,7 +1613,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:20:13.532Z",
+    "date": "2026-10-19T14:10:22.680Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1624,7 +1624,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:20:16.047Z",
+    "date": "2026-10-19T14:10:25.164Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1635,7 +1635,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:20:18.658Z",
+    "date": "2026-10-19T14:10:27.605Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   },
   {
@@ -1646,7 +1646,7 @@
       "height": 900
     },
     "route": "/next/foundations/blueprint",
-    "date": "2026-10-19T13:20:21.173Z",
+    "date": "2026-10-19T14:10:30.054Z",
     "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68"
   }
 ]

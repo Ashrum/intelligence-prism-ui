@@ -4,6 +4,32 @@
 
 ## 当前
 
+- 轮次：BPM1f · 补齐矩阵证据并记录旧周期收口 · 2026-10-20；分支 `docs/blueprint-matrix-closeout-2`，HEAD `031ea44`；Supervisor 已发起合并 main `0bcfa51`（P88 #210）。本轮仅解决 STATUS 文本冲突和补本目录证据，保留已有合并文件；未 git add，索引合并状态交 Supervisor 处理。
+- 决定：PO 2026-10-20：“补齐矩阵证据并把旧周期记为收口（例外写明）”。Supervisor 据此判定旧 Blueprint 周期 **3/3 累计浏览器矩阵收口**；Builder 仅记录此决定，不作自我批准。
+- 最终自动结果（均 Supervisor 2026-10-19 实测）：matrix **645/645 自动项**；isolation **150/150（P88 后）**；interactions **1500/1500**；per-round **975 pass、20 observed、0 fail，116 项待目检**。matrix 另有 645 条原始 pending-visual；不改机器目检状态为自动通过。[完整来源、逐类结论与例外](evidence/matrix-closeout-20261019/checks.md)。
+- isolation 来源：Supervisor 指定的 `isolation-after-P88.json` 原字节，P88 工作树、产品代码等同 main `0bcfa51`，日期 2026-10-19；JSON 的 baseline 仍是 manifest 固定值 `c2dd2239`，真实运行基线及散列另记[来源记录](evidence/matrix-closeout-20261019/bpm1f-provenance.json)。修复前 18 个严格失败组合原字节[归档](evidence/matrix-closeout-20261019/bpm1f-isolation-before-P88.json.gz)，其余三组未冒称 P88 后重跑。
+- 缺陷：P87 注释组件“自身为蓝图预览根 + 外层核心主题”时强调色失效，已由 P88（#210）修复。已排除误报：动画进行中采样、焦点 guard 异步回焦、coarse 上下文、核心主题 reduced-motion 契约、子菜单两次 Esc、浮层入场动画、P87 标尺在 760px 以下隐藏。依据 Supervisor《BPM1-handoff-20261019.md》及各轮报告；仓库诊断见上述汇总与 BPM1d/BPM1e 分析，不把真实强调色缺陷归入动画误报。
+- Supervisor 目检（2026-10-19，截图对照图）：P78 长中文/公式/代码局部滚动/链接焦点/附件通过；P79 超长英文文件名换行与 A/B 方块通过；P87 锁定框/标签/入口行高亮对应、夜图标签反白通过；P85 墨底标题/关系列表通过；第二批 InputGroup 焦点/无效/只读/禁用通过；编辑式排版、Agent 组件总览、结构编排器、蓝图示例页五主题 × 320/1280 布局抽查通过。其余目检类别逐类映射到自动探针与交互组 1500/1500，见[目检记录](evidence/matrix-closeout-20261019/manual-review.md)，不声称全部 116 项逐组合目检通过。
+- 例外：原生 200% 浏览器缩放未验，320 CSS zoom2 溢出属超出原 1280 验收范围的观察，转后续设备/可访问专项；P76 历史 ShellNavFixture 无 openMobile 接线、移动抽屉未验，Workspace 真实移动导航在矩阵外；P73 蓝图/夜图“长中文与公式＋附件”阅读态截图准备失败，仅浅色预览实测通过，蓝图/夜图以布局矩阵截图与自动探针为证据，后续专项补拍；P74/第二批浮层专项打开态截图未生成，由交互组与 Supervisor 手工复核覆盖打开/主题/越界/回焦，后续补拍。
+- 继续保留的例外：夜图分隔线 1.58 / 1.45:1、浅色系列白色图案不足 3:1，归后续夜图可访问性/配色专项；真机、读屏器、IME 引擎、实体打印未验，归后续设备/可访问/打印专项；截图按 PO 决定只留本机、不入库，由 Supervisor 保管。上述范围外项、替代证据与已知限制已按此次 PO 决定明示，**不阻塞旧周期收口**，不等同相关专项通过。
+- 周期计数：旧周期 3/3 收口；新周期从旧周期之后下一个已授权产品小轮计 1/3。该小轮 P87 已在旧周期收口前实施，本次追记 **P87 为新周期 1/3**；P88 是 P87 同轮缺陷修复，按 §10.2 不另计数。BPM1d/e/f 为累计验收返工/文档补证，也不计新轮。下一个已授权产品小轮续计 2/3，至 3/3 触发完整回归与独立综合审查，高风险提前触发；不得再把 P87 重复计为未来 1/3。
+- 最近完整工程回归：P88 **2277/2277**（历史工程结果；类型检查退出 2，1 条既有 TS2306、无新增诊断）。本轮仅离线文档/证据校验，实际命令与退出码见[validation.json](evidence/matrix-closeout-20261019/validation.json)，不沿用历史结果宣称 BPM1f 构建或全量测试通过。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行；Builder 本轮未跑浏览器。真实服务、Workspace 接入及上述设备专项未验；不提交/推送/PR，不启动/重启服务，不改依赖或发布站点。P88 与矩阵线历史原文完整保留在下方；两侧共同的 P87 记录正文及更早历史相同，沿用 BPM1d 侧标题，P88 侧原标题及全本另存[合并来源](evidence/matrix-closeout-20261019/bpm1f-before-status-main.txt)。
+
+## 历史
+
+### P88 · 2026-10-19（BPM1f 前 main 当前，原样保留）
+
+- 轮次：P88 · P87 标注组件自身主题根强调色修复 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `fix/blueprint-p87-self-root`；开工工作树干净。本轮属于缺陷修复小轮。
+- 范围与取舍：复用 P87 既有样式及 CSS AST 测试，只为 `.bp-target-lock`、`.bp-diagram-callout` 补充自身带 `blueprint` / `blueprint-night` 的 `color:var(--link)` 规则，沿用非蓝图预览根及全部后代排除条件。无需新增组件或外部来源；`.bp-entry-row[data-emphasis]` 自身为主题根时，其 action 已是后代，现有规则有效，新增回归断言而不改该规则。核心三主题中普通组件、coss、令牌、组件 API、依赖和矩阵证据 / 截图不改。
+- 工程：数学字体检查退出 0；排版检查 317 TSX、退出 0；生产构建退出 0；构建后全量测试 **2277/2277，fail / skipped 均 0**、退出 0；`tsc --noEmit` 退出 2，仅任务允许的既有 1 条 TS2306（learning-analysis/prototype-source/main.tsx:57，app.js 非模块）。修改前在干净基线执行 `tsc --noEmit --incremental false` 已复现同一诊断，候选日志逐字相同，无新增类型错误；未人工读取或修改该工作线源码。
+- 专项与变异：entry-annotations **15/15**，新增 3 项覆盖两种蓝图自身根 / 后代命中、嵌套核心预览根 / 深层后代 / 再嵌套蓝图根排除、核心外层普通组件排除和入口 action 回归。删除新增变体后，运行同一自身根正向断言确实失败（退出 1）；恢复 CSS 原字节。AST 只证明选择器匹配边界，不代替浏览器计算样式。guide 随本状态同步，最终同步校验及文档相关复验另记于本轮报告。
+- 周期：P88 Builder 实施与工程自测完成，尚未记为已验收；继承旧周期 3/3 累计浏览器矩阵待收口，不新增已完成轮、不重置周期、不宣布矩阵收口。最近完整工程回归为本轮（2277/2277，类型检查保留上述基线问题）；下一触发点仍为 Supervisor 的 isolation 复验、累计浏览器收口与独立综合审查。
+- 交接：`/next/foundations` isolation 组，外层 light / paper / dark × 内层 blueprint / blueprint-night × 320 / 768 / 1280（高 900），共 18 个原失败组合全部复验。reduced-motion 下等待稳定后，自身为预览根的两个标注组件 `color` 应与同内层主题对照一致并解析为 `--link`；同时复核核心内层隔离、普通组件、bp-sheet 后代和入口 action。`/next/foundations/blueprint#entry-annotations` 补看桌面 / 窄屏节点与标注强调色。本轮未生成浏览器截图。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。未验真实服务、Workspace、真机、读屏器或打印；未提交、推送、创建 PR、启动或重启服务、发布或同步站点。Builder 自测不等同 Supervisor Review 或 PO 批准。
+
+### BPM1e · 2026-10-19（BPM1f 前矩阵线当前，原样保留）
+
 - 轮次：BPM1e · 剩余四类探针修正 · 2026-10-19；基线 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，分支 `docs/blueprint-matrix-closeout-2`；开工已有 BPM1d 修改与 Supervisor 重跑证据。
 - 范围：仅本轮 evidence 和本状态；P87 隔离先稳定动画并保留属性/两侧值/来源，P74 真实候选打开与选中，320 标尺隐藏/无反白残留，320 CSS zoom2 依原验收1280范围改为未来重跑的观察项。产品源码、CSS、测试与依赖不变。[逐类结论及交接](evidence/matrix-closeout-20261019/bpm1e-analysis.md)。
 - 当前浏览器实测为 BPM1d Supervisor 重跑：matrix 645通过 /645待目检；isolation 132通过 /18错误；interactions 1500/1500；per-round 955通过 /15观察 /116待目检 /20错误 /5失败。四组结果与截图索引原字节保留并[归档](evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz)，未改写为 BPM1e 通过。
@@ -13,7 +39,6 @@
 - 周期：同轮自动化返工；旧周期3/3累计浏览器矩阵与独立综合审查仍待收口，P87未验收，不新增完成轮、不重置周期、不宣布收口。Builder 自测不等同 Supervisor Review 或 PO 批准。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace、原生IME/缩放、真机、读屏器与实体打印未验。无提交/推送/PR、联网/依赖安装、服务启动/重启、部署/站点同步。
 
-## 历史
 
 ### BPM1d · 2026-10-19（BPM1e 前当前，原样保留）
 

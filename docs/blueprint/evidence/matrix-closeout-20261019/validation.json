@@ -1,116 +1,116 @@
 {
-  "at": "2026-10-19T13:14:25.222Z",
+  "at": "2026-10-20T02:37:30.704Z",
   "baseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68",
   "browserExecuted": false,
   "commands": [
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
-      "startedAt": "2026-10-19T13:13:37.000Z",
+      "startedAt": "2026-10-20T02:36:40.320Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
-      "startedAt": "2026-10-19T13:13:37.020Z",
+      "startedAt": "2026-10-20T02:36:40.338Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
-      "startedAt": "2026-10-19T13:13:37.037Z",
+      "startedAt": "2026-10-20T02:36:40.354Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/rename-screenshots.mjs",
-      "startedAt": "2026-10-19T13:13:37.054Z",
+      "startedAt": "2026-10-20T02:36:40.371Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
-      "startedAt": "2026-10-19T13:13:37.072Z",
+      "startedAt": "2026-10-20T02:36:40.388Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
-      "startedAt": "2026-10-19T13:13:37.090Z",
+      "startedAt": "2026-10-20T02:36:40.404Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
-      "startedAt": "2026-10-19T13:13:37.108Z",
+      "startedAt": "2026-10-20T02:36:40.420Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs",
-      "startedAt": "2026-10-19T13:13:37.124Z",
+      "startedAt": "2026-10-20T02:36:40.437Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
-      "startedAt": "2026-10-19T13:13:37.141Z",
+      "startedAt": "2026-10-20T02:36:40.455Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
-      "startedAt": "2026-10-19T13:13:37.158Z",
+      "startedAt": "2026-10-20T02:36:40.471Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
-      "startedAt": "2026-10-19T13:13:37.174Z",
+      "startedAt": "2026-10-20T02:36:40.488Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
-      "startedAt": "2026-10-19T13:13:37.271Z",
+      "startedAt": "2026-10-20T02:36:40.587Z",
       "exitCode": 0,
       "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\nok focus guard transition waits for redirect and two unchanged frames\nok stable real outside focus is rejected, not hidden by guard tolerance\nok permanent focus guard times out instead of passing containment\nok reduced motion accepts contractual .01ms one iteration, rejects loops and long duration\n{\"offlineChecks\":12,\"browserExecuted\":false}\n",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
-      "startedAt": "2026-10-19T13:13:37.296Z",
+      "startedAt": "2026-10-20T02:36:40.613Z",
       "exitCode": 0,
       "stdout": "ok isolation waits finite animations, freezes loops at same time, removes all temporary roots\nok post-stabilization pseudo-element mutation fails and preserves named values and source\nok 320 CSS zoom is observed with raw overflow retained and zoom restored\nok 768 and 1280 overflow remain failures; 320 print-shadow regression cannot become observed\nok 320 asserts four hidden rulers and clears active marks instead of waiting for tracking\nok 320 visible ruler or stale mark remains a failure\n{\"offlineChecks\":6,\"browserExecuted\":false}\n",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
-      "startedAt": "2026-10-19T13:13:37.323Z",
+      "startedAt": "2026-10-20T02:36:40.642Z",
       "exitCode": 0,
       "stdout": "{\"scope\":\"review-fixture.tsx and imported dependencies\",\"diagnostics\":0,\"noEmit\":true}\n",
       "stderr": ""
     },
     {
       "command": "node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --plan",
-      "startedAt": "2026-10-19T13:13:38.911Z",
+      "startedAt": "2026-10-20T02:36:42.308Z",
       "exitCode": 0,
       "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":150,\"per-round\":1111}}\n",
       "stderr": ""
     },
     {
       "command": "git diff --check",
-      "startedAt": "2026-10-19T13:13:39.035Z",
+      "startedAt": "2026-10-20T02:36:42.441Z",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
@@ -182,9 +182,9 @@
             "observed": 0
           },
           "isolation": {
-            "pass": 132,
+            "pass": 150,
             "fail": 0,
-            "error": 18,
+            "error": 0,
             "unstable": 0,
             "pending-supervisor-browser": 0,
             "pending-visual": 0,
@@ -192,14 +192,14 @@
             "observed": 0
           },
           "per-round": {
-            "pass": 955,
-            "fail": 5,
-            "error": 20,
+            "pass": 975,
+            "fail": 0,
+            "error": 0,
             "unstable": 0,
             "pending-supervisor-browser": 0,
             "pending-visual": 116,
             "known-limitation": 0,
-            "observed": 15
+            "observed": 20
           }
         }
       }
@@ -262,7 +262,7 @@
       "pass": true,
       "detail": {
         "renamed": 645,
-        "indexed": 2869,
+        "indexed": 2871,
         "historicalLayoutHashesChecked": false,
         "note": "new layout rerun replaces local PNGs; original hashes retained in migration record"
       }
@@ -313,6 +313,16 @@
       "detail": {
         "tracked": [
           "docs/blueprint/STATUS.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1c-supervisor-run.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-analysis.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-scripts.diff",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-analysis.md",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-before-status.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-scripts.diff",
           "docs/blueprint/evidence/matrix-closeout-20261019/checklist-classification.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/checks.md",
           "docs/blueprint/evidence/matrix-closeout-20261019/classification.md",
@@ -321,6 +331,7 @@
           "docs/blueprint/evidence/matrix-closeout-20261019/isolation.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
           "docs/blueprint/evidence/matrix-closeout-20261019/manifest.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/manual-review-plan.md",
           "docs/blueprint/evidence/matrix-closeout-20261019/manual-review.md",
           "docs/blueprint/evidence/matrix-closeout-20261019/matrix.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
@@ -338,20 +349,18 @@
           "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-matrix.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-per-round.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+          "docs/blueprint/evidence/matrix-closeout-20261019/validation-error.json",
           "docs/blueprint/evidence/matrix-closeout-20261019/validation.json"
         ],
         "untracked": [
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1-original-blueprint-theme.test.mjs.txt",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1c-supervisor-run.json.gz",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-analysis.md",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-before-status.txt",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-scripts.diff",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1d-supervisor-run.json.gz",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-analysis.md",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-before-status.txt",
-          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-scripts.diff",
-          "docs/blueprint/evidence/matrix-closeout-20261019/manual-review-plan.md"
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-main.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-ours.txt",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-first-validation-error.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-isolation-before-P88.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-provenance.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-screenshots-isolation-before-P88.json.gz",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-second-validation-error.json",
+          "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-third-validation-error.json"
         ]
       }
     },
@@ -363,7 +372,7 @@
     {
       "name": "new Markdown links resolve",
       "pass": true,
-      "detail": 395
+      "detail": 418
     }
   ],
   "summary": {
@@ -482,14 +491,54 @@
       "sha256": "e8048882f45df9cabd14fe7f0c55ff34a8de17a6a993b58767cb9a21dd953853"
     },
     {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-main.txt",
+      "bytes": 124473,
+      "sha256": "8afada5c0ec7c7876bdbb04cebe7ac9768f11635e2addcc397c2bcde2e769903"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-before-status-ours.txt",
+      "bytes": 126558,
+      "sha256": "20d14be00b4146a62aba72df16e9b5596e16e0e6817f5e536cea9ba9f83b69a5"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-first-validation-error.json",
+      "bytes": 9431,
+      "sha256": "a570a58ec9cdd7e27f9eb384f5d5737e9dbcf3029a935e8c21d2532b28a3878a"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-isolation-before-P88.json.gz",
+      "bytes": 434162,
+      "sha256": "384a8d5b7df4ac78122c816fb00022f0288837e600077146b23fe3c31090c048"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-provenance.json",
+      "bytes": 1437,
+      "sha256": "d832aa186cb6a989a84b5575023a95682f8204656587db6b5eb7aa33386cf38f"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-screenshots-isolation-before-P88.json.gz",
+      "bytes": 1991,
+      "sha256": "69e3fb35e1172c1b05936df9195eca51d0be67204d909b376784aa8ebf8c633d"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-second-validation-error.json",
+      "bytes": 14869,
+      "sha256": "371441676278aa6a0c56aed0ea6a5af42ebccdb9f7bfb74fe4545a90e71b88c6"
+    },
+    {
+      "path": "docs/blueprint/evidence/matrix-closeout-20261019/bpm1f-third-validation-error.json",
+      "bytes": 6011,
+      "sha256": "658b278cbd2244ddc6e5f8b4dd5ff0e62690ad1b447ca13b2ba8be8999b6c5ee"
+    },
+    {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/checklist-classification.json",
       "bytes": 301081,
       "sha256": "4466b82a2680ae9b899b862ad6e1e38b4a71d2ca52cbafb79671de970dceb4d7"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/checks.md",
-      "bytes": 23587,
-      "sha256": "df37a77227171d0e79764af9ecb04bc43b7bb09bd51a57fdf2cdb75e34d4d1f9"
+      "bytes": 36423,
+      "sha256": "13a2cde03c839347fc1dbbc6e486d220e1d1346f174b0c64913146cd90e4f060"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/classification.log",
@@ -523,8 +572,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/isolation.json",
-      "bytes": 17764792,
-      "sha256": "7ecd0db5124103bc47f41738751cd5c9c6603475a256f3434ffdd876489012f6"
+      "bytes": 18146526,
+      "sha256": "a29518ebc4eda244fa39fef9cc642ed1928a785d0f9131acba8d7c0db406e403"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
@@ -543,8 +592,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/manual-review.md",
-      "bytes": 114227,
-      "sha256": "4d1bf6dd23c6a01927698863e071bf3b25e7081c44f3857c3ef37cac27a6453d"
+      "bytes": 131221,
+      "sha256": "6c88d72760913bed1fad1e44ec41f02d35d8249da05d49e1b6b9295a5da5ff9e"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/matrix.json",
@@ -568,8 +617,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/per-round.json",
-      "bytes": 7023339,
-      "sha256": "c8b037d30015429fd303f93fd13d268ea928aca29d6cee5a54b4ec14db187996"
+      "bytes": 7230245,
+      "sha256": "f7d768a42781b111f9244c04e24cdc0fe947acc4bacf55f6a1c946d788803b68"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
@@ -613,8 +662,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/scope.diff",
-      "bytes": 7144,
-      "sha256": "3de9ac69312c983b636a6b0e94c8513617e5527ca258835d7f314119c75ad02f"
+      "bytes": 8265,
+      "sha256": "c0739da9ae9eb1ac76a5e3574d6242e4ddf5d49fb1cbd1c470f17a3fb5d4b789"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/screenshot-index.json",
@@ -633,8 +682,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-isolation.json",
-      "bytes": 53467,
-      "sha256": "73f5bcd6f32c608d8c1810f3b93c20d6e6ad9c71fa66412145163b7c1352e9ed"
+      "bytes": 53323,
+      "sha256": "8e4f18b4f23940fb822b499abebb88ee5ddc581580b424eaaaa7eb995c4a50e8"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-matrix.json",
@@ -643,8 +692,8 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/screenshots-per-round.json",
-      "bytes": 388758,
-      "sha256": "74af956762eed372829c212908b532dd70d8084ddc642e4aacf2d464d11862a8"
+      "bytes": 389466,
+      "sha256": "62a8ad0e5c478d547343db01abb844ca0b799b82e9f1490815262edc68d5ad89"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
@@ -658,13 +707,13 @@
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
-      "bytes": 19334,
-      "sha256": "2ec64b4376642b8f0a772cf5fa58e2249eac1148e1acb6e2a6b156f76d59cf49"
+      "bytes": 19658,
+      "sha256": "3bb1bf5e357611b5503f0663f6af05aaa2cf4a258e8a9199b46e4cd7c8eb80ef"
     },
     {
       "path": "docs/blueprint/evidence/matrix-closeout-20261019/validation-error.json",
-      "bytes": 6072,
-      "sha256": "73461d29bdbb00b5314bb7694f841278f215577b914add642445e49b2c491fe4"
+      "bytes": 6011,
+      "sha256": "658b278cbd2244ddc6e5f8b4dd5ff0e62690ad1b447ca13b2ba8be8999b6c5ee"
     }
   ],
   "excludedSelf": "validation.json omits its own hash"

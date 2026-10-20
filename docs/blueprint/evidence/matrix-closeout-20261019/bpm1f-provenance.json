@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-20",
+  "branch": "docs/blueprint-matrix-closeout-2",
+  "mergeOurs": "031ea447470b5e5d0c6c91f16442da372f14ed40",
+  "mergeMain": "0bcfa51170efbf1cd5c9498ac271b1f24eb0d75a",
+  "isolation": {
+    "source": "Supervisor isolation-after-P88.json（BPM1f 委派指定交付）",
+    "measuredDate": "2026-10-19",
+    "productBaseline": "P88 工作树，产品代码等同 main 0bcfa51",
+    "recordedBaseline": "c2dd2239b97963e12f7cf7cb3924328958e68a68",
+    "sha256": "a29518ebc4eda244fa39fef9cc642ed1928a785d0f9131acba8d7c0db406e403",
+    "beforeArchive": "bpm1f-isolation-before-P88.json.gz",
+    "localScreenshotRoot": "/private/tmp/claude-503/bpm-wt",
+    "screenshotIndexSha256": "8e4f18b4f23940fb822b499abebb88ee5ddc581580b424eaaaa7eb995c4a50e8",
+    "screenshotSource": "Supervisor P88 临时运行目录；其中 isolation.json 与指定交付原字节一致；截图仅在本机，不复制入库。"
+  },
+  "inheritedMergePaths": {
+    "app/(next)/next/blueprint.css": "761d5ccab356a6137f1b60c1e56739d904a8f66779a87cae9541e441bffc04b0",
+    "lib/prism-next/blueprint-guide.json": "38ff83da436d2ebf7dc564c07ab254cda351c9f2fa224b0c242d5698bb7d1c24",
+    "public/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md": "8afada5c0ec7c7876bdbb04cebe7ac9768f11635e2addcc397c2bcde2e769903",
+    "tests/blueprint-entry-annotations.test.mjs": "ae68d3d522052c97a5e656d9f3e8b9707e1de8fc51b410fd522871af20563ddf"
+  }
+}

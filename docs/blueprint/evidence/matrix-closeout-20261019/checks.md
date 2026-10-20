@@ -1,3 +1,91 @@
+# BPM1f · 旧周期累计矩阵收口（2026-10-20）
+
+PO 2026-10-20 决定：“补齐矩阵证据并把旧周期记为收口（例外写明）”。Supervisor 据此判定旧 Blueprint 周期 **3/3 累计浏览器矩阵收口**。本轮仅补证据与记录决定；Builder 不作独立 Review 或自我批准。以下为当前汇总，后文 BPM1d/BPM1c/BPM1b 记录全部是历史，不再作为当前待办。
+
+## 最终自动结果与来源
+
+| 组 | Supervisor 实测结果 | 日期与证据 |
+| --- | --- | --- |
+| matrix | 645/645 自动项；另有 645 条 pending-visual 原始记录 | 2026-10-19；[matrix.json](matrix.json)，11:34 UTC |
+| isolation | 150/150，P88 后；fail/error/unstable 均 0 | 2026-10-19；[isolation.json](isolation.json)，14:10 UTC |
+| interactions | 1500/1500；fail/error/unstable 均 0 | 2026-10-19；[interactions.json](interactions.json)，12:23 UTC |
+| per-round | 975 pass，20 observed，0 fail；116 项待目检（pending-visual 原始状态） | 2026-10-19；[per-round.json](per-round.json)，13:59 UTC；error/unstable 均 0 |
+
+isolation 原字节来自 Supervisor 的 `isolation-after-P88.json`，由 Supervisor 在 **P88 工作树（产品代码等同 main `0bcfa51`，含 [P88 #210](https://github.com/Ashrum/intelligence-prism-ui/pull/210)）** 上用 BPM1e 脚本实测。结果 JSON 的 `baseline` 仍是脚本 manifest 固定值 `c2dd2239b97963e12f7cf7cb3924328958e68a68`，不是 P88 运行时提交号；本轮保留原字节，通过[来源记录](bpm1f-provenance.json)补充真实产品基线、日期与 SHA-256，不伪造机器元数据。其余三组保留既有 Supervisor 结果及原基线，不称为 P88 后重跑。
+
+修复前严格比较为 132 pass / **18 fail**，原字节保存在[修复前归档](bpm1f-isolation-before-P88.json.gz)。更早 BPM1d 的 18 error 仍在[bpm1d 归档](bpm1d-supervisor-run.json.gz)，与严格失败阶段区分。matrix 的 645 条和 per-round 的 116 条目检原始状态不改为自动 pass；收口依据是上述自动结果、下列 Supervisor 抽样目检、逐类替代证据及 PO 接受的例外，不代表逐张截图或全部视觉细项已验。
+
+## 缺陷与已排除误报
+
+实际缺陷：P87 注释组件在“自身为蓝图预览根 + 外层核心主题”时强调色失效；P88 #210 已修复。外层 light/paper/dark × 内层 blueprint/blueprint-night × 320/768/1280 的 18 个严格失败组合，P88 后全部通过。不能将此真实缺陷归入动画误报。
+
+已排除误报：动画进行中采样、焦点 guard 异步回焦、coarse 上下文不一致、核心主题 reduced-motion 契约误用、子菜单需要两次 Esc、浮层入场动画，以及 P87 标尺在 760px 以下按契约隐藏。依据为 Supervisor《BPM1-handoff-20261019.md》（2026-10-19 交接说明）和 BPM1b/BPM1d/BPM1e 各轮报告；仓库内诊断见[本文件历史记录](checks.md#历史交接记录)、[BPM1d 分析](bpm1d-analysis.md)、[BPM1e 分析](bpm1e-analysis.md)。动画稳定、颜色比较、焦点与断点断言保持，不因收口放宽。
+
+## Supervisor 目检（2026-10-19，截图对照图）
+
+| 类别 | 已确认结论与范围 |
+| --- | --- |
+| P78 对话气泡 | 通过：长中文、公式、代码局部滚动、链接焦点、附件 |
+| P79 卡片 | 通过：超长英文文件名换行、A/B 方块 |
+| P87 | 通过：锁定框、标签、入口行高亮对应；夜图标签反白 |
+| P85 对象卡片 | 通过：墨底标题、关系列表 |
+| 第二批 InputGroup | 焦点、无效、只读、禁用通过 |
+| 编辑式排版、Agent 组件总览、结构编排器、蓝图示例页 | 五主题 × 320/1280 布局抽查通过；不是所有细项逐组合目检 |
+
+### 其余目检类与对应证据
+
+以下逐类按 PO 决定作为收口证据；“自动覆盖”不等于人工视觉通过。探针名对应 [round-probes.mjs](round-probes.mjs)、[分类账本](checklist-classification.json) 与 [per-round.json](per-round.json) 的 checklistId；交互证据为 [interactions.json](interactions.json) 的 1500/1500。目检勾选与组合边界见 [manual-review.md](manual-review.md)。
+
+| 目检类别 | 对应自动探针 / 交互证据及结论边界 |
+| --- | --- |
+| P73 prompt-reading | `prompt-extra`、`prompt-portals`、`question-card`、`execution`；交互组 common-controls。浅色预览长中文/公式＋附件手工通过；蓝图/夜图该阅读态未验，使用布局矩阵截图与自动探针，见例外 |
+| P74 portal-visual | `scoped-controls`、`scoped-toasts`、`scoped-chart`、`overlay-regression`；交互组 local-*。打开、主题继承、边界、回焦及 Supervisor 手工复核覆盖；专项打开态截图未生成 |
+| P75 question-reading | `question-details`、`question-coarse`、`question-spacing`、`question-isolation`、`question-fixture`，三面板/图片/粗指针几何与样式；交互组配合总体状态回归，未补人工逐组合阅读 |
+| P76 shell-reading / shell / shell-mobile-manual | `site-sidebar`、`shell-nav-state`、`shell-isolation` 与 `shell` 桌面项；历史夹具移动 openMobile 缺口仍未验（`P76-shell` 另有 10 条转目检记录），不以本站 Sidebar 通过代替 |
+| P77 folio-reading | `folio`、`shell-nav-state`；交互组 folio 行为与回焦；布局矩阵及蓝图页抽查，字体/长标题未逐组合人工核销 |
+| P78 message-reading | Supervisor 上述目检 + `message`、`nested-styles` 和交互组链接/复制；确认范围以上表为准 |
+| P79 cards-reading / card-tones | 上述文件名/A-B 目检 + `card-return`、`card-options`、`nested-styles`；五 tone 状态/装饰语义有记录，不扩称每种填充对比均人工通过 |
+| P82 facts-lines / facts-flow | `facts-extra`、`facts-390` 及附加 `facts` 采样；奇数项/独立宽度与格线属性有证据，结合蓝图页布局抽查，未把几何断言当作全量视觉验收 |
+| P83 glyph-reading | `glyph-api`、`glyph-colors`、`nested-styles`；交互组 reduce 首次及动态切换，glyph/九点尺寸颜色记录；读屏器仍未验 |
+| P84 workspace-reading | `material-states`、`material-policy`、`confirmation-states`、`basket`、`old-agent-calls`、`title-actions`；交互组确认/版本入口，结合 Agent 总览布局抽查，不涉及真实 Workspace 服务 |
+| P85/P85b/P85c objects-focus / objects-reading | 上述墨底标题/关系列表目检 + `object-geometry`、`object-expand`、`arranger-interactions`、`relation-interactions`、`object-spacing-matrix`、`object-capabilities`、`nested-styles`；结合编排器抽查，不扩大到全部密度/焦点像素目检 |
+| 首批 common-visual | `common-extras`、`print-zoom`；交互组首批 Select/Dialog/字段、Tabs 与焦点，未补全部视觉细项；原生缩放另列未验 |
+| 第二批 batch-two-visual | 上述 InputGroup 目检 + `group-focus`、`button-states`；交互组 Combobox/Menu/Popover/Tooltip/AlertDialog/Sheet/Toast 的打开、主题与回焦；打开态截图例外见下 |
+| 编辑式排版与字体 editorial-reading | 上述五主题布局抽查 + `editorial`、附加 `font` 加载/阻断采样；未扩称每个缺字回退细项均人工目检 |
+| 夜图 heatmap-reading / BPW1 | `heatmap`、`heatmap-zero`、`night-buttons`、`formal-tabs`、`seg-tabs`、`ink-pairs`、`warning-composite`、附加 `contrast`；零值/缺测/文字实值与交互记录，保留夜图对比度限制 |
+| P87 reading | 上述锁定框/标签/入口行目检 + `entry-pointer`、`entry-selection`、`entry-layout`、`entry-motion` 与 P88 后 isolation 150/150；320 标尺隐藏按契约，非桌面标尺视觉通过 |
+| 首批 native-zoom-review | `print-zoom` 仅 CSS 投影与打印媒体探针；原生 200% 未验，不能用自动通过替代 |
+
+## 收口例外、理由与后续归属
+
+| 例外 / 未验 | 不阻塞此次收口的理由 | 后续归属 |
+| --- | --- | --- |
+| 原生 200% 浏览器缩放 | CSS zoom2 在 320 下溢出是超出原 1280 验收范围的观察；原生缩放未在真实浏览器复核，PO 接受作为例外 | 后续设备 / 可访问专项 |
+| P76 历史 ShellNavFixture 移动抽屉 | 夹具没有接入 openMobile；未验证。Workspace 真实移动导航不在本矩阵范围 | 后续夹具或 Workspace 移动导航接入专项，另行授权 |
+| P73 阅读态 | 蓝图/夜图“长中文与公式＋附件”截图准备失败；Supervisor 只在浅色预览中实测通过。蓝图/夜图以布局矩阵截图及自动探针作为本轮证据，不能视为该阅读态通过 | 后续 P73 阅读态专项补拍、目检 |
+| P74 与第二批浮层打开态截图 | 本次专项截图未生成；打开、主题继承、越界、焦点归还由交互组 1500/1500 与 Supervisor 手工复核覆盖。历史脚本索引中的文件名不证明此次专项截图已生成 | 后续视觉证据补拍；不重复计作产品缺陷 |
+| 夜图已知限制 | 分隔线 1.58 / 1.45:1，浅色系列上的白色图案不足 3:1，照旧保留；不冒充无障碍全面通过 | 后续夜图可访问性 / 配色专项，需产品决策 |
+| 真机、读屏器、IME 引擎、实体打印 | 本矩阵未覆盖，PO 接受本次范围边界 | 后续设备 / 可访问 / 打印专项 |
+| 截图只在本机、不入库 | 按 PO 决定保留，仓库仅收 JSON、索引与说明；本机可读不等于其他检出可读 | Supervisor 本机保管与后续交接 |
+
+## BPM1f 离线校验的来源适配
+
+首次 `validate.mjs` 退出 1：P88 新结果的 18 个成功截图路径与当前检出保留的失败截图索引不一致。该失败[完整记录](bpm1f-first-validation-error.json)保留。随后从 Supervisor 的 P88 临时运行目录取得同次运行的 [screenshots-isolation.json](screenshots-isolation.json) 原字节；已核对该目录的 isolation JSON 与指定交付 SHA-256 相同，150 张原始 PNG 全部存在。修复前索引另存[归档](bpm1f-screenshots-isolation-before-P88.json.gz)。
+
+`validate.mjs` 仅调整来源：isolation PNG 从[来源记录](bpm1f-provenance.json)的 `localScreenshotRoot` 读取（该路径仅在 Supervisor 本机有效，不是仓库资源链接）；历史 P87 当前段校验固定使用实际原提交 `c2dd2239`，不再误把当前 HEAD 的 BPM1e 当作 P87；范围校验相对于已合入工作树的 main `0bcfa51`，不把预先存在的 P88 产品改动算作本轮改动。所有 PNG 签名、引用、数量、行状态、归档与历史断言原样保留。没有复制/改写 PNG、没有删除失败检查或放宽门槛。第二次校验在新文档链接检查退出 1：旧校验器把同页 `#` 锚点解析成目录；已将本页历史链接改写为明确的 `checks.md#` 来源路径，[错误记录](bpm1f-second-validation-error.json)保留，未修改校验器规则。第三次校验在 `git diff --check` 退出 2：合并中的默认 combined diff 给 `scope.diff` 写入空白上下文，形成尾随空格。现将两处 diff 来源固定为本轮起点 `031ea44`，使用 `--unified=0` 输出真实普通差异，避免生成物自触发空白错误；[错误记录](bpm1f-third-validation-error.json)保留。未删除 `git diff --check`。最终结果以 [validation.json](validation.json) 为准；`validation-error.json` 是最近失败日志，成功校验不自动清空它。
+
+## 周期与工程回归
+
+旧周期 **3/3 收口**。新周期从旧周期之后的下一个已授权小轮计 **1/3**：P87 虽在旧周期累计矩阵尚未收口时先行实施，仍是该下一个产品小轮，因此本次追记 **P87 为新周期 1/3**；P88 是此次矩阵发现的 P87 同轮缺陷修复，依 AGENTS.md §10.2 不另计数。BPM1d/BPM1e/BPM1f 是同一次累计验收的返工与文档补证，也不计新产品轮。下一已授权产品小轮续计 2/3，累计到 3/3 触发完整工程回归、累计主题/页面/交互矩阵与独立综合审查；高风险变化仍提前扩大回归。这里的“下一个”以旧周期产品顺序为准，不能把已经实施的 P87 再计一次或从 BPM1f 后重新起算。
+
+最近完整工程回归：**P88，全量 2277/2277**，不是 BPM1f 重跑结果。P88 历史记录还保留类型检查退出 2、1 条既有 TS2306（无新增诊断），不称全仓类型通过。本轮纯文档，离线检查结果见 [validation.json](validation.json)；不运行生产构建或全量工程测试，不更新范围外 guide 生成物。
+
+浏览器验收：按分工由 Supervisor 执行。本轮 Builder 仅整理其指定实测与目检结论；没有运行浏览器、管理服务、改产品源码/样式/测试/依赖或提交/推送。
+
+## 历史交接记录
+
+以下为各轮原记录，数字与“待收口”状态只适用于当时；以本文件顶部 BPM1f 为当前结论。
+
 # BPM1d · 当前交接
 
 当前任务说明、四类结论和两组重跑命令以 [BPM1e交接](bpm1e-analysis.md) 为准。BPM1d 及以下 BPM1c/BPM1b 交接均为历史；当前结果是 BPM1d Supervisor 重跑，未宣称 BPM1e 浏览器通过。

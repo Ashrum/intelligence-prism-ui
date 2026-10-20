@@ -1,0 +1,119 @@
+{
+  "at": "2026-10-20T02:35:56.604Z",
+  "commands": [
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/prepare.mjs",
+      "startedAt": "2026-10-20T02:35:54.370Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs",
+      "startedAt": "2026-10-20T02:35:54.394Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/measurement-utils.mjs",
+      "startedAt": "2026-10-20T02:35:54.413Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/rename-screenshots.mjs",
+      "startedAt": "2026-10-20T02:35:54.432Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.450Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.468Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/legacy-probes.mjs",
+      "startedAt": "2026-10-20T02:35:54.485Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/round-probes.mjs",
+      "startedAt": "2026-10-20T02:35:54.503Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/plan-utils.mjs",
+      "startedAt": "2026-10-20T02:35:54.522Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:35:54.540Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node --check docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs",
+      "startedAt": "2026-10-20T02:35:54.556Z",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/offline-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.655Z",
+      "exitCode": 0,
+      "stdout": "ok finite entry animation must finish even when rect is already stable\nok moving rect must settle across consecutive frames\nok opacity transition must settle before reduced-motion sample\nok timeout is explicitly unstable and preserves last sample\nok normal motion permits infinite decoration, reduce does not\nok missing elements cannot pass stabilization\nok contrast thresholds distinguish core, blueprint and known border limitation\nok route names are readable and unique across all 645 layout screenshots\nok focus guard transition waits for redirect and two unchanged frames\nok stable real outside focus is rejected, not hidden by guard tolerance\nok permanent focus guard times out instead of passing containment\nok reduced motion accepts contractual .01ms one iteration, rejects loops and long duration\n{\"offlineChecks\":12,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/bpm1e-audit.mjs",
+      "startedAt": "2026-10-20T02:35:54.680Z",
+      "exitCode": 0,
+      "stdout": "ok isolation waits finite animations, freezes loops at same time, removes all temporary roots\nok post-stabilization pseudo-element mutation fails and preserves named values and source\nok 320 CSS zoom is observed with raw overflow retained and zoom restored\nok 768 and 1280 overflow remain failures; 320 print-shadow regression cannot become observed\nok 320 asserts four hidden rulers and clears active marks instead of waiting for tracking\nok 320 visible ruler or stale mark remains a failure\n{\"offlineChecks\":6,\"browserExecuted\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/validate-fixture.mjs",
+      "startedAt": "2026-10-20T02:35:54.708Z",
+      "exitCode": 0,
+      "stdout": "{\"scope\":\"review-fixture.tsx and imported dependencies\",\"diagnostics\":0,\"noEmit\":true}\n",
+      "stderr": ""
+    },
+    {
+      "command": "node docs/blueprint/evidence/matrix-closeout-20261019/measure.mjs --plan",
+      "startedAt": "2026-10-20T02:35:56.351Z",
+      "exitCode": 0,
+      "stdout": "{\"mode\":\"plan\",\"browserLaunched\":false,\"evidencePreserved\":[\"matrix\",\"interactions\",\"isolation\",\"per-round\"],\"counts\":{\"matrix\":1290,\"interactions\":1500,\"isolation\":150,\"per-round\":1111}}\n",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "startedAt": "2026-10-20T02:35:56.481Z",
+      "exitCode": 2,
+      "stdout": "docs/blueprint/evidence/matrix-closeout-20261019/scope.diff:6: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:8: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:32: trailing whitespace.\n++ \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:58: trailing whitespace.\n+  \ndocs/blueprint/evidence/matrix-closeout-20261019/scope.diff:61: trailing whitespace.\n+  \n",
+      "stderr": ""
+    }
+  ],
+  "checks": [],
+  "error": "AssertionError [ERR_ASSERTION]: git diff --check\n\n2 !== 0\n\n    at command (file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:17:240)\n    at file:///Users/OLE/HermesWork/intelligence-prism-ui/docs/blueprint/evidence/matrix-closeout-20261019/validate.mjs:27:1"
+}
