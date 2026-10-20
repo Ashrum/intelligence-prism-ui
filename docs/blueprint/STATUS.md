@@ -4,6 +4,17 @@
 
 ## 当前
 
+- 轮次：P91 · 设计线阶段 0-P：双线规则入仓与合并状态补记 · 2026-10-20；基线 `28cc2de08000ff17808d58d9aac78e9908f9d546`，分支 `docs/design-track-p91-20261020`；开工工作树干净。本轮为文档轮，待 Supervisor 独立 Review。
+- 范围：仅 `AGENTS.md` 新增 §11 双线规则、`README.md` Agent 文档导航新增规则入口及本状态轮换；不改既有文档批准状态或版本号。跨仓规则入口暂指向 main，待 O2 合并后由 Supervisor 固定 SHA。
+- 合并补记：P89 [#212](https://github.com/Ashrum/intelligence-prism-ui/pull/212) 已合并（main `9667ef9`）并同步至 Workbench（W225）；P90 [#213](https://github.com/Ashrum/intelligence-prism-ui/pull/213) README 导航已合并（main `28cc2de`）。合并由本地 Git 历史核对，W225 同步事实依据本轮 Supervisor 交接；P89 浏览器验收结论未在本仓库登记。
+- 检查：`node --test tests/blueprint-guide.test.mjs`：6 项、通过 4、失败 2、跳过 0，退出 1；STATUS 更新导致 guide JSON 与公开证据副本过期，按任务要求停止实施，未修改测试或越界同步生成物。`git diff --check` 退出 0；diff 仅含上述三个文件，新增链接均为任务指定的跨仓规则入口与 PR 链接，无新增或修改仓内相对链接；P89 原当前及更早历史已逐字核对保留。不沿用历史构建或全量测试结果。
+- 周期：保持 P87 新周期 1/3，本轮为文档轮，不计产品小轮；下一个已授权产品小轮续计 2/3，至 3/3 触发完整回归与独立综合审查，高风险提前触发。最近完整工程回归仍为 P89（历史记录，含既有类型例外），本轮不刷新该结论。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。未执行构建、全量测试、类型、排版或字体检查；未验证真实服务、Workspace 接入、真机与读屏器、OLE 规则远端可用性。未提交、推送、PR、启动或重启服务、发布站点；不处理 PR #183。
+
+## 历史
+
+### P89 · 2026-10-20（P91 前当前，原样保留）
+
 - 轮次：P89 · SpaceBar 展开左段侧栏语义底修复 · 2026-10-20；基线 `b69f141db48dde40e7f1de3e3dfdda59396b912a`，分支 `fix/space-bar-side-sidebar-token`；开工工作树干净。本轮为缺陷修复小轮，Builder 实施与工程自测完成，待 Supervisor 独立 Review。
 - 范围：仅 SpaceBar 左段背景从 `--secondary` 改用 `--sidebar`，同步顶部区域说明、蓝图说明及 guide 生成物，新增 CSS AST 令牌解析/收起态断言。复用现有 Prism SpaceBar 和现有令牌，无新增组件或来源依赖；coss、令牌定义、AppBar、边框、尺寸、断点均不改。
 - 静态解析：light `#F4F5F7`、paper `#EAE6DF`、dark `#202328`，sidebar 均等于 secondary；blueprint `#FFFFFF`、blueprint-night `#0D1C31`，sidebar 均等于 card。蓝图规则仅设置父级 SpaceBar 的 card 背景，子元素自身背景不继承该值；收起态仍透明。这是源码解析结果，不是浏览器计算样式实测。
@@ -11,8 +22,6 @@
 - 周期：沿用 BPM1f 的 P87 新周期 1/3；本轮为缺陷修复，不新增已验收产品轮次。下一个已授权产品小轮续计 2/3，至 3/3 触发完整回归与独立综合审查；最近完整工程回归为 P89，上述类型例外保留。旧周期收口及例外原文移入历史，不冒称当前浏览器复验通过。
 - 浏览器交接：`/next/use-cases/workspace-app-bar`，1280 与 390 宽度，五主题展开/收起、标题与侧栏同底及嵌套核心预览隔离；现有示例仅提供核心三主题，蓝图需 Supervisor 在独立夹具/预览根设置主题，不能只切外层主题。390 下按钮打开抽屉，不改变原交互。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workspace W224 同步/接入、真机与读屏器未验。未提交、推送、PR、启动或重启服务、发布站点；Builder 不自我批准。
-
-## 历史
 
 ### BPM1f · 2026-10-20（P89 前当前，原样保留）
 
