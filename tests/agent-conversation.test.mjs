@@ -155,9 +155,10 @@ test('reduced motion freezes mark and label, inverse rich text and 88% narrow bu
 // They do not claim DOM focus, browser keyboard delivery, or screen-reader validation.
 const probeFile = join(temp, 'probe.mjs');
 await writeFile(probeFile, (await build({ stdin: { contents: `export { AgentPromptBar } from './components/prism-next/agent-prompt-bar';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false, plugins: [{ name: 'prompt-hooks', setup(b) {
-  b.onLoad({ filter: /agent-prompt-bar\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8')).replace('import { useEffect, useId, useRef, useState, type ReactNode } from "react"', `import type { ReactNode } from "react";
+  b.onLoad({ filter: /agent-prompt-bar\.tsx$/ }, async args => ({ loader: 'tsx', contents: (await readFile(args.path, 'utf8')).replace('import { useEffect, useLayoutEffect, useId, useRef, useState, type ReactNode } from "react"', `import type { ReactNode } from "react";
 const useId = () => 'prompt-test';
 const useEffect = () => {};
+const useLayoutEffect = useEffect;
 const useRef = () => ({ current: { focus() { (globalThis as any).__promptProbe.focused++ }, play() {} } });
 const useState = (initial: any) => { const p = (globalThis as any).__promptProbe, i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (next: any) => { p.values[i] = typeof next === 'function' ? next(p.values[i]) : next }]; };`) }));
 } }] })).outputFiles[0].text);
