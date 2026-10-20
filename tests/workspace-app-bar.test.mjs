@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import postcss from 'postcss';
 import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 
@@ -17,6 +18,44 @@ await rm(file);
 const h = React.createElement;
 const css = await readFile(new URL('../components/prism-next/app-bar.css', import.meta.url), 'utf8');
 const typography = await readFile(new URL('../app/(next)/next/typography.css', import.meta.url), 'utf8');
+
+test('SpaceBar side uses sidebar semantics and stays transparent when collapsed', async t => {
+  const styles = postcss.parse(css);
+  const background = selector => {
+    let value;
+    styles.walkRules(selector, rule => rule.walkDecls('background', decl => { value = decl.value; }));
+    return value;
+  };
+  assert.equal(background('.prism-space-bar-side'), 'var(--sidebar)');
+  assert.equal(background('.prism-space-bar[data-side="collapsed"] .prism-space-bar-side'), 'transparent');
+
+  const tokens = postcss.parse(await readFile(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8'));
+  const expected = { light: '#F4F5F7', paper: '#EAE6DF', dark: '#202328', blueprint: '#FFFFFF', 'blueprint-night': '#0D1C31' };
+  for (const [theme, colour] of Object.entries(expected)) {
+    const values = new Map();
+    tokens.walkRules(rule => {
+      const base = ':where([data-agent-preview][data-prism-theme])';
+      const themed = `:where([data-agent-preview])[data-prism-theme="${theme}"]`;
+      if (!rule.selectors.includes(base) && !rule.selectors.includes(themed)) return;
+      rule.walkDecls(/^--/, decl => values.set(decl.prop, decl.value));
+    });
+    const resolve = (name, seen = new Set()) => {
+      assert.ok(!seen.has(name), `cyclic token ${name}`);
+      seen.add(name);
+      const value = values.get(name);
+      assert.ok(value, `missing token ${name}`);
+      const reference = value.match(/^var\((--[\w-]+)\)$/);
+      return reference ? resolve(reference[1], seen) : value;
+    };
+    assert.equal(resolve('--sidebar'), colour, theme);
+    if (['light', 'paper', 'dark'].includes(theme)) {
+      assert.equal(resolve('--sidebar'), resolve('--secondary'), theme);
+    } else {
+      assert.equal(resolve('--sidebar'), resolve('--card'), theme);
+    }
+    t.diagnostic(`${theme}: sidebar=${resolve('--sidebar')}, secondary=${resolve('--secondary')}`);
+  }
+});
 
 test('brand mark preserves three decorative shell bars and uses only the existing brand colours', () => {
   const html = render(h(PrismBrandMark));

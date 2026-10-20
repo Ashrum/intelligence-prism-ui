@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "41abae96eb8a5eb11db2982b8e6c51a82a69d9dc67497921ea8f759e36339d3d",
+  "sourceSha256": "965fdf827a4f7051221dec30b6666b2b720652254a51d3f0903a4a194f344bd2",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -1855,7 +1855,23 @@
       "children": [
         {
           "type": "text",
-          "value": "blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；P77 将一级当前项加强为 36px 高直角实块，使用 "
+          "value": "blueprint / blueprint-night 下，AppBar、SpaceBar 与组件站顶栏改用 card 纸面和结构底线；SpaceBar 展开左段使用 "
+        },
+        {
+          "type": "code",
+          "value": "--sidebar"
+        },
+        {
+          "type": "text",
+          "value": "，与侧栏同底（核心三主题等同 "
+        },
+        {
+          "type": "code",
+          "value": "--secondary"
+        },
+        {
+          "type": "text",
+          "value": "），收起态仍透明，父级 card 底不覆盖子元素背景；P77 将一级当前项加强为 36px 高直角实块，使用 "
         },
         {
           "type": "code",
@@ -9091,7 +9107,7 @@
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "8afada5c0ec7c7876bdbb04cebe7ac9768f11635e2addcc397c2bcde2e769903"
+      "sha256": "650d6e4b7cb73c6dd6a74e8271945b4a48321f7a5ade8f5d5e691610d78fa16a"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -9586,7 +9602,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "41abae96eb8a5eb11db2982b8e6c51a82a69d9dc67497921ea8f759e36339d3d"
+      "sha256": "965fdf827a4f7051221dec30b6666b2b720652254a51d3f0903a4a194f344bd2"
     }
   ]
 }

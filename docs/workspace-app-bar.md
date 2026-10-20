@@ -23,7 +23,7 @@
 | `AppBarTeachingContext` | 顶栏 School 图标 + coss Popover；任教事实、切换意图、设置入口，完整属性见下文 PO 2026-09-29 契约。 |
 | `AppBarStatusButton` | Button 属性及宿主传入的 children / aria-label；28px 高、component-label、secondary 底，仅提供状态入口外观。状态与说明不在组件中内置。 |
 | `AppBarPersonalMenu` | `identity:{name,institution,detail,initials} / children / menuProps? / popupProps?`；32px 头像，手机 44px 触点；300px 菜单、身份卡、40px 菜单项。宿主组合 MenuGroup / MenuGroupLabel / MenuItem 提供栏目和行为；不内置用户、审阅项或权限。 |
-| `SpaceBar` | `side?:{title,collapsed,onToggle,controls?} / sideWidth? / children / tools?`，默认 sideWidth 248px；48px 高。展开左段 secondary 底+右边框，目录 item-title；收起时只显示图标按钮。中段 min-width:0、右段放空间工具。使用 role=group 与正常 Tab 顺序，不伪装具有方向键行为的 toolbar。 |
+| `SpaceBar` | `side?:{title,collapsed,onToggle,controls?} / sideWidth? / children / tools?`，默认 sideWidth 248px；48px 高。展开左段 sidebar 语义底（核心主题等同 secondary）+右边框，目录 item-title；收起时只显示图标按钮。中段 min-width:0、右段放空间工具。使用 role=group 与正常 Tab 顺序，不伪装具有方向键行为的 toolbar。 |
 | `SpaceBarTitle` | span 属性；默认 item-title，手机用既有 block-title 字号/行高 16/24，单行省略，可传 title 保留完整名称。 |
 | `PageHead` | `title / description? / actions?` 及 div 属性；h1 section-title 20/30/600，说明 ui-hint 14/22 + muted-foreground。默认内边距 24/32/16；内容区不足 600 时 20/16/12，操作区下移整行，按钮至少 44px，字号使用既有 16px token。 |
 
