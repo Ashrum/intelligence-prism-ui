@@ -47,3 +47,13 @@
   .agent-dictation-bar { animation: none !important; transform: none !important; height: 60% !important; }
   .agent-dictation-placeholder { animation: none; background: none; color: var(--muted-foreground); }
 }
+/* P92 opt-in action rows keep their layout space. Hidden controls remain in the
+   keyboard sequence, and focus-within reveals them before activation. */
+@media (hover: hover) and (pointer: fine) {
+  .agent-message-container [data-message-actions][data-actions-visible="false"] .agent-message-secondary-actions { opacity: 0; pointer-events: none; }
+  .agent-message-container:hover [data-message-actions] .agent-message-secondary-actions,
+  .agent-message-container:focus-within [data-message-actions] .agent-message-secondary-actions { opacity: 1; pointer-events: auto; }
+}
+@media (pointer: coarse) {
+  .agent-message-container [data-message-actions] .agent-message-secondary-actions { opacity: 1; pointer-events: auto; }
+}

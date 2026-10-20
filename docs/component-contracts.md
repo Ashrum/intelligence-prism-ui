@@ -2758,6 +2758,22 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `AgentPromptBar` 必填 `value` / `onValueChange`、`sources`、`commands`、`models`、`dictation`、`voice`、`onIntent`；可选 `modelId`、`showModelSelector`、`attachments`、`variant`、视觉隐藏的固定 `label`、`placeholder`、`contextActions`、`privacy`、`disabled`、`sendDisabledReason`、`announceDisabledReason`、`activity`。
 
+**P92 可选输入布局与主动作（2026-10-20，组件候选）**：
+
+| Prop | 默认 | 契约 |
+| --- | --- | --- |
+| `density?: "compact"` | 不传，旧密度 | 仅压缩容器留白，输入仍使用 read-body。无附件、工具不折行时表面目标 104–112px；文本区最小 52px、主动作占位 44px。聚焦不改变尺寸；长文、工具折行、附件自然增高，不截断内容。目标尺寸需浏览器量测。 |
+| `expandable?: boolean` | `false` | 依据 textarea 实际滚动高度与当前 `max-h-52`（根字号 16px 时 208px）比较，达到上限显示「展开编辑」。同一 textarea 在原位增高，保留全文、选区方向、光标与滚动位置；不复制成第二份草稿。收起与 Esc 不提交或清空。 |
+| `primaryAction?: "send" \| "stop" \| "stopping"` | 不传，旧发送按钮 | 显式传入或启用上述布局／提示时，主按钮可见 36px，独立 44px 布局占位及命中区，邻组留间距。`stop` 只发 `{type:"stop"}`；`stopping` 显示「正在请求停止」且禁用，不显示「已停止」。两种停止状态均阻止 Enter 提交，草稿仍可编辑。 |
+| `stopLabel?: string` | `停止当前回答` | 停止的可访问名及常驻文字；宿主必须按真实停止范围改为「停止当前任务」等。不是仅以方块表达停止语义。 |
+| `statusHint?: AgentPromptStatusHint` | 不传 | `{message: string, tone?: "info" \| "error", action?: {label, onClick, disabled?}, details?: ReactNode}`。一条 ui-hint 主提示、一个可选次级动作、原生「详情」展开；窄屏自然换行，不截断关键状态。error 增加「错误：」及 alert，不只靠颜色。 |
+
+新增布局把材料、上下文、模型（仍受 `showModelSelector` 控制）、听写／语音及展开入口归为「材料与输入工具」，另一组为「主动作」。旧调用的 DOM 与 SSR 字节保持不变；P92 的 22 组基线夹具见 `tests/fixtures/p92/main-e56908d.json`。正文大小、主题令牌与冻结 coss 原件均不改。
+
+`sendDisabledReason` 与 `statusHint` 同时提供时，禁发原因优先作为唯一主提示，保留输入框／发送按钮的描述关联，避免被普通提示盖住；宿主应将其余上下文放进 `details`。`announceDisabledReason=false` 仍抑制禁发原因的主动播报。`statusHint` 本身不禁发，是否允许发送仍由 `disabled` / `sendDisabledReason` 决定；语音已有错误与权限状态独立保留，不能借提示收敛隐藏。
+
+停止资格、请求身份与回执均由宿主负责；组件同步拦截同一个 `stop` 状态期间重复点击，宿主收到意图应立即传 `stopping`。同状态重渲染不解锁；只有宿主切换状态后再明确开放 `stop` 才可再次请求。组件不通过点击推定已停止、结果未知、任务完成或合法重试，不内置队列、持久化和自动发送。Enter / Shift+Enter、IME `isComposing` / 229 保护沿用；Esc 先处理听写停止意图／输入候选，再收起编辑区。实际 IME、焦点与触屏验收由 Supervisor 执行。
+
 **禁用原因播报**：`announceDisabledReason?: boolean` 默认 `true`，禁用原因段落保留 `role="status"`。宿主已有全局连接提示时传 `false`，仅移除该段落的 live status 角色，避免重复主动播报；原因文字仍显示，发送按钮与输入框仍通过 `aria-describedby` 关联。无 `sendDisabledReason`（含空字符串）时不渲染原因段落，发送按钮无此关联。不传新参数时，唯一 SSR 变化是有原因的发送按钮新增描述关联；不改变禁用、草稿、提交或焦点行为。
 
 **R1 / CI-01（2026-10-16）**：`showModelSelector?: boolean` 默认 `true`，保持旧调用行为（包括空 `models` 时的禁用入口）；宿主传 `false` 时整个模型 Menu 不渲染，入口及选项均不进入 DOM。关闭可用性会清理菜单展开状态，再开放不会自动弹出；草稿、`modelId`、来源与命令保留。学校是否开放由宿主决定，组件不做权限判断。组件页提供模型入口显隐、五主题及 320px 夹具。
@@ -2787,6 +2803,22 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 新增 `size="glyph"` 用于列表行首固定 16px 状态位，内部 13px 九宫格，无可见文字与耗时；即使传入 startedAt / endedAt，也不启动计时器。根节点为 `role="img"`，`aria-label` 默认取 agentMarkLabels[state]，可用 label 覆盖；点阵对读屏隐藏，不提供 status / live region，不可用于主状态播报。仅 thinking / working 有动画类；CSS 媒体查询在初始与系统偏好运行中切换到 reduce 时立即停止动画并显示完整静态点阵。蓝图 / 夜图 glyph 强制直角，运行沿用 foreground（身份状态位而非链接，不引入 link 色）；错误与等待仍沿用 destructive / warning 前景色。核心三主题保留变体形状逻辑，inline / loading 行为不变。
 
 `AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
+
+**P92 可选正文与操作区（组件候选）**：
+
+| Prop | 默认 | 契约 |
+| --- | --- | --- |
+| `bodyRole?: "read-body"` | 不传，旧输出 | 给正文容器的直接 `p` / `ul` / `ol` 使用既有 read-body（16/28）；裸文字继续继承正文角色。嵌套富文本由调用方使用相同语义角色，业务卡片中的描述不全局重绘。 |
+| `actions?: ReactNode` | 无 | 操作插槽；调用方使用既有 Button，图标按钮需提供名称与 Tooltip。 |
+| `moreActions?: ReactNode` | 无 | coss MenuItem 内容；组件提供有可访问名和 Tooltip 的「更多消息操作」入口，Menu / Tooltip Portal 挂在消息自身容器以继承局部预览主题。 |
+| `persistentActions?: ReactNode` | 无 | 必要动作插槽；失败处理、澄清提交等始终可见，与可隐藏的次要操作分离。 |
+| `actionsVisibility?: "auto" \| "always"` | `"auto"` | auto 的桌面历史次要操作以 opacity 隐去但保留空间与键盘顺序；消息悬停／焦点进入即显露，菜单打开期间保留。always 整组常驻。 |
+| `isLast?: boolean` | `false` | 宿主明确标记最后一条消息，其操作常驻；组件不推断消息顺序。触屏 `pointer: coarse` 下所有操作常驻紧凑显示。 |
+| `copyAction?` | 无 | `{onCopy, state?: "idle" \| "copied" \| "error", disabled?}`。宿主完成复制后传 `copied`，显示图标、可访问名及 live status「已复制」；error 显示「复制失败，请重试」。未收到结果不显示成功，组件不访问剪贴板、不用计时器清除状态。 |
+
+启用正文角色或操作插槽时，正文到附件／详情使用 8px，附属信息到操作区使用 4px；无操作不渲染空操作行。操作位于气泡外，不继承用户气泡反相底色。次要操作隐去时仍能 Tab 入焦后显露，不以 `display:none` / `visibility:hidden` 移出键盘序列。必要动作应放 `persistentActions` 或明确使用 always，不能依赖 hover。默认路径的 6 组消息 SSR 字节与 `e56908d` 一致。
+
+P92 复用检索（离线）：先核对现有 AgentPromptBar / AgentMessage / AgentVoice，再核对固定 coss InputGroup、Textarea、Button、Menu、Tooltip 源码；沿用下述既有 particles 28/29/23 的组合来源记录。现有原语足以完成密度、原位编辑、操作分组及菜单，不新增组件条目或第三方代码。未联网刷新官方 particles，不能据此声明官方最新实现已接入。两个现有组件页提供紧凑空态、超长草稿、stop / stopping、单条提示及历史／最后一条消息操作夹具；五主题 1280 / 390 的视觉、选区、键盘、IME 与触屏仍需独立浏览器验收。
 
 ### 第三方来源与适配
 

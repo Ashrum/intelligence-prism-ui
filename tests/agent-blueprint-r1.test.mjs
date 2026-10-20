@@ -36,12 +36,13 @@ const base = { value: '', onValueChange() {}, onIntent() {}, sources: [], comman
 // This tests state transitions and container plumbing, not DOM focus or portals.
 const probe = await bundle('hooks', [{ name: 'prompt-hooks', setup(b) {
   b.onLoad({ filter: /agent-prompt-bar\.tsx$/ }, args => ({ loader: 'tsx', contents: readFileSync(args.path, 'utf8').replace(
-    'import { useEffect, useId, useRef, useState, type ReactNode } from "react"',
+    'import { useEffect, useLayoutEffect, useId, useRef, useState, type ReactNode } from "react"',
     `import type { ReactNode } from "react";
 const useId = () => 'p73-prompt';
 const useRef = (initial: any) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; return p.values[i] ??= { current: initial }; };
 const useState = (initial: any) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; if (!(i in p.values)) p.values[i] = initial; return [p.values[i], (next: any) => { const v = typeof next === 'function' ? next(p.values[i]) : next; if (!Object.is(v, p.values[i])) { p.values[i] = v; p.dirty = true; } }]; };
-const useEffect = (effect: any, deps: any[]) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; if (!p.effects[i] || deps.some((d, j) => !Object.is(d, p.effects[i].deps[j]))) { p.pending.push(() => { p.effects[i]?.cleanup?.(); p.effects[i] = { deps, cleanup: effect() }; }); } };`
+const useEffect = (effect: any, deps: any[]) => { const p = (globalThis as any).__p73Hooks, i = p.cursor++; if (!p.effects[i] || deps.some((d, j) => !Object.is(d, p.effects[i].deps[j]))) { p.pending.push(() => { p.effects[i]?.cleanup?.(); p.effects[i] = { deps, cleanup: effect() }; }); } };
+const useLayoutEffect = useEffect;`
   ) }));
 } }]);
 
