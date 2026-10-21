@@ -6,6 +6,9 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
 import { MenuPopup } from "../scoped-overlays"
 import { Button } from "../button"
+import { Badge } from "../badge"
+import { ChartLegend } from "../charts/chart-legend"
+import { BlueprintOverviewDemo } from "./blueprint-overview"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
@@ -78,12 +81,14 @@ export function BlueprintComponentsDemo() {
       <a href="#artifact-folio">成果标题定位</a>
       <a href="#object-section-cards">原件与成果分节</a>
       <a href="#workspace-contracts">Agent 工作区稳定交互</a>
+      <a href="#trend-calibration">C0 趋势图对照</a>
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
     <AgentWorkspacePatternsDemo />
+    <BlueprintOverviewDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
         titleActions={<Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="成果标题更多操作" />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
@@ -167,6 +172,29 @@ export function BlueprintComponentsDemo() {
           </div>
         </div>
       </div>
+      <section id="calibration" className="mt-9 space-y-5" aria-label="学情比例与状态样例">
+        <BpMinor code="BP-06.1 · Size Bar" label="补回与保持（合成数据）" />
+        <BpSizeBar legendValues rows={[
+          { id: "recovered", label: "补回率", total: 272, unit: "项", display: "65% · 177 / 272", segments: [
+            { id: "qualified", label: "合格", value: 177, fill: "ink" },
+            { id: "excluded", label: "排除 / 未核实", value: 31, fill: "hatch" },
+            { id: "other", label: "其他", value: 64, fill: "quiet" },
+          ] },
+          { id: "retained", label: "保持率", total: 1200, unit: "项", display: "80% · 960 / 1,200", segments: [
+            { id: "qualified", label: "合格", value: 960, fill: "ink" },
+            { id: "excluded", label: "排除 / 未核实", value: 0, fill: "hatch" },
+            { id: "other", label: "其他", value: 240, fill: "quiet" },
+          ] },
+        ]} />
+        <BpSizeBar rows={[{ id: "count", label: "记录数", unit: "项", segments: [{ id: "verified", label: "已核实", value: 12345, fill: "ink" }, { id: "unverified", label: "未核实", value: 0, fill: "hatch" }] }]} />
+        <div className="flex flex-wrap gap-2" aria-label="状态标签样例"><Badge variant="success" mark="ok">已通过</Badge><Badge variant="warning" mark="warn">需补充</Badge><Badge variant="error" mark="no">未通过</Badge></div>
+        <ChartLegend label="类别与语义形状样例" items={[
+          { id: "area", label: "面积类别", marker: "area" }, { id: "bar", label: "柱类别", marker: "bar" },
+          { id: "segment", label: "分段类别", marker: "segment" }, { id: "excluded", label: "排除 / 未核实", marker: "hatch" },
+          { id: "incomparable", label: "不可比", marker: "hollow-dot" }, { id: "new", label: "新情境", marker: "diamond" },
+          { id: "trend", label: "趋势", marker: "line" },
+        ]} />
+      </section>
     </BlueprintSheet>
 
     <BlueprintSheet id="feedback" letter="D" sheetNo="04 / 05" title="反馈与文本" description="提示、错误与批注都指向具体位置，并给出可照做的修改。">

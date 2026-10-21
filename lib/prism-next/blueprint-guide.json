@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "965fdf827a4f7051221dec30b6666b2b720652254a51d3f0903a4a194f344bd2",
+  "sourceSha256": "529d42fe79ffeff40b2c7b9e41b76da52a4c53014e237daa16b985bf5292b4b9",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -223,6 +223,16 @@
       "id": "section-44",
       "level": 3,
       "text": "事实栏与标题块的容器布局（P82 · 2026-10-17）"
+    },
+    {
+      "id": "section-45",
+      "level": 2,
+      "text": "学情校准组件补齐（P97 · 2026-10-21）"
+    },
+    {
+      "id": "section-46",
+      "level": 2,
+      "text": "P99 · C0 学情概览组件抽取"
     }
   ],
   "blocks": [
@@ -1016,7 +1026,7 @@
         },
         {
           "type": "text",
-          "value": " 把浅色结构墨线混成浅底。实色危险按钮 / Badge 使用夜图深墨文字，加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 "
+          "value": " 把浅色结构墨线混成浅底。实色危险按钮使用夜图深墨文字（Badge 在 P97 改为纸面与语义描边，见下节），加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 "
         },
         {
           "type": "code",
@@ -9101,13 +9111,326 @@
           }
         ]
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-45",
+      "children": [
+        {
+          "type": "text",
+          "value": "学情校准组件补齐（P97 · 2026-10-21）"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态：候选；工程准入：未开始。基线 "
+        },
+        {
+          "type": "code",
+          "value": "d25e358"
+        },
+        {
+          "type": "text",
+          "value": "。这是组件层实现与自测，不代表学情页面已接入或 Supervisor 已验收。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "复用检索（离线）：Prism Badge / BpSizeBar / ChartLegend / chart-palette 与固定 coss Badge 已匹配，无需新增组件体系、依赖或上游代码。coss 源码保持；未联网检索 particles 最新实现。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "悬停提示：Recharts Trend / Comparison 读取 "
+          },
+          {
+            "type": "code",
+            "value": "max(0px, var(--radius-md))"
+          },
+          {
+            "type": "text",
+            "value": "，core 保持 8px，白图与夜图为 0，与 ECharts 的 0px 几何一致。既有蓝图提示框 1.5px 描边规则保留。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "色板：夜图第六色补为 "
+          },
+          {
+            "type": "code",
+            "value": "#B6BEC9"
+          },
+          {
+            "type": "text",
+            "value": "。夜图 CSS 与 JS 当前均定义 6 色，1–6 全量一致；7、8 两侧均未定义，本轮不新增。白图保留既有 1–5 CSS 桥接与 JS 6 色的边界。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "状态标签：蓝图和夜图统一直角、1.5px 描边、card 纸面；语义色限于文字／边框／符号。Prism Badge 的可选 "
+          },
+          {
+            "type": "code",
+            "value": "mark"
+          },
+          {
+            "type": "text",
+            "value": " 为 ok / warn / no，显示 ✓ / ! / ✗；符号为装饰，文字状态仍必需，"
+          },
+          {
+            "type": "code",
+            "value": "variant"
+          },
+          {
+            "type": "text",
+            "value": " 独立选择。core 隐藏该符号且保留原外观，嵌套 core 根及其后代排除。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "比例条："
+          },
+          {
+            "type": "code",
+            "value": "BpSizeBar.rows[].display"
+          },
+          {
+            "type": "text",
+            "value": " 可给出完整汇总文字，如 "
+          },
+          {
+            "type": "code",
+            "value": "65% · 177 / 272"
+          },
+          {
+            "type": "text",
+            "value": "。未传 display 时仍为分段合计及单位；合计、图例与无障碍名称统一千分位。"
+          },
+          {
+            "type": "code",
+            "value": "total"
+          },
+          {
+            "type": "text",
+            "value": " 仍只决定宽度分母。"
+          },
+          {
+            "type": "code",
+            "value": "legendValues"
+          },
+          {
+            "type": "text",
+            "value": " 单行默认 true、多行默认 false；多行传 true 时每行独立列出所有分段与数值，重复 id 不串行合并，0 仍写出且不绘制宽度。"
+          },
+          {
+            "type": "code",
+            "value": "legend=false"
+          },
+          {
+            "type": "text",
+            "value": " 不影响可读名称中的值。合格使用 ink，排除／未核实使用 hatch，其他使用 quiet，业务分类由宿主给定。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "共享图例：area / bar / segment 为类别，蓝图与夜图下方形；hatch 为斜线块。点类（包括不可比空心点、新情境菱形）和线类保持语义形状；不会自动把未声明语义的 dot 改为类别。显式颜色继续优先。新增 area / segment 在 core 退回既有圆点类别样式。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "示例："
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "学情比例与状态样例"
+            }
+          ],
+          "href": "/next/foundations/blueprint#calibration",
+          "external": false
+        },
+        {
+          "type": "text",
+          "value": "。包含 65% · 177 / 272、80% · 960 / 1,200、排除／未核实 0、记录数 12,345、三态标签与点／线／类别对照。完整 API 见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "组件契约"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。工程检查见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "当前状态"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "；浏览器验收：按分工由 Supervisor 执行，覆盖 blueprint / blueprint-night / light，1280 / 390，并补 paper / dark 与嵌套 core 隔离回归。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-46",
+      "children": [
+        {
+          "type": "text",
+          "value": "P99 · C0 学情概览组件抽取"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态：组件实现待 Supervisor 独立 Review；工程准入：未开始。本轮依批准扩展蓝图族，未改冻结 coss、core 令牌、依赖或 Workspace。推荐用于 blueprint / night；核心三主题中的显式 bp 组件使用既有中性令牌回退。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "新增 "
+        },
+        {
+          "type": "code",
+          "value": "BpStat"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "BpStatStrip"
+        },
+        {
+          "type": "text",
+          "value": "，扩展 "
+        },
+        {
+          "type": "code",
+          "value": "BpSizeBar"
+        },
+        {
+          "type": "text",
+          "value": " 的 framed/size/hideRowLabel、标题项 tone/numeric、分节 density 和 Callout emphasis。完整 props、复用取舍、未知态规则及布局边界见"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "组件契约"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。这些 bp 呈现封装不新增目录条目，不替代 MetricSummary。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "示例 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint#overview-calibration"
+        },
+        {
+          "type": "text",
+          "value": " 组合 C0 SHEET 01 的七格标题栏、6px 强调 Callout、75%（+1 pp、1,684 / 2,250 分）、65%（177 / 95 / 17）、76%（626 / 197 / 43）、10 人及 compact B 节。保留 "
+        },
+        {
+          "type": "code",
+          "value": "#trend-calibration"
+        },
+        {
+          "type": "text",
+          "value": " 锚点，趋势图改为自动域，蓝图/夜图刻度应为 65 / 70 / 75 / 80。标题块沿用 P82 容器窄屏两列与奇数尾项铺满。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "指标条按自身容器 ≥960 / 480–959 / <480px 排四/二/一列，末行填满；统计值使用已有 40px score-display 及等宽 700，单位为 ui-body 14px、标签 ui-meta 12px、紧凑标题 item-title 14px。与样稿约 15/11/16px 的差异是沿用正式语义字号，未新增字号令牌。未知/数据不足显示宿主文案，隐藏数值附属单位、增量与条形，保留说明与帮助。展开“查看未知态与长文案夹具”可核对。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "验证边界：SSR/API、容器 CSS AST 与网格占位计算、P98 core SVG 指纹均为工程证据，不能当作视觉通过。浏览器验收：按分工由 Supervisor 执行；在 blueprint / blueprint-night / light 的 1280 / 390 与样稿并排，另检查窄容器两列、帮助展开、依据链接、未知态、长文案及 core 嵌套预览。独立 Review、浏览器验收与 PO 批准另行记录。"
+        }
+      ]
     }
   ],
   "assets": [
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "d2efc67972b75f4ea97e5b64742405a2093352182198dceae1d5f7f9e1cb859e"
+      "sha256": "e79c082eb96db6836b4d369476751f0d9efcdced5fc2ea80c165b2d2141deea8"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -9600,9 +9923,14 @@
       "sha256": "955d5a23612ad08b34cda5b90f0e0306dfb014fe12396289c6f01a51f734df83"
     },
     {
+      "source": "docs/component-contracts.md",
+      "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
+      "sha256": "25b10b42eafa34591e61d2f60ecc5c9d412ddbc286e61b8a4d297b9bf0e04bfb"
+    },
+    {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "965fdf827a4f7051221dec30b6666b2b720652254a51d3f0903a4a194f344bd2"
+      "sha256": "529d42fe79ffeff40b2c7b9e41b76da52a4c53014e237daa16b985bf5292b4b9"
     }
   ]
 }

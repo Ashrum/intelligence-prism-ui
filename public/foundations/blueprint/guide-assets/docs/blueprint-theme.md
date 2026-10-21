@@ -36,7 +36,7 @@
 
 **已知设计缺口保留：** 夜图普通分隔色 `#23385A` 对画布 / 纸面约 1.58 / 1.45:1，只能作为弱分隔，结构与控件使用 `--line`。沿用白图的白色半透明图案在夜图浅色系列上的对比度不足 3:1；夜图图表色与图案尚待设计确认，不能据此宣称黑白打印已通过。Recharts 仍主要靠颜色区分系列。实体打印、真机与读屏器验收继续单列。热力图窄于 400px 且可见数据披露可用时隐藏格内数字；数据披露隐藏时保留数字，原三核心主题不改变。
 
-通用描边按钮、Badge 与未选中 Toggle 在夜图中使用纸面，悬停使用现有 accent；输入表面使用设计稿的 `#0A1729`。这避免 `dark:bg-input/*` 把浅色结构墨线混成浅底。实色危险按钮 / Badge 使用夜图深墨文字，加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 `#E6EDF7` / `#16305A`，实色危险按钮为 `#081322` / `#FF7070`。
+通用描边按钮、Badge 与未选中 Toggle 在夜图中使用纸面，悬停使用现有 accent；输入表面使用设计稿的 `#0A1729`。这避免 `dark:bg-input/*` 把浅色结构墨线混成浅底。实色危险按钮使用夜图深墨文字（Badge 在 P97 改为纸面与语义描边，见下节），加载态保留透明文字与可见加载图标。所有修正限于夜图并排除嵌套白图与核心预览；冻结 coss 仍不改。浏览器实测普通描边悬停为 `#E6EDF7` / `#16305A`，实色危险按钮为 `#081322` / `#FF7070`。
 
 当前验证与合并记录见 [STATUS](blueprint/STATUS.md)。 本轮[工程记录](blueprint/evidence/night-20261016/engineering.json)、[浏览器记录](blueprint/evidence/night-20261016/browser.json)、[检查边界](blueprint/evidence/night-20261016/checks.md)与[独立代码审查](blueprint/evidence/night-20261016/review.md)单独归档；可查看[夜图控件](blueprint/screens/night-20261016/blueprint-night-1280-controls.jpg)和[窄屏对话框](blueprint/screens/night-20261016/blueprint-night-320-dialog.jpg)。原 stash / 补丁保留；历史 `evidence/v9/` 属于另一轮，不以旧夜图日志覆盖或冒充本次结果。
 
@@ -511,3 +511,30 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 - 轨道使用 `minmax(0,1fr)`，单元 `min-width:0` / `overflow-wrap:anywhere`，长中文及连续数字可换行；既有数值字号和 tabular-nums 不变。事实栏仅内部列右侧画线，标题块沿用右/下单向分隔线，无叠加边框。
 - 五主题（light / paper / dark / blueprint / blueprint-night）共用显式 bp-* 布局，普通组件不受影响。基线事实栏实际为固定两列、标题块为 auto-fit 160px，并非五主题已有独立窄屏规则；本轮按统一目标修正。
 - 工程声明级网格检查不能代替实际 scrollWidth 与视觉检查；浏览器验收按分工由 Supervisor 执行。证据目录：`docs/blueprint/evidence/facts-narrow-20261017/`。
+
+## 学情校准组件补齐（P97 · 2026-10-21）
+
+设计状态：候选；工程准入：未开始。基线 `d25e358`。这是组件层实现与自测，不代表学情页面已接入或 Supervisor 已验收。
+
+复用检索（离线）：Prism Badge / BpSizeBar / ChartLegend / chart-palette 与固定 coss Badge 已匹配，无需新增组件体系、依赖或上游代码。coss 源码保持；未联网检索 particles 最新实现。
+
+- 悬停提示：Recharts Trend / Comparison 读取 `max(0px, var(--radius-md))`，core 保持 8px，白图与夜图为 0，与 ECharts 的 0px 几何一致。既有蓝图提示框 1.5px 描边规则保留。
+- 色板：夜图第六色补为 `#B6BEC9`。夜图 CSS 与 JS 当前均定义 6 色，1–6 全量一致；7、8 两侧均未定义，本轮不新增。白图保留既有 1–5 CSS 桥接与 JS 6 色的边界。
+- 状态标签：蓝图和夜图统一直角、1.5px 描边、card 纸面；语义色限于文字／边框／符号。Prism Badge 的可选 `mark` 为 ok / warn / no，显示 ✓ / ! / ✗；符号为装饰，文字状态仍必需，`variant` 独立选择。core 隐藏该符号且保留原外观，嵌套 core 根及其后代排除。
+- 比例条：`BpSizeBar.rows[].display` 可给出完整汇总文字，如 `65% · 177 / 272`。未传 display 时仍为分段合计及单位；合计、图例与无障碍名称统一千分位。`total` 仍只决定宽度分母。`legendValues` 单行默认 true、多行默认 false；多行传 true 时每行独立列出所有分段与数值，重复 id 不串行合并，0 仍写出且不绘制宽度。`legend=false` 不影响可读名称中的值。合格使用 ink，排除／未核实使用 hatch，其他使用 quiet，业务分类由宿主给定。
+- 共享图例：area / bar / segment 为类别，蓝图与夜图下方形；hatch 为斜线块。点类（包括不可比空心点、新情境菱形）和线类保持语义形状；不会自动把未声明语义的 dot 改为类别。显式颜色继续优先。新增 area / segment 在 core 退回既有圆点类别样式。
+
+示例：[学情比例与状态样例](/next/foundations/blueprint#calibration)。包含 65% · 177 / 272、80% · 960 / 1,200、排除／未核实 0、记录数 12,345、三态标签与点／线／类别对照。完整 API 见 [组件契约](component-contracts.md)。工程检查见 [当前状态](blueprint/STATUS.md)；浏览器验收：按分工由 Supervisor 执行，覆盖 blueprint / blueprint-night / light，1280 / 390，并补 paper / dark 与嵌套 core 隔离回归。
+
+
+## P99 · C0 学情概览组件抽取
+
+设计状态：组件实现待 Supervisor 独立 Review；工程准入：未开始。本轮依批准扩展蓝图族，未改冻结 coss、core 令牌、依赖或 Workspace。推荐用于 blueprint / night；核心三主题中的显式 bp 组件使用既有中性令牌回退。
+
+新增 `BpStat` / `BpStatStrip`，扩展 `BpSizeBar` 的 framed/size/hideRowLabel、标题项 tone/numeric、分节 density 和 Callout emphasis。完整 props、复用取舍、未知态规则及布局边界见[组件契约](component-contracts.md)。这些 bp 呈现封装不新增目录条目，不替代 MetricSummary。
+
+示例 `/next/foundations/blueprint#overview-calibration` 组合 C0 SHEET 01 的七格标题栏、6px 强调 Callout、75%（+1 pp、1,684 / 2,250 分）、65%（177 / 95 / 17）、76%（626 / 197 / 43）、10 人及 compact B 节。保留 `#trend-calibration` 锚点，趋势图改为自动域，蓝图/夜图刻度应为 65 / 70 / 75 / 80。标题块沿用 P82 容器窄屏两列与奇数尾项铺满。
+
+指标条按自身容器 ≥960 / 480–959 / <480px 排四/二/一列，末行填满；统计值使用已有 40px score-display 及等宽 700，单位为 ui-body 14px、标签 ui-meta 12px、紧凑标题 item-title 14px。与样稿约 15/11/16px 的差异是沿用正式语义字号，未新增字号令牌。未知/数据不足显示宿主文案，隐藏数值附属单位、增量与条形，保留说明与帮助。展开“查看未知态与长文案夹具”可核对。
+
+验证边界：SSR/API、容器 CSS AST 与网格占位计算、P98 core SVG 指纹均为工程证据，不能当作视觉通过。浏览器验收：按分工由 Supervisor 执行；在 blueprint / blueprint-night / light 的 1280 / 390 与样稿并排，另检查窄容器两列、帮助展开、依据链接、未知态、长文案及 core 嵌套预览。独立 Review、浏览器验收与 PO 批准另行记录。

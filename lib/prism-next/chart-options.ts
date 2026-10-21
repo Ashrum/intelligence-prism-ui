@@ -51,6 +51,21 @@ export function trendAutoDomain(values:(number|null)[],unit=''):[number,number]{
 export function trendAutoScale(values:(number|null)[],unit=''){
  return chartAutoScale(values,unit)
 }
+/** Blueprint trend grid: whole steps, preferably 5 for classroom-sized ranges.
+ * Separate from core/scatter scaling. Padding and rounding never clip source facts. */
+export function blueprintTrendAutoScale(values:(number|null)[],unit=''):{domain:[number,number];interval:number;ticks:number[]}{
+ const valid=values.filter(isChartValue),percent=/[%％]/.test(unit)
+ if(!valid.length)return percent?{domain:[0,100],interval:20,ticks:[0,20,40,60,80,100]}:{domain:[0,1],interval:1,ticks:[0,1]}
+ const min=Math.min(...valid),max=Math.max(...valid),target=(max-min)/3
+ // Keep large non-percentage facts bounded too, with the same 1/2/5 family at larger powers.
+ const power=max-min>100?10**Math.floor(Math.log10(target)):1
+ const interval=([1,2,5,10,20].find(step=>step*power>=target)??20)*power
+ let first=Math.floor(min/interval),last=Math.ceil(max/interval)
+ if(first===last){first-=1;last+=1}
+ if(percent&&min>=0&&max<=100){first=Math.max(0,first);last=Math.min(100/interval,last)}
+ const ticks=Array.from({length:Math.round(last-first)+1},(_,i)=>(first+i)*interval)
+ return {domain:[ticks[0],ticks[ticks.length-1]],interval,ticks}
+}
 export function chartDomain(values:(number|null)[],range?:[number,number]):[number,number]{if(range&&range.every(isChartValue)&&range[0]<range[1])return range;const valid=values.filter(isChartValue);const min=Math.min(0,...valid),max=Math.max(0,...valid);return [min,max===min?min+1:max]}
 export function withinDomain(value:unknown,range:[number,number]){return isChartValue(value)&&value>=range[0]&&value<=range[1]}
 export function compositionSummary(items:{value:number|null}[]){return {total:items.reduce((sum,item)=>sum+(isChartValue(item.value)&&item.value>=0?item.value:0),0),invalid:items.filter(item=>item.value!==null&&(!isChartValue(item.value)||item.value<0)).length,missing:items.filter(item=>item.value===null).length}}

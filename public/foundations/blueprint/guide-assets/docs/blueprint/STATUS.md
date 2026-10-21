@@ -4,13 +4,38 @@
 
 ## 当前
 
+- 轮次：P99 · C0 学情概览组件抽取与蓝图趋势刻度 · 2026-10-21；基线 `85c35243a90d8ac20a7b7272f54e452dfa89cb27`，分支 `feat/bp-calibration-p97-20261021`；沿用 P97/P98 工作树，开工干净。Builder 实施，不作自我批准，待 Supervisor 独立 Review。
+- 范围：新增蓝图族 BpStat/BpStatStrip；扩展 BpSizeBar 无框/紧凑/隐藏行标签，BpTitleBlock tone/numeric，BpSectionCard compact，BpCallout emphasis；新增 C0 七格标题栏、四指标与 compact B 节组合。追加蓝图/夜图 yDomain=auto 整数刻度，保留 core 刻度逻辑及显式域；未更改 P98 其余绘图几何、冻结 coss、核心令牌或依赖。
+- 工程检查：字体通过；排版通过（319 个 owned TSX）；相关定向 88/88（含 P99 新增 17 项、P98 的 18 组 core SVG 指纹）；生产构建成功后全量 2389/2389，失败/跳过 0。类型退出 2，仅 1 条既有 TS2306（prototype-source/main.tsx:57 的 app.js 非模块），与开工干净基线诊断逐字一致，新增 0。guide 与 diff 检查通过。标准 vinext 构建仍因共享 node_modules/.vite-temp 写入 EPERM 退出 1；按 P97 同配置临时 bundle + Vite native loader 构建退出 0，不改配置或共享依赖。
+- 返工记录：首轮全量 2361/2369，失败 8，均已修复：新增图纸标题补入原精确清单；P79 字母无障碍变异更新到 cn 节点且保留失败检测；新增 CSS 放在 P97 独立尾段之前，避免旧测试按注释截取时读到未闭合片段。未删除断言或跳过测试。最终产品源码重新构建并跑全量；本状态验证元数据及 guide 生成物随后同步，单独做文档一致性复验，不宣称再次全量构建。
+- 差异：大数使用现有 40px score-display（stat-display 为 24px）；标签/单位/紧凑标题分别 ui-meta 12px、ui-body 14px、item-title 14px，未造样稿局部字号。TitleBlock 沿用 P82 容器布局；未知指标不渲染单位、增量和条形，宿主非空文案与说明保留。默认 API SSR 对照本轮开工快照。
+- 周期：延续 P97 记录的新周期 3/3 累计校准范围，不因 P98/P99 追加或返工重复计已验收轮次。当前仍待 Supervisor 累计浏览器回归与独立综合审查，不宣布周期收口；本轮按任务执行完整工程回归。最近完整工程回归为本轮 P99（2389/2389，保留上述类型例外与标准构建环境限制）；累计浏览器矩阵和独立综合审查仍交 Supervisor。
+- 浏览器交接：`/next/foundations/blueprint#overview-calibration` 与 `#trend-calibration`，blueprint / blueprint-night / light，1280 / 390，与 C0 SHEET 01 并排；另核对容器四/二/一列、帮助按钮、依据链接/披露、未知与长文案、嵌套 core 隔离。浏览器验收：按分工由 Supervisor 执行。实际截图、焦点、读屏、真机、真实服务和 Workspace 接入未验。
+- 未提交、推送、PR、启动服务、联网、调用模型、读取凭据或修改主 checkout。报告与工程日志已按委派交 Supervisor；仓内不链接本机交接路径。
+
+## 历史
+
+### P97 · 2026-10-21（P99 前当前，原样保留）
+
+- 轮次：P97 · 学情蓝图校准 C1 · 2026-10-21；基线 `d25e358ea972614abcebd400e0f4be74b20757ec`，分支 `feat/bp-calibration-p97-20261021`；开工工作树干净，Builder 实施与自测，待 Supervisor 独立 Review 与浏览器验收。
+- 范围：Recharts 提示圆角读既有 radius-md（core 8px、蓝图 0px）；夜图 chart-6 对齐 JS；Badge 纸面描边与可选装饰 mark；BpSizeBar 千分位、display 和多行独立数值图例；ChartLegend 类别方块／斜线块，点和线语义不改；同步示例、契约、Badge Agent Spec 与 guide 生成物。复用现有 Prism 与固定 coss，无新增依赖或组件条目。
+- 工程检查：数学字体退出 0、排版 317 TSX／退出 0；P97 与夜图定向 24/24；生产构建成功（退出 0，见下述环境适配）；随后全量测试 2345/2345、失败 0、跳过 0、退出 0。最终类型退出 2，仅 1 条既有 TS2306（`docs/learning-analysis/prototype-source/main.tsx:57` 引用的 `app.js` 非模块），开工干净基线已复现相同诊断，无新增。guide 同步检查与 diff 检查退出 0。
+- 构建环境适配：标准 vinext 命令退出 1，Vite 尝试写共享 node_modules/.vite-temp 遇 EPERM；runner loader 退出 7（动态 import 时 module runner 已关闭）。最终用已有 esbuild 将同一份 vite.config.ts 打包到工作树 .sites-runtime/p97-vite.config.mjs，以 Vite createBuilder 的 native loader 构建成功；不改配置、共享依赖或主 checkout，不启动开发服务。dist 对应本轮产品源码。最后只补记验证元数据并同步 guide、运行文档一致性复验，不将这一步冒称重新全量构建。
+- 收尾兼容性检查：Badge 仅在传 mark 时覆盖 children，未传 mark 时原样透传 render 子内容；新增 render 元素自带文本的回归断言。最终产品源码已重新构建、全量 2345/2345 与类型检查，结果同上；本条属于随后补记的验证元数据。
+- 差异说明：任务所列第 7、8 色在 CSS／JS 两侧均未定义；夜图只修已有第 6 色，不造新色。白图沿用既有五个 CSS 系列桥接与六色 JS 配置，未扩张白图桥接。core 令牌、coss 源码、点／线形状保持；工程隔离断言不等于视觉验收。
+- 周期：沿 P93 记录进入新周期第 3/3 轮，本轮实施尚待验收，不记为已验收或宣布周期收口。按任务执行完整工程回归；最近完整工程回归为本轮 P97（2345/2345，保留既有类型错误与标准构建环境限制）。下次触发点为 Supervisor 对本周期累计页面／主题／交互的完整浏览器回归及独立综合审查。
+- 浏览器交接：`/next/foundations/blueprint#calibration`，blueprint / blueprint-night / light ×1280/390；另补 paper / dark、嵌套 core 预览、Trend / Comparison 悬停及 ECharts 提示几何。应见 65% · 177 / 272、80% · 960 / 1,200、排除／未核实 0、12,345、三态标记、类别方块／斜线块及原有空心点／菱形／线段。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workbench 接入、真机、读屏器未验；未提交、推送、PR、联网、模型调用、读取凭据、启动或重启开发服务、发布站点。Builder 不自我批准。
+
+
+### P93 · 2026-10-20（P97 前当前，原样保留）
+
 - 轮次：P93 · SpaceBar 降低高度 · 2026-10-20；基线 `7f335106ec0812bbff54645b18aadbf4bd2e7d54`，分支 `feat/space-bar-height-p93-20261020`；开工工作树干净，待 Supervisor 独立 Review 与浏览器验收。
 - 范围：复用现有 Prism SpaceBar，仅修改尺寸声明：桌面栏高 48→40px，space／收起侧区按钮 36→32px（展开侧区保持 32px），图标 17→16px；<600px 栏高 44px、按钮 44×44px。TSX 与蓝图覆盖无重复尺寸；五主题共用同一尺寸来源，不引入新组件或上游代码。AppBar、Token、颜色、边框、结构与交互保持原契约。
 - 配套：更新尺寸断言及定向测试、Workspace 顶部区域与组件契约；同步本状态的 guide 生成物。工程检查：字体退出 0；排版 317 个 TSX、退出 0；生产构建退出 0；全量测试 2312/2312、失败 0、跳过 0、退出 0；类型退出 2，仅既有 TS2306（`docs/learning-analysis/prototype-source/main.tsx:57` 引用的 `app.js` 非模块），干净基线临时归档复现同一诊断，无新增。首轮测试 2311/2312，旧蓝图高度断言未区分窄屏，按 40/44px 契约修正后全量通过；guide 检查与 diff 检查退出 0。
 - 周期：P87 后新周期第 2/3 轮实施完成，尚待验收，不记为已验收；下一已授权产品小轮为 3/3，触发完整回归与独立综合审查。本轮按任务要求执行完整工程检查，不据此重置浏览器综合验收周期。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。验收路由 `/next/use-cases/workspace-app-bar`，覆盖五主题、1280 与 390、展开／收起侧区、长标题省略及图标不挤压。真实服务、Workspace 接入、真机与读屏器未验。未提交、推送、PR、启动或重启开发服务、发布站点。
 
-## 历史
 
 ### P91 · 2026-10-20（P93 前当前，原样保留）
 

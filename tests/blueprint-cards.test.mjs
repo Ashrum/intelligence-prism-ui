@@ -223,7 +223,7 @@ test('P79 rollback mutations fail rendered/accessibility and theme/wrapping cont
     ['frame heading becomes div', s => s.replace('className="bp-frame-card-title text-ui-action">{title}</Heading>', 'className="bp-frame-card-title text-ui-action">{title}</div>').replace('<Heading id={id} className="bp-frame-card-title', '<div id={id} className="bp-frame-card-title'), headingContract],
     ['unlabelled frame', s => s.replace('<section aria-labelledby={id} {...props} className={cn("bp-frame-card"', '<section {...props} className={cn("bp-frame-card"'), headingContract],
     ['status fact lost', s => s.replace('{status.label}', '在线'), statusContract],
-    ['decorative letter', s => s.replace('className="bp-section-card-letter font-mono text-stat-display"', 'aria-hidden="true" className="bp-section-card-letter font-mono text-stat-display"'), sectionContract],
+    ['decorative letter', s => s.replace('className={cn("bp-section-card-letter font-mono",', 'aria-hidden="true" className={cn("bp-section-card-letter font-mono",'), sectionContract],
     ['action dropped', s => s.replace('<div className="bp-card-actions">{action}</div>', '<div className="bp-card-actions" />'), sectionContract],
   ];
   for (const [label, mutate, check] of sourceMutations) {

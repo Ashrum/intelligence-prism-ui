@@ -1,0 +1,68 @@
+{
+  "baseline": "85c35243a90d8ac20a7b7272f54e452dfa89cb27",
+  "cases": [
+    {
+      "name": "BpSizeBar",
+      "props": {
+        "rows": [
+          {
+            "id": "a",
+            "label": "构成",
+            "unit": "项",
+            "segments": [
+              {
+                "id": "a",
+                "label": "补回",
+                "value": 1684,
+                "fill": "accent"
+              },
+              {
+                "id": "b",
+                "label": "排除",
+                "value": 0,
+                "fill": "hatch"
+              }
+            ]
+          }
+        ]
+      },
+      "html": "<div class=\"space-y-3 border-(length:--line-width) border-(--line) p-4.5 pb-3.5\"><div class=\"space-y-3\"><div class=\"bp-size-row\"><span class=\"text-item-title\">构成</span><span role=\"img\" aria-label=\"构成：补回 1,684项，排除 0项\" class=\"bp-size-bar\"><span class=\"bp-fill-accent\" style=\"width:100%\"></span></span><span class=\"min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]\"><b class=\"text-ui-action text-foreground tabular-nums\">1,684</b> 项</span></div></div><ul aria-label=\"分段图例\" class=\"bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground\"><li class=\"flex min-w-0 max-w-full items-start gap-1.5\"><span aria-hidden=\"true\" class=\"mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-accent\"></span><span class=\"min-w-0 [overflow-wrap:anywhere]\">补回 <b class=\"text-foreground tabular-nums\">1,684</b></span></li><li class=\"flex min-w-0 max-w-full items-start gap-1.5\"><span aria-hidden=\"true\" class=\"mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-hatch\"></span><span class=\"min-w-0 [overflow-wrap:anywhere]\">排除 <b class=\"text-foreground tabular-nums\">0</b></span></li></ul></div>"
+    },
+    {
+      "name": "BpTitleBlock",
+      "props": {
+        "items": [
+          {
+            "id": "a",
+            "label": "学生",
+            "value": "45 人"
+          },
+          {
+            "id": "b",
+            "label": "名册",
+            "value": "当前班级"
+          }
+        ]
+      },
+      "html": "<div class=\"bp-fact-container\"><dl class=\"bp-titleblock\"><div><dt>学生</dt><dd>45 人</dd></div><div><dt>名册</dt><dd>当前班级</dd></div></dl></div>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "班级得分率与预期",
+        "meta": "6 次",
+        "children": "分节内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">班级得分率与预期</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">6 次</div></header><div class=\"bp-card-body\">分节内容</div></section>"
+    },
+    {
+      "name": "BpCallout",
+      "props": {
+        "title": "近期表现",
+        "children": "固定说明"
+      },
+      "html": "<div role=\"note\" class=\"bp-callout\"><b class=\"block text-block-title text-foreground\">近期表现</b><div class=\"mt-1.5 mb-2.5 text-ui-body text-muted-foreground\">固定说明</div></div>"
+    }
+  ]
+}

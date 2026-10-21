@@ -9,7 +9,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const dir = await createTestRuntime('p57-charts');
 const file = new URL('bundle.mjs', dir);
 await writeFile(file, (await build({
-  stdin: { contents: `export * from './components/prism-next/charts/donut-chart'; export * from './components/prism-next/charts/radar-chart'; export * from './components/prism-next/charts/advanced-charts'; export * from './lib/prism-next/polar-chart-options'; export * from './components/prism-next/charts/echart-engine'; export * from './lib/prism-next/config'; export {useChartTheme} from './components/prism-next/charts/chart-theme';`, resolveDir: root, loader: 'tsx' },
+  stdin: { contents: `export {PrismScopeProvider} from './components/prism-next/prism-scope'; export * from './components/prism-next/charts/donut-chart'; export * from './components/prism-next/charts/radar-chart'; export * from './components/prism-next/charts/advanced-charts'; export * from './lib/prism-next/polar-chart-options'; export * from './components/prism-next/charts/echart-engine'; export * from './lib/prism-next/config'; export {useChartTheme} from './components/prism-next/charts/chart-theme';`, resolveDir: root, loader: 'tsx' },
   bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
   plugins: [{ name: 'p57-chart-probe', setup(build) {
     build.onResolve({ filter: /^next-themes$/ }, () => ({ path: 'theme', namespace: 'p57' }));
@@ -30,7 +30,7 @@ export function capture(name, props, theme = 'light') {
   }
   try {
     let chartTheme;
-    const html = render(h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); }));
+    const html = render(h(api.PrismScopeProvider, {theme}, h(function Probe() { chartTheme = api.useChartTheme(); return walk(api[name](props)); })));
     return { html, nodes, charts: globalThis.__p57Charts, theme: chartTheme };
   } finally { delete globalThis.__p57Theme; delete globalThis.__p57Charts; }
 }

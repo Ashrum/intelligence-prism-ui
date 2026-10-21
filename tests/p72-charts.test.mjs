@@ -4,6 +4,7 @@ import { api, capture, defaults, h, render } from './p58-chart-harness.mjs';
 
 const lines = out => out.nodes.filter(n => n.type?.displayName === 'Line' || n.type?.name === 'Line');
 for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) {
+  const blueprint = theme === 'blueprint' || theme === 'blueprint-night';
   test(`P72 ${theme}: showPoints defaults true for solid/dashed, including custom symbols`, () => {
     for (const lineStyle of ['solid', 'dashed']) for (const symbol of [undefined, 'circle', 'hollow-circle', 'diamond']) {
       const series = [{ ...defaults.TrendChart.series[0], lineStyle, data: defaults.TrendChart.series[0].data.map(p => ({ ...p, symbol })) }];
@@ -12,7 +13,11 @@ for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) 
       assert.equal(explicit.html, omitted.html);
       for (const key of ['dot', 'activeDot']) {
         const a = lines(omitted)[0].props[key], b = lines(explicit)[0].props[key];
-        if (symbol) assert.equal(render(a({ cx: 10, cy: 20, payload: { id: 'zero' } })), render(b({ cx: 10, cy: 20, payload: { id: 'zero' } })));
+        if (symbol || blueprint) {
+          const svg = render(a({ cx: 10, cy: 20, payload: { id: 'zero' } }));
+          assert.equal(svg, render(b({ cx: 10, cy: 20, payload: { id: 'zero' } })));
+          if (blueprint && (!symbol || symbol === 'circle')) assert.match(svg, new RegExp(`<rect[^>]*width="${key === 'dot' ? 12 : 16}"`));
+        }
         else assert.equal(a.r, key === 'dot' ? 6.5 : 8);
         assert.notEqual(a, false);
       }
@@ -27,7 +32,7 @@ for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) 
       assert.equal(line.dot, false);
       assert.equal(line.activeDot, false);
       assert.equal(line.stroke, '#123456');
-      assert.equal(line.strokeWidth, 2.5);
+      assert.equal(line.strokeWidth, blueprint && lineStyle === 'dashed' ? 1.5 : 2.5);
       assert.equal(line.strokeOpacity, connect === false ? 0 : undefined);
       assert.equal(line.connectNulls, connect !== false && connectGaps);
       assert.equal(line.strokeDasharray, lineStyle === 'dashed' ? '5 4' : undefined);

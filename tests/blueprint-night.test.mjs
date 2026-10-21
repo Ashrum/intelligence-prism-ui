@@ -68,7 +68,8 @@ const controlBuild=await build({stdin:{contents:"export { buttonVariants } from 
 writeFileSync(controlFile,controlBuild.outputFiles[0].text);
 const {buttonVariants,badgeVariants,Toggle}=await import(controlFile);
 const controlCSS=read('app/(next)/next/blueprint.css').split('/* Night controls:')[1].split('/* Night surfaces')[0];
-const controlRules=postcss.parse('/* Night controls:'+controlCSS).nodes.filter(n=>n.type==='rule').map(rule=>({rule,selectors:rule.selectors.map(parseSelector)}));
+const badgeCSS=read('app/(next)/next/blueprint.css').split('/* P97 · Status badges')[1].split('*/')[1].split('\n').filter(line=>!line.includes('badge-mark')).join('\n');
+const controlRules=postcss.parse('/* Night controls:'+controlCSS+badgeCSS).nodes.filter(n=>n.type==='rule').map(rule=>({rule,selectors:rule.selectors.map(parseSelector)}));
 function controlStyle(slot,classes,{hover=false,pressed=false,loading=false,outer=night,preview}={}) {
   const parent=preview?element(preview,element(outer),true):element(outer);
   const node={parent,classes:classes.split(/\s+/),states:hover?['hover']:[],attrs:{'data-slot':slot,...(pressed?{'data-pressed':''}:{}),...(loading?{'data-loading':''}:{})}};
@@ -119,7 +120,7 @@ test('night maps BP.dark roles, SQUARE geometry, and documented fill fallbacks',
   for (const [key,value] of Object.entries(expected)) assert.equal(tokens[`--${key}`],value,key);
   const white=theme.split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
   const keys=[...white.matchAll(/(--[\w-]+):/g)].map(m=>m[1]);
-  assert.deepEqual(Object.keys(tokens),keys);
+  assert.deepEqual(Object.keys(tokens).sort(),[...keys,'--chart-6'].sort());
   assert.match(body,/color-scheme:dark/);
   for (const [key,value] of Object.entries(themePalette[night])) {
     const alias={surface:'card',muted:'muted-foreground',disabled:'disabled-foreground'};
@@ -199,7 +200,7 @@ test('night charts retain their independent legacy fallback palette with Bluepri
   assert.deepEqual(opts.aria,blueprintChartOverrides('blueprint').aria);
   assert.equal(opts.tooltip.borderColor,'#C9D6E8'); assert.equal(opts.tooltip.shadowColor,'#6EA8FF');
   assert.equal(opts.tooltip.borderRadius,0); assert.equal(opts.tooltip.borderWidth,1.5);
-  chartSeriesColors(night).slice(0,5).forEach((color,i)=>assert.equal(tokens[`--chart-${i+1}`],color));
+  chartSeriesColors(night).forEach((color,i)=>assert.equal(tokens[`--chart-${i+1}`],color));
   assert.equal(themePalette[night].line,'#C9D6E8');
 });
 
@@ -249,7 +250,7 @@ test('night outlined controls keep real coss default/hover/pressed text above 4.
 });
 
 test('night solid danger text uses dark ink and loading keeps its transparent label; input surfaces retain placeholder contrast',()=>{
-  for(const [slot,classes] of [['button',buttonVariants({variant:'destructive'})],['alert-dialog-close',buttonVariants({variant:'destructive'})],['badge',badgeVariants({variant:'destructive'})]]) {
+  for(const [slot,classes] of [['button',buttonVariants({variant:'destructive'})],['alert-dialog-close',buttonVariants({variant:'destructive'})]]) {
     const style=controlStyle(slot,classes);
     assert.equal(style.color,'var(--accent-ink)');
     for(const alpha of [1,.9]) for(const surface of ['--card','--background']) assert.ok(ratio(resolveControlColor(style.color),blend(tokens['--destructive'],tokens[surface],alpha))>=4.5);

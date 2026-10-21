@@ -566,7 +566,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   badge: {
     component: "Badge",
     source: "coss Badge plus Prism info-solid and attention aliases",
-    contract: ["Use text plus restrained color to express status.", "Prism semantic colors require textual meaning.", "info-solid increases information emphasis only; it does not imply pending, error, category or completion.", "attention maps to the existing error appearance for host-declared human attention; text defines meaning, never infer execution failure. Prism size remains lg by default.", "Counts do not automatically hide zero or collapse to 99+."],
+    contract: ["Use text plus restrained color to express status.", "Prism semantic colors require textual meaning.", "info-solid increases information emphasis only; it does not imply pending, error, category or completion.", "attention maps to the existing error appearance for host-declared human attention; text defines meaning, never infer execution failure. Prism size remains lg by default.", "Counts do not automatically hide zero or collapse to 99+.", "P97: optional mark=ok|warn|no renders a decorative ✓|!|✗ only in blueprint/blueprint-night; keep explicit visible status text and choose variant separately. Blueprint Badge uses square 1.5px currentColor borders on card paper with semantic foreground ink; core appearances stay unchanged."],
     accessibility: ["Ensure the containing control has a complete accessible name when a numeric badge is visually repeated."],
     dont: ["Do not communicate status by color alone.", "Do not invent automatic count truncation."]
   },
