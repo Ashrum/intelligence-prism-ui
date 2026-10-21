@@ -220,16 +220,17 @@ export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "tit
   /** Host provides the icon button and its accessible name. */
   action?: ReactNode
   headingLevel?: 2 | 3 | 4 | 5 | 6
+  density?: "default" | "compact"
 }
 /** A numbered/ordered subdivision within a result, without sheet rulers. */
-export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, children, className, ...props }: BpSectionCardProps) {
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", children, className, ...props }: BpSectionCardProps) {
   const id = useId()
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
   const code = letter?.trim()
-  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", className)} data-slot="bp-section-card">
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card">
     <header className="bp-section-card-head">
-      <Heading id={id} className="bp-section-card-title text-block-title">
-        {code && <span className="bp-section-card-letter font-mono text-stat-display">{code}</span>}
+      <Heading id={id} className={cn("bp-section-card-title", density === "compact" ? "text-item-title" : "text-block-title")}>
+        {code && <span className={cn("bp-section-card-letter font-mono", density === "compact" ? "text-ui-hint" : "text-stat-display")}>{code}</span>}
         <span className="bp-section-card-label">{title}</span>
       </Heading>
       {meta != null && <div className="bp-section-card-meta font-mono text-ui-meta">{meta}</div>}
@@ -246,32 +247,71 @@ export interface BpSizeBarProps {
   legend?: boolean
   /** Defaults to true for one row; opt in for a separately labelled legend per row. */
   legendValues?: boolean
+  framed?: boolean
+  size?: "default" | "sm"
+  /** Hide the visual row heading; it remains in the bar accessible name. */
+  hideRowLabel?: boolean
   className?: string
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, className }: BpSizeBarProps) {
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
   const renderLegend = (segments: BpSizeSegment[], label: string, unit = "") => <ul aria-label={label} className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
     {segments.map(s => <li key={s.id} className="flex min-w-0 max-w-full items-start gap-1.5"><span aria-hidden="true" className={`mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-${s.fill}`} /><span className="min-w-0 [overflow-wrap:anywhere]">{s.label}{legendValues && <> <b className="text-foreground tabular-nums">{sizeNumber.format(s.value)}</b>{unit && ` ${unit}`}</>}</span></li>)}
   </ul>
-  return <div className={cn("space-y-3 border-(length:--line-width) border-(--line) p-4.5 pb-3.5", className)}>
+  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", className)}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
       return <div key={row.id} className="space-y-3">
-        <div className="bp-size-row" data-display={row.display !== undefined ? "" : undefined}>
-        <span className="text-item-title">{row.label}</span>
+        <div className={cn("bp-size-row", hideRowLabel && "bp-size-row-unlabelled")} data-display={row.display !== undefined ? "" : undefined}>
+        {!hideRowLabel && <span className="text-item-title">{row.label}</span>}
         <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${sizeNumber.format(s.value)}${row.unit ?? ""}`).join("，")}`} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
         </span>
-        <span className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
+        <span hidden={row.display === "" || undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
         </div>
         {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit)}
       </div>
     })}
     {legend && (!legendValues || rows.length <= 1) && renderLegend(legendItems, "分段图例")}
   </div>
+}
+
+export interface BpStatProps {
+  label: ReactNode
+  code?: string
+  value: number | string
+  unit?: ReactNode
+  delta?: { text: ReactNode; tone?: "accent" | "warn" | "error" | "muted" }
+  caption?: ReactNode
+  children?: ReactNode
+  /** Host-supplied named help control. */
+  help?: ReactNode
+  state?: "available" | "insufficient" | "unknown"
+  className?: string
+}
+/** Blueprint-only vocabulary, not a second general MetricSummary. Place inside BpStatStrip. */
+export function BpStat({ label, code, value, unit, delta, caption, children, help, state = "available", className }: BpStatProps) {
+  const available = state === "available"
+  // Never present a numeric placeholder as an observation when the host says it is unavailable.
+  const display = available || typeof value === "string" && value.trim() ? value : state === "insufficient" ? "数据不足" : "未知"
+  return <div className={cn("bp-stat", className)} data-state={state}>
+    <dt className="bp-stat-label text-ui-meta">
+      <span>{label}</span>{code && <span className="bp-stat-code">{code}</span>}{help != null && <span className="bp-stat-help">{help}</span>}
+    </dt>
+    <dd className="bp-stat-content">
+      <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-score-display" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
+      {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
+      {caption != null && <div className="bp-stat-caption text-ui-hint">{caption}</div>}
+      {available && children != null && <div className="bp-stat-detail">{children}</div>}
+    </dd>
+  </div>
+}
+/** Container-width 4 / 2 / 1 grid; final rows fill all columns. Children are BpStat items. */
+export function BpStatStrip({ children, className, ...props }: ComponentProps<"dl">) {
+  return <div className="bp-stat-container"><dl {...props} className={cn("bp-stat-strip", className)}>{children}</dl></div>
 }
 
 export interface BpMetricProps { name: ReactNode; max: number; baseline: { label: string; value: number; display?: ReactNode }; current: { label: string; value: number; display?: ReactNode }; gain: ReactNode; gainUnit?: ReactNode; className?: string }
@@ -296,12 +336,13 @@ export function BpMetricLegend({ baseline, current }: { baseline: string; curren
 export function BpFacts({ items, className }: { items: { id: string; value: ReactNode; label: ReactNode }[]; className?: string }) {
   return <div className="bp-fact-container"><dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl></div>
 }
-export function BpTitleBlock({ items, className }: { items: { id: string; label: ReactNode; value: ReactNode }[]; className?: string }) {
-  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>
+export interface BpTitleBlockItem { id: string; label: ReactNode; value: ReactNode; tone?: "default" | "warn" | "muted"; numeric?: boolean }
+export function BpTitleBlock({ items, className }: { items: BpTitleBlockItem[]; className?: string }) {
+  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd data-tone={item.tone === "default" ? undefined : item.tone} className={item.numeric ? "bp-titleblock-numeric" : undefined}>{item.value}</dd></div>)}</dl></div>
 }
 
-export function BpCallout({ title, action, children, className }: { title: ReactNode; action?: ReactNode; children?: ReactNode; className?: string }) {
-  return <div role="note" className={cn("bp-callout", className)}><b className="block text-block-title text-foreground">{title}</b>{children && <div className="mt-1.5 mb-2.5 text-ui-body text-muted-foreground">{children}</div>}{action}</div>
+export function BpCallout({ title, action, emphasis = false, children, className }: { title: ReactNode; action?: ReactNode; emphasis?: boolean; children?: ReactNode; className?: string }) {
+  return <div role="note" className={cn("bp-callout", emphasis && "bp-callout-emphasis", className)}><b className="block text-block-title text-foreground">{title}</b>{children && <div className="mt-1.5 mb-2.5 text-ui-body text-muted-foreground">{children}</div>}{action}</div>
 }
 
 export interface BpErrorProps { location: ReactNode; message: ReactNode; example?: ReactNode; exampleLabel?: string; action?: ReactNode; className?: string }

@@ -136,7 +136,7 @@ for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real compone
     const id = attrs.match(/aria-labelledby="([^"]+)"/)[1];
     return bp.match(new RegExp(`<h2 id="${id}"[^>]*>([^<]+)</h2>`))[1];
   });
-  assert.deepEqual(labels, ['函数单元练习 PDF（示例）', '完整扫描纸', '按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本', '图形标注与入口']);
+  assert.deepEqual(labels, ['概览 · 九年级（1）班数学', '函数单元练习 PDF（示例）', '完整扫描纸', '按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本', '图形标注与入口']);
   assert.match(bp, /class="bp-section-folio" aria-hidden="true">REV 02<\/p>/);
   assert.match(bp, /class="bp-section-folio" aria-hidden="true">SHEET 01 \/ 02<\/p>/);
   for (const role of ['radiogroup', 'radio', 'img', 'note', 'alert', 'status']) assert.ok(bp.includes(`role="${role}"`));

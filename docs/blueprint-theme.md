@@ -525,3 +525,16 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 - 共享图例：area / bar / segment 为类别，蓝图与夜图下方形；hatch 为斜线块。点类（包括不可比空心点、新情境菱形）和线类保持语义形状；不会自动把未声明语义的 dot 改为类别。显式颜色继续优先。新增 area / segment 在 core 退回既有圆点类别样式。
 
 示例：[学情比例与状态样例](/next/foundations/blueprint#calibration)。包含 65% · 177 / 272、80% · 960 / 1,200、排除／未核实 0、记录数 12,345、三态标签与点／线／类别对照。完整 API 见 [组件契约](component-contracts.md)。工程检查见 [当前状态](blueprint/STATUS.md)；浏览器验收：按分工由 Supervisor 执行，覆盖 blueprint / blueprint-night / light，1280 / 390，并补 paper / dark 与嵌套 core 隔离回归。
+
+
+## P99 · C0 学情概览组件抽取
+
+设计状态：组件实现待 Supervisor 独立 Review；工程准入：未开始。本轮依批准扩展蓝图族，未改冻结 coss、core 令牌、依赖或 Workspace。推荐用于 blueprint / night；核心三主题中的显式 bp 组件使用既有中性令牌回退。
+
+新增 `BpStat` / `BpStatStrip`，扩展 `BpSizeBar` 的 framed/size/hideRowLabel、标题项 tone/numeric、分节 density 和 Callout emphasis。完整 props、复用取舍、未知态规则及布局边界见[组件契约](component-contracts.md)。这些 bp 呈现封装不新增目录条目，不替代 MetricSummary。
+
+示例 `/next/foundations/blueprint#overview-calibration` 组合 C0 SHEET 01 的七格标题栏、6px 强调 Callout、75%（+1 pp、1,684 / 2,250 分）、65%（177 / 95 / 17）、76%（626 / 197 / 43）、10 人及 compact B 节。保留 `#trend-calibration` 锚点，趋势图改为自动域，蓝图/夜图刻度应为 65 / 70 / 75 / 80。标题块沿用 P82 容器窄屏两列与奇数尾项铺满。
+
+指标条按自身容器 ≥960 / 480–959 / <480px 排四/二/一列，末行填满；统计值使用已有 40px score-display 及等宽 700，单位为 ui-body 14px、标签 ui-meta 12px、紧凑标题 item-title 14px。与样稿约 15/11/16px 的差异是沿用正式语义字号，未新增字号令牌。未知/数据不足显示宿主文案，隐藏数值附属单位、增量与条形，保留说明与帮助。展开“查看未知态与长文案夹具”可核对。
+
+验证边界：SSR/API、容器 CSS AST 与网格占位计算、P98 core SVG 指纹均为工程证据，不能当作视觉通过。浏览器验收：按分工由 Supervisor 执行；在 blueprint / blueprint-night / light 的 1280 / 390 与样稿并排，另检查窄容器两列、帮助展开、依据链接、未知态、长文案及 core 嵌套预览。独立 Review、浏览器验收与 PO 批准另行记录。

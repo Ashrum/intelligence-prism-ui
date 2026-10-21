@@ -5,7 +5,7 @@ import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAx
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 import { fitTrendTick, sparkTickLayout } from "@/lib/prism-next/trend-ticks"
 import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
-import { formatChartValue, trendAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
+import { formatChartValue, trendAutoScale, blueprintTrendAutoScale, type ChartDecimals } from "@/lib/prism-next/chart-options"
 import { chartToneColor, type ChartTone } from "@/lib/prism-next/polar-chart-options"
 import { ChartLegend, ChartMarker, type ChartLegendItem } from "./chart-legend"
 import { useChartTheme } from "./chart-theme"
@@ -52,8 +52,8 @@ export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,d
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
- const theme=useChartTheme(),autoScale=yDomain==="auto"?trendAutoScale(series.flatMap(s=>s.data.map(p=>p.value)),unit):undefined,activeDomain=yDomain==="auto"?autoScale!.domain:yDomain??domain
- const blueprint=isBlueprintTheme(theme.theme)
+ const theme=useChartTheme(),blueprint=isBlueprintTheme(theme.theme)
+ const autoScale=yDomain==="auto"?(blueprint?blueprintTrendAutoScale:trendAutoScale)(series.flatMap(s=>s.data.map(p=>p.value)),unit):undefined,activeDomain=yDomain==="auto"?autoScale!.domain:yDomain??domain
  const trendAxis=blueprint?{...axis,tick:{...axis.tick,fontFamily:"var(--font-mono)"}}:axis
  const format=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?formatChartValue(value,unit,decimals):"—"
  const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}))

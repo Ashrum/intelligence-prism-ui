@@ -2405,6 +2405,29 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 - 离线复用检索：既有 Badge、BpSizeBar、ChartLegend、chart-palette 与固定 coss Badge 已足够；沿用既有来源，不需要新组件、particles 或外部代码。没有联网刷新上游，不声称最新来源已接入。组件 Agent Spec 与蓝图 guide JSON 同步；不登记新的目录条目。
 - 合成示例 `/next/foundations/blueprint#calibration` 包含双行比例、排除零值、千分位、三态 Badge 和类别／点／线图例；浏览器验收：按分工由 Supervisor 执行。
 
+### C0 学情概览组合（P99）
+
+设计状态：P99 组件实现待独立 Review；工程准入：未开始。示例位于 `/next/foundations/blueprint#overview-calibration`，采用固定合成数据，不代表 Workspace 接入或生产准入。
+
+复用检索（离线）：先核对 Prism `MetricSummary`、`BpFacts`、`BpMetric`、`BpSizeBar`、`BpTitleBlock`、`BpSectionCard`、`BpCallout`。MetricSummary 保留通用指标职责；BpFacts 无 code/help/state/内嵌分段条，BpMetric 是基线/当前对照，不能直接承载 C0 单指标。按本轮批准仅增加蓝图族 `BpStat` / `BpStatStrip`，其余扩展已有组件。复用 BpTool 作为具名帮助按钮，不新增基础控件，不引入 coss particles 或第三方代码，不联网刷新来源，不新增依赖或平行通用指标体系。
+
+| API | 默认与契约 |
+| --- | --- |
+| `BpStat` | 必填 `label: ReactNode`、`value: number \| string`；可选 `code: string`、`unit: ReactNode`、`caption: ReactNode`、`className`。标签和 code 同在 dt 内可读，value/unit 在 dd 内分开呈现。数值不计算、不自动格式化，格式化文字由宿主传入。 |
+| `delta?: { text: ReactNode; tone?: "accent" \| "warn" \| "error" \| "muted" }` | 默认 accent，文字必须描述实际变化；不从数值或色彩推断业务含义。 |
+| `state?: "available" \| "insufficient" \| "unknown"` | 默认 available。后两态显示宿主传入的非空文字；错误传入数字/空白时分别回退“数据不足”/“未知”，不显示占位零。隐藏 unit/delta/children，保留 caption/help 解释缺失；真实 available 数值 0 仍显示。宿主不得把缺失预格式化为字符串“0”。 |
+| `help?: ReactNode` / `children?: ReactNode` | help 在标签行右侧，由宿主提供具名按钮和展开/焦点接线；children 位于指标说明下方，可嵌紧凑分段条。组件不创建 Tooltip、业务 Store 或异步查询。 |
+| `BpStatStrip` | 接收 dl 原生属性、className 与 BpStat children；外层具名 inline-size 容器，内部 dl，BpStat 为 div > dt + dd。容器 ≥960px 四列，480–959px 两列，<480px 一列；1.5px 外框、格间 1px。末行余 1 项铺满、四列余 2 项各占两列、余 3 项末项占两列，不留尾部空格。 |
+| `BpSizeBar.framed?: boolean` / `size?: "default" \| "sm"` | 默认 true/default，保持原外框、内边距、22px 条。false 去框和内边距；sm 条高 14px、图例保留 ui-meta。 |
+| `BpSizeBar.hideRowLabel?: boolean` | 默认 false；true 只隐藏可见行标签，role=img 名称仍含行标签、所有分段值与单位。已有 `rows[].display=""` 省略空汇总占位；省略 display 仍显示格式化合计。framed/size/hideRowLabel 不改变 P97 千分位、legendValues 或 total 分母。 |
+| `BpTitleBlock.items[].tone?` / `numeric?` | tone 为 default/warn/muted，默认样式保持；numeric=true 用等宽 700 字重。标签已有等宽大写 ui-meta；保留 P82 自身容器 ≤480px 两列/奇数尾项跨满及长文本换行。 |
+| `BpSectionCard.density?: "default" \| "compact"` | 默认保持。compact 字母块 28×28px、头部 padding 10px 12px、标题 block-title 降一级为 item-title、字母用 ui-hint；不改 heading 级别和可访问名。 |
+| `BpCallout.emphasis?: boolean` | 默认 false，保留原 5px warning 左线；true 为 6px line 左线、card 纸面、16px 20px 内边距，与 C0 强调框对应。 |
+
+推荐用于 blueprint / night（主题 ID 为 `blueprint` / `blueprint-night`）；显式 bp 组件在 light/paper/dark 读取既有中性语义令牌，可读、对齐，不改变普通 core 组件。大数复用现有 `text-score-display` 40px 并在 bp 族设等宽 700；`text-stat-display` 实值只有 24px，故不采用。单位用 ui-body 14px、标签用 ui-meta 12px、紧凑标题用 item-title 14px：沿用现有语义字号，不新增样稿 15/11/16px 局部字号。
+
+追加 TrendChart：只有 blueprint / blueprint-night 且 `yDomain="auto"` 使用整数步长 1/2/5/10/20（按数据跨度约三段选择，C0 取 5），首尾向外取步长整数倍；百分比合法范围保留 0–100 边界，常量扩成非零范围，全缺测显示空坐标系。超过 100 的跨度扩展同系十进位步长，避免无限刻度。显式域由宿主控制，core 的自动刻度和 P98 SVG 几何保持；不修改 Scatter 的自动比例。C0 断言为 65、70、75、80。工程测试不等同浏览器验收。
+
 ### Blueprint 事实栏与标题块布局（P82）
 
 `BpFacts` / `BpTitleBlock` 保留 items / className 与 dt/dd 契约，新增 `bp-fact-container` 外层作为自身容器查询边界，className 仍在 dl。宿主直接子节点选择器须考虑该外层。五主题一致：容器 ≤480px 固定两列，奇数末项跨满；>480px 所有项等宽单行。断点取原标题块单元 160px ×3。事实栏原固定两列也统一为此规则；不改字号、颜色或 Token。长中文 / 连续数字允许换行，数值保留 tabular-nums。只保证文本换行策略，不替调用方强制缩小固定宽媒体或不可断行的自定义 ReactNode。工程测试覆盖 2 / 3 / 4 / 5 项、宽窄声明与回退变异；实际像素溢出及视觉由 Supervisor 浏览器验收。

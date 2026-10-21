@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "110d5a2d6106e97b24d7eeac4796c6e8f2389e8bbde65293494b8786b8aa88a1",
+  "sourceSha256": "529d42fe79ffeff40b2c7b9e41b76da52a4c53014e237daa16b985bf5292b4b9",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -228,6 +228,11 @@
       "id": "section-45",
       "level": 2,
       "text": "学情校准组件补齐（P97 · 2026-10-21）"
+    },
+    {
+      "id": "section-46",
+      "level": 2,
+      "text": "P99 · C0 学情概览组件抽取"
     }
   ],
   "blocks": [
@@ -9307,13 +9312,125 @@
           "value": "；浏览器验收：按分工由 Supervisor 执行，覆盖 blueprint / blueprint-night / light，1280 / 390，并补 paper / dark 与嵌套 core 隔离回归。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-46",
+      "children": [
+        {
+          "type": "text",
+          "value": "P99 · C0 学情概览组件抽取"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态：组件实现待 Supervisor 独立 Review；工程准入：未开始。本轮依批准扩展蓝图族，未改冻结 coss、core 令牌、依赖或 Workspace。推荐用于 blueprint / night；核心三主题中的显式 bp 组件使用既有中性令牌回退。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "新增 "
+        },
+        {
+          "type": "code",
+          "value": "BpStat"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "BpStatStrip"
+        },
+        {
+          "type": "text",
+          "value": "，扩展 "
+        },
+        {
+          "type": "code",
+          "value": "BpSizeBar"
+        },
+        {
+          "type": "text",
+          "value": " 的 framed/size/hideRowLabel、标题项 tone/numeric、分节 density 和 Callout emphasis。完整 props、复用取舍、未知态规则及布局边界见"
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "组件契约"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。这些 bp 呈现封装不新增目录条目，不替代 MetricSummary。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "示例 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint#overview-calibration"
+        },
+        {
+          "type": "text",
+          "value": " 组合 C0 SHEET 01 的七格标题栏、6px 强调 Callout、75%（+1 pp、1,684 / 2,250 分）、65%（177 / 95 / 17）、76%（626 / 197 / 43）、10 人及 compact B 节。保留 "
+        },
+        {
+          "type": "code",
+          "value": "#trend-calibration"
+        },
+        {
+          "type": "text",
+          "value": " 锚点，趋势图改为自动域，蓝图/夜图刻度应为 65 / 70 / 75 / 80。标题块沿用 P82 容器窄屏两列与奇数尾项铺满。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "指标条按自身容器 ≥960 / 480–959 / <480px 排四/二/一列，末行填满；统计值使用已有 40px score-display 及等宽 700，单位为 ui-body 14px、标签 ui-meta 12px、紧凑标题 item-title 14px。与样稿约 15/11/16px 的差异是沿用正式语义字号，未新增字号令牌。未知/数据不足显示宿主文案，隐藏数值附属单位、增量与条形，保留说明与帮助。展开“查看未知态与长文案夹具”可核对。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "验证边界：SSR/API、容器 CSS AST 与网格占位计算、P98 core SVG 指纹均为工程证据，不能当作视觉通过。浏览器验收：按分工由 Supervisor 执行；在 blueprint / blueprint-night / light 的 1280 / 390 与样稿并排，另检查窄容器两列、帮助展开、依据链接、未知态、长文案及 core 嵌套预览。独立 Review、浏览器验收与 PO 批准另行记录。"
+        }
+      ]
     }
   ],
   "assets": [
     {
       "source": "docs/blueprint/STATUS.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint/STATUS.md",
-      "sha256": "5f98d7afde3acb662bd3d1239837ef8804b3869e0b279e382bf61cbb8a882bd4"
+      "sha256": "e79c082eb96db6836b4d369476751f0d9efcdced5fc2ea80c165b2d2141deea8"
     },
     {
       "source": "docs/blueprint/evidence/night-20261016/engineering.json",
@@ -9808,12 +9925,12 @@
     {
       "source": "docs/component-contracts.md",
       "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
-      "sha256": "e52dd73714030da7b511abb3f8abb6fc8a237a28d9df4538ae585e3ac9388108"
+      "sha256": "25b10b42eafa34591e61d2f60ecc5c9d412ddbc286e61b8a4d297b9bf0e04bfb"
     },
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "110d5a2d6106e97b24d7eeac4796c6e8f2389e8bbde65293494b8786b8aa88a1"
+      "sha256": "529d42fe79ffeff40b2c7b9e41b76da52a4c53014e237daa16b985bf5292b4b9"
     }
   ]
 }
