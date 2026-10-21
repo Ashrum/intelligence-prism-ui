@@ -221,6 +221,17 @@
 .bp-card-body { min-width:0; padding:20px; overflow-wrap:anywhere; }
 /* End P79 cards. */
 
+/* P103 · Explicit frame focus; local P102 tokens reset at nested theme boundaries. */
+.bp-frame-card[data-focus="review"] { outline:2px solid var(--bp-phase-review); outline-offset:3px; animation:bp-paper-focus 180ms ease-out; }
+.bp-frame-card > .bp-card-body[data-swap="answer"] { animation:bp-frame-swap 180ms ease-out; }
+@keyframes bp-frame-swap { from { transform:translateX(8px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+.bp-grading-demo[data-reduced-motion="true"] .bp-frame-card[data-focus="review"],
+.bp-grading-demo[data-reduced-motion="true"] .bp-frame-card > .bp-card-body[data-swap="answer"] { animation:none; }
+@media (prefers-reduced-motion:reduce) {
+  .bp-frame-card[data-focus="review"],.bp-frame-card > .bp-card-body[data-swap="answer"] { animation:none; }
+}
+/* End P103 frame focus. */
+
 /* P85 object cards: scoped aliases of P79 frame/status/actions; keep legacy SSR byte-identical. */
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-sizing:border-box; width:100%; min-width:0; max-width:100%; margin-inline:0; border:1.5px solid var(--line); border-radius:0; box-shadow:none; background:var(--card); color:var(--card-foreground); }
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="card"]:is([data-agent-arranger-view],[data-agent-relation-view]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { display:none; }

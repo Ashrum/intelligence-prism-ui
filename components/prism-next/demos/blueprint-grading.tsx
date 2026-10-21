@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { BlueprintSectionHeader, BpButton, BpPaperSlot, BpScanTrace, BpSteps, type BpPaperSlotState } from "../blueprint/blueprint"
+import { BlueprintSectionHeader, BpButton, BpFrameCard, BpPaperSlot, BpScanTrace, BpSteps, type BpPaperSlotState } from "../blueprint/blueprint"
 
 const names = ["陈一诺", "林子涵", "王思远", "李沐辰", "张语桐", "赵知行", "周若溪", "吴书言", "郑明轩", "孙清越", "许嘉宁", "黄雨辰"]
 const initialStates: BpPaperSlotState[] = ["graded", "review", "grading", "received", "waiting", "waiting", "received", "graded", "waiting", "review", "waiting", "received"]
@@ -15,6 +15,7 @@ export function BlueprintGradingDemo() {
   const [fresh, setFresh] = useState<number | null>(null)
   const [focused, setFocused] = useState<number | null>(null)
   const [reduced, setReduced] = useState(false)
+  const [reviewIndex, setReviewIndex] = useState(0)
   const [event, setEvent] = useState("五态合成快照，可选择答卷位查看聚焦框。")
   function simulate(from: BpPaperSlotState, to: BpPaperSlotState, phase: number) {
     const index = slots.indexOf(from)
@@ -31,6 +32,7 @@ export function BlueprintGradingDemo() {
     setReceiving(true)
     setFresh(null)
     setFocused(null)
+    setReviewIndex(0)
     setEvent("已重置为五态合成快照。")
   }
   return <section id="grading-p102" className="bp-grading-demo space-y-5" data-reduced-motion={reduced ? "true" : undefined} aria-label="智能批阅组件示例">
@@ -57,9 +59,21 @@ export function BlueprintGradingDemo() {
     <div className="bp-grading-grid">
       {slots.map((state, index) => <BpPaperSlot key={index} state={state} name={names[index]} code={String(index + 1).padStart(2, "0")} detail={details[state]} fresh={fresh === index} focused={focused === index} onSelect={() => { setFocused(index); setEvent(`当前查看：${names[index]}，${details[state]}。`) }} />)}
     </div>
+    <section id="frame-focus-p103" className="space-y-4" aria-label="复核原件示例">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-2"><h3 className="text-block-title">复核原件 · P103</h3><p className="text-ui-hint text-muted-foreground">演示事件，产品中由真实选中驱动。以下原件文字为合成数据。</p></div>
+        <BpButton onClick={() => setReviewIndex(value => (value + 1) % names.length)}>下一份</BpButton>
+      </div>
+      <BpFrameCard title={`当前作答原件 · ${names[reviewIndex]} · 第 1 题`} focus="review" swapKey={`demo-submission-${reviewIndex}:question-1`} aria-current="true" status={{ tone: "neutral", label: `第 ${reviewIndex + 1} / ${names.length} 份` }}>
+        <div className="space-y-3">
+          <p className="text-read-body">{names[reviewIndex]}的合成作答：y = −(x − 1)² + 5，对称轴为 x = 1，最大值为 5。</p>
+          <p className="text-ui-hint text-muted-foreground">此处仅演示当前原件的聚焦与切换，不代表真实扫描图像或复核结果。</p>
+        </div>
+      </BpFrameCard>
+    </section>
     <div className="space-y-2">
       <BpButton aria-pressed={reduced} onClick={() => setReduced(value => !value)}>减少动态效果对照：{reduced ? "开" : "关"}</BpButton>
-      <p className="text-ui-hint text-muted-foreground">仅为本示例的静态对照，不保存偏好。系统开启减少动态效果时始终隐藏光束、扫描线和闪边，取消落位、阶段展开与聚焦动画；姓名、状态、成功标记和聚焦框仍保留。系统关闭后，对照开关才允许查看动效。</p>
+      <p className="text-ui-hint text-muted-foreground">仅为本示例的静态对照，不保存偏好。系统开启减少动态效果时始终隐藏光束、扫描线和闪边，取消落位、阶段展开、聚焦与原件横移淡入动画；姓名、状态、成功标记和聚焦框仍保留。系统关闭后，对照开关才允许查看动效。</p>
     </div>
   </section>
 }

@@ -206,16 +206,24 @@ export function BpPaneHead({ title, action, className, ...props }: Omit<Componen
 
 export interface BpFrameCardProps extends Omit<ComponentProps<"section">, "title"> {
   title: ReactNode
+  /** Visual supplement to the host's current-answer fact; does not move keyboard focus. */
+  focus?: "review"
+  /** Answer identity. Changes remount the body for a CSS-only entrance; initial mount is static. */
+  swapKey?: string | number
   /** Host-supplied fact, always accompanied by readable text. Never infer a live/execution state. */
   status?: { tone: "success" | "warning" | "danger" | "info" | "neutral"; label: ReactNode }
   actions?: ReactNode
   headingLevel?: 2 | 3 | 4 | 5 | 6
 }
 /** An independently identifiable object, such as an original document or export preview. */
-export function BpFrameCard({ title, status, actions, headingLevel = 3, children, className, ...props }: BpFrameCardProps) {
+export function BpFrameCard({ title, focus, swapKey, status, actions, headingLevel = 3, children, className, ...props }: BpFrameCardProps) {
   const id = useId()
+  const [swap, setSwap] = useState({ key: swapKey, revision: 0 })
+  // Adjust during render so the new body and its entrance marker commit together.
+  // A revision also distinguishes numeric/string identities and repeated A → B → A switches.
+  if (!Object.is(swap.key, swapKey)) setSwap({ key: swapKey, revision: swap.revision + 1 })
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
-  return <section aria-labelledby={id} {...props} className={cn("bp-frame-card", className)} data-slot="bp-frame-card">
+  return <section aria-labelledby={id} {...props} className={cn("bp-frame-card", className)} data-slot="bp-frame-card" data-focus={focus}>
     <header className="bp-frame-card-head">
       <Heading id={id} className="bp-frame-card-title text-ui-action">{title}</Heading>
       {status && <div className="bp-frame-card-status text-ui-hint" data-tone={status.tone}>
@@ -224,7 +232,7 @@ export function BpFrameCard({ title, status, actions, headingLevel = 3, children
       </div>}
       {actions != null && <div className="bp-card-actions">{actions}</div>}
     </header>
-    <div className="bp-card-body">{children}</div>
+    <div key={swap.revision} className="bp-card-body" data-swap={swapKey !== undefined && swap.revision > 0 ? "answer" : undefined}>{children}</div>
   </section>
 }
 
