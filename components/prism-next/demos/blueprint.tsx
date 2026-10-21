@@ -8,6 +8,7 @@ import { MenuPopup } from "../scoped-overlays"
 import { Button } from "../button"
 import { Badge } from "../badge"
 import { ChartLegend } from "../charts/chart-legend"
+import { BlueprintGradingDemo } from "./blueprint-grading"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
@@ -82,6 +83,7 @@ export function BlueprintComponentsDemo() {
       <a href="#artifact-folio">成果标题定位</a>
       <a href="#object-section-cards">原件与成果分节</a>
       <a href="#workspace-contracts">Agent 工作区稳定交互</a>
+      <a href="#grading-p102">智能批阅组件</a>
       <a href="#trend-calibration">C0 趋势图对照</a>
     </nav>
     <BlueprintFoundationDemo />
@@ -93,6 +95,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintCardsDemo />
     <AgentWorkspacePatternsDemo />
     <BlueprintOverviewDemo />
+    <BlueprintGradingDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
         titleActions={<Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="成果标题更多操作" />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
