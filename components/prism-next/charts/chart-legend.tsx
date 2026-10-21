@@ -43,7 +43,7 @@ export function ChartMarker({ marker, color, cx = 12, cy = 8, r = 6.5 }: { marke
 export function ChartLegend({ items, align = "left", label = "图例", className = "" }: ChartLegendProps) {
   const theme = useChartTheme()
   if (!items.length) return null
-  return <ul aria-label={label} data-chart-legend className={`flex min-w-0 max-w-full flex-wrap gap-x-5 gap-y-2 text-ui-hint ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : "justify-start"} ${className}`}>
+  return <ul style={theme.theme === undefined ? { visibility: "hidden" } : undefined} aria-label={label} data-chart-legend className={`flex min-w-0 max-w-full flex-wrap gap-x-5 gap-y-2 text-ui-hint ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : "justify-start"} ${className}`}>
     {items.map((item, index) => <li key={item.id} data-legend-id={item.id} className="flex min-w-0 max-w-full items-start gap-2">
       <svg aria-hidden="true" focusable="false" width={24} height={16} viewBox="0 0 24 16" className="mt-0.5 shrink-0" data-legend-marker={item.marker}><ChartMarker marker={chartLegendMarker(item.marker, theme.theme)} color={chartLegendColor(item, index, theme)} /></svg>
       <span className="text-ui-hint text-foreground"><span className="whitespace-normal [overflow-wrap:anywhere]">{item.label}</span></span>

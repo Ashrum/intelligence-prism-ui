@@ -146,20 +146,22 @@ test('P74: submenu keeps coss offsets, scoped/explicit targets and real parent P
   });
 });
 
-test('P74: chart scope uses the local palette in both directions and empty nested boundaries restore global defaults', () => {
-  function capture(tree) { let result; function Probe() { result = api.useChartTheme(); return null; } renderToStaticMarkup(tree(h(Probe))); return result; }
-  for (const globalTheme of [...themes, undefined]) {
-    globalThis.__p74GlobalTheme = globalTheme;
-    const original = capture(child => child);
-    assert.equal(original.theme, globalTheme);
-    assert.deepEqual(original.colors, api.chartSeriesColors(globalTheme));
-    assert.deepEqual(original.palette, api.themePalette[globalTheme] ?? api.themePalette.light);
-    for (const theme of themes) {
-      const local = capture(child => scope(api, undefined, theme, child));
-      assert.equal(local.theme, theme); assert.deepEqual(local.colors, api.chartSeriesColors(theme)); assert.deepEqual(local.palette, api.themePalette[theme]);
-      assert.deepEqual(capture(child => scope(api, undefined, theme, h(api.PrismScopeProvider, null, child))), original);
+test('P74: chart scope uses the local palette in both directions and empty nested boundaries restore global defaults', async () => {
+  await mounted(async ({render}) => {
+    async function capture(tree) { let result; function Probe() { result = api.useChartTheme(); return null; } await render(tree(h(Probe))); return result; }
+    for (const globalTheme of [...themes, undefined]) {
+      globalThis.__p74GlobalTheme = globalTheme;
+      const original = await capture(child => child);
+      assert.equal(original.theme, globalTheme ?? 'light');
+      assert.deepEqual(original.colors, api.chartSeriesColors(globalTheme));
+      assert.deepEqual(original.palette, api.themePalette[globalTheme] ?? api.themePalette.light);
+      for (const theme of themes) {
+        const local = await capture(child => scope(api, undefined, theme, child));
+        assert.equal(local.theme, theme); assert.deepEqual(local.colors, api.chartSeriesColors(theme)); assert.deepEqual(local.palette, api.themePalette[theme]);
+        assert.deepEqual(await capture(child => scope(api, undefined, theme, h(api.PrismScopeProvider, null, child))), original);
+      }
     }
-  }
+  });
   delete globalThis.__p74GlobalTheme;
 });
 
@@ -266,7 +268,9 @@ test('P74: context, explicit precedence, submenu and Toast regressions fail the 
 
 test('P74: dropping the local chart theme is caught by the palette assertion', async () => {
   const path = 'components/prism-next/charts/chart-theme.ts';
-  const runtime = await compileScope({ [path]: read(path).replace('localTheme??globalTheme', 'globalTheme') });
+  const source = read(path), mutated = source.replace('localTheme ?? hydratedTheme', 'hydratedTheme');
+  assert.notEqual(mutated, source, 'mutation must actually remove the local scope');
+  const runtime = await compileScope({ [path]: mutated });
   globalThis.__p74GlobalTheme = 'light';
   let result; function Probe() { result = runtime.useChartTheme(); return null; }
   renderToStaticMarkup(scope(runtime, undefined, 'blueprint', h(Probe)));

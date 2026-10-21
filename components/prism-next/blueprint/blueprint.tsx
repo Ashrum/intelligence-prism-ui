@@ -240,7 +240,7 @@ export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, d
   </section>
 }
 
-export type BpFill = "ink" | "hatch" | "accent" | "quiet"
+export type BpFill = "ink" | "hatch" | "accent" | "quiet" | "warn"
 export interface BpSizeSegment { id: string; label: string; value: number; fill: BpFill }
 export interface BpSizeBarProps {
   rows: { id: string; label: string; total?: number; unit?: string; display?: string; segments: BpSizeSegment[] }[]
@@ -248,29 +248,35 @@ export interface BpSizeBarProps {
   /** Defaults to true for one row; opt in for a separately labelled legend per row. */
   legendValues?: boolean
   framed?: boolean
-  size?: "default" | "sm"
+  size?: "default" | "sm" | "xs"
+  /** Target in the same units as each row total; included in the accessible name. */
+  marker?: { value: number; label: string }
   /** Hide the visual row heading; it remains in the bar accessible name. */
   hideRowLabel?: boolean
   className?: string
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, className }: BpSizeBarProps) {
+  const compact = size === "xs"
+  const hideLabel = compact || hideRowLabel
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
   const renderLegend = (segments: BpSizeSegment[], label: string, unit = "") => <ul aria-label={label} className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
     {segments.map(s => <li key={s.id} className="flex min-w-0 max-w-full items-start gap-1.5"><span aria-hidden="true" className={`mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-${s.fill}`} /><span className="min-w-0 [overflow-wrap:anywhere]">{s.label}{legendValues && <> <b className="text-foreground tabular-nums">{sizeNumber.format(s.value)}</b>{unit && ` ${unit}`}</>}</span></li>)}
+    {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}</li>}
   </ul>
-  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", className)}>
+  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", className)}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
       return <div key={row.id} className="space-y-3">
-        <div className={cn("bp-size-row", hideRowLabel && "bp-size-row-unlabelled")} data-display={row.display !== undefined ? "" : undefined}>
-        {!hideRowLabel && <span className="text-item-title">{row.label}</span>}
-        <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${sizeNumber.format(s.value)}${row.unit ?? ""}`).join("，")}`} className="bp-size-bar">
+        <div className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled")} data-display={row.display !== undefined ? "" : undefined}>
+        {!hideLabel && <span className="text-item-title">{row.label}</span>}
+        <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${sizeNumber.format(s.value)}${row.unit ?? ""}`).join("，")}${marker ? `，${marker.label} ${sizeNumber.format(marker.value)}${row.unit ?? ""}` : ""}`} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
+          {marker && Number.isFinite(marker.value) && <i aria-hidden="true" className="bp-size-marker" style={{ left: `${total > 0 ? Math.min(100, Math.max(0, marker.value / total * 100)) : 0}%` }} />}
         </span>
-        <span hidden={row.display === "" || undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
+        <span hidden={compact || row.display === "" || undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
         </div>
         {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit)}
       </div>
@@ -284,6 +290,8 @@ export interface BpStatProps {
   code?: string
   value: number | string
   unit?: ReactNode
+  layout?: "stack" | "inline"
+  readout?: { text: ReactNode; tone?: "accent" | "warn" | "error" | "muted" }
   delta?: { text: ReactNode; tone?: "accent" | "warn" | "error" | "muted" }
   caption?: ReactNode
   children?: ReactNode
@@ -293,19 +301,31 @@ export interface BpStatProps {
   className?: string
 }
 /** Blueprint-only vocabulary, not a second general MetricSummary. Place inside BpStatStrip. */
-export function BpStat({ label, code, value, unit, delta, caption, children, help, state = "available", className }: BpStatProps) {
+export function BpStat({ label, code, value, unit, delta, caption, children, help, state = "available", layout = "stack", readout, className }: BpStatProps) {
   const available = state === "available"
   // Never present a numeric placeholder as an observation when the host says it is unavailable.
   const display = available || typeof value === "string" && value.trim() ? value : state === "insufficient" ? "数据不足" : "未知"
-  return <div className={cn("bp-stat", className)} data-state={state}>
+  return <div className={cn("bp-stat", layout === "inline" && "bp-stat-inline", className)} data-state={state}>
     <dt className="bp-stat-label text-ui-meta">
       <span>{label}</span>{code && <span className="bp-stat-code">{code}</span>}{help != null && <span className="bp-stat-help">{help}</span>}
     </dt>
     <dd className="bp-stat-content">
-      <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-score-display" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
-      {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
-      {caption != null && <div className="bp-stat-caption text-ui-hint">{caption}</div>}
-      {available && children != null && <div className="bp-stat-detail">{children}</div>}
+      {layout === "inline" ? <div className="bp-stat-reading-row">
+        <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-page-title" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
+        {available && readout && <span className="bp-stat-readout text-ui-meta" data-tone={readout.tone}>{readout.text}</span>}
+      </div> : <>
+        <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-score-display" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
+        {available && readout && <div className="bp-stat-readout text-ui-meta" data-tone={readout.tone}>{readout.text}</div>}
+      </>}
+      {layout === "inline" ? <div className="bp-stat-detail">
+        {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
+        {available && children}
+        {caption != null && <div className="bp-stat-caption text-ui-meta">{caption}</div>}
+      </div> : <>
+        {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
+        {caption != null && <div className="bp-stat-caption text-ui-hint">{caption}</div>}
+        {available && children != null && <div className="bp-stat-detail">{children}</div>}
+      </>}
     </dd>
   </div>
 }
@@ -337,12 +357,12 @@ export function BpFacts({ items, className }: { items: { id: string; value: Reac
   return <div className="bp-fact-container"><dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl></div>
 }
 export interface BpTitleBlockItem { id: string; label: ReactNode; value: ReactNode; tone?: "default" | "warn" | "muted"; numeric?: boolean }
-export function BpTitleBlock({ items, className }: { items: BpTitleBlockItem[]; className?: string }) {
-  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd data-tone={item.tone === "default" ? undefined : item.tone} className={item.numeric ? "bp-titleblock-numeric" : undefined}>{item.value}</dd></div>)}</dl></div>
+export function BpTitleBlock({ items, density = "default", note, className }: { items: BpTitleBlockItem[]; density?: "default" | "compact"; note?: ReactNode; className?: string }) {
+  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", density === "compact" && "bp-titleblock-compact", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd data-tone={item.tone === "default" ? undefined : item.tone} className={item.numeric ? "bp-titleblock-numeric" : undefined}>{item.value}</dd></div>)}</dl>{note != null && <div className="bp-titleblock-note text-ui-meta text-muted-foreground">{note}</div>}</div>
 }
 
-export function BpCallout({ title, action, emphasis = false, children, className }: { title: ReactNode; action?: ReactNode; emphasis?: boolean; children?: ReactNode; className?: string }) {
-  return <div role="note" className={cn("bp-callout", emphasis && "bp-callout-emphasis", className)}><b className="block text-block-title text-foreground">{title}</b>{children && <div className="mt-1.5 mb-2.5 text-ui-body text-muted-foreground">{children}</div>}{action}</div>
+export function BpCallout({ title, action, emphasis = false, tone = "warning", layout = "stack", children, className }: { title: ReactNode; action?: ReactNode; emphasis?: boolean; tone?: "neutral" | "warning"; layout?: "stack" | "inline"; children?: ReactNode; className?: string }) {
+  return <div role="note" className={cn("bp-callout", emphasis && "bp-callout-emphasis", tone === "neutral" && "bp-callout-neutral", layout === "inline" && "bp-callout-inline", className)}><b className={cn(layout === "stack" && "block", "text-block-title text-foreground")}>{title}</b>{children && <div className={cn(layout === "stack" && "mt-1.5 mb-2.5", "text-ui-body text-muted-foreground")}>{children}</div>}{action}</div>
 }
 
 export interface BpErrorProps { location: ReactNode; message: ReactNode; example?: ReactNode; exampleLabel?: string; action?: ReactNode; className?: string }

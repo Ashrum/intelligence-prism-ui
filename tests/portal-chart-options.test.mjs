@@ -31,7 +31,9 @@ function capture(name, props, globalTheme, localTheme) {
   globalThis.__p74ChartGlobal = globalTheme; globalThis.__p74ChartOptions = [];
   try {
     const element = h(api[name], props);
-    renderToStaticMarkup(localTheme ? h(api.PrismScopeProvider, { theme: localTheme }, element) : element);
+    // SSR option snapshots require an explicit server-known theme. The real
+    // global client/empty-scope fallback is exercised in portal-scope.test.mjs.
+    renderToStaticMarkup(h(api.PrismScopeProvider, { theme: localTheme ?? globalTheme }, element));
     return globalThis.__p74ChartOptions[0];
   } finally { delete globalThis.__p74ChartGlobal; delete globalThis.__p74ChartOptions; }
 }

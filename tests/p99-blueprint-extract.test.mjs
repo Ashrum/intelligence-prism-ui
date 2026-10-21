@@ -70,7 +70,7 @@ function occupied(width, count, text = css) {
   const rules = [];
   postcss.parse(text).walkRules(rule => {
     if (rule.selector.includes('.bp-stat') && !rule.selector.includes('.bp-stat-strip {')) for (const selector of rule.selectors) {
-      if (!selector.includes('.bp-stat') || !rule.nodes.some(d => d.prop === 'grid-column')) continue;
+      if (selector.includes('.bp-stat-inline') || !selector.includes('.bp-stat') || !rule.nodes.some(d => d.prop === 'grid-column')) continue;
       const value = declarations(selector, width, text)['grid-column'];
       if (value) rules.push({selector, value, specificity: (selector.match(/\.[\w-]+|:(?!:)[\w-]+/g) ?? []).length});
     }
@@ -141,7 +141,7 @@ test('P99 blueprints: whole 1/2/5/10/20 steps, missing/constant/negative/large d
 });
 test('P99 overview C0 data, unique trend anchor, help control, compact B heading and unknown fixture', () => {
   const html=out('BlueprintOverviewDemo');
-  for(const text of ['overview-calibration','学情概览组合','45 人','6 次','2,436 次','08/01–10/21','2026-10-21','截止后 1 份','按当前班级近似','1,684 / 2,250 分','+1 pp 高于预期','MET03','MET07','MET08','RULE','数据不足','尚未提供统计结果','bp-section-card-compact']) assert.ok(html.includes(text),text);
+  for(const text of ['overview-calibration','学情概览组合','45 人','6 次','2,436 次','08/01–10/21','2026-10-21','截止后结果 1 份未纳入','按当前班级近似','1,684 / 2,250 分','+1 pp 高于预期','MET03','MET07','MET08','RULE','数据不足','尚未提供统计结果','bp-section-card-compact']) assert.ok(html.includes(text),text);
   for(const number of [75,65,76,10,177,95,17,626,197,43]) assert.match(html,new RegExp(`>${number}<`));
   assert.equal((html.match(/id="trend-calibration"/g)??[]).length,1);
   assert.match(html,/aria-controls="overview-score-help"/); assert.match(html,/id="overview-score-help" hidden=""/);

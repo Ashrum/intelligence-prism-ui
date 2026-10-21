@@ -571,6 +571,51 @@
 
 .bp-size-row.bp-size-row-unlabelled:has(> [hidden]) { grid-template-columns:minmax(0,1fr); }
 
+/* P100 · REV B opt-in layouts; legacy stacks retain their geometry. */
+.bp-fill-warn { background:var(--warning-foreground); }
+.bp-stat-strip:has(> .bp-stat-inline) { grid-auto-rows:auto; }
+.bp-stat-inline { display:grid; grid-template-rows:subgrid; grid-row:span 3; padding:12px 16px; row-gap:6px; }
+/* The 1280px catalog leaves about 893px inside its sidebar, page and sheet. */
+@container bp-stat-layout (min-width:800px) {
+  .bp-stat-strip:has(> .bp-stat-inline) { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .bp-stat-strip:has(> .bp-stat-inline) > .bp-stat-inline { grid-column:auto; }
+  .bp-stat-strip:has(> .bp-stat-inline) > .bp-stat-inline:last-child:nth-child(4n + 1) { grid-column:1 / -1; }
+  .bp-stat-strip:has(> .bp-stat-inline) > .bp-stat-inline:nth-last-child(2):nth-child(4n + 1),
+  .bp-stat-strip:has(> .bp-stat-inline) > .bp-stat-inline:last-child:nth-child(4n + 2),
+  .bp-stat-strip:has(> .bp-stat-inline) > .bp-stat-inline:last-child:nth-child(4n + 3) { grid-column:span 2; }
+}
+.bp-stat-inline > .bp-stat-label { margin:0; }
+.bp-stat-inline > .bp-stat-content { display:contents; }
+.bp-stat-reading-row { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 8px; min-width:0; }
+.bp-stat-inline .bp-stat-reading { flex-wrap:nowrap; white-space:nowrap; }
+.bp-stat-readout { font-family:var(--font-mono); font-weight:600; color:var(--foreground); }
+.bp-stat-readout[data-tone="accent"] { color:var(--link); }
+.bp-stat-readout[data-tone="warn"] { color:var(--warning-foreground); }
+.bp-stat-readout[data-tone="error"] { color:var(--destructive-foreground); }
+.bp-stat-readout[data-tone="muted"] { color:var(--muted-foreground); }
+.bp-stat-inline .bp-stat-detail { align-self:start; }
+.bp-size-xs { display:grid; gap:6px; }
+.bp-size-xs > *, .bp-size-xs > div > * { margin-block:0; }
+.bp-size-xs > div { display:contents; }
+.bp-size-xs .bp-size-row { display:block; }
+.bp-size-xs .bp-size-row > [hidden] { display:none; }
+.bp-size-xs .bp-size-bar { position:relative; height:8px; border:1px solid var(--line); overflow:visible; }
+.bp-size-xs .bp-size-legend { margin:0; column-gap:4px; row-gap:2px; }
+.bp-size-xs .bp-size-legend li { align-items:baseline; gap:4px; white-space:nowrap; }
+.bp-size-xs .bp-size-legend li > span[aria-hidden] { width:9px; height:9px; margin:0; }
+.bp-size-bar:has(> .bp-size-marker) { position:relative; overflow:visible; }
+.bp-size-marker { position:absolute; top:-4px; bottom:-4px; width:0; border-left:2px solid var(--foreground); }
+.bp-size-marker-key { height:9px; border-left:2px solid var(--foreground); }
+.bp-size-xs .bp-size-legend li > .bp-size-marker-key { width:0; }
+.bp-titleblock.bp-titleblock-compact { grid-auto-flow:row; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); }
+.bp-titleblock-compact > div { padding:7px 12px; }
+.bp-titleblock-compact > div:last-child:nth-child(odd) { grid-column:auto; }
+.bp-titleblock-compact dd { margin-top:2px; white-space:nowrap; }
+.bp-titleblock-note { margin-top:6px; }
+.bp-callout.bp-callout-neutral { background:transparent; border:1.5px solid var(--line); border-left-width:6px; }
+.bp-callout.bp-callout-inline { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:10px 16px; }
+.bp-callout-inline > a { white-space:nowrap; }
+
 /* P97 · Status badges use semantic ink on paper, never a solid status fill. */
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; border:var(--line-width) solid currentColor; background:var(--card); color:var(--foreground); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:is(.text-success-foreground):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--success-foreground); }
