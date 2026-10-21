@@ -1,42 +1,79 @@
 {
-  "revision": "v0.7 r2",
-  "status": "approved-derived-design",
-  "implementationStatus": "requires-applicable-gates",
+  "revision": "v1.0-candidate",
+  "status": "candidate-not-published",
+  "engineeringAdmission": "not-started",
+  "approvalPerson": "待 PO 批准",
+  "approvalDate": "待 PO 批准",
+  "publication": {
+    "github": "not-synced",
+    "outline": "not-synced",
+    "site": "not-synced; historical assets unchanged"
+  },
   "files": [
     {
       "path": "00-实施规格索引.md",
-      "sha256": "b9b3599a6a5e54637b9898672ee5aeb8073f40a90a8949f8ba178de2ed59b8e5",
-      "bytes": 4236
+      "sha256": "439f081363e208b8f4e0aa8fcda767c52d769ea64667c7b4a48a2c2328c4e918",
+      "bytes": 3508
     },
     {
       "path": "01-数据投影与指标规范.md",
-      "sha256": "33ec127993e0fe51234053027f3079d220dd66fe6d5808c70e9c710e3f3d4671",
-      "bytes": 59423
+      "sha256": "c7eaa43d298f8bc3882d2e4aa99a86207fbae4a614962664fa17b69a2bfff4f7",
+      "bytes": 55089
     },
     {
       "path": "02-教学行动与支持逻辑规范.md",
-      "sha256": "6d83156c0ceaf5109663d4050f7a2353eb9a94c85cf703e33ef1beddeefec82a",
-      "bytes": 27092
+      "sha256": "58153a0fa3568c9aac7f2c97c5a6529767ce0030da07c0b1c75b94279f4bd252",
+      "bytes": 24099
     },
     {
       "path": "03-独立页重构与迁移规范.md",
-      "sha256": "3843575f3336312fc3e1a3b0b8677eb07ea73c6912ed3e19e9a529e0a6b4ed52",
-      "bytes": 16038
+      "sha256": "ffe60a58073731b0b409eff174f11e81511c13f81ac015e4343f0536b450a672",
+      "bytes": 14308
     },
     {
       "path": "04-Agent协同与Blueprint承载规范.md",
-      "sha256": "2eb8332eea8b01edb088f2e355146630df03d044259343d2b2a5a3109be51dcf",
-      "bytes": 42410
+      "sha256": "a5a7c07cee673bd936b62836a045711e62f213d200d9a3a1c3d5c173b9bd09e5",
+      "bytes": 30911
     },
     {
       "path": "05-多角色与跨域披露规范.md",
-      "sha256": "5295af00300026cba796a253edc8e76d41e8c0e930cdb3555d2c7ff68e19f590",
-      "bytes": 16215
+      "sha256": "675b5fb3f5e554ab1d70541b4515cf55542ab5085650a5a0ebfd56a7c3248cf3",
+      "bytes": 12938
     },
     {
       "path": "06-全周期验证协议与夹具矩阵.md",
-      "sha256": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3",
-      "bytes": 51929
+      "sha256": "f9176407cff38984bcbad9ed2daa73c8cb6305478094b768960f4619f6690a9c",
+      "bytes": 32931
+    },
+    {
+      "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+      "sha256": "06cc59254bb3e92b86635ec11f67c975124e0b2a3baeab77645b52b9dbc71713",
+      "bytes": 255088
+    },
+    {
+      "path": "OLE_Learning_Analysis_Design_v1.0.md",
+      "sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99",
+      "bytes": 243348
+    },
+    {
+      "path": "README.md",
+      "sha256": "ba500db705dc72f368dfdd594e457ab2545e8667676af93b55c51ed9bd66686b",
+      "bytes": 2346
+    },
+    {
+      "path": "REFERENCE-ARCHIVE.md",
+      "sha256": "c812ce3d847bd9dd327fbf96b5b35e4916a900b9455264b702523d32450300ab",
+      "bytes": 1920
+    },
+    {
+      "path": "RELEASE.md",
+      "sha256": "092e39ba43db0cda4f9d8a652da4bd95f5606940838c0fc5a372cf89d0f8ac7f",
+      "bytes": 17010
+    },
+    {
+      "path": "SCREENS.md",
+      "sha256": "8ea8ecb0a4a510ff069da3fa77ca390ddf6a0560d3cba1356705db220a75cffc",
+      "bytes": 5958
     },
     {
       "path": "agent-ui-v0.7/screens/01-overview-r2.png",
@@ -87,6 +124,11 @@
       "path": "agent-ui-v0.7/screens/08-advice-change-r2.png",
       "sha256": "c6111200f66c2e5e58f4ef063189afa434fc7b80ba81ab515c7948ff759e0783",
       "bytes": 105585
+    },
+    {
+      "path": "engineering-appendix-v1.0.md",
+      "sha256": "a9d36c9602c197925db1474b1d841d22219611a4592c436b2ed118e274dc8c2d",
+      "bytes": 66557
     },
     {
       "path": "evidence/approved-v0.7-r1.md",
@@ -194,11 +236,6 @@
       "bytes": 12625
     },
     {
-      "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
-      "sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
-      "bytes": 254988
-    },
-    {
       "path": "prototype-source/app.js",
       "sha256": "9e2d253430fbec4d09db2ad02d89f338969a8bf7de5473d6243dbd44a19fd4a4",
       "bytes": 47512
@@ -234,29 +271,14 @@
       "bytes": 565
     },
     {
-      "path": "README.md",
-      "sha256": "8a17cefc991f54c3841f2776c8b71b3faf5d8cb48a74f1be73a725e555a34b1b",
-      "bytes": 1893
-    },
-    {
-      "path": "REFERENCE-ARCHIVE.md",
-      "sha256": "c812ce3d847bd9dd327fbf96b5b35e4916a900b9455264b702523d32450300ab",
-      "bytes": 1920
-    },
-    {
-      "path": "RELEASE.md",
-      "sha256": "ff7283df267d5a0e05ecdfbfa5a7ee15d5149623e889531fe1095256db157eed",
-      "bytes": 4833
-    },
-    {
       "path": "research-ole-contracts.md",
       "sha256": "0df54e9f75d0758709b32116dfeed08308d43ba921384d2156dfd638c2729551",
       "bytes": 26496
     },
     {
-      "path": "SCREENS.md",
-      "sha256": "1d0ca88a803420adae5e3391f305f7d5f562bbbc50d65025a8d4497b58551b34",
-      "bytes": 3164
+      "path": "sources/OLEPTAv5.1.github-2026-10-18.md",
+      "sha256": "8b33e878bef4b062d8325806b91dcf267e4b38c356c975b745e6297cfecc582f",
+      "bytes": 168351
     },
     {
       "path": "sources/authority-step1-core-2026-10-18.md",
@@ -274,19 +296,14 @@
       "bytes": 26884
     },
     {
-      "path": "sources/OLEPTAv5.1.github-2026-10-18.md",
-      "sha256": "8b33e878bef4b062d8325806b91dcf267e4b38c356c975b745e6297cfecc582f",
-      "bytes": 168351
-    },
-    {
       "path": "split-manifest.json",
-      "sha256": "89a7f35b1d4efa86d49040aa99d7cf369c9b37704cfc20c030d35e46e457bd58",
-      "bytes": 7039
+      "sha256": "4ba96681e34290a26de53a855519f3f2acbdcfc57bd2ebe10d2ae91d09a11844",
+      "bytes": 24366
     },
     {
       "path": "split-validation.json",
-      "sha256": "4579edb623c1fde71b3688e72e3e54e11c17df04382e6f1e0ef8c75ef2f98ddd",
-      "bytes": 370
+      "sha256": "9a70366e328caa26451f7810522dee02d98d7ea297bef917eede2695e195eb34",
+      "bytes": 736
     },
     {
       "path": "v0.7-审核决策与差异清单.md",

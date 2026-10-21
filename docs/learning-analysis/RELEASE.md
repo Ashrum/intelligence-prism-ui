@@ -1,3 +1,151 @@
+# 学情分析 v1.0 候选稿维护与签发记录
+
+- 设计状态：候选(v1.0-candidate)
+- 工程准入：未开始
+- 版本：v1.0-candidate · 2026-10-21 · Derived, Non-canonical
+- 批准人：待 PO 批准
+- 批准日期：待 PO 批准
+
+## 当前交付与证据范围
+
+[主稿](OLE_Learning_Analysis_Design_v1.0.md)、[六规格索引](00-实施规格索引.md)、[工程线附录](engineering-appendix-v1.0.md)、[工作台粗验待填栏](SCREENS.md)与三份JSON清单构成本轮候选包。LD01–LD04范围决定已定，不等于本版整体批准。v0.7-r2留原位，只改头部历史标签；原批准稿、隔离截图、源码参考及影响报告未改。
+
+本版22段产品正文按修订后主稿§4–§12逐段派生，另29组工程／后续验证片段自Git基线9435e92分流；不声称原17段无变更。每条工程映射保留历史来源文件、Git提交、字符起止、行号、SHA-256及附录目标范围。split-validation只证明本次文档完整性，不代表Supervisor Review、工作台浏览器验收、真实模型调用、教学试点或工程准入。
+
+## 本轮校验与维护流程
+
+1. 先修主稿与决定；工程机制在附录维护。保留已批公式、分母、旧档兼容与交互规则；改变产品规则须有对应授权。
+2. 使用split-manifest里的start_marker/end_marker及主承接配置重出六规格。源范围以Unicode字符索引、左闭右开计，不混用UTF-8字节位置；摘要计算实际UTF-8内容。
+3. 运行下方文档工具的`--write`模式更新六规格、split-manifest、split-validation及release-manifest，再以默认只读模式复核；README／00／SCREENS／本文件手工维护。检查新增相对链接、Markdown表格、保护的指标／分类区块、历史正文、10组oracle和工程转移源／目标逐字一致。
+4. `git diff --check`；`git status --short`应仅有本目录文档／清单变化。正文不嵌入自己的完整哈希；release-manifest排除自身以避免循环，其余文件逐个指纹。
+5. 本次是文档任务，不运行应用构建／全量测试，不沿用旧工程测试数字。浏览器验收由Supervisor执行；粗验／C01证据全部待填。
+
+旧脚本`scripts/sync-learning-analysis-specs.py`固定v0.7-r2并会重写六规格及00；`scripts/sync-learning-analysis-docs.mjs`写出public及lib站点产物；`scripts/verify-learning-analysis-release.mjs`固定17段、重复门禁表与§6全文不变。修改前已运行旧verify，旧基线PASS（12篇阅读页、59文件），仅证明修改前状态。它们不能直接作为本候选包的新校验器；本任务不改scripts、不运行旧生成器覆盖候选或写站点。修改后旧verify和站点`--check`的预期不兼容结果如实记报告，不能算v1.0通过。
+
+下方是本轮文档派生／校验工具全文，保留在文档中便于复跑，不新增仓库脚本。仓库根目录可用以下命令提取到临时文件；工具只写本目录六规格和三份JSON，不调用网络、服务、模型或Git写操作。默认校验也会从既有Git对象读取历史来源；缺历史blob时应取回准确基线再检查，不能跳过来源验证。
+
+```sh
+python3 - <<'PYCODE'
+from pathlib import Path
+text=Path('docs/learning-analysis/RELEASE.md').read_text()
+code=text.split('<!-- p96-document-tool:start -->\n```python\n',1)[1].split('\n```\n<!-- p96-document-tool:end -->',1)[0]
+Path('/tmp/p96-document-check.py').write_text(code+'\n')
+PYCODE
+python3 /tmp/p96-document-check.py --write
+python3 /tmp/p96-document-check.py
+```
+
+<!-- p96-document-tool:start -->
+```python
+from pathlib import Path
+import sys, json, hashlib, re, subprocess
+from urllib.parse import unquote
+D=Path.cwd()/'docs/learning-analysis'
+write='--write' in sys.argv
+H=lambda b: hashlib.sha256(b).hexdigest()
+J=lambda x: (json.dumps(x,ensure_ascii=False,indent=2)+'\n').encode()
+m=json.loads((D/'split-manifest.json').read_text()); main=(D/m['baseline_file']).read_text()
+outputs={}; segments=[]; count=0
+for spec in m['specs']:
+    selected=[]
+    for seg in spec['segments']:
+        assert main.count(seg['start_marker'])==1 and main.count(seg['end_marker'])==1
+        a=main.index(seg['start_marker']); b=main.index(seg['end_marker'],a); body=main[a:b].strip()
+        seg.update(source_start=a,source_end=b,source_line=main[:a].count('\n')+1,sha256=H(body.encode()))
+        selected.append(body); segments.append((a,b)); count+=1
+    text=f"# OLE 学情分析 {spec['title']}\n\n"
+    text+='- 设计状态：候选(v1.0-candidate)\n- 工程准入：未开始\n- 版本：v1.0-candidate · 2026-10-21 · Derived, Non-canonical\n- 批准人：待 PO 批准\n- 批准日期：待 PO 批准\n\n'
+    text+=spec['purpose']+'\n\n'
+    text+=f"来源：[v1.0候选主稿]({m['baseline_file']})。保留主稿章节号，产品正文单向派生；历史结论不作为当前通过。\n\n"
+    text+='## 范围与工程交接\n\n'
+    text+='本版适用性以主稿§13.9 LD01–LD04及06规格§12.10–12.11为准；完整生命周期语义中的后续能力不构成本版即时交付。关联工程索引：'+ '、'.join(spec['engineering_gate_refs'])+'，细则统一在[工程线附录](engineering-appendix-v1.0.md)，不作为设计转正前置。\n\n'
+    text+='01定义数值与资格，02定义行动语义，03承接独立页，04定义C01及Agent交互，05定义职责用途，06登记粗验。主稿§1–§3和当前决定共同适用；变更先修主稿，再按[RELEASE](RELEASE.md)重出。\n\n## 基线承接正文\n\n'
+    text+='\n\n'.join(selected)+'\n'
+    data=text.encode(); outputs[spec['file']]=data
+    spec.update(sha256=H(data),characters=len(text))
+segments.sort(); assert len(segments)==len(set(segments))
+assert segments[0][0]==main.index('## 4 ') and segments[-1][1]==main.index('## 13 ')
+assert all(a[1]==b[0] for a,b in zip(segments,segments[1:]))
+m['baseline_sha256']=H(main.encode())
+app=m['engineering_appendix']; apptext=(D/app['file']).read_text()
+app['sha256']=H(apptext.encode()); old_sources={}
+for t in app['transfers']:
+    source=subprocess.check_output(['git','show',m['historical_git_commit']+':docs/learning-analysis/'+t['source_file']]).decode()
+    old_sources[t['source_file']]=H(source.encode())
+    piece=source[t['source_start']:t['source_end']]
+    assert H(piece.encode())==t['sha256'], t['key']+' historical source mismatch'
+    start='<!-- '+t['key']+':start -->\n'; end='\n<!-- '+t['key']+':end -->'
+    assert apptext.count(start)==1 and apptext.count(end)==1
+    a=apptext.index(start)+len(start); b=apptext.index(end,a)
+    assert apptext[a:b]==piece, t['key']+' transfer mismatch'
+    t.update(target_start=a,target_end=b,target_line=apptext[:a].count('\n')+1)
+app['historical_sources']=old_sources
+old=subprocess.check_output(['git','show',m['historical_git_commit']+':docs/learning-analysis/OLE_Learning_Analysis_Design_v0.7-r2.md']).decode()
+# Independent protected product blocks; do not claim all section 6 unchanged.
+protected=[('| 指标编号与名称 |','MET07 的注册须'),('| 条件 | 显示 |','N按当前学生'),('| 顺序 / 状态 |','旧报告按learning'),('| 题库难度 |','80%/60%/40% 以'),('N按当前学生','**学生进展。**')]
+for start,end in protected:
+    before=old[old.index(start):old.index(end,old.index(start))].strip()
+    after=main[main.index(start):main.index(end,main.index(start))].strip()
+    assert before==after, start+' changed approved product block'
+legacy=(D/'OLE_Learning_Analysis_Design_v0.7-r2.md').read_text()
+assert legacy[legacy.index('本文件供产品'):]==old[old.index('本文件供产品'):], 'historical body changed'
+assert H((D/'evidence/approved-v0.7-r1.md').read_bytes())=='a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a'
+# Verify ten numerical oracle rows appear exactly in both the source definition and current QA.
+start='| 原始输入 | 预期可读结果 |'; oracle=old[old.index(start):old.index('## 7 ')].strip()
+assert len([l for l in oracle.splitlines()[2:] if l.startswith('|')])==10
+assert main.count(oracle)==2
+assert oracle in outputs[next(x['file'] for x in m['specs'] if x['number']==6)].decode()
+for prefix,maximum in [('MET',10),('LA',9),('ED',4),('T',7),('E',10),('EDU',12),('M',4),('AG',6)]:
+    for n in range(1,maximum+1): assert prefix+str(n).zfill(2) in main
+for field in ['LD01=A','LD02=A','LD03=A','LD04=B','qwen3.8-flash','ole-agent-workspace-appearance','blueprint-night','复查统计口径待确认','待 PO 批准']:
+    assert field in main,field
+assert '.supervisor/' not in main and '.supervisor/' not in apptext
+outputs['split-manifest.json']=J(m)
+# Validate local links and table structure for all changed reading entries, including derived specs.
+names=[m['baseline_file'],app['file'],'README.md','00-实施规格索引.md','RELEASE.md','SCREENS.md']+[x['file'] for x in m['specs']]
+links=0; tables=0
+for name in names:
+    text=outputs.get(name,(D/name).read_bytes()).decode(); content=re.sub(r'```.*?```','',text,flags=re.S)
+    for url in re.findall(r'!?\[[^\]]*\]\(([^\n)]+)\)',content):
+        if re.match(r'https?://|#',url): continue
+        path=unquote(url.split('#',1)[0]); assert not re.match(r'\w+:|/',path), (name,url)
+        dest=(D/name).parent/path
+        assert dest.exists(),(name,url); links+=1
+    widths=[]
+    for line in content.splitlines()+['']:
+        if line.startswith('|'):
+            widths.append(line.count('|'))
+        elif widths:
+            assert len(set(widths))==1,(name,'ragged table',widths)
+            tables+=1; widths=[]
+result={'status':'PASS','revision':'v1.0-candidate','scope':'document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission','baseline_sha256':m['baseline_sha256'],'specs':len(m['specs']),'verbatim_product_segments':count,'section4_to12_continuous':True,'engineering_transfers':len(app['transfers']),'engineering_source_and_target_exact':True,'protected_product_blocks_unchanged':len(protected),'la08_oracles':10,'historical_master_body_unchanged':True,'historical_r1_hash_verified':True,'local_links_checked':links,'tables_checked':tables,'browser_acceptance':'待 Supervisor 执行','c01_smoke':'待执行','approval':'待 PO 批准'}
+outputs['split-validation.json']=J(result)
+files=[]
+for p in sorted(D.rglob('*')):
+    if not p.is_file() or p.name=='release-manifest.json': continue
+    rel=p.relative_to(D).as_posix(); b=outputs.get(rel,p.read_bytes())
+    files.append({'path':rel,'sha256':H(b),'bytes':len(b)})
+release={'revision':'v1.0-candidate','status':'candidate-not-published','engineeringAdmission':'not-started','approvalPerson':'待 PO 批准','approvalDate':'待 PO 批准','publication':{'github':'not-synced','outline':'not-synced','site':'not-synced; historical assets unchanged'},'files':files}
+outputs['release-manifest.json']=J(release)
+if write:
+    for rel,b in outputs.items(): (D/rel).write_bytes(b)
+else:
+    for rel,b in outputs.items(): assert (D/rel).read_bytes()==b,'stale document output: '+rel
+# Parse all JSON under the package, including retained evidence.
+json_count=0
+for p in D.rglob('*.json'): json.loads(p.read_text()); json_count+=1
+print(json.dumps({'mode':'write' if write else 'check',**result,'release_files':len(files),'json_files_parsed':json_count},ensure_ascii=False))
+```
+<!-- p96-document-tool:end -->
+
+## 后续签发与同步（未执行）
+
+Supervisor先独立审查当前diff及工程分流、验证工作台粗验和C01受控冒烟证据；不可用旧隔离画面替代。通过后由PO整体批准，填写批准人与日期并重新生成准确内容指纹。再由Supervisor按授权同步GitHub／Outline并逐项读回；既有组件站点后续同步须先另单适配版本入口、附录和新映射校验，生产构建后沿原站点发布链执行，不新建站点。本任务没有提交、推送、发布或同步，站点生成资产仍为历史内容。
+
+## 历史 v0.7-r2 发布记录
+
+以下原发布与审核叙述仅对应2026-10-18版本，历史维护命令不可直接运行于当前候选正文；其批准、PASS、实拍及发布均不转移为v1.0证据。
+
 # 学情分析 v0.7 r2 正式发布记录
 
 2026-10-18 · 已批准设计与实施规格拆分基线 · Derived / Non-canonical

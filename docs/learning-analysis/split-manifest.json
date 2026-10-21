@@ -1,14 +1,18 @@
 {
-  "baseline_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
-  "baseline_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
-  "schema": "split-manifest-v2-portable",
-  "design_revision": "v0.7 r2",
-  "design_status": "approved-derived-baseline",
-  "implementation_status": "requires-applicable-gate-evidence",
+  "schema": "split-manifest-v3-design-engineering",
+  "design_revision": "v1.0-candidate",
+  "design_status": "candidate",
+  "engineering_admission": "not-started",
+  "approval_person": "待 PO 批准",
+  "approval_date": "待 PO 批准",
+  "baseline_file": "OLE_Learning_Analysis_Design_v1.0.md",
+  "coordinate_unit": "unicode-code-point; end-exclusive",
+  "historical_git_commit": "9435e92f4e9e1d802f6fd364bc8ac3b8fa7933c9",
+  "historical_source_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
   "retained_in_baseline": [
-    "§1—§3 产品定位、研究与教育基础",
-    "§13 决定、审核台账与定稿管理",
-    "附录A/B 来源与历史追溯"
+    "§1–§3 产品／教育背景",
+    "§13 历史决定与当前LD01–LD04",
+    "附录A/B历史来源与术语"
   ],
   "specs": [
     {
@@ -16,217 +20,661 @@
       "file": "01-数据投影与指标规范.md",
       "title": "数据投影与指标规范",
       "batch": "P0",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G03",
         "G04"
       ],
-      "sha256": "33ec127993e0fe51234053027f3079d220dd66fe6d5808c70e9c710e3f3d4671",
-      "characters": 25245,
+      "purpose": "本版统一用途、来源、资格、集合、MET01–MET10、分类和精度；公式与已批规则不变。正式BKT／Profile未核实为已知工程限制。",
       "segments": [
         {
           "key": "§6 指标与比较",
-          "source_line": 241,
-          "source_start": 12581,
-          "source_end": 31871,
-          "sha256": "87de7e14cb5cef0c33d74bad57b56b6cefcd4ddc5f752a6e6b244c464d6b08d6"
+          "start_marker": "## 6 ",
+          "end_marker": "## 7 ",
+          "source_start": 12953,
+          "source_end": 31632,
+          "source_line": 261,
+          "sha256": "823543b0f77d06818f527aefdb716e4ca7313c666f12d3c0b4c9c953d83d24b0"
         },
         {
-          "key": "§9.1 正式对象与实例界限",
-          "source_line": 728,
-          "source_start": 47281,
-          "source_end": 48354,
-          "sha256": "8a7cd47bacb739648f790af73c1c048b3df4b0a9e0954d6c668d51ddcc008b04"
+          "key": "§9.1 正式对象语义",
+          "start_marker": "## 9 ",
+          "end_marker": "#### 行动 复查与支持的逻辑映射",
+          "source_start": 45798,
+          "source_end": 46974,
+          "source_line": 765,
+          "sha256": "3c058d1fb95d0aef964c368ed82de128a4c8a20b517f02849db3ad54911e3106"
         },
         {
           "key": "§9.3 证据与状态",
-          "source_line": 847,
-          "source_start": 54034,
-          "source_end": 54837,
-          "sha256": "6b6909dfa5213feb5108697ae6fe93c98941a8e5572074aec400cff811304723"
+          "start_marker": "### 9.3 ",
+          "end_marker": "### 9.4 ",
+          "source_start": 52311,
+          "source_end": 53027,
+          "source_line": 894,
+          "sha256": "2ddba54d716273b951616f0036c813cf60b803f26e6d243f51fcf215037e4807"
         },
         {
-          "key": "§9.4 权限水位失效与驻留",
-          "source_line": 857,
-          "source_start": 54837,
-          "source_end": 56914,
-          "sha256": "fa6da96444ce46e5f316c4b72a8d8bd2eb9171b42792c03e83ee643d42ee5b74"
+          "key": "§9.4 完整性与失效产品规则",
+          "start_marker": "### 9.4 ",
+          "end_marker": "### 9.5 ",
+          "source_start": 53027,
+          "source_end": 54609,
+          "source_line": 906,
+          "sha256": "a4d8aaa3b4a070f1a74e4dbd5719aa3be96f498f32669f2492c4f7e59f152612"
         },
         {
-          "key": "§9.5 案例与能力资产",
-          "source_line": 881,
-          "source_start": 56914,
-          "source_end": 57160,
+          "key": "§9.5 案例与资产",
+          "start_marker": "### 9.5 ",
+          "end_marker": "### 9.6 ",
+          "source_start": 54609,
+          "source_end": 54855,
+          "source_line": 938,
           "sha256": "36e1713c4b26e7481d4ebee53f68d8f5e2d4ec262963d9b1d0823159b534fa63"
         }
-      ]
+      ],
+      "sha256": "c7eaa43d298f8bc3882d2e4aa99a86207fbae4a614962664fa17b69a2bfff4f7",
+      "characters": 22971
     },
     {
       "number": 2,
       "file": "02-教学行动与支持逻辑规范.md",
       "title": "教学行动与支持逻辑规范",
       "batch": "P1",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G02",
         "G04",
         "G05"
       ],
-      "sha256": "6d83156c0ceaf5109663d4050f7a2353eb9a94c85cf703e33ef1beddeefec82a",
-      "characters": 10693,
+      "purpose": "保留完整教学闭环语义；本版仅同运行非试卷草稿、编辑来源及更正核对，明确未保存。完整持久化、执行、支持与复盘后续。",
       "segments": [
         {
           "key": "§5 教学闭环",
-          "source_line": 170,
-          "source_start": 9669,
-          "source_end": 12581,
-          "sha256": "c1b2d04c86948628a1936a63972d696aaecaaea91da691ed5b81062f21374025"
+          "start_marker": "## 5 ",
+          "end_marker": "## 6 ",
+          "source_start": 9925,
+          "source_end": 12953,
+          "source_line": 188,
+          "sha256": "7c83633fff3a57db17394504d9dd4645169978710d857c946aa630d862a3004d"
         },
         {
-          "key": "§9.1 应用行动与支持映射",
-          "source_line": 748,
-          "source_start": 48354,
-          "source_end": 49704,
-          "sha256": "f0016cedc299531b9838de9504415bf6460cdffa0e4d0d2905436ed171828a4f"
+          "key": "§9.1 应用行动语义",
+          "start_marker": "#### 行动 复查与支持的逻辑映射",
+          "end_marker": "### 9.2 ",
+          "source_start": 46974,
+          "source_end": 48055,
+          "source_line": 787,
+          "sha256": "db4df3439e9ade3f0322447a06458eafe3e7dc0ce1943f5a70d8ec76ec384c14"
         },
         {
           "key": "§9.2 事实与匹配",
-          "source_line": 768,
-          "source_start": 49704,
-          "source_end": 54034,
-          "sha256": "fae958344298d433a871d9467bf2068baa0802d9166acd64215f2db44bd6dae5"
+          "start_marker": "### 9.2 ",
+          "end_marker": "### 9.3 ",
+          "source_start": 48055,
+          "source_end": 52311,
+          "source_line": 811,
+          "sha256": "15d0b7c98f02a5aa1234e7de11174513dcd1e8e884d2666f74e1d664463f0e77"
         },
         {
-          "key": "§10.2 教育语义补强",
-          "source_line": 932,
-          "source_start": 61537,
-          "source_end": 61877,
+          "key": "§10.2 教育语义",
+          "start_marker": "### 10.2 ",
+          "end_marker": "### 10.3 ",
+          "source_start": 59109,
+          "source_end": 59449,
+          "source_line": 997,
           "sha256": "5351265e76f52f4e906c231db6a35a69a220e804d2d9b751dee0b4bb2c75d63f"
         }
-      ]
+      ],
+      "sha256": "58153a0fa3568c9aac7f2c97c5a6529767ce0030da07c0b1c75b94279f4bd252",
+      "characters": 9273
     },
     {
       "number": 3,
       "file": "03-独立页重构与迁移规范.md",
       "title": "独立页重构与迁移规范",
       "batch": "P2",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G02",
         "G04",
         "G05"
       ],
-      "sha256": "3843575f3336312fc3e1a3b0b8677eb07ea73c6912ed3e19e9a529e0a6b4ed52",
-      "characters": 7187,
+      "purpose": "本版保留五入口和标准概览，修正口径并加首排“带此范围问 Agent”；五视图及浮层／冻结详情共用外观偏好。教学周期新结构后续，报表不重组。",
       "segments": [
         {
           "key": "§7 独立页面",
-          "source_line": 509,
-          "source_start": 31871,
-          "source_end": 33916,
-          "sha256": "59e3140517f2cc93dd4fb6374f8610834f2c8ba940642e41d509665f3ad6c524"
+          "start_marker": "## 7 ",
+          "end_marker": "## 8 ",
+          "source_start": 31632,
+          "source_end": 34144,
+          "source_line": 527,
+          "sha256": "9a065b32287a8ed9774538e9573598632ab0c696076e84b1e5ae252b81044cf2"
         },
         {
           "key": "§10.1 整改清单",
-          "source_line": 909,
-          "source_start": 58978,
-          "source_end": 61537,
-          "sha256": "94631468534011092d4231fcf0bc37d06bce4eebbee5772174a75bb41e5f114f"
+          "start_marker": "## 10 ",
+          "end_marker": "### 10.2 ",
+          "source_start": 56485,
+          "source_end": 59109,
+          "source_line": 972,
+          "sha256": "aa0e6753d6df7310885c94c536f35ded3853779f7837dcd31ccfb22a41aca4d4"
         },
         {
-          "key": "§10.3 迁移与回滚",
-          "source_line": 943,
-          "source_start": 61877,
-          "source_end": 62782,
-          "sha256": "7fa02b32a43e5229b8fc5395f9ebd9959248afbe8ac0ba1f969cd0a95ffbd5f5"
+          "key": "§10.3 历史兼容与迁移产品规则",
+          "start_marker": "### 10.3 ",
+          "end_marker": "## 11 ",
+          "source_start": 59449,
+          "source_end": 60186,
+          "source_line": 1008,
+          "sha256": "7b83dbc0436b51e557993fbf8a482b55b5346332ab473371c4229aeb285d5953"
         }
-      ]
+      ],
+      "sha256": "ffe60a58073731b0b409eff174f11e81511c13f81ac015e4343f0536b450a672",
+      "characters": 6451
     },
     {
       "number": 4,
       "file": "04-Agent协同与Blueprint承载规范.md",
       "title": "Agent协同与Blueprint承载规范",
       "batch": "P3",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G02",
         "G03",
         "G04",
         "G05"
       ],
-      "sha256": "2eb8332eea8b01edb088f2e355146630df03d044259343d2b2a5a3109be51dcf",
-      "characters": 18730,
+      "purpose": "本版在既有工作台承接四画面与双入口；C01 qwen3.8-flash受控合成建议冒烟、C02核证、C03同运行未保存草稿；练习用既有题篮／编辑／保存。",
       "segments": [
         {
-          "key": "§8 Agent与Blueprint",
-          "source_line": 552,
-          "source_start": 33916,
-          "source_end": 47281,
-          "sha256": "568b4abf54d5057df40aa03c6397088d015b81e8a1941400175af5a201a53bd6"
+          "key": "§8.1 C01合同与本版能力",
+          "start_marker": "## 8 ",
+          "end_marker": "### 8.2 ",
+          "source_start": 34144,
+          "source_end": 39488,
+          "source_line": 574,
+          "sha256": "a55dbd891859680b8ea38dd89ab19390d524870b7644480b65adf187eb77eb99"
         },
         {
-          "key": "§11 批次与阶段",
-          "source_line": 960,
-          "source_start": 62782,
-          "source_end": 66234,
-          "sha256": "6bce073d5c478350c69fd96d837d67052ed0c2648a785b8765d159ef4e8bbc1b"
+          "key": "§8.2 典型交互",
+          "start_marker": "### 8.2 ",
+          "end_marker": "### 8.3 ",
+          "source_start": 39488,
+          "source_end": 40838,
+          "source_line": 653,
+          "sha256": "2daf9ab7b51dcfaad7938a2b427302b8545a264c1807497d0b33cc9c5a5b052c"
+        },
+        {
+          "key": "§8.3 Blueprint承载",
+          "start_marker": "### 8.3 ",
+          "end_marker": "### 8.4 ",
+          "source_start": 40838,
+          "source_end": 45169,
+          "source_line": 671,
+          "sha256": "d323271563438145519d2a31710f5b41492038d00399c3c9c85906e6d5b1938c"
+        },
+        {
+          "key": "§8.4 确认与恢复产品行为",
+          "start_marker": "### 8.4 ",
+          "end_marker": "## 9 ",
+          "source_start": 45169,
+          "source_end": 45798,
+          "source_line": 743,
+          "sha256": "10167b9e596e9183a5c7ab31aa61af25add0c1c91028ea05fdf74de5324d2721"
+        },
+        {
+          "key": "§11 本版设计与后续范围",
+          "start_marker": "## 11 ",
+          "end_marker": "## 12 ",
+          "source_start": 60186,
+          "source_end": 60897,
+          "source_line": 1029,
+          "sha256": "1e130ea01e0c54d24814297aad9b36cb190f51069b243d6f4f67afbcb61cb9dd"
         }
-      ]
+      ],
+      "sha256": "a5a7c07cee673bd936b62836a045711e62f213d200d9a3a1c3d5c173b9bd09e5",
+      "characters": 12967
     },
     {
       "number": 5,
       "file": "05-多角色与跨域披露规范.md",
       "title": "多角色与跨域披露规范",
       "batch": "P4",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G02",
         "G03",
         "G04",
         "G05"
       ],
-      "sha256": "5295af00300026cba796a253edc8e76d41e8c0e930cdb3555d2c7ff68e19f590",
-      "characters": 6546,
+      "purpose": "保留职责、最小字段、共享与跨域披露产品边界；多角色实际协作和跨Home教学结果出口后续。C01外发只按04 §8.1白名单，不继承未核外部用途。",
       "segments": [
         {
           "key": "§4 职责与授权",
-          "source_line": 123,
-          "source_start": 6708,
-          "source_end": 9669,
-          "sha256": "e5fabad92b5f2f44b0a65b0f27712d3b6c1dfb96431e73f6c96d0d4c8ddee4af"
+          "start_marker": "## 4 ",
+          "end_marker": "## 5 ",
+          "source_start": 7080,
+          "source_end": 9925,
+          "source_line": 135,
+          "sha256": "99cbd2c63a5620b21e188febc53e274c763392390d2b2d44ede03ac1d4a2f98a"
         },
         {
-          "key": "§9.6 共享模型与披露",
-          "source_line": 887,
-          "source_start": 57160,
-          "source_end": 58978,
-          "sha256": "8dd63a68fd8a20a04f7a09298e67613c62241f61284a784daa4f7aea0670bbe9"
+          "key": "§9.6 共享与模型用途",
+          "start_marker": "### 9.6 ",
+          "end_marker": "## 10 ",
+          "source_start": 54855,
+          "source_end": 56485,
+          "source_line": 944,
+          "sha256": "ab7cb477ecb3d5fe22c899cb43fa627f20cb626662b20ec5987e6b4fdafd85dd"
         }
-      ]
+      ],
+      "sha256": "675b5fb3f5e554ab1d70541b4515cf55542ab5085650a5a0ebfd56a7c3248cf3",
+      "characters": 5062
     },
     {
       "number": 6,
       "file": "06-全周期验证协议与夹具矩阵.md",
       "title": "全周期验证协议与夹具矩阵",
       "batch": "P0—P4",
-      "gates": [
+      "engineering_gate_refs": [
         "G01",
         "G02",
         "G03",
         "G04",
         "G05"
       ],
-      "sha256": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3",
-      "characters": 21735,
+      "purpose": "本版逐项登记工作台合成粗验与C01受控冒烟；十组oracle及关键反例均待执行。真实用户、教学／测量、生产验证另交工程附录，不假称已通过。",
       "segments": [
         {
-          "key": "§12 全周期验证",
-          "source_line": 998,
-          "source_start": 66234,
-          "source_end": 80332,
-          "sha256": "ce9a4b85dc2713b1e0d6082d496bda7765aee8ad5d2465490218262e75f7b9c0"
+          "key": "§12.1–12.9 场景与判定",
+          "start_marker": "## 12 ",
+          "end_marker": "### 12.10 ",
+          "source_start": 60897,
+          "source_end": 71770,
+          "source_line": 1043,
+          "sha256": "8b77fd9d3a29c394c59bfca33102ef4ad48514e415a3f56f049565570502ba0c"
+        },
+        {
+          "key": "§12.10 工作台粗验与十组oracle",
+          "start_marker": "### 12.10 ",
+          "end_marker": "### 12.11 ",
+          "source_start": 71770,
+          "source_end": 73964,
+          "source_line": 1197,
+          "sha256": "742f5513037567c117ceb05195235f9c5aa25bd7e7346e109ad04ffaeb3c7afb"
+        },
+        {
+          "key": "§12.11 R2产品反例归属",
+          "start_marker": "### 12.11 ",
+          "end_marker": "## 13 ",
+          "source_start": 73964,
+          "source_end": 74643,
+          "source_line": 1233,
+          "sha256": "84e4d5fc84af16451086b90820a926ce68683c4831b185921312281a3e3f3378"
         }
-      ]
+      ],
+      "sha256": "f9176407cff38984bcbad9ed2daa73c8cb6305478094b768960f4619f6690a9c",
+      "characters": 14330
     }
-  ]
+  ],
+  "engineering_appendix": {
+    "file": "engineering-appendix-v1.0.md",
+    "transfers": [
+      {
+        "key": "ENG01",
+        "label": "§4.1 组织关系接口映射",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 156,
+        "source_start": 8913,
+        "source_end": 9056,
+        "sha256": "6295332a0d150a13bc6620c21f479adc7bbc2758994a58f1651258c23031aa3b",
+        "target_start": 3050,
+        "target_end": 3193,
+        "target_line": 68
+      },
+      {
+        "key": "ENG02",
+        "label": "§4.1 ACL 动作映射",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 158,
+        "source_start": 9058,
+        "source_end": 9251,
+        "sha256": "3edcbed20a7ded6e6ce6a8e2c80fa1f917da7db99664024826e79e23e6d841b5",
+        "target_start": 3316,
+        "target_end": 3509,
+        "target_line": 76
+      },
+      {
+        "key": "ENG03",
+        "label": "§6.2 正式 Profile 实例登记",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 265,
+        "source_start": 13754,
+        "source_end": 14246,
+        "sha256": "024a3ced55b46419bc122b4a843fe23863a2762ed20da46955d2f90d8313ee05",
+        "target_start": 3639,
+        "target_end": 4131,
+        "target_line": 84
+      },
+      {
+        "key": "ENG04",
+        "label": "§6.4 投影 owner 与规则实例登记",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 302,
+        "source_start": 15860,
+        "source_end": 16153,
+        "sha256": "63c3502df54d67f0291e57f1e8951f6619e7fc72079685102d3111bcf5633f2e",
+        "target_start": 4262,
+        "target_end": 4555,
+        "target_line": 98
+      },
+      {
+        "key": "ENG05",
+        "label": "§6.4 旧档资格接口版本映射",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 325,
+        "source_start": 19190,
+        "source_end": 19355,
+        "sha256": "0215ee2478a01ff693b96270aaf1435a42b70fdbf01a1859f16b2267a54acf16",
+        "target_start": 4680,
+        "target_end": 4845,
+        "target_line": 106
+      },
+      {
+        "key": "ENG06",
+        "label": "§8.1 能力 handler／owner／schema 与副作用业务键",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 580,
+        "source_start": 36088,
+        "source_end": 40877,
+        "sha256": "6a92587354497d57fdd349573deb91d5df5df8538438d96e177205f4a55f89e1",
+        "target_start": 4991,
+        "target_end": 9780,
+        "target_line": 114
+      },
+      {
+        "key": "ENG07",
+        "label": "§8.1 建议持久化与输入结果接口",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 578,
+        "source_start": 35770,
+        "source_end": 36086,
+        "sha256": "598be5200ae04a3abc1686132bf0c5aeac2d65e2112a36ef13aaaf0ed18fcca2",
+        "target_start": 9907,
+        "target_end": 10223,
+        "target_line": 160
+      },
+      {
+        "key": "ENG08",
+        "label": "§8.2 接续认证接口",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 624,
+        "source_start": 40981,
+        "source_end": 41114,
+        "sha256": "c23ee7d9b9fb2184c3bf4f3e1b2ec22dfd76f4614c0fa4f745821babd59aa7fd",
+        "target_start": 10344,
+        "target_end": 10477,
+        "target_line": 168
+      },
+      {
+        "key": "ENG09",
+        "label": "§8.4 原子 HANDOFF",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 712,
+        "source_start": 46718,
+        "source_end": 46839,
+        "sha256": "1194730cb01117c08cc4f1e516b3ab0f9f8384c7bca3e7099ed144b51cbd9d4f",
+        "target_start": 10602,
+        "target_end": 10723,
+        "target_line": 176
+      },
+      {
+        "key": "ENG10",
+        "label": "§9.1 写入字段与修订冲突",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 762,
+        "source_start": 49151,
+        "source_end": 49311,
+        "sha256": "287eba7abddf23a0fde656ecbe803ffdd55b6195ea27f09d25ff6dfb8c5df1ff",
+        "target_start": 10847,
+        "target_end": 11007,
+        "target_line": 184
+      },
+      {
+        "key": "ENG11",
+        "label": "§9.1 应用幂等键与 CAS",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 764,
+        "source_start": 49313,
+        "source_end": 49586,
+        "sha256": "9acca94aebbd2b81978e802ab201a1782854a804c73b6809a4ea6f59ed40d247",
+        "target_start": 11132,
+        "target_end": 11405,
+        "target_line": 192
+      },
+      {
+        "key": "ENG12",
+        "label": "§9.2 时间来源接口",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 788,
+        "source_start": 50758,
+        "source_end": 50901,
+        "sha256": "aa71f111f486cdbf10734d54ed40e330a4aa46a946da6dadf79300b43e88fbc1",
+        "target_start": 11526,
+        "target_end": 11669,
+        "target_line": 200
+      },
+      {
+        "key": "ENG13",
+        "label": "§9.2 可靠事件时间接口",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 792,
+        "source_start": 51134,
+        "source_end": 51266,
+        "sha256": "6306d9d117c2f5f65f5ef627e866615125e94130adfaaeb55b18a3233a091752",
+        "target_start": 11792,
+        "target_end": 11924,
+        "target_line": 208
+      },
+      {
+        "key": "ENG14",
+        "label": "§9.3 正式证据提交链",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 853,
+        "source_start": 54391,
+        "source_end": 54590,
+        "sha256": "a69559c29ad24ac9edf8d1088e1cdcbc8273e94a4bd2da8c8bd3c63bf1d5137e",
+        "target_start": 12046,
+        "target_end": 12245,
+        "target_line": 216
+      },
+      {
+        "key": "ENG15",
+        "label": "§9.4 结果与聚合水位接口",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 859,
+        "source_start": 54856,
+        "source_end": 55112,
+        "sha256": "66f450bb82fa090cf01b4e0b6715b1ca1821c4c5adb951c0fbaccb8d8a4e087d",
+        "target_start": 12369,
+        "target_end": 12625,
+        "target_line": 224
+      },
+      {
+        "key": "ENG16",
+        "label": "§9.4 来源依赖索引",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 867,
+        "source_start": 55572,
+        "source_end": 55778,
+        "sha256": "301c0457250f2c28a9439ef3d6660d54ea7b295cd7354f5cb2862fcd8aea976f",
+        "target_start": 12746,
+        "target_end": 12952,
+        "target_line": 232
+      },
+      {
+        "key": "ENG17",
+        "label": "§9.4 可靠序列与恢复",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 869,
+        "source_start": 55780,
+        "source_end": 55877,
+        "sha256": "e5599211508d30566d1fcf1fd1ab560aacf7dcb317150dbcc9e9d3d75a431ed3",
+        "target_start": 13074,
+        "target_end": 13171,
+        "target_line": 240
+      },
+      {
+        "key": "ENG18",
+        "label": "§9.4 Home／Cell／writer 部署映射",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 879,
+        "source_start": 56567,
+        "source_end": 56912,
+        "sha256": "a4a3fbb395ac8069f8d8d1904f4b48f4c134afdaa24529fc22391f7b4e838c79",
+        "target_start": 13307,
+        "target_end": 13652,
+        "target_line": 248
+      },
+      {
+        "key": "ENG19",
+        "label": "§9.6 历史模型边界与实际处理配置",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 893,
+        "source_start": 57496,
+        "source_end": 57769,
+        "sha256": "071d1925eaea648f7a3d9e5012f76fa26e78b582bdde895d07d5667825f8476a",
+        "target_start": 13780,
+        "target_end": 14053,
+        "target_line": 256
+      },
+      {
+        "key": "ENG20",
+        "label": "§9.6 模型调用登记与字段核对",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 895,
+        "source_start": 57771,
+        "source_end": 57945,
+        "sha256": "0c3665951d8b94c8f80ff52b883de5c4a0204586c1fc868a0d88ef1260a9b134",
+        "target_start": 14179,
+        "target_end": 14353,
+        "target_line": 264
+      },
+      {
+        "key": "ENG21",
+        "label": "§9.6 披露配置与责任登记",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 901,
+        "source_start": 58302,
+        "source_end": 58465,
+        "sha256": "98056c67c6c8b01917683b4cc2ce1f084b32a17dbf5ca9dea9189aa36511a67a",
+        "target_start": 14477,
+        "target_end": 14640,
+        "target_line": 272
+      },
+      {
+        "key": "ENG22",
+        "label": "§10.3 schema、备份与生产回滚",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 947,
+        "source_start": 61985,
+        "source_end": 62096,
+        "sha256": "804805a8fbcafbbf1431d1beddeb0ea19eabeb7271e2235845aedf9f2326e38f",
+        "target_start": 14770,
+        "target_end": 14881,
+        "target_line": 280
+      },
+      {
+        "key": "ENG23",
+        "label": "§10.3 生产迁移验收",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 958,
+        "source_start": 62556,
+        "source_end": 62780,
+        "sha256": "29f211445161fa4b43b979bbf1b101113e94e5e92e5c8a249b25247569093439",
+        "target_start": 15003,
+        "target_end": 15227,
+        "target_line": 288
+      },
+      {
+        "key": "ENG24",
+        "label": "§11.1–11.2 工程批次、PTA 与生产 Gate",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 962,
+        "source_start": 62799,
+        "source_end": 66232,
+        "sha256": "d10e6240d552d0fece2cf5e7ebe9e33792bec41683cb8153076684fa077146dd",
+        "target_start": 15365,
+        "target_end": 18798,
+        "target_line": 296
+      },
+      {
+        "key": "ENG25",
+        "label": "§12.6–12.9 后续试点、测量与真实故障／生产验收",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 1132,
+        "source_start": 76382,
+        "source_end": 80330,
+        "sha256": "c5b12b15744b888a2a365a17d6ed8cd0f2ece5af264dd918611399df88cf222d",
+        "target_start": 18937,
+        "target_end": 22885,
+        "target_line": 338
+      },
+      {
+        "key": "ENG26",
+        "label": "§13.5 G01–G05 工程准入索引",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 1273,
+        "source_start": 86352,
+        "source_end": 87200,
+        "sha256": "42b91fead66fd0b6ecffb36f6e20e2648ca4bb26d5456ccf65dcccecea325a9b",
+        "target_start": 23016,
+        "target_end": 23864,
+        "target_line": 406
+      },
+      {
+        "key": "ENG27",
+        "label": "06 规格 R2-M01–08 详细历史夹具与工程／真实用户断言",
+        "source_file": "06-全周期验证协议与夹具矩阵.md",
+        "source_line": 236,
+        "source_start": 15827,
+        "source_end": 21406,
+        "sha256": "0307eca6d80eb68a778c2eff8bee36ae888f9a60fcaf9c0d4b3843ebd132a208",
+        "target_start": 23985,
+        "target_end": 29564,
+        "target_line": 426
+      },
+      {
+        "key": "ENG28",
+        "label": "§12 产品反例中的真实业务恢复断言：E10 / G02 幂等",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 1067,
+        "source_start": 71258,
+        "source_end": 71393,
+        "sha256": "28888a67fb36524658d28ca890ae084b7d77b8db03823eb12be2a69ca0c23862",
+        "target_start": 29839,
+        "target_end": 29974,
+        "target_line": 549
+      },
+      {
+        "key": "ENG29",
+        "label": "§12 产品反例中的真实业务恢复断言：AG03 写入未知",
+        "source_file": "OLE_Learning_Analysis_Design_v0.7-r2.md",
+        "source_line": 1124,
+        "source_start": 75578,
+        "source_end": 75674,
+        "sha256": "1b8c8b69ff1ce3c7e242ef8099a225642843d6fc4dcb97f11fdb0bddcc55883d",
+        "target_start": 30069,
+        "target_end": 30165,
+        "target_line": 557
+      }
+    ],
+    "sha256": "a9d36c9602c197925db1474b1d841d22219611a4592c436b2ed118e274dc8c2d",
+    "historical_sources": {
+      "OLE_Learning_Analysis_Design_v0.7-r2.md": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
+      "06-全周期验证协议与夹具矩阵.md": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3"
+    }
+  },
+  "baseline_sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99"
 }

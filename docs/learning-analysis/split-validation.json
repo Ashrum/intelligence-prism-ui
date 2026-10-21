@@ -1,11 +1,20 @@
 {
   "status": "PASS",
-  "revision": "v0.7 r2",
-  "baseline_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
+  "revision": "v1.0-candidate",
+  "scope": "document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission",
+  "baseline_sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99",
   "specs": 6,
-  "verbatim_segments": 17,
+  "verbatim_product_segments": 22,
   "section4_to12_continuous": true,
-  "gate_rows_identical": true,
-  "section6_rules_unchanged": true,
-  "scope": "document integrity and deterministic publication; not production admission"
+  "engineering_transfers": 29,
+  "engineering_source_and_target_exact": true,
+  "protected_product_blocks_unchanged": 5,
+  "la08_oracles": 10,
+  "historical_master_body_unchanged": true,
+  "historical_r1_hash_verified": true,
+  "local_links_checked": 121,
+  "tables_checked": 136,
+  "browser_acceptance": "待 Supervisor 执行",
+  "c01_smoke": "待执行",
+  "approval": "待 PO 批准"
 }
