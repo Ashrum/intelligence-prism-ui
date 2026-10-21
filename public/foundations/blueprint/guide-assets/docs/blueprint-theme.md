@@ -47,6 +47,18 @@
 
 示例以按钮模拟到达、开始批阅、批完、待处理回执和进入复核，并可停止 / 恢复接收、选择答卷、重置。默认 12 个答卷位含五态，窄容器两列；只更改当前夹具数据。工作台业务接入、真实回执与生产服务不在 P102 范围。浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390、系统动态减少动效、键盘与嵌套主题。
 
+## 原件预览浮动控件 · P104（2026-10-22）
+
+原件预览的学生控制条、纸边工具坞，以及原件画布内的 toolbar / combobox-trigger / collapsible-trigger，在 blueprint / blueprint-night 下统一为 0 圆角、1px `--line` 墨线边与 `--popover` 实色纸面。硬阴影沿用现有 Popover / Select 的 `6px 6px 0 rgb(22 24 29 / 6%)`，夜图沿用 `6px 6px 0 rgba(0,0,0,.3)`，模糊半径为 0。工具坞承担外层边与阴影，内部滚动 toolbar 不重复绘制边与阴影；焦点轮廓沿用现有规则。
+
+`surface-floating` 同族全部适配：学生切换面板的 Combobox 包装 span、学生刻度 / 题目栏 / 复核与分析工具提示、快捷键 Dialog、连续纸张工具条和 Foundations 材质样本。`--surface-floating-background:var(--popover)` 与 `--surface-floating-blur:0px` 仅在命中的浮动表面就地覆盖，`backdrop-filter`（含 WebKit）为 none，不改 theme.css 中核心三主题的 92% / 12px 材质。所有覆盖均限制两蓝图主题并排除嵌套核心预览根及后代；伪元素同样排除，去除残余圆角和装饰阴影。打印不保留新浮动阴影。普通页面的 Toolbar / Combobox / Collapsible 不因此改成浮层。
+
+组件站对照入口：[原件预览浮动控件](/next/components/paper-preview#p104-floating)，包含 blueprint / blueprint-night / light 三份同构合成数据，复用现有学生控制条、连续原件预览、满分作答披露与快捷键表。打开「选择学生」、搜索 / 选择学生、切换「适合页面 / 适合宽度」、旋转当前纸、展开「满分 2 人」、打开「快捷键」，检查纸面、边线、硬阴影和焦点；窄屏保留控制条横向滚动与工具坞滚动。原有三主题示例仍保留用于嵌套隔离对照。
+
+复用检索（离线）：已有 Prism StudentControlBar / PaperPreviewSurface / ReviewSwitcher / ReviewWorkspaceShortcuts 提供完整结构和行为；固定 coss Toolbar / Combobox / Collapsible 及已有 Popover / Select 蓝图规则提供稳定 data-slot 与硬阴影参考，本地 particles 无需引入新组合。未联网刷新 particles / registry，未引入第三方代码、新依赖、组件条目或视觉令牌。只新增主题 CSS 与示例组合，复用组件 TSX / API / 行为不变；Workspace 同步清单由交接报告提供，本轮未接入 Workspace。
+
+浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390，并复核 paper / dark 嵌套预览、浮层 portal 主题继承、键盘焦点、长中文与公式。自动化 CSS 选择器与 SSR 检查不等于浏览器视觉验收。
+
 ## 复核原件聚焦 · P103（2026-10-22）
 
 设计状态：候选实现，依据 PO 2026-10-22 对复核原件聚焦能力的决定；工程准入：未开始。扩展现有 `BpFrameCard`，不新增组件目录条目。示例入口：`/next/foundations/blueprint#frame-focus-p103`；按钮标明「演示事件，产品中由真实选中驱动」。Builder 自测不等同于 Supervisor Review、浏览器验收或 PO 批准。
