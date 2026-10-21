@@ -1,0 +1,22 @@
+{
+  "baseline": "c830ac12e09c9a14bb7ccefe714f06e9a85585a9",
+  "sheets": [
+    {
+      "props": {
+        "title": "长中文图纸标题",
+        "letter": "A",
+        "sheetNo": "01 / 02"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-sheet\" data-slot=\"bp-sheet\"><div aria-hidden=\"true\" class=\"bp-ruler bp-ruler--top\"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden=\"true\" class=\"bp-ruler bp-ruler--bottom\"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div><div aria-hidden=\"true\" class=\"bp-ruler bp-ruler--left\"><span>A</span><span>B</span><span>C</span><span>D</span></div><div aria-hidden=\"true\" class=\"bp-ruler bp-ruler--right\"><span>A</span><span>B</span><span>C</span><span>D</span></div><header class=\"bp-section-header relative\" data-slot=\"bp-section-header\" data-has-code=\"\"><span class=\"bp-section-code\">A</span><div class=\"bp-section-main\"><div class=\"bp-section-title-row\"><h2 id=\"_R_0_\" class=\"bp-section-title text-section-title\">长中文图纸标题</h2><p class=\"bp-section-folio\">SHEET 01 / 02</p></div></div></header><div class=\"relative min-w-0\">正文</div></section>"
+    },
+    {
+      "props": {
+        "title": "无坐标尺",
+        "rulers": false,
+        "className": "host"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-sheet host\" data-slot=\"bp-sheet\"><header class=\"bp-section-header relative\" data-slot=\"bp-section-header\"><div class=\"bp-section-main\"><div class=\"bp-section-title-row\"><h2 id=\"_R_0_\" class=\"bp-section-title text-section-title\">无坐标尺</h2></div></div></header><div class=\"relative min-w-0\">正文</div></section>"
+    }
+  ],
+  "tableSha256": "8c75312e6cfcbc8b6af65317b9e0206239395cb2e49f88a7cd0cb99ae97895fc"
+}

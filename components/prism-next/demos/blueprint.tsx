@@ -76,6 +76,7 @@ export function BlueprintComponentsDemo() {
     <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
+      <a href="#narrow-frame">窄屏图纸外框</a>
       <a href="#actions">蓝图按钮与标签页</a>
       <a href="#entry-annotations">图形标注与入口</a>
       <a href="#artifact-folio">成果标题定位</a>
@@ -85,6 +86,9 @@ export function BlueprintComponentsDemo() {
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
+    <BlueprintSheet id="narrow-frame" title="窄屏保留图纸外框" narrowFrame="keep" description="窄屏保留左右外框，隐藏坐标尺与内框。">
+      <p className="text-ui-body">长中文标题与正文在图纸内自然换行，左右保留阅读间距。</p>
+    </BlueprintSheet>
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
     <AgentWorkspacePatternsDemo />
