@@ -1,0 +1,299 @@
+{
+  "baseline": "6bfd796a21cc98b648313a05f7914b001e1b5009",
+  "records": [
+    {
+      "theme": "light",
+      "width": 1280,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "6033b5d38350c5e434219ad21358f07ef8905c62ad1af9dd7f409b014294f8c5"
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "f2b77440d1f098a8b131d2e4669ae70680ed2ebcb0458b5ef7bece95a650b4e8"
+        },
+        {
+          "elements": 2,
+          "sha256": "524e26a6cc9f70d51b959367f567de45ee1dfcee07d0f1c8635ef9c19321fea4"
+        },
+        {
+          "elements": 2,
+          "sha256": "26ec29616a958f5f114d35a657169da362e79f5727d009c4cbb7a246caef92cc"
+        },
+        {
+          "elements": 142,
+          "sha256": "5744949b8c49ab4b1ffd1d74bdd901b59bbbe09b54f20ad3f2631205e5fbeb17"
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "395562d535d930466a726010d506656f885fed767da23407e0fd485fad29a541"
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "0e4bbc9c11e2b3f9ce536fa05c08cb0474b200bb20f057cfb8aa8ead5dca98ea"
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "f2b77440d1f098a8b131d2e4669ae70680ed2ebcb0458b5ef7bece95a650b4e8"
+        },
+        {
+          "elements": 2,
+          "sha256": "524e26a6cc9f70d51b959367f567de45ee1dfcee07d0f1c8635ef9c19321fea4"
+        },
+        {
+          "elements": 2,
+          "sha256": "26ec29616a958f5f114d35a657169da362e79f5727d009c4cbb7a246caef92cc"
+        },
+        {
+          "elements": 130,
+          "sha256": "fd1b4eca92db8e3d4968c5842dd6fae2e03d8ffd9559c80d3b35cb2b775c14f4"
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "2ae3a86b9aa4beac6638165ddf1404638797370a383090d27cac2d6263bdde4a"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "6033b5d38350c5e434219ad21358f07ef8905c62ad1af9dd7f409b014294f8c5"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "f2b77440d1f098a8b131d2e4669ae70680ed2ebcb0458b5ef7bece95a650b4e8"
+        },
+        {
+          "elements": 2,
+          "sha256": "524e26a6cc9f70d51b959367f567de45ee1dfcee07d0f1c8635ef9c19321fea4"
+        },
+        {
+          "elements": 2,
+          "sha256": "26ec29616a958f5f114d35a657169da362e79f5727d009c4cbb7a246caef92cc"
+        },
+        {
+          "elements": 142,
+          "sha256": "5744949b8c49ab4b1ffd1d74bdd901b59bbbe09b54f20ad3f2631205e5fbeb17"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 1280,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "395562d535d930466a726010d506656f885fed767da23407e0fd485fad29a541"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 390,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "0e4bbc9c11e2b3f9ce536fa05c08cb0474b200bb20f057cfb8aa8ead5dca98ea"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 390,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "f2b77440d1f098a8b131d2e4669ae70680ed2ebcb0458b5ef7bece95a650b4e8"
+        },
+        {
+          "elements": 2,
+          "sha256": "524e26a6cc9f70d51b959367f567de45ee1dfcee07d0f1c8635ef9c19321fea4"
+        },
+        {
+          "elements": 2,
+          "sha256": "26ec29616a958f5f114d35a657169da362e79f5727d009c4cbb7a246caef92cc"
+        },
+        {
+          "elements": 130,
+          "sha256": "fd1b4eca92db8e3d4968c5842dd6fae2e03d8ffd9559c80d3b35cb2b775c14f4"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "width": 390,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "2ae3a86b9aa4beac6638165ddf1404638797370a383090d27cac2d6263bdde4a"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "6033b5d38350c5e434219ad21358f07ef8905c62ad1af9dd7f409b014294f8c5"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "8ddc664abe3ed6ec7ed6c5b5b7f3d17d02f289043d6c603846f8c1926fd4731f"
+        },
+        {
+          "elements": 2,
+          "sha256": "db4019f20f7f088a6bf5a3f086f18148e1affebb09fbd3121e139d7976439003"
+        },
+        {
+          "elements": 2,
+          "sha256": "dea18c7886973d08aa630f409e8cfb07ca95eaa9f2b43b791aae5125fcff7b85"
+        },
+        {
+          "elements": 142,
+          "sha256": "372fd6a58d13a407106c6dba9468f6fa14b1409af18cfaf634e91128b5c63baf"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "395562d535d930466a726010d506656f885fed767da23407e0fd485fad29a541"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "name": "default",
+      "svg": [
+        {
+          "elements": 71,
+          "sha256": "0e4bbc9c11e2b3f9ce536fa05c08cb0474b200bb20f057cfb8aa8ead5dca98ea"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "name": "enriched",
+      "svg": [
+        {
+          "elements": 2,
+          "sha256": "8d7b4640d81eb1138652cbc97d0cee7aaf1f18d93927be98f923066982757f4d"
+        },
+        {
+          "elements": 2,
+          "sha256": "8ddc664abe3ed6ec7ed6c5b5b7f3d17d02f289043d6c603846f8c1926fd4731f"
+        },
+        {
+          "elements": 2,
+          "sha256": "db4019f20f7f088a6bf5a3f086f18148e1affebb09fbd3121e139d7976439003"
+        },
+        {
+          "elements": 2,
+          "sha256": "dea18c7886973d08aa630f409e8cfb07ca95eaa9f2b43b791aae5125fcff7b85"
+        },
+        {
+          "elements": 130,
+          "sha256": "a6d4ff533d4d7b50cf3caa4b48c97630b80182b79e4924ef7880e95f28e5a8f2"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "name": "pointOnly",
+      "svg": [
+        {
+          "elements": 84,
+          "sha256": "2ae3a86b9aa4beac6638165ddf1404638797370a383090d27cac2d6263bdde4a"
+        }
+      ]
+    }
+  ]
+}

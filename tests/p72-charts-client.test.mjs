@@ -33,9 +33,18 @@ test('P72 mounted Recharts: reference line persists without dots; toggling resto
         assert.equal(paths.length, 1);
         assert.ok(paths[0].attributes.d.length > 0);
         assert.doesNotMatch(paths[0].attributes.d, /NaN|Infinity/);
-        const dots = find(host, node => node.tagName === 'CIRCLE' && node.attributes.class?.includes('recharts-line-dot'));
+        const blueprint = theme === 'blueprint' || theme === 'blueprint-night';
+        assert.equal(paths[0].attributes['stroke-width'], blueprint ? '1.5' : '2.5');
+        const dots = blueprint
+          ? find(host, node => node.attributes?.['data-trend-symbol'] === 'circle')
+          : find(host, node => node.tagName === 'CIRCLE' && node.attributes.class?.includes('recharts-line-dot'));
         assert.equal(dots.length, showPoints === false ? 4 : 8, 'actual four dots remain; expected four dots obey the explicit flag');
-        assert.equal(find(host, node => node.attributes?.['data-trend-symbol']).length, 2, 'isolated hollow/diamond observations remain');
+        if (blueprint) for (const dot of dots) {
+          const square = find(dot, node => node.tagName === 'RECT')[0];
+          assert.equal(square.attributes.width, '12'); assert.equal(square.attributes.height, '12');
+        }
+        assert.equal(find(host, node => node.attributes?.['data-trend-symbol'] === 'hollow-circle').length, 1, 'isolated hollow observation remains');
+        assert.equal(find(host, node => node.attributes?.['data-trend-symbol'] === 'diamond').length, 1, 'isolated diamond observation remains');
         const legend = find(host, node => node.attributes?.['data-legend-id'] === 'expected')[0];
         assert.equal(find(legend, node => node.attributes?.['data-legend-marker'] === 'dashed-line').length, 1);
         const table = find(host, node => node.tagName === 'TABLE')[0];

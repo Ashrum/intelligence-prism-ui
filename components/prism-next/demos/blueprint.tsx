@@ -8,6 +8,7 @@ import { MenuPopup } from "../scoped-overlays"
 import { Button } from "../button"
 import { Badge } from "../badge"
 import { ChartLegend } from "../charts/chart-legend"
+import { BlueprintTrendDemo } from "./blueprint-trend"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
@@ -80,12 +81,14 @@ export function BlueprintComponentsDemo() {
       <a href="#artifact-folio">成果标题定位</a>
       <a href="#object-section-cards">原件与成果分节</a>
       <a href="#workspace-contracts">Agent 工作区稳定交互</a>
+      <a href="#trend-calibration">C0 趋势图对照</a>
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
     <AgentWorkspacePatternsDemo />
+    <BlueprintTrendDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
         titleActions={<Menu><MenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="成果标题更多操作" />}><MoreHorizontal aria-hidden="true" /></MenuTrigger>
