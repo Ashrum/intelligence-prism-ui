@@ -2395,6 +2395,16 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 - 教材目录：外部 `createDirectory` 数据支持递归层级，2—5 级示例位于独立 `directory-depth` fixture。选择以叶节点为准，父级勾选包含全部下级，取消不提交草稿。
 
+### 学情蓝图校准（P97）
+
+- Badge 复用 Prism 适配层与冻结 coss Badge；可选 `mark="ok" | "warn" | "no"` 分别前置 ✓ / ! / ✗，符号仅蓝图与夜图可见、`aria-hidden`，必须保留状态文字；`variant` 独立选择 success / warning / error 等语义，不从 mark 推断业务状态。所有蓝图 Badge（包括 coss 原语）使用直角、1.5px currentColor 描边和 card 纸面，颜色只在文字、边框与符号上；嵌套 core 预览不受覆盖。core 原 variant、字号、尺寸与默认 DOM（未传 mark）保持。
+- `BpSizeBar.rows[].display?: string` 完整替换右侧汇总文案（不再另加 unit），例如 `65% · 177 / 272`；未传时仍显示分段合计与 unit，合计、图例和 aria 数值统一 zh-CN 千分位，最多 21 位有效数字。`total` 仍只作条形分母，不改为右侧分段合计，不计算业务率。
+- `legendValues?: boolean` 单行默认 true，多行默认 false 保留既有合并类别图例；多行显式 true 时每行有自己的命名图例，不按跨行 id 合并数值。数值图例保留每个零值并显示 0；零段不占条形宽度。`legend=false` 仍隐藏图例，但每行 aria 名称始终包含全部分段的格式化数值。ink / hatch / quiet 可分别承载合格 / 排除或未核实 / 其他，分类和事实由宿主提供。
+- `ChartLegendMarker` 新增 area / segment / hatch；area、bar、segment 在 blueprint / blueprint-night 下显示方块，hatch 为斜线块。area / segment 在 core 采用原圆点类别样式，旧 marker 的 core 几何不变。dot / hollow-dot / diamond / triangle / square 保留点语义，line / dashed-line 保留线段，不能把点类一概改方块。调用方须明确传类别 marker；显式 color 优先规则不变。
+- Recharts Trend / Comparison Tooltip 改读 `max(0px, var(--radius-md))`：core 10px 基础半径减 2px，保持原 8px；蓝图基础半径 0，结果钳制为 0，与 ECharts 蓝图 tooltip.borderRadius=0 一致。夜图 `--chart-6=#B6BEC9` 与 JS 色板一致。夜图双方都是 6 色，第 7、8 色未定义，不新造配色；白图保留既有 1–5 CSS 桥接（JS 为 6 色），不扩大此轮夜图修复。
+- 离线复用检索：既有 Badge、BpSizeBar、ChartLegend、chart-palette 与固定 coss Badge 已足够；沿用既有来源，不需要新组件、particles 或外部代码。没有联网刷新上游，不声称最新来源已接入。组件 Agent Spec 与蓝图 guide JSON 同步；不登记新的目录条目。
+- 合成示例 `/next/foundations/blueprint#calibration` 包含双行比例、排除零值、千分位、三态 Badge 和类别／点／线图例；浏览器验收：按分工由 Supervisor 执行。
+
 ### Blueprint 事实栏与标题块布局（P82）
 
 `BpFacts` / `BpTitleBlock` 保留 items / className 与 dt/dd 契约，新增 `bp-fact-container` 外层作为自身容器查询边界，className 仍在 dl。宿主直接子节点选择器须考虑该外层。五主题一致：容器 ≤480px 固定两列，奇数末项跨满；>480px 所有项等宽单行。断点取原标题块单元 160px ×3。事实栏原固定两列也统一为此规则；不改字号、颜色或 Token。长中文 / 连续数字允许换行，数值保留 tabular-nums。只保证文本换行策略，不替调用方强制缩小固定宽媒体或不可断行的自定义 ReactNode。工程测试覆盖 2 / 3 / 4 / 5 项、宽窄声明与回退变异；实际像素溢出及视觉由 Supervisor 浏览器验收。

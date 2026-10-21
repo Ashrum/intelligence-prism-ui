@@ -4,13 +4,26 @@
 
 ## 当前
 
+- 轮次：P97 · 学情蓝图校准 C1 · 2026-10-21；基线 `d25e358ea972614abcebd400e0f4be74b20757ec`，分支 `feat/bp-calibration-p97-20261021`；开工工作树干净，Builder 实施与自测，待 Supervisor 独立 Review 与浏览器验收。
+- 范围：Recharts 提示圆角读既有 radius-md（core 8px、蓝图 0px）；夜图 chart-6 对齐 JS；Badge 纸面描边与可选装饰 mark；BpSizeBar 千分位、display 和多行独立数值图例；ChartLegend 类别方块／斜线块，点和线语义不改；同步示例、契约、Badge Agent Spec 与 guide 生成物。复用现有 Prism 与固定 coss，无新增依赖或组件条目。
+- 工程检查：数学字体退出 0、排版 317 TSX／退出 0；P97 与夜图定向 24/24；生产构建成功（退出 0，见下述环境适配）；随后全量测试 2345/2345、失败 0、跳过 0、退出 0。最终类型退出 2，仅 1 条既有 TS2306（`docs/learning-analysis/prototype-source/main.tsx:57` 引用的 `app.js` 非模块），开工干净基线已复现相同诊断，无新增。guide 同步检查与 diff 检查退出 0。
+- 构建环境适配：标准 vinext 命令退出 1，Vite 尝试写共享 node_modules/.vite-temp 遇 EPERM；runner loader 退出 7（动态 import 时 module runner 已关闭）。最终用已有 esbuild 将同一份 vite.config.ts 打包到工作树 .sites-runtime/p97-vite.config.mjs，以 Vite createBuilder 的 native loader 构建成功；不改配置、共享依赖或主 checkout，不启动开发服务。dist 对应本轮产品源码。最后只补记验证元数据并同步 guide、运行文档一致性复验，不将这一步冒称重新全量构建。
+- 收尾兼容性检查：Badge 仅在传 mark 时覆盖 children，未传 mark 时原样透传 render 子内容；新增 render 元素自带文本的回归断言。最终产品源码已重新构建、全量 2345/2345 与类型检查，结果同上；本条属于随后补记的验证元数据。
+- 差异说明：任务所列第 7、8 色在 CSS／JS 两侧均未定义；夜图只修已有第 6 色，不造新色。白图沿用既有五个 CSS 系列桥接与六色 JS 配置，未扩张白图桥接。core 令牌、coss 源码、点／线形状保持；工程隔离断言不等于视觉验收。
+- 周期：沿 P93 记录进入新周期第 3/3 轮，本轮实施尚待验收，不记为已验收或宣布周期收口。按任务执行完整工程回归；最近完整工程回归为本轮 P97（2345/2345，保留既有类型错误与标准构建环境限制）。下次触发点为 Supervisor 对本周期累计页面／主题／交互的完整浏览器回归及独立综合审查。
+- 浏览器交接：`/next/foundations/blueprint#calibration`，blueprint / blueprint-night / light ×1280/390；另补 paper / dark、嵌套 core 预览、Trend / Comparison 悬停及 ECharts 提示几何。应见 65% · 177 / 272、80% · 960 / 1,200、排除／未核实 0、12,345、三态标记、类别方块／斜线块及原有空心点／菱形／线段。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。真实服务、Workbench 接入、真机、读屏器未验；未提交、推送、PR、联网、模型调用、读取凭据、启动或重启开发服务、发布站点。Builder 不自我批准。
+
+## 历史
+
+### P93 · 2026-10-20（P97 前当前，原样保留）
+
 - 轮次：P93 · SpaceBar 降低高度 · 2026-10-20；基线 `7f335106ec0812bbff54645b18aadbf4bd2e7d54`，分支 `feat/space-bar-height-p93-20261020`；开工工作树干净，待 Supervisor 独立 Review 与浏览器验收。
 - 范围：复用现有 Prism SpaceBar，仅修改尺寸声明：桌面栏高 48→40px，space／收起侧区按钮 36→32px（展开侧区保持 32px），图标 17→16px；<600px 栏高 44px、按钮 44×44px。TSX 与蓝图覆盖无重复尺寸；五主题共用同一尺寸来源，不引入新组件或上游代码。AppBar、Token、颜色、边框、结构与交互保持原契约。
 - 配套：更新尺寸断言及定向测试、Workspace 顶部区域与组件契约；同步本状态的 guide 生成物。工程检查：字体退出 0；排版 317 个 TSX、退出 0；生产构建退出 0；全量测试 2312/2312、失败 0、跳过 0、退出 0；类型退出 2，仅既有 TS2306（`docs/learning-analysis/prototype-source/main.tsx:57` 引用的 `app.js` 非模块），干净基线临时归档复现同一诊断，无新增。首轮测试 2311/2312，旧蓝图高度断言未区分窄屏，按 40/44px 契约修正后全量通过；guide 检查与 diff 检查退出 0。
 - 周期：P87 后新周期第 2/3 轮实施完成，尚待验收，不记为已验收；下一已授权产品小轮为 3/3，触发完整回归与独立综合审查。本轮按任务要求执行完整工程检查，不据此重置浏览器综合验收周期。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。验收路由 `/next/use-cases/workspace-app-bar`，覆盖五主题、1280 与 390、展开／收起侧区、长标题省略及图标不挤压。真实服务、Workspace 接入、真机与读屏器未验。未提交、推送、PR、启动或重启开发服务、发布站点。
 
-## 历史
 
 ### P91 · 2026-10-20（P93 前当前，原样保留）
 

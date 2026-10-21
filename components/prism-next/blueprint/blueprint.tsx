@@ -241,25 +241,36 @@ export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, c
 
 export type BpFill = "ink" | "hatch" | "accent" | "quiet"
 export interface BpSizeSegment { id: string; label: string; value: number; fill: BpFill }
-export interface BpSizeBarProps { rows: { id: string; label: string; total?: number; unit?: string; segments: BpSizeSegment[] }[]; legend?: boolean; className?: string }
+export interface BpSizeBarProps {
+  rows: { id: string; label: string; total?: number; unit?: string; display?: string; segments: BpSizeSegment[] }[]
+  legend?: boolean
+  /** Defaults to true for one row; opt in for a separately labelled legend per row. */
+  legendValues?: boolean
+  className?: string
+}
+const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, className }: BpSizeBarProps) {
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
+  const renderLegend = (segments: BpSizeSegment[], label: string, unit = "") => <ul aria-label={label} className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
+    {segments.map(s => <li key={s.id} className="flex min-w-0 max-w-full items-start gap-1.5"><span aria-hidden="true" className={`mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-${s.fill}`} /><span className="min-w-0 [overflow-wrap:anywhere]">{s.label}{legendValues && <> <b className="text-foreground tabular-nums">{sizeNumber.format(s.value)}</b>{unit && ` ${unit}`}</>}</span></li>)}
+  </ul>
   return <div className={cn("space-y-3 border-(length:--line-width) border-(--line) p-4.5 pb-3.5", className)}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
-      return <div key={row.id} className="bp-size-row">
+      return <div key={row.id} className="space-y-3">
+        <div className="bp-size-row" data-display={row.display !== undefined ? "" : undefined}>
         <span className="text-item-title">{row.label}</span>
-        <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${s.value}${row.unit ?? ""}`).join("，")}`} className="bp-size-bar">
+        <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${sizeNumber.format(s.value)}${row.unit ?? ""}`).join("，")}`} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
         </span>
-        <span className="text-right text-ui-meta text-muted-foreground"><b className="text-ui-action text-foreground tabular-nums">{sum}</b> {row.unit}</span>
+        <span className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
+        </div>
+        {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit)}
       </div>
     })}
-    {legend && <ul className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
-      {legendItems.map(s => <li key={s.id} className="flex items-center gap-1.5"><span aria-hidden="true" className={`size-3 border border-(--line) bp-fill-${s.fill}`} />{s.label}<b className="text-foreground tabular-nums">{rows.length === 1 ? s.value : ""}</b></li>)}
-    </ul>}
+    {legend && (!legendValues || rows.length <= 1) && renderLegend(legendItems, "分段图例")}
   </div>
 }
 
