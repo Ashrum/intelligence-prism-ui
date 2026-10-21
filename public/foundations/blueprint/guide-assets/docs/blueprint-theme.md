@@ -3,6 +3,50 @@
 2026-10-13 新增，候选状态。视觉语言参照 answer-me-with-html 站点的 blueprint 主题（MIT）：直角、1.5px 墨线、双线图框与坐标标尺、墨底字母块、偏移硬阴影。实现位于 `app/(next)/next/theme.css`（颜色令牌）、`app/(next)/next/blueprint.css`（几何与 `bp-*` 样式）及 [React 封装](../components/prism-next/blueprint/blueprint.tsx)。演示页为 `/next/foundations/blueprint`，从侧栏「蓝图组件」进入。
 
 
+## 智能批阅 · P102（2026-10-22）
+
+设计状态：候选实现，依据 PO 2026-10-22 批准的智能批阅 Version 5 样稿及 D2–D4；工程准入：未开始。Builder 自测不等同于 Supervisor Review、浏览器验收或 PO 批准。示例入口：`/next/foundations/blueprint#grading-p102`。
+
+### D2 · 阶段身份色例外
+
+仅在智能批阅内，曜青绿 `#C2F25B` 表示收卷阶段、曜蓝 `#339FF2` 表示 AI 批阅阶段、曜紫红 `#E0438F` 表示教师复核阶段。允许用途限于阶段细条、动效轨迹（含到达 / 批完描边及当前作答聚焦框）和来源确为 AI 的 3px 来源条；均须配文字。答卷右上角标按冻结样稿标示复核入口，待处理文字仍用语义警告色。品牌三色不用于正文、标签文字、按钮底色、大面积底色、语义成功 / 警告 / 错误或进度填充。原 10/16 规则其余内容不变。本轮不新建 AI 来源条组件、不改变既有来源判定。
+
+| 新增扩展令牌 | 蓝图 / 夜图 | light / paper / dark 回退 | 用途 |
+| --- | --- | --- | --- |
+| `--bp-phase-receive` | `#C2F25B` | `var(--line)` | 当前收卷阶段条、光束、到达描边 |
+| `--bp-phase-ai` | `#339FF2` | `var(--line)` | 当前 AI 阶段条、扫描线、批完描边 |
+| `--bp-phase-review` | `#E0438F` | `var(--line)` | 当前复核阶段条、角标、当前作答聚焦框 |
+| `--bp-paper-waiting` | `#8B929E` | `var(--border)` | 等待答卷虚线 |
+
+所有令牌在根与显式 `data-agent-preview` 主题边界重置。新增样式只作用于显式 `bp-*` 类；不改原组件、coss、核心主题已有令牌值。嵌套核心主题回退中性，伪元素同样读取当地令牌，不继承外层品牌阶段色。
+
+对纸面的计算对比度（非浏览器验收）：蓝图青绿 / 蓝 / 紫红为 1.30 / 2.84 / 3.91；夜图为 13.15 / 6.01 / 4.37。浅色青绿和蓝色不满足独立非文本信息 3:1，不承担独立信息，光束附墨线描边；编号、当前 / 完成 / 未开始文字和状态文字保留。等待虚线为 3.13 / 5.46，警告文字为 5.54 / 9.04，成功标记为 7.09 / 9.80（蓝图 / 夜图）。阶段色不是文字色，不宣称其达到正文 4.5:1。
+
+### D3 · 动效与状态边界
+
+| 动效 | 时长与曲线 | 触发及静态结果 |
+| --- | --- | --- |
+| 阶段条展开 | 380ms `cubic-bezier(.2,.8,.2,1)`，`scaleX` 从左展开 | 宿主改变 current；不使用宽度动画、不推进阶段 |
+| 新答卷落位 | 320ms `cubic-bezier(.2,.8,.2,1)` | received 且 fresh；到达位移 / 缩放只执行一次 |
+| 到达 / 批完描边淡出 | 600ms `ease-out` | received 青绿；graded / review 曜蓝，遵循冻结 Flow 样稿 `.fresh-*`，为 D3 一次性位移动效 ≤400ms 之外的描边淡出 |
+| 当前作答聚焦框收拢 | 180ms `ease-out`，outline-offset 10px → 3px | focused 为真，2px 紫红轮廓保留；不移动键盘焦点 |
+| 接收光束 | 1.6s `linear` 往复，3px + 墨线 | active 为真；按任务往复要求使用 alternate，样稿原为单向循环 |
+| 答卷扫描线 | 2.4s `linear`，2px | active 为真；位置与淡入淡出沿用样稿 |
+
+`prefers-reduced-motion: reduce` 初始及运行中生效：取消全部新增动画，轨迹与闪边隐藏，文字、语义标记、阶段细条与静态聚焦框保留。示例的「减少动态效果对照」只降低当前夹具的动效，不保存设置，也不能覆盖系统减少动态效果。无计时器、内部执行器或自动推进；动画结束不产生任何业务结果。
+
+### 三组件 API 与复用边界
+
+| 组件 | API | 边界 |
+| --- | --- | --- |
+| `BpSteps` | `variant?: "chips" / "bars"`，默认 chips；`steps: { id, label, meta?, tone?: "ink" / "receive" / "ai" / "review" }[]`；沿用 `current`（0 起始）、`label`、`status`、`className`、`children` | 扩展原组件；不传 variant 或传 chips 保留旧 SSR 字节；meta / tone 只在 bars 使用。done = current 之前，当前为 `aria-current="step"`，meta 直接可读；未提供 tone 用 ink。宿主只在真实线性流程中提供 current。 |
+| `BpScanTrace` | `kind: "beam" / "line"`、`active: boolean`、`tone: "receive" / "ai"`、`className?` | active=false 返回 null；装饰 `aria-hidden`、不截获指针；宿主容器须 position:relative、明确尺寸与裁切，并提供可读进行中状态。 |
+| `BpPaperSlot` | `state: "waiting" / "received" / "grading" / "graded" / "review"`、`name: string`、`code: string`、`detail: string`；`fresh?`、`focused?`、`href?`、`onSelect?`、`className?` | 无障碍名称为姓名 + 宿主状态文字。href 为链接且优先于 onSelect；仅 onSelect 为原生按钮；否则为静态 group。grading 内嵌扫描线，graded 显示语义成功 ✓；review 文字用 warning-foreground。fresh 仅在 received / graded / review 生效，宿主在真实事件后设一次，新事件前复位；重挂载前清除历史 fresh，组件不消费事件。focused 只表达当前作答，不暗示权限或移动焦点。 |
+
+复用检索（离线）：原 `BpSteps` 已有线性阶段语义，直接扩展；Prism `Stepper` 的可导航 / 受阻等语义不替代本轮只读阶段条；`BpCard` / `BpFrameCard` / `PaperPreview` / `AgentCaptureScan` 为不同粒度，未找到五态答卷位或纯装饰轨迹。固定 coss Button / Card / Progress 与本地 selection / dialog / input particles、历史 p-tabs-1 检索记录未提供本任务几何；不新增第三方代码、不联网刷新注册表。D4 已批准补齐蓝图族，不增权威组件目录条目。
+
+示例以按钮模拟到达、开始批阅、批完、待处理回执和进入复核，并可停止 / 恢复接收、选择答卷、重置。默认 12 个答卷位含五态，窄容器两列；只更改当前夹具数据。工作台业务接入、真实回执与生产服务不在 P102 范围。浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390、系统动态减少动效、键盘与嵌套主题。
+
 ## 图纸坐标、图形标注与入口行 · P87（2026-10-19）
 
 来源：Workspace《入口与 Intro 页面规划设计》v0.6（2026-10-19）§3.3、§6.3 C、§6.4，以及同日入口与 Intro 视觉稿。只提炼已获认可的标尺追踪、瞄准框 / 引线标签和单目标入口行；不移入页面轨道、光束、转场或角色文案。入口为 `/next/foundations/blueprint#entry-annotations`，图纸 E / SHEET 05 / 05。

@@ -112,7 +112,14 @@ test('next-themes initialization restores every old stored value and night on th
 
 test('all original core and white token blocks retain their baseline bytes', () => {
   const blocks=[...theme.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(m=>m[1].includes(':where([data-agent-preview]')&&!m[1].includes(`data-prism-theme="${night}"`)).map(m=>m[2]);
-  assert.deepEqual(blocks.map(s=>createHash('sha256').update(s).digest('hex')),baseline.themeBlockHashes);
+  // P102 adds only these exact extension declarations. Keep the original byte
+  // hashes as the oracle; P102 separately checks every boundary/value and count.
+  const additions = [
+    "  /* P102: reset at every explicit preview boundary; no inherited brand phases in core themes. */\n  --bp-phase-receive:var(--line);\n  --bp-phase-ai:var(--line);\n  --bp-phase-review:var(--line);\n  --bp-paper-waiting:var(--border);\n",
+    "  --bp-phase-receive:#C2F25B;\n  --bp-phase-ai:#339FF2;\n  --bp-phase-review:#E0438F;\n  --bp-paper-waiting:#8B929E;\n",
+  ];
+  const originalBytes = s => additions.reduce((value, addition) => value.replace(addition, ''), s);
+  assert.deepEqual(blocks.map(s=>createHash('sha256').update(originalBytes(s)).digest('hex')),baseline.themeBlockHashes);
 });
 
 test('night maps BP.dark roles, SQUARE geometry, and documented fill fallbacks', () => {

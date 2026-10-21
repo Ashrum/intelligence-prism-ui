@@ -69,6 +69,11 @@
   /* Blueprint extension tokens. Neutral fallbacks keep bp-* components legible in the three core themes. */
   --line:var(--border);
   --line-width:1px;
+  /* P102: reset at every explicit preview boundary; no inherited brand phases in core themes. */
+  --bp-phase-receive:var(--line);
+  --bp-phase-ai:var(--line);
+  --bp-phase-review:var(--line);
+  --bp-paper-waiting:var(--border);
   --head-bg:var(--primary);
   --head-fg:var(--primary-foreground);
   --grid:transparent;
@@ -218,6 +223,10 @@
   --surface-floating-blur:12px;
   --line:#1D2026;
   --line-width:1.5px;
+  --bp-phase-receive:#C2F25B;
+  --bp-phase-ai:#339FF2;
+  --bp-phase-review:#E0438F;
+  --bp-paper-waiting:#8B929E;
   --head-bg:#16181D;
   --head-fg:#FFFFFF;
   --grid:rgba(29,32,38,.055);
@@ -287,6 +296,10 @@
   --surface-floating-blur:12px;
   --line:#C9D6E8;
   --line-width:1.5px;
+  --bp-phase-receive:#C2F25B;
+  --bp-phase-ai:#339FF2;
+  --bp-phase-review:#E0438F;
+  --bp-paper-waiting:#8B929E;
   --head-bg:#E6EDF7;
   --head-fg:#081322;
   --grid:rgba(201,214,232,.06);

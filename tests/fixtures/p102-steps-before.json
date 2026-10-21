@@ -1,0 +1,57 @@
+[
+  {
+    "props": {
+      "steps": [],
+      "current": 0
+    },
+    "html": "<div class=\"bp-steps\"><ol aria-label=\"流程步骤\" class=\"flex flex-wrap items-center gap-2.5\"></ol></div>"
+  },
+  {
+    "props": {
+      "steps": [
+        {
+          "id": "a",
+          "label": "设置"
+        },
+        {
+          "id": "b",
+          "label": "收卷"
+        },
+        {
+          "id": "c",
+          "label": "复核"
+        }
+      ],
+      "current": 1
+    },
+    "html": "<div class=\"bp-steps\"><ol aria-label=\"流程步骤\" class=\"flex flex-wrap items-center gap-2.5\"><li class=\"flex items-center gap-2.5\"><span class=\"bp-step\" data-state=\"done\"><b aria-hidden=\"true\">01</b>设置<span class=\"sr-only\">（已完成）</span></span><span aria-hidden=\"true\" class=\"text-border\">→</span></li><li class=\"flex items-center gap-2.5\"><span class=\"bp-step\" data-state=\"current\" aria-current=\"step\"><b aria-hidden=\"true\">02</b>收卷<span class=\"sr-only\">（当前）</span></span><span aria-hidden=\"true\" class=\"text-border\">→</span></li><li class=\"flex items-center gap-2.5\"><span class=\"bp-step\" data-state=\"todo\"><b aria-hidden=\"true\">03</b>复核<span class=\"sr-only\">（未开始）</span></span></li></ol></div>"
+  },
+  {
+    "props": {
+      "steps": [
+        {
+          "id": "a",
+          "label": "中文 <标签>"
+        }
+      ],
+      "current": 0,
+      "label": "固定步骤",
+      "status": "收卷中",
+      "className": "custom",
+      "children": "说明"
+    },
+    "html": "<div class=\"bp-steps custom\"><ol aria-label=\"固定步骤\" class=\"flex flex-wrap items-center gap-2.5\"><li class=\"flex items-center gap-2.5\"><span class=\"bp-step\" data-state=\"current\" aria-current=\"step\"><b aria-hidden=\"true\">01</b>中文 &lt;标签&gt;<span class=\"sr-only\">（当前）</span></span></li></ol><span class=\"ml-auto text-ui-meta text-(--link)\" aria-live=\"polite\">收卷中</span>说明</div>"
+  },
+  {
+    "props": {
+      "steps": [
+        {
+          "id": "a",
+          "label": "步骤"
+        }
+      ],
+      "current": -1
+    },
+    "html": "<div class=\"bp-steps\"><ol aria-label=\"流程步骤\" class=\"flex flex-wrap items-center gap-2.5\"><li class=\"flex items-center gap-2.5\"><span class=\"bp-step\" data-state=\"todo\"><b aria-hidden=\"true\">01</b>步骤<span class=\"sr-only\">（未开始）</span></span></li></ol></div>"
+  }
+]

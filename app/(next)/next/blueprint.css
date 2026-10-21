@@ -622,6 +622,60 @@
 .bp-callout.bp-callout-inline { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:10px 16px; }
 .bp-callout-inline > a { white-space:nowrap; }
 
+/* P102 · Explicit grading components. Phase tokens reset on all local theme boundaries. */
+.bp-steps-bars { display:flex; flex-wrap:wrap; gap:12px; min-width:0; }
+.bp-steps-bars > ol { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)); gap:12px 16px; width:100%; margin:0; padding:0; list-style:none; }
+.bp-steps-bars > ol > li { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.bp-phase-label { display:flex; align-items:center; gap:8px; color:var(--foreground); overflow-wrap:anywhere; }
+.bp-phase-code { display:grid; place-items:center; flex-shrink:0; width:28px; height:28px; border:1px solid var(--border); color:var(--muted-foreground); }
+.bp-steps-bars [data-state="current"] .bp-phase-code { background:var(--head-bg); color:var(--head-fg); border-color:var(--head-bg); }
+.bp-steps-bars [data-state="done"] .bp-phase-code { border-color:var(--line); color:var(--foreground); }
+.bp-phase-meta { color:var(--muted-foreground); overflow-wrap:anywhere; }
+.bp-phase-bar { display:block; height:4px; margin-top:auto; background:var(--border); transform-origin:left; }
+.bp-steps-bars [data-state="done"] .bp-phase-bar { background:var(--line); }
+.bp-steps-bars [data-state="current"] .bp-phase-bar { background:var(--line); animation:bp-phase-grow 380ms cubic-bezier(.2,.8,.2,1); }
+.bp-steps-bars [data-state="current"][data-tone="receive"] .bp-phase-bar { background:var(--bp-phase-receive); }
+.bp-steps-bars [data-state="current"][data-tone="ai"] .bp-phase-bar { background:var(--bp-phase-ai); }
+.bp-steps-bars [data-state="current"][data-tone="review"] .bp-phase-bar { background:var(--bp-phase-review); }
+.bp-scan-trace { position:absolute; display:block; pointer-events:none; z-index:1; background:var(--bp-trace-color); }
+.bp-scan-trace[data-tone="receive"] { --bp-trace-color:var(--bp-phase-receive); }
+.bp-scan-trace[data-tone="ai"] { --bp-trace-color:var(--bp-phase-ai); }
+.bp-scan-trace[data-kind="beam"] { left:6px; right:6px; top:8%; height:3px; box-shadow:0 0 0 1px var(--line); animation:bp-scan-beam 1.6s linear infinite alternate; }
+.bp-scan-trace[data-kind="line"] { left:0; right:0; top:0; height:2px; box-shadow:0 0 0 3px color-mix(in srgb,var(--bp-trace-color) 16%,transparent); animation:bp-scan-line 2.4s linear infinite; }
+.bp-paper-slot { position:relative; overflow:hidden; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; gap:16px; min-width:0; min-height:132px; padding:10px 12px; border:var(--line-width) solid var(--line); border-radius:0; background:var(--card); color:var(--foreground); text-align:start; text-decoration:none; --bp-arrival-animation:none; --bp-focus-animation:none; animation:var(--bp-arrival-animation),var(--bp-focus-animation); }
+.bp-paper-slot:is(a,button) { cursor:pointer; }
+.bp-paper-slot[data-state="waiting"] { border-style:dashed; border-color:var(--bp-paper-waiting); background:transparent; }
+.bp-paper-slot-head { display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--muted-foreground); padding-right:8px; overflow-wrap:anywhere; }
+.bp-paper-slot-body { display:flex; flex-direction:column; gap:2px; overflow-wrap:anywhere; }
+.bp-paper-slot-detail { color:var(--muted-foreground); }
+.bp-paper-slot-check { color:var(--success-foreground); }
+.bp-paper-slot[data-state="review"] .bp-paper-slot-detail { color:var(--warning-foreground); }
+.bp-paper-slot[data-state="review"]::after { content:""; position:absolute; top:0; right:0; border-style:solid; border-width:0 18px 18px 0; border-color:transparent var(--bp-phase-review) transparent transparent; pointer-events:none; }
+.bp-paper-slot[data-fresh="arrival"] { --bp-arrival-animation:bp-paper-drop 320ms cubic-bezier(.2,.8,.2,1); }
+.bp-paper-slot[data-fresh]::before { content:""; position:absolute; inset:0; border:2px solid var(--bp-phase-ai); pointer-events:none; animation:bp-paper-flash 600ms ease-out forwards; }
+.bp-paper-slot[data-fresh="arrival"]::before { border-color:var(--bp-phase-receive); }
+.bp-paper-slot[data-focused="true"] { outline:2px solid var(--bp-phase-review); outline-offset:3px; --bp-focus-animation:bp-paper-focus 180ms ease-out; }
+/* Native keyboard focus stays visible even while the supplied answer emphasis animates. */
+.bp-paper-slot:is(a,button):focus-visible { outline:2px solid var(--ring); outline-offset:3px; --bp-focus-animation:none; }
+.bp-grading-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.bp-grading-station { position:relative; overflow:hidden; width:112px; height:136px; border:var(--line-width) solid var(--line); background:var(--card); }
+@container blueprint-demo (min-width:760px) { .bp-grading-grid { grid-template-columns:repeat(6,minmax(0,1fr)); } }
+@keyframes bp-phase-grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+@keyframes bp-scan-beam { 0% { top:8%; opacity:0; } 12% { opacity:1; } 88% { opacity:1; } 100% { top:88%; opacity:0; } }
+@keyframes bp-scan-line { 0% { top:0; opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { top:calc(100% - 2px); opacity:0; } }
+@keyframes bp-paper-drop { from { transform:translateY(-14px) scale(.96); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes bp-paper-flash { from { opacity:1; } to { opacity:0; } }
+@keyframes bp-paper-focus { from { outline-offset:10px; outline-color:transparent; } to { outline-offset:3px; outline-color:var(--bp-phase-review); } }
+/* Demo-only comparison can reduce motion, never override the system preference. */
+.bp-grading-demo[data-reduced-motion="true"] :is(.bp-phase-bar,.bp-scan-trace,.bp-paper-slot),
+.bp-grading-demo[data-reduced-motion="true"] .bp-paper-slot::before { animation:none; }
+.bp-grading-demo[data-reduced-motion="true"] .bp-scan-trace,
+.bp-grading-demo[data-reduced-motion="true"] .bp-paper-slot::before { display:none; }
+@media (prefers-reduced-motion:reduce) {
+  .bp-phase-bar,.bp-scan-trace,.bp-paper-slot,.bp-paper-slot::before { animation:none; }
+  .bp-scan-trace,.bp-paper-slot::before { display:none; }
+}
+
 /* P97 · Status badges use semantic ink on paper, never a solid status fill. */
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; border:var(--line-width) solid currentColor; background:var(--card); color:var(--foreground); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:is(.text-success-foreground):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--success-foreground); }
