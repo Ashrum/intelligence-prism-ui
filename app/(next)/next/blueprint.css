@@ -51,6 +51,10 @@
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="sidebar-inset"] > header):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-bottom:var(--line-width) solid var(--line); background:color-mix(in srgb,var(--card) 88%,transparent); backdrop-filter:blur(10px); }
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="table-head"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { font-family:var(--font-mono); font-size:var(--text-ui-meta); letter-spacing:.1em; text-transform:uppercase; color:var(--muted-foreground); border-bottom:var(--line-width) solid var(--line); }
 
+/* P101 · Sort controls inherit the header; native button interaction stays with coss. */
+:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="table-head"][aria-sort] [data-slot="button"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { font:inherit; letter-spacing:inherit; text-transform:inherit; }
+:where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) [data-slot="table-head"][aria-sort] [data-slot="button"] svg:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { width:1em; height:1em; }
+
 /* ── 3 · Soft shadows → offset hard shadows ────────────── */
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="button"],[data-slot="dialog-trigger"].border,[data-slot="dialog-close"].border,[data-slot="input-control"].border,[data-slot="card"],[data-slot="select-trigger"],[data-slot="input-group"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)):not(:focus-visible):not(:focus-within),
 :where(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) :where([data-slot="button"],[data-slot="dialog-trigger"].border,[data-slot="dialog-close"].border,[data-slot="input-control"].border,[data-slot="card"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before { box-shadow:none; }
@@ -375,6 +379,7 @@
 
 @media (max-width:760px) {
   .bp-sheet { border-left:0; border-right:0; padding:36px 16px 28px; }
+  .bp-sheet[data-narrow-frame="keep"] { border-left:var(--line-width) solid var(--line); border-right:var(--line-width) solid var(--line); }
   .bp-sheet::before,.bp-ruler { display:none; }
   .bp-size-row, .bp-size-row[data-display] { grid-template-columns:minmax(0,1fr) auto; gap:8px 12px; }
   .bp-size-bar { grid-column:1 / -1; grid-row:2; }
@@ -388,6 +393,7 @@
 /* The sample sheet responds to its actual content width, including the open sidebar. */
 @container blueprint-demo (max-width:760px) {
   .bp-sheet { border-left:0; border-right:0; padding:28px 16px; }
+  .bp-sheet[data-narrow-frame="keep"] { border-left:var(--line-width) solid var(--line); border-right:var(--line-width) solid var(--line); }
   .bp-sheet::before,.bp-ruler { display:none; }
 }
 /* v8 · Keyboard outline and print output. Core previews retain their own styles. */

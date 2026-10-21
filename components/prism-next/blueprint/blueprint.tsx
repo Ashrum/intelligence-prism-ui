@@ -71,18 +71,20 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
   titleActions?: ReactNode
   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
   rulers?: boolean
+  /** Keep the outer side borders below 760px; rulers and inner frame remain hidden. */
+  narrowFrame?: "edge" | "keep"
   /** Fine-pointer feedback, unless rulerMark is supplied (including null). */
   rulerTracking?: boolean
   /** Zero-based column 0–7 / row 0–3. null explicitly clears the controlled mark. */
   rulerMark?: { column: number; row: number } | null
   headingLevel?: 2 | 3
 }
-export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, rulerTracking = false, rulerMark, headingLevel = 2, className, children, onPointerMove, onPointerLeave, ...props }: BlueprintSheetProps) {
+export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, narrowFrame = "edge", rulerTracking = false, rulerMark, headingLevel = 2, className, children, onPointerMove, onPointerLeave, ...props }: BlueprintSheetProps) {
   const id = useId()
   const [pointerMark, setPointerMark] = useState<{ column: number; row: number } | null>(null)
   const mark = rulerMark !== undefined ? rulerMark : rulerTracking ? pointerMark : null
   const validMark = mark && Number.isInteger(mark.column) && mark.column >= 0 && mark.column < 8 && Number.isInteger(mark.row) && mark.row >= 0 && mark.row < 4 ? mark : null
-  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet"
+  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet" data-narrow-frame={narrowFrame === "keep" ? "keep" : undefined}
     onPointerMove={event => {
       onPointerMove?.(event)
       if (!rulerTracking || rulerMark !== undefined || event.pointerType === "touch" || event.defaultPrevented) return
