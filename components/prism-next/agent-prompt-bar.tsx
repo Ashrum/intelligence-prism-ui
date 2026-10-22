@@ -173,7 +173,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
         {enhanced ? <InputGroupAddon align="block-end" className="min-w-0 flex-wrap gap-1.5">
           <div role="group" aria-label="材料与输入工具" className="flex min-w-0 max-w-full flex-1 flex-wrap items-center gap-2">
             <Menu open={plusOpen} onOpenChange={open => { setPlusOpen(open); if (open) { setDismissed(value); setModelOpen(false) } }}>
-              <MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" disabled={disabled} aria-label="添加附件与来源" />}><Plus aria-hidden="true" /></MenuTrigger>
+              <MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" className="-ml-1.75 sm:-ml-1.5" disabled={disabled} aria-label="添加附件与来源" />}><Plus aria-hidden="true" /></MenuTrigger>
               <MenuPopup side="top" align="start" portalProps={{ container: root }}>
                 <MenuItem onClick={() => onIntent({ type: "attach" })}><Paperclip aria-hidden="true" />添加附件</MenuItem>
                 {sources.map(source => <MenuItem key={source.id} disabled={source.disabled} onClick={() => pick(source, "source")}>{source.label}</MenuItem>)}
@@ -192,20 +192,18 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
           </div>
           <div role="group" aria-label="主动作" className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2">
             {activity}
-            <span className="flex size-11 shrink-0 items-center justify-center p-1">
-              <Button type="button" size="icon-lg" className={cn("size-9 sm:size-9 after:absolute after:inset-1/2 after:size-11 pointer-coarse:after:size-11 after:-translate-x-1/2 after:-translate-y-1/2", variant === "Pill" && "rounded-full")}
-                aria-label={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
-                title={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
-                aria-describedby={primaryAction === "stop" || stopping ? undefined : sendDisabledReason ? `${id}-blocked` : undefined}
-                disabled={disabled || stopping || (primaryAction !== "stop" && (Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)))}
-                onClick={primaryAction === "stop" ? requestStop : submit}>{primaryAction === "stop" || stopping ? <Square aria-hidden="true" /> : <ArrowUp aria-hidden="true" />}</Button>
-            </span>
+            <Button type="button" size="icon-lg" className={cn("size-9 sm:size-9 after:absolute after:inset-1/2 after:size-11 pointer-coarse:after:size-11 after:-translate-x-1/2 after:-translate-y-1/2", variant === "Pill" && "rounded-full")}
+              aria-label={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
+              title={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
+              aria-describedby={primaryAction === "stop" || stopping ? undefined : sendDisabledReason ? `${id}-blocked` : undefined}
+              disabled={disabled || stopping || (primaryAction !== "stop" && (Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)))}
+              onClick={primaryAction === "stop" ? requestStop : submit}>{primaryAction === "stop" || stopping ? <Square aria-hidden="true" /> : <ArrowUp aria-hidden="true" />}</Button>
             {(primaryAction === "stop" || stopping) && <span role={stopping ? "status" : undefined} className="text-ui-hint">{stopping ? "正在请求停止" : stopLabel}</span>}
           </div>
         </InputGroupAddon> : <InputGroupAddon align="block-end" className="min-w-0 flex-wrap gap-1.5">
           <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1">
             <Menu open={plusOpen} onOpenChange={open => { setPlusOpen(open); if (open) { setDismissed(value); setModelOpen(false) } }}>
-              <MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" disabled={disabled} aria-label="添加附件与来源" />}><Plus aria-hidden="true" /></MenuTrigger>
+              <MenuTrigger render={<Button type="button" variant="ghost" size="icon-sm" className="-ml-1.75 sm:-ml-1.5" disabled={disabled} aria-label="添加附件与来源" />}><Plus aria-hidden="true" /></MenuTrigger>
               <MenuPopup side="top" align="start" portalProps={{ container: root }}>
                 <MenuItem onClick={() => onIntent({ type: "attach" })}><Paperclip aria-hidden="true" />添加附件</MenuItem>
                 {sources.map(source => <MenuItem key={source.id} disabled={source.disabled} onClick={() => pick(source, "source")}>{source.label}</MenuItem>)}

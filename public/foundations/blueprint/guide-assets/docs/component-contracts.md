@@ -2797,13 +2797,15 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 | Prop | 默认 | 契约 |
 | --- | --- | --- |
-| `density?: "compact"` | 不传，旧密度 | 仅压缩容器留白，输入仍使用 read-body。无附件、工具不折行时表面目标 104–112px；文本区最小 52px、主动作占位 44px。聚焦不改变尺寸；长文、工具折行、附件自然增高，不截断内容。目标尺寸需浏览器量测。 |
+| `density?: "compact"` | 不传，旧密度 | 仅压缩容器留白，输入仍使用 read-body。无附件、工具不折行时表面目标随 P110 减少 8px（原 104–112px）；文本区最小 52px、主动作布局高度 36px。聚焦不改变尺寸；长文、工具折行、附件自然增高，不截断内容。目标尺寸需浏览器量测。 |
 | `expandable?: boolean` | `false` | 依据 textarea 实际滚动高度与当前 `max-h-52`（根字号 16px 时 208px）比较，达到上限显示「展开编辑」。同一 textarea 在原位增高，保留全文、选区方向、光标与滚动位置；不复制成第二份草稿。收起与 Esc 不提交或清空。 |
-| `primaryAction?: "send" \| "stop" \| "stopping"` | 不传，旧发送按钮 | 显式传入或启用上述布局／提示时，主按钮可见 36px，独立 44px 布局占位及命中区，邻组留间距。`stop` 只发 `{type:"stop"}`；`stopping` 显示「正在请求停止」且禁用，不显示「已停止」。两种停止状态均阻止 Enter 提交，草稿仍可编辑。 |
+| `primaryAction?: "send" \| "stop" \| "stopping"` | 不传，旧发送按钮 | 显式传入或启用上述布局／提示时，主按钮可见 36px，44px 伪元素命中区不参与布局，邻组留间距。`stop` 只发 `{type:"stop"}`；`stopping` 显示「正在请求停止」且禁用，不显示「已停止」。两种停止状态均阻止 Enter 提交，草稿仍可编辑。 |
 | `stopLabel?: string` | `停止当前回答` | 停止的可访问名及常驻文字；宿主必须按真实停止范围改为「停止当前任务」等。不是仅以方块表达停止语义。 |
 | `statusHint?: AgentPromptStatusHint` | 不传 | `{message: string, tone?: "info" \| "error", action?: {label, onClick, disabled?}, details?: ReactNode}`。一条 ui-hint 主提示、一个可选次级动作、原生「详情」展开；窄屏自然换行，不截断关键状态。error 增加「错误：」及 alert，不只靠颜色。 |
 
-新增布局把材料、上下文、模型（仍受 `showModelSelector` 控制）、听写／语音及展开入口归为「材料与输入工具」，另一组为「主动作」。旧调用的 DOM 与 SSR 字节保持不变；P92 的 22 组基线夹具见 `tests/fixtures/p92/main-e56908d.json`。正文大小、主题令牌与冻结 coss 原件均不改。
+新增布局把材料、上下文、模型（仍受 `showModelSelector` 控制）、听写／语音及展开入口归为「材料与输入工具」，另一组为「主动作」。P92 当轮旧调用的 DOM 与 SSR 字节保持不变；P110 仅追加首个工具按钮光学对齐类。P92 的 22 组基线夹具见 `tests/fixtures/p92/main-e56908d.json`。正文大小、主题令牌与冻结 coss 原件均不改。
+
+**P110 间距约定（2026-10-22）**：工具行与输入区共用同一内边距；发送按钮 44px 点击区由按钮自身伪元素提供（增强布局，含粗指针），不再增加 44px 布局容器。工具不折行且无更高插槽内容时，增强布局工具行高 36px；两种布局首个工具按钮以负左外边距抵消图标留白（窄屏 7px、`sm` 起 6px），保留按钮尺寸与按钮间距。旧布局无同类外层容器，发送按钮尺寸沿用原值。
 
 `sendDisabledReason` 与 `statusHint` 同时提供时，禁发原因优先作为唯一主提示，保留输入框／发送按钮的描述关联，避免被普通提示盖住；宿主应将其余上下文放进 `details`。`announceDisabledReason=false` 仍抑制禁发原因的主动播报。`statusHint` 本身不禁发，是否允许发送仍由 `disabled` / `sendDisabledReason` 决定；语音已有错误与权限状态独立保留，不能借提示收敛隐藏。
 

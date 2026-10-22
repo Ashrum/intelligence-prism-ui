@@ -1,3 +1,4 @@
+import { withoutPromptOpticalAlignment } from './helpers/p110-spacing.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, readFile, symlink, rm } from 'node:fs/promises';
@@ -54,7 +55,7 @@ test('default API: exact main SSR snapshots except the approved send-button desc
     const description = send.match(/ aria-describedby="([^"]+)"/);
     if (snapshot.props.sendDisabledReason) assert.ok(description);
     else assert.equal(description, null);
-    const comparable = description ? html.replace(send, send.replace(description[0], '')) : html;
+    const comparable = withoutPromptOpticalAlignment(description ? html.replace(send, send.replace(description[0], '')) : html);
     assert.equal(Buffer.byteLength(comparable), snapshot.bytes, snapshot.name);
     assert.equal(createHash('sha256').update(comparable).digest('hex'), snapshot.sha256, snapshot.name);
     assert.equal(markup({ ...snapshot.props, announceDisabledReason: true }), html);
