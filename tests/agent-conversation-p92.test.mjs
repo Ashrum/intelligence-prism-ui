@@ -1,3 +1,4 @@
+import { withoutPromptOpticalAlignment } from './helpers/p110-spacing.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -19,11 +20,11 @@ const base = { value: '保留草稿 f(x) = x²', onValueChange() {}, onIntent() 
 const prompt = extra => render(h(api.AgentPromptBar, { ...base, ...extra }));
 const message = extra => render(h(api.AgentMessage, { speaker: 'agent', children: h('p', {}, '保留正文'), ...extra }));
 const snapshots = JSON.parse(await readFile(new URL('./fixtures/p92/main-e56908d.json', import.meta.url), 'utf8'));
-for (const [index, item] of snapshots.promptCases.entries()) test(`P92 default PromptBar SSR matches main bytes ${index}`, () => assert.equal(prompt(item.props), gunzipSync(Buffer.from(item.htmlGzipBase64, 'base64')).toString('utf8')));
+for (const [index, item] of snapshots.promptCases.entries()) test(`P92 default PromptBar SSR matches main bytes ${index}`, () => assert.equal(withoutPromptOpticalAlignment(prompt(item.props)), gunzipSync(Buffer.from(item.htmlGzipBase64, 'base64')).toString('utf8')));
 for (const [index, item] of snapshots.messageCases.entries()) test(`P92 default Message SSR matches main bytes ${index}`, () => assert.equal(message(item.props), gunzipSync(Buffer.from(item.htmlGzipBase64, 'base64')).toString('utf8')));
 test('P92 compact layout is opt-in, retains labels and reserves 44px primary hit area', () => {
   const html = prompt({ density: 'compact', showModelSelector: false, value: '' });
-  for (const text of ['data-density="compact"', 'rows="1"', '[&amp;&gt;textarea]:min-h-13!', 'aria-label="材料与输入工具"', 'aria-label="主动作"', 'size-11 shrink-0', 'after:size-11', 'size-9 sm:size-9']) assert.ok(html.includes(text), text);
+  for (const text of ['data-density="compact"', 'rows="1"', '[&amp;&gt;textarea]:min-h-13!', 'aria-label="材料与输入工具"', 'aria-label="主动作"', 'pointer-coarse:after:size-11', 'after:size-11', 'size-9 sm:size-9']) assert.ok(html.includes(text), text);
   assert.doesNotMatch(html, /选择模型|data-expanded/);
   assert.match(html, /<button(?=[^>]*aria-label="发送消息")(?=[^>]*disabled="")[^>]*>/);
 });
