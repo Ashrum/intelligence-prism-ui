@@ -1074,6 +1074,51 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 
 `AgentSuggestionField` 公共字段为 `id/label` 和可选 `description/disabledReason/error`：text / textarea 的 value 为 string；number 为 number/null，可给 unit/step；select 为 string/null，options 为只读 `{value,label,disabledReason?}[]`。编辑保留空字符串、空白、零、负数和 null，不裁剪、不填默认值、不内置业务校验。NumberField 仅作有限数字解析；Select 用局部序号映射值，未知或禁用选项不产生请求。error 常驻并阻断提交，但保留可编辑字段以修正；只读字段以文字显示。字段空／重复 ID、空字段组阻断调整；空／重复建议 ID、缺建议上下文／版本阻断全部请求。页面须提供唯一的字段和选项身份。
 
+### 宿主文案与字段显隐（P109）
+
+新增可选 `labels?: Partial<AgentSuggestionLabels>` 和 `visibleFields?: AgentSuggestionVisibleFields`，均从组件文件导出类型。未传、空对象及键值为 `undefined` 时沿用默认值；文案只改变呈现，不改变状态枚举、动作能力、回执门禁或事件结构。单项决定按钮的读屏名称同步为“配置文案：建议标题”。文案按键独立覆盖，不从一个决定词自动推导整句；宿主应成套提供所需的按钮、状态和提示。
+
+| labels 键 | 默认值 |
+| --- | --- |
+| `adopt` | 采纳 |
+| `adjust` | 调整 |
+| `dismiss` | 驳回 |
+| `adopted` | 已采纳 |
+| `adjusted` | 已调整 |
+| `dismissed` | 已驳回 |
+| `dismissReason` | 驳回原因（可选） |
+| `adjustmentRegion` | 调整建议 |
+| `adjustmentTitle` | 调整草稿 |
+| `submitAdjustment` | 提交调整 |
+| `cancelAdjustment` | 收起调整 |
+| `adoptUnavailable` | 未提供采纳能力。 |
+| `alreadyAdopted` | 此建议已采纳。 |
+| `alreadyDismissed` | 此建议已驳回。 |
+| `batchAdoptUnavailable` | 部分已选建议不可采纳，请调整选择。 |
+| `adjustmentFieldsUnconfirmed` | 可调整字段未确认。 |
+| `comparisonUnavailable` | 当前不可调整比较项。 |
+| `adoptSelected` | 采纳已选建议 |
+| `expand` | 展开比较与调整 |
+
+`visibleFields` 为 `{ scope?: boolean; impact?: boolean; certainty?: boolean; task?: boolean }`，默认全部可见；仅显式 `false` 隐藏对应节点。`scope` 对应适用对象／范围，`impact` 对应预期影响／代价，`certainty` 对应确定性；`task` 同时隐藏任务状态及任务描述。此开关是宿主确认字段不适用后的呈现配置，不将缺失事实解释为已知。全未知汇总也排除隐藏字段；理由、依据、来源和必要限制继续显示。必填数据形状不变，不适用字段仍可传 `null`。compact 本身不改变显隐。
+
+学情宿主用法（完整文案对象见组件站 `learningAnalysisLabels` 示例，不是组件默认值）：
+
+```tsx
+<AgentSuggestionSet
+  {...props}
+  labels={learningAnalysisLabels}
+  visibleFields={{ scope: false, impact: false, certainty: false, task: false }}
+  notice="AI 仅提供建议，教师决定以回执记录为准。"
+/>
+```
+
+组件站 `/next/components/agent-components/suggestion-set` 的“学情建议（宿主文案）”示例显示“采纳 / 改后采纳 / 暂不采纳”，状态为“已采纳 / 已改后采纳 / 暂不采纳”，包含常驻原因输入、修改草稿与独立载入决定回执按钮。点击决定只呈现等待回执；载入固定示例回执后才更新状态，未接真实服务。原讲评、通用学习示例保持原配置。
+
+接入时 `adopt / adjust / dismiss` 与全部 `phase`、版本、字段值仍按原协议处理；`adjusted` 的宿主业务含义由宿主回执维护，不能仅换文案就推断已正式采纳。页面提供的 `status.reason`、`disabledReason`、`adjustment.message`、字段标签等仍由页面负责文案，组件不做全文替换。默认底部边界提示沿用原文，学情宿主可用既有 `notice` 覆盖。
+
+兼容检查：`tests/p109-suggestion-labels.test.mjs` 将当前 SSR 与 `34e114ce162363966c00fb691f93754317ffc1b9` 的冻结原始组件逐字比较，覆盖状态、两态、两种密度、未知事实与比较展开；另检验文案、读屏名称、字段不渲染与真实处理器 payload。冻结源保存在 `tests/fixtures/p109/agent-suggestion-set-34e114c.txt`，指纹校验独立固定。此证据不代表浏览器验收或工作台接入完成。
+
 ### 依据与来源合并
 
 按各字段的完整事实严格匹配：依据以 summary、target.conclusionId、target.version、unavailableReason 共同判等；来源按原始字符串判等。至少两条相同则分别提升为常驻组级说明。适用于当前传入的全部建议时标注“依据／来源 · 适用全部建议”，逐条不再重复“共用说明”；仅部分适用时，组级与相关条目均用“依据（建议可读标题…）／来源（建议可读标题…）”标注，逐条只列部分适用的事实。受限条目不参与合并，也不能推断共用事实适用于受限建议。不同目标／版本／可用性不因摘要相同而合并，不模糊归一化、不推断来源等价；来源相同但依据不同仍只合并来源。null 的重复未知也可共用，仍明确未提供／未确认。

@@ -68,6 +68,51 @@ export type AgentSuggestionIntent = { suggestionSetId: string; baseVersion: stri
   | { type: "open-evidence"; suggestionIds: readonly string[]; target: { conclusionId: string; version: string } }
   | { type: "confirm"; suggestionIds: readonly string[] }
 )
+/** Presentation only; decision states and intent payloads retain their existing meanings. */
+export type AgentSuggestionLabels = {
+  adopt: string
+  adjust: string
+  dismiss: string
+  adopted: string
+  adjusted: string
+  dismissed: string
+  dismissReason: string
+  adjustmentRegion: string
+  adjustmentTitle: string
+  submitAdjustment: string
+  cancelAdjustment: string
+  adoptUnavailable: string
+  alreadyAdopted: string
+  alreadyDismissed: string
+  batchAdoptUnavailable: string
+  adjustmentFieldsUnconfirmed: string
+  comparisonUnavailable: string
+  adoptSelected: string
+  expand: string
+}
+export type AgentSuggestionVisibleFields = { scope?: boolean; impact?: boolean; certainty?: boolean; task?: boolean }
+const defaultLabels: AgentSuggestionLabels = {
+  adopt: "采纳",
+  adjust: "调整",
+  dismiss: "驳回",
+  adopted: "已采纳",
+  adjusted: "已调整",
+  dismissed: "已驳回",
+  dismissReason: "驳回原因（可选）",
+  adjustmentRegion: "调整建议",
+  adjustmentTitle: "调整草稿",
+  submitAdjustment: "提交调整",
+  cancelAdjustment: "收起调整",
+  adoptUnavailable: "未提供采纳能力。",
+  alreadyAdopted: "此建议已采纳。",
+  alreadyDismissed: "此建议已驳回。",
+  batchAdoptUnavailable: "部分已选建议不可采纳，请调整选择。",
+  adjustmentFieldsUnconfirmed: "可调整字段未确认。",
+  comparisonUnavailable: "当前不可调整比较项。",
+  adoptSelected: "采纳已选建议",
+  expand: "展开比较与调整",
+}
+
 export type AgentSuggestionSetProps = AgentRecordViewProps & {
   title: string
   suggestionSet: { id: string; version: string; versionLabel?: string; snapshot?: boolean }
@@ -85,6 +130,10 @@ export type AgentSuggestionSetProps = AgentRecordViewProps & {
   /** Page-owned actions for visible entries; page owns permissions, guards and receipts. */
   itemActions?: (suggestion: AgentSuggestionEntry) => ReactNode
   notice?: string
+  /** Missing keys retain the original wording, including accessible names. */
+  labels?: Partial<AgentSuggestionLabels>
+  /** Defaults to visible; task hides both the status and its description. */
+  visibleFields?: AgentSuggestionVisibleFields
 }
 
 const restricted = (item: AgentSuggestion): item is AgentSuggestionRestrictedEntry => item.status.state === "restricted"
@@ -162,7 +211,8 @@ function SuggestionField({ field, readOnly, onChange }: { field: AgentSuggestion
 
 /** Semantic 22: controlled action proposals. Selection, adoption and task creation are independent. */
 export function AgentSuggestionSet({ title, suggestionSet, suggestions, selectedIds, receipt, comparison, adopt, confirm, disabledReason, onIntent, onExpand, onBack,
-  itemActions, notice, details, view = "inline", density = "default" }: AgentSuggestionSetProps) {
+  itemActions, notice, labels, visibleFields, details, view = "inline", density = "default" }: AgentSuggestionSetProps) {
+  const label = (key: keyof AgentSuggestionLabels) => labels?.[key] ?? defaultLabels[key]
   const id = useId(), workspace = view === "workspace", compact = density === "compact"
   const selected = new Set(selectedIds), records = new Map(suggestions.map(item => [item.id, item]))
   const identityReason = !suggestionSet.id.trim() || !suggestionSet.version.trim() || suggestions.some(item => !item.id.trim()) || records.size !== suggestions.length ? "建议或版本信息未确认。" : undefined
@@ -175,12 +225,12 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
     : item.disabledReason ?? (item.status.state === "expired" || item.status.state === "unconfirmed" ? item.status.reason || "建议状态未确认。" : undefined)
   const choiceReason = (item: AgentSuggestion) => editReason ?? (selected.has(item.id) ? undefined : itemReason(item))
   const adoptReason = (item: AgentSuggestion) => editReason ?? itemReason(item)
-    ?? (restricted(item) || !item.adopt ? "未提供采纳能力。" : item.adopt.disabledReason)
-    ?? (item.status.state === "adopted" ? "此建议已采纳。" : item.status.state === "dismissed" ? "此建议已驳回。" : undefined)
+    ?? (restricted(item) || !item.adopt ? label("adoptUnavailable") : item.adopt.disabledReason)
+    ?? (item.status.state === "adopted" ? label("alreadyAdopted") : item.status.state === "dismissed" ? label("alreadyDismissed") : undefined)
   const selectionReason = !selectedIds.length ? "请先选择建议。" : selected.size !== selectedIds.length || selectedIds.some(value => !records.has(value)) ? "部分选择未能匹配当前建议，请取消后重新选择。" : undefined
   // Never silently drop an ineligible selected member from a batch adoption.
   const batchAdoptReason = editReason ?? adopt?.disabledReason ?? selectionReason
-    ?? (selectedIds.some(value => { const item = records.get(value); return !item || adoptReason(item) !== undefined }) ? "部分已选建议不可采纳，请调整选择。" : undefined)
+    ?? (selectedIds.some(value => { const item = records.get(value); return !item || adoptReason(item) !== undefined }) ? label("batchAdoptUnavailable") : undefined)
   const confirmReason = editReason ?? confirm?.disabledReason ?? selectionReason
     ?? (selectedIds.some(value => { const item = records.get(value); return !item || itemReason(item) !== undefined }) ? "部分已选建议已过期、受限或未确认。" : undefined)
   const additions = suggestions.filter(item => !selected.has(item.id) && choiceReason(item) === undefined).map(item => item.id)
@@ -206,13 +256,13 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
     const choice = choiceReason(item), status = item.status.state
     const block = editReason ?? itemReason(item)
     const adjustment = !restricted(item) ? item.adjustment : undefined
-    const adjustBlock = block ?? adjustment?.disabledReason ?? (adjustment && !fieldsIdentified(adjustment.fields) ? "可调整字段未确认。" : undefined)
+    const adjustBlock = block ?? adjustment?.disabledReason ?? (adjustment && !fieldsIdentified(adjustment.fields) ? label("adjustmentFieldsUnconfirmed") : undefined)
     const submitAdjustBlock = adjustBlock ?? (adjustment?.fields.some(field => field.error !== undefined) ? "请先修正标出的字段。" : undefined)
     const adjust = (phase: "start" | "change" | "submit" | "cancel", values = fieldValues(adjustment?.fields ?? [])) => {
       if (!adjustment || (phase === "submit" ? submitAdjustBlock : adjustBlock) !== undefined) return
       emit({ ...envelope, type: "adjust", suggestionId: item.id, phase, values: { ...values } })
     }
-    const dismissBlock = block ?? (!restricted(item) ? item.dismiss?.disabledReason : undefined) ?? (status === "dismissed" ? "此建议已驳回。" : undefined)
+    const dismissBlock = block ?? (!restricted(item) ? item.dismiss?.disabledReason : undefined) ?? (status === "dismissed" ? label("alreadyDismissed") : undefined)
     const itemFactReason = itemReason(item) ?? (!restricted(item) && item.status.state === "dismissed" ? item.status.reason : undefined)
     const actionReasons = [...new Set([
       ...(!restricted(item) && item.adopt ? [adoptReason(item)] : []),
@@ -222,9 +272,10 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
     const reasonId = (reason: string | undefined) => globalReasonId(reason) ?? (reason !== undefined && reason === itemFactReason ? `${anchor}-choice-reason`
       : reason !== undefined ? `${anchor}-action-reason-${actionReasons.indexOf(reason)}` : undefined)
     const detailFields = !restricted(item) ? [["理由", textOr(item.reason, "未提供")], ["适用对象／范围", textOr(item.scope, "未指定")], ["预期影响／代价", textOr(item.impact, "未知")], ["确定性", textOr(item.certainty, "未知")]] : []
+    const visibleDetailFields = detailFields.filter((_, fieldIndex) => [true, visibleFields?.scope !== false, visibleFields?.impact !== false, visibleFields?.certainty !== false][fieldIndex])
     const allUnknown = detailFields.every(([, value]) => ["未提供", "未指定", "未知"].includes(value))
     const unknownGroups = new Map<string, string[]>()
-    if (allUnknown) for (const [label, value] of detailFields) unknownGroups.set(value, [...(unknownGroups.get(value) ?? []), label])
+    if (allUnknown) for (const [label, value] of visibleDetailFields) unknownGroups.set(value, [...(unknownGroups.get(value) ?? []), label])
     return <article key={item.id} aria-labelledby={`${anchor}-title`} className={`min-w-0 ${compact ? "space-y-2" : "space-y-3"}`}>
       <div className="flex min-w-0 items-start gap-3">
         <Label htmlFor={`${anchor}-choice`} className="min-h-10 min-w-10 shrink-0 justify-center pointer-coarse:min-h-11 pointer-coarse:min-w-11">
@@ -236,39 +287,39 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
         <h4 id={`${anchor}-title`} className="min-w-0 self-center break-words text-item-title">{index + 1}. {itemTitle}</h4>
       </div>
       <div id={`${anchor}-status`} className="flex flex-wrap gap-2">
-        <AgentStatus tone={status === "expired" || status === "restricted" || status === "unconfirmed" ? "warning" : "neutral"}>{status === "pending" && selected.has(item.id) ? "已选" : statusLabels[status]}</AgentStatus>
+        <AgentStatus tone={status === "expired" || status === "restricted" || status === "unconfirmed" ? "warning" : "neutral"}>{status === "pending" && selected.has(item.id) ? "已选" : status === "adopted" || status === "adjusted" || status === "dismissed" ? label(status) : statusLabels[status]}</AgentStatus>
         {selected.has(item.id) && status !== "pending" && <AgentStatus tone="neutral">已选</AgentStatus>}
-        {!restricted(item) && <AgentStatus tone="neutral">{taskLabels[item.task?.state ?? "unconfirmed"]}</AgentStatus>}
+        {!restricted(item) && visibleFields?.task !== false && <AgentStatus tone="neutral">{taskLabels[item.task?.state ?? "unconfirmed"]}</AgentStatus>}
       </div>
       {restricted(item) ? <p id={`${anchor}-choice-reason`} className="break-words text-ui-hint">{item.disclosure.reason || "当前建议受限。"}</p> : <>
         <div className="max-w-[40em] whitespace-pre-wrap break-words text-read-body">{item.content}</div>
         {allUnknown && <p className="break-words text-ui-hint">{[...unknownGroups].map(([value, labels]) => `${labels.join("、")}：${value}`).join("；")}</p>}
         <dl className="min-w-0 space-y-2 text-ui-hint">
-          {!allUnknown && detailFields.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-ui-action">{label}</dt><dd className="whitespace-pre-wrap break-words">{value}</dd></div>)}
+          {!allUnknown && visibleDetailFields.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-ui-action">{label}</dt><dd className="whitespace-pre-wrap break-words">{value}</dd></div>)}
           {!shared.some(fact => fact.kind === "evidence") && <div><dt className="text-ui-action">依据</dt><dd><SuggestionEvidence evidence={item.evidence} onOpen={openEvidence(item.evidence, [index])} /></dd></div>}
           {!shared.some(fact => fact.kind === "source") && <div><dt className="text-ui-action">来源</dt><dd className="break-words">{textOr(item.source, "未确认")}</dd></div>}
         </dl>
         {shared.some(fact => !fact.all) && <p className="break-words text-ui-hint">共用说明：{shared.filter(fact => !fact.all).map(fact => fact.label).join(" · ")}</p>}
-        {item.task?.description && <p className="break-words text-ui-hint">{item.task.description}</p>}
+        {visibleFields?.task !== false && item.task?.description && <p className="break-words text-ui-hint">{item.task.description}</p>}
         {(itemReason(item) !== undefined || item.status.state === "dismissed" && item.status.reason) && <p id={`${anchor}-choice-reason`} className="break-words text-ui-hint">{(itemReason(item) ?? (item.status.state === "dismissed" ? item.status.reason : undefined)) || "当前不可修改此建议。"}</p>}
         {workspace && comparison && <Label htmlFor={`${anchor}-compare`} className="min-h-10 whitespace-normal pointer-coarse:min-h-11">
           <Checkbox id={`${anchor}-compare`} checked={compareIds.includes(item.id)} disabled={compareReason !== undefined} aria-label={`加入比较：${itemTitle}`} aria-describedby={compareReason !== undefined ? `${id}-compare-reason` : undefined} onCheckedChange={checked => compareSelection(item, checked)} />加入比较
         </Label>}
         {workspace && item.dismiss?.reason !== undefined && <div className="min-w-0 space-y-2">
-          <Label htmlFor={`${anchor}-dismiss`}>驳回原因（可选）</Label><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
+          <Label htmlFor={`${anchor}-dismiss`}>{label("dismissReason")}</Label><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
             onChange={event => { if (block === undefined && item.dismiss?.disabledReason === undefined && status !== "dismissed") emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "reason", reason: event.currentTarget.value }) }} />
         </div>}
         <div role="group" aria-label={`建议操作：${itemTitle}`} data-suggestion-actions="" className="flex min-w-0 flex-wrap items-start gap-2">
-          {item.adopt && <SuggestionButton label={`采纳：${itemTitle}`} reason={adoptReason(item)} reasonId={reasonId(adoptReason(item))} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [item.id], scope: "item" })}>采纳</SuggestionButton>}
-          {workspace && adjustment && !adjustment.open && <SuggestionButton label={`调整：${itemTitle}`} reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("start")}>调整</SuggestionButton>}
-          {item.dismiss && <SuggestionButton label={`驳回：${itemTitle}`} reason={dismissBlock} reasonId={reasonId(dismissBlock)} onClick={() => emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "submit", ...(item.dismiss?.reason !== undefined ? { reason: item.dismiss.reason } : {}) })}>驳回</SuggestionButton>}
+          {item.adopt && <SuggestionButton label={`${label("adopt")}：${itemTitle}`} reason={adoptReason(item)} reasonId={reasonId(adoptReason(item))} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [item.id], scope: "item" })}>{label("adopt")}</SuggestionButton>}
+          {workspace && adjustment && !adjustment.open && <SuggestionButton label={`${label("adjust")}：${itemTitle}`} reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("start")}>{label("adjust")}</SuggestionButton>}
+          {item.dismiss && <SuggestionButton label={`${label("dismiss")}：${itemTitle}`} reason={dismissBlock} reasonId={reasonId(dismissBlock)} onClick={() => emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "submit", ...(item.dismiss?.reason !== undefined ? { reason: item.dismiss.reason } : {}) })}>{label("dismiss")}</SuggestionButton>}
           {itemActions?.(item)}
         </div>
-        {workspace && adjustment?.open && <section aria-label="调整建议" className="min-w-0 space-y-3">
-          <p className="text-ui-action">调整草稿</p>
+        {workspace && adjustment?.open && <section aria-label={label("adjustmentRegion")} className="min-w-0 space-y-3">
+          <p className="text-ui-action">{label("adjustmentTitle")}</p>
           {adjustment.message && <p className="break-words text-ui-hint">{adjustment.message}</p>}
           {adjustment.fields.map(field => <SuggestionField key={field.id} field={field} readOnly={adjustBlock !== undefined} onChange={value => adjust("change", { ...fieldValues(adjustment.fields), [field.id]: value })} />)}
-          <div className="flex flex-wrap items-start gap-2"><SuggestionButton reason={submitAdjustBlock} reasonId={reasonId(submitAdjustBlock)} onClick={() => adjust("submit")}>提交调整</SuggestionButton><SuggestionButton reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("cancel")}>收起调整</SuggestionButton></div>
+          <div className="flex flex-wrap items-start gap-2"><SuggestionButton reason={submitAdjustBlock} reasonId={reasonId(submitAdjustBlock)} onClick={() => adjust("submit")}>{label("submitAdjustment")}</SuggestionButton><SuggestionButton reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("cancel")}>{label("cancelAdjustment")}</SuggestionButton></div>
         </section>}
         {actionReasons.map((reason, reasonIndex) => <p key={reasonIndex} id={`${anchor}-action-reason-${reasonIndex}`} className="break-words text-ui-hint">{reason || "当前不可操作。"}</p>)}
       </>}
@@ -289,11 +340,11 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
         {fact.kind === "evidence" ? <SuggestionEvidence evidence={item.evidence} onOpen={openEvidence(item.evidence, fact.indexes)} /> : <p className="whitespace-pre-wrap break-words text-ui-hint">{textOr(item.source, "来源未确认")}</p>}
       </div>
     })}</section>}
-    {workspace && comparison && compareReason !== undefined && <p id={`${id}-compare-reason`} className="break-words text-ui-hint">{compareReason || "当前不可调整比较项。"}</p>}
+    {workspace && comparison && compareReason !== undefined && <p id={`${id}-compare-reason`} className="break-words text-ui-hint">{compareReason || label("comparisonUnavailable")}</p>}
     {workspace && <div className="flex flex-wrap items-start gap-2">
       <SuggestionButton reason={editReason ?? (!additions.length ? "没有其他可选建议。" : undefined)} reasonId={globalReasonId(editReason)} onClick={() => emit({ ...envelope, type: "select", suggestionIds: [...additions], scope: "visible" })}>选择当前可选项</SuggestionButton>
       <SuggestionButton reason={editReason ?? (!selectedIds.length ? "当前没有选择。" : undefined)} reasonId={globalReasonId(editReason)} onClick={() => emit({ ...envelope, type: "deselect", suggestionIds: suggestions.filter(item => selected.has(item.id)).map(item => item.id), scope: "visible" })}>取消当前列表选择</SuggestionButton>
-      {adopt && <SuggestionButton primary reason={batchAdoptReason} reasonId={globalReasonId(batchAdoptReason)} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [...selectedIds], scope: "selection" })}>采纳已选建议</SuggestionButton>}
+      {adopt && <SuggestionButton primary reason={batchAdoptReason} reasonId={globalReasonId(batchAdoptReason)} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [...selectedIds], scope: "selection" })}>{label("adoptSelected")}</SuggestionButton>}
       {comparison && <SuggestionButton reason={compareReason ?? (compareInvalid ? "请为比较选择至少两条当前可查看的建议。" : undefined)} reasonId={globalReasonId(compareReason)} onClick={() => emit({ ...envelope, type: "compare", phase: "show", suggestionIds: [...compareIds] })}>比较选中建议</SuggestionButton>}
       {comparing && <SuggestionButton reason={channelReason} reasonId={globalReasonId(channelReason)} onClick={() => emit({ ...envelope, type: "compare", phase: "close", suggestionIds: [...compareIds] })}>返回建议列表</SuggestionButton>}
     </div>}
@@ -312,7 +363,7 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
     <footer className="flex flex-wrap items-start gap-2">
       {confirm && <SuggestionButton reason={confirmReason} reasonId={globalReasonId(confirmReason)} onClick={() => emit({ ...envelope, type: "confirm", suggestionIds: [...selectedIds] })}>确认本次选择</SuggestionButton>}
       {!!selectedIds.length && <SuggestionButton reason={editReason} reasonId={globalReasonId(editReason)} onClick={() => emit({ ...envelope, type: "deselect", suggestionIds: [...selectedIds], scope: "selection" })}>取消全部选择</SuggestionButton>}
-      {!workspace && onExpand && <Button type="button" size="navigation" variant="outline" className="whitespace-normal" onClick={event => onExpand(event.currentTarget)}>展开比较与调整</Button>}
+      {!workspace && onExpand && <Button type="button" size="navigation" variant="outline" className="whitespace-normal" onClick={event => onExpand(event.currentTarget)}>{label("expand")}</Button>}
       {workspace && onBack && <Button type="button" size="navigation" variant="outline" onClick={onBack}>返回原位置</Button>}
     </footer>
   </Card>
