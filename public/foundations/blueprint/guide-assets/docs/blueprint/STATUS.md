@@ -4,6 +4,20 @@
 
 ## 当前
 
+
+- 轮次：P106 · 标题右侧墨线 · 2026-10-22；基线 `0965f49268a60d7e23882a4b8139e453c606a011`（P105），分支 `feat/bp-title-rule-p106-20261022`；开工工作树干净。Builder 已实施与自测，待 Supervisor 独立 Review，不作自我批准。
+- 范围：已有 BpSectionCard 新增 titleRule，BpMinor 新增 rule="border" / "ink"；仅显式启用的新属性触发 P106 样式。补标题墨线示例、guide、30 项专项及 21 组基线 SSR 快照。P104 / P105 的旧 CSS 全字节断言排除独立 P106 块，由 P106 断言保证剩余 CSS 与 0965f49 完全相同，原主题隔离与编译检查保留。
+- 工程检查：数学字体通过；排版通过（323 owned TSX）；专项 30/30；相关回归 45/45；同配置生产构建成功后全量 2514/2514，失败 / 跳过 0。类型检查退出 2，仅既有 TS2306（prototype-source/main.tsx:57 的 app.js 非模块），与开工干净基线逐字一致，新增 0。lint 基线与最终均 83 errors / 142 warnings，忽略新增代码导致的原诊断行号移动后新增 0；均为退出 1，不写成全仓 lint 通过。
+- 构建限制：标准 vinext 构建退出 1，写共享 node_modules/.vite-temp 遇 EPERM；已有 esbuild 将同一 vite.config.ts 打包至当前工作树临时目录后，以 Vite native loader 构建退出 0。不改配置、依赖、主 checkout 或服务。最终仅补本状态验证元数据及 guide 生成物，另做文档一致性复验，不将其冒称再次全量构建。
+- 令牌与兼容：复用 --line / --line-width，theme.css 未改；白图 / 夜图 1.5px，核心三主题中性 1px。夜图对卡片底 11.62:1、对页面底 12.66:1（源码令牌计算）。默认 API / 显式关闭保持前态 SSR 字节；伪元素为空内容，不改标题名称或层级。≤760px 卡片标题独占一行、元信息与动作顺延，线可缩短至 0。局部核心主题根 / 后代 / 伪元素采用本地中性令牌，源码及 SSR 测试不等于浏览器验收。
+- 周期：继承本文件已记录的 3/3 累计校准待验状态；不推定未登记的 P100–P105 已验收，不因本轮自动化通过新增已完成轮次或宣布周期收口。最近完整工程回归为本轮 P106（2514/2514，保留基线类型 / lint 与标准构建例外）；下一触发点仍为 Supervisor 累计浏览器矩阵与独立综合审查。
+- 浏览器交接：`/next/foundations/blueprint#title-rules`，blueprint / blueprint-night / light / paper / dark × 1280 / 390，另核对 760 断点。检查两种密度墨线位置、长中文 / 长文件名 / 公式、任务范围说明按钮开合与焦点、默认 border 对照、嵌套 core 预览；说明按钮应显示“仅展示已选范围，不执行创建任务。”。guide 路由 `/next/foundations/blueprint/guide` 核对 P106 章节。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；Workspace 接入、真实服务、真机触控、读屏器和实体打印未验。未提交、推送、创建 PR、联网、调用模型、读取凭据、启动或重启服务、发布或同步站点。
+
+## 历史
+
+### P99 · 2026-10-21（P106 前当前，原样保留）
+
 - 轮次：P99 · C0 学情概览组件抽取与蓝图趋势刻度 · 2026-10-21；基线 `85c35243a90d8ac20a7b7272f54e452dfa89cb27`，分支 `feat/bp-calibration-p97-20261021`；沿用 P97/P98 工作树，开工干净。Builder 实施，不作自我批准，待 Supervisor 独立 Review。
 - 范围：新增蓝图族 BpStat/BpStatStrip；扩展 BpSizeBar 无框/紧凑/隐藏行标签，BpTitleBlock tone/numeric，BpSectionCard compact，BpCallout emphasis；新增 C0 七格标题栏、四指标与 compact B 节组合。追加蓝图/夜图 yDomain=auto 整数刻度，保留 core 刻度逻辑及显式域；未更改 P98 其余绘图几何、冻结 coss、核心令牌或依赖。
 - 工程检查：字体通过；排版通过（319 个 owned TSX）；相关定向 88/88（含 P99 新增 17 项、P98 的 18 组 core SVG 指纹）；生产构建成功后全量 2389/2389，失败/跳过 0。类型退出 2，仅 1 条既有 TS2306（prototype-source/main.tsx:57 的 app.js 非模块），与开工干净基线诊断逐字一致，新增 0。guide 与 diff 检查通过。标准 vinext 构建仍因共享 node_modules/.vite-temp 写入 EPERM 退出 1；按 P97 同配置临时 bundle + Vite native loader 构建退出 0，不改配置或共享依赖。
@@ -12,8 +26,6 @@
 - 周期：延续 P97 记录的新周期 3/3 累计校准范围，不因 P98/P99 追加或返工重复计已验收轮次。当前仍待 Supervisor 累计浏览器回归与独立综合审查，不宣布周期收口；本轮按任务执行完整工程回归。最近完整工程回归为本轮 P99（2389/2389，保留上述类型例外与标准构建环境限制）；累计浏览器矩阵和独立综合审查仍交 Supervisor。
 - 浏览器交接：`/next/foundations/blueprint#overview-calibration` 与 `#trend-calibration`，blueprint / blueprint-night / light，1280 / 390，与 C0 SHEET 01 并排；另核对容器四/二/一列、帮助按钮、依据链接/披露、未知与长文案、嵌套 core 隔离。浏览器验收：按分工由 Supervisor 执行。实际截图、焦点、读屏、真机、真实服务和 Workspace 接入未验。
 - 未提交、推送、PR、启动服务、联网、调用模型、读取凭据或修改主 checkout。报告与工程日志已按委派交 Supervisor；仓内不链接本机交接路径。
-
-## 历史
 
 ### P97 · 2026-10-21（P99 前当前，原样保留）
 

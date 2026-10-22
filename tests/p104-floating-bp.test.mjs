@@ -86,7 +86,8 @@ for (const core of ['light', 'paper', 'dark']) test(`P104 ${core}: no CSS delta 
   // All previous rules/at-rules remain byte-identical; the only CSS delta cannot
   // match core nodes. Compile both untouched portions as an additional check.
   // P105 independently proves its additive block cannot affect core themes.
-  const untouched = text.replace(block, '').replace(/\/\* P105 ·[\s\S]*?\/\* End P105 blueprint polish\. \*\/\n\n/, '');
+  // P106 opt-in styles are independently checked against 0965f49.
+  const untouched = text.replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, '').replace(/\/\* P105 ·[\s\S]*?\/\* End P105 blueprint polish\. \*\/\n\n/, '');
   assert.equal(untouched, before(path));
   const compile = input => transform({ code: Buffer.from(input), minify: true }).code.toString();
   assert.equal(compile(untouched), compile(before(path)));
