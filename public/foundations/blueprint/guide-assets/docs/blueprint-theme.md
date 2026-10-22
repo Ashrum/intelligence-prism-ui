@@ -47,6 +47,21 @@
 
 示例以按钮模拟到达、开始批阅、批完、待处理回执和进入复核，并可停止 / 恢复接收、选择答卷、重置。默认 12 个答卷位含五态，窄容器两列；只更改当前夹具数据。工作台业务接入、真实回执与生产服务不在 P102 范围。浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390、系统动态减少动效、键盘与嵌套主题。
 
+## 蓝图复查收尾 · P105（2026-10-22）
+
+本轮仅修正 blueprint / blueprint-night 的四处样式遗漏；核心 light / paper / dark 的组件源码、SSR 与主题令牌保持不变。规则逐个排除嵌套核心预览根节点、后代及伪元素，不改冻结 coss，不新增组件、依赖或视觉令牌。
+
+| 项目 | 修正与边界 | 组件站对照入口 |
+| --- | --- | --- |
+| 描边触发器微投影 | 复用 `border-input` 与稳定 `data-slot`，补齐 Combobox / Collapsible，并覆盖 Select、Menu、Popover、Tooltip、Dialog / AlertDialog / Sheet 的触发或关闭控件、Toast action、Toolbar button/link。静态态及伪元素无微投影；聚焦保留既有 ring / outline，移除柔和 shadow 层。主行动与 P104 浮层硬阴影不变 | [Select](/next/components/select#p105-triggers)、[Collapsible](/next/components/collapsible#p105-triggers) |
+| 教材封面 | `textbook-cover` 改用 `--card` 实色纸面、1px `--line` 墨线、0 圆角；书脊细线及底部 AI 渐变细线改用 `--line`，文字、尺寸与切换教材行为不变 | [教材目录](/next/components/tree#p105-cover) |
+| 题目栏分值条 | 题目行 `data-question-layout="row"` 的细条、全卷概览细条及其填充段均为直角；比例、色彩和状态标记保持宿主提供的既有值 | [题目栏](/next/components/question-rail#p105-rail) |
+| 卡片框投影 | Card / CardFrame 静态无投影，子控件聚焦不恢复微投影；自身焦点 ring 保留，原 0 圆角与 1.5px 外框不变，可交互 `bp-card` 悬停硬阴影仍生效 | [Card](/next/components/card#p105-cards) |
+
+上述入口增加两蓝图主题的同构合成数据；既有核心主题示例保留。触发器样例同时展示 `buttonVariants` 直接提供外观的原始 Collapsible slot 与 `render={<Button />}` 组合，避免只验证其中一种 DOM 输出。题目栏包含 80% 的实际行内填充与全卷概览，CardFrame 包含可聚焦按钮以复核焦点状态。
+
+复用检索（离线）：核对已有 Prism TextbookDirectory / QuestionRail、固定 coss Button / Select / Collapsible / Card / CardFrame、已有蓝图主行动 / 卡片 / P104 浮层规则，以及本地 Select / Combobox particles 示例。本次使用已有组件与 slot 的 CSS 适配即可，不引入新 particles 或第三方代码；未联网刷新 registry。工程覆盖见 `tests/p105-bp-polish.test.mjs`，包括生产选择器 AST 的主题与嵌套隔离、硬阴影级联、P104 基线 CSS 与核心三主题实际组件 SSR 对照。静态与 SSR 检查不等同于视觉验收；浏览器验收按分工由 Supervisor 在 1280 / 390 执行，工作台同步清单随 Builder 报告交接。
+
 ## 原件预览浮动控件 · P104（2026-10-22）
 
 原件预览的学生控制条、纸边工具坞，以及原件画布内的 toolbar / combobox-trigger / collapsible-trigger，在 blueprint / blueprint-night 下统一为 0 圆角、1px `--line` 墨线边与 `--popover` 实色纸面。硬阴影沿用现有 Popover / Select 的 `6px 6px 0 rgb(22 24 29 / 6%)`，夜图沿用 `6px 6px 0 rgba(0,0,0,.3)`，模糊半径为 0。工具坞承担外层边与阴影，内部滚动 toolbar 不重复绘制边与阴影；焦点轮廓沿用现有规则。
