@@ -105,14 +105,62 @@ export function SuggestionSetExample({ purpose, narrow = false }: { purpose: key
   </div>
 }
 
+/** Host wording example; the component still emits adopt / adjust / dismiss. */
+export const learningAnalysisLabels: NonNullable<AgentSuggestionSetProps["labels"]> = {
+  adopt: "采纳", adjust: "改后采纳", dismiss: "暂不采纳",
+  adopted: "已采纳", adjusted: "已改后采纳", dismissed: "暂不采纳",
+  dismissReason: "暂不采纳原因（可选）", adjustmentRegion: "改后采纳建议",
+  adjustmentTitle: "修改草稿", submitAdjustment: "提交改后采纳", cancelAdjustment: "收起修改",
+  adoptUnavailable: "未提供采纳能力。", alreadyAdopted: "此建议已采纳。",
+  alreadyDismissed: "此建议暂不采纳。", batchAdoptUnavailable: "部分已选建议不可采纳，请重新选择。",
+  adjustmentFieldsUnconfirmed: "可修改字段未确认。", comparisonUnavailable: "当前不可更改比较项。",
+  adoptSelected: "采纳已选建议", expand: "展开比较与修改",
+}
+
+export function LearningAnalysisSuggestionExample({ narrow = false }: { narrow?: boolean }) {
+  const [suggestion, setSuggestion] = useState<AgentSuggestionEntry>({ ...first,
+    title: "核对配方过程中的常数补偿", scope: null, impact: null, certainty: null, task: undefined,
+    adjustment: { open: false, fields: [{ id: "plan", type: "textarea", label: "讲评安排", value: "先核对配方，再解释对称轴。" }] },
+  })
+  const [selectedIds, setSelectedIds] = useState<readonly string[]>([])
+  const [pending, setPending] = useState<AgentSuggestionIntent | null>(null)
+  const [receipt, setReceipt] = useState<AgentSuggestionReceipt>({ state: "idle" })
+  function act(intent: AgentSuggestionIntent) {
+    if (intent.type === "select" || intent.type === "deselect") { setSelectedIds(intent.type === "select" ? intent.suggestionIds : []); return }
+    if (intent.type === "adjust" && intent.phase !== "submit") {
+      setSuggestion(item => ({ ...item, adjustment: item.adjustment && { ...item.adjustment, open: intent.phase !== "cancel", fields: item.adjustment.fields.map(field => ({ ...field, value: intent.values[field.id] }) as typeof field) } })); return
+    }
+    if (intent.type === "dismiss" && intent.phase === "reason") { setSuggestion(item => ({ ...item, dismiss: { reason: intent.reason } })); return }
+    if (intent.type === "adopt" || intent.type === "adjust" || intent.type === "dismiss") {
+      setPending(intent); setReceipt({ state: "pending", message: "请求已记录，等待独立载入示例回执。" })
+    }
+  }
+  function loadReceipt() {
+    if (!pending) return
+    setSuggestion(item => ({ ...item,
+      status: pending.type === "dismiss" ? { state: "dismissed", reason: pending.reason } : { state: pending.type === "adjust" ? "adjusted" : "adopted" },
+      adjustment: item.adjustment && { ...item.adjustment, open: false },
+    }))
+    setPending(null); setReceipt({ state: "received", message: "已载入固定示例回执，未写入真实教学记录。" })
+  }
+  return <section aria-label="学情建议宿主配置示例" className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
+    <p className="text-ui-hint">固定合成学情示例 · 隐藏范围、影响、确定性和任务字段；决定结果由独立回执提供。</p>
+    <Button type="button" size="navigation" variant="outline" disabled={!pending} onClick={loadReceipt}>载入决定回执（示例）</Button>
+    <AgentSuggestionSet title="学情建议 · 教师决定" suggestionSet={{ id: "analysis-example", version: "v1" }}
+      suggestions={[suggestion]} selectedIds={selectedIds} receipt={receipt} view="workspace"
+      labels={learningAnalysisLabels} visibleFields={{ scope: false, impact: false, certainty: false, task: false }}
+      notice="AI 仅提供建议，教师决定以回执记录为准。" onIntent={act} />
+  </section>
+}
+
 export function AgentSuggestionSetDemo() {
   const presentation = useAgentDemoPresentation()
-  const [purpose, setPurpose] = useState<keyof typeof suggestionSetExamples>("teaching"), [narrow, setNarrow] = useState(false)
-  if (presentation.previewOnly) return <SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />
+  const [purpose, setPurpose] = useState<keyof typeof suggestionSetExamples | "analysis">("teaching"), [narrow, setNarrow] = useState(false)
+  if (presentation.previewOnly) return purpose === "analysis" ? <LearningAnalysisSuggestionExample narrow={narrow} /> : <SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />
   return <section id={presentation.embedded ? undefined : "suggestion-set"} className="mb-12 min-w-0 space-y-5">
     {!presentation.embedded && <h2 className="text-section-title">建议集</h2>}
-    <div className="flex flex-wrap gap-3">{(["teaching", "learning"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "teaching" ? "讲评后的教学建议" : "学生学习建议（通用）"}</Button>)}
+    <div className="flex flex-wrap gap-3">{(["teaching", "learning", "analysis"] as const).map(value => <Button key={value} type="button" size="navigation" variant={purpose === value ? "secondary" : "outline"} aria-pressed={purpose === value} onClick={() => setPurpose(value)}>{value === "teaching" ? "讲评后的教学建议" : value === "learning" ? "学生学习建议（通用）" : "学情建议（宿主文案）"}</Button>)}
       <Button type="button" size="navigation" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(value => !value)}>320px 窄容器</Button>
-    </div><SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />
+    </div>{purpose === "analysis" ? <LearningAnalysisSuggestionExample narrow={narrow} /> : <SuggestionSetExample key={purpose} purpose={purpose} narrow={narrow} />}
   </section>
 }
