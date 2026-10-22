@@ -1,0 +1,129 @@
+{
+  "baseline": "1384f8c21880bc7e45def9a5febcfa436ef0c7ae",
+  "cases": [
+    {
+      "props": {
+        "title": "作答原件"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">作答原件</h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "props": {
+        "title": "长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题",
+        "children": "解：y = −(x − 1)² + 5。"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题长中文原件标题</h3></header><div class=\"bp-card-body\">解：y = −(x − 1)² + 5。</div></section>"
+    },
+    {
+      "props": {
+        "title": "原件",
+        "headingLevel": 2,
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h2 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">原件</h2></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "props": {
+        "title": "原件",
+        "headingLevel": 3,
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">原件</h3></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "props": {
+        "title": "原件",
+        "headingLevel": 4,
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h4 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">原件</h4></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "props": {
+        "title": "原件",
+        "headingLevel": 5,
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h5 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">原件</h5></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "props": {
+        "title": "原件",
+        "headingLevel": 6,
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h6 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">原件</h6></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "props": {
+        "title": "答卷",
+        "status": {
+          "tone": "success",
+          "label": "第 1 / 4 份"
+        },
+        "actions": "查看原件",
+        "children": "合成作答"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">答卷</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"success\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 4 份</span></div><div class=\"bp-card-actions\">查看原件</div></header><div class=\"bp-card-body\">合成作答</div></section>"
+    },
+    {
+      "props": {
+        "title": "答卷",
+        "status": {
+          "tone": "warning",
+          "label": "第 1 / 4 份"
+        },
+        "actions": "查看原件",
+        "children": "合成作答"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">答卷</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"warning\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 4 份</span></div><div class=\"bp-card-actions\">查看原件</div></header><div class=\"bp-card-body\">合成作答</div></section>"
+    },
+    {
+      "props": {
+        "title": "答卷",
+        "status": {
+          "tone": "danger",
+          "label": "第 1 / 4 份"
+        },
+        "actions": "查看原件",
+        "children": "合成作答"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">答卷</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"danger\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 4 份</span></div><div class=\"bp-card-actions\">查看原件</div></header><div class=\"bp-card-body\">合成作答</div></section>"
+    },
+    {
+      "props": {
+        "title": "答卷",
+        "status": {
+          "tone": "info",
+          "label": "第 1 / 4 份"
+        },
+        "actions": "查看原件",
+        "children": "合成作答"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">答卷</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"info\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 4 份</span></div><div class=\"bp-card-actions\">查看原件</div></header><div class=\"bp-card-body\">合成作答</div></section>"
+    },
+    {
+      "props": {
+        "title": "答卷",
+        "status": {
+          "tone": "neutral",
+          "label": "第 1 / 4 份"
+        },
+        "actions": "查看原件",
+        "children": "合成作答"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">答卷</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"neutral\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 4 份</span></div><div class=\"bp-card-actions\">查看原件</div></header><div class=\"bp-card-body\">合成作答</div></section>"
+    },
+    {
+      "props": {
+        "title": "宿主标签",
+        "id": "original",
+        "aria-labelledby": "host-title",
+        "aria-current": "true",
+        "className": "host-layout",
+        "children": 0
+      },
+      "html": "<section aria-labelledby=\"host-title\" id=\"original\" aria-current=\"true\" class=\"bp-frame-card host-layout\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_0_\" class=\"bp-frame-card-title text-ui-action\">宿主标签</h3></header><div class=\"bp-card-body\">0</div></section>"
+    }
+  ]
+}
