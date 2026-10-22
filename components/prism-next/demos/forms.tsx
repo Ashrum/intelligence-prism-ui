@@ -1,5 +1,7 @@
 "use client"
 
+import { BlueprintPolishDemo } from "./blueprint-polish"
+
 import { useState } from "react"
 import { Search,Mail } from "lucide-react"
 import { zhCN } from "@daypicker/react/locale"
@@ -48,7 +50,7 @@ export function InputDemo() {
 }
 export function SelectDemo() {
   const [value,setValue]=useState('example')
-  return <><DemoSection title="完整选择交互" description="支持方向键、键入匹配、选中标记、禁用项与 Esc 关闭。"><div className="max-w-48"><Labeled label="材料类型" id="select-main"><MaterialSelect id="select-main" value={value} onChange={setValue}/></Labeled></div><Feedback>当前选择：{{example:'例题讲解',concept:'知识梳理',practice:'练习解析'}[value]}</Feedback></DemoSection><DemoSection title="官方尺寸与禁用状态"><div className="flex flex-wrap items-end gap-6">{(['sm','default','lg'] as const).map(size=><div className="w-44" key={size}><Labeled id={'select-'+size} label={size}><MaterialSelect id={'select-'+size} size={size}/></Labeled></div>)}<div className="w-44"><Labeled label="禁用" id="select-disabled"><MaterialSelect id="select-disabled" disabled/></Labeled></div></div></DemoSection></>
+  return <><BlueprintPolishDemo kind="triggers" /><DemoSection title="完整选择交互" description="支持方向键、键入匹配、选中标记、禁用项与 Esc 关闭。"><div className="max-w-48"><Labeled label="材料类型" id="select-main"><MaterialSelect id="select-main" value={value} onChange={setValue}/></Labeled></div><Feedback>当前选择：{{example:'例题讲解',concept:'知识梳理',practice:'练习解析'}[value]}</Feedback></DemoSection><DemoSection title="官方尺寸与禁用状态"><div className="flex flex-wrap items-end gap-6">{(['sm','default','lg'] as const).map(size=><div className="w-44" key={size}><Labeled id={'select-'+size} label={size}><MaterialSelect id={'select-'+size} size={size}/></Labeled></div>)}<div className="w-44"><Labeled label="禁用" id="select-disabled"><MaterialSelect id="select-disabled" disabled/></Labeled></div></div></DemoSection></>
 }
 export function TextareaDemo() {
   const [value,setValue]=useState('')
