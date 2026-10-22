@@ -633,6 +633,31 @@
 .bp-callout.bp-callout-inline { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:10px 16px; }
 .bp-callout-inline > a { white-space:nowrap; }
 
+/* P104 · Original-preview floating surfaces. Reuse the existing Popover/Select
+   6px hard shadows; set material tokens on the painted surface, not an ancestor,
+   so nested core previews keep their own 92% / 12px material. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.surface-floating,.d1-tool-dock,:is(.d1-canvas,.q1-student-controls) :is([data-slot="toolbar"],[data-slot="combobox-trigger"],[data-slot="collapsible-trigger"])):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) {
+  --surface-floating-background:var(--popover);
+  --surface-floating-blur:0px;
+  background:var(--surface-floating-background);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  border:1px solid var(--line);
+  border-radius:0;
+  box-shadow:6px 6px 0 rgb(22 24 29 / 6%);
+}
+[data-prism-theme="blueprint-night"] :is(.surface-floating,.d1-tool-dock,:is(.d1-canvas,.q1-student-controls) :is([data-slot="toolbar"],[data-slot="combobox-trigger"],[data-slot="collapsible-trigger"])):not(:where([data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]), [data-agent-preview][data-prism-theme]:not([data-prism-theme="blueprint-night"]) *)) { box-shadow:6px 6px 0 rgba(0,0,0,.3); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.surface-floating,.d1-tool-dock,:is(.d1-canvas,.q1-student-controls) :is([data-slot="toolbar"],[data-slot="combobox-trigger"],[data-slot="collapsible-trigger"])):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::before,
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.surface-floating,.d1-tool-dock,:is(.d1-canvas,.q1-student-controls) :is([data-slot="toolbar"],[data-slot="combobox-trigger"],[data-slot="collapsible-trigger"])):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *))::after { border-radius:0; box-shadow:none; }
+/* The dock owns the floating edge; its scrolling toolbar must not paint a second
+   shadow/border or overflow the dock's new 1px ink border. Focus outlines remain. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-tool-dock [data-slot="toolbar"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { width:100%; border:0; box-shadow:none; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-tool-dock .d1-tool-scroll:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { min-width:0; flex:1; }
+@media print {
+  :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.surface-floating,.d1-tool-dock,:is(.d1-canvas,.q1-student-controls) :is([data-slot="toolbar"],[data-slot="combobox-trigger"],[data-slot="collapsible-trigger"])):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:none !important; }
+}
+/* End P104 floating surfaces. */
+
 /* P102 · Explicit grading components. Phase tokens reset on all local theme boundaries. */
 .bp-steps-bars { display:flex; flex-wrap:wrap; gap:12px; min-width:0; }
 .bp-steps-bars > ol { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)); gap:12px 16px; width:100%; margin:0; padding:0; list-style:none; }
