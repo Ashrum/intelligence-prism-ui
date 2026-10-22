@@ -4,6 +4,18 @@
 
 ## 当前
 
+- 轮次：P107 · 蓝图主题视觉缺口修复 · 2026-10-22；基线 `1486441b727bbae4e488e16b79e67a8ef2a7b716`，分支 `feat/bp-reskin-gaps-p107-20261022`；开工工作树干净。Builder 已实施，待 Supervisor 独立 Review 与浏览器验收，不作自我批准。
+- 范围：只修改 blueprint.css 的 V1 FramePanel、V2 L2 题卡（含 QuestionAnalysisCard）、V3 ToolbarButton、V4b sheet 缩略图视觉；V6 删除题目详情区 10 处几何声明。新增 P107 专项，P75 测试改为断言原组件间距不被覆盖；P104 / P105 / P106 全文件基线断言将本轮独立块和 P75 段交给 P107 严格基线及删除清单断言，其余断言保留。guide 新增本轮约束并同步生成物。
+- 选择器与复用：核对固定 coss FramePanel / Toolbar / Button、Prism QuestionCard / QuestionAnalysisCard / PaperCard；无需新组件、particles、依赖或令牌。两蓝图限定及嵌套核心根 / 后代 / 伪元素排除保留；L2 题卡采用零模糊硬描边，不新增占位边框；按钮与纸面保留焦点 / 选中 ring。L1 / L3 阅读结构、纸面状态圆标不变。源码 AST / SSR 证据不等于浏览器视觉结果。
+- 工程检查：专项及相关回归 69/69；字体通过；排版 323 owned TSX 通过。类型退出 2、仅既有 TS2306（prototype-source/main.tsx:57）；lint 退出 1、83 errors / 142 warnings，两者与本轮开工干净基线输出逐字相同，新增 0。标准构建写共享 node_modules/.vite-temp 遇 EPERM；同配置临时 bundle + Vite native loader 构建成功。最终产品源码同配置构建退出 0 后，全量 2524/2524，失败 / 跳过 0；其中 P107 新增 10 项。随后仅补本状态验证元数据及 guide 证据生成物，另做文档一致性复验，不冒称再次全量构建。
+- 偏差与交接：未改组件 TSX；其他含几何的主题覆盖只形成逐条清单交审，未批量修正。V4 外卡状态桥接及 V5 页面选中态不属于任务明确列出的 V4b 修复，工作台两分支须分别接续。同步交接含 blueprint.css 和相关测试；未写其他 checkout，未声称 W270b / W271b 已同步。
+- 周期：继承已记录 3/3 累计校准待验状态；本轮为缺陷修复，不重复计已验收产品轮次，不宣布周期收口。最近完整工程回归为本轮 P107（2524/2524，保留既有类型 / lint 与标准构建环境例外）；下一触发点仍为 Supervisor 累计浏览器矩阵与独立综合审查。
+- 浏览器交接：`/next/components/frame`、`/next/components/question`、`/next/components/question-analysis-card`、`/next/components/toolbar`、`/next/components/attachment`、`/next/use-cases/questions`、`/next/foundations/blueprint/guide`；两蓝图及 light / paper / dark × 1280 / 390，嵌套核心预览根 / 后代 / 伪元素。复核详情三页签、加入试题篮、hover / pressed / disabled / focus、纸面选中 / 叠页 / 查看，长中文与公式；相同数据切主题比对几何，允许既有墨线粗细与指示条差异。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。工作台接入与两分支同步、真实服务、真机、读屏器、实体打印未验；无本轮浏览器截图。未提交、推送、创建 PR、联网、调用模型、读取凭据、启动或重启服务、发布站点。
+
+## 历史
+
+### P106 · 2026-10-22（P107 前当前，原样保留）
 
 - 轮次：P106 · 标题右侧墨线 · 2026-10-22；基线 `0965f49268a60d7e23882a4b8139e453c606a011`（P105），分支 `feat/bp-title-rule-p106-20261022`；开工工作树干净。Builder 已实施与自测，待 Supervisor 独立 Review，不作自我批准。
 - 范围：已有 BpSectionCard 新增 titleRule，BpMinor 新增 rule="border" / "ink"；仅显式启用的新属性触发 P106 样式。补标题墨线示例、guide、30 项专项及 21 组基线 SSR 快照。P104 / P105 的旧 CSS 全字节断言排除独立 P106 块，由 P106 断言保证剩余 CSS 与 0965f49 完全相同，原主题隔离与编译检查保留。
@@ -13,8 +25,6 @@
 - 周期：继承本文件已记录的 3/3 累计校准待验状态；不推定未登记的 P100–P105 已验收，不因本轮自动化通过新增已完成轮次或宣布周期收口。最近完整工程回归为本轮 P106（2514/2514，保留基线类型 / lint 与标准构建例外）；下一触发点仍为 Supervisor 累计浏览器矩阵与独立综合审查。
 - 浏览器交接：`/next/foundations/blueprint#title-rules`，blueprint / blueprint-night / light / paper / dark × 1280 / 390，另核对 760 断点。检查两种密度墨线位置、长中文 / 长文件名 / 公式、任务范围说明按钮开合与焦点、默认 border 对照、嵌套 core 预览；说明按钮应显示“仅展示已选范围，不执行创建任务。”。guide 路由 `/next/foundations/blueprint/guide` 核对 P106 章节。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。无本轮浏览器截图；Workspace 接入、真实服务、真机触控、读屏器和实体打印未验。未提交、推送、创建 PR、联网、调用模型、读取凭据、启动或重启服务、发布或同步站点。
-
-## 历史
 
 ### P99 · 2026-10-21（P106 前当前，原样保留）
 
