@@ -110,25 +110,18 @@ function surface(parsed = current) {
     assert.equal(result.background, 'var(--card)');
     assert.equal(result.border, '1px dashed var(--border)');
     assert.equal(result['border-radius'], '0');
-    assert.equal(result.padding, '12px');
+    assert.equal(result.padding, undefined);
     assert.equal(result['border-color'], t === 'blueprint-night' ? 'var(--line)' : undefined);
   }
 }
+// P107: all detail descendants keep their component-owned geometry.
 function spacing(parsed = current) {
   for (const t of blueprints) for (const tab of ['answer', 'teaching', 'archive']) {
     const f = fixture(t, tab);
-    assert.equal(style(f.tabs, parsed).gap, '12px');
-    const panel = f.nodes.find(n => n.attrs['data-slot'] === 'tabs-content' && n.children.length);
-    assert.ok(panel, tab);
-    if (tab === 'answer') {
-      const sections = panel.children[0].children;
-      for (const n of sections.slice(0, -1)) assert.deepEqual(style(n, parsed), { 'margin-block-start': '0', 'margin-block-end': '12px' });
-      assert.deepEqual(style(sections.at(-1), parsed), {});
-    } else if (tab === 'teaching') {
-      assert.equal(style(panel.children[0], parsed)['row-gap'], '16px');
-      for (const dl of panel.children[0].children) for (const n of dl.children.slice(0, -1)) assert.equal(style(n, parsed)['margin-block-end'], '12px');
-      assert.equal(style(panel.children[1], parsed)['margin-top'], '12px');
-    } else assert.equal(style(panel.children[0], parsed)['row-gap'], '12px');
+    assert.ok(f.nodes.some(n => n.attrs['data-slot'] === 'tabs-content' && n.children.length), tab);
+    for (const n of f.nodes) for (const prop of Object.keys(style(n, parsed))) {
+      assert.ok(!/^(padding|margin|gap|row-gap|column-gap|min-height)/.test(prop), prop);
+    }
   }
 }
 function isolation(parsed = current) {
@@ -151,11 +144,11 @@ test('P75: actual open card SSR retains three accessible Tabs and content hooks'
     assert.equal(f.nodes.filter(n => n.attrs.role === 'tab' && n.attrs['aria-selected'] === 'true').length, 1);
   }
 });
-test('P75: both Blueprint detail surfaces resolve to card, dashed 1px, square and 12px padding', () => surface());
-test('P75: real answer/teaching/archive SSR matches compact spacing selectors', () => spacing());
-test('P75: desktop floor is 32px; existing coarse 44px utility remains unoverridden', () => {
+test('P75: both Blueprint detail surfaces resolve to card, dashed 1px, square with component padding', () => surface());
+test('P75: real answer/teaching/archive SSR retains component spacing (P107)', () => spacing());
+test('P75: P107 removes desktop floor; existing coarse 44px utility remains unoverridden', () => {
   for (const t of blueprints) for (const n of fixture(t).nodes.filter(n => n.attrs.role === 'tab')) {
-    assert.equal(style(n)['min-height'], '32px');
+    assert.equal(style(n)['min-height'], undefined);
     assert.equal(style(n, current, 'coarse')['min-height'], undefined);
     assert.ok(n.classes.includes('pointer-coarse:min-h-11'));
   }
@@ -179,11 +172,8 @@ test('P75: night uses the existing line token because border/card fails 3:1', ()
 test('P75: in-memory rollback, spacing and isolation mutations are detected', () => {
   const cases = [
     ['whole-block rollback', source => source.replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''), surface],
-    ...[['background:var(--card)', 'background:var(--secondary)'], ['border:1px dashed', 'border:1px solid'], ['border:1px dashed', 'border:2px dashed'], ['border-radius:0; padding:12px', 'border-radius:12px; padding:12px'], ['padding:12px;', 'padding:16px;'], ['border-color:var(--line);', 'border-color:var(--border);']].map(([a,b]) => [a, source => source.replace(a,b), surface]),
-    ['tab gap', source => source.replace('gap:12px;', 'gap:20px;'), spacing],
-    ['answer spacing', source => source.replace('margin-block-end:12px;', 'margin-block-end:20px;'), spacing],
-    ['teaching grid', source => source.replace('row-gap:16px;', 'row-gap:24px;'), spacing],
-    ['archive rows', source => source.replace('row-gap:12px;', 'row-gap:16px;'), spacing],
+    ...[['background:var(--card)', 'background:var(--secondary)'], ['border:1px dashed', 'border:1px solid'], ['border:1px dashed', 'border:2px dashed'], ['border-radius:0;', 'border-radius:12px;'], ['border-radius:0;', 'border-radius:0; padding:12px;'], ['border-color:var(--line);', 'border-color:var(--border);']].map(([a,b]) => [a, source => source.replace(a,b), surface]),
+    ...['gap:12px', 'margin-block-end:12px', 'row-gap:16px', 'min-height:32px'].map(declaration => [declaration, source => source.replace('border-radius:0;', `border-radius:0; ${declaration};`), spacing]),
     ['preview guard removal', source => source.replaceAll(guard, ''), isolation],
     ['night guard removal', source => source.replaceAll(nightGuard, ''), isolation],
     ['unscoped family', source => source.replaceAll(`${family} .question-detail-region`, '.question-detail-region'), isolation],

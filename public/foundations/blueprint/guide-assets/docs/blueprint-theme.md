@@ -47,6 +47,22 @@
 
 示例以按钮模拟到达、开始批阅、批完、待处理回执和进入复核，并可停止 / 恢复接收、选择答卷、重置。默认 12 个答卷位含五态，窄容器两列；只更改当前夹具数据。工作台业务接入、真实回执与生产服务不在 P102 范围。浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390、系统动态减少动效、键盘与嵌套主题。
 
+## 蓝图主题只换视觉 · P107（2026-10-22）
+
+主题适配只换视觉、不改结构。适配既有组件的主题样式不得含 padding、margin、gap、width、height、min-height、display、position、overflow 等几何属性，也不得修改组件 TSX 结构。允许圆角、阴影、背景、墨线颜色 / 样式 / 粗细、文字颜色和编号字体等视觉属性；既有显式 `bp-*` 组件自身布局不等于主题覆盖。本节为后续适配约束，历史几何规则先列清单交审，不据此批量改写。PO 已接受的墨线粗细累积与标签指示条隐藏保留。
+
+| 修复项 | 选择器与处理 | 组件站复核入口 |
+| --- | --- | --- |
+| V1 FramePanel | `[data-slot="frame-panel"]` 本体与伪元素直角、无柔和投影；已有边框使用 `--line-width` / `--line` | [Frame](/next/components/frame) |
+| V2 题卡 | `article.prism-question[data-question-level="L2"]` 直角，以 `0 0 0 var(--line-width) var(--line)` 硬描边替代原 ring + 柔和投影，不新增占位边框；含 QuestionAnalysisCard 同族。L1 / L3 保持原阅读结构 | [题卡](/next/components/question)、[题目分析卡](/next/components/question-analysis-card) |
+| V3 操作按钮 | `[data-slot="toolbar-button"]` 去除柔和投影及伪元素投影；保留现有 ring 层。`.bg-primary` 主行动采用既有 `--shadow-offset`，hover 用 `--shadow-offset-sm`；pressed / active / disabled 去掉硬投影，不添加位移 | [题卡](/next/components/question)、[Toolbar](/next/components/toolbar) |
+| V4b 纸面小图 | `[data-paper-sheet-media] .rounded-sm` 覆盖 sheet 纸面、叠页、缩略图裁切层及点击层，直角并去除柔和投影；保留当前预览 ring 和键盘焦点 ring，不改成功 / 待处理圆形标记及外卡状态 | [附件](/next/components/attachment) |
+| V6 题目详情 | `.question-detail-region` 仅保留纸面背景、虚线边、直角及夜图墨线；删除 padding、tabs gap、答案和资料 margin、网格 row-gap、mt-5 覆盖、fine pointer min-height，恢复组件原有间距与触控尺寸 | [题卡详情](/next/components/question) |
+
+以上规则限定 blueprint / blueprint-night，并排除嵌套核心预览根、后代与伪元素；light / paper / dark 样式与令牌保持。V4 外卡状态桥接及 V5 页面选中样式不属于本单的 V4b 修复，不以本单宣称解决。
+
+复用检索（离线）：核对已有 Prism QuestionCard / QuestionAnalysisCard / PaperCard、固定 coss FramePanel / Toolbar / Button 及 P105 card-frame 规则，现有 slot / data 属性已足够；不新增组件、依赖、令牌或上游代码，无需引入 particles，未联网刷新 registry。`tests/p107-reskin-gaps.test.mjs` 覆盖实际组件 SSR 选择器、主题隔离、视觉白名单、V6 几何删除与基线 CSS 一致性。浏览器验收按分工由 Supervisor 执行，覆盖两蓝图、核心三主题、嵌套预览、1280 / 390 和 hover / focus / pressed / selected 状态；静态测试不是视觉验收。
+
 ## 蓝图复查收尾 · P105（2026-10-22）
 
 本轮仅修正 blueprint / blueprint-night 的四处样式遗漏；核心 light / paper / dark 的组件源码、SSR 与主题令牌保持不变。规则逐个排除嵌套核心预览根节点、后代及伪元素，不改冻结 coss，不新增组件、依赖或视觉令牌。

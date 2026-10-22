@@ -61,7 +61,8 @@ test('P106 structural rules are empty, centered flex decorations with narrow-scr
     assert.doesNotMatch(d.prop, /font|overflow|white-space|text-overflow/);
     assert.doesNotMatch(d.value, /#[\da-f]{3,8}\b/i);
   });
-  assert.equal(text.replace(block, ''), execFileSync('git', ['show', `${fixture.baseline}:${path}`], { cwd: root, encoding: 'utf8' }), 'no pre-existing CSS changed');
+  // P107 independently guards its isolated additions and P75 geometry removal.
+  assert.equal(text.replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(block, ''), execFileSync('git', ['show', `${fixture.baseline}:${path}`], { cwd: root, encoding: 'utf8' }).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''), 'no other pre-existing CSS changed');
   assert.equal(read('app/(next)/next/theme.css'), execFileSync('git', ['show', `${fixture.baseline}:app/(next)/next/theme.css`], { cwd: root, encoding: 'utf8' }), 'no tokens changed');
 });
 
