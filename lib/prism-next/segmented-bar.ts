@@ -28,5 +28,8 @@ export function segmentedBarLayout(rawValues: readonly number[], total?: number)
     }
     for (const index of small) { widths[index] = floor; available = Math.max(0, available - floor); pending.delete(index) }
   }
-  return { values, ratios, widths: widths.slice(0, -1), remainderRatio, remainderWidth: widths.at(-1)!, invalidValues, invalidTotal, empty: positive === 0 }
+  // Text callbacks receive the selected denominator in original units, never
+  // the scaled geometry denominator. An unrepresentable sum remains Infinity.
+  const totalValue = total !== undefined && !invalidTotal ? total : values.reduce((a, b) => a + b, 0)
+  return { values, ratios, widths: widths.slice(0, -1), remainderRatio, remainderWidth: widths.at(-1)!, invalidValues, invalidTotal, empty: positive === 0, totalValue }
 }

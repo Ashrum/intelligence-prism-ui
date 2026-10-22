@@ -1,0 +1,406 @@
+{
+  "baseline": "0a2be7b5dc9d2c474b344902181a61c8592fca05",
+  "description": "SHA-256 of exact baseline SSR, serialized ECharts props, and executed tooltip/axis/label text; no normalization.",
+  "fingerprints": {
+    "light/trend": {
+      "html": "bebb27e01e5366bd4108c51e8e27276a81a796920ee3e4786852a79013baca30",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "cb18764b2bb66cd0e077c8ab2fba866c406bfe7ebce7fe89aaaaa3ca1abc7ca0"
+    },
+    "light/trend-hidden": {
+      "html": "17283d40f604fec9eaf91631915b546dcef2f8e17244ccd326eb2b020bbce084",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "50af4acfc2d9ac76a5210e357befd691e436a99f4c080e088207433f613fb4bc"
+    },
+    "light/scatter": {
+      "html": "a7afec68007050899db14a332a21bf6bcfa78e701161fdffdd5cef4fc91792f9",
+      "options": "87ff2db1780b12a787bebc93b5e8978127b6fa430493388f981558d424f762a2",
+      "text": "50d465cd7d4dc9320be8b1075dae17d0e2b4e23bfdc06b9558f884e8056a58c0"
+    },
+    "light/quadrant": {
+      "html": "7b428513d08c8fe74db1b98ee6e8c467771b573b8710105ca23329d70168328b",
+      "options": "87ff2db1780b12a787bebc93b5e8978127b6fa430493388f981558d424f762a2",
+      "text": "dffeca3d4e411f9cb4365654fd882fcd761504cf22e2ae9c56513984ccaf8446"
+    },
+    "light/paired-0": {
+      "html": "befcf4e6cb77dec2c7c9db5f0daae4077c757809c4a6ec3b54828ef200596a2e",
+      "options": "979ba8ec57d411b8567d2170dab8b46328174c6b750e0350062de9c2ae477eb2",
+      "text": "3d3472129628cf9ba320f083f4781227de787e17353cde8ea34cb5a15c893816"
+    },
+    "light/paired-1": {
+      "html": "d5d5419eb6b625d549d6dc620229f9c8eff55f7f134f47be1b873fae4fb69f7c",
+      "options": "00422ce17f6fd55f9b25fdef120d518185d3fff182ffea27cb59b01d3ba840f3",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "light/paired-2": {
+      "html": "9130fcb3b477f1e5f55ed81444c9a7c24a22af3ddbc393da756c27eb8ed90cc7",
+      "options": "af781bc59646996aff0290760f9819d8d4e8b98470999ae2fbadc16023e3856f",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "light/segments": {
+      "html": "a564ffe31411ce83b2eb8e3ed98130b5614212f57f3be0e66174720f7c062963",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/segments-select": {
+      "html": "e76f9f714295f1ae6646ce5f60d670ae87d55715ee6a76348cf7c67f5982dc77",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/segments-default": {
+      "html": "9ad452663bbb354ebb50cdc80145370af7addca86783f17ef4c6870de44b44eb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/metric-0": {
+      "html": "c4bde3c4e848737f1e29dfacc499e1cf27132eb38d634291b8776bd8863e3ccb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/metric-1": {
+      "html": "de194b54b4fce96c48e8774b003223706371ad239a51253d6b6c1488787aaa4b",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/metric-2": {
+      "html": "880664b5df60fe866e6cb76c12ef8205ba8e3b29a46f873ebe94e706d3f8a132",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/size": {
+      "html": "af1c054d5519670a011551381a7c56b227cccf8874b9ac2613007b4d7e2155c2",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/size-xs": {
+      "html": "09d2275d9340477ca46f93255b3db879ff72a2ff36801585ed6d218a3ac9c140",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "light/size-multi": {
+      "html": "3a892e7d1d6bd76354e6bbc6751466b959ed734848b7b4cb4615242e733d8efa",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/trend": {
+      "html": "bebb27e01e5366bd4108c51e8e27276a81a796920ee3e4786852a79013baca30",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "cb18764b2bb66cd0e077c8ab2fba866c406bfe7ebce7fe89aaaaa3ca1abc7ca0"
+    },
+    "paper/trend-hidden": {
+      "html": "17283d40f604fec9eaf91631915b546dcef2f8e17244ccd326eb2b020bbce084",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "50af4acfc2d9ac76a5210e357befd691e436a99f4c080e088207433f613fb4bc"
+    },
+    "paper/scatter": {
+      "html": "a7afec68007050899db14a332a21bf6bcfa78e701161fdffdd5cef4fc91792f9",
+      "options": "9383de7a9a63faf1cfc78b368f45f48e41d90e4cc6f1905aca07e5d2a4eba0fd",
+      "text": "50d465cd7d4dc9320be8b1075dae17d0e2b4e23bfdc06b9558f884e8056a58c0"
+    },
+    "paper/quadrant": {
+      "html": "7b428513d08c8fe74db1b98ee6e8c467771b573b8710105ca23329d70168328b",
+      "options": "9383de7a9a63faf1cfc78b368f45f48e41d90e4cc6f1905aca07e5d2a4eba0fd",
+      "text": "dffeca3d4e411f9cb4365654fd882fcd761504cf22e2ae9c56513984ccaf8446"
+    },
+    "paper/paired-0": {
+      "html": "befcf4e6cb77dec2c7c9db5f0daae4077c757809c4a6ec3b54828ef200596a2e",
+      "options": "c1389cc81dbe7b8a8ae60fd5cd1e69b6d12525715f5ed8560437c40540b5b976",
+      "text": "3d3472129628cf9ba320f083f4781227de787e17353cde8ea34cb5a15c893816"
+    },
+    "paper/paired-1": {
+      "html": "d5d5419eb6b625d549d6dc620229f9c8eff55f7f134f47be1b873fae4fb69f7c",
+      "options": "52c470e26ed0cd14008b21129d2387ee46fd00431e3da4c88d50650d1203c3a3",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "paper/paired-2": {
+      "html": "9130fcb3b477f1e5f55ed81444c9a7c24a22af3ddbc393da756c27eb8ed90cc7",
+      "options": "6736a9ccaed018693782904d6aef270eb8ac08f83fd9968522afea72b6721ab6",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "paper/segments": {
+      "html": "a564ffe31411ce83b2eb8e3ed98130b5614212f57f3be0e66174720f7c062963",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/segments-select": {
+      "html": "e76f9f714295f1ae6646ce5f60d670ae87d55715ee6a76348cf7c67f5982dc77",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/segments-default": {
+      "html": "9ad452663bbb354ebb50cdc80145370af7addca86783f17ef4c6870de44b44eb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/metric-0": {
+      "html": "c4bde3c4e848737f1e29dfacc499e1cf27132eb38d634291b8776bd8863e3ccb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/metric-1": {
+      "html": "de194b54b4fce96c48e8774b003223706371ad239a51253d6b6c1488787aaa4b",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/metric-2": {
+      "html": "880664b5df60fe866e6cb76c12ef8205ba8e3b29a46f873ebe94e706d3f8a132",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/size": {
+      "html": "af1c054d5519670a011551381a7c56b227cccf8874b9ac2613007b4d7e2155c2",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/size-xs": {
+      "html": "09d2275d9340477ca46f93255b3db879ff72a2ff36801585ed6d218a3ac9c140",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "paper/size-multi": {
+      "html": "3a892e7d1d6bd76354e6bbc6751466b959ed734848b7b4cb4615242e733d8efa",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/trend": {
+      "html": "bebb27e01e5366bd4108c51e8e27276a81a796920ee3e4786852a79013baca30",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "cb18764b2bb66cd0e077c8ab2fba866c406bfe7ebce7fe89aaaaa3ca1abc7ca0"
+    },
+    "dark/trend-hidden": {
+      "html": "17283d40f604fec9eaf91631915b546dcef2f8e17244ccd326eb2b020bbce084",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "50af4acfc2d9ac76a5210e357befd691e436a99f4c080e088207433f613fb4bc"
+    },
+    "dark/scatter": {
+      "html": "a7afec68007050899db14a332a21bf6bcfa78e701161fdffdd5cef4fc91792f9",
+      "options": "931c829d0bb3e26c46b4ff953bb7093ce91623e91af807bc19b877194a271482",
+      "text": "50d465cd7d4dc9320be8b1075dae17d0e2b4e23bfdc06b9558f884e8056a58c0"
+    },
+    "dark/quadrant": {
+      "html": "7b428513d08c8fe74db1b98ee6e8c467771b573b8710105ca23329d70168328b",
+      "options": "931c829d0bb3e26c46b4ff953bb7093ce91623e91af807bc19b877194a271482",
+      "text": "dffeca3d4e411f9cb4365654fd882fcd761504cf22e2ae9c56513984ccaf8446"
+    },
+    "dark/paired-0": {
+      "html": "36b81762fc1fc5fb6a451177864d8f802aff60071c61a668192d4a0753d7b354",
+      "options": "06e72505257e276854a462c4215df565a2fa9a40be7b8bbc66b569aca9094c99",
+      "text": "3d3472129628cf9ba320f083f4781227de787e17353cde8ea34cb5a15c893816"
+    },
+    "dark/paired-1": {
+      "html": "ff43fcdc5cd926a08d73f8ca80d8b2e337cfcefee024537b8381cf944b2d96fa",
+      "options": "928886a6e3db1c0f023e171788581777c6be02665f042eb87a3514e2b5a1263b",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "dark/paired-2": {
+      "html": "3a3002eeb6eb4a3591d741daf25f096fbeba10eeb657e244459ceedefe3bcaac",
+      "options": "f896841fccb391a631d853165f29f7ae9a36de55acbe0dce316404aa1045f930",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "dark/segments": {
+      "html": "a564ffe31411ce83b2eb8e3ed98130b5614212f57f3be0e66174720f7c062963",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/segments-select": {
+      "html": "e76f9f714295f1ae6646ce5f60d670ae87d55715ee6a76348cf7c67f5982dc77",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/segments-default": {
+      "html": "9ad452663bbb354ebb50cdc80145370af7addca86783f17ef4c6870de44b44eb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/metric-0": {
+      "html": "c4bde3c4e848737f1e29dfacc499e1cf27132eb38d634291b8776bd8863e3ccb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/metric-1": {
+      "html": "de194b54b4fce96c48e8774b003223706371ad239a51253d6b6c1488787aaa4b",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/metric-2": {
+      "html": "880664b5df60fe866e6cb76c12ef8205ba8e3b29a46f873ebe94e706d3f8a132",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/size": {
+      "html": "af1c054d5519670a011551381a7c56b227cccf8874b9ac2613007b4d7e2155c2",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/size-xs": {
+      "html": "09d2275d9340477ca46f93255b3db879ff72a2ff36801585ed6d218a3ac9c140",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dark/size-multi": {
+      "html": "3a892e7d1d6bd76354e6bbc6751466b959ed734848b7b4cb4615242e733d8efa",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/trend": {
+      "html": "bebb27e01e5366bd4108c51e8e27276a81a796920ee3e4786852a79013baca30",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "3e03c2129dc73c260dece15d58c7fb07ed36eefcf17bc1005dd9c3486067d61f"
+    },
+    "blueprint/trend-hidden": {
+      "html": "17283d40f604fec9eaf91631915b546dcef2f8e17244ccd326eb2b020bbce084",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "fee359cb24ed2ee07f23253ec52a282cf23e363a3f541dc0f48e33202eee0f1c"
+    },
+    "blueprint/scatter": {
+      "html": "a7afec68007050899db14a332a21bf6bcfa78e701161fdffdd5cef4fc91792f9",
+      "options": "84f9699946e330e81dde532b71ddf7b311940a3893c873997829d67b20abd534",
+      "text": "50d465cd7d4dc9320be8b1075dae17d0e2b4e23bfdc06b9558f884e8056a58c0"
+    },
+    "blueprint/quadrant": {
+      "html": "7b428513d08c8fe74db1b98ee6e8c467771b573b8710105ca23329d70168328b",
+      "options": "84f9699946e330e81dde532b71ddf7b311940a3893c873997829d67b20abd534",
+      "text": "dffeca3d4e411f9cb4365654fd882fcd761504cf22e2ae9c56513984ccaf8446"
+    },
+    "blueprint/paired-0": {
+      "html": "4c8014932662a166f486ae8ceeeebe06f210366f80ea03dafe1f40175c86a680",
+      "options": "0dea887c8e9bebc5368de2b5ac400d687b33dd228d55b6e70229a3cfbb5e68de",
+      "text": "3d3472129628cf9ba320f083f4781227de787e17353cde8ea34cb5a15c893816"
+    },
+    "blueprint/paired-1": {
+      "html": "dfbfb1929bbff5cb042e277290cbb22bba1cfa143111dc35967cf19961244fe3",
+      "options": "8752d0c0ff6c105e2d7ec3756fcf9cee84954d9dac73a6082fdb0187896f6d23",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "blueprint/paired-2": {
+      "html": "4725147a10cfa27ba5bde2280f03043f5d13814cc0c46e9ab2ca827f2ba1adac",
+      "options": "74c0eb4141141e61c077a8b8104a75526b08926c5e4abb10b229a06f6f5a7ca8",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "blueprint/segments": {
+      "html": "a564ffe31411ce83b2eb8e3ed98130b5614212f57f3be0e66174720f7c062963",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/segments-select": {
+      "html": "e76f9f714295f1ae6646ce5f60d670ae87d55715ee6a76348cf7c67f5982dc77",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/segments-default": {
+      "html": "9ad452663bbb354ebb50cdc80145370af7addca86783f17ef4c6870de44b44eb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/metric-0": {
+      "html": "c4bde3c4e848737f1e29dfacc499e1cf27132eb38d634291b8776bd8863e3ccb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/metric-1": {
+      "html": "de194b54b4fce96c48e8774b003223706371ad239a51253d6b6c1488787aaa4b",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/metric-2": {
+      "html": "880664b5df60fe866e6cb76c12ef8205ba8e3b29a46f873ebe94e706d3f8a132",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/size": {
+      "html": "af1c054d5519670a011551381a7c56b227cccf8874b9ac2613007b4d7e2155c2",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/size-xs": {
+      "html": "09d2275d9340477ca46f93255b3db879ff72a2ff36801585ed6d218a3ac9c140",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint/size-multi": {
+      "html": "3a892e7d1d6bd76354e6bbc6751466b959ed734848b7b4cb4615242e733d8efa",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/trend": {
+      "html": "bebb27e01e5366bd4108c51e8e27276a81a796920ee3e4786852a79013baca30",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "3e03c2129dc73c260dece15d58c7fb07ed36eefcf17bc1005dd9c3486067d61f"
+    },
+    "blueprint-night/trend-hidden": {
+      "html": "17283d40f604fec9eaf91631915b546dcef2f8e17244ccd326eb2b020bbce084",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "fee359cb24ed2ee07f23253ec52a282cf23e363a3f541dc0f48e33202eee0f1c"
+    },
+    "blueprint-night/scatter": {
+      "html": "a7afec68007050899db14a332a21bf6bcfa78e701161fdffdd5cef4fc91792f9",
+      "options": "78b7d3f0530e0ff0a240d4b4a80e1712b53e9f1ec200c5bc5876db5b601d46a5",
+      "text": "50d465cd7d4dc9320be8b1075dae17d0e2b4e23bfdc06b9558f884e8056a58c0"
+    },
+    "blueprint-night/quadrant": {
+      "html": "7b428513d08c8fe74db1b98ee6e8c467771b573b8710105ca23329d70168328b",
+      "options": "78b7d3f0530e0ff0a240d4b4a80e1712b53e9f1ec200c5bc5876db5b601d46a5",
+      "text": "dffeca3d4e411f9cb4365654fd882fcd761504cf22e2ae9c56513984ccaf8446"
+    },
+    "blueprint-night/paired-0": {
+      "html": "a0f47e4ec8f725b621be20623788bfaa829c1f6ed4a29f685572e456ce8d5573",
+      "options": "eea32b055087a4e32eede47ca2b86c10904372b7daadd78d6a570c0310b4a4c0",
+      "text": "3d3472129628cf9ba320f083f4781227de787e17353cde8ea34cb5a15c893816"
+    },
+    "blueprint-night/paired-1": {
+      "html": "2daf0c70afbb169ba32b555ddabf3de46eebb5d8ca15b69ec93c648dd603025c",
+      "options": "e57a3974bec90f721b7f2371fd31cee9b462b84a276b756947416cd27c029387",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "blueprint-night/paired-2": {
+      "html": "8da342e7b07b46868acd697137c28183e84980deaccb6aa6fde740b639c06747",
+      "options": "81684646daa732c7f9ad60d19b6963c2483c23a36ab37ae4da77df903274d8b3",
+      "text": "45bc06bd4ba5683a641d8c57ea4b475a1b02de0e7624836de6c0a328e3f1220a"
+    },
+    "blueprint-night/segments": {
+      "html": "a564ffe31411ce83b2eb8e3ed98130b5614212f57f3be0e66174720f7c062963",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/segments-select": {
+      "html": "e76f9f714295f1ae6646ce5f60d670ae87d55715ee6a76348cf7c67f5982dc77",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/segments-default": {
+      "html": "9ad452663bbb354ebb50cdc80145370af7addca86783f17ef4c6870de44b44eb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/metric-0": {
+      "html": "c4bde3c4e848737f1e29dfacc499e1cf27132eb38d634291b8776bd8863e3ccb",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/metric-1": {
+      "html": "de194b54b4fce96c48e8774b003223706371ad239a51253d6b6c1488787aaa4b",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/metric-2": {
+      "html": "880664b5df60fe866e6cb76c12ef8205ba8e3b29a46f873ebe94e706d3f8a132",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/size": {
+      "html": "af1c054d5519670a011551381a7c56b227cccf8874b9ac2613007b4d7e2155c2",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/size-xs": {
+      "html": "09d2275d9340477ca46f93255b3db879ff72a2ff36801585ed6d218a3ac9c140",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "blueprint-night/size-multi": {
+      "html": "3a892e7d1d6bd76354e6bbc6751466b959ed734848b7b4cb4615242e733d8efa",
+      "options": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "text": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  }
+}

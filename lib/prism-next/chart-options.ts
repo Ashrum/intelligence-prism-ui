@@ -5,6 +5,17 @@ export function themeAxes(value:unknown,palette:{muted:string;border:string;line
 }
 export const isChartValue=(value:unknown):value is number=>typeof value==='number'&&Number.isFinite(value)
 export type ChartDecimals = 0 | 1
+/** Host-owned display strings. Components never round, truncate or append a unit. */
+export type ChartValueText = { text: string; ariaText?: string }
+export type ChartValueContext = {
+ unit: string
+ seriesId?: string
+ dataId?: string
+ field?: string
+ index?: number
+}
+/** Includes missing and non-finite source values so the host can explain their cause. */
+export type ChartValueFormatter = (value: number | null | undefined, ctx: ChartValueContext) => ChartValueText
 /** Percentages are display values (0–100), not fractions; formatting never changes geometry. */
 export function formatChartValue(value:number|null|undefined,unit='',decimals?:ChartDecimals){return isChartValue(value)?`${new Intl.NumberFormat('zh-CN',{maximumFractionDigits:decimals===undefined?(unit.includes('%')||unit.includes('％')?0:3):decimals===1?1:0}).format(value)}${unit}`:'缺测'}
 /** Opt-in padded extent for trend lines, independent of zero-based comparison axes. */

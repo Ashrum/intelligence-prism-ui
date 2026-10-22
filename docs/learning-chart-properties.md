@@ -123,6 +123,75 @@ Trend、Scatter/Quadrant、PairedDot、Combo、Heatmap、BoxPlot、Donut、Radar
 
 P59 离线复核上述 coss/particles 记录与本地 `table-particle.tsx` 的 Table/Badge 组合，复用既有 Prism Badge 展示示例 tag；沿用既有图表引擎与 chartToneColor，没有新组件条目、第三方代码、依赖、令牌或 coss 修改。
 
+## 宿主格式回调（P108，2026-10-22）
+
+P108 采用通用可选回调。Prism 不内置学情舍入规则；不传新属性时，仍沿用上述 P59 规则及各组件原有缺值文本。回调只生成文字，坐标、宽度、连线、有效性与象限判断始终使用原始值。回调返回的 `text` / `ariaText` 原样使用，不再舍入、截断或追加单位；宿主须返回完整单位与所需端点说明。名称、说明文字及分隔符仍由组件组合。
+
+共享类型从 `lib/prism-next/chart-options` 导入：
+
+```ts
+export type ChartValueText = { text: string; ariaText?: string }
+export type ChartValueContext = {
+  unit: string
+  seriesId?: string
+  dataId?: string
+  field?: string
+  index?: number
+}
+export type ChartValueFormatter = (
+  value: number | null | undefined,
+  ctx: ChartValueContext,
+) => ChartValueText
+```
+
+`ariaText` 省略时读屏使用 `text`；空字符串也原样保留。回调会收到缺测、非有限数值及对应 ID，宿主可通过 ID 查询分子分母、资格、缺失原因等外部事实。Prism 不推测这些业务信息。回调应为纯函数，不依赖调用次数或触发业务动作。
+
+| 组件 / 可选属性 | 文本作用范围 | 上下文与保留行为 |
+| --- | --- | --- |
+| `TrendChart.formatValue?: ChartValueFormatter` | 数据表数值、tooltip 数值、图表读屏摘要与单元格可访问名称 | `seriesId`=系列 ID，`dataId`=点 ID，`field='value'`，`index`=该系列原数据索引；该系列缺少的点收到 `undefined` 和未定义 index。坐标轴刻度不走回调。已有 `valueLabel` / `annotation` 保留原文，点标签仍由宿主传入，可在宿主处调用同一格式器生成。 |
+| `ScatterChart` / `QuadrantScatterChart.formatValue?: ChartValueFormatter` | 数据表 x/y、tooltip、图表读屏摘要 | `seriesId`=点所属分组，无分组时 `'all'`；`dataId`=点 ID，`field='x'/'y'`，`index`=原数组索引，unit 分别来自 xUnit/unit。点名称标签保留原文，坐标轴保持原格式。 |
+| 同上 `formatThreshold?: ChartValueFormatter` | 现有“分界”说明与图表读屏摘要 | `field='x'/'y'` 与对应 unit；不传时独立回落原 decimals 规则，不借用 formatValue。仅对有效且在域内的分界调用。 |
+| `PairedDotChart.formatValue?: ChartValueFormatter` | 图上数值标签、inline 行内数值、数据表、tooltip 与读屏摘要 | `seriesId`=指标 ID，`dataId`=行 ID，`field='first'/'second'`，`index`=原数组索引。null 原样交给回调，仍不绘制缺测点；轴刻度保持原状。 |
+| `SegmentedBar.shareFormatter?: SegmentedBarShareFormatter` | 图例份额、选择按钮/图形 aria、余量 aria、数据表数值单元格内的份额 | 签名见下。原 `valueFormatter` 及数值单位规则不变；不传 shareFormatter 时数据表也保持旧输出，不新增份额。 |
+| `MetricSummary.items[].visual.formatValue?: ChartValueFormatter`（sparkline） | 既有读屏“走势数值”文本 | `dataId`=指标 ID，`field='value'`，`index`=原 values 索引；新增 `visual.unit?: string` 仅作为回调元数据，缺省 `''`。不传回调时即使传 unit，仍保留旧的无单位默认格式；ring 与卡片 value/detail 不受影响。 |
+| `BpSizeBar.formatValue?: ChartValueFormatter` | 分段/marker 的条形 aria、显示数值的分段图例与 marker 图例 | `dataId`=行 ID，分段 `seriesId`=分段 ID、`field='segment'`、index=分段索引；marker `field='marker'`，unit=行单位。多行合并且不显示分段数值的公共 marker 图例无行 ID，unit 为 `''`。`legendValues=false` 仍不额外显示分段数值；`row.display`、默认总数读数与几何保持原状。 |
+
+```ts
+// 从 components/prism-next/charts/segmented-bar 导入
+export type SegmentedBarShareFormatter = (
+  numerator: number,
+  denominator: number,
+  segment: SegmentedBarSegment | undefined,
+) => ChartValueText
+```
+
+分段回调收到原 `segment.value` 与原 segment 引用。分母是既有布局规则选用的有效总数（合法显式 total，否则为有效分段数值之和），不是几何缩放后的数，也不由已舍入比例反推；零总数为 0，数值之和无法用 number 表示时为 Infinity，宿主自行说明。只有存在余量时额外调用一次，numerator 为有效总数减有效分段之和，segment 为 undefined。负值/非有限分段仍按旧规则不绘制，原始非法数值交给格式器；不改变原有总数校验与比例计算。自定义份额复用原数据表数值单元格，显示为“原数值 · 自定义份额”，没有新增列或节点。
+
+读屏文本通过原有单元格、图形摘要与可命名的数值节点提供。ECharts 的 rich-text tooltip 展示 `text`，`ariaText` 由图形摘要和数据表承接；Trend 非标注 tooltip 同样保留字符串输出。`DataRecordTable.columns[].ariaLabel?: (row) => string | undefined` 将可访问名称传给原 td，便于这些图表复用，不增加包装节点。
+
+宿主接入示例（展示适配器由消费者实现；`learningFormat` 不属于 Prism）：
+
+```tsx
+const formatValue: ChartValueFormatter = (value, ctx) =>
+  learningFormat(value, factsById[ctx.dataId ?? ''], ctx)
+
+<TrendChart {...trendProps} formatValue={formatValue} />
+<QuadrantScatterChart {...scatterProps}
+  formatValue={formatValue} formatThreshold={thresholdFormat} />
+<PairedDotChart {...pairedProps} formatValue={formatValue} />
+<SegmentedBar {...compositionProps}
+  shareFormatter={(n, d, segment) => shareFormat(n, d, segment?.id)} />
+<MetricSummary items={[{ id: 'rate', label: '得分率', value: '70.0%',
+  visual: { kind: 'sparkline', values: rawRates, unit: '%', formatValue } }]} />
+<BpSizeBar {...sizeProps} formatValue={formatValue} />
+```
+
+示例页 `/next/components/trend-chart`、`/next/components/quadrant-chart`、`/next/components/paired-dot-chart`、`/next/components/metric-summary` 的“宿主格式回调”使用仅位于 demo 内的十进制 half-up 演示函数，展示 `70.0%`、`57.5%`、`100.0%（四舍五入）`、`—` 与“尚无可比再考记录”。指标页同时演示 SegmentedBar 与 BpSizeBar；该示例不是业务格式器的另一个生产实现。
+
+复用核对：离线读取现有上述图表、`formatChartValue`、`metricVisualModel`、DataRecordTable、固定 coss Table/Meter 与本地 particles `table-particle.tsx`（p-table-3/4）及本文 p-meter/p-progress 历史检索记录。现有组件已有全部呈现节点，缺口是宿主文字接口，故作可选属性扩展；未引入第三方代码、组件条目、依赖、样式或令牌。按 Builder 分工不联网刷新 registry。
+
+`tests/p108-chart-format.test.mjs` 使用 `0a2be7b` 的固定输出指纹验证默认 SSR、ECharts 配置、执行后的 tooltip/轴/标签文本，并覆盖回调文字、aria、原始上下文、缺值、组件节点/类/style、390/1280 ECharts SVG 几何。源码/SSR/引擎验证不等于浏览器视觉或真实读屏器验收；浏览器验收按分工由 Supervisor 执行。
+
 ## 验证边界
 
 新增测试覆盖修改前 SSR / ECharts options 字节快照、三主题配色、实际 ECharts SVG、Recharts 客户端提交与 960→320→960 尺寸更新、缺测/零值、提示框、标注避让与文本披露。注入尺寸的提交测试不模拟浏览器 CSS 排版、Popover 焦点或读屏器。

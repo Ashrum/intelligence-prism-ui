@@ -2,6 +2,7 @@
 
 import { useId, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import type { ChartValueFormatter } from "@/lib/prism-next/chart-options"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 
 export { BpScanTrace, BpPaperSlot } from "./grading"
@@ -280,37 +281,51 @@ export interface BpSizeBarProps {
   size?: "default" | "sm" | "xs"
   /** Target in the same units as each row total; included in the accessible name. */
   marker?: { value: number; label: string }
+  /** Formats segment and marker text only; row display and geometry stay raw. */
+  formatValue?: ChartValueFormatter
   /** Hide the visual row heading; it remains in the bar accessible name. */
   hideRowLabel?: boolean
   className?: string
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, formatValue, className }: BpSizeBarProps) {
   const compact = size === "xs"
   const hideLabel = compact || hideRowLabel
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
-  const renderLegend = (segments: BpSizeSegment[], label: string, unit = "") => <ul aria-label={label} className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
-    {segments.map(s => <li key={s.id} className="flex min-w-0 max-w-full items-start gap-1.5"><span aria-hidden="true" className={`mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-${s.fill}`} /><span className="min-w-0 [overflow-wrap:anywhere]">{s.label}{legendValues && <> <b className="text-foreground tabular-nums">{sizeNumber.format(s.value)}</b>{unit && ` ${unit}`}</>}</span></li>)}
-    {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}</li>}
-  </ul>
+  type Row = BpSizeBarProps["rows"][number]
+  const segmentText = (segment: BpSizeSegment, index: number, row?: Row) => formatValue?.(segment.value, { unit: row?.unit ?? "", dataId: row?.id, seriesId: segment.id, field: "segment", index })
+  const markerText = (row?: Row) => marker && formatValue?.(marker.value, { unit: row?.unit ?? "", dataId: row?.id, field: "marker" })
+  const renderLegend = (segments: BpSizeSegment[], label: string, unit = "", row?: Row) => {
+    const formattedMarker = markerText(row)
+    return <ul aria-label={label} className="bp-size-legend flex flex-wrap gap-x-5 gap-y-2 text-ui-meta text-muted-foreground">
+    {segments.map((s, index) => {
+      const formatted = legendValues ? segmentText(s, index, row) : undefined
+      return <li key={s.id} className="flex min-w-0 max-w-full items-start gap-1.5"><span aria-hidden="true" className={`mt-0.5 size-3 shrink-0 border border-(--line) bp-fill-${s.fill}`} /><span className="min-w-0 [overflow-wrap:anywhere]">{s.label}{legendValues && <> <b role={formatted ? "img" : undefined} aria-label={formatted ? formatted.ariaText ?? formatted.text : undefined} className="text-foreground tabular-nums">{formatted ? formatted.text : sizeNumber.format(s.value)}</b>{!formatted && unit && ` ${unit}`}</>}</span></li>
+    })}
+    {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}{formattedMarker && ` ${formattedMarker.text}`}</li>}
+  </ul>}
   return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", className)}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
+      const formattedMarker = markerText(row)
       return <div key={row.id} className="space-y-3">
         <div className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled")} data-display={row.display !== undefined ? "" : undefined}>
         {!hideLabel && <span className="text-item-title">{row.label}</span>}
-        <span role="img" aria-label={`${row.label}：${row.segments.map(s => `${s.label} ${sizeNumber.format(s.value)}${row.unit ?? ""}`).join("，")}${marker ? `，${marker.label} ${sizeNumber.format(marker.value)}${row.unit ?? ""}` : ""}`} className="bp-size-bar">
+        <span role="img" aria-label={`${row.label}：${row.segments.map((s, index) => {
+          const formatted = segmentText(s, index, row)
+          return `${s.label} ${formatted ? formatted.ariaText ?? formatted.text : `${sizeNumber.format(s.value)}${row.unit ?? ""}`}`
+        }).join("，")}${marker ? `，${marker.label} ${formattedMarker ? formattedMarker.ariaText ?? formattedMarker.text : `${sizeNumber.format(marker.value)}${row.unit ?? ""}`}` : ""}`} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
           {marker && Number.isFinite(marker.value) && <i aria-hidden="true" className="bp-size-marker" style={{ left: `${total > 0 ? Math.min(100, Math.max(0, marker.value / total * 100)) : 0}%` }} />}
         </span>
         <span hidden={compact || row.display === "" || undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
         </div>
-        {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit)}
+        {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit, row)}
       </div>
     })}
-    {legend && (!legendValues || rows.length <= 1) && renderLegend(legendItems, "分段图例")}
+    {legend && (!legendValues || rows.length <= 1) && renderLegend(legendItems, "分段图例", "", rows.length === 1 ? rows[0] : undefined)}
   </div>
 }
 
