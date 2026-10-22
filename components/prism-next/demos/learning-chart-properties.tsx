@@ -1,5 +1,8 @@
 "use client"
 import { useState } from "react"
+import type { ChartValueFormatter, ChartValueText } from "@/lib/prism-next/chart-options"
+import { SegmentedBar } from "../charts/segmented-bar"
+import { BpSizeBar } from "../blueprint/blueprint"
 import { Badge } from "../badge"
 import { Button } from "@/components/coss/button"
 import { DemoSection, Feedback } from "../demo-parts"
@@ -37,7 +40,7 @@ export function LearningChartProperties({kind}:{kind:string}){
  const [narrow,setNarrow]=useState(false),[edge,setEdge]=useState(false),[labels,setLabels]=useState(true),[precision,setPrecision]=useState(false),[notice,setNotice]=useState("选择结果由外部接收。")
  const [inline,setInline]=useState(true),[hidden,setHidden]=useState(false),[boundary,setBoundary]=useState(false),[wideLabel,setWideLabel]=useState(false)
  const select=(id:string,metric?:string)=>setNotice(`请求查看：${id}${metric?` · ${metric}`:""}`)
- return <DemoSection id="learning-properties" title="学情分析公开属性" description={descriptions[kind]}>
+ return <><DemoSection id="learning-properties" title="学情分析公开属性" description={descriptions[kind]}>
   <div className="mb-4 flex flex-wrap gap-2"><Button variant="outline" aria-pressed={narrow} onClick={()=>setNarrow(!narrow)}>320px 容器</Button><Button variant="outline" aria-pressed={edge} onClick={()=>setEdge(!edge)}>长中文、公式与缺测</Button>{kind!=="metric-summary"&&<Button variant="outline" aria-pressed={precision} onClick={()=>setPrecision(!precision)}>保留一位小数</Button>}{kind==="paired-dot-chart"&&<><Button variant="outline" aria-pressed={inline} onClick={()=>setInline(!inline)}>单行布局</Button><Button variant="outline" aria-pressed={hidden} onClick={()=>setHidden(!hidden)}>隐藏数据披露</Button><Button variant="outline" aria-pressed={boundary} onClick={()=>{setBoundary(!boundary);setNarrow(false)}}>360px 容器</Button><Button variant="outline" aria-pressed={wideLabel} onClick={()=>setWideLabel(!wideLabel)}>名称列 180px</Button></>}{kind==="quadrant-chart"&&<Button variant="outline" aria-pressed={!labels} onClick={()=>setLabels(!labels)}>隐藏点标签</Button>}</div>
   <div className="@container min-w-0 max-w-full" style={{width:narrow?320:kind==="paired-dot-chart"&&boundary?360:960}}>
    {kind==="trend-chart"&&<TrendChart label="班级得分率与预期" yDomain="auto" xTickMode="all" decimals={precision?1:0} unit="%" height={320} onSelect={select} series={edge?learningTrendSeries.map(s=>({...s,data:s.data.map(p=>({...p,annotation:p.annotation?`${p.annotation}；请结合题目难度与公式 x² + y² = 1 的适用范围核对，不直接比较跨口径分数。`:undefined}))})):learningTrendSeries}/>}
@@ -52,5 +55,38 @@ export function LearningChartProperties({kind}:{kind:string}){
    ]} onSelect={select}/></div>}
    {kind==="metric-summary"&&<MetricSummary items={edge?learningMetrics.map((item,i)=>({...item,label:i===0?"需要结合长中文口径与公式 x² + y² = 1 解释的指标":item.label,visual:i===2?{kind:"sparkline",values:[null,0,null]}:item.visual})):learningMetrics} onSelect={select}/>}
   </div><Feedback>{notice}</Feedback>
+ </DemoSection><HostChartFormatDemo kind={kind}/></>
+}
+
+// Demonstration only. Production consumers supply their own versioned formatter.
+function demoDecimal(value:number):[bigint,bigint]{
+ const [mantissa,exponent="0"]=String(Math.abs(value)).split("e"),[whole,fraction=""]=mantissa.split(".")
+ const power=Number(exponent)-fraction.length,digits=BigInt(whole+fraction)*(value<0?-BigInt(1):BigInt(1))
+ return power>=0?[digits*BigInt(10)**BigInt(power),BigInt(1)]:[digits,BigInt(10)**BigInt(-power)]
+}
+function demoRatio(numerator:number,denominator:number,unit:string,percent=false):ChartValueText{
+ if(!Number.isFinite(numerator)||!Number.isFinite(denominator)||denominator<=0)return {text:"—",ariaText:"—，分母为零或数值无效"}
+ const [n,nd]=demoDecimal(numerator),[d,dd]=demoDecimal(denominator),raw=n*dd*(percent?BigInt(100):BigInt(1)),base=nd*d
+ const magnitude=(raw<BigInt(0)?-raw:raw)*BigInt(10),rounded=magnitude/base+(magnitude%base*BigInt(2)>=base?BigInt(1):BigInt(0))
+ const number=`${raw<BigInt(0)&&rounded!==BigInt(0)?"−":""}${rounded/BigInt(10)}.${rounded%BigInt(10)}`
+ const endpoint=unit==="%"&&raw>BigInt(0)&&raw<BigInt(100)*base&&rounded===BigInt(1000)
+ return {text:`${number}${unit}${endpoint?"（四舍五入）":""}`}
+}
+export const demoHostValueFormatter:ChartValueFormatter=(value,ctx)=>value==null
+ ?{text:"—",ariaText:"—，尚无可比再考记录"}:demoRatio(value,1,ctx.unit)
+export const demoHostShareFormatter=(numerator:number,denominator:number)=>demoRatio(numerator,denominator,"%",true)
+const hostFormatValues=[70,57.5,99.975,null]
+const hostFormatNames=["整值","23/40","3999/4000","尚无记录"]
+export function HostChartFormatDemo({kind}:{kind:string}){
+ return <DemoSection id="host-chart-format" title="宿主格式回调" description="合成数据：同一宿主回调提供固定一位小数、端点说明与缺值原因；刻度保持原格式，图形仍使用原始值。">
+  {kind==="trend-chart"&&<TrendChart label="宿主格式趋势" unit="%" formatValue={demoHostValueFormatter} series={[{id:"rate",label:"观测比例",data:hostFormatValues.map((value,index)=>({id:String(index),label:hostFormatNames[index],value,...(value===null?{}:{valueLabel:demoHostValueFormatter(value,{unit:"%"}).text})}))}]}/>}
+  {kind==="quadrant-chart"&&<QuadrantScatterChart label="宿主格式象限" xLabel="得分率" yLabel="补回率" xUnit="%" unit="%" xDomain={[0,100]} yDomain={[0,100]} formatValue={demoHostValueFormatter} formatThreshold={(value)=>({text:`${Math.round(value??0)}%`})} quadrants={{x:70,y:60,labels:["左上","右上","左下","右下"]}} data={hostFormatValues.map((value,index)=>({id:String(index),label:hostFormatNames[index],x:value,y:value}))}/>}
+  {kind==="paired-dot-chart"&&<PairedDotChart label="宿主格式双点" unit="%" rowLayout="inline" formatValue={demoHostValueFormatter} metrics={[{id:"first",label:"首次"},{id:"second",label:"再次"}]} data={hostFormatValues.map((value,index)=>({id:String(index),label:hostFormatNames[index],first:value,second:value}))}/>}
+  {kind==="metric-summary"&&<div className="space-y-4">
+   <MetricSummary items={[{id:"rate",label:"近期得分率",value:"70.0%",visual:{kind:"sparkline",unit:"%",values:hostFormatValues,formatValue:demoHostValueFormatter}}]}/>
+   <SegmentedBar label="宿主份额：23/40" total={40} dataDisclosure="visible" segments={[{id:"sample",label:"已观察",value:23}]} shareFormatter={demoHostShareFormatter}/>
+   <SegmentedBar label="宿主份额：3999/4000" total={4000} dataDisclosure="visible" segments={[{id:"sample",label:"已观察",value:3999}]} shareFormatter={demoHostShareFormatter}/>
+   <BpSizeBar rows={[{id:"rate",label:"近期比例",total:100,unit:"%",display:"70.0%",segments:[{id:"actual",label:"实际",value:70,fill:"ink"}]}]} marker={{value:99.975,label:"参考"}} formatValue={demoHostValueFormatter}/>
+  </div>}
  </DemoSection>
 }

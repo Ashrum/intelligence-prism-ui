@@ -16,8 +16,8 @@ export type {MetricVisual} from "@/lib/prism-next/metric-visual"
 function MetricLabel({item}:{item:MetricSummaryItem}){
  return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" className="text-muted-foreground hover:text-foreground"/>} aria-label={`${item.label}：指标说明`}><CircleHelp size={14} className="size-3.5" aria-hidden="true" /></PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
 }
-function MetricMiniVisual({visual,grid=false}:{visual:MetricVisual;grid?:boolean}){
- const model=metricVisualModel(visual)
+function MetricMiniVisual({visual,grid=false,dataId}:{visual:MetricVisual;grid?:boolean;dataId?:string}){
+ const model=metricVisualModel(visual,dataId)
  return <><svg aria-hidden="true" focusable="false" viewBox={model.kind==="ring"?"0 0 56 56":"0 0 72 40"} className={grid?(model.kind==="ring"?"size-14 shrink-0":"h-10 w-18 shrink-0"):"h-14 w-18 shrink-0"} data-metric-visual={model.kind}>{model.kind==="ring"?<><circle cx={28} cy={28} r={22} fill="none" stroke="var(--border)" strokeWidth={6}/>{model.ratio!==null&&<circle cx={28} cy={28} r={22} fill="none" stroke="var(--chart-1)" strokeWidth={6} pathLength={1} strokeDasharray={`${model.ratio} 1`} transform="rotate(-90 28 28)"/>}</>:model.runs.map((run,index)=><g key={index}>{run.length>=2&&<polyline points={run.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke="var(--chart-1)" strokeWidth={2}/>}{run.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r={2} fill="var(--chart-1)"/>)}</g>)}</svg><span className="sr-only">{model.text}</span></>
 }
 function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryItem;onSelect?:(id:string)=>void;compact:boolean;strip:boolean;index?:number}){
@@ -25,7 +25,7 @@ function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryI
   <dt className={`${strip?"text-ui-meta":"text-ui-hint"} col-start-1 text-muted-foreground`}><MetricLabel item={item}/></dt>
   <dd className={`analytics-value col-start-1 break-words ${strip?"my-0! text-stat-display tabular-nums":compact?"my-0!":""}`}>{item.value}</dd>
   {item.detail&&<dd className="col-start-1 text-ui-hint text-muted-foreground">{item.detail}</dd>}
-  <dd className="col-start-2 row-span-3 row-start-1"><MetricMiniVisual visual={item.visual!}/></dd>
+  <dd className="col-start-2 row-span-3 row-start-1"><MetricMiniVisual visual={item.visual!} dataId={item.id}/></dd>
   {onSelect&&<dd className="col-span-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
  </div>
 }
@@ -34,7 +34,7 @@ export function MetricSummary({items,onSelect,density="default",layout}:{items:M
   <dt className="col-start-1 flex flex-wrap items-center gap-1 text-ui-body text-muted-foreground [overflow-wrap:anywhere]"><MetricLabel item={item}/></dt>
   <dd className="col-start-1 break-words text-stat-display tabular-nums">{item.value}</dd>
   {item.detail&&<dd className="col-start-1 text-ui-hint text-muted-foreground [overflow-wrap:anywhere]">{item.detail}</dd>}
-  {item.visual&&<dd className="@min-[440px]:col-start-2 @min-[440px]:row-span-3 @min-[440px]:row-start-1"><MetricMiniVisual visual={item.visual} grid/></dd>}
+  {item.visual&&<dd className="@min-[440px]:col-start-2 @min-[440px]:row-span-3 @min-[440px]:row-start-1"><MetricMiniVisual visual={item.visual} grid dataId={item.id}/></dd>}
   {onSelect&&<dd className="col-span-full"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
  </div>)}</dl>
  if(layout==="strip"||layout==="row") return <dl data-metric-layout="strip" className="grid min-w-0 grid-cols-1 gap-y-3 @min-[400px]:grid-cols-2 @min-[680px]:grid-cols-4">{items.map((item,index)=>item.visual?<VisualMetric key={item.id} item={item} onSelect={onSelect} compact={density==="compact"} strip index={index}/>:<div key={item.id} className={`min-w-0 space-y-1 @min-[400px]:px-3 ${index ? "@min-[400px]:border-l @min-[400px]:border-border" : "@min-[400px]:pl-0"}`}>
@@ -59,4 +59,4 @@ export function StatusComposition({items,onSelect,selectedId,unit="",label="状�
 }
 export type FilterField={id:string;label:string;options:{value:string;label:string}[]}
 export function FilterBar({fields,value,onChange,onReset}:{fields:FilterField[];value:Record<string,string>;onChange:(value:Record<string,string>)=>void;onReset?:()=>void}){const id=useId();return <div className="flex flex-wrap items-end gap-3">{fields.map(field=><label key={field.id} className="grid gap-2 text-ui-body" htmlFor={`${id}-${field.id}`}>{field.label}<QuestionSelect id={`${id}-${field.id}`} label={field.label} value={value[field.id]??""} items={field.options} onChange={next=>onChange({...value,[field.id]:next})}/></label>)}{onReset&&<Button variant="ghost" onClick={onReset}>重置筛选</Button>}</div>}
-export function DataRecordTable<T extends {id:string}>({rows,columns,onSelect,selectedId,empty="暂无记录"}:{rows:T[];columns:{id:string;label:string;render:(row:T)=>ReactNode}[];onSelect?:(id:string)=>void;selectedId?:string;empty?:string}){return <div className="overflow-x-auto"><Table><TableHeader><TableRow>{columns.map(c=><TableHead key={c.id}>{c.label}</TableHead>)}{onSelect&&<TableHead>操作</TableHead>}</TableRow></TableHeader><TableBody>{rows.map(row=><TableRow key={row.id} data-state={selectedId===row.id?"selected":undefined}>{columns.map(c=><TableCell key={c.id}>{c.render(row)}</TableCell>)}{onSelect&&<TableCell><Button variant="ghost" size="sm" aria-label={`查看 ${row.id}`} onClick={()=>onSelect(row.id)}>查看</Button></TableCell>}</TableRow>)}</TableBody></Table>{!rows.length&&<p className="py-8 text-center text-ui-hint text-muted-foreground">{empty}</p>}</div>}
+export function DataRecordTable<T extends {id:string}>({rows,columns,onSelect,selectedId,empty="暂无记录"}:{rows:T[];columns:{id:string;label:string;render:(row:T)=>ReactNode;ariaLabel?:(row:T)=>string|undefined}[];onSelect?:(id:string)=>void;selectedId?:string;empty?:string}){return <div className="overflow-x-auto"><Table><TableHeader><TableRow>{columns.map(c=><TableHead key={c.id}>{c.label}</TableHead>)}{onSelect&&<TableHead>操作</TableHead>}</TableRow></TableHeader><TableBody>{rows.map(row=><TableRow key={row.id} data-state={selectedId===row.id?"selected":undefined}>{columns.map(c=><TableCell key={c.id} aria-label={c.ariaLabel?.(row)}>{c.render(row)}</TableCell>)}{onSelect&&<TableCell><Button variant="ghost" size="sm" aria-label={`查看 ${row.id}`} onClick={()=>onSelect(row.id)}>查看</Button></TableCell>}</TableRow>)}</TableBody></Table>{!rows.length&&<p className="py-8 text-center text-ui-hint text-muted-foreground">{empty}</p>}</div>}

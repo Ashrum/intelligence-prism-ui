@@ -1,8 +1,8 @@
-import {formatChartValue} from "./chart-options"
-export type MetricVisual = { kind: 'ring'; value: number; max: number } | { kind: 'sparkline'; values: (number | null)[] }
+import {formatChartValue, type ChartValueFormatter} from "./chart-options"
+export type MetricVisual = { kind: 'ring'; value: number; max: number } | { kind: 'sparkline'; values: (number | null)[]; unit?: string; formatValue?: ChartValueFormatter }
 
 /** Geometry only: connect finite observations without inventing values at missing positions. */
-export function metricVisualModel(visual: MetricVisual) {
+export function metricVisualModel(visual: MetricVisual, dataId?: string) {
   if (visual.kind === 'ring') {
     const valid = Number.isFinite(visual.value) && Number.isFinite(visual.max) && visual.max > 0 && visual.value >= 0 && visual.value <= visual.max
     return { kind: 'ring' as const, ratio: valid ? visual.value / visual.max : null, text: valid ? `环形数值：${formatChartValue(visual.value)} / ${formatChartValue(visual.max)}` : `环形数据无效：${formatChartValue(visual.value)} / ${formatChartValue(visual.max)}` }
@@ -16,5 +16,11 @@ export function metricVisualModel(visual: MetricVisual) {
     run.push({ x: visual.values.length === 1 ? 36 : 4 + index / (visual.values.length - 1) * 64, y: max === min ? 20 : 36 - (value - min) / (max - min) * 32 })
   })
   if (run.length) runs.push(run)
-  return { kind: 'sparkline' as const, runs, text: `走势数值：${visual.values.length ? visual.values.map(v => v === null ? '缺测' : Number.isFinite(v) ? formatChartValue(v) : '无效值').join('、') : '暂无数据'}` }
+  return { kind: 'sparkline' as const, runs, text: `走势数值：${visual.values.length ? visual.values.map((v, index) => {
+    if (visual.formatValue) {
+      const formatted = visual.formatValue(v, { unit: visual.unit ?? '', dataId, field: 'value', index })
+      return formatted.ariaText ?? formatted.text
+    }
+    return v === null ? '缺测' : Number.isFinite(v) ? formatChartValue(v) : '无效值'
+  }).join('、') : '暂无数据'}` }
 }
