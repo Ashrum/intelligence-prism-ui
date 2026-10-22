@@ -113,10 +113,12 @@ export interface BpMinorProps extends ComponentProps<"h3"> {
   code?: string
   label?: ReactNode
   headingLevel?: 2 | 3 | 4 | 5 | 6
+  /** Group/section ink rule; body subheadings retain the default border rule. */
+  rule?: "border" | "ink"
 }
-export function BpMinor({ className, code, label, headingLevel = 3, children, ...props }: BpMinorProps) {
+export function BpMinor({ className, code, label, headingLevel = 3, rule = "border", children, ...props }: BpMinorProps) {
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
-  return <Heading {...props} className={cn("bp-minor text-block-title", className)}>{code && <span className="bp-minor-code">{code}</span>}<span className="bp-minor-label">{label ?? children}</span></Heading>
+  return <Heading {...props} className={cn("bp-minor text-block-title", className)} data-rule={rule === "ink" ? "ink" : undefined}>{code && <span className="bp-minor-code">{code}</span>}<span className="bp-minor-label">{label ?? children}</span></Heading>
 }
 
 export function BpFigCap({ label, children, className, ...props }: ComponentProps<"p"> & { label: string }) {
@@ -246,13 +248,15 @@ export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "tit
   action?: ReactNode
   headingLevel?: 2 | 3 | 4 | 5 | 6
   density?: "default" | "compact"
+  /** Decorative structural line after the heading, before metadata/actions. */
+  titleRule?: boolean
 }
 /** A numbered/ordered subdivision within a result, without sheet rulers. */
-export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", children, className, ...props }: BpSectionCardProps) {
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", titleRule = false, children, className, ...props }: BpSectionCardProps) {
   const id = useId()
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
   const code = letter?.trim()
-  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card">
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card" data-title-rule={titleRule ? "" : undefined}>
     <header className="bp-section-card-head">
       <Heading id={id} className={cn("bp-section-card-title", density === "compact" ? "text-item-title" : "text-block-title")}>
         {code && <span className={cn("bp-section-card-letter font-mono", density === "compact" ? "text-ui-hint" : "text-stat-display")}>{code}</span>}

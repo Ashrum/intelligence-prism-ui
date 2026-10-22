@@ -74,6 +74,26 @@
 
 浏览器验收：按分工由 Supervisor 执行，覆盖蓝图 / 夜图 / light × 1280 / 390，并复核 paper / dark 嵌套预览、浮层 portal 主题继承、键盘焦点、长中文与公式。自动化 CSS 选择器与 SSR 检查不等于浏览器视觉验收。
 
+## 标题墨线 · P106（2026-10-22）
+
+在 P105 `0965f49` 基线上扩展已有 `BpSectionCard` 与 `BpMinor`，不新增组件条目。成组标题、成果内分节标题可使用 ink；正文内部的次级小标题仍用 border，避免所有标题同等强调。
+
+| 用法 | 输出与适用范围 |
+| --- | --- |
+| `<BpSectionCard titleRule title="任务范围">…</BpSectionCard>` | section 输出 `data-title-rule=""`；标题文字之后以空 `::after` 填充至 meta / action 之前，default 与 compact 密度均支持 |
+| `<BpMinor rule="ink" label="任务设置" />` | 标题输出 `data-rule="ink"`；既有装饰线切换为结构墨线 |
+| `<BpMinor rule="border">评分说明</BpMinor>` | 默认行为，保持 1px / `--border`；省略 rule 结果相同 |
+
+墨线统一使用已有 `--line-width` / `--line`：白图 1.5px / `#1D2026`、夜图 1.5px / `#C9D6E8`。选择结构线宽而非固定 1px，是为了与章节结构墨线保持层级一致，区分正文内的次级细线。核心 light / paper / dark 的显式 bp 组件沿用已有中性回退 `--line:var(--border)`、1px；不改 theme.css 或任何既有令牌值。预览根会重新声明这些令牌，嵌套核心预览的根、后代与伪元素均使用本地回退，不继承外层白图 / 夜图墨色。
+
+卡片标题墨线以 flex 填充，桌面最小 24px，垂直居中；≤760px 标题先独占一行，meta / action 随后自然换行，装饰线可缩短至 0，将空间让给文字。长中文与长文件名自然换行，不缩字、不省略、不裁切。空伪元素无可读内容，不改变标题的可访问名称、层级或按钮顺序。未传新参数时 DOM / SSR 与 `0965f49` 的前态快照逐字节一致；`titleRule={false}` 与 `rule="border"` 同样保留默认输出。
+
+夜图源码令牌计算对比度：墨线与卡片底 `#0D1C31` 为 **11.62:1**，与页面底 `#081322` 为 **12.66:1**（sRGB 相对亮度计算；数值检查不是浏览器目检）。线仅作装饰，不代替信息文本。
+
+示例：[标题墨线](/next/foundations/blueprint#title-rules)，含两种密度、meta / 可操作说明按钮、默认 border、长中文与公式、嵌套核心三主题。浏览器验收由 Supervisor 执行，覆盖白图 / 夜图 / 核心三主题、1280 / 390 及 760 断点。
+
+复用检索（离线）：现有 BpMinor 已有 flex 伪元素细线，BpSectionCard 已有标题 / meta / action 插槽，足以完成本次增量；依照先复用 Prism 的顺序，不另造组件，不引入外部实现或依赖，也未联网刷新 coss registry。
+
 ## 复核原件聚焦 · P103（2026-10-22）
 
 设计状态：候选实现，依据 PO 2026-10-22 对复核原件聚焦能力的决定；工程准入：未开始。扩展现有 `BpFrameCard`，不新增组件目录条目。示例入口：`/next/foundations/blueprint#frame-focus-p103`；按钮标明「演示事件，产品中由真实选中驱动」。Builder 自测不等同于 Supervisor Review、浏览器验收或 PO 批准。

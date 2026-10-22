@@ -221,6 +221,18 @@
 .bp-card-body { min-width:0; padding:20px; overflow-wrap:anywhere; }
 /* End P79 cards. */
 
+/* P106 · Explicit title rules; local --line tokens reset at every preview root. */
+.bp-section-card[data-title-rule] > .bp-section-card-head > .bp-section-card-title { flex-basis:max-content; max-width:100%; }
+.bp-section-card[data-title-rule] > .bp-section-card-head > .bp-section-card-title::after { content:""; flex:1 0 24px; min-width:24px; height:var(--line-width); align-self:center; background:var(--line); }
+.bp-minor[data-rule="ink"]::after { height:var(--line-width); background:var(--line); }
+@media (max-width:760px) {
+  /* Metadata/actions wrap first; the decorative tail yields space to long titles. */
+  .bp-section-card[data-title-rule] > .bp-section-card-head > .bp-section-card-title { flex-basis:100%; }
+  .bp-section-card[data-title-rule] > .bp-section-card-head > .bp-section-card-title::after,
+  .bp-minor[data-rule="ink"]::after { flex:1 1 0; min-width:0; }
+}
+/* End P106 title rules. */
+
 /* P103 · Explicit frame focus; local P102 tokens reset at nested theme boundaries. */
 .bp-frame-card[data-focus="review"] { outline:2px solid var(--bp-phase-review); outline-offset:3px; animation:bp-paper-focus 180ms ease-out; }
 .bp-frame-card > .bp-card-body[data-swap="answer"] { animation:bp-frame-swap 180ms ease-out; }

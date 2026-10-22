@@ -1,0 +1,227 @@
+{
+  "baseline": "0965f49268a60d7e23882a4b8139e453c606a011",
+  "cases": [
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "title": "任务范围"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": " A ",
+        "title": "任务范围",
+        "meta": "共 2 项",
+        "action": "操作",
+        "children": "合成内容",
+        "id": "host-section",
+        "className": "mt-6"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">共 2 项</div><div class=\"bp-card-actions\">操作</div></header><div class=\"bp-card-body\">合成内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": " ",
+        "title": "长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题",
+        "meta": "very-long-file-name.pdf",
+        "children": "x² + y² = 1"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题长中文任务标题</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">very-long-file-name.pdf</div></header><div class=\"bp-card-body\">x² + y² = 1</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "children": "原有小标题",
+        "id": "minor",
+        "className": "mt-6"
+      },
+      "html": "<h3 id=\"minor\" class=\"bp-minor text-block-title mt-6\"><span class=\"bp-minor-label\">原有小标题</span></h3>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "code": "BP-01",
+        "label": "分组标题",
+        "children": "应被 label 替代"
+      },
+      "html": "<h3 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">BP-01</span><span class=\"bp-minor-label\">分组标题</span></h3>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "code": "",
+        "label": "",
+        "children": "不得回退"
+      },
+      "html": "<h3 class=\"bp-minor text-block-title\"><span class=\"bp-minor-label\"></span></h3>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 2,
+        "density": "default",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h2 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">分节</span></h2><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 2,
+        "density": "compact",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h2 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">分节</span></h2><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "headingLevel": 2,
+        "code": "01",
+        "label": "长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题"
+      },
+      "html": "<h2 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题</span></h2>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 3,
+        "density": "default",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">分节</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 3,
+        "density": "compact",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">分节</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "headingLevel": 3,
+        "code": "01",
+        "label": "长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题"
+      },
+      "html": "<h3 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题</span></h3>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 4,
+        "density": "default",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h4 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">分节</span></h4><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 4,
+        "density": "compact",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h4 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">分节</span></h4><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "headingLevel": 4,
+        "code": "01",
+        "label": "长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题"
+      },
+      "html": "<h4 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题</span></h4>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 5,
+        "density": "default",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h5 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">分节</span></h5><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 5,
+        "density": "compact",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h5 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">分节</span></h5><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "headingLevel": 5,
+        "code": "01",
+        "label": "长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题"
+      },
+      "html": "<h5 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题</span></h5>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 6,
+        "density": "default",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h6 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">分节</span></h6><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpSectionCard",
+      "props": {
+        "letter": "B",
+        "title": "分节",
+        "headingLevel": 6,
+        "density": "compact",
+        "meta": "第 1 页",
+        "children": "内容"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h6 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">分节</span></h6><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 页</div></header><div class=\"bp-card-body\">内容</div></section>"
+    },
+    {
+      "component": "BpMinor",
+      "props": {
+        "headingLevel": 6,
+        "code": "01",
+        "label": "长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题"
+      },
+      "html": "<h6 class=\"bp-minor text-block-title\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">长中文标题长中文标题长中文标题长中文标题长中文标题长中文标题</span></h6>"
+    }
+  ]
+}

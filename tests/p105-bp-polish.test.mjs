@@ -121,7 +121,8 @@ for (const core of ['light', 'paper', 'dark']) test(`P105 ${core}: zero CSS delt
       for (const pseudo of ['before', 'after']) assert.deepEqual(style({ ...node, states }, pseudo), {});
     }
   }
-  assert.equal(text.replace(block, ''), before(path), 'all pre-existing CSS stays byte-identical');
+  // P106 opt-in styles are independently checked against 0965f49.
+  assert.equal(text.replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, ''), before(path), 'all pre-existing CSS stays byte-identical');
   assert.equal(read('app/(next)/next/theme.css'), before('app/(next)/next/theme.css'));
 });
 

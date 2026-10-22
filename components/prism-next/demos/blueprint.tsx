@@ -54,6 +54,33 @@ export function BlueprintCardsDemo() {
   </section>
 }
 
+export function BlueprintTitleRuleDemo() {
+  const [showNote, setShowNote] = useState(false)
+  return <section id="title-rules" aria-label="标题墨线" className="space-y-6">
+    <BlueprintSectionHeader title="标题墨线" description="成组标题与分节使用结构墨线；正文内次级小标题保留细线。" />
+    <BpMinor rule="ink" code="01" label="任务设置" />
+    <BpSectionCard titleRule letter="A" title="任务范围" meta="2 个班级"
+      action={<BpTool iconOnly aria-label="查看任务范围说明" aria-expanded={showNote} aria-controls="bp-title-rule-note" onClick={() => setShowNote(value => !value)}><Info className="size-4" aria-hidden="true" /></BpTool>}>
+      <p className="text-ui-body">高一（1）班、高一（2）班 · 合成数据。</p>
+      <p id="bp-title-rule-note" hidden={!showNote} className="mt-3 text-ui-hint">仅展示已选范围，不执行创建任务。</p>
+    </BpSectionCard>
+    <BpSectionCard titleRule density="compact" letter="B" title="批阅设置" meta="1 项设置">
+      <BpMinor headingLevel={4}>评分说明</BpMinor>
+      <p className="text-ui-body">按题目评分点复核作答。</p>
+    </BpSectionCard>
+    <BpSectionCard titleRule density="compact" title="长中文分节标题：检查多个班级的任务范围与批阅设置是否完整" meta="task-scope-and-grading-settings-preview.pdf">
+      <BpMinor rule="ink" headingLevel={4} label="长中文成组标题：分节范围、评分说明与教师复核要求" />
+      <QuestionMath block label="x 平方减二 x 加一等于零"><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></QuestionMath>
+    </BpSectionCard>
+    <div className="space-y-4">
+      {(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} className="bg-background p-4 text-foreground">
+        <BpMinor rule="ink" label={`${theme} · 中性标题线`} />
+        <BpSectionCard titleRule density="compact" title="局部主题分节"><p className="text-ui-body">线色与线宽跟随此预览的主题。</p></BpSectionCard>
+      </div>)}
+    </div>
+  </section>
+}
+
 export function BlueprintComponentsDemo() {
   const [tab, setTab] = useState("all")
   const [view, setView] = useState("blueprint")
@@ -78,6 +105,7 @@ export function BlueprintComponentsDemo() {
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#narrow-frame">窄屏图纸外框</a>
+      <a href="#title-rules">标题墨线</a>
       <a href="#actions">蓝图按钮与标签页</a>
       <a href="#entry-annotations">图形标注与入口</a>
       <a href="#artifact-folio">成果标题定位</a>
@@ -88,6 +116,7 @@ export function BlueprintComponentsDemo() {
     </nav>
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
+    <BlueprintTitleRuleDemo />
     <BlueprintSheet id="narrow-frame" title="窄屏保留图纸外框" narrowFrame="keep" description="窄屏保留左右外框，隐藏坐标尺与内框。">
       <p className="text-ui-body">长中文标题与正文在图纸内自然换行，左右保留阅读间距。</p>
     </BlueprintSheet>
