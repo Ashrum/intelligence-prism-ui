@@ -1,10 +1,10 @@
 {
   "schema": "split-manifest-v3-design-engineering",
-  "design_revision": "v1.0-candidate",
-  "design_status": "candidate",
+  "design_revision": "v1.0",
+  "design_status": "design-final",
   "engineering_admission": "not-started",
-  "approval_person": "待 PO 批准",
-  "approval_date": "待 PO 批准",
+  "approval_person": "Ashrum（PO）",
+  "approval_date": "2026-10-23",
   "baseline_file": "OLE_Learning_Analysis_Design_v1.0.md",
   "coordinate_unit": "unicode-code-point; end-exclusive",
   "historical_git_commit": "9435e92f4e9e1d802f6fd364bc8ac3b8fa7933c9",
@@ -31,8 +31,8 @@
           "key": "§6 指标与比较",
           "start_marker": "## 6 ",
           "end_marker": "## 7 ",
-          "source_start": 12953,
-          "source_end": 31632,
+          "source_start": 12937,
+          "source_end": 31616,
           "source_line": 261,
           "sha256": "823543b0f77d06818f527aefdb716e4ca7313c666f12d3c0b4c9c953d83d24b0"
         },
@@ -40,8 +40,8 @@
           "key": "§9.1 正式对象语义",
           "start_marker": "## 9 ",
           "end_marker": "#### 行动 复查与支持的逻辑映射",
-          "source_start": 45798,
-          "source_end": 46974,
+          "source_start": 45782,
+          "source_end": 46958,
           "source_line": 765,
           "sha256": "3c058d1fb95d0aef964c368ed82de128a4c8a20b517f02849db3ad54911e3106"
         },
@@ -49,8 +49,8 @@
           "key": "§9.3 证据与状态",
           "start_marker": "### 9.3 ",
           "end_marker": "### 9.4 ",
-          "source_start": 52311,
-          "source_end": 53027,
+          "source_start": 52295,
+          "source_end": 53011,
           "source_line": 894,
           "sha256": "2ddba54d716273b951616f0036c813cf60b803f26e6d243f51fcf215037e4807"
         },
@@ -58,8 +58,8 @@
           "key": "§9.4 完整性与失效产品规则",
           "start_marker": "### 9.4 ",
           "end_marker": "### 9.5 ",
-          "source_start": 53027,
-          "source_end": 54609,
+          "source_start": 53011,
+          "source_end": 54593,
           "source_line": 906,
           "sha256": "a4d8aaa3b4a070f1a74e4dbd5719aa3be96f498f32669f2492c4f7e59f152612"
         },
@@ -67,14 +67,14 @@
           "key": "§9.5 案例与资产",
           "start_marker": "### 9.5 ",
           "end_marker": "### 9.6 ",
-          "source_start": 54609,
-          "source_end": 54855,
+          "source_start": 54593,
+          "source_end": 54839,
           "source_line": 938,
           "sha256": "36e1713c4b26e7481d4ebee53f68d8f5e2d4ec262963d9b1d0823159b534fa63"
         }
       ],
-      "sha256": "c7eaa43d298f8bc3882d2e4aa99a86207fbae4a614962664fa17b69a2bfff4f7",
-      "characters": 22971
+      "sha256": "8ef03ad6f85c90cc373fdbad2d9b50023d968d0d8f032d0b9726daf17e52e160",
+      "characters": 22957
     },
     {
       "number": 2,
@@ -93,8 +93,8 @@
           "key": "§5 教学闭环",
           "start_marker": "## 5 ",
           "end_marker": "## 6 ",
-          "source_start": 9925,
-          "source_end": 12953,
+          "source_start": 9909,
+          "source_end": 12937,
           "source_line": 188,
           "sha256": "7c83633fff3a57db17394504d9dd4645169978710d857c946aa630d862a3004d"
         },
@@ -102,8 +102,8 @@
           "key": "§9.1 应用行动语义",
           "start_marker": "#### 行动 复查与支持的逻辑映射",
           "end_marker": "### 9.2 ",
-          "source_start": 46974,
-          "source_end": 48055,
+          "source_start": 46958,
+          "source_end": 48039,
           "source_line": 787,
           "sha256": "db4df3439e9ade3f0322447a06458eafe3e7dc0ce1943f5a70d8ec76ec384c14"
         },
@@ -111,8 +111,8 @@
           "key": "§9.2 事实与匹配",
           "start_marker": "### 9.2 ",
           "end_marker": "### 9.3 ",
-          "source_start": 48055,
-          "source_end": 52311,
+          "source_start": 48039,
+          "source_end": 52295,
           "source_line": 811,
           "sha256": "15d0b7c98f02a5aa1234e7de11174513dcd1e8e884d2666f74e1d664463f0e77"
         },
@@ -120,14 +120,14 @@
           "key": "§10.2 教育语义",
           "start_marker": "### 10.2 ",
           "end_marker": "### 10.3 ",
-          "source_start": 59109,
-          "source_end": 59449,
+          "source_start": 59093,
+          "source_end": 59433,
           "source_line": 997,
           "sha256": "5351265e76f52f4e906c231db6a35a69a220e804d2d9b751dee0b4bb2c75d63f"
         }
       ],
-      "sha256": "58153a0fa3568c9aac7f2c97c5a6529767ce0030da07c0b1c75b94279f4bd252",
-      "characters": 9273
+      "sha256": "e28938f4f489df04008b335ecc86fed499500b627ff7f818379747cd234e2bcd",
+      "characters": 9259
     },
     {
       "number": 3,
@@ -146,8 +146,8 @@
           "key": "§7 独立页面",
           "start_marker": "## 7 ",
           "end_marker": "## 8 ",
-          "source_start": 31632,
-          "source_end": 34144,
+          "source_start": 31616,
+          "source_end": 34128,
           "source_line": 527,
           "sha256": "9a065b32287a8ed9774538e9573598632ab0c696076e84b1e5ae252b81044cf2"
         },
@@ -155,8 +155,8 @@
           "key": "§10.1 整改清单",
           "start_marker": "## 10 ",
           "end_marker": "### 10.2 ",
-          "source_start": 56485,
-          "source_end": 59109,
+          "source_start": 56469,
+          "source_end": 59093,
           "source_line": 972,
           "sha256": "aa0e6753d6df7310885c94c536f35ded3853779f7837dcd31ccfb22a41aca4d4"
         },
@@ -164,14 +164,14 @@
           "key": "§10.3 历史兼容与迁移产品规则",
           "start_marker": "### 10.3 ",
           "end_marker": "## 11 ",
-          "source_start": 59449,
-          "source_end": 60186,
+          "source_start": 59433,
+          "source_end": 60170,
           "source_line": 1008,
           "sha256": "7b83dbc0436b51e557993fbf8a482b55b5346332ab473371c4229aeb285d5953"
         }
       ],
-      "sha256": "ffe60a58073731b0b409eff174f11e81511c13f81ac015e4343f0536b450a672",
-      "characters": 6451
+      "sha256": "e544cbad15fdcbe4d8f4f277c1394c13efc0c316e3ae5d0e9712bad2bb2867b0",
+      "characters": 6437
     },
     {
       "number": 4,
@@ -191,8 +191,8 @@
           "key": "§8.1 C01合同与本版能力",
           "start_marker": "## 8 ",
           "end_marker": "### 8.2 ",
-          "source_start": 34144,
-          "source_end": 39488,
+          "source_start": 34128,
+          "source_end": 39472,
           "source_line": 574,
           "sha256": "a55dbd891859680b8ea38dd89ab19390d524870b7644480b65adf187eb77eb99"
         },
@@ -200,8 +200,8 @@
           "key": "§8.2 典型交互",
           "start_marker": "### 8.2 ",
           "end_marker": "### 8.3 ",
-          "source_start": 39488,
-          "source_end": 40838,
+          "source_start": 39472,
+          "source_end": 40822,
           "source_line": 653,
           "sha256": "2daf9ab7b51dcfaad7938a2b427302b8545a264c1807497d0b33cc9c5a5b052c"
         },
@@ -209,8 +209,8 @@
           "key": "§8.3 Blueprint承载",
           "start_marker": "### 8.3 ",
           "end_marker": "### 8.4 ",
-          "source_start": 40838,
-          "source_end": 45169,
+          "source_start": 40822,
+          "source_end": 45153,
           "source_line": 671,
           "sha256": "d323271563438145519d2a31710f5b41492038d00399c3c9c85906e6d5b1938c"
         },
@@ -218,8 +218,8 @@
           "key": "§8.4 确认与恢复产品行为",
           "start_marker": "### 8.4 ",
           "end_marker": "## 9 ",
-          "source_start": 45169,
-          "source_end": 45798,
+          "source_start": 45153,
+          "source_end": 45782,
           "source_line": 743,
           "sha256": "10167b9e596e9183a5c7ab31aa61af25add0c1c91028ea05fdf74de5324d2721"
         },
@@ -227,14 +227,14 @@
           "key": "§11 本版设计与后续范围",
           "start_marker": "## 11 ",
           "end_marker": "## 12 ",
-          "source_start": 60186,
-          "source_end": 60897,
+          "source_start": 60170,
+          "source_end": 60881,
           "source_line": 1029,
           "sha256": "1e130ea01e0c54d24814297aad9b36cb190f51069b243d6f4f67afbcb61cb9dd"
         }
       ],
-      "sha256": "a5a7c07cee673bd936b62836a045711e62f213d200d9a3a1c3d5c173b9bd09e5",
-      "characters": 12967
+      "sha256": "d9acb2b2768ae8bb10f536cd1964554f57c788ba5de9bb343bb91ed9be9c7b4b",
+      "characters": 12953
     },
     {
       "number": 5,
@@ -254,8 +254,8 @@
           "key": "§4 职责与授权",
           "start_marker": "## 4 ",
           "end_marker": "## 5 ",
-          "source_start": 7080,
-          "source_end": 9925,
+          "source_start": 7064,
+          "source_end": 9909,
           "source_line": 135,
           "sha256": "99cbd2c63a5620b21e188febc53e274c763392390d2b2d44ede03ac1d4a2f98a"
         },
@@ -263,14 +263,14 @@
           "key": "§9.6 共享与模型用途",
           "start_marker": "### 9.6 ",
           "end_marker": "## 10 ",
-          "source_start": 54855,
-          "source_end": 56485,
+          "source_start": 54839,
+          "source_end": 56469,
           "source_line": 944,
           "sha256": "ab7cb477ecb3d5fe22c899cb43fa627f20cb626662b20ec5987e6b4fdafd85dd"
         }
       ],
-      "sha256": "675b5fb3f5e554ab1d70541b4515cf55542ab5085650a5a0ebfd56a7c3248cf3",
-      "characters": 5062
+      "sha256": "8d942e9b472d8f92befd834b43b739810dd9bc0fc6687e621487c09177fb3570",
+      "characters": 5048
     },
     {
       "number": 6,
@@ -290,8 +290,8 @@
           "key": "§12.1–12.9 场景与判定",
           "start_marker": "## 12 ",
           "end_marker": "### 12.10 ",
-          "source_start": 60897,
-          "source_end": 71770,
+          "source_start": 60881,
+          "source_end": 71754,
           "source_line": 1043,
           "sha256": "8b77fd9d3a29c394c59bfca33102ef4ad48514e415a3f56f049565570502ba0c"
         },
@@ -299,8 +299,8 @@
           "key": "§12.10 工作台粗验与十组oracle",
           "start_marker": "### 12.10 ",
           "end_marker": "### 12.11 ",
-          "source_start": 71770,
-          "source_end": 73964,
+          "source_start": 71754,
+          "source_end": 73948,
           "source_line": 1197,
           "sha256": "742f5513037567c117ceb05195235f9c5aa25bd7e7346e109ad04ffaeb3c7afb"
         },
@@ -308,14 +308,14 @@
           "key": "§12.11 R2产品反例归属",
           "start_marker": "### 12.11 ",
           "end_marker": "## 13 ",
-          "source_start": 73964,
-          "source_end": 74643,
+          "source_start": 73948,
+          "source_end": 74627,
           "source_line": 1233,
           "sha256": "84e4d5fc84af16451086b90820a926ce68683c4831b185921312281a3e3f3378"
         }
       ],
-      "sha256": "f9176407cff38984bcbad9ed2daa73c8cb6305478094b768960f4619f6690a9c",
-      "characters": 14330
+      "sha256": "3b53dba933c78a0039025ee647671a60973cb1e48ab47df9966d34870700a7ab",
+      "characters": 14316
     }
   ],
   "engineering_appendix": {
@@ -676,5 +676,5 @@
       "06-全周期验证协议与夹具矩阵.md": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3"
     }
   },
-  "baseline_sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99"
+  "baseline_sha256": "0f22ef232ad83f1cd682a2bf7d0f0268fa192a805eafca3c0cf21cc39bf95fed"
 }

@@ -1,14 +1,14 @@
 # OLE 学情分析 Agent协同与Blueprint承载规范
 
-- 设计状态：候选(v1.0-candidate)
+- 设计状态：设计正式版 v1.0
 - 工程准入：未开始
-- 版本：v1.0-candidate · 2026-10-21 · Derived, Non-canonical
-- 批准人：待 PO 批准
-- 批准日期：待 PO 批准
+- 版本：v1.0 · 2026-10-23 · Derived, Non-canonical
+- 批准人：Ashrum（PO）
+- 批准日期：2026-10-23
 
 本版在既有工作台承接四画面与双入口；C01 qwen3.8-flash受控合成建议冒烟、C02核证、C03同运行未保存草稿；练习用既有题篮／编辑／保存。
 
-来源：[v1.0候选主稿](OLE_Learning_Analysis_Design_v1.0.md)。保留主稿章节号，产品正文单向派生；历史结论不作为当前通过。
+来源：[v1.0主稿](OLE_Learning_Analysis_Design_v1.0.md)。保留主稿章节号，产品正文单向派生；历史结论不作为当前通过。
 
 ## 范围与工程交接
 
