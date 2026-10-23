@@ -1,5 +1,7 @@
 "use client"
 
+import { ResizeHandleDemo } from "./resize-handle"
+
 import { BlueprintPolishDemo } from "./blueprint-polish"
 
 import { useState } from "react"
@@ -77,5 +79,5 @@ export function AccordionDemo(){return <DemoSection title="判别式说明"><Acc
 export function CollapsibleDemo(){const[open,setOpen]=useState(false);return <><BlueprintPolishDemo kind="triggers" /><DemoSection title="就地展开补充说明"><Collapsible open={open} onOpenChange={setOpen} className="max-w-xl"><CollapsibleTrigger render={<Button variant="outline"/>}>{open?'收起推导说明':'展开推导说明'}<ChevronDown className={open?'rotate-180':''}/></CollapsibleTrigger><CollapsiblePanel><p className="pt-4 text-read-body text-foreground">先将方程两边同除以二次项系数，再配方。对两边开平方后，得到求根公式。每一步均保留等价条件。</p></CollapsiblePanel></Collapsible></DemoSection></>}
 export function KbdDemo(){return <DemoSection title="快捷键标注"><div className="flex flex-wrap items-center gap-3 text-ui-body"><span>切换导航</span><KbdGroup><Kbd>Ctrl</Kbd><span>+</span><Kbd>B</Kbd></KbdGroup><span className="text-muted-foreground">macOS 使用 ⌘ B</span></div></DemoSection>}
 export function ScrollAreaDemo(){return <DemoSection title="有限高度内的材料清单"><ScrollArea className="h-64 max-w-md rounded-lg border" scrollbarGutter><div className="divide-y px-4">{Array.from({length:16},(_,i)=><div key={i} className="flex gap-3 py-3 text-ui-body"><FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground"/><div><p>{['二次方程','函数的单调性','导数与极值','数列求和'][i%4]} · 材料 {i+1}</p><p className="mt-1 text-ui-hint text-muted-foreground">教研材料 · 待复核</p></div></div>)}</div></ScrollArea></DemoSection>}
-export function SeparatorDemo(){return <DemoSection title="仅在必要处区分内容"><div className="max-w-md space-y-4"><div><h3 className="font-medium">材料复核</h3><p className="mt-1 text-ui-hint text-muted-foreground">先完成阅读，再提交修改。</p></div><Separator/><div className="flex h-5 items-center gap-4 text-ui-body"><span>正文</span><Separator orientation="vertical"/><span>元数据</span><Separator orientation="vertical"/><span>历史记录</span></div></div></DemoSection>}
+export function SeparatorDemo(){return <><ResizeHandleDemo/><DemoSection title="仅在必要处区分内容"><div className="max-w-md space-y-4"><div><h3 className="font-medium">材料复核</h3><p className="mt-1 text-ui-hint text-muted-foreground">先完成阅读，再提交修改。</p></div><Separator/><div className="flex h-5 items-center gap-4 text-ui-body"><span>正文</span><Separator orientation="vertical"/><span>元数据</span><Separator orientation="vertical"/><span>历史记录</span></div></div></DemoSection></>}
 export const contentDemos={avatar:AvatarDemo,badge:BadgeDemo,card:CardDemo,frame:FrameDemo,table:TableDemo,accordion:AccordionDemo,collapsible:CollapsibleDemo,kbd:KbdDemo,'scroll-area':ScrollAreaDemo,separator:SeparatorDemo}
