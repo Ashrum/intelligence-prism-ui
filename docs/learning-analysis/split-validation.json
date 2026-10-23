@@ -1,8 +1,8 @@
 {
   "status": "PASS",
-  "revision": "v1.0-candidate",
+  "revision": "v1.0",
   "scope": "document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission",
-  "baseline_sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99",
+  "baseline_sha256": "0f22ef232ad83f1cd682a2bf7d0f0268fa192a805eafca3c0cf21cc39bf95fed",
   "specs": 6,
   "verbatim_product_segments": 22,
   "section4_to12_continuous": true,
@@ -12,9 +12,9 @@
   "la08_oracles": 10,
   "historical_master_body_unchanged": true,
   "historical_r1_hash_verified": true,
-  "local_links_checked": 121,
-  "tables_checked": 136,
-  "browser_acceptance": "待 Supervisor 执行",
-  "c01_smoke": "待执行",
-  "approval": "待 PO 批准"
+  "local_links_checked": 135,
+  "tables_checked": 138,
+  "browser_acceptance": "Supervisor L6 recorded; scope and untested items in SCREENS.md; not rerun by document tool",
+  "c01_smoke": "W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md",
+  "approval": "Ashrum（PO） · 2026-10-23"
 }

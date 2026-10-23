@@ -1,9 +1,9 @@
 {
-  "revision": "v1.0-candidate",
-  "status": "candidate-not-published",
+  "revision": "v1.0",
+  "status": "design-final-local-sync-pending",
   "engineeringAdmission": "not-started",
-  "approvalPerson": "待 PO 批准",
-  "approvalDate": "待 PO 批准",
+  "approvalPerson": "Ashrum（PO）",
+  "approvalDate": "2026-10-23",
   "publication": {
     "github": "not-synced",
     "outline": "not-synced",
@@ -12,38 +12,38 @@
   "files": [
     {
       "path": "00-实施规格索引.md",
-      "sha256": "439f081363e208b8f4e0aa8fcda767c52d769ea64667c7b4a48a2c2328c4e918",
-      "bytes": 3508
+      "sha256": "d180903acb4cfdcbd14528e5d22e478ff3afa38ca011168cdc72e2d69322ebc6",
+      "bytes": 3586
     },
     {
       "path": "01-数据投影与指标规范.md",
-      "sha256": "c7eaa43d298f8bc3882d2e4aa99a86207fbae4a614962664fa17b69a2bfff4f7",
-      "bytes": 55089
+      "sha256": "8ef03ad6f85c90cc373fdbad2d9b50023d968d0d8f032d0b9726daf17e52e160",
+      "bytes": 55069
     },
     {
       "path": "02-教学行动与支持逻辑规范.md",
-      "sha256": "58153a0fa3568c9aac7f2c97c5a6529767ce0030da07c0b1c75b94279f4bd252",
-      "bytes": 24099
+      "sha256": "e28938f4f489df04008b335ecc86fed499500b627ff7f818379747cd234e2bcd",
+      "bytes": 24079
     },
     {
       "path": "03-独立页重构与迁移规范.md",
-      "sha256": "ffe60a58073731b0b409eff174f11e81511c13f81ac015e4343f0536b450a672",
-      "bytes": 14308
+      "sha256": "e544cbad15fdcbe4d8f4f277c1394c13efc0c316e3ae5d0e9712bad2bb2867b0",
+      "bytes": 14288
     },
     {
       "path": "04-Agent协同与Blueprint承载规范.md",
-      "sha256": "a5a7c07cee673bd936b62836a045711e62f213d200d9a3a1c3d5c173b9bd09e5",
-      "bytes": 30911
+      "sha256": "d9acb2b2768ae8bb10f536cd1964554f57c788ba5de9bb343bb91ed9be9c7b4b",
+      "bytes": 30891
     },
     {
       "path": "05-多角色与跨域披露规范.md",
-      "sha256": "675b5fb3f5e554ab1d70541b4515cf55542ab5085650a5a0ebfd56a7c3248cf3",
-      "bytes": 12938
+      "sha256": "8d942e9b472d8f92befd834b43b739810dd9bc0fc6687e621487c09177fb3570",
+      "bytes": 12918
     },
     {
       "path": "06-全周期验证协议与夹具矩阵.md",
-      "sha256": "f9176407cff38984bcbad9ed2daa73c8cb6305478094b768960f4619f6690a9c",
-      "bytes": 32931
+      "sha256": "3b53dba933c78a0039025ee647671a60973cb1e48ab47df9966d34870700a7ab",
+      "bytes": 32911
     },
     {
       "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
@@ -52,13 +52,13 @@
     },
     {
       "path": "OLE_Learning_Analysis_Design_v1.0.md",
-      "sha256": "d23e52aa3cff7052d5eb76bb1cdde5110eb33973dcb22e272fb8be42a02d1e99",
-      "bytes": 243348
+      "sha256": "0f22ef232ad83f1cd682a2bf7d0f0268fa192a805eafca3c0cf21cc39bf95fed",
+      "bytes": 243324
     },
     {
       "path": "README.md",
-      "sha256": "ba500db705dc72f368dfdd594e457ab2545e8667676af93b55c51ed9bd66686b",
-      "bytes": 2346
+      "sha256": "f19054cf75b569b43ed1f7c07ea13a688835060470e90afd22ad02506847ae30",
+      "bytes": 2633
     },
     {
       "path": "REFERENCE-ARCHIVE.md",
@@ -67,13 +67,13 @@
     },
     {
       "path": "RELEASE.md",
-      "sha256": "092e39ba43db0cda4f9d8a652da4bd95f5606940838c0fc5a372cf89d0f8ac7f",
-      "bytes": 17010
+      "sha256": "b2d5936caf5db290f38422cb723d129f5eb38facfcebc493c43e77a3f1a57d2d",
+      "bytes": 20028
     },
     {
       "path": "SCREENS.md",
-      "sha256": "8ea8ecb0a4a510ff069da3fa77ca390ddf6a0560d3cba1356705db220a75cffc",
-      "bytes": 5958
+      "sha256": "327ce9a6fc6e78d3419e33d1f9c44ed93395122131f5ff6d3727d12e218993bc",
+      "bytes": 13620
     },
     {
       "path": "agent-ui-v0.7/screens/01-overview-r2.png",
@@ -236,6 +236,31 @@
       "bytes": 12625
     },
     {
+      "path": "evidence/v1.0/night-overview-charts.jpg",
+      "sha256": "999f386819f349693f40e29413b3516aa8294e8fd448aff8f80fb324a4cb01b6",
+      "bytes": 29708
+    },
+    {
+      "path": "evidence/v1.0/night-report-snapshot.jpg",
+      "sha256": "4dfe773a02d15beac74ffcccd68eeaf996c486a099fcb7d7ff5a92df829280c7",
+      "bytes": 23310
+    },
+    {
+      "path": "evidence/v1.0/w284-text200-mistakes-fixed.jpg",
+      "sha256": "bfb7e74ab17061ffc79a11694b1deaa61c1cc073eef07732ffa42b74ef3cbf28",
+      "bytes": 32704
+    },
+    {
+      "path": "evidence/v1.0/w284-text200-overview-fixed.jpg",
+      "sha256": "c294bcae5cbe5c194a27b8f40afe7f65607c473fe3b9610326c081157304b66a",
+      "bytes": 39316
+    },
+    {
+      "path": "evidence/v1.0/zoom200-640-mistakes-ok.jpg",
+      "sha256": "ba44601cafadc41a7d63755b5d28816ce337d1d7cd16d32849530f72a2c56595",
+      "bytes": 42691
+    },
+    {
       "path": "prototype-source/app.js",
       "sha256": "9e2d253430fbec4d09db2ad02d89f338969a8bf7de5473d6243dbd44a19fd4a4",
       "bytes": 47512
@@ -297,13 +322,13 @@
     },
     {
       "path": "split-manifest.json",
-      "sha256": "4ba96681e34290a26de53a855519f3f2acbdcfc57bd2ebe10d2ae91d09a11844",
-      "bytes": 24366
+      "sha256": "858280d57f3fdb37a2e2c91c7f046f1b7886436660b74146e226865c68f67351",
+      "bytes": 24357
     },
     {
       "path": "split-validation.json",
-      "sha256": "9a70366e328caa26451f7810522dee02d98d7ea297bef917eede2695e195eb34",
-      "bytes": 736
+      "sha256": "0742d6b0ac79986a1c0aabd445de61d85bf6626cf16275b0b5d71f156cca8d43",
+      "bytes": 879
     },
     {
       "path": "v0.7-审核决策与差异清单.md",
