@@ -88,7 +88,7 @@ for (const core of ['light', 'paper', 'dark']) test(`P104 ${core}: no CSS delta 
   // P105 independently proves its additive block cannot affect core themes.
   // P106 opt-in styles are independently checked against 0965f49.
   // P107 checks its visual-only delta and the remaining CSS against 1486441.
-  const untouched = text.replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, '').replace(/\/\* P105 ·[\s\S]*?\/\* End P105 blueprint polish\. \*\/\n\n/, '');
+  const untouched = text.replace(/\n\/\* P113 ·[\s\S]*$/, '').replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, '').replace(/\/\* P105 ·[\s\S]*?\/\* End P105 blueprint polish\. \*\/\n\n/, '');
   assert.equal(untouched, before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''));
   const compile = input => transform({ code: Buffer.from(input), minify: true }).code.toString();
   assert.equal(compile(untouched), compile(before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '')));

@@ -123,7 +123,7 @@ for (const core of ['light', 'paper', 'dark']) test(`P105 ${core}: zero CSS delt
   }
   // P106 opt-in styles are independently checked against 0965f49.
   // P107 independently guards the removed P75 geometry and its isolated additions.
-  assert.equal(text.replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, ''), before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''), 'all other pre-existing CSS stays byte-identical');
+  assert.equal(text.replace(/\n\/\* P113 ·[\s\S]*$/, '').replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, ''), before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''), 'all other pre-existing CSS stays byte-identical');
   assert.equal(read('app/(next)/next/theme.css'), before('app/(next)/next/theme.css'));
 });
 

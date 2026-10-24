@@ -285,11 +285,17 @@ export interface BpSizeBarProps {
   formatValue?: ChartValueFormatter
   /** Hide the visual row heading; it remains in the bar accessible name. */
   hideRowLabel?: boolean
+  /** Opt in to native whole-row activation; the host owns navigation and selection. */
+  onRowActivate?: (rowId: string) => void
+  /** Highlight only in interactive mode; activation never updates this value internally. */
+  activeRowId?: string
+  /** Action prefix; the component appends row facts so values remain accessible. */
+  rowActionLabel?: (row: BpSizeBarProps["rows"][number]) => string
   className?: string
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, formatValue, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
   const compact = size === "xs"
   const hideLabel = compact || hideRowLabel
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
@@ -310,18 +316,27 @@ export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
       const formattedMarker = markerText(row)
-      return <div key={row.id} className="space-y-3">
-        <div className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled")} data-display={row.display !== undefined ? "" : undefined}>
-        {!hideLabel && <span className="text-item-title">{row.label}</span>}
-        <span role="img" aria-label={`${row.label}：${row.segments.map((s, index) => {
+      const segmentFacts = `${row.segments.map((s, index) => {
           const formatted = segmentText(s, index, row)
           return `${s.label} ${formatted ? formatted.ariaText ?? formatted.text : `${sizeNumber.format(s.value)}${row.unit ?? ""}`}`
-        }).join("，")}${marker ? `，${marker.label} ${formattedMarker ? formattedMarker.ariaText ?? formattedMarker.text : `${sizeNumber.format(marker.value)}${row.unit ?? ""}`}` : ""}`} className="bp-size-bar">
+        }).join("，")}${marker ? `，${marker.label} ${formattedMarker ? formattedMarker.ariaText ?? formattedMarker.text : `${sizeNumber.format(marker.value)}${row.unit ?? ""}`}` : ""}`
+      const rowFacts = `${row.label}：${segmentFacts}`
+      const Row = onRowActivate ? "button" : "div"
+      const actionProps = onRowActivate ? {
+        type: "button" as const,
+        onClick: () => onRowActivate(row.id),
+        "aria-current": activeRowId === row.id ? "true" as const : undefined,
+        "aria-label": `${rowActionLabel?.(row)?.trim() || `在报告中查看：${row.label}`}；${segmentFacts}${row.display ? `；${row.display}` : ""}`,
+      } : {}
+      return <div key={row.id} className="space-y-3">
+        <Row {...actionProps} className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled", onRowActivate && "bp-size-row-action w-full text-left")} data-display={row.display !== undefined ? "" : undefined}>
+        {!hideLabel && <span aria-hidden={onRowActivate ? true : undefined} className="text-item-title">{row.label}</span>}
+        <span role={onRowActivate ? undefined : "img"} aria-label={onRowActivate ? undefined : rowFacts} aria-hidden={onRowActivate ? true : undefined} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
           {marker && Number.isFinite(marker.value) && <i aria-hidden="true" className="bp-size-marker" style={{ left: `${total > 0 ? Math.min(100, Math.max(0, marker.value / total * 100)) : 0}%` }} />}
         </span>
-        <span hidden={compact || row.display === "" || undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
-        </div>
+        <span hidden={compact || row.display === "" || undefined} aria-hidden={onRowActivate ? true : undefined} className="min-w-0 text-right text-ui-meta text-muted-foreground [overflow-wrap:anywhere]"><b className="text-ui-action text-foreground tabular-nums">{row.display ?? sizeNumber.format(sum)}</b>{row.display === undefined && <> {row.unit}</>}</span>
+        </Row>
         {legend && legendValues && rows.length > 1 && renderLegend(row.segments, `${row.label}：图例`, row.unit, row)}
       </div>
     })}

@@ -20,6 +20,20 @@ import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
 import { BlueprintSectionHeader, BlueprintSheet, BpTargetLock, BpDiagramCallout, BpEntryRow, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
+/** Synthetic host state only: no report routing, persistence or business execution. */
+export function BlueprintSizeBarActivationDemo() {
+  const [activeRowId, setActiveRowId] = useState("equation")
+  const rows = [
+    { id: "equation", label: "一元二次方程 x²", total: 40, unit: "人", display: "28 / 40", segments: [{ id: "mastered", label: "已掌握", value: 28, fill: "ink" as const }] },
+    { id: "geometry", label: "相似三角形的判定与性质（长中文知识点）", total: 40, unit: "人", display: "21 / 40", segments: [{ id: "mastered", label: "已掌握", value: 21, fill: "ink" as const }] },
+  ]
+  return <section id="sizebar-activation" aria-label="逐行激活示例（合成数据）" className="space-y-3">
+    <BpMinor code="BP-06.2 · Size Bar" label="逐行激活（合成数据）" />
+    <BpSizeBar rows={rows} legend={false} onRowActivate={setActiveRowId} activeRowId={activeRowId} rowActionLabel={row => `查看知识点：${row.label}`} />
+    <p role="status" className="text-ui-hint text-muted-foreground">当前选中：{rows.find(row => row.id === activeRowId)?.label}</p>
+  </section>
+}
+
 const tabs = [{ value: "all", label: "全部" }, { value: "todo", label: "待批阅" }, { value: "review", label: "待复核" }, { value: "locked", label: "已锁定", disabled: true }, { value: "done", label: "已完成" }, { value: "issue", label: "异常" }]
 const tabNotes: Record<string, string> = { all: "42 份答卷", todo: "9 份等待 AI 批阅", review: "7 份需要教师确认", done: "22 份已出分", issue: "4 份未提交或扫描失败" }
 const views = [{ value: "blueprint", label: "blueprint", description: "工程图纸，适合结构与流程" }, { value: "paper", label: "paper", description: "暖纸，适合长中文题干与公式推导的连续阅读" }, { value: "light", label: "light", description: "浅色，日常工作" }]
@@ -208,6 +222,7 @@ export function BlueprintComponentsDemo() {
           </div>
         </div>
       </div>
+      <BlueprintSizeBarActivationDemo />
       <section id="calibration" className="mt-9 space-y-5" aria-label="学情比例与状态样例">
         <BpMinor code="BP-06.1 · Size Bar" label="补回与保持（合成数据）" />
         <BpSizeBar legendValues rows={[

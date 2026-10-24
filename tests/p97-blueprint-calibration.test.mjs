@@ -83,7 +83,11 @@ function matches(selector, node) {
     assert.fail(JSON.stringify(s));
   });
 }
-const badgeRules = postcss.parse(read('app/(next)/next/blueprint.css').split('/* P97 · Status badges')[1].split('*/')[1]).nodes.filter(n => n.type === 'rule').map(rule => ({ rule, selectors: rule.selectors.map(parse) }));
+const stylesheet = postcss.parse(read('app/(next)/next/blueprint.css'));
+const badgeStart = stylesheet.nodes.findIndex(n => n.type === 'comment' && n.text.startsWith('P97 · Status badges'));
+assert.ok(badgeStart >= 0);
+const badgeEnd = stylesheet.nodes.findIndex((n, i) => i > badgeStart && n.type === 'comment');
+const badgeRules = stylesheet.nodes.slice(badgeStart + 1, badgeEnd < 0 ? undefined : badgeEnd).filter(n => n.type === 'rule').map(rule => ({ rule, selectors: rule.selectors.map(parse) }));
 const element = (attrs, parent, classes = []) => ({ attrs, parent, classes });
 const style = node => Object.fromEntries(badgeRules.filter(({ selectors }) => selectors.some(s => matches(s, node))).flatMap(({ rule }) => rule.nodes.filter(n => n.type === 'decl').map(d => [d.prop, d.value])));
 const badgeClasses = variant => render(h(api.Badge, { variant }, '状态')).match(/class="([^"]+)"/)[1].split(/\s+/);
