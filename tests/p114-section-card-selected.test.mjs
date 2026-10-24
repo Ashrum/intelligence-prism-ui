@@ -71,7 +71,7 @@ for(const theme of themes) test(`P114 ${theme}: selected and unselected DOM iden
     for(const outer of themes) assert.ok(render(h('div',{'data-prism-theme':outer},h('div',{'data-agent-preview':'','data-prism-theme':theme},h(api.BpSectionCard,props)))).endsWith(inner+'</div></div>'));
   }
 });
-const path='app/(next)/next/blueprint.css',css=read(path),index=css.indexOf('\n/* P114 ·');
+const path='app/(next)/next/blueprint.css',css=read(path).replace(/\n\/\* P115 ·[\s\S]*$/, ''),index=css.indexOf('\n/* P114 ·');
 assert.ok(index>0);
 const block=css.slice(index),ast=postcss.parse(block);
 test('P114 append-only CSS and unchanged tokens/coss; only exact paint declarations allowed',()=>{
