@@ -1,9 +1,9 @@
 {
-  "revision": "v1.0",
-  "status": "design-final-local-sync-pending",
+  "revision": "v1.1",
+  "status": "design-candidate-local-sync-pending",
   "engineeringAdmission": "not-started",
-  "approvalPerson": "Ashrum（PO）",
-  "approvalDate": "2026-10-23",
+  "approvalPerson": "待签发",
+  "approvalDate": "待签发",
   "publication": {
     "github": "not-synced",
     "outline": "not-synced",
@@ -12,38 +12,38 @@
   "files": [
     {
       "path": "00-实施规格索引.md",
-      "sha256": "d180903acb4cfdcbd14528e5d22e478ff3afa38ca011168cdc72e2d69322ebc6",
-      "bytes": 3586
+      "sha256": "0cce9834943cf6746e0ebeff405b7e510e3739b59db5df4b223e71899f353f48",
+      "bytes": 3649
     },
     {
       "path": "01-数据投影与指标规范.md",
-      "sha256": "8ef03ad6f85c90cc373fdbad2d9b50023d968d0d8f032d0b9726daf17e52e160",
-      "bytes": 55069
+      "sha256": "cf9f4285ad564920e1677cb7fba7c59572a83bfc5a6cf9d4cc85062707a640b3",
+      "bytes": 55098
     },
     {
       "path": "02-教学行动与支持逻辑规范.md",
-      "sha256": "e28938f4f489df04008b335ecc86fed499500b627ff7f818379747cd234e2bcd",
-      "bytes": 24079
+      "sha256": "f529455ce91099cb3e0e7f99f70169899ae14a260d57f90bf30830a8fe4f97fc",
+      "bytes": 24108
     },
     {
       "path": "03-独立页重构与迁移规范.md",
-      "sha256": "e544cbad15fdcbe4d8f4f277c1394c13efc0c316e3ae5d0e9712bad2bb2867b0",
-      "bytes": 14288
+      "sha256": "777d2fcf1f5a4ab40107c30515fc49b7aaba77ffb8c88fea738418a7d57e62aa",
+      "bytes": 14317
     },
     {
       "path": "04-Agent协同与Blueprint承载规范.md",
-      "sha256": "d9acb2b2768ae8bb10f536cd1964554f57c788ba5de9bb343bb91ed9be9c7b4b",
-      "bytes": 30891
+      "sha256": "d1e59ccc0da5e980ff4cfc809c61a2f62989b86ae8235ce99f0d081accf06ac4",
+      "bytes": 37110
     },
     {
       "path": "05-多角色与跨域披露规范.md",
-      "sha256": "8d942e9b472d8f92befd834b43b739810dd9bc0fc6687e621487c09177fb3570",
-      "bytes": 12918
+      "sha256": "b06124679c88ee72fda3c7018365394f6ab1aad5c27f2c2e0cf09dd0f3a74927",
+      "bytes": 13560
     },
     {
       "path": "06-全周期验证协议与夹具矩阵.md",
-      "sha256": "3b53dba933c78a0039025ee647671a60973cb1e48ab47df9966d34870700a7ab",
-      "bytes": 32911
+      "sha256": "39a3416df629f14177a373c2703a0734b6eec5f952f0718fdb094fd2feb3c90a",
+      "bytes": 35869
     },
     {
       "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
@@ -52,13 +52,18 @@
     },
     {
       "path": "OLE_Learning_Analysis_Design_v1.0.md",
-      "sha256": "0f22ef232ad83f1cd682a2bf7d0f0268fa192a805eafca3c0cf21cc39bf95fed",
-      "bytes": 243324
+      "sha256": "bd05cfc7875183c64ba6d614f6787373bd3fbcc52c38146a3bcdaf879b5c808d",
+      "bytes": 243396
+    },
+    {
+      "path": "OLE_Learning_Analysis_Design_v1.1.md",
+      "sha256": "c60e2b791b9c6b56614ecafd0a047b4a06483920efae362516f1db5d31f6052e",
+      "bytes": 256655
     },
     {
       "path": "README.md",
-      "sha256": "f19054cf75b569b43ed1f7c07ea13a688835060470e90afd22ad02506847ae30",
-      "bytes": 2633
+      "sha256": "440ae3433b0c844cd0f6f5066f53a661e7a3077403ec0365dbfc6b7000e73d67",
+      "bytes": 2916
     },
     {
       "path": "REFERENCE-ARCHIVE.md",
@@ -67,13 +72,13 @@
     },
     {
       "path": "RELEASE.md",
-      "sha256": "b2d5936caf5db290f38422cb723d129f5eb38facfcebc493c43e77a3f1a57d2d",
-      "bytes": 20028
+      "sha256": "bcb9398925f3953eb35770ff3f39ea5b167569e2a8b5346b9cb444e1aae01c6a",
+      "bytes": 24461
     },
     {
       "path": "SCREENS.md",
-      "sha256": "327ce9a6fc6e78d3419e33d1f9c44ed93395122131f5ff6d3727d12e218993bc",
-      "bytes": 13620
+      "sha256": "f70ede637e741ee92902263ccbe533724340cfb7ee6d733dd9eb1f12c0028daa",
+      "bytes": 17468
     },
     {
       "path": "agent-ui-v0.7/screens/01-overview-r2.png",
@@ -127,8 +132,8 @@
     },
     {
       "path": "engineering-appendix-v1.0.md",
-      "sha256": "a9d36c9602c197925db1474b1d841d22219611a4592c436b2ed118e274dc8c2d",
-      "bytes": 66557
+      "sha256": "f9459f97249a83a7748e682ba4aac9836c6d25f7b7a587994639460826811746",
+      "bytes": 66604
     },
     {
       "path": "evidence/approved-v0.7-r1.md",
@@ -322,13 +327,13 @@
     },
     {
       "path": "split-manifest.json",
-      "sha256": "858280d57f3fdb37a2e2c91c7f046f1b7886436660b74146e226865c68f67351",
-      "bytes": 24357
+      "sha256": "636b2b2bad100da37922cb74a5b57252db36efeccc783c1abb4d0a235d0e770d",
+      "bytes": 24900
     },
     {
       "path": "split-validation.json",
-      "sha256": "0742d6b0ac79986a1c0aabd445de61d85bf6626cf16275b0b5d71f156cca8d43",
-      "bytes": 879
+      "sha256": "466f80251a5bd41c20715ff179803db105e8d4abb8c166471632c89d46948b1b",
+      "bytes": 1003
     },
     {
       "path": "v0.7-审核决策与差异清单.md",
