@@ -1,0 +1,283 @@
+{
+  "baseline": "fc50fac4fce439f7e1855fb616b9f469aab4609b",
+  "cases": [
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "titleRule": false
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "titleRule": false,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "titleRule": true
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "titleRule": true,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default",
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default",
+        "titleRule": false
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default",
+        "titleRule": false,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default",
+        "titleRule": true
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "default",
+        "titleRule": true,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card mt-6\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact",
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card bp-section-card-compact mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact",
+        "titleRule": false
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact",
+        "titleRule": false,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card bp-section-card-compact mt-6\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact",
+        "titleRule": true
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "任务范围与一元二次方程 x²",
+        "density": "compact",
+        "titleRule": true,
+        "letter": " A ",
+        "meta": "section-preview.pdf · 第 1 页",
+        "action": "查看说明",
+        "children": "长中文分节内容",
+        "id": "host-section",
+        "className": "mt-6",
+        "aria-current": "page"
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" id=\"host-section\" aria-current=\"page\" class=\"bp-section-card bp-section-card-compact mt-6\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">A</span><span class=\"bp-section-card-label\">任务范围与一元二次方程 x²</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">section-preview.pdf · 第 1 页</div><div class=\"bp-card-actions\">查看说明</div></header><div class=\"bp-card-body\">长中文分节内容</div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "标题",
+        "headingLevel": 2,
+        "letter": " ",
+        "meta": 0
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h2 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">标题</span></h2><div class=\"bp-section-card-meta font-mono text-ui-meta\">0</div></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "标题",
+        "headingLevel": 3,
+        "letter": " ",
+        "meta": 0
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">标题</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">0</div></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "标题",
+        "headingLevel": 4,
+        "letter": " ",
+        "meta": 0
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h4 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">标题</span></h4><div class=\"bp-section-card-meta font-mono text-ui-meta\">0</div></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "标题",
+        "headingLevel": 5,
+        "letter": " ",
+        "meta": 0
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h5 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">标题</span></h5><div class=\"bp-section-card-meta font-mono text-ui-meta\">0</div></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BpSectionCard",
+      "props": {
+        "title": "标题",
+        "headingLevel": 6,
+        "letter": " ",
+        "meta": 0
+      },
+      "html": "<section aria-labelledby=\"_R_0_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h6 id=\"_R_0_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-label\">标题</span></h6><div class=\"bp-section-card-meta font-mono text-ui-meta\">0</div></header><div class=\"bp-card-body\"></div></section>"
+    },
+    {
+      "name": "BlueprintCardsDemo",
+      "props": {},
+      "html": "<section id=\"object-section-cards\" aria-label=\"原件卡片与试卷分节\" class=\"space-y-6\"><header class=\"bp-section-header\" data-slot=\"bp-section-header\"><div class=\"bp-section-main\"><div class=\"bp-section-title-row\"><h2 id=\"_R_1_\" class=\"bp-section-title text-section-title\">原件与成果分节</h2></div><p class=\"bp-section-description text-ui-hint\">原件沿用现有固定扫描夹具；下方试卷有 A / B 两个实际分节。状态和计数均来自当前示例内容。</p></div></header><section aria-labelledby=\"_R_2_\" class=\"bp-frame-card\" data-slot=\"bp-frame-card\"><header class=\"bp-frame-card-head\"><h3 id=\"_R_2_\" class=\"bp-frame-card-title text-ui-action\">作答原件 · 完整扫描纸</h3><div class=\"bp-frame-card-status text-ui-hint\" data-tone=\"info\"><span class=\"bp-frame-card-dot\" aria-hidden=\"true\"></span><span class=\"bp-frame-card-status-label\">第 1 / 2 份作答</span></div><div class=\"bp-card-actions\"><button type=\"button\" aria-label=\"查看上一份原件\" disabled=\"\" data-icon=\"\" class=\"bp-tool\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-arrow-left size-4\" aria-hidden=\"true\"><path d=\"m12 19-7-7 7-7\"></path><path d=\"M19 12H5\"></path></svg></button><button type=\"button\" aria-label=\"查看下一份原件\" data-icon=\"\" class=\"bp-tool\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-arrow-right size-4\" aria-hidden=\"true\"><path d=\"M5 12h14\"></path><path d=\"m12 5 7 7-7 7\"></path></svg></button></div></header><div class=\"bp-card-body\"><img src=\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22820%22%3E%3Crect%20width%3D%22600%22%20height%3D%22820%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M40%2090H560M40%20120H560M40%20360H560M40%20720H560%22%20stroke%3D%22black%22%2F%3E%3C%2Fsvg%3E\" alt=\"完整扫描纸 · 固定扫描夹具\" width=\"600\" height=\"820\" class=\"mx-auto h-auto w-full max-w-60\"/></div></section><section aria-labelledby=\"_R_3_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_3_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">选择题</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 1 题 · 共 1 题</div><div class=\"bp-card-actions\"><button type=\"button\" aria-label=\"查看选择题作答说明\" aria-expanded=\"false\" aria-controls=\"bp-choice-note\" data-icon=\"\" class=\"bp-tool\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-info size-4\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 16v-4\"></path><path d=\"M12 8h.01\"></path></svg></button></div></header><div class=\"bp-card-body\"><p class=\"text-read-body\">1. 一元二次方程的最高次数是（　）。</p><ul class=\"mt-3 flex flex-wrap gap-x-6 gap-y-2 text-read-body\"><li>A. 1</li><li>B. 2</li><li>C. 3</li><li>D. 4</li></ul><p id=\"bp-choice-note\" hidden=\"\" class=\"mt-4 text-ui-hint text-muted-foreground\">每题只有一个正确选项，请在答题卡中填写。</p></div></section><section aria-labelledby=\"_R_4_\" class=\"bp-section-card\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_4_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">B</span><span class=\"bp-section-card-label\">填空题</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">第 2 题 · 共 1 题</div></header><div class=\"bp-card-body\"><p class=\"text-read-body\">2. 若下列方程有两个相等的实数根，则判别式的值为______。</p><div class=\"relative min-w-0\" data-question-equation=\"\"><div class=\"prism-question-equation\" role=\"group\" aria-label=\"x 平方减二 x 加一等于零（超出宽度时可横向滚动）\" tabindex=\"0\"><math class=\"prism-math\" display=\"block\" aria-label=\"x 平方减二 x 加一等于零\"><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></math></div></div></div></section></section>"
+    },
+    {
+      "name": "BlueprintTitleRuleDemo",
+      "props": {},
+      "html": "<section id=\"title-rules\" aria-label=\"标题墨线\" class=\"space-y-6\"><header class=\"bp-section-header\" data-slot=\"bp-section-header\"><div class=\"bp-section-main\"><div class=\"bp-section-title-row\"><h2 id=\"_R_1_\" class=\"bp-section-title text-section-title\">标题墨线</h2></div><p class=\"bp-section-description text-ui-hint\">成组标题与分节使用结构墨线；正文内次级小标题保留细线。</p></div></header><h3 class=\"bp-minor text-block-title\" data-rule=\"ink\"><span class=\"bp-minor-code\">01</span><span class=\"bp-minor-label\">任务设置</span></h3><section aria-labelledby=\"_R_3_\" class=\"bp-section-card\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_3_\" class=\"bp-section-card-title text-block-title\"><span class=\"bp-section-card-letter font-mono text-stat-display\">A</span><span class=\"bp-section-card-label\">任务范围</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">2 个班级</div><div class=\"bp-card-actions\"><button type=\"button\" aria-label=\"查看任务范围说明\" aria-expanded=\"false\" aria-controls=\"bp-title-rule-note\" data-icon=\"\" class=\"bp-tool\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-info size-4\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 16v-4\"></path><path d=\"M12 8h.01\"></path></svg></button></div></header><div class=\"bp-card-body\"><p class=\"text-ui-body\">高一（1）班、高一（2）班 · 合成数据。</p><p id=\"bp-title-rule-note\" hidden=\"\" class=\"mt-3 text-ui-hint\">仅展示已选范围，不执行创建任务。</p></div></section><section aria-labelledby=\"_R_4_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_4_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">批阅设置</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">1 项设置</div></header><div class=\"bp-card-body\"><h4 class=\"bp-minor text-block-title\"><span class=\"bp-minor-label\">评分说明</span></h4><p class=\"text-ui-body\">按题目评分点复核作答。</p></div></section><section aria-labelledby=\"_R_5_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_5_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">长中文分节标题：检查多个班级的任务范围与批阅设置是否完整</span></h3><div class=\"bp-section-card-meta font-mono text-ui-meta\">task-scope-and-grading-settings-preview.pdf</div></header><div class=\"bp-card-body\"><h4 class=\"bp-minor text-block-title\" data-rule=\"ink\"><span class=\"bp-minor-label\">长中文成组标题：分节范围、评分说明与教师复核要求</span></h4><div class=\"relative min-w-0\" data-question-equation=\"\"><div class=\"prism-question-equation\" role=\"group\" aria-label=\"x 平方减二 x 加一等于零（超出宽度时可横向滚动）\" tabindex=\"0\"><math class=\"prism-math\" display=\"block\" aria-label=\"x 平方减二 x 加一等于零\"><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></math></div></div></div></section><div class=\"space-y-4\"><div data-agent-preview=\"true\" data-prism-theme=\"light\" class=\"bg-background p-4 text-foreground\"><h3 class=\"bp-minor text-block-title\" data-rule=\"ink\"><span class=\"bp-minor-label\">light · 中性标题线</span></h3><section aria-labelledby=\"_R_2e_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_2e_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">局部主题分节</span></h3></header><div class=\"bp-card-body\"><p class=\"text-ui-body\">线色与线宽跟随此预览的主题。</p></div></section></div><div data-agent-preview=\"true\" data-prism-theme=\"paper\" class=\"bg-background p-4 text-foreground\"><h3 class=\"bp-minor text-block-title\" data-rule=\"ink\"><span class=\"bp-minor-label\">paper · 中性标题线</span></h3><section aria-labelledby=\"_R_2m_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_2m_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">局部主题分节</span></h3></header><div class=\"bp-card-body\"><p class=\"text-ui-body\">线色与线宽跟随此预览的主题。</p></div></section></div><div data-agent-preview=\"true\" data-prism-theme=\"dark\" class=\"bg-background p-4 text-foreground\"><h3 class=\"bp-minor text-block-title\" data-rule=\"ink\"><span class=\"bp-minor-label\">dark · 中性标题线</span></h3><section aria-labelledby=\"_R_2u_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\" data-title-rule=\"\"><header class=\"bp-section-card-head\"><h3 id=\"_R_2u_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-label\">局部主题分节</span></h3></header><div class=\"bp-card-body\"><p class=\"text-ui-body\">线色与线宽跟随此预览的主题。</p></div></section></div></div></section>"
+    },
+    {
+      "name": "BlueprintTrendDemo",
+      "props": {},
+      "html": "<section id=\"trend-calibration\" aria-label=\"C0 趋势图对照样例\" class=\"space-y-3\"><section aria-labelledby=\"_R_1_\" class=\"bp-section-card bp-section-card-compact\" data-slot=\"bp-section-card\"><header class=\"bp-section-card-head\"><h3 id=\"_R_1_\" class=\"bp-section-card-title text-item-title\"><span class=\"bp-section-card-letter font-mono text-ui-hint\">B</span><span class=\"bp-section-card-label\">班级得分率与预期</span></h3><div class=\"bp-card-actions\"><ul style=\"visibility:hidden\" aria-label=\"C0 趋势图图例\" data-chart-legend=\"true\" class=\"flex min-w-0 max-w-full flex-wrap gap-x-5 gap-y-2 text-ui-hint justify-start \"><li data-legend-id=\"actual\" class=\"flex min-w-0 max-w-full items-start gap-2\"><svg aria-hidden=\"true\" focusable=\"false\" width=\"24\" height=\"16\" viewBox=\"0 0 24 16\" class=\"mt-0.5 shrink-0\" data-legend-marker=\"area\"><circle cx=\"12\" cy=\"8\" r=\"6.5\" stroke=\"var(--card)\" stroke-width=\"2\" fill=\"#1E88E5\"></circle></svg><span class=\"text-ui-hint text-foreground\"><span class=\"whitespace-normal [overflow-wrap:anywhere]\">实际得分率</span></span></li><li data-legend-id=\"expected\" class=\"flex min-w-0 max-w-full items-start gap-2\"><svg aria-hidden=\"true\" focusable=\"false\" width=\"24\" height=\"16\" viewBox=\"0 0 24 16\" class=\"mt-0.5 shrink-0\" data-legend-marker=\"hatch\"><defs><pattern id=\"legend-hatch-_R_rd_\" width=\"6\" height=\"6\" patternUnits=\"userSpaceOnUse\"><path d=\"M-1,1 L1,-1 M0,6 L6,0 M5,7 L7,5\" stroke=\"#6B7280\" stroke-width=\"1.5\"></path></pattern></defs><rect x=\"5.5\" y=\"1.5\" width=\"13\" height=\"13\" fill=\"var(--card)\"></rect><rect x=\"5.5\" y=\"1.5\" width=\"13\" height=\"13\" fill=\"url(#legend-hatch-_R_rd_)\" stroke=\"#6B7280\" stroke-width=\"1.5\"></rect></svg><span class=\"text-ui-hint text-foreground\"><span class=\"whitespace-normal [overflow-wrap:anywhere]\">按难度推算的预期</span></span></li><li data-legend-id=\"new-context\" class=\"flex min-w-0 max-w-full items-start gap-2\"><svg aria-hidden=\"true\" focusable=\"false\" width=\"24\" height=\"16\" viewBox=\"0 0 24 16\" class=\"mt-0.5 shrink-0\" data-legend-marker=\"diamond\"><path d=\"M12,1.5 L18.5,8 L12,14.5 L5.5,8 Z\" fill=\"#6B7280\" stroke=\"var(--card)\" stroke-width=\"2\"></path></svg><span class=\"text-ui-hint text-foreground\"><span class=\"whitespace-normal [overflow-wrap:anywhere]\">新情境</span></span></li></ul></div></header><div class=\"bp-card-body\"><div style=\"visibility:hidden\" class=\"space-y-3\"><div role=\"group\" aria-label=\"C0 班级得分率与预期（合成数据）\" aria-description=\"实际得分率：实线；按难度推算的预期：虚线，不画点；新情境：仅画点，不连线\" style=\"height:230px\"><div class=\"recharts-responsive-container\" style=\"width:100%;height:100%;min-width:0\"><div style=\"width:0;height:0;overflow:visible\"><div width=\"600\" height=\"230\" class=\"recharts-wrapper\" style=\"position:relative;cursor:default;width:600px;height:230px\"></div></div></div></div><details><summary class=\"cursor-pointer text-ui-hint text-muted-foreground\">查看数据</summary><p class=\"text-ui-hint text-muted-foreground\">实际得分率：实线；按难度推算的预期：虚线，不画点；新情境：仅画点，不连线。标注避让后放不下时仅在提示框和本表显示。</p><div class=\"overflow-x-auto\"><div class=\"relative w-full overflow-x-auto\" data-slot=\"table-container\" data-variant=\"default\"><table class=\"w-full caption-bottom in-data-[variant=card]:border-separate in-data-[variant=card]:border-spacing-0 text-sm\" data-slot=\"table\"><thead class=\"[&amp;_tr]:border-b\" data-slot=\"table-header\"><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><th class=\"h-10 whitespace-nowrap px-2.5 text-left align-middle font-medium text-muted-foreground leading-none has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-head\">项目</th><th class=\"h-10 whitespace-nowrap px-2.5 text-left align-middle font-medium text-muted-foreground leading-none has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-head\">实际得分率</th><th class=\"h-10 whitespace-nowrap px-2.5 text-left align-middle font-medium text-muted-foreground leading-none has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-head\">按难度推算的预期</th><th class=\"h-10 whitespace-nowrap px-2.5 text-left align-middle font-medium text-muted-foreground leading-none has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-head\">新情境</th></tr></thead><tbody class=\"relative in-data-[variant=card]:rounded-xl in-data-[variant=card]:shadow-xs/5 before:pointer-events-none before:absolute before:inset-px not-in-data-[variant=card]:before:hidden before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/8%)] [&amp;_tr:last-child]:border-0 in-data-[variant=card]:*:[tr]:border-0 in-data-[variant=card]:*:[tr]:*:[td]:border-b in-data-[variant=card]:*:[tr]:*:[td]:bg-card in-data-[variant=card]:*:[tr]:first:*:[td]:first:rounded-ss-xl in-data-[variant=card]:*:[tr]:*:[td]:first:border-s in-data-[variant=card]:*:[tr]:first:*:[td]:border-t in-data-[variant=card]:*:[tr]:last:*:[td]:last:rounded-ee-xl in-data-[variant=card]:*:[tr]:*:[td]:last:border-e in-data-[variant=card]:*:[tr]:first:*:[td]:last:rounded-se-xl in-data-[variant=card]:*:[tr]:last:*:[td]:first:rounded-es-xl in-data-[variant=card]:*:[tr]:hover:*:[td]:bg-[color-mix(in_srgb,var(--card),var(--color-black)_2%)] in-data-[variant=card]:*:[tr]:data-[state=selected]:*:[td]:bg-[color-mix(in_srgb,var(--card),var(--color-black)_4%)] dark:in-data-[variant=card]:*:[tr]:data-[state=selected]:*:[td]:bg-[color-mix(in_srgb,var(--card),var(--color-white)_4%)] dark:in-data-[variant=card]:*:[tr]:hover:*:[td]:bg-[color-mix(in_srgb,var(--card),var(--color-white)_2%)]\" data-slot=\"table-body\"><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W06 · 起点检测<span class=\"block\">W06 · 起点检测</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>77%<span class=\"block whitespace-normal break-words\">77</span></span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>74%</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td></tr><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W07 · 课堂练习<span class=\"block\">W07 · 课堂练习</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>72%<span class=\"block whitespace-normal break-words\">72</span></span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>67%</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td></tr><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W07 · 课堂诊断<span class=\"block\">W07 · 课堂诊断</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>70%<span class=\"block whitespace-normal break-words\">70</span></span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>70%</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td></tr><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W08 · 单元复查<span class=\"block\">W08 · 单元复查</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>77%<span class=\"block whitespace-normal break-words\">77</span></span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>75%</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td></tr><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W11 · 巩固检测<span class=\"block\">W11 · 巩固检测</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>70%<span class=\"block whitespace-normal break-words\">70</span></span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>72%</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td></tr><tr class=\"relative border-b not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-black)_2%)] not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-black)_4%)] dark:not-in-data-[variant=card]:data-[state=selected]:bg-[color-mix(in_srgb,var(--background),var(--color-white)_4%)] dark:not-in-data-[variant=card]:hover:bg-[color-mix(in_srgb,var(--background),var(--color-white)_2%)]\" data-slot=\"table-row\"><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\">W12 · 新情境<span class=\"block\">W12 · 新情境</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>—</span></td><td class=\"whitespace-nowrap bg-clip-padding p-2.5 in-data-[slot=table-footer]:py-3.5 align-middle leading-none in-data-[variant=card]:first:ps-[calc(--spacing(2.5)-1px)] in-data-[variant=card]:last:pe-[calc(--spacing(2.5)-1px)] has-[[role=checkbox]]:w-px last:has-[[role=checkbox]]:ps-0 first:has-[[role=checkbox]]:pe-0\" data-slot=\"table-cell\"><span>75%<span class=\"block\">菱形</span><span class=\"block whitespace-normal break-words\">75</span></span></td></tr></tbody></table></div></div></details></div></div></section><p class=\"text-ui-hint text-muted-foreground\">C0 合成数据：实际 77、72、70、77、70；预期 74、67、70、75、72；W12 新情境 75，只画点不连线。窄屏或标注放不下时可在提示框和数据表查看完整数值。</p></section>"
+    }
+  ]
+}

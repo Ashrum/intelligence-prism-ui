@@ -3172,3 +3172,11 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 - 五主题共用一套 DOM，无主题 JS 分支；仅显式 `.bp-size-row-action` 使用当前主题 `--secondary` hover、`--accent` 选中（blueprint 为既有 `#E4ECF8`）、`--ring` 焦点。复用现有 2px outline / 2px offset，不增令牌、尺寸、断点、动效或组件条目。按钮的 `w-full text-left` 保持原块级行的占宽及文本对齐；网格、条高和间距沿用原规则。
 - 演示：`/next/foundations/blueprint#sizebar-activation`，合成数据由示例宿主控制选择与“当前选中”文案，不模拟真实报告服务。
 - 复用检索与取舍（离线）：优先核对现有 Prism `BpSizeBar`、`BpSegTabs`、`BpButton`、`Button` 及固定 coss `button.tsx`；现有 SizeBar 的稳定行 ID、网格与图例可复用。通用按钮的高度、padding 和 flex 布局不适合原行几何，因此仅适配 SizeBar 为原生按钮并复用 Prism 焦点样式。coss particles 本地来源索引未提供匹配的整行图表动作；无需新组件或上游代码。按任务限制未联网查询 particles 最新注册表，不声称已接入最新实现；冻结 coss 字节及依赖保持不变。
+
+### P114 · BpSectionCard 可选受控选中态
+
+- `selected?: boolean`：仅为 `true` 时在既有 `section` 根添加 `data-selected=""`；未传或 `false` 不输出该属性。组件只呈现宿主传入的选中事实，不加点击切换、键盘处理、焦点停靠、计时器、持久化或业务打开逻辑。默认仍是有标题的分节，不自动赋予 `aria-selected`、`aria-current` 或交互 role；宿主可按实际当前对象传入 `aria-current`，通过已有动作插槽或外部按钮发出打开意图。
+- 默认兼容：`tests/fixtures/p114-section-card-before.json` 在改动前捕获 fc50fac 的 26 组 SSR（23 组组件变体、3 组既有演示）；覆盖 default / compact、titleRule、letter / meta / action / children、headingLevel、宿主属性。未传 / false 逐字节不变；true 仅多上述属性，标题层级、可访问名、插槽、顺序、类名和 DOM 结构保持。
+- 五主题共用同一 DOM，无主题 JS 分支。仅显式选中的 `.bp-section-card` 使用已有本地 `--ring`：blueprint 为 `4px 4px 0 #1D5FBF`，blueprint-night 为 `4px 4px 0 #6EA8FF`；light / paper / dark 使用 `0 0 0 2px var(--ring)`，分别解析为 `#1769AA` / `#1D4ED8` / `#86C5FF`。以上色值是现有令牌的说明，CSS 不写颜色字面量、不新增令牌。规则只设置 box-shadow，不改布局、尺寸、圆角、边框宽度或动效；阴影不占布局空间，宿主仍须避免容器裁切。蓝图偏移规则排除嵌套非蓝图预览根及全部后代，也支持卡片自身为主题预览根。
+- 演示追加在现有卡片示例之后：`/next/foundations/blueprint#section-card-selection`。用“查看概览”“查看明细”“清除选中”控制两个合成对象，覆盖两种密度、标题线、长中文、公式及嵌套核心三主题；未新建组件条目，未接入工作台真实右栏。
+- 复用检索与取舍（离线）：先核对 Prism BpSectionCard / BpFrameCard / BpSizeBar P113 的受控状态、BpTool、既有选中 ring；再核对固定 coss Card / Button 的呈现与按钮边界。分节结构和动作插槽已齐全，本次只补 SectionCard 的可选视觉状态，不改为按钮卡、不替换组件。coss particles 本地索引未提供此业务无关状态的额外必要实现，按任务限制未联网刷新 registry；未引入 particles / Beautiful UI 代码、依赖或新基础控件，冻结 coss 字节不变。契约与静态测试不代表 Supervisor 浏览器验收、工作台同步或生产工程准入。

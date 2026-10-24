@@ -761,3 +761,8 @@
 .bp-size-row-action:hover { background:var(--secondary); }
 .bp-size-row-action[aria-current="true"] { background:var(--accent); }
 .bp-size-row-action:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+
+/* P114 · Opt-in SectionCard selection: paint only, using local theme emphasis. */
+.bp-section-card[data-selected] { box-shadow:0 0 0 2px var(--ring); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .bp-section-card[data-selected]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)),
+.bp-section-card[data-selected]:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:4px 4px 0 var(--ring); }

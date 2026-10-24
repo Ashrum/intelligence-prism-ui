@@ -68,6 +68,29 @@ export function BlueprintCardsDemo() {
   </section>
 }
 
+/** Selection belongs to this synthetic host, not to SectionCard. */
+export function BlueprintSectionCardSelectionDemo() {
+  const [selectedId, setSelectedId] = useState<string | undefined>("summary")
+  return <section id="section-card-selection" aria-label="分节卡选中态（合成数据）" className="space-y-6">
+    <BlueprintSectionHeader title="分节卡选中态" description="合成数据；选择按钮切换当前查看对象，卡片本身不执行打开操作。" />
+    <div className="flex flex-wrap gap-3">
+      <BpTool aria-pressed={selectedId === "summary"} onClick={() => setSelectedId("summary")}>查看概览</BpTool>
+      <BpTool aria-pressed={selectedId === "detail"} onClick={() => setSelectedId("detail")}>查看明细</BpTool>
+      <BpTool onClick={() => setSelectedId(undefined)}>清除选中</BpTool>
+    </div>
+    <BpSectionCard letter="A" title="学情概览" selected={selectedId === "summary"} aria-current={selectedId === "summary" ? "true" : undefined}>
+      <p className="text-read-body">当前范围：高一（1）班，合成数据。</p>
+    </BpSectionCard>
+    <BpSectionCard density="compact" titleRule letter="B" title="一元二次方程的判别式与相等实数根：长中文结果明细" meta="learning-result-detail.pdf" selected={selectedId === "detail"} aria-current={selectedId === "detail" ? "true" : undefined}>
+      <QuestionMath block label="x 平方减二 x 加一等于零"><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></QuestionMath>
+    </BpSectionCard>
+    <p role="status" className="text-ui-hint">当前选中：{selectedId === "summary" ? "学情概览" : selectedId === "detail" ? "结果明细" : "无"}</p>
+    {(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} className="bg-background p-4 text-foreground">
+      <BpSectionCard selected density="compact" title={`${theme} · 局部选中态`}><p className="text-ui-body">强调色与选中描边跟随局部主题。</p></BpSectionCard>
+    </div>)}
+  </section>
+}
+
 export function BlueprintTitleRuleDemo() {
   const [showNote, setShowNote] = useState(false)
   return <section id="title-rules" aria-label="标题墨线" className="space-y-6">
@@ -136,6 +159,7 @@ export function BlueprintComponentsDemo() {
     </BlueprintSheet>
     <p className="border-l-2 border-(--line) pl-4 text-ui-hint text-muted-foreground">样式与状态样板 · 下方班级、答卷、评分与步骤均为固定示例数据。页面内选择只切换预览内容。</p>
     <BlueprintCardsDemo />
+    <BlueprintSectionCardSelectionDemo />
     <AgentWorkspacePatternsDemo />
     <BlueprintOverviewDemo />
     <BlueprintGradingDemo />

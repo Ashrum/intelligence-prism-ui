@@ -68,7 +68,7 @@ test('P113 default/sm/xs and hidden labels retain bar geometry on opt-in',()=>{
   }
 });
 test('P113 CSS adds only explicit action visuals; all previous CSS and theme tokens stay exact',()=>{
-  const path='app/(next)/next/blueprint.css',css=read(path),base=execFileSync('git',['show',`${fixture.baseline}:${path}`],{cwd:root,encoding:'utf8'});
+  const path='app/(next)/next/blueprint.css',css=read(path).replace(/\n\/\* P114 ·[\s\S]*$/, ''),base=execFileSync('git',['show',`${fixture.baseline}:${path}`],{cwd:root,encoding:'utf8'});
   const marker='\n/* P113 ·', index=css.indexOf(marker); assert.ok(index>0);
   assert.equal(css.slice(0,index),base);
   const ast=postcss.parse(css.slice(index));
