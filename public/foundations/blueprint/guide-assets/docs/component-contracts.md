@@ -3180,3 +3180,10 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 - 五主题共用同一 DOM，无主题 JS 分支。仅显式选中的 `.bp-section-card` 使用已有本地 `--ring`：blueprint 为 `4px 4px 0 #1D5FBF`，blueprint-night 为 `4px 4px 0 #6EA8FF`；light / paper / dark 使用 `0 0 0 2px var(--ring)`，分别解析为 `#1769AA` / `#1D4ED8` / `#86C5FF`。以上色值是现有令牌的说明，CSS 不写颜色字面量、不新增令牌。规则只设置 box-shadow，不改布局、尺寸、圆角、边框宽度或动效；阴影不占布局空间，宿主仍须避免容器裁切。蓝图偏移规则排除嵌套非蓝图预览根及全部后代，也支持卡片自身为主题预览根。
 - 演示追加在现有卡片示例之后：`/next/foundations/blueprint#section-card-selection`。用“查看概览”“查看明细”“清除选中”控制两个合成对象，覆盖两种密度、标题线、长中文、公式及嵌套核心三主题；未新建组件条目，未接入工作台真实右栏。
 - 复用检索与取舍（离线）：先核对 Prism BpSectionCard / BpFrameCard / BpSizeBar P113 的受控状态、BpTool、既有选中 ring；再核对固定 coss Card / Button 的呈现与按钮边界。分节结构和动作插槽已齐全，本次只补 SectionCard 的可选视觉状态，不改为按钮卡、不替换组件。coss particles 本地索引未提供此业务无关状态的额外必要实现，按任务限制未联网刷新 registry；未引入 particles / Beautiful UI 代码、依赖或新基础控件，冻结 coss 字节不变。契约与静态测试不代表 Supervisor 浏览器验收、工作台同步或生产工程准入。
+
+### P115 · 蓝图 TableRow 选中背景
+
+- 仅 `blueprint` / `blueprint-night` 的 `[data-slot="table-row"][data-state="selected"]` 使用既有 `--accent`（分别为 `#E4ECF8` / `#16305A`）；只设置 `background-color`，选中与 hover 共存时保留选中背景。不改变文字、布局、边框、字体、焦点或交互，不新增 token。
+- 沿用冻结 coss 的绘制语义：普通表格在行上着色；`variant="card"` 在 TableBody 选中行的直接 `td` 上着色，保留原来的单元格边框与圆角。light / paper / dark 及嵌套非蓝图预览根和后代不命中新规则，原 CSS、主题 token、coss 和组件输出保持不变。
+- 复用检索与取舍（离线）：核对现有 Prism `DataRecordTable`、`MaterialTableParticle`、固定 coss `table.tsx` 及本地 particles 表格示例；已有受控 `data-state` 和勾选示例足够，只在 `blueprint.css` 末尾追加 P115 段，不新增组件或演示。按任务限制未联网刷新 particles registry。
+- 组件站沿用 `/next/components/table` 的材料复核清单：勾选材料后呈现选中行，取消勾选恢复原背景。状态由既有示例宿主控制；本样式不负责业务行定位、滚动或图点联动。工作台仅同步 `app/(next)/next/blueprint.css`，不复制 coss、主题 token 或演示代码。静态检查不代替 Supervisor 浏览器验收。
