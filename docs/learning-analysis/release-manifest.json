@@ -1,9 +1,9 @@
 {
   "revision": "v1.1",
-  "status": "design-candidate-local-sync-pending",
+  "status": "design-final-local-sync-pending",
   "engineeringAdmission": "not-started",
-  "approvalPerson": "待签发",
-  "approvalDate": "待签发",
+  "approvalPerson": "Ashrum（PO）",
+  "approvalDate": "2026-10-24",
   "publication": {
     "github": "not-synced",
     "outline": "not-synced",
@@ -12,38 +12,38 @@
   "files": [
     {
       "path": "00-实施规格索引.md",
-      "sha256": "0cce9834943cf6746e0ebeff405b7e510e3739b59db5df4b223e71899f353f48",
-      "bytes": 3649
+      "sha256": "a7ceab53e729ee644f6c30df34a71c2f3b9fe2b8868745846dbfae75b36f8794",
+      "bytes": 3639
     },
     {
       "path": "01-数据投影与指标规范.md",
-      "sha256": "cf9f4285ad564920e1677cb7fba7c59572a83bfc5a6cf9d4cc85062707a640b3",
-      "bytes": 55098
+      "sha256": "c3b627e0f01c9045ca6bf55ea7d9298ff9ef1a818083feda1b9d2f81119abbfd",
+      "bytes": 55088
     },
     {
       "path": "02-教学行动与支持逻辑规范.md",
-      "sha256": "f529455ce91099cb3e0e7f99f70169899ae14a260d57f90bf30830a8fe4f97fc",
-      "bytes": 24108
+      "sha256": "bfdfad79343a8d77ab0ddaee148ff7ea7c68507821385c4f96ad5293ce695908",
+      "bytes": 24098
     },
     {
       "path": "03-独立页重构与迁移规范.md",
-      "sha256": "777d2fcf1f5a4ab40107c30515fc49b7aaba77ffb8c88fea738418a7d57e62aa",
-      "bytes": 14317
+      "sha256": "da53cb85e260c6ebe1f736063be54c6c6c24350f0d55408f730c9c29db5701ae",
+      "bytes": 14307
     },
     {
       "path": "04-Agent协同与Blueprint承载规范.md",
-      "sha256": "d1e59ccc0da5e980ff4cfc809c61a2f62989b86ae8235ce99f0d081accf06ac4",
-      "bytes": 37110
+      "sha256": "5993ee5c355e4979c3747d64127b655835dda303447fcaa3980c7689ef9cbe6d",
+      "bytes": 37105
     },
     {
       "path": "05-多角色与跨域披露规范.md",
-      "sha256": "b06124679c88ee72fda3c7018365394f6ab1aad5c27f2c2e0cf09dd0f3a74927",
-      "bytes": 13560
+      "sha256": "851c98aac93c54ffdda2853e3d06cdd257c07c77358db4b474ff9124931a4db9",
+      "bytes": 13550
     },
     {
       "path": "06-全周期验证协议与夹具矩阵.md",
-      "sha256": "39a3416df629f14177a373c2703a0734b6eec5f952f0718fdb094fd2feb3c90a",
-      "bytes": 35869
+      "sha256": "b629a773e5504fccee237c928e4470f1b8da83b1e874f8e1dde357f737f2104e",
+      "bytes": 35864
     },
     {
       "path": "OLE_Learning_Analysis_Design_v0.7-r2.md",
@@ -57,13 +57,13 @@
     },
     {
       "path": "OLE_Learning_Analysis_Design_v1.1.md",
-      "sha256": "c60e2b791b9c6b56614ecafd0a047b4a06483920efae362516f1db5d31f6052e",
-      "bytes": 256655
+      "sha256": "eeea5195a8cbc0ecca14913b1bc2bd67476e9b986d7ff137b9bd568900b88c76",
+      "bytes": 256695
     },
     {
       "path": "README.md",
-      "sha256": "440ae3433b0c844cd0f6f5066f53a661e7a3077403ec0365dbfc6b7000e73d67",
-      "bytes": 2916
+      "sha256": "08e15f4550308163ea9c51752323cb8672cb5353ebd12d22fdf35590528156bb",
+      "bytes": 2918
     },
     {
       "path": "REFERENCE-ARCHIVE.md",
@@ -72,13 +72,13 @@
     },
     {
       "path": "RELEASE.md",
-      "sha256": "bcb9398925f3953eb35770ff3f39ea5b167569e2a8b5346b9cb444e1aae01c6a",
-      "bytes": 24461
+      "sha256": "67b8321d23bab5c2db4d3c9891e1279f90681bd2c87116f05238ff65834ff458",
+      "bytes": 24434
     },
     {
       "path": "SCREENS.md",
-      "sha256": "f70ede637e741ee92902263ccbe533724340cfb7ee6d733dd9eb1f12c0028daa",
-      "bytes": 17468
+      "sha256": "b075901c74b520b82246833cf305a1e017eb14076e4482ca7ab3d68b4ce1bf28",
+      "bytes": 17474
     },
     {
       "path": "agent-ui-v0.7/screens/01-overview-r2.png",
@@ -327,13 +327,13 @@
     },
     {
       "path": "split-manifest.json",
-      "sha256": "636b2b2bad100da37922cb74a5b57252db36efeccc783c1abb4d0a235d0e770d",
-      "bytes": 24900
+      "sha256": "cb0b9bfbcb7c13923764127ca674429e05551a58e9c994ab40df2a7cee0850f3",
+      "bytes": 24902
     },
     {
       "path": "split-validation.json",
-      "sha256": "466f80251a5bd41c20715ff179803db105e8d4abb8c166471632c89d46948b1b",
-      "bytes": 1003
+      "sha256": "b7c109eab72cc87612087a7d21e8de82d0d7089004d7834062b029a00ab44264",
+      "bytes": 1007
     },
     {
       "path": "v0.7-审核决策与差异清单.md",

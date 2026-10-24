@@ -1,10 +1,10 @@
 # 学情分析 v1.1 维护与签发记录
 
-- 设计状态：设计候选 v1.1（待 PO 签发）
+- 设计状态：设计正式版 v1.1
 - 工程准入：未开始
 - 版本：v1.1 · 2026-10-24 · Derived, Non-canonical
-- 批准人：待签发
-- 批准日期：待签发
+- 批准人：Ashrum（PO）
+- 批准日期：2026-10-24
 
 ## 当前交付与证据范围
 
@@ -14,10 +14,10 @@
 
 A1 的 D1／D9／D10／D12 已在合成通道实现，G1–G4 已补验；证据为 W294d #234（516abbf）、W296 #235（e282e93）、W297 #236（9478ab9），详细链接与 Supervisor 2026-10-24 观察转录在 SCREENS。G2 无数值泄露但 E1 提示偏差、E3 工具缺水位未知场景由 W299 处理；G4 保留480＋150%字号覆盖值超框9px未截断观察。C01 真实模型和 C03 持久化原边界不变。P116 不重跑浏览器、不联网读取 PR，也不把合成粗验当真实学校或工程准入。
 
-## v1.1 维护与待签发事项
+## v1.1 维护与签发记录
 
 - 主稿§8落实 F06，并在§9.6写入 E1、§11更新阶段、§12.12登记增量、§13.10登记来源和 PO 派单决定；六规格仅从主稿派生。
-- 当前设计状态为“设计候选 v1.1（待 PO 签发）”，批准人／日期“待签发”，工程准入未开始。E1 文案已由 PO 于 2026-10-24 确定；E1／E3 工作台修正 W299 已经 Supervisor 浏览器验收，合并前不得写成已上线。
+- 设计状态为“设计正式版 v1.1”，PO Ashrum 2026-10-24 签发，工程准入未开始。E1 文案由 PO 于 2026-10-24 确定；E1／E3 工作台修正 W299 经 Supervisor 浏览器验收并已合并（ole-school-workbench #238，fba027f）。
 - 签发元数据唯一入口是下方工具的 `RELEASE_STATE` 常量：PO 实际签发后由 Supervisor 在这一处对象改 `design_status` 为 `design-final`、填写 `approval_person`／`approval_date`，再按同一流程 `--write` 与只读校验。工具同步主稿、README、00、SCREENS、本文件的五行头部和六规格／清单；手工正文与证据不自动改写。当前候选期叙述保留发生时状态，未来签发事实另行登记，不以脚本替代批准或外部同步。
 - 本轮无站点产物、组件、scripts 或依赖改动，无提交、推送或发布；签发与发布仍分开。
 
@@ -57,9 +57,9 @@ J=lambda x: (json.dumps(x,ensure_ascii=False,indent=2)+'\n').encode()
 RELEASE_STATE = {
     'revision': 'v1.1',
     'version_date': '2026-10-24',
-    'design_status': 'design-candidate',
-    'approval_person': '待签发',
-    'approval_date': '待签发',
+    'design_status': 'design-final',
+    'approval_person': 'Ashrum（PO）',
+    'approval_date': '2026-10-24',
 }
 r=RELEASE_STATE
 assert r['design_status'] in ('design-candidate','design-final')
@@ -168,7 +168,7 @@ for name in names:
         elif widths:
             assert len(set(widths))==1,(name,'ragged table',widths)
             tables+=1; widths=[]
-result={'status':'PASS','revision':r['revision'],'scope':'document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission','baseline_sha256':m['baseline_sha256'],'specs':len(m['specs']),'verbatim_product_segments':count,'section4_to12_continuous':True,'engineering_transfers':len(app['transfers']),'engineering_source_and_target_exact':True,'protected_product_blocks_unchanged':len(protected),'la08_oracles':10,'historical_master_body_unchanged':True,'historical_r1_hash_verified':True,'local_links_checked':links,'tables_checked':tables,'browser_acceptance':'Supervisor A1 2026-10-24 and historical L6 recorded; E1/E3 accepted by Supervisor via W299 (pending merge); see SCREENS.md; not rerun by document tool','c01_smoke':'W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md','approval':r['approval_person']+' · '+r['approval_date'],
+result={'status':'PASS','revision':r['revision'],'scope':'document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission','baseline_sha256':m['baseline_sha256'],'specs':len(m['specs']),'verbatim_product_segments':count,'section4_to12_continuous':True,'engineering_transfers':len(app['transfers']),'engineering_source_and_target_exact':True,'protected_product_blocks_unchanged':len(protected),'la08_oracles':10,'historical_master_body_unchanged':True,'historical_r1_hash_verified':True,'local_links_checked':links,'tables_checked':tables,'browser_acceptance':'Supervisor A1 2026-10-24 and historical L6 recorded; E1/E3 accepted by Supervisor via W299 (merged #238); see SCREENS.md; not rerun by document tool','c01_smoke':'W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md','approval':r['approval_person']+' · '+r['approval_date'],
         'v1_0_section6_verbatim':True, 'v1_0_history_status_only':True}
 outputs['split-validation.json']=J(result)
 files=[]
