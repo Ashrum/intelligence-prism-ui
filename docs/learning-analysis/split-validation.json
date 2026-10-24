@@ -2,7 +2,7 @@
   "status": "PASS",
   "revision": "v1.1",
   "scope": "document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission",
-  "baseline_sha256": "c60e2b791b9c6b56614ecafd0a047b4a06483920efae362516f1db5d31f6052e",
+  "baseline_sha256": "eeea5195a8cbc0ecca14913b1bc2bd67476e9b986d7ff137b9bd568900b88c76",
   "specs": 6,
   "verbatim_product_segments": 23,
   "section4_to12_continuous": true,
@@ -14,9 +14,9 @@
   "historical_r1_hash_verified": true,
   "local_links_checked": 180,
   "tables_checked": 216,
-  "browser_acceptance": "Supervisor A1 2026-10-24 and historical L6 recorded; E1/E3 accepted by Supervisor via W299 (pending merge); see SCREENS.md; not rerun by document tool",
+  "browser_acceptance": "Supervisor A1 2026-10-24 and historical L6 recorded; E1/E3 accepted by Supervisor via W299 (merged #238); see SCREENS.md; not rerun by document tool",
   "c01_smoke": "W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md",
-  "approval": "待签发 · 待签发",
+  "approval": "Ashrum（PO） · 2026-10-24",
   "v1_0_section6_verbatim": true,
   "v1_0_history_status_only": true
 }
