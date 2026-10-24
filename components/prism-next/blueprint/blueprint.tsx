@@ -251,13 +251,15 @@ export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "tit
   density?: "default" | "compact"
   /** Decorative structural line after the heading, before metadata/actions. */
   titleRule?: boolean
+  /** Host-controlled visual selection; does not add interaction or infer aria-current. */
+  selected?: boolean
 }
 /** A numbered/ordered subdivision within a result, without sheet rulers. */
-export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", titleRule = false, children, className, ...props }: BpSectionCardProps) {
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", titleRule = false, selected = false, children, className, ...props }: BpSectionCardProps) {
   const id = useId()
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
   const code = letter?.trim()
-  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card" data-title-rule={titleRule ? "" : undefined}>
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card" data-title-rule={titleRule ? "" : undefined} data-selected={selected ? "" : undefined}>
     <header className="bp-section-card-head">
       <Heading id={id} className={cn("bp-section-card-title", density === "compact" ? "text-item-title" : "text-block-title")}>
         {code && <span className={cn("bp-section-card-letter font-mono", density === "compact" ? "text-ui-hint" : "text-stat-display")}>{code}</span>}
