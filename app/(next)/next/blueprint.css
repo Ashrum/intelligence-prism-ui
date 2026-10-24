@@ -755,3 +755,9 @@
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:is(.text-destructive-foreground,.bg-destructive):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--destructive-foreground); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"]:is(.text-info-foreground,.bg-info-foreground):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { color:var(--info-foreground); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="badge"] > [data-slot="badge-mark"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:inline; }
+
+/* P113 · Opt-in SizeBar actions: existing geometry and local theme tokens. */
+.bp-size-row-action { cursor:pointer; }
+.bp-size-row-action:hover { background:var(--secondary); }
+.bp-size-row-action[aria-current="true"] { background:var(--accent); }
+.bp-size-row-action:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }

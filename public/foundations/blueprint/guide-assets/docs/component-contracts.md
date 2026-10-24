@@ -3162,3 +3162,13 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 - 组件级操作容器采用 `bp-card-actions` 的 flex / wrap / gap 规则，动作资格、回调、禁用说明与原先的正文后操作位置保持；标题只放标题和已有身份，不把操作视觉搬到标题而留下不同的键盘顺序。
 
 示例：`/next/foundations/blueprint#sheet-object-cards`，位于已有“卡片与线条”图纸内，包含数学课堂练习与知识点关系图。只切换 inline / workspace；固定示例没有保存回执。清单与待定范围见 [P85 盘点](blueprint/evidence/object-cards-20261018/inspection.md)，待执行的浏览器矩阵见 [验收清单](blueprint/evidence/object-cards-20261018/browser-checklist.md)。工程检查不等于视觉验收。
+
+### P113 · BpSizeBar 可选逐行激活
+
+- `onRowActivate?: (rowId: string) => void`：传入才启用整行原生 `button type="button"`；标签、条形、汇总属于同一命中区。Tab 按行进入，Enter / Space 由浏览器原生按钮激活，不叠加键盘处理器或模拟 click。仅传出稳定的 `rows[].id`，宿主负责打开知识点或报告、导航与权限。
+- `activeRowId?: string`：仅交互模式生效，命中行设置 `aria-current="true"` 与选中底；未命中或未提供则无选中行。点击不自动修改选中态，不保存状态、不推定业务执行结果。
+- `rowActionLabel?: (row: BpSizeBarProps["rows"][number]) => string`：按钮动作名称前缀，默认“在报告中查看：{label}”；空白结果回退默认。自定义前缀应包含可见行标签。组件追加全部分段数值、单位、marker 与非空 `display`，沿用 `formatValue` 的 `ariaText`。交互模式将内部视觉内容设为 `aria-hidden`，不再单独暴露条形 `role=img`，避免按钮与子图重复朗读；图例保留原有独立语义。
+- 未传 `onRowActivate` 时，即使传了 `activeRowId` / `rowActionLabel`，原 `div.bp-size-row`、类名、条形 `role=img`、名称和 DOM 字节均不变，不调用动作名称函数。`tests/fixtures/p113-static-before.json` 保存基线 f8e0657 的静态输出；定向测试覆盖既有布局选项及演示，旧格式化测试继续回归。
+- 五主题共用一套 DOM，无主题 JS 分支；仅显式 `.bp-size-row-action` 使用当前主题 `--secondary` hover、`--accent` 选中（blueprint 为既有 `#E4ECF8`）、`--ring` 焦点。复用现有 2px outline / 2px offset，不增令牌、尺寸、断点、动效或组件条目。按钮的 `w-full text-left` 保持原块级行的占宽及文本对齐；网格、条高和间距沿用原规则。
+- 演示：`/next/foundations/blueprint#sizebar-activation`，合成数据由示例宿主控制选择与“当前选中”文案，不模拟真实报告服务。
+- 复用检索与取舍（离线）：优先核对现有 Prism `BpSizeBar`、`BpSegTabs`、`BpButton`、`Button` 及固定 coss `button.tsx`；现有 SizeBar 的稳定行 ID、网格与图例可复用。通用按钮的高度、padding 和 flex 布局不适合原行几何，因此仅适配 SizeBar 为原生按钮并复用 Prism 焦点样式。coss particles 本地来源索引未提供匹配的整行图表动作；无需新组件或上游代码。按任务限制未联网查询 particles 最新注册表，不声称已接入最新实现；冻结 coss 字节及依赖保持不变。

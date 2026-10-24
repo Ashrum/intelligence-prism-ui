@@ -150,7 +150,7 @@ test('P107 V6 removes exactly the 10 old geometry declarations; visual detail ru
   current.walkDecls(d => assert.ok(['background', 'border', 'border-radius', 'border-color'].includes(d.prop), d.prop));
 });
 test('P107 all other CSS, tokens and source TSX stay byte-identical to 1486441', () => {
-  const actual = text.replace(blockPattern, '').replace(detailPattern, '');
+  const actual = text.replace(/\n\/\* P113 ·[\s\S]*$/, '').replace(blockPattern, '').replace(detailPattern, '');
   const expected = before(path).replace(detailPattern, '');
   assert.equal(actual, expected);
   const compile = source => transform({ code: Buffer.from(source), minify: true }).code.toString();
