@@ -1,28 +1,37 @@
-# 学情分析 v1.0 维护与签发记录
+# 学情分析 v1.1 维护与签发记录
 
-- 设计状态：设计正式版 v1.0
+- 设计状态：设计候选 v1.1（待 PO 签发）
 - 工程准入：未开始
-- 版本：v1.0 · 2026-10-23 · Derived, Non-canonical
-- 批准人：Ashrum（PO）
-- 批准日期：2026-10-23
+- 版本：v1.1 · 2026-10-24 · Derived, Non-canonical
+- 批准人：待签发
+- 批准日期：待签发
 
 ## 当前交付与证据范围
 
-[主稿](OLE_Learning_Analysis_Design_v1.0.md)、[六规格索引](00-实施规格索引.md)、[工程线附录](engineering-appendix-v1.0.md)、[工作台粗验登记](SCREENS.md)与三份JSON清单构成本轮正式设计包。PO 已整体签发，证据范围见下节。v0.7-r2留原位，只改头部历史标签；原批准稿、隔离截图、源码参考及影响报告未改。
+[主稿](OLE_Learning_Analysis_Design_v1.1.md)、[六规格索引](00-实施规格索引.md)、原位保留的[工程线附录](engineering-appendix-v1.0.md)、[工作台粗验登记](SCREENS.md)与三份 JSON 清单构成本轮 v1.1 候选设计包。PO 2026-10-24 授权先修 F06／E1，尚未整体签发 v1.1。v1.0 主稿与工程派生附件只改头部历史标签，正文保持原字节；六规格当前路径按主稿重出，旧版可从 [609879d 文档目录](https://github.com/Ashrum/intelligence-prism-ui/tree/609879d83d307a54039b24bfe53587eea742e297/docs/learning-analysis) 原路径读取。v0.7-r2、原批准稿、截图、源码参考及影响报告未改。
 
-本版22段产品正文按修订后主稿§4–§12逐段派生，另29组工程／后续验证片段自Git基线9435e92分流；不声称原17段无变更。每条工程映射保留历史来源文件、Git提交、字符起止、行号、SHA-256及附录目标范围。split-validation只证明本次文档完整性，不代表Supervisor Review、工作台浏览器验收、真实模型调用、教学试点或工程准入。
+本版23段产品正文从修订后主稿§4–§12连续派生；新增§12.12承接 F06／A1 增量。29组工程／后续验证片段仍按原历史 Git 9435e92 逐字核对。§6 全文及受保护指标／分类块同时与 v1.0 基线609879d比较；工程附录正文与历史主稿正文也作精确核对。split-validation只证明文档完整性，不代表 Supervisor Review、浏览器验收、真实模型或工程准入。
+
+A1 的 D1／D9／D10／D12 已在合成通道实现，G1–G4 已补验；证据为 W294d #234（516abbf）、W296 #235（e282e93）、W297 #236（9478ab9），详细链接与 Supervisor 2026-10-24 观察转录在 SCREENS。G2 无数值泄露但 E1 提示偏差、E3 工具缺水位未知场景由 W299 处理；G4 保留480＋150%字号覆盖值超框9px未截断观察。C01 真实模型和 C03 持久化原边界不变。P116 不重跑浏览器、不联网读取 PR，也不把合成粗验当真实学校或工程准入。
+
+## v1.1 维护与待签发事项
+
+- 主稿§8落实 F06，并在§9.6写入 E1、§11更新阶段、§12.12登记增量、§13.10登记来源和 PO 派单决定；六规格仅从主稿派生。
+- 当前设计状态为“设计候选 v1.1（待 PO 签发）”，批准人／日期“待签发”，工程准入未开始。E1 文案已由 PO 于 2026-10-24 确定；E1／E3 工作台修正 W299 已经 Supervisor 浏览器验收，合并前不得写成已上线。
+- 签发元数据唯一入口是下方工具的 `RELEASE_STATE` 常量：PO 实际签发后由 Supervisor 在这一处对象改 `design_status` 为 `design-final`、填写 `approval_person`／`approval_date`，再按同一流程 `--write` 与只读校验。工具同步主稿、README、00、SCREENS、本文件的五行头部和六规格／清单；手工正文与证据不自动改写。当前候选期叙述保留发生时状态，未来签发事实另行登记，不以脚本替代批准或外部同步。
+- 本轮无站点产物、组件、scripts 或依赖改动，无提交、推送或发布；签发与发布仍分开。
 
 ## 本轮校验与维护流程
 
 1. 先修主稿与决定；工程机制在附录维护。保留已批公式、分母、旧档兼容与交互规则；改变产品规则须有对应授权。
 2. 使用split-manifest里的start_marker/end_marker及主承接配置重出六规格。源范围以Unicode字符索引、左闭右开计，不混用UTF-8字节位置；摘要计算实际UTF-8内容。
-3. 运行下方文档工具的`--write`模式更新六规格、split-manifest、split-validation及release-manifest，再以默认只读模式复核；README／00／SCREENS／本文件手工维护。检查新增相对链接、Markdown表格、保护的指标／分类区块、历史正文、10组oracle和工程转移源／目标逐字一致。
+3. 运行下方文档工具的`--write`模式更新六规格、split-manifest、split-validation及release-manifest，并统一当前五个入口的头部，再以默认只读模式复核；README／00／SCREENS／本文件的正文手工维护。检查新增相对链接、Markdown表格、保护的指标／分类区块、历史正文、10组oracle和工程转移源／目标逐字一致。
 4. `git diff --check`；`git status --short`应仅有本目录文档／清单变化。正文不嵌入自己的完整哈希；release-manifest排除自身以避免循环，其余文件逐个指纹。
 5. 本次是文档任务，不运行应用构建／全量测试，不沿用旧工程测试数字。浏览器验收由Supervisor执行；已登记粗验／C01证据见 SCREENS，未测范围仍单列。
 
-旧脚本`scripts/sync-learning-analysis-specs.py`固定v0.7-r2并会重写六规格及00；`scripts/sync-learning-analysis-docs.mjs`写出public及lib站点产物；`scripts/verify-learning-analysis-release.mjs`固定17段、重复门禁表与§6全文不变。修改前已运行旧verify，旧基线PASS（12篇阅读页、59文件），仅证明修改前状态。它们不能直接作为本正式设计包的新校验器；本任务不改scripts、不运行旧生成器覆盖现行稿或写站点。修改后旧verify和站点`--check`的预期不兼容结果如实记报告，不能算v1.0通过。
+旧脚本 `scripts/sync-learning-analysis-specs.py` 固定 v0.7-r2，旧 verify 固定17段和旧门禁结构，站点生成器也未适配当前入口。只运行旧 verify 与站点 `--check` 记录预期不兼容，不计本版失败或通过；不运行其写模式、不修改 scripts，不覆盖现行稿或写 public／lib 产物。旧基线通过只对应历史版本。
 
-下方是本轮文档派生／校验工具全文，保留在文档中便于复跑，不新增仓库脚本。仓库根目录可用以下命令提取到临时文件；工具只写本目录六规格和三份JSON，不调用网络、服务、模型或Git写操作。默认校验也会从既有Git对象读取历史来源；缺历史blob时应取回准确基线再检查，不能跳过来源验证。
+下方是本轮文档派生／校验工具全文，保留在文档中便于复跑，不新增仓库脚本。仓库根目录可用以下命令提取到临时文件；工具只写本目录当前入口的五行头部、六规格和三份JSON，不调用网络、服务、模型或Git写操作。默认校验也会从既有Git对象读取历史来源；缺历史blob时应取回准确基线再检查，不能跳过来源验证。
 
 ```sh
 python3 - <<'PYCODE'
@@ -44,9 +53,36 @@ D=Path.cwd()/'docs/learning-analysis'
 write='--write' in sys.argv
 H=lambda b: hashlib.sha256(b).hexdigest()
 J=lambda x: (json.dumps(x,ensure_ascii=False,indent=2)+'\n').encode()
-m=json.loads((D/'split-manifest.json').read_text()); main=(D/m['baseline_file']).read_text()
-m.update(design_revision='v1.0',design_status='design-final',approval_person='Ashrum（PO）',approval_date='2026-10-23')
+# Single publication metadata source. Change only this object after actual PO approval.
+RELEASE_STATE = {
+    'revision': 'v1.1',
+    'version_date': '2026-10-24',
+    'design_status': 'design-candidate',
+    'approval_person': '待签发',
+    'approval_date': '待签发',
+}
+r=RELEASE_STATE
+assert r['design_status'] in ('design-candidate','design-final')
+final=r['design_status']=='design-final'
+assert (r['approval_person']!='待签发' and r['approval_date']!='待签发') if final else (r['approval_person']==r['approval_date']=='待签发')
+label=('设计正式版 '+r['revision']) if final else ('设计候选 '+r['revision']+'（待 PO 签发）')
+header=(f"- 设计状态：{label}\n- 工程准入：未开始\n"
+        f"- 版本：{r['revision']} · {r['version_date']} · Derived, Non-canonical\n"
+        f"- 批准人：{r['approval_person']}\n- 批准日期：{r['approval_date']}")
+m=json.loads((D/'split-manifest.json').read_text())
+m.update(design_revision=r['revision'],design_status=r['design_status'],
+         approval_person=r['approval_person'],approval_date=r['approval_date'],
+         baseline_file='OLE_Learning_Analysis_Design_'+r['revision']+'.md')
 outputs={}; segments=[]; count=0
+# Only synchronize these five metadata lines; editorial bodies remain manually maintained.
+reading=[m['baseline_file'],'README.md','00-实施规格索引.md','SCREENS.md','RELEASE.md']
+for name in reading:
+    text=(D/name).read_text()
+    pattern=r'^- 设计状态：[^\n]*\n- 工程准入：[^\n]*\n- 版本：[^\n]*\n- 批准人：[^\n]*\n- 批准日期：[^\n]*'
+    text,n=re.subn(pattern,lambda _: header,text,count=1,flags=re.M)
+    assert n==1,name+' missing metadata header'
+    outputs[name]=text.encode()
+main=outputs[m['baseline_file']].decode()
 for spec in m['specs']:
     selected=[]
     for seg in spec['segments']:
@@ -55,11 +91,11 @@ for spec in m['specs']:
         seg.update(source_start=a,source_end=b,source_line=main[:a].count('\n')+1,sha256=H(body.encode()))
         selected.append(body); segments.append((a,b)); count+=1
     text=f"# OLE 学情分析 {spec['title']}\n\n"
-    text+='- 设计状态：设计正式版 v1.0\n- 工程准入：未开始\n- 版本：v1.0 · 2026-10-23 · Derived, Non-canonical\n- 批准人：Ashrum（PO）\n- 批准日期：2026-10-23\n\n'
+    text+=header+'\n\n'
     text+=spec['purpose']+'\n\n'
-    text+=f"来源：[v1.0主稿]({m['baseline_file']})。保留主稿章节号，产品正文单向派生；历史结论不作为当前通过。\n\n"
+    text+=f"来源：[{r['revision']}主稿]({m['baseline_file']})。保留主稿章节号，产品正文单向派生；历史结论不作为当前通过。\n\n"
     text+='## 范围与工程交接\n\n'
-    text+='本版适用性以主稿§13.9 LD01–LD04及06规格§12.10–12.11为准；完整生命周期语义中的后续能力不构成本版即时交付。关联工程索引：'+ '、'.join(spec['engineering_gate_refs'])+'，细则统一在[工程线附录](engineering-appendix-v1.0.md)，不作为设计转正前置。\n\n'
+    text+='本版适用性以主稿§13.9 LD01–LD04、§13.10 F06／E1及06规格§12.10–12.12为准；完整生命周期语义中的后续能力不构成本版即时交付。关联工程索引：'+ '、'.join(spec['engineering_gate_refs'])+'，细则统一在[工程线附录](engineering-appendix-v1.0.md)，不作为设计转正前置。\n\n'
     text+='01定义数值与资格，02定义行动语义，03承接独立页，04定义C01及Agent交互，05定义职责用途，06登记粗验。主稿§1–§3和当前决定共同适用；变更先修主稿，再按[RELEASE](RELEASE.md)重出。\n\n## 基线承接正文\n\n'
     text+='\n\n'.join(selected)+'\n'
     data=text.encode(); outputs[spec['file']]=data
@@ -88,6 +124,19 @@ for start,end in protected:
     before=old[old.index(start):old.index(end,old.index(start))].strip()
     after=main[main.index(start):main.index(end,main.index(start))].strip()
     assert before==after, start+' changed approved product block'
+# Compare the entire metric chapter against the last signed product source as well.
+previous=subprocess.check_output(['git','show',m['previous_design_git_commit']+':docs/learning-analysis/'+m['previous_design_file']]).decode()
+section6=lambda t: t[t.index('## 6 '):t.index('## 7 ')]
+assert section6(main)==section6(previous),'v1.0 section 6 changed'
+for start,end in protected:
+    extract=lambda t: t[t.index(start):t.index(end,t.index(start))].strip()
+    assert extract(main)==extract(previous),start+' differs from v1.0'
+# Historical v1.0 files may change only their design-status line.
+for name in [m['previous_design_file'],app['file']]:
+    before=subprocess.check_output(['git','show',m['previous_design_git_commit']+':docs/learning-analysis/'+name]).decode()
+    after=(D/name).read_text()
+    strip_status=lambda t: re.sub(r'^- 设计状态：[^\n]*$', '',t,flags=re.M)
+    assert strip_status(before)==strip_status(after),name+' changed beyond historical label'
 legacy=(D/'OLE_Learning_Analysis_Design_v0.7-r2.md').read_text()
 assert legacy[legacy.index('本文件供产品'):]==old[old.index('本文件供产品'):], 'historical body changed'
 assert H((D/'evidence/approved-v0.7-r1.md').read_bytes())=='a979d411f4886ec7c93d5440239b012e2ab2978987466dab2b66d0e1e230e05a'
@@ -98,12 +147,12 @@ assert main.count(oracle)==2
 assert oracle in outputs[next(x['file'] for x in m['specs'] if x['number']==6)].decode()
 for prefix,maximum in [('MET',10),('LA',9),('ED',4),('T',7),('E',10),('EDU',12),('M',4),('AG',6)]:
     for n in range(1,maximum+1): assert prefix+str(n).zfill(2) in main
-for field in ['LD01=A','LD02=A','LD03=A','LD04=B','qwen3.8-flash','ole-agent-workspace-appearance','blueprint-night','复查统计口径待确认','设计状态：设计正式版 v1.0','批准人：Ashrum（PO）','批准日期：2026-10-23']:
+for field in ['LD01=A','LD02=A','LD03=A','LD04=B','qwen3.8-flash','ole-agent-workspace-appearance','blueprint-night','复查统计口径待确认','设计状态：'+label,'批准人：'+r['approval_person'],'批准日期：'+r['approval_date']]:
     assert field in main,field
 assert '.supervisor/' not in main and '.supervisor/' not in apptext
 outputs['split-manifest.json']=J(m)
 # Validate local links and table structure for all changed reading entries, including derived specs.
-names=[m['baseline_file'],app['file'],'README.md','00-实施规格索引.md','RELEASE.md','SCREENS.md']+[x['file'] for x in m['specs']]
+names=reading+[app['file'],m['previous_design_file']]+[x['file'] for x in m['specs']]
 links=0; tables=0
 for name in names:
     text=outputs.get(name,(D/name).read_bytes()).decode(); content=re.sub(r'```.*?```','',text,flags=re.S)
@@ -119,15 +168,18 @@ for name in names:
         elif widths:
             assert len(set(widths))==1,(name,'ragged table',widths)
             tables+=1; widths=[]
-result={'status':'PASS','revision':'v1.0','scope':'document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission','baseline_sha256':m['baseline_sha256'],'specs':len(m['specs']),'verbatim_product_segments':count,'section4_to12_continuous':True,'engineering_transfers':len(app['transfers']),'engineering_source_and_target_exact':True,'protected_product_blocks_unchanged':len(protected),'la08_oracles':10,'historical_master_body_unchanged':True,'historical_r1_hash_verified':True,'local_links_checked':links,'tables_checked':tables,'browser_acceptance':'Supervisor L6 recorded; scope and untested items in SCREENS.md; not rerun by document tool','c01_smoke':'W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md','approval':'Ashrum（PO） · 2026-10-23'}
+result={'status':'PASS','revision':r['revision'],'scope':'document integrity only; not Supervisor Review, browser acceptance, model smoke or production admission','baseline_sha256':m['baseline_sha256'],'specs':len(m['specs']),'verbatim_product_segments':count,'section4_to12_continuous':True,'engineering_transfers':len(app['transfers']),'engineering_source_and_target_exact':True,'protected_product_blocks_unchanged':len(protected),'la08_oracles':10,'historical_master_body_unchanged':True,'historical_r1_hash_verified':True,'local_links_checked':links,'tables_checked':tables,'browser_acceptance':'Supervisor A1 2026-10-24 and historical L6 recorded; E1/E3 accepted by Supervisor via W299 (pending merge); see SCREENS.md; not rerun by document tool','c01_smoke':'W278 recorded: timeouts, displayable but blocked, insufficient; see SCREENS.md','approval':r['approval_person']+' · '+r['approval_date'],
+        'v1_0_section6_verbatim':True, 'v1_0_history_status_only':True}
 outputs['split-validation.json']=J(result)
 files=[]
 for p in sorted(D.rglob('*')):
     if not p.is_file() or p.name=='release-manifest.json': continue
     rel=p.relative_to(D).as_posix(); b=outputs.get(rel,p.read_bytes())
     files.append({'path':rel,'sha256':H(b),'bytes':len(b)})
-release={'revision':'v1.0','status':'design-final-local-sync-pending','engineeringAdmission':'not-started','approvalPerson':'Ashrum（PO）','approvalDate':'2026-10-23','publication':{'github':'not-synced','outline':'not-synced','site':'not-synced; historical assets unchanged'},'files':files}
+release={'revision':r['revision'],'status':r['design_status']+'-local-sync-pending','engineeringAdmission':'not-started','approvalPerson':r['approval_person'],'approvalDate':r['approval_date'],'publication':{'github':'not-synced','outline':'not-synced','site':'not-synced; historical assets unchanged'},'files':files}
 outputs['release-manifest.json']=J(release)
+for rel in outputs:
+    assert (D/rel).resolve().is_relative_to(D.resolve()),'output escapes package: '+rel
 if write:
     for rel,b in outputs.items(): (D/rel).write_bytes(b)
 else:
@@ -139,7 +191,7 @@ print(json.dumps({'mode':'write' if write else 'check',**result,'release_files':
 ```
 <!-- p96-document-tool:end -->
 
-## v1.0 签发记录
+## v1.0 签发记录（历史）
 
 - 签发人：Ashrum（PO）；签发日期：2026-10-23；设计正式版 v1.0，Derived, Non-canonical；工程准入：未开始。
 - 依据：Supervisor（Claude）2026-10-23 L6 粗验记录，无阻断项。初验基线 `e2a027a`，合成包 `teaching-default` / `teaching-empty`；九行矩阵通过或以定向测试覆盖。主题以 L5b-B 实跑与 L6 补验为准，详见 [SCREENS](SCREENS.md)。LA08／宽度／L5-A/C/D 等定向测试记录为 97/97，并非 P111 重新执行。
@@ -158,13 +210,13 @@ print(json.dumps({'mode':'write' if write else 'check',**result,'release_files':
 
 主稿与六规格的产品正文按 P111 范围原样保留，其中“候选／待执行／待整体批准”是候选期叙述；当前签发与实际证据以本节和 SCREENS 为准。工程交接附录也保持原样，候选期附件头部不代表本版退回候选，工程准入仍未开始。
 
-## 后续同步（未执行）
+## 后续同步（v1.1 未执行）
 
-本次仅完成本地设计包登记及内容指纹更新。由 Supervisor 独立 Review 当前 diff 后按授权提交、同步 GitHub／Outline 并逐项读回；本地签发登记不等于各端已同步。组件站点发布归 GPT 线，需另单适配版本入口、附录和新映射校验，生产构建后沿既有站点发布链执行，不新建站点。本任务不运行站点生成／发布脚本，不写 public 或 lib 产物。
+本次仅完成本地 v1.1 候选设计包及内容指纹更新。PO 实际签发后，由 Supervisor 独立 Review 当前 diff 后按授权提交、同步 GitHub／Outline 并逐项读回；本地签发登记不等于各端已同步。组件站点发布归 GPT 线，需另单适配版本入口、附录和新映射校验，生产构建后沿既有站点发布链执行，不新建站点。本任务不运行站点生成／发布脚本，不写 public 或 lib 产物。
 
 ## 历史 v0.7-r2 发布记录
 
-以下原发布与审核叙述仅对应2026-10-18版本，历史维护命令不可直接运行于当前候选正文；其批准、PASS、实拍及发布均不转移为v1.0证据。
+以下原发布与审核叙述仅对应2026-10-18版本，历史维护命令不可直接运行于当前候选正文；其批准、PASS、实拍及发布均不转移为v1.0／v1.1证据。
 
 # 学情分析 v0.7 r2 正式发布记录
 

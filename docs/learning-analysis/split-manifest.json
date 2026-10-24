@@ -1,17 +1,17 @@
 {
   "schema": "split-manifest-v3-design-engineering",
-  "design_revision": "v1.0",
-  "design_status": "design-final",
+  "design_revision": "v1.1",
+  "design_status": "design-candidate",
   "engineering_admission": "not-started",
-  "approval_person": "Ashrum（PO）",
-  "approval_date": "2026-10-23",
-  "baseline_file": "OLE_Learning_Analysis_Design_v1.0.md",
+  "approval_person": "待签发",
+  "approval_date": "待签发",
+  "baseline_file": "OLE_Learning_Analysis_Design_v1.1.md",
   "coordinate_unit": "unicode-code-point; end-exclusive",
   "historical_git_commit": "9435e92f4e9e1d802f6fd364bc8ac3b8fa7933c9",
   "historical_source_sha256": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
   "retained_in_baseline": [
     "§1–§3 产品／教育背景",
-    "§13 历史决定与当前LD01–LD04",
+    "§13 历史决定、LD01–LD04与当前F06／E1修订",
     "附录A/B历史来源与术语"
   ],
   "specs": [
@@ -31,50 +31,50 @@
           "key": "§6 指标与比较",
           "start_marker": "## 6 ",
           "end_marker": "## 7 ",
-          "source_start": 12937,
-          "source_end": 31616,
-          "source_line": 261,
+          "source_start": 13215,
+          "source_end": 31894,
+          "source_line": 264,
           "sha256": "823543b0f77d06818f527aefdb716e4ca7313c666f12d3c0b4c9c953d83d24b0"
         },
         {
           "key": "§9.1 正式对象语义",
           "start_marker": "## 9 ",
           "end_marker": "#### 行动 复查与支持的逻辑映射",
-          "source_start": 45782,
-          "source_end": 46958,
-          "source_line": 765,
+          "source_start": 48326,
+          "source_end": 49502,
+          "source_line": 791,
           "sha256": "3c058d1fb95d0aef964c368ed82de128a4c8a20b517f02849db3ad54911e3106"
         },
         {
           "key": "§9.3 证据与状态",
           "start_marker": "### 9.3 ",
           "end_marker": "### 9.4 ",
-          "source_start": 52295,
-          "source_end": 53011,
-          "source_line": 894,
+          "source_start": 54839,
+          "source_end": 55555,
+          "source_line": 920,
           "sha256": "2ddba54d716273b951616f0036c813cf60b803f26e6d243f51fcf215037e4807"
         },
         {
           "key": "§9.4 完整性与失效产品规则",
           "start_marker": "### 9.4 ",
           "end_marker": "### 9.5 ",
-          "source_start": 53011,
-          "source_end": 54593,
-          "source_line": 906,
+          "source_start": 55555,
+          "source_end": 57137,
+          "source_line": 932,
           "sha256": "a4d8aaa3b4a070f1a74e4dbd5719aa3be96f498f32669f2492c4f7e59f152612"
         },
         {
           "key": "§9.5 案例与资产",
           "start_marker": "### 9.5 ",
           "end_marker": "### 9.6 ",
-          "source_start": 54593,
-          "source_end": 54839,
-          "source_line": 938,
+          "source_start": 57137,
+          "source_end": 57383,
+          "source_line": 964,
           "sha256": "36e1713c4b26e7481d4ebee53f68d8f5e2d4ec262963d9b1d0823159b534fa63"
         }
       ],
-      "sha256": "8ef03ad6f85c90cc373fdbad2d9b50023d968d0d8f032d0b9726daf17e52e160",
-      "characters": 22957
+      "sha256": "cf9f4285ad564920e1677cb7fba7c59572a83bfc5a6cf9d4cc85062707a640b3",
+      "characters": 22965
     },
     {
       "number": 2,
@@ -93,41 +93,41 @@
           "key": "§5 教学闭环",
           "start_marker": "## 5 ",
           "end_marker": "## 6 ",
-          "source_start": 9909,
-          "source_end": 12937,
-          "source_line": 188,
+          "source_start": 10187,
+          "source_end": 13215,
+          "source_line": 191,
           "sha256": "7c83633fff3a57db17394504d9dd4645169978710d857c946aa630d862a3004d"
         },
         {
           "key": "§9.1 应用行动语义",
           "start_marker": "#### 行动 复查与支持的逻辑映射",
           "end_marker": "### 9.2 ",
-          "source_start": 46958,
-          "source_end": 48039,
-          "source_line": 787,
+          "source_start": 49502,
+          "source_end": 50583,
+          "source_line": 813,
           "sha256": "db4df3439e9ade3f0322447a06458eafe3e7dc0ce1943f5a70d8ec76ec384c14"
         },
         {
           "key": "§9.2 事实与匹配",
           "start_marker": "### 9.2 ",
           "end_marker": "### 9.3 ",
-          "source_start": 48039,
-          "source_end": 52295,
-          "source_line": 811,
+          "source_start": 50583,
+          "source_end": 54839,
+          "source_line": 837,
           "sha256": "15d0b7c98f02a5aa1234e7de11174513dcd1e8e884d2666f74e1d664463f0e77"
         },
         {
           "key": "§10.2 教育语义",
           "start_marker": "### 10.2 ",
           "end_marker": "### 10.3 ",
-          "source_start": 59093,
-          "source_end": 59433,
-          "source_line": 997,
+          "source_start": 61851,
+          "source_end": 62191,
+          "source_line": 1025,
           "sha256": "5351265e76f52f4e906c231db6a35a69a220e804d2d9b751dee0b4bb2c75d63f"
         }
       ],
-      "sha256": "e28938f4f489df04008b335ecc86fed499500b627ff7f818379747cd234e2bcd",
-      "characters": 9259
+      "sha256": "f529455ce91099cb3e0e7f99f70169899ae14a260d57f90bf30830a8fe4f97fc",
+      "characters": 9267
     },
     {
       "number": 3,
@@ -146,32 +146,32 @@
           "key": "§7 独立页面",
           "start_marker": "## 7 ",
           "end_marker": "## 8 ",
-          "source_start": 31616,
-          "source_end": 34128,
-          "source_line": 527,
+          "source_start": 31894,
+          "source_end": 34406,
+          "source_line": 530,
           "sha256": "9a065b32287a8ed9774538e9573598632ab0c696076e84b1e5ae252b81044cf2"
         },
         {
           "key": "§10.1 整改清单",
           "start_marker": "## 10 ",
           "end_marker": "### 10.2 ",
-          "source_start": 56469,
-          "source_end": 59093,
-          "source_line": 972,
+          "source_start": 59227,
+          "source_end": 61851,
+          "source_line": 1000,
           "sha256": "aa0e6753d6df7310885c94c536f35ded3853779f7837dcd31ccfb22a41aca4d4"
         },
         {
           "key": "§10.3 历史兼容与迁移产品规则",
           "start_marker": "### 10.3 ",
           "end_marker": "## 11 ",
-          "source_start": 59433,
-          "source_end": 60170,
-          "source_line": 1008,
+          "source_start": 62191,
+          "source_end": 62928,
+          "source_line": 1036,
           "sha256": "7b83dbc0436b51e557993fbf8a482b55b5346332ab473371c4229aeb285d5953"
         }
       ],
-      "sha256": "e544cbad15fdcbe4d8f4f277c1394c13efc0c316e3ae5d0e9712bad2bb2867b0",
-      "characters": 6437
+      "sha256": "777d2fcf1f5a4ab40107c30515fc49b7aaba77ffb8c88fea738418a7d57e62aa",
+      "characters": 6445
     },
     {
       "number": 4,
@@ -185,56 +185,56 @@
         "G04",
         "G05"
       ],
-      "purpose": "本版在既有工作台承接四画面与双入口；C01 qwen3.8-flash受控合成建议冒烟、C02核证、C03同运行未保存草稿；练习用既有题篮／编辑／保存。",
+      "purpose": "本版承接 F06 主区摘要／图表、右栏完整报告／证据、双版本与资格、E1 汇总隐私说明；登记 A1 合成通道，C01 真实模型与 C03 同运行未保存草稿边界不变。",
       "segments": [
         {
           "key": "§8.1 C01合同与本版能力",
           "start_marker": "## 8 ",
           "end_marker": "### 8.2 ",
-          "source_start": 34128,
-          "source_end": 39472,
-          "source_line": 574,
-          "sha256": "a55dbd891859680b8ea38dd89ab19390d524870b7644480b65adf187eb77eb99"
+          "source_start": 34406,
+          "source_end": 40392,
+          "source_line": 577,
+          "sha256": "b4bd823862851272715b604ed5ea956e2e5dc240dc1cc31625c20349197292af"
         },
         {
           "key": "§8.2 典型交互",
           "start_marker": "### 8.2 ",
           "end_marker": "### 8.3 ",
-          "source_start": 39472,
-          "source_end": 40822,
-          "source_line": 653,
-          "sha256": "2daf9ab7b51dcfaad7938a2b427302b8545a264c1807497d0b33cc9c5a5b052c"
+          "source_start": 40392,
+          "source_end": 42756,
+          "source_line": 658,
+          "sha256": "602601af6c26eb2a0a8aa667f913eaf4ceef91696d61735a1afd097f1e846a47"
         },
         {
           "key": "§8.3 Blueprint承载",
           "start_marker": "### 8.3 ",
           "end_marker": "### 8.4 ",
-          "source_start": 40822,
-          "source_end": 45153,
-          "source_line": 671,
-          "sha256": "d323271563438145519d2a31710f5b41492038d00399c3c9c85906e6d5b1938c"
+          "source_start": 42756,
+          "source_end": 47385,
+          "source_line": 691,
+          "sha256": "30382cbe8a13c26e61c170eb54d0619fdd10a25db0a2c19acf07f1114e143792"
         },
         {
           "key": "§8.4 确认与恢复产品行为",
           "start_marker": "### 8.4 ",
           "end_marker": "## 9 ",
-          "source_start": 45153,
-          "source_end": 45782,
-          "source_line": 743,
-          "sha256": "10167b9e596e9183a5c7ab31aa61af25add0c1c91028ea05fdf74de5324d2721"
+          "source_start": 47385,
+          "source_end": 48326,
+          "source_line": 765,
+          "sha256": "028ccb43ca3e144c46cb8fd8440131b0fa3cf4c01a0c7315f924933bf93d0c4e"
         },
         {
           "key": "§11 本版设计与后续范围",
           "start_marker": "## 11 ",
           "end_marker": "## 12 ",
-          "source_start": 60170,
-          "source_end": 60881,
-          "source_line": 1029,
-          "sha256": "1e130ea01e0c54d24814297aad9b36cb190f51069b243d6f4f67afbcb61cb9dd"
+          "source_start": 62928,
+          "source_end": 63897,
+          "source_line": 1057,
+          "sha256": "b1b3725fa0859ba1f0dd53bb6dc75d25eb3d7f017cbb42727589835d64730eca"
         }
       ],
-      "sha256": "d9acb2b2768ae8bb10f536cd1964554f57c788ba5de9bb343bb91ed9be9c7b4b",
-      "characters": 12953
+      "sha256": "d1e59ccc0da5e980ff4cfc809c61a2f62989b86ae8235ce99f0d081accf06ac4",
+      "characters": 15491
     },
     {
       "number": 5,
@@ -254,23 +254,23 @@
           "key": "§4 职责与授权",
           "start_marker": "## 4 ",
           "end_marker": "## 5 ",
-          "source_start": 7064,
-          "source_end": 9909,
-          "source_line": 135,
+          "source_start": 7342,
+          "source_end": 10187,
+          "source_line": 138,
           "sha256": "99cbd2c63a5620b21e188febc53e274c763392390d2b2d44ede03ac1d4a2f98a"
         },
         {
           "key": "§9.6 共享与模型用途",
           "start_marker": "### 9.6 ",
           "end_marker": "## 10 ",
-          "source_start": 54839,
-          "source_end": 56469,
-          "source_line": 944,
-          "sha256": "ab7cb477ecb3d5fe22c899cb43fa627f20cb626662b20ec5987e6b4fdafd85dd"
+          "source_start": 57383,
+          "source_end": 59227,
+          "source_line": 970,
+          "sha256": "9cecb5648463530812b9eea9bccf58bbcea9ceac07116af1c77009284532ece8"
         }
       ],
-      "sha256": "8d942e9b472d8f92befd834b43b739810dd9bc0fc6687e621487c09177fb3570",
-      "characters": 5048
+      "sha256": "b06124679c88ee72fda3c7018365394f6ab1aad5c27f2c2e0cf09dd0f3a74927",
+      "characters": 5270
     },
     {
       "number": 6,
@@ -284,38 +284,47 @@
         "G04",
         "G05"
       ],
-      "purpose": "本版逐项登记工作台合成粗验与C01受控冒烟；十组oracle及关键反例均待执行。真实用户、教学／测量、生产验证另交工程附录，不假称已通过。",
+      "purpose": "保留既定验收目录与十组 oracle；v1.0 实绩见 SCREENS，新增 v1.1 F06／A1 逐项证据与 E1／E3 待修范围，不把历史测试、provider-mock 或文档校验当作真实服务与工程准入。",
       "segments": [
         {
           "key": "§12.1–12.9 场景与判定",
           "start_marker": "## 12 ",
           "end_marker": "### 12.10 ",
-          "source_start": 60881,
-          "source_end": 71754,
-          "source_line": 1043,
-          "sha256": "8b77fd9d3a29c394c59bfca33102ef4ad48514e415a3f56f049565570502ba0c"
+          "source_start": 63897,
+          "source_end": 74804,
+          "source_line": 1073,
+          "sha256": "d115931997393ffd0f2a6b1a5f120e1263e3ae11c399d3c259500aeca35b9fca"
         },
         {
           "key": "§12.10 工作台粗验与十组oracle",
           "start_marker": "### 12.10 ",
           "end_marker": "### 12.11 ",
-          "source_start": 71754,
-          "source_end": 73948,
-          "source_line": 1197,
-          "sha256": "742f5513037567c117ceb05195235f9c5aa25bd7e7346e109ad04ffaeb3c7afb"
+          "source_start": 74804,
+          "source_end": 77103,
+          "source_line": 1227,
+          "sha256": "9b22260e187cede4de00c44169b4ab6adbe9060b6031c3164888139fdc2d52b2"
         },
         {
           "key": "§12.11 R2产品反例归属",
           "start_marker": "### 12.11 ",
+          "end_marker": "### 12.12 ",
+          "source_start": 77103,
+          "source_end": 77807,
+          "source_line": 1263,
+          "sha256": "99de5f2a8ed2cf73f1dda682f6f537187879c908e7c874fd3e8f4088a1b46543"
+        },
+        {
+          "key": "§12.12 v1.1 F06与A1增量验收",
+          "start_marker": "### 12.12 ",
           "end_marker": "## 13 ",
-          "source_start": 73948,
-          "source_end": 74627,
-          "source_line": 1233,
-          "sha256": "84e4d5fc84af16451086b90820a926ce68683c4831b185921312281a3e3f3378"
+          "source_start": 77807,
+          "source_end": 78961,
+          "source_line": 1277,
+          "sha256": "ef4492a7f9e4784c26156e0a88826aafc7a159cc32cd57632289d905ee3346ed"
         }
       ],
-      "sha256": "3b53dba933c78a0039025ee647671a60973cb1e48ab47df9966d34870700a7ab",
-      "characters": 14316
+      "sha256": "39a3416df629f14177a373c2703a0734b6eec5f952f0718fdb094fd2feb3c90a",
+      "characters": 15679
     }
   ],
   "engineering_appendix": {
@@ -329,8 +338,8 @@
         "source_start": 8913,
         "source_end": 9056,
         "sha256": "6295332a0d150a13bc6620c21f479adc7bbc2758994a58f1651258c23031aa3b",
-        "target_start": 3050,
-        "target_end": 3193,
+        "target_start": 3061,
+        "target_end": 3204,
         "target_line": 68
       },
       {
@@ -341,8 +350,8 @@
         "source_start": 9058,
         "source_end": 9251,
         "sha256": "3edcbed20a7ded6e6ce6a8e2c80fa1f917da7db99664024826e79e23e6d841b5",
-        "target_start": 3316,
-        "target_end": 3509,
+        "target_start": 3327,
+        "target_end": 3520,
         "target_line": 76
       },
       {
@@ -353,8 +362,8 @@
         "source_start": 13754,
         "source_end": 14246,
         "sha256": "024a3ced55b46419bc122b4a843fe23863a2762ed20da46955d2f90d8313ee05",
-        "target_start": 3639,
-        "target_end": 4131,
+        "target_start": 3650,
+        "target_end": 4142,
         "target_line": 84
       },
       {
@@ -365,8 +374,8 @@
         "source_start": 15860,
         "source_end": 16153,
         "sha256": "63c3502df54d67f0291e57f1e8951f6619e7fc72079685102d3111bcf5633f2e",
-        "target_start": 4262,
-        "target_end": 4555,
+        "target_start": 4273,
+        "target_end": 4566,
         "target_line": 98
       },
       {
@@ -377,8 +386,8 @@
         "source_start": 19190,
         "source_end": 19355,
         "sha256": "0215ee2478a01ff693b96270aaf1435a42b70fdbf01a1859f16b2267a54acf16",
-        "target_start": 4680,
-        "target_end": 4845,
+        "target_start": 4691,
+        "target_end": 4856,
         "target_line": 106
       },
       {
@@ -389,8 +398,8 @@
         "source_start": 36088,
         "source_end": 40877,
         "sha256": "6a92587354497d57fdd349573deb91d5df5df8538438d96e177205f4a55f89e1",
-        "target_start": 4991,
-        "target_end": 9780,
+        "target_start": 5002,
+        "target_end": 9791,
         "target_line": 114
       },
       {
@@ -401,8 +410,8 @@
         "source_start": 35770,
         "source_end": 36086,
         "sha256": "598be5200ae04a3abc1686132bf0c5aeac2d65e2112a36ef13aaaf0ed18fcca2",
-        "target_start": 9907,
-        "target_end": 10223,
+        "target_start": 9918,
+        "target_end": 10234,
         "target_line": 160
       },
       {
@@ -413,8 +422,8 @@
         "source_start": 40981,
         "source_end": 41114,
         "sha256": "c23ee7d9b9fb2184c3bf4f3e1b2ec22dfd76f4614c0fa4f745821babd59aa7fd",
-        "target_start": 10344,
-        "target_end": 10477,
+        "target_start": 10355,
+        "target_end": 10488,
         "target_line": 168
       },
       {
@@ -425,8 +434,8 @@
         "source_start": 46718,
         "source_end": 46839,
         "sha256": "1194730cb01117c08cc4f1e516b3ab0f9f8384c7bca3e7099ed144b51cbd9d4f",
-        "target_start": 10602,
-        "target_end": 10723,
+        "target_start": 10613,
+        "target_end": 10734,
         "target_line": 176
       },
       {
@@ -437,8 +446,8 @@
         "source_start": 49151,
         "source_end": 49311,
         "sha256": "287eba7abddf23a0fde656ecbe803ffdd55b6195ea27f09d25ff6dfb8c5df1ff",
-        "target_start": 10847,
-        "target_end": 11007,
+        "target_start": 10858,
+        "target_end": 11018,
         "target_line": 184
       },
       {
@@ -449,8 +458,8 @@
         "source_start": 49313,
         "source_end": 49586,
         "sha256": "9acca94aebbd2b81978e802ab201a1782854a804c73b6809a4ea6f59ed40d247",
-        "target_start": 11132,
-        "target_end": 11405,
+        "target_start": 11143,
+        "target_end": 11416,
         "target_line": 192
       },
       {
@@ -461,8 +470,8 @@
         "source_start": 50758,
         "source_end": 50901,
         "sha256": "aa71f111f486cdbf10734d54ed40e330a4aa46a946da6dadf79300b43e88fbc1",
-        "target_start": 11526,
-        "target_end": 11669,
+        "target_start": 11537,
+        "target_end": 11680,
         "target_line": 200
       },
       {
@@ -473,8 +482,8 @@
         "source_start": 51134,
         "source_end": 51266,
         "sha256": "6306d9d117c2f5f65f5ef627e866615125e94130adfaaeb55b18a3233a091752",
-        "target_start": 11792,
-        "target_end": 11924,
+        "target_start": 11803,
+        "target_end": 11935,
         "target_line": 208
       },
       {
@@ -485,8 +494,8 @@
         "source_start": 54391,
         "source_end": 54590,
         "sha256": "a69559c29ad24ac9edf8d1088e1cdcbc8273e94a4bd2da8c8bd3c63bf1d5137e",
-        "target_start": 12046,
-        "target_end": 12245,
+        "target_start": 12057,
+        "target_end": 12256,
         "target_line": 216
       },
       {
@@ -497,8 +506,8 @@
         "source_start": 54856,
         "source_end": 55112,
         "sha256": "66f450bb82fa090cf01b4e0b6715b1ca1821c4c5adb951c0fbaccb8d8a4e087d",
-        "target_start": 12369,
-        "target_end": 12625,
+        "target_start": 12380,
+        "target_end": 12636,
         "target_line": 224
       },
       {
@@ -509,8 +518,8 @@
         "source_start": 55572,
         "source_end": 55778,
         "sha256": "301c0457250f2c28a9439ef3d6660d54ea7b295cd7354f5cb2862fcd8aea976f",
-        "target_start": 12746,
-        "target_end": 12952,
+        "target_start": 12757,
+        "target_end": 12963,
         "target_line": 232
       },
       {
@@ -521,8 +530,8 @@
         "source_start": 55780,
         "source_end": 55877,
         "sha256": "e5599211508d30566d1fcf1fd1ab560aacf7dcb317150dbcc9e9d3d75a431ed3",
-        "target_start": 13074,
-        "target_end": 13171,
+        "target_start": 13085,
+        "target_end": 13182,
         "target_line": 240
       },
       {
@@ -533,8 +542,8 @@
         "source_start": 56567,
         "source_end": 56912,
         "sha256": "a4a3fbb395ac8069f8d8d1904f4b48f4c134afdaa24529fc22391f7b4e838c79",
-        "target_start": 13307,
-        "target_end": 13652,
+        "target_start": 13318,
+        "target_end": 13663,
         "target_line": 248
       },
       {
@@ -545,8 +554,8 @@
         "source_start": 57496,
         "source_end": 57769,
         "sha256": "071d1925eaea648f7a3d9e5012f76fa26e78b582bdde895d07d5667825f8476a",
-        "target_start": 13780,
-        "target_end": 14053,
+        "target_start": 13791,
+        "target_end": 14064,
         "target_line": 256
       },
       {
@@ -557,8 +566,8 @@
         "source_start": 57771,
         "source_end": 57945,
         "sha256": "0c3665951d8b94c8f80ff52b883de5c4a0204586c1fc868a0d88ef1260a9b134",
-        "target_start": 14179,
-        "target_end": 14353,
+        "target_start": 14190,
+        "target_end": 14364,
         "target_line": 264
       },
       {
@@ -569,8 +578,8 @@
         "source_start": 58302,
         "source_end": 58465,
         "sha256": "98056c67c6c8b01917683b4cc2ce1f084b32a17dbf5ca9dea9189aa36511a67a",
-        "target_start": 14477,
-        "target_end": 14640,
+        "target_start": 14488,
+        "target_end": 14651,
         "target_line": 272
       },
       {
@@ -581,8 +590,8 @@
         "source_start": 61985,
         "source_end": 62096,
         "sha256": "804805a8fbcafbbf1431d1beddeb0ea19eabeb7271e2235845aedf9f2326e38f",
-        "target_start": 14770,
-        "target_end": 14881,
+        "target_start": 14781,
+        "target_end": 14892,
         "target_line": 280
       },
       {
@@ -593,8 +602,8 @@
         "source_start": 62556,
         "source_end": 62780,
         "sha256": "29f211445161fa4b43b979bbf1b101113e94e5e92e5c8a249b25247569093439",
-        "target_start": 15003,
-        "target_end": 15227,
+        "target_start": 15014,
+        "target_end": 15238,
         "target_line": 288
       },
       {
@@ -605,8 +614,8 @@
         "source_start": 62799,
         "source_end": 66232,
         "sha256": "d10e6240d552d0fece2cf5e7ebe9e33792bec41683cb8153076684fa077146dd",
-        "target_start": 15365,
-        "target_end": 18798,
+        "target_start": 15376,
+        "target_end": 18809,
         "target_line": 296
       },
       {
@@ -617,8 +626,8 @@
         "source_start": 76382,
         "source_end": 80330,
         "sha256": "c5b12b15744b888a2a365a17d6ed8cd0f2ece5af264dd918611399df88cf222d",
-        "target_start": 18937,
-        "target_end": 22885,
+        "target_start": 18948,
+        "target_end": 22896,
         "target_line": 338
       },
       {
@@ -629,8 +638,8 @@
         "source_start": 86352,
         "source_end": 87200,
         "sha256": "42b91fead66fd0b6ecffb36f6e20e2648ca4bb26d5456ccf65dcccecea325a9b",
-        "target_start": 23016,
-        "target_end": 23864,
+        "target_start": 23027,
+        "target_end": 23875,
         "target_line": 406
       },
       {
@@ -641,8 +650,8 @@
         "source_start": 15827,
         "source_end": 21406,
         "sha256": "0307eca6d80eb68a778c2eff8bee36ae888f9a60fcaf9c0d4b3843ebd132a208",
-        "target_start": 23985,
-        "target_end": 29564,
+        "target_start": 23996,
+        "target_end": 29575,
         "target_line": 426
       },
       {
@@ -653,8 +662,8 @@
         "source_start": 71258,
         "source_end": 71393,
         "sha256": "28888a67fb36524658d28ca890ae084b7d77b8db03823eb12be2a69ca0c23862",
-        "target_start": 29839,
-        "target_end": 29974,
+        "target_start": 29850,
+        "target_end": 29985,
         "target_line": 549
       },
       {
@@ -665,16 +674,18 @@
         "source_start": 75578,
         "source_end": 75674,
         "sha256": "1b8c8b69ff1ce3c7e242ef8099a225642843d6fc4dcb97f11fdb0bddcc55883d",
-        "target_start": 30069,
-        "target_end": 30165,
+        "target_start": 30080,
+        "target_end": 30176,
         "target_line": 557
       }
     ],
-    "sha256": "a9d36c9602c197925db1474b1d841d22219611a4592c436b2ed118e274dc8c2d",
+    "sha256": "f9459f97249a83a7748e682ba4aac9836c6d25f7b7a587994639460826811746",
     "historical_sources": {
       "OLE_Learning_Analysis_Design_v0.7-r2.md": "a20061aca54469b303eba63de8429384dd723cacb913653e5a7d4a4e976cbf0d",
       "06-全周期验证协议与夹具矩阵.md": "417c8ad980b1e85cafaab3621fe54448975be6016cb67f0787c582644f965dc3"
     }
   },
-  "baseline_sha256": "0f22ef232ad83f1cd682a2bf7d0f0268fa192a805eafca3c0cf21cc39bf95fed"
+  "baseline_sha256": "c60e2b791b9c6b56614ecafd0a047b4a06483920efae362516f1db5d31f6052e",
+  "previous_design_git_commit": "609879d83d307a54039b24bfe53587eea742e297",
+  "previous_design_file": "OLE_Learning_Analysis_Design_v1.0.md"
 }
