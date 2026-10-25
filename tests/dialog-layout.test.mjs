@@ -179,7 +179,7 @@ test('record uses dt/dd, sections are labelled, and notice uses all supported ho
 });
 
 test('catalog keeps one pattern and registers editing and reference examples', () => {
-  assert.equal(components.length, 105);
+  // Whole-catalog preservation is checked against the independent P119 baseline in math-field-bundle.test.mjs.
   assert.equal(components.filter(item => !item.kind).length, 54);
   assert.equal(components.filter(item => item.kind === 'pattern').length, 39);
   assert.equal(components.filter(item => item.id === 'dialog-layout').length, 1);

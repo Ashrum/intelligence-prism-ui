@@ -145,7 +145,7 @@ test('SegmentedBar SSR is stable and demo includes themes, narrow width, formula
 });
 
 test('SegmentedBar adds one searchable analytics pattern and an Agent Spec (101 to 102)', () => {
-  assert.equal(components.length, 105);
+  // Whole-catalog preservation is checked against the independent P119 baseline in math-field-bundle.test.mjs.
   const entries = componentGroups.find(group => group.id === 'analytics').items.filter(item => item.id === 'segmented-bar');
   assert.equal(entries.length, 1); assert.equal(entries[0].kind, 'pattern');
   assert.equal(searchComponents('分段条')[0].item.id, 'segmented-bar');

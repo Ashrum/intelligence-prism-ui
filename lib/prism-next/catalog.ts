@@ -12,6 +12,7 @@ export const componentGroups:ComponentGroup[] = [
     item("command","Command 命令面板","通过搜索定位并执行命令。"),
   ]},
   { id:"forms",title:"输入与选择",items:[
+    {...item("math-field","MathField 公式框","所见即所得公式、打字速记、模板与数学键盘；原文仍由宿主控制。"),kind:"extension",sourceUrl:"https://github.com/arnog/mathlive",sourceLabel:"MathLive 0.111.1 / Prism 表单与 Temml"},
     item("input","Input 输入框","固定标签、清楚的边界与三档原生尺寸。"),
     item("input-group","Input Group 输入组合","在输入项内组合单位、图标与操作。"),
     item("textarea","Textarea 多行输入","允许长内容自然增高。"),

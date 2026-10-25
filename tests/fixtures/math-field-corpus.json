@@ -1,0 +1,210 @@
+[
+  {
+    "id": "superscript",
+    "input": "x^2"
+  },
+  {
+    "id": "fraction",
+    "input": "\\frac{a}{b}"
+  },
+  {
+    "id": "root",
+    "input": "\\sqrt{x}"
+  },
+  {
+    "id": "nth-root",
+    "input": "\\sqrt[3]{x}"
+  },
+  {
+    "id": "subscript",
+    "input": "x_1"
+  },
+  {
+    "id": "both-scripts",
+    "input": "x_1^2"
+  },
+  {
+    "id": "parentheses",
+    "input": "(x+1)"
+  },
+  {
+    "id": "sized-parentheses",
+    "input": "\\left(x+1\\right)"
+  },
+  {
+    "id": "absolute",
+    "input": "\\left|x\\right|"
+  },
+  {
+    "id": "brackets",
+    "input": "\\left[x+1\\right]"
+  },
+  {
+    "id": "less-equal",
+    "input": "a\\le b"
+  },
+  {
+    "id": "greater-equal",
+    "input": "a\\ge b"
+  },
+  {
+    "id": "not-equal",
+    "input": "a\\ne b"
+  },
+  {
+    "id": "approx",
+    "input": "a\\approx b"
+  },
+  {
+    "id": "plus-minus",
+    "input": "a\\pm b"
+  },
+  {
+    "id": "times",
+    "input": "a\\times b"
+  },
+  {
+    "id": "divide",
+    "input": "a\\div b"
+  },
+  {
+    "id": "pi",
+    "input": "\\pi"
+  },
+  {
+    "id": "alpha",
+    "input": "\\alpha"
+  },
+  {
+    "id": "beta",
+    "input": "\\beta"
+  },
+  {
+    "id": "theta",
+    "input": "\\theta"
+  },
+  {
+    "id": "gamma",
+    "input": "\\gamma"
+  },
+  {
+    "id": "delta",
+    "input": "\\Delta"
+  },
+  {
+    "id": "element",
+    "input": "x\\in A"
+  },
+  {
+    "id": "not-element",
+    "input": "x\\notin A"
+  },
+  {
+    "id": "subset",
+    "input": "A\\subset B"
+  },
+  {
+    "id": "subset-equal",
+    "input": "A\\subseteq B"
+  },
+  {
+    "id": "union",
+    "input": "A\\cup B"
+  },
+  {
+    "id": "intersection",
+    "input": "A\\cap B"
+  },
+  {
+    "id": "empty-set",
+    "input": "\\varnothing"
+  },
+  {
+    "id": "reals",
+    "input": "\\mathbb{R}"
+  },
+  {
+    "id": "sheet07-cases",
+    "input": "\\begin{cases} x + y = 5 \\\\ 2x - y = 1 \\end{cases}"
+  },
+  {
+    "id": "aligned-cases",
+    "input": "\\begin{cases}x+y&=5\\\\2x-y&=1\\end{cases}"
+  },
+  {
+    "id": "chinese-text",
+    "input": "\\text{中文}"
+  },
+  {
+    "id": "mixed-text",
+    "input": "x=1\\text{，当且仅当成立}"
+  },
+  {
+    "id": "unit-text",
+    "input": "3\\text{ cm}"
+  },
+  {
+    "id": "unit-roman",
+    "input": "v=3\\,\\mathrm{m/s}"
+  },
+  {
+    "id": "vector",
+    "input": "\\vec{F}=m\\vec{a}"
+  },
+  {
+    "id": "unit-pu",
+    "input": "\\pu{9.8 m/s2}"
+  },
+  {
+    "id": "sheet07-chemistry",
+    "input": "\\ce{2H2 + O2 -> 2H2O}"
+  },
+  {
+    "id": "chem-salt",
+    "input": "\\ce{Na+ + Cl- -> NaCl}"
+  },
+  {
+    "id": "chem-equilibrium",
+    "input": "\\ce{N2 + 3H2 <=> 2NH3}"
+  },
+  {
+    "id": "sheet07-polynomial",
+    "input": "y = \\frac{1}{2}x^{2} - 4x + 3"
+  },
+  {
+    "id": "sheet07-condition",
+    "input": "x>4"
+  },
+  {
+    "id": "nested-root",
+    "input": "\\frac{1}{\\sqrt{x^2+1}}"
+  },
+  {
+    "id": "fraction-exponent",
+    "input": "x^{\\frac{1}{2}}"
+  },
+  {
+    "id": "sum",
+    "input": "\\sum_{i=1}^{n}i"
+  },
+  {
+    "id": "integral",
+    "input": "\\int_0^1 x^2\\,dx"
+  },
+  {
+    "id": "limit",
+    "input": "\\lim_{x\\to0}\\frac{\\sin x}{x}"
+  },
+  {
+    "id": "sheet08-empty-denominator",
+    "input": "y=\\frac{1}{}x^{2}-4x+3"
+  },
+  {
+    "id": "empty-template-fraction",
+    "input": "\\frac{}{}"
+  },
+  {
+    "id": "empty-template-root",
+    "input": "\\sqrt{}"
+  }
+]
