@@ -1,5 +1,6 @@
 "use client"
 
+import { ScoreReview } from "../score-review"
 import { useState } from "react"
 import { BlueprintSectionHeader, BpButton, BpFrameCard, BpPaperSlot, BpScanTrace, BpSteps, type BpPaperSlotState } from "../blueprint/blueprint"
 
@@ -37,12 +38,15 @@ export function BlueprintGradingDemo() {
   }
   return <section id="grading-p102" className="bp-grading-demo space-y-5" data-reduced-motion={reduced ? "true" : undefined} aria-label="智能批阅组件示例">
     <BlueprintSectionHeader title="智能批阅 · P102" description="演示事件，产品中由真实状态驱动。姓名、答卷与分数均为合成数据，按钮只修改当前示例。" />
+    <div className="w-full max-w-[500px]">
     <BpSteps variant="bars" current={current} steps={[
       { id: "setup", label: "设置任务", tone: "ink" },
       { id: "receive", label: "扫描学生试卷", tone: "receive", meta: `已收到 ${slots.filter(state => state !== "waiting").length} / 12` },
       { id: "ai", label: "AI 批阅", tone: "ai", meta: `已批 ${slots.filter(state => state === "graded" || state === "review").length} / 12` },
       { id: "review", label: "教师复核", tone: "review", meta: `待你处理 ${slots.filter(state => state === "review").length} 份` },
     ]} />
+    </div>
+    <ScoreReview mode="confirm" studentName="陈一诺" questionLabel="合成来源示例" maxScore={20} score={18} aiSuggestion={{ score: 18 }} source={{ kind: "ai", version: "v2（合成示例）" }} />
     <div className="flex flex-wrap items-center gap-5">
       <div className="bp-grading-station" aria-hidden="true"><BpScanTrace kind="beam" tone="receive" active={receiving} /></div>
       <div className="space-y-2"><p className="text-item-title">接收工位</p><p className="text-ui-body">{receiving ? "接收中 · 演示状态" : "接收已停止 · 演示状态"}</p><BpButton onClick={() => setReceiving(value => !value)}>{receiving ? "模拟停止接收" : "模拟恢复接收"}</BpButton></div>

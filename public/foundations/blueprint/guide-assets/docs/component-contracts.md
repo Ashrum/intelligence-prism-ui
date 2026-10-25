@@ -3187,3 +3187,14 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 - 沿用冻结 coss 的绘制语义：普通表格在行上着色；`variant="card"` 在 TableBody 选中行的直接 `td` 上着色，保留原来的单元格边框与圆角。light / paper / dark 及嵌套非蓝图预览根和后代不命中新规则，原 CSS、主题 token、coss 和组件输出保持不变。
 - 复用检索与取舍（离线）：核对现有 Prism `DataRecordTable`、`MaterialTableParticle`、固定 coss `table.tsx` 及本地 particles 表格示例；已有受控 `data-state` 和勾选示例足够，只在 `blueprint.css` 末尾追加 P115 段，不新增组件或演示。按任务限制未联网刷新 particles registry。
 - 组件站沿用 `/next/components/table` 的材料复核清单：勾选材料后呈现选中行，取消勾选恢复原背景。状态由既有示例宿主控制；本样式不负责业务行定位、滚动或图点联动。工作台仅同步 `app/(next)/next/blueprint.css`，不复制 coss、主题 token 或演示代码。静态检查不代替 Supervisor 浏览器验收。
+
+
+## P118 · ScoreReview 显式 AI 来源与四步 bars（2026-10-25）
+
+- `ScoreReview.source?: { kind: "ai"; version?: string | null } | { kind: "teacher" | "other" }`。仅宿主确认来源为 AI 并显式传入 `kind: "ai"` 才显示；不从 `aiSuggestion`、分数、模式、点击或状态推断来源。来源描述 AI 批阅依据，不表示教师最终评分的作者。
+- 版本是宿主提供的完整展示标识（例如 `v2`），只去除首尾空白，不补造 `v` 或版本号。有值显示「来源 · AI 批阅 v2」；缺失、null、空白显示「来源 · AI 批阅 · 版本未提供」。教师、其他来源及未传属性不显示此区块；所有模式适用，`showIdentity=false` 不隐藏来源。
+- 装饰条 `aria-hidden=true`、高 3px，复用 `--bp-phase-ai` → `--bp-phase-review` → `--bp-phase-receive`，仅 blueprint / blueprint-night 显示；light / paper / dark 只有文字。嵌套核心主题预览隐藏装饰条。不新增令牌，不把品牌色用于文字或按钮。
+- 未传新属性（包括显式 undefined）时，五主题 SSR 与 `2758836` 逐字节一致；专项以实际基线组件执行比对。来源不产生保存、执行或权限行为。
+- `BpSteps variant="bars"` 恰好四步时使用自身命名容器：宽度 <316px 单列，316–<648px 两列，≥648px 四列；沿用单格 150px 与列间距 16px。其他步数保持原 auto-fit 排法（可能有孤行），chips 保持原排法。
+- 复用检索：采用现有 ScoreReview、BpSteps、coss Card 和阶段令牌；现有阶段条不提供来源语义，因此在 ScoreReview 内增补文字与装饰 span，不新建目录组件。离线任务未检索在线 coss particles；无需引入来源代码或依赖。
+- 设计状态：候选实现；工程准入：未开始。PO 2026-10-25 授权本能力，Builder 工程自测不代表 Supervisor 浏览器验收或合并批准。

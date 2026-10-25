@@ -13,5 +13,7 @@ test('built Score Review route includes all fixtures, neutral copy and three the
   for (const theme of ['light','paper','dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
   assert.match(html,/data-ui-version="coss-v1"/); assert.doesNotMatch(html,/data-paper-preview|data-score-review-paper|data-review-continuous/); assert.match(html,/data-score-review-panel/);
   assert.match(html,/id="score-required-receipt"/);
+  assert.match(html,/data-score-review-source="ai"/);
+  assert.ok(text.includes("来源 · AI 批阅 · 版本未提供"));
   for (const label of ['每次保存必填理由','载入预设回执','清除回执','切换题项（焦点交接）','请填写修改理由。']) assert.ok(text.includes(label),label);
 });

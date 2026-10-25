@@ -7,7 +7,7 @@ import { transform } from 'lightningcss';
 
 const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 const path = 'app/(next)/next/blueprint.css';
-const css = read(path), marker = '\n/* P115 ·', index = css.indexOf(marker);
+const css = read(path).replace(/\n\/\* P118 ·[\s\S]*$/, ''), marker = '\n/* P115 ·', index = css.indexOf(marker);
 const block = css.slice(index), ast = postcss.parse(block);
 const themes = ['light', 'paper', 'dark', 'blueprint', 'blueprint-night'];
 const before = path => execFileSync('git', ['show', `c0e5da5:${path}`], { encoding: 'utf8' });

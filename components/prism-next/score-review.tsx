@@ -48,6 +48,8 @@ export type ScoreReviewProps = {
   maxScore: number; step?: number
   quickScores?: readonly number[]; shortcuts?: boolean
   score?: number | null; defaultScore?: number | null; onScoreChange?: (score: number | null) => void
+  /** Explicit host provenance. Never inferred from a suggestion or score. */
+  source?: { kind: "ai"; version?: string | null } | { kind: "teacher" | "other" }
   aiSuggestion?: { score: number; reason?: string; basis?: readonly string[] }
   /** Score at the start of editing. Defaults to a valid AI suggestion; absent baseline requires a reason. */
   baselineScore?: number; requireReasonOnChange?: boolean; showReason?: boolean
@@ -189,12 +191,17 @@ export function ScoreReview(props: ScoreReviewProps) {
     <FieldLabel htmlFor={`${id}-reason`}>修改理由{reasonRequired ? "（必填）" : "（选填）"}</FieldLabel>
     <Textarea id={`${id}-reason`} value={effectiveReason} disabled={locked} required={reasonRequired} readOnly={props.reasonOptions !== undefined ? !!selectedReason && !selectedReason.isOther : undefined} aria-describedby={`${id}-gate`} onChange={event => changeReason(event.target.value)} />
   </Field>
-  const identity = <header className={props.showIdentity === false ? "sr-only" : compact ? "flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1" : "min-w-0 space-y-2"}>
+  const identityHeader = <header className={props.showIdentity === false ? "sr-only" : compact ? "flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1" : "min-w-0 space-y-2"}>
       {props.eyebrow && <p className="text-ui-hint">{props.eyebrow}</p>}
       <h2 ref={titleRef} tabIndex={props.focusOnQuestionChange ? -1 : undefined} id={`${id}-title`} className="break-words text-block-title">{known(props.studentName)} · {known(props.questionLabel)}</h2>
       {props.showConfidence === false ? <AgentMetaLine>考号 {known(props.examNumber)}</AgentMetaLine> : <AgentMetaLine>考号 {known(props.examNumber)} · {confidenceKnown ? `${props.confidenceLabel || "置信度"} ${confidence}%` : "置信度 未提供"}</AgentMetaLine>}
       {props.progress && <AgentMetaLine>第 {props.progress.current} / {props.progress.total} 题</AgentMetaLine>}
     </header>
+  const sourceVersion = props.source?.kind === "ai" ? props.source.version?.trim() : undefined
+  const identity = props.source?.kind === "ai" ? <>{identityHeader}<div className="min-w-0 space-y-1" data-score-review-source="ai">
+    <span className="bp-score-source-bar" aria-hidden="true" />
+    <p className="break-words text-ui-hint">{sourceVersion ? `来源 · AI 批阅 ${sourceVersion}` : "来源 · AI 批阅 · 版本未提供"}</p>
+  </div></> : identityHeader
   const answerSection = compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.answer ?? false}>
       <CollapsibleTrigger render={<Button type="button" variant="outline" />}>{props.sectionLabels?.answer ?? "学生原始作答"}</CollapsibleTrigger>
       <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 space-y-2 pt-2">

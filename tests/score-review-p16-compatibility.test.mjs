@@ -20,6 +20,8 @@ test('P16 existing ScoreReview demos preserve main SSR apart from P31 control si
   const baseline = renderDemos(mainApi), current = renderDemos(currentApi);
   for (const [name, html] of Object.entries(baseline)) {
     assert.equal(hash(html), snapshots.demos[name], 'executed main demo matches captured main snapshot');
-    assert.equal(normalizeSizing(current[name]), normalizeSizing(html), `${name}: all non-sizing bytes including React IDs`);
+    const source = '<div class="min-w-0 space-y-1" data-score-review-source="ai"><span class="bp-score-source-bar" aria-hidden="true"></span><p class="break-words text-ui-hint">来源 · AI 批阅 · 版本未提供</p></div>';
+    if (name === 'demo') assert.equal(current[name].split(source).length, 2, 'P118 demo adds exactly one explicit source');
+    assert.equal(normalizeSizing(current[name].replace(source, '')), normalizeSizing(html), `${name}: all non-sizing bytes including React IDs`);
   }
 });
