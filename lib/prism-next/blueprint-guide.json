@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "fb20af63a638258428a066f59a34e8b4476773f6c1d0d7c05ff9a038ff06e199",
+  "sourceSha256": "e91ed4b9c9318eac9b8cbb4e6a9cde497bde0d0869f664f52a9328063337cd32",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -278,6 +278,11 @@
       "id": "section-55",
       "level": 2,
       "text": "P99 · C0 学情概览组件抽取"
+    },
+    {
+      "id": "section-56",
+      "level": 3,
+      "text": "P118 · PO 2026-10-25 来源呈现授权"
     }
   ],
   "blocks": [
@@ -405,7 +410,7 @@
         },
         {
           "type": "text",
-          "value": " 表示教师复核阶段。允许用途限于阶段细条、动效轨迹（含到达 / 批完描边）、当前作答聚焦框（P103 明确包括复核原件）和来源确为 AI 的 3px 来源条；均须配文字。答卷右上角标按冻结样稿标示复核入口，待处理文字仍用语义警告色。品牌三色不用于正文、标签文字、按钮底色、大面积底色、语义成功 / 警告 / 错误或进度填充。原 10/16 规则其余内容不变。本轮不新建 AI 来源条组件、不改变既有来源判定。"
+          "value": " 表示教师复核阶段。允许用途限于阶段细条、动效轨迹（含到达 / 批完描边）、当前作答聚焦框（P103 明确包括复核原件）和来源确为 AI 的 3px 来源条；均须配文字。答卷右上角标按冻结样稿标示复核入口，待处理文字仍用语义警告色。品牌三色不用于正文、标签文字、按钮底色、大面积底色、语义成功 / 警告 / 错误或进度填充。原 10/16 规则其余内容不变。P102 当轮不新建 AI 来源条组件、不改变既有来源判定。PO 2026-10-25 的 P118 决定覆盖该旧范围限定：授权 ScoreReview 显式 AI 来源呈现（3px 三色装饰条并配文字），不新增独立组件或内部来源判定。"
         }
       ]
     },
@@ -11488,6 +11493,75 @@
           "value": "验证边界：SSR/API、容器 CSS AST 与网格占位计算、P98 core SVG 指纹均为工程证据，不能当作视觉通过。浏览器验收：按分工由 Supervisor 执行；在 blueprint / blueprint-night / light 的 1280 / 390 与样稿并排，另检查窄容器两列、帮助展开、依据链接、未知态、长文案及 core 嵌套预览。独立 Review、浏览器验收与 PO 批准另行记录。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-56",
+      "children": [
+        {
+          "type": "text",
+          "value": "P118 · PO 2026-10-25 来源呈现授权"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态：候选实现；工程准入：未开始。PO 授权 "
+        },
+        {
+          "type": "code",
+          "value": "ScoreReview.source"
+        },
+        {
+          "type": "text",
+          "value": "，宿主确认 "
+        },
+        {
+          "type": "code",
+          "value": "kind: \"ai\""
+        },
+        {
+          "type": "text",
+          "value": " 时显示「来源 · AI 批阅」及实际版本；缺失写「来源 · AI 批阅 · 版本未提供」。D2 装饰条只在 blueprint / blueprint-night 显示，顺序为曜蓝 → 曜紫红 → 曜青绿，沿用三项阶段令牌；核心三主题只显示文字。未传属性时五主题输出不变。此授权不扩大到非批阅来源、文字、按钮、状态着色。完整契约见 "
+        },
+        {
+          "type": "link",
+          "children": [
+            {
+              "type": "text",
+              "value": "component-contracts.md"
+            }
+          ],
+          "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
+          "external": false,
+          "download": true
+        },
+        {
+          "type": "text",
+          "value": "。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "同轮修正四步 "
+        },
+        {
+          "type": "code",
+          "value": "BpSteps bars"
+        },
+        {
+          "type": "text",
+          "value": "：自身容器宽度 316px 至不足 648px 时 2×2，低于 316px 单列，648px 起四列；其他步数及 chips 不变。蓝图批阅演示以最大 500px 容器展示 2×2，并提供带合成版本的 ScoreReview；ScoreReview 原有演示提供缺失版本情形。实际主题、窄屏与交互验收由 Supervisor 执行。"
+        }
+      ]
     }
   ],
   "assets": [
@@ -11989,12 +12063,12 @@
     {
       "source": "docs/component-contracts.md",
       "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
-      "sha256": "2293b3f9ff3acc3f96323316ce0068cb09afca85e84fca558348a7f578d0c082"
+      "sha256": "3cdeff89606db1e8650e10384a3cc198e3b0f05c7a1a11eb910a56f19a5b88d7"
     },
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "fb20af63a638258428a066f59a34e8b4476773f6c1d0d7c05ff9a038ff06e199"
+      "sha256": "e91ed4b9c9318eac9b8cbb4e6a9cde497bde0d0869f664f52a9328063337cd32"
     }
   ]
 }

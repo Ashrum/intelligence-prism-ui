@@ -65,6 +65,7 @@ export function ScoreReviewDemo() {
       <Button variant="outline" className="mb-4 h-auto sm:h-auto whitespace-normal" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>320px 窄容器</Button>
       <div style={narrow ? { width: 320, maxWidth: "100%" } : undefined}>
         <ScoreFixture onIntent={setNotice} overrides={{
+          source: { kind: "ai" },
           locationNotice: "原始笔迹图像未接入；原卷由全屏预览框架呈现。",
         }} />
       </div>

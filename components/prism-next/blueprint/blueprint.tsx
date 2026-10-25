@@ -168,7 +168,7 @@ export type BpPhaseTone = "ink" | "receive" | "ai" | "review"
 export interface BpStepsProps { steps: { id: string; label: ReactNode; meta?: ReactNode; tone?: BpPhaseTone }[]; variant?: "chips" | "bars"; current: number; label?: string; status?: ReactNode; className?: string; children?: ReactNode }
 /** Read-only position in a short linear flow. Steps before `current` are done. */
 export function BpSteps({ steps, current, variant = "chips", label = "流程步骤", status, className, children }: BpStepsProps) {
-  if (variant === "bars") return <div className={cn("bp-steps-bars", className)} data-slot="bp-steps" data-variant="bars">
+  if (variant === "bars") return <div className={cn("bp-steps-bars", className)} data-slot="bp-steps" data-variant="bars" data-four-steps={steps.length === 4 ? "" : undefined}>
     <ol aria-label={label}>
       {steps.map((step, i) => <li key={step.id} data-state={i < current ? "done" : i === current ? "current" : "todo"} data-tone={step.tone ?? "ink"} aria-current={i === current ? "step" : undefined}>
         <span className="bp-phase-label text-ui-body"><b className="bp-phase-code font-mono text-ui-meta" aria-hidden="true">{String(i + 1).padStart(2, "0")}</b><span>{step.label}<span className="sr-only">{i < current ? "（已完成）" : i === current ? "（当前）" : "（未开始）"}</span></span></span>

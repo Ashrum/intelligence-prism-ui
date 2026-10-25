@@ -771,3 +771,15 @@
    Unlayered rules keep selection above coss layered hover utilities. */
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-slot="table-row"][data-state="selected"]:not(:where([data-variant="card"] *)):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background-color:var(--accent); }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) [data-variant="card"] [data-slot="table-body"] > [data-slot="table-row"][data-state="selected"] > td:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background-color:var(--accent); }
+
+/* P118 · Explicit AI provenance and four-step container layout. */
+.bp-score-source-bar { display:none; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .bp-score-source-bar:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:block; height:3px; background:linear-gradient(90deg,var(--bp-phase-ai),var(--bp-phase-review),var(--bp-phase-receive)); }
+.bp-steps-bars[data-four-steps] { container:bp-four-steps / inline-size; }
+.bp-steps-bars[data-four-steps] > ol { grid-template-columns:minmax(0,1fr); }
+@container bp-four-steps (min-width:316px) {
+  .bp-steps-bars[data-four-steps] > ol { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@container bp-four-steps (min-width:648px) {
+  .bp-steps-bars[data-four-steps] > ol { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}

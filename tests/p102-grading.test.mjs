@@ -15,7 +15,7 @@ import { relativeLuminance } from '../lib/prism-next/chart-color.ts';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const read = path => readFileSync(root + path, 'utf8');
 const file = new URL('bundle.mjs', await createTestRuntime('p102-grading'));
-writeFileSync(file, (await build({ stdin: { contents: `export * from './components/prism-next/blueprint/blueprint'; export * from './components/prism-next/demos/blueprint-grading';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false })).outputFiles[0].text);
+writeFileSync(file, (await build({ stdin: { contents: `export * from './components/prism-next/blueprint/blueprint'; export * from './components/prism-next/demos/blueprint-grading';`, resolveDir: root, loader: 'tsx' }, bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, plugins: [{ name: 'p118-temml-url', setup(b) { b.onResolve({ filter: /temml\.mjs\?url$/ }, () => ({ path: 'temml', namespace: 'url' })); b.onLoad({ filter: /.*/, namespace: 'url' }, () => ({ contents: 'export default "temml.mjs"' })); } }], write: false })).outputFiles[0].text);
 const api = await import(file);
 const h = React.createElement;
 const render = (name, props) => renderToStaticMarkup(h(api[name], props));
