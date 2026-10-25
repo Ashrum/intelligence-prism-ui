@@ -21,7 +21,7 @@ const html = el => renderToStaticMarkup(el);
 test('demo page renders all blueprint groups without changing the catalog count', () => {
   const out = html(h(api.BlueprintComponentsDemo));
   for (const text of ['按钮与标签页', '卡片与线条', '进度与数据', '反馈与文本', 'SHEET 01 / 05', 'REV 02', 'SHEET 01 / 02', '没有成果序列或已保存版本，不显示 folio。', 'bp-sheet', 'bp-btn', 'bp-seg-tabs', 'bp-steps', 'bp-card', 'bp-size-bar', 'bp-metric', 'bp-facts', 'bp-titleblock', 'bp-callout', 'bp-error', 'bp-annot', 'bp-codebox', 'bp-toast']) assert.ok(out.includes(text), text);
-  assert.equal(components.length, 105);
+  // Whole-catalog preservation is checked against the independent P119 baseline in math-field-bundle.test.mjs.
   assert.ok(!components.some(entry => entry.id.startsWith('blueprint')));
 });
 

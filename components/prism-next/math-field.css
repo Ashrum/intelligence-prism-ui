@@ -1,0 +1,31 @@
+/* P119 · Opt-in MathLive adapter; all paint resolves existing local theme tokens. */
+.prism-math-field-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.5rem 0.75rem;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-read-body);
+  --caret-color: var(--foreground);
+  --selection-background-color: var(--accent);
+  --selection-color: var(--accent-foreground);
+  --contains-highlight-background-color: var(--accent);
+  --placeholder-color: var(--muted-foreground);
+  --placeholder-opacity: 1;
+  --smart-fence-color: var(--muted-foreground);
+  --text-font-family: var(--font-sans);
+}
+.prism-math-field-input:focus-within { outline: 2px solid var(--ring); outline-offset: 2px; }
+.prism-math-field-input::part(virtual-keyboard-toggle),
+.prism-math-field-input::part(menu-toggle) { display: none; }
+.prism-math-keyboard-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; }
+/* Keep the symbol face whole; narrow hosts may trade key width for seven columns.
+   Do not let coss coarse-pointer hit areas overlap adjacent narrow keys. */
+.prism-math-key { min-height: 44px; padding-inline: 0; }
+.prism-math-key::after { min-width: 0; }
+/* End P119. */

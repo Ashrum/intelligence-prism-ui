@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { components, componentGroups, searchComponents } from '../lib/prism-next/catalog.ts';
+import { componentGroups, searchComponents } from '../lib/prism-next/catalog.ts';
 
 test('P57 two authorised chart entries are searchable and included once in analytics', () => {
-  assert.equal(components.length, 105);
+  // Whole-catalog preservation is checked against the independent P119 baseline in math-field-bundle.test.mjs.
   for (const [id, query] of [['donut-chart', '环形'], ['radar-chart', '雷达']]) {
     assert.equal(componentGroups.find(group => group.id === 'analytics').items.filter(item => item.id === id).length, 1);
     assert.ok(searchComponents(query).some(result => result.item.id === id));

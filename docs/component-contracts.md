@@ -3198,3 +3198,45 @@ E 部分结果是既有详情中的宿主组合，使用 AgentExecutionResult �
 - `BpSteps variant="bars"` 恰好四步时使用自身命名容器：宽度 <316px 单列，316–<648px 两列，≥648px 四列；沿用单格 150px 与列间距 16px。其他步数保持原 auto-fit 排法（可能有孤行），chips 保持原排法。
 - 复用检索：采用现有 ScoreReview、BpSteps、coss Card 和阶段令牌；现有阶段条不提供来源语义，因此在 ScoreReview 内增补文字与装饰 span，不新建目录组件。离线任务未检索在线 coss particles；无需引入来源代码或依赖。
 - 设计状态：候选实现；工程准入：未开始。PO 2026-10-25 授权本能力，Builder 工程自测不代表 Supervisor 浏览器验收或合并批准。
+
+## P119 · MathField 公式框（2026-10-26）
+
+设计状态：候选（实现 SHEET 08 / K4 A′）。工程准入：未开始。Builder 自测不替代 Supervisor 浏览器验收或 PO 批准。
+
+### 来源与依赖决定
+
+PO 2026-10-26 批准 MathLive 方向及新增依赖；Supervisor 预装并锁定 `mathlive@0.111.1`（MIT，无传递依赖），本轮不更换版本。检索先核对 Prism `AgentSubjectEditor`、`DraftMathPreview`、`subject-editor.ts`、Prism Button，再核对冻结 coss Label / Textarea / Button 以及本地 particles 输入与弹层示例：现有实现可复用固定标签、原文、错误定位、按钮，不能提供可视公式光标与结构编辑，故依授权适配 MathLive。离线委派未刷新在线 particles registry；未引入 Beautiful UI 代码。`components/coss/**` 和已有 CSS 字节保持不变。
+
+### API 与宿主边界
+
+导入 `components/prism-next/math-field` 的 `MathField`：必填 `value: string`、`onChange(value)`、非空 `label`；可选 `mode: inline|block`（默认 inline）、`subject: math|physics|chemistry`（默认 math）、`readOnlyReason`、`onConfirm()`、`onCancel()`、`onSplitRequest(cursor)`。回调只发意图，不保存、计算、推定版本或执行状态。宿主接受编辑后回写 value；拒绝的编辑回到宿主值。原文语法错误仍可由宿主保存草稿。
+
+`MathFieldCursor = {value, position, selection}` 的 position / selection 是 **MathLive 模型原子偏移，绝非 LaTeX 字符串或 UTF-16 索引**。宿主负责结构安全的拆分、作答空位提示与插入；不可直接 `value.slice(position)`。组件没有工作台私有类型、Store、权限或持久化。
+
+### 输入、模板与原文
+
+- 可视编辑输出统一调用 `getValue('latex-without-placeholders')`；模板编辑空格存为 `{}`。SHEET 08 高级示例采用 `y=\frac{1}{}x^{2}-4x+3`；这是 Supervisor r1 批准的表示方式调整，不改变画板结构、空位规则或冻结文件。
+- 载入时只对数学结构的空组做编辑投影为 placeholder；文本、化学、单位、环境参数、转义花括号和注释不改写。不编辑时输出的原文与输入在严格 Temml MathML 下等价。`\placeholder{}` 是编辑器内部状态，不能直接给 Temml 或作为题目中的作答空位。
+- 原生 capture 监听接管 composition 生命周期；候选期间不触发速记、确认、取消、撤销或受控回写。提交以公开 `insert(...,{mode:'text'})` 插入，连续中文序列由 MathLive 合并成 `\text{…}`，并恢复 math mode；尾随 composition input 不重复提交。含中日韩字符的粘贴整段按文本处理，不解析为公式命令。没有整条原文中文正则替换或产品内部 `_Model` 依赖。
+- 10 项速记为 `x^2`、`a/b`、`sqrt`、`pi`、`<=`、`!=`、`+-`、`*`、`x_1`、`alpha`。普通撤销/重做沿用 MathLive；「还原速记」把最近连续打字片段恢复为原字符文本（保存在合法的文本 LaTeX 中），不再次触发速记。光标移动、模板、粘贴、组字开始新事务；它不替代宿主文档历史。星号通过公开 math LaTeX 插入，避免 MathLive text 模式输出 Temml 不支持的 `\textasteriskcentered`。
+- 分式、根式、上下标、括号、方程组，以及关系、希腊、数学集合、物理单位/矢量、化学式工具；模板选中第一空格，Tab / 方向键由 MathLive 处理。
+- 「高级 · 公式原文」保持常驻固定标签。直接编辑原文时保留用户原文，包括未完成或非法命令；这一路不以 MathLive 的容错序列化覆盖错误草稿。Temml 严格解析决定是否可回写可视框，错误反馈和 UTF-16 定位复用 `DraftMathPreview`。修正后恢复双向同步。可视编辑路径保证不含 placeholder；高级错误草稿属于保留原文的例外。
+- ⌘/Ctrl+Enter 确认，Esc 取消；组字候选期间均不触发宿主回调。只读显示原因，禁止编辑和确认。
+
+### 按需加载、离线、主题与可访问性
+
+SSR 不导入 MathLive，显示原文预览占位；水合也不导入，首次点「打开公式框」后才加载独立模块。加载中显示「正在准备公式框…」，失败显示「公式框暂不可用，可继续编辑公式原文并确认。」并展开原文。Temml 同源原样 ESM 沿用现有资产方式。
+
+20 个字体逐字节复制到 `public/mathlive/fonts/`；包内许可保存在 `public/mathlive/LICENSE.txt`。`fontsDirectory='/mathlive/fonts'`、`soundsDirectory=null`、`keypressVibration=false`、`computeEngine=null`，关闭语音播放 hook；可访问说明直接使用受控公式原文，不调用 MathLive spoken-text，不引入 SRE 或联网语音。无 sounds 资源复制、CDN、计算服务或外部请求入口。
+
+数学键盘用现有 Prism Button 组合，通过 MathLive 公开 insert/executeCommand 驱动；不显示其全局默认键盘或菜单。每个键使用符号键面与中文 aria-label；字母页使用字母键面，长单位与化学式跨列，工具栏的中文模板名保持不变。数字页固定四行七列，顺序为 `7 8 9 ÷ ▭/▭ x² √` / `4 5 6 × ( ) π` / `1 2 3 − ≤ ≥ ⌫` / `0 . x + = ← →`。x² 沿用上标空格模板；← / → 分别执行上一个 / 下一个空格；其他页保留独立的退格与空格导航，收起键为 ⌄。键区列距 4px、按键高至少 44px；键区宽度达到 332px 时普通键宽也达到 44px，更窄的嵌套容器优先保持七列与完整键面，宽度按剩余空间均分，可能小于 44px，不扩大伪元素造成相邻触区重叠。五页为数字、字母、符号、希腊、学科，且主题就地继承。触屏点已打开的框，或显式点「数学键盘」才展开；窄屏鼠标不会仅因宽度而自动展开。五主题 `light/paper/dark/blueprint/blueprint-night` 均使用同一适配文件 `math-field.css` 的独立 P119 段，映射既有语义令牌，无新增全局令牌、无既有 CSS 重写。MathLive 光标伪元素的动画通过该自定义元素公开 ShadowRoot 内的局部 P119 media 样式停用，原生 `prefers-reduced-motion` 同时响应初始值和运行中变化。
+
+公式有显式 label 及关联说明；说明始终为「当前公式原文：{value}」，空值为「当前公式原文：空」。SSR、打开后、受控回写、错误原文与加载失败均取宿主当前 value；MathLive 英文朗读不保留为正文或辅助说明。中文、cases、ce 不依赖额外读屏包。真实读屏、Shadow DOM 的关联效果、IME 候选窗、焦点和触屏由 Supervisor 浏览器验收。
+
+### 语料、演示与限制
+
+组件站 `/next/components/math-field` 包含行内 SHEET 08、独立方程组、错误与定位、只读、键盘、化学、物理及 390 容器。全局主题切换用于五主题对照；页面只使用合成数据与本页状态。
+
+`tests/fixtures/math-field-corpus.json` 包含 52 条：全部指定结构、速记目标、关系、希腊、集合、中文 text、单位/pu、ce、方程组及画板示例。定向测试执行真实安装包 parser/model 与公开方法体，输入/输出均严格 Temml 渲染，MathML 相同，二次输出稳定。规范化允许数学空白、单字符上下标括号和 cases 分隔空格；text 内文、单位和化学参数保留。模型探针的内部导出仅在测试临时副本，不进入产品。
+
+已知不能直接往返：旧 `\placeholder{}` 存储格式、裸数学模式中文，以及两库支持范围之外的命令/宏/样式；这些高级原文保留并提示，不冒充完整 LaTeX 兼容。语料不是实际题库全集。模型/React commit DOM、构建依赖图与请求拦截检查均不代替真实浏览器断网、字体显示、五主题视觉或读屏验收；工作台 W320 接入另行验证。

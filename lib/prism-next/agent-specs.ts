@@ -9,6 +9,14 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  'math-field': {
+    component: 'MathField 公式框 · P119 候选',
+    source: 'MathLive 0.111.1 / Prism Button / coss Label、Textarea / DraftMathPreview；docs/component-contracts.md#p119--mathfield-公式框2026-10-26',
+    contract: ['受控 value/onChange，mode=inline|block，subject=math|physics|chemistry，label 必填，readOnlyReason 可选；onConfirm/onCancel 仅发意图。', '首次打开才导入 MathLive；SSR 使用原文占位，加载失败仍可编辑、确认原文。输出 latex-without-placeholders，模板空格存为空括号。', '组字期间阻止速记、宿主快捷键与受控回写；上屏和含中文粘贴经公开文本插入 API。拆分请求只提供 MathLive 模型位置，不能作为原文字符串索引。'],
+    states: ['初始 / 加载中 / 就绪 / 失败原文回退 / 解析错误 / 只读原因 / 五主题'],
+    accessibility: ['常驻 label、中文按钮名与当前公式原文说明；朗读不可用时保留原文。真实 IME、触屏、读屏和五主题浏览器验收由 Supervisor 执行。'],
+    dont: ['无存储、网络服务、计算或 Workspace 私有类型；作答空位规则由宿主处理。'],
+  },
   'trend-chart': {
     component: 'TrendChart 趋势图',
     source: 'Existing Recharts / chartToneColor / coss Table; docs/learning-chart-properties.md',
