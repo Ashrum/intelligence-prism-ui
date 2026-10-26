@@ -20,6 +20,8 @@ export type MathFieldProps = {
   subject?: MathFieldSubject
   readOnlyReason?: string
   label: string
+  /** Open and load after mounting; defaults to the explicit open button. */
+  autoOpen?: boolean
   onConfirm?: () => void
   onCancel?: () => void
   /** MathLive model offsets, NOT LaTeX/UTF-16 string indexes. Host owns splitting. */
@@ -35,13 +37,21 @@ export function MathField(props: MathFieldProps) {
   const shortcut = useRef<ReturnType<typeof createMathFieldShortcut> | null>(null)
   const [canRestore, setCanRestore] = useState(false)
   const composing = useRef(false), sourceComposing = useRef(false)
-  const [ime, setIme] = useState(false), [opened, setOpened] = useState(false)
-  const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'failed' | 'initialization-failed'>('idle')
+  const [ime, setIme] = useState(false), [opened, setOpened] = useState(Boolean(props.autoOpen))
+  const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'failed' | 'initialization-failed'>(props.autoOpen ? 'loading' : 'idle')
+  const [confirmedEmpty, setConfirmedEmpty] = useState<string | null>(null)
+  // A changed controlled value starts a new edit, even if it later becomes empty again.
+  if (confirmedEmpty !== null && confirmedEmpty !== value) setConfirmedEmpty(null)
   const [advanced, setAdvanced] = useState(false), [keyboard, setKeyboard] = useState(false)
   const [page, setPage] = useState('数字'), [api, setApi] = useState<MathFieldRuntime | null>(null)
   const invalid = Boolean(api && !api.sourceIsValid(value))
   const sourcePanel = useRef<HTMLDetailsElement>(null)
   const disabled = Boolean(readOnlyReason) || ime
+  const confirm = useCallback(() => {
+    if (latest.current.readOnlyReason || composing.current || sourceComposing.current) return
+    if (!latest.current.value.trim()) setConfirmedEmpty(latest.current.value)
+    latest.current.onConfirm?.()
+  }, [])
   const emit = useCallback(() => {
     const element = field.current
     if (!element || latest.current.readOnlyReason) return
@@ -93,7 +103,7 @@ export function MathField(props: MathFieldProps) {
             event.preventDefault(); event.stopPropagation(); setKeyboard(false); latest.current.onCancel?.()
           } else if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
             event.preventDefault(); event.stopPropagation()
-            if (!latest.current.readOnlyReason) latest.current.onConfirm?.()
+            confirm()
           }
         }
         const resetShortcut = () => { transaction.reset(); setCanRestore(false) }
@@ -134,7 +144,7 @@ export function MathField(props: MathFieldProps) {
       }
     }, () => { if (active) { setPhase('failed'); setAdvanced(true) } })
     return () => { active = false; cleanup?.() }
-  }, [opened, id, emit])
+  }, [opened, id, emit, confirm])
 
   useEffect(() => {
     const element = field.current, loaded = runtime.current
@@ -166,7 +176,7 @@ export function MathField(props: MathFieldProps) {
   const rawKey = (event: React.KeyboardEvent) => {
     if (sourceComposing.current || event.nativeEvent.isComposing || event.keyCode === 229) return
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); props.onCancel?.() }
-    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && !disabled) { event.preventDefault(); event.stopPropagation(); props.onConfirm?.() }
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && !disabled) { event.preventDefault(); event.stopPropagation(); confirm() }
   }
   return <section className="prism-math-field min-w-0 space-y-3" data-mode={mode} aria-labelledby={`${id}-label`}>
     <Label id={`${id}-label`} htmlFor={`${id}-visual`} className="text-ui-action">{label}</Label>
@@ -218,11 +228,11 @@ export function MathField(props: MathFieldProps) {
           onChange={event => { if (!readOnlyReason) props.onChange(event.target.value) }} />
       </div>
     </details>
-    <DraftMathPreview value={value} formulaMode={mode} label="排版预览" showHelp={false} onLocateError={location => {
+    <DraftMathPreview value={value} formulaMode={value.trim() || confirmedEmpty === value ? mode : undefined} label="排版预览" notice={null} showHelp={false} onLocateError={location => {
       setAdvanced(true); if (sourcePanel.current) sourcePanel.current.open = true; source.current?.focus(); source.current?.setSelectionRange(location.start, location.end)
     }} />
     <div className="flex flex-wrap gap-2">
-      {props.onConfirm && <Button type="button" disabled={disabled} onClick={() => { if (!composing.current && !sourceComposing.current) props.onConfirm?.() }}>确认</Button>}
+      {props.onConfirm && <Button type="button" disabled={disabled} onClick={confirm}>确认</Button>}
       {props.onCancel && <Button type="button" variant="outline" disabled={ime} onClick={() => { if (!composing.current && !sourceComposing.current) props.onCancel?.() }}>取消</Button>}
     </div>
   </section>
@@ -234,7 +244,7 @@ function ToolButtons({ items, disabled, onInsert }: { items: readonly MathFieldT
 
 function KeyboardButtons({ items, disabled, onCommand, onInsert }: { items: readonly MathFieldKey[]; disabled: boolean; onCommand: (command: Selector) => void; onInsert: (tool: MathFieldTool) => void }) {
   return items.map(key => <Button key={key.label} type="button" variant="outline" size="navigation"
-    className="prism-math-key min-w-0 min-h-11 px-0 text-ui-body" disabled={disabled} aria-label={key.label}
+    className="prism-math-key min-w-0 pointer-coarse:min-h-11 px-0 text-ui-body" disabled={disabled} aria-label={key.label}
     style={'keyboardSpan' in key && key.keyboardSpan ? { gridColumn: `span ${key.keyboardSpan}` } : undefined}
     onClick={() => 'command' in key ? onCommand(key.command) : onInsert(key)}>{key.face}</Button>)
 }

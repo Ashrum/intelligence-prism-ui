@@ -2,6 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { execFileSync } from 'node:child_process'
 import { build } from 'esbuild'
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -18,6 +19,8 @@ writeFileSync(file, (await build({
   stdin: { contents: "export * from './components/prism-next/math-field'; export * from './components/prism-next/demos/math-field';", loader:'tsx', resolveDir:root },
   bundle:true, jsx:'automatic', platform:'node', format:'esm', packages:'external', alias:{'@':root}, loader:{'.css':'empty'}, write:false,
   plugins:[{name:'test-runtime',setup(b){
+    b.onResolve({filter:/temml\.mjs\?url$/},()=>({path:'temml-url',namespace:'preview-asset'}))
+    b.onLoad({filter:/.*/,namespace:'preview-asset'},()=>({contents:`export default ${JSON.stringify(new URL('../node_modules/temml/dist/temml.mjs',import.meta.url).href)}`}))
     b.onResolve({filter:/math-field-runtime$/},()=>({path:'runtime',namespace:'probe'}))
     b.onLoad({filter:/.*/,namespace:'probe'},()=>({contents:'export const loadMathFieldRuntime=()=>globalThis.__p119Loader(); export const configureMathFieldRuntime=element=>globalThis.__p119Configure(element)'}))
   }}],
@@ -78,11 +81,11 @@ async function mounted(fail=false,accept=false,options={}){
     }
   }
   globalThis.__p119Configure=element=>{if(options.fault==='configure')throw options.error;configureMathFieldRuntime(element)}
-  globalThis.__p119Loader=()=>{loadCalls++;return fail?Promise.reject(Error('injected import failure')):Promise.resolve({MathfieldElement:FakeMathfield,validateLatex:ml.validateLatex,sourceIsValid:value=>!value.trim()||previewFormula(value,temml.renderToString)[0].kind==='math'})}
+  globalThis.__p119Loader=()=>{loadCalls++;return fail?Promise.reject(Error('injected import failure')):Promise.resolve(options.pending).then(()=>({MathfieldElement:FakeMathfield,validateLatex:ml.validateLatex,sourceIsValid:value=>!value.trim()||previewFormula(value,temml.renderToString)[0].kind==='math'}))}
   const host=dom.document.createElement('div'), mounted=createRoot(host), calls=[]
   let props={label:'编辑测试',value:'x+1',onChange:value=>{calls.push(value);if(accept){props={...props,value};mounted.render(h(MathField,props))}},onConfirm:()=>calls.push('confirm'),onCancel:()=>calls.push('cancel'),onSplitRequest:cursor=>calls.push(cursor)}
   const render=async extra=>{props={...props,...extra};await act(async()=>mounted.render(options.demo?h(MathFieldDemo):h(MathField,props)))}
-  await render({})
+  await render(options.props??{})
   return {host,calls,render,get element(){return element},get loadCalls(){return loadCalls},async cleanup(){await act(()=>mounted.unmount());for(const key of Object.keys(saved)){if(saved[key])Object.defineProperty(globalThis,key,saved[key]);else delete globalThis[key]}}}
 }
 test('client lifecycle: deferred load, source synchronization, IME held writes, keyboard/confirm/cancel, read-only, split and cleanup',async()=>{
@@ -184,11 +187,11 @@ test('D1: every authored demo opens, including the read-only and invalid-source 
   const m=await mounted(false,false,{demo:true})
   try{
     const openers=all(m.host).filter(n=>n.tagName==='BUTTON'&&n.textContent==='打开公式框')
-    // The current demo source contains seven examples, not eight.
+    // Seven existing examples remain manual; the appended P120 example auto-opens.
     assert.equal(openers.length,7)
     for(const opener of openers){assert.equal(Boolean(handlers(opener).disabled),false);await click(opener)}
     const fields=all(m.host).filter(n=>n.tagName==='MATH-FIELD')
-    assert.equal(fields.length,7)
+    assert.equal(fields.length,8)
     assert.equal(fields.filter(n=>n.readOnly).length,2)
     assert.ok(fields.every(n=>n.menuItems.length===0&&n.inlineShortcuts.sqrt))
     assert.doesNotMatch(content(m.host),/公式框暂不可用|公式框初始化出错|正在准备公式框/)
@@ -282,4 +285,134 @@ test('description always follows authoritative source and never requests English
     }
     assert.doesNotMatch(read('components/prism-next/math-field.tsx'),/spoken-text/u)
   } finally { await m.cleanup() }
+})
+
+for (const autoOpen of [undefined, false, true]) test(`P120 SSR: autoOpen=${autoOpen} never loads MathLive`, () => {
+  let calls=0;globalThis.__p119Loader=()=>{calls++;throw Error('SSR import forbidden')}
+  const html=renderToStaticMarkup(h(MathField,{label:'空公式',value:'',onChange(){},autoOpen}))
+  assert.equal(calls,0)
+  assert.match(html,autoOpen?/正在准备公式框/:/打开公式框/)
+  assert.doesNotMatch(html,/公式内容为空|暂无法确定具体位置|仅预览排版/)
+  assert.match(html,/当前公式原文：空/)
+})
+
+test('P120 autoOpen: loading, focus, one load across rerenders and no implicit open on a later prop change',async()=>{
+  let resolve
+  const pending=new Promise(done=>{resolve=done})
+  const m=await mounted(false,false,{pending,props:{autoOpen:true,value:''}})
+  try {
+    assert.equal(m.loadCalls,1);assert.match(content(m.host),/正在准备公式框/)
+    assert.equal(button(m.host,'打开公式框'),undefined)
+    await act(async()=>resolve())
+    assert.ok(m.element);assert.equal(document.activeElement,m.element)
+    assert.equal(m.element.getValue(),'')
+    await m.render({value:'z',autoOpen:false});assert.equal(m.loadCalls,1)
+  }finally{await m.cleanup()}
+  const manual=await mounted()
+  try {
+    await manual.render({autoOpen:true})
+    assert.equal(manual.loadCalls,0);assert.ok(button(manual.host,'打开公式框'))
+    await click(button(manual.host,'打开公式框'))
+    assert.equal(document.activeElement,manual.element)
+  }finally{await manual.cleanup()}
+})
+
+test('P120 autoOpen import rejection retains raw editing, confirmation and no retry loop',async()=>{
+  const m=await mounted(true,true,{props:{autoOpen:true,value:''}})
+  try {
+    assert.match(content(m.host),/公式框暂不可用/)
+    assert.doesNotMatch(content(m.host),/公式内容为空|暂无法确定具体位置/)
+    const area=all(m.host).find(n=>n.tagName==='TEXTAREA')
+    await act(()=>handlers(area).onChange({target:{value:'x+2'},currentTarget:{value:'x+2'},nativeEvent:new Event('change')}))
+    await click(button(m.host,'确认'))
+    assert.deepEqual(m.calls,['x+2','confirm']);assert.equal(m.loadCalls,1)
+  }finally{await m.cleanup()}
+})
+
+for(const path of ['button','visual-meta','visual-ctrl','source-meta','source-ctrl'])test(`P120 empty feedback follows explicit confirmation via ${path} and resets on edits`,async()=>{
+  const m=await mounted(false,true,{props:{autoOpen:true,value:' \n '}})
+  try {
+    assert.doesNotMatch(content(m.host),/公式内容为空|暂无法确定具体位置|仅预览排版/)
+    assert.match(content(m.host),/输入内容后，在这里查看排版/)
+    const area=all(m.host).find(n=>n.tagName==='TEXTAREA')
+    if(path==='button')await click(button(m.host,'确认'))
+    else {
+      const event={key:'Enter',metaKey:path.endsWith('meta'),ctrlKey:path.endsWith('ctrl')}
+      if(path.startsWith('visual'))await act(()=>send(m.element,'keydown',event))
+      else await act(()=>handlers(area).onKeyDown({...event,target:area,currentTarget:area,nativeEvent:{},preventDefault(){},stopPropagation(){}} ))
+    }
+    assert.match(content(m.host),/公式内容为空，请补充表达式/)
+    assert.equal(m.calls.at(-1),'confirm','confirmation remains an intent for the host')
+    await m.render({value:'x+1'});await m.render({value:''})
+    assert.doesNotMatch(content(m.host),/公式内容为空|暂无法确定具体位置/)
+    await click(button(m.host,'确认'));assert.match(content(m.host),/公式内容为空/)
+    await act(()=>handlers(area).onChange({target:{value:' '},currentTarget:{value:' '},nativeEvent:new Event('change')}))
+    assert.doesNotMatch(content(m.host),/公式内容为空|暂无法确定具体位置/)
+  }finally{await m.cleanup()}
+})
+
+test('P120 autoOpen respects read-only and both composition gates before reporting empty confirmation',async()=>{
+  const m=await mounted(false,false,{props:{autoOpen:true,value:'',readOnlyReason:'只供查看'}})
+  try {
+    assert.equal(m.element.readOnly,true);assert.notEqual(document.activeElement,m.element)
+    await act(()=>send(m.element,'keydown',{key:'Enter',metaKey:true}))
+    assert.deepEqual(m.calls,[]);assert.doesNotMatch(content(m.host),/公式内容为空/)
+    await m.render({readOnlyReason:undefined})
+    await act(()=>send(m.element,'compositionstart',{data:''}))
+    await act(()=>send(m.element,'keydown',{key:'Enter',ctrlKey:true,isComposing:true}))
+    await click(button(m.host,'确认'))
+    assert.deepEqual(m.calls,[]);assert.doesNotMatch(content(m.host),/公式内容为空/)
+    await act(()=>send(m.element,'compositionend',{data:''}))
+    const area=all(m.host).find(n=>n.tagName==='TEXTAREA')
+    await act(()=>handlers(area).onCompositionStart())
+    await act(()=>handlers(area).onKeyDown({key:'Enter',metaKey:true,target:area,currentTarget:area,nativeEvent:{isComposing:true}}))
+    await click(button(m.host,'确认'))
+    assert.deepEqual(m.calls,[]);assert.doesNotMatch(content(m.host),/公式内容为空/)
+    await act(()=>handlers(area).onCompositionEnd({currentTarget:{value:''}}))
+    await click(button(m.host,'确认'));assert.match(content(m.host),/公式内容为空/)
+  }finally{await m.cleanup()}
+})
+
+test('P120 nonempty error uses real Temml feedback and unchanged UTF-16 focus/selection',async()=>{
+  const value=String.raw`\frac{1}{2x^{2}`,part=previewFormula(value,temml.renderToString)[0]
+  const location=draftMathErrorLocation(value,part.position)
+  const m=await mounted(false,false,{props:{autoOpen:true,value}})
+  try {
+    assert.ok(content(m.host).includes(part.message))
+    assert.ok(content(m.host).includes(`第 ${location.line} 行，第 ${location.column} 列`))
+    const area=all(m.host).find(n=>n.tagName==='TEXTAREA');let selection
+    area.focus=()=>{document.activeElement=area}
+    area.setSelectionRange=(...args)=>{selection=args}
+    await click(button(m.host,'定位到原文'))
+    assert.equal(document.activeElement,area);assert.deepEqual(selection,[location.start,location.end])
+    assert.equal(handlers(area).value,value);assert.deepEqual(m.calls,[])
+    assert.doesNotMatch(content(m.host),/仅预览排版/)
+  }finally{await m.cleanup()}
+})
+
+test('P120 default SSR and seven existing demo fields match e1e8aa4 except the explicitly removed preview notice',async()=>{
+  const baseline='e1e8aa46fbcd2d61db1f8cfcde737e36bd00f702'
+  const old=path=>execFileSync('git',['show',`${baseline}:${path}`],{cwd:root,encoding:'utf8'})
+  const baselineFile=new URL('baseline.mjs',file)
+  writeFileSync(baselineFile,(await build({
+    stdin:{contents:"export * from './components/prism-next/math-field'; export * from './components/prism-next/demos/math-field';",loader:'tsx',resolveDir:root},
+    bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false,
+    plugins:[{name:'baseline',setup(b){
+      b.onLoad({filter:/components\/prism-next\/(?:demos\/)?math-field\.tsx$/},args=>({contents:old(args.path.slice(root.length)),loader:'tsx'}))
+    }}],
+  })).outputFiles[0].text)
+  const before=await import(baselineFile)
+  const stripNotice=html=>html.replace('<p class="text-ui-hint text-muted-foreground">仅预览排版，不校验数学结论。未识别内容按原文显示。</p>','')
+  for(const theme of themes)for(const value of ['', 'x^2',String.raw`\frac{1}{`]) {
+    const props={label:'公式',value,onChange(){}}
+    const render=Component=>renderToStaticMarkup(h('div',{'data-prism-theme':theme},h(Component,props)))
+    assert.equal(render(MathField),stripNotice(render(before.MathField)))
+    assert.equal(renderToStaticMarkup(h(MathField,{...props,autoOpen:false})),renderToStaticMarkup(h(MathField,props)))
+  }
+  // Capture each full field including its nested preview section, excluding new demo content.
+  const fields=html=>[...html.matchAll(/<section class="prism-math-field[\s\S]*?<\/section>[\s\S]*?<\/section>/g)].map(match=>stripNotice(match[0]).replace(/_R_[a-z0-9]+_/g,'_REACT_ID_'))
+  const previous=fields(renderToStaticMarkup(h(before.MathFieldDemo)))
+  const current=fields(renderToStaticMarkup(h(MathFieldDemo)))
+  assert.equal(previous.length,7);assert.equal(current.length,8)
+  assert.deepEqual(current.slice(0,7),previous)
 })

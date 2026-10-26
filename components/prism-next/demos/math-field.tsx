@@ -10,6 +10,7 @@ const examples: { title: string; value: string; props?: Partial<MathFieldProps> 
   { title: '触屏数学键盘 · SHEET 08 七列', value: 'x^2+1' },
   { title: '化学式', value: String.raw`\ce{2H2 + O2 -> 2H2O}`, props: { subject: 'chemistry', mode: 'block' } },
   { title: '物理单位与矢量', value: String.raw`\vec{F}=m\vec{a}`, props: { subject: 'physics' } },
+  { title: '挂载即打开 · 新建空公式', value: '', props: { autoOpen: true } },
 ]
 function Example({ example }: { example: typeof examples[number] }) {
   const [value, setValue] = useState(example.value), [confirmed, setConfirmed] = useState(example.value)
