@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useId, useRef, useState, type ReactNode } from "react"
 import { Button } from "@/components/coss/button"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Menu, MenuTrigger, MenuItem, MenuSub, MenuSubTrigger } from "@/components/coss/menu"
 import { Dialog, DialogTrigger, DialogTitle, DialogDescription, DialogClose } from "@/components/coss/dialog"
 import { ToastPrimitive, toastManager } from "@/components/coss/toast"
@@ -48,7 +48,7 @@ function ScopedControls() {
   const trigger = useRef<HTMLButtonElement>(null)
   return <>
     <h3 className="text-block-title">局部主题预览</h3>
-    <div className="space-y-2"><Label htmlFor={`${id}-kind`}>材料类型</Label><QuestionSelect id={`${id}-kind`} label="局部材料类型" value={kind} items={kinds} onChange={setKind} /></div>
+    <Field><FieldLabel htmlFor={`${id}-kind`}>材料类型</FieldLabel><QuestionSelect id={`${id}-kind`} label="局部材料类型" value={kind} items={kinds} onChange={setKind} /></Field>
     <AgentObjectPicker title="搜索班级" objectType={{ id: "class", label: "班级" }} selection={{ mode: "single" }} view="workspace" density="compact"
       candidates={candidates.filter(item => item.name.includes(query))} selectedCandidates={candidates} selectedIds={selected} onSelectionChange={setSelected}
       searchValue={query} onSearchChange={setQuery} result={{ state: "ready" }} />
@@ -61,8 +61,8 @@ function ScopedControls() {
       <Dialog><DialogTrigger ref={trigger} render={<Button variant="outline" />}>局部对话框</DialogTrigger>
         <DialogPopup initialFocus={input} finalFocus={trigger} closeProps={{ "aria-label": "关闭局部对话框" }} className="gap-4 p-6">
           <DialogTitle>材料说明</DialogTitle><DialogDescription>检查局部主题、嵌套选择与关闭回焦。</DialogDescription>
-          <Label htmlFor={`${id}-title`}>材料标题</Label><Input ref={input} id={`${id}-title`} defaultValue="二次函数课堂讲评" />
-          <Label htmlFor={`${id}-dialog-kind`}>对话框材料类型</Label><QuestionSelect id={`${id}-dialog-kind`} label="对话框材料类型" value={kind} items={kinds} onChange={setKind} />
+          <Field><FieldLabel >材料标题</FieldLabel><Input ref={input} id={`${id}-title`} defaultValue="二次函数课堂讲评" /></Field>
+          <Field><FieldLabel htmlFor={`${id}-dialog-kind`}>对话框材料类型</FieldLabel><QuestionSelect id={`${id}-dialog-kind`} label="对话框材料类型" value={kind} items={kinds} onChange={setKind} /></Field>
           <p className="text-read-body">长中文材料中的公式：<math className="prism-math" aria-label="x 等于负 b 除以二 a"><mi>x</mi><mo>=</mo><mo>−</mo><mfrac><mi>b</mi><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></math>。</p>
           <DialogClose render={<Button variant="outline" />}>完成查看</DialogClose>
         </DialogPopup>
@@ -84,8 +84,8 @@ export function PortalScopeDemo() {
     <h2 className="text-section-title">嵌套主题与浮层容器</h2>
     <p className="text-ui-hint">外层和局部预览各自持有通知；离开局部预览后再进入，局部通知不会恢复。</p>
     <div className="flex flex-wrap items-end gap-4">
-      <div className="space-y-2"><Label htmlFor={`${id}-outer`}>外层核心主题</Label><QuestionSelect id={`${id}-outer`} label="外层核心主题" value={outerTheme} onChange={value => setOuterTheme(value as typeof outerTheme)} items={[{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
-      <div className="space-y-2"><Label htmlFor={`${id}-inner`}>局部主题</Label><QuestionSelect id={`${id}-inner`} label="局部主题" value={innerTheme} onChange={value => setInnerTheme(value as PrismTheme)} items={[{ value: "blueprint", label: "蓝图" }, { value: "blueprint-night", label: "蓝图夜色" }, { value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></div>
+      <Field><FieldLabel htmlFor={`${id}-outer`}>外层核心主题</FieldLabel><QuestionSelect id={`${id}-outer`} label="外层核心主题" value={outerTheme} onChange={value => setOuterTheme(value as typeof outerTheme)} items={[{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></Field>
+      <Field><FieldLabel htmlFor={`${id}-inner`}>局部主题</FieldLabel><QuestionSelect id={`${id}-inner`} label="局部主题" value={innerTheme} onChange={value => setInnerTheme(value as PrismTheme)} items={[{ value: "blueprint", label: "蓝图" }, { value: "blueprint-night", label: "蓝图夜色" }, { value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]} /></Field>
       <Button variant="outline" onClick={() => setMounted(value => !value)}>{mounted ? "离开局部预览" : "进入局部预览"}</Button>
       <Button variant="outline" onClick={() => toastManager.add({ title: "全局通知", description: "保持页面全局主题。", type: "info" })}>触发全局通知</Button>
     </div>

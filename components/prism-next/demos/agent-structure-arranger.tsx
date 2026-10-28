@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useId, useRef, useState } from "react"
-import { Label } from "@/components/coss/label"
 import { Button } from "../button"
 import { RootFormula } from "../math-content"
 import { QuestionSummaryRow } from "../question-card"
@@ -140,8 +140,8 @@ export function ArrangementExample({ purpose, narrow }: { purpose: "paper" | "co
         details={<p>上移、下移或移到分组可用键盘和触屏操作。拖拽可放到条目前或分组末尾。分组最多一层，条目内容请打开原对象查看。此示例删除分组后将条目留在“未分组”。</p>} view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <div className="flex flex-wrap items-end gap-3">
-      <div className="min-w-0 space-y-2"><Label htmlFor={`${id}-save`}>独立保存状态示例</Label><QuestionSelect id={`${id}-save`} label="独立保存状态示例" value={save} onChange={value => setSave(value as AgentArrangementSave["state"])}
-        items={[{ value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例记录）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "unconfirmed", label: "回执未确认" }, { value: "error", label: "保存失败" }, { value: "unknown", label: "未知" }]} /></div>
+      <Field className="min-w-0"><FieldLabel htmlFor={`${id}-save`}>独立保存状态示例</FieldLabel><QuestionSelect id={`${id}-save`} label="独立保存状态示例" value={save} onChange={value => setSave(value as AgentArrangementSave["state"])}
+        items={[{ value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例记录）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "unconfirmed", label: "回执未确认" }, { value: "error", label: "保存失败" }, { value: "unknown", label: "未知" }]} /></Field>
       <Button type="button" variant="outline" aria-pressed={unknown} onClick={() => setUnknown(value => !value)}>合计未知示例</Button>
       <Button type="button" variant="outline" aria-pressed={readonly} onClick={() => setReadonly(value => !value)}>整体只读示例</Button>
     </div>

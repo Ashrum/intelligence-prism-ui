@@ -1,0 +1,329 @@
+{
+  "baseline": "2eb5c01d4f0678b0457bd57f44604569cfea9cd6",
+  "scope": "P121 Field / FieldLabel structure; pre-P121 fixtures remain unchanged",
+  "basket": [
+    "fb13b4c52303bedb4152d5fd56bd8dd56f2d035ceb5810f15006fde27b8e63f5",
+    "69f480cbd8178558320e41c63c1d30f587ebbdfc78da996ffebe37e70ca84b58",
+    "a9821643ee277401f1d016a323cd13ca5bdabdfe0223fa43210ea245b6ff8ce0",
+    "44ee91e572665032a4c6a6d2eadd7567e49739f5facb79f5bc83d270c192b58f"
+  ],
+  "record": [
+    "ba6a4f0fc9e103a4ed16abc462a7b43db7e9848b3844ccfe6d5e2380012274b1",
+    "9a297279bea7501998b80c4a20ffe9217ac047d01b6792caf98f9b10db5c3208",
+    "7102b21318cc030b5d1bfa8a275ec42f45fe662bbe47c53385ab519f0b1dbbfc",
+    "28ca345a08b1a055f1108b7d3f9a57b42a62718f6be55aa18a79b47e152bf62a",
+    "c98549d3cfdf0709b1b1f12289cdf3e6c46de50c5f17469312ba4cc0e31fa21f",
+    "44af3cc1546003f0b6a6ea6ceab40750fd53cd5ec5fdbb19eb69b21674ef7a33",
+    "d92d9a24cebeb5b9bde8c3710bd2f4f0a9e36ba521107e601d1fa386cfc46408",
+    "ca71f0d58152f622d8662a6bc8bea605b613e03a7e084c46ee372a0de67a3f0a",
+    "2e549c7292be71fe120b9c9e2c4cf6a68f5bfb38374e2a65a151d6b27ba17b95",
+    "d7ae52694d82631a26bbdc6fc0e39a4e1eaaea0b9c7bbb660a02c3d9bc753461"
+  ],
+  "directory": [
+    "0703da66dd1a24262cc3b8c8460309f4ac3b13c2d8cce901f413a8ae2197e75c",
+    "ec2b3c9c7e197fb7c8072de3c84aff4911af4383c5787d8d9648c45be5c35f11",
+    "8887fcc384e40da184559e2bb864888ed7ca1eb16dab6daaa76366f8d63fe431"
+  ],
+  "directoryP24": {
+    "empty": "0703da66dd1a24262cc3b8c8460309f4ac3b13c2d8cce901f413a8ae2197e75c",
+    "selected": "3d9918aea028ab0682311c6b8a043eca262bf7bfe88582d46754111ecd57c727",
+    "singleBook": "6151a6f9fab400f992d885cf17ea0e29cbf043911324e0158c49f2c896755bd3",
+    "noBooks": "ed5edc641242ff0f86fc6fad0578f7e80db02bf3ed3b52609e15796f8d32f3ac"
+  },
+  "directoryP29": {
+    "empty:locate": "0703da66dd1a24262cc3b8c8460309f4ac3b13c2d8cce901f413a8ae2197e75c",
+    "empty:select": "b350156a0918758e5d6c0242a2df0c76333817655430fc90859615ec874ef33f",
+    "selected:locate": "3d9918aea028ab0682311c6b8a043eca262bf7bfe88582d46754111ecd57c727",
+    "selected:select": "4c59048cdd455619c6a921f071c156acf6fb34ef66b832f9e81f22c0eef9d550",
+    "singleBook:locate": "6151a6f9fab400f992d885cf17ea0e29cbf043911324e0158c49f2c896755bd3",
+    "singleBook:select": "7eb14f5e8f15bcdab3f48d33c26b6e5f4b1a89a1df22545b61c31710b13389b3",
+    "noBooks:locate": "ed5edc641242ff0f86fc6fad0578f7e80db02bf3ed3b52609e15796f8d32f3ac",
+    "noBooks:select": "ed5edc641242ff0f86fc6fad0578f7e80db02bf3ed3b52609e15796f8d32f3ac"
+  },
+  "directoryP33": {
+    "split:locate:always:false": "0703da66dd1a24262cc3b8c8460309f4ac3b13c2d8cce901f413a8ae2197e75c",
+    "split:locate:always:true": "7ceb576521c332fd0a553fcdd05554b650ebae8a4750e77bdd35e8b33b5e35e9",
+    "split:locate:toggle:false": "0703da66dd1a24262cc3b8c8460309f4ac3b13c2d8cce901f413a8ae2197e75c",
+    "split:locate:toggle:true": "7ceb576521c332fd0a553fcdd05554b650ebae8a4750e77bdd35e8b33b5e35e9",
+    "split:select:always:false": "b350156a0918758e5d6c0242a2df0c76333817655430fc90859615ec874ef33f",
+    "split:select:always:true": "05145b9bb7871d2442a00a17cfcb60caeac871c77fe6abe34d94b6acc858be16",
+    "split:select:toggle:false": "b350156a0918758e5d6c0242a2df0c76333817655430fc90859615ec874ef33f",
+    "split:select:toggle:true": "05145b9bb7871d2442a00a17cfcb60caeac871c77fe6abe34d94b6acc858be16",
+    "embedded:locate:always:false": "ec2b3c9c7e197fb7c8072de3c84aff4911af4383c5787d8d9648c45be5c35f11",
+    "embedded:locate:always:true": "bf21adcc4ed723c563d6f284c0ad721a064f5c08e8e5510a114ee9835bb5bb07",
+    "embedded:locate:toggle:false": "ee41cd56d635fde7f7d47966ee81edc8c8436b9837115052328aa727418b0e2e",
+    "embedded:locate:toggle:true": "2cc512c45094c952e291030e630334d4f54b700d3ac4985178edf4ff983fc566",
+    "embedded:select:always:false": "b720c557d8d231fdfcb9cd0380b0cbff88102a31f11b178a20b3f33317cb5559",
+    "embedded:select:always:true": "8961b8860483f3eecc2a7882f80e1d8856d8eef0a6954600186f49a9ea4df2d4",
+    "embedded:select:toggle:false": "65c5aca8d380a698db6c02f9867558f0ac2a44dce0da719c44db4105cedad5a1",
+    "embedded:select:toggle:true": "ce7bdc8920bf3f22d225ba59d24e9f47c65616bdd664881624c741d5e1058acb"
+  },
+  "recordP57": [
+    {
+      "props": {},
+      "sha256": "9a297279bea7501998b80c4a20ffe9217ac047d01b6792caf98f9b10db5c3208"
+    },
+    {
+      "props": {
+        "state": {
+          "kind": "empty"
+        },
+        "rows": []
+      },
+      "sha256": "28ca345a08b1a055f1108b7d3f9a57b42a62718f6be55aa18a79b47e152bf62a"
+    },
+    {
+      "props": {
+        "state": {
+          "kind": "loading"
+        }
+      },
+      "sha256": "44af3cc1546003f0b6a6ea6ceab40750fd53cd5ec5fdbb19eb69b21674ef7a33"
+    },
+    {
+      "props": {
+        "showType": false,
+        "showStatus": false,
+        "showHeader": false,
+        "showSearch": false
+      },
+      "sha256": "1a6003af0568a4a4b95bef63aa2613288dfe8dc43d813fb378f5eedf9f51241b"
+    },
+    {
+      "props": {
+        "rows": [
+          {
+            "id": "linear",
+            "type": "作业",
+            "name": "一元二次方程复习作业",
+            "metadata": "九年级 3 班 · 46 份",
+            "description": "L2 定向复核 · 7 项 · 影响 5 名学生 / 4 题",
+            "status": {
+              "label": "待复核",
+              "tone": "warning"
+            },
+            "action": {
+              "id": "open",
+              "label": "继续处理"
+            },
+            "tabIds": [
+              "mine",
+              "all"
+            ],
+            "menu": [
+              {
+                "id": "details",
+                "label": "查看批阅配置"
+              },
+              {
+                "id": "history",
+                "label": "查看操作记录"
+              }
+            ],
+            "progress": 72,
+            "tag": "试卷",
+            "badges": [
+              "已收藏"
+            ],
+            "toggle": {
+              "id": "star",
+              "label": "收藏",
+              "pressed": false
+            }
+          },
+          {
+            "id": "midterm",
+            "type": "试卷",
+            "name": "期中模拟试卷",
+            "metadata": "九年级 1、2 班 · 92 份",
+            "description": "L3 匹配待确认 · 3 份 · 总分未决",
+            "status": {
+              "label": "匹配待确认",
+              "tone": "neutral"
+            },
+            "action": {
+              "id": "open",
+              "label": "确认匹配"
+            },
+            "tabIds": [
+              "mine",
+              "all"
+            ],
+            "menu": [
+              {
+                "id": "details",
+                "label": "查看批阅配置"
+              },
+              {
+                "id": "history",
+                "label": "查看操作记录"
+              }
+            ],
+            "tag": "试卷",
+            "badges": [
+              "已收藏"
+            ],
+            "toggle": {
+              "id": "star",
+              "label": "收藏",
+              "pressed": false
+            }
+          },
+          {
+            "id": "pythagoras",
+            "type": "练习",
+            "name": "勾股定理练习",
+            "metadata": "八年级 3 班 · 44 份",
+            "description": "L1 抽样核验 · 3 份答卷",
+            "status": {
+              "label": "待抽样",
+              "tone": "info"
+            },
+            "action": {
+              "id": "open",
+              "label": "开始抽样"
+            },
+            "tabIds": [
+              "mine",
+              "all"
+            ],
+            "menu": [
+              {
+                "id": "details",
+                "label": "查看批阅配置"
+              },
+              {
+                "id": "history",
+                "label": "查看操作记录"
+              }
+            ],
+            "tag": "试卷",
+            "badges": [
+              "已收藏"
+            ],
+            "toggle": {
+              "id": "star",
+              "label": "收藏",
+              "pressed": false
+            }
+          },
+          {
+            "id": "circle",
+            "type": "作业",
+            "name": "圆的性质课后作业",
+            "metadata": "九年级 4 班 · 45 份",
+            "description": "评分规则缺失 · 2 题 · 影响 45 份答卷",
+            "status": {
+              "label": "规则待补充",
+              "tone": "warning"
+            },
+            "action": {
+              "id": "open",
+              "label": "补充规则"
+            },
+            "tabIds": [
+              "mine",
+              "all"
+            ],
+            "menu": [
+              {
+                "id": "details",
+                "label": "查看批阅配置"
+              },
+              {
+                "id": "history",
+                "label": "查看操作记录"
+              }
+            ],
+            "tag": "试卷",
+            "badges": [
+              "已收藏"
+            ],
+            "toggle": {
+              "id": "star",
+              "label": "收藏",
+              "pressed": false
+            }
+          },
+          {
+            "id": "correction",
+            "type": "试卷",
+            "name": "平行四边形试卷 · 更正 V2",
+            "metadata": "九年级 2 班 · 42 份",
+            "description": "已重新打开 · 1 项 · 影响 1 名学生总分",
+            "status": {
+              "label": "更正中",
+              "tone": "neutral"
+            },
+            "action": {
+              "id": "open",
+              "label": "继续更正"
+            },
+            "tabIds": [
+              "mine",
+              "all"
+            ],
+            "menu": [
+              {
+                "id": "details",
+                "label": "查看批阅配置"
+              },
+              {
+                "id": "history",
+                "label": "查看操作记录"
+              }
+            ],
+            "tag": "试卷",
+            "badges": [
+              "已收藏"
+            ],
+            "toggle": {
+              "id": "star",
+              "label": "收藏",
+              "pressed": false
+            }
+          }
+        ]
+      },
+      "sha256": "70000da7b7a93fdb76de5a061ba66365ee0d2e6aa627dfad349c0ab492997c14"
+    }
+  ],
+  "questionReview": {
+    "simple/review": "df66e13ef93db2c360c6f9263258ced90520ba47bf0898538699658791d92ed7",
+    "simple/attempt": "c4b07b3f6b8ff5f1e0f5f1beb17f3ea3eda33d610749133fb684fd4f21db5943",
+    "simple/review-expanded": "4c315a3212a1fb6d26cc5c96f464319c57f84f3340ee92812ebe843b38bb3077",
+    "simple/attempt-expanded": "8a09926ab701d5076a84ceb19b9a42788816f65591109ea91098d993a74fde5a",
+    "missing/review": "831d41412388b3c4306a62caa761ee8618e11aeeb40d4da110f58ba12556d7fb",
+    "missing/attempt": "5b5dc8b4b17d20445b2b1f1a9d1ea04fc98d7a196319f674618a41a6ffed9d4b",
+    "missing/review-expanded": "5c46f8bbea48499f8bb935f0f825169189c394a5101a723dd029b79f90b5244f",
+    "missing/attempt-expanded": "fed13b6f6becd7a745e507f2e5f437656f5710ffcc3f60c3e5ef6c48f74273d0",
+    "part-points/review": "8f577d7e95c474694881940fc052bb9828e1343d06b4048d7bf135fa15316dca",
+    "part-points/attempt": "fc3d48e3c96b5f4b34003f7c9b660538e4cecf7e3b89754aaf2807d3bbce9e7c",
+    "part-points/review-expanded": "a36f085d2c0fcf036f32b8efcc8e2c44073d97e638b74baebaaead37a9070b50",
+    "part-points/attempt-expanded": "cfee6d175c78a005bc469b063ceb709ebe2eaf359bc4e1c7002f1fd78463d10c",
+    "whole-fallback/review": "4e80519cfc34bde0ac691d729c19dad7140057876482043544aababdf54551df",
+    "whole-fallback/attempt": "5c3e80ecc589d4f4b4cf2e915405551f2d752db99b18e4adb7a4fbccc1aaaa4b",
+    "whole-fallback/review-expanded": "fd95b3d0be2ef229426c6c5af3ff863c1b84ea16da015444d89eb0201c2a093e",
+    "whole-fallback/attempt-expanded": "244d140d2ad6a86b6c307dc1eb416d3216f23f38a27aa6b434028042ebd71761",
+    "rubric-zero-formula/review": "061157a725c78d94f8c8cdec83dd815f82d8d680f89d645f687e75a8cea6e730",
+    "rubric-zero-formula/attempt": "004f68607362336373dd7f7e1036ab52cfa740470052b6bc99560ae7c04cbc99",
+    "rubric-zero-formula/review-expanded": "7a0d843c2b21a419d6ebd169c5c819dbb7a75ff5e5175459e9e10b0282c9f67a",
+    "rubric-zero-formula/attempt-expanded": "9d9844d432f4768626864e843153520edb94483985c30068dbd21b8bf2e9a1f6",
+    "controlled-draft/review": "c28022e090ad2cb24cf66e38e325a0f13d0983ad2b35d2ed1211503cb1f027be",
+    "controlled-draft/attempt": "c4b07b3f6b8ff5f1e0f5f1beb17f3ea3eda33d610749133fb684fd4f21db5943",
+    "controlled-draft/review-expanded": "f994598ff710cb50b44b9c9301f545aa2cf3a0ed81b457c965b4518804480fc2",
+    "controlled-draft/attempt-expanded": "8a09926ab701d5076a84ceb19b9a42788816f65591109ea91098d993a74fde5a",
+    "legacy-record-unchanged/review": "5a4c22e05c6b3cbf719a05df448fc0aedb4e9ed5dd5096230f9873e86b0f8130",
+    "legacy-record-unchanged/attempt": "d9e530c264cb5a385945c74e5d753895dfc596135896f0d2854c991e5245afb8",
+    "legacy-record-unchanged/review-expanded": "cc2f1cd36552ce0f9994a04e28817e0c383077c6249a7dfe41e846f62ba3b3b4",
+    "legacy-record-unchanged/attempt-expanded": "781331c5533c0ecd3478f60c19f59b1a348b3e1e2e48a975aec179ff00d4fa71",
+    "legacy-record-dirty/review": "b0afaad7f8d03eb046bc032f7617fdee2a879b30788f2d8cda4953166024cd5d",
+    "legacy-record-dirty/attempt": "d9e530c264cb5a385945c74e5d753895dfc596135896f0d2854c991e5245afb8",
+    "legacy-record-dirty/review-expanded": "e92870f8fbc70f339b52724b9b9be98446e8d0197d6cef62f863764abf041654",
+    "legacy-record-dirty/attempt-expanded": "781331c5533c0ecd3478f60c19f59b1a348b3e1e2e48a975aec179ff00d4fa71"
+  },
+  "sourceSha256": {
+    "components/prism-next/demos/table-particle.tsx": "df9cb27105ad93248b01fcfe21ead63ff484850e5921b816b9d71ec2c43e8d87",
+    "components/prism-next/data-display.tsx": "4bdbfa0b5c42ea4936a162a86d6d237be95619386dc21ac129c2c88b89a7a502"
+  }
+}

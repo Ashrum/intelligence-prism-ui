@@ -1,12 +1,12 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useRef, useState } from "react"
 import type { DateRange } from "@daypicker/react"
 import { zhCN } from "@daypicker/react/locale"
 import { Calendar } from "@/components/coss/calendar"
-import { Label } from "@/components/coss/label"
 import { Popover, PopoverPopup, PopoverTrigger } from "@/components/coss/popover"
 import { Button } from "../button"
 import { FilterBar } from "../data-display"
@@ -50,12 +50,12 @@ function TimeEditor({ editor, inline = false }: { editor: AgentScopeEditor; inli
   return <div className="min-w-0 space-y-3">
     <FilterBar fields={[{ id: "period", label: "时间快捷选择", options: (editor.options as typeof presets).filter(item => !inline || item.value !== "custom" || value.preset === "custom") }]}
       value={{ period: value.preset }} onChange={next => editor.onChange({ ...value, preset: next.period })} />
-    {!inline && <div className="min-w-0 space-y-2"><Label htmlFor={editor.controlId}>起止日期</Label>
+    {!inline && <Field className="min-w-0"><FieldLabel htmlFor={editor.controlId}>起止日期</FieldLabel>
       <Popover><PopoverTrigger id={editor.controlId} aria-describedby={editor.describedBy} render={<Button type="button" variant="outline" size="navigation" className="h-auto max-w-full whitespace-normal" />}>
         {value.preset === "custom" ? timeText(value) : "选择开始与结束日期"}
       </PopoverTrigger><PopoverPopup className="w-auto"><Calendar mode="range" locale={zhCN} selected={value.range}
         defaultMonth={value.range?.from ?? new Date(2026, 8, 1)} onSelect={range => editor.onChange({ preset: "custom", range })} /></PopoverPopup></Popover>
-    </div>}
+    </Field>}
   </div>
 }
 function ChapterEditor({ editor, tree }: { editor: AgentScopeEditor; tree: boolean }) {

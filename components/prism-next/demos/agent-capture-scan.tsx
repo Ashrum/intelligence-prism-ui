@@ -1,10 +1,10 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useId, useRef, useState } from "react"
 import { AlertDialog, AlertDialogPopup, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogClose } from "@/components/coss/alert-dialog"
-import { Label } from "@/components/coss/label"
 import { Button } from "../button"
 import { QuestionSelect } from "../question-controls"
 import { DocumentRegionViewer } from "../document-region-viewer"
@@ -110,13 +110,13 @@ export function CaptureScanExample({ purpose, narrow = false }: { purpose: keyof
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
-    <div className="flex flex-wrap items-end gap-3"><div className="min-w-0 space-y-2"><Label htmlFor={`${id}-receipt`}>独立采集／上传回执示例</Label>
+    <div className="flex flex-wrap items-end gap-3"><Field className="min-w-0"><FieldLabel htmlFor={`${id}-receipt`}>独立采集／上传回执示例</FieldLabel>
       <QuestionSelect id={`${id}-receipt`} label="独立采集／上传回执示例" value={receiptChoice(state.receipt)} onChange={loadReceipt}
         items={[{ value: "idle", label: "暂无请求" }, { value: "uploading", label: "上传中 45%" }, { value: "succeeded", label: "采集已完成" }, { value: "failed", label: "上传失败" }, { value: "unconfirmed", label: "采集回执未确认" }, { value: "unknown", label: "采集状态未知" }]} />
-    </div><div className="min-w-0 space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label>
+    </Field><Field className="min-w-0"><FieldLabel htmlFor={`${id}-save`}>独立保存记录示例</FieldLabel>
       <QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentCaptureSave["state"])}
         items={[{ value: "unsaved", label: "未保存" }, { value: "saved", label: "已保存（示例）" }, { value: "saving", label: "保存中" }, { value: "error", label: "保存失败" }, { value: "conflict", label: "版本冲突" }, { value: "unconfirmed", label: "保存回执未确认" }, { value: "unknown", label: "未知" }]} />
-    </div>{preview && <Button type="button" variant="outline" onClick={() => setPreview(null)}>收起大图</Button>}</div>
+    </Field>{preview && <Button type="button" variant="outline" onClick={() => setPreview(null)}>收起大图</Button>}</div>
     <p className="text-ui-hint">固定示例；切换记录仅用于评审，不代表执行了采集、上传、保存或批阅。</p><p role="status" className="text-ui-hint">{feedback}</p>
     {([["inline", "default", "快速采集"], ["workspace", "default", "批量页与页序"], ["inline", "compact", "紧凑采集摘要"]] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} tabIndex={view === "workspace" ? -1 : undefined} ref={view === "workspace" ? workspace : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3><AgentCaptureScan inspectLabel={purpose === "paper" ? undefined : "查看板书"} {...common} view={view} density={density} />

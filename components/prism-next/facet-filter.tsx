@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { TooltipPopup, PopoverPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
@@ -11,7 +12,6 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/
 import { Tabs, TabsList, TabsTab } from "@/components/coss/tabs"
 import { Tooltip, TooltipTrigger } from "@/components/coss/tooltip"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Toggle } from "@/components/coss/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Popover, PopoverClose, PopoverTitle, PopoverTrigger } from "@/components/coss/popover"
@@ -137,7 +137,7 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
     <div className="facet-filter-row" data-full={full || undefined}>
       <DimensionLabel dimension={dimension} helpId={`${id}-help`} />
       <div ref={optionsBox} className="relative min-w-0 space-y-2" id={`${id}-options`}>
-        {searchable && <div className="space-y-2"><Label htmlFor={`${id}-search`}>搜索{dimension.label}选项</Label><Input size="sm" id={`${id}-search`} type="search" value={query} onChange={event => setQuery(event.target.value)} /></div>}
+        {searchable && <Field><FieldLabel >搜索{dimension.label}选项</FieldLabel><Input size="sm" id={`${id}-search`} type="search" value={query} onChange={event => setQuery(event.target.value)} /></Field>}
         {draft !== null ? <><MultiChoices countUnit={countUnit} dimension={dimension} draft={draft} setDraft={setDraft} options={visible} /><DraftActions onConfirm={() => { onIntent(filterIntent(dimension, draft)); finishDraft() }} onCancel={finishDraft} /></> :
           <OptionChoices countUnit={countUnit} dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
         {!visible.length && <p role="status" className="text-ui-hint">没有匹配的选项。</p>}

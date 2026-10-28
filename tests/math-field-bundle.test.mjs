@@ -23,7 +23,7 @@ test('production manifest: MathLive is dynamic, absent from browser entry and de
   const graph=closure(entries);assert.equal(graph.has(key),false)
   for(const file of [...graph].map(k=>manifest[k]?.file).filter(Boolean))assert.doesNotMatch(read('dist/client/'+file),/class MathfieldElement|mathlive@0\.111|MathLive 0\.111/u)
  }
- assert.ok(manifest[demo].dynamicImports.includes(key))
+ assert.ok([...closure([demo])].some(entry=>manifest[entry]?.dynamicImports?.includes(key)), 'shared static chunk retains the dynamic MathLive boundary')
 })
 test('built component route renders all requested examples without emitting an eager MathLive preload',async()=>{
  const {default:worker}=await import('../dist/server/index.js')

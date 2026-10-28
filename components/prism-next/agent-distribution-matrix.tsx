@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react"
 import { ArrowLeft, ArrowUpRight, Check } from "lucide-react"
 import { Card } from "@/components/coss/card"
-import { Label } from "@/components/coss/label"
 import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
 import { Badge, type BadgeProps } from "./badge"
@@ -106,15 +106,15 @@ function MatrixSelect({ label, value, options, onChange, disabled, describedBy, 
   const index = options.findIndex(option => option.id === value)
   // Only local ordinals enter the Select DOM. Opaque IDs remain in requests.
   const items = [{ value: "none", label: emptyLabel }, ...options.map((option, i) => ({ value: String(i), label: option.label }))]
-  return <div className="grid min-w-0 gap-2" aria-describedby={describedBy}>
-    <Label htmlFor={onChange ? id : undefined}>{label}</Label>
+  return <Field className="min-w-0" aria-describedby={describedBy}>
+    <FieldLabel htmlFor={onChange ? id : undefined}>{label}</FieldLabel>
     {onChange ? <Select value={index < 0 ? "none" : String(index)} items={items} disabled={disabled}
       onValueChange={next => { const option = options[Number(next)]; if (!disabled && next !== null && next !== "none" && option) onChange(option.id) }}>
       <SelectTrigger id={id} aria-label={label} aria-describedby={describedBy} className="h-auto min-w-36 max-w-full"><SelectValue className="overflow-visible whitespace-normal break-words text-clip" /></SelectTrigger>
       <SelectPopup>{items.map(item => <SelectItem key={item.value} value={item.value} className="whitespace-normal break-words">{item.label}</SelectItem>)}</SelectPopup>
     </Select>
       : <p className="break-words text-ui-body">{options[index]?.label ?? emptyLabel}</p>}
-  </div>
+  </Field>
 }
 
 type Entry = {

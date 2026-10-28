@@ -1,8 +1,8 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Badge } from "../badge"
 import { AgentStatus } from "../agent-visual-parts"
@@ -129,8 +129,8 @@ export function AgentComponentsPage() {
     <div className="space-y-4">
       <p className="text-ui-body">共 {agentComponentRegistry.length} 项语义组件：Workspace 已验证 {agentComponentStatusCounts["workspace-validated"]} 项，组件候选 {agentComponentStatusCounts.candidate} 项，未开始 {agentComponentStatusCounts["not-started"]} 项。示例验证不代表真实服务接入。默认展示对话态，更多示例与验证记录可逐项展开。</p>
       <div className="flex flex-wrap items-end gap-4">
-        <div className="min-w-0 flex-1 basis-64 space-y-2"><Label htmlFor={`${id}-search`}>搜索目录</Label><Input id={`${id}-search`} value={query} onChange={event => setQuery(event.target.value)} placeholder="名称、编号或组件名称" /></div>
-        <div className="space-y-2"><Label htmlFor={`${id}-status`}>验证状态</Label><QuestionSelect id={`${id}-status`} label="验证状态" value={status} onChange={value => setStatus(value as typeof status)} items={[{ value: "all", label: "全部状态" }, ...Object.entries(agentComponentStatusLabels).map(([value, label]) => ({ value, label }))]} /></div>
+        <Field className="min-w-0 flex-1 basis-64"><FieldLabel >搜索目录</FieldLabel><Input id={`${id}-search`} value={query} onChange={event => setQuery(event.target.value)} placeholder="名称、编号或组件名称" /></Field>
+        <Field><FieldLabel htmlFor={`${id}-status`}>验证状态</FieldLabel><QuestionSelect id={`${id}-status`} label="验证状态" value={status} onChange={value => setStatus(value as typeof status)} items={[{ value: "all", label: "全部状态" }, ...Object.entries(agentComponentStatusLabels).map(([value, label]) => ({ value, label }))]} /></Field>
         <Button variant="outline" size="navigation" onClick={() => setExpanded(new Set(allSlugs))}>全部展开</Button>
         <Button variant="outline" size="navigation" onClick={() => setExpanded(new Set())}>全部收起</Button>
       </div>

@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { AgentStatus } from "./agent-visual-parts"
@@ -163,7 +163,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
     const props = { id: anchor, value: values[key], readOnly: !!block, "aria-describedby": [describedBy, related].filter(Boolean).join(" ") || undefined,
       "aria-invalid": validation.some(item => item.level === "error" && (!item.stepIds?.length || (step && item.stepIds.includes(step.id)))) || undefined,
       "data-plan-field": key, onChange: (event: { currentTarget: { value: string } }) => { if (!block) editRequest(step, "change", { ...values, [key]: event.currentTarget.value }) } }
-    return <div className="min-w-0 space-y-2"><Label htmlFor={anchor}>{label}</Label>{key === "description" ? <Textarea {...props} /> : <Input {...props} type={key === "startDate" || key === "endDate" ? "date" : "text"} />}</div>
+    return <Field className="min-w-0"><FieldLabel htmlFor={anchor}>{label}</FieldLabel>{key === "description" ? <Textarea {...props} /> : <Input {...props} type={key === "startDate" || key === "endDate" ? "date" : "text"} />}</Field>
   }
   function editorBody(values: AgentPlanStepFields, step?: AgentPlanStep) {
     return <div className="min-w-0 space-y-3">
@@ -184,7 +184,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
     const describedBy = block === globalBlock ? globalNote : note(block, `步骤 ${steps.indexOf(step) + 1}`)
     const selectedIndex = role === "owner" ? options.findIndex(option => option.id === step.owner?.id) : -1
     const optionNotes = options.map(option => note(reason(option.disabledReason, "此选项暂不可用。"), option.label))
-    return <div className="min-w-0 space-y-2"><Label id={`${anchor}-label`} htmlFor={anchor}>{label}</Label>
+    return <Field className="min-w-0"><FieldLabel id={`${anchor}-label`} htmlFor={anchor}>{label}</FieldLabel>
       <Select items={options.map((option, index) => ({ value: String(index), label: option.label }))} value={selectedIndex < 0 ? null : String(selectedIndex)} disabled={!!block}
         onValueChange={value => {
           if (block) return
@@ -199,7 +199,7 @@ export function AgentPlanBuilder({ plan, steps, validation, pendingItems, save =
         }}>
         <SelectTrigger id={anchor} className="w-full min-w-0" aria-labelledby={`${anchor}-label`} aria-describedby={[describedBy, ...optionNotes].filter(Boolean).join(" ") || undefined}><SelectValue placeholder={role === "owner" ? step.owner?.label || "未指定" : "请选择"} /></SelectTrigger>
         <SelectPopup>{options.map((option, index) => <SelectItem key={index} value={String(index)} disabled={option.disabledReason !== undefined || (role === "audience" && !!step.audience?.some(ref => ref.id === option.id)) || (role === "resource" && !!step.resources?.some(ref => ref.id === option.id))}>{option.label}</SelectItem>)}</SelectPopup>
-      </Select></div>
+      </Select></Field>
   }
 
   const sources = new Map<string, { source: AgentPlanSource; scopes: string[] }>()

@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { capture, click } from './record-list-harness.mjs';
 
-const before = JSON.parse(await readFile(new URL('./fixtures/p57-record-before.json', import.meta.url), 'utf8'));
-test('P57 default RecordList and explicit ghost/start preserve five pre-change SSR snapshots', () => {
+const before = JSON.parse(await readFile(new URL('./fixtures/p121-field-ssr.json', import.meta.url), 'utf8')).recordP57;
+test('P57 default RecordList and explicit ghost/start preserve five P121 field SSR snapshots', () => {
   for (const { props, sha256 } of before) for (const explicit of [false, true]) {
     const html = capture({ ...props, ...(explicit ? { actionVariant: 'ghost', actionAlign: 'start' } : {}) }).html;
     assert.equal(createHash('sha256').update(html).digest('hex'), sha256);

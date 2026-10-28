@@ -14,8 +14,8 @@ function headerProbe(extra = {}) {
   const p = probe(); p.state.books = metadata(p.books); p.state.extra = { layout: 'header', ...extra }; p.render(); return p;
 }
 
-test('P51 preserves 13 pre-change default SSR outputs and treats blank marks as absent', async () => {
-  const baseline = JSON.parse(await readFile(new URL('./fixtures/p51-default-before.json', import.meta.url), 'utf8'));
+test('P51 preserves 13 default SSR outputs with P121 field structure and treats blank marks as absent', async () => {
+  const baseline = JSON.parse(await readFile(new URL('./fixtures/p121-field-ssr.json', import.meta.url), 'utf8'));
   const hash = html => createHash('sha256').update(html).digest('hex');
   const record = [];
   for (const state of [{kind:'ready'}, {kind:'empty'}, {kind:'loading'}, {kind:'search-empty'}, {kind:'error',reason:'加载失败'}]) {

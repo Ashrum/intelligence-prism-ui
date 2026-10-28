@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useId, useRef, useState, type PointerEvent } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
@@ -228,11 +229,11 @@ export function AgentImageCanvas({ title, imageSet, images, selectedImageId, com
     {draft && <section aria-label="范围选择" className="min-w-0 space-y-3">
       <h4 className="text-ui-action">{draft.mode === "crop" ? "裁切范围" : "区域标注"}</h4>
       {staleDraft && <p role="status" className="text-ui-hint">图片或标注已变化，请取消选区后重新选择。</p>}
-      {draft.mode === "annotate" && <div className="space-y-2"><Label htmlFor={`${id}-label`}>区域名称</Label><Input nativeInput id={`${id}-label`} value={draft.label} disabled={staleDraft} onChange={event => setDraft({ ...draft, label: event.target.value })} /></div>}
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,8rem),1fr))] gap-3">{["左侧（%）", "顶部（%）", "宽度（%）", "高度（%）"].map((label, index) => <div key={label} className="min-w-0 space-y-2">
-        <Label htmlFor={`${id}-rect-${index}`}>{label}</Label><Input nativeInput id={`${id}-rect-${index}`} type="number" step="0.1" min={index < 2 ? 0 : 0.1} max={100} value={draft.values[index]} disabled={staleDraft}
+      {draft.mode === "annotate" && <Field><FieldLabel htmlFor={`${id}-label`}>区域名称</FieldLabel><Input nativeInput id={`${id}-label`} value={draft.label} disabled={staleDraft} onChange={event => setDraft({ ...draft, label: event.target.value })} /></Field>}
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,8rem),1fr))] gap-3">{["左侧（%）", "顶部（%）", "宽度（%）", "高度（%）"].map((label, index) => <Field key={label} className="min-w-0">
+        <FieldLabel htmlFor={`${id}-rect-${index}`}>{label}</FieldLabel><Input nativeInput id={`${id}-rect-${index}`} type="number" step="0.1" min={index < 2 ? 0 : 0.1} max={100} value={draft.values[index]} disabled={staleDraft}
           aria-invalid={!validRect} onChange={event => setDraft({ ...draft, values: draft.values.map((value, position) => position === index ? event.target.value : value) })} />
-      </div>)}</div>
+      </Field>)}</div>
       {!validRect && <p role="status" className="text-ui-hint">请输入图片范围内的百分比，宽度和高度须大于零。</p>}
       <div className="flex flex-wrap gap-2">
         <Button type="button" size="navigation" disabled={staleDraft || !canEdit || !validRect || !capabilities[draft.mode].supported || (draft.mode === "annotate" && !hasText(draft.label))} onClick={submit}>{draft.mode === "crop" ? "请求裁切" : draft.regionId ? "请求更新标注" : "请求添加标注"}</Button>

@@ -80,7 +80,7 @@
 :where(html[data-ui-version="coss-v1"]) :is([data-slot="input"],[data-slot="combobox-input"],[data-slot="autocomplete-input"],[data-slot="table-cell"]) {
   font-size:var(--text-ui-body); line-height:var(--text-ui-body--line-height); font-weight:400;
 }
-:where(html[data-ui-version="coss-v1"]) :is([data-slot="field-description"],[data-slot="field-error"],[data-slot="card-description"],[data-slot="card-frame-description"],[data-slot="frame-panel-description"],[data-slot="dialog-description"],[data-slot="alert-dialog-description"],[data-slot="drawer-description"],[data-slot="popover-description"],[data-slot="empty-description"],[data-slot="alert-description"],[data-slot="toast-description"],[data-slot="table-caption"]) {
+:where(html[data-ui-version="coss-v1"]) :is([data-slot="field-error"],[data-slot="card-description"],[data-slot="card-frame-description"],[data-slot="frame-panel-description"],[data-slot="dialog-description"],[data-slot="alert-dialog-description"],[data-slot="drawer-description"],[data-slot="popover-description"],[data-slot="empty-description"],[data-slot="alert-description"],[data-slot="toast-description"],[data-slot="table-caption"]) {
   font-size:var(--text-ui-hint); line-height:var(--text-ui-hint--line-height); font-weight:400;
 }
 :where(html[data-ui-version="coss-v1"]) :is([data-slot="dialog-title"],[data-slot="alert-dialog-title"],[data-slot="drawer-title"],[data-slot="empty-title"]) {
@@ -130,3 +130,8 @@
 :where(html[data-ui-version="coss-v1"]) [data-slot="fieldset-legend"] { font-size:var(--text-block-title); line-height:var(--text-block-title--line-height); }
 
 .text-score-display { font-variant-numeric:tabular-nums; }
+
+/* P121 · PO 2026-10-28: S1 reuses the existing 12px / 18px meta role. */
+:where(html[data-ui-version="coss-v1"]) [data-slot="field-description"] {
+  font-size:var(--text-ui-meta); line-height:var(--text-ui-meta--line-height); font-weight:var(--text-ui-meta--font-weight);
+}

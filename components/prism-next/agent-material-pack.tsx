@@ -1,12 +1,12 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useMemo, useRef, type DragEvent, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ArrowUpRight, GripVertical } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
@@ -252,12 +252,12 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
       </div>
       {item.versionLabel?.trim() && <p className="text-ui-hint">资源版本：{item.versionLabel}</p>}
       {missing.length > 0 && <p id={`${anchor}-unknown`} data-material-unknown="resource" className="break-words text-ui-hint">未知：{missing.join("、")}。</p>}
-      {full && item.actions?.["edit-note"] && !noteBlock ? <div className="min-w-0 space-y-2"><Label htmlFor={`${anchor}-note`}>素材备注</Label>
+      {full && item.actions?.["edit-note"] && !noteBlock ? <Field className="min-w-0"><FieldLabel htmlFor={`${anchor}-note`}>素材备注</FieldLabel>
         <Textarea id={`${anchor}-note`} data-material-field="edit-note" value={item.note} className="w-full min-w-0" aria-label={`素材备注：${title}`} aria-describedby={noteId}
           onChange={event => { if (!itemBlock(item, "edit-note")) onIntent?.({ ...context, type: "edit-note", resource: item.resource, note: event.target.value }) }} />
-      </div> : item.note && <p aria-describedby={noteId} className="whitespace-pre-wrap break-words text-ui-body">备注：{item.note}</p>}
+      </Field> : item.note && <p aria-describedby={noteId} className="whitespace-pre-wrap break-words text-ui-body">备注：{item.note}</p>}
       {buttons}
-      {full && item.actions?.move && options.length > 0 && <div className="min-w-0 space-y-2"><Label htmlFor={`${anchor}-category`}>移到分类末尾</Label>
+      {full && item.actions?.move && options.length > 0 && <Field className="min-w-0"><FieldLabel htmlFor={`${anchor}-category`}>移到分类末尾</FieldLabel>
         <Select data-material-category={ordinal} value={null} items={options.map((option, i) => ({ value: String(i), label: option.title }))}
           disabled={!!moveReason || options.every(option => !!option.block)} onValueChange={value => {
             const option = options.find((_, i) => String(i) === value)
@@ -267,7 +267,7 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
             <SelectValue placeholder="选择目标分类" /></SelectTrigger>
           <SelectPopup>{options.map((option, i) => <SelectItem key={i} value={String(i)} disabled={!!option.block}>{option.title}</SelectItem>)}</SelectPopup>
         </Select>
-      </div>}
+      </Field>}
     </li>
   }
 
@@ -282,8 +282,8 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
     const deleteBlock = packBlock("category-delete") || categoryReason
       || category.members.map(item => reasonOf(item.lockedReason, "此素材已锁定。")).find(Boolean)
     const heading = full && category.id !== null && actions["category-rename"] && !renameBlock
-      ? <div className="min-w-0 space-y-2"><Label id={`${anchor}-title`} htmlFor={`${anchor}-name`}>分类名称</Label><Input id={`${anchor}-name`} data-material-field="category-rename" value={category.title} aria-label={`分类名称：${category.title}`}
-        className="min-w-0 w-full" onChange={event => { if (!renameBlock && category.id !== null) onIntent?.({ ...context, type: "category-rename", categoryId: category.id, title: event.target.value }) }} /></div>
+      ? <Field className="min-w-0"><FieldLabel id={`${anchor}-title`} >分类名称</FieldLabel><Input id={`${anchor}-name`} data-material-field="category-rename" value={category.title} aria-label={`分类名称：${category.title}`}
+        className="min-w-0 w-full" onChange={event => { if (!renameBlock && category.id !== null) onIntent?.({ ...context, type: "category-rename", categoryId: category.id, title: event.target.value }) }} /></Field>
       : <h4 id={`${anchor}-title`} className="break-words text-item-title">{category.title}</h4>
     if (full && category.id !== null && actions["category-rename"]) note(renameBlock, category.title)
     return <section key={categoryIndex} aria-labelledby={`${anchor}-title`} className={compact ? "min-w-0 space-y-3" : "min-w-0 space-y-4"}>
@@ -305,8 +305,8 @@ export function AgentMaterialPack({ pack, items, categories, uncategorizedCount 
   </div>
   const renameBlock = packBlock("rename-pack")
   const title = full && actions["rename-pack"] && !renameBlock
-    ? <div className="min-w-0 space-y-2"><Label id={`${id}-title`} htmlFor={`${id}-name`}>素材包名称</Label><Input id={`${id}-name`} data-material-field="rename-pack" value={pack.title} className="min-w-0 w-full"
-      onChange={event => sendPack("rename-pack", { ...context, type: "rename-pack", title: event.target.value })} /></div>
+    ? <Field className="min-w-0"><FieldLabel id={`${id}-title`} >素材包名称</FieldLabel><Input id={`${id}-name`} data-material-field="rename-pack" value={pack.title} className="min-w-0 w-full"
+      onChange={event => sendPack("rename-pack", { ...context, type: "rename-pack", title: event.target.value })} /></Field>
     : <h3 id={`${id}-title`} className="break-words text-block-title">{pack.title || "未命名素材包"}</h3>
   if (full && actions["rename-pack"]) note(renameBlock, "素材包名称")
   const records = reuseRecords?.map((record, ordinal) => {

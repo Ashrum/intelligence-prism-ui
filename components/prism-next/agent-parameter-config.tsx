@@ -6,6 +6,7 @@ import { useId } from "react"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldDecrement, NumberFieldGroup, NumberFieldIncrement, NumberFieldInput } from "@/components/coss/number-field"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
@@ -87,7 +88,7 @@ function ParameterFacts({ parameter }: { parameter: AgentParameterDefinition }) 
   </>
 }
 
-function ParameterField({ parameter, anchor, full, compact, baseVersion, readOnly, onIntent }: {
+function ParameterField({ parameter, anchor, full, baseVersion, readOnly, onIntent }: {
   parameter: AgentParameterDefinition; anchor: string; full: boolean; compact: boolean; baseVersion: string
   readOnly: boolean; onIntent?: AgentParameterConfigProps["onIntent"]
 }) {
@@ -138,16 +139,16 @@ function ParameterField({ parameter, anchor, full, compact, baseVersion, readOnl
         <SelectPopup>{options.map(option => <SelectItem key={option.value} value={option.value} disabled={!!option.disabledReason}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
   }
-  return <section aria-labelledby={`${anchor}-label`} data-parameter-field="" className={compact ? "min-w-0 space-y-1" : "min-w-0 space-y-2"}>
+  return <Field render={<section />} aria-labelledby={`${anchor}-label`} data-parameter-field="" className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center gap-2">
-      <Label id={`${anchor}-label`} htmlFor={blocked || parameter.type === "radio" ? undefined : controlProps.id} className="min-w-0 break-words text-ui-action">
+      <FieldLabel id={`${anchor}-label`} htmlFor={blocked || parameter.type === "radio" ? undefined : controlProps.id} className="min-w-0 break-words text-ui-action">
         {parameter.label}{parameter.type === "number" && parameter.unit ? `（${parameter.unit}）` : ""}
-      </Label>
+      </FieldLabel>
       {parameter.key && full && <span className="text-ui-hint text-muted-foreground">关键参数</span>}
     </div>
     {editor}
     <div id={`${anchor}-facts`} className="min-w-0 space-y-1 text-ui-hint">
-      {parameter.description && <p className="break-words">{parameter.description}</p>}
+      {parameter.description && <FieldDescription>{parameter.description}</FieldDescription>}
       {!blocked && parameter.type === "number" && <>
         {(parameter.min !== undefined || parameter.max !== undefined) && <p>范围：{parameter.min !== undefined ? `下限 ${parameter.min}${parameter.unit ?? ""}` : "未提供下限"}；{parameter.max !== undefined ? `上限 ${parameter.max}${parameter.unit ?? ""}` : "未提供上限"}</p>}
         {parameter.step !== undefined && <p>步长：{parameter.step}{parameter.unit ?? ""}</p>}
@@ -157,7 +158,7 @@ function ParameterField({ parameter, anchor, full, compact, baseVersion, readOnl
       <ParameterFacts parameter={parameter} />
       {full && parameter.default && <p className="break-words text-muted-foreground">{`默认：${valueText(parameter, true)}；来源：${parameter.default.source || "未提供"}`}</p>}
     </div>
-  </section>
+  </Field>
 }
 
 /** Semantic 07: scalar parameters. Rules belong to 08; execution confirmation to 25. */

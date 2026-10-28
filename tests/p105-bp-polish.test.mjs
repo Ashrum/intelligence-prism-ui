@@ -165,7 +165,18 @@ test('P105 preserves primary, hover-card and P104 floating hard shadows by casca
 
 const componentPaths = ['components/prism-next/textbook-directory.tsx', 'components/prism-next/question-rail.tsx', 'components/coss/button.tsx', 'components/coss/card.tsx', 'components/coss/select.tsx', 'components/coss/collapsible.tsx'];
 test('P105 reusable markup remains byte-identical to P104', () => {
-  for (const path of componentPaths) assert.equal(read(path), before(path), path);
+  for (const path of componentPaths) {
+    let actual = read(path);
+    if (path === 'components/prism-next/textbook-directory.tsx') {
+      // P121: exact import and visible-field hunks only; all remaining bytes frozen.
+      for (const hunk of JSON.parse(read('tests/fixtures/p121-textbook-source-hunks.json'))) {
+        assert.ok(hunk.after.length > 0);
+        assert.equal(actual.split(hunk.after).length, 2, 'authorized hunk occurs exactly once');
+        actual = actual.replace(hunk.after, hunk.before);
+      }
+    }
+    assert.equal(actual, before(path), path);
+  }
 });
 
 const probe = `

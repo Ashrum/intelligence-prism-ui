@@ -1,8 +1,9 @@
 "use client"
+import { Kbd, KbdGroup } from "@/components/coss/kbd"
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useId, useState } from "react"
 import { Button } from "@/components/coss/button"
 import { MenuItem } from "@/components/coss/menu"
-import { Label } from "@/components/coss/label"
 import { Card } from "@/components/coss/card"
 import { QuestionSelect } from "../question-controls"
 import { AgentPromptBar, type AgentPromptBarProps, type AgentPromptIntent } from "../agent-prompt-bar"
@@ -91,14 +92,14 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
   return <div className="space-y-6" data-agent-conversation-demo={section}>
     <nav aria-label="Agent 对话组合" className="flex flex-wrap gap-4">{agentConversationCompositions.map(item => <a key={item.slug} className="prism-link text-ui-action" href={`/next/components/agent-components/${item.slug}`} aria-current={section === item.slug ? "page" : undefined}>{item.name}</a>)}</nav>
     <p className="text-ui-hint">组件评审示例。语音状态由下方控件明确切换，未连接麦克风、识别或对话服务。</p>
-    {section === "prompt-bar" && <p className="text-ui-hint text-muted-foreground">听写中点击状态、麦克风或按 Esc 仅发停止请求；用时依据宿主 startedAt，无开始时间不计时。interim 在输入框内以次要色预览，最终结果由宿主更新 value。电平未知时均衡条仅提示活动，减少动效时固定为三条中等高度，占位微光停止。</p>}
+    {section === "prompt-bar" && <p className="text-ui-hint text-muted-foreground">听写中点击状态、麦克风或按 <Kbd>Esc</Kbd> 仅发停止请求；用时依据宿主 startedAt，无开始时间不计时。interim 在输入框内以次要色预览，最终结果由宿主更新 value。电平未知时均衡条仅提示活动，减少动效时固定为三条中等高度，占位微光停止。</p>}
     <div className="flex flex-wrap items-end gap-4">
-      <div className="space-y-2"><Label htmlFor={`${id}-theme`}>预览主题</Label><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} onChange={setTheme} items={[...themeOptions]} /></div>
-      <div className="space-y-2"><Label htmlFor={`${id}-width`}>预览宽度</Label><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} onChange={setWidth} items={[{ value: "auto", label: "自适应" }, { value: "320", label: "320 px" }, { value: "390", label: "390 px" }]} /></div>
+      <Field><FieldLabel htmlFor={`${id}-theme`}>预览主题</FieldLabel><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} onChange={setTheme} items={[...themeOptions]} /></Field>
+      <Field><FieldLabel htmlFor={`${id}-width`}>预览宽度</FieldLabel><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} onChange={setWidth} items={[{ value: "auto", label: "自适应" }, { value: "320", label: "320 px" }, { value: "390", label: "390 px" }]} /></Field>
       {section === "prompt-bar" && <>
-        <div className="space-y-2"><Label htmlFor={`${id}-variant`}>输入框变体</Label><QuestionSelect id={`${id}-variant`} label="输入框变体" value={variant!} onChange={v => setVariant(v as typeof variant)} items={[{ value: "Rounded", label: "Rounded" }, { value: "Pill", label: "Pill" }]} /></div>
-        <div className="space-y-2"><Label htmlFor={`${id}-dictation`}>听写状态</Label><QuestionSelect id={`${id}-dictation`} label="听写状态" value={dictation} onChange={v => { setDictation(v as typeof dictation); if (v === "inserted") setValue("请为高二三班准备函数练习。"); }} items={Object.entries(dictationLabels).map(([value, label]) => ({ value, label }))} /></div>
-        <div className="space-y-2"><Label htmlFor={`${id}-voice`}>语音对话状态</Label><QuestionSelect id={`${id}-voice`} label="语音对话状态" value={voice} onChange={v => setVoice(v as typeof voice)} items={Object.entries(voiceModeLabels).map(([value, label]) => ({ value, label }))} /></div>
+        <Field><FieldLabel htmlFor={`${id}-variant`}>输入框变体</FieldLabel><QuestionSelect id={`${id}-variant`} label="输入框变体" value={variant!} onChange={v => setVariant(v as typeof variant)} items={[{ value: "Rounded", label: "Rounded" }, { value: "Pill", label: "Pill" }]} /></Field>
+        <Field><FieldLabel htmlFor={`${id}-dictation`}>听写状态</FieldLabel><QuestionSelect id={`${id}-dictation`} label="听写状态" value={dictation} onChange={v => { setDictation(v as typeof dictation); if (v === "inserted") setValue("请为高二三班准备函数练习。"); }} items={Object.entries(dictationLabels).map(([value, label]) => ({ value, label }))} /></Field>
+        <Field><FieldLabel htmlFor={`${id}-voice`}>语音对话状态</FieldLabel><QuestionSelect id={`${id}-voice`} label="语音对话状态" value={voice} onChange={v => setVoice(v as typeof voice)} items={Object.entries(voiceModeLabels).map(([value, label]) => ({ value, label }))} /></Field>
       </>}
     </div>
     {section === "prompt-bar" && <div className="flex flex-wrap gap-2" aria-label="输入夹具">
@@ -130,6 +131,6 @@ export function AgentConversationDemo({ section = "prompt-bar" }: { section?: "p
         : section === "agent-mark" ? <MarkSamples /> : <ConversationSample />}
     </div>
     {section === "prompt-bar" && <><p role="status" className="break-all text-ui-hint">最近意图：{intent}</p><p className="text-ui-hint">P92 停止/正在请求停止由夹具按钮分别传入；点击输入器停止仅记录意图，不伪造服务回执。再次测试停止时先切发送夹具，再切停止夹具。展开编辑只改变当前编辑区高度，发送仍需明确操作。</p><details><summary className="cursor-pointer text-ui-action">全部语音状态样本</summary><div className="mt-4 grid gap-4 sm:grid-cols-2">{Object.keys(dictationLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={{ state: state as AgentDictation["state"], reason: state === "error" ? "宿主报告连接中断" : undefined }} voice={noService} onIntent={onIntent} /></Card>)}{Object.keys(voiceModeLabels).map(state => <Card key={state} className="p-4"><AgentVoiceStatus dictation={noService} voice={{ state: state as AgentVoiceMode["state"] }} onIntent={onIntent} /></Card>)}<Card className="p-4"><AgentVoiceStatus dictation={{ state: "listening", level: .6 }} voice={noService} onIntent={onIntent} /></Card></div></details></>}
-    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、showModelSelector、attachments、contextActions、dictation、voice、privacy、onIntent。showModelSelector 默认 true，false 时不渲染模型入口；学校是否开放由宿主提供。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details；P92 可选 bodyRole、actions、moreActions、persistentActions、isLast、actionsVisibility、copyAction。教师消息在蓝图与夜图使用轻背景，核心三主题保留反相文字背景对；业务卡片放在 Agent 内容区。</p><p>键盘检查：@ / 菜单 ↑↓、Enter、Esc；中文输入法确认不发送；Shift + Enter 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
+    <details><summary className="cursor-pointer text-ui-action">接口与验收边界</summary><div className="mt-3 space-y-2 text-ui-hint"><p>输入框：value / onValueChange、sources、commands、models / modelId、showModelSelector、attachments、contextActions、dictation、voice、privacy、onIntent。showModelSelector 默认 true，false 时不渲染模型入口；学校是否开放由宿主提供。所有执行状态均来自宿主；提交后是否清空由宿主决定。消息标签仅供读屏；语音不可用原因由按钮描述提供，点击后临时弹出，失败与权限拒绝仍明确显示。</p><p>AgentMark：state、variant、size、label、startedAt、endedAt。AgentMessage：speaker、children、attachments、details；P92 可选 bodyRole、actions、moreActions、persistentActions、isLast、actionsVisibility、copyAction。教师消息在蓝图与夜图使用轻背景，核心三主题保留反相文字背景对；业务卡片放在 Agent 内容区。</p><p>键盘检查：<KbdGroup><Kbd>@</Kbd><Kbd>↑↓</Kbd><Kbd>Enter</Kbd><Kbd>Esc</Kbd></KbdGroup>；中文输入法确认不发送；<KbdGroup><Kbd>Shift</Kbd><Kbd>Enter</Kbd></KbdGroup> 换行。减少动态效果冻结点阵与扫光，WebGL 不可用时保留全部输入功能。</p><p>此处是语义组合与评审夹具，不增加 80 项基础组件或 42 项业务语义目录。Workspace 接入、真实服务、真机移动设备与读屏器另行验证。</p></div></details>
   </div>
 }

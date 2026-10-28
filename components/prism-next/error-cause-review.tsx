@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useEffect, useId, useRef, type ReactNode } from "react"
 import { PencilLine } from "lucide-react"
 import { Frame, FramePanel } from "@/components/coss/frame"
@@ -98,11 +99,11 @@ export function ErrorCauseReview({
         {categoryIssue && <p id={`${id}-category-issue`} className="text-ui-hint text-muted-foreground">{categoryIssue}</p>}
       </div>
       <div className="space-y-2">
-        <label htmlFor={`${id}-explanation`} className="text-ui-action">说明{selected?.isOther ? " · 必填" : ""}</label>
+        <Field className="w-full"><FieldLabel  className="text-ui-action">说明{selected?.isOther ? " · 必填" : ""}</FieldLabel>
         <Input id={`${id}-explanation`} value={draft?.explanation ?? ""} disabled={!canChange}
           required={selected?.isOther || undefined} aria-invalid={!!explanationIssue || undefined}
           aria-describedby={explanationIssue ? `${id}-explanation-issue` : undefined}
-          onChange={event => { if (canChange && draft) onChange?.({ ...draft, explanation: event.target.value }) }} />
+          onChange={event => { if (canChange && draft) onChange?.({ ...draft, explanation: event.target.value }) }} /></Field>
         {explanationIssue && <p id={`${id}-explanation-issue`} className="text-ui-hint text-muted-foreground">{explanationIssue}</p>}
       </div>
       <div className="flex flex-wrap justify-end gap-2">

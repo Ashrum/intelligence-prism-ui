@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { MenuPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useState, type ReactNode } from "react"
@@ -78,16 +79,16 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   const primary = showPrimary && <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
     {showSearch && state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
-      <label className="grid min-w-0 flex-[2_1_240px] gap-2 text-ui-action" htmlFor={`${id}-search`}>{searchLabel}
-        <Input id={`${id}-search`} type="search" value={search} placeholder={searchPlaceholder} readOnly={!onSearch}
+      <Field className="min-w-0 flex-[2_1_240px]"><FieldLabel >{searchLabel}
+        </FieldLabel><Input id={`${id}-search`} type="search" value={search} placeholder={searchPlaceholder} readOnly={!onSearch}
           size="default" className="w-full items-center pointer-coarse:[&_[data-slot=input]]:min-h-11" onChange={event => onSearch?.(event.target.value)} />
-      </label>
+      </Field>
       {filters.map(filter => <div key={filter.id} className="grid min-w-0 flex-[1_1_150px] gap-2">
-        <label htmlFor={`${id}-filter-${filter.id}`} className="break-words text-ui-action">{filter.label}</label>
+        <Field className="w-full"><FieldLabel htmlFor={`${id}-filter-${filter.id}`} className="break-words text-ui-action">{filter.label}</FieldLabel>
         <Select items={filter.options} value={filter.value} disabled={!onFilterChange} onValueChange={value => { if (value !== null) onFilterChange?.(filter.id, value) }}>
           <SelectTrigger id={`${id}-filter-${filter.id}`} size="default" className="min-w-0 w-full"><SelectValue /></SelectTrigger>
           <SelectPopup>{filter.options.map(option => <SelectItem key={option.value} value={option.value} className="pointer-coarse:min-h-11 whitespace-normal break-words">{option.label}</SelectItem>)}</SelectPopup>
-        </Select>
+        </Select></Field>
       </div>)}
     </div>}
     {!!activeFilters.length && <div className="flex min-w-0 flex-wrap items-center gap-3" data-record-filters>
@@ -163,12 +164,12 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
       {pagination && <div className="space-y-2">
         {pagination.label && <p className="break-words text-ui-hint">{pagination.label}</p>}
         {pagination.pageSize && <div className="grid min-w-0 max-w-full gap-2" data-record-page-size>
-          <label htmlFor={`${id}-page-size`} className="break-words text-ui-action">{pagination.pageSize.label || "每页条数"}</label>
+          <Field className="w-full"><FieldLabel htmlFor={`${id}-page-size`} className="break-words text-ui-action">{pagination.pageSize.label || "每页条数"}</FieldLabel>
           <Select value={pagination.pageSize.value} items={pagination.pageSize.options.map(value => ({ value, label: `${value} 条` }))}
             disabled={!onPageSizeChange} onValueChange={value => { if (value !== null && pagination.pageSize?.options.includes(value) && Number.isSafeInteger(value) && value > 0) onPageSizeChange?.(value) }}>
             <SelectTrigger id={`${id}-page-size`} size="default" className="max-w-full"><SelectValue /></SelectTrigger>
             <SelectPopup>{pagination.pageSize.options.map(value => <SelectItem key={value} value={value} className="pointer-coarse:min-h-11 whitespace-normal break-words">{value} 条</SelectItem>)}</SelectPopup>
-          </Select>
+          </Select></Field>
         </div>}
         <Pagination aria-label={`${title}分页`}><PaginationContent className="flex-wrap">
           {pagination.pages.map(page => <PaginationItem key={page}><PaginationLink isActive={page === pagination.page} aria-label={`第 ${page} 页`}

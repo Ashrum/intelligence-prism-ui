@@ -1,10 +1,11 @@
 "use client"
 
+import { Kbd } from "@/components/coss/kbd"
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId, useRef, useState } from "react"
 import { ScanLine, Upload } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Textarea } from "@/components/coss/textarea"
 import { Form } from "@/components/coss/form"
 import { DialogClose } from "@/components/coss/dialog"
@@ -61,7 +62,7 @@ export function DialogLayoutDemo() {
         <li><a href="https://coss.com/ui/particles?tags=dialog" target="_blank" rel="noreferrer" className="underline underline-offset-4">COSS Dialog particles ↗</a><p className="text-ui-hint text-muted-foreground">表单、嵌套确认与长内容的组合依据。</p></li>
         <li><a href="https://base-ui.com/react/components/dialog" target="_blank" rel="noreferrer" className="underline underline-offset-4">Base UI Dialog ↗</a><p className="text-ui-hint text-muted-foreground">初始焦点、关闭回焦与外部点击控制。</p></li>
         <li><a href="https://www.radix-ui.com/primitives/docs/components/dialog#close-after-asynchronous-form-submission" target="_blank" rel="noreferrer" className="underline underline-offset-4">Radix Dialog ↗</a><p className="text-ui-hint text-muted-foreground">提交结果确认后再关闭，失败保留输入。</p></li>
-        <li><a href="https://react-aria.adobe.com/Modal" target="_blank" rel="noreferrer" className="underline underline-offset-4">React Aria Modal ↗</a><p className="text-ui-hint text-muted-foreground">分别处理外部点击与 Esc，避免误丢草稿。</p></li>
+        <li><a href="https://react-aria.adobe.com/Modal" target="_blank" rel="noreferrer" className="underline underline-offset-4">React Aria Modal ↗</a><p className="text-ui-hint text-muted-foreground">分别处理外部点击与 <Kbd>Esc</Kbd>，避免误丢草稿。</p></li>
         <li><a href="https://www.carbondesignsystem.com/building-blocks/core/components/modal/guidelines#overflow-content" target="_blank" rel="noreferrer" className="underline underline-offset-4">Carbon Modal ↗</a><p className="text-ui-hint text-muted-foreground">正文滚动，标题与操作区保持可用。</p></li>
       </ul>
     </DemoSection>
@@ -82,7 +83,7 @@ export function DialogLayoutDemo() {
     <DialogLayout open={active === "assign"} onOpenChange={openChange} finalFocus={triggerRef} size="xl" title="这份材料属于谁？" closeLabel="关闭成员选择" eyebrow="选择成员" media={media} initialFocus={searchRef}
       footerStart={<Button variant="ghost" onClick={event => { removeTriggerRef.current = event.currentTarget; setRemoveOpen(true) }}>移出这份材料</Button>}
       footerEnd={<><DialogClose render={<Button variant="outline" />}>取消</DialogClose><Button disabled={!selectedPerson || !!selectedPerson.disabledReason} onClick={() => request(`关联到${selectedPerson?.title}`)}>确认关联</Button></>}>
-      {compactMedia}<div className="space-y-2"><Label htmlFor="dialog-member-search">搜索成员</Label><Input ref={searchRef} id="dialog-member-search" value={query} onChange={event => setQuery(event.target.value)} placeholder="输入姓名或编号" /></div>
+      {compactMedia}<Field><FieldLabel >搜索成员</FieldLabel><Input ref={searchRef} id="dialog-member-search" value={query} onChange={event => setQuery(event.target.value)} placeholder="输入姓名或编号" /></Field>
       <DialogOptionGrid label="材料所属成员" value={selected} onValueChange={setSelected} emptyText="没有符合条件的成员" groups={[
         { id: "received", title: "已有材料", description: "关联到已接收的材料", children: people.filter(person => person.group === "received" && `${person.title}${person.description}`.includes(query.trim())).map(person => <DialogOptionGridItem key={person.value} {...person} />) },
         { id: "waiting", title: "等待材料", description: "作为一份新材料", children: people.filter(person => person.group === "waiting" && `${person.title}${person.description}`.includes(query.trim())).map(person => <DialogOptionGridItem key={person.value} {...person} />) },
@@ -97,7 +98,7 @@ export function DialogLayoutDemo() {
     <DialogLayout open={active === "reason"} onOpenChange={openChange} finalFocus={triggerRef} title="为什么按现状使用？" closeLabel="关闭理由选择" eyebrow="选择理由" media={media}
       footerEnd={<><DialogClose render={<Button variant="outline" />}>返回</DialogClose><Button disabled={!reason || (reason === "other" && !other.trim())} onClick={() => request("提交理由")}>确认理由</Button></>}>
       {compactMedia}<DialogNotice tone="warning">版式不一致的材料可能影响后续处理，请先核对内容。</DialogNotice>
-      <DialogChoiceList label="使用理由" value={reason} onValueChange={setReason} other={reason === "other" ? <div className="space-y-2"><Label htmlFor="dialog-other-reason">其他理由</Label><Textarea id="dialog-other-reason" value={other} onChange={event => setOther(event.target.value)} /></div> : undefined}>
+      <DialogChoiceList label="使用理由" value={reason} onValueChange={setReason} other={reason === "other" ? <Field><FieldLabel htmlFor="dialog-other-reason">其他理由</FieldLabel><Textarea id="dialog-other-reason" value={other} onChange={event => setOther(event.target.value)} /></Field> : undefined}>
         <DialogChoice value="readable" title="内容完整，可以辨认" /><DialogChoice value="checked" title="已人工核对无误" /><DialogChoice value="version" title="材料采用了另一种版式，但需要的信息仍然完整" /><DialogChoice value="other" title="其他" />
       </DialogChoiceList>{message}
     </DialogLayout>
@@ -160,8 +161,8 @@ function DialogFormDemo() {
     <DialogLayout open={open} onOpenChange={changeOpen} initialFocus={inputRef} finalFocus={triggerRef} disablePointerDismissal={waiting} closeDisabled={waiting} title="编辑材料说明" closeLabel="关闭材料编辑" eyebrow="表单编辑" description="修改材料标题与备注。提交前关闭会先确认未提交的修改。"
       footerEnd={<><DialogClose render={<Button variant="outline" disabled={waiting} />}>取消</DialogClose><Button type="submit" form={`${id}-form`} loading={waiting}>{status === "error" && !invalidTitle ? "重试提交" : "提交修改"}</Button></>}>
       <Form id={`${id}-form`} noValidate className="space-y-4" onSubmit={event => { event.preventDefault(); submit() }} aria-busy={waiting}>
-        <div className="space-y-2"><Label htmlFor={`${id}-title`}>材料标题（必填）</Label><Input ref={inputRef} id={`${id}-title`} name="title" value={draft.title} readOnly={waiting} required maxLength={120} aria-invalid={invalidTitle} aria-describedby={`${id}-feedback`} onChange={event => { setDraft({ ...draft, title: event.target.value }); setInvalidTitle(false); setError(""); setStatus("idle") }} /></div>
-        <div className="space-y-2"><Label htmlFor={`${id}-notes`}>核对备注</Label><Textarea id={`${id}-notes`} name="notes" value={draft.notes} readOnly={waiting} maxLength={500} onChange={event => { setDraft({ ...draft, notes: event.target.value }); if (!invalidTitle) { setError(""); setStatus("idle") } }} /><p className="text-right text-ui-hint text-muted-foreground prism-numeric">{draft.notes.length} / 500</p></div>
+        <Field><FieldLabel >材料标题（必填）</FieldLabel><Input ref={inputRef} id={`${id}-title`} name="title" value={draft.title} readOnly={waiting} required maxLength={120} aria-invalid={invalidTitle} aria-describedby={`${id}-feedback`} onChange={event => { setDraft({ ...draft, title: event.target.value }); setInvalidTitle(false); setError(""); setStatus("idle") }} /></Field>
+        <Field><FieldLabel htmlFor={`${id}-notes`}>核对备注</FieldLabel><Textarea id={`${id}-notes`} name="notes" value={draft.notes} readOnly={waiting} maxLength={500} onChange={event => { setDraft({ ...draft, notes: event.target.value }); if (!invalidTitle) { setError(""); setStatus("idle") } }} /><FieldDescription className="text-muted-foreground prism-numeric">{draft.notes.length} / 500</FieldDescription></Field>
       </Form>
       <div id={`${id}-feedback`}>{error ? <p role="alert" className="text-ui-hint text-destructive-foreground">{error}</p> : <p role="status" className="text-ui-hint text-muted-foreground">{waiting ? "等待本页演示响应，当前输入已保留。" : "只更新本页示例记录。等待与结果由下方演示控件提供。"}</p>}</div>
       {waiting && <fieldset className="space-y-3 rounded-xl border p-3"><legend className="px-1 text-ui-hint">演示响应</legend><p className="text-ui-hint text-muted-foreground">选择本次提交的返回结果。</p><div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => { setStatus("error"); setError("本次演示返回失败。当前输入已保留，可以重试。"); inputRef.current?.focus() }}>返回失败</Button><Button variant="outline" onClick={() => { const next = { title: draft.title.trim(), notes: draft.notes.trim() }; setSaved(next); setDraft(next); setStatus("idle"); setOpen(false); setMessage(`本页记录已更新：${next.title}。`) }}>返回成功</Button></div></fieldset>}

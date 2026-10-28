@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useId, useRef, useState } from "react"
-import { Label } from "@/components/coss/label"
 import { AgentCandidatePicker, type AgentCandidate, type AgentCandidateIntent, type AgentCandidatePickerProps, type AgentCandidateResult, type AgentCandidateSubmission } from "../agent-candidate-picker"
 import { Button } from "../button"
 import { QuestionSummaryRow } from "../question-card"
@@ -109,8 +109,8 @@ export function CandidatePickerExample({ purpose, narrow = false }: { purpose: k
   return <div className="min-w-0 space-y-5">{questionPreview.panel}
     <p className="text-ui-hint">固定示例 · 三处共享本页选择。提交、回执和加入记录分别演示。</p>
     {purpose === "questions" && <p className="text-ui-hint">示例：对话候选使用摘要行，“查看详情”打开完整题目；对话内不展开题目详情。类型随题目内容显示；已在集合中的候选只显示一次状态，失效与受限原因保留。</p>}
-    <div className="space-y-2"><Label htmlFor={stateId}>结果状态示例</Label><QuestionSelect id={stateId} label="结果状态示例" value={state} onChange={value => setState(value as AgentCandidateResult["state"])}
-      items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "错误" }]} /></div>
+    <Field><FieldLabel htmlFor={stateId}>结果状态示例</FieldLabel><QuestionSelect id={stateId} label="结果状态示例" value={state} onChange={value => setState(value as AgentCandidateResult["state"])}
+      items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "错误" }]} /></Field>
     <div className="flex flex-wrap gap-2" role="group" aria-label="载入示例事实">
       <Button type="button" size="navigation" variant="outline" aria-pressed={knownTotal} onClick={() => setKnownTotal(value => !value)}>切换已知总数</Button>
       <Button type="button" size="navigation" variant="outline" disabled={moreState !== "loading"} onClick={() => { setCount(items.length); setMoreState("ready"); setFeedback("已载入更多示例候选。"); }}>载入更多示例候选</Button>

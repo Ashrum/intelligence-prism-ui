@@ -1,5 +1,6 @@
 "use client"
 
+import { Kbd } from "@/components/coss/kbd"
 import { useLayoutEffect, useRef, useState } from "react"
 import { Button } from "../button"
 import { DemoSection } from "../demo-parts"
@@ -53,7 +54,7 @@ export function RegionEditingPreviewFixture() {
       <Button variant="outline" onClick={() => setZoom(150)}>放大至 150%</Button>
       <Button variant="outline" aria-pressed={mixed} onClick={() => setMixed(value => !value)}>数字与扫描混排</Button>
     </div>
-    <p className="text-ui-hint">拖动框选，或聚焦框选区按 Enter 新建；聚焦区域后用方向键移动，Shift 加方向键调整，Esc 取消当前拖动。双指可缩放。</p>
+    <p className="text-ui-hint">拖动框选，或聚焦框选区按 Enter 新建；聚焦区域后用方向键移动，Shift 加方向键调整，<Kbd>Esc</Kbd> 取消当前拖动。双指可缩放。</p>
     <div className="h-[560px] min-w-0 overflow-hidden">
       {mixed ? <PaperPreview layout="mixed" mixed={{ viewportRef: viewport, pages: [{ id: "digital", width: 600, height: 1, content: <section className="space-y-3 bg-card p-4 text-ui-body"><h3 className="text-block-title">题目内容</h3><p>数字内容不支持框选，请在下方原卷上标记完整作答范围。</p>{reviewFormula}</section> }, ...pages.map(page => ({ ...page, width: 600, height: 820 }))], zoom, rotations: { full: rotation, second: rotation }, selected: current?.id ?? "", scale: 1, activePage: pageId, topInset: 0, headers: {}, answerLabel: "示例原卷", onSelect() {}, onZoom: setZoom, onVisiblePage() {}, onViewport() {}, regionEditing }} />
         : <PaperPreview pages={pages} zoom={zoom} onZoomChange={setZoom} rotation={{ full: rotation, second: rotation }} regionEditing={regionEditing} continuous={{ viewportRef: viewport, location: { pageId, request }, renderPageHeader: (_, index) => <p className="p-2 text-ui-meta">示例原卷 · 第 {index + 1} 页</p> }} />}

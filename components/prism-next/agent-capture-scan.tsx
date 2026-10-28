@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useRef, type DragEvent, type ReactNode } from "react"
 import { GripVertical } from "lucide-react"
 import { Card } from "@/components/coss/card"
-import { Label } from "@/components/coss/label"
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/coss/progress"
 import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
@@ -184,15 +184,15 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
     </div>
     const positionId = `${id}-position-${scope}`, positionBlock = pageBlock(page, "reorder")
     const positions = pages.map((_, index) => ({ value: String(index), label: `第 ${index + 1} 位` }))
-    const position = workspace && page.actions?.reorder && <div className="min-w-0 space-y-2">
-      <Label id={`${positionId}-label`} htmlFor={positionId}>移到位置</Label>
+    const position = workspace && page.actions?.reorder && <Field className="min-w-0">
+      <FieldLabel id={`${positionId}-label`} htmlFor={positionId}>移到位置</FieldLabel>
       <Select value={String(scope)} items={positions} disabled={!!positionBlock} data-capture-position={scope}
         onValueChange={value => { const index = positions.findIndex(option => option.value === value); if (index >= 0) move(page, index, "to-position") }}>
         <SelectTrigger id={positionId} className="w-full min-w-0" aria-labelledby={`${positionId}-label ${titleId}`}
           aria-describedby={describedBy([note(positionBlock, scope, "操作限制"), ...positions.map((_, index) => index !== scope ? note(moveBlock(page, index), scope, "页序限制") : undefined)])}><SelectValue /></SelectTrigger>
         <SelectPopup>{positions.map((option, index) => <SelectItem key={option.value} value={option.value} disabled={!!moveBlock(page, index)}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
-    </div>
+    </Field>
     return { page, scope, titleId, pageUnknown, controls, position }
   })
   // Construct controls before rendering notes so every association points at one visible explanation.

@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, type ReactNode } from "react"
@@ -97,7 +98,7 @@ function ConstraintNumber({ id, label, labelledBy, describedBy, value, disabled,
   </NumberField>
 }
 
-function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledReason, onValueChange }: {
+function ConstraintItem({ item, anchor, issueId, full, basis, disabledReason, onValueChange }: {
   item: AgentConstraintItem; anchor: string; issueId?: string; full: boolean; compact: boolean
   basis: AgentConstraintTarget; disabledReason?: string; onValueChange?: AgentConstraintBuilderProps["onValueChange"]
 }) {
@@ -107,7 +108,7 @@ function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledR
   const emit = (change: ValueChange) => {
     if (!disabled) onValueChange?.({ ...basis, constraintId: item.id, ...change })
   }
-  const label = <Label id={`${anchor}-label`} htmlFor={item.type === "bounds" || (item.type === "rule" && item.control === "radio") ? undefined : `${anchor}-control`} className="min-w-0 break-words text-ui-action">{item.label}</Label>
+  const label = <FieldLabel id={`${anchor}-label`} htmlFor={item.type === "bounds" || (item.type === "rule" && item.control === "radio") ? undefined : `${anchor}-control`} className="min-w-0 break-words text-ui-action">{item.label}</FieldLabel>
   let editor: ReactNode
   switch (item.type) {
     case "toggle": case "required": case "forbidden":
@@ -119,11 +120,11 @@ function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledR
         onChange={value => emit({ type: "ratio", value })} />
       break
     case "bounds":
-      editor = <div className="grid min-w-0 gap-3 sm:grid-cols-2">{(["min", "max"] as const).map(bound => <div key={bound} className="min-w-0 space-y-2">
-        <Label id={`${anchor}-${bound}-label`} htmlFor={`${anchor}-${bound}`} className="text-ui-action">{bound === "min" ? "下限" : "上限"}{item.unit ? `（${item.unit}）` : ""}</Label>
+      editor = <div className="grid min-w-0 gap-3 sm:grid-cols-2">{(["min", "max"] as const).map(bound => <Field key={bound} className="min-w-0">
+        <FieldLabel id={`${anchor}-${bound}-label`} htmlFor={`${anchor}-${bound}`} className="text-ui-action">{bound === "min" ? "下限" : "上限"}{item.unit ? `（${item.unit}）` : ""}</FieldLabel>
         <ConstraintNumber id={`${anchor}-${bound}`} label={`${item.label}${bound === "min" ? "下限" : "上限"}`} labelledBy={`${anchor}-label ${anchor}-${bound}-label`} describedBy={describedBy}
           value={item.value[bound]} step={item.step} disabled={disabled} invalid={invalid} onChange={value => emit({ type: "bounds", value: { ...item.value, [bound]: value } })} />
-      </div>)}</div>
+      </Field>)}</div>
       break
     case "rule": {
       const change = (value: string | null) => {
@@ -147,12 +148,13 @@ function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledR
     }
   }
   const boolean = item.type === "toggle" || item.type === "required" || item.type === "forbidden"
-  return <section aria-labelledby={`${anchor}-label`} data-constraint-item="" className={compact ? "min-w-0 space-y-1" : "min-w-0 space-y-2"}>
+  return <Field render={<section />} aria-labelledby={`${anchor}-label`} data-constraint-item="" className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center gap-2">
-      {boolean && editor}{label}
+      {label}{boolean && editor}
       <AgentStatus tone={item.validation.state === "valid" ? "neutral" : "warning"}>{validationLabels[item.validation.state]}</AgentStatus>
       {item.critical && <span className="text-ui-hint text-muted-foreground">关键条件</span>}
     </div>
+    {!boolean && editor}
     <div id={`${anchor}-description`} className="min-w-0 space-y-1 text-ui-hint">
       {full && <p className="text-muted-foreground">{typeLabels[item.type]} · 默认：{valueText(item, true)}</p>}
       {item.description && <p className="break-words">{item.description}</p>}
@@ -164,8 +166,7 @@ function ConstraintItem({ item, anchor, issueId, full, compact, basis, disabledR
       {item.type === "rule" && item.options.some(option => option.disabledReason) && <ul className="space-y-1">{item.options.filter(option => option.disabledReason).map(option => <li key={option.value} className="break-words">{option.label}：{option.disabledReason}</li>)}</ul>}
     </div>
     {disabledReason && <span id={`${anchor}-disabled`} className="sr-only">{disabledReason}</span>}
-    {!boolean && editor}
-  </section>
+  </Field>
 }
 
 /** Semantic 08 edits conditions; semantic 25 alone presents execution confirmation. */

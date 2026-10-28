@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useId, useState } from "react"
 import { Button, buttonVariants } from "@/components/coss/button"
 import { Card, CardFrame, CardFrameHeader, CardFrameTitle, CardPanel } from "@/components/coss/card"
@@ -20,11 +21,11 @@ function TriggerFixture() {
   const [value, setValue] = useState("example")
   return <div className="space-y-4">
     <div className="space-y-2">
-      <label htmlFor={id} className="text-ui-action">材料类型</label>
+      <Field className="w-full"><FieldLabel htmlFor={id} className="text-ui-action">材料类型</FieldLabel>
       <Select value={value} onValueChange={next => { if (next) setValue(next) }} items={[{ value: "example", label: "例题讲解" }, { value: "concept", label: "知识梳理" }]}>
         <SelectTrigger id={id}><SelectValue /></SelectTrigger>
         <SelectPopup><SelectItem value="example">例题讲解</SelectItem><SelectItem value="concept">知识梳理</SelectItem></SelectPopup>
-      </Select>
+      </Select></Field>
     </div>
     <Collapsible>
       <CollapsibleTrigger className={buttonVariants({ variant: "outline" })}>展开推导说明</CollapsibleTrigger>

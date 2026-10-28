@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { PopoverPopup } from "@/components/prism-next/scoped-overlays"
 import { useId, type ReactNode } from "react"
 import { CircleHelp } from "lucide-react"
@@ -58,5 +59,5 @@ export function StatusComposition({items,onSelect,selectedId,unit="",label="状�
  </div>
 }
 export type FilterField={id:string;label:string;options:{value:string;label:string}[]}
-export function FilterBar({fields,value,onChange,onReset}:{fields:FilterField[];value:Record<string,string>;onChange:(value:Record<string,string>)=>void;onReset?:()=>void}){const id=useId();return <div className="flex flex-wrap items-end gap-3">{fields.map(field=><label key={field.id} className="grid gap-2 text-ui-body" htmlFor={`${id}-${field.id}`}>{field.label}<QuestionSelect id={`${id}-${field.id}`} label={field.label} value={value[field.id]??""} items={field.options} onChange={next=>onChange({...value,[field.id]:next})}/></label>)}{onReset&&<Button variant="ghost" onClick={onReset}>重置筛选</Button>}</div>}
+export function FilterBar({fields,value,onChange,onReset}:{fields:FilterField[];value:Record<string,string>;onChange:(value:Record<string,string>)=>void;onReset?:()=>void}){const id=useId();return <div className="flex flex-wrap items-end gap-3">{fields.map(field=><Field key={field.id}><FieldLabel htmlFor={`${id}-${field.id}`}>{field.label}</FieldLabel><QuestionSelect id={`${id}-${field.id}`} label={field.label} value={value[field.id]??""} items={field.options} onChange={next=>onChange({...value,[field.id]:next})}/></Field>)}{onReset&&<Button variant="ghost" onClick={onReset}>重置筛选</Button>}</div>}
 export function DataRecordTable<T extends {id:string}>({rows,columns,onSelect,selectedId,empty="暂无记录"}:{rows:T[];columns:{id:string;label:string;render:(row:T)=>ReactNode;ariaLabel?:(row:T)=>string|undefined}[];onSelect?:(id:string)=>void;selectedId?:string;empty?:string}){return <div className="overflow-x-auto"><Table><TableHeader><TableRow>{columns.map(c=><TableHead key={c.id}>{c.label}</TableHead>)}{onSelect&&<TableHead>操作</TableHead>}</TableRow></TableHeader><TableBody>{rows.map(row=><TableRow key={row.id} data-state={selectedId===row.id?"selected":undefined}>{columns.map(c=><TableCell key={c.id} aria-label={c.ariaLabel?.(row)}>{c.render(row)}</TableCell>)}{onSelect&&<TableCell><Button variant="ghost" size="sm" aria-label={`查看 ${row.id}`} onClick={()=>onSelect(row.id)}>查看</Button></TableCell>}</TableRow>)}</TableBody></Table>{!rows.length&&<p className="py-8 text-center text-ui-hint text-muted-foreground">{empty}</p>}</div>}

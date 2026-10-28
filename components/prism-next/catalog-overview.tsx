@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight,BookOpen } from "lucide-react"
 import { Input } from "@/components/coss/input"
 import { Button } from "@/components/coss/button"
-import { Label } from "@/components/coss/label"
 import { componentGroups,components,applicationExamples,agentRelatedPages,searchComponents } from "@/lib/prism-next/catalog"
 import { themeOptions } from "@/lib/prism-next/config"
 
@@ -20,7 +20,7 @@ export function CatalogOverview() {
       <Button variant="outline" render={<Link href="/next/reading"/>}><BookOpen/>材料研读</Button>
     </div>
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div className="w-full max-w-sm"><Label htmlFor="component-search">查找组件</Label><Input id="component-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="名称或用途，例如：选择、表单、Dialog"/></div>
+      <Field className="w-full max-w-sm"><FieldLabel >查找组件</FieldLabel><Input id="component-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="名称或用途，例如：选择、表单、Dialog"/></Field>
       <p className="text-ui-hint text-muted-foreground" aria-live="polite">{query?`找到 ${count} 项组件${relatedPages.length?` · ${relatedPages.length} 项骨架与示例`:''}`:`${components.filter(item=>!item.kind).length} 项基础组件 · ${components.filter(item=>item.kind==="pattern").length} 项业务与组合组件 · ${components.filter(item=>item.kind==="extension").length} 项扩展 · ${themeOptions.length} 套主题`}</p>
     </div>
     {componentGroups.map(group=>{

@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId, type ReactNode } from "react"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Input } from "@/components/coss/input"
@@ -289,12 +290,12 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       {editReason !== undefined && <p id={`${id}-edit`} className="break-words text-ui-hint">{editReason}</p>}
     </section>}
     {workspace && (query || filters || sort) && <section aria-label="检索与排序" className="min-w-0 space-y-2.5">
-      {query && <div className="space-y-1.5"><Label htmlFor={`${id}-query`}>{query.label || "检索候选"}</Label>
+      {query && <Field><FieldLabel >{query.label || "检索候选"}</FieldLabel>
         <Input id={`${id}-query`} value={query.value} readOnly={channelReason !== undefined || query.disabledReason !== undefined}
           aria-describedby={query.disabledReason !== undefined ? `${id}-query-reason` : undefined}
           onChange={event => { if (channelReason === undefined && query.disabledReason === undefined) emit({ ...envelope, type: "query", value: event.currentTarget.value }) }} />
-        {query.disabledReason !== undefined && <p id={`${id}-query-reason`} className="text-ui-hint">{query.disabledReason || "当前不可检索。"}</p>}
-      </div>}
+        {query.disabledReason !== undefined && <FieldDescription id={`${id}-query-reason`}>{query.disabledReason || "当前不可检索。"}</FieldDescription>}
+      </Field>}
       {filters && <CandidateFilters fields={filters.fields} value={filters.value} reason={channelReason ?? filters.disabledReason}
         onChange={value => emit({ ...envelope, type: "filter", value })} />}
       {sort && <div className="space-y-1"><CandidateFilters fields={[{ id: "sort", label: sort.label, options: sort.options }]} value={{ sort: sort.value }} reason={channelReason ?? sort.disabledReason}

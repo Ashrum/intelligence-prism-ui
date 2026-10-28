@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { ComboboxPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId } from "react"
@@ -166,7 +167,7 @@ export function AgentObjectPicker({ title, objectType, selection, candidates, se
       {baseReason && <p id={`${id}-disabled`} className="text-ui-hint">{baseReason}</p>}
     </section>
     {workspace && <section aria-label="搜索与筛选" className="min-w-0 space-y-3">
-      <div className="space-y-2"><Label htmlFor={`${id}-search`}>搜索{objectType.label}</Label>
+      <Field><FieldLabel htmlFor={`${id}-search`}>搜索{objectType.label}</FieldLabel>
         <Combobox items={results.map((_, index) => String(index))} value={null} inputValue={searchValue} filter={null}
           itemToStringLabel={value => results[Number(value)] ? nameOf(results[Number(value)]) : ""}
           onInputValueChange={(value, event) => { if (event.reason === "input-change") onSearchChange?.(value) }}
@@ -181,8 +182,8 @@ export function AgentObjectPicker({ title, objectType, selection, candidates, se
             </ComboboxItem>
           }}</ComboboxList></ComboboxPopup>
         </Combobox>
-        {!onSearchChange && <p id={`${id}-search-reason`} className="text-ui-hint">搜索暂不可用。</p>}
-      </div>
+        {!onSearchChange && <FieldDescription id={`${id}-search-reason`}>搜索暂不可用。</FieldDescription>}
+      </Field>
       {filters && (filters.onChange ? <FilterBar fields={filters.fields} value={filters.value} onChange={value => filters.onChange?.(value)} />
         : <dl className="space-y-1">{filters.fields.map(field => <div key={field.id} className="text-ui-body"><dt>{field.label}</dt><dd>{field.options.find(option => option.value === filters.value[field.id])?.label || "未指定"}</dd></div>)}</dl>)}
     </section>}

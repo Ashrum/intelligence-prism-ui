@@ -1,3 +1,4 @@
+import '@/components/prism-next/field-layout.css'
 import type { Metadata } from "next"
 import { Providers } from "@/components/prism-next/providers"
 import { Shell } from "@/components/prism-next/shell"

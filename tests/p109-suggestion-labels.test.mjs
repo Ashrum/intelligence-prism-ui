@@ -1,3 +1,4 @@
+import { assertP121Migration } from './helpers/p121-freeze-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, mkdir, writeFile, rm } from 'node:fs/promises';
@@ -36,8 +37,8 @@ test('default SSR is byte-for-byte identical to 34e114c across states, views, de
   for (const mode of modes) for (const state of states) for (const open of [false, true]) for (const unknown of [false, true]) {
     const suggestion = { ...item, status: { state, reason: '状态原因' }, adjustment: { ...item.adjustment, open }, ...(unknown ? { reason: null, scope: null, impact: null, certainty: null, evidence: null, source: null, task: undefined } : {}) };
     const props = { ...base, ...mode, suggestions: [suggestion, { ...suggestion, id: 's2' }, { id: 'restricted', status: { state: 'restricted' }, disclosure: { title: '受限', reason: '不可查看' } }], selectedIds: ['s1'], comparison: { selectedIds: ['s1', 's2'], open } };
-    assert.equal(render(h(AgentSuggestionSet, props)), render(h(baseline.AgentSuggestionSet, props)));
-    assert.equal(render(h(AgentSuggestionSet, { ...props, labels: {}, visibleFields: {} })), render(h(baseline.AgentSuggestionSet, props)));
+    assertP121Migration(render(h(AgentSuggestionSet, props)), render(h(baseline.AgentSuggestionSet, props)), `P109/${mode.view}/${mode.density}/${state}/${open}/${unknown}`);
+    assertP121Migration(render(h(AgentSuggestionSet, { ...props, labels: {}, visibleFields: {} })), render(h(baseline.AgentSuggestionSet, props)), `P109/${mode.view}/${mode.density}/${state}/${open}/${unknown}`);
   }
   for (const extra of [{ suggestionSet: { ...base.suggestionSet, snapshot: true } }, { onIntent: undefined }, { receipt: { state: 'pending' } }, { receipt: { state: 'unconfirmed' } }, { suggestions: [] }, { disabledReason: '' }]) {
     assert.equal(html(extra), render(h(baseline.AgentSuggestionSet, { ...base, ...extra })));

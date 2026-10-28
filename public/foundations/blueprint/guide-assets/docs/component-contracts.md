@@ -3248,3 +3248,55 @@ SSR 不导入 MathLive，显示原文预览占位；水合也不导入，首次�
 - 仅 MathField 内向 `DraftMathPreview` 传 `notice={null}`，保留顶部输入／确认／取消说明及 sr-only「当前公式原文」描述。其他预览调用者与 `DraftMathPreview` API 不变。
 - 默认手动打开路径不变；相对 P119，SSR 的有意文字差异仅为移除上述重复预览说明。组件站保留七个手动示例，并追加「挂载即打开 · 新建空公式」；新增示例可能使 React 自动生成的 ID 改变。
 - 复用检索（离线）：核对现有 MathField 加载与确认处理、DraftMathPreview 的 `formulaMode` / `notice`、Prism Button 与固定 coss Label / Textarea；沿用 P119 已记录的 particles 来源取舍，无须新增组件或外部代码。未联网刷新 registry，未改冻结 coss、主题、CSS、依赖或工作台业务。
+
+## 字段与说明文字（P121 · 2026-10-28）
+
+设计状态：候选（PO 2026-10-28 已批准本轮实施范围与 12px 说明意图，尚待独立验收）。工程准入：未开始。
+
+演示入口：`/next/foundations/field-text`。这是组合用法与验收夹具，不增加组件目录条目。沿用现有 MathField 属性、受控值、加载与 IME 门禁、确认／取消／拆分回调。
+
+### 来源与取舍
+
+- 优先核对现有 Prism MathField、QuestionSelect、局部主题 `PrismScopeProvider` / `scoped-overlays`，复用其行为与浮层容器。
+- 固定 coss `Field` / `FieldLabel` / `FieldDescription` 满足常驻标签和辅助说明；`Kbd` / `KbdGroup` / `Tooltip` 满足按键和可聚焦详情；不改 coss 字节。
+- 离线检索已入库的 particles：`demos/input-particles.tsx` 的 `p-input-group-22`、`selection-particles.tsx`、`date-particles.tsx`。这些解决控件内部组合，不提供统一字段横排换行或短状态，故增加薄组合 FieldRow / InlineStatus。未联网刷新官方 registry，不声称官方最新实现已接入。无新增依赖、视觉令牌或控件实现。
+
+### R1–R5 字段结构
+
+默认使用 coss `Field` + `FieldLabel`：标签在上，控件在下；标签与控件间距使用 Field 自带 `gap-2`。标签与控件保持可访问关联，控件保留原受控属性与回调。固定 Base UI 1.8.0 的 Input 在 Field 内 SSR 先使用上下文 ID：单一非 nativeInput 字段的 FieldLabel 不显式指定 htmlFor，由 Field 自动关联，挂载注册后使用原控件 ID。原生控件与 Textarea 保留显式关联。多字段以 grid / stack 排列，不能依赖行内文字流。复选项／单选项的 coss Label 包裹选择控件仍为合法选择项模式，不属于裸字段兄弟。
+
+`FieldRow`（`components/prism-next/field-row.tsx`）接受 `ComponentProps<typeof Field>`，包括 children、className、Field 校验与状态属性；不新增业务属性。children 顺序为 `FieldLabel → 控件 → 可选 FieldDescription`。以 flex row / wrap 和居中对齐实现横排；间距 `calc(var(--spacing) * 2)`（现有 spacing 单位 4px，对应 8px）。可用容器容不下标签和控件时，控件换至下一行，标签留在上方；按容器自然换行，不依赖视口断点。长标签可换行，控件最大宽度不超过容器；Input / Textarea 的外框使用 12rem 弹性基宽与 auto 宽度，避免原有 w-full 使宽容器也强制换行。调用方不再添加标签 margin 或覆盖布局方向。
+
+引入 `field-layout.css`（站点在根布局加载，宿主同步时须加载）：仅处理布局。Field 默认 gap 是 8px，相邻 FieldDescription 的起始 margin 为 `-1 × spacing`，将控件与说明的实际间距减至 4px；保留标签间距。说明可换行、不截断。若自定义 Field 的 gap，宿主需重新核对说明间距，不得继续假定为 4px。
+
+### S1–S5 信息层级
+
+| 级别 | 写法 | 字号与位置 |
+| --- | --- | --- |
+| S1 辅助说明 | `FieldDescription`；保留或显式提供 `id` / 控件 `aria-describedby` | `text-ui-meta` 12px / 18px、400、muted-foreground；紧邻所属控件下方 4px，完整换行 |
+| S2 快捷键 | 动作按钮内 `Kbd`；完整键位用可聚焦键盘图标按钮 + `Tooltip` / `KbdGroup` | 复用 coss 键帽；中文 aria-label；Mac / iOS 显示 ⌘，其余显示 Ctrl |
+| S3 行内状态 | `InlineStatus`，标题行右侧 | meta；图标 + 短句；详情放 Tooltip，不另起状态段落 |
+| S4 占位引导 | 控件 `placeholder` | 操作引导放空值提示，常驻标签仍保留 |
+| S5 段落提示 | 现有 `BpCallout` / `text-ui-hint` | 不改原有规格；多句业务说明继续使用段落 |
+
+`InlineStatus`（`components/prism-next/inline-status.tsx`）：接受 span 属性（children 单列），`children: ReactNode` 为短句，`tone?: 'info' | 'warning' | 'destructive'` 默认为 info，`details?: ReactNode` 为补充说明。使用现有 `--info-foreground` / `--warning-foreground` / `--destructive-foreground`，图标装饰性隐藏，文本按基线对齐、图标垂直居中。默认 `role="status"`；明确错误可由调用方传 `role="alert"`。有 details 时内部为原生可聚焦 TooltipTrigger 按钮；浮层使用 `scoped-overlays`，遵守宿主局部主题容器。组件不推断状态、不计时、不执行业务。
+
+`KeyboardHint({ modifier: string })` 为公式编辑的键位说明组合，中文名称「公式编辑快捷键」，包含确认、取消、Tab / 方向键移动；`usePrimaryModifier()` 在 SSR 和首次客户端渲染固定为 Ctrl，挂载后读取平台切为 ⌘ / Ctrl，避免 hydration 差异。调用方负责真实键位绑定；MathField 原有绑定不变。键帽不是可交互控件。
+
+### 令牌映射与蓝图边界
+
+PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 映射移出，独立映射到既有 `--text-ui-meta` / 行高 / 字重；不新增 `text-ui-caption`，不改任何令牌值。原组合内的 field-error、card-description、card-frame-description、frame-panel-description、dialog-description、alert-dialog-description、drawer-description、popover-description、empty-description、alert-description、toast-description、table-caption 均保持 hint。原先未列入本组的 sheet-description、fieldset-description 也不改。
+
+`blueprint.css` 仅追加 P121 段：蓝图和夜图键帽直角、`--line-width` / `--line` 实线、mono、既有 foreground；FieldDescription / InlineStatus 使用 sans、meta、不大写；状态语义色沿用主题令牌；FieldRow 使用两倍 spacing。没有现成 `--bp-*` 间距令牌，因此直接复用 Tailwind 既有 spacing，不造变量。字段标签不另加视觉规则；Tooltip 继续使用现有直角线框和 6px 偏移阴影。所有新蓝图规则带主题限定，并排除嵌套核心主题预览根及其后代。
+
+核心主题仅接受本任务明确授权的统一字段结构与 S1 映射，蓝图几何规则不得渗入 light / paper / dark。既有 CSS 除该映射和 P121 追加段之外保持原字节。静态选择器、SSR 与令牌检查不代表浏览器视觉验收。
+
+### MathField 样板与验证
+
+标题行包含固定字段标签、键盘图标、外部事实状态。加载降级显示「改用原文」，错误级别与详情保留区别；只读原因仍可辅助技术读取。原文框 placeholder 为输入示例，其下为「单独一行或答案中的公式不插作答空。」；确认 / 取消按钮增加键帽。MathLive 挂载、懒加载、原文同步、空值反馈、IME、快捷键处理及拆分意图逻辑不变。
+
+视觉隐藏标签（`sr-only`、静态 `hidden` 及隐藏祖先）和仅用 `aria-label` 命名的输入不属于可见标签布局迁移：保留原结构和宽度；动态类、响应式 `not-sr-only` 或只有 `aria-hidden` 不视为已证明视觉隐藏。PromptBar、ReviewRailFilter、Composer compact / conversation 以及目录 presentation 搜索按此保留。
+
+静态守卫 `tests/helpers/field-layout-guard.mjs` 扫描 `components/prism-next/**` 与 `app/(next)/**`，解析 TSX、条件分支、片段与导入别名，阻止缺少 Field / FieldRow 的标签与控件裸兄弟，以及 `<p>` 内直接书写快捷键整句；Kbd / KbdGroup 内容排除于普通段落文字检测之外。紧凑键位图例（如“↑↓ 选择 · Enter 确认 · Esc 关闭”）不是整句段落，保留既有字节；含完整操作句的段落仍拦截。无文件白名单。改前对照仅是演示页中的非交互旧排版示意，实际字段仍使用 Field。
+
+浏览器验收：由 Supervisor 执行，覆盖 1280 / 390、五主题、240 窄容器、长中文／公式、嵌套核心预览、键盘聚焦打开提示、读屏抽查；构建与静态验证不替代这些验收。全量工程测试由 Supervisor 执行。

@@ -68,7 +68,7 @@ const controlBuild=await build({stdin:{contents:"export { buttonVariants } from 
 writeFileSync(controlFile,controlBuild.outputFiles[0].text);
 const {buttonVariants,badgeVariants,Toggle}=await import(controlFile);
 const controlCSS=read('app/(next)/next/blueprint.css').split('/* Night controls:')[1].split('/* Night surfaces')[0];
-const badgeCSS=read('app/(next)/next/blueprint.css').split('/* P97 · Status badges')[1].split('*/')[1].split('\n').filter(line=>!line.includes('badge-mark')).join('\n');
+const badgeCSS=read('app/(next)/next/blueprint.css').split('/* P97 · Status badges')[1].split('*/')[1].split('/* P113 ·')[0].split('\n').filter(line=>!line.includes('badge-mark')).join('\n');
 const controlRules=postcss.parse('/* Night controls:'+controlCSS+badgeCSS).nodes.filter(n=>n.type==='rule').map(rule=>({rule,selectors:rule.selectors.map(parseSelector)}));
 function controlStyle(slot,classes,{hover=false,pressed=false,loading=false,outer=night,preview}={}) {
   const parent=preview?element(preview,element(outer),true):element(outer);

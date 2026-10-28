@@ -1,4 +1,5 @@
 "use client"
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId,useRef,type ReactNode } from "react"
 import { ArrowUp,Check,Circle,Square,FileText,ArrowUpRight,CircleAlert,CircleHelp,Clock3,ChevronDown } from "lucide-react"
 import { Button } from "@/components/coss/button"
@@ -85,10 +86,7 @@ export function AgentComposer({
       {suggestions}
     </form>;
   }
-  return <form className={compact ? "relative space-y-2" : "relative space-y-3"} onSubmit={event => { event.preventDefault(); submit(); }}>
-    <Label htmlFor={id} className={compact ? "sr-only" : undefined}>{label}</Label>
-    {scope}
-    <Textarea
+  const input = <Textarea
       id={id}
       value={value}
       onChange={event => onChange(event.target.value)}
@@ -105,7 +103,10 @@ export function AgentComposer({
           submit();
         }
       }}
-    />
+    />;
+  const fields = compact ? [<Label key="label" htmlFor={id} className="sr-only">{label}</Label>, scope, input] : [<Field key="field" className="w-full"><FieldLabel htmlFor={id}>{label}</FieldLabel>{scope}{input}</Field>];
+  return <form className={compact ? "relative space-y-2" : "relative space-y-3"} onSubmit={event => { event.preventDefault(); submit(); }}>
+    {...fields}
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 text-ui-hint text-muted-foreground">{footerNote ?? <>{value.length} / {maxLength} · Ctrl / ⌘ + Enter</>}</div>
       <div className="flex shrink-0 items-center gap-2">
@@ -212,11 +213,11 @@ export function AgentChangeSet({ view, title, basis, items, inlineLimit = 2, onD
    <AgentChangeReview title={item.title} before={item.before} after={item.after} reason={item.reason} scope={item.scope} decision={item.decision} beforePreview={item.beforePreview} afterPreview={item.afterPreview}
     disabled={!!(disabledReason || item.disabledReason)} disabledReason={[disabledReason, item.disabledReason].filter(Boolean).join('；') || undefined}
     onDecision={decision => onDecision(item.id, decision)} onResetDecision={() => onDecision(item.id, 'pending')}/>
-   {onRewrite && <div className="space-y-2">
-    <Label htmlFor={`${id}-rewrite-${index}`}>手动改写建议内容：{item.title}</Label>
+   {onRewrite && <Field>
+    <FieldLabel htmlFor={`${id}-rewrite-${index}`}>手动改写建议内容：{item.title}</FieldLabel>
     <Textarea id={`${id}-rewrite-${index}`} value={item.after} onChange={event => onRewrite(item.id, event.target.value)} disabled={!!(disabledReason || item.disabledReason)} aria-describedby={[disabledReason ? `${id}-disabled` : undefined, item.disabledReason ? `${id}-rewrite-${index}-disabled` : undefined].filter(Boolean).join(" ") || undefined}/>
-    {item.disabledReason && <p id={`${id}-rewrite-${index}-disabled`} className="text-ui-hint text-warning-foreground">{item.disabledReason}</p>}
-   </div>}
+    {item.disabledReason && <FieldDescription id={`${id}-rewrite-${index}-disabled`} className="text-warning-foreground">{item.disabledReason}</FieldDescription>}
+   </Field>}
   </li>)}</ol>
   {view === 'inline' && onExpand && <div className="space-y-2">{shown.length < items.length && <p className="text-ui-hint text-muted-foreground">另有 {items.length - shown.length} 处修改，展开查看全部</p>}<Button variant="outline" onClick={event => onExpand(event.currentTarget)}>查看全部 {items.length} 处修改<ArrowUpRight aria-hidden="true"/></Button></div>}
   {details != null && <Collapsible defaultOpen={false}>
