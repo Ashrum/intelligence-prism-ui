@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { WorkloadCalendar, type DayLoad } from "../workload-calendar"
 
 import { useId, useRef, useState } from "react"
-import { Label } from "@/components/coss/label"
 import { Button } from "../button"
 import { QuestionSelect } from "../question-controls"
 import { RootFormula } from "../math-content"
@@ -112,9 +112,9 @@ export function PlanBuilderExample({ purpose, narrow = false }: { purpose: keyof
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPlanBuilder {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
-    <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPlanSave["state"])} items={[
+    <div className="flex flex-wrap items-end gap-3"><Field><FieldLabel htmlFor={`${id}-save`}>独立保存记录示例</FieldLabel><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPlanSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved-draft", label: "已保存草稿（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "回执未确认" }, { value: "unknown", label: "未知" },
-    ]} /></div><Button type="button" variant="outline" aria-pressed={readOnly} onClick={() => setReadOnly(value => !value)}>只读示例</Button>
+    ]} /></Field><Button type="button" variant="outline" aria-pressed={readOnly} onClick={() => setReadOnly(value => !value)}>只读示例</Button>
       {purpose === "teaching" && <Button type="button" variant="outline" onClick={() => setChecksLoaded(value => !value)}>切换独立校验记录</Button>}
       <Button type="button" variant="outline" onClick={() => setState(current => ({ ...current, plan: { ...current.plan, core: "confirmed" } }))}>载入核心已确认示例</Button>
     </div>

@@ -50,7 +50,7 @@ test('P118 steps: only four bars opt in, every other count and chips keeps exact
     assert.equal(html.includes('data-four-steps'),count===4 && variant==='bars');
   }
 });
-const path='app/(next)/next/blueprint.css', css=read(path), index=css.indexOf('\n/* P118 ·'), block=css.slice(index);
+const path='app/(next)/next/blueprint.css', css=read(path).replace(/\n\/\* P121 ·[\s\S]*$/, ''), index=css.indexOf('\n/* P118 ·'), block=css.slice(index);
 test('P118 append-only CSS, exact decoration and container thresholds', () => {
   assert.ok(index>0); assert.equal(css.slice(0,index),before(path));
   assert.equal(read('app/(next)/next/theme.css'),before('app/(next)/next/theme.css'));

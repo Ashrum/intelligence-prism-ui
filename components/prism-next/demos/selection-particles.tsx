@@ -1,8 +1,9 @@
 "use client"
 
+import { FieldRow } from "@/components/prism-next/field-row"
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useState } from "react"
 import { Search } from "lucide-react"
-import { Label } from "@/components/coss/label"
 import { Select, SelectTrigger, SelectValue, SelectPopup, SelectItem, SelectGroup, SelectGroupLabel, SelectSeparator, SelectButton } from "@/components/coss/select"
 import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxEmpty, ComboboxItem, ComboboxList, ComboboxPopup, ComboboxValue, ComboboxInput, ComboboxGroup, ComboboxGroupLabel, ComboboxCollection, ComboboxTrigger } from "@/components/coss/combobox"
 import { DemoSection, Feedback } from "@/components/prism-next/demo-parts"
@@ -28,25 +29,25 @@ export function SelectParticles() {
   const widths = [{ value: "pending", label: "待复核" }, { value: "done", label: "已复核" }, { value: "supplement", label: "待补充公式推导与说明" }]
   return <>
     <DemoSection title="分组选项" description="相关选项分组呈现，学科名称保持直接可读。" sources={["p-select-6"]}>
-      <div className="max-w-64"><Label htmlFor="particle-subject">学科</Label><Select items={subjects} value={subject} onValueChange={v => v && setSubject(v)}>
+      <Field className="max-w-64"><FieldLabel htmlFor="particle-subject">学科</FieldLabel><Select items={subjects} value={subject} onValueChange={v => v && setSubject(v)}>
         <SelectTrigger id="particle-subject"><SelectValue /></SelectTrigger>
         <SelectPopup>{subjectGroups.map((group, i) => <SelectGroup key={group.label}>{i > 0 && <SelectSeparator />}<SelectGroupLabel>{group.label}</SelectGroupLabel>{group.items.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectGroup>)}</SelectPopup>
-      </Select></div><Feedback>已选择：{subjects.find(item => item.value === subject)?.label}</Feedback>
+      </Select></Field><Feedback>已选择：{subjects.find(item => item.value === subject)?.label}</Feedback>
     </DemoSection>
     <DemoSection title="带说明的选项" description="说明留在选项内，收起时只显示名称，保留标准控件高度。" sources={["p-select-18"]}>
-      <div className="max-w-80"><Label htmlFor="particle-scope">可见范围</Label><Select value={scope} onValueChange={v => v && setScope(v)} itemToStringValue={item => item.value}>
+      <Field className="max-w-80"><FieldLabel htmlFor="particle-scope">可见范围</FieldLabel><Select value={scope} onValueChange={v => v && setScope(v)} itemToStringValue={item => item.value}>
         <SelectTrigger id="particle-scope"><SelectValue>{item => <span className="truncate">{item.label}</span>}</SelectValue></SelectTrigger>
         <SelectPopup alignItemWithTrigger={false}>{visibility.map(item => <SelectItem key={item.value} value={item}><span className="flex flex-col"><span>{item.label}</span><span className="text-ui-hint text-muted-foreground">{item.description}</span></span></SelectItem>)}</SelectPopup>
-      </Select></div><Feedback>{scope.description}</Feedback>
+      </Select></Field><Feedback>{scope.description}</Feedback>
     </DemoSection>
     <DemoSection title="多选与已选摘要" description="少量选项直接多选；选中较多时显示名称与数量。" sources={["p-select-7"]}>
-      <div className="max-w-64"><Label htmlFor="particle-classes">适用班级</Label><Select multiple items={classItems} value={selected} onValueChange={setSelected}>
+      <Field className="max-w-64"><FieldLabel htmlFor="particle-classes">适用班级</FieldLabel><Select multiple items={classItems} value={selected} onValueChange={setSelected}>
         <SelectTrigger id="particle-classes"><SelectValue>{values => values.length ? `${values[0]}${values.length > 1 ? `（另 ${values.length - 1} 个）` : ""}` : "选择班级"}</SelectValue></SelectTrigger>
         <SelectPopup alignItemWithTrigger={false}>{classes.map(item => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectPopup>
-      </Select></div><Feedback>{selected.length ? `适用班级：${selected.join("、")}` : "尚未选择班级。"}</Feedback>
+      </Select></Field><Feedback>{selected.length ? `适用班级：${selected.join("、")}` : "尚未选择班级。"}</Feedback>
     </DemoSection>
     <DemoSection title="随内容确定宽度" description="短状态保持紧凑，较长内容自然扩展；保留 coss 的默认最小宽度。" sources={["p-select-21"]}>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2"><Label htmlFor="particle-auto-width">复核状态</Label><Select items={widths} value={widthValue} onValueChange={v => v && setWidthValue(v)}><SelectTrigger id="particle-auto-width" className="w-fit max-w-full"><SelectValue /></SelectTrigger><SelectPopup>{widths.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>
+      <FieldRow><FieldLabel htmlFor="particle-auto-width">复核状态</FieldLabel><Select items={widths} value={widthValue} onValueChange={v => v && setWidthValue(v)}><SelectTrigger id="particle-auto-width" className="w-fit max-w-full"><SelectValue /></SelectTrigger><SelectPopup>{widths.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></FieldRow>
     </DemoSection>
   </>
 }
@@ -64,22 +65,22 @@ export function ComboboxParticles() {
   const [popup, setPopup] = useState<Topic | null>(null)
   return <>
     <DemoSection title="可搜索多选" description="已选知识点保留为标签，可逐项移除，也可继续输入搜索。" sources={["p-combobox-9"]}>
-      <div className="max-w-md"><Label htmlFor="particle-topics">知识点</Label><Combobox multiple items={topics} value={selected} onValueChange={setSelected}>
+      <Field className="max-w-md"><FieldLabel htmlFor="particle-topics">知识点</FieldLabel><Combobox multiple items={topics} value={selected} onValueChange={setSelected}>
         <ComboboxChips><ComboboxValue>{(values: Topic[]) => <>{values.map(item => <ComboboxChip key={item.value} aria-label={item.label} removeProps={{ "aria-label": `移除${item.label}` }}>{item.label}</ComboboxChip>)}<ComboboxChipsInput id="particle-topics" placeholder={values.length ? undefined : "搜索并选择知识点"} /></>}</ComboboxValue></ComboboxChips>
         <ComboboxPopup><ComboboxEmpty>没有匹配的知识点。</ComboboxEmpty><ComboboxList>{(item: Topic) => <ComboboxItem key={item.value} value={item}>{item.label}</ComboboxItem>}</ComboboxList></ComboboxPopup>
-      </Combobox></div><Feedback>已选择 {selected.length} 个知识点。</Feedback>
+      </Combobox></Field><Feedback>已选择 {selected.length} 个知识点。</Feedback>
     </DemoSection>
     <DemoSection title="按主题分组搜索" description="搜索缩小候选范围，分组帮助判断知识点所属领域。" sources={["p-combobox-8"]}>
-      <div className="max-w-80"><Label htmlFor="particle-grouped-topic">知识领域</Label><Combobox items={topicGroups} value={grouped} onValueChange={setGrouped}>
+      <Field className="max-w-80"><FieldLabel htmlFor="particle-grouped-topic">知识领域</FieldLabel><Combobox items={topicGroups} value={grouped} onValueChange={setGrouped}>
         <ComboboxInput id="particle-grouped-topic" placeholder="搜索知识点" showClear clearProps={{ "aria-label": "清除知识领域" }} triggerProps={{ "aria-label": "展开知识领域" }} />
         <ComboboxPopup><ComboboxEmpty>没有匹配的知识点。</ComboboxEmpty><ComboboxList>{(group: typeof topicGroups[number]) => <ComboboxGroup key={group.value} items={group.items}><ComboboxGroupLabel>{group.label}</ComboboxGroupLabel><ComboboxCollection>{(item: Topic) => <ComboboxItem key={item.value} value={item}>{item.label}</ComboboxItem>}</ComboboxCollection></ComboboxGroup>}</ComboboxList></ComboboxPopup>
-      </Combobox></div><Feedback>{grouped ? `已选择：${grouped.label}` : "尚未选择知识领域。"}</Feedback>
+      </Combobox></Field><Feedback>{grouped ? `已选择：${grouped.label}` : "尚未选择知识领域。"}</Feedback>
     </DemoSection>
     <DemoSection title="选择框内展开搜索" description="收起时保持选择框形态，搜索输入位于弹层内。" sources={["p-combobox-18"]}>
-      <div className="max-w-64"><Label htmlFor="particle-popup-topic">关联知识点</Label><Combobox items={topics} value={popup} onValueChange={setPopup}>
+      <Field className="max-w-64"><FieldLabel htmlFor="particle-popup-topic">关联知识点</FieldLabel><Combobox items={topics} value={popup} onValueChange={setPopup}>
         <ComboboxTrigger id="particle-popup-topic" render={<SelectButton />}><ComboboxValue placeholder="选择知识点" /></ComboboxTrigger>
         <ComboboxPopup aria-label="关联知识点"><div className="border-b p-2"><ComboboxInput aria-label="搜索关联知识点" className="rounded-md before:rounded-[calc(var(--radius-md)-1px)]" placeholder="输入知识点名称" showTrigger={false} startAddon={<Search />} /></div><ComboboxEmpty>没有匹配的知识点。</ComboboxEmpty><ComboboxList>{(item: Topic) => <ComboboxItem key={item.value} value={item}>{item.label}</ComboboxItem>}</ComboboxList></ComboboxPopup>
-      </Combobox></div><Feedback>{popup ? `已关联：${popup.label}` : "尚未关联知识点。"}</Feedback>
+      </Combobox></Field><Feedback>{popup ? `已关联：${popup.label}` : "尚未关联知识点。"}</Feedback>
     </DemoSection>
   </>
 }

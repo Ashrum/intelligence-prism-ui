@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Badge } from "./badge"
 import { Button } from "./button"
 import { FilterBar, type FilterField } from "./data-display"
@@ -217,11 +217,11 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
     <div className="min-w-0 space-y-2">
       <div className="break-words text-ui-hint"><span className="text-muted-foreground">检索范围：</span>{scope ?? "未知"}</div>
       {channelReason !== undefined && <p id={`${id}-channel`} className="break-words text-ui-hint">{channelReason}</p>}
-      {workspace ? <div className="min-w-0 space-y-2"><Label htmlFor={`${id}-query`}>{query.label || "检索资源"}</Label>
+      {workspace ? <Field className="min-w-0"><FieldLabel >{query.label || "检索资源"}</FieldLabel>
         <Input id={`${id}-query`} value={query.value} readOnly={queryReason !== undefined} aria-describedby={queryReason !== undefined ? channelReason !== undefined ? `${id}-channel` : `${id}-query-reason` : undefined}
           onChange={event => { if (queryReason === undefined) emit({ ...envelope, type: "query", value: event.currentTarget.value }) }} />
-        {queryReason !== undefined && channelReason === undefined && <p id={`${id}-query-reason`} className="break-words text-ui-hint">{queryReason}</p>}
-      </div> : <p className="break-words text-ui-hint">检索词：{query.value || "未指定"}</p>}
+        {queryReason !== undefined && channelReason === undefined && <FieldDescription id={`${id}-query-reason`} className="break-words ">{queryReason}</FieldDescription>}
+      </Field> : <p className="break-words text-ui-hint">检索词：{query.value || "未指定"}</p>}
       {workspace && filters && <ResourceFilters fields={filters.fields} value={filters.value} reason={channelReason ?? (filters.disabledReason !== undefined ? filters.disabledReason || "当前不可筛选。" : undefined)} reasonId={channelReason !== undefined ? `${id}-channel` : undefined}
         onChange={value => emit({ ...envelope, type: "filter", value })} />}
       {workspace && sort && <div className="space-y-1"><ResourceFilters fields={[{ id: "sort", label: sort.label, options: sort.options }]} value={{ sort: sort.value }}

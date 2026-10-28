@@ -1,0 +1,8 @@
+/* P121 · Layout only. Field owns label/control spacing; helper text is 4px away. */
+[data-slot="field"] { min-width:0; }
+[data-slot="field"] > [data-slot="field-description"] { margin-block-start:calc(var(--spacing) * -1); max-width:100%; white-space:normal; overflow-wrap:anywhere; }
+[data-slot="field"].prism-field-row { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:calc(var(--spacing) * 2); }
+.prism-field-row > [data-slot="field-label"] { flex:0 1 auto; max-width:100%; }
+.prism-field-row > :not([data-slot="field-label"]):not([data-slot="field-description"]) { min-width:0; max-width:100%; }
+.prism-field-row > :is([data-slot="input-control"],[data-slot="textarea-control"]) { width:auto; flex:1 1 12rem; }
+.prism-field-row > [data-slot="field-description"] { flex-basis:100%; }

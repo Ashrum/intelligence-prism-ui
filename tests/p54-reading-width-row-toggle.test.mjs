@@ -1,3 +1,4 @@
+import { assertP121Hash } from './helpers/p121-freeze-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -28,7 +29,7 @@ test('P54 scan-containing, continuous, empty and no-toggle outputs preserve pre-
   const cases = baselineCases();
   for (const [name, html] of Object.entries(cases)) {
     if (name === 'digital') continue;
-    assert.equal(hash(html), before.sha256[name], name);
+    assertP121Hash(html, before.sha256[name], `P54/${name}`);
   }
   assert.notEqual(hash(cases.digital), before.sha256.digital, 'authorized default digital layout change');
   assert.equal(hash(restoreDigitalLayout(preview({ ...digital, contentMaxWidth: 'none' }))), before.sha256.digital, 'P55 only removes the legacy digital tool reserve and adds its layout marker');

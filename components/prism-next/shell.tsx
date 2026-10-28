@@ -30,6 +30,7 @@ function Navigation() {
       <SidebarGroup><SidebarMenu>
         {link('/next','组件总览',<Boxes/>)}
         {link('/next/foundations','基础规范',<Palette/>)}
+        {link('/next/foundations/field-text','字段与说明文字',<BookOpen/>)}
         {link('/next/foundations/typography','字体与字号',<BookOpen/>)}
         {link('/next/foundations/blueprint','蓝图组件',<Layers/>)}
         {link('/next/foundations/blueprint/guide','蓝图主题规范',<BookOpen/>)}

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
@@ -69,14 +70,16 @@ if (process.env.UPDATE_QUESTION_REVIEW_BASELINE === '1') {
   await writeFile(new URL('./fixtures/question-review-main.json', import.meta.url), JSON.stringify({ baseline: '3eb6533abb6db2506e79740265b245f4266c70ad', cases: snapshots }, null, 2)+'\n');
 }
 
-test('32 pinned main SSR snapshots preserve all scoring, answers, reference content and controls; only final status text differs', async () => {
+test('32 P121 field snapshots preserve scoring, answers, reference content and controls; historical status differences stay eight', async () => {
   const snapshot = JSON.parse(await readFile(new URL('./fixtures/question-review-main.json', import.meta.url), 'utf8'));
   assert.equal(snapshot.baseline, '3eb6533abb6db2506e79740265b245f4266c70ad');
+  const p121 = JSON.parse(await readFile(new URL('./fixtures/p121-field-ssr.json', import.meta.url), 'utf8')).questionReview;
   const differences=[];
   for (const [name, props] of Object.entries(cases)) for (const [view, seed] of Object.entries(legacyQuestionReviewViews)) {
     const key=`${name}/${view}`, before=snapshot.cases[key], after=view==='review'?render(h(ActualQuestionReview,props)):html(harness(QuestionReview,props,seed));
-    assert.equal(withoutReviewStatus(after), withoutReviewStatus(before), key);
-    if (after!==before) differences.push({ case:key, before:before.match(/<p role="status" class="text-ui-body">([\s\S]*?)<\/p><\/div>$/)[1], after:after.match(/<p role="status" class="text-ui-body">([\s\S]*?)<\/p><\/div>$/)[1] });
+    assert.equal(createHash('sha256').update(after).digest('hex'), p121[key], key);
+    const status = markup => markup.match(/<p role="status" class="text-ui-body">([\s\S]*?)<\/p><\/div>$/)[1];
+    if (status(after)!==status(before)) differences.push({ case:key, before:before.match(/<p role="status" class="text-ui-body">([\s\S]*?)<\/p><\/div>$/)[1], after:after.match(/<p role="status" class="text-ui-body">([\s\S]*?)<\/p><\/div>$/)[1] });
   }
   assert.equal(Object.keys(snapshot.cases).length,32); assert.equal(differences.length,8);
   await writeFile(new URL('ssr-differences.json',runtime),JSON.stringify(differences,null,2)+'\n');

@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useState, type ReactNode } from "react"
@@ -115,8 +116,8 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
       {full && selected && category && selected.categoryId !== category.id && <p className="text-ui-hint">当前选择不属于此分类，仍保留在列表中。</p>}
       {reason && <p id={`${id}-reason`} className="break-words text-ui-hint">{reason}</p>}
     </header>
-    {full && categories.length > 0 && <div className="min-w-0 space-y-2">
-      <Label htmlFor={`${id}-filter`}>模板分类</Label>
+    {full && categories.length > 0 && <Field className="min-w-0">
+      <FieldLabel htmlFor={`${id}-filter`}>模板分类</FieldLabel>
       <Select value={category ? String(categories.indexOf(category)) : "all"} onValueChange={value => {
         const index = categories.findIndex((_, index) => String(index) === value)
         setFilter(index < 0 ? null : categories[index].id)
@@ -124,7 +125,7 @@ export function AgentTemplatePicker({ title, templateSet, templates, selectedId,
         <SelectTrigger id={`${id}-filter`} className="w-full min-w-0"><SelectValue>{category?.label ?? "全部分类"}</SelectValue></SelectTrigger>
         <SelectPopup><SelectItem value="all">全部分类</SelectItem>{categories.map((item, index) => <SelectItem key={index} value={String(index)}>{item.label}</SelectItem>)}</SelectPopup>
       </Select>
-    </div>}
+    </Field>}
     {!visible.length && <p className="text-ui-hint">{full ? "当前分类没有模板。" : "暂无推荐模板，可查看全部模板。"}</p>}
     <div className={compact ? "min-w-0 space-y-2" : "min-w-0 space-y-4"}>
       {factEntries.map(([text, items], index) => items.length > 1 && <p key={index} id={`${id}-fact-${index}`} className="break-words text-ui-hint">

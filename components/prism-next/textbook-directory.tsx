@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup, MenuPopup, TooltipPopup } from "@/components/prism-next/scoped-overlays"
 
 import { checkboxesFeature, hotkeysCoreFeature, syncDataLoaderFeature, type TreeInstance } from "@headless-tree/core"
@@ -9,7 +10,6 @@ import { useCallback, useContext, useEffect, useId, useMemo, useRef, useState, t
 import { Button } from "@/components/coss/button"
 import { Toggle } from "@/components/coss/toggle"
 import { Checkbox } from "@/components/coss/checkbox"
-import { Label } from "@/components/coss/label"
 import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
 import { Menu, MenuTrigger, MenuRadioGroup, MenuRadioItem } from "@/components/coss/menu"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
@@ -147,7 +147,7 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
             </MenuRadioGroup>
           </MenuPopup>
         </Menu>}
-      </div> : <div className="mb-5 max-w-sm"><Label htmlFor={`${controlId}-book`}>教材</Label><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></div>}
+      </div> : <Field className="mb-5 max-w-sm"><FieldLabel htmlFor={`${controlId}-book`}>教材</FieldLabel><Select items={bookOptions} value={book.id} onValueChange={value => { if (value) setBookId(value) }}><SelectTrigger id={`${controlId}-book`}><SelectValue /></SelectTrigger><SelectPopup>{bookOptions.map(item => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}</SelectPopup></Select></Field>}
       <Tabs value={kind} onValueChange={value => setKind(value as DirectoryKind)} className={embedded ? "gap-3" : undefined}>
         {embedded ? <TabsList aria-label="目录类型" className="w-full min-w-0">{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 flex-1 basis-0"><span className="truncate" title={kindTitle(type)}>{kindTitle(type)}</span></TabsTab>)}</TabsList> : <TabsList aria-label="目录类型">{kinds.map(type => <TabsTab key={type} value={type}>{kindTitle(type)}</TabsTab>)}</TabsList>}
         {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && <DirectorySession key={scope} titleAction={titleAction} toggleMode={embedded && multiSelect === "toggle"} embedded={embedded} summary={embedded && (selectionCount > 0 || emptySelectionLabel !== undefined) && <div className="flex min-w-0 items-center gap-2 text-ui-hint">
@@ -231,12 +231,17 @@ function DirectorySession({ data, kind, scope, session, setSessions, checkedIds,
   const instructions = toggleMode ? multiple ? multiHelp : selecting ? singleHelp : "箭头展开，标题定位。打开多选后可以勾选多个章节或知识点。" : selecting ? selectHelp : selectionHelp
   const keys = toggleMode ? multiple ? "方向键浏览和展开，Enter 或空格勾选或取消。" : selecting ? "方向键浏览和展开，Enter 或空格选中这一项，再次激活取消。" : "方向键浏览和展开，Enter 或空格定位。" : selecting ? selectKeyboardHelp : keyboardHelp
   const search = <InputGroup className={presentation ? "min-w-0 flex-1" : undefined}><InputGroupAddon><Search /></InputGroupAddon><InputGroupInput aria-label={presentation ? `搜索当前${kindTitle(kind)}` : undefined} id={inputId} ref={inputRef} value={session.query} onChange={event => patch({ query: event.target.value })} placeholder={kind === "course" ? "章节名称或编号" : "知识点名称"} />{session.query && <InputGroupAddon align="inline-end"><Button variant="ghost" size="icon-xs" aria-label="清除目录搜索" onClick={clearSearch}><X /></Button></InputGroupAddon>}</InputGroup>
+  const searchControls = <div className="flex min-w-0 items-center gap-2">{search}{toggleMode && <Tooltip>
+    <TooltipTrigger render={<Toggle aria-label="多选" pressed={multiple} onPressedChange={changeMultiple} />}>多选</TooltipTrigger>
+    <TooltipPopup>打开后可以勾选多个章节或知识点</TooltipPopup>
+  </Tooltip>}</div>
   return <div className={embedded ? "grid min-w-0 gap-3" : "mt-4 min-w-0"}>
-    {embedded ? <div className="min-w-0">{!presentation && <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>}<div className="flex min-w-0 items-center gap-2">{search}{toggleMode && <Tooltip>
-      <TooltipTrigger render={<Toggle aria-label="多选" pressed={multiple} onPressedChange={changeMultiple} />}>多选</TooltipTrigger>
-      <TooltipPopup>打开后可以勾选多个章节或知识点</TooltipPopup>
-    </Tooltip>}</div></div> : <Label htmlFor={inputId}>搜索当前{kindTitle(kind)}</Label>}
-    {!embedded && search}
+    {embedded && presentation ? <div className="min-w-0">{!presentation && null}{searchControls}</div> : <Field className="w-full">
+      <FieldLabel htmlFor={inputId}>搜索当前{kindTitle(kind)}</FieldLabel>
+      {embedded ? searchControls : search}
+    </Field>}
+    {/* Preserve the former standalone-search slot so hidden-label mode keeps React IDs. */}
+    {!embedded && null}
     {embedded ? <>{summary}{projection.normalized && <p className="break-words text-ui-hint text-muted-foreground" role="status">{projection.matchingIds.size} 处匹配{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p>}</> : <div className="my-3 flex flex-wrap items-center justify-between gap-2 text-ui-body"><p className="text-muted-foreground" role="status">已选 {checked.length} {unitTitle(kind)}{projection.normalized && ` · ${projection.matchingIds.size} 处匹配`}{hiddenCount > 0 && ` · ${hiddenCount} 项在搜索结果外`}</p><Button variant="ghost" size="sm" disabled={!checked.length} onClick={() => onCheckedChange([])}>清空当前目录</Button></div>}
     {embedded ? <div className="sr-only"><p id={helpId}>{instructions}</p><p id={`${helpId}-keyboard`}>{keys}</p></div> : selecting ? <><p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p><p id={`${helpId}-keyboard`} className="sr-only">{keys}</p></> : <p id={helpId} className="mb-3 text-ui-hint text-muted-foreground">{instructions}</p>}
     {projection.nodes[data.rootId].children.length ? <View key={`${scope}:${projection.normalized}`} data={data} projection={projection} selectionTree={selectionTree} titleAction={titleAction} showCheckboxes={showCheckboxes} currentId={currentId} onCurrentChange={activate} initialExpanded={session.expandedIds ?? presentation?.initialExpanded?.(data) ?? data.nodes[data.rootId].children} onExpandedChange={saveExpanded} label={kindTitle(kind)} helpId={embedded || selecting ? `${helpId} ${helpId}-keyboard` : helpId} /> : <div className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-lg bg-muted/40 px-5 text-center"><p className="text-ui-body">{projection.normalized ? "没有匹配的目录项。" : "此教材尚未设置目录。"}</p>{projection.normalized && <Button variant="outline" size="sm" onClick={clearSearch}>清除搜索</Button>}</div>}

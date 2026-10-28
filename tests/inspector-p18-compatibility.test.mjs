@@ -1,4 +1,5 @@
-import { assertControlSizingOnly } from './prism-control-sizing-compat.mjs';
+import { assertP121Migration } from './helpers/p121-freeze-compat.mjs';
+import { assertControlSizingOnly, normalizeControlSizing } from './prism-control-sizing-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -11,10 +12,14 @@ for (const [component, variants] of Object.entries(cases(main))) {
   for (const [name, props] of Object.entries(variants)) {
     test(`P18 original ${component} ${name}: omitted/undefined/default props keep main SSR apart from P31 control sizing`, () => {
       const original = render(h(main[component], props));
+      // P121 #84: only editing/saving/failed contain the visible explanation field.
+      const compare = component === 'ErrorCauseReview' && ['editing', 'saving', 'failed'].includes(name)
+        ? (actual, expected) => assertP121Migration(normalizeControlSizing(actual), normalizeControlSizing(expected), `P18/${component}/${name}`)
+        : assertControlSizingOnly;
       assert.equal(hash(original), snapshot.components[component][name], 'executed pinned source matches captured baseline');
-      assertControlSizingOnly(render(h(current[component], props)), original, 'new props omitted');
-      assertControlSizingOnly(render(h(current[component], { ...props, ...undefinedProps[component] })), original, 'new props undefined');
-      assertControlSizingOnly(render(h(current[component], { ...props, ...defaultProps[component] })), original, 'new props explicit defaults');
+      compare(render(h(current[component], props)), original, 'new props omitted');
+      compare(render(h(current[component], { ...props, ...undefinedProps[component] })), original, 'new props undefined');
+      compare(render(h(current[component], { ...props, ...defaultProps[component] })), original, 'new props explicit defaults');
     });
   }
 }
@@ -22,7 +27,8 @@ for (const name of demos) {
   test(`P18 existing ${name} keeps main SSR apart from P31 control sizing`, () => {
     const original = render(h(main[name]));
     assert.equal(hash(original), snapshot.demos[name]);
-    assertControlSizingOnly(render(h(current[name])), original);
+    if (name === 'ErrorCauseReviewDemo') assertP121Migration(normalizeControlSizing(render(h(current[name]))), normalizeControlSizing(original), `P18/demo/${name}`);
+    else assertControlSizingOnly(render(h(current[name])), original);
   });
 }
 for (const [slug, name] of Object.entries(frozenPages)) {

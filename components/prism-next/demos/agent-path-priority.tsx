@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useId, useRef, useState } from "react"
-import { Label } from "@/components/coss/label"
 import { Button } from "../button"
 import { QuestionSelect } from "../question-controls"
 import { RootFormula } from "../math-content"
@@ -82,9 +82,9 @@ export function PathPriorityExample({ purpose, narrow }: { purpose: keyof typeof
   }
   if (presentation.previewOnly) return <AgentDemoPreview feedback={feedback}><AgentPathPriority {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
-    <div className="flex flex-wrap items-end gap-3"><div className="space-y-2"><Label htmlFor={`${id}-save`}>独立保存记录示例</Label><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPathSave["state"])} items={[
+    <div className="flex flex-wrap items-end gap-3"><Field><FieldLabel htmlFor={`${id}-save`}>独立保存记录示例</FieldLabel><QuestionSelect id={`${id}-save`} label="独立保存记录示例" value={save} onChange={value => setSave(value as AgentPathSave["state"])} items={[
       { value: "unsaved", label: "未保存" }, { value: "saved", label: "已保存（示例）" }, { value: "saving", label: "保存中" }, { value: "conflict", label: "版本冲突" }, { value: "error", label: "保存失败" }, { value: "unconfirmed", label: "保存回执未确认" }, { value: "unknown", label: "未知" },
-    ]} /></div><Button type="button" variant="outline" aria-pressed={readOnly} onClick={() => setReadOnly(value => !value)}>只读示例</Button></div>
+    ]} /></Field><Button type="button" variant="outline" aria-pressed={readOnly} onClick={() => setReadOnly(value => !value)}>只读示例</Button></div>
     <p className="text-ui-hint">固定示例；独立保存记录的切换不代表当前草稿已提交。全部操作仅用于组件评审。</p><p role="status" className="text-ui-hint">{feedback}</p>
     {([["inline", "default", "对话中的下一步建议"], ["workspace", "default", "完整路径与人工调整"], ["inline", "compact", "紧凑下一步建议"]] as const).map(([view, density, label]) => <section key={`${view}-${density}`} aria-label={label} tabIndex={view === "workspace" ? -1 : undefined} ref={view === "workspace" ? workspace : undefined} className={`min-w-0 space-y-3 ${narrow ? "w-full max-w-[320px]" : ""}`}>
       <h3 className="text-block-title">{label}</h3><AgentPathPriority {...common} view={view} density={density} />

@@ -1,10 +1,10 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import { useTheme } from "next-themes"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { Toggle } from "@/components/coss/toggle"
-import { Label } from "@/components/coss/label"
 import { AgentStatus } from "../agent-visual-parts"
 import { QuestionSelect } from "../question-controls"
 import { agentComponentStatusLabels, type AgentComponentEntry } from "@/lib/prism-next/agent-component-registry"
@@ -89,8 +89,8 @@ export function AgentComponentPage({ entry, contract }: { entry: AgentComponentE
     <section aria-label="审阅设置" className="min-w-0 space-y-3">
       <h2 className="text-block-title">审阅模式</h2>
       <div role="group" aria-label="预览设置" className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-2"><Label htmlFor={`${id}-theme`}>主题 · 仅预览区</Label><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} items={previewThemes} onChange={value => setTheme(value as PreviewTheme)} /></div>
-        <div className="flex flex-col gap-2"><Label htmlFor={`${id}-width`}>预览宽度</Label><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} items={previewWidths} onChange={value => setWidth(value as PreviewWidth)} /></div>
+        <Field><FieldLabel htmlFor={`${id}-theme`}>主题 · 仅预览区</FieldLabel><QuestionSelect id={`${id}-theme`} label="预览主题" value={theme} items={previewThemes} onChange={value => setTheme(value as PreviewTheme)} /></Field>
+        <Field><FieldLabel htmlFor={`${id}-width`}>预览宽度</FieldLabel><QuestionSelect id={`${id}-width`} label="预览宽度" value={width} items={previewWidths} onChange={value => setWidth(value as PreviewWidth)} /></Field>
         <Toggle variant="outline" pressed={parallel} onPressedChange={setParallel} aria-label="并排对话态与扩展态">并排</Toggle>
       </div>
       <p className="text-ui-hint">主题仅预览区生效。宽度超出可用空间时，可在预览区横向滚动。并排适用于对话态与扩展态；两侧为独立示例。切换标签或并排方式后，示例恢复初始内容。审阅设置离开此页后还原。</p>

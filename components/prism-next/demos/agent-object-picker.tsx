@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { AgentDemoPreview, useAgentDemoPresentation } from "./agent-demo-presentation"
 
 import { useId, useRef, useState } from "react"
-import { Label } from "@/components/coss/label"
 import { AgentObjectPicker, type AgentObjectCandidate, type AgentObjectPickerProps, type AgentObjectPickerResult } from "../agent-object-picker"
 import { Button } from "../button"
 import { QuestionSelect } from "../question-controls"
@@ -67,10 +67,10 @@ export function ObjectPickerExample({ purpose, narrow = false }: { purpose: "cla
   if (presentation.previewOnly) return <AgentDemoPreview feedback={request}><AgentObjectPicker {...common}   view={presentation.view ?? "inline"} density={presentation.density ?? "default"} onExpand={presentation.onExpand} onBack={presentation.onBack} /></AgentDemoPreview>
   return <div className="min-w-0 space-y-5">
     <p className="text-ui-hint">固定示例 · 三处共用选择、搜索与筛选；状态由下方控件手动切换。</p>
-    <div className="space-y-2"><Label htmlFor={stateId}>候选状态示例</Label>
+    <Field><FieldLabel htmlFor={stateId}>候选状态示例</FieldLabel>
       <QuestionSelect id={stateId} label="候选状态示例" value={state} onChange={value => setState(value as AgentObjectPickerResult["state"])}
         items={[{ value: "ready", label: "可用" }, { value: "loading", label: "加载中" }, { value: "empty", label: "空结果" }, { value: "error", label: "加载失败" }]} />
-    </div>
+    </Field>
     {request && <p role="status" className="text-ui-hint">{request}</p>}
     <div className="grid min-w-0 gap-6">{([
       ["inline", "default", "快捷选择"], ["workspace", "default", "完整搜索与选择"], ["inline", "compact", "紧凑选择"],

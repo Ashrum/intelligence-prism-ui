@@ -1,9 +1,9 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { Button } from "./button"
 import { RecordDetails } from "./agent-record-parts"
 
@@ -222,8 +222,8 @@ export function AgentRelationGraph({ title, graphId, version, versionLabel, node
           <p className="text-ui-hint">相邻关系（完整资料，包含筛选范围外的节点）</p>
           <ul className="text-ui-body space-y-2 break-words">{edges.filter(edge => edge.from === selected.id || edge.to === selected.id).map(edge => <li key={edge.id}>{edgeText(edge)}</li>)}</ul>
           {!edges.some(edge => edge.from === selected.id || edge.to === selected.id) && <p className="text-ui-hint">此节点暂无相邻关系。</p>}
-          {capabilities["edit-node"].supported && <><Label htmlFor={`${id}-label`}>节点名称</Label>
-          <Input id={`${id}-label`} value={selected.label} readOnly={!can("edit-node")} onChange={event => send({ ...context, type: "node-update", nodeId: selected.id, label: event.target.value }, "edit-node")} /></>}
+          {capabilities["edit-node"].supported && <><Field><FieldLabel >节点名称</FieldLabel>
+          <Input id={`${id}-label`} value={selected.label} readOnly={!can("edit-node")} onChange={event => send({ ...context, type: "node-update", nodeId: selected.id, label: event.target.value }, "edit-node")} /></Field></>}
           <div className="flex min-w-0 flex-wrap gap-2">
             {capabilities["edit-node"].supported && <Button type="button" variant="outline" disabled={!can("edit-node")} onClick={() => send({ ...context, type: "node-delete", nodeId: selected.id }, "edit-node")}>删除节点</Button>}
             {selected.source && <Button type="button" variant="outline" disabled={!ready || !text(selected.source.objectId)} onClick={() => { if (selected.source && text(selected.source.objectId)) send({ ...context, type: "open-source", nodeId: selected.id, source: selected.source }) }}>查看来源</Button>}
@@ -248,8 +248,8 @@ function RelationEdgeForm({ nodes, from, disabled, onCreate }: { nodes: readonly
   return <div className="min-w-0 space-y-2">
     <p className="text-ui-action">新增关系 · 起点：{nodeLabel(from)}</p>
     <div role="group" aria-label="选择关系终点" className="flex min-w-0 flex-wrap gap-2">{nodes.map(node => <Button key={node.id} type="button" variant="outline" className="max-w-full whitespace-normal" disabled={disabled} aria-pressed={to === node.id} onClick={() => { if (!disabled) setTo(node.id) }}>{nodeLabel(node)}</Button>)}</div>
-    <Label htmlFor={`${id}-relation`}>关系名称</Label>
-    <Input id={`${id}-relation`} value={relationType} readOnly={disabled} onChange={event => { if (!disabled) setRelationType(event.target.value) }} />
+    <Field><FieldLabel >关系名称</FieldLabel>
+    <Input id={`${id}-relation`} value={relationType} readOnly={disabled} onChange={event => { if (!disabled) setRelationType(event.target.value) }} /></Field>
     <Button type="button" variant="outline" disabled={!valid} onClick={() => { if (valid && to) onCreate(to, relationType) }}>新增关系</Button>
   </div>
 }

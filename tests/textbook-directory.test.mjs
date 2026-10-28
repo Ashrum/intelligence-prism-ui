@@ -7,8 +7,8 @@ import { readFileSync } from 'node:fs';
 import { baselineCases, htmlFor, mountedHtmlFor, hash, capture, mixedSelections } from './textbook-directory-harness.mjs';
 
 const data = textbooks[0].directories.course;
-test('default and explicit split preserve complete pre-P24 SSR output', () => {
-  const baseline = JSON.parse(readFileSync(new URL('./fixtures/textbook-directory-before.json', import.meta.url)));
+test('default and explicit split preserve complete P121 field SSR output', () => {
+  const baseline = { hashes: JSON.parse(readFileSync(new URL('./fixtures/p121-field-ssr.json', import.meta.url))).directoryP24 };
   for (const [name, props] of Object.entries(baselineCases)) {
     assert.equal(hash(htmlFor(props)), baseline.hashes[name], name);
     assert.equal(htmlFor(props), htmlFor({ ...props, layout: 'split', emptySelectionLabel: '不应显示' }), name);
@@ -478,8 +478,8 @@ test('embedded long single selection preserves full title in SSR text, title and
 const multiToggle = nodes => nodes.find(node => node.props.render?.props['aria-label'] === '多选').props.render;
 const toggleController = (extra = {}, session = {}, kind = 'course') => selectionController({ multiSelect: 'toggle', ...extra }, session, kind);
 
-test('pre-P29 split hashes remain unchanged for both title actions and all multiSelect values', () => {
-  const before = JSON.parse(readFileSync(new URL('./fixtures/textbook-directory-p29-before.json', import.meta.url)));
+test('P121 split hashes agree for both title actions and all multiSelect values', () => {
+  const before = JSON.parse(readFileSync(new URL('./fixtures/p121-field-ssr.json', import.meta.url))).directoryP29;
   for (const [name, props] of Object.entries(baselineCases)) for (const titleAction of ['locate', 'select']) {
     for (const multiSelect of [undefined, 'always', 'toggle']) assert.equal(hash(htmlFor({ ...props, titleAction, multiSelect })), before[`${name}:${titleAction}`]);
     // embedded's header intentionally changes in P29; omitted vs explicit always
@@ -601,8 +601,8 @@ test('toggle has a standard named control and tooltip; both instructions remain 
   }
 });
 
-test('P33 internal presentation seam preserves baseline split and embedded SSR hashes in all 16 mode/selection combinations', () => {
-  const before = JSON.parse(readFileSync(new URL('./fixtures/textbook-directory-p33-before.json', import.meta.url)));
+test('P33 internal presentation seam preserves P121 field split and embedded SSR hashes in all 16 mode/selection combinations', () => {
+  const before = { hashes: JSON.parse(readFileSync(new URL('./fixtures/p121-field-ssr.json', import.meta.url))).directoryP33 };
   for (const layout of ['split', 'embedded']) for (const titleAction of ['locate', 'select']) for (const multiSelect of ['always', 'toggle']) for (const selected of [false, true]) {
     const selections = selected ? { 'math-1:course': ['math-1:course:c111'], 'math-2:knowledge': ['math-2:knowledge:k11'] } : {};
     assert.equal(hash(htmlFor({ layout, titleAction, multiSelect, selections })), before.hashes[`${layout}:${titleAction}:${multiSelect}:${selected}`]);

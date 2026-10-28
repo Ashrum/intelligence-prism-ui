@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useMemo, useRef, type ReactNode, type DragEvent } from "react"
@@ -7,7 +8,6 @@ import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, GripVertical, Plus } from 
 import { Card } from "@/components/coss/card"
 import { Checkbox } from "@/components/coss/checkbox"
 import { Input } from "@/components/coss/input"
-import { Label } from "@/components/coss/label"
 import { NumberField, NumberFieldGroup, NumberFieldInput, NumberFieldDecrement, NumberFieldIncrement } from "@/components/coss/number-field"
 import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
 import { AgentStatus } from "./agent-visual-parts"
@@ -63,8 +63,8 @@ function ArrangementAttributeField({ attribute, anchor, reason, describedBy, edi
 }) {
   const emit = (value: number | string | null) => { if (editable && !reason && arrangementAttributeValueAllowed(attribute, value)) onValue(value) }
   const labelId = `${anchor}-label`
-  return <div className="min-w-0 space-y-2" data-arranger-field="">
-    <Label id={labelId} htmlFor={editable && !reason ? `${anchor}-input` : undefined}>{attribute.label}{editable && !reason && attribute.type === "number" && attribute.unit ? `（${attribute.unit}）` : ""}</Label>
+  return <Field className="min-w-0" data-arranger-field="">
+    <FieldLabel id={labelId} htmlFor={editable && !reason ? `${anchor}-input` : undefined}>{attribute.label}{editable && !reason && attribute.type === "number" && attribute.unit ? `（${attribute.unit}）` : ""}</FieldLabel>
     {!editable || reason ? <p className="break-words text-ui-body" aria-describedby={describedBy}>{attributeText(attribute)}</p>
       : attribute.type === "number" ? <NumberField id={`${anchor}-input`} value={Number.isFinite(attribute.value) ? attribute.value : null} step={attribute.step}
         onValueChange={emit} className="min-w-0 w-full">
@@ -79,7 +79,7 @@ function ArrangementAttributeField({ attribute, anchor, reason, describedBy, edi
             <SelectValue placeholder={attribute.value === null ? "未指定" : "当前选项未列出"} /></SelectTrigger>
           <SelectPopup>{attribute.options.map((option, i) => <SelectItem key={i} value={String(i)} disabled={option.disabledReason !== undefined}>{option.label}</SelectItem>)}</SelectPopup>
         </Select>}
-  </div>
+  </Field>
 }
 
 export function AgentStructureArranger({
@@ -183,7 +183,7 @@ export function AgentStructureArranger({
       .map(option => { const target = arrangementDropTarget(index, itemIds, option.groupId, null); return { ...option, target, reason: reason || arrangementMoveBlock(index, itemIds, target) } })
     if (!options.length) return null
     const describedBy = [note(reason, scope, undefined, batch ? undefined : itemIds[0]), ...options.map(option => note(option.reason, scope, undefined, batch ? undefined : itemIds[0]))].filter(Boolean).join(" ") || undefined
-    return <div className="min-w-0 space-y-2"><Label id={`${anchor}-label`} htmlFor={anchor}>{batch ? "将所选移到分组末尾" : "移到分组末尾"}</Label>
+    return <Field className="min-w-0"><FieldLabel id={`${anchor}-label`} htmlFor={anchor}>{batch ? "将所选移到分组末尾" : "移到分组末尾"}</FieldLabel>
       <Select value={null} items={options.map((option, i) => ({ value: String(i), label: option.label }))} disabled={!!reason || !options.some(option => !option.reason)}
         onValueChange={value => {
           const option = options.find((_, i) => String(i) === value)
@@ -192,7 +192,7 @@ export function AgentStructureArranger({
         <SelectTrigger id={anchor} className="w-full min-w-0" aria-labelledby={`${anchor}-label`} aria-describedby={describedBy}><SelectValue placeholder="选择目标分组" /></SelectTrigger>
         <SelectPopup>{options.map((option, i) => <SelectItem key={i} value={String(i)} disabled={!!option.reason}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
-    </div>
+    </Field>
   }
 
   function attributeField(attribute: AgentArrangementAttribute, itemIds: readonly string[], anchor: string, batch = false) {
@@ -290,11 +290,11 @@ export function AgentStructureArranger({
     note(group?.description, scope); note(locked, scope)
     return <section key={groupId ?? "ungrouped"} aria-labelledby={`${anchor}-label`} className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-end gap-2">
-        {group && view === "workspace" && actions.groupRename && !historical ? <div className="min-w-0 flex-1 space-y-2">
-          <Label id={`${anchor}-label`} htmlFor={`${anchor}-title`}>{scope}名称</Label>
+        {group && view === "workspace" && actions.groupRename && !historical ? <Field className="min-w-0 flex-1">
+          <FieldLabel id={`${anchor}-label`} >{scope}名称</FieldLabel>
           <Input id={`${anchor}-title`} value={group.title} readOnly={!!renameReason} aria-describedby={note(renameReason, scope)} data-arranger-action="group-rename"
             onChange={event => { if (!renameReason) onIntent?.({ ...context, type: "group-rename", groupId: group.id, title: event.currentTarget.value }) }} />
-        </div> : <h4 id={`${anchor}-label`} className="min-w-0 break-words text-item-title">{group?.title || (group ? "未命名分组" : "未分组")}</h4>}
+        </Field> : <h4 id={`${anchor}-label`} className="min-w-0 break-words text-item-title">{group?.title || (group ? "未命名分组" : "未分组")}</h4>}
         {group && view === "workspace" && actions.groupDelete && <Button type="button" variant="outline" size="navigation" data-arranger-action="group-delete"
           disabled={!!deleteReason} aria-describedby={note(deleteReason, scope)} onClick={() => { if (!deleteReason) onIntent?.({ ...context, type: "group-delete", groupId: group.id }) }}>删除分组</Button>}
       </div>

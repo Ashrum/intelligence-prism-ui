@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { MenuPopup, DialogPopup, SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
@@ -253,8 +254,8 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         reason={actionReason || action.disabledReason} onClick={trigger => props.onAction?.({ ...common, kind: "resolve", actionId: action.id }, trigger)} />)}
       {!summaryMode && moveButtons()}
     </div>}
-    {full && changeGroup && <div className={summaryMode ? "relative z-10 min-w-0 space-y-1.5" : "min-w-0 space-y-1.5"}>
-      <Label htmlFor={`${id}-group`}>分组 · {title}</Label>
+    {full && changeGroup && <Field className={summaryMode ? "relative z-10 min-w-0 space-y-1.5" : "min-w-0 space-y-1.5"}>
+      <FieldLabel htmlFor={`${id}-group`}>分组 · {title}</FieldLabel>
       <Select value={groupIndex >= 0 ? String(groupIndex) : null} disabled={!!groupReason}
         items={changeGroup.options.map((option, index) => ({ value: String(index), label: option.label }))}
         onValueChange={value => {
@@ -266,8 +267,8 @@ function BasketRow({ item, previous, next, props, baseReason }: {
         <SelectTrigger ref={groupTrigger} id={`${id}-group`} className="min-w-0 max-w-full" aria-describedby={groupReason ? `${id}-group-reason` : undefined}><SelectValue placeholder={groupLabel} /></SelectTrigger>
         <SelectPopup>{changeGroup.options.map((option, index) => <SelectItem key={index} value={String(index)}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
-      {groupReason && <p id={`${id}-group-reason`} className="text-ui-hint">{groupReason}</p>}
-    </div>}
+      {groupReason && <FieldDescription id={`${id}-group-reason`}>{groupReason}</FieldDescription>}
+    </Field>}
   </AgentSurface>{summaryMode && next && <Separator />}</li>
 }
 

@@ -18,7 +18,7 @@ export {Button} from './components/prism-next/button';
 export {Toolbar,ToolbarButton,ToolbarLink} from './components/prism-next/toolbar';
 export {Button as CossButton} from './components/coss/button';
 export {Toolbar as CossToolbar} from './components/coss/toolbar';
-`, resolveDir: root, loader: 'tsx' }, bundle: true, platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false });
+`, resolveDir: root, loader: 'tsx' }, bundle: true, platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false });
 await writeFile(file, built.outputFiles[0].text);
 const { AgentComposer, MetricSummary, StatusComposition, QuestionPrint, Badge, Button, Toolbar, ToolbarButton, ToolbarLink, CossButton, CossToolbar } = await import(file);
 await rm(file);

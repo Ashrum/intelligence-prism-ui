@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { MathfieldElement, Selector, Selection } from 'mathlive'
-import { Label } from '@/components/coss/label'
+import { Field, FieldLabel, FieldDescription } from '@/components/coss/field'
+import { Kbd, KbdGroup } from '@/components/coss/kbd'
+import { InlineStatus } from './inline-status'
+import { KeyboardHint, usePrimaryModifier } from './keyboard-hint'
+import './field-layout.css'
 import { Textarea } from '@/components/coss/textarea'
 import { Button } from './button'
 import { DraftMathPreview } from './draft-math-preview'
@@ -29,6 +33,7 @@ export type MathFieldProps = {
 }
 
 export function MathField(props: MathFieldProps) {
+  const modifier = usePrimaryModifier()
   const { value, label, mode = 'inline', subject = 'math', readOnlyReason, onSplitRequest } = props
   const id = useId(), mount = useRef<HTMLDivElement>(null), source = useRef<HTMLTextAreaElement>(null)
   const field = useRef<MathfieldElement | null>(null), runtime = useRef<MathFieldRuntime | null>(null)
@@ -178,17 +183,23 @@ export function MathField(props: MathFieldProps) {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); props.onCancel?.() }
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && !disabled) { event.preventDefault(); event.stopPropagation(); confirm() }
   }
-  return <section className="prism-math-field min-w-0 space-y-3" data-mode={mode} aria-labelledby={`${id}-label`}>
-    <Label id={`${id}-label`} htmlFor={`${id}-visual`} className="text-ui-action">{label}</Label>
-    <p id={`${id}-reason`} className="text-ui-hint text-muted-foreground">{readOnlyReason || '直接打字或点模板输入公式；Tab / 方向键移动，⌘ / Ctrl + Enter 确认，Esc 取消。'}</p>
+  return <Field render={<section />} className="prism-math-field min-w-0 items-stretch" data-mode={mode} aria-labelledby={`${id}-label`}>
+    <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
+      <FieldLabel id={`${id}-label`} htmlFor={`${id}-visual`} className="text-ui-action">{label}</FieldLabel>
+      <KeyboardHint modifier={modifier} />
+      <div className="ml-auto min-w-0">
+        {phase === 'loading' && <InlineStatus>正在准备公式框…</InlineStatus>}
+        {phase === 'failed' && <InlineStatus tone="warning" details="公式框暂不可用，可继续编辑公式原文并确认。">改用原文</InlineStatus>}
+        {phase === 'initialization-failed' && <InlineStatus tone="destructive" role="alert" details="公式框初始化出错，可继续编辑公式原文并确认。">改用原文</InlineStatus>}
+        {phase === 'ready' && invalid && <InlineStatus tone="warning" details="请在高级区检查；原文已保留。">公式原文有误</InlineStatus>}
+        {readOnlyReason && <InlineStatus details={readOnlyReason}>只读</InlineStatus>}
+      </div>
+    </div>
+    <span id={`${id}-reason`} className="sr-only">{readOnlyReason}</span>
     <p id={`${id}-description`} className="sr-only">{mathFieldDescription(value)}</p>
     {phase === 'idle' && <Button type="button" variant="outline" disabled={ime} onClick={() => { setPhase('loading'); setOpened(true) }}>打开公式框</Button>}
-    {phase === 'loading' && <p role="status" className="text-ui-hint">正在准备公式框…</p>}
-    {phase === 'failed' && <p role="status" className="text-ui-hint">公式框暂不可用，可继续编辑公式原文并确认。</p>}
-    {phase === 'initialization-failed' && <p role="alert" className="text-ui-hint">公式框初始化出错，可继续编辑公式原文并确认。</p>}
     <div ref={mount} hidden={phase !== 'ready' || invalid} />
     {phase === 'ready' && <>
-      {invalid && <p role="status" className="text-ui-hint">公式原文有误，请在高级区检查；原文已保留。</p>}
       <div className="flex flex-wrap gap-2" role="group" aria-label="公式模板">
         {tools(mathFieldTemplates)}
         <details><summary className="cursor-pointer text-ui-action">关系符</summary><div className="flex flex-wrap gap-2">{tools(mathFieldRelations)}</div></details>
@@ -220,22 +231,23 @@ export function MathField(props: MathFieldProps) {
     </>}
     <details ref={sourcePanel} open={advanced || phase === 'failed' || phase === 'initialization-failed' || invalid} onToggle={event => setAdvanced(event.currentTarget.open)}>
       <summary className="cursor-pointer text-ui-action">高级 · 公式原文</summary>
-      <div className="mt-2 space-y-2">
-        <Label htmlFor={`${id}-source`} className="text-ui-action">公式原文</Label>
-        <Textarea id={`${id}-source`} ref={source} value={value} readOnly={Boolean(readOnlyReason)} aria-describedby={`${id}-reason`} className="text-read-body" onKeyDown={rawKey}
+      <Field className="mt-2 w-full">
+        <FieldLabel htmlFor={`${id}-source`} className="text-ui-action">公式原文</FieldLabel>
+        <Textarea id={`${id}-source`} ref={source} value={value} readOnly={Boolean(readOnlyReason)} aria-describedby={`${id}-reason ${id}-source-help`} placeholder="直接输入或粘贴公式原文，例如 x^2 + 1" className="text-read-body" onKeyDown={rawKey}
           onCompositionStart={() => { sourceComposing.current = true; setIme(true) }}
           onCompositionEnd={event => { sourceComposing.current = false; setIme(false); if (!readOnlyReason) props.onChange(event.currentTarget.value) }}
           onChange={event => { if (!readOnlyReason) props.onChange(event.target.value) }} />
-      </div>
+        <FieldDescription id={`${id}-source-help`}>单独一行或答案中的公式不插作答空。</FieldDescription>
+      </Field>
     </details>
     <DraftMathPreview value={value} formulaMode={value.trim() || confirmedEmpty === value ? mode : undefined} label="排版预览" notice={null} showHelp={false} onLocateError={location => {
       setAdvanced(true); if (sourcePanel.current) sourcePanel.current.open = true; source.current?.focus(); source.current?.setSelectionRange(location.start, location.end)
     }} />
     <div className="flex flex-wrap gap-2">
-      {props.onConfirm && <Button type="button" disabled={disabled} onClick={confirm}>确认</Button>}
-      {props.onCancel && <Button type="button" variant="outline" disabled={ime} onClick={() => { if (!composing.current && !sourceComposing.current) props.onCancel?.() }}>取消</Button>}
+      {props.onConfirm && <Button type="button" disabled={disabled} onClick={confirm}>确认<KbdGroup aria-hidden="true"><Kbd>{modifier}</Kbd><Kbd>↵</Kbd></KbdGroup></Button>}
+      {props.onCancel && <Button type="button" variant="outline" disabled={ime} onClick={() => { if (!composing.current && !sourceComposing.current) props.onCancel?.() }}>取消<Kbd aria-hidden="true">Esc</Kbd></Button>}
     </div>
-  </section>
+  </Field>
 }
 
 function ToolButtons({ items, disabled, onInsert }: { items: readonly MathFieldTool[]; disabled: boolean; onInsert: (tool: MathFieldTool) => void }) {

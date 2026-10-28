@@ -1,7 +1,7 @@
+import { assertP121Hash } from './helpers/p121-freeze-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import postcss from 'postcss';
@@ -115,7 +115,7 @@ for (const theme of ['light', 'paper', 'dark']) test(`P101 E1 global ${theme}: n
   const { button, icon } = controls(element({ 'data-prism-theme': theme }));
   assert.deepEqual(style(button), {}); assert.deepEqual(style(icon), {});
   const html = render(h(api.MaterialTableParticle));
-  assert.equal(createHash('sha256').update(html).digest('hex'), baseline.tableSha256);
+  assertP121Hash(html, baseline.tableSha256, 'P101/table');
   assert.match(html, /aria-sort="descending"/);
   assert.match(html, /lucide-arrow-down/);
   assert.match(html, /aria-sort="none"/);

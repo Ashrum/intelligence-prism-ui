@@ -1,5 +1,6 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, type ReactNode } from "react"
@@ -187,8 +188,8 @@ function SuggestionField({ field, readOnly, onChange }: { field: AgentSuggestion
   const choose = (value: AgentSuggestionFieldValue) => { if (!blocked) onChange(value) }
   const props = { id, "aria-labelledby": `${id}-label`, "aria-describedby": `${id}-facts`, "aria-invalid": field.error !== undefined || undefined }
   const valueText = field.type === "select" ? field.options.find(option => option.value === field.value)?.label ?? (field.value === null ? "未指定" : "当前选项未列出") : field.value ?? "未指定"
-  return <div className="min-w-0 space-y-2">
-    <Label id={`${id}-label`} htmlFor={blocked ? undefined : id} className="whitespace-normal break-words">{field.label}{field.type === "number" && field.unit ? `（${field.unit}）` : ""}</Label>
+  return <Field className="min-w-0">
+    <FieldLabel id={`${id}-label`} htmlFor={blocked ? undefined : id} className="whitespace-normal break-words">{field.label}{field.type === "number" && field.unit ? `（${field.unit}）` : ""}</FieldLabel>
     {blocked ? <p className="whitespace-pre-wrap break-words text-ui-body">{valueText}</p>
       : field.type === "text" ? <Input {...props} value={field.value} onChange={event => choose(event.currentTarget.value)} />
       : field.type === "textarea" ? <Textarea {...props} value={field.value} onChange={event => choose(event.currentTarget.value)} />
@@ -206,7 +207,7 @@ function SuggestionField({ field, readOnly, onChange }: { field: AgentSuggestion
       {field.disabledReason !== undefined && <p className="break-words">{field.disabledReason || "此字段只读。"}</p>}
       {field.type === "select" && field.options.filter(option => option.disabledReason !== undefined).map((option, index) => <p key={index} className="break-words">{option.label}：{option.disabledReason || "当前不可选择。"}</p>)}
     </div>
-  </div>
+  </Field>
 }
 
 /** Semantic 22: controlled action proposals. Selection, adoption and task creation are independent. */
@@ -305,10 +306,10 @@ export function AgentSuggestionSet({ title, suggestionSet, suggestions, selected
         {workspace && comparison && <Label htmlFor={`${anchor}-compare`} className="min-h-10 whitespace-normal pointer-coarse:min-h-11">
           <Checkbox id={`${anchor}-compare`} checked={compareIds.includes(item.id)} disabled={compareReason !== undefined} aria-label={`加入比较：${itemTitle}`} aria-describedby={compareReason !== undefined ? `${id}-compare-reason` : undefined} onCheckedChange={checked => compareSelection(item, checked)} />加入比较
         </Label>}
-        {workspace && item.dismiss?.reason !== undefined && <div className="min-w-0 space-y-2">
-          <Label htmlFor={`${anchor}-dismiss`}>{label("dismissReason")}</Label><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
+        {workspace && item.dismiss?.reason !== undefined && <Field className="min-w-0">
+          <FieldLabel >{label("dismissReason")}</FieldLabel><Input id={`${anchor}-dismiss`} value={item.dismiss.reason} readOnly={block !== undefined || item.dismiss.disabledReason !== undefined || status === "dismissed"}
             onChange={event => { if (block === undefined && item.dismiss?.disabledReason === undefined && status !== "dismissed") emit({ ...envelope, type: "dismiss", suggestionId: item.id, phase: "reason", reason: event.currentTarget.value }) }} />
-        </div>}
+        </Field>}
         <div role="group" aria-label={`建议操作：${itemTitle}`} data-suggestion-actions="" className="flex min-w-0 flex-wrap items-start gap-2">
           {item.adopt && <SuggestionButton label={`${label("adopt")}：${itemTitle}`} reason={adoptReason(item)} reasonId={reasonId(adoptReason(item))} onClick={() => emit({ ...envelope, type: "adopt", suggestionIds: [item.id], scope: "item" })}>{label("adopt")}</SuggestionButton>}
           {workspace && adjustment && !adjustment.open && <SuggestionButton label={`${label("adjust")}：${itemTitle}`} reason={adjustBlock} reasonId={reasonId(adjustBlock)} onClick={() => adjust("start")}>{label("adjust")}</SuggestionButton>}

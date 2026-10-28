@@ -40,13 +40,16 @@ test('SSR in five theme roots has a fixed label, raw preview, closed advanced fi
 function all(node){return [node,...(node.childNodes??[]).flatMap(all)]}
 const content=node=>node.nodeType===3?node.nodeValue:node.childNodes?.length?node.childNodes.map(content).join(''):node.textContent
 const handlers=node=>node?.[Object.keys(node).find(k=>k.startsWith('__reactProps$'))]
-function button(host,text){return all(host).find(n=>n.tagName==='BUTTON'&&n.textContent===text)}
+function button(host,text){return all(host).find(n=>n.tagName==='BUTTON'&&(n.textContent===text || (['确认','取消'].includes(text) && n.textContent.startsWith(text))))}
 const click=async node=>{assert.ok(node);await act(async()=>handlers(node).onClick?.({preventDefault(){},stopPropagation(){},currentTarget:node}))}
 async function mounted(fail=false,accept=false,options={}){
   const dom=clientDOM(390,800), saved={}
-  for(const key of ['window','document','IS_REACT_ACT_ENVIRONMENT']){saved[key]=Object.getOwnPropertyDescriptor(globalThis,key)}
+  for(const key of ['window','document','Element','HTMLElement','Node','IS_REACT_ACT_ENVIRONMENT']){saved[key]=Object.getOwnPropertyDescriptor(globalThis,key)}
+  dom.window.Element=dom.window.HTMLElement; dom.window.Node=dom.window.HTMLElement
+  dom.window.HTMLElement.prototype.getRootNode=function(){return this.ownerDocument}
+  dom.window.HTMLElement.prototype.contains=function(node){return node===this||this.childNodes.some(child=>child===node||child.contains?.(node))}
   dom.window.mathVirtualKeyboard={visible:false,update(){}}
-  Object.assign(globalThis,{window:dom.window,document:dom.document,IS_REACT_ACT_ENVIRONMENT:true})
+  Object.assign(globalThis,{window:dom.window,document:dom.document,Element:dom.window.Element,HTMLElement:dom.window.HTMLElement,Node:dom.window.Node,IS_REACT_ACT_ENVIRONMENT:true})
   // Commit DOM and real model bridge. No geometry, native keyboard or AT claims.
   let loadCalls=0, element
   class FakeMathfield {
@@ -131,7 +134,7 @@ test('import rejection leaves the raw source editable and confirmable without re
   const m=await mounted(true)
   try{
     await click(button(m.host,'打开公式框'))
-    assert.ok(content(m.host).includes('公式框暂不可用'), content(m.host))
+    assert.ok(content(m.host).includes('改用原文'), content(m.host)); assert.ok(all(m.host).some(n=>n.getAttribute?.('data-tone')==='warning'))
     const area=all(m.host).find(n=>n.tagName==='TEXTAREA')
     assert.ok(area);assert.equal(handlers(area).readOnly,false)
     await act(()=>handlers(area).onChange({target:{value:'x+9'},currentTarget:{value:'x+9'},nativeEvent:new Event('change')}))
@@ -205,7 +208,7 @@ for(const fault of ['configure','menuItems','focus'])test(`D1: ${fault} initiali
   const m=await mounted(false,false,{fault,error})
   try{
     await click(button(m.host,'打开公式框'))
-    assert.match(content(m.host),/公式框初始化出错/)
+    assert.match(content(m.host),/改用原文/); assert.ok(all(m.host).some(n=>n.getAttribute?.('data-tone')==='destructive'&&n.getAttribute?.('role')==='alert'))
     assert.doesNotMatch(content(m.host),/公式框暂不可用|正在准备公式框/)
     assert.equal(errors.length,1);assert.equal(errors[0][1],error)
     assert.equal(all(m.host).filter(n=>n.tagName==='MATH-FIELD').length,0)
@@ -320,7 +323,7 @@ test('P120 autoOpen: loading, focus, one load across rerenders and no implicit o
 test('P120 autoOpen import rejection retains raw editing, confirmation and no retry loop',async()=>{
   const m=await mounted(true,true,{props:{autoOpen:true,value:''}})
   try {
-    assert.match(content(m.host),/公式框暂不可用/)
+    assert.match(content(m.host),/改用原文/); assert.ok(all(m.host).some(n=>n.getAttribute?.('data-tone')==='warning'))
     assert.doesNotMatch(content(m.host),/公式内容为空|暂无法确定具体位置/)
     const area=all(m.host).find(n=>n.tagName==='TEXTAREA')
     await act(()=>handlers(area).onChange({target:{value:'x+2'},currentTarget:{value:'x+2'},nativeEvent:new Event('change')}))
@@ -390,7 +393,7 @@ test('P120 nonempty error uses real Temml feedback and unchanged UTF-16 focus/se
   }finally{await m.cleanup()}
 })
 
-test('P120 default SSR and seven existing demo fields match e1e8aa4 except the explicitly removed preview notice',async()=>{
+test('P120 default SSR preserves source and preview bytes through P121 field presentation; seven demo values stay unchanged',async()=>{
   const baseline='e1e8aa46fbcd2d61db1f8cfcde737e36bd00f702'
   const old=path=>execFileSync('git',['show',`${baseline}:${path}`],{cwd:root,encoding:'utf8'})
   const baselineFile=new URL('baseline.mjs',file)
@@ -403,16 +406,15 @@ test('P120 default SSR and seven existing demo fields match e1e8aa4 except the e
   })).outputFiles[0].text)
   const before=await import(baselineFile)
   const stripNotice=html=>html.replace('<p class="text-ui-hint text-muted-foreground">仅预览排版，不校验数学结论。未识别内容按原文显示。</p>','')
+  const projection=html=>[...html.matchAll(/<textarea[^>]*>[\s\S]*?<\/textarea>|<section class="prism-draft-preview[\s\S]*?<\/section>/g)].map(match=>stripNotice(match[0]).replace(/_R_[a-z0-9]+_/g,'_REACT_ID_').replace(/<textarea[^>]*>/,'<textarea>'))
   for(const theme of themes)for(const value of ['', 'x^2',String.raw`\frac{1}{`]) {
     const props={label:'公式',value,onChange(){}}
     const render=Component=>renderToStaticMarkup(h('div',{'data-prism-theme':theme},h(Component,props)))
-    assert.equal(render(MathField),stripNotice(render(before.MathField)))
+    assert.deepEqual(projection(render(MathField)),projection(render(before.MathField)))
     assert.equal(renderToStaticMarkup(h(MathField,{...props,autoOpen:false})),renderToStaticMarkup(h(MathField,props)))
   }
-  // Capture each full field including its nested preview section, excluding new demo content.
-  const fields=html=>[...html.matchAll(/<section class="prism-math-field[\s\S]*?<\/section>[\s\S]*?<\/section>/g)].map(match=>stripNotice(match[0]).replace(/_R_[a-z0-9]+_/g,'_REACT_ID_'))
-  const previous=fields(renderToStaticMarkup(h(before.MathFieldDemo)))
-  const current=fields(renderToStaticMarkup(h(MathFieldDemo)))
-  assert.equal(previous.length,7);assert.equal(current.length,8)
-  assert.deepEqual(current.slice(0,7),previous)
+  const previous=projection(renderToStaticMarkup(h(before.MathFieldDemo)))
+  const current=projection(renderToStaticMarkup(h(MathFieldDemo)))
+  assert.equal(previous.length,14);assert.equal(current.length,16)
+  assert.deepEqual(current.slice(0,14),previous)
 })

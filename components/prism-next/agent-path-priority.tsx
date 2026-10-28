@@ -1,11 +1,11 @@
 "use client"
 
+import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useId, useRef, type DragEvent, type ReactNode } from "react"
 import { GripVertical } from "lucide-react"
 import { Card } from "@/components/coss/card"
-import { Label } from "@/components/coss/label"
 import { Select, SelectItem, SelectTrigger, SelectValue } from "@/components/coss/select"
 import { Badge } from "./badge"
 import { AgentStatus } from "./agent-visual-parts"
@@ -150,7 +150,7 @@ export function AgentPathPriority({ path, items, nextItemIds, blockerItemIds, sa
     const anchor = `${id}-choice-${scope}-${type}`
     const optionBlock = (option: AgentPathOption) => limitation(option.disabledReason, "此选项暂不可用。") || (type === "snooze" && !(option as AgentPathSnoozeOption).until?.trim() ? "冷却结束时间未确认。" : undefined)
     const describedBy = [note(block, scope, "操作限制"), ...options.map(option => note(optionBlock(option), scope, option.label))].filter(Boolean).join(" ") || undefined
-    return <div className="min-w-0 space-y-2"><Label id={`${anchor}-label`} htmlFor={anchor}>{label}</Label>
+    return <Field className="min-w-0"><FieldLabel id={`${anchor}-label`} htmlFor={anchor}>{label}</FieldLabel>
       <Select value={null} disabled={!!block} items={options.map((option, index) => ({ value: String(index), label: option.label }))} data-path-choice={type}
         onValueChange={value => {
           if (block) return
@@ -162,21 +162,21 @@ export function AgentPathPriority({ path, items, nextItemIds, blockerItemIds, sa
         <SelectTrigger id={anchor} className="w-full min-w-0" aria-labelledby={`${anchor}-label`} aria-describedby={describedBy}><SelectValue placeholder="请选择" /></SelectTrigger>
         <SelectPopup>{options.map((option, index) => <SelectItem key={index} value={String(index)} disabled={!!optionBlock(option)}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
-    </div>
+    </Field>
   }
   function positionPicker(item: AgentPathItem, scope: number) {
     if (!item.actions?.reorder) return null
     const block = actionBlock(item, "reorder"), anchor = `${id}-position-${scope}`
     const options = items.map((_, index) => ({ value: String(index), label: `第 ${index + 1} 位` }))
     const reasons = items.flatMap((_, index) => index === scope - 1 ? [] : [note(moveBlock(item, index), scope, "位置限制")])
-    return <div className="min-w-0 space-y-2"><Label id={`${anchor}-label`} htmlFor={anchor}>移到位置</Label>
+    return <Field className="min-w-0"><FieldLabel id={`${anchor}-label`} htmlFor={anchor}>移到位置</FieldLabel>
       <Select value={String(scope - 1)} items={options} disabled={!!block} data-path-choice="to-position" onValueChange={value => {
         const index = options.findIndex(option => option.value === value)
         if (index >= 0) move(item, index, "to-position")
       }}><SelectTrigger id={anchor} className="w-full min-w-0" aria-labelledby={`${anchor}-label`} aria-describedby={[note(block, scope, "操作限制"), ...reasons].filter(Boolean).join(" ") || undefined}><SelectValue /></SelectTrigger>
         <SelectPopup>{options.map((option, index) => <SelectItem key={index} value={option.value} disabled={!!moveBlock(item, index)}>{option.label}</SelectItem>)}</SelectPopup>
       </Select>
-    </div>
+    </Field>
   }
 
   const nextIds = nextValid ? nextItemIds ?? [] : [], blockerIds = blockersValid ? blockerItemIds ?? [] : []
