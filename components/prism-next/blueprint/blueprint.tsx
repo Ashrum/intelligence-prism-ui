@@ -138,9 +138,11 @@ export function BpTool({ iconOnly, count, type = "button", className, children, 
 }
 
 export interface BpSegItem { value: string; label: ReactNode; description?: ReactNode; disabled?: boolean }
-export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; className?: string }
+/** Opt-in frame hierarchy in blueprint / blueprint-night; core themes keep their existing appearance. */
+export type BpFrame = "default" | "subtle" | "none"
+export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; frame?: BpFrame; className?: string }
 /** Single choice as a segmented control (radiogroup). Arrow keys move and select; Home/End jump. For tab panels use coss Tabs. */
-export function BpSegTabs({ items, value, onValueChange, label, orientation = "horizontal", className }: BpSegTabsProps) {
+export function BpSegTabs({ items, value, onValueChange, label, orientation = "horizontal", frame = "default", className }: BpSegTabsProps) {
   const scroll = useHorizontalChoiceScroll(value, orientation === "horizontal")
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   const enabled = items.map((item, i) => item.disabled ? -1 : i).filter(i => i >= 0)
@@ -157,7 +159,7 @@ export function BpSegTabs({ items, value, onValueChange, label, orientation = "h
     if (next === undefined) return
     event.preventDefault(); refs.current[next]?.focus(); onValueChange(items[next].value)
   }
-  return <div {...scroll} role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)}>
+  return <div {...scroll} role="radiogroup" aria-label={label} aria-orientation={orientation} data-orientation={orientation} className={cn("bp-seg-tabs", className)} data-frame={frame === "default" ? undefined : frame}>
     {items.map((item, i) => <button key={item.value} ref={node => { refs.current[i] = node }} type="button" role="radio" aria-checked={item.value === value} tabIndex={i === current ? 0 : -1} disabled={item.disabled} onClick={() => onValueChange(item.value)} onKeyDown={event => move(event, i)}>
       {orientation === "vertical" ? <><b className="font-mono text-item-title">{item.label}</b>{item.description && <span className="text-ui-hint opacity-80">{item.description}</span>}</> : item.label}
     </button>)}
@@ -249,17 +251,18 @@ export interface BpSectionCardProps extends Omit<ComponentProps<"section">, "tit
   action?: ReactNode
   headingLevel?: 2 | 3 | 4 | 5 | 6
   density?: "default" | "compact"
+  frame?: BpFrame
   /** Decorative structural line after the heading, before metadata/actions. */
   titleRule?: boolean
   /** Host-controlled visual selection; does not add interaction or infer aria-current. */
   selected?: boolean
 }
 /** A numbered/ordered subdivision within a result, without sheet rulers. */
-export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", titleRule = false, selected = false, children, className, ...props }: BpSectionCardProps) {
+export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, density = "default", frame = "default", titleRule = false, selected = false, children, className, ...props }: BpSectionCardProps) {
   const id = useId()
   const Heading = `h${headingLevel}` as "h2" | "h3" | "h4" | "h5" | "h6"
   const code = letter?.trim()
-  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card" data-title-rule={titleRule ? "" : undefined} data-selected={selected ? "" : undefined}>
+  return <section aria-labelledby={id} {...props} className={cn("bp-section-card", density === "compact" && "bp-section-card-compact", className)} data-slot="bp-section-card" data-title-rule={titleRule ? "" : undefined} data-selected={selected ? "" : undefined} data-frame={frame === "default" ? undefined : frame}>
     <header className="bp-section-card-head">
       <Heading id={id} className={cn("bp-section-card-title", density === "compact" ? "text-item-title" : "text-block-title")}>
         {code && <span className={cn("bp-section-card-letter font-mono", density === "compact" ? "text-ui-hint" : "text-stat-display")}>{code}</span>}
@@ -287,6 +290,8 @@ export interface BpSizeBarProps {
   formatValue?: ChartValueFormatter
   /** Hide the visual row heading; it remains in the bar accessible name. */
   hideRowLabel?: boolean
+  /** Blueprint name column: 40% (minimum 120px), single line with middle ellipsis. Hidden labels take precedence. */
+  labelWidth?: "default" | "wide"
   /** Opt in to native whole-row activation; the host owns navigation and selection. */
   onRowActivate?: (rowId: string) => void
   /** Highlight only in interactive mode; activation never updates this value internally. */
@@ -297,9 +302,10 @@ export interface BpSizeBarProps {
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, labelWidth = "default", marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
   const compact = size === "xs"
   const hideLabel = compact || hideRowLabel
+  const labelSegmenter = labelWidth === "wide" && !hideLabel ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : undefined
   const legendItems = Array.from(new Map(rows.flatMap(row => row.segments).map(s => [s.id, s])).values())
   type Row = BpSizeBarProps["rows"][number]
   const segmentText = (segment: BpSizeSegment, index: number, row?: Row) => formatValue?.(segment.value, { unit: row?.unit ?? "", dataId: row?.id, seriesId: segment.id, field: "segment", index })
@@ -313,7 +319,7 @@ export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 
     })}
     {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}{formattedMarker && ` ${formattedMarker.text}`}</li>}
   </ul>}
-  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", className)}>
+  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", className)} data-size-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
@@ -323,16 +329,21 @@ export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 
           return `${s.label} ${formatted ? formatted.ariaText ?? formatted.text : `${sizeNumber.format(s.value)}${row.unit ?? ""}`}`
         }).join("，")}${marker ? `，${marker.label} ${formattedMarker ? formattedMarker.ariaText ?? formattedMarker.text : `${sizeNumber.format(marker.value)}${row.unit ?? ""}`}` : ""}`
       const rowFacts = `${row.label}：${segmentFacts}`
+      // Keep the end recognisable without guessing a character-based truncation threshold.
+      // CSS ellipsizes only when the actual available width is insufficient.
+      const letters = labelSegmenter ? Array.from(labelSegmenter.segment(row.label), part => part.segment) : []
+      const split = letters.length - Math.min(4, Math.floor(letters.length / 2))
+      const actionLabel = onRowActivate ? rowActionLabel?.(row)?.trim() || `在报告中查看：${row.label}` : undefined
       const Row = onRowActivate ? "button" : "div"
       const actionProps = onRowActivate ? {
         type: "button" as const,
         onClick: () => onRowActivate(row.id),
         "aria-current": activeRowId === row.id ? "true" as const : undefined,
-        "aria-label": `${rowActionLabel?.(row)?.trim() || `在报告中查看：${row.label}`}；${segmentFacts}${row.display ? `；${row.display}` : ""}`,
+        "aria-label": `${actionLabel}${labelWidth === "wide" && !actionLabel?.includes(row.label) ? `：${row.label}` : ""}；${segmentFacts}${row.display ? `；${row.display}` : ""}`,
       } : {}
       return <div key={row.id} className="space-y-3">
-        <Row {...actionProps} className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled", onRowActivate && "bp-size-row-action w-full text-left")} data-display={row.display !== undefined ? "" : undefined}>
-        {!hideLabel && <span aria-hidden={onRowActivate ? true : undefined} className="text-item-title">{row.label}</span>}
+        <Row {...actionProps} className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled", onRowActivate && "bp-size-row-action w-full text-left")} data-display={row.display !== undefined ? "" : undefined} data-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
+        {!hideLabel && (labelWidth === "wide" ? <span className="bp-size-label text-item-title" title={row.label} role={onRowActivate ? undefined : "img"} aria-label={onRowActivate ? undefined : row.label} aria-hidden={onRowActivate ? true : undefined}><span aria-hidden="true" className="bp-size-label-start">{letters.slice(0, split).join("")}</span><span aria-hidden="true" className="bp-size-label-end">{letters.slice(split).join("")}</span></span> : <span aria-hidden={onRowActivate ? true : undefined} className="text-item-title">{row.label}</span>)}
         <span role={onRowActivate ? undefined : "img"} aria-label={onRowActivate ? undefined : rowFacts} aria-hidden={onRowActivate ? true : undefined} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}
           {marker && Number.isFinite(marker.value) && <i aria-hidden="true" className="bp-size-marker" style={{ left: `${total > 0 ? Math.min(100, Math.max(0, marker.value / total * 100)) : 0}%` }} />}
@@ -391,8 +402,9 @@ export function BpStat({ label, code, value, unit, delta, caption, children, hel
   </div>
 }
 /** Container-width 4 / 2 / 1 grid; final rows fill all columns. Children are BpStat items. */
-export function BpStatStrip({ children, className, ...props }: ComponentProps<"dl">) {
-  return <div className="bp-stat-container"><dl {...props} className={cn("bp-stat-strip", className)}>{children}</dl></div>
+export interface BpStatStripProps extends ComponentProps<"dl"> { frame?: BpFrame }
+export function BpStatStrip({ children, className, frame = "default", ...props }: BpStatStripProps) {
+  return <div className="bp-stat-container"><dl {...props} className={cn("bp-stat-strip", className)} data-frame={frame === "default" ? undefined : frame}>{children}</dl></div>
 }
 
 export interface BpMetricProps { name: ReactNode; max: number; baseline: { label: string; value: number; display?: ReactNode }; current: { label: string; value: number; display?: ReactNode }; gain: ReactNode; gainUnit?: ReactNode; className?: string }
@@ -418,8 +430,9 @@ export function BpFacts({ items, className }: { items: { id: string; value: Reac
   return <div className="bp-fact-container"><dl className={cn("bp-facts", className)}>{items.map(item => <div key={item.id}><dt>{item.value}</dt><dd>{item.label}</dd></div>)}</dl></div>
 }
 export interface BpTitleBlockItem { id: string; label: ReactNode; value: ReactNode; tone?: "default" | "warn" | "muted"; numeric?: boolean }
-export function BpTitleBlock({ items, density = "default", note, className }: { items: BpTitleBlockItem[]; density?: "default" | "compact"; note?: ReactNode; className?: string }) {
-  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", density === "compact" && "bp-titleblock-compact", className)}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd data-tone={item.tone === "default" ? undefined : item.tone} className={item.numeric ? "bp-titleblock-numeric" : undefined}>{item.value}</dd></div>)}</dl>{note != null && <div className="bp-titleblock-note text-ui-meta text-muted-foreground">{note}</div>}</div>
+export interface BpTitleBlockProps { items: BpTitleBlockItem[]; density?: "default" | "compact"; frame?: BpFrame; note?: ReactNode; className?: string }
+export function BpTitleBlock({ items, density = "default", frame = "default", note, className }: BpTitleBlockProps) {
+  return <div className="bp-fact-container"><dl className={cn("bp-titleblock", density === "compact" && "bp-titleblock-compact", className)} data-frame={frame === "default" ? undefined : frame}>{items.map(item => <div key={item.id}><dt>{item.label}</dt><dd data-tone={item.tone === "default" ? undefined : item.tone} className={item.numeric ? "bp-titleblock-numeric" : undefined}>{item.value}</dd></div>)}</dl>{note != null && <div className="bp-titleblock-note text-ui-meta text-muted-foreground">{note}</div>}</div>
 }
 
 export function BpCallout({ title, action, emphasis = false, tone = "warning", layout = "stack", children, className }: { title: ReactNode; action?: ReactNode; emphasis?: boolean; tone?: "neutral" | "warning"; layout?: "stack" | "inline"; children?: ReactNode; className?: string }) {

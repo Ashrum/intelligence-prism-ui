@@ -10,6 +10,7 @@ import { Badge } from "../badge"
 import { ChartLegend } from "../charts/chart-legend"
 import { BlueprintGradingDemo } from "./blueprint-grading"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
+import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
@@ -143,6 +144,8 @@ export function BlueprintComponentsDemo() {
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#narrow-frame">窄屏图纸外框</a>
       <a href="#title-rules">标题墨线</a>
+      <a href="#frame-variants">框线层级</a>
+      <a href="#sizebar-label-width">名称列宽</a>
       <a href="#actions">蓝图按钮与标签页</a>
       <a href="#entry-annotations">图形标注与入口</a>
       <a href="#artifact-folio">成果标题定位</a>
@@ -154,6 +157,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <BlueprintTitleRuleDemo />
+    <BlueprintFrameVariantsDemo />
     <BlueprintSheet id="narrow-frame" title="窄屏保留图纸外框" narrowFrame="keep" description="窄屏保留左右外框，隐藏坐标尺与内框。">
       <p className="text-ui-body">长中文标题与正文在图纸内自然换行，左右保留阅读间距。</p>
     </BlueprintSheet>

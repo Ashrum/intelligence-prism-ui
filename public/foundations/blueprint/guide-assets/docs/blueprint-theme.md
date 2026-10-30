@@ -669,3 +669,23 @@ CSS `zoom: 2` 下已采集[放大截图](blueprint/screens/common-20261015/bluep
 设计状态：候选实现；工程准入：未开始。PO 授权 `ScoreReview.source`，宿主确认 `kind: "ai"` 时显示「来源 · AI 批阅」及实际版本；缺失写「来源 · AI 批阅 · 版本未提供」。D2 装饰条只在 blueprint / blueprint-night 显示，顺序为曜蓝 → 曜紫红 → 曜青绿，沿用三项阶段令牌；核心三主题只显示文字。未传属性时五主题输出不变。此授权不扩大到非批阅来源、文字、按钮、状态着色。完整契约见 [component-contracts.md](component-contracts.md)。
 
 同轮修正四步 `BpSteps bars`：自身容器宽度 316px 至不足 648px 时 2×2，低于 316px 单列，648px 起四列；其他步数及 chips 不变。蓝图批阅演示以最大 500px 容器展示 2×2，并提供带合成版本的 ScoreReview；ScoreReview 原有演示提供缺失版本情形。实际主题、窄屏与交互验收由 Supervisor 执行。
+
+## P122 · 框线层级与名称列宽（候选）
+
+设计状态：候选；工程准入：未开始。基于 `7e814d22f0ab4efbd98bc2047a50124dd4f89100`，本轮补充 C0 K3/K5 所需的组件参数，不表示工作台已接入或浏览器已验收。
+
+| 组件与可选参数 | 蓝图 / 夜图行为 |
+| --- | --- |
+| `BpStatStrip frame="subtle"` / `frame="none"` | subtle 使用 `1px solid var(--border)` 次级外框；none 无外框；格间 1px 分隔保持。 |
+| `BpTitleBlock frame="subtle"` / `frame="none"` | subtle 外框 1px；none 去外框与单元格投影，用 `1px solid var(--line)` 保留内部分隔。自身窄容器两列与奇数末格跨满不变，外缘不补线。 |
+| `BpSegTabs frame="subtle"` / `frame="none"` | subtle 外框 1px；none 无外框；选中态、内部分隔与横/纵键盘操作保持。 |
+| `BpSectionCard frame="subtle"` / `frame="none"` | subtle 外框与表头线 1px；none 无外框、表头线仍 1px。selected 的显式选中投影和 density/titleRule 插槽保持独立。 |
+| `BpSizeBar labelWidth="wide"` | 名称占行宽 40%，最小 120px；单行中间省略，最多保留末尾 4 个完整字素，短名称完整显示。title 与可访问名称包含全称；不改变数值、行意图或外部选中状态。 |
+
+所有 frame 默认 `"default"`，labelWidth 默认 `"default"`。省略、undefined、显式 default 不输出新属性、不改基线 DOM；CSS 仅追加可选规则，原有 CSS 与主题 Token 原样保留。只有 StatStrip subtle 外框使用既有 `--border` 次级色，其余线沿用 `--line`，细线为已有 1px 规格；默认仍用原 `--line-width` / 1.5px。样式限定 blueprint / blueprint-night，排除嵌套核心预览根及后代，light / paper / dark 保留原外观。
+
+wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、条形下一行跨满，名称仍至少 40% / 120px；图例去原固定左缩进。hideRowLabel 或 xs 优先隐藏名称，宽列不生效。宿主组合负责最多两层框；不要通过组件参数推定业务状态。
+
+复用检索（离线）：现有五个 Blueprint 呈现组件、Attachment 的前段省略/保留尾段和既有分段选择滚动足以实现；固定 coss Frame/Card/Tabs/Button 不需修改。未引入 particles 或第三方代码、依赖、新 Token、组件目录项，未联网刷新上游。新增 `BpFrame`、`BpStatStripProps`、`BpTitleBlockProps` 与已扩展的 Props 均从原 blueprint 模块直接导出，完整说明见[组件契约](component-contracts.md)。
+
+演示入口：[框线层级](/next/foundations/blueprint#frame-variants)、[名称列宽](/next/foundations/blueprint#sizebar-label-width)。演示提供五主题、三档框线、两档列宽，长中文、公式文本、零值、行激活和嵌套核心主题；320px 小图用于检查桌面中的窄容器。默认字节对照、静态选择器/声明与实际演示控件路径由单测检查；浏览器计算样式与视觉、390/1280、悬停、键盘与读屏交 Supervisor 验收。Builder 不自我批准。
