@@ -146,6 +146,8 @@ for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real compone
   // R9 adds material/confirmation record selectors without weakening the old groups.
   const choices = [...bp.matchAll(/<div(?=[^>]*class="[^"]*\bbp-seg-tabs\b)[^>]*role="radiogroup"[^>]*aria-label="([^"]+)"[^>]*>([\s\S]*?)<\/div>/g)];
   const expectedChoices = new Map([
+    ['框线与名称示例主题', '蓝图'], ['框线层级预览', '细框'],
+    ['示例报告分区', '学情概览'], ['名称列宽预览', '宽名称列'],
     ['材料记录状态', '已选择'], ['确认记录状态', '已记录'],
     ['答卷状态预览', '全部'], ['纵向选择样式预览', 'blueprint'],
   ]);

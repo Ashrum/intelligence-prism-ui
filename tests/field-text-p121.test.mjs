@@ -87,7 +87,7 @@ test('P121 changes only field-description mapping and appends isolated blueprint
   for(const f of tracked){const current=read(f),old=before(f);if(f==='app/(next)/next/blueprint.css')assert.equal(current.split('\n/* P121 ·')[0],old);else if(f==='app/(next)/next/typography.css')assert.equal(current.split('\n/* P121 ·')[0],old.replace('[data-slot="field-description"],',''));else assert.equal(current,old,f)}
   const typo=read('app/(next)/next/typography.css').split('/* P121 ·')[1]
   assert.match(typo,/font-size:var\(--text-ui-meta\)/);assert.match(typo,/line-height:var\(--text-ui-meta--line-height\)/)
-  const css=read('app/(next)/next/blueprint.css').split('\n/* P121 ·')[1],block='/* P121 ·'+css
+  const css=read('app/(next)/next/blueprint.css').split('\n/* P121 ·')[1].split('\n/* P122 ·')[0],block='/* P121 ·'+css
   transform({code:Buffer.from(block),minify:true})
   postcss.parse(block).walkRules(rule=>{assert.ok(rule.selector.includes('[data-prism-theme="blueprint"]'));assert.ok(rule.selector.includes('[data-prism-theme="blueprint-night"]'));assert.ok(rule.selector.includes(':not(:where([data-agent-preview]'));rule.walkDecls(d=>assert.ok(!d.prop.startsWith('--'),'no new token definitions'))})
   assert.match(block,/border:var\(--line-width\) solid var\(--line\)/);assert.match(block,/font-family:var\(--font-sans\)/);assert.match(block,/text-transform:none/)
@@ -125,7 +125,7 @@ function matches(s,n) {
   })
 }
 test('all appended blueprint selectors exclude core preview roots and descendants across five outer themes',()=>{
-  const block=read('app/(next)/next/blueprint.css').split('\n/* P121 ·')[1], rules=postcss.parse('/* P121 ·'+block).nodes.filter(n=>n.type==='rule').map(r=>r.selectors.map(selectorAST))
+  const block=read('app/(next)/next/blueprint.css').split('\n/* P121 ·')[1].split('\n/* P122 ·')[0], rules=postcss.parse('/* P121 ·'+block).nodes.filter(n=>n.type==='rule').map(r=>r.selectors.map(selectorAST))
   const targets=[{'data-slot':'kbd'},{'data-slot':'field-description'},{'data-slot':'inline-status','data-tone':'info'},{'data-slot':'inline-status','data-tone':'warning'},{'data-slot':'inline-status','data-tone':'destructive'},{'data-slot':'field'}]
   const any=n=>rules.some(group=>group.some(s=>matches(s,n)))
   for(const outer of themes)for(const attrs of targets){const root={attrs:{'data-prism-theme':outer}};assert.equal(any({attrs,parent:root,classes:['prism-field-row']}),outer.startsWith('blueprint'))

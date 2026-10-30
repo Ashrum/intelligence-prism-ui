@@ -3300,3 +3300,23 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 静态守卫 `tests/helpers/field-layout-guard.mjs` 扫描 `components/prism-next/**` 与 `app/(next)/**`，解析 TSX、条件分支、片段与导入别名，阻止缺少 Field / FieldRow 的标签与控件裸兄弟，以及 `<p>` 内直接书写快捷键整句；Kbd / KbdGroup 内容排除于普通段落文字检测之外。紧凑键位图例（如“↑↓ 选择 · Enter 确认 · Esc 关闭”）不是整句段落，保留既有字节；含完整操作句的段落仍拦截。无文件白名单。改前对照仅是演示页中的非交互旧排版示意，实际字段仍使用 Field。
 
 浏览器验收：由 Supervisor 执行，覆盖 1280 / 390、五主题、240 窄容器、长中文／公式、嵌套核心预览、键盘聚焦打开提示、读屏抽查；构建与静态验证不替代这些验收。全量工程测试由 Supervisor 执行。
+
+### P122 · 蓝图框线层级与条形图名称列宽
+
+设计状态：候选；工程准入：未开始。基线 `7e814d22f0ab4efbd98bc2047a50124dd4f89100`；Builder 实施与静态验证不代表独立 Review、浏览器验收或工作台同步。
+
+| API | 契约 |
+| --- | --- |
+| `BpFrame` | 导出的联合类型 `"default" \| "subtle" \| "none"`。四个组件同名可选 `frame`，默认 `default`；省略、undefined 和显式 default 均不输出 data-frame，保持基线 DOM。 |
+| `BpStatStrip.frame` | subtle 外框 `1px solid var(--border)`，复用次级线色；none 去外框。格间既有 1px 分隔、4/2/1 自身容器布局不变。 |
+| `BpTitleBlock.frame` | subtle 外框 1px，沿用 `--line`；none 去外框及单元格分隔投影，改用 `1px solid var(--line)` 内部分隔。自身容器 ≤480px 仍两列、奇数尾项跨满；只在内部列界和第二行起画线，不画外缘。 |
+| `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |
+| `BpSectionCard.frame` | subtle 外框、表头线均 1px；none 去外框，表头仍 1px。沿用 `--line`；density/titleRule/selected、标题级别与插槽独立保持。none 不清除宿主显式 selected 的选中投影。 |
+| `BpSizeBar.labelWidth?: "default" \| "wide"` | 默认 default，原 DOM/CSS 保持。wide 的可见名称列为 `minmax(120px,40%)`，单行；前段按实际可用宽度省略，尾部保留最多 4 个完整字素，短名称完整显示，不按字符数提前截短。名称 `title` 保留全称；静态名称与条形可访问名称、交互行按钮可访问名称均保留全称和原有数值事实。自定义动作前缀未包含全称时，wide 自动补全。 |
+| wide 的组合与响应式 | `hideRowLabel=true` 或 `size="xs"` 优先，不输出宽列属性和可见标签。wide 在自身容器 ≤420px 或视口 ≤760px 时使用两列，名称仍至少 40% / 120px，汇总在右侧，条形在下一行跨满；图例取消原 76px 缩进。framed、sm、marker、display、formatter、行激活与宿主控制的 activeRowId 仍按原契约。 |
+
+- frame 与 wide 的新增样式只在 blueprint / blueprint-night 生效，排除嵌套 light / paper / dark 预览根及全部后代；核心主题继续原几何、字号、配色。新增 CSS 仅追加，未改已有规则或 theme.css；不新增 Token。粗细使用既有 1px 细线规格，default 继续原 `--line-width` 或原 1.5px。
+- 类型均直接从 `components/prism-next/blueprint/blueprint` 导出：`BpFrame`、`BpStatStripProps`、`BpTitleBlockProps`、`BpSegTabsProps`、`BpSectionCardProps`、`BpSizeBarProps`。不新增组件目录项。
+- 框层数由宿主组合控制：对象外框内选 subtle/none，保持同一视图最多两层框；组件不推断祖先的业务分组或自动换档。名称最小 120px，宿主仍需提供合理阅读宽度。
+- 复用检索（离线）：先核对已有 BpStatStrip / BpTitleBlock / BpSegTabs / BpSectionCard / BpSizeBar、Attachment 中间省略结构与 useHorizontalChoiceScroll；再核对固定 coss Frame/Card/Tabs/Button 和本地来源索引。现有 Prism 参数扩展即可覆盖缺口，不引入新基础控件、particles、第三方实现或依赖；未联网刷新 coss registry。冻结 coss 保持字节不变。
+- 组件站 `/next/foundations/blueprint#frame-variants`、`#sizebar-label-width` 提供五主题切换、框线档位、名称宽度、报告分区和长名称行激活，含 320px 静态小图与嵌套核心主题。测试挂载此实际演示、操作其控件与合成数据，不复制一套替代演示夹具；真实计算样式、鼠标/键盘默认行为及读屏由 Supervisor 浏览器验收。
