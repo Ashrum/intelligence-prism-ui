@@ -142,7 +142,10 @@ test('night keycap and status text reuse existing tokens with at least 4.5:1 sta
 test('migrated production components retain every original JSX control value and event callback expression',async()=>{
   const ts=(await import('typescript')).default
   const attributes=source=>{const sf=ts.createSourceFile('component.tsx',source,99,true,4),rows=[];function walk(n){if(ts.isJsxAttribute(n)&&(/^(on[A-Z]|value$|checked$|readOnly$|disabled$)/.test(n.name.getText(sf))))rows.push(n.getText(sf));ts.forEachChild(n,walk)}walk(sf);return rows.sort()}
-  const files=execFileSync('git',['diff','--name-only',baseline,'--','components/prism-next/*.tsx'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(f=>f.split('/').length===3)
+  // P121 migrated files are pinned at its merge, not every future feature's working diff.
+  // P123 PromptBar opt-in behavior is covered by its baseline SSR and handler regressions.
+  const files=execFileSync('git',['diff','--name-only','--diff-filter=M',baseline,'7e814d22f0ab4efbd98bc2047a50124dd4f89100','--','components/prism-next/*.tsx'],{cwd:root,encoding:'utf8'}).trim().split('\n').filter(f=>f.split('/').length===3)
+  assert.ok(files.length > 0, "P121 migration inventory must not be empty")
   for(const f of files)assert.deepEqual(attributes(read(f)),attributes(before(f)),f)
 })
 

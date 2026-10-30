@@ -2850,6 +2850,26 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 新增布局把材料、上下文、模型（仍受 `showModelSelector` 控制）、听写／语音及展开入口归为「材料与输入工具」，另一组为「主动作」。P92 当轮旧调用的 DOM 与 SSR 字节保持不变；P110 仅追加首个工具按钮光学对齐类。P92 的 22 组基线夹具见 `tests/fixtures/p92/main-e56908d.json`。正文大小、主题令牌与冻结 coss 原件均不改。
 
+**P123 富媒体附件条（2026-10-30，组件候选；工程准入未开始）**：在输入框内、文字上方横向滚动，不换行。旧 `attachments: {id, label}[]` 的渲染与移除意图保留；不传新参数时对基线 `0ff4e90` 做五主题、Rounded/Pill 与 14 组状态的 SSR 逐字节比对（含显式 undefined，共 280 次）。
+
+| Prop / 类型 | 契约 |
+| --- | --- |
+| `richAttachments?: readonly AgentPromptRichAttachment[]` | 独立富附件条，默认不渲染；与旧附件并存时，旧附件条仍保留，提交 ID 按旧附件后富附件顺序去重。每个数组内部 ID 应唯一。 |
+| `AgentPromptRichAttachment` | `{id: string, name: string, kind?: "image" \| "video" \| "document" \| "file", thumbnailUrl?: string, durationLabel?: string, metaLabel?: string, status?: "ready" \| "uploading" \| "error", progress?: number, errorReason?: string, selected?: boolean}`，从 `agent-prompt-bar` 导出。kind 缺省按文件展示，name 为空显示“名称未提供”。 |
+| `onRemoveAttachment?(id)` | 富附件右上角 × 发此回调；缺省回退到既有 `onIntent({type:"remove-attachment", id})`。上传中可访问名为“取消上传：文件名”。组件不会移除数据或取消请求，宿主更新数组并处理真实上传取消。旧附件继续发旧意图。 |
+| `onOpenAttachment?(id)` | 提供时缩略图／文件卡为预览按钮；缺省为可键盘聚焦的信息组，不生成空预览动作。预览、灯箱、焦点归还全部由宿主负责。全局 disabled 禁止打开／移除／拖入／文件粘贴。 |
+| `onDropFiles?(files: File[])` | 可选启用整个输入表面的文件拖入与文件粘贴，二者共用同一回调。拖入 Files 时提示“松开以添加附件”，内部跨子节点不闪退。纯文字拖入与粘贴保持浏览器默认；含文件的混合粘贴消费文件部分并阻止默认插入。未传回调时不接管事件。 |
+
+图片／视频为 64px 方形缩略图，附件条容器 ≤480px 时为 52px；视频播放标记仅装饰，时长完全取 `durationLabel`，不探测视频。文档／其他文件显示扩展名类型块、保留首尾的文件名和 `metaLabel`；完整文件名始终在可访问名称和 title 中。× 图标 18px、布局热区至少 32×32；预览与移除为兄弟节点，不嵌套按钮。名称包含类型、全名、状态；无预览回调也能以 Tab 阅读条目。缩略图加载失败只显示占位，不改变宿主上传状态。
+
+`uploading` 显示百分比与 coss Progress，缺失／非有限／超出 0–100 的进度显示“进度未提供”，不伪造 0%。`error` 可见错误色原因，缺失时显示“原因未提供”。状态未传显示“状态未提供”，不推定 ready；宿主应对未核验或未上传材料传 `sendDisabledReason`。任一明确 uploading 或 error 阻止按钮与 Enter 发送，停止动作仍可用；宿主传入的禁发原因优先。组件不读取文件、不发请求、不推算进度，不实施类型／大小／数量校验、不创建或回收 URL。
+
+蓝图附件适配位于 `components/prism-next/blueprint/prompt-attachments.css`：直角、无阴影（含伪元素），1px 框，聚焦或宿主 `selected=true` 时 1.5px `--ring` 外框，类型与元信息 `--font-mono`，进度 `--ring`；错误沿用 `text-destructive-foreground`。规则限定 blueprint／blueprint-night，并排除嵌套非蓝图预览根及后代；无新增令牌值。核心主题组合现有 Button／InputGroup／Progress 与 Attachment 已用的语义类；新增普通 CSS 仅布局。没有新增目录组件条目。
+
+复用检索（离线固定源码）：`Attachment` 的 32/48/80px 完整卡片不匹配输入条，沿用其完整名称、未知进度与宿主事实契约；`AgentPromptBar` 既有 coss particles 28/29/23 输入／菜单组合继续复用；新增组合使用冻结 `components/coss/input-group.tsx`、`button.tsx`、`progress.tsx`，不修改原件。在线 particles 索引未查询，本轮未引入新上游来源。
+
+示例：`/next/components/agent-components/prompt-bar#attachments`，五主题、390px 容器、图片／视频／PDF／Word／42% 上传／失败／文件拖入与粘贴。数据明确标注合成，拖入只登记文件名为未知状态；不代表真实上传或预览已接入。测试使用实际示例数据和回调链，但不代替 Supervisor 的视觉、原生拖放、键盘与读屏验收。
+
 **P110 间距约定（2026-10-22）**：工具行与输入区共用同一内边距；发送按钮 44px 点击区由按钮自身伪元素提供（增强布局，含粗指针），不再增加 44px 布局容器。工具不折行且无更高插槽内容时，增强布局工具行高 36px；两种布局首个工具按钮以负左外边距抵消图标留白（窄屏 7px、`sm` 起 6px），保留按钮尺寸与按钮间距。旧布局无同类外层容器，发送按钮尺寸沿用原值。
 
 `sendDisabledReason` 与 `statusHint` 同时提供时，禁发原因优先作为唯一主提示，保留输入框／发送按钮的描述关联，避免被普通提示盖住；宿主应将其余上下文放进 `details`。`announceDisabledReason=false` 仍抑制禁发原因的主动播报。`statusHint` 本身不禁发，是否允许发送仍由 `disabled` / `sendDisabledReason` 决定；语音已有错误与权限状态独立保留，不能借提示收敛隐藏。

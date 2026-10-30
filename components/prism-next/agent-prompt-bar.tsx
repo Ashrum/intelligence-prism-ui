@@ -14,6 +14,8 @@ import { Popover, PopoverPopup } from "@/components/coss/popover"
 import { cn } from "@/lib/utils"
 import { createPromptSweep } from "./agent-prompt-sweep"
 import { AgentVoiceButtons, AgentVoiceStatus, AgentDictationIndicator, AgentDictationAnnouncement, isDictating, type AgentDictation, type AgentVoiceMode, type AgentVoicePrivacy, type AgentVoiceIntent } from "./agent-voice"
+import { AgentPromptAttachmentStrip, type AgentPromptRichAttachment } from "./agent-prompt-attachments"
+export type { AgentPromptRichAttachment } from "./agent-prompt-attachments"
 import "./agent-conversation.css"
 
 export type AgentPromptOption = { id: string; label: string; description?: string; disabled?: boolean }
@@ -35,6 +37,12 @@ export type AgentPromptBarProps = {
   /** Host-controlled availability; false omits the model menu entirely. Defaults to true for existing callers. */
   showModelSelector?: boolean
   attachments?: readonly AgentPromptAttachment[]; variant?: "Rounded" | "Pill"; label?: string; placeholder?: string
+  /** Opt-in rich strip; legacy attachments retain their original rendering and intents. */
+  richAttachments?: readonly AgentPromptRichAttachment[]
+  onRemoveAttachment?: (id: string) => void
+  onOpenAttachment?: (id: string) => void
+  /** Receives dropped or pasted files only; the host validates and uploads them. */
+  onDropFiles?: (files: File[]) => void
   contextActions?: ReactNode; dictation: AgentDictation; voice: AgentVoiceMode; privacy?: AgentVoicePrivacy
   /** Opt-in layout; omitted props retain the legacy rendering. */
   density?: "compact"
@@ -49,7 +57,7 @@ export function parsePromptToken(draft: string) {
   const match = /(^|\s)([@/])([^\s@/]*)$/u.exec(draft)
   return match ? { kind: match[2] === "@" ? "source" as const : "command" as const, query: match[3].toLocaleLowerCase(), start: match.index + match[1].length } : null
 }
-export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason, announceDisabledReason = true, activity, density, expandable = false, primaryAction, stopLabel = "停止当前回答", statusHint }: AgentPromptBarProps) {
+export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason: hostSendDisabledReason, announceDisabledReason = true, activity, density, expandable = false, primaryAction, stopLabel = "停止当前回答", statusHint, richAttachments, onRemoveAttachment, onOpenAttachment, onDropFiles }: AgentPromptBarProps) {
   const id = useId(), input = useRef<HTMLTextAreaElement>(null), anchor = useRef<HTMLDivElement>(null), root = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null)
   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
@@ -59,6 +67,15 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
   const stopRequested = useRef(false)
   const enhanced = density === "compact" || expandable || primaryAction !== undefined || statusHint !== undefined
   const stopping = primaryAction === "stopping"
+  const fileDropEnabled = Boolean(onDropFiles) && !disabled
+  const [fileDrag, setFileDrag] = useState({ enabled: fileDropEnabled, depth: 0 })
+  if (fileDrag.enabled !== fileDropEnabled) setFileDrag({ enabled: fileDropEnabled, depth: 0 })
+  const draggingFiles = fileDrag.enabled === fileDropEnabled && fileDrag.depth > 0
+  const hasFiles = (transfer: DataTransfer) => Array.from(transfer.types).includes("Files")
+  const attachmentIds = richAttachments?.length ? [...new Set([...attachments.map(item => item.id), ...richAttachments.map(item => item.id)])] : attachments.map(item => item.id)
+  const richBlockedReason = richAttachments?.some(item => item.status === "uploading") ? "附件上传中，请等待完成或取消上传" : richAttachments?.some(item => item.status === "error") ? "附件上传失败，请移除失败附件后重试" : undefined
+  // Only explicit host facts block sending; unknown states never imply readiness.
+  const sendDisabledReason = hostSendDisabledReason || richBlockedReason
   useEffect(() => { stopRequested.current = false }, [primaryAction])
   useEffect(() => {
     if (!expandable) { setExpanded(false); setCanExpand(false); return }
@@ -123,8 +140,8 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
     close(); input.current?.focus()
   }
   const submit = () => {
-    if (disabled || (primaryAction && primaryAction !== "send") || sendDisabledReason || (!value.trim() && !attachments.length)) return
-    onIntent({ type: "submit", text: value.trim(), attachmentIds: attachments.map(item => item.id) })
+    if (disabled || (primaryAction && primaryAction !== "send") || sendDisabledReason || (!value.trim() && !attachmentIds.length)) return
+    onIntent({ type: "submit", text: value.trim(), attachmentIds })
     close(); sweep.current?.play()
   }
   return <div ref={root} data-agent-prompt-bar data-variant={variant} data-dictating={dictating} data-density={density} data-expanded={expandable ? expanded : undefined} className="min-w-0 space-y-2" onKeyDownCapture={event => {
@@ -147,9 +164,33 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
           <p className="mt-2 text-ui-meta text-muted-foreground">↑↓ 选择 · Enter 确认 · Esc 关闭</p>
         </PopoverPopup>
       </Popover>
-      <InputGroup className={cn("agent-prompt-surface isolate overflow-hidden", variant === "Pill" ? "rounded-3xl" : "rounded-xl", dictating && "border-ring ring-ring/24 ring-[3px] shadow-none")}>
+      <InputGroup onDragEnter={fileDropEnabled ? event => {
+        if (!hasFiles(event.dataTransfer)) return
+        event.preventDefault(); setFileDrag(current => ({ enabled: fileDropEnabled, depth: current.depth + 1 }))
+      } : undefined} onDragOver={fileDropEnabled ? event => {
+        if (!hasFiles(event.dataTransfer)) return
+        event.preventDefault(); event.dataTransfer.dropEffect = "copy"
+      } : undefined} onDragLeave={fileDropEnabled ? () => {
+        setFileDrag(current => ({ enabled: fileDropEnabled, depth: Math.max(0, current.depth - 1) }))
+      } : undefined} onDrop={fileDropEnabled ? event => {
+        if (!hasFiles(event.dataTransfer)) return
+        event.preventDefault(); setFileDrag({ enabled: fileDropEnabled, depth: 0 })
+        const files = Array.from(event.dataTransfer.files)
+        if (files.length) onDropFiles?.(files)
+      } : undefined} onPaste={fileDropEnabled ? event => {
+        const files = Array.from(event.clipboardData.files)
+        if (!files.length) return
+        event.preventDefault(); onDropFiles?.(files)
+      } : undefined} className={cn("agent-prompt-surface isolate overflow-hidden", variant === "Pill" ? "rounded-3xl" : "rounded-xl", dictating && "border-ring ring-ring/24 ring-[3px] shadow-none")}>
         <canvas ref={canvas} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 h-full w-full rounded-[inherit]" />
-        {attachments.length > 0 && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap gap-2">{attachments.map(item => <span key={item.id} className="flex max-w-full items-center gap-1 rounded-md border px-2 text-ui-hint">
+        {richAttachments !== undefined || (fileDropEnabled && draggingFiles) ? <>
+          {richAttachments && richAttachments.length > 0 && <AgentPromptAttachmentStrip items={richAttachments} disabled={disabled} onOpen={onOpenAttachment}
+            onRemove={id => { if (onRemoveAttachment) onRemoveAttachment(id); else onIntent({ type: "remove-attachment", id }) }} />}
+          {attachments.length > 0 && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap gap-2">{attachments.map(item => <span key={item.id} className="flex max-w-full items-center gap-1 rounded-md border px-2 text-ui-hint">
+          <Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{item.label}</span><Button type="button" variant="ghost" size="icon-xs" aria-label={`移除附件：${item.label}`} disabled={disabled} onClick={() => onIntent({ type: "remove-attachment", id: item.id })}><X aria-hidden="true" /></Button>
+        </span>)}</InputGroupAddon>}
+          {fileDropEnabled && draggingFiles && <div className="bp-prompt-drop-zone pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-xl border-2 border-dashed border-ring bg-background p-4 text-center text-ui-body" role="status">松开以添加附件</div>}
+        </> : attachments.length > 0 && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap gap-2">{attachments.map(item => <span key={item.id} className="flex max-w-full items-center gap-1 rounded-md border px-2 text-ui-hint">
           <Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{item.label}</span><Button type="button" variant="ghost" size="icon-xs" aria-label={`移除附件：${item.label}`} disabled={disabled} onClick={() => onIntent({ type: "remove-attachment", id: item.id })}><X aria-hidden="true" /></Button>
         </span>)}</InputGroupAddon>}
         <div className="agent-dictation-field relative w-full min-w-0" data-shimmer={dictating && !value && !transcript}>
@@ -196,7 +237,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
               aria-label={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
               title={stopping ? "正在请求停止" : primaryAction === "stop" ? stopLabel : "发送消息"}
               aria-describedby={primaryAction === "stop" || stopping ? undefined : sendDisabledReason ? `${id}-blocked` : undefined}
-              disabled={disabled || stopping || (primaryAction !== "stop" && (Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)))}
+              disabled={disabled || stopping || (primaryAction !== "stop" && (Boolean(sendDisabledReason) || (!value.trim() && !attachmentIds.length)))}
               onClick={primaryAction === "stop" ? requestStop : submit}>{primaryAction === "stop" || stopping ? <Square aria-hidden="true" /> : <ArrowUp aria-hidden="true" />}</Button>
             {(primaryAction === "stop" || stopping) && <span role={stopping ? "status" : undefined} className="text-ui-hint">{stopping ? "正在请求停止" : stopLabel}</span>}
           </div>
@@ -221,7 +262,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
             </Menu>}
             <AgentDictationIndicator dictation={dictation} disabled={disabled} onIntent={onIntent} />
             <AgentVoiceButtons portalContainer={root} dictation={dictation} voice={voice} privacy={privacy} disabled={disabled} onIntent={onIntent} onStart={() => sweep.current?.play()} />
-            <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachments.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
+            <Button type="button" size="icon-sm" className={variant === "Pill" ? "rounded-full" : undefined} aria-label="发送消息" aria-describedby={sendDisabledReason ? `${id}-blocked` : undefined} disabled={disabled || Boolean(sendDisabledReason) || (!value.trim() && !attachmentIds.length)} onClick={submit}><ArrowUp aria-hidden="true" /></Button>
           </div>
         </InputGroupAddon>}
       </InputGroup>

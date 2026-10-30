@@ -17,8 +17,16 @@ async function api(baseline) {
   return import(file);
 }
 const before = await api(true), after = await api(false), h = React.createElement;
-test('P121 hidden PromptBar and ReviewRailFilter source is restored byte for byte', () => {
-  for (const path of ['components/prism-next/agent-prompt-bar.tsx', 'components/prism-next/knowledge-rail.tsx']) assert.equal(readFileSync(root + path, 'utf8'), old(path), path);
+test('P121 hidden PromptBar label stays exact; ReviewRailFilter source stays byte for byte', () => {
+  const path = 'components/prism-next/agent-prompt-bar.tsx';
+  // P123 adds an opt-in rich strip; its 280 full SSR comparisons guard old calls.
+  // Keep this migration's fixed hidden label contract independently pinned.
+  const labels = source => source.match(/<Label\b[^>]*>[\s\S]*?<\/Label>/g);
+  const current = labels(readFileSync(root + path, 'utf8'));
+  assert.equal(current?.length, 1);
+  assert.deepEqual(current, labels(old(path)));
+  const rail = 'components/prism-next/knowledge-rail.tsx';
+  assert.equal(readFileSync(root + rail, 'utf8'), old(rail), rail);
 });
 for (const variant of ['compact', 'conversation']) test(`P121 hidden Composer ${variant} keeps original raw SSR across blockers and slots`, () => {
   for (const extra of [{}, { readOnly: true }, { sendDisabledReason: '等待确认' }, { running: true, onStop() {} }, { scope: h('span', null, '外部范围'), context: h('span', null, '外部上下文'), suggestions: h('span', null, '建议') }]) {

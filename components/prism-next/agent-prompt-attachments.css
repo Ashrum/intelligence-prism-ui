@@ -1,0 +1,39 @@
+/* P123: layout only; core appearance composes existing coss/Prism utilities. */
+.agent-prompt-attachment-container { container-type: inline-size; }
+.agent-prompt-attachments { gap: 14px; padding: 16px 12px; }
+.agent-prompt-attachments .bp-prompt-attachment-remove {
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+}
+/* Expand toward this item, not the next one: even a 10px gap keeps 2px clear.
+   Offsets include the 1.5px border; the transparent hit box is 32px on all pointers. */
+.agent-prompt-attachments .bp-prompt-attachment-remove::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -1.5px;
+  bottom: auto;
+  left: auto;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  transform: translateY(-50%);
+}
+.agent-prompt-attachment-media,
+.agent-prompt-attachment-media-item { width: 64px; }
+.agent-prompt-attachment-media { height: 64px; }
+.agent-prompt-attachment-file,
+.agent-prompt-attachment-file-item { width: 224px; }
+.agent-prompt-attachment-file { height: 64px; }
+@container (max-width: 480px) {
+  .agent-prompt-attachments { gap: 10px; }
+  .agent-prompt-attachment-media,
+  .agent-prompt-attachment-media-item { width: 52px; }
+  .agent-prompt-attachment-media,
+  .agent-prompt-attachment-file { height: 52px; }
+  .agent-prompt-attachment-file,
+  .agent-prompt-attachment-file-item { width: 196px; }
+}
