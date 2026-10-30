@@ -14,8 +14,8 @@ import { Popover, PopoverPopup } from "@/components/coss/popover"
 import { cn } from "@/lib/utils"
 import { createPromptSweep } from "./agent-prompt-sweep"
 import { AgentVoiceButtons, AgentVoiceStatus, AgentDictationIndicator, AgentDictationAnnouncement, isDictating, type AgentDictation, type AgentVoiceMode, type AgentVoicePrivacy, type AgentVoiceIntent } from "./agent-voice"
-import { AgentPromptAttachmentStrip, type AgentPromptRichAttachment } from "./agent-prompt-attachments"
-export type { AgentPromptRichAttachment } from "./agent-prompt-attachments"
+import { AgentPromptAttachmentStrip, type AgentPromptRichAttachment, type AgentPromptAttachmentErrorDisplay } from "./agent-prompt-attachments"
+export type { AgentPromptRichAttachment, AgentPromptAttachmentErrorDisplay } from "./agent-prompt-attachments"
 import "./agent-conversation.css"
 
 export type AgentPromptOption = { id: string; label: string; description?: string; disabled?: boolean }
@@ -39,6 +39,7 @@ export type AgentPromptBarProps = {
   attachments?: readonly AgentPromptAttachment[]; variant?: "Rounded" | "Pill"; label?: string; placeholder?: string
   /** Opt-in rich strip; legacy attachments retain their original rendering and intents. */
   richAttachments?: readonly AgentPromptRichAttachment[]
+  attachmentErrorDisplay?: AgentPromptAttachmentErrorDisplay
   onRemoveAttachment?: (id: string) => void
   onOpenAttachment?: (id: string) => void
   /** Receives dropped or pasted files only; the host validates and uploads them. */
@@ -57,7 +58,7 @@ export function parsePromptToken(draft: string) {
   const match = /(^|\s)([@/])([^\s@/]*)$/u.exec(draft)
   return match ? { kind: match[2] === "@" ? "source" as const : "command" as const, query: match[3].toLocaleLowerCase(), start: match.index + match[1].length } : null
 }
-export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason: hostSendDisabledReason, announceDisabledReason = true, activity, density, expandable = false, primaryAction, stopLabel = "停止当前回答", statusHint, richAttachments, onRemoveAttachment, onOpenAttachment, onDropFiles }: AgentPromptBarProps) {
+export function AgentPromptBar({ value, onValueChange, onIntent, sources, commands, models, modelId, showModelSelector = true, attachments = [], variant = "Rounded", label = "消息", placeholder = "随心输入", contextActions, dictation, voice, privacy, disabled = false, sendDisabledReason: hostSendDisabledReason, announceDisabledReason = true, activity, density, expandable = false, primaryAction, stopLabel = "停止当前回答", statusHint, richAttachments, attachmentErrorDisplay, onRemoveAttachment, onOpenAttachment, onDropFiles }: AgentPromptBarProps) {
   const id = useId(), input = useRef<HTMLTextAreaElement>(null), anchor = useRef<HTMLDivElement>(null), root = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null)
   const sweep = useRef<ReturnType<typeof createPromptSweep> | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null), [active, setActive] = useState(0)
@@ -184,7 +185,7 @@ export function AgentPromptBar({ value, onValueChange, onIntent, sources, comman
       } : undefined} className={cn("agent-prompt-surface isolate overflow-hidden", variant === "Pill" ? "rounded-3xl" : "rounded-xl", dictating && "border-ring ring-ring/24 ring-[3px] shadow-none")}>
         <canvas ref={canvas} aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 h-full w-full rounded-[inherit]" />
         {richAttachments !== undefined || (fileDropEnabled && draggingFiles) ? <>
-          {richAttachments && richAttachments.length > 0 && <AgentPromptAttachmentStrip items={richAttachments} disabled={disabled} onOpen={onOpenAttachment}
+          {richAttachments && richAttachments.length > 0 && <AgentPromptAttachmentStrip errorDisplay={attachmentErrorDisplay} items={richAttachments} disabled={disabled} onOpen={onOpenAttachment}
             onRemove={id => { if (onRemoveAttachment) onRemoveAttachment(id); else onIntent({ type: "remove-attachment", id }) }} />}
           {attachments.length > 0 && <InputGroupAddon align="block-start" className="min-w-0 flex-wrap gap-2">{attachments.map(item => <span key={item.id} className="flex max-w-full items-center gap-1 rounded-md border px-2 text-ui-hint">
           <Paperclip aria-hidden="true" className="size-4 shrink-0" /><span className="min-w-0 break-all">{item.label}</span><Button type="button" variant="ghost" size="icon-xs" aria-label={`移除附件：${item.label}`} disabled={disabled} onClick={() => onIntent({ type: "remove-attachment", id: item.id })}><X aria-hidden="true" /></Button>
