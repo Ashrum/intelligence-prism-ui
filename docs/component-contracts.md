@@ -2870,6 +2870,38 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 示例：`/next/components/agent-components/prompt-bar#attachments`，五主题、390px 容器、图片／视频／PDF／Word／42% 上传／失败／文件拖入与粘贴。数据明确标注合成，拖入只登记文件名为未知状态；不代表真实上传或预览已接入。测试使用实际示例数据和回调链，但不代替 Supervisor 的视觉、原生拖放、键盘与读屏验收。
 
+**P124 灯箱媒体与失败原因位置（2026-10-30）**
+
+设计状态：候选。工程准入：未开始。以下均为可选接口；不传时保留 P123 默认行为。`tests/p124-media-api.test.mjs` 对固定基线 `0477484` 直接渲染比对 NativeMedia、AgentPromptBar、附件条：五主题共 760 次 SSR 逐字节比较（包含显式 undefined）。Builder 自测不代表独立 Review 或浏览器验收。
+
+| 接口 / 导出类型 | 默认及契约 |
+| --- | --- |
+| `NativeMediaProps.fit?: "contain"` | 不传沿用 `h-auto max-h-96 w-full min-w-0`。传入时去除固定高度上限，section 占可用宽度，视频使用 `object-contain`；宿主必须提供可用宽高边界。 |
+| `NativeMediaProps.containerClassName?: string` | 合并到 section，仅用于宿主布局约束。媒体说明仍保留，宿主应为说明及控件预留空间。 |
+| `NativeMediaProps.mediaClassName?: string` | 合并到原生 audio/video；灯箱推荐 `max-h-[65dvh] max-w-full`。不覆盖内部选择器、不写新的视觉令牌。 |
+| `NativeMediaProps.preload?: "none" \| "metadata" \| "auto"` | 默认 `none`；音视频均透传。灯箱推荐 `metadata`。这是浏览器加载提示，不能保证元数据已到达。 |
+| `AgentPromptAttachmentErrorDisplay` | 导出联合类型 `"item" \| "summary" \| "hidden"`，可从 `agent-prompt-attachments` 或 `agent-prompt-bar` 导入。 |
+| `AgentPromptBar.attachmentErrorDisplay` / `AgentPromptAttachmentStrip.errorDisplay` | 默认 `item`，原因仍在项下；`hidden` 仅隐藏项下可见原因；`summary` 隐藏项下原因，在附件条正下方、同一输入框内逐项显示「文件名：原因」。仅适用于 richAttachments。 |
+| `AttachmentPlayBadge({durationLabel?})` / `AttachmentPlayBadgeProps` | 从 `agent-prompt-attachments` 导出，复用原中央播放标记和左下时长的 DOM／类名；用于有定位的缩略图容器。不内置点击、播放或时长读取，不传时长不伪造数值。宿主为图片／视频触发器提供完整可访问名称。 |
+
+`fit="contain"` 在 `loadedmetadata` 后按原生 `videoWidth/videoHeight` 设置明确的 aspect-ratio，方形 poster 不作为视频比例来源；换 src 不沿用旧比例，`emptied` 清除比例。元数据到达前比例未知，仍可显示 poster，不承诺未加载时已知比例。宿主切换媒体应沿用现有 `key={附件ID或src}` 约定以重置加载失败等本地呈现状态；不因加载事件更改上传状态或可用性。保留原生 controls、playsInline、媒体说明与加载失败提示。
+
+三种失败原因位置均保留真实 `errorReason` 的可访问名称、移除操作、禁发与停止语义。默认项下原因维持原输出；`summary`／`hidden` 在缩略图或文件卡增加既有错误色边框与失败图标，避免隐藏原因后只剩无障碍状态；缺失或空字符串继续用“原因未提供”。汇总中每个失败项一个逻辑行，文件名按字素分段保留首尾、超长时中间省略，title 与可访问名称保留全名；原因在窄容器可换行，避免截断失败事实。错误色继续使用 `text-destructive-foreground`。无失败项不渲染汇总，无上传／校验业务进入组件。
+
+```tsx
+<NativeMedia key={attachment.id} kind="video" media={media} capability={{ supported: true }}
+  poster={attachment.thumbnailUrl} fit="contain" preload="metadata"
+  containerClassName="w-full" mediaClassName="max-h-[65dvh] max-w-full" />
+// 保留真实 status / errorReason；不再由宿主另画重复原因。
+<AgentPromptBar {...promptProps} richAttachments={items} attachmentErrorDisplay="summary" />
+// 消息附件网格中既有的、具有可访问名称的 relative 缩略图触发器内：
+<AttachmentPlayBadge durationLabel={attachment.durationLabel} />
+```
+
+复用检索：本轮离线检查现有 NativeMedia、P123 附件条及其蓝图样式、coss Dialog／Button／InputGroup 和既有 particles 28/29/23 组合。NativeMedia 缺少灯箱边界与 preload，附件条缺少原因位置；以可选属性扩展现有实现，播放标记提取为共享呈现片段，不新增目录条目。未联网检索新 particles 或引入第三方代码。blueprint／blueprint-night 的直角、无阴影、类型与大小等宽及嵌套隔离沿用原 `blueprint/prompt-attachments.css`；light／paper／dark 沿用原核心类；两个 CSS 文件、核心令牌、冻结 coss 字节均未改。
+
+示例：`/next/components/agent-components/prompt-bar#media-api`。提供五主题切换、390px 容器、640×360／360×640 两段本机生成的 VP8 无声 WebM（48 帧／24 fps）、128×128 方形 poster、原生播放、切换与关闭；消息网格入口复用播放标记。失败汇总包含空 PNG、MP3、超限长文件名和空原因，可移除／重置并验证发送门禁。视频为合成渐变及四边边框，不含外部素材、不自动播放；失败状态为固定样例。独立浏览器需复验比例、完整四边、主题、长中文、焦点返回及读屏；未声称工作台上传接入、真实媒体服务或生产验收完成。
+
 **P110 间距约定（2026-10-22）**：工具行与输入区共用同一内边距；发送按钮 44px 点击区由按钮自身伪元素提供（增强布局，含粗指针），不再增加 44px 布局容器。工具不折行且无更高插槽内容时，增强布局工具行高 36px；两种布局首个工具按钮以负左外边距抵消图标留白（窄屏 7px、`sm` 起 6px），保留按钮尺寸与按钮间距。旧布局无同类外层容器，发送按钮尺寸沿用原值。
 
 `sendDisabledReason` 与 `statusHint` 同时提供时，禁发原因优先作为唯一主提示，保留输入框／发送按钮的描述关联，避免被普通提示盖住；宿主应将其余上下文放进 `details`。`announceDisabledReason=false` 仍抑制禁发原因的主动播报。`statusHint` 本身不禁发，是否允许发送仍由 `disabled` / `sendDisabledReason` 决定；语音已有错误与权限状态独立保留，不能借提示收敛隐藏。

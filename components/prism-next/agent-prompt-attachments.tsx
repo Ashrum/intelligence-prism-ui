@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { File, Image as ImageIcon, Play, X } from "lucide-react"
+import { CircleAlert, File, Image as ImageIcon, Play, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { InputGroupAddon } from "@/components/coss/input-group"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
@@ -23,6 +23,23 @@ export type AgentPromptRichAttachment = {
   selected?: boolean
 }
 
+export type AgentPromptAttachmentErrorDisplay = "item" | "summary" | "hidden"
+export type AttachmentPlayBadgeProps = { durationLabel?: string }
+
+/** Presentation only. Place inside a positioned thumbnail; duration is host-authored. */
+export function AttachmentPlayBadge({ durationLabel }: AttachmentPlayBadgeProps) {
+  return <>
+    <span className="pointer-events-none absolute inset-0 flex items-center justify-center"><span className="bp-prompt-attachment-play rounded-sm bg-background text-foreground"><Play aria-hidden="true" className="size-4" /></span></span>
+    {durationLabel && <span className="bp-prompt-attachment-meta absolute bottom-0 left-0 max-w-full truncate bg-background px-1 text-ui-meta text-foreground">{durationLabel}</span>}
+  </>
+}
+
+function filenameParts(name: string) {
+  const chars = [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(name)].map(part => part.segment)
+  const tail = Math.min(8, Math.floor(chars.length / 2))
+  return [chars.slice(0, chars.length - tail).join(""), chars.slice(chars.length - tail).join("")]
+}
+
 const kinds = { image: "图片", video: "视频", document: "文档", file: "文件" }
 function progressValue(value?: number) {
   return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100 ? value : undefined
@@ -37,34 +54,35 @@ function Thumbnail({ src }: { src?: string }) {
 }
 
 /** Internal composition: the host owns files, upload lifecycle and preview/focus return. */
-export function AgentPromptAttachmentStrip({ items, disabled, onRemove, onOpen }: {
+export function AgentPromptAttachmentStrip({ items, disabled, onRemove, onOpen, errorDisplay = "item" }: {
   items: readonly AgentPromptRichAttachment[]
   disabled: boolean
+  errorDisplay?: AgentPromptAttachmentErrorDisplay
   onRemove: (id: string) => void
   onOpen?: (id: string) => void
 }) {
-  return <InputGroupAddon align="block-start" className="agent-prompt-attachment-container min-w-0">
+  return <InputGroupAddon align="block-start" className={cn("agent-prompt-attachment-container min-w-0", errorDisplay === "summary" && "flex-col items-stretch")}>
     <ul aria-label="附件条" className="agent-prompt-attachments m-0 flex w-full min-w-0 list-none items-start overflow-x-auto">
       {items.map(item => {
         const kind = item.kind ?? "file", name = item.name.trim() || "名称未提供", progress = progressValue(item.progress)
         const media = kind === "image" || kind === "video"
         const state = item.status === "ready" ? "就绪" : item.status === "uploading" ? `上传中，${progress === undefined ? "进度未提供" : `${progress}%`}` : item.status === "error" ? `失败：${item.errorReason || "原因未提供"}` : "状态未提供"
         const accessibleName = `${kinds[kind]}：${name}；${state}`
-        const chars = [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(name)].map(part => part.segment)
-        const tail = Math.min(8, Math.floor(chars.length / 2))
+        const [head, tail] = filenameParts(name)
         const type = /\.([a-z0-9]{1,8})$/i.exec(name)?.[1].toUpperCase() ?? kinds[kind]
-        const content = media ? <>
+        const content = <>{media ? <>
           <Thumbnail key={item.thumbnailUrl ?? "missing"} src={item.thumbnailUrl} />
-          {kind === "video" && <span className="pointer-events-none absolute inset-0 flex items-center justify-center"><span className="bp-prompt-attachment-play rounded-sm bg-background text-foreground"><Play aria-hidden="true" className="size-4" /></span></span>}
-          {kind === "video" && item.durationLabel && <span className="bp-prompt-attachment-meta absolute bottom-0 left-0 max-w-full truncate bg-background px-1 text-ui-meta text-foreground">{item.durationLabel}</span>}
+          {kind === "video" && <AttachmentPlayBadge durationLabel={item.durationLabel} />}
         </> : <>
           <span className="bp-prompt-attachment-meta flex h-9 w-10 shrink-0 items-center justify-center rounded-sm bg-muted text-ui-meta text-muted-foreground">{type === "文件" ? <File aria-hidden="true" className="size-4" /> : type}</span>
           <span className="min-w-0 flex-1 space-y-1">
-            <span aria-hidden="true" className="flex min-w-0 text-ui-hint"><span className="min-w-0 truncate">{chars.slice(0, chars.length - tail).join("")}</span><span className="shrink-0">{chars.slice(chars.length - tail).join("")}</span></span>
+            <span aria-hidden="true" className="flex min-w-0 text-ui-hint"><span className="min-w-0 truncate">{head}</span><span className="shrink-0">{tail}</span></span>
             {item.metaLabel && <span className="bp-prompt-attachment-meta block truncate text-ui-meta text-muted-foreground" title={item.metaLabel}>{item.metaLabel}</span>}
           </span>
+        </>}
+          {item.status === "error" && errorDisplay !== "item" && <span className="bp-prompt-attachment-meta pointer-events-none absolute right-0 bottom-0 bg-background text-destructive-foreground"><CircleAlert aria-hidden="true" className="size-4" /></span>}
         </>
-        const faceClass = cn("bp-prompt-attachment-face relative flex shrink-0 items-center gap-2 overflow-hidden rounded-md border border-input bg-background text-foreground", media ? "agent-prompt-attachment-media p-0" : "agent-prompt-attachment-file py-1 pl-2 pr-8")
+        const faceClass = cn("bp-prompt-attachment-face relative flex shrink-0 items-center gap-2 overflow-hidden rounded-md border border-input bg-background text-foreground", media ? "agent-prompt-attachment-media p-0" : "agent-prompt-attachment-file py-1 pl-2 pr-8", item.status === "error" && errorDisplay !== "item" && "border-destructive-foreground")
         return <li key={item.id} data-prompt-attachment={item.id} data-attachment-status={item.status} className={cn("relative shrink-0 space-y-1", media ? "agent-prompt-attachment-media-item" : "agent-prompt-attachment-file-item")}>
           {onOpen ? <Button type="button" variant="outline" size={null} className={faceClass} aria-label={accessibleName} title={name} data-selected={item.selected || undefined} aria-current={item.selected ? "true" : undefined} disabled={disabled} onClick={() => { if (!disabled) onOpen(item.id) }}>{content}</Button>
             : <div role="group" tabIndex={0} aria-label={accessibleName} title={name} data-selected={item.selected || undefined} aria-current={item.selected ? "true" : undefined} className={cn(faceClass, "outline-none focus-visible:ring-2 focus-visible:ring-ring")}>{content}</div>}
@@ -73,9 +91,20 @@ export function AgentPromptAttachmentStrip({ items, disabled, onRemove, onOpen }
             <p className="bp-prompt-attachment-meta break-words text-ui-meta">{progress === undefined ? "上传中 · 进度未提供" : `${progress}%`}</p>
             <Progress value={progress ?? null} aria-label={`${name}上传进度`}><ProgressTrack><ProgressIndicator className="motion-reduce:transition-none" /></ProgressTrack></Progress>
           </div>}
-          {item.status === "error" && <p role="status" className="text-ui-hint text-destructive-foreground [overflow-wrap:anywhere]">失败：{item.errorReason || "原因未提供"}</p>}
+          {item.status === "error" && errorDisplay === "item" && <p role="status" className="text-ui-hint text-destructive-foreground [overflow-wrap:anywhere]">失败：{item.errorReason || "原因未提供"}</p>}
         </li>
       })}
     </ul>
+    {errorDisplay === "summary" && items.some(item => item.status === "error") && <div role="status" className="w-full min-w-0">
+      <ul aria-label="附件失败原因" className="m-0 grid list-none gap-1 p-0 text-ui-hint text-destructive-foreground">
+        {items.filter(item => item.status === "error").map(item => {
+          const name = item.name.trim() || "名称未提供", [head, tail] = filenameParts(name)
+          return <li key={item.id} className="flex min-w-0 items-start">
+            <span title={name} className="flex max-w-[40%] min-w-0 shrink-0"><span className="sr-only">{name}</span><span aria-hidden="true" className="min-w-0 truncate">{head}</span><span aria-hidden="true" className="shrink-0">{tail}</span></span>
+            <span className="shrink-0">：</span><span className="min-w-0 [overflow-wrap:anywhere]">{item.errorReason || "原因未提供"}</span>
+          </li>
+        })}
+      </ul>
+    </div>}
   </InputGroupAddon>
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useId, useState, type KeyboardEvent, type ReactNode, type Ref } from "react"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/coss/button"
 import { Card } from "@/components/coss/card"
 import { Field, FieldLabel } from "@/components/coss/field"
@@ -89,20 +90,34 @@ export function MediaFrame({ media, kind, view = "inline", density = "default", 
   </Card>
 }
 
-export function NativeMedia({ media, kind, capability, mediaRef, poster }: {
+export type NativeMediaProps = {
   media: AgentMediaMetadata; kind: "audio" | "video"; capability: AgentMediaCapability
   mediaRef?: Ref<HTMLAudioElement> | Ref<HTMLVideoElement>; poster?: string
-}) {
+  /** Opt-in lightbox sizing; host supplies the available bounds. */
+  fit?: "contain"
+  containerClassName?: string
+  mediaClassName?: string
+  preload?: "none" | "metadata" | "auto"
+}
+
+export function NativeMedia({ media, kind, capability, mediaRef, poster, fit, containerClassName, mediaClassName, preload = "none" }: NativeMediaProps) {
   const id = useId()
   const [failed, setFailed] = useState(false)
+  const [intrinsic, setIntrinsic] = useState<{ src?: string; ratio: string } | null>(null)
   const reasons = playbackReasons(media, capability)
   const name = kind === "audio" ? "音频" : "视频"
-  return <section className="min-w-0 space-y-2" aria-label={`${name}播放`}>
+  return <section className={cn("min-w-0 space-y-2", fit === "contain" && "w-full", containerClassName)} aria-label={`${name}播放`}>
     <p id={`${id}-description`} className="break-words text-ui-hint">{media.description?.trim() || "未提供媒体说明。"}</p>
     {failed && <p role="status" className="break-words text-ui-hint">{name}不可播放：媒体加载失败，请核对文件或播放地址。</p>}
     {reasons.size || failed ? null : kind === "audio"
-      ? <audio ref={mediaRef as Ref<HTMLAudioElement>} controls preload="none" src={media.src} aria-label={media.title} aria-describedby={`${id}-description`} onError={() => setFailed(true)} className="w-full min-w-0" />
-      : <video ref={mediaRef as Ref<HTMLVideoElement>} controls playsInline preload="none" src={media.src} poster={poster} aria-label={media.title} aria-describedby={`${id}-description`} onError={() => setFailed(true)} className="h-auto max-h-96 w-full min-w-0" />}
+      ? <audio ref={mediaRef as Ref<HTMLAudioElement>} controls preload={preload} src={media.src} aria-label={media.title} aria-describedby={`${id}-description`} onError={() => setFailed(true)} className={cn("w-full min-w-0", mediaClassName)} />
+      : <video ref={mediaRef as Ref<HTMLVideoElement>} controls playsInline preload={preload} src={media.src} poster={poster} aria-label={media.title} aria-describedby={`${id}-description`} onError={() => setFailed(true)} className={cn(fit === "contain" ? "h-auto w-full min-h-0 min-w-0 object-contain" : "h-auto max-h-96 w-full min-w-0", mediaClassName)}
+          style={fit === "contain" && intrinsic?.src === media.src ? { aspectRatio: intrinsic?.ratio } : undefined}
+          onLoadedMetadata={fit === "contain" ? event => {
+            const { videoWidth, videoHeight } = event.currentTarget
+            if (videoWidth > 0 && videoHeight > 0) setIntrinsic({ src: media.src, ratio: `${videoWidth} / ${videoHeight}` })
+          } : undefined}
+          onEmptied={fit === "contain" ? () => setIntrinsic(null) : undefined} />}
   </section>
 }
 
