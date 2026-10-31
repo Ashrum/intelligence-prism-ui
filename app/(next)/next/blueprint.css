@@ -894,3 +894,16 @@ section[data-agent-preview]:is([data-prism-theme="blueprint"],[data-prism-theme=
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .bp-inline-folio:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline-start:12px; }
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .bp-inline-code:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin-inline-end:12px; }
 /* End P127 inline spacing. */
+
+/* P128: BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926px. Query the canvas itself, not
+   its workspace or viewport. Keep the root padding-free so query size cannot
+   oscillate; use the existing paper host's margin to reserve the same 30px.
+   Its scroll viewport ResizeObserver remeasures fit width after either change. */
+.bp-frame.bp-frame--canvas { container:bp-preview-canvas / inline-size; padding:0; box-shadow:none; }
+.bp-frame--canvas > .d1-paper-host { margin:0; }
+.bp-frame--canvas > .bp-frame-decoration { display:none; }
+@container bp-preview-canvas (min-width:926px) {
+  .bp-frame--canvas > .d1-paper-host { margin:30px; }
+  .bp-frame--canvas > .bp-frame-decoration { display:block; }
+}
+/* End P128 canvas frame fit. */

@@ -8,6 +8,7 @@ import { build } from 'esbuild';
 import postcss from 'postcss';
 import { transform } from 'lightningcss';
 import { restoreP127, p127SourceFiles } from './helpers/p127-source-compat.mjs';
+import { restoreP128 } from './helpers/p128-source-compat.mjs';
 import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 import { createTestRuntime } from './helpers/test-runtime.mjs';
@@ -130,7 +131,7 @@ for (const theme of ['light', 'paper', 'dark']) test(`P127 component-page host g
   assert.equal(render(wrap(api)), render(wrap(old)));
 });
 test('P127 spacing is a scoped additive CSS block; all baseline styles, tokens and frozen coss remain unchanged', () => {
-  const path = 'app/(next)/next/blueprint.css', css = read(path), base = oldSource(path);
+  const path = 'app/(next)/next/blueprint.css', css = restoreP128(path, read(path)), base = oldSource(path);
   assert.equal(css.slice(0, base.length), base);
   const ast = postcss.parse(css.slice(base.length)), rules = ast.nodes.filter(n => n.type === 'rule');
   assert.equal(rules.length, 2);

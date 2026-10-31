@@ -49,9 +49,13 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 
 题目预览从当前题目事实输出 `SHEET 17 / 20`，切题同步更新，知识点视角仍表示当前证据题；右栏保留“本题分析”或知识点原文。试卷预览没有数字题卡标题，在画布外框显示 A 与当前题号，不给每张扫描纸重复编号。新组件页示例：[无标题外框](/next/foundations/blueprint#blueprint-frame)。
 
-宿主由 `next-themes` 的有效主题显式选择两蓝图，并以初始 false 的 mounted 状态在 `useEffect` 后才启用外框、A/B 和图号；服务端与客户端首帧均关闭装饰，不使用 `suppressHydrationWarning`。global 三主题不激活外框。新增的既有组件主题规则仅含字体、数字等宽、描边与直角外观，排除嵌套非蓝图预览根及后代。外框自身占用 30px 的装饰内距；原工作区列宽规则、滚动节点、学生控件、纸张缩放及工具条定位算法不改。视口或容器 ≤760px 时外框内距归零，坐标尺、内框及扫描画布的装饰图号隐藏，题卡行内标记仍可见。
+宿主由 `next-themes` 的有效主题显式选择两蓝图，并以初始 false 的 mounted 状态在 `useEffect` 后才启用外框、A/B 和图号；服务端与客户端首帧均关闭装饰，不使用 `suppressHydrationWarning`。global 三主题不激活外框。新增的既有组件主题规则仅含字体、数字等宽、描边与直角外观，排除嵌套非蓝图预览根及后代。全页外框默认占用 30px 的装饰内距，视口或容器 ≤760px 时归零并隐藏装饰；该默认行为不变。预览画布改按以下 P128 规则。原工作区列宽规则、滚动节点、学生控件、纸张缩放及工具条定位算法不改。
 
 P126-r1 的 `BlueprintFrame` 要求一个稳定根元素：原生元素直接复用其 type / key / ref、原子节点位置及属性；复合画布须转发根属性并实现 `decoration` 插槽，将装饰放在滚动内容之外。`PaperPreviewSurface` 已提供该插槽，未传时 SSR 字节保持原样；任意不支持此契约的组件不可直接作为活动 Frame 的子元素。不要通过条件分支增删 `<BlueprintFrame>` 组件边界；已有框架可直接调用无 Hook 的 `BlueprintFrame({ active, children: canvas })`，保留原 React 树路径。非活动时返回原元素对象，活动时不创建包裹父节点。
+
+P128（PO 2026-10-31 对 C0 的已授权调整，实现待 Supervisor Review）：预览根显式选用 `bp-frame--canvas`，以自身 `bp-preview-canvas` inline-size 容器宽度决定装饰。`ReviewWorkspace` 已自动选用；直接使用 `BlueprintFrame` 装饰 `PaperPreviewSurface` 时传 `className="bp-frame--canvas"`。该模式要求原根下有直接子节点 `.d1-paper-host`（两个真实预览均已满足），不添加包裹节点。常量 `BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926`：A4 纵向纸宽 `210 × 96 / 25.4 ≈ 793.70px`（题目扫描稿取整为 794px），加外框两侧 `30 × 2`、滚动区两侧 `8 × 2`、工具条预留 `56`，向上取整为 926px。此值针对现有 A4 纵向与 794px 题目稿及默认工具条；横向、A3、自定义纸宽或工具条不据此保证 100%。
+
+画布宽度 <926px：外框内距为零，整组坐标尺、内框线、画布带 A/图号隐藏；≥926px：显示装饰并在现有 `.d1-paper-host` 外留 30px。根始终零 padding，避免容器查询尺寸随内距变化而反复切换；内容区实际缩小/扩大后，现有 `PaperPreviewContinuous` / `PaperPreviewMixed` 的 `ResizeObserver` 重新量取滚动视口，适配宽度自动重算，手动缩放值与模式不重置。高度不参与判断；收起题目栏、沉浸及右栏改变均由画布自身宽度驱动。题卡标题行 A/图号、右栏 B 不在装饰层中，始终按原主题契约显示。宽度切换不变更 React 树或 DOM 节点；滚动节点和滚动状态保留（滚动范围缩小时仍受浏览器原生边界约束）。全页 `BlueprintFrame` 未选用该类时沿用原规则。
 
 接入示例（模块已导入 `useState`、`useEffect`、`useTheme`、`BlueprintFrame`）：
 

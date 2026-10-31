@@ -1,0 +1,17 @@
+{
+  "baseline": "0656aaa60854d6b50085d6110cec96a869deb829",
+  "files": {
+    "components/prism-next/blueprint/blueprint.tsx": [
+      {
+        "before": "",
+        "after": "\n/** A4 at 96dpi rounded up (794) + frame (2×30) + viewport (2×8) + toolbar (56).\n * Keep the bp-preview-canvas query in blueprint.css in sync; P128 tests derive\n * this boundary with paperDimensions / paperZoomPercent and the real hosts. */\nexport const BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926\n"
+      }
+    ],
+    "app/(next)/next/blueprint.css": [
+      {
+        "before": "",
+        "after": "\n/* P128: BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926px. Query the canvas itself, not\n   its workspace or viewport. Keep the root padding-free so query size cannot\n   oscillate; use the existing paper host's margin to reserve the same 30px.\n   Its scroll viewport ResizeObserver remeasures fit width after either change. */\n.bp-frame.bp-frame--canvas { container:bp-preview-canvas / inline-size; padding:0; box-shadow:none; }\n.bp-frame--canvas > .d1-paper-host { margin:0; }\n.bp-frame--canvas > .bp-frame-decoration { display:none; }\n@container bp-preview-canvas (min-width:926px) {\n  .bp-frame--canvas > .d1-paper-host { margin:30px; }\n  .bp-frame--canvas > .bp-frame-decoration { display:block; }\n}\n/* End P128 canvas frame fit. */\n"
+      }
+    ]
+  }
+}
