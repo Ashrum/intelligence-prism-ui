@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { DataStation, DataStationBadge, type DataStationProps, type DataStationBadgeProps } from "../data-station"
@@ -62,7 +63,7 @@ export function DataStationDemo() {
       <Feedback>{feedback}</Feedback>
     </DemoSection>
     <DemoSection title="三主题 · 320px · 长中文与公式" description="状态、设备信息与操作完整换行，控件保留触控空间。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
         <h3 className="text-item-title">{theme} · 320px</h3><StationFixture props={{ ...dataStationBase, devices: dataStationBase.devices.map(device => ({ ...device, name: `${device.name} · 高二数学期中考试标准答案答题卡与评分依据完整核对资料接收专用设备` })) }} />
         <p className="text-ui-hint">当前任务公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </section>)}</div>

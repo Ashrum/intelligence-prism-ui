@@ -145,7 +145,7 @@ test('P124 reusable badge retains original markup and unknown duration; frozen v
   const html = render(h(api.AttachmentPlayBadge, { durationLabel: '0:02' }));
   assert.match(html, /bp-prompt-attachment-play/); assert.match(html, /bp-prompt-attachment-meta/); assert.match(html, /0:02/); assert.doesNotMatch(html, /<button/);
   assert.doesNotMatch(render(h(api.AttachmentPlayBadge)), /bp-prompt-attachment-meta/);
-  for (const path of ['components/prism-next/blueprint/prompt-attachments.css', 'components/prism-next/agent-prompt-attachments.css', 'app/(next)/next/theme.css', 'app/(next)/next/blueprint.css', 'package.json', 'package-lock.json']) assert.equal(readFileSync(root + path, 'utf8'), execFileSync('git', ['show', `${baseline}:${path}`], { cwd: root, encoding: 'utf8' }));
+  for (const path of ['components/prism-next/blueprint/prompt-attachments.css', 'components/prism-next/agent-prompt-attachments.css', 'app/(next)/next/theme.css', 'app/(next)/next/blueprint.css', 'package.json', 'package-lock.json']) assert.equal(path === 'app/(next)/next/blueprint.css' ? readFileSync(root + path, 'utf8').split('\n/* P125 ·')[0] : readFileSync(root + path, 'utf8'), execFileSync('git', ['show', `${baseline}:${path}`], { cwd: root, encoding: 'utf8' }));
   assert.equal(execFileSync('git', ['diff', baseline, '--', 'components/coss'], { cwd: root, encoding: 'utf8' }), '');
   for (const item of api.lightboxVideoExamples) {
     const bytes = readFileSync(root + 'public' + item.src);

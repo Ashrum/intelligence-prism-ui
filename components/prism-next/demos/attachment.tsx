@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { DemoSection, Feedback } from "../demo-parts"
@@ -95,7 +96,7 @@ export function AttachmentDemo() {
       <Feedback>{feedback}</Feedback>
     </DemoSection>
     <DemoSection title="三主题 · 320px · 长中文与公式" description="主题沿用智能曜彩；窄容器保留文件尾名、独立操作和状态文字，异常原因 title 保留全文。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3" aria-label={`${theme} 320px`}>
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <section key={theme} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3" aria-label={`${theme} 320px`}>
         <h3 className="text-item-title">{theme} · 320px</h3>
         {[attachmentFixtures[3], attachmentFixtures[6], attachmentFixtures[7]].map(item => <Attachment key={item.id} item={item} view={{}} onAction={attachmentAction} />)}
         <p className="text-ui-hint">样张公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>

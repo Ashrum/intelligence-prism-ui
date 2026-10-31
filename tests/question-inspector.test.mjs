@@ -38,6 +38,12 @@ test('QuestionInspector disabled reasons describe only disabled actions with uni
  const absent=render(h(api.QuestionInspector,{...base,onIntent:undefined,actions:[{id:'no-handler',label:'教师批阅',disabledReason:'未连接处理器'}]}));assert.match(absent,/教师批阅：未连接处理器/);assert.match(absent,/aria-describedby=/);
  const empty=render(h(api.QuestionInspector,{...base,actions:[{id:'empty',label:'更正',disabled:true,disabledReason:''}]}));assert.doesNotMatch(empty,/aria-describedby=/);assert.match(empty,/<footer class="flex gap-3 border-t p-4">/);
 });
-test('QuestionInspector incomplete demo supplies empty facts and two disabled explanations in three themes',()=>{
- const html=render(h(api.QuestionInspectorDemo));assert.match(html,/数据不全/);assert.equal((html.match(/更正评分：未提供评分标准/g)||[]).length,3);assert.equal((html.match(/教师批阅：当前作答尚未开放教师批阅/g)||[]).length,3);
+test('QuestionInspector incomplete demo supplies empty facts and two disabled explanations in five themes; core counts unchanged',()=>{
+ const html=render(h(api.QuestionInspectorDemo));assert.match(html,/数据不全/);assert.equal((html.match(/更正评分：未提供评分标准/g)||[]).length,5);assert.equal((html.match(/教师批阅：当前作答尚未开放教师批阅/g)||[]).length,5);
+ // Each original core theme still contains exactly one of each explanation.
+ const previews=[...html.matchAll(/data-prism-theme="([^"]+)"([\s\S]*?)(?=data-prism-theme=|$)/g)];
+ for(const theme of ['light','paper','dark','blueprint','blueprint-night']) {
+  const content=previews.filter(m=>m[1]===theme).map(m=>m[2]).join('');
+  for(const text of ['更正评分：未提供评分标准','教师批阅：当前作答尚未开放教师批阅']) assert.equal(content.split(text).length-1,1,`${theme}: ${text}`);
+ }
 });

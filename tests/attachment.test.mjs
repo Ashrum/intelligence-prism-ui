@@ -582,9 +582,9 @@ test('sheet fixtures cover all requested states with 24 dense papers', () => {
   assert.deepEqual(anonymousSheetPaperFixtures.map(item => item.slotLabel), ['4', '5', '6']);
   assert.ok(anonymousSheetPaperFixtures.every(item => !item.studentName && item.placeholder));
   assert.match(out, /未知学生待处理卡 \+ 无姓名骨架/);
-  assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24 + 6) * 4 + 4);
-  assert.equal((out.match(/data-paper-identity-skeleton="true"/g) || []).length, 27);
-  assert.equal((out.match(/data-paper-pending="true"/g) || []).length, 13);
+  assert.equal((out.match(/data-paper-variant="sheet"/g) || []).length, (sheetPaperFixtures.length + 24 + 6) * 6 + 4);
+  assert.equal((out.match(/data-paper-identity-skeleton="true"/g) || []).length, 39);
+  assert.equal((out.match(/data-paper-pending="true"/g) || []).length, 19);
 });
 
 test('anonymous sheet placeholders expose a named static slot, description and two hidden skeleton bars', () => {

@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { DemoSection, Feedback } from "../demo-parts"
@@ -94,7 +95,7 @@ export function InstrumentPanelDemo() {
       <div className="flex flex-wrap items-start gap-6">{instrumentFixtures.map(fixture => <div key={fixture.title} className="w-full max-w-[380px]"><InteractivePanel {...fixture} /></div>)}</div>
     </DemoSection>
     <DemoSection title="已收到 5/6 · 宿主量值" description="数量来自当前收交快照；不根据操作推定新增或完成。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <InstrumentPanel compact title="收交情况" metric={{ value: "5/6", label: "已收到 / 应交", progress: { kind: "meter", value: 5, max: 6, label: "已收到跨页作答完整试卷的数量" } }} />
       </div>)}</div>
     </DemoSection>
@@ -105,14 +106,14 @@ export function InstrumentPanelDemo() {
       <div className="flex flex-wrap items-start gap-4">{(["loading", "empty", "error"] as const).map(state => <div className="w-80 max-w-full" key={state}><InteractivePanel title="任务状态" state={state} /></div>)}</div>
     </DemoSection>
     <DemoSection title="三主题 · 320px · 长中文与公式" description="完整保留状态、原因和操作文字；内容随窄容器自然增高。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
-        <h3 className="mb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</h3>
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <h3 className="mb-3 text-item-title">{componentPreviewThemeLabels[theme]}</h3>
         <InteractivePanel {...instrumentFixtures[4]} title="高二年级数学期中考试智能批阅运行中" current={{ label: "当前正在处理", title: "王子睿 · 第 8/12 题 · 二次函数与不等式综合应用", description: <span>核对评分依据：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></span> }}
           list={{ title: "实时任务状态", items: [{ id: "long", title: "补交跨页作答的学生试卷并重新核对页序与答题区域", description: "仅接收本轮尚未提交的试卷，接收范围由当前任务配置提供。", status: { label: "有限开放", tone: "warning" }, selectable: true }] }} />
       </div>)}</div>
     </DemoSection>
     <DemoSection title="紧凑任务面板 · 三主题与 320px" description="分区采用统一面板；当前处理放在清单之后，所有业务事实仍由调用方提供。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <InteractivePanel {...instrumentFixtures[4]} compact current={{ label: "当前处理", title: "核对长中文题干与跨页作答的完整性", description: <math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></math> }} />
       </div>)}</div>
     </DemoSection>

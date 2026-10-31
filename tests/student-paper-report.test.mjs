@@ -125,10 +125,11 @@ test('StudentPaperReport accepts explicit coverage, pending copy, AI source, for
   assert.match(blank, /来源：未提供/);
 });
 
-test('StudentPaperReport demo contains three themes, narrow fixtures, long Chinese, formula and main report states', () => {
+test('StudentPaperReport demo contains five themes; core counts unchanged, narrow fixtures, long Chinese, formula and main report states', () => {
   const html = renderToStaticMarkup(h(api.StudentPaperReportDemo));
-  for (const theme of ['light', 'paper', 'dark']) assert.equal((html.match(new RegExp(`data-prism-theme="${theme}"`, 'g')) ?? []).length, 3);
-  assert.equal((html.match(/data-ui-version="coss-v1"/g) ?? []).length, 9);
+  // Original light / paper / dark each retain three previews.
+  for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) assert.equal((html.match(new RegExp(`data-prism-theme="${theme}"`, 'g')) ?? []).length, 3);
+  assert.equal((html.match(/data-ui-version="coss-v1"/g) ?? []).length, 15);
   for (const text of ['w-80', '仅统计已提供的 3 题', '本卷没有失分', '统计范围：未提供', '未完整说明参数范围与等价变形成立的前提条件']) assert.ok(html.includes(text), text);
   assert.match(html, /<math>/);
 });
@@ -180,10 +181,17 @@ test('StudentPaperReport omitted and explicit default emphasis retain main 4b7e9
   }
 });
 
-test('StudentPaperReport strong demo covers both densities, disabled state and three themes', () => {
+test('StudentPaperReport strong demo covers both densities, disabled state and five themes; core counts unchanged', () => {
   const html = renderToStaticMarkup(h(api.StudentPaperReportPendingDemo));
-  for (const theme of ['light', 'paper', 'dark']) assert.ok(html.includes(`data-prism-theme="${theme}"`));
-  assert.equal((html.match(/bg-warning\/15/g) ?? []).length, 9);
+  const previews = [...html.matchAll(/data-prism-theme="([^"]+)"([\s\S]*?)(?=data-prism-theme=|$)/g)];
+  // Three strong pending panels per core theme remain unchanged; append two equivalents.
+  for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) {
+    const sections = previews.filter(m => m[1] === theme);
+    assert.equal(sections.length, 1, theme);
+    assert.equal((sections[0][2].match(/bg-warning\/15/g) ?? []).length, 3, theme);
+  }
+  assert.equal((html.match(/data-ui-version="coss-v1"/g) ?? []).length, 5);
+  assert.equal((html.match(/bg-warning\/15/g) ?? []).length, 15);
   assert.match(html, /当前原始作答尚未提供/);
   assert.match(html, /<math>/);
 });

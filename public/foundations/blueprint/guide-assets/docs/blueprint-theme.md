@@ -689,3 +689,14 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 复用检索（离线）：现有五个 Blueprint 呈现组件、Attachment 的前段省略/保留尾段和既有分段选择滚动足以实现；固定 coss Frame/Card/Tabs/Button 不需修改。未引入 particles 或第三方代码、依赖、新 Token、组件目录项，未联网刷新上游。新增 `BpFrame`、`BpStatStripProps`、`BpTitleBlockProps` 与已扩展的 Props 均从原 blueprint 模块直接导出，完整说明见[组件契约](component-contracts.md)。
 
 演示入口：[框线层级](/next/foundations/blueprint#frame-variants)、[名称列宽](/next/foundations/blueprint#sizebar-label-width)。演示提供五主题、三档框线、两档列宽，长中文、公式文本、零值、行激活和嵌套核心主题；320px 小图用于检查桌面中的窄容器。默认字节对照、静态选择器/声明与实际演示控件路径由单测检查；浏览器计算样式与视觉、390/1280、悬停、键盘与读屏交 Supervisor 验收。Builder 不自我批准。
+
+
+## P125 · 五主题预览矩阵与视觉残留（候选）
+
+组件站共用 `componentPreviewThemes` 按 light、paper、dark、blueprint、blueprint-night 排序；`ReviewDemoThemes` 与独立的批阅、材料、图表及顶部栏示例使用同一清单。23 个目标路由在原核心三主题后追加蓝图、夜图，沿用相同数据、组件树、布局、交互和顺序；Agent 子页预览菜单新增「蓝图」「夜图」，默认仍为「跟随站点」。共用入口的其他调用方同步获得两蓝图预览。原核心主题预览保持；说明中的历史三主题验收记录不扩写为五主题已验收。
+
+复用检索（离线）：已有 ReviewDemoThemes、AgentPreviewFrame、固定 coss Collapsible / NumberField / Textarea / Badge / Card / Table，以及 Prism PaperCard、AgentWell / AgentCapsule、DocumentRegionViewer、LearningGoalCard 的稳定 slot / data / 类名足够，无需新组件、particles、依赖或令牌；未联网更新 registry。P125 CSS 独立追加块仅设圆角与 box-shadow，排除嵌套核心预览根及后代，保留 ring 焦点与选中态，不改尺寸、间距或 DOM。
+
+保留头像、Radio、步骤圆点、里程碑及试卷成功／待确认圆形标记。Collapsible、顶部 header、输入控件、计数 Badge、Agent 容器、纸面外卡、卡片表格、命令卡、目标卡、历史骨架装饰与区域命中框按既有锚点补齐。混排纸面 `shadow-2xl transition-opacity` 源码为 opacity-100 / opacity-65，非默认隐藏；消除模糊但保留选中 ring。此项为源码事实，不代替滚动、遮挡及浏览器可见性验收。
+
+守卫渲染真实路由示例，核对五主题矩阵、核心预览与基线 SSR、Agent 菜单和视觉属性白名单；旧 P122 / P123 / P124 规则守卫保持此前 CSS 字节断言，P125 独立守卫保护追加块及此前 CSS 全字节。P16 / P17 / P18 历史快照在测试构建中只投影原核心三主题清单，不改组件、HTML、ID 或快照指纹；完整五主题由 P125 的真实路由测试独立验证。浏览器验收：按分工由 Supervisor 执行。白图／夜图 × 1280 / 390，逐路由重测可见且宽高 >12px、有背景或边框的非零左上圆角；box-shadow 按每层第三个长度 >0 判定模糊，0 0 0 1.5px 墨线不计。排除显式核心主题预览和橙色评审浮钮；圆形语义标记单列保留。不沿用旧投影正则数字，不以静态样式或 SSR 推算测量结果。

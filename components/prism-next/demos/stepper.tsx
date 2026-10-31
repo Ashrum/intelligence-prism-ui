@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { DemoSection, Feedback } from "../demo-parts"
@@ -45,14 +46,14 @@ export function StepperDemo() {
     <DemoSection title="批阅受阻" description="S46：当前第 5 步 AI 批阅受阻；当前位置与受阻状态由调用方分别提供。"><Stepper steps={stepperFixtures.blocked} currentStepId="stage-5" /></DemoSection>
     <DemoSection title="侧栏 · 垂直方向"><div className="w-80 max-w-full"><Stepper orientation="vertical" steps={stepperFixtures.pending} /></div></DemoSection>
     <DemoSection title="三主题 · 320px · 长中文标签" description="当前步骤自动进入局部视野；横向滚动可查看之前的待完成步骤和后续阶段。">
-      <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
-        <h3 className="mb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</h3>
+      <div className="flex flex-wrap gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <h3 className="mb-3 text-item-title">{componentPreviewThemeLabels[theme]}</h3>
         <Stepper onStepSelect={id => setIntent(`请求前往 ${id}`)} steps={longSteps.map(step => ({ ...step, selectable: true }))} aria-label={`${theme} 长中文批阅阶段`} />
         <p className="mt-4 text-read-body">核对公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>
       </div>)}</div>
     </DemoSection>
     <DemoSection title="紧凑工具栏 · 三主题与 320px" description="放不下时只保留当前标签，其余名称和状态供辅助技术与悬停查看；极窄或多步时自然换行，无横向滚动。">
-      <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full space-y-3 p-3">
+      <div className="flex flex-wrap gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full space-y-3 p-3">
         <div className="flex h-14 min-w-0 items-center justify-center border-b"><Stepper compact steps={toolbarSteps} onStepSelect={id => setIntent(`请求前往 ${id}`)} aria-label={`${theme} 窄顶栏阶段`} /></div>
         <Stepper compact steps={stepperFixtures.blocked} currentStepId="stage-5" aria-label={`${theme} 紧凑批阅阶段`} />
         <Stepper compact steps={longSteps.map(step => ({ ...step, selectable: true }))} onStepSelect={id => setIntent(`请求前往 ${id}`)} aria-label={`${theme} 紧凑长中文阶段`} />

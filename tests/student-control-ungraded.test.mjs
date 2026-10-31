@@ -2,6 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
+import {build} from 'esbuild';
+import {writeFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {createTestRuntime} from './helpers/test-runtime.mjs';
+import {corePreviewCompatibility} from './helpers/p125-core-preview-compat.mjs';
 import {api,h,render,capture} from './question-analysis-c2-harness.mjs';
 
 const noop=()=>{};
@@ -66,8 +71,15 @@ test('P14 ticks use external order, copy and tones and preserve ungraded selecti
 });
 test('P14 known-score fixture, original demo, switcher and rows retain main bytes',async()=>{
  const before=JSON.parse(await readFile(new URL('./fixtures/student-control-graded-before.json',import.meta.url),'utf8'));
+ // Project only this historical demo bundle to its original three-theme topology.
+ // The normal harness and five-theme route tests continue to render all five themes.
+ const runtime=await createTestRuntime('p125-graded-core');
+ const file=new URL('bundle.mjs',runtime);
+ const bundle=await build({stdin:{contents:"export {StudentControlBarGradedDemo} from './components/prism-next/demos/student-control-bar';",resolveDir:fileURLToPath(new URL('../',import.meta.url)),loader:'tsx'},bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':fileURLToPath(new URL('../',import.meta.url))},loader:{'.css':'empty'},write:false,plugins:[corePreviewCompatibility]});
+ await writeFile(file,bundle.outputFiles[0].text);
+ const core=await import(file);
  const out=switcher(api.analysisStudents,api.analysisStudents[0]);
- const actual={fixture:render(h(api.StudentControlBarFixture)),demo:render(h(api.StudentControlBarGradedDemo)),switcher:out.html,rows:api.analysisStudents.map(i=>render(out.nodes[0].props.renderItem(i)))};
+ const actual={fixture:render(h(api.StudentControlBarFixture)),demo:render(h(core.StudentControlBarGradedDemo)),switcher:out.html,rows:api.analysisStudents.map(i=>render(out.nodes[0].props.renderItem(i)))};
  for(const [name,html] of Object.entries(actual)){
   const digest=value=>createHash('sha256').update(value).digest('hex');
   assert.deepEqual(Array.isArray(html)?html.map(digest):digest(html),before[name],name);

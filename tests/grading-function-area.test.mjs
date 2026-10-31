@@ -39,13 +39,13 @@ const visibleText = html => html.replace(/<[^>]*>/g, '');
 
 test('P18 reference renders exactly eight bounded boards per theme using the four existing components', () => {
   const html = renderToStaticMarkup(h(api.GradingFunctionAreaDemo));
-  assert.equal((html.match(/data-function-area-board=/g) ?? []).length, 24);
-  assert.equal((html.match(/h-\[844px\] w-\[380px\] max-w-full/g) ?? []).length, 24);
-  for (const theme of ['light', 'paper', 'dark']) assert.match(html, new RegExp(`data-prism-theme="${theme}" data-ui-version="coss-v1"`));
-  for (const state of api.gradingFunctionAreaStates) assert.equal((html.match(new RegExp(`data-function-area-board="${state.id}"`, 'g')) ?? []).length, 3);
-  assert.equal((html.match(/data-score-review-panel/g) ?? []).length, 9);
-  assert.equal((html.match(/data-error-cause-review/g) ?? []).length, 6);
-  assert.equal((html.match(/data-student-paper-report/g) ?? []).length, 3);
+  assert.equal((html.match(/data-function-area-board=/g) ?? []).length, 40);
+  assert.equal((html.match(/h-\[844px\] w-\[380px\] max-w-full/g) ?? []).length, 40);
+  for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) assert.match(html, new RegExp(`data-prism-theme="${theme}" data-ui-version="coss-v1"`));
+  for (const state of api.gradingFunctionAreaStates) assert.equal((html.match(new RegExp(`data-function-area-board="${state.id}"`, 'g')) ?? []).length, 5);
+  assert.equal((html.match(/data-score-review-panel/g) ?? []).length, 15);
+  assert.equal((html.match(/data-error-cause-review/g) ?? []).length, 10);
+  assert.equal((html.match(/data-student-paper-report/g) ?? []).length, 5);
   assert.match(html, /不产生服务回执/);
 });
 
@@ -161,11 +161,11 @@ test('P18 focus policy skips mount and draft changes, follows scoring modes, and
   capture('loss'); assert.equal(globalThis.__functionAreaState.focuses.length, 3);
 });
 
-test('P18 built reference route has the complete three-theme matrix', async () => {
+test('P18 built reference route has the complete five-theme matrix', async () => {
   const { default: worker } = await import('../dist/server/index.js');
   const response = await worker.fetch(new Request('http://localhost/next/reviews/grading-function-area', { headers: { accept: 'text/html' } }), { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
   assert.equal(response.status, 200);
   const html = (await response.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   assert.match(html, /批阅功能栏八种状态/);
-  assert.equal((html.match(/data-function-area-board=/g) ?? []).length, 24);
+  assert.equal((html.match(/data-function-area-board=/g) ?? []).length, 40);
 });

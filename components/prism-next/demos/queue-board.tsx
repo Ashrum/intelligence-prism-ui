@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { QueueBoard, type QueueBoardCategory, type QueueBoardProps, type QueueBoardRow, type QueueBoardSort } from "../queue-board"
@@ -53,7 +54,7 @@ export function QueueBoardDemo() {
     <p className="text-ui-hint">固定输入：分类总量由调用方提供，表格仅展示其中四份试卷；点击操作只记录请求。选择状态卡再次点击可取消筛选。</p>
     {queueBoardFixtures.map(({ id, label, props }) => <DemoSection key={id} id={`queue-${id}`} title={label}><QueueFixture props={props} controlled={id === "progress"} sortable={id === "progress"} /></DemoSection>)}
     <DemoSection id="queue-themes" title="三主题 · 320px · 长中文与公式" description="分类按容器宽度排列，方向键移动焦点，空格选择或取消；表格保留四列，可在内容区内滚动，表头吸顶，操作列位于最右侧。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
         <h3 className="text-item-title">{theme} · 320px</h3><QueueFixture sortable props={{ ...queueBoardBase, maxHeight: 280, rows: queueBoardRows.map(row => ({ ...row, paperTitle: "高二数学期中考试主观题评分依据与学生原始作答完整核对资料", description: <><span>{row.description} · 请核对完整解题过程与评分依据</span><p className="text-ui-hint">题目公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p></> })) }} />
       </section>)}</div>
     </DemoSection>

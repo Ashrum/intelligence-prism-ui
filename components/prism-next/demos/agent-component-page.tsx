@@ -12,9 +12,9 @@ import { agentOverviewHref, agentSemanticHref, agentSemanticTabs, resolveSemanti
 import { agentComponentExamples } from "./agent-component-examples"
 import { AgentDemoPresentation } from "./agent-demo-presentation"
 
-export const previewThemes = [{ value: "site", label: "跟随站点" }, { value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }]
+export const previewThemes = [{ value: "site", label: "跟随站点" }, { value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }, { value: "blueprint", label: "蓝图" }, { value: "blueprint-night", label: "夜图" }]
 export const previewWidths = [{ value: "auto", label: "自适应" }, ...[320, 390, 768, 1280].map(width => ({ value: String(width), label: `${width}` }))]
-export type PreviewTheme = "site" | "light" | "paper" | "dark"
+export type PreviewTheme = "site" | "light" | "paper" | "dark" | "blueprint" | "blueprint-night"
 export type PreviewWidth = "auto" | "320" | "390" | "768" | "1280"
 const twoStateLabels = { "仅 Inline": "仅对话态", "Inline + 通用扩展容器": "对话态与完整查看", "Inline + 专用扩展内容": "对话态与专用工作区" }
 
