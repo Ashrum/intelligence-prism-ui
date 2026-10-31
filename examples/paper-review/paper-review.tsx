@@ -1,4 +1,5 @@
 "use client"
+import { useTheme } from "next-themes"
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from "react"
 import { PanelLeftOpen, ArrowLeft, ArrowUp, ArrowDown, CircleHelp, Scan, RotateCw, Minus, Plus, MoreHorizontal, FileImage, Maximize, Minimize, Layers, ArrowLeftRight, PencilLine } from "lucide-react"
 import { Button } from "@/components/prism-next/button"
@@ -24,6 +25,10 @@ import "./paper-review.css"
 
 const shortcuts = [["T", "显示 / 隐藏题目栏"], ["G", "选择学生"], ["[ / ]", "上一位 / 下一位学生"], ["← / →", "上一页 / 下一页"], ["↑ / ↓", "上一题 / 下一题"], ["Enter", "定位所选题目"], ["N", "下一道错题"], ["+ / −", "放大 / 缩小"], ["0", "切换适合宽度 / 适合页面"], ["F / Esc", "切换沉浸 / 退出沉浸"], ["R", "旋转 90°"], ["L", "开关标注层"], ["O（按住）", "临时查看扫描原稿"], ["?", "打开快捷键表"]]
 export function PaperReviewDesign() {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+ const blueprint = mounted && (resolvedTheme === "blueprint" || resolvedTheme === "blueprint-night")
+ useEffect(() => setMounted(true), [])
   const [device, setDevice] = useState('auto'), [scale, setScale] = useState(1)
   const [selected, setSelected] = useState('q17'), [page, setPage] = useState(1), [filter, setFilter] = useState(false)
   const [studentIndex, setStudentIndex] = useState(0), [missing, setMissing] = useState(false)
@@ -178,7 +183,7 @@ export function PaperReviewDesign() {
   return <TooltipProvider><main className="d1-review bg-background text-foreground">
     <ReviewTools device={device} onDeviceChange={setDevice} missing={missing} onMissingChange={setMissing} defaultPosition={reviewPosition} onResetRailPreferences={resetRailPreferences} />
     <div ref={stage} className="d1-stage bg-muted">
-      <ReviewWorkspace frameRef={frame} label="学生试卷预览框架" device={device} pane={mobilePane} immersive={immersive} open={!railCollapsed} onOpenChange={toggleRail} ready={railState.ready} animate={railState.animate} style={device === 'auto' ? undefined : { width: Number(device), height: device === '1440' ? 900 : 1080, transform: `scale(${scale})` }} shortcuts={shortcutBindings} shortcutsDisabled={studentOpen} onShortcut={keyboard} onBlurOutside={() => setHoldOriginal(false)} mobileNavRef={mobileNav} onPaneChange={setMobilePane}
+      <ReviewWorkspace blueprintFrame={blueprint} blueprintFolio={{kind:"sheet",value:`${q.number} / ${questions.length}`}} frameRef={frame} label="学生试卷预览框架" device={device} pane={mobilePane} immersive={immersive} open={!railCollapsed} onOpenChange={toggleRail} ready={railState.ready} animate={railState.animate} style={device === 'auto' ? undefined : { width: Number(device), height: device === '1440' ? 900 : 1080, transform: `scale(${scale})` }} shortcuts={shortcutBindings} shortcutsDisabled={studentOpen} onShortcut={keyboard} onBlurOutside={() => setHoldOriginal(false)} mobileNavRef={mobileNav} onPaneChange={setMobilePane}
         topbar={<header className="d1-topbar flex items-center gap-4 border-b px-4">
           <Button variant="ghost" aria-label="返回学生列表" onClick={() => intent('返回学生列表')}><ArrowLeft /><span className="d1-return-label">返回学生列表</span></Button><Avatar aria-hidden="true"><AvatarFallback>{student[0]}</AvatarFallback></Avatar><h2 className="shrink-0 text-section-title">{student}</h2><p className="d1-student-meta text-ui-meta text-muted-foreground">高一（3）班 · 考号 {record.examId}</p>
           <StudentPanel records={activeRecords} current={studentIndex} open={studentOpen} onOpenChange={open => { if (open) openStudents(); else setStudentOpen(false) }} onSelect={changeStudent} triggerRef={studentTrigger} />
@@ -207,7 +212,7 @@ export function PaperReviewDesign() {
               </Toolbar>}>
           <PaperPreview layout="continuous" pages={pages} zoom={zoom} rotation={rotations} selectedRegionId={selected} onRegionSelect={(_page, id) => select(id)} onZoomChange={setZoom} continuous={{ viewportRef: canvas, scale, onVisiblePage: setPage, onViewport: setViewport, spotlight: true, original }} />
         </PaperPreviewSurface>}
-        inspector={<QuestionInspector {...paperInspectorData(q, linked ? record.examId : questionReviewStudentId(record.name, record.examId), record.status === '已确认', questions.some(item => item.score < item.max))} onStep={step} onWrong={wrong} onIntent={intent} />}>
+        inspector={<QuestionInspector blueprintCode={blueprint} {...paperInspectorData(q, linked ? record.examId : questionReviewStudentId(record.name, record.examId), record.status === '已确认', questions.some(item => item.score < item.max))} onStep={step} onWrong={wrong} onIntent={intent} />}>
         <div role="status" className={notice ? 'd1-notice absolute bottom-20 left-1/2 z-30 max-w-full -translate-x-1/2 surface-floating px-4 py-3 text-ui-hint' : 'sr-only'}>{notice}</div>
       </ReviewWorkspace>
     </div>

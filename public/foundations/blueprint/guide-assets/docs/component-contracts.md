@@ -3372,3 +3372,42 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 - 框层数由宿主组合控制：对象外框内选 subtle/none，保持同一视图最多两层框；组件不推断祖先的业务分组或自动换档。名称最小 120px，宿主仍需提供合理阅读宽度。
 - 复用检索（离线）：先核对已有 BpStatStrip / BpTitleBlock / BpSegTabs / BpSectionCard / BpSizeBar、Attachment 中间省略结构与 useHorizontalChoiceScroll；再核对固定 coss Frame/Card/Tabs/Button 和本地来源索引。现有 Prism 参数扩展即可覆盖缺口，不引入新基础控件、particles、第三方实现或依赖；未联网刷新 coss registry。冻结 coss 保持字节不变。
 - 组件站 `/next/foundations/blueprint#frame-variants`、`#sizebar-label-width` 提供五主题切换、框线档位、名称宽度、报告分区和长名称行激活，含 320px 静态小图与嵌套核心主题。测试挂载此实际演示、操作其控件与合成数据，不复制一套替代演示夹具；真实计算样式、鼠标/键盘默认行为及读屏由 Supervisor 浏览器验收。
+
+
+## P126 · 无标题图纸外框与预览框架（2026-10-31）
+
+设计状态：C0 图纸语言已获 PO 冻结；本轮组件实现待 Supervisor 独立 Review。工程准入：未开始。
+
+复用检索（离线）：复用 `BlueprintSheet` 的四边 `.bp-ruler`、`BlueprintSectionHeader` 的字母块样式及 folio 格式化函数。Sheet 自带必需标题与较大内距，不适合作为现有工作区外框；固定 coss Frame 负责内容分组，没有图纸坐标尺契约。因此在既有 blueprint 模块导出无标题外框和两件行内装饰，不增加目录条目，不修改 coss、依赖或主题令牌；受任务限制未联网刷新 particles。
+
+| 接口 | 契约 |
+| --- | --- |
+| `BlueprintFrame` | `active: boolean`；false 直接返回原 children，不增加 DOM。true 在现有单根元素上合并外框属性并追加装饰，不新增父节点或改变原子树位置，四边装饰坐标尺上下 1–8、左右 A–D，整组 aria-hidden；坐标带 18px，默认内距 30px，宿主可通过 style 设置内距。`narrowFrame?: "edge" 或 "keep"`；keep 在窄容器保留侧边细线。 |
+| `BlueprintInlineCode` | `active: boolean`、`code: "A" 或 "B"`；active 才渲染，aria-hidden，放入原有标题，不新增标题语义。一个预览画面最多 A、B 两块。 |
+| `BlueprintInlineFolio` | `active: boolean`、`folio: BlueprintFolio`；沿用既有格式化，图号 aria-hidden，只反映宿主传入的真实题号和总数。 |
+| `ReviewWorkspace` | 可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
+| 原标题插槽 | `QuestionHeading.leading/titleSuffix?: ReactNode`；`QuestionAnalysisCard.blueprintSheet?: {current:number;total:number}` 使用该插槽。`QuestionInspector.blueprintCode?: boolean` 默认 false，在原右栏标题加 B；默认输出不变。 |
+
+题目预览从当前题目事实输出 `SHEET 17 / 20`，切题同步更新，知识点视角仍表示当前证据题；右栏保留“本题分析”或知识点原文。试卷预览没有数字题卡标题，在画布外框显示 A 与当前题号，不给每张扫描纸重复编号。新组件页示例：[无标题外框](/next/foundations/blueprint#blueprint-frame)。
+
+宿主由 `next-themes` 的有效主题显式选择两蓝图，并以初始 false 的 mounted 状态在 `useEffect` 后才启用外框、A/B 和图号；服务端与客户端首帧均关闭装饰，不使用 `suppressHydrationWarning`。global 三主题不激活外框。新增的既有组件主题规则仅含字体、数字等宽、描边与直角外观，排除嵌套非蓝图预览根及后代。外框自身占用 30px 的装饰内距；原工作区列宽规则、滚动节点、学生控件、纸张缩放及工具条定位算法不改。视口或容器 ≤760px 时外框内距归零，坐标尺、内框及扫描画布的装饰图号隐藏，题卡行内标记仍可见。
+
+P126-r1 的 `BlueprintFrame` 要求一个稳定根元素：原生元素直接复用其 type / key / ref、原子节点位置及属性；复合画布须转发根属性并实现 `decoration` 插槽，将装饰放在滚动内容之外。`PaperPreviewSurface` 已提供该插槽，未传时 SSR 字节保持原样；任意不支持此契约的组件不可直接作为活动 Frame 的子元素。不要通过条件分支增删 `<BlueprintFrame>` 组件边界；已有框架可直接调用无 Hook 的 `BlueprintFrame({ active, children: canvas })`，保留原 React 树路径。非活动时返回原元素对象，活动时不创建包裹父节点。
+
+接入示例（模块已导入 `useState`、`useEffect`、`useTheme`、`BlueprintFrame`）：
+
+```tsx
+function CanvasHost() {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const active = mounted && (resolvedTheme === "blueprint" || resolvedTheme === "blueprint-night")
+  return <BlueprintFrame active={active}>
+    <section aria-label="现有画布">现有内容与控件</section>
+  </BlueprintFrame>
+}
+```
+
+工作台 W342 必须使用本地预览作用域的有效主题，不能改用 Prism 站点的全局主题。若该主题服务端和客户端首帧已一致，可直接按局部主题启用；若由 localStorage、系统偏好或挂载后恢复，则同样使用 mounted 门禁。无论主题来源为何，切换时均须保持画布根和组件位置稳定。
+
+专项 `tests/p126-blueprint-frame.test.mjs` 对真实题目／试卷示例执行三主题原始 SSR 字节对照（含 React ID），并在两蓝图下只移除允许装饰及其属性后进行结构对位；q17 椭圆 → q18、知识点切换及试卷检查器下一题事件保留。`tests/p126-hydration.test.mjs` 使用真实 next-themes Provider、localStorage 和 `hydrateRoot`，覆盖两个真实宿主及本页 `#blueprint-frame` 示例；断言无水合错误、原 DOM 身份保留，并在真实缩放操作后切换主题检查状态保留。移除 mounted 门禁及重新包裹画布的变异分别触发水合错误和节点身份失败。测试 DOM 只验证 React 水合与更新，不实现浏览器布局、原生事件派发或视觉验收。浏览器验收：按分工由 Supervisor 执行，覆盖 1920×1080、1440×900、1280 与 390，检查区内滚动、主题切换、A/B、动态图号、长中文及公式。

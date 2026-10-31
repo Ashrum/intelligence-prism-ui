@@ -8,7 +8,7 @@ export function ReviewQuestionDetails(props:{question:ReviewQuestion;related:str
  const related=props.related.map(id=>knowledgePoints.find(k=>k.id===id)!)
  return QuestionAnalysisDetails({...props,related,...reviewDetailFields(props.question,related)})
 }
-export function QuestionDigitalCard(props:{question:ReviewQuestion;answers:StudentAnswer[];selected:string|null;onSelect:(id:string)=>void;missing:boolean;annotations:boolean;onIncludeCorrect:()=>void;filter:string;markedPoints:string[];onKnowledge:(id:string)=>void}) {
+export function QuestionDigitalCard(props:{blueprintSheet?:{current:number;total:number};question:ReviewQuestion;answers:StudentAnswer[];selected:string|null;onSelect:(id:string)=>void;missing:boolean;annotations:boolean;onIncludeCorrect:()=>void;filter:string;markedPoints:string[];onKnowledge:(id:string)=>void}) {
  const {question:q,answers}=props,stats=questionAnalyses[q.id]
  const related=[...new Set(q.points.flatMap(p=>p.knowledge))].map(id=>knowledgePoints.find(k=>k.id===id)!)
  return <QuestionAnalysisCard {...props} {...reviewDetailFields(q,related)} contentRecord={{...q.record,figure:[12,17].includes(q.number)?ellipseFigure(q.number,'ui'):q.record.figure}} related={related} options={stats.options?.map(o=>({...o,ratio:o.count/answers.length*100,percent:Math.round(o.count/answers.length*100),students:answers.filter(a=>a.option===o.label).map(a=>a.student),distractor:o.label===stats.distractor}))} groups={q.type==='填空题'?{...props,...makeAnswerGroups(props)}:undefined}/>

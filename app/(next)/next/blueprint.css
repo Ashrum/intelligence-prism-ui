@@ -864,3 +864,28 @@
 :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is([data-slot="collapsible"],header.shadow-xs\/5.ring-1,[data-slot="number-field-group"],[data-slot="textarea-control"].border,[data-agent-capsule],[data-slot="table-body"],[data-paper-size].shadow-2xl,[data-missing-paper].shadow-2xl,[data-slot="pagination-link"],[data-review-page][data-paper-size],.review-sheet,div.max-w-lg.overflow-hidden:has([data-slot="command-list"]),div.relative.-mx-px:has([data-slot="command-list"])):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000); }
 section[data-agent-preview]:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]).rounded-xl:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; }
 /* End P125 preview surface gaps. */
+
+/* P126: opt-in drawing frame. Geometry belongs only to the new frame/inline ornaments. */
+.bp-frame { --bp-ruler-size:18px; position:relative; min-width:0; min-height:0; padding:30px; }
+.bp-frame-decoration { position:absolute; inset:0; pointer-events:none; user-select:none; z-index:1; }
+.bp-frame-decoration::before { content:""; position:absolute; inset:18px; border:1px solid var(--line); }
+.bp-frame--canvas { background:var(--border); display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr); overflow:hidden; }
+.bp-frame > .bp-frame-decoration > .bp-ruler { background:var(--border); }
+.bp-inline-code { display:inline-grid; width:1.5em; min-height:0; height:1.5em; margin-inline-end:0.5em; vertical-align:middle; font-size:var(--text-ui-body); line-height:inherit; }
+.bp-inline-folio { display:inline; white-space:nowrap; }
+.bp-frame-folio { position:absolute; top:18px; inset-inline:30px; display:flex; align-items:center; height:12px; font-family:var(--font-mono); font-size:var(--text-ui-meta); line-height:1; }
+.bp-frame-folio .bp-inline-code { height:12px; font-size:var(--text-ui-meta); }
+@container (max-width:760px) {
+  .bp-frame { padding:0; }
+  .bp-frame-decoration { display:none; }
+  .bp-frame[data-narrow-frame="keep"] { box-shadow:inset 1px 0 var(--line),inset -1px 0 var(--line); }
+}
+@media (max-width:760px) {
+  .bp-frame { padding:0; }
+  .bp-frame-decoration { display:none; }
+  .bp-frame[data-narrow-frame="keep"] { box-shadow:inset 1px 0 var(--line),inset -1px 0 var(--line); }
+}
+/* Existing review components: visual properties only, including nested-preview exclusion. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-frame :is(.text-score-display,.tabular-nums,output,[data-slot="avatar-fallback"]):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-frame [data-slot="badge"]:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-radius:0; border-color:var(--line); box-shadow:inset 0 0 0 1px var(--line); }
+/* End P126 drawing frame. */

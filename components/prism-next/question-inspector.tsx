@@ -6,8 +6,10 @@ import { Badge } from "./badge"
 import { Frame, FrameHeader, FrameFooter } from "@/components/coss/frame"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { ReviewTip as Tip, ReviewConfirmation as Confirmation, ReviewMeter as ScoreMeter, reviewToneClass, type ReviewTone } from "./review-parts"
+import { BlueprintInlineCode } from "./blueprint/blueprint"
 import "./review-workspace.css"
 export type QuestionInspectorProps = {
+  blueprintCode?: boolean
   bodyOnly?: boolean
   density?: "default" | "compact"
   showEvidence?: boolean; showConfidence?: boolean; showKnowledge?: boolean; showComparison?: boolean
@@ -24,7 +26,7 @@ export type QuestionInspectorProps = {
   extraLink?: ReactNode; onStep: (delta: number) => void; onWrong: () => void; onIntent?: (id: string) => void
 }
 /** All judgments and rubric facts are external; buttons emit intentions only. */
-export function QuestionInspector({ bodyOnly = false, density = "default", showEvidence = true, showConfidence = true, showKnowledge = true, showComparison = true, scoreSource, afterScore, afterPoints, footer, title, status, navigation, score, points, pointsEmptyText, evidence, confidence, knowledge, comparison, comparisonEmptyText, actions, extraLink, onStep, onWrong, onIntent }: QuestionInspectorProps) {
+export function QuestionInspector({ blueprintCode = false, bodyOnly = false, density = "default", showEvidence = true, showConfidence = true, showKnowledge = true, showComparison = true, scoreSource, afterScore, afterPoints, footer, title, status, navigation, score, points, pointsEmptyText, evidence, confidence, knowledge, comparison, comparisonEmptyText, actions, extraLink, onStep, onWrong, onIntent }: QuestionInspectorProps) {
   const compact = density === "compact"
   const hasFooter = footer !== undefined && footer !== null && footer !== false
   const evidenceBody = showEvidence && <section className="overflow-hidden rounded-lg bg-muted" aria-label="AI 判定依据"><div data-ai-source className="h-0.5" style={{ background: 'var(--brand-ai-gradient)' }} /><div className={compact ? "space-y-2 p-3" : "space-y-3 p-4"}><h3 className="flex items-center gap-2 text-block-title"><Sparkles className="size-4" aria-hidden="true" />AI 判定依据</h3><p className="text-ui-body">{evidence}</p>{showConfidence && <p className="text-ui-meta text-muted-foreground">置信度：{confidence ?? "未提供"}</p>}</div></section>
@@ -42,7 +44,7 @@ export function QuestionInspector({ bodyOnly = false, density = "default", showE
   const customFooter = hasFooter && <footer data-slot="question-inspector-footer" className={compact ? "flex shrink-0 flex-wrap items-center gap-2 border-t px-4 py-3" : "flex shrink-0 flex-wrap items-center gap-3 border-t p-4"}>{footer}</footer>
   if (bodyOnly) return hasFooter ? <div data-question-inspector-body className="flex h-full min-h-0 flex-col overflow-hidden"><div className="min-h-0 flex-1 overflow-hidden"><ScrollArea overscrollContain scrollFade>{body}{comparisonBody}</ScrollArea></div>{customFooter}</div> : <>{body}{comparisonBody}</>
   return <aside aria-label="本题检查器" data-review-inspector className="d1-inspector min-h-0 bg-background">
-    <FrameHeader className="d1-inspector-header flex-row items-center justify-between gap-1 px-2 py-0"><h2 className="min-w-0 truncate text-block-title" title={title}>{title}</h2><Confirmation>{status}</Confirmation><div className="flex shrink-0"><Tip label="上一题" keys="↑"><Button variant="ghost" size="icon" aria-label="上一题" disabled={!navigation.previous} onClick={() => onStep(-1)}><ArrowUp /></Button></Tip><Tip label="下一题" keys="↓"><Button variant="ghost" size="icon" aria-label="下一题" disabled={!navigation.next} onClick={() => onStep(1)}><ArrowDown /></Button></Tip><Tip label="下一道错题" keys="N"><Button variant="ghost" size="icon" aria-label="下一道错题" disabled={!navigation.nextWrong} onClick={onWrong}><ChevronsDown /></Button></Tip></div></FrameHeader>
+    <FrameHeader className="d1-inspector-header flex-row items-center justify-between gap-1 px-2 py-0"><h2 className="min-w-0 truncate text-block-title" title={title}>{blueprintCode ? <><BlueprintInlineCode active code="B" />{title}</> : title}</h2><Confirmation>{status}</Confirmation><div className="flex shrink-0"><Tip label="上一题" keys="↑"><Button variant="ghost" size="icon" aria-label="上一题" disabled={!navigation.previous} onClick={() => onStep(-1)}><ArrowUp /></Button></Tip><Tip label="下一题" keys="↓"><Button variant="ghost" size="icon" aria-label="下一题" disabled={!navigation.next} onClick={() => onStep(1)}><ArrowDown /></Button></Tip><Tip label="下一道错题" keys="N"><Button variant="ghost" size="icon" aria-label="下一道错题" disabled={!navigation.nextWrong} onClick={onWrong}><ChevronsDown /></Button></Tip></div></FrameHeader>
     <div className="min-h-0 overflow-hidden px-4 pb-4"><ScrollArea overscrollContain scrollFade><Frame>
       {body}{comparisonBody}
     </Frame></ScrollArea></div>

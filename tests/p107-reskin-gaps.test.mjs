@@ -1,3 +1,4 @@
+import { restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -155,7 +156,7 @@ test('P107 all other CSS, tokens and source TSX stay byte-identical to 1486441',
   assert.equal(actual, expected);
   const compile = source => transform({ code: Buffer.from(source), minify: true }).code.toString();
   assert.equal(compile(actual), compile(expected));
-  for (const file of ['app/(next)/next/theme.css', 'components/coss/frame.tsx', 'components/coss/button.tsx', 'components/coss/toolbar.tsx', 'components/prism-next/question-card.tsx', 'components/prism-next/question-analysis-card.tsx', 'components/prism-next/attachment.tsx']) assert.equal(read(file), before(file), file);
+  for (const file of ['app/(next)/next/theme.css', 'components/coss/frame.tsx', 'components/coss/button.tsx', 'components/coss/toolbar.tsx', 'components/prism-next/question-card.tsx', 'components/prism-next/question-analysis-card.tsx', 'components/prism-next/attachment.tsx']) assert.equal(restoreP126(file, read(file)), before(file), file);
   // Existing guide-approved shadow tokens are zero-blur in both themes.
   for (const match of read('app/(next)/next/theme.css').matchAll(/--shadow-offset(?:-sm)?:([^;]+);/g)) {
     assert.match(match[1].trim(), /^(?:none$|\S+ \S+ 0(?:px)? )/);

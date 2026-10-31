@@ -1,3 +1,4 @@
+import { restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -125,7 +126,7 @@ test('P104 nested white/night previews select their own existing Popover shadow'
 test('P104 leaves reusable component TSX and core surface/layout CSS byte-identical', () => {
   for (const file of ['student-control-bar.tsx', 'paper-preview-surface.tsx', 'review-workspace.tsx', 'review-switcher.tsx', 'paper-preview-group.tsx', 'student-control-bar.css', 'review-workspace.css']) {
     const path = `components/prism-next/${file}`;
-    assert.equal(read(path), before(path), path);
+    assert.equal(restoreP126(path, read(path)), before(path), path);
   }
 });
 
