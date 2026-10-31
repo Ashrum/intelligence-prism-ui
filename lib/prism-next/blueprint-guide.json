@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "a3727069feccd9d625904269b14b078848312157b4c660dfe3a587c353d3a41a",
+  "sourceSha256": "c25f4ec7ec3b7fe3f8a55b02dfaaeda3d271005e3d6e63b417d160e900500c5a",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -899,7 +899,7 @@
         },
         {
           "type": "text",
-          "value": "。global 三主题不激活外框。新增的既有组件主题规则仅含字体、数字等宽、描边与直角外观，排除嵌套非蓝图预览根及后代。外框自身占用 30px 的装饰内距；原工作区列宽规则、滚动节点、学生控件、纸张缩放及工具条定位算法不改。视口或容器 ≤760px 时外框内距归零，坐标尺、内框及扫描画布的装饰图号隐藏，题卡行内标记仍可见。"
+          "value": "。global 三主题不激活外框。新增的既有组件主题规则仅含字体、数字等宽、描边与直角外观，排除嵌套非蓝图预览根及后代。全页外框默认占用 30px 的装饰内距，视口或容器 ≤760px 时归零并隐藏装饰；该默认行为不变。预览画布改按以下 P128 规则。原工作区列宽规则、滚动节点、学生控件、纸张缩放及工具条定位算法不改。"
         }
       ]
     },
@@ -949,6 +949,160 @@
         {
           "type": "text",
           "value": "，保留原 React 树路径。非活动时返回原元素对象，活动时不创建包裹父节点。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "P128（PO 2026-10-31 对 C0 的已授权调整，实现待 Supervisor Review）：预览根显式选用 "
+        },
+        {
+          "type": "code",
+          "value": "bp-frame--canvas"
+        },
+        {
+          "type": "text",
+          "value": "，以自身 "
+        },
+        {
+          "type": "code",
+          "value": "bp-preview-canvas"
+        },
+        {
+          "type": "text",
+          "value": " inline-size 容器宽度决定装饰。"
+        },
+        {
+          "type": "code",
+          "value": "ReviewWorkspace"
+        },
+        {
+          "type": "text",
+          "value": " 已自动选用；直接使用 "
+        },
+        {
+          "type": "code",
+          "value": "BlueprintFrame"
+        },
+        {
+          "type": "text",
+          "value": " 装饰 "
+        },
+        {
+          "type": "code",
+          "value": "PaperPreviewSurface"
+        },
+        {
+          "type": "text",
+          "value": " 时传 "
+        },
+        {
+          "type": "code",
+          "value": "className=\"bp-frame--canvas\""
+        },
+        {
+          "type": "text",
+          "value": "。该模式要求原根下有直接子节点 "
+        },
+        {
+          "type": "code",
+          "value": ".d1-paper-host"
+        },
+        {
+          "type": "text",
+          "value": "（两个真实预览均已满足），不添加包裹节点。常量 "
+        },
+        {
+          "type": "code",
+          "value": "BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926"
+        },
+        {
+          "type": "text",
+          "value": "：A4 纵向纸宽 "
+        },
+        {
+          "type": "code",
+          "value": "210 × 96 / 25.4 ≈ 793.70px"
+        },
+        {
+          "type": "text",
+          "value": "（题目扫描稿取整为 794px），加外框两侧 "
+        },
+        {
+          "type": "code",
+          "value": "30 × 2"
+        },
+        {
+          "type": "text",
+          "value": "、滚动区两侧 "
+        },
+        {
+          "type": "code",
+          "value": "8 × 2"
+        },
+        {
+          "type": "text",
+          "value": "、工具条预留 "
+        },
+        {
+          "type": "code",
+          "value": "56"
+        },
+        {
+          "type": "text",
+          "value": "，向上取整为 926px。此值针对现有 A4 纵向与 794px 题目稿及默认工具条；横向、A3、自定义纸宽或工具条不据此保证 100%。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "画布宽度 <926px：外框内距为零，整组坐标尺、内框线、画布带 A/图号隐藏；≥926px：显示装饰并在现有 "
+        },
+        {
+          "type": "code",
+          "value": ".d1-paper-host"
+        },
+        {
+          "type": "text",
+          "value": " 外留 30px。根始终零 padding，避免容器查询尺寸随内距变化而反复切换；内容区实际缩小/扩大后，现有 "
+        },
+        {
+          "type": "code",
+          "value": "PaperPreviewContinuous"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "PaperPreviewMixed"
+        },
+        {
+          "type": "text",
+          "value": " 的 "
+        },
+        {
+          "type": "code",
+          "value": "ResizeObserver"
+        },
+        {
+          "type": "text",
+          "value": " 重新量取滚动视口，适配宽度自动重算，手动缩放值与模式不重置。高度不参与判断；收起题目栏、沉浸及右栏改变均由画布自身宽度驱动。题卡标题行 A/图号、右栏 B 不在装饰层中，始终按原主题契约显示。宽度切换不变更 React 树或 DOM 节点；滚动节点和滚动状态保留（滚动范围缩小时仍受浏览器原生边界约束）。全页 "
+        },
+        {
+          "type": "code",
+          "value": "BlueprintFrame"
+        },
+        {
+          "type": "text",
+          "value": " 未选用该类时沿用原规则。"
         }
       ]
     },
@@ -13151,12 +13305,12 @@
     {
       "source": "docs/component-contracts.md",
       "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
-      "sha256": "20fbb90ca5df121347cdc0edb15d60f16ea0849b1e1e6211944a0fd914ed2fe1"
+      "sha256": "2a49ef4ec6111ab8d90f9f6fc6abfe4342bc9ed24d15a07acda27414b4b2959a"
     },
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "a3727069feccd9d625904269b14b078848312157b4c660dfe3a587c353d3a41a"
+      "sha256": "c25f4ec7ec3b7fe3f8a55b02dfaaeda3d271005e3d6e63b417d160e900500c5a"
     }
   ]
 }

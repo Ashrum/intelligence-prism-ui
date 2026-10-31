@@ -17,6 +17,11 @@ export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "
 const RULER_TOP = ["1", "2", "3", "4", "5", "6", "7", "8"]
 const RULER_SIDE = ["A", "B", "C", "D"]
 
+/** A4 at 96dpi rounded up (794) + frame (2×30) + viewport (2×8) + toolbar (56).
+ * Keep the bp-preview-canvas query in blueprint.css in sync; P128 tests derive
+ * this boundary with paperDimensions / paperZoomPercent and the real hosts. */
+export const BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926
+
 export interface BlueprintFolio {
   kind: "sheet" | "section" | "rev"
   value: string
