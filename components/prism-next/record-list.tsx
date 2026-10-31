@@ -41,6 +41,8 @@ export type RecordListState = { kind: "ready" | "loading" | "search-empty" }
   | { kind: "empty"; description?: string } | { kind: "error"; reason: string }
 export type RecordListProps = {
   title?: string; description?: string; primaryLabel?: string
+  /** Optional decoration before the existing title; host supplies aria-hidden ornaments. */
+  titleLeading?: ReactNode
   /** List-wide visibility; defaults to true. Visible missing values retain their unknown labels. */
   showType?: boolean; showStatus?: boolean
   /** List-level primary action visibility in both header and empty state; defaults to true. */
@@ -66,7 +68,7 @@ const countLabel = (count: number | null) => count !== null && Number.isSafeInte
 const knownProgress = (value: number | null | undefined): value is number => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100
 
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
-export function RecordList({ title = "批阅记录", description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
+export function RecordList({ title = "批阅记录", titleLeading, description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
   showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
   actionVariant = 'ghost', actionAlign = 'start',
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
@@ -182,7 +184,7 @@ export function RecordList({ title = "批阅记录", description = "查看 AI �
   return <section data-record-list data-state={state.kind} aria-labelledby={showHeader ? `${id}-title` : undefined} aria-label={showHeader ? undefined : title} className="@container min-w-0">
     <Frame>
     {showHeader && <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
-      <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
+      <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{titleLeading == null ? title : <>{titleLeading}{title}</>}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
     </FrameHeader>}
     <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">

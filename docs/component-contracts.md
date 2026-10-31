@@ -3411,3 +3411,33 @@ function CanvasHost() {
 工作台 W342 必须使用本地预览作用域的有效主题，不能改用 Prism 站点的全局主题。若该主题服务端和客户端首帧已一致，可直接按局部主题启用；若由 localStorage、系统偏好或挂载后恢复，则同样使用 mounted 门禁。无论主题来源为何，切换时均须保持画布根和组件位置稳定。
 
 专项 `tests/p126-blueprint-frame.test.mjs` 对真实题目／试卷示例执行三主题原始 SSR 字节对照（含 React ID），并在两蓝图下只移除允许装饰及其属性后进行结构对位；q17 椭圆 → q18、知识点切换及试卷检查器下一题事件保留。`tests/p126-hydration.test.mjs` 使用真实 next-themes Provider、localStorage 和 `hydrateRoot`，覆盖两个真实宿主及本页 `#blueprint-frame` 示例；断言无水合错误、原 DOM 身份保留，并在真实缩放操作后切换主题检查状态保留。移除 mounted 门禁及重新包裹画布的变异分别触发水合错误和节点身份失败。测试 DOM 只验证 React 水合与更新，不实现浏览器布局、原生事件派发或视觉验收。浏览器验收：按分工由 Supervisor 执行，覆盖 1920×1080、1440×900、1280 与 390，检查区内滚动、主题切换、A/B、动态图号、长中文及公式。
+
+
+## P127 · 现有标题与结果工具行插槽（2026-10-31）
+
+设计状态：C0 图纸语言冻结范围内的候选实现，待 Supervisor 独立 Review。工程准入：未开始。
+
+本轮只扩展现有组件的可选呈现插槽，不增加标题语义，不改 `title: string`，不搬入业务状态。组件站入口：`/next/foundations/blueprint#title-slots-p127`。示例为合成数据，排序、收藏、搜索仅更新示例宿主状态；题数保持外部提供的 4 题。
+
+| 组件 | 可选参数 | 插入位置与边界 |
+| --- | --- | --- |
+| `RecordList` | `titleLeading?: ReactNode` | 原 h3 标题文字之前；`showHeader=false` 时一并不呈现。标题、列表、分页的名称仍由原 string 提供。 |
+| `TextbookDirectory` | `headingLeading?: ReactNode` | 原教材标题 p 的文字之前；适用 header、普通 embedded、正式 embedded。split 只有教材选择字段，没有教材标题行，忽略此参数，不增一行。 |
+| `FilterResults` / `FacetFilter` | `leading?: ReactNode`、`trailing?: ReactNode` | leading 在「综合」排序前，与排序共用原工具行；trailing 在结果操作区末尾、已有 endSlot 之后。endSlot 仍是原操作插槽，不新增标题。 |
+| `QuestionAnalysisPanel` | compact 分支 `titleLeading?: ReactNode` | 原 h2「本题分析」文字之前；detailed API 不扩展。 |
+
+宿主在挂载后且外观为 blueprint / blueprint-night 时传入 `BlueprintInlineCode`（A / B）与 `BlueprintInlineFolio`；其他主题传 `undefined`，不要传一个最终返回 null 的组件代替空插槽，以免 FilterResults 建立空排序组合。字母和图号沿用 `aria-hidden=true` 的装饰语义；不替换宿主原标题、可访问名称、图号事实或操作。
+
+```tsx
+const [mounted, setMounted] = useState(false)
+useEffect(() => setMounted(true), [])
+const active = mounted && (resolvedTheme === "blueprint" || resolvedTheme === "blueprint-night")
+const leading = active ? <BlueprintInlineCode active code="B" /> : undefined
+const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", value: "01 / 04" }} /> : undefined
+// value、sortItems、resultCount、onIntent 由原宿主提供。
+<FilterResults value={value} sortItems={sortItems} resultCount={resultCount} onIntent={onIntent} leading={leading} trailing={trailing} />
+```
+
+`.bp-inline-folio` 的标题侧间距与 `.bp-inline-code` 的文字侧间距均为 12px，只在两蓝图主题生效，排除嵌套核心主题预览根及其后代。沿用既有字体、配色、字重和圆角；原布局及核心主题样式不变。父容器若已有 gap，会与 margin 共同形成实际距离，宿主须在真实标题行复核，不批量改页面布局。
+
+复用检索（离线）：已有 Prism 的上述四个组件、BlueprintInlineCode / BlueprintInlineFolio 和 coss FrameHeader / Tabs 足够；沿用已有本地 particles 检索记录，不新增组件目录、第三方实现、依赖或令牌，未联网刷新 registry。专项 `tests/p127-title-slots.test.mjs` 使用固定 Git 基线比较实际组件完整 SSR，覆盖五主题默认/空参数与组件页实际示例操作；CSS 隔离断言不替代浏览器验收。浏览器验收：按分工由 Supervisor 执行，覆盖两蓝图与核心三主题、1280 / 390、嵌套预览、长中文与公式，以及 AI 批阅标题的图号间距。

@@ -21,6 +21,8 @@ export type QuestionAnalysisComparison = {id:string; label:string; value:number|
 export type QuestionAnalysisPanelCompactProps = Partial<Omit<QuestionAnalysisPanelDetailedProps,'layout'|'distribution'>> & {
  layout:'compact'
  title?:string
+ /** Decorative prefix for the existing compact title. */
+ titleLeading?:ReactNode
  verdict?:{label:string; tone:'neutral'|'info'|'success'|'warning'|'destructive'; summary:ReactNode}
  keyMetrics?:QuestionAnalysisMetric[]
  distribution?:QuestionAnalysisDistribution | number[]
@@ -77,7 +79,7 @@ function Disclosure({label,meta,children}:{label:string;meta?:ReactNode;children
 
 /** Internal compact composition; does not add a catalog component. */
 export function QuestionAnalysisPanelCompact(props:QuestionAnalysisPanelCompactProps) {
- const {title='本题分析',verdict,keyMetrics=[],distribution,distributionSlot,comparisons,disclosures=[],notes,actions,statistics,supplementaryMetrics=[],max,knowledge:k}=props
+ const {title='本题分析',titleLeading,verdict,keyMetrics=[],distribution,distributionSlot,comparisons,disclosures=[],notes,actions,statistics,supplementaryMetrics=[],max,knowledge:k}=props
  const [root,setRoot]=useState<HTMLElement|null>(null)
  const legacy:QuestionAnalysisMetric[]=statistics?[
   {id:'mean',label:'平均分',value:statistics.mean,hint:max!=null?<>满分 {max}</>:undefined},
@@ -108,7 +110,7 @@ export function QuestionAnalysisPanelCompact(props:QuestionAnalysisPanelCompactP
   {hasLegacyNotes&&<section className="space-y-2"><h4 className="text-ui-action">补充说明</h4>{Array.isArray(distribution)&&distribution.length>0&&<p>分布（按提供顺序）：{distribution.join(' · ')}</p>}{props.insight!=null&&<div>{props.insight}</div>}{props.pending!=null&&<p>待复核：{props.pending}</p>}</section>}
  </div>
  return <section ref={setRoot} data-analysis-layout="compact" aria-label={title} className="min-w-0 space-y-4 [overflow-wrap:anywhere]">
-  <header className="flex items-start justify-between gap-2"><h2 className="text-block-title">{title}</h2>{hasNotes&&<Popover>
+  <header className="flex items-start justify-between gap-2"><h2 className="text-block-title">{titleLeading == null ? title : <>{titleLeading}{title}</>}</h2>{hasNotes&&<Popover>
    <PopoverTrigger render={<Button variant="ghost" size="sm"/>}><Info aria-hidden className="size-4"/>说明</PopoverTrigger>
    <PopoverPopup align="end" portalProps={{container:root}} className="w-80 max-w-[calc(100vw-2rem)] motion-reduce:transition-none" aria-label={notes?.title??'说明'}>
     <PopoverTitle className="text-ui-action mb-3">{notes?.title??'说明'}</PopoverTitle>{notesContent}

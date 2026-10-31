@@ -9,6 +9,7 @@ import { MenuPopup } from "../scoped-overlays"
 import { Button } from "../button"
 import { Badge } from "../badge"
 import { ChartLegend } from "../charts/chart-legend"
+import { BlueprintTitleSlotsDemo } from "./blueprint-title-slots"
 import { BlueprintGradingDemo } from "./blueprint-grading"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
 import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
@@ -155,6 +156,7 @@ export function BlueprintComponentsDemo() {
   }
   return <div className="bp-demo space-y-8">
     <BlueprintFrameDemo />
+    <BlueprintTitleSlotsDemo />
     <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>

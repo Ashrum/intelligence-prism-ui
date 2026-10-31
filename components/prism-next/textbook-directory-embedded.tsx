@@ -69,12 +69,12 @@ function EditionOptions({ editions, value, onChange }: { editions: TextbookSubje
 }
 
 // Shared formal embedded presentation; metadata comes only from the host.
-function BookHeader({ book, children }: { book: TextbookHeaderDefinition; children?: ReactNode }) {
+function BookHeader({ book, headingLeading, children }: { book: TextbookHeaderDefinition; headingLeading?: ReactNode; children?: ReactNode }) {
   const volume = book.volume || book.title, details = [book.subject, book.edition].filter(Boolean).join(" · ")
   return <div className="flex min-w-0 items-center gap-3" data-slot="textbook-header">
     <BookCover book={book} />
     <div className="min-w-0 flex-1" role="group" aria-label={[volume, details].filter(Boolean).join(" · ")}>
-      <p className="truncate text-block-title text-foreground" title={volume}>{volume}</p>
+      <p className="truncate text-block-title text-foreground" title={volume}>{headingLeading == null ? volume : <>{headingLeading}{volume}</>}</p>
       {details && <p className="truncate text-ui-hint text-muted-foreground" title={details}>{details}</p>}
     </div>{children}
   </div>
@@ -127,7 +127,7 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange }: TextbookDirectoryProps) {
+export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange, headingLeading }: TextbookDirectoryProps) {
   const View = OutlineView
   const initialExpanded = noExpansion
   const [localBookId, setLocalBookId] = useState(textbooks[0]?.id ?? "")
@@ -192,7 +192,7 @@ export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, 
   const closeMulti = () => setMultiDialog(previous => ({ ...previous, open: false }))
   const setDraft: SelectionChange = update => setMultiDialog(previous => ({ ...previous, selections: typeof update === "function" ? update(previous.selections) : update }))
   return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory={layout === "header" ? "header" : "embedded"}>
-    <BookHeader book={book}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
+    <BookHeader book={book} headingLeading={headingLeading}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
       setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
     }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>

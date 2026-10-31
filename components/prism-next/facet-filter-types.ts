@@ -31,6 +31,9 @@ export type FacetFilterProps = {
   showFavorites?: boolean
   favoriteCount?: number
   endSlot?: ReactNode
+  /** Optional ornaments in the existing results toolbar, not a separate heading. */
+  leading?: ReactNode
+  trailing?: ReactNode
   onIntent: (intent: FacetFilterIntent) => void
 }
 

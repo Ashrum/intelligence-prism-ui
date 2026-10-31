@@ -1,3 +1,4 @@
+import { restoreP127 } from './helpers/p127-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -168,6 +169,7 @@ test('P105 reusable markup remains byte-identical to P104', () => {
   for (const path of componentPaths) {
     let actual = read(path);
     if (path === 'components/prism-next/textbook-directory.tsx') {
+      actual = restoreP127(path, actual);
       // P121: exact import and visible-field hunks only; all remaining bytes frozen.
       for (const hunk of JSON.parse(read('tests/fixtures/p121-textbook-source-hunks.json'))) {
         assert.ok(hunk.after.length > 0);
