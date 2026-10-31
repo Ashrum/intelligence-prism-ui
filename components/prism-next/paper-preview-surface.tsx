@@ -1,15 +1,18 @@
 "use client"
-import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react"
+import { cloneElement, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type RefObject } from "react"
+import { cn } from "@/lib/utils"
 import { FileImage } from "lucide-react"
 import { dockPaperToolbar } from "./paper-preview-layout"
 import "./review-workspace.css"
-export type PaperPreviewSurfaceProps = {
+export type PaperPreviewSurfaceProps = Omit<ComponentProps<"section">, "ref"> & {
+  /** Noninteractive root decoration, outside the scrolling paper content. */
+  decoration?: ReactNode
   children: ReactNode; toolbar: ReactNode; overlay?: ReactNode; scale?: number; layoutKey?: unknown
   viewportRef: RefObject<HTMLDivElement | null>; canvasRef?: RefObject<HTMLElement | null>; toolbarRef: RefObject<HTMLDivElement | null>
   scanOnly?:boolean; topInset?:number; bottomInset?: number; missing?: boolean; emptyImageText?: ReactNode; emptyImageDetail?: ReactNode
 }
 /** Paper-edge side tab: observes paper geometry, clamps overwide sheets, no timers. */
-export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale = 1, layoutKey, viewportRef, canvasRef, toolbarRef: toolbar, scanOnly=false, topInset=0, bottomInset = 0, missing = false, emptyImageText = "扫描图像未提供", emptyImageDetail }: PaperPreviewSurfaceProps) {
+export function PaperPreviewSurface({ decoration, className, children, toolbar: tools, overlay, scale = 1, layoutKey, viewportRef, canvasRef, toolbarRef: toolbar, scanOnly=false, topInset=0, bottomInset = 0, missing = false, emptyImageText = "扫描图像未提供", emptyImageDetail, ...rootProps }: PaperPreviewSurfaceProps) {
   const localCanvas = useRef<HTMLElement>(null), canvasArea = canvasRef ?? localCanvas
   const [dockPosition, setDockPosition] = useState({ left: 0, top: 8, maxHeight: 600 })
   useLayoutEffect(() => {
@@ -31,11 +34,12 @@ export function PaperPreviewSurface({ children, toolbar: tools, overlay, scale =
     node?.addEventListener('scroll', measure, { passive: true })
     return () => { observer.disconnect(); node?.removeEventListener('scroll', measure) }
   }, [scale, layoutKey, missing, children, bottomInset, topInset, scanOnly])
-  return <section ref={canvasArea} aria-label="试卷画布" data-review-canvas className="d1-canvas bg-border">
+  const surface = <section ref={canvasArea} aria-label="试卷画布" data-review-canvas className={cn("d1-canvas bg-border", className)} {...rootProps}>
     {overlay}
     <div className="d1-paper-host min-h-0 min-w-0 [&_[data-paper-size]]:shadow-2xl [&_[data-region]>button]:border-0! [&_[data-region]>button]:ring-offset-0! [&_[data-region]>button[aria-pressed=false]:hover]:border! [&_[data-region]>button[aria-pressed=false]:hover]:border-info! [&_[data-region]>button[aria-pressed=false]:focus-visible]:ring-1! [&_[data-region]>button[aria-pressed=false]:focus-visible]:ring-info! [&_[data-region]>button[aria-pressed=true]]:ring-2! [&_[data-region]>button[aria-pressed=true]]:ring-info!">
       {missing ? <div className="flex h-full items-center justify-center p-2 pr-16"><div data-missing-paper className="flex aspect-[210/297] h-full max-h-full max-w-full flex-col items-center justify-center gap-4 bg-card p-6 shadow-2xl"><FileImage className="size-10 text-muted-foreground" /><p className="text-ui-body">{emptyImageText}</p><p className="text-ui-hint text-muted-foreground">{emptyImageDetail}</p></div></div> : children}
     </div>
     <div className="d1-tool-dock rounded-r-xl shadow-lg" style={dockPosition}><div className="d1-tool-scroll">{tools}</div></div>
   </section>
+  return decoration ? cloneElement(surface, undefined, ...surface.props.children, decoration) : surface
 }

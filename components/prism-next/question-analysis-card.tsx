@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { QuestionContent, QuestionSolution } from '@/components/prism-next/question-content'
+import { BlueprintInlineCode, BlueprintInlineFolio } from "./blueprint/blueprint"
 import { QuestionHeading } from '@/components/prism-next/question-presentation'
 import type { QuestionDetailTab } from '@/components/prism-next/question-details'
 import { Tabs, TabsList, TabsTab, TabsPanel } from '@/components/coss/tabs'
@@ -19,7 +20,7 @@ export type AnalysisCardQuestion = {id:string;number:number;type:string;category
 export type AnalysisKnowledgeLink = {id:string;name:string}
 export type AnalysisDetailItem = {label:string;value?:ReactNode;emptyText?:ReactNode}
 export type AnalysisDetailFields = {pointsEmptyText?:ReactNode;teaching?:AnalysisDetailItem[];archive?:AnalysisDetailItem[]}
-export type QuestionAnalysisCardProps = AnalysisDetailFields & {question:AnalysisCardQuestion; contentRecord?:QuestionRecord; options?:AnalysisOption[]; related:AnalysisKnowledgeLink[]; groups?:QuestionAnalysisGroupsProps; selected:string|null;onSelect:(id:string)=>void;onIncludeCorrect:()=>void;filter:string;markedPoints:string[];onKnowledge:(id:string)=>void}
+export type QuestionAnalysisCardProps = AnalysisDetailFields & {blueprintSheet?: { current: number; total: number }; question:AnalysisCardQuestion; contentRecord?:QuestionRecord; options?:AnalysisOption[]; related:AnalysisKnowledgeLink[]; groups?:QuestionAnalysisGroupsProps; selected:string|null;onSelect:(id:string)=>void;onIncludeCorrect:()=>void;filter:string;markedPoints:string[];onKnowledge:(id:string)=>void}
 
 
 function OptionStatistics({option,students,selected,onSelect,distractor,onIncludeCorrect,filter}:{option:AnalysisOption;students:AnalysisStudent[];selected:string|null;onSelect:(id:string)=>void;distractor:boolean;onIncludeCorrect:()=>void;filter:string}) {
@@ -46,13 +47,13 @@ export function QuestionAnalysisDetails({question:q,related,tab,onTabChange,scor
   <TabsPanel value="archive" className="px-4"><dl className="grid gap-4 sm:grid-cols-2">{archive.map(item=>row(item.label,item.value??item.emptyText))}</dl></TabsPanel>
  </Tabs>
 }
-export function QuestionAnalysisCard({question:q,contentRecord=q.record,options=[],related,groups,selected,onSelect,onIncludeCorrect,filter,markedPoints,onKnowledge,pointsEmptyText,teaching,archive}:QuestionAnalysisCardProps) {
+export function QuestionAnalysisCard({question:q,contentRecord=q.record,options=[],related,groups,selected,onSelect,onIncludeCorrect,filter,markedPoints,onKnowledge,pointsEmptyText,teaching,archive,blueprintSheet}:QuestionAnalysisCardProps) {
  const [tab,setTab]=useState<QuestionDetailTab>('answer')
  useEffect(()=>{if(markedPoints.length)setTab('answer')},[markedPoints])
  const scoring=scoringPoints(q,markedPoints,pointsEmptyText)
  return <article data-question-id={q.id} data-question-level="L2" data-digital-question className="q6-question-card prism-question min-w-0 rounded-xl bg-card px-4 py-5 text-ui-body text-card-foreground shadow-xs/5 ring-1 ring-border" aria-labelledby={`digital-${q.id}`}>
   <div className="q7-question-content min-w-0 w-full space-y-4">
-  <QuestionHeading question={q.record} number={q.number} id={`digital-${q.id}`}/>
+  <QuestionHeading question={q.record} number={q.number} id={`digital-${q.id}`} leading={blueprintSheet ? <BlueprintInlineCode active code="A"/> : undefined} titleSuffix={blueprintSheet ? <BlueprintInlineFolio active folio={{kind:"sheet",value:`${blueprintSheet.current} / ${blueprintSheet.total}`}}/> : undefined}/>
   <QuestionContent question={options.length?{...contentRecord,optionColumns:1}:contentRecord} textSize="ui" optionExtra={q.type==='选择题'?id=>{const option=options.find(o=>o.label===id);if(!option)return null;return <OptionStatistics key={`${q.id}-${id}`} option={option} students={option.students} selected={selected} onSelect={onSelect} distractor={!!option.distractor} filter={filter} onIncludeCorrect={onIncludeCorrect}/>} : undefined}/>
   {groups&&<AnswerGroups {...groups} selected={selected} onSelect={onSelect} onIncludeCorrect={onIncludeCorrect} filter={filter}/>}
   <div className="question-detail-region min-w-0 rounded-xl bg-secondary py-4">

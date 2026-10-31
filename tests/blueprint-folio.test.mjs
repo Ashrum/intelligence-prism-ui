@@ -65,7 +65,7 @@ test('P77 folio: sheetNo remains compatible; explicit folio wins including expli
 test('P77 folio: readable by default; only host-confirmed equivalent information hides the folio, never the title', () => accessibility(api));
 test('P77 folio: rollback mutations are rejected by rendered output contracts', async () => {
   const mutations = [
-    ['REV lost', s => s.replace('folio.kind.toUpperCase()', 'folio.kind === "sheet" ? "SHEET" : "SECTION"'), kinds],
+    ['REV lost', s => s.replaceAll('folio.kind.toUpperCase()', 'folio.kind === "sheet" ? "SHEET" : "SECTION"'), kinds],
     ['zero padding lost', s => s.replaceAll('.padStart(2, "0")', ''), kinds],
     ['v prefix kept', s => s.replace('/^v?(\\d+)$/i', '/^(\\d+)$/i'), kinds],
     ['empty element', s => s.replace('folio && value &&', 'folio &&'), empty],

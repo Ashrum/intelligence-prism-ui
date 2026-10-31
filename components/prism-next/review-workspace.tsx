@@ -5,6 +5,7 @@ import type { CSSProperties, KeyboardEvent, ReactNode, RefObject } from "react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Dialog, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
 import { Kbd } from "@/components/coss/kbd"
+import { BlueprintFrame, type BlueprintFolio } from "./blueprint/blueprint"
 import "./review-workspace.css"
 export { PAPER_REVIEW_BEST_WIDTH, railBand, railCollapsedForWidth, type RailPreferences } from "./review-workspace-layout"
 export type ReviewShortcut = { key: string; intent: string; repeat?: boolean; disabled?: boolean }
@@ -15,6 +16,8 @@ export type ReviewWorkspaceProps = {
   panes?: { value: string; label: string }[]; ready?: boolean; animate?: boolean
   shortcuts?: ReviewShortcut[]; shortcutsDisabled?: boolean; onShortcut?: (intent: string) => void; onBlurOutside?: () => void
   frameRef?: RefObject<HTMLElement | null>; mobileNavRef?: RefObject<HTMLElement | null>
+  /** Opt-in decoration around only the canvas slot; inactive output is unchanged. */
+  blueprintFrame?: boolean; blueprintFolio?: BlueprintFolio
   device?: string; style?: CSSProperties
 }
 /** Keyboard ownership stops at inputs, portals and native tab/list navigation. */
@@ -28,7 +31,7 @@ export function reviewWorkspaceShortcut(event: KeyboardEvent, shortcuts: ReviewS
   event.preventDefault(); event.stopPropagation()
   return !event.repeat || binding.repeat ? binding.intent : undefined
 }
-export function ReviewWorkspace({ label, topbar, rail, canvas, inspector, children, open, onOpenChange, immersive, pane, onPaneChange, panes = [{ value: 'rail', label: '题目' }, { value: 'canvas', label: '试卷' }, { value: 'inspector', label: '本题反馈' }], ready = true, animate = false, shortcuts = [], shortcutsDisabled, onShortcut, onBlurOutside, frameRef, mobileNavRef, device, style }: ReviewWorkspaceProps) {
+export function ReviewWorkspace({ label, topbar, rail, canvas, inspector, children, open, onOpenChange, immersive, pane, onPaneChange, panes = [{ value: 'rail', label: '题目' }, { value: 'canvas', label: '试卷' }, { value: 'inspector', label: '本题反馈' }], ready = true, animate = false, shortcuts = [], shortcutsDisabled, onShortcut, onBlurOutside, frameRef, mobileNavRef, device, style, blueprintFrame = false, blueprintFolio }: ReviewWorkspaceProps) {
   const hasRail = rail != null && rail !== false
   const visiblePanes = hasRail ? panes : panes.filter(item => item.value !== 'rail')
   const activePane = !hasRail && pane === 'rail' ? 'canvas' : pane
@@ -36,7 +39,7 @@ export function ReviewWorkspace({ label, topbar, rail, canvas, inspector, childr
   return <section ref={frameRef} aria-label={label} tabIndex={-1} className="d1-frame bg-background" data-device={device} data-mobile-pane={activePane} data-no-rail={hasRail ? undefined : true} data-immersive={immersive} data-rail-collapsed={!open} data-rail-ready={ready} data-rail-animate={animate} style={style} onKeyDownCapture={event => { const intent = reviewWorkspaceShortcut(event, activeShortcuts, shortcutsDisabled); if (intent) onShortcut?.(intent) }} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onBlurOutside?.() }}>
     {topbar}
     <nav ref={mobileNavRef} className="d1-mobile-nav border-b px-3" aria-label="预览分区"><ToggleGroup value={[activePane]} onValueChange={value => { if (value.length) { if (value[0] === 'rail' && !hasRail) return; if (value[0] === 'rail' && !open) onOpenChange?.(true); else onPaneChange(value[0]) } }}>{visiblePanes.map(({ value, label }) => <ToggleGroupItem key={value} value={value}>{label}</ToggleGroupItem>)}</ToggleGroup></nav>
-    <div className="d1-columns">{hasRail && <div className="d1-rail-shell" inert={!open}>{rail}</div>}{canvas}{inspector}</div>
+    <div className="d1-columns">{hasRail && <div className="d1-rail-shell" inert={!open}>{rail}</div>}{BlueprintFrame({ active: blueprintFrame, className: "bp-frame--canvas", folio: blueprintFolio, children: canvas })}{inspector}</div>
     {children}
   </section>
 }

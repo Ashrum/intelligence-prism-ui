@@ -13,9 +13,9 @@ export type QuestionHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 export const questionDisplayTitle = (question: Pick<QuestionRecord, "title">, number?: number) =>
   `${number === undefined ? "" : `第 ${number} 题 · `}${question.title}`
 
-export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing }: {
+export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing, leading, titleSuffix }: {
   question: QuestionRecord; number?: number; id: string; headingLevel?: QuestionHeadingLevel
-  showPoints?: boolean; displayPoints?: number; reading?: boolean; trailing?: ReactNode
+  showPoints?: boolean; displayPoints?: number; reading?: boolean; trailing?: ReactNode; leading?: ReactNode; titleSuffix?: ReactNode
 }) {
   const Heading = `h${headingLevel}` as const
   const attributes = [!reading && question.kind, showPoints && `${displayPoints ?? question.points} 分`, !reading && question.difficulty,
@@ -23,8 +23,9 @@ export function QuestionHeading({ question, number, id, headingLevel = 3, showPo
     !reading && question.parts?.length ? `含 ${question.parts.length} 个小问` : undefined].filter(Boolean)
   return <div className="prism-question-heading flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
     <div className="flex w-full min-w-0 items-start gap-2">
-      <Heading id={id} className="min-w-0 flex-1 break-words text-item-title">{questionDisplayTitle(question, number)}</Heading>
+      <Heading id={id} className="min-w-0 flex-1 break-words text-item-title">{leading ? <>{leading}{questionDisplayTitle(question, number)}</> : questionDisplayTitle(question, number)}</Heading>
       {trailing && <div className="flex shrink-0 flex-wrap items-start gap-2">{trailing}</div>}
+      {titleSuffix}
     </div>
     {attributes.length > 0 && <p data-question-attributes="" className="prism-question-attributes w-full min-w-0 text-ui-meta tabular-nums text-muted-foreground">
       {attributes.map((attribute, index) => <span key={index} className="inline-block whitespace-nowrap">{index > 0 && " · "}{attribute}</span>)}

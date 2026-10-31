@@ -1,3 +1,4 @@
+import { p126SourceFiles, restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -112,7 +113,7 @@ test('P125 AgentPreviewFrame exposes both choices without changing default or co
   }
 });
 const cssPath = 'app/(next)/next/blueprint.css', css = read(cssPath), marker = '\n/* P125 ·';
-const block = css.slice(css.indexOf(marker)), sheet = postcss.parse(block);
+const block = css.slice(css.indexOf(marker), css.indexOf("\n/* P126:")), sheet = postcss.parse(block);
 const family = ':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])';
 const guard = `:not(:where([data-agent-preview][data-prism-theme]:not(${family}), [data-agent-preview][data-prism-theme]:not(${family}) *))`;
 function paintOnly(source) {
@@ -126,7 +127,9 @@ test('P125 append-only visual CSS; no tokens, source components, coss or depende
   transform({ code: Buffer.from(block), minify: true });
   for (const p of ['app/(next)/next/theme.css','package.json','package-lock.json']) assert.equal(read(p), before(p));
   const changed = execFileSync('git', ['diff', baseline, '--name-only', '--', 'components/coss', 'components/prism-next'], {cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
-  assert.ok(changed.every(p => changedDemos.includes(p)), changed.join('\n'));
+  assert.ok(changed.every(p => changedDemos.includes(p) || p126SourceFiles.includes(p)), changed.join('\n'));
+  // Exact P126 hunks only; all other bytes still match its pinned parent.
+  for (const p of p126SourceFiles) assert.equal(restoreP126(p, read(p)), execFileSync('git', ['show', `15f43c35ca09ece73ba9c2f6d33c384b18f86bf7:${p}`], {cwd:root,encoding:'utf8'}));
   for (const prop of ['padding','margin','gap','width','height','display','position','overflow','transform','font-size','--new-token']) assert.throws(() => paintOnly(block.replace('border-radius:0;', `border-radius:0;${prop}:0;`)));
   assert.throws(() => paintOnly(block.replaceAll(guard, '')));
 });

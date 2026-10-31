@@ -4,6 +4,32 @@
 
 ## 当前
 
+- 轮次：P126-r1 · 修复蓝图主题水合与画布重挂载 · 2026-10-31；基线 `15f43c35ca09ece73ba9c2f6d33c384b18f86bf7`，分支 `feat/blueprint-frame-p126`，在 P126 未提交改动上继续。Builder 实施，不作自我批准；待 Supervisor 独立 Review 与浏览器复验。
+- 范围：question-review、paper-review 及实际 `#blueprint-frame` 示例在 mounted 后启用外框、字母及图号。Frame 装饰现有根，ReviewWorkspace 不再条件增删组件父节点；PaperPreviewSurface 透传根属性并提供滚动区外 decoration 插槽。未改 CSS、令牌、coss、依赖或工作台；本轮同步契约、guide 与精确源码补丁清单。
+- 根因与验证：未挂载门禁让服务端未知主题与客户端 localStorage 主题形成不同树；原外框又新增父节点。真实 next-themes Provider + hydrateRoot 测试覆盖两个实际宿主和示例，检查无水合诊断、原 DOM 身份、缩放及滚动值保留。移除门禁与恢复包裹父节点的反向测试均能检测缺陷。测试 DOM 不验证 CSS 布局和浏览器原生事件行为。
+- 当前检查：专项 29/29（原专项 16 + 新增水合 13）；三核心主题两宿主的 SSR 与基线逐字节相同。交付选择守卫 99 文件、1314 项，1312 通过，仅任务书所列 P17 / P18 既有失败；三批分别为 449/449、599/600、264/265。生产构建退出 0，数学字体、排版（336 owned TSX）、guide 一致性与 diff 检查通过。类型退出 2，仅既有 TS2306（prototype-source/main.tsx:57）；本轮重新核对干净基线归档也只有同一诊断。未运行全量或 lint。构建及守卫后仅补本状态元数据、测试注释和 guide 生成物，另复验文档一致性及专项，不冒称又一次全量或构建。
+- 周期：本轮是 P126 返工，不新增产品小轮或宣布 3/3 累计验收收口；全量由 Supervisor 沙箱外执行。任务书转述 Supervisor 在 r1 前全量 2923/2925，仅 P17/P18 已知失败，此为历史结果。
+- 浏览器交接：预存 `prism-v1-theme=blueprint` / `blueprint-night` 后刷新 `/next/reviews/question-review`、`/next/reviews/paper-review`、`/next/foundations/blueprint#blueprint-frame`；确认无水合覆盖层，q17 → q18 图号与 A/B 正确，操作缩放和滚动后切主题状态保留。覆盖两蓝图与 light / paper / dark，1920×1080 / 1440×900 / 1280 / 390，嵌套核心主题隔离及装饰 30px 内距。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。W342、真实服务、生产、真机、读屏及打印未验；无本轮截图。未提交、推送、联网、发布、启动或重启服务。
+
+## 历史
+
+### P126 · 2026-10-31（P126-r1 前当前，原样保留）
+
+- 轮次：P126 · 无标题图纸外框与预览接入 · 2026-10-31；基线 `15f43c35ca09ece73ba9c2f6d33c384b18f86bf7`，分支 `feat/blueprint-frame-p126`，开工干净。Builder 实施与自测完成，待 Supervisor 独立 Review 与浏览器验收。
+- 范围：blueprint 模块新增 Frame / InlineCode / InlineFolio；ReviewWorkspace 仅增加可选画布装饰；题目／试卷预览及现有标题行接入，蓝图示例、契约和 guide 同步。coss、依赖、主题令牌、核心三主题及原业务控制器不变。
+- 复用：已有 Sheet 坐标尺、SectionHeader 字母块与 folio 格式化；固定 coss Frame 不具备坐标尺。离线核对，不引入新来源或目录条目。
+- 已验证：P126 专项 16/16，相关复跑 85/85；真实题目／试卷 × 核心三主题的 SSR 含 ID 逐字节一致，两蓝图结构对位通过；真实 q17 → q18、知识点视角、试卷下一题事件覆盖。旧主题回归 107 文件，1463/1463。交付守卫选中 98 文件，1301 项中通过 1299、失败 2；仅任务书注明的 ScoreReviewDemo P17 / P18 既有失败，没有新增失败。
+- 工程命令：`node node_modules/vinext/dist/cli.js build` 生产构建退出 0（最后源码变更后重建）；`node scripts/check-math-font.mjs` 通过；`node scripts/check-typography.mjs` 通过（336 owned TSX）；`node scripts/sync-blueprint-guide.mjs --check` 和 `git diff --check` 通过。定向 / 守卫 / 旧主题测试全部以 `NODE_OPTIONS=--max-old-space-size=4096`、`node --experimental-strip-types --test --test-concurrency=4` 分批顺序执行；coss 54 文件散列守卫通过，全量未在沙箱运行。
+- 基线例外：`node node_modules/typescript/bin/tsc --noEmit` 退出 2，1 项既有 TS2306（`docs/learning-analysis/prototype-source/main.tsx:57`）；源码 lint（ESLint 排除 dist / .next / .sites-runtime）退出 1，83 errors / 146 warnings。两者在 `15f43c3` 的干净源码归档复现；lint 去除路径、行号和源码上下文后诊断一致，新增 0。未改无关错误。生成的临时测试 bundle 不纳入源码 lint。
+- 旧测试适配：P77 mutation 覆盖全部 folio 前缀调用；P104 / P107 / P125 的源码冻结仅允许 `tests/fixtures/p126-source-hunks.json` 列明增量，并还原到基线后逐字节比较；P125 CSS 检查止于自己的区段。P126 同时校验旧 CSS 全部字节、未列改动与补丁变异拒绝，未放宽 coss 或主题边界。
+- 接入差异：扫描纸无题卡标题，A 和图号放在画布内框带；题目数字卡放在原标题行。≤760px（视口或容器）坐标尺隐藏、装饰内距归零；桌面内距 30px，原区内滚动节点保留。
+- 周期：继承 P107 所记 3/3 累计待验状态，不预记本轮已验收或周期收口；下一触发点仍为 Supervisor 累计浏览器回归与独立综合审查，全量由 Supervisor 执行。
+- 浏览器交接：`/next/reviews/question-review`、`/next/reviews/paper-review`、`/next/foundations/blueprint#blueprint-frame`；两蓝图及核心三主题，1920×1080 / 1440×900 / 1280 / 390，检查页面不滚动、区内滚动、沉浸、左栏收放、分区切换、题号和 A/B、嵌套核心预览。
+- 未验证范围：浏览器验收：按分工由 Supervisor 执行。W342 接入、真实服务、真机、读屏器与打印未验，无本轮截图。未提交、推送、联网、发布或启动服务。
+
+### P107 · 2026-10-22（P126 前当前，原样保留）
+
 - 轮次：P107 · 蓝图主题视觉缺口修复 · 2026-10-22；基线 `1486441b727bbae4e488e16b79e67a8ef2a7b716`，分支 `feat/bp-reskin-gaps-p107-20261022`；开工工作树干净。Builder 已实施，待 Supervisor 独立 Review 与浏览器验收，不作自我批准。
 - 范围：只修改 blueprint.css 的 V1 FramePanel、V2 L2 题卡（含 QuestionAnalysisCard）、V3 ToolbarButton、V4b sheet 缩略图视觉；V6 删除题目详情区 10 处几何声明。新增 P107 专项，P75 测试改为断言原组件间距不被覆盖；P104 / P105 / P106 全文件基线断言将本轮独立块和 P75 段交给 P107 严格基线及删除清单断言，其余断言保留。guide 新增本轮约束并同步生成物。
 - 选择器与复用：核对固定 coss FramePanel / Toolbar / Button、Prism QuestionCard / QuestionAnalysisCard / PaperCard；无需新组件、particles、依赖或令牌。两蓝图限定及嵌套核心根 / 后代 / 伪元素排除保留；L2 题卡采用零模糊硬描边，不新增占位边框；按钮与纸面保留焦点 / 选中 ring。L1 / L3 阅读结构、纸面状态圆标不变。源码 AST / SSR 证据不等于浏览器视觉结果。
@@ -13,7 +39,6 @@
 - 浏览器交接：`/next/components/frame`、`/next/components/question`、`/next/components/question-analysis-card`、`/next/components/toolbar`、`/next/components/attachment`、`/next/use-cases/questions`、`/next/foundations/blueprint/guide`；两蓝图及 light / paper / dark × 1280 / 390，嵌套核心预览根 / 后代 / 伪元素。复核详情三页签、加入试题篮、hover / pressed / disabled / focus、纸面选中 / 叠页 / 查看，长中文与公式；相同数据切主题比对几何，允许既有墨线粗细与指示条差异。
 - 未验证范围：浏览器验收：按分工由 Supervisor 执行。工作台接入与两分支同步、真实服务、真机、读屏器、实体打印未验；无本轮浏览器截图。未提交、推送、创建 PR、联网、调用模型、读取凭据、启动或重启服务、发布站点。
 
-## 历史
 
 ### P106 · 2026-10-22（P107 前当前，原样保留）
 

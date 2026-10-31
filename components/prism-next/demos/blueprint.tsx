@@ -1,5 +1,6 @@
 "use client"
 
+import { useTheme } from "next-themes"
 import { useEffect, useRef, useState } from "react"
 import { ArrowLeft, ArrowRight, FileText, Info, Layers, MoreHorizontal, Network } from "lucide-react"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
@@ -19,7 +20,7 @@ import { BlueprintSecondBatchDemo } from "../blueprint-second-batch-demo"
 import { BlueprintObjectCardsDemo } from "./blueprint-object-cards"
 import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
-import { BlueprintSectionHeader, BlueprintSheet, BpTargetLock, BpDiagramCallout, BpEntryRow, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+import { BlueprintFrame, BlueprintInlineCode, BlueprintInlineFolio, BlueprintSectionHeader, BlueprintSheet, BpTargetLock, BpDiagramCallout, BpEntryRow, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
 
 /** Synthetic host state only: no report routing, persistence or business execution. */
 export function BlueprintSizeBarActivationDemo() {
@@ -119,6 +120,20 @@ export function BlueprintTitleRuleDemo() {
   </section>
 }
 
+export function BlueprintFrameDemo() {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const blueprint = mounted && (resolvedTheme === "blueprint" || resolvedTheme === "blueprint-night")
+  return <section id="blueprint-frame" aria-label="无标题图纸外框" className="space-y-3">
+      <h2 className="text-section-title">无标题图纸外框</h2>
+      <BlueprintFrame active={blueprint}><div>
+        <div className="flex items-center gap-2"><h3 className="text-item-title"><BlueprintInlineCode active={blueprint} code="A" />题目画布（合成数据）</h3><BlueprintInlineFolio active={blueprint} folio={{kind:"sheet",value:"17 / 20"}} /></div>
+        <p className="mt-3 text-ui-body">外框没有标题语义；现有标题和控件由宿主提供。窄容器隐藏坐标尺。</p>
+      </div></BlueprintFrame>
+    </section>
+}
+
 export function BlueprintComponentsDemo() {
   const [tab, setTab] = useState("all")
   const [view, setView] = useState("blueprint")
@@ -139,6 +154,7 @@ export function BlueprintComponentsDemo() {
     }
   }
   return <div className="bp-demo space-y-8">
+    <BlueprintFrameDemo />
     <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>

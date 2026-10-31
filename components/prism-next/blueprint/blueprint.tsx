@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
+import { cloneElement, isValidElement, useId, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import type { ChartValueFormatter } from "@/lib/prism-next/chart-options"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
@@ -30,6 +30,48 @@ function folioValue(folio?: BlueprintFolio) {
   if (revision) return revision[1].padStart(2, "0")
   if (/^\d+(\s*\/\s*\d+)?$/.test(value)) return value.split("/").map(part => part.trim().padStart(2, "0")).join(" / ")
   return value
+}
+
+/** Inline decorative parts reuse the section header typography and folio formatter. */
+export function BlueprintInlineCode({ active, code }: { active: boolean; code: "A" | "B" }) {
+  return active ? <span aria-hidden="true" className="bp-section-code bp-inline-code">{code}</span> : null
+}
+export function BlueprintInlineFolio({ active, folio }: { active: boolean; folio: BlueprintFolio }) {
+  const value = folioValue(folio)
+  return active && value ? <span aria-hidden="true" className="bp-section-folio bp-inline-folio">{folio.kind.toUpperCase()} {value}</span> : null
+}
+export interface BlueprintFrameProps extends ComponentProps<"div"> {
+  active: boolean
+  narrowFrame?: "edge" | "keep"
+  /** For scans without a title row: decorative facts on the frame, not a new heading. */
+  folio?: BlueprintFolio
+}
+/** Decorate one existing root without replacing it. Composite children must forward
+ * div attributes and place `decoration` beside their content, outside scrolling areas.
+ * Inactive mode returns the original child directly, preserving exact SSR bytes. */
+export function BlueprintFrame({ active, narrowFrame = "edge", folio, className, children, ...props }: BlueprintFrameProps) {
+  if (!active) return children
+  if (!isValidElement<ComponentProps<"div"> & { decoration?: ReactNode }>(children)) {
+    throw new Error("BlueprintFrame requires one element with a stable root")
+  }
+  const decoration = <div key="bp-frame-decoration" aria-hidden="true" className="bp-frame-decoration">
+      <div className="bp-ruler bp-ruler--top">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
+      <div className="bp-ruler bp-ruler--bottom">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
+      <div className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+      <div className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
+      {folio && <div className="bp-frame-folio"><BlueprintInlineCode active code="A" /><BlueprintInlineFolio active folio={folio} /></div>}
+    </div>
+  const attributes = {
+    ...props,
+    className: cn(children.props.className, "bp-frame", className),
+    style: props.style ? { ...children.props.style, ...props.style } : children.props.style,
+    "data-slot": "bp-frame",
+    "data-narrow-frame": narrowFrame,
+  }
+  if (typeof children.type !== "string") return cloneElement(children, { ...attributes, decoration })
+  // Preserve the existing children's positions and keys; never flatten or re-key them.
+  const content = children.props.children
+  return cloneElement(children, attributes, ...(Array.isArray(content) ? content : [content]), decoration)
 }
 
 export interface BlueprintSectionHeaderProps extends Omit<ComponentProps<"header">, "title"> {
