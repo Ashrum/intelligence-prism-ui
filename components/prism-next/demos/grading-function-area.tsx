@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState, useEffect, useRef, type ReactNode } from "react"
 import { ArrowDown, ArrowUp, ChevronRight, CircleAlert, Pause, RotateCcw, Sparkles } from "lucide-react"
@@ -189,7 +190,7 @@ export function GradingFunctionAreaBoard({ initialState }: { initialState: Gradi
 export function GradingFunctionAreaDemo() {
   return <>
     <Alert><CircleAlert aria-hidden="true" /><AlertDescription className="text-ui-body">每栏宽 380px、高 844px；三主题使用同一组事实。查看态可进入本地评分或错因草稿，保存只记录请求；⑥为独立的已保存事实夹具。</AlertDescription></Alert>
-    {(["light", "paper", "dark"] as const).map(theme => <DemoSection key={theme} title={`${theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"} · 批阅功能栏八种状态`}>
+    {componentPreviewThemes.map(theme => <DemoSection key={theme} title={`${componentPreviewThemeLabels[theme]} · 批阅功能栏八种状态`}>
       <div data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="flex flex-wrap items-start gap-6 p-3">
         {gradingFunctionAreaStates.map(state => <GradingFunctionAreaBoard key={state.id} initialState={state.id} />)}
       </div>

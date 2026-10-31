@@ -158,7 +158,7 @@ test('P123 shipped demo integration: five themes → 390px → preview → cance
 });
 
 test('P123 layout and blueprint CSS retain core files/tokens and isolate nested preview roots/descendants', () => {
-  for (const path of ['app/(next)/next/theme.css', 'app/(next)/next/blueprint.css', 'components/prism-next/agent-conversation.css', 'package.json', 'package-lock.json']) assert.equal(read(path), before(path));
+  for (const path of ['app/(next)/next/theme.css', 'app/(next)/next/blueprint.css', 'components/prism-next/agent-conversation.css', 'package.json', 'package-lock.json']) assert.equal(path === "app/(next)/next/blueprint.css" ? read(path).split("\n/* P125 ·")[0] : read(path), before(path));
   assert.equal(execFileSync('git', ['diff', baseline, '--', 'components/coss'], { cwd: root, encoding: 'utf8' }), '');
   const css = read('components/prism-next/blueprint/prompt-attachments.css');
   assert.doesNotThrow(() => transform({ code: Buffer.from(css), minify: true }));

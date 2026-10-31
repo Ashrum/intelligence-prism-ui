@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { ScoreReview, type ScoreReviewProps, type ScoreReviewDraft } from "../score-review"
@@ -81,8 +82,8 @@ export function ScoreReviewDemo() {
       <Feedback>{notice}</Feedback>
     </DemoSection>)}
     <DemoSection title="三主题 · 320px 长中文与公式" description="浅色、暖纸、深色使用同一组语义字号与 coss 控件。">
-      <div className="flex flex-wrap gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
-        <p className="pb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</p>
+      <div className="flex flex-wrap gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <p className="pb-3 text-item-title">{componentPreviewThemeLabels[theme]}</p>
         <ScoreFixture overrides={{ quickScores: [0, 5, 10], shortcuts: true, questionLabel: "主观题 3：二次函数配方法的完整推导、取等条件与结论核对", step: 0.5, defaultScore: 7, defaultReason: "逐项核对学生的配方过程、最小值与取等条件，依据评分规则补计推导步骤分。" }} onIntent={setNotice} />
       </div>)}</div>
       <Feedback>{notice}</Feedback>

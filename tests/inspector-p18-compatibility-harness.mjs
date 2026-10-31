@@ -1,3 +1,4 @@
+import { corePreviewCompatibility } from "./helpers/p125-core-preview-compat.mjs";
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { relative } from 'node:path';
@@ -33,7 +34,7 @@ export async function buildApi(baseline = false) {
     stdin: { contents, resolveDir: root, loader: 'tsx' },
     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root },
     loader: { '.css': 'empty' }, write: false,
-    plugins: [{ name: 'temml-url', setup(b) {
+    plugins: [corePreviewCompatibility, { name: 'temml-url', setup(b) {
       b.onResolve({ filter: /^next\/(?:link|navigation)$/ }, args => ({ path: `${args.path}.js`, external: true }));
       b.onResolve({ filter: /temml\.mjs\?url$/ }, () => ({ path: 'temml-url', namespace: 'url' }));
       b.onLoad({ filter: /.*/, namespace: 'url' }, () => ({ contents: 'export default "temml.mjs"' }));

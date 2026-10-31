@@ -89,7 +89,7 @@ test('P122 hidden labels and xs take precedence; wide does not change fill geome
   assert.doesNotThrow(() => render(h(api.BpSizeBar, { rows: [], labelWidth: 'wide' })));
 });
 
-const css = read(cssPath), index = css.indexOf('\n/* P122 ·'), block = css.slice(index), ast = postcss.parse(block);
+const css = read(cssPath), index = css.indexOf('\n/* P122 ·'), block = css.slice(index).split('\n/* P125 ·')[0], ast = postcss.parse(block);
 test('P122 append-only CSS, unchanged tokens, frozen coss and no dependency changes', () => {
   assert.ok(index > 0); assert.equal(css.slice(0, index), before(cssPath));
   for (const path of ['app/(next)/next/theme.css', 'package.json', 'package-lock.json']) assert.equal(read(path), before(path));

@@ -1,3 +1,4 @@
+import { corePreviewCompatibility } from "./helpers/p125-core-preview-compat.mjs";
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -28,7 +29,7 @@ async function bundle(original) {
   const output = await build({
     stdin: { contents: "export * from './components/prism-next/score-review'; export * from './components/prism-next/demos/score-review';", resolveDir: root, loader: 'tsx' },
     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' },
-    write: false, plugins: [urlPlugin, ...(original ? [baselinePlugin] : [])],
+    write: false, plugins: [corePreviewCompatibility, urlPlugin, ...(original ? [baselinePlugin] : [])],
   });
   await writeFile(path, output.outputFiles[0].text);
   try { return await import(path); } finally { await rm(path); }

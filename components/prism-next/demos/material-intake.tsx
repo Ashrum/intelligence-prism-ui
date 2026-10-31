@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { Dialog, DialogTrigger, DialogPopup, DialogHeader, DialogTitle, DialogDescription, DialogPanel } from "@/components/coss/dialog"
@@ -76,7 +77,7 @@ export function MaterialIntakeDemo() {
         </DialogPopup></Dialog>
     </DemoSection>
     <DemoSection title="三主题 · 320px · 长中文与公式" description="保留完整状态、禁用原因与当前步骤；完整流程可在局部横向滚动。">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <section key={theme} aria-label={`${theme} 320px`} data-agent-preview data-ui-version="coss-v1" data-prism-theme={theme} className="w-80 max-w-full space-y-3 p-3">
         <h3 className="text-item-title">{theme} · 320px</h3>
         <IntakeFixture props={{ ...materialIntakeFixtures[1].props, allowPaste: true, cameraCapture: true, rejections: [{ name: "高二数学期中考试标准答案与评分依据完整扫描资料.zip", reason: "请选择 PDF 或图片" }], title: "准备接收高二数学期中考试标准答案答题卡与评分依据完整核对版本", files: [{ ...receivedFiles[0], name: "高二数学期中考试标准答案答题卡与评分依据完整核对版本.pdf" }] }} />
         <p className="text-ui-hint">资料公式：<math><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn></math></p>

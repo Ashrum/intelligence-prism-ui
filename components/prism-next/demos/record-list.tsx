@@ -1,4 +1,5 @@
 "use client"
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
 import { Button } from "@/components/coss/button"
@@ -245,14 +246,14 @@ export function RecordListDemo() {
     </DemoSection>
     <DemoSection id="record-toggle" title="行开关 · 收藏意图" description="标准 coss Toggle 位于主操作之前；外部 pressed 控制状态，空菜单不显示更多按钮。">
       <ToggleRecordFixture />
-      <div className="mt-4 flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3"><p className="pb-3 text-item-title">{theme}</p><ToggleRecordFixture /></div>)}</div>
+      <div className="mt-4 flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3"><p className="pb-3 text-item-title">{theme}</p><ToggleRecordFixture /></div>)}</div>
     </DemoSection>
     <DemoSection id="record-actions" title="行主操作样式与对齐" description="默认 ghost / start；可选 outline / primary 与操作区垂直居中，菜单和列表主操作保持自身语义。">
       <RecordActionFixture />
     </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
-      <div className="flex flex-wrap items-start gap-4">{(["light", "paper", "dark"] as const).map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
-        <p className="pb-3 text-item-title">{theme === "light" ? "浅色" : theme === "paper" ? "暖纸" : "深色"}</p>
+      <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
+        <p className="pb-3 text-item-title">{componentPreviewThemeLabels[theme]}</p>
         <RecordFixture longContent externalNavigation />
       </div>)}</div>
     </DemoSection>

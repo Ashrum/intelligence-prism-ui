@@ -1,3 +1,4 @@
+import { corePreviewCompatibility } from "./helpers/p125-core-preview-compat.mjs";
 import { createTestRuntime } from './helpers/test-runtime.mjs';
 import { writeFile, rm } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -24,7 +25,7 @@ async function bundle(original) {
       export {Button} from './components/coss/button';
     `, resolveDir: root, loader: 'tsx' },
     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, loader: { '.css': 'empty' }, write: false,
-    plugins: [{ name: 'url-asset', setup(b) {
+    plugins: [corePreviewCompatibility, { name: 'url-asset', setup(b) {
       b.onResolve({ filter: /temml\.mjs\?url$/ }, () => ({ path: 'temml-url', namespace: 'url' }));
       b.onLoad({ filter: /.*/, namespace: 'url' }, () => ({ contents: 'export default "temml.mjs"' }));
       if (original) b.onLoad({ filter: /prism-next\/[^/]+\.tsx$/ }, args => sources.has(args.path) ? { contents: sources.get(args.path), loader: 'tsx' } : undefined);

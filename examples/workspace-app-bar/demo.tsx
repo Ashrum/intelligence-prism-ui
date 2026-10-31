@@ -1,4 +1,5 @@
 "use client";
+import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes";
 
 import { useRef, useState } from "react";
 import { Bell, BookOpen, ChartNoAxesColumn, ChevronDown, ClipboardCheck, Clock, FileText, FlaskConical, Folder, Map, MoreHorizontal, PanelRight, Plus, Search, Settings2, ShoppingBasket, Sparkles } from "lucide-react";
@@ -19,7 +20,7 @@ const spaces: readonly AppBarSpace[] = [
   { id: "papers", label: "组卷", icon: <BookOpen /> },
   { id: "analysis", label: "学情分析", icon: <ChartNoAxesColumn /> },
 ];
-const themes = [{ value: "light", label: "浅色" }, { value: "paper", label: "暖纸" }, { value: "dark", label: "深色" }] as const;
+const themes = componentPreviewThemes.map(value => ({ value, label: componentPreviewThemeLabels[value] }));
 const widths = [1280, 1024, 800, 390] as const;
 const conversations = ["二次函数顶点、对称轴与最值练习", "勾股定理复习课", "九年级（1）班课堂诊断讲评"];
 const teachingItems = [{ id: "class-1", label: "九年级（1）班 · 数学" }, { id: "class-2", label: "九年级（2）班 · 数学" }];
