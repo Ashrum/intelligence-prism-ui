@@ -63,6 +63,8 @@ type DirectoryProps = {
   selections: DirectorySelections
   onSelectionsChange: Dispatch<SetStateAction<DirectorySelections>>
   layout?: "split" | "embedded"
+  /** Decoration in the existing embedded/header textbook title; split has no title row. */
+  headingLeading?: React.ReactNode
   titleAction?: TitleAction
   multiSelect?: "always" | "toggle" | "dialog"
   emptySelectionLabel?: string
@@ -133,7 +135,7 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
           <span className="absolute bottom-2 left-3 right-2 h-0.5 [background:var(--brand-ai-gradient)]" />
         </span>
         <div className="min-w-0 flex-1" role="group" aria-label={[volume, details].filter(Boolean).join(" · ")}>
-          <p className="truncate text-block-title text-foreground" title={volume}>{volume}</p>
+          <p className="truncate text-block-title text-foreground" title={volume}>{props.headingLeading == null ? volume : <>{props.headingLeading}{volume}</>}</p>
           {details && <p className="truncate text-ui-hint text-muted-foreground" title={details}>{details}</p>}
         </div>
         {onTextbookSwitch ? <Button variant="outline" size="sm" aria-label="切换教材" onClick={onTextbookSwitch}><ArrowRightLeft aria-hidden="true" />切换</Button> : directoryBooks.length > 1 && <Menu>

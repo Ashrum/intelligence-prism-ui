@@ -163,16 +163,18 @@ function FilterPanel({ label, dimensions, value, onIntent, searchable = false, c
   </Popover>
 }
 
-export function FilterResults({ value, sortItems, resultCount, favoriteCount, showFavorites = true, endSlot, onIntent, countUnit = "题" }: Omit<FacetFilterProps, "dimensions">) {
-  return <div className="facet-filter-results border-b pb-2" aria-label="筛选结果工具栏" role="group">
-    {sortItems.length > 0 && <Tabs value={value.sort} onValueChange={value => { if (typeof value === "string") onIntent({ type: "sort", value }) }}>
+export function FilterResults({ value, sortItems, resultCount, favoriteCount, showFavorites = true, endSlot, leading, trailing, onIntent, countUnit = "题" }: Omit<FacetFilterProps, "dimensions">) {
+  const sorting = sortItems.length > 0 && <Tabs value={value.sort} onValueChange={value => { if (typeof value === "string") onIntent({ type: "sort", value }) }}>
       <TabsList variant="underline" size="sm" aria-label="排序">{sortItems.map(item => <TabsTab key={item.id} value={item.id}>{item.label}</TabsTab>)}</TabsList>
-    </Tabs>}
+    </Tabs>
+  const endAction = endSlot && <div className="max-w-full">{endSlot}</div>
+  return <div className="facet-filter-results border-b pb-2" aria-label="筛选结果工具栏" role="group">
+    {leading == null ? sorting : <div className="flex min-w-0 items-center">{leading}{sorting}</div>}
     <div className="facet-filter-result-actions">
       <span className="whitespace-nowrap text-ui-hint text-muted-foreground tabular-nums">{resultCount === undefined ? (countUnit === "题" ? "题数未提供" : "数量未提供") : `共 ${resultCount} ${countUnit}`}</span>
       {showFavorites && <Toggle size="sm" variant="outline" aria-label={countUnit !== "题" && favoriteCount !== undefined ? `我的收藏，${favoriteCount} ${countUnit}` : undefined} pressed={value.favoritesOnly} onPressedChange={pressed => onIntent({ type: "favorites", value: pressed })}><Star aria-hidden="true" />我的收藏<span className="text-ui-hint text-muted-foreground tabular-nums">{favoriteCount ?? "数量未知"}</span></Toggle>}
       <InputGroup className="w-[168px] shrink-0"><InputGroupAddon><Search aria-hidden="true" /></InputGroupAddon><InputGroupInput size="sm" aria-label="在结果中搜索" placeholder="在结果中搜索" type="search" value={value.search} onChange={event => onIntent({ type: "search", value: event.target.value })} /></InputGroup>
-      {endSlot && <div className="max-w-full">{endSlot}</div>}
+      {trailing == null ? endAction : <>{endAction}{trailing}</>}
     </div>
   </div>
 }

@@ -4,6 +4,35 @@
 
 
 
+## P127 · 现有标题与结果工具行插槽（2026-10-31）
+
+设计状态：C0 图纸语言冻结范围内的候选实现，待 Supervisor 独立 Review。工程准入：未开始。
+
+本轮只扩展现有组件的可选呈现插槽，不增加标题语义，不改 `title: string`，不搬入业务状态。入口：`/next/foundations/blueprint#title-slots-p127`。示例为合成数据，排序、收藏、搜索仅更新示例宿主状态；题数保持外部提供的 4 题。
+
+| 组件 | 可选参数 | 插入位置与边界 |
+| --- | --- | --- |
+| `RecordList` | `titleLeading?: ReactNode` | 原 h3 标题文字之前；`showHeader=false` 时一并不呈现。标题、列表、分页的名称仍由原 string 提供。 |
+| `TextbookDirectory` | `headingLeading?: ReactNode` | 原教材标题 p 的文字之前；适用 header、普通 embedded、正式 embedded。split 只有教材选择字段，没有教材标题行，忽略此参数，不增一行。 |
+| `FilterResults` / `FacetFilter` | `leading?: ReactNode`、`trailing?: ReactNode` | leading 在「综合」排序前，与排序共用原工具行；trailing 在结果操作区末尾、已有 endSlot 之后。endSlot 仍是原操作插槽，不新增标题。 |
+| `QuestionAnalysisPanel` | compact 分支 `titleLeading?: ReactNode` | 原 h2「本题分析」文字之前；detailed API 不扩展。 |
+
+宿主在挂载后且外观为 blueprint / blueprint-night 时传入 `BlueprintInlineCode`（A / B）与 `BlueprintInlineFolio`；其他主题传 `undefined`，不要传一个最终返回 null 的组件代替空插槽，以免 FilterResults 建立空排序组合。字母和图号沿用 `aria-hidden=true` 的装饰语义；不替换宿主原标题、可访问名称、图号事实或操作。
+
+```tsx
+const [mounted, setMounted] = useState(false)
+useEffect(() => setMounted(true), [])
+const active = mounted && (resolvedTheme === "blueprint" || resolvedTheme === "blueprint-night")
+const leading = active ? <BlueprintInlineCode active code="B" /> : undefined
+const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", value: "01 / 04" }} /> : undefined
+// value、sortItems、resultCount、onIntent 由原宿主提供。
+<FilterResults value={value} sortItems={sortItems} resultCount={resultCount} onIntent={onIntent} leading={leading} trailing={trailing} />
+```
+
+`.bp-inline-folio` 的标题侧间距与 `.bp-inline-code` 的文字侧间距均为 12px，只在两蓝图主题生效，排除嵌套核心主题预览根及其后代。沿用既有字体、配色、字重和圆角；原布局及核心主题样式不变。父容器若已有 gap，会与 margin 共同形成实际距离，宿主须在真实标题行复核，不批量改页面布局。
+
+复用检索（离线）：已有 Prism 的上述四个组件、BlueprintInlineCode / BlueprintInlineFolio 和 coss FrameHeader / Tabs 足够；沿用已有本地 particles 检索记录，不新增组件目录、第三方实现、依赖或令牌，未联网刷新 registry。专项 `tests/p127-title-slots.test.mjs` 使用固定 Git 基线比较实际组件完整 SSR，覆盖五主题默认/空参数与组件页实际示例操作；CSS 隔离断言不替代浏览器验收。浏览器验收：按分工由 Supervisor 执行，覆盖两蓝图与核心三主题、1280 / 390、嵌套预览、长中文与公式，以及 AI 批阅标题的图号间距。
+
 ## P126 · 无标题图纸外框与预览框架（2026-10-31）
 
 设计状态：C0 图纸语言已获 PO 冻结；本轮组件实现待 Supervisor 独立 Review。工程准入：未开始。
