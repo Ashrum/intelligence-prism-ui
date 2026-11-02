@@ -907,3 +907,25 @@ section[data-agent-preview]:is([data-prism-theme="blueprint"],[data-prism-theme=
   .bp-frame--canvas > .bp-frame-decoration { display:block; }
 }
 /* End P128 canvas frame fit. */
+
+/* P130: REV 0.4 preview ground. Reuse page grid/card/ink tokens; only the
+   content sheet keeps its rulers. Full-page BlueprintFrame is unchanged. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) {
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--background);
+}
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas.bp-frame--canvas:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { padding:0; box-shadow:none; }
+/* Keep the scroll viewport flush with the canvas; spacing belongs inside the host's scroller. */
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas > .d1-paper-host:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { margin:0; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas.bp-frame--canvas > .bp-frame-decoration:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { display:none; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas:not(:has(> .d1-paper-host)):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { padding:24px 28px; }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.d1-topbar,.d1-mobile-nav,.d1-rail,.d1-inspector):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background:var(--card); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) :is(.d1-topbar,.d1-mobile-nav):not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-bottom:1.5px solid var(--line); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-rail:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-right:1.5px solid var(--line); }
+:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-inspector:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { border-left:1.5px solid var(--line); }
+@media print {
+  :is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"]) .d1-canvas:not(:where([data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])), [data-agent-preview][data-prism-theme]:not(:is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])) *)) { background-image:none; }
+}
+/* End P130 preview ground. */

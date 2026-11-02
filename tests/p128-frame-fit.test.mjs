@@ -18,7 +18,7 @@ const root = fileURLToPath(new URL('../', import.meta.url)), h = React.createEle
 const baseline = '0656aaa60854d6b50085d6110cec96a869deb829';
 const read = p => readFileSync(root + p, 'utf8');
 const css = read('app/(next)/next/blueprint.css');
-const block = css.slice(css.indexOf('/* P128:'));
+const block = css.slice(css.indexOf('/* P128:'), css.indexOf('/* P130:'));
 const ast = postcss.parse(block);
 const query = ast.nodes.find(n => n.type === 'atrule');
 const minWidth = Number(query.params.match(/min-width:(\d+)px/)[1]);
@@ -29,9 +29,17 @@ function canvasStyles(width) {
   for (const rule of [...ast.nodes.filter(n => n.type === 'rule'), ...(width >= minWidth ? query.nodes : [])]) {
     styles[rule.selector] = { ...styles[rule.selector], ...declarations(rule) };
   }
-  return { root: styles['.bp-frame.bp-frame--canvas'], host: styles['.bp-frame--canvas > .d1-paper-host'], decoration: styles['.bp-frame--canvas > .bp-frame-decoration'] };
+  return {
+    root: { ...styles['.bp-frame.bp-frame--canvas'], ...declarations(preview.nodes.find(n => n.type === 'rule' && n.selector.includes('.d1-canvas.bp-frame--canvas:not'))) },
+    host: { ...styles['.bp-frame--canvas > .d1-paper-host'], ...declarations(hostRule) },
+    decoration: { ...styles['.bp-frame--canvas > .bp-frame-decoration'], ...declarations(preview.nodes.find(n => n.type === 'rule' && n.selector.includes('> .bp-frame-decoration'))) },
+  };
 }
-const marginAt = width => parseFloat(canvasStyles(width).host.margin);
+// P130 supersedes the P128 width gate; evaluate the current preview spacing.
+const preview = postcss.parse(css.slice(css.indexOf('/* P130:')));
+const hostRule = preview.nodes.find(n => n.type === 'rule' && n.selector.includes('.d1-canvas > .d1-paper-host'));
+const [marginY, marginX = marginY] = declarations(hostRule).margin.split(' ').map(parseFloat);
+const marginAt = () => marginX;
 const runtime = await createTestRuntime('p128');
 async function compile(name) {
   const file = new URL(`${name}.mjs`, runtime);
@@ -47,7 +55,7 @@ const element = (api, name) => h(api.ThemeProvider, { storageKey: 'prism-v1-them
 const find = (host, attr) => domNodes(host, n => n.hasAttribute?.(attr))[0];
 const props = node => node[Object.keys(node).find(k => k.startsWith('__reactProps$'))];
 
-test('P128 exact constant derives from real A4 / question artwork and fit-width algorithm on both sides', () => {
+test('P130 keeps the legacy frame constant compatible and fit-width uses the full scroll viewport', () => {
   const paper = server.paperDimensions();
   assert.equal(server.PAPER_WIDTH, Math.ceil(paper.width));
   assert.equal(server.BLUEPRINT_CANVAS_FRAME_MIN_WIDTH, Math.ceil(paper.width + 60 + 16 + 56));
@@ -60,14 +68,13 @@ test('P128 exact constant derives from real A4 / question artwork and fit-width 
       for (const canvasWidth of [390, 828, 925, 926, 1236]) {
         const available = canvasWidth - 2 * marginAt(canvasWidth) - 16 - 56;
         const actual = server.paperZoomPercent('width', { width: available, height }, { width, height: paper.height });
-        if (canvasWidth < 926) assert.equal(actual, server.paperZoomPercent('width', { width: canvasWidth - 72, height }, { width, height: paper.height }));
-        else assert.ok(actual >= 100);
+        assert.equal(actual, server.paperZoomPercent('width', { width: canvasWidth - 2 * marginX - 72, height }, { width, height: paper.height }));
       }
     }
   }
 });
 
-test('P128 query only styles explicit canvas children; full-page frame / inline title ornaments and old CSS remain intact', () => {
+test('P130 overrides the legacy width gate without changing full-page frame geometry', () => {
   assert.equal(query.name, 'container'); assert.equal(query.params, 'bp-preview-canvas (min-width:926px)');
   assert.doesNotThrow(() => transform({ code: Buffer.from(block), minify: true }));
   assert.doesNotMatch(block, /@media|height:|\.bp-inline|data-narrow-frame/);
@@ -76,10 +83,14 @@ test('P128 query only styles explicit canvas children; full-page frame / inline 
   for (const width of [390, 760, 828, 925, 926, 1236]) {
     const style = canvasStyles(width);
     assert.equal(style.root.padding, '0'); assert.equal(style.root['box-shadow'], 'none');
-    assert.equal(style.host.margin, width < 926 ? '0' : '30px');
-    assert.equal(style.decoration.display, width < 926 ? 'none' : 'block');
+    assert.equal(style.host.margin, '0');
+    assert.equal(style.decoration.display, 'none');
   }
   ast.walkRules(rule => assert.ok(rule.selector.startsWith('.bp-frame--canvas > .') || rule.selector === '.bp-frame.bp-frame--canvas'));
+});
+
+// Existing source lock kept separately so it cannot skip the geometry regression.
+test('P128 query only styles explicit canvas children; full-page frame / inline title ornaments and old CSS remain intact', () => {
   for (const path of p128SourceFiles) {
     const original = execFileSync('git', ['show', `${baseline}:${path}`], { cwd: root, encoding: 'utf8' });
     assert.equal(restoreP128(path, read(path)), original);
@@ -122,7 +133,7 @@ for (const name of ['PaperReviewDesign', 'QuestionReviewDesign']) for (const the
     // No host/zoom hooks are mocked; CSS rendering remains Supervisor's check.
     async function resize(width, height = 900) {
       canvas.offsetWidth = width;
-      viewport.offsetWidth = width - 2 * marginAt(width); viewport.offsetHeight = height - 2 * marginAt(width);
+      viewport.offsetWidth = width - 2 * marginAt(width); viewport.offsetHeight = height - 2 * marginY;
       const listeners = [...observers].filter(o => o.nodes.has(viewport)); assert.ok(listeners.length);
       await act(() => { for (const o of listeners) o.callback([{ target: viewport }]); });
       assert.equal(find(host, 'data-review-canvas'), canvas); assert.equal(find(host, 'data-zoom-mode'), viewport);
