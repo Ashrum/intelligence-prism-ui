@@ -1,0 +1,3 @@
+# P129: 以下三项失败均比较生成物字节/哈希或历史 CSS 全字节；按原型协议保留断言与指纹，只登记锁。
+name: ^(?:published guide is generated from the complete current Markdown and current evidence bytes|every directly referenced local evidence asset has a working public URL and matching hash|P128 query only styles explicit canvas children; full-page frame / inline title ornaments and old CSS remain intact|P127 spacing is a scoped additive CSS block; all baseline styles, tokens and frozen coss remain unchanged)$
+# P130: P127 compares the complete post-baseline CSS suffix to its two historical spacing rules; keep assertions unchanged.
