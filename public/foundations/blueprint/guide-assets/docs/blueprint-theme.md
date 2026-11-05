@@ -787,3 +787,14 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 - 提示框使用 1px 浅线与 3px 左条；neutral／emphasis 使用曜蓝浅底，warning 与 error 保留语义色。现有 `BpCallout` 的缺省 tone 与显式 warning 输出相同；缺省改曜蓝需另行解决该标记差异，本轮保持其 warning 语义，不更改组件 API。
 
 本轮为 Builder 样式实施，浏览器验收由 Supervisor 执行；页面量测及核心主题 SSR／CSS 输出比对尚待验收，未据此宣称设计或工程准入。
+
+## P132 · 触发器浅线、尺寸条填充与图表色板
+
+依据规范 v2 §4、§5、§8，复用现有 `BpSizeBar`、图例共用填充类、品牌原色与斜纹令牌，不新增组件或依赖。
+
+- 蓝图与夜图中，有边框且非 `.bg-primary`、非透明边框的 menu、popover、tooltip、alert-dialog 触发器，以及 popover、alert-dialog 关闭按钮，改用 1px `--border`；主色触发器保留原有墨线。
+- `BpFill` 新增 `ai`、`todo`、`done`，分别使用原色 `#339FF2`、`#E0438F`、`#C2F25B`；新增 `hatch-ai`、`hatch-todo`、`hatch-done`，分别复用 `--hatch-blue`、`--hatch-magenta`、`--hatch-green`。新填充仅在蓝图与夜图生效，图例同步；曜青绿实色和三个彩色斜纹均有 1px 墨框。原有五种填充不变，文字放在色块外。
+- 蓝图系列顺序为 `#0F5FA8`、`#16181D`、`#A8245C`、`#3F6309`、`#A57013`、`#6B7280`，与 `--chart-1…6` 一致。顺序色阶为 `#E3F1FD → #6FB6F0 → #0F5FA8`；shape selected 为 `#0F5FA8`，fill 为 `#E3F1FD`。夜图及核心三主题色板不变，图表结构与 decal 不变。
+- 组件站蓝图示例的“曜彩实色与斜纹（合成数据）”展示六个新值及五个旧值，供桌面、窄屏和主题隔离验收。
+
+本轮为 Builder 实施，浏览器验收由 Supervisor 执行；未据此宣称设计或工程准入。

@@ -1,0 +1,10 @@
+{
+  "components/prism-next/blueprint/blueprint.tsx": {
+    "before": "export type BpFill = \"ink\" | \"hatch\" | \"accent\" | \"quiet\" | \"warn\"\n",
+    "after": "export type BpFill = \"ink\" | \"hatch\" | \"accent\" | \"quiet\" | \"warn\" | \"ai\" | \"todo\" | \"done\" | \"hatch-ai\" | \"hatch-todo\" | \"hatch-done\"\n"
+  },
+  "components/prism-next/demos/blueprint.tsx": {
+    "before": "",
+    "after": "      <section id=\"yaocai-fills\" className=\"mt-9 space-y-5\" aria-label=\"曜彩尺寸条填充样例\">\n        <BpMinor code=\"BP-06.2 · Size Bar\" label=\"曜彩实色与斜纹（合成数据）\" />\n        <BpSizeBar legendValues rows={[\n          { id: \"ai\", label: \"AI 数据\", unit: \"项\", segments: [\n            { id: \"ai\", label: \"已处理\", value: 60, fill: \"ai\" },\n            { id: \"hatch-ai\", label: \"计划中\", value: 40, fill: \"hatch-ai\" },\n          ] },\n          { id: \"todo\", label: \"人工复核\", unit: \"项\", segments: [\n            { id: \"todo\", label: \"已发现关注项\", value: 35, fill: \"todo\" },\n            { id: \"hatch-todo\", label: \"未补回\", value: 65, fill: \"hatch-todo\" },\n          ] },\n          { id: \"done\", label: \"达成确认\", unit: \"项\", segments: [\n            { id: \"done\", label: \"已确认\", value: 75, fill: \"done\" },\n            { id: \"hatch-done\", label: \"待确认\", value: 25, fill: \"hatch-done\" },\n          ] },\n        ]} />\n        <BpSizeBar rows={[{ id: \"legacy\", label: \"既有填充\", unit: \"项\", segments: [\n          { id: \"ink\", label: \"墨色\", value: 20, fill: \"ink\" },\n          { id: \"hatch\", label: \"墨斜纹\", value: 20, fill: \"hatch\" },\n          { id: \"accent\", label: \"强调\", value: 20, fill: \"accent\" },\n          { id: \"quiet\", label: \"中性\", value: 20, fill: \"quiet\" },\n          { id: \"warn\", label: \"警告\", value: 20, fill: \"warn\" },\n        ] }]} />\n      </section>\n"
+  }
+}

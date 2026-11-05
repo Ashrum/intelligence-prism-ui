@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "17de1db2bf0b833efe8b8176ab83822ba85e26b53e319bdca5193eb3c57704f6",
+  "sourceSha256": "b842cb854c95b0ce75d1de1c6cc4bcae585ebfb68a434cf6a5587b34fdabf13e",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -308,6 +308,11 @@
       "id": "section-61",
       "level": 2,
       "text": "P131 · 规范 v2 全局层"
+    },
+    {
+      "id": "section-62",
+      "level": 2,
+      "text": "P132 · 触发器浅线、尺寸条填充与图表色板"
     }
   ],
   "blocks": [
@@ -12978,6 +12983,269 @@
           "value": "本轮为 Builder 样式实施，浏览器验收由 Supervisor 执行；页面量测及核心主题 SSR／CSS 输出比对尚待验收，未据此宣称设计或工程准入。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-62",
+      "children": [
+        {
+          "type": "text",
+          "value": "P132 · 触发器浅线、尺寸条填充与图表色板"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "依据规范 v2 §4、§5、§8，复用现有 "
+        },
+        {
+          "type": "code",
+          "value": "BpSizeBar"
+        },
+        {
+          "type": "text",
+          "value": "、图例共用填充类、品牌原色与斜纹令牌，不新增组件或依赖。"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "蓝图与夜图中，有边框且非 "
+          },
+          {
+            "type": "code",
+            "value": ".bg-primary"
+          },
+          {
+            "type": "text",
+            "value": "、非透明边框的 menu、popover、tooltip、alert-dialog 触发器，以及 popover、alert-dialog 关闭按钮，改用 1px "
+          },
+          {
+            "type": "code",
+            "value": "--border"
+          },
+          {
+            "type": "text",
+            "value": "；主色触发器保留原有墨线。"
+          }
+        ],
+        [
+          {
+            "type": "code",
+            "value": "BpFill"
+          },
+          {
+            "type": "text",
+            "value": " 新增 "
+          },
+          {
+            "type": "code",
+            "value": "ai"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "todo"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "done"
+          },
+          {
+            "type": "text",
+            "value": "，分别使用原色 "
+          },
+          {
+            "type": "code",
+            "value": "#339FF2"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#E0438F"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#C2F25B"
+          },
+          {
+            "type": "text",
+            "value": "；新增 "
+          },
+          {
+            "type": "code",
+            "value": "hatch-ai"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "hatch-todo"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "hatch-done"
+          },
+          {
+            "type": "text",
+            "value": "，分别复用 "
+          },
+          {
+            "type": "code",
+            "value": "--hatch-blue"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "--hatch-magenta"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "--hatch-green"
+          },
+          {
+            "type": "text",
+            "value": "。新填充仅在蓝图与夜图生效，图例同步；曜青绿实色和三个彩色斜纹均有 1px 墨框。原有五种填充不变，文字放在色块外。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "蓝图系列顺序为 "
+          },
+          {
+            "type": "code",
+            "value": "#0F5FA8"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#16181D"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#A8245C"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#3F6309"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#A57013"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "#6B7280"
+          },
+          {
+            "type": "text",
+            "value": "，与 "
+          },
+          {
+            "type": "code",
+            "value": "--chart-1…6"
+          },
+          {
+            "type": "text",
+            "value": " 一致。顺序色阶为 "
+          },
+          {
+            "type": "code",
+            "value": "#E3F1FD → #6FB6F0 → #0F5FA8"
+          },
+          {
+            "type": "text",
+            "value": "；shape selected 为 "
+          },
+          {
+            "type": "code",
+            "value": "#0F5FA8"
+          },
+          {
+            "type": "text",
+            "value": "，fill 为 "
+          },
+          {
+            "type": "code",
+            "value": "#E3F1FD"
+          },
+          {
+            "type": "text",
+            "value": "。夜图及核心三主题色板不变，图表结构与 decal 不变。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "组件站蓝图示例的“曜彩实色与斜纹（合成数据）”展示六个新值及五个旧值，供桌面、窄屏和主题隔离验收。"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮为 Builder 实施，浏览器验收由 Supervisor 执行；未据此宣称设计或工程准入。"
+        }
+      ]
     }
   ],
   "assets": [
@@ -13484,7 +13752,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "17de1db2bf0b833efe8b8176ab83822ba85e26b53e319bdca5193eb3c57704f6"
+      "sha256": "b842cb854c95b0ce75d1de1c6cc4bcae585ebfb68a434cf6a5587b34fdabf13e"
     }
   ]
 }

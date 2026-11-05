@@ -322,7 +322,7 @@ export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, d
   </section>
 }
 
-export type BpFill = "ink" | "hatch" | "accent" | "quiet" | "warn"
+export type BpFill = "ink" | "hatch" | "accent" | "quiet" | "warn" | "ai" | "todo" | "done" | "hatch-ai" | "hatch-todo" | "hatch-done"
 export interface BpSizeSegment { id: string; label: string; value: number; fill: BpFill }
 export interface BpSizeBarProps {
   rows: { id: string; label: string; total?: number; unit?: string; display?: string; segments: BpSizeSegment[] }[]
