@@ -814,3 +814,12 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 复用检索：现有 AppBar 支持路由 render；coss Sidebar 已透传 data 属性；Breadcrumb 支持 render；现有 Tabs 是页内面板切换，不符合本轮原生链接契约，故新增 PageTabs / PageSegments 组合。无需新增依赖或修改冻结 coss。示例入口：`/next/foundations/blueprint#navigation-system`，随蓝图/夜图主题切换。
 
 字号偏差待确认：现有语义字号没有图纸要求的 13px，ObjectBar 暂用 `text-ui-meta`（12px），未添加局部字号或令牌。L1/L2 保留现有语义字号和布局，不按图纸重设高度。数字与辅助文字使用现有 `--muted-foreground`，确保纸底与卡片底上的可读性。新组件在核心三主题继承中性令牌；没有改核心主题已有令牌或组件规则。
+
+
+## P134 · 页面标题隐藏开关
+
+一到四级页面使用 `BlueprintSheet titleDisplay="hidden" headingLevel={1}`，无需额外装饰属性；所有主题下自动去掉外框、内框、背景与内边距，四条标尺不进入 DOM。模块名仍通过 `title` 提供，渲染为 `sr-only` 的 h1，section 的 `aria-labelledby` 指向它；字母块、可见标题、SHEET 号及说明不渲染。第五级对象页、预览框架不使用这一隐藏模式。
+
+`titleDisplay` 默认为 `"visible"`，既有调用输出保持不变。`headingLevel` 支持 1 / 2 / 3；1 仅用于隐藏标题，可见模式传 1 时按 2 渲染。隐藏模式的内容容器使用 grid、16px 间距；有 `titleActions` 时在内容顶部显示右对齐、可换行的操作区，沿用 `data-slot="bp-section-title-actions"`；未提供时不生成操作行。
+
+复用检索（离线）：沿用现有 BlueprintSheet、sr-only 和标题操作区的 flex-wrap 布局，仅新增隐藏模式的隔离 CSS，未新增组件、令牌或依赖，未修改 BlueprintSectionHeader、BpSectionCard 或冻结 coss。导航体系的学校知识库、学生与班级两个合成示例均使用隐藏模式；第五级对象示例保持原样。浏览器验收由 Supervisor 执行。

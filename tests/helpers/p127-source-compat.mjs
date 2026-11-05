@@ -1,3 +1,4 @@
+import { restoreP134 } from './p134-source-compat.mjs';
 import { restoreP133 } from './p133-source-compat.mjs';
 import { restoreP131 } from './p131-source-compat.mjs';
 import assert from 'node:assert/strict';
@@ -7,7 +8,7 @@ assert.equal(patch.baseline, '08d467b2fa0dec5b03d72723488e71d93a9ff3b4');
 export const p127SourceFiles = Object.keys(patch.files);
 /** Restore only exact P127 slot/demo hunks before applying older source freezes. */
 export function restoreP127(path, source) {
-  source = restoreP133(path, source);
+  source = restoreP133(path, restoreP134(path, source));
   if (path === 'components/prism-next/blueprint/blueprint.tsx' || path === 'components/prism-next/demos/blueprint.tsx') {
     source = restoreP131(path, source);
   }

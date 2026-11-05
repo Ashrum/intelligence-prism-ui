@@ -1,3 +1,4 @@
+import { restoreP134, p134SourceFiles } from './helpers/p134-source-compat.mjs';
 import { restoreP133, p133SourceFiles } from './helpers/p133-source-compat.mjs';
 import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import { restoreP127, p127SourceFiles } from './helpers/p127-source-compat.mjs';
@@ -135,11 +136,21 @@ test('P125 append-only visual CSS; no tokens, source components, coss or depende
   for (const p of p133SourceFiles) {
     const added = fixture.files[p].length === 1 && fixture.files[p][0].before === '';
     const expected = added ? '' : execFileSync('git', ['show', `9c56f1cb6e7fb123a7d4e9072e601027eaa6dad7:${p}`], {cwd:root,encoding:'utf8'});
-    assert.equal(restoreP133(p, read(p)), expected);
-    assert.notEqual(restoreP133(p, read(p) + '\n// unrelated edit\n'), expected);
+    assert.equal(restoreP133(p, restoreP134(p, read(p))), expected);
+    assert.notEqual(restoreP133(p, restoreP134(p, read(p)) + '\n// unrelated edit\n'), expected);
     for (const hunk of fixture.files[p]) {
-      assert.throws(() => restoreP133(p, read(p).replace(hunk.after, hunk.after + hunk.after)));
-      assert.throws(() => restoreP133(p, read(p).replace(hunk.after, hunk.after.replace('bp-', 'mutated-bp-').replace('BlueprintNavigationDemo', 'MutatedNavigationDemo').replace('#navigation-system', '#mutated-navigation'))));
+      assert.throws(() => restoreP133(p, restoreP134(p, read(p)).replace(hunk.after, hunk.after + hunk.after)));
+      assert.throws(() => restoreP133(p, restoreP134(p, read(p)).replace(hunk.after, hunk.after.replace('bp-', 'mutated-bp-').replace('BlueprintNavigationDemo', 'MutatedNavigationDemo').replace('#navigation-system', '#mutated-navigation'))));
+    }
+  }
+  const p134Fixture = JSON.parse(read('tests/fixtures/p134-source-hunks.json'));
+  for (const p of p134SourceFiles) {
+    const source = read(p), expected = execFileSync('git', ['show', `${p134Fixture.baseline}:${p}`], {cwd:root,encoding:'utf8'});
+    assert.equal(restoreP134(p, source), expected);
+    assert.notEqual(restoreP134(p, source + '\n/* unrelated edit */\n'), expected);
+    for (const hunk of p134Fixture.files[p]) {
+      assert.throws(() => restoreP134(p, source.replace(hunk.after, hunk.after + hunk.after)));
+      assert.throws(() => restoreP134(p, source.replace(hunk.after, hunk.after.slice(1))));
     }
   }
   // Exact P127 then P126 hunks only; all other bytes still match its pinned parent.
