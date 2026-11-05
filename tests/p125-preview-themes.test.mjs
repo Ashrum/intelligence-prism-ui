@@ -1,3 +1,4 @@
+import { restoreP133, p133SourceFiles } from './helpers/p133-source-compat.mjs';
 import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import { restoreP127, p127SourceFiles } from './helpers/p127-source-compat.mjs';
 import { p126SourceFiles, restoreP126 } from './helpers/p126-source-compat.mjs';
@@ -129,7 +130,18 @@ test('P125 append-only visual CSS; no tokens, source components, coss or depende
   transform({ code: Buffer.from(block), minify: true });
   for (const p of ['app/(next)/next/theme.css','package.json','package-lock.json']) assert.equal(restoreP131(p, read(p)), before(p));
   const changed = execFileSync('git', ['diff', baseline, '--name-only', '--', 'components/coss', 'components/prism-next'], {cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
-  assert.ok(changed.every(p => changedDemos.includes(p) || p126SourceFiles.includes(p) || p127SourceFiles.includes(p)), changed.join('\n'));
+  assert.ok(changed.every(p => changedDemos.includes(p) || p126SourceFiles.includes(p) || p127SourceFiles.includes(p) || p133SourceFiles.includes(p)), changed.join('\n'));
+  const fixture = JSON.parse(read('tests/fixtures/p133-source-hunks.json'));
+  for (const p of p133SourceFiles) {
+    const added = fixture.files[p].length === 1 && fixture.files[p][0].before === '';
+    const expected = added ? '' : execFileSync('git', ['show', `9c56f1cb6e7fb123a7d4e9072e601027eaa6dad7:${p}`], {cwd:root,encoding:'utf8'});
+    assert.equal(restoreP133(p, read(p)), expected);
+    assert.notEqual(restoreP133(p, read(p) + '\n// unrelated edit\n'), expected);
+    for (const hunk of fixture.files[p]) {
+      assert.throws(() => restoreP133(p, read(p).replace(hunk.after, hunk.after + hunk.after)));
+      assert.throws(() => restoreP133(p, read(p).replace(hunk.after, hunk.after.replace('bp-', 'mutated-bp-').replace('BlueprintNavigationDemo', 'MutatedNavigationDemo').replace('#navigation-system', '#mutated-navigation'))));
+    }
+  }
   // Exact P127 then P126 hunks only; all other bytes still match its pinned parent.
   for (const p of p126SourceFiles) assert.equal(restoreP126(p, restoreP127(p, read(p))), execFileSync('git', ['show', `15f43c35ca09ece73ba9c2f6d33c384b18f86bf7:${p}`], {cwd:root,encoding:'utf8'}));
   for (const prop of ['padding','margin','gap','width','height','display','position','overflow','transform','font-size','--new-token']) assert.throws(() => paintOnly(block.replace('border-radius:0;', `border-radius:0;${prop}:0;`)));

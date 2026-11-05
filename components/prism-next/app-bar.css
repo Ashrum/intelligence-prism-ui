@@ -129,3 +129,10 @@
 @media (pointer:coarse) {
   .prism-app-bar .prism-bar-icon-button[data-slot] { min-width:44px; min-height:44px; }
 }
+
+/* Explicitly enabled signature; default AppBar output is unchanged. */
+.bp-app-bar-with-band .prism-app-bar { border-bottom:0; }
+.bp-app-bar-brand-band { display:flex; height:3px; box-sizing:content-box; border-bottom:var(--line-width,1px) solid var(--line,var(--border)); }
+.bp-app-bar-brand-band > span { flex:1; background:var(--brand-blue); }
+.bp-app-bar-brand-band > span:nth-child(2) { background:var(--brand-magenta); }
+.bp-app-bar-brand-band > span:nth-child(3) { background:var(--brand-green); }

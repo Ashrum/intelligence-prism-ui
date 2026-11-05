@@ -798,3 +798,19 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 - 组件站蓝图示例的“曜彩实色与斜纹（合成数据）”展示六个新值及五个旧值，供桌面、窄屏和主题隔离验收。
 
 本轮为 Builder 实施，浏览器验收由 Supervisor 执行；未据此宣称设计或工程准入。
+
+## P133 · 导航体系方案 B（REV 0.1a）
+
+设计依据为导航画板 FROZEN REV 0.1a（00、02、04、05）及蓝图规范 v2。本轮是 Builder 实现，尚待 Supervisor 浏览器验收；不代表工程准入或 PO 验收。
+
+- L1：`AppBarNavLink` 当前项使用墨字与 3px 曜蓝底条；`AppBar brandBand` 可选开启 3px 三等分彩带，默认关闭。已有组件的改色限定蓝图与夜图。
+- L2：沿用 coss `SidebarMenuButton`、`SidebarMenuBadge`，当前项为曜蓝浅底、曜蓝字和左侧内嵌 3px 条。徽标只放数字；`data-tone="todo"` 使用曜紫红字色。无数字时用 `<SidebarMenuBadge data-dot="todo" aria-label="有待处理事项" />` 显示 7px 方点。不要只靠颜色表意；“降级”“未开启”等详细状态移入页面。子菜单去掉左竖线、保留缩进。
+- L3：`PageTabs` 接收 `items`、`currentId`、必需的 `aria-label` 和可选 `leading`、`actions`。每项包含稳定 `id`、`label`、`href` 或路由链接 `render`，可带 `count`、`tone="todo"`。`render` 须输出可聚焦链接并转发传入属性。链接保持原生 Tab 顺序，当前项 `aria-current="page"`，不采用 tablist 键盘模型。`leading` 在视口 ≤760px 显示；整行横向滚动，项目不换行、不收缩。宿主放进 grid 或 flex 时，要给所在列设置 `minmax(0,1fr)` 或给子项设置 `min-width:0`，确保 PageTabs / PageSegments 在容器内滚动。
+- L4：`PageSegments` 使用同一 `items` / `currentId` 契约；灰底轨道、白底当前项（夜图使用本地深色令牌）、细框与曜蓝文字。由宿主确认路由和选择，组件不内置业务状态。
+- L5：`ObjectBar` 接收 `back`（现有 Button 属性）、`breadcrumbs`（最后一项为当前对象）和 `actions`。复用 coss Breadcrumb 与 Prism Button，分隔符为 `/`，仅供对象页自行组合，不接入现有预览框架。
+
+一到四级页面不显示页面标题和面包屑。使用 `<h1 className="sr-only">模块名</h1>` 保留读屏标题；窄屏左栏收起时由 `PageTabs leading` 显示模块名。第五级对象页可显示对象标题与面包屑。
+
+复用检索：现有 AppBar 支持路由 render；coss Sidebar 已透传 data 属性；Breadcrumb 支持 render；现有 Tabs 是页内面板切换，不符合本轮原生链接契约，故新增 PageTabs / PageSegments 组合。无需新增依赖或修改冻结 coss。示例入口：`/next/foundations/blueprint#navigation-system`，随蓝图/夜图主题切换。
+
+字号偏差待确认：现有语义字号没有图纸要求的 13px，ObjectBar 暂用 `text-ui-meta`（12px），未添加局部字号或令牌。L1/L2 保留现有语义字号和布局，不按图纸重设高度。数字与辅助文字使用现有 `--muted-foreground`，确保纸底与卡片底上的可读性。新组件在核心三主题继承中性令牌；没有改核心主题已有令牌或组件规则。
