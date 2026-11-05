@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
@@ -53,7 +54,7 @@ test('P118 steps: only four bars opt in, every other count and chips keeps exact
 const path='app/(next)/next/blueprint.css', css=read(path).replace(/\n\/\* P121 ·[\s\S]*$/, ''), index=css.indexOf('\n/* P118 ·'), block=css.slice(index);
 test('P118 append-only CSS, exact decoration and container thresholds', () => {
   assert.ok(index>0); assert.equal(css.slice(0,index),before(path));
-  assert.equal(read('app/(next)/next/theme.css'),before('app/(next)/next/theme.css'));
+  assert.equal(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')),before('app/(next)/next/theme.css'));
   transform({filename:'p118.css',code:Buffer.from(block),minify:true});
   const ast=postcss.parse(block), rules=[]; ast.walkRules(r=>rules.push(r));
   assert.equal(rules.length,6);

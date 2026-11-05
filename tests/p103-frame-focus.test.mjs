@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -79,7 +80,7 @@ test('P103 local theme boundaries exclude outer brand focus from core roots, des
       assert.notEqual(resolve(inner, '--bp-phase-review'), '#E0438F');
     }
   }
-  assert.equal(themeText, execFileSync('git', ['show', `${fixture.baseline}:app/(next)/next/theme.css`], { cwd: root, encoding: 'utf8' }));
+  assert.equal(restoreP131('app/(next)/next/theme.css', themeText), execFileSync('git', ['show', `${fixture.baseline}:app/(next)/next/theme.css`], { cwd: root, encoding: 'utf8' }));
   const night = own('blueprint-night');
   assert.ok(ratio(night['--bp-phase-review'], night['--card']) >= 3);
   assert.ok(ratio(night['--bp-phase-review'], night['--background']) >= 3);

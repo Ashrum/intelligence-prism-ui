@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -141,7 +142,7 @@ test('P127 spacing is a scoped additive CSS block; all baseline styles, tokens a
     assert.match(rule.selector, /\*\)\)$/);
     assert.deepEqual(rule.nodes.map(n => [n.prop, n.value]), [[i ? 'margin-inline-end' : 'margin-inline-start', '12px']]);
   }
-  for (const p of ['app/(next)/next/theme.css', ...execFileSync('git', ['ls-files', 'components/coss'], { cwd: root, encoding: 'utf8' }).trim().split('\n')]) assert.equal(read(p), oldSource(p));
+  for (const p of ['app/(next)/next/theme.css', ...execFileSync('git', ['ls-files', 'components/coss'], { cwd: root, encoding: 'utf8' }).trim().split('\n')]) assert.equal(restoreP131(p, read(p)), oldSource(p));
 });
 
 // Match the production selector AST, including nested preview roots and descendants.

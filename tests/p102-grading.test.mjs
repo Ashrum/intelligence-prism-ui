@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -108,7 +109,7 @@ test('P102 new tokens reset at root AND local preview; nested core roots and des
 test('P102 existing theme declarations are identical to d960312, only four scoped tokens added', () => {
   const old = postcss.parse(execFileSync('git', ['show', 'd960312:app/(next)/next/theme.css'], { cwd: root, encoding: 'utf8' }));
   const strip = tree => { const result = []; tree.walkDecls(d => { if (!extensionNames.includes(d.prop)) result.push([d.parent.selector ?? d.parent.name, d.prop, d.value]); }); return result; };
-  assert.deepEqual(strip(theme), strip(old));
+  assert.deepEqual(strip(postcss.parse(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')))), strip(old));
   const added = []; theme.walkDecls(d => { if (extensionNames.includes(d.prop)) added.push(d); });
   assert.equal(added.length, 12);
   for (const d of added) assert.ok([baseRule, boundary('blueprint'), boundary('blueprint-night')].includes(d.parent));

@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -92,7 +93,7 @@ test('P122 hidden labels and xs take precedence; wide does not change fill geome
 const css = read(cssPath), index = css.indexOf('\n/* P122 ·'), block = css.slice(index).split('\n/* P125 ·')[0], ast = postcss.parse(block);
 test('P122 append-only CSS, unchanged tokens, frozen coss and no dependency changes', () => {
   assert.ok(index > 0); assert.equal(css.slice(0, index), before(cssPath));
-  for (const path of ['app/(next)/next/theme.css', 'package.json', 'package-lock.json']) assert.equal(read(path), before(path));
+  for (const path of ['app/(next)/next/theme.css', 'package.json', 'package-lock.json']) assert.equal(restoreP131(path, read(path)), before(path));
   assert.equal(execFileSync('git', ['diff', baseline, '--', 'components/coss'], { cwd: root, encoding: 'utf8' }), '');
   assert.doesNotThrow(() => transform({ code: Buffer.from(block), minify: true }));
   ast.walkRules(rule => {

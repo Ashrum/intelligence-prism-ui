@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -76,7 +77,7 @@ assert.ok(index>0);
 const block=css.slice(index),ast=postcss.parse(block);
 test('P114 append-only CSS and unchanged tokens/coss; only exact paint declarations allowed',()=>{
   assert.equal(css.slice(0,index),execFileSync('git',['show',`${fixture.baseline}:${path}`],{cwd:root,encoding:'utf8'}));
-  assert.equal(read('app/(next)/next/theme.css'),execFileSync('git',['show',`${fixture.baseline}:app/(next)/next/theme.css`],{cwd:root,encoding:'utf8'}));
+  assert.equal(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')),execFileSync('git',['show',`${fixture.baseline}:app/(next)/next/theme.css`],{cwd:root,encoding:'utf8'}));
   assert.equal(execFileSync('git',['diff',fixture.baseline,'--','components/coss'],{cwd:root,encoding:'utf8'}),'');
   assert.deepEqual(ast.nodes.map(n=>n.type),['comment','rule','rule']);
   const rules=ast.nodes.filter(n=>n.type==='rule');
