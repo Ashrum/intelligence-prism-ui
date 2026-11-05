@@ -7,6 +7,7 @@ import { PageTabs, type PageNavigationItem } from "../page-tabs";
 import { PageSegments } from "../page-segments";
 import { ObjectBar } from "../object-bar";
 import { Button } from "../button";
+import { BlueprintSheet } from "../blueprint/blueprint";
 import { SidebarProvider, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuBadge } from "@/components/coss/sidebar";
 
 function NavigationExample({ teacher = false }: { teacher?: boolean }) {
@@ -45,13 +46,14 @@ function NavigationExample({ teacher = false }: { teacher?: boolean }) {
           </SidebarMenu>
         </nav>
         <div className="bp-navigation-demo-main">
-          <h1 className="sr-only">{moduleName}</h1>
           <PageTabs aria-label={`${moduleName}栏目`} leading={moduleName} items={links(tabs, setTab)} currentId={tab}
             actions={<Button variant="outline" render={<a href="#navigation-object" />}>打开对象示例</Button>} />
-          <PageSegments aria-label={`${moduleName}视图`} items={links(segments, setSegment)} currentId={segment} />
-          <p role="status" className="text-ui-hint text-muted-foreground">合成示例：{tabs.find(item => item.id === tab)?.label} · {segments.find(item => item.id === segment)?.label}</p>
-          {teacher ? <ul className="space-y-3 text-ui-body"><li>稳定保持 · 10 人</li><li>近期回落 · 8 人</li><li>需要支持 · 2 人</li><li>继续观察 · 12 人</li></ul>
-            : <a className="text-ui-body underline" href="#navigation-object">二次函数单元测验 · 试卷</a>}
+          <BlueprintSheet title={moduleName} titleDisplay="hidden" headingLevel={1}>
+            <PageSegments aria-label={`${moduleName}视图`} items={links(segments, setSegment)} currentId={segment} />
+            <p role="status" className="text-ui-hint text-muted-foreground">合成示例：{tabs.find(item => item.id === tab)?.label} · {segments.find(item => item.id === segment)?.label}</p>
+            {teacher ? <ul className="space-y-3 text-ui-body"><li>稳定保持 · 10 人</li><li>近期回落 · 8 人</li><li>需要支持 · 2 人</li><li>继续观察 · 12 人</li></ul>
+              : <a className="text-ui-body underline" href="#navigation-object">二次函数单元测验 · 试卷</a>}
+          </BlueprintSheet>
         </div>
       </div>
     </SidebarProvider>

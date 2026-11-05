@@ -118,6 +118,8 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
   folio?: BlueprintFolio
   folioAriaHidden?: boolean
   title: ReactNode
+  /** Hide the visual header while retaining the accessible section title. */
+  titleDisplay?: "visible" | "hidden"
   description?: ReactNode
   titleActions?: ReactNode
   /** Coordinate rulers on the frame edges. Decorative; hidden below 760px and from assistive tech. */
@@ -128,14 +130,16 @@ export interface BlueprintSheetProps extends Omit<ComponentProps<"section">, "ti
   rulerTracking?: boolean
   /** Zero-based column 0–7 / row 0–3. null explicitly clears the controlled mark. */
   rulerMark?: { column: number; row: number } | null
-  headingLevel?: 2 | 3
+  /** Level 1 is for hidden page titles; visible headings remain level 2 or 3. */
+  headingLevel?: 1 | 2 | 3
 }
-export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, description, titleActions, rulers = true, narrowFrame = "edge", rulerTracking = false, rulerMark, headingLevel = 2, className, children, onPointerMove, onPointerLeave, ...props }: BlueprintSheetProps) {
+export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title, titleDisplay = "visible", description, titleActions, rulers = true, narrowFrame = "edge", rulerTracking = false, rulerMark, headingLevel = 2, className, children, onPointerMove, onPointerLeave, ...props }: BlueprintSheetProps) {
   const id = useId()
+  const HiddenHeading = headingLevel === 1 ? "h1" : headingLevel === 2 ? "h2" : "h3"
   const [pointerMark, setPointerMark] = useState<{ column: number; row: number } | null>(null)
   const mark = rulerMark !== undefined ? rulerMark : rulerTracking ? pointerMark : null
   const validMark = mark && Number.isInteger(mark.column) && mark.column >= 0 && mark.column < 8 && Number.isInteger(mark.row) && mark.row >= 0 && mark.row < 4 ? mark : null
-  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet" data-narrow-frame={narrowFrame === "keep" ? "keep" : undefined}
+  return <section aria-labelledby={id} {...props} className={cn("bp-sheet", className)} data-slot="bp-sheet" data-title-display={titleDisplay === "hidden" ? "hidden" : undefined} data-narrow-frame={narrowFrame === "keep" ? "keep" : undefined}
     onPointerMove={event => {
       onPointerMove?.(event)
       if (!rulerTracking || rulerMark !== undefined || event.pointerType === "touch" || event.defaultPrevented) return
@@ -146,14 +150,14 @@ export function BlueprintSheet({ letter, sheetNo, folio, folioAriaHidden, title,
       setPointerMark(previous => previous?.column === column && previous.row === row ? previous : { column, row })
     }}
     onPointerLeave={event => { onPointerLeave?.(event); setPointerMark(null) }}>
-    {rulers && <>
+    {rulers && titleDisplay !== "hidden" && <>
       <div aria-hidden="true" className="bp-ruler bp-ruler--top">{RULER_TOP.map((n, index) => <span key={n} data-active={validMark?.column === index ? "" : undefined}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--bottom">{RULER_TOP.map((n, index) => <span key={n} data-active={validMark?.column === index ? "" : undefined}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--left">{RULER_SIDE.map((n, index) => <span key={n} data-active={validMark?.row === index ? "" : undefined}>{n}</span>)}</div>
       <div aria-hidden="true" className="bp-ruler bp-ruler--right">{RULER_SIDE.map((n, index) => <span key={n} data-active={validMark?.row === index ? "" : undefined}>{n}</span>)}</div>
     </>}
-    <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} titleActions={titleActions} headingId={id} headingLevel={headingLevel} className="relative" />
-    <div className="relative min-w-0">{children}</div>
+    {titleDisplay === "hidden" ? <HiddenHeading id={id} className="sr-only">{title}</HiddenHeading> : <BlueprintSectionHeader code={letter} folio={folio ?? (sheetNo ? { kind: "sheet", value: sheetNo } : undefined)} folioAriaHidden={folioAriaHidden} title={title} description={description} titleActions={titleActions} headingId={id} headingLevel={headingLevel === 1 ? 2 : headingLevel} className="relative" />}
+    <div className={titleDisplay === "hidden" ? "relative grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4" : "relative min-w-0"}>{titleDisplay === "hidden" ? <>{titleActions != null ? <div data-slot="bp-section-title-actions" className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2">{titleActions}</div> : null}{children}</> : children}</div>
   </section>
 }
 

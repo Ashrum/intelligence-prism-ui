@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "5a0742d5dc3ce534f0d01f0b82f67893c45728d7993c6cd6cd3f110a5c341f2d",
+  "sourceSha256": "f79eee9980640e642d407d752f404f29ad2292d6ede3ae6e00e59e888d4c01da",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -318,6 +318,11 @@
       "id": "section-63",
       "level": 2,
       "text": "P133 · 导航体系方案 B（REV 0.1a）"
+    },
+    {
+      "id": "section-64",
+      "level": 2,
+      "text": "P134 · 页面标题隐藏开关"
     }
   ],
   "blocks": [
@@ -13622,6 +13627,112 @@
           "value": "，确保纸底与卡片底上的可读性。新组件在核心三主题继承中性令牌；没有改核心主题已有令牌或组件规则。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-64",
+      "children": [
+        {
+          "type": "text",
+          "value": "P134 · 页面标题隐藏开关"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "一到四级页面使用 "
+        },
+        {
+          "type": "code",
+          "value": "BlueprintSheet titleDisplay=\"hidden\" headingLevel={1}"
+        },
+        {
+          "type": "text",
+          "value": "，无需额外装饰属性；所有主题下自动去掉外框、内框、背景与内边距，四条标尺不进入 DOM。模块名仍通过 "
+        },
+        {
+          "type": "code",
+          "value": "title"
+        },
+        {
+          "type": "text",
+          "value": " 提供，渲染为 "
+        },
+        {
+          "type": "code",
+          "value": "sr-only"
+        },
+        {
+          "type": "text",
+          "value": " 的 h1，section 的 "
+        },
+        {
+          "type": "code",
+          "value": "aria-labelledby"
+        },
+        {
+          "type": "text",
+          "value": " 指向它；字母块、可见标题、SHEET 号及说明不渲染。第五级对象页、预览框架不使用这一隐藏模式。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "titleDisplay"
+        },
+        {
+          "type": "text",
+          "value": " 默认为 "
+        },
+        {
+          "type": "code",
+          "value": "\"visible\""
+        },
+        {
+          "type": "text",
+          "value": "，既有调用输出保持不变。"
+        },
+        {
+          "type": "code",
+          "value": "headingLevel"
+        },
+        {
+          "type": "text",
+          "value": " 支持 1 / 2 / 3；1 仅用于隐藏标题，可见模式传 1 时按 2 渲染。隐藏模式的内容容器使用 grid、16px 间距；有 "
+        },
+        {
+          "type": "code",
+          "value": "titleActions"
+        },
+        {
+          "type": "text",
+          "value": " 时在内容顶部显示右对齐、可换行的操作区，沿用 "
+        },
+        {
+          "type": "code",
+          "value": "data-slot=\"bp-section-title-actions\""
+        },
+        {
+          "type": "text",
+          "value": "；未提供时不生成操作行。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "复用检索（离线）：沿用现有 BlueprintSheet、sr-only 和标题操作区的 flex-wrap 布局，仅新增隐藏模式的隔离 CSS，未新增组件、令牌或依赖，未修改 BlueprintSectionHeader、BpSectionCard 或冻结 coss。导航体系的学校知识库、学生与班级两个合成示例均使用隐藏模式；第五级对象示例保持原样。浏览器验收由 Supervisor 执行。"
+        }
+      ]
     }
   ],
   "assets": [
@@ -14128,7 +14239,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "5a0742d5dc3ce534f0d01f0b82f67893c45728d7993c6cd6cd3f110a5c341f2d"
+      "sha256": "f79eee9980640e642d407d752f404f29ad2292d6ede3ae6e00e59e888d4c01da"
     }
   ]
 }
