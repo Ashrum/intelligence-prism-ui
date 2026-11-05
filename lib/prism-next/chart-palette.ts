@@ -7,9 +7,9 @@ const LIGHT_SERIES = ["#1E88E5", "#D6337F", "#3A9A2A", "#C27A00", "#7E5BD6", "#6
 const CORE_DARK_SERIES = ["#62ACED", "#E270A5", "#75B86A", "#D4A24D", "#A58CE2", "#979CA6"] as const
 const NIGHT_SERIES = ["#86C5FF", "#F296C2", "#99DFB4", "#F4CC86", "#BDACED", "#B6BEC9"] as const
 /** Accent first (current / primary series), ink second (baseline), then Prism's existing categorical hues. */
-export const BLUEPRINT_SERIES = ["#1D5FBF", "#16181D", "#B8266E", "#2B8050", "#A57013", "#6B7280"] as const
-/** secondary → mid → accent; mid is the RGB midpoint so contrastForeground stays ≥ 4.5 across the ramp. */
-export const BLUEPRINT_SEQUENTIAL = ["#F3F5F8", "#88AADD", "#1D5FBF"] as const
+export const BLUEPRINT_SERIES = ["#0F5FA8", "#16181D", "#A8245C", "#3F6309", "#A57013", "#6B7280"] as const
+/** Yaocai light blue → mid blue → text blue; labels use contrastForeground. */
+export const BLUEPRINT_SEQUENTIAL = ["#E3F1FD", "#6FB6F0", "#0F5FA8"] as const
 
 export function chartSeriesColors(theme?: string): readonly string[] {
   if (theme === "dark") return CORE_DARK_SERIES
@@ -19,7 +19,7 @@ export function chartSeriesColors(theme?: string): readonly string[] {
 export function chartShapeColors(theme?: string) {
   if (theme === "dark") return { base: "#62ACED", selected: "#E270A5", fill: "#3C719F" }
   if (theme === "blueprint-night") return { base: "#86C5FF", selected: "#F296C2", fill: "#365B7B" }
-  if (theme === "blueprint") return { base: "#16181D", selected: "#1D5FBF", fill: "#E4ECF8" }
+  if (theme === "blueprint") return { base: "#16181D", selected: "#0F5FA8", fill: "#E3F1FD" }
   return { base: "#1E88E5", selected: "#D6337F", fill: "#99C9F3" }
 }
 // Night retains the original Blueprint fallback ramp, independently of the P69 core dark palette.

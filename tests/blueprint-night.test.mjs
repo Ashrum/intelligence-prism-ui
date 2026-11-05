@@ -126,7 +126,7 @@ test('all original core and white token blocks retain their baseline bytes', () 
 test('night maps BP.dark roles, SQUARE geometry, and documented fill fallbacks', () => {
   const expected={background:'#081322',foreground:'#E6EDF7',heading:'#E6EDF7',card:'#0D1C31','card-foreground':'#E6EDF7',popover:'#0D1C31','popover-foreground':'#E6EDF7',primary:'#E6EDF7','primary-foreground':'#081322',secondary:'#12253F','secondary-foreground':'#E6EDF7',muted:'#12253F','muted-foreground':'#A9B8CC',accent:'#16305A','accent-foreground':'#E6EDF7',border:'#23385A',input:'#C9D6E8',ring:'#6EA8FF',link:'#6EA8FF','disabled-foreground':'#7D90AA',destructive:'#FF7070','destructive-foreground':'#FF7070',info:'#6EA8FF','info-foreground':'#6EA8FF',success:'#62BD89','success-foreground':'#7FD6A0',warning:'#E8A33D','warning-foreground':'#F0B14A',sidebar:'#0D1C31',code:'#0A1729','code-bg':'#0A1729','accent-ink':'#081322',line:'#C9D6E8','line-width':'1.5px',radius:'0px','head-bg':'#E6EDF7','head-fg':'#081322',grid:'rgba(201,214,232,.06)','grid-strong':'rgba(201,214,232,.1)','shadow-offset':'4px 4px 0 #6EA8FF','shadow-offset-sm':'2px 2px 0 #6EA8FF'};
   for (const [key,value] of Object.entries(expected)) assert.equal(tokens[`--${key}`],value,key);
-  const white=theme.split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
+  const white=restoreP131('app/(next)/next/theme.css', theme).split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
   const keys=[...white.matchAll(/(--[\w-]+):/g)].map(m=>m[1]);
   assert.deepEqual(Object.keys(tokens).sort(),[...keys,'--chart-6'].sort());
   assert.match(body,/color-scheme:dark/);

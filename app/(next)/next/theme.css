@@ -198,11 +198,12 @@
   --success-foreground:#216440;
   --warning:#E8A33D;
   --warning-foreground:#995909;
-  --chart-1:#1D5FBF;
+  --chart-1:#0F5FA8;
   --chart-2:#16181D;
-  --chart-3:#B8266E;
-  --chart-4:#2B8050;
+  --chart-3:#A8245C;
+  --chart-4:#3F6309;
   --chart-5:#A57013;
+  --chart-6:#6B7280;
   --radius:0px;
   --sidebar:#FFFFFF;
   --sidebar-foreground:var(--foreground);

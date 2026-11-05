@@ -268,6 +268,30 @@ export function BlueprintComponentsDemo() {
           </div>
         </div>
       </div>
+      <section id="yaocai-fills" className="mt-9 space-y-5" aria-label="曜彩尺寸条填充样例">
+        <BpMinor code="BP-06.2 · Size Bar" label="曜彩实色与斜纹（合成数据）" />
+        <BpSizeBar legendValues rows={[
+          { id: "ai", label: "AI 数据", unit: "项", segments: [
+            { id: "ai", label: "已处理", value: 60, fill: "ai" },
+            { id: "hatch-ai", label: "计划中", value: 40, fill: "hatch-ai" },
+          ] },
+          { id: "todo", label: "人工复核", unit: "项", segments: [
+            { id: "todo", label: "已发现关注项", value: 35, fill: "todo" },
+            { id: "hatch-todo", label: "未补回", value: 65, fill: "hatch-todo" },
+          ] },
+          { id: "done", label: "达成确认", unit: "项", segments: [
+            { id: "done", label: "已确认", value: 75, fill: "done" },
+            { id: "hatch-done", label: "待确认", value: 25, fill: "hatch-done" },
+          ] },
+        ]} />
+        <BpSizeBar rows={[{ id: "legacy", label: "既有填充", unit: "项", segments: [
+          { id: "ink", label: "墨色", value: 20, fill: "ink" },
+          { id: "hatch", label: "墨斜纹", value: 20, fill: "hatch" },
+          { id: "accent", label: "强调", value: 20, fill: "accent" },
+          { id: "quiet", label: "中性", value: 20, fill: "quiet" },
+          { id: "warn", label: "警告", value: 20, fill: "warn" },
+        ] }]} />
+      </section>
       <BlueprintSizeBarActivationDemo />
       <section id="calibration" className="mt-9 space-y-5" aria-label="学情比例与状态样例">
         <BpMinor code="BP-06.1 · Size Bar" label="补回与保持（合成数据）" />
