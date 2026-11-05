@@ -35,19 +35,21 @@ export function InstitutionWordmark({ children, maxWidth = 208, className, style
 }
 
 export interface AppBarProps extends Omit<ComponentProps<"header">, "children"> {
+  brandBand?: boolean;
   identity: ReactNode;
   navigation: ReactNode;
   tools?: ReactNode;
 }
 
 /** Its own available inline size, rather than the viewport, chooses navigation density. */
-export function AppBar({ identity, navigation, tools, className, ...props }: AppBarProps) {
-  return <header {...props} className={cn("prism-app-bar-root", className)}>
+export function AppBar({ identity, navigation, tools, brandBand = false, className, ...props }: AppBarProps) {
+  return <header {...props} className={cn("prism-app-bar-root", brandBand && "bp-app-bar-with-band", className)}>
     <div className="prism-app-bar">
       <div className="prism-app-bar-identity-slot">{identity}</div>
       <div className="prism-app-bar-navigation-slot">{navigation}</div>
       <div className="prism-app-bar-tools">{tools}</div>
     </div>
+    {brandBand && <div className="bp-app-bar-brand-band" aria-hidden="true"><span /><span /><span /></div>}
   </header>;
 }
 

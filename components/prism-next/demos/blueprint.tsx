@@ -11,6 +11,7 @@ import { Badge } from "../badge"
 import { ChartLegend } from "../charts/chart-legend"
 import { BlueprintTitleSlotsDemo } from "./blueprint-title-slots"
 import { BlueprintGradingDemo } from "./blueprint-grading"
+import { BlueprintNavigationDemo } from "./blueprint-navigation"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
 import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
@@ -158,6 +159,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintFrameDemo />
     <BlueprintTitleSlotsDemo />
     <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
+      <a href="#navigation-system">导航体系</a>
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#narrow-frame">窄屏图纸外框</a>
@@ -172,6 +174,7 @@ export function BlueprintComponentsDemo() {
       <a href="#grading-p102">智能批阅组件</a>
       <a href="#trend-calibration">C0 趋势图对照</a>
     </nav>
+    <BlueprintNavigationDemo />
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
     <BlueprintTitleRuleDemo />

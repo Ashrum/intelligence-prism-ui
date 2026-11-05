@@ -180,8 +180,16 @@ test('shared, white-only and night-only Blueprint rules enforce matching preview
       if (s.includes('::')) assert.ok(s.indexOf(g)<s.indexOf('::'),s);
       if (g===guard) assert.ok(s.slice(0,s.indexOf(g)).includes(shared),s);
       if (g===whiteGuard) {
-        // Blueprint §5.4 excludes night. Only the authorized Agent focus repair
-        // is white-only; this is not a blanket exemption from the family guard.
+        const navigationRules = new Map([
+          [`[data-prism-theme="blueprint"] .bp-page-segments${whiteGuard}`, 'background:#F0F1F3;'],
+          [`[data-prism-theme="blueprint"] .bp-object-bar [data-slot="breadcrumb-separator"]${whiteGuard}`, 'color:#C5C9D0;'],
+        ]);
+        if (navigationRules.has(s)) {
+          assert.equal(rule.nodes.map(d => d.toString() + ';').join(''), navigationRules.get(s));
+          continue;
+        }
+        // Apart from the exact P133 rules above, Blueprint §5.4 only permits
+        // the authorized white-only Agent focus repair.
         assert.ok(s.startsWith('[data-prism-theme="blueprint"] '),s);
         assert.match(s,/data-agent-prompt-bar|data-agent-message="user"/);
         assert.ok(s.includes(':focus-visible'),s);
