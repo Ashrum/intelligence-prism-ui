@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -82,7 +83,7 @@ test('P113 CSS adds only explicit action visuals; all previous CSS and theme tok
     '.bp-size-row-action:focus-visible':{outline:'2px solid var(--ring)','outline-offset':'2px'},
   });
   const tokens=read('app/(next)/next/theme.css');
-  assert.equal(tokens,execFileSync('git',['show',`${fixture.baseline}:app/(next)/next/theme.css`],{cwd:root,encoding:'utf8'}));
+  assert.equal(restoreP131('app/(next)/next/theme.css', tokens),execFileSync('git',['show',`${fixture.baseline}:app/(next)/next/theme.css`],{cwd:root,encoding:'utf8'}));
   for(const theme of themes){
     let found=false;postcss.parse(tokens).walkRules(r=>{if(r.selector.includes(`[data-prism-theme="${theme}"]`) || (theme==='light' && r.selector.includes(':root'))){const accent=r.nodes.find(n=>n.prop==='--accent');if(accent){found=true;if(theme==='blueprint')assert.equal(accent.value,'#E4ECF8');}}});
     assert.ok(found,theme);

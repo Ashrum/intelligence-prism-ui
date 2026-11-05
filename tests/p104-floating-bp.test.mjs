@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import { restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -83,7 +84,7 @@ for (const core of ['light', 'paper', 'dark']) test(`P104 ${core}: no CSS delta 
       for (const pseudo of ['before', 'after']) assert.deepEqual(style(node, pseudo), {});
     }
   }
-  assert.equal(read('app/(next)/next/theme.css'), before('app/(next)/next/theme.css'));
+  assert.equal(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')), before('app/(next)/next/theme.css'));
   // All previous rules/at-rules remain byte-identical; the only CSS delta cannot
   // match core nodes. Compile both untouched portions as an additional check.
   // P105 independently proves its additive block cannot affect core themes.

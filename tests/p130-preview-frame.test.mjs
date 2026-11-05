@@ -5,7 +5,7 @@ import postcss from 'postcss';
 import { transform } from 'lightningcss';
 
 const full = readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
-const block = full.slice(full.indexOf('/* P130:'));
+const block = full.slice(full.indexOf('/* P130:'), full.indexOf('/* P131 ·'));
 const css = postcss.parse(block);
 const decls = rule => Object.fromEntries(rule.nodes.filter(n => n.type === 'decl').map(n => [n.prop, n.value]));
 function parse(selector) {

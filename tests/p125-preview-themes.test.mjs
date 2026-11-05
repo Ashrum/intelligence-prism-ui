@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import { restoreP127, p127SourceFiles } from './helpers/p127-source-compat.mjs';
 import { p126SourceFiles, restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
@@ -126,7 +127,7 @@ function paintOnly(source) {
 test('P125 append-only visual CSS; no tokens, source components, coss or dependencies changed', () => {
   assert.equal(css.slice(0, css.indexOf(marker)), before(cssPath)); paintOnly(block);
   transform({ code: Buffer.from(block), minify: true });
-  for (const p of ['app/(next)/next/theme.css','package.json','package-lock.json']) assert.equal(read(p), before(p));
+  for (const p of ['app/(next)/next/theme.css','package.json','package-lock.json']) assert.equal(restoreP131(p, read(p)), before(p));
   const changed = execFileSync('git', ['diff', baseline, '--name-only', '--', 'components/coss', 'components/prism-next'], {cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
   assert.ok(changed.every(p => changedDemos.includes(p) || p126SourceFiles.includes(p) || p127SourceFiles.includes(p)), changed.join('\n'));
   // Exact P127 then P126 hunks only; all other bytes still match its pinned parent.

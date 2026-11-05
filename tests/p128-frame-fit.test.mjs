@@ -36,7 +36,7 @@ function canvasStyles(width) {
   };
 }
 // P130 supersedes the P128 width gate; evaluate the current preview spacing.
-const preview = postcss.parse(css.slice(css.indexOf('/* P130:')));
+const preview = postcss.parse(css.slice(css.indexOf('/* P130:'), css.indexOf('/* P131 ·')));
 const hostRule = preview.nodes.find(n => n.type === 'rule' && n.selector.includes('.d1-canvas > .d1-paper-host'));
 const [marginY, marginX = marginY] = declarations(hostRule).margin.split(' ').map(parseFloat);
 const marginAt = () => marginX;

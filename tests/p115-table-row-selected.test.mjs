@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -21,7 +22,7 @@ test('P115 preserves every previous CSS byte, theme tokens, coss and existing de
       // P121 intentionally migrates these fields. Pin the complete new sources rather than dropping the old freeze.
       const expected = JSON.parse(read('tests/fixtures/p121-field-ssr.json')).sourceSha256[file];
       assert.equal(createHash('sha256').update(read(file)).digest('hex'), expected, file);
-    } else assert.equal(read(file), before(file));
+    } else assert.equal(restoreP131(file, read(file)), before(file));
   }
 });
 

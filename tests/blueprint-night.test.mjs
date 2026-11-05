@@ -1,3 +1,4 @@
+import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -111,7 +112,7 @@ test('next-themes initialization restores every old stored value and night on th
 });
 
 test('all original core and white token blocks retain their baseline bytes', () => {
-  const blocks=[...theme.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(m=>m[1].includes(':where([data-agent-preview]')&&!m[1].includes(`data-prism-theme="${night}"`)).map(m=>m[2]);
+  const blocks=[...restoreP131('app/(next)/next/theme.css', theme).matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(m=>m[1].includes(':where([data-agent-preview]')&&!m[1].includes(`data-prism-theme="${night}"`)).map(m=>m[2]);
   // P102 adds only these exact extension declarations. Keep the original byte
   // hashes as the oracle; P102 separately checks every boundary/value and count.
   const additions = [
