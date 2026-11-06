@@ -2,6 +2,7 @@
   "sourcePath": "docs/blueprint-theme.md",
   "sourceSha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
+  "currentSpecDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme-v2.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
     {
@@ -16088,6 +16089,11 @@
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
       "sha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7"
+    },
+    {
+      "source": "docs/blueprint-theme-v2.md",
+      "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme-v2.md",
+      "sha256": "e329153e8c9a5d2e16be01d2feb0cb30acfdfcd0344fc2bda823c603bf36ffe4"
     }
   ]
 }

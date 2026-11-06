@@ -158,29 +158,53 @@ export function BlueprintComponentsDemo() {
     }
   }
   return <div className="bp-demo space-y-8">
-    <BlueprintFrameDemo />
-    <BlueprintTitleSlotsDemo />
-    <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
-      <a href="#navigation-system">导航体系</a>
-      <a href="#work-frame">工作框架组件</a>
-      <a href="#drafting">制图元素与颜色</a>
-      <a href="#common-components">常用基础组件</a>
-      <a href="#common-components-two">第二批常用组件</a>
-      <a href="#narrow-frame">窄屏图纸外框</a>
-      <a href="#title-rules">标题墨线</a>
-      <a href="#frame-variants">框线层级</a>
-      <a href="#sizebar-label-width">名称列宽</a>
-      <a href="#actions">蓝图按钮与标签页</a>
-      <a href="#entry-annotations">图形标注与入口</a>
-      <a href="#artifact-folio">成果标题定位</a>
-      <a href="#object-section-cards">原件与成果分节</a>
-      <a href="#workspace-contracts">Agent 工作区稳定交互</a>
-      <a href="#grading-p102">智能批阅组件</a>
-      <a href="#trend-calibration">C0 趋势图对照</a>
-    </nav>
+    <header className="space-y-3">
+      <h2 className="text-section-title">现行（v2.1）</h2>
+      <p className="text-ui-body">新页面按这里的做法；<a className="prism-link" href="/next/foundations/blueprint/guide">规范见 v2.1</a>。</p>
+      <nav aria-label="现行蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
+        <a href="#work-frame">工作框架组件</a>
+        <a href="#drafting">制图元素与颜色</a>
+        <a href="#navigation-system">导航体系</a>
+        <a href="#common-components">常用基础组件</a>
+        <a href="#common-components-two">第二批常用组件</a>
+      </nav>
+    </header>
+    <BlueprintWorkDemo />
+    <BlueprintDraftingDemo />
     <BlueprintNavigationDemo />
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />
+    <header className="space-y-3">
+      <h2 className="text-section-title">历史（v2 及以前，仅供查阅）</h2>
+      <p className="text-ui-body text-muted-foreground">以下保留历史示例，不作为新页面依据。</p>
+      <nav aria-label="历史蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
+        <a href="#blueprint-frame">无标题图纸外框</a>
+        <a href="#title-slots-p127">现有标题与工具行插槽</a>
+        <a href="#title-rules">标题墨线</a>
+        <a href="#frame-variants">框线层级</a>
+        <a href="#sizebar-label-width">名称列宽</a>
+        <a href="#narrow-frame">窄屏图纸外框</a>
+        <a href="#object-section-cards">原件与成果分节</a>
+        <a href="#section-card-selection">分节卡选中态</a>
+        <a href="#workspace-contracts">Agent 工作区稳定交互</a>
+        <a href="#overview-calibration">学情概览组合</a>
+        <a href="#trend-calibration">C0 趋势图对照</a>
+        <a href="#grading-p102">智能批阅组件</a>
+        <a href="#artifact-folio">成果标题定位</a>
+        <a href="#actions">蓝图按钮与标签页</a>
+        <a href="#cards">卡片与线条</a>
+        <a href="#data">进度与数据</a>
+        <a href="#yaocai-fills">曜彩尺寸条填充</a>
+        <a href="#sizebar-activation">逐行激活</a>
+        <a href="#calibration">学情比例与状态</a>
+        <a href="#feedback">反馈与文本</a>
+        <a href="#rubric">评分点</a>
+        <a href="#reading">长中文与公式阅读</a>
+        <a href="#entry-annotations">图形标注与入口</a>
+      </nav>
+    </header>
+    <BlueprintFrameDemo />
+    <BlueprintTitleSlotsDemo />
     <BlueprintTitleRuleDemo />
     <BlueprintFrameVariantsDemo />
     <BlueprintSheet id="narrow-frame" title="窄屏保留图纸外框" narrowFrame="keep" description="窄屏保留左右外框，隐藏坐标尺与内框。">
@@ -191,8 +215,6 @@ export function BlueprintComponentsDemo() {
     <BlueprintSectionCardSelectionDemo />
     <AgentWorkspacePatternsDemo />
     <BlueprintOverviewDemo />
-    <BlueprintWorkDemo />
-    <BlueprintDraftingDemo />
     <BlueprintGradingDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
