@@ -171,12 +171,14 @@ test('shared, white-only and night-only Blueprint rules enforce matching preview
         const navigationRules = new Map([
           [`[data-prism-theme="blueprint"] .bp-page-segments${whiteGuard}`, 'background:#F0F1F3;'],
           [`[data-prism-theme="blueprint"] .bp-object-bar [data-slot="breadcrumb-separator"]${whiteGuard}`, 'color:#C5C9D0;'],
+          // P136 §12 荧光笔，白图专用
+          [`[data-prism-theme="blueprint"] .bp-mark${whiteGuard}`, 'background:linear-gradient(transparent 55%, var(--brand-green) 55%);'],
         ]);
         if (navigationRules.has(s)) {
           assert.equal(rule.nodes.map(d => d.toString() + ';').join(''), navigationRules.get(s));
           continue;
         }
-        // Apart from the exact P133 rules above, Blueprint §5.4 only permits
+        // Apart from the exact P133 / P136 rules above, Blueprint §5.4 only permits
         // the authorized white-only Agent focus repair.
         assert.ok(s.startsWith('[data-prism-theme="blueprint"] '),s);
         assert.match(s,/data-agent-prompt-bar|data-agent-message="user"/);

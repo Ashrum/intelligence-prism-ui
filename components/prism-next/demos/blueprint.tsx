@@ -13,6 +13,7 @@ import { BlueprintTitleSlotsDemo } from "./blueprint-title-slots"
 import { BlueprintGradingDemo } from "./blueprint-grading"
 import { BlueprintNavigationDemo } from "./blueprint-navigation"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
+import { BlueprintWorkDemo } from "./blueprint-work"
 import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
 import { QuestionMath } from "../question-content"
@@ -160,6 +161,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintTitleSlotsDemo />
     <nav aria-label="蓝图示例导航" className="flex flex-wrap gap-x-5 gap-y-2 text-ui-hint">
       <a href="#navigation-system">导航体系</a>
+      <a href="#work-frame">工作框架组件</a>
       <a href="#common-components">常用基础组件</a>
       <a href="#common-components-two">第二批常用组件</a>
       <a href="#narrow-frame">窄屏图纸外框</a>
@@ -187,6 +189,7 @@ export function BlueprintComponentsDemo() {
     <BlueprintSectionCardSelectionDemo />
     <AgentWorkspacePatternsDemo />
     <BlueprintOverviewDemo />
+    <BlueprintWorkDemo />
     <BlueprintGradingDemo />
     <section id="artifact-folio" aria-label="成果标题定位样例" className="space-y-6">
       <BlueprintSheet rulers={false} title={output?.title} folio={revision ? { kind: "rev", value: revision } : undefined} folioAriaHidden
