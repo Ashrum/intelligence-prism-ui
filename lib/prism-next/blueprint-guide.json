@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "dff6e1edbb5af2a4559fd9b74faa9ebcaeb3b63c204f5a0597210f3b6c45707b",
+  "sourceSha256": "cd94433e40514d8b9328cc41b448e6226d1661563c74b4f9efe2c609f060a274",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -14460,7 +14460,7 @@
       "children": [
         {
           "type": "text",
-          "value": "本轮按任务要求使用现有语义档位。默认根字号下，指标数字沿用 "
+          "value": "字号即规范 v2.1 §2 的现有令牌（PO 2026-11-06 规范对齐令牌，不再有“目标值”差距）：指标数字 "
         },
         {
           "type": "code",
@@ -14468,7 +14468,7 @@
         },
         {
           "type": "text",
-          "value": " 默认 stack 布局的 "
+          "value": " 默认 stack 布局为 "
         },
         {
           "type": "code",
@@ -14476,7 +14476,23 @@
         },
         {
           "type": "text",
-          "value": " 40px（规范目标 28px，保持既有档位），结论 "
+          "value": " 40px，"
+        },
+        {
+          "type": "code",
+          "value": "readout"
+        },
+        {
+          "type": "text",
+          "value": " / 行内布局为 "
+        },
+        {
+          "type": "code",
+          "value": "text-stat-display"
+        },
+        {
+          "type": "text",
+          "value": " 24px；结论 "
         },
         {
           "type": "code",
@@ -14484,7 +14500,7 @@
         },
         {
           "type": "text",
-          "value": " 为 20px（目标 22px），对象名与面板标题 "
+          "value": " 20px；对象名与面板标题 "
         },
         {
           "type": "code",
@@ -14492,7 +14508,7 @@
         },
         {
           "type": "text",
-          "value": " 为 16px（对象名目标 18px、面板目标 15px），正文 "
+          "value": " 16px；正文 "
         },
         {
           "type": "code",
@@ -14500,7 +14516,7 @@
         },
         {
           "type": "text",
-          "value": " 为 14px（目标 15px），注释 "
+          "value": " 14px；注释 "
         },
         {
           "type": "code",
@@ -14508,7 +14524,7 @@
         },
         {
           "type": "text",
-          "value": " 为 12px。引注也使用 12px 档位。指标说明沿用组件默认 "
+          "value": " 12px。引注也使用 12px 档位。指标说明沿用组件默认 "
         },
         {
           "type": "code",
@@ -15259,7 +15275,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "dff6e1edbb5af2a4559fd9b74faa9ebcaeb3b63c204f5a0597210f3b6c45707b"
+      "sha256": "cd94433e40514d8b9328cc41b448e6226d1661563c74b4f9efe2c609f060a274"
     }
   ]
 }
