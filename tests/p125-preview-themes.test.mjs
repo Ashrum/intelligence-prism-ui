@@ -43,12 +43,12 @@ export * from './lib/prism-next/agent-component-registry';
       if (mode === 'old'  && replaced.has(relative)) return { contents: before(relative), loader: 'tsx' };
       // Exact baseline SSR with only the original three preview entries enabled.
       // The full five-theme DOM is independently checked below.
-      // P141 adds one authorized demo. Keep the legacy byte comparison intact;
+      // P141 and P142 each add one authorized demo. Keep the legacy byte comparison intact;
       // the shipped route and new current-row marker are asserted separately below.
       if (mode === 'core' && relative === 'components/prism-next/demos/record-list.tsx') {
         const source = read(relative);
-        const addition = /    <DemoSection id="record-current"[^]*?<\/DemoSection>\n/g;
-        assert.equal([...source.matchAll(addition)].length, 1);
+        const addition = /    <DemoSection id="record-(?:current|line)"[^]*?<\/DemoSection>\n/g;
+        assert.equal([...source.matchAll(addition)].length, 2);
         return { contents: source.replace(addition, ''), loader: 'tsx' };
       }
       if (mode === 'core' && relative === 'lib/prism-next/preview-themes.ts') return { contents: read(relative).replace(', "blueprint", "blueprint-night"] as const', '] as const'), loader: 'ts' };
@@ -90,6 +90,12 @@ for (const route of routes) test(`P125 ${route}: real route five-theme fixtures 
     assert.match(actual, /data-record-row="completed-2" aria-current="true" data-current=""/);
     assert.match(actual, /<span class="text-ui-meta text-muted-foreground">刚才查看<\/span>/);
     assert.doesNotMatch(previous, /id="record-current"/);
+    assert.equal((actual.match(/id="record-line"/g) || []).length, 1);
+    const lineDemo = actual.slice(actual.indexOf('id="record-line"'), actual.indexOf('id="record-current"'));
+    assert.equal((lineDemo.match(/data-record-row="l1-/g) || []).length, 8);
+    assert.match(lineDemo, /data-record-group="todo"/);
+    assert.match(lineDemo, /data-record-group="rest"/);
+    assert.match(lineDemo, /data-record-row="l1-8"[^>]*data-current=""/);
   }
   const expectedPreviews = previewNodes(previous), previews = previewNodes(actual);
   for (const theme of ['light','paper','dark','blueprint','blueprint-night']) assert.ok(previews.some(p => p.theme === theme), `${route}/${theme}`);

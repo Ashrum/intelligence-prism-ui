@@ -7,6 +7,26 @@ import { Badge } from "../badge"
 import { RecordList, type RecordListProps, type RecordListRow, type RecordListFilter } from "../record-list"
 import { DemoSection, Feedback } from "../demo-parts"
 
+export const lineRecordRows: RecordListRow[] = [
+  { id: "l1-1", name: "二班 · 二次函数巩固练习", type: "九年级（2）班", metadata: "待你处理 13 项 · 异常 1 份 · 未交 1 份", status: { label: "待你处理", tone: "warning" }, time: "9/16", action: { id: "open", label: "继续处理" }, attention: true, groupId: "todo" },
+  { id: "l1-2", name: "原卷缺第 2 页", type: "八年级（7）班", metadata: "已收到 0/20 份 · 资料未收齐", status: { label: "待扫描", tone: "warning" }, time: "10/20", action: { id: "open", label: "继续扫描" }, attention: true, groupId: "todo" },
+  { id: "l1-3", name: "作业材料模糊，识别失败", type: "八年级（7）班", metadata: "已收到 0/20 份 · 资料未收齐", status: { label: "待扫描", tone: "warning" }, time: "10/20", action: { id: "open", label: "继续扫描" }, attention: true, groupId: "todo" },
+  { id: "l1-4", name: "一次函数 · 接收中（尚无结果）", type: "八年级（7）班", metadata: "已收到 0/20 份 · 未交或异常 1 份", status: { label: "扫描中", tone: "neutral" }, time: "10/20", action: { id: "open", label: "继续扫描" }, attention: true, groupId: "todo" },
+  { id: "l1-5", name: "数学 · 间隔复查", type: "九年级（1）班", metadata: "平均分 45.6 / 60 · 有效 45 人", status: { label: "已完成", tone: "success" }, time: "10/24", action: { id: "open", label: "查看分析" }, groupId: "rest" },
+  { id: "l1-6", name: "数学 · 间隔复查", type: "九年级（2）班", metadata: "平均分 44.5 / 60 · 有效 30 人", status: { label: "已完成", tone: "success" }, time: "10/24", action: { id: "open", label: "查看分析" }, groupId: "rest" },
+  { id: "l1-7", name: "两材料三子题 · 独立计分", type: "八年级（7）班", metadata: "平均分 15.5 / 30 · 有效 20 人", status: { label: "已完成", tone: "success" }, time: "10/18", action: { id: "open", label: "查看分析" }, groupId: "rest" },
+  { id: "l1-8", name: "数学 · 新情境应用", type: "九年级（1）班", metadata: "平均分 37.4 / 50 · 有效 45 人", status: { label: "已完成", tone: "success" }, time: "10/17", action: { id: "open", label: "查看分析" }, groupId: "rest" },
+]
+function LineRecordFixture() {
+  const [notice, setNotice] = useState("尚无操作请求。")
+  return <>
+    <RecordList layout="line" rows={lineRecordRows} showHeader={false} showSearch={false} currentRowId="l1-8"
+      groups={[{ id: "todo", label: "等你处理", attention: true }, { id: "rest", label: "其余", note: "按创建时间" }]}
+      onRowAction={(id, action) => setNotice(`记录 ${id}：请求 ${action}，等待调用方导航。`)} />
+    <Feedback>{notice}</Feedback>
+  </>
+}
+
 export const recordTabs = [
   { id: "mine", label: "需要我处理", count: 7 }, { id: "processing", label: "系统处理中", count: 3 },
   { id: "completed", label: "已完成", count: 18 }, { id: "all", label: "全部记录", count: 28 },
@@ -250,6 +270,9 @@ export function RecordListDemo() {
     </DemoSection>
     <DemoSection id="record-actions" title="行主操作样式与对齐" description="默认 ghost / start；可选 outline / primary 与操作区垂直居中，菜单和列表主操作保持自身语义。">
       <RecordActionFixture />
+    </DemoSection>
+    <DemoSection id="record-line" title="单行排法 · 批阅记录" description="一行一对象一动词；要处理的排前、左侧紫红线；⋯ 在打开后的上方一行。">
+      <LineRecordFixture />
     </DemoSection>
     <DemoSection id="record-current" title="当前行 · 刚才查看" description="宿主提供返回位置，墨色竖线、浅底与文字标记持续显示；列表不自动滚动或移动焦点。">
       <RecordFixture initialTab="completed" overrides={{ currentRowId: "completed-2" }} />
