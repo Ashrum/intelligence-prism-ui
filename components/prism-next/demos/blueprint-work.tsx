@@ -27,8 +27,9 @@ export function BlueprintWorkDemo() {
       <BpProvenance className="mt-6" items={[{ label: "来源", value: "合成题目与批阅记录" }, { label: "依据", value: "45 份有效答卷" }]} />
     </BpSidePeek>
   }>
-    <div id="work-evidence-loss" className="space-y-3">
-      <p className="text-ui-meta">② 课堂讲评 9 题，可找回 92 分。</p>
+    <div className="space-y-3">
+      <p id="work-evidence-loss" className="text-ui-meta">② 个别解决的 3 道题共失 92 分，涉及 19 名学生，题目失分率低于 20%。</p>
+      <p className="text-ui-meta">课堂讲评题失分率（节选）</p>
       <BpSizeBar framed={false} legend={false} rows={[
         { id: "question-4", label: "第 4 题 · 公式法", total: 100, unit: "%", display: "35.0%", segments: [{ id: "loss", label: "失分率", value: 35, fill: "hatch-todo" }] },
         { id: "question-10", label: "第 10 题 · 单选", total: 100, unit: "%", display: "28.9%", segments: [{ id: "loss", label: "失分率", value: 28.9, fill: "hatch-todo" }] },
@@ -40,7 +41,7 @@ export function BlueprintWorkDemo() {
   const overview = <>
     <div className="bp-work-demo-summary">
       <div className="bp-work-demo-summary-copy">
-        <BpConclusion>本班得分率 <BpMark>76.0%</BpMark><BpRef href="#work-evidence-score">①</BpRef>，比本校高 1.8 个百分点；9 道题值得讲评，讲透能找回 <BpMark>92 分</BpMark><BpRef href="#work-evidence-loss">②</BpRef>。</BpConclusion>
+        <BpConclusion>本班得分率 <strong>76.0%</strong><BpRef href="#work-evidence-score">①</BpRef>，比本校高 <BpMark>1.8 个百分点</BpMark>；课堂讲评 9 题，个别解决 3 题。个别解决的 3 道题涉及 19 人，共失 <strong>92 分</strong><BpRef href="#work-evidence-loss">②</BpRef>。</BpConclusion>
         <p className="mt-3 text-ui-meta text-muted-foreground">① 见得分率对照　② 见题目丢分</p>
       </div>
       {provenance}
@@ -64,7 +65,7 @@ export function BlueprintWorkDemo() {
           { id: "answers", label: "有效答卷", total: 45, unit: "份", segments: [{ id: "complete", label: "已批完", value: 45, fill: "done" }] },
         ]} />
       </BpStat>
-      <BpStat label="可找回的失分" value="92" unit="分" readout={{ text: "讲评 9 · 个别 3", tone: "warn" }} caption="课堂讲评 9 题 · 个别解决 3 题 · 重新教 0">
+      <BpStat label="个别解决题失分" value="92" unit="分" readout={{ text: "讲评 9 · 个别 3", tone: "warn" }} caption="3 题 · 19 人 · 题目失分率低于 20%">
         <BpSizeBar framed={false} size="xs" legend={false} rows={[
           { id: "recovery", label: "讲评 9 · 个别 3", total: 12, unit: "题", segments: [
             { id: "class", label: "讲评", value: 9, fill: "hatch-todo" },
