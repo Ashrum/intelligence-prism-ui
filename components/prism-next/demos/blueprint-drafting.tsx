@@ -82,21 +82,21 @@ export function BlueprintDraftingDemo() {
         <p className="text-ui-meta text-muted-foreground">一个面板默认只用一种斜纹；需要看全班构成时再展开。</p>
       </section>
       <section className="min-w-0 space-y-3">
-        <h3 className="border-b border-(--line) pb-2 text-block-title">错题 · 再考仍错</h3>
+        <h3 className="border-b border-(--line) pb-2 text-block-title">出错最多的题</h3>
         <BpSizeBar layout="stacked" framed={false} legend={false} rows={[
           { id: "area", label: "矩形面积最大值", total: 100, unit: "%", display: "37.5%", displayTone: "todo", segments: [
-            { id: "recovered", label: "出错后已改对（占全班）", value: 40.2, fill: "ai" },
-            { id: "still", label: "再考仍错（占全班）", value: 24.2, fill: "hatch-todo" },
+            { id: "recovered", label: "出错（其余）", value: 40.2, fill: "ai" },
+            { id: "still", label: "按仍错率折算的再考仍错", value: 24.2, fill: "hatch-todo" },
           ] },
           { id: "vertex", label: "开口方向与最值", total: 100, unit: "%", display: "20.0%", displayTone: "todo", segments: [
-            { id: "recovered", label: "出错后已改对（占全班）", value: 44.5, fill: "ai" },
-            { id: "still", label: "再考仍错（占全班）", value: 11.1, fill: "hatch-todo" },
+            { id: "recovered", label: "出错（其余）", value: 44.5, fill: "ai" },
+            { id: "still", label: "按仍错率折算的再考仍错", value: 11.1, fill: "hatch-todo" },
           ] },
-          { id: "axis", label: "与 x 轴的交点", total: 100, unit: "%", display: "—", displayTone: "muted", segments: [
-            { id: "error", label: "出错，暂无再考", value: 51.3, fill: "ai" },
+          { id: "axis", label: "与 x 轴的交点", total: 100, unit: "%", display: "批阅不足 3 次", displayTone: "muted", segments: [
+            { id: "error", label: "出错，再考不可比", value: 51.3, fill: "ai" },
           ] },
         ]} />
-        <p className="text-ui-meta text-muted-foreground">条长＝出错率（64.4% / 55.6% / 51.3%）；紫红斜纹＝其中再考仍错的部分；右侧大字＝出错者里再考仍错的比例。</p>
+        <p className="text-ui-meta text-muted-foreground">条长＝出错率（29/45、25/45、20/39）；右侧＝可比再考中仍错（6/16、2/10）；紫红斜纹＝条长 × 右侧比例。可比再考不足时写原因，不着紫红。</p>
       </section>
     </div>
     <div className="grid min-w-0 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

@@ -164,8 +164,11 @@ export function compileGuide(root = repositoryRoot) {
   const document = parseMarkdown(bytes.toString('utf8'), resolveLink);
   const sourceDownload = resolveLink('blueprint-theme.md').href;
   const currentSpecDownload = resolveLink('blueprint-theme-v2.md').href;
+  // P143：入口文字与下载文件取同一版本号（规范 H1 末尾的 vX.Y）。
+  const currentSpecVersion = readFileSync(path.join(root, 'docs/blueprint-theme-v2.md'), 'utf8').match(/^# .*?(v\d+(?:\.\d+)*)\s*$/m)?.[1]
+  if (!currentSpecVersion) throw new Error('docs/blueprint-theme-v2.md H1 must end with its version, e.g. v2.2')
   return {
-    data: { sourcePath, sourceSha256: hash(bytes), sourceDownload, currentSpecDownload, ...document, assets: [...assets.values()].map(({ bytes: _bytes, ...asset }) => asset) },
+    data: { sourcePath, sourceSha256: hash(bytes), sourceDownload, currentSpecDownload, currentSpecVersion, ...document, assets: [...assets.values()].map(({ bytes: _bytes, ...asset }) => asset) },
     assets,
   };
 }

@@ -19,6 +19,7 @@ test('published guide is generated from the complete current Markdown and curren
   assert.ok(actual.headings.some(heading => heading.text.includes('v4 图表配色')));
   assert.deepEqual(read(`public${actual.sourceDownload}`), read(sourcePath));
   assert.equal(actual.currentSpecDownload, `${assetPrefix}docs/blueprint-theme-v2.md`);
+  assert.equal(actual.currentSpecVersion, read('docs/blueprint-theme-v2.md').toString().match(/^# .*?(v\d+(?:\.\d+)*)\s*$/m)[1]);
   assert.deepEqual(read(`public${actual.currentSpecDownload}`), read('docs/blueprint-theme-v2.md'));
 });
 
@@ -80,7 +81,7 @@ test('guide route and existing navigation expose one authored source without a r
   assert.match(route, /BlueprintGuide/);
   assert.doesNotMatch(renderer, /dangerouslySetInnerHTML|eval\(|innerHTML/);
   assert.match(renderer, /noopener noreferrer/);
-  assert.match(renderer, /href=\{guide.currentSpecDownload\} download>现行规范 v2\.1/);
+  assert.match(renderer, /href=\{guide.currentSpecDownload\} download>现行规范 \{guide.currentSpecVersion\}/);
   assert.match(renderer, /href=\{guide.sourceDownload\} download>下载组件用法原文/);
   for (const file of ['components/prism-next/shell.tsx', 'components/prism-next/foundations.tsx']) {
     assert.ok(read(file).toString().includes('/next/foundations/blueprint/guide'), file);
