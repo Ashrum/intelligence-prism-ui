@@ -194,16 +194,16 @@
   --destructive-foreground:#C62828;
   --info:#1D5FBF;
   --info-foreground:#1D5FBF;
-  --success:#2B8050;
-  --success-foreground:#216440;
-  --warning:#E8A33D;
-  --warning-foreground:#995909;
+  --success:#C2F25B;
+  --success-foreground:#3F6309;
+  --warning:#E0438F;
+  --warning-foreground:#A8245C;
   --chart-1:#0F5FA8;
-  --chart-2:#16181D;
-  --chart-3:#A8245C;
-  --chart-4:#3F6309;
-  --chart-5:#A57013;
-  --chart-6:#6B7280;
+  --chart-2:#A8245C;
+  --chart-3:#3F6309;
+  --chart-4:#5A6B80;
+  --chart-5:#0F5FA8;
+  --chart-6:#5A6B80;
   --radius:0px;
   --sidebar:#FFFFFF;
   --sidebar-foreground:var(--foreground);
@@ -325,6 +325,11 @@
   --hatch-magenta:repeating-linear-gradient(135deg,var(--muted-foreground) 0 1.5px,var(--card) 1.5px 6px);
   --hatch-blue:repeating-linear-gradient(135deg,var(--muted-foreground) 0 1.5px,var(--card) 1.5px 6px);
   --hatch-green:repeating-linear-gradient(135deg,var(--muted-foreground) 0 1.5px,var(--card) 1.5px 6px);
+  /* P139 §6 斜纹同色细框：默认墨线；只有白图蓝图改为同色。 */
+  --hatch-ink-edge:var(--line);
+  --hatch-blue-edge:var(--line);
+  --hatch-magenta-edge:var(--line);
+  --hatch-green-edge:var(--line);
 }
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="blueprint"],
 :where([data-agent-preview])[data-prism-theme="blueprint"] {
@@ -338,6 +343,10 @@
   --hatch-magenta:repeating-linear-gradient(135deg,var(--brand-magenta-text) 0 1.5px,var(--brand-magenta-tint) 1.5px 6px);
   --hatch-blue:repeating-linear-gradient(135deg,var(--brand-blue-text) 0 1.5px,var(--brand-blue-tint) 1.5px 6px);
   --hatch-green:repeating-linear-gradient(135deg,var(--brand-green-text) 0 1.5px,var(--brand-green-tint) 1.5px 6px);
+  --hatch-ink-edge:var(--muted-foreground);
+  --hatch-blue-edge:var(--brand-blue-text);
+  --hatch-magenta-edge:var(--brand-magenta-text);
+  --hatch-green-edge:var(--brand-green-text);
   --shadow-offset:3px 3px 0 #339FF2;
   --shadow-offset-sm:2px 2px 0 #339FF2;
   --grid:rgba(29,32,38,.045);

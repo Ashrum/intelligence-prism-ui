@@ -90,11 +90,11 @@ test('six decals remain distinct without hue; default pattern/base contrasts exc
   assert.equal(decals.length, 6);
   assert.equal(new Set(decals.map(({ color, ...shape }) => JSON.stringify(shape))).size, 6);
   const rows = decals.map((d, i) => {
-    if (i === 0) return { series: 1, base: BLUEPRINT_SERIES[i], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i]), texture: 'solid' };
+    if (i === 0) return { series: 1, base: BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]), texture: 'solid' };
     const alpha = Number(d.color.match(/,([.\d]+)\)$/)[1]);
-    const overlay = '#' + BLUEPRINT_SERIES[i].slice(1).match(/../g).map(v => Math.round(parseInt(v, 16) * (1 - alpha) + 255 * alpha).toString(16).padStart(2, '0')).join('');
-    assert.ok(ratio(overlay, BLUEPRINT_SERIES[i]) >= 3);
-    return { series: i + 1, base: BLUEPRINT_SERIES[i], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i]), overlay, overlayLuminance: relativeLuminance(overlay), contrast: ratio(overlay, BLUEPRINT_SERIES[i]), decal: d };
+    const overlay = '#' + BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length].slice(1).match(/../g).map(v => Math.round(parseInt(v, 16) * (1 - alpha) + 255 * alpha).toString(16).padStart(2, '0')).join('');
+    assert.ok(ratio(overlay, BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]) >= 3);
+    return { series: i + 1, base: BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]), overlay, overlayLuminance: relativeLuminance(overlay), contrast: ratio(overlay, BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]), decal: d };
   });
   save('decals.json', JSON.stringify(rows, null, 2));
   for (const theme of themes.filter(t => t !== 'blueprint')) assert.deepEqual(blueprintChartOverrides(theme), {});

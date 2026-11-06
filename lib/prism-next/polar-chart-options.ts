@@ -1,14 +1,20 @@
+import { BLUEPRINT_SERIES } from "./chart-palette"
 import type { EChartsOption } from "echarts"
 import { formatChartValue, isChartValue } from "./chart-options"
 
-/** All colours are supplied by useChartTheme; tones index its existing six-colour palette. */
+/** All colours are supplied by useChartTheme; tones preserve each theme’s palette semantics. */
 export type ChartTone = "neutral" | "info" | "success" | "warning" | "destructive" | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5" | "chart-6"
 export type ChartTheme = { palette: { foreground: string; muted: string; border: string; background: string; surface: string }; colors: readonly string[] }
 export type DonutSegment = { id: string; label: string; value: number; tone?: ChartTone }
 export type RadarAxis = { id: string; label: string; max?: number }
 export type RadarSeries = { id: string; label: string; values: number[]; tone?: ChartTone }
 const toneIndex: Record<ChartTone, number> = { neutral: 5, info: 0, success: 2, warning: 3, destructive: 1, "chart-1": 0, "chart-2": 1, "chart-3": 2, "chart-4": 3, "chart-5": 4, "chart-6": 5 }
-export const chartToneColor = (theme: ChartTheme, index: number, tone?: ChartTone) => theme.colors[(tone === undefined ? index : toneIndex[tone]) % theme.colors.length]
+const blueprintToneIndex: Record<ChartTone, number> = { neutral: 3, info: 0, success: 2, warning: 1, destructive: 1, "chart-1": 0, "chart-2": 1, "chart-3": 2, "chart-4": 3, "chart-5": 0, "chart-6": 3 }
+export function chartToneColor(theme: ChartTheme, index: number, tone?: ChartTone) {
+  // useChartTheme and its destructured callers share the authoritative palette reference.
+  const indices = theme.colors === BLUEPRINT_SERIES ? blueprintToneIndex : toneIndex
+  return theme.colors[(tone === undefined ? index : indices[tone]) % theme.colors.length]
+}
 const nonnegative = (value: unknown): value is number => isChartValue(value) && value >= 0
 export const polarValueText = (value: number | undefined) => value === undefined ? "缺测" : nonnegative(value) ? formatChartValue(value) : "无效值"
 

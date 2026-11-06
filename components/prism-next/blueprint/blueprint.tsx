@@ -14,6 +14,9 @@ export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "
 export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpSidePeek } from "./work"
 export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpSidePeekProps } from "./work"
 
+export { BpDimension, BpUnitGrid, BpDraft, BpInferred } from "./drafting"
+export type { BpDimensionProps, BpUnitGridProps, BpDraftProps } from "./drafting"
+
 /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */
 
@@ -332,7 +335,8 @@ export function BpSectionCard({ letter, title, meta, action, headingLevel = 3, d
 export type BpFill = "ink" | "hatch" | "accent" | "quiet" | "warn" | "ai" | "todo" | "done" | "hatch-ai" | "hatch-todo" | "hatch-done"
 export interface BpSizeSegment { id: string; label: string; value: number; fill: BpFill }
 export interface BpSizeBarProps {
-  rows: { id: string; label: string; total?: number; unit?: string; display?: string; segments: BpSizeSegment[] }[]
+  layout?: "row" | "stacked"
+  rows: { id: string; label: string; total?: number; unit?: string; display?: string; displayTone?: "todo" | "muted"; segments: BpSizeSegment[] }[]
   legend?: boolean
   /** Defaults to true for one row; opt in for a separately labelled legend per row. */
   legendValues?: boolean
@@ -356,7 +360,7 @@ export interface BpSizeBarProps {
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, labelWidth = "default", marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, layout = "row", legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, labelWidth = "default", marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
   const compact = size === "xs"
   const hideLabel = compact || hideRowLabel
   const labelSegmenter = labelWidth === "wide" && !hideLabel ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : undefined
@@ -373,7 +377,7 @@ export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 
     })}
     {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}{formattedMarker && ` ${formattedMarker.text}`}</li>}
   </ul>}
-  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", className)} data-size-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
+  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", layout === "stacked" && "bp-dim-size-stacked", className)} data-size-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum
@@ -396,7 +400,7 @@ export function BpSizeBar({ rows, legend = true, legendValues = rows.length === 
         "aria-label": `${actionLabel}${labelWidth === "wide" && !actionLabel?.includes(row.label) ? `：${row.label}` : ""}；${segmentFacts}${row.display ? `；${row.display}` : ""}`,
       } : {}
       return <div key={row.id} className="space-y-3">
-        <Row {...actionProps} className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled", onRowActivate && "bp-size-row-action w-full text-left")} data-display={row.display !== undefined ? "" : undefined} data-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
+        <Row {...actionProps} data-display-tone={layout === "stacked" ? row.displayTone : undefined} className={cn("bp-size-row", hideLabel && "bp-size-row-unlabelled", onRowActivate && "bp-size-row-action w-full text-left")} data-display={row.display !== undefined ? "" : undefined} data-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
         {!hideLabel && (labelWidth === "wide" ? <span className="bp-size-label text-item-title" title={row.label} role={onRowActivate ? undefined : "img"} aria-label={onRowActivate ? undefined : row.label} aria-hidden={onRowActivate ? true : undefined}><span aria-hidden="true" className="bp-size-label-start">{letters.slice(0, split).join("")}</span><span aria-hidden="true" className="bp-size-label-end">{letters.slice(split).join("")}</span></span> : <span aria-hidden={onRowActivate ? true : undefined} className="text-item-title">{row.label}</span>)}
         <span role={onRowActivate ? undefined : "img"} aria-label={onRowActivate ? undefined : rowFacts} aria-hidden={onRowActivate ? true : undefined} className="bp-size-bar">
           {row.segments.filter(s => s.value > 0).map(s => <span key={s.id} className={`bp-fill-${s.fill}`} style={{ width: `${total ? (s.value / total) * 100 : 0}%` }} />)}

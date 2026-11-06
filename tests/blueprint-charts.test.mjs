@@ -17,14 +17,14 @@ test('P69 core chart palette is approved independently of Blueprint', () => {
   for (const t of ['light', 'paper', 'dark', undefined]) assert.deepEqual(blueprintChartOverrides(t), {});
 });
 
-test('blueprint series lead with accent then ink; every series ≥ 3:1 on card and ground', () => {
-  assert.deepEqual([...BLUEPRINT_SERIES], ['#0F5FA8', '#16181D', '#A8245C', '#3F6309', '#A57013', '#6B7280']);
+test('blueprint uses four semantic series; every series ≥ 4.5:1 on card and ground', () => {
+  assert.deepEqual([...BLUEPRINT_SERIES], ['#0F5FA8', '#A8245C', '#3F6309', '#5A6B80']);
   assert.deepEqual(chartShapeColors('blueprint'), { base: '#16181D', selected: '#0F5FA8', fill: '#E3F1FD' });
   for (const [text, tint] of [['#0F5FA8', '#E3F1FD'], ['#A8245C', '#FCE6F0'], ['#3F6309', '#EEFBD3']]) {
     for (const bg of ['#FFFFFF', tint]) assert.ok(ratio(text, bg) >= 4.5, `${text}/${bg}`);
   }
-  assert.equal(new Set(BLUEPRINT_SERIES).size, 6);
-  for (const c of BLUEPRINT_SERIES) for (const bg of ['#FFFFFF', '#F6F6F3']) assert.ok(ratio(c, bg) >= 3, `${c}/${bg}`);
+  assert.equal(new Set(BLUEPRINT_SERIES).size, 4);
+  for (const c of BLUEPRINT_SERIES) for (const bg of ['#FFFFFF', '#F6F6F3']) assert.ok(ratio(c, bg) >= 4.5, `${c}/${bg}`);
 });
 
 test('blueprint sequential ramp keeps labels ≥ 4.5:1 and luminance monotonic', () => {
@@ -55,6 +55,8 @@ test('theme.css blueprint chart tokens follow the series order; Recharts tooltip
   const theme = readFileSync(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
   const block = theme.split(':where([data-agent-preview])[data-prism-theme="blueprint"] {')[1].split('}')[0];
   BLUEPRINT_SERIES.forEach((c, i) => assert.match(block, new RegExp(`--chart-${i + 1}:${c}`)));
+  assert.match(block, /--chart-5:#0F5FA8;/);
+  assert.match(block, /--chart-6:#5A6B80;/);
   const css = readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
   assert.match(css, /:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.recharts-default-tooltip[^{]*\{[^}]*border-radius:0 !important/);
   assert.match(readFileSync(new URL('../lib/prism-next/config.ts', import.meta.url), 'utf8'), /blueprint: \{[^}]*line: "#1D2026"/);
