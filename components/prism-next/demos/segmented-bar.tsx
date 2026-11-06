@@ -10,6 +10,22 @@ export const segmentedBarFixture: SegmentedBarSegment[] = [
   { id: "b", label: "内容核对", value: 30, tone: "success" },
   { id: "c", label: "补充说明", value: 15, tone: "warning" },
 ]
+const learningProgress: SegmentedBarSegment[] = [
+  { id: "stable", label: "稳定保持", value: 10, tone: "success", fill: "done" },
+  { id: "consolidating", label: "正在巩固", value: 3, tone: "info", fill: "ai" },
+  { id: "verification", label: "已纠正待验证", value: 4, tone: "info", fill: "hatch-ai" },
+  { id: "support", label: "需要支持", value: 2, tone: "warning", fill: "todo" },
+  { id: "declining", label: "近期回落", value: 8, tone: "warning", fill: "hatch-todo" },
+  { id: "observing", label: "继续观察", value: 12, tone: "neutral" },
+  { id: "insufficient", label: "数据不足", value: 6, tone: "neutral", fill: "hatch" },
+]
+function LearningProgress() {
+  const [notice, setNotice] = useState("请选择分段或图例项。")
+  return <>
+    <SegmentedBar label="学生学习进展" segments={learningProgress} unit="人" onSelect={segment => setNotice(`已请求选择：${segment.label}`)} />
+    <Feedback>{notice}</Feedback>
+  </>
+}
 const tiny: SegmentedBarSegment[] = [
   { id: "major", label: "需要完整阅读并核对所有条件、推导步骤与最终结论之间关系的长中文分类名称", value: 98.99, tone: "chart-1", description: "长中文说明保留完整内容，空间不足时自然换行，不缩小字号。" },
   { id: "one", label: "百分之一", value: 1, tone: "chart-2" },
@@ -24,6 +40,9 @@ export function SegmentedBarDemo() {
   return <>
     <DemoSection title="默认分段与图例" description="同一个总量的组成；图例显示真实数值、占比及外部说明。">
       <SegmentedBar label="分类数量组成" segments={segmentedBarFixture} unit="项" />
+    </DemoSection>
+    <DemoSection title="学生学习进展 · 合成数据" description="蓝图／夜图使用曜彩填充，斜纹表示还没有；核心三主题按 tone 呈现。">
+      <LearningProgress />
     </DemoSection>
     <DemoSection title="整数占比" description="percentDecimals=0 将图例、可访问名称与余量的占比四舍五入为整数；数值和段宽保持不变。">
       <SegmentedBar label="学情分层组成" percentDecimals={0} total={45} unit="人" segments={[{id:"stable",label:"稳定保持",value:10,tone:"success"},{id:"improving",label:"持续改善",value:26,tone:"info"}]} />
