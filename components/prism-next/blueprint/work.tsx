@@ -36,11 +36,15 @@ export interface BpWorkHeaderProps extends Omit<ComponentProps<"header">, "title
   secondary?: readonly [ReactNode] | readonly [ReactNode, ReactNode]
   primary?: Omit<BpButtonProps, "variant">
   more?: ReactNode
+  /** Defaults to stack. In compact mode at ≤ 700px, secondary actions are hidden;
+   * more must include equivalent entries supplied by the host. No actions are moved automatically. */
+  narrow?: "stack" | "compact"
 }
 
-export function BpWorkHeader({ back, title, meta, status, position, notice, secondary, primary, more, className, ...props }: BpWorkHeaderProps) {
+export function BpWorkHeader({ back, title, meta, status, position, notice, secondary, primary, more, narrow = "stack", className, ...props }: BpWorkHeaderProps) {
   const backText = <>← 返回 {back.label}</>
-  return <header {...props} className={cn("bp-work-header", className)}>
+  const compact = narrow === "compact"
+  return <header {...props} className={cn("bp-work-header", className)} data-narrow={compact ? "compact" : undefined}>
     <div className="bp-work-identity">
       {back.href !== undefined
         ? <a className="bp-work-back text-ui-body" href={back.href}>{backText}</a>
@@ -51,10 +55,10 @@ export function BpWorkHeader({ back, title, meta, status, position, notice, seco
     {status != null && <div className="bp-work-status text-ui-meta">{status}</div>}
     <div className="bp-work-actions">
       {position && <WorkPosition {...position} />}
-      {notice}
-      {secondary}
+      {compact && notice != null ? <div className="bp-work-notice">{notice}</div> : notice}
+      {compact && secondary != null ? <div className="bp-work-secondary">{secondary}</div> : secondary}
       {primary && <BpButton {...primary} variant="primary" />}
-      {more}
+      {compact && more != null ? <div className="bp-work-more">{more}</div> : more}
     </div>
   </header>
 }

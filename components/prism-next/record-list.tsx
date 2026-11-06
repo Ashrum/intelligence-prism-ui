@@ -49,6 +49,10 @@ export type RecordListProps = {
   showPrimary?: boolean
   /** Omit the complete header or built-in search/filter row; both default to true. */
   showHeader?: boolean; showSearch?: boolean
+  /** Host-controlled return location. Does not scroll, focus or change on activation. */
+  currentRowId?: string
+  /** Visible, screen-reader-readable marker; defaults to 刚才查看. */
+  currentRowLabel?: string
   /** Row primary button and action-area alignment; existing defaults are ghost / start. */
   actionVariant?: 'ghost' | 'outline' | 'primary'; actionAlign?: 'start' | 'center'
   tabs?: readonly RecordListTab[]; tab?: string; defaultTab?: string; onTabChange?: (id: string) => void
@@ -70,6 +74,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", titleLeading, description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
   showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
+  currentRowId, currentRowLabel = "刚才查看",
   actionVariant = 'ghost', actionAlign = 'start',
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
@@ -126,7 +131,9 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
               onPressedChange={() => onRowAction?.(row.id, toggle.id)}><Icon aria-hidden="true" /></Toggle>)
           }
           return <li key={row.id} className="min-w-0" aria-label={marked ? rowName : undefined}>
-            <FramePanel data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0" onClick={event => {
+            <FramePanel data-record-row={row.id} className="min-w-0 gap-0 overflow-hidden p-0"
+              aria-current={row.id === currentRowId ? "true" : undefined} data-current={row.id === currentRowId ? "" : undefined}
+              style={row.id === currentRowId ? { borderLeft: "3px solid var(--line)", backgroundColor: "var(--accent)" } : undefined} onClick={event => {
               // React portal events bubble too; isolate the entire menu subtree below.
               if (!reason && !(event.target as HTMLElement).closest("button,a,input,select,textarea,[role=menuitem],[data-record-menu]")) onRowAction?.(row.id, row.action.id)
             }}>
@@ -145,6 +152,7 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
                 </div>
                 <div className={`flex min-w-0 flex-wrap items-center gap-2 @min-[720px]:max-w-80 @min-[720px]:justify-end${actionAlign === 'center' ? ' self-center' : ''}`}>
                   {showStatus && <AgentStatus icon={Circle} tone={row.status?.tone} unknown={!row.status?.label.trim()} className="self-center text-ui-hint">{row.status?.label.trim() || "状态未知"}</AgentStatus>}
+                  {row.id === currentRowId && <span className="text-ui-meta text-muted-foreground">{currentRowLabel}</span>}
                   {secondary}
                   <Button variant={actionVariant === 'primary' ? 'default' : actionVariant} className={marked ? `${targetClass} shrink-0` : targetClass} disabled={!!reason} title={reason}
                     aria-label={`${row.action.label}：${rowName}`} onClick={event => { event.stopPropagation(); if (!reason) onRowAction?.(row.id, row.action.id) }}>

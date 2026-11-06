@@ -137,6 +137,27 @@ const row: RecordListRow = {
 复用检索：实际读取固定 coss Toggle/Button/Frame、RecordList、本地 table-particle 的 p-table-3/4，复核本页 particles p-table-5/8、p-frame-1/3/4 与 Beautiful UI Records Table / Filter Table / Task Rows 历史取舍。表格选择与执行状态行不适用单行受控收藏开关；coss Toggle 已完整提供所需基本控件，在现有列表扩展公开属性即可。不新增组件或依赖、不复制第三方代码；未联网刷新上游。浏览器验收：按分工由 Supervisor 执行。
 
 
+## 当前行
+
+`currentRowId?: string` 由宿主提供刚才查看的记录 ID；`currentRowLabel?: string` 默认为“刚才查看”。命中的可见行在 `FramePanel data-record-row` 上设置 `aria-current="true"` 和 `data-current`，用 3px `--line` 墨色左竖线、`--accent` 浅底标记，并在状态旁呈现 `text-ui-meta`（12px）灰色文字，屏幕阅读器可读。蓝图沿用现有曜蓝浅底，不使用表示“需要人处理”的紫红色。
+
+```tsx
+<RecordList rows={rows} currentRowId={returnRowId}
+  currentRowLabel="刚才查看" onRowAction={requestAction} />
+```
+
+未传 `currentRowId` 时，输出与原实现逐字节一致；ID 不在当前 rows、行被 Tab 筛除或列表处于非记录状态时，不添加标记。`showStatus={false}` 仍保留当前行文字。点击不会自行更新当前行；滚动、聚焦及清除返回位置由宿主负责，组件不抢焦点或持久化。
+
+组件页 `/next/components/record-list#record-current` 复用已完成记录，标记第 2 行。复用检索：现有 RecordList、固定 coss FramePanel、AgentStatus 与本页既有 particles 检索记录；在原行增加受控事实与既有语义令牌样式，不新建列表、不改 coss，不联网刷新上游。
+
+### 配套工作头的窄屏布局
+
+`BpWorkHeader.narrow?: "stack" | "compact"` 默认 `stack`，默认与显式 `stack` 的 SSR 均保持原输出。`compact` 在 ≤ 700px 分两行：返回与状态在第一行；对象名（单行省略）、位置、可选主操作与更多菜单在第二行；桌面保持原布局。组件站的工作框架示例容器也采用相同的 700px 断点。
+
+**compact 下 ≤ 700px 次操作不显示，more 必须包含同等入口。** 宿主自行提供菜单，组件不自动搬运；`meta` 与 `notice` 同时隐藏，`primary` 不隐藏。工作框架示例 `#work-header-compact` 使用同一组合成数据，更多菜单包含“设置目标线”“导出成绩单”；两项沿用示例的未接入禁用状态。
+
+复用检索：现有 BpWorkHeader/WorkPosition/BpButton、固定 coss Menu 与 Prism scoped MenuPopup 已覆盖布局及菜单需求，仅适配插槽与响应式结构。两项能力的浏览器验收由 Supervisor 执行。
+
 ## P57：行主操作样式与对齐
 
 `/next/components/record-list#record-actions` 可切换 ghost / outline / primary、操作区垂直居中和 320px 容器，包含长中文、MathML、事实标记与更多菜单。两项属性是列表级设置，点击只保留原有意图，禁用原因和冒泡隔离不变。

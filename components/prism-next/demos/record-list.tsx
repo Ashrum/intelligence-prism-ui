@@ -251,6 +251,9 @@ export function RecordListDemo() {
     <DemoSection id="record-actions" title="行主操作样式与对齐" description="默认 ghost / start；可选 outline / primary 与操作区垂直居中，菜单和列表主操作保持自身语义。">
       <RecordActionFixture />
     </DemoSection>
+    <DemoSection id="record-current" title="当前行 · 刚才查看" description="宿主提供返回位置，墨色竖线、浅底与文字标记持续显示；列表不自动滚动或移动焦点。">
+      <RecordFixture initialTab="completed" overrides={{ currentRowId: "completed-2" }} />
+    </DemoSection>
     <DemoSection id="record-themes" title="三主题 · 320px 长中文与公式">
       <div className="flex flex-wrap items-start gap-4">{componentPreviewThemes.map(theme => <div key={theme} data-agent-preview data-prism-theme={theme} data-ui-version="coss-v1" className="w-80 max-w-full p-3">
         <p className="pb-3 text-item-title">{componentPreviewThemeLabels[theme]}</p>
