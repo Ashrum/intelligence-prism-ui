@@ -1,6 +1,8 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
+import { MenuPopup } from "../scoped-overlays"
 import { BpButton, BpConclusion, BpMark, BpProvenance, BpRef, BpSectionCard, BpSidePeek, BpSizeBar, BpStat, BpStatStrip, BpWorkBody, BpWorkHeader, BpWorkTabs } from "../blueprint/blueprint"
 
 /** Synthetic presentation data. The two supplied records occupy positions 5 and 6. */
@@ -94,5 +96,23 @@ export function BlueprintWorkDemo() {
         ]} />
       </BpWorkBody>
     </div>
+    <section id="work-header-compact" aria-label="紧凑工作头示例" className="space-y-3">
+      <h3 className="text-block-title">紧凑工作头</h3>
+      <p className="text-ui-meta text-muted-foreground">390 下两行；次操作收进 ⋯。compact 下 ≤ 700px 次操作不显示，more 必须包含同等入口，由宿主提供；主操作仍保留。</p>
+      <BpWorkHeader narrow="compact" back={{ label: "智能批阅", href: "#work-frame" }} title="数学 · 间隔复查" meta={className}
+        status={<span className="bp-work-demo-done">● 批阅完成</span>}
+        position={{ index: record + 5, total: 20, onPrev: record === 1 ? () => setRecord(0) : undefined, onNext: record === 0 ? () => setRecord(1) : undefined, prevLabel: "上一次批阅", nextLabel: "下一次批阅" }}
+        secondary={[
+          <BpButton key="target" disabled title="示例未接入目标线设置">设置目标线</BpButton>,
+          <BpButton key="export" disabled title="示例未接入成绩导出">导出成绩单</BpButton>,
+        ]}
+        more={<Menu>
+          <MenuTrigger render={<BpButton size="sm" aria-label="更多批阅操作" />}>⋯</MenuTrigger>
+          <MenuPopup align="end">
+            <MenuItem disabled title="示例未接入目标线设置">设置目标线</MenuItem>
+            <MenuItem disabled title="示例未接入成绩导出">导出成绩单</MenuItem>
+          </MenuPopup>
+        </Menu>} />
+    </section>
   </section>
 }
