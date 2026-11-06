@@ -103,19 +103,6 @@ export function BpProvenance({ items, className, ...props }: BpProvenanceProps) 
   </dl>
 }
 
-export interface BpWorkEndProps extends ComponentProps<"footer"> {
-  next?: WorkDestination & { label: string; position: string; title: string; meta?: string }
-}
-export function BpWorkEnd({ next, children, className, ...props }: BpWorkEndProps) {
-  const content = next && <><span className="text-ui-meta">{next.label} <span className="font-mono">{next.position}</span></span><span>· {next.title}</span>{next.meta && <span className="text-ui-meta">· {next.meta}</span>}<span aria-hidden="true">→</span></>
-  return <footer {...props} className={cn("bp-work-end text-ui-body", className)}>
-    <div className="bp-work-end-status">{children}</div>
-    {next && (next.href !== undefined
-      ? <a className="bp-work-next" href={next.href}>{content}</a>
-      : <button className="bp-work-next" type="button" onClick={next.onClick}>{content}</button>)}
-  </footer>
-}
-
 export interface BpSidePeekProps extends Pick<ComponentProps<typeof Sheet>, "open" | "onOpenChange" | "defaultOpen"> {
   title: string
   trigger: ReactElement

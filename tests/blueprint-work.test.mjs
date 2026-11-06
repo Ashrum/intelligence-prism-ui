@@ -49,17 +49,16 @@ test('work tabs retain coss tablist, tab and panel relationships', () => {
   assert.match(output, /bp-work-signature" aria-hidden="true"/);
 });
 
-test('work content renders semantic references, provenance and one next destination', () => {
+test('work content renders semantic references, provenance and no end row', () => {
   const output = html(h(api.BpWorkBody, { grid: true },
     h(api.BpConclusion, {}, '得分率 ', h(api.BpMark, {}, '76.0%'), h(api.BpRef, { href: '#evidence' }, '①')),
     h(api.BpProvenance, { id: 'evidence', items: [{ label: '依据', value: '45 份答卷' }] }),
-    h(api.BpWorkEnd, { next: { label: '下一次', position: '6 / 20', title: '数学', meta: '九年级（2）班', href: '/next-record' } }, '批阅完成'),
   ));
   assert.match(output, /data-grid="true"/);
   assert.match(output, /<mark /);
   assert.match(output, /<sup [\s\S]*href="#evidence"/);
   assert.match(output, /<dt>依据<\/dt><dd>45 份答卷<\/dd>/);
-  assert.equal((output.match(/href="\/next-record"/g) || []).length, 1);
+  assert.doesNotMatch(output, /bp-work-end|bp-work-next/);
 });
 
 test('side peek composes named Sheet controls and work styles contain no color literals or new tokens', async () => {

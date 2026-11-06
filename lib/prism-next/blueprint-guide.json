@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "48e4c23a8dd601838ee7c3b7d5acf88452ba5d19cf07949d234fa8356fbfc0d2",
+  "sourceSha256": "dff6e1edbb5af2a4559fd9b74faa9ebcaeb3b63c204f5a0597210f3b6c45707b",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -14281,86 +14281,6 @@
           [
             {
               "type": "code",
-              "value": "BpWorkEnd"
-            }
-          ],
-          [
-            {
-              "type": "code",
-              "value": "children"
-            },
-            {
-              "type": "text",
-              "value": " 为本项状态或结束链接；"
-            },
-            {
-              "type": "code",
-              "value": "next"
-            },
-            {
-              "type": "text",
-              "value": " 提供 "
-            },
-            {
-              "type": "code",
-              "value": "label"
-            },
-            {
-              "type": "text",
-              "value": "、"
-            },
-            {
-              "type": "code",
-              "value": "position"
-            },
-            {
-              "type": "text",
-              "value": "、"
-            },
-            {
-              "type": "code",
-              "value": "title"
-            },
-            {
-              "type": "text",
-              "value": "、"
-            },
-            {
-              "type": "code",
-              "value": "meta"
-            },
-            {
-              "type": "text",
-              "value": " 和 "
-            },
-            {
-              "type": "code",
-              "value": "href"
-            },
-            {
-              "type": "text",
-              "value": " 或 "
-            },
-            {
-              "type": "code",
-              "value": "onClick"
-            },
-            {
-              "type": "text",
-              "value": "。链接目的地用原生链接，宿主动作使用原生按钮"
-            }
-          ],
-          [
-            {
-              "type": "text",
-              "value": "§11 收尾行、§12 第 9 条"
-            }
-          ]
-        ],
-        [
-          [
-            {
-              "type": "code",
               "value": "BpSidePeek"
             }
           ],
@@ -15339,7 +15259,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "48e4c23a8dd601838ee7c3b7d5acf88452ba5d19cf07949d234fa8356fbfc0d2"
+      "sha256": "dff6e1edbb5af2a4559fd9b74faa9ebcaeb3b63c204f5a0597210f3b6c45707b"
     }
   ]
 }
