@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { BpButton, BpConclusion, BpMark, BpProvenance, BpRef, BpSectionCard, BpSidePeek, BpSizeBar, BpStat, BpStatStrip, BpWorkBody, BpWorkEnd, BpWorkHeader, BpWorkTabs } from "../blueprint/blueprint"
+import { BpButton, BpConclusion, BpMark, BpProvenance, BpRef, BpSectionCard, BpSidePeek, BpSizeBar, BpStat, BpStatStrip, BpWorkBody, BpWorkHeader, BpWorkTabs } from "../blueprint/blueprint"
 
 /** Synthetic presentation data. The two supplied records occupy positions 5 and 6. */
 export function BlueprintWorkDemo() {
@@ -91,9 +91,6 @@ export function BlueprintWorkDemo() {
           { value: "students", label: "学生", count: 45, content: <p className="py-6 text-ui-body">{className}共 45 人，45 份有效答卷全部收到并批完。</p> },
           { value: "provenance", label: "批阅信息", content: <div className="py-6">{provenance}</div> },
         ]} />
-        <BpWorkEnd next={record === 0 ? { label: "下一次", position: "6 / 20", title: "数学 · 间隔复查", meta: "九年级（2）班", onClick: () => setRecord(1) } : undefined}>
-          本项批阅完成
-        </BpWorkEnd>
       </BpWorkBody>
     </div>
   </section>

@@ -840,7 +840,6 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 | `BpRef` | `sup` 属性与 `children`，宿主提供 ①②；可选 `href` 指向证据锚点；组件自动在前后加入禁断行字符（U+2060），使引注与紧邻的前文、后续标点连排，句中其余位置自然换行 | §12 第 2 条 |
 | `BpProvenance` | `items` 为 `{ label, value }[]`，使用定义列表展示依据与来源，每行浅分隔线、整体 1px 墨框 | §12 第 3 条 |
 | 现有 `BpStat` / `BpStatStrip` | 指标格使用 `label`、`value`、`unit`、`caption` 与 `children` 小图插槽；可找回的失分使用 `readout.tone="warn"`。示例以 `frame="none"` 组合四格，保持既有接口、输出与响应式网格 | §12 第 4 条 |
-| `BpWorkEnd` | `children` 为本项状态或结束链接；`next` 提供 `label`、`position`、`title`、`meta` 和 `href` 或 `onClick`。链接目的地用原生链接，宿主动作使用原生按钮 | §11 收尾行、§12 第 9 条 |
 | `BpSidePeek` | `title`、`trigger`、`children`、可选 `position` 与 `footer`；支持 `open` / `onOpenChange` / `defaultOpen`。通过 coss Sheet 管理 Esc、焦点与触发器。宽 640px，窄屏全宽；传入指向 BpWorkHeader 的 `headerRef`，随实际顶栏高度及滚动定位下边缘；省略时顶部为 56px | §11 S3 右侧展开 |
 
 `position` 使用宿主列表的一基 `index` / `total`，并接收 `onPrev` / `onNext`、可选 `prevLabel` / `nextLabel`。边界或缺少回调时禁用对应按钮。路由、列表顺序、操作结果和状态由宿主提供。右侧展开沿用 `usePrismPortalProps`，嵌套主题预览需要将 portal 目标放在对应主题边界内。`footer` 由宿主提供一个主操作。
