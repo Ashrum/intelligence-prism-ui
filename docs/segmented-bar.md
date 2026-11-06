@@ -14,7 +14,7 @@ PO 2026-10-06 批准加入图表与分析目录。入口 `/next/components/segme
 
 | 属性 | 契约 |
 | --- | --- |
-| `segments` | 有序只读 `{id,label,value,tone?,description?}[]`；宿主保证 id 唯一。value 为 number。 |
+| `segments` | 有序只读 `{id,label,value,tone?,fill?,description?}[]`；宿主保证 id 唯一。value 为 number。 |
 | `label` | 必填 string，整条可访问名称。 |
 | `total?` | 默认有效数值之和；大于合计时显示轨道余量。小于合计、负值或非有限值回退有效合计，开发环境告警。 |
 | `unit?` | 数值后附加单位，默认空。 |
@@ -25,6 +25,20 @@ PO 2026-10-06 批准加入图表与分析目录。入口 `/next/components/segme
 | `onSelect?` | `(segment: SegmentedBarSegment) => void`，回传原始条目；有回调时正值段与全部图例项是按钮，无回调时完全只读。 |
 
 导出 `SegmentedBar`、`SegmentedBarProps`、`SegmentedBarSegment`、`SegmentedBarTone`；tone 默认 neutral，支持 info/success/warning/destructive、chart-1…chart-5。内部布局函数不是公开组件 API；不公开 minSegmentWidth。
+
+## 曜彩填充（P135）
+
+复用现有 `BpFill` 类型、P132 的 `bp-fill-*` 样式及图表 `useChartTheme` 的全局主题／局部预览识别。`fill?: BpFill` 只在蓝图主题（`blueprint` / `blueprint-night`）生效，核心三主题回退到 `tone`。未提供 `fill` 时沿用原有呈现。
+
+```tsx
+<SegmentedBar label="学习进展" unit="人" segments={[
+  { id: "stable", label: "稳定保持", value: 10, tone: "success", fill: "done" },
+  { id: "pending", label: "已纠正待验证", value: 4, tone: "info", fill: "hatch-ai" },
+  { id: "observing", label: "继续观察", value: 12, tone: "neutral" },
+]} />
+```
+
+实色表示已经发生，斜纹表示“还没有”。七段合成示例位于组件页，依次使用 `done`、`ai`、`hatch-ai`、`todo`、`hatch-todo`、仅 `tone="neutral"`、`hatch`。启用填充的图例为 10px 方块，斜纹与绿色实色带 1px 墨框。核心主题的图例沿用 tone 圆点。
 
 ## 数值、宽度与可访问性
 
