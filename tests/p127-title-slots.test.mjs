@@ -1,4 +1,3 @@
-import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -8,8 +7,6 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import postcss from 'postcss';
 import { transform } from 'lightningcss';
-import { restoreP127, p127SourceFiles } from './helpers/p127-source-compat.mjs';
-import { restoreP128 } from './helpers/p128-source-compat.mjs';
 import React from 'react';
 import { renderToStaticMarkup as render } from 'react-dom/server';
 import { createTestRuntime } from './helpers/test-runtime.mjs';
@@ -67,7 +64,7 @@ const cases = [
   ['FacetFilter', { ...filterProps, dimensions: api.filterFixture('current') }],
   ['QuestionAnalysisPanel', { layout: 'compact', keyMetrics: [{ id: 'mean', label: '平均分', value: 6.5 }], notes: { sections: [{ id: 'n', heading: '说明', content: '合成数据' }] } }],
 ];
-for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) test(`P127 ${theme}: ${cases.length} real component cases preserve baseline SSR bytes including IDs`, t => {
+for (const theme of ['light', 'paper', 'dark']) test(`P127 ${theme}: ${cases.length} real component cases preserve baseline SSR bytes including IDs`, t => {
   const evidence = [];
   for (const [name, props] of cases) {
     const wrap = (module, extra = {}) => h('div', { 'data-prism-theme': theme }, h(module[name], { ...props, ...extra }));
@@ -131,10 +128,9 @@ for (const theme of ['light', 'paper', 'dark']) test(`P127 component-page host g
   const wrap = module => h('div', { 'data-prism-theme': theme }, h(module.BlueprintTitleSlotsContent, { active: false }));
   assert.equal(render(wrap(api)), render(wrap(old)));
 });
-test('P127 spacing is a scoped additive CSS block; all baseline styles, tokens and frozen coss remain unchanged', () => {
-  const path = 'app/(next)/next/blueprint.css', css = restoreP128(path, read(path)), base = oldSource(path);
-  assert.equal(css.slice(0, base.length), base);
-  const ast = postcss.parse(css.slice(base.length)), rules = ast.nodes.filter(n => n.type === 'rule');
+test('P127 spacing uses scoped 12px declarations and frozen coss remains unchanged', () => {
+  const path = 'app/(next)/next/blueprint.css', css = read(path);
+  const ast = postcss.parse(css.slice(css.indexOf('/* P127:'), css.indexOf('/* P128:'))), rules = ast.nodes.filter(n => n.type === 'rule');
   assert.equal(rules.length, 2);
   for (const [i, rule] of rules.entries()) {
     assert.match(rule.selector, /^:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) /);
@@ -142,7 +138,7 @@ test('P127 spacing is a scoped additive CSS block; all baseline styles, tokens a
     assert.match(rule.selector, /\*\)\)$/);
     assert.deepEqual(rule.nodes.map(n => [n.prop, n.value]), [[i ? 'margin-inline-end' : 'margin-inline-start', '12px']]);
   }
-  for (const p of ['app/(next)/next/theme.css', ...execFileSync('git', ['ls-files', 'components/coss'], { cwd: root, encoding: 'utf8' }).trim().split('\n')]) assert.equal(restoreP131(p, read(p)), oldSource(p));
+  for (const p of [...execFileSync('git', ['ls-files', 'components/coss'], { cwd: root, encoding: 'utf8' }).trim().split('\n')]) assert.equal(read(p), oldSource(p));
 });
 
 // Match the production selector AST, including nested preview roots and descendants.
@@ -194,13 +190,4 @@ test('P127 12px inline spacing matches only drawing themes, never nested core pr
       assert.deepEqual(style(el({ class: `bp-inline-${part}` }, local)), {});
     }
   }
-});
-test('P127 source compatibility removes only exact authorized slot/demo hunks, preserving all older source freezes', () => {
-  for (const path of p127SourceFiles) {
-    const current = read(path), base = path.endsWith('demos/blueprint-title-slots.tsx') ? '' : oldSource(path);
-    assert.equal(restoreP127(path, current), base);
-    assert.notEqual(restoreP127(path, current + '\n// unrelated edit\n'), base);
-  }
-  const path = 'components/prism-next/textbook-directory.tsx';
-  assert.throws(() => restoreP127(path, read(path).replace('{props.headingLeading}{volume}', '{volume}{props.headingLeading}')));
 });

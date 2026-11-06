@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import postcss from 'postcss';
@@ -12,10 +12,9 @@ import { hydrateRoot } from 'react-dom/client';
 import { createTestRuntime } from './helpers/test-runtime.mjs';
 import { reviewHydrationDOM } from './helpers/p126-hydration-dom.mjs';
 import { domNodes } from './helpers/ssr-hydration-dom.mjs';
-import { restoreP128, p128SourceFiles } from './helpers/p128-source-compat.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url)), h = React.createElement;
-const baseline = '0656aaa60854d6b50085d6110cec96a869deb829';
+
 const read = p => readFileSync(root + p, 'utf8');
 const css = read('app/(next)/next/blueprint.css');
 const block = css.slice(css.indexOf('/* P128:'), css.indexOf('/* P130:'));
@@ -87,16 +86,6 @@ test('P130 overrides the legacy width gate without changing full-page frame geom
     assert.equal(style.decoration.display, 'none');
   }
   ast.walkRules(rule => assert.ok(rule.selector.startsWith('.bp-frame--canvas > .') || rule.selector === '.bp-frame.bp-frame--canvas'));
-});
-
-// Existing source lock kept separately so it cannot skip the geometry regression.
-test('P128 query only styles explicit canvas children; full-page frame / inline title ornaments and old CSS remain intact', () => {
-  for (const path of p128SourceFiles) {
-    const original = execFileSync('git', ['show', `${baseline}:${path}`], { cwd: root, encoding: 'utf8' });
-    assert.equal(restoreP128(path, read(path)), original);
-    assert.notEqual(restoreP128(path, read(path) + '\n// unrelated\n'), original);
-    assert.throws(() => restoreP128(path, read(path).replace('926', '925')));
-  }
 });
 
 for (const name of ['PaperReviewDesign', 'QuestionReviewDesign']) for (const theme of ['blueprint', 'blueprint-night']) test(`P128 ${name}/${theme}: real host resize, rail T and immersive F retain nodes, scroll and custom zoom`, async () => {

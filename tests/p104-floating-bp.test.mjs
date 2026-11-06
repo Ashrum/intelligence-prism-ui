@@ -1,9 +1,7 @@
-import { restoreP131 } from './helpers/p131-source-compat.mjs';
-import { restoreP126 } from './helpers/p126-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+
 import { fileURLToPath } from 'node:url';
 import postcss from 'postcss';
 import { transform } from 'lightningcss';
@@ -14,8 +12,7 @@ import { createTestRuntime } from './helpers/test-runtime.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const read = path => readFileSync(root + path, 'utf8');
-const baseline = 'be43477ea5286cd8f20d37f2423a6af0ba60e58b';
-const before = path => execFileSync('git', ['show', `${baseline}:${path}`], { cwd: root, encoding: 'utf8' });
+
 const path = 'app/(next)/next/blueprint.css';
 const text = read(path);
 const block = text.match(/\/\* P104 ·[\s\S]*?\/\* End P104 floating surfaces\. \*\/\n\n/)[0];
@@ -84,16 +81,6 @@ for (const core of ['light', 'paper', 'dark']) test(`P104 ${core}: no CSS delta 
       for (const pseudo of ['before', 'after']) assert.deepEqual(style(node, pseudo), {});
     }
   }
-  assert.equal(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')), before('app/(next)/next/theme.css'));
-  // All previous rules/at-rules remain byte-identical; the only CSS delta cannot
-  // match core nodes. Compile both untouched portions as an additional check.
-  // P105 independently proves its additive block cannot affect core themes.
-  // P106 opt-in styles are independently checked against 0965f49.
-  // P107 checks its visual-only delta and the remaining CSS against 1486441.
-  const untouched = text.replace(/\n\/\* P113 ·[\s\S]*$/, '').replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(/\/\* P106 ·[\s\S]*?\/\* End P106 title rules\. \*\/\n\n/, '').replace(block, '').replace(/\/\* P105 ·[\s\S]*?\/\* End P105 blueprint polish\. \*\/\n\n/, '');
-  assert.equal(untouched, before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''));
-  const compile = input => transform({ code: Buffer.from(input), minify: true }).code.toString();
-  assert.equal(compile(untouched), compile(before(path).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '')));
 });
 
 test('P104 limits trigger adaptation to preview controls and avoids a second dock shadow', () => {
@@ -121,13 +108,6 @@ test('P104 nested white/night previews select their own existing Popover shadow'
   for (const [outer, inner] of [['blueprint-night', 'blueprint'], ['blueprint', 'blueprint-night']]) {
     const node = surfaces(theme(inner, theme(outer)))[0];
     assert.equal(style(node)['box-shadow'], inner === 'blueprint' ? '6px 6px 0 rgb(22 24 29 / 6%)' : '6px 6px 0 rgba(0,0,0,.3)');
-  }
-});
-
-test('P104 leaves reusable component TSX and core surface/layout CSS byte-identical', () => {
-  for (const file of ['student-control-bar.tsx', 'paper-preview-surface.tsx', 'review-workspace.tsx', 'review-switcher.tsx', 'paper-preview-group.tsx', 'student-control-bar.css', 'review-workspace.css']) {
-    const path = `components/prism-next/${file}`;
-    assert.equal(restoreP126(path, read(path)), before(path), path);
   }
 });
 

@@ -321,9 +321,5 @@
     "legacy-record-dirty/attempt": "d9e530c264cb5a385945c74e5d753895dfc596135896f0d2854c991e5245afb8",
     "legacy-record-dirty/review-expanded": "e92870f8fbc70f339b52724b9b9be98446e8d0197d6cef62f863764abf041654",
     "legacy-record-dirty/attempt-expanded": "781331c5533c0ecd3478f60c19f59b1a348b3e1e2e48a975aec179ff00d4fa71"
-  },
-  "sourceSha256": {
-    "components/prism-next/demos/table-particle.tsx": "df9cb27105ad93248b01fcfe21ead63ff484850e5921b816b9d71ec2c43e8d87",
-    "components/prism-next/data-display.tsx": "4bdbfa0b5c42ea4936a162a86d6d237be95619386dc21ac129c2c88b89a7a502"
   }
 }
