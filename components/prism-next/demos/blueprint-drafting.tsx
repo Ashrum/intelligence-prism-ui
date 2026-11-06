@@ -37,7 +37,7 @@ function DraftBody() {
 export function BlueprintDraftingDemo() {
   const { theme } = useChartTheme()
   return <section id="drafting" aria-label="v2.1 制图元素与颜色（合成数据）" className="min-w-0 space-y-8">
-    <BlueprintSectionHeader title="v2.1 制图元素与颜色" description="合成数据，演示尺寸线、一格一人、双段错题条与草稿确认两态。" />
+    <BlueprintSectionHeader title="v2.1 制图元素与颜色" description="合成数据，演示尺寸线、分行直标与展开全班构成、双段错题条与草稿确认两态。" />
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
       <section className="min-w-0 space-y-3">
         <h3 className="border-b border-(--line) pb-2 text-block-title">班级得分率与预期</h3>
@@ -69,8 +69,17 @@ export function BlueprintDraftingDemo() {
     </div>
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,3fr)]">
       <section className="min-w-0 space-y-3">
-        <h3 className="border-b border-(--line) pb-2 text-block-title">学生学习进展 · 一格一人</h3>
-        <BpUnitGrid label="学生学习进展" groups={groups} />
+        <h3 className="border-b border-(--line) pb-2 text-block-title">学生学习进展 · 分行直标</h3>
+        <ul className="space-y-3 text-ui-body">
+          <li className="flex items-baseline justify-between gap-3 border-l-[3px] border-(--brand-magenta-text) pl-3 text-(--brand-magenta-text)"><span>需要支持</span><span className="shrink-0 font-mono">2 人</span></li>
+          <li className="flex items-baseline justify-between gap-3 border-l-[3px] border-(--brand-magenta-text) pl-3 text-(--brand-magenta-text)"><span>近期回落</span><span className="shrink-0 font-mono">8 人</span></li>
+          <li className="flex items-baseline justify-between gap-3 pl-[15px] text-muted-foreground"><span>数据不足</span><span className="shrink-0 font-mono">6 人</span></li>
+        </ul>
+        <details>
+          <summary className="cursor-pointer text-ui-action">全班构成 · 45 人</summary>
+          <div className="mt-3"><BpUnitGrid label="学生学习进展" groups={groups} /></div>
+        </details>
+        <p className="text-ui-meta text-muted-foreground">一个面板默认只用一种斜纹；需要看全班构成时再展开。</p>
       </section>
       <section className="min-w-0 space-y-3">
         <h3 className="border-b border-(--line) pb-2 text-block-title">错题 · 再考仍错</h3>

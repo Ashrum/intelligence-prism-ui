@@ -163,8 +163,9 @@ export function compileGuide(root = repositoryRoot) {
   const { assets, resolveLink } = createLinkResolver(root);
   const document = parseMarkdown(bytes.toString('utf8'), resolveLink);
   const sourceDownload = resolveLink('blueprint-theme.md').href;
+  const currentSpecDownload = resolveLink('blueprint-theme-v2.md').href;
   return {
-    data: { sourcePath, sourceSha256: hash(bytes), sourceDownload, ...document, assets: [...assets.values()].map(({ bytes: _bytes, ...asset }) => asset) },
+    data: { sourcePath, sourceSha256: hash(bytes), sourceDownload, currentSpecDownload, ...document, assets: [...assets.values()].map(({ bytes: _bytes, ...asset }) => asset) },
     assets,
   };
 }

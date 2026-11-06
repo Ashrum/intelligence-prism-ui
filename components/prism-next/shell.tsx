@@ -33,7 +33,7 @@ function Navigation() {
         {link('/next/foundations/field-text','字段与说明文字',<BookOpen/>)}
         {link('/next/foundations/typography','字体与字号',<BookOpen/>)}
         {link('/next/foundations/blueprint','蓝图组件',<Layers/>)}
-        {link('/next/foundations/blueprint/guide','蓝图主题规范',<BookOpen/>)}
+        {link('/next/foundations/blueprint/guide','蓝图组件用法',<BookOpen/>)}
         {link('/next/reading','材料研读',<BookOpen/>)}
         {link('/next/use-cases','教师用例与流程',<Layers/>)}
         {link('/next/learning-analysis','学情分析设计',<BookOpen/>)}
