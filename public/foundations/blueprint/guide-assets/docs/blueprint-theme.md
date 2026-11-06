@@ -856,3 +856,36 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 - 面板使用 `BpSectionCard frame="none"`，省略 `letter`。已有蓝图规则提供无外框与标题下 1px 墨线，本轮沿用现有组件和样式。
 - 指标格用现有 `BpStat` / `BpStatStrip`，不新增同名实现或 `BpStatRow`。小图复用 `BpSizeBar` 与既有填充类，平均分使用六段分布小柱。`frame="none"` 最接近无外框、格间浅线的目标；现有 default 为 1.5px 墨色外框、subtle 为 1px 浅色外框，none 去掉全部外框，因此仍缺样张的顶边墨线与底边浅线，本轮不改组件或补样式，留待后续任务。响应式沿用容器 ≥960 / 480–959 / <480px 的四 / 二 / 一列，390 窄屏为一列。核心主题沿用组件既有中性外框回退。
 - 本轮示例完成上方一行、对象页签、结论与审定栏、四格指标、证据面板、收尾与第 4 题右侧展开。提供列表第 5、6 项的合成记录，目标线设置和成绩导出显示为禁用状态。纸面三栏继续由既有 `ReviewWorkspace` 承担，接入安排在工作台后续任务。
+
+## v2.1 制图元素与颜色
+
+设计状态为 v2.1 已批准规范的候选实现，等待 Supervisor Review。工程准入未开始。
+
+入口为 `/next/foundations/blueprint#drafting`，使用合成数据。复用检索覆盖本地 `BpSizeBar`、`BpStat`、`BpStatStrip`、`BpProvenance`、`BpButton` 与 `BpDiagramCallout` 的 SVG 坐标约定。已有 Prism 填充与令牌满足组合需求，新增尺寸线、一格一人、草稿容器及行内推断标记，沿用批准的 A2 范围。
+
+### 状态、图表与斜纹
+
+对应 `docs/blueprint-theme-v2.md` §5，状态采用字色加圆点。● 表示当前，○ 表示失效。错误用 `--destructive-foreground`，需处理用 `--warning-foreground`，完成用 `--success-foreground`，中性用 `--muted-foreground`。需处理行可组合 `border-l-[3px] border-(--brand-magenta-text)` 与既有排版类。
+
+白图状态字色分别为 `#C62828`、`#A8245C`、`#3F6309`、`#4B5260`。成功和警告填充分别采用曜青绿原色 `#C2F25B`、曜紫红原色 `#E0438F`，文字仍用对应字色令牌。
+
+图表前四色依次为曜蓝 `#0F5FA8`、曜紫红 `#A8245C`、曜青绿 `#3F6309`、灰蓝 `#5A6B80`，白底和纸底文字对比度均达到 4.5。`--chart-5` 兼容映射到曜蓝，`--chart-6` 兼容映射到灰蓝。JS 系列按四色循环，超过四色保留六种 decal 形状。`chartToneColor` 对白图单独映射语义色，保留其他主题原有映射。
+
+对应 §6，新一格一人中的同色斜纹表达该语义下未完成、未确认的部分，使用同色 1px 框。既有六条彩色斜纹规则的迁移因夜图测试白名单冲突暂停。新一格一人中的墨斜纹表示无数据，框色取 `--muted-foreground`。斜纹采用 135°、1.5px 线宽、6px 间距。对照或预期应使用灰虚线或浅实色。既有 `BpMetric` 对照斜纹示例列入后续迁移核查。
+
+### 组件与参数
+
+| 组件 | 用途与参数 |
+| --- | --- |
+| `BpDimension` | 对应 §4 尺寸线。输出 SVG `g`，`orientation` 指定方向，`at` 为所在轴，`from` / `to` 为两端，`leaderFrom` 为可选引出线起点，坐标均采用宿主 viewBox 单位。`tick` 默认 12，限于 6–16。`label` 为数值，`refNo` 为参照号，`tone` 为 `up` / `down` / `neutral`。宿主可访问名称须复述数值。 |
+| `BpUnitGrid` | 对应 §4 一格一人。`groups` 按传入顺序排列，每组提供 `id`、`label`、非负整数 `count`、`fill: BpFill`。`label` 为可访问名称前缀，`unit` 默认“人”，`legend` 默认 true。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。 |
+| `BpDraft` / `BpInferred` | 对应 §4 草稿斜纹边。容器提供 `state`、`title`、`children`，可选 `badge`、`meta`、`note`、`actions`、`provenance`。默认徽标随 draft / confirmed 切换，confirmed 将审定条目交给既有 `BpProvenance`。`BpInferred` 接受原生 span 属性，在 draft 内呈现下划线。状态由宿主提供。 |
+| `BpSizeBar` | 对应 §4 双段错题条。新增 `layout="stacked"`，名称与 `display` 在条上方，条高 8px；行字段 `displayTone` 为 `todo` / `muted`。`total=100` 时各段数值直接对应百分比宽度。默认 `row` 保留既有 SSR。其余 props 沿用原契约。 |
+
+### 字号、回退与验证边界
+
+按 §2，尺寸数值和参照号使用 `text-ui-meta`（12px）与 Geist Mono / 600，草稿标题使用 `text-section-title`（20px），正文使用 `text-ui-body`（14px），徽标、元信息、注记及图例使用 `text-ui-meta`（12px）。这将 §4 图纸中的尺寸线 13px、参照号 11px、草稿标题 22px、正文 15px 映射到现有字号令牌。
+
+新组件使用 `bp-dim-*`、`bp-unit-*`、`bp-draft-*` 自身类和已有中性回退令牌。核心主题下使用前景、次级表面和中性斜纹。白图六条彩色斜纹规则拆分触发现有夜图测试白名单，已回退该部分并交回 Supervisor。本轮没有新增夜图令牌或覆盖规则。
+
+示例中的草稿操作按钮为禁用的静态插槽，两态分别展示外部事实。浏览器验收由 Supervisor 执行。

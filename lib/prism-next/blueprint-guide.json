@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "cd94433e40514d8b9328cc41b448e6226d1661563c74b4f9efe2c609f060a274",
+  "sourceSha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -338,6 +338,26 @@
       "id": "section-67",
       "level": 3,
       "text": "复用检查与现有差距"
+    },
+    {
+      "id": "section-68",
+      "level": 2,
+      "text": "v2.1 制图元素与颜色"
+    },
+    {
+      "id": "section-69",
+      "level": 3,
+      "text": "状态、图表与斜纹"
+    },
+    {
+      "id": "section-70",
+      "level": 3,
+      "text": "组件与参数"
+    },
+    {
+      "id": "section-71",
+      "level": 3,
+      "text": "字号、回退与验证边界"
     }
   ],
   "blocks": [
@@ -14769,6 +14789,798 @@
           }
         ]
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-68",
+      "children": [
+        {
+          "type": "text",
+          "value": "v2.1 制图元素与颜色"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态为 v2.1 已批准规范的候选实现，等待 Supervisor Review。工程准入未开始。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "入口为 "
+        },
+        {
+          "type": "code",
+          "value": "/next/foundations/blueprint#drafting"
+        },
+        {
+          "type": "text",
+          "value": "，使用合成数据。复用检索覆盖本地 "
+        },
+        {
+          "type": "code",
+          "value": "BpSizeBar"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "BpStat"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "BpStatStrip"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "BpProvenance"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "BpButton"
+        },
+        {
+          "type": "text",
+          "value": " 与 "
+        },
+        {
+          "type": "code",
+          "value": "BpDiagramCallout"
+        },
+        {
+          "type": "text",
+          "value": " 的 SVG 坐标约定。已有 Prism 填充与令牌满足组合需求，新增尺寸线、一格一人、草稿容器及行内推断标记，沿用批准的 A2 范围。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-69",
+      "children": [
+        {
+          "type": "text",
+          "value": "状态、图表与斜纹"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "对应 "
+        },
+        {
+          "type": "code",
+          "value": "docs/blueprint-theme-v2.md"
+        },
+        {
+          "type": "text",
+          "value": " §5，状态采用字色加圆点。● 表示当前，○ 表示失效。错误用 "
+        },
+        {
+          "type": "code",
+          "value": "--destructive-foreground"
+        },
+        {
+          "type": "text",
+          "value": "，需处理用 "
+        },
+        {
+          "type": "code",
+          "value": "--warning-foreground"
+        },
+        {
+          "type": "text",
+          "value": "，完成用 "
+        },
+        {
+          "type": "code",
+          "value": "--success-foreground"
+        },
+        {
+          "type": "text",
+          "value": "，中性用 "
+        },
+        {
+          "type": "code",
+          "value": "--muted-foreground"
+        },
+        {
+          "type": "text",
+          "value": "。需处理行可组合 "
+        },
+        {
+          "type": "code",
+          "value": "border-l-[3px] border-(--brand-magenta-text)"
+        },
+        {
+          "type": "text",
+          "value": " 与既有排版类。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "白图状态字色分别为 "
+        },
+        {
+          "type": "code",
+          "value": "#C62828"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "#A8245C"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "#3F6309"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "#4B5260"
+        },
+        {
+          "type": "text",
+          "value": "。成功和警告填充分别采用曜青绿原色 "
+        },
+        {
+          "type": "code",
+          "value": "#C2F25B"
+        },
+        {
+          "type": "text",
+          "value": "、曜紫红原色 "
+        },
+        {
+          "type": "code",
+          "value": "#E0438F"
+        },
+        {
+          "type": "text",
+          "value": "，文字仍用对应字色令牌。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "图表前四色依次为曜蓝 "
+        },
+        {
+          "type": "code",
+          "value": "#0F5FA8"
+        },
+        {
+          "type": "text",
+          "value": "、曜紫红 "
+        },
+        {
+          "type": "code",
+          "value": "#A8245C"
+        },
+        {
+          "type": "text",
+          "value": "、曜青绿 "
+        },
+        {
+          "type": "code",
+          "value": "#3F6309"
+        },
+        {
+          "type": "text",
+          "value": "、灰蓝 "
+        },
+        {
+          "type": "code",
+          "value": "#5A6B80"
+        },
+        {
+          "type": "text",
+          "value": "，白底和纸底文字对比度均达到 4.5。"
+        },
+        {
+          "type": "code",
+          "value": "--chart-5"
+        },
+        {
+          "type": "text",
+          "value": " 兼容映射到曜蓝，"
+        },
+        {
+          "type": "code",
+          "value": "--chart-6"
+        },
+        {
+          "type": "text",
+          "value": " 兼容映射到灰蓝。JS 系列按四色循环，超过四色保留六种 decal 形状。"
+        },
+        {
+          "type": "code",
+          "value": "chartToneColor"
+        },
+        {
+          "type": "text",
+          "value": " 对白图单独映射语义色，保留其他主题原有映射。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "对应 §6，新一格一人中的同色斜纹表达该语义下未完成、未确认的部分，使用同色 1px 框。既有六条彩色斜纹规则的迁移因夜图测试白名单冲突暂停。新一格一人中的墨斜纹表示无数据，框色取 "
+        },
+        {
+          "type": "code",
+          "value": "--muted-foreground"
+        },
+        {
+          "type": "text",
+          "value": "。斜纹采用 135°、1.5px 线宽、6px 间距。对照或预期应使用灰虚线或浅实色。既有 "
+        },
+        {
+          "type": "code",
+          "value": "BpMetric"
+        },
+        {
+          "type": "text",
+          "value": " 对照斜纹示例列入后续迁移核查。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-70",
+      "children": [
+        {
+          "type": "text",
+          "value": "组件与参数"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "组件"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "用途与参数"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpDimension"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "对应 §4 尺寸线。输出 SVG "
+            },
+            {
+              "type": "code",
+              "value": "g"
+            },
+            {
+              "type": "text",
+              "value": "，"
+            },
+            {
+              "type": "code",
+              "value": "orientation"
+            },
+            {
+              "type": "text",
+              "value": " 指定方向，"
+            },
+            {
+              "type": "code",
+              "value": "at"
+            },
+            {
+              "type": "text",
+              "value": " 为所在轴，"
+            },
+            {
+              "type": "code",
+              "value": "from"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "to"
+            },
+            {
+              "type": "text",
+              "value": " 为两端，"
+            },
+            {
+              "type": "code",
+              "value": "leaderFrom"
+            },
+            {
+              "type": "text",
+              "value": " 为可选引出线起点，坐标均采用宿主 viewBox 单位。"
+            },
+            {
+              "type": "code",
+              "value": "tick"
+            },
+            {
+              "type": "text",
+              "value": " 默认 12，限于 6–16。"
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": " 为数值，"
+            },
+            {
+              "type": "code",
+              "value": "refNo"
+            },
+            {
+              "type": "text",
+              "value": " 为参照号，"
+            },
+            {
+              "type": "code",
+              "value": "tone"
+            },
+            {
+              "type": "text",
+              "value": " 为 "
+            },
+            {
+              "type": "code",
+              "value": "up"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "down"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "neutral"
+            },
+            {
+              "type": "text",
+              "value": "。宿主可访问名称须复述数值。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpUnitGrid"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "对应 §4 一格一人。"
+            },
+            {
+              "type": "code",
+              "value": "groups"
+            },
+            {
+              "type": "text",
+              "value": " 按传入顺序排列，每组提供 "
+            },
+            {
+              "type": "code",
+              "value": "id"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": "、非负整数 "
+            },
+            {
+              "type": "code",
+              "value": "count"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "fill: BpFill"
+            },
+            {
+              "type": "text",
+              "value": "。"
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": " 为可访问名称前缀，"
+            },
+            {
+              "type": "code",
+              "value": "unit"
+            },
+            {
+              "type": "text",
+              "value": " 默认“人”，"
+            },
+            {
+              "type": "code",
+              "value": "legend"
+            },
+            {
+              "type": "text",
+              "value": " 默认 true。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpDraft"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "BpInferred"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "对应 §4 草稿斜纹边。容器提供 "
+            },
+            {
+              "type": "code",
+              "value": "state"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "title"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": "，可选 "
+            },
+            {
+              "type": "code",
+              "value": "badge"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "meta"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "note"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "actions"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "provenance"
+            },
+            {
+              "type": "text",
+              "value": "。默认徽标随 draft / confirmed 切换，confirmed 将审定条目交给既有 "
+            },
+            {
+              "type": "code",
+              "value": "BpProvenance"
+            },
+            {
+              "type": "text",
+              "value": "。"
+            },
+            {
+              "type": "code",
+              "value": "BpInferred"
+            },
+            {
+              "type": "text",
+              "value": " 接受原生 span 属性，在 draft 内呈现下划线。状态由宿主提供。"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpSizeBar"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "对应 §4 双段错题条。新增 "
+            },
+            {
+              "type": "code",
+              "value": "layout=\"stacked\""
+            },
+            {
+              "type": "text",
+              "value": "，名称与 "
+            },
+            {
+              "type": "code",
+              "value": "display"
+            },
+            {
+              "type": "text",
+              "value": " 在条上方，条高 8px；行字段 "
+            },
+            {
+              "type": "code",
+              "value": "displayTone"
+            },
+            {
+              "type": "text",
+              "value": " 为 "
+            },
+            {
+              "type": "code",
+              "value": "todo"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "muted"
+            },
+            {
+              "type": "text",
+              "value": "。"
+            },
+            {
+              "type": "code",
+              "value": "total=100"
+            },
+            {
+              "type": "text",
+              "value": " 时各段数值直接对应百分比宽度。默认 "
+            },
+            {
+              "type": "code",
+              "value": "row"
+            },
+            {
+              "type": "text",
+              "value": " 保留既有 SSR。其余 props 沿用原契约。"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-71",
+      "children": [
+        {
+          "type": "text",
+          "value": "字号、回退与验证边界"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "按 §2，尺寸数值和参照号使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-meta"
+        },
+        {
+          "type": "text",
+          "value": "（12px）与 Geist Mono / 600，草稿标题使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-section-title"
+        },
+        {
+          "type": "text",
+          "value": "（20px），正文使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-body"
+        },
+        {
+          "type": "text",
+          "value": "（14px），徽标、元信息、注记及图例使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-meta"
+        },
+        {
+          "type": "text",
+          "value": "（12px）。这将 §4 图纸中的尺寸线 13px、参照号 11px、草稿标题 22px、正文 15px 映射到现有字号令牌。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "新组件使用 "
+        },
+        {
+          "type": "code",
+          "value": "bp-dim-*"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "bp-unit-*"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "bp-draft-*"
+        },
+        {
+          "type": "text",
+          "value": " 自身类和已有中性回退令牌。核心主题下使用前景、次级表面和中性斜纹。白图六条彩色斜纹规则拆分触发现有夜图测试白名单，已回退该部分并交回 Supervisor。本轮没有新增夜图令牌或覆盖规则。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "示例中的草稿操作按钮为禁用的静态插槽，两态分别展示外部事实。浏览器验收由 Supervisor 执行。"
+        }
+      ]
     }
   ],
   "assets": [
@@ -15275,7 +16087,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "cd94433e40514d8b9328cc41b448e6226d1661563c74b4f9efe2c609f060a274"
+      "sha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7"
     }
   ]
 }

@@ -6,8 +6,8 @@ const LIGHT_SERIES = ["#1E88E5", "#D6337F", "#3A9A2A", "#C27A00", "#7E5BD6", "#6
 // P69: keep the legacy dark series below for Blueprint Night. Core dark mixes 30% white into LIGHT_SERIES.
 const CORE_DARK_SERIES = ["#62ACED", "#E270A5", "#75B86A", "#D4A24D", "#A58CE2", "#979CA6"] as const
 const NIGHT_SERIES = ["#86C5FF", "#F296C2", "#99DFB4", "#F4CC86", "#BDACED", "#B6BEC9"] as const
-/** Accent first (current / primary series), ink second (baseline), then Prism's existing categorical hues. */
-export const BLUEPRINT_SERIES = ["#0F5FA8", "#16181D", "#A8245C", "#3F6309", "#A57013", "#6B7280"] as const
+/** 四色，墨不做数据系列。 */
+export const BLUEPRINT_SERIES = ["#0F5FA8", "#A8245C", "#3F6309", "#5A6B80"] as const
 /** Yaocai light blue → mid blue → text blue; labels use contrastForeground. */
 export const BLUEPRINT_SEQUENTIAL = ["#E3F1FD", "#6FB6F0", "#0F5FA8"] as const
 
