@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "f79eee9980640e642d407d752f404f29ad2292d6ede3ae6e00e59e888d4c01da",
+  "sourceSha256": "48e4c23a8dd601838ee7c3b7d5acf88452ba5d19cf07949d234fa8356fbfc0d2",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "title": "Foundations · 蓝图与夜图",
   "headings": [
@@ -323,6 +323,21 @@
       "id": "section-64",
       "level": 2,
       "text": "P134 · 页面标题隐藏开关"
+    },
+    {
+      "id": "section-65",
+      "level": 2,
+      "text": "工作框架组件"
+    },
+    {
+      "id": "section-66",
+      "level": 3,
+      "text": "字号映射与主题回退"
+    },
+    {
+      "id": "section-67",
+      "level": 3,
+      "text": "复用检查与现有差距"
     }
   ],
   "blocks": [
@@ -13733,6 +13748,1091 @@
           "value": "复用检索（离线）：沿用现有 BlueprintSheet、sr-only 和标题操作区的 flex-wrap 布局，仅新增隐藏模式的隔离 CSS，未新增组件、令牌或依赖，未修改 BlueprintSectionHeader、BpSectionCard 或冻结 coss。导航体系的学校知识库、学生与班级两个合成示例均使用隐藏模式；第五级对象示例保持原样。浏览器验收由 Supervisor 执行。"
         }
       ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "id": "section-65",
+      "children": [
+        {
+          "type": "text",
+          "value": "工作框架组件"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "设计状态为候选实现，依据蓝图主题规范 v2.1 §11–§12 与页面骨架 REV 0.5。工程准入未开始。本轮提供 S2 工作框架和 S3 右侧展开的组件示例，浏览器验收待 Supervisor 执行。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "通过 "
+        },
+        {
+          "type": "code",
+          "value": "components/prism-next/blueprint/blueprint.tsx"
+        },
+        {
+          "type": "text",
+          "value": " 导入，新增工作框架实现位于 "
+        },
+        {
+          "type": "code",
+          "value": "blueprint/work.tsx"
+        },
+        {
+          "type": "text",
+          "value": "；指标格用现有 "
+        },
+        {
+          "type": "code",
+          "value": "BpStat"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "BpStatStrip"
+        },
+        {
+          "type": "text",
+          "value": "。组件站“工作框架组件”示例使用合成数据。"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headers": [
+        [
+          {
+            "type": "text",
+            "value": "组件"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "用途与插槽"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "规范对应"
+          }
+        ]
+      ],
+      "rows": [
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpWorkHeader"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "56px 高度起步，窄屏按内容换行。"
+            },
+            {
+              "type": "code",
+              "value": "back"
+            },
+            {
+              "type": "text",
+              "value": " 为来处标签与 "
+            },
+            {
+              "type": "code",
+              "value": "href"
+            },
+            {
+              "type": "text",
+              "value": " 或 "
+            },
+            {
+              "type": "code",
+              "value": "onClick"
+            },
+            {
+              "type": "text",
+              "value": "，自动生成“← 返回 来处”；"
+            },
+            {
+              "type": "code",
+              "value": "title"
+            },
+            {
+              "type": "text",
+              "value": " 为对象名；依次提供 "
+            },
+            {
+              "type": "code",
+              "value": "meta"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "status"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "position"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "notice"
+            },
+            {
+              "type": "text",
+              "value": "、最多两个 "
+            },
+            {
+              "type": "code",
+              "value": "secondary"
+            },
+            {
+              "type": "text",
+              "value": "、一个 "
+            },
+            {
+              "type": "code",
+              "value": "primary"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "more"
+            },
+            {
+              "type": "text",
+              "value": "。"
+            },
+            {
+              "type": "code",
+              "value": "primary"
+            },
+            {
+              "type": "text",
+              "value": " 接收 BpButton 属性并使用 primary 变体"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§11 S2 上方一行"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpWorkBody"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "内容宽度上限 1296px，左右留白各 72px，窄屏为 16px；"
+            },
+            {
+              "type": "code",
+              "value": "grid"
+            },
+            {
+              "type": "text",
+              "value": " 启用 8 列 "
+            },
+            {
+              "type": "code",
+              "value": "minmax(0,1fr)"
+            },
+            {
+              "type": "text",
+              "value": " 网格，列距 40px，窄屏列距 16px"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§11 S2 内容区"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpWorkTabs"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": " 为页签组名称，"
+            },
+            {
+              "type": "code",
+              "value": "items"
+            },
+            {
+              "type": "text",
+              "value": " 提供 "
+            },
+            {
+              "type": "code",
+              "value": "value"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": "、可选 "
+            },
+            {
+              "type": "code",
+              "value": "count"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "disabled"
+            },
+            {
+              "type": "text",
+              "value": " 与 "
+            },
+            {
+              "type": "code",
+              "value": "content"
+            },
+            {
+              "type": "text",
+              "value": "；透传 coss Tabs 受控或非受控属性。各项内容置于 TabsPanel，保留键盘行为与标签关联。页签区域可横向滚动，右下角为三段 36×3 签名线"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§11 对象内页签、§12 第 9 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpConclusion"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "段落属性与 "
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": "，承载宿主给出的结论"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§12 第 2 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpMark"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "mark"
+            },
+            {
+              "type": "text",
+              "value": " 属性与 "
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": "，关键数字下半高荧光笔"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§12 第 2 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpRef"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "sup"
+            },
+            {
+              "type": "text",
+              "value": " 属性与 "
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": "，宿主提供 ①②；可选 "
+            },
+            {
+              "type": "code",
+              "value": "href"
+            },
+            {
+              "type": "text",
+              "value": " 指向证据锚点；组件自动在前后加入禁断行字符（U+2060），使引注与紧邻的前文、后续标点连排，句中其余位置自然换行"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§12 第 2 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpProvenance"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "items"
+            },
+            {
+              "type": "text",
+              "value": " 为 "
+            },
+            {
+              "type": "code",
+              "value": "{ label, value }[]"
+            },
+            {
+              "type": "text",
+              "value": "，使用定义列表展示依据与来源，每行浅分隔线、整体 1px 墨框"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§12 第 3 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "text",
+              "value": "现有 "
+            },
+            {
+              "type": "code",
+              "value": "BpStat"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "BpStatStrip"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "指标格使用 "
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "value"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "unit"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "caption"
+            },
+            {
+              "type": "text",
+              "value": " 与 "
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": " 小图插槽；可找回的失分使用 "
+            },
+            {
+              "type": "code",
+              "value": "readout.tone=\"warn\""
+            },
+            {
+              "type": "text",
+              "value": "。示例以 "
+            },
+            {
+              "type": "code",
+              "value": "frame=\"none\""
+            },
+            {
+              "type": "text",
+              "value": " 组合四格，保持既有接口、输出与响应式网格"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§12 第 4 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpWorkEnd"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": " 为本项状态或结束链接；"
+            },
+            {
+              "type": "code",
+              "value": "next"
+            },
+            {
+              "type": "text",
+              "value": " 提供 "
+            },
+            {
+              "type": "code",
+              "value": "label"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "position"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "title"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "meta"
+            },
+            {
+              "type": "text",
+              "value": " 和 "
+            },
+            {
+              "type": "code",
+              "value": "href"
+            },
+            {
+              "type": "text",
+              "value": " 或 "
+            },
+            {
+              "type": "code",
+              "value": "onClick"
+            },
+            {
+              "type": "text",
+              "value": "。链接目的地用原生链接，宿主动作使用原生按钮"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§11 收尾行、§12 第 9 条"
+            }
+          ]
+        ],
+        [
+          [
+            {
+              "type": "code",
+              "value": "BpSidePeek"
+            }
+          ],
+          [
+            {
+              "type": "code",
+              "value": "title"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "trigger"
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
+              "value": "children"
+            },
+            {
+              "type": "text",
+              "value": "、可选 "
+            },
+            {
+              "type": "code",
+              "value": "position"
+            },
+            {
+              "type": "text",
+              "value": " 与 "
+            },
+            {
+              "type": "code",
+              "value": "footer"
+            },
+            {
+              "type": "text",
+              "value": "；支持 "
+            },
+            {
+              "type": "code",
+              "value": "open"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "onOpenChange"
+            },
+            {
+              "type": "text",
+              "value": " / "
+            },
+            {
+              "type": "code",
+              "value": "defaultOpen"
+            },
+            {
+              "type": "text",
+              "value": "。通过 coss Sheet 管理 Esc、焦点与触发器。宽 640px，窄屏全宽；传入指向 BpWorkHeader 的 "
+            },
+            {
+              "type": "code",
+              "value": "headerRef"
+            },
+            {
+              "type": "text",
+              "value": "，随实际顶栏高度及滚动定位下边缘；省略时顶部为 56px"
+            }
+          ],
+          [
+            {
+              "type": "text",
+              "value": "§11 S3 右侧展开"
+            }
+          ]
+        ]
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "code",
+          "value": "position"
+        },
+        {
+          "type": "text",
+          "value": " 使用宿主列表的一基 "
+        },
+        {
+          "type": "code",
+          "value": "index"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "total"
+        },
+        {
+          "type": "text",
+          "value": "，并接收 "
+        },
+        {
+          "type": "code",
+          "value": "onPrev"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "onNext"
+        },
+        {
+          "type": "text",
+          "value": "、可选 "
+        },
+        {
+          "type": "code",
+          "value": "prevLabel"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "nextLabel"
+        },
+        {
+          "type": "text",
+          "value": "。边界或缺少回调时禁用对应按钮。路由、列表顺序、操作结果和状态由宿主提供。右侧展开沿用 "
+        },
+        {
+          "type": "code",
+          "value": "usePrismPortalProps"
+        },
+        {
+          "type": "text",
+          "value": "，嵌套主题预览需要将 portal 目标放在对应主题边界内。"
+        },
+        {
+          "type": "code",
+          "value": "footer"
+        },
+        {
+          "type": "text",
+          "value": " 由宿主提供一个主操作。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-66",
+      "children": [
+        {
+          "type": "text",
+          "value": "字号映射与主题回退"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "本轮按任务要求使用现有语义档位。默认根字号下，指标数字沿用 "
+        },
+        {
+          "type": "code",
+          "value": "BpStat"
+        },
+        {
+          "type": "text",
+          "value": " 默认 stack 布局的 "
+        },
+        {
+          "type": "code",
+          "value": "text-score-display"
+        },
+        {
+          "type": "text",
+          "value": " 40px（规范目标 28px，保持既有档位），结论 "
+        },
+        {
+          "type": "code",
+          "value": "text-section-title"
+        },
+        {
+          "type": "text",
+          "value": " 为 20px（目标 22px），对象名与面板标题 "
+        },
+        {
+          "type": "code",
+          "value": "text-block-title"
+        },
+        {
+          "type": "text",
+          "value": " 为 16px（对象名目标 18px、面板目标 15px），正文 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-body"
+        },
+        {
+          "type": "text",
+          "value": " 为 14px（目标 15px），注释 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-meta"
+        },
+        {
+          "type": "text",
+          "value": " 为 12px。引注也使用 12px 档位。指标说明沿用组件默认 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-hint"
+        },
+        {
+          "type": "text",
+          "value": "；数字和位置计数使用现有等宽字体。"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "颜色使用既有 "
+        },
+        {
+          "type": "code",
+          "value": "--line"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--border"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--card"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--foreground"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--heading"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--muted-foreground"
+        },
+        {
+          "type": "text",
+          "value": "、"
+        },
+        {
+          "type": "code",
+          "value": "--brand-*-text"
+        },
+        {
+          "type": "text",
+          "value": " / "
+        },
+        {
+          "type": "code",
+          "value": "--brand-green-tint"
+        },
+        {
+          "type": "text",
+          "value": " 与 "
+        },
+        {
+          "type": "code",
+          "value": "--bp-phase-*"
+        },
+        {
+          "type": "text",
+          "value": "。核心主题下使用既有中性回退。荧光笔原色仅在 blueprint 边界内启用，并排除嵌套的其他主题预览。新组件只在显式使用对应类时生效。"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "id": "section-67",
+      "children": [
+        {
+          "type": "text",
+          "value": "复用检查与现有差距"
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "type": "text",
+            "value": "已检查 Prism "
+          },
+          {
+            "type": "code",
+            "value": "BpButton"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "BpSectionCard"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "BpStat"
+          },
+          {
+            "type": "text",
+            "value": " / "
+          },
+          {
+            "type": "code",
+            "value": "BpStatStrip"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "BpMetric"
+          },
+          {
+            "type": "text",
+            "value": "、"
+          },
+          {
+            "type": "code",
+            "value": "ReviewWorkspace"
+          },
+          {
+            "type": "text",
+            "value": " 与 portal scope，以及冻结 coss Tabs / Sheet 的源码契约。Tabs 和 Sheet 已满足键盘、焦点与关闭机制，采用组合方式。现有来源已匹配，本轮无需补充外部组件来源。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "面板使用 "
+          },
+          {
+            "type": "code",
+            "value": "BpSectionCard frame=\"none\""
+          },
+          {
+            "type": "text",
+            "value": "，省略 "
+          },
+          {
+            "type": "code",
+            "value": "letter"
+          },
+          {
+            "type": "text",
+            "value": "。已有蓝图规则提供无外框与标题下 1px 墨线，本轮沿用现有组件和样式。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "指标格用现有 "
+          },
+          {
+            "type": "code",
+            "value": "BpStat"
+          },
+          {
+            "type": "text",
+            "value": " / "
+          },
+          {
+            "type": "code",
+            "value": "BpStatStrip"
+          },
+          {
+            "type": "text",
+            "value": "，不新增同名实现或 "
+          },
+          {
+            "type": "code",
+            "value": "BpStatRow"
+          },
+          {
+            "type": "text",
+            "value": "。小图复用 "
+          },
+          {
+            "type": "code",
+            "value": "BpSizeBar"
+          },
+          {
+            "type": "text",
+            "value": " 与既有填充类，平均分使用六段分布小柱。"
+          },
+          {
+            "type": "code",
+            "value": "frame=\"none\""
+          },
+          {
+            "type": "text",
+            "value": " 最接近无外框、格间浅线的目标；现有 default 为 1.5px 墨色外框、subtle 为 1px 浅色外框，none 去掉全部外框，因此仍缺样张的顶边墨线与底边浅线，本轮不改组件或补样式，留待后续任务。响应式沿用容器 ≥960 / 480–959 / <480px 的四 / 二 / 一列，390 窄屏为一列。核心主题沿用组件既有中性外框回退。"
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "value": "本轮示例完成上方一行、对象页签、结论与审定栏、四格指标、证据面板、收尾与第 4 题右侧展开。提供列表第 5、6 项的合成记录，目标线设置和成绩导出显示为禁用状态。纸面三栏继续由既有 "
+          },
+          {
+            "type": "code",
+            "value": "ReviewWorkspace"
+          },
+          {
+            "type": "text",
+            "value": " 承担，接入安排在工作台后续任务。"
+          }
+        ]
+      ]
     }
   ],
   "assets": [
@@ -14239,7 +15339,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "f79eee9980640e642d407d752f404f29ad2292d6ede3ae6e00e59e888d4c01da"
+      "sha256": "48e4c23a8dd601838ee7c3b7d5acf88452ba5d19cf07949d234fa8356fbfc0d2"
     }
   ]
 }

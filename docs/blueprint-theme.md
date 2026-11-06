@@ -823,3 +823,37 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 `titleDisplay` 默认为 `"visible"`，既有调用输出保持不变。`headingLevel` 支持 1 / 2 / 3；1 仅用于隐藏标题，可见模式传 1 时按 2 渲染。隐藏模式的内容容器使用 grid、16px 间距；有 `titleActions` 时在内容顶部显示右对齐、可换行的操作区，沿用 `data-slot="bp-section-title-actions"`；未提供时不生成操作行。
 
 复用检索（离线）：沿用现有 BlueprintSheet、sr-only 和标题操作区的 flex-wrap 布局，仅新增隐藏模式的隔离 CSS，未新增组件、令牌或依赖，未修改 BlueprintSectionHeader、BpSectionCard 或冻结 coss。导航体系的学校知识库、学生与班级两个合成示例均使用隐藏模式；第五级对象示例保持原样。浏览器验收由 Supervisor 执行。
+
+## 工作框架组件
+
+设计状态为候选实现，依据蓝图主题规范 v2.1 §11–§12 与页面骨架 REV 0.5。工程准入未开始。本轮提供 S2 工作框架和 S3 右侧展开的组件示例，浏览器验收待 Supervisor 执行。
+
+通过 `components/prism-next/blueprint/blueprint.tsx` 导入，新增工作框架实现位于 `blueprint/work.tsx`；指标格用现有 `BpStat` / `BpStatStrip`。组件站“工作框架组件”示例使用合成数据。
+
+| 组件 | 用途与插槽 | 规范对应 |
+| --- | --- | --- |
+| `BpWorkHeader` | 56px 高度起步，窄屏按内容换行。`back` 为来处标签与 `href` 或 `onClick`，自动生成“← 返回 来处”；`title` 为对象名；依次提供 `meta`、`status`、`position`、`notice`、最多两个 `secondary`、一个 `primary`、`more`。`primary` 接收 BpButton 属性并使用 primary 变体 | §11 S2 上方一行 |
+| `BpWorkBody` | 内容宽度上限 1296px，左右留白各 72px，窄屏为 16px；`grid` 启用 8 列 `minmax(0,1fr)` 网格，列距 40px，窄屏列距 16px | §11 S2 内容区 |
+| `BpWorkTabs` | `label` 为页签组名称，`items` 提供 `value`、`label`、可选 `count` / `disabled` 与 `content`；透传 coss Tabs 受控或非受控属性。各项内容置于 TabsPanel，保留键盘行为与标签关联。页签区域可横向滚动，右下角为三段 36×3 签名线 | §11 对象内页签、§12 第 9 条 |
+| `BpConclusion` | 段落属性与 `children`，承载宿主给出的结论 | §12 第 2 条 |
+| `BpMark` | `mark` 属性与 `children`，关键数字下半高荧光笔 | §12 第 2 条 |
+| `BpRef` | `sup` 属性与 `children`，宿主提供 ①②；可选 `href` 指向证据锚点；组件自动在前后加入禁断行字符（U+2060），使引注与紧邻的前文、后续标点连排，句中其余位置自然换行 | §12 第 2 条 |
+| `BpProvenance` | `items` 为 `{ label, value }[]`，使用定义列表展示依据与来源，每行浅分隔线、整体 1px 墨框 | §12 第 3 条 |
+| 现有 `BpStat` / `BpStatStrip` | 指标格使用 `label`、`value`、`unit`、`caption` 与 `children` 小图插槽；可找回的失分使用 `readout.tone="warn"`。示例以 `frame="none"` 组合四格，保持既有接口、输出与响应式网格 | §12 第 4 条 |
+| `BpWorkEnd` | `children` 为本项状态或结束链接；`next` 提供 `label`、`position`、`title`、`meta` 和 `href` 或 `onClick`。链接目的地用原生链接，宿主动作使用原生按钮 | §11 收尾行、§12 第 9 条 |
+| `BpSidePeek` | `title`、`trigger`、`children`、可选 `position` 与 `footer`；支持 `open` / `onOpenChange` / `defaultOpen`。通过 coss Sheet 管理 Esc、焦点与触发器。宽 640px，窄屏全宽；传入指向 BpWorkHeader 的 `headerRef`，随实际顶栏高度及滚动定位下边缘；省略时顶部为 56px | §11 S3 右侧展开 |
+
+`position` 使用宿主列表的一基 `index` / `total`，并接收 `onPrev` / `onNext`、可选 `prevLabel` / `nextLabel`。边界或缺少回调时禁用对应按钮。路由、列表顺序、操作结果和状态由宿主提供。右侧展开沿用 `usePrismPortalProps`，嵌套主题预览需要将 portal 目标放在对应主题边界内。`footer` 由宿主提供一个主操作。
+
+### 字号映射与主题回退
+
+本轮按任务要求使用现有语义档位。默认根字号下，指标数字沿用 `BpStat` 默认 stack 布局的 `text-score-display` 40px（规范目标 28px，保持既有档位），结论 `text-section-title` 为 20px（目标 22px），对象名与面板标题 `text-block-title` 为 16px（对象名目标 18px、面板目标 15px），正文 `text-ui-body` 为 14px（目标 15px），注释 `text-ui-meta` 为 12px。引注也使用 12px 档位。指标说明沿用组件默认 `text-ui-hint`；数字和位置计数使用现有等宽字体。
+
+颜色使用既有 `--line`、`--border`、`--card`、`--foreground`、`--heading`、`--muted-foreground`、`--brand-*-text` / `--brand-green-tint` 与 `--bp-phase-*`。核心主题下使用既有中性回退。荧光笔原色仅在 blueprint 边界内启用，并排除嵌套的其他主题预览。新组件只在显式使用对应类时生效。
+
+### 复用检查与现有差距
+
+- 已检查 Prism `BpButton`、`BpSectionCard`、`BpStat` / `BpStatStrip`、`BpMetric`、`ReviewWorkspace` 与 portal scope，以及冻结 coss Tabs / Sheet 的源码契约。Tabs 和 Sheet 已满足键盘、焦点与关闭机制，采用组合方式。现有来源已匹配，本轮无需补充外部组件来源。
+- 面板使用 `BpSectionCard frame="none"`，省略 `letter`。已有蓝图规则提供无外框与标题下 1px 墨线，本轮沿用现有组件和样式。
+- 指标格用现有 `BpStat` / `BpStatStrip`，不新增同名实现或 `BpStatRow`。小图复用 `BpSizeBar` 与既有填充类，平均分使用六段分布小柱。`frame="none"` 最接近无外框、格间浅线的目标；现有 default 为 1.5px 墨色外框、subtle 为 1px 浅色外框，none 去掉全部外框，因此仍缺样张的顶边墨线与底边浅线，本轮不改组件或补样式，留待后续任务。响应式沿用容器 ≥960 / 480–959 / <480px 的四 / 二 / 一列，390 窄屏为一列。核心主题沿用组件既有中性外框回退。
+- 本轮示例完成上方一行、对象页签、结论与审定栏、四格指标、证据面板、收尾与第 4 题右侧展开。提供列表第 5、6 项的合成记录，目标线设置和成绩导出显示为禁用状态。纸面三栏继续由既有 `ReviewWorkspace` 承担，接入安排在工作台后续任务。

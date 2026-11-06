@@ -11,6 +11,9 @@ export type { BpScanTraceProps, BpPaperSlotProps, BpPaperSlotState } from "./gra
 export { BpTargetLock, BpDiagramCallout, BpEntryRow } from "./entry-annotations"
 export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "./entry-annotations"
 
+export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpWorkEnd, BpSidePeek } from "./work"
+export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpWorkEndProps, BpSidePeekProps } from "./work"
+
 /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */
 
