@@ -28,6 +28,8 @@ export type RecordListRow = {
   tag?: string; badges?: readonly string[]
   /** Host-classified membership, never inferred from status text. Omit for an already projected page. */
   tabIds?: readonly string[]
+  /** Line-only host facts. Card layout ignores these fields. */
+  groupId?: string; attention?: boolean; time?: string
   status?: RecordListStatus; progress?: number | null
   action: RecordListAction; menu?: readonly RecordListAction[]
   /** Controlled host fact; activation emits onRowAction(id, toggle.id). */
@@ -40,6 +42,10 @@ export type RecordListFilter = {
 export type RecordListState = { kind: "ready" | "loading" | "search-empty" }
   | { kind: "empty"; description?: string } | { kind: "error"; reason: string }
 export type RecordListProps = {
+  /** Line omits description, menu, toggle, badges, tag and progress; card output is unchanged. */
+  layout?: "card" | "line"
+  /** Line-only groups in display order; counts reflect visible rows, empty groups are omitted. */
+  groups?: readonly { id: string; label: string; note?: string; attention?: boolean }[]
   title?: string; description?: string; primaryLabel?: string
   /** Optional decoration before the existing title; host supplies aria-hidden ornaments. */
   titleLeading?: ReactNode
@@ -74,7 +80,7 @@ const knownProgress = (value: number | null | undefined): value is number => typ
 /** Facts in, intents out. Only an uncontrolled tab is locally stateful. */
 export function RecordList({ title = "批阅记录", titleLeading, description = "查看 AI 批阅进度、处理必要异常并管理最终结果", primaryLabel = "开始 AI 批阅",
   showType = true, showStatus = true, showPrimary = true, showHeader = true, showSearch = true,
-  currentRowId, currentRowLabel = "刚才查看",
+  currentRowId, currentRowLabel = "刚才查看", layout = "card", groups,
   actionVariant = 'ghost', actionAlign = 'start',
   tabs = [], tab, defaultTab, onTabChange, rows, search = "", searchLabel = "搜索批阅名称或试卷", searchPlaceholder = "搜索批阅名称或试卷",
   filters = [], activeFilters = [], summary, state = { kind: "ready" }, pagination,
@@ -83,6 +89,45 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
   const [localTab, setLocalTab] = useState(defaultTab ?? tabs[0]?.id ?? "")
   const selected = tab === undefined ? localTab : tab
   const visible = rows.filter(row => !row.tabIds || (!tabs.length && tab === undefined) || row.tabIds.includes(selected))
+  const Shell = layout === "line" ? "div" : Frame
+  const lineRow = (row: RecordListRow) => {
+    const name = row.name.trim() || "名称未提供"
+    const type = row.type.trim() || "类型未提供"
+    const status = row.status?.label.trim() || "状态未知"
+    const reason = row.action.disabledReason?.trim() || (!onRowAction ? "操作暂不可用" : undefined)
+    const current = row.id === currentRowId
+    return <li key={row.id}>
+      <button type="button" className="bp-rl-line-row text-ui-body" data-record-row={row.id}
+        data-attention={row.attention || undefined} data-current={current ? "" : undefined}
+        data-show-type={showType} aria-current={current ? "true" : undefined}
+        aria-label={[name, showType && type, showStatus && status, row.action.label].filter(Boolean).join(" · ")}
+        aria-disabled={!!reason} title={reason}
+        aria-describedby={reason ? `${id}-line-${row.id}-reason` : undefined}
+        onClick={() => { if (!reason) onRowAction?.(row.id, row.action.id) }}>
+        <span className="bp-rl-line-name">{name}</span>
+        {showType && <span className="bp-rl-line-type text-ui-hint">{type}</span>}
+        <span className="bp-rl-line-metadata text-ui-hint">{row.metadata.trim() || "记录信息未提供"}</span>
+        <span className="bp-rl-line-state text-ui-hint">
+          {showStatus && <span className={`bp-rl-line-status bp-rl-line-tone-${row.status?.tone ?? "neutral"}`}>{status}</span>}
+          {current && <span className="text-ui-meta text-muted-foreground">{currentRowLabel}</span>}
+        </span>
+        {row.time?.trim() && <span className="bp-rl-line-time text-ui-meta">{row.time}</span>}
+        <span className="bp-rl-line-action text-ui-hint">{row.action.label} <span aria-hidden="true">→</span></span>
+        <span className="bp-rl-line-sub text-ui-hint">{[showType && type, row.metadata.trim() || "记录信息未提供", row.time?.trim()].filter(Boolean).join(" · ")}</span>
+        {reason && <span id={`${id}-line-${row.id}-reason`} className="bp-rl-line-reason text-ui-hint">{reason}</span>}
+      </button>
+    </li>
+  }
+  const lineRows = () => {
+    if (!groups) return visible.map(lineRow)
+    const grouped = groups.flatMap(group => {
+      const members = visible.filter(row => row.groupId === group.id)
+      return members.length ? [<li key={`group-${group.id}`} className="bp-rl-line-group text-ui-meta" data-record-group={group.id} data-attention={group.attention || undefined}>
+        {group.label}<span className="bp-rl-line-count">{members.length}</span>{group.note && <span> · {group.note}</span>}
+      </li>, ...members.map(lineRow)] : []
+    })
+    return [...grouped, ...visible.filter(row => !groups.some(group => group.id === row.groupId)).map(lineRow)]
+  }
   const primary = showPrimary && <Button type="button" className={targetClass} disabled={!onPrimary} title={!onPrimary ? "操作暂不可用" : undefined} onClick={onPrimary}><span className="truncate">{primaryLabel}</span></Button>
   const content = <div className="min-w-0 space-y-4">
     {showSearch && state.kind !== "empty" && <div className="flex min-w-0 flex-wrap items-end gap-3" role="group" aria-label="记录搜索与筛选">
@@ -114,8 +159,8 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
       {!!search && <Button variant="outline" className={targetClass} disabled={!onSearch} onClick={() => onSearch?.("")}>清除搜索</Button>}
     </Empty> : <>
       {summary && <div role="status" aria-live="polite"><AgentStatus icon={Circle} tone={summary.tone} className="text-ui-hint">{summary.label}</AgentStatus></div>}
-      <ul className="min-w-0 space-y-3" aria-label={`${title}列表`}>
-        {visible.map(row => {
+      <ul className={layout === "line" ? "bp-rl-line-list" : "min-w-0 space-y-3"} aria-label={`${title}列表`}>
+        {layout === "line" ? lineRows() : visible.map(row => {
           const tag = row.tag?.trim()
           const badges = row.badges?.map(label => label.trim()).filter(Boolean) ?? []
           const marked = !!tag || badges.length > 0
@@ -189,17 +234,17 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
       </div>}
     </>}
   </div>
-  return <section data-record-list data-state={state.kind} aria-labelledby={showHeader ? `${id}-title` : undefined} aria-label={showHeader ? undefined : title} className="@container min-w-0">
-    <Frame>
+  return <section data-record-list data-record-layout={layout === "line" ? "line" : undefined} data-state={state.kind} aria-labelledby={showHeader ? `${id}-title` : undefined} aria-label={showHeader ? undefined : title} className="@container min-w-0">
+    <Shell>
     {showHeader && <FrameHeader className="flex min-w-0 flex-row flex-wrap items-start justify-between gap-3">
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{titleLeading == null ? title : <>{titleLeading}{title}</>}</h3><p className="break-words text-ui-hint">{description}</p></div>{primary}
     </FrameHeader>}
-    <div className="min-w-0 p-1">{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
+    <div className={layout === "line" ? "min-w-0" : "min-w-0 p-1"}>{tabs.length ? <Tabs value={selected} onValueChange={value => { if (typeof value === "string") { if (tab === undefined) setLocalTab(value); onTabChange?.(value) } }} className="gap-4">
       <TabsList aria-label={`${title}分类`} className="max-w-full flex-wrap justify-start motion-reduce:[&_[data-slot=tab-indicator]]:transition-none">
         {tabs.map(item => <TabsTab key={item.id} value={item.id} className={`${targetClass} pointer-coarse:min-h-11 pointer-coarse:min-w-11 motion-reduce:transition-none`}><span className="truncate">{item.label}</span> <span className="tabular-nums">{countLabel(item.count)}</span></TabsTab>)}
       </TabsList>
       {tabs.map(item => <TabsPanel key={item.id} value={item.id} className="min-w-0">{item.id === selected ? content : null}</TabsPanel>)}
     </Tabs> : content}</div>
-    </Frame>
+    </Shell>
   </section>
 }

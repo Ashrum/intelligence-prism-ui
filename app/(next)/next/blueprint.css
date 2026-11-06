@@ -1136,3 +1136,43 @@ section[data-agent-preview]:is([data-prism-theme="blueprint"],[data-prism-theme=
 .bp-dim-size-stacked :where(.bp-fill-hatch-ai) { background:var(--hatch-blue); border:1px solid var(--brand-blue-text); }
 .bp-dim-size-stacked :where(.bp-fill-hatch-todo) { background:var(--hatch-magenta); border:1px solid var(--brand-magenta-text); }
 .bp-dim-size-stacked :where(.bp-fill-hatch-done) { background:var(--hatch-green); border:1px solid var(--brand-green-text); }
+
+/* P142 · RecordList line layout */
+.bp-rl-line-list { min-width:0; margin:0; padding:0; list-style:none; background:var(--card); border-top:1px solid var(--line); }
+.bp-rl-line-group { height:26px; display:flex; align-items:center; gap:8px; padding-left:15px; color:var(--muted-foreground); background:var(--background); border-bottom:1px solid var(--border); }
+.bp-rl-line-count { font-family:var(--font-mono); font-weight:600; color:var(--foreground); }
+.bp-rl-line-group[data-attention] .bp-rl-line-count { color:var(--warning-foreground); }
+.bp-rl-line-row { display:grid; width:100%; min-width:0; grid-template-columns:minmax(0,2.4fr) 120px minmax(0,2.6fr) 96px 64px 92px; align-items:center; column-gap:16px; min-height:44px; padding:0 12px 0 15px; border:0; border-bottom:1px solid var(--border); background:var(--card); color:var(--foreground); text-align:left; cursor:pointer; }
+.bp-rl-line-row > span { min-width:0; }
+.bp-rl-line-row[data-show-type="false"] { grid-template-columns:minmax(0,2.4fr) minmax(0,2.6fr) 96px 64px 92px; }
+.bp-rl-line-row:hover { background:var(--accent); }
+.bp-rl-line-row[data-attention] { box-shadow:inset 3px 0 0 var(--warning-foreground); }
+.bp-rl-line-row[data-current] { background:var(--brand-blue-tint); outline:2px solid var(--brand-blue-text); outline-offset:-2px; }
+.bp-rl-line-row:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.bp-rl-line-row[aria-disabled="true"] { cursor:not-allowed; }
+.bp-rl-line-name { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bp-rl-line-type, .bp-rl-line-metadata { color:var(--muted-foreground); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bp-rl-line-state { display:flex; flex-wrap:wrap; gap:2px 6px; }
+.bp-rl-line-status { display:inline-flex; align-items:center; gap:6px; overflow-wrap:anywhere; }
+.bp-rl-line-status::before { content:""; width:7px; height:7px; flex:none; border-radius:50%; background:currentColor; }
+.bp-rl-line-tone-warning { color:var(--warning-foreground); }
+.bp-rl-line-tone-success { color:var(--success-foreground); }
+.bp-rl-line-tone-error { color:var(--destructive-foreground); }
+.bp-rl-line-tone-info, .bp-rl-line-tone-neutral { color:var(--muted-foreground); }
+.bp-rl-line-time { grid-column:-3; font-family:var(--font-mono); text-align:right; color:var(--muted-foreground); }
+.bp-rl-line-action { grid-column:-2; color:var(--brand-blue-text); text-align:right; overflow-wrap:anywhere; }
+.bp-rl-line-row[data-attention] .bp-rl-line-action { font-weight:600; }
+.bp-rl-line-sub { display:none; }
+.bp-rl-line-reason { grid-column:1 / -1; color:var(--muted-foreground); overflow-wrap:anywhere; }
+@container (max-width:1000px) {
+  .bp-rl-line-row, .bp-rl-line-row[data-show-type="false"] { grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,auto); grid-template-areas:"name state action" "sub sub sub"; row-gap:2px; padding-top:8px; padding-bottom:8px; }
+  .bp-rl-line-name { grid-area:name; }
+  .bp-rl-line-state { grid-area:state; }
+  .bp-rl-line-action { grid-area:action; }
+  .bp-rl-line-type, .bp-rl-line-metadata, .bp-rl-line-time { display:none; }
+  .bp-rl-line-sub { grid-area:sub; display:block; color:var(--muted-foreground); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+}
+@container (max-width:600px) {
+  .bp-rl-line-row, .bp-rl-line-row[data-show-type="false"] { grid-template-columns:minmax(0,1fr) minmax(0,auto); grid-template-areas:"name action" "state state" "sub sub"; padding-right:8px; }
+  .bp-rl-line-sub { white-space:normal; overflow-wrap:anywhere; }
+}

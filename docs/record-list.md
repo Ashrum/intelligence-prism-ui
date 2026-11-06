@@ -168,3 +168,26 @@ const row: RecordListRow = {
 ```
 
 复用检索：固定 coss Button 的 ghost/outline/default 与 FramePanel 原行布局、本地 particles p-table-3/4；复核本页 p-table-5/8、p-frame-1/3/4 和 Beautiful UI Records Table / Filter Table / Task Rows 的历史取舍。现有组件足以扩展，不创建另一套按钮样式或列表，不增依赖、令牌或复制第三方代码。按 Builder 前置约定离线复核，未刷新上游 registry。浏览器验收：按分工由 Supervisor 执行。
+
+
+## 单行排法（line）
+
+`layout="line"` 用于一行一对象一动词的记录列表。默认 `layout="card"` 保持原输出；card 忽略新增的 `groups`、行 `groupId`、`attention`、`time`。
+
+- `groups?: { id: string; label: string; note?: string; attention?: boolean }[]`：按数组顺序显示分组，人数由当前可见行计算，空组省略；未知或未提供 `groupId` 的行放在最后，不显示分组标题。不传 groups 时保持可见行顺序。
+- 行 `groupId?: string` 指定分组；`attention?: boolean` 由宿主判定，显示左侧 3px 竖线及加重动词，不根据状态文字推断；`time?: string` 显示日期。
+- 容器 >1000px：最小 44px 单行，名称、type、metadata、状态、日期、动词；分组行 26px。容器 ≤1000px：名称／状态／动词一行，type／metadata／time 第二行省略溢出。容器 ≤600px：名称／动词、状态、可换行的辅助信息三行。
+- 使用现有 `text-ui-hint`（14px）和 `text-ui-meta`（12px），不新增字号。母版辅助文字的 13px 与现有字号约束存在差异，待裁定。
+- line 不显示 `description`、`menu`（⋯）、`toggle`、`badges`、`tag`、`progress`；`actionVariant`、`actionAlign` 不改变整行动词的排法。⋯ 由宿主放到打开后的子页面。
+- `showType`、`showStatus`、`showHeader`、`showSearch` 继续生效。分页、加载、空态、错误及搜索无结果复用既有实现。
+- 整行是原生 button，Tab 聚焦，Enter／Space 原生激活，发出 `onRowAction(row.id, row.action.id)`。可访问名为“名称 · type · 状态 · 动词”（省略隐藏字段）。禁用原因通过可见文字、title 和 aria-describedby 提供；aria-disabled 行仍可聚焦，但不发出意图。
+- `currentRowId` 显示浅底、2px 内描边及状态后的“刚才查看”，与 attention 左线共存，不移动焦点。
+
+| tone | 核心主题 | 蓝图 |
+| --- | --- | --- |
+| warning | `--warning-foreground` | `--brand-magenta-text` |
+| success | `--success-foreground` | `--brand-green-text` |
+| error | `--destructive-foreground` | 同左 |
+| info / neutral / 未给 | `--muted-foreground` | 同左 |
+
+状态仅显示字色与 7px 圆点。复用检索：已有 RecordList 提供可见行投影、分页与状态；现有 coss FramePanel／Button 的卡片与按钮外框不匹配 L1，因此 line 使用原生整行 button 和独立布局样式，card 继续复用原组件；不新增组件目录条目或外部依赖。

@@ -1,0 +1,58 @@
+[
+  {
+    "props": {},
+    "sha256": "9a297279bea7501998b80c4a20ffe9217ac047d01b6792caf98f9b10db5c3208"
+  },
+  {
+    "props": {
+      "showHeader": false,
+      "showSearch": false
+    },
+    "sha256": "2ee0994c2145f83575f970120d2d072f2dccdf21bda7defa375dfb14d6747f86"
+  },
+  {
+    "props": {
+      "currentRowId": "linear"
+    },
+    "sha256": "036c2825d555c001a7f945b37c0c8536b19bb7b513a45516c98d9ce216de725c"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "loading"
+      }
+    },
+    "sha256": "44af3cc1546003f0b6a6ea6ceab40750fd53cd5ec5fdbb19eb69b21674ef7a33"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "empty"
+      }
+    },
+    "sha256": "28ca345a08b1a055f1108b7d3f9a57b42a62718f6be55aa18a79b47e152bf62a"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "error",
+        "reason": "失败"
+      }
+    },
+    "sha256": "0836fa6354dfa6fa143e7fb61bfeba4e24a5397a5096540307fd06e7ee6eac75"
+  },
+  {
+    "props": {
+      "state": {
+        "kind": "search-empty"
+      }
+    },
+    "sha256": "ca71f0d58152f622d8662a6bc8bea605b613e03a7e084c46ee372a0de67a3f0a"
+  },
+  {
+    "props": {
+      "tab": "completed"
+    },
+    "sha256": "787630a0d105b133b918e5f53f250b243d5fc45c5f66130238fb1dc0791256f2"
+  }
+]
