@@ -846,7 +846,7 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 
 ### 字号映射与主题回退
 
-本轮按任务要求使用现有语义档位。默认根字号下，指标数字沿用 `BpStat` 默认 stack 布局的 `text-score-display` 40px（规范目标 28px，保持既有档位），结论 `text-section-title` 为 20px（目标 22px），对象名与面板标题 `text-block-title` 为 16px（对象名目标 18px、面板目标 15px），正文 `text-ui-body` 为 14px（目标 15px），注释 `text-ui-meta` 为 12px。引注也使用 12px 档位。指标说明沿用组件默认 `text-ui-hint`；数字和位置计数使用现有等宽字体。
+字号即规范 v2.1 §2 的现有令牌（PO 2026-11-06 规范对齐令牌，不再有“目标值”差距）：指标数字 `BpStat` 默认 stack 布局为 `text-score-display` 40px，`readout` / 行内布局为 `text-stat-display` 24px；结论 `text-section-title` 20px；对象名与面板标题 `text-block-title` 16px；正文 `text-ui-body` 14px；注释 `text-ui-meta` 12px。引注也使用 12px 档位。指标说明沿用组件默认 `text-ui-hint`；数字和位置计数使用现有等宽字体。
 
 颜色使用既有 `--line`、`--border`、`--card`、`--foreground`、`--heading`、`--muted-foreground`、`--brand-*-text` / `--brand-green-tint` 与 `--bp-phase-*`。核心主题下使用既有中性回退。荧光笔原色仅在 blueprint 边界内启用，并排除嵌套的其他主题预览。新组件只在显式使用对应类时生效。
 
