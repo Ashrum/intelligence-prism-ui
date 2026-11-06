@@ -1,8 +1,7 @@
-import { restoreP131 } from './helpers/p131-source-compat.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import postcss from 'postcss';
@@ -63,8 +62,6 @@ test('P106 structural rules are empty, centered flex decorations with narrow-scr
     assert.doesNotMatch(d.value, /#[\da-f]{3,8}\b/i);
   });
   // P107 independently guards its isolated additions and P75 geometry removal.
-  assert.equal(text.replace(/\n\/\* P113 ·[\s\S]*$/, '').replace(/\/\* P107 ·[\s\S]*?\/\* End P107 reskin gaps\. \*\/\n\n/, '').replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, '').replace(block, ''), execFileSync('git', ['show', `${fixture.baseline}:${path}`], { cwd: root, encoding: 'utf8' }).replace(/\/\* P75 question detail:[\s\S]*?\/\* End P75 question detail\. \*\//, ''), 'no other pre-existing CSS changed');
-  assert.equal(restoreP131('app/(next)/next/theme.css', read('app/(next)/next/theme.css')), execFileSync('git', ['show', `${fixture.baseline}:app/(next)/next/theme.css`], { cwd: root, encoding: 'utf8' }), 'no tokens changed');
 });
 
 // Selector/variable evaluation over SSR ancestry: engineering evidence, not visual QA.

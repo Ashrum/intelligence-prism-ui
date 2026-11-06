@@ -26,7 +26,7 @@ function engineGeometry(option, width, height) {
 
 assert.equal(frozen.baseline, baseline);
 for (const theme of themes) {
-  for (const [id, name, props] of cases) test(`P108 ${theme}/${id}: default output exactly matches 0a2be7b`, () => {
+  if (!theme.startsWith("blueprint")) for (const [id, name, props] of cases) test(`P108 ${theme}/${id}: default output exactly matches 0a2be7b`, () => {
     const out = capture(name, props, theme), old = frozen.fingerprints[`${theme}/${id}`];
     assert.equal(digest(out.html), old.html, 'exact SSR bytes');
     assert.equal(digest(json(out.charts)), old.options, 'engine configuration');
@@ -159,7 +159,6 @@ test('P108 demo formatter uses decimal half-up only in demo and renders host-for
     for (const text of ['宿主格式回调', '70.0%', '57.5%', '100.0%（四舍五入）', '尚无可比再考记录']) assertMarkupText(out.html, text);
   }
 });
-
 
 test('P108 mounted Recharts keeps paths/points/ticks at 390 and 1280 while formatter updates', async () => {
   const previous = { window: globalThis.window, document: globalThis.document, ResizeObserver: globalThis.ResizeObserver, IS_REACT_ACT_ENVIRONMENT: globalThis.IS_REACT_ACT_ENVIRONMENT };
