@@ -14,8 +14,8 @@ export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "
 export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpSidePeek } from "./work"
 export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpSidePeekProps } from "./work"
 
-export { BpDimension, BpUnitGrid, BpDraft, BpInferred } from "./drafting"
-export type { BpDimensionProps, BpUnitGridProps, BpDraftProps } from "./drafting"
+export { BpDimension, BpUnitGrid, BpDraft, BpInferred, BpStatus } from "./drafting"
+export type { BpDimensionProps, BpUnitGridProps, BpDraftProps, BpStatusProps } from "./drafting"
 
 /** Blueprint presentation components (bp-*). Page-level presentation only; forms and actions stay on coss.
  *  Styles live in app/(next)/next/blueprint.css and read tokens with core-theme fallbacks, so they render in any theme. */

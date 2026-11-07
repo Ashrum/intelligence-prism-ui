@@ -6,6 +6,28 @@ import { cn } from "@/lib/utils"
 import type { BpFill } from "./blueprint"
 import { BpProvenance, type BpProvenanceProps } from "./work"
 
+export interface BpStatusProps {
+  tone: "error" | "attention" | "done" | "neutral"
+  inactive?: boolean
+  children: ReactNode
+  className?: string
+}
+
+const statusToneClasses = {
+  error: "text-destructive-foreground",
+  attention: "text-warning-foreground",
+  done: "text-success-foreground",
+  neutral: "text-muted-foreground",
+}
+
+export function BpStatus({ tone, inactive = false, children, className }: BpStatusProps) {
+  return <span data-bp-status={tone} data-inactive={inactive || undefined}
+    className={cn("inline-flex items-center gap-[6px] [overflow-wrap:anywhere]", statusToneClasses[tone], className)}>
+    <span aria-hidden="true" className={cn("size-[7px] shrink-0 rounded-full", inactive ? "border-[1.5px] border-solid border-current bg-transparent" : "bg-current")} />
+    {children}
+  </span>
+}
+
 export interface BpDimensionProps {
   orientation: "vertical" | "horizontal"
   at: number
