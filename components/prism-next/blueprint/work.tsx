@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/coss/tabs"
 import { Sheet, SheetBackdrop, SheetClose, SheetPortal, SheetPrimitive, SheetTitle, SheetTrigger, SheetViewport } from "@/components/coss/sheet"
 import { cn } from "@/lib/utils"
 import { usePrismPortalProps } from "../prism-scope"
-import { BpButton, type BpButtonProps } from "./blueprint"
+import { BpButton, BpSteps, type BpButtonProps } from "./blueprint"
 
 type WorkDestination = { href: string; onClick?: never } | { href?: never; onClick: () => void }
 export interface BpWorkPosition {
@@ -32,6 +32,7 @@ export interface BpWorkHeaderProps extends Omit<ComponentProps<"header">, "title
   meta?: ReactNode
   status?: ReactNode
   position?: BpWorkPosition
+  steps?: { items: { id: string; label: string }[]; current: number; label?: string }
   notice?: ReactNode
   secondary?: readonly [ReactNode] | readonly [ReactNode, ReactNode]
   primary?: Omit<BpButtonProps, "variant">
@@ -41,7 +42,7 @@ export interface BpWorkHeaderProps extends Omit<ComponentProps<"header">, "title
   narrow?: "stack" | "compact"
 }
 
-export function BpWorkHeader({ back, title, meta, status, position, notice, secondary, primary, more, narrow = "stack", className, ...props }: BpWorkHeaderProps) {
+export function BpWorkHeader({ back, title, meta, status, position, steps, notice, secondary, primary, more, narrow = "stack", className, ...props }: BpWorkHeaderProps) {
   const backText = <>← 返回 {back.label}</>
   const compact = narrow === "compact"
   return <header {...props} className={cn("bp-work-header", className)} data-narrow={compact ? "compact" : undefined}>
@@ -53,6 +54,14 @@ export function BpWorkHeader({ back, title, meta, status, position, notice, seco
     </div>
     {meta != null && <div className="bp-work-meta text-ui-meta">{meta}</div>}
     {status != null && <div className="bp-work-status text-ui-meta">{status}</div>}
+    {steps && <div className="col-span-full flex min-w-0 flex-1 justify-center [@media(max-width:700px)]:basis-full [@container_bp-work-demo_(max-width:700px)]:basis-full">
+      <div className="[@media(max-width:700px)]:hidden [@container_bp-work-demo_(max-width:700px)]:hidden">
+        <BpSteps steps={steps.items} current={steps.current} label={steps.label} variant="chips" />
+      </div>
+      <div role="group" aria-label={steps.label ?? "流程步骤"} className="hidden whitespace-nowrap text-ui-meta [@media(max-width:700px)]:block [@container_bp-work-demo_(max-width:700px)]:block">
+        第 {steps.current + 1} / {steps.items.length} 步 · {steps.items[steps.current]?.label}
+      </div>
+    </div>}
     <div className="bp-work-actions">
       {position && <WorkPosition {...position} />}
       {compact && notice != null ? <div className="bp-work-notice">{notice}</div> : notice}
