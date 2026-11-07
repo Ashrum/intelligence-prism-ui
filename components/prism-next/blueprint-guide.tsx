@@ -38,9 +38,9 @@ export function GuideBlock({ block, index }: { block: Block; index: number }) {
 
 export function BlueprintGuide({ showBlueprintDemo = true }: { showBlueprintDemo?: boolean }) {
   return <div className="prism-content min-w-0" data-blueprint-guide-source={guide.sourceSha256}>
-    <header className="prism-page-heading"><p>FOUNDATIONS / BLUEPRINT / GUIDE</p><h1>{guide.title}</h1><p className="text-ui-hint text-muted-foreground">本页是组件用法与接入历史；<a className="prism-link" href={guide.currentSpecDownload} download><strong>新页面以规范 v2.1 为准</strong></a>。</p></header>
+    <header className="prism-page-heading"><p>FOUNDATIONS / BLUEPRINT / GUIDE</p><h1>{guide.title}</h1><p className="text-ui-hint text-muted-foreground">本页是组件用法与接入历史；<a className="prism-link" href={guide.currentSpecDownload} download><strong>新页面以规范 {guide.currentSpecVersion} 为准</strong></a>。</p></header>
     <nav aria-label="蓝图规范相关页面" className="mb-6 flex flex-wrap gap-x-6 gap-y-3 text-ui-action">
-      <a className="prism-link" href={guide.currentSpecDownload} download>现行规范 v2.1</a>
+      <a className="prism-link" href={guide.currentSpecDownload} download>现行规范 {guide.currentSpecVersion}</a>
       <a className="prism-link" href="/next/foundations">基础规范</a>
       {showBlueprintDemo && <a className="prism-link" href="/next/foundations/blueprint">蓝图组件示例</a>}
       <a className="prism-link" href="/next/experiments/blueprint">轻量页面实验</a>
