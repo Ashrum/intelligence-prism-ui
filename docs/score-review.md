@@ -138,3 +138,9 @@ SSR/意图探针覆盖逐点合计与缺值、受控更新、半分/浮点、输
 新增 `/next/components/score-review/compact`，原两个 demo 与扩展页保持不变；同一数据 default/compact 对照含长中文与公式、三主题和 320px 容器，另含宿主声明全部展开、showIdentity=false 示例。SSR 不能测高度：请在同一宽度与主题分别测 `[data-density-comparison] [data-score-review-panel]` 的高度（初始折叠、三个区全部展开各一次），记录 default/compact px 及差值；上述清单是已压缩/合并/折叠项，不作为高度实测值。
 
 操作：Tab 到“学生原始作答 / 标准答案 / 历史记录”，Enter/Space 展开/折叠，确认焦点留在按钮、aria-expanded 更新且内容可达；核对默认折叠与宿主全开。调整为 7 分后理由门禁仍生效；输入理由，保存或 Ctrl/⌘+Enter 仅提示请求，未出现伪回执。三主题、320/390/1440px 检查身份自然换行、按钮字号尺寸、长中文/公式与 Tooltip。浏览器验收：按分工由 Supervisor 执行；真实服务、Workspace 接入、真机、读屏器与真实焦点/键盘行为未验证。
+
+### P147 展开项呈现
+
+`disclosureVariant?: "button" | "link"` 默认 `"button"`，`"link"` 复用 coss Button 的 link 变体与既有链接色，仅改变学生原始作答、标准答案、历史记录的折叠触发器呈现，标签、计数、aria-expanded 和其他操作沿用原行为。
+
+蓝图写法示例位于 `/next/foundations/blueprint#flow-status-p147` 的“批阅页蓝图写法”节（合成数据，未接入服务）。原组件页演示保持不变。
