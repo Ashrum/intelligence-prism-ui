@@ -96,6 +96,17 @@ export function BlueprintWorkDemo() {
         ]} />
       </BpWorkBody>
     </div>
+    <section id="work-header-steps" aria-label="带步骤工作头示例" className="space-y-3">
+      <h3 className="text-block-title">带步骤</h3>
+      <BpWorkHeader back={{ label: "批阅记录", href: "#work-frame" }} title="九年级（1）班 · 数学 · 间隔复查"
+        steps={{ items: [
+          { id: "setup", label: "设置任务" },
+          { id: "scan", label: "扫描学生试卷" },
+          { id: "grading", label: "AI 批阅" },
+          { id: "analysis", label: "整体分析" },
+        ], current: 2 }}
+        primary={{ children: "去处理", disabled: true, title: "示例未接入批阅处理" }} />
+    </section>
     <section id="work-header-compact" aria-label="紧凑工作头示例" className="space-y-3">
       <h3 className="text-block-title">紧凑工作头</h3>
       <p className="text-ui-meta text-muted-foreground">390 下两行；次操作收进 ⋯。compact 下 ≤ 700px 次操作不显示，more 必须包含同等入口，由宿主提供；主操作仍保留。</p>
