@@ -1,6 +1,6 @@
 "use client"
 
-import { BlueprintSectionHeader, BpButton, BpDimension, BpDraft, BpInferred, BpSizeBar, BpStat, BpStatStrip, BpUnitGrid, type BpUnitGridProps } from "../blueprint/blueprint"
+import { BlueprintSectionHeader, BpButton, BpDimension, BpDraft, BpInferred, BpSizeBar, BpStat, BpStatStrip, BpStatus, BpUnitGrid, type BpUnitGridProps } from "../blueprint/blueprint"
 import { useChartTheme } from "../charts/chart-theme"
 import { BLUEPRINT_SERIES } from "@/lib/prism-next/chart-palette"
 import { relativeLuminance } from "@/lib/prism-next/chart-color"
@@ -111,10 +111,13 @@ export function BlueprintDraftingDemo() {
       </BpDraft>
     </div>
     <section className="space-y-3" aria-label="四档状态写法">
-      <h3 className="text-block-title">状态写法</h3>
+      <h3 className="text-block-title">状态</h3>
       <ul className="flex flex-wrap gap-4 text-ui-body">
-        <li className="text-destructive-foreground">● 错误</li><li className="text-warning-foreground">● 需处理</li>
-        <li className="text-success-foreground">● 完成</li><li className="text-muted-foreground">○ 已失效</li>
+        <li><BpStatus tone="error">错误</BpStatus></li>
+        <li><BpStatus tone="attention">需处理</BpStatus></li>
+        <li><BpStatus tone="done">完成</BpStatus></li>
+        <li><BpStatus tone="neutral">待定</BpStatus></li>
+        <li><BpStatus tone="neutral" inactive>已失效</BpStatus></li>
       </ul>
       <p className="border-l-[3px] border-(--brand-magenta-text) pl-3 text-ui-body">待你确认这份讲评稿</p>
     </section>
