@@ -30,6 +30,7 @@ export type ScoreReviewProps = {
   /** Opt-in function-area modes; review retains the original presentation. */
   mode?: "review" | "confirm" | "edit" | "manual"
   showBasis?: boolean; showConfidence?: boolean; instruction?: ReactNode | false
+  disclosureVariant?: "button" | "link"
   sectionsPlacement?: "top" | "bottom"
   sectionLabels?: Partial<Record<"answer" | "standardAnswer" | "history", string>>
   /** Host-supplied baseline text beside the total, e.g. 原 6 分. */
@@ -203,7 +204,7 @@ export function ScoreReview(props: ScoreReviewProps) {
     <p className="break-words text-ui-hint">{sourceVersion ? `来源 · AI 批阅 ${sourceVersion}` : "来源 · AI 批阅 · 版本未提供"}</p>
   </div></> : identityHeader
   const answerSection = compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.answer ?? false}>
-      <CollapsibleTrigger render={<Button type="button" variant="outline" />}>{props.sectionLabels?.answer ?? "学生原始作答"}</CollapsibleTrigger>
+      <CollapsibleTrigger render={<Button type="button" variant={props.disclosureVariant === "link" ? "link" : "outline"} className={props.disclosureVariant === "link" ? "text-[var(--link)]" : undefined} />}>{props.sectionLabels?.answer ?? "学生原始作答"}</CollapsibleTrigger>
       <CollapsiblePanel className="motion-reduce:transition-none"><div className="min-w-0 space-y-2 pt-2">
         {props.answer?.trim() ? <DraftMathPreview label="OCR 文本" value={props.answer} showHelp={false} notice={null} /> : <p className="text-read-body">OCR 文本未提供</p>}
         {props.locationNotice && <p className="break-words text-ui-hint">{props.locationNotice}</p>}
@@ -274,11 +275,11 @@ export function ScoreReview(props: ScoreReviewProps) {
     </div>
   const standardSection = props.standardAnswer !== undefined ? <>
       {compact ? <Collapsible defaultOpen={props.sectionsDefaultOpen?.standardAnswer ?? false}>
-        <CollapsibleTrigger render={<Button type="button" variant="outline" />}>{props.sectionLabels?.standardAnswer ?? "标准答案"}</CollapsibleTrigger>
+        <CollapsibleTrigger render={<Button type="button" variant={props.disclosureVariant === "link" ? "link" : "outline"} className={props.disclosureVariant === "link" ? "text-[var(--link)]" : undefined} />}>{props.sectionLabels?.standardAnswer ?? "标准答案"}</CollapsibleTrigger>
         <CollapsiblePanel className="motion-reduce:transition-none"><div className="pt-2"><DraftMathPreview label="标准答案" value={props.standardAnswer} showHelp={false} notice={null} /></div></CollapsiblePanel>
       </Collapsible> : <section aria-label={props.sectionLabels?.standardAnswer ?? "标准答案"} className="min-w-0 space-y-2"><h3 className="text-item-title">{props.sectionLabels?.standardAnswer ?? "标准答案"}</h3><DraftMathPreview label={props.sectionLabels?.standardAnswer ?? "标准答案"} value={props.standardAnswer} showHelp={false} notice={null} /></section>}
     </> : null
-  const historySection = props.history && <Collapsible defaultOpen={props.sectionsDefaultOpen?.history}><CollapsibleTrigger render={<Button type="button" variant="outline" className={mode === "review" ? actionClass : undefined} />}><span className="truncate">{props.sectionLabels?.history ?? "历史记录"}（{props.history.length}）</span></CollapsibleTrigger><CollapsiblePanel className={compact ? "motion-reduce:transition-none" : undefined}>
+  const historySection = props.history && <Collapsible defaultOpen={props.sectionsDefaultOpen?.history}><CollapsibleTrigger render={<Button type="button" variant={props.disclosureVariant === "link" ? "link" : "outline"} className={props.disclosureVariant === "link" ? "max-w-full text-[var(--link)]" : mode === "review" ? actionClass : undefined} />}><span className="truncate">{props.sectionLabels?.history ?? "历史记录"}（{props.history.length}）</span></CollapsibleTrigger><CollapsiblePanel className={compact ? "motion-reduce:transition-none" : undefined}>
       {props.history.length ? <ol className={compact ? "space-y-2 pt-2" : "space-y-3 pt-3"}>{props.history.map(record => <li key={record.id} className="space-y-1"><p className="text-ui-body">过往评分 {Number.isFinite(record.score) ? record.score : "未提供"} 分</p><p className="break-words text-read-body">理由：{known(record.reason)}</p><AgentMetaLine>时间：{known(record.time)}</AgentMetaLine></li>)}</ol> : <p className="pt-3 text-ui-hint">暂无历史记录</p>}
     </CollapsiblePanel></Collapsible>
   const modeActions = mode === "review" ? actions : <div className="flex min-w-0 flex-wrap justify-end gap-2" aria-label="评分操作">

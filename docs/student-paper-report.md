@@ -57,3 +57,9 @@ particles 的 `p-frame-1`、`p-meter-3/4` 和 `p-progress-1/2/3` 依据来自仓
 `pendingEmphasis?: "default" | "strong"`，默认 default，保留 main 4b7e959 输出。strong 将待办区移至 Frame 第一个子项（标题之前），使用 `bg-warning/15 text-warning-foreground`，数量用语义 `text-block-title` 加重，标准尺寸主按钮带装饰性右箭头。compact 同样保留全部信息与按钮尺寸。自定义 pendingText 原样显示，同时单列外部待办数量；0 和未知保持各自事实，不显示定位按钮。禁用原因、可访问名称和 onFirstPending 意图契约不变。
 
 独立示例 `/next/components/student-paper-report/pending` 新增三主题 × default/compact 的 strong 示例；参照页 `/next/reviews/grading-function-area` 的 ⑧ 使用 strong。Supervisor 验收三主题与 320/390/1440px，确认顶部提示醒目、文字和按钮对比、长中文/公式、Tab/Enter 定位请求及禁用说明；点击不改变待办数或报告。浏览器验收：按分工由 Supervisor 执行。
+
+### P147 状态插槽
+
+`statusSlot?: ReactNode` 显式提供时，在“状态：”后原样渲染并替换 ReviewConfirmation 包裹，显式 null 留空，省略或 undefined 沿用原输出，每题对错 Badge 保留。
+
+蓝图写法示例位于 `/next/foundations/blueprint#flow-status-p147` 的“批阅页蓝图写法”节（合成数据，未接入服务）。原组件页演示保持不变。

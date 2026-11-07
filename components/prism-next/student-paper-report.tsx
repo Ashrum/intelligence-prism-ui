@@ -31,6 +31,7 @@ export type StudentPaperReportProps = {
   title?: ReactNode
   studentName?: ReactNode
   status?: ReactNode
+  statusSlot?: ReactNode
   score?: number | null
   maxScore?: number | null
   counts?: StudentPaperReportCounts
@@ -77,7 +78,7 @@ function content(value: ReactNode) {
 
 /** All totals, judgments, distribution scales and completion facts belong to the host. */
 export function StudentPaperReport({
-  density = "default", pendingEmphasis = "default", title = "整卷报告", studentName, status, score, maxScore, counts, complete, provided,
+  density = "default", pendingEmphasis = "default", title = "整卷报告", studentName, status, statusSlot, score, maxScore, counts, complete, provided,
   coverageText, causes = [], totalLost, missingCauses, unattributedLost, causesEmptyText,
   analysis, analysisSource = "AI", pendingCount, pendingText, onFirstPending,
   firstPendingDisabledReason, footer, className,
@@ -120,7 +121,7 @@ export function StudentPaperReport({
             <span className="text-score-display">{displayNumber(score)}</span>
             <span className="text-ui-body text-muted-foreground">/ {displayNumber(maxScore)} 分</span>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-ui-hint"><span>状态：</span><ReviewConfirmation><span className="whitespace-normal wrap-anywhere">{content(status)}</span></ReviewConfirmation></div>
+          <div className="flex flex-wrap items-center gap-2 text-ui-hint"><span>状态：</span>{statusSlot !== undefined ? statusSlot : <ReviewConfirmation><span className="whitespace-normal wrap-anywhere">{content(status)}</span></ReviewConfirmation>}</div>
         </section>
         {coverage !== null && <p data-report-coverage className="text-ui-hint text-muted-foreground wrap-anywhere">{coverage}</p>}
         <section aria-label="每题对错" className={compact ? "space-y-2" : "space-y-3"}>

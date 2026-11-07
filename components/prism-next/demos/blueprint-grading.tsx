@@ -1,8 +1,13 @@
 "use client"
 
+import { PaperCard, PaperCardGrid } from "../attachment"
+import { StudentPaperReport } from "../student-paper-report"
+import { scoreReviewBase } from "./score-review"
+import { studentPaperReportFixture } from "./student-paper-report"
+import { Feedback } from "../demo-parts"
 import { ScoreReview } from "../score-review"
 import { useState } from "react"
-import { BlueprintSectionHeader, BpButton, BpFrameCard, BpPaperSlot, BpScanTrace, BpSteps, type BpPaperSlotState } from "../blueprint/blueprint"
+import { BlueprintSectionHeader, BpButton, BpFrameCard, BpPaperSlot, BpScanTrace, BpSteps, BpStatus, type BpPaperSlotState } from "../blueprint/blueprint"
 
 const names = ["陈一诺", "林子涵", "王思远", "李沐辰", "张语桐", "赵知行", "周若溪", "吴书言", "郑明轩", "孙清越", "许嘉宁", "黄雨辰"]
 const initialStates: BpPaperSlotState[] = ["graded", "review", "grading", "received", "waiting", "waiting", "received", "graded", "waiting", "review", "waiting", "received"]
@@ -10,6 +15,7 @@ const details: Record<BpPaperSlotState, string> = { waiting: "等待接收", rec
 
 /** Explicit synthetic events only; this fixture has no service or automatic progression. */
 export function BlueprintGradingDemo() {
+  const [notice, setNotice] = useState("尚无操作请求。")
   const [slots, setSlots] = useState(initialStates)
   const [current, setCurrent] = useState(1)
   const [receiving, setReceiving] = useState(true)
@@ -74,6 +80,21 @@ export function BlueprintGradingDemo() {
           <p className="text-ui-hint text-muted-foreground">此处仅演示当前原件的聚焦与切换，不代表真实扫描图像或复核结果。</p>
         </div>
       </BpFrameCard>
+    </section>
+    <section id="flow-status-p147" className="space-y-4" aria-label="批阅页蓝图写法">
+      <BlueprintSectionHeader title="批阅页蓝图写法" description="示例，未接入服务。姓名、答卷与分数均为合成数据；操作只发出请求，不改变回执状态。" />
+      <PaperCardGrid variant="sheet">
+        <PaperCard id="bp-pending" studentName="李华" variant="sheet" status={{ label: "待你处理", tone: "warning" }} statusSlot={<BpStatus tone="attention">待你处理</BpStatus>} onView={id => setNotice(`查看请求：${id}`)} onResolve={id => setNotice(`处置请求：${id}`)} />
+        <PaperCard id="bp-done" studentName="王同学" variant="sheet" status={{ label: "已批阅", tone: "success" }} statusSlot={<BpStatus tone="done">已批阅</BpStatus>} onView={id => setNotice(`查看请求：${id}`)} />
+        <PaperCard id="bp-waiting" studentName="张同学" variant="sheet" placeholder status={{ label: "等待接收", tone: "neutral" }} statusSlot={<BpStatus tone="neutral">等待接收</BpStatus>} />
+        <PaperCard id="bp-error" studentName="赵同学" variant="sheet" status={{ label: "识别失败", tone: "error" }} statusSlot={<BpStatus tone="error">识别失败</BpStatus>} onView={id => setNotice(`查看请求：${id}`)} />
+      </PaperCardGrid>
+      <ScoreReview {...scoreReviewBase} density="compact" disclosureVariant="link" standardAnswer="最小值为 −4，取等条件为 x = 1。"
+        onAcceptAi={value => setNotice(`已接受 ${value} 分建议作为编辑草稿，尚未保存。`)}
+        onSave={draft => setNotice(`保存请求：${draft.score} 分；理由：${draft.reason || "未填写"}。等待处理回执。`)}
+        onPrev={() => setNotice("请求上一题；等待调用方导航。")} onSkip={() => setNotice("请求跳过；等待调用方导航。")} />
+      <StudentPaperReport {...studentPaperReportFixture} statusSlot={<BpStatus tone="attention">待你处理</BpStatus>} onFirstPending={() => setNotice("已请求定位第一道待办题")} />
+      <Feedback>{notice}</Feedback>
     </section>
     <div className="space-y-2">
       <BpButton aria-pressed={reduced} onClick={() => setReduced(value => !value)}>减少动态效果对照：{reduced ? "开" : "关"}</BpButton>

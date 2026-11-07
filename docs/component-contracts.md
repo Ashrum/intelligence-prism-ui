@@ -3445,3 +3445,15 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 `.bp-inline-folio` 的标题侧间距与 `.bp-inline-code` 的文字侧间距均为 12px，只在两蓝图主题生效，排除嵌套核心主题预览根及其后代。沿用既有字体、配色、字重和圆角；原布局及核心主题样式不变。父容器若已有 gap，会与 margin 共同形成实际距离，宿主须在真实标题行复核，不批量改页面布局。
 
 复用检索（离线）：已有 Prism 的上述四个组件、BlueprintInlineCode / BlueprintInlineFolio 和 coss FrameHeader / Tabs 足够；沿用已有本地 particles 检索记录，不新增组件目录、第三方实现、依赖或令牌，未联网刷新 registry。专项 `tests/p127-title-slots.test.mjs` 使用固定 Git 基线比较实际组件完整 SSR，覆盖五主题默认/空参数与组件页实际示例操作；CSS 隔离断言不替代浏览器验收。浏览器验收：按分工由 Supervisor 执行，覆盖两蓝图与核心三主题、1280 / 390、嵌套预览、长中文与公式，以及 AI 批阅标题的图号间距。
+
+## P147 · 批阅状态与展开项可选接口
+
+复用检索采用现有 PaperCard、StudentPaperReport、ScoreReview、BpStatus 和固定 coss Button / Collapsible。既有 particles `p-collapsible-1` 的折叠组合记录见 score-review.md，本轮离线核对本地实现，采用现有公开能力。
+
+- `PaperCard.statusSlot?: ReactNode` 在 sheet 具名卡姓名下替换 information，并隐藏左上状态 Badge、成功勾与待处理问号角标，保留 sr-only 状态、描述引用、匿名占位和处理行为，card 变体沿用原输出。
+- `StudentPaperReport.statusSlot?: ReactNode` 在“状态：”后原样渲染宿主节点并替换 ReviewConfirmation 包裹，每题对错 Badge 保留。
+- `ScoreReview.disclosureVariant?: "button" | "link"` 默认 button，link 仅将学生原始作答、标准答案、历史记录三个折叠触发器设为文字链接，保留标签、计数与展开语义。
+
+三个属性省略或显式 undefined 均沿用原输出。statusSlot 显式 null 表示留空，由宿主维护可见状态与无障碍状态的一致性。
+
+蓝图写法示例位于 `/next/foundations/blueprint#flow-status-p147` 的“批阅页蓝图写法”节（合成数据，未接入服务）。原组件页演示保持不变。

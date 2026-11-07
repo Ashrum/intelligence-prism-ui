@@ -75,6 +75,8 @@ export function Attachment({ item, size = "md", thumbnailUrl, mediaKind, view, o
 export type PaperCardProps = {
   id: string; studentName: string; examNumber?: string; pageCount?: number; thumbnailUrl?: string
   variant?: "card" | "sheet"; compact?: boolean; placeholder?: boolean
+  /** Host-rendered status below the sheet name; undefined preserves legacy output. */
+  statusSlot?: ReactNode
   /** Decorative slot identifier, only for sheet placeholders without a student name. */
   slotLabel?: string
   /** Labels and resolution eligibility are supplied by the host, never inferred from status. */
@@ -83,7 +85,7 @@ export type PaperCardProps = {
   status: { label: string; tone?: AgentStatusTone }; reason?: string; selected?: boolean; onView?: (id: string) => void
 }
 const badgeTones = { neutral: "outline", info: "info", success: "success", warning: "warning", error: "error" } as const
-export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, variant = "card", compact = false, placeholder = false, slotLabel, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
+export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl, paperSize = "A4", orientation, status, reason, selected, onView, variant = "card", compact = false, placeholder = false, slotLabel, statusSlot, viewLabel = "查看", resolveLabel = "处理", onResolve }: PaperCardProps) {
   const labelId = useId(), dimensions = paperDimensions(paperSize, orientation)
   const count = Number.isInteger(pageCount) && pageCount! > 0 ? pageCount : undefined
   const exam = examNumber?.trim(), name = studentName || "姓名未提供"
@@ -108,9 +110,9 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
           <text data-paper-slot-glyph x="54" y="54" textAnchor="middle" dominantBaseline="central" fill="currentColor" fontSize="36" fontWeight="300">{slotLabel}</text>
         </svg>}
       </span>
-      {!placeholder && status.tone === "success" && <span aria-hidden="true" data-paper-success className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-success-foreground text-background ring-2 ring-background"><Check className="size-3" /></span>}
-      {pending && <span aria-hidden="true" data-paper-pending className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-warning-foreground text-background text-ui-hint ring-2 ring-background">?</span>}
-      {!placeholder && status.tone && status.tone !== "success" && <Badge variant={badgeTones[status.tone]} title={statusLabel}
+      {statusSlot === undefined && !placeholder && status.tone === "success" && <span aria-hidden="true" data-paper-success className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-success-foreground text-background ring-2 ring-background"><Check className="size-3" /></span>}
+      {statusSlot === undefined && pending && <span aria-hidden="true" data-paper-pending className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-warning-foreground text-background text-ui-hint ring-2 ring-background">?</span>}
+      {statusSlot === undefined && !placeholder && status.tone && status.tone !== "success" && <Badge variant={badgeTones[status.tone]} title={statusLabel}
         className={cn("absolute top-1.5 -left-1.5 max-w-[calc(100%-0.5rem)] px-0.5 duration-150 motion-reduce:transition-none", error ? "bg-destructive-foreground text-background dark:bg-destructive-foreground" : pending ? "bg-warning-foreground text-background dark:bg-warning-foreground" : "bg-card dark:bg-card")}><span className="truncate">{statusLabel}</span></Badge>}
     </>
     return <article data-paper-card={id} data-paper-variant="sheet" data-placeholder={placeholder || undefined} aria-labelledby={anonymous ? undefined : labelId} aria-label={anonymous ? slotName : undefined} aria-describedby={anonymous ? `${labelId}-status` : undefined} aria-current={selected ? "true" : undefined}
@@ -128,7 +130,7 @@ export function PaperCard({ id, studentName, examNumber, pageCount, thumbnailUrl
         <span className="h-2 w-9 max-w-full rounded-full bg-muted" />
       </div> : <div className="flex w-full min-w-0 flex-col items-center gap-px">
         <h3 id={labelId} title={name} className={cn("max-w-full truncate text-item-title", placeholder && "text-muted-foreground")}>{name}</h3>
-        {information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : pending ? "text-warning-foreground" : "text-muted-foreground")}>
+        {statusSlot !== undefined ? <div id={`${labelId}-information`} className="max-w-full text-ui-hint">{statusSlot}</div> : information && <p id={`${labelId}-information`} title={information} className={cn("max-w-full truncate text-ui-hint", error ? "text-destructive-foreground" : pending ? "text-warning-foreground" : "text-muted-foreground")}>
           {!placeholder && !showReason && exam ? <><span data-paper-exam-prefix>考号 </span>{[exam, count !== undefined && `${count} 页`].filter(Boolean).join(" · ")}</> : information}
         </p>}
       </div>}
