@@ -28,6 +28,10 @@ export type FacetFilterProps = {
   /** Unit for host counts; defaults to 题. */
   countUnit?: string
   resultCount?: number
+  /** Render the results toolbar; defaults to true. Hosts may render FilterResults separately. */
+  results?: boolean
+  /** Allow collapsing; defaults to true. False hides the toggle and keeps facets expanded. */
+  collapsible?: boolean
   showFavorites?: boolean
   favoriteCount?: number
   endSlot?: ReactNode

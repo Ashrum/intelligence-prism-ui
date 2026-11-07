@@ -180,10 +180,11 @@ export function FilterResults({ value, sortItems, resultCount, favoriteCount, sh
 }
 
 export function FacetFilter(props: FacetFilterProps) {
-  const { dimensions, value, onIntent, countUnit = "题" } = props
+  const { dimensions, value, onIntent, countUnit = "题", results = true, collapsible = true } = props
   const { ref, width } = useContainerWidth()
   const id = useId()
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapseRequested, setCollapsed] = useState(false)
+  const collapsed = collapsible && collapseRequested
   const [resetKey, setResetKey] = useState(0)
   const collapseTrigger = useRef<HTMLButtonElement>(null)
   const restoreCollapseFocus = useRef(false)
@@ -196,7 +197,7 @@ export function FacetFilter(props: FacetFilterProps) {
   const slots = Math.max(1, Math.floor((width - 224) / 90))
   const summary = dimensions.filter(dimension => value.filters[dimension.id]?.length).map(dimension => `${dimension.label} ${dimensionSelection(dimension, value.filters[dimension.id])}`).join("；") || "未筛选"
   const reset = <Button size="xs" variant="ghost" className="text-muted-foreground" onClick={() => { setResetKey(key => key + 1); onIntent({ type: "reset" }) }}>重置</Button>
-  const collapse = <Button ref={collapseTrigger} size="xs" variant="ghost" className="text-muted-foreground" aria-expanded={!collapsed} aria-controls={`${id}-facets`} onClick={() => { restoreCollapseFocus.current = true; setCollapsed(value => !value) }}>{collapsed ? "展开" : "收起"}</Button>
+  const collapse = collapsible && <Button ref={collapseTrigger} size="xs" variant="ghost" className="text-muted-foreground" aria-expanded={!collapsed} aria-controls={`${id}-facets`} onClick={() => { restoreCollapseFocus.current = true; setCollapsed(value => !value) }}>{collapsed ? "展开" : "收起"}</Button>
   const rows = common
   return <div ref={ref} data-facet-filter className="facet-filter min-w-0 space-y-2">
     <FramePanel className="p-0">
@@ -206,6 +207,6 @@ export function FacetFilter(props: FacetFilterProps) {
         {remaining.length > 0 && <FilterPanel countUnit={countUnit} label="全部筛选" count={otherActive} dimensions={dimensions} value={value} onIntent={onIntent} />}{reset}{collapse}
       </> : undefined} />)}</div>
     </FramePanel>
-    <FilterResults {...props} />
+    {results && <FilterResults {...props} />}
   </div>
 }

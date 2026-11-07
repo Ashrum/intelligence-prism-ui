@@ -9,6 +9,8 @@ PO 2026-10-08 选定 C；正式目录项 `facet-filter`，页面 `/next/componen
 | `sortItems` | `{id,label}[]`；空数组不显示排序；示例用综合/最新/热门，不硬编码到组件 |
 | `resultCount? / favoriteCount?` | 宿主当前查询口径下的事实；0 正常显示，未提供写未知，不从选项求和 |
 | `countUnit?: string` | 默认“题”；结果文字与常用行、全部筛选、多选草稿中的选项可访问名称使用同一单位。例如 `countUnit="份试卷"` → “共 12 份试卷”。紧凑选项计数仍显示数字；自定义单位时收藏可访问名称也包含数量与单位。未知结果在默认单位下仍为“题数未提供”，自定义单位下为“数量未提供” |
+| `results?: boolean` | 默认 `true`；`false` 时隐藏末尾结果栏，宿主仍可单独使用导出的 `FilterResults` |
+| `collapsible?: boolean` | 默认 `true`；`false` 时隐藏收起 / 展开按钮，始终展开，保留重置与全部筛选 |
 | `showFavorites?` | 默认 `true`；`false` 时结果栏不渲染“我的收藏”开关，不改变受控值或发出意图 |
 | `endSlot?` | 结果栏附加操作，组件不实现该操作 |
 | `onIntent` | `filter {dimensionId,values}` / `sort {value}` / `favorites {value}` / `search {value}` / `reset` |
@@ -26,3 +28,16 @@ Workspace 接入：用查询层生成 dimensions/counts 与 value；收到意图
 ## P50：试卷计数单位
 
 组件页的“计数单位”可在“题”和“份试卷”间切换，既有筛选、数量开关与宽度夹具保留。单位只影响文字，不改变数量、筛选值或意图；未传属性的输出逐字节不变。复核本地 coss ToggleGroup / Toggle / Frame / InputGroup 及 particles p-select-7、p-combobox-9、p-input-group-22 的既有组合，仅扩展现有公开属性，未联网刷新上游。
+
+## P144：嵌入抽屉时的两个开关
+
+`results` 和 `collapsible` 均为可选布尔属性，默认 `true`，未传时输出逐字节不变。`results={false}` 隐藏末尾结果栏；`collapsible={false}` 隐藏收起 / 展开按钮并始终展开，包括从已收起状态切换为 `false` 时。常用行、重置和原有全部筛选入口继续可用，受控值、计数与意图契约保持原有行为。
+
+放进抽屉或面板时传入两个 `false`，结果栏由宿主放在列表上方，复用单独导出的 `FilterResults`。
+
+```tsx
+<FacetFilter {...filterProps} results={false} collapsible={false} />
+<FilterResults {...filterProps} />
+```
+
+组件站提供“嵌入抽屉（不带结果栏、不可收起）”开关，默认关闭，复用同一组数据与筛选状态。复用检索采用现有 FacetFilter、FilterResults 和 coss Toggle，现有组合满足需求。
