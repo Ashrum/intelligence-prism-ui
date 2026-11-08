@@ -720,6 +720,8 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 
 ## 采集扫描 v0.1
 
+预览加载态：BpSkeleton＋sr-only 文字。
+
 2026-09-26 设计候选，语义 **05 采集扫描**，声明 **Inline + 专用扩展内容**。源码 `components/prism-next/agent-capture-scan.tsx`；组件页 `/next/components/agent-components#capture-scan`；分支 `feat/agent-capture-scan`，基于 main `3f41b9a`。不增加 80 项目录条目。
 
 ### 复用检索与 04 / 18 / DocumentRegionViewer 边界
@@ -968,6 +970,8 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 
 ## 资源检索器 v0.1
 
+预览加载态：BpSkeleton＋sr-only 文字。
+
 2026-09-26 设计候选，语义 **36 资源检索器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-resource-retriever` 导入 `AgentResourceRetriever` 及同文件公开类型。任务分支 `feat/agent-resource-retriever`，基于 main `5036bd1`；尚未提交或合并，不新增 80 项目录条目。
 
 ### 复用检索与 10 / 03 / 38 / 21 边界
@@ -1154,6 +1158,8 @@ change 是片段编辑草稿，不直接改整段原内容；apply 才请求确�
 五项日志、实际 diff、测试数字和 Workspace 本地 main `cf46ee9` 的只读轻量验证方案见 `.sites-runtime/suggestion-set/REPORT.md`。本轮不写 .git、不启动开发服务、不修改 Workspace；浏览器三主题、窄容器视觉、键盘／触屏／读屏器、Workspace 接线与真实服务未验证。Builder 自检不构成独立 Review 或 PO 验收。
 
 ## 候选选择器 v0.1
+
+加载态：BpSkeleton＋sr-only 文字。
 
 2026-09-26 设计候选，语义 **10 候选选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-candidate-picker` 导入 `AgentCandidatePicker` 及同文件公开类型。任务分支 `feat/agent-candidate-picker`，基于 main `ac27658`，未合并；不新增 80 项目录条目。
 
@@ -1488,6 +1494,8 @@ name 仅为可读文件名；包含路径分隔符或换行时不显示原值，
 独立组件示例在 `/next/components/agent-components#change-set-two-state`，数据仅位于 `demos`；手动采用、改写与应用意图不证明业务生效。真实两态验证必须在 Workspace P04 流程完成；本仓库 `/next/skeletons/agent` 为历史骨架，不作验收依据。本轮未修改 Workspace，浏览器三主题、窄容器、长中文/公式实看、键盘/读屏及接入持久化仍待验证。
 
 ## 对象选择器 v0.1
+
+加载态：BpSkeleton＋sr-only 文字。
 
 2026-09-25 设计候选，语义 **01 对象选择器**，声明 **Inline + 专用扩展内容**。从 `components/prism-next/agent-object-picker` 导入 `AgentObjectPicker` 与同文件公开类型。不新增组件目录条目，目录保持 80 项。
 
@@ -2993,23 +3001,33 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Instrument 任务状态面板 v0.1（PO 2026-09-30 候选 #3）
 
+加载态：BpSkeleton＋sr-only 文字。
+
 `InstrumentPanel` 登记在「内容与数据」，入口 `/next/components/instrument-panel`。按头部、指标、当前处理、关注、清单、动作、下一步顺序组合可选区块；复用 coss 与 `MetricSummary` / `AgentStatus`。调用方提供所有事实、状态文字、完成标记与进度；组件不推定执行状态。主动作唯一，禁用原因关联 `aria-describedby`，次动作最多两个；所有回调仅发出意图。具备 Loading / Empty / Error 与 320px 三主题长中文、公式夹具。完整 API、复用检索、边界见 [Instrument 契约](instrument-panel.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
 
 ## Attachment 附件 / Paper Card 试卷卡
+
+加载态：BpSkeleton＋sr-only 文字。
 
 2026-10-01 · PO 批准候选 #4、#5，共用“内容与数据 / Attachment 附件”条目，Paper Card 为变体。复用 AgentFileStatus、文件状态标签和大小格式化、PaperThumbnail 与 coss / Prism 展示原子；上传与后续处理保持独立。支持 sm/md/lg、独立移除/重试/查看意图、已知或未知进度、学生身份/页数/状态/选中/异常原因及局部滚动网格。Loading / Empty / Error 由宿主传入；不内置执行或业务状态。完整 API、复用检索与未知值边界见 [Attachment 契约](attachment.md)。Builder 实现待独立 Review。
 
 
 ## Material Intake 资料接收
 
+加载态：BpSkeleton＋sr-only 文字。
+
 2026-10-01 · PO 批准候选 #6，位于「内容与数据」。组合 AgentFileInput（新增向后兼容的 renderItem 行内容插槽）、Attachment、Stepper 与 coss Card/Dialog。调用方提供设备/页数/接收状态/文件/能力/流程，组件仅发选择、移除、重试、更换数据站、取消、确认意图。页数未知显示「未提供」，文件选择不等于接收成功；单页替换固定只收 1 页并显示影响边界。等待、处理中、失败、Loading/Error、未知状态均阻止保存并关联原因。完整 API、复用取舍、页面夹具和验证边界见 [Material Intake 契约](material-intake.md)。本轮为 Builder 实现，独立 Review 与产品验收另行确认。
 
 ## Data Station 教学数据站
+
+加载态：BpSkeleton＋sr-only 文字。
 
 2026-10-01 · PO 批准候选 #7，位于「内容与数据」。默认受控 coss 右侧 Sheet，支持 inline；组合 RadioGroup/Card/Skeleton/Empty 和共享 DataStationConnectionStatus（MaterialIntake 旧 API 保持）。调用方提供设备可用性、推荐、选择、连接目标/状态、任务绑定说明与刷新文案；只发 onSelect/onConnect/onDisconnect/onRetry/onClose/onOpen 意图。离线、占用、未知不可选且说明原因；连接中锁定选择与连接，已连接先断开；失败重试携带原目标 ID。DataStationBadge 是同条目入口变体，接收明确的已连接/可用数量/未连接事实。缺失事实不推断，组件无计时器与设备执行。完整 API、复用检索限制、44px 目标与浏览器阻塞见 [Data Station 契约](data-station.md)。独立 Review 与产品验收另行确认。
 
 
 ## Queue Board 队列看板 v0.1
+
+加载态：BpSkeleton＋sr-only 文字。
 
 2026-10-01 · PO 批准候选 #8，位于「内容与数据」。评估 AgentReviewQueue / StatusComposition 后保持旧 API，复用 coss Card/Toggle/Table/Empty/Skeleton 与 Prism Badge/Button 组合。外部提供 2–6 分类计数与互斥状态；受控/非受控单选可取消，零值可见；行操作、头部和重试只发意图。禁用原因可见且关联 title/aria-describedby；缺失事实不推断。表格支持 maxHeight 和局部横向滚动，分页由宿主组合。完整 API、复用证据与浏览器验收阻塞见 [Queue Board 契约](queue-board.md)。独立 Review 与产品验收另行确认。
 

@@ -139,7 +139,7 @@ test('loading/empty/error replace stale data and error retry stays an intent', (
   for (const [kind, text] of [['loading', '正在加载试卷队列'], ['empty', '暂无试卷'], ['error', '连接失败']]) {
     const props = { state: { kind, reason: '连接失败' }, onRetry: () => retries++ }, out = capture(props);
     assert.match(out.html, new RegExp(text)); assert.doesNotMatch(out.html, /张雨桐|队列状态筛选|查看当前批阅结果/);
-    if (kind === 'loading') assert.match(out.html, /aria-busy="true"/);
+    if (kind === 'loading') { assert.match(out.html, /aria-busy="true"/); assert.match(out.html, /<p class="sr-only">正在加载试卷队列…<\/p>/); }
     if (kind === 'error') { button(out, '重试').props.onClick(); assert.equal(capture(props).html, out.html); }
   }
   assert.equal(retries, 1);

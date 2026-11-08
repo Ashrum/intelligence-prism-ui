@@ -1,5 +1,7 @@
 "use client"
 
+import { BpSkeleton } from "./blueprint/motion"
+
 import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId, type ReactNode } from "react"
 import { Checkbox } from "@/components/coss/checkbox"
@@ -304,7 +306,10 @@ export function AgentCandidatePicker({ title, candidateSet, candidates, relatedC
       </div>}
     </section>}
     <section aria-label="候选结果" aria-busy={result.state === "loading"} className="min-w-0 space-y-2.5">
-      {message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
+      {result.state === "loading" ? <div role="status" aria-busy="true" className="space-y-3">
+        <p className="sr-only">{message}</p>
+        <BpSkeleton shape="line" width="70%" /><BpSkeleton shape="line" width="55%" /><BpSkeleton shape="line" width="62%" />
+      </div> : message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
       {result.state === "ready" && <>
         {!!facts.length && <section aria-label="候选共用说明" className="min-w-0 space-y-1.5">{facts.map(fact => <div key={fact.anchor} id={fact.anchor} className="min-w-0 space-y-1">
           {!fact.all && <p className="break-words text-ui-action">适用候选：{fact.indexes.map(index => titleOf(candidates[index])).join("、")}</p>}

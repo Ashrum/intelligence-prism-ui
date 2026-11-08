@@ -7,7 +7,7 @@ import { Empty } from "@/components/coss/empty"
 import { Radio, RadioGroup } from "@/components/coss/radio-group"
 import { Sheet, SheetPopup, SheetHeader, SheetTitle, SheetDescription, SheetPanel } from "@/components/coss/sheet"
 import { Drawer, DrawerPopup, DrawerHeader, DrawerTitle, DrawerDescription, DrawerPanel, DrawerClose } from "@/components/coss/drawer"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { AgentStatus } from "./agent-visual-parts"
 import { Button } from "./button"
 import { DataStationConnectionStatus } from "./data-station-status"
@@ -106,7 +106,7 @@ function DataStationPanel({ devices, recommendedId, selectedId, connection, stat
   return <section data-data-station data-state={state.kind} aria-label={hideHeading ? "数据站连接面板" : undefined}
     aria-labelledby={!hideHeading ? `${id}-title` : undefined} className="min-w-0 space-y-4 [overflow-wrap:anywhere]">
     {!hideHeading && <header className="space-y-2"><h2 id={`${id}-title`} className="text-block-title">教学数据站</h2><p className="text-ui-hint">{description}</p></header>}
-    {state.kind === "loading" ? <><p role="status" className="text-ui-hint">正在加载数据站</p><div aria-busy="true" className="space-y-4"><Skeleton className="h-32 w-full motion-reduce:animate-none" /><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div></>
+    {state.kind === "loading" ? <><p role="status" aria-busy="true" className="sr-only">正在加载数据站</p><div aria-busy="true" className="space-y-4"><BpSkeleton shape="block" height={128} /><BpSkeleton shape="block" height={192} /></div></>
       : state.kind === "error" ? <div className="space-y-3"><p role="alert" className="text-ui-hint">数据站加载失败：{known(state.reason)}</p>{action("load", "重新加载", !onRetry ? "重试操作暂不可用。" : undefined, () => onRetry?.({ kind: "load" }))}</div>
         : state.kind === "empty" ? <Empty><h3 className="text-block-title">本校未配置数据站</h3><p className="text-ui-hint">{known(state.nextStep)}</p></Empty>
           : <>

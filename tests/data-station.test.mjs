@@ -92,7 +92,7 @@ test('loading, empty and error replace device facts; refresh, task and unknown f
   for (const kind of ['loading', 'empty', 'error']) {
     const props = fixtures.find(item => item.props.state.kind === kind).props, out = capture(props);
     assert.equal(out.group, undefined); assert.equal(out.action('connect'), undefined); assert.doesNotMatch(out.html, /ST-HS-02/);
-    if (kind === 'loading') { assert.match(out.html, /data-slot="skeleton"/); assert.match(out.html, /aria-busy="true"/); }
+    if (kind === 'loading') { assert.match(out.html, /class="bp-skeleton /); assert.match(out.html, /aria-busy="true"/); }
     if (kind === 'empty') { assert.match(out.html, /本校未配置数据站/); assert.match(out.html, /请联系学校管理员/); }
   }
   assert.match(capture().html, /高二（3）班 · 数学 · 答题卡批阅/); assert.match(capture().html, /状态每 10 秒刷新/);

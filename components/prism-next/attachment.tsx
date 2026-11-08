@@ -6,7 +6,7 @@ import { Card } from "@/components/coss/card"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
 import { Empty } from "@/components/coss/empty"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
 import { Badge } from "./badge"
@@ -167,7 +167,7 @@ export type PaperCardGridProps = {
 }
 export function PaperCardGrid({ variant = "card", density = "comfortable", compact = false, className, children, maxHeight, state = "ready", emptyMessage = "尚未接收学生试卷", errorMessage = "学生试卷加载失败", onRetry, "aria-label": label = "学生试卷" }: PaperCardGridProps) {
   const sheet = variant === "sheet", dense = sheet && density === "dense"
-  const content = state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载学生试卷…</p><Skeleton className="h-48 w-full motion-reduce:animate-none" /></div>
+  const content = state === "loading" ? <div role="status" aria-busy="true" className="space-y-3"><p className="sr-only">正在加载学生试卷</p><BpSkeleton shape="block" height={192} /></div>
       : state === "error" ? <Empty><p role="alert" className="text-ui-body">{errorMessage}</p>{onRetry && <Button type="button" variant="outline" onClick={onRetry}>重试</Button>}</Empty>
         : state === "empty" || Children.toArray(children).filter(child => child !== "").length === 0 ? <Empty><p className="text-ui-body">{emptyMessage}</p></Empty>
           : <div className={cn("grid items-stretch", sheet ? dense ? "gap-x-2 gap-y-1 [&>[data-paper-variant=sheet]]:px-0.5 [&>[data-paper-variant=sheet]]:pt-2.5 [&>[data-paper-variant=sheet]]:pb-2 [&>[data-paper-variant=sheet]>[data-paper-sheet-media]]:w-[84px] [&>[data-paper-variant=sheet]_[data-paper-exam-prefix]]:sr-only" : "gap-x-3 gap-y-2" : "gap-3")} style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${sheet ? dense ? 112 : 160 : compact ? 172 : 168}px, 100%), 1fr))` }}>{children}</div>
