@@ -237,22 +237,28 @@ export function BpFocusBlock({ title, children, actions, tone = "attention" }: B
   </section>
 }
 
-export interface BpObjectPaneProps {
+export interface BpObjectPaneProps extends Omit<ComponentProps<"aside">, "title" | "children"> {
   refCode?: ReactNode
   title: ReactNode
   meta?: ReactNode
   position?: { current: number; total: number; onPrev?: () => void; onNext?: () => void }
   onExpand?: () => void
-  onClose: () => void
+  onClose?: () => void
+  expanded?: boolean
+  expandLabel?: string
+  restoreLabel?: string
+  closeLabel?: string
+  bodyProps?: ComponentProps<"div">
   tabs?: ReactNode
   footer?: ReactNode
   children: ReactNode
   grid?: boolean
 }
 
-export function BpObjectPane({ refCode, title, meta, position, onExpand, onClose, tabs, footer, children, grid = false }: BpObjectPaneProps) {
-  return <aside aria-label="对象右栏" className="bp-object-pane flex h-full min-h-0 w-full min-w-0 flex-col border-l-[1.5px] border-(--line) bg-card" onKeyDown={event => {
-    if (event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return
+export function BpObjectPane({ refCode, title, meta, position, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", bodyProps, tabs, footer, children, grid = false, className, onKeyDown, ...props }: BpObjectPaneProps) {
+  return <aside aria-label="对象右栏" {...props} className={cn("bp-object-pane flex h-full min-h-0 w-full min-w-0 flex-col border-l-[1.5px] border-(--line) bg-card", className)} onKeyDown={event => {
+    onKeyDown?.(event)
+    if (!onClose || event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return
     const target = event.target as HTMLElement
     if (target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]')) return
     event.stopPropagation()
@@ -267,13 +273,13 @@ export function BpObjectPane({ refCode, title, meta, position, onExpand, onClose
           <span className="whitespace-nowrap font-mono">{position.current} / {position.total}</span>
           <BpButton size="sm" aria-label="下一项" disabled={!position.onNext || position.current >= position.total} onClick={position.onNext}>›</BpButton>
         </div>}
-        {onExpand && <BpButton size="sm" aria-label="专注查看" onClick={onExpand}>⤢</BpButton>}
-        <BpButton size="sm" aria-label="关闭右栏" onClick={onClose}>×</BpButton>
+        {onExpand && <BpButton size="sm" aria-label={expanded ? restoreLabel : expandLabel} onClick={onExpand}>{expanded ? "⤡" : "⤢"}</BpButton>}
+        {onClose && <BpButton size="sm" aria-label={closeLabel} onClick={onClose}>×</BpButton>}
       </div>
       {meta != null && <div className="mt-2 flex min-w-0 flex-wrap gap-2 text-ui-meta text-muted-foreground wrap-anywhere">{meta}</div>}
     </header>
     {tabs != null && <div className="min-w-0 shrink-0 overflow-x-auto">{tabs}</div>}
-    <div tabIndex={0} aria-label="对象正文" className={cn("bp-object-pane-body min-h-0 min-w-0 flex-1 overflow-auto p-4 text-ui-body wrap-anywhere", grid && "bg-[linear-gradient(var(--grid)_1px,transparent_1px),linear-gradient(90deg,var(--grid)_1px,transparent_1px)] bg-size-[40px_40px]")}>{children}</div>
+    <div tabIndex={0} aria-label="对象正文" {...bodyProps} className={cn("bp-object-pane-body min-h-0 min-w-0 flex-1 overflow-auto p-4 text-ui-body wrap-anywhere", grid && "bg-[linear-gradient(var(--grid)_1px,transparent_1px),linear-gradient(90deg,var(--grid)_1px,transparent_1px)] bg-size-[40px_40px]", bodyProps?.className)}>{children}</div>
     {footer != null && <footer className="flex min-w-0 shrink-0 flex-wrap items-center gap-3 border-t border-border p-4 text-ui-body wrap-anywhere">{footer}</footer>}
   </aside>
 }
