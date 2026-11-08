@@ -4,7 +4,7 @@ import { useId, useRef, useState } from "react"
 import { Upload } from "lucide-react"
 import { Card } from "@/components/coss/card"
 import { Alert, AlertDescription } from "@/components/coss/alert"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { AgentFileInput, formatAgentFileSize, type AgentFileInputProps, type AgentFileItem } from "./agent-file-input"
 import { Attachment, type AttachmentIntent } from "./attachment"
 import { AgentStatus } from "./agent-visual-parts"
@@ -157,7 +157,7 @@ export function MaterialIntake({ title, description, station, platform, platform
       <AgentStatus tone={failed ? "error" : state.kind === "review" ? "success" : state.kind === "receiving" ? "info" : "neutral"}>{labels[state.kind]}</AgentStatus>
       {state.kind === "receiving" && <p className="text-ui-hint">已接收 {pages}</p>}
     </div>
-    {loading ? <div aria-busy="true" className="space-y-3"><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-36 w-full motion-reduce:animate-none" /></div>
+    {loading ? <div role="status" aria-busy="true" className="space-y-3"><span className="sr-only">正在加载资料</span><BpSkeleton shape="block" height={96} /><BpSkeleton shape="block" height={144} /></div>
       : state.kind !== "error" && <>
         <Card className="min-w-0 gap-3 p-4" aria-label="数据站状态" aria-busy={state.kind === "receiving"}>
           <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">

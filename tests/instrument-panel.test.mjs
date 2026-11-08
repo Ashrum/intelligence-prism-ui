@@ -132,7 +132,7 @@ test('loading empty error replace stale facts; retry does not synthesize readine
     const out = capture({ ...instrumentFixtures[4], state, onRetry: () => retries++, onHeaderAction() {} });
     assert.doesNotMatch(out.html, /82%|查看批阅配置|data-instrument-primary/);
     assert.match(out.html, new RegExp(`data-state="${state}"`));
-    if (state === 'loading') { assert.match(out.html, /aria-busy="true"/); assert.match(out.html, /data-slot="skeleton"/); }
+    if (state === 'loading') { assert.match(out.html, /aria-busy="true"/); assert.match(out.html, /class="bp-skeleton /); }
     if (state === 'empty') assert.match(out.html, /暂无任务状态/);
     if (state === 'error') { assert.match(out.html, /role="alert"/); button(out, '重试').props.onClick(); }
   }

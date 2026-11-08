@@ -1,5 +1,7 @@
 "use client"
 
+import { BpSkeleton } from "./blueprint/motion"
+
 import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { useId, type ReactNode } from "react"
 import { Card } from "@/components/coss/card"
@@ -265,7 +267,8 @@ export function AgentResourceRetriever({ title, resourceSet, resources, query, s
         {validPreview && previewTarget === resource && <section aria-label="资源预览" className="min-w-0 space-y-2">
           <h5 className="text-item-title">资源预览</h5>
           {preview?.state === "ready" ? renderPreview ? renderPreview(resource, { view, density }) : <p className="text-ui-hint">暂未提供预览内容。</p>
-            : <p role={preview?.state === "error" ? "alert" : "status"} className="break-words text-ui-hint">{preview?.state === "error" ? `预览失败：${preview.message || "内容暂不可用。"}` : preview?.message || "正在加载预览…"}</p>}
+            : preview?.state === "error" ? <p role="alert" className="break-words text-ui-hint">{`预览失败：${preview.message || "内容暂不可用。"}`}</p>
+              : <div role="status" aria-busy="true" className="space-y-2"><p className="sr-only">{preview?.message || "正在加载预览…"}</p><BpSkeleton shape="block" height={160} /></div>}
         </section>}
       </li>
     })}</ol>}

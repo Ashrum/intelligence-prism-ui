@@ -1,5 +1,7 @@
 "use client"
 
+import { BpSkeleton } from "./blueprint/motion"
+
 import { Field, FieldLabel } from "@/components/coss/field"
 import { SelectPopup } from "@/components/prism-next/scoped-overlays"
 
@@ -247,7 +249,8 @@ export function AgentCaptureScan({ captureSet, pages, capturedCount, totalPages,
         {previewValid && previewPage === page && <section aria-label="页面大图" className="min-w-0 space-y-2">
           {preview.state === "ready" ? renderPreview ? renderPreview(page, { view, density }) : page.previewUrl
             ? <img src={page.previewUrl} alt="页面大图" loading="lazy" className="h-auto max-w-full" /> : <p className="text-ui-hint">暂未提供大图。</p>
-            : <p role={preview.state === "error" ? "alert" : "status"} className="break-words text-ui-hint">{preview.state === "error" ? `预览失败：${preview.message || "内容暂不可用。"}` : preview.message || "正在加载大图…"}</p>}
+            : preview.state === "error" ? <p role="alert" className="break-words text-ui-hint">{`预览失败：${preview.message || "内容暂不可用。"}`}</p>
+              : <div role="status" aria-busy="true" className="space-y-2"><p className="sr-only">{preview.message || "正在加载大图…"}</p><BpSkeleton shape="block" height={160} /></div>}
         </section>}
       </li>)}
     </ol>

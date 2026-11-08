@@ -7,7 +7,7 @@ import { Meter, MeterLabel, MeterValue, MeterTrack, MeterIndicator } from "@/com
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
 import { Alert, AlertTitle, AlertDescription } from "@/components/coss/alert"
 import { Empty } from "@/components/coss/empty"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
 import { MetricSummary } from "./data-display"
@@ -74,7 +74,7 @@ export function InstrumentPanel(props: InstrumentPanelProps) {
       {ready && headerAction && <Button type="button" variant="ghost" className={actionClass} disabled={headerAction.disabled || !props.onHeaderAction} onClick={() => { if (!headerAction.disabled) props.onHeaderAction?.() }}><span className="truncate">{headerAction.label}</span></Button>}
     </header></FramePanel>}
     {!ready ? <FramePanel>{state === "loading" ? <div role="status" aria-busy="true" className="grid gap-3">
-      <span className="text-ui-hint">正在加载任务状态…</span><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-12 w-full motion-reduce:animate-none" />
+      <span className="sr-only">正在加载任务状态…</span><BpSkeleton shape="block" height={96} /><BpSkeleton shape="block" height={48} />
     </div> : state === "error" ? <Empty className="px-0 py-6 md:py-6"><p role="alert" className="text-ui-body">{props.errorMessage || "任务状态加载失败"}</p>{props.onRetry && <Button type="button" className={actionClass} onClick={props.onRetry}>重试</Button>}</Empty>
       : <Empty className="px-0 py-6 md:py-6"><p className="text-ui-body">{props.emptyMessage || "暂无任务状态"}</p></Empty>}</FramePanel>
       : <>

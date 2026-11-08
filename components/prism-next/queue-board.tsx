@@ -5,7 +5,7 @@ import { ChevronRight, ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react"
 import { Frame, FrameHeader, FramePanel } from "@/components/coss/frame"
 import { ScrollArea } from "@/components/coss/scroll-area"
 import { Empty } from "@/components/coss/empty"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/coss/table"
 import { Badge } from "./badge"
@@ -81,7 +81,7 @@ export function QueueBoard({ title = "试卷工作区", description = "选择队
       <div className="min-w-0 space-y-1"><h3 id={`${id}-title`} className="break-words text-block-title">{title}</h3><p className="break-words text-ui-hint">{description}</p></div>
       {state.kind === "ready" && headerAction && <BoardAction label={headerAction.label} reason={actionReason(headerAction, !!onHeaderAction)} onClick={() => onHeaderAction?.()}><ChevronRight aria-hidden="true" /></BoardAction>}
     </FrameHeader>
-    {state.kind !== "ready" ? <FramePanel>{state.kind === "loading" ? <div role="status" aria-live="polite" aria-busy="true" className="space-y-3"><p className="text-ui-hint">正在加载试卷队列…</p><Skeleton className="h-24 w-full motion-reduce:animate-none" /><Skeleton className="h-40 w-full motion-reduce:animate-none" /></div>
+    {state.kind !== "ready" ? <FramePanel>{state.kind === "loading" ? <div role="status" aria-live="polite" aria-busy="true" className="space-y-3"><p className="sr-only">正在加载试卷队列…</p><BpSkeleton shape="block" height={96} /><BpSkeleton shape="block" height={160} /></div>
       : state.kind === "error" ? <Empty><p role="alert" className="break-words text-ui-hint">{state.reason || "队列加载失败，原因未提供"}</p><BoardAction label="重试" reason={!onRetry ? "重试暂不可用" : undefined} onClick={() => onRetry?.()} /></Empty>
       : <Empty role="status"><p className="text-ui-body">暂无试卷</p>{state.kind === "empty" && state.description && <p className="text-ui-hint">{state.description}</p>}</Empty>}</FramePanel>
       : <>

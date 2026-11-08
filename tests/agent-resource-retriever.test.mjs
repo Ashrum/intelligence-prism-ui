@@ -176,7 +176,8 @@ test('ready preview mounts once without marking any evidence confirmed or duplic
 
 test('preview loading/error messages do not alter resource facts', () => {
   for (const [state, phrase] of [['loading', '正在加载预览'], ['error', '预览失败']]) {
-    const text = textOf(htmlFor({ preview: activated(first, state) })); assert.ok(text.includes(phrase)); assert.ok(text.includes('预览：未预览'));
+    const html = htmlFor({ preview: activated(first, state) }), text = textOf(html); assert.ok(text.includes(phrase)); assert.ok(text.includes('预览：未预览'));
+    if (state === 'loading') assert.match(html, /<p class="sr-only">正在加载预览…<\/p>/);
   }
 });
 

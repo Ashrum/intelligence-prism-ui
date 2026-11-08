@@ -1,5 +1,7 @@
 "use client"
 
+import { BpSkeleton } from "./blueprint/motion"
+
 import { Field, FieldLabel, FieldDescription } from "@/components/coss/field"
 import { ComboboxPopup } from "@/components/prism-next/scoped-overlays"
 
@@ -188,7 +190,10 @@ export function AgentObjectPicker({ title, objectType, selection, candidates, se
         : <dl className="space-y-1">{filters.fields.map(field => <div key={field.id} className="text-ui-body"><dt>{field.label}</dt><dd>{field.options.find(option => option.value === filters.value[field.id])?.label || "未指定"}</dd></div>)}</dl>)}
     </section>}
     <section aria-label="候选对象" aria-busy={result.state === "loading"} className="min-w-0 space-y-3">
-      {message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
+      {result.state === "loading" ? <div role="status" aria-busy="true" className="space-y-3">
+        <p className="sr-only">{message}</p>
+        <BpSkeleton shape="line" width="70%" /><BpSkeleton shape="line" width="55%" /><BpSkeleton shape="line" width="62%" />
+      </div> : message && <p role={result.state === "error" ? "alert" : "status"} className="whitespace-pre-wrap break-words text-ui-hint">{message}</p>}
       {workspace && multiple && result.state === "ready" && <div className="space-y-1">
         <div className="flex flex-wrap gap-2"><Button type="button" size="navigation" variant="outline" disabled={!!batchReason || !additions.length}
           aria-describedby={batchReason ? `${id}-batch` : undefined} onClick={() => { if (!batchReason && additions.length) onSelectionChange?.([...selectedIds, ...additions.map(item => item.id)]) }}>选择本页可选对象</Button>
