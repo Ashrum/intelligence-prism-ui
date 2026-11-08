@@ -256,7 +256,13 @@
 | SHEET 05 | BpCaret | 2×16px 光标；正文按实际到达片段呈现，不另加打字效果 |
 | SHEET 06 | BpUndoToast | 复用 BpToast，宿主提供撤销动作与到期处理 |
 
-本轮提供新组件与合成示例，未迁移已有业务动画；SHEET 07 微状态另单实施。`BpWorking` 计数字号用 `text-stat-display`（24px），与指标格一致，以此为准。骨架用 `--border` 的 50% 浅灰，保证在纸面与卡片上都看得见。
+本轮提供新组件与合成示例，未迁移已有业务动画；SHEET 07 按钮微状态按下节 P150 实施。`BpWorking` 计数字号用 `text-stat-display`（24px），与指标格一致，以此为准。骨架用 `--border` 的 50% 浅灰，保证在纸面与卡片上都看得见。
+
+### 按钮微状态（P150 · 2026-11-08）
+
+BpButton / BpTool 样式迁入组件，常态尺寸、颜色、边框、阴影与字号保持五主题原值；保留原类名和 data 属性供共享规则定位。background-color、color、box-shadow、transform 使用 `--motion-fast`（120ms）与 `ease-bp`。primary 悬停背景为 `color-mix(in srgb, var(--foreground) 90%, var(--card))`，不位移且保持 `--shadow-offset`；非 disabled 按下位移 3px、阴影收为 none。default 悬停为 `--secondary`，按下为 foreground 8% / card 混色，不位移；danger 悬停为 destructive 8% / card，按下为 14%。BpTool 悬停墨底白字，按下不位移。disabled 沿用现有样式、无悬停与按下反馈。
+
+蓝图与夜图的 coss 主按钮及工具条主按钮悬停保持 `--shadow-offset`，亮度沿用 coss 的 `hover:bg-primary/90`；非 disabled 按下位移 3px，装饰阴影收去而保留 ring。transform 与 box-shadow 过渡为 `--motion-fast` / `cubic-bezier(0.2, 0, 0, 1)`。减弱动态取消位移，保留颜色过渡；聚焦继续使用覆盖层既有 2px `--ring`、外移 2px 规则。
 
 # 附录 · v2 原文（2026-11-05）
 

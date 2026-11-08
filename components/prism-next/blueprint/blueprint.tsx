@@ -187,13 +187,23 @@ export function BpFigCap({ label, children, className, ...props }: ComponentProp
 
 export interface BpButtonProps extends ComponentProps<"button"> { variant?: "default" | "primary" | "danger"; size?: "default" | "sm" }
 export function BpButton({ variant = "default", size = "default", type = "button", className, ...props }: BpButtonProps) {
-  return <button type={type} {...props} data-variant={variant === "default" ? undefined : variant} data-size={size === "default" ? undefined : size} className={cn("bp-btn", className)} />
+  return <button type={type} {...props} data-variant={variant === "default" ? undefined : variant} data-size={size === "default" ? undefined : size} className={cn(
+    "bp-btn inline-flex items-center justify-center gap-[8px] min-h-[46px] max-w-full px-[22px] py-[10px] border-[length:var(--line-width)] border-solid border-(--line) bg-(--card) text-(--foreground) font-semibold text-ui-action text-center [overflow-wrap:anywhere] cursor-pointer transition-[background-color,color,box-shadow,transform] duration-(--motion-fast) ease-bp",
+    "enabled:hover:bg-(--secondary) enabled:active:bg-[color-mix(in_srgb,var(--foreground)_8%,var(--card))]",
+    "data-[variant=primary]:enabled:bg-(--foreground) data-[variant=primary]:enabled:text-(--card) data-[variant=primary]:enabled:shadow-(--shadow-offset) data-[variant=primary]:enabled:hover:bg-[color-mix(in_srgb,var(--foreground)_90%,var(--card))] data-[variant=primary]:enabled:active:[transform:translate(3px,3px)] data-[variant=primary]:enabled:active:shadow-none",
+    "data-[variant=danger]:enabled:text-(--destructive-foreground) data-[variant=danger]:enabled:border-(--destructive-foreground) data-[variant=danger]:enabled:hover:bg-[color-mix(in_srgb,var(--destructive)_8%,var(--card))] data-[variant=danger]:enabled:active:bg-[color-mix(in_srgb,var(--destructive)_14%,var(--card))]",
+    "data-[size=sm]:min-h-[34px] data-[size=sm]:px-[14px] data-[size=sm]:py-[5px] disabled:bg-(--secondary) disabled:text-(--disabled-foreground) disabled:border-(--border) disabled:shadow-none disabled:cursor-not-allowed motion-reduce:data-[variant=primary]:enabled:active:transform-none",
+    className,
+  )} />
 }
 
 export interface BpToolProps extends ComponentProps<"button"> { iconOnly?: boolean; count?: ReactNode }
 /** Square tool button for app bars. iconOnly requires aria-label. */
 export function BpTool({ iconOnly, count, type = "button", className, children, ...props }: BpToolProps) {
-  return <button type={type} {...props} data-icon={iconOnly ? "" : undefined} className={cn("bp-tool", className)}>{children}{count !== undefined && <span className="bp-tool-count">{count}</span>}</button>
+  return <button type={type} {...props} data-icon={iconOnly ? "" : undefined} className={cn(
+    "bp-tool h-[32px] min-w-[32px] inline-flex items-center justify-center gap-[6px] px-[10px] py-0 border-[length:var(--line-width)] border-solid border-(--line) bg-(--card) text-(--foreground) text-ui-action leading-[inherit] font-semibold cursor-pointer transition-[background-color,color,box-shadow,transform] duration-(--motion-fast) ease-bp enabled:hover:bg-(--foreground) enabled:hover:text-(--card) data-[icon]:w-[32px] data-[icon]:p-0 disabled:bg-(--secondary) disabled:text-(--disabled-foreground) disabled:border-(--border) disabled:shadow-none disabled:cursor-not-allowed motion-reduce:transform-none",
+    className,
+  )}>{children}{count !== undefined && <span className="bp-tool-count font-mono font-medium pl-[8px] ml-[2px] border-l border-current">{count}</span>}</button>
 }
 
 export interface BpSegItem { value: string; label: ReactNode; description?: ReactNode; disabled?: boolean }

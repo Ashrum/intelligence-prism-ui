@@ -1,7 +1,9 @@
 "use client"
 
+import { Button } from "@/components/coss/button"
+import { Search } from "lucide-react"
 import { useEffect, useState } from "react"
-import { BpButton, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps } from "../blueprint/blueprint"
+import { BpButton, BpTool, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps } from "../blueprint/blueprint"
 
 /** Explicitly played synthetic examples; no service or business state. */
 export function BlueprintMotionDemo() {
@@ -58,5 +60,15 @@ export function BlueprintMotionDemo() {
       {deleted && !toast && <BpButton onClick={() => setDeleted(false)}>重置示例</BpButton>}
     </div>
     <p className="text-ui-body">流式光标示例：正在整理结论<BpCaret /></p>
+    <div className="space-y-3">
+      <h3 className="text-block-title">按钮微状态</h3>
+      <p className="text-ui-hint text-muted-foreground">示例 · 悬停、按下、Tab 聚焦可试。不可用按钮仅用于展示。</p>
+      <div className="flex flex-wrap items-center gap-4">
+        <BpButton variant="primary">开始复核</BpButton><BpButton>导出</BpButton><BpButton variant="danger">删除</BpButton>
+        <BpButton variant="primary" disabled>不可用</BpButton><BpButton size="sm">小按钮</BpButton>
+        <BpTool>工具</BpTool><BpTool iconOnly aria-label="搜索示例"><Search size={16} /></BpTool><BpTool count={3}>材料</BpTool>
+        <Button>coss 主按钮</Button>
+      </div>
+    </div>
   </section>
 }

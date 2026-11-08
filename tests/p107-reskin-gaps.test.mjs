@@ -92,7 +92,8 @@ for (const name of ['blueprint', 'blueprint-night']) {
       assert.equal(actual[0]['box-shadow'], 'none');
       // A hard spread stroke preserves the ring-only card geometry (no new border box).
       assert.equal(actual[1]['box-shadow'], '0 0 0 var(--line-width) var(--line)');
-      assert.equal(actual[2]['box-shadow'], states.includes('active') || states.includes('disabled') ? rings : `${rings},var(${states.includes('hover') ? '--shadow-offset-sm' : '--shadow-offset'})`);
+      assert.equal(actual[2]['box-shadow'], states.includes('active') || states.includes('disabled') ? rings : `${rings},var(--shadow-offset)`);
+      assert.equal(actual[2].transform, states.includes('active') && !states.includes('disabled') ? 'translate(3px,3px)' : undefined);
       for (const value of actual.slice(3)) assert.equal(value['box-shadow'], rings);
       for (const node of nodes) for (const pseudo of ['before', 'after']) {
         assert.deepEqual(style({ ...node, states }, pseudo), { 'border-radius': '0', 'box-shadow': 'none' });
@@ -120,7 +121,8 @@ for (const core of ['light', 'paper', 'dark']) test(`P107 ${core}: no CSS output
 const visual = new Set(['border-radius', 'box-shadow', 'background', 'background-image', 'border-color', 'border-style', 'border-width', 'color', 'font-family']);
 function visualOnly(source) {
   const ast = postcss.parse(source);
-  ast.walkDecls(d => assert.ok(visual.has(d.prop) && !d.important, d.toString()));
+  // P150：主按钮按下位移与其过渡属交互状态（PO 2026-11-08），只允许 transition，以及 :active 规则里的 transform。
+  ast.walkDecls(d => assert.ok((visual.has(d.prop) || d.prop === 'transition' || (d.prop === 'transform' && /:active/.test(d.parent.selector))) && !d.important, d.toString()));
   ast.walkRules(r => r.selectors.forEach(s => {
     assert.ok(s.startsWith(`${family} `), s);
     assert.ok(s.includes(guard), s);
