@@ -97,10 +97,40 @@ test('P141 compact layout rules are structural, opt-in and share the viewport/de
   }
 });
 
+function assertLoading(props) {
+  for (const layout of ['card', 'line']) {
+    for (const showType of [true, false]) {
+      const output = render(current.RecordList, { ...props, layout, showType });
+      assert.match(output, /role="status" aria-live="polite" aria-busy="true"/);
+      assert.match(output, /<span class="sr-only">正在加载记录<\/span>/);
+      assert.doesNotMatch(output, /data-record-row|data-current|aria-current/);
+      if (layout === 'line') {
+        assert.match(output, /<ul class="bp-rl-line-list" aria-hidden="true">/);
+        const skeletonRows = output.match(/<div class="bp-rl-line-row[^>]*>/g) || [];
+        assert.equal(skeletonRows.length, 5);
+        for (const row of skeletonRows) {
+          assert.match(row, /pointer-events-none/);
+          assert.match(row, new RegExp(`data-show-type="${showType}"`));
+          assert.doesNotMatch(row, /role=|tabindex=/);
+        }
+        assert.equal((output.match(/data-shape="line"/g) || []).length, showType ? 30 : 25);
+      } else {
+        assert.equal((output.match(/data-shape="block"/g) || []).length, 3);
+        assert.equal((output.match(/class="bp-skeleton[^>]*style="height:96px"/g) || []).length, 3);
+      }
+    }
+  }
+}
+
 test('P141 RecordList without currentRowId matches 4df58ae SSR in ready and non-record states', () => {
   for (const state of [{ kind: 'ready' }, { kind: 'loading' }, { kind: 'empty' }, { kind: 'search-empty' }, { kind: 'error', reason: '加载失败' }]) {
     for (const extra of [{}, { showHeader: false, showSearch: false, showStatus: false }, { tabs: [{ id: 'all', label: '全部', count: 2 }], defaultTab: 'all' }]) {
       const props = { ...record, state, ...extra };
+      if (state.kind === 'loading') {
+        assertLoading(props);
+        assertLoading({ ...props, currentRowId: undefined, currentRowLabel: '其他标记' });
+        continue;
+      }
       const expected = render(original.RecordList, props);
       assert.equal(render(current.RecordList, props), expected);
       assert.equal(render(current.RecordList, { ...props, currentRowId: undefined, currentRowLabel: '其他标记' }), expected);
@@ -126,7 +156,8 @@ test('P141 missing, filtered or non-record current IDs add no markup', () => {
   assert.equal(render(current.RecordList, { ...filtered, currentRowId: 'one' }), render(original.RecordList, filtered));
   for (const kind of ['empty', 'loading', 'search-empty', 'error']) {
     const props = { ...record, state: { kind, reason: '加载失败' } };
-    assert.equal(render(current.RecordList, { ...props, currentRowId: 'one' }), render(original.RecordList, props));
+    if (kind === 'loading') assertLoading({ ...props, currentRowId: 'one' });
+    else assert.equal(render(current.RecordList, { ...props, currentRowId: 'one' }), render(original.RecordList, props));
   }
 });
 

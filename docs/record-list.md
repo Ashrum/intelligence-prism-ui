@@ -31,7 +31,7 @@ PO 批准候选 #10；目录「内容与数据」，入口 `/next/components/rec
 - `pagination{page,pages,label}` 接收宿主页码窗口，组件不算页数。页码按钮发出 `onPageChange(page)`，当前页保留 aria-current。大数据使用紧凑页码窗口，分页规则归宿主。
 - 意图：`onTabChange(id)`、`onSearch(query)`、`onFilterChange(id,value)`、`onRowAction(rowId,actionId)`、`onRowMenu(rowId,actionId)`、`onPageChange(page)`、`onPrimary()`、`onRetry()`、`onClearFilters()`。无回调的操作禁用；search 无回调时只读。行主操作可给 disabledReason，禁用整行快捷点击并显示原因；菜单项可给 disabledReason。
 - 行背景点击与可聚焦的主操作按钮调用同一个意图；FramePanel 不以 Button 包裹整行，内部按钮与 Portal 菜单阻止冒泡，不出现嵌套按钮，也不抢夺内部控件键盘行为。
-- `state` 默认 ready；ready + activeFilters 为 Filtered；search-empty 为搜索无结果；empty 为首次空；error 带 reason 与 retry；loading 呈现 Skeleton。隐去非 ready 的记录与分页，不把旧结果当作新回执；首次空不显示搜索工具栏。
+- `state` 默认 ready；ready + activeFilters 为 Filtered；search-empty 为搜索无结果；empty 为首次空；error 带 reason 与 retry；loading 复用 BpSkeleton：线式布局呈现 5 行逐列骨架，复用现有线式行网格；卡片布局呈现 3 块 96px 骨架，读屏文字为“正在加载记录”。隐去非 ready 的记录与分页，不把旧结果当作新回执；首次空不显示搜索工具栏。
 
 ## 页面、无障碍与验证边界
 

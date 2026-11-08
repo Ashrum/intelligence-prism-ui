@@ -108,7 +108,7 @@ test('filtered, search-empty, first-empty, error and loading have distinct actio
   assert.equal(empty.find('Input').length,0);
   const error = capture({ state: { kind: 'error', reason: '批阅记录加载失败' }, onRetry: () => events.push('retry') });
   assert.match(error.html,/role="alert"/); button(error,'重试').props.onClick(); assert.deepEqual(events,['','primary','retry']);
-  const loading = capture({ state: { kind: 'loading' } }); assert.match(loading.html,/aria-busy="true"/); assert.match(loading.html,/data-slot="skeleton"/);
+  const loading = capture({ state: { kind: 'loading' } }); assert.match(loading.html,/aria-busy="true"/); assert.match(loading.html,/bp-skeleton/);
   for (const out of [search,empty,error,loading]) { assert.doesNotMatch(out.html,/data-record-row=/); assert.doesNotMatch(out.html,/data-slot="pagination"/); }
 });
 

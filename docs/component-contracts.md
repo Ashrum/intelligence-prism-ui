@@ -3027,7 +3027,7 @@ P16（PO 2026-10-05 批准新增）目录「内容与数据」`student-paper-rep
 
 ## Record List 记录列表（PO 批准候选 #10 · Builder 实现）
 
-`RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Skeleton、Progress 和共享 AgentStatus；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。
+`RecordList` 位于「内容与数据」，入口 `/next/components/record-list`。复用 coss Tabs、Input、Select、Menu、Card、Pagination、Empty、Progress 和共享 AgentStatus、BpSkeleton；不改固定 coss 文件。外部计数与分类、受控/非受控 Tab、搜索/筛选与清除、行主操作/更多菜单、分页和主操作/重试均为意图；不含业务状态机、路由、Store 或持久化。支持筛选中、搜索无结果、首次空、加载失败和加载中，三主题与 1366px / 320px 长中文和公式夹具。加载态线式布局用 5 行逐列 BpSkeleton 复用线式行网格，卡片布局用 3 块 96px 骨架，读屏文字为“正在加载记录”。完整 API、检索取舍与验收边界见 [Record List 契约](record-list.md)。Builder 不自我批准，浏览器验收待独立 Review。
 
 ## QuestionContent / QuestionSolution · 可选正文字号（Q7）
 
