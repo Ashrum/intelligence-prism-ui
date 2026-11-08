@@ -3499,3 +3499,14 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 - `BpAnswerLabel`：从 blueprint 导出，纯展示 `span`；`kind=observe|explain|suggest`，默认“观察 / 解释 · 待核对 / 建议”，`children` 可覆盖。依次为墨线框、灰色虚线框、墨底反相字；复用现有令牌、`text-ui-meta`，不判断事实。
 - `BpProvenanceLine`：从 blueprint 导出，`items: {label?: string; value: ReactNode}[]`、`action?: ReactNode`；顶部 border 分隔线，灰字可换行，项与末尾 action 用“ ｜ ”分隔。宿主提供依据和操作，不推定已审定。原 `BpProvenance` 不变。
 - 复用检索：现有 `BpConclusion` / `BpMark` / `BpRef` 直接复用；`BpProvenance` 为多行 dl，不能覆盖本单单行需求。按 P153 授权在 work.tsx 补两个纯展示组合，不新增依赖或覆盖层规则。组件站 motion 节提供合成示例。
+
+## P154 · Agent 对话与右栏
+
+设计状态为候选，工程准入未开始。本轮依据 Agent 页母版 A1–A3 FROZEN REV 0.1，四个组件及 Props 从 `components/prism-next/blueprint/work.tsx` 具名导出。
+
+- `BpObjectRef` 接收 `code: string`、`label: string`、`current?: boolean`、`onOpen?: () => void`、`href?: string`。有 `onOpen` 时为 button，否则有 `href` 时为 a，其余为 span。交互元素读屏名为“在右栏打开 {code} {label}”，当前对象使用 `aria-current="true"`。等宽参照号使用现有 `text-ui-meta` 12 px、600；母版 11 px 缺少语义字号，待 Supervisor 收口。边框使用 `--link`，当前对象反相。复用检索涵盖现有 `BpRef`、`BpButton` 和 coss Button，前者的引用语义与本组件的对象定位不同，采用原生 button/a/span 与现有令牌。
+- `BpResultRow` 接收 `refCode?`、`title`、`meta?`、`action?`、`children?`（均为 ReactNode）和 `current?: boolean`。参照号、标题及 meta、主操作为三列，children 占整行；480 px 窄容器下操作占整行并满宽。墨线框、card 底、14×16 px 内边距，当前项外加 2 px link 描边。检索 `BpSectionCard`、`BpEntryRow` 后，按冻结成果行结构补充此组合。
+- `BpFocusBlock` 接收 `title`、`children?`、`actions?`（ReactNode），`tone?: "attention" | "neutral"` 默认 attention。上下细线、左侧 3 px warning-foreground 或 border 竖线，标题使用 `text-block-title`。640 px 窄容器下操作另起一行，宿主传入的第一个主操作满宽，后续为文字操作。检索现有 `BpCallout` 与学情 `la-hero-focus` 后，按母版的无底色结构实现。
+- `BpObjectPane` 接收 `refCode?`、`title`、`meta?`、`tabs?`、`footer?`、`children`（ReactNode），`position?: { current: number; total: number; onPrev?: () => void; onNext?: () => void }`、`onExpand?: () => void`、`onClose: () => void`、`grid?: boolean`。宿主提供高度和窄屏呈现方式，正文独立滚动、footer 贴底，标题单行省略，位置按钮按边界和回调禁用。Escape 在栏内冒泡且未被消费、未组字、未处于 input/textarea/select/contenteditable/textbox 时发出关闭意图。按钮均有读屏名。检索 `BpSidePeek`、`BpWorkHeader`、`BpButton`，采用停靠 aside 和已有按钮，tabs 可传入 `BpSegTabs`。
+
+组件站 `#agent-conversation-pane` 提供合成数据下的回执、问询、交接及批阅右栏示例。组件仅呈现宿主数据并发出意图。新增组件从 work 模块导入，聚合出口文件不在本轮 scope 内。浏览器验收由 Supervisor 执行。
