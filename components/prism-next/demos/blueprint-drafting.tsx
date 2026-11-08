@@ -67,6 +67,22 @@ export function BlueprintDraftingDemo() {
         </BpStat>
       </BpStatStrip>
     </div>
+    <section className="min-w-0 space-y-3" aria-label="指标格示例（合成数据）">
+      <h3 className="text-block-title">指标格 · 示例</h3>
+      <BpStatStrip frame="none">
+        <BpStat size="metric" label="得分率" value="76.0" unit="%" caption="本校 74.2% · 有效 45 人">
+          <BpSizeBar size="xs" framed={false} legend={false} rows={[
+            { id: "score", label: "得分构成", total: 100, unit: "%", display: "", segments: [
+              { id: "earned", label: "得分", value: 76, fill: "ink" },
+              { id: "lost", label: "失分", value: 24, fill: "hatch" },
+            ] },
+          ]} />
+        </BpStat>
+        <BpStat size="metric" label="可找回失分" value={92} unit="分" caption="讲评 9 · 个别 3" />
+        <BpStat size="metric" label="巩固率" value={0} state="unknown" unit="%" caption="等待巩固记录" />
+        <BpStat size="metric" label="有效人数" value={45} unit="人" caption="有效 45 / 全班 45 人" />
+      </BpStatStrip>
+    </section>
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,3fr)]">
       <section className="min-w-0 space-y-3">
         <h3 className="border-b border-(--line) pb-2 text-block-title">学生学习进展 · 分行直标</h3>

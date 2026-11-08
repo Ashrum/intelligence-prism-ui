@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7",
+  "sourceSha256": "502de70387bac2dc1e7d720c216ed28ff2601f4df947ed995ca73cfd148fa0d8",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "currentSpecDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme-v2.md",
   "currentSpecVersion": "v2.2",
@@ -14237,6 +14237,14 @@
             },
             {
               "type": "code",
+              "value": "size=\"metric\""
+            },
+            {
+              "type": "text",
+              "value": "、"
+            },
+            {
+              "type": "code",
               "value": "label"
             },
             {
@@ -14289,7 +14297,7 @@
             },
             {
               "type": "text",
-              "value": " 组合四格，保持既有接口、输出与响应式网格"
+              "value": " 组合四格，默认档保持既有输出与响应式网格；指标格按数字、小图、一行说明排序，说明截断并提供完整 title"
             }
           ],
           [
@@ -14486,27 +14494,11 @@
         },
         {
           "type": "code",
-          "value": "BpStat"
+          "value": "BpStat size=\"metric\""
         },
         {
           "type": "text",
-          "value": " 默认 stack 布局为 "
-        },
-        {
-          "type": "code",
-          "value": "text-score-display"
-        },
-        {
-          "type": "text",
-          "value": " 40px，"
-        },
-        {
-          "type": "code",
-          "value": "readout"
-        },
-        {
-          "type": "text",
-          "value": " / 行内布局为 "
+          "value": " 为 "
         },
         {
           "type": "code",
@@ -14514,7 +14506,39 @@
         },
         {
           "type": "text",
-          "value": " 24px；结论 "
+          "value": " 24px；默认 stack 布局仍为 "
+        },
+        {
+          "type": "code",
+          "value": "text-score-display"
+        },
+        {
+          "type": "text",
+          "value": " 40px、默认行内数字为 "
+        },
+        {
+          "type": "code",
+          "value": "text-page-title"
+        },
+        {
+          "type": "text",
+          "value": " 26px，"
+        },
+        {
+          "type": "code",
+          "value": "readout"
+        },
+        {
+          "type": "text",
+          "value": " 为 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-meta"
+        },
+        {
+          "type": "text",
+          "value": " 12px；结论 "
         },
         {
           "type": "code",
@@ -14546,7 +14570,7 @@
         },
         {
           "type": "text",
-          "value": " 12px。引注也使用 12px 档位。指标说明沿用组件默认 "
+          "value": " 12px。引注也使用 12px 档位。指标说明默认 stack 沿用 "
         },
         {
           "type": "code",
@@ -14554,7 +14578,15 @@
         },
         {
           "type": "text",
-          "value": "；数字和位置计数使用现有等宽字体。"
+          "value": "，metric 档使用 "
+        },
+        {
+          "type": "code",
+          "value": "text-ui-meta"
+        },
+        {
+          "type": "text",
+          "value": " 并单行截断、title 保留完整文本；数字和位置计数使用现有等宽字体。"
         }
       ]
     },
@@ -16084,12 +16116,12 @@
     {
       "source": "docs/component-contracts.md",
       "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
-      "sha256": "f2dd4917c2d75dff508470122578beac221d338051cb42af7be9421201c2ef4f"
+      "sha256": "6e1de650b56f854645b2f029c5ba9d8d5747c204b7100c68663837c6417ac9bc"
     },
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "33fbe69974472574338a37b8d8e828210d4839e4d75e22dc15a05fc21c92e4b7"
+      "sha256": "502de70387bac2dc1e7d720c216ed28ff2601f4df947ed995ca73cfd148fa0d8"
     },
     {
       "source": "docs/blueprint-theme-v2.md",

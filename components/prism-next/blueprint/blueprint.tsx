@@ -421,6 +421,7 @@ export interface BpStatProps {
   value: number | string
   unit?: ReactNode
   layout?: "stack" | "inline"
+  size?: "default" | "metric"
   readout?: { text: ReactNode; tone?: "accent" | "warn" | "error" | "muted" }
   delta?: { text: ReactNode; tone?: "accent" | "warn" | "error" | "muted" }
   caption?: ReactNode
@@ -430,8 +431,15 @@ export interface BpStatProps {
   state?: "available" | "insufficient" | "unknown"
   className?: string
 }
+/** Plain text from host caption markup; custom components should supply their text as children. */
+function metricCaptionText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number" || typeof node === "bigint") return String(node)
+  if (Array.isArray(node)) return node.map(metricCaptionText).join("")
+  if (isValidElement<{ children?: ReactNode }>(node)) return metricCaptionText(node.props.children)
+  return ""
+}
 /** Blueprint-only vocabulary, not a second general MetricSummary. Place inside BpStatStrip. */
-export function BpStat({ label, code, value, unit, delta, caption, children, help, state = "available", layout = "stack", readout, className }: BpStatProps) {
+export function BpStat({ label, code, value, unit, delta, caption, children, help, state = "available", layout = "stack", size = "default", readout, className }: BpStatProps) {
   const available = state === "available"
   // Never present a numeric placeholder as an observation when the host says it is unavailable.
   const display = available || typeof value === "string" && value.trim() ? value : state === "insufficient" ? "数据不足" : "未知"
@@ -441,13 +449,17 @@ export function BpStat({ label, code, value, unit, delta, caption, children, hel
     </dt>
     <dd className="bp-stat-content">
       {layout === "inline" ? <div className="bp-stat-reading-row">
-        <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-page-title" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
+        <div className="bp-stat-reading"><span className={cn("bp-stat-value", size === "metric" ? "text-stat-display tabular-nums" : available ? "text-page-title" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
         {available && readout && <span className="bp-stat-readout text-ui-meta" data-tone={readout.tone}>{readout.text}</span>}
       </div> : <>
-        <div className="bp-stat-reading"><span className={cn("bp-stat-value", available ? "text-score-display" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
+        <div className="bp-stat-reading"><span className={cn("bp-stat-value", size === "metric" ? "text-stat-display tabular-nums" : available ? "text-score-display" : "text-block-title")}>{display}</span>{available && unit != null && <span className="bp-stat-unit text-ui-body">{unit}</span>}</div>
         {available && readout && <div className="bp-stat-readout text-ui-meta" data-tone={readout.tone}>{readout.text}</div>}
       </>}
-      {layout === "inline" ? <div className="bp-stat-detail">
+      {size === "metric" ? <div className="bp-stat-detail min-w-0">
+        {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
+        {available && children}
+        {caption != null && <div className="bp-stat-caption min-w-0 truncate text-ui-meta" title={metricCaptionText(caption)}>{caption}</div>}
+      </div> : layout === "inline" ? <div className="bp-stat-detail">
         {available && delta && <div className="bp-stat-delta text-ui-hint" data-tone={delta.tone ?? "accent"}>{delta.text}</div>}
         {available && children}
         {caption != null && <div className="bp-stat-caption text-ui-meta">{caption}</div>}
