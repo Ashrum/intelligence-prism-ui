@@ -9,6 +9,27 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  "bp-object-ref": {
+    component: "BpObjectRef",
+    source: "docs/component-contracts.md#p154--agent-对话与右栏",
+    contract: ["从 blueprint/work 具名导出。code/label 必填，current 可选；onOpen 优先为 button，href 为 a，否则 span。交互名为在右栏打开 {code} {label}，当前项 aria-current=true。现有 text-ui-meta 12px，母版 11px 字号缺口待收口。"],
+  },
+  "bp-result-row": {
+    component: "BpResultRow",
+    source: "docs/component-contracts.md#p154--agent-对话与右栏",
+    contract: ["从 blueprint/work 具名导出。refCode/title/meta/action/children 为展示槽，current 控制外描边；三列结构，480px 窄容器下主操作另起整行且满宽。"],
+  },
+  "bp-focus-block": {
+    component: "BpFocusBlock",
+    source: "docs/component-contracts.md#p154--agent-对话与右栏",
+    contract: ["从 blueprint/work 具名导出。title/children/actions 为展示槽；tone=attention|neutral，默认 attention。左侧 3px 线，上下细线，无底色；640px 窄容器操作另起行，第一个主操作满宽。"],
+  },
+  "bp-object-pane": {
+    component: "BpObjectPane",
+    source: "docs/component-contracts.md#p154--agent-对话与右栏",
+    contract: ["从 blueprint/work 具名导出。停靠 aside；refCode/title/meta/position/tabs/children/footer，grid 可选。position.current 为一基序号，onPrev/onNext/onExpand/onClose 仅发意图。正文滚动、footer 贴底，宿主控制高度与全屏。栏内 Escape 关闭，输入控件、可编辑正文、组字或已消费事件除外。"],
+  },
+
   "agent-mark": {
     component: "AgentMark",
     source: "docs/component-contracts.md#标识与消息-api",

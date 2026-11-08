@@ -15,6 +15,7 @@ import { BlueprintNavigationDemo } from "./blueprint-navigation"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
 import { BlueprintMotionDemo } from "./blueprint-motion"
 import { BlueprintDraftingDemo } from "./blueprint-drafting"
+import { BlueprintAgentPageDemo } from "./blueprint-agent-page"
 import { BlueprintWorkDemo } from "./blueprint-work"
 import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
 import { AgentWorkspacePatternsDemo } from "./agent-workspace-patterns"
@@ -171,6 +172,7 @@ export function BlueprintComponentsDemo() {
       </nav>
     </header>
     <BlueprintWorkDemo />
+    <BlueprintAgentPageDemo />
     <BlueprintDraftingDemo />
     <BlueprintMotionDemo />
     <BlueprintNavigationDemo />
