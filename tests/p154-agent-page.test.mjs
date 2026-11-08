@@ -12,12 +12,12 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const runtime = await createTestRuntime('p154');
 const h = React.createElement;
 const modules = ['work', 'blueprint', 'drafting', 'motion'];
-async function bundle(name, baseline = false) {
+async function bundle(name, baseline = false, revision = '8a45524') {
   const output = await build({
     stdin: { contents: modules.map(name => `export * from './components/prism-next/blueprint/${name}';`).join('\n'), loader: 'tsx', resolveDir: root },
     bundle: true, jsx: 'automatic', platform: 'node', format: 'esm', packages: 'external', alias: { '@': root }, write: false,
     plugins: baseline ? [{ name: 'baseline-8a45524', setup(builder) {
-      builder.onLoad({ filter: /prism-next\/blueprint\/.*\.tsx$/ }, args => ({ contents: execFileSync('git', ['show', `8a45524:${args.path.slice(root.length)}`], { cwd: root, encoding: 'utf8' }), loader: 'tsx' }));
+      builder.onLoad({ filter: /prism-next\/blueprint\/.*\.tsx$/ }, args => ({ contents: execFileSync('git', ['show', `${revision}:${args.path.slice(root.length)}`], { cwd: root, encoding: 'utf8' }), loader: 'tsx' }));
     } }] : [],
   });
   const url = new URL(`${name}.mjs`, runtime);
@@ -26,6 +26,7 @@ async function bundle(name, baseline = false) {
 }
 const before = await bundle('before', true);
 const after = await bundle('after');
+const p155Before = await bundle('p155-before', true, 'fdfed77');
 const render = (component, props = {}) => renderToStaticMarkup(h(component, props));
 
 test('P154 reference span, button and link expose names and supplied current state', () => {
@@ -130,5 +131,61 @@ for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) 
   for (const [name, props] of Object.entries(fixtures)) {
     const themed = api => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api[name], props)));
     assert.equal(themed(after), themed(before), name);
+  }
+});
+
+
+test('P155 optional close leaves Escape and other callbacks untouched', () => {
+  let expanded = 0;
+  const props = { title: '任务', children: '正文', onExpand: () => expanded++ };
+  assert.doesNotMatch(render(after.BpObjectPane, props), /aria-label="关闭右栏"|>×</);
+  after.BpObjectPane(props).props.onKeyDown({ key: 'Escape', stopPropagation() { assert.fail('must not consume Escape'); } });
+  assert.equal(expanded, 0);
+});
+
+test('P155 expanded state switches labels and glyphs with host-owned intent', () => {
+  let count = 0;
+  for (const custom of [false, true]) for (const expanded of [false, true]) {
+    const props = { title: '任务', children: '正文', expanded, onExpand: () => count++, onClose() {}, ...(custom ? { expandLabel: '展开详情', restoreLabel: '恢复侧栏', closeLabel: '收起详情' } : {}) };
+    const html = render(after.BpObjectPane, props);
+    assert.ok(html.includes(`aria-label="${expanded ? (custom ? '恢复侧栏' : '还原') : (custom ? '展开详情' : '专注查看')}"`));
+    assert.ok(html.includes(`>${expanded ? '⤡' : '⤢'}</button>`));
+    assert.ok(!html.includes(`>${expanded ? '⤢' : '⤡'}</button>`));
+    assert.ok(html.includes(`aria-label="${custom ? '收起详情' : '关闭右栏'}"`));
+    const pane = after.BpObjectPane(props);
+    const buttons = React.Children.toArray(pane.props.children[0].props.children[0].props.children);
+    buttons.find(child => child.props.onClick === props.onExpand).props.onClick();
+  }
+  assert.equal(count, 4);
+});
+
+test('P155 root and scroll body merge props and chain keyboard handlers', () => {
+  const calls = [];
+  const props = { title: '任务', children: '正文', className: 'host-pane', 'data-host': 'pane', 'aria-label': '任务右栏', onKeyDown: () => calls.push('host'), onClose: () => calls.push('close'), bodyProps: { className: 'host-body', 'data-workspace-scroll': 'true', tabIndex: -1, 'aria-label': '任务正文' } };
+  const html = render(after.BpObjectPane, props);
+  assert.match(html, /^<aside[^>]*aria-label="任务右栏"[^>]*data-host="pane"[^>]*class="bp-object-pane [^"]*host-pane"/);
+  assert.match(html, /<div tabindex="-1" aria-label="任务正文" class="bp-object-pane-body [^"]*overflow-auto [^"]*host-body" data-workspace-scroll="true">正文<\/div>/);
+  const event = { key: 'Escape', defaultPrevented: false, nativeEvent: { isComposing: false }, target: { closest: () => null }, stopPropagation: () => calls.push('stop') };
+  after.BpObjectPane(props).props.onKeyDown(event);
+  assert.deepEqual(calls, ['host', 'stop', 'close']);
+  calls.length = 0;
+  after.BpObjectPane({ ...props, onKeyDown(event) { calls.push('host'); event.defaultPrevented = true; } }).props.onKeyDown({ ...event });
+  assert.deepEqual(calls, ['host']);
+  calls.length = 0;
+  after.BpObjectPane({ ...props, onClose: undefined }).props.onKeyDown({ ...event });
+  assert.deepEqual(calls, ['host']);
+  assert.match(render(after.BpObjectPane, { title: '任务', children: '正文' }), /tabindex="0" aria-label="对象正文"/);
+});
+
+const p155Fixtures = { ...fixtures,
+  BpObjectRef: { code: 'R1', label: '结果' },
+  BpResultRow: { title: '结果', children: '正文' },
+  BpFocusBlock: { title: '先看', children: '正文' },
+  BpObjectPane: { title: '结果', children: '正文', onClose() {}, onExpand() {} },
+};
+for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) test(`P155 ${theme}: existing components and default pane SSR equal fdfed77 bytes`, () => {
+  for (const [name, props] of Object.entries(p155Fixtures)) {
+    const themed = api => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api[name], props)));
+    assert.equal(themed(after), themed(p155Before), name);
   }
 });

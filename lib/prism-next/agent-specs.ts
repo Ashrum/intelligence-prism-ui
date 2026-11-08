@@ -27,7 +27,7 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
   "bp-object-pane": {
     component: "BpObjectPane",
     source: "docs/component-contracts.md#p154--agent-对话与右栏",
-    contract: ["从 blueprint/work 具名导出。停靠 aside；refCode/title/meta/position/tabs/children/footer，grid 可选。position.current 为一基序号，onPrev/onNext/onExpand/onClose 仅发意图。正文滚动、footer 贴底，宿主控制高度与全屏。栏内 Escape 关闭，输入控件、可编辑正文、组字或已消费事件除外。"],
+    contract: ["从 blueprint/work 具名导出。停靠 aside；refCode/title/meta/position/tabs/children/footer，grid 可选。position.current 为一基序号，onPrev/onNext/onExpand/onClose 仅发意图。正文滚动、footer 贴底，宿主控制高度与全屏。onClose 可选；无回调不显示关闭按钮、不处理 Escape。有回调时栏内 Escape 关闭，输入控件、可编辑正文、组字或已消费事件除外。expanded 默认 false，控制专注 ⤢ / 还原 ⤡，点击均发 onExpand；expandLabel/restoreLabel/closeLabel 默认专注查看/还原/关闭右栏。根 props 扩展 Omit<ComponentProps<aside>, title | children>，className 合并，aria-label 默认对象右栏且可覆盖，data-* 透传；onKeyDown 先调用宿主，再处理未消费的 Escape。bodyProps?: ComponentProps<div> 透传真实滚动正文，className 合并，tabIndex=0 / aria-label=对象正文可覆盖，children 决定正文。"],
   },
 
   "agent-mark": {

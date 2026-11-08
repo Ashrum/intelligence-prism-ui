@@ -35,7 +35,7 @@ export function BlueprintAgentPageDemo() {
       </div>}
       {open && <div className="h-[720px] min-w-0">
         <BpObjectPane refCode={<BpObjectRef code="R1" label="批阅 · 数学 · 间隔复查" current />} title="批阅 · 数学 · 间隔复查"
-          onClose={() => { setOpen(false); setFocused(false) }} onExpand={() => setFocused(!focused)} grid
+          onClose={() => { setOpen(false); setFocused(false) }} onExpand={() => setFocused(!focused)} expanded={focused} grid
           meta={<><span>九年级（1）班 · 45 / 45 份已批 · 结果 v1</span><BpStatus tone="done">已发布</BpStatus><BpStatus tone="neutral">0 项待处理</BpStatus></>}
           tabs={<BpSegTabs label="批阅任务" value={section} onValueChange={setSection} items={[{ value: "analysis", label: "分析" }, { value: "source", label: "批阅信息" }]} />}
           footer={<><BpButton variant="primary" onClick={() => setNotice("查看完整学情（示例：未接入）")}>查看完整学情</BpButton><button type="button" className="text-ui-action text-(--link)" onClick={() => { setFocused(false); setNotice("准备下一次学习") }}>准备下一次学习</button><button type="button" aria-label="结果说明" title="依据批阅结果 v1，示例 · 合成数据">?</button></>}>
@@ -47,6 +47,11 @@ export function BlueprintAgentPageDemo() {
           </div> : <p>依据：批阅结果 v1 · 2026-10-24 · 45 份有效作答 ｜ 规则计算 ｜ 原型 · 合成数据</p>}
         </BpObjectPane>
       </div>}
+    </div>
+    <div className="h-64 min-w-0">
+      <BpObjectPane title="任务执行详情" meta="示例 · 合成数据">
+        <p>宿主没有关闭时不出关闭按钮。</p>
+      </BpObjectPane>
     </div>
   </section>
 }
