@@ -111,7 +111,7 @@ test('AgentMark states, three patterns, host elapsed snapshots and unknown defau
     const html = render(h(api.AgentMark, { state, variant, size: 'loading' }));
     assert.equal((html.match(/agent-mark-pixel/g) ?? []).length, 9);
     assert.ok(html.includes(api.agentMarkLabels[state]));
-    assert.equal(html.includes('animation:prism-agent-pixel'), ['thinking', 'working'].includes(state));
+    assert.doesNotMatch(html, /agent-mark-glyph-pulse|animation|agent-mark-shimmer/);
     assert.doesNotMatch(html, /已用时/);
   }
   assert.match(render(h(api.AgentMark)), /状态未知/);

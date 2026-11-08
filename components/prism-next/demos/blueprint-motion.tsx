@@ -1,9 +1,10 @@
 "use client"
 
+import { AgentMark } from "../agent-mark"
 import { Button } from "@/components/coss/button"
 import { Search } from "lucide-react"
 import { useEffect, useState } from "react"
-import { BpButton, BpTool, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps } from "../blueprint/blueprint"
+import { BpButton, BpTool, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps, BpConclusion, BpMark, BpRef, BpAnswerLabel, BpProvenanceLine } from "../blueprint/blueprint"
 
 /** Explicitly played synthetic examples; no service or business state. */
 export function BlueprintMotionDemo() {
@@ -28,6 +29,18 @@ export function BlueprintMotionDemo() {
   return <section id="motion" className="min-w-0 space-y-6">
     <BpMinor code="C0 · REV 0.1" label="质感层 · 动效与状态" />
     <p className="text-ui-hint text-muted-foreground">示例 · 合成数据，播放只演示状态变化。</p>
+    <section aria-label="Agent 回答写法" className="min-w-0 space-y-3">
+      <h3 className="text-block-title">Agent 回答写法</h3>
+      <p className="text-ui-hint text-muted-foreground">示例 · 合成文字</p>
+      <BpConclusion>建议先讲评<BpMark>公式的适用条件</BpMark><BpRef href="#answer-example-source">①</BpRef>。</BpConclusion>
+      <p className="text-ui-body"><BpAnswerLabel kind="observe" /> 第 4、7 题集中出现概念理解错误。</p>
+      <p className="text-ui-body"><BpAnswerLabel kind="explain" /> 可能混淆了两类公式的适用条件，需要看作答确认。</p>
+      <p className="text-ui-body"><BpAnswerLabel kind="suggest" /> 先对照两份作答，再安排一道辨析题。</p>
+      <BpProvenanceLine id="answer-example-source" items={[{ label: "依据", value: "示例作答 ①" }, { value: "教师待核对" }]} action={<a href="#motion">运行详情（示例）</a>} />
+      <div className="flex flex-wrap gap-4 text-ui-meta">
+        {(["thinking", "working", "idle"] as const).map(state => <span key={state} className="inline-flex items-center gap-2"><AgentMark state={state} label={state} />静止</span>)}
+      </div>
+    </section>
     <div className="space-y-3">
       <BpButton onClick={() => setPlaying(value => !value)}>播放三档时长</BpButton>
       {[
