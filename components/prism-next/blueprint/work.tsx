@@ -116,6 +116,25 @@ export function BpProvenance({ items, className, ...props }: BpProvenanceProps) 
   </dl>
 }
 
+export interface BpAnswerLabelProps extends ComponentProps<"span"> {
+  kind: "observe" | "explain" | "suggest"
+}
+const answerLabels = { observe: "观察", explain: "解释 · 待核对", suggest: "建议" }
+export function BpAnswerLabel({ kind, children, className, ...props }: BpAnswerLabelProps) {
+  return <span {...props} data-kind={kind} className={cn("bp-answer-label inline-block border px-1.5 py-px text-ui-meta font-semibold", kind === "explain" ? "border-dashed border-muted-foreground text-muted-foreground" : kind === "suggest" ? "border-foreground bg-foreground text-background" : "border-foreground text-foreground", className)}>{children ?? answerLabels[kind]}</span>
+}
+
+export interface BpProvenanceLineProps extends ComponentProps<"div"> {
+  items: { label?: string; value: ReactNode }[]
+  action?: ReactNode
+}
+export function BpProvenanceLine({ items, action, className, ...props }: BpProvenanceLineProps) {
+  return <div {...props} className={cn("bp-provenance-line border-t border-border pt-2 text-ui-meta text-muted-foreground break-words", className)}>
+    {items.map((item, index) => <span key={index}>{index > 0 && " ｜ "}{item.label && <>{item.label}：</>}{item.value}</span>)}
+    {action != null && <span>{items.length > 0 && " ｜ "}{action}</span>}
+  </div>
+}
+
 export interface BpSidePeekProps extends Pick<ComponentProps<typeof Sheet>, "open" | "onOpenChange" | "defaultOpen"> {
   title: string
   trigger: ReactElement

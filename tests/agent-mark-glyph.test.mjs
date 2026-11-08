@@ -37,18 +37,19 @@ function glyphChecks(module) {
     assert.doesNotMatch(html, /role="status"|aria-live|已用时/);
     assert.equal(html.replace(/<[^>]*>/g, ''), '');
     assert.equal((html.match(/class="agent-mark-pixel /g) ?? []).length, 9);
-    assert.equal(html.includes('agent-mark-glyph-pulse'), ['thinking', 'working'].includes(state));
+    assert.doesNotMatch(html, /agent-mark-glyph-pulse|animation|agent-mark-shimmer/);
   }
   assert.match(render({ size: 'glyph', label: '自定义状态' }, module), /aria-label="自定义状态"/);
   assert.match(render({ size: 'glyph' }, module), /aria-label="状态未知"/);
 }
-test('glyph six states and three variants: image name, no text/live region/time, active animation only', () => glyphChecks(api));
-test('inline/loading SSR markup remains byte-identical to baseline', async () => {
+test('glyph six states and three variants: image name, no text/live region/time, all states static', () => glyphChecks(api));
+test('inline/loading SSR preserves baseline apart from authorized active animation removal', async () => {
   const { execFileSync } = await import('node:child_process');
   const original = await compile(execFileSync('git', ['show', 'bb85dd9:components/prism-next/agent-mark.tsx'], { encoding: 'utf8' }));
   for (const size of ['inline', 'loading']) for (const state of Object.keys(api.agentMarkLabels)) for (const variant of ['Drive', 'Orbit', 'Dots']) for (const label of [undefined, '宿主名称']) {
     const props = { size, state, variant, label, startedAt: 0, endedAt: 65000 };
-    assert.equal(render(props), render(props, original));
+    const baseline = render(props, original).replace(/opacity:0\.15/g, 'opacity:1').replace(/;animation:[^";]+/g, '').replace(/ agent-mark-shimmer/g, '');
+    assert.equal(render(props), baseline);
   }
 });
 async function timerChecks(text = source) {
@@ -66,21 +67,21 @@ test('effect probe: glyph allocates no timer, other sizes retain interval and cl
 function cssChecks(text = css, bp = blueprint) {
   assert.match(text, /\[data-agent-mark\]\[data-size="glyph"\] \{ width: 16px; height: 16px; \}/);
   assert.match(text, /\[data-agent-mark\]\[data-size="glyph"\] \.agent-mark-grid \{ width: 13px; height: 13px; \}/);
-  assert.match(text, /\.agent-mark-glyph-pulse \{ animation: prism-agent-pixel/);
-  assert.match(text, /@media \(prefers-reduced-motion: reduce\)\s*\{\s*\[data-agent-mark\] \.agent-mark-pixel \{ animation: none !important; opacity: 1 !important;/);
+  assert.doesNotMatch(text, /agent-mark-glyph-pulse|prism-agent-pixel|agent-mark-shimmer/);
+  assert.doesNotMatch(text, /\[data-agent-mark\] \.agent-mark-pixel \{ animation:/);
   const rule = bp.split('\n').find(line => line.includes('[data-size="glyph"]'));
   assert.ok(rule?.startsWith(':is([data-prism-theme="blueprint"],[data-prism-theme="blueprint-night"])'));
   assert.ok(rule.includes('[data-agent-mark][data-size="glyph"] .agent-mark-pixel:not(:where('));
   assert.ok(rule.includes('[data-agent-preview][data-prism-theme]'));
   assert.ok(rule.includes(' *)) { border-radius:0; }'));
 }
-test('CSS contract: dimensions, reduce initial/live media response, blueprint-only square with nested preview exclusion', () => cssChecks());
+test('CSS contract: dimensions, static mark, blueprint-only square with nested preview exclusion', () => cssChecks());
 test('rollback mutations are rejected by behavioral and CSS checks', async () => {
   for (const [before, after] of [
     ['role="img"', 'role="status"'],
     ['aria-label={text}', 'aria-label="错误名称"'],
     ['<span aria-hidden="true" className="agent-mark-grid', '<span aria-live="polite" className="agent-mark-grid'],
-    ['active && delay !== null && "agent-mark-glyph-pulse"', 'true && "agent-mark-glyph-pulse"'],
+    ['"agent-mark-pixel bg-current"', '"agent-mark-pixel bg-current agent-mark-glyph-pulse"'],
   ]) {
     assert.ok(source.includes(before));
     const mutated = await compile(source.replace(before, after));
@@ -88,7 +89,7 @@ test('rollback mutations are rejected by behavioral and CSS checks', async () =>
   }
   await assert.rejects(() => timerChecks(source.replace('size === "glyph" || ', '')));
   await assert.rejects(() => timerChecks(source.replace('[size, active, startedAt, endedAt]', '[active, startedAt, endedAt]')));
-  for (const [before, after] of [['width: 13px', 'width: 16px'], ['animation: none !important; opacity: 1 !important;', 'animation: none; opacity: .15;']]) {
+  for (const [before, after] of [['width: 13px', 'width: 16px'], ['.agent-mark-pixel {', '.agent-mark-glyph-pulse {']]) {
     assert.throws(() => cssChecks(css.replace(before, after)));
   }
   assert.throws(() => cssChecks(css, blueprint.replace(' *)) { border-radius:0; }\n', ' *)) { border-radius:4px; }\n').replace(/(\[data-size="glyph"\].*)border-radius:0/, '$1border-radius:4px')));

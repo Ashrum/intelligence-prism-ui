@@ -9,6 +9,21 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  "agent-mark": {
+    component: "AgentMark",
+    source: "docs/component-contracts.md#标识与消息-api",
+    contract: ["六种 state、三种 variant、glyph/inline/loading 均为全亮静止点阵，无闪烁或文字扫光。保留 data-state、读屏名称、错误/等待颜色及宿主时间计时；glyph 不计时。步骤文字与工作线由宿主组合 BpWorking short。"],
+  },
+  "bp-answer-label": {
+    component: "BpAnswerLabel",
+    source: "docs/component-contracts.md#p153--agent-回答展示组件",
+    contract: ["纯展示 span；kind=observe|explain|suggest，默认观察 / 解释 · 待核对 / 建议，children 可覆盖。墨线框 / 灰色虚线框 / 墨底反相字；不推定事实。"],
+  },
+  "bp-provenance-line": {
+    component: "BpProvenanceLine",
+    source: "docs/component-contracts.md#p153--agent-回答展示组件",
+    contract: ["items={label?,value:ReactNode}[]，action?:ReactNode 在末尾；顶部 border 分隔线、text-ui-meta 灰字、可换行，各项与 action 用 ｜ 分隔。只呈现宿主依据，不推定审定。原 BpProvenance 不变。"],
+  },
   "bp-skeleton": {
     component: "BpSkeleton",
     source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",

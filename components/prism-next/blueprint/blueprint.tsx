@@ -11,8 +11,8 @@ export type { BpScanTraceProps, BpPaperSlotProps, BpPaperSlotState } from "./gra
 export { BpTargetLock, BpDiagramCallout, BpEntryRow } from "./entry-annotations"
 export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "./entry-annotations"
 
-export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpSidePeek } from "./work"
-export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpSidePeekProps } from "./work"
+export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpAnswerLabel, BpProvenanceLine, BpSidePeek } from "./work"
+export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpAnswerLabelProps, BpProvenanceLineProps, BpSidePeekProps } from "./work"
 
 export { BpSkeleton, useBpPending, BpWorkLine, BpWorking, BpUndoToast, BpCaret } from "./motion"
 export type { BpSkeletonProps, BpWorkingProps, BpUndoToastProps } from "./motion"

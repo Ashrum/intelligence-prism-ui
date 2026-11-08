@@ -2947,7 +2947,7 @@ AgentComposer 的 `inputSize="compact"` 缩短连续对话输入区，默认尺�
 
 `AgentMark`：`state = unknown`（idle / thinking / working / waiting-for-user / error / unknown）；`variant = Drive`（Orbit / Dots 可选）；`size = inline`（16px 点阵，loading 为 24px）；可选 `label`、`startedAt`、`endedAt`（epoch ms）。默认使用前景色，waiting-for-user / error 使用已有警示／错误前景色；没有三原色默认变体。运行中的时间每秒读取当前时间减去宿主开始时间，不累计组件挂载次数，也不改变状态。终态只有提供 endedAt 才显示固定用时。
 
-新增 `size="glyph"` 用于列表行首固定 16px 状态位，内部 13px 九宫格，无可见文字与耗时；即使传入 startedAt / endedAt，也不启动计时器。根节点为 `role="img"`，`aria-label` 默认取 agentMarkLabels[state]，可用 label 覆盖；点阵对读屏隐藏，不提供 status / live region，不可用于主状态播报。仅 thinking / working 有动画类；CSS 媒体查询在初始与系统偏好运行中切换到 reduce 时立即停止动画并显示完整静态点阵。蓝图 / 夜图 glyph 强制直角，运行沿用 foreground（身份状态位而非链接，不引入 link 色）；错误与等待仍沿用 destructive / warning 前景色。核心三主题保留变体形状逻辑，inline / loading 行为不变。
+新增 `size="glyph"` 用于列表行首固定 16px 状态位，内部 13px 九宫格，无可见文字与耗时；即使传入 startedAt / endedAt，也不启动计时器。根节点为 `role="img"`，`aria-label` 默认取 agentMarkLabels[state]，可用 label 覆盖；点阵对读屏隐藏，不提供 status / live region，不可用于主状态播报。所有状态均为全亮静止点阵，无动画类或文字扫光；state、读屏名称和 inline / loading 的宿主计时保留。“在做什么”由宿主组合 `BpWorking tier="short"` 表达。蓝图 / 夜图 glyph 强制直角，运行沿用 foreground（身份状态位而非链接，不引入 link 色）；错误与等待仍沿用 destructive / warning 前景色。核心三主题保留变体形状逻辑，inline / loading 行为不变。
 
 `AgentMessage`：`speaker: user | agent`、`children`、可选 `attachments`、`details`、`className`。用户消息右对齐，最大宽 80%／窄屏 88%，`bg-foreground text-background` 在 dark 自动反转；可访问名「你说」，无可见的「你」标题。用户文字、代码、公式和附件使用继承的反相文字颜色；带自定义颜色的外部富内容需消费端额外验证。`AgentMessageAttachment` 提供继承文字与边框的小签。Agent 左对齐、无气泡底，前置 idle AgentMark + Agent，业务卡片和一行详情保留插槽原样，不受用户气泡样式影响。
 
@@ -3493,3 +3493,9 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 - **BpCaret**（`bp-caret`）：2×16px 曜蓝光标，1s steps(1) infinite，50% 透明；减弱动态常亮；aria-hidden。
 
 契约运行时由 `agent-specs.ts` 的五条记录提供，`getSemanticContract` 读取同源条目；组件从 `blueprint/blueprint.tsx` 导出。
+
+### P153 · Agent 回答展示组件
+
+- `BpAnswerLabel`：从 blueprint 导出，纯展示 `span`；`kind=observe|explain|suggest`，默认“观察 / 解释 · 待核对 / 建议”，`children` 可覆盖。依次为墨线框、灰色虚线框、墨底反相字；复用现有令牌、`text-ui-meta`，不判断事实。
+- `BpProvenanceLine`：从 blueprint 导出，`items: {label?: string; value: ReactNode}[]`、`action?: ReactNode`；顶部 border 分隔线，灰字可换行，项与末尾 action 用“ ｜ ”分隔。宿主提供依据和操作，不推定已审定。原 `BpProvenance` 不变。
+- 复用检索：现有 `BpConclusion` / `BpMark` / `BpRef` 直接复用；`BpProvenance` 为多行 dl，不能覆盖本单单行需求。按 P153 授权在 work.tsx 补两个纯展示组合，不新增依赖或覆盖层规则。组件站 motion 节提供合成示例。

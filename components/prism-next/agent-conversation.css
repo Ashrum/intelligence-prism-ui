@@ -5,16 +5,7 @@
 [data-agent-mark][data-size="loading"] .agent-mark-grid { width: 1.5rem; height: 1.5rem; }
 [data-agent-mark][data-size="glyph"] { width: 16px; height: 16px; }
 [data-agent-mark][data-size="glyph"] .agent-mark-grid { width: 13px; height: 13px; }
-.agent-mark-glyph-pulse { animation: prism-agent-pixel 650ms ease-in-out infinite; }
 .agent-mark-pixel { min-width: 0; min-height: 0; }
-.agent-mark-shimmer {
-  background-image: linear-gradient(90deg, var(--muted-foreground) 35%, var(--foreground) 50%, var(--muted-foreground) 65%);
-  background-size: 200% 100%;
-  background-clip: text;
-  color: transparent;
-  animation: prism-agent-shimmer 1.4s linear infinite;
-}
-@keyframes prism-agent-pixel { 0%, 100% { opacity: .15; } 18%, 42% { opacity: 1; } 62% { opacity: .15; } }
 @keyframes prism-agent-shimmer { from { background-position: 150% center; } to { background-position: -50% center; } }
 .agent-message-container { container-type: inline-size; }
 .agent-user-message { width: fit-content; max-width: 80%; }
@@ -41,8 +32,6 @@
   animation: prism-agent-shimmer 1.4s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-agent-mark] .agent-mark-pixel { animation: none !important; opacity: 1 !important; }
-  .agent-mark-shimmer { animation: none; background: none; color: inherit; }
   [data-agent-prompt-bar] *, [data-agent-prompt-bar] *::before, [data-agent-prompt-bar] *::after { animation: none !important; transition: none !important; }
   .agent-dictation-bar { animation: none !important; transform: none !important; height: 60% !important; }
   .agent-dictation-placeholder { animation: none; background: none; color: var(--muted-foreground); }
