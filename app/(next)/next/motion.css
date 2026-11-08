@@ -1,0 +1,24 @@
+:root {
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+}
+
+@theme {
+  --ease-bp: cubic-bezier(0.2, 0, 0, 1);
+  --animate-bp-work-line: bp-work-line 1.6s linear infinite;
+  --animate-bp-countdown: bp-countdown 6s linear forwards;
+  --animate-bp-caret: bp-caret 1s steps(1) infinite;
+
+  @keyframes bp-work-line {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(420%); }
+  }
+  @keyframes bp-countdown {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+  }
+  @keyframes bp-caret {
+    50% { opacity: 0; }
+  }
+}

@@ -14,6 +14,8 @@ export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "
 export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpSidePeek } from "./work"
 export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpSidePeekProps } from "./work"
 
+export { BpSkeleton, useBpPending, BpWorkLine, BpWorking, BpUndoToast, BpCaret } from "./motion"
+export type { BpSkeletonProps, BpWorkingProps, BpUndoToastProps } from "./motion"
 export { BpDimension, BpUnitGrid, BpDraft, BpInferred, BpStatus } from "./drafting"
 export type { BpDimensionProps, BpUnitGridProps, BpDraftProps, BpStatusProps } from "./drafting"
 

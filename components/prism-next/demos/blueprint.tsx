@@ -13,6 +13,7 @@ import { BlueprintTitleSlotsDemo } from "./blueprint-title-slots"
 import { BlueprintGradingDemo } from "./blueprint-grading"
 import { BlueprintNavigationDemo } from "./blueprint-navigation"
 import { BlueprintOverviewDemo } from "./blueprint-overview"
+import { BlueprintMotionDemo } from "./blueprint-motion"
 import { BlueprintDraftingDemo } from "./blueprint-drafting"
 import { BlueprintWorkDemo } from "./blueprint-work"
 import { BlueprintFrameVariantsDemo } from "./blueprint-frame-variants"
@@ -171,6 +172,7 @@ export function BlueprintComponentsDemo() {
     </header>
     <BlueprintWorkDemo />
     <BlueprintDraftingDemo />
+    <BlueprintMotionDemo />
     <BlueprintNavigationDemo />
     <BlueprintFoundationDemo />
     <BlueprintSecondBatchDemo />

@@ -3460,3 +3460,16 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 三个属性省略或显式 undefined 均沿用原输出。statusSlot 显式 null 表示留空，由宿主维护可见状态与无障碍状态的一致性。
 
 蓝图写法示例位于 `/next/foundations/blueprint#flow-status-p147` 的“批阅页蓝图写法”节（合成数据，未接入服务）。原组件页演示保持不变。
+
+
+## P149 · 质感层（2026-11-08）
+
+复用检索：coss `Skeleton`（扫光、圆角）、`Spinner`、`Progress` 与 SHEET 03 / 04 不符，不复用；复用 `BpToast` 外观及 `BpSizeBar` 的 ai / hatch-ai 对应变量；不修改既有组件。
+
+- **BpSkeleton**（`bp-skeleton`）：shape=line|block|stat|row，width/height 为尺寸，lines 为 row 列宽数组；aria-hidden，无边框、圆角或动画；useBpPending(loading,{delay=400,minVisible=300}) 延迟显示、显示后至少 300ms，SSR=false；宿主提供 aria-busy 和对象名。
+- **BpWorkLine**（`bp-work-line`）：2px 分隔底线，24% 曜蓝段 1.6s linear infinite；减弱动态静止在中间；aria-hidden，文字由宿主提供。
+- **BpWorking**（`bp-working`）：tier=short|mid|long，step 必填；done/total 为有效外部进度，缺失不伪造；unit 默认份；eta/actions/children 由宿主传入，少于 3 份的 ETA 由宿主省略。short 无框；mid/long 实色完成与同色斜纹剩余、工作线；long 默认离开说明。role=status、aria-live=polite；不推定业务状态。计数字号用 text-stat-display（24px），与指标格一致。
+- **BpUndoToast**（`bp-undo-toast`）：children 为消息，action 为宿主撤销按钮，duration=6000ms，onExpire 仅发到期意图。复用 BpToast 外观；悬停或聚焦暂停，animationend 到期；减弱动态隐藏条并用可暂停 setTimeout，响应运行中偏好变化。出现 200ms 淡入上移 8px，减弱动态只淡入 120ms；不执行删除。
+- **BpCaret**（`bp-caret`）：2×16px 曜蓝光标，1s steps(1) infinite，50% 透明；减弱动态常亮；aria-hidden。
+
+契约运行时由 `agent-specs.ts` 的五条记录提供，`getSemanticContract` 读取同源条目；组件从 `blueprint/blueprint.tsx` 导出。

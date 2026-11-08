@@ -9,6 +9,32 @@ export type AgentSpec = {
 }
 
 export const coreAgentSpecs: Record<string, AgentSpec> = {
+  "bp-skeleton": {
+    component: "BpSkeleton",
+    source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["shape=line|block|stat|row，width/height 为尺寸，lines 为 row 列宽数组；aria-hidden，无边框、圆角或动画；useBpPending(loading,{delay=400,minVisible=300}) 延迟显示、显示后至少 300ms，SSR=false；宿主提供 aria-busy 和对象名。"],
+  },
+  "bp-work-line": {
+    component: "BpWorkLine",
+    source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["2px 分隔底线，24% 曜蓝段 1.6s linear infinite；减弱动态静止在中间；aria-hidden，文字由宿主提供。"],
+  },
+  "bp-working": {
+    component: "BpWorking",
+    source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["tier=short|mid|long，step 必填；done/total 为有效外部进度，缺失不伪造；unit 默认份；eta/actions/children 由宿主传入，少于 3 份的 ETA 由宿主省略。short 无框；mid/long 实色完成与同色斜纹剩余、工作线；long 默认离开说明。role=status、aria-live=polite；不推定业务状态。计数字号用 text-stat-display（24px），与指标格一致。"],
+  },
+  "bp-undo-toast": {
+    component: "BpUndoToast",
+    source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["children 为消息，action 为宿主撤销按钮，duration=6000ms，onExpire 仅发到期意图。复用 BpToast 外观；悬停或聚焦暂停，animationend 到期；减弱动态隐藏条并用可暂停 setTimeout，响应运行中偏好变化。出现 200ms 淡入上移 8px，减弱动态只淡入 120ms；不执行删除。"],
+  },
+  "bp-caret": {
+    component: "BpCaret",
+    source: "Prism 质感层 C0 REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["2×16px 曜蓝光标，1s steps(1) infinite，50% 透明；减弱动态常亮；aria-hidden。"],
+  },
+
   'math-field': {
     component: 'MathField 公式框 · P119 候选',
     source: 'MathLive 0.111.1 / Prism Button / coss Label、Textarea / DraftMathPreview；docs/component-contracts.md#p119--mathfield-公式框2026-10-26',
