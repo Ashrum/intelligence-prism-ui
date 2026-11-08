@@ -14,7 +14,7 @@ import { Menu, MenuTrigger, MenuItem } from "@/components/coss/menu"
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "@/components/coss/pagination"
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/coss/progress"
 import { Select, SelectTrigger, SelectValue, SelectItem } from "@/components/coss/select"
-import { Skeleton } from "@/components/coss/skeleton"
+import { BpSkeleton } from "./blueprint/motion"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { Toggle } from "@/components/coss/toggle"
 import { AgentStatus, type AgentStatusTone } from "./agent-visual-parts"
@@ -97,7 +97,7 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
     const reason = row.action.disabledReason?.trim() || (!onRowAction ? "操作暂不可用" : undefined)
     const current = row.id === currentRowId
     return <li key={row.id}>
-      <button type="button" className="bp-rl-line-row text-ui-body" data-record-row={row.id}
+      <button type="button" className="bp-rl-line-row text-ui-body transition-[background-color] duration-(--motion-fast) ease-bp" data-record-row={row.id}
         data-attention={row.attention || undefined} data-current={current ? "" : undefined}
         data-show-type={showType} aria-current={current ? "true" : undefined}
         aria-label={[name, showType && type, showStatus && status, row.action.label].filter(Boolean).join(" · ")}
@@ -148,7 +148,19 @@ export function RecordList({ title = "批阅记录", titleLeading, description =
       <Button variant="outline" className={targetClass} disabled={!onClearFilters} onClick={onClearFilters}>清除筛选</Button>
     </div>}
     {state.kind === "loading" ? <div role="status" aria-live="polite" aria-busy="true" className="space-y-3">
-      <p className="text-ui-hint">正在加载记录…</p>{[0, 1, 2].map(key => <Skeleton key={key} className="h-24 w-full motion-reduce:animate-none" />)}
+      <span className="sr-only">正在加载记录</span>
+      {layout === "line" ? <ul className="bp-rl-line-list" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map(key => <li key={key}>
+          <div className="bp-rl-line-row pointer-events-none" data-show-type={showType}>
+            <div className="bp-rl-line-name"><BpSkeleton shape="line" width="70%" /></div>
+            {showType && <div className="bp-rl-line-type"><BpSkeleton shape="line" width="60%" /></div>}
+            <div className="bp-rl-line-metadata"><BpSkeleton shape="line" width="80%" /></div>
+            <div className="bp-rl-line-state"><BpSkeleton shape="line" width="50%" /></div>
+            <div className="bp-rl-line-time"><BpSkeleton shape="line" width="60%" /></div>
+            <div className="bp-rl-line-action"><BpSkeleton shape="line" width="55%" /></div>
+          </div>
+        </li>)}
+      </ul> : [0, 1, 2].map(key => <BpSkeleton key={key} shape="block" height={96} />)}
     </div> : state.kind === "error" ? <Empty>
       <p role="alert" className="break-words text-ui-hint">{state.reason.trim() || "记录加载失败，原因未提供"}</p>
       <Button variant="outline" className={targetClass} disabled={!onRetry} onClick={onRetry}>重试</Button>
