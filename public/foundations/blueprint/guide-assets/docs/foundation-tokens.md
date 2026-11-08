@@ -54,3 +54,19 @@ PO 2026-10-15 批准的核心主题图表调整。单一来源为 `lib/prism-nex
 形状 base / selected 对应系列 1 / 2；light/paper 面积 fill #99C9F3，白底对比度 1.750:1，纸色页面 1.551:1；dark fill #3C719F，对页面 3.701:1、卡片 3.401:1。连续色阶为 `[secondary, fill, base]`；1001 个采样点逐个选黑/白文字，文字对背景均 ≥ 4.5:1。系列色用于图形，不直接替代正文文字色。
 
 默认图形尺寸与覆盖规则见 [图表组件 P69](learning-chart-properties.md#p69-曜彩与图形尺寸2026-10-15)。`--chart-6` 补齐中性第六色（浅/纸 #6B7280，深 #979CA6），不改品牌、状态或正文令牌。
+
+## 动效
+
+质感层 C0 REV 0.1（2026-11-08）：`motion.css` 由 `theme.css` 导入。
+
+| 令牌 | 数值 | 用途 |
+| --- | --- | --- |
+| `--motion-fast` | 120ms | 悬停、按下、聚焦、勾选、开关 |
+| `--motion-base` | 200ms | 出现与消失、骨架换内容 |
+| `--motion-slow` | 320ms | 抽屉、面板展开收起、页面内容进入 |
+| `--ease-bp` / `ease-bp` | cubic-bezier(0.2, 0, 0, 1) | 进出共用 |
+| `--animate-bp-work-line` | 1.6s linear infinite | 24% 工作线段单向通过 |
+| `--animate-bp-countdown` | 6s linear forwards | scaleX(1) → scaleX(0)，使用处覆盖 duration |
+| `--animate-bp-caret` | 1s steps(1) infinite | 50% 透明的流式光标 |
+
+组件使用 `duration-(--motion-fast)` 等语义令牌。消失比出现快一档（320 → 200、200 → 120）。减弱动态：取消位移、透明度统一保留 120ms、工作线静止在中间并保留步骤文字、光标常亮；骨架始终静止。撤销倒计时条隐藏，改以可暂停的计时器发出到期意图；悬停或内部聚焦均暂停。系统偏好运行中变化同样生效。

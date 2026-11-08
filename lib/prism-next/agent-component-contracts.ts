@@ -274,6 +274,7 @@ const paragraphStarts: Record<string, readonly string[]> = {
 }
 
 export function getSemanticContract(slug: string): string[] {
+  if (["bp-skeleton", "bp-work-line", "bp-working", "bp-undo-toast", "bp-caret"].includes(slug)) return [...coreAgentSpecs[slug].contract]
   return (paragraphStarts[slug] ?? []).map(prefix => {
     const paragraph = coreAgentSpecs["agent-components"].contract.find(text => text.startsWith(prefix))
     if (!paragraph) throw new Error(`Missing Agent Spec paragraph for ${slug}: ${prefix}`)
