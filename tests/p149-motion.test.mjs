@@ -25,7 +25,8 @@ const before = await bundle('before', [{ name: 'baseline-72aad43', setup(b) {
 } }]);
 const after = await bundle('after');
 const cases = [
-  ['BpButton', { children: '继续' }], ['BpToast', { children: '已保存' }],
+  // BpButton 样式在 P150 迁入组件，由 tests/p150-button-states.test.mjs 覆盖。
+  ['BpToast', { children: '已保存' }],
   ['BpStat', { label: '得分率', value: '76.0', unit: '%', caption: '有效 45 人' }],
   ['BpStat', { label: '得分率', value: '76.0', size: 'metric', children: h('i', null, '构成条') }],
   ['BpSizeBar', { rows: [{ id: 'a', label: '已处理', total: 45, segments: [{ id: 'done', label: '完成', value: 18, fill: 'ai' }, { id: 'rest', label: '剩余', value: 27, fill: 'hatch-ai' }] }] }],
@@ -57,7 +58,9 @@ test('P149 motion tokens and frozen stylesheet boundaries', () => {
   assert.match(css, /--ease-bp: cubic-bezier\(0.2, 0, 0, 1\)/);
   const baseTheme = execFileSync('git', ['show', '72aad43:app/(next)/next/theme.css'], { encoding: 'utf8' });
   assert.equal(readFileSync(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8'), baseTheme.replace('@import "./typography.css";', '@import "./typography.css";\n@import "./motion.css";'));
-  assert.equal(readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8'), execFileSync('git', ['show', '72aad43:app/(next)/next/blueprint.css'], { encoding: 'utf8' }));
+  // 覆盖层不承载动效令牌（P150 起按钮规则迁入组件，覆盖层不再与 72aad43 全文相等）。
+  const overlay = readFileSync(new URL('../app/(next)/next/blueprint.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(overlay, /--motion-(fast|base|slow)\s*:|--ease-bp\s*:|@keyframes bp-(work-line|countdown|caret)/);
 });
 test('P149 static skeletons and three working tiers expose only supplied facts', () => {
   for (const shape of ['line', 'block', 'stat', 'row']) {

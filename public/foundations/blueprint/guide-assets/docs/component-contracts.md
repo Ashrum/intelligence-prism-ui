@@ -2427,6 +2427,8 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 ## 常用展示约定
 
+- BpButton / BpTool（P150）：样式在组件内，覆盖层只保留共享钩子规则；保留 `bp-btn` / `bp-tool` / `bp-tool-count` 和原 `data-*`。复用现有 Prism 按钮与冻结 coss Button / ToolbarButton，本轮无新增组件或第三方实现，未联网刷新 particles。
+
 - SpaceBar（P93）：五主题统一，容器宽度 ≥600px 时栏高 40px、space 图标按钮及展开／收起侧区按钮 32×32px、图标 16px；<600px 时栏高 44px、图标按钮 44×44px。侧区随栏拉伸；AppBar 仍为 56px。详见 [Workspace 顶部区域契约](workspace-app-bar.md)。
 
 - Avatar：通过 `className` 使用 24、32、40、48、64、96px 六档示例，默认 32px；保留图像失败时的文字回退。

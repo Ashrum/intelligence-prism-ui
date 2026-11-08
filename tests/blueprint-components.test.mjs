@@ -85,8 +85,8 @@ test('steps expose current step and textual state; bars write values out', () =>
 });
 
 test('buttons default to type=button; card element follows interaction', () => {
-  assert.match(html(h(api.BpButton, { variant: 'primary' }, 'x')), /<button type="button" data-variant="primary" class="bp-btn">/);
-  assert.match(html(h(api.BpButton, {}, 'x')), /<button type="button" class="bp-btn">/);
+  assert.match(html(h(api.BpButton, { variant: 'primary' }, 'x')), /<button type="button" data-variant="primary" class="bp-btn[^"]*">/);
+  assert.match(html(h(api.BpButton, {}, 'x')), /<button type="button" class="bp-btn[^"]*">/);
   assert.match(html(h(api.BpCard, { name: 'n', description: 'd', href: '/x' })), /^<a href="\/x" class="bp-card">/);
   assert.match(html(h(api.BpCard, { name: 'n', description: 'd', onSelect() {} })), /^<button type="button" class="bp-card">/);
   assert.match(html(h(api.BpCard, { name: 'n', description: 'd' })), /^<div class="bp-card">/);

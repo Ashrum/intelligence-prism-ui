@@ -150,9 +150,9 @@ test('P105 preserves primary, hover-card and P104 floating hard shadows by casca
       const node = el({ 'data-slot': slot, class: 'border-input' }, el({ class: 'd1-canvas' }, parent));
       assert.equal(style(node, undefined, cascade)['box-shadow'], name === 'blueprint' ? '6px 6px 0 rgb(22 24 29 / 6%)' : '6px 6px 0 rgba(0,0,0,.3)');
     }
-    const primary = el({ class: 'bp-btn', 'data-variant': 'primary' }, parent, 'button');
-    assert.equal(style(primary, undefined, cascade)['box-shadow'], 'var(--shadow-offset)');
-    assert.equal(style({ ...primary, states: ['hover'] }, undefined, cascade)['box-shadow'], 'var(--shadow-offset-sm)');
+    const buttonSource = read('components/prism-next/blueprint/blueprint.tsx');
+    for (const value of ['min-h-[46px]', 'bg-(--card)', 'text-(--foreground)', 'data-[variant=primary]:enabled:bg-(--foreground)', 'data-[variant=primary]:enabled:text-(--card)', 'data-[variant=primary]:enabled:shadow-(--shadow-offset)']) assert.ok(buttonSource.includes(value), value);
+    assert.ok(!buttonSource.includes('data-[variant=primary]:enabled:hover:shadow-'));
     const card = { ...el({ class: 'bp-card', 'data-slot': 'card' }, parent, 'a'), states: ['hover'] };
     assert.equal(style(card, undefined, cascade)['box-shadow'], '4px 4px 0 var(--foreground)');
   }
