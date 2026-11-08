@@ -839,14 +839,14 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 | `BpMark` | `mark` 属性与 `children`，关键数字下半高荧光笔 | §12 第 2 条 |
 | `BpRef` | `sup` 属性与 `children`，宿主提供 ①②；可选 `href` 指向证据锚点；组件自动在前后加入禁断行字符（U+2060），使引注与紧邻的前文、后续标点连排，句中其余位置自然换行 | §12 第 2 条 |
 | `BpProvenance` | `items` 为 `{ label, value }[]`，使用定义列表展示依据与来源，每行浅分隔线、整体 1px 墨框 | §12 第 3 条 |
-| 现有 `BpStat` / `BpStatStrip` | 指标格使用 `label`、`value`、`unit`、`caption` 与 `children` 小图插槽；可找回的失分使用 `readout.tone="warn"`。示例以 `frame="none"` 组合四格，保持既有接口、输出与响应式网格 | §12 第 4 条 |
+| 现有 `BpStat` / `BpStatStrip` | 指标格使用 `size="metric"`、`label`、`value`、`unit`、`caption` 与 `children` 小图插槽；可找回的失分使用 `readout.tone="warn"`。示例以 `frame="none"` 组合四格，默认档保持既有输出与响应式网格；指标格按数字、小图、一行说明排序，说明截断并提供完整 title | §12 第 4 条 |
 | `BpSidePeek` | `title`、`trigger`、`children`、可选 `position` 与 `footer`；支持 `open` / `onOpenChange` / `defaultOpen`。通过 coss Sheet 管理 Esc、焦点与触发器。宽 640px，窄屏全宽；传入指向 BpWorkHeader 的 `headerRef`，随实际顶栏高度及滚动定位下边缘；省略时顶部为 56px | §11 S3 右侧展开 |
 
 `position` 使用宿主列表的一基 `index` / `total`，并接收 `onPrev` / `onNext`、可选 `prevLabel` / `nextLabel`。边界或缺少回调时禁用对应按钮。路由、列表顺序、操作结果和状态由宿主提供。右侧展开沿用 `usePrismPortalProps`，嵌套主题预览需要将 portal 目标放在对应主题边界内。`footer` 由宿主提供一个主操作。
 
 ### 字号映射与主题回退
 
-字号即规范 v2.1 §2 的现有令牌（PO 2026-11-06 规范对齐令牌，不再有“目标值”差距）：指标数字 `BpStat` 默认 stack 布局为 `text-score-display` 40px，`readout` / 行内布局为 `text-stat-display` 24px；结论 `text-section-title` 20px；对象名与面板标题 `text-block-title` 16px；正文 `text-ui-body` 14px；注释 `text-ui-meta` 12px。引注也使用 12px 档位。指标说明沿用组件默认 `text-ui-hint`；数字和位置计数使用现有等宽字体。
+字号即规范 v2.1 §2 的现有令牌（PO 2026-11-06 规范对齐令牌，不再有“目标值”差距）：指标数字 `BpStat size="metric"` 为 `text-stat-display` 24px；默认 stack 布局仍为 `text-score-display` 40px、默认行内数字为 `text-page-title` 26px，`readout` 为 `text-ui-meta` 12px；结论 `text-section-title` 20px；对象名与面板标题 `text-block-title` 16px；正文 `text-ui-body` 14px；注释 `text-ui-meta` 12px。引注也使用 12px 档位。指标说明默认 stack 沿用 `text-ui-hint`，metric 档使用 `text-ui-meta` 并单行截断、title 保留完整文本；数字和位置计数使用现有等宽字体。
 
 颜色使用既有 `--line`、`--border`、`--card`、`--foreground`、`--heading`、`--muted-foreground`、`--brand-*-text` / `--brand-green-tint` 与 `--bp-phase-*`。核心主题下使用既有中性回退。荧光笔原色仅在 blueprint 边界内启用，并排除嵌套的其他主题预览。新组件只在显式使用对应类时生效。
 
