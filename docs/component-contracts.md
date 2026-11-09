@@ -2464,6 +2464,8 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 
 设计状态：P99 组件实现待独立 Review；工程准入：未开始。示例位于 `/next/foundations/blueprint#overview-calibration`，采用固定合成数据，不代表 Workspace 接入或生产准入。
 
+P156 复用检索（离线）沿用已有 BpStatStrip 容器查询、BpStat size="metric" 和格间 box-shadow；本地已有实现覆盖需求，未联网刷新 coss particles。
+
 P148 复用检索（离线）：已有 BpStat / BpStatStrip / BpSizeBar 与 text-stat-display 足以覆盖指标格，仅扩展尺寸，不新增组件、CSS、Token 或依赖；未联网刷新 coss particles。
 
 复用检索（离线）：先核对 Prism `MetricSummary`、`BpFacts`、`BpMetric`、`BpSizeBar`、`BpTitleBlock`、`BpSectionCard`、`BpCallout`。MetricSummary 保留通用指标职责；BpFacts 无 code/help/state/内嵌分段条，BpMetric 是基线/当前对照，不能直接承载 C0 单指标。按本轮批准仅增加蓝图族 `BpStat` / `BpStatStrip`，其余扩展已有组件。复用 BpTool 作为具名帮助按钮，不新增基础控件，不引入 coss particles 或第三方代码，不联网刷新来源，不新增依赖或平行通用指标体系。
@@ -2475,7 +2477,7 @@ P148 复用检索（离线）：已有 BpStat / BpStatStrip / BpSizeBar 与 text
 | `delta?: { text: ReactNode; tone?: "accent" \| "warn" \| "error" \| "muted" }` | 默认 accent，文字必须描述实际变化；不从数值或色彩推断业务含义。 |
 | `state?: "available" \| "insufficient" \| "unknown"` | 默认 available。后两态显示宿主传入的非空文字；错误传入数字/空白时分别回退“数据不足”/“未知”，不显示占位零。隐藏 unit/delta/children，保留 caption/help 解释缺失；真实 available 数值 0 仍显示。宿主不得把缺失预格式化为字符串“0”。 |
 | `help?: ReactNode` / `children?: ReactNode` | help 在标签行右侧，由宿主提供具名按钮和展开/焦点接线；children 默认位于指标说明下方，metric 时在说明上方，可嵌紧凑分段条。组件不创建 Tooltip、业务 Store 或异步查询。 |
-| `BpStatStrip` | 接收 dl 原生属性、className 与 BpStat children；外层具名 inline-size 容器，内部 dl，BpStat 为 div > dt + dd。容器 ≥960px 四列，480–959px 两列，<480px 一列；1.5px 外框、格间 1px。末行余 1 项铺满、四列余 2 项各占两列、余 3 项末项占两列，不留尾部空格。 |
+| `BpStatStrip` | 默认密度接收 dl 原生属性、className 与 BpStat children；外层具名 inline-size 容器，内部 dl，BpStat 为 div > dt + dd。容器 ≥960px 四列，480–959px 两列，<480px 一列；1.5px 外框、格间 1px。末行余 1 项铺满、四列余 2 项各占两列、余 3 项末项占两列，不留尾部空格。 |
 | `BpSizeBar.framed?: boolean` / `size?: "default" \| "sm"` | 默认 true/default，保持原外框、内边距、22px 条。false 去框和内边距；sm 条高 14px、图例保留 ui-meta。 |
 | `BpSizeBar.hideRowLabel?: boolean` | 默认 false；true 只隐藏可见行标签，role=img 名称仍含行标签、所有分段值与单位。已有 `rows[].display=""` 省略空汇总占位；省略 display 仍显示格式化合计。framed/size/hideRowLabel 不改变 P97 千分位、legendValues 或 total 分母。 |
 | `BpTitleBlock.items[].tone?` / `numeric?` | tone 为 default/warn/muted，默认样式保持；numeric=true 用等宽 700 字重。标签已有等宽大写 ui-meta；保留 P82 自身容器 ≤480px 两列/奇数尾项跨满及长文本换行。 |
@@ -3383,6 +3385,7 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 | API | 契约 |
 | --- | --- |
 | `BpFrame` | 导出的联合类型 `"default" \| "subtle" \| "none"`。四个组件同名可选 `frame`，默认 `default`；省略、undefined 和显式 default 均不输出 data-frame，保持基线 DOM。 |
+| `BpStatStrip.density?: "default" \| "compact"` | 默认 default，省略或显式 default 不输出 data-density，沿用默认布局。窄容器（对象右栏）用 compact，dl 输出 data-density="compact"；容器 ≥400px 四列、240–399px 两列、<240px 一列，末行各格等宽并保留空位。格内 10px 12px，标签与数值间距 4px，沿用 var(--border) 分隔线和 size="metric" 数值字号；支持 blueprint / blueprint-night 与三档 frame。 |
 | `BpStatStrip.frame` | subtle 外框 `1px solid var(--border)`，复用次级线色；none 去外框。格间既有 1px 分隔、4/2/1 自身容器布局不变。 |
 | `BpTitleBlock.frame` | subtle 外框 1px，沿用 `--line`；none 去外框及单元格分隔投影，改用 `1px solid var(--line)` 内部分隔。自身容器 ≤480px 仍两列、奇数尾项跨满；只在内部列界和第二行起画线，不画外缘。 |
 | `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |

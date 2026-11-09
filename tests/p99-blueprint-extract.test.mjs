@@ -70,7 +70,8 @@ function occupied(width, count, text = css) {
   const rules = [];
   postcss.parse(text).walkRules(rule => {
     if (rule.selector.includes('.bp-stat') && !rule.selector.includes('.bp-stat-strip {')) for (const selector of rule.selectors) {
-      if (selector.includes('.bp-stat-inline') || !selector.includes('.bp-stat') || !rule.nodes.some(d => d.prop === 'grid-column')) continue;
+      // P156: compact-density rules have their own equal-cell layout (tests/p156-stat-strip-density.test.mjs).
+      if (selector.includes('[data-density') || selector.includes('.bp-stat-inline') || !selector.includes('.bp-stat') || !rule.nodes.some(d => d.prop === 'grid-column')) continue;
       const value = declarations(selector, width, text)['grid-column'];
       if (value) rules.push({selector, value, specificity: (selector.match(/\.[\w-]+|:(?!:)[\w-]+/g) ?? []).length});
     }

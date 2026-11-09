@@ -68,6 +68,15 @@ export function BlueprintOverviewDemo() {
         </details>
       </div>
     </BlueprintSheet>
+    <section aria-label="对象右栏紧凑指标" className="w-full max-w-[560px] space-y-3">
+      <h3 className="text-block-title">对象右栏紧凑指标</h3>
+      <BpStatStrip density="compact" frame="none" aria-label="本次批阅四指标">
+        <BpStat size="metric" label="有效" value="45" unit="份" />
+        <BpStat size="metric" label="最高" value="60" />
+        <BpStat size="metric" label="最低" value="27" />
+        <BpStat size="metric" label="中位" value="47" />
+      </BpStatStrip>
+    </section>
     <details className="text-ui-hint">
       <summary>查看未知态与长文案夹具</summary>
       <BpStatStrip aria-label="不可用指标">
