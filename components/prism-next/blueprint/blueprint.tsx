@@ -483,10 +483,10 @@ export function BpStat({ label, code, value, unit, delta, caption, children, hel
     </dd>
   </div>
 }
-/** Container-width 4 / 2 / 1 grid; final rows fill all columns. Children are BpStat items. */
-export interface BpStatStripProps extends ComponentProps<"dl"> { frame?: BpFrame }
-export function BpStatStrip({ children, className, frame = "default", ...props }: BpStatStripProps) {
-  return <div className="bp-stat-container"><dl {...props} className={cn("bp-stat-strip", className)} data-frame={frame === "default" ? undefined : frame}>{children}</dl></div>
+/** Container-width 4 / 2 / 1 grid; compact keeps equal cells, default fills final rows. Children are BpStat items. */
+export interface BpStatStripProps extends ComponentProps<"dl"> { frame?: BpFrame; density?: "default" | "compact" }
+export function BpStatStrip({ children, className, frame = "default", density = "default", ...props }: BpStatStripProps) {
+  return <div className="bp-stat-container"><dl {...props} className={cn("bp-stat-strip", className)} data-density={density === "compact" ? "compact" : undefined} data-frame={frame === "default" ? undefined : frame}>{children}</dl></div>
 }
 
 export interface BpMetricProps { name: ReactNode; max: number; baseline: { label: string; value: number; display?: ReactNode }; current: { label: string; value: number; display?: ReactNode }; gain: ReactNode; gainUnit?: ReactNode; className?: string }
