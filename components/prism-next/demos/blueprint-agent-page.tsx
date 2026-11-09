@@ -48,6 +48,15 @@ export function BlueprintAgentPageDemo() {
         </BpObjectPane>
       </div>}
     </div>
+    {[480, 390].map(width => <div key={width} className="h-64 max-w-full" style={{ width }}>
+      <BpObjectPane refCode={<BpObjectRef code="R1" label="批阅结果" current />}
+        title="批阅 · 数学 · 间隔复查（九年级（1）班）" meta={`nav 示例 · ${width}px · 合成数据`}
+        position={{ current: 1, total: 3, onNext: () => setNotice("下一项（示例）") }}
+        nav={<BpButton size="sm" aria-label="跳转到右栏层级" onClick={() => setNotice("层级导航（示例：由宿主提供菜单）")}>层级 ▾</BpButton>}
+        onExpand={() => setNotice("专注查看（示例）")} onClose={() => setNotice("关闭右栏（示例）")}>
+        <p>标题行包含对象位置、层级导航、专注与关闭。</p>
+      </BpObjectPane>
+    </div>)}
     <div className="h-64 min-w-0">
       <BpObjectPane title="任务执行详情" meta="示例 · 合成数据">
         <p>宿主没有关闭时不出关闭按钮。</p>

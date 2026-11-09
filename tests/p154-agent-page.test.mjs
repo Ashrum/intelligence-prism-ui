@@ -27,6 +27,7 @@ async function bundle(name, baseline = false, revision = '8a45524') {
 const before = await bundle('before', true);
 const after = await bundle('after');
 const p155Before = await bundle('p155-before', true, 'fdfed77');
+const p157Before = await bundle('p157-before', true, 'fb2e009');
 const render = (component, props = {}) => renderToStaticMarkup(h(component, props));
 
 test('P154 reference span, button and link expose names and supplied current state', () => {
@@ -188,4 +189,31 @@ for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) 
     const themed = api => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api[name], props)));
     assert.equal(themed(after), themed(p155Before), name);
   }
+});
+
+const p157PaneProps = {
+  refCode: 'R1', title: '批阅 · 数学 · 间隔复查（九年级（1）班）',
+  meta: '结果 v1', tabs: '页签', footer: '主操作', children: '正文', grid: true,
+  onExpand() {}, onClose() {}, position: { current: 1, total: 3, onNext() {} },
+};
+for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) test(`P157 ${theme}: pane without nav SSR equals fb2e009 bytes`, () => {
+  for (const props of [{ title: '任务', children: '正文' }, p157PaneProps, { ...p157PaneProps, expanded: true }]) {
+    const themed = (api, extra = {}) => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api.BpObjectPane, { ...props, ...extra })));
+    assert.equal(themed(after), themed(p157Before));
+    assert.equal(themed(after, { nav: null }), themed(p157Before));
+    assert.doesNotMatch(themed(after), /object-pane-nav/);
+  }
+});
+test('P157 nav sits after position and before expand in the title row', () => {
+  const props = { ...p157PaneProps, nav: h(after.BpButton, { size: 'sm' }, '层级 ▾') };
+  const html = render(after.BpObjectPane, props);
+  assert.match(html, /<div class="flex shrink-0 items-center gap-1" data-slot="object-pane-nav">/);
+  assert.ok(html.indexOf('aria-label="下一项"') < html.indexOf('data-slot="object-pane-nav"'));
+  assert.ok(html.indexOf('data-slot="object-pane-nav"') < html.indexOf('aria-label="专注查看"'));
+  const row = after.BpObjectPane(props).props.children[0].props.children[0];
+  const children = React.Children.toArray(row.props.children);
+  const navIndex = children.findIndex(child => child.props?.['data-slot'] === 'object-pane-nav');
+  assert.equal(children[navIndex - 1].props['aria-label'], '对象位置');
+  assert.equal(children[navIndex + 1].props.onClick, props.onExpand);
+  assert.equal(children[navIndex].props.children, props.nav);
 });

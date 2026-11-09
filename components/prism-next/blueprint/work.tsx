@@ -241,6 +241,7 @@ export interface BpObjectPaneProps extends Omit<ComponentProps<"aside">, "title"
   refCode?: ReactNode
   title: ReactNode
   meta?: ReactNode
+  nav?: ReactNode
   position?: { current: number; total: number; onPrev?: () => void; onNext?: () => void }
   onExpand?: () => void
   onClose?: () => void
@@ -255,7 +256,7 @@ export interface BpObjectPaneProps extends Omit<ComponentProps<"aside">, "title"
   grid?: boolean
 }
 
-export function BpObjectPane({ refCode, title, meta, position, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", bodyProps, tabs, footer, children, grid = false, className, onKeyDown, ...props }: BpObjectPaneProps) {
+export function BpObjectPane({ refCode, title, meta, position, nav, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", bodyProps, tabs, footer, children, grid = false, className, onKeyDown, ...props }: BpObjectPaneProps) {
   return <aside aria-label="对象右栏" {...props} className={cn("bp-object-pane flex h-full min-h-0 w-full min-w-0 flex-col border-l-[1.5px] border-(--line) bg-card", className)} onKeyDown={event => {
     onKeyDown?.(event)
     if (!onClose || event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return
@@ -273,6 +274,7 @@ export function BpObjectPane({ refCode, title, meta, position, onExpand, onClose
           <span className="whitespace-nowrap font-mono">{position.current} / {position.total}</span>
           <BpButton size="sm" aria-label="下一项" disabled={!position.onNext || position.current >= position.total} onClick={position.onNext}>›</BpButton>
         </div>}
+        {nav != null && <div className="flex shrink-0 items-center gap-1" data-slot="object-pane-nav">{nav}</div>}
         {onExpand && <BpButton size="sm" aria-label={expanded ? restoreLabel : expandLabel} onClick={onExpand}>{expanded ? "⤡" : "⤢"}</BpButton>}
         {onClose && <BpButton size="sm" aria-label={closeLabel} onClick={onClose}>×</BpButton>}
       </div>
