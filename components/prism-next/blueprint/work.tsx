@@ -256,16 +256,29 @@ export interface BpObjectPaneProps extends Omit<ComponentProps<"aside">, "title"
   grid?: boolean
 }
 
-export function BpObjectPane({ refCode, title, meta, position, nav, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", bodyProps, tabs, footer, children, grid = false, className, onKeyDown, ...props }: BpObjectPaneProps) {
+export type BpObjectPaneShellProps = Omit<ComponentProps<"aside">, "title"> & { onEscape?: () => void }
+export type BpObjectPaneHeadProps = Omit<ComponentProps<"header">, "title"> & Pick<BpObjectPaneProps,
+  "refCode" | "title" | "meta" | "nav" | "position" | "onExpand" | "onClose" | "expanded" | "expandLabel" | "restoreLabel" | "closeLabel">
+export type BpObjectPaneTabsProps = ComponentProps<"div">
+export type BpObjectPaneBodyProps = ComponentProps<"div"> & { grid?: boolean }
+export type BpObjectPaneFooterProps = ComponentProps<"footer">
+
+export function BpObjectPaneShell({ onEscape, children, className, onKeyDown, ...props }: BpObjectPaneShellProps) {
   return <aside aria-label="对象右栏" {...props} className={cn("bp-object-pane flex h-full min-h-0 w-full min-w-0 flex-col border-l-[1.5px] border-(--line) bg-card", className)} onKeyDown={event => {
     onKeyDown?.(event)
-    if (!onClose || event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return
+    if (!onEscape || event.key !== "Escape" || event.defaultPrevented || event.nativeEvent.isComposing) return
     const target = event.target as HTMLElement
     if (target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]')) return
     event.stopPropagation()
-    onClose()
+    onEscape()
   }}>
-    <header className="shrink-0 border-b border-border p-3">
+    {children}
+  </aside>
+}
+
+export function BpObjectPaneHead({ refCode, title, meta, position, nav, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", className, ...props }: BpObjectPaneHeadProps) {
+  return (
+    <header {...props} className={cn("shrink-0 border-b border-border p-3", className)}>
       <div className="flex min-w-0 items-center gap-1">
         {refCode}
         <h2 className="min-w-0 flex-1 truncate text-section-title font-semibold">{title}</h2>
@@ -280,8 +293,26 @@ export function BpObjectPane({ refCode, title, meta, position, nav, onExpand, on
       </div>
       {meta != null && <div className="mt-2 flex min-w-0 flex-wrap gap-2 text-ui-meta text-muted-foreground wrap-anywhere">{meta}</div>}
     </header>
-    {tabs != null && <div className="min-w-0 shrink-0 overflow-x-auto">{tabs}</div>}
-    <div tabIndex={0} aria-label="对象正文" {...bodyProps} className={cn("bp-object-pane-body min-h-0 min-w-0 flex-1 overflow-auto p-4 text-ui-body wrap-anywhere", grid && "bg-[linear-gradient(var(--grid)_1px,transparent_1px),linear-gradient(90deg,var(--grid)_1px,transparent_1px)] bg-size-[40px_40px]", bodyProps?.className)}>{children}</div>
-    {footer != null && <footer className="flex min-w-0 shrink-0 flex-wrap items-center gap-3 border-t border-border p-4 text-ui-body wrap-anywhere">{footer}</footer>}
-  </aside>
+  )
+}
+
+export function BpObjectPaneTabs({ children, className, ...props }: BpObjectPaneTabsProps) {
+  return <div {...props} className={cn("min-w-0 shrink-0 overflow-x-auto", className)}>{children}</div>
+}
+
+export function BpObjectPaneBody({ grid = false, children, ...props }: BpObjectPaneBodyProps) {
+  return <div tabIndex={0} aria-label="对象正文" {...props} className={cn("bp-object-pane-body min-h-0 min-w-0 flex-1 overflow-auto p-4 text-ui-body wrap-anywhere", grid && "bg-[linear-gradient(var(--grid)_1px,transparent_1px),linear-gradient(90deg,var(--grid)_1px,transparent_1px)] bg-size-[40px_40px]", props.className)}>{children}</div>
+}
+
+export function BpObjectPaneFooter({ children, className, ...props }: BpObjectPaneFooterProps) {
+  return <footer {...props} className={cn("flex min-w-0 shrink-0 flex-wrap items-center gap-3 border-t border-border p-4 text-ui-body wrap-anywhere", className)}>{children}</footer>
+}
+
+export function BpObjectPane({ refCode, title, meta, position, nav, onExpand, onClose, expanded = false, expandLabel = "专注查看", restoreLabel = "还原", closeLabel = "关闭右栏", bodyProps, tabs, footer, children, grid = false, className, onKeyDown, ...props }: BpObjectPaneProps) {
+  return <BpObjectPaneShell {...props} className={className} onKeyDown={onKeyDown} onEscape={onClose}>
+    <BpObjectPaneHead refCode={refCode} title={title} meta={meta} position={position} nav={nav} onExpand={onExpand} onClose={onClose} expanded={expanded} expandLabel={expandLabel} restoreLabel={restoreLabel} closeLabel={closeLabel} />
+    {tabs != null && <BpObjectPaneTabs>{tabs}</BpObjectPaneTabs>}
+    <BpObjectPaneBody {...bodyProps} grid={grid}>{children}</BpObjectPaneBody>
+    {footer != null && <BpObjectPaneFooter>{footer}</BpObjectPaneFooter>}
+  </BpObjectPaneShell>
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { BpButton, BpConclusion, BpMark, BpSegTabs, BpSizeBar, BpStat, BpStatStrip, BpStatus } from "../blueprint/blueprint"
-import { BpFocusBlock, BpObjectPane, BpObjectRef, BpResultRow } from "../blueprint/work"
+import { BpFocusBlock, BpObjectPane, BpObjectPaneShell, BpObjectPaneHead, BpObjectPaneTabs, BpObjectPaneBody, BpObjectPaneFooter, BpObjectRef, BpResultRow } from "../blueprint/work"
 
 const scores = [71.6, 78.2, 80, 65, 77.8, 84.4, 74.4, 82.2, 82.2, 71.1, 80, 75.6]
 
@@ -56,6 +56,26 @@ export function BlueprintAgentPageDemo() {
         onExpand={() => setNotice("专注查看（示例）")} onClose={() => setNotice("关闭右栏（示例）")}>
         <p>标题行包含对象位置、层级导航、专注与关闭。</p>
       </BpObjectPane>
+    </div>)}
+    <h3 className="text-block-title">部件组合</h3>
+    {[480, 390].map(width => <div key={width} className="h-96 max-w-full" style={{ width }}>
+      <BpObjectPaneShell onEscape={() => setNotice("关闭右栏（部件组合示例）")} data-example-width={width}>
+        <BpObjectPaneHead refCode={<BpObjectRef code="R1" label="批阅结果" current />}
+          title="批阅 · 数学 · 间隔复查（九年级（1）班）"
+          meta="九年级（1）班 · 45 / 45 份已批 · 结果 V1"
+          position={{ current: 1, total: 3, onNext: () => setNotice("下一项（部件组合示例）") }}
+          nav={<BpButton size="sm" onClick={() => setNotice("层级导航（部件组合示例）")}>层级 ▾</BpButton>}
+          onExpand={() => setNotice("专注查看（部件组合示例）")}
+          onClose={() => setNotice("关闭右栏（部件组合示例）")} />
+        <BpObjectPaneTabs>
+          <BpSegTabs label={`部件组合 ${width}px`} value={section} onValueChange={setSection}
+            items={[{ value: "analysis", label: "分析" }, { value: "source", label: "批阅信息" }]} />
+        </BpObjectPaneTabs>
+        <BpObjectPaneBody grid>
+          {section === "analysis" ? <BpConclusion>第 4 题失分最多（得分率 65.0%）；全班平均 45.6 / 60，得分率 76.0%。</BpConclusion> : <p>依据：批阅结果 V1 · 45 份有效作答 · 合成数据</p>}
+        </BpObjectPaneBody>
+        <BpObjectPaneFooter><BpButton variant="primary" onClick={() => setNotice("查看完整学情（部件组合示例）")}>查看完整学情</BpButton></BpObjectPaneFooter>
+      </BpObjectPaneShell>
     </div>)}
     <div className="h-64 min-w-0">
       <BpObjectPane title="任务执行详情" meta="示例 · 合成数据">

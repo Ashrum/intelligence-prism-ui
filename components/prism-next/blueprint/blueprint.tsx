@@ -11,8 +11,8 @@ export type { BpScanTraceProps, BpPaperSlotProps, BpPaperSlotState } from "./gra
 export { BpTargetLock, BpDiagramCallout, BpEntryRow } from "./entry-annotations"
 export type { BpTargetLockProps, BpDiagramCalloutProps, BpEntryRowProps } from "./entry-annotations"
 
-export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpAnswerLabel, BpProvenanceLine, BpSidePeek, BpObjectRef, BpResultRow, BpFocusBlock, BpObjectPane } from "./work"
-export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpAnswerLabelProps, BpProvenanceLineProps, BpSidePeekProps, BpObjectRefProps, BpResultRowProps, BpFocusBlockProps, BpObjectPaneProps } from "./work"
+export { BpWorkHeader, BpWorkBody, BpWorkTabs, BpConclusion, BpMark, BpRef, BpProvenance, BpAnswerLabel, BpProvenanceLine, BpSidePeek, BpObjectRef, BpResultRow, BpFocusBlock, BpObjectPane, BpObjectPaneShell, BpObjectPaneHead, BpObjectPaneTabs, BpObjectPaneBody, BpObjectPaneFooter } from "./work"
+export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProps, BpRefProps, BpProvenanceProps, BpAnswerLabelProps, BpProvenanceLineProps, BpSidePeekProps, BpObjectRefProps, BpResultRowProps, BpFocusBlockProps, BpObjectPaneProps, BpObjectPaneShellProps, BpObjectPaneHeadProps, BpObjectPaneTabsProps, BpObjectPaneBodyProps, BpObjectPaneFooterProps } from "./work"
 
 export { BpSkeleton, useBpPending, BpWorkLine, BpWorking, BpUndoToast, BpCaret } from "./motion"
 export type { BpSkeletonProps, BpWorkingProps, BpUndoToastProps } from "./motion"

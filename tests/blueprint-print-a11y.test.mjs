@@ -151,6 +151,8 @@ for (const theme of [...themes, 'blueprint-night']) test(`${theme}: real compone
     ['材料记录状态', '已选择'], ['确认记录状态', '已记录'],
     ['答卷状态预览', '全部'], ['纵向选择样式预览', 'blueprint'],
     ['批阅任务', '分析'],
+    // P158 composes the docked pane from parts at host widths 480 / 390.
+    ['部件组合 480px', '分析'], ['部件组合 390px', '分析'],
   ]);
   assert.deepEqual(choices.map(([, label]) => label).sort(), [...expectedChoices.keys()].sort());
   for (const [, label, content] of choices) {

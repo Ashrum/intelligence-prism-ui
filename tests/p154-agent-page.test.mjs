@@ -79,7 +79,7 @@ test('P154 docked pane keeps semantic slots, labelled controls and scroll body',
 test('P154 Escape closes only unconsumed non-editing pane events', () => {
   let closed = 0;
   let stopped = 0;
-  const pane = after.BpObjectPane({ title: '批阅', children: '正文', onClose: () => closed++ });
+  const pane = after.BpObjectPaneShell({ children: '正文', onEscape: () => closed++ });
   const event = { key: 'Escape', defaultPrevented: false, nativeEvent: { isComposing: false }, target: { closest: () => null }, stopPropagation: () => stopped++ };
   pane.props.onKeyDown(event);
   assert.equal(closed, 1); assert.equal(stopped, 1);
@@ -140,7 +140,7 @@ test('P155 optional close leaves Escape and other callbacks untouched', () => {
   let expanded = 0;
   const props = { title: '任务', children: '正文', onExpand: () => expanded++ };
   assert.doesNotMatch(render(after.BpObjectPane, props), /aria-label="关闭右栏"|>×</);
-  after.BpObjectPane(props).props.onKeyDown({ key: 'Escape', stopPropagation() { assert.fail('must not consume Escape'); } });
+  after.BpObjectPaneShell({ ...props, onEscape: props.onClose }).props.onKeyDown({ key: 'Escape', stopPropagation() { assert.fail('must not consume Escape'); } });
   assert.equal(expanded, 0);
 });
 
@@ -153,8 +153,8 @@ test('P155 expanded state switches labels and glyphs with host-owned intent', ()
     assert.ok(html.includes(`>${expanded ? '⤡' : '⤢'}</button>`));
     assert.ok(!html.includes(`>${expanded ? '⤢' : '⤡'}</button>`));
     assert.ok(html.includes(`aria-label="${custom ? '收起详情' : '关闭右栏'}"`));
-    const pane = after.BpObjectPane(props);
-    const buttons = React.Children.toArray(pane.props.children[0].props.children[0].props.children);
+    const pane = after.BpObjectPaneHead(props);
+    const buttons = React.Children.toArray(pane.props.children[0].props.children);
     buttons.find(child => child.props.onClick === props.onExpand).props.onClick();
   }
   assert.equal(count, 4);
@@ -167,13 +167,13 @@ test('P155 root and scroll body merge props and chain keyboard handlers', () => 
   assert.match(html, /^<aside[^>]*aria-label="任务右栏"[^>]*data-host="pane"[^>]*class="bp-object-pane [^"]*host-pane"/);
   assert.match(html, /<div tabindex="-1" aria-label="任务正文" class="bp-object-pane-body [^"]*overflow-auto [^"]*host-body" data-workspace-scroll="true">正文<\/div>/);
   const event = { key: 'Escape', defaultPrevented: false, nativeEvent: { isComposing: false }, target: { closest: () => null }, stopPropagation: () => calls.push('stop') };
-  after.BpObjectPane(props).props.onKeyDown(event);
+  after.BpObjectPaneShell({ ...props, onEscape: props.onClose }).props.onKeyDown(event);
   assert.deepEqual(calls, ['host', 'stop', 'close']);
   calls.length = 0;
-  after.BpObjectPane({ ...props, onKeyDown(event) { calls.push('host'); event.defaultPrevented = true; } }).props.onKeyDown({ ...event });
+  after.BpObjectPaneShell({ ...props, onEscape: props.onClose, onKeyDown(event) { calls.push('host'); event.defaultPrevented = true; } }).props.onKeyDown({ ...event });
   assert.deepEqual(calls, ['host']);
   calls.length = 0;
-  after.BpObjectPane({ ...props, onClose: undefined }).props.onKeyDown({ ...event });
+  after.BpObjectPaneShell({ ...props, onEscape: undefined }).props.onKeyDown({ ...event });
   assert.deepEqual(calls, ['host']);
   assert.match(render(after.BpObjectPane, { title: '任务', children: '正文' }), /tabindex="0" aria-label="对象正文"/);
 });
@@ -210,7 +210,7 @@ test('P157 nav sits after position and before expand in the title row', () => {
   assert.match(html, /<div class="flex shrink-0 items-center gap-1" data-slot="object-pane-nav">/);
   assert.ok(html.indexOf('aria-label="下一项"') < html.indexOf('data-slot="object-pane-nav"'));
   assert.ok(html.indexOf('data-slot="object-pane-nav"') < html.indexOf('aria-label="专注查看"'));
-  const row = after.BpObjectPane(props).props.children[0].props.children[0];
+  const row = after.BpObjectPaneHead(props).props.children[0];
   const children = React.Children.toArray(row.props.children);
   const navIndex = children.findIndex(child => child.props?.['data-slot'] === 'object-pane-nav');
   assert.equal(children[navIndex - 1].props['aria-label'], '对象位置');
