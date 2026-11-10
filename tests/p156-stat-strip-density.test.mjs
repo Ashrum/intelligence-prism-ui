@@ -75,5 +75,10 @@ test('P156 compact CSS scopes geometry and thresholds to opt-in strips', () => {
   const baseline = execFileSync('git', ['show', 'ec18900:app/(next)/next/blueprint.css'], { cwd: root, encoding: 'utf8' });
   const unitSelect = css.slice(css.indexOf('/* P160'), css.indexOf('.bp-draft-root {'));
   assert.ok(unitSelect.startsWith('/* P160'));
-  assert.equal(css.replace('\n' + compact, '').replace(unitSelect, ''), baseline);
+  // P161 moved the vertical column rules (rail right, inspector left) from L1 to L2; compare against the pre-P161 text.
+  const columnRules = (text) => text.split('\n').map((line) =>
+    /^:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.d1-rail:not\(/.test(line) ? line.replace('{ border-right:1px solid var(--border); }', '{ border-right:1.5px solid var(--line); }')
+    : /^:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.d1-inspector:not\(/.test(line) ? line.replace('{ border-left:1px solid var(--border); }', '{ border-left:1.5px solid var(--line); }')
+    : line).join('\n');
+  assert.equal(columnRules(css.replace('\n' + compact, '').replace(unitSelect, '')), baseline);
 });
