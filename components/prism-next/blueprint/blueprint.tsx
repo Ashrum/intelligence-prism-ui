@@ -16,6 +16,10 @@ export type { BpWorkHeaderProps, BpWorkPosition, BpWorkBodyProps, BpWorkTabsProp
 
 export { BpSkeleton, useBpPending, BpWorkLine, BpWorking, BpUndoToast, BpCaret } from "./motion"
 export type { BpSkeletonProps, BpWorkingProps, BpUndoToastProps } from "./motion"
+export { BpCollapse, useBpAutoExpand, formatBpElapsed, BpElapsed, BpStepGroup, BpAnnouncerProvider, useBpAnnounce } from "./progress"
+export type { BpCollapseProps, BpElapsedProps, BpStep, BpStepGroupProps, BpAnnouncerProviderProps } from "./progress"
+export { BpDecisionDock, BpDecisionReceipt } from "./decision"
+export type { BpDecisionItem, BpDecisionAnswer, BpDecisionDockProps, BpDecisionReceiptProps } from "./decision"
 export { BpDimension, BpUnitGrid, BpDraft, BpInferred, BpStatus } from "./drafting"
 export type { BpDimensionProps, BpUnitGridProps, BpDraftProps, BpStatusProps } from "./drafting"
 

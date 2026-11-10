@@ -3497,6 +3497,17 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 
 契约运行时由 `agent-specs.ts` 的五条记录提供，`getSemanticContract` 读取同源条目；组件从 `blueprint/blueprint.tsx` 导出。
 
+### P159 · 处理中与待你决定
+
+来源为 AF FROZEN REV 0.1 与 `docs/blueprint-theme-v2.md` §15。组件及 Props 从 `blueprint/blueprint.tsx` 导出。复用 `BpWorkLine`、`BpButton`、coss Input 与现有语义令牌，折叠取舍及 particles 离线检索见 §15。
+
+- **BpCollapse**（`bp-collapse`）接收 `open`、`children`、可选 `id/className`。网格行展开为 1fr，收起为 0fr，时长分别取 slow/base，减弱动态取消高度过渡。关闭内层带 inert 与 aria-hidden。使用方提供带 aria-expanded/aria-controls 的触发按钮。`useBpAutoExpand(failed, resetKey?)` 返回 open/toggle，初次失败展开，失败边沿自动展开，手动后保留选择，resetKey 改变收起并清掉手动记忆。
+- **BpElapsed**（`bp-elapsed`）接收 `startedAt`、可选 `endedAt` 和 `threshold=10000`。运行时每秒更新，到阈值显示，SSR 运行计时先留空，挂载后读取当前时刻。有 endedAt 时立即显示总用时且不启动定时器。等宽数字带 aria-hidden。`formatBpElapsed(ms)` 向下取整，分钟起秒数补零，负数和非有限值返回空字符串。
+- **BpStepGroup**（`bp-step-group`）接收 status、steps、startedAt、endedAt?、resetKey?、onStop?、stopLabel?、summaryLabel?、expandLabel?、collapseLabel?。五态为 preparing/answering/done/error/stopped，步骤条目含 id、label、state、durationMs?、detail?、action?。首字前工作线与横排步骤，首字后摘要与折叠 ol 明细。成功默认收起，失败自动展开并显示宿主原因与动作。结束时间缺失显示用时未知。根节点由宿主统一播报，停止按钮仅发意图。
+- **BpAnnouncer**（`bp-announcer`）通过 `BpAnnouncerProvider({children})` 和 `useBpAnnounce()` 使用。宿主全页挂载一个 Provider，生成 sr-only、role=status、aria-live=polite、aria-atomic=true 的状态区。announce(text) 清空后下一帧重写相同文本，卸载取消帧回调，Provider 外为空操作。播报用句由宿主决定。
+- **BpDecisionDock**（`bp-decision-dock`）接收 items、index/onIndexChange、folded/onFoldedChange、onAnswer、confirmDwell=800、laterLabel=稍后、title=待你决定。items 为 id/question/description?/options/other?，options 为 value/label/recommended?，other=false 隐藏自由填写项，其他情况下提供 label?/placeholder?/submitLabel?。选择立即发 `onAnswer(id, {value} | {other})`，确认期保留快照与禁用选项，结束后显示宿主最新队列。根 tabIndex=-1，数字键与 Escape 仅卡内处理，输入和组字除外。自由填写去除首尾空白后提交，空值不提交。卡片出现保留焦点，展开时才将焦点移到其他输入框。宽度 ≤ 480 px 时卡片最高 50dvh，头部固定、正文可滚动。宿主负责将已回答项移出队列。
+- **BpDecisionReceipt**（`bp-decision-receipt`）接收 question、answer?。answer 缺失时显示粉点、等你决定、问题和输入框上方提示，提供 answer 时显示勾、问题、箭头和加粗回答。使用外部事实更新回执。
+
 ### P153 · Agent 回答展示组件
 
 - `BpAnswerLabel`：从 blueprint 导出，纯展示 `span`；`kind=observe|explain|suggest`，默认“观察 / 解释 · 待核对 / 建议”，`children` 可覆盖。依次为墨线框、灰色虚线框、墨底反相字；复用现有令牌、`text-ui-meta`，不判断事实。
