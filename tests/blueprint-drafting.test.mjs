@@ -113,6 +113,6 @@ test('P139 core-theme new components use token fallbacks without inline blueprin
     const output = html(scoped(theme, h(api.BlueprintDraftingDemo)));
     assert.doesNotMatch(output, /#(?:0F5FA8|A8245C|3F6309|5A6B80|339FF2|C2F25B|E0438F)/i);
     assert.doesNotMatch(output, /data-blueprint="true"/);
-    assert.equal((output.match(/class="bp-unit-cell /g) || []).length, 45);
+    assert.equal((output.match(/class="bp-unit-cell /g) || []).length, 135);
   }
 });

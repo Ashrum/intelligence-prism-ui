@@ -73,5 +73,7 @@ test('P156 compact CSS scopes geometry and thresholds to opt-in strips', () => {
   assert.match(compact, /margin-bottom:4px/);
   assert.doesNotMatch(compact, /font-size|box-shadow|border:/);
   const baseline = execFileSync('git', ['show', 'ec18900:app/(next)/next/blueprint.css'], { cwd: root, encoding: 'utf8' });
-  assert.equal(css.replace('\n' + compact, ''), baseline);
+  const unitSelect = css.slice(css.indexOf('/* P160'), css.indexOf('.bp-draft-root {'));
+  assert.ok(unitSelect.startsWith('/* P160'));
+  assert.equal(css.replace('\n' + compact, '').replace(unitSelect, ''), baseline);
 });

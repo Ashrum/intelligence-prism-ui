@@ -878,7 +878,7 @@ wide 的自身容器 ≤420px 或视口 ≤760px 时，名称与汇总一行、�
 | 组件 | 用途与参数 |
 | --- | --- |
 | `BpDimension` | 对应 §4 尺寸线。输出 SVG `g`，`orientation` 指定方向，`at` 为所在轴，`from` / `to` 为两端，`leaderFrom` 为可选引出线起点，坐标均采用宿主 viewBox 单位。`tick` 默认 12，限于 6–16。`label` 为数值，`refNo` 为参照号，`tone` 为 `up` / `down` / `neutral`。宿主可访问名称须复述数值。 |
-| `BpUnitGrid` | 对应 §4 一格一人。`groups` 按传入顺序排列，每组提供 `id`、`label`、非负整数 `count`、`fill: BpFill`。`label` 为可访问名称前缀，`unit` 默认“人”，`legend` 默认 true。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。 |
+| `BpUnitGrid` | 对应 §4 一格一人。`groups` 按传入顺序排列，每组提供 `id`、`label`、非负整数 `count`、`fill: BpFill`，可选 `muted` 将该组格子与图例置灰并保留位置。`label` 为可访问名称前缀，`unit` 默认“人”，`legend` 默认 true。可选 `onSelect(groupId)` 让图例和格子发出点选意图，`selected` 为宿主控制的已选 id 数组，仅在传入 `onSelect` 时生效，筛选与置灰由宿主决定。点选时根为 `role="group"`，图例按钮以 `aria-pressed` 呈现选中态并提供键盘入口，格子提供快捷点击且保持 `aria-hidden`。点选且 `legend=false` 时开发环境每实例警告一次，仍渲染。不传新属性时输出保持不变。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。 |
 | `BpDraft` / `BpInferred` | 对应 §4 草稿斜纹边。容器提供 `state`、`title`、`children`，可选 `badge`、`meta`、`note`、`actions`、`provenance`。默认徽标随 draft / confirmed 切换，confirmed 将审定条目交给既有 `BpProvenance`。`BpInferred` 接受原生 span 属性，在 draft 内呈现下划线。状态由宿主提供。 |
 | `BpSizeBar` | 对应 §4 双段错题条。新增 `layout="stacked"`，名称与 `display` 在条上方，条高 8px；行字段 `displayTone` 为 `todo` / `muted`。`total=100` 时各段数值直接对应百分比宽度。默认 `row` 保留既有 SSR。其余 props 沿用原契约。 |
 
