@@ -78,7 +78,7 @@ for (const name of ['blueprint', 'blueprint-night']) test(`P130 ${name}: page gr
   for (const [target, side] of [['d1-topbar','bottom'], ['d1-mobile-nav','bottom'], ['d1-rail','right'], ['d1-inspector','left']]) {
     const face = el({ class: target }, parent);
     assert.equal(style(face).background, 'var(--card)');
-    assert.equal(style(face)[`border-${side}`], '1.5px solid var(--line)');
+    assert.equal(style(face)[`border-${side}`], side === 'bottom' ? '1.5px solid var(--line)' : '1px solid var(--border)');
     assert.deepEqual(style(el({ class: 'selected bg-accent' }, face)), {});
   }
   assert.equal(style(el({ class: 'd1-canvas' }, parent)).padding, '24px 28px');
