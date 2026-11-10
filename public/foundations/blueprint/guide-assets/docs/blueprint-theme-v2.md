@@ -264,6 +264,44 @@ BpButton / BpTool 样式迁入组件，常态尺寸、颜色、边框、阴影�
 
 蓝图与夜图的 coss 主按钮及工具条主按钮悬停保持 `--shadow-offset`，亮度沿用 coss 的 `hover:bg-primary/90`；非 disabled 按下位移 3px，装饰阴影收去而保留 ring。transform 与 box-shadow 过渡为 `--motion-fast` / `cubic-bezier(0.2, 0, 0, 1)`。减弱动态取消位移，保留颜色过渡；聚焦继续使用覆盖层既有 2px `--ring`、外移 2px 规则。
 
+### 处理中与待你决定（P159 · 2026-11-10，AF FROZEN REV 0.1）
+
+设计依据为 PO 2026-11-10 冻结的 AF REV 0.1，组件实施与合成示例待 Supervisor 浏览器验收。工程准入未开始。
+
+四项共用底层如下。
+
+1. 折叠统一使用 `BpCollapse` 的网格行 `0fr / 1fr`，展开取 `--motion-slow`，收起取 `--motion-base`。关闭内容带 `inert` 和 `aria-hidden`。步骤失败自动展开，教师手动操作后保留其选择，新的 `resetKey` 清空记忆并收起。
+2. 动效使用现有 `--motion-fast/base/slow` 和 `ease-bp`。减弱动态下折叠高度直接变化，停靠卡取消位移，透明度过渡取 `--motion-fast`。
+3. 宿主页挂载一个 `BpAnnouncerProvider`，通过 `useBpAnnounce()` 提交状态变化。计时、步骤组和停靠卡交由这个状态区播报。现有 `BpWorking` 的 live region 迁移由后续宿主接入单处理。
+4. 按冻结画板 SHEET 00 / 05，输入框上方依次显示待你决定、回到最新、空。处理中留在所属消息内。位置协调、消息流留出空间和回到最新行为由宿主负责。
+
+| 画板 | 组件或 Hook | 契约 |
+| --- | --- | --- |
+| SHEET 02 | `BpCollapse`、`useBpAutoExpand` | 受控折叠、失败展开、手动优先、按答复重置 |
+| SHEET 01 | `BpElapsed`、`formatBpElapsed` | 宿主时间戳，运行满 10 s 显示，每秒刷新，完成立即显示总用时 |
+| SHEET 01 / 02 | `BpStepGroup` | preparing / answering / done / error / stopped，宿主步骤事实与停止意图 |
+| SHEET 05 | `BpAnnouncerProvider`、`useBpAnnounce` | 一个礼貌状态区，相同文本清空后在下一帧重写 |
+| SHEET 03 / 04 / 06 | `BpDecisionDock` | 受控队列、翻页和折叠，立即发 `onAnswer`，保留确认快照 |
+| SHEET 03 | `BpDecisionReceipt` | 消息流内的等待或回答回执，由宿主提供问答 |
+
+推荐播报沿用 SHEET 05，具体数字和对象名由宿主提供。
+
+| 事件 | 推荐播报 |
+| --- | --- |
+| 开始处理 | Agent 正在处理 |
+| 完成 | 答复完成，用了 14 秒 |
+| 出错 | 1 步失败：读取 R1 第 4 题作答 |
+| 停止 | 已停止，已写的保留 |
+| 来了待你决定 | 有 2 件待你决定 |
+| 选了一项 | 已选择 查最近一次，还剩 1 件 |
+| 全部答完 | 没有待你决定的了 |
+
+每秒计时、步骤打勾、流式字符、翻页和折叠均保持安静。停靠卡出现时保留原焦点，卡内快捷键忽略输入框、可编辑内容和输入法组字。其他选项使用常驻标签，主动打开后聚焦输入框。窄容器宽度 ≤ 480 px 时选项至少 48 px、翻页按钮 32 px，卡片最高 50dvh，头部固定、正文滚动。
+
+确认停留 `confirmDwell=800` ms 是供教师看清所选内容的停留参数。过渡时长继续由动效令牌控制，停留结束后根据宿主当前队列淡出淡入下一件或整体收起。确认期间保留问题、选中行与计数的快照。组件仅发出回答意图，宿主负责队列移除、执行与消息回执。`endedAt` 缺失的终态显示“用时未知”，宿主应提供结束时间。
+
+复用检索采用现有 `BpWorkLine`、`BpFocusBlock` 的 attention 令牌、`BpButton`、固定 coss Input / Button / Collapsible，以及 `docs/score-review.md` 已记录的 particles `p-collapsible-1`。coss 折叠使用测量高度和固定 200 ms，AF 指定网格行与分档令牌，故本轮补 `BpCollapse`。现有 `AgentQuestionCard` 为回填选择，AF 停靠卡按授权补即时回答意图。离线检索沿用仓库记录。
+
 # 附录 · v2 原文（2026-11-05）
 
 以下为 v2 全文，保留作为基线；与上文 v2.1 冲突处以 v2.1 为准。

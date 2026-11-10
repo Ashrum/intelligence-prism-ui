@@ -3,8 +3,9 @@
 import { AgentMark } from "../agent-mark"
 import { Button } from "@/components/coss/button"
 import { Search } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { BpButton, BpTool, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps, BpConclusion, BpMark, BpRef, BpAnswerLabel, BpProvenanceLine } from "../blueprint/blueprint"
+import { BpAnnouncerProvider, useBpAnnounce, BpStepGroup, BpDecisionDock, BpDecisionReceipt, type BpStep, type BpStepGroupProps, type BpDecisionItem, type BpDecisionAnswer } from "../blueprint/blueprint"
 
 /** Explicitly played synthetic examples; no service or business state. */
 export function BlueprintMotionDemo() {
@@ -83,5 +84,96 @@ export function BlueprintMotionDemo() {
         <Button>coss 主按钮</Button>
       </div>
     </div>
+    <BpAnnouncerProvider><ProgressDecisionExamples /></BpAnnouncerProvider>
   </section>
+}
+
+const progressLabels = ["识别意图", "读取 R1 第 4 题作答", "对照 45 份标注", "组织答复"]
+const completedSteps: BpStep[] = progressLabels.map((label, index) => ({ id: String(index), label, state: "done", durationMs: [1000, 6000, 4000, 3000][index] }))
+const failedSteps: BpStep[] = [
+  completedSteps[0],
+  { ...completedSteps[1], state: "error", durationMs: 8000, detail: "作答图片读取超时" },
+  { ...completedSteps[2], state: "pending", durationMs: undefined },
+]
+const decisionItems: BpDecisionItem[] = [
+  { id: "assessment", question: "要查哪一次测评？", description: "你没说时间；目前只能查最近一次。", options: [{ value: "latest", label: "查最近一次", recommended: true }, { value: "new", label: "不查了，作为新诉求" }], other: { placeholder: "例如，查国庆前那次单元测" } },
+  { id: "lesson", question: "第 4 题讲评放在哪一节？", description: "明天有两节数学课。", options: [{ value: "second", label: "明天第 2 节", recommended: true }, { value: "fifth", label: "明天第 5 节" }] },
+]
+
+function ProgressDecisionExamples() {
+  const announce = useBpAnnounce()
+  const [live, setLive] = useState("（安静）")
+  const notify = useCallback((text: string) => { setLive(text); announce(text) }, [announce])
+  return <>
+    <p className="text-ui-hint text-muted-foreground">状态区此刻会说：{live}</p>
+    <section aria-label="处理中" className="min-w-0 space-y-4">
+      <h3 className="text-block-title">处理中</h3>
+      {[696, 480, 390].map(width => <div key={width} className="min-w-0 max-w-full space-y-3" style={{ width }}>
+        <p className="font-mono text-ui-meta text-muted-foreground">{width} px · 合成数据</p>
+        {width === 696 ? <ProgressPlayback notify={notify} /> : <BpStepGroup status="error" steps={failedSteps} startedAt={0} endedAt={9000} />}
+      </div>)}
+    </section>
+    <section aria-label="待你决定" className="min-w-0 space-y-4">
+      <h3 className="text-block-title">待你决定</h3>
+      {[696, 480, 390].map(width => <div key={width} className="min-w-0 max-w-full space-y-3" style={{ width }}>
+        <p className="font-mono text-ui-meta text-muted-foreground">{width} px · 合成数据</p>
+        <DecisionExample playable={width === 696} notify={notify} />
+      </div>)}
+    </section>
+  </>
+}
+
+type Playback = { mode: "short" | "mid" | "error"; startedAt: number; elapsed: number; stopped: boolean }
+
+function ProgressPlayback({ notify }: { notify: (text: string) => void }) {
+  const [run, setRun] = useState<Playback | null>(null)
+  const total = run?.mode === "short" ? 7 : run?.mode === "error" ? 9 : 26
+  const active = !!run && !run.stopped && run.elapsed < total
+  const firstWord = run?.mode === "short" ? 4 : 19
+  const status: BpStepGroupProps["status"] = !run ? "done" : run.stopped ? "stopped" : run.elapsed >= total ? (run.mode === "error" ? "error" : "done") : run.elapsed >= firstWord ? "answering" : "preparing"
+  useEffect(() => {
+    if (!active) return
+    const timer = setInterval(() => setRun(previous => previous && ({ ...previous, elapsed: Math.min(total, Math.floor((Date.now() - previous.startedAt) / 1000)) })), 1000)
+    return () => clearInterval(timer)
+  }, [active, run?.startedAt, total])
+  useEffect(() => {
+    if (!run) return
+    if (status === "done") notify(`答复完成，用了 ${total} 秒`)
+    if (status === "error") notify("1 步失败：读取 R1 第 4 题作答")
+    if (status === "stopped") notify("已停止，已写的保留")
+  }, [status, run?.startedAt, notify, total])
+  const play = (mode: Playback["mode"]) => { setRun({ mode, startedAt: Date.now(), elapsed: 0, stopped: false }); notify("Agent 正在处理") }
+  const doneAt = run?.mode === "short" ? [1, 2, 3, 7] : run?.mode === "error" ? [1, 9, 12, 14] : [2, 9, 16, 26]
+  const steps: BpStep[] = !run ? completedSteps : status === "error" ? failedSteps.map(step => step.state === "error" ? { ...step, action: <button type="button" className="text-(--link) underline" onClick={() => play("mid")}>重试这一步</button> } : step) : progressLabels.map((label, index) => {
+    const previousEnd = index === 0 ? 0 : doneAt[index - 1]
+    const done = run.elapsed >= doneAt[index]
+    return { id: String(index), label, state: done ? "done" : run.elapsed >= previousEnd ? "running" : "pending", durationMs: done ? (doneAt[index] - previousEnd) * 1000 : undefined }
+  })
+  return <div className="min-w-0 space-y-4">
+    <div className="flex flex-wrap gap-2"><BpButton onClick={() => play("short")}>播放 · 短档 7 s</BpButton><BpButton onClick={() => play("mid")}>播放 · 中档 26 s</BpButton><BpButton onClick={() => play("error")}>播放 · 出错</BpButton></div>
+    <BpStepGroup status={status} steps={steps} startedAt={run?.startedAt ?? 0} endedAt={run ? active ? undefined : run.startedAt + run.elapsed * 1000 : 14000} resetKey={run?.startedAt} onStop={active ? () => setRun(previous => previous && ({ ...previous, stopped: true })) : undefined} />
+    {run && run.elapsed >= firstWord && <p className="text-read-body" aria-busy={active}>第 4 题是公式法求两个实根，16 / 45 人失分。{active && <BpCaret />}</p>}
+    <BpStepGroup status="stopped" steps={completedSteps.slice(0, 2)} startedAt={0} endedAt={7000} />
+  </div>
+}
+
+function DecisionExample({ playable, notify }: { playable: boolean; notify: (text: string) => void }) {
+  const [items, setItems] = useState<BpDecisionItem[]>(playable ? [] : decisionItems)
+  const [receipts, setReceipts] = useState<{ id: string; question: ReactNode; answer?: ReactNode }[]>(playable ? [] : decisionItems)
+  const [index, setIndex] = useState(0)
+  const [folded, setFolded] = useState(false)
+  const onAnswer = (id: string, answer: BpDecisionAnswer) => {
+    const item = items.find(item => item.id === id)
+    const label = "other" in answer ? answer.other : item?.options.find(option => option.value === answer.value)?.label
+    const rest = items.filter(item => item.id !== id)
+    setReceipts(previous => previous.map(receipt => receipt.id === id ? { ...receipt, answer: label } : receipt))
+    setItems(rest)
+    setIndex(Math.min(index, Math.max(0, rest.length - 1)))
+    notify(rest.length ? `已选择 ${label}，还剩 ${rest.length} 件` : "没有待你决定的了")
+  }
+  return <div className="min-w-0 space-y-3">
+    {playable && <BpButton onClick={() => { setItems(decisionItems); setReceipts(decisionItems); setIndex(0); setFolded(false); notify("有 2 件待你决定") }}>来两件待你决定</BpButton>}
+    {receipts.map(receipt => <BpDecisionReceipt key={receipt.id} question={receipt.question} answer={receipt.answer} />)}
+    <BpDecisionDock items={items} index={index} onIndexChange={setIndex} folded={folded} onFoldedChange={setFolded} onAnswer={onAnswer} />
+  </div>
 }

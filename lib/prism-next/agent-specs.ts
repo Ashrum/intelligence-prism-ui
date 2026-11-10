@@ -71,6 +71,37 @@ export const coreAgentSpecs: Record<string, AgentSpec> = {
     contract: ["2×16px 曜蓝光标，1s steps(1) infinite，50% 透明；减弱动态常亮；aria-hidden。"],
   },
 
+  "bp-collapse": {
+    component: "BpCollapse",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["open/children，id/className 可选。网格行 0fr/1fr，展开 slow、收起 base，减弱动态取消过渡。关闭内容 inert + aria-hidden。宿主按钮提供 aria-expanded/aria-controls。useBpAutoExpand(failed, resetKey?) 返回 open/toggle，失败自动展开、手动优先、resetKey 变化清除记忆并收起。"],
+  },
+  "bp-elapsed": {
+    component: "BpElapsed",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["startedAt/endedAt?/threshold=10000。每秒显示宿主起点至当前的用时，满阈值淡入，endedAt 存在立即显示且无定时器。aria-hidden 等宽数字，统一播报由宿主完成。formatBpElapsed 向下取整，分钟起秒数补零，负数/非有限值返回空。"],
+  },
+  "bp-step-group": {
+    component: "BpStepGroup",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["status=preparing|answering|done|error|stopped，steps={id,label,state,durationMs?,detail?,action?}[]，startedAt/endedAt?/resetKey?。onStop 仅发意图。summaryLabel/stopLabel/expandLabel/collapseLabel 可覆盖。首字前步骤与工作线，之后一行摘要和 ol 明细，成功默认收起、出错自动展开、手动优先。根无 live region，结束时间缺失显示用时未知。"],
+  },
+  "bp-announcer": {
+    component: "BpAnnouncerProvider / useBpAnnounce",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["宿主全页挂载一个 Provider，sr-only role=status aria-live=polite aria-atomic=true。useBpAnnounce 返回 announce(text)，清空后下一帧写入，支持重复句子，Provider 外为空操作。只播报宿主状态变化，卸载清除待执行帧。"],
+  },
+  "bp-decision-dock": {
+    component: "BpDecisionDock",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["受控 items/index/onIndexChange/folded/onFoldedChange，onAnswer(id,{value}|{other}) 立即发意图。confirmDwell=800ms 保留问题与选择快照，之后读取宿主最新队列。title/laterLabel 与 other 文案可覆盖，other=false 关闭自由填写。卡内数字选择、Escape 稍后，忽略输入/可编辑区/组字，出现保留焦点。≤480px 最高 50dvh、头部固定、正文滚动，减弱动态取消位移、透明度 fast。"],
+  },
+  "bp-decision-receipt": {
+    component: "BpDecisionReceipt",
+    source: "Prism AF FROZEN REV 0.1 / docs/blueprint-theme-v2.md §15",
+    contract: ["question/answer? 展示宿主问答。等待时粉点、等你决定、输入框上方提示；已答时勾、问题、箭头、加粗回答。消息流内使用。"],
+  },
+
   'math-field': {
     component: 'MathField 公式框 · P119 候选',
     source: 'MathLive 0.111.1 / Prism Button / coss Label、Textarea / DraftMathPreview；docs/component-contracts.md#p119--mathfield-公式框2026-10-26',
