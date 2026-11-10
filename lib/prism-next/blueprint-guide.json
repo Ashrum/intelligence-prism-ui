@@ -1,6 +1,6 @@
 {
   "sourcePath": "docs/blueprint-theme.md",
-  "sourceSha256": "502de70387bac2dc1e7d720c216ed28ff2601f4df947ed995ca73cfd148fa0d8",
+  "sourceSha256": "585c5e61becb85634a16e92f61e9d01b5529426969f91e7e9cd19523dea41e3d",
   "sourceDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
   "currentSpecDownload": "/foundations/blueprint/guide-assets/docs/blueprint-theme-v2.md",
   "currentSpecVersion": "v2.2",
@@ -15320,7 +15320,15 @@
             },
             {
               "type": "text",
-              "value": "。"
+              "value": "，可选 "
+            },
+            {
+              "type": "code",
+              "value": "muted"
+            },
+            {
+              "type": "text",
+              "value": " 将该组格子与图例置灰并保留位置。"
             },
             {
               "type": "code",
@@ -15344,7 +15352,63 @@
             },
             {
               "type": "text",
-              "value": " 默认 true。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。"
+              "value": " 默认 true。可选 "
+            },
+            {
+              "type": "code",
+              "value": "onSelect(groupId)"
+            },
+            {
+              "type": "text",
+              "value": " 让图例和格子发出点选意图，"
+            },
+            {
+              "type": "code",
+              "value": "selected"
+            },
+            {
+              "type": "text",
+              "value": " 为宿主控制的已选 id 数组，仅在传入 "
+            },
+            {
+              "type": "code",
+              "value": "onSelect"
+            },
+            {
+              "type": "text",
+              "value": " 时生效，筛选与置灰由宿主决定。点选时根为 "
+            },
+            {
+              "type": "code",
+              "value": "role=\"group\""
+            },
+            {
+              "type": "text",
+              "value": "，图例按钮以 "
+            },
+            {
+              "type": "code",
+              "value": "aria-pressed"
+            },
+            {
+              "type": "text",
+              "value": " 呈现选中态并提供键盘入口，格子提供快捷点击且保持 "
+            },
+            {
+              "type": "code",
+              "value": "aria-hidden"
+            },
+            {
+              "type": "text",
+              "value": "。点选且 "
+            },
+            {
+              "type": "code",
+              "value": "legend=false"
+            },
+            {
+              "type": "text",
+              "value": " 时开发环境每实例警告一次，仍渲染。不传新属性时输出保持不变。每格 30×30、间距 4，人数超过 60 时开发环境每实例仅警告一次，仍渲染全部。"
             }
           ]
         ],
@@ -16121,7 +16185,7 @@
     {
       "source": "docs/blueprint-theme.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme.md",
-      "sha256": "502de70387bac2dc1e7d720c216ed28ff2601f4df947ed995ca73cfd148fa0d8"
+      "sha256": "585c5e61becb85634a16e92f61e9d01b5529426969f91e7e9cd19523dea41e3d"
     },
     {
       "source": "docs/blueprint-theme-v2.md",

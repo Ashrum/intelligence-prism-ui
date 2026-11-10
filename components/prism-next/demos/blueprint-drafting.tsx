@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { BlueprintSectionHeader, BpButton, BpDimension, BpDraft, BpInferred, BpSizeBar, BpStat, BpStatStrip, BpStatus, BpUnitGrid, type BpUnitGridProps } from "../blueprint/blueprint"
 import { useChartTheme } from "../charts/chart-theme"
 import { BLUEPRINT_SERIES } from "@/lib/prism-next/chart-palette"
@@ -36,6 +37,7 @@ function DraftBody() {
 
 export function BlueprintDraftingDemo() {
   const { theme } = useChartTheme()
+  const [selected, setSelected] = useState<string[]>([])
   return <section id="drafting" aria-label="v2.1 制图元素与颜色（合成数据）" className="min-w-0 space-y-8">
     <BlueprintSectionHeader title="v2.1 制图元素与颜色" description="合成数据，演示尺寸线、分行直标与展开全班构成、双段错题条与草稿确认两态。" />
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -96,6 +98,22 @@ export function BlueprintDraftingDemo() {
           <div className="mt-3"><BpUnitGrid label="学生学习进展" groups={groups} /></div>
         </details>
         <p className="text-ui-meta text-muted-foreground">一个面板默认只用一种斜纹；需要看全班构成时再展开。</p>
+        <section className="min-w-0 space-y-3" aria-label="全班构成点选示例">
+          <h4 className="text-block-title">点选分组</h4>
+          <BpUnitGrid label="学生学习进展 · 点选分组"
+            groups={groups.map(group => ({ ...group, muted: selected.length > 0 && !selected.includes(group.id) }))}
+            selected={selected}
+            onSelect={id => setSelected(current => current.includes(id) ? current.filter(value => value !== id) : [...current, id])} />
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-ui-meta" aria-live="polite">{selected.length ? `已选：${groups.filter(group => selected.includes(group.id)).map(group => group.label).join("、")}` : "未筛选"}</p>
+            <BpButton onClick={() => setSelected([])} disabled={selected.length === 0}>清除</BpButton>
+          </div>
+        </section>
+        <section className="min-w-0 space-y-3" aria-label="优先关注静态示例">
+          <h4 className="text-block-title">优先关注 · 10 人</h4>
+          <BpUnitGrid label="优先关注需要支持与近期回落的学生"
+            groups={groups.map(group => ({ ...group, muted: group.id !== "support" && group.id !== "decline" }))} />
+        </section>
       </section>
       <section className="min-w-0 space-y-3">
         <h3 className="border-b border-(--line) pb-2 text-block-title">出错最多的题</h3>

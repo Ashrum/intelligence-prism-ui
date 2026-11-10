@@ -66,13 +66,17 @@ export function BpDimension({ orientation, at, from, to, leaderFrom, tick = 12, 
 
 export interface BpUnitGridProps {
   /** Counts are whole, nonnegative people. Groups retain caller order. */
-  groups: { id: string; label: string; count: number; fill: BpFill }[]
+  groups: { id: string; label: string; count: number; fill: BpFill; muted?: boolean }[]
   label: string
   unit?: string
   legend?: boolean
+  /** Ids shown as selected; only meaningful with onSelect. */
+  selected?: readonly string[]
+  /** When set, legend items become buttons and cells become click targets. */
+  onSelect?: (groupId: string) => void
 }
 
-export function BpUnitGrid({ groups, label, unit = "人", legend = true }: BpUnitGridProps) {
+export function BpUnitGrid({ groups, label, unit = "人", legend = true, selected, onSelect }: BpUnitGridProps) {
   const { theme } = useChartTheme()
   const total = groups.reduce((sum, group) => sum + group.count, 0)
   const warned = useRef(false)
@@ -82,16 +86,30 @@ export function BpUnitGrid({ groups, label, unit = "人", legend = true }: BpUni
       console.warn("BpUnitGrid: 一格一人适用于 60 人以内，当前仍按全部人数渲染。")
     }
   }, [total])
+  const warnedMissingLegend = useRef(false)
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && onSelect && !legend && !warnedMissingLegend.current) {
+      warnedMissingLegend.current = true
+      console.warn("BpUnitGrid：点选需要图例作为键盘入口")
+    }
+  }, [legend, onSelect])
   const summary = `${label}；${groups.map(group => `${group.label} ${group.count}${unit}`).join("；")}；总计 ${total}${unit}`
-  return <div className="bp-unit-root" data-blueprint={theme === "blueprint" || undefined} role="img" aria-label={summary}>
+  return <div className="bp-unit-root" data-blueprint={theme === "blueprint" || undefined} role={onSelect ? "group" : "img"} aria-label={summary}>
     <div className="bp-unit-cells" aria-hidden="true">
-      {groups.flatMap(group => Array.from({ length: group.count }, (_, index) => <span key={`${group.id}-${index}`} className={`bp-unit-cell bp-fill-${group.fill}`} />))}
+      {groups.flatMap(group => Array.from({ length: group.count }, (_, index) => <span key={`${group.id}-${index}`} className={`bp-unit-cell bp-fill-${group.fill}`}
+        data-muted={group.muted ? "" : undefined} data-pickable={onSelect ? "" : undefined} onClick={onSelect ? () => onSelect(group.id) : undefined} />))}
     </div>
-    {legend && <ul className="bp-unit-legend text-ui-meta" aria-hidden="true">
-      {groups.map(group => <li key={group.id} data-tone={group.fill === "todo" || group.fill === "hatch-todo" ? "todo" : undefined}>
-        <span className={`bp-unit-key bp-fill-${group.fill}`} />
-        <span>{group.label}</span><b className="bp-unit-count">{group.count}</b>
-      </li>)}
+    {legend && <ul className="bp-unit-legend text-ui-meta" aria-hidden={onSelect ? undefined : "true"}>
+      {groups.map(group => {
+        const content = <>
+          <span className={`bp-unit-key bp-fill-${group.fill}`} data-muted={group.muted ? "" : undefined} />
+          <span>{group.label}</span><b className="bp-unit-count">{group.count}</b>
+        </>
+        return <li key={group.id} data-tone={group.fill === "todo" || group.fill === "hatch-todo" ? "todo" : undefined}
+          data-muted={group.muted ? "" : undefined} data-selected={onSelect && selected?.includes(group.id) ? "" : undefined}>
+          {onSelect ? <button type="button" className="bp-unit-pick" aria-pressed={selected?.includes(group.id) ?? false} onClick={() => onSelect(group.id)}>{content}</button> : content}
+        </li>
+      })}
     </ul>}
   </div>
 }
