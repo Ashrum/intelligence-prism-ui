@@ -560,3 +560,6 @@ export function BpCodebox({ file, meta, children, className }: { file: ReactNode
 export function BpToast({ className, ...props }: ComponentProps<"div">) {
   return <div role="status" {...props} className={cn("bp-toast", className)} />
 }
+
+export { BpWorkLayer, BpWorkSkeleton } from "./work-layer"
+export type { BpWorkLayerProps, BpWorkSkeletonProps } from "./work-layer"

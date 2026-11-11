@@ -3497,6 +3497,13 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 
 契约运行时由 `agent-specs.ts` 的五条记录提供，`getSemanticContract` 读取同源条目；组件从 `blueprint/blueprint.tsx` 导出。
 
+### P162 · 全屏子页面层
+
+来源为「预览层 骨架与动效」FROZEN REV 0.1，动效与骨架规则见 `docs/blueprint-theme-v2.md` §15。复用固定 coss Dialog 部件、现有 `BpSkeleton`；组件与 Props 从 `blueprint/blueprint.tsx` 导出。宿主业务接入另单处理。
+
+- **BpWorkLayer**（`bp-work-layer`）：受控 `open/onOpenChange`、必填 `label/children`；`portalProps` 透传 Portal，`initialFocus/finalFocus` 透传 Popup，`popupProps` 合并 className 并保留宿主 data-*、ref、事件。顶层 label、焦点参数和组件 aria-busy 优先。skeleton 默认 `BpWorkSkeleton`。每次打开 ready=false，收到 Base UI onOpenChangeComplete(true)、进场完成后再经 rAF → setTimeout 0 挂 children；可选 onOpenChangeComplete 向宿主转发打开与关闭完成回调；关闭或卸载取消帧与计时器，关闭时不渲染内容。ready 前 aria-busy=true，之后移除。内容块以 `contentKey` 为 key，首次与切换淡入 120 ms；不同 key 会重置子树本地状态。打开 320 ms 放大淡入，关闭 200 ms；减弱动态均 120 ms 仅透明度、隐藏压暗层。宿主不得在关闭当帧卸载整个组件，退场卸载交给 Base UI。ready 初值支持服务端计算，但真实 Portal 的 SSR HTML 为空，不声明服务端已输出骨架；首帧骨架由浏览器验收。组件只管呈现和焦点，不判断数据加载或执行业务。
+- **BpWorkSkeleton**（`bp-work-skeleton`）：`header?: ReactNode` 原样渲染，缺省为 56 px 顶栏占位；`rail=true/inspector=true` 分别控制 232/380 px 侧栏，中栏自适应，小于 768 px 仅显示中栏。`label="正在打开"` 用于 role=status 的 aria-label。标题、来源、三格指标、页签、两栏列表和图表均由 BpSkeleton 组合；静态占位、不扫光，真顶栏底线与侧栏分隔遵循 1.5/1 px 规则。
+
 ### P159 · 处理中与待你决定
 
 来源为 AF FROZEN REV 0.1 与 `docs/blueprint-theme-v2.md` §15。组件及 Props 从 `blueprint/blueprint.tsx` 导出。复用 `BpWorkLine`、`BpButton`、coss Input 与现有语义令牌，折叠取舍及 particles 离线检索见 §15。

@@ -302,6 +302,20 @@ BpButton / BpTool 样式迁入组件，常态尺寸、颜色、边框、阴影�
 
 复用检索采用现有 `BpWorkLine`、`BpFocusBlock` 的 attention 令牌、`BpButton`、固定 coss Input / Button / Collapsible，以及 `docs/score-review.md` 已记录的 particles `p-collapsible-1`。coss 折叠使用测量高度和固定 200 ms，AF 指定网格行与分档令牌，故本轮补 `BpCollapse`。现有 `AgentQuestionCard` 为回填选择，AF 停靠卡按授权补即时回答意图。离线检索沿用仓库记录。
 
+### 全屏子页面层（P162 · 2026-11-11）
+
+设计依据为「预览层 骨架与动效」FROZEN REV 0.1（PO 2026-11-10 冻结），本轮组件与合成示例待 Supervisor 浏览器验收，工程准入未开始。
+
+- **打开**：SHEET 01 的 `.pl-layer` 指定 0.985 → 1 放大、透明度 0 → 1，原点 50% 40%，取 `--motion-slow` 320 ms 与 `ease-bp`；底层黑 8% 压暗。`BpWorkLayer` 先呈现骨架，收到 Base UI `onOpenChangeComplete(true)`、进场完成后再经 rAF → setTimeout 0 挂载重内容（减弱动态等待 120 ms 进场完成）。
+- **关闭**：SHEET 03 指定 200 ms 反向；宿主保持组件挂载并将 `open` 设为 false，由 Base UI 在退场后卸载 Popup，按 `finalFocus` 返回焦点。关闭时重内容立即移除。
+- **切换**：SHEET 01 的 `.pl-content` 与 SHEET 03 指定 120 ms 淡入；首次就绪或 `contentKey` 改变时重挂内容容器，层不重播。容器使用 `h-full min-h-0` 块盒，使 opacity 动画有实际绘制盒；宿主负责数据就绪与局部占位。
+- **减弱动态**：SHEET 03 指定打开、关闭均只保留 120 ms 透明度，不缩放、不压暗；CSS 媒体变体同步响应系统偏好及运行中变化。
+- **骨架**：SHEET 02 指定真顶栏优先，缺省为 56 px 占位，顶栏底线 1.5 px；左 232 px、中自适应、右 380 px，竖向分隔为 1 px。中栏保留标题、来源、三格指标、页签、两栏列表和图表块；小于 768 px 隐藏侧栏。骨架立即显示，不套用通用等待的 400 ms 延迟。
+
+复用检索：采用现有 `BpSkeleton`、`BpWorkHeader`、`BpButton` 与固定 coss 导出的 `DialogPrimitive`；`ReviewWorkspace` 仅提供布局，coss `DialogPopup` 自带限宽、圆角和视口包装，均不符合本轮全屏层形状，因此仅组合原始 Dialog 部件。离线沿用仓库的 coss / particles 来源记录，不引入新组件来源或依赖。Tailwind v4 的 scale 是独立属性，Popup 过渡列表同时包含 opacity、transform、scale；所有时长沿用现有令牌。
+
+`initialFocus` / `finalFocus` 及 `portalProps` 由宿主提供，嵌套主题使用 `usePrismPortalProps()` 的容器。内部 ready 初值为 false；真实 Base UI Portal 在 SSR 不输出弹层 HTML，骨架与 aria-busy 在客户端 Portal 挂载时呈现，首帧骨架由 Supervisor 在浏览器验收。组件只安排呈现时序，不读取或推定业务加载完成。
+
 # 附录 · v2 原文（2026-11-05）
 
 以下为 v2 全文，保留作为基线；与上文 v2.1 冲突处以 v2.1 为准。
