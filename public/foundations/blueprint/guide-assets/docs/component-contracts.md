@@ -2453,6 +2453,7 @@ Workspace 适配建议（只读核对 `ole-school-workbench` main `a2962e9`，�
 ### 学情蓝图校准（P97）
 
 - Badge 复用 Prism 适配层与冻结 coss Badge；可选 `mark="ok" | "warn" | "no"` 分别前置 ✓ / ! / ✗，符号仅蓝图与夜图可见、`aria-hidden`，必须保留状态文字；`variant` 独立选择 success / warning / error 等语义，不从 mark 推断业务状态。所有蓝图 Badge（包括 coss 原语）使用直角、1.5px currentColor 描边和 card 纸面，颜色只在文字、边框与符号上；嵌套 core 预览不受覆盖。core 原 variant、字号、尺寸与默认 DOM（未传 mark）保持。
+- `BpSizeBar.track?: "default" | "muted"` 默认 default；muted 使用 `--muted` 轨道底色并去掉轨道边框，适用于 default / sm / xs。
 - `BpSizeBar.rows[].display?: string` 完整替换右侧汇总文案（不再另加 unit），例如 `65% · 177 / 272`；未传时仍显示分段合计与 unit，合计、图例和 aria 数值统一 zh-CN 千分位，最多 21 位有效数字。`total` 仍只作条形分母，不改为右侧分段合计，不计算业务率。
 - `legendValues?: boolean` 单行默认 true，多行默认 false 保留既有合并类别图例；多行显式 true 时每行有自己的命名图例，不按跨行 id 合并数值。数值图例保留每个零值并显示 0；零段不占条形宽度。`legend=false` 仍隐藏图例，但每行 aria 名称始终包含全部分段的格式化数值。ink / hatch / quiet 可分别承载合格 / 排除或未核实 / 其他，分类和事实由宿主提供。
 - `ChartLegendMarker` 新增 area / segment / hatch；area、bar、segment 在 blueprint / blueprint-night 下显示方块，hatch 为斜线块。area / segment 在 core 采用原圆点类别样式，旧 marker 的 core 几何不变。dot / hollow-dot / diamond / triangle / square 保留点语义，line / dashed-line 保留线段，不能把点类一概改方块。调用方须明确传类别 marker；显式 color 优先规则不变。
@@ -3502,7 +3503,7 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 来源为「预览层 骨架与动效」FROZEN REV 0.1，动效与骨架规则见 `docs/blueprint-theme-v2.md` §15。复用固定 coss Dialog 部件、现有 `BpSkeleton`；组件与 Props 从 `blueprint/blueprint.tsx` 导出。宿主业务接入另单处理。
 
 - **BpWorkLayer**（`bp-work-layer`）：受控 `open/onOpenChange`、必填 `label/children`；`portalProps` 透传 Portal，`initialFocus/finalFocus` 透传 Popup，`popupProps` 合并 className 并保留宿主 data-*、ref、事件。顶层 label、焦点参数和组件 aria-busy 优先。skeleton 默认 `BpWorkSkeleton`。初始及关闭完成后 ready=false，收到 Base UI onOpenChangeComplete(true)、进场完成后再经 rAF → setTimeout 0 挂 children；可选 onOpenChangeComplete 向宿主转发打开与关闭完成回调；关闭或卸载取消帧与计时器，关闭完成回调中重置 ready=false。退场时保留当前内容（未 ready 时保留骨架），反向播完后卸载。仅 open 且未 ready 时 aria-busy=true，其余移除。内容块以 `contentKey` 为 key，首次与切换淡入 120 ms；不同 key 会重置子树本地状态。打开 320 ms 放大淡入，关闭 200 ms；减弱动态均 120 ms 仅透明度、隐藏压暗层。宿主不得在关闭当帧卸载整个组件，退场卸载交给 Base UI。ready 初值支持服务端计算，但真实 Portal 的 SSR HTML 为空，不声明服务端已输出骨架；首帧骨架由浏览器验收。组件只管呈现和焦点，不判断数据加载或执行业务。
-- **BpWorkSkeleton**（`bp-work-skeleton`）：`header?: ReactNode` 原样渲染，缺省为 56 px 顶栏占位；`rail=true/inspector=true` 分别控制 232/380 px 侧栏，中栏自适应，小于 768 px 仅显示中栏。`label="正在打开"` 用于 role=status 的 aria-label。标题、来源、三格指标、页签、两栏列表和图表均由 BpSkeleton 组合；静态占位、不扫光，真顶栏底线与侧栏分隔遵循 1.5/1 px 规则。
+- **BpWorkSkeleton**（`bp-work-skeleton`）：`header?: ReactNode` 原样渲染，缺省为 56 px 顶栏占位；`rail=true/inspector=true` 分别控制 232/380 px 侧栏，中栏自适应，< 768 px 为单栏：纸面无边框、指标三行、只留第一栏列表。`label="正在打开"` 用于 role=status 的 aria-label。标题、来源、三格指标、页签、两栏列表和图表均由 BpSkeleton 组合；静态占位、不扫光，真顶栏底线与侧栏分隔遵循 1.5/1 px 规则。
 
 ### P159 · 处理中与待你决定
 

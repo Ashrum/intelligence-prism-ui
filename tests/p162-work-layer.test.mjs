@@ -90,6 +90,14 @@ test('P162 skeleton keeps known header, optional sidebars and responsive center 
   for (const token of ['data-bp-work-skeleton-header', 'h-14', 'border-b-[1.5px]', 'w-[232px]', 'w-[380px]', 'md:block', 'border-r border-border', 'border-l border-border', 'min-w-0 flex-1']) assert.ok(html.includes(token), token);
   assert.equal((html.match(/data-shape="stat"/g) || []).length, 3);
   assert.match(html, /height:180px/);
+  assert.match(html, /class="hidden md:grid grid-cols-3 divide-x/);
+  assert.match(html, /class="border-t border-border md:hidden"/);
+  assert.equal((html.match(/grid-cols-\[76px_minmax\(0,1fr\)_64px\]/g) || []).length, 3);
+  assert.match(html, /grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-8/);
+  assert.match(html, /class="hidden md:block min-w-0 space-y-3.5"><div[^>]*width:50%/);
+  assert.match(html, /class="hidden md:block"><div[^>]*height:180px/);
+  assert.match(html, /overflow-y-auto p-0 md:p-4/);
+  assert.match(html, /bg-card px-4 py-4 md:border md:border-border md:py-7/);
   for (const rail of [true, false]) for (const inspector of [true, false]) {
     const custom = render(api.BpWorkSkeleton, { rail, inspector, header: h('header', null, '真实顶栏'), label: '正在打开李思远' });
     assert.match(custom, /<header>真实顶栏<\/header>/);
