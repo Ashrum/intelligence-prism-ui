@@ -336,7 +336,9 @@ export function MaterialCard({ title, onOpen }: { title: string; onOpen: () => v
 | Prism Badge `variant='attention'` | 原 variant 默认不变 | 映射 coss 已有 error 变体；文字应表达待人工处理，不推断任务失败。Prism 默认 size 继续为 lg |
 | Prism Button `size='navigation' / 'navigation-icon'` | 原 size 默认不变 | 从 `components/prism-next/button` 导入；文字按钮最小 40px、自适应高度，图标按钮 40px，粗指针最小/固定 44px。保留 coss 原字体与事件，可与 info 变体组合 |
 | Prism Button `variant='info'` | 原 variant 默认不变 | 信息色用于“引导/信息性操作”，不替代主操作（default）层级，每个操作区仍只有一个主要动作。复用既有 info 语义令牌，保留 coss 尺寸、焦点、disabled、loading 与 render 行为 |
-| Prism Toolbar `variant='framed' / 'plain'` | `framed` | 从 `components/prism-next/toolbar` 导入；framed 完整复用 coss，plain 复用同一 Base UI root 和子组件，仅省略外框，保留键盘与导航语义 |
+| Prism Toolbar `variant='framed' / 'plain' / 'inverse'` | `framed` | 从 `components/prism-next/toolbar` 导入；framed 完整复用 coss，plain 复用同一 Base UI root 和子组件，仅省略外框，保留键盘与导航语义；inverse 用于勾选后的批量操作条，复用同一 root，按钮自动反色，可用于贴底或浮层，sticky / fixed 等定位由宿主负责 |
+
+Toolbar inverse（P165）复用已有 Prism Toolbar、Button 与冻结 coss ToolbarPrimitive / ToolbarSeparator，无新增组件或第三方实现；未联网刷新 particles。样式仅对显式 inverse 生效，使用既有 `--brand-blue` 硬阴影、`--disabled-foreground` 中灰（蓝图为 #8B929E；现有令牌没有画板 #5E6675，禁用边框与分隔线沿用同一中灰），字号沿用 `text-ui-body`。只做 180 ms 入场，系统减少动态效果时停用。
 
 Composer 的统一发送条件为 `!running && !readOnly && !sendDisabled && !sendDisabledReason && value.trim()`；不传新属性时原渲染与行为保持。发送原因不自动解除、只读不自动改变运行状态，组件不自行决定可用范围。示例：`/next/components/agent-components#composer-adaptations`、`/next/components/metric-summary#compact-summary`、`/next/components/status-composition#compact-composition`、`/next/components/question#print-metadata`、`/next/components/badge`、`/next/components/button`、`/next/components/toolbar`。
 
