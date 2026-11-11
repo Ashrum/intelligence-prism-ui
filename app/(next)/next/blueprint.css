@@ -626,6 +626,7 @@
 .bp-size-xs .bp-size-legend { margin:0; column-gap:4px; row-gap:2px; }
 .bp-size-xs .bp-size-legend li { align-items:baseline; gap:4px; white-space:nowrap; }
 .bp-size-xs .bp-size-legend li > span[aria-hidden] { width:9px; height:9px; margin:0; }
+.bp-size-track-muted .bp-size-bar { background:var(--muted); border:0; }
 .bp-size-bar:has(> .bp-size-marker) { position:relative; overflow:visible; }
 .bp-size-marker { position:absolute; top:-4px; bottom:-4px; width:0; border-left:2px solid var(--foreground); }
 .bp-size-marker-key { height:9px; border-left:2px solid var(--foreground); }

@@ -358,6 +358,7 @@ export interface BpSizeBarProps {
   legendValues?: boolean
   framed?: boolean
   size?: "default" | "sm" | "xs"
+  track?: "default" | "muted"
   /** Target in the same units as each row total; included in the accessible name. */
   marker?: { value: number; label: string }
   /** Formats segment and marker text only; row display and geometry stay raw. */
@@ -376,7 +377,7 @@ export interface BpSizeBarProps {
 }
 const sizeNumber = new Intl.NumberFormat("zh-CN", { maximumSignificantDigits: 21 })
 /** Composition bars. Fills differ by pattern, not only colour; every value is written out in the accessible name and legend. */
-export function BpSizeBar({ rows, layout = "row", legend = true, legendValues = rows.length === 1, framed = true, size = "default", hideRowLabel = false, labelWidth = "default", marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
+export function BpSizeBar({ rows, layout = "row", legend = true, legendValues = rows.length === 1, framed = true, size = "default", track = "default", hideRowLabel = false, labelWidth = "default", marker, formatValue, onRowActivate, activeRowId, rowActionLabel, className }: BpSizeBarProps) {
   const compact = size === "xs"
   const hideLabel = compact || hideRowLabel
   const labelSegmenter = labelWidth === "wide" && !hideLabel ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : undefined
@@ -393,7 +394,7 @@ export function BpSizeBar({ rows, layout = "row", legend = true, legendValues = 
     })}
     {marker && <li className="flex items-center gap-1.5"><span aria-hidden="true" className="bp-size-marker-key" />{marker.label}{formattedMarker && ` ${formattedMarker.text}`}</li>}
   </ul>}
-  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", layout === "stacked" && "bp-dim-size-stacked", className)} data-size-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
+  return <div className={cn("space-y-3", framed && "border-(length:--line-width) border-(--line) p-4.5 pb-3.5", size === "sm" && "bp-size-sm", compact && "bp-size-xs", track === "muted" && "bp-size-track-muted", layout === "stacked" && "bp-dim-size-stacked", className)} data-size-label-width={labelWidth === "wide" && !hideLabel ? "wide" : undefined}>
     {rows.map(row => {
       const sum = row.segments.reduce((n, s) => n + Math.max(0, s.value), 0)
       const total = row.total ?? sum

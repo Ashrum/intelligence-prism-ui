@@ -85,6 +85,19 @@ export function BlueprintDraftingDemo() {
         <BpStat size="metric" label="有效人数" value={45} unit="人" caption="有效 45 / 全班 45 人" />
       </BpStatStrip>
     </section>
+    <section className="min-w-0 space-y-3" aria-label="浅灰轨道（失分条）">
+      <h3 className="text-block-title">浅灰轨道（失分条）</h3>
+      {[
+        { id: "graph", label: "开口与图像变换", value: 17 },
+        { id: "formula", label: "公式法", value: 15 },
+        { id: "equation", label: "函数与方程", value: 12 },
+      ].map(row => <div key={row.id} className="space-y-1.5">
+        <p className="text-ui-body">{row.label}</p>
+        <BpSizeBar size="xs" framed={false} legend={false} hideRowLabel track="muted" rows={[
+          { id: row.id, label: row.label, total: 17, unit: "分", display: "", segments: [{ id: "lost", label: "失分", value: row.value, fill: "ai" }] },
+        ]} />
+      </div>)}
+    </section>
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,3fr)]">
       <section className="min-w-0 space-y-3">
         <h3 className="border-b border-(--line) pb-2 text-block-title">学生学习进展 · 分行直标</h3>

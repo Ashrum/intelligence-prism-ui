@@ -22,18 +22,23 @@ export function BpWorkSkeleton({ header, rail = true, inspector = true, label = 
         <BpSkeleton width="60%" height={14} /><BpSkeleton height={28} /><BpSkeleton width="40%" height={12} />
         {[52, 46, 58, 42, 50, 55].map(width => <BpSkeleton key={width} shape="row" lines={[`${width}%`, "36px"]} height={14} />)}
       </aside>}
-      <div data-bp-work-skeleton-main className="min-w-0 flex-1 overflow-y-auto p-4">
-        <div className="space-y-5 border border-border bg-card px-4 py-7 lg:px-8">
+      <div data-bp-work-skeleton-main className="min-w-0 flex-1 overflow-y-auto p-0 md:p-4">
+        <div className="space-y-5 bg-card px-4 py-4 md:border md:border-border md:py-7 lg:px-8">
           <BpSkeleton width="72%" height={28} /><BpSkeleton width="54%" height={12} />
-          <div className="grid grid-cols-3 divide-x divide-border border-y border-border">
+          <div className="hidden md:grid grid-cols-3 divide-x divide-border border-y border-border">
             {[0, 1, 2].map(index => <BpSkeleton key={index} shape="stat" />)}
           </div>
-          <div className="grid grid-cols-3 gap-6"><BpSkeleton width={64} height={14} /><BpSkeleton width={72} height={14} /><BpSkeleton width={72} height={14} /></div>
-          <div className="grid grid-cols-2 gap-4 lg:gap-8">
-            <div className="min-w-0 space-y-3.5"><BpSkeleton width="40%" height={16} />{[0, 1, 2, 3].map(index => <BpSkeleton key={index} shape="block" height={40} />)}</div>
-            <div className="min-w-0 space-y-3.5"><BpSkeleton width="50%" height={16} />{[0, 1].map(index => <BpSkeleton key={index} shape="block" height={58} />)}</div>
+          <div className="border-t border-border md:hidden">
+            {[0, 1, 2].map(index => <div key={index} className="grid grid-cols-[76px_minmax(0,1fr)_64px] items-center gap-2.5 border-b border-border py-2.5">
+              <BpSkeleton width="80%" height={12} /><BpSkeleton height={6} /><BpSkeleton width="100%" height={14} />
+            </div>)}
           </div>
-          <BpSkeleton shape="block" height={180} />
+          <div className="grid grid-cols-3 gap-6"><BpSkeleton width={64} height={14} /><BpSkeleton width={72} height={14} /><BpSkeleton width={72} height={14} /></div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-8">
+            <div className="min-w-0 space-y-3.5"><BpSkeleton width="40%" height={16} />{[0, 1, 2, 3].map(index => <BpSkeleton key={index} shape="block" height={40} />)}</div>
+            <div className="hidden md:block min-w-0 space-y-3.5"><BpSkeleton width="50%" height={16} />{[0, 1].map(index => <BpSkeleton key={index} shape="block" height={58} />)}</div>
+          </div>
+          <div className="hidden md:block"><BpSkeleton shape="block" height={180} /></div>
         </div>
       </div>
       {inspector && <aside data-bp-work-skeleton-inspector className="hidden w-[380px] shrink-0 space-y-4 overflow-y-auto border-l border-border px-6 py-5 md:block">

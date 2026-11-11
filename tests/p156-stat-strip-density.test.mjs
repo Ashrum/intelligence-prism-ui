@@ -80,5 +80,7 @@ test('P156 compact CSS scopes geometry and thresholds to opt-in strips', () => {
     /^:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.d1-rail:not\(/.test(line) ? line.replace('{ border-right:1px solid var(--border); }', '{ border-right:1.5px solid var(--line); }')
     : /^:is\(\[data-prism-theme="blueprint"\],\[data-prism-theme="blueprint-night"\]\) \.d1-inspector:not\(/.test(line) ? line.replace('{ border-left:1px solid var(--border); }', '{ border-left:1.5px solid var(--line); }')
     : line).join('\n');
-  assert.equal(columnRules(css.replace('\n' + compact, '').replace(unitSelect, '')), baseline);
+  // P164 adds exactly one opt-in muted-track rule.
+  const mutedTrack = '.bp-size-track-muted .bp-size-bar { background:var(--muted); border:0; }\n';
+  assert.equal(columnRules(css.replace(mutedTrack, '').replace('\n' + compact, '').replace(unitSelect, '')), baseline);
 });
