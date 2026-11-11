@@ -307,7 +307,7 @@ BpButton / BpTool 样式迁入组件，常态尺寸、颜色、边框、阴影�
 设计依据为「预览层 骨架与动效」FROZEN REV 0.1（PO 2026-11-10 冻结），本轮组件与合成示例待 Supervisor 浏览器验收，工程准入未开始。
 
 - **打开**：SHEET 01 的 `.pl-layer` 指定 0.985 → 1 放大、透明度 0 → 1，原点 50% 40%，取 `--motion-slow` 320 ms 与 `ease-bp`；底层黑 8% 压暗。`BpWorkLayer` 先呈现骨架，收到 Base UI `onOpenChangeComplete(true)`、进场完成后再经 rAF → setTimeout 0 挂载重内容（减弱动态等待 120 ms 进场完成）。
-- **关闭**：SHEET 03 指定 200 ms 反向；宿主保持组件挂载并将 `open` 设为 false，由 Base UI 在退场后卸载 Popup，按 `finalFocus` 返回焦点。关闭时重内容立即移除。
+- **关闭**：SHEET 03 指定 200 ms 反向；宿主保持组件挂载并将 `open` 设为 false，由 Base UI 在退场后卸载 Popup，按 `finalFocus` 返回焦点。退场时保留当前内容（未 ready 时保留骨架），反向播完后卸载；关闭时取消未执行的就绪排期，关闭完成后重置 ready。
 - **切换**：SHEET 01 的 `.pl-content` 与 SHEET 03 指定 120 ms 淡入；首次就绪或 `contentKey` 改变时重挂内容容器，层不重播。容器使用 `h-full min-h-0` 块盒，使 opacity 动画有实际绘制盒；宿主负责数据就绪与局部占位。
 - **减弱动态**：SHEET 03 指定打开、关闭均只保留 120 ms 透明度，不缩放、不压暗；CSS 媒体变体同步响应系统偏好及运行中变化。
 - **骨架**：SHEET 02 指定真顶栏优先，缺省为 56 px 占位，顶栏底线 1.5 px；左 232 px、中自适应、右 380 px，竖向分隔为 1 px。中栏保留标题、来源、三格指标、页签、两栏列表和图表块；小于 768 px 隐藏侧栏。骨架立即显示，不套用通用等待的 400 ms 延迟。

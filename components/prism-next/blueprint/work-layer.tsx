@@ -72,7 +72,6 @@ export function BpWorkLayer({ open, onOpenChange, onOpenChangeComplete, label, p
     if (!open) {
       cancelReady.current?.()
       cancelReady.current = undefined
-      setReady(false)
     }
     return () => {
       cancelReady.current?.()
@@ -87,6 +86,11 @@ export function BpWorkLayer({ open, onOpenChange, onOpenChangeComplete, label, p
         setReady(true)
       })
     }
+    if (!completedOpen) {
+      cancelReady.current?.()
+      cancelReady.current = undefined
+      setReady(false)
+    }
     onOpenChangeComplete?.(completedOpen)
   }
   const { className, ...rest } = popupProps ?? {}
@@ -96,9 +100,9 @@ export function BpWorkLayer({ open, onOpenChange, onOpenChangeComplete, label, p
       <DialogPrimitive.Popup {...rest} data-ui-version="coss-v1" aria-label={label} aria-busy={open && !ready ? true : undefined}
         initialFocus={initialFocus ?? rest.initialFocus} finalFocus={finalFocus ?? rest.finalFocus}
         className={cn("bp-work-layer fixed inset-0 z-50 outline-none bg-background origin-[50%_40%] transition-[opacity,transform,scale] duration-(--motion-slow) ease-bp data-starting-style:opacity-0 data-starting-style:scale-[0.985] data-ending-style:opacity-0 data-ending-style:scale-[0.985] data-ending-style:duration-(--motion-base) motion-reduce:transition-opacity motion-reduce:duration-(--motion-fast) motion-reduce:data-ending-style:duration-(--motion-fast) motion-reduce:data-starting-style:scale-100 motion-reduce:data-ending-style:scale-100", className)}>
-        {open && (ready
+        {ready
           ? <div key={contentKey} className="h-full min-h-0 min-w-0 animate-in fade-in duration-(--motion-fast) ease-bp" data-bp-work-layer-content>{children}</div>
-          : skeleton)}
+          : skeleton}
       </DialogPrimitive.Popup>
     </DialogPrimitive.Portal>
   </DialogPrimitive.Root>

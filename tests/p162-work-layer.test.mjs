@@ -79,7 +79,7 @@ test('P162 pending subtree SSR with inline dialog shows skeleton and busy, never
   assert.match(html, /role="dialog"[^>]*aria-label="学生详情"[^>]*aria-busy="true"/);
   assert.match(html, /role="status" aria-label="正在打开"/);
   assert.doesNotMatch(html, /data-bp-work-layer-content/);
-  assert.doesNotMatch(render(inline.BpWorkLayer, { ...props, open: false }), /aria-busy|role="status"|HEAVY CHILD/);
+  assert.doesNotMatch(render(inline.BpWorkLayer, { ...props, open: false }), /aria-busy|HEAVY CHILD/);
   const custom = render(inline.BpWorkLayer, { ...props, skeleton: h('span', null, 'CUSTOM SKELETON') });
   assert.match(custom, /CUSTOM SKELETON/);
   assert.doesNotMatch(custom, /HEAVY CHILD|bp-work-skeleton/);
@@ -160,10 +160,12 @@ test('P162 lifecycle gates children, keys content only, forwards focus and clear
   assert.equal(popupOf(tree).props.children.key, '2');
   assert.equal(clock.frames.size + clock.timers.size, 0);
   popup = popupOf(hooks.run(hooks.BpWorkLayer, { ...input, open: false }));
-  assert.equal(popup.props.children, false);
+  assert.equal(popup.props.children.props.children, props.children);
+  assert.equal(popup.props['aria-busy'], undefined);
   tree = hooks.run(hooks.BpWorkLayer, { ...input, open: false });
   tree.props.onOpenChangeComplete(false);
   assert.deepEqual(completions, [true, false]);
+  assert.equal(popupOf(hooks.run(hooks.BpWorkLayer, { ...input, open: false })).props.children.type, hooks.BpWorkSkeleton);
   tree = hooks.run(hooks.BpWorkLayer, input);
   popup = popupOf(tree);
   assert.equal(popup.props['aria-busy'], true);
@@ -176,4 +178,33 @@ test('P162 lifecycle gates children, keys content only, forwards focus and clear
   tree.props.onOpenChangeComplete(true);
   hooks.reset();
   assert.equal(clock.frames.size + clock.timers.size, 0);
+});
+
+for (const phase of ['before frame', 'after frame']) test(`P163 closing ${phase} retains skeleton and cancels pending ready`, t => {
+  const clock = fakeScheduler(t);
+  t.after(() => hooks.reset());
+  const skeleton = h('span', null, 'PENDING');
+  const input = { ...props, skeleton };
+  const tree = hooks.run(hooks.BpWorkLayer, input);
+  tree.props.onOpenChangeComplete(true);
+  if (phase === 'after frame') clock.frame();
+  const closed = { ...input, open: false };
+  let popup = popupOf(hooks.run(hooks.BpWorkLayer, closed));
+  assert.equal(popup.props.children, skeleton);
+  assert.equal(popup.props['aria-busy'], undefined);
+  assert.equal(clock.frames.size + clock.timers.size, 0);
+  clock.frame(); clock.tick();
+  popup = popupOf(hooks.run(hooks.BpWorkLayer, closed));
+  assert.equal(popup.props.children, skeleton);
+});
+test('P163 close completion cancels outstanding ready scheduling', t => {
+  const clock = fakeScheduler(t);
+  t.after(() => hooks.reset());
+  const tree = hooks.run(hooks.BpWorkLayer, props);
+  tree.props.onOpenChangeComplete(true);
+  clock.frame();
+  tree.props.onOpenChangeComplete(false);
+  assert.equal(clock.frames.size + clock.timers.size, 0);
+  clock.tick();
+  assert.equal(popupOf(hooks.run(hooks.BpWorkLayer, props)).props['aria-busy'], true);
 });
