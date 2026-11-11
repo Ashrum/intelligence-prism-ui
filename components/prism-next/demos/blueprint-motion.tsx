@@ -3,7 +3,9 @@
 import { AgentMark } from "../agent-mark"
 import { Button } from "@/components/coss/button"
 import { Search } from "lucide-react"
-import { useCallback, useEffect, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { usePrismPortalProps } from "../prism-scope"
+import { BpWorkHeader, BpWorkLayer, BpWorkSkeleton } from "../blueprint/blueprint"
 import { BpButton, BpTool, BpMinor, BpSkeleton, useBpPending, BpWorking, BpUndoToast, BpCaret, BpSteps, BpConclusion, BpMark, BpRef, BpAnswerLabel, BpProvenanceLine } from "../blueprint/blueprint"
 import { BpAnnouncerProvider, useBpAnnounce, BpStepGroup, BpDecisionDock, BpDecisionReceipt, type BpStep, type BpStepGroupProps, type BpDecisionItem, type BpDecisionAnswer } from "../blueprint/blueprint"
 
@@ -85,7 +87,41 @@ export function BlueprintMotionDemo() {
       </div>
     </div>
     <BpAnnouncerProvider><ProgressDecisionExamples /></BpAnnouncerProvider>
+    <WorkLayerExample />
   </section>
+}
+
+function WorkLayerExample() {
+  const [open, setOpen] = useState(false)
+  const [index, setIndex] = useState(0)
+  const trigger = useRef<HTMLButtonElement>(null)
+  const popup = useRef<HTMLDivElement>(null)
+  const portalProps = usePrismPortalProps()
+  const names = ["李思远", "陈雨桐", "王子墨"]
+  const header = <BpWorkHeader back={{ label: "示例", onClick: () => setOpen(false) }} title={names[index]} meta="合成数据"
+    secondary={[<BpButton key="next" size="sm" onClick={() => setIndex(value => (value + 1) % names.length)}>下一位</BpButton>]} />
+  return <section aria-label="全屏子页面层" className="min-w-0 space-y-4">
+    <h3 className="text-block-title">全屏子页面层</h3>
+    <p className="text-ui-hint text-muted-foreground">示例 · 打开时先显示骨架，再模拟约 800 ms 的重计算。下一位切换内容，返回或 Esc 关闭。</p>
+    <BpButton ref={trigger} onClick={() => setOpen(true)}>打开示例子页面</BpButton>
+    <BpWorkLayer open={open} onOpenChange={setOpen} label="示例子页面" portalProps={portalProps}
+      initialFocus={popup} finalFocus={trigger} popupProps={{ ref: popup }} contentKey={index} skeleton={<BpWorkSkeleton header={header} />}>
+      <div className="flex h-full min-h-0 min-w-0 flex-col">
+        {header}
+        <HeavyWorkLayerContent name={names[index]} />
+      </div>
+    </BpWorkLayer>
+  </section>
+}
+
+function HeavyWorkLayerContent({ name }: { name: string }) {
+  // Demo only: intentionally block render to make the skeleton's first paint observable.
+  const startedAt = performance.now()
+  while (performance.now() - startedAt < 800) { /* Synthetic heavy computation. */ }
+  return <div className="min-h-0 min-w-0 flex-1 space-y-4 overflow-y-auto p-6 [overflow-wrap:anywhere]">
+    <h2 className="text-section-title">{name} · 示例内容</h2>
+    <p className="text-read-body">子页面已打开。这是合成数据，用于观察骨架替换和内容淡入，不连接真实学生记录。</p>
+  </div>
 }
 
 const progressLabels = ["识别意图", "读取 R1 第 4 题作答", "对照 45 份标注", "组织答复"]

@@ -16180,7 +16180,7 @@
     {
       "source": "docs/component-contracts.md",
       "href": "/foundations/blueprint/guide-assets/docs/component-contracts.md",
-      "sha256": "996ea8e8ce6651bccb78042aded16fd3f2fd0fbba02944085e7aa607fdda7dfc"
+      "sha256": "2d85d681378dfa03d94ecabae8c9db90afa8771cd15f4d6800232b3c6a60a003"
     },
     {
       "source": "docs/blueprint-theme.md",
@@ -16190,7 +16190,7 @@
     {
       "source": "docs/blueprint-theme-v2.md",
       "href": "/foundations/blueprint/guide-assets/docs/blueprint-theme-v2.md",
-      "sha256": "ef5d44f43c5a4631d3d068046d5d3e54b58ada60431d0cb3bc907019aa112e80"
+      "sha256": "28cf6f64a5372716dc8a1e8ab4e27566316611e30697d80a827efb4b6c47b720"
     }
   ]
 }
