@@ -3391,7 +3391,7 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 | `BpStatStrip.density?: "default" \| "compact"` | 默认 default，省略或显式 default 不输出 data-density，沿用默认布局。窄容器（对象右栏）用 compact，dl 输出 data-density="compact"；容器 ≥400px 四列、240–399px 两列、<240px 一列，末行各格等宽并保留空位。格内 10px 12px，标签与数值间距 4px，沿用 var(--border) 分隔线和 size="metric" 数值字号；支持 blueprint / blueprint-night 与三档 frame。 |
 | `BpStatStrip.frame` | subtle 外框 `1px solid var(--border)`，复用次级线色；none 去外框。格间既有 1px 分隔、4/2/1 自身容器布局不变。 |
 | `BpTitleBlock.frame` | subtle 外框 1px，沿用 `--line`；none 去外框及单元格分隔投影，改用 `1px solid var(--line)` 内部分隔。自身容器 ≤480px 仍两列、奇数尾项跨满；只在内部列界和第二行起画线，不画外缘。 |
-| `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |
+| `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。joined 为相连细线外框，选中为品牌蓝细框浅蓝底，`--bp-seg-cell` 可设最小格宽（默认 52px），用于表单内短选项（学科、纸张、作答方式等）。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |
 | `BpSectionCard.frame` | subtle 外框、表头线均 1px；none 去外框，表头仍 1px。沿用 `--line`；density/titleRule/selected、标题级别与插槽独立保持。none 不清除宿主显式 selected 的选中投影。 |
 | `BpSizeBar.labelWidth?: "default" \| "wide"` | 默认 default，原 DOM/CSS 保持。wide 的可见名称列为 `minmax(120px,40%)`，单行；前段按实际可用宽度省略，尾部保留最多 4 个完整字素，短名称完整显示，不按字符数提前截短。名称 `title` 保留全称；静态名称与条形可访问名称、交互行按钮可访问名称均保留全称和原有数值事实。自定义动作前缀未包含全称时，wide 自动补全。 |
 | wide 的组合与响应式 | `hideRowLabel=true` 或 `size="xs"` 优先，不输出宽列属性和可见标签。wide 在自身容器 ≤420px 或视口 ≤760px 时使用两列，名称仍至少 40% / 120px，汇总在右侧，条形在下一行跨满；图例取消原 76px 缩进。framed、sm、marker、display、formatter、行激活与宿主控制的 activeRowId 仍按原契约。 |

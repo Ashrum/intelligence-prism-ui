@@ -213,7 +213,7 @@ export function BpTool({ iconOnly, count, type = "button", className, children, 
 export interface BpSegItem { value: string; label: ReactNode; description?: ReactNode; disabled?: boolean }
 /** Opt-in frame hierarchy in blueprint / blueprint-night; core themes keep their existing appearance. */
 export type BpFrame = "default" | "subtle" | "none"
-export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; frame?: BpFrame; className?: string }
+export interface BpSegTabsProps { items: BpSegItem[]; value: string; onValueChange: (value: string) => void; label: string; orientation?: "horizontal" | "vertical"; frame?: BpFrame | "joined"; className?: string }
 /** Single choice as a segmented control (radiogroup). Arrow keys move and select; Home/End jump. For tab panels use coss Tabs. */
 export function BpSegTabs({ items, value, onValueChange, label, orientation = "horizontal", frame = "default", className }: BpSegTabsProps) {
   const scroll = useHorizontalChoiceScroll(value, orientation === "horizontal")
