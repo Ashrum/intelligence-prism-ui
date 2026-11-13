@@ -249,3 +249,17 @@ mixed 复用原有 `renderSectionHeading(page,index)` 与 `headers[page.id]`，�
 `/next/components/paper-preview/digital` 新增“宽屏数字阅读”，可切换“默认 794px”“自定义 640px”“不限宽”。三主题 320px 示例复用同一夹具，含长中文、公式与可选分节标题。复用检索：读取现有 PaperPreviewMixed、paperDimensions、固定尺寸与 review-workspace.css，并复核本页 particles p-frame-1/p-toolbar-1 历史组合记录；现有布局已具备居中容器，直接调整数字列尺寸，无需新增组件。通用文档阅读不涉及 Agent 执行能力，未复制 Beautiful UI 代码。按 Builder 前置约定离线工作，未刷新上游注册表。浏览器验收：按分工由 Supervisor 执行。
 
 P55：纯数字卷面在 `PaperPreviewSurface.toolbar` 有实际渲染内容时，为既有侧边工具预留 72px（56px 工具 + 两侧各 8px），在剩余区域扣除原 16px 内边距后应用阅读上限并居中；无工具不预留，沉浸状态沿用相同规则，含扫描页的布局与输出保持不变。仅复用现有 Surface/Mixed 布局与本页 p-frame-1/p-toolbar-1 检索结论，不新增控件、视觉令牌或第三方代码。
+
+## 底部横排工具条（P167）
+
+`PaperPreviewSurface` 新增 `dock?: "side" | "bottom"`，默认 `"side"`。纸面需要满宽阅读、工具条按钮 ≤ 12 个时可选 `dock="bottom"`，用于 GR3 批阅复核与扫描单份预览。省略属性或显式传 `"side"` 均保留原侧签输出。
+
+- 宿主传入 `Toolbar orientation="horizontal"`，分隔线传 `ToolbarSeparator orientation="vertical"`。Surface 继续接收宿主工具插槽和引用，按钮动作由宿主处理。
+- 底部工具条以当前可见纸面左右边界的中点居中，无可见纸面时使用画布中点。距画布底部为 `20px + bottomInset / scale`，`bottomInset` 沿用屏幕 CSS px，默认值为 0。纸面、工具条、画布尺寸和滚动变化触发重测。
+- 工具条高 34px、圆角 10px，按钮 28×28px、图标 15px，读数使用既有 `text-ui-meta` 的 12px 字号与 28px 行高。窄容器保持尺寸，超宽工具条在内部横向滚动并隐藏滚动条。
+- 宿主须给自己的滚动区设置 `padding-bottom: var(--d1-dock-clearance)`。Surface 在底部模式根节点提供 `--d1-dock-clearance:64px`，滚动区消费该值后，最后一页可滚过工具条。存在额外底部浮层时，宿主按 `bottomInset` 相应增加留白。
+- 连续扫描宿主同时传 `continuous.toolbarWidth: 0`，释放原侧签的 56px 预留。底部模式的数字卷面使用全部可用宽度，沿用数字阅读上限。
+
+组件站 `/next/components/paper-preview` 的“连续纸张 · 底部横排工具条”复用原连续纸张，提供最大 796px 宿主及各主题窄容器示例。包含上一页、页码、下一页、缩小、比例、放大、旋转和全屏，滚动区通过宿主 `viewportRef` 设置上述底部留白。全屏沿用示例的视口铺满方式，支持按钮与 Esc 返回。
+
+复用记录已核对现有 Surface、Continuous、Prism Button、固定 coss Toolbar/ToolbarGroup/ToolbarSeparator，以及本页既有 particles `p-toolbar-1`、`p-frame-1` 检索记录。现有插槽可承载本轮横排组合，布局数值取 GR3 FROZEN REV 0.2b。上游检索沿用本地记录。浏览器验收由 Supervisor 执行。

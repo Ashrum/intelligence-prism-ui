@@ -3065,6 +3065,8 @@ P16（PO 2026-10-05 批准新增）目录「内容与数据」`student-paper-rep
 
 `PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。
 
+P167 新增可选 `PaperPreviewSurface dock="bottom"`，横排工具条与宿主滚动区留白约定见 [底部横排工具条（P167）](paper-preview.md#底部横排工具条p167)。
+
 
 ## 2026-10-02 · C2 题目与知识点预览组件
 
