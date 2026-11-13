@@ -3038,7 +3038,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Score Review 人工评分（独立组件候选）
 
-2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。 P168 复用工作台 W462 / W462-r2 的既有呈现，新增 `presentation?: "question"` 与仅在该呈现生效的 `questionFooter?: ReactNode`，用于逐题复核右栏，默认关闭，默认输出不变。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
 
 ### 错因核对 v0.1
 
@@ -3071,7 +3071,7 @@ P167 新增可选 `PaperPreviewSurface dock="bottom"`，横排工具条与宿主
 ## 2026-10-02 · C2 题目与知识点预览组件
 
 - [Knowledge Rail 知识点栏](knowledge-rail.md)：sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。
-- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。 P14：score / ratio 允许 null；未知比例条省略，null score 原样显示 scoreText；顺序、筛选、刻度事实由宿主提供，未知不等于零分。
+- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；P168 复用工作台既有适配，`StudentControlSwitcher.presentation?: "question"` 用于逐题复核纸面页签行的安静外观，默认关闭，默认输出不变；Scale 的 tone、tooltip、summary 完全外部提供。 P14：score / ratio 允许 null；未知比例条省略，null score 原样显示 scoreText；顺序、筛选、刻度事实由宿主提供，未知不等于零分。
 - [Question Analysis Card 题目分析卡](question-analysis-card.md)：question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。
 - [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
 

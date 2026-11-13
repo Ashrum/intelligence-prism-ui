@@ -51,6 +51,13 @@ export * from './lib/prism-next/agent-component-registry';
         assert.equal([...source.matchAll(addition)].length, 2);
         return { contents: source.replace(addition, ''), loader: 'tsx' };
       }
+      // P168 adds only this opt-in example. Preserve the exact legacy page comparison;
+      // assert the added block on the real shipped route below.
+      if (mode === 'core' && relative === 'components/prism-next/demos/score-review.tsx') {
+        const source = read(relative), addition = '    <ScoreReviewQuestionDemo />\n';
+        assert.equal(source.split(addition).length - 1, 1);
+        return { contents: source.replace(addition, ''), loader: 'tsx' };
+      }
       if (mode === 'core' && relative === 'lib/prism-next/preview-themes.ts') return { contents: read(relative).replace(', "blueprint", "blueprint-night"] as const', '] as const'), loader: 'ts' };
     });
   } }] });
@@ -85,6 +92,16 @@ const normalizeIds = html => html.replace(/_R_[\w-]+_/g, '_REACT_ID_');
 for (const route of routes) test(`P125 ${route}: real route five-theme fixtures and baseline core SSR`, async () => {
   for (const lib of [old, api, core]) { const stream = await renderToReadableStream(await page(lib, route)); await stream.allReady; await stream.cancel(); }
   const actual = render(await page(api, route)), previous = render(await page(old, route));
+  if (route === '/next/components/score-review') {
+    assert.equal((actual.match(/id="score-review-question"/g) || []).length, 1);
+    assert.doesNotMatch(previous, /id="score-review-question"/);
+    const questionDemo = actual.slice(actual.indexOf('id="score-review-question"'), actual.indexOf('快捷给分与键盘操作'));
+    assert.match(questionDemo, /逐题复核 · 380px 右栏/);
+    assert.match(questionDemo, /data-score-review-mode="confirm"/);
+    assert.match(questionDemo, /data-score-review-sections/);
+    assert.match(questionDemo, /采纳 6 分 · 下一份/);
+    assert.match(questionDemo, /aria-label="重新 AI 批阅"/);
+  }
   if (route === '/next/components/record-list') {
     assert.equal((actual.match(/id="record-current"/g) || []).length, 1);
     assert.match(actual, /data-record-row="completed-2" aria-current="true" data-current=""/);
