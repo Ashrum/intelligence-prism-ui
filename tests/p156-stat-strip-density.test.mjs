@@ -82,5 +82,37 @@ test('P156 compact CSS scopes geometry and thresholds to opt-in strips', () => {
     : line).join('\n');
   // P164 adds exactly one opt-in muted-track rule.
   const mutedTrack = '.bp-size-track-muted .bp-size-bar { background:var(--muted); border:0; }\n';
-  assert.equal(columnRules(css.replace(mutedTrack, '').replace('\n' + compact, '').replace(unitSelect, '')), baseline);
+  // P166 adds this exact joined block, including its reduced-motion rule.
+  const joined = `/* Joined choices share a hairline frame. Layouts may set --bp-seg-cell for longer labels. */
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] {
+  position:relative; display:inline-grid; grid-auto-flow:column; grid-auto-columns:1fr;
+  gap:0; padding:0; border:0; border-radius:3px; background:var(--card);
+}
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"]::before {
+  content:""; position:absolute; inset:0; border:1px solid light-dark(#d2dce5,var(--border));
+  border-radius:inherit; pointer-events:none;
+}
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button {
+  position:relative; box-sizing:border-box; min-width:var(--bp-seg-cell,52px); min-height:30px; padding:0 8px;
+  border:1px solid transparent; border-radius:2px; background:transparent;
+  color:light-dark(#415163,var(--muted-foreground)); font-weight:400; line-height:1.25;
+}
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:first-child { border-start-start-radius:3px; border-end-start-radius:3px; }
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:last-child { border-start-end-radius:3px; border-end-end-radius:3px; }
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:is([aria-checked="false"],[aria-pressed="false"]):enabled:hover {
+  background:light-dark(#f6faff,var(--accent)); color:var(--brand-blue-text);
+}
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:is([aria-checked="true"],[aria-pressed="true"]) {
+  border-color:var(--brand-blue-text); background:light-dark(#f0f7ff,var(--brand-blue-tint));
+  color:var(--brand-blue-text); font-weight:var(--text-item-title--font-weight);
+}
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:is([aria-checked="false"],[aria-pressed="false"]):disabled { color:var(--disabled-foreground); }
+.bp-seg-tabs[data-frame="joined"][data-orientation="horizontal"] > button:focus-visible { outline-offset:-3px; }
+@media (prefers-reduced-motion:no-preference) {
+  .bp-seg-tabs[data-frame="joined"] > button { transition:background-color 110ms ease-out,color 110ms ease-out; }
+}
+
+`;
+  assert.equal(css.split(joined).length, 2, 'P166 joined CSS block must occur exactly once');
+  assert.equal(columnRules(css.replace(joined, '').replace(mutedTrack, '').replace('\n' + compact, '').replace(unitSelect, '')), baseline);
 });

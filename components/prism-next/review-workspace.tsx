@@ -1,7 +1,9 @@
 "use client"
 
 import { DialogPopup } from "@/components/prism-next/scoped-overlays"
-import type { CSSProperties, KeyboardEvent, ReactNode, RefObject } from "react"
+import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode, type RefObject } from "react"
+import { Minimize2 } from "lucide-react"
+import { Button } from "./button"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
 import { Dialog, DialogTitle, DialogDescription, DialogHeader, DialogPanel } from "@/components/coss/dialog"
 import { Kbd } from "@/components/coss/kbd"
@@ -12,6 +14,7 @@ export type ReviewShortcut = { key: string; intent: string; repeat?: boolean; di
 export type ReviewWorkspaceProps = {
   label: string; topbar?: ReactNode; rail?: ReactNode; canvas: ReactNode; inspector: ReactNode; children?: ReactNode
   open?: boolean; onOpenChange?: (open: boolean) => void; immersive: boolean
+  onImmersiveChange?: (immersive: boolean) => void; immersiveLabel?: ReactNode; fullscreen?: boolean
   pane: string; onPaneChange: (pane: string) => void
   panes?: { value: string; label: string }[]; ready?: boolean; animate?: boolean
   shortcuts?: ReviewShortcut[]; shortcutsDisabled?: boolean; onShortcut?: (intent: string) => void; onBlurOutside?: () => void
@@ -31,16 +34,94 @@ export function reviewWorkspaceShortcut(event: KeyboardEvent, shortcuts: ReviewS
   event.preventDefault(); event.stopPropagation()
   return !event.repeat || binding.repeat ? binding.intent : undefined
 }
-export function ReviewWorkspace({ label, topbar, rail, canvas, inspector, children, open, onOpenChange, immersive, pane, onPaneChange, panes = [{ value: 'rail', label: '题目' }, { value: 'canvas', label: '试卷' }, { value: 'inspector', label: '本题反馈' }], ready = true, animate = false, shortcuts = [], shortcutsDisabled, onShortcut, onBlurOutside, frameRef, mobileNavRef, device, style, blueprintFrame = false, blueprintFolio }: ReviewWorkspaceProps) {
+type FullscreenRoot = HTMLElement & { webkitRequestFullscreen?: () => void | Promise<void> }
+type FullscreenDocument = Document & { webkitFullscreenElement?: Element | null; webkitExitFullscreen?: () => void | Promise<void> }
+
+export function ReviewWorkspace({ label, topbar, rail, canvas, inspector, children, open, onOpenChange, immersive, onImmersiveChange, immersiveLabel, fullscreen = true, pane, onPaneChange, panes = [{ value: 'rail', label: '题目' }, { value: 'canvas', label: '试卷' }, { value: 'inspector', label: '本题反馈' }], ready = true, animate = false, shortcuts = [], shortcutsDisabled, onShortcut, onBlurOutside, frameRef, mobileNavRef, device, style, blueprintFrame = false, blueprintFolio }: ReviewWorkspaceProps) {
+  const localFrame = useRef<HTMLElement | null>(null)
+  const setFrame = useCallback((node: HTMLElement | null) => { localFrame.current = node; if (frameRef) frameRef.current = node }, [frameRef])
+  const onChange = useRef(onImmersiveChange)
+  const leave = useRef<(() => void) | undefined>(undefined)
+  const [controlsVisible, setControlsVisible] = useState(true)
+  useLayoutEffect(() => { onChange.current = onImmersiveChange }, [onImmersiveChange])
+  useLayoutEffect(() => {
+    if (!immersive || !localFrame.current) return
+    const root = localFrame.current as FullscreenRoot
+    const doc = root.ownerDocument as FullscreenDocument
+    const previousFocus = doc.activeElement as HTMLElement | null
+    const canvasNode = root.querySelector<HTMLElement>('[data-review-canvas]')
+    const previousTabIndex = canvasNode?.getAttribute('tabindex')
+    let active = true, owned = false, leaving = false
+    let timer: ReturnType<typeof setTimeout>
+    const fullscreenElement = () => doc.fullscreenElement ?? doc.webkitFullscreenElement
+    const exit = () => {
+      if (fullscreenElement() !== root) return
+      try { void Promise.resolve((doc.exitFullscreen ?? doc.webkitExitFullscreen)?.call(doc)).catch(() => {}) } catch { /* Page-only fallback remains usable. */ }
+    }
+    const requestLeave = () => {
+      if (leaving) return
+      leaving = true
+      exit()
+      onChange.current?.(false)
+    }
+    leave.current = requestLeave
+    const changed = () => {
+      if (fullscreenElement() === root) { owned = true; if (!active) exit() }
+      else if (active && owned && !leaving) { owned = false; requestLeave() }
+    }
+    const showControls = () => {
+      setControlsVisible(true)
+      clearTimeout(timer)
+      timer = setTimeout(() => setControlsVisible(false), 2500)
+    }
+    const keydown = (event: globalThis.KeyboardEvent) => {
+      showControls()
+      if (event.key === 'Escape' && !event.isComposing) {
+        event.preventDefault(); event.stopPropagation(); requestLeave()
+      }
+    }
+    doc.addEventListener('fullscreenchange', changed)
+    doc.addEventListener('webkitfullscreenchange', changed)
+    doc.addEventListener('pointermove', showControls)
+    doc.addEventListener('keydown', keydown, true)
+    showControls()
+    if (fullscreen) {
+      try {
+        const request = root.requestFullscreen ?? root.webkitRequestFullscreen
+        if (request) void Promise.resolve(request.call(root)).then(() => {
+          if (!active || leaving) exit()
+          else if (fullscreenElement() === root) owned = true
+        }).catch(() => {})
+      } catch { /* Unsupported or denied fullscreen falls back to the fixed canvas. */ }
+    }
+    canvasNode?.setAttribute('tabindex', '-1')
+    canvasNode?.focus({ preventScroll: true })
+    return () => {
+      active = false
+      leave.current = undefined
+      clearTimeout(timer)
+      doc.removeEventListener('fullscreenchange', changed)
+      doc.removeEventListener('webkitfullscreenchange', changed)
+      doc.removeEventListener('pointermove', showControls)
+      doc.removeEventListener('keydown', keydown, true)
+      exit()
+      if (previousTabIndex == null) canvasNode?.removeAttribute('tabindex')
+      else canvasNode?.setAttribute('tabindex', previousTabIndex)
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true })
+    }
+  }, [immersive, fullscreen])
   const hasRail = rail != null && rail !== false
   const visiblePanes = hasRail ? panes : panes.filter(item => item.value !== 'rail')
   const activePane = !hasRail && pane === 'rail' ? 'canvas' : pane
   const activeShortcuts = hasRail ? shortcuts : shortcuts.filter(binding => binding.key !== 't')
-  return <section ref={frameRef} aria-label={label} tabIndex={-1} className="d1-frame bg-background" data-device={device} data-mobile-pane={activePane} data-no-rail={hasRail ? undefined : true} data-immersive={immersive} data-rail-collapsed={!open} data-rail-ready={ready} data-rail-animate={animate} style={style} onKeyDownCapture={event => { const intent = reviewWorkspaceShortcut(event, activeShortcuts, shortcutsDisabled); if (intent) onShortcut?.(intent) }} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onBlurOutside?.() }}>
-    {topbar}
+  return <section ref={setFrame} aria-label={label} tabIndex={-1} className="d1-frame bg-background" data-device={device} data-mobile-pane={activePane} data-no-rail={hasRail ? undefined : true} data-immersive={immersive} data-rail-collapsed={!open} data-rail-ready={ready} data-rail-animate={animate} style={style} onKeyDownCapture={event => { const intent = reviewWorkspaceShortcut(event, activeShortcuts, shortcutsDisabled); if (intent) onShortcut?.(intent) }} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) onBlurOutside?.() }}>
+    {!immersive && topbar}
     <nav ref={mobileNavRef} className="d1-mobile-nav border-b px-3" aria-label="预览分区"><ToggleGroup value={[activePane]} onValueChange={value => { if (value.length) { if (value[0] === 'rail' && !hasRail) return; if (value[0] === 'rail' && !open) onOpenChange?.(true); else onPaneChange(value[0]) } }}>{visiblePanes.map(({ value, label }) => <ToggleGroupItem key={value} value={value}>{label}</ToggleGroupItem>)}</ToggleGroup></nav>
-    <div className="d1-columns">{hasRail && <div className="d1-rail-shell" inert={!open}>{rail}</div>}{BlueprintFrame({ active: blueprintFrame, className: "bp-frame--canvas", folio: blueprintFolio, children: canvas })}{inspector}</div>
-    {children}
+    <div className="d1-columns">{hasRail && <div className="d1-rail-shell" inert={!open}>{rail}</div>}{BlueprintFrame({ active: blueprintFrame, className: "bp-frame--canvas", folio: blueprintFolio, children: canvas })}{!immersive && inspector}</div>
+    {immersive ? <>{children}<div className="d1-immersive-controls" data-visible={controlsVisible}>
+      {immersiveLabel != null && <div className="d1-immersive-label text-ui-meta">{immersiveLabel}</div>}
+      <Button variant="ghost" size="icon" className="d1-immersive-exit" aria-label="退出沉浸（Esc）" onClick={() => leave.current?.()}><Minimize2 /></Button>
+    </div></> : children}
   </section>
 }
 export type ReviewWorkspaceShortcutsProps = { open: boolean; onOpenChange: (open: boolean) => void; entries: readonly (readonly string[])[]; description?: string }

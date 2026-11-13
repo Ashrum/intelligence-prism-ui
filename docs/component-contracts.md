@@ -3038,7 +3038,7 @@ Foundation 映射：surface → background；ink → foreground；ink-2 / ink-3 
 
 ## Score Review 人工评分（独立组件候选）
 
-2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
+2026-10-01 · PO 批准候选 #9，位于「内容与数据」。评估 AgentItemReviewer / AgentReviewQueue 后保持旧协议，共享 AgentMetaLine / AgentStatus、coss NumberField / Field / Textarea / Card / Alert / Button / Collapsible，组合 DraftMathPreview；R1 已移除 `paper` 及内嵌原卷，原卷由独立全屏 ReviewWorkspace + PaperPreview 连续画布承载。受控/非受控评分、范围钳制和 0.5 分步长、可选修改理由门禁、AI 建议与依据、保存/重试/导航意图及外部回执反馈；未知置信度明确显示未提供。保存成功读取回执分值，只有明确审计事实才声称已更新。三主题 320px 长中文与公式夹具；未接入原始笔迹图像与实际服务。完整 API、复用检索与职责边界见 [Score Review 契约](score-review.md)。 P168 复用工作台 W462 / W462-r2 的既有呈现，新增 `presentation?: "question"` 与仅在该呈现生效的 `questionFooter?: ReactNode`，用于逐题复核右栏，默认关闭，默认输出不变。P16（2026-10-05）新增可选受控逐点给分/只读合计、预置理由与其他必填、未作答撤销、动作标签、只禁保存原因；原示例输出不变，扩展夹具 `/next/components/score-review/extensions`。浏览器由 Supervisor 按分工验收；Builder 不自我批准。
 
 ### 错因核对 v0.1
 
@@ -3065,11 +3065,13 @@ P16（PO 2026-10-05 批准新增）目录「内容与数据」`student-paper-rep
 
 `PaperPreview` 新增可选连续模式及同目录辅助导出 `PaperPreviewContinuous` / `PaperPreviewSurface`，支持独立纸张尺寸/旋转、可见页、显式定位、纸外页眉、前置内容、区域聚光、边缘侧签及空图文案，详见 [PaperPreview 增强](paper-preview.md#c1-连续模式与贴纸侧签2026-10-02)。不传新属性时旧 DOM 和行为保持；原冻结快照不改，另补重构前六态及旧调用快照。组件 CSS 沿用冻结类名和已有令牌，不更改 coss、依赖或主题。Builder 不自授 Review 结论；浏览器与基线复核由 Supervisor 做。
 
+P167 新增可选 `PaperPreviewSurface dock="bottom"`，横排工具条与宿主滚动区留白约定见 [底部横排工具条（P167）](paper-preview.md#底部横排工具条p167)。
+
 
 ## 2026-10-02 · C2 题目与知识点预览组件
 
 - [Knowledge Rail 知识点栏](knowledge-rail.md)：sections/selected/onSelect/onEvidence；filter 插槽由 ReviewRailFilter 组合。bodyOnly 用于宿主 Tabs；ReviewRailList 负责 ↑↓、Enter、滚入可视区。名称、secondary、status、evidence.label、rate 均来自宿主。
-- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；Scale 的 tone、tooltip、summary 完全外部提供。 P14：score / ratio 允许 null；未知比例条省略，null score 原样显示 scoreText；顺序、筛选、刻度事实由宿主提供，未知不等于零分。
+- [Student Control Bar 学生控制条](student-control-bar.md)：复合 API：StudentControlBar + Row + Home + Filters + Switcher + Scale。ref/style 对接宿主高度测量，topInset=实测高度+16；children 保留宿主组合顺序。Switcher 使用 ReviewSwitcher，items/groups/current/open/onSelect/searchId 受控；P168 复用工作台既有适配，`StudentControlSwitcher.presentation?: "question"` 用于逐题复核纸面页签行的安静外观，默认关闭，默认输出不变；Scale 的 tone、tooltip、summary 完全外部提供。 P14：score / ratio 允许 null；未知比例条省略，null score 原样显示 scoreText；顺序、筛选、刻度事实由宿主提供，未知不等于零分。
 - [Question Analysis Card 题目分析卡](question-analysis-card.md)：question/contentRecord 沿用 QuestionRecord；QuestionHeading/QuestionContent/QuestionSolution 渲染唯一题面，textSize="ui"。options 含外部 ratio/percent/count/high/low/correct/distractor/students；groups 为外部分组、代表图和名单；related、markedPoints、filter 与意图回调由宿主给。QuestionAnalysisDetails 提供三个页签，QuestionAnalysisSummary 承接 L1 节选按钮。
 - [Question Analysis Panel 本题分析面板](question-analysis-panel.md)：statistics 已格式化的 mean/sd/d/discrimination/fullRate/zeroRate；distribution、pending、insight、errorAnswers 或 errorAnswersSlot、reasons、related 是外部事实。knowledge 有值时替换为专题、Meter、影响人数、证据量/清单和提醒；onKnowledge/onEvidence 仅发意图。
 
@@ -3391,7 +3393,7 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 | `BpStatStrip.density?: "default" \| "compact"` | 默认 default，省略或显式 default 不输出 data-density，沿用默认布局。窄容器（对象右栏）用 compact，dl 输出 data-density="compact"；容器 ≥400px 四列、240–399px 两列、<240px 一列，末行各格等宽并保留空位。格内 10px 12px，标签与数值间距 4px，沿用 var(--border) 分隔线和 size="metric" 数值字号；支持 blueprint / blueprint-night 与三档 frame。 |
 | `BpStatStrip.frame` | subtle 外框 `1px solid var(--border)`，复用次级线色；none 去外框。格间既有 1px 分隔、4/2/1 自身容器布局不变。 |
 | `BpTitleBlock.frame` | subtle 外框 1px，沿用 `--line`；none 去外框及单元格分隔投影，改用 `1px solid var(--line)` 内部分隔。自身容器 ≤480px 仍两列、奇数尾项跨满；只在内部列界和第二行起画线，不画外缘。 |
-| `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |
+| `BpSegTabs.frame` | subtle 外框 1px，沿用 `--line`；none 去外框。joined 为相连细线外框，选中为品牌蓝细框浅蓝底，`--bp-seg-cell` 可设最小格宽（默认 52px），用于表单内短选项（学科、纸张、作答方式等）。横/纵分隔、选中、禁用、焦点、方向键和 Home/End 行为保持。 |
 | `BpSectionCard.frame` | subtle 外框、表头线均 1px；none 去外框，表头仍 1px。沿用 `--line`；density/titleRule/selected、标题级别与插槽独立保持。none 不清除宿主显式 selected 的选中投影。 |
 | `BpSizeBar.labelWidth?: "default" \| "wide"` | 默认 default，原 DOM/CSS 保持。wide 的可见名称列为 `minmax(120px,40%)`，单行；前段按实际可用宽度省略，尾部保留最多 4 个完整字素，短名称完整显示，不按字符数提前截短。名称 `title` 保留全称；静态名称与条形可访问名称、交互行按钮可访问名称均保留全称和原有数值事实。自定义动作前缀未包含全称时，wide 自动补全。 |
 | wide 的组合与响应式 | `hideRowLabel=true` 或 `size="xs"` 优先，不输出宽列属性和可见标签。wide 在自身容器 ≤420px 或视口 ≤760px 时使用两列，名称仍至少 40% / 120px，汇总在右侧，条形在下一行跨满；图例取消原 76px 缩进。framed、sm、marker、display、formatter、行激活与宿主控制的 activeRowId 仍按原契约。 |
@@ -3414,7 +3416,7 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 | `BlueprintFrame` | `active: boolean`；false 直接返回原 children，不增加 DOM。true 在现有单根元素上合并外框属性并追加装饰，不新增父节点或改变原子树位置，四边装饰坐标尺上下 1–8、左右 A–D，整组 aria-hidden；坐标带 18px，默认内距 30px，宿主可通过 style 设置内距。`narrowFrame?: "edge" 或 "keep"`；keep 在窄容器保留侧边细线。 |
 | `BlueprintInlineCode` | `active: boolean`、`code: "A" 或 "B"`；active 才渲染，aria-hidden，放入原有标题，不新增标题语义。一个预览画面最多 A、B 两块。 |
 | `BlueprintInlineFolio` | `active: boolean`、`folio: BlueprintFolio`；沿用既有格式化，图号 aria-hidden，只反映宿主传入的真实题号和总数。 |
-| `ReviewWorkspace` | 可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
+| `ReviewWorkspace` | P169：可选 `onImmersiveChange?: (immersive: boolean) => void` 同步框架退出与外部全屏退出；`immersiveLabel?: ReactNode` 提供沉浸身份标签；`fullscreen?: boolean` 默认 true，false 仅页内铺满。接入须传状态回调，详见[沉浸契约](paper-preview.md#沉浸p169)。可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
 | 原标题插槽 | `QuestionHeading.leading/titleSuffix?: ReactNode`；`QuestionAnalysisCard.blueprintSheet?: {current:number;total:number}` 使用该插槽。`QuestionInspector.blueprintCode?: boolean` 默认 false，在原右栏标题加 B；默认输出不变。 |
 
 题目预览从当前题目事实输出 `SHEET 17 / 20`，切题同步更新，知识点视角仍表示当前证据题；右栏保留“本题分析”或知识点原文。试卷预览没有数字题卡标题，在画布外框显示 A 与当前题号，不给每张扫描纸重复编号。新组件页示例：[无标题外框](/next/foundations/blueprint#blueprint-frame)。

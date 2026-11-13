@@ -142,6 +142,8 @@ export function BlueprintFrameDemo() {
 
 export function BlueprintComponentsDemo() {
   const [tab, setTab] = useState("all")
+  const [subject, setSubject] = useState("math")
+  const [paperSize, setPaperSize] = useState("a4")
   const [view, setView] = useState("blueprint")
   const [reading, setReading] = useState("question")
   const readingScroll = useHorizontalChoiceScroll(reading)
@@ -258,6 +260,11 @@ export function BlueprintComponentsDemo() {
           <p className="mt-2.5 text-ui-hint text-muted-foreground" aria-live="polite">示例快照：{tabNotes[tab]}</p>
           <div className="mt-4 max-w-72"><BpSegTabs label="纵向选择样式预览" orientation="vertical" items={views} value={view} onValueChange={setView} /></div>
           <p className="mt-2.5 text-ui-hint text-muted-foreground">此选择仅演示纵向状态；整站主题由顶部设置切换。</p>
+          <div className="mt-4 space-y-2">
+            <p className="text-ui-hint text-muted-foreground">相连分段框 · 学科与纸张</p>
+            <BpSegTabs frame="joined" label="学科样式预览" value={subject} onValueChange={setSubject} items={[{ value: "math", label: "数学" }, { value: "physics", label: "物理" }, { value: "chemistry", label: "化学" }, { value: "english", label: "英语" }]} />
+            <BpSegTabs frame="joined" label="纸张样式预览" value={paperSize} onValueChange={setPaperSize} items={[{ value: "a4", label: "A4" }, { value: "a3", label: "A3", disabled: true }]} />
+          </div>
           <BpMinor className="mt-6" code="BP-02.1 · Stepper" label="步骤快照" />
           <BpSteps steps={steps} current={1} label="固定步骤样例" status="示例快照 · 18 / 42" />
           <p className="mt-2.5 text-ui-hint text-muted-foreground">步骤位置来自固定快照，不通过点击推进任务。</p>

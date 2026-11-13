@@ -2,7 +2,7 @@
 import { componentPreviewThemes, componentPreviewThemeLabels } from "@/lib/prism-next/preview-themes"
 
 import { useState } from "react"
-import { ScoreReview, type ScoreReviewProps, type ScoreReviewDraft } from "../score-review"
+import { ScoreReview, type ScoreReviewProps, type ScoreReviewDraft, type ScoreReviewPoint } from "../score-review"
 import { Button } from "@/components/coss/button"
 import { DemoSection, Feedback } from "../demo-parts"
 
@@ -72,6 +72,7 @@ export function ScoreReviewDemo() {
       </div>
       <Feedback>{notice}</Feedback>
     </DemoSection>
+    <ScoreReviewQuestionDemo />
     <DemoSection title="快捷给分与键盘操作" description="快捷给分仅改草稿；Ctrl/⌘+Enter 保存仍需满足理由门禁。Alt+A 接受建议，Alt+← 上一题，Alt+→ 跳过。">
       <ScoreFixture overrides={{ quickScores: [0, 5, 10], shortcuts: true }} onIntent={setNotice} />
       <Feedback>{notice}</Feedback>
@@ -89,4 +90,29 @@ export function ScoreReviewDemo() {
       <Feedback>{notice}</Feedback>
     </DemoSection>
   </>
+}
+
+const questionReviewPoints: readonly ScoreReviewPoint[] = [
+  { id: "expression", label: "正确写出配方表达式", maxScore: 6, score: 6 },
+  { id: "condition", label: "说明取等条件与最小值", maxScore: 4, score: 0, uncertain: true },
+]
+
+export function ScoreReviewQuestionDemo() {
+  const [mode, setMode] = useState<"confirm" | "edit">("confirm")
+  const [points, setPoints] = useState(questionReviewPoints)
+  const [notice, setNotice] = useState("合成数据 · 等待复核操作。")
+  return <DemoSection id="score-review-question" title="逐题复核 · 380px 右栏">
+    <div className="h-[844px] w-[380px] max-w-full">
+      <ScoreFixture onIntent={setNotice} overrides={{
+        presentation: "question", mode, density: "compact", showBasis: false,
+        showConfidence: false, instruction: false, shortcuts: true,
+        standardAnswer: "配方得 \\(f(x)=(x-1)^2-4\\)，当 \\(x=1\\) 时取得最小值 −4。",
+        points: mode === "confirm" ? questionReviewPoints : points, onPointsChange: setPoints, disclosureVariant: "link",
+        onEdit: () => { setPoints(questionReviewPoints); setMode("edit") }, onCancel: () => setMode("confirm"),
+        actionLabels: { save: mode === "confirm" ? "采纳 6 分 · 下一份" : "保存评分" },
+        questionFooter: <Button variant="ghost" onClick={() => setNotice("已请求重新 AI 批阅，等待宿主处理。")}>重新 AI 批阅</Button>,
+      }} />
+    </div>
+    <Feedback>{notice}</Feedback>
+  </DemoSection>
 }

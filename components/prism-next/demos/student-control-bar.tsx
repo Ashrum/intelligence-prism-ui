@@ -1,6 +1,7 @@
 "use client"
 import {useId,useRef,useState} from 'react'
 import {Separator} from '@/components/coss/separator'
+import {Tabs,TabsList,TabsTab,TabsPanel} from '@/components/coss/tabs'
 import {StudentControlBar,StudentControlBarRow,StudentControlHome,StudentControlFilters,StudentControlSwitcher,StudentControlScale,StudentIdentity,type StudentControlItem} from '../student-control-bar'
 import {DemoSection} from '../demo-parts'
 import {ReviewDemoThemes,reviewFormula} from './review-workspace-fixtures'
@@ -29,4 +30,25 @@ export function StudentControlUngradedFixture(){
   <p className="text-ui-hint">示例数据：未给分与 0 分分别显示；打开学生面板核对。{reviewFormula}</p>
  </>
 }
-export function StudentControlBarDemo(){return <><StudentControlBarGradedDemo/><DemoSection title="含未给分学生" description="未知不等于零分；顺序、筛选集合与刻度文案由调用方提供。"><ReviewDemoThemes>{()=> <StudentControlUngradedFixture/>}</ReviewDemoThemes></DemoSection></>}
+export function StudentControlBarDemo(){return <><StudentControlBarGradedDemo/><StudentControlQuestionDemo/><DemoSection title="含未给分学生" description="未知不等于零分；顺序、筛选集合与刻度文案由调用方提供。"><ReviewDemoThemes>{()=> <StudentControlUngradedFixture/>}</ReviewDemoThemes></DemoSection></>}
+
+export function StudentControlQuestionDemo() {
+ const searchId = useId()
+ const trigger = useRef<HTMLButtonElement>(null)
+ const [selected, setSelected] = useState(analysisStudents[0].id)
+ const [open, setOpen] = useState(false)
+ const current = analysisStudents.find(item => item.id === selected) ?? null
+ return <DemoSection id="student-control-question" title="逐题复核 · 796px 纸面页签行">
+  <Tabs defaultValue="answer" className="w-[796px] max-w-full">
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+    <TabsList aria-label="纸面内容"><TabsTab value="question">题目</TabsTab><TabsTab value="answer">学生作答</TabsTab></TabsList>
+    <StudentControlSwitcher presentation="question" items={analysisStudents} current={current}
+     groups={['待复核','已确认'].map(value => ({value, items: analysisStudents.filter(item => item.group === value)}))}
+     max={12} open={open} onOpenChange={setOpen} onSelect={id => {setSelected(id);setOpen(false)}}
+     triggerRef={trigger} searchId={searchId} />
+   </div>
+   <TabsPanel value="question"><p className="text-read-body">说明参数约束与结论成立的条件。{reviewFormula}</p></TabsPanel>
+   <TabsPanel value="answer"><p className="text-read-body">{current?.name} · {current?.scoreText} · {current?.review}</p></TabsPanel>
+  </Tabs>
+ </DemoSection>
+}

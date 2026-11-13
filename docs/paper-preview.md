@@ -249,3 +249,28 @@ mixed 复用原有 `renderSectionHeading(page,index)` 与 `headers[page.id]`，�
 `/next/components/paper-preview/digital` 新增“宽屏数字阅读”，可切换“默认 794px”“自定义 640px”“不限宽”。三主题 320px 示例复用同一夹具，含长中文、公式与可选分节标题。复用检索：读取现有 PaperPreviewMixed、paperDimensions、固定尺寸与 review-workspace.css，并复核本页 particles p-frame-1/p-toolbar-1 历史组合记录；现有布局已具备居中容器，直接调整数字列尺寸，无需新增组件。通用文档阅读不涉及 Agent 执行能力，未复制 Beautiful UI 代码。按 Builder 前置约定离线工作，未刷新上游注册表。浏览器验收：按分工由 Supervisor 执行。
 
 P55：纯数字卷面在 `PaperPreviewSurface.toolbar` 有实际渲染内容时，为既有侧边工具预留 72px（56px 工具 + 两侧各 8px），在剩余区域扣除原 16px 内边距后应用阅读上限并居中；无工具不预留，沉浸状态沿用相同规则，含扫描页的布局与输出保持不变。仅复用现有 Surface/Mixed 布局与本页 p-frame-1/p-toolbar-1 检索结论，不新增控件、视觉令牌或第三方代码。
+
+## 底部横排工具条（P167）
+
+`PaperPreviewSurface` 新增 `dock?: "side" | "bottom"`，默认 `"side"`。纸面需要满宽阅读、工具条按钮 ≤ 12 个时可选 `dock="bottom"`，用于 GR3 批阅复核与扫描单份预览。省略属性或显式传 `"side"` 均保留原侧签输出。
+
+- 宿主传入 `Toolbar orientation="horizontal"`，分隔线传 `ToolbarSeparator orientation="vertical"`。Surface 继续接收宿主工具插槽和引用，按钮动作由宿主处理。
+- 底部工具条以当前可见纸面左右边界的中点居中，无可见纸面时使用画布中点。距画布底部为 `20px + bottomInset / scale`，`bottomInset` 沿用屏幕 CSS px，默认值为 0。纸面、工具条、画布尺寸和滚动变化触发重测。
+- 工具条高 34px、圆角 10px，按钮 28×28px、图标 15px，读数使用既有 `text-ui-meta` 的 12px 字号与 28px 行高。窄容器保持尺寸，超宽工具条在内部横向滚动并隐藏滚动条。
+- 宿主须给自己的滚动区设置 `padding-bottom: var(--d1-dock-clearance)`。Surface 在底部模式根节点提供 `--d1-dock-clearance:64px`，滚动区消费该值后，最后一页可滚过工具条。存在额外底部浮层时，宿主按 `bottomInset` 相应增加留白。
+- 连续扫描宿主同时传 `continuous.toolbarWidth: 0`，释放原侧签的 56px 预留。底部模式的数字卷面使用全部可用宽度，沿用数字阅读上限。
+
+组件站 `/next/components/paper-preview` 的“连续纸张 · 底部横排工具条”复用原连续纸张，提供最大 796px 宿主及各主题窄容器示例。包含上一页、页码、下一页、缩小、比例、放大、旋转和全屏，滚动区通过宿主 `viewportRef` 设置上述底部留白。全屏沿用示例的视口铺满方式，支持按钮与 Esc 返回。
+
+复用记录已核对现有 Surface、Continuous、Prism Button、固定 coss Toolbar/ToolbarGroup/ToolbarSeparator，以及本页既有 particles `p-toolbar-1`、`p-frame-1` 检索记录。现有插槽可承载本轮横排组合，布局数值取 GR3 FROZEN REV 0.2b。上游检索沿用本地记录。浏览器验收由 Supervisor 执行。
+
+
+## 沉浸（P169）
+
+`ReviewWorkspace` 的受控 `immersive` 开启后，在布局提交时对框架根请求浏览器全屏（标准 API，兼容 WebKit）；不支持或请求被拒绝时静默回退到页内 fixed 铺满。`fullscreen={false}` 只使用页内铺满。浏览器的地址栏、标签栏是否让出，由浏览器全屏权限和实现决定。
+
+沉浸时整个 `topbar` 槽及右栏不渲染，移动导航和左栏隐藏，保留纸面画布与宿主 Surface 工具条（side / bottom 均适用）。画布背景压暗，不改变纸张阴影。`immersiveLabel?: ReactNode` 在左上角提供身份，例如“苏景行 · 第 1 / 2 页”；右上角退出按钮由框架统一绘制。两者在指针或键盘 2.5 秒无操作后淡出，重新操作后显示；退出按钮获得键盘焦点时保持可见，系统减少动态效果时取消过渡。
+
+宿主须同时传 `onImmersiveChange={setImmersive}`，并让工具条沉浸按钮切换同一状态。Esc、右上退出按钮、浏览器自身退出全屏均同步 `false`；工具条切换为 false 时框架退出其自身全屏。卸载同样清理全屏、监听和计时器，不退出其他元素的全屏。进入时框架为 `[data-review-canvas]` 临时设置 `tabIndex=-1` 并聚焦，退出时恢复属性与仍在文档中的原焦点元素。进入按钮宜位于保留的画布工具条，避免顶栏卸载后原元素不再存在。
+
+本轮复用检索：沿用既有 ReviewWorkspace、Prism Button（ghost / icon）及其固定 coss Button，使用已有 lucide-react 的 Minimize2；不新增组件、依赖或主题令牌。coss particles 的 p-frame-1 / p-toolbar-1 沿用本页已有记录，本轮未联网更新。组件站框架示例已传身份标签和状态回调；工作台等业务宿主另单接线。Builder 的 API stub 检查不代表真实浏览器全屏、用户激活窗口或视觉验收，浏览器验收由 Supervisor 执行。
