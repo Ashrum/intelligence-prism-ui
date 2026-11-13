@@ -263,3 +263,14 @@ P55：纯数字卷面在 `PaperPreviewSurface.toolbar` 有实际渲染内容时�
 组件站 `/next/components/paper-preview` 的“连续纸张 · 底部横排工具条”复用原连续纸张，提供最大 796px 宿主及各主题窄容器示例。包含上一页、页码、下一页、缩小、比例、放大、旋转和全屏，滚动区通过宿主 `viewportRef` 设置上述底部留白。全屏沿用示例的视口铺满方式，支持按钮与 Esc 返回。
 
 复用记录已核对现有 Surface、Continuous、Prism Button、固定 coss Toolbar/ToolbarGroup/ToolbarSeparator，以及本页既有 particles `p-toolbar-1`、`p-frame-1` 检索记录。现有插槽可承载本轮横排组合，布局数值取 GR3 FROZEN REV 0.2b。上游检索沿用本地记录。浏览器验收由 Supervisor 执行。
+
+
+## 沉浸（P169）
+
+`ReviewWorkspace` 的受控 `immersive` 开启后，在布局提交时对框架根请求浏览器全屏（标准 API，兼容 WebKit）；不支持或请求被拒绝时静默回退到页内 fixed 铺满。`fullscreen={false}` 只使用页内铺满。浏览器的地址栏、标签栏是否让出，由浏览器全屏权限和实现决定。
+
+沉浸时整个 `topbar` 槽及右栏不渲染，移动导航和左栏隐藏，保留纸面画布与宿主 Surface 工具条（side / bottom 均适用）。画布背景压暗，不改变纸张阴影。`immersiveLabel?: ReactNode` 在左上角提供身份，例如“苏景行 · 第 1 / 2 页”；右上角退出按钮由框架统一绘制。两者在指针或键盘 2.5 秒无操作后淡出，重新操作后显示；退出按钮获得键盘焦点时保持可见，系统减少动态效果时取消过渡。
+
+宿主须同时传 `onImmersiveChange={setImmersive}`，并让工具条沉浸按钮切换同一状态。Esc、右上退出按钮、浏览器自身退出全屏均同步 `false`；工具条切换为 false 时框架退出其自身全屏。卸载同样清理全屏、监听和计时器，不退出其他元素的全屏。进入时框架为 `[data-review-canvas]` 临时设置 `tabIndex=-1` 并聚焦，退出时恢复属性与仍在文档中的原焦点元素。进入按钮宜位于保留的画布工具条，避免顶栏卸载后原元素不再存在。
+
+本轮复用检索：沿用既有 ReviewWorkspace、Prism Button（ghost / icon）及其固定 coss Button，使用已有 lucide-react 的 Minimize2；不新增组件、依赖或主题令牌。coss particles 的 p-frame-1 / p-toolbar-1 沿用本页已有记录，本轮未联网更新。组件站框架示例已传身份标签和状态回调；工作台等业务宿主另单接线。Builder 的 API stub 检查不代表真实浏览器全屏、用户激活窗口或视觉验收，浏览器验收由 Supervisor 执行。

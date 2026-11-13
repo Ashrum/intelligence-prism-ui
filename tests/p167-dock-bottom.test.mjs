@@ -95,6 +95,29 @@ test('P167 CSS scopes bottom geometry, scrolling, controls and host clearance', 
 test('P167 CSS retains every side rule apart from excluding bottom from the 72px reservation', () => {
   const selector = '.d1-canvas:not([data-dock="bottom"]):has(> .d1-tool-dock > .d1-tool-scroll:not(:empty))';
   assert.ok(css.includes(selector + ' > .d1-paper-host .d1-continuous[data-digital-paper] { width:calc(100% - 72px); }'));
-  assert.equal((css.slice(0, start) + css.slice(end)).replace(selector, '.d1-canvas:has(> .d1-tool-dock > .d1-tool-scroll:not(:empty))'), before(cssPath));
+  // Keep each baseline rule (including complete conditional blocks) byte-exact,
+  // while allowing new rules between or after those existing rules.
+  const rules = text => {
+    const blocks = [];
+    let depth = 0, offset = 0;
+    for (const match of text.matchAll(/[{}]/g)) {
+      depth += match[0] === '{' ? 1 : -1;
+      assert.ok(depth >= 0, 'CSS blocks must be balanced');
+      if (depth === 0) {
+        blocks.push(text.slice(offset, match.index + 1).trim());
+        offset = match.index + 1;
+      }
+    }
+    assert.equal(depth, 0, 'CSS blocks must be balanced');
+    assert.equal(text.slice(offset).trim(), '', 'No unparsed CSS remains');
+    return blocks;
+  };
+  const currentRules = rules((css.slice(0, start) + css.slice(end)).replace(selector, '.d1-canvas:has(> .d1-tool-dock > .d1-tool-scroll:not(:empty))'));
+  let cursor = 0;
+  for (const rule of rules(before(cssPath))) {
+    const index = currentRules.indexOf(rule, cursor);
+    assert.ok(index >= 0, `Baseline CSS rule must remain byte-exact and in order: ${rule}`);
+    cursor = index + 1;
+  }
   assert.equal(readFileSync(root + 'components/prism-next/paper-preview-layout.ts', 'utf8'), before('components/prism-next/paper-preview-layout.ts'));
 });

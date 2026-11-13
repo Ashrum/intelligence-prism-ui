@@ -72,3 +72,16 @@
 @media (prefers-reduced-motion:reduce) {
   .d1-paper-host [data-region] > button, .d1-columns, .d1-rail-shell, .d1-question { transition:none; }
 }
+
+/* P169 · Immersive canvas, including the browser-fullscreen fallback. */
+.d1-frame[data-immersive="true"] { position:fixed; inset:0; z-index:1000; width:100vw; height:100dvh; max-width:none; max-height:none; }
+.d1-frame[data-immersive="true"] > .d1-columns > [data-review-canvas] { display:grid; background:color-mix(in srgb, var(--foreground) 88%, var(--background)); }
+.d1-frame[data-immersive="true"] .d1-immersive-controls { position:absolute; inset:12px 12px auto; z-index:20; pointer-events:none; opacity:1; transition:opacity 200ms; }
+.d1-frame[data-immersive="true"] .d1-immersive-controls[data-visible="false"] { opacity:0; }
+.d1-frame[data-immersive="true"] .d1-immersive-controls:focus-within { opacity:1; }
+.d1-frame[data-immersive="true"] .d1-immersive-label { width:fit-content; max-width:calc(100% - 44px); padding:4px 10px; border-radius:6px; background:rgb(255 255 255 / 80%); color:rgb(0 0 0 / 88%); overflow-wrap:anywhere; }
+.d1-frame[data-immersive="true"] .d1-immersive-exit { position:absolute; top:0; right:0; width:32px; height:32px; pointer-events:auto; color:var(--background); }
+.d1-frame[data-immersive="true"] .d1-immersive-exit:hover { color:var(--foreground); }
+@media (prefers-reduced-motion:reduce) {
+  .d1-frame[data-immersive="true"] .d1-immersive-controls { transition:none; }
+}

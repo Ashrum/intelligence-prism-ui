@@ -3416,7 +3416,7 @@ PO 2026-10-28 授权把 `typography.css` 中 **仅 field-description** 从 hint 
 | `BlueprintFrame` | `active: boolean`；false 直接返回原 children，不增加 DOM。true 在现有单根元素上合并外框属性并追加装饰，不新增父节点或改变原子树位置，四边装饰坐标尺上下 1–8、左右 A–D，整组 aria-hidden；坐标带 18px，默认内距 30px，宿主可通过 style 设置内距。`narrowFrame?: "edge" 或 "keep"`；keep 在窄容器保留侧边细线。 |
 | `BlueprintInlineCode` | `active: boolean`、`code: "A" 或 "B"`；active 才渲染，aria-hidden，放入原有标题，不新增标题语义。一个预览画面最多 A、B 两块。 |
 | `BlueprintInlineFolio` | `active: boolean`、`folio: BlueprintFolio`；沿用既有格式化，图号 aria-hidden，只反映宿主传入的真实题号和总数。 |
-| `ReviewWorkspace` | 可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
+| `ReviewWorkspace` | P169：可选 `onImmersiveChange?: (immersive: boolean) => void` 同步框架退出与外部全屏退出；`immersiveLabel?: ReactNode` 提供沉浸身份标签；`fullscreen?: boolean` 默认 true，false 仅页内铺满。接入须传状态回调，详见[沉浸契约](paper-preview.md#沉浸p169)。可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
 | 原标题插槽 | `QuestionHeading.leading/titleSuffix?: ReactNode`；`QuestionAnalysisCard.blueprintSheet?: {current:number;total:number}` 使用该插槽。`QuestionInspector.blueprintCode?: boolean` 默认 false，在原右栏标题加 B；默认输出不变。 |
 
 题目预览从当前题目事实输出 `SHEET 17 / 20`，切题同步更新，知识点视角仍表示当前证据题；右栏保留“本题分析”或知识点原文。试卷预览没有数字题卡标题，在画布外框显示 A 与当前题号，不给每张扫描纸重复编号。新组件页示例：[无标题外框](/next/foundations/blueprint#blueprint-frame)。
