@@ -20,6 +20,7 @@ function Choices({ label, value, options, onChange }: { label: string; value: st
 function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMode, counts, countUnit, countsAdditive }: {
   books: TextbookDefinition[]; subjects: TextbookSubject[]; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; width: string; callbackMode: boolean; counts?: Readonly<Record<string, number>>; countUnit: string; countsAdditive: boolean
 }) {
+  const [cardHeader, setCardHeader] = useState(false)
   const [switchRequests, setSwitchRequests] = useState(0)
   const [selections, setSelections] = useState<DirectorySelections>(() => defaultDirectorySelections(books))
   const [currentNodes, setCurrentNodes] = useState<Record<string, string>>({})
@@ -39,9 +40,10 @@ function DirectoryPanel({ books, subjects, kind, onKindChange, width, callbackMo
   const entries = books.flatMap(book => (["course", "knowledge"] as DirectoryKind[]).flatMap(type => (selections[`${book.id}:${type}`] ?? []).map(id => ({ id, title: book.directories[type].nodes[id]?.title ?? id }))))
   return <section id="embedded-directory" className="min-w-0 space-y-3" aria-label="内嵌大纲目录">
     <h2 className="text-block-title">教材大纲树</h2>
+    <Toggle pressed={cardHeader} onPressedChange={setCardHeader}>教材卡与分段目录</Toggle>
     <Button variant="outline" onClick={() => { clearDirectoryMemory(() => sessionStorage); setSelections(defaultDirectorySelections(books)); setCurrentNodes({}); setReset(value => value + 1) }}>清除记忆，回到首次进入状态</Button>
     <div className="textbook-directory-frame max-w-full border p-2" style={{ width: Number(width) }}>
-      {ready ? <TextbookDirectory layout="embedded" titleAction="select" multiSelect="dialog" allOption={{}} counts={counts} countUnit={countUnit} countsAdditive={countsAdditive} key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
+      {ready ? <TextbookDirectory headerStyle={cardHeader ? "card" : "default"} layout="embedded" titleAction="select" multiSelect="dialog" allOption={{}} counts={counts} countUnit={countUnit} countsAdditive={countsAdditive} key={reset} textbooks={books} subjects={subjects} currentNodes={currentNodes} onCurrentNodesChange={setCurrentNodes} selections={selections} onSelectionsChange={setSelections} kind={kind} onKindChange={onKindChange} onTextbookSwitch={callbackMode ? () => setSwitchRequests(value => value + 1) : undefined} /> : <p role="status" className="text-ui-hint">正在恢复目录选择…</p>}
     </div>
     <details className="max-w-full text-ui-hint" style={{ width: Number(width) }}>
       <summary className="cursor-pointer">宿主选择回显 · {entries.length} 个叶节点</summary>

@@ -3542,3 +3542,21 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 - `BpObjectPaneFooter` 接收 footer 属性，合并 className，提供不收缩且可换行的底栏。
 
 组件站 `#agent-conversation-pane` 提供合成数据下的回执、问询、交接及批阅右栏示例。组件仅呈现宿主数据并发出意图。新增组件从 work 模块导入，聚合出口文件不在本轮 scope 内。浏览器验收由 Supervisor 执行。
+
+### P170 教学资源可选呈现
+
+设计状态为候选，基于 S02 FROZEN 修订 b。工程准入未开始。
+
+| 组件 | 新增契约 | 使用与边界 |
+| --- | --- | --- |
+| `FacetFilter` | `appearance?: "rows" \| "panel"`，默认 `rows` | `panel` 平铺全部维度及选项，顶部提供重置与收起。所有筛选为空、搜索为空且未开启收藏时重置禁用。多选维度在开发环境每个组件实例警告一次，以 single 展示和发出意图。结果栏沿用 `FilterResults`。 |
+| `FacetFilterOption` | `swatch?: string` | 宿主提供 CSS 颜色值，文字前显示装饰色块，`aria-hidden`。rows 与 panel 均支持。 |
+| `DifficultyMix` | `basic: number`、`consolidate: number`、`advance: number`、`className?: string` | 宿主提供非负整数题数。按基础、巩固、提升顺序绘制非零段并提供完整可访问摘要，零项文字淡化，全零显示“难度未标注”。导出 `difficultySwatches` 供筛选复用。 |
+| `TextbookDirectory` | `headerStyle?: "default" \| "card"`，默认 `default` | 仅 embedded 生效，采用既有正式内嵌目录组合。教材卡承接切换回调或教材对话框，单教材且无回调时为静态卡。卡按钮承担焦点还原，目录类型继续使用 coss Tabs。header 与 split 忽略该属性。 |
+| `PageTabs` | `subject?: { label: ReactNode; ariaLabel: string; onClick?: () => void }`、`sticky?: boolean` | 学科块始终显示，有回调使用 button，缺少回调使用 span。sticky 使用 1px 哨兵与 IntersectionObserver，支持最近滚动容器及 `--page-tabs-sticky-top`。离开上边界后显示阴影，卸载清理观察器，无观察器时保留 CSS 吸顶。 |
+
+复用检索已核对现有 FacetRow、FilterResults、TextbookDirectory / EmbeddedTextbookDirectory、PageTabs 及 coss ToggleGroup、Toggle、Tabs。筛选与目录继续复用现有受控意图和导航逻辑。现有组件缺少三档题数构成条，按任务授权新增 DifficultyMix。配色统一使用 `difficultySwatches`。
+
+示例位于 [分面筛选](/next/components/facet-filter)、[难度构成](/next/components/difficulty-mix)、既有 Tree 内嵌目录示例与 Blueprint 导航体系示例。难度构成通过独立示例路由和筛选页链接访问。
+
+排版待裁定项为图纸 13px 面板标题、11px 数量、10px 封面短标。当前分别沿用 `text-ui-action`（14px）、`text-ui-meta`（12px）、`text-ui-meta`（12px），遵守已有语义字号约束。其余 14px、16px 使用既有语义类。默认属性的 SSR 与 7155a08 的逐字节对比见 `tests/p170-resources-components.test.mjs`，浏览器验收由 Supervisor 执行。

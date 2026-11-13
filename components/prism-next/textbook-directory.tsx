@@ -65,6 +65,8 @@ type DirectoryProps = {
   layout?: "split" | "embedded"
   /** Decoration in the existing embedded/header textbook title; split has no title row. */
   headingLeading?: React.ReactNode
+  /** Card presentation applies only to embedded layout. */
+  headerStyle?: "default" | "card"
   titleAction?: TitleAction
   multiSelect?: "always" | "toggle" | "dialog"
   emptySelectionLabel?: string
@@ -104,7 +106,7 @@ export function TextbookDirectory(props: TextbookDirectoryProps) {
   const [sessions, setSessions] = useState<Record<string, Session>>({})
   if (props.layout === "header") return <EmbeddedTextbookDirectory {...props} />
   const { textbooks: directoryBooks, selections, onSelectionsChange, layout = "split", titleAction = "locate", multiSelect = "always", emptySelectionLabel, onTextbookSwitch, ...extension } = props
-  const formalEmbedded = layout === "embedded" && (extension.allOption !== undefined || extension.counts !== undefined || extension.subjects !== undefined || extension.currentNodes !== undefined || multiSelect === "dialog")
+  const formalEmbedded = layout === "embedded" && (extension.headerStyle === "card" || extension.allOption !== undefined || extension.counts !== undefined || extension.subjects !== undefined || extension.currentNodes !== undefined || multiSelect === "dialog")
   if (formalEmbedded) return <EmbeddedTextbookDirectory textbooks={directoryBooks} selections={selections} onSelectionsChange={onSelectionsChange} {...extension}
     kind={extension.kind ?? kind} onKindChange={extension.onKindChange ?? setKind} titleAction={props.titleAction ?? "select"}
     multiSelect={multiSelect} emptySelectionLabel={emptySelectionLabel} onTextbookSwitch={onTextbookSwitch} />

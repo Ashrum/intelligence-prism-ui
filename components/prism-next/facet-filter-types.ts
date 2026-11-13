@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-export type FacetFilterOption = { id: string; label: string; count?: number; tone?: "success" | "info" | "warning" }
+export type FacetFilterOption = { id: string; label: string; count?: number; tone?: "success" | "info" | "warning"; swatch?: string }
 export type FacetFilterDimension = {
   id: string
   label: string
@@ -22,6 +22,7 @@ export type FacetFilterIntent =
   | { type: "search"; value: string }
   | { type: "reset" }
 export type FacetFilterProps = {
+  appearance?: "rows" | "panel"
   dimensions: readonly FacetFilterDimension[]
   value: FacetFilterValue
   sortItems: readonly { id: string; label: string }[]

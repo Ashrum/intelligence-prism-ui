@@ -1,7 +1,7 @@
 "use client"
 
-import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ComponentType, type Dispatch, type ReactNode, type SetStateAction } from "react"
-import { ArrowRightLeft, Search, X } from "lucide-react"
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ComponentType, type Dispatch, type ReactNode, type RefObject, type SetStateAction } from "react"
+import { ArrowRightLeft, ChevronsUpDown, Search, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
@@ -13,6 +13,7 @@ import type { DirectoryViewProps } from "@/components/prism-next/directory-prese
 import { directoryLeaves, projectDirectory, summarizeDirectory, type DirectoryData, type DirectoryKind } from "@/lib/prism-next/textbook-directory"
 import { DirectoryFacts, DirectoryMarks, OutlineView } from "./textbook-directory-outline"
 import "./textbook-directory.css"
+import "./textbook-directory-embedded.css"
 
 const kinds: DirectoryKind[] = ["course", "knowledge"]
 const kindTitle = (kind: DirectoryKind) => kind === "course" ? "课程目录" : "知识点目录"
@@ -80,9 +81,24 @@ function BookHeader({ book, headingLeading, children }: { book: TextbookHeaderDe
   </div>
 }
 
-function KindTabs({ kind, onKindChange, children }: { kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; children: ReactNode }) {
-  return <Tabs value={kind} onValueChange={value => onKindChange(value as DirectoryKind)} className="min-h-0 gap-3">
-    <TabsList aria-label="目录类型" className="w-full min-w-0">{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 flex-1 basis-0"><span className="truncate">{kindTitle(type)}</span></TabsTab>)}</TabsList>
+function BookCard({ book, headingLeading, onSwitch, switchRef, dialog }: {
+  book: TextbookHeaderDefinition; headingLeading?: ReactNode; onSwitch?: () => void
+  switchRef: RefObject<HTMLButtonElement | null>; dialog: boolean
+}) {
+  const volume = book.volume || book.title
+  const half = volume.includes("上") ? "上" : volume.includes("下") ? "下" : ""
+  const shortLabel = half ? Array.from(volume)[0] + half : Array.from(book.subject ?? "").slice(0, 2).join("")
+  const content = <>
+    <span className="textbook-card-cover text-ui-meta" aria-hidden="true">{shortLabel}</span>
+    <span className="textbook-card-copy"><span className="text-ui-meta text-muted-foreground">{editionTitle(book)} · {subjectTitle(book)}</span><span className="truncate text-item-title" title={volume}>{headingLeading}{volume}</span></span>
+    {onSwitch && <span className="textbook-card-switch"><ChevronsUpDown size={16} aria-hidden="true" /></span>}
+  </>
+  return onSwitch ? <button ref={switchRef} type="button" className="textbook-card" aria-label={`教材：${editionTitle(book)} ${volume}，切换教材`} aria-haspopup={dialog ? "dialog" : undefined} onClick={onSwitch}>{content}</button> : <div className="textbook-card">{content}</div>
+}
+
+function KindTabs({ kind, onKindChange, children, card = false }: { card?: boolean; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; children: ReactNode }) {
+  return <Tabs value={kind} onValueChange={value => onKindChange(value as DirectoryKind)} className={card ? "min-h-0 gap-0" : "min-h-0 gap-3"}>
+    <TabsList aria-label="目录类型" className={card ? "textbook-card-tabs w-full min-w-0" : "w-full min-w-0"}>{kinds.map(type => <TabsTab key={type} value={type} className="min-w-0 flex-1 basis-0"><span className="truncate">{kindTitle(type)}</span></TabsTab>)}</TabsList>
     {kinds.map(type => <TabsPanel key={type} value={type}>{kind === type && children}</TabsPanel>)}
   </Tabs>
 }
@@ -127,7 +143,7 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange, headingLeading }: TextbookDirectoryProps) {
+export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange, headingLeading, headerStyle = "default" }: TextbookDirectoryProps) {
   const View = OutlineView
   const initialExpanded = noExpansion
   const [localBookId, setLocalBookId] = useState(textbooks[0]?.id ?? "")
@@ -191,12 +207,17 @@ export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, 
   const closeBook = () => setBookDialog(previous => ({ ...previous, open: false }))
   const closeMulti = () => setMultiDialog(previous => ({ ...previous, open: false }))
   const setDraft: SelectionChange = update => setMultiDialog(previous => ({ ...previous, selections: typeof update === "function" ? update(previous.selections) : update }))
-  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className="textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3" data-textbook-directory={layout === "header" ? "header" : "embedded"}>
-    <BookHeader book={book} headingLeading={headingLeading}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
+  const card = headerStyle === "card" && layout !== "header"
+  const switchBook = () => {
+    if (onTextbookSwitch) { onTextbookSwitch(); return }
+    setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
+  }
+  return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className={card ? "textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-0" : "textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3"} data-textbook-directory={layout === "header" ? "header" : "embedded"}>
+    {card ? <BookCard book={book} headingLeading={headingLeading} switchRef={switchRef} dialog={!onTextbookSwitch} onSwitch={onTextbookSwitch || textbooks.length > 1 ? switchBook : undefined} /> : <BookHeader book={book} headingLeading={headingLeading}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
       setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
-    }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>
-    {activeData && <KindTabs kind={kind} onKindChange={onKindChange}>
+    }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>}
+    {activeData && <KindTabs kind={kind} onKindChange={onKindChange} card={card}>
       <PickerSession key={scope} toggleTitles={multiSelect !== "always"} allOption={allOption} titleAction={titleAction} multiple={multiSelect === "always" || (multiSelect === "toggle" && (sessions[scope]?.multiple ?? entries.length > 1))} currentNode={currentNodes[scope]} onCurrentNodeChange={id => onCurrentNodesChange?.(previous => {
         const next = { ...previous }; if (id) next[scope] = id; else delete next[scope]; return next
       })} data={activeData} kind={kind} checkedIds={activeIds} onCheckedChange={changeChecked(kind, onSelectionsChange)} View={View} session={sessions[scope] ?? { query: "" }} onSessionChange={patchSession} initialExpanded={initialExpanded(activeData)}
