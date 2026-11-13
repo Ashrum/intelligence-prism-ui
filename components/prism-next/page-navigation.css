@@ -24,3 +24,11 @@
   .bp-navigation-demo-side { display:none; }
   .bp-navigation-demo-main { padding:16px; }
 }
+
+.bp-page-tabs--subject { align-items:stretch; }
+.bp-page-tabs-subject { display:flex; align-items:center; flex:none; gap:12px; margin-right:12px; padding:0 16px; border:0; background:var(--foreground); color:var(--background); font-weight:600; white-space:nowrap; }
+.bp-page-tabs-subject svg { opacity:.85; }
+button.bp-page-tabs-subject:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.bp-page-tabs--sticky { position:sticky; top:var(--page-tabs-sticky-top, 0px); z-index:20; background:var(--card); }
+.bp-page-tabs--sticky[data-stuck] { box-shadow:0 1px 0 var(--border), 0 6px 12px -8px rgb(15 23 42 / 18%); }
+.bp-page-tabs-sentinel { display:block; height:1px; margin-bottom:-1px; pointer-events:none; }

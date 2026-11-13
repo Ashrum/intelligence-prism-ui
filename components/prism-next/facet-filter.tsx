@@ -4,7 +4,7 @@ import { Field, FieldLabel } from "@/components/coss/field"
 import { TooltipPopup, PopoverPopup } from "@/components/prism-next/scoped-overlays"
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react"
-import { Circle, Info, ListFilter, Search, Star, ChevronDown, ChevronUp } from "lucide-react"
+import { Circle, Filter, Info, ListFilter, Search, Star, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { Badge } from "@/components/coss/badge"
 import { FramePanel } from "@/components/coss/frame"
@@ -36,6 +36,7 @@ function useContainerWidth() {
 
 function OptionLabel({ option, selected }: { option: FacetFilterOption; selected: boolean }) {
   return <span className={`flex min-w-0 items-center gap-1.5 ${option.count === 0 ? "text-muted-foreground" : ""}`}>
+    {option.swatch && <span className="facet-filter-swatch" style={{ background: option.swatch }} aria-hidden="true" />}
     {option.tone && <Circle aria-hidden="true" className={`size-[7px] shrink-0 ${option.tone === "success" ? "text-success" : option.tone === "info" ? "text-info" : "text-warning"}`} fill="currentColor" strokeWidth={0} />}
     <span className={`truncate ${selected ? "text-ui-action" : "text-ui-body"}`}>{option.label}</span>
     {option.count !== undefined && <span className="shrink-0 text-ui-hint text-muted-foreground tabular-nums">{option.count}</span>}
@@ -94,7 +95,7 @@ function DraftActions({ onConfirm, onCancel }: { onConfirm: () => void; onCancel
   return <div className="flex gap-2"><Button size="xs" variant="outline" onClick={onConfirm}>确定</Button><Button size="xs" variant="ghost" onClick={onCancel}>取消</Button></div>
 }
 
-export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools, countUnit = "题" }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode }) {
+export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools, panel = false, countUnit = "题" }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode; panel?: boolean }) {
   const id = useId()
   const [expanded, setExpanded] = useState(false)
   const signature = dimensionKey(dimension, selected)
@@ -142,11 +143,11 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
           <OptionChoices countUnit={countUnit} dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
         {!visible.length && <p role="status" className="text-ui-hint">没有匹配的选项。</p>}
       </div>
-      <div className="facet-filter-tools">
+      {!panel && <div className="facet-filter-tools">
         <span>{!full && hasMore && draft === null && <Button size="xs" variant="ghost" className="text-muted-foreground" aria-label={`${dimension.label}${expanded ? "收起" : "更多"}`} aria-expanded={expanded} aria-controls={`${id}-options`} onClick={() => setExpanded(value => !value)}>{expanded ? "收起" : "更多"}{expanded ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}</Button>}</span>
         <span>{dimension.mode === "multiple" && <Button size="xs" ref={multiTrigger} variant="ghost" className="text-muted-foreground" disabled={draft !== null} aria-label={`${dimension.label}多选`} onClick={() => setDraft([...selected])}>多选</Button>}</span>
         {tools && <div className="col-span-2 flex flex-wrap justify-end gap-1">{tools}</div>}
-      </div>
+      </div>}
     </div>
   </fieldset>
 }
@@ -180,7 +181,7 @@ export function FilterResults({ value, sortItems, resultCount, favoriteCount, sh
 }
 
 export function FacetFilter(props: FacetFilterProps) {
-  const { dimensions, value, onIntent, countUnit = "题", results = true, collapsible = true } = props
+  const { dimensions, value, onIntent, countUnit = "题", results = true, collapsible = true, appearance = "rows" } = props
   const { ref, width } = useContainerWidth()
   const id = useId()
   const [collapseRequested, setCollapsed] = useState(false)
@@ -191,6 +192,13 @@ export function FacetFilter(props: FacetFilterProps) {
   useEffect(() => {
     if (restoreCollapseFocus.current) { collapseTrigger.current?.focus(); restoreCollapseFocus.current = false }
   }, [collapsed])
+  const warnedMultiple = useRef(false)
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && appearance === "panel" && dimensions.some(dimension => dimension.mode === "multiple") && !warnedMultiple.current) {
+      warnedMultiple.current = true
+      console.warn('FacetFilter appearance="panel" only supports single dimensions; rendering as single.')
+    }
+  }, [appearance, dimensions])
   const common = dimensions.filter(dimension => dimension.common).slice(0, 3)
   const remaining = dimensions.filter(dimension => !common.includes(dimension))
   const otherActive = remaining.filter(dimension => value.filters[dimension.id]?.length).length
@@ -198,6 +206,19 @@ export function FacetFilter(props: FacetFilterProps) {
   const summary = dimensions.filter(dimension => value.filters[dimension.id]?.length).map(dimension => `${dimension.label} ${dimensionSelection(dimension, value.filters[dimension.id])}`).join("；") || "未筛选"
   const reset = <Button size="xs" variant="ghost" className="text-muted-foreground" onClick={() => { setResetKey(key => key + 1); onIntent({ type: "reset" }) }}>重置</Button>
   const collapse = collapsible && <Button ref={collapseTrigger} size="xs" variant="ghost" className="text-muted-foreground" aria-expanded={!collapsed} aria-controls={`${id}-facets`} onClick={() => { restoreCollapseFocus.current = true; setCollapsed(value => !value) }}>{collapsed ? "展开" : "收起"}</Button>
+  if (appearance === "panel") {
+    const resetDisabled = !Object.values(value.filters).some(values => values.length) && !value.search && !value.favoritesOnly
+    const panelReset = <button type="button" className="facet-filter-panel-action text-ui-meta" disabled={resetDisabled} onClick={() => { setResetKey(key => key + 1); onIntent({ type: "reset" }) }}>重置</button>
+    const panelCollapse = collapsible && <button type="button" ref={collapseTrigger} className="facet-filter-panel-action text-ui-meta" aria-expanded={!collapsed} aria-controls={`${id}-facets`} onClick={() => { restoreCollapseFocus.current = true; setCollapsed(value => !value) }}>{collapsed ? "展开" : "收起"}{collapsed ? <ChevronDown size={14} aria-hidden="true" /> : <ChevronUp size={14} aria-hidden="true" />}</button>
+    return <div ref={ref} data-facet-filter className="facet-filter min-w-0 space-y-2">
+      <div className="facet-filter-panel">
+        {collapsed ? <div className="flex h-10 items-center gap-2 px-2"><span className="shrink-0 text-ui-action">筛选</span><span className="min-w-0 flex-1 truncate text-ui-hint text-muted-foreground" title={summary}>{summary}</span><div className="flex shrink-0">{panelReset}{panelCollapse}</div></div> :
+          <div className="facet-filter-panel-head"><span className="facet-filter-panel-title text-ui-action"><Filter size={14} aria-hidden="true" />筛选</span><div className="flex">{panelReset}{panelCollapse}</div></div>}
+        <div key={resetKey} id={`${id}-facets`} hidden={collapsed}>{dimensions.map(dimension => <FacetRow key={dimension.id} panel full countUnit={countUnit} dimension={{ ...dimension, mode: "single" }} selected={(value.filters[dimension.id] ?? []).slice(0, 1)} onIntent={onIntent} />)}</div>
+      </div>
+      {results && <FilterResults {...props} />}
+    </div>
+  }
   const rows = common
   return <div ref={ref} data-facet-filter className="facet-filter min-w-0 space-y-2">
     <FramePanel className="p-0">

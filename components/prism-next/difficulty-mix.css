@@ -1,0 +1,6 @@
+.difficulty-mix { display:flex; align-items:center; gap:8px; }
+.difficulty-mix-bar { display:flex; gap:2px; width:48px; height:8px; flex:none; }
+.difficulty-mix-bar > i { min-width:4px; border-radius:2px; }
+.difficulty-mix-text { line-height:16px; color:var(--muted-foreground); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.difficulty-mix-text [data-empty] { opacity:.55; }
+.difficulty-mix-unknown { color:var(--muted-foreground); }

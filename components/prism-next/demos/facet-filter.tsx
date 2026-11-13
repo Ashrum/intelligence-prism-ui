@@ -4,6 +4,8 @@ import { DemoSection } from "@/components/prism-next/demo-parts"
 import { useState } from "react"
 import { Toggle } from "@/components/coss/toggle"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
+import { DifficultyMix, difficultySwatches } from "../difficulty-mix"
+import { initialFilterValue } from "./fixtures/facet-filter"
 import { FacetFilter } from "../facet-filter"
 import { applyFilterIntent, filterFixture, filterSortItems, previewFilterValue, type FilterScale } from "./fixtures/facet-filter"
 import type { FacetFilterProps, FacetFilterIntent } from "@/components/prism-next/facet-filter-types"
@@ -55,6 +57,27 @@ export function FacetFilterDemo() {
     </div>
     <p className="text-ui-hint">使用组件示例数据。切换规模会重置；其余开关保留筛选。128 {countUnit}与收藏 23 {countUnit}为固定夹具事实，不随操作模拟查询结果。选项包含 0 与未提供数量；取消数量开关后组件不推定可用性。所选宽度就是筛选区宽度，窄窗口以实际可用宽度为准。</p>
     <p className="text-ui-hint">countUnit 默认“题”；选择“份试卷”后，结果数与选项可访问名称使用试卷单位。数量仍由宿主提供。</p>
+    <ResourcePanelExample />
     <FilterPreview results={!embedded} collapsible={!embedded} countUnit={countUnit} showFavorites={showFavorites} key={scale} scale={scale} width={Number(width)} dimensions={dimensions} sortItems={sortItems} />
   </div></DemoSection>
+}
+
+function ResourcePanelExample() {
+  const [value, setValue] = useState(initialFilterValue)
+  const dimensions: FacetFilterProps["dimensions"] = [
+    { id: "type", label: "类型", mode: "single", options: [{ id: "practice", label: "同步练习", count: 29 }, { id: "unit", label: "单元测试", count: 5 }, { id: "advanced", label: "单元提升卷", count: 5 }] },
+    { id: "difficulty", label: "难度", mode: "single", options: [{ id: "basic", label: "基础", count: 21, swatch: difficultySwatches.basic }, { id: "consolidate", label: "巩固", count: 18, swatch: difficultySwatches.consolidate }, { id: "advance", label: "提升", count: 0, swatch: difficultySwatches.advance }] },
+    { id: "source", label: "来源", mode: "single", options: [{ id: "school", label: "本校", count: 39 }, { id: "joint", label: "联考", count: 0 }, { id: "institute", label: "教研院", count: 0 }, { id: "exam", label: "考试中心", count: 0 }] },
+    { id: "year", label: "年份", mode: "single", options: [{ id: "2026", label: "2026", count: 39 }, { id: "2025", label: "2025", count: 0 }, { id: "2024", label: "2024", count: 0 }] },
+    { id: "region", label: "地区", mode: "single", options: ["东澜市", "临江市", "云岫市", "启明区"].map(label => ({ id: label, label, count: 0 })) },
+  ]
+  return <section className="space-y-3" aria-label="试卷筛选面板">
+    <h2 className="text-block-title">试卷筛选面板</h2>
+    <FacetFilter appearance="panel" dimensions={dimensions} value={value} sortItems={[]} results={false} countUnit="份试卷" onIntent={intent => setValue(previous => applyFilterIntent(previous, intent))} />
+    <h3 className="text-item-title">难度构成</h3>
+    <DifficultyMix basic={5} consolidate={5} advance={2} />
+    <DifficultyMix basic={0} consolidate={10} advance={2} />
+    <DifficultyMix basic={0} consolidate={0} advance={0} />
+    <a className="text-ui-body underline" href="/next/components/difficulty-mix">查看 DifficultyMix 契约与示例</a>
+  </section>
 }

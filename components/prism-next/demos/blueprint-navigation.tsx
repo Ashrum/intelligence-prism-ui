@@ -65,6 +65,11 @@ export function BlueprintNavigationDemo() {
   return <section id="navigation-system" aria-label="导航体系" className="min-w-0 space-y-6">
     <h2 className="text-section-title">导航体系</h2>
     <p className="text-ui-hint text-muted-foreground">方案 B · 合成数据。链接切换示例选择；不连接工作台业务或预览框架。</p>
+    <div className="max-h-72 overflow-auto border p-3">
+      <p className="pb-3 text-ui-hint">向下滚动此容器查看吸顶。顶部偏移由 --page-tabs-sticky-top 设置，离开原位后显示阴影。</p>
+      <PageTabs sticky subject={{ label: "初中数学", ariaLabel: "当前学科：初中数学" }} aria-label="教学资源栏目" currentId="papers" items={[{ id: "papers", label: "试卷库", href: "#resources-sticky-example" }, { id: "questions", label: "题库", href: "#resources-sticky-example" }]} />
+      <div id="resources-sticky-example" className="h-96 pt-4 text-ui-hint">教学资源导航示例</div>
+    </div>
     <NavigationExample />
     <NavigationExample teacher />
     <div id="navigation-object" className="min-w-0">
