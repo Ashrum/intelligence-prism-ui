@@ -11,7 +11,7 @@ import {answerHeight,PAPER_WIDTH} from '../examples/question-review/artwork.ts';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const out=new URL('../.sites-runtime/q5-test/canvas.mjs',import.meta.url);
 await mkdir(new URL('.',out),{recursive:true});
-const result=await build({stdin:{contents:"export {QuestionPaperCanvas} from './examples/question-review/question-paper-canvas'",resolveDir:root,loader:'tsx'},bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false,plugins:[{name:'canvas-dimensions-only',setup(b){b.onLoad({filter:/document-region-viewer\.tsx$/},()=>({loader:'tsx',contents:'export const DocumentRegionViewer=({pageLayout,background}:any)=><div data-viewer style={pageLayout}>{background}</div>'}))}}]});
+const result=await build({stdin:{contents:"export {QuestionPaperCanvas} from './examples/question-review/question-paper-canvas'",resolveDir:root,loader:'tsx'},bundle:true,jsx:'automatic',platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false,plugins:[{name:'canvas-dimensions-only',setup(b){b.onLoad({filter:/document-region-viewer\.tsx$/},()=>({loader:'tsx',contents:'export const DocumentRegionViewer=({pageLayout,background}:any)=><div data-viewer style={pageLayout}>{background}</div>; export const DocumentRegionOverlay=()=>null'}))}}]});
 await writeFile(out,result.outputFiles[0].text);const {QuestionPaperCanvas}=await import(out);await rm(out);
 
 // Minimal in-memory DOM for React's client commit. It deliberately retains invalid
