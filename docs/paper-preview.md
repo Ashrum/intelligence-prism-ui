@@ -69,6 +69,26 @@ P53（PO 2026-10-13）：数字卷面不提供缩放与旋转。mixed 全部为�
 
 PaperPreviewSurface 可选 `scanOnly/topInset`，仅吸附当前可见扫描纸右缘，没有扫描纸时回到画布侧边（不隐藏工具，保持冻结行为）。题目宿主仍用同样几何协议；无扫描夹具由宿主提供等高图像。连续与混排冻结快照不变；辅助导出不新增目录条目。
 
+## 原件题框（tone / tag / selectedRegionIds）
+
+`DocumentRegion` 新增可选 `tone?: "default" | "current" | "pending"`、`tag?: string`。同一页只要有一个区域传入 tone 或 tag，整页启用原件题框；其余区域按 default 呈现。不带 tag 不画角标，tag 原样显示；label 保留为按钮的 `aria-label="定位{label}"`，不再在题框内重复显示。整页未传 tone/tag 时，保留既有区域外观与默认输出。
+
+| 状态 | 外观 |
+| --- | --- |
+| default | 1px 蓝色细框 |
+| current | 2px 蓝色实线与极浅蓝底 |
+| pending | 紫红虚线；同时选中时为 2px 虚线与极浅底 |
+
+通过 `PaperPreview layout="mixed" mixed={{ …, selectedRegionIds }}` 或 `PaperPreviewMixed` 传入 `readonly string[]`。ID 命中的按钮 `aria-pressed=true`，启用题框外观时按 current 呈现，pending 保留紫红虚线。未传数组时不从既有 selected 推断题框选中；空数组表示没有选中。tone="current" 只声明外观，不替代受控 aria-pressed。低层 `DocumentRegionViewer` 也接受 selectedRegionIds；传入时优先于原有 selectedId，单选的定位行为仍由 selectedId 控制。
+
+多段关系由宿主维护：为「7」和「7 续」各分配全局唯一 region id（例如 q7-start、q7-end），选择该题时传入两个 ID。组件不按 tag 猜测分组，也不更新业务状态。数字页和图片页点击都通过同一 `onSelect(regionId)` 回调，宿主据 ID 反查所属页与题目。
+
+数字页有 `content` 且 regions 非空时，以正文外层容器为相对定位基准叠加题框；rect 仍为 0–100 百分比 `[left, top, width, height]`。宿主须按数字内容实际排版提供坐标。无 regions 或空数组时保持原有 child tree 与 React ID。数字页**不支持 regionEditing / 补框**；图片页编辑能力保持既有合同。
+
+组件站 PaperPreview 的「原件题框」示例含一张数字原文、三题（第 2 题 pending）和两张合成扫描页的跨页题，提供普通宽度及五主题窄容器。复用现有 DocumentRegionViewer、Prism Button、PaperPreview mixed 与连续预览的合成扫描图；无需新增基础组件或外部来源。题框颜色复用 brand-blue / brand-blue-text / brand-magenta-text / card 令牌。
+
+角标沿用 `text-component-label`（12px）和 `--font-mono`。本节为 Builder 实现说明，不代表独立 Review 或浏览器验收通过。
+
 ## P15 可选作答区域编辑（PO 2026-10-04 批准）
 
 本节为实现候选，待 Supervisor 独立 Review。`regionEditing` 默认关闭；未传时保持原有 DOM 输出、区域呈现、缩放、平移与捏合行为，不改变两份冻结评审页。组件只发出区域变更意图，宿主持有 `pages[].regions`，决定区域身份、接受变更和退出编辑；没有保存、解析、裁切图像或持久化行为。

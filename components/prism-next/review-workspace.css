@@ -85,3 +85,27 @@
 @media (prefers-reduced-motion:reduce) {
   .d1-frame[data-immersive="true"] .d1-immersive-controls { transition:none; }
 }
+
+/* P176: explicit original-question frames only; legacy regions keep their paint. */
+.prism-document-region-overlay { position:absolute; inset:0; pointer-events:none; }
+.prism-document-region-overlay > [data-region] { pointer-events:auto; }
+.prism-document-region { position:absolute; }
+.prism-document-region > .prism-document-region-hit {
+  position:absolute; inset:0; width:100%; height:100%; min-height:0; padding:0;
+  border:1px solid color-mix(in srgb, var(--brand-blue) 55%, transparent);
+  border-radius:var(--radius-sm); background:transparent; color:var(--foreground);
+}
+.prism-document-region[data-region-current="true"] > .prism-document-region-hit {
+  border-width:2px; border-color:var(--brand-blue-text);
+  background:color-mix(in srgb, var(--brand-blue) 6%, transparent);
+}
+.prism-document-region[data-region-tone="pending"] > .prism-document-region-hit { border-style:dashed; border-color:var(--brand-magenta-text); }
+.prism-document-region > .prism-document-region-hit:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+.prism-document-region > .prism-document-region-tag {
+  position:absolute; left:0; top:0; transform:translateY(-100%); padding:0 6px;
+  font-family:var(--font-mono); color:var(--card);
+  background:color-mix(in srgb, var(--brand-blue) 80%, transparent);
+  pointer-events:none; white-space:nowrap;
+}
+.prism-document-region[data-region-current="true"] > .prism-document-region-tag { background:var(--brand-blue-text); }
+.prism-document-region[data-region-tone="pending"] > .prism-document-region-tag { background:var(--brand-magenta-text); }
