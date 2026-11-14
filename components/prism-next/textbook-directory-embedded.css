@@ -13,9 +13,9 @@ button.textbook-card:hover .textbook-card-switch { color:var(--foreground); back
 .textbook-card-tabs [data-slot="tabs-tab"] { height:30px; border-radius:7px; font-size:var(--text-ui-action); font-weight:500; color:var(--muted-foreground); background:none; border:0; box-shadow:none; }
 .textbook-card-tabs [data-slot="tabs-tab"][aria-selected="true"] { background:var(--card); color:var(--foreground); font-weight:600; box-shadow:0 1px 2px rgb(0 0 0 / 8%), 0 0 0 1px rgb(0 0 0 / 4%); }
 
-/* P172: opt-in textbook selection popover, reusing the existing facet panel. */
+/* Opt-in textbook selection popover, reusing facet rows with a standard surface. */
 .textbook-card[aria-expanded="true"] { border-color:color-mix(in srgb, var(--brand-blue) 55%, var(--border)); box-shadow:0 0 0 3px color-mix(in srgb, var(--brand-blue) 12%, transparent); }
 .bp-textbook-picker[data-slot="popover-popup"] { width:420px; max-width:calc(100vw - 24px); border-radius:12px; border:1px solid var(--border); box-shadow:0 12px 32px -12px rgb(15 23 42 / 28%), 0 2px 6px -2px rgb(15 23 42 / 10%); }
 .bp-textbook-picker > [data-slot="popover-viewport"] { padding:14px 14px 12px; }
 .bp-textbook-picker-content { display:flex; flex-direction:column; gap:10px; }
-.bp-textbook-picker .facet-filter-panel { padding:4px 14px; }
+.bp-textbook-picker .bp-textbook-picker-rows > .facet-filter-panel { background:none; border:0; border-radius:0; box-shadow:none; padding:0; }

@@ -77,16 +77,16 @@ function HeaderOnlyFixture() {
 
 function BookOptionsFixture() {
   const { books } = useMemo(() => directoryDemoBooks("3", "small"), [])
-  const bookOptions = useMemo(() => ["人教版", "北师大版"].flatMap(edition => ["七年级", "八年级", "九年级"].flatMap(grade => ["上册", "下册"].map(term => ({
-    id: `${edition}-${grade}-${term}`, edition, grade, term, publisher: edition === "人教版" ? "人民教育出版社" : "北京师范大学出版社", count: edition === "人教版" && grade === "九年级" && term === "上册" ? 128 : 0,
-  })))), [])
-  const defaultBookId = "人教版-九年级-上册"
+  const bookOptions = useMemo(() => ["人教版", "北师大版"].flatMap(edition => ["2024", "2012"].flatMap(revision => ["七年级", "八年级", "九年级"].flatMap(grade => ["上册", "下册"].map(term => ({
+    id: `${edition}-${revision}-${grade}-${term}`, edition, revision, revisionNote: revision === "2024" ? "新教材" : undefined, grade, term, publisher: edition === "人教版" ? "人民教育出版社" : "北京师范大学出版社", count: edition === "人教版" && revision === "2024" && grade === "九年级" && term === "上册" ? 128 : 0,
+  }))))), [])
+  const defaultBookId = "人教版-2024-九年级-上册"
   const [bookId, setBookId] = useState(defaultBookId)
   const [selections, setSelections] = useState<DirectorySelections>({})
   const textbooks = bookOptions.map(option => ({ ...books[0], id: option.id, edition: option.edition, subject: "数学", title: `${option.grade}${option.term}`, volume: `${option.grade}${option.term}` }))
   return <section className="space-y-3" aria-label="教材卡选择面板">
     <h2 className="text-block-title">教材卡选择面板</h2>
-    <p className="text-ui-hint">版本、年级、学期单选即切换；示例仅人教版九年级上册有资源。</p>
+    <p className="text-ui-hint">版本、版次、年级、学期单选即切换；示例仅人教版 2024 新教材九年级上册有资源。</p>
     <div className="w-[280px] max-w-full"><TextbookDirectory layout="embedded" headerStyle="card" textbooks={textbooks} bookOptions={bookOptions} defaultBookId={defaultBookId} bookId={bookId} onBookChange={setBookId} selections={selections} onSelectionsChange={setSelections} countUnit="份试卷" /></div>
   </section>
 }

@@ -82,7 +82,7 @@ type DirectoryProps = {
   onCurrentNodesChange?: Dispatch<SetStateAction<Record<string, string>>>
   kind?: DirectoryKind
   onKindChange?: (kind: DirectoryKind) => void
-  bookOptions?: { id: string; edition: string; publisher?: string; grade: string; term: string; count: number }[]
+  bookOptions?: { id: string; edition: string; revision?: string; revisionNote?: string; publisher?: string; grade: string; term: string; count: number }[]
   defaultBookId?: string
   bookId?: string
   onBookChange?: (bookId: string) => void

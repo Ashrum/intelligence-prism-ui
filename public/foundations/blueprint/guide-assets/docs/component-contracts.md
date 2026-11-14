@@ -3585,8 +3585,8 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 
 ### P172 教材卡选择面板
 
-- `TextbookDirectory` 新增可选 `bookOptions?: { id: string; edition: string; publisher?: string; grade: string; term: string; count: number }[]` 与 `defaultBookId?: string`。仅 embedded 的 `headerStyle="card"` 且传入 `bookOptions` 时，教材卡打开下方对齐的 Popover，优先于 `onTextbookSwitch` 与原教材对话框；header / split 忽略它们。未传时保持原有输出与行为。
-- 宿主提供当前教材及候选组合，每个版本／年级／学期组合对应唯一 book；当前 book 须在 `bookOptions` 中且 `count > 0`。切换目标应在 `textbooks` 中提供对应目录。三行分别去重，年级按七／八／九年级、学期按上／下册排序。每项数量只取另两行保持当前值时的对应 book，无对应项为 0；计数单位沿用 `countUnit`。
-- 三行复用 `FacetRow panel full allOption={false}`，不显示全部或面板工具栏。零数量沿用现有禁用规则；点击正数量组合使用既有 `bookId/onBookChange` 受控或本地状态，浮层保持打开。底注显示版本、年级学期、可选出版社、匹配 `defaultBookId` 时的任教默认标记与数量。
+- `TextbookDirectory` 新增可选 `bookOptions?: { id: string; edition: string; revision?: string; revisionNote?: string; publisher?: string; grade: string; term: string; count: number }[]` 与 `defaultBookId?: string`。仅 embedded 的 `headerStyle="card"` 且传入 `bookOptions` 时，教材卡打开下方对齐的 Popover，优先于 `onTextbookSwitch` 与原教材对话框；header / split 忽略它们。未传时保持原有输出与行为。
+- 宿主提供当前教材及候选组合，每个版本／版次／年级／学期组合对应唯一 book；当前 book 须在 `bookOptions` 中且 `count > 0`。切换目标应在 `textbooks` 中提供对应目录。各行分别去重，版本仍按 `edition` 去重，年级按七／八／九年级、学期按上／下册排序。行序为版本、版次、年级、学期；仅当前所选版本有至少两个不同的非空 `revision` 时显示版次行，按 `revision` 降序，文字为版次及可选的空格＋`revisionNote`（例如「2024 新教材」）。每项数量只取其余维度保持当前值时的对应 book，无对应项为 0；版本切换保留当前版次，目标版本没有该版次时取目标版本最新版次。计数单位沿用 `countUnit`。
+- 各行复用 `FacetRow panel full allOption={false}`，不显示全部或面板工具栏。零数量沿用现有禁用规则；点击正数量组合使用既有 `bookId/onBookChange` 受控或本地状态，浮层保持打开。浮层采用标准样式：行容器无面板底色、边框、圆角、阴影与内距，仅保留行间虚线分隔，浮层自身样式不变。底注显示版本（有 `revision` 时为「版本（版次）」）、年级学期、可选出版社、匹配 `defaultBookId` 时的任教默认标记与数量。
 - `FacetRow` 新可选 `allOption?: boolean`，默认 true；false 同时省去可交互选项与测量盒中的“全部”，不改变既有零数量禁用规则。默认 FacetRow / FacetFilter 以 cee6e0e SSR 字节对照覆盖。
 - 复用检索：现有 TextbookDirectory / BookCard、FacetRow / OptionChoices、coss Popover / PopoverTrigger / PopoverTitle 与 Prism scoped-overlays/PopoverPopup 已覆盖所需结构；仅补授权的隐藏全部属性，不新增目录组件或修改 coss。底注采用既有 text-ui-meta（12px）。
