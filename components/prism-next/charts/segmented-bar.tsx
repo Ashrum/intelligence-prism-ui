@@ -13,7 +13,7 @@ import { useChartTheme } from "./chart-theme"
 import { isBlueprintTheme } from "@/lib/prism-next/config"
 
 export type SegmentedBarTone = "neutral" | "info" | "success" | "warning" | "destructive" | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5"
-export type SegmentedBarSegment = { id: string; label: string; value: number; tone?: SegmentedBarTone; fill?: BpFill; description?: string }
+export type SegmentedBarSegment = { id: string; label: string; value: number; tone?: SegmentedBarTone; color?: string; fill?: BpFill; description?: string }
 /** Raw values and the effective total in original units; remainder has no segment. */
 export type SegmentedBarShareFormatter = (numerator: number, denominator: number, segment: SegmentedBarSegment | undefined) => ChartValueText
 export type SegmentedBarProps = {
@@ -55,7 +55,7 @@ export function SegmentedBar({ dataDisclosure, segments, label, total, unit = ""
     const formattedShare = shareFormatter?.(segment.value, layout.totalValue, segment)
     const share = formattedShare ? formattedShare.text : shareText(layout.ratios[index], value > 0)
     const shareAria = formattedShare?.ariaText ?? share
-    const fill = blueprint ? segment.fill : undefined
+    const fill = blueprint && segment.color === undefined ? segment.fill : undefined
     return { id: segment.id, segment, fill, value, text, share, shareAria, name: `${segment.label} ${text} ${shareAria}`, tone: tones[segment.tone ?? "neutral"], width: layout.widths[index] }
   })
   const remainder = layout.remainderRatio > 0 && shareFormatter ? shareFormatter(layout.totalValue - layout.values.reduce((a, b) => a + b, 0), layout.totalValue, undefined) : undefined
@@ -68,7 +68,7 @@ export function SegmentedBar({ dataDisclosure, segments, label, total, unit = ""
       {rows.filter(row => row.value > 0).map((row, index, visible) => {
         const separator = index < visible.length - 1 ? <span aria-hidden className="pointer-events-none absolute inset-y-0 end-0 w-px max-w-[20%] bg-background" /> : null
         const className = cn("relative block h-full min-w-0 shrink-0", row.tone, row.fill && `bp-fill-${row.fill}`, onSelect && "cursor-pointer outline-offset-[-2px] focus-visible:outline-2 focus-visible:outline-foreground")
-        const style = { width: `${row.width * 100}%` }
+        const style = { width: `${row.width * 100}%`, background: row.segment.color }
         return onSelect
           ? <button key={row.segment.id} type="button" className={className} style={style} aria-label={`${row.name}${row.segment.description ? `；${row.segment.description}` : ""}`} onClick={() => onSelect(row.segment)}>{separator}</button>
           : <span key={row.segment.id} aria-hidden className={className} style={style}>{separator}</span>
@@ -76,14 +76,14 @@ export function SegmentedBar({ dataDisclosure, segments, label, total, unit = ""
     </MeterTrack>
     {legend === "below" && <ul aria-label={`${label}：图例`} className="grid min-w-0 gap-2">
       {rows.map(row => {
-        const content = <><span aria-hidden className={cn(row.fill ? "mt-1.5 size-2.5 shrink-0" : "mt-1.5 size-2 shrink-0 rounded-full", row.tone, row.fill && `bp-fill-${row.fill}`, row.fill === "hatch" && "border border-(--line)")} /><span className="grid min-w-0 gap-1"><span className="flex flex-wrap gap-x-2"><span className="min-w-0 [overflow-wrap:anywhere]">{row.segment.label}</span><span role={shareFormatter ? "img" : undefined} aria-label={shareFormatter ? `${row.text} · ${row.shareAria}` : undefined} className="min-w-0 tabular-nums [overflow-wrap:anywhere]">{row.text} · {row.share}</span></span>{row.segment.description && <span className="text-ui-hint text-muted-foreground [overflow-wrap:anywhere]">{row.segment.description}</span>}</span></>
+        const content = <><span aria-hidden style={row.segment.color === undefined ? undefined : { background: row.segment.color }} className={cn(row.fill ? "mt-1.5 size-2.5 shrink-0" : "mt-1.5 size-2 shrink-0 rounded-full", row.tone, row.fill && `bp-fill-${row.fill}`, row.fill === "hatch" && "border border-(--line)")} /><span className="grid min-w-0 gap-1"><span className="flex flex-wrap gap-x-2"><span className="min-w-0 [overflow-wrap:anywhere]">{row.segment.label}</span><span role={shareFormatter ? "img" : undefined} aria-label={shareFormatter ? `${row.text} · ${row.shareAria}` : undefined} className="min-w-0 tabular-nums [overflow-wrap:anywhere]">{row.text} · {row.share}</span></span>{row.segment.description && <span className="text-ui-hint text-muted-foreground [overflow-wrap:anywhere]">{row.segment.description}</span>}</span></>
         return <li key={row.segment.id} className="min-w-0">{onSelect
           ? <Button variant="ghost" className="h-auto w-full items-start justify-start whitespace-normal py-2 text-left" onClick={() => onSelect(row.segment)}>{content}</Button>
           : <div className="text-ui-body flex min-w-0 items-start gap-2">{content}</div>}</li>
       })}
     </ul>}
     {dataDisclosure!==undefined&&<ChartDataDisclosure mode={dataDisclosure} label={label}><DataRecordTable rows={rows} columns={[
-      {id:"label",label:"项目",render:row=>row.segment.label},
+      {id:"label",label:"项目",render:row=>row.segment.color === undefined ? row.segment.label : <span className="inline-flex items-center gap-2"><span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: row.segment.color }} />{row.segment.label}</span>},
       {id:"value",label:unit||"数值",render:row=>shareFormatter ? `${formatChartValue(row.segment.value,unit)} · ${row.share}` : formatChartValue(row.segment.value,unit),ariaLabel:row=>shareFormatter ? `${formatChartValue(row.segment.value,unit)} · ${row.shareAria}` : undefined},
       {id:"description",label:"说明",render:row=>row.segment.description},
     ]}/></ChartDataDisclosure>}
