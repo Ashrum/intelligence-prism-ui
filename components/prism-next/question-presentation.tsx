@@ -6,6 +6,8 @@ import { Button } from "@/components/coss/button"
 import { Checkbox } from "@/components/coss/checkbox"
 import { AgentStatus } from "./agent-visual-parts"
 import { QuestionContent, type QuestionRecord } from "./question-content"
+import { difficultySwatches } from "./difficulty-mix"
+import "./question-catalog.css"
 import { cn } from "@/lib/utils"
 
 export type QuestionHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
@@ -13,7 +15,8 @@ export type QuestionHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 export const questionDisplayTitle = (question: Pick<QuestionRecord, "title">, number?: number) =>
   `${number === undefined ? "" : `第 ${number} 题 · `}${question.title}`
 
-export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing, leading, titleSuffix }: {
+export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing, leading, titleSuffix, attributeStyle = "text" }: {
+  attributeStyle?: "text" | "tags"
   question: QuestionRecord; number?: number; id: string; headingLevel?: QuestionHeadingLevel
   showPoints?: boolean; displayPoints?: number; reading?: boolean; trailing?: ReactNode; leading?: ReactNode; titleSuffix?: ReactNode
 }) {
@@ -27,8 +30,13 @@ export function QuestionHeading({ question, number, id, headingLevel = 3, showPo
       {trailing && <div className="flex shrink-0 flex-wrap items-start gap-2">{trailing}</div>}
       {titleSuffix}
     </div>
-    {attributes.length > 0 && <p data-question-attributes="" className="prism-question-attributes w-full min-w-0 text-ui-meta tabular-nums text-muted-foreground">
-      {attributes.map((attribute, index) => <span key={index} className="inline-block whitespace-nowrap">{index > 0 && " · "}{attribute}</span>)}
+    {attributes.length > 0 && <p data-question-attributes="" className={cn("prism-question-attributes w-full min-w-0 text-ui-meta tabular-nums text-muted-foreground", attributeStyle === "tags" && "prism-question-attribute-tags")}>
+      {attributeStyle === "text" ? attributes.map((attribute, index) => <span key={index} className="inline-block whitespace-nowrap">{index > 0 && " · "}{attribute}</span>) : <>
+        {!reading && question.kind && <span className="prism-question-kind whitespace-nowrap">{question.kind}</span>}
+        {showPoints && <span className="prism-question-points whitespace-nowrap">{displayPoints ?? question.points} 分</span>}
+        {!reading && question.difficulty && <span className="inline-flex items-center whitespace-nowrap">{(["基础", "巩固", "提升"] as const).includes(question.difficulty as "基础" | "巩固" | "提升") && <span aria-hidden="true" className="prism-question-difficulty-swatch" style={{ background: difficultySwatches[question.difficulty === "基础" ? "basic" : question.difficulty === "巩固" ? "consolidate" : "advance"] }} />}{question.difficulty}</span>}
+        {!reading && !!question.parts?.length && <><span className="whitespace-nowrap">整题</span><span className="whitespace-nowrap">含 {question.parts.length} 个小问</span></>}
+      </>}
     </p>}
   </div>
 }
@@ -69,7 +77,7 @@ export function QuestionSummaryRow({ question, number, headingLevel = 3, checked
   const omitted = !!(excerpt && onOpen && (question.blocks?.length || question.figure || question.options?.length || question.parts?.length))
   const content = omitted ? { ...question, blocks: undefined, figure: undefined, options: undefined, parts: undefined } : question
   return <article data-question-summary={question.id} data-question-excerpt={omitted || undefined} aria-labelledby={id}
-    className={cn("prism-question min-w-0 space-y-2 py-2", checked && "bg-info/10")}>
+    className={cn("prism-question min-w-0 space-y-2 py-2", checked && "prism-question-selected ring-2 ring-primary/60")}>
     <header className="flex min-w-0 flex-wrap items-start gap-2">
       {onCheckedChange && <label className="flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 shrink-0 items-start justify-center">
         <span className="flex h-5 items-center"><Checkbox checked={!!checked} onCheckedChange={onCheckedChange} aria-label={`批量勾选：${questionDisplayTitle(question, number)}`} /></span>

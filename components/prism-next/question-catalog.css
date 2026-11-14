@@ -1,0 +1,76 @@
+/* P171: opt-in catalog surface; selection never changes the content background. */
+.prism-question.prism-question-selected {
+  box-shadow: var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: color-mix(in srgb, var(--brand-blue, var(--primary)) 60%, transparent);
+}
+.prism-question.prism-question-catalog {
+  border-radius: 10px;
+  box-shadow: none;
+  padding: 18px 20px 12px 56px;
+}
+.prism-question.prism-question-catalog:hover {
+  --tw-shadow: 0 4px 12px -6px rgb(15 23 42 / 14%);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.prism-question.prism-question-catalog.prism-question-selected {
+  box-shadow: var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  border-color: var(--tw-ring-color);
+  --tw-ring-offset-width: -1px;
+}
+.prism-question-catalog .prism-question-checkbox {
+  position: absolute;
+  left: 20px;
+  top: 19px;
+}
+.prism-question-index {
+  position: absolute;
+  left: 18px;
+  top: 44px;
+  width: 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--muted-foreground);
+}
+.prism-question-attribute-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.prism-question-kind {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 6px;
+  line-height: 18px;
+  color: var(--foreground);
+  background: var(--card);
+}
+.prism-question-points {
+  font-family: var(--font-mono);
+  color: var(--foreground);
+}
+.prism-question-difficulty-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+.prism-question-option-key {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  color: var(--muted-foreground);
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+.prism-question-catalog .prism-question-catalog-actions {
+  margin-top: 16px;
+  padding-top: 10px;
+  border-top: 1px dashed color-mix(in srgb, var(--brand-blue, var(--primary)) 18%, var(--border));
+}

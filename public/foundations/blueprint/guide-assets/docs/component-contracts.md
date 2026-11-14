@@ -2575,6 +2575,10 @@ import { Badge } from "@/components/prism-next/badge"
 | `QuestionSummaryRow` | L1，无外框；`question`、可选 `number`、`headingLevel=3`、`checked/onCheckedChange`、`onOpen(trigger)`、`showPoints=true`、`displayPoints`、`status/header` |
 | `QuestionSummaryRow.excerpt` | 默认 true；只有提供 `onOpen` 且存在后续 blocks / figure / options / parts 时，保留完整 stem 块、省略后续块，显示带图标的“节选”和“查看详情”；无 opener 或 excerpt=false 时完整呈现。stem 本身无论多长均不按行数、字符或 DOM 内部裁切，公式整体保留 |
 | `QuestionCard.number` | 沿用现有可选属性，明确为宿主提供的展示序号；不新增 displayLabel、不改写 question.id。标题“第 n 题 · 标题”，档案始终显示真实 question.id |
+| `QuestionCard.appearance` \| 可选 `"default" \| "catalog"`，默认 default。catalog 为题库 C1 外观，复用原题面、详情与动作；reading / compact + onOpen 仍优先使用既有 L3 / L1。未传时未勾选输出不变 |
+| `QuestionCard.index` \| 可选 number，仅 catalog 显示 aria-hidden 的两位补零视觉序号；不改 number、标题或可访问名称 |
+| `QuestionHeading.attributeStyle` \| 可选 `"text" \| "tags"`，默认 text。tags 使用题型描边标签、等宽分值、difficultySwatches 难度色块，无属性间分隔点；其他难度保留文字 |
+| `QuestionContent.optionStyle` \| 可选 `"text" \| "badge"`，默认 text。badge 仅将顶层选项字母呈现为圆形徽标并移除点；小问选项与内容不变 |
 | `QuestionCard.headingLevel` | 新增可选 1—6，默认 3；不改变既有调用的标题层级 |
 | `QuestionCard.onOpen` | 新增可选完整题目入口。compact + onOpen 改用 L1，不挂载 details；无 onOpen 的旧 compact 调用安全回退完整 L2，保留旧 details / actions 能力，取消两行裁切 |
 | `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
@@ -3560,3 +3564,9 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 示例位于 [分面筛选](/next/components/facet-filter)、[难度构成](/next/components/difficulty-mix)、既有 Tree 内嵌目录示例与 Blueprint 导航体系示例。难度构成通过独立示例路由和筛选页链接访问。
 
 排版待裁定项为图纸 13px 面板标题、11px 数量、10px 封面短标。当前分别沿用 `text-ui-action`（14px）、`text-ui-meta`（12px）、`text-ui-meta`（12px），遵守已有语义字号约束。其余 14px、16px 使用既有语义类。默认属性的 SSR 与 7155a08 的逐字节对比见 `tests/p170-resources-components.test.mjs`，浏览器验收由 Supervisor 执行。
+
+### P171 题卡 catalog 与选择边框
+
+PO 2026-11-14 规则：所有宿主题卡（含 L1 摘要）选中只使用 2px 边框环，不改底色；曜蓝 60%，无品牌色时回退 primary 60%。catalog 以 1px 描边与外环重叠形成同一 2px 效果。复用 QuestionCard / QuestionHeading / QuestionContent、coss Checkbox / Toolbar 及 P170 difficultySwatches，不新增组件或令牌。默认未选中 SSR 与 42d77fb 对照。
+
+字号遵循既有语义：标题保留 text-item-title（14/20、600，替代图纸 15/22）；序号和选项字母使用 text-component-label（12/16、500）。示例包含可勾选单选题、解答题及序号 01 / 12。
