@@ -40,8 +40,8 @@ test('blueprint sequential ramp keeps labels ≥ 4.5:1 and luminance monotonic',
 test('blueprint overrides: first series solid, the rest patterned; square ink tooltip', () => {
   const o = blueprintChartOverrides('blueprint');
   assert.equal(o.aria.decal.show, true);
-  assert.equal(o.aria.decal.decals[0].symbol, 'none');
-  assert.ok(o.aria.decal.decals.slice(1).every(d => d.symbol !== 'none'));
+  assert.ok(o.aria.decal.decals.slice(0, 4).every(d => d.symbol === 'none'));
+  assert.ok(o.aria.decal.decals.slice(4).every(d => d.symbol !== 'none'));
   assert.equal(o.tooltip.borderRadius, 0); assert.equal(o.tooltip.shadowBlur, 0); assert.equal(o.tooltip.borderColor, '#1D2026');
 });
 

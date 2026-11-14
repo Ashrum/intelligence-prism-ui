@@ -35,11 +35,14 @@ export function blueprintChartOverrides(theme?: PrismTheme | string) {
   if (!isBlueprintTheme(theme)) return {}
   const night = theme === "blueprint-night"
   return {
-    // Keep six texture signatures at CSS-pixel scale: solid, ±45° 2/4 hatch,
+    // Keep the first four entries solid; then use five textures: ±45° 2/4 hatch,
     // 2.4px dots on an 8px grid, horizontal/vertical 3/3 stripes.
     // White at .8 keeps pattern/base luminance contrast above 3:1 for the
-    // five white-Blueprint fills; night retains these patterns pending design review; printer halftoning and small marks still need paper QA.
+    // four white-Blueprint fills; night retains these patterns pending design review; printer halftoning and small marks still need paper QA.
     aria: { enabled: true, decal: { show: true, decals: [
+      { symbol: "none" },
+      { symbol: "none" },
+      { symbol: "none" },
       { symbol: "none" },
       { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: -Math.PI / 4, color: "rgba(255,255,255,.8)" },
       { symbol: "rect", symbolSize: 1, dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: Math.PI / 4, color: "rgba(255,255,255,.8)" },
