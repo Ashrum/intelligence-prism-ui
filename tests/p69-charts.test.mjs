@@ -77,6 +77,6 @@ test('P69 white/night CSS bridges agree with palette and tooltip/decal contracts
     colors.slice(0, 5).forEach((color, i) => assert.equal(values[`--chart-${i + 1}`], color));
     const overrides = blueprintChartOverrides(theme);
     assert.equal(overrides.tooltip.borderColor, theme === 'blueprint' ? '#1D2026' : '#C9D6E8');
-    assert.equal(overrides.aria.decal.decals.length, 6);
+    assert.equal(overrides.aria.decal.decals.length, 9);
   }
 });

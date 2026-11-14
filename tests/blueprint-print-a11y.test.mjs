@@ -85,12 +85,12 @@ test('blueprint focus uses the opaque ring token, 2px outer outline, with scroll
   assert.ok(ratio(bpTokens['--card'], bpTokens['--head-bg']) >= 3, 'paper separator must contrast with the ink surface');
 });
 
-test('six decals remain distinct without hue; default pattern/base contrasts exceed 3:1', () => {
+test('first four entries are solid, then five textures remain distinct without hue; default pattern/base contrasts exceed 3:1', () => {
   const decals = blueprintChartOverrides('blueprint').aria.decal.decals;
-  assert.equal(decals.length, 6);
+  assert.equal(decals.length, 9);
   assert.equal(new Set(decals.map(({ color, ...shape }) => JSON.stringify(shape))).size, 6);
   const rows = decals.map((d, i) => {
-    if (i === 0) return { series: 1, base: BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]), texture: 'solid' };
+    if (i < 4) return { series: i + 1, base: BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length], baseLuminance: relativeLuminance(BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]), texture: 'solid' };
     const alpha = Number(d.color.match(/,([.\d]+)\)$/)[1]);
     const overlay = '#' + BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length].slice(1).match(/../g).map(v => Math.round(parseInt(v, 16) * (1 - alpha) + 255 * alpha).toString(16).padStart(2, '0')).join('');
     assert.ok(ratio(overlay, BLUEPRINT_SERIES[i % BLUEPRINT_SERIES.length]) >= 3);

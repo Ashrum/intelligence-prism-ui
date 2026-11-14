@@ -36,7 +36,6 @@
 .bp-page-tabs-subject-menu { width:288px; max-width:var(--available-width); }
 .bp-page-tabs-subject-group { letter-spacing:.08em; }
 .bp-page-tabs-subject-item { display:flex; align-items:center; gap:8px; height:40px; padding:0 10px; border-radius:8px; outline:none; cursor:default; }
-.bp-page-tabs-subject-item[data-current] { background:color-mix(in srgb, var(--brand-blue) 7%, transparent); }
 .bp-page-tabs-subject-item[data-highlighted] { background:var(--accent); }
 .bp-page-tabs-subject-item:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
 .bp-page-tabs-subject-tag { padding:1px 6px; border-radius:999px; color:var(--brand-blue-text); background:color-mix(in srgb, var(--brand-blue) 10%, transparent); }
