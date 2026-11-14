@@ -5,6 +5,9 @@ import { ArrowRightLeft, ChevronsUpDown, Search, X } from "lucide-react"
 import { Button } from "@/components/coss/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/coss/input-group"
 import { ToggleGroup, ToggleGroupItem } from "@/components/coss/toggle-group"
+import { Popover, PopoverTrigger, PopoverTitle } from "@/components/coss/popover"
+import { PopoverPopup } from "./scoped-overlays"
+import { FacetRow } from "./facet-filter"
 import { Separator } from "@/components/coss/separator"
 import { Tabs, TabsList, TabsTab, TabsPanel } from "@/components/coss/tabs"
 import { DialogLayout, DialogSection } from "@/components/prism-next/dialog-layout"
@@ -81,9 +84,9 @@ function BookHeader({ book, headingLeading, children }: { book: TextbookHeaderDe
   </div>
 }
 
-function BookCard({ book, headingLeading, onSwitch, switchRef, dialog }: {
+function BookCard({ book, headingLeading, onSwitch, switchRef, dialog, popover = false }: {
   book: TextbookHeaderDefinition; headingLeading?: ReactNode; onSwitch?: () => void
-  switchRef: RefObject<HTMLButtonElement | null>; dialog: boolean
+  switchRef: RefObject<HTMLButtonElement | null>; dialog: boolean; popover?: boolean
 }) {
   const volume = book.volume || book.title
   const half = volume.includes("上") ? "上" : volume.includes("下") ? "下" : ""
@@ -91,9 +94,41 @@ function BookCard({ book, headingLeading, onSwitch, switchRef, dialog }: {
   const content = <>
     <span className="textbook-card-cover text-ui-meta" aria-hidden="true">{shortLabel}</span>
     <span className="textbook-card-copy"><span className="text-ui-meta text-muted-foreground">{editionTitle(book)} · {subjectTitle(book)}</span><span className="truncate text-item-title" title={volume}>{headingLeading}{volume}</span></span>
-    {onSwitch && <span className="textbook-card-switch"><ChevronsUpDown size={16} aria-hidden="true" /></span>}
+    {(onSwitch || popover) && <span className="textbook-card-switch"><ChevronsUpDown size={16} aria-hidden="true" /></span>}
   </>
+  if (popover) return <PopoverTrigger ref={switchRef} className="textbook-card" aria-label={`教材：${editionTitle(book)} ${volume}，切换教材`}>{content}</PopoverTrigger>
   return onSwitch ? <button ref={switchRef} type="button" className="textbook-card" aria-label={`教材：${editionTitle(book)} ${volume}，切换教材`} aria-haspopup={dialog ? "dialog" : undefined} onClick={onSwitch}>{content}</button> : <div className="textbook-card">{content}</div>
+}
+
+type BookOption = NonNullable<TextbookDirectoryProps["bookOptions"]>[number]
+function BookPicker({ book, bookOptions, defaultBookId, countUnit, onBookChange, headingLeading, switchRef }: {
+  book: TextbookHeaderDefinition; bookOptions: BookOption[]; defaultBookId?: string; countUnit: string
+  onBookChange: (id: string) => void; headingLeading?: ReactNode; switchRef: RefObject<HTMLButtonElement | null>
+}) {
+  const current = bookOptions.find(option => option.id === book.id)
+  const fields = ["edition", "grade", "term"] as const
+  const labels = { edition: "版本", grade: "年级", term: "学期" }
+  const orders = { edition: [], grade: ["七年级", "八年级", "九年级"], term: ["上册", "下册"] }
+  return <Popover>
+    <BookCard book={book} headingLeading={headingLeading} switchRef={switchRef} dialog popover />
+    <PopoverPopup side="bottom" align="start" sideOffset={6} className="bp-textbook-picker" aria-label="选择教材">
+      <div className="bp-textbook-picker-content">
+        <div className="flex flex-wrap items-center justify-between gap-2"><PopoverTitle className="text-item-title">选择教材</PopoverTitle><span className="text-ui-meta text-muted-foreground">选好即切换目录</span></div>
+        <div className="facet-filter"><div className="facet-filter-panel">
+          {fields.map(field => {
+            const findBook = (value: string) => bookOptions.find(option => fields.every(key => option[key] === (key === field ? value : current?.[key])))
+            const values = [...new Set(bookOptions.map(option => option[field]))].sort((a, b) => hostRank(orders[field] as string[], a) - hostRank(orders[field] as string[], b))
+            return <FacetRow key={field} panel full allOption={false} countUnit={countUnit} dimension={{ id: field, label: labels[field], mode: "single", options: values.map(value => ({ id: value, label: value, count: findBook(value)?.count ?? 0 })) }} selected={current ? [current[field]] : []} onIntent={intent => {
+              if (intent.type !== "filter" || !intent.values[0]) return
+              const next = findBook(intent.values[0])
+              if (next && next.count > 0) onBookChange(next.id)
+            }} />
+          })}
+        </div></div>
+        {current && <p className="text-ui-meta text-muted-foreground"><strong className="font-semibold text-foreground">{current.edition} · {current.grade}{current.term}</strong>　{[current.publisher, current.id === defaultBookId ? "任教默认" : undefined, `${current.count} ${countUnit}`].filter(Boolean).join(" · ")}</p>}
+      </div>
+    </PopoverPopup>
+  </Popover>
 }
 
 function KindTabs({ kind, onKindChange, children, card = false }: { card?: boolean; kind: DirectoryKind; onKindChange: (kind: DirectoryKind) => void; children: ReactNode }) {
@@ -143,7 +178,7 @@ function PickerSession({ data, kind, checkedIds, onCheckedChange, View, multiple
   </div>
 }
 
-export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange, headingLeading, headerStyle = "default" }: TextbookDirectoryProps) {
+export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, onSelectionsChange = () => {}, kind = "course", onKindChange = () => {}, onTextbookSwitch, subjects: hostSubjects = [], currentNodes: controlledNodes, onCurrentNodesChange: onControlledNodesChange, allOption, counts, countUnit = "题", countsAdditive = true, titleAction = "select", multiSelect = "dialog", emptySelectionLabel, bookId: controlledBookId, onBookChange, headingLeading, headerStyle = "default", bookOptions, defaultBookId }: TextbookDirectoryProps) {
   const View = OutlineView
   const initialExpanded = noExpansion
   const [localBookId, setLocalBookId] = useState(textbooks[0]?.id ?? "")
@@ -213,7 +248,7 @@ export function EmbeddedTextbookDirectory({ textbooks, layout, selections = {}, 
     setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
   }
   return <DirectoryFacts.Provider value={{ counts: counts ?? {}, showCounts: counts !== undefined, countUnit }}><div className={card ? "textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-0" : "textbook-directory-embedded flex min-h-0 min-w-0 flex-1 flex-col gap-3"} data-textbook-directory={layout === "header" ? "header" : "embedded"}>
-    {card ? <BookCard book={book} headingLeading={headingLeading} switchRef={switchRef} dialog={!onTextbookSwitch} onSwitch={onTextbookSwitch || textbooks.length > 1 ? switchBook : undefined} /> : <BookHeader book={book} headingLeading={headingLeading}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
+    {card && bookOptions ? <BookPicker book={book} bookOptions={bookOptions} defaultBookId={defaultBookId} countUnit={countUnit} onBookChange={setBookId} headingLeading={headingLeading} switchRef={switchRef} /> : card ? <BookCard book={book} headingLeading={headingLeading} switchRef={switchRef} dialog={!onTextbookSwitch} onSwitch={onTextbookSwitch || textbooks.length > 1 ? switchBook : undefined} /> : <BookHeader book={book} headingLeading={headingLeading}>{(onTextbookSwitch || textbooks.length > 1) && <Button ref={switchRef} variant="outline" size="sm" aria-label="切换教材" aria-haspopup={onTextbookSwitch ? undefined : "dialog"} onClick={() => {
       if (onTextbookSwitch) { onTextbookSwitch(); return }
       setBookDialog({ open: true, subject: subjectTitle(book), edition: editionTitle(book), id: book.id })
     }}><ArrowRightLeft aria-hidden="true" />切换</Button>}</BookHeader>}
