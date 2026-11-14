@@ -57,10 +57,11 @@ type DimensionProps = {
   dimension: FacetFilterDimension
   selected: readonly string[]
   countUnit?: string
+  allOption?: boolean
   onIntent: (intent: FacetFilterIntent) => void
 }
 
-function OptionChoices({ dimension, selected, onSelect, options = dimension.options, multiple = false, list = false, countUnit = "题" }: Omit<DimensionProps, "onIntent"> & {
+function OptionChoices({ dimension, selected, onSelect, options = dimension.options, multiple = false, list = false, countUnit = "题", allOption = true }: Omit<DimensionProps, "onIntent"> & {
   options?: readonly FacetFilterOption[]
   onSelect: (values: string[]) => void
   multiple?: boolean
@@ -78,24 +79,24 @@ function OptionChoices({ dimension, selected, onSelect, options = dimension.opti
     const added = ids.find(value => !selected.includes(value))
     applySelection(multiple ? ids : added ? [added] : ids)
   }}>
-    <ToggleGroupItem value={allValue} aria-label={`${dimension.label}：全部`} className={list ? "w-full justify-start" : ""}><span className={!selected.length ? "text-ui-action" : "text-ui-body"}>全部</span></ToggleGroupItem>
+    {allOption && <ToggleGroupItem value={allValue} aria-label={`${dimension.label}：全部`} className={list ? "w-full justify-start" : ""}><span className={!selected.length ? "text-ui-action" : "text-ui-body"}>全部</span></ToggleGroupItem>}
     {options.map(option => <ToggleGroupItem key={option.id} value={optionValue(option.id)} aria-label={`${dimension.label}：${option.label}${option.count !== undefined ? `，${option.count} ${countUnit}` : ""}`} title={option.label} disabled={option.count === 0 && !selected.includes(option.id)} className={list ? "w-full justify-start" : "max-w-full"}>
       <OptionLabel option={option} selected={selected.includes(option.id)} />
     </ToggleGroupItem>)}
   </ToggleGroup>
 }
 
-function MultiChoices({ dimension, draft, setDraft, options = dimension.options, list = false, countUnit }: {
-  dimension: FacetFilterDimension; draft: readonly string[]; setDraft: (value: string[]) => void; options?: readonly FacetFilterOption[]; list?: boolean; countUnit?: string
+function MultiChoices({ dimension, draft, setDraft, options = dimension.options, list = false, countUnit, allOption }: {
+  dimension: FacetFilterDimension; draft: readonly string[]; setDraft: (value: string[]) => void; options?: readonly FacetFilterOption[]; list?: boolean; countUnit?: string; allOption?: boolean
 }) {
-  return <OptionChoices countUnit={countUnit} dimension={dimension} selected={draft} onSelect={setDraft} options={options} multiple list={list} />
+  return <OptionChoices allOption={allOption} countUnit={countUnit} dimension={dimension} selected={draft} onSelect={setDraft} options={options} multiple list={list} />
 }
 
 function DraftActions({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   return <div className="flex gap-2"><Button size="xs" variant="outline" onClick={onConfirm}>确定</Button><Button size="xs" variant="ghost" onClick={onCancel}>取消</Button></div>
 }
 
-export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools, panel = false, countUnit = "题" }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode; panel?: boolean }) {
+export function FacetRow({ dimension, selected, onIntent, slots = 2, full = false, searchable = false, tools, panel = false, countUnit = "题", allOption = true }: DimensionProps & { slots?: number; full?: boolean; searchable?: boolean; tools?: ReactNode; panel?: boolean }) {
   const id = useId()
   const [expanded, setExpanded] = useState(false)
   const signature = dimensionKey(dimension, selected)
@@ -119,14 +120,15 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
     if (full || !optionsBox.current || !measureBox.current) return
     const measure = () => {
       if (!optionsBox.current || !measureBox.current || !optionsBox.current.clientWidth) return
-      setMeasuredSlots(fittingOptions(optionsBox.current.clientWidth, Array.from(measureBox.current.children).map(child => child.getBoundingClientRect().width)))
+      // fittingOptions reserves its first width for 全部; -2 cancels its leading gap when omitted.
+      setMeasuredSlots(fittingOptions(optionsBox.current.clientWidth, [...(allOption ? [] : [-2]), ...Array.from(measureBox.current.children).map(child => child.getBoundingClientRect().width)]))
     }
     const observer = new ResizeObserver(measure)
     observer.observe(optionsBox.current)
     observer.observe(measureBox.current)
     measure()
     return () => observer.disconnect()
-  }, [full, dimension.options, selected])
+  }, [full, dimension.options, selected, allOption])
   const limit = measuredSlots ?? slots
   const matching = dimension.options.filter(option => option.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
   const visible = full || expanded || draft !== null ? matching : matching.filter((option, index) => index < limit || selected.includes(option.id))
@@ -134,13 +136,13 @@ export function FacetRow({ dimension, selected, onIntent, slots = 2, full = fals
   const finishDraft = () => { restoreMultiFocus.current = true; setDraft(null) }
   return <fieldset className="facet-filter-facet relative min-w-0 border-b last:border-b-0" aria-describedby={dimension.description ? `${id}-help` : undefined} data-dimension={dimension.id}>
     <legend className="sr-only">{dimension.label}</legend>
-    {!full && <div className="absolute h-0 w-0 overflow-hidden" aria-hidden="true" inert><div ref={measureBox} className="flex w-max gap-0.5"><Toggle size="sm" tabIndex={-1}><span className={!selected.length ? "text-ui-action" : "text-ui-body"}>全部</span></Toggle>{dimension.options.map(option => <Toggle size="sm" key={option.id} tabIndex={-1}><OptionLabel option={option} selected={selected.includes(option.id)} /></Toggle>)}</div></div>}
+    {!full && <div className="absolute h-0 w-0 overflow-hidden" aria-hidden="true" inert><div ref={measureBox} className="flex w-max gap-0.5">{allOption && <Toggle size="sm" tabIndex={-1}><span className={!selected.length ? "text-ui-action" : "text-ui-body"}>全部</span></Toggle>}{dimension.options.map(option => <Toggle size="sm" key={option.id} tabIndex={-1}><OptionLabel option={option} selected={selected.includes(option.id)} /></Toggle>)}</div></div>}
     <div className="facet-filter-row" data-full={full || undefined}>
       <DimensionLabel dimension={dimension} helpId={`${id}-help`} />
       <div ref={optionsBox} className="relative min-w-0 space-y-2" id={`${id}-options`}>
         {searchable && <Field><FieldLabel >搜索{dimension.label}选项</FieldLabel><Input size="sm" id={`${id}-search`} type="search" value={query} onChange={event => setQuery(event.target.value)} /></Field>}
-        {draft !== null ? <><MultiChoices countUnit={countUnit} dimension={dimension} draft={draft} setDraft={setDraft} options={visible} /><DraftActions onConfirm={() => { onIntent(filterIntent(dimension, draft)); finishDraft() }} onCancel={finishDraft} /></> :
-          <OptionChoices countUnit={countUnit} dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
+        {draft !== null ? <><MultiChoices allOption={allOption} countUnit={countUnit} dimension={dimension} draft={draft} setDraft={setDraft} options={visible} /><DraftActions onConfirm={() => { onIntent(filterIntent(dimension, draft)); finishDraft() }} onCancel={finishDraft} /></> :
+          <OptionChoices allOption={allOption} countUnit={countUnit} dimension={dimension} selected={selected} options={visible} onSelect={values => onIntent(filterIntent(dimension, values))} />}
         {!visible.length && <p role="status" className="text-ui-hint">没有匹配的选项。</p>}
       </div>
       {!panel && <div className="facet-filter-tools">

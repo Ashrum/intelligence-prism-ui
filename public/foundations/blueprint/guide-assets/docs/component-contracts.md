@@ -3557,7 +3557,7 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 | `FacetFilterOption` | `swatch?: string` | 宿主提供 CSS 颜色值，文字前显示装饰色块，`aria-hidden`。rows 与 panel 均支持。 |
 | `DifficultyMix` | `basic: number`、`consolidate: number`、`advance: number`、`className?: string` | 宿主提供非负整数题数。按基础、巩固、提升顺序绘制非零段并提供完整可访问摘要，零项文字淡化，全零显示“难度未标注”。导出 `difficultySwatches` 供筛选复用。 |
 | `TextbookDirectory` | `headerStyle?: "default" \| "card"`，默认 `default` | 仅 embedded 生效，采用既有正式内嵌目录组合。教材卡承接切换回调或教材对话框，单教材且无回调时为静态卡。卡按钮承担焦点还原，目录类型继续使用 coss Tabs。header 与 split 忽略该属性。 |
-| `PageTabs` | `subject?: { label: ReactNode; ariaLabel: string; onClick?: () => void }`、`sticky?: boolean` | 学科块始终显示，有回调使用 button，缺少回调使用 span。sticky 使用 1px 哨兵与 IntersectionObserver，支持最近滚动容器及 `--page-tabs-sticky-top`。离开上边界后显示阴影，卸载清理观察器，无观察器时保留 CSS 吸顶。 |
+| `PageTabs` | `subject?: { label: ReactNode; ariaLabel: string; onClick?: () => void; menu?: SubjectMenu }`、`sticky?: boolean` | 学科 v3 为小方块、文字与上下切换箭头，有页签时显示竖分隔。menu 结构见下节；有 menu 时使用单选菜单，否则有回调使用 button，缺少回调使用 span。sticky 使用 1px 哨兵与 IntersectionObserver，支持最近滚动容器及 `--page-tabs-sticky-top`。离开上边界后显示阴影，卸载清理观察器，无观察器时保留 CSS 吸顶。 |
 
 复用检索已核对现有 FacetRow、FilterResults、TextbookDirectory / EmbeddedTextbookDirectory、PageTabs 及 coss ToggleGroup、Toggle、Tabs。筛选与目录继续复用现有受控意图和导航逻辑。现有组件缺少三档题数构成条，按任务授权新增 DifficultyMix。配色统一使用 `difficultySwatches`。
 
@@ -3570,3 +3570,23 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 PO 2026-11-14 规则：所有宿主题卡（含 L1 摘要）选中只使用 2px 边框环，不改底色；曜蓝 60%，无品牌色时回退 primary 60%。catalog 以 1px 描边与外环重叠形成同一 2px 效果。复用 QuestionCard / QuestionHeading / QuestionContent、coss Checkbox / Toolbar 及 P170 difficultySwatches，不新增组件或令牌。默认未选中 SSR 与 42d77fb 对照。
 
 字号遵循既有语义：标题保留 text-item-title（14/20、600，替代图纸 15/22）；序号和选项字母使用 text-component-label（12/16、500）。示例包含可勾选单选题、解答题及序号 01 / 12。
+
+
+### P172 · PageTabs 学科标识 v3
+
+`subject.menu?: { groups: { label: string; items: { id: string; label: string; tag?: string; current?: boolean; muted?: boolean }[] }[]; onSelect: (id: string) => void }`。
+
+提供 menu 时使用现有 coss Menu 与作用域 MenuPopup，单选项使用 coss 导出的 MenuPrimitive.RadioItem（避免 MenuRadioItem 固定左侧勾选布局），选择后发出 id 并关闭。宿主提供全局唯一 id、唯一 current 项并回写当前学科；muted 仅将小方块显示为灰色，不禁用学科。无 menu 时保留 onClick button / 无回调 span 行为。
+
+v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示竖分隔，无页签不显示。学科字号沿用 text-block-title，菜单项 text-ui-body，组标题与标签 text-ui-meta，未增加局部字号。无 subject 的宿主输出不变。
+
+复用核对：PageTabs、scoped-overlays/MenuPopup、coss Menu / MenuTrigger / MenuGroup / MenuGroupLabel / MenuRadioGroup / MenuPrimitive.RadioItem / MenuSeparator 均已存在；无需引入依赖或更改冻结 coss。
+
+
+### P172 教材卡选择面板
+
+- `TextbookDirectory` 新增可选 `bookOptions?: { id: string; edition: string; publisher?: string; grade: string; term: string; count: number }[]` 与 `defaultBookId?: string`。仅 embedded 的 `headerStyle="card"` 且传入 `bookOptions` 时，教材卡打开下方对齐的 Popover，优先于 `onTextbookSwitch` 与原教材对话框；header / split 忽略它们。未传时保持原有输出与行为。
+- 宿主提供当前教材及候选组合，每个版本／年级／学期组合对应唯一 book；当前 book 须在 `bookOptions` 中且 `count > 0`。切换目标应在 `textbooks` 中提供对应目录。三行分别去重，年级按七／八／九年级、学期按上／下册排序。每项数量只取另两行保持当前值时的对应 book，无对应项为 0；计数单位沿用 `countUnit`。
+- 三行复用 `FacetRow panel full allOption={false}`，不显示全部或面板工具栏。零数量沿用现有禁用规则；点击正数量组合使用既有 `bookId/onBookChange` 受控或本地状态，浮层保持打开。底注显示版本、年级学期、可选出版社、匹配 `defaultBookId` 时的任教默认标记与数量。
+- `FacetRow` 新可选 `allOption?: boolean`，默认 true；false 同时省去可交互选项与测量盒中的“全部”，不改变既有零数量禁用规则。默认 FacetRow / FacetFilter 以 cee6e0e SSR 字节对照覆盖。
+- 复用检索：现有 TextbookDirectory / BookCard、FacetRow / OptionChoices、coss Popover / PopoverTrigger / PopoverTitle 与 Prism scoped-overlays/PopoverPopup 已覆盖所需结构；仅补授权的隐藏全部属性，不新增目录组件或修改 coss。底注采用既有 text-ui-meta（12px）。

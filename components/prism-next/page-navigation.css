@@ -25,9 +25,22 @@
   .bp-navigation-demo-main { padding:16px; }
 }
 
-.bp-page-tabs--subject { align-items:stretch; }
-.bp-page-tabs-subject { display:flex; align-items:center; flex:none; gap:12px; margin-right:12px; padding:0 16px; border:0; background:var(--foreground); color:var(--background); font-weight:600; white-space:nowrap; }
-.bp-page-tabs-subject svg { opacity:.85; }
+.bp-page-tabs--subject { align-items:center; min-height:46px; }
+.bp-page-tabs--subject a.bp-page-tab { align-self:stretch; }
+.bp-page-tabs-subject { display:flex; align-items:center; flex:none; height:36px; gap:8px; margin:0 0 0 -8px; padding:0 8px; border:0; border-radius:8px; background:none; color:var(--foreground); font-weight:600; letter-spacing:.02em; white-space:nowrap; }
+.bp-page-tabs-subject:hover,.bp-page-tabs-subject[aria-expanded="true"] { background:var(--accent); }
+.bp-page-tabs-subject-mark { display:block; width:8px; height:8px; flex:none; border-radius:2px; background:var(--brand-blue); }
+.bp-page-tabs-subject-mark[data-muted] { background:var(--border); }
+.bp-page-tabs-subject-switch { display:flex; color:var(--muted-foreground); }
+.bp-page-tabs-subject-divider { width:1px; height:20px; flex:none; align-self:center; background:var(--border); margin:0 -4px 0 -8px; }
+.bp-page-tabs-subject-menu { width:288px; max-width:var(--available-width); }
+.bp-page-tabs-subject-group { letter-spacing:.08em; }
+.bp-page-tabs-subject-item { display:flex; align-items:center; gap:8px; height:40px; padding:0 10px; border-radius:8px; outline:none; cursor:default; }
+.bp-page-tabs-subject-item[data-current] { background:color-mix(in srgb, var(--brand-blue) 7%, transparent); }
+.bp-page-tabs-subject-item[data-highlighted] { background:var(--accent); }
+.bp-page-tabs-subject-item:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.bp-page-tabs-subject-tag { padding:1px 6px; border-radius:999px; color:var(--brand-blue-text); background:color-mix(in srgb, var(--brand-blue) 10%, transparent); }
+.bp-page-tabs-subject-check { margin-left:auto; color:var(--brand-blue-text); }
 button.bp-page-tabs-subject:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
 .bp-page-tabs--sticky { position:sticky; top:var(--page-tabs-sticky-top, 0px); z-index:20; background:var(--card); }
 .bp-page-tabs--sticky[data-stuck] { box-shadow:0 1px 0 var(--border), 0 6px 12px -8px rgb(15 23 42 / 18%); }

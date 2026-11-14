@@ -75,6 +75,22 @@ function HeaderOnlyFixture() {
   </section>
 }
 
+function BookOptionsFixture() {
+  const { books } = useMemo(() => directoryDemoBooks("3", "small"), [])
+  const bookOptions = useMemo(() => ["人教版", "北师大版"].flatMap(edition => ["七年级", "八年级", "九年级"].flatMap(grade => ["上册", "下册"].map(term => ({
+    id: `${edition}-${grade}-${term}`, edition, grade, term, publisher: edition === "人教版" ? "人民教育出版社" : "北京师范大学出版社", count: edition === "人教版" && grade === "九年级" && term === "上册" ? 128 : 0,
+  })))), [])
+  const defaultBookId = "人教版-九年级-上册"
+  const [bookId, setBookId] = useState(defaultBookId)
+  const [selections, setSelections] = useState<DirectorySelections>({})
+  const textbooks = bookOptions.map(option => ({ ...books[0], id: option.id, edition: option.edition, subject: "数学", title: `${option.grade}${option.term}`, volume: `${option.grade}${option.term}` }))
+  return <section className="space-y-3" aria-label="教材卡选择面板">
+    <h2 className="text-block-title">教材卡选择面板</h2>
+    <p className="text-ui-hint">版本、年级、学期单选即切换；示例仅人教版九年级上册有资源。</p>
+    <div className="w-[280px] max-w-full"><TextbookDirectory layout="embedded" headerStyle="card" textbooks={textbooks} bookOptions={bookOptions} defaultBookId={defaultBookId} bookId={bookId} onBookChange={setBookId} selections={selections} onSelectionsChange={setSelections} countUnit="份试卷" /></div>
+  </section>
+}
+
 export function EmbeddedTextbookDirectoryDemo() {
   const [width, setWidth] = useState("280")
   const [depth, setDepth] = useState("5")
@@ -103,6 +119,7 @@ export function EmbeddedTextbookDirectoryDemo() {
     <p className="text-ui-hint">教材及题数均为演示数据，包含 0 与未提供题数。首次进入课程选第一课，知识点选全部；宿主按教材与目录种类在当前会话中保存选择，刷新后恢复。</p>
     <p className="text-ui-hint">countUnit 默认“题”。试卷可能同时属于多个章节：选择“份试卷”并关闭“节点数量可相加”，多选页脚只保留已选项数与确认按钮；节点和整本数量仍显示宿主事实。</p>
       <DirectoryPanel countUnit={countUnit} countsAdditive={countsAdditive} key={`${depth}:${bookMode}:${scale}`} books={books} subjects={fixture.subjects} kind={kind} onKindChange={setKind} width={width} callbackMode={callbackMode} counts={showCounts ? fixture.counts : undefined} />
+    <BookOptionsFixture />
     <HeaderOnlyFixture />
   </div>
 }
