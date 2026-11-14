@@ -9,7 +9,7 @@ import {matrixExtent,validBox} from '../lib/prism-next/chart-data.ts';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const file=new URL('../.sites-runtime/reuse-test.mjs',import.meta.url);
 await mkdir(new URL('../.sites-runtime/',import.meta.url),{recursive:true});
-const bundle=await build({stdin:{contents:`export {QuestionCard} from './components/prism-next/question-card';export {QuestionReview} from './components/prism-next/question-review';export {MetricSummary,StatusComposition,FilterBar} from './components/prism-next/data-display';`,resolveDir:root,loader:'tsx'},bundle:true,platform:'node',format:'esm',packages:'external',alias:{'@':root},write:false});
+const bundle=await build({stdin:{contents:`export {QuestionCard} from './components/prism-next/question-card';export {QuestionReview} from './components/prism-next/question-review';export {MetricSummary,StatusComposition,FilterBar} from './components/prism-next/data-display';`,resolveDir:root,loader:'tsx'},bundle:true,platform:'node',format:'esm',packages:'external',alias:{'@':root},loader:{'.css':'empty'},write:false});
 await writeFile(file,bundle.outputFiles[0].text);
 const {QuestionCard,QuestionReview,MetricSummary,StatusComposition,FilterBar}=await import(file);
 await rm(file);

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
+import "./question-catalog.css"
+
 export type ResponseModel = "single" | "multiple" | "fill" | "boolean" | "long"
 const responseLabels: Record<ResponseModel, string> = { single: "单选", multiple: "多选", fill: "填空", boolean: "判断", long: "解答" }
 export type QuestionPart = {
@@ -35,13 +37,13 @@ export type QuestionRecord = {
   explanation?: ReactNode
 }
 
-export function QuestionContent({ question, optionExtra, textSize = "read" }: { question: QuestionRecord; /** Reading typography by default; ui is an explicit host choice. */ textSize?: "read" | "ui"; /** Host-owned option statistics or actions; omitted preserves legacy markup. */ optionExtra?: (optionId: string) => ReactNode }) {
+export function QuestionContent({ question, optionExtra, textSize = "read", optionStyle = "text" }: { optionStyle?: "text" | "badge"; question: QuestionRecord; /** Reading typography by default; ui is an explicit host choice. */ textSize?: "read" | "ui"; /** Host-owned option statistics or actions; omitted preserves legacy markup. */ optionExtra?: (optionId: string) => ReactNode }) {
   return <div className={`prism-question-copy min-w-0 ${textSize === "ui" ? "text-ui-body" : "text-read-body"} text-foreground`}>
     <div className="space-y-3">{question.stem}</div>
     {question.blocks?.map(block => <div key={block.id} className="my-4 min-w-0">{block.content}</div>)}
     {question.figure}
-    {question.options && <ol aria-label="题目选项（只读）" className={`prism-question-options prism-question-options-${question.optionColumns ?? 2} mt-5 grid gap-x-8 gap-y-3`}>
-      {question.options.map(option => <li key={option.id} className={optionExtra ? "grid min-w-0 grid-cols-[auto_minmax(0,1fr)_minmax(8rem,40%)] items-baseline gap-x-3 gap-y-2" : "flex min-w-0 items-baseline gap-3"}><span className="shrink-0 font-medium">{option.id}.</span><div className="min-w-0">{option.content}</div>{optionExtra?.(option.id)}</li>)}
+    {question.options && <ol aria-label="题目选项（只读）" className={`prism-question-options prism-question-options-${question.optionColumns ?? 2} mt-5 grid gap-x-8 ${optionStyle === "badge" ? "gap-y-2.5" : "gap-y-3"}`}>
+      {question.options.map(option => <li key={option.id} className={optionExtra ? "grid min-w-0 grid-cols-[auto_minmax(0,1fr)_minmax(8rem,40%)] items-baseline gap-x-3 gap-y-2" : "flex min-w-0 items-baseline gap-3"}><span className={optionStyle === "badge" ? "prism-question-option-key text-component-label" : "shrink-0 font-medium"}>{option.id}{optionStyle === "text" && "."}</span><div className="min-w-0">{option.content}</div>{optionExtra?.(option.id)}</li>)}
     </ol>}
     {question.parts && <ol aria-label="题目小问" className="mt-5 space-y-5">{question.parts.map(part => <li key={part.id} data-part-id={part.id} className="flex min-w-0 gap-2"><span className="shrink-0">（{part.id}）</span><div className="min-w-0 flex-1">{(part.response || part.points !== undefined) && <p className={`mb-1 ${textSize === "ui" ? "text-ui-meta" : "text-ui-hint"} text-muted-foreground`}>{responseLabels[part.response ?? "long"]}{part.points !== undefined && <> · {part.points} 分</>}</p>}{part.content}{part.options && <ol aria-label={`第${part.id}小问选项（只读）`} className="prism-question-options prism-question-options-2 mt-3 grid gap-2">{part.options.map(option => <li key={option.id} className="flex min-w-0 gap-3"><span className="shrink-0">{option.id}.</span><div className="min-w-0">{option.content}</div></li>)}</ol>}</div></li>)}</ol>}
   </div>

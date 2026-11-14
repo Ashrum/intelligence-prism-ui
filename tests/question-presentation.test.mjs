@@ -175,7 +175,7 @@ test('detail tabs keep canonical order and full accessible names while offering 
 test('the selected L2 uses the shared surface and metadata role across the 12 SSR review frames', () => {
   for (const theme of ['light', 'paper', 'dark']) for (const width of [1280, 900, 390, 320]) {
     const html = render(h('div', { 'data-prism-theme': theme, style: { width } }, h(c.QuestionCard, { question: c.questionPresentationSample, checked: true })));
-    for (const token of ['rounded-xl', 'p-4', 'shadow-xs/5', 'ring-primary/60', 'bg-info/10', 'text-ui-meta', 'text-item-title', 'text-read-body']) assert.ok(html.includes(token), token);
+    for (const token of ['rounded-xl', 'p-4', 'shadow-xs/5', 'ring-primary/60', 'ring-2', 'text-ui-meta', 'text-item-title', 'text-read-body']) assert.ok(html.includes(token), token);
     assert.match(html, /多选/); assert.match(html, /<math/); assert.doesNotMatch(html, /data-slot="badge"/);
   }
 });

@@ -13,8 +13,9 @@ import { cn } from "@/lib/utils"
 export { QuestionReference, QuestionSummaryRow } from "./question-presentation"
 
 export function QuestionCard({ question, number, headingLevel = 3, details, detailsOpen, onDetailsOpenChange, checked, onCheckedChange,
-  actions, secondaryActions, reading = false, compact = false, status, header, showPoints = true, displayPoints, displayPartPoints, highlighted = false, onOpen }: {
+  actions, secondaryActions, reading = false, compact = false, status, header, showPoints = true, displayPoints, displayPartPoints, highlighted = false, onOpen, appearance = "default", index }: {
   question: QuestionRecord
+  appearance?: "default" | "catalog"; index?: number
   /** Host-owned display ordinal only. The archive always uses question.id. */
   number?: number; headingLevel?: QuestionHeadingLevel
   details?: ReactNode; detailsOpen?: boolean; onDetailsOpenChange?: (open: boolean) => void
@@ -30,21 +31,23 @@ export function QuestionCard({ question, number, headingLevel = 3, details, deta
   const changeOpen = (next: boolean) => { if (detailsOpen === undefined) setLocalOpen(next); onDetailsOpenChange?.(next) }
   const content = { ...question, parts: question.parts?.map(part => ({ ...part, points: showPoints ? displayPartPoints?.[part.id] ?? part.points : undefined })) }
   const summary = compact && onOpen && !reading
+  const catalog = appearance === "catalog" && !reading && !summary
   return <article data-question-id={question.id} data-question-level={reading ? "L3" : summary ? "L1" : "L2"} data-highlight={highlighted || undefined}
     aria-labelledby={summary ? undefined : id} className={cn("prism-question min-w-0",
-      reading || summary ? "py-2" : "rounded-xl bg-card p-4 text-card-foreground shadow-xs/5 ring-1 ring-border",
-      !reading && !summary && checked && "bg-info/10 ring-primary/60")}>
+      reading || summary ? "py-2" : catalog ? "prism-question-catalog relative rounded-[10px] border border-border bg-card text-card-foreground" : "rounded-xl bg-card p-4 text-card-foreground shadow-xs/5 ring-1 ring-border",
+      !reading && !summary && checked && "prism-question-selected ring-2 ring-primary/60")}>
     {summary ? <QuestionSummaryRow question={content} number={number} headingLevel={headingLevel} checked={checked} onCheckedChange={onCheckedChange}
       onOpen={onOpen} showPoints={showPoints} displayPoints={displayPoints} header={header} status={status} /> : <>
       <header className="mb-3 flex min-w-0 flex-wrap items-start gap-2.5">
-        {!reading && onCheckedChange && <label className="flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 shrink-0 items-start justify-center">
+        {!reading && onCheckedChange && <label className={cn("flex pointer-coarse:min-h-11 pointer-coarse:min-w-11 shrink-0 items-start justify-center", catalog && "prism-question-checkbox")}>
           <span className="flex h-5 items-center"><Checkbox checked={!!checked} onCheckedChange={onCheckedChange} aria-label={`批量勾选：${questionDisplayTitle(question, number)}`} /></span>
         </label>}
-        <QuestionHeading question={question} number={number} id={id} headingLevel={headingLevel} showPoints={showPoints} displayPoints={displayPoints} reading={reading} trailing={!reading && (header || status) ? <>{header}{status}</> : undefined} />
+        {catalog && index !== undefined && <span aria-hidden="true" className="prism-question-index text-component-label">{String(index).padStart(2, "0")}</span>}
+        <QuestionHeading attributeStyle={catalog ? "tags" : "text"} question={question} number={number} id={id} headingLevel={headingLevel} showPoints={showPoints} displayPoints={displayPoints} reading={reading} trailing={!reading && (header || status) ? <>{header}{status}</> : undefined} />
       </header>
-      <QuestionContent question={content} />
+      <QuestionContent question={content} optionStyle={catalog ? "badge" : "text"} />
     </>}
-    {!reading && ((!summary && details) || secondaryActions || actions) && <Toolbar aria-label={`${question.title}操作`} className="mt-3 flex-wrap items-center gap-y-2 rounded-none border-0 bg-transparent p-0 text-foreground">
+    {!reading && ((!summary && details) || secondaryActions || actions) && <Toolbar aria-label={`${question.title}操作`} className={cn("mt-3 flex-wrap items-center gap-y-2 rounded-none border-0 bg-transparent p-0 text-foreground", catalog && "prism-question-catalog-actions")}>
       <ToolbarGroup className="flex-wrap">{!summary && details && <ToolbarButton render={<Button variant="ghost" />}
         aria-label={`${number === undefined ? question.title : `第${number}题`}详情`} aria-expanded={open} aria-controls={`${id}-details`} onClick={() => changeOpen(!open)}>
         <ChevronDown aria-hidden="true" className={cn("motion-safe:transition-transform", open && "rotate-180")} />详情

@@ -10,6 +10,7 @@ import { AgentSampleTag } from "../agent-visual-parts"
 import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { questionPresentationSample } from "../fixtures/question-presentation-samples"
 import { QuestionDetails,type QuestionDetailTab } from "../question-details"
+import { QuestionSolution } from "../question-content"
 import { QuestionSelect } from "../question-controls"
 import { QuestionResponse,type ResponseValue } from "../question-response"
 import { QuestionReviewExample } from "./question-review"
@@ -21,7 +22,7 @@ import { textbooks } from "@/lib/prism-next/textbook-directory"
 import { initialReviewScores,reviewAttempts } from "@/lib/prism-next/fixtures/review"
 import type { DirectorySelections } from "../textbook-directory"
 const samples=[...questionSamples,judgmentQuestion,compositeQuestion]
-export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
+export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionCatalogDemo/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
 function PrintMetadataDemo({id}:{id:string}) {
  const question=samples.find(q=>q.id===id)!
  const [showIds,setShowIds]=useState(true),[preferences,setPreferences]=useState(createPrintPreferences),[settingsOpen,setSettingsOpen]=useState(false)
@@ -52,5 +53,20 @@ export function QuestionLevelExamples() {
       {level === "L2" && <QuestionExampleCard question={question} number={1} />}
       {level === "L3" && <QuestionCard question={question} number={1} headingLevel={4} reading />}
     </div>{preview.panel}
+  </section>
+}
+
+function QuestionCatalogDemo() {
+  const [selected, setSelected] = useState<string[]>(["single"])
+  const questions = [
+    { key: "single", question: { ...questionSamples.find(question => question.response === "single")!, difficulty: "基础" }, index: 1 },
+    { key: "long", question: { ...questionSamples.find(question => question.response === "long")!, difficulty: "提升" }, index: 12 },
+  ]
+  return <section className="my-8 space-y-4" aria-label="catalog 题卡示例">
+    <h3 className="text-block-title">题库题卡 · catalog</h3>
+    <p className="text-ui-hint text-muted-foreground">示例选择只保存在本页；勾选只改变边框。</p>
+    {questions.map(({ key, question, index }) => <QuestionCard key={key} appearance="catalog" index={index} question={question}
+      checked={selected.includes(key)} onCheckedChange={checked => setSelected(previous => checked ? [...previous, key] : previous.filter(value => value !== key))}
+      header={<AgentSampleTag />} details={<QuestionSolution question={question} />} />)}
   </section>
 }
