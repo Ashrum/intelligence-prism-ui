@@ -1,0 +1,17 @@
+.prism-scale-meter .prism-scale-meter-track {
+  height:6px;
+  border:0;
+  border-radius:9999px;
+  background:color-mix(in srgb, var(--brand-blue) 12%, var(--muted));
+  box-shadow:none;
+}
+.prism-scale-meter .prism-scale-meter-indicator {
+  height:100%;
+  border:0;
+  border-radius:9999px;
+  background:var(--brand-blue);
+  box-shadow:none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .prism-scale-meter .prism-scale-meter-indicator { transition:none; }
+}

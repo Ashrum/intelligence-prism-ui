@@ -1,5 +1,6 @@
 "use client"
 
+import { difficultySwatches } from "../difficulty-mix"
 import { useState } from "react"
 import { SegmentedBar, type SegmentedBarSegment } from "../charts/segmented-bar"
 import { DemoSection, Feedback } from "../demo-parts"
@@ -38,6 +39,13 @@ function Selectable({ legend = "below" }: { legend?: "none" | "below" }) {
 }
 export function SegmentedBarDemo() {
   return <>
+    <DemoSection title="试卷难度结构 · 自定颜色">
+      <SegmentedBar label="难度结构" dataDisclosure="visible" segments={[
+        {id:"basic",label:"基础",value:50,color:difficultySwatches.basic},
+        {id:"consolidate",label:"巩固",value:30,color:difficultySwatches.consolidate},
+        {id:"advance",label:"提升",value:20,color:difficultySwatches.advance},
+      ]} />
+    </DemoSection>
     <DemoSection title="默认分段与图例" description="同一个总量的组成；图例显示真实数值、占比及外部说明。">
       <SegmentedBar label="分类数量组成" segments={segmentedBarFixture} unit="项" />
     </DemoSection>

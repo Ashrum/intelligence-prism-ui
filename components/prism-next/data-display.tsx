@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { compositionSummary,formatChartValue,isChartValue } from "@/lib/prism-next/chart-options"
 import { QuestionSelect } from "./question-controls"
 
-export type MetricSummaryItem={id:string;label:string;value:ReactNode;detail?:ReactNode;visual?:MetricVisual;help?:ReactNode}
+export type MetricSummaryItem={id:string;label:string;value:ReactNode;unit?:string;detail?:ReactNode;visual?:MetricVisual;help?:ReactNode}
 export type {MetricVisual} from "@/lib/prism-next/metric-visual"
 function MetricLabel({item}:{item:MetricSummaryItem}){
  return <>{item.label}{item.help!=null&&<Popover><PopoverTrigger render={<Button variant="ghost" size="icon-xs" className="text-muted-foreground hover:text-foreground"/>} aria-label={`${item.label}：指标说明`}><CircleHelp size={14} className="size-3.5" aria-hidden="true" /></PopoverTrigger><PopoverPopup aria-label={`${item.label}：指标说明`} className="max-w-72"><div className="whitespace-normal break-words text-ui-body">{item.help}</div></PopoverPopup></Popover>}</>
@@ -30,7 +30,13 @@ function VisualMetric({item,onSelect,compact,strip,index=0}:{item:MetricSummaryI
   {onSelect&&<dd className="col-span-2"><Button variant="ghost" size="sm" onClick={()=>onSelect(item.id)}>查看{item.label}明细</Button></dd>}
  </div>
 }
-export function MetricSummary({items,onSelect,density="default",layout}:{items:MetricSummaryItem[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"row"|"grid"|"strip"}){
+export function MetricSummary({items,onSelect,density="default",layout}:{items:MetricSummaryItem[];onSelect?:(id:string)=>void;density?:"default"|"compact";layout?:"row"|"grid"|"strip"|"readout"}){
+ if (layout === "readout") return <dl data-metric-layout="readout" className="grid min-w-0" style={{ gridTemplateColumns: `repeat(${Math.max(1, items.length)}, minmax(0, 1fr))` }}>
+  {items.map((item, index) => <div key={item.id} className={`min-w-0 space-y-1 px-3 ${index ? "border-l border-border" : "pl-0"}`}>
+   <dt className="text-ui-meta text-muted-foreground">{item.label}</dt>
+   <dd className="m-0 break-words text-page-title leading-[1.1] tabular-nums" style={{ fontFamily: "var(--font-mono)" }}>{item.value}{item.unit != null && <span className="ml-[3px] text-ui-action text-muted-foreground">{item.unit}</span>}</dd>
+  </div>)}
+ </dl>
  if(layout==="grid") return <dl data-metric-layout="grid" className="@container grid min-w-0 grid-cols-2">{items.map((item,index)=><div key={item.id} className={`grid min-w-0 grid-cols-1 items-center gap-x-3 gap-y-1 p-4 @min-[440px]:grid-cols-[minmax(0,1fr)_auto] ${index%2?"border-l border-border":""} ${index>=2?"border-t border-border":""}`}>
   <dt className="col-start-1 flex flex-wrap items-center gap-1 text-ui-body text-muted-foreground [overflow-wrap:anywhere]"><MetricLabel item={item}/></dt>
   <dd className="col-start-1 break-words text-stat-display tabular-nums">{item.value}</dd>

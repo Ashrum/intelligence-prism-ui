@@ -3590,3 +3590,14 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 - 各行复用 `FacetRow panel full allOption={false}`，不显示全部或面板工具栏。零数量沿用现有禁用规则；点击正数量组合使用既有 `bookId/onBookChange` 受控或本地状态，浮层保持打开。浮层采用标准样式：行容器无面板底色、边框、圆角、阴影与内距，仅保留行间虚线分隔，浮层自身样式不变。底注显示版本（有 `revision` 时为「版本（版次）」）、年级学期、可选出版社、匹配 `defaultBookId` 时的任教默认标记与数量。
 - `FacetRow` 新可选 `allOption?: boolean`，默认 true；false 同时省去可交互选项与测量盒中的“全部”，不改变既有零数量禁用规则。默认 FacetRow / FacetFilter 以 cee6e0e SSR 字节对照覆盖。
 - 复用检索：现有 TextbookDirectory / BookCard、FacetRow / OptionChoices、coss Popover / PopoverTrigger / PopoverTitle 与 Prism scoped-overlays/PopoverPopup 已覆盖所需结构；仅补授权的隐藏全部属性，不新增目录组件或修改 coss。底注采用既有 text-ui-meta（12px）。
+
+## P174 试卷预览可选外观
+
+复用检索核对了 Prism `QuestionRail`、`MetricSummary`、`SegmentedBar`、`DifficultyMix` 与固定 coss `Meter` / `MeterTrack` / `MeterIndicator`。前三项沿用现有组件增加可选属性，细刻度条组合已有 coss Meter。来源已满足本轮需求，未引入外部代码。
+
+- `QuestionRail.cellAppearance?: "default" | "outline"` 默认 default。outline 仅作用于 cell 题号格，使用 card 底色、1px border、6px 圆角、至少 44px 高度与 accent hover，去掉阴影。warning / destructive 采用对应色 40% 混合 border 的描边。原选中 ring 和行布局继续生效。
+- `MetricSummary.layout="readout"` 为只读等分网格，列数按项数固定，任何宽度都保持同一列数。格间竖线，首格左内距 0，其余左右 12px。标签为 `text-ui-meta`。数字使用现有 `text-page-title`（26px / 600）、mono 字体与 1.1 行高。`MetricSummaryItem.unit?: string` 在读数后以 `text-ui-action`（14px / 500）显示，左距 3px。单位的 13px 按任务授权取最近语义字号 14px。readout 仅呈现 label、value 与 unit，detail、visual、help、onSelect 不渲染。空数组保留空 dl。
+- `ScaleMeter` 从 `components/prism-next/scale-meter` 具名导出，沿用仓库按模块导入的惯例。接收 coss Meter 的 `value`、`min`、`max`、`aria-valuetext`、`aria-label`、`aria-labelledby`，可选 `label={{start:"偏易",end:"偏难"}}` 呈现两端文字。宿主提供可访问名称与读数说明。轨道高 6px，曜蓝 12% 混 muted 底色，曜蓝指示条，均全圆角、无描边和阴影。跟随系统 reduced-motion 关闭过渡。
+- `SegmentedBarSegment.color?: string` 接收 CSS 颜色，优先于 tone / fill，同时应用于条、图例色块和数据表色标。未传 color 时维持原有输出。试卷难度结构示例复用 `difficultySwatches` 的基础 / 巩固 / 提升三色。工作台难度走势同样使用 SegmentedBar，可直接使用该属性。
+
+组件站在 QuestionRail、MetricSummary、Meter、SegmentedBar 现有示例中展示上述外观。未传新增属性时，默认 QuestionRail、MetricSummary 各 layout 与 SegmentedBar 的 SSR 使用 3733107 做逐字节对照。
