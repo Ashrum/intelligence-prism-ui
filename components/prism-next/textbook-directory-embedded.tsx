@@ -106,26 +106,33 @@ function BookPicker({ book, bookOptions, defaultBookId, countUnit, onBookChange,
   onBookChange: (id: string) => void; headingLeading?: ReactNode; switchRef: RefObject<HTMLButtonElement | null>
 }) {
   const current = bookOptions.find(option => option.id === book.id)
-  const fields = ["edition", "grade", "term"] as const
-  const labels = { edition: "版本", grade: "年级", term: "学期" }
-  const orders = { edition: [], grade: ["七年级", "八年级", "九年级"], term: ["上册", "下册"] }
+  const revisionsFor = (edition?: string) => [...new Set(bookOptions.filter(option => option.edition === edition).map(option => option.revision).filter((revision): revision is string => !!revision))].sort().reverse()
+  const revisions = revisionsFor(current?.edition)
+  const fields = revisions.length >= 2 ? ["edition", "revision", "grade", "term"] as const : ["edition", "grade", "term"] as const
+  const labels = { edition: "版本", revision: "版次", grade: "年级", term: "学期" }
+  const orders = { edition: [], revision: revisions, grade: ["七年级", "八年级", "九年级"], term: ["上册", "下册"] }
   return <Popover>
     <BookCard book={book} headingLeading={headingLeading} switchRef={switchRef} dialog popover />
     <PopoverPopup side="bottom" align="start" sideOffset={6} className="bp-textbook-picker" aria-label="选择教材">
       <div className="bp-textbook-picker-content">
         <div className="flex flex-wrap items-center justify-between gap-2"><PopoverTitle className="text-item-title">选择教材</PopoverTitle><span className="text-ui-meta text-muted-foreground">选好即切换目录</span></div>
-        <div className="facet-filter"><div className="facet-filter-panel">
+        <div className="facet-filter bp-textbook-picker-rows"><div className="facet-filter-panel">
           {fields.map(field => {
-            const findBook = (value: string) => bookOptions.find(option => fields.every(key => option[key] === (key === field ? value : current?.[key])))
-            const values = [...new Set(bookOptions.map(option => option[field]))].sort((a, b) => hostRank(orders[field] as string[], a) - hostRank(orders[field] as string[], b))
-            return <FacetRow key={field} panel full allOption={false} countUnit={countUnit} dimension={{ id: field, label: labels[field], mode: "single", options: values.map(value => ({ id: value, label: value, count: findBook(value)?.count ?? 0 })) }} selected={current ? [current[field]] : []} onIntent={intent => {
+            const findBook = (value: string) => {
+              const edition = field === "edition" ? value : current?.edition
+              const availableRevisions = revisionsFor(edition)
+              const revision = field === "revision" ? value : field === "edition" && !availableRevisions.includes(current?.revision ?? "") ? availableRevisions[0] : current?.revision
+              return bookOptions.find(option => option.edition === edition && option.revision === revision && option.grade === (field === "grade" ? value : current?.grade) && option.term === (field === "term" ? value : current?.term))
+            }
+            const values = field === "revision" ? revisions : [...new Set(bookOptions.map(option => option[field]))].sort((a, b) => hostRank(orders[field] as string[], a) - hostRank(orders[field] as string[], b))
+            return <FacetRow key={field} panel full allOption={false} countUnit={countUnit} dimension={{ id: field, label: labels[field], mode: "single", options: values.map(value => ({ id: value, label: field === "revision" ? [value, bookOptions.find(option => option.edition === current?.edition && option.revision === value)?.revisionNote].filter(Boolean).join(" ") : value, count: findBook(value)?.count ?? 0 })) }} selected={current?.[field] ? [current[field]!] : []} onIntent={intent => {
               if (intent.type !== "filter" || !intent.values[0]) return
               const next = findBook(intent.values[0])
               if (next && next.count > 0) onBookChange(next.id)
             }} />
           })}
         </div></div>
-        {current && <p className="text-ui-meta text-muted-foreground"><strong className="font-semibold text-foreground">{current.edition} · {current.grade}{current.term}</strong>　{[current.publisher, current.id === defaultBookId ? "任教默认" : undefined, `${current.count} ${countUnit}`].filter(Boolean).join(" · ")}</p>}
+        {current && <p className="text-ui-meta text-muted-foreground"><strong className="font-semibold text-foreground">{current.edition}{current.revision ? `（${current.revision}）` : ""} · {current.grade}{current.term}</strong>　{[current.publisher, current.id === defaultBookId ? "任教默认" : undefined, `${current.count} ${countUnit}`].filter(Boolean).join(" · ")}</p>}
       </div>
     </PopoverPopup>
   </Popover>
