@@ -15,19 +15,21 @@ export type QuestionHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 export const questionDisplayTitle = (question: Pick<QuestionRecord, "title">, number?: number) =>
   `${number === undefined ? "" : `第 ${number} 题 · `}${question.title}`
 
-export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing, leading, titleSuffix, attributeStyle = "text" }: {
+export function QuestionHeading({ question, number, id, headingLevel = 3, showPoints = true, displayPoints, reading = false, trailing, leading, titleSuffix, titleOverride, attributeStyle = "text" }: {
   attributeStyle?: "text" | "tags"
-  question: QuestionRecord; number?: number; id: string; headingLevel?: QuestionHeadingLevel
+  question: Pick<QuestionRecord, "title" | "kind" | "points" | "difficulty" | "parts">; number?: number; id: string; headingLevel?: QuestionHeadingLevel
   showPoints?: boolean; displayPoints?: number; reading?: boolean; trailing?: ReactNode; leading?: ReactNode; titleSuffix?: ReactNode
+  /** Complete host-owned heading, including any display ordinal (used by hold cards). */
+  titleOverride?: ReactNode
 }) {
   const Heading = `h${headingLevel}` as const
   const attributes = [!reading && question.kind, showPoints && `${displayPoints ?? question.points} 分`, !reading && question.difficulty,
     !reading && question.parts?.length ? "整题" : undefined,
     !reading && question.parts?.length ? `含 ${question.parts.length} 个小问` : undefined].filter(Boolean)
   return <div className="prism-question-heading flex min-w-0 flex-1 flex-wrap items-baseline gap-x-3 gap-y-1">
-    <div className="flex w-full min-w-0 items-start gap-2">
-      <Heading id={id} className="min-w-0 flex-1 break-words text-item-title">{leading ? <>{leading}{questionDisplayTitle(question, number)}</> : questionDisplayTitle(question, number)}</Heading>
-      {trailing && <div className="flex shrink-0 flex-wrap items-start gap-2">{trailing}</div>}
+    <div className={titleOverride !== undefined ? "flex w-full min-w-0 flex-wrap items-start gap-2" : "flex w-full min-w-0 items-start gap-2"}>
+      <Heading id={id} className="min-w-0 flex-1 break-words text-item-title">{titleOverride !== undefined ? titleOverride : leading ? <>{leading}{questionDisplayTitle(question, number)}</> : questionDisplayTitle(question, number)}</Heading>
+      {trailing && <div className={titleOverride !== undefined ? "flex min-w-0 max-w-full flex-wrap items-start gap-2" : "flex shrink-0 flex-wrap items-start gap-2"}>{trailing}</div>}
       {titleSuffix}
     </div>
     {attributes.length > 0 && <p data-question-attributes="" className={cn("prism-question-attributes w-full min-w-0 text-ui-meta tabular-nums text-muted-foreground", attributeStyle === "tags" && "prism-question-attribute-tags")}>

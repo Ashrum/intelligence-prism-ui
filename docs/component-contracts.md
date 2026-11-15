@@ -2591,6 +2591,20 @@ import { Badge } from "@/components/prism-next/badge"
 
 L2 复用任务 C 的 rounded-xl（现有令牌实际 14px）、ring-1、shadow-xs/5、bg-card；不为配图中的 12px 新增圆角令牌。内边距 16px，选中用 ring-primary/60 与 bg-info/10；属性一行 text-ui-meta，窄容器整体换到标题下。选项默认两列，容器不足 480px 单列；显式 optionColumns=1/4 保持原支持。块级公式按实际滚动位置显示两侧边缘渐隐，使用现有 border 令牌，无动画、无字号缩小。
 
+### 待正式版本（hold）
+
+P177 依据题目创作画板 C0 FROZEN REV 0.3 SHEET 30 第 02 题卡及 PO 2026-11-15 的题干摘要展示决定。复用检索：现有 QuestionCard / QuestionHeading 可保留题号、题型、分值与两种外框，缺少无正式题面的正文插槽；沿用 coss Toolbar / ToolbarGroup / ToolbarButton / Button 承载动作。此缺口在现有 Prism 题卡内补齐，不新增组件、CSS、令牌或依赖。
+
+`QuestionCard.hold?: { title: ReactNode; meta?: ReactNode; status?: ReactNode; body?: ReactNode; note?: ReactNode }`：
+
+- 传入 `hold` 时，`question` 保留 id、title、kind、points 等元数据，`stem` 可省略；不挂载 `QuestionContent`，不回退呈现 question.stem / options / parts 中的正文。普通题卡仍要求原 `QuestionRecord`。
+- `hold.title` 替换整段标题文字（宿主自行包含“第 2 题”等题号），标题层级、aria-labelledby、题型和分值仍由 QuestionHeading 呈现。`hold.status` 在标题右侧使用与原件题框 pending 状态一致的现有 `--brand-magenta-text` 品红文字令牌与 `text-ui-meta`；`hold.meta` 是属性行之后的可选补充元信息。占位标题与状态替代普通 header / status。
+- `hold.body` 是弱化的题干摘要，支持宿主传入 QuestionMath 等公式节点；`hold.note` 在其下使用 `text-ui-meta`。省略 body 时只显示说明，不补造题干。读取摘要及不持久化均由宿主负责；组件不发请求、不缓存正文，不推断正式版本是否存在或已经补齐。
+- 外框继续支持 default / catalog；根节点带 `data-question-hold`。hold 优先于 compact + onOpen，避免进入需要正式题面的 L1。reading 仍遵守原 L3 的无操作、无状态规则。
+- `actions` / `secondaryActions` 及受控详情沿用原契约，补齐、读取答案、更多操作都由宿主提供；点击不改变正式版本状态。不传 hold 时既有 SSR 输出逐字节不变。
+
+组件页 `/next/components/question#question-hold` 提供有摘要（含公式）与读不到题干两例、default / catalog 切换及 390px / 320px 容器，沿用站点五主题切换。示例按钮只报告宿主意图，不接真实作者页。
+
 ### Agent 题目插槽接入（任务 C2）
 
 | 组件 | 接入与兼容边界 |

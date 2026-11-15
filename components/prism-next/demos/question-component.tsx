@@ -10,7 +10,7 @@ import { AgentSampleTag } from "../agent-visual-parts"
 import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { questionPresentationSample } from "../fixtures/question-presentation-samples"
 import { QuestionDetails,type QuestionDetailTab } from "../question-details"
-import { QuestionSolution } from "../question-content"
+import { QuestionMath, QuestionSolution } from "../question-content"
 import { QuestionSelect } from "../question-controls"
 import { QuestionResponse,type ResponseValue } from "../question-response"
 import { QuestionReviewExample } from "./question-review"
@@ -22,7 +22,7 @@ import { textbooks } from "@/lib/prism-next/textbook-directory"
 import { initialReviewScores,reviewAttempts } from "@/lib/prism-next/fixtures/review"
 import type { DirectorySelections } from "../textbook-directory"
 const samples=[...questionSamples,judgmentQuestion,compositeQuestion]
-export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionCatalogDemo/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
+export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionCatalogDemo/><QuestionHoldDemo/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
 function PrintMetadataDemo({id}:{id:string}) {
  const question=samples.find(q=>q.id===id)!
  const [showIds,setShowIds]=useState(true),[preferences,setPreferences]=useState(createPrintPreferences),[settingsOpen,setSettingsOpen]=useState(false)
@@ -68,5 +68,34 @@ function QuestionCatalogDemo() {
     {questions.map(({ key, question, index }) => <QuestionCard key={key} appearance="catalog" index={index} question={question}
       checked={selected.includes(key)} onCheckedChange={checked => setSelected(previous => checked ? [...previous, key] : previous.filter(value => value !== key))}
       header={<AgentSampleTag />} details={<QuestionSolution question={question} />} />)}
+  </section>
+}
+
+
+export function QuestionHoldDemo() {
+  const [appearance, setAppearance] = useState<"default" | "catalog">("catalog")
+  const [width, setWidth] = useState("full")
+  const [notice, setNotice] = useState("")
+  return <section id="question-hold" className="my-8 min-w-0 space-y-4" aria-label="待正式版本示例">
+    <h3 className="text-block-title">待正式版本</h3>
+    <p className="text-ui-hint text-muted-foreground">示例 · 题干摘要由宿主在显示时临时读取，不写入试卷；读取不到时保留题号与说明。</p>
+    <div className="flex flex-wrap gap-3">
+      <QuestionSelect label="占位卡外观" value={appearance} onChange={value => setAppearance(value as "default" | "catalog")} items={[{ value: "default", label: "default" }, { value: "catalog", label: "catalog" }]} />
+      <QuestionSelect label="占位卡容器宽度" value={width} onChange={setWidth} items={[{ value: "full", label: "跟随容器" }, { value: "390", label: "390px" }, { value: "320", label: "320px" }]} />
+    </div>
+    <div className="min-w-0 space-y-4" style={{ maxWidth: width === "full" ? "100%" : `${width}px` }}>
+      {[true, false].map((hasBody, index) => <QuestionCard key={String(hasBody)} appearance={appearance} index={index + 2} number={index + 2} headingLevel={4}
+        question={{ id: `hold-example-${index + 2}`, title: "待正式版本", kind: "单选题", points: 4 }}
+        hold={{
+          title: `第 ${index + 2} 题 · 待正式版本`,
+          status: "题稿 r1 · 答案待补",
+          body: hasBody ? <>函数 <QuestionMath label="y 等于 x 平方加 2x 加 5"><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mn>2</mn><mi>x</mi><mo>+</mo><mn>5</mn></QuestionMath> 的图象与 x 轴有几个交点？（原件无答案）</> : undefined,
+          note: hasBody ? "此处仅临时显示题干摘要。请在作者页补齐答案并提交正式版本；当前占位不代表已有正式题面。" : "读不到题干摘要。可在作者页查看题稿，补齐答案并提交正式版本。",
+        }}
+        secondaryActions={<ToolbarButton render={<Button variant="ghost" />} onClick={() => setNotice("示例：答案尚未补齐，未读取答案与解析。")}>答案与解析 ▾</ToolbarButton>}
+        actions={<ToolbarButton render={<Button variant="ghost" />} onClick={() => setNotice("示例宿主收到打开作者页的意图，未连接真实作者页。")}>在作者页补齐 →</ToolbarButton>}
+      />)}
+    </div>
+    <p role="status" className="min-h-5 text-ui-hint text-muted-foreground">{notice}</p>
   </section>
 }
