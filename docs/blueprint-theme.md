@@ -41,7 +41,7 @@ const trailing = active ? <BlueprintInlineFolio active folio={{ kind: "sheet", v
 
 | 接口 | 契约 |
 | --- | --- |
-| `BlueprintFrame` | `active: boolean`；false 直接返回原 children，不增加 DOM。true 在现有单根元素上合并外框属性并追加装饰，不新增父节点或改变原子树位置，四边装饰坐标尺上下 1–8、左右 A–D，整组 aria-hidden；坐标带 18px，默认内距 30px，宿主可通过 style 设置内距。`narrowFrame?: "edge" 或 "keep"`；keep 在窄容器保留侧边细线。 |
+| `BlueprintFrame` | `active: boolean`；false 直接返回原 children，不增加 DOM。true 在现有单根元素上合并外框属性并追加装饰，不新增父节点或改变原子树位置，画布变体四边装饰坐标尺上下 1–8、左右 A–D，整组 aria-hidden；坐标带 18px，画布显示规则见下文。整页模式无刻度、内框线与装饰内距，宿主仍可通过 style 设置内距。`narrowFrame?: "edge" 或 "keep"`；keep 在窄容器保留侧边细线。 |
 | `BlueprintInlineCode` | `active: boolean`、`code: "A" 或 "B"`；active 才渲染，aria-hidden，放入原有标题，不新增标题语义。一个预览画面最多 A、B 两块。 |
 | `BlueprintInlineFolio` | `active: boolean`、`folio: BlueprintFolio`；沿用既有格式化，图号 aria-hidden，只反映宿主传入的真实题号和总数。 |
 | `ReviewWorkspace` | 可选 `blueprintFrame?: boolean` 默认 false；只装饰 canvas 插槽的原根，rail / inspector / topbar 不包。可选 `blueprintFolio?: BlueprintFolio` 用于无标题扫描画布，在外框内带显示 A 与图号，不新建标题行。 |
@@ -55,7 +55,7 @@ P126-r1 的 `BlueprintFrame` 要求一个稳定根元素：原生元素直接复
 
 P128（PO 2026-10-31 对 C0 的已授权调整，实现待 Supervisor Review）：预览根显式选用 `bp-frame--canvas`，以自身 `bp-preview-canvas` inline-size 容器宽度决定装饰。`ReviewWorkspace` 已自动选用；直接使用 `BlueprintFrame` 装饰 `PaperPreviewSurface` 时传 `className="bp-frame--canvas"`。该模式要求原根下有直接子节点 `.d1-paper-host`（两个真实预览均已满足），不添加包裹节点。常量 `BLUEPRINT_CANVAS_FRAME_MIN_WIDTH = 926`：A4 纵向纸宽 `210 × 96 / 25.4 ≈ 793.70px`（题目扫描稿取整为 794px），加外框两侧 `30 × 2`、滚动区两侧 `8 × 2`、工具条预留 `56`，向上取整为 926px。此值针对现有 A4 纵向与 794px 题目稿及默认工具条；横向、A3、自定义纸宽或工具条不据此保证 100%。
 
-画布宽度 <926px：外框内距为零，整组坐标尺、内框线、画布带 A/图号隐藏；≥926px：显示装饰并在现有 `.d1-paper-host` 外留 30px。根始终零 padding，避免容器查询尺寸随内距变化而反复切换；内容区实际缩小/扩大后，现有 `PaperPreviewContinuous` / `PaperPreviewMixed` 的 `ResizeObserver` 重新量取滚动视口，适配宽度自动重算，手动缩放值与模式不重置。高度不参与判断；收起题目栏、沉浸及右栏改变均由画布自身宽度驱动。题卡标题行 A/图号、右栏 B 不在装饰层中，始终按原主题契约显示。宽度切换不变更 React 树或 DOM 节点；滚动节点和滚动状态保留（滚动范围缩小时仍受浏览器原生边界约束）。全页 `BlueprintFrame` 未选用该类时沿用原规则。
+画布宽度 <926px：外框内距为零，整组坐标尺、内框线、画布带 A/图号隐藏；≥926px：显示装饰并在现有 `.d1-paper-host` 外留 30px。根始终零 padding，避免容器查询尺寸随内距变化而反复切换；内容区实际缩小/扩大后，现有 `PaperPreviewContinuous` / `PaperPreviewMixed` 的 `ResizeObserver` 重新量取滚动视口，适配宽度自动重算，手动缩放值与模式不重置。高度不参与判断；收起题目栏、沉浸及右栏改变均由画布自身宽度驱动。题卡标题行 A/图号、右栏 B 不在装饰层中，始终按原主题契约显示。宽度切换不变更 React 树或 DOM 节点；滚动节点和滚动状态保留（滚动范围缩小时仍受浏览器原生边界约束）。P178（PO 2026-11-16）：全页 `BlueprintFrame` 未选用该类时不再渲染刻度与内框线，并取消装饰内距；保留根元素、folio 与 narrowFrame 行为，画布变体及 `BlueprintSheet rulers` 不变。
 
 接入示例（模块已导入 `useState`、`useEffect`、`useTheme`、`BlueprintFrame`）：
 

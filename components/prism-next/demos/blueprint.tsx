@@ -135,7 +135,7 @@ export function BlueprintFrameDemo() {
       <h2 className="text-section-title">无标题图纸外框</h2>
       <BlueprintFrame active={blueprint}><div>
         <div className="flex items-center gap-2"><h3 className="text-item-title"><BlueprintInlineCode active={blueprint} code="A" />题目画布（合成数据）</h3><BlueprintInlineFolio active={blueprint} folio={{kind:"sheet",value:"17 / 20"}} /></div>
-        <p className="mt-3 text-ui-body">外框没有标题语义；现有标题和控件由宿主提供。窄容器隐藏坐标尺。</p>
+        <p className="mt-3 text-ui-body">外框没有标题语义；现有标题和控件由宿主提供。整页模式不显示刻度，刻度只在画布变体与 BlueprintSheet。</p>
       </div></BlueprintFrame>
     </section>
 }
