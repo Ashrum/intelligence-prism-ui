@@ -71,13 +71,15 @@ export function BlueprintFrame({ active, narrowFrame = "edge", folio, className,
   if (!isValidElement<ComponentProps<"div"> & { decoration?: ReactNode }>(children)) {
     throw new Error("BlueprintFrame requires one element with a stable root")
   }
-  const decoration = <div key="bp-frame-decoration" aria-hidden="true" className="bp-frame-decoration">
+  const isCanvas = className?.split(/\s+/).includes("bp-frame--canvas")
+  const frameFolio = folio && <div key="bp-frame-folio" aria-hidden="true" className="bp-frame-folio"><BlueprintInlineCode active code="A" /><BlueprintInlineFolio active folio={folio} /></div>
+  const decoration = isCanvas ? <div key="bp-frame-decoration" aria-hidden="true" className="bp-frame-decoration">
       <div className="bp-ruler bp-ruler--top">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
       <div className="bp-ruler bp-ruler--bottom">{RULER_TOP.map(n => <span key={n}>{n}</span>)}</div>
       <div className="bp-ruler bp-ruler--left">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
       <div className="bp-ruler bp-ruler--right">{RULER_SIDE.map(n => <span key={n}>{n}</span>)}</div>
       {folio && <div className="bp-frame-folio"><BlueprintInlineCode active code="A" /><BlueprintInlineFolio active folio={folio} /></div>}
-    </div>
+    </div> : frameFolio
   const attributes = {
     ...props,
     className: cn(children.props.className, "bp-frame", className),

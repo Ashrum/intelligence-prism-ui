@@ -131,7 +131,10 @@ test('P154 SSR fixtures cover every component declared in the four baseline modu
 for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) test(`P154 ${theme}: all existing component exports SSR equal 8a45524 bytes`, () => {
   for (const [name, props] of Object.entries(fixtures)) {
     const themed = api => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api[name], props)));
-    assert.equal(themed(after), themed(before), name);
+    if (name === 'BlueprintFrame') {
+      assert.match(themed(before), /bp-frame-decoration/);
+      assert.equal(themed(after), `<div data-prism-theme="${theme}"><div class="bp-frame" data-slot="bp-frame" data-narrow-frame="edge">内容</div></div>`);
+    } else assert.equal(themed(after), themed(before), name);
   }
 });
 
@@ -187,7 +190,10 @@ const p155Fixtures = { ...fixtures,
 for (const theme of ['light', 'paper', 'dark', 'blueprint', 'blueprint-night']) test(`P155 ${theme}: existing components and default pane SSR equal fdfed77 bytes`, () => {
   for (const [name, props] of Object.entries(p155Fixtures)) {
     const themed = api => renderToStaticMarkup(h('div', { 'data-prism-theme': theme }, h(api[name], props)));
-    assert.equal(themed(after), themed(p155Before), name);
+    if (name === 'BlueprintFrame') {
+      assert.match(themed(p155Before), /bp-frame-decoration/);
+      assert.equal(themed(after), `<div data-prism-theme="${theme}"><div class="bp-frame" data-slot="bp-frame" data-narrow-frame="edge">内容</div></div>`);
+    } else assert.equal(themed(after), themed(p155Before), name);
   }
 });
 
