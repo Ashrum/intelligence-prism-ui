@@ -3715,3 +3715,29 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 样式使用已有 foreground / card / brand-blue / brand-blue-text，兼容 light、paper、dark、blueprint、blueprint-night；仅显式选用的 `bp-toast-pill*` / `bp-blank-slot` 类生效。BlankSlot 编号使用 `text-ui-hint`（14px），替代画板局部 13px。沿用组件站加载的 `blueprint.css`，宿主接入时也须加载该样式与主题令牌。
 
 组件站示例位于 `/next/foundations/blueprint#toast-blank`：按钮触发 8 秒胶囊，撤销和到期由示例宿主收起；展示同一题干内两个空位、第二空选中态及 contenteditable 原子。测试见 `tests/p182-toast-blank.test.mjs`；源码、SSR 与确定性计时验证不替代浏览器验收。
+
+## P183 · MathField 即时值与写完事件（2026-11-17）
+
+复用检索（离线）：沿用现有 MathField、Prism Button、MathLive 0.111.1 公开模型偏移、`getValue` 和 `selection`；核对本地 `leapTarget` 实现，其目标还包括深层单子节点，不能用它判断“下一个空格”。沿用 P119 / P180 的 coss 与 particles 取舍，无新增组件、依赖、样式或令牌。
+
+| 新增接口 | 类型与默认行为 |
+| --- | --- |
+| `MathFieldHandle.getValue()` | `() => string`；同步读取 `mathFieldOutputFormat`（`latex-without-placeholders`），允许空串；原生框未就绪时返回当前受控 `value`。 |
+| `MathFieldProps.onFinish` | 可选 `(value: string, reason: MathFieldFinishReason, detail?: MathFieldFinishDetail) => void`；默认不传。compact 或 full 显式传入时启用新完成行为；未传时保留原先的输出、键位与回调行为。 |
+| `MathFieldFinishReason` | `'enter' \| 'forward' \| 'backward' \| 'tab' \| 'escape' \| 'blur'`，从 MathField 模块导出。 |
+| `MathFieldFinishDetail` | `{ relatedTarget?: Element \| null }`，从 MathField 模块导出；blur 携带焦点目标，无法确定时为 null。 |
+
+| reason | 触发条件 |
+| --- | --- |
+| `enter` | 可视框 Enter（无 Shift，支持 Ctrl / Meta），或已有确认按钮。 |
+| `forward` | MathLive `move-out` 报告向前边界。 |
+| `backward` | MathLive `move-out` 报告向后边界。 |
+| `tab` | Tab 后面已无真实占位符；Shift+Tab 前面已无真实占位符。仍有空格时只选中该空格，不循环、不选中整式。 |
+| `escape` | 可视框 Esc；compact 仍保留旧确认／退出回调。 |
+| `blur` | 焦点离开整个组件；内部工具、数学键盘按钮、原生虚拟键盘不完成。捕获原生 blur 的目标，并用指针目标补足 MathLive 合成事件缺少的 relatedTarget。 |
+
+完成时先同步读取即时值，再调用 onFinish，早于旧 onConfirm / onExit 和受控回滚微任务。同次编辑退出只发一次 onFinish，后续 confirm、exit 或 blur 不重复；新的输入或从外部重新聚焦开始下一次编辑。只读与输入法组合期间不完成。旧 onConfirm / onExit / onCancel 的参数和原有调用行为保留，取消按钮仍发取消意图。
+
+宿主应把 onFinish 作为唯一写回入口，直接消费参数 value，不读取可能尚未刷新的 state；不要同时在旧 onConfirm / onExit 中重复提交。blur 时优先保留 detail.relatedTarget 所在的点击／焦点位置；其他原因由宿主恢复文字光标。外置“完成”按钮可同步调用句柄 getValue 后提交，空串的移除规则由宿主决定。宿主外置工具不属于本组件内部焦点范围，需在 pointerdown 保持编辑框焦点，或由宿主在 blur 回调中识别自有工具并保留编辑。
+
+组件站 MathField 的“写完方式”示例显示最近一次 reason 与即时 value。模型／React 探针不等于真实浏览器焦点、虚拟键盘和输入法验收；浏览器验收由 Supervisor 执行。

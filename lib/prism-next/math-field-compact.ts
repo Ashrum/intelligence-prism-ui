@@ -1,4 +1,5 @@
 import type { MathfieldElement, VirtualKeyboardLayout } from 'mathlive'
+import { mathFieldOutputFormat } from './math-field-adapter'
 import { formulaTools, formulaQuickTools } from './math-field-tools'
 
 export type MathFieldExitReason = 'forward' | 'backward' | 'escape'
@@ -16,6 +17,70 @@ export function attachMathFieldExit(element: MathfieldElement, options: {
   }
   element.addEventListener('move-out', move)
   return () => element.removeEventListener('move-out', move)
+}
+
+export type MathFieldFinishReason = 'enter' | 'forward' | 'backward' | 'tab' | 'escape' | 'blur'
+export type MathFieldFinishDetail = { relatedTarget?: Element | null }
+
+/** Public model offsets only: do not use MathLive leapTarget's single-child fallback. */
+export function moveMathFieldPlaceholder(element: MathfieldElement, backward = false) {
+  const ranges = element.selection.ranges
+  const start = Math.min(...ranges.flat()), end = Math.max(...ranges.flat())
+  for (let offset = backward ? start : end + 1; backward ? offset > 0 : offset <= element.lastOffset; offset += backward ? -1 : 1) {
+    if (element.getValue(offset - 1, offset, 'latex') === '\\placeholder{}') {
+      element.selection = { ranges: [[offset - 1, offset]] }
+      return true
+    }
+  }
+  return false
+}
+
+/** One notification per editing session; capture the value before host callbacks. */
+export function attachMathFieldFinish(element: MathfieldElement, root: HTMLElement, options: {
+  enabled: () => boolean
+  blocked: () => boolean
+  onFinish: (value: string, reason: MathFieldFinishReason, detail?: MathFieldFinishDetail) => void
+}) {
+  let finished = false
+  let internalPointer = false
+  let pointerTarget: Element | null = null
+  const internal = (target: EventTarget | null) => target instanceof Element && (
+    root.contains(target) || Boolean(target.closest('.ML__keyboard'))
+  )
+  const finish = (reason: MathFieldFinishReason, detail?: MathFieldFinishDetail) => {
+    if (!options.enabled() || options.blocked() || finished) return
+    const value = element.getValue(mathFieldOutputFormat)
+    finished = true
+    options.onFinish(value, reason, detail)
+  }
+  const pointer = (event: PointerEvent) => {
+    internalPointer = event.composedPath().some(internal)
+    pointerTarget = event.composedPath().find(target => target instanceof Element) as Element | undefined ?? null
+    queueMicrotask(() => { internalPointer = false; pointerTarget = null })
+  }
+  const blur = (event: FocusEvent) => {
+    if (!options.enabled()) return
+    const target = event.relatedTarget ?? pointerTarget ?? root.ownerDocument.activeElement
+    if (internal(target) || (!event.relatedTarget && internalPointer)) return
+    finish('blur', { relatedTarget: target instanceof Element ? target : null })
+  }
+  const focus = (event: FocusEvent) => { if (!internal(event.relatedTarget) && !internalPointer) finished = false }
+  const input = () => { finished = false }
+  element.addEventListener('blur', blur)
+  // Capture native blur before MathLive replaces it with an Event without relatedTarget.
+  root.addEventListener('blur', blur, true)
+  root.addEventListener('focusout', blur)
+  root.addEventListener('focusin', focus)
+  element.addEventListener('input', input)
+  root.ownerDocument.addEventListener('pointerdown', pointer, true)
+  return { finish, dispose() {
+    element.removeEventListener('blur', blur)
+    root.removeEventListener('blur', blur, true)
+    root.removeEventListener('focusout', blur)
+    root.removeEventListener('focusin', focus)
+    element.removeEventListener('input', input)
+    root.ownerDocument.removeEventListener('pointerdown', pointer, true)
+  } }
 }
 
 const key = (item: typeof formulaTools[number]) => ({ label: item.face, tooltip: item.label, insert: item.latex })
