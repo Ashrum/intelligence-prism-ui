@@ -68,10 +68,10 @@ test('all five ResponseModels have exact part labels, including multiple without
 
 test('missing archive status stays unknown and an explicitly supplied status is preserved', () => {
   const unknown = render(h(c.QuestionDetails, { ...detailProps, tab: 'archive' }));
-  assert.match(unknown, /可用状态<\/dt><dd[^>]*>未知<\/dd>/);
+  assert.match(unknown, /<span[^>]*aria-label="可用状态：未知"[^>]*><span[^>]*aria-hidden="true"[^>]*><\/span>未知<\/span>/);
   const supplied = render(h(c.QuestionDetails, { ...detailProps, tab: 'archive', status: '已停用' }));
-  assert.match(supplied, /可用状态<\/dt><dd[^>]*>已停用<\/dd>/);
-  assert.doesNotMatch(unknown, /<dd[^>]*>可用<\/dd>/);
+  assert.match(supplied, /<span[^>]*aria-label="可用状态：已停用"[^>]*><span[^>]*aria-hidden="true"[^>]*><\/span>已停用<\/span>/);
+  assert.doesNotMatch(unknown, /aria-label="可用状态：可用"/);
 });
 
 test('missing answers and explanations are explicit at whole-question and part level; zero is not missing', () => {
@@ -94,7 +94,7 @@ test('number is only a display ordinal and never changes the actual archive iden
   const copy = structuredClone(question);
   const html = render(h(c.QuestionCard, { question, number: 7, detailsOpen: true, details: h(c.QuestionDetails, { ...detailProps, tab: 'archive' }) }));
   assert.match(text(html), /第 7 题 · 从配方解释最小值/);
-  assert.match(html, /题目编号<\/dt><dd[^>]*>real-question-2048<\/dd>/);
+  assert.match(html, /<span[^>]*class="[^"]*font-mono[^"]*"[^>]*>real-question-2048<\/span>/);
   assert.deepEqual(question, copy);
   assert.match(render(h(c.QuestionCard, { question })), /<h3[^>]*>从配方解释最小值<\/h3>/);
 });

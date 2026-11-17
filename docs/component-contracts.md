@@ -2647,7 +2647,7 @@ import { Badge } from "@/components/prism-next/badge"
 | `QuestionCard.reading` | L3，无外框、勾选、操作和详情；保留题号、题面与分值，优先于 compact |
 | `QuestionContent.optionExtra` | Q6 授权增加的可选 `(optionId: string) => ReactNode`；按顶层选项顺序调用，内容接在该选项正文之后。省略或传 undefined 时既有 DOM 完全不变；传入时选项使用字母／正文／附加内容的网格布局，宿主负责统计、名单、动作及窄容器适配；不影响小问内选项，不推断正确性或执行状态 |
 | `QuestionRecord.difficulty` | 可选外部难度文字；缺省不显示，不按内容推断 |
-| `QuestionDetails.status` | 未提供时“未知”，保留档案行，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
+| `QuestionDetails.status` | 未提供时“未知”，保留档案起头行状态，便于区分缺少状态与已确认可用；空教学字段显示“未关联” |
 | `QuestionDetails.tabs` | 固定顺序 answer → teaching → archive 后按宿主传入裁剪；窄容器显示答案／定位／档案，aria-label 保留完整名称 |
 
 `QuestionSolution` 的整题与每个小问均对缺失的 answer / explanation 显示“未提供参考答案 / 未提供解析”；数值 0 不是缺失。宿主可通过 tabs 去掉答案页，不根据作答或提交状态自行显示答案。小问类型覆盖 single / multiple / fill / boolean / long。
@@ -3760,3 +3760,24 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 题面 `.prism-math` 的行内 mfrac 使用 `math-style:normal` 取得 display 分式度量，不改变 TeX、annotation 或存储值；Temml 的 `\tfrac` 生成 `mstyle[displaystyle="false"]`，其后代排除，保持小分式。block 公式不变，字号仍为 1.125em；不设置固定行高或脚标字号，上下标和根指数依照 MathML 规则缩小。原生 MathML 的紧凑分式也可显式用上述 mstyle 表达。
 
 组件演示「浮动图标条 · SHEET 51」含按需开启的真实公式框、完成按钮、常开「更多公式」Tooltip，以及小分式 / 大分式对照。定位测试验证传给 Base UI 的翻转契约，未冒充浏览器几何验收。
+## QuestionDetails / QuestionArchiveSummary · P184 冻结版式
+
+依据 REV 0.8 SHEET 53。复用检索：现有 QuestionDetails、QuestionSolution、coss Tabs underline、Button ghost icon-xs 和 Tooltip 已满足本轮，不新增来源、依赖、令牌或目录条目，不改 coss 原始文件。
+
+- 容器宽度 ≥ 560px 使用真正的 vertical Tabs（96px 页签列、24px 内容间距），更窄使用 horizontal Tabs；400px 以下保留答案／定位／档案缩写与完整可访问名称。ResizeObserver 观察容器而非视口；SSR 初始横排，挂载测量后切换。
+- 答案与解析仍由 QuestionSolution 提供，显式使用 ui 正文字号；外层将标签与内容排为 84px + 12px 间距的小表，保留缺失提示、小问和评分依据。
+- 教学定位字段和缺失提示不变。档案改编号、复制按钮、版本及状态圆点起头；可用为 success，草稿／未入库为 warning，其余为 muted，未知状态不推定可用。复制完成或失败均有可读的 live status。
+- 档案字段依次为题型与结构（选项／小问数）、来源、archive 中的入库项、其余 archive 项、维护说明。空字符串、空白字符串、null、undefined、false 行省略；0 保留。宿主负责不传入无内容的 React 元素。
+
+新增 `QuestionArchiveSummary` 与 `QuestionArchiveSummaryProps` 从 `components/prism-next/question-details.tsx` 导出：
+
+| Prop | 类型 | 约定 |
+| --- | --- | --- |
+| id | string，可选 | 不传时显示“添加后生成编号”，无复制按钮 |
+| version | string，可选 | 缺 id 且未传时显示“草稿”；已有 id 而缺版本时省略版本 |
+| status | string，必填 | 外部事实；草稿宿主传“未入库” |
+| rows | `{ label: string; value: ReactNode }[]` | 按传入顺序呈现两列小表；标签唯一；日期／数字使用 tabular-nums |
+
+组件站题目示例提供正式详情、560／559／390px 容器与草稿档案。此组件不生成编号，不入库，不连接业务服务。
+
+本轮实现待复核：现有 `text-ui-hint` 为 14px，没有 13px 语义字号；编号、档案值和竖排页签暂沿用该语义字号，未新增令牌或局部字号。该差异尚未达到图纸像素要求，需 Supervisor 收敛规范冲突后处理。
