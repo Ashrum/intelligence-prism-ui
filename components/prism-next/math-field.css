@@ -76,6 +76,11 @@
   --keycap-glyph-size-xl: var(--text-read-body);
 }
 .prism-math-native-keyboard:empty { display: none; }
+/* P181: two rows per tool; columns follow the panel width, not the viewport. */
+.prism-formula-palette-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr)); gap: 8px; }
+.prism-formula-palette-tool[data-slot="button"] { display: flex; flex-direction: column; gap: 2px; height: 56px; min-width: 0; padding: 4px 8px; }
+.prism-formula-palette-face, .prism-formula-palette-label { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prism-formula-palette-tool::after { min-width: 0; }
 @media (prefers-reduced-motion: reduce) {
   .prism-math-native-keyboard *,
   .prism-math-native-keyboard *::before,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Input } from '@/components/coss/input'
 import { Textarea } from '@/components/coss/textarea'
 import { Tabs, TabsList, TabsTab, TabsPanel } from '@/components/coss/tabs'
@@ -17,6 +17,7 @@ export function AuthoringSurfaceDemo() {
   const [analysis, setAnalysis] = useState('')
   const [analysisState, setAnalysisState] = useState<AiSuggestState>('loading')
   const [notice, setNotice] = useState('')
+  const boxedEditor = useRef<HTMLDivElement>(null)
   const request = (field: string) => () => setNotice(`收到「${field}」意图；本页未连接 AI 服务。`)
   const toolbar = <span className="text-ui-meta text-muted-foreground">富内容工具栏插槽 · 由宿主接入公式、图片等工具</span>
   return <div className="space-y-6">
@@ -50,10 +51,11 @@ export function AuthoringSurfaceDemo() {
               <div className="grid gap-x-7 gap-y-3 @min-[720px]:grid-cols-2" role="group" aria-label="选项与正确答案">
                 {['1', '3', '√3', '−1'].map((value, index) => {
                   const key = String.fromCharCode(65 + index)
-                  return <div key={key} className="flex min-w-0 items-center gap-3">
-                    <ChoiceKey selected={selected === key} onClick={() => setSelected(key)} aria-label={`将 ${key} 设为正确答案`}>{key}</ChoiceKey>
-                    <QuietField className="flex-1"><Input aria-label={`选项 ${key} 内容`} defaultValue={value} className="text-read-body" /></QuietField>
-                  </div>
+                  return <QuietField key={key} appearance="boxed"
+                    leading={<ChoiceKey selected={selected === key} onClick={() => setSelected(key)} aria-label={`将 ${key} 设为正确答案`}>{key}</ChoiceKey>}
+                    trailing={<Button variant="ghost" size="icon-sm" aria-label={`删除选项 ${key}`} onClick={request(`删除选项 ${key}`)}>×</Button>}>
+                    <Input aria-label={`选项 ${key} 内容`} defaultValue={value} className="text-read-body" />
+                  </QuietField>
                 })}
               </div>
             </AuthoringRow>
@@ -71,6 +73,20 @@ export function AuthoringSurfaceDemo() {
             <AuthoringRow label="教材与章节" htmlFor={`${id}-book`} trailing={<AiSuggestButton onSuggest={request('教材与章节建议')} />}><QuietField><Input id={`${id}-book`} placeholder="人教版 · 九年级上册" /></QuietField></AuthoringRow>
           </AuthoringSection>
           <AuthoringSection no="03" title="题目档案" hint="系统记录"><AuthoringRow label="状态"><StatusDot tone="neutral">草稿 · 尚未添加</StatusDot></AuthoringRow></AuthoringSection>
+        </AuthoringSurface>
+        <AuthoringSurface title="boxed 书写区">
+          <AuthoringSection title="书写区四种状态" hint="悬停查看边框；点击聚焦或用 Tab 进入字段。">
+            <AuthoringRow label="空 · 可悬停" htmlFor={`${id}-boxed-empty`}><QuietField appearance="boxed"><Input id={`${id}-boxed-empty`} placeholder="输入题干" className="text-read-body" /></QuietField></AuthoringRow>
+            <AuthoringRow label="聚焦" trailing={<Button variant="outline" onClick={() => boxedEditor.current?.focus()}>聚焦书写区</Button>}>
+              <QuietField appearance="boxed" toolbar={toolbar}><div><div ref={boxedEditor} contentEditable suppressContentEditableWarning role="textbox" aria-label="聚焦书写区示例" className="text-read-body">已知 a + b = 5</div></div></QuietField>
+            </AuthoringRow>
+            <AuthoringRow label="已写" htmlFor={`${id}-boxed-filled`}><QuietField appearance="boxed"><Input id={`${id}-boxed-filled`} defaultValue="已知 a + b = 5，求 a² + b²" className="text-read-body" /></QuietField></AuthoringRow>
+            <AuthoringRow label="有误" htmlFor={`${id}-boxed-error`}><QuietField appearance="boxed" invalid message="公式不完整：等号右边缺内容"><div><Input id={`${id}-boxed-error`} defaultValue="已知 a + b =" className="text-read-body" /></div></QuietField></AuthoringRow>
+            <AuthoringRow label="三行题干" htmlFor={`${id}-boxed-stem`}>
+              <QuietField appearance="boxed" lines={3} toolbar={toolbar}><div><div><Textarea id={`${id}-boxed-stem`} placeholder="输入题干，至少保留三行书写空间" className="text-read-body" /></div></div></QuietField>
+            </AuthoringRow>
+            <AuthoringRow label="填空答案" htmlFor={`${id}-boxed-answer`}><QuietField appearance="boxed" leading={<span className="text-ui-meta">空 ①</span>}><Input id={`${id}-boxed-answer`} defaultValue="x = 5" className="text-read-body" /></QuietField></AuthoringRow>
+          </AuthoringSection>
         </AuthoringSurface>
         <AuthoringSurface variant="floating" no="02" title="题号卡" status={<StatusDot tone="check">需核对</StatusDot>}>
           <AuthoringSection aria-label="状态示例"><div className="flex flex-wrap gap-4"><StatusDot tone="miss">还差解析</StatusDot><StatusDot tone="ai">AI 建议</StatusDot><StatusDot tone="neutral">草稿</StatusDot></div></AuthoringSection>
