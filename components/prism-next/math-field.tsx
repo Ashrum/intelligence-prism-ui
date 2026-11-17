@@ -14,14 +14,15 @@ import { attachMathFieldComposition, mathFieldDescription, mathFieldEditingValue
 import { configureMathFieldRuntime, loadMathFieldRuntime, type MathFieldRuntime } from '@/lib/prism-next/math-field-runtime'
 import { mathFieldTemplates, mathFieldRelations, mathFieldGreek, mathFieldSubjectTools, mathFieldShortcuts, mathFieldNumberKeys, mathFieldKeyboardCommands, type MathFieldKey, type MathFieldSubject, type MathFieldTool } from '@/lib/prism-next/math-field-tools'
 import { createMathFieldShortcut } from '@/lib/prism-next/math-field-shortcut'
-import { attachMathFieldExit, attachCompactKeyboard, type MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
+import { attachMathFieldExit, attachCompactKeyboard, attachMathFieldFinish, moveMathFieldPlaceholder, type MathFieldFinishReason, type MathFieldFinishDetail, type MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
 export { FormulaQuickTools, FormulaPalette } from './formula-tools'
 export type { FormulaQuickToolsProps, FormulaPaletteProps } from './formula-tools'
-export type { MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
+export type { MathFieldExitReason, MathFieldFinishReason, MathFieldFinishDetail } from '@/lib/prism-next/math-field-compact'
 import './math-field.css'
 
 export type MathFieldCursor = { value: string; position: number; selection: Selection }
 export type MathFieldHandle = {
+  getValue: () => string
   insert: (latex: string) => void
   focus: () => void
   executeCommand: (name: Selector) => void
@@ -31,6 +32,7 @@ export type MathFieldProps = {
   variant?: 'full' | 'compact'
   virtualKeyboard?: 'auto' | 'off'
   onExit?: (reason: MathFieldExitReason) => void
+  onFinish?: (value: string, reason: MathFieldFinishReason, detail?: MathFieldFinishDetail) => void
   value: string
   onChange: (value: string) => void
   mode?: 'inline' | 'block'
@@ -55,6 +57,7 @@ export function MathField(props: MathFieldProps) {
   const field = useRef<MathfieldElement | null>(null), runtime = useRef<MathFieldRuntime | null>(null)
   const latest = useRef(props)
   useLayoutEffect(() => { latest.current = props })
+  const finishSession = useRef<ReturnType<typeof attachMathFieldFinish> | null>(null)
   const shortcut = useRef<ReturnType<typeof createMathFieldShortcut> | null>(null)
   const [canRestore, setCanRestore] = useState(false)
   const composing = useRef(false), sourceComposing = useRef(false)
@@ -70,6 +73,7 @@ export function MathField(props: MathFieldProps) {
   const disabled = Boolean(readOnlyReason) || ime
   const confirm = useCallback(() => {
     if (latest.current.readOnlyReason || composing.current || sourceComposing.current) return
+    finishSession.current?.finish('enter')
     if (!latest.current.value.trim()) setConfirmedEmpty(latest.current.value)
     latest.current.onConfirm?.()
   }, [])
@@ -117,17 +121,35 @@ export function MathField(props: MathFieldProps) {
           onCommit: () => emit(),
         })
         const input = () => { if (!composing.current) { transaction.afterInput(); setCanRestore(transaction.available()); emit() } }
+        const completion = attachMathFieldFinish(element, mount.current.parentNode as HTMLElement, {
+          enabled: () => Boolean(latest.current.onFinish),
+          blocked: () => composing.current || sourceComposing.current || Boolean(latest.current.readOnlyReason) || element.readOnly,
+          onFinish: (value, reason, detail) => latest.current.onFinish?.(value, reason, detail),
+        })
+        finishSession.current = completion
         const exit = (reason: MathFieldExitReason) => {
           if (latest.current.readOnlyReason || composing.current || element.readOnly) return
+          completion.finish(reason)
           if (latest.current.variant === 'compact') confirm()
           latest.current.onExit?.(reason)
         }
         const detachExit = attachMathFieldExit(element, {
-          blocked: () => composing.current || Boolean(latest.current.readOnlyReason) || element.readOnly || (latest.current.variant !== 'compact' && !latest.current.onExit),
+          blocked: () => composing.current || Boolean(latest.current.readOnlyReason) || element.readOnly || (latest.current.variant !== 'compact' && !latest.current.onExit && !latest.current.onFinish),
           onExit: exit,
         })
         const keydown = (event: KeyboardEvent) => {
           if (composing.current || event.isComposing || event.keyCode === 229) return
+          if (latest.current.onFinish && !latest.current.readOnlyReason && !element.readOnly) {
+            if (event.key === 'Tab') {
+              event.preventDefault(); event.stopImmediatePropagation()
+              if (!moveMathFieldPlaceholder(element, event.shiftKey)) completion.finish('tab')
+              return
+            }
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault(); event.stopImmediatePropagation(); confirm(); return
+            }
+            if (event.key === 'Escape') completion.finish('escape')
+          }
           transaction.beforeKey(event)
           if (event.key === 'Escape') {
             event.preventDefault(); event.stopPropagation(); setKeyboard(false)
@@ -143,6 +165,7 @@ export function MathField(props: MathFieldProps) {
           if (event.pointerType === 'touch' && !latest.current.readOnlyReason && latest.current.variant !== 'compact' && latest.current.virtualKeyboard === undefined) setKeyboard(true)
         }
         cleanup = () => {
+          completion.dispose(); finishSession.current = null
           detachExit(); composition.dispose(); element.removeEventListener('input', input)
           element.removeEventListener('keydown', keydown, true); element.removeEventListener('pointerdown', touch)
           element.removeEventListener('pointerdown', resetShortcut); element.removeEventListener('paste', resetShortcut); shortcut.current = null
@@ -209,6 +232,7 @@ export function MathField(props: MathFieldProps) {
     emit()
   }
   useImperativeHandle(props.ref, () => ({
+    getValue: () => field.current?.getValue(mathFieldOutputFormat) ?? latest.current.value,
     insert: latex => insert({ label: '', latex, face: '' }),
     focus: () => field.current?.focus(),
     executeCommand: act,

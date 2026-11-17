@@ -33,6 +33,7 @@ export function MathFieldDemo() {
     <div className="space-y-6" style={narrow ? { maxWidth: 390 } : undefined}>
       {examples.map(example => <Example key={example.title} example={example} />)}
       <CompactExample />
+      <FinishExample />
     </div>
   </div>
 }
@@ -64,5 +65,20 @@ function CompactExample() {
       </Field>}
     </>}
     <p role="status" className="text-ui-hint text-muted-foreground">走出回调 {exits} 次 · {reason}</p>
+  </section>
+}
+
+function FinishExample() {
+  const [value, setValue] = useState(String.raw`\frac{1}{}`)
+  const [editing, setEditing] = useState(false)
+  const [last, setLast] = useState('尚未写完')
+  return <section className="space-y-3" aria-label="写完方式">
+    <h3 className="text-block-title">写完方式</h3>
+    <p className="text-ui-hint">Enter、边界方向键、末格 Tab（Shift+Tab 反向）、Esc 或移开焦点，按最新内容写回。</p>
+    <Button type="button" variant="outline" onClick={() => setEditing(true)}>试写公式</Button>
+    {editing && <MathField variant="compact" value={value} onChange={setValue} label="写完方式示例" onFinish={(next, reason) => {
+      setValue(next); setLast(`${reason} · ${next || '（空串）'}`); setEditing(false)
+    }} />}
+    <p role="status" className="text-ui-hint">最近一次 onFinish：{last}</p>
   </section>
 }
