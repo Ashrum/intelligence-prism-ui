@@ -3,6 +3,7 @@
 import { cloneElement, isValidElement, useId, useRef, useState, type ComponentProps, type KeyboardEvent, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import type { ChartValueFormatter } from "@/lib/prism-next/chart-options"
+import { useToastTimer } from "./toast-timer"
 import { useHorizontalChoiceScroll } from "../use-horizontal-choice-scroll"
 
 export { BpScanTrace, BpPaperSlot } from "./grading"
@@ -559,9 +560,28 @@ export function BpCodebox({ file, meta, children, className }: { file: ReactNode
   return <figure className={cn("bp-codebox m-0", className)}><figcaption className="bp-codebox-head"><span className="font-semibold text-foreground">{file}</span>{meta && <span>{meta}</span>}</figcaption><pre>{children}</pre></figure>
 }
 
-/** Presentational toast surface; announce via coss ToastProvider in real flows. */
-export function BpToast({ className, ...props }: ComponentProps<"div">) {
+export interface BpToastProps extends ComponentProps<"div"> {
+  variant?: "bar" | "pill"
+  icon?: ReactNode
+  action?: ReactNode
+  duration?: number
+  onTimeout?: () => void
+}
+
+/** The host owns visibility and actions. The legacy bar keeps its exact markup. */
+export function BpToast({ variant = "bar", icon, action, duration, onTimeout, className, ...props }: BpToastProps) {
+  if (variant === "pill") return <BpToastPill {...props} className={className} icon={icon} action={action} duration={duration} onTimeout={onTimeout} />
   return <div role="status" {...props} className={cn("bp-toast", className)} />
+}
+
+function BpToastPill({ icon, action, duration, onTimeout, children, className, ...props }: Omit<BpToastProps, "variant">) {
+  const lifetime = useToastTimer(duration, onTimeout)
+  return <div {...props} role="status" aria-live="polite" className={cn("bp-toast bp-toast-pill", className)}>
+    {icon != null && <span aria-hidden="true" className="bp-toast-pill-icon">{icon}</span>}
+    <span className="bp-toast-pill-message">{children}</span>
+    {action != null && <span className="bp-toast-pill-action">{action}</span>}
+    {lifetime !== undefined && <span key={lifetime} aria-hidden="true" className="bp-toast-pill-countdown" style={{ animationDuration: `${lifetime}ms` }} />}
+  </div>
 }
 
 export { BpWorkLayer, BpWorkSkeleton } from "./work-layer"

@@ -8,6 +8,7 @@ import { Menu, MenuItem, MenuTrigger } from "@/components/coss/menu"
 import { MenuPopup } from "../scoped-overlays"
 import { Button } from "../button"
 import { Badge } from "../badge"
+import { BlankSlot } from "../blank-slot"
 import { ChartLegend } from "../charts/chart-legend"
 import { BlueprintTitleSlotsDemo } from "./blueprint-title-slots"
 import { BlueprintGradingDemo } from "./blueprint-grading"
@@ -27,6 +28,28 @@ import { BlueprintObjectCardsDemo } from "./blueprint-object-cards"
 import { artifactOutputExamples } from "./agent-artifact-output"
 import { continuousPreviewPages } from "./paper-preview-continuous"
 import { BlueprintFrame, BlueprintInlineCode, BlueprintInlineFolio, BlueprintSectionHeader, BlueprintSheet, BpTargetLock, BpDiagramCallout, BpEntryRow, BpAnnotatedText, BpAnnotationList, BpButton, BpCallout, BpCard, BpCardNote, BpCodebox, BpError, BpFacts, BpFigCap, BpFrameCard, BpSectionCard, BpMetric, BpMetricLegend, BpMinor, BpPaneHead, BpSegTabs, BpSizeBar, BpSteps, BpTitleBlock, BpToast, BpTool } from "../blueprint/blueprint"
+
+/** Local preview owns visibility and undo; no question data is changed. */
+export function BlueprintToastBlankDemo() {
+  const [toastKey, setToastKey] = useState(0)
+  const [visible, setVisible] = useState(false)
+  const [note, setNote] = useState("点击预览，显示 8 秒可撤销提示。")
+  return <section id="toast-blank" aria-label="胶囊提示与行内空位示例" className="space-y-4">
+    <BpMinor code="BP-08.1 · Toast / BlankSlot" label="胶囊提示与行内空位" />
+    <BpButton onClick={() => { setToastKey(key => key + 1); setVisible(true); setNote("正在预览题型切换提示。") }}>预览 8 秒提示</BpButton>
+    {visible && <BpToast key={toastKey} variant="pill" icon="↺" duration={8000}
+      onTimeout={() => { setVisible(false); setNote("提示已到期，由示例宿主收起。") }}
+      action={<button type="button" onClick={() => { setVisible(false); setNote("已撤销本次示例切换。") }}>撤销</button>}>
+      已改为判断题，移除了 4 个选项
+    </BpToast>}
+    <p role="status" className="text-ui-hint text-muted-foreground">{note}</p>
+    <p className="text-read-body">方程 |x − 2| = 3 的解是 <BlankSlot index={1} /> 或 <BlankSlot index={2} selected />。</p>
+    <p className="text-ui-hint text-muted-foreground">第二空为选中态；下方可编辑题干中的空位仍是不可编辑原子。</p>
+    <div contentEditable suppressContentEditableWarning role="textbox" aria-label="含空位的题干编辑示例" className="border border-border p-3 text-read-body">
+      方程的解是 <BlankSlot index={1} /> 或 <BlankSlot index={2} />。
+    </div>
+  </section>
+}
 
 /** Synthetic host state only: no report routing, persistence or business execution. */
 export function BlueprintSizeBarActivationDemo() {
@@ -367,6 +390,7 @@ export function BlueprintComponentsDemo() {
           <BpCallout title="为什么 AI 分数与教师分数不同" action={<a className="prism-link text-ui-action underline underline-offset-3" href="#rubric">查看评分点 →</a>}>示例记录：第 7 题的评分点 2 要求写出单位。AI 判定为漏写，教师改判为可接受。</BpCallout>
           <BpError location="第 12 行 · 选项" message="选择题缺少选项 D。单选题需要 4 个选项，每个以字母开头。" example="A. 3　B. 4　C. 5　D. 6" />
           <BpToast>成功状态样例 · 第 7 题评分已保存</BpToast>
+          <BlueprintToastBlankDemo />
         </div>
         <div className="min-w-0 space-y-5">
           <BpMinor code="BP-09 · Annotation" label="批注" />
