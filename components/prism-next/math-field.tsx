@@ -15,8 +15,8 @@ import { configureMathFieldRuntime, loadMathFieldRuntime, type MathFieldRuntime 
 import { mathFieldTemplates, mathFieldRelations, mathFieldGreek, mathFieldSubjectTools, mathFieldShortcuts, mathFieldNumberKeys, mathFieldKeyboardCommands, type MathFieldKey, type MathFieldSubject, type MathFieldTool } from '@/lib/prism-next/math-field-tools'
 import { createMathFieldShortcut } from '@/lib/prism-next/math-field-shortcut'
 import { attachMathFieldExit, attachCompactKeyboard, attachMathFieldFinish, moveMathFieldPlaceholder, type MathFieldFinishReason, type MathFieldFinishDetail, type MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
-export { FormulaQuickTools, FormulaPalette } from './formula-tools'
-export type { FormulaQuickToolsProps, FormulaPaletteProps } from './formula-tools'
+export { FormulaQuickTools, FormulaFloatingToolbar, FormulaPalette } from './formula-tools'
+export type { FormulaQuickToolsProps, FormulaFloatingToolbarProps, FormulaPaletteProps } from './formula-tools'
 export type { MathFieldExitReason, MathFieldFinishReason, MathFieldFinishDetail } from '@/lib/prism-next/math-field-compact'
 import './math-field.css'
 

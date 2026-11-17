@@ -4,21 +4,69 @@ import { useId, useRef, useState, type ReactNode } from 'react'
 import { Field, FieldLabel } from '@/components/coss/field'
 import { Input } from '@/components/coss/input'
 import { Button } from './button'
-import { formulaQuickTools, searchFormulaTools } from '@/lib/prism-next/math-field-tools'
+import { Button as CossButton } from '@/components/coss/button'
+import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from '@/components/coss/toolbar'
+import { Tooltip, TooltipTrigger, TooltipPopup } from '@/components/coss/tooltip'
+import { Kbd } from '@/components/coss/kbd'
+import { PopoverPrimitive } from '@/components/coss/popover'
+import { Check } from 'lucide-react'
+import { formulaQuickTools, searchFormulaTools, mathFieldShortcuts } from '@/lib/prism-next/math-field-tools'
 import './math-field.css'
 
 export type FormulaQuickToolsProps = {
   onInsert: (latex: string) => void
   trailing?: ReactNode
   disabled?: boolean
+  variant?: 'row' | 'floating'
+  finish?: { onFinish: () => void; label?: string }
 }
 
-export function FormulaQuickTools({ onInsert, trailing, disabled }: FormulaQuickToolsProps) {
+export function FormulaQuickTools({ onInsert, trailing, disabled, variant = 'row', finish }: FormulaQuickToolsProps) {
+  if (variant === 'floating') return <Toolbar aria-label="快捷公式" className="items-center gap-0.5 rounded-xl p-1 shadow-lg/5 max-w-full overflow-x-auto" onPointerDown={event => event.preventDefault()}>
+    <ToolbarGroup className="gap-0.5">
+      {formulaQuickTools.filter(tool => tool.label !== '正负').map(tool => {
+        const shortcut = Object.entries(mathFieldShortcuts).find(([, latex]) => latex === tool.latex)?.[0]
+        return <Tooltip key={tool.label}>
+          <TooltipTrigger render={<ToolbarButton render={<CossButton type="button" variant="ghost" size="icon-sm" />} disabled={disabled}
+            aria-label={`插入${tool.label}`} onPointerDown={event => event.preventDefault()} onClick={() => onInsert(tool.latex)} />}>
+            <span className="prism-formula-toolbar-symbol font-serif" aria-hidden="true">{tool.label === '分数' ? 'a⁄b' : tool.face}</span>
+          </TooltipTrigger>
+          <TooltipPopup side="top">{tool.label}{shortcut && <>　<Kbd>{shortcut}</Kbd></>}</TooltipPopup>
+        </Tooltip>
+      })}
+    </ToolbarGroup>
+    {trailing && <><ToolbarSeparator /><ToolbarGroup className="gap-0.5">{trailing}</ToolbarGroup></>}
+    {finish && <><ToolbarSeparator /><Tooltip>
+      <TooltipTrigger render={<ToolbarButton render={<CossButton type="button" size="icon-sm" />} disabled={disabled}
+        aria-label={`${finish.label ?? '完成'}（Enter）`} onPointerDown={event => event.preventDefault()} onClick={finish.onFinish} />}><Check aria-hidden="true" /></TooltipTrigger>
+      <TooltipPopup side="top">{finish.label ?? '完成'} <Kbd>↵</Kbd></TooltipPopup>
+    </Tooltip></>}
+  </Toolbar>
   return <div className="flex min-w-0 items-center gap-1 overflow-x-auto" role="group" aria-label="快捷公式">
     {formulaQuickTools.map(tool => <Button key={tool.label} type="button" variant="outline" size="navigation" className="shrink-0" disabled={disabled}
       aria-label={`插入${tool.label}`} title={tool.label} onPointerDown={event => event.preventDefault()} onClick={() => onInsert(tool.latex)}>{tool.face}</Button>)}
     {trailing}
   </div>
+}
+
+export type FormulaFloatingToolbarProps = Omit<FormulaQuickToolsProps, 'variant'> & {
+  anchor: Element | null
+  open: boolean
+}
+
+/** Host owns active field and visibility; opening never moves the editor focus. */
+export function FormulaFloatingToolbar({ anchor, open, ...props }: FormulaFloatingToolbarProps) {
+  if (!open || !anchor) return null
+  return <PopoverPrimitive.Root open modal={false}>
+    <PopoverPrimitive.Portal>
+      <PopoverPrimitive.Positioner anchor={anchor} side="top" align="start" sideOffset={8}
+        collisionAvoidance={{ side: 'flip', align: 'shift', fallbackAxisSide: 'none' }} className="z-50 max-w-(--available-width)">
+        <PopoverPrimitive.Popup data-prism-formula-floating-toolbar="" initialFocus={false} finalFocus={false}>
+          <FormulaQuickTools {...props} variant="floating" />
+        </PopoverPrimitive.Popup>
+      </PopoverPrimitive.Positioner>
+    </PopoverPrimitive.Portal>
+  </PopoverPrimitive.Root>
 }
 
 export type FormulaPaletteProps = {

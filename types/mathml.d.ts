@@ -11,6 +11,8 @@ declare module "react" {
       mo: MathAttributes
       msub: MathAttributes
       msup: MathAttributes
+      mstyle: MathAttributes & { displaystyle?: boolean; scriptlevel?: number }
+      mroot: MathAttributes
       mfrac: MathAttributes
       msqrt: MathAttributes
       mtext: MathAttributes

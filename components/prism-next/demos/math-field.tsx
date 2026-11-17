@@ -1,9 +1,15 @@
 "use client"
 import { useRef, useState } from 'react'
-import { MathField, FormulaQuickTools, FormulaPalette, type MathFieldHandle, type MathFieldProps } from '../math-field'
+import { MathField, FormulaQuickTools, FormulaFloatingToolbar, FormulaPalette, type MathFieldHandle, type MathFieldProps } from '../math-field'
 import { Field, FieldLabel } from '@/components/coss/field'
 import { Textarea } from '@/components/coss/textarea'
 import { Button } from '../button'
+import { Button as CossButton } from '@/components/coss/button'
+import { ToolbarButton } from '@/components/coss/toolbar'
+import { Tooltip, TooltipTrigger, TooltipPopup } from '@/components/coss/tooltip'
+import { Kbd } from '@/components/coss/kbd'
+import { ChevronDown } from 'lucide-react'
+import { QuestionMath } from '../question-content'
 const examples: { title: string; value: string; props?: Partial<MathFieldProps> }[] = [
   { title: '行内 · SHEET 08', value: String.raw`y=\frac{1}{}x^{2}-4x+3` },
   { title: '单独一行 · 方程组', value: String.raw`\begin{cases}x+y=5\\2x-y=1\end{cases}`, props: { mode: 'block' } },
@@ -34,6 +40,7 @@ export function MathFieldDemo() {
       {examples.map(example => <Example key={example.title} example={example} />)}
       <CompactExample />
       <FinishExample />
+      <FloatingExample />
     </div>
   </div>
 }
@@ -80,5 +87,36 @@ function FinishExample() {
       setValue(next); setLast(`${reason} · ${next || '（空串）'}`); setEditing(false)
     }} />}
     <p role="status" className="text-ui-hint">最近一次 onFinish：{last}</p>
+  </section>
+}
+
+function FloatingExample() {
+  const region = useRef<HTMLElement>(null)
+  const isInternal = (target: EventTarget | null | undefined) => target instanceof Element && (region.current?.contains(target) || Boolean(target.closest('[data-prism-formula-floating-toolbar]')))
+  const field = useRef<MathFieldHandle>(null)
+  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null)
+  const [open, setOpen] = useState(false), [more, setMore] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [value, setValue] = useState(String.raw`\frac{1}{2}`)
+  const [last, setLast] = useState('尚未完成')
+  const finish = () => { const next = field.current?.getValue() ?? value; setValue(next); setLast(next); setOpen(false); setEditing(false); setMore(false) }
+  return <section ref={region} className="space-y-3" aria-label="浮动公式工具条" onBlur={event => { if (!isInternal(event.relatedTarget)) finish() }}>
+    <h3 className="text-block-title">浮动图标条 · SHEET 51</h3>
+    <Button type="button" variant="outline" onClick={() => setEditing(true)}>试用浮动工具条</Button>
+    {editing && <div ref={setAnchor} onFocus={() => setOpen(true)}>
+      <MathField ref={field} variant="compact" value={value} onChange={setValue} label="浮动工具条示例" virtualKeyboard="off"
+        onFinish={(next, reason, detail) => { if (reason === 'blur' && isInternal(detail?.relatedTarget)) return; setValue(next); setLast(next); setOpen(false); setEditing(false); setMore(false) }} />
+    </div>}
+    <FormulaFloatingToolbar anchor={anchor} open={open} onInsert={latex => field.current?.insert(latex)} finish={{ onFinish: finish }} trailing={
+      <Tooltip open><TooltipTrigger render={<ToolbarButton render={<CossButton variant="ghost" size="icon-sm" />} aria-label="更多公式" aria-expanded={more}
+        onPointerDown={event => event.preventDefault()} onClick={() => setMore(!more)} />}><ChevronDown /></TooltipTrigger>
+        <TooltipPopup side="top">更多公式 <Kbd>▾</Kbd></TooltipPopup></Tooltip>
+    } />
+    {more && <FormulaPalette onInsert={latex => field.current?.insert(latex)} />}
+    <p role="status" className="text-ui-hint">最近完成：{last}</p>
+    <div className="space-y-3 text-read-body">
+      <p>之前（小分式）：已知 <QuestionMath label="小分式"><mstyle displaystyle={false} scriptlevel={0}><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle></QuestionMath> 与 x 的关系。</p>
+      <p>现在（大分式）：已知 <QuestionMath label="大分式"><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mroot><mi>x</mi><mn>3</mn></mroot></QuestionMath> 与 x 的关系。</p>
+    </div>
   </section>
 }
