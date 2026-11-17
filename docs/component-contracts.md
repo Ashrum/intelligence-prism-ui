@@ -3803,3 +3803,50 @@ text 不显示数学或学科符号，保留公式入口、填空线、formulaTr
 定位仍采用 Base UI collisionAvoidance：side=flip、align=shift、fallbackAxisSide=none；首选主方向空间不足才翻转，横轴位移避碰。默认 top/start/8 与旧定位一致；默认 row 渲染保持一致，floating 仅按本节修订 Tooltip 为 bottom、完成键为线框。宿主槽位内 Tooltip 也须显式传 bottom，组件不改写外部节点。
 
 题干锚定标签＋输入框整体，宿主保证与卡头至少 12px；第二行及以后选项传 side="bottom"，其他字段传 top，对齐由所在列决定。组件不推断字段位置或学科。组件站「浮动图标条 · SHEET 56」可选择上 / 下、起点 / 末端及四种 toolset；测试只验证传参和结构，不代表浏览器几何验收。
+
+### P187 · 化学与生物工具组（SHEET 59 / 60 REV 0.11、SHEET 64 REV 0.12）
+
+本节修订 P186 的 chemistry 工具组，并新增 biology。复用检索已核对现有 FormulaQuickTools、FormulaFloatingToolbar、固定 coss Toolbar / ToolbarButton / Button / Tooltip 及 lucide Hexagon。按钮组合沿用 SubjBar，字形沿用 prism-formula-toolbar-symbol，现有组件足够覆盖本轮。
+
+| 属性 | 类型 / 默认值 | 行为 |
+| --- | --- | --- |
+| toolset | 'math' / 'physics' / 'chemistry' / 'biology' / 'text'；math | chemistry 显示下表十项，biology 显示下表九项；两组均只显示学科按钮。支持 row 与 floating |
+| onOpenChemistry | `(snippet?: string) => void`；可选 | 发出打开化学弹窗意图，H₂O 传空字符串，快捷片段传 mhchem 原文，宿主作为初始内容 |
+| onOpenStructure | `() => void`；可选 | 发出打开结构式弹窗意图，仅化学组提供入口 |
+| onInsertText | `(text: string) => void`；可选 | 序列方向发出文字插入意图，传 `5′--3′` |
+| onInsert | `(latex: string) => void`；必填 | 反应热与生物公式发出 LaTeX 插入意图 |
+
+两组中对应回调未传的按钮保留并禁用，disabled=true 禁用全部内建按钮。Tooltip 位于下方，pointerdown 保留编辑框焦点。按钮使用 coss ghost，face.length > 2 时 size=sm，其余 size=icon-sm；结构式使用 Hexagon 图标。floating 依次排列学科按钮、formulaTrailing、分隔线及 trailing、可选 finish，槽位的启用与回调由宿主管理。row 沿用原有槽位顺序与完成键约定。
+
+#### 化学按钮（显示顺序）
+
+| face | 名称 | 回调与内容 |
+| --- | --- | --- |
+| H₂O | 化学式 / 方程式 | `onOpenChemistry('')` |
+| ⬡（Hexagon） | 结构式 | `onOpenStructure()` |
+| → | 反应箭头（可带条件） | `onOpenChemistry('->')` |
+| ⇌ | 可逆 | `onOpenChemistry('<=>')` |
+| ↑ | 气体 | `onOpenChemistry(' ^')`，保留前导空格 |
+| ↓ | 沉淀 | `onOpenChemistry(' v')`，保留前导空格 |
+| ⁿ⁺ | 离子电荷 | `onOpenChemistry('^')` |
+| · | 结晶水点 | `onOpenChemistry('*')` |
+| △ | 加热 | `onOpenChemistry('->[△]')` |
+| ΔH | 反应热 | `onInsert` 传 `\Delta H=#?\ \mathrm{kJ\cdot mol^{-1}}` |
+
+#### 生物按钮（显示顺序）
+
+| face | 名称 | 回调与内容 |
+| --- | --- | --- |
+| ♀ | 雌 | `onInsert` 传 `\text{♀}` |
+| ♂ | 雄 | `onInsert` 传 `\text{♂}` |
+| × | 杂交 | `onInsert` 传 `\times` |
+| P | 亲本 | `onInsert` 传 `\mathrm{P}` |
+| F₁ | 子一代 | `onInsert` 传 `\mathrm{F_{#?}}` |
+| Xᴮ | 伴性基因（上标） | `onInsert` 传 `X^{#?}` |
+| → | 箭头（可带条件） | `onInsert` 传 `\xrightarrow{#?}` |
+| H₂O | 化学式 / 方程式 | `onOpenChemistry('')` |
+| 5′ | 序列方向 | `onInsertText('5′--3′')` |
+
+`lib/prism-next/math-field-tools` 导出 chemistryToolbarTools、biologyToolbarTools 与 SubjectToolbarTool。工具项包含 label、face、action，插入或化学弹窗动作另含 value。chemistrySnippets 导出上述七个 mhchem 片段的 `{ label, face, snippet }`，宿主化学弹窗可直接复用快捷按钮数据，保留顺序及前导空格。
+
+math、physics、text 沿用 P186 契约。MathFieldSubject 与 mathFieldSubjectTools 继续服务 MathField 键盘。组件站 MathField 演示提供化学、生物两组及回调输出区，可切换可选回调接入来查看禁用状态，浮动示例也可选 biology。化学弹窗、结构式编辑器及文字插入由宿主实现。

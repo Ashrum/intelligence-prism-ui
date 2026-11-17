@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useRef, useState, type ReactNode } from 'react'
+import { useId, useRef, useState, type ReactNode, type PointerEvent } from 'react'
 import { Field, FieldLabel } from '@/components/coss/field'
 import { Input } from '@/components/coss/input'
 import { Button } from './button'
@@ -9,15 +9,18 @@ import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from '@/compon
 import { Tooltip, TooltipTrigger, TooltipPopup } from '@/components/coss/tooltip'
 import { Kbd } from '@/components/coss/kbd'
 import { PopoverPrimitive } from '@/components/coss/popover'
-import { Check, Sigma, Underline } from 'lucide-react'
-import { formulaQuickTools, searchFormulaTools, mathFieldShortcuts, mathFieldSubjectTools } from '@/lib/prism-next/math-field-tools'
+import { Check, Hexagon, Sigma, Underline } from 'lucide-react'
+import { formulaQuickTools, searchFormulaTools, mathFieldShortcuts, mathFieldSubjectTools, chemistryToolbarTools, biologyToolbarTools } from '@/lib/prism-next/math-field-tools'
 import './math-field.css'
 
 export type FormulaQuickToolsProps = {
   onInsert: (latex: string) => void
   trailing?: ReactNode
   formulaTrailing?: ReactNode
-  toolset?: 'math' | 'physics' | 'chemistry' | 'text'
+  toolset?: 'math' | 'physics' | 'chemistry' | 'biology' | 'text'
+  onOpenChemistry?: (snippet?: string) => void
+  onOpenStructure?: () => void
+  onInsertText?: (text: string) => void
   onOpenFormula?: () => void
   onInsertUnderline?: () => void
   disabled?: boolean
@@ -25,8 +28,25 @@ export type FormulaQuickToolsProps = {
   finish?: { onFinish: () => void; label?: string }
 }
 
-export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disabled, variant = 'row', finish, toolset = 'math', onOpenFormula, onInsertUnderline }: FormulaQuickToolsProps) {
-  const subjectTools = toolset === 'physics' || toolset === 'chemistry' ? mathFieldSubjectTools[toolset].slice(0, 4) : []
+export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disabled, variant = 'row', finish, toolset = 'math', onOpenFormula, onInsertUnderline, onOpenChemistry, onOpenStructure, onInsertText }: FormulaQuickToolsProps) {
+  const subjectTools = toolset === 'physics' ? mathFieldSubjectTools.physics.slice(0, 4) : []
+  const toolbarTools = toolset === 'chemistry' ? chemistryToolbarTools : toolset === 'biology' ? biologyToolbarTools : null
+  const callbacks = { onInsert, onOpenChemistry, onOpenStructure, onInsertText }
+  const toolbarButtons = toolbarTools?.map(tool => {
+    const callback = callbacks[tool.action]
+    const buttonProps = {
+      disabled: disabled || !callback,
+      'aria-label': tool.label,
+      onPointerDown: (event: PointerEvent<HTMLButtonElement>) => event.preventDefault(),
+      onClick: () => 'value' in tool ? callback?.(tool.value) : onOpenStructure?.(),
+    }
+    const button = <CossButton type="button" variant="ghost" size={tool.face.length > 2 ? 'sm' : 'icon-sm'} />
+    return <Tooltip key={tool.label}>
+      <TooltipTrigger render={variant === 'floating' ? <ToolbarButton render={button} {...buttonProps} /> : <CossButton {...button.props} {...buttonProps} />}>
+        {tool.action === 'onOpenStructure' ? <Hexagon aria-hidden="true" /> : <span className="prism-formula-toolbar-symbol font-serif" aria-hidden="true">{tool.face}</span>}
+      </TooltipTrigger><TooltipPopup side="bottom">{tool.label}</TooltipPopup>
+    </Tooltip>
+  })
   const textTools = <>
     <CossButton type="button" variant="ghost" size="sm" disabled={disabled} aria-label="插入公式"
       onPointerDown={event => event.preventDefault()} onClick={onOpenFormula}><Sigma aria-hidden="true" />公式</CossButton>
@@ -43,7 +63,7 @@ export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disable
 
   if (variant === 'floating') return <Toolbar aria-label="快捷公式" className="items-center gap-0.5 rounded-xl p-1 shadow-lg/5 max-w-full overflow-x-auto" onPointerDown={event => event.preventDefault()}>
     <ToolbarGroup className="gap-0.5">
-      {toolset === 'text' ? textTools : <>{formulaQuickTools.filter(tool => tool.label !== '正负').map(tool => {
+      {toolbarButtons ?? (toolset === 'text' ? textTools : <>{formulaQuickTools.filter(tool => tool.label !== '正负').map(tool => {
         const shortcut = Object.entries(mathFieldShortcuts).find(([, latex]) => latex === tool.latex)?.[0]
         return <Tooltip key={tool.label}>
           <TooltipTrigger render={<ToolbarButton render={<CossButton type="button" variant="ghost" size="icon-sm" />} disabled={disabled}
@@ -52,7 +72,7 @@ export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disable
           </TooltipTrigger>
           <TooltipPopup side="bottom">{tool.label}{shortcut && <>　<Kbd>{shortcut}</Kbd></>}</TooltipPopup>
         </Tooltip>
-      })}{subjectButtons}</>}
+      })}{subjectButtons}</>)}
       {formulaTrailing}
     </ToolbarGroup>
     {trailing && <><ToolbarSeparator /><ToolbarGroup className="gap-0.5">{trailing}</ToolbarGroup></>}
@@ -63,8 +83,8 @@ export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disable
     </Tooltip></>}
   </Toolbar>
   return <div className="flex min-w-0 items-center gap-1 overflow-x-auto" role="group" aria-label="快捷公式">
-    {toolset === 'text' ? textTools : <>{formulaQuickTools.map(tool => <Button key={tool.label} type="button" variant="outline" size="navigation" className="shrink-0" disabled={disabled}
-      aria-label={`插入${tool.label}`} title={tool.label} onPointerDown={event => event.preventDefault()} onClick={() => onInsert(tool.latex)}>{tool.face}</Button>)}{subjectButtons}</>}
+    {toolbarButtons ?? (toolset === 'text' ? textTools : <>{formulaQuickTools.map(tool => <Button key={tool.label} type="button" variant="outline" size="navigation" className="shrink-0" disabled={disabled}
+      aria-label={`插入${tool.label}`} title={tool.label} onPointerDown={event => event.preventDefault()} onClick={() => onInsert(tool.latex)}>{tool.face}</Button>)}{subjectButtons}</>)}
     {formulaTrailing}
     {trailing}
   </div>

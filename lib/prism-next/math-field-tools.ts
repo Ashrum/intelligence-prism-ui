@@ -66,3 +66,38 @@ export function searchFormulaTools(query: string): readonly FormulaTool[] {
   const term = query.trim().toLocaleLowerCase()
   return term ? formulaTools.filter(item => [item.label, ...item.aliases].some(name => name.toLocaleLowerCase().includes(term))) : formulaCommonTools
 }
+
+
+export type SubjectToolbarTool = { label: string; face: string } & (
+  | { action: 'onInsert' | 'onInsertText' | 'onOpenChemistry'; value: string }
+  | { action: 'onOpenStructure' }
+)
+
+export const chemistrySnippets = [
+  { label: '反应箭头（可带条件）', face: '→', snippet: '->' },
+  { label: '可逆', face: '⇌', snippet: '<=>' },
+  { label: '气体', face: '↑', snippet: ' ^' },
+  { label: '沉淀', face: '↓', snippet: ' v' },
+  { label: '离子电荷', face: 'ⁿ⁺', snippet: '^' },
+  { label: '结晶水点', face: '·', snippet: '*' },
+  { label: '加热', face: '△', snippet: '->[△]' },
+] as const
+
+export const chemistryToolbarTools: readonly SubjectToolbarTool[] = [
+  { label: '化学式 / 方程式', face: 'H₂O', action: 'onOpenChemistry', value: '' },
+  { label: '结构式', face: '⬡', action: 'onOpenStructure' },
+  ...chemistrySnippets.map(({ label, face, snippet }) => ({ label, face, action: 'onOpenChemistry' as const, value: snippet })),
+  { label: '反应热', face: 'ΔH', action: 'onInsert', value: String.raw`\Delta H=#?\ \mathrm{kJ\cdot mol^{-1}}` },
+]
+
+export const biologyToolbarTools: readonly SubjectToolbarTool[] = [
+  { label: '雌', face: '♀', action: 'onInsert', value: String.raw`\text{♀}` },
+  { label: '雄', face: '♂', action: 'onInsert', value: String.raw`\text{♂}` },
+  { label: '杂交', face: '×', action: 'onInsert', value: String.raw`\times` },
+  { label: '亲本', face: 'P', action: 'onInsert', value: String.raw`\mathrm{P}` },
+  { label: '子一代', face: 'F₁', action: 'onInsert', value: String.raw`\mathrm{F_{#?}}` },
+  { label: '伴性基因（上标）', face: 'Xᴮ', action: 'onInsert', value: 'X^{#?}' },
+  { label: '箭头（可带条件）', face: '→', action: 'onInsert', value: String.raw`\xrightarrow{#?}` },
+  { label: '化学式 / 方程式', face: 'H₂O', action: 'onOpenChemistry', value: '' },
+  { label: '序列方向', face: '5′', action: 'onInsertText', value: '5′--3′' },
+]
