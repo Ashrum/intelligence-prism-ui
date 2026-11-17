@@ -3743,6 +3743,23 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 组件站 MathField 的“写完方式”示例显示最近一次 reason 与即时 value。模型／React 探针不等于真实浏览器焦点、虚拟键盘和输入法验收；浏览器验收由 Supervisor 执行。
 
 
+### P185 · 浮动公式工具条与题面大分式（SHEET 51 REV 0.8）
+
+复用检索：已有 Prism `FormulaQuickTools` / `FormulaPalette` / `mathFieldShortcuts` 提供插入与检索；已核对固定 coss `Toolbar`、`ToolbarButton`、`ToolbarGroup`、`ToolbarSeparator`、`Button`、`Tooltip`、`Kbd` 与 `PopoverPrimitive`。已有组件可满足本轮，无需新增 particles、依赖或修改冻结 coss。外观依据 Scene51，定位用已安装 Base UI Positioner，避开 coss PopoverPopup 的 16px 内边距。
+
+| 导出 | 属性与行为 |
+| --- | --- |
+| `FormulaQuickTools` / `FormulaQuickToolsProps` | 新增 `variant?: 'row' | 'floating'`，默认 row 的九按钮、title、插入及 trailing 输出保持不变。floating 按 SHEET 51 显示八个符号（正负仍在 row 与 Palette），coss ghost icon-sm、2px 间距、4px 内边距、ToolbarSeparator 分组。Tooltip 顶部显示名称及现有映射对应的 Kbd，无映射不编造速记。 |
+| `finish?: { onFinish: () => void; label?: string }` | floating 最右可选实心 icon-sm Check 按钮；默认 aria-label「完成（Enter）」、Tooltip「完成 ↵」。只发出完成意图；宿主通过 MathFieldHandle.getValue() 取即时值并结束编辑。label 覆盖名称。row 忽略该槽。 |
+| `FormulaFloatingToolbar` / `FormulaFloatingToolbarProps` | 同 QuickTools（不含 variant），加必填 `anchor: Element | null`、`open: boolean`；在 formula-tools 与 math-field 入口均导出。open=false 或 anchor=null 不渲染。Portal 脱离文档流，top/start、偏移 8px，空间不足交给 Base UI flip，横向 shift；不自动聚焦或恢复焦点，不增加浮层视觉与内边距。 |
+
+宿主拥有激活输入框与 open 状态，在真实失焦、完成时关闭；工具条所有按钮 pointerdown preventDefault，根节点也保护 trailing 的指针操作。键盘仍可聚焦按钮；宿主应把键盘移入工具条视作编辑区域内焦点。trailing 由宿主提供 coss icon-sm ToolbarButton 及对应 Tooltip，可接图片、表格、更多 Menu / Autocomplete；搜索继续复用 FormulaPalette。disabled 控制内建按钮，trailing 的禁用状态由宿主负责。
+
+符号为非正文装饰字形：按冻结 Scene51 使用衬线 15px（`theme.css` 的 `prism-formula-toolbar-symbol`，仅作用于该字形），不新增字号令牌。其余视觉直接复用 coss 默认。
+
+题面 `.prism-math` 的行内 mfrac 使用 `math-style:normal` 取得 display 分式度量，不改变 TeX、annotation 或存储值；Temml 的 `\tfrac` 生成 `mstyle[displaystyle="false"]`，其后代排除，保持小分式。block 公式不变，字号仍为 1.125em；不设置固定行高或脚标字号，上下标和根指数依照 MathML 规则缩小。原生 MathML 的紧凑分式也可显式用上述 mstyle 表达。
+
+组件演示「浮动图标条 · SHEET 51」含按需开启的真实公式框、完成按钮、常开「更多公式」Tooltip，以及小分式 / 大分式对照。定位测试验证传给 Base UI 的翻转契约，未冒充浏览器几何验收。
 ## QuestionDetails / QuestionArchiveSummary · P184 冻结版式
 
 依据 REV 0.8 SHEET 53。复用检索：现有 QuestionDetails、QuestionSolution、coss Tabs underline、Button ghost icon-xs 和 Tooltip 已满足本轮，不新增来源、依赖、令牌或目录条目，不改 coss 原始文件。

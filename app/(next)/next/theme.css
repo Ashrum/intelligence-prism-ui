@@ -657,3 +657,8 @@ body:has(.q-focus-view) [data-slot="sidebar-wrapper"] { display:block; }
 @media (prefers-reduced-motion:reduce) {
   .surface-floating, .surface-floating *, [data-slot$="-positioner"]:has(> .surface-floating) { transition:none !important; animation:none !important; }
 }
+
+/* P185 SHEET 51: decorative formula glyph, frozen 15px sample (not prose). */
+.prism-formula-toolbar-symbol { font-size:15px; }
+/* Inline fractions use display metrics; explicit textstyle/tfrac stays compact. */
+.prism-math:not([display="block"]) mfrac:not(mstyle[displaystyle="false"] *) { math-style:normal; }
