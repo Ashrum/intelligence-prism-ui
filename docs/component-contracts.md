@@ -3386,6 +3386,28 @@ SSR 不导入 MathLive，显示原文预览占位；水合也不导入，首次�
 - 默认手动打开路径不变；相对 P119，SSR 的有意文字差异仅为移除上述重复预览说明。组件站保留七个手动示例，并追加「挂载即打开 · 新建空公式」；新增示例可能使 React 自动生成的 ID 改变。
 - 复用检索（离线）：核对现有 MathField 加载与确认处理、DraftMathPreview 的 `formulaMode` / `notice`、Prism Button 与固定 coss Label / Textarea；沿用 P119 已记录的 particles 来源取舍，无须新增组件或外部代码。未联网刷新 registry，未改冻结 coss、主题、CSS、依赖或工作台业务。
 
+### P180 · 紧凑就地写与公式工具（2026-11-17）
+
+设计状态：候选（按 C0 FROZEN REV 0.5 SHEET 39 实施，待 Supervisor 验收）；工程准入：未开始。
+
+复用检索（离线）：沿用 P119 / P120 的 MathField、MathLive 0.111.1 公开 `insert` / `executeCommand` / `move-out` 与已有数据；核对 Prism Button、固定 coss Field / Input / Command / Popover 及既有 particles 输入示例。快捷工具采用现有 Button，搜索采用 Field + Input + Button 网格；浮动容器由宿主组合，不再内嵌一层弹窗。沿用 P119 的 particles 取舍，未联网刷新 registry；不改冻结 coss、依赖、核心令牌或目录条目。
+
+统一从 `components/prism-next/math-field` 导入以下组件与类型（工具组件也可从 `formula-tools` 导入）：
+
+| 导出 / 属性 | 契约 |
+| --- | --- |
+| `MathFieldProps.variant?: 'full' \| 'compact'` | 默认 full。compact 挂载即加载，正常态只显示可视公式框和「Tab 下一格 · → 回到文字」；无完整模板、编辑操作、高级原文、预览或展开按钮。label 仍必填，作为辅助名称。省略 variant 与显式 full 的默认 SSR 输出保持 main `490e2bf` 字节一致。 |
+| `MathFieldProps.ref?: Ref<MathFieldHandle>` | React 19 ref；`insert(latex: string): void` 在当前选区插入／替换并选中首个 `#?`；`focus(): void` 聚焦当前公式；`executeCommand(name: Selector): void` 调用 MathLive 公开命令。尚未就绪时不排队；插入与命令在只读、IME、非法原文时不执行。仍由宿主接受 onChange 并回写 value。 |
+| `MathFieldProps.onExit?(reason: MathFieldExitReason)` | `MathFieldExitReason = 'forward' \| 'backward' \| 'escape'`。MathLive 模型报告末尾 →、开头 ←、最后占位 Tab（forward）；Esc 直接报告 escape。内部方向键和中间占位 Tab 不退出，上下走出不处理。阻止默认焦点跳转后由宿主移动焦点或关闭。compact 每次走出先调用可选 onConfirm，再调用 onExit；Esc 也是确认意图，不调用 onCancel。full 未提供 onExit 时保持原 Esc 取消行为。 |
+| `MathFieldProps.virtualKeyboard?: 'auto' \| 'off'` | compact 默认 auto；full 省略时保持 P119 自制键盘。auto 在焦点位于框内且粗指针或视口宽度 <768 时显示 MathLive 原生键盘，含 123 / abc / 符号 / 函数；监听媒体条件变化。off 不启用原生键盘，不限制插入。显式 full + auto 同样启用原生键盘，既有手动按钮仍保留。 |
+| `FormulaQuickTools` / `FormulaQuickToolsProps` | 必填 `onInsert(latex)`；可选 `trailing: ReactNode`、`disabled: boolean`。一行 9 个常用公式按钮，窄容器横向滚动，中文 aria-label / title；trailing 由宿主放图片、表格或更多。指针按下保持公式光标；键盘按钮仍可聚焦。 |
+| `FormulaPalette` / `FormulaPaletteProps` | 必填 `onInsert(latex)`；可选 `footer: ReactNode`、`disabled: boolean`。常驻「搜索公式」标签；按名称与别名搜索，忽略首尾空格和拉丁大小写。空搜索显示常用网格，无匹配显示提示。搜索框 ↑/↓ 聚焦末项／首项，Enter 插入首项；结果按钮 ↑/↓ 循环、Home/End 到首尾、Enter 原生按钮激活、Esc 回搜索。中文组字期间不接管按键。footer 由宿主放公式原文入口。 |
+| `FormulaTool` / `formulaTools` / `formulaQuickTools` / `formulaCommonTools` / `searchFormulaTools(query)` | 从 `lib/prism-next/math-field-tools` 导出；每项含 label、aliases、latex、face。包含分数／分式、根号／根式、绝对值、上下标、方程组／分段函数、对数／三角函数、几何／集合／关系符、希腊字母。 |
+
+原生键盘使用就地主题容器，颜色映射现有语义令牌、字号映射既有语义字号；失焦／卸载恢复共享键盘的原布局与容器。iframe 内使用 MathLive sandboxed 策略，使键盘留在当前文档。减少动态效果响应系统设置。五主题沿用同一映射，不引入业务状态。compact 加载失败／非法原文保留受控值和辅助说明，只显示事实提示；原文修改入口由宿主提供。
+
+组件站 `/next/components/math-field` 追加「紧凑就地写」：点「编辑文中公式」后显示题干内公式、快捷条、更多面板和宿主原文入口；走出时计数并将焦点移到后续文字。其状态仅在本页，未接入工作台。`tests/p180-math-field-compact.test.mjs` 覆盖默认输出、真实安装包模型插入和走出、搜索／常用网格、演示操作、键盘配置生命周期；模型与 React commit DOM 不代表实屏／真机／读屏验收。浏览器验收由 Supervisor 执行。
+
 ## 字段与说明文字（P121 · 2026-10-28）
 
 设计状态：候选（PO 2026-10-28 已批准本轮实施范围与 12px 说明意图，尚待独立验收）。工程准入：未开始。

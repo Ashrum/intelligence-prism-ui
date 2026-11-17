@@ -29,3 +29,55 @@
 .prism-math-key { min-height: 44px; padding-inline: 0; }
 .prism-math-key::after { min-width: 0; }
 /* End P119. */
+
+/* P180: opt-in MathLive keyboard inherits the field's local theme. */
+.prism-math-native-keyboard {
+  position: fixed;
+  inset: auto 0 0;
+  height: min(24rem, 50dvh);
+  z-index: 105;
+  min-width: 0;
+  --keyboard-background: var(--background);
+  --keyboard-border: var(--border);
+  --keyboard-accent-color: var(--primary);
+  --keyboard-toolbar-text: var(--foreground);
+  --keyboard-toolbar-text-active: var(--primary);
+  --keyboard-toolbar-background: var(--background);
+  --keyboard-toolbar-background-hover: var(--accent);
+  --keyboard-toolbar-background-selected: var(--accent);
+  --keyboard-horizontal-rule: 1px solid var(--border);
+  --keyboard-toolbar-font-size: var(--text-ui-body);
+  --keycap-background: var(--background);
+  --keycap-background-hover: var(--accent);
+  --keycap-background-active: var(--accent);
+  --keycap-background-pressed: var(--accent);
+  --keycap-border: var(--input);
+  --keycap-border-bottom: var(--input);
+  --keycap-text: var(--foreground);
+  --keycap-text-active: var(--accent-foreground);
+  --keycap-text-hover: var(--accent-foreground);
+  --keycap-text-pressed: var(--accent-foreground);
+  --keycap-shift-text: var(--foreground);
+  --keycap-shift-color: var(--foreground);
+  --keycap-primary-background: var(--primary);
+  --keycap-primary-background-hover: var(--primary);
+  --keycap-primary-text: var(--primary-foreground);
+  --keycap-secondary-background: var(--secondary);
+  --keycap-secondary-background-hover: var(--accent);
+  --keycap-secondary-text: var(--secondary-foreground);
+  --keycap-secondary-border: var(--input);
+  --keycap-secondary-border-bottom: var(--input);
+  --keycap-font-size: var(--text-read-body);
+  --keycap-small-font-size: var(--text-ui-body);
+  --keycap-extra-small-font-size: var(--text-ui-hint);
+  --keycap-shift-font-size: var(--text-ui-body);
+  --keycap-glyph-size: var(--text-read-body);
+  --keycap-glyph-size-lg: var(--text-read-body);
+  --keycap-glyph-size-xl: var(--text-read-body);
+}
+.prism-math-native-keyboard:empty { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .prism-math-native-keyboard *,
+  .prism-math-native-keyboard *::before,
+  .prism-math-native-keyboard *::after { animation: none !important; transition: none !important; }
+}

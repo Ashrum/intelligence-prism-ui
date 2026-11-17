@@ -1,6 +1,8 @@
 "use client"
-import { useState } from 'react'
-import { MathField, type MathFieldProps } from '../math-field'
+import { useRef, useState } from 'react'
+import { MathField, FormulaQuickTools, FormulaPalette, type MathFieldHandle, type MathFieldProps } from '../math-field'
+import { Field, FieldLabel } from '@/components/coss/field'
+import { Textarea } from '@/components/coss/textarea'
 import { Button } from '../button'
 const examples: { title: string; value: string; props?: Partial<MathFieldProps> }[] = [
   { title: '行内 · SHEET 08', value: String.raw`y=\frac{1}{}x^{2}-4x+3` },
@@ -30,6 +32,37 @@ export function MathFieldDemo() {
     <Button type="button" variant="outline" aria-pressed={narrow} onClick={() => setNarrow(!narrow)}>390 窄容器</Button>
     <div className="space-y-6" style={narrow ? { maxWidth: 390 } : undefined}>
       {examples.map(example => <Example key={example.title} example={example} />)}
+      <CompactExample />
     </div>
   </div>
+}
+
+function CompactExample() {
+  const field = useRef<MathFieldHandle>(null), following = useRef<HTMLSpanElement>(null)
+  const [value, setValue] = useState(String.raw`y=\frac{1}{}`)
+  const [editing, setEditing] = useState(false), [more, setMore] = useState(false), [source, setSource] = useState(false)
+  const [exits, setExits] = useState(0), [reason, setReason] = useState('尚未走出')
+  const insert = (latex: string) => field.current?.insert(latex)
+  return <section className="min-w-0 space-y-3 rounded-lg border border-border p-4" aria-label="紧凑就地写示例">
+    <h3 className="text-block-title">紧凑就地写</h3>
+    {!editing && <Button type="button" variant="outline" onClick={() => setEditing(true)}>编辑文中公式</Button>}
+    {editing && <>
+      <FormulaQuickTools onInsert={insert} trailing={<Button type="button" variant="outline" className="shrink-0" aria-expanded={more} onClick={() => setMore(!more)}>更多</Button>} />
+      <div className="flex min-w-0 flex-wrap items-center gap-2 text-read-body">
+        <span>函数</span>
+        <MathField ref={field} variant="compact" value={value} onChange={setValue} label="题干中的公式" onExit={direction => {
+          setExits(count => count + 1); setReason(direction); following.current?.focus()
+        }} />
+        <span ref={following} tabIndex={-1}>的定义域是</span>
+      </div>
+      {more && <FormulaPalette onInsert={latex => { insert(latex); setMore(false) }} footer={
+        <Button type="button" variant="outline" aria-expanded={source} onClick={() => setSource(!source)}>公式原文</Button>
+      } />}
+      {source && <Field className="w-full">
+        <FieldLabel htmlFor="compact-example-source">公式原文</FieldLabel>
+        <Textarea id="compact-example-source" value={value} onChange={event => setValue(event.target.value)} />
+      </Field>}
+    </>}
+    <p role="status" className="text-ui-hint text-muted-foreground">走出回调 {exits} 次 · {reason}</p>
+  </section>
 }
