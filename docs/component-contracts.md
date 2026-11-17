@@ -1,5 +1,42 @@
 # v1.14.0 字体实施候选 · 组件复用约定
 
+## Authoring Surface 题目编辑表面（P179）
+
+设计状态：候选。工程准入：未开始。依据题目创作 C0 FROZEN REV 0.4a / V41 的编辑卡、静默输入与 AI 状态样式；本轮不改变冻结 coss、五主题令牌和既有组件契约。
+
+实现：`components/prism-next/authoring-surface.tsx`（同时导出所有 Props 与 `AiSuggestState`），样式由该模块导入 `authoring-surface.css`。演示：`/next/components/authoring-surface`，包含五主题切换、390 窄容器、单选题 B 选中、解析 loading、知识点 done 和浮动题号卡。其他题型仅显示禁用页签。AI 状态切换由夹具控制；按钮只回报意图，不发请求或模拟完成。
+
+### 复用检索与取舍
+
+- 已核对 Prism `FieldRow`、`InlineStatus`、`Button`、`MathField`：现有字段行不含固定三栏，状态组件使用图标且没有本次五种点状状态；公式编辑器继续负责公式，不复制其运行时。
+- 复用冻结 coss `Input` / `Textarea` 作为字段，Prism `Button`（内部 coss Button）作为字母键和 AI 操作；演示复用 coss `Tabs`。`QuietField` 只标记并适配传入的直接子控件根，不改 coss 文件。画板的局部字号映射为现有 `text-ui-body` / `text-ui-meta` / `text-item-title` / `text-read-body`。
+- 核对已接入 particles `p-input-group-22`（搜索与清除）、`p-group-22`（数值范围）：没有静默富内容输入和 AI 建议三态契约，不引入无关附加交互。本轮离线，不声明检索或接入了官方最新 registry。
+
+### 属性与插槽
+
+| 导出 | 属性与默认值 |
+| --- | --- |
+| `AuthoringSurface` | `variant?: 'default' \| 'floating'`，默认 default；`header?: ReactNode` 自定义整条 header；省略时用 `no / title / status / actions?: ReactNode` 组合题号、标题、状态与右侧动作。`children` 为内容；floating 仅声明小卡外观，定位由宿主负责。 |
+| `AuthoringSection` | `no / title / hint?: ReactNode`，`children`；节标题自动关联唯一 ID，直接相邻节用细线分隔。无 title 时由宿主用 `aria-label` 命名。 |
+| `AuthoringRow` | `label: ReactNode`、`htmlFor?: string`、`trailing / note?: ReactNode`、`children`。htmlFor 关联单字段；复合字段由宿主给内部控件或 group 提供可访问名称。三栏 96 / 自适应 / 132，列距 20；表面容器或视口窄于 720 时 trailing 与 label 同行，内容置下一行。 |
+| `QuietField` | `children: ReactElement<{ className?: string }>` 必须是一个会把 className 转发到真实绘制根节点的控件；`toolbar?: ReactNode`。保留原 class、ref、值及回调，只追加 `prism-quiet-field-control`。支持 coss Input / Textarea 或满足此根节点约定的公式编辑器，不自动适配不转发 className 的复合编辑器。 |
+| `ChoiceKey` | `selected?: boolean` 默认 false，`children` 为字母；其余原生 button 属性（包含 `onClick / disabled / aria-label / ref`），`aria-pressed` 由 selected 唯一控制，默认 `type="button"`。 |
+| `StatusDot` | `tone?: 'ok' \| 'miss' \| 'ai' \| 'check' \| 'neutral'` 默认 neutral，`children` 为外部状态文本；其余 span 属性。 |
+| `AiSuggestButton` | `state?: AiSuggestState` 默认 idle；`label?: string` 默认「AI 建议」，仅 idle 生效；`onSuggest?: () => void`、`onStop?: () => void`、`disabled?: boolean` 默认 false；其余 span 属性。没有对应回调时该操作禁用，不呈现虚假可操作按钮。 |
+| `AiSuggestField` | `state?: AiSuggestState` 默认 idle；`empty?: boolean` 默认 false，由宿主根据实际内容传入；`children` 保留挂载，loading 且 empty 才显示两条占位线，done 显示左竖线和「AI 建议 · 待确认」。 |
+
+除注明外，容器透传对应原生元素属性及 `className / ref`；`AuthoringSection` 透传 section，其他外壳透传 div。所有状态、正确答案、字段内容与 AI 生命周期由宿主控制；不请求模型、不使用定时器、不保存数据、不由点击或动画推定执行完成。
+
+### 外观、状态与可访问性
+
+卡边框 1px、圆角 12、双层柔和投影；不加蓝图刻度。`QuietField` 静默时只有底线，`:focus-within` 显示 1px 前景边框、圆角 8 和品牌蓝 18% 外晕。工具栏平时 `display:none`，字段或工具栏持有焦点时显示，避免离焦的隐藏按钮进入 Tab 序列。无效字段保留语义错误底线；输入标签、错误说明、工具栏中真实工具及其焦点管理由宿主提供。
+
+`ChoiceKey` 使用原生可键盘触发的按钮，selected 映射到 `aria-pressed`，只改变字母圈，不重画整行。`StatusDot` 点装饰 `aria-hidden`，可读含义必须在文字中提供。`AiSuggestButton` loading 外壳 `aria-busy="true"`，停止是独立按钮且有回调时可达；idle / done 为「✦ AI 建议 / ✦ 换一个」。组件不自动宣告成功，宿主可用状态区域播报服务回执。
+
+`AiSuggestField` loading 保留已存在的内容与可编辑性；空字段占位为不拦截输入的装饰层，聚焦后隐藏。底部 2px 流光和按钮转圈均通过 CSS `prefers-reduced-motion: reduce` 停用，流光替换为静态线，偏好运行中改变也生效。done 的竖线与待确认文字不表示已采纳。颜色全部取已有语义令牌；核心三主题的 `--brand-magenta-text` / `--brand-blue-text` 沿用已有中性回退，不擅自新增洋红或蓝色主题值。
+
+SSR / CSS 断言不等同于浏览器验收；浏览器验收由 Supervisor 执行。
+
 ## Dialog Layout 对话框版式（P13）
 
 2026-10-04 PO 批准新增 pattern，基于 coss Dialog 组合媒体栏、选项网格、理由列表与记录单。受控属性、插槽、可访问性、窄屏规则、复用依据与画布差异见 [Dialog Layout 契约](dialog-layout.md)。Builder 候选，独立 Review 与浏览器验收由 Supervisor 执行。
