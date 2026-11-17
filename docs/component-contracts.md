@@ -3674,3 +3674,18 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 - `SegmentedBarSegment.color?: string` 接收 CSS 颜色，优先于 tone / fill，同时应用于条、图例色块和数据表色标。未传 color 时维持原有输出。试卷难度结构示例复用 `difficultySwatches` 的基础 / 巩固 / 提升三色。工作台难度走势同样使用 SegmentedBar，可直接使用该属性。
 
 组件站在 QuestionRail、MetricSummary、Meter、SegmentedBar 现有示例中展示上述外观。未传新增属性时，默认 QuestionRail、MetricSummary 各 layout 与 SegmentedBar 的 SSR 使用 3733107 做逐字节对照。
+
+## P182 · 胶囊提示与行内空位
+
+复用检索：已核对 Prism `BpToast`、`BpUndoToast` 与冻结 coss `ToastProvider` / `ToastPrimitive`。BpToast 适合宿主内联展示；BpUndoToast 的悬停／聚焦暂停契约保持不变，队列与 Portal 仍由 coss 承担。本轮仅扩展 BpToast 并按 C0 FROZEN REV 0.6 的 Q44 / Q43 新增 BlankSlot；未找到已有独立空位组件，不引入外部代码、依赖或视觉令牌，不改 authoring-surface。
+
+| 导出 | 属性 | 契约 |
+| --- | --- | --- |
+| `BpToast`、`BpToastProps`，`components/prism-next/blueprint/blueprint` | `variant?: "bar" \| "pill"`，默认 `bar` | 默认和显式 bar 保留 aa86cfe 的输出；新增属性仅用于 pill，不透传到 DOM。pill 内容宽、居中、最大宽度不超过容器，长文案换行。定位在卡片下方由宿主布局控制。 |
+| 同上 | `icon?: ReactNode`、`action?: ReactNode` | icon 为装饰性圆点内容；action 传宿主原生按钮或链接，提供可访问名称与事件。pill 使用 `role="status"`、`aria-live="polite"`。 |
+| 同上 | `duration?: number`、`onTimeout?: () => void` | 有限正数毫秒才启用底部 2px 倒计时和到期回调；省略、非正数、非有限数均不计时。到期只通知一次，宿主负责隐藏及撤销。duration 改变重启计时；只改回调不重启，使用最新回调；新通知用新 key。卸载清理计时器。减弱动态在初始及运行中均通过媒体查询隐藏进度并关闭动画，计时回调继续生效；不暂停悬停／聚焦。 |
+| `BlankSlot`、`BlankSlotProps`，`components/prism-next/blank-slot` | `index: number`、`width?: CSSProperties["width"]`、`selected?: boolean` | 宿主传正整数序号；1–20 显示 ①–⑳，超过 20 显示数字。宽默认 84px、高 26px、2px 底线和浅底，selected 默认 false、选中仅加描边。span 使用 `contentEditable={false}`、`role="img"`、`aria-label="第 N 空"`，内部编号不重复朗读。只呈现原子，不处理编辑器插入、删除、答案关联或选择。 |
+
+样式使用已有 foreground / card / brand-blue / brand-blue-text，兼容 light、paper、dark、blueprint、blueprint-night；仅显式选用的 `bp-toast-pill*` / `bp-blank-slot` 类生效。BlankSlot 编号使用 `text-ui-hint`（14px），替代画板局部 13px。沿用组件站加载的 `blueprint.css`，宿主接入时也须加载该样式与主题令牌。
+
+组件站示例位于 `/next/foundations/blueprint#toast-blank`：按钮触发 8 秒胶囊，撤销和到期由示例宿主收起；展示同一题干内两个空位、第二空选中态及 contenteditable 原子。测试见 `tests/p182-toast-blank.test.mjs`；源码、SSR 与确定性计时验证不替代浏览器验收。
