@@ -62,8 +62,8 @@
 .prism-ai-field[data-state="done"] > .prism-ai-field-body { border-inline-start: 2px solid var(--brand-magenta-text); padding-inline-start: 12px; }
 .prism-ai-field-note { margin: 6px 0 0; color: var(--brand-magenta-text); }
 .prism-ai-field[data-state="loading"][data-empty="false"] > .prism-ai-field-body > :not(.prism-ai-flow) { opacity: .6; }
-.prism-ai-field[data-state="loading"] > .prism-ai-field-body > .prism-quiet-field:not(:focus-within),
-.prism-ai-field[data-state="done"] > .prism-ai-field-body > .prism-quiet-field:not(:focus-within) { border-bottom-color: transparent; }
+.prism-ai-field[data-state="loading"] > .prism-ai-field-body > .prism-quiet-field:not([data-appearance="boxed"]):not(:focus-within),
+.prism-ai-field[data-state="done"] > .prism-ai-field-body > .prism-quiet-field:not([data-appearance="boxed"]):not(:focus-within) { border-bottom-color: transparent; }
 .prism-ai-flow { position: absolute; pointer-events: none; inset-inline: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--brand-magenta-text), transparent); background-size: 40% 100%; background-repeat: no-repeat; animation: prism-authoring-flow 1.3s ease-in-out infinite; }
 .prism-ai-placeholder { display: flex; flex-direction: column; gap: 9px; padding: 8px 2px; pointer-events: none; }
 .prism-ai-placeholder > i { display: block; height: 9px; width: 86%; border-radius: 5px; background: color-mix(in srgb, var(--border) 60%, var(--card)); }
@@ -84,4 +84,51 @@
 }
 @media (width < 720px) {
   .prism-authoring-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'label trailing' 'content content'; row-gap: 6px; column-gap: 12px; }
+}
+
+/* P181 · C0 REV 0.6 opt-in writing box. Legacy quiet selectors stay unchanged. */
+.prism-quiet-field[data-appearance="boxed"] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  min-height: calc(var(--quiet-field-lines, 1) * 30px + 22px);
+  padding: 11px 14px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 14%, var(--border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--background) 55%, var(--card));
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.prism-quiet-field[data-appearance="boxed"]:hover {
+  border-color: color-mix(in srgb, var(--brand-blue-text) 70%, var(--foreground));
+}
+.prism-quiet-field[data-appearance="boxed"]:focus-within {
+  background: var(--card);
+  border-color: color-mix(in srgb, var(--brand-blue-text) 70%, var(--foreground));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-blue) 16%, transparent);
+}
+.prism-quiet-field[data-appearance="boxed"]:is([data-invalid="true"], :has([aria-invalid="true"])) {
+  background: var(--card);
+  border-color: var(--brand-magenta-text);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-magenta-text) 12%, transparent);
+}
+.prism-quiet-field[data-appearance="boxed"] > .prism-quiet-field-control { grid-column: 2; grid-row: 1; min-height: calc(var(--quiet-field-lines, 1) * 30px); }
+.prism-quiet-field-leading, .prism-quiet-field-trailing { display: flex; align-items: center; align-self: center; grid-row: 1; }
+.prism-quiet-field-leading { grid-column: 1; padding-inline-end: 12px; }
+.prism-quiet-field-trailing { grid-column: 3; padding-inline-start: 12px; }
+.prism-quiet-field[data-appearance="boxed"] .prism-quiet-field-input {
+  &, &::before, &::after { border: 0; border-radius: 0; background: transparent; box-shadow: none; outline: none; }
+}
+.prism-quiet-field[data-appearance="boxed"] :is(
+  input.prism-quiet-field-input, textarea.prism-quiet-field-input, [contenteditable].prism-quiet-field-input,
+  .prism-quiet-field-input > [data-slot="input"], .prism-quiet-field-input > [data-slot="textarea"]
+) {
+  width: 100%; min-width: 0; min-height: calc(var(--quiet-field-lines, 1) * 30px);
+  height: auto; padding: 0; line-height: 30px; color: var(--foreground); overflow-wrap: anywhere;
+  &::placeholder { color: color-mix(in srgb, var(--muted-foreground) 75%, transparent); }
+}
+.prism-quiet-field[data-appearance="boxed"] > .prism-quiet-field-toolbar { grid-column: 1 / -1; margin: 8px -14px -11px; border-radius: 0 0 10px 10px; }
+.prism-quiet-field-message { margin: 6px 0 0; color: var(--muted-foreground); overflow-wrap: anywhere; }
+.prism-quiet-field-message[data-invalid="true"] { color: var(--brand-magenta-text); }
+@media (prefers-reduced-motion: reduce) {
+  .prism-quiet-field[data-appearance="boxed"] { transition: none; }
 }

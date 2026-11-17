@@ -5,6 +5,7 @@ import { Field, FieldLabel } from '@/components/coss/field'
 import { Input } from '@/components/coss/input'
 import { Button } from './button'
 import { formulaQuickTools, searchFormulaTools } from '@/lib/prism-next/math-field-tools'
+import './math-field.css'
 
 export type FormulaQuickToolsProps = {
   onInsert: (latex: string) => void
@@ -44,16 +45,16 @@ export function FormulaPalette({ onInsert, footer, disabled }: FormulaPalettePro
         }} />
     </Field>
     <p className="text-ui-hint text-muted-foreground" role="status">{query.trim() ? `搜索结果 · ${results.length} 项` : '常用'}</p>
-    <div id={`${id}-results`} className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label={query.trim() ? '公式搜索结果' : '常用公式'}>
+    <div id={`${id}-results`} className="prism-formula-palette-grid" role="group" aria-label={query.trim() ? '公式搜索结果' : '常用公式'}>
       {results.map((tool, index) => <Button key={tool.label} ref={node => { buttons.current[index] = node }} type="button" variant="outline" size="navigation"
-        className="min-w-0" disabled={disabled} aria-label={`插入${tool.label}`} onClick={() => onInsert(tool.latex)}
+        className="prism-formula-palette-tool" disabled={disabled} title={tool.label} aria-label={`插入${tool.label}`} onClick={() => onInsert(tool.latex)}
         onKeyDown={event => {
           if (event.nativeEvent.isComposing || event.keyCode === 229) return
           if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault(); focusResult((index + (event.key === 'ArrowDown' ? 1 : results.length - 1)) % results.length)
           } else if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); focusResult(event.key === 'Home' ? 0 : results.length - 1) }
           else if (event.key === 'Escape') { event.preventDefault(); input.current?.focus() }
-        }}><span aria-hidden="true">{tool.face}</span><span>{tool.label}</span></Button>)}
+        }}><span className="prism-formula-palette-face" aria-hidden="true">{tool.face}</span><span className="prism-formula-palette-label text-ui-hint">{tool.label}</span></Button>)}
     </div>
     {!results.length && <p className="text-ui-hint text-muted-foreground">没有找到公式，试试其他中文名称。</p>}
     {footer}

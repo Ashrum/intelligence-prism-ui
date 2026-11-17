@@ -1,6 +1,6 @@
 "use client"
 
-import { cloneElement, useId, type ComponentProps, type ReactElement, type ReactNode } from 'react'
+import { Children, Fragment, cloneElement, isValidElement, useId, type ComponentProps, type CSSProperties, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import './authoring-surface.css'
@@ -54,12 +54,52 @@ export type QuietFieldProps = Omit<ComponentProps<'div'>, 'children'> & {
   /** One control/editor root that forwards className; its first nested coss control is the input surface. */
   children: ReactElement<{ className?: string }>
   toolbar?: ReactNode
+  appearance?: 'quiet' | 'boxed'
+  /** Boxed minimum writing lines; finite values are rounded up and clamped to one. */
+  lines?: number
+  leading?: ReactNode
+  trailing?: ReactNode
+  invalid?: boolean
+  message?: ReactNode
 }
-export function QuietField({ children, toolbar, className, ...props }: QuietFieldProps) {
+export function QuietField({ appearance = 'quiet', lines, leading, trailing, invalid, message, children, toolbar, className, ...props }: QuietFieldProps) {
+  if (appearance === 'boxed') return <BoxedQuietField {...props} {...{ lines, leading, trailing, invalid, message, children, toolbar, className }} />
   return <div {...props} data-slot="quiet-field" className={cn('prism-quiet-field', className)}>
     {cloneElement(children, { className: cn(children.props.className, 'prism-quiet-field-control') })}
     {toolbar != null && <div data-slot="quiet-field-toolbar" className="prism-quiet-field-toolbar">{toolbar}</div>}
   </div>
+}
+
+function BoxedQuietField({ lines = 1, leading, trailing, invalid, message, children, toolbar, className, style, ...props }: QuietFieldProps) {
+  const messageId = useId()
+  const hasMessage = message != null
+  let marked = false
+  // Traverse supplied DOM wrappers only. An opaque editor must forward these
+  // attributes to its editable surface, just as coss Input / Textarea do.
+  const markInput = (node: ReactNode): ReactNode => {
+    if (marked || !isValidElement<ComponentProps<'div'>>(node)) return node
+    if ((typeof node.type !== 'string' && node.type !== Fragment) || node.type === 'input' || node.type === 'textarea' || node.props.contentEditable === true || node.props.contentEditable === 'true' || node.props.contentEditable === 'plaintext-only') {
+      marked = true
+      return cloneElement(node, {
+        className: cn(node.props.className, 'prism-quiet-field-input'),
+        'aria-invalid': invalid ?? node.props['aria-invalid'],
+        'aria-describedby': [node.props['aria-describedby'], hasMessage ? messageId : undefined].filter(Boolean).join(' ') || undefined,
+      })
+    }
+    return node.props.children == null ? node : cloneElement(node, { children: Children.map(node.props.children, markInput) })
+  }
+  const control = markInput(children) as QuietFieldProps['children']
+  const lineCount = Number.isFinite(lines) ? Math.max(1, Math.ceil(lines)) : 1
+  return <>
+    <div {...props} data-slot="quiet-field" data-appearance="boxed" data-invalid={invalid || undefined}
+      className={cn('prism-quiet-field', className)} style={{ ...style, '--quiet-field-lines': lineCount } as CSSProperties}>
+      {leading != null && <div data-slot="quiet-field-leading" className="prism-quiet-field-leading">{leading}</div>}
+      {cloneElement(control, { className: cn(control.props.className, 'prism-quiet-field-control') })}
+      {trailing != null && <div data-slot="quiet-field-trailing" className="prism-quiet-field-trailing">{trailing}</div>}
+      {toolbar != null && <div data-slot="quiet-field-toolbar" className="prism-quiet-field-toolbar">{toolbar}</div>}
+    </div>
+    {hasMessage && <p id={messageId} data-slot="quiet-field-message" data-invalid={invalid || undefined} className="prism-quiet-field-message text-ui-meta">{message}</p>}
+  </>
 }
 
 export type ChoiceKeyProps = Omit<ComponentProps<'button'>, 'aria-pressed'> & { selected?: boolean }

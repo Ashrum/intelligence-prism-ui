@@ -37,6 +37,32 @@
 
 SSR / CSS 断言不等同于浏览器验收；浏览器验收由 Supervisor 执行。
 
+### P181 · QuietField boxed 与 FormulaPalette（C0 FROZEN REV 0.6）
+
+设计状态：候选。工程准入：未开始。2026-11-17 按 REV 0.6 书写区与 SHEET 39 常用公式格实施；不新增组件目录项，不改变五主题令牌或冻结 coss 源码。
+
+复用检索：沿用本节已核对的 Prism `QuietField`、`ChoiceKey`、`Button` 与 coss `Input` / `Textarea`；公式格复用 P180 `FormulaPalette`、中文检索及插入回调。既有组件已有所需行为，本轮只扩展外观、槽位和布局，不引入新的 particles 或第三方实现。
+
+| `QuietFieldProps` 新增属性 | 默认值与约定 |
+| --- | --- |
+| `appearance?: 'quiet' \| 'boxed'` | 默认 `quiet`，既有调用的渲染输出保持不变；以下扩展只在 `boxed` 生效。 |
+| `lines?: number` | 默认 1，有限数向上取整且至少 1，非有限数回退 1。书写行高 30px；题干传 `lines={3}`。允许随内容增长。 |
+| `leading / trailing?: ReactNode` | 框内左、右槽位，垂直居中。可放 `ChoiceKey`、`空 ①`、删除按钮；按钮的名称和行为由宿主提供，`ChoiceKey` 外观不变。 |
+| `invalid?: boolean` | 控制错误外观并向实际输入传递 `aria-invalid`；未提供时保留输入自身的 ARIA。只呈现外部校验结果。 |
+| `message?: ReactNode` | 框下一句说明，自动生成唯一 ID 并追加到输入的 `aria-describedby`，保留已有描述 ID；`invalid` 为 true 时用错误色。 |
+
+导出路径仍为 `components/prism-next/authoring-surface`，新增属性包含在既有 `QuietFieldProps` 中，无新增公开组件。`toolbar` 仍为框底插槽，只在字段或其工具栏持有焦点时显示。
+
+boxed 使用 10px 圆角、11px / 14px 内距、背景 `color-mix(in srgb, var(--background) 55%, var(--card))`、边框 `color-mix(in srgb, var(--foreground) 14%, var(--border))`。悬停使用聚焦深边；`:focus-within` 使用 `--card` 底、品牌蓝深边与 3px / 16% 外晕。invalid 优先于悬停和聚焦，使用 `--brand-magenta-text` 边与 3px / 12% 外晕。深色主题使用对应语义底色，核心主题继续沿用已有中性品牌回退。字号使用既有语义类；减少动态效果时停用过渡。
+
+嵌套约定：支持传入的原生 DOM / Fragment 包裹层，按顺序找到首个 Input / Textarea、原生 input / textarea 或 contenteditable，追加输入标记与 ARIA；后续工具输入不受影响。React 自定义编辑器作为不透明控件根，须将 `className` 转发到绘制根，且将 `aria-invalid` / `aria-describedby` 转发到可编辑节点；组件不穿透其内部实现或 Shadow DOM。保留原 ref、值与回调。外部常驻 label / 可访问名称仍由宿主提供。`AiSuggestField` 只隐藏 quiet 的静默底线，不隐藏 boxed 边框。
+
+组件站原有四个选项改用 boxed leading / trailing，另有空、真实聚焦（按钮聚焦 contenteditable）、已写、有误四态，嵌套三行题干和「空 ①」答案行，均可切换五主题及 390 窄容器。删除按钮只回报演示意图。
+
+`FormulaPalette` / `FormulaPaletteProps` 与 `FormulaQuickTools` / `FormulaQuickToolsProps` 导出和参数不变。常用和结果共享按容器宽度自适应的列（目标最小 6rem），按钮 56px 高，符号 / 中文名分两行；两行均不换行，极窄时省略并保留完整 `aria-label` / `title`。检索、键盘导航、插入和 footer 不变，快捷工具条不受影响。布局位于 `math-field.css`，`formula-tools.tsx` 自行导入，支持独立使用。
+
+本轮定向验证覆盖默认 quiet 与基线的输出比较、boxed 槽位和 ARIA、行数与公式格结构；CSS / SSR 不代表实际视觉通过。浏览器验收由 Supervisor 执行。
+
 ## Dialog Layout 对话框版式（P13）
 
 2026-10-04 PO 批准新增 pattern，基于 coss Dialog 组合媒体栏、选项网格、理由列表与记录单。受控属性、插槽、可访问性、窄屏规则、复用依据与画布差异见 [Dialog Layout 契约](dialog-layout.md)。Builder 候选，独立 Review 与浏览器验收由 Supervisor 执行。
