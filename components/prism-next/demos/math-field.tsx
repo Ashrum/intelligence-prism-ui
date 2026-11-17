@@ -97,20 +97,29 @@ function FloatingExample() {
   const [anchor, setAnchor] = useState<HTMLDivElement | null>(null)
   const [open, setOpen] = useState(false), [more, setMore] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [side, setSide] = useState<'top' | 'bottom'>('top')
+  const [toolset, setToolset] = useState<'math' | 'physics' | 'chemistry' | 'text'>('math')
+  const [align, setAlign] = useState<'start' | 'end'>('start')
   const [value, setValue] = useState(String.raw`\frac{1}{2}`)
   const [last, setLast] = useState('尚未完成')
   const finish = () => { const next = field.current?.getValue() ?? value; setValue(next); setLast(next); setOpen(false); setEditing(false); setMore(false) }
   return <section ref={region} className="space-y-3" aria-label="浮动公式工具条" onBlur={event => { if (!isInternal(event.relatedTarget)) finish() }}>
-    <h3 className="text-block-title">浮动图标条 · SHEET 51</h3>
+    <h3 className="text-block-title">浮动图标条 · SHEET 56</h3>
+    <div className="flex flex-wrap gap-2">
+      {(['top', 'bottom'] as const).map(value => <CossButton key={value} variant="outline" aria-pressed={side === value} onClick={() => setSide(value)}>{value === 'top' ? '上方' : '下方'}</CossButton>)}
+      {(['start', 'end'] as const).map(value => <CossButton key={value} variant="outline" aria-pressed={align === value} onClick={() => setAlign(value)}>{value === 'start' ? '起点对齐' : '末端对齐'}</CossButton>)}
+      {(['math', 'physics', 'chemistry', 'text'] as const).map((value, index) => <CossButton key={value} variant="outline" aria-pressed={toolset === value} onClick={() => setToolset(value)}>{['数学', '物理', '化学', '语文 / 英语'][index]}</CossButton>)}
+    </div>
     <Button type="button" variant="outline" onClick={() => setEditing(true)}>试用浮动工具条</Button>
     {editing && <div ref={setAnchor} onFocus={() => setOpen(true)}>
       <MathField ref={field} variant="compact" value={value} onChange={setValue} label="浮动工具条示例" virtualKeyboard="off"
         onFinish={(next, reason, detail) => { if (reason === 'blur' && isInternal(detail?.relatedTarget)) return; setValue(next); setLast(next); setOpen(false); setEditing(false); setMore(false) }} />
     </div>}
-    <FormulaFloatingToolbar anchor={anchor} open={open} onInsert={latex => field.current?.insert(latex)} finish={{ onFinish: finish }} trailing={
+    <FormulaFloatingToolbar anchor={anchor} open={open} side={side} align={align} toolset={toolset}
+      onOpenFormula={() => setMore(true)} onInsertUnderline={() => setLast('宿主收到填空线意图')} onInsert={latex => field.current?.insert(latex)} finish={{ onFinish: finish }} trailing={
       <Tooltip open><TooltipTrigger render={<ToolbarButton render={<CossButton variant="ghost" size="icon-sm" />} aria-label="更多公式" aria-expanded={more}
         onPointerDown={event => event.preventDefault()} onClick={() => setMore(!more)} />}><ChevronDown /></TooltipTrigger>
-        <TooltipPopup side="top">更多公式 <Kbd>▾</Kbd></TooltipPopup></Tooltip>
+        <TooltipPopup side="bottom">更多公式 <Kbd>▾</Kbd></TooltipPopup></Tooltip>
     } />
     {more && <FormulaPalette onInsert={latex => field.current?.insert(latex)} />}
     <p role="status" className="text-ui-hint">最近完成：{last}</p>

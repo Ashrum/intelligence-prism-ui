@@ -3781,3 +3781,25 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 组件站题目示例提供正式详情、560／559／390px 容器与草稿档案。此组件不生成编号，不入库，不连接业务服务。
 
 本轮实现待复核：现有 `text-ui-hint` 为 14px，没有 13px 语义字号；编号、档案值和竖排页签暂沿用该语义字号，未新增令牌或局部字号。该差异尚未达到图纸像素要求，需 Supervisor 收敛规范冲突后处理。
+
+### P186 · 工具条放置与学科分组（SHEET 56 REV 0.10）
+
+本节修订 P185 的 Tooltip 方向和完成键外观。复用检索：已有 FormulaQuickTools、mathFieldSubjectTools 和固定 coss Toolbar / Button / Tooltip / PopoverPrimitive 足够；采用 Scene56 的 ghost icon-sm、ghost sm 与 outline icon-sm 组合，不新增组件、依赖、令牌或修改 coss。
+
+| 属性 | 类型 / 默认值 | 行为 |
+| --- | --- | --- |
+| side | 'top' / 'bottom'；top | 仅 FormulaFloatingToolbar；首选主方向 |
+| align | 'start' / 'end'；start | 仅 FormulaFloatingToolbar；锚点起点 / 末端对齐 |
+| sideOffset | number；8 | 仅 FormulaFloatingToolbar；与锚点间距，支持 0 |
+| toolset | 'math' / 'physics' / 'chemistry' / 'text'；math | 两种工具条均支持；math 保留 row 九按钮、floating 八符号。物理 / 化学在快捷符号后附加 mathFieldSubjectTools 对应前四项，ghost icon-sm 与名称 Tooltip |
+| onOpenFormula | () => void；无 | text 的「Σ 公式」ghost sm 按钮发出意图 |
+| onInsertUnderline | () => void；无 | text 的填空线图标按钮发出意图，aria-label「下划线（填空线）」 |
+| formulaTrailing | ReactNode；无 | 公式组末尾，floating 的分隔线左侧；row 在 trailing 前。供宿主放粘贴公式按钮 |
+| trailing | ReactNode；无 | 仍用于图片、表格、更多；floating 在分隔线右侧 |
+| finish | 既有类型；无 | floating 末尾 outline icon-sm，border-primary/40 text-primary；原 aria-label / Tooltip 名称与回调不变 |
+
+text 不显示数学或学科符号，保留公式入口、填空线、formulaTrailing（如宿主显式传入）与 trailing；宿主在文科不需要粘贴入口时省略 formulaTrailing。disabled 控制内建按钮，两个槽位的禁用状态由宿主控制。内建按钮 pointerdown 防止夺焦，floating 根节点同时保护槽位；row 槽位由宿主自行保护。
+
+定位仍采用 Base UI collisionAvoidance：side=flip、align=shift、fallbackAxisSide=none；首选主方向空间不足才翻转，横轴位移避碰。默认 top/start/8 与旧定位一致；默认 row 渲染保持一致，floating 仅按本节修订 Tooltip 为 bottom、完成键为线框。宿主槽位内 Tooltip 也须显式传 bottom，组件不改写外部节点。
+
+题干锚定标签＋输入框整体，宿主保证与卡头至少 12px；第二行及以后选项传 side="bottom"，其他字段传 top，对齐由所在列决定。组件不推断字段位置或学科。组件站「浮动图标条 · SHEET 56」可选择上 / 下、起点 / 末端及四种 toolset；测试只验证传参和结构，不代表浏览器几何验收。

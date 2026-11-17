@@ -36,7 +36,7 @@ test('floating uses eight symbol buttons, separators, shortcut tooltips and opti
   assert.doesNotMatch(markup, /插入正负/)
   assert.match(markup, /完成（Enter）/)
   assert.equal((markup.match(/data-slot="toolbar-separator"/g) ?? []).length, 2)
-  const tips = walk(tree).filter(node => node.props.side === 'top')
+  const tips = walk(tree).filter(node => node.props.side === 'bottom')
   assert.equal(tips.length, 9)
   assert.match(renderToStaticMarkup(h('div', null, tips.flatMap(children))), /sqrt/)
   assert.match(renderToStaticMarkup(h('div', null, tips.flatMap(children))), /pi/)
