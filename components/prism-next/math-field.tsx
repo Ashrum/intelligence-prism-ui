@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react'
 import type { MathfieldElement, Selector, Selection } from 'mathlive'
 import { Field, FieldLabel, FieldDescription } from '@/components/coss/field'
 import { Kbd, KbdGroup } from '@/components/coss/kbd'
@@ -14,10 +14,23 @@ import { attachMathFieldComposition, mathFieldDescription, mathFieldEditingValue
 import { configureMathFieldRuntime, loadMathFieldRuntime, type MathFieldRuntime } from '@/lib/prism-next/math-field-runtime'
 import { mathFieldTemplates, mathFieldRelations, mathFieldGreek, mathFieldSubjectTools, mathFieldShortcuts, mathFieldNumberKeys, mathFieldKeyboardCommands, type MathFieldKey, type MathFieldSubject, type MathFieldTool } from '@/lib/prism-next/math-field-tools'
 import { createMathFieldShortcut } from '@/lib/prism-next/math-field-shortcut'
+import { attachMathFieldExit, attachCompactKeyboard, type MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
+export { FormulaQuickTools, FormulaPalette } from './formula-tools'
+export type { FormulaQuickToolsProps, FormulaPaletteProps } from './formula-tools'
+export type { MathFieldExitReason } from '@/lib/prism-next/math-field-compact'
 import './math-field.css'
 
 export type MathFieldCursor = { value: string; position: number; selection: Selection }
+export type MathFieldHandle = {
+  insert: (latex: string) => void
+  focus: () => void
+  executeCommand: (name: Selector) => void
+}
 export type MathFieldProps = {
+  ref?: Ref<MathFieldHandle>
+  variant?: 'full' | 'compact'
+  virtualKeyboard?: 'auto' | 'off'
+  onExit?: (reason: MathFieldExitReason) => void
   value: string
   onChange: (value: string) => void
   mode?: 'inline' | 'block'
@@ -34,7 +47,10 @@ export type MathFieldProps = {
 
 export function MathField(props: MathFieldProps) {
   const modifier = usePrimaryModifier()
-  const { value, label, mode = 'inline', subject = 'math', readOnlyReason, onSplitRequest } = props
+  const { value, label, mode = 'inline', subject = 'math', readOnlyReason, onSplitRequest, variant = 'full' } = props
+  const compact = variant === 'compact'
+  const autoKeyboard = props.virtualKeyboard === 'auto' || (compact && props.virtualKeyboard !== 'off')
+  const keyboardMount = useRef<HTMLDivElement>(null)
   const id = useId(), mount = useRef<HTMLDivElement>(null), source = useRef<HTMLTextAreaElement>(null)
   const field = useRef<MathfieldElement | null>(null), runtime = useRef<MathFieldRuntime | null>(null)
   const latest = useRef(props)
@@ -42,8 +58,8 @@ export function MathField(props: MathFieldProps) {
   const shortcut = useRef<ReturnType<typeof createMathFieldShortcut> | null>(null)
   const [canRestore, setCanRestore] = useState(false)
   const composing = useRef(false), sourceComposing = useRef(false)
-  const [ime, setIme] = useState(false), [opened, setOpened] = useState(Boolean(props.autoOpen))
-  const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'failed' | 'initialization-failed'>(props.autoOpen ? 'loading' : 'idle')
+  const [ime, setIme] = useState(false), [opened, setOpened] = useState(compact || Boolean(props.autoOpen))
+  const [phase, setPhase] = useState<'idle' | 'loading' | 'ready' | 'failed' | 'initialization-failed'>(compact || props.autoOpen ? 'loading' : 'idle')
   const [confirmedEmpty, setConfirmedEmpty] = useState<string | null>(null)
   // A changed controlled value starts a new edit, even if it later becomes empty again.
   if (confirmedEmpty !== null && confirmedEmpty !== value) setConfirmedEmpty(null)
@@ -101,11 +117,22 @@ export function MathField(props: MathFieldProps) {
           onCommit: () => emit(),
         })
         const input = () => { if (!composing.current) { transaction.afterInput(); setCanRestore(transaction.available()); emit() } }
+        const exit = (reason: MathFieldExitReason) => {
+          if (latest.current.readOnlyReason || composing.current || element.readOnly) return
+          if (latest.current.variant === 'compact') confirm()
+          latest.current.onExit?.(reason)
+        }
+        const detachExit = attachMathFieldExit(element, {
+          blocked: () => composing.current || Boolean(latest.current.readOnlyReason) || element.readOnly || (latest.current.variant !== 'compact' && !latest.current.onExit),
+          onExit: exit,
+        })
         const keydown = (event: KeyboardEvent) => {
           if (composing.current || event.isComposing || event.keyCode === 229) return
           transaction.beforeKey(event)
           if (event.key === 'Escape') {
-            event.preventDefault(); event.stopPropagation(); setKeyboard(false); latest.current.onCancel?.()
+            event.preventDefault(); event.stopPropagation(); setKeyboard(false)
+            if (latest.current.variant === 'compact' || latest.current.onExit) exit('escape')
+            else latest.current.onCancel?.()
           } else if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
             event.preventDefault(); event.stopPropagation()
             confirm()
@@ -113,10 +140,10 @@ export function MathField(props: MathFieldProps) {
         }
         const resetShortcut = () => { transaction.reset(); setCanRestore(false) }
         const touch = (event: PointerEvent) => {
-          if (event.pointerType === 'touch' && !latest.current.readOnlyReason) setKeyboard(true)
+          if (event.pointerType === 'touch' && !latest.current.readOnlyReason && latest.current.variant !== 'compact' && latest.current.virtualKeyboard === undefined) setKeyboard(true)
         }
         cleanup = () => {
-          composition.dispose(); element.removeEventListener('input', input)
+          detachExit(); composition.dispose(); element.removeEventListener('input', input)
           element.removeEventListener('keydown', keydown, true); element.removeEventListener('pointerdown', touch)
           element.removeEventListener('pointerdown', resetShortcut); element.removeEventListener('paste', resetShortcut); shortcut.current = null
           element.remove(); field.current = null; runtime.current = null; composing.current = false
@@ -164,6 +191,11 @@ export function MathField(props: MathFieldProps) {
     }
   }, [value, label, readOnlyReason, mode, phase, ime])
 
+  useEffect(() => {
+    if (!autoKeyboard || phase !== 'ready' || invalid || readOnlyReason || !field.current || !keyboardMount.current) return
+    return attachCompactKeyboard(field.current, keyboardMount.current)
+  }, [autoKeyboard, phase, invalid, readOnlyReason])
+
   const act = (command: Selector) => {
     if (!field.current || disabled || invalid) return
     shortcut.current?.reset(); setCanRestore(false)
@@ -176,6 +208,11 @@ export function MathField(props: MathFieldProps) {
     field.current.insert(tool.latex, { format: 'latex', mode: 'math', selectionMode: 'placeholder' })
     emit()
   }
+  useImperativeHandle(props.ref, () => ({
+    insert: latex => insert({ label: '', latex, face: '' }),
+    focus: () => field.current?.focus(),
+    executeCommand: act,
+  }))
   const tools = (items: readonly MathFieldTool[]) => <ToolButtons items={items} disabled={disabled || invalid} onInsert={insert} />
   const keys = (items: readonly MathFieldKey[]) => <KeyboardButtons items={items} disabled={disabled || invalid} onCommand={act} onInsert={insert} />
   const rawKey = (event: React.KeyboardEvent) => {
@@ -183,6 +220,16 @@ export function MathField(props: MathFieldProps) {
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); props.onCancel?.() }
     if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && !disabled) { event.preventDefault(); event.stopPropagation(); confirm() }
   }
+  if (compact) return <div className="prism-math-field-compact inline-flex max-w-full min-w-0 flex-col gap-1" role="group" aria-label={label}>
+    <span id={`${id}-reason`} className="sr-only">{readOnlyReason}</span>
+    <span id={`${id}-description`} className="sr-only">{mathFieldDescription(value)}</span>
+    <div ref={mount} hidden={phase !== 'ready' || invalid} />
+    {phase === 'loading' && <InlineStatus>正在准备公式框…</InlineStatus>}
+    {(phase === 'failed' || phase === 'initialization-failed') && <InlineStatus tone="warning">公式框暂不可用，原文已保留。</InlineStatus>}
+    {invalid && <InlineStatus tone="warning">公式原文有误，请在宿主原文入口修改。</InlineStatus>}
+    <span className="text-ui-hint text-muted-foreground">Tab 下一格 · → 回到文字</span>
+    {autoKeyboard && <div ref={keyboardMount} className="prism-math-native-keyboard" />}
+  </div>
   return <Field render={<section />} className="prism-math-field min-w-0 items-stretch" data-mode={mode} aria-labelledby={`${id}-label`}>
     <div className="flex w-full min-w-0 flex-wrap items-center gap-2">
       <FieldLabel id={`${id}-label`} htmlFor={`${id}-visual`} className="text-ui-action">{label}</FieldLabel>
@@ -198,7 +245,7 @@ export function MathField(props: MathFieldProps) {
     <span id={`${id}-reason`} className="sr-only">{readOnlyReason}</span>
     <p id={`${id}-description`} className="sr-only">{mathFieldDescription(value)}</p>
     {phase === 'idle' && <Button type="button" variant="outline" disabled={ime} onClick={() => { setPhase('loading'); setOpened(true) }}>打开公式框</Button>}
-    <div ref={mount} hidden={phase !== 'ready' || invalid} />
+    <div ref={mount} hidden={phase !== 'ready' || invalid}>{autoKeyboard && <div ref={keyboardMount} className="prism-math-native-keyboard" />}</div>
     {phase === 'ready' && <>
       <div className="flex flex-wrap gap-2" role="group" aria-label="公式模板">
         {tools(mathFieldTemplates)}

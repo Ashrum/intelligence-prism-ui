@@ -31,3 +31,38 @@ export const mathFieldNumberKeys: MathFieldKey[] = [
 export const mathFieldShortcuts = {
   sqrt: '\\sqrt{#?}', pi: '\\pi', '<=': '\\le', '>=': '\\ge', '!=': '\\ne', '+-': '\\pm', '*': '\\times', alpha: '\\alpha',
 }
+
+export type FormulaTool = MathFieldTool & { aliases: readonly string[] }
+const formula = (label: string, aliases: string[], latex: string, face: string): FormulaTool => ({ label, aliases, latex, face })
+export const formulaQuickTools: readonly FormulaTool[] = [
+  formula('分数', ['分式'], String.raw`\frac{#?}{#?}`, '▭/▭'),
+  formula('根号', ['根式', '平方根'], String.raw`\sqrt{#?}`, '√'),
+  formula('上标', ['平方'], '^{#?}', 'x²'), formula('下标', [], '_{#?}', 'x₁'),
+  formula('括号', ['圆括号'], String.raw`\left(#?\right)`, '( )'),
+  formula('小于等于', ['≤'], '\\le', '≤'), formula('不等于', ['≠'], '\\ne', '≠'),
+  formula('正负', ['±'], '\\pm', '±'), formula('圆周率', ['希腊字母', 'π', 'pi', '派'], '\\pi', 'π'),
+]
+export const formulaTools: readonly FormulaTool[] = [
+  ...formulaQuickTools,
+  formula('绝对值', ['模'], String.raw`\left|#?\right|`, '|x|'),
+  formula('方程组', ['联立方程'], String.raw`\begin{cases}#?&#?\\#?&#?\end{cases}`, '{⋮'),
+  formula('分段函数', ['分段'], String.raw`\begin{cases}#?&#?\\#?&#?\end{cases}`, 'f(x)'),
+  formula('对数', ['log'], String.raw`\log_{#?}{#?}`, 'log'),
+  formula('正弦', ['三角函数', 'sin'], String.raw`\sin{#?}`, 'sin'),
+  formula('余弦', ['三角函数', 'cos'], String.raw`\cos{#?}`, 'cos'),
+  formula('正切', ['三角函数', 'tan'], String.raw`\tan{#?}`, 'tan'),
+  formula('角', ['角度符号'], '\\angle', '∠'), formula('三角形', [], '\\triangle', '△'),
+  formula('平行', [], '\\parallel', '∥'), formula('垂直', [], '\\perp', '⊥'),
+  formula('属于', [], '\\in', '∈'), formula('空集', [], '\\emptyset', '∅'),
+  formula('无穷', ['无限'], '\\infty', '∞'), formula('度', ['度数'], '^{\\circ}', '°'),
+  formula('大于等于', ['≥'], '\\ge', '≥'), formula('乘', ['×', '乘号'], '\\times', '×'),
+  formula('除', ['÷', '除号'], '\\div', '÷'),
+  formula('阿尔法', ['希腊字母', 'α', 'alpha'], '\\alpha', 'α'),
+  formula('贝塔', ['希腊字母', 'β', 'beta'], '\\beta', 'β'),
+  formula('西塔', ['希腊字母', 'θ', 'theta'], '\\theta', 'θ'),
+]
+export const formulaCommonTools: readonly FormulaTool[] = [...formulaQuickTools, ...formulaTools.slice(9, 16)]
+export function searchFormulaTools(query: string): readonly FormulaTool[] {
+  const term = query.trim().toLocaleLowerCase()
+  return term ? formulaTools.filter(item => [item.label, ...item.aliases].some(name => name.toLocaleLowerCase().includes(term))) : formulaCommonTools
+}
