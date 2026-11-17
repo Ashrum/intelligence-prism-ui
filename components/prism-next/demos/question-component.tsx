@@ -9,7 +9,7 @@ import { QuestionCard, QuestionReference, QuestionSummaryRow } from "../question
 import { AgentSampleTag } from "../agent-visual-parts"
 import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { questionPresentationSample } from "../fixtures/question-presentation-samples"
-import { QuestionDetails,type QuestionDetailTab } from "../question-details"
+import { QuestionArchiveSummary, QuestionDetails,type QuestionDetailTab } from "../question-details"
 import { QuestionMath, QuestionSolution } from "../question-content"
 import { QuestionSelect } from "../question-controls"
 import { QuestionResponse,type ResponseValue } from "../question-response"
@@ -22,7 +22,7 @@ import { textbooks } from "@/lib/prism-next/textbook-directory"
 import { initialReviewScores,reviewAttempts } from "@/lib/prism-next/fixtures/review"
 import type { DirectorySelections } from "../textbook-directory"
 const samples=[...questionSamples,judgmentQuestion,compositeQuestion]
-export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionCatalogDemo/><QuestionHoldDemo/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
+export function QuestionComponentDemo(){const [id,setId]=useState(samples[0].id);return <DemoSection title="独立题目卡片" description="题目数据、详情、作答与操作分别传入。同一组件用于选题、编排、作答和复核。"><div className="mb-6 flex flex-wrap items-center justify-between gap-3"><QuestionSelect label="题型样本" value={id} onChange={setId} items={samples.map(q=>({value:q.id,label:`${q.kind} · ${q.title}`}))}/><Button variant="outline" render={<Link href="/next/examples/questions"/>}>题库与组卷应用示例</Button></div><QuestionLevelExamples/><QuestionCatalogDemo/><QuestionHoldDemo/><QuestionDetailsLayoutDemo/><QuestionSpecimen key={id} id={id}/><PrintMetadataDemo id={id}/><details className="mt-6 text-ui-body"><summary className="cursor-pointer text-muted-foreground">使用接口</summary><pre className="mt-3 overflow-x-auto rounded-lg bg-muted p-4 text-ui-hint">{'<QuestionCard question={question} />\n<QuestionCard question={question} checked={selected}\n  onCheckedChange={setSelected} actions={actions}\n  details={details} detailsOpen={open}\n  onDetailsOpenChange={setOpen} />'}</pre></details></DemoSection>}
 function PrintMetadataDemo({id}:{id:string}) {
  const question=samples.find(q=>q.id===id)!
  const [showIds,setShowIds]=useState(true),[preferences,setPreferences]=useState(createPrintPreferences),[settingsOpen,setSettingsOpen]=useState(false)
@@ -97,5 +97,21 @@ export function QuestionHoldDemo() {
       />)}
     </div>
     <p role="status" className="min-h-5 text-ui-hint text-muted-foreground">{notice}</p>
+  </section>
+}
+
+function QuestionDetailsLayoutDemo() {
+  const [tab,setTab]=useState<QuestionDetailTab>("archive")
+  const [links,setLinks]=useState<DirectorySelections>({})
+  const [width,setWidth]=useState("full")
+  const question=questionSamples[0]
+  return <section className="my-8 space-y-4" aria-label="题目详情新版式">
+    <h3 className="text-block-title">题目详情与草稿档案</h3>
+    <QuestionSelect label="详情容器宽度" value={width} onChange={setWidth} items={[{value:"full",label:"跟随容器"},...[560,559,390].map(value=>({value:String(value),label:`${value}px`}))]}/>
+    <div className="min-w-0 space-y-6" style={{maxWidth:width === "full" ? "100%" : `${width}px`}}>
+      <QuestionDetails question={question} metadata={questionMetadata[question.id]} links={links} onLinksChange={setLinks} tab={tab} onTabChange={setTab} status="可用" archive={[{label:"入库",value:"2026-11-17 · 王建国"}]}/>
+      <h4 className="text-item-title">草稿档案 · 示例</h4>
+      <QuestionArchiveSummary status="未入库" rows={[{label:"题型与结构",value:"单选题 · 4 个选项"},{label:"来源",value:"在线新建 · 王建国"},{label:"创建",value:"2026-11-17 18:42"}]}/>
+    </div>
   </section>
 }
