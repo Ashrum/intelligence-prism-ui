@@ -3850,3 +3850,7 @@ text 不显示数学或学科符号，保留公式入口、填空线、formulaTr
 `lib/prism-next/math-field-tools` 导出 chemistryToolbarTools、biologyToolbarTools 与 SubjectToolbarTool。工具项包含 label、face、action，插入或化学弹窗动作另含 value。chemistrySnippets 导出上述七个 mhchem 片段的 `{ label, face, snippet }`，宿主化学弹窗可直接复用快捷按钮数据，保留顺序及前导空格。
 
 math、physics、text 沿用 P186 契约。MathFieldSubject 与 mathFieldSubjectTools 继续服务 MathField 键盘。组件站 MathField 演示提供化学、生物两组及回调输出区，可切换可选回调接入来查看禁用状态，浮动示例也可选 biology。化学弹窗、结构式编辑器及文字插入由宿主实现。
+
+### P188 · 浮动公式工具条反色
+
+浮动工具条为反色（黑底），宿主槽位按钮由作用域样式统一。复用现有 FormulaQuickTools 与固定 coss Toolbar / Button / ToolbarSeparator，使用既有 foreground / background 语义令牌；浅色主题为近黑底白字，深色主题自动反为浅底深字。全部学科组及 formulaTrailing / trailing 按钮共用悬停、按下、焦点环与禁用样式，完成键使用反色线框；row、FormulaPalette、更多弹出面板与 Tooltip 保持原样，不新增组件或令牌。

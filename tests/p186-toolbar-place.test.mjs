@@ -60,13 +60,13 @@ test('math and physics retain quick symbols; chemistry uses its dedicated group;
     }
   }
 })
-test('formula slot stays inside first group before separator and trailing; finish is primary outline', () => {
+test('formula slot stays inside first group before separator and trailing; finish is inverse outline', () => {
   const tree = FormulaQuickTools({ variant: 'floating', onInsert() {}, formulaTrailing: h('button', null, '粘贴公式'), trailing: h('button', null, '图片'), finish: { onFinish() {} } })
   const html = renderToStaticMarkup(tree)
   assert.ok(html.indexOf('粘贴公式') < html.indexOf('data-slot="toolbar-separator"'))
   assert.ok(html.indexOf('data-slot="toolbar-separator"') < html.indexOf('图片'))
   const finish = walk(tree).map(node => node.props.render).find(node => node?.props['aria-label'] === '完成（Enter）')
   assert.equal(finish.props.render.props.variant, 'outline')
-  assert.equal(finish.props.render.props.className, 'border-primary/40 text-primary')
+  assert.equal(finish.props.render.props.className, 'border-background/60 text-background')
   assert.equal(walk(tree).filter(node => node.props.side === 'bottom').length, 9)
 })
