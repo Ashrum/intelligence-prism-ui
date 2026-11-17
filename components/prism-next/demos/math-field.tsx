@@ -41,6 +41,8 @@ export function MathFieldDemo() {
       <CompactExample />
       <FinishExample />
       <FloatingExample />
+      <SubjectToolbarExample toolset="chemistry" />
+      <SubjectToolbarExample toolset="biology" />
     </div>
   </div>
 }
@@ -98,7 +100,7 @@ function FloatingExample() {
   const [open, setOpen] = useState(false), [more, setMore] = useState(false)
   const [editing, setEditing] = useState(false)
   const [side, setSide] = useState<'top' | 'bottom'>('top')
-  const [toolset, setToolset] = useState<'math' | 'physics' | 'chemistry' | 'text'>('math')
+  const [toolset, setToolset] = useState<'math' | 'physics' | 'chemistry' | 'biology' | 'text'>('math')
   const [align, setAlign] = useState<'start' | 'end'>('start')
   const [value, setValue] = useState(String.raw`\frac{1}{2}`)
   const [last, setLast] = useState('尚未完成')
@@ -108,7 +110,7 @@ function FloatingExample() {
     <div className="flex flex-wrap gap-2">
       {(['top', 'bottom'] as const).map(value => <CossButton key={value} variant="outline" aria-pressed={side === value} onClick={() => setSide(value)}>{value === 'top' ? '上方' : '下方'}</CossButton>)}
       {(['start', 'end'] as const).map(value => <CossButton key={value} variant="outline" aria-pressed={align === value} onClick={() => setAlign(value)}>{value === 'start' ? '起点对齐' : '末端对齐'}</CossButton>)}
-      {(['math', 'physics', 'chemistry', 'text'] as const).map((value, index) => <CossButton key={value} variant="outline" aria-pressed={toolset === value} onClick={() => setToolset(value)}>{['数学', '物理', '化学', '语文 / 英语'][index]}</CossButton>)}
+      {(['math', 'physics', 'chemistry', 'biology', 'text'] as const).map((value, index) => <CossButton key={value} variant="outline" aria-pressed={toolset === value} onClick={() => setToolset(value)}>{['数学', '物理', '化学', '生物', '语文 / 英语'][index]}</CossButton>)}
     </div>
     <Button type="button" variant="outline" onClick={() => setEditing(true)}>试用浮动工具条</Button>
     {editing && <div ref={setAnchor} onFocus={() => setOpen(true)}>
@@ -116,6 +118,9 @@ function FloatingExample() {
         onFinish={(next, reason, detail) => { if (reason === 'blur' && isInternal(detail?.relatedTarget)) return; setValue(next); setLast(next); setOpen(false); setEditing(false); setMore(false) }} />
     </div>}
     <FormulaFloatingToolbar anchor={anchor} open={open} side={side} align={align} toolset={toolset}
+      onOpenChemistry={snippet => setLast(`onOpenChemistry(${JSON.stringify(snippet)})`)}
+      onOpenStructure={() => setLast('onOpenStructure()')}
+      onInsertText={text => setLast(`onInsertText(${JSON.stringify(text)})`)}
       onOpenFormula={() => setMore(true)} onInsertUnderline={() => setLast('宿主收到填空线意图')} onInsert={latex => field.current?.insert(latex)} finish={{ onFinish: finish }} trailing={
       <Tooltip open><TooltipTrigger render={<ToolbarButton render={<CossButton variant="ghost" size="icon-sm" />} aria-label="更多公式" aria-expanded={more}
         onPointerDown={event => event.preventDefault()} onClick={() => setMore(!more)} />}><ChevronDown /></TooltipTrigger>
@@ -127,5 +132,22 @@ function FloatingExample() {
       <p>之前（小分式）：已知 <QuestionMath label="小分式"><mstyle displaystyle={false} scriptlevel={0}><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle></QuestionMath> 与 x 的关系。</p>
       <p>现在（大分式）：已知 <QuestionMath label="大分式"><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mroot><mi>x</mi><mn>3</mn></mroot></QuestionMath> 与 x 的关系。</p>
     </div>
+  </section>
+}
+
+
+function SubjectToolbarExample({ toolset }: { toolset: 'chemistry' | 'biology' }) {
+  const [last, setLast] = useState('点击工具查看回调与内容')
+  const [connected, setConnected] = useState(true)
+  const title = toolset === 'chemistry' ? '化学工具组 · SHEET 59 / 64' : '生物工具组 · SHEET 60'
+  return <section className="min-w-0 space-y-3" aria-label={title}>
+    <h3 className="text-block-title">{title}</h3>
+    <CossButton variant="outline" aria-pressed={connected} onClick={() => setConnected(!connected)}>接入弹窗与文字回调</CossButton>
+    <FormulaQuickTools variant="floating" toolset={toolset}
+      onInsert={latex => setLast(`onInsert(${JSON.stringify(latex)})`)}
+      onOpenChemistry={connected ? snippet => setLast(`onOpenChemistry(${JSON.stringify(snippet)})`) : undefined}
+      onOpenStructure={connected ? () => setLast('onOpenStructure()') : undefined}
+      onInsertText={connected ? text => setLast(`onInsertText(${JSON.stringify(text)})`) : undefined} />
+    <p role="status" className="text-ui-hint break-words">{last}</p>
   </section>
 }

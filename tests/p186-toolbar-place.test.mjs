@@ -33,14 +33,14 @@ test('placement forwards both directions, alignments and zero offset without cha
     assert.deepEqual(positioner.props.collisionAvoidance, { side: 'flip', align: 'shift', fallbackAxisSide: 'none' })
   }
 })
-test('four toolsets retain quick symbols and append the four subject tools; text emits host intents', () => {
-  const labels = { physics: ['矢量', '米每秒', '牛顿', '加速度单位'], chemistry: ['水', '反应箭头', '可逆反应', '化学方程式'] }
+test('math and physics retain quick symbols; chemistry uses its dedicated group; text emits host intents', () => {
+  const labels = { physics: ['矢量', '米每秒', '牛顿', '加速度单位'], chemistry: ['化学式 / 方程式', '结构式', '反应箭头（可带条件）', '可逆', '气体', '沉淀', '离子电荷', '结晶水点', '加热', '反应热'] }
   for (const variant of ['row', 'floating']) for (const toolset of ['math', 'physics', 'chemistry', 'text']) {
     const calls = []
     const tree = FormulaQuickTools({ variant, toolset, onInsert: value => calls.push(value), onOpenFormula: () => calls.push('formula'), onInsertUnderline: () => calls.push('underline') })
     const html = renderToStaticMarkup(tree)
-    assert.equal((html.match(/<button/g) ?? []).length, toolset === 'text' ? 2 : (variant === 'row' ? 9 : 8) + (toolset === 'math' ? 0 : 4))
-    for (const label of labels[toolset] ?? []) assert.ok(html.includes('插入' + label))
+    assert.equal((html.match(/<button/g) ?? []).length, toolset === 'text' ? 2 : toolset === 'chemistry' ? 10 : (variant === 'row' ? 9 : 8) + (toolset === 'math' ? 0 : 4))
+    for (const label of labels[toolset] ?? []) assert.ok(html.includes((toolset === 'chemistry' ? '' : '插入') + label))
     const nodes = walk(tree)
     for (const node of nodes.filter(node => 'side' in node.props)) assert.equal(node.props.side, 'bottom')
     const buttons = nodes.flatMap(node => [node, node.props.render]).filter(node => node?.props.onClick)
@@ -56,7 +56,7 @@ test('four toolsets retain quick symbols and append the four subject tools; text
     } else if (toolset !== 'math') {
       buttons.at(-1).props.onClick()
       assert.equal(calls.length, 1)
-      assert.ok(calls[0].includes(toolset === 'physics' ? 'm/s^2' : '2H2'))
+      assert.ok(calls[0].includes(toolset === 'physics' ? 'm/s^2' : '\\Delta H='))
     }
   }
 })
