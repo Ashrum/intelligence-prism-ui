@@ -61,7 +61,7 @@ export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disable
     </TooltipTrigger><TooltipPopup side="bottom">{tool.label}</TooltipPopup>
   </Tooltip>)
 
-  if (variant === 'floating') return <Toolbar aria-label="快捷公式" className="items-center gap-0.5 rounded-xl p-1 shadow-lg/5 max-w-full overflow-x-auto" onPointerDown={event => event.preventDefault()}>
+  if (variant === 'floating') return <Toolbar data-prism-formula-floating-toolbar="" aria-label="快捷公式" className="bg-foreground border-foreground text-background items-center gap-0.5 rounded-xl p-1 shadow-lg/5 max-w-full overflow-x-auto" onPointerDown={event => event.preventDefault()}>
     <ToolbarGroup className="gap-0.5">
       {toolbarButtons ?? (toolset === 'text' ? textTools : <>{formulaQuickTools.filter(tool => tool.label !== '正负').map(tool => {
         const shortcut = Object.entries(mathFieldShortcuts).find(([, latex]) => latex === tool.latex)?.[0]
@@ -77,7 +77,7 @@ export function FormulaQuickTools({ onInsert, trailing, formulaTrailing, disable
     </ToolbarGroup>
     {trailing && <><ToolbarSeparator /><ToolbarGroup className="gap-0.5">{trailing}</ToolbarGroup></>}
     {finish && <><ToolbarSeparator /><Tooltip>
-      <TooltipTrigger render={<ToolbarButton render={<CossButton type="button" variant="outline" size="icon-sm" className="border-primary/40 text-primary" />} disabled={disabled}
+      <TooltipTrigger render={<ToolbarButton render={<CossButton type="button" variant="outline" size="icon-sm" className="border-background/60 text-background" />} disabled={disabled}
         aria-label={`${finish.label ?? '完成'}（Enter）`} onPointerDown={event => event.preventDefault()} onClick={finish.onFinish} />}><Check aria-hidden="true" /></TooltipTrigger>
       <TooltipPopup side="bottom">{finish.label ?? '完成'} <Kbd>↵</Kbd></TooltipPopup>
     </Tooltip></>}

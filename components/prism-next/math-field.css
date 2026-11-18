@@ -86,3 +86,23 @@
   .prism-math-native-keyboard *::before,
   .prism-math-native-keyboard *::after { animation: none !important; transition: none !important; }
 }
+
+/* P188: include host slot buttons; portalled panels and tooltips keep their own theme. */
+[data-prism-formula-floating-toolbar][data-slot="toolbar"] button {
+  color: var(--background);
+  background-color: transparent;
+}
+[data-prism-formula-floating-toolbar][data-slot="toolbar"] button:is(:hover, :active, [data-pressed]):not(:disabled, [aria-disabled="true"], [data-disabled]) {
+  background-color: color-mix(in srgb, var(--background) 15%, transparent);
+}
+[data-prism-formula-floating-toolbar][data-slot="toolbar"] button:focus-visible {
+  --tw-ring-color: color-mix(in srgb, var(--background) 60%, transparent);
+  --tw-ring-offset-color: var(--foreground);
+  box-shadow: 0 0 0 1px var(--tw-ring-offset-color), 0 0 0 3px var(--tw-ring-color);
+}
+[data-prism-formula-floating-toolbar][data-slot="toolbar"] button:is(:disabled, [aria-disabled="true"], [data-disabled]) {
+  opacity: 0.4;
+}
+[data-prism-formula-floating-toolbar][data-slot="toolbar"] [data-slot="toolbar-separator"] {
+  background-color: color-mix(in srgb, var(--background) 20%, transparent);
+}
