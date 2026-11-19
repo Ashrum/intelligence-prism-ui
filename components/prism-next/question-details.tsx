@@ -46,21 +46,24 @@ export function QuestionArchiveSummary({id,version,status,rows}:QuestionArchiveS
     <span role="status" aria-live="polite" className={notice ? "text-ui-meta text-muted-foreground" : "sr-only"}>{notice}</span>
   </div>
 }
-export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinksChange,status="未知",canEdit=false,textbooks=[],tabs=["answer","teaching","archive"],archive}:{question:QuestionRecord;metadata:QuestionMetadata;links:DirectorySelections;tab:QuestionDetailTab;onTabChange:(value:QuestionDetailTab)=>void;onLinksChange:Dispatch<SetStateAction<DirectorySelections>>;status?:string;canEdit?:boolean;textbooks?:TextbookDefinition[];tabs?:QuestionDetailTab[];archive?:{label:string;value:React.ReactNode}[]}) {
+export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinksChange,status="未知",canEdit=false,textbooks=[],tabs=["answer","teaching","archive"],archive,orientation="auto"}:{orientation?:"auto"|"vertical";question:QuestionRecord;metadata:QuestionMetadata;links:DirectorySelections;tab:QuestionDetailTab;onTabChange:(value:QuestionDetailTab)=>void;onLinksChange:Dispatch<SetStateAction<DirectorySelections>>;status?:string;canEdit?:boolean;textbooks?:TextbookDefinition[];tabs?:QuestionDetailTab[];archive?:{label:string;value:React.ReactNode}[]}) {
   const courses=directoryLabels(textbooks,links,"course"),knowledge=directoryLabels(textbooks,links,"knowledge")
   const containerRef=useRef<HTMLDivElement>(null)
-  const [vertical,setVertical]=useState(false)
+  const [wide,setWide]=useState(false)
+  const vertical=orientation === "vertical" || wide
   useEffect(()=>{
     const node=containerRef.current
-    if (!node || typeof ResizeObserver === "undefined") return
-    const observer=new ResizeObserver(([entry])=>setVertical(entry.contentRect.width >= 560))
+    if (orientation !== "auto" || !node || typeof ResizeObserver === "undefined") return
+    const observer=new ResizeObserver(([entry])=>setWide(entry.contentRect.width >= 560))
     observer.observe(node)
     return ()=>observer.disconnect()
-  },[tabs.length])
+  },[orientation,tabs.length])
   if(!tabs.length)return null
   const orderedTabs = (["answer", "teaching", "archive"] as const).filter(value => tabs.includes(value))
   const active=orderedTabs.includes(tab)?tab:orderedTabs[0]
-  return <div ref={containerRef} className="@container/question-details min-w-0"><Tabs orientation={vertical ? "vertical" : "horizontal"} value={active} onValueChange={value=>onTabChange(value as QuestionDetailTab)} className={vertical ? "min-w-0 items-start gap-6 [&_dl>div]:min-h-[30px] [&_dl>div]:pt-[3px] [&_dd]:leading-relaxed" : "min-w-0 gap-5"}>
+  return <div ref={containerRef} className="@container/question-details min-w-0"><Tabs orientation={vertical ? "vertical" : "horizontal"} value={active} onValueChange={value=>onTabChange(value as QuestionDetailTab)} className={(vertical ? "min-w-0 items-start gap-6 [&_dl>div]:min-h-[30px] [&_dl>div]:pt-[3px] [&_dd]:leading-relaxed" : "min-w-0 gap-5") + (orientation === "vertical"
+    ? " @max-[400px]/question-details:[&_[data-slot=tabs-list]]:w-16 @max-[400px]/question-details:[&_dl>div]:grid-cols-1"
+    : "")}>
     <TabsList variant="underline" className={vertical ? "w-24 shrink-0 items-stretch data-[orientation=vertical]:px-0 border-s border-border/70" : "grid w-full min-w-0 auto-cols-fr grid-flow-col"} aria-label={`${question.title}详情分类`}>{orderedTabs.map(value => {
       const label = { answer: "答案与解析", teaching: "教学定位", archive: "题目档案" }[value]
       return <TabsTab key={value} value={value} aria-label={label} className={vertical ? "h-[30px] min-h-0 justify-start px-3 text-ui-hint tracking-[.02em] font-normal text-muted-foreground data-active:font-medium data-active:text-foreground" : "pointer-coarse:min-h-11 pointer-coarse:min-w-11 min-w-0 whitespace-normal px-1"}>

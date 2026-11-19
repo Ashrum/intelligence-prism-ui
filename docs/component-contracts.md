@@ -3779,7 +3779,7 @@ v3 使用曜蓝小方块、单行学科名、ChevronsUpDown；有页签时显示
 
 依据 REV 0.8 SHEET 53。复用检索：现有 QuestionDetails、QuestionSolution、coss Tabs underline、Button ghost icon-xs 和 Tooltip 已满足本轮，不新增来源、依赖、令牌或目录条目，不改 coss 原始文件。
 
-- 容器宽度 ≥ 560px 使用真正的 vertical Tabs（96px 页签列、24px 内容间距），更窄使用 horizontal Tabs；400px 以下保留答案／定位／档案缩写与完整可访问名称。ResizeObserver 观察容器而非视口；SSR 初始横排，挂载测量后切换。
+- 默认 `orientation="auto"` 时，容器宽度 ≥ 560px 使用真正的 vertical Tabs（96px 页签列、24px 内容间距），更窄使用 horizontal Tabs；400px 以下保留答案／定位／档案缩写与完整可访问名称。ResizeObserver 观察容器而非视口；SSR 初始横排，挂载测量后切换。题库卡传 `orientation="vertical"` 固定竖排，内容宽不足 400px 时使用 64px 短标签列并将定义表的标签和值上下排列，达到 400px 时使用 96px 全称列和双列定义表。
 - 答案与解析仍由 QuestionSolution 提供，显式使用 ui 正文字号；外层将标签与内容排为 84px + 12px 间距的小表，保留缺失提示、小问和评分依据。
 - 教学定位字段和缺失提示不变。档案改编号、复制按钮、版本及状态圆点起头；可用为 success，草稿／未入库为 warning，其余为 muted，未知状态不推定可用。复制完成或失败均有可读的 live status。
 - 档案字段依次为题型与结构（选项／小问数）、来源、archive 中的入库项、其余 archive 项、维护说明。空字符串、空白字符串、null、undefined、false 行省略；0 保留。宿主负责不传入无内容的 React 元素。
