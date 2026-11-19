@@ -165,6 +165,7 @@ export function BlueprintFrameDemo() {
 
 export function BlueprintComponentsDemo() {
   const [tab, setTab] = useState("all")
+  const [listFilter, setListFilter] = useState("all")
   const [subject, setSubject] = useState("math")
   const [paperSize, setPaperSize] = useState("a4")
   const [view, setView] = useState("blueprint")
@@ -291,6 +292,18 @@ export function BlueprintComponentsDemo() {
           <BpMinor className="mt-6" code="BP-02.1 · Stepper" label="步骤快照" />
           <BpSteps steps={steps} current={1} label="固定步骤样例" status="示例快照 · 18 / 42" />
           <p className="mt-2.5 text-ui-hint text-muted-foreground">步骤位置来自固定快照，不通过点击推进任务。</p>
+        </div>
+        <div className="col-span-full w-full max-w-[1080px] space-y-2">
+          <p className="text-ui-hint text-muted-foreground">quiet · 列表筛选</p>
+          <div className="max-w-[760px]">
+            <BpSegTabs frame="quiet" label="列表筛选" value={listFilter} onValueChange={setListFilter}
+              items={[
+                { value: "all", label: "全部 45" },
+                { value: "needs-action", label: <>要处理 <span className="text-(--brand-magenta-text)">13</span></> },
+                { value: "stable", label: <>好转与稳定 <span className="text-(--brand-blue-text)">14</span></> },
+                { value: "observe", label: "待观察 18" },
+              ]} />
+          </div>
         </div>
       </div>
     </BlueprintSheet>
