@@ -76,7 +76,12 @@ export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinks
       vertical
         ? "[&_.question-solution>section]:min-h-[30px] [&_.question-solution>section]:pt-[3px] [&_.question-solution>section]:leading-relaxed [&_.question-solution>section:nth-child(-n+2)>h4]:pt-[5px]"
         : "[&_.question-solution>section:nth-child(-n+2)]:min-h-[22px] [&_.question-solution>section:nth-child(-n+2)]:leading-[22px] [&_.question-solution>section:nth-child(2)]:leading-[26px] [&_.question-solution>section:nth-child(-n+2)>h4]:leading-[22px]"
-    ].join(" ")}><QuestionSolution question={question} textSize="ui"/></div></TabsPanel>}
+    ].join(" ") + (orientation === "vertical" ? [
+      " @max-[400px]/question-details:[&_.question-solution]:space-y-2",
+      "@max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)]:pl-0",
+      "@max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:static @max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:w-auto @max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:pt-0",
+      "@max-[400px]/question-details:[&_.question-solution>section>h4]:m-0 @max-[400px]/question-details:[&_.question-solution>section>h4]:text-ui-hint! @max-[400px]/question-details:[&_.question-solution>section>h4]:font-normal @max-[400px]/question-details:[&_.question-solution>section>h4]:text-muted-foreground",
+    ].join(" ") : "")}><QuestionSolution question={question} textSize="ui"/></div></TabsPanel>}
     {tabs.includes("teaching")&&<TabsPanel value="teaching" className="min-w-0"><div className="grid gap-2"><dl className="space-y-2"><DataRow label="核心知识点">{metadata.knowledge.join(" · ") || "未关联"}</DataRow><DataRow label="考查方法">{metadata.method || "未关联"}</DataRow><DataRow label="认知要求">{metadata.demand || "未关联"}</DataRow></dl><dl className="space-y-2"><DataRow label="教材与章节">{courses.length?courses.map(item=><p key={item.id}>{item.label}</p>):"尚未关联教材章节"}</DataRow><DataRow label="知识点目录">{knowledge.length?knowledge.map(item=><p key={item.id}>{item.label}</p>):"尚未关联知识点目录"}</DataRow><DataRow label="课程标准">未关联</DataRow></dl></div>{canEdit&&<div className="mt-5"><TextbookRangePicker textbooks={textbooks} selections={links} onSelectionsChange={onLinksChange} compactTrigger triggerLabel="编辑教材与知识点"/></div>}</TabsPanel>}
     {tabs.includes("archive")&&<TabsPanel value="archive" className="min-w-0"><QuestionArchiveSummary id={question.id} version={metadata.version} status={status} rows={[
       {label:"题型与结构",value:`${question.kind}${question.options?.length ? ` · ${question.options.length} 个选项` : ""}${question.parts?.length ? ` · 含 ${question.parts.length} 个小问` : ""}`},

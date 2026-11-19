@@ -98,3 +98,18 @@ test('P190 keeps the P189 vertical keyboard contract and controlled tab selectio
     assert.deepEqual(controls(markup), controls(previous));
   }
 });
+
+test('P190 narrow fixed vertical stacks answer section labels above full-width values', () => {
+  const question = { ...props.question, parts: [{ id: '1', answer: 'A', explanation: '分步解析',
+    rubric: [{ id: 'step', label: '列式正确', points: 2 }] }] };
+  const html = renderToStaticMarkup(after.layout({ ...props, question, tab: 'answer', orientation: 'vertical' }, 390));
+  const narrow = '@max-[400px]/question-details:[&amp;_.question-solution';
+  for (const rule of [
+    ']:space-y-2', '&gt;section:nth-child(-n+2)]:pl-0',
+    '&gt;section:nth-child(-n+2)&gt;h4]:static', '&gt;section:nth-child(-n+2)&gt;h4]:w-auto',
+    '&gt;section&gt;h4]:text-ui-hint!', '&gt;section&gt;h4]:text-muted-foreground',
+  ]) assert.ok(html.includes(narrow + rule), rule);
+  assert.match(html, /参考答案<\/h4>A/);
+  assert.match(html, /解析<\/h4>示例解析/);
+  assert.match(html, /第 1 小问<\/h4>[\s\S]*分步解析[\s\S]*列式正确/);
+});
