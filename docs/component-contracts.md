@@ -3671,6 +3671,21 @@ PO 2026-11-14 规则：所有宿主题卡（含 L1 摘要）选中只使用 2px 
 字号遵循既有语义：标题保留 text-item-title（14/20、600，替代图纸 15/22）；序号和选项字母使用 text-component-label（12/16、500）。示例包含可勾选单选题、解答题及序号 01 / 12。
 
 
+### P189 题库 catalog 卡头、详情与操作
+
+依据冻结画板 REV 0.14 SHEET 67–70，复用 QuestionContent、QuestionDetails、difficultySwatches 以及 coss Checkbox、Toolbar 和 Menu。以下更新适用于 L2 catalog。默认卡、L3 阅读、L1 摘要沿用各自的呈现。
+
+| 接口 | 宿主约定 |
+| --- | --- |
+| `QuestionCard.meta?: ReactNode` | 知识点等补充属性。卡头顺序为勾选框、等宽 index、纯文字题型 · 分值 · 难度色块与文字 · meta；meta 单行省略，status 靠右。标题使用原 id 和层级，以 sr-only 保留读屏名称。 |
+| `QuestionActions.collapse?: boolean` | 将相似题和收藏收入所有宽度都可打开的菜单。按实际回调依次显示前置项、相似题、收藏／取消收藏，分隔后为复制为新题、纠错及其余操作。原有隐藏界面（如提供）、上移、下移、移组、编辑、移出仍可用。 |
+| `QuestionActions.leadingItems?: ReactNode` | 宿主提供的 coss MenuItem 放在首位，单独提供也能打开菜单。 |
+| `QuestionActions.triggerLabelHidden?: boolean` | 启用时“更多”文字为 sr-only，保留图标和包含题目名称的 aria-label。宿主按可用空间传入。 |
+
+启用上述任一菜单选项时弹层右对齐。省略这些选项时沿用原按钮、菜单顺序、文案和起始对齐。
+
+catalog 卡内边距为 16px 20px 12px。宽卡正文及详情缩进 52px，操作栏缩进 44px，上方留白 12px。卡宽小于 600px 时，meta 与状态共用第二行，左缩进 52px，间距 1rem，行首省略分隔点；正文、详情与操作栏取消缩进。详情仅保留细上边线及 12px 上内边距，取消内框、底色和圆角。QuestionDetails 竖排字段至少高 30px，多行正文使用 leading-relaxed，随公式、图片增高。选中描边和悬停浅阴影沿用 P171。
+
 ### P172 · PageTabs 学科标识 v3
 
 `subject.menu?: { groups: { label: string; items: { id: string; label: string; tag?: string; current?: boolean; muted?: boolean }[] }[]; onSelect: (id: string) => void }`。

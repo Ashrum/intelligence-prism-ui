@@ -257,7 +257,11 @@ test('the published charter preserves the approved original, scoped PO amendment
   // Do not trim/normalize the remaining text: every original byte stays SHA-256 protected.
   const amendmentPattern = /^\*\*([^\n*]*修订)（(\d{4}-\d{2}-\d{2})，PO 批准）\*\*：[^\n]*\n\n/gm;
   const amendments = [...charter.matchAll(amendmentPattern)];
-  assert.deepEqual(amendments.map(match => [match[1], match[2]]), [['文案修订', '2026-09-29'], ['预览框架修订', '2026-10-02'], ['原型阶段修订', '2026-09-28']]);
+  assert.deepEqual(amendments.map(match => [match[1], match[2]]), [['文案修订', '2026-09-29'], ['预览框架修订', '2026-10-02'], ['题库 catalog 修订', '2026-11-19'], ['原型阶段修订', '2026-09-28']]);
+  const catalogAmendment = amendments.find(match => match[1] === '题库 catalog 修订')[0];
+  for (const term of ['L2 题库卡', 'meta', 'sr-only', 'aria-labelledby', '详情去掉底色和内框', 'QuestionActions.collapse', 'leadingItems', 'triggerLabelHidden']) {
+    assert.ok(catalogAmendment.includes(term), term);
+  }
   const amendment = amendments.find(match => match[1] === '原型阶段修订')[0];
   assert.ok(amendment.startsWith('**原型阶段修订（2026-09-28，PO 批准）**：'), 'retain the approval date and PO approval');
   for (const condition of [

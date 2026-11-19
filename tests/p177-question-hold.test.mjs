@@ -61,7 +61,10 @@ for (const appearance of ['default', 'catalog']) {
     assert.match(html, /data-question-hold-body="" class="min-w-0 text-read-body text-muted-foreground"/);
     assert.match(html, /data-question-hold-note="" class="min-w-0 text-ui-meta"/);
     assert.match(html, /<msup><mi>x<\/mi><mn>2<\/mn><\/msup>/);
-    const ordered = ['第 2 题 · 待正式版本', '题稿 r1 · 答案待补', '单选题', '4 分', '来源：示例原件', '题干摘要：', '补齐后由宿主读取正式版本。', '答案与解析 ▾', '在作者页补齐 →'];
+    const headerFields = appearance === 'catalog'
+      ? ['单选题', '4 分', '来源：示例原件', '题稿 r1 · 答案待补']
+      : ['题稿 r1 · 答案待补', '单选题', '4 分', '来源：示例原件'];
+    const ordered = ['第 2 题 · 待正式版本', ...headerFields, '题干摘要：', '补齐后由宿主读取正式版本。', '答案与解析 ▾', '在作者页补齐 →'];
     for (let i = 1; i < ordered.length; i++) assert.ok(html.indexOf(ordered[i - 1]) < html.indexOf(ordered[i]), ordered[i]);
     const regular = render(current.QuestionCard, { question: { ...question, stem: '完整题面' }, appearance });
     assert.equal(html.match(/<article[^>]*class="([^"]+)"/)[1], regular.match(/<article[^>]*class="([^"]+)"/)[1]);
@@ -106,13 +109,22 @@ const variants = [
   { details: '答案详情', detailsOpen: true, actions, secondaryActions },
 ];
 for (const appearance of ['default', 'catalog']) {
-  test(`no hold ${appearance}: all existing sample cards are byte-identical to main ${baselineSha.slice(0, 7)}`, () => {
+  test(`no hold ${appearance}: all samples preserve markup outside the P189 catalog changes from main ${baselineSha.slice(0, 7)}`, () => {
     for (const record of [...current.questionSamples, current.questionPresentationSample]) {
       for (const extra of variants) {
         const props = { question: record, appearance, index: 2, ...extra };
         const expected = render(baseline.QuestionCard, props);
-        assert.equal(render(current.QuestionCard, props), expected, `${record.id}: ${JSON.stringify(extra)}`);
-        assert.equal(render(current.QuestionCard, { ...props, hold: undefined }), expected);
+        const actual = render(current.QuestionCard, props);
+        if (appearance === 'catalog' && !extra.reading && !(extra.compact && extra.onOpen)) {
+          // The P189 header is covered separately. Keep the rest of every historical card byte-protected.
+          const outsideHeader = html => html.replace(/<header\b[^>]*>[\s\S]*?<\/header>/, '');
+          const previousDetail = 'class="question-detail-region mt-3 min-w-0 rounded-xl bg-secondary p-4"';
+          const catalogDetail = 'class="prism-question-catalog-details mt-3 min-w-0 border-t pt-3"';
+          assert.equal(outsideHeader(actual), outsideHeader(expected).replace(previousDetail, catalogDetail), record.id);
+        } else {
+          assert.equal(actual, expected, `${record.id}: ${JSON.stringify(extra)}`);
+        }
+        assert.equal(render(current.QuestionCard, { ...props, hold: undefined }), actual);
       }
     }
   });
