@@ -10,7 +10,7 @@ import { AgentSampleTag } from "../agent-visual-parts"
 import { QuestionExampleCard, useQuestionPreview } from "./agent-question-presentation"
 import { questionPresentationSample } from "../fixtures/question-presentation-samples"
 import { QuestionArchiveSummary, QuestionDetails,type QuestionDetailTab } from "../question-details"
-import { QuestionMath, QuestionSolution } from "../question-content"
+import { QuestionMath } from "../question-content"
 import { QuestionSelect } from "../question-controls"
 import { QuestionResponse,type ResponseValue } from "../question-response"
 import { QuestionReviewExample } from "./question-review"
@@ -65,10 +65,22 @@ function QuestionCatalogDemo() {
   return <section className="my-8 space-y-4" aria-label="catalog 题卡示例">
     <h3 className="text-block-title">题库题卡 · catalog</h3>
     <p className="text-ui-hint text-muted-foreground">示例选择只保存在本页；勾选只改变边框。</p>
-    {questions.map(({ key, question, index }) => <QuestionCard key={key} appearance="catalog" index={index} question={question}
-      checked={selected.includes(key)} onCheckedChange={checked => setSelected(previous => checked ? [...previous, key] : previous.filter(value => value !== key))}
-      header={<AgentSampleTag />} details={<QuestionSolution question={question} />} />)}
+    {questions.map(({ key, question, index }) => <QuestionCatalogExample key={key} question={question} index={index} checked={selected.includes(key)}
+      onCheckedChange={checked => setSelected(previous => checked ? [...previous, key] : previous.filter(value => value !== key))} />)}
   </section>
+}
+
+function QuestionCatalogExample({ question, index, checked, onCheckedChange }: {
+  question: typeof samples[number]; index: number; checked: boolean; onCheckedChange: (checked: boolean) => void
+}) {
+  const [tab, setTab] = useState<QuestionDetailTab>("answer")
+  const [links, setLinks] = useState<DirectorySelections>({})
+  const [favorite, setFavorite] = useState(false)
+  const metadata = questionMetadata[question.id]
+  return <QuestionCard appearance="catalog" index={index} question={question} checked={checked} onCheckedChange={onCheckedChange}
+    meta={metadata.knowledge.join("、")} status={<AgentSampleTag />}
+    details={<QuestionDetails question={question} metadata={metadata} links={links} onLinksChange={setLinks} tab={tab} onTabChange={setTab} />}
+    actions={<QuestionActions title={question.title} collapse favorite={favorite} onFavorite={() => setFavorite(value => !value)} />} />
 }
 
 

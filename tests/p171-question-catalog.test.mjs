@@ -40,20 +40,21 @@ test('selected cards and summaries retain background and use a 2px ring', () => 
     assert.match(html, /prism-question-selected ring-2 ring-primary\/60/);
   }
 });
-test('catalog index is visual only, tags have no separators, options have badges, actions retain details', () => {
+test('catalog index is visual only, plain attributes have separators, options have badges, actions retain details', () => {
   for (const index of [1, 12]) {
     const props = { question, onCheckedChange: noop, details: '答案详情', detailsOpen: true };
     const html = render(current.QuestionCard, { ...props, appearance: 'catalog', index });
-    assert.match(html, new RegExp(`aria-hidden="true" class="prism-question-index text-component-label">${String(index).padStart(2, '0')}<`));
-    assert.doesNotMatch(html, / · /);
-    assert.match(html, /prism-question-kind whitespace-nowrap">单选题/);
+    assert.match(html, new RegExp(`aria-hidden="true" class="prism-question-index shrink-0 font-mono tabular-nums">${String(index).padStart(2, '0')}<`));
+    assert.equal((html.match(/>·<\/span>/g) ?? []).length, 2);
+    assert.doesNotMatch(html, /prism-question-kind/);
+    assert.match(html, /class="text-foreground">单选题/);
     assert.match(html, /prism-question-points whitespace-nowrap">5 分/);
     assert.match(html, /prism-question-option-key text-component-label">A<\/span>/);
     assert.doesNotMatch(html, />A\./);
     assert.match(html, /prism-question-catalog-actions/);
     assert.match(html, /答案详情/);
     const plain = render(current.QuestionCard, props);
-    assert.equal(html.match(/<h3[^>]*>.*?<\/h3>/)[0], plain.match(/<h3[^>]*>.*?<\/h3>/)[0]);
+    assert.equal(html.match(/<h3 id="([^"]+)" class="sr-only">(.*?)<\/h3>/)?.slice(1).join(), plain.match(/<h3 id="([^"]+)"[^>]*>(.*?)<\/h3>/)?.slice(1).join());
     assert.deepEqual(html.match(/aria-(?:label|labelledby|controls|expanded)="[^"]*"/g), plain.match(/aria-(?:label|labelledby|controls|expanded)="[^"]*"/g));
   }
 });
@@ -72,11 +73,12 @@ test('badge affects top-level letters only; reading and summary keep existing pr
   assert.match(html, /class="shrink-0">A\.<\/span>/);
   for (const extra of [{ reading: true }, { compact: true, onOpen: noop }]) assert.equal(render(current.QuestionCard, { question, ...extra, appearance: 'catalog', index: 1 }), render(current.QuestionCard, { question, ...extra }));
 });
-test('catalog styles use mono, dashed divider, precise layout and border-only selection with fallback', async () => {
+test('catalog styles use mono, spacing between actions and body, precise layout and border-only selection with fallback', async () => {
   const css = await readFile('components/prism-next/question-catalog.css', 'utf8');
   assert.match(css, /var\(--brand-blue, var\(--primary\)\) 60%, transparent/);
-  assert.match(css, /padding: 18px 20px 12px 56px/);
-  assert.match(css, /border-top: 1px dashed/);
+  assert.match(css, /padding: 16px 20px 12px;/);
+  assert.doesNotMatch(css, /border-top: 1px dashed/);
+  assert.match(css, /catalog-actions \{\s*margin-top: 12px;/);
   assert.match(css, /\.prism-question-points\s*\{\s*font-family: var\(--font-mono\)/);
   for (const rule of css.matchAll(/\.prism-question[^{}]*selected[^{}]*\{([^}]+)\}/g)) assert.doesNotMatch(rule[1], /background/);
 });

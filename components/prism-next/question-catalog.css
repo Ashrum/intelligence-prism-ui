@@ -6,7 +6,8 @@
 .prism-question.prism-question-catalog {
   border-radius: 10px;
   box-shadow: none;
-  padding: 18px 20px 12px 56px;
+  container: question-catalog / inline-size;
+  padding: 16px 20px 12px;
 }
 .prism-question.prism-question-catalog:hover {
   --tw-shadow: 0 4px 12px -6px rgb(15 23 42 / 14%);
@@ -16,20 +17,6 @@
   box-shadow: var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
   border-color: var(--tw-ring-color);
   --tw-ring-offset-width: -1px;
-}
-.prism-question-catalog .prism-question-checkbox {
-  position: absolute;
-  left: 20px;
-  top: 19px;
-}
-.prism-question-index {
-  position: absolute;
-  left: 18px;
-  top: 44px;
-  width: 20px;
-  text-align: center;
-  font-family: var(--font-mono);
-  color: var(--muted-foreground);
 }
 .prism-question-attribute-tags {
   display: flex;
@@ -69,8 +56,43 @@
   justify-content: center;
   align-self: center;
 }
+.prism-question-catalog-status {
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+.prism-question-catalog > .prism-question-copy,
+.prism-question-catalog-body,
+.prism-question-catalog-details {
+  margin-inline-start: 52px;
+}
 .prism-question-catalog .prism-question-catalog-actions {
-  margin-top: 16px;
-  padding-top: 10px;
-  border-top: 1px dashed color-mix(in srgb, var(--brand-blue, var(--primary)) 18%, var(--border));
+  margin-top: 12px;
+  padding-inline-start: 44px;
+}
+
+/* Container queries measure the content box. The card also has 40px of padding and two 1px borders. */
+@container question-catalog (width < calc(600px - 42px)) {
+  .prism-question-catalog-header {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .prism-question-catalog-extra {
+    flex: 0 0 100%;
+    padding-inline-start: 52px;
+    column-gap: 1rem;
+  }
+  .prism-question-meta-separator {
+    display: none;
+  }
+  .prism-question-catalog-status {
+    margin-inline-start: 0;
+  }
+  .prism-question-catalog > .prism-question-copy,
+  .prism-question-catalog-body,
+  .prism-question-catalog-details {
+    margin-inline-start: 0;
+  }
+  .prism-question-catalog .prism-question-catalog-actions {
+    padding-inline-start: 0;
+  }
 }
