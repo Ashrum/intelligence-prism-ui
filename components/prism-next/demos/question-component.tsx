@@ -79,7 +79,7 @@ function QuestionCatalogExample({ question, index, checked, onCheckedChange }: {
   const metadata = questionMetadata[question.id]
   return <QuestionCard appearance="catalog" index={index} question={question} checked={checked} onCheckedChange={onCheckedChange}
     meta={metadata.knowledge.join("、")} status={<AgentSampleTag />}
-    details={<QuestionDetails question={question} metadata={metadata} links={links} onLinksChange={setLinks} tab={tab} onTabChange={setTab} />}
+    details={<QuestionDetails orientation="vertical" question={question} metadata={metadata} links={links} onLinksChange={setLinks} tab={tab} onTabChange={setTab} />}
     actions={<QuestionActions title={question.title} collapse favorite={favorite} onFavorite={() => setFavorite(value => !value)} />} />
 }
 

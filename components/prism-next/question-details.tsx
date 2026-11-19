@@ -46,21 +46,24 @@ export function QuestionArchiveSummary({id,version,status,rows}:QuestionArchiveS
     <span role="status" aria-live="polite" className={notice ? "text-ui-meta text-muted-foreground" : "sr-only"}>{notice}</span>
   </div>
 }
-export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinksChange,status="未知",canEdit=false,textbooks=[],tabs=["answer","teaching","archive"],archive}:{question:QuestionRecord;metadata:QuestionMetadata;links:DirectorySelections;tab:QuestionDetailTab;onTabChange:(value:QuestionDetailTab)=>void;onLinksChange:Dispatch<SetStateAction<DirectorySelections>>;status?:string;canEdit?:boolean;textbooks?:TextbookDefinition[];tabs?:QuestionDetailTab[];archive?:{label:string;value:React.ReactNode}[]}) {
+export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinksChange,status="未知",canEdit=false,textbooks=[],tabs=["answer","teaching","archive"],archive,orientation="auto"}:{orientation?:"auto"|"vertical";question:QuestionRecord;metadata:QuestionMetadata;links:DirectorySelections;tab:QuestionDetailTab;onTabChange:(value:QuestionDetailTab)=>void;onLinksChange:Dispatch<SetStateAction<DirectorySelections>>;status?:string;canEdit?:boolean;textbooks?:TextbookDefinition[];tabs?:QuestionDetailTab[];archive?:{label:string;value:React.ReactNode}[]}) {
   const courses=directoryLabels(textbooks,links,"course"),knowledge=directoryLabels(textbooks,links,"knowledge")
   const containerRef=useRef<HTMLDivElement>(null)
-  const [vertical,setVertical]=useState(false)
+  const [wide,setWide]=useState(false)
+  const vertical=orientation === "vertical" || wide
   useEffect(()=>{
     const node=containerRef.current
-    if (!node || typeof ResizeObserver === "undefined") return
-    const observer=new ResizeObserver(([entry])=>setVertical(entry.contentRect.width >= 560))
+    if (orientation !== "auto" || !node || typeof ResizeObserver === "undefined") return
+    const observer=new ResizeObserver(([entry])=>setWide(entry.contentRect.width >= 560))
     observer.observe(node)
     return ()=>observer.disconnect()
-  },[tabs.length])
+  },[orientation,tabs.length])
   if(!tabs.length)return null
   const orderedTabs = (["answer", "teaching", "archive"] as const).filter(value => tabs.includes(value))
   const active=orderedTabs.includes(tab)?tab:orderedTabs[0]
-  return <div ref={containerRef} className="@container/question-details min-w-0"><Tabs orientation={vertical ? "vertical" : "horizontal"} value={active} onValueChange={value=>onTabChange(value as QuestionDetailTab)} className={vertical ? "min-w-0 items-start gap-6 [&_dl>div]:min-h-[30px] [&_dl>div]:pt-[3px] [&_dd]:leading-relaxed" : "min-w-0 gap-5"}>
+  return <div ref={containerRef} className="@container/question-details min-w-0"><Tabs orientation={vertical ? "vertical" : "horizontal"} value={active} onValueChange={value=>onTabChange(value as QuestionDetailTab)} className={(vertical ? "min-w-0 items-start gap-6 [&_dl>div]:min-h-[30px] [&_dl>div]:pt-[3px] [&_dd]:leading-relaxed" : "min-w-0 gap-5") + (orientation === "vertical"
+    ? " @max-[400px]/question-details:[&_[data-slot=tabs-list]]:w-16 @max-[400px]/question-details:[&_dl>div]:grid-cols-1"
+    : "")}>
     <TabsList variant="underline" className={vertical ? "w-24 shrink-0 items-stretch data-[orientation=vertical]:px-0 border-s border-border/70" : "grid w-full min-w-0 auto-cols-fr grid-flow-col"} aria-label={`${question.title}详情分类`}>{orderedTabs.map(value => {
       const label = { answer: "答案与解析", teaching: "教学定位", archive: "题目档案" }[value]
       return <TabsTab key={value} value={value} aria-label={label} className={vertical ? "h-[30px] min-h-0 justify-start px-3 text-ui-hint tracking-[.02em] font-normal text-muted-foreground data-active:font-medium data-active:text-foreground" : "pointer-coarse:min-h-11 pointer-coarse:min-w-11 min-w-0 whitespace-normal px-1"}>
@@ -73,7 +76,12 @@ export function QuestionDetails({question,metadata,links,tab,onTabChange,onLinks
       vertical
         ? "[&_.question-solution>section]:min-h-[30px] [&_.question-solution>section]:pt-[3px] [&_.question-solution>section]:leading-relaxed [&_.question-solution>section:nth-child(-n+2)>h4]:pt-[5px]"
         : "[&_.question-solution>section:nth-child(-n+2)]:min-h-[22px] [&_.question-solution>section:nth-child(-n+2)]:leading-[22px] [&_.question-solution>section:nth-child(2)]:leading-[26px] [&_.question-solution>section:nth-child(-n+2)>h4]:leading-[22px]"
-    ].join(" ")}><QuestionSolution question={question} textSize="ui"/></div></TabsPanel>}
+    ].join(" ") + (orientation === "vertical" ? [
+      " @max-[400px]/question-details:[&_.question-solution]:space-y-2",
+      "@max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)]:pl-0",
+      "@max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:static @max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:w-auto @max-[400px]/question-details:[&_.question-solution>section:nth-child(-n+2)>h4]:pt-0",
+      "@max-[400px]/question-details:[&_.question-solution>section>h4]:m-0 @max-[400px]/question-details:[&_.question-solution>section>h4]:text-ui-hint! @max-[400px]/question-details:[&_.question-solution>section>h4]:font-normal @max-[400px]/question-details:[&_.question-solution>section>h4]:text-muted-foreground",
+    ].join(" ") : "")}><QuestionSolution question={question} textSize="ui"/></div></TabsPanel>}
     {tabs.includes("teaching")&&<TabsPanel value="teaching" className="min-w-0"><div className="grid gap-2"><dl className="space-y-2"><DataRow label="核心知识点">{metadata.knowledge.join(" · ") || "未关联"}</DataRow><DataRow label="考查方法">{metadata.method || "未关联"}</DataRow><DataRow label="认知要求">{metadata.demand || "未关联"}</DataRow></dl><dl className="space-y-2"><DataRow label="教材与章节">{courses.length?courses.map(item=><p key={item.id}>{item.label}</p>):"尚未关联教材章节"}</DataRow><DataRow label="知识点目录">{knowledge.length?knowledge.map(item=><p key={item.id}>{item.label}</p>):"尚未关联知识点目录"}</DataRow><DataRow label="课程标准">未关联</DataRow></dl></div>{canEdit&&<div className="mt-5"><TextbookRangePicker textbooks={textbooks} selections={links} onSelectionsChange={onLinksChange} compactTrigger triggerLabel="编辑教材与知识点"/></div>}</TabsPanel>}
     {tabs.includes("archive")&&<TabsPanel value="archive" className="min-w-0"><QuestionArchiveSummary id={question.id} version={metadata.version} status={status} rows={[
       {label:"题型与结构",value:`${question.kind}${question.options?.length ? ` · ${question.options.length} 个选项` : ""}${question.parts?.length ? ` · 含 ${question.parts.length} 个小问` : ""}`},
