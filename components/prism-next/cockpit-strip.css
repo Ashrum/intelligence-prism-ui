@@ -1,0 +1,113 @@
+.prism-cockpit { container: prism-cockpit / inline-size; }
+
+.prism-cockpit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 1px solid rgb(15 23 42 / .08);
+}
+
+.prism-cockpit-cell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) fit-content(50%);
+  grid-template-rows: auto auto 1fr;
+  align-items: start;
+  min-width: 0;
+  padding: 24px;
+  background: white;
+}
+
+.prism-cockpit-cell + .prism-cockpit-cell { border-top: 1px solid rgb(15 23 42 / .08); }
+
+@container prism-cockpit (width >= 640px) {
+  .prism-cockpit-cell { padding-inline: 32px; }
+}
+
+@container prism-cockpit (width >= 1024px) {
+  .prism-cockpit-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .prism-cockpit-cell { grid-column: span 4; }
+  .prism-cockpit-cell + .prism-cockpit-cell {
+    border-top: 0;
+    border-inline-start: 1px solid rgb(15 23 42 / .08);
+  }
+}
+
+.prism-cockpit-label, .prism-cockpit-unit {
+  color: #475569;
+  font-weight: 500;
+}
+
+.prism-cockpit-label {
+  grid-area: 1 / 1;
+  overflow-wrap: anywhere;
+}
+
+.prism-cockpit-value-row {
+  grid-area: 2 / 1 / 3 / -1;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+  margin-top: 8px;
+}
+
+.prism-cockpit-value {
+  min-width: 0;
+  max-width: 100%;
+  color: #111827;
+  line-height: 1;
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+
+.prism-cockpit-cell:not(:has(.prism-cockpit-footer)) .prism-cockpit-value-row {
+  grid-row: 2 / -1;
+  align-self: end;
+}
+
+.prism-cockpit-aside {
+  grid-area: 1 / 2;
+  margin-inline-start: 12px;
+  color: #64748b;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  text-align: end;
+}
+
+.prism-cockpit-footer {
+  grid-area: 3 / 1 / 4 / -1;
+  align-self: end;
+  min-width: 0;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgb(15 23 42 / .06);
+}
+
+.prism-cockpit-cell[data-emphasis="true"] {
+  background: #fff8fb;
+  box-shadow: inset 3px 0 0 var(--chromatic-pink);
+}
+
+.prism-cockpit-cell[data-emphasis="true"] .prism-cockpit-label {
+  color: #111827;
+  font-weight: 600;
+}
+
+.prism-cockpit-cell[data-emphasis="true"] .prism-cockpit-footer { border-color: rgb(224 67 143 / .15); }
+
+.prism-cockpit-tag {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding-inline: 10px;
+  border: 1px solid rgb(15 23 42 / .08);
+  border-radius: 8px;
+  background: rgb(255 255 255 / .7);
+  color: #475569;
+  font-weight: 500;
+}
+
+.prism-cockpit-tag svg { flex: none; }
+.prism-cockpit-tag strong { color: #111827; font-weight: 600; }

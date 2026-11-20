@@ -1,0 +1,55 @@
+.prism-texture-stack-track {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: #F1F5F9;
+}
+
+.prism-texture-stack-segment,
+.prism-texture-stack-swatch {
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / .75) 0 2px, transparent 2px 6px);
+}
+
+.prism-texture-stack-segment {
+  flex-basis: 0;
+  min-width: 0;
+}
+
+.prism-texture-stack-swatch {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 3px;
+}
+
+.prism-texture-stack-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 8px;
+  margin-top: 10px;
+}
+
+.prism-texture-stack-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+
+button.prism-texture-stack-item,
+button.prism-texture-stack-segment { cursor: pointer; }
+
+button.prism-texture-stack-segment:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+button.prism-texture-stack-item:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

@@ -4,6 +4,10 @@
   --text-score-display--line-height: 1.1;
   --text-score-display--font-weight: 600;
   --text-score-display--letter-spacing: 0;
+  --text-metric-display: 2rem;
+  --text-metric-display--line-height: 1;
+  --text-metric-display--font-weight: 600;
+  --text-metric-display--letter-spacing: -0.025em;
   --text-page-title: 1.625rem;
   --text-page-title--line-height: 1.38461538;
   --text-page-title--font-weight: 600;
@@ -101,6 +105,7 @@
 :where(html[data-ui-version="coss-v1"]) [data-slot="badge"].text-component-label { font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); min-height:1rem; }
 :where(html[data-ui-version="coss-v1"]) [data-slot="kbd"] { font-size:var(--text-component-label); line-height:var(--text-component-label--line-height); font-weight:500; }
 .text-stat-display { font-variant-numeric:tabular-nums; }
+.text-metric-display { font-variant-numeric:tabular-nums; }
 /* Match the existing coss sm breakpoint; never shrink reading content. */
 @media (width < 40rem) {
   :where(html[data-ui-version="coss-v1"]) :is([data-slot="button"],[data-slot="tabs-tab"],[data-slot="menu-item"],[data-slot="select-trigger"],[data-slot="select-item"],[data-slot="input"],[data-slot="combobox-input"],[data-slot="combobox-item"],[data-slot="autocomplete-input"],[data-slot="autocomplete-item"],[data-slot="toolbar-button"],[data-slot="toggle"],[data-slot="field-label"]) { font-size:1rem; line-height:1.5; }

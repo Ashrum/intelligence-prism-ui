@@ -4,6 +4,7 @@ import { componentPreviewThemes } from "@/lib/prism-next/preview-themes"
 import { useState } from "react"
 import { QueueBoard, type QueueBoardCategory, type QueueBoardProps, type QueueBoardRow, type QueueBoardSort } from "../queue-board"
 import { DemoSection, Feedback } from "../demo-parts"
+import { GradingQueueDemo } from "./gr4-sections"
 
 export const queueBoardCategories: QueueBoardCategory[] = [
   { id: "completed", label: "已完成", count: 31, tone: "success", description: "可预览批阅结果" },
@@ -51,6 +52,7 @@ function QueueFixture({ props, controlled = false, sortable = false }: { props: 
 }
 export function QueueBoardDemo() {
   return <>
+    <GradingQueueDemo />
     <p className="text-ui-hint">固定输入：分类总量由调用方提供，表格仅展示其中四份试卷；点击操作只记录请求。选择状态卡再次点击可取消筛选。</p>
     {queueBoardFixtures.map(({ id, label, props }) => <DemoSection key={id} id={`queue-${id}`} title={label}><QueueFixture props={props} controlled={id === "progress"} sortable={id === "progress"} /></DemoSection>)}
     <DemoSection id="queue-themes" title="三主题 · 320px · 长中文与公式" description="分类按容器宽度排列，方向键移动焦点，空格选择或取消；表格保留四列，可在内容区内滚动，表头吸顶，操作列位于最右侧。">

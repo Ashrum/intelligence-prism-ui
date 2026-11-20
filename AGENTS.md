@@ -52,6 +52,7 @@
   - 新增／改造前记录检索条目、匹配情况与取舍。Open WebUI、Open-ClaudeCode 等客户端只作交互研究，不整体引入运行时或替换前端框架。
 - 页面和组件 CSS 只处理布局与响应式；不重绘组件的颜色、圆角、阴影、字号、字重，不新增视觉令牌。 Blueprint 的有限例外见 §10；其余范围继续遵守本条。
 - 文字使用语义字号类（`text-ui-body`、`text-ui-hint`、`text-read-body`、`text-block-title` 等），不写局部字号；排版检查脚本会拦截。
+- 例外：`text-metric-display`（32px）由 PO 2026-11-20 为 GR4 指标带批准，只用于指标带主读数。
 - 核心主题保持 `light` / `paper` / `dark` 三套；`blueprint` 为隔离的第四套实验主题，例外边界与生效条件见 §10。根节点 `data-ui-version="coss-v1"`，主题属性 `data-prism-theme`。
 - 基础表单使用常驻固定标签，不做浮动标签。
 - 组件目录可扩充，新增组件须经 Product Owner 认可（PO 2026-09-30）；页面骨架、应用示例与语义别名不计入组件数，不为搜索或演示另建组件条目。
