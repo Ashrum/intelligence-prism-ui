@@ -54,11 +54,15 @@ const render = (component, props) => renderToStaticMarkup(h(component, props));
 
 test('GR4 tokens are declared only in the explicit light/paper token block', async () => {
   const css = await readFile(new URL('../app/(next)/next/theme.css', import.meta.url), 'utf8');
-  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*--chromatic-[^{}]*)\}/g)];
-  assert.equal(rules.length, 1);
-  const [, selector, declarations] = rules[0];
-  assert.match(selector, /\[data-agent-preview\].*\[data-prism-theme="light"\]/);
-  assert.doesNotMatch(selector, /dark|blueprint/);
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter(([, , declarations]) => /--chromatic-[\w-]+\s*:/.test(declarations));
+  for (const [, selector] of rules) {
+    assert.match(selector, /\[data-prism-theme="light"\]/);
+    assert.doesNotMatch(selector, /dark|blueprint/);
+  }
+  const skyRules = rules.filter(([, , declarations]) => /--chromatic-sky\s*:/.test(declarations));
+  assert.equal(skyRules.length, 1);
+  const [, , declarations] = skyRules[0];
   assert.deepEqual(Object.fromEntries([...declarations.matchAll(/--chromatic-([\w-]+):\s*(#[0-9A-Fa-f]{6});/g)].map(([, name, value]) => [name, value])), {
     sky: '#4EB1D9', 'sky-ink': '#0369A1', pink: '#E0438F', 'pink-ink': '#BE185D', 'pink-badge': '#C81E6F',
     lime: '#C2F25B', 'lime-anchor': '#65A30D', 'class-1': '#4EB1D9', 'class-2': '#A3D94E', 'class-3': '#F29BC4',

@@ -1,0 +1,97 @@
+.prism-segmented-control {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: 100%;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--chromatic-radius);
+  background: var(--chromatic-section-tint);
+}
+
+.prism-segmented-control-lead {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+.prism-segmented-control-divider {
+  flex: 0 0 1px;
+  height: 16px;
+  margin-inline: 4px;
+  background: rgb(15 23 42 / .12);
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-lead > [data-slot="select-trigger"] {
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  height: 30px;
+  gap: 6px;
+  padding-inline: 10px 8px;
+  border-color: transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--chromatic-ink);
+  box-shadow: none;
+  font-size: var(--text-ui-body);
+  font-weight: var(--text-item-title--font-weight);
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-lead > [data-slot="select-trigger"]::before {
+  box-shadow: none;
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-lead > [data-slot="select-trigger"]:hover {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+}
+
+.prism-segmented-control-options {
+  flex: 1 1 min-content;
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.prism-segmented-control-options > [data-slot="toggle"] {
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.prism-segmented-control[data-size="sm"] .prism-segmented-control-options > [data-slot="toggle"] {
+  min-height: 22px;
+  height: auto;
+  padding-inline: 6px;
+  font-size: var(--text-ui-meta);
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-options > [data-slot="toggle"] {
+  height: 30px;
+  padding-inline: 12px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-ui-body);
+  color: var(--chromatic-muted);
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-options > [data-slot="toggle"]:hover {
+  background: transparent;
+  color: var(--chromatic-ink);
+}
+
+.prism-segmented-control .prism-segmented-control-options > [data-slot="toggle"][data-pressed] {
+  background: var(--card);
+  color: var(--chromatic-ink);
+  font-weight: var(--text-item-title--font-weight);
+}
+
+.prism-segmented-control[data-size="md"] .prism-segmented-control-options > [data-slot="toggle"][data-pressed] {
+  box-shadow: 0 1px 2px rgb(15 23 42 / .06);
+}
+
+.prism-segmented-control-options > [data-slot="toggle"]:focus-visible,
+.prism-segmented-control[data-size="md"] .prism-segmented-control-lead > [data-slot="select-trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}

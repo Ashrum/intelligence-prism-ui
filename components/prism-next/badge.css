@@ -1,0 +1,9 @@
+.prism-badge-count-info {
+  background: color-mix(in srgb, var(--chromatic-sky) 16%, transparent);
+  color: var(--chromatic-sky-ink);
+}
+
+.prism-badge-attention-soft {
+  background: color-mix(in srgb, var(--chromatic-pink) 10%, transparent);
+  color: var(--chromatic-pink-ink);
+}
