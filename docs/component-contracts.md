@@ -3880,3 +3880,14 @@ math、physics、text 沿用 P186 契约。MathFieldSubject 与 mathFieldSubject
 
 - **CockpitStrip / CockpitCell / CockpitTag** 组合三项独立读数。按宿主宽度排列，1024px 起每格占四栏。每格接收 `label`、`value`、`unit`（无单位时传 `null`）、可选 `aside`、`footer` 和 `emphasis`；主读数使用 `text-metric-display`（32px），数值可由调用方组合节点。标签接收 `icon: "alert" | "plus" | "check" | "clock"`、`label` 和 `count`，只读展示，无焦点、过滤或选择行为。读数口径、图表、动作与选择状态由宿主提供。
 - **QueueList** 按宿主提供的 `items` 顺序呈现任务。每项提供 `id`、`title`、`tag: { label, tone: "pink" | "sky", live? }`、`meta: { className, detail }`、`date`、`waitDays`、`overdue`、`actionLabel`，以及二选一的 `href` 或 `onAction`。整行和行末控件触发同一操作，每次激活发出一次。行末控件是键盘入口。空列表呈现 `emptyText`；`live` 仅展示宿主提供的状态，系统减少动态效果时显示静态点。宿主负责排序、过滤、计算等待天数和逾期规则、处理动作结果。
+
+### GR4 曜彩浅色外观（P194）
+
+以下为曜彩浅色页面专用，按需选用。宿主使用 `data-prism-theme="light"` 和 `.prism-chromatic-scope`，全局加载一次 Inter，页面不得再自写这些外观。
+
+- **Button** 用 `appearance="chromatic"` 选用 32px 无阴影外观，`variant="outline"` 用于次要操作，`variant="default"` 用于主操作。禁用、加载和触发行为沿用 coss。
+- **Badge** 用 `variant="count-info"` 展示天青浅底计数，用 `variant="attention-soft"` 展示曜粉浅底提醒。计数和提醒文字由宿主提供。
+- **SegmentedControl** 接收 `items: { value, label }[]`、`value`、`onValueChange` 和 `aria-label`，由宿主管理单选值。方向键在选项间移动并选择。班级切换用 `size="sm"`，学科和资源分类用 `size="md"`。可通过 `lead` 提供独立交互的前置学科下拉。
+- **DeltaValue** 将宿主提供的 `value` 舍入到一位小数再标记正、负、零。可选 `prefix`、`unit`（默认「百分点」）与 `baseLabel`（默认「基准次」）。
+- **RulerSheet / RulerSheetBand** 提供白卡、装饰性上／左标尺、可选分区带及内部 coss Table 的浅灰表头。白卡 `maxWidth` 默认 1280，宿主为顶部 16px、左侧 14px 标尺预留空间；容器查询名为 `prism-ruler-sheet`。
+- **曜彩浅色令牌／作用域** 提供墨色、次要文字、控件边线、分区底色、正值色、圆角和字体族。`.prism-chromatic-scope` 只应用字体族与正文色。

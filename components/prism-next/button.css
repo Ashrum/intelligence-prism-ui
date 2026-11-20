@@ -1,0 +1,33 @@
+.prism-button-chromatic {
+  height: 32px;
+  border-radius: var(--chromatic-radius);
+  box-shadow: none;
+}
+
+.prism-button-chromatic::before {
+  box-shadow: none;
+}
+
+.prism-button-chromatic:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.prism-button-chromatic-outline {
+  border-color: var(--chromatic-control-line);
+  background: var(--card);
+}
+
+.prism-button-chromatic-outline:not([data-loading]),
+.prism-button-chromatic-outline [data-slot="button-loading-indicator"] {
+  color: var(--chromatic-ink);
+}
+
+.prism-button-chromatic-outline:hover {
+  background: var(--chromatic-section-tint);
+}
+
+.prism-button-chromatic-primary {
+  --primary: var(--chromatic-ink);
+  --primary-foreground: var(--card);
+}

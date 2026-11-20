@@ -102,6 +102,22 @@
   --chromatic-class-3:#F29BC4;
 }
 
+:root:where([data-ui-version="coss-v1"])[data-prism-theme="light"],
+:where([data-agent-preview])[data-prism-theme="light"] {
+  --chromatic-ink:#111827;
+  --chromatic-muted:#64748B;
+  --chromatic-control-line:rgb(15 23 42 / .16);
+  --chromatic-section-tint:#F5F7FA;
+  --chromatic-positive:#15803D;
+  --chromatic-radius:8px;
+  --font-chromatic:Inter, var(--font-sans), sans-serif;
+}
+
+.prism-chromatic-scope {
+  font-family:var(--font-chromatic);
+  color:var(--chromatic-ink);
+}
+
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="paper"],
 :where([data-agent-preview])[data-prism-theme="paper"] {
   --background:#F4F1EA;
