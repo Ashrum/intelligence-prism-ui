@@ -1,4 +1,5 @@
 "use client"
+import { GradingCockpitDemo } from "./gr4-sections"
 import { ChartLegendPositionDemo } from "./chart-legend-position"
 import { LearningOverviewCards } from "./learning-overview-cards"
 import { useState } from "react"
@@ -16,10 +17,27 @@ import {CompactHeatmapFixture} from "./polar-charts"
 import {LearningRecordProperties} from "./learning-record-properties"
 import {LearningChartProperties} from "./learning-chart-properties"
 import {ReferenceChartDemo} from './reference-charts'
+const gradingTrend = [
+  { id: "demo-1", label: "示例测验 1", value: 76.6 },
+  { id: "demo-2", label: "示例测验 2", value: 71.9 },
+  { id: "demo-3", label: "示例测验 3", value: 70.0 },
+  { id: "demo-4", label: "示例测验 4", value: 76.8 },
+  { id: "2026-10-10", label: "2026-10-10 巩固检测", value: 70.3, valueLabel: "39.4/56" },
+  { id: "2026-10-17", label: "2026-10-17 新情境应用", value: 74.8, valueLabel: "37.4/50" },
+  { id: "2026-10-24", label: "2026-10-24 间隔复查", value: 76.0, valueLabel: "45.6/60" },
+]
+function GradingTrendSparkDemo() {
+  return <DemoSection id="grading-trend-spark" title="九(1)班 · 近期得分率走势">
+    <div data-agent-preview data-prism-theme="light" className="w-[144px] max-w-full bg-background">
+      <TrendChart variant="spark" label="九(1)班近期得分率走势" unit="%" series={[{ id: "9-1", label: "九(1)班", data: gradingTrend }]} />
+    </div>
+  </DemoSection>
+}
+
 const datasets=[{id:"assessment",label:"测评数据",unit:"分",groups:["甲组","乙组","丙组"],values:[62,78,86],baseline:45,target:90},{id:"devices",label:"设备处理量",unit:"份",groups:["一号设备","二号设备","三号设备"],values:[120,180,95],baseline:60,target:200}]
 export function ChartComponentDemo({kind}:{kind:string}){const [source,setSource]=useState("assessment"),[empty,setEmpty]=useState(false),[selected,setSelected]=useState(""),[filters,setFilters]=useState<Record<string,string>>({group:"all",period:"week"});const [candidate,setCandidate]=useState(true);const {theme}=useTheme();const sample=datasets.find(d=>d.id===source)!,{unit}=sample;const points=empty?[]:sample.values.map((value,i)=>({id:`item-${i}`,label:sample.groups[i],value}));const rows=points.map(p=>({id:p.id,label:p.label}));const select=(id:string)=>setSelected(id)
 if(['status-composition','paired-dot-chart','quadrant-chart','combo-chart'].includes(kind))return <ReferenceChartDemo kind={kind}/>
-return <><DemoSection title="数据驱动的独立组件" description="切换两组不同用途的数据，组件实现保持一致；选中结果通过回调交给外部。"><div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} onChange={id=>{setSource(id);setSelected("")}} items={datasets.map(d=>({value:d.id,label:d.label}))}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected("")}}>{empty?"恢复数据":"查看空数据"}</Button></div>{kind==="evidence-matrix"&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}<div className="analytics-panel">
+return <>{kind==="trend-chart"&&<GradingTrendSparkDemo/>}{kind==="metric-summary"&&<GradingCockpitDemo/>}<DemoSection title="数据驱动的独立组件" description="切换两组不同用途的数据，组件实现保持一致；选中结果通过回调交给外部。"><div className="mb-6 flex flex-wrap items-center gap-3"><QuestionSelect label="组件数据集" value={source} onChange={id=>{setSource(id);setSelected("")}} items={datasets.map(d=>({value:d.id,label:d.label}))}/><Button variant="outline" aria-pressed={empty} onClick={()=>{setEmpty(!empty);setSelected("")}}>{empty?"恢复数据":"查看空数据"}</Button></div>{kind==="evidence-matrix"&&<PaperPaletteReview candidate={candidate} onChange={setCandidate}/>}<div className="analytics-panel">
 {kind==="trend-chart"&&<TrendChart label={sample.label} unit={unit} series={[{id:"a",label:"序列 A",data:points},{id:"b",label:"序列 B",data:points.map((p,i)=>({...p,value:i===1?null:Math.round(p.value*.8*10)/10}))}]} onSelect={select}/>}
 {(kind==="comparison-chart"||kind==="distribution-chart")&&<ComparisonChart label={sample.label} unit={unit} horizontal={kind!=="distribution-chart"} data={points} onSelect={select}/>}
 {kind==="evidence-matrix"&&<HeatmapChart sequentialColors={theme==="paper"&&candidate?paperSequentialCandidate:undefined} label={sample.label} unit={unit} rows={rows} columns={[{id:"before",label:"第一轮"},{id:"after",label:"第二轮"}]} cells={points.flatMap((p,i)=>[{id:p.id+"-before",row:p.id,column:"before",value:i===1?null:Math.round(p.value*.8)},{id:p.id+"-after",row:p.id,column:"after",value:p.value}])} selectedId={selected} onSelect={select}/>}

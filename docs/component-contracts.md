@@ -3869,3 +3869,14 @@ math、physics、text 沿用 P186 契约。MathFieldSubject 与 mathFieldSubject
 ### P188 · 浮动公式工具条反色
 
 浮动工具条为反色（黑底），宿主槽位按钮由作用域样式统一。复用现有 FormulaQuickTools 与固定 coss Toolbar / Button / ToolbarSeparator，使用既有 foreground / background 语义令牌；浅色主题为近黑底白字，深色主题自动反为浅底深字。全部学科组及 formulaTrailing / trailing 按钮共用悬停、按下、焦点环与禁用样式，完成键使用反色线框；row、FormulaPalette、更多弹出面板与 Tooltip 保持原样，不新增组件或令牌。
+
+### P192 · 智能批阅 GR4 原语
+
+- **HatchMeter** 用实色表示达成量，斜纹表示同一百分比的余量。接收 `value`（夹到 0–100）、`tone: "sky" | "pink"`、`size: "sm" | "md"`（7 / 8px）与可选无障碍名 `label`。省略名称时读出一位小数的得分率。宽度由宿主决定；不用于构成。
+- **TextureStack** 按 `segments: { id, label, value, color, shortLabel? }[]` 展示已完成份数的构成。完整名称用于提示与无障碍名称，可选 `shortLabel` 用于图例。正数段宽按合计份数分配；零值保留图例。段与图例通过 `onSelect?(id)` 发出选择意图，由宿主传入 `selectedId?` 控制强调。不表示进度，不负责切换班级或过滤记录。
+- **TrendChart** 用 `variant="spark"` 展示 48px 的近期得分率。沿用 `series`、`label`、域配置与 `onSelect(pointId, seriesId)`，可传 `formatTooltip(point)` 返回 React 内容。默认第一行读点的 `label`（宿主可组合日期和名称），第二行读一位小数的百分比和可选 `valueLabel`（如 `45.6/60`）。不排序、不计算得分率和均分。此模式省略坐标轴、网格、图例和数据披露，省略 `variant` 保留原趋势图。三项 GR4 演示均显式使用 light 主题。
+
+### GR4 指标带与待处理队列（P193 · light）
+
+- **CockpitStrip / CockpitCell / CockpitTag** 组合三项独立读数。按宿主宽度排列，1024px 起每格占四栏。每格接收 `label`、`value`、`unit`（无单位时传 `null`）、可选 `aside`、`footer` 和 `emphasis`；主读数使用 `text-metric-display`（32px），数值可由调用方组合节点。标签接收 `icon: "alert" | "plus" | "check" | "clock"`、`label` 和 `count`，只读展示，无焦点、过滤或选择行为。读数口径、图表、动作与选择状态由宿主提供。
+- **QueueList** 按宿主提供的 `items` 顺序呈现任务。每项提供 `id`、`title`、`tag: { label, tone: "pink" | "sky", live? }`、`meta: { className, detail }`、`date`、`waitDays`、`overdue`、`actionLabel`，以及二选一的 `href` 或 `onAction`。整行和行末控件触发同一操作，每次激活发出一次。行末控件是键盘入口。空列表呈现 `emptyText`；`live` 仅展示宿主提供的状态，系统减少动态效果时显示静态点。宿主负责排序、过滤、计算等待天数和逾期规则、处理动作结果。

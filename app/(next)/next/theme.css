@@ -90,6 +90,16 @@
 :root:where([data-ui-version="coss-v1"]):is(:not([data-prism-theme]), [data-prism-theme="light"], [data-prism-theme="paper"]),
 :where([data-agent-preview]):is([data-prism-theme="light"], [data-prism-theme="paper"]) {
   --chart-6:#6B7280;
+  --chromatic-sky:#4EB1D9;
+  --chromatic-sky-ink:#0369A1;
+  --chromatic-pink:#E0438F;
+  --chromatic-pink-ink:#BE185D;
+  --chromatic-pink-badge:#C81E6F;
+  --chromatic-lime:#C2F25B;
+  --chromatic-lime-anchor:#65A30D;
+  --chromatic-class-1:#4EB1D9;
+  --chromatic-class-2:#A3D94E;
+  --chromatic-class-3:#F29BC4;
 }
 
 :root:where([data-ui-version="coss-v1"])[data-prism-theme="paper"],

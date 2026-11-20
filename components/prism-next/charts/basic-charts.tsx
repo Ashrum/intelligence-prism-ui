@@ -1,7 +1,7 @@
 "use client"
 import { ChartDataDisclosure, type ChartDataDisclosureMode } from "./chart-data-disclosure"
-import { useCallback, useState } from "react"
-import { ResponsiveContainer, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
+import { useCallback, useId, useState, type ReactNode } from "react"
+import { ResponsiveContainer, AreaChart, Area, LineChart, Line, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, LabelList, Rectangle, usePlotArea, useYAxisScale } from "recharts"
 import { comparisonDomain, comparisonReferencePosition, comparisonReferenceSegment, comparisonReferenceBand, comparisonTextWidth, type ComparisonReferenceLine } from "@/lib/prism-next/comparison-reference"
 import { fitTrendTick, sparkTickLayout } from "@/lib/prism-next/trend-ticks"
 import { trendLabelLayout } from "@/lib/prism-next/trend-label-layout"
@@ -23,7 +23,7 @@ export function trendLegendItems(series: readonly ChartSeries[], theme?: string)
   return symbols.map(symbol=>({id:symbols.length===1?s.id:`${s.id}:${symbol}`,label:symbols.length===1?s.label:`${s.label} · ${pointSymbolText[symbol]}`,marker:symbol==="diamond"?"diamond":symbol==="hollow-circle"?"hollow-dot":isBlueprintTheme(theme)?"square":"dot",color,tone:s.tone}))
  })
 }
-export type BasicChartProps={legendPosition?:'bottom'|'top-left'|'none';dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;formatValue?:ChartValueFormatter;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean}
+export type BasicChartProps={legendPosition?:'bottom'|'top-left'|'none';dataDisclosure?:ChartDataDisclosureMode;label:string;series:ChartSeries[];unit?:string;domain?:[number,number];yDomain?:[number,number]|"auto";decimals?:ChartDecimals;formatValue?:ChartValueFormatter;xTickMode?:"auto"|"all";onSelect?:(pointId:string,seriesId:string)=>void;height?:number;showData?:boolean;variant?:"spark";formatTooltip?:(point:ChartPoint)=>ReactNode}
 const axis={tickLine:false,axisLine:false,tickMargin:10,tick:{fill:"var(--muted-foreground)",fontSize:12}}
 const pointSymbolText={circle:"圆点","hollow-circle":"空心圆",diamond:"菱形"}
 function TrendDot({cx,cy,point,color,active,blueprint=false,onSelect}:{cx?:number;cy?:number;point?:ChartPoint;color:string;active?:boolean;blueprint?:boolean;onSelect?:()=>void}){
@@ -48,7 +48,60 @@ function TrendUnit({unit}:{unit:string}){
  const plot=usePlotArea()
  return plot?<text {...axis.tick} fontFamily="var(--font-mono)" x={plot.x-10} y={plot.y-10} textAnchor="end" data-trend-unit>{unit}</text>:null
 }
-export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,formatValue,xTickMode="auto",height=260,onSelect,showData=true,legendPosition}:BasicChartProps){
+function TrendSpark({ label, series, rows, domain, unit, onSelect, formatTooltip }: Pick<BasicChartProps, "label" | "series" | "unit" | "domain" | "onSelect" | "formatTooltip"> & { rows: { id: string; label: string }[] }) {
+ const gradientId = `trend-spark-${useId()}`
+ const sky = "var(--chromatic-sky)"
+ const pointMaps = series.map(s => new Map(s.data.map(point => [point.id, point])))
+ return <div role="group" aria-label={label} data-trend-variant="spark" style={{ height: 48 }}>
+  <ResponsiveContainer width="100%" height="100%" minWidth={0} initialDimension={{ width: 144, height: 48 }}>
+   <AreaChart data={rows} accessibilityLayer margin={{ left: 6, right: 8, top: 8, bottom: 6 }}>
+    <defs>
+     <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor={sky} stopOpacity={0.22} />
+      <stop offset="100%" stopColor={sky} stopOpacity={0} />
+     </linearGradient>
+    </defs>
+    <XAxis dataKey="id" hide />
+    <YAxis domain={domain ?? [45, 95]} hide />
+    <Tooltip wrapperStyle={{ maxWidth: "calc(100% - 14px)" }} cursor={{ stroke: "rgb(15 23 42 / .18)" }} content={({ active, label: pointId }) => {
+     if (!active || typeof pointId !== "string") return null
+     const points = pointMaps.flatMap(byId => {
+      const point = byId.get(pointId)
+      return point?.value != null && Number.isFinite(point.value) ? [{ point, value: point.value }] : []
+     })
+     if (!points.length) return null
+     return <div className="rounded-md px-2 py-1 tabular-nums whitespace-normal [overflow-wrap:anywhere]" style={{ backgroundColor: "#111827", color: "#fff", fontSize: 11.5 }}>
+      {points.map(({ point, value }, index) => <div key={index}>{formatTooltip ? formatTooltip(point) : <>
+       {point.label}<br />{value.toFixed(1)}{unit || "%"}{point.valueLabel && `（${point.valueLabel}）`}
+      </>}</div>)}
+     </div>
+    }} />
+    {series.map((s, index) => <Area key={s.id} name={s.label} type="linear"
+     dataKey={(row: { id: string }) => {
+      const value = pointMaps[index].get(row.id)?.value
+      return Number.isFinite(value) ? value : null
+     }}
+     stroke={sky} strokeWidth={2} fill={`url(#${gradientId})`} fillOpacity={1} baseValue="dataMin"
+     connectNulls={s.connectGaps === true} isAnimationActive={false} activeDot={false}
+     dot={({ cx, cy, payload }) => {
+      const point = pointMaps[index].get(payload?.id)
+      if (!point || point.value === null || !Number.isFinite(point.value) || cx == null || cy == null) return <g />
+      const last = point.id === s.data.at(-1)?.id
+      const low = last && point.value < 60
+      const pink = "var(--chromatic-pink)"
+      return <circle cx={cx} cy={cy} r={last ? 4 : 2.5}
+       fill={last ? low ? pink : sky : "#fff"}
+       stroke={last ? low ? pink : "var(--chromatic-sky-ink)" : sky}
+       strokeWidth={last ? 1.8 : 1.6}
+       className={onSelect ? "cursor-pointer" : undefined}
+       onClick={onSelect ? () => onSelect(point.id, s.id) : undefined} />
+     }}
+    />)}
+   </AreaChart>
+  </ResponsiveContainer>
+ </div>
+}
+export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,decimals,formatValue,xTickMode="auto",height=260,onSelect,showData=true,legendPosition,variant,formatTooltip}:BasicChartProps){
  const [chartWidth,setChartWidth]=useState(600)
  const measureWidth=useCallback((width:number)=>{if(Number.isFinite(width)&&width>0)setChartWidth(width)},[])
  const measureContainer=useCallback((node:HTMLDivElement|null)=>{if(node)measureWidth(node.getBoundingClientRect().width)},[measureWidth])
@@ -57,6 +110,7 @@ export function TrendChart({dataDisclosure,label,series,unit="",domain,yDomain,d
  const trendAxis=blueprint?{...axis,tick:{...axis.tick,fontFamily:"var(--font-mono)"}}:axis
  const format=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?formatChartValue(value,unit,decimals):"—"
  const rows=[...new Set(series.flatMap(s=>s.data.map(p=>p.id)))].map(id=>({id,label:series.flatMap(s=>s.data).find(p=>p.id===id)!.label,...Object.fromEntries(series.map(s=>[s.id,s.data.find(p=>p.id===id)?.value??null]))}))
+ if(variant==="spark")return <TrendSpark label={label} series={series} rows={rows} domain={activeDomain} unit={unit} onSelect={onSelect} formatTooltip={formatTooltip}/>
  const formatted=new Map(series.map(s=>[s.id,new Map(rows.map(row=>{
   const index=s.data.findIndex(p=>p.id===row.id),point=s.data[index]
   return [row.id,formatValue?.(point?.value,{unit,seriesId:s.id,dataId:row.id,field:"value",index:index<0?undefined:index})]

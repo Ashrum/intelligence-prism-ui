@@ -3,6 +3,7 @@
 import { difficultySwatches } from "../difficulty-mix"
 import { useState } from "react"
 import { SegmentedBar, type SegmentedBarSegment } from "../charts/segmented-bar"
+import { TextureStack } from "../texture-stack"
 import { DemoSection, Feedback } from "../demo-parts"
 import { ReviewDemoThemes, reviewFormula } from "./review-workspace-fixtures"
 
@@ -37,8 +38,23 @@ function Selectable({ legend = "below" }: { legend?: "none" | "below" }) {
   const [notice, setNotice] = useState("请选择分段或图例项。")
   return <><SegmentedBar segments={tiny} label="可选择的分类组成" legend={legend} onSelect={segment => setNotice(`已请求选择：${segment.label}`)} /><Feedback>{notice}</Feedback></>
 }
+const completedByClass = [
+  { id: "9-1", label: "九年级(1)班", shortLabel: "九(1)班", value: 6, color: "var(--chromatic-class-1)" },
+  { id: "9-2", label: "九年级(2)班", shortLabel: "九(2)班", value: 6, color: "var(--chromatic-class-2)" },
+  { id: "8-7", label: "八年级(7)班", shortLabel: "八(7)班", value: 4, color: "var(--chromatic-class-3)" },
+]
+function GradingTextureStackDemo() {
+  const [selectedId, setSelectedId] = useState<string>()
+  return <DemoSection id="grading-texture-stack" title="本学期已完成 · 班级构成">
+    <div data-agent-preview data-prism-theme="light" className="w-[444px] max-w-full bg-background text-foreground">
+      <TextureStack segments={completedByClass} selectedId={selectedId}
+        onSelect={id => setSelectedId(current => current === id ? undefined : id)} />
+    </div>
+  </DemoSection>
+}
 export function SegmentedBarDemo() {
   return <>
+    <GradingTextureStackDemo />
     <DemoSection title="试卷难度结构 · 自定颜色">
       <SegmentedBar label="难度结构" dataDisclosure="visible" segments={[
         {id:"basic",label:"基础",value:50,color:difficultySwatches.basic},

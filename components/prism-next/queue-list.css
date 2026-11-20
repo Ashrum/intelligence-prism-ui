@@ -1,0 +1,123 @@
+.prism-queue { container: prism-queue / inline-size; }
+
+.prism-queue-list { margin: 0; padding: 0; list-style: none; }
+
+.prism-queue-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 74px;
+  gap: 8px 20px;
+  padding: 14px 32px;
+  background: white;
+  cursor: pointer;
+}
+
+.prism-queue-row:hover { background: #f8fafc; }
+.prism-queue-row + .prism-queue-row { border-top: 1px solid rgb(15 23 42 / .08); }
+
+.prism-queue-details { min-width: 0; overflow-wrap: anywhere; }
+.prism-queue-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.prism-queue-title, .prism-queue-meta strong { color: #111827; }
+.prism-queue-meta { margin-top: 2px; color: #475569; }
+.prism-queue-meta strong { font-weight: 500; }
+.prism-queue-separator { margin-inline: 6px; color: #64748b; }
+
+.prism-queue-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 2px 10px;
+  background: rgb(224 67 143 / .10);
+  color: var(--chromatic-pink-ink);
+  font-weight: 500;
+}
+
+.prism-queue-tag[data-tone="sky"] {
+  background: rgb(78 177 217 / .14);
+  color: var(--chromatic-sky-ink);
+}
+
+.prism-queue-live {
+  position: relative;
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chromatic-pink);
+}
+
+.prism-queue-tag[data-tone="sky"] .prism-queue-live { background: var(--chromatic-sky); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .prism-queue-live::before {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    content: "";
+    animation: prism-queue-pulse 1.8s ease-out infinite;
+  }
+}
+
+@keyframes prism-queue-pulse {
+  from { opacity: .65; transform: scale(1); }
+  to { opacity: 0; transform: scale(2.4); }
+}
+
+.prism-queue-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+}
+
+.prism-queue-timing { width: 108px; color: #64748b; }
+.prism-queue-timing > div + div { margin-top: 2px; }
+.prism-queue-overdue { color: var(--chromatic-pink-ink); font-weight: 600; }
+
+.prism-queue .prism-queue-action {
+  width: 96px;
+  height: 32px;
+  padding-inline: 8px;
+  border: 1px solid rgb(15 23 42 / .16);
+  border-radius: 8px;
+  background: white;
+  color: #111827;
+  box-shadow: none;
+  font-size: var(--text-ui-meta);
+  text-align: center;
+  white-space: normal;
+}
+
+.prism-queue .prism-queue-action:hover {
+  border-color: rgb(15 23 42 / .30);
+  background: #f8fafc;
+}
+
+/* Stretch the actual link over its row without adding a second tab stop. */
+.prism-queue a.prism-queue-action { position: static; }
+.prism-queue a.prism-queue-action::before { content: none; }
+.prism-queue a.prism-queue-action::after {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  content: "";
+}
+
+.prism-queue-empty { padding: 40px 24px; color: #64748b; text-align: center; }
+
+@container prism-queue (width >= 768px) {
+  .prism-queue-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .prism-queue-controls { flex: none; flex-wrap: nowrap; }
+  .prism-queue-timing { text-align: end; }
+}

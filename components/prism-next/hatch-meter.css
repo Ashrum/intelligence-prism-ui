@@ -1,0 +1,19 @@
+.prism-hatch-meter {
+  --hatch-color: var(--chromatic-sky);
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg,
+    color-mix(in srgb, var(--hatch-color) 42%, transparent) 0 1.5px,
+    color-mix(in srgb, var(--hatch-color) 8%, transparent) 1.5px 5px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hatch-color) 28%, transparent);
+}
+
+.prism-hatch-meter[data-size="sm"] { height: 7px; }
+.prism-hatch-meter[data-tone="pink"] { --hatch-color: var(--chromatic-pink); }
+
+.prism-hatch-meter-fill {
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--hatch-color);
+}
