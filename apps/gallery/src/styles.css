@@ -1,0 +1,240 @@
+@import "tailwindcss" source("./");
+@import "@ole/ui/styles/theme.css";
+@import "@ole/ui/styles/ruler.css";
+
+.gallery {
+  min-height: 100dvh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.gallery-layout {
+  max-width: 1344px;
+  margin-inline: auto;
+  padding: 0 clamp(1.25rem, 4vw, 3.5rem) 4rem;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 1.15rem;
+  font-weight: 750;
+  letter-spacing: -0.055em;
+}
+
+.wordmark-mark {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-inline-end: 0.35rem;
+  border-radius: 0.25rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+}
+
+.wordmark-ui {
+  color: var(--chromatic-sky-ink);
+}
+
+.gallery-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: clamp(2.5rem, 6.5vw, 5rem) 2.5rem;
+}
+
+.gallery-heading h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 650;
+  letter-spacing: -0.065em;
+  line-height: 1.05;
+}
+
+.gallery-heading code {
+  color: var(--chromatic-sky-ink);
+}
+
+.jump-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  color: var(--chromatic-sky-ink);
+}
+
+.jump-link:hover, .sheet-aside a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.gallery-sheet {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(0, 3.2fr);
+}
+
+.sheet-aside {
+  border-inline-end: 1px solid var(--border);
+  padding: 1.75rem 1.5rem;
+}
+
+.sheet-aside nav {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.sheet-aside a {
+  display: block;
+  width: fit-content;
+  padding-block: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 550;
+}
+
+.palette {
+  margin-block-start: 1.5rem;
+  padding-block-start: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.palette h2 span {
+  display: block;
+  margin-block-start: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.palette ul {
+  display: grid;
+  gap: 0.7rem;
+  margin-block-start: 1rem;
+}
+
+.palette li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.palette code {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.palette-swatch {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.2rem;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
+}
+
+.sheet-content {
+  min-width: 0;
+}
+
+.demo-section {
+  display: grid;
+  gap: 1rem;
+  padding: 1.75rem clamp(1.25rem, 4vw, 2.5rem);
+  scroll-margin-top: 1rem;
+}
+
+.demo-section + .demo-section {
+  border-top: 1px solid var(--border);
+}
+
+.demo-fields, .button-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-block-start: 0.5rem;
+}
+
+.demo-fields > div {
+  display: grid;
+  gap: 0.35rem;
+  flex: 1 1 12rem;
+}
+
+.demo-fields label, .field-label {
+  font-size: 0.8125rem;
+  font-weight: 550;
+}
+
+.overlay-demo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-inline-start: 3px solid var(--chromatic-sky);
+  border-radius: 0.375rem;
+  background: var(--muted);
+}
+
+.skip-link {
+  position: absolute;
+  z-index: 100;
+  inset: 0.5rem auto auto 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--card);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+@media (width < 700px) {
+  .gallery-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .gallery-sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet-aside {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem;
+  }
+
+  .sheet-aside nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .palette ul {
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  }
+
+  .palette li {
+    grid-template-columns: auto 1fr;
+  }
+
+  .palette code {
+    grid-column: 2;
+  }
+}

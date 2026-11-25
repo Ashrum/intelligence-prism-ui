@@ -1,0 +1,24 @@
+{
+  "name": "@ole/gallery",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5188 --strictPort",
+    "build": "vite build",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "preview": "vite preview --host 127.0.0.1 --port 5188 --strictPort"
+  },
+  "dependencies": {
+    "@ole/ui": "0.1.0",
+    "lucide-react": "0.577.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "tailwindcss": "4.3.3",
+    "vite": "8.2.0"
+  }
+}
