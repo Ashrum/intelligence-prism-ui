@@ -1,12 +1,12 @@
 # Current state
 
-- This npm workspace uses Node 24.14.0 and npm 11.9.0.
-- `packages/ui` exports `@ole/ui` 0.1.0 for React 19. The 46 COSS modules live in `src/coss/` and use Base UI 1.8.0.
+- Use the Node version pinned in `.nvmrc` and the npm version declared in `package.json` under `packageManager`.
+- `packages/ui` exports `@ole/ui` 0.2.0 for React 19. The 50 COSS modules live in `src/coss/` and use Base UI 1.8.0 (plus `DataTable` and `FilterBar` primitives).
 - `apps/gallery` is a static Vite/React/Tailwind CSS v4 gallery that consumes the public package exports.
 
 ## Working here
 
-- Run `npm ci` to install the locked workspace and `npm run check` to run the dependency guard, type checks, and production builds.
+- Install from the lockfile with `npm ci --legacy-peer-deps=false --strict-peer-deps --engine-strict` and run `npm run check` to execute the dependency/dist guards (`--verify-dist`), type checks, and production builds.
 - Run `npm run dev` or `npm run preview` from the root. Both use loopback port 5188 with strict port selection.
 - Keep `@ole/ui` and its lockfile dependency tree free of `@radix-ui/*`, `radix-ui`, `vaul`, and `sonner`. Keep package entry points ESM with declaration files.
 - Set `data-prism-theme` to `light` or `dark`. The existing `blueprint` and `blueprint-night` values map to those themes.
