@@ -15,6 +15,7 @@
     "build": "npm run build --workspaces",
     "check": "npm run check:no-radix && npm run check -w @ole/ui && npm run build -w @ole/ui && node scripts/check-no-radix.mjs --verify-dist && npm run check -w @ole/gallery && npm run build -w @ole/gallery",
     "check:no-radix": "node scripts/check-no-radix.mjs",
+    "test": "node --experimental-strip-types --test packages/ui/test/*.test.ts",
     "dev": "npm run build -w @ole/ui && npm run dev -w @ole/gallery",
     "preview": "npm run preview -w @ole/gallery"
   },

@@ -1,6 +1,9 @@
 @source "../dist/coss";
 @source "../dist/data-table.js";
+@source "../dist/date-picker.js";
 @source "../dist/particles";
+@source "../dist/resizable-panels.js";
+@source "../dist/virtual-list.js";
 
 @custom-variant dark (&:where([data-prism-theme="dark"], [data-prism-theme="dark"] *, [data-prism-theme="blueprint-night"], [data-prism-theme="blueprint-night"] *):not(:where([data-prism-theme="light"], [data-prism-theme="light"] *, [data-prism-theme="paper"], [data-prism-theme="paper"] *, [data-prism-theme="blueprint"], [data-prism-theme="blueprint"] *)));
 

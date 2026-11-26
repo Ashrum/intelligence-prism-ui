@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join, posix } from "node:path";
+import { posix } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
@@ -18,6 +18,7 @@ const blocked = /^(?:@radix-ui\/[^/]+|radix-ui|@mui\/[^/]+|@emotion\/[^/]+|vaul|
 const issues = new Set();
 const visited = new Set();
 let distFiles = 0;
+let sourceFiles = 0;
 
 function inspectName(name, origin) {
   if (blocked.test(name)) issues.add(`${origin} uses ${name}`);
@@ -84,8 +85,7 @@ function inspectPackage(path) {
   }
 }
 
-function inspectDistFile(path) {
-  distFiles++;
+function inspectModuleFile(path) {
   const source = ts.createSourceFile(
     path, readFileSync(new URL(`../${path}`, import.meta.url), "utf8"), ts.ScriptTarget.Latest, true,
   );
@@ -130,21 +130,31 @@ function inspectDistFile(path) {
   for (const reference of source.typeReferenceDirectives) inspectSpecifier(reference.fileName, reference.pos);
 }
 
-function inspectDist(directory) {
+function inspectModules(directory, pattern) {
+  let count = 0;
   const absolute = fileURLToPath(new URL(`../${directory}`, import.meta.url));
   for (const entry of readdirSync(absolute, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) inspectDist(path);
-    else if (entry.isFile() && /(?:\.js|\.d\.ts)$/.test(entry.name)) inspectDistFile(path);
+    const path = posix.join(directory, entry.name);
+    if (entry.isDirectory()) count += inspectModules(path, pattern);
+    else if (entry.isFile() && pattern.test(entry.name)) {
+      inspectModuleFile(path);
+      count++;
+    }
   }
+  return count;
 }
 
 for (const path of Object.keys(packages)) inspectPackage(path);
 inspectDependencies(uiPath, manifest, true);
+for (const directory of [`${uiPath}/src`, "apps/gallery/src"]) {
+  sourceFiles += inspectModules(directory, /\.[cm]?[jt]sx?$/);
+}
 
 const distDirectory = `${uiPath}/dist`;
 if (process.argv.includes("--verify-dist") || existsSync(new URL(`../${distDirectory}`, import.meta.url))) {
-  if (existsSync(new URL(`../${distDirectory}`, import.meta.url))) inspectDist(distDirectory);
+  if (existsSync(new URL(`../${distDirectory}`, import.meta.url))) {
+    distFiles = inspectModules(distDirectory, /(?:\.js|\.d\.ts)$/);
+  }
   if (!distFiles) issues.add(`No JavaScript or declaration artifacts found in ${distDirectory}`);
 }
 
@@ -152,5 +162,5 @@ if (issues.size) {
   console.error(`[no-radix] Failed:\n- ${[...issues].sort().join("\n- ")}`);
   process.exitCode = 1;
 } else {
-  console.log(`[no-radix] ${visited.size} workspace lockfile entries and ${distFiles} build artifacts contain 0 forbidden dependencies.`);
+  console.log(`[no-radix] ${visited.size} workspace lockfile entries, ${sourceFiles} source files, and ${distFiles} build artifacts contain 0 forbidden dependencies.`);
 }

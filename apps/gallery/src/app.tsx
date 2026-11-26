@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -70,15 +70,30 @@ import {
   ToastPrimitive,
   ToastProvider,
 } from "@ole/ui";
-import { ArrowDown, ArrowUpRight, Layers, Moon, PanelRightOpen, Sun } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Layers, PanelRightOpen } from "lucide-react";
+import { DemoSection } from "./demo-section";
+import { WaveTwoDemos } from "./wave-two-demos";
 
-type Theme = "light" | "dark";
+const themes = {
+  light: "Light",
+  dark: "Dark",
+  blueprint: "Blueprint",
+  "blueprint-night": "Blueprint night",
+  paper: "Paper",
+};
+type Theme = keyof typeof themes;
 
 const themeKey = "ole-gallery-theme";
 const sections = [
   { id: "controls", label: "Controls" },
   { id: "overlays", label: "Overlays" },
   { id: "data", label: "Data display" },
+  { id: "virtual-list", label: "Virtual list" },
+  { id: "resizable-panels", label: "Resizable panels" },
+  { id: "date-picker", label: "Date picker" },
+  { id: "editable", label: "Editable" },
+  { id: "tags-input", label: "Tags input" },
+  { id: "file-upload", label: "File picker" },
 ];
 const palette = [
   { name: "Sky", hex: "#4EB1D9", color: "bg-prism-sky" },
@@ -99,7 +114,7 @@ const assignmentRows = [
 function initialTheme(): Theme {
   try {
     const saved = localStorage.getItem(themeKey);
-    if (saved === "light" || saved === "dark") return saved;
+    if (saved && Object.hasOwn(themes, saved)) return saved as Theme;
   } catch {
     // Storage can be unavailable in restricted browser contexts.
   }
@@ -120,15 +135,6 @@ function SubjectSelect({ label }: { label: string }) {
         ))}
       </SelectPopup>
     </Select>
-  );
-}
-
-function DemoSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} className="demo-section" aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`} className="text-block-title">{title}</h2>
-      {children}
-    </section>
   );
 }
 
@@ -365,15 +371,12 @@ function DataDisplay() {
 export function App() {
   const [theme, setTheme] = useState(initialTheme);
   const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
-  const dark = theme === "dark";
-
-  function toggleTheme() {
-    const next = dark ? "light" : "dark";
+  function changeTheme(next: Theme) {
     setTheme(next);
     try {
       localStorage.setItem(themeKey, next);
     } catch {
-      // The toggle still works for the current page.
+      // The theme still applies to the current page.
     }
   }
 
@@ -386,10 +389,13 @@ export function App() {
             <span className="wordmark-mark" aria-hidden="true">O</span>
             OLE<span className="wordmark-ui">UI</span>
           </a>
-          <Button variant="outline" onClick={toggleTheme}>
-            {dark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
-            {dark ? "Light mode" : "Dark mode"}
-          </Button>
+          <label className="flex items-center gap-2 text-ui-action">
+            Theme
+            <select className="rounded-lg border border-input bg-card px-2 py-1 text-card-foreground focus-visible:outline-2 focus-visible:outline-ring"
+              value={theme} onChange={(event) => changeTheme(event.target.value as Theme)}>
+              {Object.entries(themes).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
         </header>
 
         <main id="gallery-main" tabIndex={-1}>
@@ -429,6 +435,7 @@ export function App() {
                   <Controls />
                   <Overlays />
                   <DataDisplay />
+                  <WaveTwoDemos />
                 </div>
               </PrismRulerShell>
             </ToastProvider>
