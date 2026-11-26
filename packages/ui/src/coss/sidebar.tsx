@@ -32,6 +32,16 @@ const SIDEBAR_WIDTH_MOBILE: string = "18rem";
 const SIDEBAR_WIDTH_ICON: string = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT: string = "b";
 
+function persistSidebarOpen(open: boolean) {
+  try {
+    if (typeof document !== "undefined") {
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; Max-Age=${SIDEBAR_COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
+    }
+  } catch {
+    // The sidebar can still change state when cookies are unavailable.
+  }
+}
+
 const sidebarMenuButtonVariants = cva(
   "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-lg p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pe-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg:not([class*='size-'])]:size-4 [&>svg]:shrink-0",
   {
@@ -80,6 +90,8 @@ export function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  mobileQuery = "max-md",
+  onPersistOpen = persistSidebarOpen,
   className,
   style,
   children,
@@ -88,8 +100,10 @@ export function SidebarProvider({
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  mobileQuery?: string;
+  onPersistOpen?: (open: boolean) => void;
 }): React.ReactElement {
-  const isMobile = useMediaQuery("(width < 48rem)");
+  const isMobile = useMediaQuery(mobileQuery);
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.
@@ -105,9 +119,9 @@ export function SidebarProvider({
         _setOpen(openState);
       }
 
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; Max-Age=${SIDEBAR_COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
+      onPersistOpen(openState);
     },
-    [setOpenProp, open],
+    [setOpenProp, open, onPersistOpen],
   );
 
   // Helper to toggle the sidebar.

@@ -1,6 +1,35 @@
 import { useRef, useState, type ReactNode } from "react";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+  AlertDialog,
+  AlertDialogClose,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogPopup,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Button,
+  ContextMenu,
+  ContextMenuItem,
+  ContextMenuPopup,
+  ContextMenuSub,
+  ContextMenuSubPopup,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+  DataTable,
+  FilterBar,
+  FilterBarActions,
+  FilterBarBody,
+  FilterBarChips,
+  FilterBarHeader,
+  FilterChipOptions,
+  FilterChipShell,
+  useDataTable,
+  type ColumnDef,
   Dialog,
   DialogClose,
   DialogDescription,
@@ -18,6 +47,9 @@ import {
   PopoverTitle,
   PopoverTrigger,
   PortalScope,
+  PreviewCard,
+  PreviewCardPopup,
+  PreviewCardTrigger,
   PrismRulerShell,
   Select,
   SelectItem,
@@ -31,13 +63,6 @@ import {
   SheetPopup,
   SheetTitle,
   SheetTrigger,
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
   Tabs,
   TabsList,
   TabsPanel,
@@ -66,9 +91,9 @@ const subjects = [
   { value: "language", label: "Language arts" },
 ];
 const assignmentRows = [
-  { title: "Linear equations", subject: "Mathematics", status: "Ready" },
-  { title: "States of matter", subject: "Science", status: "In review" },
-  { title: "Reading inference", subject: "Language arts", status: "Draft" },
+  { id: "linear-equations", title: "Linear equations", subject: "Mathematics", status: "Ready" },
+  { id: "states-of-matter", title: "States of matter", subject: "Science", status: "In review" },
+  { id: "reading-inference", title: "Reading inference", subject: "Language arts", status: "Draft" },
 ];
 
 function initialTheme(): Theme {
@@ -139,6 +164,12 @@ function Controls() {
           <Button disabled>Disabled</Button>
         </TabsPanel>
       </Tabs>
+      <Accordion aria-label="Assignment help">
+        <AccordionItem value="visibility">
+          <AccordionTrigger>Who can see a draft?</AccordionTrigger>
+          <AccordionPanel>Draft assignments stay private until you share them.</AccordionPanel>
+        </AccordionItem>
+      </Accordion>
     </DemoSection>
   );
 }
@@ -193,6 +224,9 @@ function FocusDemo() {
 }
 
 function Overlays() {
+  const toast = ToastPrimitive.useToastManager();
+  const contextTrigger = useRef<HTMLDivElement>(null);
+  const [contextOpen, setContextOpen] = useState<"pointer" | "keyboard" | null>(null);
   return (
     <DemoSection id="overlays" title="Overlays">
       <div className="overlay-demo">
@@ -227,33 +261,103 @@ function Overlays() {
             <PopoverDescription>Use the subject field to organize related assignments.</PopoverDescription>
           </PopoverPopup>
         </Popover>
+        <AlertDialog>
+          <AlertDialogTrigger render={<Button variant="outline" />}>Discard draft</AlertDialogTrigger>
+          <AlertDialogPopup>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Discard this draft?</AlertDialogTitle>
+              <AlertDialogDescription>Unsaved assignment changes will be lost.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogClose render={<Button variant="outline" />}>Keep draft</AlertDialogClose>
+              <AlertDialogClose render={<Button variant="destructive" />}
+                onClick={() => toast.add({ title: "Draft discarded" })}>Discard</AlertDialogClose>
+            </AlertDialogFooter>
+          </AlertDialogPopup>
+        </AlertDialog>
+        <PreviewCard>
+          <PreviewCardTrigger href="#data" className="text-ui-action underline underline-offset-4">
+            Preview assignments
+          </PreviewCardTrigger>
+          <PreviewCardPopup>View assignment titles, subjects and review statuses.</PreviewCardPopup>
+        </PreviewCard>
       </div>
+      <ContextMenu open={contextOpen !== null} onOpenChange={(open) => setContextOpen(open ? "pointer" : null)}>
+        <ContextMenuTrigger ref={contextTrigger} tabIndex={0} className="rounded-lg border border-dashed p-4 text-ui-body"
+          onKeyDown={(event) => {
+            if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return;
+            event.preventDefault();
+            setContextOpen("keyboard");
+          }}>
+          Right-click or press Shift+F10 for assignment actions
+        </ContextMenuTrigger>
+        <ContextMenuPopup anchor={contextOpen === "keyboard" ? contextTrigger : undefined} finalFocus={contextTrigger}>
+          <ContextMenuItem onClick={() => toast.add({ title: "Assignment duplicated" })}>Duplicate assignment</ContextMenuItem>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Move to</ContextMenuSubTrigger>
+            <ContextMenuSubPopup>
+              <ContextMenuItem onClick={() => toast.add({ title: "Assignment moved to drafts" })}>Drafts</ContextMenuItem>
+            </ContextMenuSubPopup>
+          </ContextMenuSub>
+        </ContextMenuPopup>
+      </ContextMenu>
     </DemoSection>
   );
 }
 
+const assignmentColumns: ColumnDef<(typeof assignmentRows)[number]>[] = [
+  { accessorKey: "title", header: "Assignment" },
+  { accessorKey: "subject", header: "Subject" },
+  { accessorKey: "status", header: "Status" },
+];
+const assignmentStatuses = ["Ready", "In review", "Draft", "Archived"].map((status) => ({
+  id: status, label: status, count: assignmentRows.filter((row) => row.status === status).length,
+}));
+
 function DataDisplay() {
+  const [expanded, setExpanded] = useState(false);
+  const [status, setStatus] = useState("Ready");
+  const expandButton = useRef<HTMLButtonElement>(null);
+  const rows = status ? assignmentRows.filter((row) => row.status === status) : assignmentRows;
+  const table = useDataTable({ data: rows, columns: assignmentColumns, getRowId: (row) => row.id });
+
   return (
     <DemoSection id="data" title="Data display">
-      <Table>
-        <TableCaption className="sr-only">Example assignment statuses</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead scope="col">Assignment</TableHead>
-            <TableHead scope="col">Subject</TableHead>
-            <TableHead scope="col">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {assignmentRows.map(({ title, subject, status }) => (
-            <TableRow key={title}>
-              <TableCell className="font-medium">{title}</TableCell>
-              <TableCell>{subject}</TableCell>
-              <TableCell>{status}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <FilterBar aria-label="Assignment filters">
+        <FilterBarHeader expanded={expanded}>
+          <span className="text-ui-action">Filters</span>
+          {!expanded && status && (
+            <FilterBarChips aria-label="Applied assignment filters">
+              <FilterChipShell label="Status" removeLabel={`Remove status filter: ${status}`} onRemove={() => {
+                setStatus("");
+                expandButton.current?.focus();
+              }}>
+                <FilterChipOptions options={assignmentStatuses} value={status} valueLabel={status}
+                  triggerLabel={`Change status filter: ${status}`} optionsLabel="Status options" onValueChange={setStatus} />
+              </FilterChipShell>
+            </FilterBarChips>
+          )}
+          <FilterBarActions
+            reset={{ children: "Reset", disabled: !status, onClick: () => setStatus("") }}
+            toggle={{
+              ref: expandButton, "aria-expanded": expanded, "aria-controls": "assignment-filter-options",
+              children: expanded ? "Collapse filters" : "Expand filters", onClick: () => setExpanded(!expanded),
+            }}
+          />
+        </FilterBarHeader>
+        <FilterBarBody id="assignment-filter-options" expanded={expanded}>
+          <div className="flex flex-wrap items-center gap-1 p-2">
+            {assignmentStatuses.map((option) => (
+              <Button key={option.id} size="xs" variant="outline" aria-pressed={status === option.id}
+                disabled={option.count === 0} onClick={() => setStatus(option.id)}>
+                {option.label} <span className="tabular-nums">{option.count}</span>
+              </Button>
+            ))}
+          </div>
+        </FilterBarBody>
+      </FilterBar>
+      <DataTable table={table} aria-label="Example assignment statuses"
+        getCellClassName={({ column }) => column.id === "title" ? "font-medium" : undefined} />
     </DemoSection>
   );
 }

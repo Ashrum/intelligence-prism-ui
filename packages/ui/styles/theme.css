@@ -1,19 +1,14 @@
 @source "../dist/coss";
+@source "../dist/data-table.js";
+@source "../dist/particles";
 
-@custom-variant dark {
-  @scope ([data-prism-theme="dark"], [data-prism-theme="blueprint-night"]) to ([data-prism-theme]) {
-    @slot;
-  }
-}
+@custom-variant dark (&:where([data-prism-theme="dark"], [data-prism-theme="dark"] *, [data-prism-theme="blueprint-night"], [data-prism-theme="blueprint-night"] *):not(:where([data-prism-theme="light"], [data-prism-theme="light"] *, [data-prism-theme="paper"], [data-prism-theme="paper"] *, [data-prism-theme="blueprint"], [data-prism-theme="blueprint"] *)));
 
-@custom-variant prism-light {
-  @scope (:root:not([data-prism-theme]), [data-prism-theme="light"], [data-prism-theme="blueprint"]) to ([data-prism-theme]) {
-    @slot;
-  }
-}
+@custom-variant prism-light (&:not(:where([data-prism-theme="dark"], [data-prism-theme="dark"] *, [data-prism-theme="blueprint-night"], [data-prism-theme="blueprint-night"] *):not(:where([data-prism-theme="light"], [data-prism-theme="light"] *, [data-prism-theme="paper"], [data-prism-theme="paper"] *, [data-prism-theme="blueprint"], [data-prism-theme="blueprint"] *))));
 
 :where(:root, [data-prism-theme]) {
   color-scheme: light;
+  --prism-color-scheme: light;
   --chromatic-sky: #4EB1D9;
   --chromatic-pink: #E0438F;
   --chromatic-lime: #C2F25B;
@@ -61,6 +56,7 @@
 
 :where([data-prism-theme="dark"], [data-prism-theme="blueprint-night"]) {
   color-scheme: dark;
+  --prism-color-scheme: dark;
   --chromatic-sky-ink: #9CDCFA;
   --chromatic-pink-ink: #FFA9CE;
   --chromatic-lime-ink: var(--chromatic-lime);

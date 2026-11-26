@@ -2,15 +2,18 @@
   "name": "ole-ui-system",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/ui", "apps/gallery"],
+  "workspaces": [
+    "packages/ui",
+    "apps/gallery"
+  ],
   "packageManager": "npm@11.9.0",
   "engines": {
-    "node": "24.14.0",
+    "node": ">=24.14.1 <25",
     "npm": "11.9.0"
   },
   "scripts": {
     "build": "npm run build --workspaces",
-    "check": "npm run check:no-radix && npm run check -w @ole/ui && npm run build -w @ole/ui && npm run check -w @ole/gallery && npm run build -w @ole/gallery",
+    "check": "npm run check:no-radix && npm run check -w @ole/ui && npm run build -w @ole/ui && node scripts/check-no-radix.mjs --verify-dist && npm run check -w @ole/gallery && npm run build -w @ole/gallery",
     "check:no-radix": "node scripts/check-no-radix.mjs",
     "dev": "npm run build -w @ole/ui && npm run dev -w @ole/gallery",
     "preview": "npm run preview -w @ole/gallery"

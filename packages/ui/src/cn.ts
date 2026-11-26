@@ -3,10 +3,13 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 const merge = extendTailwindMerge({
   extend: {
-    theme: {
-      text: [
-        "ui-meta", "ui-hint", "ui-action", "ui-body", "ui-title",
-        "read-caption", "read-body", "read-lead", "read-title", "block-title",
+    classGroups: {
+      "font-size": [
+        "text-score-display", "text-metric-display", "text-page-title", "text-section-title",
+        "text-block-title", "text-item-title", "text-read-body", "text-read-lead",
+        "text-read-title", "text-read-caption", "text-ui-body", "text-ui-action",
+        "text-ui-hint", "text-ui-meta", "text-ui-title", "text-component-label",
+        "text-stat-display", "text-brand-wordmark",
       ],
     },
   },
