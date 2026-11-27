@@ -27,6 +27,8 @@
       "import": "./dist/scoped-overlays.js"
     },
     "./styles/theme.css": "./styles/theme.css",
+    "./styles/tokens.css": "./styles/tokens.css",
+    "./styles/theme-workbench.css": "./styles/theme-workbench.css",
     "./styles/ruler.css": "./styles/ruler.css"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-export { PortalScope, usePortalProps, type PortalContainer, type PortalScopeProps } from "./portal-scope.js";
+export * from "./portal-scope.js";
 export { AutocompletePopup } from "./coss/autocomplete.js";
 export { ComboboxPopup } from "./coss/combobox.js";
 export { CommandDialogPopup } from "./coss/command.js";
