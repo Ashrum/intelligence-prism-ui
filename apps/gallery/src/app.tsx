@@ -72,6 +72,7 @@ import {
 } from "@ole/ui";
 import { ArrowDown, ArrowUpRight, Layers, PanelRightOpen } from "lucide-react";
 import { DemoSection } from "./demo-section";
+import { LayoutFixtureLinks, LayoutFixtures, readLayoutFixture } from "./layout-fixtures";
 import { WaveTwoDemos } from "./wave-two-demos";
 
 const themes = {
@@ -370,6 +371,7 @@ function DataDisplay() {
 
 export function App() {
   const [theme, setTheme] = useState(initialTheme);
+  const [fixture] = useState(readLayoutFixture);
   const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
   function changeTheme(next: Theme) {
     setTheme(next);
@@ -379,6 +381,8 @@ export function App() {
       // The theme still applies to the current page.
     }
   }
+
+  if (fixture) return <LayoutFixtures initialFixture={fixture} theme={theme} />;
 
   return (
     <div className="gallery" data-prism-theme={theme}>
@@ -411,6 +415,7 @@ export function App() {
             </a>
           </header>
 
+          <LayoutFixtureLinks />
           <PortalScope container={portalHost}>
             <ToastProvider>
               <PrismRulerShell className="gallery-sheet">

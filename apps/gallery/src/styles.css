@@ -1,4 +1,5 @@
 @import "tailwindcss" source("./");
+@import "@ole/ui/styles/theme-workbench.css";
 @import "@ole/ui/styles/theme.css";
 @import "@ole/ui/styles/ruler.css";
 
@@ -238,3 +239,47 @@
     grid-column: 2;
   }
 }
+
+.layout-fixture {
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--ole-surface-layer-0);
+  color: var(--ole-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--ole-typography-scale-ui-control-font-size);
+}
+
+.fixture-input {
+  min-width: 0;
+  max-width: 100%;
+  min-height: var(--ole-control-height-md);
+  padding-inline: var(--ole-spacing-8);
+  border: var(--ole-border-width) solid var(--ole-border-control);
+  border-radius: var(--ole-radius-md);
+  background: var(--ole-surface-layer-0);
+  color: inherit;
+}
+
+.fixture-input:focus-visible {
+  outline: var(--ole-border-focus-ring-width) solid var(--ole-focus-ring);
+  outline-offset: var(--ole-border-focus-ring-offset);
+}
+
+.fixture-row { border-block-end: var(--ole-border-width) solid var(--ole-border-subtle); }
+
+.fixture-paper {
+  background: var(--ole-surface-layer-1);
+  border-color: var(--ole-border-subtle);
+}
+
+.fixture-ruler-top, .fixture-ruler-left {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  font-family: var(--font-mono);
+}
+
+.fixture-ruler-left { flex-direction: column; }
+
+.gallery-heading + nav { margin-block-end: var(--ole-spacing-16, 1rem); }

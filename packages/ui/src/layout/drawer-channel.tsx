@@ -118,12 +118,14 @@ interface DrawerChannel {
   pushChild: (fromViewId: string, view: DrawerChannelView, snapshot?: DrawerViewSnapshot) => void;
   updateActive: (viewId: string, snapshot: DrawerViewSnapshot) => void;
   requestExit: (reason: DrawerExitReason, repeat?: boolean) => void;
-  invalidateView: (viewId: string) => void;
+  /** Close an invalidated root and optionally direct focus to the newly active editing field. */
+  invalidateView: (viewId: string, focusTarget?: () => HTMLElement | null) => void;
 }
 
 interface DrawerChannelContextValue extends DrawerChannel {
   bodyRef: RefObject<HTMLDivElement | null>;
   returnFocusRef: RefObject<HTMLElement | null>;
+  exitFocusRef: RefObject<(() => HTMLElement | null) | undefined>;
   fallbackFocusRef: RefObject<HTMLElement | null>;
   exitPhase: ExitPhase;
 }
@@ -147,6 +149,7 @@ export function DrawerChannelProvider({ children }: { children: ReactNode }) {
   const stateRef = useRef(state);
   const bodyRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement>(null);
+  const exitFocusRef = useRef<() => HTMLElement | null>(undefined);
   const fallbackFocusRef = useRef<HTMLElement>(null);
   const exitIntentRef = useRef<string | null>(null);
   const exitSequence = useRef(0);
@@ -159,11 +162,12 @@ export function DrawerChannelProvider({ children }: { children: ReactNode }) {
   }
 
   const value: DrawerChannelContextValue = {
-    state, bodyRef, returnFocusRef, fallbackFocusRef, exitPhase,
+    state, bodyRef, returnFocusRef, exitFocusRef, fallbackFocusRef, exitPhase,
     openRoot(view) {
       if (stateRef.current.views.length || isLeaveGuardBlocking(guard?.getState() ?? initialLeaveGuardState)) return;
       const focused = focusedElement();
       returnFocusRef.current = focused;
+      exitFocusRef.current = undefined;
       fallbackFocusRef.current = focused?.closest('[data-slot="workbench-shell"]')
         ?.querySelector<HTMLElement>('[data-slot="workbench-main"]') ?? null;
       send({ type: "openRoot", view });
@@ -212,8 +216,9 @@ export function DrawerChannelProvider({ children }: { children: ReactNode }) {
         },
       });
     },
-    invalidateView(viewId) {
+    invalidateView(viewId, focusTarget) {
       const before = stateRef.current;
+      if (before.views[0]?.id === viewId) exitFocusRef.current = focusTarget;
       send({ type: "invalidateView", viewId });
       const leave = guard?.getState();
       if (stateRef.current !== before && leave && "pending" in leave && leave.pending.intent.id === exitIntentRef.current) {
@@ -279,7 +284,7 @@ export function DrawerChannelHost({
 }: DrawerChannelHostProps) {
   const channel = useContext(DrawerChannelContext);
   if (!channel) throw new Error("DrawerChannelHost requires DrawerChannelProvider");
-  const { state, requestExit, bodyRef, returnFocusRef, fallbackFocusRef, exitPhase } = channel;
+  const { state, requestExit, bodyRef, returnFocusRef, exitFocusRef, fallbackFocusRef, exitPhase } = channel;
   const active = state.views.at(-1);
   const policy = getDrawerExitPolicy(state, exitPhase);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -332,6 +337,8 @@ export function DrawerChannelHost({
               return activeFocus() ?? true;
             }}
             finalFocus={() => {
+              const destination = exitFocusRef.current?.();
+              if (usableFocus(destination)) return destination;
               if (usableFocus(returnFocusRef.current)) return returnFocusRef.current;
               const fallback = returnFocus?.();
               if (usableFocus(fallback)) return fallback;
@@ -358,14 +365,14 @@ export function DrawerChannelHost({
                 {renderView(view)}
               </DrawerViewBody>
             ))}
+            {overlay && (
+              <>
+                <div ref={setOverlayHost} data-slot="workbench-drawer-overlay-host" />
+                <PortalScope container={overlayHost}>{overlay}</PortalScope>
+              </>
+            )}
           </DrawerPrimitive.Popup>
         </DrawerPrimitive.Viewport>
-        {overlay && (
-          <>
-            <div ref={setOverlayHost} data-slot="workbench-drawer-overlay-host" />
-            <PortalScope container={overlayHost}>{overlay}</PortalScope>
-          </>
-        )}
       </DrawerPrimitive.Portal>
     </DrawerPrimitive.Root>
   );
