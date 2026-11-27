@@ -541,10 +541,13 @@ const components = {
   overlays: OverlaysFixture, states: StatesFixture,
 };
 
-export function LayoutFixtures({ initialFixture, theme }: { initialFixture: Fixture; theme: string }) {
+export function LayoutFixtures({ initialFixture, theme, oleContext }: {
+  initialFixture: Fixture;
+  theme: string;
+  oleContext: OleContext;
+}) {
   const [fixture, setFixture] = useState(initialFixture);
   const Component = components[fixture];
-  const oleContext = theme === "dark" || theme === "blueprint-night" ? "dark" : theme === "paper" ? "paperForcedLight" : "light";
   const switcher = (
     <select className="fixture-input min-w-0 max-w-full" aria-label="布局夹具" value={fixture} onChange={(event) => {
       const next = event.target.value as Fixture;

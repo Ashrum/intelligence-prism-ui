@@ -30,6 +30,7 @@ import {
   FilterChipShell,
   useDataTable,
   type ColumnDef,
+  type OleContext,
   Dialog,
   DialogClose,
   DialogDescription,
@@ -83,6 +84,13 @@ const themes = {
   paper: "Paper",
 };
 type Theme = keyof typeof themes;
+const themeContexts: Record<Theme, OleContext> = {
+  light: "light",
+  dark: "dark",
+  blueprint: "light",
+  "blueprint-night": "dark",
+  paper: "paperForcedLight",
+};
 
 const themeKey = "ole-gallery-theme";
 const sections = [
@@ -97,7 +105,7 @@ const sections = [
   { id: "file-upload", label: "File picker" },
 ];
 const palette = [
-  { name: "Sky", hex: "#4EB1D9", color: "bg-prism-sky" },
+  { name: "Sky", hex: "#339FF2", color: "bg-prism-sky" },
   { name: "Pink", hex: "#E0438F", color: "bg-prism-pink" },
   { name: "Lime", hex: "#C2F25B", color: "bg-prism-lime" },
 ];
@@ -371,6 +379,7 @@ function DataDisplay() {
 
 export function App() {
   const [theme, setTheme] = useState(initialTheme);
+  const oleContext = themeContexts[theme];
   const [fixture] = useState(readLayoutFixture);
   const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
   function changeTheme(next: Theme) {
@@ -382,10 +391,10 @@ export function App() {
     }
   }
 
-  if (fixture) return <LayoutFixtures initialFixture={fixture} theme={theme} />;
+  if (fixture) return <LayoutFixtures initialFixture={fixture} theme={theme} oleContext={oleContext} />;
 
   return (
-    <div className="gallery" data-prism-theme={theme}>
+    <div className="gallery" data-prism-theme={theme} data-ole-context={oleContext}>
       <a className="skip-link" href="#gallery-main">Skip to components</a>
       <div className="gallery-layout">
         <header className="site-header">
@@ -416,7 +425,7 @@ export function App() {
           </header>
 
           <LayoutFixtureLinks />
-          <PortalScope container={portalHost}>
+          <PortalScope container={portalHost} oleContext={oleContext}>
             <ToastProvider>
               <PrismRulerShell className="gallery-sheet">
                 <aside className="sheet-aside">

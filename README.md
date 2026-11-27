@@ -39,8 +39,8 @@ export function Workspace() {
   const [portalHost, setPortalHost] = useState<HTMLDivElement | null>(null);
 
   return (
-    <div data-prism-theme="light">
-      <PortalScope container={portalHost}>
+    <div data-ole-context="light">
+      <PortalScope container={portalHost} oleContext="light">
         <PrismRulerShell>
           <Dialog>
             <DialogTrigger render={<Button />}>Open</DialogTrigger>
@@ -56,11 +56,11 @@ export function Workspace() {
 }
 ```
 
-`data-prism-theme` defaults to light. Set it to `dark` for dark mode. Existing `blueprint` and `blueprint-night` attributes map to light and dark. Use `text-ui-*` for interface copy, `text-read-*` for longer text, and `text-block-title` for section titles. The brand palette is Sky `#4EB1D9`, Pink `#E0438F`, and Lime `#C2F25B`.
+Set `data-ole-context` to `light`, `dark`, or `paperForcedLight` on the theme boundary and pass the same value to `PortalScope`. For Smart Prism hosts, map `blueprint` to `light`, `blueprint-night` to `dark`, and `paper` to `paperForcedLight`. Use `text-ui-*` for interface copy, `text-read-*` for longer text, and `text-block-title` for section titles.
 
 COSS popup wrappers and toast providers use the nearest `PortalScope` by default. An overlay can override that host with `portalProps.container`. Pass `null` to wait for a host to mount. Without a scope, Base UI picks the parent portal or the document body as appropriate. The same scoped wrappers are available from `@ole/ui/scoped-overlays`.
 
-The type scale and component utilities target Tailwind CSS v4. Theme CSS uses `@scope` to keep light and dark variants within the nearest theme boundary.
+The type scale and component utilities target Tailwind CSS v4. Both theme entries use the effective OLE context to resolve design tokens.
 
 ## Sources
 

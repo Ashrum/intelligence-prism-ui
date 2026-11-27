@@ -17,95 +17,106 @@
   ))
 );
 
-@custom-variant prism-light (
-  &:not(:where([data-ole-context="dark"], [data-ole-context="dark"] *):not(:where(
-    [data-ole-context="dark"] :is([data-ole-context="light"], [data-ole-context="paperForcedLight"]),
-    [data-ole-context="dark"] :is([data-ole-context="light"], [data-ole-context="paperForcedLight"]) *
-  )))
-);
-
-/* COSS utilities read the workbench application's legacy variables. */
+/* Resolve utilities at the element so nested contexts and portals use their own tokens. */
 @theme inline {
-  --font-sans: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-prism-sky: var(--chromatic-sky);
-  --color-prism-pink: var(--chromatic-pink);
-  --color-prism-lime: var(--chromatic-lime);
-  --radius-xs: max(0px, calc(var(--radius) - 6px));
-  --radius-sm: max(0px, calc(var(--radius) - 4px));
-  --radius-md: max(0px, calc(var(--radius) - 2px));
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
+  --font-sans: var(--ole-typography-font-family-sans);
+  --font-heading: var(--ole-typography-font-family-sans);
+  --font-mono: var(--ole-typography-font-family-mono);
+  --color-background: var(--ole-surface-layer-0);
+  --color-foreground: var(--ole-text-primary);
+  --color-card: var(--ole-surface-layer-1);
+  --color-card-foreground: var(--ole-text-primary);
+  --color-popover: var(--ole-surface-overlay);
+  --color-popover-foreground: var(--ole-text-primary);
+  --color-primary: var(--ole-action-primary-bg);
+  --color-primary-foreground: var(--ole-action-primary-fg);
+  --color-primary-hover: var(--ole-action-primary-bg-hover);
+  --color-primary-pressed: var(--ole-action-primary-bg-pressed);
+  --color-secondary: var(--ole-surface-layer-2);
+  --color-secondary-foreground: var(--ole-text-primary);
+  --color-muted: var(--ole-surface-layer-2);
+  --color-muted-foreground: var(--ole-text-muted);
+  --color-accent: var(--ole-surface-hover);
+  --color-accent-foreground: var(--ole-text-primary);
+  --color-border: var(--ole-border-subtle);
+  --color-input: var(--ole-border-control);
+  --color-ring: var(--ole-focus-ring);
+  --color-destructive: var(--ole-action-danger-bg);
+  --color-destructive-foreground: var(--ole-status-issue-blocking-error-fg);
+  --color-danger-ink: var(--ole-action-danger-fg);
+  --color-danger-hover: var(--ole-action-danger-bg-hover);
+  --color-danger-pressed: var(--ole-action-danger-bg-pressed);
+  --color-error-surface: var(--ole-status-issue-blocking-error-bg);
+  --color-error-border: var(--ole-status-issue-blocking-error-border);
+  --color-info: var(--ole-accent-blue-subtle-bg);
+  --color-info-foreground: var(--ole-accent-blue-subtle-fg);
+  --color-info-border: var(--ole-accent-blue-ui);
+  --color-success: var(--ole-status-positive-rule-verified-bg);
+  --color-success-foreground: var(--ole-status-positive-rule-verified-fg);
+  --color-success-border: var(--ole-status-positive-rule-verified-border);
+  --color-warning: var(--ole-status-issue-review-recommended-bg);
+  --color-warning-foreground: var(--ole-status-issue-review-recommended-fg);
+  --color-warning-border: var(--ole-status-issue-review-recommended-border);
+  --color-sidebar: var(--ole-surface-layer-1);
+  --color-sidebar-foreground: var(--ole-text-primary);
+  --color-sidebar-primary: var(--ole-action-primary-bg);
+  --color-sidebar-primary-foreground: var(--ole-action-primary-fg);
+  --color-sidebar-accent: var(--ole-surface-hover);
+  --color-sidebar-accent-foreground: var(--ole-text-primary);
+  --color-sidebar-border: var(--ole-border-subtle);
+  --color-sidebar-ring: var(--ole-focus-ring);
+  --color-prism-sky: var(--ole-accent-blue-brand-raw);
+  --color-prism-pink: var(--ole-accent-magenta-brand-raw);
+  --color-prism-lime: var(--ole-accent-lime-brand-raw);
+  --color-scrim: var(--ole-overlay-scrim);
+  --radius-xs: var(--ole-radius-xs);
+  --radius-sm: var(--ole-radius-sm);
+  --radius-md: var(--ole-radius-md);
+  --radius-lg: var(--ole-radius-lg);
+  --radius-xl: var(--ole-radius-lg);
+  --radius-2xl: var(--ole-radius-lg);
+  --shadow-overlay: var(--ole-shadow-overlay);
 
-  --text-ui-meta: 0.75rem;
-  --text-ui-meta--line-height: 1.25rem;
-  --text-ui-hint: 0.8125rem;
-  --text-ui-hint--line-height: 1.25rem;
-  --text-ui-action: 0.875rem;
-  --text-ui-action--line-height: 1.25rem;
-  --text-ui-action--font-weight: 550;
-  --text-ui-body: 0.875rem;
-  --text-ui-body--line-height: 1.5rem;
-  --text-ui-title: 1.125rem;
-  --text-ui-title--line-height: 1.5rem;
-  --text-ui-title--font-weight: 650;
-  --text-read-caption: 0.875rem;
-  --text-read-caption--line-height: 1.5rem;
-  --text-read-body: 1rem;
-  --text-read-body--line-height: 1.75rem;
-  --text-read-lead: 1.125rem;
-  --text-read-lead--line-height: 1.875rem;
-  --text-read-title: 1.625rem;
-  --text-read-title--line-height: 2rem;
-  --text-read-title--font-weight: 650;
-  --text-block-title: 1rem;
-  --text-block-title--line-height: 1.5rem;
-  --text-block-title--font-weight: 650;
+  --text-ui-meta: var(--ole-typography-scale-metadata-font-size);
+  --text-ui-meta--line-height: var(--ole-typography-scale-metadata-line-height);
+  --text-ui-hint: var(--ole-typography-scale-metadata-font-size);
+  --text-ui-hint--line-height: var(--ole-typography-scale-metadata-line-height);
+  --text-ui-action: var(--ole-typography-scale-ui-control-font-size);
+  --text-ui-action--line-height: var(--ole-typography-scale-ui-control-line-height);
+  --text-ui-action--font-weight: var(--ole-typography-scale-ui-control-font-weight);
+  --text-ui-body: var(--ole-typography-scale-ui-control-font-size);
+  --text-ui-body--line-height: var(--ole-typography-scale-ui-control-line-height);
+  --text-ui-title: var(--ole-typography-scale-section-title-font-size);
+  --text-ui-title--line-height: var(--ole-typography-scale-section-title-line-height);
+  --text-ui-title--font-weight: var(--ole-typography-scale-section-title-font-weight);
+  --text-read-caption: var(--ole-typography-scale-ui-control-font-size);
+  --text-read-caption--line-height: var(--ole-typography-scale-ui-control-line-height);
+  --text-read-body: var(--ole-typography-scale-reading-body-font-size);
+  --text-read-body--line-height: var(--ole-typography-scale-reading-body-line-height);
+  --text-read-lead: var(--ole-typography-scale-reading-body-font-size);
+  --text-read-lead--line-height: var(--ole-typography-scale-reading-body-line-height);
+  --text-read-title: var(--ole-typography-scale-page-title-font-size);
+  --text-read-title--line-height: var(--ole-typography-scale-page-title-line-height);
+  --text-read-title--font-weight: var(--ole-typography-scale-page-title-font-weight);
+  --text-block-title: var(--ole-typography-scale-section-title-font-size);
+  --text-block-title--line-height: var(--ole-typography-scale-section-title-line-height);
+  --text-block-title--font-weight: var(--ole-typography-scale-section-title-font-weight);
 
-  --animate-skeleton: prism-shimmer 1.6s linear infinite;
-  --animate-toast-success-even: prism-toast-pulse 240ms ease-out;
-  --animate-toast-success-odd: prism-toast-pulse-alt 240ms ease-out;
-  --animate-toast-error-even: prism-toast-shake 280ms ease-out;
-  --animate-toast-error-odd: prism-toast-shake-alt 280ms ease-out;
+  --default-transition-duration: var(--ole-motion-duration-fast);
+  --default-transition-timing-function: var(--ole-motion-easing-standard);
+  --animate-spin: ole-spin var(--ole-motion-duration-slow) var(--ole-motion-easing-standard) infinite;
+  --animate-skeleton: prism-shimmer var(--ole-motion-duration-slow) var(--ole-motion-easing-standard);
+  --animate-toast-success-even: prism-toast-pulse var(--ole-motion-duration-normal) var(--ole-motion-easing-standard);
+  --animate-toast-success-odd: prism-toast-pulse-alt var(--ole-motion-duration-normal) var(--ole-motion-easing-standard);
+  --animate-toast-error-even: prism-toast-shake var(--ole-motion-duration-normal) var(--ole-motion-easing-standard);
+  --animate-toast-error-odd: prism-toast-shake-alt var(--ole-motion-duration-normal) var(--ole-motion-easing-standard);
 }
 
+@keyframes ole-spin { to { transform: rotate(360deg); } }
+
 @keyframes prism-shimmer {
-  from { background-position-x: calc(-1 * var(--skeleton-width, 12rem)); }
-  to { background-position-x: calc(100% + var(--skeleton-width, 12rem)); }
+  from { background-position-x: calc(-1 * var(--wb-skeleton-width, 12rem)); }
+  to { background-position-x: calc(100% + var(--wb-skeleton-width, 12rem)); }
 }
 
 @keyframes prism-toast-pulse { 50% { scale: 1.02; } }
@@ -121,17 +132,17 @@
 
 @layer base {
   :where([data-slot], [data-slot] *) {
-    border-color: var(--border);
+    border-color: var(--ole-border-subtle);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :where([data-slot], [data-slot] *, .prism-ruler-shell, .prism-ruler-shell *) {
     &, &::before, &::after {
-      animation-duration: 0.01ms !important;
+      animation-duration: var(--ole-motion-reduced-duration) !important;
       animation-iteration-count: 1 !important;
-      transition-delay: 0ms !important;
-      transition-duration: 0.01ms !important;
+      transition-delay: var(--ole-motion-reduced-duration) !important;
+      transition-duration: var(--ole-motion-reduced-duration) !important;
       scroll-behavior: auto !important;
     }
   }

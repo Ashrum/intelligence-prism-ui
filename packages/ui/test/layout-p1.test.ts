@@ -34,13 +34,12 @@ test("P1 styles resolve from the package and supply all semantic layers without 
   assert.match(workbenchTheme, /@import "\.\/tokens\.css"/);
   assert.match(workbenchTheme, /@source[^;]+dist\/layout/);
   assert.match(workbenchTheme, /@custom-variant dark/);
-  assert.match(workbenchTheme, /@custom-variant prism-light/);
   assert.doesNotMatch(workbenchTheme, /@container\s+style\(/);
   assert.doesNotMatch(workbenchTheme, /@media[^{}]*\bwidth\b/);
   assert.match(workbenchTheme, /\[data-slot="workbench-drawer"\]\[data-viewport="compact"\]/);
   assert.match(workbenchTheme, /\[data-slot="workbench-drawer"\]\[data-viewport="desktop"\]/);
   assert.doesNotMatch(workbenchTheme, /--(?:background|foreground|popover|border)\s*:/);
-  assert.match(standaloneTheme, /--background\s*:/);
+  assert.match(standaloneTheme, /@import "\.\/theme-workbench\.css"/);
 });
 
 test("PortalScope copies effective context and density onto per-portal wrappers", () => {

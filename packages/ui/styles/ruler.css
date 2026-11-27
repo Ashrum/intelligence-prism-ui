@@ -1,18 +1,20 @@
+@import "./tokens.css";
+
 .prism-ruler-shell {
   position: relative;
   container: prism-ruler-shell / inline-size;
   min-width: 0;
   margin-inline: auto;
-  border: 1px solid var(--border, #D7DDE5);
-  background: var(--prism-ruler-paper, #FFFFFF);
+  border: var(--ole-ruler-border-width) solid var(--ole-border-subtle);
+  background: var(--ole-surface-layer-1);
 }
 
 .prism-ruler-marks {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  color: var(--muted-foreground, #515C6B);
-  font: 10px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  color: var(--ole-ruler-label);
+  font: 10px/1 var(--ole-typography-font-family-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -25,8 +27,8 @@
   height: 21px;
   padding-inline: 6px;
   background:
-    repeating-linear-gradient(to right, var(--prism-ruler-major-tick, #4EB1D9) 0 1px, transparent 1px 64px) left bottom / 100% 7px no-repeat,
-    repeating-linear-gradient(to right, var(--prism-ruler-minor-tick, #D7DDE5) 0 1px, transparent 1px 16px) left bottom / 100% 3px no-repeat;
+    repeating-linear-gradient(to right, var(--ole-ruler-tick-major) 0 1px, transparent 1px 64px) left bottom / 100% 7px no-repeat,
+    repeating-linear-gradient(to right, var(--ole-ruler-tick-minor) 0 1px, transparent 1px 16px) left bottom / 100% 3px no-repeat;
 }
 
 .prism-ruler-left {
@@ -37,8 +39,8 @@
   width: 22px;
   padding-block: 5px;
   background:
-    repeating-linear-gradient(to bottom, var(--prism-ruler-major-tick, #4EB1D9) 0 1px, transparent 1px 64px) right top / 7px 100% no-repeat,
-    repeating-linear-gradient(to bottom, var(--prism-ruler-minor-tick, #D7DDE5) 0 1px, transparent 1px 16px) right top / 3px 100% no-repeat;
+    repeating-linear-gradient(to bottom, var(--ole-ruler-tick-major) 0 1px, transparent 1px 64px) right top / 7px 100% no-repeat,
+    repeating-linear-gradient(to bottom, var(--ole-ruler-tick-minor) 0 1px, transparent 1px 16px) right top / 3px 100% no-repeat;
 }
 
 @container prism-ruler-shell (width < 1080px) {

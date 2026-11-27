@@ -11,12 +11,12 @@ const alertVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-transparent dark:bg-input/32 [&>svg]:text-muted-foreground",
+          "bg-card [&>svg]:text-muted-foreground",
         error:
-          "border-destructive/32 bg-destructive/4 [&>svg]:text-destructive",
-        info: "border-info/32 bg-info/4 [&>svg]:text-info",
-        success: "border-success/32 bg-success/4 [&>svg]:text-success",
-        warning: "border-warning/32 bg-warning/4 [&>svg]:text-warning",
+          "border-error-border bg-error-surface [&>svg]:text-destructive-foreground",
+        info: "border-info-border bg-info [&>svg]:text-info-foreground",
+        success: "border-success-border bg-success [&>svg]:text-success-foreground",
+        warning: "border-warning-border bg-warning [&>svg]:text-warning-foreground",
       },
     },
   },
