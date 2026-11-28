@@ -1,7 +1,7 @@
 # Current state
 
 - Use the Node version pinned in `.nvmrc` and the npm version declared in `package.json` under `packageManager`.
-- `packages/ui` exports the `@ole/ui` 0.3.0 candidate for React 19. The 50 COSS modules live in `src/coss/` and use Base UI 1.8.0. The package also exports `DataTable`, `FilterBar`, `VirtualList`, resizable panels, `Calendar`, `DatePicker`, `Editable`, `TagsInput`, and `FileUpload`.
+- `packages/ui` exports `@ole/ui` for React 19. Use its package manifest for the version and its public entry point for available exports. The COSS modules in `src/coss/` use Base UI.
 - `apps/gallery` is a static Vite/React/Tailwind CSS v4 gallery that consumes the public package exports.
 
 ## Working here

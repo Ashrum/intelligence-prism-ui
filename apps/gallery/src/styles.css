@@ -269,6 +269,7 @@
 
 .fixture-paper {
   background: var(--ole-surface-layer-1);
+  color: var(--ole-text-primary);
   border-color: var(--ole-border-subtle);
 }
 

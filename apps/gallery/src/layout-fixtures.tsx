@@ -1,6 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { ShieldCheck, Sparkles, UserCheck } from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
-  AppShell, BasketTrigger, DrawerChannelHost, DrawerChannelProvider, FilterSummaryList, InspectorSlot,
+  AppShell, Badge, BasketTrigger, Button, DrawerChannelHost, DrawerChannelProvider, FilterSummaryList, InspectorSlot,
   LayoutForm, LayoutList, LayoutSplit, LeaveConfirmDialog, LeaveGuardProvider, PageStatePanel, PaperStage,
   Popover, PopoverPopup, PopoverTrigger, ProcessHost, Select, SelectItem, SelectPopup, SelectTrigger, SelectValue,
   Tabs, TabsList, TabsTab, ToastProvider, WorkbenchDialog, toastManager,
@@ -9,10 +10,11 @@ import {
 } from "@ole/ui";
 
 const fixtures = {
-  list: "列表",
-  split: "分栏",
-  focus: "沉浸作业",
+  list: "清单",
+  split: "分屏审阅",
   form: "表单",
+  focus: "纸面标尺",
+  grading: "AI 批阅",
   overlays: "浮层",
   states: "页面状态",
 } as const;
@@ -25,9 +27,11 @@ export function readLayoutFixture(): Fixture | undefined {
 
 export function LayoutFixtureLinks() {
   return (
-    <nav className="flex flex-wrap gap-3" aria-label="工作台布局夹具">
+    <nav className="flex flex-wrap gap-2" aria-label="工作台场景" lang="zh">
       {Object.entries(fixtures).map(([id, label]) => (
-        <a key={id} className="underline" href={`?fixture=${id}`}>{label}</a>
+        <Button key={id} variant="outline" size="sm" render={<a href={`?fixture=${id}`} />}>
+          {label}
+        </Button>
       ))}
     </nav>
   );
@@ -290,10 +294,10 @@ function FocusStage({ restoreInline, onRestore, edge, toolbar }: {
   );
 }
 
-function PaperSample({ readOnly = false }: { readOnly?: boolean }) {
+function PaperSample({ readOnly = false, heading: Heading = "h1" }: { readOnly?: boolean; heading?: "h1" | "h2" }) {
   return (
-    <article className="fixture-paper m-2 min-w-72 space-y-5 border p-5">
-      <h1 className="text-ui-title">原卷 · 数学第 6 题</h1>
+    <article data-ole-context="paperForcedLight" className="fixture-paper m-2 min-w-72 space-y-5 border p-5">
+      <Heading className="text-ui-title">原卷 · 数学第 6 题</Heading>
       <p>已知函数 f(x) = x² − 4x + 3。求图像与坐标轴的交点，并说明对称轴的位置。</p>
       <p>作答记录</p>
       <div className="space-y-4">
@@ -303,6 +307,77 @@ function PaperSample({ readOnly = false }: { readOnly?: boolean }) {
       </div>
       {!readOnly && <label className="grid gap-2">原卷批注<input className="fixture-input" /></label>}
     </article>
+  );
+}
+
+type GradingDraft = { score: string; reason: string };
+
+function GradingFixture({ switcher }: { switcher: ReactNode }) {
+  const [view, setView] = useState<"selection" | "detail">("detail");
+  const [draft, setDraft] = useState<GradingDraft>();
+  const [receipt, setReceipt] = useState<GradingDraft>();
+  const [simulateFailure, setSimulateFailure] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (receipt) receiptRef.current?.focus();
+  }, [receipt]);
+
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!draft) return;
+    if (simulateFailure) {
+      setFailed(true);
+      return;
+    }
+    setFailed(false);
+    setReceipt({ ...draft, reason: draft.reason.trim() });
+    setDraft(undefined);
+  }
+
+  return (
+    <FixtureShell switcher={switcher}>
+      <LayoutSplit header={{ title: "AI 批阅" }} singleView={view} onSingleViewChange={setView}
+        list={<ul className="p-3"><li><Button variant="outline" onClick={() => setView("detail")}>第 6 题</Button></li></ul>}>
+        <div className="grid min-w-0 gap-4 p-3">
+          <PaperSample readOnly heading="h2" />
+          <section className="grid justify-items-start gap-3 p-2" aria-label="批阅依据">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline"><Sparkles aria-hidden="true" /> AI 建议通过</Badge>
+              <Badge variant="outline"><ShieldCheck aria-hidden="true" /> 规则校验通过</Badge>
+            </div>
+            <p>AI 建议 8 分。规则校验范围为得分区间。</p>
+            {draft ? (
+              <form className="grid w-full max-w-sm gap-3" onSubmit={submit}>
+                <label className="grid gap-1">改判得分
+                  <input className="fixture-input" type="number" min={0} max={10} step="any" required
+                    value={draft.score} onChange={(event) => setDraft({ ...draft, score: event.target.value })} />
+                </label>
+                <label className="grid gap-1">改判理由
+                  <input className="fixture-input" required value={draft.reason}
+                    onChange={(event) => setDraft({ ...draft, reason: event.target.value })} />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={simulateFailure}
+                    onChange={(event) => setSimulateFailure(event.target.checked)} />
+                  演示保存失败
+                </label>
+                {failed && <p role="alert">本次改判未保存，已保留草稿。</p>}
+                <Button type="submit" className="justify-self-start" disabled={!draft.reason.trim()}>保存改判</Button>
+              </form>
+            ) : receipt ? (
+              <div className="grid gap-2" ref={receiptRef} tabIndex={-1} role="group" aria-label="人工核验回执">
+                <div><Badge variant="outline"><UserCheck aria-hidden="true" /> 人工已核验</Badge></div>
+                <output>第 6 题 · v1 · {receipt.score} 分。{receipt.reason}</output>
+              </div>
+            ) : (
+              <Button onClick={() => setDraft({ score: "8", reason: "" })}>接管并改判</Button>
+            )}
+          </section>
+        </div>
+      </LayoutSplit>
+    </FixtureShell>
   );
 }
 
@@ -538,7 +613,7 @@ function StatesFixture({ switcher }: { switcher: ReactNode }) {
 
 const components = {
   list: ListFixture, split: SplitFixture, focus: FocusFixture, form: FormFixture,
-  overlays: OverlaysFixture, states: StatesFixture,
+  grading: GradingFixture, overlays: OverlaysFixture, states: StatesFixture,
 };
 
 export function LayoutFixtures({ initialFixture, theme, oleContext }: {

@@ -1,10 +1,10 @@
 # OLE UI System
 
-`@ole/ui` is a React 19 component library with 46 COSS modules built on Base UI 1.8.0. Smart Prism (一色一尺) provides the light and dark themes, semantic type, and optional sheet rulers. The gallery uses the same package exports as a consumer.
+`@ole/ui` is a React 19 component library built with COSS and Base UI. Smart Prism (一色一尺) provides the light and dark themes, semantic type, and optional sheet rulers. The gallery uses the same package exports as a consumer.
 
 ## Workspace
 
-Use Node 24.14.0 and npm 11.9.0.
+Use the Node version in `.nvmrc` and the npm version in the root manifest's `packageManager`.
 
 ```sh
 npm ci
@@ -13,6 +13,10 @@ npm run dev
 ```
 
 The development gallery runs at http://127.0.0.1:5188. Run `npm run build` to emit the UI ESM and declarations into `packages/ui/dist` and the static site into `apps/gallery/dist`. Run `npm run preview` to serve the production gallery locally on port 5188.
+
+## 工作台场景
+
+从 Gallery 主页的「工作台场景」打开[清单](http://127.0.0.1:5188/?fixture=list)、[分屏审阅](http://127.0.0.1:5188/?fixture=split)、[表单](http://127.0.0.1:5188/?fixture=form)、[纸面标尺](http://127.0.0.1:5188/?fixture=focus)或 [AI 批阅](http://127.0.0.1:5188/?fixture=grading)。AI 批阅样板使用演示答案，可查看接管、保存失败保留草稿和核验回执。工作台的实际页面入口见[页面复用索引](https://gitlab.wj985.cc/ole/open-learning-engine/-/blob/main/docs/governance/ole-design-spec/02-components/selection-guide.md)。
 
 `npm run check` checks the UI package's dependencies and reachable npm lockfile entries, runs `tsc --noEmit` for both workspaces, and builds both packages. The UI dependency guard covers direct and transitive dependencies, peers, optional dependencies, and npm aliases.
 
